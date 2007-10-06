@@ -1,0 +1,75 @@
+Cecil is a library to generate and inspect programs and libraries in the ECMA CIL format.
+
+* Building
+
+	Simply type the usual commands:
+		./configure --prefix=/your/prefix
+		make && make install
+
+* Bugs
+
+	Please report bugs at:
+		http://bugzilla.ximian.com,
+		Product: Mono Class Library,
+		Component: Mono.Cecil
+
+* Layout
+
+	CodeGen/
+		Here is a ruby code generation script. Do not modify generated files.
+		Please modify template then run:
+
+			./cecil-gen.rb
+
+		in this folder. If you add or remove files, please run:
+
+			./cecil-gen-sources.rb
+
+		to update the file Mono.Cecil.dll.sources
+
+	Mono.Cecil/
+		General implementation of Cecil.
+
+	Mono.Cecil.Binary/
+		Here are files dealing with PE format.
+
+	Mono.Cecil.Metadata/
+		Here lies files dealing with the format of metadata.
+
+	Mono.Cecil.Cil/
+		Files dealing with CIL intermediate code.
+
+	Mono.Cecil.Signatures/
+		Here are files dealing with signatures in blobs.
+
+* Acknowledgements
+
+	Thanks to:
+		- SŽbastien Pouliot,
+		- Todd Berman,
+		- Martin Baulig,
+		- SŽbastien Ros,
+		- Thomas Gil
+
+* License
+
+    Copyright (C) 2005 Jb Evain
+
+    Permission is hereby granted, free of charge, to any person obtaining
+    a copy of this software and associated documentation files (the
+    "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to
+    the following conditions:
+
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+    LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+    OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+    WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

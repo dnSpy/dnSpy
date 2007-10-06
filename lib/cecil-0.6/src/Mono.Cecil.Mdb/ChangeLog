@@ -1,0 +1,23 @@
+2007-08-28  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Mdb/MdbWriter.cs:
+		Rewrite variables infos.
+
+2007-08-27  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Mdb/MdbWriter.cs:
+		Rewrite using the direct mdb api.
+
+2007-02-21  Jb Evain  <jb@nurv.fr>
+
+	* Start working on local var debug infos emitting.
+
+2006-09-24  Jb Evain  <jbevain@gmail.com>
+
+	* start some work on the reader.
+
+2006-09-19  Jb Evain  <jbevain@gmail.com>
+
+	* first checkin in SVN:
+		This is the assembly to support reading and writing
+		from Mono's mdb symbol store.

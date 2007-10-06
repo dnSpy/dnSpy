@@ -1,0 +1,43 @@
+#!/bin/sh
+
+help()
+{
+	echo ""
+	echo "Usage is: configure [--prefix=PREFIX]"
+	echo ""
+}
+
+prefix=/usr/local
+profile=default
+
+while [ $# -ne 0 ]; do
+  case $1 in
+    --help)
+    	help
+    	exit 0
+	;;
+    --prefix=*)
+    	prefix=`echo $1 | sed 's/--prefix=//'`;
+	shift
+	;;
+    --prefix)
+        shift
+	prefix="$1"
+	shift
+	;;
+    *)
+	echo Unknown option: $1
+	help
+	shift
+  esac
+done
+
+echo "prefix=$prefix" > config.make
+
+echo ""
+echo "Mono.Cecil module configured"
+echo ""
+echo "     Prefix:           $prefix"
+echo ""
+
+exit 0;

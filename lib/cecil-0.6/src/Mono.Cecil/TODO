@@ -1,0 +1,19 @@
+Cecil TODO
+
+* debugs infos
+
+	Cecil should be able to emit debug infos along with assemblies.
+
+* strong name
+
+	For the moment, Cecil only create space for strong name signatures.
+	Can we do better ?
+
+* win32 resource
+
+	Cecil does not suppport win32 resources and globaly the .rsrc section
+	into PE files.
+
+* verify
+
+	Cecil does absolutely no verification on what it emits.
