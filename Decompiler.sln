@@ -4,6 +4,8 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # SharpDevelop 3.0.0.2707
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decompiler", "Decompiler.csproj", "{EE3A3C1A-F9C3-4C75-853D-A9476E518C3A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "lib\cecil-0.6\src\Mono.Cecil\Mono.Cecil.csproj", "{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,5 +16,9 @@ Global
 		{EE3A3C1A-F9C3-4C75-853D-A9476E518C3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EE3A3C1A-F9C3-4C75-853D-A9476E518C3A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EE3A3C1A-F9C3-4C75-853D-A9476E518C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal
