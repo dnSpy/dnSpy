@@ -97,7 +97,95 @@ namespace Decompiler
 				codeType.BaseTypes.Add(typeDef.BaseType.FullName);
 			}
 			
+			AddTypeMembers(codeType, typeDef);
+			
 			return codeType;
+		}
+		
+		MemberAttributes GetMethodAttributes(MethodDefinition methodDef)
+		{
+			MemberAttributes noAttribs = (MemberAttributes)0;
+			return
+				// Access modifiers
+				(methodDef.IsCompilerControlled ? noAttribs : noAttribs) |
+				(methodDef.IsPrivate ? MemberAttributes.Private : noAttribs) |
+				(methodDef.IsFamilyAndAssembly ? MemberAttributes.FamilyAndAssembly : noAttribs) |
+				(methodDef.IsAssembly ? MemberAttributes.Assembly : noAttribs) |
+				(methodDef.IsFamily ? MemberAttributes.Family : noAttribs) |
+				(methodDef.IsFamilyOrAssembly ? MemberAttributes.FamilyOrAssembly : noAttribs) |
+				(methodDef.IsPublic ? MemberAttributes.Public : noAttribs) |
+				// Others
+				(methodDef.IsStatic ? MemberAttributes.Static : noAttribs) |
+				// Method specific
+				(methodDef.IsFinal ? MemberAttributes.Final : noAttribs) |
+				(methodDef.IsAbstract ? MemberAttributes.Abstract : noAttribs);
+		}
+		
+		void AddTypeMembers(CodeTypeDeclaration codeType, TypeDefinition typeDef)
+		{
+			MemberAttributes noAttribs = (MemberAttributes)0;
+			
+			// Add fields
+			foreach(FieldDefinition fieldDef in typeDef.Fields) {
+				CodeMemberField codeField = new CodeMemberField();
+				codeField.Name = fieldDef.Name;
+				codeField.Type = new CodeTypeReference(fieldDef.FieldType.FullName);
+				codeField.Attributes = 
+					// Access modifiers
+					(fieldDef.IsCompilerControlled ? noAttribs : noAttribs) |
+					(fieldDef.IsPrivate ? MemberAttributes.Private : noAttribs) |
+					(fieldDef.IsFamilyAndAssembly ? MemberAttributes.FamilyAndAssembly : noAttribs) |
+					(fieldDef.IsAssembly ? MemberAttributes.Assembly : noAttribs) |
+					(fieldDef.IsFamily ? MemberAttributes.Family : noAttribs) |
+					(fieldDef.IsFamilyOrAssembly ? MemberAttributes.FamilyOrAssembly : noAttribs) |
+					(fieldDef.IsPublic ? MemberAttributes.Public : noAttribs) |
+					// Others
+					(fieldDef.IsLiteral ? MemberAttributes.Const : noAttribs) |
+					(fieldDef.IsStatic ? MemberAttributes.Static : noAttribs);
+				
+				codeType.Members.Add(codeField);
+			}
+			
+			// Add properties
+			foreach(PropertyDefinition propDef in typeDef.Properties) {
+				CodeMemberProperty codeProp = new CodeMemberProperty();
+				codeProp.Name = propDef.Name;
+				codeProp.Type = new CodeTypeReference(propDef.PropertyType.FullName);
+				codeProp.Attributes = GetMethodAttributes(propDef.GetMethod);
+				
+				codeType.Members.Add(codeProp);
+			}
+			
+			foreach(EventDefinition eventDef in typeDef.Events) {
+				CodeMemberEvent codeEvent = new CodeMemberEvent();
+				codeEvent.Name = eventDef.Name;
+				codeEvent.Type = new CodeTypeReference(eventDef.EventType.FullName);
+				codeEvent.Attributes = GetMethodAttributes(eventDef.AddMethod);
+				
+				codeType.Members.Add(codeEvent);
+			}
+			
+			foreach(MethodDefinition methodDef in typeDef.Methods) {
+				if (methodDef.IsSpecialName) continue;
+				
+				CodeMemberMethod codeMethod = new CodeMemberMethod();
+				codeMethod.Name = methodDef.Name;
+				codeMethod.ReturnType = new CodeTypeReference(methodDef.ReturnType.ReturnType.FullName);
+				codeMethod.Attributes = GetMethodAttributes(methodDef);
+				
+				foreach(ParameterDefinition paramDef in methodDef.Parameters) {
+					CodeParameterDeclarationExpression codeParam = new CodeParameterDeclarationExpression();
+					codeParam.Name = paramDef.Name;
+					codeParam.Type = new CodeTypeReference(paramDef.ParameterType.FullName);
+					if (paramDef.IsIn && !paramDef.IsOut) codeParam.Direction = FieldDirection.In;
+					if (!paramDef.IsIn && paramDef.IsOut) codeParam.Direction = FieldDirection.Out;
+					if (paramDef.IsIn && paramDef.IsOut) codeParam.Direction = FieldDirection.Ref;
+					
+					codeMethod.Parameters.Add(codeParam);
+				}
+				
+				codeType.Members.Add(codeMethod);
+			}
 		}
 	}
 }

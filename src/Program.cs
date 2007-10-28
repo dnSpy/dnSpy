@@ -21,7 +21,7 @@ namespace Decompiler
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			string sourceCode = Decompile(@"..\..\tests\ClassStructure\bin\Debug\ClassStructure.dll");
+			string sourceCode = Decompile(@"..\..\tests\ClassMembers\bin\Debug\ClassMembers.dll");
 			
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
