@@ -40,12 +40,14 @@ namespace Decompiler
 			this.sourceCode.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 									| System.Windows.Forms.AnchorStyles.Left) 
 									| System.Windows.Forms.AnchorStyles.Right)));
+			this.sourceCode.Font = new System.Drawing.Font("Courier New", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.sourceCode.Location = new System.Drawing.Point(12, 12);
 			this.sourceCode.Multiline = true;
 			this.sourceCode.Name = "sourceCode";
-			this.sourceCode.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.sourceCode.ScrollBars = System.Windows.Forms.ScrollBars.Both;
 			this.sourceCode.Size = new System.Drawing.Size(736, 665);
 			this.sourceCode.TabIndex = 0;
+			this.sourceCode.WordWrap = false;
 			// 
 			// MainForm
 			// 

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Microsoft.CSharp;
 
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 
 namespace Decompiler
 {
@@ -25,7 +26,7 @@ namespace Decompiler
 			options.BlankLinesBetweenMembers = true;
 			options.BracingStyle = "C";
 			options.ElseOnClosing = true;
-			options.IndentString = "\t";
+			options.IndentString = "    ";
 			options.VerbatimOrder = true;
 			
 			provider.GenerateCodeFromCompileUnit(codeCompileUnit, stringWriter, options);
@@ -184,8 +185,56 @@ namespace Decompiler
 					codeMethod.Parameters.Add(codeParam);
 				}
 				
+				codeMethod.Statements.AddRange(CreateMetodBody(methodDef));
+				
 				codeType.Members.Add(codeMethod);
 			}
+		}
+		
+		object FormatInstructionOperand(object operand)
+		{
+			if (operand == null) {
+				return string.Empty;
+			} else if (operand is Instruction) {
+				return string.Format("IL_{0:X2}", ((Instruction)operand).Offset);
+			} else if (operand is MethodReference) {
+				return ((MethodReference)operand).Name + "()";
+			} else if (operand is TypeReference) {
+				return ((TypeReference)operand).FullName;
+			} else if (operand is VariableDefinition) {
+				return ((VariableDefinition)operand).Name;
+			} else if (operand is ParameterDefinition) {
+				return ((ParameterDefinition)operand).Name;
+			} else if (operand is string) {
+				return "\"" + operand + "\"";
+			} else if (operand is int) {
+				return operand.ToString();
+			} else {
+				return "(" + operand.GetType() + ")";
+			}
+		}
+		
+		CodeStatementCollection CreateMetodBody(MethodDefinition methodDef)
+		{
+			CodeStatementCollection codeStmtCol = new CodeStatementCollection();
+			
+			methodDef.Body.Simplify();
+			
+			foreach(Instruction instr in methodDef.Body.Instructions) {
+				OpCode opCode = instr.OpCode;
+				string decription = 
+					string.Format("IL_{0:X2}: {1, -11} {2, -15}  # {3}->{4} {5} {6}", 
+					              instr.Offset,
+					              opCode,
+					              FormatInstructionOperand(instr.Operand),
+					              opCode.StackBehaviourPop,
+					              opCode.StackBehaviourPush,
+					              opCode.FlowControl == FlowControl.Next ? string.Empty : "Flow=" + opCode.FlowControl,
+					              opCode.OpCodeType == OpCodeType.Macro ? "(macro)" : string.Empty);
+				codeStmtCol.Add(new CodeCommentStatement(decription));
+			}
+			
+			return codeStmtCol;
 		}
 	}
 }
