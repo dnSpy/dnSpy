@@ -6,6 +6,8 @@
 using System;
 using System.Windows.Forms;
 
+using Mono.Cecil;
+
 namespace Decompiler
 {
 	/// <summary>
@@ -19,7 +21,7 @@ namespace Decompiler
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			string sourceCode = "<Source code>";
+			string sourceCode = Decompile(@"..\..\tests\ClassStructure\bin\Debug\ClassStructure.dll");
 			
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
@@ -28,5 +30,12 @@ namespace Decompiler
 			Application.Run(mainForm);
 		}
 		
+		static string Decompile(string filename)
+		{
+			AssemblyDefinition assembly = AssemblyFactory.GetAssembly(filename);
+			CodeDomBuilder codeDomBuilder = new CodeDomBuilder();
+			codeDomBuilder.AddAssembly(assembly);
+			return codeDomBuilder.GenerateCode();
+		}
 	}
 }

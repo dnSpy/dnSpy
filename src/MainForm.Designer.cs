@@ -43,14 +43,15 @@ namespace Decompiler
 			this.sourceCode.Location = new System.Drawing.Point(12, 12);
 			this.sourceCode.Multiline = true;
 			this.sourceCode.Name = "sourceCode";
-			this.sourceCode.Size = new System.Drawing.Size(266, 223);
+			this.sourceCode.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.sourceCode.Size = new System.Drawing.Size(736, 665);
 			this.sourceCode.TabIndex = 0;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(290, 247);
+			this.ClientSize = new System.Drawing.Size(760, 689);
 			this.Controls.Add(this.sourceCode);
 			this.Name = "MainForm";
 			this.Text = "Decompiler";

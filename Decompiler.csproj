@@ -34,6 +34,7 @@
   <ItemGroup>
     <Folder Include="src" />
     <Compile Include="src\AssemblyInfo.cs" />
+    <Compile Include="src\CodeDomBuilder.cs" />
     <Compile Include="src\MainForm.cs" />
     <Compile Include="src\MainForm.Designer.cs" />
     <Compile Include="src\Program.cs" />
