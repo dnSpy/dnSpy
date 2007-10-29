@@ -17,16 +17,15 @@ namespace Decompiler
 			foreach(Instruction instr in methodDef.Body.Instructions) {
 				OpCode opCode = instr.OpCode;
 				string decription = 
-					string.Format("IL_{0:X2}: {1, -11} {2, -15}  # {3}->{4} {5} {6}", 
+					string.Format("IL_{0:X2}: {1, -22} # {2}->{3} {4} {5}",
 					              instr.Offset,
-					              opCode,
-					              FormatInstructionOperand(instr.Operand),
+					              opCode + " " + FormatInstructionOperand(instr.Operand),
 					              opCode.StackBehaviourPop,
 					              opCode.StackBehaviourPush,
 					              opCode.FlowControl == FlowControl.Next ? string.Empty : "Flow=" + opCode.FlowControl,
 					              opCode.OpCodeType == OpCodeType.Macro ? "(macro)" : string.Empty);
-				codeStmtCol.Add(new CodeCommentStatement(decription));
 				
+				codeStmtCol.Add(new CodeCommentStatement(decription));
 				try {
 					object codeExpr = MakeCodeDomExpression(
 						instr,
@@ -39,7 +38,9 @@ namespace Decompiler
 						codeStmtCol.Add((CodeExpression)codeExpr);
 					}
 				} catch (NotImplementedException) {
+					codeStmtCol.Add(new CodeSnippetExpression("/* Not implemented */"));
 				}
+				codeStmtCol.Add(new CodeSnippetStatement(""));
 			}
 			
 			return codeStmtCol;
@@ -251,7 +252,7 @@ namespace Decompiler
 				case Code.Mkrefany: throw new NotImplementedException();
 				case Code.Newobj: throw new NotImplementedException();
 				case Code.No: throw new NotImplementedException();
-				case Code.Nop: return new CodeCommentStatement("No-op");
+				case Code.Nop: return new CodeSnippetExpression("/* No-op */");
 				case Code.Or: throw new NotImplementedException();
 				case Code.Pop: throw new NotImplementedException();
 				case Code.Readonly: throw new NotImplementedException();

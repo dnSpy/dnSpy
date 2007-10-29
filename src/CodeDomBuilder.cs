@@ -37,6 +37,31 @@ namespace Decompiler
 				code = code.Remove(0, code.IndexOf("\r\n") + "\r\n".Length);
 			}
 			
+			// Post processing commands
+			while(true) { 
+				int endIndex = code.IndexOf("[JoinLine]") + "[JoinLine]".Length;
+				if (endIndex != -1) {
+					int startIndex = code.LastIndexOf("\r\n", endIndex, endIndex);
+					if (startIndex != -1) {
+						code = code.Remove(startIndex, endIndex - startIndex);
+						continue;
+					}
+				}
+				break;
+			}
+			while(true) { 
+				int endIndex = code.IndexOf("[Tab]");
+				if (endIndex != -1) {
+					int startIndex = code.LastIndexOf("\r\n", endIndex, endIndex);
+					if (startIndex != -1) {
+						code = code.Remove(endIndex, "[Tab]".Length);
+						code = code.Insert(endIndex, new string(' ', 40 - endIndex + startIndex));
+						continue;
+					}
+				}
+				break;
+			}
+			
 			return code;
 		}
 		
