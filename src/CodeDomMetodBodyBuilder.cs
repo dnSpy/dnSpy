@@ -26,6 +26,20 @@ namespace Decompiler
 					              opCode.FlowControl == FlowControl.Next ? string.Empty : "Flow=" + opCode.FlowControl,
 					              opCode.OpCodeType == OpCodeType.Macro ? "(macro)" : string.Empty);
 				codeStmtCol.Add(new CodeCommentStatement(decription));
+				
+				try {
+					object codeExpr = MakeCodeDomExpression(
+						instr,
+						new CodeVariableReferenceExpression("arg1"),
+						new CodeVariableReferenceExpression("arg2"),
+						new CodeVariableReferenceExpression("arg3"));
+					if (codeExpr is CodeStatement) {
+						codeStmtCol.Add((CodeStatement)codeExpr);
+					} else if (codeExpr is CodeExpression) {
+						codeStmtCol.Add((CodeExpression)codeExpr);
+					}
+				} catch (NotImplementedException) {
+				}
 			}
 			
 			return codeStmtCol;
@@ -54,13 +68,13 @@ namespace Decompiler
 			}
 		}
 		
-		static object MakeCodeDomExpression(Instruction inst, params CodeExpression[] stackArgs)
+		static object MakeCodeDomExpression(Instruction inst, params CodeExpression[] args)
 		{
 			OpCode opCode = inst.OpCode;
 			object operand = inst.Operand;
-			CodeExpression stackArg1 = stackArgs.Length >= 1 ? stackArgs[0] : null;
-			CodeExpression stackArg2 = stackArgs.Length >= 2 ? stackArgs[1] : null;
-			CodeExpression stackArg3 = stackArgs.Length >= 3 ? stackArgs[2] : null;
+			CodeExpression arg1 = args.Length >= 1 ? args[0] : null;
+			CodeExpression arg2 = args.Length >= 2 ? args[1] : null;
+			CodeExpression arg3 = args.Length >= 3 ? args[2] : null;
 			
 			switch(opCode.Code) {
 				case Code.Add: throw new NotImplementedException();
@@ -94,39 +108,44 @@ namespace Decompiler
 				case Code.Clt: throw new NotImplementedException();
 				case Code.Clt_Un: throw new NotImplementedException();
 				case Code.Constrained: throw new NotImplementedException();
-				case Code.Conv_I: throw new NotImplementedException();
-				case Code.Conv_I1: throw new NotImplementedException();
-				case Code.Conv_I2: throw new NotImplementedException();
-				case Code.Conv_I4: throw new NotImplementedException();
-				case Code.Conv_I8: throw new NotImplementedException();
-				case Code.Conv_Ovf_I: throw new NotImplementedException();
-				case Code.Conv_Ovf_I_Un: throw new NotImplementedException();
-				case Code.Conv_Ovf_I1: throw new NotImplementedException();
-				case Code.Conv_Ovf_I1_Un: throw new NotImplementedException();
-				case Code.Conv_Ovf_I2: throw new NotImplementedException();
-				case Code.Conv_Ovf_I2_Un: throw new NotImplementedException();
-				case Code.Conv_Ovf_I4: throw new NotImplementedException();
-				case Code.Conv_Ovf_I4_Un: throw new NotImplementedException();
-				case Code.Conv_Ovf_I8: throw new NotImplementedException();
-				case Code.Conv_Ovf_I8_Un: throw new NotImplementedException();
-				case Code.Conv_Ovf_U: throw new NotImplementedException();
-				case Code.Conv_Ovf_U_Un: throw new NotImplementedException();
-				case Code.Conv_Ovf_U1: throw new NotImplementedException();
-				case Code.Conv_Ovf_U1_Un: throw new NotImplementedException();
-				case Code.Conv_Ovf_U2: throw new NotImplementedException();
-				case Code.Conv_Ovf_U2_Un: throw new NotImplementedException();
-				case Code.Conv_Ovf_U4: throw new NotImplementedException();
-				case Code.Conv_Ovf_U4_Un: throw new NotImplementedException();
-				case Code.Conv_Ovf_U8: throw new NotImplementedException();
-				case Code.Conv_Ovf_U8_Un: throw new NotImplementedException();
-				case Code.Conv_R_Un: throw new NotImplementedException();
-				case Code.Conv_R4: throw new NotImplementedException();
-				case Code.Conv_R8: throw new NotImplementedException();
-				case Code.Conv_U: throw new NotImplementedException();
-				case Code.Conv_U1: throw new NotImplementedException();
-				case Code.Conv_U2: throw new NotImplementedException();
-				case Code.Conv_U4: throw new NotImplementedException();
-				case Code.Conv_U8: throw new NotImplementedException();
+				
+				// Conversions
+				case Code.Conv_I:  return new CodeCastExpression(typeof(int), arg1); // TODO
+				case Code.Conv_I1: return new CodeCastExpression(typeof(SByte), arg1);
+				case Code.Conv_I2: return new CodeCastExpression(typeof(Int16), arg1);
+				case Code.Conv_I4: return new CodeCastExpression(typeof(Int32), arg1);
+				case Code.Conv_I8: return new CodeCastExpression(typeof(Int64), arg1);
+				case Code.Conv_U:  return new CodeCastExpression(typeof(uint), arg1); // TODO
+				case Code.Conv_U1: return new CodeCastExpression(typeof(Byte), arg1);
+				case Code.Conv_U2: return new CodeCastExpression(typeof(UInt16), arg1);
+				case Code.Conv_U4: return new CodeCastExpression(typeof(UInt32), arg1);
+				case Code.Conv_U8: return new CodeCastExpression(typeof(UInt64), arg1);
+				case Code.Conv_R4: return new CodeCastExpression(typeof(float), arg1);
+				case Code.Conv_R8: return new CodeCastExpression(typeof(double), arg1);
+				case Code.Conv_R_Un: return new CodeCastExpression(typeof(double), arg1); // TODO
+				
+				case Code.Conv_Ovf_I:  return new CodeCastExpression(typeof(int), arg1); // TODO
+				case Code.Conv_Ovf_I1: return new CodeCastExpression(typeof(SByte), arg1);
+				case Code.Conv_Ovf_I2: return new CodeCastExpression(typeof(Int16), arg1);
+				case Code.Conv_Ovf_I4: return new CodeCastExpression(typeof(Int32), arg1);
+				case Code.Conv_Ovf_I8: return new CodeCastExpression(typeof(Int64), arg1);
+				case Code.Conv_Ovf_U:  return new CodeCastExpression(typeof(uint), arg1); // TODO
+				case Code.Conv_Ovf_U1: return new CodeCastExpression(typeof(Byte), arg1);
+				case Code.Conv_Ovf_U2: return new CodeCastExpression(typeof(UInt16), arg1);
+				case Code.Conv_Ovf_U4: return new CodeCastExpression(typeof(UInt32), arg1);
+				case Code.Conv_Ovf_U8: return new CodeCastExpression(typeof(UInt64), arg1);
+				
+				case Code.Conv_Ovf_I_Un:  return new CodeCastExpression(typeof(int), arg1); // TODO
+				case Code.Conv_Ovf_I1_Un: return new CodeCastExpression(typeof(SByte), arg1);
+				case Code.Conv_Ovf_I2_Un: return new CodeCastExpression(typeof(Int16), arg1);
+				case Code.Conv_Ovf_I4_Un: return new CodeCastExpression(typeof(Int32), arg1);
+				case Code.Conv_Ovf_I8_Un: return new CodeCastExpression(typeof(Int64), arg1);
+				case Code.Conv_Ovf_U_Un:  return new CodeCastExpression(typeof(uint), arg1); // TODO
+				case Code.Conv_Ovf_U1_Un: return new CodeCastExpression(typeof(Byte), arg1);
+				case Code.Conv_Ovf_U2_Un: return new CodeCastExpression(typeof(UInt16), arg1);
+				case Code.Conv_Ovf_U4_Un: return new CodeCastExpression(typeof(UInt32), arg1);
+				case Code.Conv_Ovf_U8_Un: return new CodeCastExpression(typeof(UInt64), arg1);
+				
 				case Code.Cpblk: throw new NotImplementedException();
 				case Code.Cpobj: throw new NotImplementedException();
 				case Code.Div: throw new NotImplementedException();
@@ -138,12 +157,12 @@ namespace Decompiler
 				case Code.Initobj: throw new NotImplementedException();
 				case Code.Isinst: throw new NotImplementedException();
 				case Code.Jmp: throw new NotImplementedException();
-				case Code.Ldarg: throw new NotImplementedException();
+				case Code.Ldarg: return new CodeArgumentReferenceExpression(((ParameterDefinition)operand).Name);
 				case Code.Ldarga: throw new NotImplementedException();
-				case Code.Ldc_I4: throw new NotImplementedException();
-				case Code.Ldc_I8: throw new NotImplementedException();
-				case Code.Ldc_R4: throw new NotImplementedException();
-				case Code.Ldc_R8: throw new NotImplementedException();
+				case Code.Ldc_I4: 
+				case Code.Ldc_I8: 
+				case Code.Ldc_R4: 
+				case Code.Ldc_R8: return new CodePrimitiveExpression(operand);
 				case Code.Ldelem_Any: throw new NotImplementedException();
 				case Code.Ldelem_I: throw new NotImplementedException();
 				case Code.Ldelem_I1: throw new NotImplementedException();
@@ -167,18 +186,18 @@ namespace Decompiler
 				case Code.Ldind_I8: throw new NotImplementedException();
 				case Code.Ldind_R4: throw new NotImplementedException();
 				case Code.Ldind_R8: throw new NotImplementedException();
-				case Code.Ldind_Ref: throw new NotImplementedException();
 				case Code.Ldind_U1: throw new NotImplementedException();
 				case Code.Ldind_U2: throw new NotImplementedException();
 				case Code.Ldind_U4: throw new NotImplementedException();
-				case Code.Ldlen: throw new NotImplementedException();
-				case Code.Ldloc: throw new NotImplementedException();
+				case Code.Ldind_Ref: throw new NotImplementedException();
+				case Code.Ldlen: return new CodePropertyReferenceExpression(arg1, "Length");
+				case Code.Ldloc: return new CodeVariableReferenceExpression(((VariableDefinition)operand).Name);
 				case Code.Ldloca: throw new NotImplementedException();
-				case Code.Ldnull: throw new NotImplementedException();
+				case Code.Ldnull: return new CodePrimitiveExpression(null);
 				case Code.Ldobj: throw new NotImplementedException();
 				case Code.Ldsfld: throw new NotImplementedException();
 				case Code.Ldsflda: throw new NotImplementedException();
-				case Code.Ldstr: throw new NotImplementedException();
+				case Code.Ldstr: return new CodePrimitiveExpression(operand);
 				case Code.Ldtoken: throw new NotImplementedException();
 				case Code.Ldvirtftn: throw new NotImplementedException();
 				case Code.Leave: throw new NotImplementedException();
@@ -191,7 +210,7 @@ namespace Decompiler
 				case Code.Newarr: throw new NotImplementedException();
 				case Code.Newobj: throw new NotImplementedException();
 				case Code.No: throw new NotImplementedException();
-				case Code.Nop: throw new NotImplementedException();
+				case Code.Nop: return new CodeCommentStatement("No-op");
 				case Code.Not: throw new NotImplementedException();
 				case Code.Or: throw new NotImplementedException();
 				case Code.Pop: throw new NotImplementedException();
@@ -225,7 +244,7 @@ namespace Decompiler
 				case Code.Stind_R4: throw new NotImplementedException();
 				case Code.Stind_R8: throw new NotImplementedException();
 				case Code.Stind_Ref: throw new NotImplementedException();
-				case Code.Stloc: throw new NotImplementedException();
+				case Code.Stloc: return new CodeAssignStatement(new CodeVariableReferenceExpression(((VariableDefinition)operand).Name), arg1);
 				case Code.Stobj: throw new NotImplementedException();
 				case Code.Stsfld: throw new NotImplementedException();
 				case Code.Sub: throw new NotImplementedException();
