@@ -79,27 +79,27 @@ namespace Decompiler
 			
 			switch(opCode.Code) {
 				#region Arithmetic
-					case Code.Add: throw new NotImplementedException();
-					case Code.Add_Ovf: throw new NotImplementedException();
-					case Code.Add_Ovf_Un: throw new NotImplementedException();
-					case Code.Div: throw new NotImplementedException();
-					case Code.Div_Un: throw new NotImplementedException();
-					case Code.Mul: throw new NotImplementedException();
-					case Code.Mul_Ovf: throw new NotImplementedException();
-					case Code.Mul_Ovf_Un: throw new NotImplementedException();
-					case Code.Rem: throw new NotImplementedException();
-					case Code.Rem_Un: throw new NotImplementedException();
-					case Code.Sub: throw new NotImplementedException();
-					case Code.Sub_Ovf: throw new NotImplementedException();
-					case Code.Sub_Ovf_Un: throw new NotImplementedException();
-					case Code.And: throw new NotImplementedException();
-					case Code.Xor: throw new NotImplementedException();
-					case Code.Shl: throw new NotImplementedException();
-					case Code.Shr: throw new NotImplementedException();
-					case Code.Shr_Un: throw new NotImplementedException();
+					case Code.Add:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Add, arg2);
+					case Code.Add_Ovf:    return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Add, arg2);
+					case Code.Add_Ovf_Un: return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Add, arg2);
+					case Code.Div:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Divide, arg2);
+					case Code.Div_Un:     return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Divide, arg2);
+					case Code.Mul:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Multiply, arg2);
+					case Code.Mul_Ovf:    return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Multiply, arg2);
+					case Code.Mul_Ovf_Un: return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Multiply, arg2);
+					case Code.Rem:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Modulus, arg2);
+					case Code.Rem_Un:     return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Modulus, arg2);
+					case Code.Sub:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Subtract, arg2);
+					case Code.Sub_Ovf:    return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Subtract, arg2);
+					case Code.Sub_Ovf_Un: return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Subtract, arg2);
+					case Code.And:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.BitwiseAnd, arg2);
+					case Code.Xor:        throw new NotImplementedException();
+					case Code.Shl:        throw new NotImplementedException();
+					case Code.Shr:        throw new NotImplementedException();
+					case Code.Shr_Un:     throw new NotImplementedException();
 					
-					case Code.Neg: throw new NotImplementedException();
-					case Code.Not: throw new NotImplementedException();
+					case Code.Neg:        throw new NotImplementedException();
+					case Code.Not:        throw new NotImplementedException();
 				#endregion
 				#region Arrays
 					case Code.Newarr: throw new NotImplementedException();
