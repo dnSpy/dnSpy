@@ -151,11 +151,11 @@ namespace Decompiler
 					case Code.Bne_Un: throw new NotImplementedException();
 				#endregion
 				#region Comparison
-					case Code.Ceq: throw new NotImplementedException();
-					case Code.Cgt: throw new NotImplementedException();
-					case Code.Cgt_Un: throw new NotImplementedException();
-					case Code.Clt: throw new NotImplementedException();
-					case Code.Clt_Un: throw new NotImplementedException();
+					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
+					case Code.Cgt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+					case Code.Cgt_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+					case Code.Clt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+					case Code.Clt_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 				#endregion
 				#region Conversions
 					case Code.Conv_I:    return new Ast.CastExpression(new Ast.TypeReference(typeof(int).Name), arg1, CastType.Cast); // TODO
