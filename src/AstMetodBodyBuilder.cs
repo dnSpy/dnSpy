@@ -94,13 +94,13 @@ namespace Decompiler
 					case Code.Sub_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 					case Code.Sub_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 					case Code.And:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.BitwiseAnd, arg2);
-					case Code.Xor:        throw new NotImplementedException();
-					case Code.Shl:        throw new NotImplementedException();
-					case Code.Shr:        throw new NotImplementedException();
-					case Code.Shr_Un:     throw new NotImplementedException();
+					case Code.Xor:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ExclusiveOr, arg2);
+					case Code.Shl:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftLeft, arg2);
+					case Code.Shr:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftRight, arg2);
+					case Code.Shr_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftRight, arg2);
 					
-					case Code.Neg:        throw new NotImplementedException();
-					case Code.Not:        throw new NotImplementedException();
+					case Code.Neg:        return new Ast.UnaryOperatorExpression(arg1, UnaryOperatorType.Minus);
+					case Code.Not:        return new Ast.UnaryOperatorExpression(arg1, UnaryOperatorType.BitNot);
 				#endregion
 				#region Arrays
 					case Code.Newarr: throw new NotImplementedException();
