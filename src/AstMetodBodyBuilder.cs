@@ -9,7 +9,7 @@ using Mono.Cecil.Cil;
 
 namespace Decompiler
 {
-	public class ASTMetodBodyBuilder
+	public class AstMetodBodyBuilder
 	{
 		public static BlockStatement CreateMetodBody(MethodDefinition methodDef)
 		{

@@ -13,7 +13,7 @@ using Mono.Cecil.Cil;
 
 namespace Decompiler
 {
-	public class ASTBuilder
+	public class AstBuilder
 	{
 		CompilationUnit astCompileUnit = new CompilationUnit();
 		Dictionary<string, NamespaceDeclaration> astNamespaces = new Dictionary<string, NamespaceDeclaration>();
@@ -212,7 +212,7 @@ namespace Decompiler
 					astMethod.Parameters.Add(astParam);
 				}
 				
-				astMethod.Body = ASTMetodBodyBuilder.CreateMetodBody(methodDef);
+				astMethod.Body = AstMetodBodyBuilder.CreateMetodBody(methodDef);
 				
 				astType.Children.Add(astMethod);
 			}

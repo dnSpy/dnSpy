@@ -33,7 +33,7 @@ namespace Decompiler
 		static string Decompile(string filename)
 		{
 			AssemblyDefinition assembly = AssemblyFactory.GetAssembly(filename);
-			ASTBuilder codeDomBuilder = new ASTBuilder();
+			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddAssembly(assembly);
 			return codeDomBuilder.GenerateCode();
 		}
