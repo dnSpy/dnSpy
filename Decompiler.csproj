@@ -25,6 +25,9 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <ItemGroup>
+    <Reference Include="ICSharpCode.NRefactory">
+      <HintPath>lib\NRefactory\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -35,7 +38,6 @@
     <Folder Include="src" />
     <Compile Include="src\AssemblyInfo.cs" />
     <Compile Include="src\CodeDomBuilder.cs" />
-    <Compile Include="src\CodeDomMetodBodyBuilder.cs" />
     <Compile Include="src\MainForm.cs" />
     <Compile Include="src\MainForm.Designer.cs" />
     <Compile Include="src\Program.cs" />

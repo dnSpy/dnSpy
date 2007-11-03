@@ -1,14 +1,15 @@
 using System;
-using System.CodeDom;
+
+using ICSharpCode.NRefactory.Ast;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace Decompiler
 {
-	public class CodeDomMetodBodyBuilder
+	public class ASTMetodBodyBuilder
 	{
-		public static CodeStatementCollection CreateMetodBody(MethodDefinition methodDef)
+		public static BlockStatement CreateMetodBody(MethodDefinition methodDef)
 		{
 			CodeStatementCollection codeStmtCol = new CodeStatementCollection();
 			
@@ -69,7 +70,7 @@ namespace Decompiler
 			}
 		}
 		
-		static object MakeCodeDomExpression(Instruction inst, params CodeExpression[] args)
+		static object MakeCodeDomExpression(Instruction inst, params Expression[] args)
 		{
 			OpCode opCode = inst.OpCode;
 			object operand = inst.Operand;
