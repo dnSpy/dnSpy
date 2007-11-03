@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using Ast = ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Ast;
@@ -74,6 +75,7 @@ namespace Decompiler
 		{
 			OpCode opCode = inst.OpCode;
 			object operand = inst.Operand;
+			Ast.TypeReference operandAsTypeRef = operand is Cecil.TypeReference ? new Ast.TypeReference(((Cecil.TypeReference)operand).FullName) : null;
 			Ast.Expression arg1 = args.Length >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Length >= 2 ? args[1] : null;
 			Ast.Expression arg3 = args.Length >= 3 ? args[2] : null;
@@ -103,32 +105,34 @@ namespace Decompiler
 					case Code.Not:        return new Ast.UnaryOperatorExpression(arg1, UnaryOperatorType.BitNot);
 				#endregion
 				#region Arrays
-					case Code.Newarr: throw new NotImplementedException();
+					case Code.Newarr:
+						operandAsTypeRef.RankSpecifier = new int[] {0};
+						return new Ast.ArrayCreateExpression(operandAsTypeRef, new List<Expression>(new Expression[] {arg1}));
 					
 					case Code.Ldlen: return new Ast.MemberReferenceExpression(arg1, "Length");
 					
-					case Code.Ldelem_I:   throw new NotImplementedException();
-					case Code.Ldelem_I1:  throw new NotImplementedException();
-					case Code.Ldelem_I2:  throw new NotImplementedException();
-					case Code.Ldelem_I4:  throw new NotImplementedException();
-					case Code.Ldelem_I8:  throw new NotImplementedException();
-					case Code.Ldelem_U1:  throw new NotImplementedException();
-					case Code.Ldelem_U2:  throw new NotImplementedException();
-					case Code.Ldelem_U4:  throw new NotImplementedException();
-					case Code.Ldelem_R4:  throw new NotImplementedException();
-					case Code.Ldelem_R8:  throw new NotImplementedException();
-					case Code.Ldelem_Ref: throw new NotImplementedException();
+					case Code.Ldelem_I:   
+					case Code.Ldelem_I1:  
+					case Code.Ldelem_I2:  
+					case Code.Ldelem_I4:  
+					case Code.Ldelem_I8:  
+					case Code.Ldelem_U1:  
+					case Code.Ldelem_U2:  
+					case Code.Ldelem_U4:  
+					case Code.Ldelem_R4:  
+					case Code.Ldelem_R8:  
+					case Code.Ldelem_Ref: return new Ast.IndexerExpression(arg1, new List<Expression>(new Expression[] {arg2}));
 					case Code.Ldelem_Any: throw new NotImplementedException();
 					case Code.Ldelema:    throw new NotImplementedException();
 					
-					case Code.Stelem_I:   throw new NotImplementedException();
-					case Code.Stelem_I1:  throw new NotImplementedException();
-					case Code.Stelem_I2:  throw new NotImplementedException();
-					case Code.Stelem_I4:  throw new NotImplementedException();
-					case Code.Stelem_I8:  throw new NotImplementedException();
-					case Code.Stelem_R4:  throw new NotImplementedException();
-					case Code.Stelem_R8:  throw new NotImplementedException();
-					case Code.Stelem_Ref: throw new NotImplementedException();
+					case Code.Stelem_I:   
+					case Code.Stelem_I1:  
+					case Code.Stelem_I2:  
+					case Code.Stelem_I4:  
+					case Code.Stelem_I8:  
+					case Code.Stelem_R4:  
+					case Code.Stelem_R8:  
+					case Code.Stelem_Ref: return new Ast.AssignmentExpression(new Ast.IndexerExpression(arg1, new List<Expression>(new Expression[] {arg2})), AssignmentOperatorType.Assign, arg3);
 					case Code.Stelem_Any: throw new NotImplementedException();
 				#endregion
 				#region Branching
