@@ -1,7 +1,9 @@
 using System;
 
+using Ast = ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Ast;
 
+using Cecil = Mono.Cecil;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -11,14 +13,14 @@ namespace Decompiler
 	{
 		public static BlockStatement CreateMetodBody(MethodDefinition methodDef)
 		{
-			CodeStatementCollection codeStmtCol = new CodeStatementCollection();
+			Ast.BlockStatement astBlock = new Ast.BlockStatement();
 			
 			methodDef.Body.Simplify();
 			
 			foreach(Instruction instr in methodDef.Body.Instructions) {
 				OpCode opCode = instr.OpCode;
-				string decription = 
-					string.Format("IL_{0:X2}: {1, -22} # {2}->{3} {4} {5}",
+				string description = 
+					string.Format("/* IL_{0:X2}: {1, -22} # {2}->{3} {4} {5} */",
 					              instr.Offset,
 					              opCode + " " + FormatInstructionOperand(instr.Operand),
 					              opCode.StackBehaviourPop,
@@ -26,25 +28,23 @@ namespace Decompiler
 					              opCode.FlowControl == FlowControl.Next ? string.Empty : "Flow=" + opCode.FlowControl,
 					              opCode.OpCodeType == OpCodeType.Macro ? "(macro)" : string.Empty);
 				
-				codeStmtCol.Add(new CodeCommentStatement(decription));
+				astBlock.Children.Add(new Ast.ExpressionStatement(new PrimitiveExpression(description, description)));
 				try {
 					object codeExpr = MakeCodeDomExpression(
 						instr,
-						new CodeVariableReferenceExpression("arg1"),
-						new CodeVariableReferenceExpression("arg2"),
-						new CodeVariableReferenceExpression("arg3"));
-					if (codeExpr is CodeStatement) {
-						codeStmtCol.Add((CodeStatement)codeExpr);
-					} else if (codeExpr is CodeExpression) {
-						codeStmtCol.Add((CodeExpression)codeExpr);
+						new Ast.IdentifierExpression("arg1"),
+						new Ast.IdentifierExpression("arg2"),
+						new Ast.IdentifierExpression("arg3"));
+					if (codeExpr is Ast.Expression) {
+						astBlock.Children.Add(new ExpressionStatement((Ast.Expression)codeExpr));
+					} else if (codeExpr is Ast.Statement) {
+						astBlock.Children.Add((Ast.Statement)codeExpr);
 					}
 				} catch (NotImplementedException) {
-					codeStmtCol.Add(new CodeSnippetExpression("/* Not implemented */"));
 				}
-				codeStmtCol.Add(new CodeSnippetStatement(""));
 			}
 			
-			return codeStmtCol;
+			return astBlock;
 		}
 		
 		static object FormatInstructionOperand(object operand)
@@ -55,8 +55,8 @@ namespace Decompiler
 				return string.Format("IL_{0:X2}", ((Instruction)operand).Offset);
 			} else if (operand is MethodReference) {
 				return ((MethodReference)operand).Name + "()";
-			} else if (operand is TypeReference) {
-				return ((TypeReference)operand).FullName;
+			} else if (operand is Cecil.TypeReference) {
+				return ((Cecil.TypeReference)operand).FullName;
 			} else if (operand is VariableDefinition) {
 				return ((VariableDefinition)operand).Name;
 			} else if (operand is ParameterDefinition) {
@@ -70,30 +70,30 @@ namespace Decompiler
 			}
 		}
 		
-		static object MakeCodeDomExpression(Instruction inst, params Expression[] args)
+		static object MakeCodeDomExpression(Instruction inst, params Ast.Expression[] args)
 		{
 			OpCode opCode = inst.OpCode;
 			object operand = inst.Operand;
-			CodeExpression arg1 = args.Length >= 1 ? args[0] : null;
-			CodeExpression arg2 = args.Length >= 2 ? args[1] : null;
-			CodeExpression arg3 = args.Length >= 3 ? args[2] : null;
+			Ast.Expression arg1 = args.Length >= 1 ? args[0] : null;
+			Ast.Expression arg2 = args.Length >= 2 ? args[1] : null;
+			Ast.Expression arg3 = args.Length >= 3 ? args[2] : null;
 			
 			switch(opCode.Code) {
 				#region Arithmetic
-					case Code.Add:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Add, arg2);
-					case Code.Add_Ovf:    return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Add, arg2);
-					case Code.Add_Ovf_Un: return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Add, arg2);
-					case Code.Div:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Divide, arg2);
-					case Code.Div_Un:     return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Divide, arg2);
-					case Code.Mul:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Multiply, arg2);
-					case Code.Mul_Ovf:    return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Multiply, arg2);
-					case Code.Mul_Ovf_Un: return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Multiply, arg2);
-					case Code.Rem:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Modulus, arg2);
-					case Code.Rem_Un:     return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Modulus, arg2);
-					case Code.Sub:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Subtract, arg2);
-					case Code.Sub_Ovf:    return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Subtract, arg2);
-					case Code.Sub_Ovf_Un: return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.Subtract, arg2);
-					case Code.And:        return new CodeBinaryOperatorExpression(arg1, CodeBinaryOperatorType.BitwiseAnd, arg2);
+					case Code.Add:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+					case Code.Add_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+					case Code.Add_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+					case Code.Div:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Divide, arg2);
+					case Code.Div_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Divide, arg2);
+					case Code.Mul:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
+					case Code.Mul_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
+					case Code.Mul_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
+					case Code.Rem:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Modulus, arg2);
+					case Code.Rem_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Modulus, arg2);
+					case Code.Sub:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
+					case Code.Sub_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
+					case Code.Sub_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
+					case Code.And:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.BitwiseAnd, arg2);
 					case Code.Xor:        throw new NotImplementedException();
 					case Code.Shl:        throw new NotImplementedException();
 					case Code.Shr:        throw new NotImplementedException();
@@ -105,7 +105,7 @@ namespace Decompiler
 				#region Arrays
 					case Code.Newarr: throw new NotImplementedException();
 					
-					case Code.Ldlen: return new CodePropertyReferenceExpression(arg1, "Length");
+					case Code.Ldlen: return new Ast.MemberReferenceExpression(arg1, "Length");
 					
 					case Code.Ldelem_I:   throw new NotImplementedException();
 					case Code.Ldelem_I1:  throw new NotImplementedException();
@@ -154,41 +154,41 @@ namespace Decompiler
 					case Code.Clt_Un: throw new NotImplementedException();
 				#endregion
 				#region Conversions
-					case Code.Conv_I:  return new CodeCastExpression(typeof(int), arg1); // TODO
-					case Code.Conv_I1: return new CodeCastExpression(typeof(SByte), arg1);
-					case Code.Conv_I2: return new CodeCastExpression(typeof(Int16), arg1);
-					case Code.Conv_I4: return new CodeCastExpression(typeof(Int32), arg1);
-					case Code.Conv_I8: return new CodeCastExpression(typeof(Int64), arg1);
-					case Code.Conv_U:  return new CodeCastExpression(typeof(uint), arg1); // TODO
-					case Code.Conv_U1: return new CodeCastExpression(typeof(Byte), arg1);
-					case Code.Conv_U2: return new CodeCastExpression(typeof(UInt16), arg1);
-					case Code.Conv_U4: return new CodeCastExpression(typeof(UInt32), arg1);
-					case Code.Conv_U8: return new CodeCastExpression(typeof(UInt64), arg1);
-					case Code.Conv_R4: return new CodeCastExpression(typeof(float), arg1);
-					case Code.Conv_R8: return new CodeCastExpression(typeof(double), arg1);
-					case Code.Conv_R_Un: return new CodeCastExpression(typeof(double), arg1); // TODO
+					case Code.Conv_I:    return new Ast.CastExpression(new Ast.TypeReference(typeof(int).Name), arg1, CastType.Cast); // TODO
+					case Code.Conv_I1:   return new Ast.CastExpression(new Ast.TypeReference(typeof(SByte).Name), arg1, CastType.Cast);
+					case Code.Conv_I2:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Int16).Name), arg1, CastType.Cast);
+					case Code.Conv_I4:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Int32).Name), arg1, CastType.Cast);
+					case Code.Conv_I8:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Int64).Name), arg1, CastType.Cast);
+					case Code.Conv_U:    return new Ast.CastExpression(new Ast.TypeReference(typeof(uint).Name), arg1, CastType.Cast); // TODO
+					case Code.Conv_U1:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Byte).Name), arg1, CastType.Cast);
+					case Code.Conv_U2:   return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt16).Name), arg1, CastType.Cast);
+					case Code.Conv_U4:   return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt32).Name), arg1, CastType.Cast);
+					case Code.Conv_U8:   return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt64).Name), arg1, CastType.Cast);
+					case Code.Conv_R4:   return new Ast.CastExpression(new Ast.TypeReference(typeof(float).Name), arg1, CastType.Cast);
+					case Code.Conv_R8:   return new Ast.CastExpression(new Ast.TypeReference(typeof(double).Name), arg1, CastType.Cast);
+					case Code.Conv_R_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(double).Name), arg1, CastType.Cast); // TODO
 					
-					case Code.Conv_Ovf_I:  return new CodeCastExpression(typeof(int), arg1); // TODO
-					case Code.Conv_Ovf_I1: return new CodeCastExpression(typeof(SByte), arg1);
-					case Code.Conv_Ovf_I2: return new CodeCastExpression(typeof(Int16), arg1);
-					case Code.Conv_Ovf_I4: return new CodeCastExpression(typeof(Int32), arg1);
-					case Code.Conv_Ovf_I8: return new CodeCastExpression(typeof(Int64), arg1);
-					case Code.Conv_Ovf_U:  return new CodeCastExpression(typeof(uint), arg1); // TODO
-					case Code.Conv_Ovf_U1: return new CodeCastExpression(typeof(Byte), arg1);
-					case Code.Conv_Ovf_U2: return new CodeCastExpression(typeof(UInt16), arg1);
-					case Code.Conv_Ovf_U4: return new CodeCastExpression(typeof(UInt32), arg1);
-					case Code.Conv_Ovf_U8: return new CodeCastExpression(typeof(UInt64), arg1);
+					case Code.Conv_Ovf_I:  return new Ast.CastExpression(new Ast.TypeReference(typeof(int).Name), arg1, CastType.Cast); // TODO
+					case Code.Conv_Ovf_I1: return new Ast.CastExpression(new Ast.TypeReference(typeof(SByte).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I2: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int16).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I4: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int32).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I8: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int64).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U:  return new Ast.CastExpression(new Ast.TypeReference(typeof(uint).Name), arg1, CastType.Cast); // TODO
+					case Code.Conv_Ovf_U1: return new Ast.CastExpression(new Ast.TypeReference(typeof(Byte).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U2: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt16).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U4: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt32).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U8: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt64).Name), arg1, CastType.Cast);
 					
-					case Code.Conv_Ovf_I_Un:  return new CodeCastExpression(typeof(int), arg1); // TODO
-					case Code.Conv_Ovf_I1_Un: return new CodeCastExpression(typeof(SByte), arg1);
-					case Code.Conv_Ovf_I2_Un: return new CodeCastExpression(typeof(Int16), arg1);
-					case Code.Conv_Ovf_I4_Un: return new CodeCastExpression(typeof(Int32), arg1);
-					case Code.Conv_Ovf_I8_Un: return new CodeCastExpression(typeof(Int64), arg1);
-					case Code.Conv_Ovf_U_Un:  return new CodeCastExpression(typeof(uint), arg1); // TODO
-					case Code.Conv_Ovf_U1_Un: return new CodeCastExpression(typeof(Byte), arg1);
-					case Code.Conv_Ovf_U2_Un: return new CodeCastExpression(typeof(UInt16), arg1);
-					case Code.Conv_Ovf_U4_Un: return new CodeCastExpression(typeof(UInt32), arg1);
-					case Code.Conv_Ovf_U8_Un: return new CodeCastExpression(typeof(UInt64), arg1);
+					case Code.Conv_Ovf_I_Un:  return new Ast.CastExpression(new Ast.TypeReference(typeof(int).Name), arg1, CastType.Cast); // TODO
+					case Code.Conv_Ovf_I1_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(SByte).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I2_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int16).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I4_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int32).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I8_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int64).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U_Un:  return new Ast.CastExpression(new Ast.TypeReference(typeof(uint).Name), arg1, CastType.Cast); // TODO
+					case Code.Conv_Ovf_U1_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Byte).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U2_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt16).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U4_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt32).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U8_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt64).Name), arg1, CastType.Cast);
 				#endregion
 				#region Indirect
 					case Code.Ldind_I: throw new NotImplementedException();
@@ -230,22 +230,22 @@ namespace Decompiler
 				case Code.Initobj: throw new NotImplementedException();
 				case Code.Isinst: throw new NotImplementedException();
 				case Code.Jmp: throw new NotImplementedException();
-				case Code.Ldarg: return new CodeArgumentReferenceExpression(((ParameterDefinition)operand).Name);
+				case Code.Ldarg: return new Ast.IdentifierExpression(((ParameterDefinition)operand).Name);
 				case Code.Ldarga: throw new NotImplementedException();
 				case Code.Ldc_I4: 
 				case Code.Ldc_I8: 
 				case Code.Ldc_R4: 
-				case Code.Ldc_R8: return new CodePrimitiveExpression(operand);
+				case Code.Ldc_R8: return new Ast.PrimitiveExpression(operand, null);
 				case Code.Ldfld: throw new NotImplementedException();
 				case Code.Ldflda: throw new NotImplementedException();
 				case Code.Ldftn: throw new NotImplementedException();
-				case Code.Ldloc: return new CodeVariableReferenceExpression(((VariableDefinition)operand).Name);
+				case Code.Ldloc: return new Ast.IdentifierExpression(((VariableDefinition)operand).Name);
 				case Code.Ldloca: throw new NotImplementedException();
-				case Code.Ldnull: return new CodePrimitiveExpression(null);
+				case Code.Ldnull: return new Ast.PrimitiveExpression(null, null);
 				case Code.Ldobj: throw new NotImplementedException();
 				case Code.Ldsfld: throw new NotImplementedException();
 				case Code.Ldsflda: throw new NotImplementedException();
-				case Code.Ldstr: return new CodePrimitiveExpression(operand);
+				case Code.Ldstr: return new Ast.PrimitiveExpression(operand, null);
 				case Code.Ldtoken: throw new NotImplementedException();
 				case Code.Ldvirtftn: throw new NotImplementedException();
 				case Code.Leave: throw new NotImplementedException();
@@ -253,7 +253,7 @@ namespace Decompiler
 				case Code.Mkrefany: throw new NotImplementedException();
 				case Code.Newobj: throw new NotImplementedException();
 				case Code.No: throw new NotImplementedException();
-				case Code.Nop: return new CodeSnippetExpression("/* No-op */");
+				case Code.Nop: return new Ast.PrimitiveExpression("/* No-op */", "/* No-op */");
 				case Code.Or: throw new NotImplementedException();
 				case Code.Pop: throw new NotImplementedException();
 				case Code.Readonly: throw new NotImplementedException();
@@ -264,7 +264,7 @@ namespace Decompiler
 				case Code.Sizeof: throw new NotImplementedException();
 				case Code.Starg: throw new NotImplementedException();
 				case Code.Stfld: throw new NotImplementedException();
-				case Code.Stloc: return new CodeAssignStatement(new CodeVariableReferenceExpression(((VariableDefinition)operand).Name), arg1);
+				case Code.Stloc: return new Ast.AssignmentExpression(new Ast.IdentifierExpression(((VariableDefinition)operand).Name), AssignmentOperatorType.Assign, arg1);
 				case Code.Stobj: throw new NotImplementedException();
 				case Code.Stsfld: throw new NotImplementedException();
 				case Code.Switch: throw new NotImplementedException();

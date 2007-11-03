@@ -24,7 +24,10 @@ namespace Decompiler
 			
 			astCompileUnit.AcceptVisitor(csOutVisitor, null);
 			
-			string code = csOutVisitor.Text.Replace("\t", "    ");
+			string code = csOutVisitor.Text;
+			code = code.Replace("\t", "    ");
+			code = code.Replace("\"/*", "//");
+			code = code.Replace("*/\";", "");
 			
 			// Post processing commands
 			while(true) { 
@@ -209,7 +212,7 @@ namespace Decompiler
 					astMethod.Parameters.Add(astParam);
 				}
 				
-				//astMethod.Statements.AddRange(ASTMetodBodyBuilder.CreateMetodBody(methodDef));
+				astMethod.Body = ASTMetodBodyBuilder.CreateMetodBody(methodDef);
 				
 				astType.Children.Add(astMethod);
 			}
