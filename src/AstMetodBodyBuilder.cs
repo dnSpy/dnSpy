@@ -32,6 +32,7 @@ namespace Decompiler
 				Ast.Statement astStatement = null;
 				try {
 					object codeExpr = MakeCodeDomExpression(
+						methodDef,
 						instr,
 						new Ast.IdentifierExpression("arg1"),
 						new Ast.IdentifierExpression("arg2"),
@@ -74,7 +75,7 @@ namespace Decompiler
 			}
 		}
 		
-		static object MakeCodeDomExpression(Instruction inst, params Ast.Expression[] args)
+		static object MakeCodeDomExpression(MethodDefinition methodDef, Instruction inst, params Ast.Expression[] args)
 		{
 			OpCode opCode = inst.OpCode;
 			object operand = inst.Operand;
@@ -275,7 +276,7 @@ namespace Decompiler
 				case Code.Readonly: throw new NotImplementedException();
 				case Code.Refanytype: throw new NotImplementedException();
 				case Code.Refanyval: throw new NotImplementedException();
-				case Code.Ret: throw new NotImplementedException();
+				case Code.Ret: return new Ast.ReturnStatement(methodDef.ReturnType.ReturnType.FullName != Cecil.Constants.Void ? arg1 : null);
 				case Code.Rethrow: throw new NotImplementedException();
 				case Code.Sizeof: throw new NotImplementedException();
 				case Code.Starg: throw new NotImplementedException();
