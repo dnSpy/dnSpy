@@ -29,7 +29,7 @@ namespace Decompiler
 					              opCode.FlowControl == FlowControl.Next ? string.Empty : "Flow=" + opCode.FlowControl,
 					              opCode.OpCodeType == OpCodeType.Macro ? "(macro)" : string.Empty);
 				
-				astBlock.Children.Add(new Ast.ExpressionStatement(new PrimitiveExpression(description, description)));
+				Ast.Statement astStatement = null;
 				try {
 					object codeExpr = MakeCodeDomExpression(
 						instr,
@@ -37,12 +37,15 @@ namespace Decompiler
 						new Ast.IdentifierExpression("arg2"),
 						new Ast.IdentifierExpression("arg3"));
 					if (codeExpr is Ast.Expression) {
-						astBlock.Children.Add(new ExpressionStatement((Ast.Expression)codeExpr));
+						astStatement = new ExpressionStatement((Ast.Expression)codeExpr);
 					} else if (codeExpr is Ast.Statement) {
-						astBlock.Children.Add((Ast.Statement)codeExpr);
+						astStatement = (Ast.Statement)codeExpr;
 					}
 				} catch (NotImplementedException) {
+					astStatement = new Ast.ExpressionStatement(new PrimitiveExpression(description, description));
 				}
+				astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", instr.Offset)));
+				astBlock.Children.Add(astStatement);
 			}
 			
 			return astBlock;
