@@ -21,7 +21,7 @@ namespace Decompiler
 			foreach(Instruction instr in methodDef.Body.Instructions) {
 				OpCode opCode = instr.OpCode;
 				string description = 
-					string.Format("/* IL_{0:X2}: {1, -22} # {2}->{3} {4} {5} */",
+					string.Format("/* {1, -22} # {2}->{3} {4} {5} */",
 					              instr.Offset,
 					              opCode + " " + FormatInstructionOperand(instr.Operand),
 					              opCode.StackBehaviourPop,
@@ -129,7 +129,7 @@ namespace Decompiler
 					case Code.Ldelem_R8:  
 					case Code.Ldelem_Ref: return new Ast.IndexerExpression(arg1, new List<Expression>(new Expression[] {arg2}));
 					case Code.Ldelem_Any: throw new NotImplementedException();
-					case Code.Ldelema:    throw new NotImplementedException();
+					case Code.Ldelema:    return new Ast.IndexerExpression(arg1, new List<Expression>(new Expression[] {arg2}));
 					
 					case Code.Stelem_I:   
 					case Code.Stelem_I1:  
@@ -230,9 +230,13 @@ namespace Decompiler
 					Ast.IdentifierExpression astType = new Ast.IdentifierExpression(cecilMethod.DeclaringType.FullName);
 					List<Ast.Expression> astArgs = new List<Ast.Expression>();
 					for(int i = 0; i < cecilMethod.Parameters.Count; i++) {
-						astArgs.Add(new Ast.IdentifierExpression("arg" + i));
+						astArgs.Add(new Ast.IdentifierExpression("arg" + (cecilMethod.HasThis ? i + 1 : i)));
 					}
-					return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(astType, cecilMethod.Name), astArgs);
+					if (cecilMethod.HasThis) {
+						return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(arg1, cecilMethod.Name), astArgs);
+					} else {
+						return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(astType, cecilMethod.Name), astArgs);
+					}
 				case Code.Calli: throw new NotImplementedException();
 				case Code.Callvirt: throw new NotImplementedException();
 				case Code.Castclass: throw new NotImplementedException();
