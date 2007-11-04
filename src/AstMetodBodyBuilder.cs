@@ -221,7 +221,14 @@ namespace Decompiler
 				case Code.Arglist: throw new NotImplementedException();
 				case Code.Box: throw new NotImplementedException();
 				case Code.Break: throw new NotImplementedException();
-				case Code.Call: throw new NotImplementedException();
+				case Code.Call:
+					Cecil.MethodReference cecilMethod = ((MethodReference)operand);
+					Ast.IdentifierExpression astType = new Ast.IdentifierExpression(cecilMethod.DeclaringType.FullName);
+					List<Ast.Expression> astArgs = new List<Ast.Expression>();
+					for(int i = 0; i < cecilMethod.Parameters.Count; i++) {
+						astArgs.Add(new Ast.IdentifierExpression("arg" + i));
+					}
+					return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(astType, cecilMethod.Name), astArgs);
 				case Code.Calli: throw new NotImplementedException();
 				case Code.Callvirt: throw new NotImplementedException();
 				case Code.Castclass: throw new NotImplementedException();
