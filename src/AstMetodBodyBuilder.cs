@@ -38,6 +38,13 @@ namespace Decompiler
 						new Ast.IdentifierExpression("arg2"),
 						new Ast.IdentifierExpression("arg3"));
 					if (codeExpr is Ast.Expression) {
+						if (GetNumberOfOutputs(methodDef, instr) == 1) {
+							codeExpr = new Ast.AssignmentExpression(
+								new Ast.IdentifierExpression(string.Format("expr{0:X2}", instr.Offset)),
+								AssignmentOperatorType.Assign,
+								(Ast.Expression)codeExpr
+							);
+						}
 						astStatement = new ExpressionStatement((Ast.Expression)codeExpr);
 					} else if (codeExpr is Ast.Statement) {
 						astStatement = (Ast.Statement)codeExpr;
@@ -72,6 +79,34 @@ namespace Decompiler
 				return operand.ToString();
 			} else {
 				return "(" + operand.GetType() + ")";
+			}
+		}
+		
+		static int GetNumberOfOutputs(MethodDefinition methodDef, Instruction inst)
+		{
+			switch(inst.OpCode.StackBehaviourPush) {
+				case StackBehaviour.Push0:       return 0;
+				case StackBehaviour.Push1:       return 1;
+				case StackBehaviour.Push1_push1: return 2;
+				case StackBehaviour.Pushi:       return 1;
+				case StackBehaviour.Pushi8:      return 1;
+				case StackBehaviour.Pushr4:      return 1;
+				case StackBehaviour.Pushr8:      return 1;
+				case StackBehaviour.Pushref:     return 1;
+				case StackBehaviour.Varpush:     // Happens only for calls
+					switch(inst.OpCode.Code) {
+						case Code.Call:     
+							Cecil.MethodReference cecilMethod = ((MethodReference)inst.Operand);
+							if (cecilMethod.ReturnType.ReturnType.FullName == Constants.Void) {
+								return 0;
+							} else {
+								return 1;
+							}
+						case Code.Calli:    throw new NotImplementedException();
+						case Code.Callvirt: throw new NotImplementedException();
+						default: throw new Exception("Unknown Varpush opcode");
+					}
+				default: throw new Exception("Unknown push behaviour: " + inst.OpCode.StackBehaviourPush);
 			}
 		}
 		
