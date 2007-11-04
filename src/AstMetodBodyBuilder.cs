@@ -76,6 +76,8 @@ namespace Decompiler
 			OpCode opCode = inst.OpCode;
 			object operand = inst.Operand;
 			Ast.TypeReference operandAsTypeRef = operand is Cecil.TypeReference ? new Ast.TypeReference(((Cecil.TypeReference)operand).FullName) : null;
+			Instruction operandAsInstruction = operand is Instruction ? (Instruction)operand : null;
+			string operandAsInstructionLabel = operand is Instruction ? String.Format("IL_{0:X2}", ((Instruction)operand).Offset) : null;
 			Ast.Expression arg1 = args.Length >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Length >= 2 ? args[1] : null;
 			Ast.Expression arg3 = args.Length >= 3 ? args[2] : null;
@@ -136,19 +138,19 @@ namespace Decompiler
 					case Code.Stelem_Any: throw new NotImplementedException();
 				#endregion
 				#region Branching
-					case Code.Br: throw new NotImplementedException();
-					case Code.Brfalse: throw new NotImplementedException();
-					case Code.Brtrue: throw new NotImplementedException();
-					case Code.Beq: throw new NotImplementedException();
-					case Code.Bge: throw new NotImplementedException();
-					case Code.Bge_Un: throw new NotImplementedException();
-					case Code.Bgt: throw new NotImplementedException();
-					case Code.Bgt_Un: throw new NotImplementedException();
-					case Code.Ble: throw new NotImplementedException();
-					case Code.Ble_Un: throw new NotImplementedException();
-					case Code.Blt: throw new NotImplementedException();
-					case Code.Blt_Un: throw new NotImplementedException();
-					case Code.Bne_Un: throw new NotImplementedException();
+					case Code.Br:      return new Ast.GotoStatement(operandAsInstructionLabel);
+					case Code.Brfalse: return new Ast.IfElseStatement(new Ast.UnaryOperatorExpression(arg1, UnaryOperatorType.Not), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Brtrue:  return new Ast.IfElseStatement(arg1, new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Beq:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Bge:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Bge_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Bgt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Bgt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Ble:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Ble_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Blt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Blt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Bne_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
 				#endregion
 				#region Comparison
 					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
