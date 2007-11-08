@@ -18,10 +18,12 @@ namespace Decompiler
 			
 			methodDef.Body.Simplify();
 			
+			StackAnalysis stackAnalysis = new StackAnalysis(methodDef);
+			
 			foreach(Instruction instr in methodDef.Body.Instructions) {
 				OpCode opCode = instr.OpCode;
 				string description = 
-					string.Format("/* {1, -22} # {2}->{3} {4} {5} */",
+					string.Format(" {1, -22} # {2}->{3} {4} {5}",
 					              instr.Offset,
 					              opCode + " " + FormatInstructionOperand(instr.Operand),
 					              opCode.StackBehaviourPop,
@@ -46,7 +48,7 @@ namespace Decompiler
 						new Ast.IdentifierExpression("arg2"),
 						new Ast.IdentifierExpression("arg3"));
 					if (codeExpr is Ast.Expression) {
-						if (GetNumberOfOutputs(methodDef, instr) == 1) {
+						if (Util.GetNumberOfOutputs(methodDef, instr) == 1) {
 							type = type ?? "object";
 							string name = string.Format("expr{0:X2}", instr.Offset);
 							Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
@@ -59,13 +61,20 @@ namespace Decompiler
 						astStatement = (Ast.Statement)codeExpr;
 					}
 				} catch (NotImplementedException) {
-					astStatement = new Ast.ExpressionStatement(new PrimitiveExpression(description, description));
+					astStatement = MakeComment(description);
 				}
 				astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", instr.Offset)));
 				astBlock.Children.Add(astStatement);
+				astBlock.Children.Add(MakeComment(" " + stackAnalysis.StackAfter[instr].ToString()));
 			}
 			
 			return astBlock;
+		}
+		
+		static Ast.ExpressionStatement MakeComment(string text)
+		{
+			text = "/*" + text + "*/";
+			return new Ast.ExpressionStatement(new PrimitiveExpression(text, text));
 		}
 		
 		static object FormatInstructionOperand(object operand)
@@ -88,34 +97,6 @@ namespace Decompiler
 				return operand.ToString();
 			} else {
 				return "(" + operand.GetType() + ")";
-			}
-		}
-		
-		static int GetNumberOfOutputs(MethodDefinition methodDef, Instruction inst)
-		{
-			switch(inst.OpCode.StackBehaviourPush) {
-				case StackBehaviour.Push0:       return 0;
-				case StackBehaviour.Push1:       return 1;
-				case StackBehaviour.Push1_push1: return 2;
-				case StackBehaviour.Pushi:       return 1;
-				case StackBehaviour.Pushi8:      return 1;
-				case StackBehaviour.Pushr4:      return 1;
-				case StackBehaviour.Pushr8:      return 1;
-				case StackBehaviour.Pushref:     return 1;
-				case StackBehaviour.Varpush:     // Happens only for calls
-					switch(inst.OpCode.Code) {
-						case Code.Call:     
-							Cecil.MethodReference cecilMethod = ((MethodReference)inst.Operand);
-							if (cecilMethod.ReturnType.ReturnType.FullName == Constants.Void) {
-								return 0;
-							} else {
-								return 1;
-							}
-						case Code.Calli:    throw new NotImplementedException();
-						case Code.Callvirt: throw new NotImplementedException();
-						default: throw new Exception("Unknown Varpush opcode");
-					}
-				default: throw new Exception("Unknown push behaviour: " + inst.OpCode.StackBehaviourPush);
 			}
 		}
 		
