@@ -20,6 +20,13 @@ namespace Decompiler
 			
 			StackAnalysis stackAnalysis = new StackAnalysis(methodDef);
 			
+			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
+				Ast.VariableDeclaration astVar = new Ast.VariableDeclaration(varDef.Name);
+				Ast.LocalVariableDeclaration astLocalVar = new Ast.LocalVariableDeclaration(astVar);
+				astLocalVar.TypeReference = new Ast.TypeReference(varDef.VariableType.FullName);
+				astBlock.Children.Add(astLocalVar);
+			}
+			
 			foreach(Instruction instr in methodDef.Body.Instructions) {
 				OpCode opCode = instr.OpCode;
 				string description = 
