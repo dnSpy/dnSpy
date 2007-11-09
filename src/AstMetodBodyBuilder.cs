@@ -75,6 +75,7 @@ namespace Decompiler
 				} catch (NotImplementedException) {
 					astStatement = MakeComment(description);
 				}
+				//astBlock.Children.Add(MakeComment(description));
 				astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", instr.Offset)));
 				astBlock.Children.Add(astStatement);
 				//astBlock.Children.Add(MakeComment(" " + stackAnalysis.StackAfter[instr].ToString()));
@@ -370,7 +371,9 @@ namespace Decompiler
 					case Code.Not:        return Cecil.Constants.Boolean;
 				#endregion
 				#region Arrays
-					case Code.Newarr: throw new NotImplementedException();
+					case Code.Newarr:
+						operandAsTypeRef.RankSpecifier = new int[1];
+						return operandAsTypeRef;
 					
 					case Code.Ldlen: return Cecil.Constants.Int32;
 					
