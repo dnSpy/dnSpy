@@ -195,7 +195,7 @@ namespace Decompiler
 					case Code.Bne_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
 				#endregion
 				#region Comparison
-					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
+					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, ConvertIntToBool(arg2));
 					case Code.Cgt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
 					case Code.Cgt_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
 					case Code.Clt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
@@ -333,6 +333,11 @@ namespace Decompiler
 				case Code.Volatile: throw new NotImplementedException();
 				default: throw new Exception("Unknown OpCode: " + opCode);
 			}
+		}
+		
+		static Ast.Expression ConvertIntToBool(Ast.Expression astInt)
+		{
+			return new Ast.ParenthesizedExpression(new Ast.BinaryOperatorExpression(astInt, BinaryOperatorType.InEquality, new Ast.PrimitiveExpression(0, "0")));
 		}
 		
 		static object GetType(MethodDefinition methodDef, Instruction inst, params Cecil.TypeReference[] args)
