@@ -41,12 +41,17 @@ namespace Decompiler
 						}
 					} catch (NotImplementedException) {
 					}
+					int argCount = Util.GetNumberOfInputs(methodDef, instr);
+					Ast.Expression[] args = new Ast.Expression[argCount];
+					for(int i = 0; i < argCount; i++) {
+						Instruction allocBy = stackAnalysis.StackBefore[instr].Peek(argCount - i).AllocadedBy;
+						string name = string.Format("expr{0:X2}", allocBy.Offset);
+						args[i] = new Ast.IdentifierExpression(name);
+					}
 					object codeExpr = MakeCodeDomExpression(
 						methodDef,
 						instr,
-						new Ast.IdentifierExpression("arg1"),
-						new Ast.IdentifierExpression("arg2"),
-						new Ast.IdentifierExpression("arg3"));
+						args);
 					if (codeExpr is Ast.Expression) {
 						if (Util.GetNumberOfOutputs(methodDef, instr) == 1) {
 							type = type ?? "object";
@@ -65,7 +70,7 @@ namespace Decompiler
 				}
 				astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", instr.Offset)));
 				astBlock.Children.Add(astStatement);
-				astBlock.Children.Add(MakeComment(" " + stackAnalysis.StackAfter[instr].ToString()));
+				//astBlock.Children.Add(MakeComment(" " + stackAnalysis.StackAfter[instr].ToString()));
 			}
 			
 			return astBlock;
@@ -253,14 +258,12 @@ namespace Decompiler
 				case Code.Call:
 					Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 					Ast.IdentifierExpression astType = new Ast.IdentifierExpression(cecilMethod.DeclaringType.FullName);
-					List<Ast.Expression> astArgs = new List<Ast.Expression>();
-					for(int i = 0; i < cecilMethod.Parameters.Count; i++) {
-						astArgs.Add(new Ast.IdentifierExpression("arg" + (cecilMethod.HasThis ? i + 1 : i)));
-					}
+					List<Ast.Expression> methodArgs = new List<Ast.Expression>(args);
 					if (cecilMethod.HasThis) {
-						return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(arg1, cecilMethod.Name), astArgs);
+						methodArgs.RemoveAt(0); // Remove 'this'
+						return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(arg1, cecilMethod.Name), methodArgs);
 					} else {
-						return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(astType, cecilMethod.Name), astArgs);
+						return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(astType, cecilMethod.Name), methodArgs);
 					}
 				case Code.Calli: throw new NotImplementedException();
 				case Code.Callvirt: throw new NotImplementedException();

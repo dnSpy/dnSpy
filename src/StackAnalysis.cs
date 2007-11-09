@@ -66,6 +66,11 @@ namespace Decompiler
 			this.Add(slot);
 		}
 		
+		public CilStackSlot Peek(int depth)
+		{
+			return this[this.Count - depth];
+		}
+		
 		public CilStack(): base()
 		{
 			
