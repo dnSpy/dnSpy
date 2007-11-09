@@ -62,6 +62,9 @@ namespace Decompiler
 		
 		public void AddAssembly(AssemblyDefinition assemblyDefinition)
 		{
+			Ast.UsingDeclaration astUsing = new Ast.UsingDeclaration("System");
+			astCompileUnit.Children.Add(astUsing);
+			
 			foreach(TypeDefinition typeDef in assemblyDefinition.MainModule.Types) {
 				// Skip nested types - they will be added by the parent type
 				if (typeDef.DeclaringType != null) continue;
@@ -74,6 +77,9 @@ namespace Decompiler
 		
 		NamespaceDeclaration GetCodeNamespace(string name)
 		{
+			if (string.IsNullOrEmpty(name)) {
+				return null;
+			}
 			if (astNamespaces.ContainsKey(name)) {
 				return astNamespaces[name];
 			} else {
@@ -88,7 +94,12 @@ namespace Decompiler
 		public void AddType(TypeDefinition typeDef)
 		{
 			TypeDeclaration astType = CreateType(typeDef);
-			GetCodeNamespace(typeDef.Namespace).Children.Add(astType);
+			NamespaceDeclaration astNS = GetCodeNamespace(typeDef.Namespace);
+			if (astNS != null) {
+				astNS.Children.Add(astType);
+			} else {
+				astCompileUnit.Children.Add(astType);
+			}
 		}
 		
 		public TypeDeclaration CreateType(TypeDefinition typeDef)
