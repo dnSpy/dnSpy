@@ -53,7 +53,7 @@ namespace Decompiler
 						args);
 					if (codeExpr is Ast.Expression) {
 						if (Util.GetNumberOfOutputs(methodDef, instr) == 1) {
-							string type = stackAnalysis.StackAfter[instr].Peek(1).Type.FullName;
+							string type = stackAnalysis.GetTypeOf(instr).FullName;
 							string name = string.Format("expr{0:X2}", instr.Offset);
 							Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
 							astLocal.Variables.Add(new Ast.VariableDeclaration(name, (Ast.Expression)codeExpr));

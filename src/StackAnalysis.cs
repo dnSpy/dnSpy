@@ -63,9 +63,11 @@ namespace Decompiler
 			return new CilStack(this);
 		}
 		
-		public void PopCount(int count)
+		public CilStackSlot[] PopCount(int count)
 		{
+			CilStackSlot[] poped = this.GetRange(this.Count - count, count).ToArray();
 			this.RemoveRange(this.Count - count, count);
+			return poped;
 		}
 		
 		public void Push(CilStackSlot slot)
@@ -115,6 +117,15 @@ namespace Decompiler
 			get { return stackAfter; }
 		}
 		
+		public Cecil.TypeReference GetTypeOf(Instruction inst)
+		{
+			if (Util.GetNumberOfOutputs(methodDef, inst) == 0) {
+				return TypeVoid;
+			} else {
+				return StackAfter[inst].Peek(1).Type;
+			}
+		}
+		
 		public StackAnalysis(MethodDefinition methodDef) {
 			this.methodDef = methodDef;
 			
@@ -156,9 +167,13 @@ namespace Decompiler
 		CilStack ChangeStack(CilStack oldStack, Instruction inst)
 		{
 			CilStack newStack = oldStack.Clone();
-			newStack.PopCount(Util.GetNumberOfInputs(methodDef, inst));
+			CilStackSlot[] popedSlots = newStack.PopCount(Util.GetNumberOfInputs(methodDef, inst));
+			List<Cecil.TypeReference> typeArgs = new List<Cecil.TypeReference>();
+			foreach(CilStackSlot slot in popedSlots) {
+				typeArgs.Add(slot.Type);
+			}
 			for (int i = 0; i < Util.GetNumberOfOutputs(methodDef, inst); i++) {
-				newStack.Push(new CilStackSlot(inst, GetType(methodDef, inst)));
+				newStack.Push(new CilStackSlot(inst, GetType(methodDef, inst, typeArgs.ToArray())));
 			}
 			return newStack;
 		}

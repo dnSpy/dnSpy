@@ -12,6 +12,7 @@ namespace Decompiler
 {
 	public partial class StackAnalysis
 	{
+		static public Cecil.TypeReference TypeVoid = GetCecilType(typeof(void));
 		static public Cecil.TypeReference TypeObject = GetCecilType(typeof(Object));
 		static public Cecil.TypeReference TypeBool = GetCecilType(typeof(bool));
 		static public Cecil.TypeReference TypeInt32 = GetCecilType(typeof(Int32));
@@ -81,8 +82,13 @@ namespace Decompiler
 					case Code.Ldelem_U2:  
 					case Code.Ldelem_U4:  
 					case Code.Ldelem_R4:  
-					case Code.Ldelem_R8:  
+					case Code.Ldelem_R8:  throw new NotImplementedException();
 					case Code.Ldelem_Ref: 
+						if (arg1 is ArrayType) {
+							return ((ArrayType)arg1).ElementType;
+						} else {
+							throw new NotImplementedException();
+						}
 					case Code.Ldelem_Any: 
 					case Code.Ldelema:    throw new NotImplementedException();
 					
