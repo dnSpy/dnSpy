@@ -13,20 +13,27 @@ namespace Decompiler
 	// Imutable
 	public struct CilStackSlot {
 		Instruction allocadedBy;
+		Cecil.TypeReference type;
 		
 		public Instruction AllocadedBy {
 			get { return allocadedBy; }
 		}
 		
-		public CilStackSlot(Instruction allocadedBy)
+		public Cecil.TypeReference Type {
+			get { return type; }
+		}
+		
+		public CilStackSlot(Instruction allocadedBy, Cecil.TypeReference type)
 		{
 			this.allocadedBy = allocadedBy;
+			this.type = type;
 		}
 		
 		public override int GetHashCode()
 		{
 			int hashCode = 0;
 			if (allocadedBy != null) hashCode ^= allocadedBy.GetHashCode(); 
+			if (type != null) hashCode ^= type.GetHashCode(); 
 			return hashCode;
 		}
 		
@@ -34,7 +41,7 @@ namespace Decompiler
 		{
 			if (!(obj is CilStackSlot)) return false; 
 			CilStackSlot myCilStackSlot = (CilStackSlot)obj;
-			return object.Equals(this.allocadedBy, myCilStackSlot.allocadedBy);
+			return object.Equals(this.allocadedBy, myCilStackSlot.allocadedBy) && object.Equals(this.type, myCilStackSlot.type);
 		}
 		
 		public override string ToString()
@@ -95,7 +102,7 @@ namespace Decompiler
 		}
 	}
 	
-	public class StackAnalysis {
+	public partial class StackAnalysis {
 		MethodDefinition methodDef;
 		Dictionary<Instruction, CilStack> stackBefore = new Dictionary<Instruction, CilStack>();
 		Dictionary<Instruction, CilStack> stackAfter = new Dictionary<Instruction, CilStack>();
@@ -151,7 +158,7 @@ namespace Decompiler
 			CilStack newStack = oldStack.Clone();
 			newStack.PopCount(Util.GetNumberOfInputs(methodDef, inst));
 			for (int i = 0; i < Util.GetNumberOfOutputs(methodDef, inst); i++) {
-				newStack.Push(new CilStackSlot(inst));
+				newStack.Push(new CilStackSlot(inst, GetType(methodDef, inst)));
 			}
 			return newStack;
 		}
@@ -186,7 +193,7 @@ namespace Decompiler
 			merged = stack1.Clone();
 			for (int i = 0; i < count; i++) {
 				if (!stack1[i].Equals(stack2[i])) {
-					merged[i] = new CilStackSlot(null); // Merge slots
+					merged[i] = new CilStackSlot(null, null); // Merge slots
 					same = false;
 				}
 			}

@@ -43,6 +43,7 @@
     <Compile Include="src\MainForm.Designer.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\StackAnalysis.cs" />
+    <Compile Include="src\StackAnalysis.Types.cs" />
     <Compile Include="src\Util.cs" />
     <EmbeddedResource Include="src\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
