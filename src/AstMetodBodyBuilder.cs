@@ -18,7 +18,7 @@ namespace Decompiler
 			
 			methodDef.Body.Simplify();
 			
-			ByteCodeCollection body = new ByteCodeCollection(methodDef.Body.Instructions);
+			ByteCodeCollection body = new ByteCodeCollection(methodDef);
 			StackAnalysis stackAnalysis = new StackAnalysis(methodDef, body);
 			
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
@@ -41,7 +41,7 @@ namespace Decompiler
 				
 				Ast.Statement astStatement = null;
 				try {
-					int argCount = Util.GetNumberOfInputs(methodDef, byteCode);
+					int argCount = byteCode.PopCount;
 					Ast.Expression[] args = new Ast.Expression[argCount];
 					for(int i = 0; i < argCount; i++) {
 						ByteCode allocBy = stackAnalysis.StackBefore[byteCode].Peek(argCount - i).AllocadedBy;
@@ -53,7 +53,7 @@ namespace Decompiler
 						byteCode,
 						args);
 					if (codeExpr is Ast.Expression) {
-						if (Util.GetNumberOfOutputs(methodDef, byteCode) == 1) {
+						if (byteCode.PushCount == 1) {
 							string type = stackAnalysis.GetTypeOf(byteCode).FullName;
 							string name = string.Format("expr{0:X2}", byteCode.Offset);
 							Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));

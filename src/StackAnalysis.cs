@@ -124,7 +124,7 @@ namespace Decompiler
 		
 		public Cecil.TypeReference GetTypeOf(ByteCode byteCode)
 		{
-			if (Util.GetNumberOfOutputs(methodDef, byteCode) == 0) {
+			if (byteCode.PushCount == 0) {
 				return TypeVoid;
 			} else {
 				return StackAfter[byteCode].Peek(1).Type;
@@ -179,12 +179,12 @@ namespace Decompiler
 		CilStack ChangeStack(CilStack oldStack, ByteCode byteCode)
 		{
 			CilStack newStack = oldStack.Clone();
-			CilStackSlot[] popedSlots = newStack.PopCount(Util.GetNumberOfInputs(methodDef, byteCode));
+			CilStackSlot[] popedSlots = newStack.PopCount(byteCode.PopCount);
 			List<Cecil.TypeReference> typeArgs = new List<Cecil.TypeReference>();
 			foreach(CilStackSlot slot in popedSlots) {
 				typeArgs.Add(slot.Type);
 			}
-			for (int i = 0; i < Util.GetNumberOfOutputs(methodDef, byteCode); i++) {
+			for (int i = 0; i < byteCode.PushCount; i++) {
 				newStack.Push(new CilStackSlot(byteCode, GetType(methodDef, byteCode, typeArgs.ToArray())));
 			}
 			return newStack;

@@ -10,27 +10,27 @@ namespace Decompiler
 {
 	public class ByteCodeCollection: IEnumerable<ByteCode>
 	{
-		List<ByteCode> byteCodes = new List<ByteCode>();
+		List<ByteCode> list = new List<ByteCode>();
 		
 		public IEnumerator<ByteCode> GetEnumerator()
 		{
-			return byteCodes.GetEnumerator();
+			return list.GetEnumerator();
 		}
 		
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return byteCodes.GetEnumerator();
+			return list.GetEnumerator();
 		}
 		
 		public int Count {
 			get {
-				return byteCodes.Count;
+				return list.Count;
 			}
 		}
 		
 		public ByteCode this[int index] {
 			get {
-				return byteCodes[index];
+				return list[index];
 			}
 		}
 		
@@ -44,18 +44,38 @@ namespace Decompiler
 			throw new Exception("Not found");
 		}
 		
-		public ByteCodeCollection(InstructionCollection instCol)
+		public int IndexOf(ByteCode byteCode)
 		{
-			foreach(Instruction inst in instCol) {
-				byteCodes.Add(new ByteCode(inst));
+			return list.IndexOf(byteCode);
+		}
+		
+		public void Remove(ByteCode byteCode)
+		{
+			int index = IndexOf(byteCode);
+			list.RemoveAt(index);
+			byteCode.Next = null;
+			byteCode.Previous = null;
+			UpdateNextPrevious();
+		}
+		
+		public ByteCodeCollection(MethodDefinition methodDef)
+		{
+			foreach(Instruction inst in methodDef.Body.Instructions) {
+				list.Add(new ByteCode(methodDef, inst));
 			}
 			foreach(ByteCode byteCode in this) {
 				if (byteCode.CanBranch) {
 					byteCode.Operand = GetByOffset(((Instruction)byteCode.Operand).Offset);
 				}
 			}
-			for(int i = 0; i < byteCodes.Count - 1; i++) {
+			UpdateNextPrevious();
+		}
+		
+		void UpdateNextPrevious()
+		{
+			for(int i = 0; i < list.Count - 1; i++) {
 				this[i].Next = this[i + 1];
+				this[i + 1].Previous = this[i];
 			}
 		}
 	}
