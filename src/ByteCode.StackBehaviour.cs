@@ -11,43 +11,19 @@ namespace Decompiler
 	{
 		public int PopCount {
 			get {
-				int popCount;
-				int pushCount;
-				SimulateStackSize(out popCount, out pushCount);
-				return popCount;
+				return GetPopCount();
 			}
 		}
 		
 		public int PushCount {
 			get {
-				int popCount;
-				int pushCount;
-				SimulateStackSize(out popCount, out pushCount);
-				return pushCount;
+				return GetPushCount();
 			}
 		}
 		
-		void SimulateStackSize(out int popCount, out int pushCount)
+		int GetPopCount()
 		{
-			int stackSize = 0;
-			int minStackSize = 0;
-			foreach(ByteCode bc in nestedByteCodes) {
-				stackSize -= bc.PopCount;
-				minStackSize = Math.Min(minStackSize, stackSize);
-				stackSize += bc.PushCount;
-			}
-			{
-				stackSize -= GetPopCount(methodDef, this);
-				minStackSize = Math.Min(minStackSize, stackSize);
-				stackSize += GetPushCount(methodDef, this);
-			}
-			popCount = -minStackSize;
-			pushCount = stackSize - minStackSize;
-		}
-		
-		static int GetPopCount(MethodDefinition methodDef, ByteCode byteCode)
-		{
-			switch(byteCode.OpCode.StackBehaviourPop) {
+			switch(this.OpCode.StackBehaviourPop) {
 				case StackBehaviour.Pop0:   return 0;
 				case StackBehaviour.Pop1:   return 1;
 				case StackBehaviour.Popi:   return 1;
@@ -68,9 +44,9 @@ namespace Decompiler
 				case StackBehaviour.Popref_popi_popref: return 3;
 				case StackBehaviour.PopAll: throw new Exception("PopAll");
 				case StackBehaviour.Varpop: 
-					switch(byteCode.OpCode.Code) {
+					switch(this.OpCode.Code) {
 						case Code.Call:     
-							Cecil.MethodReference cecilMethod = ((MethodReference)byteCode.Operand);
+							Cecil.MethodReference cecilMethod = ((MethodReference)this.Operand);
 							if (cecilMethod.HasThis) {
 								return cecilMethod.Parameters.Count + 1 /* this */;
 							} else {
@@ -87,13 +63,13 @@ namespace Decompiler
 						case Code.Newobj:   throw new NotImplementedException();
 						default: throw new Exception("Unknown Varpop opcode");
 					}
-				default: throw new Exception("Unknown pop behaviour: " + byteCode.OpCode.StackBehaviourPop);
+				default: throw new Exception("Unknown pop behaviour: " + this.OpCode.StackBehaviourPop);
 			}
 		}
 		
-		static int GetPushCount(MethodDefinition methodDef, ByteCode byteCode)
+		int GetPushCount()
 		{
-			switch(byteCode.OpCode.StackBehaviourPush) {
+			switch(this.OpCode.StackBehaviourPush) {
 				case StackBehaviour.Push0:       return 0;
 				case StackBehaviour.Push1:       return 1;
 				case StackBehaviour.Push1_push1: return 2;
@@ -103,9 +79,9 @@ namespace Decompiler
 				case StackBehaviour.Pushr8:      return 1;
 				case StackBehaviour.Pushref:     return 1;
 				case StackBehaviour.Varpush:     // Happens only for calls
-					switch(byteCode.OpCode.Code) {
+					switch(this.OpCode.Code) {
 						case Code.Call:     
-							Cecil.MethodReference cecilMethod = ((MethodReference)byteCode.Operand);
+							Cecil.MethodReference cecilMethod = ((MethodReference)this.Operand);
 							if (cecilMethod.ReturnType.ReturnType.FullName == Constants.Void) {
 								return 0;
 							} else {
@@ -115,7 +91,7 @@ namespace Decompiler
 						case Code.Callvirt: throw new NotImplementedException();
 						default: throw new Exception("Unknown Varpush opcode");
 					}
-				default: throw new Exception("Unknown push behaviour: " + byteCode.OpCode.StackBehaviourPush);
+				default: throw new Exception("Unknown push behaviour: " + this.OpCode.StackBehaviourPush);
 			}
 		}
 	}

@@ -75,6 +75,11 @@ namespace Decompiler
 			this.Add(slot);
 		}
 		
+		public CilStackSlot[] PeekCount(int count)
+		{
+			return this.GetRange(this.Count - count, count).ToArray();
+		}
+		
 		public CilStackSlot Peek(int depth)
 		{
 			return this[this.Count - depth];
