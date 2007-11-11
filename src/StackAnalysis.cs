@@ -108,6 +108,7 @@ namespace Decompiler
 		MethodDefinition methodDef;
 		Dictionary<Instruction, CilStack> stackBefore = new Dictionary<Instruction, CilStack>();
 		Dictionary<Instruction, CilStack> stackAfter = new Dictionary<Instruction, CilStack>();
+		Dictionary<Instruction, List<Instruction>> branchTargetOf = new Dictionary<Instruction, List<Instruction>>();
 		
 		public Dictionary<Instruction, CilStack> StackBefore {
 			get { return stackBefore; }
@@ -115,6 +116,10 @@ namespace Decompiler
 		
 		public Dictionary<Instruction, CilStack> StackAfter {
 			get { return stackAfter; }
+		}
+		
+		public Dictionary<Instruction, List<Instruction>> BranchTargetOf {
+			get { return branchTargetOf; }
 		}
 		
 		public Cecil.TypeReference GetTypeOf(Instruction inst)
@@ -132,6 +137,15 @@ namespace Decompiler
 			foreach(Instruction inst in methodDef.Body.Instructions) {
 				stackBefore[inst] = null;
 				stackAfter[inst] = null;
+				branchTargetOf[inst] = new List<Instruction>();
+			}
+			
+			foreach(Instruction inst in methodDef.Body.Instructions) {
+				if (inst.OpCode.FlowControl == FlowControl.Branch ||
+				    inst.OpCode.FlowControl == FlowControl.Cond_Branch)
+				{
+					branchTargetOf[(Instruction)inst.Operand].Add(inst);
+				}
 			}
 			
 			if (methodDef.Body.Instructions.Count > 0) {

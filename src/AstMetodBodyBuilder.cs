@@ -68,7 +68,9 @@ namespace Decompiler
 					astStatement = MakeComment(description);
 				}
 				//astBlock.Children.Add(MakeComment(description));
-				astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", instr.Offset)));
+				if (stackAnalysis.BranchTargetOf[instr].Count > 0) {
+					astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", instr.Offset)));
+				}
 				astBlock.Children.Add(astStatement);
 				//astBlock.Children.Add(MakeComment(" " + stackAnalysis.StackAfter[instr].ToString()));
 			}
