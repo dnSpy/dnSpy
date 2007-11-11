@@ -7,7 +7,7 @@ using Mono.Cecil.Cil;
 
 namespace Decompiler
 {
-	public class ByteCode
+	public partial class ByteCode
 	{
 		ByteCode previous;
 		ByteCode next;
@@ -31,14 +31,38 @@ namespace Decompiler
 		
 		public int PopCount {
 			get {
-				return GetNumberOfInputs(methodDef, this);
+				int popCount;
+				int pushCount;
+				SimulateStackSize(out popCount, out pushCount);
+				return popCount;
 			}
 		}
 		
 		public int PushCount {
 			get {
-				return GetNumberOfOutputs(methodDef, this);
+				int popCount;
+				int pushCount;
+				SimulateStackSize(out popCount, out pushCount);
+				return pushCount;
 			}
+		}
+		
+		void SimulateStackSize(out int popCount, out int pushCount)
+		{
+			int stackSize = 0;
+			int minStackSize = 0;
+			foreach(ByteCode bc in nestedByteCodes) {
+				stackSize -= bc.PopCount;
+				minStackSize = Math.Min(minStackSize, stackSize);
+				stackSize += bc.PushCount;
+			}
+			{
+				stackSize -= GetPopCount(methodDef, this);
+				minStackSize = Math.Min(minStackSize, stackSize);
+				stackSize += GetPushCount(methodDef, this);
+			}
+			popCount = -minStackSize;
+			pushCount = stackSize - minStackSize;
 		}
 		
 		public List<ByteCode> NestedByteCodes {
@@ -81,7 +105,7 @@ namespace Decompiler
 			this.operand = inst.Operand;
 		}
 		
-		static int GetNumberOfInputs(MethodDefinition methodDef, ByteCode byteCode)
+		static int GetPopCount(MethodDefinition methodDef, ByteCode byteCode)
 		{
 			switch(byteCode.OpCode.StackBehaviourPop) {
 				case StackBehaviour.Pop0:   return 0;
@@ -127,7 +151,7 @@ namespace Decompiler
 			}
 		}
 		
-		static int GetNumberOfOutputs(MethodDefinition methodDef, ByteCode byteCode)
+		static int GetPushCount(MethodDefinition methodDef, ByteCode byteCode)
 		{
 			switch(byteCode.OpCode.StackBehaviourPush) {
 				case StackBehaviour.Push0:       return 0;

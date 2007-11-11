@@ -10,7 +10,7 @@ using Mono.Cecil.Cil;
 
 namespace Decompiler
 {
-	public partial class StackAnalysis
+	public partial class ByteCode
 	{
 		static public Cecil.TypeReference TypeVoid = GetCecilType(typeof(void));
 		static public Cecil.TypeReference TypeObject = GetCecilType(typeof(Object));
@@ -23,19 +23,19 @@ namespace Decompiler
 			return new Cecil.TypeReference(type.Name, type.Namespace, null, type.IsValueType);
 		}
 		
-		static Cecil.TypeReference GetType(MethodDefinition methodDef, ByteCode byteCode, params Cecil.TypeReference[] args)
+		public Cecil.TypeReference GetType(params Cecil.TypeReference[] args)
 		{
 			try {
-				return(GetTypeInternal(methodDef, byteCode, args));
+				return(GetTypeInternal(args));
 			} catch (NotImplementedException) {
 				return TypeObject;
 			}
 		}
 		
-		static Cecil.TypeReference GetTypeInternal(MethodDefinition methodDef, ByteCode byteCode, params Cecil.TypeReference[] args)
+		public Cecil.TypeReference GetTypeInternal(params Cecil.TypeReference[] args)
 		{
-			OpCode opCode = byteCode.OpCode;
-			object operand = byteCode.Operand;
+			OpCode opCode = this.OpCode;
+			object operand = this.Operand;
 			Cecil.TypeReference operandAsTypeRef = operand as Cecil.TypeReference;
 			ByteCode operandAsByteCode = operand as ByteCode;
 			string operandAsByteCodeLabel = operand is ByteCode ? String.Format("IL_{0:X2}", ((ByteCode)operand).Offset) : null;
