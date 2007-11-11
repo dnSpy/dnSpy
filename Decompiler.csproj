@@ -40,6 +40,7 @@
     <Compile Include="src\AstBuilder.cs" />
     <Compile Include="src\AstMetodBodyBuilder.cs" />
     <Compile Include="src\ByteCode.cs" />
+    <Compile Include="src\ByteCode.StackBehaviour.cs" />
     <Compile Include="src\ByteCode.Type.cs" />
     <Compile Include="src\ByteCodeCollection.cs" />
     <Compile Include="src\MainForm.cs" />
