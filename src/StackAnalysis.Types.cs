@@ -23,22 +23,22 @@ namespace Decompiler
 			return new Cecil.TypeReference(type.Name, type.Namespace, null, type.IsValueType);
 		}
 		
-		static Cecil.TypeReference GetType(MethodDefinition methodDef, Instruction inst, params Cecil.TypeReference[] args)
+		static Cecil.TypeReference GetType(MethodDefinition methodDef, ByteCode byteCode, params Cecil.TypeReference[] args)
 		{
 			try {
-				return(GetTypeInternal(methodDef, inst, args));
+				return(GetTypeInternal(methodDef, byteCode, args));
 			} catch (NotImplementedException) {
 				return TypeObject;
 			}
 		}
 		
-		static Cecil.TypeReference GetTypeInternal(MethodDefinition methodDef, Instruction inst, params Cecil.TypeReference[] args)
+		static Cecil.TypeReference GetTypeInternal(MethodDefinition methodDef, ByteCode byteCode, params Cecil.TypeReference[] args)
 		{
-			OpCode opCode = inst.OpCode;
-			object operand = inst.Operand;
+			OpCode opCode = byteCode.OpCode;
+			object operand = byteCode.Operand;
 			Cecil.TypeReference operandAsTypeRef = operand as Cecil.TypeReference;
-			Instruction operandAsInstruction = operand is Instruction ? (Instruction)operand : null;
-			string operandAsInstructionLabel = operand is Instruction ? String.Format("IL_{0:X2}", ((Instruction)operand).Offset) : null;
+			ByteCode operandAsByteCode = operand as ByteCode;
+			string operandAsByteCodeLabel = operand is ByteCode ? String.Format("IL_{0:X2}", ((ByteCode)operand).Offset) : null;
 			Cecil.TypeReference arg1 = args.Length >= 1 ? args[0] : null;
 			Cecil.TypeReference arg2 = args.Length >= 2 ? args[1] : null;
 			Cecil.TypeReference arg3 = args.Length >= 3 ? args[2] : null;

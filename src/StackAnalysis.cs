@@ -12,10 +12,10 @@ namespace Decompiler
 {
 	// Imutable
 	public struct CilStackSlot {
-		Instruction allocadedBy;
+		ByteCode allocadedBy;
 		Cecil.TypeReference type;
 		
-		public Instruction AllocadedBy {
+		public ByteCode AllocadedBy {
 			get { return allocadedBy; }
 		}
 		
@@ -23,7 +23,7 @@ namespace Decompiler
 			get { return type; }
 		}
 		
-		public CilStackSlot(Instruction allocadedBy, Cecil.TypeReference type)
+		public CilStackSlot(ByteCode allocadedBy, Cecil.TypeReference type)
 		{
 			this.allocadedBy = allocadedBy;
 			this.type = type;
@@ -106,98 +106,96 @@ namespace Decompiler
 	
 	public partial class StackAnalysis {
 		MethodDefinition methodDef;
-		Dictionary<Instruction, CilStack> stackBefore = new Dictionary<Instruction, CilStack>();
-		Dictionary<Instruction, CilStack> stackAfter = new Dictionary<Instruction, CilStack>();
-		Dictionary<Instruction, List<Instruction>> branchTargetOf = new Dictionary<Instruction, List<Instruction>>();
+		Dictionary<ByteCode, CilStack> stackBefore = new Dictionary<ByteCode, CilStack>();
+		Dictionary<ByteCode, CilStack> stackAfter = new Dictionary<ByteCode, CilStack>();
+		Dictionary<ByteCode, List<ByteCode>> branchTargetOf = new Dictionary<ByteCode, List<ByteCode>>();
 		
-		public Dictionary<Instruction, CilStack> StackBefore {
+		public Dictionary<ByteCode, CilStack> StackBefore {
 			get { return stackBefore; }
 		}
 		
-		public Dictionary<Instruction, CilStack> StackAfter {
+		public Dictionary<ByteCode, CilStack> StackAfter {
 			get { return stackAfter; }
 		}
 		
-		public Dictionary<Instruction, List<Instruction>> BranchTargetOf {
+		public Dictionary<ByteCode, List<ByteCode>> BranchTargetOf {
 			get { return branchTargetOf; }
 		}
 		
-		public Cecil.TypeReference GetTypeOf(Instruction inst)
+		public Cecil.TypeReference GetTypeOf(ByteCode byteCode)
 		{
-			if (Util.GetNumberOfOutputs(methodDef, inst) == 0) {
+			if (Util.GetNumberOfOutputs(methodDef, byteCode) == 0) {
 				return TypeVoid;
 			} else {
-				return StackAfter[inst].Peek(1).Type;
+				return StackAfter[byteCode].Peek(1).Type;
 			}
 		}
 		
-		public StackAnalysis(MethodDefinition methodDef) {
+		public StackAnalysis(MethodDefinition methodDef, ByteCodeCollection byteCodeCol) {
 			this.methodDef = methodDef;
 			
-			foreach(Instruction inst in methodDef.Body.Instructions) {
-				stackBefore[inst] = null;
-				stackAfter[inst] = null;
-				branchTargetOf[inst] = new List<Instruction>();
+			foreach(ByteCode byteCode in byteCodeCol) {
+				stackBefore[byteCode] = null;
+				stackAfter[byteCode] = null;
+				branchTargetOf[byteCode] = new List<ByteCode>();
 			}
 			
-			foreach(Instruction inst in methodDef.Body.Instructions) {
-				if (inst.OpCode.FlowControl == FlowControl.Branch ||
-				    inst.OpCode.FlowControl == FlowControl.Cond_Branch)
-				{
-					branchTargetOf[(Instruction)inst.Operand].Add(inst);
+			foreach(ByteCode byteCode in byteCodeCol) {
+				if (byteCode.CanBranch) {
+					branchTargetOf[byteCode.BranchTarget].Add(byteCode);
 				}
 			}
 			
-			if (methodDef.Body.Instructions.Count > 0) {
-				Instruction firstInst = methodDef.Body.Instructions[0];
+			if (byteCodeCol.Count > 0) {
+				ByteCode firstInst = byteCodeCol[0];
 				stackBefore[firstInst] = CilStack.Empty;
-				ProcessInstructionRec(firstInst);
+				ProcessByteCodeRec(firstInst);
 			}
 		}
 		
-		void ProcessInstructionRec(Instruction inst)
+		void ProcessByteCodeRec(ByteCode byteCode)
 		{
-			stackAfter[inst] = ChangeStack(stackBefore[inst], inst);
+			stackAfter[byteCode] = ChangeStack(stackBefore[byteCode], byteCode);
 			
-			switch(inst.OpCode.FlowControl) {
+			switch(byteCode.OpCode.FlowControl) {
 				case FlowControl.Branch:
-					CopyStack(inst, ((Instruction)inst.Operand));
+					CopyStack(byteCode, byteCode.BranchTarget);
 					break;
 				case FlowControl.Cond_Branch:
-					CopyStack(inst, inst.Next);
-					CopyStack(inst, ((Instruction)inst.Operand));
+					CopyStack(byteCode, byteCode.Next);
+					CopyStack(byteCode, byteCode.BranchTarget);
 					break;
 				case FlowControl.Next:
 				case FlowControl.Call:
-					CopyStack(inst, inst.Next);
+					CopyStack(byteCode, byteCode.Next);
 					break;
 				case FlowControl.Return:
-					if (stackAfter[inst].Count > 0) throw new Exception("Non-empty stack at the end");
+					if (stackAfter[byteCode].Count > 0) throw new Exception("Non-empty stack at the end");
 					break;
 				default: throw new NotImplementedException();
 			}
 		}
 		
-		CilStack ChangeStack(CilStack oldStack, Instruction inst)
+		CilStack ChangeStack(CilStack oldStack, ByteCode byteCode)
 		{
 			CilStack newStack = oldStack.Clone();
-			CilStackSlot[] popedSlots = newStack.PopCount(Util.GetNumberOfInputs(methodDef, inst));
+			CilStackSlot[] popedSlots = newStack.PopCount(Util.GetNumberOfInputs(methodDef, byteCode));
 			List<Cecil.TypeReference> typeArgs = new List<Cecil.TypeReference>();
 			foreach(CilStackSlot slot in popedSlots) {
 				typeArgs.Add(slot.Type);
 			}
-			for (int i = 0; i < Util.GetNumberOfOutputs(methodDef, inst); i++) {
-				newStack.Push(new CilStackSlot(inst, GetType(methodDef, inst, typeArgs.ToArray())));
+			for (int i = 0; i < Util.GetNumberOfOutputs(methodDef, byteCode); i++) {
+				newStack.Push(new CilStackSlot(byteCode, GetType(methodDef, byteCode, typeArgs.ToArray())));
 			}
 			return newStack;
 		}
 		
-		void CopyStack(Instruction instFrom, Instruction instTo)
+		void CopyStack(ByteCode byteCodeFrom, ByteCode byteCodeTo)
 		{
 			CilStack mergedStack;
-			if (!Merge(stackAfter[instFrom], stackBefore[instTo], out mergedStack)) {
-				stackBefore[instTo] = mergedStack;
-				ProcessInstructionRec(instTo);
+			if (!Merge(stackAfter[byteCodeFrom], stackBefore[byteCodeTo], out mergedStack)) {
+				stackBefore[byteCodeTo] = mergedStack;
+				ProcessByteCodeRec(byteCodeTo);
 			}
 		}
 		

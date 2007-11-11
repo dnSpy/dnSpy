@@ -18,7 +18,8 @@ namespace Decompiler
 			
 			methodDef.Body.Simplify();
 			
-			StackAnalysis stackAnalysis = new StackAnalysis(methodDef);
+			ByteCodeCollection body = new ByteCodeCollection(methodDef.Body.Instructions);
+			StackAnalysis stackAnalysis = new StackAnalysis(methodDef, body);
 			
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
 				Ast.VariableDeclaration astVar = new Ast.VariableDeclaration(varDef.Name);
@@ -27,12 +28,12 @@ namespace Decompiler
 				astBlock.Children.Add(astLocalVar);
 			}
 			
-			foreach(Instruction instr in methodDef.Body.Instructions) {
-				OpCode opCode = instr.OpCode;
+			foreach(ByteCode byteCode in body) {
+				OpCode opCode = byteCode.OpCode;
 				string description = 
 					string.Format(" {1, -22} # {2}->{3} {4} {5}",
-					              instr.Offset,
-					              opCode + " " + FormatInstructionOperand(instr.Operand),
+					              byteCode.Offset,
+					              opCode + " " + FormatByteCodeOperand(byteCode.Operand),
 					              opCode.StackBehaviourPop,
 					              opCode.StackBehaviourPush,
 					              opCode.FlowControl == FlowControl.Next ? string.Empty : "Flow=" + opCode.FlowControl,
@@ -40,21 +41,21 @@ namespace Decompiler
 				
 				Ast.Statement astStatement = null;
 				try {
-					int argCount = Util.GetNumberOfInputs(methodDef, instr);
+					int argCount = Util.GetNumberOfInputs(methodDef, byteCode);
 					Ast.Expression[] args = new Ast.Expression[argCount];
 					for(int i = 0; i < argCount; i++) {
-						Instruction allocBy = stackAnalysis.StackBefore[instr].Peek(argCount - i).AllocadedBy;
+						ByteCode allocBy = stackAnalysis.StackBefore[byteCode].Peek(argCount - i).AllocadedBy;
 						string name = string.Format("expr{0:X2}", allocBy.Offset);
 						args[i] = new Ast.IdentifierExpression(name);
 					}
 					object codeExpr = MakeCodeDomExpression(
 						methodDef,
-						instr,
+						byteCode,
 						args);
 					if (codeExpr is Ast.Expression) {
-						if (Util.GetNumberOfOutputs(methodDef, instr) == 1) {
-							string type = stackAnalysis.GetTypeOf(instr).FullName;
-							string name = string.Format("expr{0:X2}", instr.Offset);
+						if (Util.GetNumberOfOutputs(methodDef, byteCode) == 1) {
+							string type = stackAnalysis.GetTypeOf(byteCode).FullName;
+							string name = string.Format("expr{0:X2}", byteCode.Offset);
 							Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
 							astLocal.Variables.Add(new Ast.VariableDeclaration(name, (Ast.Expression)codeExpr));
 							astStatement = astLocal;
@@ -68,8 +69,8 @@ namespace Decompiler
 					astStatement = MakeComment(description);
 				}
 				//astBlock.Children.Add(MakeComment(description));
-				if (stackAnalysis.BranchTargetOf[instr].Count > 0) {
-					astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", instr.Offset)));
+				if (stackAnalysis.BranchTargetOf[byteCode].Count > 0) {
+					astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", byteCode.Offset)));
 				}
 				astBlock.Children.Add(astStatement);
 				//astBlock.Children.Add(MakeComment(" " + stackAnalysis.StackAfter[instr].ToString()));
@@ -84,12 +85,12 @@ namespace Decompiler
 			return new Ast.ExpressionStatement(new PrimitiveExpression(text, text));
 		}
 		
-		static object FormatInstructionOperand(object operand)
+		static object FormatByteCodeOperand(object operand)
 		{
 			if (operand == null) {
 				return string.Empty;
-			} else if (operand is Instruction) {
-				return string.Format("IL_{0:X2}", ((Instruction)operand).Offset);
+			} else if (operand is ByteCode) {
+				return string.Format("IL_{0:X2}", ((ByteCode)operand).Offset);
 			} else if (operand is MethodReference) {
 				return ((MethodReference)operand).Name + "()";
 			} else if (operand is Cecil.TypeReference) {
@@ -107,13 +108,13 @@ namespace Decompiler
 			}
 		}
 		
-		static object MakeCodeDomExpression(MethodDefinition methodDef, Instruction inst, params Ast.Expression[] args)
+		static object MakeCodeDomExpression(MethodDefinition methodDef, ByteCode byteCode, params Ast.Expression[] args)
 		{
-			OpCode opCode = inst.OpCode;
-			object operand = inst.Operand;
+			OpCode opCode = byteCode.OpCode;
+			object operand = byteCode.Operand;
 			Ast.TypeReference operandAsTypeRef = operand is Cecil.TypeReference ? new Ast.TypeReference(((Cecil.TypeReference)operand).FullName) : null;
-			Instruction operandAsInstruction = operand is Instruction ? (Instruction)operand : null;
-			string operandAsInstructionLabel = operand is Instruction ? String.Format("IL_{0:X2}", ((Instruction)operand).Offset) : null;
+			ByteCode operandAsByteCode = operand as ByteCode;
+			string operandAsByteCodeLabel = operand is ByteCode ? String.Format("IL_{0:X2}", ((ByteCode)operand).Offset) : null;
 			Ast.Expression arg1 = args.Length >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Length >= 2 ? args[1] : null;
 			Ast.Expression arg3 = args.Length >= 3 ? args[2] : null;
@@ -174,19 +175,19 @@ namespace Decompiler
 					case Code.Stelem_Any: throw new NotImplementedException();
 				#endregion
 				#region Branching
-					case Code.Br:      return new Ast.GotoStatement(operandAsInstructionLabel);
-					case Code.Brfalse: return new Ast.IfElseStatement(new Ast.UnaryOperatorExpression(arg1, UnaryOperatorType.Not), new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Brtrue:  return new Ast.IfElseStatement(arg1, new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Beq:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Bge:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Bge_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Bgt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Bgt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Ble:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Ble_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Blt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Blt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
-					case Code.Bne_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2), new Ast.GotoStatement(operandAsInstructionLabel));
+					case Code.Br:      return new Ast.GotoStatement(operandAsByteCodeLabel);
+					case Code.Brfalse: return new Ast.IfElseStatement(new Ast.UnaryOperatorExpression(arg1, UnaryOperatorType.Not), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Brtrue:  return new Ast.IfElseStatement(arg1, new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Beq:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Bge:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Bge_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Bgt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Bgt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Ble:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Ble_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Blt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Blt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Bne_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
 				#endregion
 				#region Comparison
 					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, ConvertIntToBool(arg2));

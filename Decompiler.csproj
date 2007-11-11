@@ -39,6 +39,8 @@
     <Compile Include="src\AssemblyInfo.cs" />
     <Compile Include="src\AstBuilder.cs" />
     <Compile Include="src\AstMetodBodyBuilder.cs" />
+    <Compile Include="src\ByteCode.cs" />
+    <Compile Include="src\ByteCodeCollection.cs" />
     <Compile Include="src\MainForm.cs" />
     <Compile Include="src\MainForm.Designer.cs" />
     <Compile Include="src\Program.cs" />
