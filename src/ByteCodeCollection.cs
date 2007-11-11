@@ -49,15 +49,6 @@ namespace Decompiler
 			return list.IndexOf(byteCode);
 		}
 		
-		public void Remove(ByteCode byteCode)
-		{
-			int index = IndexOf(byteCode);
-			list.RemoveAt(index);
-			byteCode.Next = null;
-			byteCode.Previous = null;
-			UpdateNextPrevious();
-		}
-		
 		public ByteCodeCollection(MethodDefinition methodDef)
 		{
 			foreach(Instruction inst in methodDef.Body.Instructions) {
@@ -68,7 +59,13 @@ namespace Decompiler
 					byteCode.Operand = GetByOffset(((Instruction)byteCode.Operand).Offset);
 				}
 			}
+			foreach(ByteCode byteCode in this) {
+				if (byteCode.CanBranch) {
+					byteCode.BranchTarget.BranchesHere.Add(byteCode);
+				}
+			}
 			UpdateNextPrevious();
+			UpdateStackAnalysis();
 		}
 		
 		void UpdateNextPrevious()
@@ -76,6 +73,13 @@ namespace Decompiler
 			for(int i = 0; i < list.Count - 1; i++) {
 				this[i].Next = this[i + 1];
 				this[i + 1].Previous = this[i];
+			}
+		}
+		
+		void UpdateStackAnalysis()
+		{
+			if (this.Count > 0) {
+				this[0].MergeStackBeforeWith(CilStack.Empty);
 			}
 		}
 	}

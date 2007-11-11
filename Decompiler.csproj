@@ -43,10 +43,11 @@
     <Compile Include="src\ByteCode.StackBehaviour.cs" />
     <Compile Include="src\ByteCode.Type.cs" />
     <Compile Include="src\ByteCodeCollection.cs" />
+    <Compile Include="src\CilStack.cs" />
     <Compile Include="src\MainForm.cs" />
     <Compile Include="src\MainForm.Designer.cs" />
     <Compile Include="src\Program.cs" />
-    <Compile Include="src\StackAnalysis.cs" />
+    <Compile Include="src\ByteCode.StackAnalysis.cs" />
     <Compile Include="src\Util.cs" />
     <EmbeddedResource Include="src\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

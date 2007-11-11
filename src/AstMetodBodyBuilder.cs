@@ -19,7 +19,6 @@ namespace Decompiler
 			methodDef.Body.Simplify();
 			
 			ByteCodeCollection body = new ByteCodeCollection(methodDef);
-			StackAnalysis stackAnalysis = new StackAnalysis(methodDef, body);
 			
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
 				Ast.VariableDeclaration astVar = new Ast.VariableDeclaration(varDef.Name);
@@ -44,7 +43,7 @@ namespace Decompiler
 					int argCount = byteCode.PopCount;
 					Ast.Expression[] args = new Ast.Expression[argCount];
 					for(int i = 0; i < argCount; i++) {
-						ByteCode allocBy = stackAnalysis.StackBefore[byteCode].Peek(argCount - i).AllocadedBy;
+						ByteCode allocBy = byteCode.StackBefore.Peek(argCount - i).AllocadedBy;
 						string name = string.Format("expr{0:X2}", allocBy.Offset);
 						args[i] = new Ast.IdentifierExpression(name);
 					}
@@ -54,7 +53,7 @@ namespace Decompiler
 						args);
 					if (codeExpr is Ast.Expression) {
 						if (byteCode.PushCount == 1) {
-							string type = stackAnalysis.GetTypeOf(byteCode).FullName;
+							string type = byteCode.Type.FullName;
 							string name = string.Format("expr{0:X2}", byteCode.Offset);
 							Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
 							astLocal.Variables.Add(new Ast.VariableDeclaration(name, (Ast.Expression)codeExpr));
@@ -69,7 +68,7 @@ namespace Decompiler
 					astStatement = MakeComment(description);
 				}
 				//astBlock.Children.Add(MakeComment(description));
-				if (stackAnalysis.BranchTargetOf[byteCode].Count > 0) {
+				if (byteCode.BranchesHere.Count > 0) {
 					astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", byteCode.Offset)));
 				}
 				astBlock.Children.Add(astStatement);

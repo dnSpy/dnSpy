@@ -23,6 +23,16 @@ namespace Decompiler
 			return new Cecil.TypeReference(type.Name, type.Namespace, null, type.IsValueType);
 		}
 		
+		public Cecil.TypeReference Type {
+			get {
+				if (this.PushCount == 0) {
+					return TypeVoid;
+				} else {
+					return this.StackAfter.Peek(1).Type;
+				}
+			}
+		}
+		
 		public Cecil.TypeReference GetType(params Cecil.TypeReference[] args)
 		{
 			try {
