@@ -26,8 +26,11 @@ namespace Decompiler
 			
 			string code = csOutVisitor.Text;
 			code = code.Replace(":\r\n\t\t\t", ": ");
+			code = code.Replace(": }", ":\r\n\t\t\t}");
 			code = code.Replace(":\r\n\t\t", ": ");
+			code = code.Replace(": }", ":\r\n\t\t}");
 			code = code.Replace(":\r\n\t", ": ");
+			code = code.Replace(": }", ":\r\n\t}");
 			code = code.Replace("\t", "    ");
 			code = code.Replace("\"/*", "//");
 			code = code.Replace("*/\";", "");

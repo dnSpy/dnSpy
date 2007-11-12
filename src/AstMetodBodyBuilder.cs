@@ -29,7 +29,8 @@ namespace Decompiler
 				astBlock.Children.Add(astLocalVar);
 			}
 			
-			foreach(StackExpression expr in exprCol) {
+			for(int i = 0; i < exprCol.Count; i++) {
+				StackExpression expr = exprCol[i];
 				Ast.Statement astStatement = null;
 				try {
 					List<Ast.Expression> args = new List<Ast.Expression>();
@@ -56,6 +57,12 @@ namespace Decompiler
 				}
 				if (expr.FirstByteCode.BranchesHere.Count > 0) {
 					astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", expr.FirstByteCode.Offset)));
+				}
+				// Skip last return statement
+				if (i == exprCol.Count - 1 && 
+				    expr.ExpressionByteCode.OpCode.Code == Code.Ret &&
+				    expr.ExpressionByteCode.PopCount == 0) {
+					continue;
 				}
 				astBlock.Children.Add(astStatement);
 			}
