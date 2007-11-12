@@ -12,6 +12,9 @@ namespace Decompiler
 {
 	public class AstMetodBodyBuilder
 	{
+		static Dictionary<string, Cecil.TypeReference> localVarTypes = new Dictionary<string, Cecil.TypeReference>();
+		static Dictionary<string, bool> localVarDefined = new Dictionary<string, bool>();
+		
 		public static BlockStatement CreateMetodBody(MethodDefinition methodDef)
 		{
 			Ast.BlockStatement astBlock = new Ast.BlockStatement();
@@ -23,10 +26,13 @@ namespace Decompiler
 			exprCol.Optimize();
 			
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
-				Ast.VariableDeclaration astVar = new Ast.VariableDeclaration(varDef.Name);
-				Ast.LocalVariableDeclaration astLocalVar = new Ast.LocalVariableDeclaration(astVar);
-				astLocalVar.TypeReference = new Ast.TypeReference(varDef.VariableType.FullName);
-				astBlock.Children.Add(astLocalVar);
+				localVarTypes[varDef.Name] = varDef.VariableType;
+				localVarDefined[varDef.Name] = false;
+				
+//				Ast.VariableDeclaration astVar = new Ast.VariableDeclaration(varDef.Name);
+//				Ast.LocalVariableDeclaration astLocalVar = new Ast.LocalVariableDeclaration(astVar);
+//				astLocalVar.TypeReference = new Ast.TypeReference(varDef.VariableType.FullName);
+//				astBlock.Children.Add(astLocalVar);
 			}
 			
 			for(int i = 0; i < exprCol.Count; i++) {
@@ -301,7 +307,16 @@ namespace Decompiler
 				case Code.Sizeof: throw new NotImplementedException();
 				case Code.Starg: throw new NotImplementedException();
 				case Code.Stfld: throw new NotImplementedException();
-				case Code.Stloc: return new Ast.AssignmentExpression(new Ast.IdentifierExpression(((VariableDefinition)operand).Name), AssignmentOperatorType.Assign, arg1);
+				case Code.Stloc: 
+					string name = ((VariableDefinition)operand).Name;
+					if (localVarDefined[name]) {
+						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(name), AssignmentOperatorType.Assign, arg1);
+					} else {
+						Ast.LocalVariableDeclaration astLocalVar = new Ast.LocalVariableDeclaration(new Ast.VariableDeclaration(name, arg1));
+						astLocalVar.TypeReference = new Ast.TypeReference(localVarTypes[name].FullName);
+						localVarDefined[name] = true;
+						return astLocalVar;
+					}
 				case Code.Stobj: throw new NotImplementedException();
 				case Code.Stsfld: throw new NotImplementedException();
 				case Code.Switch: throw new NotImplementedException();
