@@ -99,5 +99,43 @@ namespace Decompiler
 		{
 			this.expressionByteCode = expressionByteCode;
 		}
+		
+		public bool MustBeParenthesized {
+			get {
+				switch(this.ExpressionByteCode.OpCode.Code) {
+					#region Arithmetic
+						case Code.Neg:
+						case Code.Not:
+					#endregion
+					#region Arrays
+						case Code.Newarr:
+						case Code.Ldlen:      
+						case Code.Ldelem_I:   
+						case Code.Ldelem_I1:  
+						case Code.Ldelem_I2:  
+						case Code.Ldelem_I4:  
+						case Code.Ldelem_I8:  
+						case Code.Ldelem_U1:  
+						case Code.Ldelem_U2:  
+						case Code.Ldelem_U4:  
+						case Code.Ldelem_R4:  
+						case Code.Ldelem_R8:  
+						case Code.Ldelem_Ref: 
+					#endregion
+					case Code.Call:
+					case Code.Ldarg: 
+					case Code.Ldc_I4:
+					case Code.Ldc_I8:
+					case Code.Ldc_R4:
+					case Code.Ldc_R8:
+					case Code.Ldloc: 
+					case Code.Ldnull:
+					case Code.Ldstr: 
+						return false;
+					default: 
+						return true;
+				}
+			}
+		}
 	}
 }
