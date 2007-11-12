@@ -19,6 +19,7 @@ namespace Decompiler
 		public void Optimize()
 		{
 			for(int i = 1; i < this.Count; i++) {
+				if (i == 0) continue;
 				StackExpression prevExpr = this[i - 1];
 				StackExpression expr = this[i];
 				

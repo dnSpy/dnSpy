@@ -21,7 +21,7 @@ namespace Decompiler
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			string sourceCode = Decompile(@"..\..\tests\QuickSort\bin\Debug\QuickSort.exe");
+			string sourceCode = Decompile(@"..\..\tests\QuickSort\bin\Release\QuickSort.exe");
 			
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
