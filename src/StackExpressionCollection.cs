@@ -18,7 +18,19 @@ namespace Decompiler
 		
 		public void Optimize()
 		{
-			
+			for(int i = 1; i < this.Count; i++) {
+				StackExpression prevExpr = this[i - 1];
+				StackExpression expr = this[i];
+				
+				if (expr.PopCount > 0 && // This expr needs some more arguments
+				    !expr.IsBranchTarget &&
+				    prevExpr.IsClosed)
+				{
+					this.RemoveAt(i - 1); i--;
+					expr.LastArguments.Insert(0, prevExpr);
+					i--;
+				}
+			}
 		}
 	}
 }

@@ -16,6 +16,7 @@ namespace Decompiler
 			get { return expressionByteCode; }
 		}
 		
+		// A list of closed expression for last arguments
 		public List<StackExpression> LastArguments {
 			get { return lastArguments; }
 		}
@@ -29,6 +30,22 @@ namespace Decompiler
 		public CilStack StackAfter {
 			get {
 				return this.ExpressionByteCode.StackAfter;
+			}
+		}
+		
+		/// <summary>
+		/// Expression is closed if it has no inputs and has exactly one output
+		/// </summary>
+		public bool IsClosed {
+			get {
+				return this.PopCount == 0 &&
+				       this.PushCount == 1;
+			}
+		}
+		
+		public bool IsBranchTarget {
+			get {
+				return this.FirstByteCode.BranchesHere.Count > 0;
 			}
 		}
 		
