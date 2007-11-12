@@ -61,13 +61,14 @@ namespace Decompiler
 				} catch (NotImplementedException) {
 					astStatement = MakeComment(expr.ExpressionByteCode.Description);
 				}
-				if (expr.FirstByteCode.BranchesHere.Count > 0) {
+				if (expr.IsBranchTarget) {
 					astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", expr.FirstByteCode.Offset)));
 				}
 				// Skip last return statement
 				if (i == exprCol.Count - 1 && 
 				    expr.ExpressionByteCode.OpCode.Code == Code.Ret &&
-				    expr.ExpressionByteCode.PopCount == 0) {
+				    expr.ExpressionByteCode.PopCount == 0 &&
+				    !expr.IsBranchTarget) {
 					continue;
 				}
 				astBlock.Children.Add(astStatement);
