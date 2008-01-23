@@ -50,6 +50,7 @@
     <Compile Include="src\ByteCode.StackAnalysis.cs" />
     <Compile Include="src\StackExpression.cs" />
     <Compile Include="src\StackExpressionCollection.cs" />
+    <Compile Include="src\ControlFlow.cs" />
     <Compile Include="src\Util.cs" />
     <EmbeddedResource Include="src\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

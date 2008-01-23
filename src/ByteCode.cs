@@ -9,6 +9,7 @@ namespace Decompiler
 {
 	public partial class ByteCode
 	{
+		StackExpression owner;
 		ByteCode previous;
 		ByteCode next;
 		
@@ -16,6 +17,11 @@ namespace Decompiler
 		int offset;
 		OpCode opCode;
 		object operand;
+		
+		public StackExpression Owner {
+			get { return owner; }
+			set { owner = value; }
+		}
 		
 		public ByteCode Previous {
 			get { return previous; }
@@ -44,7 +50,7 @@ namespace Decompiler
 		
 		public ByteCode BranchTarget {
 			get {
-				return (ByteCode)operand;
+				return operand as ByteCode;
 			}
 		}
 		
@@ -66,7 +72,7 @@ namespace Decompiler
 		public string Description {
 			get {
 				return string.Format(
-					" {1, -22} # {2}->{3} {4} {5}",
+					"{1, -22} # {2}->{3} {4} {5}",
 					this.Offset,
 					this.OpCode + " " + FormatByteCodeOperand(this.Operand),
 					this.OpCode.StackBehaviourPop,

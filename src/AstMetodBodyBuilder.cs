@@ -22,8 +22,10 @@ namespace Decompiler
 			methodDef.Body.Simplify();
 			
 			ByteCodeCollection body = new ByteCodeCollection(methodDef);
-			StackExpressionCollection exprCol = new StackExpressionCollection(body);
-			exprCol.Optimize();
+			StackExpressionCollection exprCollection = new StackExpressionCollection(body);
+			exprCollection.Optimize();
+			
+			BasicBlockSet basicBlockSet = new BasicBlockSet(exprCollection);
 			
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
 				localVarTypes[varDef.Name] = varDef.VariableType;
@@ -35,43 +37,47 @@ namespace Decompiler
 //				astBlock.Children.Add(astLocalVar);
 			}
 			
-			for(int i = 0; i < exprCol.Count; i++) {
-				StackExpression expr = exprCol[i];
-				Ast.Statement astStatement = null;
-				try {
-					List<Ast.Expression> args = new List<Ast.Expression>();
-					foreach(CilStackSlot stackSlot in expr.StackBefore.PeekCount(expr.PopCount)) {
-						string name = string.Format("expr{0:X2}", stackSlot.AllocadedBy.Offset);
-						args.Add(new Ast.IdentifierExpression(name));
-					}
-					object codeExpr = MakeCodeDomExpression(methodDef, expr, args.ToArray());
-					if (codeExpr is Ast.Expression) {
-						if (expr.PushCount == 1) {
-							string type = expr.ExpressionByteCode.Type.FullName;
-							string name = string.Format("expr{0:X2}", expr.ExpressionByteCode.Offset);
-							Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
-							astLocal.Variables.Add(new Ast.VariableDeclaration(name, (Ast.Expression)codeExpr));
-							astStatement = astLocal;
-						} else {
-							astStatement = new ExpressionStatement((Ast.Expression)codeExpr);
+			for(int b = 0; b < basicBlockSet.Elements.Count; b++) {
+				BasicBlock basicBlock = (BasicBlock)basicBlockSet.Elements[b];
+				astBlock.Children.Add(MakeComment(basicBlock.ToString()));
+				for(int i = 0; i < basicBlock.Body.Count; i++) {
+					StackExpression expr = basicBlock.Body[i];
+					Ast.Statement astStatement = null;
+					try {
+						List<Ast.Expression> args = new List<Ast.Expression>();
+						foreach(CilStackSlot stackSlot in expr.StackBefore.PeekCount(expr.PopCount)) {
+							string name = string.Format("expr{0:X2}", stackSlot.AllocadedBy.Offset);
+							args.Add(new Ast.IdentifierExpression(name));
 						}
-					} else if (codeExpr is Ast.Statement) {
-						astStatement = (Ast.Statement)codeExpr;
+						object codeExpr = MakeCodeDomExpression(methodDef, expr, args.ToArray());
+						if (codeExpr is Ast.Expression) {
+							if (expr.PushCount == 1) {
+								string type = expr.LastByteCode.Type.FullName;
+								string name = string.Format("expr{0:X2}", expr.LastByteCode.Offset);
+								Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
+								astLocal.Variables.Add(new Ast.VariableDeclaration(name, (Ast.Expression)codeExpr));
+								astStatement = astLocal;
+							} else {
+								astStatement = new ExpressionStatement((Ast.Expression)codeExpr);
+							}
+						} else if (codeExpr is Ast.Statement) {
+							astStatement = (Ast.Statement)codeExpr;
+						}
+					} catch (NotImplementedException) {
+						astStatement = MakeComment(expr.LastByteCode.Description);
 					}
-				} catch (NotImplementedException) {
-					astStatement = MakeComment(expr.ExpressionByteCode.Description);
+					if (expr.IsBranchTarget) {
+						astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", expr.FirstByteCode.Offset)));
+					}
+					// Skip last return statement
+//					if (i == exprCol.Count - 1 && 
+//					    expr.LastByteCode.OpCode.Code == Code.Ret &&
+//					    expr.LastByteCode.PopCount == 0 &&
+//					    !expr.IsBranchTarget) {
+//						continue;
+//					}
+					astBlock.Children.Add(astStatement);
 				}
-				if (expr.IsBranchTarget) {
-					astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", expr.FirstByteCode.Offset)));
-				}
-				// Skip last return statement
-				if (i == exprCol.Count - 1 && 
-				    expr.ExpressionByteCode.OpCode.Code == Code.Ret &&
-				    expr.ExpressionByteCode.PopCount == 0 &&
-				    !expr.IsBranchTarget) {
-					continue;
-				}
-				astBlock.Children.Add(astStatement);
 			}
 			
 			return astBlock;
@@ -79,7 +85,7 @@ namespace Decompiler
 		
 		static Ast.ExpressionStatement MakeComment(string text)
 		{
-			text = "/*" + text + "*/";
+			text = "/* " + text + "*/";
 			return new Ast.ExpressionStatement(new PrimitiveExpression(text, text));
 		}
 		
@@ -97,7 +103,7 @@ namespace Decompiler
 					allArgs.Add(astExpr);
 				}
 			}
-			return MakeCodeDomExpression(methodDef, expr.ExpressionByteCode, allArgs.ToArray());
+			return MakeCodeDomExpression(methodDef, expr.LastByteCode, allArgs.ToArray());
 		}
 		
 		static object MakeCodeDomExpression(MethodDefinition methodDef, ByteCode byteCode, params Ast.Expression[] args)

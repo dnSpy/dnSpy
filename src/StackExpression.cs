@@ -9,11 +9,16 @@ namespace Decompiler
 {
 	public class StackExpression
 	{
-		ByteCode expressionByteCode;
+		StackExpressionCollection owner;
+		ByteCode lastByteCode;
 		List<StackExpression> lastArguments = new List<StackExpression>();
 		
-		public ByteCode ExpressionByteCode {
-			get { return expressionByteCode; }
+		public StackExpressionCollection Owner {
+			get { return owner; }
+		}
+		
+		public ByteCode LastByteCode {
+			get { return lastByteCode; }
 		}
 		
 		// A list of closed expression for last arguments
@@ -29,7 +34,7 @@ namespace Decompiler
 		
 		public CilStack StackAfter {
 			get {
-				return this.ExpressionByteCode.StackAfter;
+				return this.LastByteCode.StackAfter;
 			}
 		}
 		
@@ -40,6 +45,26 @@ namespace Decompiler
 			get {
 				return this.PopCount == 0 &&
 				       this.PushCount == 1;
+			}
+		}
+		
+		public List<StackExpression> BranchesHere {
+			get {
+				List<StackExpression> branchesHere = new List<StackExpression>();
+				foreach(ByteCode byteCode in this.FirstByteCode.BranchesHere) {
+					branchesHere.Add(byteCode.Owner);
+				}
+				return branchesHere;
+			}
+		}
+		
+		public StackExpression BranchTarget {
+			get {
+				if (this.lastByteCode.BranchTarget == null) {
+					return null;
+				} else {
+					return this.lastByteCode.BranchTarget.Owner;
+				}
 			}
 		}
 		
@@ -77,9 +102,9 @@ namespace Decompiler
 				stackSize += expr.PushCount;
 			}
 			{
-				stackSize -= expressionByteCode.PopCount;
+				stackSize -= lastByteCode.PopCount;
 				minStackSize = Math.Min(minStackSize, stackSize);
-				stackSize += expressionByteCode.PushCount;
+				stackSize += lastByteCode.PushCount;
 			}
 			popCount = -minStackSize;
 			pushCount = stackSize - minStackSize;
@@ -90,19 +115,21 @@ namespace Decompiler
 				if (lastArguments.Count > 0) {
 					return lastArguments[0].FirstByteCode;
 				} else {
-					return this.ExpressionByteCode;
+					return this.LastByteCode;
 				}
 			}
 		}
 		
-		public StackExpression(ByteCode expressionByteCode)
+		public StackExpression(StackExpressionCollection owner, ByteCode lastByteCode)
 		{
-			this.expressionByteCode = expressionByteCode;
+			this.owner = owner;
+			this.lastByteCode = lastByteCode;
+			this.lastByteCode.Owner = this;
 		}
 		
 		public bool MustBeParenthesized {
 			get {
-				switch(this.ExpressionByteCode.OpCode.Code) {
+				switch(this.LastByteCode.OpCode.Code) {
 					#region Arithmetic
 						case Code.Neg:
 						case Code.Not:

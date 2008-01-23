@@ -12,7 +12,7 @@ namespace Decompiler
 		public StackExpressionCollection(ByteCodeCollection byteCodeCol)
 		{
 			foreach(ByteCode bc in byteCodeCol) {
-				this.Add(new StackExpression(bc));
+				this.Add(new StackExpression(this, bc));
 			}
 		}
 		
