@@ -57,18 +57,15 @@ namespace Decompiler.ControlFlow
 		
 		public void Optimize()
 		{
-			bool optimized;
-			do {
-				optimized = false;
-				foreach(Node child in this.Childs) {
-					if (child.Predecessors.Count == 1) {
-						Node predecessor = child.Predecessors[0];
-						MergeChilds(predecessor, child);
-						optimized = true;
-						break; // Collection was modified; restart
-					}
+			for(int i = 0; i < this.Childs.Count;) {
+				Node child = childs[i];
+				if (child.Predecessors.Count == 1) {
+					MergeChilds(child.Predecessors[0], child);
+					i = 0; // Restart
+				} else {
+					i++; // Next
 				}
-			} while (optimized);
+			}
 		}
 		
 		static void MergeChilds(Node head, Node tail)
@@ -124,10 +121,11 @@ namespace Decompiler.ControlFlow
 			Relink(head, mergedNode);
 			Relink(tail, mergedNode);
 			
-			// Remove the old nodes and add the merged node
-			container.Childs.Remove(head);
+			// Remove the old nodes and add the merged node - replace head with the merged node
 			container.Childs.Remove(tail);
-			container.Childs.Add(mergedNode);
+			int headIndex = container.Childs.IndexOf(head);
+			container.Childs.Remove(head);
+			container.Childs.Insert(headIndex, mergedNode);
 		}
 		
 		static void Relink(Node node, Node target)

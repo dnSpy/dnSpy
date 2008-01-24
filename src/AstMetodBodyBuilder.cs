@@ -8,14 +8,24 @@ using Cecil = Mono.Cecil;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
+using Decompiler.ControlFlow;
+
 namespace Decompiler
 {
 	public class AstMetodBodyBuilder
 	{
+		MethodDefinition methodDef;
 		static Dictionary<string, Cecil.TypeReference> localVarTypes = new Dictionary<string, Cecil.TypeReference>();
 		static Dictionary<string, bool> localVarDefined = new Dictionary<string, bool>();
 		
 		public static BlockStatement CreateMetodBody(MethodDefinition methodDef)
+		{
+			AstMetodBodyBuilder builder = new AstMetodBodyBuilder();
+			builder.methodDef = methodDef;
+			return builder.CreateMetodBody();
+		}
+		
+		public BlockStatement CreateMetodBody()
 		{
 			Ast.BlockStatement astBlock = new Ast.BlockStatement();
 			
@@ -25,7 +35,7 @@ namespace Decompiler
 			StackExpressionCollection exprCollection = new StackExpressionCollection(body);
 			exprCollection.Optimize();
 			
-			ControlFlow.MethodBodyGraph bodyGraph = new ControlFlow.MethodBodyGraph(exprCollection);
+			MethodBodyGraph bodyGraph = new MethodBodyGraph(exprCollection);
 			
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
 				localVarTypes[varDef.Name] = varDef.VariableType;
@@ -37,50 +47,74 @@ namespace Decompiler
 //				astBlock.Children.Add(astLocalVar);
 			}
 			
-			for(int b = 0; b < bodyGraph.Childs.Count; b++) {
-				ControlFlow.BasicBlock node = (ControlFlow.BasicBlock)bodyGraph.Childs[b];
-				astBlock.Children.Add(MakeComment(node.ToString()));
-				for(int i = 0; i < node.Body.Count; i++) {
-					StackExpression expr = node.Body[i];
-					Ast.Statement astStatement = null;
-					try {
-						List<Ast.Expression> args = new List<Ast.Expression>();
-						foreach(CilStackSlot stackSlot in expr.StackBefore.PeekCount(expr.PopCount)) {
-							string name = string.Format("expr{0:X2}", stackSlot.AllocadedBy.Offset);
-							args.Add(new Ast.IdentifierExpression(name));
-						}
-						object codeExpr = MakeCodeDomExpression(methodDef, expr, args.ToArray());
-						if (codeExpr is Ast.Expression) {
-							if (expr.PushCount == 1) {
-								string type = expr.LastByteCode.Type.FullName;
-								string name = string.Format("expr{0:X2}", expr.LastByteCode.Offset);
-								Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
-								astLocal.Variables.Add(new Ast.VariableDeclaration(name, (Ast.Expression)codeExpr));
-								astStatement = astLocal;
-							} else {
-								astStatement = new ExpressionStatement((Ast.Expression)codeExpr);
-							}
-						} else if (codeExpr is Ast.Statement) {
-							astStatement = (Ast.Statement)codeExpr;
-						}
-					} catch (NotImplementedException) {
-						astStatement = MakeComment(expr.LastByteCode.Description);
-					}
-					if (expr.IsBranchTarget) {
-						astBlock.Children.Add(new Ast.LabelStatement(string.Format("IL_{0:X2}", expr.FirstByteCode.Offset)));
-					}
-					// Skip last return statement
-//					if (i == exprCol.Count - 1 && 
-//					    expr.LastByteCode.OpCode.Code == Code.Ret &&
-//					    expr.LastByteCode.PopCount == 0 &&
-//					    !expr.IsBranchTarget) {
-//						continue;
-//					}
-					astBlock.Children.Add(astStatement);
-				}
-			}
+			astBlock.Children.AddRange(TransformNodes(bodyGraph.Childs));
 			
 			return astBlock;
+		}
+		
+		IEnumerable<Ast.INode> TransformNodes(IEnumerable<Node> nodes)
+		{
+			foreach(Node node in nodes) {
+				foreach(Ast.Statement stmt in TransformNode(node)) {
+					yield return stmt;
+				}
+			}
+		}
+		
+		IEnumerable<Ast.INode> TransformNode(Node node)
+		{
+			yield return MakeComment(node.ToString());
+			
+			if (node is BasicBlock) {
+				yield return new Ast.LabelStatement(string.Format("BasicBlock_{0}", ((BasicBlock)node).Id));
+				foreach(StackExpression expr in ((BasicBlock)node).Body) {
+					yield return TransformExpression(expr);
+				}
+			} else if (node is AcyclicGraph) {
+				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
+				blockStatement.Children.AddRange(TransformNodes(node.Childs));
+				yield return blockStatement;
+			} else if (node is Loop) {
+				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
+				blockStatement.Children.AddRange(TransformNodes(node.Childs));
+				yield return new Ast.DoLoopStatement(
+					new Ast.PrimitiveExpression(true, true.ToString()),
+					blockStatement,
+					ConditionType.While,
+					ConditionPosition.Start
+				);
+			} else {
+				throw new Exception("Bad node type");
+			}
+		}
+		
+		Ast.Statement TransformExpression(StackExpression expr)
+		{
+			Ast.Statement astStatement = null;
+			try {
+				List<Ast.Expression> args = new List<Ast.Expression>();
+				foreach(CilStackSlot stackSlot in expr.StackBefore.PeekCount(expr.PopCount)) {
+					string name = string.Format("expr{0:X2}", stackSlot.AllocadedBy.Offset);
+					args.Add(new Ast.IdentifierExpression(name));
+				}
+				object codeExpr = MakeCodeDomExpression(methodDef, expr, args.ToArray());
+				if (codeExpr is Ast.Expression) {
+					if (expr.PushCount == 1) {
+						string type = expr.LastByteCode.Type.FullName;
+						string name = string.Format("expr{0:X2}", expr.LastByteCode.Offset);
+						Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
+						astLocal.Variables.Add(new Ast.VariableDeclaration(name, (Ast.Expression)codeExpr));
+						astStatement = astLocal;
+					} else {
+						astStatement = new ExpressionStatement((Ast.Expression)codeExpr);
+					}
+				} else if (codeExpr is Ast.Statement) {
+					astStatement = (Ast.Statement)codeExpr;
+				}
+			} catch (NotImplementedException) {
+				astStatement = MakeComment(expr.LastByteCode.Description);
+			}
+			return astStatement;
 		}
 		
 		static Ast.ExpressionStatement MakeComment(string text)

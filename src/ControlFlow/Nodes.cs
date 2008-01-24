@@ -22,6 +22,27 @@ namespace Decompiler.ControlFlow
 					this.Childs.Add(basicBlock);
 				}
 				basicBlock.Body.Add(exprs[i]);
+				exprs[i].BasicBlock = basicBlock;
+			}
+			
+			// Add fall-though links
+			for(int i = 0; i < exprs.Count - 1; i++) {
+				BasicBlock node = exprs[i].BasicBlock;
+				BasicBlock target = exprs[i + 1].BasicBlock;
+				if (node != target) {
+					node.Successors.Add(target);
+					target.Predecessors.Add(node);
+				}
+			}
+			
+			// Add branch links
+			for(int i = 0; i < exprs.Count; i++) {
+				if (exprs[i].BranchTarget != null) {
+					BasicBlock node = exprs[i].BasicBlock;
+					BasicBlock target = exprs[i].BranchTarget.BasicBlock;
+					node.Successors.Add(target);
+					target.Predecessors.Add(node);
+				}
 			}
 			
 			this.HeadChild = this.Childs[0];
@@ -33,12 +54,22 @@ namespace Decompiler.ControlFlow
 		public AcyclicGraph(Node parent): base(parent){
 			
 		}
+		
+		public override string ToString()
+		{
+			return "AcyclicGraph";
+		}
 	}
 	
 	public class Loop: Node
 	{
 		public Loop(Node parent): base(parent){
 			
+		}
+		
+		public override string ToString()
+		{
+			return "Loop";
 		}
 	}
 	

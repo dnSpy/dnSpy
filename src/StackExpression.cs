@@ -9,9 +9,20 @@ namespace Decompiler
 {
 	public class StackExpression
 	{
+		ControlFlow.BasicBlock basicBlock;
 		StackExpressionCollection owner;
 		ByteCode lastByteCode;
 		List<StackExpression> lastArguments = new List<StackExpression>();
+		
+		public Decompiler.ControlFlow.BasicBlock BasicBlock {
+			get { return basicBlock; }
+			set {
+				basicBlock = value;
+				foreach (StackExpression lastArgument in lastArguments) {
+					lastArgument.BasicBlock = value;
+				}
+			}
+		}
 		
 		public StackExpressionCollection Owner {
 			get { return owner; }
