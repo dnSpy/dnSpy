@@ -11,14 +11,13 @@ namespace Decompiler.ControlFlow
 			if (exprs.Count == 0) throw new ArgumentException("Count == 0", "exprs");
 			
 			BasicBlock basicBlock = null;
-			int basicBlockId = 1;
 			for(int i = 0; i < exprs.Count; i++) {
 				// Start new basic block if
 				//  - this is first expression
 				//  - last expression was branch
 				//  - this expression is branch target
 				if (i == 0 || exprs[i - 1].BranchTarget != null || exprs[i].BranchesHere.Count > 0){
-					basicBlock = new BasicBlock(this, basicBlockId++);
+					basicBlock = new BasicBlock(this);
 					this.Childs.Add(basicBlock);
 				}
 				basicBlock.Body.Add(exprs[i]);
@@ -54,11 +53,6 @@ namespace Decompiler.ControlFlow
 		public AcyclicGraph(Node parent): base(parent){
 			
 		}
-		
-		public override string ToString()
-		{
-			return "AcyclicGraph";
-		}
 	}
 	
 	public class Loop: Node
@@ -66,34 +60,24 @@ namespace Decompiler.ControlFlow
 		public Loop(Node parent): base(parent){
 			
 		}
-		
-		public override string ToString()
-		{
-			return "Loop";
-		}
 	}
 	
 	public class BasicBlock: Node
 	{
-		int id;
 		List<StackExpression> body = new List<StackExpression>();
 		
-		public int Id {
-			get { return id; }
+		public string Label {
+			get {
+				return "BasicBlock_" + ID;
+			}
 		}
 		
 		public List<StackExpression> Body {
 			get { return body; }
 		}
 		
-		public BasicBlock(Node parent, int id): base(parent)
+		public BasicBlock(Node parent): base(parent)
 		{
-			this.id = id;
-		}
-		
-		public override string ToString()
-		{
-			return string.Format("BasicBlock {0}", id, body.Count);
 		}
 	}
 }

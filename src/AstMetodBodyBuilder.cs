@@ -36,6 +36,7 @@ namespace Decompiler
 			exprCollection.Optimize();
 			
 			MethodBodyGraph bodyGraph = new MethodBodyGraph(exprCollection);
+			bodyGraph.Optimize();
 			
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
 				localVarTypes[varDef.Name] = varDef.VariableType;
@@ -63,10 +64,10 @@ namespace Decompiler
 		
 		IEnumerable<Ast.INode> TransformNode(Node node)
 		{
-			yield return MakeComment(node.ToString());
+			yield return MakeComment("// " + node.ToString());
 			
 			if (node is BasicBlock) {
-				yield return new Ast.LabelStatement(string.Format("BasicBlock_{0}", ((BasicBlock)node).Id));
+				yield return new Ast.LabelStatement(((BasicBlock)node).Label);
 				foreach(StackExpression expr in ((BasicBlock)node).Body) {
 					yield return TransformExpression(expr);
 				}
@@ -86,6 +87,8 @@ namespace Decompiler
 			} else {
 				throw new Exception("Bad node type");
 			}
+			
+			yield return MakeComment("");
 		}
 		
 		Ast.Statement TransformExpression(StackExpression expr)
@@ -119,7 +122,7 @@ namespace Decompiler
 		
 		static Ast.ExpressionStatement MakeComment(string text)
 		{
-			text = "/* " + text + "*/";
+			text = "/*" + text + "*/";
 			return new Ast.ExpressionStatement(new PrimitiveExpression(text, text));
 		}
 		
@@ -146,7 +149,7 @@ namespace Decompiler
 			object operand = byteCode.Operand;
 			Ast.TypeReference operandAsTypeRef = operand is Cecil.TypeReference ? new Ast.TypeReference(((Cecil.TypeReference)operand).FullName) : null;
 			ByteCode operandAsByteCode = operand as ByteCode;
-			string operandAsByteCodeLabel = operand is ByteCode ? String.Format("IL_{0:X2}", ((ByteCode)operand).Offset) : null;
+			string operandAsByteCodeLabel = operand is ByteCode ? ((ByteCode)operand).Expression.BasicBlock.Label : null;
 			Ast.Expression arg1 = args.Length >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Length >= 2 ? args[1] : null;
 			Ast.Expression arg3 = args.Length >= 3 ? args[2] : null;

@@ -27,6 +27,7 @@ namespace Decompiler
 				    !expr.IsBranchTarget &&
 				    prevExpr.IsClosed)
 				{
+					if (Options.CollapseExpression-- <= 0) return;
 					this.RemoveAt(i - 1); i--;
 					expr.LastArguments.Insert(0, prevExpr);
 					i--;

@@ -23,11 +23,18 @@ namespace Decompiler.ControlFlow
 	
 	public abstract class Node
 	{
+		public static int NextNodeID = 1;
+		
+		int id;
 		Node parent;
 		Node headChild;
 		Set<Node> childs = new Set<Node>();
 		Set<Node> predecessors = new Set<Node>();
 		Set<Node> successors = new Set<Node>();
+		
+		public int ID {
+			get { return id; }
+		}
 		
 		public Node Parent {
 			get { return parent; }
@@ -53,6 +60,7 @@ namespace Decompiler.ControlFlow
 		public Node(Node parent)
 		{
 			this.parent = parent;
+			this.id = NextNodeID++;
 		}
 		
 		public void Optimize()
@@ -60,6 +68,7 @@ namespace Decompiler.ControlFlow
 			for(int i = 0; i < this.Childs.Count;) {
 				Node child = childs[i];
 				if (child.Predecessors.Count == 1) {
+					if (Options.ReduceGraph-- <= 0) return;
 					MergeChilds(child.Predecessors[0], child);
 					i = 0; // Restart
 				} else {
@@ -145,6 +154,50 @@ namespace Decompiler.ControlFlow
 			target.Successors.AddRange(node.Successors);
 			node.Predecessors.Clear();
 			node.Successors.Clear();
+		}
+		
+		public override string ToString()
+		{
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			sb.Append(this.GetType().Name);
+			sb.Append(" ");
+			sb.Append(ID);
+			sb.Append(" ");
+			
+			if (this.Predecessors.Count > 0 || this.Successors.Count > 0) {
+				sb.Append("(");
+				if (this.Predecessors.Count > 0) {
+					sb.Append("Predecessors:");
+					bool isFirst = true;
+					foreach(Node predecessor in this.Predecessors) {
+						if (isFirst) {
+							isFirst = false;
+						} else {
+							sb.Append(",");
+						}
+						sb.Append(predecessor.ID);
+					}
+				}
+				
+				if (this.Predecessors.Count > 0 && this.Successors.Count > 0) {
+					sb.Append(" ");
+				}
+				
+				if (this.Successors.Count > 0) {
+					sb.Append("Successors:");
+					bool isFirst = true;
+					foreach(Node successor in this.Successors) {
+						if (isFirst) {
+							isFirst = false;
+						} else {
+							sb.Append(",");
+						}
+						sb.Append(successor.ID);
+					}
+				}
+				sb.Append(")");
+			}
+			return sb.ToString();
 		}
 	}
 }

@@ -49,6 +49,7 @@
     <Compile Include="src\ControlFlow\Node.cs" />
     <Compile Include="src\MainForm.cs" />
     <Compile Include="src\MainForm.Designer.cs" />
+    <Compile Include="src\Options.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\ByteCode.StackAnalysis.cs" />
     <Compile Include="src\StackExpression.cs" />

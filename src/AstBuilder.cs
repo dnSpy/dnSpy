@@ -32,7 +32,7 @@ namespace Decompiler
 			code = code.Replace(":\r\n\t", ": ");
 			code = code.Replace(": }", ":\r\n\t}");
 			code = code.Replace("\t", "    ");
-			code = code.Replace("\"/*", "//");
+			code = code.Replace("\"/*", "");
 			code = code.Replace("*/\";", "");
 			
 			// Post processing commands

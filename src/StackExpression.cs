@@ -63,7 +63,7 @@ namespace Decompiler
 			get {
 				List<StackExpression> branchesHere = new List<StackExpression>();
 				foreach(ByteCode byteCode in this.FirstByteCode.BranchesHere) {
-					branchesHere.Add(byteCode.Owner);
+					branchesHere.Add(byteCode.Expression);
 				}
 				return branchesHere;
 			}
@@ -74,7 +74,7 @@ namespace Decompiler
 				if (this.lastByteCode.BranchTarget == null) {
 					return null;
 				} else {
-					return this.lastByteCode.BranchTarget.Owner;
+					return this.lastByteCode.BranchTarget.Expression;
 				}
 			}
 		}
@@ -135,7 +135,7 @@ namespace Decompiler
 		{
 			this.owner = owner;
 			this.lastByteCode = lastByteCode;
-			this.lastByteCode.Owner = this;
+			this.lastByteCode.Expression = this;
 		}
 		
 		public bool MustBeParenthesized {

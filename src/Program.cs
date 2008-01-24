@@ -21,21 +21,13 @@ namespace Decompiler
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			string sourceCode = Decompile(@"..\..\tests\QuickSort\bin\Release\QuickSort.exe");
+			string sourceFilename = @"..\..\tests\QuickSort\bin\Release\QuickSort.exe";
 			
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			MainForm mainForm = new MainForm();
-			mainForm.SourceCode = sourceCode;
+			MainForm mainForm = new MainForm(sourceFilename);
+			mainForm.Decompile();
 			Application.Run(mainForm);
-		}
-		
-		static string Decompile(string filename)
-		{
-			AssemblyDefinition assembly = AssemblyFactory.GetAssembly(filename);
-			AstBuilder codeDomBuilder = new AstBuilder();
-			codeDomBuilder.AddAssembly(assembly);
-			return codeDomBuilder.GenerateCode();
 		}
 	}
 }

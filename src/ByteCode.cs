@@ -9,7 +9,7 @@ namespace Decompiler
 {
 	public partial class ByteCode
 	{
-		StackExpression owner;
+		StackExpression expression;
 		ByteCode previous;
 		ByteCode next;
 		
@@ -18,9 +18,9 @@ namespace Decompiler
 		OpCode opCode;
 		object operand;
 		
-		public StackExpression Owner {
-			get { return owner; }
-			set { owner = value; }
+		public StackExpression Expression {
+			get { return expression; }
+			set { expression = value; }
 		}
 		
 		public ByteCode Previous {
