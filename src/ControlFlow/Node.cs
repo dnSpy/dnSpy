@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Decompiler
+namespace Decompiler.ControlFlow
 {
 	public class Set<T>: System.Collections.ObjectModel.Collection<T>
 	{
@@ -54,75 +54,6 @@ namespace Decompiler
 		{
 			this.parent = parent;
 		}
-	}
-	
-	public class BasicBlock: Node
-	{
-		int id;
-		List<StackExpression> body = new List<StackExpression>();
-		
-		public int Id {
-			get { return id; }
-		}
-		
-		public List<StackExpression> Body {
-			get { return body; }
-		}
-		
-		public BasicBlock(Node parent, int id): base(parent)
-		{
-			this.id = id;
-		}
-		
-		public override string ToString()
-		{
-			return string.Format("BasicBlock {0}", id, body.Count);
-		}
-	}
-	
-	public enum BasicBlockSetType {
-		MethodBody,
-		Acyclic,
-		Loop,
-	}
-	
-	// TODO: Split into two classes?
-	public class BasicBlockSet: Node
-	{
-		BasicBlockSetType type;
-		
-		public BasicBlockSetType Type {
-			get { return type; }
-		}
-		
-		BasicBlockSet(Node parent): base(parent)
-		{
-			
-		}
-		
-		// TODO: Add links between the generated BasicBlocks
-		public BasicBlockSet(StackExpressionCollection exprs): base(null)
-		{
-			if (exprs.Count == 0) throw new ArgumentException("Count == 0", "exprs");
-			
-			this.type = BasicBlockSetType.MethodBody;
-			
-			BasicBlock basicBlock = null;
-			int basicBlockId = 1;
-			for(int i = 0; i < exprs.Count; i++) {
-				// Start new basic block if
-				//  - this is first expression
-				//  - last expression was branch
-				//  - this expression is branch target
-				if (i == 0 || exprs[i - 1].BranchTarget != null || exprs[i].BranchesHere.Count > 0){
-					basicBlock = new BasicBlock(this, basicBlockId++);
-					this.Childs.Add(basicBlock);
-				}
-				basicBlock.Body.Add(exprs[i]);
-			}
-			
-			this.HeadChild = this.Childs[0];
-		}
 		
 		public void Optimize()
 		{
@@ -132,7 +63,7 @@ namespace Decompiler
 				foreach(Node child in this.Childs) {
 					if (child.Predecessors.Count == 1) {
 						Node predecessor = child.Predecessors[0];
-						MergeNodes(predecessor, child);
+						MergeChilds(predecessor, child);
 						optimized = true;
 						break; // Collection was modified; restart
 					}
@@ -140,48 +71,44 @@ namespace Decompiler
 			} while (optimized);
 		}
 		
-		static void MergeNodes(Node head, Node tail)
+		static void MergeChilds(Node head, Node tail)
 		{
 			if (head == null) throw new ArgumentNullException("head");
 			if (tail == null) throw new ArgumentNullException("tail");
 			if (head.Parent != tail.Parent) throw new ArgumentException("different parents");
 			
 			Node container = head.Parent;
-			BasicBlockSet mergedNode = new BasicBlockSet(container);
-			
+			Node mergedNode;
 			// Get type
 			if (tail.Successors.Contains(head)) {
-				mergedNode.type = BasicBlockSetType.Loop;
+				mergedNode = new Loop(container);
 			} else {
-				mergedNode.type = BasicBlockSetType.Acyclic;
+				mergedNode = new AcyclicGraph(container);
 			}
-			
-			BasicBlockSet headAsSet = head as BasicBlockSet;
-			BasicBlockSet tailAsSet = tail as BasicBlockSet;
 			
 			// Add head
 			if (head is BasicBlock) {
 				mergedNode.HeadChild = head;
 				mergedNode.Childs.Add(head);
-			} else if (headAsSet != null && headAsSet.type == BasicBlockSetType.Acyclic) {
-				mergedNode.HeadChild = headAsSet.HeadChild;
-				mergedNode.Childs.AddRange(headAsSet.Childs);
-			} else if (headAsSet != null && headAsSet.type == BasicBlockSetType.Loop) {
-				mergedNode.HeadChild = headAsSet;
-				mergedNode.Childs.Add(headAsSet);
+			} else if (head is AcyclicGraph) {
+				mergedNode.HeadChild = ((AcyclicGraph)head).HeadChild;
+				mergedNode.Childs.AddRange(((AcyclicGraph)head).Childs);
+			} else if (head is Loop) {
+				mergedNode.HeadChild = head;
+				mergedNode.Childs.Add(head);
 			} else {
-				throw new Exception("Invalid head");
+				throw new Exception("Invalid head type");
 			}
 			
 			// Add tail
 			if (tail is BasicBlock) {
 				mergedNode.Childs.Add(tail);
-			} else if (tailAsSet != null && tailAsSet.type == BasicBlockSetType.Acyclic) {
-				mergedNode.Childs.AddRange(tailAsSet.Childs);
-			} else if (tailAsSet != null && tailAsSet.type == BasicBlockSetType.Loop) {
-				mergedNode.Childs.Add(tailAsSet);
+			} else if (tail is AcyclicGraph) {
+				mergedNode.Childs.AddRange(((AcyclicGraph)tail).Childs);
+			} else if (tail is Loop) {
+				mergedNode.Childs.Add(tail);
 			} else {
-				throw new Exception("Invalid tail");
+				throw new Exception("Invalid tail type");
 			}
 			
 			// Remove links between the head and tail
