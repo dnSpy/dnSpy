@@ -4,65 +4,79 @@ using System.Collections.Generic;
 
 namespace Decompiler
 {
-	public class Set<T>: List<T>
+	public class Set<T>: System.Collections.ObjectModel.Collection<T>
 	{
+		public void AddRange(IEnumerable<T> items)
+		{
+			foreach(T item in items) {
+				this.Add(item);
+			}
+		}
 		
+		protected override void InsertItem(int index, T item)
+		{
+			if (!this.Contains(item)) {
+				base.InsertItem(index, item);
+			}
+		}
 	}
 	
+	public abstract class Node
+	{
+		Node parent;
+		Node headChild;
+		Set<Node> childs = new Set<Node>();
+		Set<Node> predecessors = new Set<Node>();
+		Set<Node> successors = new Set<Node>();
+		
+		public Node Parent {
+			get { return parent; }
+		}
+		
+		public Node HeadChild {
+			get { return headChild; }
+			protected set { headChild = value; }
+		}
+		
+		public Set<Node> Childs {
+			get { return childs; }
+		}
+		
+		public Set<Node> Predecessors {
+			get { return predecessors; }
+		}
+		
+		public Set<Node> Successors {
+			get { return successors; }
+		}
+		
+		public Node(Node parent)
+		{
+			this.parent = parent;
+		}
+	}
 	
-	public class BasicBlock
+	public class BasicBlock: Node
 	{
 		int id;
-		BasicBlockSet owner;
-		Set<BasicBlock> predecessors;
-		public Set<BasicBlock> successors;
-		BasicBlock fallThroughSuccessor;
-		BasicBlock branchSuccessor;
 		List<StackExpression> body = new List<StackExpression>();
-		
-		#region Peoperties
 		
 		public int Id {
 			get { return id; }
-			set { id = value; }
-		}
-		
-		public BasicBlockSet Owner {
-			get { return owner; }
-			set { owner = value; }
-		}
-		
-		public Set<BasicBlock> Predecessors {
-			get { return predecessors; }
-			set { predecessors = value; }
-		}
-		
-		public Set<BasicBlock> Successors {
-			get { return successors; }
-			set { successors = value; }
-		}
-		
-		public BasicBlock FallThroughSuccessor {
-			get { return fallThroughSuccessor; }
-			set { fallThroughSuccessor = value; }
-		}
-		
-		public BasicBlock BranchSuccessor {
-			get { return branchSuccessor; }
-			set { branchSuccessor = value; }
 		}
 		
 		public List<StackExpression> Body {
 			get { return body; }
-			set { body = value; }
 		}
 		
-		#endregion
+		public BasicBlock(Node parent, int id): base(parent)
+		{
+			this.id = id;
+		}
 		
 		public override string ToString()
 		{
-			//return string.Format("BackBlock {0} ({1} expressions)", id, body.Count);
-			return string.Format("BackBlock {0}", id, body.Count);
+			return string.Format("BasicBlock {0}", id, body.Count);
 		}
 	}
 	
@@ -72,98 +86,25 @@ namespace Decompiler
 		Loop,
 	}
 	
-	public class BasicBlockSet
+	// TODO: Split into two classes?
+	public class BasicBlockSet: Node
 	{
-		BasicBlockSet owner;
 		BasicBlockSetType type;
-		
-		object head;
-		Set<object> elements = new Set<object>();
-		
-		Set<BasicBlock> BasicBlockSuccessors;
-		
-		BasicBlock headBasicBlock {
-			get {
-				return null;
-			}
-		}
-		
-		public BasicBlockSet Owner {
-			get { return owner; }
-		}
 		
 		public BasicBlockSetType Type {
 			get { return type; }
 		}
 		
-		public object Head {
-			get { return head; }
-		}
-		
-		public Set<object> Elements {
-			get { return elements; }
-		}
-		
-		
-		BasicBlockSet()
+		BasicBlockSet(Node parent): base(parent)
 		{
 			
 		}
 		
-		public BasicBlockSet(object head, object tail)
-		{
-			if (head == null) throw new ArgumentNullException("head");
-			if (tail == null) throw new ArgumentNullException("tail");
-			
-			BasicBlockSet headAsSet = head as BasicBlockSet;
-			BasicBlockSet tailAsSet = tail as BasicBlockSet;
-			
-			// Add head
-			if (head is BasicBlock) {
-				this.head = head;
-				this.elements.Add(head);
-			} else if (headAsSet != null && headAsSet.type == BasicBlockSetType.Acyclic) {
-				this.head = headAsSet.head;
-				this.elements.AddRange(headAsSet.elements);
-			} else if (headAsSet != null && headAsSet.type == BasicBlockSetType.Loop) {
-				this.head = headAsSet;
-				this.elements.Add(headAsSet);
-			} else {
-				throw new Exception("Invalid head");
-			}
-			
-			// Add tail
-			if (tail is BasicBlock) {
-				this.elements.Add(tail);
-			} else if (tailAsSet != null && tailAsSet.type == BasicBlockSetType.Acyclic) {
-				this.elements.AddRange(tailAsSet.elements);
-			} else if (tailAsSet != null && tailAsSet.type == BasicBlockSetType.Loop) {
-				this.elements.Add(tailAsSet);
-			} else {
-				throw new Exception("Invalid tail");
-			}
-			
-			// Get type
-			if (tail is BasicBlock) {
-				if (((BasicBlock)tail).successors.Contains(this.headBasicBlock)) {
-					this.type = BasicBlockSetType.Loop;
-				} else {
-					this.type = BasicBlockSetType.Acyclic;
-				}
-			} else if (tailAsSet != null) {
-				if (tailAsSet.BasicBlockSuccessors.Contains(this.headBasicBlock)) {
-					
-				}
-			} else {
-				throw new Exception("Invalid tail");
-			}
-		}
-		
-		public BasicBlockSet(StackExpressionCollection exprs)
+		// TODO: Add links between the generated BasicBlocks
+		public BasicBlockSet(StackExpressionCollection exprs): base(null)
 		{
 			if (exprs.Count == 0) throw new ArgumentException("Count == 0", "exprs");
 			
-			this.owner = null;
 			this.type = BasicBlockSetType.MethodBody;
 			
 			BasicBlock basicBlock = null;
@@ -174,14 +115,111 @@ namespace Decompiler
 				//  - last expression was branch
 				//  - this expression is branch target
 				if (i == 0 || exprs[i - 1].BranchTarget != null || exprs[i].BranchesHere.Count > 0){
-					basicBlock = new BasicBlock();
-					this.elements.Add(basicBlock);
-					basicBlock.Id = basicBlockId++;
+					basicBlock = new BasicBlock(this, basicBlockId++);
+					this.Childs.Add(basicBlock);
 				}
 				basicBlock.Body.Add(exprs[i]);
 			}
 			
-			this.head = this.elements[0];
+			this.HeadChild = this.Childs[0];
+		}
+		
+		public void Optimize()
+		{
+			bool optimized;
+			do {
+				optimized = false;
+				foreach(Node child in this.Childs) {
+					if (child.Predecessors.Count == 1) {
+						Node predecessor = child.Predecessors[0];
+						MergeNodes(predecessor, child);
+						optimized = true;
+						break; // Collection was modified; restart
+					}
+				}
+			} while (optimized);
+		}
+		
+		static void MergeNodes(Node head, Node tail)
+		{
+			if (head == null) throw new ArgumentNullException("head");
+			if (tail == null) throw new ArgumentNullException("tail");
+			if (head.Parent != tail.Parent) throw new ArgumentException("different parents");
+			
+			Node container = head.Parent;
+			BasicBlockSet mergedNode = new BasicBlockSet(container);
+			
+			// Get type
+			if (tail.Successors.Contains(head)) {
+				mergedNode.type = BasicBlockSetType.Loop;
+			} else {
+				mergedNode.type = BasicBlockSetType.Acyclic;
+			}
+			
+			BasicBlockSet headAsSet = head as BasicBlockSet;
+			BasicBlockSet tailAsSet = tail as BasicBlockSet;
+			
+			// Add head
+			if (head is BasicBlock) {
+				mergedNode.HeadChild = head;
+				mergedNode.Childs.Add(head);
+			} else if (headAsSet != null && headAsSet.type == BasicBlockSetType.Acyclic) {
+				mergedNode.HeadChild = headAsSet.HeadChild;
+				mergedNode.Childs.AddRange(headAsSet.Childs);
+			} else if (headAsSet != null && headAsSet.type == BasicBlockSetType.Loop) {
+				mergedNode.HeadChild = headAsSet;
+				mergedNode.Childs.Add(headAsSet);
+			} else {
+				throw new Exception("Invalid head");
+			}
+			
+			// Add tail
+			if (tail is BasicBlock) {
+				mergedNode.Childs.Add(tail);
+			} else if (tailAsSet != null && tailAsSet.type == BasicBlockSetType.Acyclic) {
+				mergedNode.Childs.AddRange(tailAsSet.Childs);
+			} else if (tailAsSet != null && tailAsSet.type == BasicBlockSetType.Loop) {
+				mergedNode.Childs.Add(tailAsSet);
+			} else {
+				throw new Exception("Invalid tail");
+			}
+			
+			// Remove links between the head and tail
+			if (head.Successors.Contains(tail)) {
+				head.Successors.Remove(tail);
+				tail.Predecessors.Remove(head);
+			}
+			if (tail.Successors.Contains(head)) {
+				tail.Successors.Remove(head);
+				head.Predecessors.Remove(tail);
+			}
+			
+			Relink(head, mergedNode);
+			Relink(tail, mergedNode);
+			
+			// Remove the old nodes and add the merged node
+			container.Childs.Remove(head);
+			container.Childs.Remove(tail);
+			container.Childs.Add(mergedNode);
+		}
+		
+		static void Relink(Node node, Node target)
+		{
+			// Relink all neighbours to the target node
+			foreach(Node predecessor in node.Predecessors) {
+				predecessor.Successors.Remove(node);
+				predecessor.Successors.Add(target);
+			}
+			foreach(Node successor in node.Successors) {
+				successor.Predecessors.Remove(node);
+				successor.Predecessors.Add(target);
+			}
+			
+			// Move our pointers to the target node
+			target.Predecessors.AddRange(node.Predecessors);
+			target.Successors.AddRange(node.Successors);
+			node.Predecessors.Clear();
+			node.Successors.Clear();
 		}
 	}
 }

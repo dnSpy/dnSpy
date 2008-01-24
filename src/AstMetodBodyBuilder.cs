@@ -37,8 +37,8 @@ namespace Decompiler
 //				astBlock.Children.Add(astLocalVar);
 			}
 			
-			for(int b = 0; b < basicBlockSet.Elements.Count; b++) {
-				BasicBlock basicBlock = (BasicBlock)basicBlockSet.Elements[b];
+			for(int b = 0; b < basicBlockSet.Childs.Count; b++) {
+				BasicBlock basicBlock = (BasicBlock)basicBlockSet.Childs[b];
 				astBlock.Children.Add(MakeComment(basicBlock.ToString()));
 				for(int i = 0; i < basicBlock.Body.Count; i++) {
 					StackExpression expr = basicBlock.Body[i];
