@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using Mono.Cecil.Cil;
+
 namespace Decompiler.ControlFlow
 {
 	public class MethodBodyGraph: Node
@@ -24,14 +26,20 @@ namespace Decompiler.ControlFlow
 				exprs[i].BasicBlock = basicBlock;
 			}
 			
-			// Add fall-though links
+			// Add fall-through links
 			for(int i = 0; i < exprs.Count - 1; i++) {
 				BasicBlock node = exprs[i].BasicBlock;
 				BasicBlock target = exprs[i + 1].BasicBlock;
-				if (node != target) {
-					node.Successors.Add(target);
-					target.Predecessors.Add(node);
-				}
+				
+				// Still same basic block - ignore
+				if (node == target) continue;
+				
+				// Non-conditional branch does not fall-through
+				if (exprs[i].LastByteCode.OpCode.Code == Code.Br) continue;
+				
+				node.FallThroughBasicBlock = target;
+				node.Successors.Add(target);
+				target.Predecessors.Add(node);
 			}
 			
 			// Add branch links
@@ -39,6 +47,8 @@ namespace Decompiler.ControlFlow
 				if (exprs[i].BranchTarget != null) {
 					BasicBlock node = exprs[i].BasicBlock;
 					BasicBlock target = exprs[i].BranchTarget.BasicBlock;
+					
+					node.BranchBasicBlock = target;
 					node.Successors.Add(target);
 					target.Predecessors.Add(node);
 				}
@@ -65,15 +75,21 @@ namespace Decompiler.ControlFlow
 	public class BasicBlock: Node
 	{
 		List<StackExpression> body = new List<StackExpression>();
-		
-		public string Label {
-			get {
-				return "BasicBlock_" + ID;
-			}
-		}
+		BasicBlock fallThroughBasicBlock;
+		BasicBlock branchBasicBlock;
 		
 		public List<StackExpression> Body {
 			get { return body; }
+		}
+		
+		public BasicBlock FallThroughBasicBlock {
+			get { return fallThroughBasicBlock; }
+			set { fallThroughBasicBlock = value; }
+		}
+		
+		public BasicBlock BranchBasicBlock {
+			get { return branchBasicBlock; }
+			set { branchBasicBlock = value; }
 		}
 		
 		public BasicBlock(Node parent): base(parent)

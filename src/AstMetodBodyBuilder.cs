@@ -64,12 +64,19 @@ namespace Decompiler
 		
 		IEnumerable<Ast.INode> TransformNode(Node node)
 		{
-			yield return MakeComment("// " + node.ToString());
+			if (Options.NodeComments) {
+				yield return MakeComment("// " + node.ToString());
+			}
+			
+			yield return new Ast.LabelStatement(node.Label);
 			
 			if (node is BasicBlock) {
-				yield return new Ast.LabelStatement(((BasicBlock)node).Label);
 				foreach(StackExpression expr in ((BasicBlock)node).Body) {
 					yield return TransformExpression(expr);
+				}
+				Node next  = ((BasicBlock)node).FallThroughBasicBlock;
+				if (next != null) {
+					yield return new Ast.GotoStatement(next.Label);
 				}
 			} else if (node is AcyclicGraph) {
 				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
@@ -88,7 +95,9 @@ namespace Decompiler
 				throw new Exception("Bad node type");
 			}
 			
-			yield return MakeComment("");
+			if (Options.NodeComments) {
+				yield return MakeComment("");
+			}
 		}
 		
 		Ast.Statement TransformExpression(StackExpression expr)

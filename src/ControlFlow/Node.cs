@@ -57,6 +57,12 @@ namespace Decompiler.ControlFlow
 			get { return successors; }
 		}
 		
+		public string Label {
+			get {
+				return this.GetType().Name + "_" + ID;
+			}
+		}
+		
 		public Node(Node parent)
 		{
 			this.parent = parent;
@@ -74,6 +80,11 @@ namespace Decompiler.ControlFlow
 				} else {
 					i++; // Next
 				}
+			}
+			// If it result is single acyclic node, eliminate it
+			if (this.Childs.Count == 1 && this.Childs[0] is AcyclicGraph) {
+				this.headChild = this.Childs[0].HeadChild;
+				this.childs = this.Childs[0].Childs;
 			}
 		}
 		

@@ -34,6 +34,7 @@ namespace Decompiler
 			ControlFlow.Node.NextNodeID = 0;
 			Options.CollapseExpression = (int)collapseCount.Value;
 			Options.ReduceGraph = (int)reduceCount.Value;
+			Options.NodeComments = nodeComments.Checked;
 			
 			AssemblyDefinition assembly = AssemblyFactory.GetAssembly(filename);
 			AstBuilder codeDomBuilder = new AstBuilder();
@@ -64,6 +65,11 @@ namespace Decompiler
 		}
 		
 		void ReduceCountValueChanged(object sender, EventArgs e)
+		{
+			Decompile();
+		}
+		
+		void NodeCommentsCheckedChanged(object sender, EventArgs e)
 		{
 			Decompile();
 		}
