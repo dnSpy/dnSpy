@@ -74,9 +74,10 @@ namespace Decompiler
 				foreach(StackExpression expr in ((BasicBlock)node).Body) {
 					yield return TransformExpression(expr);
 				}
-				Node next  = ((BasicBlock)node).FallThroughBasicBlock;
-				if (next != null) {
-					yield return new Ast.GotoStatement(next.Label);
+				Node fallThroughNode = ((BasicBlock)node).FallThroughBasicBlock;
+				// If there is default branch and it is not the following node
+				if (fallThroughNode != null && fallThroughNode != node.NextNode) {
+					yield return MakeBranchCommand(node, fallThroughNode);
 				}
 			} else if (node is AcyclicGraph) {
 				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
@@ -152,16 +153,37 @@ namespace Decompiler
 			return MakeCodeDomExpression(methodDef, expr.LastByteCode, allArgs.ToArray());
 		}
 		
+		static Ast.Statement MakeBranchCommand(Node node, Node targetNode)
+		{
+			// Propagate target up to the top most scope
+			while (targetNode.Parent != null && targetNode.Parent.HeadChild == targetNode) {
+				targetNode = targetNode.Parent;
+			}
+			// If branches to the start of encapsulating loop
+			if (node.Parent is Loop && targetNode == node.Parent) {
+				return new Ast.ContinueStatement();
+			}
+			// If branches outside the encapsulating loop
+			if (node.Parent is Loop && targetNode == node.Parent.NextNode) {
+				return new Ast.BreakStatement();
+			}
+			return new Ast.GotoStatement(targetNode.Label);
+		}
+		
 		static object MakeCodeDomExpression(MethodDefinition methodDef, ByteCode byteCode, params Ast.Expression[] args)
 		{
 			OpCode opCode = byteCode.OpCode;
 			object operand = byteCode.Operand;
 			Ast.TypeReference operandAsTypeRef = operand is Cecil.TypeReference ? new Ast.TypeReference(((Cecil.TypeReference)operand).FullName) : null;
 			ByteCode operandAsByteCode = operand as ByteCode;
-			string operandAsByteCodeLabel = operand is ByteCode ? ((ByteCode)operand).Expression.BasicBlock.Label : null;
 			Ast.Expression arg1 = args.Length >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Length >= 2 ? args[1] : null;
 			Ast.Expression arg3 = args.Length >= 3 ? args[2] : null;
+			
+			Ast.Statement branchCommand = null;
+			if (operand is ByteCode) {
+				branchCommand = MakeBranchCommand(byteCode.Expression.BasicBlock, ((ByteCode)operand).Expression.BasicBlock);
+			}
 			
 			switch(opCode.Code) {
 				#region Arithmetic
@@ -219,19 +241,19 @@ namespace Decompiler
 					case Code.Stelem_Any: throw new NotImplementedException();
 				#endregion
 				#region Branching
-					case Code.Br:      return new Ast.GotoStatement(operandAsByteCodeLabel);
-					case Code.Brfalse: return new Ast.IfElseStatement(new Ast.UnaryOperatorExpression(arg1, UnaryOperatorType.Not), new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Brtrue:  return new Ast.IfElseStatement(arg1, new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Beq:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Bge:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Bge_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Bgt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Bgt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Ble:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Ble_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Blt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Blt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
-					case Code.Bne_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2), new Ast.GotoStatement(operandAsByteCodeLabel));
+					case Code.Br:      return branchCommand;
+					case Code.Brfalse: return new Ast.IfElseStatement(new Ast.UnaryOperatorExpression(arg1, UnaryOperatorType.Not), branchCommand);
+					case Code.Brtrue:  return new Ast.IfElseStatement(arg1, branchCommand);
+					case Code.Beq:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2), branchCommand);
+					case Code.Bge:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), branchCommand);
+					case Code.Bge_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), branchCommand);
+					case Code.Bgt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), branchCommand);
+					case Code.Bgt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), branchCommand);
+					case Code.Ble:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), branchCommand);
+					case Code.Ble_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), branchCommand);
+					case Code.Blt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), branchCommand);
+					case Code.Blt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), branchCommand);
+					case Code.Bne_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2), branchCommand);
 				#endregion
 				#region Comparison
 					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, ConvertIntToBool(arg2));

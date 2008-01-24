@@ -4,16 +4,16 @@ using System.Collections.Generic;
 
 namespace Decompiler.ControlFlow
 {
-	public class Set<T>: System.Collections.ObjectModel.Collection<T>
+	public class NodeCollection: System.Collections.ObjectModel.Collection<Node>
 	{
-		public void AddRange(IEnumerable<T> items)
+		public void AddRange(IEnumerable<Node> items)
 		{
-			foreach(T item in items) {
+			foreach(Node item in items) {
 				this.Add(item);
 			}
 		}
 		
-		protected override void InsertItem(int index, T item)
+		protected override void InsertItem(int index, Node item)
 		{
 			if (!this.Contains(item)) {
 				base.InsertItem(index, item);
@@ -28,9 +28,9 @@ namespace Decompiler.ControlFlow
 		int id;
 		Node parent;
 		Node headChild;
-		Set<Node> childs = new Set<Node>();
-		Set<Node> predecessors = new Set<Node>();
-		Set<Node> successors = new Set<Node>();
+		NodeCollection childs = new NodeCollection();
+		NodeCollection predecessors = new NodeCollection();
+		NodeCollection successors = new NodeCollection();
 		
 		public int ID {
 			get { return id; }
@@ -38,6 +38,7 @@ namespace Decompiler.ControlFlow
 		
 		public Node Parent {
 			get { return parent; }
+			set { parent = value; }
 		}
 		
 		public Node HeadChild {
@@ -45,16 +46,29 @@ namespace Decompiler.ControlFlow
 			protected set { headChild = value; }
 		}
 		
-		public Set<Node> Childs {
+		public NodeCollection Childs {
 			get { return childs; }
 		}
 		
-		public Set<Node> Predecessors {
+		public NodeCollection Predecessors {
 			get { return predecessors; }
 		}
 		
-		public Set<Node> Successors {
+		public NodeCollection Successors {
 			get { return successors; }
+		}
+		
+		public Node NextNode {
+			get {
+				if (this.Parent == null) throw new Exception("Does not have a parent");
+				int myIndex = this.Parent.Childs.IndexOf(this);
+				int index = myIndex + 1;
+				if (0 <= index && index < this.Parent.Childs.Count) {
+					return this.Parent.Childs[index];
+				} else {
+					return null;
+				}
+			}
 		}
 		
 		public string Label {
@@ -85,6 +99,14 @@ namespace Decompiler.ControlFlow
 			if (this.Childs.Count == 1 && this.Childs[0] is AcyclicGraph) {
 				this.headChild = this.Childs[0].HeadChild;
 				this.childs = this.Childs[0].Childs;
+				this.UpdateParentOfChilds();
+			}
+		}
+		
+		void UpdateParentOfChilds()
+		{
+			foreach(Node child in this.Childs) {
+				child.Parent = this;
 			}
 		}
 		
@@ -127,6 +149,8 @@ namespace Decompiler.ControlFlow
 			} else {
 				throw new Exception("Invalid tail type");
 			}
+			
+			mergedNode.UpdateParentOfChilds();
 			
 			// Remove links between the head and tail
 			if (head.Successors.Contains(tail)) {
@@ -175,39 +199,50 @@ namespace Decompiler.ControlFlow
 			sb.Append(ID);
 			sb.Append(" ");
 			
-			if (this.Predecessors.Count > 0 || this.Successors.Count > 0) {
-				sb.Append("(");
-				if (this.Predecessors.Count > 0) {
-					sb.Append("Predecessors:");
-					bool isFirst = true;
-					foreach(Node predecessor in this.Predecessors) {
-						if (isFirst) {
-							isFirst = false;
-						} else {
-							sb.Append(",");
-						}
-						sb.Append(predecessor.ID);
+			sb.Append("(");
+			
+			if (this.Predecessors.Count > 0) {
+				sb.Append("Predecessors:");
+				bool isFirst = true;
+				foreach(Node predecessor in this.Predecessors) {
+					if (isFirst) {
+						isFirst = false;
+					} else {
+						sb.Append(",");
 					}
+					sb.Append(predecessor.ID);
 				}
-				
-				if (this.Predecessors.Count > 0 && this.Successors.Count > 0) {
-					sb.Append(" ");
-				}
-				
-				if (this.Successors.Count > 0) {
-					sb.Append("Successors:");
-					bool isFirst = true;
-					foreach(Node successor in this.Successors) {
-						if (isFirst) {
-							isFirst = false;
-						} else {
-							sb.Append(",");
-						}
-						sb.Append(successor.ID);
-					}
-				}
-				sb.Append(")");
+				sb.Append(" ");
 			}
+			
+			if (this.Successors.Count > 0) {
+				sb.Append("Successors:");
+				bool isFirst = true;
+				foreach(Node successor in this.Successors) {
+					if (isFirst) {
+						isFirst = false;
+					} else {
+						sb.Append(",");
+					}
+					sb.Append(successor.ID);
+				}
+				sb.Append(" ");
+			}
+			
+			if (this.Parent != null) {
+				sb.Append("Parent:");
+				sb.Append(this.Parent.ID);
+			}
+			sb.Append(" ");
+			
+			if (this.HeadChild != null) {
+				sb.Append("Head:");
+				sb.Append(this.HeadChild.ID);
+			}
+			sb.Append(" ");
+			
+			sb.Length = sb.Length - 1;
+			sb.Append(")");
 			return sb.ToString();
 		}
 	}
