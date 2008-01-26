@@ -13,6 +13,24 @@ namespace Decompiler.ControlFlow
 			}
 		}
 		
+		public void RemoveRange(IEnumerable<Node> items)
+		{
+			foreach(Node item in items) {
+				this.Remove(item);
+			}
+		}
+		
+		public static NodeCollection Intersection(NodeCollection collectionA, NodeCollection collectionB)
+		{
+			NodeCollection result = new NodeCollection();
+			foreach(Node a in collectionA) {
+				if (collectionB.Contains(a)) {
+					result.Add(a);
+				}
+			}
+			return result;
+		}
+		
 		protected override void InsertItem(int index, Node item)
 		{
 			if (!this.Contains(item)) {
@@ -106,6 +124,23 @@ namespace Decompiler.ControlFlow
 			this.id = NextNodeID++;
 		}
 		
+		NodeCollection GetReachableNodes()
+		{
+			NodeCollection accumulator = new NodeCollection();
+			AddReachableNode(accumulator, this);
+			return accumulator;
+		}
+		
+		static void AddReachableNode(NodeCollection accumulator, Node node)
+		{
+			if (!accumulator.Contains(node)) {
+				accumulator.Add(node);
+				foreach(Node successor in node.Successors) {
+					AddReachableNode(successor, accumulator);
+				}
+			}
+		}
+		
 		void GetBasicBlockSuccessors(NodeCollection accumulator)
 		{
 			BasicBlock me = this as BasicBlock;
@@ -163,6 +198,23 @@ namespace Decompiler.ControlFlow
 				this.headChild = this.Childs[0].HeadChild;
 				this.childs = this.Childs[0].Childs;
 				this.UpdateParentOfChilds();
+			}
+			OptimizeIf();
+		}
+		
+		public void OptimizeIf()
+		{
+			Node conditionNode = this.HeadChild;
+			// Find conditionNode (the start)
+			while(true) {
+				if (conditionNode is BasicBlock && conditionNode.Successors.Count == 2) {
+					break; // Found
+				} else if (conditionNode.Successors == 1) {
+					conditionNode = conditionNode.Successors[0];
+					continue; // Next
+				} else {
+					return;
+				}
 			}
 		}
 		
