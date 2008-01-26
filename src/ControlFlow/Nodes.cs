@@ -7,7 +7,6 @@ namespace Decompiler.ControlFlow
 {
 	public class MethodBodyGraph: Node
 	{
-		// TODO: Add links between the generated BasicBlocks
 		public MethodBodyGraph(StackExpressionCollection exprs): base(null)
 		{
 			if (exprs.Count == 0) throw new ArgumentException("Count == 0", "exprs");
@@ -26,7 +25,7 @@ namespace Decompiler.ControlFlow
 				exprs[i].BasicBlock = basicBlock;
 			}
 			
-			// Add fall-through links
+			// Add fall-through links to BasicBlocks
 			for(int i = 0; i < exprs.Count - 1; i++) {
 				BasicBlock node = exprs[i].BasicBlock;
 				BasicBlock target = exprs[i + 1].BasicBlock;
@@ -38,21 +37,20 @@ namespace Decompiler.ControlFlow
 				if (exprs[i].LastByteCode.OpCode.Code == Code.Br) continue;
 				
 				node.FallThroughBasicBlock = target;
-				node.Successors.Add(target);
-				target.Predecessors.Add(node);
 			}
 			
-			// Add branch links
+			// Add branch links to BasicBlocks
 			for(int i = 0; i < exprs.Count; i++) {
 				if (exprs[i].BranchTarget != null) {
 					BasicBlock node = exprs[i].BasicBlock;
 					BasicBlock target = exprs[i].BranchTarget.BasicBlock;
 					
 					node.BranchBasicBlock = target;
-					node.Successors.Add(target);
-					target.Predecessors.Add(node);
 				}
 			}
+			
+			// Link all nodes
+			RebuildNodeLinks();
 			
 			this.HeadChild = this.Childs[0];
 		}

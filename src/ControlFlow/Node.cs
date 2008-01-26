@@ -19,6 +19,29 @@ namespace Decompiler.ControlFlow
 				base.InsertItem(index, item);
 			}
 		}
+		
+		public bool ContainsRecursive(Node node)
+		{
+			if (this.Contains(node)) {
+				return true;
+			}
+			foreach(Node item in this.Items) {
+				if (item.Childs.ContainsRecursive(node)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public Node FindContainer(Node node)
+		{
+			foreach(Node item in this.Items) {
+				if (item == node || item.Childs.ContainsRecursive(node)) {
+					return item;
+				}
+			}
+			return null;
+		}
 	}
 	
 	public abstract class Node
@@ -81,6 +104,46 @@ namespace Decompiler.ControlFlow
 		{
 			this.parent = parent;
 			this.id = NextNodeID++;
+		}
+		
+		void GetBasicBlockSuccessors(NodeCollection accumulator)
+		{
+			BasicBlock me = this as BasicBlock;
+			if (me != null) {
+				if (me.FallThroughBasicBlock != null) {
+					accumulator.Add(me.FallThroughBasicBlock);
+				}
+				if (me.BranchBasicBlock != null) {
+					accumulator.Add(me.BranchBasicBlock);
+				}
+			} else {
+				foreach(Node child in this.Childs) {
+					child.GetBasicBlockSuccessors(accumulator);
+				}
+			}
+		}
+		
+		public void RebuildNodeLinks()
+		{
+			foreach(Node child in this.Childs) {
+				NodeCollection successorBasicBlocks = new NodeCollection();
+				child.GetBasicBlockSuccessors(successorBasicBlocks);
+				NodeCollection successorNodes = new NodeCollection();
+				foreach(Node successorBasicBlock in successorBasicBlocks) {
+					Node container = this.Childs.FindContainer(successorBasicBlock);
+					if (container != null) {
+						successorNodes.Add(container);
+					}
+				}
+				// Remove self link
+				if (successorNodes.Contains(child)) {
+					successorNodes.Remove(child);
+				}
+				foreach(Node target in successorNodes) {
+					child.Successors.Add(target);
+					target.Predecessors.Add(child);
+				}
+			}
 		}
 		
 		public void Optimize()
@@ -164,6 +227,8 @@ namespace Decompiler.ControlFlow
 			
 			Relink(head, mergedNode);
 			Relink(tail, mergedNode);
+			
+			mergedNode.RebuildNodeLinks();
 			
 			// Remove the old nodes and add the merged node - replace head with the merged node
 			container.Childs.Remove(tail);
