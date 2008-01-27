@@ -92,6 +92,37 @@ namespace Decompiler
 					ConditionType.While,
 					ConditionPosition.Start
 				);
+			} else if (node is Block) {
+				foreach(Ast.INode inode in TransformNodes(node.Childs)) {
+					yield return inode;
+				}
+			} else if (node is ConditionalNode) {
+				ConditionalNode conditionalNode = (ConditionalNode)node;
+				yield return new Ast.LabelStatement(conditionalNode.Condition.Label);
+				Ast.Statement lastStatement = null;
+				foreach(StackExpression expr in conditionalNode.Condition.Body) {
+					lastStatement = TransformExpression(expr);
+					yield return lastStatement;
+				}
+				Ast.IfElseStatement ifElseStmt = (Ast.IfElseStatement)lastStatement;
+				Ast.Statement oldTrueBody = ifElseStmt.TrueStatement[0];
+				ifElseStmt.TrueStatement.Clear();
+				// Swap the method bodies
+				ifElseStmt.Condition = new Ast.UnaryOperatorExpression(new Ast.ParenthesizedExpression(ifElseStmt.Condition), UnaryOperatorType.Not);
+				
+				Ast.BlockStatement trueBlock = new Ast.BlockStatement();
+				// The block entry code
+				trueBlock.Children.Add(MakeBranchCommand(node, conditionalNode.Condition.FallThroughBasicBlock));
+				// Sugested content
+				trueBlock.Children.AddRange(TransformNode(conditionalNode.TrueBody));
+				ifElseStmt.TrueStatement.Add(trueBlock);
+				
+				Ast.BlockStatement falseBlock = new Ast.BlockStatement();
+				// The block entry code
+				falseBlock.Children.Add(oldTrueBody);
+				// Sugested content
+				falseBlock.Children.AddRange(TransformNode(conditionalNode.FalseBody));
+				ifElseStmt.FalseStatement.Add(falseBlock);
 			} else {
 				throw new Exception("Bad node type");
 			}

@@ -81,20 +81,35 @@ namespace Decompiler.ControlFlow
 		
 		public void MoveTo(Node newNode)
 		{
-			while(this.Count > 0) {
-				this[0].MoveTo(newNode);
+			foreach(Node child in this.Clone()) {
+				child.MoveTo(newNode);
 			}
 		}
 		
 		public void MoveTo(Node newNode, int index)
 		{
-			while(this.Count > 0) {
-				this[0].MoveTo(newNode, index);
+			foreach(Node child in this.Clone()) {
+				child.MoveTo(newNode, index);
 				index++;
 			}
 		}
 		
-		public static NodeCollection Intersection(NodeCollection collectionA, NodeCollection collectionB)
+		public NodeCollection()
+		{
+			
+		}
+		
+		public NodeCollection(IEnumerable<Node> items)
+		{
+			this.AddRange(items);
+		}
+		
+		public NodeCollection Clone()
+		{
+			return new NodeCollection(this);
+		}
+		
+		public static NodeCollection Intersect(NodeCollection collectionA, NodeCollection collectionB)
 		{
 			NodeCollection result = new NodeCollection();
 			foreach(Node a in collectionA) {

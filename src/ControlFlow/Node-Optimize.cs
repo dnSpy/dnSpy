@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Decompiler.ControlFlow
 {
@@ -9,6 +10,7 @@ namespace Decompiler.ControlFlow
 		public void Optimize()
 		{
 			OptimizeLoops();
+			OptimizeIf();
 		}
 		
 		public void OptimizeLoops()
@@ -39,19 +41,12 @@ namespace Decompiler.ControlFlow
 		
 		NodeCollection GetReachableNodes()
 		{
-			NodeCollection accumulator = new NodeCollection();
-			AddReachableNode(accumulator, this);
-			return accumulator;
-		}
-		
-		static void AddReachableNode(NodeCollection accumulator, Node node)
-		{
-			if (!accumulator.Contains(node)) {
-				accumulator.Add(node);
-				foreach(Node successor in node.Successors) {
-					AddReachableNode(accumulator, successor);
-				}
+			NodeCollection reachableNodes = new NodeCollection();
+			reachableNodes.Add(this);
+			for(int i = 0; i < reachableNodes.Count; i++) {
+				reachableNodes.AddRange(reachableNodes[i].Successors);
 			}
+			return reachableNodes;
 		}
 		
 		public void OptimizeIf()
@@ -60,14 +55,47 @@ namespace Decompiler.ControlFlow
 			// Find conditionNode (the start)
 			while(true) {
 				if (conditionNode is BasicBlock && conditionNode.Successors.Count == 2) {
-					break; // Found
+					// Found if start
+					OptimizeIf((BasicBlock)conditionNode);
+					return;
 				} else if (conditionNode.Successors.Count == 1) {
 					conditionNode = conditionNode.Successors[0];
 					continue; // Next
 				} else {
-					return;
+					return; // Just give up
 				}
 			}
+		}
+		
+		public static void OptimizeIf(BasicBlock condition)
+		{
+			Node trueStart = condition.FloatUpToNeighbours(condition.FallThroughBasicBlock);
+			Node falseStart = condition.FloatUpToNeighbours(condition.BranchBasicBlock);
+			Debug.Assert(trueStart != null);
+			Debug.Assert(falseStart != null);
+			Debug.Assert(trueStart != falseStart);
+			
+			NodeCollection trueReachable = trueStart.GetReachableNodes();
+			NodeCollection falseReachable = falseStart.GetReachableNodes();
+			NodeCollection commonReachable = NodeCollection.Intersect(trueReachable, falseReachable);
+			
+			NodeCollection trueNodes = trueReachable.Clone();
+			trueNodes.RemoveRange(commonReachable);
+			NodeCollection falseNodes = falseReachable.Clone();
+			falseNodes.RemoveRange(commonReachable);
+			
+			// Replace the basic block with condition node
+			if (Options.ReduceGraph-- <= 0) return;
+			Node conditionParent = condition.Parent;
+			int conditionIndex = condition.Index; 
+			ConditionalNode conditionalNode = new ConditionalNode(condition);
+			conditionalNode.MoveTo(conditionParent, conditionIndex);
+			
+			if (Options.ReduceGraph-- <= 0) return;
+			trueNodes.MoveTo(conditionalNode.TrueBody);
+			
+			if (Options.ReduceGraph-- <= 0) return;
+			falseNodes.MoveTo(conditionalNode.FalseBody);
 		}
 	}
 }

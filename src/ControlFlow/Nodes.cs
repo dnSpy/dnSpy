@@ -5,6 +5,49 @@ using Mono.Cecil.Cil;
 
 namespace Decompiler.ControlFlow
 {
+	public class BasicBlock: Node
+	{
+		List<StackExpression> body = new List<StackExpression>();
+		List<BasicBlock> basicBlockPredecessors = new List<BasicBlock>();
+		BasicBlock fallThroughBasicBlock;
+		BasicBlock branchBasicBlock;
+		
+		public List<StackExpression> Body {
+			get { return body; }
+		}
+		
+		public List<BasicBlock> BasicBlockPredecessors {
+			get { return basicBlockPredecessors; }
+		}
+		
+		public BasicBlock FallThroughBasicBlock {
+			get { return fallThroughBasicBlock; }
+			set { fallThroughBasicBlock = value; }
+		}
+		
+		public BasicBlock BranchBasicBlock {
+			get { return branchBasicBlock; }
+			set { branchBasicBlock = value; }
+		}
+		
+		public IEnumerable<BasicBlock> BasicBlockSuccessors {
+			get {
+				if (this.FallThroughBasicBlock != null) {
+					yield return this.FallThroughBasicBlock;
+				}
+				if (this.BranchBasicBlock != null) {
+					yield return this.BranchBasicBlock;
+				}
+			}
+		}
+		
+		public bool IsConditionalBranch {
+			get {
+				return fallThroughBasicBlock != null && branchBasicBlock != null;
+			}
+		}
+	}
+	
 	public class MethodBodyGraph: Node
 	{
 		BasicBlock methodEntry;
@@ -69,40 +112,35 @@ namespace Decompiler.ControlFlow
 	{
 	}
 	
-	public class BasicBlock: Node
+	public class Block: Node
 	{
-		List<StackExpression> body = new List<StackExpression>();
-		List<BasicBlock> basicBlockPredecessors = new List<BasicBlock>();
-		BasicBlock fallThroughBasicBlock;
-		BasicBlock branchBasicBlock;
+	}
+	
+	public class ConditionalNode: Node
+	{
+		BasicBlock condition;
+		Block trueBody = new Block();
+		Block falseBody = new Block();
 		
-		public List<StackExpression> Body {
-			get { return body; }
+		public BasicBlock Condition {
+			get { return condition; }
 		}
 		
-		public List<BasicBlock> BasicBlockPredecessors {
-			get { return basicBlockPredecessors; }
+		public Block TrueBody {
+			get { return trueBody; }
 		}
 		
-		public BasicBlock FallThroughBasicBlock {
-			get { return fallThroughBasicBlock; }
-			set { fallThroughBasicBlock = value; }
+		public Block FalseBody {
+			get { return falseBody; }
 		}
 		
-		public BasicBlock BranchBasicBlock {
-			get { return branchBasicBlock; }
-			set { branchBasicBlock = value; }
-		}
-		
-		public IEnumerable<BasicBlock> BasicBlockSuccessors {
-			get {
-				if (this.FallThroughBasicBlock != null) {
-					yield return this.FallThroughBasicBlock;
-				}
-				if (this.BranchBasicBlock != null) {
-					yield return this.BranchBasicBlock;
-				}
-			}
+		public ConditionalNode(BasicBlock condition)
+		{
+			this.condition = condition;
+			
+			condition.MoveTo(this);
+			trueBody.MoveTo(this);
+			falseBody.MoveTo(this);
 		}
 	}
 }

@@ -60,16 +60,12 @@ namespace Decompiler.ControlFlow
 			}
 		}
 		
-		NodeCollection FloatUpToNeighbours(IEnumerable<BasicBlock> basickBlocks)
+		NodeCollection FloatUpToNeighbours(IEnumerable<BasicBlock> basicBlocks)
 		{
 			NodeCollection neighbours = new NodeCollection();
 			if (this.Parent != null) {
-				foreach(BasicBlock basicBlock in basickBlocks) {
-					// Find neighbour coresponding to the target
-					Node targetNode = basicBlock;
-					while(targetNode != null && targetNode.Parent != this.Parent) {
-						targetNode = targetNode.Parent;
-					}
+				foreach(BasicBlock basicBlock in basicBlocks) {
+					Node targetNode = FloatUpToNeighbours(basicBlock);
 					// The target is outside the scope of the parent node
 					if (targetNode == null) continue;
 					// This child is a loop
@@ -79,6 +75,16 @@ namespace Decompiler.ControlFlow
 				}
 			}
 			return neighbours;
+		}
+		
+		Node FloatUpToNeighbours(BasicBlock basicBlock)
+		{
+			// Find neighbour coresponding to the basickBlock
+			Node targetNode = basicBlock;
+			while(targetNode != null && targetNode.Parent != this.Parent) {
+				targetNode = targetNode.Parent;
+			}
+			return targetNode;
 		}
 		
 		public NodeCollection Predecessors {
