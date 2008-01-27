@@ -13,9 +13,16 @@ namespace Decompiler.Transforms.Ast
 			
 			// Remove redundant jump at the end of block
 			INode lastStmt = blockStatement.Children[blockStatement.Children.Count - 1];
-			// End of loop
+			// End of while loop
 			if (lastStmt is ContinueStatement && 
 			    blockStatement.Parent is DoLoopStatement)
+			{
+				blockStatement.Children.Remove(lastStmt);
+				return null;
+			}
+			// End of for loop
+			if (lastStmt is ContinueStatement && 
+			    blockStatement.Parent is ForStatement)
 			{
 				blockStatement.Children.Remove(lastStmt);
 				return null;

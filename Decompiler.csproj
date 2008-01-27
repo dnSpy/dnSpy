@@ -66,6 +66,7 @@
     <Compile Include="src\Transforms\Ast\RemoveDeadLabels.cs" />
     <Compile Include="src\Transforms\Ast\RemoveEmptyElseBody.cs" />
     <Compile Include="src\Transforms\Ast\RemoveGotos.cs" />
+    <Compile Include="src\Transforms\Ast\RestoreLoop.cs" />
     <Compile Include="src\Transforms\Ast\SimplifyTypeReferences.cs" />
     <Compile Include="src\Util.cs" />
     <EmbeddedResource Include="src\MainForm.resx">

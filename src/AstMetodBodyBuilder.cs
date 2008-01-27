@@ -86,11 +86,11 @@ namespace Decompiler
 			} else if (node is Loop) {
 				Ast.MyBlockStatement blockStatement = new Ast.MyBlockStatement();
 				blockStatement.Children.AddRange(TransformNodes(node.Childs));
-				yield return new Ast.DoLoopStatement(
-					new Ast.PrimitiveExpression(true, true.ToString()),
-					blockStatement,
-					ConditionType.While,
-					ConditionPosition.Start
+				yield return new Ast.ForStatement(
+					null,
+					null,
+					null,
+					blockStatement
 				);
 			} else if (node is Block) {
 				foreach(Ast.INode inode in TransformNodes(node.Childs)) {
