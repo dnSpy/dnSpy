@@ -18,16 +18,16 @@ namespace Decompiler
 		static Dictionary<string, Cecil.TypeReference> localVarTypes = new Dictionary<string, Cecil.TypeReference>();
 		static Dictionary<string, bool> localVarDefined = new Dictionary<string, bool>();
 		
-		public static BlockStatement CreateMetodBody(MethodDefinition methodDef)
+		public static MyBlockStatement CreateMetodBody(MethodDefinition methodDef)
 		{
 			AstMetodBodyBuilder builder = new AstMetodBodyBuilder();
 			builder.methodDef = methodDef;
 			return builder.CreateMetodBody();
 		}
 		
-		public BlockStatement CreateMetodBody()
+		public MyBlockStatement CreateMetodBody()
 		{
-			Ast.BlockStatement astBlock = new Ast.BlockStatement();
+			Ast.MyBlockStatement astBlock = new Ast.MyBlockStatement();
 			
 			methodDef.Body.Simplify();
 			
@@ -50,6 +50,7 @@ namespace Decompiler
 			
 			astBlock.Children.AddRange(TransformNodes(bodyGraph.Childs));
 			
+			astBlock.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
 			astBlock.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
 			
 			return astBlock;
@@ -78,15 +79,15 @@ namespace Decompiler
 				}
 				Node fallThroughNode = ((BasicBlock)node).FallThroughBasicBlock;
 				// If there is default branch and it is not the following node
-				if (fallThroughNode != null && fallThroughNode != node.NextNode) {
+				if (fallThroughNode != null) {
 					yield return Ast.MyGotoStatement.Create(node, fallThroughNode);
 				}
 			} else if (node is AcyclicGraph) {
-				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
+				Ast.MyBlockStatement blockStatement = new Ast.MyBlockStatement();
 				blockStatement.Children.AddRange(TransformNodes(node.Childs));
 				yield return blockStatement;
 			} else if (node is Loop) {
-				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
+				Ast.MyBlockStatement blockStatement = new Ast.MyBlockStatement();
 				blockStatement.Children.AddRange(TransformNodes(node.Childs));
 				yield return new Ast.DoLoopStatement(
 					new Ast.PrimitiveExpression(true, true.ToString()),
@@ -112,14 +113,14 @@ namespace Decompiler
 				// Swap the method bodies
 				ifElseStmt.Condition = new Ast.UnaryOperatorExpression(new Ast.ParenthesizedExpression(ifElseStmt.Condition), UnaryOperatorType.Not);
 				
-				Ast.BlockStatement trueBlock = new Ast.BlockStatement();
+				Ast.MyBlockStatement trueBlock = new Ast.MyBlockStatement();
 				// The block entry code
 				trueBlock.Children.Add(Ast.MyGotoStatement.Create(node, conditionalNode.Condition.FallThroughBasicBlock));
 				// Sugested content
 				trueBlock.Children.AddRange(TransformNode(conditionalNode.TrueBody));
 				ifElseStmt.TrueStatement.Add(trueBlock);
 				
-				Ast.BlockStatement falseBlock = new Ast.BlockStatement();
+				Ast.MyBlockStatement falseBlock = new Ast.MyBlockStatement();
 				// The block entry code
 				falseBlock.Children.Add(oldTrueBody);
 				// Sugested content
