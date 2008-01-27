@@ -12,6 +12,7 @@ namespace Decompiler.Transforms.Ast
 		{
 			base.VisitForStatement(forStatement, data);
 			
+			// Restore loop condition
 			if (forStatement.Condition.IsNull &&
 				forStatement.EmbeddedStatement.Children.Count >= 3)
 			{
@@ -25,13 +26,28 @@ namespace Decompiler.Transforms.Ast
 				{
 					MyGotoStatement gotoStmt = condition.TrueStatement[0] as MyGotoStatement;
 					if (gotoStmt != null && gotoStmt.NodeLabel == label.NodeLabel) {
-						forStatement.EmbeddedStatement.Children.RemoveAt(0);
-						forStatement.EmbeddedStatement.Children.RemoveAt(0);
+						forStatement.EmbeddedStatement.Children.Remove(condition);
+						forStatement.EmbeddedStatement.Children.Remove(breakStmt);
 						gotoStmt.NodeLabel.ReferenceCount--;
 						forStatement.Condition = condition.Condition;
 					}
 				}
 			}
+			
+			// Restore loop iterator
+			if (forStatement.EmbeddedStatement.Children.Count > 0 &&
+			    forStatement.Iterator.Count == 0)
+			{
+				ExpressionStatement lastStmt = forStatement.EmbeddedStatement.Children[forStatement.EmbeddedStatement.Children.Count - 1] as ExpressionStatement;
+				if (lastStmt != null) {
+					AssignmentExpression assign = lastStmt.Expression as AssignmentExpression;
+					if (assign != null) {
+						forStatement.EmbeddedStatement.Children.Remove(lastStmt);
+						forStatement.Iterator.Add(lastStmt);
+					}
+				}
+			}
+			
 			return null;
 		}
 	}
