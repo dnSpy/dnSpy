@@ -64,6 +64,7 @@
     <Compile Include="src\StackExpression.cs" />
     <Compile Include="src\StackExpressionCollection.cs" />
     <Compile Include="src\Transforms\Ast\RemoveDeadLabels.cs" />
+    <Compile Include="src\Transforms\Ast\RemoveEmptyElseBody.cs" />
     <Compile Include="src\Transforms\Ast\RemoveGotos.cs" />
     <Compile Include="src\Transforms\Ast\SimplifyTypeReferences.cs" />
     <Compile Include="src\Util.cs" />
