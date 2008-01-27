@@ -39,30 +39,42 @@ namespace Decompiler.ControlFlow
 			}
 		}
 		
-		NodeCollection GetReachableNodes()
+		NodeCollection GetReachableNodes(Node exclude)
 		{
 			NodeCollection reachableNodes = new NodeCollection();
 			reachableNodes.Add(this);
 			for(int i = 0; i < reachableNodes.Count; i++) {
 				reachableNodes.AddRange(reachableNodes[i].Successors);
+				reachableNodes.Remove(exclude);
 			}
 			return reachableNodes;
 		}
 		
 		public void OptimizeIf()
 		{
+			foreach(Node child in this.Childs) {
+				if (child is Loop) {
+					child.OptimizeIf();
+				}
+			}
+			
 			Node conditionNode = this.HeadChild;
 			// Find conditionNode (the start)
-			while(true) {
+			while(conditionNode != null) {
 				if (conditionNode is BasicBlock && conditionNode.Successors.Count == 2) {
 					// Found if start
 					OptimizeIf((BasicBlock)conditionNode);
-					return;
-				} else if (conditionNode.Successors.Count == 1) {
+					conditionNode = this.HeadChild;
+					continue; // Restart
+				} else if (conditionNode.Successors.Count > 0) {
+					// Keep looking down
 					conditionNode = conditionNode.Successors[0];
+					if (conditionNode == this.HeadChild) {
+						return;
+					}
 					continue; // Next
 				} else {
-					return; // Just give up
+					return; // End of block
 				}
 			}
 		}
@@ -75,8 +87,8 @@ namespace Decompiler.ControlFlow
 			Debug.Assert(falseStart != null);
 			Debug.Assert(trueStart != falseStart);
 			
-			NodeCollection trueReachable = trueStart.GetReachableNodes();
-			NodeCollection falseReachable = falseStart.GetReachableNodes();
+			NodeCollection trueReachable = trueStart.GetReachableNodes(condition);
+			NodeCollection falseReachable = falseStart.GetReachableNodes(condition);
 			NodeCollection commonReachable = NodeCollection.Intersect(trueReachable, falseReachable);
 			
 			NodeCollection trueNodes = trueReachable.Clone();
@@ -96,6 +108,10 @@ namespace Decompiler.ControlFlow
 			
 			if (Options.ReduceGraph-- <= 0) return;
 			falseNodes.MoveTo(conditionalNode.FalseBody);
+			
+			// Optimize the created subtrees
+			conditionalNode.TrueBody.OptimizeIf();
+			conditionalNode.FalseBody.OptimizeIf();
 		}
 	}
 }
