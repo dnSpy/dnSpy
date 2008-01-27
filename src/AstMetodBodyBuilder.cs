@@ -116,6 +116,7 @@ namespace Decompiler
 				// Sugested content
 				trueBlock.Children.AddRange(TransformNode(conditionalNode.TrueBody));
 				ifElseStmt.TrueStatement.Add(trueBlock);
+				trueBlock.Parent = ifElseStmt;
 				
 				Ast.MyBlockStatement falseBlock = new Ast.MyBlockStatement();
 				// The block entry code
@@ -123,6 +124,7 @@ namespace Decompiler
 				// Sugested content
 				falseBlock.Children.AddRange(TransformNode(conditionalNode.FalseBody));
 				ifElseStmt.FalseStatement.Add(falseBlock);
+				falseBlock.Parent = ifElseStmt;
 			} else {
 				throw new Exception("Bad node type");
 			}

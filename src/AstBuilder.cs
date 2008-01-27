@@ -24,6 +24,8 @@ namespace Decompiler
 			
 			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
 			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
+			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
+			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
 			astCompileUnit.AcceptVisitor(new Transforms.Ast.SimplifyTypeReferences(), null);
 
 			

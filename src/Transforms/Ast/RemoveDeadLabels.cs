@@ -1,5 +1,6 @@
 using System;
 
+using Ast = ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Visitors;
 
