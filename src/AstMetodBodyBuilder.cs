@@ -50,9 +50,6 @@ namespace Decompiler
 			
 			astBlock.Children.AddRange(TransformNodes(bodyGraph.Childs));
 			
-			astBlock.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
-			astBlock.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
-			
 			return astBlock;
 		}
 		
@@ -280,41 +277,41 @@ namespace Decompiler
 					case Code.Clt_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 				#endregion
 				#region Conversions
-					case Code.Conv_I:    return new Ast.CastExpression(new Ast.TypeReference(typeof(int).Name), arg1, CastType.Cast); // TODO
-					case Code.Conv_I1:   return new Ast.CastExpression(new Ast.TypeReference(typeof(SByte).Name), arg1, CastType.Cast);
-					case Code.Conv_I2:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Int16).Name), arg1, CastType.Cast);
-					case Code.Conv_I4:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Int32).Name), arg1, CastType.Cast);
-					case Code.Conv_I8:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Int64).Name), arg1, CastType.Cast);
-					case Code.Conv_U:    return new Ast.CastExpression(new Ast.TypeReference(typeof(uint).Name), arg1, CastType.Cast); // TODO
-					case Code.Conv_U1:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Byte).Name), arg1, CastType.Cast);
-					case Code.Conv_U2:   return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt16).Name), arg1, CastType.Cast);
-					case Code.Conv_U4:   return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt32).Name), arg1, CastType.Cast);
-					case Code.Conv_U8:   return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt64).Name), arg1, CastType.Cast);
-					case Code.Conv_R4:   return new Ast.CastExpression(new Ast.TypeReference(typeof(float).Name), arg1, CastType.Cast);
-					case Code.Conv_R8:   return new Ast.CastExpression(new Ast.TypeReference(typeof(double).Name), arg1, CastType.Cast);
-					case Code.Conv_R_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(double).Name), arg1, CastType.Cast); // TODO
+					case Code.Conv_I:    return new Ast.CastExpression(new Ast.TypeReference(typeof(int).FullName), arg1, CastType.Cast); // TODO
+					case Code.Conv_I1:   return new Ast.CastExpression(new Ast.TypeReference(typeof(SByte).FullName), arg1, CastType.Cast);
+					case Code.Conv_I2:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Int16).FullName), arg1, CastType.Cast);
+					case Code.Conv_I4:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Int32).FullName), arg1, CastType.Cast);
+					case Code.Conv_I8:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Int64).FullName), arg1, CastType.Cast);
+					case Code.Conv_U:    return new Ast.CastExpression(new Ast.TypeReference(typeof(uint).FullName), arg1, CastType.Cast); // TODO
+					case Code.Conv_U1:   return new Ast.CastExpression(new Ast.TypeReference(typeof(Byte).FullName), arg1, CastType.Cast);
+					case Code.Conv_U2:   return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt16).FullName), arg1, CastType.Cast);
+					case Code.Conv_U4:   return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt32).FullName), arg1, CastType.Cast);
+					case Code.Conv_U8:   return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt64).FullName), arg1, CastType.Cast);
+					case Code.Conv_R4:   return new Ast.CastExpression(new Ast.TypeReference(typeof(float).FullName), arg1, CastType.Cast);
+					case Code.Conv_R8:   return new Ast.CastExpression(new Ast.TypeReference(typeof(double).FullName), arg1, CastType.Cast);
+					case Code.Conv_R_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(double).FullName), arg1, CastType.Cast); // TODO
 					
-					case Code.Conv_Ovf_I:  return new Ast.CastExpression(new Ast.TypeReference(typeof(int).Name), arg1, CastType.Cast); // TODO
-					case Code.Conv_Ovf_I1: return new Ast.CastExpression(new Ast.TypeReference(typeof(SByte).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_I2: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int16).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_I4: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int32).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_I8: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int64).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_U:  return new Ast.CastExpression(new Ast.TypeReference(typeof(uint).Name), arg1, CastType.Cast); // TODO
-					case Code.Conv_Ovf_U1: return new Ast.CastExpression(new Ast.TypeReference(typeof(Byte).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_U2: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt16).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_U4: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt32).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_U8: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt64).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I:  return new Ast.CastExpression(new Ast.TypeReference(typeof(int).FullName), arg1, CastType.Cast); // TODO
+					case Code.Conv_Ovf_I1: return new Ast.CastExpression(new Ast.TypeReference(typeof(SByte).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I2: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int16).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I4: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int32).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I8: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int64).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U:  return new Ast.CastExpression(new Ast.TypeReference(typeof(uint).FullName), arg1, CastType.Cast); // TODO
+					case Code.Conv_Ovf_U1: return new Ast.CastExpression(new Ast.TypeReference(typeof(Byte).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U2: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt16).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U4: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt32).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U8: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt64).FullName), arg1, CastType.Cast);
 					
-					case Code.Conv_Ovf_I_Un:  return new Ast.CastExpression(new Ast.TypeReference(typeof(int).Name), arg1, CastType.Cast); // TODO
-					case Code.Conv_Ovf_I1_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(SByte).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_I2_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int16).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_I4_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int32).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_I8_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int64).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_U_Un:  return new Ast.CastExpression(new Ast.TypeReference(typeof(uint).Name), arg1, CastType.Cast); // TODO
-					case Code.Conv_Ovf_U1_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Byte).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_U2_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt16).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_U4_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt32).Name), arg1, CastType.Cast);
-					case Code.Conv_Ovf_U8_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt64).Name), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I_Un:  return new Ast.CastExpression(new Ast.TypeReference(typeof(int).FullName), arg1, CastType.Cast); // TODO
+					case Code.Conv_Ovf_I1_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(SByte).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I2_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int16).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I4_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int32).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_I8_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Int64).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U_Un:  return new Ast.CastExpression(new Ast.TypeReference(typeof(uint).FullName), arg1, CastType.Cast); // TODO
+					case Code.Conv_Ovf_U1_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(Byte).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U2_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt16).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U4_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt32).FullName), arg1, CastType.Cast);
+					case Code.Conv_Ovf_U8_Un: return new Ast.CastExpression(new Ast.TypeReference(typeof(UInt64).FullName), arg1, CastType.Cast);
 				#endregion
 				#region Indirect
 					case Code.Ldind_I: throw new NotImplementedException();

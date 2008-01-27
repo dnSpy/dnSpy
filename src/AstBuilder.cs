@@ -22,6 +22,11 @@ namespace Decompiler
 		{
 			CSharpOutputVisitor csOutVisitor = new CSharpOutputVisitor();
 			
+			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
+			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
+			astCompileUnit.AcceptVisitor(new Transforms.Ast.SimplifyTypeReferences(), null);
+
+			
 			astCompileUnit.AcceptVisitor(csOutVisitor, null);
 			
 			string code = csOutVisitor.Text;
