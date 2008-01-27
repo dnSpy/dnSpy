@@ -45,8 +45,11 @@
     <Compile Include="src\ByteCode.Type.cs" />
     <Compile Include="src\ByteCodeCollection.cs" />
     <Compile Include="src\CilStack.cs" />
+    <Compile Include="src\ControlFlow\Node-Optimize.cs" />
+    <Compile Include="src\ControlFlow\Node-Transforms.cs" />
+    <Compile Include="src\ControlFlow\NodeCollection.cs" />
     <Compile Include="src\ControlFlow\Nodes.cs" />
-    <Compile Include="src\ControlFlow\Node.cs" />
+    <Compile Include="src\ControlFlow\Node-Structure.cs" />
     <Compile Include="src\MainForm.cs" />
     <Compile Include="src\MainForm.Designer.cs" />
     <Compile Include="src\Options.cs" />

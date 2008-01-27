@@ -65,7 +65,7 @@ namespace Decompiler
 		IEnumerable<Ast.INode> TransformNode(Node node)
 		{
 			if (Options.NodeComments) {
-				yield return MakeComment("// " + node.ToString());
+				yield return MakeComment("// " + node.Description);
 			}
 			
 			yield return new Ast.LabelStatement(node.Label);

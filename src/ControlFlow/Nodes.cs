@@ -7,7 +7,13 @@ namespace Decompiler.ControlFlow
 {
 	public class MethodBodyGraph: Node
 	{
-		public MethodBodyGraph(StackExpressionCollection exprs): base(null)
+		BasicBlock methodEntry;
+		
+		public BasicBlock MethodEntry {
+			get { return methodEntry; }
+		}
+		
+		public MethodBodyGraph(StackExpressionCollection exprs)
 		{
 			if (exprs.Count == 0) throw new ArgumentException("Count == 0", "exprs");
 			
@@ -18,7 +24,7 @@ namespace Decompiler.ControlFlow
 				//  - last expression was branch
 				//  - this expression is branch target
 				if (i == 0 || exprs[i - 1].BranchTarget != null || exprs[i].BranchesHere.Count > 0){
-					basicBlock = new BasicBlock(this);
+					basicBlock = new BasicBlock();
 					this.Childs.Add(basicBlock);
 				}
 				basicBlock.Body.Add(exprs[i]);
@@ -37,6 +43,7 @@ namespace Decompiler.ControlFlow
 				if (exprs[i].LastByteCode.OpCode.Code == Code.Br) continue;
 				
 				node.FallThroughBasicBlock = target;
+				target.BasicBlockPredecessors.Add(node);
 			}
 			
 			// Add branch links to BasicBlocks
@@ -46,38 +53,35 @@ namespace Decompiler.ControlFlow
 					BasicBlock target = exprs[i].BranchTarget.BasicBlock;
 					
 					node.BranchBasicBlock = target;
+					target.BasicBlockPredecessors.Add(node);
 				}
 			}
 			
-			// Link all nodes
-			RebuildNodeLinks();
-			
-			this.HeadChild = this.Childs[0];
+			this.methodEntry = (BasicBlock)this.HeadChild;
 		}
 	}
 	
 	public class AcyclicGraph: Node
 	{
-		public AcyclicGraph(Node parent): base(parent){
-			
-		}
 	}
 	
 	public class Loop: Node
 	{
-		public Loop(Node parent): base(parent){
-			
-		}
 	}
 	
 	public class BasicBlock: Node
 	{
 		List<StackExpression> body = new List<StackExpression>();
+		List<BasicBlock> basicBlockPredecessors = new List<BasicBlock>();
 		BasicBlock fallThroughBasicBlock;
 		BasicBlock branchBasicBlock;
 		
 		public List<StackExpression> Body {
 			get { return body; }
+		}
+		
+		public List<BasicBlock> BasicBlockPredecessors {
+			get { return basicBlockPredecessors; }
 		}
 		
 		public BasicBlock FallThroughBasicBlock {
@@ -90,8 +94,15 @@ namespace Decompiler.ControlFlow
 			set { branchBasicBlock = value; }
 		}
 		
-		public BasicBlock(Node parent): base(parent)
-		{
+		public IEnumerable<BasicBlock> BasicBlockSuccessors {
+			get {
+				if (this.FallThroughBasicBlock != null) {
+					yield return this.FallThroughBasicBlock;
+				}
+				if (this.BranchBasicBlock != null) {
+					yield return this.BranchBasicBlock;
+				}
+			}
 		}
 	}
 }
