@@ -9,6 +9,7 @@ namespace Decompiler.ControlFlow
 		public static int NextNodeID = 1;
 		
 		int id;
+		NodeLabel label;
 		Node parent;
 		NodeCollection childs = new NodeCollection();
 		
@@ -19,6 +20,10 @@ namespace Decompiler.ControlFlow
 		
 		public int ID {
 			get { return id; }
+		}
+		
+		public NodeLabel Label {
+			get { return label; }
 		}
 		
 		public Node Parent {
@@ -137,12 +142,6 @@ namespace Decompiler.ControlFlow
 			}
 		}
 		
-		public string Label {
-			get {
-				return this.GetType().Name + "_" + ID;
-			}
-		}
-		
 		public string Description {
 			get {
 				return ToString();
@@ -152,6 +151,7 @@ namespace Decompiler.ControlFlow
 		protected Node()
 		{
 			this.id = NextNodeID++;
+			this.label = new NodeLabel(this.GetType().Name + "_" + ID);
 			this.Childs.Added += delegate(object sender, NodeEventArgs e) {
 				if (e.Node.Parent != null) {
 					throw new Exception("Node is already assigned to other parent");
@@ -228,6 +228,26 @@ namespace Decompiler.ControlFlow
 				sb.Append(")");
 			}
 			return sb.ToString();
+		}
+	}
+	
+	public class NodeLabel
+	{
+		string label;
+		int referenceCount = 0;
+		
+		public string Label {
+			get { return label; }
+		}
+		
+		public int ReferenceCount {
+			get { return referenceCount; }
+			set { referenceCount = value; }
+		}
+		
+		public NodeLabel(string label)
+		{
+			this.label = label;
 		}
 	}
 }

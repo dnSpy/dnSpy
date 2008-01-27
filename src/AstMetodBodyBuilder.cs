@@ -50,6 +50,8 @@ namespace Decompiler
 			
 			astBlock.Children.AddRange(TransformNodes(bodyGraph.Childs));
 			
+			astBlock.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
+			
 			return astBlock;
 		}
 		
@@ -68,7 +70,7 @@ namespace Decompiler
 				yield return MakeComment("// " + node.Description);
 			}
 			
-			yield return new Ast.LabelStatement(node.Label);
+			yield return new Ast.MyLabelStatement(node.Label);
 			
 			if (node is BasicBlock) {
 				foreach(StackExpression expr in ((BasicBlock)node).Body) {
@@ -77,7 +79,7 @@ namespace Decompiler
 				Node fallThroughNode = ((BasicBlock)node).FallThroughBasicBlock;
 				// If there is default branch and it is not the following node
 				if (fallThroughNode != null && fallThroughNode != node.NextNode) {
-					yield return MakeBranchCommand(node, fallThroughNode);
+					yield return Ast.MyGotoStatement.Create(node, fallThroughNode);
 				}
 			} else if (node is AcyclicGraph) {
 				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
@@ -98,7 +100,7 @@ namespace Decompiler
 				}
 			} else if (node is ConditionalNode) {
 				ConditionalNode conditionalNode = (ConditionalNode)node;
-				yield return new Ast.LabelStatement(conditionalNode.Condition.Label);
+				yield return new Ast.MyLabelStatement(conditionalNode.Condition.Label);
 				Ast.Statement lastStatement = null;
 				foreach(StackExpression expr in conditionalNode.Condition.Body) {
 					lastStatement = TransformExpression(expr);
@@ -112,7 +114,7 @@ namespace Decompiler
 				
 				Ast.BlockStatement trueBlock = new Ast.BlockStatement();
 				// The block entry code
-				trueBlock.Children.Add(MakeBranchCommand(node, conditionalNode.Condition.FallThroughBasicBlock));
+				trueBlock.Children.Add(Ast.MyGotoStatement.Create(node, conditionalNode.Condition.FallThroughBasicBlock));
 				// Sugested content
 				trueBlock.Children.AddRange(TransformNode(conditionalNode.TrueBody));
 				ifElseStmt.TrueStatement.Add(trueBlock);
@@ -184,23 +186,6 @@ namespace Decompiler
 			return MakeCodeDomExpression(methodDef, expr.LastByteCode, allArgs.ToArray());
 		}
 		
-		static Ast.Statement MakeBranchCommand(Node node, Node targetNode)
-		{
-			// Propagate target up to the top most scope
-			while (targetNode.Parent != null && targetNode.Parent.HeadChild == targetNode) {
-				targetNode = targetNode.Parent;
-			}
-			// If branches to the start of encapsulating loop
-			if (node.Parent is Loop && targetNode == node.Parent) {
-				return new Ast.ContinueStatement();
-			}
-			// If branches outside the encapsulating loop
-			if (node.Parent is Loop && targetNode == node.Parent.NextNode) {
-				return new Ast.BreakStatement();
-			}
-			return new Ast.GotoStatement(targetNode.Label);
-		}
-		
 		static object MakeCodeDomExpression(MethodDefinition methodDef, ByteCode byteCode, params Ast.Expression[] args)
 		{
 			OpCode opCode = byteCode.OpCode;
@@ -213,7 +198,7 @@ namespace Decompiler
 			
 			Ast.Statement branchCommand = null;
 			if (operand is ByteCode) {
-				branchCommand = MakeBranchCommand(byteCode.Expression.BasicBlock, ((ByteCode)operand).Expression.BasicBlock);
+				branchCommand = Ast.MyGotoStatement.Create(byteCode.Expression.BasicBlock, ((ByteCode)operand).Expression.BasicBlock);
 			}
 			
 			switch(opCode.Code) {
