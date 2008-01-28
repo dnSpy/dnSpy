@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 
 using Mono.Cecil;
@@ -18,6 +19,25 @@ namespace Decompiler
 		{
 			this.filename = filename;
 			InitializeComponent();
+			int x = 16;
+			int y = 46;
+			foreach(FieldInfo _field in typeof(Options).GetFields()) {
+				FieldInfo field = _field;
+				if (field.FieldType == typeof(bool)) {
+					CheckBox checkBox = new CheckBox();
+					checkBox.Left = x;
+					checkBox.Top = y;
+					checkBox.AutoSize = true;
+					checkBox.Text = field.Name;
+					checkBox.Checked = (bool)field.GetValue(null);
+					checkBox.CheckedChanged += delegate {
+						field.SetValue(null, checkBox.Checked);
+						Decompile();
+					};
+					this.Controls.Add(checkBox);
+					x += checkBox.Width + 10;
+				}
+			}
 		}
 		
 		public string SourceCode {
@@ -34,7 +54,6 @@ namespace Decompiler
 			ControlFlow.Node.NextNodeID = 0;
 			Options.CollapseExpression = (int)collapseCount.Value;
 			Options.ReduceGraph = (int)reduceCount.Value;
-			Options.NodeComments = nodeComments.Checked;
 			
 			AssemblyDefinition assembly = AssemblyFactory.GetAssembly(filename);
 			AstBuilder codeDomBuilder = new AstBuilder();
@@ -54,22 +73,7 @@ namespace Decompiler
 			Decompile();
 		}
 		
-		void DecompileBtnClick(object sender, EventArgs e)
-		{
-			Decompile();
-		}
-		
-		void CollapseCountValueChanged(object sender, EventArgs e)
-		{
-			Decompile();
-		}
-		
-		void ReduceCountValueChanged(object sender, EventArgs e)
-		{
-			Decompile();
-		}
-		
-		void NodeCommentsCheckedChanged(object sender, EventArgs e)
+		void Decompile(object sender, EventArgs e)
 		{
 			Decompile();
 		}

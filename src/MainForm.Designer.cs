@@ -38,7 +38,6 @@ namespace Decompiler
 			this.reduceBtn = new System.Windows.Forms.Button();
 			this.decompileBtn = new System.Windows.Forms.Button();
 			this.sourceCodeBox = new System.Windows.Forms.RichTextBox();
-			this.nodeComments = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.collapseCount)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.reduceCount)).BeginInit();
 			this.SuspendLayout();
@@ -59,7 +58,7 @@ namespace Decompiler
 									0,
 									0,
 									0});
-			this.collapseCount.ValueChanged += new System.EventHandler(this.CollapseCountValueChanged);
+			this.collapseCount.ValueChanged += new System.EventHandler(this.Decompile);
 			// 
 			// reduceCount
 			// 
@@ -77,7 +76,7 @@ namespace Decompiler
 									0,
 									0,
 									0});
-			this.reduceCount.ValueChanged += new System.EventHandler(this.ReduceCountValueChanged);
+			this.reduceCount.ValueChanged += new System.EventHandler(this.Decompile);
 			// 
 			// collapseBtn
 			// 
@@ -109,7 +108,7 @@ namespace Decompiler
 			this.decompileBtn.TabIndex = 5;
 			this.decompileBtn.Text = "Decompile";
 			this.decompileBtn.UseVisualStyleBackColor = true;
-			this.decompileBtn.Click += new System.EventHandler(this.DecompileBtnClick);
+			this.decompileBtn.Click += new System.EventHandler(this.Decompile);
 			// 
 			// sourceCodeBox
 			// 
@@ -124,23 +123,11 @@ namespace Decompiler
 			this.sourceCodeBox.Text = "";
 			this.sourceCodeBox.WordWrap = false;
 			// 
-			// nodeComments
-			// 
-			this.nodeComments.AutoSize = true;
-			this.nodeComments.Location = new System.Drawing.Point(12, 44);
-			this.nodeComments.Name = "nodeComments";
-			this.nodeComments.Size = new System.Drawing.Size(147, 24);
-			this.nodeComments.TabIndex = 7;
-			this.nodeComments.Text = "Node comments";
-			this.nodeComments.UseVisualStyleBackColor = true;
-			this.nodeComments.CheckedChanged += new System.EventHandler(this.NodeCommentsCheckedChanged);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(760, 689);
-			this.Controls.Add(this.nodeComments);
 			this.Controls.Add(this.sourceCodeBox);
 			this.Controls.Add(this.decompileBtn);
 			this.Controls.Add(this.reduceBtn);
@@ -152,9 +139,7 @@ namespace Decompiler
 			((System.ComponentModel.ISupportInitialize)(this.collapseCount)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.reduceCount)).EndInit();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 		}
-		private System.Windows.Forms.CheckBox nodeComments;
 		private System.Windows.Forms.RichTextBox sourceCodeBox;
 		private System.Windows.Forms.Button decompileBtn;
 		private System.Windows.Forms.Button reduceBtn;

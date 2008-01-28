@@ -9,8 +9,12 @@ namespace Decompiler.ControlFlow
 	{
 		public void Optimize()
 		{
-			OptimizeLoops();
-			OptimizeIf();
+			if (Options.ReduceLoops) {
+				OptimizeLoops();
+			}
+			if (Options.ReduceConditonals) {
+				OptimizeIf();
+			}
 		}
 		
 		public void OptimizeLoops()

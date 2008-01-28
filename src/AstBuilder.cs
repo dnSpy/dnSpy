@@ -22,17 +22,21 @@ namespace Decompiler
 		{
 			CSharpOutputVisitor csOutVisitor = new CSharpOutputVisitor();
 			
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.SimplifyTypeReferences(), null);
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.Idioms(), null);
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
-
+			for (int i = 0; i < 2; i++) {
+				if (Options.ReduceAstJumps) {
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
+				}
+				if (Options.ReduceAstLoops) {
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
+				}
+				if (Options.ReduceAstOther) {
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.SimplifyTypeReferences(), null);
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.Idioms(), null);
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
+				}
+			}
 			
 			astCompileUnit.AcceptVisitor(csOutVisitor, null);
 			
