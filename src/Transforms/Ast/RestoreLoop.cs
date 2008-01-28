@@ -27,15 +27,14 @@ namespace Decompiler.Transforms.Ast
 			{
 				IfElseStatement  condition = forStatement.EmbeddedStatement.Children[0] as IfElseStatement;
 				BreakStatement   breakStmt = forStatement.EmbeddedStatement.Children[1] as BreakStatement;
-				MyLabelStatement label     = forStatement.EmbeddedStatement.Children[2] as MyLabelStatement;
+				LabelStatement   label     = forStatement.EmbeddedStatement.Children[2] as LabelStatement;
 				if (condition != null && breakStmt != null && label != null &&
 				    condition.TrueStatement.Count == 1)
 				{
-					MyGotoStatement gotoStmt = condition.TrueStatement[0] as MyGotoStatement;
-					if (gotoStmt != null && gotoStmt.NodeLabel == label.NodeLabel) {
+					GotoStatement gotoStmt = condition.TrueStatement[0] as GotoStatement;
+					if (gotoStmt != null && gotoStmt.Label == label.Label) {
 						condition.Remove();
 						breakStmt.Remove();
-						gotoStmt.NodeLabel.ReferenceCount--;
 						forStatement.Condition = condition.Condition;
 					}
 				}

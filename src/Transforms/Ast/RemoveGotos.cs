@@ -39,10 +39,9 @@ namespace Decompiler.Transforms.Ast
 			if (lastStmt is GotoStatement &&
 			    blockStatement.Parent is IfElseStatement)
 			{
-				MyLabelStatement nextNodeAsLabel = blockStatement.Parent.Next() as MyLabelStatement;
+				LabelStatement nextNodeAsLabel = blockStatement.Parent.Next() as LabelStatement;
 				if (nextNodeAsLabel != null) {
-					if (nextNodeAsLabel.NodeLabel == ((MyGotoStatement)lastStmt).NodeLabel) {
-						((MyGotoStatement)lastStmt).NodeLabel.ReferenceCount--;
+					if (nextNodeAsLabel.Label == ((GotoStatement)lastStmt).Label) {
 						lastStmt.Remove();
 						return null;
 					}
@@ -54,10 +53,8 @@ namespace Decompiler.Transforms.Ast
 		
 		public override object VisitGotoStatement(GotoStatement gotoStatement, object data)
 		{
-			MyGotoStatement myGoto = (MyGotoStatement)gotoStatement;
-			MyLabelStatement followingLabel = myGoto.Next() as MyLabelStatement;
-			if (followingLabel != null && followingLabel.NodeLabel == myGoto.NodeLabel) {
-				myGoto.NodeLabel.ReferenceCount--;
+			LabelStatement followingLabel = gotoStatement.Next() as LabelStatement;
+			if (followingLabel != null && followingLabel.Label == gotoStatement.Label) {
 				RemoveCurrentNode();
 			}
 			return null;

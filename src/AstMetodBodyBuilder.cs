@@ -77,7 +77,7 @@ namespace Decompiler
 				yield return MakeComment("// " + node.Description);
 			}
 			
-			yield return new Ast.MyLabelStatement(node.Label);
+			yield return new Ast.LabelStatement(node.Label);
 			
 			if (node is BasicBlock) {
 				foreach(StackExpression expr in ((BasicBlock)node).Body) {
@@ -86,7 +86,7 @@ namespace Decompiler
 				Node fallThroughNode = ((BasicBlock)node).FallThroughBasicBlock;
 				// If there is default branch and it is not the following node
 				if (fallThroughNode != null) {
-					yield return Ast.MyGotoStatement.Create(node, fallThroughNode);
+					yield return MakeBranchCommand(node, fallThroughNode);
 				}
 			} else if (node is AcyclicGraph) {
 				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
@@ -107,7 +107,7 @@ namespace Decompiler
 				}
 			} else if (node is ConditionalNode) {
 				ConditionalNode conditionalNode = (ConditionalNode)node;
-				yield return new Ast.MyLabelStatement(conditionalNode.Condition.Label);
+				yield return new Ast.LabelStatement(conditionalNode.Condition.Label);
 				Ast.Statement lastStatement = null;
 				foreach(StackExpression expr in conditionalNode.Condition.Body) {
 					lastStatement = TransformExpression(expr);
@@ -121,7 +121,7 @@ namespace Decompiler
 				
 				Ast.BlockStatement trueBlock = new Ast.BlockStatement();
 				// The block entry code
-				trueBlock.Children.Add(Ast.MyGotoStatement.Create(node, conditionalNode.Condition.FallThroughBasicBlock));
+				trueBlock.Children.Add(MakeBranchCommand(node, conditionalNode.Condition.FallThroughBasicBlock));
 				// Sugested content
 				trueBlock.Children.AddRange(TransformNode(conditionalNode.TrueBody));
 				ifElseStmt.TrueStatement.Add(trueBlock);
@@ -178,6 +178,23 @@ namespace Decompiler
 			return new Ast.ExpressionStatement(new PrimitiveExpression(text, text));
 		}
 		
+		public static Ast.Statement MakeBranchCommand(Node contextNode, Node targetNode)
+		{
+			// Propagate target up to the top most scope
+			while (targetNode.Parent != null && targetNode.Parent.HeadChild == targetNode) {
+				targetNode = targetNode.Parent;
+			}
+			// If branches to the start of encapsulating loop
+			if (contextNode.Parent is Loop && targetNode == contextNode.Parent) {
+				return new Ast.ContinueStatement();
+			}
+			// If branches outside the encapsulating loop
+			if (contextNode.Parent is Loop && targetNode == contextNode.Parent.NextNode) {
+				return new Ast.BreakStatement();
+			}
+			return new Ast.GotoStatement(targetNode.Label);
+		}
+		
 		static object MakeCodeDomExpression(MethodDefinition methodDef, StackExpression expr, params Ast.Expression[] args)
 		{
 			List<Ast.Expression> allArgs = new List<Ast.Expression>();
@@ -207,7 +224,7 @@ namespace Decompiler
 			
 			Ast.Statement branchCommand = null;
 			if (operand is ByteCode) {
-				branchCommand = Ast.MyGotoStatement.Create(byteCode.Expression.BasicBlock, ((ByteCode)operand).Expression.BasicBlock);
+				branchCommand = MakeBranchCommand(byteCode.Expression.BasicBlock, ((ByteCode)operand).Expression.BasicBlock);
 			}
 			
 			switch(opCode.Code) {
