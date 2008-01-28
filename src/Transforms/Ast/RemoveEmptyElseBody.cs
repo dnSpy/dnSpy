@@ -8,6 +8,19 @@ namespace Decompiler.Transforms.Ast
 {
 	public class RemoveEmptyElseBody: AbstractAstTransformer
 	{
+		public override object VisitBlockStatement(BlockStatement blockStatement, object data)
+		{
+			for(int i = 0; i < blockStatement.Children.Count; i++) {
+				if (blockStatement.Children[i] is Statement &&
+				    ((Statement)blockStatement.Children[i]).IsNull)
+				{
+					blockStatement.Children.RemoveAt(i);
+					i--;
+				}
+			}
+			return base.VisitBlockStatement(blockStatement, data);
+		}
+		
 		public override object VisitIfElseStatement(IfElseStatement ifElseStatement, object data)
 		{
 			base.VisitIfElseStatement(ifElseStatement, data);

@@ -30,6 +30,7 @@ namespace Decompiler
 			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
 			astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
 			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
+			astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
 
 			
 			astCompileUnit.AcceptVisitor(csOutVisitor, null);

@@ -12,6 +12,18 @@ namespace Decompiler.Transforms.Ast
 		{
 			base.VisitForStatement(forStatement, data);
 			
+			// Restore loop initializer
+			if (forStatement.Initializers.Count == 0) {
+				int myIndex = forStatement.Parent.Children.IndexOf(forStatement);
+				if (myIndex - 1 >= 0) {
+					LocalVariableDeclaration varDeclr = forStatement.Parent.Children[myIndex - 1] as LocalVariableDeclaration;
+					if (varDeclr != null) {
+						forStatement.Parent.Children[myIndex - 1] = Statement.Null;
+						forStatement.Initializers.Add(varDeclr);
+					}
+				}
+			}
+			
 			// Restore loop condition
 			if (forStatement.Condition.IsNull &&
 				forStatement.EmbeddedStatement.Children.Count >= 3)
