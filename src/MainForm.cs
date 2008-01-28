@@ -38,6 +38,8 @@ namespace Decompiler
 					x += checkBox.Width + 10;
 				}
 			}
+			collapseCount.Value = Options.CollapseExpression;
+			reduceCount.Value = Options.ReduceGraph;
 		}
 		
 		public string SourceCode {
