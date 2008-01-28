@@ -12,19 +12,19 @@ namespace Decompiler.Transforms.Ast
 			base.VisitBlockStatement(blockStatement, data);
 			
 			// Remove redundant jump at the end of block
-			INode lastStmt = blockStatement.Children[blockStatement.Children.Count - 1];
+			INode lastStmt = blockStatement.Children.Last;
 			// End of while loop
 			if (lastStmt is ContinueStatement && 
 			    blockStatement.Parent is DoLoopStatement)
 			{
-				blockStatement.Children.Remove(lastStmt);
+				lastStmt.Remove();
 				return null;
 			}
 			// End of for loop
 			if (lastStmt is ContinueStatement && 
 			    blockStatement.Parent is ForStatement)
 			{
-				blockStatement.Children.Remove(lastStmt);
+				lastStmt.Remove();
 				return null;
 			}
 			// End of method
@@ -32,26 +32,21 @@ namespace Decompiler.Transforms.Ast
 			    blockStatement.Parent is MethodDeclaration &&
 			    ((ReturnStatement)lastStmt).Expression.IsNull)
 			{
-				blockStatement.Children.Remove(lastStmt);
+				lastStmt.Remove();
 				return null;
 			}
 			// End of if body
 			if (lastStmt is GotoStatement &&
 			    blockStatement.Parent is IfElseStatement)
 			{
-				INode ifParent = blockStatement.Parent.Parent;
-				int ifIndex = ifParent.Children.IndexOf(blockStatement.Parent);
-				if (ifIndex + 1 < ifParent.Children.Count) {
-					MyLabelStatement nextNodeAsLabel = ifParent.Children[ifIndex + 1] as MyLabelStatement;
-					if (nextNodeAsLabel != null) {
-						if (nextNodeAsLabel.NodeLabel == ((MyGotoStatement)lastStmt).NodeLabel) {
-							((MyGotoStatement)lastStmt).NodeLabel.ReferenceCount--;
-							blockStatement.Children.Remove(lastStmt);
-						}
+				MyLabelStatement nextNodeAsLabel = blockStatement.Parent.Next() as MyLabelStatement;
+				if (nextNodeAsLabel != null) {
+					if (nextNodeAsLabel.NodeLabel == ((MyGotoStatement)lastStmt).NodeLabel) {
+						((MyGotoStatement)lastStmt).NodeLabel.ReferenceCount--;
+						lastStmt.Remove();
+						return null;
 					}
 				}
-				
-				return null;
 			}
 			
 			return null;
@@ -60,15 +55,10 @@ namespace Decompiler.Transforms.Ast
 		public override object VisitGotoStatement(GotoStatement gotoStatement, object data)
 		{
 			MyGotoStatement myGoto = (MyGotoStatement)gotoStatement;
-			if (gotoStatement.Parent == null) return null;
-			int index = gotoStatement.Parent.Children.IndexOf(gotoStatement);
-			if (index + 1 < gotoStatement.Parent.Children.Count) {
-				INode nextStmt = gotoStatement.Parent.Children[index + 1];
-				MyLabelStatement myLabel = nextStmt as MyLabelStatement;
-				if (myLabel != null && myLabel.NodeLabel == myGoto.NodeLabel) {
-					myGoto.NodeLabel.ReferenceCount--;
-					RemoveCurrentNode();
-				}
+			MyLabelStatement followingLabel = myGoto.Next() as MyLabelStatement;
+			if (followingLabel != null && followingLabel.NodeLabel == myGoto.NodeLabel) {
+				myGoto.NodeLabel.ReferenceCount--;
+				RemoveCurrentNode();
 			}
 			return null;
 		}

@@ -14,13 +14,10 @@ namespace Decompiler.Transforms.Ast
 			
 			// Restore loop initializer
 			if (forStatement.Initializers.Count == 0) {
-				int myIndex = forStatement.Parent.Children.IndexOf(forStatement);
-				if (myIndex - 1 >= 0) {
-					LocalVariableDeclaration varDeclr = forStatement.Parent.Children[myIndex - 1] as LocalVariableDeclaration;
-					if (varDeclr != null) {
-						forStatement.Parent.Children[myIndex - 1] = Statement.Null;
-						forStatement.Initializers.Add(varDeclr);
-					}
+				LocalVariableDeclaration varDeclr = forStatement.Previous() as LocalVariableDeclaration;
+				if (varDeclr != null) {
+					varDeclr.ReplaceWith(Statement.Null);
+					forStatement.Initializers.Add(varDeclr);
 				}
 			}
 			
@@ -31,15 +28,13 @@ namespace Decompiler.Transforms.Ast
 				IfElseStatement  condition = forStatement.EmbeddedStatement.Children[0] as IfElseStatement;
 				BreakStatement   breakStmt = forStatement.EmbeddedStatement.Children[1] as BreakStatement;
 				MyLabelStatement label     = forStatement.EmbeddedStatement.Children[2] as MyLabelStatement;
-				if (condition != null &&
-				    breakStmt != null &&
-				    label != null &&
+				if (condition != null && breakStmt != null && label != null &&
 				    condition.TrueStatement.Count == 1)
 				{
 					MyGotoStatement gotoStmt = condition.TrueStatement[0] as MyGotoStatement;
 					if (gotoStmt != null && gotoStmt.NodeLabel == label.NodeLabel) {
-						forStatement.EmbeddedStatement.Children.Remove(condition);
-						forStatement.EmbeddedStatement.Children.Remove(breakStmt);
+						condition.Remove();
+						breakStmt.Remove();
 						gotoStmt.NodeLabel.ReferenceCount--;
 						forStatement.Condition = condition.Condition;
 					}
@@ -54,7 +49,7 @@ namespace Decompiler.Transforms.Ast
 				if (lastStmt != null) {
 					AssignmentExpression assign = lastStmt.Expression as AssignmentExpression;
 					if (assign != null) {
-						forStatement.EmbeddedStatement.Children.Remove(lastStmt);
+						lastStmt.Remove();
 						forStatement.Iterator.Add(lastStmt);
 					}
 				}

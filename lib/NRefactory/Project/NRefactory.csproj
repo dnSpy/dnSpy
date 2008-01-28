@@ -23,7 +23,7 @@
     <FileAlignment>4096</FileAlignment>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA1002;-Microsoft.Design#CA1020;-Microsoft.Design#CA1051;-Microsoft.Design#CA1062;-Microsoft.Globalization#CA1303;-Microsoft.Globalization#CA1305;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1800;-Microsoft.Performance#CA1805;-Microsoft.Usage#CA2211;-Microsoft.Usage#CA2227</CodeAnalysisRules>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>False</Optimize>
@@ -49,6 +49,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ICSharpCode.NRefactory.snk" />
