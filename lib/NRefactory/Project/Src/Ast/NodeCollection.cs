@@ -60,13 +60,21 @@ namespace ICSharpCode.NRefactory.Ast
 		
 		public INode First {
 			get {
-				return this[0];
+				if (this.Count > 0) {
+					return this[0];
+				} else {
+					return null;
+				}
 			}
 		}
 		
 		public INode Last {
 			get {
-				return this[this.Count - 1];
+				if (this.Count > 0) {
+					return this[this.Count - 1];
+				} else {
+					return null;
+				}
 			}
 		}
 		

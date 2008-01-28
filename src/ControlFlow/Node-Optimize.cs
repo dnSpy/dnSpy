@@ -22,7 +22,6 @@ namespace Decompiler.ControlFlow
 		Reset:
 			foreach(Node child in this.Childs) {
 				if (child.Predecessors.Count == 1) {
-					if (Options.ReduceGraph <= 0) return;
 					Node predecessor = child.Predecessors[0];
 					Node mergedNode;
 					if (child.Successors.Contains(predecessor)) {
@@ -36,7 +35,7 @@ namespace Decompiler.ControlFlow
 			}
 			// If the result is single acyclic node, eliminate it
 			if (this.Childs.Count == 1 && this.HeadChild is AcyclicGraph) {
-				if (Options.ReduceGraph-- <= 0) return;
+				Options.NotifyReducingGraph();
 				Node headChild = this.HeadChild;
 				this.Childs.Remove(this.HeadChild);
 				headChild.Childs.MoveTo(this);
@@ -103,18 +102,18 @@ namespace Decompiler.ControlFlow
 			falseNodes.RemoveRange(commonReachable);
 			
 			// Replace the basic block with condition node
-			if (Options.ReduceGraph-- <= 0) return;
+			Options.NotifyReducingGraph();
 			Node conditionParent = condition.Parent;
 			int conditionIndex = condition.Index; 
 			ConditionalNode conditionalNode = new ConditionalNode(condition);
 			conditionalNode.MoveTo(conditionParent, conditionIndex);
 			
-			if (Options.ReduceGraph-- <= 0) return;
+			Options.NotifyReducingGraph();
 			trueNodes.MoveTo(conditionalNode.TrueBody);
 			
-			if (Options.ReduceGraph-- <= 0) return;
 			// We can exit the 'true' part of Loop or MethodBody conviently using 'break' or 'return'
 			if (commonReachable.Count > 0 && (conditionalNode.Parent is Loop || conditionalNode.Parent is MethodBodyGraph)) {
+				Options.NotifyReducingGraph();
 				falseNodes.MoveTo(conditionalNode.FalseBody);
 			}
 			

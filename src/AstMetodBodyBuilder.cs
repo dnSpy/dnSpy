@@ -33,10 +33,16 @@ namespace Decompiler
 			
 			ByteCodeCollection body = new ByteCodeCollection(methodDef);
 			StackExpressionCollection exprCollection = new StackExpressionCollection(body);
-			exprCollection.Optimize();
+			try {
+				exprCollection.Optimize();
+			} catch (StopOptimizations) {
+			}
 			
 			MethodBodyGraph bodyGraph = new MethodBodyGraph(exprCollection);
-			bodyGraph.Optimize();
+			try {
+				bodyGraph.Optimize();
+			} catch (StopOptimizations) {
+			}
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
 			
