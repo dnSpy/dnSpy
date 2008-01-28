@@ -52,7 +52,6 @@
     <Compile Include="src\ControlFlow\Node-Structure.cs" />
     <Compile Include="src\MainForm.cs" />
     <Compile Include="src\MainForm.Designer.cs" />
-    <Compile Include="src\MyAst\MyBlockStatement.cs" />
     <Compile Include="src\MyAst\MyGotoStatement.cs" />
     <Compile Include="src\MyAst\MyLabelStatement.cs" />
     <Compile Include="src\Options.cs" />

@@ -25,7 +25,7 @@ namespace Decompiler.Transforms.Ast
 		{
 			base.VisitIfElseStatement(ifElseStatement, data);
 			if (ifElseStatement.FalseStatement.Count == 1 &&
-			    ifElseStatement.FalseStatement[0] is MyBlockStatement &&
+			    ifElseStatement.FalseStatement[0] is BlockStatement &&
 			    ifElseStatement.FalseStatement[0].Children.Count == 0)
 			{
 				ifElseStatement.FalseStatement.Clear();

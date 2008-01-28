@@ -18,16 +18,16 @@ namespace Decompiler
 		static Dictionary<string, Cecil.TypeReference> localVarTypes = new Dictionary<string, Cecil.TypeReference>();
 		static Dictionary<string, bool> localVarDefined = new Dictionary<string, bool>();
 		
-		public static MyBlockStatement CreateMetodBody(MethodDefinition methodDef)
+		public static BlockStatement CreateMetodBody(MethodDefinition methodDef)
 		{
 			AstMetodBodyBuilder builder = new AstMetodBodyBuilder();
 			builder.methodDef = methodDef;
 			return builder.CreateMetodBody();
 		}
 		
-		public MyBlockStatement CreateMetodBody()
+		public BlockStatement CreateMetodBody()
 		{
-			Ast.MyBlockStatement astBlock = new Ast.MyBlockStatement();
+			Ast.BlockStatement astBlock = new Ast.BlockStatement();
 			
 			methodDef.Body.Simplify();
 			
@@ -89,11 +89,11 @@ namespace Decompiler
 					yield return Ast.MyGotoStatement.Create(node, fallThroughNode);
 				}
 			} else if (node is AcyclicGraph) {
-				Ast.MyBlockStatement blockStatement = new Ast.MyBlockStatement();
+				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
 				blockStatement.Children.AddRange(TransformNodes(node.Childs));
 				yield return blockStatement;
 			} else if (node is Loop) {
-				Ast.MyBlockStatement blockStatement = new Ast.MyBlockStatement();
+				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
 				blockStatement.Children.AddRange(TransformNodes(node.Childs));
 				yield return new Ast.ForStatement(
 					null,
@@ -119,7 +119,7 @@ namespace Decompiler
 				// Swap the method bodies
 				ifElseStmt.Condition = new Ast.UnaryOperatorExpression(new Ast.ParenthesizedExpression(ifElseStmt.Condition), UnaryOperatorType.Not);
 				
-				Ast.MyBlockStatement trueBlock = new Ast.MyBlockStatement();
+				Ast.BlockStatement trueBlock = new Ast.BlockStatement();
 				// The block entry code
 				trueBlock.Children.Add(Ast.MyGotoStatement.Create(node, conditionalNode.Condition.FallThroughBasicBlock));
 				// Sugested content
@@ -127,7 +127,7 @@ namespace Decompiler
 				ifElseStmt.TrueStatement.Add(trueBlock);
 				trueBlock.Parent = ifElseStmt;
 				
-				Ast.MyBlockStatement falseBlock = new Ast.MyBlockStatement();
+				Ast.BlockStatement falseBlock = new Ast.BlockStatement();
 				// The block entry code
 				falseBlock.Children.Add(oldTrueBody);
 				// Sugested content
