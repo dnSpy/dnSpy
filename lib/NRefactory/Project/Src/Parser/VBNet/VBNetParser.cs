@@ -80,7 +80,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			return st as BlockStatement;
 		}
 		
-		public override List<INode> ParseTypeMembers()
+		public override IList<INode> ParseTypeMembers()
 		{
 			lexer.NextToken();
 			compilationUnit = new CompilationUnit();

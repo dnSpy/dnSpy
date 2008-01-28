@@ -65,7 +65,7 @@ namespace ICSharpCode.NRefactory.Parser
 		
 		public abstract Expression ParseExpression();
 		public abstract BlockStatement ParseBlock();
-		public abstract List<INode> ParseTypeMembers();
+		public abstract IList<INode> ParseTypeMembers();
 		
 		protected abstract void SynErr(int line, int col, int errorNumber);
 		

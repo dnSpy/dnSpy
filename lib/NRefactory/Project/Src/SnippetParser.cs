@@ -79,7 +79,7 @@ namespace ICSharpCode.NRefactory
 			}
 			if (errors.Count > 0) {
 				parser = ParserFactory.CreateParser(language, new StringReader(code));
-				List<INode> members = parser.ParseTypeMembers();
+				IList<INode> members = parser.ParseTypeMembers();
 				if (members != null && members.Count > 0 && parser.Errors.Count < errors.Count) {
 					errors = parser.Errors;
 					specials = parser.Lexer.SpecialTracker.RetrieveSpecials();
@@ -91,9 +91,9 @@ namespace ICSharpCode.NRefactory
 		
 		sealed class NodeListNode : INode
 		{
-			List<INode> nodes;
+			IList<INode> nodes;
 			
-			public NodeListNode(List<INode> nodes)
+			public NodeListNode(IList<INode> nodes)
 			{
 				this.nodes = nodes;
 			}
@@ -103,7 +103,7 @@ namespace ICSharpCode.NRefactory
 				set { throw new NotSupportedException(); }
 			}
 			
-			public List<INode> Children {
+			public IList<INode> Children {
 				get { return nodes; }
 			}
 			

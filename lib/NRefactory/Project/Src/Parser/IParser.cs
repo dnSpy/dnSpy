@@ -36,6 +36,6 @@ namespace ICSharpCode.NRefactory
 		
 		Expression ParseExpression();
 		BlockStatement ParseBlock();
-		List<INode> ParseTypeMembers();
+		IList<INode> ParseTypeMembers();
 	}
 }

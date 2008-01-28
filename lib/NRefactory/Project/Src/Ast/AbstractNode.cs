@@ -15,14 +15,14 @@ namespace ICSharpCode.NRefactory.Ast
 {
 	public abstract class AbstractNode : INode
 	{
-		List<INode> children = new List<INode>();
+		IList<INode> children = new List<INode>();
 		
 		public INode Parent { get; set; }
 		public Location StartLocation { get; set; }
 		public Location EndLocation { get; set; }
 		public object UserData { get; set; }
 		
-		public List<INode> Children {
+		public IList<INode> Children {
 			get {
 				return children;
 			}
@@ -49,7 +49,7 @@ namespace ICSharpCode.NRefactory.Ast
 			return data;
 		}
 		
-		public static string GetCollectionString(ICollection collection)
+		public static string GetCollectionString<T>(IList<T> collection)
 		{
 			StringBuilder output = new StringBuilder();
 			output.Append('{');

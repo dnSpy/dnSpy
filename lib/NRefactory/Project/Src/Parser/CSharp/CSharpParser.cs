@@ -84,7 +84,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			return blockStmt;
 		}
 		
-		public override List<INode> ParseTypeMembers()
+		public override IList<INode> ParseTypeMembers()
 		{
 			lexer.NextToken();
 			compilationUnit = new CompilationUnit();

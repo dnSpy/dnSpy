@@ -17,7 +17,7 @@ namespace ICSharpCode.NRefactory.Ast
 			set;
 		}
 		
-		List<INode> Children {
+		IList<INode> Children {
 			get;
 		}
 		
