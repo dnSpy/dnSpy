@@ -1,10 +1,14 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 # SharpDevelop 3.0.0.2914
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decompiler", "Decompiler.csproj", "{EE3A3C1A-F9C3-4C75-853D-A9476E518C3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "lib\cecil-0.6\src\Mono.Cecil\Mono.Cecil.csproj", "{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRefactory", "lib\NRefactory\Project\NRefactory.csproj", "{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRefactoryASTGenerator", "lib\NRefactory\NRefactoryASTGenerator\NRefactoryASTGenerator.csproj", "{B22522AA-B5BF-4A58-AC6D-D4B45805521F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "lib\cecil-0.6\src\Mono.Cecil\Mono.Cecil.csproj", "{C58CA4B3-20ED-4D22-A55B-AD5DE9DEB125}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,5 +24,21 @@ Global
 		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6075AD9-053B-4B6B-ABAF-92DC5EDC877B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6075AD9-053B-4B6B-ABAF-92DC5EDC877B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6075AD9-053B-4B6B-ABAF-92DC5EDC877B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6075AD9-053B-4B6B-ABAF-92DC5EDC877B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C58CA4B3-20ED-4D22-A55B-AD5DE9DEB125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C58CA4B3-20ED-4D22-A55B-AD5DE9DEB125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C58CA4B3-20ED-4D22-A55B-AD5DE9DEB125}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C58CA4B3-20ED-4D22-A55B-AD5DE9DEB125}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 EndGlobal

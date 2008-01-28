@@ -23,7 +23,7 @@ namespace Decompiler.Transforms.Ast
 			IdentifierExpression id = memberReferenceExpression.TargetObject as IdentifierExpression;
 			if (id != null) {
 				if (id.Identifier == "System" || id.Identifier == currentClass) {
-					ReplaceCurrentNode(new IdentifierExpression(memberReferenceExpression.FieldName));
+					ReplaceCurrentNode(new IdentifierExpression(memberReferenceExpression.MemberName));
 					return null;
 				}
 				if (id.Identifier.StartsWith("System.")) {
