@@ -70,6 +70,13 @@ namespace ICSharpCode.NRefactory.Ast
 			}
 		}
 		
+		public void AddRange(IEnumerable<INode> items)
+		{
+			foreach(INode item in items) {
+				this.Add(item);
+			}
+		}
+		
 		public void RemoveFirst()
 		{
 			this.RemoveAt(0);
