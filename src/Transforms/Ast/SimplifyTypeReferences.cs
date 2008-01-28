@@ -43,9 +43,9 @@ namespace Decompiler.Transforms.Ast
 				return null;
 			}
 			if (fullName.EndsWith("[]")) {
-				shortName = GetShortName(fullName.Replace("[]","")) + "[]";
+				shortName = GetShortName(fullName.Replace("[]",""));
 				if (shortName != null) {
-					typeReference.Type = shortName;
+					typeReference.Type = shortName + "[]";
 					return null;
 				}
 			}
