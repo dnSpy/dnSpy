@@ -13,7 +13,7 @@ namespace Decompiler.ControlFlow
 				OptimizeLoops();
 			}
 			if (Options.ReduceConditonals) {
-				OptimizeIf();
+				OptimizeConditions();
 			}
 		}
 		
@@ -43,33 +43,38 @@ namespace Decompiler.ControlFlow
 			}
 		}
 		
-		NodeCollection GetReachableNodes(Node exclude)
+		NodeCollection GetReachableNodes()
 		{
 			NodeCollection reachableNodes = new NodeCollection();
 			reachableNodes.Add(this);
 			for(int i = 0; i < reachableNodes.Count; i++) {
-				reachableNodes.AddRange(reachableNodes[i].Successors);
-				reachableNodes.Remove(exclude);
+				foreach(Node alsoReachable in reachableNodes[i].Successors) {
+					// Do not go though the head child
+					if (alsoReachable != this.Parent.HeadChild) {
+						reachableNodes.Add(alsoReachable);
+					}
+				}
 			}
 			return reachableNodes;
 		}
 		
-		public void OptimizeIf()
+		public void OptimizeConditions()
 		{
 			foreach(Node child in this.Childs) {
 				if (child is Loop) {
-					child.OptimizeIf();
+					child.OptimizeConditions();
 				}
 			}
 			
 			Node conditionNode = this.HeadChild;
-			// Find conditionNode (the start)
 			while(conditionNode != null) {
-				if (conditionNode is BasicBlock && conditionNode.Successors.Count == 2) {
-					// Found if start
+				// Keep looking for some conditional block
+				if (conditionNode is BasicBlock && ((BasicBlock)conditionNode).IsConditionalBranch) {
+					// Found start of conditional
 					OptimizeIf((BasicBlock)conditionNode);
+					// Restart
 					conditionNode = this.HeadChild;
-					continue; // Restart
+					continue;
 				} else if (conditionNode.Successors.Count > 0) {
 					// Keep looking down
 					conditionNode = conditionNode.Successors[0];
@@ -87,12 +92,9 @@ namespace Decompiler.ControlFlow
 		{
 			Node trueStart = condition.FloatUpToNeighbours(condition.FallThroughBasicBlock);
 			Node falseStart = condition.FloatUpToNeighbours(condition.BranchBasicBlock);
-			Debug.Assert(trueStart != null);
-			Debug.Assert(falseStart != null);
-			Debug.Assert(trueStart != falseStart);
 			
-			NodeCollection trueReachable = trueStart.GetReachableNodes(condition);
-			NodeCollection falseReachable = falseStart.GetReachableNodes(condition);
+			NodeCollection trueReachable = trueStart != null ? trueStart.GetReachableNodes() : NodeCollection.Empty;
+			NodeCollection falseReachable = falseStart != null ? falseStart.GetReachableNodes() : NodeCollection.Empty;
 			NodeCollection commonReachable = NodeCollection.Intersect(trueReachable, falseReachable);
 			
 			NodeCollection trueNodes = trueReachable.Clone();
@@ -111,11 +113,14 @@ namespace Decompiler.ControlFlow
 			trueNodes.MoveTo(conditionalNode.TrueBody);
 			
 			if (Options.ReduceGraph-- <= 0) return;
-			falseNodes.MoveTo(conditionalNode.FalseBody);
+			// We can exit the 'true' part of Loop or MethodBody conviently using 'break' or 'return'
+			if (commonReachable.Count > 0 && (conditionalNode.Parent is Loop || conditionalNode.Parent is MethodBodyGraph)) {
+				falseNodes.MoveTo(conditionalNode.FalseBody);
+			}
 			
 			// Optimize the created subtrees
-			conditionalNode.TrueBody.OptimizeIf();
-			conditionalNode.FalseBody.OptimizeIf();
+			conditionalNode.TrueBody.OptimizeConditions();
+			conditionalNode.FalseBody.OptimizeConditions();
 		}
 	}
 }

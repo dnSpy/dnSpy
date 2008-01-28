@@ -19,6 +19,8 @@ namespace Decompiler.ControlFlow
 	
 	public class NodeCollection: System.Collections.ObjectModel.Collection<Node>
 	{
+		public static NodeCollection Empty = new NodeCollection();
+		
 		public event EventHandler<NodeEventArgs> Added;
 		public event EventHandler<NodeEventArgs> Removed;
 		

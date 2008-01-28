@@ -40,6 +40,26 @@ namespace Decompiler.Transforms.Ast
 				}
 			}
 			
+			// Restore loop condition (version 2)
+			if (forStatement.Condition.IsNull) {
+				IfElseStatement condition = forStatement.EmbeddedStatement.Children.First as IfElseStatement;
+				if (condition != null &&
+				    condition.TrueStatement[0] is BlockStatement &&
+				    condition.TrueStatement[0].Children.Count == 1 &&
+				    condition.TrueStatement[0].Children.First is BreakStatement &&
+				    condition.FalseStatement[0] is BlockStatement &&
+				    condition.FalseStatement[0].Children.Count == 0)
+				{
+					UnaryOperatorExpression negExpr = condition.Condition as UnaryOperatorExpression;
+					if (negExpr != null &&
+					    negExpr.Op == UnaryOperatorType.Not) {
+						
+						condition.Remove();
+						forStatement.Condition = negExpr.Expression;
+					}
+				}
+			}
+			
 			// Restore loop iterator
 			if (forStatement.EmbeddedStatement.Children.Count > 0 &&
 			    forStatement.Iterator.Count == 0)

@@ -29,7 +29,6 @@ namespace Decompiler
 				}
 				if (Options.ReduceAstLoops) {
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
 				}
 				if (Options.ReduceAstOther) {
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.SimplifyTypeReferences(), null);
