@@ -38,7 +38,16 @@ namespace Decompiler
 			MethodBodyGraph bodyGraph = new MethodBodyGraph(exprCollection);
 			bodyGraph.Optimize();
 			
+			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
+			
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
+				if (varDef.VariableType.FullName == Cecil.Constants.Int32 &&
+				    varDef.Name.StartsWith("V_") &&
+				    intNames.Count > 0)
+				{
+					varDef.Name = intNames[0];
+					intNames.RemoveAt(0);
+				}
 				localVarTypes[varDef.Name] = varDef.VariableType;
 				localVarDefined[varDef.Name] = false;
 				
