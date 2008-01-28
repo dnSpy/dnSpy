@@ -15,14 +15,20 @@ namespace ICSharpCode.NRefactory.Ast
 {
 	public abstract class AbstractNode : INode
 	{
-		IList<INode> children = new List<INode>();
+		NodeCollection children;
 		
 		public INode Parent { get; set; }
 		public Location StartLocation { get; set; }
 		public Location EndLocation { get; set; }
 		public object UserData { get; set; }
 		
-		public IList<INode> Children {
+		IList<INode> INode.Children {
+			get {
+				return children;
+			}
+		}
+		
+		public NodeCollection Children {
 			get {
 				return children;
 			}
@@ -30,6 +36,12 @@ namespace ICSharpCode.NRefactory.Ast
 				Debug.Assert(value != null);
 				children = value;
 			}
+		}
+		
+		public AbstractNode()
+		{
+			children = new NodeCollection();
+			children.Added += delegate(object sender, NodeEventArgs e) { e.Node.Parent = this; };
 		}
 		
 		public virtual void AddChild(INode childNode)

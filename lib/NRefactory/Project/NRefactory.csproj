@@ -54,6 +54,7 @@
     <None Include="Resources\ICSharpCode.NRefactory.snk" />
     <None Include="Src\Lexer\BuildKeywords.pl" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
+    <Compile Include="Src\Ast\NodeCollection.cs" />
     <Compile Include="Src\Lexer\AbstractLexer.cs" />
     <Compile Include="Src\Lexer\CSharp\Keywords.cs" />
     <Compile Include="Src\Lexer\CSharp\Lexer.cs" />
