@@ -463,7 +463,15 @@ namespace Decompiler
 				case Code.Ldsfld: throw new NotImplementedException();
 				case Code.Ldsflda: throw new NotImplementedException();
 				case Code.Ldstr: return new Ast.PrimitiveExpression(operand, null);
-				case Code.Ldtoken: throw new NotImplementedException();
+				case Code.Ldtoken:
+					if (operand is Cecil.TypeReference) {
+						return new Ast.MemberReferenceExpression(
+							new Ast.TypeOfExpression(new Ast.TypeReference(((Cecil.TypeReference)operand).FullName)),
+							"TypeHandle"
+						);
+					} else {
+						throw new NotImplementedException();
+					}
 				case Code.Ldvirtftn: throw new NotImplementedException();
 				case Code.Leave: throw new NotImplementedException();
 				case Code.Localloc: throw new NotImplementedException();

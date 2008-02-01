@@ -25,7 +25,7 @@ namespace Reversi
         }
         private void InitializeComponent()
         {
-            System.Resources.ResourceManager V_0 = (new System.Resources.ResourceManager(Type.GetTypeFromHandle((IL__ldtoken(Reversi.AboutDialog)))));
+            System.Resources.ResourceManager V_0 = (new System.Resources.ResourceManager(Type.GetTypeFromHandle((typeof(Reversi.AboutDialog).TypeHandle))));
             @this.iconPictureBox = (new System.Windows.Forms.PictureBox());
             @this.titleLabel = (new System.Windows.Forms.Label());
             @this.versionLabel = (new System.Windows.Forms.Label());
