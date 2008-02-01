@@ -379,6 +379,8 @@ namespace Decompiler
 				case Code.Box: throw new NotImplementedException();
 				case Code.Break: throw new NotImplementedException();
 				case Code.Call:
+				case Code.Callvirt:
+					// TODO: Diferentiate vitual and non-vitual dispach
 					Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 					Ast.IdentifierExpression astType = new Ast.IdentifierExpression(cecilMethod.DeclaringType.FullName);
 					List<Ast.Expression> methodArgs = new List<Ast.Expression>(args);
@@ -389,7 +391,6 @@ namespace Decompiler
 						return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(astType, cecilMethod.Name), methodArgs);
 					}
 				case Code.Calli: throw new NotImplementedException();
-				case Code.Callvirt: throw new NotImplementedException();
 				case Code.Castclass: throw new NotImplementedException();
 				case Code.Ckfinite: throw new NotImplementedException();
 				case Code.Constrained: throw new NotImplementedException();
