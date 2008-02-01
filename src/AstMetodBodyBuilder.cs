@@ -382,13 +382,28 @@ namespace Decompiler
 				case Code.Callvirt:
 					// TODO: Diferentiate vitual and non-vitual dispach
 					Cecil.MethodReference cecilMethod = ((MethodReference)operand);
-					Ast.IdentifierExpression astType = new Ast.IdentifierExpression(cecilMethod.DeclaringType.FullName);
+					Ast.Expression target;
 					List<Ast.Expression> methodArgs = new List<Ast.Expression>(args);
 					if (cecilMethod.HasThis) {
-						methodArgs.RemoveAt(0); // Remove 'this'
-						return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(arg1, cecilMethod.Name), methodArgs);
+						target = methodArgs[0];
+						methodArgs.RemoveAt(0);
 					} else {
-						return new Ast.InvocationExpression(new Ast.MemberReferenceExpression(astType, cecilMethod.Name), methodArgs);
+						target = new Ast.IdentifierExpression(cecilMethod.DeclaringType.FullName);
+					}
+					// TODO: Hack, detect properties properly
+					if (cecilMethod.Name.StartsWith("get_")) {
+						return new Ast.MemberReferenceExpression(target, cecilMethod.Name.Remove(0, 4));
+					} else if (cecilMethod.Name.StartsWith("set_")) {
+						return new Ast.AssignmentExpression(
+							new Ast.MemberReferenceExpression(target, cecilMethod.Name.Remove(0, 4)),
+							AssignmentOperatorType.Assign,
+							methodArgs[0]
+						);
+					} else {
+						return new Ast.InvocationExpression(
+							new Ast.MemberReferenceExpression(target, cecilMethod.Name),
+							methodArgs
+						);
 					}
 				case Code.Calli: throw new NotImplementedException();
 				case Code.Castclass: throw new NotImplementedException();
