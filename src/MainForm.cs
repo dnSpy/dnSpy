@@ -39,9 +39,7 @@ namespace Decompiler
 					x += checkBox.Width + 10;
 				}
 			}
-			collapseCount.Value = 10000;
-			reduceCount.Value = 10000;
-			filter.Text = "AboutDialog";
+			filter.Text = "Board";
 		}
 		
 		public string SourceCode {

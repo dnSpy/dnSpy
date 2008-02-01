@@ -111,7 +111,7 @@ namespace Decompiler
 		
 		public void AddType(TypeDefinition typeDef)
 		{
-			if (Options.TypeFilter != null && typeDef.Name != Options.TypeFilter) return;
+			if (!string.IsNullOrEmpty(Options.TypeFilter) && typeDef.Name != Options.TypeFilter) return;
 			
 			TypeDeclaration astType = CreateType(typeDef);
 			NamespaceDeclaration astNS = GetCodeNamespace(typeDef.Namespace);
