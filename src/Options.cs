@@ -4,6 +4,7 @@ namespace Decompiler
 {
 	public static class Options
 	{
+		public static string TypeFilter = null;
 		public static int CollapseExpression = 1000;
 		public static int ReduceGraph = 1000;
 		public static bool NodeComments = false;

@@ -42,10 +42,11 @@ namespace Decompiler
 				case StackBehaviour.Popref_popi_popr4:  return 3;
 				case StackBehaviour.Popref_popi_popr8:  return 3;
 				case StackBehaviour.Popref_popi_popref: return 3;
-				case StackBehaviour.PopAll: throw new Exception("PopAll");
+				case StackBehaviour.PopAll: return this.StackBefore.Count;
 				case StackBehaviour.Varpop: 
 					switch(this.OpCode.Code) {
-						case Code.Call:     
+						case Code.Call:
+						case Code.Callvirt:
 							Cecil.MethodReference cecilMethod = ((MethodReference)this.Operand);
 							if (cecilMethod.HasThis) {
 								return cecilMethod.Parameters.Count + 1 /* this */;
@@ -53,14 +54,15 @@ namespace Decompiler
 								return cecilMethod.Parameters.Count;
 							}
 						case Code.Calli:    throw new NotImplementedException();
-						case Code.Callvirt: throw new NotImplementedException();
 						case Code.Ret:
 							if (methodDef.ReturnType.ReturnType.FullName == Constants.Void) {
 								return 0;
 							} else {
 								return 1;
 							}
-						case Code.Newobj:   throw new NotImplementedException();
+						case Code.Newobj:
+							Cecil.MethodReference ctorMethod = ((MethodReference)this.Operand);
+							return ctorMethod.Parameters.Count;
 						default: throw new Exception("Unknown Varpop opcode");
 					}
 				default: throw new Exception("Unknown pop behaviour: " + this.OpCode.StackBehaviourPop);
@@ -80,7 +82,8 @@ namespace Decompiler
 				case StackBehaviour.Pushref:     return 1;
 				case StackBehaviour.Varpush:     // Happens only for calls
 					switch(this.OpCode.Code) {
-						case Code.Call:     
+						case Code.Call:
+						case Code.Callvirt:
 							Cecil.MethodReference cecilMethod = ((MethodReference)this.Operand);
 							if (cecilMethod.ReturnType.ReturnType.FullName == Constants.Void) {
 								return 0;
@@ -88,7 +91,6 @@ namespace Decompiler
 								return 1;
 							}
 						case Code.Calli:    throw new NotImplementedException();
-						case Code.Callvirt: throw new NotImplementedException();
 						default: throw new Exception("Unknown Varpush opcode");
 					}
 				default: throw new Exception("Unknown push behaviour: " + this.OpCode.StackBehaviourPush);

@@ -38,8 +38,9 @@ namespace Decompiler
 					x += checkBox.Width + 10;
 				}
 			}
-			collapseCount.Value = Options.CollapseExpression;
-			reduceCount.Value = Options.ReduceGraph;
+			collapseCount.Value = 0;
+			reduceCount.Value = 0;
+			filter.Text = "AboutDialog";
 		}
 		
 		public string SourceCode {
@@ -56,6 +57,8 @@ namespace Decompiler
 			ControlFlow.Node.NextNodeID = 0;
 			Options.CollapseExpression = (int)collapseCount.Value;
 			Options.ReduceGraph = (int)reduceCount.Value;
+			Options.TypeFilter = filter.Text;
+			
 			
 			AssemblyDefinition assembly = AssemblyFactory.GetAssembly(filename);
 			AstBuilder codeDomBuilder = new AstBuilder();

@@ -21,7 +21,7 @@ namespace Decompiler
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			string sourceFilename = @".\QuickSort.exe";
+			string sourceFilename = @".\Reversi.exe";
 			
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
