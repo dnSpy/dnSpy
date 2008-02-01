@@ -26,11 +26,11 @@ namespace Reversi
         private void InitializeComponent()
         {
             System.Resources.ResourceManager V_0 = (IL__newobj(.ctor(), Type.GetTypeFromHandle((IL__ldtoken(Reversi.AboutDialog)))));
-            IL__stfld(iconPictureBox, @this, (IL__newobj(.ctor())));
-            IL__stfld(titleLabel, @this, (IL__newobj(.ctor())));
-            IL__stfld(versionLabel, @this, (IL__newobj(.ctor())));
-            IL__stfld(okButton, @this, (IL__newobj(.ctor())));
-            IL__stfld(copyrightLabel, @this, (IL__newobj(.ctor())));
+            @this.iconPictureBox = (IL__newobj(.ctor()));
+            @this.titleLabel = (IL__newobj(.ctor()));
+            @this.versionLabel = (IL__newobj(.ctor()));
+            @this.okButton = (IL__newobj(.ctor()));
+            @this.copyrightLabel = (IL__newobj(.ctor()));
             @this.SuspendLayout();
             (@this.iconPictureBox).set_Location((IL__newobj(.ctor(), 77, 56)));
             (@this.iconPictureBox).set_Name("iconPictureBox");

@@ -409,7 +409,36 @@ namespace Decompiler
 				case Code.Ldc_I8: 
 				case Code.Ldc_R4: 
 				case Code.Ldc_R8: return new Ast.PrimitiveExpression(operand, null);
-				case Code.Ldfld: return new Ast.MemberReferenceExpression(arg1, ((FieldDefinition)operand).Name);
+				case Code.Ldfld: {
+					FieldDefinition field = (FieldDefinition) operand;
+					if (field.IsStatic) {
+						return new Ast.MemberReferenceExpression(
+							new Ast.IdentifierExpression(field.DeclaringType.FullName),
+							field.Name
+						);
+					} else {
+						return new Ast.MemberReferenceExpression(arg1, field.Name);
+					}
+				}
+				case Code.Stfld: {
+					FieldDefinition field = (FieldDefinition) operand;
+					if (field.IsStatic) {
+						return new AssignmentExpression(
+							new Ast.MemberReferenceExpression(
+								new Ast.IdentifierExpression(field.DeclaringType.FullName),
+								field.Name
+							),
+							AssignmentOperatorType.Assign,
+							arg1
+						);
+					} else {
+						return new AssignmentExpression(
+							new Ast.MemberReferenceExpression(arg1, field.Name),
+							AssignmentOperatorType.Assign,
+							arg2
+						);
+					}
+				}
 				case Code.Ldflda: throw new NotImplementedException();
 				case Code.Ldftn: throw new NotImplementedException();
 				case Code.Ldloc: return new Ast.IdentifierExpression(((VariableDefinition)operand).Name);
@@ -436,7 +465,6 @@ namespace Decompiler
 				case Code.Rethrow: throw new NotImplementedException();
 				case Code.Sizeof: throw new NotImplementedException();
 				case Code.Starg: throw new NotImplementedException();
-				case Code.Stfld: throw new NotImplementedException();
 				case Code.Stloc: 
 					string name = ((VariableDefinition)operand).Name;
 					if (localVarDefined[name]) {
