@@ -408,7 +408,7 @@ namespace Decompiler
 				case Code.Ldc_I8: 
 				case Code.Ldc_R4: 
 				case Code.Ldc_R8: return new Ast.PrimitiveExpression(operand, null);
-				case Code.Ldfld: throw new NotImplementedException();
+				case Code.Ldfld: return new Ast.MemberReferenceExpression(arg1, ((FieldDefinition)operand).Name);
 				case Code.Ldflda: throw new NotImplementedException();
 				case Code.Ldftn: throw new NotImplementedException();
 				case Code.Ldloc: return new Ast.IdentifierExpression(((VariableDefinition)operand).Name);
