@@ -468,7 +468,12 @@ namespace Decompiler
 				case Code.Leave: throw new NotImplementedException();
 				case Code.Localloc: throw new NotImplementedException();
 				case Code.Mkrefany: throw new NotImplementedException();
-				case Code.Newobj: throw new NotImplementedException();
+				case Code.Newobj:
+					// TODO: Ensure that the corrent overloaded constructor is called
+					return new Ast.ObjectCreateExpression(
+						new Ast.TypeReference(((MethodReference)operand).DeclaringType.FullName),
+						new List<Expression>(args)
+					);
 				case Code.No: throw new NotImplementedException();
 				case Code.Nop: return new Ast.PrimitiveExpression("/* No-op */", "/* No-op */");
 				case Code.Or: throw new NotImplementedException();
