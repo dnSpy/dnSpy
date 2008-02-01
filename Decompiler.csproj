@@ -84,5 +84,13 @@
       <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
       <Name>NRefactory</Name>
     </ProjectReference>
+    <None Include="tests\QuickSort\bin\Release\QuickSort.exe">
+      <Link>QuickSort.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="tests\Reversi\bin\Release\Reversi.exe">
+      <Link>Reversi.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
