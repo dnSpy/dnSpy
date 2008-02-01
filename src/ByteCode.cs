@@ -69,6 +69,11 @@ namespace Decompiler
 			this.operand = inst.Operand;
 		}
 		
+		public override string ToString()
+		{
+			return this.OpCode + " " + FormatByteCodeOperand(this.Operand);
+		}
+		
 		public string Description {
 			get {
 				return string.Format(
@@ -83,7 +88,13 @@ namespace Decompiler
 			}
 		}
 		
-		static object FormatByteCodeOperand(object operand)
+		public string FormatedOperand {
+			get {
+				return FormatByteCodeOperand(this.Operand);
+			}
+		}
+		
+		static string FormatByteCodeOperand(object operand)
 		{
 			if (operand == null) {
 				return string.Empty;
@@ -97,12 +108,14 @@ namespace Decompiler
 				return ((VariableDefinition)operand).Name;
 			} else if (operand is ParameterDefinition) {
 				return ((ParameterDefinition)operand).Name;
+			} else if (operand is FieldReference) {
+				return ((FieldReference)operand).Name;
 			} else if (operand is string) {
 				return "\"" + operand + "\"";
 			} else if (operand is int) {
 				return operand.ToString();
 			} else {
-				return "(" + operand.GetType() + ")";
+				return operand.ToString();
 			}
 		}
 	}

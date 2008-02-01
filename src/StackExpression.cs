@@ -138,6 +138,11 @@ namespace Decompiler
 			this.lastByteCode.Expression = this;
 		}
 		
+		public override string ToString()
+		{
+			return this.LastByteCode.ToString();
+		}
+		
 		public bool MustBeParenthesized {
 			get {
 				switch(this.LastByteCode.OpCode.Code) {

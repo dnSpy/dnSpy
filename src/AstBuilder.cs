@@ -47,8 +47,8 @@ namespace Decompiler
 //			code = code.Replace(":\r\n\t", ": ");
 //			code = code.Replace(": }", ":\r\n\t}");
 			code = code.Replace("\t", "    ");
-			code = code.Replace("\"/*", "");
-			code = code.Replace("*/\";", "");
+			code = code.Replace("\"/***", "");
+			code = code.Replace("***/\";", "");
 			
 			// Post processing commands
 			while(true) { 
@@ -111,7 +111,7 @@ namespace Decompiler
 		
 		public void AddType(TypeDefinition typeDef)
 		{
-			if (Options.TypeFilter != null && !typeDef.Name.EndsWith(Options.TypeFilter)) return;
+			if (Options.TypeFilter != null && typeDef.Name != Options.TypeFilter) return;
 			
 			TypeDeclaration astType = CreateType(typeDef);
 			NamespaceDeclaration astNS = GetCodeNamespace(typeDef.Namespace);

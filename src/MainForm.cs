@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
@@ -38,8 +39,8 @@ namespace Decompiler
 					x += checkBox.Width + 10;
 				}
 			}
-			collapseCount.Value = 0;
-			reduceCount.Value = 0;
+			collapseCount.Value = 10000;
+			reduceCount.Value = 10000;
 			filter.Text = "AboutDialog";
 		}
 		
@@ -64,6 +65,8 @@ namespace Decompiler
 			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddAssembly(assembly);
 			SourceCode = codeDomBuilder.GenerateCode();
+			
+			File.WriteAllText("output.cs", SourceCode);
 		}
 		
 		void CollapseBtnClick(object sender, EventArgs e)

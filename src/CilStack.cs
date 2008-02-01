@@ -25,6 +25,9 @@ namespace Decompiler
 		
 		public CilStackSlot(ByteCode allocadedBy, Cecil.TypeReference type)
 		{
+			if (allocadedBy == null) throw new ArgumentNullException();
+			if (type == null) throw new ArgumentNullException();
+			
 			this.allocadedBy = allocadedBy;
 			this.type = type;
 		}

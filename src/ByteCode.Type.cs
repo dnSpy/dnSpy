@@ -110,7 +110,7 @@ namespace Decompiler
 					case Code.Stelem_R4:  
 					case Code.Stelem_R8:  
 					case Code.Stelem_Ref: 
-					case Code.Stelem_Any: return null;
+					case Code.Stelem_Any: return TypeVoid;
 				#endregion
 				#region Branching
 					case Code.Br:      
@@ -125,7 +125,7 @@ namespace Decompiler
 					case Code.Ble_Un:  
 					case Code.Blt:     
 					case Code.Blt_Un:  
-					case Code.Bne_Un:  return null;
+					case Code.Bne_Un:  return TypeVoid;
 				#endregion
 				#region Comparison
 					case Code.Ceq:    
@@ -211,7 +211,10 @@ namespace Decompiler
 				case Code.Initobj: throw new NotImplementedException();
 				case Code.Isinst: throw new NotImplementedException();
 				case Code.Jmp: throw new NotImplementedException();
-				case Code.Ldarg: return ((ParameterDefinition)operand).ParameterType;
+				case Code.Ldarg:
+					Cecil.TypeReference typeRef = ((ParameterDefinition)operand).ParameterType;
+					// 'this' returns null;  TODO: Return proper type of this
+					return typeRef ?? TypeObject;
 				case Code.Ldarga: throw new NotImplementedException();
 				case Code.Ldc_I4: return TypeInt32;
 				case Code.Ldc_I8: throw new NotImplementedException();
@@ -234,18 +237,18 @@ namespace Decompiler
 				case Code.Mkrefany: throw new NotImplementedException();
 				case Code.Newobj: throw new NotImplementedException();
 				case Code.No: throw new NotImplementedException();
-				case Code.Nop: return null;
+				case Code.Nop: return TypeVoid;
 				case Code.Or: throw new NotImplementedException();
 				case Code.Pop: throw new NotImplementedException();
 				case Code.Readonly: throw new NotImplementedException();
 				case Code.Refanytype: throw new NotImplementedException();
 				case Code.Refanyval: throw new NotImplementedException();
-				case Code.Ret: return null;
+				case Code.Ret: return TypeVoid;
 				case Code.Rethrow: throw new NotImplementedException();
 				case Code.Sizeof: throw new NotImplementedException();
 				case Code.Starg: throw new NotImplementedException();
 				case Code.Stfld: throw new NotImplementedException();
-				case Code.Stloc: return null;
+				case Code.Stloc: return TypeVoid;
 				case Code.Stobj: throw new NotImplementedException();
 				case Code.Stsfld: throw new NotImplementedException();
 				case Code.Switch: throw new NotImplementedException();

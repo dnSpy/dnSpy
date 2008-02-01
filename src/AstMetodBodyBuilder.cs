@@ -119,7 +119,10 @@ namespace Decompiler
 					lastStatement = TransformExpression(expr);
 					yield return lastStatement;
 				}
-				Ast.IfElseStatement ifElseStmt = (Ast.IfElseStatement)lastStatement;
+				Ast.IfElseStatement ifElseStmt = lastStatement as Ast.IfElseStatement;
+				if (ifElseStmt == null) {
+					ifElseStmt = new IfElseStatement(Ast.Expression.Null, Ast.Statement.Null, Ast.Statement.Null);
+				}
 				Ast.Statement oldTrueBody = ifElseStmt.TrueStatement[0];
 				ifElseStmt.TrueStatement.Clear();
 				// Swap the method bodies
@@ -152,35 +155,31 @@ namespace Decompiler
 		Ast.Statement TransformExpression(StackExpression expr)
 		{
 			Ast.Statement astStatement = null;
-			try {
-				List<Ast.Expression> args = new List<Ast.Expression>();
-				foreach(CilStackSlot stackSlot in expr.StackBefore.PeekCount(expr.PopCount)) {
-					string name = string.Format("expr{0:X2}", stackSlot.AllocadedBy.Offset);
-					args.Add(new Ast.IdentifierExpression(name));
+			List<Ast.Expression> args = new List<Ast.Expression>();
+			foreach(CilStackSlot stackSlot in expr.StackBefore.PeekCount(expr.PopCount)) {
+				string name = string.Format("expr{0:X2}", stackSlot.AllocadedBy.Offset);
+				args.Add(new Ast.IdentifierExpression(name));
+			}
+			object codeExpr = MakeCodeDomExpression(methodDef, expr, args.ToArray());
+			if (codeExpr is Ast.Expression) {
+				if (expr.PushCount == 1) {
+					string type = expr.LastByteCode.Type.FullName;
+					string name = string.Format("expr{0:X2}", expr.LastByteCode.Offset);
+					Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
+					astLocal.Variables.Add(new Ast.VariableDeclaration(name, (Ast.Expression)codeExpr));
+					astStatement = astLocal;
+				} else {
+					astStatement = new ExpressionStatement((Ast.Expression)codeExpr);
 				}
-				object codeExpr = MakeCodeDomExpression(methodDef, expr, args.ToArray());
-				if (codeExpr is Ast.Expression) {
-					if (expr.PushCount == 1) {
-						string type = expr.LastByteCode.Type.FullName;
-						string name = string.Format("expr{0:X2}", expr.LastByteCode.Offset);
-						Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
-						astLocal.Variables.Add(new Ast.VariableDeclaration(name, (Ast.Expression)codeExpr));
-						astStatement = astLocal;
-					} else {
-						astStatement = new ExpressionStatement((Ast.Expression)codeExpr);
-					}
-				} else if (codeExpr is Ast.Statement) {
-					astStatement = (Ast.Statement)codeExpr;
-				}
-			} catch (NotImplementedException) {
-				astStatement = MakeComment(expr.LastByteCode.Description);
+			} else if (codeExpr is Ast.Statement) {
+				astStatement = (Ast.Statement)codeExpr;
 			}
 			return astStatement;
 		}
 		
 		static Ast.ExpressionStatement MakeComment(string text)
 		{
-			text = "/*" + text + "*/";
+			text = "/***" + text + "***/";
 			return new Ast.ExpressionStatement(new PrimitiveExpression(text, text));
 		}
 		
@@ -215,7 +214,14 @@ namespace Decompiler
 					allArgs.Add(astExpr);
 				}
 			}
-			return MakeCodeDomExpression(methodDef, expr.LastByteCode, allArgs.ToArray());
+			try {
+				return MakeCodeDomExpression(methodDef, expr.LastByteCode, allArgs.ToArray());
+			} catch (NotImplementedException) {
+				if (expr.LastByteCode.Operand != null) {
+					allArgs.Insert(0, new IdentifierExpression(expr.LastByteCode.FormatedOperand));
+				}
+				return new Ast.InvocationExpression(new IdentifierExpression("IL__" + expr.LastByteCode.OpCode.Name), allArgs);
+			}
 		}
 		
 		static object MakeCodeDomExpression(MethodDefinition methodDef, ByteCode byteCode, params Ast.Expression[] args)
