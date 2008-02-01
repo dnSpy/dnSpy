@@ -406,7 +406,7 @@ namespace Decompiler
 						);
 					}
 				case Code.Calli: throw new NotImplementedException();
-				case Code.Castclass: throw new NotImplementedException();
+				case Code.Castclass: return new Ast.CastExpression(operandAsTypeRef, arg1, CastType.Cast);
 				case Code.Ckfinite: throw new NotImplementedException();
 				case Code.Constrained: throw new NotImplementedException();
 				case Code.Cpblk: throw new NotImplementedException();
@@ -466,7 +466,7 @@ namespace Decompiler
 				case Code.Ldtoken:
 					if (operand is Cecil.TypeReference) {
 						return new Ast.MemberReferenceExpression(
-							new Ast.TypeOfExpression(new Ast.TypeReference(((Cecil.TypeReference)operand).FullName)),
+							new Ast.TypeOfExpression(operandAsTypeRef),
 							"TypeHandle"
 						);
 					} else {

@@ -75,7 +75,7 @@ namespace Reversi
             @this.Controls.Add((@this.okButton));
             @this.Controls.Add((@this.iconPictureBox));
             @this.FormBorderStyle = 3;
-            @this.Icon = (IL__castclass(System.Drawing.Icon, (V_0.GetObject("$this.Icon"))));
+            @this.Icon = ((System.Drawing.Icon)(V_0.GetObject("$this.Icon")));
             @this.MaximizeBox = 0;
             @this.MinimizeBox = 0;
             @this.Name = "AboutDialog";
