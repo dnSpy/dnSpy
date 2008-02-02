@@ -54,13 +54,13 @@ namespace Reversi
                 for (int j = -1; (j <= 1); j = (j + 1)) {
                     if (!(i)) {
                         if (!(!j)) {
-                            goto ConditionalNode_62;
+                            goto BasicBlock_27;
                         }
                         else {
-                            goto BasicBlock_31;
+                            continue;
                         }
                     }
-                    ConditionalNode_62:
+                    BasicBlock_27:
                     if (!(!@this.IsOutflanking(color, row, col, i, j))) {
                         int k = (row + i);
                         for (int l = (col + j);; l = (l + j)) {
@@ -96,17 +96,16 @@ namespace Reversi
                 for (int j = -1; (j <= 1); j = (j + 1)) {
                     if (!(i)) {
                         if (!(!j)) {
-                            goto ConditionalNode_130;
+                            goto BasicBlock_100;
                         }
                         else {
-                            goto BasicBlock_102;
+                            continue;
                         }
                     }
-                    ConditionalNode_130:
+                    BasicBlock_100:
                     if (!(!@this.IsOutflanking(color, row, col, i, j))) {
                         return 1;
                     }
-                    BasicBlock_102:
                 }
             }
             return 0;
@@ -126,50 +125,47 @@ namespace Reversi
         private bool IsOutflanking(int color, int row, int col, int dr, int dc)
         {
             int i = (row + dr);
-            int j = (col + dc);
-            Loop_185:
-            for (;;) {
+            for (int j = (col + dc);;) {
                 if (!(i < 0)) {
                     if (!(i >= 8)) {
                         if (!(j < 0)) {
                             if (!(j >= 8)) {
                                 if (!((@this.squares).Get(i, j) == -color)) {
-                                    goto ConditionalNode_213;
+                                    break;
                                 }
                                 i = (i + dr);
                                 j = (j + dc);
-                                goto Loop_185;
+                                continue;
                             }
                             else {
-                                goto ConditionalNode_213;
+                                break;
                             }
                         }
                         else {
-                            goto ConditionalNode_213;
+                            break;
                         }
                     }
                     else {
-                        goto ConditionalNode_213;
+                        break;
                     }
                 }
                 else {
-                    goto ConditionalNode_213;
+                    break;
                 }
             }
-            ConditionalNode_213:
             if (!(i < 0)) {
                 if (!(i > 7)) {
                     if (!(j < 0)) {
                         if (!(j > 7)) {
                             if (!((i - dr) != row)) {
                                 if (!((j - dc) == col)) {
-                                    goto ConditionalNode_231;
+                                    goto BasicBlock_178;
                                 }
                                 else {
                                     goto BasicBlock_179;
                                 }
                             }
-                            ConditionalNode_231:
+                            BasicBlock_178:
                             if (!((@this.squares).Get(i, j) == color)) {
                                 goto BasicBlock_179;
                             }
@@ -203,13 +199,15 @@ namespace Reversi
             @this.whiteFrontierCount = 0;
             @this.whiteSafeCount = 0;
             @this.blackSafeCount = 0;
-            bool V_2 = 1;
-            Loop_287:
-            for (; (V_2);) {
+            for (bool V_2 = 1;;) {
+                BasicBlock_244:
+                if (!(V_2)) {
+                    break;
+                }
                 V_2 = 0;
                 for (int i = 0;; i = (i + 1)) {
                     if (!(i < 8)) {
-                        goto Loop_287;
+                        goto BasicBlock_244;
                     }
                     for (int j = 0; (j < 8); j = (j + 1)) {
                         if (!((@this.squares).Get(i, j) == (IL__ldsfld(Empty)))) {
@@ -217,17 +215,16 @@ namespace Reversi
                                 if (!(@this.IsOutflankable(i, j))) {
                                     (@this.safeDiscs).Set(i, j, 1);
                                     V_2 = 1;
-                                    goto BasicBlock_240;
+                                    continue;
                                 }
                                 else {
-                                    goto BasicBlock_240;
+                                    continue;
                                 }
                             }
                             else {
-                                goto BasicBlock_240;
+                                continue;
                             }
                         }
-                        BasicBlock_240:
                     }
                 }
             }
@@ -239,47 +236,46 @@ namespace Reversi
                     if (!((@this.squares).Get(i, j) == (IL__ldsfld(Empty)))) {
                         for (int k = -1;; k = (k + 1)) {
                             if (!(k <= 1)) {
-                                goto ConditionalNode_375;
+                                goto BasicBlock_262;
                             }
                             for (int l = -1; (l <= 1); l = (l + 1)) {
                                 if (!(k)) {
                                     if (!(!l)) {
-                                        goto ConditionalNode_351;
+                                        goto BasicBlock_252;
                                     }
                                     else {
-                                        goto BasicBlock_258;
+                                        continue;
                                     }
                                 }
-                                ConditionalNode_351:
+                                BasicBlock_252:
                                 if (!((i + k) < 0)) {
                                     if (!((i + k) >= 8)) {
                                         if (!((j + l) < 0)) {
                                             if (!((j + l) >= 8)) {
                                                 if (!((@this.squares).Get((i + k), (j + l)) != (IL__ldsfld(Empty)))) {
                                                     V_5 = 1;
-                                                    goto BasicBlock_258;
+                                                    continue;
                                                 }
                                                 else {
-                                                    goto BasicBlock_258;
+                                                    continue;
                                                 }
                                             }
                                             else {
-                                                goto BasicBlock_258;
+                                                continue;
                                             }
                                         }
                                         else {
-                                            goto BasicBlock_258;
+                                            continue;
                                         }
                                     }
                                     else {
-                                        goto BasicBlock_258;
+                                        continue;
                                     }
                                 }
-                                BasicBlock_258:
                             }
                         }
                     }
-                    ConditionalNode_375:
+                    BasicBlock_262:
                     if (!((@this.squares).Get(i, j) != (IL__ldsfld(Black)))) {
                         IL__dup(@this);
                         object expr123 = expr122.blackCount;
@@ -296,10 +292,10 @@ namespace Reversi
                             object expr152 = expr151.blackSafeCount;
                             int expr158 = expr152 + 1;
                             expr151.blackSafeCount = expr158;
-                            goto BasicBlock_273;
+                            continue;
                         }
                         else {
-                            goto BasicBlock_273;
+                            continue;
                         }
                     }
                     else {
@@ -319,10 +315,10 @@ namespace Reversi
                                 object expr1A5 = expr1A4.whiteSafeCount;
                                 int expr1AB = expr1A5 + 1;
                                 expr1A4.whiteSafeCount = expr1AB;
-                                goto BasicBlock_273;
+                                continue;
                             }
                             else {
-                                goto BasicBlock_273;
+                                continue;
                             }
                         }
                         IL__dup(@this);
@@ -330,7 +326,6 @@ namespace Reversi
                         int expr1BB = expr1B5 + 1;
                         expr1B4.emptyCount = expr1BB;
                     }
-                    BasicBlock_273:
                 }
             }
         }
@@ -341,12 +336,10 @@ namespace Reversi
             bool V_5 = 0;
             bool V_4 = 0;
             bool V_6 = 0;
-            int k = 0;
-            Loop_506:
-            for (;;) {
+            for (int k = 0;;) {
                 if (!(k >= col)) {
                     if (!(!V_3)) {
-                        goto BasicBlock_404;
+                        break;
                     }
                     if (!((@this.squares).Get(row, k) != (IL__ldsfld(Empty)))) {
                         V_3 = 1;
@@ -365,22 +358,20 @@ namespace Reversi
                     }
                     BasicBlock_401:
                     k = (k + 1);
-                    goto Loop_506;
+                    continue;
                     BasicBlock_400:
                     V_5 = 1;
                     goto BasicBlock_401;
                 }
                 else {
-                    goto BasicBlock_404;
+                    break;
                 }
             }
-            BasicBlock_404:
             k = (col + 1);
-            Loop_515:
             for (;;) {
                 if (!(k >= 8)) {
                     if (!(!V_4)) {
-                        goto BasicBlock_413;
+                        break;
                     }
                     if (!((@this.squares).Get(row, k) != (IL__ldsfld(Empty)))) {
                         V_4 = 1;
@@ -399,16 +390,15 @@ namespace Reversi
                     }
                     BasicBlock_410:
                     k = (k + 1);
-                    goto Loop_515;
+                    continue;
                     BasicBlock_409:
                     V_6 = 1;
                     goto BasicBlock_410;
                 }
                 else {
-                    goto BasicBlock_413;
+                    break;
                 }
             }
-            BasicBlock_413:
             if (!V_3) goto BasicBlock_415; 
             if (V_4) goto BasicBlock_419; 
             BasicBlock_415:
@@ -424,12 +414,10 @@ namespace Reversi
             V_4 = 0;
             V_5 = 0;
             V_6 = 0;
-            int j = 0;
-            Loop_531:
-            for (;;) {
+            for (int j = 0;;) {
                 if (!(j >= row)) {
                     if (!(!V_3)) {
-                        goto BasicBlock_429;
+                        break;
                     }
                     if (!((@this.squares).Get(j, col) != (IL__ldsfld(Empty)))) {
                         V_3 = 1;
@@ -448,22 +436,20 @@ namespace Reversi
                     }
                     BasicBlock_426:
                     j = (j + 1);
-                    goto Loop_531;
+                    continue;
                     BasicBlock_425:
                     V_5 = 1;
                     goto BasicBlock_426;
                 }
                 else {
-                    goto BasicBlock_429;
+                    break;
                 }
             }
-            BasicBlock_429:
             j = (row + 1);
-            Loop_540:
             for (;;) {
                 if (!(j >= 8)) {
                     if (!(!V_4)) {
-                        goto BasicBlock_438;
+                        break;
                     }
                     if (!((@this.squares).Get(j, col) != (IL__ldsfld(Empty)))) {
                         V_4 = 1;
@@ -482,16 +468,15 @@ namespace Reversi
                     }
                     BasicBlock_435:
                     j = (j + 1);
-                    goto Loop_540;
+                    continue;
                     BasicBlock_434:
                     V_6 = 1;
                     goto BasicBlock_435;
                 }
                 else {
-                    goto BasicBlock_438;
+                    break;
                 }
             }
-            BasicBlock_438:
             if (!V_3) goto BasicBlock_440; 
             if (V_4) goto BasicBlock_444; 
             BasicBlock_440:
@@ -509,12 +494,11 @@ namespace Reversi
             V_6 = 0;
             j = (row - 1);
             k = (col - 1);
-            Loop_557:
             for (;;) {
                 if (!(j < 0)) {
                     if (!(k < 0)) {
                         if (!(!V_3)) {
-                            goto BasicBlock_455;
+                            break;
                         }
                         if (!((@this.squares).Get(j, k) != (IL__ldsfld(Empty)))) {
                             V_3 = 1;
@@ -534,28 +518,26 @@ namespace Reversi
                         BasicBlock_451:
                         j = (j - 1);
                         k = (k - 1);
-                        goto Loop_557;
+                        continue;
                         BasicBlock_450:
                         V_5 = 1;
                         goto BasicBlock_451;
                     }
                     else {
-                        goto BasicBlock_455;
+                        break;
                     }
                 }
                 else {
-                    goto BasicBlock_455;
+                    break;
                 }
             }
-            BasicBlock_455:
             j = (row + 1);
             k = (col + 1);
-            Loop_567:
             for (;;) {
                 if (!(j >= 8)) {
                     if (!(k >= 8)) {
                         if (!(!V_4)) {
-                            goto BasicBlock_465;
+                            break;
                         }
                         if (!((@this.squares).Get(j, k) != (IL__ldsfld(Empty)))) {
                             V_4 = 1;
@@ -575,20 +557,19 @@ namespace Reversi
                         BasicBlock_461:
                         j = (j + 1);
                         k = (k + 1);
-                        goto Loop_567;
+                        continue;
                         BasicBlock_460:
                         V_6 = 1;
                         goto BasicBlock_461;
                     }
                     else {
-                        goto BasicBlock_465;
+                        break;
                     }
                 }
                 else {
-                    goto BasicBlock_465;
+                    break;
                 }
             }
-            BasicBlock_465:
             if (!V_3) goto BasicBlock_467; 
             if (V_4) goto BasicBlock_471; 
             BasicBlock_467:
@@ -606,12 +587,11 @@ namespace Reversi
             V_6 = 0;
             j = (row - 1);
             k = (col + 1);
-            Loop_584:
             for (;;) {
                 if (!(j < 0)) {
-                    if (k >= 8) goto BasicBlock_482; 
+                    if (k >= 8) break; 
                     if (!V_3) goto BasicBlock_473; 
-                    goto BasicBlock_482;
+                    break;
                     BasicBlock_473:
                     if ((@this.squares).Get(j, k) != (IL__ldsfld(Empty))) goto BasicBlock_475; 
                     V_3 = 1;
@@ -622,7 +602,7 @@ namespace Reversi
                     BasicBlock_478:
                     j = (j - 1);
                     k = (k + 1);
-                    goto Loop_584;
+                    continue;
                     BasicBlock_476:
                     if ((@this.safeDiscs).Get(j, k)) goto BasicBlock_478; 
                     BasicBlock_477:
@@ -630,10 +610,9 @@ namespace Reversi
                     goto BasicBlock_478;
                 }
                 else {
-                    goto BasicBlock_482;
+                    break;
                 }
             }
-            BasicBlock_482:
             j = (row + 1);
             k = (col - 1);
             for (;; k = (k - 1)) {

@@ -185,18 +185,18 @@ namespace Decompiler
 		
 		public static Ast.Statement MakeBranchCommand(Node contextNode, Node targetNode)
 		{
-			// Propagate target up to the top most scope
-			while (targetNode.Parent != null && targetNode.Parent.HeadChild == targetNode) {
-				targetNode = targetNode.Parent;
-			}
-			// If branches to the start of encapsulating loop
-			if (contextNode.Parent is Loop && targetNode == contextNode.Parent) {
-				return new Ast.ContinueStatement();
-			}
-			// If branches outside the encapsulating loop
-			if (contextNode.Parent is Loop && targetNode == contextNode.Parent.NextNode) {
-				return new Ast.BreakStatement();
-			}
+//			// Propagate target up to the top most scope
+//			while (targetNode.Parent != null && targetNode.Parent.HeadChild == targetNode) {
+//				targetNode = targetNode.Parent;
+//			}
+//			// If branches to the start of encapsulating loop
+//			if (contextNode.Parent is Loop && targetNode == contextNode.Parent) {
+//				return new Ast.ContinueStatement();
+//			}
+//			// If branches outside the encapsulating loop
+//			if (contextNode.Parent is Loop && targetNode == contextNode.Parent.NextNode) {
+//				return new Ast.BreakStatement();
+//			}
 			return new Ast.GotoStatement(targetNode.Label);
 		}
 		

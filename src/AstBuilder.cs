@@ -22,7 +22,7 @@ namespace Decompiler
 		{
 			CSharpOutputVisitor csOutVisitor = new CSharpOutputVisitor();
 			
-			for (int i = 0; i < 2; i++) {
+			for (int i = 0; i < 4; i++) {
 				if (Options.ReduceAstJumps) {
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);

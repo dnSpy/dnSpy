@@ -52,8 +52,8 @@ namespace ICSharpCode.NRefactory.Ast
 		
 		protected override void SetItem(int index, INode item)
 		{
-			base.RemoveItem(index);
-			base.InsertItem(index, item);
+			RemoveItem(index);
+			InsertItem(index, item);
 		}
 		
 		#region Convenience methods
