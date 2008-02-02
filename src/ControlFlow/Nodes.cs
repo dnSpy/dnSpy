@@ -66,7 +66,12 @@ namespace Decompiler.ControlFlow
 				//  - this is first expression
 				//  - last expression was branch
 				//  - this expression is branch target
-				if (i == 0 || exprs[i - 1].BranchTarget != null || exprs[i].BranchesHere.Count > 0){
+				//  - this expression is a branch
+				if (i == 0 ||
+				    exprs[i - 1].BranchTarget != null ||
+				    exprs[i].BranchesHere.Count > 0 ||
+				    exprs[i].BranchTarget != null)
+				{
 					basicBlock = new BasicBlock();
 					this.Childs.Add(basicBlock);
 				}
