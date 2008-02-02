@@ -56,7 +56,7 @@ namespace Decompiler
 			this.collapseCount.Size = new System.Drawing.Size(78, 26);
 			this.collapseCount.TabIndex = 1;
 			this.collapseCount.Value = new decimal(new int[] {
-									1000,
+									10000,
 									0,
 									0,
 									0});
@@ -74,7 +74,7 @@ namespace Decompiler
 			this.reduceCount.Size = new System.Drawing.Size(70, 26);
 			this.reduceCount.TabIndex = 2;
 			this.reduceCount.Value = new decimal(new int[] {
-									1000,
+									10000,
 									0,
 									0,
 									0});
