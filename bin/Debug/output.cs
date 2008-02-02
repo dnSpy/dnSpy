@@ -61,15 +61,11 @@ namespace Reversi
                     }
                     if (!(!@this.IsOutflanking(color, row, col, i, j))) {
                         int k = (row + i);
-                        for (int l = (col + j);; l = (l + j)) {
-                            if (!((@this.squares).Get(k, l) == -color)) {
-                                goto BasicBlock_31;
-                            }
+                        for (int l = (col + j); ((@this.squares).Get(k, l) == -color); l = (l + j)) {
                             (@this.squares).Set(k, l, color);
                             k = (k + i);
                         }
                     }
-                    BasicBlock_31:
                 }
             }
             @this.UpdateCounts();
@@ -131,7 +127,6 @@ namespace Reversi
                                 }
                                 i = (i + dr);
                                 j = (j + dc);
-                                continue;
                             }
                             else {
                                 break;
@@ -183,16 +178,9 @@ namespace Reversi
             @this.whiteFrontierCount = 0;
             @this.whiteSafeCount = 0;
             @this.blackSafeCount = 0;
-            for (bool V_2 = 1;;) {
-                BasicBlock_244:
-                if (!(V_2)) {
-                    break;
-                }
+            for (bool V_2 = 1; (V_2);) {
                 V_2 = 0;
-                for (int i = 0;; i = (i + 1)) {
-                    if (!(i < 8)) {
-                        goto BasicBlock_244;
-                    }
+                for (int i = 0; (i < 8); i = (i + 1)) {
                     for (int j = 0; (j < 8); j = (j + 1)) {
                         if (!((@this.squares).Get(i, j) == (IL__ldsfld(Empty)))) {
                             if (!((@this.safeDiscs).Get(i, j))) {
@@ -211,10 +199,7 @@ namespace Reversi
                 for (; (j < 8); j = (j + 1)) {
                     bool V_5 = 0;
                     if (!((@this.squares).Get(i, j) == (IL__ldsfld(Empty)))) {
-                        for (int k = -1;; k = (k + 1)) {
-                            if (!(k <= 1)) {
-                                goto BasicBlock_262;
-                            }
+                        for (int k = -1; (k <= 1); k = (k + 1)) {
                             for (int l = -1; (l <= 1); l = (l + 1)) {
                                 if (!(k)) {
                                     if (!(!l)) {
@@ -237,7 +222,6 @@ namespace Reversi
                             }
                         }
                     }
-                    BasicBlock_262:
                     if (!((@this.squares).Get(i, j) != (IL__ldsfld(Black)))) {
                         IL__dup(@this);
                         object expr123 = expr122.blackCount;

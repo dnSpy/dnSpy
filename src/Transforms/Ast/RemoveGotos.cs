@@ -83,7 +83,7 @@ namespace Decompiler.Transforms.Ast
 		// Gets a next fall though statement, entering and exiting code blocks
 		// It does not matter what the current statement is
 		// May return null
-		public static Statement GetNextStatement(Statement statement)
+		public static INode GetNextStatement(Statement statement)
 		{
 			if (statement == null) throw new ArgumentNullException();
 			
@@ -96,22 +96,36 @@ namespace Decompiler.Transforms.Ast
 				if (statement.Parent is BlockStatement &&
 				    statement.Parent.Parent is IfElseStatement) {
 					return GetNextStatement((Statement)statement.Parent.Parent);
-				} else {
-					return null;
 				}
+				
+				// When a 'for' body is finished the execution continues by:
+				// Iterator; Condition; Body
+				if (statement.Parent is BlockStatement &&
+				    statement.Parent.Parent is ForStatement) {
+					ForStatement forLoop = statement.Parent.Parent as ForStatement;
+					if (forLoop.Iterator.Count > 0) {
+						return forLoop.Iterator[0];
+					} else if (!forLoop.Condition.IsNull) {
+						return forLoop.Condition;
+					} else {
+						return forLoop.EmbeddedStatement.Children.First;
+					}
+				}
+				
+				return null;
 			}
 			
 			// Enter a block of code
 			while(true) {
 				// If a 'for' loop does not have initializers and condition,
 				// the next statement is the entry point
-				ForStatement stmtAsForStmt = next as ForStatement;
-				if (stmtAsForStmt != null &&
-					stmtAsForStmt.Initializers.Count == 0 &&
-					stmtAsForStmt.Condition.IsNull &&
-					stmtAsForStmt.EmbeddedStatement is BlockStatement &&
-					stmtAsForStmt.EmbeddedStatement.Children.Count > 0) {
-					next = (Statement)stmtAsForStmt.EmbeddedStatement.Children.First;
+				ForStatement nextAsForStmt = next as ForStatement;
+				if (nextAsForStmt != null &&
+					nextAsForStmt.Initializers.Count == 0 &&
+					nextAsForStmt.Condition.IsNull &&
+					nextAsForStmt.EmbeddedStatement is BlockStatement &&
+					nextAsForStmt.EmbeddedStatement.Children.Count > 0) {
+					next = (Statement)nextAsForStmt.EmbeddedStatement.Children.First;
 					continue; // Restart
 				}
 				
@@ -122,25 +136,28 @@ namespace Decompiler.Transforms.Ast
 		public override object VisitGotoStatement(GotoStatement gotoStatement, object data)
 		{
 			// Remove redundant goto which goes to a label that imideately follows
-			LabelStatement followingLabel = GetNextStatement(gotoStatement) as LabelStatement;
-			if (followingLabel != null && followingLabel.Label == gotoStatement.Label) {
+			INode fallthoughTarget = GetNextStatement(gotoStatement);
+			if ((fallthoughTarget is LabelStatement) &&
+			    (fallthoughTarget as LabelStatement).Label == gotoStatement.Label) {
 				RemoveCurrentNode();
 				return null;
 			}
 			
 			// Replace goto with 'break'
 			// Break statement moves right outside the looop
-			if (CurrentLoop != null &&
-			    (CurrentLoop.Next() as LabelStatement) != null &&
-			    (CurrentLoop.Next() as LabelStatement).Label == gotoStatement.Label) {
-				ReplaceCurrentNode(new BreakStatement());
-				return null;
+			if (CurrentLoop != null) {
+				INode breakTarget = GetNextStatement(CurrentLoop);
+				if ((breakTarget is LabelStatement) &&
+				    (breakTarget as LabelStatement).Label == gotoStatement.Label) {
+					ReplaceCurrentNode(new BreakStatement());
+					return null;
+				}
 			}
 			
 			// Replace goto with 'continue'
 			// Continue statement which moves at the very end of loop
 			if (CurrentLoop != null &&
-			    (CurrentLoop.EmbeddedStatement as BlockStatement) != null &&
+			    (CurrentLoop.EmbeddedStatement is BlockStatement) &&
 			    ((CurrentLoop.EmbeddedStatement as BlockStatement).Children.Last as LabelStatement) != null &&
 			    ((CurrentLoop.EmbeddedStatement as BlockStatement).Children.Last as LabelStatement).Label == gotoStatement.Label) {
 				ReplaceCurrentNode(new ContinueStatement());
@@ -149,7 +166,7 @@ namespace Decompiler.Transforms.Ast
 			
 			// Replace goto with 'continue'
 			// Continue statement which moves at the very start of for loop if there is no contition and iteration
-			if ((CurrentLoop as ForStatement) != null &&
+			if ((CurrentLoop is ForStatement) &&
 			    (CurrentLoop as ForStatement).Condition.IsNull &&
 			    (CurrentLoop as ForStatement).Iterator.Count == 0 &&
 			    (CurrentLoop.EmbeddedStatement as BlockStatement) != null &&
