@@ -80,21 +80,49 @@ namespace Decompiler.Transforms.Ast
 			return null;
 		}
 		
-		public override object VisitGotoStatement(GotoStatement gotoStatement, object data)
+		// Gets a next fall though statement, entering and exiting code blocks
+		// It does not matter what the current statement is
+		// May return null
+		public static Statement GetNextStatement(Statement statement)
 		{
-			// Find what is the next statement following this one
-			// It does fall though loop entries (the loop must not have initializer and condition)
-			INode followingStmt = gotoStatement.Next();
-			while(
-				(followingStmt as ForStatement) != null &&
-				(followingStmt as ForStatement).Initializers.Count == 0 &&
-				(followingStmt as ForStatement).Condition.IsNull &&
-				(followingStmt as ForStatement).EmbeddedStatement is BlockStatement) {
-				followingStmt = (followingStmt as ForStatement).EmbeddedStatement.Children.First;
+			if (statement == null) throw new ArgumentNullException();
+			
+			Statement next = (Statement)statement.Next();
+			
+			// Exit a block of code
+			if (next == null) {
+				// When an 'if' body is finished the execution continues with the
+				// next statement after the 'if' statement
+				if (statement.Parent is BlockStatement &&
+				    statement.Parent.Parent is IfElseStatement) {
+					return GetNextStatement((Statement)statement.Parent.Parent);
+				} else {
+					return null;
+				}
 			}
 			
+			// Enter a block of code
+			while(true) {
+				// If a 'for' loop does not have initializers and condition,
+				// the next statement is the entry point
+				ForStatement stmtAsForStmt = next as ForStatement;
+				if (stmtAsForStmt != null &&
+					stmtAsForStmt.Initializers.Count == 0 &&
+					stmtAsForStmt.Condition.IsNull &&
+					stmtAsForStmt.EmbeddedStatement is BlockStatement &&
+					stmtAsForStmt.EmbeddedStatement.Children.Count > 0) {
+					next = (Statement)stmtAsForStmt.EmbeddedStatement.Children.First;
+					continue; // Restart
+				}
+				
+				return next;
+			}
+		}
+		
+		public override object VisitGotoStatement(GotoStatement gotoStatement, object data)
+		{
 			// Remove redundant goto which goes to a label that imideately follows
-			LabelStatement followingLabel = followingStmt as LabelStatement;
+			LabelStatement followingLabel = GetNextStatement(gotoStatement) as LabelStatement;
 			if (followingLabel != null && followingLabel.Label == gotoStatement.Label) {
 				RemoveCurrentNode();
 				return null;

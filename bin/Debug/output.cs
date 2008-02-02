@@ -54,13 +54,11 @@ namespace Reversi
                 for (int j = -1; (j <= 1); j = (j + 1)) {
                     if (!(i)) {
                         if (!(!j)) {
-                            goto BasicBlock_27;
                         }
                         else {
                             continue;
                         }
                     }
-                    BasicBlock_27:
                     if (!(!@this.IsOutflanking(color, row, col, i, j))) {
                         int k = (row + i);
                         for (int l = (col + j);; l = (l + j)) {
@@ -96,13 +94,11 @@ namespace Reversi
                 for (int j = -1; (j <= 1); j = (j + 1)) {
                     if (!(i)) {
                         if (!(!j)) {
-                            goto BasicBlock_100;
                         }
                         else {
                             continue;
                         }
                     }
-                    BasicBlock_100:
                     if (!(!@this.IsOutflanking(color, row, col, i, j))) {
                         return 1;
                     }
@@ -159,30 +155,18 @@ namespace Reversi
                         if (!(j > 7)) {
                             if (!((i - dr) != row)) {
                                 if (!((j - dc) == col)) {
-                                    goto BasicBlock_178;
                                 }
                                 else {
                                     goto BasicBlock_179;
                                 }
                             }
-                            BasicBlock_178:
                             if (!((@this.squares).Get(i, j) == color)) {
-                                goto BasicBlock_179;
                             }
                             else {
                                 goto BasicBlock_180;
                             }
                         }
-                        else {
-                            goto BasicBlock_179;
-                        }
                     }
-                    else {
-                        goto BasicBlock_179;
-                    }
-                }
-                else {
-                    goto BasicBlock_179;
                 }
             }
             BasicBlock_179:
@@ -215,14 +199,7 @@ namespace Reversi
                                 if (!(@this.IsOutflankable(i, j))) {
                                     (@this.safeDiscs).Set(i, j, 1);
                                     V_2 = 1;
-                                    continue;
                                 }
-                                else {
-                                    continue;
-                                }
-                            }
-                            else {
-                                continue;
                             }
                         }
                     }
@@ -241,35 +218,20 @@ namespace Reversi
                             for (int l = -1; (l <= 1); l = (l + 1)) {
                                 if (!(k)) {
                                     if (!(!l)) {
-                                        goto BasicBlock_252;
                                     }
                                     else {
                                         continue;
                                     }
                                 }
-                                BasicBlock_252:
                                 if (!((i + k) < 0)) {
                                     if (!((i + k) >= 8)) {
                                         if (!((j + l) < 0)) {
                                             if (!((j + l) >= 8)) {
                                                 if (!((@this.squares).Get((i + k), (j + l)) != (IL__ldsfld(Empty)))) {
                                                     V_5 = 1;
-                                                    continue;
-                                                }
-                                                else {
-                                                    continue;
                                                 }
                                             }
-                                            else {
-                                                continue;
-                                            }
                                         }
-                                        else {
-                                            continue;
-                                        }
-                                    }
-                                    else {
-                                        continue;
                                     }
                                 }
                             }
@@ -292,10 +254,6 @@ namespace Reversi
                             object expr152 = expr151.blackSafeCount;
                             int expr158 = expr152 + 1;
                             expr151.blackSafeCount = expr158;
-                            continue;
-                        }
-                        else {
-                            continue;
                         }
                     }
                     else {
@@ -349,9 +307,6 @@ namespace Reversi
                         if (!((@this.safeDiscs).Get(row, k))) {
                             goto BasicBlock_400;
                         }
-                        else {
-                            goto BasicBlock_401;
-                        }
                     }
                     else {
                         goto BasicBlock_400;
@@ -380,9 +335,6 @@ namespace Reversi
                     if (!((@this.squares).Get(row, k) != i)) {
                         if (!((@this.safeDiscs).Get(row, k))) {
                             goto BasicBlock_409;
-                        }
-                        else {
-                            goto BasicBlock_410;
                         }
                     }
                     else {
@@ -427,9 +379,6 @@ namespace Reversi
                         if (!((@this.safeDiscs).Get(j, col))) {
                             goto BasicBlock_425;
                         }
-                        else {
-                            goto BasicBlock_426;
-                        }
                     }
                     else {
                         goto BasicBlock_425;
@@ -458,9 +407,6 @@ namespace Reversi
                     if (!((@this.squares).Get(j, col) != i)) {
                         if (!((@this.safeDiscs).Get(j, col))) {
                             goto BasicBlock_434;
-                        }
-                        else {
-                            goto BasicBlock_435;
                         }
                     }
                     else {
@@ -508,9 +454,6 @@ namespace Reversi
                             if (!((@this.safeDiscs).Get(j, k))) {
                                 goto BasicBlock_450;
                             }
-                            else {
-                                goto BasicBlock_451;
-                            }
                         }
                         else {
                             goto BasicBlock_450;
@@ -546,9 +489,6 @@ namespace Reversi
                         if (!((@this.squares).Get(j, k) != i)) {
                             if (!((@this.safeDiscs).Get(j, k))) {
                                 goto BasicBlock_460;
-                            }
-                            else {
-                                goto BasicBlock_461;
                             }
                         }
                         else {
