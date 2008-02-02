@@ -112,7 +112,7 @@ namespace Decompiler.ControlFlow
 			trueNodes.MoveTo(conditionalNode.TrueBody);
 			
 			// We can exit the 'true' part of Loop or MethodBody conviently using 'break' or 'return'
-			if (commonReachable.Count > 0 && (conditionalNode.Parent is Loop || conditionalNode.Parent is MethodBodyGraph)) {
+			if (commonReachable.Count > 0) {
 				Options.NotifyReducingGraph();
 				falseNodes.MoveTo(conditionalNode.FalseBody);
 			}

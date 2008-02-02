@@ -285,22 +285,19 @@ namespace Reversi
                     }
                     if (!((@this.squares).Get(row, k) != (IL__ldsfld(Empty)))) {
                         V_3 = 1;
-                        goto BasicBlock_401;
-                    }
-                    if (!((@this.squares).Get(row, k) != i)) {
-                        if (!((@this.safeDiscs).Get(row, k))) {
-                            goto BasicBlock_400;
-                        }
                     }
                     else {
-                        goto BasicBlock_400;
+                        if (!((@this.squares).Get(row, k) != i)) {
+                            if (!((@this.safeDiscs).Get(row, k))) {
+                            }
+                            else {
+                                goto BasicBlock_401;
+                            }
+                        }
+                        V_5 = 1;
                     }
                     BasicBlock_401:
                     k = (k + 1);
-                    continue;
-                    BasicBlock_400:
-                    V_5 = 1;
-                    goto BasicBlock_401;
                 }
                 else {
                     break;
@@ -314,22 +311,19 @@ namespace Reversi
                     }
                     if (!((@this.squares).Get(row, k) != (IL__ldsfld(Empty)))) {
                         V_4 = 1;
-                        goto BasicBlock_410;
-                    }
-                    if (!((@this.squares).Get(row, k) != i)) {
-                        if (!((@this.safeDiscs).Get(row, k))) {
-                            goto BasicBlock_409;
-                        }
                     }
                     else {
-                        goto BasicBlock_409;
+                        if (!((@this.squares).Get(row, k) != i)) {
+                            if (!((@this.safeDiscs).Get(row, k))) {
+                            }
+                            else {
+                                goto BasicBlock_410;
+                            }
+                        }
+                        V_6 = 1;
                     }
                     BasicBlock_410:
                     k = (k + 1);
-                    continue;
-                    BasicBlock_409:
-                    V_6 = 1;
-                    goto BasicBlock_410;
                 }
                 else {
                     break;
@@ -366,22 +360,19 @@ namespace Reversi
                     }
                     if (!((@this.squares).Get(j, col) != (IL__ldsfld(Empty)))) {
                         V_3 = 1;
-                        goto BasicBlock_426;
-                    }
-                    if (!((@this.squares).Get(j, col) != i)) {
-                        if (!((@this.safeDiscs).Get(j, col))) {
-                            goto BasicBlock_425;
-                        }
                     }
                     else {
-                        goto BasicBlock_425;
+                        if (!((@this.squares).Get(j, col) != i)) {
+                            if (!((@this.safeDiscs).Get(j, col))) {
+                            }
+                            else {
+                                goto BasicBlock_426;
+                            }
+                        }
+                        V_5 = 1;
                     }
                     BasicBlock_426:
                     j = (j + 1);
-                    continue;
-                    BasicBlock_425:
-                    V_5 = 1;
-                    goto BasicBlock_426;
                 }
                 else {
                     break;
@@ -395,22 +386,19 @@ namespace Reversi
                     }
                     if (!((@this.squares).Get(j, col) != (IL__ldsfld(Empty)))) {
                         V_4 = 1;
-                        goto BasicBlock_435;
-                    }
-                    if (!((@this.squares).Get(j, col) != i)) {
-                        if (!((@this.safeDiscs).Get(j, col))) {
-                            goto BasicBlock_434;
-                        }
                     }
                     else {
-                        goto BasicBlock_434;
+                        if (!((@this.squares).Get(j, col) != i)) {
+                            if (!((@this.safeDiscs).Get(j, col))) {
+                            }
+                            else {
+                                goto BasicBlock_435;
+                            }
+                        }
+                        V_6 = 1;
                     }
                     BasicBlock_435:
                     j = (j + 1);
-                    continue;
-                    BasicBlock_434:
-                    V_6 = 1;
-                    goto BasicBlock_435;
                 }
                 else {
                     break;
@@ -450,23 +438,20 @@ namespace Reversi
                         }
                         if (!((@this.squares).Get(j, k) != (IL__ldsfld(Empty)))) {
                             V_3 = 1;
-                            goto BasicBlock_451;
-                        }
-                        if (!((@this.squares).Get(j, k) != i)) {
-                            if (!((@this.safeDiscs).Get(j, k))) {
-                                goto BasicBlock_450;
-                            }
                         }
                         else {
-                            goto BasicBlock_450;
+                            if (!((@this.squares).Get(j, k) != i)) {
+                                if (!((@this.safeDiscs).Get(j, k))) {
+                                }
+                                else {
+                                    goto BasicBlock_451;
+                                }
+                            }
+                            V_5 = 1;
                         }
                         BasicBlock_451:
                         j = (j - 1);
                         k = (k - 1);
-                        continue;
-                        BasicBlock_450:
-                        V_5 = 1;
-                        goto BasicBlock_451;
                     }
                     else {
                         break;
@@ -486,23 +471,20 @@ namespace Reversi
                         }
                         if (!((@this.squares).Get(j, k) != (IL__ldsfld(Empty)))) {
                             V_4 = 1;
-                            goto BasicBlock_461;
-                        }
-                        if (!((@this.squares).Get(j, k) != i)) {
-                            if (!((@this.safeDiscs).Get(j, k))) {
-                                goto BasicBlock_460;
-                            }
                         }
                         else {
-                            goto BasicBlock_460;
+                            if (!((@this.squares).Get(j, k) != i)) {
+                                if (!((@this.safeDiscs).Get(j, k))) {
+                                }
+                                else {
+                                    goto BasicBlock_461;
+                                }
+                            }
+                            V_6 = 1;
                         }
                         BasicBlock_461:
                         j = (j + 1);
                         k = (k + 1);
-                        continue;
-                        BasicBlock_460:
-                        V_6 = 1;
-                        goto BasicBlock_461;
                     }
                     else {
                         break;
@@ -546,23 +528,20 @@ namespace Reversi
                         }
                         if (!((@this.squares).Get(j, k) != (IL__ldsfld(Empty)))) {
                             V_3 = 1;
-                            goto BasicBlock_478;
-                        }
-                        if (!((@this.squares).Get(j, k) != i)) {
-                            if (!((@this.safeDiscs).Get(j, k))) {
-                                goto BasicBlock_477;
-                            }
                         }
                         else {
-                            goto BasicBlock_477;
+                            if (!((@this.squares).Get(j, k) != i)) {
+                                if (!((@this.safeDiscs).Get(j, k))) {
+                                }
+                                else {
+                                    goto BasicBlock_478;
+                                }
+                            }
+                            V_5 = 1;
                         }
                         BasicBlock_478:
                         j = (j - 1);
                         k = (k + 1);
-                        continue;
-                        BasicBlock_477:
-                        V_5 = 1;
-                        goto BasicBlock_478;
                     }
                     else {
                         break;
@@ -582,23 +561,20 @@ namespace Reversi
                         }
                         if (!((@this.squares).Get(j, k) != (IL__ldsfld(Empty)))) {
                             V_4 = 1;
-                            goto BasicBlock_488;
-                        }
-                        if (!((@this.squares).Get(j, k) != i)) {
-                            if (!((@this.safeDiscs).Get(j, k))) {
-                                goto BasicBlock_487;
-                            }
                         }
                         else {
-                            goto BasicBlock_487;
+                            if (!((@this.squares).Get(j, k) != i)) {
+                                if (!((@this.safeDiscs).Get(j, k))) {
+                                }
+                                else {
+                                    goto BasicBlock_488;
+                                }
+                            }
+                            V_6 = 1;
                         }
                         BasicBlock_488:
                         j = (j + 1);
                         k = (k - 1);
-                        continue;
-                        BasicBlock_487:
-                        V_6 = 1;
-                        goto BasicBlock_488;
                     }
                     else {
                         break;
