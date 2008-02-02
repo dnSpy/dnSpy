@@ -64,24 +64,11 @@ namespace Decompiler.Transforms.Ast
 				lastStmt.Remove();
 				return null;
 			}
-			// End of if body
-			if (lastStmt is GotoStatement &&
-			    blockStatement.Parent is IfElseStatement)
-			{
-				LabelStatement nextNodeAsLabel = blockStatement.Parent.Next() as LabelStatement;
-				if (nextNodeAsLabel != null) {
-					if (nextNodeAsLabel.Label == ((GotoStatement)lastStmt).Label) {
-						lastStmt.Remove();
-						return null;
-					}
-				}
-			}
 			
 			return null;
 		}
 		
-		// Gets a next fall though statement, entering and exiting code blocks
-		// It does not matter what the current statement is
+		// Get the next statement that will be executed after this one 
 		// May return null
 		public static INode GetNextStatement(Statement statement)
 		{
@@ -89,48 +76,65 @@ namespace Decompiler.Transforms.Ast
 			
 			Statement next = (Statement)statement.Next();
 			
-			// Exit a block of code
-			if (next == null) {
-				// When an 'if' body is finished the execution continues with the
-				// next statement after the 'if' statement
-				if (statement.Parent is BlockStatement &&
-				    statement.Parent.Parent is IfElseStatement) {
-					return GetNextStatement((Statement)statement.Parent.Parent);
+			if (next != null) {
+				return EnterBlockStatement(next);
+			} else {
+				if (statement.Parent is BlockStatement) {
+					return ExitBlockStatement((Statement)statement.Parent.Parent);
+				} else {
+					return null;
 				}
-				
-				// When a 'for' body is finished the execution continues by:
-				// Iterator; Condition; Body
-				if (statement.Parent is BlockStatement &&
-				    statement.Parent.Parent is ForStatement) {
-					ForStatement forLoop = statement.Parent.Parent as ForStatement;
-					if (forLoop.Iterator.Count > 0) {
-						return forLoop.Iterator[0];
-					} else if (!forLoop.Condition.IsNull) {
-						return forLoop.Condition;
-					} else {
-						return forLoop.EmbeddedStatement.Children.First;
-					}
-				}
-				
-				return null;
+			}
+		}
+		
+		// Get the statement that will be executed once the given block exits by the end brace
+		// May return null
+		public static INode ExitBlockStatement(Statement statement)
+		{
+			if (statement == null) throw new ArgumentNullException();
+			
+			// When an 'if' body is finished the execution continues with the
+			// next statement after the 'if' statement
+			if (statement is IfElseStatement) {
+				return GetNextStatement((IfElseStatement)statement);
 			}
 			
-			// Enter a block of code
-			while(true) {
-				// If a 'for' loop does not have initializers and condition,
-				// the next statement is the entry point
-				ForStatement nextAsForStmt = next as ForStatement;
-				if (nextAsForStmt != null &&
-					nextAsForStmt.Initializers.Count == 0 &&
-					nextAsForStmt.Condition.IsNull &&
-					nextAsForStmt.EmbeddedStatement is BlockStatement &&
-					nextAsForStmt.EmbeddedStatement.Children.Count > 0) {
-					next = (Statement)nextAsForStmt.EmbeddedStatement.Children.First;
-					continue; // Restart
+			// When a 'for' body is finished the execution continues by:
+			// Iterator; Condition; Body
+			if (statement is ForStatement) {
+				ForStatement forLoop = statement as ForStatement;
+				if (forLoop.Iterator.Count > 0) {
+					return forLoop.Iterator[0];
+				} else if (!forLoop.Condition.IsNull) {
+					return forLoop.Condition;
+				} else {
+					return EnterBlockStatement((Statement)forLoop.EmbeddedStatement.Children.First);
 				}
-				
-				return next;
 			}
+			
+			return null;
+		}
+		
+		// Get the first statement that will be executed in the given block
+		public static INode EnterBlockStatement(Statement statement)
+		{
+			if (statement == null) throw new ArgumentNullException();
+			
+			// For loop starts as follows: Initializers; Condition; Body
+			if (statement is ForStatement) {
+				ForStatement forLoop = statement as ForStatement;
+				if (forLoop.Initializers.Count > 0) {
+					return forLoop.Initializers[0];
+				} else if (!forLoop.Condition.IsNull) {
+					return forLoop.Condition;
+				} else if (forLoop.EmbeddedStatement is BlockStatement &&
+					       forLoop.EmbeddedStatement.Children.Count > 0) {
+					statement = (Statement)forLoop.EmbeddedStatement.Children.First;
+					return EnterBlockStatement(statement);  // Simplify again
+				}
+			}
+			
+			return statement; // Can not simplify
 		}
 		
 		public override object VisitGotoStatement(GotoStatement gotoStatement, object data)
@@ -165,15 +169,14 @@ namespace Decompiler.Transforms.Ast
 			}
 			
 			// Replace goto with 'continue'
-			// Continue statement which moves at the very start of for loop if there is no contition and iteration
-			if ((CurrentLoop is ForStatement) &&
-			    (CurrentLoop as ForStatement).Condition.IsNull &&
-			    (CurrentLoop as ForStatement).Iterator.Count == 0 &&
-			    (CurrentLoop.EmbeddedStatement as BlockStatement) != null &&
-			    ((CurrentLoop.EmbeddedStatement as BlockStatement).Children.First as LabelStatement) != null &&
-			    ((CurrentLoop.EmbeddedStatement as BlockStatement).Children.First as LabelStatement).Label == gotoStatement.Label) {
-				ReplaceCurrentNode(new ContinueStatement());
-				return null;
+			// Continue statement which moves at the very start of for loop
+			if (CurrentLoop != null) {
+				INode continueTarget = ExitBlockStatement(CurrentLoop); // The start of the loop
+				if ((continueTarget is LabelStatement) &&
+				    (continueTarget as LabelStatement).Label == gotoStatement.Label) {
+					ReplaceCurrentNode(new ContinueStatement());
+					return null;
+				}
 			}
 			
 			return null;
