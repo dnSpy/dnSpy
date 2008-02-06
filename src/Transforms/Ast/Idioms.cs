@@ -31,5 +31,35 @@ namespace Decompiler.Transforms.Ast
 			
 			return null;
 		}
+		
+		public override object VisitAssignmentExpression(AssignmentExpression assignment, object data)
+		{
+			IdentifierExpression ident = assignment.Left as IdentifierExpression;
+			BinaryOperatorExpression binary = assignment.Right as BinaryOperatorExpression;
+			if (ident != null && binary != null) {
+				IdentifierExpression binaryLeft = binary.Left as IdentifierExpression;
+				if (binaryLeft != null &&
+				    binaryLeft.Identifier == ident.Identifier) {
+					if (binary.Right is PrimitiveExpression &&
+					    1.Equals((binary.Right as PrimitiveExpression).Value)) {
+						if (binary.Op == BinaryOperatorType.Add) {
+							ReplaceCurrentNode(new UnaryOperatorExpression(ident, UnaryOperatorType.PostIncrement));
+						}
+						if (binary.Op == BinaryOperatorType.Subtract) {
+							ReplaceCurrentNode(new UnaryOperatorExpression(ident, UnaryOperatorType.PostDecrement));
+						}
+					} else {
+						if (binary.Op == BinaryOperatorType.Add) {
+							ReplaceCurrentNode(new AssignmentExpression(ident, AssignmentOperatorType.Add, binary.Right));
+						}
+						if (binary.Op == BinaryOperatorType.Subtract) {
+							ReplaceCurrentNode(new AssignmentExpression(ident, AssignmentOperatorType.Subtract, binary.Right));
+						}
+					}
+					return null;
+				}
+			}
+			return null;
+		}
 	}
 }

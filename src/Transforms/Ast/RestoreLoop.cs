@@ -61,13 +61,11 @@ namespace Decompiler.Transforms.Ast
 			if (forStatement.EmbeddedStatement.Children.Count > 0 &&
 			    forStatement.Iterator.Count == 0)
 			{
-				ExpressionStatement lastStmt = forStatement.EmbeddedStatement.Children[forStatement.EmbeddedStatement.Children.Count - 1] as ExpressionStatement;
-				if (lastStmt != null) {
-					AssignmentExpression assign = lastStmt.Expression as AssignmentExpression;
-					if (assign != null) {
-						lastStmt.Remove();
-						forStatement.Iterator.Add(lastStmt);
-					}
+				ExpressionStatement lastStmt = forStatement.EmbeddedStatement.Children.Last as ExpressionStatement;
+				if (lastStmt != null &&
+				    (lastStmt.Expression is AssignmentExpression || lastStmt.Expression is UnaryOperatorExpression)) {
+					lastStmt.Remove();
+					forStatement.Iterator.Add(lastStmt);
 				}
 			}
 			

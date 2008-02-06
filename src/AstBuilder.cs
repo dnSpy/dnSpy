@@ -42,6 +42,7 @@ namespace Decompiler
 				astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveParenthesis(), null);
 				astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveParenthesis(), null);
 				astCompileUnit.AcceptVisitor(new Transforms.Ast.SimplifyTypeReferences(), null);
+				astCompileUnit.AcceptVisitor(new Transforms.Ast.Idioms(), null);
 			}
 			if (Options.ReduceAstLoops) {
 				astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
