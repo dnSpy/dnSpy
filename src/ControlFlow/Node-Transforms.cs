@@ -24,7 +24,7 @@ namespace Decompiler.ControlFlow
 			newNode.Childs.Insert(index, this);
 		}
 		
-		Node MergeChilds<T>(params Node[] nodes) where T: Node, new()
+		T MergeChilds<T>(params Node[] nodes) where T: Node, new()
 		{
 			foreach(Node node in nodes) {
 				if (node == null) throw new ArgumentNullException("nodes");
@@ -32,7 +32,7 @@ namespace Decompiler.ControlFlow
 			}
 			if (nodes.Length == 0) throw new ArgumentException("At least one node must be specified");
 			
-			Node mergedNode = new T();
+			T mergedNode = new T();
 			
 			// Add the merged node
 			Options.NotifyReducingGraph();
@@ -40,7 +40,7 @@ namespace Decompiler.ControlFlow
 			this.Childs.Insert(headIndex, mergedNode);
 			
 			foreach(Node node in nodes) {
-				Options.NotifyReducingGraph();
+				//Options.NotifyReducingGraph();
 				node.MoveTo(mergedNode);
 			}
 			

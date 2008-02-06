@@ -13,6 +13,7 @@ namespace Decompiler.ControlFlow
 				OptimizeLoops();
 			}
 			if (Options.ReduceConditonals) {
+				OptimizeShortCircuits();
 				OptimizeConditions();
 			}
 		}
@@ -57,6 +58,76 @@ namespace Decompiler.ControlFlow
 			return reachableNodes;
 		}
 		
+		public void OptimizeShortCircuits()
+		{
+			foreach(Node child in this.Childs) {
+				if (child is Loop) {
+					child.OptimizeShortCircuits();
+				}
+			}
+			
+		Reset:
+			foreach(Node child in this.Childs) {
+				if (TryOptimizeShortCircuit(child)) {
+					goto Reset;
+				}
+			}
+		}
+		
+		public static bool TryOptimizeShortCircuit(Node head)
+		{
+			if ((head is BasicBlock) &&
+			    (head as BasicBlock).BranchBasicBlock != null &&
+			    (head as BasicBlock).FallThroughBasicBlock != null) {
+				head.Parent.MergeChilds<SimpleBranch>(head);
+				return true;
+			}
+			
+			Branch top = head as Branch;
+			if (top == null) return false;
+			
+			Branch left = head.FloatUpToNeighbours(top.TrueSuccessor) as Branch;
+			Branch right = head.FloatUpToNeighbours(top.FalseSuccessor) as Branch;
+			
+			// A & B
+			if (left != null && 
+			    left.Predecessors.Count == 1 &&
+			    left.FalseSuccessor == top.FalseSuccessor) {
+				ShortCircuitBranch scBranch = top.Parent.MergeChilds<ShortCircuitBranch>(top, left);
+				scBranch.Operator = ShortCircuitOperator.LeftAndRight;
+				return true;
+			}
+			
+			// ~A | B
+			if (left != null && 
+			    left.Predecessors.Count == 1 &&
+			    left.TrueSuccessor == top.FalseSuccessor) {
+				ShortCircuitBranch scBranch = top.Parent.MergeChilds<ShortCircuitBranch>(top, left);
+				scBranch.Operator = ShortCircuitOperator.NotLeftOrRight;
+				return true;
+			}
+			
+			// A | B
+			if (right != null &&
+			    right.Predecessors.Count == 1 &&
+			    right.TrueSuccessor == top.TrueSuccessor) {
+				ShortCircuitBranch scBranch = top.Parent.MergeChilds<ShortCircuitBranch>(top, right);
+				scBranch.Operator = ShortCircuitOperator.LeftOrRight;
+				return true;
+			}
+			
+			// ~A & B
+			if (right != null &&
+			    right.Predecessors.Count == 1 &&
+			    right.FalseSuccessor == top.TrueSuccessor) {
+				ShortCircuitBranch scBranch = top.Parent.MergeChilds<ShortCircuitBranch>(top, right);
+				scBranch.Operator = ShortCircuitOperator.NotLeftAndRight;
+				return true;
+			}
+			
+			return false;
+		}
+		
 		public void OptimizeConditions()
 		{
 			foreach(Node child in this.Childs) {
@@ -68,9 +139,9 @@ namespace Decompiler.ControlFlow
 			Node conditionNode = this.HeadChild;
 			while(conditionNode != null) {
 				// Keep looking for some conditional block
-				if (conditionNode is BasicBlock && ((BasicBlock)conditionNode).IsConditionalBranch) {
+				if (conditionNode is Branch) {
 					// Found start of conditional
-					OptimizeIf((BasicBlock)conditionNode);
+					OptimizeIf((Branch)conditionNode);
 					// Restart
 					conditionNode = this.HeadChild;
 					continue;
@@ -87,10 +158,10 @@ namespace Decompiler.ControlFlow
 			}
 		}
 		
-		public static void OptimizeIf(BasicBlock condition)
+		public static void OptimizeIf(Branch condition)
 		{
-			Node trueStart = condition.FloatUpToNeighbours(condition.FallThroughBasicBlock);
-			Node falseStart = condition.FloatUpToNeighbours(condition.BranchBasicBlock);
+			Node trueStart = condition.FloatUpToNeighbours(condition.TrueSuccessor);
+			Node falseStart = condition.FloatUpToNeighbours(condition.FalseSuccessor);
 			
 			NodeCollection trueReachable = trueStart != null ? trueStart.GetReachableNodes() : NodeCollection.Empty;
 			NodeCollection falseReachable = falseStart != null ? falseStart.GetReachableNodes() : NodeCollection.Empty;
@@ -108,14 +179,14 @@ namespace Decompiler.ControlFlow
 			ConditionalNode conditionalNode = new ConditionalNode(condition);
 			conditionalNode.MoveTo(conditionParent, conditionIndex);
 			
-			Options.NotifyReducingGraph();
-			trueNodes.MoveTo(conditionalNode.TrueBody);
-			
-			// We can exit the 'true' part of Loop or MethodBody conviently using 'break' or 'return'
+			// If there are no common nodes, let the 'true' block be the default
 			if (commonReachable.Count > 0) {
 				Options.NotifyReducingGraph();
-				falseNodes.MoveTo(conditionalNode.FalseBody);
+				trueNodes.MoveTo(conditionalNode.TrueBody);
 			}
+			
+			Options.NotifyReducingGraph();
+			falseNodes.MoveTo(conditionalNode.FalseBody);
 			
 			// Optimize the created subtrees
 			conditionalNode.TrueBody.OptimizeConditions();

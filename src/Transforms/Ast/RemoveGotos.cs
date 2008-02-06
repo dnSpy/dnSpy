@@ -79,7 +79,8 @@ namespace Decompiler.Transforms.Ast
 			if (next != null) {
 				return EnterBlockStatement(next);
 			} else {
-				if (statement.Parent is BlockStatement) {
+				if (statement.Parent is BlockStatement &&
+				    statement.Parent.Parent is Statement) {
 					return ExitBlockStatement((Statement)statement.Parent.Parent);
 				} else {
 					return null;

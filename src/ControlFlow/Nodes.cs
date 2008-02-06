@@ -40,11 +40,72 @@ namespace Decompiler.ControlFlow
 				}
 			}
 		}
-		
-		public bool IsConditionalBranch {
+	}
+	
+	public enum ShortCircuitOperator {
+		LeftAndRight,
+		LeftOrRight,
+		NotLeftAndRight,
+		NotLeftOrRight,
+	}
+	
+	public abstract class Branch: Node
+	{
+		public abstract BasicBlock FirstBasicBlock { get; }
+		public abstract BasicBlock TrueSuccessor { get; }
+		public abstract BasicBlock FalseSuccessor { get; }
+	}
+	
+	public class SimpleBranch: Branch
+	{
+		public override BasicBlock FirstBasicBlock {
 			get {
-				return fallThroughBasicBlock != null && branchBasicBlock != null;
+				return this.BasicBlock;
 			}
+		}
+		
+		public BasicBlock BasicBlock {
+			get { return (BasicBlock)this.Childs[0]; }
+		}
+		
+		public override BasicBlock TrueSuccessor {
+			get { return this.BasicBlock.BranchBasicBlock; }
+		}
+		
+		public override BasicBlock FalseSuccessor {
+			get { return this.BasicBlock.FallThroughBasicBlock; }
+		}
+	}
+	
+	public class ShortCircuitBranch: Branch
+	{
+		ShortCircuitOperator @operator;
+		
+		public override BasicBlock FirstBasicBlock {
+			get {
+				return this.Left.FirstBasicBlock;
+			}
+		}
+		
+		public Branch Left {
+			get { return (Branch)this.Childs[0];; }
+		}
+		
+		public Branch Right {
+			get { return (Branch)this.Childs[1]; }
+		}
+		
+		public ShortCircuitOperator Operator {
+			get { return @operator; }
+			set { @operator = value; }
+		}
+		
+		public override BasicBlock TrueSuccessor {
+			get { return this.Right.TrueSuccessor; }
+		}
+		
+		public override BasicBlock FalseSuccessor {
+			get { return this.Right.FalseSuccessor; }
 		}
 	}
 	
@@ -123,11 +184,11 @@ namespace Decompiler.ControlFlow
 	
 	public class ConditionalNode: Node
 	{
-		BasicBlock condition;
+		Branch condition;
 		Block trueBody = new Block();
 		Block falseBody = new Block();
 		
-		public BasicBlock Condition {
+		public Branch Condition {
 			get { return condition; }
 		}
 		
@@ -139,7 +200,7 @@ namespace Decompiler.ControlFlow
 			get { return falseBody; }
 		}
 		
-		public ConditionalNode(BasicBlock condition)
+		public ConditionalNode(Branch condition)
 		{
 			this.condition = condition;
 			
