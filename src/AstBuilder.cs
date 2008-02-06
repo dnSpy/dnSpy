@@ -34,6 +34,7 @@ namespace Decompiler
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.SimplifyTypeReferences(), null);
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.Idioms(), null);
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveParenthesis(), null);
 				}
 			}
 			
