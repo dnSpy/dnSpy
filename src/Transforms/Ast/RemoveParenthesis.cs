@@ -47,6 +47,22 @@ namespace Decompiler.Transforms.Ast
 			return base.VisitUnaryOperatorExpression(unary, data);
 		}
 		
+		public override object VisitMemberReferenceExpression(MemberReferenceExpression memberRef, object data)
+		{
+			if (GetPrecedence(memberRef.TargetObject) >= GetPrecedence(memberRef)) {
+				memberRef.TargetObject = Deparenthesize(memberRef.TargetObject);
+			}
+			return base.VisitMemberReferenceExpression(memberRef, data);
+		}
+		
+		public override object VisitInvocationExpression(InvocationExpression invocation, object data)
+		{
+			if (GetPrecedence(invocation.TargetObject) >= GetPrecedence(invocation)) {
+				invocation.TargetObject = Deparenthesize(invocation.TargetObject);
+			}
+			return base.VisitInvocationExpression(invocation, data);
+		}
+		
 		public override object VisitBinaryOperatorExpression(BinaryOperatorExpression binary, object data)
 		{
 			int? myPrecedence = GetPrecedence(binary);
@@ -75,11 +91,6 @@ namespace Decompiler.Transforms.Ast
 			return base.VisitForStatement(forStatement, data);
 		}
 		
-		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
-		{
-			return base.VisitInvocationExpression(invocationExpression, data);
-		}
-		
 		Expression Deparenthesize(Expression expr)
 		{
 			if (expr is ParenthesizedExpression) {
@@ -102,15 +113,23 @@ namespace Decompiler.Transforms.Ast
 			
 			//	Primary
 			//		x.y
+			if (expr is MemberReferenceExpression)                             return 15;
 			//		f(x)
+			if (expr is InvocationExpression)                                  return 15;
 			//		a[x]
+			if (expr is IndexerExpression)                                     return 15;
 			//		x++
+			if (unary != null && unary.Op == UnaryOperatorType.PostIncrement)  return 15;
 			//		x--
+			if (unary != null && unary.Op == UnaryOperatorType.PostDecrement)  return 15;
 			//		new T(...)
+			if (expr is ObjectCreateExpression)                                return 15;
 			//		new T(...){...}
 			//		new {...}
 			//		new T[...]
+			if (expr is ArrayCreateExpression)                                 return 15;
 			//		typeof(T)
+			if (expr is TypeOfExpression)                                      return 15;
 			//		checked(x)
 			//		unchecked(x)
 			//		default (T)
