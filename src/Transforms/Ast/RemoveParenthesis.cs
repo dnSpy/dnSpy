@@ -8,15 +8,6 @@ namespace Decompiler.Transforms.Ast
 {
 	public class RemoveParenthesis: AbstractAstTransformer
 	{
-		Expression Deparenthesize(Expression expr)
-		{
-			if (expr is ParenthesizedExpression) {
-				return Deparenthesize(((ParenthesizedExpression)expr).Expression);
-			} else {
-				return expr;
-			}
-		}
-		
 		public override object VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
 		{
 			// The following do not need to be parenthesized
@@ -29,9 +20,24 @@ namespace Decompiler.Transforms.Ast
 			return base.VisitParenthesizedExpression(parenthesizedExpression, data);
 		}
 		
-		public override object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
+		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unary, object data)
 		{
-			return base.VisitBinaryOperatorExpression(binaryOperatorExpression, data);
+			if (GetPrecedence(unary.Expression) > GetPrecedence(unary)) {
+				unary.Expression = Deparenthesize(unary.Expression);
+			}
+			return base.VisitUnaryOperatorExpression(unary, data);
+		}
+		
+		public override object VisitBinaryOperatorExpression(BinaryOperatorExpression binary, object data)
+		{
+			int? myPrecedence = GetPrecedence(binary);
+			if (GetPrecedence(binary.Left) > myPrecedence) {
+				binary.Left = Deparenthesize(binary.Left);
+			}
+			if (GetPrecedence(binary.Right) > myPrecedence) {
+				binary.Right = Deparenthesize(binary.Right);
+			}
+			return base.VisitBinaryOperatorExpression(binary, data);
 		}
 		
 		public override object VisitExpressionStatement(ExpressionStatement expressionStatement, object data)
@@ -49,6 +55,114 @@ namespace Decompiler.Transforms.Ast
 		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
 		{
 			return base.VisitInvocationExpression(invocationExpression, data);
+		}
+		
+		Expression Deparenthesize(Expression expr)
+		{
+			if (expr is ParenthesizedExpression) {
+				return Deparenthesize(((ParenthesizedExpression)expr).Expression);
+			} else {
+				return expr;
+			}
+		}
+		
+		int? GetPrecedence(Expression expr)
+		{
+			if (expr is ParenthesizedExpression) {
+				return GetPrecedence(((ParenthesizedExpression)expr).Expression);
+			}
+			
+			UnaryOperatorExpression unary = expr as UnaryOperatorExpression;
+			BinaryOperatorExpression binary = expr as BinaryOperatorExpression;
+			
+			// see http://msdn2.microsoft.com/en-us/library/ms173145.aspx
+			
+			//	Primary
+			//		x.y
+			//		f(x)
+			//		a[x]
+			//		x++
+			//		x--
+			//		new T(...)
+			//		new T(...){...}
+			//		new {...}
+			//		new T[...]
+			//		typeof(T)
+			//		checked(x)
+			//		unchecked(x)
+			//		default (T)
+			//		delegate {}
+			//	Unary
+			//		+x
+			if (unary != null && unary.Op == UnaryOperatorType.Plus)           return 14;
+			//		-x
+			if (unary != null && unary.Op == UnaryOperatorType.Minus)          return 14;
+			//		!x
+			if (unary != null && unary.Op == UnaryOperatorType.Not)            return 14;
+			//		~x
+			if (unary != null && unary.Op == UnaryOperatorType.BitNot)         return 14;
+			//		++x
+			if (unary != null && unary.Op == UnaryOperatorType.Increment)      return 14;
+			//		--x
+			if (unary != null && unary.Op == UnaryOperatorType.Decrement)      return 14;
+			//		(T)x
+			//	Multiplicative
+			//		*, ,
+			if (binary != null && binary.Op == BinaryOperatorType.Multiply)    return 13;
+			//		/ 
+			if (binary != null && binary.Op == BinaryOperatorType.Divide)      return 13;
+			//		% 
+			if (binary != null && binary.Op == BinaryOperatorType.Modulus)     return 13;
+			//	Additive
+			//		x + y
+			if (binary != null && binary.Op == BinaryOperatorType.Add)         return 12;
+			//		x - y
+			if (binary != null && binary.Op == BinaryOperatorType.Subtract)    return 12;
+			//	Shift
+			//		x << y
+			//		x >> y
+			//	Relational and Type Testing
+			//		x < y
+			if (binary != null && binary.Op == BinaryOperatorType.LessThan)           return 10;
+			//		x > y
+			if (binary != null && binary.Op == BinaryOperatorType.GreaterThan)        return 10;
+			//		x <= y
+			if (binary != null && binary.Op == BinaryOperatorType.LessThanOrEqual)    return 10;
+			//		x >= y
+			if (binary != null && binary.Op == BinaryOperatorType.GreaterThanOrEqual) return 10;
+			//		x is T
+			//		x as T
+			//	Equality
+			//		x == y
+			if (binary != null && binary.Op == BinaryOperatorType.Equality)    return 9;
+			//		x != y
+			if (binary != null && binary.Op == BinaryOperatorType.InEquality)  return 9;
+			//	Logical AND
+			//		x & y
+			if (binary != null && binary.Op == BinaryOperatorType.BitwiseAnd)  return 8;
+			//	Logical XOR
+			//		x ^ y
+			if (binary != null && binary.Op == BinaryOperatorType.ExclusiveOr) return 7;
+			//	Logical OR
+			//		x | y
+			if (binary != null && binary.Op == BinaryOperatorType.BitwiseOr)   return 6;
+			//	Conditional AND
+			//		x && y
+			if (binary != null && binary.Op == BinaryOperatorType.LogicalAnd)  return 5;
+			//	Conditional OR
+			//		x || y
+			if (binary != null && binary.Op == BinaryOperatorType.LogicalOr)   return 4;
+			//	Null coalescing
+			//		X ?? y
+			//	Conditional
+			//		x ?: y : z
+			//	Assignment or anonymous function
+			//		=, , =>
+			if (expr is AssignmentExpression)                                  return 1;
+			//		x op= y
+			//		(T x) => y
+			
+			return null;
 		}
 	}
 }
