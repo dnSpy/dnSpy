@@ -10,6 +10,16 @@ namespace Decompiler.Transforms.Ast
 	{
 		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unary, object data)
 		{
+			// Remove double negation
+			// !!a
+			if (unary.Op == UnaryOperatorType.Not &&
+			    unary.Expression is UnaryOperatorExpression &&
+			    (unary.Expression as UnaryOperatorExpression).Op == UnaryOperatorType.Not) {
+				Expression newParenth = new ParenthesizedExpression((unary.Expression as UnaryOperatorExpression).Expression);
+				ReplaceCurrentNode(newParenth);
+				return newParenth.AcceptVisitor(this, data);
+			}
+			
 			// Basic assumtion is that we have something in form !(a)
 			if (unary.Op == UnaryOperatorType.Not &&
 			    unary.Expression is ParenthesizedExpression) {

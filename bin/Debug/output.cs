@@ -106,7 +106,7 @@ namespace Reversi
             for (int j = (col + dc); ((((i >= 0) && (i < 8)) && (j >= 0)) && (j < 8)) && (((@this.squares).Get(i, j)) == (-color)); j = (j + dc)) {
                 i = (i + dr);
             }
-            if ((((((!(i >= 0) || !(i <= 7)) || !(j >= 0)) || !(j <= 7)) || !(!((i - dr) == row) || !((j - dc) == col))) || !(((@this.squares).Get(i, j)) == color))) {
+            if (((((((i < 0) || (i > 7)) || (j < 0)) || (j > 7)) || (((i - dr) == row) && ((j - dc) == col))) || (((@this.squares).Get(i, j)) != color))) {
                 return 0;
             }
             return 1;
@@ -206,7 +206,7 @@ namespace Reversi
                     V_3 = 1;
                 }
                 else {
-                    if ((!(((@this.squares).Get(row, k)) == i) || !((@this.safeDiscs).Get(row, k)))) {
+                    if (((((@this.squares).Get(row, k)) != i) || (!((@this.safeDiscs).Get(row, k))))) {
                         V_5 = 1;
                     }
                 }
@@ -217,12 +217,12 @@ namespace Reversi
                     V_4 = 1;
                 }
                 else {
-                    if ((!(((@this.squares).Get(row, k)) == i) || !((@this.safeDiscs).Get(row, k)))) {
+                    if (((((@this.squares).Get(row, k)) != i) || (!((@this.safeDiscs).Get(row, k))))) {
                         V_6 = 1;
                     }
                 }
             }
-            if (((!(!V_3 || !V_4) || !(!V_3 || !V_6)) || (V_5 && V_4))) {
+            if ((((V_3 && V_4) || (V_3 && V_6)) || (V_5 && V_4))) {
                 return 1;
             }
             V_3 = 0;
@@ -234,7 +234,7 @@ namespace Reversi
                     V_3 = 1;
                 }
                 else {
-                    if ((!(((@this.squares).Get(j, col)) == i) || !((@this.safeDiscs).Get(j, col)))) {
+                    if (((((@this.squares).Get(j, col)) != i) || (!((@this.safeDiscs).Get(j, col))))) {
                         V_5 = 1;
                     }
                 }
@@ -245,12 +245,12 @@ namespace Reversi
                     V_4 = 1;
                 }
                 else {
-                    if ((!(((@this.squares).Get(j, col)) == i) || !((@this.safeDiscs).Get(j, col)))) {
+                    if (((((@this.squares).Get(j, col)) != i) || (!((@this.safeDiscs).Get(j, col))))) {
                         V_6 = 1;
                     }
                 }
             }
-            if (((!(!V_3 || !V_4) || !(!V_3 || !V_6)) || (V_5 && V_4))) {
+            if ((((V_3 && V_4) || (V_3 && V_6)) || (V_5 && V_4))) {
                 return 1;
             }
             V_3 = 0;
@@ -264,7 +264,7 @@ namespace Reversi
                     V_3 = 1;
                 }
                 else {
-                    if ((!(((@this.squares).Get(j, k)) == i) || !((@this.safeDiscs).Get(j, k)))) {
+                    if (((((@this.squares).Get(j, k)) != i) || (!((@this.safeDiscs).Get(j, k))))) {
                         V_5 = 1;
                     }
                 }
@@ -277,13 +277,13 @@ namespace Reversi
                     V_4 = 1;
                 }
                 else {
-                    if ((!(((@this.squares).Get(j, k)) == i) || !((@this.safeDiscs).Get(j, k)))) {
+                    if (((((@this.squares).Get(j, k)) != i) || (!((@this.safeDiscs).Get(j, k))))) {
                         V_6 = 1;
                     }
                 }
                 j = (j + 1);
             }
-            if (((!(!V_3 || !V_4) || !(!V_3 || !V_6)) || (V_5 && V_4))) {
+            if ((((V_3 && V_4) || (V_3 && V_6)) || (V_5 && V_4))) {
                 return 1;
             }
             V_3 = 0;
@@ -297,7 +297,7 @@ namespace Reversi
                     V_3 = 1;
                 }
                 else {
-                    if ((!(((@this.squares).Get(j, k)) == i) || !((@this.safeDiscs).Get(j, k)))) {
+                    if (((((@this.squares).Get(j, k)) != i) || (!((@this.safeDiscs).Get(j, k))))) {
                         V_5 = 1;
                     }
                 }
@@ -310,13 +310,13 @@ namespace Reversi
                     V_4 = 1;
                 }
                 else {
-                    if ((!(((@this.squares).Get(j, k)) == i) || !((@this.safeDiscs).Get(j, k)))) {
+                    if (((((@this.squares).Get(j, k)) != i) || (!((@this.safeDiscs).Get(j, k))))) {
                         V_6 = 1;
                     }
                 }
                 j = (j + 1);
             }
-            if (((!(!V_3 || !V_4) || !(!V_3 || !V_6)) || (V_5 && V_4))) {
+            if ((((V_3 && V_4) || (V_3 && V_6)) || (V_5 && V_4))) {
                 return 1;
             }
             return 0;
