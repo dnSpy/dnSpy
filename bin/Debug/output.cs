@@ -162,36 +162,36 @@ namespace Reversi
                         }
                     }
                     if (squares[i, j] == Black) {
-                        IL__dup(this);
+                        object expr122 = this;
                         int expr123 = expr122.blackCount;
                         int expr129 = expr123 + 1;
                         expr122.blackCount = expr129;
                         if (flag2) {
-                            IL__dup(this);
+                            object expr134 = this;
                             int expr135 = expr134.blackFrontierCount;
                             int expr13B = expr135 + 1;
                             expr134.blackFrontierCount = expr13B;
                         }
                         if (safeDiscs[i, j]) {
-                            IL__dup(this);
+                            object expr151 = this;
                             int expr152 = expr151.blackSafeCount;
                             int expr158 = expr152 + 1;
                             expr151.blackSafeCount = expr158;
                         }
                     } else {
                         if (squares[i, j] == White) {
-                            IL__dup(this);
+                            object expr175 = this;
                             int expr176 = expr175.whiteCount;
                             int expr17C = expr176 + 1;
                             expr175.whiteCount = expr17C;
                             if (flag2) {
-                                IL__dup(this);
+                                object expr187 = this;
                                 int expr188 = expr187.whiteFrontierCount;
                                 int expr18E = expr188 + 1;
                                 expr187.whiteFrontierCount = expr18E;
                             }
                             if (safeDiscs[i, j]) {
-                                IL__dup(this);
+                                object expr1A4 = this;
                                 int expr1A5 = expr1A4.whiteSafeCount;
                                 int expr1AB = expr1A5 + 1;
                                 expr1A4.whiteSafeCount = expr1AB;
@@ -200,7 +200,7 @@ namespace Reversi
                                 goto BasicBlock_327;
                             }
                         }
-                        IL__dup(this);
+                        object expr1B4 = this;
                         int expr1B5 = expr1B4.emptyCount;
                         int expr1BB = expr1B5 + 1;
                         expr1B4.emptyCount = expr1BB;

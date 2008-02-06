@@ -201,7 +201,7 @@ namespace Decompiler
 		{
 			object codeExpr = TransformExpression(expr);
 			if (codeExpr is Ast.Expression) {
-				if (expr.PushCount == 1) {
+				if (expr.PushCount >= 1) {
 					string type = expr.LastByteCode.Type.FullName;
 					string name = string.Format("expr{0:X2}", expr.LastByteCode.Offset);
 					Ast.LocalVariableDeclaration astLocal = new Ast.LocalVariableDeclaration(new Ast.TypeReference(type.ToString()));
@@ -504,7 +504,7 @@ namespace Decompiler
 				case Code.Constrained: throw new NotImplementedException();
 				case Code.Cpblk: throw new NotImplementedException();
 				case Code.Cpobj: throw new NotImplementedException();
-				case Code.Dup: throw new NotImplementedException();
+				case Code.Dup: return arg1;
 				case Code.Endfilter: throw new NotImplementedException();
 				case Code.Endfinally: throw new NotImplementedException();
 				case Code.Initblk: throw new NotImplementedException();
