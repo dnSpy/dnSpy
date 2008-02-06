@@ -51,12 +51,9 @@ namespace Decompiler
 			astCompileUnit.AcceptVisitor(csOutVisitor, null);
 			
 			string code = csOutVisitor.Text;
-//			code = code.Replace(":\r\n\t\t\t", ": ");
-//			code = code.Replace(": }", ":\r\n\t\t\t}");
-//			code = code.Replace(":\r\n\t\t", ": ");
-//			code = code.Replace(": }", ":\r\n\t\t}");
-//			code = code.Replace(":\r\n\t", ": ");
-//			code = code.Replace(": }", ":\r\n\t}");
+			for(int i = 10; i >= 0; i--) {
+				code = code.Replace("\r\n" + new string('\t', i) + "else {", " else {");
+			}
 			code = code.Replace("\t", "    ");
 			code = code.Replace("\"/***", "");
 			code = code.Replace("***/\";", "");

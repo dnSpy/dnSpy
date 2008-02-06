@@ -178,8 +178,7 @@ namespace Reversi
                             int expr158 = expr152 + 1;
                             expr151.blackSafeCount = expr158;
                         }
-                    }
-                    else {
+                    } else {
                         if (squares[i, j] == White) {
                             IL__dup(this);
                             object expr176 = expr175.whiteCount;
@@ -197,8 +196,7 @@ namespace Reversi
                                 int expr1AB = expr1A5 + 1;
                                 expr1A4.whiteSafeCount = expr1AB;
                                 goto BasicBlock_327;
-                            }
-                            else {
+                            } else {
                                 goto BasicBlock_327;
                             }
                         }
@@ -222,8 +220,7 @@ namespace Reversi
             for (int k = 0; k < col && !V_3; k++) {
                 if (squares[row, k] == Empty) {
                     V_3 = 1;
-                }
-                else {
+                } else {
                     if (squares[row, k] != i || !safeDiscs[row, k]) {
                         V_5 = 1;
                     }
@@ -233,8 +230,7 @@ namespace Reversi
             for (; k < 8 && !V_4; k++) {
                 if (squares[row, k] == Empty) {
                     V_4 = 1;
-                }
-                else {
+                } else {
                     if (squares[row, k] != i || !safeDiscs[row, k]) {
                         V_6 = 1;
                     }
@@ -250,8 +246,7 @@ namespace Reversi
             for (int j = 0; j < row && !V_3; j++) {
                 if (squares[j, col] == Empty) {
                     V_3 = 1;
-                }
-                else {
+                } else {
                     if (squares[j, col] != i || !safeDiscs[j, col]) {
                         V_5 = 1;
                     }
@@ -261,8 +256,7 @@ namespace Reversi
             for (; j < 8 && !V_4; j++) {
                 if (squares[j, col] == Empty) {
                     V_4 = 1;
-                }
-                else {
+                } else {
                     if (squares[j, col] != i || !safeDiscs[j, col]) {
                         V_6 = 1;
                     }
@@ -280,8 +274,7 @@ namespace Reversi
             for (; j >= 0 && k >= 0 && !V_3; k--) {
                 if (squares[j, k] == Empty) {
                     V_3 = 1;
-                }
-                else {
+                } else {
                     if (squares[j, k] != i || !safeDiscs[j, k]) {
                         V_5 = 1;
                     }
@@ -293,8 +286,7 @@ namespace Reversi
             for (; j < 8 && k < 8 && !V_4; k++) {
                 if (squares[j, k] == Empty) {
                     V_4 = 1;
-                }
-                else {
+                } else {
                     if (squares[j, k] != i || !safeDiscs[j, k]) {
                         V_6 = 1;
                     }
@@ -313,8 +305,7 @@ namespace Reversi
             for (; j >= 0 && k < 8 && !V_3; k++) {
                 if (squares[j, k] == Empty) {
                     V_3 = 1;
-                }
-                else {
+                } else {
                     if (squares[j, k] != i || !safeDiscs[j, k]) {
                         V_5 = 1;
                     }
@@ -326,8 +317,7 @@ namespace Reversi
             for (; j < 8 && k >= 0 && !V_4; k--) {
                 if (squares[j, k] == Empty) {
                     V_4 = 1;
-                }
-                else {
+                } else {
                     if (squares[j, k] != i || !safeDiscs[j, k]) {
                         V_6 = 1;
                     }
