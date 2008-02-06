@@ -17,6 +17,8 @@ namespace Decompiler
 		static public Cecil.TypeReference TypeBool = GetCecilType(typeof(bool));
 		static public Cecil.TypeReference TypeInt32 = GetCecilType(typeof(Int32));
 		static public Cecil.TypeReference TypeString = GetCecilType(typeof(string));
+		static public Cecil.TypeReference TypeZero = GetCecilType(typeof(Int32));
+		static public Cecil.TypeReference TypeOne = GetCecilType(typeof(Int32));
 		
 		static public Cecil.TypeReference GetCecilType(Type type)
 		{
@@ -198,7 +200,7 @@ namespace Decompiler
 				case Code.Break: throw new NotImplementedException();
 				case Code.Call: return ((MethodReference)operand).ReturnType.ReturnType;
 				case Code.Calli: throw new NotImplementedException();
-				case Code.Callvirt: throw new NotImplementedException();
+				case Code.Callvirt: return ((MethodReference)operand).ReturnType.ReturnType;
 				case Code.Castclass: throw new NotImplementedException();
 				case Code.Ckfinite: throw new NotImplementedException();
 				case Code.Constrained: throw new NotImplementedException();
@@ -216,11 +218,18 @@ namespace Decompiler
 					// 'this' returns null;  TODO: Return proper type of this
 					return typeRef ?? TypeObject;
 				case Code.Ldarga: throw new NotImplementedException();
-				case Code.Ldc_I4: return TypeInt32;
+				case Code.Ldc_I4:
+					if ((int)operand == 0) {
+						return TypeZero;
+					} else if ((int)operand == 1) {
+						return TypeOne;
+					} else {
+						return TypeInt32;
+					}
 				case Code.Ldc_I8: throw new NotImplementedException();
 				case Code.Ldc_R4: throw new NotImplementedException();
 				case Code.Ldc_R8: throw new NotImplementedException();
-				case Code.Ldfld: throw new NotImplementedException();
+				case Code.Ldfld: return ((FieldDefinition)operand).FieldType;
 				case Code.Ldflda: throw new NotImplementedException();
 				case Code.Ldftn: throw new NotImplementedException();
 				case Code.Ldloc: return ((VariableDefinition)operand).VariableType;

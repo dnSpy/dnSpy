@@ -117,7 +117,7 @@ namespace ICSharpCode.NRefactory
 				set { throw new NotSupportedException(); }
 			}
 			
-			public object UserData { get; set; }
+			public Dictionary<string, object> UserData { get; set; }
 			
 			public object AcceptChildren(IAstVisitor visitor, object data)
 			{

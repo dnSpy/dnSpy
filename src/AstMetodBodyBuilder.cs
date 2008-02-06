@@ -279,10 +279,11 @@ namespace Decompiler
 		static object TransformByteCode(MethodDefinition methodDef, ByteCode byteCode, List<Ast.Expression> args)
 		{
 			try {
-				object ret = TransformByteCode_Internal(methodDef, byteCode, args);
+				Ast.INode ret = TransformByteCode_Internal(methodDef, byteCode, args);
 				if (ret is Ast.Expression) {
 					ret = new ParenthesizedExpression((Ast.Expression)ret);
 				}
+				ret.UserData["Type"] = byteCode.Type;
 				return ret;
 			} catch (NotImplementedException) {
 				// Output the operand of the unknown IL code as well
@@ -293,7 +294,7 @@ namespace Decompiler
 			}
 		}
 		
-		static object TransformByteCode_Internal(MethodDefinition methodDef, ByteCode byteCode, List<Ast.Expression> args)
+		static Ast.INode TransformByteCode_Internal(MethodDefinition methodDef, ByteCode byteCode, List<Ast.Expression> args)
 		{
 			OpCode opCode = byteCode.OpCode;
 			object operand = byteCode.Operand;
@@ -579,12 +580,21 @@ namespace Decompiler
 				case Code.Readonly: throw new NotImplementedException();
 				case Code.Refanytype: throw new NotImplementedException();
 				case Code.Refanyval: throw new NotImplementedException();
-				case Code.Ret: return new Ast.ReturnStatement(methodDef.ReturnType.ReturnType.FullName != Cecil.Constants.Void ? arg1 : null);
+				case Code.Ret: {
+					if (methodDef.ReturnType.ReturnType.FullName != Cecil.Constants.Void) {
+						arg1 = Convert(arg1, methodDef.ReturnType.ReturnType);
+						return new Ast.ReturnStatement(arg1);
+					} else {
+						return new Ast.ReturnStatement(null);
+					}
+				}
 				case Code.Rethrow: throw new NotImplementedException();
 				case Code.Sizeof: throw new NotImplementedException();
 				case Code.Starg: throw new NotImplementedException();
-				case Code.Stloc: 
-					string name = ((VariableDefinition)operand).Name;
+				case Code.Stloc: {
+					VariableDefinition locVar = (VariableDefinition)operand;
+					string name = locVar.Name;
+					arg1 = Convert(arg1, locVar.VariableType);
 					if (localVarDefined[name]) {
 						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(name), AssignmentOperatorType.Assign, arg1);
 					} else {
@@ -593,6 +603,7 @@ namespace Decompiler
 						localVarDefined[name] = true;
 						return astLocalVar;
 					}
+				}
 				case Code.Stobj: throw new NotImplementedException();
 				case Code.Switch: throw new NotImplementedException();
 				case Code.Tail: throw new NotImplementedException();
@@ -603,6 +614,22 @@ namespace Decompiler
 				case Code.Volatile: throw new NotImplementedException();
 				default: throw new Exception("Unknown OpCode: " + opCode);
 			}
+		}
+		
+		static Ast.Expression Convert(Ast.Expression expr, Cecil.TypeReference reqType)
+		{
+			if (expr.UserData.ContainsKey("Type")) {
+			    Cecil.TypeReference exprType = (Cecil.TypeReference)expr.UserData["Type"];
+				if (exprType == ByteCode.TypeZero &&
+				    reqType.FullName == ByteCode.TypeBool.FullName) {
+					return new PrimitiveExpression(false, "false");
+				}
+				if (exprType == ByteCode.TypeOne &&
+				    reqType.FullName == ByteCode.TypeBool.FullName) {
+					return new PrimitiveExpression(true, "true");
+				}
+			}
+			return expr;
 		}
 		
 		static Ast.Expression ConvertIntToBool(Ast.Expression astInt)

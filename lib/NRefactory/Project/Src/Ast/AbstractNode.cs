@@ -20,7 +20,7 @@ namespace ICSharpCode.NRefactory.Ast
 		public INode Parent { get; set; }
 		public Location StartLocation { get; set; }
 		public Location EndLocation { get; set; }
-		public object UserData { get; set; }
+		public Dictionary<string, object> UserData { get; set; }
 		
 		IList<INode> INode.Children {
 			get {
@@ -42,6 +42,7 @@ namespace ICSharpCode.NRefactory.Ast
 		{
 			children = new NodeCollection();
 			children.Added += delegate(object sender, NodeEventArgs e) { e.Node.Parent = this; };
+			this.UserData = new Dictionary<string, object>();
 		}
 		
 		public virtual void AddChild(INode childNode)

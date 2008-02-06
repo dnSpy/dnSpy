@@ -31,7 +31,7 @@ namespace ICSharpCode.NRefactory.Ast
 			set;
 		}
 		
-		object UserData {
+		Dictionary<string, object> UserData {
 			get;
 			set;
 		}
