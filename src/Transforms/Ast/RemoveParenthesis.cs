@@ -13,6 +13,7 @@ namespace Decompiler.Transforms.Ast
 			// The following do not need to be parenthesized
 			if (parenthesizedExpression.Expression is IdentifierExpression ||
 			    parenthesizedExpression.Expression is PrimitiveExpression ||
+			    parenthesizedExpression.Expression is ThisReferenceExpression ||
 			    parenthesizedExpression.Expression is ParenthesizedExpression) {
 				ReplaceCurrentNode(parenthesizedExpression.Expression);
 				return null;

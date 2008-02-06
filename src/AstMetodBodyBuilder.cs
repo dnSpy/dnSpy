@@ -487,7 +487,12 @@ namespace Decompiler
 				case Code.Initobj: throw new NotImplementedException();
 				case Code.Isinst: throw new NotImplementedException();
 				case Code.Jmp: throw new NotImplementedException();
-				case Code.Ldarg: return new Ast.IdentifierExpression(((ParameterDefinition)operand).Name);
+				case Code.Ldarg:
+					if (methodDef.HasThis && ((ParameterDefinition)operand).Sequence == 0) {
+						return new Ast.ThisReferenceExpression();
+					} else {
+						return new Ast.IdentifierExpression(((ParameterDefinition)operand).Name);
+					}
 				case Code.Ldarga: throw new NotImplementedException();
 				case Code.Ldc_I4: 
 				case Code.Ldc_I8: 
