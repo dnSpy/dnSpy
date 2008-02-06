@@ -103,10 +103,10 @@ namespace Reversi
         private bool IsOutflanking(int color, int row, int col, int dr, int dc)
         {
             int i = (row + dr);
-            for (int j = (col + dc); (((i >= 0 && i < 8) && j >= 0) && j < 8) && ((@this.squares).Get(i, j)) == -color; j = (j + dc)) {
+            for (int j = (col + dc); i >= 0 && i < 8 && j >= 0 && j < 8 && ((@this.squares).Get(i, j)) == -color; j = (j + dc)) {
                 i = (i + dr);
             }
-            if ((((((i < 0 || i > 7) || j < 0) || j > 7) || i - dr == row && j - dc == col) || ((@this.squares).Get(i, j)) != color)) {
+            if ((i < 0 || i > 7 || j < 0 || j > 7 || i - dr == row && j - dc == col || ((@this.squares).Get(i, j)) != color)) {
                 return 0;
             }
             return 1;
@@ -124,7 +124,7 @@ namespace Reversi
                 V_2 = 0;
                 for (int i = 0; i < 8; i = (i + 1)) {
                     for (int j = 0; j < 8; j = (j + 1)) {
-                        if (((!(((@this.squares).Get(i, j)) == IL__ldsfld(Empty)) && !((@this.safeDiscs).Get(i, j))) && !(@this.IsOutflankable(i, j)))) {
+                        if ((!(((@this.squares).Get(i, j)) == IL__ldsfld(Empty)) && !((@this.safeDiscs).Get(i, j)) && !(@this.IsOutflankable(i, j)))) {
                             (@this.safeDiscs).Set(i, j, 1);
                             V_2 = 1;
                         }
@@ -139,7 +139,7 @@ namespace Reversi
                     if ((!(((@this.squares).Get(i, j)) == IL__ldsfld(Empty)))) {
                         for (int k = -1; k <= 1; k = (k + 1)) {
                             for (int l = -1; l <= 1; l = (l + 1)) {
-                                if (((((((k || l) && i + k >= 0) && i + k < 8) && j + l >= 0) && j + l < 8) && !(((@this.squares).Get((i + k), (j + l))) != IL__ldsfld(Empty)))) {
+                                if (((k || l) && i + k >= 0 && i + k < 8 && j + l >= 0 && j + l < 8 && !(((@this.squares).Get((i + k), (j + l))) != IL__ldsfld(Empty)))) {
                                     V_5 = 1;
                                 }
                             }
@@ -222,7 +222,7 @@ namespace Reversi
                     }
                 }
             }
-            if (((V_3 && V_4 || V_3 && V_6) || V_5 && V_4)) {
+            if ((V_3 && V_4 || V_3 && V_6 || V_5 && V_4)) {
                 return 1;
             }
             V_3 = 0;
@@ -250,7 +250,7 @@ namespace Reversi
                     }
                 }
             }
-            if (((V_3 && V_4 || V_3 && V_6) || V_5 && V_4)) {
+            if ((V_3 && V_4 || V_3 && V_6 || V_5 && V_4)) {
                 return 1;
             }
             V_3 = 0;
@@ -259,7 +259,7 @@ namespace Reversi
             V_6 = 0;
             j = (row - 1);
             k = (col - 1);
-            for (; (j >= 0 && k >= 0) && !V_3; k = (k - 1)) {
+            for (; j >= 0 && k >= 0 && !V_3; k = (k - 1)) {
                 if ((!(((@this.squares).Get(j, k)) != IL__ldsfld(Empty)))) {
                     V_3 = 1;
                 }
@@ -272,7 +272,7 @@ namespace Reversi
             }
             j = (row + 1);
             k = (col + 1);
-            for (; (j < 8 && k < 8) && !V_4; k = (k + 1)) {
+            for (; j < 8 && k < 8 && !V_4; k = (k + 1)) {
                 if ((!(((@this.squares).Get(j, k)) != IL__ldsfld(Empty)))) {
                     V_4 = 1;
                 }
@@ -283,7 +283,7 @@ namespace Reversi
                 }
                 j = (j + 1);
             }
-            if (((V_3 && V_4 || V_3 && V_6) || V_5 && V_4)) {
+            if ((V_3 && V_4 || V_3 && V_6 || V_5 && V_4)) {
                 return 1;
             }
             V_3 = 0;
@@ -292,7 +292,7 @@ namespace Reversi
             V_6 = 0;
             j = (row - 1);
             k = (col + 1);
-            for (; (j >= 0 && k < 8) && !V_3; k = (k + 1)) {
+            for (; j >= 0 && k < 8 && !V_3; k = (k + 1)) {
                 if ((!(((@this.squares).Get(j, k)) != IL__ldsfld(Empty)))) {
                     V_3 = 1;
                 }
@@ -305,7 +305,7 @@ namespace Reversi
             }
             j = (row + 1);
             k = (col - 1);
-            for (; (j < 8 && k >= 0) && !V_4; k = (k - 1)) {
+            for (; j < 8 && k >= 0 && !V_4; k = (k - 1)) {
                 if ((!(((@this.squares).Get(j, k)) != IL__ldsfld(Empty)))) {
                     V_4 = 1;
                 }
@@ -316,7 +316,7 @@ namespace Reversi
                 }
                 j = (j + 1);
             }
-            if (((V_3 && V_4 || V_3 && V_6) || V_5 && V_4)) {
+            if ((V_3 && V_4 || V_3 && V_6 || V_5 && V_4)) {
                 return 1;
             }
             return 0;

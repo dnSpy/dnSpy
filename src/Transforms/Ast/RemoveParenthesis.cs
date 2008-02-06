@@ -37,6 +37,10 @@ namespace Decompiler.Transforms.Ast
 			if (GetPrecedence(binary.Right) > myPrecedence) {
 				binary.Right = Deparenthesize(binary.Right);
 			}
+			// Associativity
+			if (GetPrecedence(binary.Left) == myPrecedence && myPrecedence.HasValue) {
+				binary.Left = Deparenthesize(binary.Left);
+			}
 			return base.VisitBinaryOperatorExpression(binary, data);
 		}
 		
