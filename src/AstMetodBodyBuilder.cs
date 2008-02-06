@@ -459,6 +459,7 @@ namespace Decompiler
 					} else {
 						target = new Ast.IdentifierExpression(cecilMethod.DeclaringType.FullName);
 					}
+					
 					// TODO: Hack, detect properties properly
 					if (cecilMethod.Name.StartsWith("get_")) {
 						return new Ast.MemberReferenceExpression(target, cecilMethod.Name.Remove(0, 4));
@@ -468,12 +469,26 @@ namespace Decompiler
 							AssignmentOperatorType.Assign,
 							methodArgs[0]
 						);
-					} else {
-						return new Ast.InvocationExpression(
-							new Ast.MemberReferenceExpression(target, cecilMethod.Name),
-							methodArgs
+					}
+					
+					// Multi-dimensional array acces // TODO: do properly
+					if (cecilMethod.Name == "Get") {
+						return new Ast.IndexerExpression(target, methodArgs);
+					} else if (cecilMethod.Name == "Set") {
+						Expression val = methodArgs[methodArgs.Count - 1];
+						methodArgs.RemoveAt(methodArgs.Count - 1);
+						return new Ast.AssignmentExpression(
+							new Ast.IndexerExpression(target, methodArgs),
+							AssignmentOperatorType.Assign,
+							val
 						);
 					}
+					
+					// Default invocation
+					return new Ast.InvocationExpression(
+						new Ast.MemberReferenceExpression(target, cecilMethod.Name),
+						methodArgs
+					);
 				case Code.Calli: throw new NotImplementedException();
 				case Code.Castclass: return new Ast.CastExpression(operandAsTypeRef, arg1, CastType.Cast);
 				case Code.Ckfinite: throw new NotImplementedException();

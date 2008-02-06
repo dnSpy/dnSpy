@@ -33,29 +33,29 @@ namespace Reversi
         {
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
-                    squares.Set(i, j, Empty);
-                    safeDiscs.Set(i, j, 0);
+                    squares[i, j] = Empty;
+                    safeDiscs[i, j] = 0;
                 }
             }
-            squares.Set(3, 3, White);
-            squares.Set(3, 4, Black);
-            squares.Set(4, 3, Black);
-            squares.Set(4, 4, White);
+            squares[3, 3] = White;
+            squares[3, 4] = Black;
+            squares[4, 3] = Black;
+            squares[4, 4] = White;
             UpdateCounts();
         }
         public int GetSquareContents(int row, int col)
         {
-            return (squares.Get(row, col));
+            return squares[row, col];
         }
         public void MakeMove(int color, int row, int col)
         {
-            squares.Set(row, col, color);
+            squares[row, col] = color;
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= 1; j++) {
                     if ((i || j) && IsOutflanking(color, row, col, i, j)) {
                         int k = row + i;
-                        for (int l = col + j; squares.Get(k, l) == -color; l += j) {
-                            squares.Set(k, l, color);
+                        for (int l = col + j; squares[k, l] == -color; l += j) {
+                            squares[k, l] = color;
                             k += i;
                         }
                     }
@@ -76,7 +76,7 @@ namespace Reversi
         }
         public bool IsValidMove(int color, int row, int col)
         {
-            if (squares.Get(row, col) != Empty) {
+            if (squares[row, col] != Empty) {
                 return 0;
             }
             for (int i = -1; i <= 1; i++) {
@@ -103,10 +103,10 @@ namespace Reversi
         private bool IsOutflanking(int color, int row, int col, int dr, int dc)
         {
             int i = row + dr;
-            for (int j = col + dc; i >= 0 && i < 8 && j >= 0 && j < 8 && squares.Get(i, j) == -color; j += dc) {
+            for (int j = col + dc; i >= 0 && i < 8 && j >= 0 && j < 8 && squares[i, j] == -color; j += dc) {
                 i += dr;
             }
-            if (i < 0 || i > 7 || j < 0 || j > 7 || i - dr == row && j - dc == col || squares.Get(i, j) != color) {
+            if (i < 0 || i > 7 || j < 0 || j > 7 || i - dr == row && j - dc == col || squares[i, j] != color) {
                 return 0;
             }
             return 1;
@@ -124,8 +124,8 @@ namespace Reversi
                 V_2 = 0;
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++) {
-                        if (squares.Get(i, j) != Empty && !safeDiscs.Get(i, j) && !IsOutflankable(i, j)) {
-                            safeDiscs.Set(i, j, 1);
+                        if (squares[i, j] != Empty && !safeDiscs[i, j] && !IsOutflankable(i, j)) {
+                            safeDiscs[i, j] = 1;
                             V_2 = 1;
                         }
                     }
@@ -136,16 +136,16 @@ namespace Reversi
                 j = 0;
                 for (; j < 8; j++) {
                     bool V_5 = 0;
-                    if (squares.Get(i, j) != Empty) {
+                    if (squares[i, j] != Empty) {
                         for (int k = -1; k <= 1; k++) {
                             for (int l = -1; l <= 1; l++) {
-                                if ((k || l) && i + k >= 0 && i + k < 8 && j + l >= 0 && j + l < 8 && squares.Get(i + k, j + l) == Empty) {
+                                if ((k || l) && i + k >= 0 && i + k < 8 && j + l >= 0 && j + l < 8 && squares[(i + k), (j + l)] == Empty) {
                                     V_5 = 1;
                                 }
                             }
                         }
                     }
-                    if (squares.Get(i, j) == Black) {
+                    if (squares[i, j] == Black) {
                         IL__dup(this);
                         object expr123 = expr122.blackCount;
                         int expr129 = expr123 + 1;
@@ -156,7 +156,7 @@ namespace Reversi
                             int expr13B = expr135 + 1;
                             expr134.blackFrontierCount = expr13B;
                         }
-                        if (safeDiscs.Get(i, j)) {
+                        if (safeDiscs[i, j]) {
                             IL__dup(this);
                             object expr152 = expr151.blackSafeCount;
                             int expr158 = expr152 + 1;
@@ -164,7 +164,7 @@ namespace Reversi
                         }
                     }
                     else {
-                        if (squares.Get(i, j) == White) {
+                        if (squares[i, j] == White) {
                             IL__dup(this);
                             object expr176 = expr175.whiteCount;
                             int expr17C = expr176 + 1;
@@ -175,7 +175,7 @@ namespace Reversi
                                 int expr18E = expr188 + 1;
                                 expr187.whiteFrontierCount = expr18E;
                             }
-                            if (safeDiscs.Get(i, j)) {
+                            if (safeDiscs[i, j]) {
                                 IL__dup(this);
                                 object expr1A5 = expr1A4.whiteSafeCount;
                                 int expr1AB = expr1A5 + 1;
@@ -197,28 +197,28 @@ namespace Reversi
         }
         private bool IsOutflankable(int row, int col)
         {
-            int i = squares.Get(row, col);
+            int i = squares[row, col];
             bool V_3 = 0;
             bool V_5 = 0;
             bool V_4 = 0;
             bool V_6 = 0;
             for (int k = 0; k < col && !V_3; k++) {
-                if (squares.Get(row, k) == Empty) {
+                if (squares[row, k] == Empty) {
                     V_3 = 1;
                 }
                 else {
-                    if (squares.Get(row, k) != i || !safeDiscs.Get(row, k)) {
+                    if (squares[row, k] != i || !safeDiscs[row, k]) {
                         V_5 = 1;
                     }
                 }
             }
             k = col + 1;
             for (; k < 8 && !V_4; k++) {
-                if (squares.Get(row, k) == Empty) {
+                if (squares[row, k] == Empty) {
                     V_4 = 1;
                 }
                 else {
-                    if (squares.Get(row, k) != i || !safeDiscs.Get(row, k)) {
+                    if (squares[row, k] != i || !safeDiscs[row, k]) {
                         V_6 = 1;
                     }
                 }
@@ -231,22 +231,22 @@ namespace Reversi
             V_5 = 0;
             V_6 = 0;
             for (int j = 0; j < row && !V_3; j++) {
-                if (squares.Get(j, col) == Empty) {
+                if (squares[j, col] == Empty) {
                     V_3 = 1;
                 }
                 else {
-                    if (squares.Get(j, col) != i || !safeDiscs.Get(j, col)) {
+                    if (squares[j, col] != i || !safeDiscs[j, col]) {
                         V_5 = 1;
                     }
                 }
             }
             j = row + 1;
             for (; j < 8 && !V_4; j++) {
-                if (squares.Get(j, col) == Empty) {
+                if (squares[j, col] == Empty) {
                     V_4 = 1;
                 }
                 else {
-                    if (squares.Get(j, col) != i || !safeDiscs.Get(j, col)) {
+                    if (squares[j, col] != i || !safeDiscs[j, col]) {
                         V_6 = 1;
                     }
                 }
@@ -261,11 +261,11 @@ namespace Reversi
             j = row - 1;
             k = col - 1;
             for (; j >= 0 && k >= 0 && !V_3; k--) {
-                if (squares.Get(j, k) == Empty) {
+                if (squares[j, k] == Empty) {
                     V_3 = 1;
                 }
                 else {
-                    if (squares.Get(j, k) != i || !safeDiscs.Get(j, k)) {
+                    if (squares[j, k] != i || !safeDiscs[j, k]) {
                         V_5 = 1;
                     }
                 }
@@ -274,11 +274,11 @@ namespace Reversi
             j = row + 1;
             k = col + 1;
             for (; j < 8 && k < 8 && !V_4; k++) {
-                if (squares.Get(j, k) == Empty) {
+                if (squares[j, k] == Empty) {
                     V_4 = 1;
                 }
                 else {
-                    if (squares.Get(j, k) != i || !safeDiscs.Get(j, k)) {
+                    if (squares[j, k] != i || !safeDiscs[j, k]) {
                         V_6 = 1;
                     }
                 }
@@ -294,11 +294,11 @@ namespace Reversi
             j = row - 1;
             k = col + 1;
             for (; j >= 0 && k < 8 && !V_3; k++) {
-                if (squares.Get(j, k) == Empty) {
+                if (squares[j, k] == Empty) {
                     V_3 = 1;
                 }
                 else {
-                    if (squares.Get(j, k) != i || !safeDiscs.Get(j, k)) {
+                    if (squares[j, k] != i || !safeDiscs[j, k]) {
                         V_5 = 1;
                     }
                 }
@@ -307,11 +307,11 @@ namespace Reversi
             j = row + 1;
             k = col - 1;
             for (; j < 8 && k >= 0 && !V_4; k--) {
-                if (squares.Get(j, k) == Empty) {
+                if (squares[j, k] == Empty) {
                     V_4 = 1;
                 }
                 else {
-                    if (squares.Get(j, k) != i || !safeDiscs.Get(j, k)) {
+                    if (squares[j, k] != i || !safeDiscs[j, k]) {
                         V_6 = 1;
                     }
                 }

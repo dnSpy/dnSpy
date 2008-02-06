@@ -28,6 +28,20 @@ namespace Decompiler.Transforms.Ast
 			return base.VisitAssignmentExpression(assignmentExpression, data);
 		}
 		
+		public override object VisitReturnStatement(ReturnStatement returnStatement, object data)
+		{
+			returnStatement.Expression = Deparenthesize(returnStatement.Expression);
+			return base.VisitReturnStatement(returnStatement, data);
+		}
+		
+		public override object VisitIndexerExpression(IndexerExpression indexer, object data)
+		{
+			if (GetPrecedence(indexer.TargetObject) >= GetPrecedence(indexer)) {
+				indexer.TargetObject = Deparenthesize(indexer.TargetObject);
+			}
+			return base.VisitIndexerExpression(indexer, data);
+		}
+		
 		public override object VisitIfElseStatement(IfElseStatement ifElseStatement, object data)
 		{
 			ifElseStatement.Condition = Deparenthesize(ifElseStatement.Condition);
