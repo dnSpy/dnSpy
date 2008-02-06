@@ -45,7 +45,7 @@ namespace Decompiler
 			}
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
-			
+			int boolFlagId = 1;
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
 				if (varDef.VariableType.FullName == Cecil.Constants.Int32 &&
 				    varDef.Name.StartsWith("V_") &&
@@ -53,6 +53,14 @@ namespace Decompiler
 				{
 					varDef.Name = intNames[0];
 					intNames.RemoveAt(0);
+				} else if (varDef.VariableType.FullName == Cecil.Constants.Boolean &&
+				           varDef.Name.StartsWith("V_")) {
+					if (boolFlagId == 1) {
+						varDef.Name = "flag";
+					} else {
+						varDef.Name = "flag" + boolFlagId;
+					}
+					boolFlagId++;
 				}
 				localVarTypes[varDef.Name] = varDef.VariableType;
 				localVarDefined[varDef.Name] = false;

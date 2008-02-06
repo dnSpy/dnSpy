@@ -136,13 +136,13 @@ namespace Reversi
             whiteFrontierCount = 0;
             whiteSafeCount = 0;
             blackSafeCount = 0;
-            for (bool V_2 = true; V_2;) {
-                V_2 = false;
+            for (bool flag = true; flag;) {
+                flag = false;
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++) {
                         if (squares[i, j] != Empty && !safeDiscs[i, j] && !IsOutflankable(i, j)) {
                             safeDiscs[i, j] = 1;
-                            V_2 = true;
+                            flag = true;
                         }
                     }
                 }
@@ -151,12 +151,12 @@ namespace Reversi
             for (; i < 8; i++) {
                 j = 0;
                 for (; j < 8; j++) {
-                    bool V_5 = false;
+                    bool flag2 = false;
                     if (squares[i, j] != Empty) {
                         for (int k = -1; k <= 1; k++) {
                             for (int l = -1; l <= 1; l++) {
                                 if ((k || l) && i + k >= 0 && i + k < 8 && j + l >= 0 && j + l < 8 && squares[(i + k), (j + l)] == Empty) {
-                                    V_5 = true;
+                                    flag2 = true;
                                 }
                             }
                         }
@@ -166,7 +166,7 @@ namespace Reversi
                         int expr123 = expr122.blackCount;
                         int expr129 = expr123 + 1;
                         expr122.blackCount = expr129;
-                        if (V_5) {
+                        if (flag2) {
                             IL__dup(this);
                             int expr135 = expr134.blackFrontierCount;
                             int expr13B = expr135 + 1;
@@ -184,7 +184,7 @@ namespace Reversi
                             int expr176 = expr175.whiteCount;
                             int expr17C = expr176 + 1;
                             expr175.whiteCount = expr17C;
-                            if (V_5) {
+                            if (flag2) {
                                 IL__dup(this);
                                 int expr188 = expr187.whiteFrontierCount;
                                 int expr18E = expr188 + 1;
@@ -213,118 +213,118 @@ namespace Reversi
         private bool IsOutflankable(int row, int col)
         {
             int i = squares[row, col];
-            bool V_3 = false;
-            bool V_5 = false;
-            bool V_4 = false;
-            bool V_6 = false;
-            for (int k = 0; k < col && !V_3; k++) {
+            bool flag = false;
+            bool flag3 = false;
+            bool flag2 = false;
+            bool flag4 = false;
+            for (int k = 0; k < col && !flag; k++) {
                 if (squares[row, k] == Empty) {
-                    V_3 = true;
+                    flag = true;
                 } else {
                     if (squares[row, k] != i || !safeDiscs[row, k]) {
-                        V_5 = true;
+                        flag3 = true;
                     }
                 }
             }
             k = col + 1;
-            for (; k < 8 && !V_4; k++) {
+            for (; k < 8 && !flag2; k++) {
                 if (squares[row, k] == Empty) {
-                    V_4 = true;
+                    flag2 = true;
                 } else {
                     if (squares[row, k] != i || !safeDiscs[row, k]) {
-                        V_6 = true;
+                        flag4 = true;
                     }
                 }
             }
-            if (V_3 && V_4 || V_3 && V_6 || V_5 && V_4) {
+            if (flag && flag2 || flag && flag4 || flag3 && flag2) {
                 return true;
             }
-            V_3 = false;
-            V_4 = false;
-            V_5 = false;
-            V_6 = false;
-            for (int j = 0; j < row && !V_3; j++) {
+            flag = false;
+            flag2 = false;
+            flag3 = false;
+            flag4 = false;
+            for (int j = 0; j < row && !flag; j++) {
                 if (squares[j, col] == Empty) {
-                    V_3 = true;
+                    flag = true;
                 } else {
                     if (squares[j, col] != i || !safeDiscs[j, col]) {
-                        V_5 = true;
+                        flag3 = true;
                     }
                 }
             }
             j = row + 1;
-            for (; j < 8 && !V_4; j++) {
+            for (; j < 8 && !flag2; j++) {
                 if (squares[j, col] == Empty) {
-                    V_4 = true;
+                    flag2 = true;
                 } else {
                     if (squares[j, col] != i || !safeDiscs[j, col]) {
-                        V_6 = true;
+                        flag4 = true;
                     }
                 }
             }
-            if (V_3 && V_4 || V_3 && V_6 || V_5 && V_4) {
+            if (flag && flag2 || flag && flag4 || flag3 && flag2) {
                 return true;
             }
-            V_3 = false;
-            V_4 = false;
-            V_5 = false;
-            V_6 = false;
+            flag = false;
+            flag2 = false;
+            flag3 = false;
+            flag4 = false;
             j = row - 1;
             k = col - 1;
-            for (; j >= 0 && k >= 0 && !V_3; k--) {
+            for (; j >= 0 && k >= 0 && !flag; k--) {
                 if (squares[j, k] == Empty) {
-                    V_3 = true;
+                    flag = true;
                 } else {
                     if (squares[j, k] != i || !safeDiscs[j, k]) {
-                        V_5 = true;
+                        flag3 = true;
                     }
                 }
                 j--;
             }
             j = row + 1;
             k = col + 1;
-            for (; j < 8 && k < 8 && !V_4; k++) {
+            for (; j < 8 && k < 8 && !flag2; k++) {
                 if (squares[j, k] == Empty) {
-                    V_4 = true;
+                    flag2 = true;
                 } else {
                     if (squares[j, k] != i || !safeDiscs[j, k]) {
-                        V_6 = true;
+                        flag4 = true;
                     }
                 }
                 j++;
             }
-            if (V_3 && V_4 || V_3 && V_6 || V_5 && V_4) {
+            if (flag && flag2 || flag && flag4 || flag3 && flag2) {
                 return true;
             }
-            V_3 = false;
-            V_4 = false;
-            V_5 = false;
-            V_6 = false;
+            flag = false;
+            flag2 = false;
+            flag3 = false;
+            flag4 = false;
             j = row - 1;
             k = col + 1;
-            for (; j >= 0 && k < 8 && !V_3; k++) {
+            for (; j >= 0 && k < 8 && !flag; k++) {
                 if (squares[j, k] == Empty) {
-                    V_3 = true;
+                    flag = true;
                 } else {
                     if (squares[j, k] != i || !safeDiscs[j, k]) {
-                        V_5 = true;
+                        flag3 = true;
                     }
                 }
                 j--;
             }
             j = row + 1;
             k = col - 1;
-            for (; j < 8 && k >= 0 && !V_4; k--) {
+            for (; j < 8 && k >= 0 && !flag2; k--) {
                 if (squares[j, k] == Empty) {
-                    V_4 = true;
+                    flag2 = true;
                 } else {
                     if (squares[j, k] != i || !safeDiscs[j, k]) {
-                        V_6 = true;
+                        flag4 = true;
                     }
                 }
                 j++;
             }
-            if (V_3 && V_4 || V_3 && V_6 || V_5 && V_4) {
+            if (flag && flag2 || flag && flag4 || flag3 && flag2) {
                 return true;
             }
             return false;
