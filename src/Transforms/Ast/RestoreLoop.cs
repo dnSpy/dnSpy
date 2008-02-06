@@ -44,19 +44,16 @@ namespace Decompiler.Transforms.Ast
 			if (forStatement.Condition.IsNull) {
 				IfElseStatement condition = forStatement.EmbeddedStatement.Children.First as IfElseStatement;
 				if (condition != null &&
+				    condition.TrueStatement.Count == 1 &&
 				    condition.TrueStatement[0] is BlockStatement &&
 				    condition.TrueStatement[0].Children.Count == 1 &&
 				    condition.TrueStatement[0].Children.First is BreakStatement &&
+				    condition.FalseStatement.Count == 1 &&
 				    condition.FalseStatement[0] is BlockStatement &&
 				    condition.FalseStatement[0].Children.Count == 0)
 				{
-					UnaryOperatorExpression negExpr = condition.Condition as UnaryOperatorExpression;
-					if (negExpr != null &&
-					    negExpr.Op == UnaryOperatorType.Not) {
-						
-						condition.Remove();
-						forStatement.Condition = negExpr.Expression;
-					}
+					condition.Remove();
+					forStatement.Condition = new UnaryOperatorExpression(condition.Condition, UnaryOperatorType.Not);
 				}
 			}
 			

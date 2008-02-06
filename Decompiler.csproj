@@ -66,6 +66,7 @@
     <Compile Include="src\ByteCode.StackAnalysis.cs" />
     <Compile Include="src\StackExpression.cs" />
     <Compile Include="src\StackExpressionCollection.cs" />
+    <Compile Include="src\Transforms\Ast\PushNegation.cs" />
     <Compile Include="src\Transforms\Ast\Idioms.cs" />
     <Compile Include="src\Transforms\Ast\RemoveDeadLabels.cs" />
     <Compile Include="src\Transforms\Ast\RemoveEmptyElseBody.cs" />
