@@ -498,7 +498,8 @@ namespace Decompiler
 				case Code.Ldc_I8: 
 				case Code.Ldc_R4: 
 				case Code.Ldc_R8: return new Ast.PrimitiveExpression(operand, null);
-				case Code.Ldfld: {
+				case Code.Ldfld:
+				case Code.Ldsfld: {
 					FieldDefinition field = (FieldDefinition) operand;
 					if (field.IsStatic) {
 						return new Ast.MemberReferenceExpression(
@@ -509,7 +510,8 @@ namespace Decompiler
 						return new Ast.MemberReferenceExpression(arg1, field.Name);
 					}
 				}
-				case Code.Stfld: {
+				case Code.Stfld:
+				case Code.Stsfld: {
 					FieldDefinition field = (FieldDefinition) operand;
 					if (field.IsStatic) {
 						return new AssignmentExpression(
@@ -528,14 +530,13 @@ namespace Decompiler
 						);
 					}
 				}
-				case Code.Ldflda: throw new NotImplementedException();
+				case Code.Ldflda:
+				case Code.Ldsflda: throw new NotImplementedException();
 				case Code.Ldftn: throw new NotImplementedException();
 				case Code.Ldloc: return new Ast.IdentifierExpression(((VariableDefinition)operand).Name);
 				case Code.Ldloca: throw new NotImplementedException();
 				case Code.Ldnull: return new Ast.PrimitiveExpression(null, null);
 				case Code.Ldobj: throw new NotImplementedException();
-				case Code.Ldsfld: throw new NotImplementedException();
-				case Code.Ldsflda: throw new NotImplementedException();
 				case Code.Ldstr: return new Ast.PrimitiveExpression(operand, null);
 				case Code.Ldtoken:
 					if (operand is Cecil.TypeReference) {
@@ -578,7 +579,6 @@ namespace Decompiler
 						return astLocalVar;
 					}
 				case Code.Stobj: throw new NotImplementedException();
-				case Code.Stsfld: throw new NotImplementedException();
 				case Code.Switch: throw new NotImplementedException();
 				case Code.Tail: throw new NotImplementedException();
 				case Code.Throw: throw new NotImplementedException();

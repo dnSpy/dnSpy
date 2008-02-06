@@ -61,6 +61,9 @@ namespace Decompiler.Transforms.Ast
 			if (GetPrecedence(invocation.TargetObject) >= GetPrecedence(invocation)) {
 				invocation.TargetObject = Deparenthesize(invocation.TargetObject);
 			}
+			for(int i = 0; i < invocation.Arguments.Count; i++) {
+				invocation.Arguments[i] = Deparenthesize(invocation.Arguments[i]);
+			}
 			return base.VisitInvocationExpression(invocation, data);
 		}
 		

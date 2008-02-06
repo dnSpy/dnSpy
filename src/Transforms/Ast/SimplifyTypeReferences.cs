@@ -8,11 +8,20 @@ namespace Decompiler.Transforms.Ast
 {
 	public class SimplifyTypeReferences: AbstractAstTransformer
 	{
+		string currentNamepace = string.Empty;
 		string currentClass = null;
+		
+		public override object VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, object data)
+		{
+			currentNamepace = namespaceDeclaration.Name;
+			base.VisitNamespaceDeclaration(namespaceDeclaration, data);
+			currentNamepace = string.Empty;
+			return null;
+		}
 		
 		public override object VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
 		{
-			currentClass = typeDeclaration.Name;
+			currentClass = currentNamepace + "." + typeDeclaration.Name;
 			base.VisitTypeDeclaration(typeDeclaration, data);
 			currentClass = null;
 			return null;
