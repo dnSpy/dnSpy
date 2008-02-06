@@ -20,6 +20,25 @@ namespace Decompiler.Transforms.Ast
 			return base.VisitParenthesizedExpression(parenthesizedExpression, data);
 		}
 		
+		public override object VisitAssignmentExpression(AssignmentExpression assignmentExpression, object data)
+		{
+			assignmentExpression.Left = Deparenthesize(assignmentExpression.Left);
+			assignmentExpression.Right = Deparenthesize(assignmentExpression.Right);
+			return base.VisitAssignmentExpression(assignmentExpression, data);
+		}
+		
+		public override object VisitIfElseStatement(IfElseStatement ifElseStatement, object data)
+		{
+			ifElseStatement.Condition = Deparenthesize(ifElseStatement.Condition);
+			return base.VisitIfElseStatement(ifElseStatement, data);
+		}
+		
+		public override object VisitVariableDeclaration(VariableDeclaration variableDeclaration, object data)
+		{
+			variableDeclaration.Initializer = Deparenthesize(variableDeclaration.Initializer);
+			return base.VisitVariableDeclaration(variableDeclaration, data);
+		}
+		
 		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unary, object data)
 		{
 			if (GetPrecedence(unary.Expression) > GetPrecedence(unary)) {

@@ -36,8 +36,15 @@ namespace Decompiler
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.PushNegation(), null);
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.PushNegation(), null);
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveParenthesis(), null);
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.PushNegation(), null);
 				}
+			}
+			if (Options.ReduceAstOther) {
+				astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveParenthesis(), null);
+				astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveParenthesis(), null);
+			}
+			if (Options.ReduceAstLoops) {
+				astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
 			}
 			
 			astCompileUnit.AcceptVisitor(csOutVisitor, null);
