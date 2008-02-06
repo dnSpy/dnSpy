@@ -15,20 +15,29 @@ namespace Reversi
         private int whiteSafeCount;
         private System.Int32[,] squares;
         private System.Boolean[,] safeDiscs;
+
         public int BlackCount {
+            get { return blackCount; }
         }
         public int WhiteCount {
+            get { return whiteCount; }
         }
         public int EmptyCount {
+            get { return emptyCount; }
         }
         public int BlackFrontierCount {
+            get { return blackFrontierCount; }
         }
         public int WhiteFrontierCount {
+            get { return whiteFrontierCount; }
         }
         public int BlackSafeCount {
+            get { return blackSafeCount; }
         }
         public int WhiteSafeCount {
+            get { return whiteSafeCount; }
         }
+
         public void SetForNewGame()
         {
             for (int i = 0; i < 8; i++) {
@@ -43,10 +52,12 @@ namespace Reversi
             squares[4, 4] = White;
             UpdateCounts();
         }
+
         public int GetSquareContents(int row, int col)
         {
             return squares[row, col];
         }
+
         public void MakeMove(int color, int row, int col)
         {
             squares[row, col] = color;
@@ -63,6 +74,7 @@ namespace Reversi
             }
             UpdateCounts();
         }
+
         public bool HasAnyValidMove(int color)
         {
             for (int i = 0; i < 8; i++) {
@@ -74,6 +86,7 @@ namespace Reversi
             }
             return 0;
         }
+
         public bool IsValidMove(int color, int row, int col)
         {
             if (squares[row, col] != Empty) {
@@ -88,6 +101,7 @@ namespace Reversi
             }
             return 0;
         }
+
         public int GetValidMoveCount(int color)
         {
             int i = 0;
@@ -100,6 +114,7 @@ namespace Reversi
             }
             return i;
         }
+
         private bool IsOutflanking(int color, int row, int col, int dr, int dc)
         {
             int i = row + dr;
@@ -111,6 +126,7 @@ namespace Reversi
             }
             return 1;
         }
+
         private void UpdateCounts()
         {
             blackCount = 0;
@@ -180,10 +196,10 @@ namespace Reversi
                                 object expr1A5 = expr1A4.whiteSafeCount;
                                 int expr1AB = expr1A5 + 1;
                                 expr1A4.whiteSafeCount = expr1AB;
-                                goto BasicBlock_313;
+                                goto BasicBlock_327;
                             }
                             else {
-                                goto BasicBlock_313;
+                                goto BasicBlock_327;
                             }
                         }
                         IL__dup(this);
@@ -191,10 +207,11 @@ namespace Reversi
                         int expr1BB = expr1B5 + 1;
                         expr1B4.emptyCount = expr1BB;
                     }
-                    BasicBlock_313:
+                    BasicBlock_327:
                 }
             }
         }
+
         private bool IsOutflankable(int row, int col)
         {
             int i = squares[row, col];

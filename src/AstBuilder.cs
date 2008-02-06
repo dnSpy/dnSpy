@@ -215,18 +215,11 @@ namespace Decompiler
 				astType.Children.Add(astField);
 			}
 			
-			// Add properties
-			foreach(PropertyDefinition propDef in typeDef.Properties) {
-				Ast.PropertyDeclaration astProp = new Ast.PropertyDeclaration(
-					ConvertModifiers(propDef.GetMethod),
-					new List<AttributeSection>(),
-					propDef.Name,
-					new List<ParameterDeclarationExpression>()
-				);
-				astProp.TypeReference = new Ast.TypeReference(propDef.PropertyType.FullName);
-				astType.Children.Add(astProp);
+			if (typeDef.Fields.Count > 0) {
+				astType.Children.Add(new IdentifierExpression("\n"));
 			}
 			
+			// Add events
 			foreach(EventDefinition eventDef in typeDef.Events) {
 				Ast.EventDeclaration astEvent = new Ast.EventDeclaration();
 				astEvent.Name = eventDef.Name;
@@ -236,6 +229,41 @@ namespace Decompiler
 				astType.Children.Add(astEvent);
 			}
 			
+			if (typeDef.Events.Count > 0) {
+				astType.Children.Add(new IdentifierExpression("\n"));
+			}
+			
+			// Add properties
+			foreach(PropertyDefinition propDef in typeDef.Properties) {
+				Ast.PropertyDeclaration astProp = new Ast.PropertyDeclaration(
+					ConvertModifiers(propDef.GetMethod),
+					new List<AttributeSection>(),
+					propDef.Name,
+					new List<ParameterDeclarationExpression>()
+				);
+				astProp.TypeReference = new Ast.TypeReference(propDef.PropertyType.FullName);
+				
+				if (propDef.GetMethod != null) {
+					astProp.GetRegion = new PropertyGetRegion(
+						AstMetodBodyBuilder.CreateMetodBody(propDef.GetMethod),
+						new List<AttributeSection>()
+					);
+				}
+				if (propDef.SetMethod != null) {
+					astProp.SetRegion = new PropertySetRegion(
+						AstMetodBodyBuilder.CreateMetodBody(propDef.SetMethod),
+						new List<AttributeSection>()
+					);
+				}
+				
+				astType.Children.Add(astProp);
+			}
+			
+			if (typeDef.Properties.Count > 0) {
+				astType.Children.Add(new IdentifierExpression("\n"));
+			}
+			
+			// Add methods
 			foreach(MethodDefinition methodDef in typeDef.Methods) {
 				if (methodDef.IsSpecialName) continue;
 				
@@ -260,6 +288,12 @@ namespace Decompiler
 				astMethod.Body = AstMetodBodyBuilder.CreateMetodBody(methodDef);
 				
 				astType.Children.Add(astMethod);
+				
+				astType.Children.Add(new IdentifierExpression("\n"));
+			}
+			
+			if (astType.Children.Last is IdentifierExpression) {
+				astType.Children.Last.Remove();
 			}
 		}
 	}
