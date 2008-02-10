@@ -28,10 +28,26 @@ namespace Decompiler.Transforms.Ast
 			return base.VisitAssignmentExpression(assignmentExpression, data);
 		}
 		
+		public override object VisitArrayCreateExpression(ArrayCreateExpression array, object data)
+		{
+			for(int i = 0; i < array.Arguments.Count; i++) {
+				array.Arguments[i] = Deparenthesize(array.Arguments[i]);
+			}
+			return base.VisitArrayCreateExpression(array, data);
+		}
+		
 		public override object VisitReturnStatement(ReturnStatement returnStatement, object data)
 		{
 			returnStatement.Expression = Deparenthesize(returnStatement.Expression);
 			return base.VisitReturnStatement(returnStatement, data);
+		}
+		
+		public override object VisitCastExpression(CastExpression castExpression, object data)
+		{
+			if (GetPrecedence(castExpression.Expression) > GetPrecedence(castExpression)) {
+				castExpression.Expression = Deparenthesize(castExpression.Expression);
+			}
+			return base.VisitCastExpression(castExpression, data);
 		}
 		
 		public override object VisitIndexerExpression(IndexerExpression indexer, object data)
@@ -166,6 +182,7 @@ namespace Decompiler.Transforms.Ast
 			//		--x
 			if (unary != null && unary.Op == UnaryOperatorType.Decrement)      return 14;
 			//		(T)x
+			if (expr is CastExpression)                                        return 14;
 			//	Multiplicative
 			//		*, ,
 			if (binary != null && binary.Op == BinaryOperatorType.Multiply)    return 13;

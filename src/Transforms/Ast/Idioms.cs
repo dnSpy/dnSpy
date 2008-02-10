@@ -61,5 +61,16 @@ namespace Decompiler.Transforms.Ast
 			}
 			return null;
 		}
+		
+		public override object VisitCastExpression(CastExpression castExpression, object data)
+		{
+			if (castExpression.CastTo.Type == "int" &&
+			    castExpression.Expression is MemberReferenceExpression &&
+			    (castExpression.Expression as MemberReferenceExpression).MemberName == "Length") {
+				ReplaceCurrentNode(castExpression.Expression);
+				return null;
+			}
+			return base.VisitCastExpression(castExpression, data);
+		}
 	}
 }
