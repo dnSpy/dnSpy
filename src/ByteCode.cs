@@ -9,7 +9,7 @@ namespace Decompiler
 {
 	public partial class ByteCode
 	{
-		StackExpression expression;
+		ByteCodeExpression expression;
 		ByteCode previous;
 		ByteCode next;
 		
@@ -18,7 +18,7 @@ namespace Decompiler
 		OpCode opCode;
 		object operand;
 		
-		public StackExpression Expression {
+		public ByteCodeExpression Expression {
 			get { return expression; }
 			set { expression = value; }
 		}

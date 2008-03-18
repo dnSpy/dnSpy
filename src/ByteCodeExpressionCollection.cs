@@ -7,12 +7,12 @@ using Mono.Cecil.Cil;
 
 namespace Decompiler
 {
-	public class StackExpressionCollection: List<StackExpression>
+	public class ByteCodeExpressionCollection: List<ByteCodeExpression>
 	{
-		public StackExpressionCollection(ByteCodeCollection byteCodeCol)
+		public ByteCodeExpressionCollection(ByteCodeCollection byteCodeCol)
 		{
 			foreach(ByteCode bc in byteCodeCol) {
-				this.Add(new StackExpression(this, bc));
+				this.Add(new ByteCodeExpression(this, bc));
 			}
 		}
 		
@@ -20,8 +20,8 @@ namespace Decompiler
 		{
 			for(int i = 1; i < this.Count; i++) {
 				if (i == 0) continue;
-				StackExpression prevExpr = this[i - 1];
-				StackExpression expr = this[i];
+				ByteCodeExpression prevExpr = this[i - 1];
+				ByteCodeExpression expr = this[i];
 				
 				if (expr.PopCount > 0 && // This expr needs some more arguments
 				    !expr.IsBranchTarget &&

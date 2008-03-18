@@ -7,12 +7,12 @@ namespace Decompiler.ControlFlow
 {
 	public class BasicBlock: Node
 	{
-		List<StackExpression> body = new List<StackExpression>();
+		List<ByteCodeExpression> body = new List<ByteCodeExpression>();
 		List<BasicBlock> basicBlockPredecessors = new List<BasicBlock>();
 		BasicBlock fallThroughBasicBlock;
 		BasicBlock branchBasicBlock;
 		
-		public List<StackExpression> Body {
+		public List<ByteCodeExpression> Body {
 			get { return body; }
 		}
 		
@@ -117,7 +117,7 @@ namespace Decompiler.ControlFlow
 			get { return methodEntry; }
 		}
 		
-		public MethodBodyGraph(StackExpressionCollection exprs)
+		public MethodBodyGraph(ByteCodeExpressionCollection exprs)
 		{
 			if (exprs.Count == 0) throw new ArgumentException("Count == 0", "exprs");
 			

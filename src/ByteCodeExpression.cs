@@ -7,24 +7,24 @@ using Mono.Cecil.Cil;
 
 namespace Decompiler
 {
-	public class StackExpression
+	public class ByteCodeExpression
 	{
 		ControlFlow.BasicBlock basicBlock;
-		StackExpressionCollection owner;
+		ByteCodeExpressionCollection owner;
 		ByteCode lastByteCode;
-		List<StackExpression> lastArguments = new List<StackExpression>();
+		List<ByteCodeExpression> lastArguments = new List<ByteCodeExpression>();
 		
 		public Decompiler.ControlFlow.BasicBlock BasicBlock {
 			get { return basicBlock; }
 			set {
 				basicBlock = value;
-				foreach (StackExpression lastArgument in lastArguments) {
+				foreach (ByteCodeExpression lastArgument in lastArguments) {
 					lastArgument.BasicBlock = value;
 				}
 			}
 		}
 		
-		public StackExpressionCollection Owner {
+		public ByteCodeExpressionCollection Owner {
 			get { return owner; }
 		}
 		
@@ -33,7 +33,7 @@ namespace Decompiler
 		}
 		
 		// A list of closed expression for last arguments
-		public List<StackExpression> LastArguments {
+		public List<ByteCodeExpression> LastArguments {
 			get { return lastArguments; }
 		}
 		
@@ -59,9 +59,9 @@ namespace Decompiler
 			}
 		}
 		
-		public List<StackExpression> BranchesHere {
+		public List<ByteCodeExpression> BranchesHere {
 			get {
-				List<StackExpression> branchesHere = new List<StackExpression>();
+				List<ByteCodeExpression> branchesHere = new List<ByteCodeExpression>();
 				foreach(ByteCode byteCode in this.FirstByteCode.BranchesHere) {
 					branchesHere.Add(byteCode.Expression);
 				}
@@ -69,7 +69,7 @@ namespace Decompiler
 			}
 		}
 		
-		public StackExpression BranchTarget {
+		public ByteCodeExpression BranchTarget {
 			get {
 				if (this.lastByteCode.BranchTarget == null) {
 					return null;
@@ -107,7 +107,7 @@ namespace Decompiler
 		{
 			int stackSize = 0;
 			int minStackSize = 0;
-			foreach(StackExpression expr in lastArguments) {
+			foreach(ByteCodeExpression expr in lastArguments) {
 				stackSize -= expr.PopCount;
 				minStackSize = Math.Min(minStackSize, stackSize);
 				stackSize += expr.PushCount;
@@ -131,7 +131,7 @@ namespace Decompiler
 			}
 		}
 		
-		public StackExpression(StackExpressionCollection owner, ByteCode lastByteCode)
+		public ByteCodeExpression(ByteCodeExpressionCollection owner, ByteCode lastByteCode)
 		{
 			this.owner = owner;
 			this.lastByteCode = lastByteCode;
