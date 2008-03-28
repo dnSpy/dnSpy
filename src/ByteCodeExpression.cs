@@ -10,137 +10,103 @@ namespace Decompiler
 	public class ByteCodeExpression
 	{
 		ControlFlow.BasicBlock basicBlock;
-		ByteCodeExpressionCollection owner;
-		ByteCode lastByteCode;
-		List<ByteCodeExpression> lastArguments = new List<ByteCodeExpression>();
+		
+		OpCode opCode;
+		object operand;
+		List<ByteCodeExpression> arguments = new List<ByteCodeExpression>();
+		bool returnsValue;
+		Cecil.TypeReference type;
+		
+		ByteCodeExpression branchTarget;
+		List<ByteCodeExpression> branchesHere = new List<ByteCodeExpression>();
+		
+		bool isSSASR = false;
 		
 		public Decompiler.ControlFlow.BasicBlock BasicBlock {
 			get { return basicBlock; }
 			set {
 				basicBlock = value;
-				foreach (ByteCodeExpression lastArgument in lastArguments) {
-					lastArgument.BasicBlock = value;
+				foreach (ByteCodeExpression argument in arguments) {
+					argument.BasicBlock = value;
 				}
 			}
 		}
 		
-		public ByteCodeExpressionCollection Owner {
-			get { return owner; }
+		public OpCode OpCode {
+			get { return opCode; }
+			set { opCode = value; }
 		}
 		
-		public ByteCode LastByteCode {
-			get { return lastByteCode; }
+		public object Operand {
+			get { return operand; }
+			set { operand = value; }
 		}
 		
-		// A list of closed expression for last arguments
-		public List<ByteCodeExpression> LastArguments {
-			get { return lastArguments; }
+		public List<ByteCodeExpression> Arguments {
+			get { return arguments; }
 		}
 		
-		public CilStack StackBefore {
-			get {
-				return this.FirstByteCode.StackBefore;
-			}
+		public bool ReturnsValue {
+			get { return returnsValue; }
+			set { returnsValue = value; }
 		}
 		
-		public CilStack StackAfter {
-			get {
-				return this.LastByteCode.StackAfter;
-			}
+		public TypeReference Type {
+			get { return type; }
+			set { type = value; }
 		}
 		
-		/// <summary>
-		/// Expression is closed if it has no inputs and has exactly one output
-		/// </summary>
-		public bool IsClosed {
-			get {
-				return this.PopCount == 0 &&
-				       this.PushCount == 1;
-			}
-		}
-		
-		public List<ByteCodeExpression> BranchesHere {
-			get {
-				List<ByteCodeExpression> branchesHere = new List<ByteCodeExpression>();
-				foreach(ByteCode byteCode in this.FirstByteCode.BranchesHere) {
-					branchesHere.Add(byteCode.Expression);
-				}
-				return branchesHere;
-			}
+		/// <summary> Single static assignment; single read </summary>
+		public bool IsSSASR {
+			get { return isSSASR; }
+			set { isSSASR = value; }
 		}
 		
 		public ByteCodeExpression BranchTarget {
-			get {
-				if (this.lastByteCode.BranchTarget == null) {
-					return null;
-				} else {
-					return this.lastByteCode.BranchTarget.Expression;
-				}
-			}
+			get { return branchTarget; }
+			set { branchTarget = value; }
+		}
+		
+		public List<ByteCodeExpression> BranchesHere {
+			get { return branchesHere; }
 		}
 		
 		public bool IsBranchTarget {
-			get {
-				return this.FirstByteCode.BranchesHere.Count > 0;
-			}
+			get { return BranchesHere.Count > 0; }
 		}
 		
-		public int PopCount {
-			get {
-				int popCount;
-				int pushCount;
-				SimulateStackSize(out popCount, out pushCount);
-				return popCount;
-			}
-		}
-		
-		public int PushCount {
-			get {
-				int popCount;
-				int pushCount;
-				SimulateStackSize(out popCount, out pushCount);
-				return pushCount;
-			}
-		}
-		
-		void SimulateStackSize(out int popCount, out int pushCount)
+		public static ByteCodeExpression Ldloc(string name)
 		{
-			int stackSize = 0;
-			int minStackSize = 0;
-			foreach(ByteCodeExpression expr in lastArguments) {
-				stackSize -= expr.PopCount;
-				minStackSize = Math.Min(minStackSize, stackSize);
-				stackSize += expr.PushCount;
-			}
-			{
-				stackSize -= lastByteCode.PopCount;
-				minStackSize = Math.Min(minStackSize, stackSize);
-				stackSize += lastByteCode.PushCount;
-			}
-			popCount = -minStackSize;
-			pushCount = stackSize - minStackSize;
+			return new ByteCodeExpression(OpCodes.Ldloc, new VariableDefinition(name, 0, null, null), true);
 		}
 		
-		public ByteCode FirstByteCode {
-			get {
-				if (lastArguments.Count > 0) {
-					return lastArguments[0].FirstByteCode;
-				} else {
-					return this.LastByteCode;
-				}
-			}
-		}
-		
-		public ByteCodeExpression(ByteCodeExpressionCollection owner, ByteCode lastByteCode)
+		public static ByteCodeExpression Stloc(string name)
 		{
-			this.owner = owner;
-			this.lastByteCode = lastByteCode;
-			this.lastByteCode.Expression = this;
+			return new ByteCodeExpression(OpCodes.Stloc, new VariableDefinition(name, 0, null, null), false);
+		}
+		
+		public ByteCodeExpression(OpCode opCode, object operand, bool returnsValue)
+		{
+			this.opCode = opCode;
+			this.operand = operand;
+			this.returnsValue = returnsValue;
+		}
+		
+		public ByteCodeExpression(ByteCode byteCode)
+		{
+			this.OpCode = byteCode.OpCode;
+			this.Operand = byteCode.Operand;
+			foreach(CilStackSlot arg in byteCode.StackBefore.PeekCount(byteCode.PopCount)) {
+				string name = string.Format("expr{0:X2}", arg.AllocadedBy.Offset);
+				this.Arguments.Add(Ldloc(name));
+			}
+			this.ReturnsValue = byteCode.PushCount > 0;
+			this.Type = byteCode.Type;
 		}
 		
 		public override string ToString()
 		{
-			return this.LastByteCode.ToString();
+			return string.Format("[ByteCodeExpression OpCode={0}]", this.opCode);
 		}
 	}
 }

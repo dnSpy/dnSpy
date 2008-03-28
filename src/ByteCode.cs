@@ -9,7 +9,6 @@ namespace Decompiler
 {
 	public partial class ByteCode
 	{
-		ByteCodeExpression expression;
 		ByteCode previous;
 		ByteCode next;
 		
@@ -17,11 +16,6 @@ namespace Decompiler
 		int offset;
 		OpCode opCode;
 		object operand;
-		
-		public ByteCodeExpression Expression {
-			get { return expression; }
-			set { expression = value; }
-		}
 		
 		public ByteCode Previous {
 			get { return previous; }
@@ -94,7 +88,7 @@ namespace Decompiler
 			}
 		}
 		
-		static string FormatByteCodeOperand(object operand)
+		public static string FormatByteCodeOperand(object operand)
 		{
 			if (operand == null) {
 				return string.Empty;

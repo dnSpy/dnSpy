@@ -149,7 +149,7 @@ namespace Decompiler.ControlFlow
 				if (node == target) continue;
 				
 				// Non-conditional branch does not fall-through
-				if (exprs[i].LastByteCode.OpCode.Code == Code.Br) continue;
+				if (exprs[i].OpCode.Code == Code.Br) continue;
 				
 				node.FallThroughBasicBlock = target;
 				target.BasicBlockPredecessors.Add(node);

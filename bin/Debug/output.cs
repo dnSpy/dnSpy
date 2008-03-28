@@ -162,48 +162,27 @@ namespace Reversi
                         }
                     }
                     if (squares[i, j] == Black) {
-                        object expr122 = this;
-                        int expr123 = expr122.blackCount;
-                        int expr129 = expr123 + 1;
-                        expr122.blackCount = expr129;
+                        expr122.blackCount = blackCount + 1;
                         if (flag2) {
-                            object expr134 = this;
-                            int expr135 = expr134.blackFrontierCount;
-                            int expr13B = expr135 + 1;
-                            expr134.blackFrontierCount = expr13B;
+                            expr134.blackFrontierCount = blackFrontierCount + 1;
                         }
                         if (safeDiscs[i, j]) {
-                            object expr151 = this;
-                            int expr152 = expr151.blackSafeCount;
-                            int expr158 = expr152 + 1;
-                            expr151.blackSafeCount = expr158;
+                            expr151.blackSafeCount = blackSafeCount + 1;
                         }
                     } else {
                         if (squares[i, j] == White) {
-                            object expr175 = this;
-                            int expr176 = expr175.whiteCount;
-                            int expr17C = expr176 + 1;
-                            expr175.whiteCount = expr17C;
+                            expr175.whiteCount = whiteCount + 1;
                             if (flag2) {
-                                object expr187 = this;
-                                int expr188 = expr187.whiteFrontierCount;
-                                int expr18E = expr188 + 1;
-                                expr187.whiteFrontierCount = expr18E;
+                                expr187.whiteFrontierCount = whiteFrontierCount + 1;
                             }
                             if (safeDiscs[i, j]) {
-                                object expr1A4 = this;
-                                int expr1A5 = expr1A4.whiteSafeCount;
-                                int expr1AB = expr1A5 + 1;
-                                expr1A4.whiteSafeCount = expr1AB;
+                                expr1A4.whiteSafeCount = whiteSafeCount + 1;
                                 goto BasicBlock_327;
                             } else {
                                 goto BasicBlock_327;
                             }
                         }
-                        object expr1B4 = this;
-                        int expr1B5 = expr1B4.emptyCount;
-                        int expr1BB = expr1B5 + 1;
-                        expr1B4.emptyCount = expr1BB;
+                        expr1B4.emptyCount = emptyCount + 1;
                     }
                     BasicBlock_327:
                 }
