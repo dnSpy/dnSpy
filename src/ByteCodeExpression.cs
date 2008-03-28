@@ -108,5 +108,30 @@ namespace Decompiler
 		{
 			return string.Format("[ByteCodeExpression OpCode={0}]", this.opCode);
 		}
+		
+		public ByteCodeExpression Clone()
+		{
+			ByteCodeExpression clone = (ByteCodeExpression)this.MemberwiseClone();
+			clone.branchTarget = null;
+			clone.branchesHere = new List<ByteCodeExpression>();
+			return clone;
+		}
+		
+		public bool IsConstant()
+		{
+			if (!IsOpCodeConstant()) return false;
+			foreach(ByteCodeExpression arg in this.Arguments) {
+				if (!arg.IsConstant()) return false;
+			}
+			return true;
+		}
+		
+		bool IsOpCodeConstant()
+		{
+			switch(this.OpCode.Code) {
+				case Code.Ldarg: return true;
+				default: return false;
+			}
+		}
 	}
 }

@@ -162,27 +162,27 @@ namespace Reversi
                         }
                     }
                     if (squares[i, j] == Black) {
-                        expr122.blackCount = blackCount + 1;
+                        blackCount++;
                         if (flag2) {
-                            expr134.blackFrontierCount = blackFrontierCount + 1;
+                            blackFrontierCount++;
                         }
                         if (safeDiscs[i, j]) {
-                            expr151.blackSafeCount = blackSafeCount + 1;
+                            blackSafeCount++;
                         }
                     } else {
                         if (squares[i, j] == White) {
-                            expr175.whiteCount = whiteCount + 1;
+                            whiteCount++;
                             if (flag2) {
-                                expr187.whiteFrontierCount = whiteFrontierCount + 1;
+                                whiteFrontierCount++;
                             }
                             if (safeDiscs[i, j]) {
-                                expr1A4.whiteSafeCount = whiteSafeCount + 1;
+                                whiteSafeCount++;
                                 goto BasicBlock_327;
                             } else {
                                 goto BasicBlock_327;
                             }
                         }
-                        expr1B4.emptyCount = emptyCount + 1;
+                        emptyCount++;
                     }
                     BasicBlock_327:
                 }

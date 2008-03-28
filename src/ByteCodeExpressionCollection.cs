@@ -21,7 +21,7 @@ namespace Decompiler
 					string name = string.Format("expr{0:X2}", byteCode.Offset);
 					ByteCodeExpression stExpr = ByteCodeExpression.Stloc(name);
 					stExpr.Arguments.Add(newExpr);
-					stExpr.IsSSASR = true;
+					stExpr.IsSSASR = byteCode.PushCount == 1;
 					newExpr = stExpr;
 				}
 				
@@ -38,15 +38,33 @@ namespace Decompiler
 			}
 		}
 		
+		Dictionary<ByteCodeExpression, object> alreadyDuplicated = new Dictionary<ByteCodeExpression, object>();
+		
 		public void Optimize()
 		{
-			// Try to in-line stloc into following expression
-			
 			for(int i = 0; i < this.Count - 1; i++) {
 				if (i < 0) continue;
 				
 				ByteCodeExpression expr = this[i];
 				ByteCodeExpression nextExpr = this[i + 1];
+				
+				// Duplicate 'dup' expressions
+				
+				if (expr.OpCode.Code == Code.Stloc &&
+				    expr.Arguments[0].OpCode.Code == Code.Dup &&
+				    expr.Arguments[0].Arguments[0].IsConstant() &&
+				    !alreadyDuplicated.ContainsKey(expr))
+				{
+					Options.NotifyCollapsingExpression();
+					this.Insert(i + 1, expr.Clone());
+					this[i].IsSSASR = true;
+					this[i + 1].IsSSASR = true;
+					alreadyDuplicated.Add(this[i], null);
+					alreadyDuplicated.Add(this[i + 1], null);
+					continue;
+				}
+				
+				// Try to in-line stloc into following expression
 				
 				if (expr.OpCode.Code == Code.Stloc &&
 				    expr.IsSSASR &&
