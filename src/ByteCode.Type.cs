@@ -14,6 +14,7 @@ namespace Decompiler
 	{
 		static public Cecil.TypeReference TypeVoid = GetCecilType(typeof(void));
 		static public Cecil.TypeReference TypeObject = GetCecilType(typeof(Object));
+		static public Cecil.TypeReference TypeException = GetCecilType(typeof(Exception));
 		static public Cecil.TypeReference TypeBool = GetCecilType(typeof(bool));
 		static public Cecil.TypeReference TypeInt32 = GetCecilType(typeof(Int32));
 		static public Cecil.TypeReference TypeString = GetCecilType(typeof(string));

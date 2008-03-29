@@ -65,7 +65,7 @@ namespace Decompiler
 				}
 			}
 			UpdateNextPrevious();
-			UpdateStackAnalysis();
+			UpdateStackAnalysis(methodDef);
 		}
 		
 		void UpdateNextPrevious()
@@ -76,10 +76,17 @@ namespace Decompiler
 			}
 		}
 		
-		void UpdateStackAnalysis()
+		void UpdateStackAnalysis(MethodDefinition methodDef)
 		{
 			if (this.Count > 0) {
 				this[0].MergeStackBeforeWith(CilStack.Empty);
+			}
+			foreach(ExceptionHandler handler in methodDef.Body.ExceptionHandlers) {
+				ByteCode byteCode = this.GetByOffset(handler.HandlerStart.Offset);
+				CilStack expetionStack = new CilStack();
+				// TODO: Allocated by what?
+				expetionStack.Add(new CilStackSlot(byteCode, ByteCode.TypeException));
+				byteCode.MergeStackBeforeWith(expetionStack);
 			}
 		}
 	}

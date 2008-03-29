@@ -32,6 +32,7 @@ namespace Decompiler
 			methodDef.Body.Simplify();
 			
 			ByteCodeCollection body = new ByteCodeCollection(methodDef);
+			
 			ByteCodeExpressionCollection exprCollection = new ByteCodeExpressionCollection(body);
 			try {
 				exprCollection.Optimize();
@@ -235,6 +236,7 @@ namespace Decompiler
 					case Code.Blt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					case Code.Blt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					case Code.Bne_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
+					case Code.Leave:   return new Ast.PrimitiveExpression(true, true.ToString());
 					default: throw new Exception("Bad opcode");
 				}
 			} else if (branch is ShortCircuitBranch) {
