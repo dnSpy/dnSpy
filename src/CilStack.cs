@@ -120,7 +120,8 @@ namespace Decompiler
 			merged = stack1.Clone();
 			for (int i = 0; i < count; i++) {
 				if (!stack1[i].Equals(stack2[i])) {
-					merged[i] = new CilStackSlot(null, null); // Merge slots
+					// TODO: Do the merge
+					// merged[i] = new CilStackSlot(null, null); // Merge slots
 					same = false;
 				}
 			}

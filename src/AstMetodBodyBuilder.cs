@@ -29,6 +29,8 @@ namespace Decompiler
 		{
 			Ast.BlockStatement astBlock = new Ast.BlockStatement();
 			
+			if (methodDef.Body == null) return astBlock;
+			
 			methodDef.Body.Simplify();
 			
 			ByteCodeCollection body = new ByteCodeCollection(methodDef);
@@ -521,14 +523,19 @@ namespace Decompiler
 				case Code.Ldc_R8: return new Ast.PrimitiveExpression(operand, null);
 				case Code.Ldfld:
 				case Code.Ldsfld: {
-					FieldDefinition field = (FieldDefinition) operand;
-					if (field.IsStatic) {
-						return new Ast.MemberReferenceExpression(
-							new Ast.IdentifierExpression(field.DeclaringType.FullName),
-							field.Name
-						);
+					if (operand is FieldDefinition) {
+						FieldDefinition field = (FieldDefinition) operand;
+						if (field.IsStatic) {
+							return new Ast.MemberReferenceExpression(
+								new Ast.IdentifierExpression(field.DeclaringType.FullName),
+								field.Name
+							);
+						} else {
+							return new Ast.MemberReferenceExpression(arg1, field.Name);
+						}
 					} else {
-						return new Ast.MemberReferenceExpression(arg1, field.Name);
+						// TODO: Static accesses
+						return new Ast.MemberReferenceExpression(arg1, ((FieldReference)operand).Name);
 					}
 				}
 				case Code.Stfld:
@@ -634,7 +641,11 @@ namespace Decompiler
 		
 		static Ast.Expression Convert(Ast.Expression expr, Cecil.TypeReference reqType)
 		{
-			return Convert(expr, reqType.FullName);
+			if (reqType == null) {
+				return expr;
+			} else {
+				return Convert(expr, reqType.FullName);
+			}
 		}
 		
 		static Ast.Expression Convert(Ast.Expression expr, string reqType)

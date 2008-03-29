@@ -56,12 +56,19 @@ namespace Decompiler
 			}
 			foreach(ByteCode byteCode in this) {
 				if (byteCode.CanBranch) {
-					byteCode.Operand = GetByOffset(((Instruction)byteCode.Operand).Offset);
-				}
-			}
-			foreach(ByteCode byteCode in this) {
-				if (byteCode.CanBranch) {
-					byteCode.BranchTarget.BranchesHere.Add(byteCode);
+					if (byteCode.Operand is Instruction[]) {
+						List<ByteCode> operands = new List<ByteCode>();
+						foreach(Instruction inst in (Instruction[])byteCode.Operand) {
+							ByteCode target = GetByOffset(inst.Offset);
+							operands.Add(target);
+							target.BranchesHere.Add(byteCode);
+						}
+						byteCode.Operand = operands.ToArray();
+					} else {
+						ByteCode target = GetByOffset(((Instruction)byteCode.Operand).Offset);
+						byteCode.Operand = target;
+						target.BranchesHere.Add(byteCode);
+					}
 				}
 			}
 			UpdateNextPrevious();

@@ -36,6 +36,18 @@ namespace Decompiler
 			
 			stackAfter = SimulateEffectOnStack(this.StackBefore);
 			
+			if (this.OpCode.Code == Code.Endfinally) {
+				return; // TODO
+			}
+			
+			if (this.OpCode.Code == Code.Switch) {
+				this.Next.MergeStackBeforeWith(this.StackAfter);
+				foreach(ByteCode target in (ByteCode[])this.Operand) {
+					target.MergeStackBeforeWith(this.StackAfter);
+				}
+				return;
+			}
+			
 			switch(this.OpCode.FlowControl) {
 				case FlowControl.Branch:
 					this.BranchTarget.MergeStackBeforeWith(this.StackAfter);
