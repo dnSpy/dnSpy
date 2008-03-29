@@ -38,6 +38,45 @@ namespace Reversi
             get { return whiteSafeCount; }
         }
 
+        public Board()
+        {
+            // Constructor
+            squares = new System.Int32[,](8, 8);
+            safeDiscs = new System.Boolean[,](8, 8);
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    squares[i, j] = Empty;
+                    safeDiscs[i, j] = 0;
+                }
+            }
+            UpdateCounts();
+        }
+
+        public Board(Reversi.Board board)
+        {
+            // Constructor
+            squares = new System.Int32[,](8, 8);
+            safeDiscs = new System.Boolean[,](8, 8);
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    squares[i, j] = board.squares[i, j];
+                    safeDiscs[i, j] = board.safeDiscs[i, j];
+                }
+            }
+            blackCount = board.blackCount;
+            whiteCount = board.whiteCount;
+            emptyCount = board.emptyCount;
+            blackSafeCount = board.blackSafeCount;
+            whiteSafeCount = board.whiteSafeCount;
+        }
+
+        private static Board()
+        {
+            Black = -1;
+            Empty = 0;
+            White = 1;
+        }
+
         public void SetForNewGame()
         {
             for (int i = 0; i < 8; i++) {
@@ -177,14 +216,14 @@ namespace Reversi
                             }
                             if (safeDiscs[i, j]) {
                                 whiteSafeCount++;
-                                goto BasicBlock_327;
+                                goto BasicBlock_381;
                             } else {
-                                goto BasicBlock_327;
+                                goto BasicBlock_381;
                             }
                         }
                         emptyCount++;
                     }
-                    BasicBlock_327:
+                    BasicBlock_381:
                 }
             }
         }

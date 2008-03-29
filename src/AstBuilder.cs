@@ -213,7 +213,7 @@ namespace Decompiler
 			}
 			
 			if (typeDef.Fields.Count > 0) {
-				astType.Children.Add(new IdentifierExpression("\n"));
+				astType.Children.Add(new IdentifierExpression("\r\n"));
 			}
 			
 			// Add events
@@ -227,7 +227,7 @@ namespace Decompiler
 			}
 			
 			if (typeDef.Events.Count > 0) {
-				astType.Children.Add(new IdentifierExpression("\n"));
+				astType.Children.Add(new IdentifierExpression("\r\n"));
 			}
 			
 			// Add properties
@@ -257,7 +257,22 @@ namespace Decompiler
 			}
 			
 			if (typeDef.Properties.Count > 0) {
-				astType.Children.Add(new IdentifierExpression("\n"));
+				astType.Children.Add(new IdentifierExpression("\r\n"));
+			}
+			
+			// Add constructors
+			foreach(MethodDefinition methodDef in typeDef.Constructors) {
+				Ast.ConstructorDeclaration astMethod = new Ast.ConstructorDeclaration(
+					methodDef.Name,
+					ConvertModifiers(methodDef),
+					new List<ParameterDeclarationExpression>(MakeParameters(methodDef.Parameters)),
+					new List<AttributeSection>()
+				);
+				
+				astMethod.Body = AstMetodBodyBuilder.CreateMetodBody(methodDef);
+				
+				astType.Children.Add(astMethod);
+				astType.Children.Add(new IdentifierExpression("\r\n"));
 			}
 			
 			// Add methods
@@ -269,28 +284,33 @@ namespace Decompiler
 				astMethod.TypeReference = new Ast.TypeReference(methodDef.ReturnType.ReturnType.FullName);
 				astMethod.Modifier = ConvertModifiers(methodDef);
 				
-				foreach(ParameterDefinition paramDef in methodDef.Parameters) {
-					Ast.ParameterDeclarationExpression astParam = new Ast.ParameterDeclarationExpression(
-						new Ast.TypeReference(paramDef.ParameterType.FullName),
-						paramDef.Name
-					);
-					
-					if (paramDef.IsIn && !paramDef.IsOut) astParam.ParamModifier = ParameterModifiers.In;
-					if (!paramDef.IsIn && paramDef.IsOut) astParam.ParamModifier = ParameterModifiers.Out;
-					if (paramDef.IsIn && paramDef.IsOut)  astParam.ParamModifier = ParameterModifiers.Ref;
-					
-					astMethod.Parameters.Add(astParam);
-				}
+				astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 				
 				astMethod.Body = AstMetodBodyBuilder.CreateMetodBody(methodDef);
 				
 				astType.Children.Add(astMethod);
 				
-				astType.Children.Add(new IdentifierExpression("\n"));
+				astType.Children.Add(new IdentifierExpression("\r\n"));
 			}
 			
 			if (astType.Children.Last is IdentifierExpression) {
 				astType.Children.Last.Remove();
+			}
+		}
+		
+		IEnumerable<Ast.ParameterDeclarationExpression> MakeParameters(ParameterDefinitionCollection paramCol)
+		{
+			foreach(ParameterDefinition paramDef in paramCol) {
+				Ast.ParameterDeclarationExpression astParam = new Ast.ParameterDeclarationExpression(
+					new Ast.TypeReference(paramDef.ParameterType.FullName),
+					paramDef.Name
+				);
+				
+				if (paramDef.IsIn && !paramDef.IsOut) astParam.ParamModifier = ParameterModifiers.In;
+				if (!paramDef.IsIn && paramDef.IsOut) astParam.ParamModifier = ParameterModifiers.Out;
+				if (paramDef.IsIn && paramDef.IsOut)  astParam.ParamModifier = ParameterModifiers.Ref;
+				
+				yield return astParam;
 			}
 		}
 	}

@@ -58,7 +58,7 @@ namespace Decompiler.Transforms.Ast
 			}
 			// End of method
 			if (lastStmt is ReturnStatement && 
-			    blockStatement.Parent is MethodDeclaration &&
+			    (blockStatement.Parent is MethodDeclaration || blockStatement.Parent is ConstructorDeclaration) &&
 			    ((ReturnStatement)lastStmt).Expression.IsNull)
 			{
 				lastStmt.Remove();

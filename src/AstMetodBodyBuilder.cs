@@ -459,6 +459,11 @@ namespace Decompiler
 						target = new Ast.IdentifierExpression(cecilMethod.DeclaringType.FullName);
 					}
 					
+					// TODO: Constructors are ignored
+					if (cecilMethod.Name == ".ctor") {
+						return MakeComment("// Constructor");
+					}
+					
 					// TODO: Hack, detect properties properly
 					if (cecilMethod.Name.StartsWith("get_")) {
 						return new Ast.MemberReferenceExpression(target, cecilMethod.Name.Remove(0, 4));

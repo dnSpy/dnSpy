@@ -11,6 +11,15 @@ namespace Decompiler.Transforms.Ast
 		List<string> usedLabels = new List<string>();
 		bool collectingUsedLabels;
 		
+		public override object VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, object data)
+		{
+			collectingUsedLabels = true;
+			base.VisitConstructorDeclaration(constructorDeclaration, data);
+			collectingUsedLabels = false;
+			base.VisitConstructorDeclaration(constructorDeclaration, data);
+			return null;
+		}
+		
 		public override object VisitMethodDeclaration(MethodDeclaration methodDeclaration, object data)
 		{
 			collectingUsedLabels = true;
