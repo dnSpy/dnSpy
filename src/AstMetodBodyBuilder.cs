@@ -484,7 +484,7 @@ namespace Decompiler
 						return new Ast.AssignmentExpression(
 							new Ast.IndexerExpression(target, methodArgs),
 							AssignmentOperatorType.Assign,
-							val
+							Convert(val, ((Cecil.ArrayType)target.UserData["Type"]).ElementType)
 						);
 					}
 					
@@ -571,9 +571,16 @@ namespace Decompiler
 				case Code.Localloc: throw new NotImplementedException();
 				case Code.Mkrefany: throw new NotImplementedException();
 				case Code.Newobj:
+					Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
 					// TODO: Ensure that the corrent overloaded constructor is called
+					if (declaringType is ArrayType) {
+						return new Ast.ArrayCreateExpression(
+							new Ast.TypeReference(((ArrayType)declaringType).ElementType.FullName, new int[] {}),
+							new List<Expression>(args)
+						);
+					}
 					return new Ast.ObjectCreateExpression(
-						new Ast.TypeReference(((MethodReference)operand).DeclaringType.FullName),
+						new Ast.TypeReference(declaringType.FullName),
 						new List<Expression>(args)
 					);
 				case Code.No: throw new NotImplementedException();
@@ -625,14 +632,19 @@ namespace Decompiler
 		
 		static Ast.Expression Convert(Ast.Expression expr, Cecil.TypeReference reqType)
 		{
+			return Convert(expr, reqType.FullName);
+		}
+		
+		static Ast.Expression Convert(Ast.Expression expr, string reqType)
+		{
 			if (expr.UserData.ContainsKey("Type")) {
 			    Cecil.TypeReference exprType = (Cecil.TypeReference)expr.UserData["Type"];
 				if (exprType == ByteCode.TypeZero &&
-				    reqType.FullName == ByteCode.TypeBool.FullName) {
+				    reqType == ByteCode.TypeBool.FullName) {
 					return new PrimitiveExpression(false, "false");
 				}
 				if (exprType == ByteCode.TypeOne &&
-				    reqType.FullName == ByteCode.TypeBool.FullName) {
+				    reqType == ByteCode.TypeBool.FullName) {
 					return new PrimitiveExpression(true, "true");
 				}
 			}

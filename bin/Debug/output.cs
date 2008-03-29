@@ -41,12 +41,12 @@ namespace Reversi
         public Board()
         {
             // Constructor
-            squares = new System.Int32[,](8, 8);
-            safeDiscs = new System.Boolean[,](8, 8);
+            squares = new int[8, 8];
+            safeDiscs = new bool[8, 8];
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     squares[i, j] = Empty;
-                    safeDiscs[i, j] = 0;
+                    safeDiscs[i, j] = false;
                 }
             }
             UpdateCounts();
@@ -55,8 +55,8 @@ namespace Reversi
         public Board(Reversi.Board board)
         {
             // Constructor
-            squares = new System.Int32[,](8, 8);
-            safeDiscs = new System.Boolean[,](8, 8);
+            squares = new int[8, 8];
+            safeDiscs = new bool[8, 8];
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     squares[i, j] = board.squares[i, j];
@@ -82,7 +82,7 @@ namespace Reversi
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     squares[i, j] = Empty;
-                    safeDiscs[i, j] = 0;
+                    safeDiscs[i, j] = false;
                 }
             }
             squares[3, 3] = White;
@@ -180,7 +180,7 @@ namespace Reversi
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++) {
                         if (squares[i, j] != Empty && !safeDiscs[i, j] && !IsOutflankable(i, j)) {
-                            safeDiscs[i, j] = 1;
+                            safeDiscs[i, j] = true;
                             flag = true;
                         }
                     }
