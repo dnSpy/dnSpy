@@ -39,7 +39,7 @@ namespace Decompiler
 					x += checkBox.Width + 10;
 				}
 			}
-			filter.Text = "ReversiForm";
+			//filter.Text = "ReversiForm";
 		}
 		
 		public string SourceCode {

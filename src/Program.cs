@@ -21,10 +21,14 @@ namespace Decompiler
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			string sourceFilename = @".\Reversi.exe";
-			
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+			
+			OpenFileDialog openFile = new OpenFileDialog();
+			openFile.Filter = "Executable (*.exe)|*.exe";
+			if (openFile.ShowDialog() != DialogResult.OK) return;
+			string sourceFilename = openFile.FileName;
+			
 			MainForm mainForm = new MainForm(sourceFilename);
 			mainForm.Decompile();
 			Application.Run(mainForm);
