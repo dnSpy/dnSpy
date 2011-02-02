@@ -1,0 +1,18 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 4.0.1.7084
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy", "ILSpy\ILSpy.csproj", "{1E85EFF9-E370-4683-83E4-8A3D063FF791}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E85EFF9-E370-4683-83E4-8A3D063FF791}.Debug|x86.Build.0 = Debug|x86
+		{1E85EFF9-E370-4683-83E4-8A3D063FF791}.Debug|x86.ActiveCfg = Debug|x86
+		{1E85EFF9-E370-4683-83E4-8A3D063FF791}.Release|x86.Build.0 = Release|x86
+		{1E85EFF9-E370-4683-83E4-8A3D063FF791}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+EndGlobal
