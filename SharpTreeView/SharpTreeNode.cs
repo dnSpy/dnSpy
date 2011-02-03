@@ -21,7 +21,7 @@ namespace ICSharpCode.TreeView
 		static SharpTreeNode()
 		{
 			SelectedNodes = new List<SharpTreeNode>();
-			ActiveNodes = new List<SharpTreeNode>();			
+			ActiveNodes = new List<SharpTreeNode>();
 			StartCuttedDataWatcher();
 		}
 
@@ -156,10 +156,14 @@ namespace ICSharpCode.TreeView
 			get { return Icon != null; }
 		}
 
-		public virtual void LoadChildren()
+		protected virtual void LoadChildren()
 		{
+			throw new NotSupportedException(GetType().Name + " does not support lazy loading");
 		}
 
+		/// <summary>
+		/// Ensures the children were initialized (loads children if lazy loading is enabled)
+		/// </summary>
 		public void EnsureLazyChildren()
 		{
 			if (LazyLoading) {
@@ -424,7 +428,7 @@ namespace ICSharpCode.TreeView
 		internal void InternalDelete()
 		{
 			Delete(ActiveNodesArray);
-		}		
+		}
 
 		public virtual bool CanDelete(SharpTreeNode[] nodes)
 		{
@@ -433,10 +437,12 @@ namespace ICSharpCode.TreeView
 
 		public virtual void Delete(SharpTreeNode[] nodes)
 		{
+			throw new NotSupportedException(GetType().Name + " does not support deletion");
 		}
 
 		public virtual void DeleteCore(SharpTreeNode[] nodes)
 		{
+			throw new NotSupportedException(GetType().Name + " does not support deletion");
 		}
 
 		public virtual bool CanCopy(SharpTreeNode[] nodes)
@@ -446,7 +452,7 @@ namespace ICSharpCode.TreeView
 
 		public virtual IDataObject Copy(SharpTreeNode[] nodes)
 		{
-			return null;
+			throw new NotSupportedException(GetType().Name + " does not support copy/paste or drag'n'drop");
 		}
 
 		public virtual bool CanPaste(IDataObject data)
