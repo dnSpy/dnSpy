@@ -42,9 +42,16 @@ namespace ICSharpCode.ILSpy
 				assemblies.Add(new AssemblyTreeNode(asm.Location));
 		}
 		
-		void Window_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+		void ExitClick(object sender, RoutedEventArgs e)
 		{
-			Process.Start(e.Uri.ToString());
+			Close();
+		}
+		
+		void AboutClick(object sender, RoutedEventArgs e)
+		{
+			AboutDialog dlg = new AboutDialog();
+			dlg.Owner = this;
+			dlg.ShowDialog();
 		}
 	}
 }

@@ -7,48 +7,99 @@
 	MinWidth="250"
 	MinHeight="200"
 	UseLayoutRounding="True"
-	Hyperlink.RequestNavigate="Window_RequestNavigate"
 	TextOptions.TextFormattingMode="Display"
 >
-	<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition
-				MinWidth="100"
-				Width="250" />
-			<ColumnDefinition
-				Width="3" />
-			<ColumnDefinition
-				MinWidth="100"
-				Width="0.514411764705882*" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition
-				Height="*" />
-		</Grid.RowDefinitions>
-		<!-- Tree View of assemblies and classes -->
-		<tv:SharpTreeView
-			Name="treeView"
-			ShowRoot="False"
-			AllowDropOrder="True"
-			AllowDrop="True" />
-		<GridSplitter
-			Grid.ZIndex="1"
-			Grid.Column="1"
-			Margin="-2,0"
-			BorderThickness="2,0"
-			BorderBrush="Transparent"
-			HorizontalAlignment="Stretch" />
-		<!-- DockPanel in right pane -->
-		<DockPanel
-			Grid.Column="2">
-			<ae:TextEditor
-				SyntaxHighlighting="C#"
-				FontFamily="Consolas"
-				FontSize="10pt"
-				IsReadOnly="True"
-				Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
-				Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}" />
-		</DockPanel>
-	</Grid>
+	<DockPanel>
+		<Menu
+			DockPanel.Dock="Top">
+			<MenuItem
+				Header="_File">
+				<MenuItem
+					Command="Open">
+					<MenuItem.Icon>
+						<Image
+							Width="16"
+							Height="16"
+							Source="Images/Open.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<Separator />
+				<MenuItem
+					Header="E_xit"
+					Click="ExitClick" />
+			</MenuItem>
+			<MenuItem
+				Header="_Help">
+				<MenuItem
+					Header="_About"
+					Click="AboutClick" />
+			</MenuItem>
+		</Menu>
+		<ToolBar
+			DockPanel.Dock="Top">
+			<ToolBar.Resources>
+				<!-- Make images transparent if menu command is disabled -->
+				<Style
+					TargetType="{x:Type Image}">
+					<Style.Triggers>
+						<DataTrigger
+							Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}"
+							Value="False">
+							<Setter
+								Property="Opacity"
+								Value="0.30" />
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</ToolBar.Resources>
+			<Button
+				Command="Open">
+				<Image
+					Width="16"
+					Height="16"
+					Source="Images/Open.png" />
+			</Button>
+		</ToolBar>
+		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition
+					MinWidth="100"
+					Width="250" />
+				<ColumnDefinition
+					Width="3" />
+				<ColumnDefinition
+					MinWidth="100"
+					Width="0.514411764705882*" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition
+					Height="*" />
+			</Grid.RowDefinitions>
+			<!-- Tree View of assemblies and classes -->
+			<tv:SharpTreeView
+				Name="treeView"
+				ShowRoot="False"
+				AllowDropOrder="True"
+				AllowDrop="True" />
+			<GridSplitter
+				Grid.ZIndex="1"
+				Grid.Column="1"
+				Margin="-2,0"
+				BorderThickness="2,0"
+				BorderBrush="Transparent"
+				HorizontalAlignment="Stretch" />
+			<!-- DockPanel in right pane -->
+			<DockPanel
+				Grid.Column="2">
+				<ae:TextEditor
+					SyntaxHighlighting="C#"
+					FontFamily="Consolas"
+					FontSize="10pt"
+					IsReadOnly="True"
+					Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
+					Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}" />
+			</DockPanel>
+		</Grid>
+	</DockPanel>
 </Window>
