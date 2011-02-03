@@ -151,15 +151,9 @@ namespace ICSharpCode.TreeView
 			}
 		}
 		
-		bool showIcon;
-		
-		public bool ShowIcon
+		public virtual bool ShowIcon
 		{
-			get { return showIcon; }
-			set {
-				showIcon = value;
-				RaisePropertyChanged("ShowIcon");
-			}
+			get { return Icon != null; }
 		}
 
 		public virtual void LoadChildren()

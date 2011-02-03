@@ -248,19 +248,25 @@
                             <StackPanel Orientation="Horizontal"
                                         Background="Transparent"
                                         ToolTip="{Binding ToolTip}">
-                                <ContentControl Name="icon"
-                                                Content="{Binding Icon}"
-                                                Width="16"
-                                                Height="16"
-                                                Margin="0 0 5 1"
-                                                VerticalAlignment="Center"
-                                                Focusable="False" />
+                                <ContentPresenter Name="icon"
+                                                  Content="{Binding Icon}"
+                                                  Width="16"
+                                                  Height="16"
+                                                  Margin="0 0 5 1"
+                                                  VerticalAlignment="Center"
+                                                  Focusable="False">
+                            		<ContentPresenter.ContentTemplate>
+                                		<DataTemplate>
+                            				<Image Source="{Binding}"/>
+                            			</DataTemplate>
+                                	</ContentPresenter.ContentTemplate>
+                            	</ContentPresenter>
                                 <Border Name="textContainer"
                                         Background="{TemplateBinding TextBackground}">
-                                    <ContentControl Content="{Binding Text}"
-                                                    Margin="2 0 6 0"
-                                                    VerticalAlignment="Center"
-                                                    Focusable="False" />
+                                    <ContentPresenter Content="{Binding Text}"
+                                                      Margin="2 0 6 0"
+                                                      VerticalAlignment="Center"
+                                                      Focusable="False" />
                                 </Border>
                                 <Border Name="textEditorContainer" />
                             </StackPanel>
