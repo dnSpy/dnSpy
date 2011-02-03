@@ -3,10 +3,13 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
-
+using System.Windows.Input;
 using ICSharpCode.TreeView;
+using Microsoft.Win32;
 
 namespace ICSharpCode.ILSpy
 {
@@ -39,7 +42,34 @@ namespace ICSharpCode.ILSpy
 			assemblies = treeView.Root.Children;
 			
 			foreach (Assembly asm in initialAssemblies)
-				assemblies.Add(new AssemblyTreeNode(asm.Location));
+				OpenAssembly(asm.Location);
+		}
+		
+		void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			e.Handled = true;
+			OpenFileDialog dlg = new OpenFileDialog();
+			dlg.Filter = ".NET assemblies|*.dll;*.exe|All files|*.*";
+			dlg.Multiselect = true;
+			dlg.RestoreDirectory = true;
+			if (dlg.ShowDialog() == true) {
+				treeView.UnselectAll();
+				foreach (string file in dlg.FileNames) {
+					treeView.SelectedItems.Add(OpenAssembly(file));
+				}
+			}
+		}
+		
+		AssemblyTreeNode OpenAssembly(string file)
+		{
+			file = Path.GetFullPath(file);
+			
+			var node = assemblies.OfType<AssemblyTreeNode>().FirstOrDefault(a => file.Equals(a.FileName, StringComparison.OrdinalIgnoreCase));
+			if (node == null) {
+				node = new AssemblyTreeNode(file);
+				assemblies.Add(node);
+			}
+			return node;
 		}
 		
 		void ExitClick(object sender, RoutedEventArgs e)

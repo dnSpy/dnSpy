@@ -9,6 +9,11 @@
 	UseLayoutRounding="True"
 	TextOptions.TextFormattingMode="Display"
 >
+	<Window.CommandBindings>
+		<CommandBinding
+			Command="Open"
+			Executed="OpenCommandExecuted" />
+	</Window.CommandBindings>
 	<DockPanel>
 		<Menu
 			DockPanel.Dock="Top">

@@ -33,6 +33,10 @@ namespace ICSharpCode.ILSpy
 			this.LazyLoading = true;
 		}
 		
+		public string FileName {
+			get { return fileName; }
+		}
+		
 		public override object Text {
 			get { return name; }
 		}
