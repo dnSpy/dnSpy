@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Text;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -37,23 +38,31 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public override object Text {
-			get { return method.Name; }
+			get {
+				StringBuilder b = new StringBuilder();
+				b.Append(method.Name);
+				b.Append('(');
+				for (int i = 0; i < method.Parameters.Count; i++) {
+					if (i > 0) b.Append(", ");
+					b.Append(Language.Current.TypeToString(method.Parameters[i].ParameterType));
+				}
+				b.Append(") : ");
+				b.Append(Language.Current.TypeToString(method.ReturnType));
+				return b.ToString();
+			}
 		}
 		
 		public override object Icon {
 			get {
-				switch (method.Attributes & MethodAttributes.MemberAccessMask) {
-					case MethodAttributes.Public:
-						return Images.Method;
-					case MethodAttributes.Assembly:
-					case MethodAttributes.FamANDAssem:
-						return Images.InternalMethod;
-					case MethodAttributes.Family:
-					case MethodAttributes.FamORAssem:
-						return Images.ProtectedMethod;
-					default:
-						return Images.PrivateMethod;
+				if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal))
+					return Images.Operator;
+				if (method.IsStatic && method.HasParameters && method.Parameters[0].HasCustomAttributes) {
+					foreach (var ca in method.Parameters[0].CustomAttributes) {
+						if (ca.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
+							return Images.ExtensionMethod;
+					}
 				}
+				return Images.Method;
 			}
 		}
 	}

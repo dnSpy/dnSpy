@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Media;
 
 using ICSharpCode.TreeView;
@@ -74,8 +75,39 @@ namespace ICSharpCode.ILSpy
 			foreach (FieldDefinition field in type.Fields) {
 				this.Children.Add(new FieldTreeNode(field));
 			}
+			HashSet<MethodDefinition> accessorMethods = new HashSet<MethodDefinition>();
+			
+			// figure out the name of the indexer:
+			string defaultMemberName = null;
+			var defaultMemberAttribute = type.CustomAttributes.FirstOrDefault(
+				a => a.AttributeType.FullName == typeof(System.Reflection.DefaultMemberAttribute).FullName);
+			if (defaultMemberAttribute != null && defaultMemberAttribute.ConstructorArguments.Count == 1) {
+				defaultMemberName = defaultMemberAttribute.ConstructorArguments[0].Value as string;
+			}
+			
+			foreach (PropertyDefinition property in type.Properties) {
+				this.Children.Add(new PropertyTreeNode(property, property.Name == defaultMemberName));
+				accessorMethods.Add(property.GetMethod);
+				accessorMethods.Add(property.SetMethod);
+				if (property.HasOtherMethods) {
+					foreach (var m in property.OtherMethods)
+						accessorMethods.Add(m);
+				}
+			}
+			foreach (EventDefinition ev in type.Events) {
+				this.Children.Add(new EventTreeNode(ev));
+				accessorMethods.Add(ev.AddMethod);
+				accessorMethods.Add(ev.RemoveMethod);
+				accessorMethods.Add(ev.InvokeMethod);
+				if (ev.HasOtherMethods) {
+					foreach (var m in ev.OtherMethods)
+						accessorMethods.Add(m);
+				}
+			}
 			foreach (MethodDefinition method in type.Methods) {
-				this.Children.Add(new MethodTreeNode(method));
+				if (!accessorMethods.Contains(method)) {
+					this.Children.Add(new MethodTreeNode(method));
+				}
 			}
 		}
 		

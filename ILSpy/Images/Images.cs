@@ -32,30 +32,29 @@ namespace ICSharpCode.ILSpy
 		public static readonly BitmapImage Struct = LoadBitmap("Struct");
 		public static readonly BitmapImage Field = LoadBitmap("Field");
 		public static readonly BitmapImage Method = LoadBitmap("Method");
+		public static readonly BitmapImage ExtensionMethod = LoadBitmap("ExtensionMethod");
 		public static readonly BitmapImage Literal = LoadBitmap("Literal");
+		public static readonly BitmapImage Property = LoadBitmap("Property");
+		public static readonly BitmapImage Event = LoadBitmap("Event");
+		public static readonly BitmapImage Indexer = LoadBitmap("Indexer");
+		public static readonly BitmapImage Operator = LoadBitmap("Operator");
 		
 		public static readonly BitmapImage InternalClass = LoadBitmap("InternalClass");
 		public static readonly BitmapImage InternalDelegate = LoadBitmap("InternalDelegate");
 		public static readonly BitmapImage InternalEnum = LoadBitmap("InternalEnum");
 		public static readonly BitmapImage InternalInterface = LoadBitmap("InternalInterface");
 		public static readonly BitmapImage InternalStruct = LoadBitmap("InternalStruct");
-		public static readonly BitmapImage InternalField = LoadBitmap("InternalField");
-		public static readonly BitmapImage InternalMethod = LoadBitmap("InternalMethod");
 		
 		public static readonly BitmapImage PrivateClass = LoadBitmap("PrivateClass");
 		public static readonly BitmapImage PrivateDelegate = LoadBitmap("PrivateDelegate");
 		public static readonly BitmapImage PrivateEnum = LoadBitmap("PrivateEnum");
 		public static readonly BitmapImage PrivateInterface = LoadBitmap("PrivateInterface");
 		public static readonly BitmapImage PrivateStruct = LoadBitmap("PrivateStruct");
-		public static readonly BitmapImage PrivateField = LoadBitmap("PrivateField");
-		public static readonly BitmapImage PrivateMethod = LoadBitmap("PrivateMethod");
 		
 		public static readonly BitmapImage ProtectedClass = LoadBitmap("ProtectedClass");
 		public static readonly BitmapImage ProtectedDelegate = LoadBitmap("ProtectedDelegate");
 		public static readonly BitmapImage ProtectedEnum = LoadBitmap("ProtectedEnum");
 		public static readonly BitmapImage ProtectedInterface = LoadBitmap("ProtectedInterface");
 		public static readonly BitmapImage ProtectedStruct = LoadBitmap("ProtectedStruct");
-		public static readonly BitmapImage ProtectedField = LoadBitmap("ProtectedField");
-		public static readonly BitmapImage ProtectedMethod = LoadBitmap("ProtectedMethod");
 	}
 }

@@ -37,25 +37,15 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public override object Text {
-			get { return field.Name; }
+			get { return field.Name + " : " + Language.Current.TypeToString(field.FieldType); }
 		}
 		
 		public override object Icon {
 			get {
 				if (field.IsLiteral)
 					return Images.Literal;
-				switch (field.Attributes & FieldAttributes.FieldAccessMask) {
-					case FieldAttributes.Public:
-						return Images.Field;
-					case FieldAttributes.Assembly:
-					case FieldAttributes.FamANDAssem:
-						return Images.InternalField;
-					case FieldAttributes.Family:
-					case FieldAttributes.FamORAssem:
-						return Images.ProtectedField;
-					default:
-						return Images.PrivateField;
-				}
+				else
+					return Images.Field;
 			}
 		}
 	}
