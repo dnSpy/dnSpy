@@ -616,5 +616,12 @@ namespace ICSharpCode.TreeView
 		public virtual void ActivateItem(RoutedEventArgs e)
 		{
 		}
+		
+		public override string ToString()
+		{
+			// used for keyboard navigation
+			object text = this.Text;
+			return text != null ? text.ToString() : string.Empty;
+		}
 	}
 }
