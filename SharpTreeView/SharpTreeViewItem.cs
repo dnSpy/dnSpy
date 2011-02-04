@@ -65,6 +65,7 @@ namespace ICSharpCode.TreeView
 
 		Point startPoint;
 		bool wasSelected;
+		bool wasDoubleClick;
 
 		protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
 		{
@@ -78,9 +79,7 @@ namespace ICSharpCode.TreeView
 				CaptureMouse();
 
 				if (e.ClickCount == 2) {
-					if (!Node.IsRoot || ParentTreeView.ShowRootExpander) {
-						Node.IsExpanded = !Node.IsExpanded;
-					}
+					wasDoubleClick = true;
 				}
 			}
 		}
@@ -101,6 +100,16 @@ namespace ICSharpCode.TreeView
 
 		protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
 		{
+			if (wasDoubleClick) {
+				wasDoubleClick = false;
+				Node.ActivateItem(e);
+				if (!e.Handled) {
+					if (!Node.IsRoot || ParentTreeView.ShowRootExpander) {
+						Node.IsExpanded = !Node.IsExpanded;
+					}
+				}
+			}
+			
 			ReleaseMouseCapture();
 			if (wasSelected) {
 				base.OnMouseLeftButtonDown(e);

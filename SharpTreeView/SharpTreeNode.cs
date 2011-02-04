@@ -609,5 +609,12 @@ namespace ICSharpCode.TreeView
 		}
 
 		#endregion
+		
+		/// <summary>
+		/// Gets called when the item is double-clicked.
+		/// </summary>
+		public virtual void ActivateItem(RoutedEventArgs e)
+		{
+		}
 	}
 }
