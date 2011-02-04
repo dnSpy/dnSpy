@@ -166,7 +166,7 @@ namespace ICSharpCode.TreeView
 				SharpTreeNode.SelectedNodes.Remove(node);
 			}
 			foreach (SharpTreeNode node in e.AddedItems) {
-				SharpTreeNode.SelectedNodes.AddOnce(node);
+				SharpTreeNode.SelectedNodes.Add(node);
 			}
 
 			if (IsKeyboardFocusWithin) {
@@ -174,9 +174,8 @@ namespace ICSharpCode.TreeView
 					SharpTreeNode.ActiveNodes.Remove(node);
 				}
 				foreach (SharpTreeNode node in e.AddedItems) {
-					SharpTreeNode.ActiveNodes.AddOnce(node);
+					SharpTreeNode.ActiveNodes.Add(node);
 				}
-				SortActiveNodes();
 			}
 			base.OnSelectionChanged(e);
 		}
@@ -184,9 +183,8 @@ namespace ICSharpCode.TreeView
 		protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
 		{
 			foreach (SharpTreeNode node in SelectedItems) {
-				SharpTreeNode.ActiveNodes.AddOnce(node);
+				SharpTreeNode.ActiveNodes.Add(node);
 			}
-			SortActiveNodes();
 		}
 
 		protected override void OnPreviewLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
@@ -194,15 +192,6 @@ namespace ICSharpCode.TreeView
 			foreach (SharpTreeNode node in SelectedItems) {
 				SharpTreeNode.ActiveNodes.Remove(node);
 			}
-		}
-
-		void SortActiveNodes()
-		{
-			SharpTreeNode.ActiveNodes.Sort(delegate(SharpTreeNode n1, SharpTreeNode n2) {
-				var index1 = Items.IndexOf(n1);
-				var index2 = Items.IndexOf(n2);
-				return index1.CompareTo(index2);
-			});
 		}
 		
 		#endregion

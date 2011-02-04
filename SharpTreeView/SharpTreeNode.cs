@@ -20,13 +20,13 @@ namespace ICSharpCode.TreeView
 
 		static SharpTreeNode()
 		{
-			SelectedNodes = new List<SharpTreeNode>();
-			ActiveNodes = new List<SharpTreeNode>();
+			SelectedNodes = new HashSet<SharpTreeNode>();
+			ActiveNodes = new HashSet<SharpTreeNode>();
 			StartCuttedDataWatcher();
 		}
 
-		public static List<SharpTreeNode> SelectedNodes { get; private set; }
-		public static List<SharpTreeNode> ActiveNodes { get; private set; }
+		public static HashSet<SharpTreeNode> SelectedNodes { get; private set; }
+		public static HashSet<SharpTreeNode> ActiveNodes { get; private set; }
 
 		static SharpTreeNode[] ActiveNodesArray
 		{
