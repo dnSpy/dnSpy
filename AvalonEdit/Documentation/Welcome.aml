@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="c52241ea-3eba-4ddf-b463-6349cbff38fd" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <summary>
+      <para>AvalonEdit is a WPF-based extensible text editor.</para>
+    </summary>
+    <introduction>
+      <para>While the WPF RichTextBox is quite powerful, you quickly run into its limits
+		when trying to use it as a code editor: it's hard to write efficient syntax highlighting for it,
+		and you cannot really implement features like code folding with the standard RichTextBox.</para>
+      <para>The problem is: the RichTextBox edits a rich document.
+		In contrast, AvalonEdit simply edits text.</para>
+      <para>However, AvalonEdit offers lots of possibilities on how the text document is
+		displayed - so it is much more suitable for a code editor where things like the text color
+		are not controlled by the user, but instead depend on the text (syntax highlighting).
+		</para>
+	   <para>
+	   	AvalonEdit was written for the SharpDevelop IDE. It replaces our old
+	   	Windows Forms-based text editor (ICSharpCode.TextEditor).
+	   </para>
+    </introduction>
+    
+	<mediaLink><image xlink:href="WelcomeScreenshot" placement="center"/></mediaLink>
+
+	<section>
+	  <title>Usage</title>
+	  <content>
+	  <para>The main class of the editor is <codeEntityReference qualifyHint="true">T:ICSharpCode.AvalonEdit.TextEditor</codeEntityReference>.
+	  You can use it similar to a normal WPF TextBox:</para>
+	  <code language="xml"><![CDATA[
+<avalonEdit:TextEditor
+    xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    Name="textEditor"
+    SyntaxHighlighting="C#"
+    FontFamily="Consolas"
+    FontSize="10pt"/>
+]]></code>
+	  </content>
+	</section>
+
+	<section>
+	  <title>System requirements</title>
+	  <content>
+	    <para>AvalonEdit requires the
+			<externalLink>
+			<linkText>.NET Framework 3.5 SP1</linkText>
+			<linkUri>http://www.microsoft.com/downloads/details.aspx?FamilyID=ab99342f-5d1a-413d-8319-81da479ab0d7&amp;DisplayLang=en</linkUri>
+			<linkTarget>_blank</linkTarget>
+			</externalLink>.
+			For compiling AvalonEdit inside Visual Studio 2008, VS08 SP1 is required.
+		</para>
+		<para>AvalonEdit requires FullTrust and will not run as XBAP.</para>
+	  </content>
+	</section>
+	
+    <relatedTopics>
+      <codeEntityReference qualifyHint="true">T:ICSharpCode.AvalonEdit.TextEditor</codeEntityReference>
+      <externalLink>
+        <linkText>www.avalonedit.net</linkText>
+        <linkUri>http://www.avalonedit.net</linkUri>
+		<linkTarget>_blank</linkTarget>
+      </externalLink>
+      <externalLink>
+        <linkText>www.icsharpcode.net</linkText>
+        <linkUri>http://www.icsharpcode.net</linkUri>
+		<linkTarget>_blank</linkTarget>
+      </externalLink>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

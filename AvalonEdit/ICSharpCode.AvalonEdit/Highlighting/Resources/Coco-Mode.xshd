@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<!-- syntaxdefinition for Coco/R 2003 by Mike Krueger -->
+<!-- converted to AvalonEdit format by Siegfried Pammer in 2010 -->
+<SyntaxDefinition name="Coco" extensions=".atg" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Comment" foreground="#FF808080" fontStyle="italic" />
+	<Color name="Punctuation" foreground="#FF000000" fontWeight="bold" />
+	<Color name="Keywords" foreground="#FF0000FF" fontWeight="bold" />
+	<Color name="String" foreground="#FF006400" />
+	<RuleSet ignoreCase="false">
+		<Rule color="Punctuation">
+			[{}\(\)\[\]|+\-=\.]+
+		</Rule>
+		<Keywords color="Keywords">
+			<Word>ANY</Word>
+			<Word>CHARACTERS</Word>
+			<Word>COMMENTS</Word>
+			<Word>COMPILER</Word>
+			<Word>CONTEXT</Word>
+			<Word>END</Word>
+			<Word>FROM</Word>
+			<Word>IF</Word>
+			<Word>IGNORE</Word>
+			<Word>NAMESPACE</Word>
+			<Word>NESTED</Word>
+			<Word>PRAGMAS</Word>
+			<Word>PRODUCTIONS</Word>
+			<Word>SYNC</Word>
+			<Word>TO</Word>
+			<Word>TOKENS</Word>
+			<Word>TOKENNAMES</Word>
+			<Word>WEAK</Word>
+			<Word>using</Word>
+		</Keywords>
+		<Span color="Comment">
+			<Begin>//</Begin>
+		</Span>
+		<Span color="Comment" multiline="true">
+			<Begin>/\*</Begin>
+			<End>\*/</End>
+		</Span>
+		<Span foreground="Black" ruleSet="CSharp" multiline="true">
+			<Begin color="Keywords">COMPILER</Begin>
+			<End color="Keywords">TOKENNAMES</End>
+		</Span>
+		<Span color="String">
+			<Begin>"</Begin>
+			<End>"</End>
+		</Span>
+		<Span color="String">
+			<Begin>'</Begin>
+			<End>'</End>
+		</Span>
+		<Span foreground="#FF000000" ruleSet="ParamList">
+			<Begin foreground="#FF000000" fontWeight="bold">&lt;</Begin>
+			<End foreground="#FF000000" fontWeight="bold">&gt;</End>
+		</Span>
+		<Span foreground="#FF2F4F4F" fontWeight="normal" fontStyle="normal" ruleSet="CSharp" multiline="true">
+			<Begin foreground="#FF008000" fontWeight="bold" fontStyle="italic">\(\.</Begin>
+			<End foreground="#FF008000" fontWeight="bold" fontStyle="italic">\.\)</End>
+		</Span>
+		<Rule foreground="#FF00008B" fontWeight="normal" fontStyle="normal">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+	</RuleSet>
+	<RuleSet name="CSharp" ignoreCase="false">
+		<Import ruleSet="C#/" />
+		<Rule foreground="#FF00008B" fontWeight="normal" fontStyle="normal">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+	</RuleSet>
+	<RuleSet name="ParamList" ignoreCase="false">
+		<Import ruleSet="C#/" />
+		<Rule foreground="#FF00008B" fontWeight="normal" fontStyle="normal">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+	</RuleSet>
+	<RuleSet name="RuleDefinition" ignoreCase="false">
+		<Rule foreground="#FF00008B" fontWeight="normal" fontStyle="normal">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+	</RuleSet>
+</SyntaxDefinition>

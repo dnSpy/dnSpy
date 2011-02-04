@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="4d4ceb51-154d-43f0-b876-ad9640c5d2d8" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>Probably the most important feature for any text editor is syntax highlighting.</para>
+      <para>AvalonEdit has a flexible text rendering model, see
+        <link xlink:href="c06e9832-9ef0-4d65-ac2e-11f7ce9c7774" />. Among the
+		text rendering extension points is the support for "visual line transformers" that
+		can change the display of a visual line after it has been constructed by the "visual element generators".
+		A useful base class implementing IVisualLineTransformer for the purpose of syntax highlighting
+		is <codeEntityReference>T:ICSharpCode.AvalonEdit.Rendering.DocumentColorizingTransformer</codeEntityReference>.
+		Take a look at that class' documentation to see
+		how to write fully custom syntax highlighters. This article only discusses the XML-driven built-in
+		highlighting engine.
+		</para>
+    </introduction>
+    <section>
+      <title>The highlighting engine</title>
+      <content>
+        <para>
+			The highlighting engine in AvalonEdit is implemented in the class
+			<codeEntityReference>T:ICSharpCode.AvalonEdit.Highlighting.DocumentHighlighter</codeEntityReference>.
+			Highlighting is the process of taking a DocumentLine and constructing
+			a <codeEntityReference>T:ICSharpCode.AvalonEdit.Highlighting.HighlightedLine</codeEntityReference>
+			instance for it by assigning colors to different sections of the line.
+			A <codeInline>HighlightedLine</codeInline> is simply a list of
+			(possibly nested) highlighted text sections.
+		</para><para>
+			The <codeInline>HighlightingColorizer</codeInline> class is the only
+			link between highlighting and rendering.
+			It uses a <codeInline>DocumentHighlighter</codeInline> to implement
+			a line transformer that applies the
+			highlighting to the visual lines in the rendering process.
+		</para><para>
+			Except for this single call, syntax highlighting is independent from the
+			rendering namespace. To help with other potential uses of the highlighting
+			engine, the <codeInline>HighlightedLine</codeInline> class has the
+			method <codeInline>ToHtml()</codeInline>
+			to produce syntax highlighted HTML source code.
+		</para>
+        <para>The highlighting rules used by the highlighting engine to highlight
+			the document are described by the following classes:
+			</para>
+			
+<definitionTable>
+  <definedTerm>HighlightingRuleSet</definedTerm>
+  <definition>Describes a set of highlighting spans and rules.</definition>
+  <definedTerm>HighlightingSpan</definedTerm>
+  <definition>A span consists of two regular expressions (Start and End), a color,
+			and a child ruleset.
+			The region between Start and End expressions will be assigned the
+			given color, and inside that span, the rules of the child
+			ruleset apply.
+			If the child ruleset also has <codeInline>HighlightingSpan</codeInline>s,
+			they can be nested, allowing highlighting constructs like nested comments or one language
+			embedded in another.</definition>
+  <definedTerm>HighlightingRule</definedTerm>
+  <definition>A highlighting rule is a regular expression with a color.
+  			It will highlight matches of the regular expression using that color.</definition>
+  <definedTerm>HighlightingColor</definedTerm>
+  <definition>A highlighting color isn't just a color: it consists of a foreground
+			color, font weight and font style.</definition>
+</definitionTable>
+		<para>
+       The highlighting engine works by first analyzing the spans: whenever a
+       begin RegEx matches some text, that span is pushed onto a stack.
+       Whenever the end RegEx of the current span matches some text,
+       the span is popped from the stack.
+		</para><para>
+		Each span has a nested rule set associated with it, which is empty 
+		by default. This is why keywords won't be highlighted inside comments: 
+		the span's empty ruleset is active there, so the keyword rule is not applied.
+		</para><para>
+		This feature is also used in the string span: the nested span will match 
+		when a backslash is encountered, and the character following the backslash
+		will be consumed by the end RegEx of the nested span 
+		(<codeInline>.</codeInline> matches any character). 
+		This ensures that <codeInline>\"</codeInline> does not denote the end of the string span;
+		but <codeInline>\\"</codeInline> still does.
+		</para><para>
+		What's great about the highlighting engine is that it highlights only
+		on-demand, works incrementally, and yet usually requires only a
+		few KB of memory even for large code files.
+		</para><para>
+		On-demand means that when a document is opened, only the lines initially 
+		visible will be highlighted. When the user scrolls down, highlighting will continue
+		from the point where it stopped the last time. If the user scrolls quickly,
+		so that the first visible line is far below the last highlighted line,
+		then the highlighting engine still has to process all the lines in between
+		– there might be comment starts in them. However, it will only scan that region
+		for changes in the span stack; highlighting rules will not be tested.
+		</para><para>
+		The stack of active spans is stored at the beginning of every line.
+		If the user scrolls back up, the lines getting into view can be highlighted 
+		immediately because the necessary context (the span stack) is still available.
+		</para><para>
+		Incrementally means that even if the document is changed, the stored span stacks
+		will be reused as far as possible. If the user types <codeInline>/*</codeInline>,
+		that would theoretically cause the whole remainder of the file to become
+		highlighted in the comment color.
+		However, because the engine works on-demand, it will only update the span
+		stacks within the currently visible region and keep a notice 
+		'the highlighting state is not consistent between line X and line X+1',
+		where X is the last line in the visible region.
+		Now, if the user would scroll down,
+		the highlighting state would be updated and the 'not consistent' notice
+		would be moved down. But usually, the user will continue typing
+		and type <codeInline>*/</codeInline> only a few lines later.
+		Now the highlighting state in the visible region will revert to the normal
+		'only the main ruleset is on the stack of active spans'. 
+		When the user now scrolls down below the line with the 'not consistent' marker;
+		the engine will notice that the old stack and the new stack are identical;
+		and will remove the 'not consistent' marker. 
+		This allows reusing the stored span stacks cached from before the user typed
+		<codeInline>/*</codeInline>.
+		</para><para>
+		While the stack of active spans might change frequently inside the lines,
+		it rarely changes from the beginning of one line to the beginning of the next line.
+		With most languages, such changes happen only at the start and end of multiline comments.
+		The highlighting engine exploits this property by storing the list of
+		span stacks in a special data structure
+		(<codeEntityReference>T:ICSharpCode.AvalonEdit.Utils.CompressingTreeList`1</codeEntityReference>).
+		The memory usage of the highlighting engine is linear to the number of span stack changes;
+		not to the total number of lines.
+		This allows the highlighting engine to store the span stacks for big code
+		files using only a tiny amount of memory, especially in languages like
+		C# where sequences of <codeInline>//</codeInline> or <codeInline>///</codeInline>
+		are more popular than <codeInline>/* */</codeInline> comments.
+       </para>
+      </content>
+    </section>
+    <section>
+      <title>XML highlighting definitions</title>
+      <content>
+        <para>AvalonEdit supports XML syntax highlighting definitions (.xshd files).</para>
+        <para>In the AvalonEdit source code, you can find the file
+        <codeInline>ICSharpCode.AvalonEdit\Highlighting\Resources\ModeV2.xsd</codeInline>.
+        This is an XML schema for the .xshd file format; you can use it to
+        code completion for .xshd files in XML editors.
+        </para>
+        <para>Here is an example highlighting definition for a sub-set of C#:
+<code language="xml"><![CDATA[
+<SyntaxDefinition name="C#"
+        xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+    <Color name="Comment" foreground="Green" />
+    <Color name="String" foreground="Blue" />
+    
+    <!-- This is the main ruleset. -->
+    <RuleSet>
+        <Span color="Comment" begin="//" />
+        <Span color="Comment" multiline="true" begin="/\*" end="\*/" />
+        
+        <Span color="String">
+            <Begin>"</Begin>
+            <End>"</End>
+            <RuleSet>
+                <!-- nested span for escape sequences -->
+                <Span begin="\\" end="." />
+            </RuleSet>
+        </Span>
+        
+        <Keywords fontWeight="bold" foreground="Blue">
+            <Word>if</Word>
+            <Word>else</Word>
+            <!-- ... -->
+        </Keywords>
+        
+        <!-- Digits -->
+        <Rule foreground="DarkBlue">
+            \b0[xX][0-9a-fA-F]+  # hex number
+        |    \b
+            (    \d+(\.[0-9]+)?   #number with optional floating point
+            |    \.[0-9]+         #or just starting with floating point
+            )
+            ([eE][+-]?[0-9]+)? # optional exponent
+        </Rule>
+    </RuleSet>
+</SyntaxDefinition>
+]]></code>
+        </para>
+      </content>
+    </section>
+    <section>
+      <title>ICSharpCode.TextEditor XML highlighting definitions</title>
+      <content>
+        <para>ICSharpCode.TextEditor (the predecessor of AvalonEdit) used
+        a different version of the XSHD file format.
+        AvalonEdit detects the difference between the formats using the XML namespace:
+        The new format uses <codeInline>xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008"</codeInline>,
+        the old format does not use any XML namespace.
+        </para><para>
+        AvalonEdit can load .xshd files written in that old format, and even
+        automatically convert them to the new format. However, not all
+        constructs of the old file format are supported by AvalonEdit.
+        </para>
+        <code language="cs"><![CDATA[// convert from old .xshd format to new format
+XshdSyntaxDefinition xshd;
+using (XmlTextReader reader = new XmlTextReader("input.xshd")) {
+    xshd = HighlightingLoader.LoadXshd(reader);
+}
+using (XmlTextWriter writer = new XmlTextWriter("output.xshd", System.Text.Encoding.UTF8)) {
+    writer.Formatting = Formatting.Indented;
+    new SaveXshdVisitor(writer).WriteDefinition(xshd);
+}
+]]></code>
+      </content>
+  	  </section>
+    <section>
+      <title>Programmatically accessing highlighting information</title>
+      <content>
+        <para>As described above, the highlighting engine only stores the "span stack"
+        at the start of each line. This information can be retrieved using the
+        <codeEntityReference>M:ICSharpCode.AvalonEdit.Highlighting.DocumentHighlighter.GetSpanStack(System.Int32)</codeEntityReference>
+        method:
+<code language="cs"><![CDATA[bool isInComment = documentHighlighter.GetSpanStack(1).Any(
+    s => s.SpanColor != null && s.SpanColor.Name == "Comment");
+// returns true if the end of line 1 (=start of line 2) is inside a multiline comment]]></code>
+		Spans can be identified using their color. For this purpose, named colors should be used in the syntax definition.
+        </para>
+        <para>For more detailed results inside lines, the highlighting algorithm
+        must be executed for that line:
+<code language="cs"><![CDATA[int off = document.GetOffset(7, 22);
+HighlightedLine result = documentHighlighter.HighlightLine(document.GetLineByNumber(7));
+bool isInComment = result.Sections.Any(
+    s => s.Offset <= off && s.Offset+s.Length >= off
+         && s.Color.Name == "Comment");]]></code>
+		</para>
+      </content>
+    </section>
+    <relatedTopics>
+      <codeEntityReference>N:ICSharpCode.AvalonEdit.Highlighting</codeEntityReference>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

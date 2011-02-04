@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="440df648-413e-4f42-a28b-6b2b0e9b1084" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!--<introduction>
+      <para>
+			Introduction for 'Folding'.
+		</para>
+    </introduction>-->
+    <section>
+      <title>How to use Folding in your application</title>
+      <content>
+        <para>
+        Folding (code collapsing) is implemented as an extension to the editor.
+        It could have been implemented in a separate assembly without having to
+        modify the AvalonEdit code. 
+        A <codeEntityReference>T:ICSharpCode.AvalonEdit.Rendering.VisualLineElementGenerator</codeEntityReference>
+        takes care of the collapsed sections in the text document; and a custom
+        margin draws the plus and minus buttons.
+		</para>
+		<para>You could use the relevant classes separately;
+		but, to make it a bit easier to use, the static
+		<codeEntityReference qualifyHint="true">M:ICSharpCode.AvalonEdit.Folding.FoldingManager.Install(ICSharpCode.AvalonEdit.Editing.TextArea)</codeEntityReference>
+		method will create and register the necessary parts automatically.</para>
+		<para>All that's left for you is to regularly call
+		<codeEntityReference qualifyHint="true">M:ICSharpCode.AvalonEdit.Folding.FoldingManager.UpdateFoldings(System.Collections.Generic.IEnumerable{ICSharpCode.AvalonEdit.Folding.NewFolding},System.Int32)</codeEntityReference>
+		with the list of foldings you want to provide.
+		You could calculate that list yourself, or you could use a built-in
+		folding strategy to do it for you.</para>
+		<para>Here is the full code required to enable folding: 
+<code language="cs">foldingManager = FoldingManager.Install(textEditor.TextArea);
+foldingStrategy = new XmlFoldingStrategy();
+foldingStrategy.UpdateFoldings(foldingManager, textEditor.Document);</code>
+		If you want the folding markers to update when the text is changed,
+		you have to repeat the <codeInline>foldingStrategy.UpdateFoldings</codeInline> call regularly.
+		</para>
+      </content>
+    </section>
+    <section>
+      <title>How the FoldingManager works</title>
+      <content>
+        <para>
+	The FoldingManager maintains a list of foldings. The FoldMargin displays those foldings and provides
+	the UI for collapsing/expanding.</para><para>
+	Folded foldings cause the FoldingElementGenerator to produce a line element that spans the whole folded
+	text section, causing the text generation for the visual line that contains the folding start to
+	continue after the folding end in another line.</para><para>
+	To ensure scrolling works correctly in the presence of foldings, lines inside folded regions must not
+	be used as start lines for the visual line generation. This is done by setting the line height of all
+	such lines to 0. To efficiently set the height on a large number of lines and support reverting to the
+	old height when the folding is uncollapsed, a CollapsedLineSection is used.
+			</para>
+      </content>
+    </section>
+    <relatedTopics>
+      <codeEntityReference>T:ICSharpCode.AvalonEdit.Folding.FoldingManager</codeEntityReference>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>
