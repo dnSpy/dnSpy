@@ -71,12 +71,18 @@
     <Compile Include="AssemblyListTreeNode.cs" />
     <Compile Include="AssemblyReferenceTreeNode.cs" />
     <Compile Include="AssemblyTreeNode.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FieldTreeNode.cs" />
+    <Compile Include="Fusion.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="MethodTreeNode.cs" />
     <Compile Include="ModuleReferenceTreeNode.cs" />
     <Compile Include="Mono.Cecil.Rocks\MethodBodyRocks.cs" />
     <Compile Include="NamespaceTreeNode.cs" />
+    <Compile Include="OpenFromGacDialog.xaml.cs">
+      <DependentUpon>OpenFromGacDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -84,12 +90,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReferenceFolderTreeNode.cs" />
+    <Compile Include="SortableGridViewColumn.cs" />
     <Compile Include="TreeTraversal.cs" />
     <Compile Include="TypeTreeNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="AboutDialog.xaml" />
     <Page Include="MainWindow.xaml" />
+    <Page Include="OpenFromGacDialog.xaml" />
+    <Page Include="themes\generic.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Class.png" />
@@ -128,6 +137,7 @@
   <ItemGroup>
     <Folder Include="Images" />
     <Folder Include="Mono.Cecil.Rocks" />
+    <Folder Include="themes" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mono.Cecil\Mono.Cecil.csproj">

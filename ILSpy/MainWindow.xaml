@@ -8,6 +8,7 @@
 	MinHeight="200"
 	UseLayoutRounding="True"
 	TextOptions.TextFormattingMode="Display"
+	FocusManager.FocusedElement="{Binding ElementName=treeView}"
 >
 	<Window.CommandBindings>
 		<CommandBinding
@@ -28,6 +29,7 @@
 							Source="Images/Open.png" />
 					</MenuItem.Icon>
 				</MenuItem>
+				<MenuItem Header="Open from _GAC" Click="OpenFromGac_Click" />
 				<Separator />
 				<MenuItem
 					Header="E_xit"
@@ -98,6 +100,7 @@
 			<DockPanel
 				Grid.Column="2">
 				<ae:TextEditor
+					Name="textEditor"
 					SyntaxHighlighting="C#"
 					FontFamily="Consolas"
 					FontSize="10pt"

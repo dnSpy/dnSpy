@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="ICSharpCode.ILSpy.OpenFromGacDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:ICSharpCode.ILSpy"
+	Title="Open From GAC"
+	Style="{DynamicResource DialogWindow}"
+	WindowStartupLocation="CenterOwner"
+	ResizeMode="CanResizeWithGrip"
+	MinWidth="200"
+	MinHeight="150"
+	Height="350"
+	Width="650"
+	FocusManager.FocusedElement="{Binding ElementName=filterTextBox}">
+	<Grid
+		Margin="12,8">
+		<Grid.RowDefinitions>
+			<RowDefinition
+				Height="Auto" />
+			<RowDefinition
+				Height="1*" />
+			<RowDefinition
+				Height="Auto" />
+		</Grid.RowDefinitions>
+		<TextBox Name="filterTextBox" TextChanged="FilterTextBox_TextChanged" />
+		<ListView Name="listView" Grid.Row="1" Margin="0, 8" local:SortableGridViewColumn.SortMode="Automatic" SelectionChanged="ListView_SelectionChanged">
+			<ListView.View>
+				<GridView>
+					<local:SortableGridViewColumn x:Name="nameColumn" Width="300" Header="Reference Name" DisplayMemberBinding="{Binding ShortName}" />
+					<local:SortableGridViewColumn Width="75" Header="Version" DisplayMemberBinding="{Binding Version}" />
+					<local:SortableGridViewColumn Width="80" Header="Culture" DisplayMemberBinding="{Binding Culture}" />
+					<local:SortableGridViewColumn Width="120" Header="Public Key Token" DisplayMemberBinding="{Binding PublicKeyToken}" />
+				</GridView>
+			</ListView.View>
+		</ListView>
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button IsDefault="True" Margin="2,0" IsEnabled="False" Name="okButton" Click="OKButton_Click">Open</Button>
+			<Button IsCancel="True" Margin="2,0">Cancel</Button>
+		</StackPanel>
+	</Grid>
+</Window>

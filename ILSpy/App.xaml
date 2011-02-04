@@ -8,5 +8,10 @@
 			<Setter Property="UseLayoutRounding" Value="True"/>
 			<Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
 		</Style>
+		
+		<Style TargetType="{x:Type Button}">
+			<Setter Property="MinWidth" Value="73" />
+			<Setter Property="Padding" Value="9,1,9,1" />
+		</Style>
 	</Application.Resources>
 </Application>

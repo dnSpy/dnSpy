@@ -18,7 +18,7 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		SharpTreeNodeCollection assemblies;
+		AssemblyListTreeNode assemblyList = new AssemblyListTreeNode();
 		
 		static readonly Assembly[] initialAssemblies = {
 			typeof(object).Assembly,
@@ -38,11 +38,11 @@ namespace ICSharpCode.ILSpy
 		{
 			InitializeComponent();
 			
-			treeView.Root = new AssemblyListTreeNode();
-			assemblies = treeView.Root.Children;
+			textEditor.Text = "// Welcome to ILSpy!";
+			treeView.Root = assemblyList;
 			
 			foreach (Assembly asm in initialAssemblies)
-				OpenAssembly(asm.Location);
+				assemblyList.OpenAssembly(asm.Location);
 		}
 		
 		void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -55,21 +55,11 @@ namespace ICSharpCode.ILSpy
 			if (dlg.ShowDialog() == true) {
 				treeView.UnselectAll();
 				foreach (string file in dlg.FileNames) {
-					treeView.SelectedItems.Add(OpenAssembly(file));
+					var asm = assemblyList.OpenAssembly(file);
+					if (asm != null)
+						treeView.SelectedItems.Add(asm);
 				}
 			}
-		}
-		
-		AssemblyTreeNode OpenAssembly(string file)
-		{
-			file = Path.GetFullPath(file);
-			
-			var node = assemblies.OfType<AssemblyTreeNode>().FirstOrDefault(a => file.Equals(a.FileName, StringComparison.OrdinalIgnoreCase));
-			if (node == null) {
-				node = new AssemblyTreeNode(file);
-				assemblies.Add(node);
-			}
-			return node;
 		}
 		
 		void ExitClick(object sender, RoutedEventArgs e)
@@ -82,6 +72,20 @@ namespace ICSharpCode.ILSpy
 			AboutDialog dlg = new AboutDialog();
 			dlg.Owner = this;
 			dlg.ShowDialog();
+		}
+		
+		void OpenFromGac_Click(object sender, RoutedEventArgs e)
+		{
+			OpenFromGacDialog dlg = new OpenFromGacDialog();
+			dlg.Owner = this;
+			if (dlg.ShowDialog() == true) {
+				treeView.UnselectAll();
+				foreach (string fullName in dlg.SelectedFullNames) {
+					var asm = assemblyList.OpenGacAssembly(fullName);
+					if (asm != null)
+						treeView.SelectedItems.Add(asm);
+				}
+			}
 		}
 	}
 }

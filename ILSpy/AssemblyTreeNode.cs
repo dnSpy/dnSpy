@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using ICSharpCode.TreeView;
@@ -15,20 +16,26 @@ namespace ICSharpCode.ILSpy
 {
 	sealed class AssemblyTreeNode : SharpTreeNode
 	{
+		readonly IAssemblyResolver assemblyResolver;
 		readonly string fileName;
-		readonly string name;
+		string fullName;
+		string shortName;
 		readonly Task<AssemblyDefinition> assemblyTask;
 		readonly List<TypeTreeNode> classes = new List<TypeTreeNode>();
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
+		readonly SynchronizationContext syncContext;
 		
-		public AssemblyTreeNode(string fileName)
+		public AssemblyTreeNode(string fileName, string fullName, IAssemblyResolver assemblyResolver)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException("fileName");
 			
 			this.fileName = fileName;
+			this.fullName = fullName;
+			this.assemblyResolver = assemblyResolver;
 			this.assemblyTask = Task.Factory.StartNew<AssemblyDefinition>(LoadAssembly); // requires that this.fileName is set
-			this.name = Path.GetFileNameWithoutExtension(fileName);
+			this.shortName = Path.GetFileNameWithoutExtension(fileName);
+			this.syncContext = SynchronizationContext.Current;
 			
 			this.LazyLoading = true;
 		}
@@ -37,8 +44,16 @@ namespace ICSharpCode.ILSpy
 			get { return fileName; }
 		}
 		
+		public string FullName {
+			get { return fullName ?? assemblyTask.Result.FullName; }
+		}
+		
+		public AssemblyDefinition AssemblyDefinition {
+			get { return assemblyTask.Result; }
+		}
+		
 		public override object Text {
-			get { return name; }
+			get { return shortName; }
 		}
 		
 		public override object Icon {
@@ -48,10 +63,24 @@ namespace ICSharpCode.ILSpy
 		AssemblyDefinition LoadAssembly()
 		{
 			// runs on background thread
-			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(fileName);
+			ReaderParameters p = new ReaderParameters();
+			p.AssemblyResolver = assemblyResolver;
+			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(fileName, p);
 			foreach (TypeDefinition type in assembly.MainModule.Types.OrderBy(t => t.FullName)) {
 				classes.Add(new TypeTreeNode(type));
 			}
+			syncContext.Post(
+				delegate {
+					if (shortName != assembly.Name.Name) {
+						shortName = assembly.Name.Name;
+						RaisePropertyChanged("Text");
+					}
+					if (fullName != assembly.FullName) {
+						fullName = assembly.FullName;
+						RaisePropertyChanged("FullName");
+					}
+				}, null);
+			
 			return assembly;
 		}
 		

@@ -18,6 +18,6 @@
 			<Hyperlink NavigateUri="http://www.avalonedit.net/">ICSharpCode.AvalonEdit</Hyperlink><LineBreak/>
 			<Hyperlink NavigateUri="http://www.sharpdevelop.net/">SharpDevelop</Hyperlink> components (SharpTreeView, NRefactory)<LineBreak/>
 		</TextBlock>
-		<Button IsCancel="True" MinWidth="73" HorizontalAlignment="Center">Close</Button>
+		<Button IsCancel="True" HorizontalAlignment="Center">Close</Button>
 	</StackPanel>
 </Window>
