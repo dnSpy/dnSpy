@@ -16,7 +16,7 @@ namespace ICSharpCode.ILSpy
 {
 	sealed class AssemblyTreeNode : SharpTreeNode
 	{
-		readonly IAssemblyResolver assemblyResolver;
+		readonly AssemblyListTreeNode assemblyList;
 		readonly string fileName;
 		string shortName;
 		readonly Task<AssemblyDefinition> assemblyTask;
@@ -24,13 +24,13 @@ namespace ICSharpCode.ILSpy
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
 		readonly SynchronizationContext syncContext;
 		
-		public AssemblyTreeNode(string fileName, IAssemblyResolver assemblyResolver)
+		public AssemblyTreeNode(string fileName, AssemblyListTreeNode assemblyList)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException("fileName");
 			
 			this.fileName = fileName;
-			this.assemblyResolver = assemblyResolver;
+			this.assemblyList = assemblyList;
 			this.assemblyTask = Task.Factory.StartNew<AssemblyDefinition>(LoadAssembly); // requires that this.fileName is set
 			this.shortName = Path.GetFileNameWithoutExtension(fileName);
 			this.syncContext = SynchronizationContext.Current;
@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy
 		{
 			// runs on background thread
 			ReaderParameters p = new ReaderParameters();
-			p.AssemblyResolver = assemblyResolver;
+			p.AssemblyResolver = new MyAssemblyResolver(this);
 			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(fileName, p);
 			foreach (TypeDefinition type in assembly.MainModule.Types.OrderBy(t => t.FullName)) {
 				classes.Add(new TypeTreeNode(type));
@@ -74,10 +74,44 @@ namespace ICSharpCode.ILSpy
 			return assembly;
 		}
 		
+		sealed class MyAssemblyResolver : IAssemblyResolver
+		{
+			readonly AssemblyTreeNode parent;
+			
+			public MyAssemblyResolver(AssemblyTreeNode parent)
+			{
+				this.parent = parent;
+			}
+			
+			public AssemblyDefinition Resolve(AssemblyNameReference name)
+			{
+				var node = parent.LookupReferencedAssembly(name.FullName);
+				return node != null ? node.AssemblyDefinition : null;
+			}
+			
+			public AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
+			{
+				var node = parent.LookupReferencedAssembly(name.FullName);
+				return node != null ? node.AssemblyDefinition : null;
+			}
+			
+			public AssemblyDefinition Resolve(string fullName)
+			{
+				var node = parent.LookupReferencedAssembly(fullName);
+				return node != null ? node.AssemblyDefinition : null;
+			}
+			
+			public AssemblyDefinition Resolve(string fullName, ReaderParameters parameters)
+			{
+				var node = parent.LookupReferencedAssembly(fullName);
+				return node != null ? node.AssemblyDefinition : null;
+			}
+		}
+		
 		protected override void LoadChildren()
 		{
 			assemblyTask.Wait();
-			this.Children.Add(new ReferenceFolderTreeNode(assemblyTask.Result.MainModule));
+			this.Children.Add(new ReferenceFolderTreeNode(assemblyTask.Result.MainModule, this));
 			foreach (NamespaceTreeNode ns in namespaces.Values) {
 				ns.Children.Clear();
 			}
@@ -149,6 +183,29 @@ namespace ICSharpCode.ILSpy
 			DataObject dataObject = new DataObject();
 			dataObject.SetData(DataFormat, nodes.OfType<AssemblyTreeNode>().Select(n => n.fileName).ToArray());
 			return dataObject;
+		}
+		
+		public AssemblyTreeNode LookupReferencedAssembly(string fullName)
+		{
+			foreach (AssemblyTreeNode node in assemblyList.Children) {
+				if (fullName.Equals(node.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
+					return node;
+			}
+			
+			var name = AssemblyNameReference.Parse(fullName);
+			string file = GacInterop.FindAssemblyInNetGac(name);
+			if (file == null) {
+				string dir = Path.GetDirectoryName(this.fileName);
+				if (File.Exists(Path.Combine(dir, name.Name + ".dll")))
+					file = Path.Combine(dir, name.Name + ".dll");
+				else if (File.Exists(Path.Combine(dir, name.Name + ".exe")))
+					file = Path.Combine(dir, name.Name + ".exe");
+			}
+			if (file != null) {
+				return assemblyList.OpenAssembly(file);
+			} else {
+				return null;
+			}
 		}
 	}
 }

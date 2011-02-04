@@ -40,6 +40,10 @@ namespace ICSharpCode.ILSpy
 			
 			textEditor.Text = "// Welcome to ILSpy!";
 			treeView.Root = assemblyList;
+			assemblyList.Select = delegate(SharpTreeNode obj) {
+				treeView.SelectedItem = obj;
+				treeView.ScrollIntoView(obj);
+			};
 			
 			foreach (Assembly asm in initialAssemblies)
 				assemblyList.OpenAssembly(asm.Location);
@@ -53,13 +57,23 @@ namespace ICSharpCode.ILSpy
 			dlg.Multiselect = true;
 			dlg.RestoreDirectory = true;
 			if (dlg.ShowDialog() == true) {
-				treeView.UnselectAll();
-				foreach (string file in dlg.FileNames) {
-					var asm = assemblyList.OpenAssembly(file);
-					if (asm != null)
-						treeView.SelectedItems.Add(asm);
+				OpenFiles(dlg.FileNames);
+			}
+		}
+		
+		void OpenFiles(string[] fileNames)
+		{
+			treeView.UnselectAll();
+			SharpTreeNode lastNode = null;
+			foreach (string file in fileNames) {
+				var asm = assemblyList.OpenAssembly(file);
+				if (asm != null) {
+					treeView.SelectedItems.Add(asm);
+					lastNode = asm;
 				}
 			}
+			if (lastNode != null)
+				treeView.ScrollIntoView(lastNode);
 		}
 		
 		void ExitClick(object sender, RoutedEventArgs e)
@@ -79,12 +93,7 @@ namespace ICSharpCode.ILSpy
 			OpenFromGacDialog dlg = new OpenFromGacDialog();
 			dlg.Owner = this;
 			if (dlg.ShowDialog() == true) {
-				treeView.UnselectAll();
-				foreach (string file in dlg.SelectedFileNames) {
-					var asm = assemblyList.OpenAssembly(file);
-					if (asm != null)
-						treeView.SelectedItems.Add(asm);
-				}
+				OpenFiles(dlg.SelectedFileNames);
 			}
 		}
 	}

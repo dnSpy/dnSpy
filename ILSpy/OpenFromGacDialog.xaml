@@ -20,7 +20,10 @@
 			<RowDefinition
 				Height="Auto" />
 		</Grid.RowDefinitions>
-		<TextBox Name="filterTextBox" TextChanged="FilterTextBox_TextChanged" />
+		<DockPanel>
+			<Label DockPanel.Dock="Left" Target="{Binding ElementName=filterTextBox}">_Search:</Label>
+			<TextBox Name="filterTextBox" TextChanged="FilterTextBox_TextChanged" />
+		</DockPanel>
 		<ListView Name="listView" Grid.Row="1" Margin="0, 8" local:SortableGridViewColumn.SortMode="Automatic" SelectionChanged="ListView_SelectionChanged">
 			<ListView.View>
 				<GridView>

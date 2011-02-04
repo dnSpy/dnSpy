@@ -75,6 +75,10 @@ namespace ICSharpCode.ILSpy
 		
 		public static string FindAssemblyInNetGac (AssemblyNameReference reference)
 		{
+			// without public key, it can't be in the GAC
+			if (reference.PublicKeyToken == null)
+				return null;
+			
 			for (int i = 0; i < 2; i++) {
 				for (int j = 0; j < gacs.Length; j++) {
 					var gac = Path.Combine (gac_paths [i], gacs [j]);

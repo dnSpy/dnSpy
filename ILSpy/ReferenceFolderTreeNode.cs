@@ -10,13 +10,15 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// References folder.
 	/// </summary>
-	public sealed class ReferenceFolderTreeNode : SharpTreeNode
+	sealed class ReferenceFolderTreeNode : SharpTreeNode
 	{
-		ModuleDefinition module;
+		readonly ModuleDefinition module;
+		readonly AssemblyTreeNode parentAssembly;
 		
-		public ReferenceFolderTreeNode(ModuleDefinition module)
+		public ReferenceFolderTreeNode(ModuleDefinition module, AssemblyTreeNode parentAssembly)
 		{
 			this.module = module;
+			this.parentAssembly = parentAssembly;
 			this.LazyLoading = true;
 		}
 		
@@ -35,7 +37,7 @@ namespace ICSharpCode.ILSpy
 		protected override void LoadChildren()
 		{
 			foreach (var r in module.AssemblyReferences)
-				this.Children.Add(new AssemblyReferenceTreeNode(r));
+				this.Children.Add(new AssemblyReferenceTreeNode(r, parentAssembly));
 			foreach (var r in module.ModuleReferences)
 				this.Children.Add(new ModuleReferenceTreeNode(r));
 		}

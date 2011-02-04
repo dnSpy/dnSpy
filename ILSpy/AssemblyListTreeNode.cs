@@ -17,7 +17,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Represents a list of assemblies.
 	/// </summary>
-	sealed class AssemblyListTreeNode : SharpTreeNode, IAssemblyResolver
+	sealed class AssemblyListTreeNode : SharpTreeNode
 	{
 		public override bool CanDelete(SharpTreeNode[] nodes)
 		{
@@ -80,40 +80,6 @@ namespace ICSharpCode.ILSpy
 			return newNode;
 		}
 		
-		AssemblyTreeNode OpenGacAssembly(string fullName)
-		{
-			App.Current.Dispatcher.VerifyAccess();
-			
-			string file = GacInterop.FindAssemblyInNetGac(AssemblyNameReference.Parse(fullName));
-			if (file != null) {
-				return OpenAssembly(file);
-			} else {
-				return null;
-			}
-		}
-		
-		AssemblyDefinition IAssemblyResolver.Resolve(AssemblyNameReference name)
-		{
-			var node = OpenGacAssembly(name.FullName);
-			return node != null ? node.AssemblyDefinition : null;
-		}
-		
-		AssemblyDefinition IAssemblyResolver.Resolve(AssemblyNameReference name, ReaderParameters parameters)
-		{
-			var node = OpenGacAssembly(name.FullName);
-			return node != null ? node.AssemblyDefinition : null;
-		}
-		
-		AssemblyDefinition IAssemblyResolver.Resolve(string fullName)
-		{
-			var node = OpenGacAssembly(fullName);
-			return node != null ? node.AssemblyDefinition : null;
-		}
-		
-		AssemblyDefinition IAssemblyResolver.Resolve(string fullName, ReaderParameters parameters)
-		{
-			var node = OpenGacAssembly(fullName);
-			return node != null ? node.AssemblyDefinition : null;
-		}
+		public Action<SharpTreeNode> Select = delegate {};
 	}
 }
