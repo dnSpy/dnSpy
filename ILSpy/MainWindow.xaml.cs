@@ -92,12 +92,18 @@ namespace ICSharpCode.ILSpy
 			
 			#if DEBUG
 			toolBar.Items.Add(new Separator());
+			
 			Button cfg = new Button() { Content = "CFG" };
 			cfg.Click += new RoutedEventHandler(cfg_Click);
 			toolBar.Items.Add(cfg);
+			
 			Button ssa = new Button() { Content = "SSA" };
 			ssa.Click += new RoutedEventHandler(ssa_Click);
 			toolBar.Items.Add(ssa);
+			
+			Button varGraph = new Button() { Content = "Var" };
+			varGraph.Click += new RoutedEventHandler(varGraph_Click);
+			toolBar.Items.Add(varGraph);
 			#endif
 		}
 		
@@ -117,7 +123,16 @@ namespace ICSharpCode.ILSpy
 			MethodTreeNode node = treeView.SelectedItem as MethodTreeNode;
 			if (node != null && node.MethodDefinition.HasBody) {
 				node.MethodDefinition.Body.SimplifyMacros();
-				ShowGraph(node.MethodDefinition.Name + "-cfg", SsaFormBuilder.Build(node.MethodDefinition).ExportBlockGraph());
+				ShowGraph(node.MethodDefinition.Name + "-ssa", SsaFormBuilder.Build(node.MethodDefinition).ExportBlockGraph());
+			}
+		}
+		
+		void varGraph_Click(object sender, RoutedEventArgs e)
+		{
+			MethodTreeNode node = treeView.SelectedItem as MethodTreeNode;
+			if (node != null && node.MethodDefinition.HasBody) {
+				node.MethodDefinition.Body.SimplifyMacros();
+				ShowGraph(node.MethodDefinition.Name + "-var", SsaFormBuilder.Build(node.MethodDefinition).ExportVariableGraph());
 			}
 		}
 		
