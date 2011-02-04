@@ -1,8 +1,0 @@
-prefix=@prefix@
-assemblies_dir=${prefix}/lib/Mono.Cecil
-Libraries=${assemblies_dir}/Mono.Cecil.dll
-
-Name: Mono.Cecil
-Description: Mono.Cecil Library
-Version: 0.5
-Libs: -r:${Libraries}

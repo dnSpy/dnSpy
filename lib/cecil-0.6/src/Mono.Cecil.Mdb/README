@@ -1,2 +1,0 @@
-Mono.Cecil.Mdb is an internal assembly used by Mono.Cecil to
-read and write the Mono Debugging Symbols file format.

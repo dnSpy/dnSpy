@@ -1,8 +1,0 @@
-./Mono.Cecil.Mdb/AssemblyInfo.cs
-./Mono.Cecil.Mdb/MdbFactory.cs
-./Mono.Cecil.Mdb/MdbReader.cs
-./Mono.Cecil.Mdb/MdbWriter.cs
-../Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
-../Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
-../Mono.CompilerServices.SymbolWriter/MonoSymbolWriter.cs
-../Mono.CompilerServices.SymbolWriter/SymbolWriterImpl.cs
