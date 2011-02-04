@@ -44,6 +44,7 @@
 			</MenuItem>
 		</Menu>
 		<ToolBar
+			Name="toolBar"
 			DockPanel.Dock="Top">
 			<ToolBar.Resources>
 				<!-- Make images transparent if menu command is disabled -->

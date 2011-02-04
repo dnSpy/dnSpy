@@ -24,9 +24,11 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
+using Mono.Cecil.Rocks;
 
 namespace ICSharpCode.ILSpy
 {
@@ -87,7 +89,47 @@ namespace ICSharpCode.ILSpy
 			for (int i = 1; i < args.Length; i++) {
 				assemblyList.OpenAssembly(args[i]);
 			}
+			
+			#if DEBUG
+			toolBar.Items.Add(new Separator());
+			Button cfg = new Button() { Content = "CFG" };
+			cfg.Click += new RoutedEventHandler(cfg_Click);
+			toolBar.Items.Add(cfg);
+			Button ssa = new Button() { Content = "SSA" };
+			ssa.Click += new RoutedEventHandler(ssa_Click);
+			toolBar.Items.Add(ssa);
+			#endif
 		}
+		
+		#region Debugging CFG
+		#if DEBUG
+		void cfg_Click(object sender, RoutedEventArgs e)
+		{
+			MethodTreeNode node = treeView.SelectedItem as MethodTreeNode;
+			if (node != null && node.MethodDefinition.HasBody) {
+				node.MethodDefinition.Body.SimplifyMacros();
+				ShowGraph(node.MethodDefinition.Name + "-cfg", ControlFlowGraphBuilder.Build(node.MethodDefinition.Body).ExportGraph());
+			}
+		}
+		
+		void ssa_Click(object sender, RoutedEventArgs e)
+		{
+			MethodTreeNode node = treeView.SelectedItem as MethodTreeNode;
+			if (node != null && node.MethodDefinition.HasBody) {
+				node.MethodDefinition.Body.SimplifyMacros();
+				ShowGraph(node.MethodDefinition.Name + "-cfg", SsaFormBuilder.Build(node.MethodDefinition).ExportBlockGraph());
+			}
+		}
+		
+		void ShowGraph(string name, GraphVizGraph graph)
+		{
+			string fileName = Path.Combine(Path.GetTempPath(), name);
+			graph.Save(fileName + ".gv");
+			Process.Start("dot", "\"" + fileName + ".gv\" -Tpng -o \"" + fileName + ".png\"").WaitForExit();
+			Process.Start(fileName + ".png");
+		}
+		#endif
+		#endregion
 		
 		void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{

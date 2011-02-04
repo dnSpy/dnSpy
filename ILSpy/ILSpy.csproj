@@ -75,7 +75,7 @@
     <Compile Include="BaseTypesTreeNode.cs" />
     <Compile Include="CueBannerService.cs" />
     <Compile Include="Decompiler\CSharpLanguage.cs" />
-    <Compile Include="Disassembler\CecilExtensions.cs" />
+    <Compile Include="Disassembler\DisassemblerHelpers.cs" />
     <Compile Include="Disassembler\ILLanguage.cs" />
     <Compile Include="EventTreeNode.cs" />
     <Compile Include="ExtensionMethods.cs" />
@@ -149,6 +149,10 @@
     <Folder Include="themes" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
+      <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
+      <Name>ICSharpCode.Decompiler</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>

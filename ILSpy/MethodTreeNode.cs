@@ -30,6 +30,10 @@ namespace ICSharpCode.ILSpy
 	{
 		MethodDefinition method;
 		
+		public MethodDefinition MethodDefinition {
+			get { return method; }
+		}
+		
 		public MethodTreeNode(MethodDefinition method)
 		{
 			if (method == null)
