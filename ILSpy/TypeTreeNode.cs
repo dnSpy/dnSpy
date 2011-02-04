@@ -1,0 +1,132 @@
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Media;
+
+using ICSharpCode.TreeView;
+using Mono.Cecil;
+
+namespace ICSharpCode.ILSpy
+{
+	sealed class TypeTreeNode : SharpTreeNode
+	{
+		readonly TypeDefinition type;
+		
+		public ObservableCollection<TypeTreeNode> NestedTypes { get; private set; }
+		
+		public TypeTreeNode(TypeDefinition type)
+		{
+			if (type == null)
+				throw new ArgumentNullException("type");
+			this.type = type;
+			
+			this.NestedTypes = new ObservableCollection<TypeTreeNode>();
+		}
+		
+		public string Name {
+			get { return type.Name; }
+		}
+		
+		public string Namespace {
+			get { return type.Namespace; }
+		}
+		
+		public override object Text {
+			get { return type.Name; }
+		}
+		
+		enum ClassType
+		{
+			Class,
+			Enum,
+			Struct,
+			Interface,
+			Delegate
+		}
+		
+		ClassType GetClassType()
+		{
+			if (type.IsValueType) {
+				if (type.IsEnum)
+					return ClassType.Enum;
+				else
+					return ClassType.Struct;
+			} else {
+				if (type.IsInterface)
+					return ClassType.Interface;
+				else if (type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName)
+					return ClassType.Delegate;
+				else
+					return ClassType.Class;
+			}
+		}
+		
+		public TypeAttributes Visibility {
+			get {
+				return type.Attributes & TypeAttributes.VisibilityMask;
+			}
+		}
+		
+		public bool IsPublicAPI {
+			get {
+				switch (this.Visibility) {
+					case TypeAttributes.Public:
+					case TypeAttributes.NestedPublic:
+					case TypeAttributes.NestedFamily:
+					case TypeAttributes.NestedFamORAssem:
+						return true;
+					default:
+						return false;
+				}
+			}
+		}
+		
+		public override object Icon {
+			get {
+				switch (this.Visibility) {
+					case TypeAttributes.Public:
+					case TypeAttributes.NestedPublic:
+						switch (this.GetClassType()) {
+								case ClassType.Delegate:  return Images.Delegate;
+								case ClassType.Enum:      return Images.Enum;
+								case ClassType.Interface: return Images.Interface;
+								case ClassType.Struct:    return Images.Struct;
+								default:                  return Images.Class;
+						}
+					case TypeAttributes.NotPublic:
+					case TypeAttributes.NestedAssembly:
+					case TypeAttributes.NestedFamANDAssem:
+						switch (this.GetClassType()) {
+								case ClassType.Delegate:  return Images.InternalDelegate;
+								case ClassType.Enum:      return Images.InternalEnum;
+								case ClassType.Interface: return Images.InternalInterface;
+								case ClassType.Struct:    return Images.InternalStruct;
+								default:                  return Images.InternalClass;
+						}
+					case TypeAttributes.NestedFamily:
+					case TypeAttributes.NestedFamORAssem:
+						switch (this.GetClassType()) {
+								case ClassType.Delegate:  return Images.ProtectedDelegate;
+								case ClassType.Enum:      return Images.ProtectedEnum;
+								case ClassType.Interface: return Images.ProtectedInterface;
+								case ClassType.Struct:    return Images.ProtectedStruct;
+								default:                  return Images.ProtectedClass;
+						}
+					case TypeAttributes.NestedPrivate:
+						switch (this.GetClassType()) {
+								case ClassType.Delegate:  return Images.PrivateDelegate;
+								case ClassType.Enum:      return Images.PrivateEnum;
+								case ClassType.Interface: return Images.PrivateInterface;
+								case ClassType.Struct:    return Images.PrivateStruct;
+								default:                  return Images.PrivateClass;
+						}
+					default:
+						throw new NotSupportedException(this.Visibility.ToString());
+				}
+			}
+		}
+	}
+}

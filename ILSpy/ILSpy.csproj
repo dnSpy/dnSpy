@@ -64,13 +64,18 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Images\TypeImages.cs" />
+    <Compile Include="AssemblyTreeNode.cs" />
+    <Compile Include="Images\Images.cs" />
+    <Compile Include="Mono.Cecil.Rocks\MethodBodyRocks.cs" />
+    <Compile Include="NamespaceTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TreeTraversal.cs" />
+    <Compile Include="TypeTreeNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindow.xaml" />
@@ -106,11 +111,22 @@
     <Resource Include="Images\ProtectedInterface.png" />
     <Resource Include="Images\ProtectedMethod.png" />
     <Resource Include="Images\ProtectedStruct.png" />
-    <Resource Include="Images\Reference.png" />
+    <Resource Include="Images\Assembly.png" />
     <Resource Include="Images\Struct.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images" />
+    <Folder Include="Mono.Cecil.Rocks" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mono.Cecil\Mono.Cecil.csproj">
+      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpTreeView\ICSharpCode.TreeView.csproj">
+      <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
+      <Name>ICSharpCode.TreeView</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
