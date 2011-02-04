@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">net_4_0_Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A47B1F49-A81A-43E8-BE6B-DD28AF2C4055}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mono.Cecil.Tests</RootNamespace>
+    <AssemblyName>Mono.Cecil.Tests</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\mono.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0_Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\net_2_0_Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0_Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\net_2_0_Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_3_5_Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\net_3_5_Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NET_3_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_3_5_Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\net_3_5_Release\</OutputPath>
+    <DefineConstants>TRACE;NET_3_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_4_0_Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\net_4_0_Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_4_0_Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\net_4_0_Release\</OutputPath>
+    <DefineConstants>TRACE;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFrameworkVersion)' != 'v2.0' ">
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="nunit.core, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\nunit-2.4.8\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core.interfaces, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\nunit-2.4.8\nunit.core.interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\nunit-2.4.8\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Mono.Cecil.Tests\Addin.cs" />
+    <Compile Include="Mono.Cecil.Tests\AssemblyTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\AssemblyInfo.cs" />
+    <Compile Include="Mono.Cecil.Tests\BaseTestFixture.cs" />
+    <Compile Include="Mono.Cecil.Tests\CompilationService.cs" />
+    <Compile Include="Mono.Cecil.Tests\VariableTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\TypeParserTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\ImportCecilTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\ImportReflectionTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\ILProcessorTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\SecurityDeclarationTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\ParameterTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\Extensions.cs" />
+    <Compile Include="Mono.Cecil.Tests\Linq.cs" />
+    <Compile Include="Mono.Cecil.Tests\ResolveTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\CustomAttributesTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\Formatter.cs" />
+    <Compile Include="Mono.Cecil.Tests\MethodBodyTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\TypeTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\PropertyTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\EventTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\MethodTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\FieldTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\ImageReadTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\ModuleTests.cs" />
+    <Compile Include="Mono.Cecil.Tests\NestedTypesTests.cs" />
+    <None Include="Resources\cs\CustomAttributes.cs" />
+    <None Include="Resources\cs\Generics.cs" />
+    <None Include="Resources\cs\Interfaces.cs" />
+    <None Include="Resources\cs\Layouts.cs" />
+    <None Include="Resources\cs\Properties.cs" />
+    <None Include="Resources\cs\Events.cs" />
+    <None Include="Resources\cs\Methods.cs" />
+    <None Include="Resources\assemblies\moda.netmodule" />
+    <None Include="Resources\assemblies\modb.netmodule" />
+    <None Include="Resources\cs\Fields.cs" />
+    <None Include="Resources\cs\NestedTypes.cs" />
+    <None Include="Resources\il\hello.il" />
+    <None Include="Resources\il\methodspecs.il" />
+    <None Include="Resources\il\others.il" />
+    <None Include="Resources\il\types.il" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mono.Cecil.csproj">
+      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\assemblies\boxedoptarg.dll" />
+    <Content Include="Resources\assemblies\catch.exe" />
+    <Content Include="Resources\assemblies\decsec-att.dll" />
+    <Content Include="Resources\assemblies\decsec-xml.dll" />
+    <Content Include="Resources\assemblies\fptr.exe" />
+    <Content Include="Resources\assemblies\hello.anycpu.exe" />
+    <Content Include="Resources\assemblies\hello.exe" />
+    <Content Include="Resources\assemblies\hello.ia64.exe" />
+    <Content Include="Resources\assemblies\hello.x64.exe" />
+    <Content Include="Resources\assemblies\hello.x86.exe" />
+    <Content Include="Resources\assemblies\hello1.exe" />
+    <Content Include="Resources\assemblies\hellow.exe" />
+    <Content Include="Resources\assemblies\iterator.exe" />
+    <Content Include="Resources\assemblies\libhello.dll" />
+    <Content Include="Resources\assemblies\libres.dll" />
+    <Content Include="Resources\assemblies\mma.exe" />
+    <Content Include="Resources\assemblies\pinvoke.exe" />
+    <Content Include="Resources\assemblies\switch.exe" />
+    <Content Include="Resources\assemblies\text_file.txt" />
+    <Content Include="Resources\assemblies\varargs.exe" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
