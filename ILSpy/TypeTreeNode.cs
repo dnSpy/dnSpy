@@ -77,6 +77,16 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			if (settings.ShowInternalApi == false && IsPublicAPI)
+				return FilterResult.Hidden;
+			if (settings.SearchTermMatches(type.Name))
+				return FilterResult.Match;
+			else
+				return FilterResult.Recurse;
+		}
+		
 		protected override void LoadChildren()
 		{
 			if (type.BaseType != null || type.HasInterfaces)

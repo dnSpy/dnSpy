@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Window
 	x:Class="ICSharpCode.ILSpy.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tv="http://icsharpcode.net/sharpdevelop/treeview" xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
+	xmlns:local="clr-namespace:ICSharpCode.ILSpy"
 	Title="ILSpy"
 	Width="790"
 	Height="500"
@@ -83,12 +84,16 @@
 				<RowDefinition
 					Height="*" />
 			</Grid.RowDefinitions>
-			<!-- Tree View of assemblies and classes -->
-			<tv:SharpTreeView
-				Name="treeView"
-				ShowRoot="False"
-				AllowDropOrder="True"
-				AllowDrop="True" />
+			<!-- Left pane: Search bar + Tree View -->
+			<DockPanel>
+				<TextBox DockPanel.Dock="Top" local:CueBannerService.CueBanner=" Search" Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" />
+				<!-- Tree View of assemblies and classes -->
+				<tv:SharpTreeView
+					Name="treeView"
+					ShowRoot="False"
+					AllowDropOrder="True"
+					AllowDrop="True" />
+			</DockPanel>
 			<GridSplitter
 				Grid.ZIndex="1"
 				Grid.Column="1"
@@ -96,7 +101,7 @@
 				BorderThickness="2,0"
 				BorderBrush="Transparent"
 				HorizontalAlignment="Stretch" />
-			<!-- DockPanel in right pane -->
+			<!-- Right pane: Text Editor -->
 			<DockPanel
 				Grid.Column="2">
 				<ae:TextEditor

@@ -143,6 +143,8 @@ namespace ICSharpCode.TreeView
 			else {
 				result -= 19;
 			}
+			if (result < 0)
+				throw new InvalidOperationException();
 			return result;
 		}		
 	}

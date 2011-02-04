@@ -60,5 +60,13 @@ namespace ICSharpCode.ILSpy
 					this.Children.Add(new MethodTreeNode(m));
 			}
 		}
+		
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			if (settings.SearchTermMatches(property.Name))
+				return FilterResult.Match;
+			else
+				return FilterResult.Hidden;
+		}
 	}
 }

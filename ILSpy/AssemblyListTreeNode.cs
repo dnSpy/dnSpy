@@ -48,7 +48,6 @@ namespace ICSharpCode.ILSpy
 			if (assemblyList == null)
 				throw new ArgumentNullException("assemblyList");
 			this.assemblyList = assemblyList;
-			this.FilterSettings = new FilterSettings(); // default filter
 		}
 		
 		public override bool CanDelete(SharpTreeNode[] nodes)

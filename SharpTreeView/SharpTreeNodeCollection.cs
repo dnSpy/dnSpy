@@ -34,10 +34,14 @@ namespace ICSharpCode.TreeView
 
 		protected override void ClearItems()
 		{
-			foreach (var node in this) {
+			/*foreach (var node in this) {
 				node.Parent = null;
 			}
-			base.ClearItems();
+			base.ClearItems();*/
+			
+			// workaround for bug (reproducable when using ILSpy search filter)
+			while (Count > 0)
+				RemoveAt(Count - 1);
 		}
 
 		protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)

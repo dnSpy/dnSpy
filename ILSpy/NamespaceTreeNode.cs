@@ -22,7 +22,7 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
 {
-	sealed class NamespaceTreeNode : ILSpyTreeNode
+	sealed class NamespaceTreeNode : ILSpyTreeNode<TypeTreeNode>
 	{
 		string name;
 		
@@ -43,6 +43,14 @@ namespace ICSharpCode.ILSpy
 		
 		public override object Icon {
 			get { return Images.Namespace; }
+		}
+		
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			if (settings.SearchTermMatches(name))
+				return FilterResult.Match;
+			else
+				return FilterResult.Recurse;
 		}
 	}
 }

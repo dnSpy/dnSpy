@@ -73,6 +73,7 @@
     <Compile Include="AssemblyReferenceTreeNode.cs" />
     <Compile Include="AssemblyTreeNode.cs" />
     <Compile Include="BaseTypesTreeNode.cs" />
+    <Compile Include="CueBannerService.cs" />
     <Compile Include="Decompiler\CSharpLanguage.cs" />
     <Compile Include="EventTreeNode.cs" />
     <Compile Include="ExtensionMethods.cs" />

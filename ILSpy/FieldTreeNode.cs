@@ -48,5 +48,13 @@ namespace ICSharpCode.ILSpy
 					return Images.Field;
 			}
 		}
+		
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			if (settings.SearchTermMatches(field.Name))
+				return FilterResult.Match;
+			else
+				return FilterResult.Hidden;
+		}
 	}
 }

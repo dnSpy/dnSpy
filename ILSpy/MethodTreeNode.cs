@@ -70,5 +70,13 @@ namespace ICSharpCode.ILSpy
 		{
 			language.Decompile(method, output);
 		}
+		
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			if (settings.SearchTermMatches(method.Name))
+				return FilterResult.Match;
+			else
+				return FilterResult.Hidden;
+		}
 	}
 }

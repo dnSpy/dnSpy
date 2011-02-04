@@ -197,5 +197,14 @@ namespace ICSharpCode.ILSpy
 				return null;
 			}
 		}
+		
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			// avoid accessing this.AssemblyDefinition (waiting for background thread) if settings.SearchTerm == null
+			if (settings.SearchTerm == null || settings.SearchTermMatches(this.AssemblyDefinition.Name.Name))
+				return FilterResult.Match;
+			else
+				return FilterResult.Recurse;
+		}
 	}
 }

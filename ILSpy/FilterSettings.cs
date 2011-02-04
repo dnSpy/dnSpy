@@ -24,6 +24,11 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Represents the filters applied to the tree view.
 	/// </summary>
+	/// <remarks>
+	/// This class is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
+	/// Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
+	/// mutable instance changes.
+	/// </remarks>
 	public class FilterSettings : INotifyPropertyChanged
 	{
 		string searchTerm;
@@ -36,6 +41,13 @@ namespace ICSharpCode.ILSpy
 					OnPropertyChanged("SearchTerm");
 				}
 			}
+		}
+		
+		public bool SearchTermMatches(string text)
+		{
+			if (searchTerm == null)
+				return true;
+			return text.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 		
 		bool showInternalApi;

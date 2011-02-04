@@ -36,6 +36,7 @@ namespace ICSharpCode.ILSpy
 	public partial class MainWindow : Window
 	{
 		AssemblyList assemblyList = new AssemblyList();
+		FilterSettings filterSettings = new FilterSettings();
 		
 		static readonly Assembly[] initialAssemblies = {
 			typeof(object).Assembly,
@@ -53,10 +54,18 @@ namespace ICSharpCode.ILSpy
 		
 		public MainWindow()
 		{
+			this.DataContext = filterSettings;
 			InitializeComponent();
 			
 			textEditor.Text = "Welcome to ILSpy!";
 			AssemblyListTreeNode assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
+			assemblyListTreeNode.FilterSettings = filterSettings.Clone();
+			filterSettings.PropertyChanged += delegate {
+				// filterSettings is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
+				// Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
+				// mutable instance changes.
+				assemblyListTreeNode.FilterSettings = filterSettings.Clone();
+			};
 			treeView.Root = assemblyListTreeNode;
 			assemblyListTreeNode.Select = delegate(SharpTreeNode obj) {
 				if (obj != null) {

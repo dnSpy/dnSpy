@@ -38,11 +38,18 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		public SharpTreeNodeCollection VisibleChildren {
+			get { return base.Children; }
+		}
+		
 		protected abstract void OnFilterSettingsChanged();
 		
 		public virtual FilterResult Filter(FilterSettings settings)
 		{
-			return FilterResult.Match;
+			if (string.IsNullOrEmpty(settings.SearchTerm))
+				return FilterResult.Match;
+			else
+				return FilterResult.Hidden;
 		}
 		
 		public virtual void Decompile(Language language, ITextOutput output)
@@ -52,8 +59,18 @@ namespace ICSharpCode.ILSpy
 	
 	public enum FilterResult
 	{
+		/// <summary>
+		/// Hides the node.
+		/// </summary>
 		Hidden,
-		Match
+		/// <summary>
+		/// Shows the node.
+		/// </summary>
+		Match,
+		/// <summary>
+		/// Hides the node only if all children are hidden.
+		/// </summary>
+		Recurse
 	}
 	
 	/// <summary>
@@ -97,16 +114,27 @@ namespace ICSharpCode.ILSpy
 				FilterChild(child);
 			}
 		}
-
+		
 		void FilterChild(T child)
 		{
-			switch (child.Filter(this.FilterSettings)) {
+			FilterResult r;
+			if (this.FilterSettings == null)
+				r = FilterResult.Match;
+			else
+				r = child.Filter(this.FilterSettings);
+			switch (r) {
 				case FilterResult.Hidden:
 					// don't add to base.Children
 					break;
 				case FilterResult.Match:
 					base.Children.Add(child);
 					child.FilterSettings = StripSearchTerm(this.FilterSettings);
+					break;
+				case FilterResult.Recurse:
+					child.FilterSettings = this.FilterSettings;
+					child.EnsureLazyChildren();
+					if (child.VisibleChildren.Count > 0)
+						base.Children.Add(child);
 					break;
 				default:
 					throw new InvalidEnumArgumentException();
