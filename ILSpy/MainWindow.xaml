@@ -1,7 +1,6 @@
-﻿<Window x:Class="ICSharpCode.ILSpy.MainWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:tv="http://icsharpcode.net/sharpdevelop/treeview"
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="ICSharpCode.ILSpy.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tv="http://icsharpcode.net/sharpdevelop/treeview" xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
 	Title="ILSpy"
 	Width="790"
 	Height="500"
@@ -11,6 +10,45 @@
 	Hyperlink.RequestNavigate="Window_RequestNavigate"
 	TextOptions.TextFormattingMode="Display"
 >
-	<tv:SharpTreeView Name="treeView" ShowRoot="False" AllowDropOrder="True" AllowDrop="True">
-	</tv:SharpTreeView>
+	<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition
+				MinWidth="100"
+				Width="250" />
+			<ColumnDefinition
+				Width="3" />
+			<ColumnDefinition
+				MinWidth="100"
+				Width="0.514411764705882*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition
+				Height="*" />
+		</Grid.RowDefinitions>
+		<!-- Tree View of assemblies and classes -->
+		<tv:SharpTreeView
+			Name="treeView"
+			ShowRoot="False"
+			AllowDropOrder="True"
+			AllowDrop="True" />
+		<GridSplitter
+			Grid.ZIndex="1"
+			Grid.Column="1"
+			Margin="-2,0"
+			BorderThickness="2,0"
+			BorderBrush="Transparent"
+			HorizontalAlignment="Stretch" />
+		<!-- DockPanel in right pane -->
+		<DockPanel
+			Grid.Column="2">
+			<ae:TextEditor
+				SyntaxHighlighting="C#"
+				FontFamily="Consolas"
+				FontSize="10pt"
+				IsReadOnly="True"
+				Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
+				Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}" />
+		</DockPanel>
+	</Grid>
 </Window>

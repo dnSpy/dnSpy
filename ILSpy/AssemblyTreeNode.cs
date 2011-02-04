@@ -54,7 +54,7 @@ namespace ICSharpCode.ILSpy
 		protected override void LoadChildren()
 		{
 			assemblyTask.Wait();
-			
+			this.Children.Add(new ReferenceFolderTreeNode(assemblyTask.Result.MainModule));
 			foreach (NamespaceTreeNode ns in namespaces.Values) {
 				ns.Children.Clear();
 			}

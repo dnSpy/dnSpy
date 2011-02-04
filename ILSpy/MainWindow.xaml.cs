@@ -28,7 +28,6 @@ namespace ICSharpCode.ILSpy
 			typeof(System.Windows.FrameworkElement).Assembly,
 			typeof(ICSharpCode.TreeView.SharpTreeView).Assembly,
 			typeof(Mono.Cecil.AssemblyDefinition).Assembly,
-			typeof(ICSharpCode.NRefactory.SupportedLanguage).Assembly,
 			typeof(MainWindow).Assembly
 		};
 		

@@ -65,10 +65,12 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AssemblyListTreeNode.cs" />
+    <Compile Include="AssemblyReferenceTreeNode.cs" />
     <Compile Include="AssemblyTreeNode.cs" />
     <Compile Include="FieldTreeNode.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="MethodTreeNode.cs" />
+    <Compile Include="ModuleReferenceTreeNode.cs" />
     <Compile Include="Mono.Cecil.Rocks\MethodBodyRocks.cs" />
     <Compile Include="NamespaceTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,6 +79,7 @@
       <SubType>Code</SubType>
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ReferenceFolderTreeNode.cs" />
     <Compile Include="TreeTraversal.cs" />
     <Compile Include="TypeTreeNode.cs" />
   </ItemGroup>
@@ -126,10 +129,18 @@
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
+      <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>
+      <Name>ICSharpCode.AvalonEdit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpTreeView\ICSharpCode.TreeView.csproj">
       <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ReferenceFolder.Closed.png" />
+    <Resource Include="Images\ReferenceFolder.Open.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
