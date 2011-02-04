@@ -152,10 +152,12 @@ namespace ICSharpCode.ILSpy
 			Parent.DeleteCore(nodes); // handle deletion in the AssemblyListTreeNode
 		}
 		
+		internal const string DataFormat = "ILSpyAssemblies";
+		
 		public override IDataObject Copy(SharpTreeNode[] nodes)
 		{
 			DataObject dataObject = new DataObject();
-			dataObject.SetData("ILSpyAssemblies", nodes.OfType<AssemblyTreeNode>());
+			dataObject.SetData(DataFormat, nodes.OfType<AssemblyTreeNode>().Select(n => n.fileName).ToArray());
 			return dataObject;
 		}
 	}

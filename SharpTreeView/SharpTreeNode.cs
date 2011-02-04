@@ -558,6 +558,7 @@ namespace ICSharpCode.TreeView
 
 		public virtual void Drop(IDataObject data, int index, DropEffect finalEffect)
 		{
+			throw new NotSupportedException(GetType().Name + " does not support Drop()");
 		}
 
 		#endregion

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
@@ -251,12 +252,17 @@ namespace ICSharpCode.TreeView
 
 		internal void HandleDrop(SharpTreeViewItem item, DragEventArgs e)
 		{
-			HidePreview();
-			e.Handled = true;
+			try {
+				HidePreview();
+				e.Handled = true;
 
-			var target = GetDropTarget(item, e);
-			if (target != null) {
-				target.Node.InternalDrop(e, target.Index);
+				var target = GetDropTarget(item, e);
+				if (target != null) {
+					target.Node.InternalDrop(e, target.Index);
+				}
+			} catch (Exception ex) {
+				Debug.WriteLine(ex.ToString());
+				throw;
 			}
 		}
 

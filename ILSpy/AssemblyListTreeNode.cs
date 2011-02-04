@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows;
+
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -33,9 +35,33 @@ namespace ICSharpCode.ILSpy
 				this.Children.Remove(node);
 		}
 		
-		public override DropEffect CanDrop(System.Windows.IDataObject data, DropEffect requestedEffect)
+		public override DropEffect CanDrop(IDataObject data, DropEffect requestedEffect)
 		{
-			return requestedEffect;
+			if (data.GetDataPresent(AssemblyTreeNode.DataFormat))
+				return DropEffect.Move;
+			else
+				return DropEffect.None;
+		}
+		
+		public override void Drop(IDataObject data, int index, DropEffect finalEffect)
+		{
+			string[] files = data.GetData(AssemblyTreeNode.DataFormat) as string[];
+			if (files != null) {
+				var nodes = (from file in files
+				             select OpenAssembly(file) into node
+				             where node != null
+				             select node).Distinct().ToList();
+				foreach (AssemblyTreeNode node in nodes) {
+					int nodeIndex = this.Children.IndexOf(node);
+					if (nodeIndex < index)
+						index--;
+					this.Children.RemoveAt(nodeIndex);
+				}
+				nodes.Reverse();
+				foreach (AssemblyTreeNode node in nodes) {
+					this.Children.Insert(index, node);
+				}
+			}
 		}
 		
 		public AssemblyTreeNode OpenAssembly(string file)
