@@ -64,8 +64,11 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AssemblyListTreeNode.cs" />
     <Compile Include="AssemblyTreeNode.cs" />
+    <Compile Include="FieldTreeNode.cs" />
     <Compile Include="Images\Images.cs" />
+    <Compile Include="MethodTreeNode.cs" />
     <Compile Include="Mono.Cecil.Rocks\MethodBodyRocks.cs" />
     <Compile Include="NamespaceTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

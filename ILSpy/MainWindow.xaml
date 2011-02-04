@@ -11,6 +11,6 @@
 	Hyperlink.RequestNavigate="Window_RequestNavigate"
 	TextOptions.TextFormattingMode="Display"
 >
-	<tv:SharpTreeView Name="treeView" ShowRoot="False" AllowDropOrder="True">
+	<tv:SharpTreeView Name="treeView" ShowRoot="False" AllowDropOrder="True" AllowDrop="True">
 	</tv:SharpTreeView>
 </Window>

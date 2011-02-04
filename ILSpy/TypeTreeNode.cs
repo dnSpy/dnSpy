@@ -15,15 +15,13 @@ namespace ICSharpCode.ILSpy
 	{
 		readonly TypeDefinition type;
 		
-		public ObservableCollection<TypeTreeNode> NestedTypes { get; private set; }
-		
 		public TypeTreeNode(TypeDefinition type)
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
 			this.type = type;
 			
-			this.NestedTypes = new ObservableCollection<TypeTreeNode>();
+			this.LazyLoading = true;
 		}
 		
 		public string Name {
@@ -38,6 +36,40 @@ namespace ICSharpCode.ILSpy
 			get { return type.Name; }
 		}
 		
+		public TypeAttributes Visibility {
+			get {
+				return type.Attributes & TypeAttributes.VisibilityMask;
+			}
+		}
+		
+		public bool IsPublicAPI {
+			get {
+				switch (this.Visibility) {
+					case TypeAttributes.Public:
+					case TypeAttributes.NestedPublic:
+					case TypeAttributes.NestedFamily:
+					case TypeAttributes.NestedFamORAssem:
+						return true;
+					default:
+						return false;
+				}
+			}
+		}
+		
+		protected override void LoadChildren()
+		{
+			foreach (TypeDefinition nestedType in type.NestedTypes) {
+				this.Children.Add(new TypeTreeNode(nestedType));
+			}
+			foreach (FieldDefinition field in type.Fields) {
+				this.Children.Add(new FieldTreeNode(field));
+			}
+			foreach (MethodDefinition method in type.Methods) {
+				this.Children.Add(new MethodTreeNode(method));
+			}
+		}
+		
+		#region Icon
 		enum ClassType
 		{
 			Class,
@@ -61,26 +93,6 @@ namespace ICSharpCode.ILSpy
 					return ClassType.Delegate;
 				else
 					return ClassType.Class;
-			}
-		}
-		
-		public TypeAttributes Visibility {
-			get {
-				return type.Attributes & TypeAttributes.VisibilityMask;
-			}
-		}
-		
-		public bool IsPublicAPI {
-			get {
-				switch (this.Visibility) {
-					case TypeAttributes.Public:
-					case TypeAttributes.NestedPublic:
-					case TypeAttributes.NestedFamily:
-					case TypeAttributes.NestedFamORAssem:
-						return true;
-					default:
-						return false;
-				}
 			}
 		}
 		
@@ -128,5 +140,6 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 		}
+		#endregion
 	}
 }

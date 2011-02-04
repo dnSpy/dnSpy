@@ -4,8 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
-
+using System.Threading.Tasks;
+using System.Windows;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -13,62 +15,46 @@ namespace ICSharpCode.ILSpy
 {
 	sealed class AssemblyTreeNode : SharpTreeNode
 	{
-		readonly AssemblyDefinition assembly;
+		readonly string fileName;
+		readonly string name;
+		readonly Task<AssemblyDefinition> assemblyTask;
 		readonly List<TypeTreeNode> classes = new List<TypeTreeNode>();
-		public ObservableCollection<NamespaceTreeNode> Namespaces { get; private set; }
-		readonly Dictionary<TypeDefinition, TypeTreeNode> typeDict = new Dictionary<TypeDefinition, TypeTreeNode>();
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
 		
-		public AssemblyTreeNode(AssemblyDefinition assembly)
+		public AssemblyTreeNode(string fileName)
 		{
-			if (assembly == null)
-				throw new ArgumentNullException("assembly");
-			this.assembly = assembly;
-			this.Namespaces = new ObservableCollection<NamespaceTreeNode>();
-			InitClassList();
-			BuildNestedTypeLists();
-			BuildNamespaceList();
+			if (fileName == null)
+				throw new ArgumentNullException("fileName");
+			
+			this.fileName = fileName;
+			this.assemblyTask = Task.Factory.StartNew<AssemblyDefinition>(LoadAssembly); // requires that this.fileName is set
+			this.name = Path.GetFileNameWithoutExtension(fileName);
+			
+			this.LazyLoading = true;
 		}
 		
 		public override object Text {
-			get { return assembly.Name.Name; }
+			get { return name; }
 		}
 		
 		public override object Icon {
 			get { return Images.Assembly; }
 		}
 		
-		void InitClassList()
+		AssemblyDefinition LoadAssembly()
 		{
+			// runs on background thread
+			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(fileName);
 			foreach (TypeDefinition type in assembly.MainModule.Types.OrderBy(t => t.FullName)) {
-				var viewmodel = new TypeTreeNode(type);
-				typeDict.Add(type, viewmodel);
-				if (type.IsNested == false) {
-					classes.Add(viewmodel);
-				}
-				foreach (TypeDefinition nestedType in TreeTraversal.PreOrder(type.NestedTypes, t => t.NestedTypes)) {
-					typeDict.Add(nestedType, new TypeTreeNode(nestedType));
-				}
+				classes.Add(new TypeTreeNode(type));
 			}
+			return assembly;
 		}
 		
-		void BuildNestedTypeLists()
+		protected override void LoadChildren()
 		{
-			foreach (var typeModel in typeDict.Values) {
-				typeModel.NestedTypes.Clear();
-			}
-			foreach (var pair in typeDict) {
-				if (showInternalAPI == false && pair.Value.IsPublicAPI == false)
-					continue;
-				if (pair.Key.IsNested) {
-					typeDict[pair.Key.DeclaringType].NestedTypes.Add(pair.Value);
-				}
-			}
-		}
-		
-		void BuildNamespaceList()
-		{
-			this.Children.Clear();
+			assemblyTask.Wait();
+			
 			foreach (NamespaceTreeNode ns in namespaces.Values) {
 				ns.Children.Clear();
 			}
@@ -88,18 +74,56 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		bool showInternalAPI;
+		/// <summary>
+		/// Invalidates the list of children.
+		/// </summary>
+		void InvalidateChildren()
+		{
+			this.Children.Clear();
+			if (this.IsExpanded)
+				this.LoadChildren();
+			else
+				this.LazyLoading = true;
+		}
+		
+		bool showInternalAPI = true;
 		
 		public bool ShowInternalAPI {
 			get { return showInternalAPI; }
 			set {
 				if (showInternalAPI != value) {
 					showInternalAPI = value;
-					BuildNestedTypeLists();
-					BuildNamespaceList();
+					InvalidateChildren();
 					RaisePropertyChanged("ShowInternalAPI");
 				}
 			}
+		}
+		
+		public override bool CanDrag(SharpTreeNode[] nodes)
+		{
+			return nodes.All(n => n is AssemblyTreeNode);
+		}
+		
+		public override bool CanDelete(SharpTreeNode[] nodes)
+		{
+			return Parent != null && Parent.CanDelete(nodes); // handle deletion in the AssemblyListTreeNode
+		}
+		
+		public override void Delete(SharpTreeNode[] nodes)
+		{
+			Parent.Delete(nodes); // handle deletion in the AssemblyListTreeNode
+		}
+		
+		public override void DeleteCore(SharpTreeNode[] nodes)
+		{
+			Parent.DeleteCore(nodes); // handle deletion in the AssemblyListTreeNode
+		}
+		
+		public override IDataObject Copy(SharpTreeNode[] nodes)
+		{
+			DataObject dataObject = new DataObject();
+			dataObject.SetData("ILSpyAssemblies", nodes.OfType<AssemblyTreeNode>());
+			return dataObject;
 		}
 	}
 }

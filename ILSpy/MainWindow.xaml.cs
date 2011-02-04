@@ -3,9 +3,10 @@
 
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
+
 using ICSharpCode.TreeView;
-using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
@@ -16,14 +17,30 @@ namespace ICSharpCode.ILSpy
 	{
 		SharpTreeNodeCollection assemblies;
 		
+		static readonly Assembly[] initialAssemblies = {
+			typeof(object).Assembly,
+			typeof(Uri).Assembly,
+			typeof(System.Linq.Enumerable).Assembly,
+			typeof(System.Xml.XmlDocument).Assembly,
+			typeof(System.Windows.Markup.MarkupExtension).Assembly,
+			typeof(System.Windows.Rect).Assembly,
+			typeof(System.Windows.UIElement).Assembly,
+			typeof(System.Windows.FrameworkElement).Assembly,
+			typeof(ICSharpCode.TreeView.SharpTreeView).Assembly,
+			typeof(Mono.Cecil.AssemblyDefinition).Assembly,
+			typeof(ICSharpCode.NRefactory.SupportedLanguage).Assembly,
+			typeof(MainWindow).Assembly
+		};
+		
 		public MainWindow()
 		{
 			InitializeComponent();
 			
-			treeView.Root = new SharpTreeNode();
+			treeView.Root = new AssemblyListTreeNode();
 			assemblies = treeView.Root.Children;
 			
-			assemblies.Add(new AssemblyTreeNode(AssemblyDefinition.ReadAssembly(typeof(object).Assembly.Location)));
+			foreach (Assembly asm in initialAssemblies)
+				assemblies.Add(new AssemblyTreeNode(asm.Location));
 		}
 		
 		void Window_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
