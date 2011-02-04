@@ -1,0 +1,9 @@
+<NUnitProject>
+  <Settings activeconfig="Default" />
+  <Config name="Default" binpathtype="Auto">
+    <assembly path="Test\bin\net_4_0_Debug\Mono.Cecil.Tests.dll" />
+    <assembly path="rocks\Test\bin\net_4_0_Debug\Mono.Cecil.Rocks.Tests.dll" />
+    <assembly path="symbols\mdb\Test\bin\net_4_0_Debug\Mono.Cecil.Mdb.Tests.dll" />
+    <assembly path="symbols\pdb\Test\bin\net_4_0_Debug\Mono.Cecil.Pdb.Tests.dll" />
+  </Config>
+</NUnitProject>
