@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<!-- syntaxdefinition for Java 2001 by Jonathan Pierce & Mike Krueger -->
+<!-- converted to AvalonEdit format by Siegfried Pammer in 2010 -->
+<SyntaxDefinition name="Java" extensions=".java" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="MethodName" foreground="DarkBlue" />
+  <Color name="Digits" foreground="DarkBlue" fontStyle="italic" />
+  <Color name="String" foreground="Magenta"  />
+  <Color name="Character" foreground="Magenta"  />
+  <Color name="Comment" foreground="SlateGray" />
+  <Color name="Punctuation" foreground="DarkGreen" />
+  <Color name="AccessKeywords" foreground="Black" fontWeight="bold" />
+  <Color name="OperatorKeywords" foreground="DarkCyan" fontWeight="bold" />
+  <Color name="SelectionStatements" foreground="Blue" fontWeight="bold" />
+  <Color name="IterationStatements" foreground="Blue" fontWeight="bold" />
+  <Color name="ExceptionHandlingStatements" foreground="Teal" fontWeight="bold" />
+  <Color name="ValueTypes" foreground="Red" fontWeight="bold" />
+  <Color name="ReferenceTypes" foreground="Red" />
+  <Color name="Void" foreground="Red" />
+  <Color name="JumpStatements" foreground="Navy" />
+  <Color name="Modifiers" foreground="Brown" />
+  <Color name="AccessModifiers" foreground="Blue" fontWeight="bold" />
+  <Color name="Package" foreground="Green" fontWeight="bold" />
+  <Color name="Literals" foreground="Black" fontWeight="bold" />
+  <Color name="CommentTags" foreground="Red" fontWeight="bold" fontStyle="italic" />
+  <Color name="JavaDocTags" foreground="DarkGray" fontWeight="bold" fontStyle="italic" />
+  <RuleSet ignoreCase="false">
+    <Rule color="Punctuation">
+      [?,.()\[\]{}+\-/%*&lt;&gt;^!|]+
+    </Rule>
+    <Keywords color="AccessKeywords">
+      <Word>this</Word>
+      <Word>super</Word>
+    </Keywords>
+    <Keywords color="OperatorKeywords">
+      <Word>new</Word>
+      <Word>instanceof</Word>
+      <Word>true</Word>
+      <Word>false</Word>
+    </Keywords>
+    <Keywords color="SelectionStatements">
+      <Word>else</Word>
+      <Word>if</Word>
+      <Word>switch</Word>
+      <Word>case</Word>
+    </Keywords>
+    <Keywords color="IterationStatements">
+      <Word>do</Word>
+      <Word>for</Word>
+      <Word>while</Word>
+    </Keywords>
+    <Keywords color="JumpStatements">
+      <Word>break</Word>
+      <Word>continue</Word>
+      <Word>default</Word>
+      <Word>goto</Word>
+      <Word>return</Word>
+    </Keywords>
+    <Keywords color="ExceptionHandlingStatements">
+      <Word>try</Word>
+      <Word>throw</Word>
+      <Word>catch</Word>
+      <Word>finally</Word>
+    </Keywords>
+    <Keywords color="ValueTypes">
+      <Word>boolean</Word>
+      <Word>double</Word>
+      <Word>int</Word>
+      <Word>short</Word>
+      <Word>long</Word>
+      <Word>float</Word>
+      <Word>byte</Word>
+      <Word>char</Word>
+    </Keywords>
+    <Keywords color="ReferenceTypes">
+      <Word>class</Word>
+      <Word>interface</Word>
+      <Word>object</Word>
+    </Keywords>
+    <Keywords color="Void">
+      <Word>void</Word>
+    </Keywords>
+    <Keywords color="Modifiers">
+      <Word>abstract</Word>
+      <Word>const</Word>
+      <Word>static</Word>
+      <Word>final</Word>
+      <Word>native</Word>
+      <Word>extends</Word>
+      <Word>implements</Word>
+      <Word>volatile</Word>
+      <Word>transient</Word>
+      <Word>throws</Word>
+      <Word>strictfp</Word>
+      <Word>synchronized</Word>
+    </Keywords>
+    <Keywords color="AccessModifiers">
+      <Word>public</Word>
+      <Word>protected</Word>
+      <Word>private</Word>
+    </Keywords>
+    <Keywords color="Package">
+      <Word>package</Word>
+      <Word>import</Word>
+    </Keywords>
+    <Keywords color="Literals">
+      <Word>null</Word>
+    </Keywords>
+    <Span color="Comment" ruleSet="TestSet">
+      <Begin>//</Begin>
+    </Span>
+    <Span color="Comment" ruleSet="TestSet" multiline="true">
+      <Begin>/\*</Begin>
+      <End>\*/</End>
+    </Span>
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Span color="Character">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Rule color="MethodName">[\d\w_]+(?=(\s*\())</Rule>
+    <Rule color="Digits">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+  </RuleSet>
+  <RuleSet name="TestSet" ignoreCase="true">
+    <Keywords color="CommentTags">
+      <Word>TODO</Word>
+    </Keywords>
+    <Keywords color="JavaDocTags">
+      <Word>@author</Word>
+      <Word>@version</Word>
+      <Word>@param</Word>
+      <Word>@return</Word>
+      <Word>@exception</Word>
+      <Word>@throws</Word>
+      <Word>@see</Word>
+      <Word>@since</Word>
+      <Word>@serial</Word>
+      <Word>@serialField</Word>
+      <Word>@serialData</Word>
+      <Word>@deprecated</Word>
+    </Keywords>
+    <Rule color="Digits">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+  </RuleSet>
+</SyntaxDefinition>

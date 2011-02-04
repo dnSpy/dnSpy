@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="5d1af8a2-fc1b-4a1b-b6c1-f33fb14bec1f" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+    <introduction>
+      <!-- Uncomment this to generate an outline of the section and sub-section
+           titles.  Specify a numeric value as the inner text to limit it to
+           a specific number of sub-topics when creating the outline.  Specify
+           zero (0) to limit it to top-level sections only.  -->
+      <!-- <autoOutline /> -->
+	  <mediaLink><image xlink:href="NamespaceDependencies" placement="center"/></mediaLink>
+	  <para>As you can see in this dependency graph, AvalonEdit consists of a few 
+	  sub-namespaces that have cleanly separated jobs. 
+	  Most of the namespaces have a kind of 'main' class.</para>
+	  <para>Here is the visual tree of the TextEditor control:</para>
+	  <mediaLink><image xlink:href="VisualTree" placement="center"/></mediaLink>
+	  <para>It's important to understand that AvalonEdit is a composite control
+	  with the three layers:
+	  <codeEntityReference>T:ICSharpCode.AvalonEdit.TextEditor</codeEntityReference> (main control),
+	  <codeEntityReference>T:ICSharpCode.AvalonEdit.Editing.TextArea</codeEntityReference> (editing),
+	  <codeEntityReference>T:ICSharpCode.AvalonEdit.Rendering.TextView</codeEntityReference> (rendering).
+	  </para><para>
+	  While the main control provides some convenience methods for common tasks,
+	  for most advanced features you have to work directly with the inner controls.
+	  You can access them using <codeInline>textEditor.TextArea</codeInline> or
+	  <codeInline>textEditor.TextArea.TextView</codeInline>.</para>
+    </introduction>
+  </developerConceptualDocument>
+</topic>

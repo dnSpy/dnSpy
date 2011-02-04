@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="5b1854b4-884c-4713-b921-b28e96a1b43e" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!--
+  <summary>
+    <para>Optional summary abstract</para>
+  </summary>
+  -->
+    <introduction>
+      <!-- Uncomment this to generate an outline of the section and sub-section
+         titles.  Specify a numeric value as the inner text to limit it to
+         a specific number of sub-topics when creating the outline.  Specify
+         zero (0) to limit it to top-level sections only.  -->
+      <!-- <autoOutline /> -->
+      <para>The text editor makes use of several different coordinate systems.
+		Here's an explanation of them.</para>
+    </introduction>
+    <!-- Add one or more top-level section elements.  These are collapsible.
+       If using <autoOutline /> tag, add an address attribute to identify
+       it so that it can be jumped to with a hyperlink. -->
+    <section>
+      <title>Offset</title>
+      <content>
+        <para>In AvalonEdit, an index into the document is called an <newTerm>offset</newTerm>.</para>
+        <para>
+			Offsets usually represent the position between two characters.
+			The first offset at the start of the document is 0;
+			the offset after the first char in the document is 1.
+			The last valid offset is <codeInline>document.TextLength</codeInline>,
+			representing the end of the document.
+			This is exactly the same as the <codeInline>index</codeInline> parameter
+			used by methods in the .NET String or StringBuilder classes.
+        </para>
+      </content>
+    </section>
+    <section>
+      <title>TextLocation</title>
+      <content>
+        <para>The
+        <codeEntityReference qualifyHint="true">T:ICSharpCode.AvalonEdit.Document.TextLocation</codeEntityReference>
+        struct represents a Line/Column pair. Line and column are counted from 1.</para>
+        <para>The document provides the methods
+				<codeEntityReference qualifyHint="true">M:ICSharpCode.AvalonEdit.Document.TextDocument.GetLocation(System.Int32)</codeEntityReference>
+				and
+				<codeEntityReference qualifyHint="true">M:ICSharpCode.AvalonEdit.Document.TextDocument.GetOffset(ICSharpCode.AvalonEdit.Document.TextLocation)</codeEntityReference>
+			to convert between offsets and <codeInline>TextLocation</codeInline>s.</para>
+      </content>
+    </section>
+    <section>
+      <title>TextAnchor</title>
+      <content>
+      	<para>If you are working with the text editor, you will likely run into the problem
+      	that you need to store an offset, but want it to adjust automatically whenever
+      	text is inserted prior to that offset. </para>
+      	<para>Sure, you could listen to the TextDocument.Changed event and call
+      	GetNewOffset on the DocumentChangeEventArgs to translate the offset,
+      	but that gets tedious; especially when your object is short-lived and you
+      	have to deal with deregistering the event handler at the correct point of time.</para>
+        <para>A text anchor object stores an Offset, but automatically
+			updates the offset when text is inserted/removed before the offset.
+		</para>
+        <para>
+			A much simpler solution is to use the
+			<codeEntityReference qualifyHint="true">T:ICSharpCode.AvalonEdit.Document.TextAnchor</codeEntityReference>
+			class.
+			Please take a look at the documentation for that class for more details.
+		</para>
+      </content>
+    </section>
+    <section>
+      <title>RelativeTextOffset</title>
+      <content>
+        <para>An offset in the document, but relative to the start offset of a <codeEntityReference>T:ICSharpCode.AvalonEdit.Rendering.VisualLine</codeEntityReference>.</para>
+        <para>Relative text offsets are used to store document offsets in visual lines.</para>
+        <para>You can convert between relative text offsets and document offsets
+			by adding/subtracting
+			<codeEntityReference qualifyHint="true">P:ICSharpCode.AvalonEdit.Rendering.VisualLine.FirstDocumentLine</codeEntityReference>.<codeEntityReference>P:ICSharpCode.AvalonEdit.Document.DocumentLine.Offset</codeEntityReference>.
+			</para>
+      </content>
+    </section>
+    <section>
+      <title>VisualColumn</title>
+      <content>
+        <para>An integer value that specifies a position inside a VisualLine.</para>
+        <para>
+			Not only text has a length in the visual line, but also other VisualLineElements.
+			VisualColumn is counting from 0 for each visual line.
+			</para>
+        <para>For example, tab markers take 2 visual columns (the marker and the tab space),
+			newline markers take 1 visual column; folding markers take just 1 visual column
+			even though they are longer in the document text.</para>
+        <para>Use the
+			<codeEntityReference qualifyHint="true">M:ICSharpCode.AvalonEdit.Rendering.VisualLine.GetVisualColumn(System.Int32)</codeEntityReference>
+			and 
+			<codeEntityReference qualifyHint="true">M:ICSharpCode.AvalonEdit.Rendering.VisualLine.GetRelativeOffset(System.Int32)</codeEntityReference>
+			methods to convert between
+			visual columns and relative text offsets.</para>
+        <alert class="note">
+          <para>Do not confuse VisualColumn with text columns.
+				VisualColumn starts at 0, text column at 1. Text may have different length
+				in the two coordinate systems (e.g. tab markers, foldings).</para>
+        </alert>
+      </content>
+    </section>
+    <section>
+      <title>TextViewPosition</title>
+      <content>
+        <para>A Line,Column,VisualColumn triple.</para>
+        <para>The <codeEntityReference qualifyHint="true">T:ICSharpCode.AvalonEdit.TextViewPosition</codeEntityReference>
+        	struct can be implicitly converted
+			to <codeEntityReference qualifyHint="false">T:ICSharpCode.AvalonEdit.Document.TextLocation</codeEntityReference>,
+			but has the additional VisualColumn information
+			that is necessary to accurately hold the caret position when
+			VisualLineElements with DocumentLength 0 are in use.</para>
+      </content>
+    </section>
+    <section>
+      <title>VisualTop</title>
+      <content>
+        <para>A double value that specifies the distance from the top of
+			the document to the top of a line measured in device-independent pixels.</para>
+        <para>VisualTop is equivalent to the Y component of a VisualPosition.</para>
+      </content>
+    </section>
+    <section>
+      <title>VisualPosition</title>
+      <content>
+        <para>A Point value (double X,Y) that specifies the position of an
+			element from the top left document corner measured in device-independent pixels.</para>
+        <para>To convert a VisualPosition to or from a (mouse) position inside
+			the TextView, simply subtract or add
+			<codeEntityReference qualifyHint="true">P:ICSharpCode.AvalonEdit.Rendering.TextView.ScrollOffset</codeEntityReference>
+			to it.
+			</para>
+      </content>
+    </section>
+    <relatedTopics>
+      <!-- One or more of the following:
+         - A local link
+         - An external link
+         - A code entity reference
+
+    <link xlink:href="Other Topic's ID"/>
+    <link xlink:href="Other Topic's ID">Link inner text</link>
+
+    <externalLink>
+        <linkText>Link text</linkText>
+        <linkAlternateText>Optional alternate link text</linkAlternateText>
+        <linkUri>URI</linkUri>
+    </externalLink>
+
+    <codeEntityReference>API member ID</codeEntityReference>
+
+    Examples:
+
+    <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8270" />
+    <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8278">Some other topic</link>
+
+    <externalLink>
+        <linkText>SHFB on CodePlex</linkText>
+        <linkAlternateText>Go to CodePlex</linkAlternateText>
+        <linkUri>http://www.codeplex.com/SHFB</linkUri>
+    </externalLink>
+
+    <codeEntityReference>T:TestDoc.TestClass</codeEntityReference>
+    <codeEntityReference>P:TestDoc.TestClass.SomeProperty</codeEntityReference>
+    <codeEntityReference>M:TestDoc.TestClass.#ctor</codeEntityReference>
+    <codeEntityReference>M:TestDoc.TestClass.#ctor(System.String,System.Int32)</codeEntityReference>
+    <codeEntityReference>M:TestDoc.TestClass.ToString</codeEntityReference>
+    <codeEntityReference>M:TestDoc.TestClass.FirstMethod</codeEntityReference>
+    <codeEntityReference>M:TestDoc.TestClass.SecondMethod(System.Int32,System.String)</codeEntityReference>
+    -->
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

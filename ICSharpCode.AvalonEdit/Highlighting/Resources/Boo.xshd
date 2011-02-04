@@ -1,0 +1,212 @@
+﻿<SyntaxDefinition name="Boo" extensions=".boo" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Comment" foreground="Green" />
+	<Color name="String" foreground="Blue" />
+	<Color name="Regex" foreground="#FFFF6600" />
+	<RuleSet>
+		<Span color="Comment" multiline="true">
+			<Begin>"""</Begin>
+			<End>"""</End>
+		</Span>
+		<Span foreground="Gray">
+			<Begin>\#</Begin>
+		</Span>
+		<Span foreground="#FF999999">
+			<Begin>//</Begin>
+		</Span>
+		<Span color="Comment" ruleSet="comments set" multiline="true">
+			<Begin>/\*</Begin>
+			<End>\*/</End>
+		</Span>
+		<Span color="String">
+			<Begin>"</Begin>
+			<End>"</End>
+			<RuleSet>
+				<Span begin="\\" end="." />
+				<Span foreground="#FF993366" ruleSet="">
+					<!-- ruleSet="" reference this file's main ruleset, allowing normal boo code inside ${} -->
+					<Begin>\$\{</Begin>
+					<End>}</End>
+				</Span>
+			</RuleSet>
+		</Span>
+		<Span color="String">
+			<Begin>'</Begin>
+			<End>'</End>
+			<RuleSet>
+				<Span begin="\\" end="." />
+			</RuleSet>
+		</Span>
+		<Span color="Regex" multiline="true">
+			<Begin>@/</Begin>
+			<End>/</End>
+		</Span>
+		<Span color="Regex">
+			<!-- this is a span (not a rule) because " within a regex doesn't start a string literal -->
+			<Begin>/\S+/</Begin>
+			<End></End> <!-- end immediately after Begin -->
+		</Span>
+		<Keywords foreground="Black" fontWeight="bold">
+			<Word>self</Word>
+			<Word>super</Word>
+		</Keywords>
+		<Keywords foreground="DarkCyan" fontWeight="bold">
+			<Word>is</Word>
+			<Word>isa</Word>
+			<Word>and</Word>
+			<Word>or</Word>
+			<Word>not</Word>
+		</Keywords>
+		<Keywords foreground="Blue" fontWeight="bold">
+			<Word>else</Word>
+			<Word>elif</Word>
+			<Word>if</Word>
+			<Word>match</Word>
+			<Word>case</Word>
+			<Word>unless</Word>
+			<Word>otherwise</Word>
+			<Word>for</Word>
+			<Word>in</Word>
+			<Word>while</Word>
+		</Keywords>
+		<Keywords foreground="Navy">
+			<Word>break</Word>
+			<Word>continue</Word>
+			<Word>return</Word>
+			<Word>yield</Word>
+			<Word>goto</Word>
+		</Keywords>
+		<Keywords foreground="Teal" fontWeight="bold">
+			<Word>try</Word>
+			<Word>raise</Word>
+			<Word>ensure</Word>
+			<Word>except</Word>
+			<Word>retry</Word>
+			<Word>success</Word>
+		</Keywords>
+		<Keywords foreground="Olive">
+			<Word>fixed</Word>
+			<Word>unsafe</Word>
+		</Keywords>
+		<Keywords foreground="Purple" fontWeight="bold">
+			<Word>bool</Word>
+			<Word>double</Word>
+			<Word>single</Word>
+			<Word>byte</Word>
+			<Word>sbyte</Word>
+			<Word>short</Word>
+			<Word>ushort</Word>
+			<Word>int</Word>
+			<Word>uint</Word>
+			<Word>long</Word>
+			<Word>ulong</Word>
+			<Word>date</Word>
+			<Word>timespan</Word>
+			<Word>decimal</Word>
+			<Word>char</Word>
+			<Word>object</Word>
+			<Word>duck</Word>
+			<Word>string</Word>
+			<Word>regex</Word>
+		</Keywords>
+		<Keywords foreground="Red">
+			<Word>void</Word>
+		</Keywords>
+		<Keywords foreground="Blue" fontWeight="bold">
+			<Word>cast</Word>
+			<Word>as</Word>
+		</Keywords>
+		<Keywords foreground="Brown">
+			<Word>override</Word>
+			<Word>static</Word>
+			<Word>virtual</Word>
+			<Word>abstract</Word>
+			<Word>final</Word>
+			<Word>transient</Word>
+			<Word>partial</Word>
+		</Keywords>
+		<Keywords foreground="Blue" fontWeight="bold">
+			<Word>public</Word>
+			<Word>protected</Word>
+			<Word>private</Word>
+			<Word>internal</Word>
+		</Keywords>
+		<Keywords foreground="Green" fontWeight="bold">
+			<Word>namespace</Word>
+			<Word>import</Word>
+			<Word>from</Word>
+		</Keywords>
+		<Keywords foreground="SaddleBrown">
+			<Word>get</Word>
+			<Word>set</Word>
+		</Keywords>
+		<Keywords foreground="Black" fontWeight="bold">
+			<Word>null</Word>
+			<Word>value</Word>
+			<Word>true</Word>
+			<Word>false</Word>
+			<Word>ast</Word>
+		</Keywords>
+		<Keywords foreground="Maroon">
+			<Word>using</Word>
+			<Word>unchecked</Word>
+			<Word>checked</Word>
+			<Word>lock</Word>
+			<Word>getter</Word>
+			<Word>required</Word>
+			<Word>rawArrayIndexing</Word>
+			<Word>normalArrayIndexing</Word>
+			<Word>yieldAll</Word>
+		</Keywords>
+		<Keywords foreground="Purple">
+			<Word>assert</Word>
+			<Word>array</Word>
+			<Word>matrix</Word>
+			<Word>print</Word>
+			<Word>gets</Word>
+			<Word>prompt</Word>
+			<Word>enumerate</Word>
+			<Word>zip</Word>
+			<Word>filter</Word>
+			<Word>map</Word>
+			<Word>cat</Word>
+			<Word>__eval__</Word>
+			<Word>__switch__</Word>
+		</Keywords>
+		<Keywords foreground="Blue" fontWeight="bold">
+			<Word>constructor</Word>
+			<Word>destructor</Word>
+			<Word>def</Word>
+			<Word>include</Word>
+			<Word>event</Word>
+			<Word>ref</Word>
+		</Keywords>
+		<Keywords foreground="Gray">
+			<Word>pass</Word>
+		</Keywords>
+		<Keywords foreground="Blue" fontWeight="bold">
+			<Word>enum</Word>
+			<Word>class</Word>
+			<Word>struct</Word>
+			<Word>interface</Word>
+			<Word>mixin</Word>
+			<Word>callable</Word>
+			<Word>do</Word>
+			<Word>of</Word>
+		</Keywords>
+		<Rule foreground="MidnightBlue">[\d\w_]+(?=(\s*\())</Rule>
+		<Rule foreground="DarkBlue">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+	</RuleSet>
+	<RuleSet name="comments set">
+		<!-- allows nested /**/ comments, coloring them Green/Teal alternately -->
+		<Span foreground="Teal" multiline="true">
+			<Begin>/\*</Begin>
+			<End>\*/</End>
+			<RuleSet>
+				<Span color="Comment" ruleSet="comments set" multiline="true">
+					<Begin>/\*</Begin>
+					<End>\*/</End>
+				</Span>
+			</RuleSet>
+		</Span>
+	</RuleSet>
+</SyntaxDefinition>
