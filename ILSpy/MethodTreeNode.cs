@@ -56,8 +56,8 @@ namespace ICSharpCode.ILSpy
 			get {
 				if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal))
 					return Images.Operator;
-				if (method.IsStatic && method.HasParameters && method.Parameters[0].HasCustomAttributes) {
-					foreach (var ca in method.Parameters[0].CustomAttributes) {
+				if (method.IsStatic && method.HasCustomAttributes) {
+					foreach (var ca in method.CustomAttributes) {
 						if (ca.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
 							return Images.ExtensionMethod;
 					}
