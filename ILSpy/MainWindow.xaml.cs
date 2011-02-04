@@ -57,6 +57,10 @@ namespace ICSharpCode.ILSpy
 			this.DataContext = filterSettings;
 			InitializeComponent();
 			
+			languageComboBox.Items.Add(new Decompiler.CSharpLanguage());
+			languageComboBox.Items.Add(new Disassembler.ILLanguage());
+			languageComboBox.SelectedItem = languageComboBox.Items[0];
+			
 			textEditor.Text = "Welcome to ILSpy!";
 			AssemblyListTreeNode assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			assemblyListTreeNode.FilterSettings = filterSettings.Clone();
@@ -146,6 +150,12 @@ namespace ICSharpCode.ILSpy
 				textEditor.SyntaxHighlighting = null;
 				textEditor.Text = ex.ToString();
 			}
+		}
+		
+		void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			ILSpy.Language.Current = (ILSpy.Language)languageComboBox.SelectedItem;
+			TreeView_SelectionChanged(null, null);
 		}
 	}
 }

@@ -67,6 +67,8 @@
 					Height="16"
 					Source="Images/Open.png" />
 			</Button>
+			<Separator />
+			<ComboBox Name="languageComboBox" DisplayMemberPath="Name" Width="50" SelectionChanged="LanguageComboBox_SelectionChanged" />
 		</ToolBar>
 		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
 		<Grid>
@@ -90,6 +92,7 @@
 				<!-- Tree View of assemblies and classes -->
 				<tv:SharpTreeView
 					Name="treeView"
+					SelectionChanged="TreeView_SelectionChanged"
 					ShowRoot="False"
 					AllowDropOrder="True"
 					AllowDrop="True" />

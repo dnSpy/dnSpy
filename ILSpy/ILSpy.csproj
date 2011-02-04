@@ -75,6 +75,8 @@
     <Compile Include="BaseTypesTreeNode.cs" />
     <Compile Include="CueBannerService.cs" />
     <Compile Include="Decompiler\CSharpLanguage.cs" />
+    <Compile Include="Disassembler\CecilExtensions.cs" />
+    <Compile Include="Disassembler\ILLanguage.cs" />
     <Compile Include="EventTreeNode.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FieldTreeNode.cs" />
@@ -143,6 +145,7 @@
     <Folder Include="Images" />
     <Folder Include="Mono.Cecil.Rocks" />
     <Folder Include="Decompiler" />
+    <Folder Include="Disassembler" />
     <Folder Include="themes" />
   </ItemGroup>
   <ItemGroup>

@@ -34,6 +34,11 @@ namespace ICSharpCode.ILSpy
 				list.Add(item);
 		}
 		
+		public static void Write(this ITextOutput output, string format, params object[] args)
+		{
+			output.Write(string.Format(format, args));
+		}
+		
 		/// <summary>
 		/// Sets the value of a dependency property on <paramref name="targetObject"/> using a markup extension.
 		/// </summary>
