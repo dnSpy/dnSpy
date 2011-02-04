@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Markup;
 
@@ -27,6 +28,12 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public static class ExtensionMethods
 	{
+		public static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items)
+		{
+			foreach (T item in items)
+				list.Add(item);
+		}
+		
 		/// <summary>
 		/// Sets the value of a dependency property on <paramref name="targetObject"/> using a markup extension.
 		/// </summary>

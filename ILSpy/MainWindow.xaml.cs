@@ -35,7 +35,7 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		AssemblyListTreeNode assemblyList = new AssemblyListTreeNode();
+		AssemblyList assemblyList = new AssemblyList();
 		
 		static readonly Assembly[] initialAssemblies = {
 			typeof(object).Assembly,
@@ -55,9 +55,10 @@ namespace ICSharpCode.ILSpy
 		{
 			InitializeComponent();
 			
-			textEditor.Text = "// Welcome to ILSpy!";
-			treeView.Root = assemblyList;
-			assemblyList.Select = delegate(SharpTreeNode obj) {
+			textEditor.Text = "Welcome to ILSpy!";
+			AssemblyListTreeNode assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
+			treeView.Root = assemblyListTreeNode;
+			assemblyListTreeNode.Select = delegate(SharpTreeNode obj) {
 				if (obj != null) {
 					foreach (SharpTreeNode node in obj.Ancestors())
 						node.IsExpanded = true;
@@ -128,7 +129,7 @@ namespace ICSharpCode.ILSpy
 			try {
 				textEditor.SyntaxHighlighting = ILSpy.Language.Current.SyntaxHighlighting;
 				SmartTextOutput textOutput = new SmartTextOutput();
-				foreach (var node in treeView.SelectedItems.OfType<IDecompilableNode>()) {
+				foreach (var node in treeView.SelectedItems.OfType<ILSpyTreeNode>()) {
 					node.Decompile(ILSpy.Language.Current, textOutput);
 				}
 				textEditor.Text = textOutput.ToString();

@@ -29,9 +29,9 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
-	sealed class AssemblyTreeNode : SharpTreeNode
+	sealed class AssemblyTreeNode : ILSpyTreeNode
 	{
-		readonly AssemblyListTreeNode assemblyList;
+		readonly AssemblyList assemblyList;
 		readonly string fileName;
 		string shortName;
 		readonly Task<AssemblyDefinition> assemblyTask;
@@ -39,7 +39,7 @@ namespace ICSharpCode.ILSpy
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
 		readonly SynchronizationContext syncContext;
 		
-		public AssemblyTreeNode(string fileName, AssemblyListTreeNode assemblyList)
+		public AssemblyTreeNode(string fileName, AssemblyList assemblyList)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException("fileName");
@@ -133,8 +133,6 @@ namespace ICSharpCode.ILSpy
 				ns.Children.Clear();
 			}
 			foreach (TypeTreeNode type in classes) {
-				if (showInternalAPI == false && type.IsPublicAPI == false)
-					continue;
 				NamespaceTreeNode ns;
 				if (!namespaces.TryGetValue(type.Namespace, out ns)) {
 					ns = new NamespaceTreeNode(type.Namespace);
@@ -145,31 +143,6 @@ namespace ICSharpCode.ILSpy
 			foreach (NamespaceTreeNode ns in namespaces.Values.OrderBy(n => n.Name)) {
 				if (ns.Children.Count > 0)
 					this.Children.Add(ns);
-			}
-		}
-		
-		/// <summary>
-		/// Invalidates the list of children.
-		/// </summary>
-		void InvalidateChildren()
-		{
-			this.Children.Clear();
-			if (this.IsExpanded)
-				this.LoadChildren();
-			else
-				this.LazyLoading = true;
-		}
-		
-		bool showInternalAPI = true;
-		
-		public bool ShowInternalAPI {
-			get { return showInternalAPI; }
-			set {
-				if (showInternalAPI != value) {
-					showInternalAPI = value;
-					InvalidateChildren();
-					RaisePropertyChanged("ShowInternalAPI");
-				}
 			}
 		}
 		
@@ -204,7 +177,7 @@ namespace ICSharpCode.ILSpy
 		
 		public AssemblyTreeNode LookupReferencedAssembly(string fullName)
 		{
-			foreach (AssemblyTreeNode node in assemblyList.Children) {
+			foreach (AssemblyTreeNode node in assemblyList.Assemblies) {
 				if (fullName.Equals(node.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
 					return node;
 			}

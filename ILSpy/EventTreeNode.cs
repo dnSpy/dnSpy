@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Represents an event in the TreeView.
 	/// </summary>
-	sealed class EventTreeNode : SharpTreeNode
+	sealed class EventTreeNode : ILSpyTreeNode
 	{
 		readonly EventDefinition ev;
 		

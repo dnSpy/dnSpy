@@ -101,7 +101,6 @@
 				Grid.Column="2">
 				<ae:TextEditor
 					Name="textEditor"
-					SyntaxHighlighting="C#"
 					FontFamily="Consolas"
 					FontSize="10pt"
 					IsReadOnly="True"

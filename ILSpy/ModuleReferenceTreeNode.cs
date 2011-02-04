@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Module reference in ReferenceFolderTreeNode.
 	/// </summary>
-	public class ModuleReferenceTreeNode : SharpTreeNode
+	sealed class ModuleReferenceTreeNode : ILSpyTreeNode
 	{
 		ModuleReference r;
 		
@@ -38,6 +38,10 @@ namespace ICSharpCode.ILSpy
 		
 		public override object Text {
 			get { return r.Name; }
+		}
+		
+		public override object Icon {
+			get { return Images.Library; }
 		}
 	}
 }

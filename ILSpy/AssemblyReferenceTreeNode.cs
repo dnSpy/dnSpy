@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Node within assembly reference list.
 	/// </summary>
-	sealed class AssemblyReferenceTreeNode : SharpTreeNode
+	sealed class AssemblyReferenceTreeNode : ILSpyTreeNode
 	{
 		readonly AssemblyNameReference r;
 		readonly AssemblyTreeNode parentAssembly;

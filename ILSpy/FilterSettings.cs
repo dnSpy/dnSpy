@@ -17,14 +17,53 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.ComponentModel;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
-	/// Interface for decompilable tree nodes.
+	/// Represents the filters applied to the tree view.
 	/// </summary>
-	public interface IDecompilableNode
+	public class FilterSettings : INotifyPropertyChanged
 	{
-		void Decompile(Language language, ITextOutput output);
+		string searchTerm;
+		
+		public string SearchTerm {
+			get { return searchTerm; }
+			set {
+				if (searchTerm != value) {
+					searchTerm = value;
+					OnPropertyChanged("SearchTerm");
+				}
+			}
+		}
+		
+		bool showInternalApi;
+		
+		public bool ShowInternalApi {
+			get { return showInternalApi; }
+			set {
+				if (showInternalApi != value) {
+					showInternalApi = value;
+					OnPropertyChanged("ShowInternalAPI");
+				}
+			}
+		}
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			if (PropertyChanged != null) {
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		public FilterSettings Clone()
+		{
+			FilterSettings f = (FilterSettings)MemberwiseClone();
+			f.PropertyChanged = null;
+			return f;
+		}
 	}
 }

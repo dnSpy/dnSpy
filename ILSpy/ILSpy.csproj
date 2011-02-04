@@ -68,6 +68,7 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListTreeNode.cs" />
     <Compile Include="AssemblyReferenceTreeNode.cs" />
     <Compile Include="AssemblyTreeNode.cs" />
@@ -76,9 +77,10 @@
     <Compile Include="EventTreeNode.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FieldTreeNode.cs" />
+    <Compile Include="FilterSettings.cs" />
     <Compile Include="Fusion.cs" />
     <Compile Include="GacInterop.cs" />
-    <Compile Include="IDecompilableNode.cs" />
+    <Compile Include="ILSpyTreeNode.cs" />
     <Compile Include="ITextOutput.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Images\Images.cs" />
@@ -176,6 +178,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Property.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Find.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Library.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

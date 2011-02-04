@@ -22,7 +22,7 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
 {
-	sealed class NamespaceTreeNode : SharpTreeNode
+	sealed class NamespaceTreeNode : ILSpyTreeNode
 	{
 		string name;
 		

@@ -18,12 +18,14 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows;
+
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -32,8 +34,23 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Represents a list of assemblies.
 	/// </summary>
-	sealed class AssemblyListTreeNode : SharpTreeNode
+	sealed class AssemblyListTreeNode : ILSpyTreeNode<AssemblyTreeNode>
 	{
+		readonly AssemblyList assemblyList;
+		
+		public AssemblyList AssemblyList {
+			get { return assemblyList; }
+		}
+		
+		public AssemblyListTreeNode(AssemblyList assemblyList)
+			: base(assemblyList.Assemblies)
+		{
+			if (assemblyList == null)
+				throw new ArgumentNullException("assemblyList");
+			this.assemblyList = assemblyList;
+			this.FilterSettings = new FilterSettings(); // default filter
+		}
+		
 		public override bool CanDelete(SharpTreeNode[] nodes)
 		{
 			return nodes.All(n => n is AssemblyTreeNode);
@@ -46,8 +63,8 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DeleteCore(SharpTreeNode[] nodes)
 		{
-			foreach (SharpTreeNode node in nodes)
-				this.Children.Remove(node);
+			foreach (AssemblyTreeNode node in nodes)
+				assemblyList.Assemblies.Remove(node);
 		}
 		
 		public override DropEffect CanDrop(IDataObject data, DropEffect requestedEffect)
@@ -68,7 +85,7 @@ namespace ICSharpCode.ILSpy
 			if (files != null) {
 				var nodes = (from file in files
 				             where file != null
-				             select OpenAssembly(file) into node
+				             select assemblyList.OpenAssembly(file) into node
 				             where node != null
 				             select node).Distinct().ToList();
 				foreach (AssemblyTreeNode node in nodes) {
@@ -84,51 +101,6 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public AssemblyTreeNode OpenAssembly(string file)
-		{
-			App.Current.Dispatcher.VerifyAccess();
-			
-			file = Path.GetFullPath(file);
-			
-			foreach (AssemblyTreeNode node in this.Children) {
-				if (file.Equals(node.FileName, StringComparison.OrdinalIgnoreCase))
-					return node;
-			}
-			
-			var newNode = new AssemblyTreeNode(file, this);
-			this.Children.Add(newNode);
-			return newNode;
-		}
-		
 		public Action<SharpTreeNode> Select = delegate {};
-		
-		ConcurrentDictionary<TypeDefinition, TypeTreeNode> typeDict = new ConcurrentDictionary<TypeDefinition, TypeTreeNode>();
-		
-		public void RegisterTypeNode(TypeTreeNode node)
-		{
-			// called on background loading thread, so we need to use a ConcurrentDictionary
-			typeDict[node.TypeDefinition] = node;
-		}
-		
-		public TypeTreeNode FindTypeNode(TypeDefinition def)
-		{
-			if (def.DeclaringType != null) {
-				TypeTreeNode decl = FindTypeNode(def.DeclaringType);
-				if (decl != null) {
-					decl.EnsureLazyChildren();
-					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def);
-				}
-			} else {
-				TypeTreeNode node;
-				if (typeDict.TryGetValue(def, out node)) {
-					// Ensure that the node is connected to the tree
-					node.ParentAssemblyNode.EnsureLazyChildren();
-					// Validate that the node wasn't removed due to visibility settings:
-					if (node.Ancestors().Contains(this))
-						return node;
-				}
-			}
-			return null;
-		}
 	}
 }

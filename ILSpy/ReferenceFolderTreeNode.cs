@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// References folder.
 	/// </summary>
-	sealed class ReferenceFolderTreeNode : SharpTreeNode
+	sealed class ReferenceFolderTreeNode : ILSpyTreeNode
 	{
 		readonly ModuleDefinition module;
 		readonly AssemblyTreeNode parentAssembly;

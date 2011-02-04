@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Tree Node representing a field, method, property, or event.
 	/// </summary>
-	sealed class MethodTreeNode : SharpTreeNode, IDecompilableNode
+	sealed class MethodTreeNode : ILSpyTreeNode
 	{
 		MethodDefinition method;
 		
@@ -66,7 +66,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public void Decompile(Language language, ITextOutput output)
+		public override void Decompile(Language language, ITextOutput output)
 		{
 			language.Decompile(method, output);
 		}

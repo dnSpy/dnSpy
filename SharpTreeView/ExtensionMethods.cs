@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace ICSharpCode.TreeView
 {
-	public static class ExtensionMethods
+	static class ExtensionMethods
 	{
 		public static T FindAncestor<T>(this DependencyObject d) where T : class
 		{
