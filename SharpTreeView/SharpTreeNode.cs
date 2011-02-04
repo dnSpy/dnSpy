@@ -167,8 +167,8 @@ namespace ICSharpCode.TreeView
 		public void EnsureLazyChildren()
 		{
 			if (LazyLoading) {
-				LoadChildren();
 				LazyLoading = false;
+				LoadChildren();
 			}
 		}
 
