@@ -56,8 +56,13 @@ namespace ICSharpCode.ILSpy
 			textEditor.Text = "// Welcome to ILSpy!";
 			treeView.Root = assemblyList;
 			assemblyList.Select = delegate(SharpTreeNode obj) {
-				treeView.SelectedItem = obj;
-				treeView.ScrollIntoView(obj);
+				if (obj != null) {
+					foreach (SharpTreeNode node in obj.Ancestors())
+						node.IsExpanded = true;
+					
+					treeView.SelectedItem = obj;
+					treeView.ScrollIntoView(obj);
+				}
 			};
 			
 			foreach (Assembly asm in initialAssemblies)

@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -75,9 +76,7 @@ namespace ICSharpCode.ILSpy
 			
 			public override bool ShowExpander {
 				get {
-					if (isInterface || tr.FullName == "System.Object")
-						EnsureLazyChildren(); // need to create children to test whether we have any
-					return base.ShowExpander;
+					return def != null && (def.BaseType != null || def.HasInterfaces);
 				}
 			}
 			
@@ -98,6 +97,23 @@ namespace ICSharpCode.ILSpy
 			{
 				if (def != null)
 					AddBaseTypes(this.Children, def);
+			}
+			
+			public override void ActivateItem(System.Windows.RoutedEventArgs e)
+			{
+				// on item activation, try to resolve once again (maybe the user loaded the assembly in the meantime)
+				if (def == null) {
+					def = tr.Resolve();
+					if (def != null)
+						this.LazyLoading = true; // re-load children
+				}
+				if (def != null) {
+					var assemblyListNode = this.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();
+					if (assemblyListNode != null) {
+						assemblyListNode.Select(assemblyListNode.FindTypeNode(def));
+						e.Handled = true;
+					}
+				}
 			}
 		}
 	}

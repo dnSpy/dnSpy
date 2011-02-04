@@ -30,14 +30,25 @@ namespace ICSharpCode.ILSpy
 	sealed class TypeTreeNode : SharpTreeNode
 	{
 		readonly TypeDefinition type;
+		readonly AssemblyTreeNode parentAssemblyNode;
 		
-		public TypeTreeNode(TypeDefinition type)
+		public TypeTreeNode(TypeDefinition type, AssemblyTreeNode parentAssemblyNode)
 		{
+			if (parentAssemblyNode == null)
+				throw new ArgumentNullException("parentAssemblyNode");
 			if (type == null)
 				throw new ArgumentNullException("type");
 			this.type = type;
-			
+			this.parentAssemblyNode = parentAssemblyNode;
 			this.LazyLoading = true;
+		}
+		
+		public TypeDefinition TypeDefinition {
+			get { return type; }
+		}
+		
+		public AssemblyTreeNode ParentAssemblyNode {
+			get { return parentAssemblyNode; }
 		}
 		
 		public string Name {
@@ -68,9 +79,10 @@ namespace ICSharpCode.ILSpy
 		
 		protected override void LoadChildren()
 		{
-			this.Children.Add(new BaseTypesTreeNode(type));
+			if (type.BaseType != null || type.HasInterfaces)
+				this.Children.Add(new BaseTypesTreeNode(type));
 			foreach (TypeDefinition nestedType in type.NestedTypes) {
-				this.Children.Add(new TypeTreeNode(nestedType));
+				this.Children.Add(new TypeTreeNode(nestedType, parentAssemblyNode));
 			}
 			foreach (FieldDefinition field in type.Fields) {
 				this.Children.Add(new FieldTreeNode(field));

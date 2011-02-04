@@ -76,7 +76,9 @@ namespace ICSharpCode.ILSpy
 			p.AssemblyResolver = new MyAssemblyResolver(this);
 			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(fileName, p);
 			foreach (TypeDefinition type in assembly.MainModule.Types.OrderBy(t => t.FullName)) {
-				classes.Add(new TypeTreeNode(type));
+				TypeTreeNode node = new TypeTreeNode(type, this);
+				classes.Add(node);
+				assemblyList.RegisterTypeNode(node);
 			}
 			syncContext.Post(
 				delegate {

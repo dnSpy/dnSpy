@@ -17,13 +17,13 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows;
-
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -96,5 +96,34 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public Action<SharpTreeNode> Select = delegate {};
+		
+		ConcurrentDictionary<TypeDefinition, TypeTreeNode> typeDict = new ConcurrentDictionary<TypeDefinition, TypeTreeNode>();
+		
+		public void RegisterTypeNode(TypeTreeNode node)
+		{
+			// called on background loading thread, so we need to use a ConcurrentDictionary
+			typeDict[node.TypeDefinition] = node;
+		}
+		
+		public TypeTreeNode FindTypeNode(TypeDefinition def)
+		{
+			if (def.DeclaringType != null) {
+				TypeTreeNode decl = FindTypeNode(def.DeclaringType);
+				if (decl != null) {
+					decl.EnsureLazyChildren();
+					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def);
+				}
+			} else {
+				TypeTreeNode node;
+				if (typeDict.TryGetValue(def, out node)) {
+					// Ensure that the node is connected to the tree
+					node.ParentAssemblyNode.EnsureLazyChildren();
+					// Validate that the node wasn't removed due to visibility settings:
+					if (node.Ancestors().Contains(this))
+						return node;
+				}
+			}
+			return null;
+		}
 	}
 }
