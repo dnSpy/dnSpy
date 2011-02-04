@@ -74,6 +74,7 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FieldTreeNode.cs" />
     <Compile Include="Fusion.cs" />
+    <Compile Include="GacInterop.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="MethodTreeNode.cs" />
     <Compile Include="ModuleReferenceTreeNode.cs" />

@@ -18,20 +18,18 @@ namespace ICSharpCode.ILSpy
 	{
 		readonly IAssemblyResolver assemblyResolver;
 		readonly string fileName;
-		string fullName;
 		string shortName;
 		readonly Task<AssemblyDefinition> assemblyTask;
 		readonly List<TypeTreeNode> classes = new List<TypeTreeNode>();
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
 		readonly SynchronizationContext syncContext;
 		
-		public AssemblyTreeNode(string fileName, string fullName, IAssemblyResolver assemblyResolver)
+		public AssemblyTreeNode(string fileName, IAssemblyResolver assemblyResolver)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException("fileName");
 			
 			this.fileName = fileName;
-			this.fullName = fullName;
 			this.assemblyResolver = assemblyResolver;
 			this.assemblyTask = Task.Factory.StartNew<AssemblyDefinition>(LoadAssembly); // requires that this.fileName is set
 			this.shortName = Path.GetFileNameWithoutExtension(fileName);
@@ -42,10 +40,6 @@ namespace ICSharpCode.ILSpy
 		
 		public string FileName {
 			get { return fileName; }
-		}
-		
-		public string FullName {
-			get { return fullName ?? assemblyTask.Result.FullName; }
 		}
 		
 		public AssemblyDefinition AssemblyDefinition {
@@ -74,10 +68,6 @@ namespace ICSharpCode.ILSpy
 					if (shortName != assembly.Name.Name) {
 						shortName = assembly.Name.Name;
 						RaisePropertyChanged("Text");
-					}
-					if (fullName != assembly.FullName) {
-						fullName = assembly.FullName;
-						RaisePropertyChanged("FullName");
 					}
 				}, null);
 			

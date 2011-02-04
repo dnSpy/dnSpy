@@ -15,6 +15,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
@@ -46,63 +47,52 @@ namespace ICSharpCode.ILSpy
 		#region Fetch Gac Contents
 		sealed class GacEntry : IEquatable<GacEntry>
 		{
-			readonly string fullAssemblyName;
-			readonly string shortName, culture, publicKeyToken;
-			readonly Version version;
+			readonly AssemblyNameReference r;
+			readonly string fileName;
 			
-			public GacEntry(string fullAssemblyName)
+			public GacEntry(AssemblyNameReference r, string fileName)
 			{
-				this.fullAssemblyName = fullAssemblyName;
-				string[] components = fullAssemblyName.Split(',');
-				shortName = components[0];
-				for (int i = 1; i < components.Length; i++) {
-					string val = components[i].Trim();
-					int pos = val.IndexOf('=');
-					if (pos > 0) {
-						switch (val.Substring(0, pos)) {
-							case "Version":
-								string versionText = val.Substring(pos + 1);
-								Version.TryParse(versionText, out version);
-								break;
-							case "Culture":
-								culture = val.Substring(pos + 1);
-								break;
-							case "PublicKeyToken":
-								publicKeyToken = val.Substring(pos + 1);
-								break;
-						}
-					}
-				}
+				this.r = r;
+				this.fileName = fileName;
 			}
 			
 			public string FullName {
-				get { return fullAssemblyName; }
+				get { return r.FullName; }
 			}
 			
 			public string ShortName {
-				get { return shortName; }
+				get { return r.Name; }
+			}
+			
+			public string FileName {
+				get { return fileName; }
 			}
 			
 			public Version Version {
-				get { return version; }
+				get { return r.Version; }
 			}
 			
 			public string Culture {
-				get { return culture; }
+				get { return r.Culture; }
 			}
 			
 			public string PublicKeyToken {
-				get { return publicKeyToken; }
+				get {
+					StringBuilder s = new StringBuilder();
+					foreach (byte b in r.PublicKeyToken)
+						s.Append(b.ToString("x2"));
+					return s.ToString();
+				}
 			}
 			
 			public override string ToString()
 			{
-				return fullAssemblyName;
+				return r.FullName;
 			}
 			
 			public override int GetHashCode()
 			{
-				return fullAssemblyName.GetHashCode();
+				return r.FullName.GetHashCode();
 			}
 			
 			public override bool Equals(object obj)
@@ -112,31 +102,18 @@ namespace ICSharpCode.ILSpy
 			
 			public bool Equals(GacEntry o)
 			{
-				return o != null && fullAssemblyName == o.fullAssemblyName;
-			}
-		}
-		
-		IEnumerable<GacEntry> GetGacAssemblyFullNames()
-		{
-			IApplicationContext applicationContext = null;
-			IAssemblyEnum assemblyEnum = null;
-			IAssemblyName assemblyName = null;
-			
-			Fusion.CreateAssemblyEnum(out assemblyEnum, null, null, 2, 0);
-			while (!cancelFetchThread && assemblyEnum.GetNextAssembly(out applicationContext, out assemblyName, 0) == 0) {
-				uint nChars = 0;
-				assemblyName.GetDisplayName(null, ref nChars, 0);
-				
-				StringBuilder name = new StringBuilder((int)nChars);
-				assemblyName.GetDisplayName(name, ref nChars, 0);
-				
-				yield return new GacEntry(name.ToString());
+				return o != null && r.FullName == o.r.FullName;
 			}
 		}
 		
 		void FetchGacContents()
 		{
-			foreach (var entry in GetGacAssemblyFullNames().Distinct()) {
+			var entries =
+				from r in GacInterop.GetGacAssemblyFullNames()
+				let file = GacInterop.FindAssemblyInNetGac(r)
+				where file != null
+				select new GacEntry(r, file);
+			foreach (var entry in entries.Distinct()) {
 				Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<GacEntry>(AddNewEntry), entry);
 			}
 		}
@@ -171,9 +148,9 @@ namespace ICSharpCode.ILSpy
 			Close();
 		}
 		
-		public string[] SelectedFullNames {
+		public string[] SelectedFileNames {
 			get {
-				return listView.SelectedItems.OfType<GacEntry>().Select(e => e.FullName).ToArray();
+				return listView.SelectedItems.OfType<GacEntry>().Select(e => e.FileName).ToArray();
 			}
 		}
 	}

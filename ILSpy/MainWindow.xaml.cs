@@ -80,8 +80,8 @@ namespace ICSharpCode.ILSpy
 			dlg.Owner = this;
 			if (dlg.ShowDialog() == true) {
 				treeView.UnselectAll();
-				foreach (string fullName in dlg.SelectedFullNames) {
-					var asm = assemblyList.OpenGacAssembly(fullName);
+				foreach (string file in dlg.SelectedFileNames) {
+					var asm = assemblyList.OpenAssembly(file);
 					if (asm != null)
 						treeView.SelectedItems.Add(asm);
 				}

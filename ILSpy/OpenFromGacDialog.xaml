@@ -8,7 +8,7 @@
 	MinWidth="200"
 	MinHeight="150"
 	Height="350"
-	Width="650"
+	Width="750"
 	FocusManager.FocusedElement="{Binding ElementName=filterTextBox}">
 	<Grid
 		Margin="12,8">
@@ -26,8 +26,9 @@
 				<GridView>
 					<local:SortableGridViewColumn x:Name="nameColumn" Width="300" Header="Reference Name" DisplayMemberBinding="{Binding ShortName}" />
 					<local:SortableGridViewColumn Width="75" Header="Version" DisplayMemberBinding="{Binding Version}" />
-					<local:SortableGridViewColumn Width="80" Header="Culture" DisplayMemberBinding="{Binding Culture}" />
-					<local:SortableGridViewColumn Width="120" Header="Public Key Token" DisplayMemberBinding="{Binding PublicKeyToken}" />
+					<local:SortableGridViewColumn Width="65" Header="Culture" DisplayMemberBinding="{Binding Culture}" />
+					<local:SortableGridViewColumn Width="115" Header="Public Key Token" DisplayMemberBinding="{Binding PublicKeyToken}" />
+					<local:SortableGridViewColumn Width="1000" Header="Location" DisplayMemberBinding="{Binding FileName}" />
 				</GridView>
 			</ListView.View>
 		</ListView>
