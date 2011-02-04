@@ -19,44 +19,19 @@
 using System;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.Decompiler
 {
 	/// <summary>
-	/// Description of ILanguage.
+	/// Decompiler logic for C#.
 	/// </summary>
-	public abstract class Language
+	public class CSharpLanguage : Language
 	{
-		public static readonly Language Current = new Decompiler.CSharpLanguage();
-		
-		public abstract string Name { get; }
-		
-		public virtual ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting {
-			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition(this.Name); }
+		public override string Name {
+			get { return "C#"; }
 		}
 		
-		public virtual void Decompile(MethodDefinition method, ITextOutput output)
+		public override void Decompile(MethodDefinition methodDefinition, ITextOutput output)
 		{
-		}
-		
-		public virtual void Decompile(PropertyDefinition property, ITextOutput output)
-		{
-		}
-		
-		public virtual void Decompile(FieldDefinition field, ITextOutput output)
-		{
-		}
-		
-		public virtual void Decompile(EventDefinition ev, ITextOutput output)
-		{
-		}
-		
-		public virtual void Decompile(TypeDefinition type, ITextOutput output)
-		{
-		}
-		
-		public string TypeToString(TypeReference t)
-		{
-			return t.Name;
 		}
 	}
 }

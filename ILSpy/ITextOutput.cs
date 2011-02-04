@@ -17,46 +17,88 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Mono.Cecil;
+using System.Text;
+using ICSharpCode.AvalonEdit.Document;
 
 namespace ICSharpCode.ILSpy
 {
-	/// <summary>
-	/// Description of ILanguage.
-	/// </summary>
-	public abstract class Language
+	public interface ITextOutput
 	{
-		public static readonly Language Current = new Decompiler.CSharpLanguage();
+		void Indent();
+		void Unindent();
+		void Write(char ch);
+		void Write(string text);
+		void WriteComment(string comment);
+		void WriteLine();
+		void WriteDefinition(string text, object definition);
+		void WriteReference(string text, object definition);
+	}
+	
+	sealed class SmartTextOutput : ITextOutput
+	{
+		readonly StringBuilder b = new StringBuilder();
+		int indent;
+		bool needsIndent;
 		
-		public abstract string Name { get; }
-		
-		public virtual ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting {
-			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition(this.Name); }
+		public override string ToString()
+		{
+			return b.ToString();
 		}
 		
-		public virtual void Decompile(MethodDefinition method, ITextOutput output)
+		public void Indent()
 		{
+			indent++;
 		}
 		
-		public virtual void Decompile(PropertyDefinition property, ITextOutput output)
+		public void Unindent()
 		{
+			indent--;
 		}
 		
-		public virtual void Decompile(FieldDefinition field, ITextOutput output)
+		void WriteIndent()
 		{
+			if (needsIndent) {
+				needsIndent = false;
+				for (int i = 0; i < indent; i++) {
+					b.Append('\t');
+				}
+			}
 		}
 		
-		public virtual void Decompile(EventDefinition ev, ITextOutput output)
+		public void Write(char ch)
 		{
+			WriteIndent();
+			b.Append(ch);
 		}
 		
-		public virtual void Decompile(TypeDefinition type, ITextOutput output)
+		public void Write(string text)
 		{
+			WriteIndent();
+			b.Append(text);
 		}
 		
-		public string TypeToString(TypeReference t)
+		public void WriteComment(string comment)
 		{
-			return t.Name;
+			WriteIndent();
+			b.Append(comment);
+		}
+		
+		public void WriteLine()
+		{
+			b.AppendLine();
+			needsIndent = true;
+		}
+		
+		public void WriteDefinition(string text, object definition)
+		{
+			WriteIndent();
+			b.Append(text);
+		}
+		
+		public void WriteReference(string text, object definition)
+		{
+			WriteIndent();
+			b.Append(text);
 		}
 	}
 }

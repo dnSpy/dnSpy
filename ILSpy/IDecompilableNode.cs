@@ -17,46 +17,14 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
-	/// Description of ILanguage.
+	/// Interface for decompilable tree nodes.
 	/// </summary>
-	public abstract class Language
+	public interface IDecompilableNode
 	{
-		public static readonly Language Current = new Decompiler.CSharpLanguage();
-		
-		public abstract string Name { get; }
-		
-		public virtual ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting {
-			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition(this.Name); }
-		}
-		
-		public virtual void Decompile(MethodDefinition method, ITextOutput output)
-		{
-		}
-		
-		public virtual void Decompile(PropertyDefinition property, ITextOutput output)
-		{
-		}
-		
-		public virtual void Decompile(FieldDefinition field, ITextOutput output)
-		{
-		}
-		
-		public virtual void Decompile(EventDefinition ev, ITextOutput output)
-		{
-		}
-		
-		public virtual void Decompile(TypeDefinition type, ITextOutput output)
-		{
-		}
-		
-		public string TypeToString(TypeReference t)
-		{
-			return t.Name;
-		}
+		void Decompile(Language language, ITextOutput output);
 	}
 }

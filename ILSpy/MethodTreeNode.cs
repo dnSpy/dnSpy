@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Tree Node representing a field, method, property, or event.
 	/// </summary>
-	public sealed class MethodTreeNode : SharpTreeNode
+	sealed class MethodTreeNode : SharpTreeNode, IDecompilableNode
 	{
 		MethodDefinition method;
 		
@@ -64,6 +64,11 @@ namespace ICSharpCode.ILSpy
 				}
 				return Images.Method;
 			}
+		}
+		
+		public void Decompile(Language language, ITextOutput output)
+		{
+			language.Decompile(method, output);
 		}
 	}
 }

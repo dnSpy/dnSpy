@@ -72,11 +72,14 @@
     <Compile Include="AssemblyReferenceTreeNode.cs" />
     <Compile Include="AssemblyTreeNode.cs" />
     <Compile Include="BaseTypesTreeNode.cs" />
+    <Compile Include="Decompiler\CSharpLanguage.cs" />
     <Compile Include="EventTreeNode.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FieldTreeNode.cs" />
     <Compile Include="Fusion.cs" />
     <Compile Include="GacInterop.cs" />
+    <Compile Include="IDecompilableNode.cs" />
+    <Compile Include="ITextOutput.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="MethodTreeNode.cs" />
@@ -136,6 +139,7 @@
   <ItemGroup>
     <Folder Include="Images" />
     <Folder Include="Mono.Cecil.Rocks" />
+    <Folder Include="Decompiler" />
     <Folder Include="themes" />
   </ItemGroup>
   <ItemGroup>

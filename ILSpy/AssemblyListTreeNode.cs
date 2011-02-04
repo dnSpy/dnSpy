@@ -54,6 +54,8 @@ namespace ICSharpCode.ILSpy
 		{
 			if (data.GetDataPresent(AssemblyTreeNode.DataFormat))
 				return DropEffect.Move;
+			else if (data.GetDataPresent(DataFormats.FileDrop))
+				return DropEffect.Move;
 			else
 				return DropEffect.None;
 		}
@@ -61,8 +63,11 @@ namespace ICSharpCode.ILSpy
 		public override void Drop(IDataObject data, int index, DropEffect finalEffect)
 		{
 			string[] files = data.GetData(AssemblyTreeNode.DataFormat) as string[];
+			if (files == null)
+				files = data.GetData(DataFormats.FileDrop) as string[];
 			if (files != null) {
 				var nodes = (from file in files
+				             where file != null
 				             select OpenAssembly(file) into node
 				             where node != null
 				             select node).Distinct().ToList();

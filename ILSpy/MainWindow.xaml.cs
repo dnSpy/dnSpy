@@ -22,7 +22,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 
@@ -67,6 +69,10 @@ namespace ICSharpCode.ILSpy
 			
 			foreach (Assembly asm in initialAssemblies)
 				assemblyList.OpenAssembly(asm.Location);
+			string[] args = Environment.GetCommandLineArgs();
+			for (int i = 1; i < args.Length; i++) {
+				assemblyList.OpenAssembly(args[i]);
+			}
 		}
 		
 		void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -114,6 +120,21 @@ namespace ICSharpCode.ILSpy
 			dlg.Owner = this;
 			if (dlg.ShowDialog() == true) {
 				OpenFiles(dlg.SelectedFileNames);
+			}
+		}
+		
+		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			try {
+				textEditor.SyntaxHighlighting = ILSpy.Language.Current.SyntaxHighlighting;
+				SmartTextOutput textOutput = new SmartTextOutput();
+				foreach (var node in treeView.SelectedItems.OfType<IDecompilableNode>()) {
+					node.Decompile(ILSpy.Language.Current, textOutput);
+				}
+				textEditor.Text = textOutput.ToString();
+			} catch (Exception ex) {
+				textEditor.SyntaxHighlighting = null;
+				textEditor.Text = ex.ToString();
 			}
 		}
 	}
