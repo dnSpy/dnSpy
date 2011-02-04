@@ -55,7 +55,7 @@ namespace Decompiler
 							}
 						case Code.Calli:    throw new NotImplementedException();
 						case Code.Ret:
-							if (methodDef.ReturnType.ReturnType.FullName == Constants.Void) {
+							if (methodDef.ReturnType.FullName == Constants.Void) {
 								return 0;
 							} else {
 								return 1;
@@ -85,7 +85,7 @@ namespace Decompiler
 						case Code.Call:
 						case Code.Callvirt:
 							Cecil.MethodReference cecilMethod = ((MethodReference)this.Operand);
-							if (cecilMethod.ReturnType.ReturnType.FullName == Constants.Void) {
+							if (cecilMethod.ReturnType.FullName == Constants.Void) {
 								return 0;
 							} else {
 								return 1;

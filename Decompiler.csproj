@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectGuid>{EE3A3C1A-F9C3-4C75-853D-A9476E518C3A}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -7,10 +8,14 @@
     <RootNamespace>Decompiler</RootNamespace>
     <AssemblyName>Decompiler</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
@@ -23,6 +28,13 @@
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>x86</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <ItemGroup>
@@ -44,6 +56,7 @@
   <ItemGroup>
     <Folder Include="src" />
     <Folder Include="src\ControlFlow" />
+    <Folder Include="src\Mono.Cecil.Rocks" />
     <Folder Include="src\Transforms" />
     <Folder Include="src\Transforms\Ast" />
     <Compile Include="src\AssemblyInfo.cs" />
@@ -54,6 +67,7 @@
     <Compile Include="src\ByteCode.Type.cs" />
     <Compile Include="src\ByteCodeCollection.cs" />
     <Compile Include="src\CilStack.cs" />
+    <Compile Include="src\Constants.cs" />
     <Compile Include="src\ControlFlow\Node-Optimize.cs" />
     <Compile Include="src\ControlFlow\Node-Transforms.cs" />
     <Compile Include="src\ControlFlow\NodeCollection.cs" />
@@ -61,6 +75,7 @@
     <Compile Include="src\ControlFlow\Node-Structure.cs" />
     <Compile Include="src\MainForm.cs" />
     <Compile Include="src\MainForm.Designer.cs" />
+    <Compile Include="src\Mono.Cecil.Rocks\MethodBodyRocks.cs" />
     <Compile Include="src\Options.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\ByteCode.StackAnalysis.cs" />
@@ -86,8 +101,8 @@
       <Link>Reversi.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <ProjectReference Include="lib\cecil-0.6\src\Mono.Cecil\Mono.Cecil.csproj">
-      <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
+    <ProjectReference Include="lib\Mono.Cecil\Mono.Cecil.csproj">
+      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
     </ProjectReference>
     <ProjectReference Include="lib\NRefactory\Project\NRefactory.csproj">

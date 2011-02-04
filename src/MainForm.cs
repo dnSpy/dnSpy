@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -59,7 +58,7 @@ namespace Decompiler
 			Options.TypeFilter = filter.Text;
 			
 			
-			AssemblyDefinition assembly = AssemblyFactory.GetAssembly(filename);
+			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(filename);
 			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddAssembly(assembly);
 			SourceCode = codeDomBuilder.GenerateCode();

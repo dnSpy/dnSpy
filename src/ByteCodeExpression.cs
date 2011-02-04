@@ -77,12 +77,12 @@ namespace Decompiler
 		
 		public static ByteCodeExpression Ldloc(string name)
 		{
-			return new ByteCodeExpression(OpCodes.Ldloc, new VariableDefinition(name, 0, null, null), true);
+			return new ByteCodeExpression(OpCodes.Ldloc, new VariableDefinition(name, null), true);
 		}
 		
 		public static ByteCodeExpression Stloc(string name)
 		{
-			return new ByteCodeExpression(OpCodes.Stloc, new VariableDefinition(name, 0, null, null), false);
+			return new ByteCodeExpression(OpCodes.Stloc, new VariableDefinition(name, null), false);
 		}
 		
 		public ByteCodeExpression(OpCode opCode, object operand, bool returnsValue)

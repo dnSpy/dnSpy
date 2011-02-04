@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
-using Microsoft.CSharp;
-
+using System.Linq;
 using Ast = ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.PrettyPrinter;
-
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -261,7 +258,9 @@ namespace Decompiler
 			}
 			
 			// Add constructors
-			foreach(MethodDefinition methodDef in typeDef.Constructors) {
+			foreach(MethodDefinition methodDef in typeDef.Methods) {
+				if (!methodDef.IsConstructor) continue;
+				
 				Ast.ConstructorDeclaration astMethod = new Ast.ConstructorDeclaration(
 					methodDef.Name,
 					ConvertModifiers(methodDef),
@@ -281,7 +280,7 @@ namespace Decompiler
 				
 				Ast.MethodDeclaration astMethod = new Ast.MethodDeclaration();
 				astMethod.Name = methodDef.Name;
-				astMethod.TypeReference = new Ast.TypeReference(methodDef.ReturnType.ReturnType.FullName);
+				astMethod.TypeReference = new Ast.TypeReference(methodDef.ReturnType.FullName);
 				astMethod.Modifier = ConvertModifiers(methodDef);
 				
 				astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
@@ -293,12 +292,12 @@ namespace Decompiler
 				astType.Children.Add(new IdentifierExpression("\r\n"));
 			}
 			
-			if (astType.Children.Last is IdentifierExpression) {
+			if (astType.Children.LastOrDefault() is IdentifierExpression) {
 				astType.Children.Last.Remove();
 			}
 		}
 		
-		IEnumerable<Ast.ParameterDeclarationExpression> MakeParameters(ParameterDefinitionCollection paramCol)
+		IEnumerable<Ast.ParameterDeclarationExpression> MakeParameters(IEnumerable<ParameterDefinition> paramCol)
 		{
 			foreach(ParameterDefinition paramDef in paramCol) {
 				Ast.ParameterDeclarationExpression astParam = new Ast.ParameterDeclarationExpression(

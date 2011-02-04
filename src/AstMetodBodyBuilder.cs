@@ -7,6 +7,7 @@ using ICSharpCode.NRefactory.Ast;
 using Cecil = Mono.Cecil;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 
 using Decompiler.ControlFlow;
 
@@ -31,7 +32,7 @@ namespace Decompiler
 			
 			if (methodDef.Body == null) return astBlock;
 			
-			methodDef.Body.Simplify();
+			methodDef.Body.SimplifyMacros();
 			
 			ByteCodeCollection body = new ByteCodeCollection(methodDef);
 			
@@ -48,22 +49,37 @@ namespace Decompiler
 			}
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
+			Dictionary<string, int> typeNames = new Dictionary<string, int>();
 			int boolFlagId = 1;
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
-				if (varDef.VariableType.FullName == Cecil.Constants.Int32 &&
-				    varDef.Name.StartsWith("V_") &&
-				    intNames.Count > 0)
-				{
-					varDef.Name = intNames[0];
-					intNames.RemoveAt(0);
-				} else if (varDef.VariableType.FullName == Cecil.Constants.Boolean &&
-				           varDef.Name.StartsWith("V_")) {
-					if (boolFlagId == 1) {
-						varDef.Name = "flag";
+				if (string.IsNullOrEmpty(varDef.Name)) {
+					if (varDef.VariableType.FullName == Constants.Int32 && intNames.Count > 0) {
+						varDef.Name = intNames[0];
+						intNames.RemoveAt(0);
+					} else if (varDef.VariableType.FullName == Constants.Boolean) {
+						if (boolFlagId == 1) {
+							varDef.Name = "flag";
+						} else {
+							varDef.Name = "flag" + boolFlagId;
+						}
+						boolFlagId++;
 					} else {
-						varDef.Name = "flag" + boolFlagId;
+						string name;
+						if (varDef.VariableType.IsArray) {
+							name = "array";
+						} else {
+							name = varDef.VariableType.Name;
+							name = char.ToLower(name[0]) + name.Substring(1);
+						}
+						if (!typeNames.ContainsKey(name)) {
+ 							typeNames.Add(name, 0);
+						}
+						int count = typeNames[name];
+						if (count > 0) {
+							name += count.ToString();
+						}
+						varDef.Name = name;
 					}
-					boolFlagId++;
 				}
 				localVarTypes[varDef.Name] = varDef.VariableType;
 				localVarDefined[varDef.Name] = false;
@@ -511,7 +527,7 @@ namespace Decompiler
 				case Code.Isinst: throw new NotImplementedException();
 				case Code.Jmp: throw new NotImplementedException();
 				case Code.Ldarg:
-					if (methodDef.HasThis && ((ParameterDefinition)operand).Sequence == 0) {
+					if (methodDef.HasThis && ((ParameterDefinition)operand).Index == 0) {
 						return new Ast.ThisReferenceExpression();
 					} else {
 						return new Ast.IdentifierExpression(((ParameterDefinition)operand).Name);
@@ -600,8 +616,8 @@ namespace Decompiler
 				case Code.Refanytype: throw new NotImplementedException();
 				case Code.Refanyval: throw new NotImplementedException();
 				case Code.Ret: {
-					if (methodDef.ReturnType.ReturnType.FullName != Cecil.Constants.Void) {
-						arg1 = Convert(arg1, methodDef.ReturnType.ReturnType);
+					if (methodDef.ReturnType.FullName != Constants.Void) {
+						arg1 = Convert(arg1, methodDef.ReturnType);
 						return new Ast.ReturnStatement(arg1);
 					} else {
 						return new Ast.ReturnStatement(null);

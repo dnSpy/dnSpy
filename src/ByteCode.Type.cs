@@ -199,9 +199,9 @@ namespace Decompiler
 				case Code.Arglist: throw new NotImplementedException();
 				case Code.Box: throw new NotImplementedException();
 				case Code.Break: throw new NotImplementedException();
-				case Code.Call: return ((MethodReference)operand).ReturnType.ReturnType;
+				case Code.Call: return ((MethodReference)operand).ReturnType;
 				case Code.Calli: throw new NotImplementedException();
-				case Code.Callvirt: return ((MethodReference)operand).ReturnType.ReturnType;
+				case Code.Callvirt: return ((MethodReference)operand).ReturnType;
 				case Code.Castclass: throw new NotImplementedException();
 				case Code.Ckfinite: throw new NotImplementedException();
 				case Code.Constrained: throw new NotImplementedException();
