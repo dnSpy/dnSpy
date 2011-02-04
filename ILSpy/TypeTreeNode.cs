@@ -79,7 +79,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.ShowInternalApi == false && IsPublicAPI)
+			if (!settings.ShowInternalApi && !IsPublicAPI)
 				return FilterResult.Hidden;
 			if (settings.SearchTermMatches(type.Name))
 				return FilterResult.Match;

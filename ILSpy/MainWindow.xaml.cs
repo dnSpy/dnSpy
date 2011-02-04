@@ -138,6 +138,8 @@ namespace ICSharpCode.ILSpy
 		
 		void ShowGraph(string name, GraphVizGraph graph)
 		{
+			foreach (char c in Path.GetInvalidFileNameChars())
+				name = name.Replace(c, '-');
 			string fileName = Path.Combine(Path.GetTempPath(), name);
 			graph.Save(fileName + ".gv");
 			Process.Start("dot", "\"" + fileName + ".gv\" -Tpng -o \"" + fileName + ".png\"").WaitForExit();

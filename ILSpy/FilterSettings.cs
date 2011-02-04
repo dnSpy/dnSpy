@@ -45,12 +45,12 @@ namespace ICSharpCode.ILSpy
 		
 		public bool SearchTermMatches(string text)
 		{
-			if (searchTerm == null)
+			if (string.IsNullOrEmpty(searchTerm))
 				return true;
 			return text.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 		
-		bool showInternalApi;
+		bool showInternalApi = true;
 		
 		public bool ShowInternalApi {
 			get { return showInternalApi; }
