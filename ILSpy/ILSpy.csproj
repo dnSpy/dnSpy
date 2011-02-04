@@ -71,6 +71,7 @@
     <Compile Include="AssemblyListTreeNode.cs" />
     <Compile Include="AssemblyReferenceTreeNode.cs" />
     <Compile Include="AssemblyTreeNode.cs" />
+    <Compile Include="BaseTypesTreeNode.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FieldTreeNode.cs" />
     <Compile Include="Fusion.cs" />
@@ -157,6 +158,10 @@
   <ItemGroup>
     <Resource Include="Images\ReferenceFolder.Closed.png" />
     <Resource Include="Images\ReferenceFolder.Open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Redo.png" />
+    <Resource Include="Images\Undo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

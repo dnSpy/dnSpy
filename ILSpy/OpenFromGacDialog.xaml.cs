@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		#region Fetch Gac Contents
-		sealed class GacEntry : IEquatable<GacEntry>
+		sealed class GacEntry
 		{
 			readonly AssemblyNameReference r;
 			readonly string fileName;
@@ -89,32 +89,21 @@ namespace ICSharpCode.ILSpy
 			{
 				return r.FullName;
 			}
-			
-			public override int GetHashCode()
-			{
-				return r.FullName.GetHashCode();
-			}
-			
-			public override bool Equals(object obj)
-			{
-				return Equals(obj as GacEntry);
-			}
-			
-			public bool Equals(GacEntry o)
-			{
-				return o != null && r.FullName == o.r.FullName;
-			}
 		}
 		
 		void FetchGacContents()
 		{
-			var entries =
-				from r in GacInterop.GetGacAssemblyFullNames()
-				let file = GacInterop.FindAssemblyInNetGac(r)
-				where file != null
-				select new GacEntry(r, file);
-			foreach (var entry in entries.Distinct()) {
-				Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<GacEntry>(AddNewEntry), entry);
+			HashSet<string> fullNames = new HashSet<string>();
+			foreach (var r in GacInterop.GetGacAssemblyFullNames()) {
+				if (cancelFetchThread)
+					return;
+				if (fullNames.Add(r.FullName)) { // filter duplicates
+					var file = GacInterop.FindAssemblyInNetGac(r);
+					if (file != null) {
+						var entry = new GacEntry(r, file);
+						Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<GacEntry>(AddNewEntry), entry);
+					}
+				}
 			}
 		}
 		

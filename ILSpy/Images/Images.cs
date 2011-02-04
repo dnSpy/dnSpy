@@ -21,6 +21,9 @@ namespace ICSharpCode.ILSpy
 		public static readonly BitmapImage ReferenceFolderOpen = LoadBitmap("ReferenceFolder.Open");
 		public static readonly BitmapImage ReferenceFolderClosed = LoadBitmap("ReferenceFolder.Closed");
 		
+		public static readonly BitmapImage Redo = LoadBitmap("Redo");
+		public static readonly BitmapImage Undo = LoadBitmap("Undo");
+		
 		
 		public static readonly BitmapImage Class = LoadBitmap("Class");
 		public static readonly BitmapImage Delegate = LoadBitmap("Delegate");

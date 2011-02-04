@@ -36,15 +36,9 @@ namespace ICSharpCode.ILSpy
 			get { return type.Name; }
 		}
 		
-		public TypeAttributes Visibility {
-			get {
-				return type.Attributes & TypeAttributes.VisibilityMask;
-			}
-		}
-		
 		public bool IsPublicAPI {
 			get {
-				switch (this.Visibility) {
+				switch (type.Attributes & TypeAttributes.VisibilityMask) {
 					case TypeAttributes.Public:
 					case TypeAttributes.NestedPublic:
 					case TypeAttributes.NestedFamily:
@@ -58,6 +52,7 @@ namespace ICSharpCode.ILSpy
 		
 		protected override void LoadChildren()
 		{
+			this.Children.Add(new BaseTypesTreeNode(type));
 			foreach (TypeDefinition nestedType in type.NestedTypes) {
 				this.Children.Add(new TypeTreeNode(nestedType));
 			}
@@ -79,7 +74,7 @@ namespace ICSharpCode.ILSpy
 			Delegate
 		}
 		
-		ClassType GetClassType()
+		static ClassType GetClassType(TypeDefinition type)
 		{
 			if (type.IsValueType) {
 				if (type.IsEnum)
@@ -98,46 +93,51 @@ namespace ICSharpCode.ILSpy
 		
 		public override object Icon {
 			get {
-				switch (this.Visibility) {
-					case TypeAttributes.Public:
-					case TypeAttributes.NestedPublic:
-						switch (this.GetClassType()) {
-								case ClassType.Delegate:  return Images.Delegate;
-								case ClassType.Enum:      return Images.Enum;
-								case ClassType.Interface: return Images.Interface;
-								case ClassType.Struct:    return Images.Struct;
-								default:                  return Images.Class;
-						}
-					case TypeAttributes.NotPublic:
-					case TypeAttributes.NestedAssembly:
-					case TypeAttributes.NestedFamANDAssem:
-						switch (this.GetClassType()) {
-								case ClassType.Delegate:  return Images.InternalDelegate;
-								case ClassType.Enum:      return Images.InternalEnum;
-								case ClassType.Interface: return Images.InternalInterface;
-								case ClassType.Struct:    return Images.InternalStruct;
-								default:                  return Images.InternalClass;
-						}
-					case TypeAttributes.NestedFamily:
-					case TypeAttributes.NestedFamORAssem:
-						switch (this.GetClassType()) {
-								case ClassType.Delegate:  return Images.ProtectedDelegate;
-								case ClassType.Enum:      return Images.ProtectedEnum;
-								case ClassType.Interface: return Images.ProtectedInterface;
-								case ClassType.Struct:    return Images.ProtectedStruct;
-								default:                  return Images.ProtectedClass;
-						}
-					case TypeAttributes.NestedPrivate:
-						switch (this.GetClassType()) {
-								case ClassType.Delegate:  return Images.PrivateDelegate;
-								case ClassType.Enum:      return Images.PrivateEnum;
-								case ClassType.Interface: return Images.PrivateInterface;
-								case ClassType.Struct:    return Images.PrivateStruct;
-								default:                  return Images.PrivateClass;
-						}
-					default:
-						throw new NotSupportedException(this.Visibility.ToString());
-				}
+				return GetIcon(type);
+			}
+		}
+		
+		public static ImageSource GetIcon(TypeDefinition type)
+		{
+			switch (type.Attributes & TypeAttributes.VisibilityMask) {
+				case TypeAttributes.Public:
+				case TypeAttributes.NestedPublic:
+					switch (GetClassType(type)) {
+							case ClassType.Delegate:  return Images.Delegate;
+							case ClassType.Enum:      return Images.Enum;
+							case ClassType.Interface: return Images.Interface;
+							case ClassType.Struct:    return Images.Struct;
+							default:                  return Images.Class;
+					}
+				case TypeAttributes.NotPublic:
+				case TypeAttributes.NestedAssembly:
+				case TypeAttributes.NestedFamANDAssem:
+					switch (GetClassType(type)) {
+							case ClassType.Delegate:  return Images.InternalDelegate;
+							case ClassType.Enum:      return Images.InternalEnum;
+							case ClassType.Interface: return Images.InternalInterface;
+							case ClassType.Struct:    return Images.InternalStruct;
+							default:                  return Images.InternalClass;
+					}
+				case TypeAttributes.NestedFamily:
+				case TypeAttributes.NestedFamORAssem:
+					switch (GetClassType(type)) {
+							case ClassType.Delegate:  return Images.ProtectedDelegate;
+							case ClassType.Enum:      return Images.ProtectedEnum;
+							case ClassType.Interface: return Images.ProtectedInterface;
+							case ClassType.Struct:    return Images.ProtectedStruct;
+							default:                  return Images.ProtectedClass;
+					}
+				case TypeAttributes.NestedPrivate:
+					switch (GetClassType(type)) {
+							case ClassType.Delegate:  return Images.PrivateDelegate;
+							case ClassType.Enum:      return Images.PrivateEnum;
+							case ClassType.Interface: return Images.PrivateInterface;
+							case ClassType.Struct:    return Images.PrivateStruct;
+							default:                  return Images.PrivateClass;
+					}
+				default:
+					throw new NotSupportedException();
 			}
 		}
 		#endregion

@@ -35,6 +35,14 @@ namespace ICSharpCode.ILSpy
 			get { return Images.Assembly; }
 		}
 		
+		public override bool ShowExpander {
+			get {
+				if (r.Name == "mscorlib")
+					EnsureLazyChildren(); // likely doesn't have any children
+				return base.ShowExpander;
+			}
+		}
+		
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
 			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
