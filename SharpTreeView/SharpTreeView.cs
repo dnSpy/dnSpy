@@ -6,12 +6,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Windows.Controls;
 using System.Windows;
-using System.Windows.Media;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace ICSharpCode.TreeView
 {
@@ -20,19 +22,19 @@ namespace ICSharpCode.TreeView
 		static SharpTreeView()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(SharpTreeView),
-				new FrameworkPropertyMetadata(typeof(SharpTreeView)));
+			                                         new FrameworkPropertyMetadata(typeof(SharpTreeView)));
 
 			SelectionModeProperty.OverrideMetadata(typeof(SharpTreeView),
-				new FrameworkPropertyMetadata(SelectionMode.Extended));
+			                                       new FrameworkPropertyMetadata(SelectionMode.Extended));
 
 			AlternationCountProperty.OverrideMetadata(typeof(SharpTreeView),
-				new FrameworkPropertyMetadata(2));
+			                                          new FrameworkPropertyMetadata(2));
 
-			DefaultItemContainerStyleKey = 
+			DefaultItemContainerStyleKey =
 				new ComponentResourceKey(typeof(SharpTreeView), "DefaultItemContainerStyleKey");
 
 			VirtualizingStackPanel.VirtualizationModeProperty.OverrideMetadata(typeof(SharpTreeView),
-				new FrameworkPropertyMetadata(VirtualizationMode.Recycling));
+			                                                                   new FrameworkPropertyMetadata(VirtualizationMode.Recycling));
 		}
 
 		public static ResourceKey DefaultItemContainerStyleKey { get; private set; }
@@ -53,7 +55,7 @@ namespace ICSharpCode.TreeView
 
 		public static readonly DependencyProperty ShowRootProperty =
 			DependencyProperty.Register("ShowRoot", typeof(bool), typeof(SharpTreeView),
-			new FrameworkPropertyMetadata(true));
+			                            new FrameworkPropertyMetadata(true));
 
 		public bool ShowRoot
 		{
@@ -63,7 +65,7 @@ namespace ICSharpCode.TreeView
 
 		public static readonly DependencyProperty ShowRootExpanderProperty =
 			DependencyProperty.Register("ShowRootExpander", typeof(bool), typeof(SharpTreeView),
-			new FrameworkPropertyMetadata(false));
+			                            new FrameworkPropertyMetadata(false));
 
 		public bool ShowRootExpander
 		{
@@ -82,7 +84,7 @@ namespace ICSharpCode.TreeView
 
 		public static readonly DependencyProperty ShowLinesProperty =
 			DependencyProperty.Register("ShowLines", typeof(bool), typeof(SharpTreeView),
-			new FrameworkPropertyMetadata(true));
+			                            new FrameworkPropertyMetadata(true));
 
 		public bool ShowLines
 		{
@@ -102,14 +104,14 @@ namespace ICSharpCode.TreeView
 
 		public static readonly DependencyProperty ShowAlternationProperty =
 			DependencyProperty.RegisterAttached("ShowAlternation", typeof(bool), typeof(SharpTreeView),
-			new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
-						
+			                                    new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
+		
 		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
 		{
 			base.OnPropertyChanged(e);
-			if (e.Property == RootProperty || 
-				e.Property == ShowRootProperty ||
-				e.Property == ShowRootExpanderProperty) {
+			if (e.Property == RootProperty ||
+			    e.Property == ShowRootProperty ||
+			    e.Property == ShowRootExpanderProperty) {
 				Reload();
 			}
 		}
@@ -156,6 +158,64 @@ namespace ICSharpCode.TreeView
 				list.AddOnce(Node);
 				SetSelectedItems(list);
 			}
+		}
+		
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			switch (e.Key) {
+				case Key.Left:
+				case Key.Right:
+					SharpTreeViewItem container = e.OriginalSource as SharpTreeViewItem;
+					if (container != null && ItemsControl.ItemsControlFromItemContainer(container) == this) {
+						bool newExpanded = (e.Key == Key.Right);
+						if (container.Node.IsExpanded != newExpanded) {
+							container.Node.IsExpanded = newExpanded;
+						} else {
+							// already in collapsed/expanded - jump to parent/first child:
+							if (e.Key == Key.Right) {
+								container.MoveFocus(new TraversalRequest(FocusNavigationDirection.Down));
+							} else if (container.Node.Parent != null) {
+								this.FocusNode(container.Node.Parent);
+							}
+						}
+						e.Handled = true;
+					}
+					break;
+				default:
+					base.OnKeyDown(e);
+					break;
+			}
+		}
+		
+		public void FocusNode(SharpTreeNode node)
+		{
+			if (node == null)
+				throw new ArgumentNullException("node");
+			ScrollIntoView(node);
+			// WPF's ScrollIntoView() uses the same if/dispatcher construct, so we call OnFocusItem() after the item was brought into view.
+			if (this.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated) {
+				OnFocusItem(node);
+			} else {
+				this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new DispatcherOperationCallback(this.OnFocusItem), node);
+			}
+		}
+		
+		public void ScrollIntoView(SharpTreeNode node)
+		{
+			if (node == null)
+				throw new ArgumentNullException("node");
+			foreach (SharpTreeNode ancestor in node.Ancestors())
+				ancestor.IsExpanded = true;
+			base.ScrollIntoView(node);
+		}
+		
+		object OnFocusItem(object item)
+		{
+			FrameworkElement element = this.ItemContainerGenerator.ContainerFromItem(item) as FrameworkElement;
+			if (element != null) {
+				element.Focus();
+			}
+			return null;
 		}
 
 		#region Track selection
@@ -265,7 +325,7 @@ namespace ICSharpCode.TreeView
 		{
 			public SharpTreeViewItem Item;
 			public DropPlace Place;
-			public double Y;			
+			public double Y;
 			public SharpTreeNode Node;
 			public int Index;
 		}
@@ -288,7 +348,7 @@ namespace ICSharpCode.TreeView
 			var node = item.Node;
 
 			if (AllowDropOrder) {
-				TryAddDropTarget(result, item, DropPlace.Before, e);				
+				TryAddDropTarget(result, item, DropPlace.Before, e);
 			}
 
 			TryAddDropTarget(result, item, DropPlace.Inside, e);
@@ -310,11 +370,11 @@ namespace ICSharpCode.TreeView
 
 			if (result.Count == 2) {
 				if (result[0].Place == DropPlace.Inside &&
-					result[1].Place != DropPlace.Inside) {
+				    result[1].Place != DropPlace.Inside) {
 					result[0].Y = y3;
 				}
 				else if (result[0].Place != DropPlace.Inside &&
-					result[1].Place == DropPlace.Inside) {
+				         result[1].Place == DropPlace.Inside) {
 					result[0].Y = y1;
 				}
 				else {
@@ -349,7 +409,7 @@ namespace ICSharpCode.TreeView
 					};
 					targets.Add(target);
 				}
-			}			
+			}
 		}
 
 		void GetNodeAndIndex(SharpTreeViewItem item, DropPlace place, out SharpTreeNode node, out int index)
@@ -387,7 +447,7 @@ namespace ICSharpCode.TreeView
 		void ShowPreview(SharpTreeViewItem item, DropPlace place)
 		{
 			previewNodeView = item.NodeView;
-			previewPlace = place;			
+			previewPlace = place;
 
 			if (place == DropPlace.Inside) {
 				previewNodeView.TextBackground = SystemColors.HighlightBrush;

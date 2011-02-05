@@ -18,7 +18,7 @@ namespace ICSharpCode.TreeView
 		static SharpTreeViewItem()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(SharpTreeViewItem),
-				new FrameworkPropertyMetadata(typeof(SharpTreeViewItem)));
+			                                         new FrameworkPropertyMetadata(typeof(SharpTreeViewItem)));
 
 			RegisterCommands();
 		}
@@ -29,7 +29,7 @@ namespace ICSharpCode.TreeView
 		}
 
 		public SharpTreeNodeView NodeView { get; internal set; }
-		public SharpTreeView ParentTreeView { get; internal set; }		
+		public SharpTreeView ParentTreeView { get; internal set; }
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
@@ -41,12 +41,6 @@ namespace ICSharpCode.TreeView
 					break;
 				case Key.Escape:
 					Node.IsEditing = false;
-					break;
-				case Key.Left:
-					Node.IsExpanded = false;
-					break;
-				case Key.Right:
-					Node.IsExpanded = true;
 					break;
 			}
 		}
@@ -89,7 +83,7 @@ namespace ICSharpCode.TreeView
 			if (IsMouseCaptured) {
 				var currentPoint = e.GetPosition(null);
 				if (Math.Abs(currentPoint.X - startPoint.X) >= SystemParameters.MinimumHorizontalDragDistance ||
-					Math.Abs(currentPoint.Y - startPoint.Y) >= SystemParameters.MinimumVerticalDragDistance) {
+				    Math.Abs(currentPoint.Y - startPoint.Y) >= SystemParameters.MinimumVerticalDragDistance) {
 
 					if (Node.InternalCanDrag()) {
 						Node.InternalDrag(this);
@@ -147,16 +141,16 @@ namespace ICSharpCode.TreeView
 		static void RegisterCommands()
 		{
 			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeViewItem),
-				new CommandBinding(ApplicationCommands.Cut, HandleExecuted_Cut, HandleCanExecute_Cut));
+			                                           new CommandBinding(ApplicationCommands.Cut, HandleExecuted_Cut, HandleCanExecute_Cut));
 
 			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeViewItem),
-				new CommandBinding(ApplicationCommands.Copy, HandleExecuted_Copy, HandleCanExecute_Copy));
+			                                           new CommandBinding(ApplicationCommands.Copy, HandleExecuted_Copy, HandleCanExecute_Copy));
 
 			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeViewItem),
-				new CommandBinding(ApplicationCommands.Paste, HandleExecuted_Paste, HandleCanExecute_Paste));
+			                                           new CommandBinding(ApplicationCommands.Paste, HandleExecuted_Paste, HandleCanExecute_Paste));
 
 			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeViewItem),
-				new CommandBinding(ApplicationCommands.Delete, HandleExecuted_Delete, HandleCanExecute_Delete));
+			                                           new CommandBinding(ApplicationCommands.Delete, HandleExecuted_Delete, HandleCanExecute_Delete));
 		}
 
 		static void HandleExecuted_Cut(object sender, ExecutedRoutedEventArgs e)
