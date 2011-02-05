@@ -13,6 +13,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.Xml;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Mono.Cecil;
@@ -25,6 +26,7 @@ namespace ICSharpCode.ILSpy.TextView
 	sealed partial class DecompilerTextView : UserControl
 	{
 		readonly ReferenceElementGenerator referenceElementGenerator;
+		readonly FoldingManager foldingManager;
 		internal MainWindow mainWindow;
 		
 		DefinitionLookup definitionLookup;
@@ -46,6 +48,7 @@ namespace ICSharpCode.ILSpy.TextView
 			this.referenceElementGenerator = new ReferenceElementGenerator(this);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			textEditor.Text = "Welcome to ILSpy!";
+			foldingManager = FoldingManager.Install(textEditor.TextArea);
 		}
 		
 		public void Decompile(IEnumerable<ILSpyTreeNodeBase> treeNodes)
@@ -66,12 +69,14 @@ namespace ICSharpCode.ILSpy.TextView
 					if (currentCancellationTokenSource == myCancellationTokenSource) {
 						currentCancellationTokenSource = null;
 						waitAdorner.Visibility = Visibility.Collapsed;
+						foldingManager.Clear();
 						try {
 							SmartTextOutput textOutput = task.Result;
 							referenceElementGenerator.References = textOutput.References;
 							definitionLookup = textOutput.DefinitionLookup;
 							textEditor.SyntaxHighlighting = ILSpy.Language.Current.SyntaxHighlighting;
 							textEditor.Text = textOutput.ToString();
+							foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
 						} catch (AggregateException ex) {
 							textEditor.SyntaxHighlighting = null;
 							referenceElementGenerator.References = null;

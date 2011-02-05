@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy
 		void WriteDefinition(string text, object definition);
 		void WriteReference(string text, object reference);
 		
-		void MarkFoldStart(string collapsedText = "...", bool defaultClosed = false);
+		void MarkFoldStart(string collapsedText = "...", bool defaultCollapsed = false);
 		void MarkFoldEnd();
 	}
 	
@@ -101,7 +101,7 @@ namespace ICSharpCode.ILSpy
 			Write(text);
 		}
 		
-		void ITextOutput.MarkFoldStart(string collapsedText, bool defaultClosed)
+		void ITextOutput.MarkFoldStart(string collapsedText, bool defaultCollapsed)
 		{
 		}
 		

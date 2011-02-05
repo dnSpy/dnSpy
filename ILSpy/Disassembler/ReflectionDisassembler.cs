@@ -18,6 +18,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 		ITextOutput output;
 		CancellationToken cancellationToken;
 		bool detectControlStructure;
+		bool isInType; // whether we are currently disassembling a whole type (-> defaultCollapsed for foldings)
 		MethodBodyDisassembler methodBodyDisassembler;
 		
 		public ReflectionDisassembler(ITextOutput output, bool detectControlStructure, CancellationToken cancellationToken)
@@ -123,9 +124,8 @@ namespace ICSharpCode.ILSpy.Disassembler
 				output.Write("unmanaged ");
 			WriteFlags(method.ImplAttributes & ~(MethodImplAttributes.CodeTypeMask | MethodImplAttributes.ManagedMask), methodImpl);
 			
-			output.WriteLine();
 			output.Unindent();
-			OpenBlock();
+			OpenBlock(isInType);
 			WriteAttributes(method.CustomAttributes);
 			
 			if (method.HasBody)
@@ -195,8 +195,8 @@ namespace ICSharpCode.ILSpy.Disassembler
 			WriteFlags(property.Attributes, propertyAttributes);
 			property.PropertyType.WriteTo(output);
 			output.Write(' ');
-			output.WriteLine(DisassemblerHelpers.Escape(property.Name));
-			OpenBlock();
+			output.Write(DisassemblerHelpers.Escape(property.Name));
+			OpenBlock(false);
 			WriteAttributes(property.CustomAttributes);
 			WriteNestedMethod(".get", property.GetMethod);
 			WriteNestedMethod(".set", property.SetMethod);
@@ -235,8 +235,8 @@ namespace ICSharpCode.ILSpy.Disassembler
 			WriteFlags(ev.Attributes, eventAttributes);
 			ev.EventType.WriteTo(output);
 			output.Write(' ');
-			output.WriteLine(DisassemblerHelpers.Escape(ev.Name));
-			OpenBlock();
+			output.Write(DisassemblerHelpers.Escape(ev.Name));
+			OpenBlock(false);
 			WriteAttributes(ev.CustomAttributes);
 			WriteNestedMethod(".add", ev.AddMethod);
 			WriteNestedMethod(".remove", ev.RemoveMethod);
@@ -293,17 +293,19 @@ namespace ICSharpCode.ILSpy.Disassembler
 			const TypeAttributes masks = TypeAttributes.ClassSemanticMask | TypeAttributes.VisibilityMask | TypeAttributes.LayoutMask | TypeAttributes.StringFormatMask;
 			WriteFlags(type.Attributes & ~masks, typeAttributes);
 			
-			output.WriteLine(DisassemblerHelpers.Escape(type.Name));
+			output.Write(DisassemblerHelpers.Escape(type.Name));
 			
 			if (type.BaseType != null) {
+				output.WriteLine();
 				output.Indent();
 				output.Write("extends ");
 				type.BaseType.WriteTo(output);
 				output.Unindent();
-				output.WriteLine();
 			}
 			
-			OpenBlock();
+			OpenBlock(isInType);
+			bool oldIsInType = isInType;
+			isInType = true;
 			WriteAttributes(type.CustomAttributes);
 			if (type.HasLayoutInfo) {
 				output.WriteLine(".pack {0}", type.PackingSize);
@@ -357,6 +359,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 				output.WriteLine();
 			}
 			CloseBlock();
+			isInType = oldIsInType;
 		}
 		#endregion
 
@@ -394,9 +397,10 @@ namespace ICSharpCode.ILSpy.Disassembler
 			output.Write(")");
 		}
 		
-		void OpenBlock()
+		void OpenBlock(bool defaultCollapsed)
 		{
-			output.MarkFoldStart();
+			output.MarkFoldStart(defaultCollapsed: defaultCollapsed);
+			output.WriteLine();
 			output.WriteLine("{");
 			output.Indent();
 		}

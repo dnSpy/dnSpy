@@ -129,9 +129,10 @@ namespace ICSharpCode.ILSpy.TextView
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference });
 		}
 		
-		public void MarkFoldStart(string collapsedText, bool defaultClosed)
+		public void MarkFoldStart(string collapsedText, bool defaultCollapsed)
 		{
-			openFoldings.Push(new NewFolding { StartOffset = b.Length, Name = collapsedText, DefaultClosed = defaultClosed });
+			WriteIndent();
+			openFoldings.Push(new NewFolding { StartOffset = b.Length, Name = collapsedText, DefaultClosed = defaultCollapsed });
 		}
 		
 		public void MarkFoldEnd()
