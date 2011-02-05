@@ -88,6 +88,7 @@ namespace ICSharpCode.ILSpy.TextView
 					if (currentCancellationTokenSource == myCancellationTokenSource) {
 						currentCancellationTokenSource = null;
 						waitAdorner.Visibility = Visibility.Collapsed;
+						textEditor.ScrollToHome();
 						foldingManager.Clear();
 						try {
 							SmartTextOutput textOutput = task.Result;

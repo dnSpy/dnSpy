@@ -142,13 +142,17 @@ namespace ICSharpCode.ILSpy.Disassembler
 			WriteFlags(method.ImplAttributes & ~(MethodImplAttributes.CodeTypeMask | MethodImplAttributes.ManagedMask), methodImpl);
 			
 			output.Unindent();
-			OpenBlock(isInType);
-			WriteAttributes(method.CustomAttributes);
-			
-			if (method.HasBody)
-				methodBodyDisassembler.Disassemble(method.Body);
-			
-			CloseBlock("End of method " + method.DeclaringType.Name + "." + method.Name);
+			if (method.HasBody || method.HasCustomAttributes) {
+				OpenBlock(defaultCollapsed: isInType);
+				WriteAttributes(method.CustomAttributes);
+				
+				if (method.HasBody)
+					methodBodyDisassembler.Disassemble(method.Body);
+				
+				CloseBlock("End of method " + method.DeclaringType.Name + "." + method.Name);
+			} else {
+				output.WriteLine();
+			}
 		}
 		
 		void WriteParameters(Collection<ParameterDefinition> parameters)
@@ -181,6 +185,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 			{ FieldAttributes.InitOnly, "initonly" },
 			{ FieldAttributes.SpecialName, "specialname" },
 			{ FieldAttributes.RTSpecialName, "rtspecialname" },
+			{ FieldAttributes.NotSerialized, "notserialized" },
 		};
 		
 		public void DisassembleField(FieldDefinition field)
@@ -195,7 +200,13 @@ namespace ICSharpCode.ILSpy.Disassembler
 				output.Write(" = ");
 				DisassemblerHelpers.WriteOperand(output, field.Constant);
 			}
-			output.WriteLine();
+			if (field.HasCustomAttributes) {
+				OpenBlock(false);
+				WriteAttributes(field.CustomAttributes);
+				CloseBlock();
+			} else {
+				output.WriteLine();
+			}
 		}
 		#endregion
 		
@@ -296,6 +307,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 			{ TypeAttributes.Import, "import" },
 			{ TypeAttributes.Serializable, "serializable" },
 			{ TypeAttributes.BeforeFieldInit, "beforefieldinit" },
+			{ TypeAttributes.HasSecurity, null },
 		};
 		
 		public void DisassembleType(TypeDefinition type)
@@ -311,16 +323,19 @@ namespace ICSharpCode.ILSpy.Disassembler
 			WriteFlags(type.Attributes & ~masks, typeAttributes);
 			
 			output.Write(DisassemblerHelpers.Escape(type.Name));
+			output.MarkFoldStart(defaultCollapsed: isInType);
+			output.WriteLine();
 			
 			if (type.BaseType != null) {
-				output.WriteLine();
 				output.Indent();
 				output.Write("extends ");
 				type.BaseType.WriteTo(output, true);
+				output.WriteLine();
 				output.Unindent();
 			}
 			
-			OpenBlock(isInType);
+			output.WriteLine("{");
+			output.Indent();
 			bool oldIsInType = isInType;
 			isInType = true;
 			WriteAttributes(type.CustomAttributes);
@@ -351,7 +366,6 @@ namespace ICSharpCode.ILSpy.Disassembler
 				foreach (var prop in type.Properties) {
 					cancellationToken.ThrowIfCancellationRequested();
 					DisassembleProperty(prop);
-					output.WriteLine();
 				}
 				output.WriteLine();
 			}
@@ -374,9 +388,8 @@ namespace ICSharpCode.ILSpy.Disassembler
 						output.WriteLine();
 					}
 				}
-				output.WriteLine();
 			}
-			CloseBlock("// End of class " + type.FullName);
+			CloseBlock("End of class " + type.FullName);
 			isInType = oldIsInType;
 		}
 		#endregion
@@ -428,7 +441,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 			output.Unindent();
 			output.Write("}");
 			if (comment != null)
-				output.Write("// " + comment);
+				output.Write(" // " + comment);
 			output.MarkFoldEnd();
 			output.WriteLine();
 		}
@@ -439,7 +452,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 			long tested = 0;
 			foreach (var pair in flagNames) {
 				tested |= pair.Key;
-				if ((val & pair.Key) != 0) {
+				if ((val & pair.Key) != 0 && pair.Value != null) {
 					output.Write(pair.Value);
 					output.Write(' ');
 				}
@@ -453,8 +466,10 @@ namespace ICSharpCode.ILSpy.Disassembler
 			long val = Convert.ToInt64(enumValue);
 			foreach (var pair in enumNames) {
 				if (pair.Key == val) {
-					output.Write(pair.Value);
-					output.Write(' ');
+					if (pair.Value != null) {
+						output.Write(pair.Value);
+						output.Write(' ');
+					}
 					return;
 				}
 			}

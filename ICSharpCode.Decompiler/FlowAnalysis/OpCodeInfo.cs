@@ -205,7 +205,7 @@ namespace ICSharpCode.Decompiler
 			// CanThrow is true by default - most OO instructions can throw, so we don't specify CanThrow all of the time
 			new OpCodeInfo(OpCodes.Box),
 			new OpCodeInfo(OpCodes.Callvirt),
-			new OpCodeInfo(OpCodes.Castclass), // (output type not Input0 as type arguments may change)
+			new OpCodeInfo(OpCodes.Castclass),
 			new OpCodeInfo(OpCodes.Cpobj),
 			new OpCodeInfo(OpCodes.Initobj) { CanThrow = false },
 			new OpCodeInfo(OpCodes.Isinst)  { CanThrow = false },
@@ -232,11 +232,11 @@ namespace ICSharpCode.Decompiler
 			new OpCodeInfo(OpCodes.Ldstr) { CanThrow = false },
 			new OpCodeInfo(OpCodes.Ldtoken) { CanThrow = false },
 			new OpCodeInfo(OpCodes.Ldvirtftn),
-			//new OpCodeInfo(OpCodes.Mkrefany), don't enable this without checking what it is
+			new OpCodeInfo(OpCodes.Mkrefany),
 			new OpCodeInfo(OpCodes.Newarr),
 			new OpCodeInfo(OpCodes.Newobj),
-			//new OpCodeInfo(OpCodes.Mkrefany), don't enable this without checking what it is
-			//new OpCodeInfo(OpCodes.Refanyval), don't enable this without checking what it is
+			new OpCodeInfo(OpCodes.Refanytype) { CanThrow = false },
+			new OpCodeInfo(OpCodes.Refanyval),
 			new OpCodeInfo(OpCodes.Rethrow),
 			new OpCodeInfo(OpCodes.Sizeof) { CanThrow = false },
 			new OpCodeInfo(OpCodes.Stelem_Any),
