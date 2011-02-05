@@ -5,7 +5,7 @@
 // without restriction, including without limitation the rights to use, copy, modify, merge,
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
 // to whom the Software is furnished to do so, subject to the following conditions:
-// 4
+// 
 // The above copyright notice and this permission notice shall be included in all copies or
 // substantial portions of the Software.
 // 
@@ -17,14 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.FlowAnalysis;
+using System.Collections.Generic;
 using Mono.Cecil;
-using Mono.Cecil.Rocks;
 
 namespace ICSharpCode.ILSpy.Disassembler
 {
@@ -45,29 +39,39 @@ namespace ICSharpCode.ILSpy.Disassembler
 			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("ILAsm"); }
 		}
 		
-		public override void Decompile(MethodDefinition method, ITextOutput output, CancellationToken cancellationToken)
+		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, cancellationToken).DisassembleMethod(method);
+			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleMethod(method);
 		}
 		
-		public override void Decompile(FieldDefinition field, ITextOutput output, CancellationToken cancellationToken)
+		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, cancellationToken).DisassembleField(field);
+			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleField(field);
 		}
 		
-		public override void Decompile(PropertyDefinition property, ITextOutput output, CancellationToken cancellationToken)
+		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, cancellationToken).DisassembleProperty(property);
+			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleProperty(property);
 		}
 		
-		public override void Decompile(EventDefinition ev, ITextOutput output, CancellationToken cancellationToken)
+		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, cancellationToken).DisassembleEvent(ev);
+			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleEvent(ev);
 		}
 		
-		public override void Decompile(TypeDefinition type, ITextOutput output, CancellationToken cancellationToken)
+		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, cancellationToken).DisassembleType(type);
+			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleType(type);
+		}
+		
+		public override void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)
+		{
+			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleNamespace(nameSpace, types);
+		}
+		
+		public override void DecompileAssembly(AssemblyDefinition assembly, ITextOutput output, DecompilationOptions options)
+		{
+			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).WriteAssemblyHeader(assembly);
 		}
 		
 		public override string TypeToString(TypeReference t)

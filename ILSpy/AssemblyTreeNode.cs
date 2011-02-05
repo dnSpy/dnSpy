@@ -209,5 +209,10 @@ namespace ICSharpCode.ILSpy
 			else
 				return FilterResult.Recurse;
 		}
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			language.DecompileAssembly(assemblyTask.Result, output, options);
+		}
 	}
 }

@@ -86,6 +86,7 @@
     <Compile Include="AssemblyTreeNode.cs" />
     <Compile Include="BaseTypesTreeNode.cs" />
     <Compile Include="CueBannerService.cs" />
+    <Compile Include="DecompilationOptions.cs" />
     <Compile Include="Decompiler\CSharpLanguage.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
     <Compile Include="Disassembler\ILLanguage.cs" />

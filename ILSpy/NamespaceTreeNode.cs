@@ -17,8 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.ObjectModel;
-using ICSharpCode.TreeView;
+using System.Linq;
 
 namespace ICSharpCode.ILSpy
 {
@@ -51,6 +50,11 @@ namespace ICSharpCode.ILSpy
 				return FilterResult.MatchAndRecurse;
 			else
 				return FilterResult.Recurse;
+		}
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			language.DecompileNamespace(name, this.Children.Select(t => t.TypeDefinition), output, options);
 		}
 	}
 }

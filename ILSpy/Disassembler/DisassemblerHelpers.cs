@@ -86,9 +86,11 @@ namespace ICSharpCode.ILSpy.Disassembler
 		
 		public static void WriteTo(this MethodReference method, ITextOutput writer)
 		{
+			if (method.HasThis)
+				writer.Write("instance ");
 			method.ReturnType.WriteTo(writer);
 			writer.Write(' ');
-			method.DeclaringType.WriteTo(writer);
+			method.DeclaringType.WriteTo(writer, true);
 			writer.Write("::");
 			writer.WriteReference(method.Name, method);
 			writer.Write("(");

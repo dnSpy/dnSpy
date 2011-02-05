@@ -17,13 +17,14 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
-	/// Description of ILanguage.
+	/// Base class for language-specific decompiler implementations.
 	/// </summary>
 	public abstract class Language
 	{
@@ -35,23 +36,31 @@ namespace ICSharpCode.ILSpy
 			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition(this.Name); }
 		}
 		
-		public virtual void Decompile(MethodDefinition method, ITextOutput output, CancellationToken cancellationToken)
+		public virtual void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
 		}
 		
-		public virtual void Decompile(PropertyDefinition property, ITextOutput output, CancellationToken cancellationToken)
+		public virtual void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
 		}
 		
-		public virtual void Decompile(FieldDefinition field, ITextOutput output, CancellationToken cancellationToken)
+		public virtual void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
 		}
 		
-		public virtual void Decompile(EventDefinition ev, ITextOutput output, CancellationToken cancellationToken)
+		public virtual void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
 		}
 		
-		public virtual void Decompile(TypeDefinition type, ITextOutput output, CancellationToken cancellationToken)
+		public virtual void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
+		{
+		}
+		
+		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)
+		{
+		}
+		
+		public virtual void DecompileAssembly(AssemblyDefinition assembly, ITextOutput output, DecompilationOptions options)
 		{
 		}
 		

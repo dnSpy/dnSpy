@@ -13,7 +13,7 @@
 			IsReadOnly="True"
 			Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
 			Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}" />
-		<Border Name="waitAdorner" Background="#80FFFFFF">
+		<Border Name="waitAdorner" Background="#C0FFFFFF">
 			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 				<TextBlock FontSize="14pt">Decompiling...</TextBlock>
 				<ProgressBar IsIndeterminate="True" Height="16" Margin="0, 4" />

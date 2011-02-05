@@ -18,12 +18,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Windows.Media;
 
-using ICSharpCode.TreeView;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
@@ -121,9 +118,9 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public override void Decompile(Language language, ITextOutput output, CancellationToken cancellationToken)
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.Decompile(type, output, cancellationToken);
+			language.DecompileType(type, output, options);
 		}
 		
 		#region Icon
