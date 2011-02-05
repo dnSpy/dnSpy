@@ -1,7 +1,6 @@
 ﻿<SyntaxDefinition name="ILAsm" extensions=".il" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
 	<Color name="Comment" foreground="Green" exampleText="// comment" />
 	<Color name="String" foreground="Magenta" exampleText="&quot;Hello, World!&quot;" />
-	<Color name="NumberLiteral" foreground="DarkBlue" exampleText="3.1415" />
 	<Color name="Instructions" foreground="Blue" exampleText="nop;" />
 	<Color name="Keywords" foreground="Blue" fontWeight="bold" exampleText="true" />
 	<Color name="Directives" foreground="Green" fontWeight="bold" exampleText=".class" />
@@ -504,10 +503,6 @@
 			<Begin>"</Begin>
 			<End>"</End>
 		</Span>
-		<Rule color="NumberLiteral">\b0[xX][0-9a-fA-F]+|\b(\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
-		<!--<Rule color="Punctuation">
-			[?,.;()\[\]{}+\-/%*&lt;&gt;^+~!|&amp;]+
-		</Rule>-->
 	</RuleSet>
 	<RuleSet name="CommentMarkerSet" ignoreCase="false">
 		<Keywords foreground="#FFFF0000" fontWeight="bold">

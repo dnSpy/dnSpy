@@ -60,7 +60,7 @@ namespace ICSharpCode.ILSpy
 		{
 		}
 		
-		public virtual void DecompileAssembly(AssemblyDefinition assembly, ITextOutput output, DecompilationOptions options)
+		public virtual void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
 		{
 		}
 		

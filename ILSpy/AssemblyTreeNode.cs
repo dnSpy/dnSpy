@@ -212,7 +212,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.DecompileAssembly(assemblyTask.Result, output, options);
+			language.DecompileAssembly(assemblyTask.Result, fileName, output, options);
 		}
 	}
 }

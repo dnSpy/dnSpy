@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.Disassembler
@@ -69,8 +70,11 @@ namespace ICSharpCode.ILSpy.Disassembler
 			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleNamespace(nameSpace, types);
 		}
 		
-		public override void DecompileAssembly(AssemblyDefinition assembly, ITextOutput output, DecompilationOptions options)
+		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
 		{
+			output.WriteCommentLine("// " + fileName);
+			output.WriteCommentLine("");
+			
 			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).WriteAssemblyHeader(assembly);
 		}
 		
