@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using ICSharpCode.AvalonEdit.Document;
 
@@ -31,7 +32,13 @@ namespace ICSharpCode.ILSpy
 		void WriteComment(string comment);
 		void WriteLine();
 		void WriteDefinition(string text, object definition);
-		void WriteReference(string text, object definition);
+		void WriteReference(string text, object reference);
+	}
+	
+	sealed class ReferenceSegment : TextSegment
+	{
+		public object Reference;
+		public ILSpyTreeNode TreeNode;
 	}
 	
 	sealed class SmartTextOutput : ITextOutput
@@ -39,6 +46,23 @@ namespace ICSharpCode.ILSpy
 		readonly StringBuilder b = new StringBuilder();
 		int indent;
 		bool needsIndent;
+		Dictionary<object, int> definitions = new Dictionary<object, int>();
+		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
+		
+		public TextSegmentCollection<ReferenceSegment> References {
+			get { return references; }
+		}
+		
+		public ILSpyTreeNode CurrentTreeNode;
+		
+		public int GetDefinitionPosition(object definition)
+		{
+			int val;
+			if (definitions.TryGetValue(definition, out val))
+				return val;
+			else
+				return -1;
+		}
 		
 		public override string ToString()
 		{
@@ -93,12 +117,16 @@ namespace ICSharpCode.ILSpy
 		{
 			WriteIndent();
 			b.Append(text);
+			definitions[definition] = b.Length;
 		}
 		
-		public void WriteReference(string text, object definition)
+		public void WriteReference(string text, object reference)
 		{
 			WriteIndent();
+			int start = b.Length;
 			b.Append(text);
+			int end = b.Length;
+			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, TreeNode = CurrentTreeNode });
 		}
 	}
 }

@@ -24,10 +24,12 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
+using Mono.Cecil;
 using Mono.Cecil.Rocks;
 
 namespace ICSharpCode.ILSpy
@@ -39,6 +41,7 @@ namespace ICSharpCode.ILSpy
 	{
 		AssemblyList assemblyList = new AssemblyList();
 		FilterSettings filterSettings = new FilterSettings();
+		ReferenceElementGenerator referenceElementGenerator;
 		
 		static readonly Assembly[] initialAssemblies = {
 			typeof(object).Assembly,
@@ -64,6 +67,10 @@ namespace ICSharpCode.ILSpy
 			languageComboBox.SelectedItem = languageComboBox.Items[0];
 			
 			textEditor.Text = "Welcome to ILSpy!";
+			
+			referenceElementGenerator = new ReferenceElementGenerator(this);
+			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
+			
 			AssemblyListTreeNode assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			assemblyListTreeNode.FilterSettings = filterSettings.Clone();
 			filterSettings.PropertyChanged += delegate {
@@ -73,15 +80,7 @@ namespace ICSharpCode.ILSpy
 				assemblyListTreeNode.FilterSettings = filterSettings.Clone();
 			};
 			treeView.Root = assemblyListTreeNode;
-			assemblyListTreeNode.Select = delegate(SharpTreeNode obj) {
-				if (obj != null) {
-					foreach (SharpTreeNode node in obj.Ancestors())
-						node.IsExpanded = true;
-					
-					treeView.SelectedItem = obj;
-					treeView.ScrollIntoView(obj);
-				}
-			};
+			assemblyListTreeNode.Select = SelectNode;
 			
 			foreach (Assembly asm in initialAssemblies)
 				assemblyList.OpenAssembly(asm.Location);
@@ -105,6 +104,17 @@ namespace ICSharpCode.ILSpy
 			varGraph.Click += new RoutedEventHandler(varGraph_Click);
 			toolBar.Items.Add(varGraph);
 			#endif
+		}
+		
+		void SelectNode(SharpTreeNode obj)
+		{
+			if (obj != null) {
+				foreach (SharpTreeNode node in obj.Ancestors())
+					node.IsExpanded = true;
+				
+				treeView.SelectedItem = obj;
+				treeView.ScrollIntoView(obj);
+			}
 		}
 		
 		#region Debugging CFG
@@ -196,18 +206,53 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		SmartTextOutput textOutput;
+		
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			try {
 				textEditor.SyntaxHighlighting = ILSpy.Language.Current.SyntaxHighlighting;
-				SmartTextOutput textOutput = new SmartTextOutput();
+				textOutput = new SmartTextOutput();
 				foreach (var node in treeView.SelectedItems.OfType<ILSpyTreeNode>()) {
+					textOutput.CurrentTreeNode = node;
 					node.Decompile(ILSpy.Language.Current, textOutput);
 				}
+				referenceElementGenerator.References = textOutput.References;
 				textEditor.Text = textOutput.ToString();
 			} catch (Exception ex) {
 				textEditor.SyntaxHighlighting = null;
 				textEditor.Text = ex.ToString();
+			}
+		}
+		
+		internal void JumpToReference(ReferenceSegment referenceSegment)
+		{
+			object reference = referenceSegment.Reference;
+			if (textOutput != null) {
+				int pos = textOutput.GetDefinitionPosition(reference);
+				if (pos >= 0) {
+					textEditor.TextArea.Focus();
+					textEditor.Select(pos, 0);
+					textEditor.ScrollTo(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column);
+					Dispatcher.Invoke(DispatcherPriority.Background, new Action(
+						delegate {
+							CaretHighlightAdorner.DisplayCaretHighlightAnimation(textEditor.TextArea);
+						}));
+					return;
+				}
+			}
+			if (reference is TypeReference) {
+				SelectNode(assemblyList.FindTypeNode(((TypeReference)reference).Resolve()));
+			} else if (reference is MethodReference) {
+				SelectNode(assemblyList.FindMethodNode(((MethodReference)reference).Resolve()));
+			} else if (reference is FieldReference) {
+				SelectNode(assemblyList.FindFieldNode(((FieldReference)reference).Resolve()));
+			} else if (reference is PropertyReference) {
+				SelectNode(assemblyList.FindPropertyNode(((PropertyReference)reference).Resolve()));
+			} else if (reference is EventReference) {
+				SelectNode(assemblyList.FindEventNode(((EventReference)reference).Resolve()));
+			} else if (reference is AssemblyDefinition) {
+				SelectNode(assemblyList.Assemblies.FirstOrDefault(node => node.AssemblyDefinition == reference));
 			}
 		}
 		

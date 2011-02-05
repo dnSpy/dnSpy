@@ -25,20 +25,38 @@ namespace ICSharpCode.ILSpy.Disassembler
 {
 	static class DisassemblerHelpers
 	{
-		#region Debug output(ToString helpers)
+		static void WriteOffsetReference(ITextOutput writer, int offset)
+		{
+			writer.WriteReference(CecilExtensions.OffsetToString(offset), offset);
+		}
+		
 		public static void WriteTo(this ExceptionHandler exceptionHandler, ITextOutput writer)
 		{
-			writer.Write("Try IL_{0:x4}-IL_{1:x4} ", exceptionHandler.TryStart.Offset, exceptionHandler.TryEnd.Offset);
+			writer.Write("Try ");
+			WriteOffsetReference(writer, exceptionHandler.TryStart.Offset);
+			writer.Write('-');
+			WriteOffsetReference(writer, exceptionHandler.TryEnd.Offset);
 			writer.Write(exceptionHandler.HandlerType.ToString());
 			if (exceptionHandler.FilterStart != null) {
-				writer.Write(" IL_{0:x4}-IL_{1:x4} handler ", exceptionHandler.FilterStart.Offset, exceptionHandler.FilterEnd.Offset);
+				writer.Write(' ');
+				WriteOffsetReference(writer, exceptionHandler.FilterStart.Offset);
+				writer.Write('-');
+				WriteOffsetReference(writer, exceptionHandler.FilterEnd.Offset);
+				writer.Write(" handler ");
 			}
-			writer.Write(" IL_{0:x4}-IL_{1:x4} ", exceptionHandler.HandlerStart.Offset, exceptionHandler.HandlerEnd.Offset);
+			if (exceptionHandler.CatchType != null) {
+				writer.Write(' ');
+				exceptionHandler.CatchType.WriteTo(writer);
+			}
+			writer.Write(' ');
+			WriteOffsetReference(writer, exceptionHandler.HandlerStart.Offset);
+			writer.Write('-');
+			WriteOffsetReference(writer, exceptionHandler.HandlerEnd.Offset);
 		}
 		
 		public static void WriteTo(this Instruction instruction, ITextOutput writer)
 		{
-			writer.Write(CecilExtensions.OffsetToString(instruction.Offset));
+			writer.WriteDefinition(CecilExtensions.OffsetToString(instruction.Offset), instruction.Offset);
 			writer.Write(": ");
 			writer.Write(instruction.OpCode.Name);
 			if(null != instruction.Operand) {
@@ -52,7 +70,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 			writer.Write("(");
 			for(int i = 0; i < instructions.Length; i++) {
 				if(i != 0) writer.Write(", ");
-				writer.Write(CecilExtensions.OffsetToString(instructions [i].Offset));
+				WriteOffsetReference(writer, instructions[i].Offset);
 			}
 			writer.Write(")");
 		}
@@ -65,95 +83,99 @@ namespace ICSharpCode.ILSpy.Disassembler
 				: value.ToString();
 		}
 		
-		static void WriteMethodReference(ITextOutput writer, MethodReference method)
+		static void WriteTo(this MethodReference method, ITextOutput writer)
 		{
-			writer.Write(FormatTypeReference(method.ReturnType));
+			method.ReturnType.WriteTo(writer);
 			writer.Write(' ');
-			writer.Write(FormatTypeReference(method.DeclaringType));
+			method.DeclaringType.WriteTo(writer);
 			writer.Write("::");
-			writer.Write(method.Name);
+			writer.WriteReference(method.Name, method);
 			writer.Write("(");
 			var parameters = method.Parameters;
-			for(int i=0; i < parameters.Count; ++i) {
-				if(i > 0) writer.Write(", ");
-				writer.Write(FormatTypeReference(parameters [i].ParameterType));
+			for(int i = 0; i < parameters.Count; ++i) {
+				if (i > 0) writer.Write(", ");
+				parameters[i].ParameterType.WriteTo(writer);
 			}
 			writer.Write(")");
 		}
 		
-		static string FormatTypeReference(TypeReference type)
+		static void WriteTo(this TypeReference type, ITextOutput writer)
 		{
-			string typeName = type.FullName;
-			switch(typeName) {
-					case "System.Void": return "void";
-					case "System.String": return "string";
-					case "System.Int32": return "int32";
-					case "System.Long": return "int64";
-					case "System.Boolean": return "bool";
-					case "System.Single": return "float32";
-					case "System.Double": return "float64";
-			}
-			return typeName;
+			string name = ShortTypeName(type);
+			if (name != null)
+				writer.Write(name);
+			else
+				writer.WriteReference(type.FullName, type);
 		}
 		
 		public static void WriteOperand(ITextOutput writer, object operand)
 		{
-			if(null == operand) throw new ArgumentNullException("operand");
+			if (operand == null)
+				throw new ArgumentNullException("operand");
 			
 			Instruction targetInstruction = operand as Instruction;
-			if(null != targetInstruction) {
-				writer.Write(CecilExtensions.OffsetToString(targetInstruction.Offset));
+			if (targetInstruction != null) {
+				WriteOffsetReference(writer, targetInstruction.Offset);
 				return;
 			}
 			
-			Instruction [] targetInstructions = operand as Instruction [];
-			if(null != targetInstructions) {
+			Instruction[] targetInstructions = operand as Instruction[];
+			if (targetInstructions != null) {
 				WriteLabelList(writer, targetInstructions);
 				return;
 			}
 			
 			VariableReference variableRef = operand as VariableReference;
-			if(null != variableRef) {
-				writer.Write(variableRef.Index.ToString());
+			if (variableRef != null) {
+				writer.WriteReference(variableRef.Index.ToString(), variableRef);
 				return;
 			}
 			
 			MethodReference methodRef = operand as MethodReference;
-			if(null != methodRef) {
-				WriteMethodReference(writer, methodRef);
+			if (methodRef != null) {
+				methodRef.WriteTo(writer);
+				return;
+			}
+			
+			TypeReference typeRef = operand as TypeReference;
+			if (typeRef != null) {
+				typeRef.WriteTo(writer);
 				return;
 			}
 			
 			string s = operand as string;
-			if(null != s) {
-				writer.Write("\"" + s + "\"");
+			if (s != null) {
+				writer.Write("\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"");
 				return;
 			}
 			
 			s = ToInvariantCultureString(operand);
 			writer.Write(s);
 		}
-		#endregion
 		
 		public static string ShortTypeName(this TypeReference type)
 		{
 			switch (type.FullName) {
+				case "System.SByte":
+					return "int8";
 				case "System.Int16":
-					return "short";
+					return "int16";
 				case "System.Int32":
-					return "int";
+					return "int32";
 				case "System.Int64":
-					return "long";
+					return "int65";
+				case "System.Byte":
+					return "uint8";
 				case "System.UInt16":
-					return "ushort";
+					return "uint16";
 				case "System.UInt32":
-					return "uint";
+					return "uint32";
 				case "System.UInt64":
-					return "ulong";
+					return "uint64";
 				case "System.Single":
-					return "float";
+					return "float32";
 				case "System.Double":
-					return "double";
+					return "float64";
 				case "System.Void":
 					return "void";
 				case "System.Boolean":
@@ -165,12 +187,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 				case "System.Object":
 					return "object";
 				default:
-					string name = type.Name;
-					int pos = name.LastIndexOf('`');
-					if (pos >= 0)
-						return name.Substring(0, pos);
-					else
-						return name;
+					return null;
 			}
 		}
 	}

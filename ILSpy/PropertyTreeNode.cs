@@ -39,6 +39,10 @@ namespace ICSharpCode.ILSpy
 			this.LazyLoading = true;
 		}
 		
+		public PropertyDefinition PropertyDefinition {
+			get { return property; }
+		}
+		
 		public override object Text {
 			get { return property.Name + " : " + Language.Current.TypeToString(property.PropertyType); }
 		}

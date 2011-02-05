@@ -37,6 +37,10 @@ namespace ICSharpCode.ILSpy
 			this.LazyLoading = true;
 		}
 		
+		public EventDefinition EventDefinition {
+			get { return ev; }
+		}
+		
 		public override object Text {
 			get { return ev.Name + " : " + Language.Current.TypeToString(ev.EventType); }
 		}

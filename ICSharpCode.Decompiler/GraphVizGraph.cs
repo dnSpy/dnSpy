@@ -93,7 +93,7 @@ namespace ICSharpCode.Decompiler
 		public void Save(TextWriter writer)
 		{
 			writer.WriteLine("digraph G {");
-			writer.WriteLine("node [fontsize = 14.5];");
+			writer.WriteLine("node [fontsize = 16];");
 			WriteGraphAttribute(writer, "rankdir", rankdir);
 			foreach (GraphVizNode node in nodes) {
 				node.Save(writer);

@@ -29,6 +29,10 @@ namespace ICSharpCode.ILSpy
 	{
 		readonly FieldDefinition field;
 		
+		public FieldDefinition FieldDefinition {
+			get { return field; }
+		}
+		
 		public FieldTreeNode(FieldDefinition field)
 		{
 			if (field == null)
