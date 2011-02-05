@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
-
+using Decompiler.Mono.Cecil.Rocks;
 using Mono.Cecil.Cil;
 
 namespace Decompiler.ControlFlow
 {
 	public class BasicBlock: Node
 	{
-		List<ByteCodeExpression> body = new List<ByteCodeExpression>();
+		List<ILExpression> body = new List<ILExpression>();
 		List<BasicBlock> basicBlockPredecessors = new List<BasicBlock>();
 		BasicBlock fallThroughBasicBlock;
 		BasicBlock branchBasicBlock;
 		
-		public List<ByteCodeExpression> Body {
+		public List<ILExpression> Body {
 			get { return body; }
 		}
 		
@@ -117,27 +117,22 @@ namespace Decompiler.ControlFlow
 			get { return methodEntry; }
 		}
 		
-		public MethodBodyGraph(ByteCodeExpressionCollection exprs)
+		public MethodBodyGraph(List<ILExpression> exprs)
 		{
 			if (exprs.Count == 0) throw new ArgumentException("Count == 0", "exprs");
 			
 			BasicBlock basicBlock = null;
 			for(int i = 0; i < exprs.Count; i++) {
-				// Start new basic block if
-				//  - this is first expression
-				//  - last expression was branch
-				//  - this expression is branch target
-				//  - this expression is a branch
 				if (i == 0 ||
-				    exprs[i - 1].BranchTarget != null ||
-				    exprs[i].BranchesHere.Count > 0 ||
-				    exprs[i].BranchTarget != null)
+				    exprs[i - 1].OpCode.IsBranch() ||
+				    exprs[i].IsBranchTarget ||
+				    exprs[i].OpCode.IsBranch())
 				{
 					basicBlock = new BasicBlock();
 					this.Childs.Add(basicBlock);
 				}
 				basicBlock.Body.Add(exprs[i]);
-				exprs[i].BasicBlock = basicBlock;
+				exprs[i].SetBasicBlock(basicBlock);
 			}
 			
 			// Add fall-through links to BasicBlocks
@@ -145,22 +140,17 @@ namespace Decompiler.ControlFlow
 				BasicBlock node = exprs[i].BasicBlock;
 				BasicBlock target = exprs[i + 1].BasicBlock;
 				
-				// Still same basic block - ignore
-				if (node == target) continue;
-				
-				// Non-conditional branch does not fall-through
-				if (exprs[i].OpCode.Code == Code.Br ||
-				    exprs[i].OpCode.Code == Code.Leave) continue;
-				
-				node.FallThroughBasicBlock = target;
-				target.BasicBlockPredecessors.Add(node);
+				if (target != node && exprs[i].OpCode.CanFallThough()) {
+					node.FallThroughBasicBlock = target;
+					target.BasicBlockPredecessors.Add(node);
+				}
 			}
 			
 			// Add branch links to BasicBlocks
 			for(int i = 0; i < exprs.Count; i++) {
-				if (exprs[i].BranchTarget != null) {
+				if (exprs[i].OpCode.IsBranch()) {
 					BasicBlock node = exprs[i].BasicBlock;
-					BasicBlock target = exprs[i].BranchTarget.BasicBlock;
+					BasicBlock target = ((ILExpression)exprs[i].Operand).BasicBlock;
 					
 					node.BranchBasicBlock = target;
 					target.BasicBlockPredecessors.Add(node);

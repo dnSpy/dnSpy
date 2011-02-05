@@ -35,12 +35,10 @@ namespace Decompiler.ControlFlow
 			T mergedNode = new T();
 			
 			// Add the merged node
-			Options.NotifyReducingGraph();
 			int headIndex = this.Childs.IndexOf(nodes[0]);
 			this.Childs.Insert(headIndex, mergedNode);
 			
 			foreach(Node node in nodes) {
-				//Options.NotifyReducingGraph();
 				node.MoveTo(mergedNode);
 			}
 			
@@ -52,7 +50,6 @@ namespace Decompiler.ControlFlow
 		Reset:
 			foreach(Node child in this.Childs) {
 				if (child is AcyclicGraph) {
-					Options.NotifyReducingGraph();
 					child.Childs.MoveTo(this, child.Index);
 					child.Remove();
 					goto Reset;

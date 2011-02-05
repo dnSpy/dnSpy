@@ -55,52 +55,39 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src" />
-    <Folder Include="src\ControlFlow" />
+    <Folder Include="src\ILAst\ControlFlow" />
     <Folder Include="src\Mono.Cecil.Rocks" />
-    <Folder Include="src\Transforms" />
-    <Folder Include="src\Transforms\Ast" />
+    <Folder Include="src\ILAst" />
+    <Folder Include="src\Ast" />
+    <Folder Include="src\Ast\Transforms" />
     <Compile Include="src\AssemblyInfo.cs" />
-    <Compile Include="src\AstBuilder.cs" />
-    <Compile Include="src\AstMetodBodyBuilder.cs" />
-    <Compile Include="src\ByteCode.cs" />
-    <Compile Include="src\ByteCode.StackBehaviour.cs" />
-    <Compile Include="src\ByteCode.Type.cs" />
-    <Compile Include="src\ByteCodeCollection.cs" />
-    <Compile Include="src\CilStack.cs" />
-    <Compile Include="src\Constants.cs" />
-    <Compile Include="src\ControlFlow\Node-Optimize.cs" />
-    <Compile Include="src\ControlFlow\Node-Transforms.cs" />
-    <Compile Include="src\ControlFlow\NodeCollection.cs" />
-    <Compile Include="src\ControlFlow\Nodes.cs" />
-    <Compile Include="src\ControlFlow\Node-Structure.cs" />
+    <Compile Include="src\Ast\AstBuilder.cs" />
+    <Compile Include="src\Ast\AstMetodBodyBuilder.cs" />
+    <Compile Include="src\Ast\Transforms\Idioms.cs" />
+    <Compile Include="src\Ast\Transforms\PushNegation.cs" />
+    <Compile Include="src\Ast\Transforms\RemoveDeadLabels.cs" />
+    <Compile Include="src\Ast\Transforms\RemoveEmptyElseBody.cs" />
+    <Compile Include="src\Ast\Transforms\RemoveGotos.cs" />
+    <Compile Include="src\Ast\Transforms\RemoveParenthesis.cs" />
+    <Compile Include="src\Ast\Transforms\RestoreLoop.cs" />
+    <Compile Include="src\Ast\Transforms\SimplifyTypeReferences.cs" />
+    <Compile Include="src\ILAst\ControlFlow\Node-Optimize.cs" />
+    <Compile Include="src\ILAst\ControlFlow\Node-Transforms.cs" />
+    <Compile Include="src\ILAst\ControlFlow\NodeCollection.cs" />
+    <Compile Include="src\ILAst\ControlFlow\Nodes.cs" />
+    <Compile Include="src\ILAst\ControlFlow\Node-Structure.cs" />
+    <Compile Include="src\ILAst\ILAstBuilder.cs" />
+    <Compile Include="src\ILAst\ILAstTypes.cs" />
     <Compile Include="src\MainForm.cs" />
     <Compile Include="src\MainForm.Designer.cs" />
+    <Compile Include="src\Mono.Cecil.Rocks\Constants.cs" />
     <Compile Include="src\Mono.Cecil.Rocks\MethodBodyRocks.cs" />
+    <Compile Include="src\Mono.Cecil.Rocks\MyRocks.cs" />
     <Compile Include="src\Options.cs" />
     <Compile Include="src\Program.cs" />
-    <Compile Include="src\ByteCode.StackAnalysis.cs" />
-    <Compile Include="src\ByteCodeExpression.cs" />
-    <Compile Include="src\ByteCodeExpressionCollection.cs" />
-    <Compile Include="src\Transforms\Ast\PushNegation.cs" />
-    <Compile Include="src\Transforms\Ast\Idioms.cs" />
-    <Compile Include="src\Transforms\Ast\RemoveDeadLabels.cs" />
-    <Compile Include="src\Transforms\Ast\RemoveEmptyElseBody.cs" />
-    <Compile Include="src\Transforms\Ast\RemoveGotos.cs" />
-    <Compile Include="src\Transforms\Ast\RemoveParenthesis.cs" />
-    <Compile Include="src\Transforms\Ast\RestoreLoop.cs" />
-    <Compile Include="src\Transforms\Ast\SimplifyTypeReferences.cs" />
-    <Compile Include="src\Util.cs" />
     <EmbeddedResource Include="src\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="tests\QuickSort\bin\Release\QuickSort.exe">
-      <Link>QuickSort.exe</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="tests\Reversi\bin\Release\Reversi.exe">
-      <Link>Reversi.exe</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <ProjectReference Include="lib\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>

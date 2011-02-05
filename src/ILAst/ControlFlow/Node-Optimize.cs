@@ -36,7 +36,6 @@ namespace Decompiler.ControlFlow
 			}
 			// If the result is single acyclic node, eliminate it
 			if (this.Childs.Count == 1 && this.HeadChild is AcyclicGraph) {
-				Options.NotifyReducingGraph();
 				Node headChild = this.HeadChild;
 				this.Childs.Remove(this.HeadChild);
 				headChild.Childs.MoveTo(this);
@@ -173,7 +172,6 @@ namespace Decompiler.ControlFlow
 			falseNodes.RemoveRange(commonReachable);
 			
 			// Replace the basic block with condition node
-			Options.NotifyReducingGraph();
 			Node conditionParent = condition.Parent;
 			int conditionIndex = condition.Index; 
 			ConditionalNode conditionalNode = new ConditionalNode(condition);
@@ -181,11 +179,9 @@ namespace Decompiler.ControlFlow
 			
 			// If there are no common nodes, let the 'true' block be the default
 			if (commonReachable.Count > 0) {
-				Options.NotifyReducingGraph();
 				trueNodes.MoveTo(conditionalNode.TrueBody);
 			}
 			
-			Options.NotifyReducingGraph();
 			falseNodes.MoveTo(conditionalNode.FalseBody);
 			
 			// Optimize the created subtrees

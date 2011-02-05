@@ -73,7 +73,7 @@ namespace Decompiler
 					int startIndex = code.LastIndexOf("\r\n", endIndex, endIndex);
 					if (startIndex != -1) {
 						code = code.Remove(endIndex, "[Tab]".Length);
-						code = code.Insert(endIndex, new string(' ', 40 - endIndex + startIndex));
+						code = code.Insert(endIndex, new string(' ', Math.Max(0, 40 - endIndex + startIndex)));
 						continue;
 					}
 				}
