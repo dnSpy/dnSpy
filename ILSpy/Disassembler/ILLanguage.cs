@@ -17,7 +17,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil;
+using Mono.Cecil.Rocks;
 
 namespace ICSharpCode.ILSpy.Disassembler
 {
@@ -27,17 +31,48 @@ namespace ICSharpCode.ILSpy.Disassembler
 			get { return "IL"; }
 		}
 		
+		bool detectControlStructure = true;
+		
 		public override void Decompile(MethodDefinition method, ITextOutput output)
 		{
-			foreach (var inst in method.Body.Instructions) {
-				inst.WriteTo(output);
+			if (detectControlStructure) {
+				method.Body.SimplifyMacros();
+				var cfg = ControlFlowGraphBuilder.Build(method.Body);
+				cfg.ComputeDominance();
+				cfg.ComputeDominanceFrontier();
+				var s = DominanceLoopDetector.DetectLoops(cfg);
+				WriteStructure(output, s);
+			} else {
+				foreach (var inst in method.Body.Instructions) {
+					inst.WriteTo(output);
+					output.WriteLine();
+				}
 				output.WriteLine();
+				foreach (var eh in method.Body.ExceptionHandlers) {
+					eh.WriteTo(output);
+					output.WriteLine();
+				}
 			}
+		}
+		
+		void WriteStructure(ITextOutput output, ControlStructure s)
+		{
+			output.WriteComment("// loop start");
 			output.WriteLine();
-			foreach (var eh in method.Body.ExceptionHandlers) {
-				eh.WriteTo(output);
-				output.WriteLine();
+			output.Indent();
+			foreach (var node in s.Nodes.Concat(s.Children.Select(c => c.EntryPoint)).OrderBy(n => n.BlockIndex)) {
+				if (s.Nodes.Contains(node)) {
+					foreach (var inst in node.Instructions) {
+						inst.WriteTo(output);
+						output.WriteLine();
+					}
+				} else {
+					WriteStructure(output, s.Children.Single(c => c.EntryPoint == node));
+				}
 			}
+			output.Unindent();
+			output.WriteComment("// loop end");
+			output.WriteLine();
 		}
 	}
 }

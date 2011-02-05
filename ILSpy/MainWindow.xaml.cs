@@ -124,7 +124,10 @@ namespace ICSharpCode.ILSpy
 			MethodTreeNode node = treeView.SelectedItem as MethodTreeNode;
 			if (node != null && node.MethodDefinition.HasBody) {
 				node.MethodDefinition.Body.SimplifyMacros();
-				ShowGraph(node.MethodDefinition.Name + "-cfg", ControlFlowGraphBuilder.Build(node.MethodDefinition.Body).ExportGraph());
+				var cfg = ControlFlowGraphBuilder.Build(node.MethodDefinition.Body);
+				cfg.ComputeDominance();
+				cfg.ComputeDominanceFrontier();
+				ShowGraph(node.MethodDefinition.Name + "-cfg", cfg.ExportGraph());
 			}
 		}
 		

@@ -174,11 +174,26 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 //				writer.WriteLine();
 //				writer.Write("ImmediateDominator: #{0}", ImmediateDominator.BlockIndex);
 //			}
+			if (DominanceFrontier != null && DominanceFrontier.Any()) {
+				writer.WriteLine();
+				writer.Write("DominanceFrontier: " + string.Join(",", DominanceFrontier.OrderBy(d => d.BlockIndex).Select(d => d.BlockIndex.ToString())));
+			}
 			foreach (Instruction inst in this.Instructions) {
 				writer.WriteLine();
 				inst.WriteTo(writer);
 			}
 			return writer.ToString();
+		}
+		
+		public bool Dominates(ControlFlowNode node)
+		{
+			ControlFlowNode tmp = node;
+			while (tmp != null) {
+				if (tmp == this)
+					return true;
+				tmp = tmp.ImmediateDominator;
+			}
+			return false;
 		}
 	}
 }
