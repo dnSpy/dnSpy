@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 {
 	static class DisassemblerHelpers
 	{
-		static void WriteOffsetReference(ITextOutput writer, Instruction instruction)
+		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction)
 		{
 			writer.WriteReference(CecilExtensions.OffsetToString(instruction.Offset), instruction);
 		}

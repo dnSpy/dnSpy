@@ -55,7 +55,8 @@ namespace ICSharpCode.ILSpy
 			typeof(System.Windows.FrameworkElement).Assembly,
 			typeof(ICSharpCode.TreeView.SharpTreeView).Assembly,
 			typeof(Mono.Cecil.AssemblyDefinition).Assembly,
-			typeof(MainWindow).Assembly
+			typeof(MainWindow).Assembly,
+			typeof(ICSharpCode.Decompiler.GraphVizGraph).Assembly
 		};
 		
 		public MainWindow()

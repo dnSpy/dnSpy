@@ -5,7 +5,7 @@
 // without restriction, including without limitation the rights to use, copy, modify, merge,
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
 // to whom the Software is furnished to do so, subject to the following conditions:
-// 
+// 4
 // The above copyright notice and this permission notice shall be included in all copies or
 // substantial portions of the Software.
 // 
@@ -84,7 +84,13 @@ namespace ICSharpCode.ILSpy.Disassembler
 			if (s.Type != ControlStructureType.Root) {
 				switch (s.Type) {
 					case ControlStructureType.Loop:
-						output.WriteCommentLine("// loop start");
+						output.Write("// loop start");
+						if (s.EntryPoint.Start != null) {
+							output.Write(" (head: ");
+							DisassemblerHelpers.WriteOffsetReference(output, s.EntryPoint.Start);
+							output.Write(')');
+						}
+						output.WriteLine();
 						break;
 					case ControlStructureType.Try:
 						output.WriteLine(".try {");
