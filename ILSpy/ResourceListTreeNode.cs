@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			if (string.IsNullOrEmpty(settings.SearchTerm))
-				return FilterResult.Match;
+				return FilterResult.MatchAndRecurse;
 			else
 				return FilterResult.Recurse;
 		}

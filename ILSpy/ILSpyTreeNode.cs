@@ -64,11 +64,15 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		Hidden,
 		/// <summary>
-		/// Shows the node.
+		/// Shows the node (and resets the search term for child nodes).
 		/// </summary>
 		Match,
 		/// <summary>
-		/// Hides the node only if all children are hidden.
+		/// Hides the node only if all children are hidden (and resets the search term for child nodes).
+		/// </summary>
+		MatchAndRecurse,
+		/// <summary>
+		/// Hides the node only if all children are hidden (doesn't reset the search term for child nodes).
 		/// </summary>
 		Recurse
 	}
@@ -127,11 +131,17 @@ namespace ICSharpCode.ILSpy
 					// don't add to base.Children
 					break;
 				case FilterResult.Match:
-					base.Children.Add(child);
 					child.FilterSettings = StripSearchTerm(this.FilterSettings);
+					base.Children.Add(child);
 					break;
 				case FilterResult.Recurse:
 					child.FilterSettings = this.FilterSettings;
+					child.EnsureLazyChildren();
+					if (child.VisibleChildren.Count > 0)
+						base.Children.Add(child);
+					break;
+				case FilterResult.MatchAndRecurse:
+					child.FilterSettings = StripSearchTerm(this.FilterSettings);
 					child.EnsureLazyChildren();
 					if (child.VisibleChildren.Count > 0)
 						base.Children.Add(child);

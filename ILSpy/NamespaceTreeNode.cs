@@ -48,7 +48,7 @@ namespace ICSharpCode.ILSpy
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			if (settings.SearchTermMatches(name))
-				return FilterResult.Match;
+				return FilterResult.MatchAndRecurse;
 			else
 				return FilterResult.Recurse;
 		}
