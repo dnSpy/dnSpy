@@ -105,6 +105,7 @@
     <Compile Include="PropertyTreeNode.cs" />
     <Compile Include="ReferenceFolderTreeNode.cs" />
     <Compile Include="ReferenceElementGenerator.cs" />
+    <Compile Include="ResourceListTreeNode.cs" />
     <Compile Include="SortableGridViewColumn.cs" />
     <Compile Include="TreeTraversal.cs" />
     <Compile Include="TypeTreeNode.cs" />
@@ -173,10 +174,6 @@
     <Resource Include="Images\ReferenceFolder.Open.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Redo.png" />
-    <Resource Include="Images\Undo.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Event.png" />
     <Resource Include="Images\ExtensionMethod.png" />
   </ItemGroup>
@@ -194,6 +191,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Library.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\SubTypes.png" />
+    <Resource Include="Images\SuperTypes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Resource.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

@@ -128,7 +128,10 @@ namespace ICSharpCode.ILSpy
 		protected override void LoadChildren()
 		{
 			assemblyTask.Wait();
-			this.Children.Add(new ReferenceFolderTreeNode(assemblyTask.Result.MainModule, this));
+			ModuleDefinition mainModule = assemblyTask.Result.MainModule;
+			this.Children.Add(new ReferenceFolderTreeNode(mainModule, this));
+			if (mainModule.HasResources)
+				this.Children.Add(new ResourceListTreeNode(mainModule));
 			foreach (NamespaceTreeNode ns in namespaces.Values) {
 				ns.Children.Clear();
 			}

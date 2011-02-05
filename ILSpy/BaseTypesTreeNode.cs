@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public override object Icon {
-			get { return Images.Undo; }
+			get { return Images.SuperTypes; }
 		}
 		
 		protected override void LoadChildren()
