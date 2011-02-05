@@ -98,6 +98,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		{
 			for (int i = 0; i < methodBody.Instructions.Count; i++) {
 				Instruction blockStart = methodBody.Instructions[i];
+				ExceptionHandler blockStartEH = FindInnermostExceptionHandler(blockStart.Offset);
 				// try and see how big we can make that block:
 				for (; i + 1 < methodBody.Instructions.Count; i++) {
 					Instruction inst = methodBody.Instructions[i];
@@ -105,6 +106,12 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 						break;
 					if (hasIncomingJumps[i + 1])
 						break;
+					if (inst.Next != null) {
+						// ensure that blocks never contain instructions from different try blocks
+						ExceptionHandler instEH = FindInnermostExceptionHandler(inst.Next.Offset);
+						if (instEH != blockStartEH)
+							break;
+					}
 				}
 				
 				nodes.Add(new ControlFlowNode(nodes.Count, blockStart, methodBody.Instructions[i]));
@@ -170,17 +177,17 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		{
 			foreach (ControlFlowNode node in nodes) {
 				if (node.End != null && CanThrowException(node.End.OpCode)) {
-					CreateEdge(node, FindInnermostExceptionHandler(node.End.Offset), JumpType.JumpToExceptionHandler);
+					CreateEdge(node, FindInnermostExceptionHandlerNode(node.End.Offset), JumpType.JumpToExceptionHandler);
 				}
 				if (node.ExceptionHandler != null) {
 					if (node.EndFinallyOrFaultNode != null) {
 						// For Fault and Finally blocks, create edge from "EndFinally" to next exception handler.
 						// This represents the exception bubbling up after finally block was executed.
-						CreateEdge(node.EndFinallyOrFaultNode, FindInnermostExceptionHandler(node.ExceptionHandler.HandlerEnd.Offset), JumpType.JumpToExceptionHandler);
+						CreateEdge(node.EndFinallyOrFaultNode, FindInnermostExceptionHandlerNode(node.ExceptionHandler.HandlerEnd.Offset), JumpType.JumpToExceptionHandler);
 					} else {
 						// For Catch blocks, create edge from "CatchHandler" block (at beginning) to next exception handler.
 						// This represents the exception bubbling up because it did not match the type of the catch block.
-						CreateEdge(node, FindInnermostExceptionHandler(node.ExceptionHandler.HandlerStart.Offset), JumpType.JumpToExceptionHandler);
+						CreateEdge(node, FindInnermostExceptionHandlerNode(node.ExceptionHandler.HandlerStart.Offset), JumpType.JumpToExceptionHandler);
 					}
 					CreateEdge(node, node.ExceptionHandler.HandlerStart, JumpType.Normal);
 				}
@@ -200,14 +207,23 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			}
 		}
 		
-		ControlFlowNode FindInnermostExceptionHandler(int instructionOffsetInTryBlock)
+		ExceptionHandler FindInnermostExceptionHandler(int instructionOffsetInTryBlock)
 		{
 			foreach (ExceptionHandler h in methodBody.ExceptionHandlers) {
 				if (h.TryStart.Offset <= instructionOffsetInTryBlock && instructionOffsetInTryBlock < h.TryEnd.Offset) {
-					return nodes.Single(n => n.ExceptionHandler == h && n.CopyFrom == null);
+					return h;
 				}
 			}
-			return exceptionalExit;
+			return null;
+		}
+		
+		ControlFlowNode FindInnermostExceptionHandlerNode(int instructionOffsetInTryBlock)
+		{
+			ExceptionHandler h = FindInnermostExceptionHandler(instructionOffsetInTryBlock);
+			if (h != null)
+				return nodes.Single(n => n.ExceptionHandler == h && n.CopyFrom == null);
+			else
+				return exceptionalExit;
 		}
 		
 		ControlFlowNode FindInnermostHandlerBlock(int instructionOffset)
@@ -236,7 +252,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					target.Incoming.Remove(node.Outgoing[0]);
 					node.Outgoing.Clear();
 					
-					ControlFlowNode handler = FindInnermostExceptionHandler(node.End.Offset);
+					ControlFlowNode handler = FindInnermostExceptionHandlerNode(node.End.Offset);
 					Debug.Assert(handler.NodeType == ControlFlowNodeType.FinallyOrFaultHandler);
 					
 					ControlFlowNode copy = CopyFinallySubGraph(handler, handler.EndFinallyOrFaultNode, target);
@@ -258,7 +274,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					target.Incoming.Remove(node.Outgoing[0]);
 					node.Outgoing.Clear();
 					
-					ControlFlowNode handler = FindInnermostExceptionHandler(node.End.Offset);
+					ControlFlowNode handler = FindInnermostExceptionHandlerNode(node.End.Offset);
 					Debug.Assert(handler.NodeType == ControlFlowNodeType.FinallyOrFaultHandler);
 					
 					CreateEdge(node, handler, JumpType.Normal);

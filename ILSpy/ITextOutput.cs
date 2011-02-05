@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy
 		void Unindent();
 		void Write(char ch);
 		void Write(string text);
-		void WriteComment(string comment);
+		void WriteCommentLine(string comment);
 		void WriteLine();
 		void WriteDefinition(string text, object definition);
 		void WriteReference(string text, object reference);
@@ -101,10 +101,11 @@ namespace ICSharpCode.ILSpy
 			b.Append(text);
 		}
 		
-		public void WriteComment(string comment)
+		public void WriteCommentLine(string comment)
 		{
 			WriteIndent();
-			b.Append(comment);
+			b.AppendLine(comment);
+			needsIndent = true;
 		}
 		
 		public void WriteLine()

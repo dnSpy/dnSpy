@@ -50,9 +50,9 @@ namespace ICSharpCode.ILSpy
 			output.WriteLine(string.Format(format, args));
 		}
 		
-		public static void WriteComment(this ITextOutput output, string format, params object[] args)
+		public static void WriteCommentLine(this ITextOutput output, string format, params object[] args)
 		{
-			output.WriteComment(string.Format(format, args));
+			output.WriteCommentLine(string.Format(format, args));
 		}
 		
 		/// <summary>
