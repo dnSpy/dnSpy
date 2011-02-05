@@ -79,7 +79,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		void CalculateHasIncomingJumps()
 		{
 			foreach (Instruction inst in methodBody.Instructions) {
-				if (inst.OpCode.OperandType == OperandType.InlineBrTarget) {
+				if (inst.OpCode.OperandType == OperandType.InlineBrTarget || inst.OpCode.OperandType == OperandType.ShortInlineBrTarget) {
 					hasIncomingJumps[GetInstructionIndex((Instruction)inst.Operand)] = true;
 				} else if (inst.OpCode.OperandType == OperandType.InlineSwitch) {
 					foreach (Instruction i in (Instruction[])inst.Operand)
@@ -138,8 +138,8 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 						CreateEdge(node, node.End.Next, JumpType.Normal);
 					
 					// create edges for branch instructions
-					if (node.End.OpCode.OperandType == OperandType.InlineBrTarget) {
-						if (node.End.OpCode == OpCodes.Leave) {
+					if (node.End.OpCode.OperandType == OperandType.InlineBrTarget || node.End.OpCode.OperandType == OperandType.ShortInlineBrTarget) {
+						if (node.End.OpCode == OpCodes.Leave || node.End.OpCode == OpCodes.Leave_S) {
 							var handlerBlock = FindInnermostHandlerBlock(node.End.Offset);
 							if (handlerBlock.NodeType == ControlFlowNodeType.FinallyOrFaultHandler)
 								CreateEdge(node, (Instruction)node.End.Operand, JumpType.LeaveTry);
@@ -245,7 +245,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			for (int i = nodes.Count - 1; i >= 0; i--) {
 				ControlFlowNode node = nodes[i];
 				if (node.End != null && node.Outgoing.Count == 1 && node.Outgoing[0].Type == JumpType.LeaveTry) {
-					Debug.Assert(node.End.OpCode == OpCodes.Leave);
+					Debug.Assert(node.End.OpCode == OpCodes.Leave || node.End.OpCode == OpCodes.Leave_S);
 					
 					ControlFlowNode target = node.Outgoing[0].Target;
 					// remove the edge
@@ -267,7 +267,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			for (int i = nodes.Count - 1; i >= 0; i--) {
 				ControlFlowNode node = nodes[i];
 				if (node.End != null && node.Outgoing.Count == 1 && node.Outgoing[0].Type == JumpType.LeaveTry) {
-					Debug.Assert(node.End.OpCode == OpCodes.Leave);
+					Debug.Assert(node.End.OpCode == OpCodes.Leave || node.End.OpCode == OpCodes.Leave_S);
 					
 					ControlFlowNode target = node.Outgoing[0].Target;
 					// remove the edge

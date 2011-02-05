@@ -20,17 +20,16 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
 namespace ICSharpCode.ILSpy
@@ -44,7 +43,7 @@ namespace ICSharpCode.ILSpy
 		FilterSettings filterSettings = new FilterSettings();
 		ReferenceElementGenerator referenceElementGenerator;
 		
-		static readonly Assembly[] initialAssemblies = {
+		static readonly System.Reflection.Assembly[] initialAssemblies = {
 			typeof(object).Assembly,
 			typeof(Uri).Assembly,
 			typeof(System.Linq.Enumerable).Assembly,
@@ -61,16 +60,17 @@ namespace ICSharpCode.ILSpy
 		
 		public MainWindow()
 		{
+			referenceElementGenerator = new ReferenceElementGenerator(this);
 			this.DataContext = filterSettings;
 			InitializeComponent();
 			
 			languageComboBox.Items.Add(new Decompiler.CSharpLanguage());
-			languageComboBox.Items.Add(new Disassembler.ILLanguage());
+			languageComboBox.Items.Add(new Disassembler.ILLanguage(false));
+			languageComboBox.Items.Add(new Disassembler.ILLanguage(true));
 			languageComboBox.SelectedItem = languageComboBox.Items[0];
 			
 			textEditor.Text = "Welcome to ILSpy!";
 			
-			referenceElementGenerator = new ReferenceElementGenerator(this);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			
 			AssemblyListTreeNode assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
@@ -84,7 +84,7 @@ namespace ICSharpCode.ILSpy
 			treeView.Root = assemblyListTreeNode;
 			assemblyListTreeNode.Select = SelectNode;
 			
-			foreach (Assembly asm in initialAssemblies)
+			foreach (System.Reflection.Assembly asm in initialAssemblies)
 				assemblyList.OpenAssembly(asm.Location);
 			string[] args = Environment.GetCommandLineArgs();
 			for (int i = 1; i < args.Length; i++) {
@@ -125,7 +125,6 @@ namespace ICSharpCode.ILSpy
 		{
 			MethodTreeNode node = treeView.SelectedItem as MethodTreeNode;
 			if (node != null && node.MethodDefinition.HasBody) {
-				node.MethodDefinition.Body.SimplifyMacros();
 				var cfg = ControlFlowGraphBuilder.Build(node.MethodDefinition.Body);
 				cfg.ComputeDominance();
 				cfg.ComputeDominanceFrontier();
@@ -226,6 +225,7 @@ namespace ICSharpCode.ILSpy
 				textEditor.Text = textOutput.ToString();
 			} catch (Exception ex) {
 				textEditor.SyntaxHighlighting = null;
+				referenceElementGenerator.References = null;
 				textEditor.Text = ex.ToString();
 			}
 		}

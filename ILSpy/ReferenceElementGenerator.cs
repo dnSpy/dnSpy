@@ -33,8 +33,9 @@ namespace ICSharpCode.ILSpy
 			if (this.References == null)
 				return null;
 			foreach (var segment in this.References.FindSegmentsContaining(offset)) {
-				if (offset < segment.EndOffset) {
-					return new VisualLineReferenceText(CurrentContext.VisualLine, segment.EndOffset - offset, this, segment);
+				int endOffset = Math.Min(segment.EndOffset, CurrentContext.VisualLine.LastDocumentLine.EndOffset);
+				if (offset < endOffset) {
+					return new VisualLineReferenceText(CurrentContext.VisualLine, endOffset - offset, this, segment);
 				}
 			}
 			return null;

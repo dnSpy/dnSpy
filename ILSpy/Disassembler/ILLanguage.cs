@@ -28,11 +28,16 @@ namespace ICSharpCode.ILSpy.Disassembler
 {
 	public class ILLanguage : Language
 	{
-		public override string Name {
-			get { return "IL"; }
+		bool detectControlStructure;
+		
+		public ILLanguage(bool detectControlStructure)
+		{
+			this.detectControlStructure = detectControlStructure;
 		}
 		
-		bool detectControlStructure = true;
+		public override string Name {
+			get { return detectControlStructure ? "IL (simplified)" : "IL"; }
+		}
 		
 		public override void Decompile(MethodDefinition method, ITextOutput output)
 		{
@@ -60,7 +65,6 @@ namespace ICSharpCode.ILSpy.Disassembler
 			output.WriteLine();
 			
 			if (detectControlStructure) {
-				method.Body.SimplifyMacros();
 				var cfg = ControlFlowGraphBuilder.Build(method.Body);
 				cfg.ComputeDominance();
 				cfg.ComputeDominanceFrontier();
