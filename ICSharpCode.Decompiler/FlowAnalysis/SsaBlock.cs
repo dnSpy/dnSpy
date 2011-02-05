@@ -22,12 +22,22 @@ using System.IO;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
+	/// <summary>
+	/// A block in a control flow graph; with instructions represented by "SsaInstructions" (instructions use variables, no evaluation stack).
+	/// Usually these variables are in SSA form to make analysis easier.
+	/// </summary>
 	public sealed class SsaBlock
 	{
 		public readonly List<SsaBlock> Successors = new List<SsaBlock>();
 		public readonly List<SsaBlock> Predecessors = new List<SsaBlock>();
 		public readonly ControlFlowNodeType NodeType;
 		public readonly List<SsaInstruction> Instructions = new List<SsaInstruction>();
+		
+		/// <summary>
+		/// The block index in the control flow graph.
+		/// This correspons to the node index in ControlFlowGraph.Nodes, so it can be used to retrieve the original CFG node and look
+		/// up additional information (e.g. dominance).
+		/// </summary>
 		public readonly int BlockIndex;
 		
 		internal SsaBlock(ControlFlowNode node)

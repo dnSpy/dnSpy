@@ -27,27 +27,72 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
+	/// <summary>
+	/// Type of the control flow node
+	/// </summary>
 	public enum ControlFlowNodeType
 	{
+		/// <summary>
+		/// A normal node represents a basic block.
+		/// </summary>
 		Normal,
+		/// <summary>
+		/// The entry point of the method.
+		/// </summary>
 		EntryPoint,
+		/// <summary>
+		/// The exit point of the method (every ret instruction branches to this node)
+		/// </summary>
 		RegularExit,
+		/// <summary>
+		/// This node represents leaving a method irregularly by throwing an exception.
+		/// </summary>
 		ExceptionalExit,
+		/// <summary>
+		/// This node is used as a header for exception handler blocks.
+		/// </summary>
 		CatchHandler,
+		/// <summary>
+		/// This node is used as a header for finally blocks and fault blocks.
+		/// Every leave instruction in the try block leads to the handler of the containing finally block;
+		/// and exceptional control flow also leads to this handler.
+		/// </summary>
 		FinallyOrFaultHandler,
+		/// <summary>
+		/// This node is used as footer for finally blocks and fault blocks.
+		/// Depending on the "copyFinallyBlocks" option used when creating the graph, it is connected with all leave targets using
+		/// EndFinally edges (when not copying); or with a specific leave target using a normal edge (when copying).
+		/// For fault blocks, an exception edge is used to represent the "re-throwing" of the exception.
+		/// </summary>
 		EndFinallyOrFault
 	}
 	
+	/// <summary>
+	/// Represents a block in the control flow graph.
+	/// </summary>
 	public sealed class ControlFlowNode
 	{
+		/// <summary>
+		/// Index of this node in the ControlFlowGraph.Nodes collection.
+		/// </summary>
 		public readonly int BlockIndex;
+		
+		/// <summary>
+		/// Type of the node.
+		/// </summary>
 		public readonly ControlFlowNodeType NodeType;
+		
+		/// <summary>
+		/// If this node is a FinallyOrFaultHandler node, this field points to the corresponding EndFinallyOrFault node.
+		/// Otherwise, this field is null.
+		/// </summary>
 		public readonly ControlFlowNode EndFinallyOrFaultNode;
 		
 		/// <summary>
-		/// Visited flag that's used in various algorithms.
+		/// Visited flag, used in various algorithms.
+		/// Before using it in your algorithm, reset it to false by calling ControlFlowGraph.ResetVisited();
 		/// </summary>
-		internal bool Visited;
+		public bool Visited;
 		
 		/// <summary>
 		/// Signalizes that this node is a copy of another node.
@@ -55,21 +100,33 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		public ControlFlowNode CopyFrom { get; internal set; }
 		
 		/// <summary>
-		/// Gets the immediate dominator.
+		/// Gets the immediate dominator (the parent in the dominator tree).
+		/// Null if dominance has not been calculated; or if the node is unreachable.
 		/// </summary>
 		public ControlFlowNode ImmediateDominator { get; internal set; }
 		
+		/// <summary>
+		/// List of children in the dominator tree.
+		/// </summary>
 		public readonly List<ControlFlowNode> DominatorTreeChildren = new List<ControlFlowNode>();
 		
+		/// <summary>
+		/// The dominance frontier of this node.
+		/// This is the set of nodes for which this node dominates a predecessor, but which are not strictly dominated by this node.
+		/// </summary>
+		/// <remarks>
+		/// b.DominanceFrontier = { y in CFG; (exists p in predecessors(y): b dominates p) and not (b strictly dominates y)}
+		/// </remarks>
 		public HashSet<ControlFlowNode> DominanceFrontier;
 		
 		/// <summary>
-		/// Start of code block represented by this node.  Only set for nodetype == Normal.
+		/// Start of code block represented by this node. Only set for nodetype == Normal.
 		/// </summary>
 		public readonly Instruction Start;
 		
 		/// <summary>
 		/// End of the code block represented by this node. Only set for nodetype == Normal.
+		/// The end is exclusive, the end instruction itself does not belong to this block.
 		/// </summary>
 		public readonly Instruction End;
 		
@@ -79,7 +136,14 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// </summary>
 		public readonly ExceptionHandler ExceptionHandler;
 		
+		/// <summary>
+		/// List of incoming control flow edges.
+		/// </summary>
 		public readonly List<ControlFlowEdge> Incoming = new List<ControlFlowEdge>();
+		
+		/// <summary>
+		/// List of outgoing control flow edges.
+		/// </summary>
 		public readonly List<ControlFlowEdge> Outgoing = new List<ControlFlowEdge>();
 		
 		internal ControlFlowNode(int blockIndex, ControlFlowNodeType nodeType)
@@ -109,18 +173,28 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			Debug.Assert((exceptionHandler.HandlerType == ExceptionHandlerType.Finally || exceptionHandler.HandlerType == ExceptionHandlerType.Fault) == (endFinallyOrFaultNode != null));
 		}
 		
+		/// <summary>
+		/// Gets all predecessors (=sources of incoming edges)
+		/// </summary>
 		public IEnumerable<ControlFlowNode> Predecessors {
 			get {
 				return Incoming.Select(e => e.Source);
 			}
 		}
 		
+		/// <summary>
+		/// Gets all successors (=targets of outgoing edges)
+		/// </summary>
 		public IEnumerable<ControlFlowNode> Successors {
 			get {
 				return Outgoing.Select(e => e.Target);
 			}
 		}
 		
+		/// <summary>
+		/// Gets all instructions in this node.
+		/// Returns an empty list for special nodes that don't have any instructions.
+		/// </summary>
 		public IEnumerable<Instruction> Instructions {
 			get {
 				Instruction inst = Start;
@@ -186,8 +260,12 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			return writer.ToString();
 		}
 		
+		/// <summary>
+		/// Gets whether <c>this</c> dominates <paramref name="node"/>.
+		/// </summary>
 		public bool Dominates(ControlFlowNode node)
 		{
+			// TODO: this can be made O(1) by numbering the dominator tree
 			ControlFlowNode tmp = node;
 			while (tmp != null) {
 				if (tmp == this)

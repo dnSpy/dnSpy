@@ -23,6 +23,10 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
+	/// <summary>
+	/// Represents a variable used with the SsaInstruction register-based instructions.
+	/// Despite what the name suggests, the variable is not necessarily in single-assignment form - take a look at "bool IsSingleAssignment".
+	/// </summary>
 	public sealed class SsaVariable
 	{
 		public int OriginalVariableIndex;
@@ -68,6 +72,8 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// Gets whether this variable has only a single assignment.
 		/// This field is initialized in TransformToSsa step.
 		/// </summary>
+		/// <remarks>Not all variables can be transformed to single assignment form: variables that have their address taken
+		/// cannot be represented in SSA (although SimplifyByRefCalls will get rid of the address-taking instruction in almost all cases)</remarks>
 		public bool IsSingleAssignment;
 		
 		/// <summary>

@@ -24,6 +24,9 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
+	/// <summary>
+	/// Contains some very simple optimizations that work on the SSA form.
+	/// </summary>
 	static class SsaOptimization
 	{
 		public static void Optimize(SsaForm ssaForm)

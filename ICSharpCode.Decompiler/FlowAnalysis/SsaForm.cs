@@ -27,6 +27,9 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
+	/// <summary>
+	/// Represents a graph of SsaBlocks.
+	/// </summary>
 	public sealed class SsaForm
 	{
 		readonly SsaVariable[] parameters;

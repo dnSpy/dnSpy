@@ -25,6 +25,9 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
+	/// <summary>
+	/// Constructs the Control Flow Graph from a Cecil method body.
+	/// </summary>
 	public sealed class ControlFlowGraphBuilder
 	{
 		public static ControlFlowGraph Build(MethodBody methodBody)
@@ -32,7 +35,12 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			return new ControlFlowGraphBuilder(methodBody).Build();
 		}
 		
+		// This option controls how finally blocks are handled:
+		// false means that the endfinally instruction will jump to any of the leave targets (EndFinally edge type).
+		// true means that a copy of the whole finally block is created for each leave target. In this case, each endfinally node will be connected with the leave
+		//   target using a normal edge.
 		bool copyFinallyBlocks = false;
+		
 		MethodBody methodBody;
 		int[] offsets; // array index = instruction index; value = IL offset
 		bool[] hasIncomingJumps; // array index = instruction index
@@ -56,6 +64,9 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			Debug.Assert(nodes.Count == 3);
 		}
 		
+		/// <summary>
+		/// Determines the index of the instruction (for use with the hasIncomingJumps array)
+		/// </summary>
 		int GetInstructionIndex(Instruction inst)
 		{
 			int index = Array.BinarySearch(offsets, inst.Offset);
@@ -63,6 +74,9 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			return index;
 		}
 		
+		/// <summary>
+		/// Builds the ControlFlowGraph.
+		/// </summary>
 		public ControlFlowGraph Build()
 		{
 			CalculateHasIncomingJumps();
@@ -76,6 +90,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			return new ControlFlowGraph(nodes.ToArray());
 		}
 		
+		#region Step 1: calculate which instructions are the targets of jump instructions.
 		void CalculateHasIncomingJumps()
 		{
 			foreach (Instruction inst in methodBody.Instructions) {
@@ -93,9 +108,12 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				hasIncomingJumps[GetInstructionIndex(eh.HandlerStart)] = true;
 			}
 		}
+		#endregion
 		
+		#region Step 2: create nodes
 		void CreateNodes()
 		{
+			// Step 2a: find basic blocks and create nodes for them
 			for (int i = 0; i < methodBody.Instructions.Count; i++) {
 				Instruction blockStart = methodBody.Instructions[i];
 				ExceptionHandler blockStartEH = FindInnermostExceptionHandler(blockStart.Offset);
@@ -116,6 +134,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				
 				nodes.Add(new ControlFlowNode(nodes.Count, blockStart, methodBody.Instructions[i]));
 			}
+			// Step 2b: Create special nodes for the exception handling constructs
 			foreach (ExceptionHandler handler in methodBody.ExceptionHandlers) {
 				if (handler.HandlerType == ExceptionHandlerType.Filter)
 					throw new NotSupportedException();
@@ -127,7 +146,9 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				nodes.Add(new ControlFlowNode(nodes.Count, handler, endFinallyOrFaultNode));
 			}
 		}
+		#endregion
 		
+		#region Step 3: create edges for the normal flow of control (assuming no exceptions thrown)
 		void CreateRegularControlFlow()
 		{
 			CreateEdge(entryPoint, methodBody.Instructions[0], JumpType.Normal);
@@ -172,7 +193,9 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				}
 			}
 		}
+		#endregion
 		
+		#region Step 4: create edges for the exceptional control flow (from instructions that might throw, to the innermost containing exception handler)
 		void CreateExceptionalControlFlow()
 		{
 			foreach (ControlFlowNode node in nodes) {
@@ -237,7 +260,33 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			}
 			return exceptionalExit;
 		}
+		#endregion
 		
+		#region Step 5a: replace LeaveTry edges with EndFinally edges
+		// this is used only for copyFinallyBlocks==false; see Step 5b otherwise
+		void TransformLeaveEdges()
+		{
+			for (int i = nodes.Count - 1; i >= 0; i--) {
+				ControlFlowNode node = nodes[i];
+				if (node.End != null && node.Outgoing.Count == 1 && node.Outgoing[0].Type == JumpType.LeaveTry) {
+					Debug.Assert(node.End.OpCode == OpCodes.Leave || node.End.OpCode == OpCodes.Leave_S);
+					
+					ControlFlowNode target = node.Outgoing[0].Target;
+					// remove the edge
+					target.Incoming.Remove(node.Outgoing[0]);
+					node.Outgoing.Clear();
+					
+					ControlFlowNode handler = FindInnermostExceptionHandlerNode(node.End.Offset);
+					Debug.Assert(handler.NodeType == ControlFlowNodeType.FinallyOrFaultHandler);
+					
+					CreateEdge(node, handler, JumpType.Normal);
+					CreateEdge(handler.EndFinallyOrFaultNode, target, JumpType.EndFinally);
+				}
+			}
+		}
+		#endregion
+		
+		#region Step 5b: copy finally blocks into the LeaveTry edges
 		void CopyFinallyBlocksIntoLeaveEdges()
 		{
 			// We need to process try-finally blocks inside-out.
@@ -257,28 +306,6 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					
 					ControlFlowNode copy = CopyFinallySubGraph(handler, handler.EndFinallyOrFaultNode, target);
 					CreateEdge(node, copy, JumpType.Normal);
-				}
-			}
-		}
-		
-		
-		void TransformLeaveEdges()
-		{
-			for (int i = nodes.Count - 1; i >= 0; i--) {
-				ControlFlowNode node = nodes[i];
-				if (node.End != null && node.Outgoing.Count == 1 && node.Outgoing[0].Type == JumpType.LeaveTry) {
-					Debug.Assert(node.End.OpCode == OpCodes.Leave || node.End.OpCode == OpCodes.Leave_S);
-					
-					ControlFlowNode target = node.Outgoing[0].Target;
-					// remove the edge
-					target.Incoming.Remove(node.Outgoing[0]);
-					node.Outgoing.Clear();
-					
-					ControlFlowNode handler = FindInnermostExceptionHandlerNode(node.End.Offset);
-					Debug.Assert(handler.NodeType == ControlFlowNodeType.FinallyOrFaultHandler);
-					
-					CreateEdge(node, handler, JumpType.Normal);
-					CreateEdge(handler.EndFinallyOrFaultNode, target, JumpType.EndFinally);
 				}
 			}
 		}
@@ -366,6 +393,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				return oldNode;
 			}
 		}
+		#endregion
 		
 		#region CreateEdge methods
 		void CreateEdge(ControlFlowNode fromNode, Instruction toInstruction, JumpType type)

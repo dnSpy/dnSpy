@@ -20,8 +20,14 @@ using System;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public enum JumpType
 	{
+		/// <summary>
+		/// A regular control flow edge.
+		/// </summary>
 		Normal,
 		/// <summary>
 		/// Jump to exception handler (an exception occurred)
@@ -33,15 +39,21 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// </summary>
 		LeaveTry,
 		/// <summary>
-		/// Jump from one catch block to its sibling
+		/// Jump from one catch block to its sibling (e.g. in "try {} catch (A) {} catch (B) {}")
 		/// </summary>
 		MutualProtection,
 		/// <summary>
-		/// non-determistic jump at end finally (to any of the potential leave targets)
+		/// Jump at endfinally (to any of the potential leave targets).
+		/// For any leave-instruction, control flow enters the finally block - the edge to the leave target (LeaveTry) is not a real control flow edge.
+		/// EndFinally edges are inserted at the end of the finally block, jumping to any of the targets of the leave instruction.
+		/// This edge type is only used when copying of finally blocks is disabled (with copying, a normal deterministic edge is used at each copy of the endfinally node).
 		/// </summary>
 		EndFinally
 	}
 	
+	/// <summary>
+	/// Represents an edge in the control flow graph, pointing from Source to Target.
+	/// </summary>
 	public sealed class ControlFlowEdge
 	{
 		public readonly ControlFlowNode Source;

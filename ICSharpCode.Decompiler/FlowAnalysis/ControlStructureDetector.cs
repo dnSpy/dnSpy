@@ -34,15 +34,20 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		public static ControlStructure DetectStructure(ControlFlowGraph g, IEnumerable<ExceptionHandler> exceptionHandlers, CancellationToken cancellationToken)
 		{
 			ControlStructure root = new ControlStructure(new HashSet<ControlFlowNode>(g.Nodes), g.EntryPoint, ControlStructureType.Root);
+			// First build a structure tree out of the exception table
 			DetectExceptionHandling(root, g, exceptionHandlers);
+			// Then run the loop detection.
 			DetectLoops(g, root, cancellationToken);
-			g.ResetVisited();
 			return root;
 		}
 		
 		#region Exception Handling
 		static void DetectExceptionHandling(ControlStructure current, ControlFlowGraph g, IEnumerable<ExceptionHandler> exceptionHandlers)
 		{
+			// We rely on the fact that the exception handlers are sorted so that the innermost come first.
+			// For each exception handler, we determine the nodes and substructures inside that handler, and move them into a new substructure.
+			// This is always possible because exception handlers are guaranteed (by the CLR spec) to be properly nested and non-overlapping;
+			// so they directly form the tree that we need.
 			foreach (ExceptionHandler eh in exceptionHandlers) {
 				var tryNodes = FindNodes(current, eh.TryStart, eh.TryEnd);
 				current.Nodes.ExceptWith(tryNodes);
@@ -112,6 +117,13 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		#endregion
 		
 		#region Loop Detection
+		// Loop detection works like this:
+		// We find a top-level loop by looking for its entry point, which is characterized by a node dominating its own predecessor.
+		// Then we determine all other nodes that belong to such a loop (all nodes which lead to the entry point, and are dominated by it).
+		// Finally, we check whether our result conforms with potential existing exception structures, and create the substructure for the loop if successful.
+		
+		// This algorithm is applied recursively for any substructures (both detected loops and exception blocks)
+		
 		static void DetectLoops(ControlFlowGraph g, ControlStructure current, CancellationToken cancellationToken)
 		{
 			g.ResetVisited();
@@ -170,20 +182,56 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 	
 	public enum ControlStructureType
 	{
+		/// <summary>
+		/// The root block of the method
+		/// </summary>
 		Root,
+		/// <summary>
+		/// A nested control structure representing a loop.
+		/// </summary>
 		Loop,
+		/// <summary>
+		/// A nested control structure representing a try block.
+		/// </summary>
 		Try,
+		/// <summary>
+		/// A nested control structure representing a catch, finally, or fault block.
+		/// </summary>
 		Handler,
+		/// <summary>
+		/// A nested control structure representing an exception filter block.
+		/// </summary>
 		Filter
 	}
 	
+	/// <summary>
+	/// Represents the structure detected by the <see cref="ControlStructureDetector"/>.
+	/// 
+	/// This is a tree of ControlStructure nodes. Each node contains a set of CFG nodes, and every CFG node is contained in exactly one ControlStructure node.
+	/// </summary>
 	public class ControlStructure
 	{
 		public readonly ControlStructureType Type;
 		public readonly List<ControlStructure> Children = new List<ControlStructure>();
+		
+		/// <summary>
+		/// The nodes in this control structure.
+		/// </summary>
 		public readonly HashSet<ControlFlowNode> Nodes;
+		
+		/// <summary>
+		/// The nodes in this control structure and in all child control structures.
+		/// </summary>
 		public readonly HashSet<ControlFlowNode> AllNodes;
+		
+		/// <summary>
+		/// The entry point of this control structure.
+		/// </summary>
 		public readonly ControlFlowNode EntryPoint;
+		
+		/// <summary>
+		/// The exception handler associated with this Try,Handler or Finally structure.
+		/// </summary>
 		public ExceptionHandler ExceptionHandler;
 		
 		public ControlStructure(HashSet<ControlFlowNode> nodes, ControlFlowNode entryPoint, ControlStructureType type)

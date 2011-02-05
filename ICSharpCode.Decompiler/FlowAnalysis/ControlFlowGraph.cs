@@ -31,6 +31,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 	/// <summary>
 	/// Contains the control flow graph.
 	/// </summary>
+	/// <remarks>Use ControlFlowGraph builder to create instances of the ControlFlowGraph.</remarks>
 	public sealed class ControlFlowGraph
 	{
 		readonly ReadOnlyCollection<ControlFlowNode> nodes;
@@ -90,13 +91,19 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		}
 		#endif
 		
-		internal void ResetVisited()
+		/// <summary>
+		/// Resets "Visited" to false for all nodes in this graph.
+		/// </summary>
+		public void ResetVisited()
 		{
 			foreach (ControlFlowNode node in nodes) {
 				node.Visited = false;
 			}
 		}
 		
+		/// <summary>
+		/// Computes the dominator tree.
+		/// </summary>
 		public void ComputeDominance(CancellationToken cancellationToken = default(CancellationToken))
 		{
 			// A Simple, Fast Dominance Algorithm
@@ -151,6 +158,10 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			throw new Exception("No common dominator found!");
 		}
 		
+		/// <summary>
+		/// Computes dominance frontiers.
+		/// This method requires that the dominator tree is already computed!
+		/// </summary>
 		public void ComputeDominanceFrontier()
 		{
 			ResetVisited();

@@ -25,6 +25,11 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
+	/// <summary>
+	/// This is a transformation working on SSA form.
+	/// It removes ldloca instructions and replaces them with SpecialOpCode.PrepareByOutCall or SpecialOpCode.PrepareByRefCall.
+	/// This then allows the variable that had its address taken to also be transformed into SSA.
+	/// </summary>
 	sealed class SimplifyByRefCalls
 	{
 		public static bool MakeByRefCallsSimple(SsaForm ssaForm)
