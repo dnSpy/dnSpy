@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-
+using ICSharpCode.Decompiler.Disassembler;
 using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
@@ -239,7 +239,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				case ControlFlowNodeType.CatchHandler:
 				case ControlFlowNodeType.FinallyOrFaultHandler:
 					writer.Write("Block #{0}: {1}: ", BlockIndex, NodeType);
-					ExceptionHandler.WriteTo(writer);
+					Disassembler.DisassemblerHelpers.WriteTo(ExceptionHandler, new PlainTextOutput(writer));
 					break;
 				default:
 					writer.Write("Block #{0}: {1}", BlockIndex, NodeType);
@@ -255,7 +255,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			}
 			foreach (Instruction inst in this.Instructions) {
 				writer.WriteLine();
-				inst.WriteTo(writer);
+				Disassembler.DisassemblerHelpers.WriteTo(inst, new PlainTextOutput(writer));
 			}
 			return writer.ToString();
 		}

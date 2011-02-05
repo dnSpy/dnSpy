@@ -17,22 +17,16 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Windows;
 
 using ICSharpCode.TreeView;
-using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
 	/// Represents a list of assemblies.
+	/// This is used as (invisible) root node of the tree view.
 	/// </summary>
 	sealed class AssemblyListTreeNode : ILSpyTreeNode<AssemblyTreeNode>
 	{

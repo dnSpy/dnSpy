@@ -35,50 +35,6 @@ namespace ICSharpCode.ILSpy
 				list.Add(item);
 		}
 		
-		public static void Write(this ITextOutput output, string format, params object[] args)
-		{
-			output.Write(string.Format(format, args));
-		}
-		
-		public static void WriteLine(this ITextOutput output, string text)
-		{
-			output.Write(text);
-			output.WriteLine();
-		}
-		
-		public static void WriteLine(this ITextOutput output, string format, params object[] args)
-		{
-			output.WriteLine(string.Format(format, args));
-		}
-		
-		public static void WriteCommentLine(this ITextOutput output, string format, params object[] args)
-		{
-			output.WriteCommentLine(string.Format(format, args));
-		}
-		
-		public static HashSet<MethodDefinition> GetAccessorMethods(this TypeDefinition type)
-		{
-			HashSet<MethodDefinition> accessorMethods = new HashSet<MethodDefinition>();
-			foreach (var property in type.Properties) {
-				accessorMethods.Add(property.GetMethod);
-				accessorMethods.Add(property.SetMethod);
-				if (property.HasOtherMethods) {
-					foreach (var m in property.OtherMethods)
-						accessorMethods.Add(m);
-				}
-			}
-			foreach (EventDefinition ev in type.Events) {
-				accessorMethods.Add(ev.AddMethod);
-				accessorMethods.Add(ev.RemoveMethod);
-				accessorMethods.Add(ev.InvokeMethod);
-				if (ev.HasOtherMethods) {
-					foreach (var m in ev.OtherMethods)
-						accessorMethods.Add(m);
-				}
-			}
-			return accessorMethods;
-		}
-		
 		/// <summary>
 		/// Sets the value of a dependency property on <paramref name="targetObject"/> using a markup extension.
 		/// </summary>

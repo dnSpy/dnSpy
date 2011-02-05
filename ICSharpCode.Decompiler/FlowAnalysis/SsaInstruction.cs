@@ -19,7 +19,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-
+using ICSharpCode.Decompiler.Disassembler;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -143,7 +143,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		public void WriteTo(TextWriter writer)
 		{
 			foreach (Instruction prefix in this.Prefixes) {
-				prefix.WriteTo(writer);
+				Disassembler.DisassemblerHelpers.WriteTo(prefix, new PlainTextOutput(writer));
 				writer.WriteLine();
 			}
 			if (Instruction != null && Instruction.Offset >= 0) {
@@ -166,7 +166,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					writer.Write(Instruction.OpCode.Name);
 					if(null != Instruction.Operand) {
 						writer.Write(' ');
-						writer.Write(CecilExtensions.OperandToString(Instruction.Operand));
+						Disassembler.DisassemblerHelpers.WriteOperand(new PlainTextOutput(writer), Instruction.Operand);
 						writer.Write(' ');
 					}
 				}

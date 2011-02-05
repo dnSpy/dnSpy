@@ -19,7 +19,7 @@
 using System;
 using System.Text;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.Decompiler
 {
 	public interface ITextOutput
 	{
@@ -27,7 +27,6 @@ namespace ICSharpCode.ILSpy
 		void Unindent();
 		void Write(char ch);
 		void Write(string text);
-		void WriteCommentLine(string comment);
 		void WriteLine();
 		void WriteDefinition(string text, object definition);
 		void WriteReference(string text, object reference);
@@ -36,77 +35,22 @@ namespace ICSharpCode.ILSpy
 		void MarkFoldEnd();
 	}
 	
-	public class PlainTextOutput : ITextOutput
+	public static class TextOutputExtensions
 	{
-		readonly StringBuilder b = new StringBuilder();
-		int indent;
-		bool needsIndent;
-		
-		public override string ToString()
+		public static void Write(this ITextOutput output, string format, params object[] args)
 		{
-			return b.ToString();
+			output.Write(string.Format(format, args));
 		}
 		
-		public void Indent()
+		public static void WriteLine(this ITextOutput output, string text)
 		{
-			indent++;
+			output.Write(text);
+			output.WriteLine();
 		}
 		
-		public void Unindent()
+		public static void WriteLine(this ITextOutput output, string format, params object[] args)
 		{
-			indent--;
-		}
-		
-		void WriteIndent()
-		{
-			if (needsIndent) {
-				needsIndent = false;
-				for (int i = 0; i < indent; i++) {
-					b.Append('\t');
-				}
-			}
-		}
-		
-		public void Write(char ch)
-		{
-			WriteIndent();
-			b.Append(ch);
-		}
-		
-		public void Write(string text)
-		{
-			WriteIndent();
-			b.Append(text);
-		}
-		
-		public void WriteCommentLine(string comment)
-		{
-			Write(comment);
-			WriteLine();
-		}
-		
-		public void WriteLine()
-		{
-			b.AppendLine();
-			needsIndent = true;
-		}
-		
-		public void WriteDefinition(string text, object definition)
-		{
-			Write(text);
-		}
-		
-		public void WriteReference(string text, object reference)
-		{
-			Write(text);
-		}
-		
-		void ITextOutput.MarkFoldStart(string collapsedText, bool defaultCollapsed)
-		{
-		}
-		
-		void ITextOutput.MarkFoldEnd()
-		{
+			output.WriteLine(string.Format(format, args));
 		}
 	}
 }

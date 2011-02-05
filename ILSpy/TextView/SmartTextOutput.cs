@@ -19,8 +19,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TextView
 {

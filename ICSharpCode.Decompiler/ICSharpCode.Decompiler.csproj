@@ -50,6 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CecilExtensions.cs" />
+    <Compile Include="Disassembler\DisassemblerHelpers.cs" />
+    <Compile Include="Disassembler\MethodBodyDisassembler.cs" />
+    <Compile Include="Disassembler\ReflectionDisassembler.cs" />
     <Compile Include="FlowAnalysis\ControlFlowEdge.cs" />
     <Compile Include="FlowAnalysis\ControlFlowGraph.cs" />
     <Compile Include="FlowAnalysis\ControlFlowGraphBuilder.cs" />
@@ -65,6 +68,8 @@
     <Compile Include="FlowAnalysis\SsaVariable.cs" />
     <Compile Include="FlowAnalysis\TransformToSsa.cs" />
     <Compile Include="GraphVizGraph.cs" />
+    <Compile Include="ITextOutput.cs" />
+    <Compile Include="PlainTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\AssemblyInfo.template.cs" />
   </ItemGroup>
@@ -73,6 +78,9 @@
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Disassembler" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <Target Name="BeforeBuild">

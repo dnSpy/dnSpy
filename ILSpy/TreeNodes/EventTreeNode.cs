@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy

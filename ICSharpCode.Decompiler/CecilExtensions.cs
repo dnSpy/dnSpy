@@ -17,8 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -124,62 +126,32 @@ namespace ICSharpCode.Decompiler
 		}
 		#endregion
 		
-		public static void WriteTo(this Instruction instruction, TextWriter writer)
-		{
-			writer.Write(OffsetToString(instruction.Offset));
-			writer.Write(": ");
-			writer.Write(instruction.OpCode.Name);
-			if(null != instruction.Operand) {
-				writer.Write(' ');
-				writer.Write(OperandToString(instruction.Operand));
-			}
-		}
-		
-		public static void WriteTo(this ExceptionHandler exceptionHandler, TextWriter writer)
-		{
-			writer.Write("Try IL_{0:x4}-IL_{1:x4} ", exceptionHandler.TryStart.Offset, exceptionHandler.TryEnd.Offset);
-			writer.Write(exceptionHandler.HandlerType.ToString());
-			if (exceptionHandler.FilterStart != null) {
-				writer.Write(" IL_{0:x4}-IL_{1:x4} handler ", exceptionHandler.FilterStart.Offset, exceptionHandler.FilterEnd.Offset);
-			}
-			writer.Write(" IL_{0:x4}-IL_{1:x4} ", exceptionHandler.HandlerStart.Offset, exceptionHandler.HandlerEnd.Offset);
-		}
-		
 		public static string OffsetToString(int offset)
 		{
 			return string.Format("IL_{0:x4}", offset);
 		}
 		
-		public static string OperandToString(object operand)
+		public static HashSet<MethodDefinition> GetAccessorMethods(this TypeDefinition type)
 		{
-			if(null == operand) throw new ArgumentNullException("operand");
-			
-			Instruction targetInstruction = operand as Instruction;
-			if(null != targetInstruction) {
-				return OffsetToString(targetInstruction.Offset);
+			HashSet<MethodDefinition> accessorMethods = new HashSet<MethodDefinition>();
+			foreach (var property in type.Properties) {
+				accessorMethods.Add(property.GetMethod);
+				accessorMethods.Add(property.SetMethod);
+				if (property.HasOtherMethods) {
+					foreach (var m in property.OtherMethods)
+						accessorMethods.Add(m);
+				}
 			}
-			
-			Instruction [] targetInstructions = operand as Instruction [];
-			if(null != targetInstructions) {
-				return string.Join(", ", targetInstructions.Select(i => OffsetToString(i.Offset)));
+			foreach (EventDefinition ev in type.Events) {
+				accessorMethods.Add(ev.AddMethod);
+				accessorMethods.Add(ev.RemoveMethod);
+				accessorMethods.Add(ev.InvokeMethod);
+				if (ev.HasOtherMethods) {
+					foreach (var m in ev.OtherMethods)
+						accessorMethods.Add(m);
+				}
 			}
-			
-			VariableReference variableRef = operand as VariableReference;
-			if(null != variableRef) {
-				return variableRef.Index.ToString();
-			}
-			
-			MethodReference methodRef = operand as MethodReference;
-			if(null != methodRef) {
-				return methodRef.ToString();
-			}
-			
-			string s = operand as string;
-			if(null != s) {
-				return "\"" + s + "\"";
-			}
-			
-			return operand.ToString();
+			return accessorMethods;
 		}
 	}
 }

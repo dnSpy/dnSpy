@@ -18,13 +18,12 @@
 
 using System;
 using System.Linq;
-using ICSharpCode.Decompiler;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace ICSharpCode.ILSpy.Disassembler
+namespace ICSharpCode.Decompiler.Disassembler
 {
-	static class DisassemblerHelpers
+	public static class DisassemblerHelpers
 	{
 		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction)
 		{

@@ -18,7 +18,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy

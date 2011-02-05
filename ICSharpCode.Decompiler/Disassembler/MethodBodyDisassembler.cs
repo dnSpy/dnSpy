@@ -20,16 +20,17 @@ using System;
 using System.Linq;
 using System.Threading;
 
+using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace ICSharpCode.ILSpy.Disassembler
+namespace ICSharpCode.Decompiler.Disassembler
 {
 	/// <summary>
 	/// Disassembles a method body.
 	/// </summary>
-	public class MethodBodyDisassembler
+	public sealed class MethodBodyDisassembler
 	{
 		readonly ITextOutput output;
 		readonly bool detectControlStructure;
@@ -47,8 +48,8 @@ namespace ICSharpCode.ILSpy.Disassembler
 		public void Disassemble(MethodBody body)
 		{
 			MethodDefinition method = body.Method;
-			output.WriteCommentLine("// Method begins at RVA 0x{0:x4}", method.RVA);
-			output.WriteCommentLine("// Code size {0} (0x{0:x})", body.CodeSize);
+			output.WriteLine("// Method begins at RVA 0x{0:x4}", method.RVA);
+			output.WriteLine("// Code size {0} (0x{0:x})", body.CodeSize);
 			output.WriteLine(".maxstack {0}", body.MaxStackSize);
 			if (method.DeclaringType.Module.Assembly.EntryPoint == method)
 				output.WriteLine (".entrypoint");
@@ -149,7 +150,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 				output.Unindent();
 				switch (s.Type) {
 					case ControlStructureType.Loop:
-						output.WriteCommentLine("// end loop");
+						output.WriteLine("// end loop");
 						break;
 					case ControlStructureType.Try:
 						output.WriteLine("} // end .try");

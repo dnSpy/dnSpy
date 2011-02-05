@@ -17,56 +17,45 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
-	/// Represents a property in the TreeView.
+	/// Represents a field in the TreeView.
 	/// </summary>
-	sealed class PropertyTreeNode : ILSpyTreeNode<MethodTreeNode>
+	sealed class FieldTreeNode : ILSpyTreeNode
 	{
-		readonly PropertyDefinition property;
-		readonly bool isIndexer;
+		readonly FieldDefinition field;
 		
-		public PropertyTreeNode(PropertyDefinition property, bool isIndexer)
-		{
-			if (property == null)
-				throw new ArgumentNullException("property");
-			this.property = property;
-			this.isIndexer = isIndexer;
-			this.LazyLoading = true;
+		public FieldDefinition FieldDefinition {
+			get { return field; }
 		}
 		
-		public PropertyDefinition PropertyDefinition {
-			get { return property; }
+		public FieldTreeNode(FieldDefinition field)
+		{
+			if (field == null)
+				throw new ArgumentNullException("field");
+			this.field = field;
 		}
 		
 		public override object Text {
-			get { return property.Name + " : " + Language.Current.TypeToString(property.PropertyType); }
+			get { return field.Name + " : " + Language.Current.TypeToString(field.FieldType); }
 		}
 		
 		public override object Icon {
 			get {
-				return isIndexer ? Images.Indexer : Images.Property;
-			}
-		}
-		
-		protected override void LoadChildren()
-		{
-			if (property.GetMethod != null)
-				this.Children.Add(new MethodTreeNode(property.GetMethod));
-			if (property.SetMethod != null)
-				this.Children.Add(new MethodTreeNode(property.SetMethod));
-			if (property.HasOtherMethods) {
-				foreach (var m in property.OtherMethods)
-					this.Children.Add(new MethodTreeNode(m));
+				if (field.IsLiteral)
+					return Images.Literal;
+				else
+					return Images.Field;
 			}
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(property.Name))
+			if (settings.SearchTermMatches(field.Name))
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;
@@ -74,7 +63,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.DecompileProperty(property, output, options);
+			language.DecompileField(field, output, options);
 		}
 	}
 }

@@ -18,6 +18,7 @@
 
 using System;
 using System.Text;
+using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy

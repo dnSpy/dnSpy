@@ -23,12 +23,12 @@ using System.Threading;
 using Mono.Cecil;
 using Mono.Collections.Generic;
 
-namespace ICSharpCode.ILSpy.Disassembler
+namespace ICSharpCode.Decompiler.Disassembler
 {
 	/// <summary>
 	/// Disassembles type and member definitions.
 	/// </summary>
-	public class ReflectionDisassembler
+	public sealed class ReflectionDisassembler
 	{
 		ITextOutput output;
 		CancellationToken cancellationToken;
@@ -345,7 +345,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 				output.WriteLine();
 			}
 			if (type.HasNestedTypes) {
-				output.WriteCommentLine("// Nested Types");
+				output.WriteLine("// Nested Types");
 				foreach (var nestedType in type.NestedTypes) {
 					cancellationToken.ThrowIfCancellationRequested();
 					DisassembleType(nestedType);
@@ -354,7 +354,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 				output.WriteLine();
 			}
 			if (type.HasFields) {
-				output.WriteCommentLine("// Fields");
+				output.WriteLine("// Fields");
 				foreach (var field in type.Fields) {
 					cancellationToken.ThrowIfCancellationRequested();
 					DisassembleField(field);
@@ -362,7 +362,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 				output.WriteLine();
 			}
 			if (type.HasProperties) {
-				output.WriteCommentLine("// Properties");
+				output.WriteLine("// Properties");
 				foreach (var prop in type.Properties) {
 					cancellationToken.ThrowIfCancellationRequested();
 					DisassembleProperty(prop);
@@ -370,7 +370,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 				output.WriteLine();
 			}
 			if (type.HasEvents) {
-				output.WriteCommentLine("// Events");
+				output.WriteLine("// Events");
 				foreach (var ev in type.Events) {
 					cancellationToken.ThrowIfCancellationRequested();
 					DisassembleEvent(ev);
@@ -379,7 +379,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 				output.WriteLine();
 			}
 			if (type.HasMethods) {
-				output.WriteCommentLine("// Methods");
+				output.WriteLine("// Methods");
 				var accessorMethods = type.GetAccessorMethods();
 				foreach (var m in type.Methods) {
 					cancellationToken.ThrowIfCancellationRequested();

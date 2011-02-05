@@ -24,6 +24,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+
+using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
