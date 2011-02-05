@@ -115,11 +115,8 @@ namespace ICSharpCode.ILSpy
 		internal void SelectNode(SharpTreeNode obj)
 		{
 			if (obj != null) {
-				foreach (SharpTreeNode node in obj.Ancestors())
-					node.IsExpanded = true;
-				
+				treeView.FocusNode(obj);
 				treeView.SelectedItem = obj;
-				treeView.ScrollIntoView(obj);
 			}
 		}
 		
