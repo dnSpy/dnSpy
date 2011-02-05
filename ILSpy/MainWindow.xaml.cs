@@ -30,6 +30,7 @@ using System.Windows.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.ILSpy.Disassembler;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 using Mono.Cecil;
@@ -44,8 +45,8 @@ namespace ICSharpCode.ILSpy
 	public partial class MainWindow : Window
 	{
 		AssemblyList assemblyList = new AssemblyList();
+		DecompilerTextView decompilerTextView;
 		FilterSettings filterSettings = new FilterSettings();
-		ReferenceElementGenerator referenceElementGenerator;
 		
 		static readonly System.Reflection.Assembly[] initialAssemblies = {
 			typeof(object).Assembly,
@@ -64,9 +65,9 @@ namespace ICSharpCode.ILSpy
 		
 		public MainWindow()
 		{
-			referenceElementGenerator = new ReferenceElementGenerator(this);
 			this.DataContext = filterSettings;
 			InitializeComponent();
+			decompilerTextView = new DecompilerTextView(this, textEditor);
 			
 			languageComboBox.Items.Add(new Decompiler.CSharpLanguage());
 			languageComboBox.Items.Add(new Disassembler.ILLanguage(false));
@@ -74,8 +75,6 @@ namespace ICSharpCode.ILSpy
 			languageComboBox.SelectedItem = languageComboBox.Items[0];
 			
 			textEditor.Text = "Welcome to ILSpy!";
-			
-			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			
 			AssemblyListTreeNode assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			assemblyListTreeNode.FilterSettings = filterSettings.Clone();
@@ -112,7 +111,11 @@ namespace ICSharpCode.ILSpy
 			#endif
 		}
 		
-		void SelectNode(SharpTreeNode obj)
+		internal AssemblyList AssemblyList {
+			get { return assemblyList; }
+		}
+		
+		internal void SelectNode(SharpTreeNode obj)
 		{
 			if (obj != null) {
 				foreach (SharpTreeNode node in obj.Ancestors())
@@ -214,85 +217,9 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		DefinitionLookup definitionLookup;
-		CancellationTokenSource currentCancellationTokenSource;
-		
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (currentCancellationTokenSource != null)
-				currentCancellationTokenSource.Cancel();
-			var myCancellationTokenSource = new CancellationTokenSource();
-			currentCancellationTokenSource = myCancellationTokenSource;
-			var task = RunDecompiler(ILSpy.Language.Current,
-			                         treeView.SelectedItems.OfType<ILSpyTreeNode>().ToArray(),
-			                         myCancellationTokenSource.Token);
-			task.ContinueWith(
-				delegate {
-					try {
-						if (currentCancellationTokenSource == myCancellationTokenSource) {
-							currentCancellationTokenSource = null;
-							try {
-								SmartTextOutput textOutput = task.Result;
-								referenceElementGenerator.References = textOutput.References;
-								definitionLookup = textOutput.DefinitionLookup;
-								textEditor.SyntaxHighlighting = ILSpy.Language.Current.SyntaxHighlighting;
-								textEditor.Text = textOutput.ToString();
-							} catch (AggregateException ex) {
-								textEditor.SyntaxHighlighting = null;
-								referenceElementGenerator.References = null;
-								definitionLookup = null;
-								textEditor.Text = string.Join(Environment.NewLine, ex.InnerExceptions.Select(ie => ie.ToString()));
-							}
-						}
-					} finally {
-						myCancellationTokenSource.Dispose();
-					}
-				},
-				TaskScheduler.FromCurrentSynchronizationContext());
-		}
-		
-		static Task<SmartTextOutput> RunDecompiler(ILSpy.Language language, ILSpyTreeNode[] nodes, CancellationToken cancellationToken)
-		{
-			return Task.Factory.StartNew(
-				delegate {
-					SmartTextOutput textOutput = new SmartTextOutput();
-					foreach (var node in nodes) {
-						cancellationToken.ThrowIfCancellationRequested();
-						node.Decompile(language, textOutput, cancellationToken);
-					}
-					return textOutput;
-				});
-		}
-		
-		internal void JumpToReference(ReferenceSegment referenceSegment)
-		{
-			object reference = referenceSegment.Reference;
-			if (definitionLookup != null) {
-				int pos = definitionLookup.GetDefinitionPosition(reference);
-				if (pos >= 0) {
-					textEditor.TextArea.Focus();
-					textEditor.Select(pos, 0);
-					textEditor.ScrollTo(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column);
-					Dispatcher.Invoke(DispatcherPriority.Background, new Action(
-						delegate {
-							CaretHighlightAdorner.DisplayCaretHighlightAnimation(textEditor.TextArea);
-						}));
-					return;
-				}
-			}
-			if (reference is TypeReference) {
-				SelectNode(assemblyList.FindTypeNode(((TypeReference)reference).Resolve()));
-			} else if (reference is MethodReference) {
-				SelectNode(assemblyList.FindMethodNode(((MethodReference)reference).Resolve()));
-			} else if (reference is FieldReference) {
-				SelectNode(assemblyList.FindFieldNode(((FieldReference)reference).Resolve()));
-			} else if (reference is PropertyReference) {
-				SelectNode(assemblyList.FindPropertyNode(((PropertyReference)reference).Resolve()));
-			} else if (reference is EventReference) {
-				SelectNode(assemblyList.FindEventNode(((EventReference)reference).Resolve()));
-			} else if (reference is AssemblyDefinition) {
-				SelectNode(assemblyList.Assemblies.FirstOrDefault(node => node.AssemblyDefinition == reference));
-			}
+			decompilerTextView.Decompile(treeView.SelectedItems.OfType<ILSpyTreeNodeBase>());
 		}
 		
 		void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

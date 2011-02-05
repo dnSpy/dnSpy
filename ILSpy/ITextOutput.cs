@@ -17,9 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ICSharpCode.AvalonEdit.Document;
 
 namespace ICSharpCode.ILSpy
 {
@@ -33,109 +30,5 @@ namespace ICSharpCode.ILSpy
 		void WriteLine();
 		void WriteDefinition(string text, object definition);
 		void WriteReference(string text, object reference);
-	}
-	
-	sealed class ReferenceSegment : TextSegment
-	{
-		public object Reference;
-	}
-	
-	sealed class DefinitionLookup
-	{
-		Dictionary<object, int> definitions = new Dictionary<object, int>();
-		
-		public int GetDefinitionPosition(object definition)
-		{
-			int val;
-			if (definitions.TryGetValue(definition, out val))
-				return val;
-			else
-				return -1;
-		}
-		
-		public void AddDefinition(object definition, int offset)
-		{
-			definitions[definition] = offset;
-		}
-	}
-	
-	sealed class SmartTextOutput : ITextOutput
-	{
-		readonly StringBuilder b = new StringBuilder();
-		int indent;
-		bool needsIndent;
-		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
-		
-		public readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
-		
-		public TextSegmentCollection<ReferenceSegment> References {
-			get { return references; }
-		}
-		
-		public override string ToString()
-		{
-			return b.ToString();
-		}
-		
-		public void Indent()
-		{
-			indent++;
-		}
-		
-		public void Unindent()
-		{
-			indent--;
-		}
-		
-		void WriteIndent()
-		{
-			if (needsIndent) {
-				needsIndent = false;
-				for (int i = 0; i < indent; i++) {
-					b.Append('\t');
-				}
-			}
-		}
-		
-		public void Write(char ch)
-		{
-			WriteIndent();
-			b.Append(ch);
-		}
-		
-		public void Write(string text)
-		{
-			WriteIndent();
-			b.Append(text);
-		}
-		
-		public void WriteCommentLine(string comment)
-		{
-			WriteIndent();
-			b.AppendLine(comment);
-			needsIndent = true;
-		}
-		
-		public void WriteLine()
-		{
-			b.AppendLine();
-			needsIndent = true;
-		}
-		
-		public void WriteDefinition(string text, object definition)
-		{
-			WriteIndent();
-			b.Append(text);
-			this.DefinitionLookup.AddDefinition(definition, b.Length);
-		}
-		
-		public void WriteReference(string text, object reference)
-		{
-			WriteIndent();
-			int start = b.Length;
-			b.Append(text);
-			int end = b.Length;
-			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference });
-		}
 	}
 }

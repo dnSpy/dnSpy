@@ -85,7 +85,6 @@
     <Compile Include="AssemblyReferenceTreeNode.cs" />
     <Compile Include="AssemblyTreeNode.cs" />
     <Compile Include="BaseTypesTreeNode.cs" />
-    <Compile Include="CaretHighlightAdorner.cs" />
     <Compile Include="CueBannerService.cs" />
     <Compile Include="Decompiler\CSharpLanguage.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
@@ -117,11 +116,15 @@
     </Compile>
     <Compile Include="PropertyTreeNode.cs" />
     <Compile Include="ReferenceFolderTreeNode.cs" />
-    <Compile Include="ReferenceElementGenerator.cs" />
     <Compile Include="ResourceListTreeNode.cs" />
     <Compile Include="SortableGridViewColumn.cs" />
+    <Compile Include="TextView\CaretHighlightAdorner.cs" />
+    <Compile Include="TextView\DecompilerTextView.cs" />
+    <Compile Include="TextView\ReferenceElementGenerator.cs" />
+    <Compile Include="TextView\SmartTextOutput.cs" />
     <Compile Include="TreeTraversal.cs" />
     <Compile Include="TypeTreeNode.cs" />
+    <None Include="TextView\ILAsm-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="AboutDialog.xaml" />
@@ -190,6 +193,9 @@
       <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TextView" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
