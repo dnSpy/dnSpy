@@ -66,6 +66,7 @@
     <Compile Include="FlowAnalysis\TransformToSsa.cs" />
     <Compile Include="GraphVizGraph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Properties\AssemblyInfo.template.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mono.Cecil\Mono.Cecil.csproj">
@@ -73,8 +74,10 @@
       <Name>Mono.Cecil</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="FlowAnalysis" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <Target Name="BeforeBuild">
+    <MSBuild Projects="$(MSBuildProjectDirectory)\..\BuildTools\UpdateAssemblyInfo\UpdateAssemblyInfo.csproj" Targets="Build" Properties="Configuration=Debug" />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)\..\BuildTools\UpdateAssemblyInfo\bin\Debug" Command="UpdateAssemblyInfo.exe --branchname $(BranchName)" Timeout="60000" Condition=" '$(BranchName)' != '' " />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)\..\BuildTools\UpdateAssemblyInfo\bin\Debug" Command="UpdateAssemblyInfo.exe" Timeout="60000" Condition=" '$(BranchName)' == '' " />
+  </Target>
 </Project>

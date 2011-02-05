@@ -10,13 +10,25 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
@@ -97,6 +109,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Properties\AssemblyInfo.template.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <SubType>Code</SubType>
@@ -143,13 +156,22 @@
     <Resource Include="Images\ProtectedStruct.png" />
     <Resource Include="Images\Assembly.png" />
     <Resource Include="Images\Struct.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Images" />
-    <Folder Include="Mono.Cecil.Rocks" />
-    <Folder Include="Decompiler" />
-    <Folder Include="Disassembler" />
-    <Folder Include="themes" />
+    <Resource Include="Images\ReferenceFolder.Closed.png" />
+    <Resource Include="Images\ReferenceFolder.Open.png" />
+    <Resource Include="Images\Event.png" />
+    <Resource Include="Images\ExtensionMethod.png" />
+    <Resource Include="Images\Indexer.png" />
+    <Resource Include="Images\Operator.png" />
+    <Resource Include="Images\Property.png" />
+    <Resource Include="Images\Find.png" />
+    <Resource Include="Images\Library.png" />
+    <Resource Include="Images\SubTypes.png" />
+    <Resource Include="Images\SuperTypes.png" />
+    <Resource Include="Images\Resource.png" />
+    <Resource Include="Images\Back.png" />
+    <Resource Include="Images\Forward.png" />
+    <Resource Include="Images\PrivateInternal.png" />
+    <Resource Include="Images\Refresh.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
@@ -168,42 +190,6 @@
       <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\ReferenceFolder.Closed.png" />
-    <Resource Include="Images\ReferenceFolder.Open.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Event.png" />
-    <Resource Include="Images\ExtensionMethod.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Indexer.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Operator.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Property.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Find.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Library.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\SubTypes.png" />
-    <Resource Include="Images\SuperTypes.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Resource.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Back.png" />
-    <Resource Include="Images\Forward.png" />
-    <Resource Include="Images\PrivateInternal.png" />
-    <Resource Include="Images\Refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

@@ -39,7 +39,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public static string Version {
-			get { return typeof(AboutDialog).Assembly.GetName().Version.ToString(); }
+			get { return RevisionClass.FullVersion; }
 		}
 	}
 }

@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="All"  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Required Import to use MSBuild Community Tasks -->
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  
+  <!-- These are sample targets the demonstrate the use of MSBuild Community Tasks  -->
+  <Target Name="AssemblyInfo">    
+    <AssemblyInfo CodeLanguage="CS"  
+			OutputFile="AssemblyInfo.cs" 
+			AssemblyTitle="AssemblyInfoTask" 
+			AssemblyDescription="AssemblyInfo Description"
+			AssemblyConfiguration=""
+			AssemblyCompany="Company Name, LLC"
+			AssemblyProduct="AssemblyInfoTask"
+			AssemblyCopyright="Copyright (c) Company Name, LLC 2005"
+			AssemblyTrademark=""
+			ComVisible="false"
+			CLSCompliant="true"
+			Guid="d038566a-1937-478a-b5c5-b79c4afb253d"
+			AssemblyVersion="1.0.0.0" 
+			AssemblyFileVersion="1.0.0.0" />
+  </Target>
+
+  <Target Name="Math">
+    <Add Numbers="4;3">
+      <Output TaskParameter="Result" PropertyName="Result" />
+    </Add>
+    <Message Text="Add 4+3= $(Result)"/>
+
+    <Add Numbers="4;3;7">
+      <Output TaskParameter="Result" PropertyName="Result" />
+    </Add>
+    <Message Text="Add 4+3+7= $(Result)"/>
+
+    <Subtract Numbers="10;3">
+      <Output TaskParameter="Result" PropertyName="Result" />
+    </Subtract>
+    <Message Text="Subtract 10-3= $(Result)"/>
+
+    <Multiple Numbers="10;3">
+      <Output TaskParameter="Result" PropertyName="Result" />
+    </Multiple>
+    <Message Text="Multiple 10*3= $(Result)"/>
+
+    <Divide Numbers="1;2">
+      <Output TaskParameter="Result" PropertyName="Result" />
+    </Divide>
+    <Message Text="Divide 1/2= $(Result)"/>
+
+  </Target>
+
+  <Target Name="Version">
+    <Version VersionFile="version.txt" RevisionType="Increment">
+      <Output TaskParameter="Major" PropertyName="Major" />
+      <Output TaskParameter="Minor" PropertyName="Minor" />
+      <Output TaskParameter="Build" PropertyName="Build" />
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </Version>
+
+    <Message Text="Version: $(Major).$(Minor).$(Build).$(Revision)"/>
+  </Target>
+
+  <Target Name="Registry">
+    <RegistryRead 
+			KeyName="HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework" 
+			ValueName="InstallRoot">
+      <Output TaskParameter="Value" PropertyName="InstallRoot" />
+    </RegistryRead>
+    <Message Text="InstallRoot: $(InstallRoot)"/>
+
+    <RegistryWrite 
+			KeyName="HKEY_CURRENT_USER\SOFTWARE\MSBuildTasks"
+			ValueName="RegistryWrite"
+			Value="Test Write" />
+
+  </Target>
+
+  <Target Name="Service">
+    <ServiceQuery ServiceName="w3svc">
+      <Output TaskParameter="Status" PropertyName="Status" />
+    </ServiceQuery>
+    <Message Text="Web Server: $(Status)"/>
+
+    <ServiceController ServiceName="w3svc" Action="Restart" />
+
+  </Target>
+
+  <Target Name="WebDownload">
+    <WebDownload FileUri="http://www.microsoft.com/default.aspx" 
+			FileName="microsoft.html" />
+  </Target>
+
+  <Target Name="Attrib" DependsOnTargets="Version">
+    <Attrib Files="version.txt" 
+      ReadOnly="true" Hidden="true" System="true"/>
+
+    <Attrib Files="version.txt" 
+      Hidden="false" System="false"/>
+
+    <Attrib Files="version.txt" 
+      Normal="true"/>
+
+  </Target>
+
+  <PropertyGroup>
+    <Code>
+      <![CDATA[
+			public static void ScriptMain() {
+				List<string> list = new List<string>();
+				list.Add("Happy");
+				list.Add("New");
+				list.Add("Year");
+				Console.WriteLine("Hello MSBuild Community Scripting World.");
+				foreach(string s in list)
+				{
+				  Console.WriteLine(s);
+				}
+			}
+			]]>
+    </Code>
+  </PropertyGroup>
+
+  <Target Name="Script">
+    <Script Language="C#" Code="$(Code)" />
+  </Target>
+
+  <Target Name="Sleep">
+    <Message Text="Sleep: 200"/>
+    <Sleep Milliseconds="200" />
+  </Target>
+  
+  <ItemGroup>
+    <ZipFiles Include="**\*.*" Exclude="" />
+  </ItemGroup>
+  
+  <Target Name="Zip">
+    <Zip Files="@(ZipFiles)" 
+			ZipFileName="Sample.zip" />
+  </Target>
+
+  <Target Name="All">
+    <CallTarget Targets="AssemblyInfo" />
+    <CallTarget Targets="Math" />
+    <CallTarget Targets="Version" />
+    <CallTarget Targets="Registry" />
+    <CallTarget Targets="Service" />
+    <CallTarget Targets="WebDownload" />
+    <CallTarget Targets="Attrib" />
+    <CallTarget Targets="Script" />
+    <CallTarget Targets="Sleep" />
+    <CallTarget Targets="Zip" />
+  </Target>
+</Project>
