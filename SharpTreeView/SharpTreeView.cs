@@ -162,29 +162,38 @@ namespace ICSharpCode.TreeView
 		
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
+			SharpTreeViewItem container = e.OriginalSource as SharpTreeViewItem;
 			switch (e.Key) {
 				case Key.Left:
-				case Key.Right:
-					SharpTreeViewItem container = e.OriginalSource as SharpTreeViewItem;
 					if (container != null && ItemsControl.ItemsControlFromItemContainer(container) == this) {
-						bool newExpanded = (e.Key == Key.Right);
-						if (container.Node.IsExpanded != newExpanded) {
-							container.Node.IsExpanded = newExpanded;
-						} else {
-							// already in collapsed/expanded - jump to parent/first child:
-							if (e.Key == Key.Right) {
-								container.MoveFocus(new TraversalRequest(FocusNavigationDirection.Down));
-							} else if (container.Node.Parent != null) {
-								this.FocusNode(container.Node.Parent);
-							}
+						if (container.Node.IsExpanded) {
+							container.Node.IsExpanded = false;
+						} else if (container.Node.Parent != null) {
+							this.FocusNode(container.Node.Parent);
 						}
 						e.Handled = true;
 					}
 					break;
-				default:
-					base.OnKeyDown(e);
+				case Key.Right:
+					if (container != null && ItemsControl.ItemsControlFromItemContainer(container) == this) {
+						if (!container.Node.IsExpanded && container.Node.ShowExpander) {
+							container.Node.IsExpanded = true;
+						} else if (container.Node.Children.Count > 0) {
+							// jump to first child:
+							container.MoveFocus(new TraversalRequest(FocusNavigationDirection.Down));
+						}
+						e.Handled = true;
+					}
+					break;
+				case Key.Return:
+				case Key.Space:
+					if (container != null && Keyboard.Modifiers == ModifierKeys.None && this.SelectedItems.Count == 1 && this.SelectedItem == container.Node) {
+						container.Node.ActivateItem(e);
+					}
 					break;
 			}
+			if (!e.Handled)
+				base.OnKeyDown(e);
 		}
 		
 		public void FocusNode(SharpTreeNode node)

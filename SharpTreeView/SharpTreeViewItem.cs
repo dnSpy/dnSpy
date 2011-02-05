@@ -37,6 +37,7 @@ namespace ICSharpCode.TreeView
 				case Key.F2:
 					if (SharpTreeNode.ActiveNodes.Count == 1 && Node.IsEditable) {
 						Node.IsEditing = true;
+						e.Handled = true;
 					}
 					break;
 				case Key.Escape:
