@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy
 		{
 		}
 		
-		public string TypeToString(TypeReference t)
+		public virtual string TypeToString(TypeReference t)
 		{
 			return t.Name;
 		}

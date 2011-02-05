@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Media;
 
 using ICSharpCode.TreeView;
@@ -97,7 +98,6 @@ namespace ICSharpCode.ILSpy
 			foreach (FieldDefinition field in type.Fields) {
 				this.Children.Add(new FieldTreeNode(field));
 			}
-			HashSet<MethodDefinition> accessorMethods = new HashSet<MethodDefinition>();
 			
 			// figure out the name of the indexer:
 			string defaultMemberName = null;
@@ -109,28 +109,21 @@ namespace ICSharpCode.ILSpy
 			
 			foreach (PropertyDefinition property in type.Properties) {
 				this.Children.Add(new PropertyTreeNode(property, property.Name == defaultMemberName));
-				accessorMethods.Add(property.GetMethod);
-				accessorMethods.Add(property.SetMethod);
-				if (property.HasOtherMethods) {
-					foreach (var m in property.OtherMethods)
-						accessorMethods.Add(m);
-				}
 			}
 			foreach (EventDefinition ev in type.Events) {
 				this.Children.Add(new EventTreeNode(ev));
-				accessorMethods.Add(ev.AddMethod);
-				accessorMethods.Add(ev.RemoveMethod);
-				accessorMethods.Add(ev.InvokeMethod);
-				if (ev.HasOtherMethods) {
-					foreach (var m in ev.OtherMethods)
-						accessorMethods.Add(m);
-				}
 			}
+			HashSet<MethodDefinition> accessorMethods = type.GetAccessorMethods();
 			foreach (MethodDefinition method in type.Methods) {
 				if (!accessorMethods.Contains(method)) {
 					this.Children.Add(new MethodTreeNode(method));
 				}
 			}
+		}
+		
+		public override void Decompile(Language language, ITextOutput output, CancellationToken cancellationToken)
+		{
+			language.Decompile(type, output, cancellationToken);
 		}
 		
 		#region Icon

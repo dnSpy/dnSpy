@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Markup;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
@@ -53,6 +54,29 @@ namespace ICSharpCode.ILSpy
 		public static void WriteCommentLine(this ITextOutput output, string format, params object[] args)
 		{
 			output.WriteCommentLine(string.Format(format, args));
+		}
+		
+		public static HashSet<MethodDefinition> GetAccessorMethods(this TypeDefinition type)
+		{
+			HashSet<MethodDefinition> accessorMethods = new HashSet<MethodDefinition>();
+			foreach (var property in type.Properties) {
+				accessorMethods.Add(property.GetMethod);
+				accessorMethods.Add(property.SetMethod);
+				if (property.HasOtherMethods) {
+					foreach (var m in property.OtherMethods)
+						accessorMethods.Add(m);
+				}
+			}
+			foreach (EventDefinition ev in type.Events) {
+				accessorMethods.Add(ev.AddMethod);
+				accessorMethods.Add(ev.RemoveMethod);
+				accessorMethods.Add(ev.InvokeMethod);
+				if (ev.HasOtherMethods) {
+					foreach (var m in ev.OtherMethods)
+						accessorMethods.Add(m);
+				}
+			}
+			return accessorMethods;
 		}
 		
 		/// <summary>

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +11,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using System.Xml;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TextView
@@ -28,6 +32,16 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		public DecompilerTextView()
 		{
+			HighlightingManager.Instance.RegisterHighlighting(
+				"ILAsm", new string[] { ".il" },
+				delegate {
+					using (Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream(typeof(DecompilerTextView), "ILAsm-Mode.xshd")) {
+						using (XmlTextReader reader = new XmlTextReader(s)) {
+							return HighlightingLoader.Load(reader, HighlightingManager.Instance);
+						}
+					}
+				});
+			
 			InitializeComponent();
 			this.referenceElementGenerator = new ReferenceElementGenerator(this);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
@@ -47,36 +61,35 @@ namespace ICSharpCode.ILSpy.TextView
 			if (previousCancellationTokenSource != null)
 				previousCancellationTokenSource.Cancel();
 			var task = RunDecompiler(ILSpy.Language.Current, treeNodes.ToArray(), myCancellationTokenSource.Token);
-			task.ContinueWith(
-				delegate {
-					try {
-						if (currentCancellationTokenSource == myCancellationTokenSource) {
-							currentCancellationTokenSource = null;
-							waitAdorner.Visibility = Visibility.Collapsed;
-							try {
-								SmartTextOutput textOutput = task.Result;
-								referenceElementGenerator.References = textOutput.References;
-								definitionLookup = textOutput.DefinitionLookup;
-								textEditor.SyntaxHighlighting = ILSpy.Language.Current.SyntaxHighlighting;
-								textEditor.Text = textOutput.ToString();
-							} catch (AggregateException ex) {
-								textEditor.SyntaxHighlighting = null;
-								referenceElementGenerator.References = null;
-								definitionLookup = null;
-								textEditor.Text = string.Join(Environment.NewLine, ex.InnerExceptions.Select(ie => ie.ToString()));
-							}
-						} else {
-							try {
-								task.Wait();
-							} catch (AggregateException) {
-								// observe the exception (otherwise the task's finalizer will shut down the AppDomain)
-							}
+			Action continuation = delegate {
+				try {
+					if (currentCancellationTokenSource == myCancellationTokenSource) {
+						currentCancellationTokenSource = null;
+						waitAdorner.Visibility = Visibility.Collapsed;
+						try {
+							SmartTextOutput textOutput = task.Result;
+							referenceElementGenerator.References = textOutput.References;
+							definitionLookup = textOutput.DefinitionLookup;
+							textEditor.SyntaxHighlighting = ILSpy.Language.Current.SyntaxHighlighting;
+							textEditor.Text = textOutput.ToString();
+						} catch (AggregateException ex) {
+							textEditor.SyntaxHighlighting = null;
+							referenceElementGenerator.References = null;
+							definitionLookup = null;
+							textEditor.Text = string.Join(Environment.NewLine, ex.InnerExceptions.Select(ie => ie.ToString()));
 						}
-					} finally {
-						myCancellationTokenSource.Dispose();
+					} else {
+						try {
+							task.Wait();
+						} catch (AggregateException) {
+							// observe the exception (otherwise the task's finalizer will shut down the AppDomain)
+						}
 					}
-				},
-				TaskScheduler.FromCurrentSynchronizationContext());
+				} finally {
+					myCancellationTokenSource.Dispose();
+				}
+			};
+			task.ContinueWith(delegate { Dispatcher.BeginInvoke(DispatcherPriority.Normal, continuation); });
 		}
 		
 		static Task<SmartTextOutput> RunDecompiler(ILSpy.Language language, ILSpyTreeNodeBase[] nodes, CancellationToken cancellationToken)

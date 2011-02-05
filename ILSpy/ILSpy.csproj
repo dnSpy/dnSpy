@@ -126,7 +126,7 @@
     <Compile Include="TextView\SmartTextOutput.cs" />
     <Compile Include="TreeTraversal.cs" />
     <Compile Include="TypeTreeNode.cs" />
-    <None Include="TextView\ILAsm-Mode.xshd" />
+    <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="AboutDialog.xaml" />

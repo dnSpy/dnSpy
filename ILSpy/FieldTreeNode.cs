@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Threading;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -59,6 +60,11 @@ namespace ICSharpCode.ILSpy
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;
+		}
+		
+		public override void Decompile(Language language, ITextOutput output, CancellationToken cancellationToken)
+		{
+			language.Decompile(field, output, cancellationToken);
 		}
 	}
 }

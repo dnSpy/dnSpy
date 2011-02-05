@@ -41,9 +41,40 @@ namespace ICSharpCode.ILSpy.Disassembler
 			get { return detectControlStructure ? "IL (structured)" : "IL"; }
 		}
 		
+		public override ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting {
+			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("ILAsm"); }
+		}
+		
 		public override void Decompile(MethodDefinition method, ITextOutput output, CancellationToken cancellationToken)
 		{
 			new ReflectionDisassembler(output, detectControlStructure, cancellationToken).DisassembleMethod(method);
+		}
+		
+		public override void Decompile(FieldDefinition field, ITextOutput output, CancellationToken cancellationToken)
+		{
+			new ReflectionDisassembler(output, detectControlStructure, cancellationToken).DisassembleField(field);
+		}
+		
+		public override void Decompile(PropertyDefinition property, ITextOutput output, CancellationToken cancellationToken)
+		{
+			new ReflectionDisassembler(output, detectControlStructure, cancellationToken).DisassembleProperty(property);
+		}
+		
+		public override void Decompile(EventDefinition ev, ITextOutput output, CancellationToken cancellationToken)
+		{
+			new ReflectionDisassembler(output, detectControlStructure, cancellationToken).DisassembleEvent(ev);
+		}
+		
+		public override void Decompile(TypeDefinition type, ITextOutput output, CancellationToken cancellationToken)
+		{
+			new ReflectionDisassembler(output, detectControlStructure, cancellationToken).DisassembleType(type);
+		}
+		
+		public override string TypeToString(TypeReference t)
+		{
+			PlainTextOutput output = new PlainTextOutput();
+			t.WriteTo(output, true, true);
+			return output.ToString();
 		}
 	}
 }

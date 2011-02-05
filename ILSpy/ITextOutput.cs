@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Text;
 
 namespace ICSharpCode.ILSpy
 {
@@ -30,5 +31,82 @@ namespace ICSharpCode.ILSpy
 		void WriteLine();
 		void WriteDefinition(string text, object definition);
 		void WriteReference(string text, object reference);
+		
+		void MarkFoldStart(string collapsedText = "...", bool defaultClosed = false);
+		void MarkFoldEnd();
+	}
+	
+	public class PlainTextOutput : ITextOutput
+	{
+		readonly StringBuilder b = new StringBuilder();
+		int indent;
+		bool needsIndent;
+		
+		public override string ToString()
+		{
+			return b.ToString();
+		}
+		
+		public void Indent()
+		{
+			indent++;
+		}
+		
+		public void Unindent()
+		{
+			indent--;
+		}
+		
+		void WriteIndent()
+		{
+			if (needsIndent) {
+				needsIndent = false;
+				for (int i = 0; i < indent; i++) {
+					b.Append('\t');
+				}
+			}
+		}
+		
+		public void Write(char ch)
+		{
+			WriteIndent();
+			b.Append(ch);
+		}
+		
+		public void Write(string text)
+		{
+			WriteIndent();
+			b.Append(text);
+		}
+		
+		public void WriteCommentLine(string comment)
+		{
+			Write(comment);
+			WriteLine();
+		}
+		
+		public void WriteLine()
+		{
+			b.AppendLine();
+			needsIndent = true;
+		}
+		
+		public void WriteDefinition(string text, object definition)
+		{
+			Write(text);
+		}
+		
+		public void WriteReference(string text, object reference)
+		{
+			Write(text);
+		}
+		
+		void ITextOutput.MarkFoldStart(string collapsedText, bool defaultClosed)
+		{
+		}
+		
+		void ITextOutput.MarkFoldEnd()
+		{
+		}
 	}
 }

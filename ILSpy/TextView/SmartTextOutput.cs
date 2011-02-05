@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Folding;
 
 namespace ICSharpCode.ILSpy.TextView
 {
@@ -53,7 +54,9 @@ namespace ICSharpCode.ILSpy.TextView
 		int indent;
 		bool needsIndent;
 		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
+		Stack<NewFolding> openFoldings = new Stack<NewFolding>();
 		
+		public readonly List<NewFolding> Foldings = new List<NewFolding>();
 		public readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
 		
 		public TextSegmentCollection<ReferenceSegment> References {
@@ -124,6 +127,18 @@ namespace ICSharpCode.ILSpy.TextView
 			b.Append(text);
 			int end = b.Length;
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference });
+		}
+		
+		public void MarkFoldStart(string collapsedText, bool defaultClosed)
+		{
+			openFoldings.Push(new NewFolding { StartOffset = b.Length, Name = collapsedText, DefaultClosed = defaultClosed });
+		}
+		
+		public void MarkFoldEnd()
+		{
+			NewFolding f = openFoldings.Pop();
+			f.EndOffset = b.Length;
+			this.Foldings.Add(f);
 		}
 	}
 }

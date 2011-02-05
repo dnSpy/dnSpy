@@ -17,6 +17,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 	{
 		ITextOutput output;
 		CancellationToken cancellationToken;
+		bool detectControlStructure;
 		MethodBodyDisassembler methodBodyDisassembler;
 		
 		public ReflectionDisassembler(ITextOutput output, bool detectControlStructure, CancellationToken cancellationToken)
@@ -25,9 +26,11 @@ namespace ICSharpCode.ILSpy.Disassembler
 				throw new ArgumentNullException("output");
 			this.output = output;
 			this.cancellationToken = cancellationToken;
+			this.detectControlStructure = detectControlStructure;
 			this.methodBodyDisassembler = new MethodBodyDisassembler(output, detectControlStructure, cancellationToken);
 		}
 		
+		#region Disassemble Method
 		EnumNameCollection<MethodAttributes> methodAttributeFlags = new EnumNameCollection<MethodAttributes>() {
 			{ MethodAttributes.Static, "static" },
 			{ MethodAttributes.Final, "final" },
@@ -73,12 +76,16 @@ namespace ICSharpCode.ILSpy.Disassembler
 		
 		public void DisassembleMethod(MethodDefinition method)
 		{
+			// write method header
+			output.WriteDefinition(".method ", method);
+			DisassembleMethodInternal(method);
+		}
+		
+		void DisassembleMethodInternal(MethodDefinition method)
+		{
 			//    .method public hidebysig  specialname
 			//               instance default class [mscorlib]System.IO.TextWriter get_BaseWriter ()  cil managed
 			//
-			
-			// write method header
-			output.WriteDefinition(".method ", method);
 			
 			//emit flags
 			WriteEnum(method.Attributes & MethodAttributes.MemberAccessMask, methodVisibility);
@@ -95,7 +102,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 			
 			
 			//return type
-			method.ReturnType.WriteTo(output, false, true);
+			method.ReturnType.WriteTo(output);
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(method.Name));
 			
@@ -139,11 +146,225 @@ namespace ICSharpCode.ILSpy.Disassembler
 				output.WriteLine();
 			}
 		}
+		#endregion
 		
+		#region Disassemble Field
+		EnumNameCollection<FieldAttributes> fieldVisibility = new EnumNameCollection<FieldAttributes>() {
+			{ FieldAttributes.Private, "private" },
+			{ FieldAttributes.FamANDAssem, "famandassem" },
+			{ FieldAttributes.Assembly, "assembly" },
+			{ FieldAttributes.Family, "family" },
+			{ FieldAttributes.FamORAssem, "famorassem" },
+			{ FieldAttributes.Public, "public" },
+		};
+		
+		EnumNameCollection<FieldAttributes> fieldAttributes = new EnumNameCollection<FieldAttributes>() {
+			{ FieldAttributes.Static, "static" },
+			{ FieldAttributes.Literal, "literal" },
+			{ FieldAttributes.InitOnly, "initonly" },
+			{ FieldAttributes.SpecialName, "specialname" },
+			{ FieldAttributes.RTSpecialName, "rtspecialname" },
+		};
+		
+		public void DisassembleField(FieldDefinition field)
+		{
+			output.WriteDefinition(".field ", field);
+			WriteEnum(field.Attributes & FieldAttributes.FieldAccessMask, fieldVisibility);
+			WriteFlags(field.Attributes & ~(FieldAttributes.FieldAccessMask | FieldAttributes.HasDefault), fieldAttributes);
+			field.FieldType.WriteTo(output);
+			output.Write(' ');
+			output.Write(DisassemblerHelpers.Escape(field.Name));
+			if (field.HasConstant) {
+				output.Write(" = ");
+				DisassemblerHelpers.WriteOperand(output, field.Constant);
+			}
+			output.WriteLine();
+		}
+		#endregion
+		
+		#region Disassemble Property
+		EnumNameCollection<PropertyAttributes> propertyAttributes = new EnumNameCollection<PropertyAttributes>() {
+			{ PropertyAttributes.SpecialName, "specialname" },
+			{ PropertyAttributes.RTSpecialName, "rtspecialname" },
+			{ PropertyAttributes.HasDefault, "hasdefault" },
+		};
+		
+		public void DisassembleProperty(PropertyDefinition property)
+		{
+			output.WriteDefinition(".property ", property);
+			WriteFlags(property.Attributes, propertyAttributes);
+			property.PropertyType.WriteTo(output);
+			output.Write(' ');
+			output.WriteLine(DisassemblerHelpers.Escape(property.Name));
+			OpenBlock();
+			WriteAttributes(property.CustomAttributes);
+			WriteNestedMethod(".get", property.GetMethod);
+			WriteNestedMethod(".set", property.SetMethod);
+			foreach (var method in property.OtherMethods) {
+				WriteNestedMethod(".method", method);
+			}
+			CloseBlock();
+		}
+		
+		void WriteNestedMethod(string keyword, MethodDefinition method)
+		{
+			if (method == null)
+				return;
+			if (detectControlStructure) {
+				output.WriteDefinition(keyword, method);
+				output.Write(' ');
+				DisassembleMethodInternal(method);
+			} else {
+				output.Write(keyword);
+				output.Write(' ');
+				method.WriteTo(output);
+				output.WriteLine();
+			}
+		}
+		#endregion
+		
+		#region Disassemble Event
+		EnumNameCollection<EventAttributes> eventAttributes = new EnumNameCollection<EventAttributes>() {
+			{ EventAttributes.SpecialName, "specialname" },
+			{ EventAttributes.RTSpecialName, "rtspecialname" },
+		};
+		
+		public void DisassembleEvent(EventDefinition ev)
+		{
+			output.WriteDefinition(".event ", ev);
+			WriteFlags(ev.Attributes, eventAttributes);
+			ev.EventType.WriteTo(output);
+			output.Write(' ');
+			output.WriteLine(DisassemblerHelpers.Escape(ev.Name));
+			OpenBlock();
+			WriteAttributes(ev.CustomAttributes);
+			WriteNestedMethod(".add", ev.AddMethod);
+			WriteNestedMethod(".remove", ev.RemoveMethod);
+			WriteNestedMethod(".invoke", ev.InvokeMethod);
+			foreach (var method in ev.OtherMethods) {
+				WriteNestedMethod(".method", method);
+			}
+			CloseBlock();
+		}
+		#endregion
+		
+		#region Disassembly Type
+		EnumNameCollection<TypeAttributes> typeVisibility = new EnumNameCollection<TypeAttributes>() {
+			{ TypeAttributes.Public, "public" },
+			{ TypeAttributes.NotPublic, "private" },
+			{ TypeAttributes.NestedPublic, "nested public" },
+			{ TypeAttributes.NestedPrivate, "nested private" },
+			{ TypeAttributes.NestedAssembly, "nested assembly" },
+			{ TypeAttributes.NestedFamily, "nested family" },
+			{ TypeAttributes.NestedFamANDAssem, "nested famandassem" },
+			{ TypeAttributes.NestedFamORAssem, "nested famorassem" },
+		};
+		
+		EnumNameCollection<TypeAttributes> typeLayout = new EnumNameCollection<TypeAttributes>() {
+			{ TypeAttributes.AutoLayout, "auto" },
+			{ TypeAttributes.SequentialLayout, "sequential" },
+			{ TypeAttributes.ExplicitLayout, "explicit" },
+		};
+		
+		EnumNameCollection<TypeAttributes> typeStringFormat = new EnumNameCollection<TypeAttributes>() {
+			{ TypeAttributes.AutoClass, "auto" },
+			{ TypeAttributes.AnsiClass, "ansi" },
+			{ TypeAttributes.UnicodeClass, "unicode" },
+		};
+		
+		EnumNameCollection<TypeAttributes> typeAttributes = new EnumNameCollection<TypeAttributes>() {
+			{ TypeAttributes.Abstract, "abstract" },
+			{ TypeAttributes.Sealed, "sealed" },
+			{ TypeAttributes.SpecialName, "specialname" },
+			{ TypeAttributes.Import, "import" },
+			{ TypeAttributes.Serializable, "serializable" },
+			{ TypeAttributes.BeforeFieldInit, "beforefieldinit" },
+		};
+		
+		public void DisassembleType(TypeDefinition type)
+		{
+			output.WriteDefinition(".class ", type);
+			
+			if ((type.Attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Interface)
+				output.Write("interface ");
+			WriteEnum(type.Attributes & TypeAttributes.VisibilityMask, typeVisibility);
+			WriteEnum(type.Attributes & TypeAttributes.LayoutMask, typeLayout);
+			WriteEnum(type.Attributes & TypeAttributes.StringFormatMask, typeStringFormat);
+			const TypeAttributes masks = TypeAttributes.ClassSemanticMask | TypeAttributes.VisibilityMask | TypeAttributes.LayoutMask | TypeAttributes.StringFormatMask;
+			WriteFlags(type.Attributes & ~masks, typeAttributes);
+			
+			output.WriteLine(DisassemblerHelpers.Escape(type.Name));
+			
+			if (type.BaseType != null) {
+				output.Indent();
+				output.Write("extends ");
+				type.BaseType.WriteTo(output);
+				output.Unindent();
+				output.WriteLine();
+			}
+			
+			OpenBlock();
+			WriteAttributes(type.CustomAttributes);
+			if (type.HasLayoutInfo) {
+				output.WriteLine(".pack {0}", type.PackingSize);
+				output.WriteLine(".size {0}", type.ClassSize);
+				output.WriteLine();
+			}
+			if (type.HasNestedTypes) {
+				output.WriteCommentLine("// Nested Types");
+				foreach (var nestedType in type.NestedTypes) {
+					cancellationToken.ThrowIfCancellationRequested();
+					DisassembleType(nestedType);
+				}
+				output.WriteLine();
+			}
+			if (type.HasFields) {
+				output.WriteCommentLine("// Fields");
+				foreach (var field in type.Fields) {
+					cancellationToken.ThrowIfCancellationRequested();
+					DisassembleField(field);
+				}
+				output.WriteLine();
+			}
+			if (type.HasProperties) {
+				output.WriteCommentLine("// Properties");
+				foreach (var prop in type.Properties) {
+					cancellationToken.ThrowIfCancellationRequested();
+					DisassembleProperty(prop);
+					output.WriteLine();
+				}
+				output.WriteLine();
+			}
+			if (type.HasEvents) {
+				output.WriteCommentLine("// Events");
+				foreach (var ev in type.Events) {
+					cancellationToken.ThrowIfCancellationRequested();
+					DisassembleEvent(ev);
+					output.WriteLine();
+				}
+				output.WriteLine();
+			}
+			if (type.HasMethods) {
+				output.WriteCommentLine("// Methods");
+				var accessorMethods = type.GetAccessorMethods();
+				foreach (var m in type.Methods) {
+					cancellationToken.ThrowIfCancellationRequested();
+					if (!(detectControlStructure && accessorMethods.Contains(m))) {
+						DisassembleMethod(m);
+						output.WriteLine();
+					}
+				}
+				output.WriteLine();
+			}
+			CloseBlock();
+		}
+		#endregion
+
+		#region Helper methods
 		void WriteAttributes(Collection<CustomAttribute> attributes)
 		{
 			foreach (CustomAttribute a in attributes) {
-				output.Write(".custom");
+				output.Write(".custom ");
 				a.Constructor.WriteTo(output);
 				byte[] blob = a.GetBlob();
 				if (blob != null) {
@@ -175,6 +396,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 		
 		void OpenBlock()
 		{
+			output.MarkFoldStart();
 			output.WriteLine("{");
 			output.Indent();
 		}
@@ -182,7 +404,9 @@ namespace ICSharpCode.ILSpy.Disassembler
 		void CloseBlock()
 		{
 			output.Unindent();
-			output.WriteLine("}");
+			output.Write("}");
+			output.MarkFoldEnd();
+			output.WriteLine();
 		}
 		
 		void WriteFlags<T>(T flags, EnumNameCollection<T> flagNames) where T : struct
@@ -236,5 +460,6 @@ namespace ICSharpCode.ILSpy.Disassembler
 				return names.GetEnumerator();
 			}
 		}
+		#endregion
 	}
 }

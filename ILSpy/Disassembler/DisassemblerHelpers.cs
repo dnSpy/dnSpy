@@ -114,61 +114,61 @@ namespace ICSharpCode.ILSpy.Disassembler
 			return identifier;
 		}
 		
-		public static void WriteTo(this TypeReference type, ITextOutput writer, bool onlyName = false, bool convertPrimitive = true)
+		public static void WriteTo(this TypeReference type, ITextOutput writer, bool onlyName = false, bool shortName = false)
 		{
 			if (type is PinnedType) {
 				writer.Write("pinned ");
-				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+				type.GetElementType().WriteTo(writer, onlyName, shortName);
 			} else if (type is ArrayType) {
 				ArrayType at = (ArrayType)type;
-				at.ElementType.WriteTo(writer, onlyName, convertPrimitive);
+				at.ElementType.WriteTo(writer, onlyName, shortName);
 				writer.Write('[');
 				writer.Write(string.Join(", ", at.Dimensions));
 				writer.Write(']');
 			} else if (type is GenericParameter) {
 				writer.WriteReference(type.Name, type);
 			} else if (type is ByReferenceType) {
-				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+				type.GetElementType().WriteTo(writer, onlyName, shortName);
 				writer.Write('&');
 			} else if (type is PointerType) {
-				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+				type.GetElementType().WriteTo(writer, onlyName, shortName);
 				writer.Write('*');
 			} else if (type is GenericInstanceType) {
-				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+				type.GetElementType().WriteTo(writer, onlyName, shortName);
 				writer.Write('<');
 				var arguments = ((GenericInstanceType)type).GenericArguments;
 				for (int i = 0; i < arguments.Count; i++) {
 					if (i > 0)
 						writer.Write(", ");
-					arguments[i].WriteTo(writer, onlyName, convertPrimitive);
+					arguments[i].WriteTo(writer, onlyName, shortName);
 				}
 				writer.Write('>');
 			} else if (type is OptionalModifierType) {
 				writer.Write("modopt(");
-				((OptionalModifierType)type).ModifierType.WriteTo(writer, true, false);
+				((OptionalModifierType)type).ModifierType.WriteTo(writer, true, shortName);
 				writer.Write(") ");
-				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+				type.GetElementType().WriteTo(writer, onlyName, shortName);
 			} else if (type is RequiredModifierType) {
 				writer.Write("modreq(");
-				((RequiredModifierType)type).ModifierType.WriteTo(writer, true, false);
+				((RequiredModifierType)type).ModifierType.WriteTo(writer, true, shortName);
 				writer.Write(") ");
-				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+				type.GetElementType().WriteTo(writer, onlyName, shortName);
 			} else {
-				if (!onlyName)
-					writer.Write(type.IsValueType ? "valuetype " : "class ");
-				
-				if (type.DeclaringType != null) {
-					type.DeclaringType.WriteTo(writer, true, false);
-					writer.Write('/');
-					writer.WriteReference(Escape(type.Name), type);
+				string name = PrimitiveTypeName(type);
+				if (name != null) {
+					writer.Write(name);
 				} else {
-					string name = ShortTypeName(type);
-					if (name != null) {
-						writer.Write(name);
+					if (!onlyName)
+						writer.Write(type.IsValueType ? "valuetype " : "class ");
+					
+					if (type.DeclaringType != null) {
+						type.DeclaringType.WriteTo(writer, true, shortName);
+						writer.Write('/');
+						writer.WriteReference(Escape(type.Name), type);
 					} else {
-						if (!type.IsDefinition && type.Scope != null && !(type is TypeSpecification))
+						if (!type.IsDefinition && type.Scope != null && !shortName && !(type is TypeSpecification))
 							writer.Write("[{0}]", Escape(type.Scope.Name));
-						writer.WriteReference(type.FullName, type);
+						writer.WriteReference(shortName ? type.Name : type.FullName, type);
 					}
 				}
 			}
@@ -225,7 +225,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 			writer.Write(s);
 		}
 		
-		public static string ShortTypeName(this TypeReference type)
+		public static string PrimitiveTypeName(this TypeReference type)
 		{
 			switch (type.FullName) {
 				case "System.SByte":
