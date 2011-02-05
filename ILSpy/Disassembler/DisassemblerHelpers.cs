@@ -99,6 +99,15 @@ namespace ICSharpCode.ILSpy.Disassembler
 			writer.Write(")");
 		}
 		
+		static void WriteTo(this FieldReference field, ITextOutput writer)
+		{
+			field.FieldType.WriteTo(writer);
+			writer.Write(' ');
+			field.DeclaringType.WriteTo(writer);
+			writer.Write("::");
+			writer.WriteReference(field.Name, field);
+		}
+		
 		static void WriteTo(this TypeReference type, ITextOutput writer)
 		{
 			string name = ShortTypeName(type);
@@ -140,6 +149,12 @@ namespace ICSharpCode.ILSpy.Disassembler
 			TypeReference typeRef = operand as TypeReference;
 			if (typeRef != null) {
 				typeRef.WriteTo(writer);
+				return;
+			}
+			
+			FieldReference fieldRef = operand as FieldReference;
+			if (fieldRef != null) {
+				fieldRef.WriteTo(writer);
 				return;
 			}
 			
