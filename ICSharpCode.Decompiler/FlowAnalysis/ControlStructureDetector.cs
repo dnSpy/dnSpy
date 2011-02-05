@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil.Cil;
 
@@ -30,11 +31,11 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 	/// </summary>
 	public class ControlStructureDetector
 	{
-		public static ControlStructure DetectStructure(ControlFlowGraph g, IEnumerable<ExceptionHandler> exceptionHandlers)
+		public static ControlStructure DetectStructure(ControlFlowGraph g, IEnumerable<ExceptionHandler> exceptionHandlers, CancellationToken cancellationToken)
 		{
 			ControlStructure root = new ControlStructure(new HashSet<ControlFlowNode>(g.Nodes), g.EntryPoint, ControlStructureType.Root);
 			DetectExceptionHandling(root, g, exceptionHandlers);
-			DetectLoops(g, root);
+			DetectLoops(g, root, cancellationToken);
 			g.ResetVisited();
 			return root;
 		}
@@ -111,12 +112,13 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		#endregion
 		
 		#region Loop Detection
-		static void DetectLoops(ControlFlowGraph g, ControlStructure current)
+		static void DetectLoops(ControlFlowGraph g, ControlStructure current, CancellationToken cancellationToken)
 		{
 			g.ResetVisited();
+			cancellationToken.ThrowIfCancellationRequested();
 			FindLoops(current, current.EntryPoint);
 			foreach (ControlStructure loop in current.Children)
-				DetectLoops(g, loop);
+				DetectLoops(g, loop, cancellationToken);
 		}
 		
 		static void FindLoops(ControlStructure current, ControlFlowNode node)

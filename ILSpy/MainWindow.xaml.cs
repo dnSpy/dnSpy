@@ -17,15 +17,19 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
+using ICSharpCode.ILSpy.Disassembler;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 using Mono.Cecil;
@@ -210,31 +214,61 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		SmartTextOutput textOutput;
+		DefinitionLookup definitionLookup;
+		CancellationTokenSource currentCancellationTokenSource;
 		
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			try {
-				textEditor.SyntaxHighlighting = ILSpy.Language.Current.SyntaxHighlighting;
-				textOutput = new SmartTextOutput();
-				foreach (var node in treeView.SelectedItems.OfType<ILSpyTreeNode>()) {
-					textOutput.CurrentTreeNode = node;
-					node.Decompile(ILSpy.Language.Current, textOutput);
-				}
-				referenceElementGenerator.References = textOutput.References;
-				textEditor.Text = textOutput.ToString();
-			} catch (Exception ex) {
-				textEditor.SyntaxHighlighting = null;
-				referenceElementGenerator.References = null;
-				textEditor.Text = ex.ToString();
-			}
+			if (currentCancellationTokenSource != null)
+				currentCancellationTokenSource.Cancel();
+			var myCancellationTokenSource = new CancellationTokenSource();
+			currentCancellationTokenSource = myCancellationTokenSource;
+			var task = RunDecompiler(ILSpy.Language.Current,
+			                         treeView.SelectedItems.OfType<ILSpyTreeNode>().ToArray(),
+			                         myCancellationTokenSource.Token);
+			task.ContinueWith(
+				delegate {
+					try {
+						if (currentCancellationTokenSource == myCancellationTokenSource) {
+							currentCancellationTokenSource = null;
+							try {
+								SmartTextOutput textOutput = task.Result;
+								referenceElementGenerator.References = textOutput.References;
+								definitionLookup = textOutput.DefinitionLookup;
+								textEditor.SyntaxHighlighting = ILSpy.Language.Current.SyntaxHighlighting;
+								textEditor.Text = textOutput.ToString();
+							} catch (AggregateException ex) {
+								textEditor.SyntaxHighlighting = null;
+								referenceElementGenerator.References = null;
+								definitionLookup = null;
+								textEditor.Text = string.Join(Environment.NewLine, ex.InnerExceptions.Select(ie => ie.ToString()));
+							}
+						}
+					} finally {
+						myCancellationTokenSource.Dispose();
+					}
+				},
+				TaskScheduler.FromCurrentSynchronizationContext());
+		}
+		
+		static Task<SmartTextOutput> RunDecompiler(ILSpy.Language language, ILSpyTreeNode[] nodes, CancellationToken cancellationToken)
+		{
+			return Task.Factory.StartNew(
+				delegate {
+					SmartTextOutput textOutput = new SmartTextOutput();
+					foreach (var node in nodes) {
+						cancellationToken.ThrowIfCancellationRequested();
+						node.Decompile(language, textOutput, cancellationToken);
+					}
+					return textOutput;
+				});
 		}
 		
 		internal void JumpToReference(ReferenceSegment referenceSegment)
 		{
 			object reference = referenceSegment.Reference;
-			if (textOutput != null) {
-				int pos = textOutput.GetDefinitionPosition(reference);
+			if (definitionLookup != null) {
+				int pos = definitionLookup.GetDefinitionPosition(reference);
 				if (pos >= 0) {
 					textEditor.TextArea.Focus();
 					textEditor.Select(pos, 0);

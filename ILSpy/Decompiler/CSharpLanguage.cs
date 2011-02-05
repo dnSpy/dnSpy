@@ -18,6 +18,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil;
@@ -34,7 +35,7 @@ namespace ICSharpCode.ILSpy.Decompiler
 			get { return "C#"; }
 		}
 		
-		public override void Decompile(MethodDefinition method, ITextOutput output)
+		public override void Decompile(MethodDefinition method, ITextOutput output, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}

@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Threading;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
@@ -34,23 +35,23 @@ namespace ICSharpCode.ILSpy
 			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition(this.Name); }
 		}
 		
-		public virtual void Decompile(MethodDefinition method, ITextOutput output)
+		public virtual void Decompile(MethodDefinition method, ITextOutput output, CancellationToken cancellationToken)
 		{
 		}
 		
-		public virtual void Decompile(PropertyDefinition property, ITextOutput output)
+		public virtual void Decompile(PropertyDefinition property, ITextOutput output, CancellationToken cancellationToken)
 		{
 		}
 		
-		public virtual void Decompile(FieldDefinition field, ITextOutput output)
+		public virtual void Decompile(FieldDefinition field, ITextOutput output, CancellationToken cancellationToken)
 		{
 		}
 		
-		public virtual void Decompile(EventDefinition ev, ITextOutput output)
+		public virtual void Decompile(EventDefinition ev, ITextOutput output, CancellationToken cancellationToken)
 		{
 		}
 		
-		public virtual void Decompile(TypeDefinition type, ITextOutput output)
+		public virtual void Decompile(TypeDefinition type, ITextOutput output, CancellationToken cancellationToken)
 		{
 		}
 		

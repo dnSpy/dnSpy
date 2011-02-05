@@ -38,22 +38,11 @@ namespace ICSharpCode.ILSpy
 	sealed class ReferenceSegment : TextSegment
 	{
 		public object Reference;
-		public ILSpyTreeNode TreeNode;
 	}
 	
-	sealed class SmartTextOutput : ITextOutput
+	sealed class DefinitionLookup
 	{
-		readonly StringBuilder b = new StringBuilder();
-		int indent;
-		bool needsIndent;
 		Dictionary<object, int> definitions = new Dictionary<object, int>();
-		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
-		
-		public TextSegmentCollection<ReferenceSegment> References {
-			get { return references; }
-		}
-		
-		public ILSpyTreeNode CurrentTreeNode;
 		
 		public int GetDefinitionPosition(object definition)
 		{
@@ -62,6 +51,25 @@ namespace ICSharpCode.ILSpy
 				return val;
 			else
 				return -1;
+		}
+		
+		public void AddDefinition(object definition, int offset)
+		{
+			definitions[definition] = offset;
+		}
+	}
+	
+	sealed class SmartTextOutput : ITextOutput
+	{
+		readonly StringBuilder b = new StringBuilder();
+		int indent;
+		bool needsIndent;
+		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
+		
+		public readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
+		
+		public TextSegmentCollection<ReferenceSegment> References {
+			get { return references; }
 		}
 		
 		public override string ToString()
@@ -118,7 +126,7 @@ namespace ICSharpCode.ILSpy
 		{
 			WriteIndent();
 			b.Append(text);
-			definitions[definition] = b.Length;
+			this.DefinitionLookup.AddDefinition(definition, b.Length);
 		}
 		
 		public void WriteReference(string text, object reference)
@@ -127,7 +135,7 @@ namespace ICSharpCode.ILSpy
 			int start = b.Length;
 			b.Append(text);
 			int end = b.Length;
-			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, TreeNode = CurrentTreeNode });
+			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference });
 		}
 	}
 }

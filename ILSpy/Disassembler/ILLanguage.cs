@@ -19,6 +19,8 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil;
@@ -36,10 +38,10 @@ namespace ICSharpCode.ILSpy.Disassembler
 		}
 		
 		public override string Name {
-			get { return detectControlStructure ? "IL (simplified)" : "IL"; }
+			get { return detectControlStructure ? "IL (structured)" : "IL"; }
 		}
 		
-		public override void Decompile(MethodDefinition method, ITextOutput output)
+		public override void Decompile(MethodDefinition method, ITextOutput output, CancellationToken cancellationToken)
 		{
 			output.WriteCommentLine("// Method begins at RVA 0x{0:x4}", method.RVA);
 			output.WriteCommentLine("// Code size {0} (0x{0:x})", method.Body.CodeSize);
@@ -66,9 +68,9 @@ namespace ICSharpCode.ILSpy.Disassembler
 			
 			if (detectControlStructure) {
 				var cfg = ControlFlowGraphBuilder.Build(method.Body);
-				cfg.ComputeDominance();
+				cfg.ComputeDominance(cancellationToken);
 				cfg.ComputeDominanceFrontier();
-				var s = ControlStructureDetector.DetectStructure(cfg, method.Body.ExceptionHandlers);
+				var s = ControlStructureDetector.DetectStructure(cfg, method.Body.ExceptionHandlers, cancellationToken);
 				WriteStructure(output, s);
 			} else {
 				foreach (var inst in method.Body.Instructions) {

@@ -18,6 +18,8 @@
 
 using System;
 using System.Text;
+using System.Threading;
+
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -70,9 +72,9 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public override void Decompile(Language language, ITextOutput output)
+		public override void Decompile(Language language, ITextOutput output, CancellationToken cancellationToken)
 		{
-			language.Decompile(method, output);
+			language.Decompile(method, output, cancellationToken);
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)

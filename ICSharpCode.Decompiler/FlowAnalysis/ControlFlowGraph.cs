@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-
+using System.Threading;
 using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
@@ -97,7 +97,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			}
 		}
 		
-		public void ComputeDominance()
+		public void ComputeDominance(CancellationToken cancellationToken = default(CancellationToken))
 		{
 			// A Simple, Fast Dominance Algorithm
 			// Keith D. Cooper, Timothy J. Harvey and Ken Kennedy
@@ -107,6 +107,8 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			while (changed) {
 				changed = false;
 				ResetVisited();
+				
+				cancellationToken.ThrowIfCancellationRequested();
 				
 				// for all nodes b except the entry point
 				EntryPoint.TraversePreOrder(

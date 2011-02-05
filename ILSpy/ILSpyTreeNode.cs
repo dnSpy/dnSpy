@@ -20,6 +20,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Threading;
+
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
@@ -52,7 +54,7 @@ namespace ICSharpCode.ILSpy
 				return FilterResult.Hidden;
 		}
 		
-		public virtual void Decompile(Language language, ITextOutput output)
+		public virtual void Decompile(Language language, ITextOutput output, CancellationToken cancellationToken)
 		{
 		}
 	}
