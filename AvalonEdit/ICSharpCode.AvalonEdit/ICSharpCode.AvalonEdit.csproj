@@ -215,6 +215,7 @@
     <Compile Include="Indentation\CSharp\DocumentAccessor.cs" />
     <Compile Include="Indentation\DefaultIndentationStrategy.cs" />
     <Compile Include="Indentation\IIndentationStrategy.cs" />
+    <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="Rendering\BackgroundGeometryBuilder.cs">
       <DependentUpon>IBackgroundRenderer.cs</DependentUpon>
     </Compile>

@@ -79,6 +79,7 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="SharpGridView.cs" />
     <Compile Include="SharpTreeNode.cs" />
     <Compile Include="SharpTreeNodeCollection.cs" />
