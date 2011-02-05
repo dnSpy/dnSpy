@@ -32,9 +32,6 @@ using Mono.Cecil.Cil;
 
 namespace Mono.Cecil.Rocks {
 
-#if INSIDE_ROCKS
-	public
-#endif
 	static class MethodBodyRocks {
 
 		public static ParameterDefinition GetParameter (this MethodBody self, int index)

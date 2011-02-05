@@ -20,7 +20,7 @@ using System;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy.Decompiler
+namespace ICSharpCode.ILSpy
 {
 	/// <summary>
 	/// Decompiler logic for C#.

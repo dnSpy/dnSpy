@@ -66,7 +66,7 @@ namespace ICSharpCode.ILSpy.TextView
 			foldingManager = FoldingManager.Install(textEditor.TextArea);
 		}
 		
-		public void Decompile(IEnumerable<ILSpyTreeNodeBase> treeNodes)
+		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNodeBase> treeNodes)
 		{
 			if (waitAdorner.Visibility != Visibility.Visible) {
 				waitAdorner.Visibility = Visibility.Visible;
@@ -82,7 +82,7 @@ namespace ICSharpCode.ILSpy.TextView
 			DecompilationOptions options = new DecompilationOptions();
 			options.CancellationToken = myCancellationTokenSource.Token;
 			
-			var task = RunDecompiler(ILSpy.Language.Current, treeNodes.ToArray(), options);
+			var task = RunDecompiler(language, treeNodes.ToArray(), options);
 			Action continuation = delegate {
 				try {
 					if (currentCancellationTokenSource == myCancellationTokenSource) {
@@ -94,7 +94,7 @@ namespace ICSharpCode.ILSpy.TextView
 							SmartTextOutput textOutput = task.Result;
 							referenceElementGenerator.References = textOutput.References;
 							definitionLookup = textOutput.DefinitionLookup;
-							textEditor.SyntaxHighlighting = ILSpy.Language.Current.SyntaxHighlighting;
+							textEditor.SyntaxHighlighting = language.SyntaxHighlighting;
 							textEditor.Text = textOutput.ToString();
 							foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
 						} catch (AggregateException ex) {

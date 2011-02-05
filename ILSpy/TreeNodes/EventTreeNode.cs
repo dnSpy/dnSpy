@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public override object Text {
-			get { return ev.Name + " : " + Language.Current.TypeToString(ev.EventType); }
+			get { return ev.Name + " : " + this.Language.TypeToString(ev.EventType); }
 		}
 		
 		public override object Icon {

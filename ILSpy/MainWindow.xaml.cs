@@ -17,24 +17,17 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
-using ICSharpCode.ILSpy.Disassembler;
-using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
 namespace ICSharpCode.ILSpy
@@ -45,6 +38,7 @@ namespace ICSharpCode.ILSpy
 	public partial class MainWindow : Window
 	{
 		AssemblyList assemblyList = new AssemblyList();
+		AssemblyListTreeNode assemblyListTreeNode;
 		FilterSettings filterSettings = new FilterSettings();
 		
 		static readonly System.Reflection.Assembly[] initialAssemblies = {
@@ -68,19 +62,9 @@ namespace ICSharpCode.ILSpy
 			InitializeComponent();
 			decompilerTextView.mainWindow = this;
 			
-			languageComboBox.Items.Add(new Decompiler.CSharpLanguage());
-			languageComboBox.Items.Add(new Disassembler.ILLanguage(false));
-			languageComboBox.Items.Add(new Disassembler.ILLanguage(true));
-			languageComboBox.SelectedItem = languageComboBox.Items[0];
-			
-			AssemblyListTreeNode assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
+			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			assemblyListTreeNode.FilterSettings = filterSettings.Clone();
-			filterSettings.PropertyChanged += delegate {
-				// filterSettings is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
-				// Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
-				// mutable instance changes.
-				assemblyListTreeNode.FilterSettings = filterSettings.Clone();
-			};
+			filterSettings.PropertyChanged += new PropertyChangedEventHandler(filterSettings_PropertyChanged);
 			treeView.Root = assemblyListTreeNode;
 			assemblyListTreeNode.Select = SelectNode;
 			
@@ -92,20 +76,19 @@ namespace ICSharpCode.ILSpy
 			}
 			
 			#if DEBUG
-			toolBar.Items.Add(new Separator());
-			
-			Button cfg = new Button() { Content = "CFG" };
-			cfg.Click += new RoutedEventHandler(cfg_Click);
-			toolBar.Items.Add(cfg);
-			
-			Button ssa = new Button() { Content = "SSA" };
-			ssa.Click += new RoutedEventHandler(ssa_Click);
-			toolBar.Items.Add(ssa);
-			
-			Button varGraph = new Button() { Content = "Var" };
-			varGraph.Click += new RoutedEventHandler(varGraph_Click);
-			toolBar.Items.Add(varGraph);
+			AddDebugItemsToToolbar();
 			#endif
+		}
+
+		void filterSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			// filterSettings is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
+			// Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
+			// mutable instance changes.
+			assemblyListTreeNode.FilterSettings = filterSettings.Clone();
+			if (e.PropertyName == "Language") {
+				TreeView_SelectionChanged(null, null);
+			}
 		}
 		
 		internal AssemblyList AssemblyList {
@@ -122,6 +105,23 @@ namespace ICSharpCode.ILSpy
 		
 		#region Debugging CFG
 		#if DEBUG
+		void AddDebugItemsToToolbar()
+		{
+			toolBar.Items.Add(new Separator());
+			
+			Button cfg = new Button() { Content = "CFG" };
+			cfg.Click += new RoutedEventHandler(cfg_Click);
+			toolBar.Items.Add(cfg);
+			
+			Button ssa = new Button() { Content = "SSA" };
+			ssa.Click += new RoutedEventHandler(ssa_Click);
+			toolBar.Items.Add(ssa);
+			
+			Button varGraph = new Button() { Content = "Var" };
+			varGraph.Click += new RoutedEventHandler(varGraph_Click);
+			toolBar.Items.Add(varGraph);
+		}
+		
 		void cfg_Click(object sender, RoutedEventArgs e)
 		{
 			MethodTreeNode node = treeView.SelectedItem as MethodTreeNode;
@@ -213,13 +213,7 @@ namespace ICSharpCode.ILSpy
 		
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			decompilerTextView.Decompile(treeView.SelectedItems.OfType<ILSpyTreeNodeBase>());
-		}
-		
-		void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			ILSpy.Language.Current = (ILSpy.Language)languageComboBox.SelectedItem;
-			TreeView_SelectionChanged(null, null);
+			decompilerTextView.Decompile(filterSettings.Language, treeView.SelectedItems.OfType<ILSpyTreeNodeBase>());
 		}
 	}
 }

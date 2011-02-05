@@ -40,6 +40,10 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		public Language Language {
+			get { return filterSettings.Language; }
+		}
+		
 		public SharpTreeNodeCollection VisibleChildren {
 			get { return base.Children; }
 		}
@@ -93,16 +97,20 @@ namespace ICSharpCode.ILSpy
 		{
 			if (children == null)
 				throw new ArgumentNullException("children");
-			this.Children = children;
-			children.CollectionChanged += children_CollectionChanged;
+			this.allChildren = children;
+			children.CollectionChanged += allChildren_CollectionChanged;
 		}
 		
-		void children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		void allChildren_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
+			var visibleChildren = this.VisibleChildren;
+			
 			switch (e.Action) {
 				case NotifyCollectionChangedAction.Add:
-					if (e.NewItems.Count == 1 && e.NewStartingIndex == this.Children.Count - 1) {
-						FilterChild((T)e.NewItems[0]);
+					if (e.NewItems.Count == 1 && e.NewStartingIndex == allChildren.Count - 1) {
+						T newChild = (T)e.NewItems[0];
+						if (FilterChild(newChild))
+							visibleChildren.Add(newChild);
 						break;
 					} else {
 						goto default;
@@ -115,13 +123,16 @@ namespace ICSharpCode.ILSpy
 		
 		void ResetChildren()
 		{
-			base.Children.Clear();
-			foreach (T child in this.Children) {
-				FilterChild(child);
+			var visibleChildren = this.VisibleChildren;
+			
+			visibleChildren.Clear();
+			foreach (T child in allChildren) {
+				if (FilterChild(child))
+					visibleChildren.Add(child);
 			}
 		}
 		
-		void FilterChild(T child)
+		bool FilterChild(T child)
 		{
 			FilterResult r;
 			if (this.FilterSettings == null)
@@ -130,24 +141,18 @@ namespace ICSharpCode.ILSpy
 				r = child.Filter(this.FilterSettings);
 			switch (r) {
 				case FilterResult.Hidden:
-					// don't add to base.Children
-					break;
+					return false;
 				case FilterResult.Match:
 					child.FilterSettings = StripSearchTerm(this.FilterSettings);
-					base.Children.Add(child);
-					break;
+					return true;
 				case FilterResult.Recurse:
 					child.FilterSettings = this.FilterSettings;
 					child.EnsureLazyChildren();
-					if (child.VisibleChildren.Count > 0)
-						base.Children.Add(child);
-					break;
+					return child.VisibleChildren.Count > 0;
 				case FilterResult.MatchAndRecurse:
 					child.FilterSettings = StripSearchTerm(this.FilterSettings);
 					child.EnsureLazyChildren();
-					if (child.VisibleChildren.Count > 0)
-						base.Children.Add(child);
-					break;
+					return child.VisibleChildren.Count > 0;
 				default:
 					throw new InvalidEnumArgumentException();
 			}
@@ -166,10 +171,34 @@ namespace ICSharpCode.ILSpy
 		
 		protected override void OnFilterSettingsChanged()
 		{
-			ResetChildren();
+			var visibleChildren = this.VisibleChildren;
+			var allChildren = this.Children;
+			int j = 0;
+			for (int i = 0; i < allChildren.Count; i++) {
+				T child = allChildren[i];
+				if (j < visibleChildren.Count && visibleChildren[j] == child) {
+					// it was visible before
+					if (FilterChild(child)) {
+						j++; // keep it visible
+					} else {
+						visibleChildren.RemoveAt(j); // hide it
+					}
+				} else {
+					// it wasn't visible before
+					if (FilterChild(child)) {
+						// make it visible
+						visibleChildren.Insert(j++, child);
+					}
+				}
+			}
+			RaisePropertyChanged("Text");
 		}
 		
-		public new readonly ObservableCollection<T> Children;
+		readonly ObservableCollection<T> allChildren;
+		
+		public new ObservableCollection<T> Children {
+			get { return allChildren; }
+		}
 	}
 	
 	class ILSpyTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase> {}

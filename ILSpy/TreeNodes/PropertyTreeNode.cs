@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public override object Text {
-			get { return property.Name + " : " + Language.Current.TypeToString(property.PropertyType); }
+			get { return property.Name + " : " + this.Language.TypeToString(property.PropertyType); }
 		}
 		
 		public override object Icon {

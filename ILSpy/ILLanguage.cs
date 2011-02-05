@@ -24,7 +24,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy.Disassembler
+namespace ICSharpCode.ILSpy
 {
 	public class ILLanguage : Language
 	{

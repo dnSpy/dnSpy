@@ -28,8 +28,6 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public abstract class Language
 	{
-		public static Language Current = new Decompiler.CSharpLanguage();
-		
 		public abstract string Name { get; }
 		
 		public virtual ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting {
@@ -73,5 +71,14 @@ namespace ICSharpCode.ILSpy
 		{
 			return Name;
 		}
+	}
+	
+	public static class Languages
+	{
+		public static readonly Language[] AllLanguages = {
+			new CSharpLanguage(),
+			new ILLanguage(false),
+			new ILLanguage(true)
+		};
 	}
 }

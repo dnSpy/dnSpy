@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public override object Text {
-			get { return field.Name + " : " + Language.Current.TypeToString(field.FieldType); }
+			get { return field.Name + " : " + this.Language.TypeToString(field.FieldType); }
 		}
 		
 		public override object Icon {

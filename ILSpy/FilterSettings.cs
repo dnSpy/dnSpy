@@ -62,6 +62,18 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		Language language = Languages.AllLanguages[0];
+		
+		public Language Language {
+			get { return language; }
+			set {
+				if (language != value) {
+					language = value;
+					OnPropertyChanged("Language");
+				}
+			}
+		}
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)

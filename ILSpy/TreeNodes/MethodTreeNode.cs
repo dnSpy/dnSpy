@@ -48,10 +48,10 @@ namespace ICSharpCode.ILSpy
 				b.Append('(');
 				for (int i = 0; i < method.Parameters.Count; i++) {
 					if (i > 0) b.Append(", ");
-					b.Append(Language.Current.TypeToString(method.Parameters[i].ParameterType));
+					b.Append(this.Language.TypeToString(method.Parameters[i].ParameterType));
 				}
 				b.Append(") : ");
-				b.Append(Language.Current.TypeToString(method.ReturnType));
+				b.Append(this.Language.TypeToString(method.ReturnType));
 				return b.ToString();
 			}
 		}

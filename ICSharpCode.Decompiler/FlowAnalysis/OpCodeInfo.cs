@@ -22,7 +22,7 @@ using System.Linq;
 
 using Mono.Cecil.Cil;
 
-namespace ICSharpCode.Decompiler
+namespace ICSharpCode.Decompiler.FlowAnalysis
 {
 	/// <summary>
 	/// Additional info about opcodes.

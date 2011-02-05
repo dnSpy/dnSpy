@@ -64,7 +64,9 @@
 				<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
 			</CheckBox>
 			<Separator />
-			<ComboBox Name="languageComboBox" DisplayMemberPath="Name" Width="100" SelectionChanged="LanguageComboBox_SelectionChanged" />
+			<ComboBox Name="languageComboBox" DisplayMemberPath="Name" Width="100"
+			          ItemsSource="{x:Static local:Languages.AllLanguages}"
+			          SelectedItem="{Binding Language}" />
 		</ToolBar>
 		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
 		<Grid>

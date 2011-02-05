@@ -81,14 +81,14 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AssemblyList.cs" />
+    <Compile Include="CSharpLanguage.cs" />
     <Compile Include="CueBannerService.cs" />
     <Compile Include="DecompilationOptions.cs" />
-    <Compile Include="Decompiler\CSharpLanguage.cs" />
-    <Compile Include="Disassembler\ILLanguage.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FilterSettings.cs" />
     <Compile Include="Fusion.cs" />
     <Compile Include="GacInterop.cs" />
+    <Compile Include="ILLanguage.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="Mono.Cecil.Rocks\MethodBodyRocks.cs" />
@@ -122,7 +122,6 @@
     <Compile Include="TreeNodes\ReferenceFolderTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceListTreeNode.cs" />
     <Compile Include="TreeNodes\TypeTreeNode.cs" />
-    <Compile Include="TreeTraversal.cs" />
     <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
