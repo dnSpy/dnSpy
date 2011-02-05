@@ -17,7 +17,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil;
+using Mono.Cecil.Rocks;
 
 namespace ICSharpCode.ILSpy.Decompiler
 {
@@ -30,8 +34,9 @@ namespace ICSharpCode.ILSpy.Decompiler
 			get { return "C#"; }
 		}
 		
-		public override void Decompile(MethodDefinition methodDefinition, ITextOutput output)
+		public override void Decompile(MethodDefinition method, ITextOutput output)
 		{
+			throw new NotImplementedException();
 		}
 	}
 }

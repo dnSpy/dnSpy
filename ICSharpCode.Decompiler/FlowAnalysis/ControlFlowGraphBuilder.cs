@@ -32,14 +32,14 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			return new ControlFlowGraphBuilder(methodBody).Build();
 		}
 		
+		bool copyFinallyBlocks = false;
 		MethodBody methodBody;
 		int[] offsets; // array index = instruction index; value = IL offset
 		bool[] hasIncomingJumps; // array index = instruction index
 		List<ControlFlowNode> nodes = new List<ControlFlowNode>();
 		ControlFlowNode entryPoint;
-		ControlFlowNode regularExit ;
+		ControlFlowNode regularExit;
 		ControlFlowNode exceptionalExit;
-		//Stack<> activeExceptionHandlers = new Stack<ExceptionHandler>();
 		
 		private ControlFlowGraphBuilder(MethodBody methodBody)
 		{
@@ -69,7 +69,10 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			CreateNodes();
 			CreateRegularControlFlow();
 			CreateExceptionalControlFlow();
-			CopyFinallyBlocksIntoLeaveEdges();
+			if (copyFinallyBlocks)
+				CopyFinallyBlocksIntoLeaveEdges();
+			else
+				TransformLeaveEdges();
 			return new ControlFlowGraph(nodes.ToArray());
 		}
 		
@@ -238,6 +241,28 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					
 					ControlFlowNode copy = CopyFinallySubGraph(handler, handler.EndFinallyOrFaultNode, target);
 					CreateEdge(node, copy, JumpType.Normal);
+				}
+			}
+		}
+		
+		
+		void TransformLeaveEdges()
+		{
+			for (int i = nodes.Count - 1; i >= 0; i--) {
+				ControlFlowNode node = nodes[i];
+				if (node.End != null && node.Outgoing.Count == 1 && node.Outgoing[0].Type == JumpType.LeaveTry) {
+					Debug.Assert(node.End.OpCode == OpCodes.Leave);
+					
+					ControlFlowNode target = node.Outgoing[0].Target;
+					// remove the edge
+					target.Incoming.Remove(node.Outgoing[0]);
+					node.Outgoing.Clear();
+					
+					ControlFlowNode handler = FindInnermostExceptionHandler(node.End.Offset);
+					Debug.Assert(handler.NodeType == ControlFlowNodeType.FinallyOrFaultHandler);
+					
+					CreateEdge(node, handler, JumpType.Normal);
+					CreateEdge(handler.EndFinallyOrFaultNode, target, JumpType.EndFinally);
 				}
 			}
 		}

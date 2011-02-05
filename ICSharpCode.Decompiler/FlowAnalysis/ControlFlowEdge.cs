@@ -23,9 +23,23 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 	public enum JumpType
 	{
 		Normal,
+		/// <summary>
+		/// Jump to exception handler (an exception occurred)
+		/// </summary>
 		JumpToExceptionHandler,
+		/// <summary>
+		/// Jump from try block to leave target:
+		/// This is not a real jump, as the finally handler is executed first!
+		/// </summary>
 		LeaveTry,
-		MutualProtection
+		/// <summary>
+		/// Jump from one catch block to its sibling
+		/// </summary>
+		MutualProtection,
+		/// <summary>
+		/// non-determistic jump at end finally (to any of the potential leave targets)
+		/// </summary>
+		EndFinally
 	}
 	
 	public sealed class ControlFlowEdge
