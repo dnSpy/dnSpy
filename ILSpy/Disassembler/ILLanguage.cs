@@ -29,6 +29,30 @@ namespace ICSharpCode.ILSpy.Disassembler
 		
 		public override void Decompile(MethodDefinition method, ITextOutput output)
 		{
+			output.WriteComment("// Method begins at RVA 0x{0:x4}", method.RVA);
+			output.WriteLine();
+			output.WriteComment("// Code size {0} (0x{0:x})", method.Body.CodeSize);
+			output.WriteLine();
+			output.WriteLine(".maxstack {0}", method.Body.MaxStackSize);
+			if (method.DeclaringType.Module.Assembly.EntryPoint == method)
+				output.WriteLine (".entrypoint");
+			
+			if (method.Body.HasVariables) {
+				output.Write(".locals ");
+				if (method.Body.InitLocals)
+					output.Write("init ");
+				output.WriteLine("(");
+				output.Indent();
+				foreach (var v in method.Body.Variables) {
+					v.VariableType.WriteTo(output);
+					output.Write(' ');
+					output.WriteDefinition(string.IsNullOrEmpty(v.Name) ? v.Index.ToString() : v.Name, v);
+					output.WriteLine();
+				}
+				output.Unindent();
+				output.WriteLine(")");
+			}
+			
 			foreach (var inst in method.Body.Instructions) {
 				inst.WriteTo(output);
 				output.WriteLine();

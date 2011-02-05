@@ -25,23 +25,23 @@ namespace ICSharpCode.ILSpy.Disassembler
 {
 	static class DisassemblerHelpers
 	{
-		static void WriteOffsetReference(ITextOutput writer, int offset)
+		static void WriteOffsetReference(ITextOutput writer, Instruction instruction)
 		{
-			writer.WriteReference(CecilExtensions.OffsetToString(offset), offset);
+			writer.WriteReference(CecilExtensions.OffsetToString(instruction.Offset), instruction);
 		}
 		
 		public static void WriteTo(this ExceptionHandler exceptionHandler, ITextOutput writer)
 		{
 			writer.Write("Try ");
-			WriteOffsetReference(writer, exceptionHandler.TryStart.Offset);
+			WriteOffsetReference(writer, exceptionHandler.TryStart);
 			writer.Write('-');
-			WriteOffsetReference(writer, exceptionHandler.TryEnd.Offset);
+			WriteOffsetReference(writer, exceptionHandler.TryEnd);
 			writer.Write(exceptionHandler.HandlerType.ToString());
 			if (exceptionHandler.FilterStart != null) {
 				writer.Write(' ');
-				WriteOffsetReference(writer, exceptionHandler.FilterStart.Offset);
+				WriteOffsetReference(writer, exceptionHandler.FilterStart);
 				writer.Write('-');
-				WriteOffsetReference(writer, exceptionHandler.FilterEnd.Offset);
+				WriteOffsetReference(writer, exceptionHandler.FilterEnd);
 				writer.Write(" handler ");
 			}
 			if (exceptionHandler.CatchType != null) {
@@ -49,14 +49,14 @@ namespace ICSharpCode.ILSpy.Disassembler
 				exceptionHandler.CatchType.WriteTo(writer);
 			}
 			writer.Write(' ');
-			WriteOffsetReference(writer, exceptionHandler.HandlerStart.Offset);
+			WriteOffsetReference(writer, exceptionHandler.HandlerStart);
 			writer.Write('-');
-			WriteOffsetReference(writer, exceptionHandler.HandlerEnd.Offset);
+			WriteOffsetReference(writer, exceptionHandler.HandlerEnd);
 		}
 		
 		public static void WriteTo(this Instruction instruction, ITextOutput writer)
 		{
-			writer.WriteDefinition(CecilExtensions.OffsetToString(instruction.Offset), instruction.Offset);
+			writer.WriteDefinition(CecilExtensions.OffsetToString(instruction.Offset), instruction);
 			writer.Write(": ");
 			writer.Write(instruction.OpCode.Name);
 			if(null != instruction.Operand) {
@@ -70,7 +70,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 			writer.Write("(");
 			for(int i = 0; i < instructions.Length; i++) {
 				if(i != 0) writer.Write(", ");
-				WriteOffsetReference(writer, instructions[i].Offset);
+				WriteOffsetReference(writer, instructions[i]);
 			}
 			writer.Write(")");
 		}
@@ -108,7 +108,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 			writer.WriteReference(field.Name, field);
 		}
 		
-		static void WriteTo(this TypeReference type, ITextOutput writer)
+		public static void WriteTo(this TypeReference type, ITextOutput writer)
 		{
 			string name = ShortTypeName(type);
 			if (name != null)
@@ -124,7 +124,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 			
 			Instruction targetInstruction = operand as Instruction;
 			if (targetInstruction != null) {
-				WriteOffsetReference(writer, targetInstruction.Offset);
+				WriteOffsetReference(writer, targetInstruction);
 				return;
 			}
 			
