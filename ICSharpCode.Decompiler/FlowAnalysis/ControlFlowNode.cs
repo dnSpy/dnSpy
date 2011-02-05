@@ -74,7 +74,8 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		public readonly Instruction End;
 		
 		/// <summary>
-		/// Gets the exception handler associated with this node. Only set for nodetype == ExceptionHandler.
+		/// Gets the exception handler associated with this node.
+		/// Only set for nodetype == CatchHandler or nodetype == FinallyOrFaultHandler.
 		/// </summary>
 		public readonly ExceptionHandler ExceptionHandler;
 		
