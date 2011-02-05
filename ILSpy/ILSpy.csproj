@@ -89,6 +89,8 @@
     <Compile Include="Decompiler\CSharpLanguage.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
     <Compile Include="Disassembler\ILLanguage.cs" />
+    <Compile Include="Disassembler\MethodBodyDisassembler.cs" />
+    <Compile Include="Disassembler\ReflectionDisassembler.cs" />
     <Compile Include="EventTreeNode.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FieldTreeNode.cs" />

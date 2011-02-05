@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -83,7 +84,7 @@ namespace ICSharpCode.ILSpy.Disassembler
 				: value.ToString();
 		}
 		
-		static void WriteTo(this MethodReference method, ITextOutput writer)
+		public static void WriteTo(this MethodReference method, ITextOutput writer)
 		{
 			method.ReturnType.WriteTo(writer);
 			writer.Write(' ');
@@ -108,13 +109,69 @@ namespace ICSharpCode.ILSpy.Disassembler
 			writer.WriteReference(field.Name, field);
 		}
 		
-		public static void WriteTo(this TypeReference type, ITextOutput writer)
+		public static string Escape(string identifier)
 		{
-			string name = ShortTypeName(type);
-			if (name != null)
-				writer.Write(name);
-			else
-				writer.WriteReference(type.FullName, type);
+			return identifier;
+		}
+		
+		public static void WriteTo(this TypeReference type, ITextOutput writer, bool onlyName = false, bool convertPrimitive = true)
+		{
+			if (type is PinnedType) {
+				writer.Write("pinned ");
+				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+			} else if (type is ArrayType) {
+				ArrayType at = (ArrayType)type;
+				at.ElementType.WriteTo(writer, onlyName, convertPrimitive);
+				writer.Write('[');
+				writer.Write(string.Join(", ", at.Dimensions));
+				writer.Write(']');
+			} else if (type is GenericParameter) {
+				writer.WriteReference(type.Name, type);
+			} else if (type is ByReferenceType) {
+				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+				writer.Write('&');
+			} else if (type is PointerType) {
+				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+				writer.Write('*');
+			} else if (type is GenericInstanceType) {
+				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+				writer.Write('<');
+				var arguments = ((GenericInstanceType)type).GenericArguments;
+				for (int i = 0; i < arguments.Count; i++) {
+					if (i > 0)
+						writer.Write(", ");
+					arguments[i].WriteTo(writer, onlyName, convertPrimitive);
+				}
+				writer.Write('>');
+			} else if (type is OptionalModifierType) {
+				writer.Write("modopt(");
+				((OptionalModifierType)type).ModifierType.WriteTo(writer, true, false);
+				writer.Write(") ");
+				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+			} else if (type is RequiredModifierType) {
+				writer.Write("modreq(");
+				((RequiredModifierType)type).ModifierType.WriteTo(writer, true, false);
+				writer.Write(") ");
+				type.GetElementType().WriteTo(writer, onlyName, convertPrimitive);
+			} else {
+				if (!onlyName)
+					writer.Write(type.IsValueType ? "valuetype " : "class ");
+				
+				if (type.DeclaringType != null) {
+					type.DeclaringType.WriteTo(writer, true, false);
+					writer.Write('/');
+					writer.WriteReference(Escape(type.Name), type);
+				} else {
+					string name = ShortTypeName(type);
+					if (name != null) {
+						writer.Write(name);
+					} else {
+						if (!type.IsDefinition && type.Scope != null && !(type is TypeSpecification))
+							writer.Write("[{0}]", Escape(type.Scope.Name));
+						writer.WriteReference(type.FullName, type);
+					}
+				}
+			}
 		}
 		
 		public static void WriteOperand(ITextOutput writer, object operand)
