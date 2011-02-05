@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Window
-	x:Class="ICSharpCode.ILSpy.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView" xmlns:ae="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit"
-	xmlns:local="clr-namespace:ICSharpCode.ILSpy"
+	x:Class="ICSharpCode.ILSpy.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
+	xmlns:local="clr-namespace:ICSharpCode.ILSpy" xmlns:textView="clr-namespace:ICSharpCode.ILSpy.TextView"
 	Title="ILSpy"
 	Width="790"
 	Height="500"
@@ -103,13 +103,7 @@
 			<!-- Right pane: Text Editor -->
 			<DockPanel
 				Grid.Column="2">
-				<ae:TextEditor
-					Name="textEditor"
-					FontFamily="Consolas"
-					FontSize="10pt"
-					IsReadOnly="True"
-					Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
-					Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}" />
+				<textView:DecompilerTextView x:Name="decompilerTextView" />
 			</DockPanel>
 		</Grid>
 	</DockPanel>

@@ -130,6 +130,9 @@
     <Page Include="AboutDialog.xaml" />
     <Page Include="MainWindow.xaml" />
     <Page Include="OpenFromGacDialog.xaml" />
+    <Page Include="TextView\DecompilerTextView.xaml">
+      <DependentUpon>DecompilerTextView.cs</DependentUpon>
+    </Page>
     <Page Include="themes\generic.xaml" />
   </ItemGroup>
   <ItemGroup>

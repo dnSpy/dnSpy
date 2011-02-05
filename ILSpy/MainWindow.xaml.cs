@@ -45,7 +45,6 @@ namespace ICSharpCode.ILSpy
 	public partial class MainWindow : Window
 	{
 		AssemblyList assemblyList = new AssemblyList();
-		DecompilerTextView decompilerTextView;
 		FilterSettings filterSettings = new FilterSettings();
 		
 		static readonly System.Reflection.Assembly[] initialAssemblies = {
@@ -67,14 +66,12 @@ namespace ICSharpCode.ILSpy
 		{
 			this.DataContext = filterSettings;
 			InitializeComponent();
-			decompilerTextView = new DecompilerTextView(this, textEditor);
+			decompilerTextView.mainWindow = this;
 			
 			languageComboBox.Items.Add(new Decompiler.CSharpLanguage());
 			languageComboBox.Items.Add(new Disassembler.ILLanguage(false));
 			languageComboBox.Items.Add(new Disassembler.ILLanguage(true));
 			languageComboBox.SelectedItem = languageComboBox.Items[0];
-			
-			textEditor.Text = "Welcome to ILSpy!";
 			
 			AssemblyListTreeNode assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			assemblyListTreeNode.FilterSettings = filterSettings.Clone();

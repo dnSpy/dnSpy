@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
-
 using ICSharpCode.AvalonEdit;
 using Mono.Cecil;
 
@@ -16,39 +18,41 @@ namespace ICSharpCode.ILSpy.TextView
 	/// <summary>
 	/// Manages the TextEditor showing the decompiled code.
 	/// </summary>
-	sealed class DecompilerTextView
+	sealed partial class DecompilerTextView : UserControl
 	{
-		readonly MainWindow mainWindow;
-		readonly TextEditor textEditor;
 		readonly ReferenceElementGenerator referenceElementGenerator;
+		internal MainWindow mainWindow;
 		
 		DefinitionLookup definitionLookup;
 		CancellationTokenSource currentCancellationTokenSource;
 		
-		public DecompilerTextView(MainWindow mainWindow, TextEditor textEditor)
+		public DecompilerTextView()
 		{
-			if (mainWindow == null)
-				throw new ArgumentNullException("mainWindow");
-			if (textEditor == null)
-				throw new ArgumentNullException("textEditor");
-			this.mainWindow = mainWindow;
-			this.textEditor = textEditor;
+			InitializeComponent();
 			this.referenceElementGenerator = new ReferenceElementGenerator(this);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
+			textEditor.Text = "Welcome to ILSpy!";
 		}
 		
 		public void Decompile(IEnumerable<ILSpyTreeNodeBase> treeNodes)
 		{
-			if (currentCancellationTokenSource != null)
-				currentCancellationTokenSource.Cancel();
+			if (waitAdorner.Visibility != Visibility.Visible) {
+				waitAdorner.Visibility = Visibility.Visible;
+				waitAdorner.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
+			}
+			CancellationTokenSource previousCancellationTokenSource = currentCancellationTokenSource;
 			var myCancellationTokenSource = new CancellationTokenSource();
 			currentCancellationTokenSource = myCancellationTokenSource;
-			var task = RunDecompiler(Language.Current, treeNodes.ToArray(), myCancellationTokenSource.Token);
+			// cancel the previous only after current was set to the new one (avoid that the old one still finishes successfully)
+			if (previousCancellationTokenSource != null)
+				previousCancellationTokenSource.Cancel();
+			var task = RunDecompiler(ILSpy.Language.Current, treeNodes.ToArray(), myCancellationTokenSource.Token);
 			task.ContinueWith(
 				delegate {
 					try {
 						if (currentCancellationTokenSource == myCancellationTokenSource) {
 							currentCancellationTokenSource = null;
+							waitAdorner.Visibility = Visibility.Collapsed;
 							try {
 								SmartTextOutput textOutput = task.Result;
 								referenceElementGenerator.References = textOutput.References;
@@ -61,6 +65,12 @@ namespace ICSharpCode.ILSpy.TextView
 								definitionLookup = null;
 								textEditor.Text = string.Join(Environment.NewLine, ex.InnerExceptions.Select(ie => ie.ToString()));
 							}
+						} else {
+							try {
+								task.Wait();
+							} catch (AggregateException) {
+								// observe the exception (otherwise the task's finalizer will shut down the AppDomain)
+							}
 						}
 					} finally {
 						myCancellationTokenSource.Dispose();
@@ -69,7 +79,7 @@ namespace ICSharpCode.ILSpy.TextView
 				TaskScheduler.FromCurrentSynchronizationContext());
 		}
 		
-		static Task<SmartTextOutput> RunDecompiler(Language language, ILSpyTreeNodeBase[] nodes, CancellationToken cancellationToken)
+		static Task<SmartTextOutput> RunDecompiler(ILSpy.Language language, ILSpyTreeNodeBase[] nodes, CancellationToken cancellationToken)
 		{
 			return Task.Factory.StartNew(
 				delegate {
@@ -91,7 +101,7 @@ namespace ICSharpCode.ILSpy.TextView
 					textEditor.TextArea.Focus();
 					textEditor.Select(pos, 0);
 					textEditor.ScrollTo(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column);
-					mainWindow.Dispatcher.Invoke(DispatcherPriority.Background, new Action(
+					Dispatcher.Invoke(DispatcherPriority.Background, new Action(
 						delegate {
 							CaretHighlightAdorner.DisplayCaretHighlightAnimation(textEditor.TextArea);
 						}));
@@ -112,6 +122,12 @@ namespace ICSharpCode.ILSpy.TextView
 			} else if (reference is AssemblyDefinition) {
 				mainWindow.SelectNode(assemblyList.Assemblies.FirstOrDefault(node => node.AssemblyDefinition == reference));
 			}
+		}
+		
+		void cancelButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (currentCancellationTokenSource != null)
+				currentCancellationTokenSource.Cancel();
 		}
 	}
 }
