@@ -78,10 +78,7 @@ namespace ICSharpCode.ILSpy
 			this.assemblyList = assemblyListManager.LoadList(this.spySettings, sessionSettings.ActiveAssemblyList);
 			this.spySettings = null;
 			
-			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
-			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
-			assemblyListTreeNode.Select = SelectNode;
-			treeView.Root = assemblyListTreeNode;
+			ShowAssemblyList(this.assemblyList);
 			
 			string[] args = Environment.GetCommandLineArgs();
 			for (int i = 1; i < args.Length; i++) {
@@ -91,6 +88,21 @@ namespace ICSharpCode.ILSpy
 				LoadInitialAssemblies();
 			
 			SelectNode(FindNodeByPath(sessionSettings.ActiveTreeViewPath, true));
+		}
+		
+		void ShowAssemblyList(AssemblyList assemblyList)
+		{
+			this.assemblyList = assemblyList;
+			
+			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
+			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
+			assemblyListTreeNode.Select = SelectNode;
+			treeView.Root = assemblyListTreeNode;
+			
+			if (assemblyList.ListName == AssemblyListManager.DefaultListName)
+				this.Title = "ILSpy";
+			else
+				this.Title = "ILSpy - " + assemblyList.ListName;
 		}
 		
 		void LoadInitialAssemblies()
@@ -264,6 +276,14 @@ namespace ICSharpCode.ILSpy
 			}
 			if (lastNode != null)
 				treeView.ScrollIntoView(lastNode);
+		}
+		
+		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			e.Handled = true;
+			var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
+			ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
+			SelectNode(FindNodeByPath(path, true));
 		}
 		
 		void ExitClick(object sender, RoutedEventArgs e)

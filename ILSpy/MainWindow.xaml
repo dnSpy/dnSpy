@@ -15,6 +15,9 @@
 		<CommandBinding
 			Command="Open"
 			Executed="OpenCommandExecuted" />
+		<CommandBinding
+			Command="Refresh"
+			Executed="RefreshCommandExecuted" />
 	</Window.CommandBindings>
 	<DockPanel>
 		<!-- Main menu -->
@@ -36,6 +39,11 @@
 				<MenuItem Header="E_xit" Click="ExitClick" />
 			</MenuItem>
 			<MenuItem Header="_View">
+				<MenuItem Command="Refresh">
+					<MenuItem.Icon>
+						<Image Width="16" Height="16" Source="Images/Refresh.png" />
+					</MenuItem.Icon>
+				</MenuItem>
 				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
 					<MenuItem.Icon>
 						<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
@@ -62,8 +70,11 @@
 					</Style.Triggers>
 				</Style>
 			</ToolBar.Resources>
-			<Button Command="Open">
+			<Button Command="Open" ToolTip="Open">
 				<Image Width="16" Height="16" Source="Images/Open.png" />
+			</Button>
+			<Button Command="Refresh" ToolTip="Reload all assemblies">
+				<Image Width="16" Height="16" Source="Images/Refresh.png" />
 			</Button>
 			<Separator />
 			<CheckBox IsChecked="{Binding FilterSettings.ShowInternalApi}" ToolTip="Show internal types and members">

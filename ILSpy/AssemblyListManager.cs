@@ -66,8 +66,10 @@ namespace ICSharpCode.ILSpy
 			if (firstList != null)
 				return new AssemblyList(firstList);
 			else
-				return new AssemblyList(listName ?? "(Default)");
+				return new AssemblyList(listName ?? DefaultListName);
 		}
+		
+		public const string DefaultListName = "(Default)";
 		
 		/// <summary>
 		/// Saves the specifies assembly list into the config file.
