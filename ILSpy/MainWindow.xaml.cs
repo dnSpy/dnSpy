@@ -87,7 +87,11 @@ namespace ICSharpCode.ILSpy
 			if (assemblyList.Assemblies.Count == 0)
 				LoadInitialAssemblies();
 			
-			SelectNode(FindNodeByPath(sessionSettings.ActiveTreeViewPath, true));
+			SharpTreeNode node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
+			if (node != null)
+				SelectNode(node);
+			else
+				AboutPage.Display(decompilerTextView);
 		}
 		
 		void ShowAssemblyList(AssemblyList assemblyList)
@@ -293,9 +297,7 @@ namespace ICSharpCode.ILSpy
 		
 		void AboutClick(object sender, RoutedEventArgs e)
 		{
-			AboutDialog dlg = new AboutDialog();
-			dlg.Owner = this;
-			dlg.ShowDialog();
+			AboutPage.Display(decompilerTextView);
 		}
 		
 		void OpenFromGac_Click(object sender, RoutedEventArgs e)

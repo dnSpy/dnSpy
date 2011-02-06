@@ -73,7 +73,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
-			textEditor.Text = "Welcome to ILSpy!";
+			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
 		}
 		#endregion
 		
@@ -134,7 +134,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// Shows the given output in the text view.
 		/// Cancels any currently running decompilation tasks.
 		/// </summary>
-		public void Show(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting)
+		public void Show(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null)
 		{
 			// Cancel the decompilation task:
 			if (currentCancellationTokenSource != null) {
