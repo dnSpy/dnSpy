@@ -61,6 +61,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FilterResult.Hidden;
 		}
 		
+		protected object HighlightSearchMatch(string text, string suffix = null)
+		{
+			// TODO: implement highlighting the search match
+			return text + suffix;
+		}
+		
 		public virtual void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 		}

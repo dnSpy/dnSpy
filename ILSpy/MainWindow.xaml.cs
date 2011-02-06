@@ -90,7 +90,7 @@ namespace ICSharpCode.ILSpy
 			if (assemblyList.Assemblies.Count == 0)
 				LoadInitialAssemblies();
 			
-			SelectNode(FindNodeByPath(sessionSettings.ActiveTreeViewPath));
+			SelectNode(FindNodeByPath(sessionSettings.ActiveTreeViewPath, true));
 		}
 		
 		void LoadInitialAssemblies()
@@ -138,18 +138,23 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		SharpTreeNode FindNodeByPath(string[] path)
+		SharpTreeNode FindNodeByPath(string[] path, bool returnBestMatch)
 		{
 			if (path == null)
 				return null;
 			SharpTreeNode node = treeView.Root;
+			SharpTreeNode bestMatch = node;
 			foreach (var element in path) {
 				if (node == null)
 					break;
+				bestMatch = node;
 				node.EnsureLazyChildren();
 				node = node.Children.FirstOrDefault(c => c.ToString() == element);
 			}
-			return node;
+			if (returnBestMatch)
+				return node ?? bestMatch;
+			else
+				return node;
 		}
 		
 		string[] GetPathForNode(SharpTreeNode node)

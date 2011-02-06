@@ -44,7 +44,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override object Text {
 			get {
 				StringBuilder b = new StringBuilder();
-				b.Append(method.Name);
 				b.Append('(');
 				for (int i = 0; i < method.Parameters.Count; i++) {
 					if (i > 0) b.Append(", ");
@@ -52,7 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				}
 				b.Append(") : ");
 				b.Append(this.Language.TypeToString(method.ReturnType));
-				return b.ToString();
+				return HighlightSearchMatch(method.Name, b.ToString());
 			}
 		}
 		
