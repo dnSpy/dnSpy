@@ -81,6 +81,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AssemblyList.cs" />
+    <Compile Include="AssemblyListManager.cs" />
     <Compile Include="CSharpLanguage.cs" />
     <Compile Include="CueBannerService.cs" />
     <Compile Include="DecompilationOptions.cs" />

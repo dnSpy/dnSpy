@@ -21,16 +21,31 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-
+using System.Xml.Linq;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
-	/// Description of AssemblyList.
+	/// Describes a list of assemblies.
 	/// </summary>
 	class AssemblyList
 	{
+		public AssemblyList(string listName)
+		{
+			this.ListName = listName;
+		}
+		
+		public AssemblyList(XElement listElement)
+		{
+			this.ListName = (string)listElement.Attribute("name");
+			foreach (var asm in listElement.Elements("Assembly")) {
+				OpenAssembly((string)asm);
+			}
+		}
+		
+		public string ListName { get; set; }
+		
 		public readonly ObservableCollection<AssemblyTreeNode> Assemblies = new ObservableCollection<AssemblyTreeNode>();
 		
 		ConcurrentDictionary<TypeDefinition, TypeTreeNode> typeDict = new ConcurrentDictionary<TypeDefinition, TypeTreeNode>();

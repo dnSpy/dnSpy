@@ -28,18 +28,36 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Manages IL Spy settings.
 	/// </summary>
-	public static class ILSpySettings
+	public class ILSpySettings
 	{
-		public static XElement LoadSettings(string section)
+		readonly XElement root;
+		
+		ILSpySettings()
+		{
+			this.root = new XElement("ILSpy");
+		}
+		
+		ILSpySettings(XElement root)
+		{
+			this.root = root;
+		}
+		
+		public XElement this[string section] {
+			get {
+				return root.Element(section) ?? new XElement(section);
+			}
+		}
+		
+		public static ILSpySettings Load()
 		{
 			using (new MutexProtector(ConfigFileMutex)) {
 				try {
 					XDocument doc = XDocument.Load(GetConfigFile());
-					return doc.Root.Element(section) ?? new XElement(section);
+					return new ILSpySettings(doc.Root);
 				} catch (IOException) {
-					return new XElement(section);
+					return new ILSpySettings();
 				} catch (XmlException) {
-					return new XElement(section);
+					return new ILSpySettings();
 				}
 			}
 		}

@@ -38,56 +38,68 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		AssemblyList assemblyList = new AssemblyList();
+		SessionSettings sessionSettings;
+		AssemblyListManager assemblyListManager;
+		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
-		SessionSettings settings = new SessionSettings();
-		
-		static readonly System.Reflection.Assembly[] initialAssemblies = {
-			typeof(object).Assembly,
-			typeof(Uri).Assembly,
-			typeof(System.Linq.Enumerable).Assembly,
-			typeof(System.Xml.XmlDocument).Assembly,
-			typeof(System.Windows.Markup.MarkupExtension).Assembly,
-			typeof(System.Windows.Rect).Assembly,
-			typeof(System.Windows.UIElement).Assembly,
-			typeof(System.Windows.FrameworkElement).Assembly,
-			typeof(ICSharpCode.TreeView.SharpTreeView).Assembly,
-			typeof(Mono.Cecil.AssemblyDefinition).Assembly,
-			typeof(MainWindow).Assembly,
-			typeof(ICSharpCode.Decompiler.GraphVizGraph).Assembly
-		};
 		
 		public MainWindow()
 		{
-			this.DataContext = settings.FilterSettings;
-			this.Left = settings.WindowBounds.Left;
-			this.Top = settings.WindowBounds.Top;
-			this.Width = settings.WindowBounds.Width;
-			this.Height = settings.WindowBounds.Height;
+			ILSpySettings spySettings = ILSpySettings.Load();
+			this.sessionSettings = new SessionSettings(spySettings);
+			this.assemblyListManager = new AssemblyListManager(spySettings);
+			this.assemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
+			
+			this.DataContext = sessionSettings;
+			this.Left = sessionSettings.WindowBounds.Left;
+			this.Top = sessionSettings.WindowBounds.Top;
+			this.Width = sessionSettings.WindowBounds.Width;
+			this.Height = sessionSettings.WindowBounds.Height;
 			// TODO: validate bounds (maybe a screen was removed...)
-			this.WindowState = settings.WindowState;
+			this.WindowState = sessionSettings.WindowState;
 			
 			InitializeComponent();
 			decompilerTextView.mainWindow = this;
 			
 			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
-			assemblyListTreeNode.FilterSettings = settings.FilterSettings.Clone();
-			settings.FilterSettings.PropertyChanged += new PropertyChangedEventHandler(filterSettings_PropertyChanged);
+			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
+			sessionSettings.FilterSettings.PropertyChanged += new PropertyChangedEventHandler(filterSettings_PropertyChanged);
 			treeView.Root = assemblyListTreeNode;
 			assemblyListTreeNode.Select = SelectNode;
 			
-			foreach (System.Reflection.Assembly asm in initialAssemblies)
-				assemblyList.OpenAssembly(asm.Location);
 			string[] args = Environment.GetCommandLineArgs();
 			for (int i = 1; i < args.Length; i++) {
 				assemblyList.OpenAssembly(args[i]);
 			}
+			if (assemblyList.Assemblies.Count == 0)
+				LoadInitialAssemblies();
 			
-			SelectNode(FindNodeByPath(settings.ActiveTreeViewPath));
+			SelectNode(FindNodeByPath(sessionSettings.ActiveTreeViewPath));
 			
 			#if DEBUG
 			AddDebugItemsToToolbar();
 			#endif
+		}
+		
+		void LoadInitialAssemblies()
+		{
+			System.Reflection.Assembly[] initialAssemblies = {
+				typeof(object).Assembly,
+				typeof(Uri).Assembly,
+				typeof(System.Linq.Enumerable).Assembly,
+				typeof(System.Xml.XmlDocument).Assembly,
+				typeof(System.Windows.Markup.MarkupExtension).Assembly,
+				typeof(System.Windows.Rect).Assembly,
+				typeof(System.Windows.UIElement).Assembly,
+				typeof(System.Windows.FrameworkElement).Assembly,
+				typeof(ICSharpCode.TreeView.SharpTreeView).Assembly,
+				typeof(Mono.Cecil.AssemblyDefinition).Assembly,
+				typeof(ICSharpCode.AvalonEdit.TextEditor).Assembly,
+				typeof(ICSharpCode.Decompiler.GraphVizGraph).Assembly,
+				typeof(MainWindow).Assembly
+			};
+			foreach (System.Reflection.Assembly asm in initialAssemblies)
+				assemblyList.OpenAssembly(asm.Location);
 		}
 
 		void filterSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -95,7 +107,7 @@ namespace ICSharpCode.ILSpy
 			// filterSettings is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
 			// Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
 			// mutable instance changes.
-			assemblyListTreeNode.FilterSettings = settings.FilterSettings.Clone();
+			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
 			if (e.PropertyName == "Language") {
 				TreeView_SelectionChanged(null, null);
 			}
@@ -250,7 +262,7 @@ namespace ICSharpCode.ILSpy
 		
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			decompilerTextView.Decompile(settings.FilterSettings.Language, treeView.SelectedItems.OfType<ILSpyTreeNodeBase>());
+			decompilerTextView.Decompile(sessionSettings.FilterSettings.Language, treeView.SelectedItems.OfType<ILSpyTreeNodeBase>());
 		}
 		
 		protected override void OnStateChanged(EventArgs e)
@@ -258,15 +270,16 @@ namespace ICSharpCode.ILSpy
 			base.OnStateChanged(e);
 			// store window state in settings only if it's not minimized
 			if (this.WindowState != System.Windows.WindowState.Minimized)
-				settings.WindowState = this.WindowState;
+				sessionSettings.WindowState = this.WindowState;
 		}
 		
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
-			settings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
-			settings.WindowBounds = this.RestoreBounds;
-			settings.Save();
+			sessionSettings.ActiveAssemblyList = assemblyList.ListName;
+			sessionSettings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
+			sessionSettings.WindowBounds = this.RestoreBounds;
+			sessionSettings.Save();
 		}
 	}
 }

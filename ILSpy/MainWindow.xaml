@@ -28,7 +28,7 @@
 				<MenuItem Header="E_xit" Click="ExitClick" />
 			</MenuItem>
 			<MenuItem Header="_View">
-				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding ShowInternalApi}">
+				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
 					<MenuItem.Icon>
 						<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
 					</MenuItem.Icon>
@@ -58,13 +58,13 @@
 				<Image Width="16" Height="16" Source="Images/Open.png" />
 			</Button>
 			<Separator />
-			<CheckBox IsChecked="{Binding ShowInternalApi}" ToolTip="Show internal types and members">
+			<CheckBox IsChecked="{Binding FilterSettings.ShowInternalApi}" ToolTip="Show internal types and members">
 				<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
 			</CheckBox>
 			<Separator />
 			<ComboBox Name="languageComboBox" DisplayMemberPath="Name" Width="100"
 			          ItemsSource="{x:Static local:Languages.AllLanguages}"
-			          SelectedItem="{Binding Language}" />
+			          SelectedItem="{Binding FilterSettings.Language}" />
 		</ToolBar>
 		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
 		<Grid>
@@ -84,7 +84,7 @@
 			</Grid.RowDefinitions>
 			<!-- Left pane: Search bar + Tree View -->
 			<DockPanel>
-				<TextBox DockPanel.Dock="Top" local:CueBannerService.CueBanner=" Search" Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" />
+				<TextBox DockPanel.Dock="Top" local:CueBannerService.CueBanner=" Search" Text="{Binding FilterSettings.SearchTerm, UpdateSourceTrigger=PropertyChanged}" />
 				<!-- Tree View of assemblies and classes -->
 				<tv:SharpTreeView
 					Name="treeView"

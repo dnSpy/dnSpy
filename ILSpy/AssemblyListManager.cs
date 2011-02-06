@@ -17,24 +17,50 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Threading;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
-	/// Options passed to the decompiler.
+	/// Manages the available assembly lists.
 	/// </summary>
-	public class DecompilationOptions
+	sealed class AssemblyListManager
 	{
-		/// <summary>
-		/// Gets whether a full decompilation (all members recursively) is desired.
-		/// If this option is false, language bindings are allowed to show the only headers of the decompiled element's children.
-		/// </summary>
-		public bool FullDecompilation { get; set; }
+		public AssemblyListManager(ILSpySettings spySettings)
+		{
+			XElement doc = spySettings["AssemblyLists"];
+			foreach (var list in doc.Elements("List")) {
+				AssemblyLists.Add((string)list.Attribute("name"));
+			}
+		}
 		
-		/// <summary>
-		/// Gets the cancellation token that is used to abort the decompiler.
-		/// </summary>
-		public CancellationToken CancellationToken { get; set; }
+		public readonly ObservableCollection<string> AssemblyLists = new ObservableCollection<string>();
+		
+		public AssemblyList LoadList(ILSpySettings spySettings, string listName)
+		{
+			AssemblyList list = DoLoadList(spySettings, listName);
+			if (!AssemblyLists.Contains(list.ListName))
+				AssemblyLists.Add(list.ListName);
+			return list;
+		}
+		
+		AssemblyList DoLoadList(ILSpySettings spySettings, string listName)
+		{
+			XElement doc = spySettings["AssemblyLists"];
+			if (listName != null) {
+				foreach (var list in doc.Elements("List")) {
+					if ((string)list.Attribute("name") == listName) {
+						return new AssemblyList(list);
+					}
+				}
+			}
+			XElement firstList = doc.Elements("List").FirstOrDefault();
+			if (firstList != null)
+				return new AssemblyList(firstList);
+			else
+				return new AssemblyList(listName ?? "(Default)");
+		}
 	}
 }
