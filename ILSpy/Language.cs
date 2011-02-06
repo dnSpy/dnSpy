@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public virtual ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting {
 			get {
-				return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(this.FileExtension); 
+				return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(this.FileExtension);
 			}
 		}
 		
@@ -75,6 +75,11 @@ namespace ICSharpCode.ILSpy
 		
 		public virtual void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
 		{
+		}
+		
+		public virtual void WriteCommentLine(ITextOutput output, string comment)
+		{
+			output.WriteLine("// " + comment);
 		}
 		
 		/// <summary>

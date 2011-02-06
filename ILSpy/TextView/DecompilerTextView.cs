@@ -124,7 +124,7 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (currentCancellationTokenSource != null) {
 				currentCancellationTokenSource.Cancel();
-				currentCancellationTokenSource = null;
+				// Don't set to null: the task still needs to produce output and hide the wait adorner
 			}
 		}
 		#endregion
@@ -132,10 +132,23 @@ namespace ICSharpCode.ILSpy.TextView
 		#region ShowOutput
 		/// <summary>
 		/// Shows the given output in the text view.
+		/// Cancels any currently running decompilation tasks.
 		/// </summary>
-		/// <param name="textOutput">The output to show.</param>
-		/// <param name="language">The language used for syntax highlighting.</param>
-		void ShowOutput(AvalonEditTextOutput textOutput, ILSpy.Language language = null)
+		public void Show(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting)
+		{
+			// Cancel the decompilation task:
+			if (currentCancellationTokenSource != null) {
+				currentCancellationTokenSource.Cancel();
+				currentCancellationTokenSource = null; // prevent canceled task from producing output
+			}
+			this.nextDecompilationRun = null; // remove scheduled decompilation run
+			ShowOutput(textOutput, highlighting);
+		}
+		
+		/// <summary>
+		/// Shows the given output in the text view.
+		/// </summary>
+		void ShowOutput(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null)
 		{
 			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
 			Stopwatch w = Stopwatch.StartNew();
@@ -149,7 +162,7 @@ namespace ICSharpCode.ILSpy.TextView
 			uiElementGenerator.UIElements = textOutput.UIElements;
 			referenceElementGenerator.References = textOutput.References;
 			definitionLookup = textOutput.DefinitionLookup;
-			textEditor.SyntaxHighlighting = language != null ? language.SyntaxHighlighting : null;
+			textEditor.SyntaxHighlighting = highlighting;
 			
 			Debug.WriteLine("  Set-up: {0}", w.Elapsed); w.Restart();
 			textEditor.Document = textOutput.GetDocument();
@@ -163,8 +176,11 @@ namespace ICSharpCode.ILSpy.TextView
 		#endregion
 		
 		#region Decompile (for display)
-		const int defaultOutputLengthLimit  =  5000000; // more than 5M characters is too slow to output (when user browses treeview)
-		const int extendedOutputLengthLimit = 75000000; // more than 75M characters can get us into trouble with memory usage
+		// more than 5M characters is too slow to output (when user browses treeview)
+		public const int DefaultOutputLengthLimit  =  5000000;
+		
+		// more than 75M characters can get us into trouble with memory usage
+		public const int ExtendedOutputLengthLimit = 75000000;
 		
 		DecompilationContext nextDecompilationRun;
 		
@@ -183,7 +199,8 @@ namespace ICSharpCode.ILSpy.TextView
 					delegate {
 						var context = this.nextDecompilationRun;
 						this.nextDecompilationRun = null;
-						DoDecompile(context, defaultOutputLengthLimit);
+						if (context != null)
+							DoDecompile(context, DefaultOutputLengthLimit);
 					}
 				));
 			}
@@ -213,7 +230,7 @@ namespace ICSharpCode.ILSpy.TextView
 				delegate (Task<AvalonEditTextOutput> task) { // handling the result
 					try {
 						AvalonEditTextOutput textOutput = task.Result;
-						ShowOutput(textOutput, context.Language);
+						ShowOutput(textOutput, context.Language.SyntaxHighlighting);
 					} catch (AggregateException aggregateException) {
 						textEditor.SyntaxHighlighting = null;
 						Debug.WriteLine("Decompiler crashed: " + aggregateException.ToString());
@@ -224,7 +241,7 @@ namespace ICSharpCode.ILSpy.TextView
 							ex = ex.InnerException;
 						AvalonEditTextOutput output = new AvalonEditTextOutput();
 						if (ex is OutputLengthExceededException) {
-							WriteOutputLengthExceededMessage(output, context, outputLengthLimit == defaultOutputLengthLimit);
+							WriteOutputLengthExceededMessage(output, context, outputLengthLimit == DefaultOutputLengthLimit);
 						} else {
 							output.WriteLine(ex.ToString());
 						}
@@ -252,7 +269,7 @@ namespace ICSharpCode.ILSpy.TextView
 					DecompileNodes(context, textOutput);
 					textOutput.PrepareDocument();
 					return textOutput;
-				});
+				}, TaskCreationOptions.LongRunning);
 		}
 		
 		static void DecompileNodes(DecompilationContext context, ITextOutput textOutput)
@@ -282,45 +299,20 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			output.WriteLine();
 			if (wasNormalLimit) {
-				output.AddUIElement(MakeButton(
+				output.AddButton(
 					Images.ViewCode, "Display Code",
 					delegate {
-						DoDecompile(context, extendedOutputLengthLimit);
-					}));
+						DoDecompile(context, ExtendedOutputLengthLimit);
+					});
 				output.WriteLine();
 			}
 			
-			output.AddUIElement(MakeButton(
+			output.AddButton(
 				Images.Save, "Save Code",
 				delegate {
 					SaveToDisk(context.Language, context.TreeNodes, context.Options);
-				}));
+				});
 			output.WriteLine();
-		}
-		
-		/// <summary>
-		/// Creates a button for use with <see cref="ISmartTextOutput.AddUIElement"/>.
-		/// </summary>
-		static Func<Button> MakeButton(ImageSource icon, string text, RoutedEventHandler click)
-		{
-			return () => {
-				Button button = new Button();
-				button.Cursor = Cursors.Arrow;
-				button.Margin = new Thickness(2);
-				if (icon != null) {
-					button.Content = new StackPanel {
-						Orientation = Orientation.Horizontal,
-						Children = {
-							new Image { Width = 16, Height = 16, Source = icon, Margin = new Thickness(0, 0, 4, 0) },
-							new TextBlock { Text = text }
-						}
-					};
-				} else {
-					button.Content = text;
-				}
-				button.Click += click;
-				return button;
-			};
 		}
 		#endregion
 		
@@ -402,15 +394,15 @@ namespace ICSharpCode.ILSpy.TextView
 							AvalonEditTextOutput output = new AvalonEditTextOutput();
 							output.WriteLine("Decompilation complete.");
 							output.WriteLine();
-							output.AddUIElement(MakeButton(
+							output.AddButton(
 								null, "Open Explorer",
 								delegate {
 									Process.Start("explorer", "/select,\"" + fileName + "\"");
 								}
-							));
+							);
 							output.WriteLine();
 							return output;
-						});
+						}, TaskCreationOptions.LongRunning);
 				},
 				delegate (Task<AvalonEditTextOutput> task) {
 					try {
@@ -433,7 +425,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>
 		/// Cleans up a node name for use as a file name.
 		/// </summary>
-		static string CleanUpName(string text)
+		internal static string CleanUpName(string text)
 		{
 			int pos = text.IndexOf(':');
 			if (pos > 0)

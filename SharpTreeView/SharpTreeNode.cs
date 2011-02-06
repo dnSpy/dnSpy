@@ -325,6 +325,8 @@ namespace ICSharpCode.TreeView
 		#endregion
 
 		#region Cut / Copy / Paste / Delete
+		
+		public bool IsCut { get { return false; } }
 /*
 		static List<SharpTreeNode> cuttedNodes = new List<SharpTreeNode>();
 		static IDataObject cuttedData;

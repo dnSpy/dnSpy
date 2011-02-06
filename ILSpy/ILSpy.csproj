@@ -89,6 +89,7 @@
     <Compile Include="FilterSettings.cs" />
     <Compile Include="Fusion.cs" />
     <Compile Include="GacInterop.cs" />
+    <Compile Include="GuessFileType.cs" />
     <Compile Include="ILLanguage.cs" />
     <Compile Include="ILSpySettings.cs" />
     <Compile Include="ISmartTextOutput.cs" />

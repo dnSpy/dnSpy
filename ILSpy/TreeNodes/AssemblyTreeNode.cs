@@ -78,7 +78,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get { return assemblyTask.IsFaulted ? Images.AssemblyWarning : Images.Assembly; }
+			get {
+				if (assemblyTask.IsCompleted) {
+					return assemblyTask.IsFaulted ? Images.AssemblyWarning : Images.Assembly;
+				} else {
+					return Images.AssemblyLoading;
+				}
+			}
 		}
 		
 		public override bool ShowExpander {
@@ -102,10 +108,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		void OnAssemblyLoaded(Task<AssemblyDefinition> assemblyTask)
 		{
+			// change from "Loading" icon to final icon
+			RaisePropertyChanged("Icon");
+			RaisePropertyChanged("ExpandedIcon");
 			if (assemblyTask.IsFaulted) {
-				RaisePropertyChanged("Icon");
-				RaisePropertyChanged("ExpandedIcon");
-				RaisePropertyChanged("ShowExpander");
+				RaisePropertyChanged("ShowExpander"); // cannot expand assemblies with load error
 			} else {
 				AssemblyDefinition assembly = assemblyTask.Result;
 				if (shortName != assembly.Name.Name) {

@@ -2,6 +2,14 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.IO;
+using System.Text;
+
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Utils;
+using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.TextView;
+using Microsoft.Win32;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -51,6 +59,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.r = r;
 		}
 		
+		public Resource Resource {
+			get { return r; }
+		}
+		
 		public override object Text {
 			get { return r.Name; }
 		}
@@ -67,6 +79,60 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;
+		}
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			language.WriteCommentLine(output, string.Format("{0} ({1}, {2})", r.Name, r.ResourceType, r.Attributes));
+			
+			ISmartTextOutput smartOutput = output as ISmartTextOutput;
+			if (smartOutput != null && r is EmbeddedResource) {
+				smartOutput.AddButton(Images.Save, "Save", delegate { Save(); });
+				output.WriteLine();
+			}
+		}
+		
+		internal override bool View(DecompilerTextView textView)
+		{
+			EmbeddedResource er = r as EmbeddedResource;
+			if (er != null) {
+				Stream s = er.GetResourceStream();
+				if (s != null && s.Length < DecompilerTextView.DefaultOutputLengthLimit) {
+					s.Position = 0;
+					FileType type = GuessFileType.DetectFileType(s);
+					if (type != FileType.Binary) {
+						s.Position = 0;
+						AvalonEditTextOutput output = new AvalonEditTextOutput();
+						output.Write(FileReader.OpenStream(s, Encoding.UTF8).ReadToEnd());
+						string ext;
+						if (type == FileType.Xml)
+							ext = ".xml";
+						else
+							ext = Path.GetExtension(DecompilerTextView.CleanUpName(er.Name));
+						textView.Show(output, HighlightingManager.Instance.GetDefinitionByExtension(ext));
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		public override bool Save()
+		{
+			EmbeddedResource er = r as EmbeddedResource;
+			if (er != null) {
+				SaveFileDialog dlg = new SaveFileDialog();
+				dlg.FileName = DecompilerTextView.CleanUpName(er.Name);
+				if (dlg.ShowDialog() == true) {
+					Stream s = er.GetResourceStream();
+					s.Position = 0;
+					using (var fs = dlg.OpenFile()) {
+						s.CopyTo(fs);
+					}
+				}
+				return true;
+			}
+			return false;
 		}
 	}
 }

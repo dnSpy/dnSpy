@@ -70,6 +70,26 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public virtual void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 		}
+		
+		/// <summary>
+		/// Used to implement special view logic for some items.
+		/// This method is called on the main thread when only a single item is selected.
+		/// If it returns false, normal decompilation is used to view the item.
+		/// </summary>
+		internal virtual bool View(TextView.DecompilerTextView textView)
+		{
+			return false;
+		}
+		
+		/// <summary>
+		/// Used to implement special save logic for some items.
+		/// This method is called on the main thread when only a single item is selected.
+		/// If it returns false, normal decompilation is used to save the item.
+		/// </summary>
+		public virtual bool Save()
+		{
+			return false;
+		}
 	}
 	
 	enum FilterResult
