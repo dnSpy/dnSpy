@@ -22,6 +22,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+
+using ICSharpCode.ILSpy.TreeNodes;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy

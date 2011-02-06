@@ -21,12 +21,12 @@ using System.Linq;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
 	/// <summary>
 	/// Node within assembly reference list.
 	/// </summary>
-	sealed class AssemblyReferenceTreeNode : ILSpyTreeNode
+	sealed class AssemblyReferenceTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
 	{
 		readonly AssemblyNameReference r;
 		readonly AssemblyTreeNode parentAssembly;

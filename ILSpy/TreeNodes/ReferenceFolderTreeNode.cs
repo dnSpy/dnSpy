@@ -20,12 +20,12 @@ using System;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
 	/// <summary>
 	/// References folder.
 	/// </summary>
-	sealed class ReferenceFolderTreeNode : ILSpyTreeNode
+	sealed class ReferenceFolderTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
 	{
 		readonly ModuleDefinition module;
 		readonly AssemblyTreeNode parentAssembly;

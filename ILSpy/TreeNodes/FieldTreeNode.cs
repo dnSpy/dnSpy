@@ -20,12 +20,12 @@ using System;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
 	/// <summary>
 	/// Represents a field in the TreeView.
 	/// </summary>
-	sealed class FieldTreeNode : ILSpyTreeNode
+	sealed class FieldTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
 	{
 		readonly FieldDefinition field;
 		

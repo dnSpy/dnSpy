@@ -31,6 +31,7 @@ using System.Xml;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using ICSharpCode.ILSpy.TreeNodes;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TextView

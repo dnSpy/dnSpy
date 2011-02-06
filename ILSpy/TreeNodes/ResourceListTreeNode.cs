@@ -4,10 +4,10 @@
 using System;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
 	/// <summary>
-	/// Description of ResourcesTreeNode.
+	/// Lists the embedded resources in an assembly.
 	/// </summary>
 	class ResourceListTreeNode : ILSpyTreeNode<ResourceTreeNode>
 	{
@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 	
-	class ResourceTreeNode : ILSpyTreeNode
+	class ResourceTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
 	{
 		Resource r;
 		

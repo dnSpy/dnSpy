@@ -24,9 +24,9 @@ using System.Windows.Media;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
-	sealed class TypeTreeNode : ILSpyTreeNode
+	sealed class TypeTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
 	{
 		readonly TypeDefinition type;
 		readonly AssemblyTreeNode parentAssemblyNode;

@@ -21,12 +21,12 @@ using System.Text;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
 	/// <summary>
 	/// Tree Node representing a field, method, property, or event.
 	/// </summary>
-	sealed class MethodTreeNode : ILSpyTreeNode
+	sealed class MethodTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
 	{
 		MethodDefinition method;
 		

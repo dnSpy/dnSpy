@@ -22,7 +22,7 @@ using System.Windows;
 
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
 	/// <summary>
 	/// Represents a list of assemblies.

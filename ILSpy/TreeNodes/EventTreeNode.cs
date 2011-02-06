@@ -20,7 +20,7 @@ using System;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
 	/// <summary>
 	/// Represents an event in the TreeView.

@@ -22,7 +22,7 @@ using System.Linq;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
 	/// <summary>
 	/// Lists the base types of a class.

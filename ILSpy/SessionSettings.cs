@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
 		
-		public readonly FilterSettings FilterSettings;
+		public FilterSettings FilterSettings { get; private set; }
 		
 		public string[] ActiveTreeViewPath;
 		

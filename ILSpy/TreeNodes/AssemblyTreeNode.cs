@@ -29,9 +29,13 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
-	sealed class AssemblyTreeNode : ILSpyTreeNode
+	/// <summary>
+	/// Tree node representing an assembly.
+	/// This class is responsible for loading both namespace and type nodes.
+	/// </summary>
+	sealed class AssemblyTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
 	{
 		readonly AssemblyList assemblyList;
 		readonly string fileName;

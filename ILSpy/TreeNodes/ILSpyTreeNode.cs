@@ -24,8 +24,11 @@ using System.ComponentModel;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes
 {
+	/// <summary>
+	/// Base class of all ILSpy tree nodes.
+	/// </summary>
 	abstract class ILSpyTreeNodeBase : SharpTreeNode
 	{
 		FilterSettings filterSettings;
@@ -63,7 +66,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 	
-	public enum FilterResult
+	enum FilterResult
 	{
 		/// <summary>
 		/// Hides the node.
@@ -200,6 +203,4 @@ namespace ICSharpCode.ILSpy
 			get { return allChildren; }
 		}
 	}
-	
-	class ILSpyTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase> {}
 }
