@@ -40,6 +40,7 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		ILSpySettings spySettings;
 		SessionSettings sessionSettings;
 		AssemblyListManager assemblyListManager;
 		AssemblyList assemblyList;
@@ -47,10 +48,9 @@ namespace ICSharpCode.ILSpy
 		
 		public MainWindow()
 		{
-			ILSpySettings spySettings = ILSpySettings.Load();
+			spySettings = ILSpySettings.Load();
 			this.sessionSettings = new SessionSettings(spySettings);
 			this.assemblyListManager = new AssemblyListManager(spySettings);
-			this.assemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
 			
 			this.DataContext = sessionSettings;
 			this.Left = sessionSettings.WindowBounds.Left;
@@ -63,11 +63,25 @@ namespace ICSharpCode.ILSpy
 			InitializeComponent();
 			decompilerTextView.mainWindow = this;
 			
+			sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
+			
+			#if DEBUG
+			AddDebugItemsToToolbar();
+			#endif
+			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
+		}
+
+		void MainWindow_Loaded(object sender, RoutedEventArgs e)
+		{
+			// Load AssemblyList only in Loaded event so that WPF is initialized before we start the CPU-heavy stuff.
+			// This makes the UI come up a bit faster.
+			this.assemblyList = assemblyListManager.LoadList(this.spySettings, sessionSettings.ActiveAssemblyList);
+			this.spySettings = null;
+			
 			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
-			sessionSettings.FilterSettings.PropertyChanged += new PropertyChangedEventHandler(filterSettings_PropertyChanged);
-			treeView.Root = assemblyListTreeNode;
 			assemblyListTreeNode.Select = SelectNode;
+			treeView.Root = assemblyListTreeNode;
 			
 			string[] args = Environment.GetCommandLineArgs();
 			for (int i = 1; i < args.Length; i++) {
@@ -77,10 +91,6 @@ namespace ICSharpCode.ILSpy
 				LoadInitialAssemblies();
 			
 			SelectNode(FindNodeByPath(sessionSettings.ActiveTreeViewPath));
-			
-			#if DEBUG
-			AddDebugItemsToToolbar();
-			#endif
 		}
 		
 		void LoadInitialAssemblies()
@@ -109,7 +119,8 @@ namespace ICSharpCode.ILSpy
 			// filterSettings is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
 			// Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
 			// mutable instance changes.
-			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
+			if (assemblyListTreeNode != null)
+				assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
 			if (e.PropertyName == "Language") {
 				TreeView_SelectionChanged(null, null);
 			}

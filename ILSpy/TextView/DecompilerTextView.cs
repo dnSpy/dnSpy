@@ -120,10 +120,20 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		static Task<SmartTextOutput> RunDecompiler(ILSpy.Language language, ILSpyTreeNodeBase[] nodes, DecompilationOptions options)
 		{
+			if (nodes.Length == 0) {
+				// If there's nothing to be decompiled, don't bother starting up a thread.
+				// (Improves perf in some cases since we don't have to wait for the thread-pool to accept our task)
+				TaskCompletionSource<SmartTextOutput> tcs = new TaskCompletionSource<SmartTextOutput>();
+				tcs.SetResult(new SmartTextOutput());
+				return tcs.Task;
+			}
+			
 			return Task.Factory.StartNew(
 				delegate {
 					SmartTextOutput textOutput = new SmartTextOutput();
+					bool first = true;
 					foreach (var node in nodes) {
+						if (first) first = false; else textOutput.WriteLine();
 						options.CancellationToken.ThrowIfCancellationRequested();
 						node.Decompile(language, textOutput, options);
 					}

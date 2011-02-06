@@ -30,7 +30,7 @@ using Mono.Cecil;
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
-	/// Describes a list of assemblies.
+	/// A list of assemblies.
 	/// </summary>
 	class AssemblyList
 	{
@@ -57,6 +57,13 @@ namespace ICSharpCode.ILSpy
 				Assemblies.Select(asm => new XElement("Assembly", asm.FileName))
 			);
 		}
+		
+		public bool Dirty { get; set; }
+		public string ListName { get; set; }
+		
+		public readonly ObservableCollection<AssemblyTreeNode> Assemblies = new ObservableCollection<AssemblyTreeNode>();
+		
+		ConcurrentDictionary<TypeDefinition, TypeTreeNode> typeDict = new ConcurrentDictionary<TypeDefinition, TypeTreeNode>();
 
 		void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
@@ -72,13 +79,6 @@ namespace ICSharpCode.ILSpy
 					})
 			);
 		}
-		
-		public bool Dirty { get; set; }
-		public string ListName { get; set; }
-		
-		public readonly ObservableCollection<AssemblyTreeNode> Assemblies = new ObservableCollection<AssemblyTreeNode>();
-		
-		ConcurrentDictionary<TypeDefinition, TypeTreeNode> typeDict = new ConcurrentDictionary<TypeDefinition, TypeTreeNode>();
 		
 		public void RegisterTypeNode(TypeTreeNode node)
 		{

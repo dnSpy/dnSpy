@@ -118,6 +118,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					} else {
 						goto default;
 					}
+				case NotifyCollectionChangedAction.Remove:
+					if (e.OldItems.Count == 1) {
+						visibleChildren.Remove((T)e.OldItems[0]);
+						break;
+					} else {
+						goto default;
+					}
 				default:
 					ResetChildren();
 					break;

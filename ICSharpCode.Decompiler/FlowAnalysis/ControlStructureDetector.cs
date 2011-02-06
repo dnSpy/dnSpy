@@ -123,6 +123,9 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		
 		// This algorithm is applied recursively for any substructures (both detected loops and exception blocks)
 		
+		// But maybe we should get rid of this complex stuff and instead treat every backward jump as a loop?
+		// That should still work with the IL produced by compilers, and has the advantage that the detected loop bodies are consecutive IL regions.
+		
 		static void DetectLoops(ControlFlowGraph g, ControlStructure current, CancellationToken cancellationToken)
 		{
 			g.ResetVisited();
