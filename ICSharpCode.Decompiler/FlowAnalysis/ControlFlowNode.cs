@@ -78,6 +78,11 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		public readonly int BlockIndex;
 		
 		/// <summary>
+		/// Gets the IL offset of this node.
+		/// </summary>
+		public readonly int Offset;
+		
+		/// <summary>
 		/// Type of the node.
 		/// </summary>
 		public readonly ControlFlowNodeType NodeType;
@@ -93,6 +98,13 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// Before using it in your algorithm, reset it to false by calling ControlFlowGraph.ResetVisited();
 		/// </summary>
 		public bool Visited;
+		
+		/// <summary>
+		/// Gets whether this node is reachable. Requires that dominance is computed!
+		/// </summary>
+		public bool IsReachable {
+			get { return ImmediateDominator != null || NodeType == ControlFlowNodeType.EntryPoint; }
+		}
 		
 		/// <summary>
 		/// Signalizes that this node is a copy of another node.
@@ -146,9 +158,10 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// </summary>
 		public readonly List<ControlFlowEdge> Outgoing = new List<ControlFlowEdge>();
 		
-		internal ControlFlowNode(int blockIndex, ControlFlowNodeType nodeType)
+		internal ControlFlowNode(int blockIndex, int offset, ControlFlowNodeType nodeType)
 		{
 			this.BlockIndex = blockIndex;
+			this.Offset = offset;
 			this.NodeType = nodeType;
 		}
 		
@@ -162,6 +175,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			this.NodeType = ControlFlowNodeType.Normal;
 			this.Start = start;
 			this.End = end;
+			this.Offset = start.Offset;
 		}
 		
 		internal ControlFlowNode(int blockIndex, ExceptionHandler exceptionHandler, ControlFlowNode endFinallyOrFaultNode)
@@ -171,6 +185,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			this.ExceptionHandler = exceptionHandler;
 			this.EndFinallyOrFaultNode = endFinallyOrFaultNode;
 			Debug.Assert((exceptionHandler.HandlerType == ExceptionHandlerType.Finally || exceptionHandler.HandlerType == ExceptionHandlerType.Fault) == (endFinallyOrFaultNode != null));
+			this.Offset = exceptionHandler.HandlerStart.Offset;
 		}
 		
 		/// <summary>

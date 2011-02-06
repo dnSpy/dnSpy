@@ -163,7 +163,6 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 							throw new NotSupportedException("stacksize must be 0 in endfinally edge");
 						newStackSize = 0;
 						break;
-					case JumpType.MutualProtection:
 					case JumpType.JumpToExceptionHandler:
 						switch (edge.Target.NodeType) {
 							case ControlFlowNodeType.FinallyOrFaultHandler:

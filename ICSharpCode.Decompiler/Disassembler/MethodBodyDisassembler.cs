@@ -136,7 +136,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				}
 				output.Indent();
 			}
-			foreach (var node in s.Nodes.Concat(s.Children.Select(c => c.EntryPoint)).OrderBy(n => n.BlockIndex)) {
+			foreach (var node in s.Nodes.Concat(from c in s.Children select c.EntryPoint).OrderBy(c => c.Offset)) {
 				if (s.Nodes.Contains(node)) {
 					foreach (var inst in node.Instructions) {
 						inst.WriteTo(output);

@@ -18,9 +18,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-
 using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
@@ -59,15 +59,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				current.Children.Add(tryBlock);
 				
 				if (eh.FilterStart != null) {
-					var filterNodes = FindNodes(current, eh.FilterStart, eh.FilterEnd);
-					current.Nodes.ExceptWith(filterNodes);
-					ControlStructure filterBlock = new ControlStructure(
-						filterNodes,
-						g.Nodes.Single(n => n.Start == eh.HandlerStart),
-						ControlStructureType.Filter);
-					filterBlock.ExceptionHandler = eh;
-					MoveControlStructures(current, filterBlock, eh.FilterStart, eh.FilterEnd);
-					current.Children.Add(filterBlock);
+					throw new NotSupportedException();
 				}
 				
 				var handlerNodes = FindNodes(current, eh.HandlerStart, eh.HandlerEnd);
@@ -77,9 +69,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					handlerNodes.Add(handlerNode.EndFinallyOrFaultNode);
 				current.Nodes.ExceptWith(handlerNodes);
 				ControlStructure handlerBlock = new ControlStructure(
-					handlerNodes,
-					g.Nodes.Single(n => n.Start == eh.HandlerStart),
-					ControlStructureType.Handler);
+					handlerNodes, handlerNode, ControlStructureType.Handler);
 				handlerBlock.ExceptionHandler = eh;
 				MoveControlStructures(current, handlerBlock, eh.HandlerStart, eh.HandlerEnd);
 				current.Children.Add(handlerBlock);
@@ -95,7 +85,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			int start = startInst.Offset;
 			int end = endInst.Offset;
 			foreach (var node in current.Nodes.ToArray()) {
-				if (node.Start != null && node.Start.Offset >= start && node.Start.Offset < end) {
+				if (node.Start != null && start <= node.Start.Offset && node.Start.Offset < end) {
 					result.Add(node);
 				}
 			}
@@ -106,7 +96,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		{
 			for (int i = 0; i < current.Children.Count; i++) {
 				var child = current.Children[i];
-				if (child.EntryPoint.Start.Offset >= startInst.Offset && child.EntryPoint.Start.Offset <= endInst.Offset) {
+				if (startInst.Offset <= child.EntryPoint.Offset && child.EntryPoint.Offset < endInst.Offset) {
 					current.Children.RemoveAt(i--);
 					target.Children.Add(child);
 					target.AllNodes.UnionWith(child.AllNodes);
@@ -128,6 +118,8 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		
 		static void DetectLoops(ControlFlowGraph g, ControlStructure current, CancellationToken cancellationToken)
 		{
+			if (!current.EntryPoint.IsReachable)
+				return;
 			g.ResetVisited();
 			cancellationToken.ThrowIfCancellationRequested();
 			FindLoops(current, current.EntryPoint);
@@ -238,6 +230,8 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		
 		public ControlStructure(HashSet<ControlFlowNode> nodes, ControlFlowNode entryPoint, ControlStructureType type)
 		{
+			if (nodes == null)
+				throw new ArgumentNullException("nodes");
 			this.Nodes = nodes;
 			this.EntryPoint = entryPoint;
 			this.Type = type;

@@ -39,10 +39,6 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// </summary>
 		LeaveTry,
 		/// <summary>
-		/// Jump from one catch block to its sibling (e.g. in "try {} catch (A) {} catch (B) {}")
-		/// </summary>
-		MutualProtection,
-		/// <summary>
 		/// Jump at endfinally (to any of the potential leave targets).
 		/// For any leave-instruction, control flow enters the finally block - the edge to the leave target (LeaveTry) is not a real control flow edge.
 		/// EndFinally edges are inserted at the end of the finally block, jumping to any of the targets of the leave instruction.

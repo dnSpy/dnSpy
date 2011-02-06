@@ -71,6 +71,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 						case JumpType.Normal:
 							break;
 						case JumpType.LeaveTry:
+						case JumpType.EndFinally:
 							e.color = "red";
 							break;
 						default:

@@ -55,11 +55,11 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			offsets = methodBody.Instructions.Select(i => i.Offset).ToArray();
 			hasIncomingJumps = new bool[methodBody.Instructions.Count];
 			
-			entryPoint = new ControlFlowNode(0, ControlFlowNodeType.EntryPoint);
+			entryPoint = new ControlFlowNode(0, 0, ControlFlowNodeType.EntryPoint);
 			nodes.Add(entryPoint);
-			regularExit = new ControlFlowNode(1, ControlFlowNodeType.RegularExit);
+			regularExit = new ControlFlowNode(1, -1, ControlFlowNodeType.RegularExit);
 			nodes.Add(regularExit);
-			exceptionalExit = new ControlFlowNode(2, ControlFlowNodeType.ExceptionalExit);
+			exceptionalExit = new ControlFlowNode(2, -1, ControlFlowNodeType.ExceptionalExit);
 			nodes.Add(exceptionalExit);
 			Debug.Assert(nodes.Count == 3);
 		}
@@ -140,7 +140,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					throw new NotSupportedException();
 				ControlFlowNode endFinallyOrFaultNode = null;
 				if (handler.HandlerType == ExceptionHandlerType.Finally || handler.HandlerType == ExceptionHandlerType.Fault) {
-					endFinallyOrFaultNode = new ControlFlowNode(nodes.Count, ControlFlowNodeType.EndFinallyOrFault);
+					endFinallyOrFaultNode = new ControlFlowNode(nodes.Count, handler.HandlerEnd.Offset, ControlFlowNodeType.EndFinallyOrFault);
 					nodes.Add(endFinallyOrFaultNode);
 				}
 				nodes.Add(new ControlFlowNode(nodes.Count, handler, endFinallyOrFaultNode));
@@ -206,26 +206,13 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					if (node.EndFinallyOrFaultNode != null) {
 						// For Fault and Finally blocks, create edge from "EndFinally" to next exception handler.
 						// This represents the exception bubbling up after finally block was executed.
-						CreateEdge(node.EndFinallyOrFaultNode, FindInnermostExceptionHandlerNode(node.ExceptionHandler.HandlerEnd.Offset), JumpType.JumpToExceptionHandler);
+						CreateEdge(node.EndFinallyOrFaultNode, FindParentExceptionHandlerNode(node), JumpType.JumpToExceptionHandler);
 					} else {
 						// For Catch blocks, create edge from "CatchHandler" block (at beginning) to next exception handler.
 						// This represents the exception bubbling up because it did not match the type of the catch block.
-						CreateEdge(node, FindInnermostExceptionHandlerNode(node.ExceptionHandler.HandlerStart.Offset), JumpType.JumpToExceptionHandler);
+						CreateEdge(node, FindParentExceptionHandlerNode(node), JumpType.JumpToExceptionHandler);
 					}
 					CreateEdge(node, node.ExceptionHandler.HandlerStart, JumpType.Normal);
-				}
-			}
-			
-			// now create edges between catch handlers that mutually protect
-			for (int i = 0; i < methodBody.ExceptionHandlers.Count; i++) {
-				ExceptionHandler first = methodBody.ExceptionHandlers[i];
-				if (first.HandlerType == ExceptionHandlerType.Catch) {
-					for (int j = i + 1; j < methodBody.ExceptionHandlers.Count; j++) {
-						ExceptionHandler second = methodBody.ExceptionHandlers[j];
-						if (second.HandlerType == ExceptionHandlerType.Catch && second.TryStart == first.TryStart && second.TryEnd == first.TryEnd) {
-							CreateEdge(nodes.Single(n => n.ExceptionHandler == first), nodes.Single(n => n.ExceptionHandler == second), JumpType.MutualProtection);
-						}
-					}
 				}
 			}
 		}
@@ -257,6 +244,19 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				{
 					return nodes.Single(n => n.ExceptionHandler == h && n.CopyFrom == null);
 				}
+			}
+			return exceptionalExit;
+		}
+		
+		ControlFlowNode FindParentExceptionHandlerNode(ControlFlowNode exceptionHandler)
+		{
+			Debug.Assert(exceptionHandler.NodeType == ControlFlowNodeType.CatchHandler
+			             || exceptionHandler.NodeType == ControlFlowNodeType.FinallyOrFaultHandler);
+			int offset = exceptionHandler.ExceptionHandler.TryStart.Offset;
+			for (int i = exceptionHandler.BlockIndex + 1; i < nodes.Count; i++) {
+				ExceptionHandler h = nodes[i].ExceptionHandler;
+				if (h != null && h.TryStart.Offset <= offset && offset < h.TryEnd.Offset)
+					return nodes[i];
 			}
 			return exceptionalExit;
 		}
