@@ -571,7 +571,7 @@ namespace ICSharpCode.TreeView
 		static void HandleExecuted_Delete(object sender, ExecutedRoutedEventArgs e)
 		{
 			SharpTreeView treeView = (SharpTreeView)sender;
-			foreach (SharpTreeNode node in treeView.GetTopLevelSelection())
+			foreach (SharpTreeNode node in treeView.GetTopLevelSelection().ToArray())
 				node.Delete();
 		}
 
@@ -581,10 +581,14 @@ namespace ICSharpCode.TreeView
 			e.CanExecute = treeView.GetTopLevelSelection().All(node => node.CanDelete());
 		}
 		
-		IEnumerable<SharpTreeNode> GetTopLevelSelection()
+		/// <summary>
+		/// Gets the selected items which do not have any of their ancestors selected.
+		/// </summary>
+		public IEnumerable<SharpTreeNode> GetTopLevelSelection()
 		{
-			// TODO: return only top-level selection
-			return this.SelectedItems.OfType<SharpTreeNode>().ToList();
+			var selection = this.SelectedItems.OfType<SharpTreeNode>();
+			var selectionHash = new HashSet<SharpTreeNode>(selection);
+			return selection.Where(item => item.Ancestors().All(a => !selectionHash.Contains(a)));
 		}
 
 		#endregion
