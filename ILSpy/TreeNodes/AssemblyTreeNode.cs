@@ -43,7 +43,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		readonly Task<AssemblyDefinition> assemblyTask;
 		readonly List<TypeTreeNode> classes = new List<TypeTreeNode>();
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
-		readonly SynchronizationContext syncContext;
 		
 		public AssemblyTreeNode(string fileName, AssemblyList assemblyList)
 		{
@@ -54,7 +53,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.assemblyList = assemblyList;
 			this.assemblyTask = Task.Factory.StartNew<AssemblyDefinition>(LoadAssembly); // requires that this.fileName is set
 			this.shortName = Path.GetFileNameWithoutExtension(fileName);
-			this.syncContext = SynchronizationContext.Current;
+			
+			assemblyTask.ContinueWith(OnAssemblyLoaded, TaskScheduler.FromCurrentSynchronizationContext());
 			
 			this.LazyLoading = true;
 		}
@@ -64,7 +64,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public AssemblyDefinition AssemblyDefinition {
-			get { return assemblyTask.Result; }
+			get {
+				try {
+					return assemblyTask.Result;
+				} catch {
+					return null;
+				}
+			}
 		}
 		
 		public override object Text {
@@ -72,7 +78,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get { return Images.Assembly; }
+			get { return assemblyTask.IsFaulted ? Images.AssemblyWarning : Images.Assembly; }
+		}
+		
+		public override bool ShowExpander {
+			get { return !assemblyTask.IsFaulted; }
 		}
 		
 		AssemblyDefinition LoadAssembly()
@@ -86,15 +96,23 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				classes.Add(node);
 				assemblyList.RegisterTypeNode(node);
 			}
-			syncContext.Post(
-				delegate {
-					if (shortName != assembly.Name.Name) {
-						shortName = assembly.Name.Name;
-						RaisePropertyChanged("Text");
-					}
-				}, null);
 			
 			return assembly;
+		}
+		
+		void OnAssemblyLoaded(Task<AssemblyDefinition> assemblyTask)
+		{
+			if (assemblyTask.IsFaulted) {
+				RaisePropertyChanged("Icon");
+				RaisePropertyChanged("ExpandedIcon");
+				RaisePropertyChanged("ShowExpander");
+			} else {
+				AssemblyDefinition assembly = assemblyTask.Result;
+				if (shortName != assembly.Name.Name) {
+					shortName = assembly.Name.Name;
+					RaisePropertyChanged("Text");
+				}
+			}
 		}
 		
 		sealed class MyAssemblyResolver : IAssemblyResolver
@@ -133,7 +151,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		protected override void LoadChildren()
 		{
-			assemblyTask.Wait();
+			try {
+				assemblyTask.Wait();
+			} catch (AggregateException ex) {
+				return;
+			}
 			ModuleDefinition mainModule = assemblyTask.Result.MainModule;
 			this.Children.Add(new ReferenceFolderTreeNode(mainModule, this));
 			if (mainModule.HasResources)
@@ -187,7 +209,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public AssemblyTreeNode LookupReferencedAssembly(string fullName)
 		{
 			foreach (AssemblyTreeNode node in assemblyList.Assemblies) {
-				if (fullName.Equals(node.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
+				if (node.AssemblyDefinition != null && fullName.Equals(node.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
 					return node;
 			}
 			
@@ -209,8 +231,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			// avoid accessing this.AssemblyDefinition (waiting for background thread) if settings.SearchTerm == null
-			if (settings.SearchTerm == null || settings.SearchTermMatches(this.AssemblyDefinition.Name.Name))
+			if (settings.SearchTermMatches(shortName))
 				return FilterResult.Match;
 			else
 				return FilterResult.Recurse;
@@ -218,6 +239,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
+			// use assemblyTask.Result instead of this.AssemblyDefinition so that load errors are passed on to the caller
 			language.DecompileAssembly(assemblyTask.Result, fileName, output, options);
 		}
 	}

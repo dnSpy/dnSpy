@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,7 +28,6 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.Xml;
-
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
@@ -98,11 +98,16 @@ namespace ICSharpCode.ILSpy.TextView
 							textEditor.SyntaxHighlighting = language.SyntaxHighlighting;
 							textEditor.Text = textOutput.ToString();
 							foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
-						} catch (AggregateException ex) {
+						} catch (AggregateException aggregateException) {
 							textEditor.SyntaxHighlighting = null;
 							referenceElementGenerator.References = null;
 							definitionLookup = null;
-							textEditor.Text = string.Join(Environment.NewLine, ex.InnerExceptions.Select(ie => ie.ToString()));
+							// Unpack aggregate exceptions as long as there's only a single exception:
+							// (assembly load errors might produce nested aggregate exceptions)
+							Exception ex = aggregateException;
+							while (ex is AggregateException && (ex as AggregateException).InnerExceptions.Count == 1)
+								ex = ex.InnerException;
+							textEditor.Text = ex.ToString();
 						}
 					} else {
 						try {
