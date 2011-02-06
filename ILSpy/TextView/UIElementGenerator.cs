@@ -29,8 +29,13 @@ namespace ICSharpCode.ILSpy.TextView
 	/// <summary>
 	/// Embeds UIElements in the text output.
 	/// </summary>
-	public class UIElementGenerator : VisualLineElementGenerator, IComparer<Pair>
+	sealed class UIElementGenerator : VisualLineElementGenerator, IComparer<Pair>
 	{
+		/// <summary>
+		/// The list of embedded UI elements to be displayed.
+		/// We store this as a sorted list of (offset, Lazy&lt;UIElement&gt;) pairs.
+		/// The "Lazy" part is used to create UIElements on demand (and thus on the UI thread, not on the decompiler thread).
+		/// </summary>
 		public List<Pair> UIElements;
 		
 		public override int GetFirstInterestedOffset(int startOffset)
@@ -38,6 +43,8 @@ namespace ICSharpCode.ILSpy.TextView
 			if (this.UIElements == null)
 				return -1;
 			int r = this.UIElements.BinarySearch(new Pair(startOffset, null), this);
+			// If the element isn't found, BinarySearch returns the complement of "insertion position".
+			// We use this to find the next element (if there wasn't any exact match).
 			if (r < 0)
 				r = ~r;
 			if (r < this.UIElements.Count)
@@ -59,6 +66,8 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		int IComparer<Pair>.Compare(Pair x, Pair y)
 		{
+			// Compare (offset,Lazy<UIElement>) pairs by the offset.
+			// Used in BinarySearch()
 			return x.Key.CompareTo(y.Key);
 		}
 	}

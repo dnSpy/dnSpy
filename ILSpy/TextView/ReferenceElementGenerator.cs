@@ -23,22 +23,30 @@ using ICSharpCode.AvalonEdit.Rendering;
 
 namespace ICSharpCode.ILSpy.TextView
 {
+	/// <summary>
+	/// Creates hyperlinks in the text view.
+	/// </summary>
 	sealed class ReferenceElementGenerator : VisualLineElementGenerator
 	{
-		DecompilerTextView decompilerTextView;
+		Action<ReferenceSegment> referenceClicked;
+		
+		/// <summary>
+		/// The collection of references (hyperlinks).
+		/// </summary>
 		public TextSegmentCollection<ReferenceSegment> References { get; set; }
 		
-		public ReferenceElementGenerator(DecompilerTextView decompilerTextView)
+		public ReferenceElementGenerator(Action<ReferenceSegment> referenceClicked)
 		{
-			if (decompilerTextView == null)
-				throw new ArgumentNullException("decompilerTextView");
-			this.decompilerTextView = decompilerTextView;
+			if (referenceClicked == null)
+				throw new ArgumentNullException("referenceClicked");
+			this.referenceClicked = referenceClicked;
 		}
 		
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
 			if (this.References == null)
 				return -1;
+			// inform AvalonEdit about the next position where we want to build a hyperlink
 			var segment = this.References.FindFirstSegmentWithStartAfter(startOffset);
 			return segment != null ? segment.StartOffset : -1;
 		}
@@ -48,7 +56,9 @@ namespace ICSharpCode.ILSpy.TextView
 			if (this.References == null)
 				return null;
 			foreach (var segment in this.References.FindSegmentsContaining(offset)) {
+				// ensure that hyperlinks don't span several lines (VisualLineElements can't contain line breaks)
 				int endOffset = Math.Min(segment.EndOffset, CurrentContext.VisualLine.LastDocumentLine.EndOffset);
+				// don't create hyperlinks with length 0
 				if (offset < endOffset) {
 					return new VisualLineReferenceText(CurrentContext.VisualLine, endOffset - offset, this, segment);
 				}
@@ -58,7 +68,7 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		internal void JumpToReference(ReferenceSegment referenceSegment)
 		{
-			decompilerTextView.JumpToReference(referenceSegment);
+			referenceClicked(referenceSegment);
 		}
 	}
 	

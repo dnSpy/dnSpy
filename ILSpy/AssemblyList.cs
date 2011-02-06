@@ -32,24 +32,45 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// A list of assemblies.
 	/// </summary>
-	class AssemblyList
+	sealed class AssemblyList
 	{
+		readonly string listName;
+		
+		/// <summary>Dirty flag, used to mark modifications so that the list is saved later</summary>
+		bool dirty;
+		
+		/// <summary>
+		/// The assemblies in this list.
+		/// </summary>
+		public readonly ObservableCollection<AssemblyTreeNode> Assemblies = new ObservableCollection<AssemblyTreeNode>();
+		
+		/// <summary>
+		/// Dictionary for quickly finding types (used in hyperlink navigation)
+		/// </summary>
+		readonly ConcurrentDictionary<TypeDefinition, TypeTreeNode> typeDict = new ConcurrentDictionary<TypeDefinition, TypeTreeNode>();
+		
 		public AssemblyList(string listName)
 		{
-			this.ListName = listName;
+			this.listName = listName;
 			Assemblies.CollectionChanged += Assemblies_CollectionChanged;
 		}
 		
+		/// <summary>
+		/// Loads an assembly list from XML.
+		/// </summary>
 		public AssemblyList(XElement listElement)
 			: this((string)listElement.Attribute("name"))
 		{
 			foreach (var asm in listElement.Elements("Assembly")) {
 				OpenAssembly((string)asm);
 			}
-			this.Dirty = false; // OpenAssembly() sets dirty, so reset it since we just loaded...
+			this.dirty = false; // OpenAssembly() sets dirty, so reset it afterwards
 		}
 		
-		public XElement Save()
+		/// <summary>
+		/// Saves this assembly list to XML.
+		/// </summary>
+		public XElement SaveAsXml()
 		{
 			return new XElement(
 				"List",
@@ -58,34 +79,45 @@ namespace ICSharpCode.ILSpy
 			);
 		}
 		
-		public bool Dirty { get; set; }
-		public string ListName { get; set; }
-		
-		public readonly ObservableCollection<AssemblyTreeNode> Assemblies = new ObservableCollection<AssemblyTreeNode>();
-		
-		ConcurrentDictionary<TypeDefinition, TypeTreeNode> typeDict = new ConcurrentDictionary<TypeDefinition, TypeTreeNode>();
-
-		void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			this.Dirty = true;
-			App.Current.Dispatcher.BeginInvoke(
-				DispatcherPriority.Normal,
-				new Action(
-					delegate {
-						if (this.Dirty) {
-							this.Dirty = false;
-							AssemblyListManager.SaveList(this);
-						}
-					})
-			);
+		/// <summary>
+		/// Gets the name of this list.
+		/// </summary>
+		public string ListName {
+			get { return listName; }
 		}
 		
+		void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			// Whenever the assembly list is modified, mark it as dirty
+			// and enqueue a task that saves it once the UI has finished modifying the assembly list.
+			if (!dirty) {
+				dirty = true;
+				App.Current.Dispatcher.BeginInvoke(
+					DispatcherPriority.Background,
+					new Action(
+						delegate {
+							dirty = false;
+							AssemblyListManager.SaveList(this);
+						})
+				);
+			}
+		}
+		
+		/// <summary>
+		/// Registers a type node in the dictionary for quick type lookup.
+		/// </summary>
+		/// <remarks>This method is called by the assembly loading code (on a background thread)</remarks>
 		public void RegisterTypeNode(TypeTreeNode node)
 		{
 			// called on background loading thread, so we need to use a ConcurrentDictionary
 			typeDict[node.TypeDefinition] = node;
 		}
 		
+		#region Find*Node
+		/// <summary>
+		/// Looks up the type node corresponding to the type definition.
+		/// Returns null if no matching node is found.
+		/// </summary>
 		public TypeTreeNode FindTypeNode(TypeDefinition def)
 		{
 			if (def == null)
@@ -109,6 +141,10 @@ namespace ICSharpCode.ILSpy
 			return null;
 		}
 		
+		/// <summary>
+		/// Looks up the method node corresponding to the method definition.
+		/// Returns null if no matching node is found.
+		/// </summary>
 		public MethodTreeNode FindMethodNode(MethodDefinition def)
 		{
 			if (def == null)
@@ -129,6 +165,10 @@ namespace ICSharpCode.ILSpy
 			return null;
 		}
 		
+		/// <summary>
+		/// Looks up the field node corresponding to the field definition.
+		/// Returns null if no matching node is found.
+		/// </summary>
 		public FieldTreeNode FindFieldNode(FieldDefinition def)
 		{
 			if (def == null)
@@ -138,6 +178,10 @@ namespace ICSharpCode.ILSpy
 			return typeNode.VisibleChildren.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def);
 		}
 		
+		/// <summary>
+		/// Looks up the property node corresponding to the property definition.
+		/// Returns null if no matching node is found.
+		/// </summary>
 		public PropertyTreeNode FindPropertyNode(PropertyDefinition def)
 		{
 			if (def == null)
@@ -147,6 +191,10 @@ namespace ICSharpCode.ILSpy
 			return typeNode.VisibleChildren.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def);
 		}
 		
+		/// <summary>
+		/// Looks up the event node corresponding to the event definition.
+		/// Returns null if no matching node is found.
+		/// </summary>
 		public EventTreeNode FindEventNode(EventDefinition def)
 		{
 			if (def == null)
@@ -155,7 +203,12 @@ namespace ICSharpCode.ILSpy
 			typeNode.EnsureLazyChildren();
 			return typeNode.VisibleChildren.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def);
 		}
+		#endregion
 		
+		/// <summary>
+		/// Opens an assembly from disk.
+		/// Returns the existing assembly node if it is already loaded.
+		/// </summary>
 		public AssemblyTreeNode OpenAssembly(string file)
 		{
 			App.Current.Dispatcher.VerifyAccess();

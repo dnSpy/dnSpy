@@ -30,6 +30,9 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public static class GacInterop
 	{
+		/// <summary>
+		/// Gets the names of all assemblies in the GAC.
+		/// </summary>
 		public static IEnumerable<AssemblyNameReference> GetGacAssemblyFullNames()
 		{
 			IApplicationContext applicationContext = null;
@@ -88,6 +91,9 @@ namespace ICSharpCode.ILSpy
 		static readonly string[] gacs = { "GAC_MSIL", "GAC_32", "GAC" };
 		static readonly string[] prefixes = { string.Empty, "v4.0_" };
 		
+		/// <summary>
+		/// Gets the file name for an assembly stored in the GAC.
+		/// </summary>
 		public static string FindAssemblyInNetGac (AssemblyNameReference reference)
 		{
 			// without public key, it can't be in the GAC

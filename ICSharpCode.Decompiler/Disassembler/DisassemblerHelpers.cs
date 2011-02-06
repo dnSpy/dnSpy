@@ -235,7 +235,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				case "System.Int32":
 					return "int32";
 				case "System.Int64":
-					return "int65";
+					return "int64";
 				case "System.Byte":
 					return "uint8";
 				case "System.UInt16":

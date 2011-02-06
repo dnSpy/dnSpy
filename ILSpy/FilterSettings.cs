@@ -28,8 +28,8 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	/// <remarks>
 	/// This class is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
-	/// Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
-	/// mutable instance changes.
+	/// Thus, the main window will use one mutable instance (for data-binding), and will assign a new
+	/// clone to the ILSpyTreeNodes whenever the main mutable instance changes.
 	/// </remarks>
 	public class FilterSettings : INotifyPropertyChanged
 	{
@@ -50,6 +50,10 @@ namespace ICSharpCode.ILSpy
 		
 		string searchTerm;
 		
+		/// <summary>
+		/// Gets/Sets the search term.
+		/// Only tree nodes containing the search term will be shown.
+		/// </summary>
 		public string SearchTerm {
 			get { return searchTerm; }
 			set {
@@ -60,6 +64,9 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		/// <summary>
+		/// Gets whether a node with the specified text is matched by the current search term.
+		/// </summary>
 		public bool SearchTermMatches(string text)
 		{
 			if (string.IsNullOrEmpty(searchTerm))
@@ -69,6 +76,9 @@ namespace ICSharpCode.ILSpy
 		
 		bool showInternalApi;
 		
+		/// <summary>
+		/// Gets/Sets whether internal API members should be shown.
+		/// </summary>
 		public bool ShowInternalApi {
 			get { return showInternalApi; }
 			set {
@@ -81,6 +91,13 @@ namespace ICSharpCode.ILSpy
 		
 		Language language;
 		
+		/// <summary>
+		/// Gets/Sets the current language.
+		/// </summary>
+		/// <remarks>
+		/// While this isn't related to filtering, having it as part of the FilterSettings
+		/// makes it easy to pass it down into all tree nodes.
+		/// </remarks>
 		public Language Language {
 			get { return language; }
 			set {

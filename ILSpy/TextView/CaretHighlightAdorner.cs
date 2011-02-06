@@ -29,6 +29,7 @@ namespace ICSharpCode.ILSpy.TextView
 {
 	/// <summary>
 	/// Animated rectangle around the caret.
+	/// This is used after clicking links that lead to another location within the text view.
 	/// </summary>
 	sealed class CaretHighlightAdorner : Adorner
 	{

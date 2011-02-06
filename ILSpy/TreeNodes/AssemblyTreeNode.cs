@@ -153,7 +153,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			try {
 				assemblyTask.Wait();
-			} catch (AggregateException ex) {
+			} catch (AggregateException) {
+				// if we crashed on loading, then we don't have any children
 				return;
 			}
 			ModuleDefinition mainModule = assemblyTask.Result.MainModule;

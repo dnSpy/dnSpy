@@ -35,6 +35,10 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Gets the cancellation token that is used to abort the decompiler.
 		/// </summary>
+		/// <remarks>
+		/// Decompilers should regularly call <c>options.CancellationToken.ThrowIfCancellationRequested();</c>
+		/// to allow for cooperative cancellation of the decompilation task.
+		/// </remarks>
 		public CancellationToken CancellationToken { get; set; }
 	}
 }

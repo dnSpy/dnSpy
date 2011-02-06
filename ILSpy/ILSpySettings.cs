@@ -48,6 +48,12 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		/// <summary>
+		/// Loads the settings file from disk.
+		/// </summary>
+		/// <returns>
+		/// An instance used to access the loaded settings.
+		/// </returns>
 		public static ILSpySettings Load()
 		{
 			using (new MutexProtector(ConfigFileMutex)) {
@@ -62,6 +68,9 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		/// <summary>
+		/// Saves a setting section.
+		/// </summary>
 		public static void SaveSettings(XElement section)
 		{
 			Update(
@@ -74,6 +83,11 @@ namespace ICSharpCode.ILSpy
 				});
 		}
 		
+		/// <summary>
+		/// Updates the saved settings.
+		/// We always reload the file on updates to ensure we aren't overwriting unrelated changes performed
+		/// by another ILSpy instance.
+		/// </summary>
 		public static void Update(Action<XElement> action)
 		{
 			using (new MutexProtector(ConfigFileMutex)) {
@@ -94,13 +108,16 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public static string GetConfigFile()
+		static string GetConfigFile()
 		{
 			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ICSharpCode\\ILSpy.xml");
 		}
 		
 		const string ConfigFileMutex = "01A91708-49D1-410D-B8EB-4DE2662B3971";
 		
+		/// <summary>
+		/// Helper class for serializing access to the config file when multiple ILSpy instances are running.
+		/// </summary>
 		sealed class MutexProtector : IDisposable
 		{
 			Mutex mutex;

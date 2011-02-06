@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy
 	/// Per-session setting:
 	/// Loaded at startup; saved at exit.
 	/// </summary>
-	public class SessionSettings : INotifyPropertyChanged
+	sealed class SessionSettings : INotifyPropertyChanged
 	{
 		public SessionSettings(ILSpySettings spySettings)
 		{

@@ -25,7 +25,7 @@ using Mono.Cecil;
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
-	/// ExtensionMethods that help with WPF.
+	/// ExtensionMethods used in ILSpy.
 	/// </summary>
 	public static class ExtensionMethods
 	{
@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy
 		/// having a XAML file as context.</remarks>
 		public static void SetValueToExtension(this DependencyObject targetObject, DependencyProperty property, MarkupExtension markupExtension)
 		{
-			// This method was copied from ICSharpCode.Core.Presentation
+			// This method was copied from ICSharpCode.Core.Presentation (with permission to switch license to X11)
 			
 			if (targetObject == null)
 				throw new ArgumentNullException("targetObject");
@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy
 		
 		sealed class SetValueToExtensionServiceProvider : IServiceProvider, IProvideValueTarget
 		{
-			// This class  was copied from ICSharpCode.Core.Presentation
+			// This class was copied from ICSharpCode.Core.Presentation (with permission to switch license to X11)
 			
 			readonly DependencyObject targetObject;
 			readonly DependencyProperty targetProperty;

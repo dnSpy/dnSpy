@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
@@ -29,11 +30,23 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public abstract class Language
 	{
+		/// <summary>
+		/// Gets the name of the language (as shown in the UI)
+		/// </summary>
 		public abstract string Name { get; }
+		
+		/// <summary>
+		/// Gets the file extension used by source code files in this language.
+		/// </summary>
 		public abstract string FileExtension { get; }
 		
+		/// <summary>
+		/// Gets the syntax highlighting used for this language.
+		/// </summary>
 		public virtual ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting {
-			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(this.FileExtension); }
+			get {
+				return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(this.FileExtension); 
+			}
 		}
 		
 		public virtual void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
@@ -64,11 +77,17 @@ namespace ICSharpCode.ILSpy
 		{
 		}
 		
+		/// <summary>
+		/// Converts a type reference into a string. This method is used by the member tree node for parameter and return types.
+		/// </summary>
 		public virtual string TypeToString(TypeReference t)
 		{
 			return t.Name;
 		}
 		
+		/// <summary>
+		/// Used for WPF keyboard navigation.
+		/// </summary>
 		public override string ToString()
 		{
 			return Name;
@@ -77,12 +96,20 @@ namespace ICSharpCode.ILSpy
 	
 	public static class Languages
 	{
-		public static readonly Language[] AllLanguages = {
-			new CSharpLanguage(),
-			new ILLanguage(false),
-			new ILLanguage(true)
-		};
+		/// <summary>
+		/// A list of all languages.
+		/// </summary>
+		public static readonly ReadOnlyCollection<Language> AllLanguages = Array.AsReadOnly(
+			new Language[] {
+				new CSharpLanguage(),
+				new ILLanguage(false),
+				new ILLanguage(true)
+			});
 		
+		/// <summary>
+		/// Gets a language using its name.
+		/// If the language is not found, C# is returned instead.
+		/// </summary>
 		public static Language GetLanguage(string name)
 		{
 			return AllLanguages.FirstOrDefault(l => l.Name == name) ?? AllLanguages.First();

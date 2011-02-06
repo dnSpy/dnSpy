@@ -25,6 +25,8 @@ namespace ICSharpCode.ILSpy
 {
 	/// <summary>
 	/// Manages the available assembly lists.
+	/// 
+	/// Contains the list of list names; and provides methods for loading/saving and creating/deleting lists.
 	/// </summary>
 	sealed class AssemblyListManager
 	{
@@ -38,6 +40,10 @@ namespace ICSharpCode.ILSpy
 		
 		public readonly ObservableCollection<string> AssemblyLists = new ObservableCollection<string>();
 		
+		/// <summary>
+		/// Loads an assembly list from the ILSpySettings.
+		/// If no list with the specified name is found, the default list is loaded instead.
+		/// </summary>
 		public AssemblyList LoadList(ILSpySettings spySettings, string listName)
 		{
 			AssemblyList list = DoLoadList(spySettings, listName);
@@ -63,6 +69,9 @@ namespace ICSharpCode.ILSpy
 				return new AssemblyList(listName ?? "(Default)");
 		}
 		
+		/// <summary>
+		/// Saves the specifies assembly list into the config file.
+		/// </summary>
 		public static void SaveList(AssemblyList list)
 		{
 			ILSpySettings.Update(
@@ -74,9 +83,9 @@ namespace ICSharpCode.ILSpy
 					}
 					XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == list.ListName);
 					if (listElement != null)
-						listElement.ReplaceWith(list.Save());
+						listElement.ReplaceWith(list.SaveAsXml());
 					else
-						doc.Add(list.Save());
+						doc.Add(list.SaveAsXml());
 				});
 		}
 	}

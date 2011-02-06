@@ -26,6 +26,13 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
+	/// <summary>
+	/// IL language support.
+	/// </summary>
+	/// <remarks>
+	/// Currently comes in two versions:
+	/// flat IL (detectControlStructure=false) and structured IL (detectControlStructure=true).
+	/// </remarks>
 	public class ILLanguage : Language
 	{
 		bool detectControlStructure;

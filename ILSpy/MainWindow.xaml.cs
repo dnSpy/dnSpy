@@ -38,7 +38,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// The main window of the application.
 	/// </summary>
-	public partial class MainWindow : Window
+	partial class MainWindow : Window
 	{
 		ILSpySettings spySettings;
 		SessionSettings sessionSettings;
@@ -95,6 +95,8 @@ namespace ICSharpCode.ILSpy
 		
 		void LoadInitialAssemblies()
 		{
+			// Called when loading an empty assembly list; so that
+			// the user can see something initially.
 			System.Reflection.Assembly[] initialAssemblies = {
 				typeof(object).Assembly,
 				typeof(Uri).Assembly,
@@ -133,11 +135,15 @@ namespace ICSharpCode.ILSpy
 		internal void SelectNode(SharpTreeNode obj)
 		{
 			if (obj != null) {
+				// Set both the selection and focus to ensure that keyboard navigation works as expected.
 				treeView.FocusNode(obj);
 				treeView.SelectedItem = obj;
 			}
 		}
 		
+		/// <summary>
+		/// Retrieves a node using the .ToString() representations of its ancestors.
+		/// </summary>
 		SharpTreeNode FindNodeByPath(string[] path, bool returnBestMatch)
 		{
 			if (path == null)
@@ -157,6 +163,9 @@ namespace ICSharpCode.ILSpy
 				return node;
 		}
 		
+		/// <summary>
+		/// Gets the .ToString() representation of the node's ancestors.
+		/// </summary>
 		string[] GetPathForNode(SharpTreeNode node)
 		{
 			if (node == null)

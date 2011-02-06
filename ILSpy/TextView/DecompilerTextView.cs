@@ -43,12 +43,13 @@ namespace ICSharpCode.ILSpy.TextView
 {
 	/// <summary>
 	/// Manages the TextEditor showing the decompiled code.
+	/// Contains all the threading logic that makes the decompiler work in the background.
 	/// </summary>
 	sealed partial class DecompilerTextView : UserControl
 	{
 		readonly ReferenceElementGenerator referenceElementGenerator;
 		readonly UIElementGenerator uiElementGenerator;
-		readonly FoldingManager foldingManager;
+		FoldingManager foldingManager;
 		internal MainWindow mainWindow;
 		
 		DefinitionLookup definitionLookup;
@@ -68,16 +69,23 @@ namespace ICSharpCode.ILSpy.TextView
 				});
 			
 			InitializeComponent();
-			this.referenceElementGenerator = new ReferenceElementGenerator(this);
+			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 			textEditor.Text = "Welcome to ILSpy!";
-			foldingManager = FoldingManager.Install(textEditor.TextArea);
 		}
 		#endregion
 		
 		#region RunWithCancellation
+		/// <summary>
+		/// Switches the GUI into "waiting" mode, then calls <paramref name="taskCreation"/> to create
+		/// the task.
+		/// When the task completes without being cancelled, the <paramref name="taskCompleted"/>
+		/// callback is called on the GUI thread.
+		/// When the task is cancelled before completing, the callback is not called; and any result
+		/// of the task (including exceptions) are ignored.
+		/// </summary>
 		void RunWithCancellation<T>(Func<CancellationToken, Task<T>> taskCreation, Action<Task<T>> taskCompleted)
 		{
 			if (waitAdorner.Visibility != Visibility.Visible) {
@@ -114,22 +122,43 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		void cancelButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (currentCancellationTokenSource != null)
+			if (currentCancellationTokenSource != null) {
 				currentCancellationTokenSource.Cancel();
+				currentCancellationTokenSource = null;
+			}
 		}
 		#endregion
 		
 		#region ShowOutput
-		void ShowOutput(SmartTextOutput textOutput, ILSpy.Language language = null)
+		/// <summary>
+		/// Shows the given output in the text view.
+		/// </summary>
+		/// <param name="textOutput">The output to show.</param>
+		/// <param name="language">The language used for syntax highlighting.</param>
+		void ShowOutput(AvalonEditTextOutput textOutput, ILSpy.Language language = null)
 		{
+			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
+			Stopwatch w = Stopwatch.StartNew();
+			
 			textEditor.ScrollToHome();
-			foldingManager.Clear();
+			if (foldingManager != null) {
+				FoldingManager.Uninstall(foldingManager);
+				foldingManager = null;
+			}
+			textEditor.Document = null; // clear old document while we're changing the highlighting
 			uiElementGenerator.UIElements = textOutput.UIElements;
 			referenceElementGenerator.References = textOutput.References;
 			definitionLookup = textOutput.DefinitionLookup;
 			textEditor.SyntaxHighlighting = language != null ? language.SyntaxHighlighting : null;
-			textEditor.Text = textOutput.ToString();
-			foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
+			
+			Debug.WriteLine("  Set-up: {0}", w.Elapsed); w.Restart();
+			textEditor.Document = textOutput.GetDocument();
+			Debug.WriteLine("  Assigning document: {0}", w.Elapsed); w.Restart();
+			if (textOutput.Foldings.Count > 0) {
+				foldingManager = FoldingManager.Install(textEditor.TextArea);
+				foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
+				Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
+			}
 		}
 		#endregion
 		
@@ -137,6 +166,10 @@ namespace ICSharpCode.ILSpy.TextView
 		const int defaultOutputLengthLimit  =  5000000; // more than 5M characters is too slow to output (when user browses treeview)
 		const int extendedOutputLengthLimit = 75000000; // more than 75M characters can get us into trouble with memory usage
 		
+		/// <summary>
+		/// Starts the decompilation of the given nodes.
+		/// The result is displayed in the text view.
+		/// </summary>
 		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNodeBase> treeNodes, DecompilationOptions options)
 		{
 			Decompile(language, treeNodes.ToArray(), defaultOutputLengthLimit, options);
@@ -149,10 +182,9 @@ namespace ICSharpCode.ILSpy.TextView
 					options.CancellationToken = ct;
 					return RunDecompiler(language, treeNodes, options, outputLengthLimit);
 				},
-				delegate (Task<SmartTextOutput> task) { // handling the result
+				delegate (Task<AvalonEditTextOutput> task) { // handling the result
 					try {
-						SmartTextOutput textOutput = task.Result;
-						Debug.WriteLine("Decompiler finished; output size = {0} characters", textOutput.TextLength);
+						AvalonEditTextOutput textOutput = task.Result;
 						ShowOutput(textOutput, language);
 					} catch (AggregateException aggregateException) {
 						textEditor.SyntaxHighlighting = null;
@@ -162,60 +194,67 @@ namespace ICSharpCode.ILSpy.TextView
 						Exception ex = aggregateException;
 						while (ex is AggregateException && (ex as AggregateException).InnerExceptions.Count == 1)
 							ex = ex.InnerException;
+						AvalonEditTextOutput output = new AvalonEditTextOutput();
 						if (ex is OutputLengthExceededException) {
-							ShowOutputLengthExceededMessage(language, treeNodes, options, outputLengthLimit == defaultOutputLengthLimit);
+							WriteOutputLengthExceededMessage(output, language, treeNodes, options, outputLengthLimit == defaultOutputLengthLimit);
 						} else {
-							SmartTextOutput output = new SmartTextOutput();
 							output.WriteLine(ex.ToString());
-							ShowOutput(output);
 						}
+						ShowOutput(output);
 					}
 				});
 		}
 		
-		static Task<SmartTextOutput> RunDecompiler(ILSpy.Language language, ILSpyTreeNodeBase[] nodes, DecompilationOptions options, int outputLengthLimit)
+		static Task<AvalonEditTextOutput> RunDecompiler(ILSpy.Language language, ILSpyTreeNodeBase[] nodes, DecompilationOptions options, int outputLengthLimit)
 		{
 			Debug.WriteLine("Start decompilation of {0} nodes", nodes.Length);
 			
 			if (nodes.Length == 0) {
 				// If there's nothing to be decompiled, don't bother starting up a thread.
 				// (Improves perf in some cases since we don't have to wait for the thread-pool to accept our task)
-				TaskCompletionSource<SmartTextOutput> tcs = new TaskCompletionSource<SmartTextOutput>();
-				tcs.SetResult(new SmartTextOutput());
+				TaskCompletionSource<AvalonEditTextOutput> tcs = new TaskCompletionSource<AvalonEditTextOutput>();
+				tcs.SetResult(new AvalonEditTextOutput());
 				return tcs.Task;
 			}
 			
 			return Task.Factory.StartNew(
 				delegate {
-					SmartTextOutput textOutput = new SmartTextOutput();
+					AvalonEditTextOutput textOutput = new AvalonEditTextOutput();
 					textOutput.LengthLimit = outputLengthLimit;
 					DecompileNodes(language, nodes, options, textOutput);
+					textOutput.PrepareDocument();
 					return textOutput;
 				});
 		}
 		
 		static void DecompileNodes(ILSpy.Language language, ILSpyTreeNodeBase[] nodes, DecompilationOptions options, ITextOutput textOutput)
 		{
-			bool first = true;
-			foreach (var node in nodes) {
-				if (first) first = false; else textOutput.WriteLine();
+			for (int i = 0; i < nodes.Length; i++) {
+				if (i > 0)
+					textOutput.WriteLine();
+				
 				options.CancellationToken.ThrowIfCancellationRequested();
-				node.Decompile(language, textOutput, options);
+				nodes[i].Decompile(language, textOutput, options);
 			}
 		}
 		#endregion
 		
-		#region ShowOutputLengthExceededMessage
-		void ShowOutputLengthExceededMessage(ILSpy.Language language, ILSpyTreeNodeBase[] treeNodes, DecompilationOptions options, bool wasNormalLimit)
+		#region WriteOutputLengthExceededMessage
+		/// <summary>
+		/// Creates a message that the decompiler output was too long.
+		/// The message contains buttons that allow re-trying (with larger limit) or saving to a file.
+		/// </summary>
+		void WriteOutputLengthExceededMessage(
+			ISmartTextOutput output,
+			ILSpy.Language language, ILSpyTreeNodeBase[] treeNodes, DecompilationOptions options,
+			bool wasNormalLimit)
 		{
-			SmartTextOutput output = new SmartTextOutput();
 			if (wasNormalLimit) {
 				output.WriteLine("You have selected too much code for it to be displayed automatically.");
 			} else {
 				output.WriteLine("You have selected too much code; it cannot be displayed here.");
 			}
 			output.WriteLine();
-			Button button;
 			if (wasNormalLimit) {
 				output.AddUIElement(MakeButton(
 					Images.ViewCode, "Display Code",
@@ -231,11 +270,12 @@ namespace ICSharpCode.ILSpy.TextView
 					SaveToDisk(language, treeNodes, options);
 				}));
 			output.WriteLine();
-			
-			ShowOutput(output);
 		}
 		
-		Func<Button> MakeButton(ImageSource icon, string text, RoutedEventHandler click)
+		/// <summary>
+		/// Creates a button for use with <see cref="ISmartTextOutput.AddUIElement"/>.
+		/// </summary>
+		static Func<Button> MakeButton(ImageSource icon, string text, RoutedEventHandler click)
 		{
 			return () => {
 				Button button = new Button();
@@ -259,6 +299,9 @@ namespace ICSharpCode.ILSpy.TextView
 		#endregion
 		
 		#region JumpToReference
+		/// <summary>
+		/// Jumps to the definition referred to by the <see cref="ReferenceSegment"/>.
+		/// </summary>
 		internal void JumpToReference(ReferenceSegment referenceSegment)
 		{
 			object reference = referenceSegment.Reference;
@@ -293,6 +336,9 @@ namespace ICSharpCode.ILSpy.TextView
 		#endregion
 		
 		#region SaveToDisk
+		/// <summary>
+		/// Shows the 'save file dialog', prompting the user to save the decompiled nodes to disk.
+		/// </summary>
 		public void SaveToDisk(ILSpy.Language language, IEnumerable<ILSpyTreeNodeBase> treeNodes, DecompilationOptions options)
 		{
 			if (!treeNodes.Any())
@@ -307,7 +353,11 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
-		void SaveToDisk(ILSpy.Language language, ILSpyTreeNodeBase[] nodes, DecompilationOptions options, string fileName)
+		/// <summary>
+		/// Starts the decompilation of the given nodes.
+		/// The result will be saved to the given file name.
+		/// </summary>
+		public void SaveToDisk(ILSpy.Language language, ILSpyTreeNodeBase[] nodes, DecompilationOptions options, string fileName)
 		{
 			RunWithCancellation(
 				delegate (CancellationToken ct) {
@@ -323,7 +373,7 @@ namespace ICSharpCode.ILSpy.TextView
 									throw;
 								}
 							}
-							SmartTextOutput output = new SmartTextOutput();
+							AvalonEditTextOutput output = new AvalonEditTextOutput();
 							output.WriteLine("Decompilation complete.");
 							output.WriteLine();
 							output.AddUIElement(MakeButton(
@@ -336,7 +386,7 @@ namespace ICSharpCode.ILSpy.TextView
 							return output;
 						});
 				},
-				delegate (Task<SmartTextOutput> task) {
+				delegate (Task<AvalonEditTextOutput> task) {
 					try {
 						ShowOutput(task.Result);
 					} catch (AggregateException aggregateException) {
@@ -347,14 +397,17 @@ namespace ICSharpCode.ILSpy.TextView
 						Exception ex = aggregateException;
 						while (ex is AggregateException && (ex as AggregateException).InnerExceptions.Count == 1)
 							ex = ex.InnerException;
-						SmartTextOutput output = new SmartTextOutput();
+						AvalonEditTextOutput output = new AvalonEditTextOutput();
 						output.WriteLine(ex.ToString());
 						ShowOutput(output);
 					}
 				});
 		}
 		
-		string CleanUpName(string text)
+		/// <summary>
+		/// Cleans up a node name for use as a file name.
+		/// </summary>
+		static string CleanUpName(string text)
 		{
 			int pos = text.IndexOf(':');
 			if (pos > 0)

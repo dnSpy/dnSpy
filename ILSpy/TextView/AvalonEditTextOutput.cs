@@ -18,19 +18,28 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TextView
 {
+	/// <summary>
+	/// A text segment that references some object. Used for hyperlinks in the editor.
+	/// </summary>
 	sealed class ReferenceSegment : TextSegment
 	{
 		public object Reference;
 	}
 	
+	/// <summary>
+	/// Stores the positions of the definitions that were written to the text output.
+	/// </summary>
 	sealed class DefinitionLookup
 	{
 		Dictionary<object, int> definitions = new Dictionary<object, int>();
@@ -50,32 +59,82 @@ namespace ICSharpCode.ILSpy.TextView
 		}
 	}
 	
-	sealed class SmartTextOutput : ITextOutput
+	/// <summary>
+	/// Text output implementation for AvalonEdit.
+	/// </summary>
+	sealed class AvalonEditTextOutput : ISmartTextOutput
 	{
 		readonly StringBuilder b = new StringBuilder();
+		
+		/// <summary>Current indentation level</summary>
 		int indent;
+		/// <summary>Whether indentation should be inserted on the next write</summary>
 		bool needsIndent;
+		
+		/// <summary>List of all references that were written to the output</summary>
 		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
+		
+		/// <summary>Stack of the fold markers that are open but not closed yet</summary>
 		Stack<NewFolding> openFoldings = new Stack<NewFolding>();
 		
+		/// <summary>List of all foldings that were written to the output</summary>
 		public readonly List<NewFolding> Foldings = new List<NewFolding>();
+		
+		
 		public readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
+		
+		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
 		public readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
 		
+		/// <summary>
+		/// Gets the list of references (hyperlinks).
+		/// </summary>
 		public TextSegmentCollection<ReferenceSegment> References {
 			get { return references; }
 		}
 		
+		/// <summary>
+		/// Controls the maximum length of the text.
+		/// When this length is exceeded, an <see cref="OutputLengthExceededException"/> will be thrown,
+		/// thus aborting the decompilation.
+		/// </summary>
 		public int LengthLimit = int.MaxValue;
 		
 		public int TextLength {
 			get { return b.Length; }
 		}
 		
-		public override string ToString()
+		#region Text Document
+		TextDocument textDocument;
+		
+		/// <summary>
+		/// Prepares the TextDocument.
+		/// This method may be called by the background thread writing to the output.
+		/// Once the document is prepared, it can no longer be written to.
+		/// </summary>
+		/// <remarks>
+		/// Calling this method on the background thread ensures the TextDocument's line tokenization
+		/// runs in the background and does not block the GUI.
+		/// </remarks>
+		public void PrepareDocument()
 		{
-			return b.ToString();
+			if (textDocument == null) {
+				textDocument = new TextDocument(b.ToString());
+				textDocument.SetOwnerThread(null); // release ownership
+			}
 		}
+		
+		/// <summary>
+		/// Retrieves the TextDocument.
+		/// Once the document is retrieved, it can no longer be written to.
+		/// </summary>
+		public TextDocument GetDocument()
+		{
+			PrepareDocument();
+			textDocument.SetOwnerThread(System.Threading.Thread.CurrentThread); // acquire ownership
+			return textDocument;
+		}
+		#endregion
 		
 		public void Indent()
 		{
@@ -89,6 +148,7 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		void WriteIndent()
 		{
+			Debug.Assert(textDocument == null);
 			if (needsIndent) {
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
@@ -111,9 +171,10 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		public void WriteLine()
 		{
+			Debug.Assert(textDocument == null);
 			b.AppendLine();
 			needsIndent = true;
-			if (b.Length > LengthLimit) {
+			if (this.TextLength > LengthLimit) {
 				throw new OutputLengthExceededException();
 			}
 		}
@@ -122,35 +183,43 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			WriteIndent();
 			b.Append(text);
-			this.DefinitionLookup.AddDefinition(definition, b.Length);
+			this.DefinitionLookup.AddDefinition(definition, this.TextLength);
 		}
 		
 		public void WriteReference(string text, object reference)
 		{
 			WriteIndent();
-			int start = b.Length;
+			int start = this.TextLength;
 			b.Append(text);
-			int end = b.Length;
+			int end = this.TextLength;
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference });
 		}
 		
 		public void MarkFoldStart(string collapsedText, bool defaultCollapsed)
 		{
 			WriteIndent();
-			openFoldings.Push(new NewFolding { StartOffset = b.Length, Name = collapsedText, DefaultClosed = defaultCollapsed });
+			openFoldings.Push(
+				new NewFolding {
+					StartOffset = this.TextLength,
+					Name = collapsedText,
+					DefaultClosed = defaultCollapsed
+				});
 		}
 		
 		public void MarkFoldEnd()
 		{
 			NewFolding f = openFoldings.Pop();
-			f.EndOffset = b.Length;
+			f.EndOffset = this.TextLength;
 			this.Foldings.Add(f);
 		}
 		
 		public void AddUIElement(Func<UIElement> element)
 		{
-			if (element != null)
-				this.UIElements.Add(new KeyValuePair<int, Lazy<UIElement>>(b.Length, new Lazy<UIElement>(element)));
+			if (element != null) {
+				if (this.UIElements.Count > 0 && this.UIElements.Last().Key == this.TextLength)
+					throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
+				this.UIElements.Add(new KeyValuePair<int, Lazy<UIElement>>(this.TextLength, new Lazy<UIElement>(element)));
+			}
 		}
 	}
 }
