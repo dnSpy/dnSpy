@@ -89,6 +89,7 @@
     <Compile Include="Fusion.cs" />
     <Compile Include="GacInterop.cs" />
     <Compile Include="ILLanguage.cs" />
+    <Compile Include="ILSpySettings.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="Mono.Cecil.Rocks\MethodBodyRocks.cs" />
@@ -103,6 +104,7 @@
       <SubType>Code</SubType>
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SessionSettings.cs" />
     <Compile Include="SortableGridViewColumn.cs" />
     <Compile Include="TextView\CaretHighlightAdorner.cs" />
     <Compile Include="TextView\DecompilerTextView.cs" />

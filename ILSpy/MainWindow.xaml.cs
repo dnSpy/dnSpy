@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -39,7 +40,7 @@ namespace ICSharpCode.ILSpy
 	{
 		AssemblyList assemblyList = new AssemblyList();
 		AssemblyListTreeNode assemblyListTreeNode;
-		FilterSettings filterSettings = new FilterSettings();
+		SessionSettings settings = new SessionSettings();
 		
 		static readonly System.Reflection.Assembly[] initialAssemblies = {
 			typeof(object).Assembly,
@@ -58,13 +59,20 @@ namespace ICSharpCode.ILSpy
 		
 		public MainWindow()
 		{
-			this.DataContext = filterSettings;
+			this.DataContext = settings.FilterSettings;
+			this.Left = settings.WindowBounds.Left;
+			this.Top = settings.WindowBounds.Top;
+			this.Width = settings.WindowBounds.Width;
+			this.Height = settings.WindowBounds.Height;
+			// TODO: validate bounds (maybe a screen was removed...)
+			this.WindowState = settings.WindowState;
+			
 			InitializeComponent();
 			decompilerTextView.mainWindow = this;
 			
 			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
-			assemblyListTreeNode.FilterSettings = filterSettings.Clone();
-			filterSettings.PropertyChanged += new PropertyChangedEventHandler(filterSettings_PropertyChanged);
+			assemblyListTreeNode.FilterSettings = settings.FilterSettings.Clone();
+			settings.FilterSettings.PropertyChanged += new PropertyChangedEventHandler(filterSettings_PropertyChanged);
 			treeView.Root = assemblyListTreeNode;
 			assemblyListTreeNode.Select = SelectNode;
 			
@@ -74,6 +82,8 @@ namespace ICSharpCode.ILSpy
 			for (int i = 1; i < args.Length; i++) {
 				assemblyList.OpenAssembly(args[i]);
 			}
+			
+			SelectNode(FindNodeByPath(settings.ActiveTreeViewPath));
 			
 			#if DEBUG
 			AddDebugItemsToToolbar();
@@ -85,7 +95,7 @@ namespace ICSharpCode.ILSpy
 			// filterSettings is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
 			// Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
 			// mutable instance changes.
-			assemblyListTreeNode.FilterSettings = filterSettings.Clone();
+			assemblyListTreeNode.FilterSettings = settings.FilterSettings.Clone();
 			if (e.PropertyName == "Language") {
 				TreeView_SelectionChanged(null, null);
 			}
@@ -101,6 +111,33 @@ namespace ICSharpCode.ILSpy
 				treeView.FocusNode(obj);
 				treeView.SelectedItem = obj;
 			}
+		}
+		
+		SharpTreeNode FindNodeByPath(string[] path)
+		{
+			if (path == null)
+				return null;
+			SharpTreeNode node = treeView.Root;
+			foreach (var element in path) {
+				if (node == null)
+					break;
+				node.EnsureLazyChildren();
+				node = node.Children.FirstOrDefault(c => c.ToString() == element);
+			}
+			return node;
+		}
+		
+		string[] GetPathForNode(SharpTreeNode node)
+		{
+			if (node == null)
+				return null;
+			List<string> path = new List<string>();
+			while (node.Parent != null) {
+				path.Add(node.ToString());
+				node = node.Parent;
+			}
+			path.Reverse();
+			return path.ToArray();
 		}
 		
 		#region Debugging CFG
@@ -213,7 +250,23 @@ namespace ICSharpCode.ILSpy
 		
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			decompilerTextView.Decompile(filterSettings.Language, treeView.SelectedItems.OfType<ILSpyTreeNodeBase>());
+			decompilerTextView.Decompile(settings.FilterSettings.Language, treeView.SelectedItems.OfType<ILSpyTreeNodeBase>());
+		}
+		
+		protected override void OnStateChanged(EventArgs e)
+		{
+			base.OnStateChanged(e);
+			// store window state in settings only if it's not minimized
+			if (this.WindowState != System.Windows.WindowState.Minimized)
+				settings.WindowState = this.WindowState;
+		}
+		
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			base.OnClosing(e);
+			settings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
+			settings.WindowBounds = this.RestoreBounds;
+			settings.Save();
 		}
 	}
 }

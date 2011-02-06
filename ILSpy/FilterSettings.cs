@@ -18,6 +18,8 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace ICSharpCode.ILSpy
 {
@@ -31,6 +33,21 @@ namespace ICSharpCode.ILSpy
 	/// </remarks>
 	public class FilterSettings : INotifyPropertyChanged
 	{
+		public FilterSettings(XElement element)
+		{
+			this.ShowInternalApi = (bool?)element.Element("ShowInternalAPI") ?? true;
+			this.Language = Languages.GetLanguage((string)element.Element("Language"));
+		}
+		
+		public XElement SaveAsXml()
+		{
+			return new XElement(
+				"FilterSettings",
+				new XElement("ShowInternalAPI", this.ShowInternalApi),
+				new XElement("Language", this.Language.Name)
+			);
+		}
+		
 		string searchTerm;
 		
 		public string SearchTerm {
@@ -50,7 +67,7 @@ namespace ICSharpCode.ILSpy
 			return text.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 		
-		bool showInternalApi = true;
+		bool showInternalApi;
 		
 		public bool ShowInternalApi {
 			get { return showInternalApi; }
@@ -62,7 +79,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		Language language = Languages.AllLanguages[0];
+		Language language;
 		
 		public Language Language {
 			get { return language; }

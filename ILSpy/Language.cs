@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
@@ -80,5 +81,10 @@ namespace ICSharpCode.ILSpy
 			new ILLanguage(false),
 			new ILLanguage(true)
 		};
+		
+		public static Language GetLanguage(string name)
+		{
+			return AllLanguages.FirstOrDefault(l => l.Name == name) ?? AllLanguages.First();
+		}
 	}
 }

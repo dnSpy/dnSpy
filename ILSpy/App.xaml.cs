@@ -18,9 +18,11 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
 namespace ICSharpCode.ILSpy
 {
@@ -33,9 +35,31 @@ namespace ICSharpCode.ILSpy
 		{
 			InitializeComponent();
 			
+			if (!Debugger.IsAttached) {
+				AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;
+				Dispatcher.CurrentDispatcher.UnhandledException += Dispatcher_UnhandledException;
+			}
+			
 			EventManager.RegisterClassHandler(typeof(Window),
 			                                  Hyperlink.RequestNavigateEvent,
 			                                  new RequestNavigateEventHandler(Window_RequestNavigate));
+		}
+		
+		
+		static void Dispatcher_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+		{
+			Debug.WriteLine(e.Exception.ToString());
+			MessageBox.Show(e.Exception.ToString(), "Sorry, we crashed");
+			e.Handled = true;
+		}
+		
+		static void ShowErrorBox(object sender, UnhandledExceptionEventArgs e)
+		{
+			Exception ex = e.ExceptionObject as Exception;
+			if (ex != null) {
+				Debug.WriteLine(ex.ToString());
+				MessageBox.Show(ex.ToString(), "Sorry, we crashed");
+			}
 		}
 		
 		void Window_RequestNavigate(object sender, RequestNavigateEventArgs e)

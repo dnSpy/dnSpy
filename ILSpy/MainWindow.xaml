@@ -3,8 +3,6 @@
 	x:Class="ICSharpCode.ILSpy.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
 	xmlns:local="clr-namespace:ICSharpCode.ILSpy" xmlns:textView="clr-namespace:ICSharpCode.ILSpy.TextView"
 	Title="ILSpy"
-	Width="790"
-	Height="500"
 	MinWidth="250"
 	MinHeight="200"
 	UseLayoutRounding="True"
