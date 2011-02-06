@@ -22,7 +22,7 @@ namespace ICSharpCode.TreeView
 		{
 			SelectedNodes = new HashSet<SharpTreeNode>();
 			ActiveNodes = new HashSet<SharpTreeNode>();
-			StartCuttedDataWatcher();
+			//StartCuttedDataWatcher();
 		}
 
 		public static HashSet<SharpTreeNode> SelectedNodes { get; private set; }
@@ -325,7 +325,7 @@ namespace ICSharpCode.TreeView
 		#endregion
 
 		#region Cut / Copy / Paste / Delete
-
+/*
 		static List<SharpTreeNode> cuttedNodes = new List<SharpTreeNode>();
 		static IDataObject cuttedData;
 		static EventHandler requerySuggestedHandler; // for weak event
@@ -419,40 +419,32 @@ namespace ICSharpCode.TreeView
 				ClearCuttedData();
 			}
 		}
+		*/
 
-		internal bool InternalCanDelete()
-		{
-			return CanDelete(ActiveNodesArray);
-		}
-
-		internal void InternalDelete()
-		{
-			Delete(ActiveNodesArray);
-		}
-
-		public virtual bool CanDelete(SharpTreeNode[] nodes)
+		public virtual bool CanDelete()
 		{
 			return false;
 		}
 
-		public virtual void Delete(SharpTreeNode[] nodes)
+		public virtual void Delete()
 		{
 			throw new NotSupportedException(GetType().Name + " does not support deletion");
 		}
 
-		public virtual void DeleteCore(SharpTreeNode[] nodes)
+		public virtual void DeleteCore()
 		{
 			throw new NotSupportedException(GetType().Name + " does not support deletion");
-		}
-
-		public virtual bool CanCopy(SharpTreeNode[] nodes)
-		{
-			return false;
 		}
 
 		public virtual IDataObject Copy(SharpTreeNode[] nodes)
 		{
 			throw new NotSupportedException(GetType().Name + " does not support copy/paste or drag'n'drop");
+		}
+
+		/*
+		public virtual bool CanCopy(SharpTreeNode[] nodes)
+		{
+			return false;
 		}
 
 		public virtual bool CanPaste(IDataObject data)
@@ -465,7 +457,7 @@ namespace ICSharpCode.TreeView
 			EnsureLazyChildren();
 			Drop(data, Children.Count, DropEffect.Copy);
 		}
-
+*/
 		#endregion
 
 		#region Drag and Drop
@@ -498,7 +490,8 @@ namespace ICSharpCode.TreeView
 			Drop(e.Data, index, finalEffect);
 
 			if (finalEffect == DropEffect.Move) {
-				DeleteCore(ActiveNodesArray);
+				foreach (SharpTreeNode node in ActiveNodesArray)
+					node.DeleteCore();
 			}
 		}
 
@@ -507,7 +500,7 @@ namespace ICSharpCode.TreeView
 			var requestedEffect = GetDropEffect(e);
 			var result = CanDrop(e.Data, requestedEffect);
 			if (result == DropEffect.Move) {
-				if (!CanDelete(ActiveNodesArray)) {
+				if (!ActiveNodesArray.All(n => n.CanDelete())) {
 					return DropEffect.None;
 				}
 			}

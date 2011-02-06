@@ -35,6 +35,8 @@ namespace ICSharpCode.TreeView
 
 			VirtualizingStackPanel.VirtualizationModeProperty.OverrideMetadata(typeof(SharpTreeView),
 			                                                                   new FrameworkPropertyMetadata(VirtualizationMode.Recycling));
+			
+			RegisterCommands();
 		}
 
 		public static ResourceKey DefaultItemContainerStyleKey { get; private set; }
@@ -515,6 +517,74 @@ namespace ICSharpCode.TreeView
 				}
 				previewNodeView = null;
 			}
+		}
+
+		#endregion
+		
+		#region Cut / Copy / Paste / Delete Commands
+
+		static void RegisterCommands()
+		{
+			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
+			                                           new CommandBinding(ApplicationCommands.Cut, HandleExecuted_Cut, HandleCanExecute_Cut));
+
+			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
+			                                           new CommandBinding(ApplicationCommands.Copy, HandleExecuted_Copy, HandleCanExecute_Copy));
+
+			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
+			                                           new CommandBinding(ApplicationCommands.Paste, HandleExecuted_Paste, HandleCanExecute_Paste));
+
+			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
+			                                           new CommandBinding(ApplicationCommands.Delete, HandleExecuted_Delete, HandleCanExecute_Delete));
+		}
+
+		static void HandleExecuted_Cut(object sender, ExecutedRoutedEventArgs e)
+		{
+			
+		}
+
+		static void HandleCanExecute_Cut(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = false;
+		}
+
+		static void HandleExecuted_Copy(object sender, ExecutedRoutedEventArgs e)
+		{
+			
+		}
+
+		static void HandleCanExecute_Copy(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = false;
+		}
+
+		static void HandleExecuted_Paste(object sender, ExecutedRoutedEventArgs e)
+		{
+			
+		}
+
+		static void HandleCanExecute_Paste(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = false;
+		}
+
+		static void HandleExecuted_Delete(object sender, ExecutedRoutedEventArgs e)
+		{
+			SharpTreeView treeView = (SharpTreeView)sender;
+			foreach (SharpTreeNode node in treeView.GetTopLevelSelection())
+				node.Delete();
+		}
+
+		static void HandleCanExecute_Delete(object sender, CanExecuteRoutedEventArgs e)
+		{
+			SharpTreeView treeView = (SharpTreeView)sender;
+			e.CanExecute = treeView.GetTopLevelSelection().All(node => node.CanDelete());
+		}
+		
+		IEnumerable<SharpTreeNode> GetTopLevelSelection()
+		{
+			// TODO: return only top-level selection
+			return this.SelectedItems.OfType<SharpTreeNode>().ToList();
 		}
 
 		#endregion

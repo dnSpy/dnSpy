@@ -19,8 +19,6 @@ namespace ICSharpCode.TreeView
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(SharpTreeViewItem),
 			                                         new FrameworkPropertyMetadata(typeof(SharpTreeViewItem)));
-
-			RegisterCommands();
 		}
 
 		public SharpTreeNode Node
@@ -133,65 +131,6 @@ namespace ICSharpCode.TreeView
 		protected override void OnDragLeave(DragEventArgs e)
 		{
 			ParentTreeView.HandleDragLeave(this, e);
-		}
-
-		#endregion
-
-		#region Cut / Copy / Paste / Delete Commands
-
-		static void RegisterCommands()
-		{
-			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeViewItem),
-			                                           new CommandBinding(ApplicationCommands.Cut, HandleExecuted_Cut, HandleCanExecute_Cut));
-
-			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeViewItem),
-			                                           new CommandBinding(ApplicationCommands.Copy, HandleExecuted_Copy, HandleCanExecute_Copy));
-
-			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeViewItem),
-			                                           new CommandBinding(ApplicationCommands.Paste, HandleExecuted_Paste, HandleCanExecute_Paste));
-
-			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeViewItem),
-			                                           new CommandBinding(ApplicationCommands.Delete, HandleExecuted_Delete, HandleCanExecute_Delete));
-		}
-
-		static void HandleExecuted_Cut(object sender, ExecutedRoutedEventArgs e)
-		{
-			(sender as SharpTreeViewItem).Node.InternalCut();
-		}
-
-		static void HandleCanExecute_Cut(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = (sender as SharpTreeViewItem).Node.InternalCanCut();
-		}
-
-		static void HandleExecuted_Copy(object sender, ExecutedRoutedEventArgs e)
-		{
-			(sender as SharpTreeViewItem).Node.InternalCopy();
-		}
-
-		static void HandleCanExecute_Copy(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = (sender as SharpTreeViewItem).Node.InternalCanCopy();
-		}
-
-		static void HandleExecuted_Paste(object sender, ExecutedRoutedEventArgs e)
-		{
-			(sender as SharpTreeViewItem).Node.InternalPaste();
-		}
-
-		static void HandleCanExecute_Paste(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = (sender as SharpTreeViewItem).Node.InternalCanPaste();
-		}
-
-		static void HandleExecuted_Delete(object sender, ExecutedRoutedEventArgs e)
-		{
-			(sender as SharpTreeViewItem).Node.InternalDelete();
-		}
-
-		static void HandleCanExecute_Delete(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = (sender as SharpTreeViewItem).Node.InternalCanDelete();
 		}
 
 		#endregion

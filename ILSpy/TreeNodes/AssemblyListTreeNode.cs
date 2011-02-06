@@ -44,22 +44,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.assemblyList = assemblyList;
 		}
 		
-		public override bool CanDelete(SharpTreeNode[] nodes)
-		{
-			return nodes.All(n => n is AssemblyTreeNode);
-		}
-		
-		public override void Delete(SharpTreeNode[] nodes)
-		{
-			DeleteCore(nodes);
-		}
-		
-		public override void DeleteCore(SharpTreeNode[] nodes)
-		{
-			foreach (AssemblyTreeNode node in nodes)
-				assemblyList.Assemblies.Remove(node);
-		}
-		
 		public override DropEffect CanDrop(IDataObject data, DropEffect requestedEffect)
 		{
 			if (data.GetDataPresent(AssemblyTreeNode.DataFormat))

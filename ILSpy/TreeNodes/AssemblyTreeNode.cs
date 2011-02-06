@@ -160,19 +160,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return nodes.All(n => n is AssemblyTreeNode);
 		}
 		
-		public override bool CanDelete(SharpTreeNode[] nodes)
+		public override bool CanDelete()
 		{
-			return Parent != null && Parent.CanDelete(nodes); // handle deletion in the AssemblyListTreeNode
+			return true;
 		}
 		
-		public override void Delete(SharpTreeNode[] nodes)
+		public override void Delete()
 		{
-			Parent.Delete(nodes); // handle deletion in the AssemblyListTreeNode
+			DeleteCore();
 		}
 		
-		public override void DeleteCore(SharpTreeNode[] nodes)
+		public override void DeleteCore()
 		{
-			Parent.DeleteCore(nodes); // handle deletion in the AssemblyListTreeNode
+			assemblyList.Assemblies.Remove(this);
 		}
 		
 		internal const string DataFormat = "ILSpyAssemblies";
