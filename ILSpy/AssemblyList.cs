@@ -19,10 +19,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Windows.Threading;
 using System.Xml.Linq;
-
 using ICSharpCode.ILSpy.TreeNodes;
 using Mono.Cecil;
 
@@ -36,16 +37,43 @@ namespace ICSharpCode.ILSpy
 		public AssemblyList(string listName)
 		{
 			this.ListName = listName;
+			Assemblies.CollectionChanged += Assemblies_CollectionChanged;
 		}
 		
 		public AssemblyList(XElement listElement)
+			: this((string)listElement.Attribute("name"))
 		{
-			this.ListName = (string)listElement.Attribute("name");
 			foreach (var asm in listElement.Elements("Assembly")) {
 				OpenAssembly((string)asm);
 			}
+			this.Dirty = false; // OpenAssembly() sets dirty, so reset it since we just loaded...
 		}
 		
+		public XElement Save()
+		{
+			return new XElement(
+				"List",
+				new XAttribute("name", this.ListName),
+				Assemblies.Select(asm => new XElement("Assembly", asm.FileName))
+			);
+		}
+
+		void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			this.Dirty = true;
+			App.Current.Dispatcher.BeginInvoke(
+				DispatcherPriority.Normal,
+				new Action(
+					delegate {
+						if (this.Dirty) {
+							this.Dirty = false;
+							AssemblyListManager.SaveList(this);
+						}
+					})
+			);
+		}
+		
+		public bool Dirty { get; set; }
 		public string ListName { get; set; }
 		
 		public readonly ObservableCollection<AssemblyTreeNode> Assemblies = new ObservableCollection<AssemblyTreeNode>();

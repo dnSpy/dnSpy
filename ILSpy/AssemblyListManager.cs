@@ -62,5 +62,22 @@ namespace ICSharpCode.ILSpy
 			else
 				return new AssemblyList(listName ?? "(Default)");
 		}
+		
+		public static void SaveList(AssemblyList list)
+		{
+			ILSpySettings.Update(
+				delegate (XElement root) {
+					XElement doc = root.Element("AssemblyLists");
+					if (doc == null) {
+						doc = new XElement("AssemblyLists");
+						root.Add(doc);
+					}
+					XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == list.ListName);
+					if (listElement != null)
+						listElement.ReplaceWith(list.Save());
+					else
+						doc.Add(list.Save());
+				});
+		}
 	}
 }

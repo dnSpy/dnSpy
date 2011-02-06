@@ -64,6 +64,18 @@ namespace ICSharpCode.ILSpy
 		
 		public static void SaveSettings(XElement section)
 		{
+			Update(
+				delegate (XElement root) {
+					XElement existingElement = root.Element(section.Name);
+					if (existingElement != null)
+						existingElement.ReplaceWith(section);
+					else
+						root.Add(section);
+				});
+		}
+		
+		public static void Update(Action<XElement> action)
+		{
 			using (new MutexProtector(ConfigFileMutex)) {
 				string config = GetConfigFile();
 				XDocument doc;
@@ -77,11 +89,7 @@ namespace ICSharpCode.ILSpy
 					doc = new XDocument(new XElement("ILSpy"));
 				}
 				doc.Root.SetAttributeValue("version", RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
-				XElement existingElement = doc.Root.Element(section.Name);
-				if (existingElement != null)
-					existingElement.ReplaceWith(section);
-				else
-					doc.Root.Add(section);
+				action(doc.Root);
 				doc.Save(config);
 			}
 		}
