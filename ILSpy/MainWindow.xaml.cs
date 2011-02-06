@@ -280,7 +280,16 @@ namespace ICSharpCode.ILSpy
 		
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			decompilerTextView.Decompile(sessionSettings.FilterSettings.Language, treeView.SelectedItems.OfType<ILSpyTreeNodeBase>());
+			decompilerTextView.Decompile(sessionSettings.FilterSettings.Language,
+			                             treeView.GetTopLevelSelection().OfType<ILSpyTreeNodeBase>(),
+			                             new DecompilationOptions());
+		}
+		
+		void saveCode_Click(object sender, RoutedEventArgs e)
+		{
+			decompilerTextView.SaveToDisk(sessionSettings.FilterSettings.Language,
+			                              treeView.GetTopLevelSelection().OfType<ILSpyTreeNodeBase>(),
+			                              new DecompilationOptions());
 		}
 		
 		protected override void OnStateChanged(EventArgs e)

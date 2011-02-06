@@ -25,6 +25,12 @@
 				</MenuItem>
 				<MenuItem Header="Open from _GAC" Click="OpenFromGac_Click" />
 				<Separator />
+				<MenuItem Header="_Save Code" Click="saveCode_Click">
+					<MenuItem.Icon>
+						<Image Width="16" Height="16" Source="Images/SaveFile.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<Separator />
 				<MenuItem Header="E_xit" Click="ExitClick" />
 			</MenuItem>
 			<MenuItem Header="_View">

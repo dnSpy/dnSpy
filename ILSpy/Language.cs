@@ -30,9 +30,10 @@ namespace ICSharpCode.ILSpy
 	public abstract class Language
 	{
 		public abstract string Name { get; }
+		public abstract string FileExtension { get; }
 		
 		public virtual ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting {
-			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition(this.Name); }
+			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(this.FileExtension); }
 		}
 		
 		public virtual void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)

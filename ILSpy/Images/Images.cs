@@ -15,6 +15,9 @@ namespace ICSharpCode.ILSpy
 			return image;
 		}
 		
+		public static readonly BitmapImage ViewCode = LoadBitmap("ViewCode");
+		public static readonly BitmapImage Save = LoadBitmap("SaveFile");
+		
 		public static readonly BitmapImage Assembly = LoadBitmap("Assembly");
 		public static readonly BitmapImage AssemblyWarning = LoadBitmap("AssemblyWarning");
 		public static readonly BitmapImage Library = LoadBitmap("Library");

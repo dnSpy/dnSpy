@@ -19,7 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Windows;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.Decompiler;
@@ -60,9 +60,16 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		public readonly List<NewFolding> Foldings = new List<NewFolding>();
 		public readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
+		public readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
 		
 		public TextSegmentCollection<ReferenceSegment> References {
 			get { return references; }
+		}
+		
+		public int LengthLimit = int.MaxValue;
+		
+		public int TextLength {
+			get { return b.Length; }
 		}
 		
 		public override string ToString()
@@ -102,17 +109,13 @@ namespace ICSharpCode.ILSpy.TextView
 			b.Append(text);
 		}
 		
-		public void WriteCommentLine(string comment)
-		{
-			WriteIndent();
-			b.AppendLine(comment);
-			needsIndent = true;
-		}
-		
 		public void WriteLine()
 		{
 			b.AppendLine();
 			needsIndent = true;
+			if (b.Length > LengthLimit) {
+				throw new OutputLengthExceededException();
+			}
 		}
 		
 		public void WriteDefinition(string text, object definition)
@@ -142,6 +145,12 @@ namespace ICSharpCode.ILSpy.TextView
 			NewFolding f = openFoldings.Pop();
 			f.EndOffset = b.Length;
 			this.Foldings.Add(f);
+		}
+		
+		public void AddUIElement(Func<UIElement> element)
+		{
+			if (element != null)
+				this.UIElements.Add(new KeyValuePair<int, Lazy<UIElement>>(b.Length, new Lazy<UIElement>(element)));
 		}
 	}
 }

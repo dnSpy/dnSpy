@@ -101,6 +101,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Resource Include="Images\AssemblyList.png" />
     <Resource Include="Images\AssemblyWarning.png" />
+    <Resource Include="Images\ViewCode.png" />
+    <Resource Include="Images\SaveFile.png" />
     <None Include="Properties\AssemblyInfo.template.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -111,8 +113,10 @@
     <Compile Include="SortableGridViewColumn.cs" />
     <Compile Include="TextView\CaretHighlightAdorner.cs" />
     <Compile Include="TextView\DecompilerTextView.cs" />
+    <Compile Include="TextView\OutputLengthExceededException.cs" />
     <Compile Include="TextView\ReferenceElementGenerator.cs" />
     <Compile Include="TextView\SmartTextOutput.cs" />
+    <Compile Include="TextView\UIElementGenerator.cs" />
     <Compile Include="TreeNodes\AssemblyListTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyReferenceTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyTreeNode.cs" />
@@ -203,9 +207,6 @@
   <ItemGroup>
     <Folder Include="TreeNodes" />
     <Folder Include="TextView" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ProfilingSessions\Session20110206_031358.sdps" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

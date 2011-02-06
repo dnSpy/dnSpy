@@ -17,27 +17,49 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using ICSharpCode.Decompiler;
-using Mono.Cecil;
+using System.Collections.Generic;
+using System.Windows;
 
-namespace ICSharpCode.ILSpy
+using ICSharpCode.AvalonEdit.Rendering;
+
+namespace ICSharpCode.ILSpy.TextView
 {
+	using Pair = KeyValuePair<int, Lazy<UIElement>>;
+	
 	/// <summary>
-	/// Decompiler logic for C#.
+	/// Embeds UIElements in the text output.
 	/// </summary>
-	public class CSharpLanguage : Language
+	public class UIElementGenerator : VisualLineElementGenerator, IComparer<Pair>
 	{
-		public override string Name {
-			get { return "C#"; }
-		}
+		public List<Pair> UIElements;
 		
-		public override string FileExtension {
-			get { return ".cs"; }
-		}
-		
-		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
+		public override int GetFirstInterestedOffset(int startOffset)
 		{
-			throw new NotImplementedException();
+			if (this.UIElements == null)
+				return -1;
+			int r = this.UIElements.BinarySearch(new Pair(startOffset, null), this);
+			if (r < 0)
+				r = ~r;
+			if (r < this.UIElements.Count)
+				return this.UIElements[r].Key;
+			else
+				return -1;
+		}
+		
+		public override VisualLineElement ConstructElement(int offset)
+		{
+			if (this.UIElements == null)
+				return null;
+			int r = UIElements.BinarySearch(new Pair(offset, null), this);
+			if (r >= 0)
+				return new InlineObjectElement(0, this.UIElements[r].Value.Value);
+			else
+				return null;
+		}
+		
+		int IComparer<Pair>.Compare(Pair x, Pair y)
+		{
+			return x.Key.CompareTo(y.Key);
 		}
 	}
 }

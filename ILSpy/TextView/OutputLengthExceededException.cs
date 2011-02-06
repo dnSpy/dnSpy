@@ -17,27 +17,30 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using ICSharpCode.Decompiler;
-using Mono.Cecil;
+using System.Runtime.Serialization;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TextView
 {
 	/// <summary>
-	/// Decompiler logic for C#.
+	/// This exception gets used when the text output is longer than the specified limit.
 	/// </summary>
-	public class CSharpLanguage : Language
+	class OutputLengthExceededException : Exception, ISerializable
 	{
-		public override string Name {
-			get { return "C#"; }
-		}
-		
-		public override string FileExtension {
-			get { return ".cs"; }
-		}
-		
-		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
+		public OutputLengthExceededException()
 		{
-			throw new NotImplementedException();
+		}
+
+	 	public OutputLengthExceededException(string message) : base(message)
+		{
+		}
+
+		public OutputLengthExceededException(string message, Exception innerException) : base(message, innerException)
+		{
+		}
+
+		// This constructor is needed for serialization.
+		protected OutputLengthExceededException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
 		}
 	}
 }

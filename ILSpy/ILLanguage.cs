@@ -39,8 +39,8 @@ namespace ICSharpCode.ILSpy
 			get { return detectControlStructure ? "IL (structured)" : "IL"; }
 		}
 		
-		public override ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting {
-			get { return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("ILAsm"); }
+		public override string FileExtension {
+			get { return ".il"; }
 		}
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
