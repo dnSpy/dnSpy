@@ -37,11 +37,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
-			this.name = name.Length == 0 ? "-" : name;
+			this.name = name;
 		}
 		
 		public override object Text {
-			get { return HighlightSearchMatch(name); }
+			get { return HighlightSearchMatch(name.Length == 0 ? "-" : name); }
 		}
 		
 		public override object Icon {

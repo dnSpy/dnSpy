@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -55,6 +56,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				this.Children.Add(new AssemblyReferenceTreeNode(r, parentAssembly));
 			foreach (var r in module.ModuleReferences)
 				this.Children.Add(new ModuleReferenceTreeNode(r));
+		}
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			EnsureLazyChildren();
+			foreach (var child in this.Children) {
+				child.Decompile(language, output, options);
+			}
 		}
 	}
 }

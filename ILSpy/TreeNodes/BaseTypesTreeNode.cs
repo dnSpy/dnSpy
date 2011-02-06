@@ -19,6 +19,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+
+using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -56,6 +58,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				children.Add(new BaseTypesEntryNode(type.BaseType, false));
 			foreach (TypeReference i in type.Interfaces) {
 				children.Add(new BaseTypesEntryNode(i, true));
+			}
+		}
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			EnsureLazyChildren();
+			foreach (var child in this.Children) {
+				child.Decompile(language, output, options);
 			}
 		}
 	}
@@ -116,6 +126,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					e.Handled = true;
 				}
 			}
+		}
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			language.WriteCommentLine(output, language.TypeToString(tr));
 		}
 	}
 }

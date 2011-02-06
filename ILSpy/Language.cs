@@ -51,30 +51,38 @@ namespace ICSharpCode.ILSpy
 		
 		public virtual void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(method.DeclaringType) + "." + method.Name);
 		}
 		
 		public virtual void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(property.DeclaringType) + "." + property.Name);
 		}
 		
 		public virtual void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(field.DeclaringType) + "." + field.Name);
 		}
 		
 		public virtual void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(ev.DeclaringType) + "." + ev.Name);
 		}
 		
 		public virtual void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(type));
 		}
 		
 		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, nameSpace);
 		}
 		
 		public virtual void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, fileName);
+			WriteCommentLine(output, assembly.Name.FullName);
 		}
 		
 		public virtual void WriteCommentLine(ITextOutput output, string comment)
@@ -107,7 +115,6 @@ namespace ICSharpCode.ILSpy
 		public static readonly ReadOnlyCollection<Language> AllLanguages = Array.AsReadOnly(
 			new Language[] {
 				new CSharpLanguage(),
-				new ILLanguage(false),
 				new ILLanguage(true)
 			});
 		

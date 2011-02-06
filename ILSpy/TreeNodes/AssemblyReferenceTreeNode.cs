@@ -18,6 +18,7 @@
 
 using System;
 using System.Linq;
+using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -77,6 +78,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 						this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode));
 				}
 			}
+		}
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			language.WriteCommentLine(output, r.FullName);
 		}
 	}
 }

@@ -20,6 +20,7 @@ using System;
 using System.Linq;
 using System.Windows;
 
+using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -79,5 +80,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public Action<SharpTreeNode> Select = delegate {};
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			language.WriteCommentLine(output, "List: " + assemblyList.ListName);
+			output.WriteLine();
+			foreach (AssemblyTreeNode asm in assemblyList.Assemblies) {
+				language.WriteCommentLine(output, new string('-', 60));
+				output.WriteLine();
+				asm.Decompile(language, output, options);
+			}
+		}
 	}
 }

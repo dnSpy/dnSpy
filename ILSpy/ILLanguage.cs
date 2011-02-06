@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public override string Name {
-			get { return detectControlStructure ? "IL (structured)" : "IL"; }
+			get { return "IL"; }
 		}
 		
 		public override string FileExtension {

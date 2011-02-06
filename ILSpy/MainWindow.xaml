@@ -29,6 +29,11 @@
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem Header="Open from _GAC" Click="OpenFromGac_Click" />
+				<MenuItem Command="Refresh" Header="_Reload">
+					<MenuItem.Icon>
+						<Image Width="16" Height="16" Source="Images/Refresh.png" />
+					</MenuItem.Icon>
+				</MenuItem>
 				<Separator />
 				<MenuItem Header="_Save Code" Click="saveCode_Click">
 					<MenuItem.Icon>
@@ -39,11 +44,6 @@
 				<MenuItem Header="E_xit" Click="ExitClick" />
 			</MenuItem>
 			<MenuItem Header="_View">
-				<MenuItem Command="Refresh">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/Refresh.png" />
-					</MenuItem.Icon>
-				</MenuItem>
 				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
 					<MenuItem.Icon>
 						<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />

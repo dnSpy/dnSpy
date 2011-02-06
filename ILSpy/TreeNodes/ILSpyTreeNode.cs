@@ -67,9 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return text + suffix;
 		}
 		
-		public virtual void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-		}
+		public abstract void Decompile(Language language, ITextOutput output, DecompilationOptions options);
 		
 		/// <summary>
 		/// Used to implement special view logic for some items.
@@ -115,7 +113,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Base class for ILSpy tree nodes.
 	/// </summary>
-	class ILSpyTreeNode<T> : ILSpyTreeNodeBase where T : ILSpyTreeNodeBase
+	abstract class ILSpyTreeNode<T> : ILSpyTreeNodeBase where T : ILSpyTreeNodeBase
 	{
 		public ILSpyTreeNode()
 			: this(new ObservableCollection<T>())

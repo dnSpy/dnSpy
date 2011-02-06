@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -42,6 +43,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override object Icon {
 			get { return Images.Library; }
+		}
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			language.WriteCommentLine(output, r.Name);
 		}
 	}
 }
