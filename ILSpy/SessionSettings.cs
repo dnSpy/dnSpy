@@ -78,7 +78,7 @@ namespace ICSharpCode.ILSpy
 				doc.Add(new XElement("ActiveTreeViewPath", ActiveTreeViewPath.Select(p => new XElement("Node", p))));
 			}
 			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
-			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
+			doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
 			
 			ILSpySettings.SaveSettings(doc);
 		}
