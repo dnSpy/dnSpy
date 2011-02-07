@@ -4,6 +4,7 @@
 	x:ClassModifier="internal"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
 	xmlns:local="clr-namespace:ICSharpCode.ILSpy" xmlns:textView="clr-namespace:ICSharpCode.ILSpy.TextView"
+	xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
 	Title="ILSpy"
 	MinWidth="250"
 	MinHeight="200"
@@ -11,6 +12,13 @@
 	TextOptions.TextFormattingMode="Display"
 	FocusManager.FocusedElement="{Binding ElementName=treeView}"
 >
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Controls/SearchBoxStyle.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
 	<Window.CommandBindings>
 		<CommandBinding
 			Command="Open"
@@ -103,7 +111,9 @@
 			</Grid.RowDefinitions>
 			<!-- Left pane: Search bar + Tree View -->
 			<DockPanel>
-				<TextBox DockPanel.Dock="Top" local:CueBannerService.CueBanner=" Search" Text="{Binding FilterSettings.SearchTerm, UpdateSourceTrigger=PropertyChanged}" />
+				<!-- Search bar -->
+				<controls:SearchBox DockPanel.Dock="Top" WatermarkText="Search" WatermarkColor="Gray" ToolTip="Search"
+					Text="{Binding FilterSettings.SearchTerm, UpdateSourceTrigger=PropertyChanged}" />				
 				<!-- Tree View of assemblies and classes -->
 				<tv:SharpTreeView
 					Name="treeView"

@@ -79,6 +79,7 @@
     </Compile>
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
+    <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="CSharpLanguage.cs" />
     <Compile Include="CueBannerService.cs" />
     <Compile Include="DecompilationOptions.cs" />
@@ -106,6 +107,8 @@
     <Resource Include="Images\ViewCode.png" />
     <Resource Include="Images\SaveFile.png" />
     <Resource Include="Images\OK.png" />
+    <Resource Include="Images\ClearSearch.png" />
+    <Resource Include="Images\Search.png" />
     <None Include="Properties\AssemblyInfo.template.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -137,6 +140,9 @@
     <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\SearchBoxStyle.xaml">
+      <DependentUpon>SearchBox.cs</DependentUpon>
+    </Page>
     <Page Include="MainWindow.xaml" />
     <Page Include="OpenFromGacDialog.xaml" />
     <Page Include="TextView\DecompilerTextView.xaml">
@@ -207,6 +213,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Controls" />
     <Folder Include="TreeNodes" />
     <Folder Include="TextView" />
   </ItemGroup>
