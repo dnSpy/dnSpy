@@ -57,12 +57,16 @@ namespace ICSharpCode.ILSpy
 			this.Top = sessionSettings.WindowBounds.Top;
 			this.Width = sessionSettings.WindowBounds.Width;
 			this.Height = sessionSettings.WindowBounds.Height;
-			// TODO: validate bounds (maybe a screen was removed...)
+			// TODO: validate bounds (maybe a monitor was removed...)
 			this.WindowState = sessionSettings.WindowState;
 			
 			InitializeComponent();
 			decompilerTextView.mainWindow = this;
 			
+			if (sessionSettings.SplitterPosition > 0 && sessionSettings.SplitterPosition < 1) {
+				leftColumn.Width = new GridLength(sessionSettings.SplitterPosition, GridUnitType.Star);
+				rightColumn.Width = new GridLength(1 - sessionSettings.SplitterPosition, GridUnitType.Star);
+			}
 			sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
 			
 			#if DEBUG
@@ -347,6 +351,7 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.ActiveAssemblyList = assemblyList.ListName;
 			sessionSettings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 			sessionSettings.WindowBounds = this.RestoreBounds;
+			sessionSettings.SplitterPosition = leftColumn.Width.Value / (leftColumn.Width.Value + rightColumn.Width.Value);
 			sessionSettings.Save();
 		}
 	}

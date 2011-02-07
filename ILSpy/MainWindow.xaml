@@ -97,11 +97,13 @@
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition
+					Name="leftColumn"
 					MinWidth="100"
 					Width="0.4*" />
 				<ColumnDefinition
 					Width="3" />
 				<ColumnDefinition
+					Name="rightColumn"
 					MinWidth="100"
 					Width="0.6*" />
 			</Grid.ColumnDefinitions>

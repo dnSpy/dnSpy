@@ -48,6 +48,7 @@ namespace ICSharpCode.ILSpy
 			
 			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
 			this.WindowBounds = FromString((string)doc.Element("WindowBounds"), new Rect(10, 10, 750, 550));
+			this.SplitterPosition = FromString((string)doc.Element("SplitterPosition"), 0.4);
 		}
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -66,6 +67,7 @@ namespace ICSharpCode.ILSpy
 		
 		public WindowState WindowState = WindowState.Normal;
 		public Rect WindowBounds;
+		public double SplitterPosition;
 		
 		public void Save()
 		{
@@ -79,6 +81,7 @@ namespace ICSharpCode.ILSpy
 			}
 			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
 			doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
+			doc.Add(new XElement("SplitterPosition", ToString(this.SplitterPosition)));
 			
 			ILSpySettings.SaveSettings(doc);
 		}
