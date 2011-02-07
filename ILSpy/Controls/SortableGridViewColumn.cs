@@ -22,7 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.Controls
 {
 	/// <summary>
 	/// Allows to automatically sort a grid view.

@@ -1,22 +1,22 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:local="clr-namespace:ICSharpCode.ILSpy"
+	xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
 >
 	<!-- SortableGridViewColumn.
 		Displays an up arrow or down arrow in the column header when the grid is sorted using that column.
 	-->
-	<local:ColumnSortDirectionToVisibilityConverter x:Key="ColumnSortDirectionToVisibilityConverter"/>
+	<controls:ColumnSortDirectionToVisibilityConverter x:Key="ColumnSortDirectionToVisibilityConverter"/>
 	
-	<DataTemplate x:Key="{ComponentResourceKey {x:Type local:SortableGridViewColumn}, ColumnHeaderTemplate}">
+	<DataTemplate x:Key="{ComponentResourceKey {x:Type controls:SortableGridViewColumn}, ColumnHeaderTemplate}">
 		<StackPanel Orientation="Horizontal">
 			<TextBlock HorizontalAlignment="Center" Text="{Binding}"/>
 			<Path x:Name="upArrow"
-			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static local:ColumnSortDirection.Ascending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
+			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static controls:ColumnSortDirection.Ascending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
 			      StrokeThickness = "1"
 			      Fill            = "Gray"
 			      Data            = "M 5,10 L 15,10 L 10,5 L 5,10"/>
 			<Path x:Name="downArrow"
-			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static local:ColumnSortDirection.Descending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
+			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static controls:ColumnSortDirection.Descending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
 			      StrokeThickness = "1"
 			      Fill            = "Gray"
 			      Data            = "M 5,5 L 10,10 L 15,5 L 5,5"/>

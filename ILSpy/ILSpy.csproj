@@ -80,8 +80,8 @@
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="Controls\SearchBox.cs" />
+    <Compile Include="Controls\SortableGridViewColumn.cs" />
     <Compile Include="CSharpLanguage.cs" />
-    <Compile Include="CueBannerService.cs" />
     <Compile Include="DecompilationOptions.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FilterSettings.cs" />
@@ -116,7 +116,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="SessionSettings.cs" />
-    <Compile Include="SortableGridViewColumn.cs" />
     <Compile Include="TextView\CaretHighlightAdorner.cs" />
     <Compile Include="TextView\DecompilerTextView.cs" />
     <Compile Include="TextView\OutputLengthExceededException.cs" />
