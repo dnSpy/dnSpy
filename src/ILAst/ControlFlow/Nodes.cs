@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Decompiler.Mono.Cecil.Rocks;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace Decompiler.ControlFlow
 {
 	public class BasicBlock: Node
 	{
-		List<ILExpression> body = new List<ILExpression>();
+		List<ILNode> body = new List<ILNode>();
 		List<BasicBlock> basicBlockPredecessors = new List<BasicBlock>();
 		BasicBlock fallThroughBasicBlock;
 		BasicBlock branchBasicBlock;
 		
-		public List<ILExpression> Body {
+		public List<ILNode> Body {
 			get { return body; }
 		}
 		
@@ -117,48 +119,98 @@ namespace Decompiler.ControlFlow
 			get { return methodEntry; }
 		}
 		
-		public MethodBodyGraph(List<ILExpression> exprs)
+		Dictionary<ILLabel, BasicBlock> labelToBasicBlock = new Dictionary<ILLabel, BasicBlock>();
+		
+		public MethodBodyGraph(List<ILNode> ast)
 		{
-			if (exprs.Count == 0) throw new ArgumentException("Count == 0", "exprs");
-			
-			BasicBlock basicBlock = null;
-			for(int i = 0; i < exprs.Count; i++) {
-				if (i == 0 ||
-				    exprs[i - 1].OpCode.IsBranch() ||
-				    exprs[i].IsBranchTarget ||
-				    exprs[i].OpCode.IsBranch())
-				{
-					basicBlock = new BasicBlock();
-					this.Childs.Add(basicBlock);
-				}
-				basicBlock.Body.Add(exprs[i]);
-				exprs[i].SetBasicBlock(basicBlock);
-			}
-			
-			// Add fall-through links to BasicBlocks
-			for(int i = 0; i < exprs.Count - 1; i++) {
-				BasicBlock node = exprs[i].BasicBlock;
-				BasicBlock target = exprs[i + 1].BasicBlock;
-				
-				if (target != node && exprs[i].OpCode.CanFallThough()) {
-					node.FallThroughBasicBlock = target;
-					target.BasicBlockPredecessors.Add(node);
-				}
-			}
+			if (ast.Count == 0) throw new ArgumentException("Count == 0", "ast");
+			this.methodEntry = new BasicBlock();
+			this.Childs.Add(this.methodEntry);
+			this.Childs.AddRange(SplitToBasicBlocks(ast));
 			
 			// Add branch links to BasicBlocks
-			for(int i = 0; i < exprs.Count; i++) {
-				if (exprs[i].OpCode.IsBranch()) {
-					BasicBlock node = exprs[i].BasicBlock;
-					BasicBlock target = ((ILExpression)exprs[i].Operand).BasicBlock;
-					
-					node.BranchBasicBlock = target;
-					target.BasicBlockPredecessors.Add(node);
+			foreach(BasicBlock basicBlock in this.BasicBlocks) {
+				foreach(ILNode node in basicBlock.Body) {
+					if (node is ILExpression) {
+						ILExpression expr = (ILExpression)node;
+						if (expr.Operand is ILLabel) {
+							BasicBlock target = labelToBasicBlock[(ILLabel)expr.Operand];
+							basicBlock.BranchBasicBlock = target;
+							target.BasicBlockPredecessors.Add(basicBlock);
+						}
+						// TODO: Switch
+					}
+				}
+			}
+		}
+		
+		public List<Node> SplitToBasicBlocks(List<ILNode> ast)
+		{
+			if (ast.Count == 0) return new List<Node>();
+			
+			List<Node> nodes = new List<Node>();
+			
+			BasicBlock basicBlock = null;
+			
+			for(int i = 0; i < ast.Count; i++) {
+				if (i == 0 ||
+					ast[i] is ILLabel ||
+					ast[i - 1] is ILTryCatchBlock ||
+					ast[i] is ILTryCatchBlock ||
+				    (ast[i - 1] is ILExpression) && ((ILExpression)ast[i - 1]).OpCode.IsBranch() ||
+				    (ast[i] is ILExpression)     && ((ILExpression)ast[i]).OpCode.IsBranch())
+				{
+					BasicBlock oldBB = basicBlock;
+					basicBlock = new BasicBlock();
+					nodes.Add(basicBlock);
+					// Links
+					if (oldBB != null && ast[i - 1] is ILExpression && ((ILExpression)ast[i - 1]).OpCode.CanFallThough()) {
+						oldBB.FallThroughBasicBlock = basicBlock;
+						basicBlock.BasicBlockPredecessors.Add(oldBB);
+					}
+				}
+				if (ast[i] is ILTryCatchBlock) {
+					nodes.Add(ConvertTryCatch((ILTryCatchBlock)ast[i]));
+				} else {
+					basicBlock.Body.Add(ast[i]);
+				}
+				if (ast[i] is ILLabel) {
+					labelToBasicBlock[(ILLabel)ast[i]] = basicBlock;
 				}
 			}
 			
-			this.methodEntry = (BasicBlock)this.HeadChild;
+			return nodes;
 		}
+		
+		public TryCatchNode ConvertTryCatch(ILTryCatchBlock ilTryCatch)
+		{
+			TryCatchNode tryCatch = new TryCatchNode();
+			
+			Block tryBlock = new Block();
+			tryBlock.Childs.AddRange(SplitToBasicBlocks(ilTryCatch.TryBlock));
+			tryBlock.MoveTo(tryCatch);
+			
+			Block finallyBlock = new Block();
+			if (ilTryCatch.FinallyBlock != null) {
+				finallyBlock.Childs.AddRange(SplitToBasicBlocks(ilTryCatch.FinallyBlock));
+			}
+			finallyBlock.MoveTo(tryCatch);
+			
+			foreach(ILTryCatchBlock.CatchBlock cb in ilTryCatch.CatchBlocks) {
+				tryCatch.Types.Add(cb.ExceptionType);
+				Block catchBlock = new Block();
+				catchBlock.Childs.AddRange(SplitToBasicBlocks(cb.Body));
+				catchBlock.MoveTo(tryCatch);
+			}
+			
+			return tryCatch;
+		}
+		
+	}
+	
+	public class TryCatchNode: Node
+	{
+		public List<TypeReference> Types = new List<TypeReference>();
 	}
 	
 	public class AcyclicGraph: Node

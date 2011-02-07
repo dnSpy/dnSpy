@@ -3,12 +3,10 @@ using System.Collections.Generic;
 
 using Ast = ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Ast;
-
 using Cecil = Mono.Cecil;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
-
 using Decompiler.ControlFlow;
 
 namespace Decompiler
@@ -26,7 +24,9 @@ namespace Decompiler
 			try {
 				return builder.CreateMetodBody();
 			} catch {
-				return new BlockStatement();
+				BlockStatement block = new BlockStatement();
+				block.Children.Add(MakeComment("Exception during decompilation"));
+				return block;
 			}
 		}
 		
@@ -38,7 +38,7 @@ namespace Decompiler
 			
 			methodDef.Body.SimplifyMacros();
 			
-			List<ILExpression> body = ILAstBuilder.Build(methodDef);
+			List<ILNode> body = new ILAstBuilder().Build(methodDef);
 			
 			MethodBodyGraph bodyGraph = new MethodBodyGraph(body);
 			bodyGraph.Optimize();
@@ -108,10 +108,14 @@ namespace Decompiler
 			yield return new Ast.LabelStatement(node.Label);
 			
 			if (node is BasicBlock) {
-				foreach(ILExpression expr in ((BasicBlock)node).Body) {
-					Statement stmt = TransformExpressionToStatement(expr);
-					if (stmt != null) {
-						yield return stmt;
+				foreach(ILNode expr in ((BasicBlock)node).Body) {
+					if (expr is ILLabel) {
+						yield return new Ast.LabelStatement(((ILLabel)expr).Name);
+					} else {
+						Statement stmt = TransformExpressionToStatement((ILExpression)expr);
+						if (stmt != null) {
+							yield return stmt;
+						}
 					}
 				}
 				Node fallThroughNode = ((BasicBlock)node).FallThroughBasicBlock;
@@ -185,6 +189,28 @@ namespace Decompiler
 				falseBlock.Parent = ifElseStmt;
 				
 				yield return ifElseStmt;
+			} else if (node is TryCatchNode) {
+				TryCatchNode tryCachNode = ((TryCatchNode)node);
+				Ast.BlockStatement tryBlock = new Ast.BlockStatement();
+				tryBlock.Children.AddRange(TransformNode(tryCachNode.Childs[0]));
+				Ast.BlockStatement finallyBlock = null;
+				if (tryCachNode.Childs[1].Childs.Count > 0) {
+					finallyBlock = new Ast.BlockStatement();
+					finallyBlock.Children.AddRange(TransformNode(tryCachNode.Childs[1]));
+				}
+				List<Ast.CatchClause> ccs = new List<CatchClause>();
+				for (int i = 0; i < tryCachNode.Types.Count; i++) {
+					Ast.BlockStatement catchBlock = new Ast.BlockStatement();
+					catchBlock.Children.AddRange(TransformNode(tryCachNode.Childs[i + 2]));
+					Ast.CatchClause cc = new Ast.CatchClause(
+						new Ast.TypeReference(tryCachNode.Types[i].FullName),
+						"exception",
+						catchBlock
+					);
+					ccs.Add(cc);
+				}
+				Ast.TryCatchStatement tryCachStmt = new Ast.TryCatchStatement(tryBlock, ccs, finallyBlock);
+				yield return tryCachStmt;
 			} else {
 				throw new Exception("Bad node type");
 			}
@@ -238,10 +264,10 @@ namespace Decompiler
 		Ast.Expression MakeBranchCondition_Internal(Branch branch)
 		{
 			if (branch is SimpleBranch) {
-				List<Ast.Expression> args = TransformExpressionArguments(((SimpleBranch)branch).BasicBlock.Body[0]);
+				List<Ast.Expression> args = TransformExpressionArguments((ILExpression)((SimpleBranch)branch).BasicBlock.Body[0]);
 				Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
 				Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
-				switch(((SimpleBranch)branch).BasicBlock.Body[0].OpCode.Code) {
+				switch(((ILExpression)((SimpleBranch)branch).BasicBlock.Body[0]).OpCode.Code) {
 					case Code.Brfalse: return new Ast.UnaryOperatorExpression(arg1, UnaryOperatorType.Not);
 					case Code.Brtrue:  return arg1;
 					case Code.Beq:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
@@ -349,7 +375,7 @@ namespace Decompiler
 			
 			Ast.Statement branchCommand = null;
 			if (byteCode.Operand is ILExpression) {
-				branchCommand = new Ast.GotoStatement(((ILExpression)byteCode.Operand).BasicBlock.Label);
+				branchCommand = new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
 			}
 			
 			switch(opCode.Code) {
@@ -546,10 +572,10 @@ namespace Decompiler
 				case Code.Cpobj: throw new NotImplementedException();
 				case Code.Dup: return arg1;
 				case Code.Endfilter: throw new NotImplementedException();
-				case Code.Endfinally: throw new NotImplementedException();
+				case Code.Endfinally: return null;
 				case Code.Initblk: throw new NotImplementedException();
 				case Code.Initobj: throw new NotImplementedException();
-				case Code.Isinst: throw new NotImplementedException();
+				case Code.Isinst: return new Ast.TypeOfIsExpression(arg1, new Ast.TypeReference(((Cecil.TypeReference)operand).FullName));
 				case Code.Jmp: throw new NotImplementedException();
 				case Code.Ldarg:
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index == 0) {
@@ -602,7 +628,12 @@ namespace Decompiler
 				case Code.Ldflda:
 				case Code.Ldsflda: throw new NotImplementedException();
 				case Code.Ldftn: throw new NotImplementedException();
-				case Code.Ldloc: return new Ast.IdentifierExpression(((VariableDefinition)operand).Name);
+				case Code.Ldloc: 
+					if (operand is ILStackVariable) {
+						return new Ast.IdentifierExpression(((ILStackVariable)operand).Name);
+					} else {
+						return new Ast.IdentifierExpression(((VariableDefinition)operand).Name);
+					}
 				case Code.Ldloca: throw new NotImplementedException();
 				case Code.Ldnull: return new Ast.PrimitiveExpression(null, null);
 				case Code.Ldobj: throw new NotImplementedException();
@@ -617,7 +648,7 @@ namespace Decompiler
 						throw new NotImplementedException();
 					}
 				case Code.Ldvirtftn: throw new NotImplementedException();
-				case Code.Leave: throw new NotImplementedException();
+				case Code.Leave: return null;
 				case Code.Localloc: throw new NotImplementedException();
 				case Code.Mkrefany: throw new NotImplementedException();
 				case Code.Newobj:
@@ -636,7 +667,7 @@ namespace Decompiler
 				case Code.No: throw new NotImplementedException();
 				case Code.Nop: return null;
 				case Code.Or: throw new NotImplementedException();
-				case Code.Pop: throw new NotImplementedException();
+				case Code.Pop: return arg1;
 				case Code.Readonly: throw new NotImplementedException();
 				case Code.Refanytype: throw new NotImplementedException();
 				case Code.Refanyval: throw new NotImplementedException();
@@ -648,10 +679,13 @@ namespace Decompiler
 						return new Ast.ReturnStatement(null);
 					}
 				}
-				case Code.Rethrow: throw new NotImplementedException();
+				case Code.Rethrow: return new Ast.ThrowStatement(new IdentifierExpression("exception"));
 				case Code.Sizeof: throw new NotImplementedException();
 				case Code.Starg: throw new NotImplementedException();
 				case Code.Stloc: {
+					if (operand is ILStackVariable) {
+						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(((ILStackVariable)operand).Name), AssignmentOperatorType.Assign, arg1);
+					}
 					VariableDefinition locVar = (VariableDefinition)operand;
 					string name = locVar.Name;
 					arg1 = Convert(arg1, locVar.VariableType);
@@ -671,7 +705,7 @@ namespace Decompiler
 				case Code.Stobj: throw new NotImplementedException();
 				case Code.Switch: throw new NotImplementedException();
 				case Code.Tail: throw new NotImplementedException();
-				case Code.Throw: throw new NotImplementedException();
+				case Code.Throw: return new Ast.ThrowStatement(arg1);
 				case Code.Unaligned: throw new NotImplementedException();
 				case Code.Unbox: throw new NotImplementedException();
 				case Code.Unbox_Any: throw new NotImplementedException();

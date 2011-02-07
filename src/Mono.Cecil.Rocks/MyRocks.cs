@@ -24,6 +24,16 @@ namespace Decompiler.Mono.Cecil.Rocks
 		static public TypeReference TypeZero = GetCecilType(typeof(Int32));
 		static public TypeReference TypeOne = GetCecilType(typeof(Int32));
 		
+		public static List<T> CutRange<T>(this List<T> list, int start, int count)
+		{
+			List<T> ret = new List<T>(count);
+			for (int i = 0; i < count; i++) {
+				ret.Add(list[start + i]);
+			}
+			list.RemoveRange(start, count);
+			return ret;
+		}
+		
 		public static bool CanFallThough(this OpCode opCode)
 		{
 			switch(opCode.FlowControl) {
@@ -33,6 +43,7 @@ namespace Decompiler.Mono.Cecil.Rocks
 				case FlowControl.Call:			return true;
 				case FlowControl.Return:			return false;
 				case FlowControl.Throw:			return false;
+				case FlowControl.Meta:			return false;
 				default: throw new NotImplementedException();
 			}
 		}
@@ -42,7 +53,7 @@ namespace Decompiler.Mono.Cecil.Rocks
 			return opCode.FlowControl == FlowControl.Branch || opCode.FlowControl == FlowControl.Cond_Branch;
 		}
 		
-		public static int GetPopCount(this Instruction inst, MethodDefinition methodDef, int stackLength)
+		public static int GetPopCount(this Instruction inst)
 		{
 			switch(inst.OpCode.StackBehaviourPop) {
 				case StackBehaviour.Pop0:   				return 0;
@@ -63,7 +74,7 @@ namespace Decompiler.Mono.Cecil.Rocks
 				case StackBehaviour.Popref_popi_popr4:  return 3;
 				case StackBehaviour.Popref_popi_popr8:  return 3;
 				case StackBehaviour.Popref_popi_popref: return 3;
-				case StackBehaviour.PopAll: 				return stackLength;
+				case StackBehaviour.PopAll: 				return int.MaxValue;
 				case StackBehaviour.Varpop: 
 					switch(inst.OpCode.Code) {
 						case Code.Call:
@@ -75,12 +86,7 @@ namespace Decompiler.Mono.Cecil.Rocks
 								return cecilMethod.Parameters.Count;
 							}
 						case Code.Calli:    throw new NotImplementedException();
-						case Code.Ret:
-							if (methodDef.ReturnType.FullName == Constants.Void) {
-								return 0;
-							} else {
-								return 1;
-							}
+						case Code.Ret:		return int.MaxValue;
 						case Code.Newobj:
 							MethodReference ctorMethod = ((MethodReference)inst.Operand);
 							return ctorMethod.Parameters.Count;
