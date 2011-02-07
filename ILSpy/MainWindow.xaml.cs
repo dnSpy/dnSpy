@@ -22,10 +22,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -77,10 +77,12 @@ namespace ICSharpCode.ILSpy
 
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			ILSpySettings spySettings = this.spySettings;
+			this.spySettings = null;
+			
 			// Load AssemblyList only in Loaded event so that WPF is initialized before we start the CPU-heavy stuff.
 			// This makes the UI come up a bit faster.
-			this.assemblyList = assemblyListManager.LoadList(this.spySettings, sessionSettings.ActiveAssemblyList);
-			this.spySettings = null;
+			this.assemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
 			
 			ShowAssemblyList(this.assemblyList);
 			
@@ -92,11 +94,42 @@ namespace ICSharpCode.ILSpy
 				LoadInitialAssemblies();
 			
 			SharpTreeNode node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
-			if (node != null)
+			if (node != null) {
 				SelectNode(node);
-			else
+				
+				// only if not showing the about page, perform the update check:
+				ShowMessageIfUpdatesAvailableAsync(spySettings);
+			} else {
 				AboutPage.Display(decompilerTextView);
+			}
 		}
+		
+		#region Update Check
+		string updateAvailableDownloadUrl;
+		
+		void ShowMessageIfUpdatesAvailableAsync(ILSpySettings spySettings)
+		{
+			AboutPage.CheckForUpdatesIfEnabledAsync(spySettings).ContinueWith(
+				delegate (Task<string> task) {
+					if (task.Result != null) {
+						updateAvailableDownloadUrl = task.Result;
+						updateAvailablePanel.Visibility = Visibility.Visible;
+					}
+				},
+				TaskScheduler.FromCurrentSynchronizationContext()
+			);
+		}
+		
+		void updateAvailablePanelCloseButtonClick(object sender, RoutedEventArgs e)
+		{
+			updateAvailablePanel.Visibility = Visibility.Collapsed;
+		}
+		
+		void downloadUpdateButtonClick(object sender, RoutedEventArgs e)
+		{
+			Process.Start(updateAvailableDownloadUrl);
+		}
+		#endregion
 		
 		void ShowAssemblyList(AssemblyList assemblyList)
 		{
