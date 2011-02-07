@@ -155,7 +155,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			foreach (ControlFlowNode node in nodes) {
 				if (node.End != null) {
 					// create normal edges from one instruction to the next
-					if (!IsUnconditionalBranch(node.End.OpCode))
+					if (!OpCodeInfo.IsUnconditionalBranch(node.End.OpCode))
 						CreateEdge(node, node.End.Next, JumpType.Normal);
 					
 					// create edges for branch instructions
@@ -429,24 +429,6 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					return true;
 				case FlowControl.Next:
 				case FlowControl.Call:
-					return false;
-				default:
-					throw new NotSupportedException(opcode.FlowControl.ToString());
-			}
-		}
-		
-		static bool IsUnconditionalBranch(OpCode opcode)
-		{
-			if (opcode.OpCodeType == OpCodeType.Prefix)
-				return false;
-			switch (opcode.FlowControl) {
-				case FlowControl.Branch:
-				case FlowControl.Throw:
-				case FlowControl.Return:
-					return true;
-				case FlowControl.Next:
-				case FlowControl.Call:
-				case FlowControl.Cond_Branch:
 					return false;
 				default:
 					throw new NotSupportedException(opcode.FlowControl.ToString());

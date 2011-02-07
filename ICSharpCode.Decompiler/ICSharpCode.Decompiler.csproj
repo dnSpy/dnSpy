@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="CecilExtensions.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
+    <Compile Include="Disassembler\ILStructure.cs" />
     <Compile Include="Disassembler\MethodBodyDisassembler.cs" />
     <Compile Include="Disassembler\ReflectionDisassembler.cs" />
     <Compile Include="FlowAnalysis\ControlFlowEdge.cs" />

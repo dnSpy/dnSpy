@@ -248,7 +248,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			StringWriter writer = new StringWriter();
 			switch (NodeType) {
 				case ControlFlowNodeType.Normal:
-					int endOffset = End.Next != null ? End.Next.Offset : End.Offset + End.GetSize();
+					int endOffset = End.GetEndOffset();
 					writer.Write("Block #{0}: IL_{1:x4} to IL_{2:x4}", BlockIndex, Start.Offset, endOffset);
 					break;
 				case ControlFlowNodeType.CatchHandler:

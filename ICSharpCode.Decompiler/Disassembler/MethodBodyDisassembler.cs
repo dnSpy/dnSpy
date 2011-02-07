@@ -17,9 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil;
@@ -72,12 +72,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			output.WriteLine();
 			
-			if (detectControlStructure) {
-				var cfg = ControlFlowGraphBuilder.Build(method.Body);
-				cfg.ComputeDominance(cancellationToken);
-				cfg.ComputeDominanceFrontier();
-				var s = ControlStructureDetector.DetectStructure(cfg, method.Body.ExceptionHandlers, cancellationToken);
-				WriteStructure(s);
+			if (detectControlStructure && body.Instructions.Count > 0) {
+				Instruction inst = body.Instructions[0];
+				WriteStructureBody(new ILStructure(body), ref inst);
 			} else {
 				foreach (var inst in method.Body.Instructions) {
 					inst.WriteTo(output);
@@ -91,79 +88,87 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		void WriteStructure(ControlStructure s)
+		void WriteStructureHeader(ILStructure s)
 		{
-			if (s.Type != ControlStructureType.Root) {
-				switch (s.Type) {
-					case ControlStructureType.Loop:
-						output.Write("// loop start");
-						if (s.EntryPoint.Start != null) {
-							output.Write(" (head: ");
-							DisassemblerHelpers.WriteOffsetReference(output, s.EntryPoint.Start);
-							output.Write(')');
-						}
-						output.WriteLine();
-						break;
-					case ControlStructureType.Try:
-						output.WriteLine(".try {");
-						break;
-					case ControlStructureType.Handler:
-						switch (s.ExceptionHandler.HandlerType) {
-							case Mono.Cecil.Cil.ExceptionHandlerType.Catch:
-							case Mono.Cecil.Cil.ExceptionHandlerType.Filter:
-								output.Write("catch");
-								if (s.ExceptionHandler.CatchType != null) {
-									output.Write(' ');
-									s.ExceptionHandler.CatchType.WriteTo(output);
-								}
-								output.WriteLine(" {");
-								break;
-							case Mono.Cecil.Cil.ExceptionHandlerType.Finally:
-								output.WriteLine("finally {");
-								break;
-							case Mono.Cecil.Cil.ExceptionHandlerType.Fault:
-								output.WriteLine("fault {");
-								break;
-							default:
-								throw new NotSupportedException();
-						}
-						break;
-					case ControlStructureType.Filter:
-						output.WriteLine("filter {");
-						break;
-					default:
-						throw new NotSupportedException();
-				}
-				output.Indent();
-			}
-			foreach (var node in s.Nodes.Concat(from c in s.Children select c.EntryPoint).OrderBy(c => c.Offset)) {
-				if (s.Nodes.Contains(node)) {
-					foreach (var inst in node.Instructions) {
-						inst.WriteTo(output);
-						output.WriteLine();
+			switch (s.Type) {
+				case ILStructureType.Loop:
+					output.Write("// loop start");
+					if (s.LoopEntryPoint != null) {
+						output.Write(" (head: ");
+						DisassemblerHelpers.WriteOffsetReference(output, s.LoopEntryPoint);
+						output.Write(')');
 					}
+					output.WriteLine();
+					break;
+				case ILStructureType.Try:
+					output.WriteLine(".try {");
+					break;
+				case ILStructureType.Handler:
+					switch (s.ExceptionHandler.HandlerType) {
+						case Mono.Cecil.Cil.ExceptionHandlerType.Catch:
+						case Mono.Cecil.Cil.ExceptionHandlerType.Filter:
+							output.Write("catch");
+							if (s.ExceptionHandler.CatchType != null) {
+								output.Write(' ');
+								s.ExceptionHandler.CatchType.WriteTo(output);
+							}
+							output.WriteLine(" {");
+							break;
+						case Mono.Cecil.Cil.ExceptionHandlerType.Finally:
+							output.WriteLine("finally {");
+							break;
+						case Mono.Cecil.Cil.ExceptionHandlerType.Fault:
+							output.WriteLine("fault {");
+							break;
+						default:
+							throw new NotSupportedException();
+					}
+					break;
+				case ILStructureType.Filter:
+					output.WriteLine("filter {");
+					break;
+				default:
+					throw new NotSupportedException();
+			}
+			output.Indent();
+		}
+		
+		void WriteStructureBody(ILStructure s, ref Instruction inst)
+		{
+			int childIndex = 0;
+			while (inst != null && inst.Offset < s.EndOffset) {
+				int offset = inst.Offset;
+				if (childIndex < s.Children.Count && s.Children[childIndex].StartOffset <= offset && offset < s.Children[childIndex].EndOffset) {
+					ILStructure child = s.Children[childIndex++];
+					WriteStructureHeader(child);
+					WriteStructureBody(child, ref inst);
+					WriteStructureFooter(child);
 				} else {
-					WriteStructure(s.Children.Single(c => c.EntryPoint == node));
+					inst.WriteTo(output);
+					output.WriteLine();
+					inst = inst.Next;
 				}
 			}
-			if (s.Type != ControlStructureType.Root) {
-				output.Unindent();
-				switch (s.Type) {
-					case ControlStructureType.Loop:
-						output.WriteLine("// end loop");
-						break;
-					case ControlStructureType.Try:
-						output.WriteLine("} // end .try");
-						break;
-					case ControlStructureType.Handler:
-						output.WriteLine("} // end handler");
-						break;
-					case ControlStructureType.Filter:
-						output.WriteLine("} // end filter");
-						break;
-					default:
-						throw new NotSupportedException();
-				}
+		}
+		
+		void WriteStructureFooter(ILStructure s)
+		{
+			output.Unindent();
+			switch (s.Type) {
+				case ILStructureType.Loop:
+					output.WriteLine("// end loop");
+					break;
+				case ILStructureType.Try:
+					output.WriteLine("} // end .try");
+					break;
+				case ILStructureType.Handler:
+					output.WriteLine("} // end handler");
+					break;
+				case ILStructureType.Filter:
+					output.WriteLine("} // end filter");
+					break;
+				default:
+					throw new NotSupportedException();
 			}
 		}
 	}
