@@ -22,6 +22,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 	{
 		TextView textView;
 		List<VisualLineElement> elements;
+		internal bool hasInlineObjects;
 		
 		/// <summary>
 		/// Gets the document to which this VisualLine belongs.

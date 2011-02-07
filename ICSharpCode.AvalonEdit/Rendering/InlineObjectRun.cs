@@ -38,11 +38,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			if (context == null)
 				throw new ArgumentNullException("context");
 			
-			// remove inline object if its already added, can happen e.g. when recreating textrun for word-wrapping
-			// TODO: certainly the text view should handle this internally? external code might want to use InlineObjectRun,
-			// but doesn't have access to textLayer.RemoveInlineObject
-			context.TextView.textLayer.RemoveInlineObject(this.Element);
-			
 			return new InlineObjectRun(1, this.TextRunProperties, this.Element);
 		}
 	}
@@ -55,6 +50,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		UIElement element;
 		int length;
 		TextRunProperties properties;
+		internal Size desiredSize;
 		
 		/// <summary>
 		/// Creates a new InlineObjectRun instance.
@@ -122,11 +118,10 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		/// <inheritdoc/>
 		public override TextEmbeddedObjectMetrics Format(double remainingParagraphWidth)
 		{
-			Size size = element.DesiredSize;
 			double baseline = TextBlock.GetBaselineOffset(element);
 			if (double.IsNaN(baseline))
-				baseline = size.Height;
-			return new TextEmbeddedObjectMetrics(size.Width, size.Height, baseline);
+				baseline = desiredSize.Height;
+			return new TextEmbeddedObjectMetrics(desiredSize.Width, desiredSize.Height, baseline);
 		}
 		
 		/// <inheritdoc/>
@@ -135,8 +130,8 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			if (this.element.IsArrangeValid) {
 				double baseline = TextBlock.GetBaselineOffset(element);
 				if (double.IsNaN(baseline))
-					baseline = element.DesiredSize.Height;
-				return new Rect(new Point(0, -baseline), element.DesiredSize);
+					baseline = desiredSize.Height;
+				return new Rect(new Point(0, -baseline), desiredSize);
 			} else {
 				return Rect.Empty;
 			}

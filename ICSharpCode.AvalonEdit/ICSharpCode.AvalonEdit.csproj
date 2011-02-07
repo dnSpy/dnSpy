@@ -257,6 +257,7 @@
       <DependentUpon>TextView.cs</DependentUpon>
     </Compile>
     <Compile Include="Rendering\LinkElementGenerator.cs" />
+    <Compile Include="Rendering\MouseHoverLogic.cs" />
     <Compile Include="Rendering\NewLineElementGenerator.cs" />
     <Compile Include="Rendering\SimpleTextSource.cs">
       <DependentUpon>FormattedTextElement.cs</DependentUpon>
