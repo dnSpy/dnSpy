@@ -30,6 +30,23 @@ namespace Decompiler
 			}
 		}
 		
+		static readonly Dictionary<string, string> typeNameToVariableNameDict = new Dictionary<string, string> {
+			{ "System.Boolean", "flag" },
+			{ "System.Byte", "b" },
+			{ "System.SByte", "b" },
+			{ "System.Int16", "num" },
+			{ "System.Int32", "num" },
+			{ "System.Int64", "num" },
+			{ "System.UInt16", "num" },
+			{ "System.UInt32", "num" },
+			{ "System.UInt64", "num" },
+			{ "System.Single", "num" },
+			{ "System.Double", "num" },
+			{ "System.Decimal", "num" },
+			{ "System.String", "text" },
+			{ "System.Object", "obj" },
+		};
+		
 		public BlockStatement CreateMetodBody()
 		{
 			Ast.BlockStatement astBlock = new Ast.BlockStatement();
@@ -45,29 +62,21 @@ namespace Decompiler
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
 			Dictionary<string, int> typeNames = new Dictionary<string, int>();
-			int boolFlagId = 1;
 			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
 				if (string.IsNullOrEmpty(varDef.Name)) {
 					if (varDef.VariableType.FullName == Constants.Int32 && intNames.Count > 0) {
 						varDef.Name = intNames[0];
 						intNames.RemoveAt(0);
-					} else if (varDef.VariableType.FullName == Constants.Boolean) {
-						if (boolFlagId == 1) {
-							varDef.Name = "flag";
-						} else {
-							varDef.Name = "flag" + boolFlagId;
-						}
-						boolFlagId++;
 					} else {
 						string name;
 						if (varDef.VariableType.IsArray) {
 							name = "array";
-						} else {
+						} else if (!typeNameToVariableNameDict.TryGetValue(varDef.VariableType.FullName, out name)) {
 							name = varDef.VariableType.Name;
 							name = char.ToLower(name[0]) + name.Substring(1);
 						}
 						if (!typeNames.ContainsKey(name)) {
- 							typeNames.Add(name, 0);
+							typeNames.Add(name, 0);
 						}
 						int count = typeNames[name];
 						if (count > 0) {
