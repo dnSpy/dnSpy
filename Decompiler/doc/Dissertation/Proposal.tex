@@ -1,0 +1,356 @@
+%\thispagestyle{empty}
+
+%\rightline{\large\emph{David Srbeck\'y}}
+%\medskip
+%\rightline{\large\emph{Jesus College}}
+%\medskip
+%\rightline{\large\emph{ds417}}
+
+\vfil
+\vspace{0.4in}
+\centerline{\large Part II of the Computer Science Project Proposal}
+\vspace{0.4in}
+\centerline{\Large\bf .NET Decompiler}
+\vspace{0.3in}
+\centerline{\large\emph{October~14,~2007}}
+
+\vfil
+
+{\bf Project Originator:} \emph{David Srbeck\'y}
+
+\vspace{0.1in}
+
+{\bf Resources Required:} See attached Project Resource Form
+
+\vspace{0.3in}
+
+{\bf Project Supervisor:} \emph{Alan Mycroft}
+
+\vspace{0.3in}
+
+{\bf Director of Studies:} \emph{Jean Bacon} and \emph{David Ingram}
+
+\vspace{0.3in}
+
+{\bf Overseers:} \emph{Anuj Dawar} and \emph{Andrew Moore}
+
+\vfil
+\eject
+
+\section*{Introduction and Description of the Work}
+The \emph{.NET Framework} is a general-purpose software development platform 
+which is very similar to \emph{Java}.  It includes extensive class library 
+and, similarly to Java, is based on the virtual machine model.  The executable 
+code for a \emph{.NET} program is stored in a file called \emph{assembly} 
+which consists of class metadata and a stack-based bytecode called Common 
+Intermediate Language (\emph{CIL} or \emph{IL}).
+
+In general, any programming language can be compiled to \emph{.NET} and 
+there are dozens of compilers that compile into \emph{CIL}.  The most 
+common language used for \emph{.NET} development is \emph{C\#}.
+
+The goal of this project is to decompile \emph{.NET} assemblies back into 
+equivalent \emph{C\#} source code.  Compared to decompilation of 
+conventional assembly code, this task is hugely simplified by the 
+presence of metadata in the \emph{.NET} assemblies.  The metadata contains 
+complete information about classes, methods and fields.  The method bodies 
+consist of stack-based \emph{IL} code which needs to be decompiled into 
+higher-level \emph{C\#} statements.  Data-flow analysis will need to be 
+employed to transform the stack-based data model into one that uses 
+temporary local variables and composition of expressions.  Control-flow 
+analysis will be used to recreate high level control structures like 
+\verb|for| loops and conditional branching.
+
+\section*{Resources Required}
+\begin{itemize}
+	\item{\textbf{My own machine}\\
+		(1.6 GHz CPU, 1.5 GB of RAM, 50 GB \& 75 GB Disks, 
+		Windows XP SP2 OS) \\
+		Used for development
+	}
+	\item{\textbf{Student-Run Computing Facility (SRCF)}\\
+		Used for running the \emph{SVN} server
+	}
+	\item{\textbf{Public Workstation Facility (PWF)}\\
+		Used for storage of back-ups
+	}
+\end{itemize}
+
+\newpage
+
+\section*{Starting Point}
+I plan to implement the project in \emph{C\#}.  I have been using this 
+language for over five years now and so I do not have to spend any time 
+learning a new language.  It also means that I will not be having any 
+problems neither with the syntax of the language nor with any peculiar 
+error messages produced by the compiler or by the runtime.
+
+I have written an integrated \emph{.NET} debugger for the 
+\emph{SharpDevelop} IDE.  During that I have obtained some basic knowledge 
+about metadata and lower-level functionality in \emph{.NET}.  I can read 
+\emph{.NET} bytecode and, with the help of reference manual, I can write 
+short programs in it.
+
+The metadata and bytecode needs to be read form the assembly files. 
+I plan to use the \emph{Cecil} library for it.  I am not familiar with this 
+library, but I do not expect to have any difficulties with it.
+
+\section*{Substance and Structure of the Project}
+The project consists of the following major work items:
+\begin{enumerate}
+\newcommand{\milestone}[1]{\item \textbf{#1} \\}
+
+\milestone{Preliminary research}
+I will have to research the following topics:
+\begin{itemize}
+	\item {\emph{Cecil} library}
+		- \emph{Cecil} is the library which I will use for reading of the 
+		metadata.  It will need to get familiar with its public API.
+		Because it is open-source, it might be valuable to get some basic 
+		understanding of its source code as well.
+	\item {\emph{CIL} bytecode}
+		- The runtime of the \emph{.NET Framework} is described in 
+		ECMA-335 Standard: \emph{``CLI Specification -- Virtual Machine''} 
+		(556 pages).  I will need to get familiar with this document since 
+		I will be using it as the main reference.  I will be especially 
+		interested in \emph{Partition III -- CIL Instruction Set}.
+	\item {Decompilation theory} - I will need to get familiar with the 
+		theory behind decompilation of programs.  Cristina Cifuentes' 
+		PhD thesis \emph{``Reverse Compilation Techniques''} might prove as 
+		especially useful starting point.
+\end{itemize}
+
+The research of these topics should not be too extensive.  I only indeed to 
+get sufficient background knowledge in these areas and then return to the 
+finner details when I needed them.
+
+\milestone{Create a skeleton of the code}
+It will be necessary to read the assembly metadata and create a \emph{C\#} 
+source code that has the same classes, fields and methods.  The method 
+signatures have to match the ones in the assembly.  At this point the method 
+bodies can be left empty.
+
+\milestone{Read and disassemble \emph{.NET} bytecode}
+The next step is to read the bytecode for each method, disassemble it and 
+output it as comments (for example, \verb|// IL_01: ldstr "Hello world"|).  
+This will help me learn how to use the \emph{Cecil} library to read the 
+bytecode and how to process it.  I also expect that this output will be 
+extremely helpful for debugging purposes later on.
+
+\milestone{Start creating r-value expressions}
+Ignoring the stack of the virtual machine, some bytecodes can be 
+straightforwardly converted into expressions.  For example:
+\begin{verbatim}
+ldstr "Hello world"      - string "Hello world"
+ldnull                   - 'null' reference
+ldc.i4.0                 - 4 byte integer of value 0
+ldc.i4 123               - 4 byte integer of value 123
+ldarg.0                  - the first method argument
+ldloc.0                  - the first local variable in the method
+\end{verbatim}
+
+The goal of this stage is to create \emph{C\#} expressions for several of 
+the most important bytecodes.
+
+Function calls and arithmetic operations are also expressions, but at this 
+stage I do not know their inputs and so I will have to use dummy values as 
+their inputs.
+
+\milestone{Conditional and unconditional branching}
+There are several bytecodes that investigate one or two values on the top 
+of stack and then, if a given condition is met, branch to different 
+location.  (\verb|br|, \verb|brfalse|, \verb|brtrue|, \verb|beq|, 
+\verb|bge|, \verb|bgt|, etc...)
+
+The goal of this stage is to use \emph{C\#} labels and \verb|goto|
+statements to recreate this flow of control.  (eg translate 
+\verb|brfalse IL_02| to \verb|if (input == false) goto Label_02;|)
+
+As in the previous stage the inputs (ie the values at the top of stack) are
+still not know.
+
+\milestone{Simple data-flow analysis}
+This is where it begins to be difficult.  Consider the code:
+\begin{verbatim}
+// Load "Hello, world!" on top of the stack
+IL_01: ldstr "Hello, world!"
+// Print the top of the stack to the console
+IL_02: call void [mscorlib]System.Console::WriteLine(string)
+\end{verbatim}
+Both of these are already decompiled as expressions, however the call 
+has a dummy value as its argument.  The goal of this stage is to perform 
+as simple data-flow analysis as possible.  The text "Hello, world!" must 
+find its way to the method call.  At this point it will probably be through 
+one or even two temporary variables.  For example:
+\begin{verbatim}
+String il_01_expression = "Hello, world!";
+String il_02_argument_1 = il_01_expression;
+System.Console.WriteLine(il_02_argument_1);
+\end{verbatim}
+The most difficult part will be handling of control flow.  Different values 
+can be on stack depending on which branch of code was executed.  At this 
+stage it will be necessary to create and analyse control flow graph.  As a 
+result of this stage, many temporary variables might be introduced to the 
+code.
+
+\milestone{Round-trip quick-sort algorithm}
+At this point very simple applications should probably successfully 
+decompile and compile again (round-trip).
+
+The goal of this stage is to fix bugs and to add features so that simple 
+algorithm like quick-sort can be successfully round-tripped without need to 
+manually change the produced \emph{C\#} source code.  At this point there is 
+no restriction on the aesthetics of the source code.  The only requirement 
+is that it does compile. 
+
+There are many features of \emph{.NET} that I do not plan to support at 
+this point.  For example, boxing \& unboxing, casting, generics and 
+exception handling.  In general, all non-essential features are excluded.
+
+\milestone{Further data-flow analysis}
+Employ more advanced data-flow analysis to simplify the generated \emph{C\#} 
+code.  Many temporary variables can be probably removed, relocated or 
+renamed according to their use.
+
+\emph{[This task has variable scope and if the project starts falling behind 
+schedule, simpler algorithms can be employed and vice versa.]}
+
+\milestone{Control-flow analysis}
+The goal of this stage is to use control-flow analysis to regenerate 
+high-level structures like \verb|if| statements and \verb|for| loops. 
+It will not be possible to eliminated all \verb|goto| statements, but they 
+should be avoided whenever possible.
+
+\emph{[This task has variable scope and if the project starts falling behind 
+schedule, simpler algorithms can be employed and vice versa.]}
+
+\milestone{Assembly resources}
+\emph{.NET} assemblies can have files embed in them.  These files can then 
+be accessed at runtime and thus the programs might require them.
+
+The goal is to extract the resources so that they can be included during 
+the recompilation process.
+
+\emph{[Optional.  This is an optional goal which will be done only if the 
+project development goes much better then originally anticipated.]}
+
+\milestone{Advanced features}
+Add commonly used features which where ignored so far - for example, 
+boxing \& unboxing, casting, generics and exception handling.
+
+\emph{[Optional.  This is an optional goal which will be done only if the 
+project development goes much better then originally anticipated.]}
+
+\milestone{Round-trip Mono}
+The ultimate goal of this project is to be able to round-trip any 
+\emph{.NET} assembly.  This means that for any given assembly the 
+Decompiler should produce \emph{C\#} source code which is valid (does 
+compile again without error).  Even more importantly, the program produced 
+by the compilation of the source code should be semantically same as the 
+original one.  Since the bytecode will in general differ, this condition is 
+difficult to verify.  One way to check that the Decompiler preserves the 
+meaning of programs is to simply try it.
+
+\emph{Mono} is open-source reimplantation of the \emph{.NET Framework}.
+The major part of it are the \emph{.NET} class libraries which can be 
+used for testing of the Decompiler.  The project is open-source and so if 
+any decompilation problems occur, it is possible to investigate the 
+source code of these libraries.  Furthermore, the libraries come with 
+extensive unit testing suite so it is possible to verify that the 
+round-tripped libraries are not broken.
+
+The goal of this final stage is to successfully round-trip all \emph{Mono} 
+libraries and pass the unit tests.  This would probably involve enormous 
+amount of bugfixing, investigation and handling of corner cases.  All 
+remaining \emph{.NET} features would have to be implemented.
+
+\emph{[Optional.  This last stage is huge and impossible to be finished 
+within the time frame of Part II project.  If all goes well, I expect 
+that it will take at least one more year for the project to mature to 
+this point.]}
+
+\milestone{Write the dissertation}
+The last and most important piece of work is to write the dissertation.
+Being a non-native English speaker, I expect this to take considerable
+amount of time.  I plan to spend the last seven weeks of project time
+on it.  This includes the end of Lent Term and the whole Easter vacation.
+I plan to have the dissertation finished by the start of Easter term.
+
+\end{enumerate}
+
+\newpage
+
+\section*{Success Criteria}
+The Decompiler should successfully round-trip a quick-sort algorithm 
+(or any algorithm of comparable complexity). 
+That is, when an assembly containing the algorithm is 
+decompiled, the produced \emph{C\#} source code should be both 
+syntactically and semantically correct.  The bytecode produced
+by compilation of the generated source code is not expected to be
+identical to the original one, but it is expected to be equivalent.
+That is, the binary may be different but it still needs to be a correct 
+implementation of the algorithm.
+
+To achieve this the Decompiler will need to have the following features:
+\begin{itemize}
+	\item Handle integers and integer arithmetic
+	\item Create and be able to use integer arrays
+	\item Branching must be successfully decompiled
+	\item Several methods can be defined
+	\item Methods can have arguments and return values
+	\item Methods can be called recursively
+	\item Integer command line arguments can be read and parsed
+	\item Text can be outputted to the standard console output
+\end{itemize}
+
+See the following page for a \emph{C\#} implementation of a quick-sort
+algorithm which will be used to demonstrate successful implementation
+of these features.
+
+I plan to achieve the success criteria by the progress report dead-line 
+and then spend the rest of the time available by increasing the quality 
+of the generated source code  (ie ``Further data-flow analysis'' and 
+``Control-flow analysis'').
+
+
+\newpage
+
+{
+\linespread{0.90}
+\lstinputlisting[
+  basicstyle=\footnotesize,
+  language={[Sharp]C},
+  tabsize=4,
+  numbers=left,
+  frame=single,
+  title=Quick-sort algorithm
+]{
+  ../../tests/QuickSort/Program.cs
+}
+}
+\newpage
+\section*{Timetable and Milestones}
+The work shall start on the Monday 22.10.2007 and is expected to 
+take 20 weeks in total.
+
+\vspace{0.1in}
+\newcommand{\milestone}[3]{\emph{#1} & \emph{#2} & \textbf{#3} \\}
+\begin{tabular}{l l l}
+	\milestone{22 Oct - 28 Oct}{(week  1)}{Preliminary research}
+	\milestone{29 Oct -  4 Nov}{(week  2)}{Create a skeleton of the code}
+	\milestone{5 Nov  - 11 Nov}{(week  3)}{Read and disassemble \emph{.NET} bytecode}
+	\milestone{12 Nov - 18 Nov}{(week  4)}{Start creating r-value expressions}
+	\milestone{19 Nov - 25 Nov}{(week  5)}{Conditional and unconditional branching}
+	\milestone{26 Nov -  9 Dec}{(weeks 6 and 7)}{Simple data-flow analysis}
+	\milestone{10 Dec - 20 Jan}{}{\textnormal{Christmas vacation}}
+	\milestone{21 Jan - 27 Jan}{(week  8)}{Round-trip quick-sort algorithm}
+	\milestone{26 Jan - 27 Jan}{}{Write the Progress Report}
+	\milestone{28 Jan - 10 Feb}{(weeks 9 and 10)}{Further data-flow analysis}
+	\milestone{11 Feb -  2 Mar}{(weeks 11 to 13)}{Control-flow analysis}
+	\milestone{3 Mar  - 20 Apr}{(weeks 14 to 20)}{Write the dissertation \textnormal{(over Easter vacation)}}
+	\milestone{21 Apr onwards }{}{\textnormal{Easter term -- Preparation for exams}}
+\end{tabular}
+\vspace{0.1in}
+
+Unscheduled tasks: \textbf{Assembly resources}; \textbf{Advanced features};
+ \textbf{Round-trip Mono}
