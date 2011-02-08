@@ -46,9 +46,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		readonly List<TypeTreeNode> classes = new List<TypeTreeNode>();
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
 		
-		// UI
-		ContextMenu menu;
-		
 		public AssemblyTreeNode(string fileName, AssemblyList assemblyList)
 		{
 			if (fileName == null)
