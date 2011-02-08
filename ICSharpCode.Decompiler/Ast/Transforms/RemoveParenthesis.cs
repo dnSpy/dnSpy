@@ -42,6 +42,12 @@ namespace Decompiler.Transforms.Ast
 			return base.VisitReturnStatement(returnStatement, data);
 		}
 		
+		public override object VisitThrowStatement(ThrowStatement throwStatement, object data)
+		{
+			throwStatement.Expression = Deparenthesize(throwStatement.Expression);
+			return base.VisitThrowStatement(throwStatement, data);
+		}
+		
 		public override object VisitCastExpression(CastExpression castExpression, object data)
 		{
 			if (GetPrecedence(castExpression.Expression) > GetPrecedence(castExpression)) {
