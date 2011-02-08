@@ -20,6 +20,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
@@ -31,6 +33,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// </summary>
 	abstract class ILSpyTreeNodeBase : SharpTreeNode
 	{
+		// UI
+		protected ContextMenu contextMenu;
+		
 		FilterSettings filterSettings;
 		
 		public FilterSettings FilterSettings {
@@ -59,6 +64,18 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;
+		}
+		
+		protected virtual void CreateContextMenu()
+		{
+			contextMenu = new ContextMenu();
+			
+			// add common context menu items, e.g. copy.
+		}
+		
+		public override ContextMenu GetContextMenu()
+		{
+			return contextMenu;
 		}
 		
 		protected object HighlightSearchMatch(string text, string suffix = null)
