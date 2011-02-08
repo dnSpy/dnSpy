@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using Decompiler;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
@@ -37,7 +38,14 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("Currently we can decompile only whole types.");
+		}
+		
+		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
+		{
+			AstBuilder codeDomBuilder = new AstBuilder();
+			codeDomBuilder.AddType(type);
+			output.Write(codeDomBuilder.GenerateCode());
 		}
 	}
 }

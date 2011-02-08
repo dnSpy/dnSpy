@@ -126,7 +126,7 @@ namespace Decompiler.Mono.Cecil.Rocks
 		
 		static public TypeReference GetCecilType(Type type)
 		{
-			return new TypeReference(type.Name, type.Namespace, null, type.IsValueType);
+			return new TypeReference(type.Name, type.Namespace, null, null, type.IsValueType);
 		}
 		
 		static public TypeReference GetTypeInternal(this Instruction inst, MethodDefinition methodDef, List<TypeReference> args)
