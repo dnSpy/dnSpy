@@ -40,10 +40,11 @@ namespace Decompiler.Transforms.Ast
 					return null;
 				}
 			}
-			if (memberReferenceExpression.TargetObject is ThisReferenceExpression) {
-				ReplaceCurrentNode(new IdentifierExpression(memberReferenceExpression.MemberName));
-				return null;
-			}
+			// we can't always remove "this", the field name might conflict with a parameter/local variable
+//			if (memberReferenceExpression.TargetObject is ThisReferenceExpression) {
+//				ReplaceCurrentNode(new IdentifierExpression(memberReferenceExpression.MemberName));
+//				return null;
+//			}
 			return base.VisitMemberReferenceExpression(memberReferenceExpression, data);
 		}
 		
