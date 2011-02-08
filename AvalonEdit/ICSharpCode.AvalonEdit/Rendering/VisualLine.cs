@@ -323,6 +323,12 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		public int GetVisualColumnFloor(Point point)
 		{
 			TextLine textLine = GetTextLineByVisualYPosition(point.Y);
+			if (point.X > textLine.WidthIncludingTrailingWhitespace) {
+				// GetCharacterHitFromDistance returns a hit with FirstCharacterIndex=last character inline
+				// and TrailingLength=1 when clicking behind the line, so the floor function needs to handle this case
+				// specially end return the line's end column instead.
+				return GetTextLineVisualStartColumn(textLine) + textLine.Length;
+			}
 			CharacterHit ch = textLine.GetCharacterHitFromDistance(point.X);
 			return ch.FirstCharacterIndex;
 		}
