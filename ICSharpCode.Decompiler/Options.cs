@@ -4,19 +4,13 @@ namespace Decompiler
 {
 	public static class Options
 	{
-		public static string TypeFilter = null;
-		public static int CollapseExpression = 1000;
-		public static int ReduceGraph = 1000;
-		public static bool NodeComments = false;
-		public static bool ReduceLoops = true;
-		public static bool ReduceConditonals = true;
-		public static bool ReduceAstJumps = true;
-		public static bool ReduceAstLoops = true;
-		public static bool ReduceAstOther = true;
-	}
-	
-	class StopOptimizations: Exception
-	{
-		
+		public static readonly int CollapseExpression = 1000;
+		public static readonly int ReduceGraph = 1000;
+		public static readonly bool NodeComments = false;
+		public static readonly bool ReduceLoops = true;
+		public static readonly bool ReduceConditonals = true;
+		public static readonly bool ReduceAstJumps = true;
+		public static readonly bool ReduceAstLoops = true;
+		public static readonly bool ReduceAstOther = true;
 	}
 }
