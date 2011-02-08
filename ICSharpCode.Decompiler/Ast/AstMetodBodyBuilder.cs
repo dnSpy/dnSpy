@@ -22,7 +22,7 @@ namespace Decompiler
 			AstMetodBodyBuilder builder = new AstMetodBodyBuilder();
 			builder.methodDef = methodDef;
 			try {
-				return builder.CreateMetodBody();
+				return builder.CreateMethodBody();
 			} catch {
 				BlockStatement block = new BlockStatement();
 				block.Children.Add(MakeComment("Exception during decompilation"));
@@ -47,7 +47,7 @@ namespace Decompiler
 			{ "System.Object", "obj" },
 		};
 		
-		public BlockStatement CreateMetodBody()
+		public BlockStatement CreateMethodBody()
 		{
 			Ast.BlockStatement astBlock = new Ast.BlockStatement();
 			
@@ -73,7 +73,17 @@ namespace Decompiler
 							name = "array";
 						} else if (!typeNameToVariableNameDict.TryGetValue(varDef.VariableType.FullName, out name)) {
 							name = varDef.VariableType.Name;
-							name = char.ToLower(name[0]) + name.Substring(1);
+							// remove the 'I' for interfaces
+							if (name.Length >= 3 && name[0] == 'I' && char.IsUpper(name[1]) && char.IsLower(name[2]))
+								name = name.Substring(1);
+							// remove the backtick (generics)
+							int pos = name.IndexOf('`');
+							if (pos >= 0)
+								name = name.Substring(0, pos);
+							if (name.Length == 0)
+								name = "obj";
+							else
+								name = char.ToLower(name[0]) + name.Substring(1);
 						}
 						if (!typeNames.ContainsKey(name)) {
 							typeNames.Add(name, 0);
