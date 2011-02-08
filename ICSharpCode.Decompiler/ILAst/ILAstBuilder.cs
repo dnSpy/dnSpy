@@ -265,6 +265,8 @@ namespace Decompiler
 			
 			// Try to in-line stloc / ldloc pairs
 			for(int i = 0; i < ast.Count - 1; i++) {
+				if (i < 0) continue;
+				
 				ILExpression expr = ast[i] as ILExpression;
 				ILExpression nextExpr = ast[i + 1] as ILExpression;
 				
@@ -290,7 +292,7 @@ namespace Decompiler
 									ast.RemoveAt(i);
 								}
 								nextExpr.Arguments[j] = expr.Arguments[0]; // Inline the stloc body
-								i = Math.Max(0, i - 2); // Try the same index again
+								i -= 2; // Try the same index again
 								break;  // Found
 							}
 						} else {
