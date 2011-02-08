@@ -578,7 +578,7 @@ namespace Decompiler
 				case Code.Isinst: return new Ast.TypeOfIsExpression(arg1, new Ast.TypeReference(((Cecil.TypeReference)operand).FullName));
 				case Code.Jmp: throw new NotImplementedException();
 				case Code.Ldarg:
-					if (methodDef.HasThis && ((ParameterDefinition)operand).Index == 0) {
+					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
 						return new Ast.ThisReferenceExpression();
 					} else {
 						return new Ast.IdentifierExpression(((ParameterDefinition)operand).Name);
