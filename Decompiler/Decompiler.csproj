@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <ProjectGuid>{EE3A3C1A-F9C3-4C75-853D-A9476E518C3A}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Decompiler</RootNamespace>
+    <AssemblyName>Decompiler</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>x86</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src" />
+    <Folder Include="src\ILAst\ControlFlow" />
+    <Folder Include="src\Mono.Cecil.Rocks" />
+    <Folder Include="src\ILAst" />
+    <Folder Include="src\Ast" />
+    <Folder Include="src\Ast\Transforms" />
+    <Compile Include="src\AssemblyInfo.cs" />
+    <Compile Include="src\Ast\AstBuilder.cs" />
+    <Compile Include="src\Ast\AstMetodBodyBuilder.cs" />
+    <Compile Include="src\Ast\Transforms\Idioms.cs" />
+    <Compile Include="src\Ast\Transforms\PushNegation.cs" />
+    <Compile Include="src\Ast\Transforms\RemoveDeadLabels.cs" />
+    <Compile Include="src\Ast\Transforms\RemoveEmptyElseBody.cs" />
+    <Compile Include="src\Ast\Transforms\RemoveGotos.cs" />
+    <Compile Include="src\Ast\Transforms\RemoveParenthesis.cs" />
+    <Compile Include="src\Ast\Transforms\RestoreLoop.cs" />
+    <Compile Include="src\Ast\Transforms\SimplifyTypeReferences.cs" />
+    <Compile Include="src\ILAst\ControlFlow\Node-Optimize.cs" />
+    <Compile Include="src\ILAst\ControlFlow\Node-Transforms.cs" />
+    <Compile Include="src\ILAst\ControlFlow\NodeCollection.cs" />
+    <Compile Include="src\ILAst\ControlFlow\Nodes.cs" />
+    <Compile Include="src\ILAst\ControlFlow\Node-Structure.cs" />
+    <Compile Include="src\ILAst\ILAstBuilder.cs" />
+    <Compile Include="src\ILAst\ILAstTypes.cs" />
+    <Compile Include="src\MainForm.cs" />
+    <Compile Include="src\MainForm.Designer.cs" />
+    <Compile Include="src\Mono.Cecil.Rocks\Constants.cs" />
+    <Compile Include="src\Mono.Cecil.Rocks\MethodBodyRocks.cs" />
+    <Compile Include="src\Mono.Cecil.Rocks\MyRocks.cs" />
+    <Compile Include="src\Options.cs" />
+    <Compile Include="src\Program.cs" />
+    <EmbeddedResource Include="src\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <ProjectReference Include="lib\Mono.Cecil\Mono.Cecil.csproj">
+      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
+    <ProjectReference Include="lib\NRefactory\Project\NRefactory.csproj">
+      <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
+      <Name>NRefactory</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
