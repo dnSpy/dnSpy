@@ -54,6 +54,7 @@ namespace Decompiler
 		
 		public List<ILNode> Build(MethodDefinition methodDef)
 		{
+			// Make editable copy
 			List<Instruction> body = new List<Instruction>(methodDef.Body.Instructions);
 			
 			if (body.Count == 0) return new List<ILNode>();
@@ -63,20 +64,16 @@ namespace Decompiler
 			// Create branch labels for instructins; use the labels as branch operands
 			foreach (Instruction inst in body) {
 				if (inst.Operand is Instruction[]) {
-					List<ILLabel> newOperand = new List<ILLabel>();
 					foreach(Instruction target in (Instruction[])inst.Operand) {
 						if (!labels.ContainsKey(target)) {
 							labels[target] = new ILLabel() { Name = "IL_" + target.Offset.ToString("X2") };
 						}
-						newOperand.Add(labels[target]);
 					}
-					inst.Operand = newOperand.ToArray();
 				} else if (inst.Operand is Instruction) {
 					Instruction target = (Instruction)inst.Operand;
 					if (!labels.ContainsKey(target)) {
 						labels[target] = new ILLabel() { Name = "IL_" + target.Offset.ToString("X2") };
 					}
-					inst.Operand = labels[target];
 				}
 			}
 			
@@ -227,6 +224,17 @@ namespace Decompiler
 				ILLabel label;
 				if (labels.TryGetValue(inst, out label)) {
 					ast.Add(label);
+				}
+				
+				// Branch using labels
+				if (inst.Operand is Instruction[]) {
+					List<ILLabel> newOperand = new List<ILLabel>();
+					foreach(Instruction target in (Instruction[])inst.Operand) {
+						newOperand.Add(labels[target]);
+					}
+					expr.Operand = newOperand.ToArray();
+				} else if (inst.Operand is Instruction) {
+					expr.Operand = labels[(Instruction)inst.Operand];
 				}
 				
 				// Reference arguments using temporary variables
