@@ -65,5 +65,7 @@ namespace ICSharpCode.ILSpy
 		public static readonly BitmapImage ProtectedEnum = LoadBitmap("ProtectedEnum");
 		public static readonly BitmapImage ProtectedInterface = LoadBitmap("ProtectedInterface");
 		public static readonly BitmapImage ProtectedStruct = LoadBitmap("ProtectedStruct");
+		
+		public static readonly BitmapImage Delete = LoadBitmap("Delete");
 	}
 }

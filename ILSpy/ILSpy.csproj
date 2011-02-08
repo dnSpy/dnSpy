@@ -109,6 +109,7 @@
     <Resource Include="Images\OK.png" />
     <Resource Include="Images\ClearSearch.png" />
     <Resource Include="Images\Search.png" />
+    <Resource Include="Images\Delete.png" />
     <None Include="Properties\AssemblyInfo.template.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">

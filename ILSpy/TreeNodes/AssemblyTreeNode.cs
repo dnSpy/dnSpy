@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
@@ -37,12 +38,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// </summary>
 	sealed class AssemblyTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
 	{
+		
 		readonly AssemblyList assemblyList;
 		readonly string fileName;
 		string shortName;
 		readonly Task<AssemblyDefinition> assemblyTask;
 		readonly List<TypeTreeNode> classes = new List<TypeTreeNode>();
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
+		
+		// UI
+		ContextMenu menu;
 		
 		public AssemblyTreeNode(string fileName, AssemblyList assemblyList)
 		{
@@ -57,6 +62,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			assemblyTask.ContinueWith(OnAssemblyLoaded, TaskScheduler.FromCurrentSynchronizationContext());
 			
 			this.LazyLoading = true;
+			
+			CreateRemoveItemContextMenu();
 		}
 		
 		public string FileName {
@@ -122,6 +129,20 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
+		void CreateRemoveItemContextMenu()
+		{
+			var menu = GetContextMenu();
+			
+			MenuItem item = new MenuItem() {
+				Header = "Remove assembly",
+				Icon = new Image() { Source = Images.Delete }
+			};
+			
+			item.Click += delegate { Delete(); };
+			
+			menu.Items.Add(item);
+		}
+		
 		sealed class MyAssemblyResolver : IAssemblyResolver
 		{
 			readonly AssemblyTreeNode parent;
@@ -154,6 +175,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				var node = parent.LookupReferencedAssembly(fullName);
 				return node != null ? node.AssemblyDefinition : null;
 			}
+		}
+		
+		public override ContextMenu GetContextMenu()
+		{
+			if (menu != null)
+				return menu;
+			
+			return (menu = new ContextMenu());
 		}
 		
 		protected override void LoadChildren()
