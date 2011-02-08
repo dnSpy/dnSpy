@@ -62,8 +62,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			assemblyTask.ContinueWith(OnAssemblyLoaded, TaskScheduler.FromCurrentSynchronizationContext());
 			
 			this.LazyLoading = true;
-			
-			CreateRemoveItemContextMenu();
 		}
 		
 		public string FileName {
@@ -129,10 +127,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
-		void CreateRemoveItemContextMenu()
+		MenuItem CreateRemoveAssemblyItem()
 		{
-			var menu = GetContextMenu();
-			
 			MenuItem item = new MenuItem() {
 				Header = "Remove assembly",
 				Icon = new Image() { Source = Images.Delete }
@@ -140,7 +136,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			
 			item.Click += delegate { Delete(); };
 			
-			menu.Items.Add(item);
+			return item;
 		}
 		
 		sealed class MyAssemblyResolver : IAssemblyResolver
@@ -179,10 +175,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override ContextMenu GetContextMenu()
 		{
-			if (menu != null)
-				return menu;
+			// specific to AssemblyTreeNode
+			var menu = new ContextMenu();
+			menu.Items.Add(CreateRemoveAssemblyItem());
 			
-			return (menu = new ContextMenu());
+			return menu;
 		}
 		
 		protected override void LoadChildren()
