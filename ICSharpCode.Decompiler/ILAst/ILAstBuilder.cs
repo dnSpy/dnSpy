@@ -5,6 +5,7 @@ using System.Text;
 using Decompiler.Mono.Cecil.Rocks;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 using Cecil = Mono.Cecil;
 
 namespace Decompiler
@@ -49,11 +50,14 @@ namespace Decompiler
 			}
 		}
 		
+		MethodDefinition methodDef;
 		Dictionary<Instruction, ILStack> stackBefore = new Dictionary<Instruction, ILAstBuilder.ILStack>();
 		Dictionary<Instruction, ILLabel> labels = new Dictionary<Instruction, ILLabel>();
 		
 		public List<ILNode> Build(MethodDefinition methodDef)
 		{
+			this.methodDef = methodDef;
+			
 			// Make editable copy
 			List<Instruction> body = new List<Instruction>(methodDef.Body.Instructions);
 			
@@ -218,7 +222,12 @@ namespace Decompiler
 			
 			// Convert stack-based IL code to ILAst tree
 			foreach(Instruction inst in body) {
-				ILExpression expr = new ILExpression(inst.OpCode, inst.Operand);
+				OpCode opCode  = inst.OpCode;
+				object operand = inst.Operand;
+				
+				MethodBodyRocks.ExpandMacro(ref opCode, ref operand, methodDef.Body);
+				
+				ILExpression expr = new ILExpression(opCode, operand);
 				
 				// Label for this instruction
 				ILLabel label;

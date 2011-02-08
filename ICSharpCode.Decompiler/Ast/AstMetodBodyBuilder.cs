@@ -53,8 +53,6 @@ namespace Decompiler
 			
 			if (methodDef.Body == null) return astBlock;
 			
-			methodDef.Body.SimplifyMacros();
-			
 			List<ILNode> body = new ILAstBuilder().Build(methodDef);
 			
 			MethodBodyGraph bodyGraph = new MethodBodyGraph(body);

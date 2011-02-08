@@ -198,6 +198,58 @@ namespace Mono.Cecil.Rocks {
 				}
 			}
 		}
+		
+		public static void ExpandMacro(ref OpCode opCode, ref object operand, MethodBody methodBody)
+		{
+			if (opCode.OpCodeType != OpCodeType.Macro)
+				return;
+
+			switch (opCode.Code) {
+				case Code.Ldarg_0: 		opCode = OpCodes.Ldarg; operand = methodBody.GetParameter(0); break;
+				case Code.Ldarg_1: 		opCode = OpCodes.Ldarg; operand = methodBody.GetParameter(1); break;
+				case Code.Ldarg_2: 		opCode = OpCodes.Ldarg; operand = methodBody.GetParameter(2); break;
+				case Code.Ldarg_3: 		opCode = OpCodes.Ldarg; operand = methodBody.GetParameter(3); break;
+				case Code.Ldloc_0: 		opCode = OpCodes.Ldloc; operand = methodBody.Variables[0]; break;
+				case Code.Ldloc_1: 		opCode = OpCodes.Ldloc; operand = methodBody.Variables[1]; break;
+				case Code.Ldloc_2: 		opCode = OpCodes.Ldloc; operand = methodBody.Variables[2]; break;
+				case Code.Ldloc_3: 		opCode = OpCodes.Ldloc; operand = methodBody.Variables[3]; break;
+				case Code.Stloc_0: 		opCode = OpCodes.Stloc; operand = methodBody.Variables[0]; break;
+				case Code.Stloc_1: 		opCode = OpCodes.Stloc; operand = methodBody.Variables[1]; break;
+				case Code.Stloc_2: 		opCode = OpCodes.Stloc; operand = methodBody.Variables[2]; break;
+				case Code.Stloc_3: 		opCode = OpCodes.Stloc; operand = methodBody.Variables[3]; break;
+				case Code.Ldarg_S: 		opCode = OpCodes.Ldarg; break;
+				case Code.Ldarga_S: 		opCode = OpCodes.Ldarga; break;
+				case Code.Starg_S: 		opCode = OpCodes.Starg; break;
+				case Code.Ldloc_S: 		opCode = OpCodes.Ldloc; break;
+				case Code.Ldloca_S: 		opCode = OpCodes.Ldloca; break;
+				case Code.Stloc_S: 		opCode = OpCodes.Stloc; break;
+				case Code.Ldc_I4_M1: 	opCode = OpCodes.Ldc_I4; operand = -1; break;
+				case Code.Ldc_I4_0: 		opCode = OpCodes.Ldc_I4; operand = 0; break;
+				case Code.Ldc_I4_1: 		opCode = OpCodes.Ldc_I4; operand = 1; break;
+				case Code.Ldc_I4_2: 		opCode = OpCodes.Ldc_I4; operand = 2; break;
+				case Code.Ldc_I4_3: 		opCode = OpCodes.Ldc_I4; operand = 3; break;
+				case Code.Ldc_I4_4: 		opCode = OpCodes.Ldc_I4; operand = 4; break;
+				case Code.Ldc_I4_5: 		opCode = OpCodes.Ldc_I4; operand = 5; break;
+				case Code.Ldc_I4_6: 		opCode = OpCodes.Ldc_I4; operand = 6; break;
+				case Code.Ldc_I4_7: 		opCode = OpCodes.Ldc_I4; operand = 7; break;
+				case Code.Ldc_I4_8: 		opCode = OpCodes.Ldc_I4; operand = 8; break;
+				case Code.Ldc_I4_S: 		opCode = OpCodes.Ldc_I4; operand = (int) (sbyte) operand; break;
+				case Code.Br_S: 			opCode = OpCodes.Br; break;
+				case Code.Brfalse_S: 	opCode = OpCodes.Brfalse; break;
+				case Code.Brtrue_S: 		opCode = OpCodes.Brtrue; break;
+				case Code.Beq_S: 		opCode = OpCodes.Beq; break;
+				case Code.Bge_S: 		opCode = OpCodes.Bge; break;
+				case Code.Bgt_S: 		opCode = OpCodes.Bgt; break;
+				case Code.Ble_S: 		opCode = OpCodes.Ble; break;
+				case Code.Blt_S: 		opCode = OpCodes.Blt; break;
+				case Code.Bne_Un_S: 		opCode = OpCodes.Bne_Un; break;
+				case Code.Bge_Un_S: 		opCode = OpCodes.Bge_Un; break;
+				case Code.Bgt_Un_S: 		opCode = OpCodes.Bgt_Un; break;
+				case Code.Ble_Un_S: 		opCode = OpCodes.Ble_Un; break;
+				case Code.Blt_Un_S:		opCode = OpCodes.Blt_Un; break;
+				case Code.Leave_S:		opCode = OpCodes.Leave; break;
+			}
+		}
 
 		static void ExpandMacro (Instruction instruction, OpCode opcode, object operand)
 		{
