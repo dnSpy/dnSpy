@@ -29,6 +29,22 @@ namespace Decompiler.Transforms.Ast
 			return null;
 		}
 		
+		public override object VisitPropertyGetRegion(PropertyGetRegion propertyGetRegion, object data)
+		{
+			collectingUsedLabels = true;
+			base.VisitPropertyGetRegion(propertyGetRegion, data);
+			collectingUsedLabels = false;
+			return base.VisitPropertyGetRegion(propertyGetRegion, data);
+		}
+		
+		public override object VisitPropertySetRegion(PropertySetRegion propertySetRegion, object data)
+		{
+			collectingUsedLabels = true;
+			base.VisitPropertySetRegion(propertySetRegion, data);
+			collectingUsedLabels = false;
+			return base.VisitPropertySetRegion(propertySetRegion, data);
+		}
+		
 		public override object VisitGotoStatement(GotoStatement gotoStatement, object data)
 		{
 			if (collectingUsedLabels) {

@@ -170,7 +170,7 @@ namespace Decompiler.ControlFlow
 					}
 				}
 				if (ast[i] is ILTryCatchBlock) {
-					nodes.Add(ConvertTryCatch((ILTryCatchBlock)ast[i]));
+					basicBlock.Childs.Add(ConvertTryCatch((ILTryCatchBlock)ast[i]));
 				} else {
 					basicBlock.Body.Add(ast[i]);
 				}

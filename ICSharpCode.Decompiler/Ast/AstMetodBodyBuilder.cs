@@ -135,15 +135,18 @@ namespace Decompiler
 						}
 					}
 				}
+				foreach(Ast.INode inode in TransformNodes(node.Childs)) {
+					yield return inode;
+				}
 				Node fallThroughNode = ((BasicBlock)node).FallThroughBasicBlock;
 				// If there is default branch and it is not the following node
 				if (fallThroughNode != null) {
 					yield return new Ast.GotoStatement(fallThroughNode.Label);
 				}
 			} else if (node is AcyclicGraph) {
-				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
-				blockStatement.Children.AddRange(TransformNodes(node.Childs));
-				yield return blockStatement;
+				foreach(Ast.INode inode in TransformNodes(node.Childs)) {
+					yield return inode;
+				}
 			} else if (node is Loop) {
 				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
 				blockStatement.Children.AddRange(TransformNodes(node.Childs));
@@ -349,7 +352,7 @@ namespace Decompiler
 				if (byteCode.Operand != null) {
 					args.Insert(0, new IdentifierExpression(FormatByteCodeOperand(byteCode.Operand)));
 				}
-				return new Ast.InvocationExpression(new IdentifierExpression("__" + byteCode.OpCode.Name), args);
+				return new Ast.InvocationExpression(new IdentifierExpression(byteCode.OpCode.Name), args);
 			}
 		}
 		
@@ -391,7 +394,7 @@ namespace Decompiler
 			Ast.Expression arg3 = args.Count >= 3 ? args[2] : null;
 			
 			Ast.Statement branchCommand = null;
-			if (byteCode.Operand is ILExpression) {
+			if (byteCode.Operand is ILLabel) {
 				branchCommand = new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
 			}
 			
