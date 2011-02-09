@@ -704,7 +704,9 @@ namespace Decompiler
 				case Code.Starg: throw new NotImplementedException();
 				case Code.Stloc: {
 					if (operand is ILStackVariable) {
-						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(((ILStackVariable)operand).Name), AssignmentOperatorType.Assign, arg1);
+						Ast.LocalVariableDeclaration astLocalVar = new Ast.LocalVariableDeclaration(new Ast.VariableDeclaration(((ILStackVariable)operand).Name, arg1));
+						astLocalVar.TypeReference = new Ast.TypeReference("var");
+						return astLocalVar;
 					}
 					VariableDefinition locVar = (VariableDefinition)operand;
 					string name = locVar.Name;

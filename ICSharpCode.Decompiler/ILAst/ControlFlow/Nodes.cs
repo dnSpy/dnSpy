@@ -124,8 +124,6 @@ namespace Decompiler.ControlFlow
 		public MethodBodyGraph(List<ILNode> ast)
 		{
 			if (ast.Count == 0) throw new ArgumentException("Count == 0", "ast");
-			this.methodEntry = new BasicBlock();
-			this.Childs.Add(this.methodEntry);
 			this.Childs.AddRange(SplitToBasicBlocks(ast));
 			
 			// Add branch links to BasicBlocks
@@ -162,6 +160,7 @@ namespace Decompiler.ControlFlow
 				{
 					BasicBlock oldBB = basicBlock;
 					basicBlock = new BasicBlock();
+					if (methodEntry == null) methodEntry = basicBlock;
 					nodes.Add(basicBlock);
 					// Links
 					if (oldBB != null && ast[i - 1] is ILExpression && ((ILExpression)ast[i - 1]).OpCode.CanFallThough()) {

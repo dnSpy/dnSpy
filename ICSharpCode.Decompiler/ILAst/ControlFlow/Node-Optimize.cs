@@ -60,9 +60,7 @@ namespace Decompiler.ControlFlow
 		public void OptimizeShortCircuits()
 		{
 			foreach(Node child in this.Childs) {
-				if (child is Loop) {
-					child.OptimizeShortCircuits();
-				}
+				child.OptimizeShortCircuits();
 			}
 			
 		Reset:
@@ -130,9 +128,7 @@ namespace Decompiler.ControlFlow
 		public void OptimizeConditions()
 		{
 			foreach(Node child in this.Childs) {
-				if (child is Loop) {
-					child.OptimizeConditions();
-				}
+				child.OptimizeConditions();
 			}
 			
 			Node conditionNode = this.HeadChild;
