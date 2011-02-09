@@ -49,8 +49,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ast\AstBuilder.cs" />
+    <Compile Include="Ast\AstMetodBodyBuilder.cs" />
+    <Compile Include="Ast\Transforms\Idioms.cs" />
+    <Compile Include="Ast\Transforms\PushNegation.cs" />
+    <Compile Include="Ast\Transforms\RemoveDeadLabels.cs" />
+    <Compile Include="Ast\Transforms\RemoveEmptyElseBody.cs" />
+    <Compile Include="Ast\Transforms\RemoveGotos.cs" />
+    <Compile Include="Ast\Transforms\RemoveParenthesis.cs" />
+    <Compile Include="Ast\Transforms\RestoreLoop.cs" />
+    <Compile Include="Ast\Transforms\SimplifyTypeReferences.cs" />
     <Compile Include="CecilExtensions.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
+    <Compile Include="Disassembler\ILStructure.cs" />
     <Compile Include="Disassembler\MethodBodyDisassembler.cs" />
     <Compile Include="Disassembler\ReflectionDisassembler.cs" />
     <Compile Include="FlowAnalysis\ControlFlowEdge.cs" />
@@ -68,19 +79,39 @@
     <Compile Include="FlowAnalysis\SsaVariable.cs" />
     <Compile Include="FlowAnalysis\TransformToSsa.cs" />
     <Compile Include="GraphVizGraph.cs" />
+    <Compile Include="ILAst\ControlFlow\Node-Optimize.cs" />
+    <Compile Include="ILAst\ControlFlow\Node-Structure.cs" />
+    <Compile Include="ILAst\ControlFlow\Node-Transforms.cs" />
+    <Compile Include="ILAst\ControlFlow\NodeCollection.cs" />
+    <Compile Include="ILAst\ControlFlow\Nodes.cs" />
+    <Compile Include="ILAst\ILAstBuilder.cs" />
+    <Compile Include="ILAst\ILAstTypes.cs" />
     <Compile Include="ITextOutput.cs" />
+    <Compile Include="Mono.Cecil.Rocks\Constants.cs" />
+    <Compile Include="Mono.Cecil.Rocks\MethodBodyRocks.cs" />
+    <Compile Include="Mono.Cecil.Rocks\MyRocks.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="PlainTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\AssemblyInfo.template.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Decompiler\lib\NRefactory\Project\NRefactory.csproj">
+      <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
+      <Name>NRefactory</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Ast" />
+    <Folder Include="Ast\Transforms" />
     <Folder Include="Disassembler" />
+    <Folder Include="ILAst" />
+    <Folder Include="ILAst\ControlFlow" />
+    <Folder Include="Mono.Cecil.Rocks" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <Target Name="BeforeBuild">

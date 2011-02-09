@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.41115</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</ProjectGuid>
+    <RootNamespace>ICSharpCode.NRefactory</RootNamespace>
+    <AssemblyName>ICSharpCode.NRefactory</AssemblyName>
+    <OutputTarget>Library</OutputTarget>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>False</NoStdLib>
+    <NoConfig>False</NoConfig>
+    <RunPostBuildEvent>OnSuccessfulBuild</RunPostBuildEvent>
+    <OutputType>Library</OutputType>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>Resources\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>94896128</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+    <RunCodeAnalysis>False</RunCodeAnalysis>
+    <CodeAnalysisRules>-Microsoft.Design#CA1002;-Microsoft.Design#CA1020;-Microsoft.Design#CA1051;-Microsoft.Design#CA1062;-Microsoft.Globalization#CA1303;-Microsoft.Globalization#CA1305;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1800;-Microsoft.Performance#CA1805;-Microsoft.Usage#CA2211;-Microsoft.Usage#CA2227</CodeAnalysisRules>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>TEST; DEBUG</DefineConstants>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TEST</DefineConstants>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>Full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>None</DebugType>
+    <OutputPath>bin\Release</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ICSharpCode.NRefactory.snk" />
+    <None Include="Src\Lexer\BuildKeywords.pl" />
+    <Compile Include="Configuration\AssemblyInfo.cs" />
+    <Compile Include="Src\Ast\NodeCollection.cs" />
+    <Compile Include="Src\Lexer\AbstractLexer.cs" />
+    <Compile Include="Src\Lexer\CSharp\Keywords.cs" />
+    <Compile Include="Src\Lexer\CSharp\Lexer.cs" />
+    <Compile Include="Src\Lexer\CSharp\Tokens.cs" />
+    <Compile Include="Src\Lexer\ILexer.cs" />
+    <Compile Include="Src\Lexer\LookupTable.cs" />
+    <Compile Include="Src\Lexer\Special\BlankLine.cs" />
+    <Compile Include="Src\Lexer\Special\Comment.cs" />
+    <Compile Include="Src\Lexer\Special\CommentType.cs" />
+    <Compile Include="Src\Lexer\Special\PreProcessingDirective.cs" />
+    <Compile Include="Src\Lexer\Special\SpecialTracker.cs" />
+    <Compile Include="Src\Lexer\Special\TagComment.cs" />
+    <Compile Include="Src\Lexer\Token.cs" />
+    <Compile Include="Src\Lexer\VBNet\Keywords.cs" />
+    <Compile Include="Src\Lexer\VBNet\Lexer.cs" />
+    <Compile Include="Src\Lexer\VBNet\Tokens.cs" />
+    <Compile Include="Src\Lexer\Special\ISpecial.cs" />
+    <Compile Include="Src\OperatorPrecedence.cs" />
+    <Compile Include="Src\Parser\CSharp\CSharpParser.cs" />
+    <Compile Include="Src\Parser\CSharp\Parser.cs" />
+    <Compile Include="Src\Parser\VBNet\Parser.cs" />
+    <Compile Include="Src\Parser\VBNet\VBNetParser.cs" />
+    <Compile Include="Src\Parser\AbstractParser.cs" />
+    <Compile Include="Src\Parser\Errors.cs" />
+    <Compile Include="Src\Parser\IParser.cs" />
+    <Compile Include="Src\Parser\ModifierList.cs" />
+    <Compile Include="Src\PrettyPrinter\CSharp\CSharpOutputVisitor.cs" />
+    <Compile Include="Src\PrettyPrinter\CSharp\OutputFormatter.cs" />
+    <Compile Include="Src\PrettyPrinter\CSharp\PrettyPrintOptions.cs" />
+    <Compile Include="Src\PrettyPrinter\VBNet\VBNetOutputFormatter.cs" />
+    <Compile Include="Src\PrettyPrinter\VBNet\VBNetOutputVisitor.cs" />
+    <Compile Include="Src\PrettyPrinter\VBNet\VBNetPrettyPrintOptions.cs" />
+    <Compile Include="Src\PrettyPrinter\AbstractOutputFormatter.cs" />
+    <Compile Include="Src\PrettyPrinter\AbstractPrettyPrintOptions.cs" />
+    <Compile Include="Src\PrettyPrinter\IOutputAstVisitor.cs" />
+    <Compile Include="Src\PrettyPrinter\SpecialNodesInserter.cs" />
+    <Compile Include="Src\SnippetParser.cs" />
+    <Compile Include="Src\Visitors\AbstractAstTransformer.cs" />
+    <Compile Include="Src\Visitors\AbstractASTVisitor.cs" />
+    <Compile Include="Src\Visitors\CodeDOMOutputVisitor.cs" />
+    <Compile Include="Src\Visitors\CodeDOMVerboseOutputGenerator.cs" />
+    <Compile Include="Src\Visitors\ConvertVisitorBase.cs" />
+    <Compile Include="Src\Visitors\CSharpConstructsConvertVisitor.cs" />
+    <Compile Include="Src\Visitors\LookupTableVisitor.cs" />
+    <Compile Include="Src\Visitors\PrefixFieldsVisitor.cs" />
+    <Compile Include="Src\Visitors\RenameIdentifierVisitor.cs" />
+    <Compile Include="Src\Visitors\ToCSharpConvertVisitor.cs" />
+    <Compile Include="Src\Visitors\ToVBNetConvertVisitor.cs" />
+    <Compile Include="Src\Visitors\ToVBNetRenameConflictingVariables.cs" />
+    <Compile Include="Src\Visitors\VBNetConstructsConvertVisitor.cs" />
+    <Compile Include="Src\EnvironmentInformationProvider.cs" />
+    <Compile Include="Src\IAstVisitor.cs" />
+    <Compile Include="Src\ParserFactory.cs" />
+    <Compile Include="Src\Location.cs" />
+    <Compile Include="Src\Ast\General\BlockStatement.cs" />
+    <Compile Include="Src\Ast\General\CompilationUnit.cs" />
+    <Compile Include="Src\Ast\General\Expression.cs" />
+    <Compile Include="Src\Ast\General\LocalVariableDeclaration.cs" />
+    <Compile Include="Src\Ast\General\PrimitiveExpression.cs" />
+    <Compile Include="Src\Ast\General\Statement.cs" />
+    <Compile Include="Src\Ast\AbstractNode.cs" />
+    <Compile Include="Src\Ast\Enums.cs" />
+    <Compile Include="Src\Ast\Generated.cs" />
+    <Compile Include="Src\Ast\INode.cs" />
+    <Compile Include="Src\Ast\INullable.cs" />
+    <Compile Include="Src\Ast\TypeReference.cs" />
+    <Compile Include="Src\Parser\VBNet\ParamModifierList.cs" />
+    <Compile Include="Src\Visitors\NodeTrackingAstVisitor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Src\Lexer\CSharp\KeywordList.txt" />
+    <Content Include="Src\Lexer\VBNet\KeywordList.txt" />
+    <Folder Include="Src\Parser" />
+    <Folder Include="Src\Parser\CSharp" />
+    <Content Include="Src\Parser\CSharp\cs.ATG" />
+    <Content Include="Src\Parser\CSharp\trace.txt" />
+    <Folder Include="Src\Parser\Frames" />
+    <Content Include="Src\Parser\Frames\OldSharpCoco.exe" />
+    <Content Include="Src\Parser\Frames\Parser.frame" />
+    <Content Include="Src\Parser\Frames\Parser.frame.new" />
+    <Content Include="Src\Parser\Frames\Parser.frame.old" />
+    <Content Include="Src\Parser\Frames\Scanner.frame" />
+    <Content Include="Src\Parser\Frames\SharpCoco.exe" />
+    <Content Include="Src\Parser\Frames\trace.txt" />
+    <Folder Include="Src\Parser\VBNet" />
+    <Content Include="Src\Parser\VBNet\VBNET.ATG" />
+    <Content Include="Src\Parser\gen.bat" />
+    <Folder Include="Src\PrettyPrinter" />
+    <Folder Include="Src\PrettyPrinter\CSharp" />
+    <Folder Include="Src\PrettyPrinter\VBNet" />
+    <Folder Include="Src\Visitors" />
+    <Folder Include="Src\Ast" />
+    <Folder Include="Src\Ast\General" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>

@@ -29,6 +29,24 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 	/// </summary>
 	sealed class OpCodeInfo
 	{
+		public static bool IsUnconditionalBranch(OpCode opcode)
+		{
+			if (opcode.OpCodeType == OpCodeType.Prefix)
+				return false;
+			switch (opcode.FlowControl) {
+				case FlowControl.Branch:
+				case FlowControl.Throw:
+				case FlowControl.Return:
+					return true;
+				case FlowControl.Next:
+				case FlowControl.Call:
+				case FlowControl.Cond_Branch:
+					return false;
+				default:
+					throw new NotSupportedException(opcode.FlowControl.ToString());
+			}
+		}
+		
 		static readonly OpCodeInfo[] knownOpCodes = {
 			#region Base Instructions
 			new OpCodeInfo(OpCodes.Add)        { CanThrow = false },

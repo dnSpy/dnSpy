@@ -123,6 +123,14 @@ namespace ICSharpCode.Decompiler
 		}
 		#endregion
 		
+		/// <summary>
+		/// Gets the (exclusive) end offset of this instruction.
+		/// </summary>
+		public static int GetEndOffset(this Instruction inst)
+		{
+			return inst.Offset + inst.GetSize();
+		}
+		
 		public static string OffsetToString(int offset)
 		{
 			return string.Format("IL_{0:x4}", offset);

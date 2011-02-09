@@ -1,0 +1,243 @@
+\documentclass[12pt]{article}
+\usepackage{a4wide}
+\usepackage{listings}
+
+\parindent 0pt
+\parskip 6pt
+
+\begin{document}
+
+\thispagestyle{empty}
+
+\rightline{\large\emph{David Srbeck\'y}}
+\medskip
+\rightline{\large\emph{Jesus College}}
+\medskip
+\rightline{\large\emph{ds417}}
+
+\vspace{0.675in}
+
+\centerline{\large Progress Report}
+\vspace{0.4in}
+\centerline{\Large\bf .NET Decompiler}
+\vspace{0.3in}
+\centerline{\large\emph{January~30,~2008}}
+
+\vspace{0.675in}
+
+{\bf Project Originator:} \emph{David Srbeck\'y}
+
+\vspace{0.1in}
+
+{\bf Project Supervisor:} \emph{Alan Mycroft}
+
+\vspace{0.1in}
+
+{\bf Director of Studies:} \emph{Jean Bacon} and \emph{David Ingram}
+
+\vspace{0.1in}
+
+{\bf Overseers:} \emph{Anuj Dawar} and \emph{Andrew Moore}
+
+\vspace{0.1in}
+
+\vfil
+\eject
+
+\newcommand{\CS}{\emph{C\#} }
+
+\lstset{
+  basicstyle=\small,
+  language={[Sharp]C},
+  tabsize=4,
+  numbers=left,
+  frame=single,
+  frameround=tfft
+}
+
+\section*{Work completed so far}
+\subsection*{Disassemble \emph{.NET} bytecode}
+
+The \emph{.NET} assembly is read using the \emph{Cecil} library
+and the class structure is created.  Method bodies contain the 
+disassembly of the IL bytecode.  The debugging comment on the 
+right indicates the stack behavior of the given instruction.
+This, of course, is not valid \CS code yet.
+
+\lstinputlisting[lastline=32]
+{./Evolution/01_Disassemble.cs}
+
+\newpage
+\subsection*{Start creating expressions}
+
+The bytecodes are converted to \CS expressions on individual basis.
+Only one bytecode is considered at a time and thus the expressions
+are completely independent.  The resulting output is a valid \CS code
+which however does not compile since the dummy arguments \verb|arg1|, 
+\verb|arg2|, etc\dots{} are never defined.  Conditional and unconditional
+branches are converted to \verb|goto| goto statements.
+
+\lstinputlisting[lastline=32]
+{./Evolution/02_Peephole_decompilation.cs}
+
+\newpage
+\subsection*{Data-flow analysis}
+
+The execution of the bytecode is simulated and the state of the stack is 
+recorded for each position.  We are interested in the number of 
+elements on the stack as well as which instruction has pushed the 
+individual elements on the stack.  This information can then be used to eliminate 
+the dummy \verb|arg1| arguments.  Result of each instruction is stored
+in new temporary variable.  When an instruction pops a stack value
+we look-up which instruction has allocated the value and use the temporary
+variable of the allocating instruction.
+This code compiles and works correctly.
+
+\lstinputlisting[firstline=21, lastline=52]
+{./Evolution/03_Dataflow_Comments.cs}
+
+\newpage
+\subsection*{In-lineing expressions}
+
+Many of the temporary variables can be in-lined into the expressions in which
+they are used.  This is in general non-trivial optimization, however it is 
+simpler in this case since the temporary variables generated to store the
+stack values are guaranteed to be single static assignment variables (the 
+variable is assigned only once during the push instruction and is used
+only once during the pop instruction).
+Having said that, we still need to check that doing the optimization is
+safe with regards to expression evaluation order and with regrads to branching.
+
+\lstinputlisting[firstline=1, lastline=32]
+{./Evolution/04_Inline_expressions.cs}
+
+\newpage
+\subsection*{Finding basic blocks}
+
+The first step of reconstructing any high-level structures is the 
+decomposition of the program into basic blocks.  This is an easy
+algorithm to implement.
+
+I chose to use the following constraint for the output:
+``Each basic block starts with a label and is exited by an explicit 
+\verb|goto| statement.''
+Therefore except for the method entry, the order 
+of the blocks is completely irrelevant.  Any swapping of the basic
+blocks is not going change the semantics of the program in any way.
+
+\lstinputlisting[firstline=1, lastline=30]
+{./Evolution/05_Find_basic_blocks.cs}
+
+\newpage
+\subsection*{Finding loops}
+
+The algorithm for finding loops is inspired by T1-T2 transformations.
+T1-T2 transformations are used to determine whether a graph is 
+reducible or not.  The core idea is that if a block of code has 
+only one predecessor then the block of code can be merged
+with its predecessor to form a directed acyclic graph.  Using this,
+loops will reduce to single self-referencing nodes.  
+This also works for nested loops.
+
+Note that merely adding a loop does not change the program in any way --
+the loop is completely redundant as far as control flow goes.  
+The basic blocks still explicitly transfer control using \verb|goto|
+statements, so the control flow never reaches the loop.
+
+This is desirable property.  It ensures that the program will run
+correctly.  The order of basic blocks and their nesting within loops
+does not have any effect on program correctness.
+
+The only advantage of the loop is readability and that some \verb|goto|
+statements can be replaced by \verb|break| and \verb|continue| statements
+if they have the same semantics in the given context.
+
+\lstinputlisting[firstline=1, lastline=25]
+{./Evolution/06_Find_loops.cs}
+
+\newpage
+\subsection*{Finding conditionals}
+
+The current algorithm for finding conditionals works as follows:
+First find a node that has two successors.  Get all nodes accessible
+\emph{only} from the `true' branch -- these form the `true' body of
+the conditional.  Similarly, all nodes accessible \emph{only} from the 
+`false' branch form the `false' body.  The rest of the nodes is
+not part of the conditional.
+
+Similarly as for the loops, adding a conditional does not have any
+effect on program correctness.
+
+\lstinputlisting[firstline=1, lastline=32]
+{./Evolution/07_Find_conditionals.cs}
+
+\newpage
+\subsection*{Remove dead jumps}
+
+There are many \verb|goto| statements in the form:
+\begin{verbatim}
+goto BasicBlock_X;
+BasicBlock_X:
+\end{verbatim}
+These \verb|goto| statement can be removed.  As a result of 
+doing that, several labels will become dead; these can be
+removed as well.
+
+\lstinputlisting[firstline=1, lastline=32]
+{./Evolution/08_Remove_dead_jumps.cs}
+
+\newpage
+\subsection*{Reduce loops}
+
+It is common for loops to be preceded by a temporary variable
+initialization, start by evaluating a condition and finally
+end by doing an increment on a variable.  We can look
+for these patterns and if they are found move the code 
+to the \verb|for(;;)| part of the statement.
+
+\lstinputlisting[firstline=1, lastline=32]
+{./Evolution/09_Reduce_loops.cs}
+
+\newpage
+\subsection*{Clean up}
+
+Finally some minor cleanups like removing empty statements and
+simplifying type names.
+
+\lstinputlisting[firstline=1, lastline=42]
+{./Evolution/10_Short_type_names.cs}
+
+\newpage
+\subsection*{Original source code}
+Here is the original source code for reference.
+
+\lstinputlisting[firstline=1, lastline=41]
+{./Evolution/QuickSort_original.cs}
+
+\newpage
+\subsection*{Unexpected difficulties}
+
+The \emph{CodeDom} library that I have initially intended to use
+to output source code in arbitrary \emph{.NET} language has turned out to be
+quite incomplete.  That is, since the library aims to be
+able to represent source code for any language, it has 
+feature set limited to the lowest common denominator.
+Therefore, I have switched to \emph{NRefactory} library which
+is specifically designed with \CS and \emph{VB.NET} in mind.
+
+Using \emph{T1-T2} transformations for loop finding turned out to be
+a slightly more difficult since the algorithm is, after all,
+originally intended to produce a yes or no answer to whether the graph 
+is reducible.  However, it was not problematic to refactor
+the idea to suit a different purpose.
+
+\subsection*{Summary}
+
+The project tasks were performed in the planned order and
+the project is progressing according to the schedule.
+
+The quality of decompilation of the Quick-Sort algorithm is 
+almost `as good as it gets' so I intend to look for some more
+complex assembly to tackle.
+
+\end{document}
