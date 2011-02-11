@@ -179,6 +179,16 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			{
 				return null;
 			}
+			
+			public AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
+			{
+				return null;
+			}
+			
+			public AssemblyDefinition Resolve(string fullName, ReaderParameters parameters)
+			{
+				return null;
+			}
 		}
 		#endregion
 		
