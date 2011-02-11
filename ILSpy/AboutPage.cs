@@ -163,7 +163,12 @@ namespace ICSharpCode.ILSpy
 			{
 				XElement s = spySettings["UpdateSettings"];
 				this.automaticUpdateCheckEnabled = (bool?)s.Element("AutomaticUpdateCheckEnabled") ?? true;
-				this.LastSuccessfulUpdateCheck = (DateTime?)s.Element("LastSuccessfulUpdateCheck");
+				try {
+					this.LastSuccessfulUpdateCheck = (DateTime?)s.Element("LastSuccessfulUpdateCheck");
+				} catch (FormatException) {
+					// avoid crashing on settings files invalid due to
+					// https://github.com/icsharpcode/ILSpy/issues/closed/#issue/2
+				}
 			}
 			
 			bool automaticUpdateCheckEnabled;
@@ -194,11 +199,11 @@ namespace ICSharpCode.ILSpy
 			
 			public void Save()
 			{
-				ILSpySettings.SaveSettings(new XElement(
-					"UpdateSettings",
-					new XElement("AutomaticUpdateCheckEnabled", automaticUpdateCheckEnabled),
-					new XElement("LastSuccessfulUpdateCheck", this.LastSuccessfulUpdateCheck)
-				));
+				XElement updateSettings = new XElement("UpdateSettings");
+				updateSettings.Add(new XElement("AutomaticUpdateCheckEnabled", automaticUpdateCheckEnabled));
+				if (lastSuccessfulUpdateCheck != null)
+					updateSettings.Add(new XElement("LastSuccessfulUpdateCheck", lastSuccessfulUpdateCheck));
+				ILSpySettings.SaveSettings(updateSettings);
 			}
 			
 			public event PropertyChangedEventHandler PropertyChanged;
