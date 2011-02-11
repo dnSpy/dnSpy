@@ -1,0 +1,32 @@
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+
+using System;
+
+namespace ICSharpCode.NRefactory.CSharp
+{
+	/// <summary>
+	/// Represents a named argument passed to a method or attribute.
+	/// </summary>
+	public class NamedArgumentExpression : Expression
+	{
+		public string Identifier {
+			get {
+				return GetChildByRole (Roles.Identifier).Name;
+			}
+			set {
+				SetChildByRole(Roles.Identifier, new Identifier(value, AstLocation.Empty));
+			}
+		}
+		
+		public Expression Expression {
+			get { return GetChildByRole (Roles.Expression); }
+			set { SetChildByRole (Roles.Expression, value); }
+		}
+		
+		public override S AcceptVisitor<T, S>(AstVisitor<T, S> visitor, T data)
+		{
+			return visitor.VisitNamedArgumentExpression(this, data);
+		}
+	}
+}

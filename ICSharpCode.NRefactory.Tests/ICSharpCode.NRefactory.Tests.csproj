@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectGuid>{63D3B27A-D966-4902-90B3-30290E1692F1}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ICSharpCode.NRefactory</RootNamespace>
+    <AssemblyName>ICSharpCode.NRefactory.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <WarningLevel>4</WarningLevel>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CSharp\AstStructureTest.cs" />
+    <Compile Include="CSharp\Parser\GeneralScope\DelegateDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\GeneralScope\NamespaceDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\GeneralScope\TypeDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\GeneralScope\UsingDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\BlockStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\CheckedStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\EmptyStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\ExpressionStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\FixedStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\ForStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\GotoStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\IfElseStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\LabelStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\LockStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\ReturnStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\SwitchStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\ThrowStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\TryCatchStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\UnsafeStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\UsingStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\VariableDeclarationStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\WhileStatementTests.cs" />
+    <Compile Include="CSharp\Parser\Statements\YieldStatementTests.cs" />
+    <Compile Include="CSharp\Parser\TypeMembers\ConstructorDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\TypeMembers\DestructorDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\TypeMembers\EventDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\TypeMembers\FieldDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\TypeMembers\IndexerDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\TypeMembers\MethodDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\TypeMembers\OperatorDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\TypeMembers\PropertyDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\TypeSystemConvertVisitorTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\AliasReferenceExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\AnonymousMethodTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\ArrayObjectCreateExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\AssignmentExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\BaseReferenceExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\BinaryOperatorExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\CastExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\CheckedExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\ConditionalExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\DefaultValueExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\IdentifierExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\IndexerExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\InvocationExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\IsExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\LambdaExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\MemberReferenceExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\ParenthesizedExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\PointerReferenceExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\PrimitiveExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\QueryExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\SizeOfExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\StackAllocExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\ThisReferenceExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\TypeOfExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\TypeReferenceExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\UnaryOperatorExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\GeneralScope\AttributeSectionTests.cs" />
+    <Compile Include="CSharp\Parser\ParseUtil.cs" />
+    <Compile Include="CSharp\Resolver\AttributeTests.cs" />
+    <Compile Include="CSharp\Resolver\BinaryOperatorTests.cs" />
+    <Compile Include="CSharp\Resolver\CastTests.cs" />
+    <Compile Include="CSharp\Resolver\ExtensionMethodTests.cs" />
+    <Compile Include="CSharp\Resolver\InvocationTests.cs" />
+    <Compile Include="CSharp\Resolver\LambdaTests.cs" />
+    <Compile Include="CSharp\Resolver\LinqTests.cs" />
+    <Compile Include="CSharp\Resolver\LocalTypeInferenceTests.cs" />
+    <Compile Include="CSharp\Resolver\NameLookupTests.cs" />
+    <Compile Include="CSharp\Resolver\ObjectCreationTests.cs" />
+    <Compile Include="CSharp\Resolver\TypeInferenceTests.cs" />
+    <Compile Include="CSharp\Resolver\ConversionsTest.cs" />
+    <Compile Include="CSharp\Resolver\OverloadResolutionTests.cs" />
+    <Compile Include="CSharp\Resolver\ResolverTestBase.cs" />
+    <Compile Include="CSharp\Resolver\UnaryOperatorTests.cs" />
+    <Compile Include="CSharp\Resolver\UnsafeCodeTests.cs" />
+    <Compile Include="FormattingTests\TestBraceStlye.cs" />
+    <Compile Include="FormattingTests\TestFormattingBugs.cs" />
+    <Compile Include="FormattingTests\TestSpacingVisitor.cs" />
+    <Compile Include="FormattingTests\TestStatementIndentation.cs" />
+    <Compile Include="FormattingTests\TestTypeLevelIndentation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeSystem\CecilLoaderTests.cs" />
+    <Compile Include="TypeSystem\GetAllBaseTypesTest.cs" />
+    <Compile Include="TypeSystem\GetMembersTests.cs" />
+    <Compile Include="TypeSystem\ReflectionHelperTests.cs" />
+    <Compile Include="TypeSystem\TestInterningProvider.cs" />
+    <Compile Include="TypeSystem\TypeSystemTests.cs" />
+    <Compile Include="TypeSystem\TypeSystemTests.TestCase.cs" />
+    <EmbeddedResource Include="TypeSystem\TypeSystemTests.TestCase.cs" />
+    <Compile Include="Untested.cs" />
+    <Compile Include="Utils\CSharpPrimitiveCastTests.cs" />
+    <Compile Include="Utils\TreeTraversalTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CSharp\Parser\Expression" />
+    <Folder Include="CSharp\Parser\GeneralScope" />
+    <Folder Include="CSharp\Parser\TypeMembers" />
+    <Folder Include="CSharp\Parser\Statements" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
