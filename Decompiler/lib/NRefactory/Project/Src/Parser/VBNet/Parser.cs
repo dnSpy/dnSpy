@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Parser.VB;
@@ -19,13 +20,13 @@ namespace ICSharpCode.NRefactory.Parser.VB {
 
 partial class Parser : AbstractParser
 {
-	const int maxT = 206;
+	const int maxT = 238;
 
 	const  bool   T            = true;
 	const  bool   x            = false;
 	
 
-#line  12 "VBNET.ATG" 
+#line  13 "VBNET.ATG" 
 
 
 /*
@@ -34,373 +35,427 @@ partial class Parser : AbstractParser
 
 	void VBNET() {
 
-#line  231 "VBNET.ATG" 
+#line  263 "VBNET.ATG" 
 		lexer.NextToken(); // get the first token
 		compilationUnit = new CompilationUnit();
+		BlockStart(compilationUnit);
 		
-		while (la.kind == 1) {
-			lexer.NextToken();
+		while (la.kind == 1 || la.kind == 21) {
+			EndOfStmt();
 		}
-		while (la.kind == 136) {
+		while (la.kind == 173) {
 			OptionStmt();
+			while (la.kind == 1 || la.kind == 21) {
+				EndOfStmt();
+			}
 		}
-		while (la.kind == 108) {
+		while (la.kind == 137) {
 			ImportsStmt();
+			while (la.kind == 1 || la.kind == 21) {
+				EndOfStmt();
+			}
 		}
 		while (
-#line  237 "VBNET.ATG" 
+#line  271 "VBNET.ATG" 
 IsGlobalAttrTarget()) {
 			GlobalAttributeSection();
+			while (la.kind == 1 || la.kind == 21) {
+				EndOfStmt();
+			}
 		}
 		while (StartOf(1)) {
 			NamespaceMemberDecl();
+			while (la.kind == 1 || la.kind == 21) {
+				EndOfStmt();
+			}
 		}
 		Expect(0);
 	}
 
+	void EndOfStmt() {
+		while (!(la.kind == 0 || la.kind == 1 || la.kind == 21)) {SynErr(239); lexer.NextToken(); }
+		if (la.kind == 1) {
+			lexer.NextToken();
+		} else if (la.kind == 21) {
+			lexer.NextToken();
+		} else SynErr(240);
+	}
+
 	void OptionStmt() {
 
-#line  242 "VBNET.ATG" 
+#line  276 "VBNET.ATG" 
 		INode node = null; bool val = true; 
-		Expect(136);
+		Expect(173);
 
-#line  243 "VBNET.ATG" 
+#line  277 "VBNET.ATG" 
 		Location startPos = t.Location; 
-		if (la.kind == 95) {
+		if (la.kind == 121) {
 			lexer.NextToken();
-			if (la.kind == 134 || la.kind == 135) {
+			if (la.kind == 170 || la.kind == 171) {
 				OptionValue(
-#line  245 "VBNET.ATG" 
+#line  279 "VBNET.ATG" 
 ref val);
 			}
 
-#line  246 "VBNET.ATG" 
+#line  280 "VBNET.ATG" 
 			node = new OptionDeclaration(OptionType.Explicit, val); 
-		} else if (la.kind == 164) {
+		} else if (la.kind == 207) {
 			lexer.NextToken();
-			if (la.kind == 134 || la.kind == 135) {
+			if (la.kind == 170 || la.kind == 171) {
 				OptionValue(
-#line  248 "VBNET.ATG" 
+#line  282 "VBNET.ATG" 
 ref val);
 			}
 
-#line  249 "VBNET.ATG" 
+#line  283 "VBNET.ATG" 
 			node = new OptionDeclaration(OptionType.Strict, val); 
-		} else if (la.kind == 70) {
+		} else if (la.kind == 87) {
 			lexer.NextToken();
-			if (la.kind == 51) {
+			if (la.kind == 67) {
 				lexer.NextToken();
 
-#line  251 "VBNET.ATG" 
+#line  285 "VBNET.ATG" 
 				node = new OptionDeclaration(OptionType.CompareBinary, val); 
-			} else if (la.kind == 169) {
+			} else if (la.kind == 213) {
 				lexer.NextToken();
 
-#line  252 "VBNET.ATG" 
+#line  286 "VBNET.ATG" 
 				node = new OptionDeclaration(OptionType.CompareText, val); 
-			} else SynErr(207);
-		} else SynErr(208);
+			} else SynErr(241);
+		} else if (la.kind == 139) {
+			lexer.NextToken();
+			if (la.kind == 170 || la.kind == 171) {
+				OptionValue(
+#line  289 "VBNET.ATG" 
+ref val);
+			}
+
+#line  290 "VBNET.ATG" 
+			node = new OptionDeclaration(OptionType.Infer, val); 
+		} else SynErr(242);
 		EndOfStmt();
 
-#line  257 "VBNET.ATG" 
+#line  294 "VBNET.ATG" 
 		if (node != null) {
 		node.StartLocation = startPos;
 		node.EndLocation   = t.Location;
-		compilationUnit.AddChild(node);
+		AddChild(node);
 		}
 		
 	}
 
 	void ImportsStmt() {
 
-#line  280 "VBNET.ATG" 
+#line  315 "VBNET.ATG" 
 		List<Using> usings = new List<Using>();
 		
-		Expect(108);
+		Expect(137);
 
-#line  284 "VBNET.ATG" 
+#line  319 "VBNET.ATG" 
 		Location startPos = t.Location;
 		Using u;
 		
 		ImportClause(
-#line  287 "VBNET.ATG" 
+#line  322 "VBNET.ATG" 
 out u);
 
-#line  287 "VBNET.ATG" 
+#line  322 "VBNET.ATG" 
 		if (u != null) { usings.Add(u); } 
-		while (la.kind == 12) {
+		while (la.kind == 22) {
 			lexer.NextToken();
 			ImportClause(
-#line  289 "VBNET.ATG" 
+#line  324 "VBNET.ATG" 
 out u);
 
-#line  289 "VBNET.ATG" 
+#line  324 "VBNET.ATG" 
 			if (u != null) { usings.Add(u); } 
 		}
 		EndOfStmt();
 
-#line  293 "VBNET.ATG" 
+#line  328 "VBNET.ATG" 
 		UsingDeclaration usingDeclaration = new UsingDeclaration(usings);
 		usingDeclaration.StartLocation = startPos;
 		usingDeclaration.EndLocation   = t.Location;
-		compilationUnit.AddChild(usingDeclaration);
+		AddChild(usingDeclaration);
 		
 	}
 
 	void GlobalAttributeSection() {
-		Expect(27);
+		Expect(40);
 
-#line  2055 "VBNET.ATG" 
+#line  2817 "VBNET.ATG" 
 		Location startPos = t.Location; 
-		if (la.kind == 49) {
+		if (la.kind == 65) {
 			lexer.NextToken();
-		} else if (la.kind == 121) {
+		} else if (la.kind == 155) {
 			lexer.NextToken();
-		} else SynErr(209);
+		} else SynErr(243);
 
-#line  2057 "VBNET.ATG" 
-		string attributeTarget = t.val.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+#line  2819 "VBNET.ATG" 
+		string attributeTarget = t.val != null ? t.val.ToLower(System.Globalization.CultureInfo.InvariantCulture) : null;
 		List<ASTAttribute> attributes = new List<ASTAttribute>();
 		ASTAttribute attribute;
 		
-		Expect(13);
+		Expect(21);
 		Attribute(
-#line  2061 "VBNET.ATG" 
+#line  2823 "VBNET.ATG" 
 out attribute);
 
-#line  2061 "VBNET.ATG" 
+#line  2823 "VBNET.ATG" 
 		attributes.Add(attribute); 
 		while (
-#line  2062 "VBNET.ATG" 
+#line  2824 "VBNET.ATG" 
 NotFinalComma()) {
-			if (la.kind == 12) {
+			if (la.kind == 22) {
 				lexer.NextToken();
-				if (la.kind == 49) {
+				if (la.kind == 65) {
 					lexer.NextToken();
-				} else if (la.kind == 121) {
+				} else if (la.kind == 155) {
 					lexer.NextToken();
-				} else SynErr(210);
-				Expect(13);
+				} else SynErr(244);
+				Expect(21);
 			}
 			Attribute(
-#line  2062 "VBNET.ATG" 
+#line  2824 "VBNET.ATG" 
 out attribute);
 
-#line  2062 "VBNET.ATG" 
+#line  2824 "VBNET.ATG" 
 			attributes.Add(attribute); 
 		}
-		if (la.kind == 12) {
+		if (la.kind == 22) {
 			lexer.NextToken();
 		}
-		Expect(26);
+		Expect(39);
 		EndOfStmt();
 
-#line  2067 "VBNET.ATG" 
+#line  2829 "VBNET.ATG" 
 		AttributeSection section = new AttributeSection {
 		AttributeTarget = attributeTarget,
 		Attributes = attributes,
 		StartLocation = startPos,
 		EndLocation = t.EndLocation
 		};
-		compilationUnit.AddChild(section);
+		AddChild(section);
 		
 	}
 
 	void NamespaceMemberDecl() {
 
-#line  322 "VBNET.ATG" 
+#line  361 "VBNET.ATG" 
 		ModifierList m = new ModifierList();
 		AttributeSection section;
 		List<AttributeSection> attributes = new List<AttributeSection>();
 		string qualident;
 		
-		if (la.kind == 126) {
+		if (la.kind == 160) {
 			lexer.NextToken();
 
-#line  329 "VBNET.ATG" 
+#line  368 "VBNET.ATG" 
 			Location startPos = t.Location;
 			
 			Qualident(
-#line  331 "VBNET.ATG" 
+#line  370 "VBNET.ATG" 
 out qualident);
 
-#line  333 "VBNET.ATG" 
+#line  372 "VBNET.ATG" 
 			INode node =  new NamespaceDeclaration(qualident);
 			node.StartLocation = startPos;
-			compilationUnit.AddChild(node);
-			compilationUnit.BlockStart(node);
+			AddChild(node);
+			BlockStart(node);
 			
-			Expect(1);
+			EndOfStmt();
 			NamespaceBody();
 
-#line  341 "VBNET.ATG" 
+#line  380 "VBNET.ATG" 
 			node.EndLocation = t.Location;
-			compilationUnit.BlockEnd();
+			BlockEnd();
 			
 		} else if (StartOf(2)) {
-			while (la.kind == 27) {
+			while (la.kind == 40) {
 				AttributeSection(
-#line  345 "VBNET.ATG" 
+#line  384 "VBNET.ATG" 
 out section);
 
-#line  345 "VBNET.ATG" 
+#line  384 "VBNET.ATG" 
 				attributes.Add(section); 
 			}
 			while (StartOf(3)) {
 				TypeModifier(
-#line  346 "VBNET.ATG" 
+#line  385 "VBNET.ATG" 
 m);
 			}
 			NonModuleDeclaration(
-#line  346 "VBNET.ATG" 
+#line  385 "VBNET.ATG" 
 m, attributes);
-		} else SynErr(211);
+		} else SynErr(245);
 	}
 
 	void OptionValue(
-#line  265 "VBNET.ATG" 
+#line  302 "VBNET.ATG" 
 ref bool val) {
-		if (la.kind == 135) {
+		if (la.kind == 171) {
 			lexer.NextToken();
 
-#line  267 "VBNET.ATG" 
+#line  304 "VBNET.ATG" 
 			val = true; 
-		} else if (la.kind == 134) {
+		} else if (la.kind == 170) {
 			lexer.NextToken();
 
-#line  269 "VBNET.ATG" 
+#line  306 "VBNET.ATG" 
 			val = false; 
-		} else SynErr(212);
-	}
-
-	void EndOfStmt() {
-		if (la.kind == 1) {
-			lexer.NextToken();
-		} else if (la.kind == 13) {
-			lexer.NextToken();
-			if (la.kind == 1) {
-				lexer.NextToken();
-			}
-		} else SynErr(213);
+		} else SynErr(246);
 	}
 
 	void ImportClause(
-#line  300 "VBNET.ATG" 
+#line  335 "VBNET.ATG" 
 out Using u) {
 
-#line  302 "VBNET.ATG" 
+#line  337 "VBNET.ATG" 
 		string qualident  = null;
 		TypeReference aliasedType = null;
 		u = null;
 		
-		Qualident(
-#line  306 "VBNET.ATG" 
+		if (StartOf(4)) {
+			Qualident(
+#line  342 "VBNET.ATG" 
 out qualident);
-		if (la.kind == 11) {
-			lexer.NextToken();
-			TypeName(
-#line  307 "VBNET.ATG" 
+			if (la.kind == 20) {
+				lexer.NextToken();
+				TypeName(
+#line  343 "VBNET.ATG" 
 out aliasedType);
-		}
+			}
 
-#line  309 "VBNET.ATG" 
-		if (qualident != null && qualident.Length > 0) {
-		if (aliasedType != null) {
-			u = new Using(qualident, aliasedType);
-		} else {
-			u = new Using(qualident);
-		}
-		}
-		
+#line  345 "VBNET.ATG" 
+			if (qualident != null && qualident.Length > 0) {
+			if (aliasedType != null) {
+				u = new Using(qualident, aliasedType);
+			} else {
+				u = new Using(qualident);
+			}
+			}
+			
+		} else if (la.kind == 10) {
+
+#line  353 "VBNET.ATG" 
+			string prefix = null; 
+			lexer.NextToken();
+			Identifier();
+
+#line  354 "VBNET.ATG" 
+			prefix = t.val; 
+			Expect(20);
+			Expect(3);
+
+#line  354 "VBNET.ATG" 
+			u = new Using(t.literalValue as string, prefix); 
+			Expect(11);
+		} else SynErr(247);
 	}
 
 	void Qualident(
-#line  2794 "VBNET.ATG" 
+#line  3617 "VBNET.ATG" 
 out string qualident) {
 
-#line  2796 "VBNET.ATG" 
+#line  3619 "VBNET.ATG" 
 		string name;
 		qualidentBuilder.Length = 0; 
 		
 		Identifier();
 
-#line  2800 "VBNET.ATG" 
+#line  3623 "VBNET.ATG" 
 		qualidentBuilder.Append(t.val); 
 		while (
-#line  2801 "VBNET.ATG" 
+#line  3624 "VBNET.ATG" 
 DotAndIdentOrKw()) {
-			Expect(10);
+			Expect(26);
 			IdentifierOrKeyword(
-#line  2801 "VBNET.ATG" 
+#line  3624 "VBNET.ATG" 
 out name);
 
-#line  2801 "VBNET.ATG" 
+#line  3624 "VBNET.ATG" 
 			qualidentBuilder.Append('.'); qualidentBuilder.Append(name); 
 		}
 
-#line  2803 "VBNET.ATG" 
+#line  3626 "VBNET.ATG" 
 		qualident = qualidentBuilder.ToString(); 
 	}
 
 	void TypeName(
-#line  1948 "VBNET.ATG" 
+#line  2688 "VBNET.ATG" 
 out TypeReference typeref) {
 
-#line  1949 "VBNET.ATG" 
-		ArrayList rank = null; 
+#line  2689 "VBNET.ATG" 
+		ArrayList rank = null; Location startLocation = la.Location; 
 		NonArrayTypeName(
-#line  1951 "VBNET.ATG" 
+#line  2691 "VBNET.ATG" 
 out typeref, false);
 		ArrayTypeModifiers(
-#line  1952 "VBNET.ATG" 
+#line  2692 "VBNET.ATG" 
 out rank);
 
-#line  1953 "VBNET.ATG" 
-		if (rank != null && typeref != null) {
-		typeref.RankSpecifier = (int[])rank.ToArray(typeof(int));
+#line  2694 "VBNET.ATG" 
+		if (typeref != null) {
+		if (rank != null) {
+			typeref.RankSpecifier = (int[])rank.ToArray(typeof(int));
+		}
+		typeref.StartLocation = startLocation;
+		typeref.EndLocation = t.EndLocation;
 		}
 		
+	}
+
+	void Identifier() {
+		if (StartOf(5)) {
+			IdentifierForFieldDeclaration();
+		} else if (la.kind == 98) {
+			lexer.NextToken();
+		} else SynErr(248);
 	}
 
 	void NamespaceBody() {
+		while (la.kind == 1 || la.kind == 21) {
+			EndOfStmt();
+		}
 		while (StartOf(1)) {
 			NamespaceMemberDecl();
+			while (la.kind == 1 || la.kind == 21) {
+				EndOfStmt();
+			}
 		}
-		Expect(88);
-		Expect(126);
-		Expect(1);
+		Expect(113);
+		Expect(160);
+		EndOfStmt();
 	}
 
 	void AttributeSection(
-#line  2128 "VBNET.ATG" 
+#line  2895 "VBNET.ATG" 
 out AttributeSection section) {
 
-#line  2130 "VBNET.ATG" 
-		string attributeTarget = "";List<ASTAttribute> attributes = new List<ASTAttribute>();
+#line  2897 "VBNET.ATG" 
+		string attributeTarget = "";
+		List<ASTAttribute> attributes = new List<ASTAttribute>();
 		ASTAttribute attribute;
+		Location startLocation = la.Location;
 		
-		
-		Expect(27);
-
-#line  2134 "VBNET.ATG" 
-		Location startPos = t.Location; 
+		Expect(40);
 		if (
-#line  2135 "VBNET.ATG" 
+#line  2903 "VBNET.ATG" 
 IsLocalAttrTarget()) {
-			if (la.kind == 93) {
+			if (la.kind == 119) {
 				lexer.NextToken();
 
-#line  2136 "VBNET.ATG" 
+#line  2904 "VBNET.ATG" 
 				attributeTarget = "event";
-			} else if (la.kind == 154) {
+			} else if (la.kind == 195) {
 				lexer.NextToken();
 
-#line  2137 "VBNET.ATG" 
+#line  2905 "VBNET.ATG" 
 				attributeTarget = "return";
 			} else {
 				Identifier();
 
-#line  2140 "VBNET.ATG" 
+#line  2908 "VBNET.ATG" 
 				string val = t.val.ToLower(System.Globalization.CultureInfo.InvariantCulture);
 				if (val != "field"	|| val != "method" ||
 					val != "module" || val != "param"  ||
@@ -410,1023 +465,1019 @@ IsLocalAttrTarget()) {
 				attributeTarget = t.val;
 				
 			}
-			Expect(13);
+			Expect(21);
 		}
 		Attribute(
-#line  2150 "VBNET.ATG" 
+#line  2918 "VBNET.ATG" 
 out attribute);
 
-#line  2150 "VBNET.ATG" 
+#line  2918 "VBNET.ATG" 
 		attributes.Add(attribute); 
 		while (
-#line  2151 "VBNET.ATG" 
+#line  2919 "VBNET.ATG" 
 NotFinalComma()) {
-			Expect(12);
+			Expect(22);
 			Attribute(
-#line  2151 "VBNET.ATG" 
+#line  2919 "VBNET.ATG" 
 out attribute);
 
-#line  2151 "VBNET.ATG" 
+#line  2919 "VBNET.ATG" 
 			attributes.Add(attribute); 
 		}
-		if (la.kind == 12) {
+		if (la.kind == 22) {
 			lexer.NextToken();
 		}
-		Expect(26);
+		Expect(39);
 
-#line  2155 "VBNET.ATG" 
+#line  2923 "VBNET.ATG" 
 		section = new AttributeSection {
 		AttributeTarget = attributeTarget,
 		Attributes = attributes,
-		StartLocation = startPos,
+		StartLocation = startLocation,
 		EndLocation = t.EndLocation
 		};
 		
 	}
 
 	void TypeModifier(
-#line  2874 "VBNET.ATG" 
+#line  3702 "VBNET.ATG" 
 ModifierList m) {
 		switch (la.kind) {
-		case 148: {
+		case 188: {
 			lexer.NextToken();
 
-#line  2875 "VBNET.ATG" 
+#line  3703 "VBNET.ATG" 
 			m.Add(Modifiers.Public, t.Location); 
 			break;
 		}
-		case 147: {
+		case 187: {
 			lexer.NextToken();
 
-#line  2876 "VBNET.ATG" 
+#line  3704 "VBNET.ATG" 
 			m.Add(Modifiers.Protected, t.Location); 
 			break;
 		}
-		case 99: {
+		case 125: {
 			lexer.NextToken();
 
-#line  2877 "VBNET.ATG" 
+#line  3705 "VBNET.ATG" 
 			m.Add(Modifiers.Internal, t.Location); 
 			break;
 		}
-		case 145: {
+		case 185: {
 			lexer.NextToken();
 
-#line  2878 "VBNET.ATG" 
+#line  3706 "VBNET.ATG" 
 			m.Add(Modifiers.Private, t.Location); 
 			break;
 		}
-		case 158: {
+		case 200: {
 			lexer.NextToken();
 
-#line  2879 "VBNET.ATG" 
+#line  3707 "VBNET.ATG" 
 			m.Add(Modifiers.Static, t.Location); 
 			break;
 		}
-		case 157: {
+		case 199: {
 			lexer.NextToken();
 
-#line  2880 "VBNET.ATG" 
+#line  3708 "VBNET.ATG" 
 			m.Add(Modifiers.New, t.Location); 
 			break;
 		}
-		case 122: {
+		case 156: {
 			lexer.NextToken();
 
-#line  2881 "VBNET.ATG" 
+#line  3709 "VBNET.ATG" 
 			m.Add(Modifiers.Abstract, t.Location); 
-			break;
-		}
-		case 131: {
-			lexer.NextToken();
-
-#line  2882 "VBNET.ATG" 
-			m.Add(Modifiers.Sealed, t.Location); 
-			break;
-		}
-		case 204: {
-			lexer.NextToken();
-
-#line  2883 "VBNET.ATG" 
-			m.Add(Modifiers.Partial, t.Location); 
-			break;
-		}
-		default: SynErr(214); break;
-		}
-	}
-
-	void NonModuleDeclaration(
-#line  405 "VBNET.ATG" 
-ModifierList m, List<AttributeSection> attributes) {
-
-#line  407 "VBNET.ATG" 
-		TypeReference typeRef = null;
-		List<TypeReference> baseInterfaces = null;
-		
-		switch (la.kind) {
-		case 67: {
-
-#line  410 "VBNET.ATG" 
-			m.Check(Modifiers.Classes); 
-			lexer.NextToken();
-
-#line  413 "VBNET.ATG" 
-			TypeDeclaration newType = new TypeDeclaration(m.Modifier, attributes);
-			newType.StartLocation = t.Location;
-			compilationUnit.AddChild(newType);
-			compilationUnit.BlockStart(newType);
-			
-			newType.Type       = ClassType.Class;
-			
-			Identifier();
-
-#line  420 "VBNET.ATG" 
-			newType.Name = t.val; 
-			TypeParameterList(
-#line  421 "VBNET.ATG" 
-newType.Templates);
-			EndOfStmt();
-
-#line  423 "VBNET.ATG" 
-			newType.BodyStartLocation = t.Location; 
-			if (la.kind == 110) {
-				ClassBaseType(
-#line  424 "VBNET.ATG" 
-out typeRef);
-
-#line  424 "VBNET.ATG" 
-				newType.BaseTypes.Add(typeRef); 
-			}
-			while (la.kind == 107) {
-				TypeImplementsClause(
-#line  425 "VBNET.ATG" 
-out baseInterfaces);
-
-#line  425 "VBNET.ATG" 
-				newType.BaseTypes.AddRange(baseInterfaces); 
-			}
-			ClassBody(
-#line  426 "VBNET.ATG" 
-newType);
-			Expect(88);
-			Expect(67);
-
-#line  427 "VBNET.ATG" 
-			newType.EndLocation = t.EndLocation; 
-			Expect(1);
-
-#line  430 "VBNET.ATG" 
-			compilationUnit.BlockEnd();
-			
-			break;
-		}
-		case 121: {
-			lexer.NextToken();
-
-#line  434 "VBNET.ATG" 
-			m.Check(Modifiers.VBModules);
-			TypeDeclaration newType = new TypeDeclaration(m.Modifier, attributes);
-			compilationUnit.AddChild(newType);
-			compilationUnit.BlockStart(newType);
-			newType.StartLocation = m.GetDeclarationLocation(t.Location);
-			newType.Type = ClassType.Module;
-			
-			Identifier();
-
-#line  441 "VBNET.ATG" 
-			newType.Name = t.val; 
-			Expect(1);
-
-#line  443 "VBNET.ATG" 
-			newType.BodyStartLocation = t.Location; 
-			ModuleBody(
-#line  444 "VBNET.ATG" 
-newType);
-
-#line  446 "VBNET.ATG" 
-			compilationUnit.BlockEnd();
-			
 			break;
 		}
 		case 166: {
 			lexer.NextToken();
 
-#line  450 "VBNET.ATG" 
-			m.Check(Modifiers.VBStructures);
-			TypeDeclaration newType = new TypeDeclaration(m.Modifier, attributes);
-			compilationUnit.AddChild(newType);
-			compilationUnit.BlockStart(newType);
-			newType.StartLocation = m.GetDeclarationLocation(t.Location);
-			newType.Type = ClassType.Struct;
-			
-			Identifier();
-
-#line  457 "VBNET.ATG" 
-			newType.Name = t.val; 
-			TypeParameterList(
-#line  458 "VBNET.ATG" 
-newType.Templates);
-			Expect(1);
-
-#line  460 "VBNET.ATG" 
-			newType.BodyStartLocation = t.Location; 
-			while (la.kind == 107) {
-				TypeImplementsClause(
-#line  461 "VBNET.ATG" 
-out baseInterfaces);
-
-#line  461 "VBNET.ATG" 
-				newType.BaseTypes.AddRange(baseInterfaces);
-			}
-			StructureBody(
-#line  462 "VBNET.ATG" 
-newType);
-
-#line  464 "VBNET.ATG" 
-			compilationUnit.BlockEnd();
-			
-			break;
-		}
-		case 90: {
-			lexer.NextToken();
-
-#line  469 "VBNET.ATG" 
-			m.Check(Modifiers.VBEnums);
-			TypeDeclaration newType = new TypeDeclaration(m.Modifier, attributes);
-			newType.StartLocation = m.GetDeclarationLocation(t.Location);
-			compilationUnit.AddChild(newType);
-			compilationUnit.BlockStart(newType);
-			
-			newType.Type = ClassType.Enum;
-			
-			Identifier();
-
-#line  477 "VBNET.ATG" 
-			newType.Name = t.val; 
-			if (la.kind == 48) {
-				lexer.NextToken();
-				NonArrayTypeName(
-#line  478 "VBNET.ATG" 
-out typeRef, false);
-
-#line  478 "VBNET.ATG" 
-				newType.BaseTypes.Add(typeRef); 
-			}
-			Expect(1);
-
-#line  480 "VBNET.ATG" 
-			newType.BodyStartLocation = t.Location; 
-			EnumBody(
-#line  481 "VBNET.ATG" 
-newType);
-
-#line  483 "VBNET.ATG" 
-			compilationUnit.BlockEnd();
-			
-			break;
-		}
-		case 112: {
-			lexer.NextToken();
-
-#line  488 "VBNET.ATG" 
-			m.Check(Modifiers.VBInterfacs);
-			TypeDeclaration newType = new TypeDeclaration(m.Modifier, attributes);
-			newType.StartLocation = m.GetDeclarationLocation(t.Location);
-			compilationUnit.AddChild(newType);
-			compilationUnit.BlockStart(newType);
-			newType.Type = ClassType.Interface;
-			
-			Identifier();
-
-#line  495 "VBNET.ATG" 
-			newType.Name = t.val; 
-			TypeParameterList(
-#line  496 "VBNET.ATG" 
-newType.Templates);
-			EndOfStmt();
-
-#line  498 "VBNET.ATG" 
-			newType.BodyStartLocation = t.Location; 
-			while (la.kind == 110) {
-				InterfaceBase(
-#line  499 "VBNET.ATG" 
-out baseInterfaces);
-
-#line  499 "VBNET.ATG" 
-				newType.BaseTypes.AddRange(baseInterfaces); 
-			}
-			InterfaceBody(
-#line  500 "VBNET.ATG" 
-newType);
-
-#line  502 "VBNET.ATG" 
-			compilationUnit.BlockEnd();
-			
-			break;
-		}
-		case 80: {
-			lexer.NextToken();
-
-#line  507 "VBNET.ATG" 
-			m.Check(Modifiers.VBDelegates);
-			DelegateDeclaration delegateDeclr = new DelegateDeclaration(m.Modifier, attributes);
-			delegateDeclr.ReturnType = new TypeReference("", "System.Void");
-			delegateDeclr.StartLocation = m.GetDeclarationLocation(t.Location);
-			List<ParameterDeclarationExpression> p = new List<ParameterDeclarationExpression>();
-			
-			if (la.kind == 167) {
-				lexer.NextToken();
-				Identifier();
-
-#line  514 "VBNET.ATG" 
-				delegateDeclr.Name = t.val; 
-				TypeParameterList(
-#line  515 "VBNET.ATG" 
-delegateDeclr.Templates);
-				if (la.kind == 24) {
-					lexer.NextToken();
-					if (StartOf(4)) {
-						FormalParameterList(
-#line  516 "VBNET.ATG" 
-p);
-					}
-					Expect(25);
-
-#line  516 "VBNET.ATG" 
-					delegateDeclr.Parameters = p; 
-				}
-			} else if (la.kind == 100) {
-				lexer.NextToken();
-				Identifier();
-
-#line  518 "VBNET.ATG" 
-				delegateDeclr.Name = t.val; 
-				TypeParameterList(
-#line  519 "VBNET.ATG" 
-delegateDeclr.Templates);
-				if (la.kind == 24) {
-					lexer.NextToken();
-					if (StartOf(4)) {
-						FormalParameterList(
-#line  520 "VBNET.ATG" 
-p);
-					}
-					Expect(25);
-
-#line  520 "VBNET.ATG" 
-					delegateDeclr.Parameters = p; 
-				}
-				if (la.kind == 48) {
-					lexer.NextToken();
-
-#line  521 "VBNET.ATG" 
-					TypeReference type; 
-					TypeName(
-#line  521 "VBNET.ATG" 
-out type);
-
-#line  521 "VBNET.ATG" 
-					delegateDeclr.ReturnType = type; 
-				}
-			} else SynErr(215);
-
-#line  523 "VBNET.ATG" 
-			delegateDeclr.EndLocation = t.EndLocation; 
-			Expect(1);
-
-#line  526 "VBNET.ATG" 
-			compilationUnit.AddChild(delegateDeclr);
-			
-			break;
-		}
-		default: SynErr(216); break;
-		}
-	}
-
-	void TypeParameterList(
-#line  350 "VBNET.ATG" 
-List<TemplateDefinition> templates) {
-
-#line  352 "VBNET.ATG" 
-		TemplateDefinition template;
-		
-		if (
-#line  355 "VBNET.ATG" 
-la.kind == Tokens.OpenParenthesis && Peek(1).kind == Tokens.Of) {
-			lexer.NextToken();
-			Expect(201);
-			TypeParameter(
-#line  356 "VBNET.ATG" 
-out template);
-
-#line  358 "VBNET.ATG" 
-			if (template != null) templates.Add(template);
-			
-			while (la.kind == 12) {
-				lexer.NextToken();
-				TypeParameter(
-#line  361 "VBNET.ATG" 
-out template);
-
-#line  363 "VBNET.ATG" 
-				if (template != null) templates.Add(template);
-				
-			}
-			Expect(25);
-		}
-	}
-
-	void TypeParameter(
-#line  371 "VBNET.ATG" 
-out TemplateDefinition template) {
-		Identifier();
-
-#line  373 "VBNET.ATG" 
-		template = new TemplateDefinition(t.val, null); 
-		if (la.kind == 48) {
-			TypeParameterConstraints(
-#line  374 "VBNET.ATG" 
-template);
-		}
-	}
-
-	void Identifier() {
-		switch (la.kind) {
-		case 2: {
-			lexer.NextToken();
-			break;
-		}
-		case 169: {
-			lexer.NextToken();
-			break;
-		}
-		case 51: {
-			lexer.NextToken();
-			break;
-		}
-		case 70: {
-			lexer.NextToken();
-			break;
-		}
-		case 205: {
-			lexer.NextToken();
-			break;
-		}
-		case 49: {
-			lexer.NextToken();
-			break;
-		}
-		case 47: {
-			lexer.NextToken();
-			break;
-		}
-		case 50: {
-			lexer.NextToken();
-			break;
-		}
-		case 144: {
-			lexer.NextToken();
-			break;
-		}
-		case 176: {
-			lexer.NextToken();
-			break;
-		}
-		case 177: {
-			lexer.NextToken();
-			break;
-		}
-		case 134: {
-			lexer.NextToken();
-			break;
-		}
-		case 95: {
-			lexer.NextToken();
-			break;
-		}
-		default: SynErr(217); break;
-		}
-	}
-
-	void TypeParameterConstraints(
-#line  378 "VBNET.ATG" 
-TemplateDefinition template) {
-
-#line  380 "VBNET.ATG" 
-		TypeReference constraint;
-		
-		Expect(48);
-		if (la.kind == 22) {
-			lexer.NextToken();
-			TypeParameterConstraint(
-#line  386 "VBNET.ATG" 
-out constraint);
-
-#line  386 "VBNET.ATG" 
-			if (constraint != null) { template.Bases.Add(constraint); } 
-			while (la.kind == 12) {
-				lexer.NextToken();
-				TypeParameterConstraint(
-#line  389 "VBNET.ATG" 
-out constraint);
-
-#line  389 "VBNET.ATG" 
-				if (constraint != null) { template.Bases.Add(constraint); } 
-			}
-			Expect(23);
-		} else if (StartOf(5)) {
-			TypeParameterConstraint(
-#line  392 "VBNET.ATG" 
-out constraint);
-
-#line  392 "VBNET.ATG" 
-			if (constraint != null) { template.Bases.Add(constraint); } 
-		} else SynErr(218);
-	}
-
-	void TypeParameterConstraint(
-#line  396 "VBNET.ATG" 
-out TypeReference constraint) {
-
-#line  397 "VBNET.ATG" 
-		constraint = null; 
-		if (la.kind == 67) {
-			lexer.NextToken();
-
-#line  398 "VBNET.ATG" 
-			constraint = TypeReference.ClassConstraint; 
-		} else if (la.kind == 166) {
-			lexer.NextToken();
-
-#line  399 "VBNET.ATG" 
-			constraint = TypeReference.StructConstraint; 
-		} else if (la.kind == 127) {
-			lexer.NextToken();
-
-#line  400 "VBNET.ATG" 
-			constraint = TypeReference.NewConstraint; 
-		} else if (StartOf(6)) {
-			TypeName(
-#line  401 "VBNET.ATG" 
-out constraint);
-		} else SynErr(219);
-	}
-
-	void ClassBaseType(
-#line  727 "VBNET.ATG" 
-out TypeReference typeRef) {
-
-#line  729 "VBNET.ATG" 
-		typeRef = null;
-		
-		Expect(110);
-		TypeName(
-#line  732 "VBNET.ATG" 
-out typeRef);
-		EndOfStmt();
-	}
-
-	void TypeImplementsClause(
-#line  1520 "VBNET.ATG" 
-out List<TypeReference> baseInterfaces) {
-
-#line  1522 "VBNET.ATG" 
-		baseInterfaces = new List<TypeReference>();
-		TypeReference type = null;
-		
-		Expect(107);
-		TypeName(
-#line  1525 "VBNET.ATG" 
-out type);
-
-#line  1527 "VBNET.ATG" 
-		baseInterfaces.Add(type);
-		
-		while (la.kind == 12) {
-			lexer.NextToken();
-			TypeName(
-#line  1530 "VBNET.ATG" 
-out type);
-
-#line  1531 "VBNET.ATG" 
-			baseInterfaces.Add(type); 
-		}
-		EndOfStmt();
-	}
-
-	void ClassBody(
-#line  536 "VBNET.ATG" 
-TypeDeclaration newType) {
-
-#line  537 "VBNET.ATG" 
-		AttributeSection section; 
-		while (StartOf(7)) {
-
-#line  539 "VBNET.ATG" 
-			List<AttributeSection> attributes = new List<AttributeSection>();
-			ModifierList m = new ModifierList();
-			
-			while (la.kind == 27) {
-				AttributeSection(
-#line  542 "VBNET.ATG" 
-out section);
-
-#line  542 "VBNET.ATG" 
-				attributes.Add(section); 
-			}
-			while (StartOf(8)) {
-				MemberModifier(
-#line  543 "VBNET.ATG" 
-m);
-			}
-			ClassMemberDecl(
-#line  544 "VBNET.ATG" 
-m, attributes);
-		}
-	}
-
-	void ModuleBody(
-#line  563 "VBNET.ATG" 
-TypeDeclaration newType) {
-
-#line  564 "VBNET.ATG" 
-		AttributeSection section; 
-		while (StartOf(7)) {
-
-#line  566 "VBNET.ATG" 
-			List<AttributeSection> attributes = new List<AttributeSection>();
-			ModifierList m = new ModifierList();
-			
-			while (la.kind == 27) {
-				AttributeSection(
-#line  569 "VBNET.ATG" 
-out section);
-
-#line  569 "VBNET.ATG" 
-				attributes.Add(section); 
-			}
-			while (StartOf(8)) {
-				MemberModifier(
-#line  570 "VBNET.ATG" 
-m);
-			}
-			ClassMemberDecl(
-#line  571 "VBNET.ATG" 
-m, attributes);
-		}
-		Expect(88);
-		Expect(121);
-
-#line  573 "VBNET.ATG" 
-		newType.EndLocation = t.EndLocation; 
-		Expect(1);
-	}
-
-	void StructureBody(
-#line  548 "VBNET.ATG" 
-TypeDeclaration newType) {
-
-#line  549 "VBNET.ATG" 
-		AttributeSection section; 
-		while (StartOf(7)) {
-
-#line  551 "VBNET.ATG" 
-			List<AttributeSection> attributes = new List<AttributeSection>();
-			ModifierList m = new ModifierList();
-			
-			while (la.kind == 27) {
-				AttributeSection(
-#line  554 "VBNET.ATG" 
-out section);
-
-#line  554 "VBNET.ATG" 
-				attributes.Add(section); 
-			}
-			while (StartOf(8)) {
-				MemberModifier(
-#line  555 "VBNET.ATG" 
-m);
-			}
-			StructureMemberDecl(
-#line  556 "VBNET.ATG" 
-m, attributes);
-		}
-		Expect(88);
-		Expect(166);
-
-#line  558 "VBNET.ATG" 
-		newType.EndLocation = t.EndLocation; 
-		Expect(1);
-	}
-
-	void NonArrayTypeName(
-#line  1971 "VBNET.ATG" 
-out TypeReference typeref, bool canBeUnbound) {
-
-#line  1973 "VBNET.ATG" 
-		string name;
-		typeref = null;
-		bool isGlobal = false;
-		
-		if (StartOf(9)) {
-			if (la.kind == 199) {
-				lexer.NextToken();
-				Expect(10);
-
-#line  1978 "VBNET.ATG" 
-				isGlobal = true; 
-			}
-			QualIdentAndTypeArguments(
-#line  1979 "VBNET.ATG" 
-out typeref, canBeUnbound);
-
-#line  1980 "VBNET.ATG" 
-			typeref.IsGlobal = isGlobal; 
-			while (la.kind == 10) {
-				lexer.NextToken();
-
-#line  1981 "VBNET.ATG" 
-				TypeReference nestedTypeRef; 
-				QualIdentAndTypeArguments(
-#line  1982 "VBNET.ATG" 
-out nestedTypeRef, canBeUnbound);
-
-#line  1983 "VBNET.ATG" 
-				typeref = new InnerClassTypeReference(typeref, nestedTypeRef.Type, nestedTypeRef.GenericTypes); 
-			}
-		} else if (la.kind == 133) {
-			lexer.NextToken();
-
-#line  1986 "VBNET.ATG" 
-			typeref = new TypeReference("System.Object"); 
-		} else if (StartOf(10)) {
-			PrimitiveTypeName(
-#line  1987 "VBNET.ATG" 
-out name);
-
-#line  1987 "VBNET.ATG" 
-			typeref = new TypeReference(name); 
-		} else SynErr(220);
-	}
-
-	void EnumBody(
-#line  577 "VBNET.ATG" 
-TypeDeclaration newType) {
-
-#line  578 "VBNET.ATG" 
-		FieldDeclaration f; 
-		while (StartOf(11)) {
-			EnumMemberDecl(
-#line  580 "VBNET.ATG" 
-out f);
-
-#line  580 "VBNET.ATG" 
-			compilationUnit.AddChild(f); 
-		}
-		Expect(88);
-		Expect(90);
-
-#line  582 "VBNET.ATG" 
-		newType.EndLocation = t.EndLocation; 
-		Expect(1);
-	}
-
-	void InterfaceBase(
-#line  1505 "VBNET.ATG" 
-out List<TypeReference> bases) {
-
-#line  1507 "VBNET.ATG" 
-		TypeReference type;
-		bases = new List<TypeReference>();
-		
-		Expect(110);
-		TypeName(
-#line  1511 "VBNET.ATG" 
-out type);
-
-#line  1511 "VBNET.ATG" 
-		bases.Add(type); 
-		while (la.kind == 12) {
-			lexer.NextToken();
-			TypeName(
-#line  1514 "VBNET.ATG" 
-out type);
-
-#line  1514 "VBNET.ATG" 
-			bases.Add(type); 
-		}
-		Expect(1);
-	}
-
-	void InterfaceBody(
-#line  586 "VBNET.ATG" 
-TypeDeclaration newType) {
-		while (StartOf(12)) {
-			InterfaceMemberDecl();
-		}
-		Expect(88);
-		Expect(112);
-
-#line  588 "VBNET.ATG" 
-		newType.EndLocation = t.EndLocation; 
-		Expect(1);
-	}
-
-	void FormalParameterList(
-#line  2165 "VBNET.ATG" 
-List<ParameterDeclarationExpression> parameter) {
-
-#line  2167 "VBNET.ATG" 
-		ParameterDeclarationExpression p;
-		AttributeSection section;
-		List<AttributeSection> attributes = new List<AttributeSection>();
-		
-		while (la.kind == 27) {
-			AttributeSection(
-#line  2171 "VBNET.ATG" 
-out section);
-
-#line  2171 "VBNET.ATG" 
-			attributes.Add(section); 
-		}
-		FormalParameter(
-#line  2173 "VBNET.ATG" 
-out p);
-
-#line  2175 "VBNET.ATG" 
-		bool paramsFound = false;
-		p.Attributes = attributes;
-		parameter.Add(p);
-		
-		while (la.kind == 12) {
-			lexer.NextToken();
-
-#line  2180 "VBNET.ATG" 
-			if (paramsFound) Error("params array must be at end of parameter list"); 
-			while (la.kind == 27) {
-				AttributeSection(
-#line  2181 "VBNET.ATG" 
-out section);
-
-#line  2181 "VBNET.ATG" 
-				attributes.Add(section); 
-			}
-			FormalParameter(
-#line  2183 "VBNET.ATG" 
-out p);
-
-#line  2183 "VBNET.ATG" 
-			p.Attributes = attributes; parameter.Add(p); 
-		}
-	}
-
-	void MemberModifier(
-#line  2886 "VBNET.ATG" 
-ModifierList m) {
-		switch (la.kind) {
-		case 122: {
-			lexer.NextToken();
-
-#line  2887 "VBNET.ATG" 
-			m.Add(Modifiers.Abstract, t.Location);
-			break;
-		}
-		case 79: {
-			lexer.NextToken();
-
-#line  2888 "VBNET.ATG" 
-			m.Add(Modifiers.Default, t.Location);
-			break;
-		}
-		case 99: {
-			lexer.NextToken();
-
-#line  2889 "VBNET.ATG" 
-			m.Add(Modifiers.Internal, t.Location);
-			break;
-		}
-		case 157: {
-			lexer.NextToken();
-
-#line  2890 "VBNET.ATG" 
-			m.Add(Modifiers.New, t.Location);
-			break;
-		}
-		case 142: {
-			lexer.NextToken();
-
-#line  2891 "VBNET.ATG" 
-			m.Add(Modifiers.Override, t.Location);
-			break;
-		}
-		case 123: {
-			lexer.NextToken();
-
-#line  2892 "VBNET.ATG" 
-			m.Add(Modifiers.Abstract, t.Location);
-			break;
-		}
-		case 145: {
-			lexer.NextToken();
-
-#line  2893 "VBNET.ATG" 
-			m.Add(Modifiers.Private, t.Location);
-			break;
-		}
-		case 147: {
-			lexer.NextToken();
-
-#line  2894 "VBNET.ATG" 
-			m.Add(Modifiers.Protected, t.Location);
-			break;
-		}
-		case 148: {
-			lexer.NextToken();
-
-#line  2895 "VBNET.ATG" 
-			m.Add(Modifiers.Public, t.Location);
-			break;
-		}
-		case 131: {
-			lexer.NextToken();
-
-#line  2896 "VBNET.ATG" 
-			m.Add(Modifiers.Sealed, t.Location);
-			break;
-		}
-		case 132: {
-			lexer.NextToken();
-
-#line  2897 "VBNET.ATG" 
-			m.Add(Modifiers.Sealed, t.Location);
-			break;
-		}
-		case 158: {
-			lexer.NextToken();
-
-#line  2898 "VBNET.ATG" 
-			m.Add(Modifiers.Static, t.Location);
-			break;
-		}
-		case 141: {
-			lexer.NextToken();
-
-#line  2899 "VBNET.ATG" 
-			m.Add(Modifiers.Virtual, t.Location);
-			break;
-		}
-		case 140: {
-			lexer.NextToken();
-
-#line  2900 "VBNET.ATG" 
-			m.Add(Modifiers.Overloads, t.Location);
-			break;
-		}
-		case 150: {
-			lexer.NextToken();
-
-#line  2901 "VBNET.ATG" 
-			m.Add(Modifiers.ReadOnly, t.Location);
-			break;
-		}
-		case 184: {
-			lexer.NextToken();
-
-#line  2902 "VBNET.ATG" 
-			m.Add(Modifiers.WriteOnly, t.Location);
+#line  3710 "VBNET.ATG" 
+			m.Add(Modifiers.Sealed, t.Location); 
 			break;
 		}
 		case 183: {
 			lexer.NextToken();
 
-#line  2903 "VBNET.ATG" 
+#line  3711 "VBNET.ATG" 
+			m.Add(Modifiers.Partial, t.Location); 
+			break;
+		}
+		default: SynErr(249); break;
+		}
+	}
+
+	void NonModuleDeclaration(
+#line  455 "VBNET.ATG" 
+ModifierList m, List<AttributeSection> attributes) {
+
+#line  457 "VBNET.ATG" 
+		TypeReference typeRef = null;
+		List<TypeReference> baseInterfaces = null;
+		
+		switch (la.kind) {
+		case 84: {
+
+#line  460 "VBNET.ATG" 
+			m.Check(Modifiers.Classes); 
+			lexer.NextToken();
+
+#line  463 "VBNET.ATG" 
+			TypeDeclaration newType = new TypeDeclaration(m.Modifier, attributes);
+			newType.StartLocation = t.Location;
+			AddChild(newType);
+			BlockStart(newType);
+			
+			newType.Type       = ClassType.Class;
+			
+			Identifier();
+
+#line  470 "VBNET.ATG" 
+			newType.Name = t.val; 
+			TypeParameterList(
+#line  471 "VBNET.ATG" 
+newType.Templates);
+			EndOfStmt();
+
+#line  473 "VBNET.ATG" 
+			newType.BodyStartLocation = t.Location; 
+			if (la.kind == 140) {
+				ClassBaseType(
+#line  474 "VBNET.ATG" 
+out typeRef);
+
+#line  474 "VBNET.ATG" 
+				SafeAdd(newType, newType.BaseTypes, typeRef); 
+			}
+			while (la.kind == 136) {
+				TypeImplementsClause(
+#line  475 "VBNET.ATG" 
+out baseInterfaces);
+
+#line  475 "VBNET.ATG" 
+				newType.BaseTypes.AddRange(baseInterfaces); 
+			}
+			ClassBody(
+#line  476 "VBNET.ATG" 
+newType);
+			Expect(113);
+			Expect(84);
+
+#line  477 "VBNET.ATG" 
+			newType.EndLocation = t.EndLocation; 
+			EndOfStmt();
+
+#line  480 "VBNET.ATG" 
+			BlockEnd();
+			
+			break;
+		}
+		case 155: {
+			lexer.NextToken();
+
+#line  484 "VBNET.ATG" 
+			m.Check(Modifiers.VBModules);
+			TypeDeclaration newType = new TypeDeclaration(m.Modifier, attributes);
+			AddChild(newType);
+			BlockStart(newType);
+			newType.StartLocation = m.GetDeclarationLocation(t.Location);
+			newType.Type = ClassType.Module;
+			
+			Identifier();
+
+#line  491 "VBNET.ATG" 
+			newType.Name = t.val; 
+			EndOfStmt();
+
+#line  493 "VBNET.ATG" 
+			newType.BodyStartLocation = t.Location; 
+			ModuleBody(
+#line  494 "VBNET.ATG" 
+newType);
+
+#line  496 "VBNET.ATG" 
+			BlockEnd();
+			
+			break;
+		}
+		case 209: {
+			lexer.NextToken();
+
+#line  500 "VBNET.ATG" 
+			m.Check(Modifiers.VBStructures);
+			TypeDeclaration newType = new TypeDeclaration(m.Modifier, attributes);
+			AddChild(newType);
+			BlockStart(newType);
+			newType.StartLocation = m.GetDeclarationLocation(t.Location);
+			newType.Type = ClassType.Struct;
+			
+			Identifier();
+
+#line  507 "VBNET.ATG" 
+			newType.Name = t.val; 
+			TypeParameterList(
+#line  508 "VBNET.ATG" 
+newType.Templates);
+			EndOfStmt();
+
+#line  510 "VBNET.ATG" 
+			newType.BodyStartLocation = t.Location; 
+			while (la.kind == 136) {
+				TypeImplementsClause(
+#line  511 "VBNET.ATG" 
+out baseInterfaces);
+
+#line  511 "VBNET.ATG" 
+				newType.BaseTypes.AddRange(baseInterfaces);
+			}
+			StructureBody(
+#line  512 "VBNET.ATG" 
+newType);
+
+#line  514 "VBNET.ATG" 
+			BlockEnd();
+			
+			break;
+		}
+		case 115: {
+			lexer.NextToken();
+
+#line  519 "VBNET.ATG" 
+			m.Check(Modifiers.VBEnums);
+			TypeDeclaration newType = new TypeDeclaration(m.Modifier, attributes);
+			newType.StartLocation = m.GetDeclarationLocation(t.Location);
+			AddChild(newType);
+			BlockStart(newType);
+			
+			newType.Type = ClassType.Enum;
+			
+			Identifier();
+
+#line  527 "VBNET.ATG" 
+			newType.Name = t.val; 
+			if (la.kind == 63) {
+				lexer.NextToken();
+				NonArrayTypeName(
+#line  528 "VBNET.ATG" 
+out typeRef, false);
+
+#line  528 "VBNET.ATG" 
+				SafeAdd(newType, newType.BaseTypes, typeRef); 
+			}
+			EndOfStmt();
+
+#line  530 "VBNET.ATG" 
+			newType.BodyStartLocation = t.Location; 
+			EnumBody(
+#line  531 "VBNET.ATG" 
+newType);
+
+#line  533 "VBNET.ATG" 
+			BlockEnd();
+			
+			break;
+		}
+		case 142: {
+			lexer.NextToken();
+
+#line  538 "VBNET.ATG" 
+			m.Check(Modifiers.VBInterfacs);
+			TypeDeclaration newType = new TypeDeclaration(m.Modifier, attributes);
+			newType.StartLocation = m.GetDeclarationLocation(t.Location);
+			AddChild(newType);
+			BlockStart(newType);
+			newType.Type = ClassType.Interface;
+			
+			Identifier();
+
+#line  545 "VBNET.ATG" 
+			newType.Name = t.val; 
+			TypeParameterList(
+#line  546 "VBNET.ATG" 
+newType.Templates);
+			EndOfStmt();
+
+#line  548 "VBNET.ATG" 
+			newType.BodyStartLocation = t.Location; 
+			while (la.kind == 140) {
+				InterfaceBase(
+#line  549 "VBNET.ATG" 
+out baseInterfaces);
+
+#line  549 "VBNET.ATG" 
+				newType.BaseTypes.AddRange(baseInterfaces); 
+			}
+			InterfaceBody(
+#line  550 "VBNET.ATG" 
+newType);
+
+#line  552 "VBNET.ATG" 
+			BlockEnd();
+			
+			break;
+		}
+		case 103: {
+			lexer.NextToken();
+
+#line  557 "VBNET.ATG" 
+			m.Check(Modifiers.VBDelegates);
+			DelegateDeclaration delegateDeclr = new DelegateDeclaration(m.Modifier, attributes);
+			delegateDeclr.ReturnType = new TypeReference("System.Void", true);
+			delegateDeclr.StartLocation = m.GetDeclarationLocation(t.Location);
+			List<ParameterDeclarationExpression> p = new List<ParameterDeclarationExpression>();
+			
+			if (la.kind == 210) {
+				lexer.NextToken();
+				Identifier();
+
+#line  564 "VBNET.ATG" 
+				delegateDeclr.Name = t.val; 
+				TypeParameterList(
+#line  565 "VBNET.ATG" 
+delegateDeclr.Templates);
+				if (la.kind == 37) {
+					lexer.NextToken();
+					if (StartOf(6)) {
+						FormalParameterList(
+#line  566 "VBNET.ATG" 
+p);
+					}
+					Expect(38);
+
+#line  566 "VBNET.ATG" 
+					delegateDeclr.Parameters = p; 
+				}
+			} else if (la.kind == 127) {
+				lexer.NextToken();
+				Identifier();
+
+#line  568 "VBNET.ATG" 
+				delegateDeclr.Name = t.val; 
+				TypeParameterList(
+#line  569 "VBNET.ATG" 
+delegateDeclr.Templates);
+				if (la.kind == 37) {
+					lexer.NextToken();
+					if (StartOf(6)) {
+						FormalParameterList(
+#line  570 "VBNET.ATG" 
+p);
+					}
+					Expect(38);
+
+#line  570 "VBNET.ATG" 
+					delegateDeclr.Parameters = p; 
+				}
+				if (la.kind == 63) {
+					lexer.NextToken();
+
+#line  571 "VBNET.ATG" 
+					TypeReference type; 
+					TypeName(
+#line  571 "VBNET.ATG" 
+out type);
+
+#line  571 "VBNET.ATG" 
+					delegateDeclr.ReturnType = type; 
+				}
+			} else SynErr(250);
+
+#line  573 "VBNET.ATG" 
+			delegateDeclr.EndLocation = t.EndLocation; 
+			EndOfStmt();
+
+#line  576 "VBNET.ATG" 
+			AddChild(delegateDeclr);
+			
+			break;
+		}
+		default: SynErr(251); break;
+		}
+	}
+
+	void TypeParameterList(
+#line  389 "VBNET.ATG" 
+List<TemplateDefinition> templates) {
+
+#line  391 "VBNET.ATG" 
+		TemplateDefinition template;
+		
+		if (
+#line  395 "VBNET.ATG" 
+la.kind == Tokens.OpenParenthesis && Peek(1).kind == Tokens.Of) {
+			lexer.NextToken();
+			Expect(169);
+			TypeParameter(
+#line  396 "VBNET.ATG" 
+out template);
+
+#line  398 "VBNET.ATG" 
+			if (template != null) templates.Add(template);
+			
+			while (la.kind == 22) {
+				lexer.NextToken();
+				TypeParameter(
+#line  401 "VBNET.ATG" 
+out template);
+
+#line  403 "VBNET.ATG" 
+				if (template != null) templates.Add(template);
+				
+			}
+			Expect(38);
+		}
+	}
+
+	void TypeParameter(
+#line  411 "VBNET.ATG" 
+out TemplateDefinition template) {
+
+#line  412 "VBNET.ATG" 
+		VarianceModifier modifier = VarianceModifier.Invariant; Location startLocation = la.Location; 
+		if (la.kind == 138 || la.kind == 178) {
+			if (la.kind == 138) {
+				lexer.NextToken();
+
+#line  415 "VBNET.ATG" 
+				modifier = VarianceModifier.Contravariant; 
+			} else {
+				lexer.NextToken();
+
+#line  415 "VBNET.ATG" 
+				modifier = VarianceModifier.Covariant; 
+			}
+		}
+		Identifier();
+
+#line  415 "VBNET.ATG" 
+		template = new TemplateDefinition(t.val, null) { VarianceModifier = modifier }; 
+		if (la.kind == 63) {
+			TypeParameterConstraints(
+#line  416 "VBNET.ATG" 
+template);
+		}
+
+#line  419 "VBNET.ATG" 
+		if (template != null) {
+		template.StartLocation = startLocation;
+		template.EndLocation = t.EndLocation;
+		}
+		
+	}
+
+	void TypeParameterConstraints(
+#line  427 "VBNET.ATG" 
+TemplateDefinition template) {
+
+#line  429 "VBNET.ATG" 
+		TypeReference constraint;
+		
+		Expect(63);
+		if (la.kind == 35) {
+			lexer.NextToken();
+			TypeParameterConstraint(
+#line  435 "VBNET.ATG" 
+out constraint);
+
+#line  435 "VBNET.ATG" 
+			if (constraint != null) { template.Bases.Add(constraint); } 
+			while (la.kind == 22) {
+				lexer.NextToken();
+				TypeParameterConstraint(
+#line  438 "VBNET.ATG" 
+out constraint);
+
+#line  438 "VBNET.ATG" 
+				if (constraint != null) { template.Bases.Add(constraint); } 
+			}
+			Expect(36);
+		} else if (StartOf(7)) {
+			TypeParameterConstraint(
+#line  441 "VBNET.ATG" 
+out constraint);
+
+#line  441 "VBNET.ATG" 
+			if (constraint != null) { template.Bases.Add(constraint); } 
+		} else SynErr(252);
+	}
+
+	void TypeParameterConstraint(
+#line  445 "VBNET.ATG" 
+out TypeReference constraint) {
+
+#line  446 "VBNET.ATG" 
+		constraint = null; Location startLocation = la.Location; 
+		if (la.kind == 84) {
+			lexer.NextToken();
+
+#line  448 "VBNET.ATG" 
+			constraint = TypeReference.ClassConstraint; 
+		} else if (la.kind == 209) {
+			lexer.NextToken();
+
+#line  449 "VBNET.ATG" 
+			constraint = TypeReference.StructConstraint; 
+		} else if (la.kind == 162) {
+			lexer.NextToken();
+
+#line  450 "VBNET.ATG" 
+			constraint = TypeReference.NewConstraint; 
+		} else if (StartOf(8)) {
+			TypeName(
+#line  451 "VBNET.ATG" 
+out constraint);
+		} else SynErr(253);
+	}
+
+	void ClassBaseType(
+#line  797 "VBNET.ATG" 
+out TypeReference typeRef) {
+
+#line  799 "VBNET.ATG" 
+		typeRef = null;
+		
+		Expect(140);
+		TypeName(
+#line  802 "VBNET.ATG" 
+out typeRef);
+		EndOfStmt();
+	}
+
+	void TypeImplementsClause(
+#line  1617 "VBNET.ATG" 
+out List<TypeReference> baseInterfaces) {
+
+#line  1619 "VBNET.ATG" 
+		baseInterfaces = new List<TypeReference>();
+		TypeReference type = null;
+		
+		Expect(136);
+		TypeName(
+#line  1622 "VBNET.ATG" 
+out type);
+
+#line  1624 "VBNET.ATG" 
+		if (type != null) baseInterfaces.Add(type);
+		
+		while (la.kind == 22) {
+			lexer.NextToken();
+			TypeName(
+#line  1627 "VBNET.ATG" 
+out type);
+
+#line  1628 "VBNET.ATG" 
+			if (type != null) baseInterfaces.Add(type); 
+		}
+		EndOfStmt();
+	}
+
+	void ClassBody(
+#line  590 "VBNET.ATG" 
+TypeDeclaration newType) {
+
+#line  591 "VBNET.ATG" 
+		AttributeSection section; 
+		while (la.kind == 1 || la.kind == 21) {
+			EndOfStmt();
+		}
+		while (StartOf(9)) {
+
+#line  594 "VBNET.ATG" 
+			List<AttributeSection> attributes = new List<AttributeSection>();
+			ModifierList m = new ModifierList();
+			
+			while (la.kind == 40) {
+				AttributeSection(
+#line  597 "VBNET.ATG" 
+out section);
+
+#line  597 "VBNET.ATG" 
+				attributes.Add(section); 
+			}
+			while (StartOf(10)) {
+				MemberModifier(
+#line  598 "VBNET.ATG" 
+m);
+			}
+			ClassMemberDecl(
+#line  599 "VBNET.ATG" 
+m, attributes);
+			while (la.kind == 1 || la.kind == 21) {
+				EndOfStmt();
+			}
+		}
+	}
+
+	void ModuleBody(
+#line  621 "VBNET.ATG" 
+TypeDeclaration newType) {
+
+#line  622 "VBNET.ATG" 
+		AttributeSection section; 
+		while (la.kind == 1 || la.kind == 21) {
+			EndOfStmt();
+		}
+		while (StartOf(9)) {
+
+#line  625 "VBNET.ATG" 
+			List<AttributeSection> attributes = new List<AttributeSection>();
+			ModifierList m = new ModifierList();
+			
+			while (la.kind == 40) {
+				AttributeSection(
+#line  628 "VBNET.ATG" 
+out section);
+
+#line  628 "VBNET.ATG" 
+				attributes.Add(section); 
+			}
+			while (StartOf(10)) {
+				MemberModifier(
+#line  629 "VBNET.ATG" 
+m);
+			}
+			ClassMemberDecl(
+#line  630 "VBNET.ATG" 
+m, attributes);
+			while (la.kind == 1 || la.kind == 21) {
+				EndOfStmt();
+			}
+		}
+		Expect(113);
+		Expect(155);
+
+#line  633 "VBNET.ATG" 
+		newType.EndLocation = t.EndLocation; 
+		EndOfStmt();
+	}
+
+	void StructureBody(
+#line  604 "VBNET.ATG" 
+TypeDeclaration newType) {
+
+#line  605 "VBNET.ATG" 
+		AttributeSection section; 
+		while (la.kind == 1 || la.kind == 21) {
+			EndOfStmt();
+		}
+		while (StartOf(9)) {
+
+#line  608 "VBNET.ATG" 
+			List<AttributeSection> attributes = new List<AttributeSection>();
+			ModifierList m = new ModifierList();
+			
+			while (la.kind == 40) {
+				AttributeSection(
+#line  611 "VBNET.ATG" 
+out section);
+
+#line  611 "VBNET.ATG" 
+				attributes.Add(section); 
+			}
+			while (StartOf(10)) {
+				MemberModifier(
+#line  612 "VBNET.ATG" 
+m);
+			}
+			StructureMemberDecl(
+#line  613 "VBNET.ATG" 
+m, attributes);
+			while (la.kind == 1 || la.kind == 21) {
+				EndOfStmt();
+			}
+		}
+		Expect(113);
+		Expect(209);
+
+#line  616 "VBNET.ATG" 
+		newType.EndLocation = t.EndLocation; 
+		EndOfStmt();
+	}
+
+	void NonArrayTypeName(
+#line  2716 "VBNET.ATG" 
+out TypeReference typeref, bool canBeUnbound) {
+
+#line  2718 "VBNET.ATG" 
+		string name;
+		typeref = null;
+		bool isGlobal = false;
+		
+		if (StartOf(11)) {
+			if (la.kind == 130) {
+				lexer.NextToken();
+				Expect(26);
+
+#line  2723 "VBNET.ATG" 
+				isGlobal = true; 
+			}
+			QualIdentAndTypeArguments(
+#line  2724 "VBNET.ATG" 
+out typeref, canBeUnbound);
+
+#line  2725 "VBNET.ATG" 
+			typeref.IsGlobal = isGlobal; 
+			while (la.kind == 26) {
+				lexer.NextToken();
+
+#line  2726 "VBNET.ATG" 
+				TypeReference nestedTypeRef; 
+				QualIdentAndTypeArguments(
+#line  2727 "VBNET.ATG" 
+out nestedTypeRef, canBeUnbound);
+
+#line  2728 "VBNET.ATG" 
+				typeref = new InnerClassTypeReference(typeref, nestedTypeRef.Type, nestedTypeRef.GenericTypes); 
+			}
+		} else if (la.kind == 168) {
+			lexer.NextToken();
+
+#line  2731 "VBNET.ATG" 
+			typeref = new TypeReference("System.Object", true); 
+			if (la.kind == 33) {
+				lexer.NextToken();
+
+#line  2735 "VBNET.ATG" 
+				List<TypeReference> typeArguments = new List<TypeReference>(1);
+				if (typeref != null) typeArguments.Add(typeref);
+				typeref = new TypeReference("System.Nullable", typeArguments) { IsKeyword = true };
+				
+			}
+		} else if (StartOf(12)) {
+			PrimitiveTypeName(
+#line  2741 "VBNET.ATG" 
+out name);
+
+#line  2741 "VBNET.ATG" 
+			typeref = new TypeReference(name, true); 
+			if (la.kind == 33) {
+				lexer.NextToken();
+
+#line  2745 "VBNET.ATG" 
+				List<TypeReference> typeArguments = new List<TypeReference>(1);
+				if (typeref != null) typeArguments.Add(typeref);
+				typeref = new TypeReference("System.Nullable", typeArguments) { IsKeyword = true };
+				
+			}
+		} else SynErr(254);
+	}
+
+	void EnumBody(
+#line  637 "VBNET.ATG" 
+TypeDeclaration newType) {
+
+#line  638 "VBNET.ATG" 
+		FieldDeclaration f; 
+		while (la.kind == 1 || la.kind == 21) {
+			EndOfStmt();
+		}
+		while (StartOf(13)) {
+			EnumMemberDecl(
+#line  641 "VBNET.ATG" 
+out f);
+
+#line  643 "VBNET.ATG" 
+			AddChild(f);
+			
+			while (la.kind == 1 || la.kind == 21) {
+				EndOfStmt();
+			}
+		}
+		Expect(113);
+		Expect(115);
+
+#line  647 "VBNET.ATG" 
+		newType.EndLocation = t.EndLocation; 
+		EndOfStmt();
+	}
+
+	void InterfaceBase(
+#line  1602 "VBNET.ATG" 
+out List<TypeReference> bases) {
+
+#line  1604 "VBNET.ATG" 
+		TypeReference type;
+		bases = new List<TypeReference>();
+		
+		Expect(140);
+		TypeName(
+#line  1608 "VBNET.ATG" 
+out type);
+
+#line  1608 "VBNET.ATG" 
+		if (type != null) bases.Add(type); 
+		while (la.kind == 22) {
+			lexer.NextToken();
+			TypeName(
+#line  1611 "VBNET.ATG" 
+out type);
+
+#line  1611 "VBNET.ATG" 
+			if (type != null) bases.Add(type); 
+		}
+		EndOfStmt();
+	}
+
+	void InterfaceBody(
+#line  651 "VBNET.ATG" 
+TypeDeclaration newType) {
+		while (la.kind == 1 || la.kind == 21) {
+			EndOfStmt();
+		}
+		while (StartOf(14)) {
+			InterfaceMemberDecl();
+			while (la.kind == 1 || la.kind == 21) {
+				EndOfStmt();
+			}
+		}
+		Expect(113);
+		Expect(142);
+
+#line  657 "VBNET.ATG" 
+		newType.EndLocation = t.EndLocation; 
+		EndOfStmt();
+	}
+
+	void FormalParameterList(
+#line  2933 "VBNET.ATG" 
+List<ParameterDeclarationExpression> parameter) {
+
+#line  2934 "VBNET.ATG" 
+		ParameterDeclarationExpression p; 
+		FormalParameter(
+#line  2936 "VBNET.ATG" 
+out p);
+
+#line  2936 "VBNET.ATG" 
+		if (p != null) parameter.Add(p); 
+		while (la.kind == 22) {
+			lexer.NextToken();
+			FormalParameter(
+#line  2938 "VBNET.ATG" 
+out p);
+
+#line  2938 "VBNET.ATG" 
+			if (p != null) parameter.Add(p); 
+		}
+	}
+
+	void MemberModifier(
+#line  3714 "VBNET.ATG" 
+ModifierList m) {
+		switch (la.kind) {
+		case 156: {
+			lexer.NextToken();
+
+#line  3715 "VBNET.ATG" 
+			m.Add(Modifiers.Abstract, t.Location);
+			break;
+		}
+		case 102: {
+			lexer.NextToken();
+
+#line  3716 "VBNET.ATG" 
+			m.Add(Modifiers.Default, t.Location);
+			break;
+		}
+		case 125: {
+			lexer.NextToken();
+
+#line  3717 "VBNET.ATG" 
+			m.Add(Modifiers.Internal, t.Location);
+			break;
+		}
+		case 199: {
+			lexer.NextToken();
+
+#line  3718 "VBNET.ATG" 
+			m.Add(Modifiers.New, t.Location);
+			break;
+		}
+		case 181: {
+			lexer.NextToken();
+
+#line  3719 "VBNET.ATG" 
+			m.Add(Modifiers.Override, t.Location);
+			break;
+		}
+		case 157: {
+			lexer.NextToken();
+
+#line  3720 "VBNET.ATG" 
+			m.Add(Modifiers.Abstract, t.Location);
+			break;
+		}
+		case 185: {
+			lexer.NextToken();
+
+#line  3721 "VBNET.ATG" 
+			m.Add(Modifiers.Private, t.Location);
+			break;
+		}
+		case 187: {
+			lexer.NextToken();
+
+#line  3722 "VBNET.ATG" 
+			m.Add(Modifiers.Protected, t.Location);
+			break;
+		}
+		case 188: {
+			lexer.NextToken();
+
+#line  3723 "VBNET.ATG" 
+			m.Add(Modifiers.Public, t.Location);
+			break;
+		}
+		case 166: {
+			lexer.NextToken();
+
+#line  3724 "VBNET.ATG" 
+			m.Add(Modifiers.Sealed, t.Location);
+			break;
+		}
+		case 167: {
+			lexer.NextToken();
+
+#line  3725 "VBNET.ATG" 
+			m.Add(Modifiers.Sealed, t.Location);
+			break;
+		}
+		case 200: {
+			lexer.NextToken();
+
+#line  3726 "VBNET.ATG" 
+			m.Add(Modifiers.Static, t.Location);
+			break;
+		}
+		case 180: {
+			lexer.NextToken();
+
+#line  3727 "VBNET.ATG" 
+			m.Add(Modifiers.Virtual, t.Location);
+			break;
+		}
+		case 179: {
+			lexer.NextToken();
+
+#line  3728 "VBNET.ATG" 
+			m.Add(Modifiers.Overloads, t.Location);
+			break;
+		}
+		case 190: {
+			lexer.NextToken();
+
+#line  3729 "VBNET.ATG" 
+			m.Add(Modifiers.ReadOnly, t.Location);
+			break;
+		}
+		case 235: {
+			lexer.NextToken();
+
+#line  3730 "VBNET.ATG" 
+			m.Add(Modifiers.WriteOnly, t.Location);
+			break;
+		}
+		case 234: {
+			lexer.NextToken();
+
+#line  3731 "VBNET.ATG" 
 			m.Add(Modifiers.WithEvents, t.Location);
 			break;
 		}
-		case 81: {
+		case 105: {
 			lexer.NextToken();
 
-#line  2904 "VBNET.ATG" 
+#line  3732 "VBNET.ATG" 
 			m.Add(Modifiers.Dim, t.Location);
 			break;
 		}
-		default: SynErr(221); break;
+		case 183: {
+			lexer.NextToken();
+
+#line  3733 "VBNET.ATG" 
+			m.Add(Modifiers.Partial, t.Location);
+			break;
+		}
+		default: SynErr(255); break;
 		}
 	}
 
 	void ClassMemberDecl(
-#line  723 "VBNET.ATG" 
+#line  793 "VBNET.ATG" 
 ModifierList m, List<AttributeSection> attributes) {
 		StructureMemberDecl(
-#line  724 "VBNET.ATG" 
+#line  794 "VBNET.ATG" 
 m, attributes);
 	}
 
 	void StructureMemberDecl(
-#line  737 "VBNET.ATG" 
+#line  807 "VBNET.ATG" 
 ModifierList m, List<AttributeSection> attributes) {
 
-#line  739 "VBNET.ATG" 
+#line  809 "VBNET.ATG" 
 		TypeReference type = null;
 		List<ParameterDeclarationExpression> p = new List<ParameterDeclarationExpression>();
 		Statement stmt = null;
@@ -1434,162 +1485,163 @@ ModifierList m, List<AttributeSection> attributes) {
 		List<TemplateDefinition> templates = new List<TemplateDefinition>();
 		
 		switch (la.kind) {
-		case 67: case 80: case 90: case 112: case 121: case 166: {
+		case 84: case 103: case 115: case 142: case 155: case 209: {
 			NonModuleDeclaration(
-#line  746 "VBNET.ATG" 
+#line  816 "VBNET.ATG" 
 m, attributes);
 			break;
 		}
-		case 167: {
+		case 210: {
 			lexer.NextToken();
 
-#line  750 "VBNET.ATG" 
+#line  820 "VBNET.ATG" 
 			Location startPos = t.Location;
 			
-			if (StartOf(13)) {
+			if (StartOf(4)) {
 
-#line  754 "VBNET.ATG" 
+#line  824 "VBNET.ATG" 
 				string name = String.Empty;
 				MethodDeclaration methodDeclaration; List<string> handlesClause = null;
 				List<InterfaceImplementation> implementsClause = null;
 				
 				Identifier();
 
-#line  760 "VBNET.ATG" 
+#line  830 "VBNET.ATG" 
 				name = t.val;
 				m.Check(Modifiers.VBMethods);
 				
 				TypeParameterList(
-#line  763 "VBNET.ATG" 
+#line  833 "VBNET.ATG" 
 templates);
-				if (la.kind == 24) {
+				if (la.kind == 37) {
 					lexer.NextToken();
-					if (StartOf(4)) {
+					if (StartOf(6)) {
 						FormalParameterList(
-#line  764 "VBNET.ATG" 
+#line  834 "VBNET.ATG" 
 p);
 					}
-					Expect(25);
+					Expect(38);
 				}
-				if (la.kind == 105 || la.kind == 107) {
-					if (la.kind == 107) {
+				if (la.kind == 134 || la.kind == 136) {
+					if (la.kind == 136) {
 						ImplementsClause(
-#line  767 "VBNET.ATG" 
+#line  837 "VBNET.ATG" 
 out implementsClause);
 					} else {
 						HandlesClause(
-#line  769 "VBNET.ATG" 
+#line  839 "VBNET.ATG" 
 out handlesClause);
 					}
 				}
 
-#line  772 "VBNET.ATG" 
+#line  842 "VBNET.ATG" 
 				Location endLocation = t.EndLocation; 
-				Expect(1);
 				if (
-#line  776 "VBNET.ATG" 
+#line  845 "VBNET.ATG" 
 IsMustOverride(m)) {
+					EndOfStmt();
 
-#line  778 "VBNET.ATG" 
+#line  848 "VBNET.ATG" 
 					methodDeclaration = new MethodDeclaration {
 					Name = name, Modifier = m.Modifier, Parameters = p, Attributes = attributes,
 					StartLocation = m.GetDeclarationLocation(startPos), EndLocation = endLocation,
-					TypeReference = new TypeReference("", "System.Void"),
+					TypeReference = new TypeReference("System.Void", true),
 					Templates = templates,
 					HandlesClause = handlesClause,
 					InterfaceImplementations = implementsClause
 					};
-					compilationUnit.AddChild(methodDeclaration);
+					AddChild(methodDeclaration);
 					
-				} else if (StartOf(14)) {
+				} else if (la.kind == 1) {
+					lexer.NextToken();
 
-#line  790 "VBNET.ATG" 
+#line  861 "VBNET.ATG" 
 					methodDeclaration = new MethodDeclaration {
 					Name = name, Modifier = m.Modifier, Parameters = p, Attributes = attributes,
 					StartLocation = m.GetDeclarationLocation(startPos), EndLocation = endLocation,
-					TypeReference = new TypeReference("", "System.Void"),
+					TypeReference = new TypeReference("System.Void", true),
 					Templates = templates,
 					HandlesClause = handlesClause,
 					InterfaceImplementations = implementsClause
 					};
-					compilationUnit.AddChild(methodDeclaration);
+					AddChild(methodDeclaration);
 					
 
-#line  801 "VBNET.ATG" 
+#line  872 "VBNET.ATG" 
 					if (ParseMethodBodies) { 
 					Block(
-#line  802 "VBNET.ATG" 
+#line  873 "VBNET.ATG" 
 out stmt);
-					Expect(88);
-					Expect(167);
+					Expect(113);
+					Expect(210);
 
-#line  804 "VBNET.ATG" 
+#line  875 "VBNET.ATG" 
 					} else {
 					// don't parse method body
 					lexer.SkipCurrentBlock(Tokens.Sub); stmt = new BlockStatement();
 					  }
 					
 
-#line  810 "VBNET.ATG" 
+#line  881 "VBNET.ATG" 
 					methodDeclaration.Body  = (BlockStatement)stmt; 
 
-#line  811 "VBNET.ATG" 
+#line  882 "VBNET.ATG" 
 					methodDeclaration.Body.EndLocation = t.EndLocation; 
-					Expect(1);
-				} else SynErr(222);
-			} else if (la.kind == 127) {
+					EndOfStmt();
+				} else SynErr(256);
+			} else if (la.kind == 162) {
 				lexer.NextToken();
-				if (la.kind == 24) {
+				if (la.kind == 37) {
 					lexer.NextToken();
-					if (StartOf(4)) {
+					if (StartOf(6)) {
 						FormalParameterList(
-#line  814 "VBNET.ATG" 
+#line  886 "VBNET.ATG" 
 p);
 					}
-					Expect(25);
+					Expect(38);
 				}
 
-#line  815 "VBNET.ATG" 
+#line  887 "VBNET.ATG" 
 				m.Check(Modifiers.Constructors); 
 
-#line  816 "VBNET.ATG" 
+#line  888 "VBNET.ATG" 
 				Location constructorEndLocation = t.EndLocation; 
 				Expect(1);
 
-#line  819 "VBNET.ATG" 
+#line  891 "VBNET.ATG" 
 				if (ParseMethodBodies) { 
 				Block(
-#line  820 "VBNET.ATG" 
+#line  892 "VBNET.ATG" 
 out stmt);
-				Expect(88);
-				Expect(167);
+				Expect(113);
+				Expect(210);
 
-#line  822 "VBNET.ATG" 
+#line  894 "VBNET.ATG" 
 				} else {
 				// don't parse method body
 				lexer.SkipCurrentBlock(Tokens.Sub); stmt = new BlockStatement();
 				  }
 				
 
-#line  828 "VBNET.ATG" 
+#line  900 "VBNET.ATG" 
 				Location endLocation = t.EndLocation; 
-				Expect(1);
+				EndOfStmt();
 
-#line  830 "VBNET.ATG" 
-				ConstructorDeclaration cd = new ConstructorDeclaration("New", m.Modifier, p, attributes); 
+#line  903 "VBNET.ATG" 
+				ConstructorDeclaration cd = new ConstructorDeclaration("New", m.Modifier, p, attributes);
 				cd.StartLocation = m.GetDeclarationLocation(startPos);
 				cd.EndLocation   = constructorEndLocation;
 				cd.Body = (BlockStatement)stmt;
 				cd.Body.EndLocation   = endLocation;
-				compilationUnit.AddChild(cd);
+				AddChild(cd);
 				
-			} else SynErr(223);
+			} else SynErr(257);
 			break;
 		}
-		case 100: {
+		case 127: {
 			lexer.NextToken();
 
-#line  842 "VBNET.ATG" 
+#line  915 "VBNET.ATG" 
 			m.Check(Modifiers.VBMethods);
 			string name = String.Empty;
 			Location startPos = t.Location;
@@ -1599,96 +1651,100 @@ out stmt);
 			
 			Identifier();
 
-#line  849 "VBNET.ATG" 
+#line  922 "VBNET.ATG" 
 			name = t.val; 
 			TypeParameterList(
-#line  850 "VBNET.ATG" 
+#line  923 "VBNET.ATG" 
 templates);
-			if (la.kind == 24) {
+			if (la.kind == 37) {
 				lexer.NextToken();
-				if (StartOf(4)) {
+				if (StartOf(6)) {
 					FormalParameterList(
-#line  851 "VBNET.ATG" 
+#line  924 "VBNET.ATG" 
 p);
 				}
-				Expect(25);
+				Expect(38);
 			}
-			if (la.kind == 48) {
+			if (la.kind == 63) {
 				lexer.NextToken();
-				while (la.kind == 27) {
+				while (la.kind == 40) {
 					AttributeSection(
-#line  852 "VBNET.ATG" 
+#line  926 "VBNET.ATG" 
 out returnTypeAttributeSection);
+
+#line  928 "VBNET.ATG" 
+					if (returnTypeAttributeSection != null) {
+					returnTypeAttributeSection.AttributeTarget = "return";
+					attributes.Add(returnTypeAttributeSection);
+					}
+					
 				}
 				TypeName(
-#line  852 "VBNET.ATG" 
+#line  934 "VBNET.ATG" 
 out type);
 			}
 
-#line  854 "VBNET.ATG" 
+#line  936 "VBNET.ATG" 
 			if(type == null) {
-			type = new TypeReference("System.Object");
+			type = new TypeReference("System.Object", true);
 			}
 			
-			if (la.kind == 105 || la.kind == 107) {
-				if (la.kind == 107) {
+			if (la.kind == 134 || la.kind == 136) {
+				if (la.kind == 136) {
 					ImplementsClause(
-#line  860 "VBNET.ATG" 
+#line  942 "VBNET.ATG" 
 out implementsClause);
 				} else {
 					HandlesClause(
-#line  862 "VBNET.ATG" 
+#line  944 "VBNET.ATG" 
 out handlesClause);
 				}
 			}
-			Expect(1);
+
+#line  947 "VBNET.ATG" 
+			Location endLocation = t.EndLocation; 
 			if (
-#line  868 "VBNET.ATG" 
+#line  950 "VBNET.ATG" 
 IsMustOverride(m)) {
+				EndOfStmt();
 
-#line  870 "VBNET.ATG" 
+#line  953 "VBNET.ATG" 
 				methodDeclaration = new MethodDeclaration {
 				Name = name, Modifier = m.Modifier, TypeReference = type,
 				Parameters = p, Attributes = attributes,
 				StartLocation = m.GetDeclarationLocation(startPos),
-				EndLocation   = t.EndLocation,
+				EndLocation   = endLocation,
 				HandlesClause = handlesClause,
 				Templates     = templates,
 				InterfaceImplementations = implementsClause
 				};
-				if (returnTypeAttributeSection != null) {
-					returnTypeAttributeSection.AttributeTarget = "return";
-					methodDeclaration.Attributes.Add(returnTypeAttributeSection);
-				}
-				compilationUnit.AddChild(methodDeclaration);
 				
-			} else if (StartOf(14)) {
+				AddChild(methodDeclaration);
+				
+			} else if (la.kind == 1) {
+				lexer.NextToken();
 
-#line  887 "VBNET.ATG" 
+#line  968 "VBNET.ATG" 
 				methodDeclaration = new MethodDeclaration {
 				Name = name, Modifier = m.Modifier, TypeReference = type,
 				Parameters = p, Attributes = attributes,
 				StartLocation = m.GetDeclarationLocation(startPos),
-				EndLocation   = t.EndLocation,
+				EndLocation   = endLocation,
 				Templates     = templates,
 				HandlesClause = handlesClause,
 				InterfaceImplementations = implementsClause
 				};
-				if (returnTypeAttributeSection != null) {
-					returnTypeAttributeSection.AttributeTarget = "return";
-					methodDeclaration.Attributes.Add(returnTypeAttributeSection);
-				}
 				
-				compilationUnit.AddChild(methodDeclaration);
+				AddChild(methodDeclaration);
 				
 				if (ParseMethodBodies) { 
 				Block(
-#line  904 "VBNET.ATG" 
+#line  981 "VBNET.ATG" 
 out stmt);
-				Expect(88);
-				Expect(100);
+				Expect(113);
+				Expect(127);
 
-#line  906 "VBNET.ATG" 
+#line  983 "VBNET.ATG" 
 				} else {
 				// don't parse method body
 				lexer.SkipCurrentBlock(Tokens.Function); stmt = new BlockStatement();
@@ -1697,14 +1753,14 @@ out stmt);
 				methodDeclaration.Body.StartLocation = methodDeclaration.EndLocation;
 				methodDeclaration.Body.EndLocation   = t.EndLocation;
 				
-				Expect(1);
-			} else SynErr(224);
+				EndOfStmt();
+			} else SynErr(258);
 			break;
 		}
-		case 78: {
+		case 101: {
 			lexer.NextToken();
 
-#line  920 "VBNET.ATG" 
+#line  997 "VBNET.ATG" 
 			m.Check(Modifiers.VBExternalMethods);
 			Location startPos = t.Location;
 			CharsetModifier charsetModifer = CharsetModifier.None;
@@ -1714,92 +1770,92 @@ out stmt);
 			
 			if (StartOf(15)) {
 				Charset(
-#line  927 "VBNET.ATG" 
+#line  1004 "VBNET.ATG" 
 out charsetModifer);
 			}
-			if (la.kind == 167) {
+			if (la.kind == 210) {
 				lexer.NextToken();
 				Identifier();
 
-#line  930 "VBNET.ATG" 
+#line  1007 "VBNET.ATG" 
 				name = t.val; 
-				Expect(115);
+				Expect(149);
 				Expect(3);
 
-#line  931 "VBNET.ATG" 
+#line  1008 "VBNET.ATG" 
 				library = t.literalValue as string; 
-				if (la.kind == 44) {
+				if (la.kind == 59) {
 					lexer.NextToken();
 					Expect(3);
 
-#line  932 "VBNET.ATG" 
+#line  1009 "VBNET.ATG" 
 					alias = t.literalValue as string; 
 				}
-				if (la.kind == 24) {
+				if (la.kind == 37) {
 					lexer.NextToken();
-					if (StartOf(4)) {
+					if (StartOf(6)) {
 						FormalParameterList(
-#line  933 "VBNET.ATG" 
+#line  1010 "VBNET.ATG" 
 p);
 					}
-					Expect(25);
+					Expect(38);
 				}
-				Expect(1);
+				EndOfStmt();
 
-#line  936 "VBNET.ATG" 
+#line  1013 "VBNET.ATG" 
 				DeclareDeclaration declareDeclaration = new DeclareDeclaration(name, m.Modifier, null, p, attributes, library, alias, charsetModifer);
 				declareDeclaration.StartLocation = m.GetDeclarationLocation(startPos);
 				declareDeclaration.EndLocation   = t.EndLocation;
-				compilationUnit.AddChild(declareDeclaration);
+				AddChild(declareDeclaration);
 				
-			} else if (la.kind == 100) {
+			} else if (la.kind == 127) {
 				lexer.NextToken();
 				Identifier();
 
-#line  943 "VBNET.ATG" 
+#line  1020 "VBNET.ATG" 
 				name = t.val; 
-				Expect(115);
+				Expect(149);
 				Expect(3);
 
-#line  944 "VBNET.ATG" 
+#line  1021 "VBNET.ATG" 
 				library = t.literalValue as string; 
-				if (la.kind == 44) {
+				if (la.kind == 59) {
 					lexer.NextToken();
 					Expect(3);
 
-#line  945 "VBNET.ATG" 
+#line  1022 "VBNET.ATG" 
 					alias = t.literalValue as string; 
 				}
-				if (la.kind == 24) {
+				if (la.kind == 37) {
 					lexer.NextToken();
-					if (StartOf(4)) {
+					if (StartOf(6)) {
 						FormalParameterList(
-#line  946 "VBNET.ATG" 
+#line  1023 "VBNET.ATG" 
 p);
 					}
-					Expect(25);
+					Expect(38);
 				}
-				if (la.kind == 48) {
+				if (la.kind == 63) {
 					lexer.NextToken();
 					TypeName(
-#line  947 "VBNET.ATG" 
+#line  1024 "VBNET.ATG" 
 out type);
 				}
-				Expect(1);
+				EndOfStmt();
 
-#line  950 "VBNET.ATG" 
+#line  1027 "VBNET.ATG" 
 				DeclareDeclaration declareDeclaration = new DeclareDeclaration(name, m.Modifier, type, p, attributes, library, alias, charsetModifer);
 				declareDeclaration.StartLocation = m.GetDeclarationLocation(startPos);
 				declareDeclaration.EndLocation   = t.EndLocation;
-				compilationUnit.AddChild(declareDeclaration);
+				AddChild(declareDeclaration);
 				
-			} else SynErr(225);
+			} else SynErr(259);
 			break;
 		}
-		case 93: {
+		case 119: {
 			lexer.NextToken();
 
-#line  960 "VBNET.ATG" 
+#line  1037 "VBNET.ATG" 
 			m.Check(Modifiers.VBEvents);
 			Location startPos = t.Location;
 			EventDeclaration eventDeclaration;
@@ -1808,165 +1864,196 @@ out type);
 			
 			Identifier();
 
-#line  966 "VBNET.ATG" 
+#line  1043 "VBNET.ATG" 
 			name= t.val; 
-			if (la.kind == 48) {
+			if (la.kind == 63) {
 				lexer.NextToken();
 				TypeName(
-#line  968 "VBNET.ATG" 
+#line  1045 "VBNET.ATG" 
 out type);
-			} else if (la.kind == 1 || la.kind == 24 || la.kind == 107) {
-				if (la.kind == 24) {
+			} else if (StartOf(16)) {
+				if (la.kind == 37) {
 					lexer.NextToken();
-					if (StartOf(4)) {
+					if (StartOf(6)) {
 						FormalParameterList(
-#line  970 "VBNET.ATG" 
+#line  1047 "VBNET.ATG" 
 p);
 					}
-					Expect(25);
+					Expect(38);
 				}
-			} else SynErr(226);
-			if (la.kind == 107) {
+			} else SynErr(260);
+			if (la.kind == 136) {
 				ImplementsClause(
-#line  972 "VBNET.ATG" 
+#line  1049 "VBNET.ATG" 
 out implementsClause);
 			}
 
-#line  974 "VBNET.ATG" 
+#line  1051 "VBNET.ATG" 
 			eventDeclaration = new EventDeclaration {
 			Name = name, TypeReference = type, Modifier = m.Modifier, 
 			Parameters = p, Attributes = attributes, InterfaceImplementations = implementsClause,
 			StartLocation = m.GetDeclarationLocation(startPos),
 			EndLocation = t.EndLocation
 			};
-			compilationUnit.AddChild(eventDeclaration);
+			AddChild(eventDeclaration);
 			
-			Expect(1);
+			EndOfStmt();
 			break;
 		}
-		case 2: case 47: case 49: case 50: case 51: case 70: case 95: case 134: case 144: case 169: case 176: case 177: {
+		case 2: case 58: case 62: case 64: case 65: case 66: case 67: case 70: case 87: case 104: case 107: case 116: case 121: case 126: case 133: case 139: case 143: case 146: case 147: case 170: case 176: case 178: case 184: case 203: case 212: case 213: case 223: case 224: case 230: {
 
-#line  984 "VBNET.ATG" 
-			Location startPos = t.Location; 
-
-#line  986 "VBNET.ATG" 
+#line  1062 "VBNET.ATG" 
 			m.Check(Modifiers.Fields);
 			FieldDeclaration fd = new FieldDeclaration(attributes, null, m.Modifier);
-			fd.StartLocation = m.GetDeclarationLocation(startPos); 
 			
 			IdentifierForFieldDeclaration();
 
-#line  990 "VBNET.ATG" 
+#line  1065 "VBNET.ATG" 
 			string name = t.val; 
+
+#line  1066 "VBNET.ATG" 
+			fd.StartLocation = m.GetDeclarationLocation(t.Location); 
 			VariableDeclaratorPartAfterIdentifier(
-#line  991 "VBNET.ATG" 
+#line  1068 "VBNET.ATG" 
 variableDeclarators, name);
-			while (la.kind == 12) {
+			while (la.kind == 22) {
 				lexer.NextToken();
 				VariableDeclarator(
-#line  992 "VBNET.ATG" 
+#line  1069 "VBNET.ATG" 
 variableDeclarators);
 			}
-			Expect(1);
+			EndOfStmt();
 
-#line  995 "VBNET.ATG" 
+#line  1072 "VBNET.ATG" 
 			fd.EndLocation = t.EndLocation;
 			fd.Fields = variableDeclarators;
-			compilationUnit.AddChild(fd);
+			AddChild(fd);
 			
 			break;
 		}
-		case 71: {
+		case 88: {
 
-#line  1000 "VBNET.ATG" 
+#line  1077 "VBNET.ATG" 
 			m.Check(Modifiers.Fields); 
 			lexer.NextToken();
 
-#line  1001 "VBNET.ATG" 
+#line  1078 "VBNET.ATG" 
 			m.Add(Modifiers.Const, t.Location);  
 
-#line  1003 "VBNET.ATG" 
+#line  1080 "VBNET.ATG" 
 			FieldDeclaration fd = new FieldDeclaration(attributes, type, m.Modifier);
 			fd.StartLocation = m.GetDeclarationLocation(t.Location);
 			List<VariableDeclaration> constantDeclarators = new List<VariableDeclaration>();
 			
 			ConstantDeclarator(
-#line  1007 "VBNET.ATG" 
+#line  1084 "VBNET.ATG" 
 constantDeclarators);
-			while (la.kind == 12) {
+			while (la.kind == 22) {
 				lexer.NextToken();
 				ConstantDeclarator(
-#line  1008 "VBNET.ATG" 
+#line  1085 "VBNET.ATG" 
 constantDeclarators);
 			}
 
-#line  1010 "VBNET.ATG" 
+#line  1087 "VBNET.ATG" 
 			fd.Fields = constantDeclarators;
 			fd.EndLocation = t.Location;
 			
-			Expect(1);
+			EndOfStmt();
 
-#line  1015 "VBNET.ATG" 
+#line  1092 "VBNET.ATG" 
 			fd.EndLocation = t.EndLocation;
-			compilationUnit.AddChild(fd);
+			AddChild(fd);
 			
 			break;
 		}
-		case 146: {
+		case 186: {
 			lexer.NextToken();
 
-#line  1021 "VBNET.ATG" 
+#line  1098 "VBNET.ATG" 
 			m.Check(Modifiers.VBProperties);
 			Location startPos = t.Location;
 			List<InterfaceImplementation> implementsClause = null;
+			AttributeSection returnTypeAttributeSection = null;
+			Expression initializer = null;
 			
 			Identifier();
 
-#line  1025 "VBNET.ATG" 
+#line  1104 "VBNET.ATG" 
 			string propertyName = t.val; 
-			if (la.kind == 24) {
+			if (la.kind == 37) {
 				lexer.NextToken();
-				if (StartOf(4)) {
+				if (StartOf(6)) {
 					FormalParameterList(
-#line  1026 "VBNET.ATG" 
+#line  1105 "VBNET.ATG" 
 p);
 				}
-				Expect(25);
+				Expect(38);
 			}
-			if (la.kind == 48) {
+			if (la.kind == 63) {
 				lexer.NextToken();
-				TypeName(
-#line  1027 "VBNET.ATG" 
-out type);
-			}
+				while (la.kind == 40) {
+					AttributeSection(
+#line  1108 "VBNET.ATG" 
+out returnTypeAttributeSection);
 
-#line  1029 "VBNET.ATG" 
-			if(type == null) {
-			type = new TypeReference("System.Object");
+#line  1110 "VBNET.ATG" 
+					if (returnTypeAttributeSection != null) {
+					returnTypeAttributeSection.AttributeTarget = "return";
+					attributes.Add(returnTypeAttributeSection);
+					}
+					
+				}
+				if (
+#line  1117 "VBNET.ATG" 
+IsNewExpression()) {
+					ObjectCreateExpression(
+#line  1117 "VBNET.ATG" 
+out initializer);
+
+#line  1119 "VBNET.ATG" 
+					if (initializer is ObjectCreateExpression) {
+					type = ((ObjectCreateExpression)initializer).CreateType.Clone();
+					} else {
+						type = ((ArrayCreateExpression)initializer).CreateType.Clone();
+					}
+					
+				} else if (StartOf(8)) {
+					TypeName(
+#line  1126 "VBNET.ATG" 
+out type);
+				} else SynErr(261);
 			}
-			
-			if (la.kind == 107) {
+			if (la.kind == 20) {
+				lexer.NextToken();
+				Expr(
+#line  1129 "VBNET.ATG" 
+out initializer);
+			}
+			if (la.kind == 136) {
 				ImplementsClause(
-#line  1033 "VBNET.ATG" 
+#line  1130 "VBNET.ATG" 
 out implementsClause);
 			}
-			Expect(1);
+			EndOfStmt();
 			if (
-#line  1037 "VBNET.ATG" 
-IsMustOverride(m)) {
+#line  1134 "VBNET.ATG" 
+IsMustOverride(m) || IsAutomaticProperty()) {
 
-#line  1039 "VBNET.ATG" 
+#line  1136 "VBNET.ATG" 
 				PropertyDeclaration pDecl = new PropertyDeclaration(propertyName, type, m.Modifier, attributes);
 				pDecl.StartLocation = m.GetDeclarationLocation(startPos);
 				pDecl.EndLocation   = t.Location;
 				pDecl.TypeReference = type;
 				pDecl.InterfaceImplementations = implementsClause;
 				pDecl.Parameters = p;
-				compilationUnit.AddChild(pDecl);
+				if (initializer != null)
+					pDecl.Initializer = initializer;
+				AddChild(pDecl);
 				
-			} else if (StartOf(16)) {
+			} else if (StartOf(17)) {
 
-#line  1049 "VBNET.ATG" 
+#line  1148 "VBNET.ATG" 
 				PropertyDeclaration pDecl = new PropertyDeclaration(propertyName, type, m.Modifier, attributes);
 				pDecl.StartLocation = m.GetDeclarationLocation(startPos);
 				pDecl.EndLocation   = t.Location;
@@ -1978,29 +2065,29 @@ IsMustOverride(m)) {
 				PropertySetRegion setRegion;
 				
 				AccessorDecls(
-#line  1059 "VBNET.ATG" 
+#line  1158 "VBNET.ATG" 
 out getRegion, out setRegion);
-				Expect(88);
-				Expect(146);
-				Expect(1);
+				Expect(113);
+				Expect(186);
+				EndOfStmt();
 
-#line  1063 "VBNET.ATG" 
+#line  1162 "VBNET.ATG" 
 				pDecl.GetRegion = getRegion;
 				pDecl.SetRegion = setRegion;
-				pDecl.BodyEnd = t.EndLocation;
-				compilationUnit.AddChild(pDecl);
+				pDecl.BodyEnd = t.Location; // t = EndOfStmt; not "Property"
+				AddChild(pDecl);
 				
-			} else SynErr(227);
+			} else SynErr(262);
 			break;
 		}
-		case 205: {
+		case 98: {
 			lexer.NextToken();
 
-#line  1070 "VBNET.ATG" 
+#line  1169 "VBNET.ATG" 
 			Location startPos = t.Location; 
-			Expect(93);
+			Expect(119);
 
-#line  1072 "VBNET.ATG" 
+#line  1171 "VBNET.ATG" 
 			m.Check(Modifiers.VBCustomEvents);
 			EventAddRemoveRegion eventAccessorDeclaration;
 			EventAddRegion addHandlerAccessorDeclaration = null;
@@ -2010,24 +2097,24 @@ out getRegion, out setRegion);
 			
 			Identifier();
 
-#line  1079 "VBNET.ATG" 
+#line  1178 "VBNET.ATG" 
 			string customEventName = t.val; 
-			Expect(48);
+			Expect(63);
 			TypeName(
-#line  1080 "VBNET.ATG" 
+#line  1179 "VBNET.ATG" 
 out type);
-			if (la.kind == 107) {
+			if (la.kind == 136) {
 				ImplementsClause(
-#line  1081 "VBNET.ATG" 
+#line  1180 "VBNET.ATG" 
 out implementsClause);
 			}
-			Expect(1);
-			while (StartOf(17)) {
+			EndOfStmt();
+			while (StartOf(18)) {
 				EventAccessorDeclaration(
-#line  1084 "VBNET.ATG" 
+#line  1183 "VBNET.ATG" 
 out eventAccessorDeclaration);
 
-#line  1086 "VBNET.ATG" 
+#line  1185 "VBNET.ATG" 
 				if(eventAccessorDeclaration is EventAddRegion)
 				{
 					addHandlerAccessorDeclaration = (EventAddRegion)eventAccessorDeclaration;
@@ -2042,11 +2129,11 @@ out eventAccessorDeclaration);
 				}
 				
 			}
-			Expect(88);
-			Expect(93);
-			Expect(1);
+			Expect(113);
+			Expect(119);
+			EndOfStmt();
 
-#line  1102 "VBNET.ATG" 
+#line  1201 "VBNET.ATG" 
 			if(addHandlerAccessorDeclaration == null)
 			{
 				Error("Need to provide AddHandler accessor.");
@@ -2071,109 +2158,91 @@ out eventAccessorDeclaration);
 				RemoveRegion = removeHandlerAccessorDeclaration,
 				RaiseRegion = raiseEventAccessorDeclaration
 			};
-			compilationUnit.AddChild(decl);
+			AddChild(decl);
 			
 			break;
 		}
-		case 188: case 202: case 203: {
+		case 161: case 172: case 232: {
 
-#line  1128 "VBNET.ATG" 
+#line  1227 "VBNET.ATG" 
 			ConversionType opConversionType = ConversionType.None; 
-			if (la.kind == 202 || la.kind == 203) {
-				if (la.kind == 203) {
+			if (la.kind == 161 || la.kind == 232) {
+				if (la.kind == 232) {
 					lexer.NextToken();
 
-#line  1129 "VBNET.ATG" 
+#line  1228 "VBNET.ATG" 
 					opConversionType = ConversionType.Implicit; 
 				} else {
 					lexer.NextToken();
 
-#line  1130 "VBNET.ATG" 
+#line  1229 "VBNET.ATG" 
 					opConversionType = ConversionType.Explicit;
 				}
 			}
-			Expect(188);
+			Expect(172);
 
-#line  1133 "VBNET.ATG" 
+#line  1232 "VBNET.ATG" 
 			m.Check(Modifiers.VBOperators);
 			Location startPos = t.Location;
 			TypeReference returnType = NullTypeReference.Instance;
 			TypeReference operandType = NullTypeReference.Instance;
-			string operandName;
 			OverloadableOperatorType operatorType;
 			AttributeSection section;
+			ParameterDeclarationExpression param;
 			List<ParameterDeclarationExpression> parameters = new List<ParameterDeclarationExpression>();
-			List<AttributeSection> returnTypeAttributes = new List<AttributeSection>();
 			
 			OverloadableOperator(
-#line  1143 "VBNET.ATG" 
+#line  1241 "VBNET.ATG" 
 out operatorType);
-			Expect(24);
-			if (la.kind == 55) {
+			Expect(37);
+			FormalParameter(
+#line  1243 "VBNET.ATG" 
+out param);
+
+#line  1244 "VBNET.ATG" 
+			if (param != null) parameters.Add(param); 
+			if (la.kind == 22) {
 				lexer.NextToken();
+				FormalParameter(
+#line  1246 "VBNET.ATG" 
+out param);
+
+#line  1247 "VBNET.ATG" 
+				if (param != null) parameters.Add(param); 
 			}
-			Identifier();
+			Expect(38);
 
-#line  1144 "VBNET.ATG" 
-			operandName = t.val; 
-			if (la.kind == 48) {
-				lexer.NextToken();
-				TypeName(
-#line  1145 "VBNET.ATG" 
-out operandType);
-			}
-
-#line  1146 "VBNET.ATG" 
-			parameters.Add(new ParameterDeclarationExpression(operandType, operandName, ParameterModifiers.In)); 
-			while (la.kind == 12) {
-				lexer.NextToken();
-				if (la.kind == 55) {
-					lexer.NextToken();
-				}
-				Identifier();
-
-#line  1150 "VBNET.ATG" 
-				operandName = t.val; 
-				if (la.kind == 48) {
-					lexer.NextToken();
-					TypeName(
-#line  1151 "VBNET.ATG" 
-out operandType);
-				}
-
-#line  1152 "VBNET.ATG" 
-				parameters.Add(new ParameterDeclarationExpression(operandType, operandName, ParameterModifiers.In)); 
-			}
-			Expect(25);
-
-#line  1155 "VBNET.ATG" 
+#line  1250 "VBNET.ATG" 
 			Location endPos = t.EndLocation; 
-			if (la.kind == 48) {
+			if (la.kind == 63) {
 				lexer.NextToken();
-				while (la.kind == 27) {
+				while (la.kind == 40) {
 					AttributeSection(
-#line  1156 "VBNET.ATG" 
+#line  1251 "VBNET.ATG" 
 out section);
 
-#line  1156 "VBNET.ATG" 
-					returnTypeAttributes.Add(section); 
+#line  1252 "VBNET.ATG" 
+					if (section != null) {
+					section.AttributeTarget = "return";
+					attributes.Add(section);
+					} 
 				}
 				TypeName(
-#line  1156 "VBNET.ATG" 
+#line  1256 "VBNET.ATG" 
 out returnType);
 
-#line  1156 "VBNET.ATG" 
+#line  1256 "VBNET.ATG" 
 				endPos = t.EndLocation; 
-				Expect(1);
 			}
-			Block(
-#line  1157 "VBNET.ATG" 
-out stmt);
-			Expect(88);
-			Expect(188);
 			Expect(1);
+			Block(
+#line  1258 "VBNET.ATG" 
+out stmt);
+			Expect(113);
+			Expect(172);
+			EndOfStmt();
 
-#line  1159 "VBNET.ATG" 
+#line  1260 "VBNET.ATG" 
 			OperatorDeclaration operatorDeclaration = new OperatorDeclaration {
 			Modifier = m.Modifier,
 			Attributes = attributes,
@@ -2181,61 +2250,63 @@ out stmt);
 			TypeReference = returnType,
 			OverloadableOperator = operatorType,
 			ConversionType = opConversionType,
-			ReturnTypeAttributes = returnTypeAttributes,
 			Body = (BlockStatement)stmt,
 			StartLocation = m.GetDeclarationLocation(startPos),
 			EndLocation = endPos
 			};
 			operatorDeclaration.Body.StartLocation = startPos;
 			operatorDeclaration.Body.EndLocation = t.Location;
-			compilationUnit.AddChild(operatorDeclaration);
+			AddChild(operatorDeclaration);
 			
 			break;
 		}
-		default: SynErr(228); break;
+		default: SynErr(263); break;
 		}
 	}
 
 	void EnumMemberDecl(
-#line  705 "VBNET.ATG" 
+#line  774 "VBNET.ATG" 
 out FieldDeclaration f) {
 
-#line  707 "VBNET.ATG" 
+#line  776 "VBNET.ATG" 
 		Expression expr = null;List<AttributeSection> attributes = new List<AttributeSection>();
 		AttributeSection section = null;
 		VariableDeclaration varDecl = null;
 		
-		while (la.kind == 27) {
+		while (la.kind == 40) {
 			AttributeSection(
-#line  711 "VBNET.ATG" 
+#line  780 "VBNET.ATG" 
 out section);
 
-#line  711 "VBNET.ATG" 
+#line  780 "VBNET.ATG" 
 			attributes.Add(section); 
 		}
 		Identifier();
 
-#line  714 "VBNET.ATG" 
+#line  783 "VBNET.ATG" 
 		f = new FieldDeclaration(attributes);
 		varDecl = new VariableDeclaration(t.val);
 		f.Fields.Add(varDecl);
 		f.StartLocation = varDecl.StartLocation = t.Location;
 		
-		if (la.kind == 11) {
+		if (la.kind == 20) {
 			lexer.NextToken();
 			Expr(
-#line  719 "VBNET.ATG" 
+#line  788 "VBNET.ATG" 
 out expr);
 
-#line  719 "VBNET.ATG" 
+#line  788 "VBNET.ATG" 
 			varDecl.Initializer = expr; 
 		}
-		Expect(1);
+
+#line  789 "VBNET.ATG" 
+		f.EndLocation = varDecl.EndLocation = t.EndLocation; 
+		EndOfStmt();
 	}
 
 	void InterfaceMemberDecl() {
 
-#line  596 "VBNET.ATG" 
+#line  665 "VBNET.ATG" 
 		TypeReference type =null;
 		List<ParameterDeclarationExpression> p = new List<ParameterDeclarationExpression>();
 		List<TemplateDefinition> templates = new List<TemplateDefinition>();
@@ -2244,132 +2315,132 @@ out expr);
 		List<AttributeSection> attributes = new List<AttributeSection>();
 		string name;
 		
-		if (StartOf(18)) {
-			while (la.kind == 27) {
+		if (StartOf(19)) {
+			while (la.kind == 40) {
 				AttributeSection(
-#line  604 "VBNET.ATG" 
+#line  673 "VBNET.ATG" 
 out section);
 
-#line  604 "VBNET.ATG" 
+#line  673 "VBNET.ATG" 
 				attributes.Add(section); 
 			}
-			while (StartOf(8)) {
+			while (StartOf(10)) {
 				MemberModifier(
-#line  607 "VBNET.ATG" 
+#line  676 "VBNET.ATG" 
 mod);
 			}
-			if (la.kind == 93) {
+			if (la.kind == 119) {
 				lexer.NextToken();
 
-#line  611 "VBNET.ATG" 
+#line  680 "VBNET.ATG" 
 				mod.Check(Modifiers.VBInterfaceEvents);
 				Location startLocation = t.Location;
 				
 				Identifier();
 
-#line  614 "VBNET.ATG" 
+#line  683 "VBNET.ATG" 
 				name = t.val; 
-				if (la.kind == 24) {
+				if (la.kind == 37) {
 					lexer.NextToken();
-					if (StartOf(4)) {
+					if (StartOf(6)) {
 						FormalParameterList(
-#line  615 "VBNET.ATG" 
+#line  684 "VBNET.ATG" 
 p);
 					}
-					Expect(25);
+					Expect(38);
 				}
-				if (la.kind == 48) {
+				if (la.kind == 63) {
 					lexer.NextToken();
 					TypeName(
-#line  616 "VBNET.ATG" 
+#line  685 "VBNET.ATG" 
 out type);
 				}
-				Expect(1);
+				EndOfStmt();
 
-#line  619 "VBNET.ATG" 
+#line  688 "VBNET.ATG" 
 				EventDeclaration ed = new EventDeclaration {
 				Name = name, TypeReference = type, Modifier = mod.Modifier,
 				Parameters = p, Attributes = attributes,
 				StartLocation = startLocation, EndLocation = t.EndLocation
 				};
-				compilationUnit.AddChild(ed);
+				AddChild(ed);
 				
-			} else if (la.kind == 167) {
+			} else if (la.kind == 210) {
 				lexer.NextToken();
 
-#line  629 "VBNET.ATG" 
+#line  698 "VBNET.ATG" 
 				Location startLocation =  t.Location;
 				mod.Check(Modifiers.VBInterfaceMethods);
 				
 				Identifier();
 
-#line  632 "VBNET.ATG" 
+#line  701 "VBNET.ATG" 
 				name = t.val; 
 				TypeParameterList(
-#line  633 "VBNET.ATG" 
+#line  702 "VBNET.ATG" 
 templates);
-				if (la.kind == 24) {
+				if (la.kind == 37) {
 					lexer.NextToken();
-					if (StartOf(4)) {
+					if (StartOf(6)) {
 						FormalParameterList(
-#line  634 "VBNET.ATG" 
+#line  703 "VBNET.ATG" 
 p);
 					}
-					Expect(25);
+					Expect(38);
 				}
-				Expect(1);
+				EndOfStmt();
 
-#line  637 "VBNET.ATG" 
+#line  706 "VBNET.ATG" 
 				MethodDeclaration md = new MethodDeclaration {
 				Name = name, 
 				Modifier = mod.Modifier, 
 				Parameters = p,
 				Attributes = attributes,
-				TypeReference = new TypeReference("", "System.Void"),
+				TypeReference = new TypeReference("System.Void", true),
 				StartLocation = startLocation,
 				EndLocation = t.EndLocation,
 				Templates = templates
 				};
-				compilationUnit.AddChild(md);
+				AddChild(md);
 				
-			} else if (la.kind == 100) {
+			} else if (la.kind == 127) {
 				lexer.NextToken();
 
-#line  652 "VBNET.ATG" 
+#line  721 "VBNET.ATG" 
 				mod.Check(Modifiers.VBInterfaceMethods);
 				Location startLocation = t.Location;
 				
 				Identifier();
 
-#line  655 "VBNET.ATG" 
+#line  724 "VBNET.ATG" 
 				name = t.val; 
 				TypeParameterList(
-#line  656 "VBNET.ATG" 
+#line  725 "VBNET.ATG" 
 templates);
-				if (la.kind == 24) {
+				if (la.kind == 37) {
 					lexer.NextToken();
-					if (StartOf(4)) {
+					if (StartOf(6)) {
 						FormalParameterList(
-#line  657 "VBNET.ATG" 
+#line  726 "VBNET.ATG" 
 p);
 					}
-					Expect(25);
+					Expect(38);
 				}
-				if (la.kind == 48) {
+				if (la.kind == 63) {
 					lexer.NextToken();
-					while (la.kind == 27) {
+					while (la.kind == 40) {
 						AttributeSection(
-#line  658 "VBNET.ATG" 
+#line  727 "VBNET.ATG" 
 out returnTypeAttributeSection);
 					}
 					TypeName(
-#line  658 "VBNET.ATG" 
+#line  727 "VBNET.ATG" 
 out type);
 				}
 
-#line  660 "VBNET.ATG" 
+#line  729 "VBNET.ATG" 
 				if(type == null) {
-				type = new TypeReference("System.Object");
+				type = new TypeReference("System.Object", true);
 				}
 				MethodDeclaration md = new MethodDeclaration {
 					Name = name, Modifier = mod.Modifier, 
@@ -2382,182 +2453,211 @@ out type);
 				md.StartLocation = startLocation;
 				md.EndLocation = t.EndLocation;
 				md.Templates = templates;
-				compilationUnit.AddChild(md);
+				AddChild(md);
 				
-				Expect(1);
-			} else if (la.kind == 146) {
+				EndOfStmt();
+			} else if (la.kind == 186) {
 				lexer.NextToken();
 
-#line  680 "VBNET.ATG" 
+#line  749 "VBNET.ATG" 
 				Location startLocation = t.Location;
 				mod.Check(Modifiers.VBInterfaceProperties);
 				
 				Identifier();
 
-#line  683 "VBNET.ATG" 
+#line  752 "VBNET.ATG" 
 				name = t.val;  
-				if (la.kind == 24) {
+				if (la.kind == 37) {
 					lexer.NextToken();
-					if (StartOf(4)) {
+					if (StartOf(6)) {
 						FormalParameterList(
-#line  684 "VBNET.ATG" 
+#line  753 "VBNET.ATG" 
 p);
 					}
-					Expect(25);
+					Expect(38);
 				}
-				if (la.kind == 48) {
+				if (la.kind == 63) {
 					lexer.NextToken();
 					TypeName(
-#line  685 "VBNET.ATG" 
+#line  754 "VBNET.ATG" 
 out type);
 				}
 
-#line  687 "VBNET.ATG" 
+#line  756 "VBNET.ATG" 
 				if(type == null) {
-				type = new TypeReference("System.Object");
+				type = new TypeReference("System.Object", true);
 				}
 				
-				Expect(1);
+				EndOfStmt();
 
-#line  693 "VBNET.ATG" 
+#line  762 "VBNET.ATG" 
 				PropertyDeclaration pd = new PropertyDeclaration(name, type, mod.Modifier, attributes);
 				pd.Parameters = p;
 				pd.EndLocation = t.EndLocation;
 				pd.StartLocation = startLocation;
-				compilationUnit.AddChild(pd);
+				AddChild(pd);
 				
-			} else SynErr(229);
-		} else if (StartOf(19)) {
+			} else SynErr(264);
+		} else if (StartOf(20)) {
 			NonModuleDeclaration(
-#line  701 "VBNET.ATG" 
+#line  770 "VBNET.ATG" 
 mod, attributes);
-		} else SynErr(230);
+		} else SynErr(265);
 	}
 
 	void Expr(
-#line  1564 "VBNET.ATG" 
+#line  1661 "VBNET.ATG" 
 out Expression expr) {
-		DisjunctionExpr(
-#line  1566 "VBNET.ATG" 
+
+#line  1662 "VBNET.ATG" 
+		expr = null; Location startLocation = la.Location; 
+		if (
+#line  1665 "VBNET.ATG" 
+IsQueryExpression() ) {
+			QueryExpr(
+#line  1666 "VBNET.ATG" 
 out expr);
+		} else if (la.kind == 127 || la.kind == 210) {
+			LambdaExpr(
+#line  1667 "VBNET.ATG" 
+out expr);
+		} else if (StartOf(21)) {
+			DisjunctionExpr(
+#line  1668 "VBNET.ATG" 
+out expr);
+		} else SynErr(266);
+
+#line  1671 "VBNET.ATG" 
+		if (expr != null) {
+		expr.StartLocation = startLocation;
+		expr.EndLocation = t.EndLocation;
+		}
+		
 	}
 
 	void ImplementsClause(
-#line  1537 "VBNET.ATG" 
+#line  1634 "VBNET.ATG" 
 out List<InterfaceImplementation> baseInterfaces) {
 
-#line  1539 "VBNET.ATG" 
+#line  1636 "VBNET.ATG" 
 		baseInterfaces = new List<InterfaceImplementation>();
 		TypeReference type = null;
 		string memberName = null;
 		
-		Expect(107);
+		Expect(136);
 		NonArrayTypeName(
-#line  1544 "VBNET.ATG" 
+#line  1641 "VBNET.ATG" 
 out type, false);
 
-#line  1545 "VBNET.ATG" 
+#line  1642 "VBNET.ATG" 
 		if (type != null) memberName = TypeReference.StripLastIdentifierFromType(ref type); 
 
-#line  1546 "VBNET.ATG" 
+#line  1643 "VBNET.ATG" 
 		baseInterfaces.Add(new InterfaceImplementation(type, memberName)); 
-		while (la.kind == 12) {
+		while (la.kind == 22) {
 			lexer.NextToken();
 			NonArrayTypeName(
-#line  1548 "VBNET.ATG" 
+#line  1645 "VBNET.ATG" 
 out type, false);
 
-#line  1549 "VBNET.ATG" 
+#line  1646 "VBNET.ATG" 
 			if (type != null) memberName = TypeReference.StripLastIdentifierFromType(ref type); 
 
-#line  1550 "VBNET.ATG" 
+#line  1647 "VBNET.ATG" 
 			baseInterfaces.Add(new InterfaceImplementation(type, memberName)); 
 		}
 	}
 
 	void HandlesClause(
-#line  1495 "VBNET.ATG" 
+#line  1592 "VBNET.ATG" 
 out List<string> handlesClause) {
 
-#line  1497 "VBNET.ATG" 
+#line  1594 "VBNET.ATG" 
 		handlesClause = new List<string>();
 		string name;
 		
-		Expect(105);
+		Expect(134);
 		EventMemberSpecifier(
-#line  1500 "VBNET.ATG" 
+#line  1597 "VBNET.ATG" 
 out name);
 
-#line  1500 "VBNET.ATG" 
-		handlesClause.Add(name); 
-		while (la.kind == 12) {
+#line  1597 "VBNET.ATG" 
+		if (name != null) handlesClause.Add(name); 
+		while (la.kind == 22) {
 			lexer.NextToken();
 			EventMemberSpecifier(
-#line  1501 "VBNET.ATG" 
+#line  1598 "VBNET.ATG" 
 out name);
 
-#line  1501 "VBNET.ATG" 
-			handlesClause.Add(name); 
+#line  1598 "VBNET.ATG" 
+			if (name != null) handlesClause.Add(name); 
 		}
 	}
 
 	void Block(
-#line  2221 "VBNET.ATG" 
+#line  2981 "VBNET.ATG" 
 out Statement stmt) {
 
-#line  2224 "VBNET.ATG" 
+#line  2984 "VBNET.ATG" 
 		BlockStatement blockStmt = new BlockStatement();
 		/* in snippet parsing mode, t might be null */
-		if (t != null) blockStmt.StartLocation = t.Location;
-		compilationUnit.BlockStart(blockStmt);
+		if (t != null) blockStmt.StartLocation = t.EndLocation;
+		BlockStart(blockStmt);
 		
-		while (StartOf(20) || 
-#line  2230 "VBNET.ATG" 
+		while (StartOf(22) || 
+#line  2990 "VBNET.ATG" 
 IsEndStmtAhead()) {
 			if (
-#line  2230 "VBNET.ATG" 
+#line  2990 "VBNET.ATG" 
 IsEndStmtAhead()) {
-				Expect(88);
+
+#line  2991 "VBNET.ATG" 
+				Token first = la; 
+				Expect(113);
 				EndOfStmt();
 
-#line  2230 "VBNET.ATG" 
-				compilationUnit.AddChild(new EndStatement()); 
+#line  2994 "VBNET.ATG" 
+				AddChild(new EndStatement() {
+				StartLocation = first.Location,
+				EndLocation = first.EndLocation }
+				);
+				
 			} else {
 				Statement();
 				EndOfStmt();
 			}
 		}
 
-#line  2235 "VBNET.ATG" 
+#line  3003 "VBNET.ATG" 
 		stmt = blockStmt;
 		if (t != null) blockStmt.EndLocation = t.EndLocation;
-		compilationUnit.BlockEnd();
+		BlockEnd();
 		
 	}
 
 	void Charset(
-#line  1487 "VBNET.ATG" 
+#line  1584 "VBNET.ATG" 
 out CharsetModifier charsetModifier) {
 
-#line  1488 "VBNET.ATG" 
+#line  1585 "VBNET.ATG" 
 		charsetModifier = CharsetModifier.None; 
-		if (la.kind == 100 || la.kind == 167) {
-		} else if (la.kind == 47) {
+		if (la.kind == 127 || la.kind == 210) {
+		} else if (la.kind == 62) {
 			lexer.NextToken();
 
-#line  1489 "VBNET.ATG" 
+#line  1586 "VBNET.ATG" 
 			charsetModifier = CharsetModifier.Ansi; 
-		} else if (la.kind == 50) {
+		} else if (la.kind == 66) {
 			lexer.NextToken();
 
-#line  1490 "VBNET.ATG" 
+#line  1587 "VBNET.ATG" 
 			charsetModifier = CharsetModifier.Auto; 
-		} else if (la.kind == 176) {
+		} else if (la.kind == 223) {
 			lexer.NextToken();
 
-#line  1491 "VBNET.ATG" 
+#line  1588 "VBNET.ATG" 
 			charsetModifier = CharsetModifier.Unicode; 
-		} else SynErr(231);
+		} else SynErr(267);
 	}
 
 	void IdentifierForFieldDeclaration() {
@@ -2566,11 +2666,27 @@ out CharsetModifier charsetModifier) {
 			lexer.NextToken();
 			break;
 		}
-		case 169: {
+		case 58: {
 			lexer.NextToken();
 			break;
 		}
-		case 51: {
+		case 62: {
+			lexer.NextToken();
+			break;
+		}
+		case 64: {
+			lexer.NextToken();
+			break;
+		}
+		case 65: {
+			lexer.NextToken();
+			break;
+		}
+		case 66: {
+			lexer.NextToken();
+			break;
+		}
+		case 67: {
 			lexer.NextToken();
 			break;
 		}
@@ -2578,19 +2694,51 @@ out CharsetModifier charsetModifier) {
 			lexer.NextToken();
 			break;
 		}
-		case 49: {
+		case 87: {
 			lexer.NextToken();
 			break;
 		}
-		case 47: {
+		case 104: {
 			lexer.NextToken();
 			break;
 		}
-		case 50: {
+		case 107: {
 			lexer.NextToken();
 			break;
 		}
-		case 144: {
+		case 116: {
+			lexer.NextToken();
+			break;
+		}
+		case 121: {
+			lexer.NextToken();
+			break;
+		}
+		case 126: {
+			lexer.NextToken();
+			break;
+		}
+		case 133: {
+			lexer.NextToken();
+			break;
+		}
+		case 139: {
+			lexer.NextToken();
+			break;
+		}
+		case 143: {
+			lexer.NextToken();
+			break;
+		}
+		case 146: {
+			lexer.NextToken();
+			break;
+		}
+		case 147: {
+			lexer.NextToken();
+			break;
+		}
+		case 170: {
 			lexer.NextToken();
 			break;
 		}
@@ -2598,27 +2746,47 @@ out CharsetModifier charsetModifier) {
 			lexer.NextToken();
 			break;
 		}
-		case 177: {
+		case 178: {
 			lexer.NextToken();
 			break;
 		}
-		case 134: {
+		case 184: {
 			lexer.NextToken();
 			break;
 		}
-		case 95: {
+		case 203: {
 			lexer.NextToken();
 			break;
 		}
-		default: SynErr(232); break;
+		case 212: {
+			lexer.NextToken();
+			break;
+		}
+		case 213: {
+			lexer.NextToken();
+			break;
+		}
+		case 223: {
+			lexer.NextToken();
+			break;
+		}
+		case 224: {
+			lexer.NextToken();
+			break;
+		}
+		case 230: {
+			lexer.NextToken();
+			break;
+		}
+		default: SynErr(268); break;
 		}
 	}
 
 	void VariableDeclaratorPartAfterIdentifier(
-#line  1363 "VBNET.ATG" 
+#line  1463 "VBNET.ATG" 
 List<VariableDeclaration> fieldDeclaration, string name) {
 
-#line  1365 "VBNET.ATG" 
+#line  1465 "VBNET.ATG" 
 		Expression expr = null;
 		TypeReference type = null;
 		ArrayList rank = null;
@@ -2626,42 +2794,42 @@ List<VariableDeclaration> fieldDeclaration, string name) {
 		Location startLocation = t.Location;
 		
 		if (
-#line  1371 "VBNET.ATG" 
+#line  1471 "VBNET.ATG" 
 IsSize() && !IsDims()) {
 			ArrayInitializationModifier(
-#line  1371 "VBNET.ATG" 
+#line  1471 "VBNET.ATG" 
 out dimension);
 		}
 		if (
-#line  1372 "VBNET.ATG" 
+#line  1472 "VBNET.ATG" 
 IsDims()) {
 			ArrayNameModifier(
-#line  1372 "VBNET.ATG" 
+#line  1472 "VBNET.ATG" 
 out rank);
 		}
 		if (
-#line  1374 "VBNET.ATG" 
+#line  1474 "VBNET.ATG" 
 IsObjectCreation()) {
-			Expect(48);
+			Expect(63);
 			ObjectCreateExpression(
-#line  1374 "VBNET.ATG" 
+#line  1474 "VBNET.ATG" 
 out expr);
 
-#line  1376 "VBNET.ATG" 
+#line  1476 "VBNET.ATG" 
 			if (expr is ObjectCreateExpression) {
-			type = ((ObjectCreateExpression)expr).CreateType;
+			type = ((ObjectCreateExpression)expr).CreateType.Clone();
 			} else {
-				type = ((ArrayCreateExpression)expr).CreateType;
+				type = ((ArrayCreateExpression)expr).CreateType.Clone();
 			}
 			
-		} else if (StartOf(21)) {
-			if (la.kind == 48) {
+		} else if (StartOf(23)) {
+			if (la.kind == 63) {
 				lexer.NextToken();
 				TypeName(
-#line  1383 "VBNET.ATG" 
+#line  1483 "VBNET.ATG" 
 out type);
 
-#line  1385 "VBNET.ATG" 
+#line  1485 "VBNET.ATG" 
 				if (type != null) {
 				for (int i = fieldDeclaration.Count - 1; i >= 0; i--) {
 					VariableDeclaration vd = fieldDeclaration[i];
@@ -2674,7 +2842,7 @@ out type);
 				 
 			}
 
-#line  1397 "VBNET.ATG" 
+#line  1497 "VBNET.ATG" 
 			if (type == null && (dimension != null || rank != null)) {
 			type = new TypeReference("");
 			}
@@ -2688,7 +2856,7 @@ out type);
 						rank.Insert(0, dimension.Count - 1);
 						type.RankSpecifier = (int[])rank.ToArray(typeof(int));
 					}
-					expr = new ArrayCreateExpression(type, dimension);
+					expr = new ArrayCreateExpression(type.Clone(), dimension);
 				}
 			} else if (rank != null) {
 				if(type.RankSpecifier != null) {
@@ -2698,15 +2866,15 @@ out type);
 				}
 			}
 			
-			if (la.kind == 11) {
+			if (la.kind == 20) {
 				lexer.NextToken();
-				VariableInitializer(
-#line  1420 "VBNET.ATG" 
+				Expr(
+#line  1520 "VBNET.ATG" 
 out expr);
 			}
-		} else SynErr(233);
+		} else SynErr(269);
 
-#line  1423 "VBNET.ATG" 
+#line  1523 "VBNET.ATG" 
 		VariableDeclaration varDecl = new VariableDeclaration(name, expr, type);
 		varDecl.StartLocation = startLocation;
 		varDecl.EndLocation = t.Location;
@@ -2715,22 +2883,22 @@ out expr);
 	}
 
 	void VariableDeclarator(
-#line  1357 "VBNET.ATG" 
+#line  1457 "VBNET.ATG" 
 List<VariableDeclaration> fieldDeclaration) {
 		Identifier();
 
-#line  1359 "VBNET.ATG" 
+#line  1459 "VBNET.ATG" 
 		string name = t.val; 
 		VariableDeclaratorPartAfterIdentifier(
-#line  1360 "VBNET.ATG" 
+#line  1460 "VBNET.ATG" 
 fieldDeclaration, name);
 	}
 
 	void ConstantDeclarator(
-#line  1338 "VBNET.ATG" 
+#line  1438 "VBNET.ATG" 
 List<VariableDeclaration> constantDeclaration) {
 
-#line  1340 "VBNET.ATG" 
+#line  1440 "VBNET.ATG" 
 		Expression expr = null;
 		TypeReference type = null;
 		string name = String.Empty;
@@ -2738,20 +2906,20 @@ List<VariableDeclaration> constantDeclaration) {
 		
 		Identifier();
 
-#line  1345 "VBNET.ATG" 
+#line  1445 "VBNET.ATG" 
 		name = t.val; location = t.Location; 
-		if (la.kind == 48) {
+		if (la.kind == 63) {
 			lexer.NextToken();
 			TypeName(
-#line  1346 "VBNET.ATG" 
+#line  1446 "VBNET.ATG" 
 out type);
 		}
-		Expect(11);
+		Expect(20);
 		Expr(
-#line  1347 "VBNET.ATG" 
+#line  1447 "VBNET.ATG" 
 out expr);
 
-#line  1349 "VBNET.ATG" 
+#line  1449 "VBNET.ATG" 
 		VariableDeclaration f = new VariableDeclaration(name, expr);
 		f.TypeReference = type;
 		f.StartLocation = location;
@@ -2759,319 +2927,456 @@ out expr);
 		
 	}
 
+	void ObjectCreateExpression(
+#line  2123 "VBNET.ATG" 
+out Expression oce) {
+
+#line  2125 "VBNET.ATG" 
+		TypeReference type = null;
+		CollectionInitializerExpression initializer = null;
+		List<Expression> arguments = null;
+		ArrayList dimensions = null;
+		oce = null;
+		Location startLocation = la.Location;
+		bool canBeNormal; bool canBeReDim;
+		
+		Expect(162);
+		if (StartOf(8)) {
+			NonArrayTypeName(
+#line  2134 "VBNET.ATG" 
+out type, false);
+			if (la.kind == 37) {
+				lexer.NextToken();
+				NormalOrReDimArgumentList(
+#line  2135 "VBNET.ATG" 
+out arguments, out canBeNormal, out canBeReDim);
+				Expect(38);
+				if (la.kind == 35 || 
+#line  2136 "VBNET.ATG" 
+la.kind == Tokens.OpenParenthesis) {
+					if (
+#line  2136 "VBNET.ATG" 
+la.kind == Tokens.OpenParenthesis) {
+						ArrayTypeModifiers(
+#line  2137 "VBNET.ATG" 
+out dimensions);
+						CollectionInitializer(
+#line  2138 "VBNET.ATG" 
+out initializer);
+					} else {
+						CollectionInitializer(
+#line  2139 "VBNET.ATG" 
+out initializer);
+					}
+				}
+
+#line  2141 "VBNET.ATG" 
+				if (canBeReDim && !canBeNormal && initializer == null) initializer = new CollectionInitializerExpression(); 
+			}
+		}
+
+#line  2145 "VBNET.ATG" 
+		if (initializer == null) {
+		oce = new ObjectCreateExpression(type, arguments);
+		} else {
+			if (dimensions == null) dimensions = new ArrayList();
+			dimensions.Insert(0, (arguments == null) ? 0 : Math.Max(arguments.Count - 1, 0));
+			type.RankSpecifier = (int[])dimensions.ToArray(typeof(int));
+			ArrayCreateExpression ace = new ArrayCreateExpression(type, initializer);
+			ace.Arguments = arguments;
+			oce = ace;
+		}
+		
+		if (la.kind == 126 || la.kind == 233) {
+			if (la.kind == 233) {
+
+#line  2160 "VBNET.ATG" 
+				MemberInitializerExpression memberInitializer = null;
+				Expression anonymousMember = null;
+				
+				lexer.NextToken();
+
+#line  2165 "VBNET.ATG" 
+				CollectionInitializerExpression memberInitializers = new CollectionInitializerExpression();
+				memberInitializers.StartLocation = la.Location;
+				
+				Expect(35);
+				if (la.kind == 26 || la.kind == 147) {
+					MemberInitializer(
+#line  2170 "VBNET.ATG" 
+out memberInitializer);
+
+#line  2171 "VBNET.ATG" 
+					memberInitializers.CreateExpressions.Add(memberInitializer); 
+				} else if (StartOf(24)) {
+					Expr(
+#line  2172 "VBNET.ATG" 
+out anonymousMember);
+
+#line  2173 "VBNET.ATG" 
+					memberInitializers.CreateExpressions.Add(anonymousMember); 
+				} else SynErr(270);
+				while (la.kind == 22) {
+					lexer.NextToken();
+					if (la.kind == 26 || la.kind == 147) {
+						MemberInitializer(
+#line  2177 "VBNET.ATG" 
+out memberInitializer);
+
+#line  2178 "VBNET.ATG" 
+						memberInitializers.CreateExpressions.Add(memberInitializer); 
+					} else if (StartOf(24)) {
+						Expr(
+#line  2179 "VBNET.ATG" 
+out anonymousMember);
+
+#line  2180 "VBNET.ATG" 
+						memberInitializers.CreateExpressions.Add(anonymousMember); 
+					} else SynErr(271);
+				}
+				Expect(36);
+
+#line  2185 "VBNET.ATG" 
+				memberInitializers.EndLocation = t.Location;
+				if(oce is ObjectCreateExpression)
+				{
+					((ObjectCreateExpression)oce).ObjectInitializer = memberInitializers;
+				}
+				
+			} else {
+				lexer.NextToken();
+				CollectionInitializer(
+#line  2195 "VBNET.ATG" 
+out initializer);
+
+#line  2197 "VBNET.ATG" 
+				if(oce is ObjectCreateExpression)
+				((ObjectCreateExpression)oce).ObjectInitializer = initializer;
+				
+			}
+		}
+
+#line  2203 "VBNET.ATG" 
+		if (oce != null) {
+		oce.StartLocation = startLocation;
+		oce.EndLocation = t.EndLocation;
+		}
+		
+	}
+
 	void AccessorDecls(
-#line  1272 "VBNET.ATG" 
+#line  1372 "VBNET.ATG" 
 out PropertyGetRegion getBlock, out PropertySetRegion setBlock) {
 
-#line  1274 "VBNET.ATG" 
+#line  1374 "VBNET.ATG" 
 		List<AttributeSection> attributes = new List<AttributeSection>();
 		AttributeSection section;
 		getBlock = null;
 		setBlock = null; 
 		
-		while (la.kind == 27) {
+		while (la.kind == 40) {
 			AttributeSection(
-#line  1279 "VBNET.ATG" 
+#line  1379 "VBNET.ATG" 
 out section);
 
-#line  1279 "VBNET.ATG" 
+#line  1379 "VBNET.ATG" 
 			attributes.Add(section); 
 		}
-		if (StartOf(22)) {
+		if (StartOf(25)) {
 			GetAccessorDecl(
-#line  1281 "VBNET.ATG" 
+#line  1381 "VBNET.ATG" 
 out getBlock, attributes);
-			if (StartOf(23)) {
+			if (StartOf(26)) {
 
-#line  1283 "VBNET.ATG" 
+#line  1383 "VBNET.ATG" 
 				attributes = new List<AttributeSection>(); 
-				while (la.kind == 27) {
+				while (la.kind == 40) {
 					AttributeSection(
-#line  1284 "VBNET.ATG" 
+#line  1384 "VBNET.ATG" 
 out section);
 
-#line  1284 "VBNET.ATG" 
+#line  1384 "VBNET.ATG" 
 					attributes.Add(section); 
 				}
 				SetAccessorDecl(
-#line  1285 "VBNET.ATG" 
+#line  1385 "VBNET.ATG" 
 out setBlock, attributes);
 			}
-		} else if (StartOf(24)) {
+		} else if (StartOf(27)) {
 			SetAccessorDecl(
-#line  1288 "VBNET.ATG" 
+#line  1388 "VBNET.ATG" 
 out setBlock, attributes);
-			if (StartOf(25)) {
+			if (StartOf(28)) {
 
-#line  1290 "VBNET.ATG" 
+#line  1390 "VBNET.ATG" 
 				attributes = new List<AttributeSection>(); 
-				while (la.kind == 27) {
+				while (la.kind == 40) {
 					AttributeSection(
-#line  1291 "VBNET.ATG" 
+#line  1391 "VBNET.ATG" 
 out section);
 
-#line  1291 "VBNET.ATG" 
+#line  1391 "VBNET.ATG" 
 					attributes.Add(section); 
 				}
 				GetAccessorDecl(
-#line  1292 "VBNET.ATG" 
+#line  1392 "VBNET.ATG" 
 out getBlock, attributes);
 			}
-		} else SynErr(234);
+		} else SynErr(272);
 	}
 
 	void EventAccessorDeclaration(
-#line  1235 "VBNET.ATG" 
+#line  1335 "VBNET.ATG" 
 out EventAddRemoveRegion eventAccessorDeclaration) {
 
-#line  1237 "VBNET.ATG" 
+#line  1337 "VBNET.ATG" 
 		Statement stmt = null;
 		List<ParameterDeclarationExpression> p = new List<ParameterDeclarationExpression>();
 		AttributeSection section;
 		List<AttributeSection> attributes = new List<AttributeSection>();
 		eventAccessorDeclaration = null;
 		
-		while (la.kind == 27) {
+		while (la.kind == 40) {
 			AttributeSection(
-#line  1243 "VBNET.ATG" 
+#line  1343 "VBNET.ATG" 
 out section);
 
-#line  1243 "VBNET.ATG" 
+#line  1343 "VBNET.ATG" 
 			attributes.Add(section); 
 		}
-		if (la.kind == 42) {
+		if (la.kind == 56) {
 			lexer.NextToken();
-			if (la.kind == 24) {
+			if (la.kind == 37) {
 				lexer.NextToken();
-				if (StartOf(4)) {
+				if (StartOf(6)) {
 					FormalParameterList(
-#line  1245 "VBNET.ATG" 
+#line  1345 "VBNET.ATG" 
 p);
 				}
-				Expect(25);
+				Expect(38);
 			}
 			Expect(1);
 			Block(
-#line  1246 "VBNET.ATG" 
+#line  1346 "VBNET.ATG" 
 out stmt);
-			Expect(88);
-			Expect(42);
-			Expect(1);
+			Expect(113);
+			Expect(56);
+			EndOfStmt();
 
-#line  1248 "VBNET.ATG" 
+#line  1348 "VBNET.ATG" 
 			eventAccessorDeclaration = new EventAddRegion(attributes);
 			eventAccessorDeclaration.Block = (BlockStatement)stmt;
 			eventAccessorDeclaration.Parameters = p;
 			
-		} else if (la.kind == 152) {
+		} else if (la.kind == 193) {
 			lexer.NextToken();
-			if (la.kind == 24) {
+			if (la.kind == 37) {
 				lexer.NextToken();
-				if (StartOf(4)) {
+				if (StartOf(6)) {
 					FormalParameterList(
-#line  1253 "VBNET.ATG" 
+#line  1353 "VBNET.ATG" 
 p);
 				}
-				Expect(25);
+				Expect(38);
 			}
 			Expect(1);
 			Block(
-#line  1254 "VBNET.ATG" 
+#line  1354 "VBNET.ATG" 
 out stmt);
-			Expect(88);
-			Expect(152);
-			Expect(1);
+			Expect(113);
+			Expect(193);
+			EndOfStmt();
 
-#line  1256 "VBNET.ATG" 
+#line  1356 "VBNET.ATG" 
 			eventAccessorDeclaration = new EventRemoveRegion(attributes);
 			eventAccessorDeclaration.Block = (BlockStatement)stmt;
 			eventAccessorDeclaration.Parameters = p;
 			
-		} else if (la.kind == 149) {
+		} else if (la.kind == 189) {
 			lexer.NextToken();
-			if (la.kind == 24) {
+			if (la.kind == 37) {
 				lexer.NextToken();
-				if (StartOf(4)) {
+				if (StartOf(6)) {
 					FormalParameterList(
-#line  1261 "VBNET.ATG" 
+#line  1361 "VBNET.ATG" 
 p);
 				}
-				Expect(25);
+				Expect(38);
 			}
 			Expect(1);
 			Block(
-#line  1262 "VBNET.ATG" 
+#line  1362 "VBNET.ATG" 
 out stmt);
-			Expect(88);
-			Expect(149);
-			Expect(1);
+			Expect(113);
+			Expect(189);
+			EndOfStmt();
 
-#line  1264 "VBNET.ATG" 
+#line  1364 "VBNET.ATG" 
 			eventAccessorDeclaration = new EventRaiseRegion(attributes);
 			eventAccessorDeclaration.Block = (BlockStatement)stmt;
 			eventAccessorDeclaration.Parameters = p;
 			
-		} else SynErr(235);
+		} else SynErr(273);
 	}
 
 	void OverloadableOperator(
-#line  1177 "VBNET.ATG" 
+#line  1277 "VBNET.ATG" 
 out OverloadableOperatorType operatorType) {
 
-#line  1178 "VBNET.ATG" 
+#line  1278 "VBNET.ATG" 
 		operatorType = OverloadableOperatorType.None; 
 		switch (la.kind) {
-		case 14: {
-			lexer.NextToken();
-
-#line  1180 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.Add; 
-			break;
-		}
-		case 15: {
-			lexer.NextToken();
-
-#line  1182 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.Subtract; 
-			break;
-		}
-		case 16: {
-			lexer.NextToken();
-
-#line  1184 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.Multiply; 
-			break;
-		}
-		case 17: {
-			lexer.NextToken();
-
-#line  1186 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.Divide; 
-			break;
-		}
-		case 18: {
-			lexer.NextToken();
-
-#line  1188 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.DivideInteger; 
-			break;
-		}
-		case 19: {
-			lexer.NextToken();
-
-#line  1190 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.Concat; 
-			break;
-		}
-		case 116: {
-			lexer.NextToken();
-
-#line  1192 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.Like; 
-			break;
-		}
-		case 120: {
-			lexer.NextToken();
-
-#line  1194 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.Modulus; 
-			break;
-		}
-		case 45: {
-			lexer.NextToken();
-
-#line  1196 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.BitwiseAnd; 
-			break;
-		}
-		case 138: {
-			lexer.NextToken();
-
-#line  1198 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.BitwiseOr; 
-			break;
-		}
-		case 185: {
-			lexer.NextToken();
-
-#line  1200 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.ExclusiveOr; 
-			break;
-		}
-		case 20: {
-			lexer.NextToken();
-
-#line  1202 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.Power; 
-			break;
-		}
 		case 31: {
 			lexer.NextToken();
 
-#line  1204 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.ShiftLeft; 
-			break;
-		}
-		case 32: {
-			lexer.NextToken();
-
-#line  1206 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.ShiftRight; 
-			break;
-		}
-		case 11: {
-			lexer.NextToken();
-
-#line  1208 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.Equality; 
-			break;
-		}
-		case 28: {
-			lexer.NextToken();
-
-#line  1210 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.InEquality; 
-			break;
-		}
-		case 27: {
-			lexer.NextToken();
-
-#line  1212 "VBNET.ATG" 
-			operatorType = OverloadableOperatorType.LessThan; 
+#line  1280 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.Add; 
 			break;
 		}
 		case 30: {
 			lexer.NextToken();
 
-#line  1214 "VBNET.ATG" 
+#line  1282 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.Subtract; 
+			break;
+		}
+		case 34: {
+			lexer.NextToken();
+
+#line  1284 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.Multiply; 
+			break;
+		}
+		case 24: {
+			lexer.NextToken();
+
+#line  1286 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.Divide; 
+			break;
+		}
+		case 25: {
+			lexer.NextToken();
+
+#line  1288 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.DivideInteger; 
+			break;
+		}
+		case 23: {
+			lexer.NextToken();
+
+#line  1290 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.Concat; 
+			break;
+		}
+		case 150: {
+			lexer.NextToken();
+
+#line  1292 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.Like; 
+			break;
+		}
+		case 154: {
+			lexer.NextToken();
+
+#line  1294 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.Modulus; 
+			break;
+		}
+		case 60: {
+			lexer.NextToken();
+
+#line  1296 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.BitwiseAnd; 
+			break;
+		}
+		case 175: {
+			lexer.NextToken();
+
+#line  1298 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.BitwiseOr; 
+			break;
+		}
+		case 236: {
+			lexer.NextToken();
+
+#line  1300 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.ExclusiveOr; 
+			break;
+		}
+		case 32: {
+			lexer.NextToken();
+
+#line  1302 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.Power; 
+			break;
+		}
+		case 44: {
+			lexer.NextToken();
+
+#line  1304 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.ShiftLeft; 
+			break;
+		}
+		case 45: {
+			lexer.NextToken();
+
+#line  1306 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.ShiftRight; 
+			break;
+		}
+		case 20: {
+			lexer.NextToken();
+
+#line  1308 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.Equality; 
+			break;
+		}
+		case 41: {
+			lexer.NextToken();
+
+#line  1310 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.InEquality; 
+			break;
+		}
+		case 40: {
+			lexer.NextToken();
+
+#line  1312 "VBNET.ATG" 
+			operatorType = OverloadableOperatorType.LessThan; 
+			break;
+		}
+		case 43: {
+			lexer.NextToken();
+
+#line  1314 "VBNET.ATG" 
 			operatorType = OverloadableOperatorType.LessThanOrEqual; 
 			break;
 		}
-		case 26: {
+		case 39: {
 			lexer.NextToken();
 
-#line  1216 "VBNET.ATG" 
+#line  1316 "VBNET.ATG" 
 			operatorType = OverloadableOperatorType.GreaterThan; 
 			break;
 		}
-		case 29: {
+		case 42: {
 			lexer.NextToken();
 
-#line  1218 "VBNET.ATG" 
+#line  1318 "VBNET.ATG" 
 			operatorType = OverloadableOperatorType.GreaterThanOrEqual; 
 			break;
 		}
-		case 75: {
+		case 94: {
 			lexer.NextToken();
 
-#line  1220 "VBNET.ATG" 
+#line  1320 "VBNET.ATG" 
 			operatorType = OverloadableOperatorType.CType; 
 			break;
 		}
-		case 2: case 47: case 49: case 50: case 51: case 70: case 95: case 134: case 144: case 169: case 176: case 177: case 205: {
+		case 2: case 58: case 62: case 64: case 65: case 66: case 67: case 70: case 87: case 98: case 104: case 107: case 116: case 121: case 126: case 133: case 139: case 143: case 146: case 147: case 170: case 176: case 178: case 184: case 203: case 212: case 213: case 223: case 224: case 230: {
 			Identifier();
 
-#line  1224 "VBNET.ATG" 
+#line  1324 "VBNET.ATG" 
 			string opName = t.val; 
 			if (string.Equals(opName, "istrue", StringComparison.InvariantCultureIgnoreCase)) {
 				operatorType = OverloadableOperatorType.IsTrue;
@@ -3083,1794 +3388,56 @@ out OverloadableOperatorType operatorType) {
 			
 			break;
 		}
-		default: SynErr(236); break;
+		default: SynErr(274); break;
 		}
-	}
-
-	void GetAccessorDecl(
-#line  1298 "VBNET.ATG" 
-out PropertyGetRegion getBlock, List<AttributeSection> attributes) {
-
-#line  1299 "VBNET.ATG" 
-		Statement stmt = null; Modifiers m; 
-		PropertyAccessorAccessModifier(
-#line  1301 "VBNET.ATG" 
-out m);
-		Expect(101);
-
-#line  1303 "VBNET.ATG" 
-		Location startLocation = t.Location; 
-		Expect(1);
-		Block(
-#line  1305 "VBNET.ATG" 
-out stmt);
-
-#line  1306 "VBNET.ATG" 
-		getBlock = new PropertyGetRegion((BlockStatement)stmt, attributes); 
-		Expect(88);
-		Expect(101);
-
-#line  1308 "VBNET.ATG" 
-		getBlock.Modifier = m; 
-
-#line  1309 "VBNET.ATG" 
-		getBlock.StartLocation = startLocation; getBlock.EndLocation = t.EndLocation; 
-		Expect(1);
-	}
-
-	void SetAccessorDecl(
-#line  1314 "VBNET.ATG" 
-out PropertySetRegion setBlock, List<AttributeSection> attributes) {
-
-#line  1316 "VBNET.ATG" 
-		Statement stmt = null;
-		List<ParameterDeclarationExpression> p = new List<ParameterDeclarationExpression>();
-		Modifiers m;
-		
-		PropertyAccessorAccessModifier(
-#line  1321 "VBNET.ATG" 
-out m);
-		Expect(156);
-
-#line  1323 "VBNET.ATG" 
-		Location startLocation = t.Location; 
-		if (la.kind == 24) {
-			lexer.NextToken();
-			if (StartOf(4)) {
-				FormalParameterList(
-#line  1324 "VBNET.ATG" 
-p);
-			}
-			Expect(25);
-		}
-		Expect(1);
-		Block(
-#line  1326 "VBNET.ATG" 
-out stmt);
-
-#line  1328 "VBNET.ATG" 
-		setBlock = new PropertySetRegion((BlockStatement)stmt, attributes);
-		setBlock.Modifier = m;
-		setBlock.Parameters = p;
-		
-		Expect(88);
-		Expect(156);
-
-#line  1333 "VBNET.ATG" 
-		setBlock.StartLocation = startLocation; setBlock.EndLocation = t.EndLocation; 
-		Expect(1);
-	}
-
-	void PropertyAccessorAccessModifier(
-#line  2907 "VBNET.ATG" 
-out Modifiers m) {
-
-#line  2908 "VBNET.ATG" 
-		m = Modifiers.None; 
-		while (StartOf(26)) {
-			if (la.kind == 148) {
-				lexer.NextToken();
-
-#line  2910 "VBNET.ATG" 
-				m |= Modifiers.Public; 
-			} else if (la.kind == 147) {
-				lexer.NextToken();
-
-#line  2911 "VBNET.ATG" 
-				m |= Modifiers.Protected; 
-			} else if (la.kind == 99) {
-				lexer.NextToken();
-
-#line  2912 "VBNET.ATG" 
-				m |= Modifiers.Internal; 
-			} else {
-				lexer.NextToken();
-
-#line  2913 "VBNET.ATG" 
-				m |= Modifiers.Private; 
-			}
-		}
-	}
-
-	void ArrayInitializationModifier(
-#line  1431 "VBNET.ATG" 
-out List<Expression> arrayModifiers) {
-
-#line  1433 "VBNET.ATG" 
-		arrayModifiers = null;
-		
-		Expect(24);
-		InitializationRankList(
-#line  1435 "VBNET.ATG" 
-out arrayModifiers);
-		Expect(25);
-	}
-
-	void ArrayNameModifier(
-#line  2007 "VBNET.ATG" 
-out ArrayList arrayModifiers) {
-
-#line  2009 "VBNET.ATG" 
-		arrayModifiers = null;
-		
-		ArrayTypeModifiers(
-#line  2011 "VBNET.ATG" 
-out arrayModifiers);
-	}
-
-	void ObjectCreateExpression(
-#line  1860 "VBNET.ATG" 
-out Expression oce) {
-
-#line  1862 "VBNET.ATG" 
-		TypeReference type = null;
-		Expression initializer = null;
-		List<Expression> arguments = null;
-		ArrayList dimensions = null;
-		oce = null;
-		bool canBeNormal; bool canBeReDim;
-		
-		Expect(127);
-		NonArrayTypeName(
-#line  1869 "VBNET.ATG" 
-out type, false);
-		if (la.kind == 24) {
-			lexer.NextToken();
-			NormalOrReDimArgumentList(
-#line  1870 "VBNET.ATG" 
-out arguments, out canBeNormal, out canBeReDim);
-			Expect(25);
-			if (la.kind == 22 || 
-#line  1871 "VBNET.ATG" 
-la.kind == Tokens.OpenParenthesis) {
-				if (
-#line  1871 "VBNET.ATG" 
-la.kind == Tokens.OpenParenthesis) {
-					ArrayTypeModifiers(
-#line  1872 "VBNET.ATG" 
-out dimensions);
-					CollectionInitializer(
-#line  1873 "VBNET.ATG" 
-out initializer);
-				} else {
-					CollectionInitializer(
-#line  1874 "VBNET.ATG" 
-out initializer);
-				}
-			}
-
-#line  1876 "VBNET.ATG" 
-			if (canBeReDim && !canBeNormal && initializer == null) initializer = new CollectionInitializerExpression(); 
-		}
-
-#line  1879 "VBNET.ATG" 
-		if (type == null) type = new TypeReference("Object"); // fallback type on parser errors
-		if (initializer == null) {
-			oce = new ObjectCreateExpression(type, arguments);
-		} else {
-			if (dimensions == null) dimensions = new ArrayList();
-			dimensions.Insert(0, (arguments == null) ? 0 : Math.Max(arguments.Count - 1, 0));
-			type.RankSpecifier = (int[])dimensions.ToArray(typeof(int));
-			ArrayCreateExpression ace = new ArrayCreateExpression(type, initializer as CollectionInitializerExpression);
-			ace.Arguments = arguments;
-			oce = ace;
-		}
-		
-	}
-
-	void VariableInitializer(
-#line  1459 "VBNET.ATG" 
-out Expression initializerExpression) {
-
-#line  1461 "VBNET.ATG" 
-		initializerExpression = null;
-		
-		if (StartOf(27)) {
-			Expr(
-#line  1463 "VBNET.ATG" 
-out initializerExpression);
-		} else if (la.kind == 22) {
-			CollectionInitializer(
-#line  1464 "VBNET.ATG" 
-out initializerExpression);
-		} else SynErr(237);
-	}
-
-	void InitializationRankList(
-#line  1439 "VBNET.ATG" 
-out List<Expression> rank) {
-
-#line  1441 "VBNET.ATG" 
-		rank = new List<Expression>();
-		Expression expr = null;
-		
-		Expr(
-#line  1444 "VBNET.ATG" 
-out expr);
-		if (la.kind == 172) {
-			lexer.NextToken();
-
-#line  1445 "VBNET.ATG" 
-			EnsureIsZero(expr); 
-			Expr(
-#line  1446 "VBNET.ATG" 
-out expr);
-		}
-
-#line  1448 "VBNET.ATG" 
-		if (expr != null) { rank.Add(expr); } 
-		while (la.kind == 12) {
-			lexer.NextToken();
-			Expr(
-#line  1450 "VBNET.ATG" 
-out expr);
-			if (la.kind == 172) {
-				lexer.NextToken();
-
-#line  1451 "VBNET.ATG" 
-				EnsureIsZero(expr); 
-				Expr(
-#line  1452 "VBNET.ATG" 
-out expr);
-			}
-
-#line  1454 "VBNET.ATG" 
-			if (expr != null) { rank.Add(expr); } 
-		}
-	}
-
-	void CollectionInitializer(
-#line  1468 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1470 "VBNET.ATG" 
-		Expression expr = null;
-		CollectionInitializerExpression initializer = new CollectionInitializerExpression();
-		
-		Expect(22);
-		if (StartOf(28)) {
-			VariableInitializer(
-#line  1475 "VBNET.ATG" 
-out expr);
-
-#line  1477 "VBNET.ATG" 
-			if (expr != null) { initializer.CreateExpressions.Add(expr); }
-			
-			while (
-#line  1480 "VBNET.ATG" 
-NotFinalComma()) {
-				Expect(12);
-				VariableInitializer(
-#line  1480 "VBNET.ATG" 
-out expr);
-
-#line  1481 "VBNET.ATG" 
-				if (expr != null) { initializer.CreateExpressions.Add(expr); } 
-			}
-		}
-		Expect(23);
-
-#line  1484 "VBNET.ATG" 
-		outExpr = initializer; 
-	}
-
-	void EventMemberSpecifier(
-#line  1554 "VBNET.ATG" 
-out string name) {
-
-#line  1555 "VBNET.ATG" 
-		string eventName; 
-		if (StartOf(13)) {
-			Identifier();
-		} else if (la.kind == 124) {
-			lexer.NextToken();
-		} else if (la.kind == 119) {
-			lexer.NextToken();
-		} else SynErr(238);
-
-#line  1558 "VBNET.ATG" 
-		name = t.val; 
-		Expect(10);
-		IdentifierOrKeyword(
-#line  1560 "VBNET.ATG" 
-out eventName);
-
-#line  1561 "VBNET.ATG" 
-		name = name + "." + eventName; 
-	}
-
-	void IdentifierOrKeyword(
-#line  2841 "VBNET.ATG" 
-out string name) {
-
-#line  2843 "VBNET.ATG" 
-		lexer.NextToken(); name = t.val;  
-	}
-
-	void DisjunctionExpr(
-#line  1704 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1706 "VBNET.ATG" 
-		Expression expr;
-		BinaryOperatorType op = BinaryOperatorType.None;
-		
-		ConjunctionExpr(
-#line  1709 "VBNET.ATG" 
-out outExpr);
-		while (la.kind == 138 || la.kind == 139 || la.kind == 185) {
-			if (la.kind == 138) {
-				lexer.NextToken();
-
-#line  1712 "VBNET.ATG" 
-				op = BinaryOperatorType.BitwiseOr; 
-			} else if (la.kind == 139) {
-				lexer.NextToken();
-
-#line  1713 "VBNET.ATG" 
-				op = BinaryOperatorType.LogicalOr; 
-			} else {
-				lexer.NextToken();
-
-#line  1714 "VBNET.ATG" 
-				op = BinaryOperatorType.ExclusiveOr; 
-			}
-			ConjunctionExpr(
-#line  1716 "VBNET.ATG" 
-out expr);
-
-#line  1716 "VBNET.ATG" 
-			outExpr = new BinaryOperatorExpression(outExpr, op, expr);  
-		}
-	}
-
-	void AssignmentOperator(
-#line  1569 "VBNET.ATG" 
-out AssignmentOperatorType op) {
-
-#line  1570 "VBNET.ATG" 
-		op = AssignmentOperatorType.None; 
-		switch (la.kind) {
-		case 11: {
-			lexer.NextToken();
-
-#line  1571 "VBNET.ATG" 
-			op = AssignmentOperatorType.Assign; 
-			break;
-		}
-		case 41: {
-			lexer.NextToken();
-
-#line  1572 "VBNET.ATG" 
-			op = AssignmentOperatorType.ConcatString; 
-			break;
-		}
-		case 33: {
-			lexer.NextToken();
-
-#line  1573 "VBNET.ATG" 
-			op = AssignmentOperatorType.Add; 
-			break;
-		}
-		case 35: {
-			lexer.NextToken();
-
-#line  1574 "VBNET.ATG" 
-			op = AssignmentOperatorType.Subtract; 
-			break;
-		}
-		case 36: {
-			lexer.NextToken();
-
-#line  1575 "VBNET.ATG" 
-			op = AssignmentOperatorType.Multiply; 
-			break;
-		}
-		case 37: {
-			lexer.NextToken();
-
-#line  1576 "VBNET.ATG" 
-			op = AssignmentOperatorType.Divide; 
-			break;
-		}
-		case 38: {
-			lexer.NextToken();
-
-#line  1577 "VBNET.ATG" 
-			op = AssignmentOperatorType.DivideInteger; 
-			break;
-		}
-		case 34: {
-			lexer.NextToken();
-
-#line  1578 "VBNET.ATG" 
-			op = AssignmentOperatorType.Power; 
-			break;
-		}
-		case 39: {
-			lexer.NextToken();
-
-#line  1579 "VBNET.ATG" 
-			op = AssignmentOperatorType.ShiftLeft; 
-			break;
-		}
-		case 40: {
-			lexer.NextToken();
-
-#line  1580 "VBNET.ATG" 
-			op = AssignmentOperatorType.ShiftRight; 
-			break;
-		}
-		default: SynErr(239); break;
-		}
-	}
-
-	void SimpleExpr(
-#line  1584 "VBNET.ATG" 
-out Expression pexpr) {
-		SimpleNonInvocationExpression(
-#line  1586 "VBNET.ATG" 
-out pexpr);
-		while (la.kind == 10 || la.kind == 24) {
-			if (la.kind == 10) {
-
-#line  1587 "VBNET.ATG" 
-				string name; 
-				lexer.NextToken();
-				IdentifierOrKeyword(
-#line  1588 "VBNET.ATG" 
-out name);
-
-#line  1588 "VBNET.ATG" 
-				pexpr = new MemberReferenceExpression(pexpr, name); 
-			} else {
-				InvocationExpression(
-#line  1589 "VBNET.ATG" 
-ref pexpr);
-			}
-		}
-	}
-
-	void SimpleNonInvocationExpression(
-#line  1593 "VBNET.ATG" 
-out Expression pexpr) {
-
-#line  1595 "VBNET.ATG" 
-		Expression expr;
-		TypeReference type = null;
-		string name = String.Empty;
-		pexpr = null;
-		
-		if (StartOf(29)) {
-			switch (la.kind) {
-			case 3: {
-				lexer.NextToken();
-
-#line  1603 "VBNET.ATG" 
-				pexpr = new PrimitiveExpression(t.literalValue, t.val);  
-				break;
-			}
-			case 4: {
-				lexer.NextToken();
-
-#line  1604 "VBNET.ATG" 
-				pexpr = new PrimitiveExpression(t.literalValue, t.val);  
-				break;
-			}
-			case 7: {
-				lexer.NextToken();
-
-#line  1605 "VBNET.ATG" 
-				pexpr = new PrimitiveExpression(t.literalValue, t.val);  
-				break;
-			}
-			case 6: {
-				lexer.NextToken();
-
-#line  1606 "VBNET.ATG" 
-				pexpr = new PrimitiveExpression(t.literalValue, t.val);  
-				break;
-			}
-			case 5: {
-				lexer.NextToken();
-
-#line  1607 "VBNET.ATG" 
-				pexpr = new PrimitiveExpression(t.literalValue, t.val);  
-				break;
-			}
-			case 9: {
-				lexer.NextToken();
-
-#line  1608 "VBNET.ATG" 
-				pexpr = new PrimitiveExpression(t.literalValue, t.val);  
-				break;
-			}
-			case 8: {
-				lexer.NextToken();
-
-#line  1609 "VBNET.ATG" 
-				pexpr = new PrimitiveExpression(t.literalValue, t.val);  
-				break;
-			}
-			case 173: {
-				lexer.NextToken();
-
-#line  1611 "VBNET.ATG" 
-				pexpr = new PrimitiveExpression(true, "true");  
-				break;
-			}
-			case 96: {
-				lexer.NextToken();
-
-#line  1612 "VBNET.ATG" 
-				pexpr = new PrimitiveExpression(false, "false"); 
-				break;
-			}
-			case 130: {
-				lexer.NextToken();
-
-#line  1613 "VBNET.ATG" 
-				pexpr = new PrimitiveExpression(null, "null");  
-				break;
-			}
-			case 24: {
-				lexer.NextToken();
-				Expr(
-#line  1614 "VBNET.ATG" 
-out expr);
-				Expect(25);
-
-#line  1614 "VBNET.ATG" 
-				pexpr = new ParenthesizedExpression(expr); 
-				break;
-			}
-			case 2: case 47: case 49: case 50: case 51: case 70: case 95: case 134: case 144: case 169: case 176: case 177: case 205: {
-				Identifier();
-
-#line  1616 "VBNET.ATG" 
-				pexpr = new IdentifierExpression(t.val); 
-
-#line  1617 "VBNET.ATG" 
-				pexpr.StartLocation = t.Location; pexpr.EndLocation = t.EndLocation; 
-				break;
-			}
-			case 52: case 54: case 65: case 76: case 77: case 84: case 111: case 117: case 133: case 159: case 160: case 165: case 191: case 192: case 193: case 194: {
-
-#line  1618 "VBNET.ATG" 
-				string val = String.Empty; 
-				if (StartOf(10)) {
-					PrimitiveTypeName(
-#line  1619 "VBNET.ATG" 
-out val);
-				} else if (la.kind == 133) {
-					lexer.NextToken();
-
-#line  1619 "VBNET.ATG" 
-					val = "Object"; 
-				} else SynErr(240);
-				Expect(10);
-
-#line  1620 "VBNET.ATG" 
-				t.val = ""; 
-				Identifier();
-
-#line  1620 "VBNET.ATG" 
-				pexpr = new MemberReferenceExpression(new TypeReferenceExpression(val), t.val); 
-				break;
-			}
-			case 119: {
-				lexer.NextToken();
-
-#line  1621 "VBNET.ATG" 
-				pexpr = new ThisReferenceExpression(); 
-				break;
-			}
-			case 124: case 125: {
-
-#line  1622 "VBNET.ATG" 
-				Expression retExpr = null; 
-				if (la.kind == 124) {
-					lexer.NextToken();
-
-#line  1623 "VBNET.ATG" 
-					retExpr = new BaseReferenceExpression(); 
-				} else if (la.kind == 125) {
-					lexer.NextToken();
-
-#line  1624 "VBNET.ATG" 
-					retExpr = new ClassReferenceExpression(); 
-				} else SynErr(241);
-				Expect(10);
-				IdentifierOrKeyword(
-#line  1626 "VBNET.ATG" 
-out name);
-
-#line  1626 "VBNET.ATG" 
-				pexpr = new MemberReferenceExpression(retExpr, name); 
-				break;
-			}
-			case 199: {
-				lexer.NextToken();
-				Expect(10);
-				Identifier();
-
-#line  1628 "VBNET.ATG" 
-				type = new TypeReference(t.val ?? ""); 
-
-#line  1630 "VBNET.ATG" 
-				type.IsGlobal = true; 
-
-#line  1631 "VBNET.ATG" 
-				pexpr = new TypeReferenceExpression(type); 
-				break;
-			}
-			case 127: {
-				ObjectCreateExpression(
-#line  1632 "VBNET.ATG" 
-out expr);
-
-#line  1632 "VBNET.ATG" 
-				pexpr = expr; 
-				break;
-			}
-			case 75: case 82: case 200: {
-
-#line  1634 "VBNET.ATG" 
-				CastType castType = CastType.Cast; 
-				if (la.kind == 82) {
-					lexer.NextToken();
-				} else if (la.kind == 75) {
-					lexer.NextToken();
-
-#line  1636 "VBNET.ATG" 
-					castType = CastType.Conversion; 
-				} else if (la.kind == 200) {
-					lexer.NextToken();
-
-#line  1637 "VBNET.ATG" 
-					castType = CastType.TryCast; 
-				} else SynErr(242);
-				Expect(24);
-				Expr(
-#line  1639 "VBNET.ATG" 
-out expr);
-				Expect(12);
-				TypeName(
-#line  1639 "VBNET.ATG" 
-out type);
-				Expect(25);
-
-#line  1640 "VBNET.ATG" 
-				pexpr = new CastExpression(type, expr, castType); 
-				break;
-			}
-			case 59: case 60: case 61: case 62: case 63: case 64: case 66: case 68: case 69: case 72: case 73: case 74: case 195: case 196: case 197: case 198: {
-				CastTarget(
-#line  1641 "VBNET.ATG" 
-out type);
-				Expect(24);
-				Expr(
-#line  1641 "VBNET.ATG" 
-out expr);
-				Expect(25);
-
-#line  1641 "VBNET.ATG" 
-				pexpr = new CastExpression(type, expr, CastType.PrimitiveConversion); 
-				break;
-			}
-			case 43: {
-				lexer.NextToken();
-				Expr(
-#line  1642 "VBNET.ATG" 
-out expr);
-
-#line  1642 "VBNET.ATG" 
-				pexpr = new AddressOfExpression(expr); 
-				break;
-			}
-			case 102: {
-				lexer.NextToken();
-				Expect(24);
-				GetTypeTypeName(
-#line  1643 "VBNET.ATG" 
-out type);
-				Expect(25);
-
-#line  1643 "VBNET.ATG" 
-				pexpr = new TypeOfExpression(type); 
-				break;
-			}
-			case 175: {
-				lexer.NextToken();
-				SimpleExpr(
-#line  1644 "VBNET.ATG" 
-out expr);
-				Expect(113);
-				TypeName(
-#line  1644 "VBNET.ATG" 
-out type);
-
-#line  1644 "VBNET.ATG" 
-				pexpr = new TypeOfIsExpression(expr, type); 
-				break;
-			}
-			}
-		} else if (la.kind == 10) {
-			lexer.NextToken();
-			IdentifierOrKeyword(
-#line  1648 "VBNET.ATG" 
-out name);
-
-#line  1648 "VBNET.ATG" 
-			pexpr = new MemberReferenceExpression(null, name);
-		} else SynErr(243);
-	}
-
-	void InvocationExpression(
-#line  1652 "VBNET.ATG" 
-ref Expression pexpr) {
-
-#line  1653 "VBNET.ATG" 
-		List<TypeReference> typeParameters = new List<TypeReference>();
-		List<Expression> parameters = null;
-		TypeReference type; 
-		Expect(24);
-
-#line  1657 "VBNET.ATG" 
-		Location start = t.Location; 
-		if (la.kind == 201) {
-			lexer.NextToken();
-			TypeName(
-#line  1659 "VBNET.ATG" 
-out type);
-
-#line  1659 "VBNET.ATG" 
-			if (type != null) typeParameters.Add(type); 
-			while (la.kind == 12) {
-				lexer.NextToken();
-				TypeName(
-#line  1662 "VBNET.ATG" 
-out type);
-
-#line  1662 "VBNET.ATG" 
-				if (type != null) typeParameters.Add(type); 
-			}
-			Expect(25);
-			if (la.kind == 10) {
-				lexer.NextToken();
-				Identifier();
-
-#line  1667 "VBNET.ATG" 
-				pexpr = new MemberReferenceExpression(GetTypeReferenceExpression(pexpr, typeParameters), t.val); 
-			} else if (la.kind == 24) {
-				lexer.NextToken();
-				ArgumentList(
-#line  1669 "VBNET.ATG" 
-out parameters);
-				Expect(25);
-
-#line  1671 "VBNET.ATG" 
-				pexpr = CreateInvocationExpression(pexpr, parameters, typeParameters); 
-			} else SynErr(244);
-		} else if (StartOf(30)) {
-			ArgumentList(
-#line  1673 "VBNET.ATG" 
-out parameters);
-			Expect(25);
-
-#line  1675 "VBNET.ATG" 
-			pexpr = CreateInvocationExpression(pexpr, parameters, typeParameters); 
-		} else SynErr(245);
-
-#line  1677 "VBNET.ATG" 
-		pexpr.StartLocation = start; pexpr.EndLocation = t.Location; 
-	}
-
-	void PrimitiveTypeName(
-#line  2848 "VBNET.ATG" 
-out string type) {
-
-#line  2849 "VBNET.ATG" 
-		type = String.Empty; 
-		switch (la.kind) {
-		case 52: {
-			lexer.NextToken();
-
-#line  2850 "VBNET.ATG" 
-			type = "Boolean"; 
-			break;
-		}
-		case 76: {
-			lexer.NextToken();
-
-#line  2851 "VBNET.ATG" 
-			type = "Date"; 
-			break;
-		}
-		case 65: {
-			lexer.NextToken();
-
-#line  2852 "VBNET.ATG" 
-			type = "Char"; 
-			break;
-		}
-		case 165: {
-			lexer.NextToken();
-
-#line  2853 "VBNET.ATG" 
-			type = "String"; 
-			break;
-		}
-		case 77: {
-			lexer.NextToken();
-
-#line  2854 "VBNET.ATG" 
-			type = "Decimal"; 
-			break;
-		}
-		case 54: {
-			lexer.NextToken();
-
-#line  2855 "VBNET.ATG" 
-			type = "Byte"; 
-			break;
-		}
-		case 159: {
-			lexer.NextToken();
-
-#line  2856 "VBNET.ATG" 
-			type = "Short"; 
-			break;
-		}
-		case 111: {
-			lexer.NextToken();
-
-#line  2857 "VBNET.ATG" 
-			type = "Integer"; 
-			break;
-		}
-		case 117: {
-			lexer.NextToken();
-
-#line  2858 "VBNET.ATG" 
-			type = "Long"; 
-			break;
-		}
-		case 160: {
-			lexer.NextToken();
-
-#line  2859 "VBNET.ATG" 
-			type = "Single"; 
-			break;
-		}
-		case 84: {
-			lexer.NextToken();
-
-#line  2860 "VBNET.ATG" 
-			type = "Double"; 
-			break;
-		}
-		case 192: {
-			lexer.NextToken();
-
-#line  2861 "VBNET.ATG" 
-			type = "UInteger"; 
-			break;
-		}
-		case 193: {
-			lexer.NextToken();
-
-#line  2862 "VBNET.ATG" 
-			type = "ULong"; 
-			break;
-		}
-		case 194: {
-			lexer.NextToken();
-
-#line  2863 "VBNET.ATG" 
-			type = "UShort"; 
-			break;
-		}
-		case 191: {
-			lexer.NextToken();
-
-#line  2864 "VBNET.ATG" 
-			type = "SByte"; 
-			break;
-		}
-		default: SynErr(246); break;
-		}
-	}
-
-	void CastTarget(
-#line  1682 "VBNET.ATG" 
-out TypeReference type) {
-
-#line  1684 "VBNET.ATG" 
-		type = null;
-		
-		switch (la.kind) {
-		case 59: {
-			lexer.NextToken();
-
-#line  1686 "VBNET.ATG" 
-			type = new TypeReference("System.Boolean"); 
-			break;
-		}
-		case 60: {
-			lexer.NextToken();
-
-#line  1687 "VBNET.ATG" 
-			type = new TypeReference("System.Byte"); 
-			break;
-		}
-		case 195: {
-			lexer.NextToken();
-
-#line  1688 "VBNET.ATG" 
-			type = new TypeReference("System.SByte"); 
-			break;
-		}
-		case 61: {
-			lexer.NextToken();
-
-#line  1689 "VBNET.ATG" 
-			type = new TypeReference("System.Char"); 
-			break;
-		}
-		case 62: {
-			lexer.NextToken();
-
-#line  1690 "VBNET.ATG" 
-			type = new TypeReference("System.DateTime"); 
-			break;
-		}
-		case 64: {
-			lexer.NextToken();
-
-#line  1691 "VBNET.ATG" 
-			type = new TypeReference("System.Decimal"); 
-			break;
-		}
-		case 63: {
-			lexer.NextToken();
-
-#line  1692 "VBNET.ATG" 
-			type = new TypeReference("System.Double"); 
-			break;
-		}
-		case 72: {
-			lexer.NextToken();
-
-#line  1693 "VBNET.ATG" 
-			type = new TypeReference("System.Int16"); 
-			break;
-		}
-		case 66: {
-			lexer.NextToken();
-
-#line  1694 "VBNET.ATG" 
-			type = new TypeReference("System.Int32"); 
-			break;
-		}
-		case 68: {
-			lexer.NextToken();
-
-#line  1695 "VBNET.ATG" 
-			type = new TypeReference("System.Int64"); 
-			break;
-		}
-		case 196: {
-			lexer.NextToken();
-
-#line  1696 "VBNET.ATG" 
-			type = new TypeReference("System.UInt16"); 
-			break;
-		}
-		case 197: {
-			lexer.NextToken();
-
-#line  1697 "VBNET.ATG" 
-			type = new TypeReference("System.UInt32"); 
-			break;
-		}
-		case 198: {
-			lexer.NextToken();
-
-#line  1698 "VBNET.ATG" 
-			type = new TypeReference("System.UInt64"); 
-			break;
-		}
-		case 69: {
-			lexer.NextToken();
-
-#line  1699 "VBNET.ATG" 
-			type = new TypeReference("System.Object"); 
-			break;
-		}
-		case 73: {
-			lexer.NextToken();
-
-#line  1700 "VBNET.ATG" 
-			type = new TypeReference("System.Single"); 
-			break;
-		}
-		case 74: {
-			lexer.NextToken();
-
-#line  1701 "VBNET.ATG" 
-			type = new TypeReference("System.String"); 
-			break;
-		}
-		default: SynErr(247); break;
-		}
-	}
-
-	void GetTypeTypeName(
-#line  1959 "VBNET.ATG" 
-out TypeReference typeref) {
-
-#line  1960 "VBNET.ATG" 
-		ArrayList rank = null; 
-		NonArrayTypeName(
-#line  1962 "VBNET.ATG" 
-out typeref, true);
-		ArrayTypeModifiers(
-#line  1963 "VBNET.ATG" 
-out rank);
-
-#line  1964 "VBNET.ATG" 
-		if (rank != null && typeref != null) {
-		typeref.RankSpecifier = (int[])rank.ToArray(typeof(int));
-		}
-		
-	}
-
-	void ArgumentList(
-#line  1894 "VBNET.ATG" 
-out List<Expression> arguments) {
-
-#line  1896 "VBNET.ATG" 
-		arguments = new List<Expression>();
-		Expression expr = null;
-		
-		if (StartOf(27)) {
-			Argument(
-#line  1899 "VBNET.ATG" 
-out expr);
-		}
-		while (la.kind == 12) {
-			lexer.NextToken();
-
-#line  1900 "VBNET.ATG" 
-			arguments.Add(expr ?? Expression.Null); expr = null; 
-			if (StartOf(27)) {
-				Argument(
-#line  1901 "VBNET.ATG" 
-out expr);
-			}
-
-#line  1902 "VBNET.ATG" 
-			if (expr == null) expr = Expression.Null; 
-		}
-
-#line  1904 "VBNET.ATG" 
-		if (expr != null) arguments.Add(expr); 
-	}
-
-	void ConjunctionExpr(
-#line  1720 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1722 "VBNET.ATG" 
-		Expression expr;
-		BinaryOperatorType op = BinaryOperatorType.None;
-		
-		NotExpr(
-#line  1725 "VBNET.ATG" 
-out outExpr);
-		while (la.kind == 45 || la.kind == 46) {
-			if (la.kind == 45) {
-				lexer.NextToken();
-
-#line  1728 "VBNET.ATG" 
-				op = BinaryOperatorType.BitwiseAnd; 
-			} else {
-				lexer.NextToken();
-
-#line  1729 "VBNET.ATG" 
-				op = BinaryOperatorType.LogicalAnd; 
-			}
-			NotExpr(
-#line  1731 "VBNET.ATG" 
-out expr);
-
-#line  1731 "VBNET.ATG" 
-			outExpr = new BinaryOperatorExpression(outExpr, op, expr);  
-		}
-	}
-
-	void NotExpr(
-#line  1735 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1736 "VBNET.ATG" 
-		UnaryOperatorType uop = UnaryOperatorType.None; 
-		while (la.kind == 129) {
-			lexer.NextToken();
-
-#line  1737 "VBNET.ATG" 
-			uop = UnaryOperatorType.Not; 
-		}
-		ComparisonExpr(
-#line  1738 "VBNET.ATG" 
-out outExpr);
-
-#line  1739 "VBNET.ATG" 
-		if (uop != UnaryOperatorType.None)
-		outExpr = new UnaryOperatorExpression(outExpr, uop);
-		
-	}
-
-	void ComparisonExpr(
-#line  1744 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1746 "VBNET.ATG" 
-		Expression expr;
-		BinaryOperatorType op = BinaryOperatorType.None;
-		
-		ShiftExpr(
-#line  1749 "VBNET.ATG" 
-out outExpr);
-		while (StartOf(31)) {
-			switch (la.kind) {
-			case 27: {
-				lexer.NextToken();
-
-#line  1752 "VBNET.ATG" 
-				op = BinaryOperatorType.LessThan; 
-				break;
-			}
-			case 26: {
-				lexer.NextToken();
-
-#line  1753 "VBNET.ATG" 
-				op = BinaryOperatorType.GreaterThan; 
-				break;
-			}
-			case 30: {
-				lexer.NextToken();
-
-#line  1754 "VBNET.ATG" 
-				op = BinaryOperatorType.LessThanOrEqual; 
-				break;
-			}
-			case 29: {
-				lexer.NextToken();
-
-#line  1755 "VBNET.ATG" 
-				op = BinaryOperatorType.GreaterThanOrEqual; 
-				break;
-			}
-			case 28: {
-				lexer.NextToken();
-
-#line  1756 "VBNET.ATG" 
-				op = BinaryOperatorType.InEquality; 
-				break;
-			}
-			case 11: {
-				lexer.NextToken();
-
-#line  1757 "VBNET.ATG" 
-				op = BinaryOperatorType.Equality; 
-				break;
-			}
-			case 116: {
-				lexer.NextToken();
-
-#line  1758 "VBNET.ATG" 
-				op = BinaryOperatorType.Like; 
-				break;
-			}
-			case 113: {
-				lexer.NextToken();
-
-#line  1759 "VBNET.ATG" 
-				op = BinaryOperatorType.ReferenceEquality; 
-				break;
-			}
-			case 190: {
-				lexer.NextToken();
-
-#line  1760 "VBNET.ATG" 
-				op = BinaryOperatorType.ReferenceInequality; 
-				break;
-			}
-			}
-			if (StartOf(32)) {
-				ShiftExpr(
-#line  1763 "VBNET.ATG" 
-out expr);
-
-#line  1763 "VBNET.ATG" 
-				outExpr = new BinaryOperatorExpression(outExpr, op, expr);  
-			} else if (la.kind == 129) {
-				lexer.NextToken();
-				ShiftExpr(
-#line  1766 "VBNET.ATG" 
-out expr);
-
-#line  1766 "VBNET.ATG" 
-				outExpr = new BinaryOperatorExpression(outExpr, op, new UnaryOperatorExpression(expr, UnaryOperatorType.Not));  
-			} else SynErr(248);
-		}
-	}
-
-	void ShiftExpr(
-#line  1771 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1773 "VBNET.ATG" 
-		Expression expr;
-		BinaryOperatorType op = BinaryOperatorType.None;
-		
-		ConcatenationExpr(
-#line  1776 "VBNET.ATG" 
-out outExpr);
-		while (la.kind == 31 || la.kind == 32) {
-			if (la.kind == 31) {
-				lexer.NextToken();
-
-#line  1779 "VBNET.ATG" 
-				op = BinaryOperatorType.ShiftLeft; 
-			} else {
-				lexer.NextToken();
-
-#line  1780 "VBNET.ATG" 
-				op = BinaryOperatorType.ShiftRight; 
-			}
-			ConcatenationExpr(
-#line  1782 "VBNET.ATG" 
-out expr);
-
-#line  1782 "VBNET.ATG" 
-			outExpr = new BinaryOperatorExpression(outExpr, op, expr);  
-		}
-	}
-
-	void ConcatenationExpr(
-#line  1786 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1787 "VBNET.ATG" 
-		Expression expr; 
-		AdditiveExpr(
-#line  1789 "VBNET.ATG" 
-out outExpr);
-		while (la.kind == 19) {
-			lexer.NextToken();
-			AdditiveExpr(
-#line  1789 "VBNET.ATG" 
-out expr);
-
-#line  1789 "VBNET.ATG" 
-			outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Concat, expr);  
-		}
-	}
-
-	void AdditiveExpr(
-#line  1792 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1794 "VBNET.ATG" 
-		Expression expr;
-		BinaryOperatorType op = BinaryOperatorType.None;
-		
-		ModuloExpr(
-#line  1797 "VBNET.ATG" 
-out outExpr);
-		while (la.kind == 14 || la.kind == 15) {
-			if (la.kind == 14) {
-				lexer.NextToken();
-
-#line  1800 "VBNET.ATG" 
-				op = BinaryOperatorType.Add; 
-			} else {
-				lexer.NextToken();
-
-#line  1801 "VBNET.ATG" 
-				op = BinaryOperatorType.Subtract; 
-			}
-			ModuloExpr(
-#line  1803 "VBNET.ATG" 
-out expr);
-
-#line  1803 "VBNET.ATG" 
-			outExpr = new BinaryOperatorExpression(outExpr, op, expr);  
-		}
-	}
-
-	void ModuloExpr(
-#line  1807 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1808 "VBNET.ATG" 
-		Expression expr; 
-		IntegerDivisionExpr(
-#line  1810 "VBNET.ATG" 
-out outExpr);
-		while (la.kind == 120) {
-			lexer.NextToken();
-			IntegerDivisionExpr(
-#line  1810 "VBNET.ATG" 
-out expr);
-
-#line  1810 "VBNET.ATG" 
-			outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Modulus, expr);  
-		}
-	}
-
-	void IntegerDivisionExpr(
-#line  1813 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1814 "VBNET.ATG" 
-		Expression expr; 
-		MultiplicativeExpr(
-#line  1816 "VBNET.ATG" 
-out outExpr);
-		while (la.kind == 18) {
-			lexer.NextToken();
-			MultiplicativeExpr(
-#line  1816 "VBNET.ATG" 
-out expr);
-
-#line  1816 "VBNET.ATG" 
-			outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.DivideInteger, expr);  
-		}
-	}
-
-	void MultiplicativeExpr(
-#line  1819 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1821 "VBNET.ATG" 
-		Expression expr;
-		BinaryOperatorType op = BinaryOperatorType.None;
-		
-		UnaryExpr(
-#line  1824 "VBNET.ATG" 
-out outExpr);
-		while (la.kind == 16 || la.kind == 17) {
-			if (la.kind == 16) {
-				lexer.NextToken();
-
-#line  1827 "VBNET.ATG" 
-				op = BinaryOperatorType.Multiply; 
-			} else {
-				lexer.NextToken();
-
-#line  1828 "VBNET.ATG" 
-				op = BinaryOperatorType.Divide; 
-			}
-			UnaryExpr(
-#line  1830 "VBNET.ATG" 
-out expr);
-
-#line  1830 "VBNET.ATG" 
-			outExpr = new BinaryOperatorExpression(outExpr, op, expr); 
-		}
-	}
-
-	void UnaryExpr(
-#line  1834 "VBNET.ATG" 
-out Expression uExpr) {
-
-#line  1836 "VBNET.ATG" 
-		Expression expr;
-		UnaryOperatorType uop = UnaryOperatorType.None;
-		bool isUOp = false;
-		
-		while (la.kind == 14 || la.kind == 15 || la.kind == 16) {
-			if (la.kind == 14) {
-				lexer.NextToken();
-
-#line  1840 "VBNET.ATG" 
-				uop = UnaryOperatorType.Plus; isUOp = true; 
-			} else if (la.kind == 15) {
-				lexer.NextToken();
-
-#line  1841 "VBNET.ATG" 
-				uop = UnaryOperatorType.Minus; isUOp = true; 
-			} else {
-				lexer.NextToken();
-
-#line  1842 "VBNET.ATG" 
-				uop = UnaryOperatorType.Star;  isUOp = true;
-			}
-		}
-		ExponentiationExpr(
-#line  1844 "VBNET.ATG" 
-out expr);
-
-#line  1846 "VBNET.ATG" 
-		if (isUOp) {
-		uExpr = new UnaryOperatorExpression(expr, uop);
-		} else {
-			uExpr = expr;
-		}
-		
-	}
-
-	void ExponentiationExpr(
-#line  1854 "VBNET.ATG" 
-out Expression outExpr) {
-
-#line  1855 "VBNET.ATG" 
-		Expression expr; 
-		SimpleExpr(
-#line  1857 "VBNET.ATG" 
-out outExpr);
-		while (la.kind == 20) {
-			lexer.NextToken();
-			SimpleExpr(
-#line  1857 "VBNET.ATG" 
-out expr);
-
-#line  1857 "VBNET.ATG" 
-			outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Power, expr);  
-		}
-	}
-
-	void NormalOrReDimArgumentList(
-#line  1908 "VBNET.ATG" 
-out List<Expression> arguments, out bool canBeNormal, out bool canBeRedim) {
-
-#line  1910 "VBNET.ATG" 
-		arguments = new List<Expression>();
-		canBeNormal = true; canBeRedim = !IsNamedAssign();
-		Expression expr = null;
-		
-		if (StartOf(27)) {
-			Argument(
-#line  1915 "VBNET.ATG" 
-out expr);
-			if (la.kind == 172) {
-				lexer.NextToken();
-
-#line  1916 "VBNET.ATG" 
-				EnsureIsZero(expr); canBeNormal = false; 
-				Expr(
-#line  1917 "VBNET.ATG" 
-out expr);
-			}
-		}
-		while (la.kind == 12) {
-			lexer.NextToken();
-
-#line  1920 "VBNET.ATG" 
-			if (expr == null) canBeRedim = false; 
-
-#line  1921 "VBNET.ATG" 
-			arguments.Add(expr ?? Expression.Null); expr = null; 
-
-#line  1922 "VBNET.ATG" 
-			canBeRedim &= !IsNamedAssign(); 
-			if (StartOf(27)) {
-				Argument(
-#line  1923 "VBNET.ATG" 
-out expr);
-				if (la.kind == 172) {
-					lexer.NextToken();
-
-#line  1924 "VBNET.ATG" 
-					EnsureIsZero(expr); canBeNormal = false; 
-					Expr(
-#line  1925 "VBNET.ATG" 
-out expr);
-				}
-			}
-
-#line  1927 "VBNET.ATG" 
-			if (expr == null) { canBeRedim = false; expr = Expression.Null; } 
-		}
-
-#line  1929 "VBNET.ATG" 
-		if (expr != null) arguments.Add(expr); else canBeRedim = false; 
-	}
-
-	void ArrayTypeModifiers(
-#line  2016 "VBNET.ATG" 
-out ArrayList arrayModifiers) {
-
-#line  2018 "VBNET.ATG" 
-		arrayModifiers = new ArrayList();
-		int i = 0;
-		
-		while (
-#line  2021 "VBNET.ATG" 
-IsDims()) {
-			Expect(24);
-			if (la.kind == 12 || la.kind == 25) {
-				RankList(
-#line  2023 "VBNET.ATG" 
-out i);
-			}
-
-#line  2025 "VBNET.ATG" 
-			arrayModifiers.Add(i);
-			
-			Expect(25);
-		}
-
-#line  2030 "VBNET.ATG" 
-		if(arrayModifiers.Count == 0) {
-		 arrayModifiers = null;
-		}
-		
-	}
-
-	void Argument(
-#line  1933 "VBNET.ATG" 
-out Expression argumentexpr) {
-
-#line  1935 "VBNET.ATG" 
-		Expression expr;
-		argumentexpr = null;
-		string name;
-		
-		if (
-#line  1939 "VBNET.ATG" 
-IsNamedAssign()) {
-			Identifier();
-
-#line  1939 "VBNET.ATG" 
-			name = t.val;  
-			Expect(13);
-			Expect(11);
-			Expr(
-#line  1939 "VBNET.ATG" 
-out expr);
-
-#line  1941 "VBNET.ATG" 
-			argumentexpr = new NamedArgumentExpression(name, expr);
-			
-		} else if (StartOf(27)) {
-			Expr(
-#line  1944 "VBNET.ATG" 
-out argumentexpr);
-		} else SynErr(249);
-	}
-
-	void QualIdentAndTypeArguments(
-#line  1990 "VBNET.ATG" 
-out TypeReference typeref, bool canBeUnbound) {
-
-#line  1991 "VBNET.ATG" 
-		string name; typeref = null; 
-		Qualident(
-#line  1993 "VBNET.ATG" 
-out name);
-
-#line  1994 "VBNET.ATG" 
-		typeref = new TypeReference(name); 
-		if (
-#line  1995 "VBNET.ATG" 
-la.kind == Tokens.OpenParenthesis && Peek(1).kind == Tokens.Of) {
-			lexer.NextToken();
-			Expect(201);
-			if (
-#line  1997 "VBNET.ATG" 
-canBeUnbound && (la.kind == Tokens.CloseParenthesis || la.kind == Tokens.Comma)) {
-
-#line  1998 "VBNET.ATG" 
-				typeref.GenericTypes.Add(NullTypeReference.Instance); 
-				while (la.kind == 12) {
-					lexer.NextToken();
-
-#line  1999 "VBNET.ATG" 
-					typeref.GenericTypes.Add(NullTypeReference.Instance); 
-				}
-			} else if (StartOf(6)) {
-				TypeArgumentList(
-#line  2000 "VBNET.ATG" 
-typeref.GenericTypes);
-			} else SynErr(250);
-			Expect(25);
-		}
-	}
-
-	void TypeArgumentList(
-#line  2043 "VBNET.ATG" 
-List<TypeReference> typeArguments) {
-
-#line  2045 "VBNET.ATG" 
-		TypeReference typeref;
-		
-		TypeName(
-#line  2047 "VBNET.ATG" 
-out typeref);
-
-#line  2047 "VBNET.ATG" 
-		if (typeref != null) typeArguments.Add(typeref); 
-		while (la.kind == 12) {
-			lexer.NextToken();
-			TypeName(
-#line  2050 "VBNET.ATG" 
-out typeref);
-
-#line  2050 "VBNET.ATG" 
-			if (typeref != null) typeArguments.Add(typeref); 
-		}
-	}
-
-	void RankList(
-#line  2037 "VBNET.ATG" 
-out int i) {
-
-#line  2038 "VBNET.ATG" 
-		i = 0; 
-		while (la.kind == 12) {
-			lexer.NextToken();
-
-#line  2039 "VBNET.ATG" 
-			++i; 
-		}
-	}
-
-	void Attribute(
-#line  2078 "VBNET.ATG" 
-out ASTAttribute attribute) {
-
-#line  2079 "VBNET.ATG" 
-		string name;
-		List<Expression> positional = new List<Expression>();
-		List<NamedArgumentExpression> named = new List<NamedArgumentExpression>();
-		
-		if (la.kind == 199) {
-			lexer.NextToken();
-			Expect(10);
-		}
-		Qualident(
-#line  2084 "VBNET.ATG" 
-out name);
-		if (la.kind == 24) {
-			AttributeArguments(
-#line  2085 "VBNET.ATG" 
-positional, named);
-		}
-
-#line  2086 "VBNET.ATG" 
-		attribute  = new ASTAttribute(name, positional, named); 
-	}
-
-	void AttributeArguments(
-#line  2090 "VBNET.ATG" 
-List<Expression> positional, List<NamedArgumentExpression> named) {
-
-#line  2092 "VBNET.ATG" 
-		bool nameFound = false;
-		string name = "";
-		Expression expr;
-		
-		Expect(24);
-		if (
-#line  2098 "VBNET.ATG" 
-IsNotClosingParenthesis()) {
-			if (
-#line  2100 "VBNET.ATG" 
-IsNamedAssign()) {
-
-#line  2100 "VBNET.ATG" 
-				nameFound = true; 
-				IdentifierOrKeyword(
-#line  2101 "VBNET.ATG" 
-out name);
-				if (la.kind == 13) {
-					lexer.NextToken();
-				}
-				Expect(11);
-			}
-			Expr(
-#line  2103 "VBNET.ATG" 
-out expr);
-
-#line  2105 "VBNET.ATG" 
-			if (expr != null) {
-			if (string.IsNullOrEmpty(name)) { positional.Add(expr); }
-			else { named.Add(new NamedArgumentExpression(name, expr)); name = ""; }
-			}
-			
-			while (la.kind == 12) {
-				lexer.NextToken();
-				if (
-#line  2113 "VBNET.ATG" 
-IsNamedAssign()) {
-
-#line  2113 "VBNET.ATG" 
-					nameFound = true; 
-					IdentifierOrKeyword(
-#line  2114 "VBNET.ATG" 
-out name);
-					if (la.kind == 13) {
-						lexer.NextToken();
-					}
-					Expect(11);
-				} else if (StartOf(27)) {
-
-#line  2116 "VBNET.ATG" 
-					if (nameFound) Error("no positional argument after named argument"); 
-				} else SynErr(251);
-				Expr(
-#line  2117 "VBNET.ATG" 
-out expr);
-
-#line  2117 "VBNET.ATG" 
-				if (expr != null) { if(name == "") positional.Add(expr);
-				else { named.Add(new NamedArgumentExpression(name, expr)); name = ""; }
-				}
-				
-			}
-		}
-		Expect(25);
 	}
 
 	void FormalParameter(
-#line  2189 "VBNET.ATG" 
+#line  2942 "VBNET.ATG" 
 out ParameterDeclarationExpression p) {
 
-#line  2191 "VBNET.ATG" 
+#line  2944 "VBNET.ATG" 
+		AttributeSection section;
+		List<AttributeSection> attributes = new List<AttributeSection>();
 		TypeReference type = null;
 		ParamModifierList mod = new ParamModifierList(this);
 		Expression expr = null;
-		p = null;ArrayList arrayModifiers = null;
+		p = null;
+		ArrayList arrayModifiers = null;
+		Location startLocation = la.Location;
 		
-		while (StartOf(33)) {
+		while (la.kind == 40) {
+			AttributeSection(
+#line  2954 "VBNET.ATG" 
+out section);
+
+#line  2954 "VBNET.ATG" 
+			attributes.Add(section); 
+		}
+		while (StartOf(29)) {
 			ParameterModifier(
-#line  2196 "VBNET.ATG" 
+#line  2955 "VBNET.ATG" 
 mod);
 		}
 		Identifier();
 
-#line  2197 "VBNET.ATG" 
+#line  2956 "VBNET.ATG" 
 		string parameterName = t.val; 
 		if (
-#line  2198 "VBNET.ATG" 
+#line  2957 "VBNET.ATG" 
 IsDims()) {
 			ArrayTypeModifiers(
-#line  2198 "VBNET.ATG" 
+#line  2957 "VBNET.ATG" 
 out arrayModifiers);
 		}
-		if (la.kind == 48) {
+		if (la.kind == 63) {
 			lexer.NextToken();
 			TypeName(
-#line  2199 "VBNET.ATG" 
+#line  2958 "VBNET.ATG" 
 out type);
 		}
 
-#line  2201 "VBNET.ATG" 
+#line  2960 "VBNET.ATG" 
 		if(type != null) {
 		if (arrayModifiers != null) {
 			if (type.RankSpecifier != null) {
@@ -4879,424 +3446,2443 @@ out type);
 				type.RankSpecifier = (int[])arrayModifiers.ToArray(typeof(int));
 			}
 		}
-		} else {
-			type = new TypeReference("System.Object", arrayModifiers == null ? null : (int[])arrayModifiers.ToArray(typeof(int)));
 		}
 		
-		if (la.kind == 11) {
+		if (la.kind == 20) {
 			lexer.NextToken();
 			Expr(
-#line  2213 "VBNET.ATG" 
+#line  2970 "VBNET.ATG" 
 out expr);
 		}
 
-#line  2215 "VBNET.ATG" 
+#line  2972 "VBNET.ATG" 
 		mod.Check();
 		p = new ParameterDeclarationExpression(type, parameterName, mod.Modifier, expr);
+		p.Attributes = attributes;
+		p.StartLocation = startLocation;
+		p.EndLocation = t.EndLocation;
 		
 	}
 
-	void ParameterModifier(
-#line  2867 "VBNET.ATG" 
-ParamModifierList m) {
-		if (la.kind == 55) {
-			lexer.NextToken();
+	void GetAccessorDecl(
+#line  1398 "VBNET.ATG" 
+out PropertyGetRegion getBlock, List<AttributeSection> attributes) {
 
-#line  2868 "VBNET.ATG" 
-			m.Add(ParameterModifiers.In); 
-		} else if (la.kind == 53) {
-			lexer.NextToken();
+#line  1399 "VBNET.ATG" 
+		Statement stmt = null; Modifiers m; 
+		PropertyAccessorAccessModifier(
+#line  1401 "VBNET.ATG" 
+out m);
+		Expect(128);
 
-#line  2869 "VBNET.ATG" 
-			m.Add(ParameterModifiers.Ref); 
-		} else if (la.kind == 137) {
-			lexer.NextToken();
+#line  1403 "VBNET.ATG" 
+		Location startLocation = t.Location; 
+		Expect(1);
+		Block(
+#line  1405 "VBNET.ATG" 
+out stmt);
 
-#line  2870 "VBNET.ATG" 
-			m.Add(ParameterModifiers.Optional); 
-		} else if (la.kind == 143) {
-			lexer.NextToken();
+#line  1406 "VBNET.ATG" 
+		getBlock = new PropertyGetRegion((BlockStatement)stmt, attributes); 
+		Expect(113);
+		Expect(128);
 
-#line  2871 "VBNET.ATG" 
-			m.Add(ParameterModifiers.Params); 
-		} else SynErr(252);
+#line  1408 "VBNET.ATG" 
+		getBlock.Modifier = m; 
+
+#line  1409 "VBNET.ATG" 
+		getBlock.StartLocation = startLocation; getBlock.EndLocation = t.EndLocation; 
+		EndOfStmt();
 	}
 
-	void Statement() {
+	void SetAccessorDecl(
+#line  1414 "VBNET.ATG" 
+out PropertySetRegion setBlock, List<AttributeSection> attributes) {
 
-#line  2243 "VBNET.ATG" 
+#line  1416 "VBNET.ATG" 
 		Statement stmt = null;
-		Location startPos = la.Location;
-		string label = String.Empty;
+		List<ParameterDeclarationExpression> p = new List<ParameterDeclarationExpression>();
+		Modifiers m;
 		
-		
-		if (la.kind == 1 || la.kind == 13) {
-		} else if (
-#line  2249 "VBNET.ATG" 
-IsLabel()) {
-			LabelName(
-#line  2249 "VBNET.ATG" 
-out label);
+		PropertyAccessorAccessModifier(
+#line  1421 "VBNET.ATG" 
+out m);
+		Expect(198);
 
-#line  2251 "VBNET.ATG" 
-			compilationUnit.AddChild(new LabelStatement(t.val));
-			
-			Expect(13);
-			Statement();
-		} else if (StartOf(34)) {
-			EmbeddedStatement(
-#line  2254 "VBNET.ATG" 
-out stmt);
-
-#line  2254 "VBNET.ATG" 
-			compilationUnit.AddChild(stmt); 
-		} else if (StartOf(35)) {
-			LocalDeclarationStatement(
-#line  2255 "VBNET.ATG" 
-out stmt);
-
-#line  2255 "VBNET.ATG" 
-			compilationUnit.AddChild(stmt); 
-		} else SynErr(253);
-
-#line  2258 "VBNET.ATG" 
-		if (stmt != null) {
-		stmt.StartLocation = startPos;
-		stmt.EndLocation = t.Location;
+#line  1423 "VBNET.ATG" 
+		Location startLocation = t.Location; 
+		if (la.kind == 37) {
+			lexer.NextToken();
+			if (StartOf(6)) {
+				FormalParameterList(
+#line  1424 "VBNET.ATG" 
+p);
+			}
+			Expect(38);
 		}
+		Expect(1);
+		Block(
+#line  1426 "VBNET.ATG" 
+out stmt);
+
+#line  1428 "VBNET.ATG" 
+		setBlock = new PropertySetRegion((BlockStatement)stmt, attributes);
+		setBlock.Modifier = m;
+		setBlock.Parameters = p;
+		
+		Expect(113);
+		Expect(198);
+
+#line  1433 "VBNET.ATG" 
+		setBlock.StartLocation = startLocation; setBlock.EndLocation = t.EndLocation; 
+		EndOfStmt();
+	}
+
+	void PropertyAccessorAccessModifier(
+#line  3736 "VBNET.ATG" 
+out Modifiers m) {
+
+#line  3737 "VBNET.ATG" 
+		m = Modifiers.None; 
+		while (StartOf(30)) {
+			if (la.kind == 188) {
+				lexer.NextToken();
+
+#line  3739 "VBNET.ATG" 
+				m |= Modifiers.Public; 
+			} else if (la.kind == 187) {
+				lexer.NextToken();
+
+#line  3740 "VBNET.ATG" 
+				m |= Modifiers.Protected; 
+			} else if (la.kind == 125) {
+				lexer.NextToken();
+
+#line  3741 "VBNET.ATG" 
+				m |= Modifiers.Internal; 
+			} else {
+				lexer.NextToken();
+
+#line  3742 "VBNET.ATG" 
+				m |= Modifiers.Private; 
+			}
+		}
+	}
+
+	void ArrayInitializationModifier(
+#line  1531 "VBNET.ATG" 
+out List<Expression> arrayModifiers) {
+
+#line  1533 "VBNET.ATG" 
+		arrayModifiers = null;
+		
+		Expect(37);
+		InitializationRankList(
+#line  1535 "VBNET.ATG" 
+out arrayModifiers);
+		Expect(38);
+	}
+
+	void ArrayNameModifier(
+#line  2769 "VBNET.ATG" 
+out ArrayList arrayModifiers) {
+
+#line  2771 "VBNET.ATG" 
+		arrayModifiers = null;
+		
+		ArrayTypeModifiers(
+#line  2773 "VBNET.ATG" 
+out arrayModifiers);
+	}
+
+	void InitializationRankList(
+#line  1539 "VBNET.ATG" 
+out List<Expression> rank) {
+
+#line  1541 "VBNET.ATG" 
+		rank = new List<Expression>();
+		Expression expr = null;
+		
+		Expr(
+#line  1544 "VBNET.ATG" 
+out expr);
+		if (la.kind == 216) {
+			lexer.NextToken();
+
+#line  1545 "VBNET.ATG" 
+			EnsureIsZero(expr); 
+			Expr(
+#line  1546 "VBNET.ATG" 
+out expr);
+		}
+
+#line  1548 "VBNET.ATG" 
+		if (expr != null) { rank.Add(expr); } 
+		while (la.kind == 22) {
+			lexer.NextToken();
+			Expr(
+#line  1550 "VBNET.ATG" 
+out expr);
+			if (la.kind == 216) {
+				lexer.NextToken();
+
+#line  1551 "VBNET.ATG" 
+				EnsureIsZero(expr); 
+				Expr(
+#line  1552 "VBNET.ATG" 
+out expr);
+			}
+
+#line  1554 "VBNET.ATG" 
+			if (expr != null) { rank.Add(expr); } 
+		}
+	}
+
+	void CollectionInitializer(
+#line  1559 "VBNET.ATG" 
+out CollectionInitializerExpression outExpr) {
+
+#line  1561 "VBNET.ATG" 
+		Expression expr = null;
+		CollectionInitializerExpression initializer = new CollectionInitializerExpression();
+		Location startLocation = la.Location;
+		
+		Expect(35);
+		if (StartOf(24)) {
+			Expr(
+#line  1567 "VBNET.ATG" 
+out expr);
+
+#line  1569 "VBNET.ATG" 
+			if (expr != null) { initializer.CreateExpressions.Add(expr); }
+			
+			while (
+#line  1572 "VBNET.ATG" 
+NotFinalComma()) {
+				Expect(22);
+				Expr(
+#line  1572 "VBNET.ATG" 
+out expr);
+
+#line  1573 "VBNET.ATG" 
+				if (expr != null) { initializer.CreateExpressions.Add(expr); } 
+			}
+		}
+		Expect(36);
+
+#line  1578 "VBNET.ATG" 
+		outExpr = initializer;
+		outExpr.StartLocation = startLocation;
+		outExpr.EndLocation = t.EndLocation;
 		
 	}
 
-	void LabelName(
-#line  2646 "VBNET.ATG" 
+	void EventMemberSpecifier(
+#line  1651 "VBNET.ATG" 
 out string name) {
 
-#line  2648 "VBNET.ATG" 
-		name = String.Empty;
-		
-		if (StartOf(13)) {
+#line  1652 "VBNET.ATG" 
+		string eventName; 
+		if (StartOf(4)) {
 			Identifier();
-
-#line  2650 "VBNET.ATG" 
-			name = t.val; 
-		} else if (la.kind == 5) {
+		} else if (la.kind == 158) {
 			lexer.NextToken();
+		} else if (la.kind == 153) {
+			lexer.NextToken();
+		} else SynErr(275);
 
-#line  2651 "VBNET.ATG" 
-			name = t.val; 
-		} else SynErr(254);
+#line  1655 "VBNET.ATG" 
+		name = t.val; 
+		Expect(26);
+		IdentifierOrKeyword(
+#line  1657 "VBNET.ATG" 
+out eventName);
+
+#line  1658 "VBNET.ATG" 
+		name = name + "." + eventName; 
 	}
 
-	void EmbeddedStatement(
+	void IdentifierOrKeyword(
+#line  3669 "VBNET.ATG" 
+out string name) {
+		lexer.NextToken();
+
+#line  3671 "VBNET.ATG" 
+		name = t.val;  
+	}
+
+	void QueryExpr(
+#line  2290 "VBNET.ATG" 
+out Expression expr) {
+
+#line  2292 "VBNET.ATG" 
+		QueryExpressionVB qexpr = new QueryExpressionVB();
+		qexpr.StartLocation = la.Location;
+		expr = qexpr;
+		
+		FromOrAggregateQueryOperator(
+#line  2296 "VBNET.ATG" 
+qexpr.Clauses);
+		while (StartOf(31)) {
+			QueryOperator(
 #line  2297 "VBNET.ATG" 
-out Statement statement) {
+qexpr.Clauses);
+		}
 
 #line  2299 "VBNET.ATG" 
-		Statement embeddedStatement = null;
-		statement = null;
-		Expression expr = null;
+		qexpr.EndLocation = t.EndLocation;
+		
+	}
+
+	void LambdaExpr(
+#line  2210 "VBNET.ATG" 
+out Expression expr) {
+
+#line  2212 "VBNET.ATG" 
+		LambdaExpression lambda = null;
+		
+		if (la.kind == 210) {
+			SubLambdaExpression(
+#line  2214 "VBNET.ATG" 
+out lambda);
+		} else if (la.kind == 127) {
+			FunctionLambdaExpression(
+#line  2215 "VBNET.ATG" 
+out lambda);
+		} else SynErr(276);
+
+#line  2216 "VBNET.ATG" 
+		expr = lambda; 
+	}
+
+	void DisjunctionExpr(
+#line  1960 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  1962 "VBNET.ATG" 
+		Expression expr;
+		BinaryOperatorType op = BinaryOperatorType.None;
+		Location startLocation = la.Location;
+		
+		ConjunctionExpr(
+#line  1966 "VBNET.ATG" 
+out outExpr);
+		while (la.kind == 175 || la.kind == 177 || la.kind == 236) {
+			if (la.kind == 175) {
+				lexer.NextToken();
+
+#line  1969 "VBNET.ATG" 
+				op = BinaryOperatorType.BitwiseOr; 
+			} else if (la.kind == 177) {
+				lexer.NextToken();
+
+#line  1970 "VBNET.ATG" 
+				op = BinaryOperatorType.LogicalOr; 
+			} else {
+				lexer.NextToken();
+
+#line  1971 "VBNET.ATG" 
+				op = BinaryOperatorType.ExclusiveOr; 
+			}
+			ConjunctionExpr(
+#line  1973 "VBNET.ATG" 
+out expr);
+
+#line  1973 "VBNET.ATG" 
+			outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  
+		}
+	}
+
+	void AssignmentOperator(
+#line  1678 "VBNET.ATG" 
+out AssignmentOperatorType op) {
+
+#line  1679 "VBNET.ATG" 
+		op = AssignmentOperatorType.None; 
+		switch (la.kind) {
+		case 20: {
+			lexer.NextToken();
+
+#line  1680 "VBNET.ATG" 
+			op = AssignmentOperatorType.Assign; 
+			break;
+		}
+		case 54: {
+			lexer.NextToken();
+
+#line  1681 "VBNET.ATG" 
+			op = AssignmentOperatorType.ConcatString; 
+			break;
+		}
+		case 46: {
+			lexer.NextToken();
+
+#line  1682 "VBNET.ATG" 
+			op = AssignmentOperatorType.Add; 
+			break;
+		}
+		case 48: {
+			lexer.NextToken();
+
+#line  1683 "VBNET.ATG" 
+			op = AssignmentOperatorType.Subtract; 
+			break;
+		}
+		case 49: {
+			lexer.NextToken();
+
+#line  1684 "VBNET.ATG" 
+			op = AssignmentOperatorType.Multiply; 
+			break;
+		}
+		case 50: {
+			lexer.NextToken();
+
+#line  1685 "VBNET.ATG" 
+			op = AssignmentOperatorType.Divide; 
+			break;
+		}
+		case 51: {
+			lexer.NextToken();
+
+#line  1686 "VBNET.ATG" 
+			op = AssignmentOperatorType.DivideInteger; 
+			break;
+		}
+		case 47: {
+			lexer.NextToken();
+
+#line  1687 "VBNET.ATG" 
+			op = AssignmentOperatorType.Power; 
+			break;
+		}
+		case 52: {
+			lexer.NextToken();
+
+#line  1688 "VBNET.ATG" 
+			op = AssignmentOperatorType.ShiftLeft; 
+			break;
+		}
+		case 53: {
+			lexer.NextToken();
+
+#line  1689 "VBNET.ATG" 
+			op = AssignmentOperatorType.ShiftRight; 
+			break;
+		}
+		default: SynErr(277); break;
+		}
+	}
+
+	void SimpleExpr(
+#line  1693 "VBNET.ATG" 
+out Expression pexpr) {
+
+#line  1694 "VBNET.ATG" 
+		string name; Location startLocation = la.Location; 
+		SimpleNonInvocationExpression(
+#line  1697 "VBNET.ATG" 
+out pexpr);
+		while (StartOf(32)) {
+			if (la.kind == 26) {
+				lexer.NextToken();
+				if (la.kind == 10) {
+					lexer.NextToken();
+					IdentifierOrKeyword(
+#line  1700 "VBNET.ATG" 
+out name);
+					Expect(11);
+
+#line  1701 "VBNET.ATG" 
+					pexpr = new XmlMemberAccessExpression(pexpr, XmlAxisType.Element, name, true); 
+				} else if (StartOf(33)) {
+					IdentifierOrKeyword(
+#line  1702 "VBNET.ATG" 
+out name);
+
+#line  1703 "VBNET.ATG" 
+					pexpr = new MemberReferenceExpression(pexpr, name) { StartLocation = startLocation, EndLocation = t.EndLocation }; 
+				} else SynErr(278);
+				if (
+#line  1705 "VBNET.ATG" 
+la.kind == Tokens.OpenParenthesis && Peek(1).kind == Tokens.Of) {
+					lexer.NextToken();
+					Expect(169);
+					TypeArgumentList(
+#line  1706 "VBNET.ATG" 
+((MemberReferenceExpression)pexpr).TypeArguments);
+					Expect(38);
+				}
+			} else if (la.kind == 29) {
+				lexer.NextToken();
+				IdentifierOrKeyword(
+#line  1708 "VBNET.ATG" 
+out name);
+
+#line  1708 "VBNET.ATG" 
+				pexpr = new BinaryOperatorExpression(pexpr, BinaryOperatorType.DictionaryAccess, new PrimitiveExpression(name, name) { StartLocation = t.Location, EndLocation = t.EndLocation }); 
+			} else if (la.kind == 27 || la.kind == 28) {
+
+#line  1709 "VBNET.ATG" 
+				XmlAxisType type = XmlAxisType.Attribute; bool isXmlName = false; 
+				if (la.kind == 28) {
+					lexer.NextToken();
+				} else if (la.kind == 27) {
+					lexer.NextToken();
+
+#line  1710 "VBNET.ATG" 
+					type = XmlAxisType.Descendents; 
+				} else SynErr(279);
+				if (la.kind == 10) {
+					lexer.NextToken();
+
+#line  1710 "VBNET.ATG" 
+					isXmlName = true; 
+				}
+				IdentifierOrKeyword(
+#line  1710 "VBNET.ATG" 
+out name);
+				if (la.kind == 11) {
+					lexer.NextToken();
+				}
+
+#line  1711 "VBNET.ATG" 
+				pexpr = new XmlMemberAccessExpression(pexpr, type, name, isXmlName); 
+			} else {
+				InvocationExpression(
+#line  1712 "VBNET.ATG" 
+ref pexpr);
+			}
+		}
+
+#line  1716 "VBNET.ATG" 
+		if (pexpr != null) {
+		pexpr.StartLocation = startLocation;
+		pexpr.EndLocation = t.EndLocation;
+		}
+		
+	}
+
+	void SimpleNonInvocationExpression(
+#line  1723 "VBNET.ATG" 
+out Expression pexpr) {
+
+#line  1725 "VBNET.ATG" 
+		Expression expr;
+		CollectionInitializerExpression cie;
+		TypeReference type = null;
 		string name = String.Empty;
-		List<Expression> p = null;
+		Location startLocation = la.Location;
+		pexpr = null;
+		
+		if (StartOf(34)) {
+			switch (la.kind) {
+			case 3: {
+				lexer.NextToken();
+
+#line  1735 "VBNET.ATG" 
+				pexpr = new PrimitiveExpression(t.literalValue, t.val) { LiteralFormat = t.literalFormat };  
+				break;
+			}
+			case 4: {
+				lexer.NextToken();
+
+#line  1736 "VBNET.ATG" 
+				pexpr = new PrimitiveExpression(t.literalValue, t.val) { LiteralFormat = t.literalFormat };  
+				break;
+			}
+			case 7: {
+				lexer.NextToken();
+
+#line  1737 "VBNET.ATG" 
+				pexpr = new PrimitiveExpression(t.literalValue, t.val) { LiteralFormat = t.literalFormat };  
+				break;
+			}
+			case 6: {
+				lexer.NextToken();
+
+#line  1738 "VBNET.ATG" 
+				pexpr = new PrimitiveExpression(t.literalValue, t.val) { LiteralFormat = t.literalFormat };  
+				break;
+			}
+			case 5: {
+				lexer.NextToken();
+
+#line  1739 "VBNET.ATG" 
+				pexpr = new PrimitiveExpression(t.literalValue, t.val) { LiteralFormat = t.literalFormat };  
+				break;
+			}
+			case 9: {
+				lexer.NextToken();
+
+#line  1740 "VBNET.ATG" 
+				pexpr = new PrimitiveExpression(t.literalValue, t.val) { LiteralFormat = t.literalFormat };  
+				break;
+			}
+			case 8: {
+				lexer.NextToken();
+
+#line  1741 "VBNET.ATG" 
+				pexpr = new PrimitiveExpression(t.literalValue, t.val) { LiteralFormat = t.literalFormat };  
+				break;
+			}
+			case 217: {
+				lexer.NextToken();
+
+#line  1743 "VBNET.ATG" 
+				pexpr = new PrimitiveExpression(true, "true");  
+				break;
+			}
+			case 122: {
+				lexer.NextToken();
+
+#line  1744 "VBNET.ATG" 
+				pexpr = new PrimitiveExpression(false, "false"); 
+				break;
+			}
+			case 165: {
+				lexer.NextToken();
+
+#line  1745 "VBNET.ATG" 
+				pexpr = new PrimitiveExpression(null, "null");  
+				break;
+			}
+			case 37: {
+				lexer.NextToken();
+				Expr(
+#line  1746 "VBNET.ATG" 
+out expr);
+				Expect(38);
+
+#line  1746 "VBNET.ATG" 
+				pexpr = new ParenthesizedExpression(expr); 
+				break;
+			}
+			case 2: case 58: case 62: case 64: case 65: case 66: case 67: case 70: case 87: case 98: case 104: case 107: case 116: case 121: case 126: case 133: case 139: case 143: case 146: case 147: case 170: case 176: case 178: case 184: case 203: case 212: case 213: case 223: case 224: case 230: {
+				Identifier();
+
+#line  1748 "VBNET.ATG" 
+				pexpr = new IdentifierExpression(t.val);
+				pexpr.StartLocation = t.Location; pexpr.EndLocation = t.EndLocation;
+				
+				if (
+#line  1751 "VBNET.ATG" 
+la.kind == Tokens.OpenParenthesis && Peek(1).kind == Tokens.Of) {
+					lexer.NextToken();
+					Expect(169);
+					TypeArgumentList(
+#line  1752 "VBNET.ATG" 
+((IdentifierExpression)pexpr).TypeArguments);
+					Expect(38);
+				}
+				break;
+			}
+			case 68: case 71: case 82: case 99: case 100: case 109: case 141: case 151: case 168: case 196: case 201: case 202: case 208: case 221: case 222: case 225: {
+
+#line  1754 "VBNET.ATG" 
+				string val = String.Empty; 
+				if (StartOf(12)) {
+					PrimitiveTypeName(
+#line  1755 "VBNET.ATG" 
+out val);
+				} else if (la.kind == 168) {
+					lexer.NextToken();
+
+#line  1755 "VBNET.ATG" 
+					val = "System.Object"; 
+				} else SynErr(280);
+
+#line  1756 "VBNET.ATG" 
+				pexpr = new TypeReferenceExpression(new TypeReference(val, true)); 
+				break;
+			}
+			case 153: {
+				lexer.NextToken();
+
+#line  1757 "VBNET.ATG" 
+				pexpr = new ThisReferenceExpression(); 
+				break;
+			}
+			case 158: case 159: {
+
+#line  1758 "VBNET.ATG" 
+				Expression retExpr = null; 
+				if (la.kind == 158) {
+					lexer.NextToken();
+
+#line  1759 "VBNET.ATG" 
+					retExpr = new BaseReferenceExpression() { StartLocation = t.Location, EndLocation = t.EndLocation }; 
+				} else if (la.kind == 159) {
+					lexer.NextToken();
+
+#line  1760 "VBNET.ATG" 
+					retExpr = new ClassReferenceExpression() { StartLocation = t.Location, EndLocation = t.EndLocation }; 
+				} else SynErr(281);
+				Expect(26);
+				IdentifierOrKeyword(
+#line  1762 "VBNET.ATG" 
+out name);
+
+#line  1762 "VBNET.ATG" 
+				pexpr = new MemberReferenceExpression(retExpr, name) { StartLocation = startLocation, EndLocation = t.EndLocation }; 
+				break;
+			}
+			case 130: {
+				lexer.NextToken();
+				Expect(26);
+				Identifier();
+
+#line  1764 "VBNET.ATG" 
+				type = new TypeReference(t.val ?? ""); 
+
+#line  1766 "VBNET.ATG" 
+				type.IsGlobal = true; 
+
+#line  1767 "VBNET.ATG" 
+				pexpr = new TypeReferenceExpression(type); 
+				break;
+			}
+			case 162: {
+				ObjectCreateExpression(
+#line  1768 "VBNET.ATG" 
+out expr);
+
+#line  1768 "VBNET.ATG" 
+				pexpr = expr; 
+				break;
+			}
+			case 35: {
+				CollectionInitializer(
+#line  1769 "VBNET.ATG" 
+out cie);
+
+#line  1769 "VBNET.ATG" 
+				pexpr = cie; 
+				break;
+			}
+			case 94: case 106: case 219: {
+
+#line  1771 "VBNET.ATG" 
+				CastType castType = CastType.Cast; 
+				if (la.kind == 106) {
+					lexer.NextToken();
+				} else if (la.kind == 94) {
+					lexer.NextToken();
+
+#line  1773 "VBNET.ATG" 
+					castType = CastType.Conversion; 
+				} else if (la.kind == 219) {
+					lexer.NextToken();
+
+#line  1774 "VBNET.ATG" 
+					castType = CastType.TryCast; 
+				} else SynErr(282);
+				Expect(37);
+				Expr(
+#line  1776 "VBNET.ATG" 
+out expr);
+				Expect(22);
+				TypeName(
+#line  1776 "VBNET.ATG" 
+out type);
+				Expect(38);
+
+#line  1777 "VBNET.ATG" 
+				pexpr = new CastExpression(type, expr, castType); 
+				break;
+			}
+			case 76: case 77: case 78: case 79: case 80: case 81: case 83: case 85: case 86: case 90: case 91: case 92: case 93: case 95: case 96: case 97: {
+				CastTarget(
+#line  1778 "VBNET.ATG" 
+out type);
+				Expect(37);
+				Expr(
+#line  1778 "VBNET.ATG" 
+out expr);
+				Expect(38);
+
+#line  1778 "VBNET.ATG" 
+				pexpr = new CastExpression(type, expr, CastType.PrimitiveConversion); 
+				break;
+			}
+			case 57: {
+				lexer.NextToken();
+				Expr(
+#line  1779 "VBNET.ATG" 
+out expr);
+
+#line  1779 "VBNET.ATG" 
+				pexpr = new AddressOfExpression(expr); 
+				break;
+			}
+			case 129: {
+				lexer.NextToken();
+				Expect(37);
+				GetTypeTypeName(
+#line  1780 "VBNET.ATG" 
+out type);
+				Expect(38);
+
+#line  1780 "VBNET.ATG" 
+				pexpr = new TypeOfExpression(type); 
+				break;
+			}
+			case 220: {
+				lexer.NextToken();
+				SimpleExpr(
+#line  1781 "VBNET.ATG" 
+out expr);
+				Expect(144);
+				TypeName(
+#line  1781 "VBNET.ATG" 
+out type);
+
+#line  1781 "VBNET.ATG" 
+				pexpr = new TypeOfIsExpression(expr, type); 
+				break;
+			}
+			case 135: {
+				ConditionalExpression(
+#line  1782 "VBNET.ATG" 
+out pexpr);
+				break;
+			}
+			case 10: case 16: case 17: case 18: case 19: {
+				XmlLiteralExpression(
+#line  1783 "VBNET.ATG" 
+out pexpr);
+				break;
+			}
+			}
+		} else if (StartOf(35)) {
+			if (la.kind == 26) {
+				lexer.NextToken();
+				if (la.kind == 10) {
+					lexer.NextToken();
+					IdentifierOrKeyword(
+#line  1789 "VBNET.ATG" 
+out name);
+					Expect(11);
+
+#line  1790 "VBNET.ATG" 
+					pexpr = new XmlMemberAccessExpression(null, XmlAxisType.Element, name, true) { StartLocation = startLocation, EndLocation = t.EndLocation }; 
+				} else if (StartOf(33)) {
+					IdentifierOrKeyword(
+#line  1791 "VBNET.ATG" 
+out name);
+
+#line  1792 "VBNET.ATG" 
+					pexpr = new MemberReferenceExpression(null, name) { StartLocation = startLocation, EndLocation = t.EndLocation }; 
+				} else SynErr(283);
+			} else if (la.kind == 29) {
+				lexer.NextToken();
+				IdentifierOrKeyword(
+#line  1794 "VBNET.ATG" 
+out name);
+
+#line  1794 "VBNET.ATG" 
+				pexpr = new BinaryOperatorExpression(null, BinaryOperatorType.DictionaryAccess, new PrimitiveExpression(name, name) { StartLocation = t.Location, EndLocation = t.EndLocation }); 
+			} else {
+
+#line  1795 "VBNET.ATG" 
+				XmlAxisType axisType = XmlAxisType.Element; bool isXmlIdentifier = false; 
+				if (la.kind == 27) {
+					lexer.NextToken();
+
+#line  1796 "VBNET.ATG" 
+					axisType = XmlAxisType.Descendents; 
+				} else if (la.kind == 28) {
+					lexer.NextToken();
+
+#line  1796 "VBNET.ATG" 
+					axisType = XmlAxisType.Attribute; 
+				} else SynErr(284);
+				if (la.kind == 10) {
+					lexer.NextToken();
+
+#line  1797 "VBNET.ATG" 
+					isXmlIdentifier = true; 
+				}
+				IdentifierOrKeyword(
+#line  1797 "VBNET.ATG" 
+out name);
+				if (la.kind == 11) {
+					lexer.NextToken();
+				}
+
+#line  1798 "VBNET.ATG" 
+				pexpr = new XmlMemberAccessExpression(null, axisType, name, isXmlIdentifier); 
+			}
+		} else SynErr(285);
+
+#line  1803 "VBNET.ATG" 
+		if (pexpr != null) {
+		pexpr.StartLocation = startLocation;
+		pexpr.EndLocation = t.EndLocation;
+		}
+		
+	}
+
+	void TypeArgumentList(
+#line  2805 "VBNET.ATG" 
+List<TypeReference> typeArguments) {
+
+#line  2807 "VBNET.ATG" 
+		TypeReference typeref;
+		
+		TypeName(
+#line  2809 "VBNET.ATG" 
+out typeref);
+
+#line  2809 "VBNET.ATG" 
+		if (typeref != null) typeArguments.Add(typeref); 
+		while (la.kind == 22) {
+			lexer.NextToken();
+			TypeName(
+#line  2812 "VBNET.ATG" 
+out typeref);
+
+#line  2812 "VBNET.ATG" 
+			if (typeref != null) typeArguments.Add(typeref); 
+		}
+	}
+
+	void InvocationExpression(
+#line  1924 "VBNET.ATG" 
+ref Expression pexpr) {
+
+#line  1925 "VBNET.ATG" 
+		List<Expression> parameters = null; 
+		Expect(37);
+
+#line  1927 "VBNET.ATG" 
+		Location start = t.Location; 
+		ArgumentList(
+#line  1928 "VBNET.ATG" 
+out parameters);
+		Expect(38);
+
+#line  1931 "VBNET.ATG" 
+		pexpr = new InvocationExpression(pexpr, parameters);
+		
+
+#line  1933 "VBNET.ATG" 
+		pexpr.StartLocation = start; pexpr.EndLocation = t.Location; 
+	}
+
+	void PrimitiveTypeName(
+#line  3676 "VBNET.ATG" 
+out string type) {
+
+#line  3677 "VBNET.ATG" 
+		type = String.Empty; 
+		switch (la.kind) {
+		case 68: {
+			lexer.NextToken();
+
+#line  3678 "VBNET.ATG" 
+			type = "System.Boolean"; 
+			break;
+		}
+		case 99: {
+			lexer.NextToken();
+
+#line  3679 "VBNET.ATG" 
+			type = "System.DateTime"; 
+			break;
+		}
+		case 82: {
+			lexer.NextToken();
+
+#line  3680 "VBNET.ATG" 
+			type = "System.Char"; 
+			break;
+		}
+		case 208: {
+			lexer.NextToken();
+
+#line  3681 "VBNET.ATG" 
+			type = "System.String"; 
+			break;
+		}
+		case 100: {
+			lexer.NextToken();
+
+#line  3682 "VBNET.ATG" 
+			type = "System.Decimal"; 
+			break;
+		}
+		case 71: {
+			lexer.NextToken();
+
+#line  3683 "VBNET.ATG" 
+			type = "System.Byte"; 
+			break;
+		}
+		case 201: {
+			lexer.NextToken();
+
+#line  3684 "VBNET.ATG" 
+			type = "System.Int16"; 
+			break;
+		}
+		case 141: {
+			lexer.NextToken();
+
+#line  3685 "VBNET.ATG" 
+			type = "System.Int32"; 
+			break;
+		}
+		case 151: {
+			lexer.NextToken();
+
+#line  3686 "VBNET.ATG" 
+			type = "System.Int64"; 
+			break;
+		}
+		case 202: {
+			lexer.NextToken();
+
+#line  3687 "VBNET.ATG" 
+			type = "System.Single"; 
+			break;
+		}
+		case 109: {
+			lexer.NextToken();
+
+#line  3688 "VBNET.ATG" 
+			type = "System.Double"; 
+			break;
+		}
+		case 221: {
+			lexer.NextToken();
+
+#line  3689 "VBNET.ATG" 
+			type = "System.UInt32"; 
+			break;
+		}
+		case 222: {
+			lexer.NextToken();
+
+#line  3690 "VBNET.ATG" 
+			type = "System.UInt64"; 
+			break;
+		}
+		case 225: {
+			lexer.NextToken();
+
+#line  3691 "VBNET.ATG" 
+			type = "System.UInt16"; 
+			break;
+		}
+		case 196: {
+			lexer.NextToken();
+
+#line  3692 "VBNET.ATG" 
+			type = "System.SByte"; 
+			break;
+		}
+		default: SynErr(286); break;
+		}
+	}
+
+	void CastTarget(
+#line  1938 "VBNET.ATG" 
+out TypeReference type) {
+
+#line  1940 "VBNET.ATG" 
+		type = null;
 		
 		switch (la.kind) {
-		case 94: {
+		case 76: {
 			lexer.NextToken();
 
-#line  2305 "VBNET.ATG" 
-			ExitType exitType = ExitType.None; 
-			switch (la.kind) {
-			case 167: {
-				lexer.NextToken();
-
-#line  2307 "VBNET.ATG" 
-				exitType = ExitType.Sub; 
-				break;
-			}
-			case 100: {
-				lexer.NextToken();
-
-#line  2309 "VBNET.ATG" 
-				exitType = ExitType.Function; 
-				break;
-			}
-			case 146: {
-				lexer.NextToken();
-
-#line  2311 "VBNET.ATG" 
-				exitType = ExitType.Property; 
-				break;
-			}
-			case 83: {
-				lexer.NextToken();
-
-#line  2313 "VBNET.ATG" 
-				exitType = ExitType.Do; 
-				break;
-			}
-			case 98: {
-				lexer.NextToken();
-
-#line  2315 "VBNET.ATG" 
-				exitType = ExitType.For; 
-				break;
-			}
-			case 174: {
-				lexer.NextToken();
-
-#line  2317 "VBNET.ATG" 
-				exitType = ExitType.Try; 
-				break;
-			}
-			case 181: {
-				lexer.NextToken();
-
-#line  2319 "VBNET.ATG" 
-				exitType = ExitType.While; 
-				break;
-			}
-			case 155: {
-				lexer.NextToken();
-
-#line  2321 "VBNET.ATG" 
-				exitType = ExitType.Select; 
-				break;
-			}
-			default: SynErr(255); break;
-			}
-
-#line  2323 "VBNET.ATG" 
-			statement = new ExitStatement(exitType); 
+#line  1942 "VBNET.ATG" 
+			type = new TypeReference("System.Boolean", true); 
 			break;
 		}
-		case 174: {
-			TryStatement(
-#line  2324 "VBNET.ATG" 
-out statement);
-			break;
-		}
-		case 187: {
+		case 77: {
 			lexer.NextToken();
 
-#line  2325 "VBNET.ATG" 
-			ContinueType continueType = ContinueType.None; 
-			if (la.kind == 83 || la.kind == 98 || la.kind == 181) {
-				if (la.kind == 83) {
-					lexer.NextToken();
-
-#line  2325 "VBNET.ATG" 
-					continueType = ContinueType.Do; 
-				} else if (la.kind == 98) {
-					lexer.NextToken();
-
-#line  2325 "VBNET.ATG" 
-					continueType = ContinueType.For; 
-				} else {
-					lexer.NextToken();
-
-#line  2325 "VBNET.ATG" 
-					continueType = ContinueType.While; 
-				}
-			}
-
-#line  2325 "VBNET.ATG" 
-			statement = new ContinueStatement(continueType); 
+#line  1943 "VBNET.ATG" 
+			type = new TypeReference("System.Byte", true); 
 			break;
 		}
-		case 171: {
-			lexer.NextToken();
-			if (StartOf(27)) {
-				Expr(
-#line  2327 "VBNET.ATG" 
-out expr);
-			}
-
-#line  2327 "VBNET.ATG" 
-			statement = new ThrowStatement(expr); 
-			break;
-		}
-		case 154: {
-			lexer.NextToken();
-			if (StartOf(27)) {
-				Expr(
-#line  2329 "VBNET.ATG" 
-out expr);
-			}
-
-#line  2329 "VBNET.ATG" 
-			statement = new ReturnStatement(expr); 
-			break;
-		}
-		case 168: {
-			lexer.NextToken();
-			Expr(
-#line  2331 "VBNET.ATG" 
-out expr);
-			EndOfStmt();
-			Block(
-#line  2331 "VBNET.ATG" 
-out embeddedStatement);
-			Expect(88);
-			Expect(168);
-
-#line  2332 "VBNET.ATG" 
-			statement = new LockStatement(expr, embeddedStatement); 
-			break;
-		}
-		case 149: {
-			lexer.NextToken();
-			Identifier();
-
-#line  2334 "VBNET.ATG" 
-			name = t.val; 
-			if (la.kind == 24) {
-				lexer.NextToken();
-				if (StartOf(30)) {
-					ArgumentList(
-#line  2335 "VBNET.ATG" 
-out p);
-				}
-				Expect(25);
-			}
-
-#line  2336 "VBNET.ATG" 
-			statement = new RaiseEventStatement(name, p); 
-			break;
-		}
-		case 182: {
-			WithStatement(
-#line  2338 "VBNET.ATG" 
-out statement);
-			break;
-		}
-		case 42: {
+		case 90: {
 			lexer.NextToken();
 
-#line  2340 "VBNET.ATG" 
-			Expression handlerExpr = null; 
-			Expr(
-#line  2341 "VBNET.ATG" 
-out expr);
-			Expect(12);
-			Expr(
-#line  2341 "VBNET.ATG" 
-out handlerExpr);
-
-#line  2343 "VBNET.ATG" 
-			statement = new AddHandlerStatement(expr, handlerExpr);
-			
+#line  1944 "VBNET.ATG" 
+			type = new TypeReference("System.SByte", true); 
 			break;
 		}
-		case 152: {
+		case 78: {
 			lexer.NextToken();
 
-#line  2346 "VBNET.ATG" 
-			Expression handlerExpr = null; 
-			Expr(
-#line  2347 "VBNET.ATG" 
-out expr);
-			Expect(12);
-			Expr(
-#line  2347 "VBNET.ATG" 
-out handlerExpr);
-
-#line  2349 "VBNET.ATG" 
-			statement = new RemoveHandlerStatement(expr, handlerExpr);
-			
+#line  1945 "VBNET.ATG" 
+			type = new TypeReference("System.Char", true); 
 			break;
 		}
-		case 181: {
+		case 79: {
 			lexer.NextToken();
-			Expr(
-#line  2352 "VBNET.ATG" 
-out expr);
-			EndOfStmt();
-			Block(
-#line  2353 "VBNET.ATG" 
-out embeddedStatement);
-			Expect(88);
-			Expect(181);
 
-#line  2355 "VBNET.ATG" 
-			statement = new DoLoopStatement(expr, embeddedStatement, ConditionType.While, ConditionPosition.Start);
-			
+#line  1946 "VBNET.ATG" 
+			type = new TypeReference("System.DateTime", true); 
+			break;
+		}
+		case 81: {
+			lexer.NextToken();
+
+#line  1947 "VBNET.ATG" 
+			type = new TypeReference("System.Decimal", true); 
+			break;
+		}
+		case 80: {
+			lexer.NextToken();
+
+#line  1948 "VBNET.ATG" 
+			type = new TypeReference("System.Double", true); 
+			break;
+		}
+		case 91: {
+			lexer.NextToken();
+
+#line  1949 "VBNET.ATG" 
+			type = new TypeReference("System.Int16", true); 
 			break;
 		}
 		case 83: {
 			lexer.NextToken();
 
-#line  2360 "VBNET.ATG" 
+#line  1950 "VBNET.ATG" 
+			type = new TypeReference("System.Int32", true); 
+			break;
+		}
+		case 85: {
+			lexer.NextToken();
+
+#line  1951 "VBNET.ATG" 
+			type = new TypeReference("System.Int64", true); 
+			break;
+		}
+		case 97: {
+			lexer.NextToken();
+
+#line  1952 "VBNET.ATG" 
+			type = new TypeReference("System.UInt16", true); 
+			break;
+		}
+		case 95: {
+			lexer.NextToken();
+
+#line  1953 "VBNET.ATG" 
+			type = new TypeReference("System.UInt32", true); 
+			break;
+		}
+		case 96: {
+			lexer.NextToken();
+
+#line  1954 "VBNET.ATG" 
+			type = new TypeReference("System.UInt64", true); 
+			break;
+		}
+		case 86: {
+			lexer.NextToken();
+
+#line  1955 "VBNET.ATG" 
+			type = new TypeReference("System.Object", true); 
+			break;
+		}
+		case 92: {
+			lexer.NextToken();
+
+#line  1956 "VBNET.ATG" 
+			type = new TypeReference("System.Single", true); 
+			break;
+		}
+		case 93: {
+			lexer.NextToken();
+
+#line  1957 "VBNET.ATG" 
+			type = new TypeReference("System.String", true); 
+			break;
+		}
+		default: SynErr(287); break;
+		}
+	}
+
+	void GetTypeTypeName(
+#line  2704 "VBNET.ATG" 
+out TypeReference typeref) {
+
+#line  2705 "VBNET.ATG" 
+		ArrayList rank = null; 
+		NonArrayTypeName(
+#line  2707 "VBNET.ATG" 
+out typeref, true);
+		ArrayTypeModifiers(
+#line  2708 "VBNET.ATG" 
+out rank);
+
+#line  2709 "VBNET.ATG" 
+		if (rank != null && typeref != null) {
+		typeref.RankSpecifier = (int[])rank.ToArray(typeof(int));
+		}
+		
+	}
+
+	void ConditionalExpression(
+#line  1890 "VBNET.ATG" 
+out Expression expr) {
+
+#line  1892 "VBNET.ATG" 
+		ConditionalExpression conditionalExpression = new ConditionalExpression();
+		BinaryOperatorExpression binaryOperatorExpression = new BinaryOperatorExpression();
+		conditionalExpression.StartLocation = binaryOperatorExpression.StartLocation = la.Location;
+		
+		Expression condition = null;
+		Expression trueExpr = null;
+		Expression falseExpr = null;
+		
+		Expect(135);
+		Expect(37);
+		Expr(
+#line  1901 "VBNET.ATG" 
+out condition);
+		Expect(22);
+		Expr(
+#line  1901 "VBNET.ATG" 
+out trueExpr);
+		if (la.kind == 22) {
+			lexer.NextToken();
+			Expr(
+#line  1901 "VBNET.ATG" 
+out falseExpr);
+		}
+		Expect(38);
+
+#line  1903 "VBNET.ATG" 
+		if(falseExpr != null)
+		{
+			conditionalExpression.Condition = condition;
+			conditionalExpression.TrueExpression = trueExpr;
+			conditionalExpression.FalseExpression = falseExpr;
+			conditionalExpression.EndLocation = t.EndLocation;
+			
+			expr = conditionalExpression;
+		}
+		else
+		{
+			binaryOperatorExpression.Left = condition;
+			binaryOperatorExpression.Right = trueExpr;
+			binaryOperatorExpression.Op = BinaryOperatorType.NullCoalescing;
+			binaryOperatorExpression.EndLocation = t.EndLocation;
+			
+			expr = binaryOperatorExpression;
+		}
+		
+	}
+
+	void XmlLiteralExpression(
+#line  1810 "VBNET.ATG" 
+out Expression pexpr) {
+
+#line  1812 "VBNET.ATG" 
+		List<XmlExpression> exprs = new List<XmlExpression>();
+		XmlExpression currentExpression = null;
+		
+		if (StartOf(36)) {
+			XmlContentExpression(
+#line  1817 "VBNET.ATG" 
+exprs);
+			while (StartOf(36)) {
+				XmlContentExpression(
+#line  1817 "VBNET.ATG" 
+exprs);
+			}
+			if (la.kind == 10) {
+				XmlElement(
+#line  1817 "VBNET.ATG" 
+out currentExpression);
+
+#line  1817 "VBNET.ATG" 
+				exprs.Add(currentExpression); 
+				while (StartOf(36)) {
+					XmlContentExpression(
+#line  1817 "VBNET.ATG" 
+exprs);
+				}
+			}
+		} else if (la.kind == 10) {
+			XmlElement(
+#line  1819 "VBNET.ATG" 
+out currentExpression);
+
+#line  1819 "VBNET.ATG" 
+			exprs.Add(currentExpression); 
+			while (StartOf(36)) {
+				XmlContentExpression(
+#line  1819 "VBNET.ATG" 
+exprs);
+			}
+		} else SynErr(288);
+
+#line  1822 "VBNET.ATG" 
+		if (exprs.Count > 1) {
+		pexpr = new XmlDocumentExpression() { Expressions = exprs };
+		} else {
+			pexpr = exprs[0];
+		}
+		
+	}
+
+	void XmlContentExpression(
+#line  1830 "VBNET.ATG" 
+List<XmlExpression> exprs) {
+
+#line  1831 "VBNET.ATG" 
+		XmlContentExpression expr = null; 
+		if (la.kind == 16) {
+			lexer.NextToken();
+
+#line  1833 "VBNET.ATG" 
+			expr = new XmlContentExpression(t.val, XmlContentType.Text); 
+		} else if (la.kind == 18) {
+			lexer.NextToken();
+
+#line  1834 "VBNET.ATG" 
+			expr = new XmlContentExpression(t.val, XmlContentType.CData); 
+		} else if (la.kind == 17) {
+			lexer.NextToken();
+
+#line  1835 "VBNET.ATG" 
+			expr = new XmlContentExpression(t.val, XmlContentType.Comment); 
+		} else if (la.kind == 19) {
+			lexer.NextToken();
+
+#line  1836 "VBNET.ATG" 
+			expr = new XmlContentExpression(t.val, XmlContentType.ProcessingInstruction); 
+		} else SynErr(289);
+
+#line  1839 "VBNET.ATG" 
+		expr.StartLocation = t.Location;
+		expr.EndLocation = t.EndLocation;
+		exprs.Add(expr);
+		
+	}
+
+	void XmlElement(
+#line  1865 "VBNET.ATG" 
+out XmlExpression expr) {
+
+#line  1866 "VBNET.ATG" 
+		XmlElementExpression el = new XmlElementExpression(); 
+		Expect(10);
+
+#line  1869 "VBNET.ATG" 
+		el.StartLocation = t.Location; 
+		if (la.kind == 12) {
+			lexer.NextToken();
+
+#line  1870 "VBNET.ATG" 
+			Expression innerExpression; 
+			Expr(
+#line  1870 "VBNET.ATG" 
+out innerExpression);
+			Expect(13);
+
+#line  1871 "VBNET.ATG" 
+			el.NameExpression = new XmlEmbeddedExpression() { InlineVBExpression = innerExpression }; 
+		} else if (StartOf(4)) {
+			Identifier();
+
+#line  1872 "VBNET.ATG" 
+			el.XmlName = t.val; 
+		} else SynErr(290);
+		while (StartOf(37)) {
+			XmlAttribute(
+#line  1872 "VBNET.ATG" 
+el.Attributes);
+		}
+		if (la.kind == 14) {
+			lexer.NextToken();
+
+#line  1873 "VBNET.ATG" 
+			el.EndLocation = t.EndLocation; 
+		} else if (la.kind == 11) {
+			lexer.NextToken();
+			while (StartOf(38)) {
+
+#line  1873 "VBNET.ATG" 
+				XmlExpression child; 
+				XmlNestedContent(
+#line  1873 "VBNET.ATG" 
+out child);
+
+#line  1873 "VBNET.ATG" 
+				el.Children.Add(child); 
+			}
+			Expect(15);
+			while (StartOf(39)) {
+				lexer.NextToken();
+			}
+			Expect(11);
+
+#line  1873 "VBNET.ATG" 
+			el.EndLocation = t.EndLocation; 
+		} else SynErr(291);
+
+#line  1875 "VBNET.ATG" 
+		expr = el; 
+	}
+
+	void XmlNestedContent(
+#line  1845 "VBNET.ATG" 
+out XmlExpression expr) {
+
+#line  1846 "VBNET.ATG" 
+		XmlExpression tmpExpr = null; Location start = la.Location; 
+		switch (la.kind) {
+		case 16: {
+			lexer.NextToken();
+
+#line  1849 "VBNET.ATG" 
+			tmpExpr = new XmlContentExpression(t.val, XmlContentType.Text); 
+			break;
+		}
+		case 18: {
+			lexer.NextToken();
+
+#line  1850 "VBNET.ATG" 
+			tmpExpr = new XmlContentExpression(t.val, XmlContentType.CData); 
+			break;
+		}
+		case 17: {
+			lexer.NextToken();
+
+#line  1851 "VBNET.ATG" 
+			tmpExpr = new XmlContentExpression(t.val, XmlContentType.Comment); 
+			break;
+		}
+		case 19: {
+			lexer.NextToken();
+
+#line  1852 "VBNET.ATG" 
+			tmpExpr = new XmlContentExpression(t.val, XmlContentType.ProcessingInstruction); 
+			break;
+		}
+		case 12: {
+			lexer.NextToken();
+
+#line  1853 "VBNET.ATG" 
+			Expression innerExpression; 
+			Expr(
+#line  1853 "VBNET.ATG" 
+out innerExpression);
+			Expect(13);
+
+#line  1853 "VBNET.ATG" 
+			tmpExpr = new XmlEmbeddedExpression() { InlineVBExpression = innerExpression }; 
+			break;
+		}
+		case 10: {
+			XmlElement(
+#line  1854 "VBNET.ATG" 
+out tmpExpr);
+			break;
+		}
+		default: SynErr(292); break;
+		}
+
+#line  1857 "VBNET.ATG" 
+		if (tmpExpr.StartLocation.IsEmpty)
+		tmpExpr.StartLocation = start;
+		if (tmpExpr.EndLocation.IsEmpty)
+			tmpExpr.EndLocation = t.EndLocation;
+		expr = tmpExpr;
+		
+	}
+
+	void XmlAttribute(
+#line  1878 "VBNET.ATG" 
+List<XmlExpression> attrs) {
+
+#line  1879 "VBNET.ATG" 
+		Location start = la.Location; 
+		if (StartOf(4)) {
+			Identifier();
+
+#line  1881 "VBNET.ATG" 
+			string name = t.val; 
+			Expect(20);
+
+#line  1882 "VBNET.ATG" 
+			string literalValue = null; Expression expressionValue = null; bool useDoubleQuotes = false; 
+			if (la.kind == 3) {
+				lexer.NextToken();
+
+#line  1883 "VBNET.ATG" 
+				literalValue = t.literalValue.ToString(); useDoubleQuotes = t.val[0] == '"'; 
+			} else if (la.kind == 12) {
+				lexer.NextToken();
+				Expr(
+#line  1883 "VBNET.ATG" 
+out expressionValue);
+				Expect(13);
+			} else SynErr(293);
+
+#line  1884 "VBNET.ATG" 
+			attrs.Add(new XmlAttributeExpression() { Name = name, ExpressionValue = expressionValue, LiteralValue = literalValue, UseDoubleQuotes = useDoubleQuotes, StartLocation = start, EndLocation = t.EndLocation }); 
+		} else if (la.kind == 12) {
+			lexer.NextToken();
+
+#line  1886 "VBNET.ATG" 
+			Expression innerExpression; 
+			Expr(
+#line  1886 "VBNET.ATG" 
+out innerExpression);
+			Expect(13);
+
+#line  1887 "VBNET.ATG" 
+			attrs.Add(new XmlEmbeddedExpression() { InlineVBExpression = innerExpression, StartLocation = start, EndLocation = t.EndLocation }); 
+		} else SynErr(294);
+	}
+
+	void ArgumentList(
+#line  2633 "VBNET.ATG" 
+out List<Expression> arguments) {
+
+#line  2635 "VBNET.ATG" 
+		arguments = new List<Expression>();
+		Expression expr = null;
+		
+		if (StartOf(24)) {
+			Argument(
+#line  2638 "VBNET.ATG" 
+out expr);
+		}
+		while (la.kind == 22) {
+			lexer.NextToken();
+
+#line  2639 "VBNET.ATG" 
+			arguments.Add(expr ?? Expression.Null); expr = null; 
+			if (StartOf(24)) {
+				Argument(
+#line  2640 "VBNET.ATG" 
+out expr);
+			}
+
+#line  2641 "VBNET.ATG" 
+			if (expr == null) expr = Expression.Null; 
+		}
+
+#line  2643 "VBNET.ATG" 
+		if (expr != null) arguments.Add(expr); 
+	}
+
+	void ConjunctionExpr(
+#line  1977 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  1979 "VBNET.ATG" 
+		Expression expr;
+		BinaryOperatorType op = BinaryOperatorType.None;
+		Location startLocation = la.Location;
+		
+		NotExpr(
+#line  1983 "VBNET.ATG" 
+out outExpr);
+		while (la.kind == 60 || la.kind == 61) {
+			if (la.kind == 60) {
+				lexer.NextToken();
+
+#line  1986 "VBNET.ATG" 
+				op = BinaryOperatorType.BitwiseAnd; 
+			} else {
+				lexer.NextToken();
+
+#line  1987 "VBNET.ATG" 
+				op = BinaryOperatorType.LogicalAnd; 
+			}
+			NotExpr(
+#line  1989 "VBNET.ATG" 
+out expr);
+
+#line  1989 "VBNET.ATG" 
+			outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  
+		}
+	}
+
+	void NotExpr(
+#line  1993 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  1994 "VBNET.ATG" 
+		UnaryOperatorType uop = UnaryOperatorType.None; 
+		while (la.kind == 164) {
+			lexer.NextToken();
+
+#line  1995 "VBNET.ATG" 
+			uop = UnaryOperatorType.Not; 
+		}
+		ComparisonExpr(
+#line  1996 "VBNET.ATG" 
+out outExpr);
+
+#line  1997 "VBNET.ATG" 
+		if (uop != UnaryOperatorType.None)
+		outExpr = new UnaryOperatorExpression(outExpr, uop);
+		
+	}
+
+	void ComparisonExpr(
+#line  2002 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  2004 "VBNET.ATG" 
+		Expression expr;
+		BinaryOperatorType op = BinaryOperatorType.None;
+		Location startLocation = la.Location;
+		
+		ShiftExpr(
+#line  2008 "VBNET.ATG" 
+out outExpr);
+		while (StartOf(40)) {
+			switch (la.kind) {
+			case 40: {
+				lexer.NextToken();
+
+#line  2011 "VBNET.ATG" 
+				op = BinaryOperatorType.LessThan; 
+				break;
+			}
+			case 39: {
+				lexer.NextToken();
+
+#line  2012 "VBNET.ATG" 
+				op = BinaryOperatorType.GreaterThan; 
+				break;
+			}
+			case 43: {
+				lexer.NextToken();
+
+#line  2013 "VBNET.ATG" 
+				op = BinaryOperatorType.LessThanOrEqual; 
+				break;
+			}
+			case 42: {
+				lexer.NextToken();
+
+#line  2014 "VBNET.ATG" 
+				op = BinaryOperatorType.GreaterThanOrEqual; 
+				break;
+			}
+			case 41: {
+				lexer.NextToken();
+
+#line  2015 "VBNET.ATG" 
+				op = BinaryOperatorType.InEquality; 
+				break;
+			}
+			case 20: {
+				lexer.NextToken();
+
+#line  2016 "VBNET.ATG" 
+				op = BinaryOperatorType.Equality; 
+				break;
+			}
+			case 150: {
+				lexer.NextToken();
+
+#line  2017 "VBNET.ATG" 
+				op = BinaryOperatorType.Like; 
+				break;
+			}
+			case 144: {
+				lexer.NextToken();
+
+#line  2018 "VBNET.ATG" 
+				op = BinaryOperatorType.ReferenceEquality; 
+				break;
+			}
+			case 145: {
+				lexer.NextToken();
+
+#line  2019 "VBNET.ATG" 
+				op = BinaryOperatorType.ReferenceInequality; 
+				break;
+			}
+			}
+			if (StartOf(41)) {
+				ShiftExpr(
+#line  2022 "VBNET.ATG" 
+out expr);
+
+#line  2022 "VBNET.ATG" 
+				outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  
+			} else if (la.kind == 164) {
+
+#line  2023 "VBNET.ATG" 
+				Location startLocation2 = la.Location; 
+				lexer.NextToken();
+				ShiftExpr(
+#line  2025 "VBNET.ATG" 
+out expr);
+
+#line  2025 "VBNET.ATG" 
+				outExpr = new BinaryOperatorExpression(outExpr, op, new UnaryOperatorExpression(expr, UnaryOperatorType.Not) { StartLocation = startLocation2, EndLocation = t.EndLocation }) { StartLocation = startLocation, EndLocation = t.EndLocation };  
+			} else SynErr(295);
+		}
+	}
+
+	void ShiftExpr(
+#line  2030 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  2032 "VBNET.ATG" 
+		Expression expr;
+		BinaryOperatorType op = BinaryOperatorType.None;
+		Location startLocation = la.Location;
+		
+		ConcatenationExpr(
+#line  2036 "VBNET.ATG" 
+out outExpr);
+		while (la.kind == 44 || la.kind == 45) {
+			if (la.kind == 44) {
+				lexer.NextToken();
+
+#line  2039 "VBNET.ATG" 
+				op = BinaryOperatorType.ShiftLeft; 
+			} else {
+				lexer.NextToken();
+
+#line  2040 "VBNET.ATG" 
+				op = BinaryOperatorType.ShiftRight; 
+			}
+			ConcatenationExpr(
+#line  2042 "VBNET.ATG" 
+out expr);
+
+#line  2042 "VBNET.ATG" 
+			outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  
+		}
+	}
+
+	void ConcatenationExpr(
+#line  2046 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  2047 "VBNET.ATG" 
+		Expression expr; Location startLocation = la.Location; 
+		AdditiveExpr(
+#line  2049 "VBNET.ATG" 
+out outExpr);
+		while (la.kind == 23) {
+			lexer.NextToken();
+			AdditiveExpr(
+#line  2049 "VBNET.ATG" 
+out expr);
+
+#line  2049 "VBNET.ATG" 
+			outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Concat, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  
+		}
+	}
+
+	void AdditiveExpr(
+#line  2052 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  2054 "VBNET.ATG" 
+		Expression expr;
+		BinaryOperatorType op = BinaryOperatorType.None;
+		Location startLocation = la.Location;
+		
+		ModuloExpr(
+#line  2058 "VBNET.ATG" 
+out outExpr);
+		while (la.kind == 30 || la.kind == 31) {
+			if (la.kind == 31) {
+				lexer.NextToken();
+
+#line  2061 "VBNET.ATG" 
+				op = BinaryOperatorType.Add; 
+			} else {
+				lexer.NextToken();
+
+#line  2062 "VBNET.ATG" 
+				op = BinaryOperatorType.Subtract; 
+			}
+			ModuloExpr(
+#line  2064 "VBNET.ATG" 
+out expr);
+
+#line  2064 "VBNET.ATG" 
+			outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  
+		}
+	}
+
+	void ModuloExpr(
+#line  2068 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  2069 "VBNET.ATG" 
+		Expression expr; Location startLocation = la.Location; 
+		IntegerDivisionExpr(
+#line  2071 "VBNET.ATG" 
+out outExpr);
+		while (la.kind == 154) {
+			lexer.NextToken();
+			IntegerDivisionExpr(
+#line  2071 "VBNET.ATG" 
+out expr);
+
+#line  2071 "VBNET.ATG" 
+			outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Modulus, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  
+		}
+	}
+
+	void IntegerDivisionExpr(
+#line  2074 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  2075 "VBNET.ATG" 
+		Expression expr; Location startLocation = la.Location; 
+		MultiplicativeExpr(
+#line  2077 "VBNET.ATG" 
+out outExpr);
+		while (la.kind == 25) {
+			lexer.NextToken();
+			MultiplicativeExpr(
+#line  2077 "VBNET.ATG" 
+out expr);
+
+#line  2077 "VBNET.ATG" 
+			outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.DivideInteger, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  
+		}
+	}
+
+	void MultiplicativeExpr(
+#line  2080 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  2082 "VBNET.ATG" 
+		Expression expr;
+		BinaryOperatorType op = BinaryOperatorType.None;
+		Location startLocation = la.Location;
+		
+		UnaryExpr(
+#line  2086 "VBNET.ATG" 
+out outExpr);
+		while (la.kind == 24 || la.kind == 34) {
+			if (la.kind == 34) {
+				lexer.NextToken();
+
+#line  2089 "VBNET.ATG" 
+				op = BinaryOperatorType.Multiply; 
+			} else {
+				lexer.NextToken();
+
+#line  2090 "VBNET.ATG" 
+				op = BinaryOperatorType.Divide; 
+			}
+			UnaryExpr(
+#line  2092 "VBNET.ATG" 
+out expr);
+
+#line  2092 "VBNET.ATG" 
+			outExpr = new BinaryOperatorExpression(outExpr, op, expr) { StartLocation = startLocation, EndLocation = t.EndLocation }; 
+		}
+	}
+
+	void UnaryExpr(
+#line  2096 "VBNET.ATG" 
+out Expression uExpr) {
+
+#line  2098 "VBNET.ATG" 
+		Expression expr;
+		UnaryOperatorType uop = UnaryOperatorType.None;
+		Location startLocation = la.Location;
+		bool isUOp = false;
+		
+		while (la.kind == 30 || la.kind == 31 || la.kind == 34) {
+			if (la.kind == 31) {
+				lexer.NextToken();
+
+#line  2103 "VBNET.ATG" 
+				uop = UnaryOperatorType.Plus; isUOp = true; 
+			} else if (la.kind == 30) {
+				lexer.NextToken();
+
+#line  2104 "VBNET.ATG" 
+				uop = UnaryOperatorType.Minus; isUOp = true; 
+			} else {
+				lexer.NextToken();
+
+#line  2105 "VBNET.ATG" 
+				uop = UnaryOperatorType.Dereference;  isUOp = true;
+			}
+		}
+		ExponentiationExpr(
+#line  2107 "VBNET.ATG" 
+out expr);
+
+#line  2109 "VBNET.ATG" 
+		if (isUOp) {
+		uExpr = new UnaryOperatorExpression(expr, uop) { StartLocation = startLocation, EndLocation = t.EndLocation };
+		} else {
+			uExpr = expr;
+		}
+		
+	}
+
+	void ExponentiationExpr(
+#line  2117 "VBNET.ATG" 
+out Expression outExpr) {
+
+#line  2118 "VBNET.ATG" 
+		Expression expr; Location startLocation = la.Location; 
+		SimpleExpr(
+#line  2120 "VBNET.ATG" 
+out outExpr);
+		while (la.kind == 32) {
+			lexer.NextToken();
+			SimpleExpr(
+#line  2120 "VBNET.ATG" 
+out expr);
+
+#line  2120 "VBNET.ATG" 
+			outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.Power, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };  
+		}
+	}
+
+	void NormalOrReDimArgumentList(
+#line  2647 "VBNET.ATG" 
+out List<Expression> arguments, out bool canBeNormal, out bool canBeRedim) {
+
+#line  2649 "VBNET.ATG" 
+		arguments = new List<Expression>();
+		canBeNormal = true; canBeRedim = !IsNamedAssign();
+		Expression expr = null;
+		
+		if (StartOf(24)) {
+			Argument(
+#line  2654 "VBNET.ATG" 
+out expr);
+			if (la.kind == 216) {
+				lexer.NextToken();
+
+#line  2655 "VBNET.ATG" 
+				EnsureIsZero(expr); canBeNormal = false; 
+				Expr(
+#line  2656 "VBNET.ATG" 
+out expr);
+			}
+		}
+		while (la.kind == 22) {
+			lexer.NextToken();
+
+#line  2659 "VBNET.ATG" 
+			if (expr == null) canBeRedim = false; 
+
+#line  2660 "VBNET.ATG" 
+			arguments.Add(expr ?? Expression.Null); expr = null; 
+
+#line  2661 "VBNET.ATG" 
+			canBeRedim &= !IsNamedAssign(); 
+			if (StartOf(24)) {
+				Argument(
+#line  2662 "VBNET.ATG" 
+out expr);
+				if (la.kind == 216) {
+					lexer.NextToken();
+
+#line  2663 "VBNET.ATG" 
+					EnsureIsZero(expr); canBeNormal = false; 
+					Expr(
+#line  2664 "VBNET.ATG" 
+out expr);
+				}
+			}
+
+#line  2666 "VBNET.ATG" 
+			if (expr == null) { canBeRedim = false; expr = Expression.Null; } 
+		}
+
+#line  2668 "VBNET.ATG" 
+		if (expr != null) arguments.Add(expr); else canBeRedim = false; 
+	}
+
+	void ArrayTypeModifiers(
+#line  2778 "VBNET.ATG" 
+out ArrayList arrayModifiers) {
+
+#line  2780 "VBNET.ATG" 
+		arrayModifiers = new ArrayList();
+		int i = 0;
+		
+		while (
+#line  2783 "VBNET.ATG" 
+IsDims()) {
+			Expect(37);
+			if (la.kind == 22 || la.kind == 38) {
+				RankList(
+#line  2785 "VBNET.ATG" 
+out i);
+			}
+
+#line  2787 "VBNET.ATG" 
+			arrayModifiers.Add(i);
+			
+			Expect(38);
+		}
+
+#line  2792 "VBNET.ATG" 
+		if(arrayModifiers.Count == 0) {
+		 arrayModifiers = null;
+		}
+		
+	}
+
+	void MemberInitializer(
+#line  2614 "VBNET.ATG" 
+out MemberInitializerExpression memberInitializer) {
+
+#line  2616 "VBNET.ATG" 
+		memberInitializer = new MemberInitializerExpression();
+		memberInitializer.StartLocation = la.Location;
+		Expression initExpr = null;
+		bool isKey = false;
+		string name = null;
+		
+		if (la.kind == 147) {
+			lexer.NextToken();
+
+#line  2622 "VBNET.ATG" 
+			isKey = true; 
+		}
+		Expect(26);
+		IdentifierOrKeyword(
+#line  2623 "VBNET.ATG" 
+out name);
+		Expect(20);
+		Expr(
+#line  2623 "VBNET.ATG" 
+out initExpr);
+
+#line  2625 "VBNET.ATG" 
+		memberInitializer.Name = name;
+		memberInitializer.Expression = initExpr;
+		memberInitializer.IsKey = isKey;
+		memberInitializer.EndLocation = t.EndLocation;
+		
+	}
+
+	void SubLambdaExpression(
+#line  2219 "VBNET.ATG" 
+out LambdaExpression lambda) {
+
+#line  2221 "VBNET.ATG" 
+		lambda = new LambdaExpression();
+		lambda.ReturnType = new TypeReference("System.Void", true);
+		Expression inner = null;
+		Statement statement = null;
+		lambda.StartLocation = la.Location;
+		
+		Expect(210);
+		if (la.kind == 37) {
+			lexer.NextToken();
+			if (StartOf(6)) {
+				FormalParameterList(
+#line  2228 "VBNET.ATG" 
+lambda.Parameters);
+			}
+			Expect(38);
+		}
+		if (StartOf(42)) {
+			if (StartOf(24)) {
+				Expr(
+#line  2231 "VBNET.ATG" 
+out inner);
+
+#line  2233 "VBNET.ATG" 
+				lambda.ExpressionBody = inner;
+				lambda.EndLocation = t.EndLocation; // la.Location?
+				
+			} else {
+				EmbeddedStatement(
+#line  2237 "VBNET.ATG" 
+out statement);
+
+#line  2239 "VBNET.ATG" 
+				lambda.StatementBody = statement;
+				lambda.EndLocation = t.EndLocation;
+				
+			}
+		} else if (la.kind == 1) {
+			lexer.NextToken();
+			Block(
+#line  2245 "VBNET.ATG" 
+out statement);
+			Expect(113);
+			Expect(210);
+
+#line  2248 "VBNET.ATG" 
+			lambda.StatementBody = statement;
+			lambda.EndLocation = t.EndLocation;
+			
+		} else SynErr(296);
+	}
+
+	void FunctionLambdaExpression(
+#line  2254 "VBNET.ATG" 
+out LambdaExpression lambda) {
+
+#line  2256 "VBNET.ATG" 
+		lambda = new LambdaExpression();
+		TypeReference typeRef = null;
+		Expression inner = null;
+		Statement statement = null;
+		lambda.StartLocation = la.Location;
+		
+		Expect(127);
+		if (la.kind == 37) {
+			lexer.NextToken();
+			if (StartOf(6)) {
+				FormalParameterList(
+#line  2263 "VBNET.ATG" 
+lambda.Parameters);
+			}
+			Expect(38);
+		}
+		if (la.kind == 63) {
+			lexer.NextToken();
+			TypeName(
+#line  2264 "VBNET.ATG" 
+out typeRef);
+
+#line  2264 "VBNET.ATG" 
+			lambda.ReturnType = typeRef; 
+		}
+		if (StartOf(42)) {
+			if (StartOf(24)) {
+				Expr(
+#line  2267 "VBNET.ATG" 
+out inner);
+
+#line  2269 "VBNET.ATG" 
+				lambda.ExpressionBody = inner;
+				lambda.EndLocation = t.EndLocation; // la.Location?
+				
+			} else {
+				EmbeddedStatement(
+#line  2273 "VBNET.ATG" 
+out statement);
+
+#line  2275 "VBNET.ATG" 
+				lambda.StatementBody = statement;
+				lambda.EndLocation = t.EndLocation;
+				
+			}
+		} else if (la.kind == 1) {
+			lexer.NextToken();
+			Block(
+#line  2281 "VBNET.ATG" 
+out statement);
+			Expect(113);
+			Expect(127);
+
+#line  2284 "VBNET.ATG" 
+			lambda.StatementBody = statement;
+			lambda.EndLocation = t.EndLocation;
+			
+		} else SynErr(297);
+	}
+
+	void EmbeddedStatement(
+#line  3064 "VBNET.ATG" 
+out Statement statement) {
+
+#line  3066 "VBNET.ATG" 
+		Statement embeddedStatement = null;
+		statement = null;
+		Expression expr = null;
+		string name = String.Empty;
+		List<Expression> p = null;
+		Location startLocation = la.Location;
+		
+		if (la.kind == 120) {
+			lexer.NextToken();
+
+#line  3074 "VBNET.ATG" 
+			ExitType exitType = ExitType.None; 
+			switch (la.kind) {
+			case 210: {
+				lexer.NextToken();
+
+#line  3076 "VBNET.ATG" 
+				exitType = ExitType.Sub; 
+				break;
+			}
+			case 127: {
+				lexer.NextToken();
+
+#line  3078 "VBNET.ATG" 
+				exitType = ExitType.Function; 
+				break;
+			}
+			case 186: {
+				lexer.NextToken();
+
+#line  3080 "VBNET.ATG" 
+				exitType = ExitType.Property; 
+				break;
+			}
+			case 108: {
+				lexer.NextToken();
+
+#line  3082 "VBNET.ATG" 
+				exitType = ExitType.Do; 
+				break;
+			}
+			case 124: {
+				lexer.NextToken();
+
+#line  3084 "VBNET.ATG" 
+				exitType = ExitType.For; 
+				break;
+			}
+			case 218: {
+				lexer.NextToken();
+
+#line  3086 "VBNET.ATG" 
+				exitType = ExitType.Try; 
+				break;
+			}
+			case 231: {
+				lexer.NextToken();
+
+#line  3088 "VBNET.ATG" 
+				exitType = ExitType.While; 
+				break;
+			}
+			case 197: {
+				lexer.NextToken();
+
+#line  3090 "VBNET.ATG" 
+				exitType = ExitType.Select; 
+				break;
+			}
+			default: SynErr(298); break;
+			}
+
+#line  3092 "VBNET.ATG" 
+			statement = new ExitStatement(exitType); 
+		} else if (la.kind == 218) {
+			TryStatement(
+#line  3093 "VBNET.ATG" 
+out statement);
+		} else if (la.kind == 89) {
+			lexer.NextToken();
+
+#line  3094 "VBNET.ATG" 
+			ContinueType continueType = ContinueType.None; 
+			if (la.kind == 108 || la.kind == 124 || la.kind == 231) {
+				if (la.kind == 108) {
+					lexer.NextToken();
+
+#line  3094 "VBNET.ATG" 
+					continueType = ContinueType.Do; 
+				} else if (la.kind == 124) {
+					lexer.NextToken();
+
+#line  3094 "VBNET.ATG" 
+					continueType = ContinueType.For; 
+				} else {
+					lexer.NextToken();
+
+#line  3094 "VBNET.ATG" 
+					continueType = ContinueType.While; 
+				}
+			}
+
+#line  3094 "VBNET.ATG" 
+			statement = new ContinueStatement(continueType); 
+		} else if (la.kind == 215) {
+			lexer.NextToken();
+			if (StartOf(24)) {
+				Expr(
+#line  3096 "VBNET.ATG" 
+out expr);
+			}
+
+#line  3096 "VBNET.ATG" 
+			statement = new ThrowStatement(expr); 
+		} else if (la.kind == 195) {
+			lexer.NextToken();
+			if (StartOf(24)) {
+				Expr(
+#line  3098 "VBNET.ATG" 
+out expr);
+			}
+
+#line  3098 "VBNET.ATG" 
+			statement = new ReturnStatement(expr); 
+		} else if (la.kind == 211) {
+			lexer.NextToken();
+			Expr(
+#line  3100 "VBNET.ATG" 
+out expr);
+			EndOfStmt();
+			Block(
+#line  3100 "VBNET.ATG" 
+out embeddedStatement);
+			Expect(113);
+			Expect(211);
+
+#line  3101 "VBNET.ATG" 
+			statement = new LockStatement(expr, embeddedStatement); 
+		} else if (la.kind == 189) {
+			lexer.NextToken();
+			Identifier();
+
+#line  3103 "VBNET.ATG" 
+			name = t.val; 
+			if (la.kind == 37) {
+				lexer.NextToken();
+				if (StartOf(43)) {
+					ArgumentList(
+#line  3104 "VBNET.ATG" 
+out p);
+				}
+				Expect(38);
+			}
+
+#line  3106 "VBNET.ATG" 
+			statement = new RaiseEventStatement(name, p);
+			
+		} else if (la.kind == 233) {
+			WithStatement(
+#line  3109 "VBNET.ATG" 
+out statement);
+		} else if (la.kind == 56) {
+			lexer.NextToken();
+
+#line  3111 "VBNET.ATG" 
+			Expression handlerExpr = null; 
+			Expr(
+#line  3112 "VBNET.ATG" 
+out expr);
+			Expect(22);
+			Expr(
+#line  3112 "VBNET.ATG" 
+out handlerExpr);
+
+#line  3114 "VBNET.ATG" 
+			statement = new AddHandlerStatement(expr, handlerExpr);
+			
+		} else if (la.kind == 193) {
+			lexer.NextToken();
+
+#line  3117 "VBNET.ATG" 
+			Expression handlerExpr = null; 
+			Expr(
+#line  3118 "VBNET.ATG" 
+out expr);
+			Expect(22);
+			Expr(
+#line  3118 "VBNET.ATG" 
+out handlerExpr);
+
+#line  3120 "VBNET.ATG" 
+			statement = new RemoveHandlerStatement(expr, handlerExpr);
+			
+		} else if (la.kind == 231) {
+			lexer.NextToken();
+			Expr(
+#line  3123 "VBNET.ATG" 
+out expr);
+			EndOfStmt();
+			Block(
+#line  3124 "VBNET.ATG" 
+out embeddedStatement);
+			Expect(113);
+			Expect(231);
+
+#line  3126 "VBNET.ATG" 
+			statement = new DoLoopStatement(expr, embeddedStatement, ConditionType.While, ConditionPosition.Start);
+			
+		} else if (la.kind == 108) {
+			lexer.NextToken();
+
+#line  3131 "VBNET.ATG" 
 			ConditionType conditionType = ConditionType.None;
 			
-			if (la.kind == 177 || la.kind == 181) {
+			if (la.kind == 224 || la.kind == 231) {
 				WhileOrUntil(
-#line  2363 "VBNET.ATG" 
+#line  3134 "VBNET.ATG" 
 out conditionType);
 				Expr(
-#line  2363 "VBNET.ATG" 
+#line  3134 "VBNET.ATG" 
 out expr);
 				EndOfStmt();
 				Block(
-#line  2364 "VBNET.ATG" 
+#line  3135 "VBNET.ATG" 
 out embeddedStatement);
-				Expect(118);
+				Expect(152);
 
-#line  2367 "VBNET.ATG" 
+#line  3138 "VBNET.ATG" 
 				statement = new DoLoopStatement(expr, 
 				                               embeddedStatement, 
 				                               conditionType == ConditionType.While ? ConditionType.DoWhile : conditionType, 
 				                               ConditionPosition.Start);
 				
-			} else if (la.kind == 1 || la.kind == 13) {
+			} else if (la.kind == 1 || la.kind == 21) {
 				EndOfStmt();
 				Block(
-#line  2374 "VBNET.ATG" 
+#line  3145 "VBNET.ATG" 
 out embeddedStatement);
-				Expect(118);
-				if (la.kind == 177 || la.kind == 181) {
+				Expect(152);
+				if (la.kind == 224 || la.kind == 231) {
 					WhileOrUntil(
-#line  2375 "VBNET.ATG" 
+#line  3146 "VBNET.ATG" 
 out conditionType);
 					Expr(
-#line  2375 "VBNET.ATG" 
+#line  3146 "VBNET.ATG" 
 out expr);
 				}
 
-#line  2377 "VBNET.ATG" 
+#line  3148 "VBNET.ATG" 
 				statement = new DoLoopStatement(expr, embeddedStatement, conditionType, ConditionPosition.End);
 				
-			} else SynErr(256);
-			break;
-		}
-		case 98: {
+			} else SynErr(299);
+		} else if (la.kind == 124) {
 			lexer.NextToken();
 
-#line  2382 "VBNET.ATG" 
+#line  3153 "VBNET.ATG" 
 			Expression group = null;
 			TypeReference typeReference;
 			string        typeName;
-			Location startLocation = t.Location;
 			
-			if (la.kind == 85) {
+			if (la.kind == 110) {
 				lexer.NextToken();
 				LoopControlVariable(
-#line  2389 "VBNET.ATG" 
+#line  3159 "VBNET.ATG" 
 out typeReference, out typeName);
-				Expect(109);
+				Expect(138);
 				Expr(
-#line  2390 "VBNET.ATG" 
+#line  3160 "VBNET.ATG" 
 out group);
 				EndOfStmt();
 				Block(
-#line  2391 "VBNET.ATG" 
+#line  3161 "VBNET.ATG" 
 out embeddedStatement);
-				Expect(128);
-				if (StartOf(27)) {
+				Expect(163);
+				if (StartOf(24)) {
 					Expr(
-#line  2392 "VBNET.ATG" 
+#line  3162 "VBNET.ATG" 
 out expr);
 				}
 
-#line  2394 "VBNET.ATG" 
+#line  3164 "VBNET.ATG" 
 				statement = new ForeachStatement(typeReference, 
 				                                typeName,
 				                                group, 
@@ -5306,188 +5892,202 @@ out expr);
 				statement.EndLocation   = t.EndLocation;
 				
 				
-			} else if (StartOf(13)) {
+			} else if (StartOf(44)) {
 
-#line  2405 "VBNET.ATG" 
+#line  3175 "VBNET.ATG" 
 				Expression start = null;
 				Expression end = null;
 				Expression step = null;
-				Expression nextExpr = null;List<Expression> nextExpressions = null;
+				Expression variableExpr = null;
+				Expression nextExpr = null;
+				List<Expression> nextExpressions = null;
 				
-				LoopControlVariable(
-#line  2410 "VBNET.ATG" 
+				if (
+#line  3182 "VBNET.ATG" 
+IsLoopVariableDeclaration()) {
+					LoopControlVariable(
+#line  3183 "VBNET.ATG" 
 out typeReference, out typeName);
-				Expect(11);
+				} else {
+
+#line  3185 "VBNET.ATG" 
+					typeReference = null; typeName = null; 
+					SimpleExpr(
+#line  3186 "VBNET.ATG" 
+out variableExpr);
+				}
+				Expect(20);
 				Expr(
-#line  2411 "VBNET.ATG" 
+#line  3188 "VBNET.ATG" 
 out start);
-				Expect(172);
+				Expect(216);
 				Expr(
-#line  2411 "VBNET.ATG" 
+#line  3188 "VBNET.ATG" 
 out end);
-				if (la.kind == 162) {
+				if (la.kind == 205) {
 					lexer.NextToken();
 					Expr(
-#line  2411 "VBNET.ATG" 
+#line  3188 "VBNET.ATG" 
 out step);
 				}
 				EndOfStmt();
 				Block(
-#line  2412 "VBNET.ATG" 
+#line  3189 "VBNET.ATG" 
 out embeddedStatement);
-				Expect(128);
-				if (StartOf(27)) {
+				Expect(163);
+				if (StartOf(24)) {
 					Expr(
-#line  2415 "VBNET.ATG" 
+#line  3192 "VBNET.ATG" 
 out nextExpr);
 
-#line  2415 "VBNET.ATG" 
-					nextExpressions = new List<Expression>(); nextExpressions.Add(nextExpr); 
-					while (la.kind == 12) {
+#line  3194 "VBNET.ATG" 
+					nextExpressions = new List<Expression>();
+					nextExpressions.Add(nextExpr);
+					
+					while (la.kind == 22) {
 						lexer.NextToken();
 						Expr(
-#line  2416 "VBNET.ATG" 
+#line  3197 "VBNET.ATG" 
 out nextExpr);
 
-#line  2416 "VBNET.ATG" 
+#line  3197 "VBNET.ATG" 
 						nextExpressions.Add(nextExpr); 
 					}
 				}
 
-#line  2419 "VBNET.ATG" 
-				statement = new ForNextStatement(typeReference, typeName, start, end, step, embeddedStatement, nextExpressions);
+#line  3200 "VBNET.ATG" 
+				statement = new ForNextStatement {
+				TypeReference = typeReference,
+				VariableName = typeName, 
+				LoopVariableExpression = variableExpr,
+				Start = start, 
+				End = end, 
+				Step = step, 
+				EmbeddedStatement = embeddedStatement, 
+				NextExpressions = nextExpressions
+				};
 				
-			} else SynErr(257);
-			break;
-		}
-		case 92: {
+			} else SynErr(300);
+		} else if (la.kind == 118) {
 			lexer.NextToken();
 			Expr(
-#line  2423 "VBNET.ATG" 
+#line  3213 "VBNET.ATG" 
 out expr);
 
-#line  2423 "VBNET.ATG" 
+#line  3213 "VBNET.ATG" 
 			statement = new ErrorStatement(expr); 
-			break;
-		}
-		case 151: {
+		} else if (la.kind == 191) {
 			lexer.NextToken();
 
-#line  2425 "VBNET.ATG" 
+#line  3215 "VBNET.ATG" 
 			bool isPreserve = false; 
-			if (la.kind == 144) {
+			if (la.kind == 184) {
 				lexer.NextToken();
 
-#line  2425 "VBNET.ATG" 
+#line  3215 "VBNET.ATG" 
 				isPreserve = true; 
 			}
 			ReDimClause(
-#line  2426 "VBNET.ATG" 
+#line  3216 "VBNET.ATG" 
 out expr);
 
-#line  2428 "VBNET.ATG" 
+#line  3218 "VBNET.ATG" 
 			ReDimStatement reDimStatement = new ReDimStatement(isPreserve);
 			statement = reDimStatement;
 			SafeAdd(reDimStatement, reDimStatement.ReDimClauses, expr as InvocationExpression);
 			
-			while (la.kind == 12) {
+			while (la.kind == 22) {
 				lexer.NextToken();
 				ReDimClause(
-#line  2432 "VBNET.ATG" 
+#line  3222 "VBNET.ATG" 
 out expr);
 
-#line  2433 "VBNET.ATG" 
+#line  3223 "VBNET.ATG" 
 				SafeAdd(reDimStatement, reDimStatement.ReDimClauses, expr as InvocationExpression); 
 			}
-			break;
-		}
-		case 91: {
+		} else if (la.kind == 117) {
 			lexer.NextToken();
 			Expr(
-#line  2437 "VBNET.ATG" 
+#line  3227 "VBNET.ATG" 
 out expr);
 
-#line  2438 "VBNET.ATG" 
-			List<Expression> arrays = new List<Expression>();
-			if (expr != null) { arrays.Add(expr);}
-			EraseStatement eraseStatement = new EraseStatement(arrays);
+#line  3229 "VBNET.ATG" 
+			EraseStatement eraseStatement = new EraseStatement();
+			if (expr != null) { SafeAdd(eraseStatement, eraseStatement.Expressions, expr);}
 			
-			
-			while (la.kind == 12) {
+			while (la.kind == 22) {
 				lexer.NextToken();
 				Expr(
-#line  2443 "VBNET.ATG" 
+#line  3232 "VBNET.ATG" 
 out expr);
 
-#line  2443 "VBNET.ATG" 
-				if (expr != null) { arrays.Add(expr); }
+#line  3232 "VBNET.ATG" 
+				if (expr != null) { SafeAdd(eraseStatement, eraseStatement.Expressions, expr); }
 			}
 
-#line  2444 "VBNET.ATG" 
+#line  3233 "VBNET.ATG" 
 			statement = eraseStatement; 
-			break;
-		}
-		case 163: {
+		} else if (la.kind == 206) {
 			lexer.NextToken();
 
-#line  2446 "VBNET.ATG" 
+#line  3235 "VBNET.ATG" 
 			statement = new StopStatement(); 
-			break;
-		}
-		case 106: {
-			lexer.NextToken();
+		} else if (
+#line  3237 "VBNET.ATG" 
+la.kind == Tokens.If) {
+			Expect(135);
 
-#line  2448 "VBNET.ATG" 
+#line  3238 "VBNET.ATG" 
 			Location ifStartLocation = t.Location; 
 			Expr(
-#line  2448 "VBNET.ATG" 
+#line  3238 "VBNET.ATG" 
 out expr);
-			if (la.kind == 170) {
+			if (la.kind == 214) {
 				lexer.NextToken();
 			}
-			if (la.kind == 1 || la.kind == 13) {
+			if (la.kind == 1 || la.kind == 21) {
 				EndOfStmt();
 				Block(
-#line  2451 "VBNET.ATG" 
+#line  3241 "VBNET.ATG" 
 out embeddedStatement);
 
-#line  2453 "VBNET.ATG" 
+#line  3243 "VBNET.ATG" 
 				IfElseStatement ifStatement = new IfElseStatement(expr, embeddedStatement);
 				ifStatement.StartLocation = ifStartLocation;
 				Location elseIfStart;
 				
-				while (la.kind == 87 || 
-#line  2459 "VBNET.ATG" 
+				while (la.kind == 112 || 
+#line  3249 "VBNET.ATG" 
 IsElseIf()) {
 					if (
-#line  2459 "VBNET.ATG" 
+#line  3249 "VBNET.ATG" 
 IsElseIf()) {
-						Expect(86);
+						Expect(111);
 
-#line  2459 "VBNET.ATG" 
+#line  3249 "VBNET.ATG" 
 						elseIfStart = t.Location; 
-						Expect(106);
+						Expect(135);
 					} else {
 						lexer.NextToken();
 
-#line  2460 "VBNET.ATG" 
+#line  3250 "VBNET.ATG" 
 						elseIfStart = t.Location; 
 					}
 
-#line  2462 "VBNET.ATG" 
+#line  3252 "VBNET.ATG" 
 					Expression condition = null; Statement block = null; 
 					Expr(
-#line  2463 "VBNET.ATG" 
+#line  3253 "VBNET.ATG" 
 out condition);
-					if (la.kind == 170) {
+					if (la.kind == 214) {
 						lexer.NextToken();
 					}
 					EndOfStmt();
 					Block(
-#line  2464 "VBNET.ATG" 
+#line  3254 "VBNET.ATG" 
 out block);
 
-#line  2466 "VBNET.ATG" 
+#line  3256 "VBNET.ATG" 
 					ElseIfSection elseIfSection = new ElseIfSection(condition, block);
 					elseIfSection.StartLocation = elseIfStart;
 					elseIfSection.EndLocation = t.Location;
@@ -5495,255 +6095,1131 @@ out block);
 					ifStatement.ElseIfSections.Add(elseIfSection);
 					
 				}
-				if (la.kind == 86) {
+				if (la.kind == 111) {
 					lexer.NextToken();
-					EndOfStmt();
+					if (la.kind == 1 || la.kind == 21) {
+						EndOfStmt();
+					}
 					Block(
-#line  2475 "VBNET.ATG" 
+#line  3265 "VBNET.ATG" 
 out embeddedStatement);
 
-#line  2477 "VBNET.ATG" 
+#line  3267 "VBNET.ATG" 
 					ifStatement.FalseStatement.Add(embeddedStatement);
 					
 				}
-				Expect(88);
-				Expect(106);
+				Expect(113);
+				Expect(135);
 
-#line  2481 "VBNET.ATG" 
+#line  3271 "VBNET.ATG" 
 				ifStatement.EndLocation = t.Location;
 				statement = ifStatement;
 				
-			} else if (StartOf(36)) {
+			} else if (StartOf(45)) {
 
-#line  2486 "VBNET.ATG" 
+#line  3276 "VBNET.ATG" 
 				IfElseStatement ifStatement = new IfElseStatement(expr);
 				ifStatement.StartLocation = ifStartLocation;
 				
 				SingleLineStatementList(
-#line  2489 "VBNET.ATG" 
+#line  3279 "VBNET.ATG" 
 ifStatement.TrueStatement);
-				if (la.kind == 86) {
+				if (la.kind == 111) {
 					lexer.NextToken();
-					if (StartOf(36)) {
+					if (StartOf(45)) {
 						SingleLineStatementList(
-#line  2492 "VBNET.ATG" 
+#line  3282 "VBNET.ATG" 
 ifStatement.FalseStatement);
 					}
 				}
 
-#line  2494 "VBNET.ATG" 
+#line  3284 "VBNET.ATG" 
 				ifStatement.EndLocation = t.Location; statement = ifStatement; 
-			} else SynErr(258);
-			break;
-		}
-		case 155: {
+			} else SynErr(301);
+		} else if (la.kind == 197) {
 			lexer.NextToken();
-			if (la.kind == 57) {
+			if (la.kind == 74) {
 				lexer.NextToken();
 			}
 			Expr(
-#line  2497 "VBNET.ATG" 
+#line  3287 "VBNET.ATG" 
 out expr);
 			EndOfStmt();
 
-#line  2498 "VBNET.ATG" 
+#line  3288 "VBNET.ATG" 
 			List<SwitchSection> selectSections = new List<SwitchSection>();
 			Statement block = null;
 			
-			while (la.kind == 57) {
+			while (la.kind == 74) {
 
-#line  2502 "VBNET.ATG" 
+#line  3292 "VBNET.ATG" 
 				List<CaseLabel> caseClauses = null; Location caseLocation = la.Location; 
 				lexer.NextToken();
 				CaseClauses(
-#line  2503 "VBNET.ATG" 
+#line  3293 "VBNET.ATG" 
 out caseClauses);
 				if (
-#line  2503 "VBNET.ATG" 
+#line  3293 "VBNET.ATG" 
 IsNotStatementSeparator()) {
 					lexer.NextToken();
 				}
 				EndOfStmt();
 
-#line  2505 "VBNET.ATG" 
+#line  3295 "VBNET.ATG" 
 				SwitchSection selectSection = new SwitchSection(caseClauses);
 				selectSection.StartLocation = caseLocation;
 				
 				Block(
-#line  2508 "VBNET.ATG" 
+#line  3298 "VBNET.ATG" 
 out block);
 
-#line  2510 "VBNET.ATG" 
+#line  3300 "VBNET.ATG" 
 				selectSection.Children = block.Children;
 				selectSection.EndLocation = t.EndLocation;
 				selectSections.Add(selectSection);
 				
 			}
 
-#line  2515 "VBNET.ATG" 
-			statement = new SwitchStatement(expr, selectSections); 
-			Expect(88);
-			Expect(155);
-			break;
-		}
-		case 135: {
+#line  3306 "VBNET.ATG" 
+			statement = new SwitchStatement(expr, selectSections);
+			
+			Expect(113);
+			Expect(197);
+		} else if (la.kind == 171) {
 
-#line  2517 "VBNET.ATG" 
+#line  3309 "VBNET.ATG" 
 			OnErrorStatement onErrorStatement = null; 
 			OnErrorStatement(
-#line  2518 "VBNET.ATG" 
+#line  3310 "VBNET.ATG" 
 out onErrorStatement);
 
-#line  2518 "VBNET.ATG" 
+#line  3310 "VBNET.ATG" 
 			statement = onErrorStatement; 
-			break;
-		}
-		case 104: {
+		} else if (la.kind == 132) {
 
-#line  2519 "VBNET.ATG" 
+#line  3311 "VBNET.ATG" 
 			GotoStatement goToStatement = null; 
 			GotoStatement(
-#line  2520 "VBNET.ATG" 
+#line  3312 "VBNET.ATG" 
 out goToStatement);
 
-#line  2520 "VBNET.ATG" 
+#line  3312 "VBNET.ATG" 
 			statement = goToStatement; 
-			break;
-		}
-		case 153: {
+		} else if (la.kind == 194) {
 
-#line  2521 "VBNET.ATG" 
+#line  3313 "VBNET.ATG" 
 			ResumeStatement resumeStatement = null; 
 			ResumeStatement(
-#line  2522 "VBNET.ATG" 
+#line  3314 "VBNET.ATG" 
 out resumeStatement);
 
-#line  2522 "VBNET.ATG" 
+#line  3314 "VBNET.ATG" 
 			statement = resumeStatement; 
-			break;
-		}
-		case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9: case 10: case 24: case 43: case 47: case 49: case 50: case 51: case 52: case 54: case 59: case 60: case 61: case 62: case 63: case 64: case 65: case 66: case 68: case 69: case 70: case 72: case 73: case 74: case 75: case 76: case 77: case 82: case 84: case 95: case 96: case 102: case 111: case 117: case 119: case 124: case 125: case 127: case 130: case 133: case 134: case 144: case 159: case 160: case 165: case 169: case 173: case 175: case 176: case 177: case 191: case 192: case 193: case 194: case 195: case 196: case 197: case 198: case 199: case 200: case 205: {
+		} else if (StartOf(44)) {
 
-#line  2525 "VBNET.ATG" 
+#line  3317 "VBNET.ATG" 
 			Expression val = null;
 			AssignmentOperatorType op;
+			Location startLoc = la.Location;
 			
 			bool mustBeAssignment = la.kind == Tokens.Plus  || la.kind == Tokens.Minus ||
 			                        la.kind == Tokens.Not   || la.kind == Tokens.Times;
 			
 			SimpleExpr(
-#line  2531 "VBNET.ATG" 
+#line  3324 "VBNET.ATG" 
 out expr);
-			if (StartOf(37)) {
+			if (StartOf(46)) {
 				AssignmentOperator(
-#line  2533 "VBNET.ATG" 
+#line  3326 "VBNET.ATG" 
 out op);
 				Expr(
-#line  2533 "VBNET.ATG" 
+#line  3326 "VBNET.ATG" 
 out val);
 
-#line  2533 "VBNET.ATG" 
-				expr = new AssignmentExpression(expr, op, val); 
-			} else if (la.kind == 1 || la.kind == 13 || la.kind == 86) {
+#line  3328 "VBNET.ATG" 
+				expr = new AssignmentExpression(expr, op, val);
+				expr.StartLocation = startLoc;
+				expr.EndLocation = t.EndLocation;
+				
+			} else if (StartOf(47)) {
 
-#line  2534 "VBNET.ATG" 
+#line  3332 "VBNET.ATG" 
 				if (mustBeAssignment) Error("error in assignment."); 
-			} else SynErr(259);
+			} else SynErr(302);
 
-#line  2537 "VBNET.ATG" 
+#line  3335 "VBNET.ATG" 
 			// a field reference expression that stands alone is a
 			// invocation expression without parantheses and arguments
 			if(expr is MemberReferenceExpression || expr is IdentifierExpression) {
+				Location endLocation = expr.EndLocation;
 				expr = new InvocationExpression(expr);
+				expr.StartLocation = startLoc;
+				expr.EndLocation = endLocation;
 			}
 			statement = new ExpressionStatement(expr);
 			
-			break;
-		}
-		case 56: {
+		} else if (la.kind == 73) {
 			lexer.NextToken();
 			SimpleExpr(
-#line  2544 "VBNET.ATG" 
+#line  3345 "VBNET.ATG" 
 out expr);
 
-#line  2544 "VBNET.ATG" 
+#line  3345 "VBNET.ATG" 
 			statement = new ExpressionStatement(expr); 
-			break;
-		}
-		case 189: {
+		} else if (la.kind == 226) {
 			lexer.NextToken();
 
-#line  2546 "VBNET.ATG" 
+#line  3347 "VBNET.ATG" 
 			Statement block;  
 			if (
-#line  2547 "VBNET.ATG" 
+#line  3348 "VBNET.ATG" 
 Peek(1).kind == Tokens.As) {
 
-#line  2548 "VBNET.ATG" 
+#line  3349 "VBNET.ATG" 
 				LocalVariableDeclaration resourceAquisition = new LocalVariableDeclaration(Modifiers.None); 
 				VariableDeclarator(
-#line  2549 "VBNET.ATG" 
+#line  3350 "VBNET.ATG" 
 resourceAquisition.Variables);
-				while (la.kind == 12) {
+				while (la.kind == 22) {
 					lexer.NextToken();
 					VariableDeclarator(
-#line  2551 "VBNET.ATG" 
+#line  3352 "VBNET.ATG" 
 resourceAquisition.Variables);
 				}
 				Block(
-#line  2553 "VBNET.ATG" 
+#line  3354 "VBNET.ATG" 
 out block);
 
-#line  2554 "VBNET.ATG" 
-				statement = new UsingStatement(resourceAquisition, block); 
-			} else if (StartOf(27)) {
+#line  3356 "VBNET.ATG" 
+				statement = new UsingStatement(resourceAquisition, block);
+				
+			} else if (StartOf(24)) {
 				Expr(
-#line  2555 "VBNET.ATG" 
+#line  3358 "VBNET.ATG" 
 out expr);
 				Block(
-#line  2556 "VBNET.ATG" 
+#line  3359 "VBNET.ATG" 
 out block);
 
-#line  2557 "VBNET.ATG" 
+#line  3360 "VBNET.ATG" 
 				statement = new UsingStatement(new ExpressionStatement(expr), block); 
-			} else SynErr(260);
-			Expect(88);
-			Expect(189);
-			break;
+			} else SynErr(303);
+			Expect(113);
+			Expect(226);
+		} else if (StartOf(48)) {
+			LocalDeclarationStatement(
+#line  3363 "VBNET.ATG" 
+out statement);
+		} else SynErr(304);
+
+#line  3366 "VBNET.ATG" 
+		if (statement != null) {
+		statement.StartLocation = startLocation;
+		statement.EndLocation = t.EndLocation;
 		}
-		default: SynErr(261); break;
+		
+	}
+
+	void FromOrAggregateQueryOperator(
+#line  2303 "VBNET.ATG" 
+List<QueryExpressionClause> middleClauses) {
+
+#line  2305 "VBNET.ATG" 
+		QueryExpressionFromClause fromClause = null;
+		QueryExpressionAggregateClause aggregateClause = null;
+		
+		if (la.kind == 126) {
+			FromQueryOperator(
+#line  2308 "VBNET.ATG" 
+out fromClause);
+
+#line  2309 "VBNET.ATG" 
+			middleClauses.Add(fromClause); 
+		} else if (la.kind == 58) {
+			AggregateQueryOperator(
+#line  2310 "VBNET.ATG" 
+out aggregateClause);
+
+#line  2311 "VBNET.ATG" 
+			middleClauses.Add(aggregateClause); 
+		} else SynErr(305);
+	}
+
+	void QueryOperator(
+#line  2314 "VBNET.ATG" 
+List<QueryExpressionClause> middleClauses) {
+
+#line  2316 "VBNET.ATG" 
+		QueryExpressionJoinVBClause joinClause = null;
+		QueryExpressionGroupVBClause groupByClause = null;
+		QueryExpressionPartitionVBClause partitionClause = null;
+		QueryExpressionGroupJoinVBClause groupJoinClause = null;
+		QueryExpressionFromClause fromClause = null;
+		QueryExpressionAggregateClause aggregateClause = null;
+		
+		if (la.kind == 126) {
+			FromQueryOperator(
+#line  2323 "VBNET.ATG" 
+out fromClause);
+
+#line  2324 "VBNET.ATG" 
+			middleClauses.Add(fromClause); 
+		} else if (la.kind == 58) {
+			AggregateQueryOperator(
+#line  2325 "VBNET.ATG" 
+out aggregateClause);
+
+#line  2326 "VBNET.ATG" 
+			middleClauses.Add(aggregateClause); 
+		} else if (la.kind == 197) {
+			SelectQueryOperator(
+#line  2327 "VBNET.ATG" 
+middleClauses);
+		} else if (la.kind == 107) {
+			DistinctQueryOperator(
+#line  2328 "VBNET.ATG" 
+middleClauses);
+		} else if (la.kind == 230) {
+			WhereQueryOperator(
+#line  2329 "VBNET.ATG" 
+middleClauses);
+		} else if (la.kind == 176) {
+			OrderByQueryOperator(
+#line  2330 "VBNET.ATG" 
+middleClauses);
+		} else if (la.kind == 203 || la.kind == 212) {
+			PartitionQueryOperator(
+#line  2331 "VBNET.ATG" 
+out partitionClause);
+
+#line  2332 "VBNET.ATG" 
+			middleClauses.Add(partitionClause); 
+		} else if (la.kind == 148) {
+			LetQueryOperator(
+#line  2333 "VBNET.ATG" 
+middleClauses);
+		} else if (la.kind == 146) {
+			JoinQueryOperator(
+#line  2334 "VBNET.ATG" 
+out joinClause);
+
+#line  2335 "VBNET.ATG" 
+			middleClauses.Add(joinClause); 
+		} else if (
+#line  2336 "VBNET.ATG" 
+la.kind == Tokens.Group && Peek(1).kind == Tokens.Join) {
+			GroupJoinQueryOperator(
+#line  2336 "VBNET.ATG" 
+out groupJoinClause);
+
+#line  2337 "VBNET.ATG" 
+			middleClauses.Add(groupJoinClause); 
+		} else if (la.kind == 133) {
+			GroupByQueryOperator(
+#line  2338 "VBNET.ATG" 
+out groupByClause);
+
+#line  2339 "VBNET.ATG" 
+			middleClauses.Add(groupByClause); 
+		} else SynErr(306);
+	}
+
+	void FromQueryOperator(
+#line  2414 "VBNET.ATG" 
+out QueryExpressionFromClause fromClause) {
+
+#line  2416 "VBNET.ATG" 
+		fromClause = new QueryExpressionFromClause();
+		fromClause.StartLocation = la.Location;
+		
+		Expect(126);
+		CollectionRangeVariableDeclarationList(
+#line  2419 "VBNET.ATG" 
+fromClause.Sources);
+
+#line  2421 "VBNET.ATG" 
+		fromClause.EndLocation = t.EndLocation;
+		
+	}
+
+	void AggregateQueryOperator(
+#line  2483 "VBNET.ATG" 
+out QueryExpressionAggregateClause aggregateClause) {
+
+#line  2485 "VBNET.ATG" 
+		aggregateClause = new QueryExpressionAggregateClause();
+		aggregateClause.IntoVariables = new List<ExpressionRangeVariable>();
+		aggregateClause.StartLocation = la.Location;
+		CollectionRangeVariable source;
+		
+		Expect(58);
+		CollectionRangeVariableDeclaration(
+#line  2490 "VBNET.ATG" 
+out source);
+
+#line  2492 "VBNET.ATG" 
+		aggregateClause.Source = source;
+		
+		while (StartOf(31)) {
+			QueryOperator(
+#line  2495 "VBNET.ATG" 
+aggregateClause.MiddleClauses);
+		}
+		Expect(143);
+		ExpressionRangeVariableDeclarationList(
+#line  2497 "VBNET.ATG" 
+aggregateClause.IntoVariables);
+
+#line  2499 "VBNET.ATG" 
+		aggregateClause.EndLocation = t.EndLocation;
+		
+	}
+
+	void SelectQueryOperator(
+#line  2425 "VBNET.ATG" 
+List<QueryExpressionClause> middleClauses) {
+
+#line  2427 "VBNET.ATG" 
+		QueryExpressionSelectVBClause selectClause = new QueryExpressionSelectVBClause();
+		selectClause.StartLocation = la.Location;
+		
+		Expect(197);
+		ExpressionRangeVariableDeclarationList(
+#line  2430 "VBNET.ATG" 
+selectClause.Variables);
+
+#line  2432 "VBNET.ATG" 
+		selectClause.EndLocation = t.Location;
+		middleClauses.Add(selectClause);
+		
+	}
+
+	void DistinctQueryOperator(
+#line  2437 "VBNET.ATG" 
+List<QueryExpressionClause> middleClauses) {
+
+#line  2439 "VBNET.ATG" 
+		QueryExpressionDistinctClause distinctClause = new QueryExpressionDistinctClause();
+		distinctClause.StartLocation = la.Location;
+		
+		Expect(107);
+
+#line  2444 "VBNET.ATG" 
+		distinctClause.EndLocation = t.EndLocation;
+		middleClauses.Add(distinctClause);
+		
+	}
+
+	void WhereQueryOperator(
+#line  2449 "VBNET.ATG" 
+List<QueryExpressionClause> middleClauses) {
+
+#line  2451 "VBNET.ATG" 
+		QueryExpressionWhereClause whereClause = new QueryExpressionWhereClause();
+		whereClause.StartLocation = la.Location;
+		Expression operand = null;
+		
+		Expect(230);
+		Expr(
+#line  2455 "VBNET.ATG" 
+out operand);
+
+#line  2457 "VBNET.ATG" 
+		whereClause.Condition = operand;
+		whereClause.EndLocation = t.EndLocation;
+		
+		middleClauses.Add(whereClause);
+		
+	}
+
+	void OrderByQueryOperator(
+#line  2342 "VBNET.ATG" 
+List<QueryExpressionClause> middleClauses) {
+
+#line  2344 "VBNET.ATG" 
+		QueryExpressionOrderClause orderClause = new QueryExpressionOrderClause();
+		orderClause.StartLocation = la.Location;
+		List<QueryExpressionOrdering> orderings = null;
+		
+		Expect(176);
+		Expect(70);
+		OrderExpressionList(
+#line  2348 "VBNET.ATG" 
+out orderings);
+
+#line  2350 "VBNET.ATG" 
+		orderClause.Orderings = orderings;
+		orderClause.EndLocation = t.EndLocation;
+		middleClauses.Add(orderClause);
+		
+	}
+
+	void PartitionQueryOperator(
+#line  2464 "VBNET.ATG" 
+out QueryExpressionPartitionVBClause partitionClause) {
+
+#line  2466 "VBNET.ATG" 
+		partitionClause = new QueryExpressionPartitionVBClause();
+		partitionClause.StartLocation = la.Location;
+		Expression expr = null;
+		
+		if (la.kind == 212) {
+			lexer.NextToken();
+
+#line  2471 "VBNET.ATG" 
+			partitionClause.PartitionType = QueryExpressionPartitionType.Take; 
+			if (la.kind == 231) {
+				lexer.NextToken();
+
+#line  2472 "VBNET.ATG" 
+				partitionClause.PartitionType = QueryExpressionPartitionType.TakeWhile; 
+			}
+		} else if (la.kind == 203) {
+			lexer.NextToken();
+
+#line  2473 "VBNET.ATG" 
+			partitionClause.PartitionType = QueryExpressionPartitionType.Skip; 
+			if (la.kind == 231) {
+				lexer.NextToken();
+
+#line  2474 "VBNET.ATG" 
+				partitionClause.PartitionType = QueryExpressionPartitionType.SkipWhile; 
+			}
+		} else SynErr(307);
+		Expr(
+#line  2476 "VBNET.ATG" 
+out expr);
+
+#line  2478 "VBNET.ATG" 
+		partitionClause.Expression = expr;
+		partitionClause.EndLocation = t.EndLocation;
+		
+	}
+
+	void LetQueryOperator(
+#line  2503 "VBNET.ATG" 
+List<QueryExpressionClause> middleClauses) {
+
+#line  2505 "VBNET.ATG" 
+		QueryExpressionLetVBClause letClause = new QueryExpressionLetVBClause();
+		letClause.StartLocation = la.Location;
+		
+		Expect(148);
+		ExpressionRangeVariableDeclarationList(
+#line  2508 "VBNET.ATG" 
+letClause.Variables);
+
+#line  2510 "VBNET.ATG" 
+		letClause.EndLocation = t.EndLocation;
+		middleClauses.Add(letClause);
+		
+	}
+
+	void JoinQueryOperator(
+#line  2547 "VBNET.ATG" 
+out QueryExpressionJoinVBClause joinClause) {
+
+#line  2549 "VBNET.ATG" 
+		joinClause = new QueryExpressionJoinVBClause();
+		joinClause.StartLocation = la.Location;
+		CollectionRangeVariable joinVariable = null;
+		QueryExpressionJoinVBClause subJoin = null;
+		QueryExpressionJoinConditionVB condition = null;
+		
+		
+		Expect(146);
+		CollectionRangeVariableDeclaration(
+#line  2556 "VBNET.ATG" 
+out joinVariable);
+
+#line  2557 "VBNET.ATG" 
+		joinClause.JoinVariable = joinVariable; 
+		if (la.kind == 146) {
+			JoinQueryOperator(
+#line  2559 "VBNET.ATG" 
+out subJoin);
+
+#line  2560 "VBNET.ATG" 
+			joinClause.SubJoin = subJoin; 
+		}
+		Expect(171);
+		JoinCondition(
+#line  2563 "VBNET.ATG" 
+out condition);
+
+#line  2564 "VBNET.ATG" 
+		SafeAdd(joinClause, joinClause.Conditions, condition); 
+		while (la.kind == 60) {
+			lexer.NextToken();
+			JoinCondition(
+#line  2566 "VBNET.ATG" 
+out condition);
+
+#line  2567 "VBNET.ATG" 
+			SafeAdd(joinClause, joinClause.Conditions, condition); 
+		}
+
+#line  2570 "VBNET.ATG" 
+		joinClause.EndLocation = t.EndLocation;
+		
+	}
+
+	void GroupJoinQueryOperator(
+#line  2400 "VBNET.ATG" 
+out QueryExpressionGroupJoinVBClause groupJoinClause) {
+
+#line  2402 "VBNET.ATG" 
+		groupJoinClause = new QueryExpressionGroupJoinVBClause();
+		groupJoinClause.StartLocation = la.Location;
+		QueryExpressionJoinVBClause joinClause = null;
+		
+		Expect(133);
+		JoinQueryOperator(
+#line  2406 "VBNET.ATG" 
+out joinClause);
+		Expect(143);
+		ExpressionRangeVariableDeclarationList(
+#line  2407 "VBNET.ATG" 
+groupJoinClause.IntoVariables);
+
+#line  2409 "VBNET.ATG" 
+		groupJoinClause.JoinClause = joinClause;
+		groupJoinClause.EndLocation = t.EndLocation;
+		
+	}
+
+	void GroupByQueryOperator(
+#line  2387 "VBNET.ATG" 
+out QueryExpressionGroupVBClause groupByClause) {
+
+#line  2389 "VBNET.ATG" 
+		groupByClause = new QueryExpressionGroupVBClause();
+		groupByClause.StartLocation = la.Location;
+		
+		Expect(133);
+		ExpressionRangeVariableDeclarationList(
+#line  2392 "VBNET.ATG" 
+groupByClause.GroupVariables);
+		Expect(70);
+		ExpressionRangeVariableDeclarationList(
+#line  2393 "VBNET.ATG" 
+groupByClause.ByVariables);
+		Expect(143);
+		ExpressionRangeVariableDeclarationList(
+#line  2394 "VBNET.ATG" 
+groupByClause.IntoVariables);
+
+#line  2396 "VBNET.ATG" 
+		groupByClause.EndLocation = t.EndLocation;
+		
+	}
+
+	void OrderExpressionList(
+#line  2356 "VBNET.ATG" 
+out List<QueryExpressionOrdering> orderings) {
+
+#line  2358 "VBNET.ATG" 
+		orderings = new List<QueryExpressionOrdering>();
+		QueryExpressionOrdering ordering = null;
+		
+		OrderExpression(
+#line  2361 "VBNET.ATG" 
+out ordering);
+
+#line  2362 "VBNET.ATG" 
+		orderings.Add(ordering); 
+		while (la.kind == 22) {
+			lexer.NextToken();
+			OrderExpression(
+#line  2364 "VBNET.ATG" 
+out ordering);
+
+#line  2365 "VBNET.ATG" 
+			orderings.Add(ordering); 
 		}
 	}
 
+	void OrderExpression(
+#line  2369 "VBNET.ATG" 
+out QueryExpressionOrdering ordering) {
+
+#line  2371 "VBNET.ATG" 
+		ordering = new QueryExpressionOrdering();
+		ordering.StartLocation = la.Location;
+		ordering.Direction = QueryExpressionOrderingDirection.None;
+		Expression orderExpr = null;
+		
+		Expr(
+#line  2376 "VBNET.ATG" 
+out orderExpr);
+
+#line  2378 "VBNET.ATG" 
+		ordering.Criteria = orderExpr;
+		
+		if (la.kind == 64 || la.kind == 104) {
+			if (la.kind == 64) {
+				lexer.NextToken();
+
+#line  2381 "VBNET.ATG" 
+				ordering.Direction = QueryExpressionOrderingDirection.Ascending; 
+			} else {
+				lexer.NextToken();
+
+#line  2382 "VBNET.ATG" 
+				ordering.Direction = QueryExpressionOrderingDirection.Descending; 
+			}
+		}
+
+#line  2384 "VBNET.ATG" 
+		ordering.EndLocation = t.EndLocation; 
+	}
+
+	void ExpressionRangeVariableDeclarationList(
+#line  2515 "VBNET.ATG" 
+List<ExpressionRangeVariable> variables) {
+
+#line  2517 "VBNET.ATG" 
+		ExpressionRangeVariable variable = null;
+		
+		ExpressionRangeVariableDeclaration(
+#line  2519 "VBNET.ATG" 
+out variable);
+
+#line  2520 "VBNET.ATG" 
+		variables.Add(variable); 
+		while (la.kind == 22) {
+			lexer.NextToken();
+			ExpressionRangeVariableDeclaration(
+#line  2521 "VBNET.ATG" 
+out variable);
+
+#line  2521 "VBNET.ATG" 
+			variables.Add(variable); 
+		}
+	}
+
+	void CollectionRangeVariableDeclarationList(
+#line  2574 "VBNET.ATG" 
+List<CollectionRangeVariable> rangeVariables) {
+
+#line  2575 "VBNET.ATG" 
+		CollectionRangeVariable variableDeclaration; 
+		CollectionRangeVariableDeclaration(
+#line  2577 "VBNET.ATG" 
+out variableDeclaration);
+
+#line  2578 "VBNET.ATG" 
+		rangeVariables.Add(variableDeclaration); 
+		while (la.kind == 22) {
+			lexer.NextToken();
+			CollectionRangeVariableDeclaration(
+#line  2579 "VBNET.ATG" 
+out variableDeclaration);
+
+#line  2579 "VBNET.ATG" 
+			rangeVariables.Add(variableDeclaration); 
+		}
+	}
+
+	void CollectionRangeVariableDeclaration(
+#line  2582 "VBNET.ATG" 
+out CollectionRangeVariable rangeVariable) {
+
+#line  2584 "VBNET.ATG" 
+		rangeVariable = new CollectionRangeVariable();
+		rangeVariable.StartLocation = la.Location;
+		TypeReference typeName = null;
+		Expression inExpr = null;
+		
+		Identifier();
+
+#line  2589 "VBNET.ATG" 
+		rangeVariable.Identifier = t.val; 
+		if (la.kind == 63) {
+			lexer.NextToken();
+			TypeName(
+#line  2590 "VBNET.ATG" 
+out typeName);
+
+#line  2590 "VBNET.ATG" 
+			rangeVariable.Type = typeName; 
+		}
+		Expect(138);
+		Expr(
+#line  2591 "VBNET.ATG" 
+out inExpr);
+
+#line  2593 "VBNET.ATG" 
+		rangeVariable.Expression = inExpr;
+		rangeVariable.EndLocation = t.EndLocation;
+		
+	}
+
+	void ExpressionRangeVariableDeclaration(
+#line  2524 "VBNET.ATG" 
+out ExpressionRangeVariable variable) {
+
+#line  2526 "VBNET.ATG" 
+		variable = new ExpressionRangeVariable();
+		variable.StartLocation = la.Location;
+		Expression rhs = null;
+		TypeReference typeName = null;
+		
+		if (
+#line  2532 "VBNET.ATG" 
+IsIdentifiedExpressionRange()) {
+			Identifier();
+
+#line  2533 "VBNET.ATG" 
+			variable.Identifier = t.val; 
+			if (la.kind == 63) {
+				lexer.NextToken();
+				TypeName(
+#line  2535 "VBNET.ATG" 
+out typeName);
+
+#line  2536 "VBNET.ATG" 
+				variable.Type = typeName; 
+			}
+			Expect(20);
+		}
+		Expr(
+#line  2540 "VBNET.ATG" 
+out rhs);
+
+#line  2542 "VBNET.ATG" 
+		variable.Expression = rhs;
+		variable.EndLocation = t.EndLocation;
+		
+	}
+
+	void JoinCondition(
+#line  2598 "VBNET.ATG" 
+out QueryExpressionJoinConditionVB condition) {
+
+#line  2600 "VBNET.ATG" 
+		condition = new QueryExpressionJoinConditionVB();
+		condition.StartLocation = la.Location;
+		
+		Expression lhs = null;
+		Expression rhs = null;
+		
+		Expr(
+#line  2606 "VBNET.ATG" 
+out lhs);
+		Expect(116);
+		Expr(
+#line  2606 "VBNET.ATG" 
+out rhs);
+
+#line  2608 "VBNET.ATG" 
+		condition.LeftSide = lhs;
+		condition.RightSide = rhs;
+		condition.EndLocation = t.EndLocation;
+		
+	}
+
+	void Argument(
+#line  2672 "VBNET.ATG" 
+out Expression argumentexpr) {
+
+#line  2674 "VBNET.ATG" 
+		Expression expr;
+		argumentexpr = null;
+		string name;
+		Location startLocation = la.Location;
+		
+		if (
+#line  2679 "VBNET.ATG" 
+IsNamedAssign()) {
+			Identifier();
+
+#line  2679 "VBNET.ATG" 
+			name = t.val;  
+			Expect(55);
+			Expr(
+#line  2679 "VBNET.ATG" 
+out expr);
+
+#line  2681 "VBNET.ATG" 
+			argumentexpr = new NamedArgumentExpression(name, expr) { StartLocation = startLocation, EndLocation = t.EndLocation };
+			
+		} else if (StartOf(24)) {
+			Expr(
+#line  2684 "VBNET.ATG" 
+out argumentexpr);
+		} else SynErr(308);
+	}
+
+	void QualIdentAndTypeArguments(
+#line  2752 "VBNET.ATG" 
+out TypeReference typeref, bool canBeUnbound) {
+
+#line  2753 "VBNET.ATG" 
+		string name; typeref = null; 
+		Qualident(
+#line  2755 "VBNET.ATG" 
+out name);
+
+#line  2756 "VBNET.ATG" 
+		typeref = new TypeReference(name); 
+		if (
+#line  2757 "VBNET.ATG" 
+la.kind == Tokens.OpenParenthesis && Peek(1).kind == Tokens.Of) {
+			lexer.NextToken();
+			Expect(169);
+			if (
+#line  2759 "VBNET.ATG" 
+canBeUnbound && (la.kind == Tokens.CloseParenthesis || la.kind == Tokens.Comma)) {
+
+#line  2760 "VBNET.ATG" 
+				typeref.GenericTypes.Add(NullTypeReference.Instance); 
+				while (la.kind == 22) {
+					lexer.NextToken();
+
+#line  2761 "VBNET.ATG" 
+					typeref.GenericTypes.Add(NullTypeReference.Instance); 
+				}
+			} else if (StartOf(8)) {
+				TypeArgumentList(
+#line  2762 "VBNET.ATG" 
+typeref.GenericTypes);
+			} else SynErr(309);
+			Expect(38);
+		}
+	}
+
+	void RankList(
+#line  2799 "VBNET.ATG" 
+out int i) {
+
+#line  2800 "VBNET.ATG" 
+		i = 0; 
+		while (la.kind == 22) {
+			lexer.NextToken();
+
+#line  2801 "VBNET.ATG" 
+			++i; 
+		}
+	}
+
+	void Attribute(
+#line  2840 "VBNET.ATG" 
+out ASTAttribute attribute) {
+
+#line  2842 "VBNET.ATG" 
+		string name;
+		List<Expression> positional = new List<Expression>();
+		List<NamedArgumentExpression> named = new List<NamedArgumentExpression>();
+		Location startLocation = la.Location;
+		
+		if (la.kind == 130) {
+			lexer.NextToken();
+			Expect(26);
+		}
+		Qualident(
+#line  2848 "VBNET.ATG" 
+out name);
+		if (la.kind == 37) {
+			AttributeArguments(
+#line  2849 "VBNET.ATG" 
+positional, named);
+		}
+
+#line  2851 "VBNET.ATG" 
+		attribute  = new ASTAttribute(name, positional, named) { StartLocation = startLocation, EndLocation = t.EndLocation };
+		
+	}
+
+	void AttributeArguments(
+#line  2856 "VBNET.ATG" 
+List<Expression> positional, List<NamedArgumentExpression> named) {
+
+#line  2858 "VBNET.ATG" 
+		bool nameFound = false;
+		string name = "";
+		Expression expr;
+		
+		Expect(37);
+		if (
+#line  2864 "VBNET.ATG" 
+IsNotClosingParenthesis()) {
+
+#line  2865 "VBNET.ATG" 
+			Location startLocation = la.Location; 
+			if (
+#line  2867 "VBNET.ATG" 
+IsNamedAssign()) {
+
+#line  2867 "VBNET.ATG" 
+				nameFound = true; 
+				IdentifierOrKeyword(
+#line  2868 "VBNET.ATG" 
+out name);
+				if (la.kind == 55) {
+					lexer.NextToken();
+				} else if (la.kind == 20) {
+					lexer.NextToken();
+				} else SynErr(310);
+			}
+			Expr(
+#line  2870 "VBNET.ATG" 
+out expr);
+
+#line  2872 "VBNET.ATG" 
+			if (expr != null) {
+			if (string.IsNullOrEmpty(name)) { positional.Add(expr); }
+			else { named.Add(new NamedArgumentExpression(name, expr) { StartLocation = startLocation, EndLocation = t.EndLocation }); name = ""; }
+			}
+			
+			while (la.kind == 22) {
+				lexer.NextToken();
+				if (
+#line  2880 "VBNET.ATG" 
+IsNamedAssign()) {
+
+#line  2880 "VBNET.ATG" 
+					nameFound = true; 
+					IdentifierOrKeyword(
+#line  2881 "VBNET.ATG" 
+out name);
+					if (la.kind == 55) {
+						lexer.NextToken();
+					} else if (la.kind == 20) {
+						lexer.NextToken();
+					} else SynErr(311);
+				} else if (StartOf(24)) {
+
+#line  2883 "VBNET.ATG" 
+					if (nameFound) Error("no positional argument after named argument"); 
+				} else SynErr(312);
+				Expr(
+#line  2884 "VBNET.ATG" 
+out expr);
+
+#line  2884 "VBNET.ATG" 
+				if (expr != null) { if(name == "") positional.Add(expr);
+				else { named.Add(new NamedArgumentExpression(name, expr) { StartLocation = startLocation, EndLocation = t.EndLocation }); name = ""; }
+				}
+				
+			}
+		}
+		Expect(38);
+	}
+
+	void ParameterModifier(
+#line  3695 "VBNET.ATG" 
+ParamModifierList m) {
+		if (la.kind == 72) {
+			lexer.NextToken();
+
+#line  3696 "VBNET.ATG" 
+			m.Add(ParameterModifiers.In); 
+		} else if (la.kind == 69) {
+			lexer.NextToken();
+
+#line  3697 "VBNET.ATG" 
+			m.Add(ParameterModifiers.Ref); 
+		} else if (la.kind == 174) {
+			lexer.NextToken();
+
+#line  3698 "VBNET.ATG" 
+			m.Add(ParameterModifiers.Optional); 
+		} else if (la.kind == 182) {
+			lexer.NextToken();
+
+#line  3699 "VBNET.ATG" 
+			m.Add(ParameterModifiers.Params); 
+		} else SynErr(313);
+	}
+
+	void Statement() {
+
+#line  3011 "VBNET.ATG" 
+		Statement stmt = null;
+		Location startPos = la.Location;
+		string label = String.Empty;
+		
+		
+		if (la.kind == 1 || la.kind == 21) {
+		} else if (
+#line  3017 "VBNET.ATG" 
+IsLabel()) {
+			LabelName(
+#line  3017 "VBNET.ATG" 
+out label);
+
+#line  3019 "VBNET.ATG" 
+			AddChild(new LabelStatement(t.val));
+			
+			Expect(21);
+			Statement();
+		} else if (StartOf(49)) {
+			EmbeddedStatement(
+#line  3022 "VBNET.ATG" 
+out stmt);
+
+#line  3022 "VBNET.ATG" 
+			AddChild(stmt); 
+		} else SynErr(314);
+
+#line  3025 "VBNET.ATG" 
+		if (stmt != null) {
+		stmt.StartLocation = startPos;
+		stmt.EndLocation = t.Location;
+		}
+		
+	}
+
+	void LabelName(
+#line  3465 "VBNET.ATG" 
+out string name) {
+
+#line  3467 "VBNET.ATG" 
+		name = String.Empty;
+		
+		if (StartOf(4)) {
+			Identifier();
+
+#line  3469 "VBNET.ATG" 
+			name = t.val; 
+		} else if (la.kind == 5) {
+			lexer.NextToken();
+
+#line  3470 "VBNET.ATG" 
+			name = t.val; 
+		} else SynErr(315);
+	}
+
 	void LocalDeclarationStatement(
-#line  2266 "VBNET.ATG" 
+#line  3033 "VBNET.ATG" 
 out Statement statement) {
 
-#line  2268 "VBNET.ATG" 
+#line  3035 "VBNET.ATG" 
 		ModifierList m = new ModifierList();
 		LocalVariableDeclaration localVariableDeclaration;
 		bool dimfound = false;
 		
-		while (la.kind == 71 || la.kind == 81 || la.kind == 161) {
-			if (la.kind == 71) {
+		while (la.kind == 88 || la.kind == 105 || la.kind == 204) {
+			if (la.kind == 88) {
 				lexer.NextToken();
 
-#line  2274 "VBNET.ATG" 
+#line  3041 "VBNET.ATG" 
 				m.Add(Modifiers.Const, t.Location); 
-			} else if (la.kind == 161) {
+			} else if (la.kind == 204) {
 				lexer.NextToken();
 
-#line  2275 "VBNET.ATG" 
+#line  3042 "VBNET.ATG" 
 				m.Add(Modifiers.Static, t.Location); 
 			} else {
 				lexer.NextToken();
 
-#line  2276 "VBNET.ATG" 
+#line  3043 "VBNET.ATG" 
 				dimfound = true; 
 			}
 		}
 
-#line  2279 "VBNET.ATG" 
+#line  3046 "VBNET.ATG" 
 		if(dimfound && (m.Modifier & Modifiers.Const) != 0) {
 		Error("Dim is not allowed on constants.");
 		}
@@ -5756,135 +7232,135 @@ out Statement statement) {
 		localVariableDeclaration.StartLocation = t.Location;
 		
 		VariableDeclarator(
-#line  2290 "VBNET.ATG" 
+#line  3057 "VBNET.ATG" 
 localVariableDeclaration.Variables);
-		while (la.kind == 12) {
+		while (la.kind == 22) {
 			lexer.NextToken();
 			VariableDeclarator(
-#line  2291 "VBNET.ATG" 
+#line  3058 "VBNET.ATG" 
 localVariableDeclaration.Variables);
 		}
 
-#line  2293 "VBNET.ATG" 
+#line  3060 "VBNET.ATG" 
 		statement = localVariableDeclaration;
 		
 	}
 
 	void TryStatement(
-#line  2760 "VBNET.ATG" 
+#line  3583 "VBNET.ATG" 
 out Statement tryStatement) {
 
-#line  2762 "VBNET.ATG" 
+#line  3585 "VBNET.ATG" 
 		Statement blockStmt = null, finallyStmt = null;List<CatchClause> catchClauses = null;
 		
-		Expect(174);
+		Expect(218);
 		EndOfStmt();
 		Block(
-#line  2765 "VBNET.ATG" 
+#line  3588 "VBNET.ATG" 
 out blockStmt);
-		if (la.kind == 58 || la.kind == 88 || la.kind == 97) {
+		if (la.kind == 75 || la.kind == 113 || la.kind == 123) {
 			CatchClauses(
-#line  2766 "VBNET.ATG" 
+#line  3589 "VBNET.ATG" 
 out catchClauses);
 		}
-		if (la.kind == 97) {
+		if (la.kind == 123) {
 			lexer.NextToken();
 			EndOfStmt();
 			Block(
-#line  2767 "VBNET.ATG" 
+#line  3590 "VBNET.ATG" 
 out finallyStmt);
 		}
-		Expect(88);
-		Expect(174);
+		Expect(113);
+		Expect(218);
 
-#line  2770 "VBNET.ATG" 
+#line  3593 "VBNET.ATG" 
 		tryStatement = new TryCatchStatement(blockStmt, catchClauses, finallyStmt);
 		
 	}
 
 	void WithStatement(
-#line  2740 "VBNET.ATG" 
+#line  3563 "VBNET.ATG" 
 out Statement withStatement) {
 
-#line  2742 "VBNET.ATG" 
+#line  3565 "VBNET.ATG" 
 		Statement blockStmt = null;
 		Expression expr = null;
 		
-		Expect(182);
+		Expect(233);
 
-#line  2745 "VBNET.ATG" 
+#line  3568 "VBNET.ATG" 
 		Location start = t.Location; 
 		Expr(
-#line  2746 "VBNET.ATG" 
+#line  3569 "VBNET.ATG" 
 out expr);
 		EndOfStmt();
 
-#line  2748 "VBNET.ATG" 
+#line  3571 "VBNET.ATG" 
 		withStatement = new WithStatement(expr);
 		withStatement.StartLocation = start;
 		
 		Block(
-#line  2751 "VBNET.ATG" 
+#line  3574 "VBNET.ATG" 
 out blockStmt);
 
-#line  2753 "VBNET.ATG" 
+#line  3576 "VBNET.ATG" 
 		((WithStatement)withStatement).Body = (BlockStatement)blockStmt;
 		
-		Expect(88);
-		Expect(182);
+		Expect(113);
+		Expect(233);
 
-#line  2756 "VBNET.ATG" 
+#line  3579 "VBNET.ATG" 
 		withStatement.EndLocation = t.Location; 
 	}
 
 	void WhileOrUntil(
-#line  2733 "VBNET.ATG" 
+#line  3556 "VBNET.ATG" 
 out ConditionType conditionType) {
 
-#line  2734 "VBNET.ATG" 
+#line  3557 "VBNET.ATG" 
 		conditionType = ConditionType.None; 
-		if (la.kind == 181) {
+		if (la.kind == 231) {
 			lexer.NextToken();
 
-#line  2735 "VBNET.ATG" 
+#line  3558 "VBNET.ATG" 
 			conditionType = ConditionType.While; 
-		} else if (la.kind == 177) {
+		} else if (la.kind == 224) {
 			lexer.NextToken();
 
-#line  2736 "VBNET.ATG" 
+#line  3559 "VBNET.ATG" 
 			conditionType = ConditionType.Until; 
-		} else SynErr(262);
+		} else SynErr(316);
 	}
 
 	void LoopControlVariable(
-#line  2576 "VBNET.ATG" 
+#line  3387 "VBNET.ATG" 
 out TypeReference type, out string name) {
 
-#line  2577 "VBNET.ATG" 
+#line  3388 "VBNET.ATG" 
 		ArrayList arrayModifiers = null;
 		type = null;
 		
 		Qualident(
-#line  2581 "VBNET.ATG" 
+#line  3392 "VBNET.ATG" 
 out name);
 		if (
-#line  2582 "VBNET.ATG" 
+#line  3393 "VBNET.ATG" 
 IsDims()) {
 			ArrayTypeModifiers(
-#line  2582 "VBNET.ATG" 
+#line  3393 "VBNET.ATG" 
 out arrayModifiers);
 		}
-		if (la.kind == 48) {
+		if (la.kind == 63) {
 			lexer.NextToken();
 			TypeName(
-#line  2583 "VBNET.ATG" 
+#line  3394 "VBNET.ATG" 
 out type);
 
-#line  2583 "VBNET.ATG" 
+#line  3394 "VBNET.ATG" 
 			if (name.IndexOf('.') > 0) { Error("No type def for 'for each' member indexer allowed."); } 
 		}
 
-#line  2585 "VBNET.ATG" 
+#line  3396 "VBNET.ATG" 
 		if (type != null) {
 		if(type.RankSpecifier != null && arrayModifiers != null) {
 			Error("array rank only allowed one time");
@@ -5896,111 +7372,112 @@ out type);
 	}
 
 	void ReDimClause(
-#line  2655 "VBNET.ATG" 
+#line  3474 "VBNET.ATG" 
 out Expression expr) {
 		SimpleNonInvocationExpression(
-#line  2657 "VBNET.ATG" 
+#line  3476 "VBNET.ATG" 
 out expr);
 		ReDimClauseInternal(
-#line  2658 "VBNET.ATG" 
+#line  3477 "VBNET.ATG" 
 ref expr);
 	}
 
 	void SingleLineStatementList(
-#line  2562 "VBNET.ATG" 
+#line  3373 "VBNET.ATG" 
 List<Statement> list) {
 
-#line  2563 "VBNET.ATG" 
+#line  3374 "VBNET.ATG" 
 		Statement embeddedStatement = null; 
-		if (la.kind == 88) {
+		if (la.kind == 113) {
 			lexer.NextToken();
 
-#line  2565 "VBNET.ATG" 
-			embeddedStatement = new EndStatement(); 
-		} else if (StartOf(34)) {
+#line  3376 "VBNET.ATG" 
+			embeddedStatement = new EndStatement() { StartLocation = t.Location, EndLocation = t.EndLocation }; 
+		} else if (StartOf(49)) {
 			EmbeddedStatement(
-#line  2566 "VBNET.ATG" 
+#line  3377 "VBNET.ATG" 
 out embeddedStatement);
-		} else SynErr(263);
+		} else SynErr(317);
 
-#line  2567 "VBNET.ATG" 
+#line  3378 "VBNET.ATG" 
 		if (embeddedStatement != null) list.Add(embeddedStatement); 
-		while (la.kind == 13) {
+		while (la.kind == 21) {
 			lexer.NextToken();
-			while (la.kind == 13) {
+			while (la.kind == 21) {
 				lexer.NextToken();
 			}
-			if (la.kind == 88) {
+			if (la.kind == 113) {
 				lexer.NextToken();
 
-#line  2569 "VBNET.ATG" 
-				embeddedStatement = new EndStatement(); 
-			} else if (StartOf(34)) {
+#line  3380 "VBNET.ATG" 
+				embeddedStatement = new EndStatement() { StartLocation = t.Location, EndLocation = t.EndLocation }; 
+			} else if (StartOf(49)) {
 				EmbeddedStatement(
-#line  2570 "VBNET.ATG" 
+#line  3381 "VBNET.ATG" 
 out embeddedStatement);
-			} else SynErr(264);
+			} else SynErr(318);
 
-#line  2571 "VBNET.ATG" 
+#line  3382 "VBNET.ATG" 
 			if (embeddedStatement != null) list.Add(embeddedStatement); 
 		}
 	}
 
 	void CaseClauses(
-#line  2693 "VBNET.ATG" 
+#line  3516 "VBNET.ATG" 
 out List<CaseLabel> caseClauses) {
 
-#line  2695 "VBNET.ATG" 
+#line  3518 "VBNET.ATG" 
 		caseClauses = new List<CaseLabel>();
 		CaseLabel caseClause = null;
 		
 		CaseClause(
-#line  2698 "VBNET.ATG" 
+#line  3521 "VBNET.ATG" 
 out caseClause);
 
-#line  2698 "VBNET.ATG" 
+#line  3521 "VBNET.ATG" 
 		if (caseClause != null) { caseClauses.Add(caseClause); } 
-		while (la.kind == 12) {
+		while (la.kind == 22) {
 			lexer.NextToken();
 			CaseClause(
-#line  2699 "VBNET.ATG" 
+#line  3522 "VBNET.ATG" 
 out caseClause);
 
-#line  2699 "VBNET.ATG" 
+#line  3522 "VBNET.ATG" 
 			if (caseClause != null) { caseClauses.Add(caseClause); } 
 		}
 	}
 
 	void OnErrorStatement(
-#line  2596 "VBNET.ATG" 
+#line  3407 "VBNET.ATG" 
 out OnErrorStatement stmt) {
 
-#line  2598 "VBNET.ATG" 
+#line  3409 "VBNET.ATG" 
 		stmt = null;
+		Location startLocation = la.Location;
 		GotoStatement goToStatement = null;
 		
-		Expect(135);
-		Expect(92);
+		Expect(171);
+		Expect(118);
 		if (
-#line  2604 "VBNET.ATG" 
+#line  3416 "VBNET.ATG" 
 IsNegativeLabelName()) {
-			Expect(104);
-			Expect(15);
+			Expect(132);
+			Expect(30);
 			Expect(5);
 
-#line  2606 "VBNET.ATG" 
+#line  3418 "VBNET.ATG" 
 			long intLabel = Int64.Parse(t.val);
 			if(intLabel != 1) {
 				Error("invalid label in on error statement.");
 			}
 			stmt = new OnErrorStatement(new GotoStatement((intLabel * -1).ToString()));
 			
-		} else if (la.kind == 104) {
+		} else if (la.kind == 132) {
 			GotoStatement(
-#line  2612 "VBNET.ATG" 
+#line  3424 "VBNET.ATG" 
 out goToStatement);
 
-#line  2614 "VBNET.ATG" 
+#line  3426 "VBNET.ATG" 
 			string val = goToStatement.Label;
 			
 			// if value is numeric, make sure that is 0
@@ -6013,92 +7490,106 @@ out goToStatement);
 			}
 			stmt = new OnErrorStatement(goToStatement);
 			
-		} else if (la.kind == 153) {
+		} else if (la.kind == 194) {
 			lexer.NextToken();
-			Expect(128);
+			Expect(163);
 
-#line  2628 "VBNET.ATG" 
+#line  3440 "VBNET.ATG" 
 			stmt = new OnErrorStatement(new ResumeStatement(true));
 			
-		} else SynErr(265);
+		} else SynErr(319);
+
+#line  3444 "VBNET.ATG" 
+		if (stmt != null) {
+		stmt.StartLocation = startLocation;
+		stmt.EndLocation = t.EndLocation;
+		}
+		
 	}
 
 	void GotoStatement(
-#line  2634 "VBNET.ATG" 
+#line  3452 "VBNET.ATG" 
 out GotoStatement goToStatement) {
 
-#line  2636 "VBNET.ATG" 
-		string label = String.Empty;
-		
-		Expect(104);
+#line  3453 "VBNET.ATG" 
+		string label = String.Empty; Location startLocation = la.Location; 
+		Expect(132);
 		LabelName(
-#line  2639 "VBNET.ATG" 
+#line  3455 "VBNET.ATG" 
 out label);
 
-#line  2641 "VBNET.ATG" 
-		goToStatement = new GotoStatement(label);
+#line  3457 "VBNET.ATG" 
+		goToStatement = new GotoStatement(label) {
+		StartLocation = startLocation,
+		EndLocation = t.EndLocation
+		};
 		
 	}
 
 	void ResumeStatement(
-#line  2682 "VBNET.ATG" 
+#line  3505 "VBNET.ATG" 
 out ResumeStatement resumeStatement) {
 
-#line  2684 "VBNET.ATG" 
+#line  3507 "VBNET.ATG" 
 		resumeStatement = null;
 		string label = String.Empty;
 		
 		if (
-#line  2687 "VBNET.ATG" 
+#line  3510 "VBNET.ATG" 
 IsResumeNext()) {
-			Expect(153);
-			Expect(128);
+			Expect(194);
+			Expect(163);
 
-#line  2688 "VBNET.ATG" 
+#line  3511 "VBNET.ATG" 
 			resumeStatement = new ResumeStatement(true); 
-		} else if (la.kind == 153) {
+		} else if (la.kind == 194) {
 			lexer.NextToken();
-			if (StartOf(38)) {
+			if (StartOf(50)) {
 				LabelName(
-#line  2689 "VBNET.ATG" 
+#line  3512 "VBNET.ATG" 
 out label);
 			}
 
-#line  2689 "VBNET.ATG" 
+#line  3512 "VBNET.ATG" 
 			resumeStatement = new ResumeStatement(label); 
-		} else SynErr(266);
+		} else SynErr(320);
 	}
 
 	void ReDimClauseInternal(
-#line  2661 "VBNET.ATG" 
+#line  3480 "VBNET.ATG" 
 ref Expression expr) {
 
-#line  2662 "VBNET.ATG" 
-		List<Expression> arguments; bool canBeNormal; bool canBeRedim; string name; 
-		while (la.kind == 10 || 
-#line  2665 "VBNET.ATG" 
+#line  3481 "VBNET.ATG" 
+		List<Expression> arguments; bool canBeNormal; bool canBeRedim; string name; Location startLocation = la.Location; 
+		while (la.kind == 26 || 
+#line  3484 "VBNET.ATG" 
 la.kind == Tokens.OpenParenthesis && Peek(1).kind == Tokens.Of) {
-			if (la.kind == 10) {
+			if (la.kind == 26) {
 				lexer.NextToken();
 				IdentifierOrKeyword(
-#line  2664 "VBNET.ATG" 
+#line  3483 "VBNET.ATG" 
 out name);
 
-#line  2664 "VBNET.ATG" 
-				expr = new MemberReferenceExpression(expr, name); 
+#line  3483 "VBNET.ATG" 
+				expr = new MemberReferenceExpression(expr, name) { StartLocation = startLocation, EndLocation = t.EndLocation }; 
 			} else {
 				InvocationExpression(
-#line  2666 "VBNET.ATG" 
+#line  3485 "VBNET.ATG" 
 ref expr);
+
+#line  3487 "VBNET.ATG" 
+				expr.StartLocation = startLocation;
+				expr.EndLocation = t.EndLocation;
+				
 			}
 		}
-		Expect(24);
+		Expect(37);
 		NormalOrReDimArgumentList(
-#line  2669 "VBNET.ATG" 
+#line  3492 "VBNET.ATG" 
 out arguments, out canBeNormal, out canBeRedim);
-		Expect(25);
+		Expect(38);
 
-#line  2671 "VBNET.ATG" 
+#line  3494 "VBNET.ATG" 
 		expr = new InvocationExpression(expr, arguments);
 		if (canBeRedim == false || canBeNormal && (la.kind == Tokens.Dot || la.kind == Tokens.OpenParenthesis)) {
 			if (this.Errors.Count == 0) {
@@ -6110,137 +7601,137 @@ out arguments, out canBeNormal, out canBeRedim);
 	}
 
 	void CaseClause(
-#line  2703 "VBNET.ATG" 
+#line  3526 "VBNET.ATG" 
 out CaseLabel caseClause) {
 
-#line  2705 "VBNET.ATG" 
+#line  3528 "VBNET.ATG" 
 		Expression expr = null;
 		Expression sexpr = null;
 		BinaryOperatorType op = BinaryOperatorType.None;
 		caseClause = null;
 		
-		if (la.kind == 86) {
+		if (la.kind == 111) {
 			lexer.NextToken();
 
-#line  2711 "VBNET.ATG" 
+#line  3534 "VBNET.ATG" 
 			caseClause = new CaseLabel(); 
-		} else if (StartOf(39)) {
-			if (la.kind == 113) {
+		} else if (StartOf(51)) {
+			if (la.kind == 144) {
 				lexer.NextToken();
 			}
 			switch (la.kind) {
-			case 27: {
+			case 40: {
 				lexer.NextToken();
 
-#line  2715 "VBNET.ATG" 
+#line  3538 "VBNET.ATG" 
 				op = BinaryOperatorType.LessThan; 
 				break;
 			}
-			case 26: {
+			case 39: {
 				lexer.NextToken();
 
-#line  2716 "VBNET.ATG" 
+#line  3539 "VBNET.ATG" 
 				op = BinaryOperatorType.GreaterThan; 
 				break;
 			}
-			case 30: {
+			case 43: {
 				lexer.NextToken();
 
-#line  2717 "VBNET.ATG" 
+#line  3540 "VBNET.ATG" 
 				op = BinaryOperatorType.LessThanOrEqual; 
 				break;
 			}
-			case 29: {
+			case 42: {
 				lexer.NextToken();
 
-#line  2718 "VBNET.ATG" 
+#line  3541 "VBNET.ATG" 
 				op = BinaryOperatorType.GreaterThanOrEqual; 
 				break;
 			}
-			case 11: {
+			case 20: {
 				lexer.NextToken();
 
-#line  2719 "VBNET.ATG" 
+#line  3542 "VBNET.ATG" 
 				op = BinaryOperatorType.Equality; 
 				break;
 			}
-			case 28: {
+			case 41: {
 				lexer.NextToken();
 
-#line  2720 "VBNET.ATG" 
+#line  3543 "VBNET.ATG" 
 				op = BinaryOperatorType.InEquality; 
 				break;
 			}
-			default: SynErr(267); break;
+			default: SynErr(321); break;
 			}
 			Expr(
-#line  2722 "VBNET.ATG" 
+#line  3545 "VBNET.ATG" 
 out expr);
 
-#line  2724 "VBNET.ATG" 
+#line  3547 "VBNET.ATG" 
 			caseClause = new CaseLabel(op, expr);
 			
-		} else if (StartOf(27)) {
+		} else if (StartOf(24)) {
 			Expr(
-#line  2726 "VBNET.ATG" 
+#line  3549 "VBNET.ATG" 
 out expr);
-			if (la.kind == 172) {
+			if (la.kind == 216) {
 				lexer.NextToken();
 				Expr(
-#line  2726 "VBNET.ATG" 
+#line  3549 "VBNET.ATG" 
 out sexpr);
 			}
 
-#line  2728 "VBNET.ATG" 
+#line  3551 "VBNET.ATG" 
 			caseClause = new CaseLabel(expr, sexpr);
 			
-		} else SynErr(268);
+		} else SynErr(322);
 	}
 
 	void CatchClauses(
-#line  2775 "VBNET.ATG" 
+#line  3598 "VBNET.ATG" 
 out List<CatchClause> catchClauses) {
 
-#line  2777 "VBNET.ATG" 
+#line  3600 "VBNET.ATG" 
 		catchClauses = new List<CatchClause>();
 		TypeReference type = null;
 		Statement blockStmt = null;
 		Expression expr = null;
 		string name = String.Empty;
 		
-		while (la.kind == 58) {
+		while (la.kind == 75) {
 			lexer.NextToken();
-			if (StartOf(13)) {
+			if (StartOf(4)) {
 				Identifier();
 
-#line  2785 "VBNET.ATG" 
+#line  3608 "VBNET.ATG" 
 				name = t.val; 
-				if (la.kind == 48) {
+				if (la.kind == 63) {
 					lexer.NextToken();
 					TypeName(
-#line  2785 "VBNET.ATG" 
+#line  3608 "VBNET.ATG" 
 out type);
 				}
 			}
-			if (la.kind == 180) {
+			if (la.kind == 229) {
 				lexer.NextToken();
 				Expr(
-#line  2786 "VBNET.ATG" 
+#line  3609 "VBNET.ATG" 
 out expr);
 			}
 			EndOfStmt();
 			Block(
-#line  2788 "VBNET.ATG" 
+#line  3611 "VBNET.ATG" 
 out blockStmt);
 
-#line  2789 "VBNET.ATG" 
+#line  3612 "VBNET.ATG" 
 			catchClauses.Add(new CatchClause(type, name, blockStmt, expr)); 
 		}
 	}
 
 
 	
-	public override void Parse()
+	void ParseRoot()
 	{
 		VBNET();
 
@@ -6260,265 +7751,319 @@ out blockStmt);
 			case 7: s = "LiteralSingle expected"; break;
 			case 8: s = "LiteralDecimal expected"; break;
 			case 9: s = "LiteralDate expected"; break;
-			case 10: s = "\".\" expected"; break;
-			case 11: s = "\"=\" expected"; break;
-			case 12: s = "\",\" expected"; break;
-			case 13: s = "\":\" expected"; break;
-			case 14: s = "\"+\" expected"; break;
-			case 15: s = "\"-\" expected"; break;
-			case 16: s = "\"*\" expected"; break;
-			case 17: s = "\"/\" expected"; break;
-			case 18: s = "\"\\\\\" expected"; break;
-			case 19: s = "\"&\" expected"; break;
-			case 20: s = "\"^\" expected"; break;
-			case 21: s = "\"?\" expected"; break;
-			case 22: s = "\"{\" expected"; break;
-			case 23: s = "\"}\" expected"; break;
-			case 24: s = "\"(\" expected"; break;
-			case 25: s = "\")\" expected"; break;
-			case 26: s = "\">\" expected"; break;
-			case 27: s = "\"<\" expected"; break;
-			case 28: s = "\"<>\" expected"; break;
-			case 29: s = "\">=\" expected"; break;
-			case 30: s = "\"<=\" expected"; break;
-			case 31: s = "\"<<\" expected"; break;
-			case 32: s = "\">>\" expected"; break;
-			case 33: s = "\"+=\" expected"; break;
-			case 34: s = "\"^=\" expected"; break;
-			case 35: s = "\"-=\" expected"; break;
-			case 36: s = "\"*=\" expected"; break;
-			case 37: s = "\"/=\" expected"; break;
-			case 38: s = "\"\\\\=\" expected"; break;
-			case 39: s = "\"<<=\" expected"; break;
-			case 40: s = "\">>=\" expected"; break;
-			case 41: s = "\"&=\" expected"; break;
-			case 42: s = "\"AddHandler\" expected"; break;
-			case 43: s = "\"AddressOf\" expected"; break;
-			case 44: s = "\"Alias\" expected"; break;
-			case 45: s = "\"And\" expected"; break;
-			case 46: s = "\"AndAlso\" expected"; break;
-			case 47: s = "\"Ansi\" expected"; break;
-			case 48: s = "\"As\" expected"; break;
-			case 49: s = "\"Assembly\" expected"; break;
-			case 50: s = "\"Auto\" expected"; break;
-			case 51: s = "\"Binary\" expected"; break;
-			case 52: s = "\"Boolean\" expected"; break;
-			case 53: s = "\"ByRef\" expected"; break;
-			case 54: s = "\"Byte\" expected"; break;
-			case 55: s = "\"ByVal\" expected"; break;
-			case 56: s = "\"Call\" expected"; break;
-			case 57: s = "\"Case\" expected"; break;
-			case 58: s = "\"Catch\" expected"; break;
-			case 59: s = "\"CBool\" expected"; break;
-			case 60: s = "\"CByte\" expected"; break;
-			case 61: s = "\"CChar\" expected"; break;
-			case 62: s = "\"CDate\" expected"; break;
-			case 63: s = "\"CDbl\" expected"; break;
-			case 64: s = "\"CDec\" expected"; break;
-			case 65: s = "\"Char\" expected"; break;
-			case 66: s = "\"CInt\" expected"; break;
-			case 67: s = "\"Class\" expected"; break;
-			case 68: s = "\"CLng\" expected"; break;
-			case 69: s = "\"CObj\" expected"; break;
-			case 70: s = "\"Compare\" expected"; break;
-			case 71: s = "\"Const\" expected"; break;
-			case 72: s = "\"CShort\" expected"; break;
-			case 73: s = "\"CSng\" expected"; break;
-			case 74: s = "\"CStr\" expected"; break;
-			case 75: s = "\"CType\" expected"; break;
-			case 76: s = "\"Date\" expected"; break;
-			case 77: s = "\"Decimal\" expected"; break;
-			case 78: s = "\"Declare\" expected"; break;
-			case 79: s = "\"Default\" expected"; break;
-			case 80: s = "\"Delegate\" expected"; break;
-			case 81: s = "\"Dim\" expected"; break;
-			case 82: s = "\"DirectCast\" expected"; break;
-			case 83: s = "\"Do\" expected"; break;
-			case 84: s = "\"Double\" expected"; break;
-			case 85: s = "\"Each\" expected"; break;
-			case 86: s = "\"Else\" expected"; break;
-			case 87: s = "\"ElseIf\" expected"; break;
-			case 88: s = "\"End\" expected"; break;
-			case 89: s = "\"EndIf\" expected"; break;
-			case 90: s = "\"Enum\" expected"; break;
-			case 91: s = "\"Erase\" expected"; break;
-			case 92: s = "\"Error\" expected"; break;
-			case 93: s = "\"Event\" expected"; break;
-			case 94: s = "\"Exit\" expected"; break;
-			case 95: s = "\"Explicit\" expected"; break;
-			case 96: s = "\"False\" expected"; break;
-			case 97: s = "\"Finally\" expected"; break;
-			case 98: s = "\"For\" expected"; break;
-			case 99: s = "\"Friend\" expected"; break;
-			case 100: s = "\"Function\" expected"; break;
-			case 101: s = "\"Get\" expected"; break;
-			case 102: s = "\"GetType\" expected"; break;
-			case 103: s = "\"GoSub\" expected"; break;
-			case 104: s = "\"GoTo\" expected"; break;
-			case 105: s = "\"Handles\" expected"; break;
-			case 106: s = "\"If\" expected"; break;
-			case 107: s = "\"Implements\" expected"; break;
-			case 108: s = "\"Imports\" expected"; break;
-			case 109: s = "\"In\" expected"; break;
-			case 110: s = "\"Inherits\" expected"; break;
-			case 111: s = "\"Integer\" expected"; break;
-			case 112: s = "\"Interface\" expected"; break;
-			case 113: s = "\"Is\" expected"; break;
-			case 114: s = "\"Let\" expected"; break;
-			case 115: s = "\"Lib\" expected"; break;
-			case 116: s = "\"Like\" expected"; break;
-			case 117: s = "\"Long\" expected"; break;
-			case 118: s = "\"Loop\" expected"; break;
-			case 119: s = "\"Me\" expected"; break;
-			case 120: s = "\"Mod\" expected"; break;
-			case 121: s = "\"Module\" expected"; break;
-			case 122: s = "\"MustInherit\" expected"; break;
-			case 123: s = "\"MustOverride\" expected"; break;
-			case 124: s = "\"MyBase\" expected"; break;
-			case 125: s = "\"MyClass\" expected"; break;
-			case 126: s = "\"Namespace\" expected"; break;
-			case 127: s = "\"New\" expected"; break;
-			case 128: s = "\"Next\" expected"; break;
-			case 129: s = "\"Not\" expected"; break;
-			case 130: s = "\"Nothing\" expected"; break;
-			case 131: s = "\"NotInheritable\" expected"; break;
-			case 132: s = "\"NotOverridable\" expected"; break;
-			case 133: s = "\"Object\" expected"; break;
-			case 134: s = "\"Off\" expected"; break;
-			case 135: s = "\"On\" expected"; break;
-			case 136: s = "\"Option\" expected"; break;
-			case 137: s = "\"Optional\" expected"; break;
-			case 138: s = "\"Or\" expected"; break;
-			case 139: s = "\"OrElse\" expected"; break;
-			case 140: s = "\"Overloads\" expected"; break;
-			case 141: s = "\"Overridable\" expected"; break;
-			case 142: s = "\"Overrides\" expected"; break;
-			case 143: s = "\"ParamArray\" expected"; break;
-			case 144: s = "\"Preserve\" expected"; break;
-			case 145: s = "\"Private\" expected"; break;
-			case 146: s = "\"Property\" expected"; break;
-			case 147: s = "\"Protected\" expected"; break;
-			case 148: s = "\"Public\" expected"; break;
-			case 149: s = "\"RaiseEvent\" expected"; break;
-			case 150: s = "\"ReadOnly\" expected"; break;
-			case 151: s = "\"ReDim\" expected"; break;
-			case 152: s = "\"RemoveHandler\" expected"; break;
-			case 153: s = "\"Resume\" expected"; break;
-			case 154: s = "\"Return\" expected"; break;
-			case 155: s = "\"Select\" expected"; break;
-			case 156: s = "\"Set\" expected"; break;
-			case 157: s = "\"Shadows\" expected"; break;
-			case 158: s = "\"Shared\" expected"; break;
-			case 159: s = "\"Short\" expected"; break;
-			case 160: s = "\"Single\" expected"; break;
-			case 161: s = "\"Static\" expected"; break;
-			case 162: s = "\"Step\" expected"; break;
-			case 163: s = "\"Stop\" expected"; break;
-			case 164: s = "\"Strict\" expected"; break;
-			case 165: s = "\"String\" expected"; break;
-			case 166: s = "\"Structure\" expected"; break;
-			case 167: s = "\"Sub\" expected"; break;
-			case 168: s = "\"SyncLock\" expected"; break;
-			case 169: s = "\"Text\" expected"; break;
-			case 170: s = "\"Then\" expected"; break;
-			case 171: s = "\"Throw\" expected"; break;
-			case 172: s = "\"To\" expected"; break;
-			case 173: s = "\"True\" expected"; break;
-			case 174: s = "\"Try\" expected"; break;
-			case 175: s = "\"TypeOf\" expected"; break;
-			case 176: s = "\"Unicode\" expected"; break;
-			case 177: s = "\"Until\" expected"; break;
-			case 178: s = "\"Variant\" expected"; break;
-			case 179: s = "\"Wend\" expected"; break;
-			case 180: s = "\"When\" expected"; break;
-			case 181: s = "\"While\" expected"; break;
-			case 182: s = "\"With\" expected"; break;
-			case 183: s = "\"WithEvents\" expected"; break;
-			case 184: s = "\"WriteOnly\" expected"; break;
-			case 185: s = "\"Xor\" expected"; break;
-			case 186: s = "\"Rem\" expected"; break;
-			case 187: s = "\"Continue\" expected"; break;
-			case 188: s = "\"Operator\" expected"; break;
-			case 189: s = "\"Using\" expected"; break;
-			case 190: s = "\"IsNot\" expected"; break;
-			case 191: s = "\"SByte\" expected"; break;
-			case 192: s = "\"UInteger\" expected"; break;
-			case 193: s = "\"ULong\" expected"; break;
-			case 194: s = "\"UShort\" expected"; break;
-			case 195: s = "\"CSByte\" expected"; break;
-			case 196: s = "\"CUShort\" expected"; break;
-			case 197: s = "\"CUInt\" expected"; break;
-			case 198: s = "\"CULng\" expected"; break;
-			case 199: s = "\"Global\" expected"; break;
-			case 200: s = "\"TryCast\" expected"; break;
-			case 201: s = "\"Of\" expected"; break;
-			case 202: s = "\"Narrowing\" expected"; break;
-			case 203: s = "\"Widening\" expected"; break;
-			case 204: s = "\"Partial\" expected"; break;
-			case 205: s = "\"Custom\" expected"; break;
-			case 206: s = "??? expected"; break;
-			case 207: s = "invalid OptionStmt"; break;
-			case 208: s = "invalid OptionStmt"; break;
-			case 209: s = "invalid GlobalAttributeSection"; break;
-			case 210: s = "invalid GlobalAttributeSection"; break;
-			case 211: s = "invalid NamespaceMemberDecl"; break;
-			case 212: s = "invalid OptionValue"; break;
-			case 213: s = "invalid EndOfStmt"; break;
-			case 214: s = "invalid TypeModifier"; break;
-			case 215: s = "invalid NonModuleDeclaration"; break;
-			case 216: s = "invalid NonModuleDeclaration"; break;
-			case 217: s = "invalid Identifier"; break;
-			case 218: s = "invalid TypeParameterConstraints"; break;
-			case 219: s = "invalid TypeParameterConstraint"; break;
-			case 220: s = "invalid NonArrayTypeName"; break;
-			case 221: s = "invalid MemberModifier"; break;
-			case 222: s = "invalid StructureMemberDecl"; break;
-			case 223: s = "invalid StructureMemberDecl"; break;
-			case 224: s = "invalid StructureMemberDecl"; break;
-			case 225: s = "invalid StructureMemberDecl"; break;
-			case 226: s = "invalid StructureMemberDecl"; break;
-			case 227: s = "invalid StructureMemberDecl"; break;
-			case 228: s = "invalid StructureMemberDecl"; break;
-			case 229: s = "invalid InterfaceMemberDecl"; break;
-			case 230: s = "invalid InterfaceMemberDecl"; break;
-			case 231: s = "invalid Charset"; break;
-			case 232: s = "invalid IdentifierForFieldDeclaration"; break;
-			case 233: s = "invalid VariableDeclaratorPartAfterIdentifier"; break;
-			case 234: s = "invalid AccessorDecls"; break;
-			case 235: s = "invalid EventAccessorDeclaration"; break;
-			case 236: s = "invalid OverloadableOperator"; break;
-			case 237: s = "invalid VariableInitializer"; break;
-			case 238: s = "invalid EventMemberSpecifier"; break;
-			case 239: s = "invalid AssignmentOperator"; break;
-			case 240: s = "invalid SimpleNonInvocationExpression"; break;
-			case 241: s = "invalid SimpleNonInvocationExpression"; break;
-			case 242: s = "invalid SimpleNonInvocationExpression"; break;
-			case 243: s = "invalid SimpleNonInvocationExpression"; break;
-			case 244: s = "invalid InvocationExpression"; break;
-			case 245: s = "invalid InvocationExpression"; break;
-			case 246: s = "invalid PrimitiveTypeName"; break;
-			case 247: s = "invalid CastTarget"; break;
-			case 248: s = "invalid ComparisonExpr"; break;
-			case 249: s = "invalid Argument"; break;
-			case 250: s = "invalid QualIdentAndTypeArguments"; break;
-			case 251: s = "invalid AttributeArguments"; break;
-			case 252: s = "invalid ParameterModifier"; break;
-			case 253: s = "invalid Statement"; break;
-			case 254: s = "invalid LabelName"; break;
-			case 255: s = "invalid EmbeddedStatement"; break;
-			case 256: s = "invalid EmbeddedStatement"; break;
-			case 257: s = "invalid EmbeddedStatement"; break;
-			case 258: s = "invalid EmbeddedStatement"; break;
-			case 259: s = "invalid EmbeddedStatement"; break;
-			case 260: s = "invalid EmbeddedStatement"; break;
-			case 261: s = "invalid EmbeddedStatement"; break;
-			case 262: s = "invalid WhileOrUntil"; break;
-			case 263: s = "invalid SingleLineStatementList"; break;
-			case 264: s = "invalid SingleLineStatementList"; break;
-			case 265: s = "invalid OnErrorStatement"; break;
-			case 266: s = "invalid ResumeStatement"; break;
-			case 267: s = "invalid CaseClause"; break;
-			case 268: s = "invalid CaseClause"; break;
+			case 10: s = "XmlOpenTag expected"; break;
+			case 11: s = "XmlCloseTag expected"; break;
+			case 12: s = "XmlStartInlineVB expected"; break;
+			case 13: s = "XmlEndInlineVB expected"; break;
+			case 14: s = "XmlCloseTagEmptyElement expected"; break;
+			case 15: s = "XmlOpenEndTag expected"; break;
+			case 16: s = "XmlContent expected"; break;
+			case 17: s = "XmlComment expected"; break;
+			case 18: s = "XmlCData expected"; break;
+			case 19: s = "XmlProcessingInstruction expected"; break;
+			case 20: s = "\"=\" expected"; break;
+			case 21: s = "\":\" expected"; break;
+			case 22: s = "\",\" expected"; break;
+			case 23: s = "\"&\" expected"; break;
+			case 24: s = "\"/\" expected"; break;
+			case 25: s = "\"\\\\\" expected"; break;
+			case 26: s = "\".\" expected"; break;
+			case 27: s = "\"...\" expected"; break;
+			case 28: s = "\".@\" expected"; break;
+			case 29: s = "\"!\" expected"; break;
+			case 30: s = "\"-\" expected"; break;
+			case 31: s = "\"+\" expected"; break;
+			case 32: s = "\"^\" expected"; break;
+			case 33: s = "\"?\" expected"; break;
+			case 34: s = "\"*\" expected"; break;
+			case 35: s = "\"{\" expected"; break;
+			case 36: s = "\"}\" expected"; break;
+			case 37: s = "\"(\" expected"; break;
+			case 38: s = "\")\" expected"; break;
+			case 39: s = "\">\" expected"; break;
+			case 40: s = "\"<\" expected"; break;
+			case 41: s = "\"<>\" expected"; break;
+			case 42: s = "\">=\" expected"; break;
+			case 43: s = "\"<=\" expected"; break;
+			case 44: s = "\"<<\" expected"; break;
+			case 45: s = "\">>\" expected"; break;
+			case 46: s = "\"+=\" expected"; break;
+			case 47: s = "\"^=\" expected"; break;
+			case 48: s = "\"-=\" expected"; break;
+			case 49: s = "\"*=\" expected"; break;
+			case 50: s = "\"/=\" expected"; break;
+			case 51: s = "\"\\\\=\" expected"; break;
+			case 52: s = "\"<<=\" expected"; break;
+			case 53: s = "\">>=\" expected"; break;
+			case 54: s = "\"&=\" expected"; break;
+			case 55: s = "\":=\" expected"; break;
+			case 56: s = "\"AddHandler\" expected"; break;
+			case 57: s = "\"AddressOf\" expected"; break;
+			case 58: s = "\"Aggregate\" expected"; break;
+			case 59: s = "\"Alias\" expected"; break;
+			case 60: s = "\"And\" expected"; break;
+			case 61: s = "\"AndAlso\" expected"; break;
+			case 62: s = "\"Ansi\" expected"; break;
+			case 63: s = "\"As\" expected"; break;
+			case 64: s = "\"Ascending\" expected"; break;
+			case 65: s = "\"Assembly\" expected"; break;
+			case 66: s = "\"Auto\" expected"; break;
+			case 67: s = "\"Binary\" expected"; break;
+			case 68: s = "\"Boolean\" expected"; break;
+			case 69: s = "\"ByRef\" expected"; break;
+			case 70: s = "\"By\" expected"; break;
+			case 71: s = "\"Byte\" expected"; break;
+			case 72: s = "\"ByVal\" expected"; break;
+			case 73: s = "\"Call\" expected"; break;
+			case 74: s = "\"Case\" expected"; break;
+			case 75: s = "\"Catch\" expected"; break;
+			case 76: s = "\"CBool\" expected"; break;
+			case 77: s = "\"CByte\" expected"; break;
+			case 78: s = "\"CChar\" expected"; break;
+			case 79: s = "\"CDate\" expected"; break;
+			case 80: s = "\"CDbl\" expected"; break;
+			case 81: s = "\"CDec\" expected"; break;
+			case 82: s = "\"Char\" expected"; break;
+			case 83: s = "\"CInt\" expected"; break;
+			case 84: s = "\"Class\" expected"; break;
+			case 85: s = "\"CLng\" expected"; break;
+			case 86: s = "\"CObj\" expected"; break;
+			case 87: s = "\"Compare\" expected"; break;
+			case 88: s = "\"Const\" expected"; break;
+			case 89: s = "\"Continue\" expected"; break;
+			case 90: s = "\"CSByte\" expected"; break;
+			case 91: s = "\"CShort\" expected"; break;
+			case 92: s = "\"CSng\" expected"; break;
+			case 93: s = "\"CStr\" expected"; break;
+			case 94: s = "\"CType\" expected"; break;
+			case 95: s = "\"CUInt\" expected"; break;
+			case 96: s = "\"CULng\" expected"; break;
+			case 97: s = "\"CUShort\" expected"; break;
+			case 98: s = "\"Custom\" expected"; break;
+			case 99: s = "\"Date\" expected"; break;
+			case 100: s = "\"Decimal\" expected"; break;
+			case 101: s = "\"Declare\" expected"; break;
+			case 102: s = "\"Default\" expected"; break;
+			case 103: s = "\"Delegate\" expected"; break;
+			case 104: s = "\"Descending\" expected"; break;
+			case 105: s = "\"Dim\" expected"; break;
+			case 106: s = "\"DirectCast\" expected"; break;
+			case 107: s = "\"Distinct\" expected"; break;
+			case 108: s = "\"Do\" expected"; break;
+			case 109: s = "\"Double\" expected"; break;
+			case 110: s = "\"Each\" expected"; break;
+			case 111: s = "\"Else\" expected"; break;
+			case 112: s = "\"ElseIf\" expected"; break;
+			case 113: s = "\"End\" expected"; break;
+			case 114: s = "\"EndIf\" expected"; break;
+			case 115: s = "\"Enum\" expected"; break;
+			case 116: s = "\"Equals\" expected"; break;
+			case 117: s = "\"Erase\" expected"; break;
+			case 118: s = "\"Error\" expected"; break;
+			case 119: s = "\"Event\" expected"; break;
+			case 120: s = "\"Exit\" expected"; break;
+			case 121: s = "\"Explicit\" expected"; break;
+			case 122: s = "\"False\" expected"; break;
+			case 123: s = "\"Finally\" expected"; break;
+			case 124: s = "\"For\" expected"; break;
+			case 125: s = "\"Friend\" expected"; break;
+			case 126: s = "\"From\" expected"; break;
+			case 127: s = "\"Function\" expected"; break;
+			case 128: s = "\"Get\" expected"; break;
+			case 129: s = "\"GetType\" expected"; break;
+			case 130: s = "\"Global\" expected"; break;
+			case 131: s = "\"GoSub\" expected"; break;
+			case 132: s = "\"GoTo\" expected"; break;
+			case 133: s = "\"Group\" expected"; break;
+			case 134: s = "\"Handles\" expected"; break;
+			case 135: s = "\"If\" expected"; break;
+			case 136: s = "\"Implements\" expected"; break;
+			case 137: s = "\"Imports\" expected"; break;
+			case 138: s = "\"In\" expected"; break;
+			case 139: s = "\"Infer\" expected"; break;
+			case 140: s = "\"Inherits\" expected"; break;
+			case 141: s = "\"Integer\" expected"; break;
+			case 142: s = "\"Interface\" expected"; break;
+			case 143: s = "\"Into\" expected"; break;
+			case 144: s = "\"Is\" expected"; break;
+			case 145: s = "\"IsNot\" expected"; break;
+			case 146: s = "\"Join\" expected"; break;
+			case 147: s = "\"Key\" expected"; break;
+			case 148: s = "\"Let\" expected"; break;
+			case 149: s = "\"Lib\" expected"; break;
+			case 150: s = "\"Like\" expected"; break;
+			case 151: s = "\"Long\" expected"; break;
+			case 152: s = "\"Loop\" expected"; break;
+			case 153: s = "\"Me\" expected"; break;
+			case 154: s = "\"Mod\" expected"; break;
+			case 155: s = "\"Module\" expected"; break;
+			case 156: s = "\"MustInherit\" expected"; break;
+			case 157: s = "\"MustOverride\" expected"; break;
+			case 158: s = "\"MyBase\" expected"; break;
+			case 159: s = "\"MyClass\" expected"; break;
+			case 160: s = "\"Namespace\" expected"; break;
+			case 161: s = "\"Narrowing\" expected"; break;
+			case 162: s = "\"New\" expected"; break;
+			case 163: s = "\"Next\" expected"; break;
+			case 164: s = "\"Not\" expected"; break;
+			case 165: s = "\"Nothing\" expected"; break;
+			case 166: s = "\"NotInheritable\" expected"; break;
+			case 167: s = "\"NotOverridable\" expected"; break;
+			case 168: s = "\"Object\" expected"; break;
+			case 169: s = "\"Of\" expected"; break;
+			case 170: s = "\"Off\" expected"; break;
+			case 171: s = "\"On\" expected"; break;
+			case 172: s = "\"Operator\" expected"; break;
+			case 173: s = "\"Option\" expected"; break;
+			case 174: s = "\"Optional\" expected"; break;
+			case 175: s = "\"Or\" expected"; break;
+			case 176: s = "\"Order\" expected"; break;
+			case 177: s = "\"OrElse\" expected"; break;
+			case 178: s = "\"Out\" expected"; break;
+			case 179: s = "\"Overloads\" expected"; break;
+			case 180: s = "\"Overridable\" expected"; break;
+			case 181: s = "\"Overrides\" expected"; break;
+			case 182: s = "\"ParamArray\" expected"; break;
+			case 183: s = "\"Partial\" expected"; break;
+			case 184: s = "\"Preserve\" expected"; break;
+			case 185: s = "\"Private\" expected"; break;
+			case 186: s = "\"Property\" expected"; break;
+			case 187: s = "\"Protected\" expected"; break;
+			case 188: s = "\"Public\" expected"; break;
+			case 189: s = "\"RaiseEvent\" expected"; break;
+			case 190: s = "\"ReadOnly\" expected"; break;
+			case 191: s = "\"ReDim\" expected"; break;
+			case 192: s = "\"Rem\" expected"; break;
+			case 193: s = "\"RemoveHandler\" expected"; break;
+			case 194: s = "\"Resume\" expected"; break;
+			case 195: s = "\"Return\" expected"; break;
+			case 196: s = "\"SByte\" expected"; break;
+			case 197: s = "\"Select\" expected"; break;
+			case 198: s = "\"Set\" expected"; break;
+			case 199: s = "\"Shadows\" expected"; break;
+			case 200: s = "\"Shared\" expected"; break;
+			case 201: s = "\"Short\" expected"; break;
+			case 202: s = "\"Single\" expected"; break;
+			case 203: s = "\"Skip\" expected"; break;
+			case 204: s = "\"Static\" expected"; break;
+			case 205: s = "\"Step\" expected"; break;
+			case 206: s = "\"Stop\" expected"; break;
+			case 207: s = "\"Strict\" expected"; break;
+			case 208: s = "\"String\" expected"; break;
+			case 209: s = "\"Structure\" expected"; break;
+			case 210: s = "\"Sub\" expected"; break;
+			case 211: s = "\"SyncLock\" expected"; break;
+			case 212: s = "\"Take\" expected"; break;
+			case 213: s = "\"Text\" expected"; break;
+			case 214: s = "\"Then\" expected"; break;
+			case 215: s = "\"Throw\" expected"; break;
+			case 216: s = "\"To\" expected"; break;
+			case 217: s = "\"True\" expected"; break;
+			case 218: s = "\"Try\" expected"; break;
+			case 219: s = "\"TryCast\" expected"; break;
+			case 220: s = "\"TypeOf\" expected"; break;
+			case 221: s = "\"UInteger\" expected"; break;
+			case 222: s = "\"ULong\" expected"; break;
+			case 223: s = "\"Unicode\" expected"; break;
+			case 224: s = "\"Until\" expected"; break;
+			case 225: s = "\"UShort\" expected"; break;
+			case 226: s = "\"Using\" expected"; break;
+			case 227: s = "\"Variant\" expected"; break;
+			case 228: s = "\"Wend\" expected"; break;
+			case 229: s = "\"When\" expected"; break;
+			case 230: s = "\"Where\" expected"; break;
+			case 231: s = "\"While\" expected"; break;
+			case 232: s = "\"Widening\" expected"; break;
+			case 233: s = "\"With\" expected"; break;
+			case 234: s = "\"WithEvents\" expected"; break;
+			case 235: s = "\"WriteOnly\" expected"; break;
+			case 236: s = "\"Xor\" expected"; break;
+			case 237: s = "\"GetXmlNamespace\" expected"; break;
+			case 238: s = "??? expected"; break;
+			case 239: s = "this symbol not expected in EndOfStmt"; break;
+			case 240: s = "invalid EndOfStmt"; break;
+			case 241: s = "invalid OptionStmt"; break;
+			case 242: s = "invalid OptionStmt"; break;
+			case 243: s = "invalid GlobalAttributeSection"; break;
+			case 244: s = "invalid GlobalAttributeSection"; break;
+			case 245: s = "invalid NamespaceMemberDecl"; break;
+			case 246: s = "invalid OptionValue"; break;
+			case 247: s = "invalid ImportClause"; break;
+			case 248: s = "invalid Identifier"; break;
+			case 249: s = "invalid TypeModifier"; break;
+			case 250: s = "invalid NonModuleDeclaration"; break;
+			case 251: s = "invalid NonModuleDeclaration"; break;
+			case 252: s = "invalid TypeParameterConstraints"; break;
+			case 253: s = "invalid TypeParameterConstraint"; break;
+			case 254: s = "invalid NonArrayTypeName"; break;
+			case 255: s = "invalid MemberModifier"; break;
+			case 256: s = "invalid StructureMemberDecl"; break;
+			case 257: s = "invalid StructureMemberDecl"; break;
+			case 258: s = "invalid StructureMemberDecl"; break;
+			case 259: s = "invalid StructureMemberDecl"; break;
+			case 260: s = "invalid StructureMemberDecl"; break;
+			case 261: s = "invalid StructureMemberDecl"; break;
+			case 262: s = "invalid StructureMemberDecl"; break;
+			case 263: s = "invalid StructureMemberDecl"; break;
+			case 264: s = "invalid InterfaceMemberDecl"; break;
+			case 265: s = "invalid InterfaceMemberDecl"; break;
+			case 266: s = "invalid Expr"; break;
+			case 267: s = "invalid Charset"; break;
+			case 268: s = "invalid IdentifierForFieldDeclaration"; break;
+			case 269: s = "invalid VariableDeclaratorPartAfterIdentifier"; break;
+			case 270: s = "invalid ObjectCreateExpression"; break;
+			case 271: s = "invalid ObjectCreateExpression"; break;
+			case 272: s = "invalid AccessorDecls"; break;
+			case 273: s = "invalid EventAccessorDeclaration"; break;
+			case 274: s = "invalid OverloadableOperator"; break;
+			case 275: s = "invalid EventMemberSpecifier"; break;
+			case 276: s = "invalid LambdaExpr"; break;
+			case 277: s = "invalid AssignmentOperator"; break;
+			case 278: s = "invalid SimpleExpr"; break;
+			case 279: s = "invalid SimpleExpr"; break;
+			case 280: s = "invalid SimpleNonInvocationExpression"; break;
+			case 281: s = "invalid SimpleNonInvocationExpression"; break;
+			case 282: s = "invalid SimpleNonInvocationExpression"; break;
+			case 283: s = "invalid SimpleNonInvocationExpression"; break;
+			case 284: s = "invalid SimpleNonInvocationExpression"; break;
+			case 285: s = "invalid SimpleNonInvocationExpression"; break;
+			case 286: s = "invalid PrimitiveTypeName"; break;
+			case 287: s = "invalid CastTarget"; break;
+			case 288: s = "invalid XmlLiteralExpression"; break;
+			case 289: s = "invalid XmlContentExpression"; break;
+			case 290: s = "invalid XmlElement"; break;
+			case 291: s = "invalid XmlElement"; break;
+			case 292: s = "invalid XmlNestedContent"; break;
+			case 293: s = "invalid XmlAttribute"; break;
+			case 294: s = "invalid XmlAttribute"; break;
+			case 295: s = "invalid ComparisonExpr"; break;
+			case 296: s = "invalid SubLambdaExpression"; break;
+			case 297: s = "invalid FunctionLambdaExpression"; break;
+			case 298: s = "invalid EmbeddedStatement"; break;
+			case 299: s = "invalid EmbeddedStatement"; break;
+			case 300: s = "invalid EmbeddedStatement"; break;
+			case 301: s = "invalid EmbeddedStatement"; break;
+			case 302: s = "invalid EmbeddedStatement"; break;
+			case 303: s = "invalid EmbeddedStatement"; break;
+			case 304: s = "invalid EmbeddedStatement"; break;
+			case 305: s = "invalid FromOrAggregateQueryOperator"; break;
+			case 306: s = "invalid QueryOperator"; break;
+			case 307: s = "invalid PartitionQueryOperator"; break;
+			case 308: s = "invalid Argument"; break;
+			case 309: s = "invalid QualIdentAndTypeArguments"; break;
+			case 310: s = "invalid AttributeArguments"; break;
+			case 311: s = "invalid AttributeArguments"; break;
+			case 312: s = "invalid AttributeArguments"; break;
+			case 313: s = "invalid ParameterModifier"; break;
+			case 314: s = "invalid Statement"; break;
+			case 315: s = "invalid LabelName"; break;
+			case 316: s = "invalid WhileOrUntil"; break;
+			case 317: s = "invalid SingleLineStatementList"; break;
+			case 318: s = "invalid SingleLineStatementList"; break;
+			case 319: s = "invalid OnErrorStatement"; break;
+			case 320: s = "invalid ResumeStatement"; break;
+			case 321: s = "invalid CaseClause"; break;
+			case 322: s = "invalid CaseClause"; break;
 
 			default: s = "error " + errorNumber; break;
 		}
@@ -6531,46 +8076,58 @@ out blockStmt);
 	}
 	
 	static bool[,] set = {
-	{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,T,T,x, x,x,T,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x},
-	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,T,T, x,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,T,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x},
-	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,T,T, T,x,T,x, x,x,x,x, x,x,x,x, x,T,x,T, x,x,T,x, x,x,x,x, T,T,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,T,T,x, x,T,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,T, x,x,x,x, x,T,x,x},
-	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,T,T, T,x,T,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,T,x, x,x,x,x, T,T,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,T,x,x, x,T,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,T, x,x,x,x, x,T,x,x},
-	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,T,T, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x,x, x,x,T,x, x,T,x,T, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,T,T,T, x,x,x,x, x,x,x,T, T,x,T,x, x,x,x,x, T,T,T,x, T,T,T,T, T,x,T,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,T,T, x,T,x,x, x,x,x,x, T,T,x,x, x,x,x,T, T,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,T,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, T,T,T,x, x,T,x,T, T,x,T,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,T,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,x, x,x,x,x, x,x,T,x, x,T,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,T,T,T, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, T,T,T,x, x,T,T,T, T,x,T,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x},
-	{x,T,T,T, T,T,T,T, T,T,T,x, x,T,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,T, x,T,T,T, T,x,T,x, T,x,x,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,x,x, x,T,T,T, T,x,x,x, T,x,x,T, T,x,T,T, T,x,T,x, x,x,T,x, T,x,T,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, T,T,x,T, x,x,T,x, x,T,T,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,T, T,T,T,T, x,x,x,T, T,T,x,T, x,T,x,x, T,T,x,T, x,T,T,T, T,T,x,x, x,T,T,x, x,x,x,T, x,T,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, T,T,T,x, x,T,T,T, T,x,T,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,T,T,T, T,T,T,T, T,T,T,x, x,T,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,T, x,T,T,T, T,x,T,x, T,x,x,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,x,x, x,T,T,T, T,x,x,x, x,x,x,T, T,x,T,T, T,x,T,x, x,x,T,x, T,x,T,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, T,T,x,T, x,x,T,x, x,T,T,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,T, T,T,T,T, x,x,x,T, T,T,x,T, x,T,x,x, T,T,x,T, x,T,T,T, T,T,x,x, x,T,T,x, x,x,x,T, x,T,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x},
-	{x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,T, T,T,T,T, T,x,T,x, T,x,x,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,x,x, x,T,T,T, T,x,x,x, T,x,x,T, T,x,T,T, T,x,T,x, x,x,T,x, T,x,T,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, T,T,x,T, x,x,T,x, x,T,T,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,T, T,T,T,T, x,x,x,T, T,T,x,T, x,T,x,x, T,T,x,T, x,T,T,T, T,T,x,x, x,T,T,x, x,x,x,T, x,T,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,T,T, T,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,T,T,T, T,x,T,x, x,x,x,T, T,T,T,T, T,T,T,x, T,T,T,x, T,T,T,T, T,T,x,x, x,x,T,x, T,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, T,T,x,T, x,T,T,x, x,T,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,T,x,x, x,T,x,x, x,T,x,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x},
-	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,T,T, T,x,x,x, x,x,T,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,T,T,T, T,x,T,x, x,x,x,T, T,T,T,T, T,T,T,x, T,T,T,x, T,T,T,T, T,T,x,x, x,x,T,x, T,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, T,T,x,T, x,T,T,x, x,T,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,T,x,x, x,T,x,x, x,T,x,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x},
-	{x,x,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,T,T,T, T,x,T,x, x,x,x,T, T,T,T,T, T,T,T,x, T,T,T,x, T,T,T,T, T,T,x,x, x,x,T,x, T,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, T,T,x,T, x,x,T,x, x,T,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,T,x,x, x,T,x,x, x,T,x,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x},
-	{x,x,T,T, T,T,T,T, T,T,T,x, T,x,T,T, T,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,T,T,T, T,x,T,x, x,x,x,T, T,T,T,T, T,T,T,x, T,T,T,x, T,T,T,T, T,T,x,x, x,x,T,x, T,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, T,T,x,T, x,T,T,x, x,T,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,T,x,x, x,T,x,x, x,T,x,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,T,T, T,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,T,T,T, T,x,T,x, x,x,x,T, T,T,T,T, T,T,T,x, T,T,T,x, T,T,T,T, T,T,x,x, x,x,T,x, T,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, T,T,x,T, x,x,T,x, x,T,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,T,x,x, x,T,x,x, x,T,x,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,T, x,T,T,T, T,x,T,x, T,x,x,T, T,T,T,T, T,T,T,x, T,T,T,x, T,T,T,T, T,T,x,x, x,x,T,T, T,x,x,x, x,x,x,T, T,x,T,T, T,x,T,x, x,x,T,x, T,x,T,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, T,T,x,T, x,x,T,x, x,T,T,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,T, T,T,T,T, x,x,x,T, T,x,x,T, x,T,x,x, T,T,x,T, x,T,T,T, T,T,x,x, x,T,T,x, x,x,x,T, x,T,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x},
-	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,T,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x},
-	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,T, x,T,T,T, T,x,T,x, T,x,x,T, T,T,T,T, T,T,T,x, T,T,T,x, T,T,T,T, T,T,x,x, x,x,T,T, T,x,x,x, T,x,x,T, T,x,T,T, T,x,T,x, x,x,T,x, T,x,T,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, T,T,x,T, x,x,T,x, x,T,T,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,T, T,T,T,T, x,x,x,T, T,x,x,T, x,T,x,x, T,T,x,T, x,T,T,T, T,T,x,x, x,T,T,x, x,x,x,T, x,T,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-	{x,x,T,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x},
-	{x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x}
+	{T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,x, x,x,T,x, x,x,x,x, x,T,x,x, x,x,x,T, x,x,x,T, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,x, x,x,T,x, x,x,x,x, x,T,x,x, x,x,x,T, x,x,x,T, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, x,T,T,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,x, x,x,T,x, x,x,x,x, x,T,x,x, x,x,x,T, x,x,x,T, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,x,T,x, x,x,T,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,x,x,x, x,x,x,x, x,x,T,x, T,x,x,T, x,x,x,x, x,x,x,x, x,x,T,T, T,x,x,x, T,x,x,T, x,T,x,x, x,x,x,x, T,x,x,x, x,T,x,x, x,x,T,x, x,x,T,x, x,T,x,x, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,T,T,T, x,x,x,x, T,T,x,x, T,T,x,x, x,x,x,x, x,T,T,T, T,T,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,T,T, T,x,x,x, T,x,x,T, x,T,x,x, x,x,x,x, T,x,x,x, x,T,x,x, x,x,T,x, x,x,T,x, x,T,x,x, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,T,T,T, x,x,x,x, T,x,x,x, T,T,x,x, x,x,x,x, x,T,T,T, T,T,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, T,x,x,x, x,x,x,x, x,x,T,x, x,T,T,T, T,T,x,T, x,x,x,x, x,x,x,T, T,x,x,T, x,T,x,x, x,T,T,T, x,x,x,x, x,T,x,x, x,x,x,T, x,x,T,T, x,x,T,T, x,x,x,x, x,x,x,T, T,T,x,x, x,T,x,x, x,x,T,T, x,x,T,x, T,x,x,x, T,x,T,T, T,T,x,T, T,T,T,T, T,x,T,x, x,x,x,x, x,x,x,T, T,x,x,T, x,x,x,x, x,T,T,x, T,T,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, T,x,T,T, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,T, x,T,x,T, T,x,T,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x},
+	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,x, x,x,T,x, x,x,T,x, x,T,x,x, x,x,x,T, x,x,x,T, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,T,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,T,T,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,x, x,x,T,x, x,x,x,x, x,T,x,x, x,x,x,T, x,x,x,T, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,T,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,T, x,T,T,T, T,x,T,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,T, x,T,T,T, T,x,T,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,T,T, T,T,T,T, x,x,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,x,x,x, T,T,T,T, T,T,T,T, x,T,T,T, x,x,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,x,T,T, x,T,x,x, x,x,x,x, T,x,x,x, x,T,T,x, x,x,T,x, x,T,T,x, x,T,x,T, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,T,x,x, x,x,T,T, x,x,T,x, T,T,x,x, T,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,T,T,T, x,x,x,x, T,x,x,x, T,T,x,x, x,T,x,T, T,T,T,T, T,T,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, T,T,T,T, x,T,x,x, x,x,T,T, T,T,x,x, x,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,T,x,x, T,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,T,T,T, T,T,x,x, x,x,x,x, T,T,T,x, T,T,T,x, T,x,T,x, x,T,T,x, T,T,x,T, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,T,x,x, x,x,T,T, x,x,T,x, x,T,x,x, T,x,T,T, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,T,x,T, x,T,T,T, T,T,x,x, x,T,T,T, T,x,T,x, T,x,x,T, T,T,x,T, x,T,T,T, T,T,T,T, T,T,T,x, x,x,T,T, x,T,x,x, x,x,x,x},
+	{x,T,T,T, T,T,T,T, T,T,T,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,x, T,T,T,T, T,T,T,T, T,x,T,T, x,T,x,x, T,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,T,T,T, T,T,x,T, x,T,x,x, T,T,T,x, T,T,T,x, T,x,T,x, x,T,T,x, T,T,x,T, T,x,x,T, x,T,x,T, T,T,T,T, T,x,T,T, x,T,T,x, x,x,T,T, x,x,T,x, x,T,x,x, T,x,T,T, x,x,x,T, T,T,T,x, x,x,x,x, T,x,x,x, x,T,x,T, x,T,T,T, T,T,x,x, x,T,T,T, T,T,T,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,T,T, x,T,x,x, T,x,x,x},
+	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,T,T, T,T,T,T, x,x,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,x,x,x, T,T,T,T, T,T,T,T, x,T,T,T, x,x,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,x,T,T, x,T,x,x, x,x,x,x, T,x,x,x, x,T,T,x, x,x,T,T, x,T,T,x, x,T,x,T, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,T,x,x, x,x,T,T, x,x,T,x, T,T,x,x, T,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,T,T,T, x,x,x,x, T,x,T,x, T,T,x,x, x,T,x,T, T,T,T,T, T,T,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,T,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,T, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x},
+	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,x,x,x, T,T,T,T, T,T,T,T, x,T,T,T, x,x,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,x,T,T, x,T,x,x, x,x,x,x, T,x,x,x, x,T,T,x, x,x,T,x, x,T,T,x, x,T,x,T, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,T,x,x, x,x,T,T, x,x,T,x, x,T,x,x, T,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,T,T,T, x,x,x,x, T,x,x,x, T,T,x,x, x,T,x,T, T,T,T,T, T,T,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,T,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,x, x,x,T,x, x,x,x,x, x,T,x,x, x,x,x,T, x,x,x,T, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,T,x, T,x,x,x, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,T,T, T,T,T,T, x,x,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,x,x,x, T,T,T,T, T,T,T,T, x,T,T,T, x,x,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,x,T,T, x,T,x,x, x,x,x,x, T,x,x,x, x,T,T,x, x,x,T,x, x,T,T,x, x,T,x,T, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,T,x,x, x,x,T,T, x,x,T,x, x,T,x,x, T,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,T,T,T, x,x,x,x, T,x,x,x, T,T,x,x, x,T,x,T, T,T,T,T, T,T,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,T,T, T,T,T,T, x,x,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,T,x,x, T,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,T,T,T, T,T,x,x, x,x,x,x, T,T,T,x, T,T,T,x, T,x,T,T, x,T,T,x, T,T,x,T, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,T,x,x, x,x,T,T, x,x,T,x, T,T,x,x, T,x,T,T, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,T,x,T, x,T,T,T, T,T,x,x, x,T,T,T, T,x,T,x, T,x,T,T, T,T,x,T, x,T,T,T, T,T,T,T, T,T,T,x, x,x,T,T, x,T,x,x, x,x,x,x},
+	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, T,T,T,T, x,x,T,x, x,x,T,T, T,T,T,T, x,x,T,T, x,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,x,x,x, T,T,T,T, T,T,T,T, x,T,T,T, x,x,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,x,T,T, x,T,x,x, x,x,x,x, T,x,x,x, x,T,T,x, x,x,T,T, x,T,T,x, x,T,x,T, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,T,x,x, x,x,T,T, x,x,T,x, T,T,x,x, T,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,T,T,T, x,x,x,x, T,x,T,x, T,T,x,x, x,T,x,T, T,T,T,T, T,T,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,x,x,x, T,T,T,T, T,T,T,T, x,T,T,T, x,x,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,x,T,T, x,T,x,x, x,x,x,x, T,x,x,x, x,T,T,x, x,x,T,x, x,T,T,x, x,T,x,T, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,T,x,x, x,x,T,T, x,x,T,x, x,T,x,x, T,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,T,T,T, x,x,x,x, T,x,x,x, T,T,x,x, x,T,x,T, T,T,T,T, T,T,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,T,x,x, T,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,T,T,T, T,T,x,x, x,T,x,x, T,T,T,x, T,T,T,x, T,x,T,x, x,T,T,x, T,T,x,T, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,T,x,x, x,x,T,T, x,x,T,x, x,T,x,x, T,x,T,T, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,T,x,T, x,T,T,T, T,T,x,x, x,T,T,T, T,x,T,x, T,x,x,T, T,T,x,T, x,T,T,T, T,T,T,T, T,T,T,x, x,x,T,T, x,T,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+	{x,T,T,T, T,T,T,T, T,T,T,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,x, T,T,T,x, T,T,T,T, T,x,T,T, x,T,x,x, T,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,T,T,T, T,T,x,T, x,T,x,x, T,T,T,x, T,T,T,x, T,x,T,x, x,T,T,x, T,T,x,T, T,x,x,T, x,T,x,T, T,T,T,T, T,x,T,T, x,T,T,x, x,x,T,T, x,x,T,x, x,T,x,x, T,x,T,T, x,x,x,T, T,T,T,x, x,x,x,x, T,x,x,x, x,T,x,T, x,T,T,T, T,T,x,x, x,T,T,T, T,T,T,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,T,T, x,T,x,x, T,x,x,x},
+	{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,T,x,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,x, x,x,T,x, x,x,x,x, x,T,x,x, x,x,x,T, x,x,x,T, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,T,T, T,T,T,T, T,T,T,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,x, x,x,T,x, T,T,T,T, T,x,T,T, x,T,x,x, T,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,T,T,T, T,T,x,x, x,x,x,x, T,T,T,x, T,T,T,x, T,x,T,x, x,T,T,x, T,T,x,T, x,x,x,T, x,T,x,T, x,x,T,T, x,x,x,T, x,T,x,x, x,x,T,T, x,x,T,x, x,T,x,x, T,x,T,T, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,T,x,T, x,T,T,T, T,T,x,x, x,T,T,T, T,x,T,x, T,x,x,T, T,T,x,T, x,T,T,T, T,T,T,T, T,T,T,x, x,x,T,T, x,T,x,x, x,x,x,x},
+	{x,x,T,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,T,T,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,x, T,x,x,x, x,T,x,x, x,x,T,x, x,x,x,x, x,T,x,x, x,x,x,T, x,x,x,T, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,T,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x},
+	{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x}
 
 	};
 } // end Parser

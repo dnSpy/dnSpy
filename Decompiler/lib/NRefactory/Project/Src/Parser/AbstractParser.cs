@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -63,9 +59,10 @@ namespace ICSharpCode.NRefactory.Parser
 		
 		public abstract void Parse();
 		
+		public abstract TypeReference ParseTypeReference ();
 		public abstract Expression ParseExpression();
 		public abstract BlockStatement ParseBlock();
-		public abstract IList<INode> ParseTypeMembers();
+		public abstract List<INode> ParseTypeMembers();
 		
 		protected abstract void SynErr(int line, int col, int errorNumber);
 		

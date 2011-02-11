@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 
@@ -32,37 +28,20 @@ namespace ICSharpCode.NRefactory
 	{
 		public abstract object AcceptVisitor(ISpecialVisitor visitor, object data);
 		
-		Location startPosition, endPosition;
-		
 		protected AbstractSpecial(Location position)
 		{
-			this.startPosition = position;
-			this.endPosition = position;
+			this.StartPosition = position;
+			this.EndPosition = position;
 		}
 		
 		protected AbstractSpecial(Location startPosition, Location endPosition)
 		{
-			this.startPosition = startPosition;
-			this.endPosition = endPosition;
+			this.StartPosition = startPosition;
+			this.EndPosition = endPosition;
 		}
 		
-		public Location StartPosition {
-			get {
-				return startPosition;
-			}
-			set {
-				startPosition = value;
-			}
-		}
-		
-		public Location EndPosition {
-			get {
-				return endPosition;
-			}
-			set {
-				endPosition = value;
-			}
-		}
+		public Location StartPosition { get; set; }
+		public Location EndPosition { get; set; }
 		
 		public override string ToString()
 		{

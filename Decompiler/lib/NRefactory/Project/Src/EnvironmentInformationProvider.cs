@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 
@@ -11,14 +7,14 @@ namespace ICSharpCode.NRefactory
 {
 	public interface IEnvironmentInformationProvider
 	{
-		bool HasField(string fullTypeName, int typeParameterCount, string fieldName);
+		bool HasField(string reflectionTypeName, int typeParameterCount, string fieldName);
 	}
 	
 	sealed class DummyEnvironmentInformationProvider : IEnvironmentInformationProvider
 	{
 		internal static readonly IEnvironmentInformationProvider Instance = new DummyEnvironmentInformationProvider();
 		
-		public bool HasField(string fullTypeName, int typeParameterCount, string fieldName)
+		public bool HasField(string reflectionTypeName, int typeParameterCount, string fieldName)
 		{
 			return false;
 		}

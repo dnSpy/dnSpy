@@ -22,7 +22,7 @@ partial class Parser : AbstractParser
 
 -->productions
 	
-	public override void Parse()
+	void ParseRoot()
 	{
 -->parseRoot
 	}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Visitors;
@@ -41,19 +42,19 @@ namespace Decompiler.Transforms.Ast
 			base.VisitBlockStatement(blockStatement, data);
 			
 			// Remove redundant jump at the end of block
-			INode lastStmt = blockStatement.Children.Last;
+			INode lastStmt = blockStatement.Children.Last();
 			// End of while loop
 			if (lastStmt is ContinueStatement && 
 			    blockStatement.Parent is DoLoopStatement)
 			{
-				lastStmt.Remove();
+				blockStatement.Children.Remove(lastStmt);
 				return null;
 			}
 			// End of for loop
 			if (lastStmt is ContinueStatement && 
 			    blockStatement.Parent is ForStatement)
 			{
-				lastStmt.Remove();
+				blockStatement.Children.Remove(lastStmt);
 				return null;
 			}
 			// End of method
@@ -61,7 +62,7 @@ namespace Decompiler.Transforms.Ast
 			    (blockStatement.Parent is MethodDeclaration || blockStatement.Parent is ConstructorDeclaration) &&
 			    ((ReturnStatement)lastStmt).Expression.IsNull)
 			{
-				lastStmt.Remove();
+				blockStatement.Children.Remove(lastStmt);
 				return null;
 			}
 			
@@ -109,7 +110,7 @@ namespace Decompiler.Transforms.Ast
 				} else if (!forLoop.Condition.IsNull) {
 					return forLoop.Condition;
 				} else {
-					return EnterBlockStatement((Statement)forLoop.EmbeddedStatement.Children.First);
+					return EnterBlockStatement((Statement)forLoop.EmbeddedStatement.Children.First());
 				}
 			}
 			
@@ -130,7 +131,7 @@ namespace Decompiler.Transforms.Ast
 					return forLoop.Condition;
 				} else if (forLoop.EmbeddedStatement is BlockStatement &&
 					       forLoop.EmbeddedStatement.Children.Count > 0) {
-					statement = (Statement)forLoop.EmbeddedStatement.Children.First;
+					statement = (Statement)forLoop.EmbeddedStatement.Children.First();
 					return EnterBlockStatement(statement);  // Simplify again
 				}
 			}
@@ -163,8 +164,8 @@ namespace Decompiler.Transforms.Ast
 			// Continue statement which moves at the very end of loop
 			if (CurrentLoop != null &&
 			    (CurrentLoop.EmbeddedStatement is BlockStatement) &&
-			    ((CurrentLoop.EmbeddedStatement as BlockStatement).Children.Last as LabelStatement) != null &&
-			    ((CurrentLoop.EmbeddedStatement as BlockStatement).Children.Last as LabelStatement).Label == gotoStatement.Label) {
+			    ((CurrentLoop.EmbeddedStatement as BlockStatement).Children.Last() as LabelStatement) != null &&
+			    ((CurrentLoop.EmbeddedStatement as BlockStatement).Children.Last() as LabelStatement).Label == gotoStatement.Label) {
 				ReplaceCurrentNode(new ContinueStatement());
 				return null;
 			}

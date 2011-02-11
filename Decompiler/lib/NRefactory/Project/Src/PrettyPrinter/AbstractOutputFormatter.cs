@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -70,6 +66,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			this.prettyPrintOptions = prettyPrintOptions;
 		}
 		
+		internal bool isIndented = false;
 		public void Indent()
 		{
 			if (DoIndent) {
@@ -86,12 +83,20 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 						++indent;
 					}
 				}
+				isIndented = true;
 			}
+		}
+		
+		public void Reset ()
+		{
+			text.Length = 0;
+			isIndented = false;
 		}
 		
 		public void Space()
 		{
 			text.Append(' ');
+			isIndented = false;
 		}
 		
 		internal int lastLineStart = 0;
@@ -117,6 +122,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				}
 				text.AppendLine();
 				lastLineStart = text.Length;
+				isIndented = false;
 			}
 		}
 		
@@ -128,15 +134,23 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		{
 			WriteInPreviousLine(txt + Environment.NewLine, forceWriteInPreviousBlock);
 		}
+		protected void WriteLineInPreviousLine(string txt, bool forceWriteInPreviousBlock, bool indent)
+		{
+			WriteInPreviousLine(txt + Environment.NewLine, forceWriteInPreviousBlock, indent);
+		}
 		
 		protected void WriteInPreviousLine(string txt, bool forceWriteInPreviousBlock)
+		{
+			WriteInPreviousLine(txt, forceWriteInPreviousBlock, true);
+		}
+		protected void WriteInPreviousLine(string txt, bool forceWriteInPreviousBlock, bool indent)
 		{
 			if (txt.Length == 0) return;
 			
 			bool lastCharacterWasNewLine = LastCharacterIsNewLine;
 			if (lastCharacterWasNewLine) {
 				if (forceWriteInPreviousBlock == false) {
-					if (txt != Environment.NewLine) Indent();
+					if (indent && txt != Environment.NewLine) Indent();
 					text.Append(txt);
 					lineBeforeLastStart = lastLineStart;
 					lastLineStart = text.Length;
@@ -146,7 +160,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			}
 			string lastLine = text.ToString(lastLineStart, text.Length - lastLineStart);
 			text.Remove(lastLineStart, text.Length - lastLineStart);
-			if (txt != Environment.NewLine) {
+			if (indent && txt != Environment.NewLine) {
 				if (forceWriteInPreviousBlock) ++indentationLevel;
 				Indent();
 				if (forceWriteInPreviousBlock) --indentationLevel;
@@ -159,6 +173,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				lineBeforeLastStart = lastLineStart;
 				lastLineStart = text.Length;
 			}
+			isIndented = false;
 		}
 		
 		/// <summary>
@@ -170,6 +185,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			lineBeforeLastStart = text.Length;
 			text.Append(specialText);
 			lastLineStart = text.Length;
+			isIndented = false;
 		}
 		
 		public void PrintTokenList(ArrayList tokenList)
@@ -184,7 +200,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		
 		public virtual void PrintPreprocessingDirective(PreprocessingDirective directive, bool forceWriteInPreviousBlock)
 		{
-			if (string.IsNullOrEmpty(directive.Arg))
+			if (!directive.Expression.IsNull) {
+				CSharpOutputVisitor visitor = new CSharpOutputVisitor();
+				directive.Expression.AcceptVisitor(visitor, null);
+				WriteLineInPreviousLine(directive.Cmd + " " + visitor.Text, forceWriteInPreviousBlock);
+			} else if (string.IsNullOrEmpty(directive.Arg))
 				WriteLineInPreviousLine(directive.Cmd, forceWriteInPreviousBlock);
 			else
 				WriteLineInPreviousLine(directive.Cmd + " " + directive.Arg, forceWriteInPreviousBlock);
@@ -200,6 +220,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		public void PrintText(string text)
 		{
 			this.text.Append(text);
+			isIndented = false;
 		}
 		
 		public abstract void PrintIdentifier(string identifier);

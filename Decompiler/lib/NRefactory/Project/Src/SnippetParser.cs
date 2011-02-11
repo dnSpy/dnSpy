@@ -1,18 +1,25 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Parser;
 
 namespace ICSharpCode.NRefactory
 {
+	public enum SnippetType
+	{
+		None,
+		CompilationUnit,
+		Expression,
+		Statements,
+		TypeMembers
+	}
+	
 	/// <summary>
 	/// The snippet parser supports parsing code snippets that are not valid as a full compilation unit.
 	/// </summary>
@@ -25,22 +32,20 @@ namespace ICSharpCode.NRefactory
 			this.language = language;
 		}
 		
-		Errors errors;
-		List<ISpecial> specials;
-		
 		/// <summary>
 		/// Gets the errors of the last call to Parse(). Returns null if parse was not yet called.
 		/// </summary>
-		public Errors Errors {
-			get { return errors; }
-		}
+		public Errors Errors { get; private set; }
 		
 		/// <summary>
 		/// Gets the specials of the last call to Parse(). Returns null if parse was not yet called.
 		/// </summary>
-		public List<ISpecial> Specials {
-			get { return specials; }
-		}
+		public List<ISpecial> Specials { get; private set; }
+		
+		/// <summary>
+		/// Gets the snippet type of the last call to Parse(). Returns None if parse was not yet called.
+		/// </summary>
+		public SnippetType SnippetType { get; private set; }
 		
 		/// <summary>
 		/// Parse the code. The result may be a CompilationUnit, an Expression, a list of statements or a list of class
@@ -50,11 +55,12 @@ namespace ICSharpCode.NRefactory
 		{
 			IParser parser = ParserFactory.CreateParser(language, new StringReader(code));
 			parser.Parse();
-			errors = parser.Errors;
-			specials = parser.Lexer.SpecialTracker.RetrieveSpecials();
+			this.Errors = parser.Errors;
+			this.Specials = parser.Lexer.SpecialTracker.RetrieveSpecials();
+			this.SnippetType = SnippetType.CompilationUnit;
 			INode result = parser.CompilationUnit;
 			
-			if (errors.Count > 0) {
+			if (this.Errors.Count > 0) {
 				if (language == SupportedLanguage.CSharp) {
 					// SEMICOLON HACK : without a trailing semicolon, parsing expressions does not work correctly
 					parser = ParserFactory.CreateParser(language, new StringReader(code + ";"));
@@ -62,38 +68,45 @@ namespace ICSharpCode.NRefactory
 					parser = ParserFactory.CreateParser(language, new StringReader(code));
 				}
 				Expression expression = parser.ParseExpression();
-				if (expression != null && parser.Errors.Count < errors.Count) {
-					errors = parser.Errors;
-					specials = parser.Lexer.SpecialTracker.RetrieveSpecials();
+				if (expression != null && parser.Errors.Count < this.Errors.Count) {
+					this.Errors = parser.Errors;
+					this.Specials = parser.Lexer.SpecialTracker.RetrieveSpecials();
+					this.SnippetType = SnippetType.Expression;
 					result = expression;
 				}
 			}
-			if (errors.Count > 0) {
+			if (this.Errors.Count > 0) {
 				parser = ParserFactory.CreateParser(language, new StringReader(code));
 				BlockStatement block = parser.ParseBlock();
-				if (block != null && parser.Errors.Count < errors.Count) {
-					errors = parser.Errors;
-					specials = parser.Lexer.SpecialTracker.RetrieveSpecials();
+				if (block != null && parser.Errors.Count < this.Errors.Count) {
+					this.Errors = parser.Errors;
+					this.Specials = parser.Lexer.SpecialTracker.RetrieveSpecials();
+					this.SnippetType = SnippetType.Statements;
 					result = block;
 				}
 			}
-			if (errors.Count > 0) {
+			if (this.Errors.Count > 0) {
 				parser = ParserFactory.CreateParser(language, new StringReader(code));
-				IList<INode> members = parser.ParseTypeMembers();
-				if (members != null && members.Count > 0 && parser.Errors.Count < errors.Count) {
-					errors = parser.Errors;
-					specials = parser.Lexer.SpecialTracker.RetrieveSpecials();
+				List<INode> members = parser.ParseTypeMembers();
+				if (members != null && members.Count > 0 && parser.Errors.Count < this.Errors.Count) {
+					this.Errors = parser.Errors;
+					this.Specials = parser.Lexer.SpecialTracker.RetrieveSpecials();
+					this.SnippetType = SnippetType.TypeMembers;
 					result = new NodeListNode(members);
+					result.StartLocation = members[0].StartLocation;
+					result.EndLocation = members[members.Count - 1].EndLocation;
 				}
 			}
+			Debug.Assert(result is CompilationUnit || !result.StartLocation.IsEmpty);
+			Debug.Assert(result is CompilationUnit || !result.EndLocation.IsEmpty);
 			return result;
 		}
 		
 		sealed class NodeListNode : INode
 		{
-			IList<INode> nodes;
+			List<INode> nodes;
 			
-			public NodeListNode(IList<INode> nodes)
+			public NodeListNode(List<INode> nodes)
 			{
 				this.nodes = nodes;
 			}
@@ -103,21 +116,14 @@ namespace ICSharpCode.NRefactory
 				set { throw new NotSupportedException(); }
 			}
 			
-			public IList<INode> Children {
+			public List<INode> Children {
 				get { return nodes; }
 			}
 			
-			public Location StartLocation {
-				get { return Location.Empty; }
-				set { throw new NotSupportedException(); }
-			}
+			public Location StartLocation { get; set; }
+			public Location EndLocation { get; set; }
 			
-			public Location EndLocation {
-				get { return Location.Empty; }
-				set { throw new NotSupportedException(); }
-			}
-			
-			public Dictionary<string, object> UserData { get; set; }
+			public object UserData { get; set; }
 			
 			public object AcceptChildren(IAstVisitor visitor, object data)
 			{

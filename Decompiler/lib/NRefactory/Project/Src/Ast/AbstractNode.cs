@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -15,20 +11,14 @@ namespace ICSharpCode.NRefactory.Ast
 {
 	public abstract class AbstractNode : INode
 	{
-		NodeCollection children;
+		List<INode> children = new List<INode>();
 		
 		public INode Parent { get; set; }
 		public Location StartLocation { get; set; }
 		public Location EndLocation { get; set; }
-		public Dictionary<string, object> UserData { get; set; }
+		public object UserData { get; set; }
 		
-		IList<INode> INode.Children {
-			get {
-				return children;
-			}
-		}
-		
-		public NodeCollection Children {
+		public List<INode> Children {
 			get {
 				return children;
 			}
@@ -38,16 +28,10 @@ namespace ICSharpCode.NRefactory.Ast
 			}
 		}
 		
-		public AbstractNode()
-		{
-			children = new NodeCollection();
-			children.Added += delegate(object sender, NodeEventArgs e) { e.Node.Parent = this; };
-			this.UserData = new Dictionary<string, object>();
-		}
-		
 		public virtual void AddChild(INode childNode)
 		{
 			Debug.Assert(childNode != null);
+			childNode.Parent = this;
 			children.Add(childNode);
 		}
 		
@@ -62,7 +46,7 @@ namespace ICSharpCode.NRefactory.Ast
 			return data;
 		}
 		
-		public static string GetCollectionString<T>(IList<T> collection)
+		public static string GetCollectionString(ICollection collection)
 		{
 			StringBuilder output = new StringBuilder();
 			output.Append('{');

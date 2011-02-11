@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using ICSharpCode.NRefactory.Ast;
 
@@ -22,7 +18,7 @@ namespace ICSharpCode.NRefactory.Parser
 		
 		public Location GetDeclarationLocation(Location keywordLocation)
 		{
-			if(location.X == -1 && location.Y == -1) {
+			if(location.IsEmpty) {
 				return keywordLocation;
 			}
 			return location;
@@ -46,7 +42,7 @@ namespace ICSharpCode.NRefactory.Parser
 		
 		public void Add(Modifiers m, Location tokenLocation) 
 		{
-			if(location.X == -1 && location.Y == -1) {
+			if(location.IsEmpty) {
 				location = tokenLocation;
 			}
 			

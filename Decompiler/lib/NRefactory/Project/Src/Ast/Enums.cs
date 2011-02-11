@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 
@@ -20,7 +16,6 @@ namespace ICSharpCode.NRefactory.Ast
 		Internal  = 0x0002,
 		Protected = 0x0004,
 		Public    = 0x0008,
-		Dim	      = 0x0010,	// VB.NET SPECIFIC, for fields/local variables only
 		
 		// Scope
 		Abstract  = 0x0010,  // == 	MustOverride/MustInherit
@@ -44,6 +39,8 @@ namespace ICSharpCode.NRefactory.Ast
 		WithEvents = 0x20000, // VB specific
 		Default    = 0x40000, // VB specific
 		Fixed      = 0x80000, // C# specific (fixed size arrays in unsafe structs)
+		
+		Dim	       = 0x100000,	// VB.NET SPECIFIC, for fields/local variables only
 		
 		/// <summary>Generated code, not part of parsed code</summary>
 		Synthetic  = 0x200000,
@@ -118,6 +115,13 @@ namespace ICSharpCode.NRefactory.Ast
 		Params = 8,
 		Optional = 16
 	}
+	
+	public enum VarianceModifier
+	{
+		Invariant,
+		Covariant,
+		Contravariant
+	};
 	
 	public enum AssignmentOperatorType
 	{
@@ -198,8 +202,14 @@ namespace ICSharpCode.NRefactory.Ast
 		
 		/// <summary>VB-only: Like</summary>
 		Like,
-		/// <summary>C#: ??</summary>
+		/// <summary>
+		/// 	C#: ??
+		/// 	VB: IF(x, y)
+		/// </summary>
 		NullCoalescing,
+		
+		/// <summary>VB-only: !</summary>
+		DictionaryAccess
 	}
 	
 	public enum CastType
@@ -238,9 +248,9 @@ namespace ICSharpCode.NRefactory.Ast
 		PostDecrement,
 		
 		/// <summary>Dereferencing pointer</summary>
-		Star,
+		Dereference,
 		/// <summary>Get address of</summary>
-		BitWiseAnd
+		AddressOf
 	}
 	
 	public enum ContinueType
@@ -304,6 +314,9 @@ namespace ICSharpCode.NRefactory.Ast
 		Modulus,
 		Concat,
 		
+		UnaryPlus,
+		UnaryMinus,
+		
 		Not,
 		BitNot,
 		
@@ -356,7 +369,8 @@ namespace ICSharpCode.NRefactory.Ast
 		Explicit,
 		Strict,
 		CompareBinary,
-		CompareText
+		CompareText,
+		Infer
 	}
 	
 	/// <summary>
@@ -364,6 +378,35 @@ namespace ICSharpCode.NRefactory.Ast
 	/// </summary>
 	public enum QueryExpressionOrderingDirection
 	{
-		None, Ascending, Descending
+		None,
+		Ascending,
+		Descending
+	}
+	
+	/// <summary>
+	/// Specifies the partition type for a VB.NET
+	/// query expression.
+	/// </summary>
+	public enum QueryExpressionPartitionType
+	{
+		Take,
+		TakeWhile,
+		Skip,
+		SkipWhile
+	}
+	
+	public enum XmlAxisType
+	{
+		Element, // .
+		Attribute, // .@
+		Descendents // ...
+	}
+	
+	public enum XmlContentType
+	{
+		Comment,
+		Text,
+		CData,
+		ProcessingInstruction
 	}
 }

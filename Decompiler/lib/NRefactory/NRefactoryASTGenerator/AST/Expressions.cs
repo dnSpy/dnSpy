@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -17,6 +13,7 @@ namespace NRefactoryASTGenerator.Ast
 	class PrimitiveExpression : Expression {}
 	
 	enum ParameterModifiers { In }
+	enum QueryExpressionPartitionType { }
 	
 	class ParameterDeclarationExpression : Expression {
 		List<AttributeSection> attributes;
@@ -35,7 +32,17 @@ namespace NRefactoryASTGenerator.Ast
 		string     name;
 		Expression expression;
 		
+		public NamedArgumentExpression() { }
 		public NamedArgumentExpression(string name, Expression expression) {}
+	}
+	
+	class MemberInitializerExpression : Expression {
+		string     name;
+		bool       isKey;
+		Expression expression;
+		
+		public MemberInitializerExpression() { }
+		public MemberInitializerExpression(string name, Expression expression) {}
 	}
 	
 	[IncludeBoolProperty("IsAnonymousType", "return createType.IsNull || string.IsNullOrEmpty(createType.Type);")]
@@ -86,6 +93,7 @@ namespace NRefactoryASTGenerator.Ast
 		BinaryOperatorType op;
 		Expression         right;
 		
+		public BinaryOperatorExpression() { }
 		public BinaryOperatorExpression(Expression left, BinaryOperatorType op, Expression right) {}
 	}
 	
@@ -101,7 +109,6 @@ namespace NRefactoryASTGenerator.Ast
 		public CastExpression(TypeReference castTo, Expression expression, CastType castType) {}
 	}
 	
-	[IncludeMember("[Obsolete] public string FieldName { get { return MemberName; } set { MemberName = value; } }")]
 	class MemberReferenceExpression : Expression
 	{
 		Expression targetObject;
@@ -113,10 +120,10 @@ namespace NRefactoryASTGenerator.Ast
 	
 	class PointerReferenceExpression : Expression {
 		Expression targetObject;
-		string     identifier;
+		string     memberName;
 		List<TypeReference> typeArguments;
 		
-		public PointerReferenceExpression(Expression targetObject, string identifier) {}
+		public PointerReferenceExpression(Expression targetObject, string memberName) {}
 	}
 	
 	class IdentifierExpression : Expression {
@@ -148,7 +155,6 @@ namespace NRefactoryASTGenerator.Ast
 		public TypeOfExpression(TypeReference typeReference) {}
 	}
 	
-	[IncludeMember("public TypeReferenceExpression(string typeName) : this(new TypeReference(typeName)) {}")]
 	class TypeReferenceExpression : Expression {
 		TypeReference typeReference;
 		
@@ -171,10 +177,12 @@ namespace NRefactoryASTGenerator.Ast
 		bool hasParameterList;
 	}
 	
+	[IncludeMember("public Location ExtendedEndLocation { get; set; }")]
 	class LambdaExpression : Expression {
 		List<ParameterDeclarationExpression> parameters;
-		BlockStatement statementBody;
+		Statement statementBody;
 		Expression expressionBody;
+		TypeReference returnType;
 	}
 	
 	class CheckedExpression : Expression {
@@ -188,6 +196,7 @@ namespace NRefactoryASTGenerator.Ast
 		Expression trueExpression;
 		Expression falseExpression;
 		
+		public ConditionalExpression() { }
 		public ConditionalExpression(Expression condition, Expression trueExpression, Expression falseExpression) {}
 	}
 	
@@ -249,11 +258,24 @@ namespace NRefactoryASTGenerator.Ast
 	
 	[ImplementNullable(NullableImplementation.Shadow)]
 	class QueryExpression : Expression {
+		
+		/// <remarks>
+		/// Either from or aggregate clause.
+		/// </remarks>
 		QueryExpressionFromClause fromClause;
-		List<QueryExpressionClause> fromLetWhereClauses;
-		List<QueryExpressionOrdering> orderings;
+		
+		bool isQueryContinuation;
+		
+		List<QueryExpressionClause> middleClauses;
+		
+		/// <remarks>
+		/// C# only.
+		/// </remarks>
 		QueryExpressionClause selectOrGroupClause;
-		QueryExpressionIntoClause intoClause;
+	}
+	
+	class QueryExpressionVB : Expression {
+		List<QueryExpressionClause> clauses;
 	}
 	
 	[ImplementNullable]
@@ -269,21 +291,58 @@ namespace NRefactoryASTGenerator.Ast
 		Expression expression;
 	}
 	
-	abstract class QueryExpressionFromOrJoinClause : QueryExpressionClause {
-		TypeReference type;
-		[QuestionMarkDefault]
+	[ImplementNullable(NullableImplementation.Shadow)]
+	class QueryExpressionFromClause : QueryExpressionClause {
+		List<CollectionRangeVariable> sources;
+	}
+
+	class QueryExpressionAggregateClause : 	QueryExpressionClause {
+		CollectionRangeVariable source;
+		List<QueryExpressionClause> middleClauses;
+		List<ExpressionRangeVariable> intoVariables;
+	}
+	
+	[ImplementNullable]
+	class ExpressionRangeVariable : AbstractNode, INullable {
 		string identifier;
-		Expression inExpression;
+		Expression expression;
+		TypeReference type;
+	}
+	
+	[ImplementNullable]
+	class CollectionRangeVariable : AbstractNode, INullable {
+		string identifier;
+		Expression expression;
+		TypeReference type;
+	}
+	
+	class QueryExpressionJoinClause : QueryExpressionClause {
+		Expression onExpression;
+		Expression equalsExpression;
+		CollectionRangeVariable source;
+		
+		string intoIdentifier;
 	}
 	
 	[ImplementNullable(NullableImplementation.Shadow)]
-	class QueryExpressionFromClause : QueryExpressionFromOrJoinClause { }
+	class QueryExpressionJoinVBClause : QueryExpressionClause {
+		CollectionRangeVariable joinVariable;
+		QueryExpressionJoinVBClause subJoin;
+		List<QueryExpressionJoinConditionVB> conditions;
+	}
+
+	class QueryExpressionPartitionVBClause : QueryExpressionClause {
+		Expression expression;
+		QueryExpressionPartitionType partitionType;
+	}
 	
-	class QueryExpressionJoinClause : QueryExpressionFromOrJoinClause {
-		Expression onExpression;
-		Expression equalsExpression;
-		
-		string intoIdentifier;
+	class QueryExpressionJoinConditionVB : AbstractNode {
+		Expression leftSide;
+		Expression rightSide;
+	}
+	
+	class QueryExpressionOrderClause : QueryExpressionClause {
+		List<QueryExpressionOrdering> orderings;
 	}
 	
 	class QueryExpressionOrdering : AbstractNode {
@@ -298,17 +357,80 @@ namespace NRefactoryASTGenerator.Ast
 	class QueryExpressionSelectClause : QueryExpressionClause {
 		Expression projection;
 	}
+
+	class QueryExpressionSelectVBClause : QueryExpressionClause {
+		List<ExpressionRangeVariable> variables;
+	}
+	
+	class QueryExpressionLetVBClause : QueryExpressionClause {
+		List<ExpressionRangeVariable> variables;
+	}
+	
+	class QueryExpressionDistinctClause : QueryExpressionClause {
+		
+	}
 	
 	class QueryExpressionGroupClause : QueryExpressionClause {
 		Expression projection;
 		Expression groupBy;
 	}
 	
-	[ImplementNullable(NullableImplementation.Shadow)]
-	class QueryExpressionIntoClause : QueryExpressionClause {
-		[QuestionMarkDefault]
-		string intoIdentifier;
+	class QueryExpressionGroupVBClause : QueryExpressionClause  {
+		List<ExpressionRangeVariable> groupVariables;
+		List<ExpressionRangeVariable> byVariables;
+		List<ExpressionRangeVariable> intoVariables;
+	}
+	
+	class QueryExpressionGroupJoinVBClause : QueryExpressionClause {
+		QueryExpressionJoinVBClause joinClause;
+		List<ExpressionRangeVariable> intoVariables;
+	}
+	
+	enum XmlAxisType { }
+	
+	class XmlMemberAccessExpression : Expression {
+		Expression targetObject;
+		XmlAxisType axisType;
+		bool isXmlIdentifier;
+		string identifier;
 		
-		QueryExpression continuedQuery;
+		public XmlMemberAccessExpression(Expression targetObject, XmlAxisType axisType, string identifier, bool isXmlIdentifier) {}
+	}
+
+	abstract class XmlExpression : Expression { }
+
+	class XmlDocumentExpression : XmlExpression {
+		List<XmlExpression> expressions;
+	}
+	
+	enum XmlContentType { }
+	
+	class XmlContentExpression : XmlExpression {
+		string content;
+		XmlContentType type;
+		
+		public XmlContentExpression(string content, XmlContentType type) {}
+	}
+	
+	class XmlEmbeddedExpression : XmlExpression {
+		Expression inlineVBExpression;
+	}
+
+	[IncludeBoolProperty("IsExpression", "return !content.IsNull;")]
+	[IncludeBoolProperty("NameIsExpression", "return !nameExpression.IsNull;")]
+	[HasChildren]
+	class XmlElementExpression : XmlExpression {
+		Expression content;
+		Expression nameExpression;
+		string xmlName;
+		List<XmlExpression> attributes;
+	}
+	
+	[IncludeBoolProperty("IsLiteralValue", "return expressionValue.IsNull;")]
+	class XmlAttributeExpression : XmlExpression {
+		string name;
+		string literalValue;
+		bool useDoubleQuotes;
+		Expression expressionValue;
 	}
 }

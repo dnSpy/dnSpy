@@ -1,0 +1,58 @@
+﻿<project schemaVersion="1.6.0.2">
+    <assemblies>
+        <assembly assemblyPath="..\..\..\..\..\..\AddIns\AddIns\Misc\Debugger\Debugger.Core.dll" xmlCommentsPath="..\..\..\..\..\..\AddIns\AddIns\Misc\Debugger\Debugger.Core.xml" commentsOnly="False" />
+    </assemblies>
+    <namespaceSummaries>
+        <namespaceSummaryItem name="" isDocumented="False" />
+        <namespaceSummaryItem name="Debugger" isDocumented="True" />
+        <namespaceSummaryItem name="Debugger.Expressions" isDocumented="True" />
+        <namespaceSummaryItem name="Debugger.Interop" isDocumented="False" />
+        <namespaceSummaryItem name="Debugger.Interop.CorDebug" isDocumented="False" />
+        <namespaceSummaryItem name="Debugger.Interop.CorSym" isDocumented="False" />
+        <namespaceSummaryItem name="Debugger.Interop.MetaData" isDocumented="False" />
+        <namespaceSummaryItem name="Debugger.MetaData" isDocumented="True" />
+        <namespaceSummaryItem name="Debugger.Tests" isDocumented="False" />
+        <namespaceSummaryItem name="Debugger.Util" isDocumented="False" />
+        <namespaceSummaryItem name="Debugger.Wrappers" isDocumented="False" />
+        <namespaceSummaryItem name="Debugger.Wrappers.CorDebug" isDocumented="False" />
+        <namespaceSummaryItem name="Debugger.Wrappers.CorSym" isDocumented="False" />
+        <namespaceSummaryItem name="Debugger.Wrappers.MetaData" isDocumented="False" />
+    </namespaceSummaries>
+    <ProjectSummary>This library provides features for debugging managed applications.</ProjectSummary>
+    <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace</MissingTags>
+    <VisibleItems>InheritedMembers, Protected, SealedProtected</VisibleItems>
+    <HtmlHelp1xCompilerPath path="" />
+    <HtmlHelp2xCompilerPath path="" />
+    <OutputPath>.\docs\</OutputPath>
+    <SandcastlePath path="" />
+    <WorkingPath path="" />
+    <CleanIntermediates>True</CleanIntermediates>
+    <KeepLogFile>True</KeepLogFile>
+    <HelpFileFormat>HtmlHelp1x</HelpFileFormat>
+    <PurgeDuplicateTopics>True</PurgeDuplicateTopics>
+    <CppCommentsFixup>False</CppCommentsFixup>
+    <FrameworkVersion>2.0.50727</FrameworkVersion>
+    <BinaryTOC>True</BinaryTOC>
+    <IncludeFavorites>False</IncludeFavorites>
+    <Preliminary>False</Preliminary>
+    <RootNamespaceContainer>False</RootNamespaceContainer>
+    <RootNamespaceTitle />
+    <HelpTitle>Managed Debugger</HelpTitle>
+    <HtmlHelpName>Managed Debugger</HtmlHelpName>
+    <Language>en-US</Language>
+    <CopyrightHref />
+    <CopyrightText>2005-2008 David Srbecký</CopyrightText>
+    <FeedbackEMailAddress>dsrbecky@gmail.com</FeedbackEMailAddress>
+    <HeaderText />
+    <FooterText />
+    <ProjectLinkType>Local</ProjectLinkType>
+    <SdkLinkType>Msdn</SdkLinkType>
+    <SdkLinkTarget>Blank</SdkLinkTarget>
+    <PresentationStyle>Prototype</PresentationStyle>
+    <NamingMethod>Guid</NamingMethod>
+    <SyntaxFilters>Standard</SyntaxFilters>
+    <ShowFeedbackControl>False</ShowFeedbackControl>
+    <ContentPlacement>AboveNamespaces</ContentPlacement>
+    <ContentSiteMap path="" />
+    <TopicFileTransform path="" />
+</project>

@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Ast = ICSharpCode.NRefactory.Ast;
+using System.Xml.Linq;
+
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.PrettyPrinter;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Ast = ICSharpCode.NRefactory.Ast;
 
 namespace Decompiler
 {
@@ -291,7 +293,7 @@ namespace Decompiler
 			}
 			
 			if (astType.Children.LastOrDefault() is IdentifierExpression) {
-				astType.Children.Last.Remove();
+				astType.Children.Remove(astType.Children.Last());
 			}
 		}
 		

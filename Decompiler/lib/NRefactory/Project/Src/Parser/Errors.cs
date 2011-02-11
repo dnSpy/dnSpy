@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Text;
@@ -40,12 +36,6 @@ namespace ICSharpCode.NRefactory.Parser
 			}
 		}
 		
-	//	public void Exception (string s)
-	//	{
-	//		Console.WriteLine(s); 
-	//		System.Environment.Exit(0);
-	//	}
-	
 		void DefaultCodeError(int line, int col, int n)
 		{
 			errorText.AppendLine(String.Format("-- line {0} col {1}: error {2}", line, col, n));

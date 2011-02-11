@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -71,12 +67,15 @@ namespace NRefactoryASTGenerator.Ast
 			public IfElseStatement(Expression condition, Statement trueStatement)
 				: this(condition) {
 				this.trueStatement.Add(Statement.CheckNull(trueStatement));
+				if (trueStatement != null) trueStatement.Parent = this;
 			}")]
 	[IncludeMember(@"
 			public IfElseStatement(Expression condition, Statement trueStatement, Statement falseStatement)
 				: this(condition) {
 				this.trueStatement.Add(Statement.CheckNull(trueStatement));
 				this.falseStatement.Add(Statement.CheckNull(falseStatement));
+				if (trueStatement != null) trueStatement.Parent = this;
+				if (falseStatement != null) falseStatement.Parent = this;
 			}")]
 	[IncludeBoolProperty("HasElseStatements", "return falseStatement.Count > 0;")]
 	[IncludeBoolProperty("HasElseIfSections", "return elseIfSections.Count > 0;")]
@@ -188,10 +187,9 @@ namespace NRefactoryASTGenerator.Ast
 	class EmptyStatement : Statement {}
 	
 	class FixedStatement : StatementWithEmbeddedStatement {
-		TypeReference             typeReference;
-		List<VariableDeclaration> pointerDeclarators;
+		Statement pointerDeclaration;
 		
-		public FixedStatement(TypeReference typeReference, List<VariableDeclaration> pointerDeclarators, Statement embeddedStatement) {}
+		public FixedStatement(Statement pointerDeclaration, Statement embeddedStatement) {}
 	}
 	
 	[IncludeBoolProperty("IsDefaultCase", "return expression.IsNull;")]
@@ -263,10 +261,11 @@ namespace NRefactoryASTGenerator.Ast
 		Expression step;
 		
 		List<Expression> nextExpressions;
+		// either use typeReference+variableName
 		TypeReference typeReference;
 		string        variableName;
-		
-		public ForNextStatement(TypeReference typeReference, string variableName, Expression start, Expression end, Expression step, Statement embeddedStatement, List<Expression> nextExpressions) {}
+		// or use loopVariableExpression:
+		Expression loopVariableExpression;
 	}
 	
 	class OnErrorStatement : StatementWithEmbeddedStatement {

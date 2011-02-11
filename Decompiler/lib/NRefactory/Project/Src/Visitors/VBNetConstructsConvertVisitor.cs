@@ -1,15 +1,15 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
 
 using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.AstBuilder;
 using Attribute = ICSharpCode.NRefactory.Ast.Attribute;
 
 namespace ICSharpCode.NRefactory.Visitors
@@ -29,6 +29,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		//   Array creation => add 1 to upper bound to get array length
 		//   Comparison with empty string literal -> string.IsNullOrEmpty
 		//   Add default value to local variable declarations without initializer
+		//   XML literals -> XLinq
 		
 		/// <summary>
 		/// Specifies whether the "Add default value to local variable declarations without initializer"
@@ -36,14 +37,20 @@ namespace ICSharpCode.NRefactory.Visitors
 		/// </summary>
 		public bool AddDefaultValueInitializerToLocalVariableDeclarations = true;
 		
+		public bool OptionInfer { get; set; }
+		
+		public bool OptionStrict { get; set; }
+		
 		Dictionary<string, string> usings;
 		List<UsingDeclaration> addedUsings;
 		TypeDeclaration currentTypeDeclaration;
+		int withStatementCount;
 		
 		public override object VisitCompilationUnit(CompilationUnit compilationUnit, object data)
 		{
 			usings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 			addedUsings = new List<UsingDeclaration>();
+			withStatementCount = 0;
 			base.VisitCompilationUnit(compilationUnit, data);
 			int i;
 			for (i = 0; i < compilationUnit.Children.Count; i++) {
@@ -148,7 +155,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			method.Modifier |= Modifiers.Extern | Modifiers.Static;
 			
 			if (method.TypeReference.IsNull) {
-				method.TypeReference = new TypeReference("System.Void");
+				method.TypeReference = new TypeReference("System.Void", true);
 			}
 			
 			Attribute att = new Attribute("DllImport", null, null);
@@ -233,23 +240,8 @@ namespace ICSharpCode.NRefactory.Visitors
 				}
 			}
 			
-			if (methodDeclaration.TypeReference.SystemType != "System.Void" && methodDeclaration.Body.Children.Count > 0) {
-				if (IsAssignmentTo(methodDeclaration.Body.Children[methodDeclaration.Body.Children.Count - 1], methodDeclaration.Name))
-				{
-					ReturnStatement rs = new ReturnStatement(GetAssignmentFromStatement(methodDeclaration.Body.Children[methodDeclaration.Body.Children.Count - 1]).Right);
-					methodDeclaration.Body.Children.RemoveAt(methodDeclaration.Body.Children.Count - 1);
-					methodDeclaration.Body.AddChild(rs);
-				} else {
-					ReturnStatementForFunctionAssignment visitor = new ReturnStatementForFunctionAssignment(methodDeclaration.Name);
-					methodDeclaration.Body.AcceptVisitor(visitor, null);
-					if (visitor.replacementCount > 0) {
-						Expression init;
-						init = GetDefaultValueForType(methodDeclaration.TypeReference);
-						methodDeclaration.Body.Children.Insert(0, new LocalVariableDeclaration(new VariableDeclaration(FunctionReturnValueName, init, methodDeclaration.TypeReference)));
-						methodDeclaration.Body.Children[0].Parent = methodDeclaration.Body;
-						methodDeclaration.Body.AddChild(new ReturnStatement(new IdentifierExpression(FunctionReturnValueName)));
-					}
-				}
+			if (methodDeclaration.TypeReference.Type != "System.Void" && methodDeclaration.Body.Children.Count > 0) {
+				ReplaceAllFunctionAssignments(methodDeclaration.Body, methodDeclaration.Name, methodDeclaration.TypeReference);
 			}
 			
 			return base.VisitMethodDeclaration(methodDeclaration, data);
@@ -277,7 +269,8 @@ namespace ICSharpCode.NRefactory.Visitors
 		class ReturnStatementForFunctionAssignment : AbstractAstTransformer
 		{
 			string functionName;
-			internal int replacementCount = 0;
+			internal List<IdentifierExpression> expressionsToReplace = new List<IdentifierExpression>();
+			internal bool hasExit = false;
 			
 			public ReturnStatementForFunctionAssignment(string functionName)
 			{
@@ -288,11 +281,23 @@ namespace ICSharpCode.NRefactory.Visitors
 			{
 				if (identifierExpression.Identifier.Equals(functionName, StringComparison.InvariantCultureIgnoreCase)) {
 					if (!(identifierExpression.Parent is AddressOfExpression) && !(identifierExpression.Parent is InvocationExpression)) {
-						identifierExpression.Identifier = FunctionReturnValueName;
-						replacementCount++;
+						expressionsToReplace.Add(identifierExpression);
 					}
 				}
 				return base.VisitIdentifierExpression(identifierExpression, data);
+			}
+			
+			public override object VisitExitStatement(ExitStatement exitStatement, object data)
+			{
+				if (exitStatement.ExitType == ExitType.Function || exitStatement.ExitType == ExitType.Property) {
+					hasExit = true;
+					IdentifierExpression expr = new IdentifierExpression("tmp");
+					expressionsToReplace.Add(expr);
+					var newNode = new ReturnStatement(expr);
+					ReplaceCurrentNode(newNode);
+					return base.VisitReturnStatement(newNode, data);
+				}
+				return base.VisitExitStatement(exitStatement, data);
 			}
 		}
 		#endregion
@@ -330,7 +335,34 @@ namespace ICSharpCode.NRefactory.Visitors
 				propertyDeclaration.SetRegion.AcceptVisitor(new RenameIdentifierVisitor(from, "value", StringComparer.InvariantCultureIgnoreCase), null);
 			}
 			
+			if (propertyDeclaration.HasGetRegion && propertyDeclaration.GetRegion.Block.Children.Count > 0) {
+				BlockStatement block = propertyDeclaration.GetRegion.Block;
+				ReplaceAllFunctionAssignments(block, propertyDeclaration.Name, propertyDeclaration.TypeReference);
+			}
+			
 			return base.VisitPropertyDeclaration(propertyDeclaration, data);
+		}
+		
+		void ReplaceAllFunctionAssignments(BlockStatement block, string functionName, TypeReference typeReference)
+		{
+			ReturnStatementForFunctionAssignment visitor = new ReturnStatementForFunctionAssignment(functionName);
+			block.AcceptVisitor(visitor, null);
+			if (visitor.expressionsToReplace.Count == 1 && !visitor.hasExit && IsAssignmentTo(block.Children.Last(), functionName)) {
+				Expression returnValue = GetAssignmentFromStatement(block.Children.Last()).Right;
+				block.Children.RemoveAt(block.Children.Count - 1);
+				block.Return(returnValue);
+			} else {
+				if (visitor.expressionsToReplace.Count > 0) {
+					foreach (var expr in visitor.expressionsToReplace) {
+						expr.Identifier = FunctionReturnValueName;
+					}
+					Expression init;
+					init = ExpressionBuilder.CreateDefaultValueForType(typeReference);
+					block.Children.Insert(0, new LocalVariableDeclaration(new VariableDeclaration(FunctionReturnValueName, init, typeReference)));
+					block.Children[0].Parent = block;
+					block.Return(new IdentifierExpression(FunctionReturnValueName));
+				}
+			}
 		}
 		
 		static volatile Dictionary<string, Expression> constantTable;
@@ -465,7 +497,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			List<Expression> arguments = new List<Expression>();
 			arguments.Add(stringVariable);
 			return new InvocationExpression(
-				new MemberReferenceExpression(new TypeReferenceExpression("System.String"), "IsNullOrEmpty"),
+				new MemberReferenceExpression(new TypeReferenceExpression(new TypeReference("System.String", true)), "IsNullOrEmpty"),
 				arguments);
 		}
 		
@@ -492,45 +524,240 @@ namespace ICSharpCode.NRefactory.Visitors
 		
 		public override object VisitLocalVariableDeclaration(LocalVariableDeclaration localVariableDeclaration, object data)
 		{
-			if (AddDefaultValueInitializerToLocalVariableDeclarations) {
-				for (int i = 0; i < localVariableDeclaration.Variables.Count; i++) {
-					VariableDeclaration decl = localVariableDeclaration.Variables[i];
-					if (decl.FixedArrayInitialization.IsNull && decl.Initializer.IsNull) {
-						TypeReference type = localVariableDeclaration.GetTypeForVariable(i);
-						decl.Initializer = GetDefaultValueForType(type);
-					}
+			for (int i = 0; i < localVariableDeclaration.Variables.Count; i++) {
+				VariableDeclaration decl = localVariableDeclaration.Variables[i];
+				if (AddDefaultValueInitializerToLocalVariableDeclarations &&
+				    (localVariableDeclaration.Modifier & Modifiers.Static) == 0 &&
+				    decl.FixedArrayInitialization.IsNull && decl.Initializer.IsNull) {
+					TypeReference type = localVariableDeclaration.GetTypeForVariable(i);
+					decl.Initializer = ExpressionBuilder.CreateDefaultValueForType(type);
+				}
+				if (decl.TypeReference.IsNull) {
+					if (OptionInfer && !(decl.Initializer is PrimitiveExpression && (decl.Initializer as PrimitiveExpression).Value == null))
+						decl.TypeReference = new TypeReference("var", true);
+					else if (OptionStrict)
+						decl.TypeReference = new TypeReference("System.Object", true);
+					else
+						decl.TypeReference = new TypeReference("dynamic", true);
 				}
 			}
 			return base.VisitLocalVariableDeclaration(localVariableDeclaration, data);
 		}
 		
-		Expression GetDefaultValueForType(TypeReference type)
+		public override object VisitOptionDeclaration(OptionDeclaration optionDeclaration, object data)
 		{
-			if (type != null && !type.IsArrayType) {
-				switch (type.SystemType) {
-					case "System.SByte":
-					case "System.Byte":
-					case "System.Int16":
-					case "System.UInt16":
-					case "System.Int32":
-					case "System.UInt32":
-					case "System.Int64":
-					case "System.UInt64":
-					case "System.Single":
-					case "System.Double":
-						return new PrimitiveExpression(0, "0");
-					case "System.Char":
-						return new PrimitiveExpression('\0', "'\\0'");
-					case "System.Object":
-					case "System.String":
-						return new PrimitiveExpression(null, "null");
-					case "System.Boolean":
-						return new PrimitiveExpression(false, "false");
-					default:
-						return new DefaultValueExpression(type);
+			if (optionDeclaration.OptionType == OptionType.Infer)
+				OptionInfer = optionDeclaration.OptionValue;
+			if (optionDeclaration.OptionType == OptionType.Strict)
+				OptionStrict = optionDeclaration.OptionValue;
+			return base.VisitOptionDeclaration(optionDeclaration, data);
+		}
+		
+		public override object VisitXmlContentExpression(XmlContentExpression xmlContentExpression, object data)
+		{
+
+			Expression newNode = ConvertXmlContentExpression(xmlContentExpression);
+			
+			if (newNode == null)
+				return base.VisitXmlContentExpression(xmlContentExpression, data);
+			
+			ReplaceCurrentNode(newNode);
+			
+			if (newNode is ObjectCreateExpression)
+				return base.VisitObjectCreateExpression((ObjectCreateExpression)newNode, data);
+			else if (newNode is PrimitiveExpression)
+				return base.VisitPrimitiveExpression((PrimitiveExpression)newNode , data);
+			
+			return null;
+		}
+
+		Expression ConvertXmlContentExpression(XmlContentExpression xmlContentExpression)
+		{
+			Expression newNode = null;
+			switch (xmlContentExpression.Type) {
+				case XmlContentType.Comment:
+					newNode = new ObjectCreateExpression(new TypeReference("XComment"), Expressions(xmlContentExpression.Content));
+					break;
+				case XmlContentType.Text:
+					newNode = new PrimitiveExpression(ConvertEntities(xmlContentExpression.Content));
+					break;
+				case XmlContentType.CData:
+					newNode = new ObjectCreateExpression(new TypeReference("XCData"), Expressions(xmlContentExpression.Content));
+					break;
+				case XmlContentType.ProcessingInstruction:
+					string content = xmlContentExpression.Content.Trim();
+					if (content.StartsWith("xml", StringComparison.OrdinalIgnoreCase)) {
+						XDeclaration decl;
+						try {
+							decl = XDocument.Parse("<?" + content + "?><Dummy />").Declaration;
+						} catch (XmlException) {
+							decl = new XDeclaration(null, null, null);
+						}
+						newNode = new ObjectCreateExpression(new TypeReference("XDeclaration"), Expressions(decl.Version, decl.Encoding, decl.Standalone));
+					} else {
+						string target = content.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "";
+						string piData = content.IndexOf(' ') > -1 ? content.Substring(content.IndexOf(' ')) : "";
+						newNode = new ObjectCreateExpression(new TypeReference("XProcessingInstruction"), Expressions(target, piData));
+					}
+					break;
+				default:
+					throw new Exception("Invalid value for XmlContentType");
+			}
+			return newNode;
+		}
+		
+		string ConvertEntities(string content)
+		{
+			try {
+				return XElement.Parse("<Dummy>" + content + "</Dummy>").Value;
+			} catch (XmlException) {
+				return content;
+			}
+		}
+		
+		public override object VisitXmlDocumentExpression(XmlDocumentExpression xmlDocumentExpression, object data)
+		{
+			var newNode = new ObjectCreateExpression(new TypeReference("XDocument"), null);
+			
+			foreach (XmlExpression expr in xmlDocumentExpression.Expressions)
+				newNode.Parameters.Add(ConvertXmlExpression(expr));
+			
+			ReplaceCurrentNode(newNode);
+			
+			return base.VisitObjectCreateExpression(newNode, data);
+		}
+		
+		public override object VisitXmlElementExpression(XmlElementExpression xmlElementExpression, object data)
+		{
+			ObjectCreateExpression newNode = ConvertXmlElementExpression(xmlElementExpression);
+			
+			ReplaceCurrentNode(newNode);
+			
+			return base.VisitObjectCreateExpression(newNode, data);
+		}
+
+		ObjectCreateExpression ConvertXmlElementExpression(XmlElementExpression xmlElementExpression)
+		{
+			var newNode = new ObjectCreateExpression(new TypeReference("XElement"), xmlElementExpression.NameIsExpression ? new List<Expression> { xmlElementExpression.NameExpression } : Expressions(xmlElementExpression.XmlName));
+			
+			foreach (XmlExpression attr in xmlElementExpression.Attributes) {
+				if (attr is XmlAttributeExpression) {
+					var a = attr as XmlAttributeExpression;
+					newNode.Parameters.Add(new ObjectCreateExpression(new TypeReference("XAttribute"), new List<Expression> {
+					                                                  	new PrimitiveExpression(a.Name),
+					                                                  	a.IsLiteralValue ? new PrimitiveExpression(ConvertEntities(a.LiteralValue)) : a.ExpressionValue
+					                                                  }));
+				} else if (attr is XmlEmbeddedExpression) {
+					newNode.Parameters.Add((attr as XmlEmbeddedExpression).InlineVBExpression);
 				}
-			} else {
-				return new PrimitiveExpression(null, "null");
+			}
+			
+			foreach (XmlExpression expr in xmlElementExpression.Children) {
+				XmlContentExpression c = expr as XmlContentExpression;
+				// skip whitespace text
+				if (!(expr is XmlContentExpression && c.Type == XmlContentType.Text && string.IsNullOrWhiteSpace(c.Content)))
+					newNode.Parameters.Add(ConvertXmlExpression(expr));
+			}
+			
+			return newNode;
+		}
+		
+		Expression ConvertXmlExpression(XmlExpression expr)
+		{
+			if (expr is XmlElementExpression)
+				return ConvertXmlElementExpression(expr as XmlElementExpression);
+			else if (expr is XmlContentExpression)
+				return ConvertXmlContentExpression(expr as XmlContentExpression);
+			else if (expr is XmlEmbeddedExpression)
+				return (expr as XmlEmbeddedExpression).InlineVBExpression;
+			
+			throw new Exception();
+		}
+		
+		List<Expression> Expressions(params string[] exprs)
+		{
+			return new List<Expression>(exprs.Select(expr => new PrimitiveExpression(expr)));
+		}
+		
+		public override object VisitWithStatement(WithStatement withStatement, object data)
+		{
+			withStatementCount++;
+			string varName = "_with" + withStatementCount;
+			WithConvertVisitor converter = new WithConvertVisitor(varName);
+			
+			LocalVariableDeclaration withVariable = new LocalVariableDeclaration(new VariableDeclaration(varName, withStatement.Expression, new TypeReference("var", true)));
+			
+			withStatement.Body.AcceptVisitor(converter, null);
+			
+			base.VisitWithStatement(withStatement, data);
+			
+			var statements = withStatement.Body.Children;
+			
+			statements.Insert(0, withVariable);
+			
+			withVariable.Parent = withStatement.Body;
+			
+			statements.Reverse();
+			
+			foreach (var stmt in statements) {
+				InsertAfterSibling(withStatement, stmt);
+			}
+			
+			RemoveCurrentNode();
+			
+			return null;
+		}
+		
+		class WithConvertVisitor : AbstractAstTransformer
+		{
+			string withAccessor;
+			
+			public WithConvertVisitor(string withAccessor)
+			{
+				this.withAccessor = withAccessor;
+			}
+			
+			public override object VisitWithStatement(WithStatement withStatement, object data)
+			{
+				// skip any nested with statement
+				var block = withStatement.Body;
+				withStatement.Body = BlockStatement.Null;
+				base.VisitWithStatement(withStatement, data);
+				withStatement.Body = block;
+				return null;
+			}
+			
+			public override object VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
+			{
+				if (memberReferenceExpression.TargetObject.IsNull) {
+					IdentifierExpression id = new IdentifierExpression(withAccessor);
+					memberReferenceExpression.TargetObject = id;
+					id.Parent = memberReferenceExpression;
+				}
+				
+				return base.VisitMemberReferenceExpression(memberReferenceExpression, data);
+			}
+			
+			public override object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
+			{
+				if (binaryOperatorExpression.Left.IsNull && binaryOperatorExpression.Op == BinaryOperatorType.DictionaryAccess) {
+					IdentifierExpression id = new IdentifierExpression(withAccessor);
+					binaryOperatorExpression.Left = id;
+					id.Parent = binaryOperatorExpression;
+				}
+				
+				return base.VisitBinaryOperatorExpression(binaryOperatorExpression, data);
+			}
+			
+			public override object VisitXmlMemberAccessExpression(XmlMemberAccessExpression xmlMemberAccessExpression, object data)
+			{
+				if (xmlMemberAccessExpression.TargetObject.IsNull) {
+					IdentifierExpression id = new IdentifierExpression(withAccessor);
+					xmlMemberAccessExpression.TargetObject = id;
+					id.Parent = xmlMemberAccessExpression;
+				}
+				
+				return base.VisitXmlMemberAccessExpression(xmlMemberAccessExpression, data);
 			}
 		}
 	}

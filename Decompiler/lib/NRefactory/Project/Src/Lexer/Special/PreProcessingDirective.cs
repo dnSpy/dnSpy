@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -12,6 +8,7 @@ namespace ICSharpCode.NRefactory
 {
 	public class PreprocessingDirective : AbstractSpecial
 	{
+		#region Conversion C# <-> VB
 		public static void VBToCSharp(IList<ISpecial> list)
 		{
 			for (int i = 0; i < list.Count; ++i) {
@@ -38,8 +35,17 @@ namespace ICSharpCode.NRefactory
 				cmd = "#if";
 				if (arg.ToLowerInvariant().EndsWith(" then"))
 					arg = arg.Substring(0, arg.Length - 5);
+			} else if (cmd.Equals("#Else", StringComparison.InvariantCultureIgnoreCase)) {
+				if (dir.Expression != null)
+					cmd = "#elif";
+				else
+					cmd = "#else";
+			} else if (cmd.Equals("#ElseIf", StringComparison.InvariantCultureIgnoreCase)) {
+				cmd = "#elif";
 			}
-			return new PreprocessingDirective(cmd, arg, dir.StartPosition, dir.EndPosition);
+			return new PreprocessingDirective(cmd, arg, dir.StartPosition, dir.EndPosition) {
+				Expression = dir.Expression
+			};
 		}
 		
 		public static void CSharpToVB(List<ISpecial> list)
@@ -76,12 +82,19 @@ namespace ICSharpCode.NRefactory
 			if (cmd.Length > 1) {
 				cmd = cmd.Substring(0, 2).ToUpperInvariant() + cmd.Substring(2);
 			}
-			return new PreprocessingDirective(cmd, arg, dir.StartPosition, dir.EndPosition);
+			return new PreprocessingDirective(cmd, arg, dir.StartPosition, dir.EndPosition) {
+				Expression = dir.Expression
+			};
 		}
+		#endregion
 		
 		string cmd;
 		string arg;
+		Ast.Expression expression = Ast.Expression.Null;
 		
+		/// <summary>
+		/// Gets the directive name, including '#'.
+		/// </summary>
 		public string Cmd {
 			get {
 				return cmd;
@@ -91,6 +104,9 @@ namespace ICSharpCode.NRefactory
 			}
 		}
 		
+		/// <summary>
+		/// Gets the directive argument.
+		/// </summary>
 		public string Arg {
 			get {
 				return arg;
@@ -100,6 +116,24 @@ namespace ICSharpCode.NRefactory
 			}
 		}
 		
+		/// <summary>
+		/// Gets/sets the expression (for directives that take an expression, e.g. #if and #elif).
+		/// </summary>
+		public Ast.Expression Expression {
+			get { return expression; }
+			set { expression = value ?? Ast.Expression.Null; }
+		}
+		
+		/// <value>
+		/// The end position of the pre processor directive line.
+		/// May be != EndPosition.
+		/// </value>
+		public Location LastLineEnd {
+			get;
+			set;
+		}
+		
+				
 		public override string ToString()
 		{
 			return String.Format("[PreProcessingDirective: Cmd = {0}, Arg = {1}]",

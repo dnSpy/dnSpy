@@ -31,6 +31,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
+using ILSpy.Debugger.UI;
 using Microsoft.Win32;
 using Mono.Cecil.Rocks;
 
@@ -326,6 +327,13 @@ namespace ICSharpCode.ILSpy
 			var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 			ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
 			SelectNode(FindNodeByPath(path, true));
+		}
+		
+		void AttachToProcessExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			AttachToProcessWindow window = new AttachToProcessWindow();
+			window.Owner = this;
+			window.ShowDialog();
 		}
 		
 		void ExitClick(object sender, RoutedEventArgs e)

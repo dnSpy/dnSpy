@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 
@@ -32,11 +28,21 @@ namespace ICSharpCode.NRefactory
 			}
 		}
 		
-		public Comment(CommentType commentType, string comment, Location startPosition, Location endPosition)
+		/// <value>
+		/// Is true, when the comment is at line start or only whitespaces
+		/// between line and comment start.
+		/// </value>
+		public bool CommentStartsLine {
+			get;
+			set;
+		}
+		
+		public Comment(CommentType commentType, string comment, bool commentStartsLine, Location startPosition, Location endPosition)
 			: base(startPosition, endPosition)
 		{
 			this.commentType   = commentType;
 			this.comment       = comment;
+			this.CommentStartsLine = commentStartsLine;
 		}
 		
 		public override string ToString()

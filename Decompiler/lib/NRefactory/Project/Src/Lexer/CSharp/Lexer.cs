@@ -1,11 +1,8 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -14,32 +11,27 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 {
 	internal sealed class Lexer : AbstractLexer
 	{
+		bool isAtLineBegin = true;
+		
 		public Lexer(TextReader reader) : base(reader)
 		{
 		}
 		
-		void ReadPreProcessingDirective()
-		{
-			Location start = new Location(Col - 1, Line);
-			
-			// skip spaces between # and the directive
-			while (ReaderPeek() == ' ')
-				ReaderRead();
-			
-			bool canBeKeyword;
-			string directive = ReadIdent('#', out canBeKeyword);
-			string argument  = ReadToEndOfLine();
-			this.specialTracker.AddPreprocessingDirective(directive, argument.Trim(), start, new Location(start.X + directive.Length + argument.Length, start.Y));
-		}
-		
 		protected override Token Next()
 		{
-			int nextChar;
 			char ch;
 			bool hadLineEnd = false;
-			if (Line == 1 && Col == 1) hadLineEnd = true; // beginning of document
+			if (Line == 1 && Col == 1) {
+				isAtLineBegin = true;
+				hadLineEnd = true; // beginning of document
+			}
 			
-			while ((nextChar = ReaderRead()) != -1) {
+			while (true) {
+				Location startLocation = new Location(Col, Line);
+				int nextChar = ReaderRead();
+				if (nextChar == -1)
+					break;
+				
 				Token token;
 				
 				switch (nextChar) {
@@ -48,13 +40,14 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 						continue;
 					case '\r':
 					case '\n':
+						HandleLineEnd((char)nextChar);
 						if (hadLineEnd) {
 							// second line end before getting to a token
 							// -> here was a blank line
-							specialTracker.AddEndOfLine(new Location(Col, Line));
+							specialTracker.AddEndOfLine(startLocation);
 						}
-						HandleLineEnd((char)nextChar);
 						hadLineEnd = true;
+						isAtLineBegin = true;
 						continue;
 					case '/':
 						int peek = ReaderPeek();
@@ -62,19 +55,24 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 							ReadComment();
 							continue;
 						} else {
+							isAtLineBegin = false;
 							token = ReadOperator('/');
 						}
 						break;
 					case '#':
 						ReadPreProcessingDirective();
+						isAtLineBegin = false;
 						continue;
 					case '"':
 						token = ReadString();
+						isAtLineBegin = false;
 						break;
 					case '\'':
 						token = ReadChar();
+						isAtLineBegin = false;
 						break;
 					case '@':
+						isAtLineBegin = false;
 						int next = ReaderRead();
 						if (next == -1) {
 							errors.Error(Line, Col, String.Format("EOF after @"));
@@ -89,12 +87,14 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 								bool canBeKeyword;
 								token = new Token(Tokens.Identifier, x - 1, y, ReadIdent(ch, out canBeKeyword));
 							} else {
+								HandleLineEnd(ch);
 								errors.Error(y, x, String.Format("Unexpected char in Lexer.Next() : {0}", ch));
 								continue;
 							}
 						}
 						break;
 					default:
+						isAtLineBegin = false; // non-ws chars are handled here
 						ch = (char)nextChar;
 						if (Char.IsLetter(ch) || ch == '_' || ch == '\\') {
 							int x = Col - 1; // Col was incremented above, but we want the start of the identifier
@@ -162,7 +162,9 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				}
 				
 				if (curPos < MAX_IDENTIFIER_LENGTH) {
-					identBuffer[curPos++] = ch;
+					if (ch != '\0') // only add character, if it is valid
+									 // prevents \ from being added
+						identBuffer[curPos++] = ch;
 				} else {
 					errors.Error(Line, Col, String.Format("Identifier too long"));
 					while (IsIdentifierPart(ReaderPeek())) {
@@ -300,28 +302,28 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				if (isfloat) {
 					float num;
 					if (float.TryParse(digit, NumberStyles.Any, CultureInfo.InvariantCulture, out num)) {
-						return new Token(Tokens.Literal, x, y, stringValue, num);
+						return new Token(Tokens.Literal, x, y, stringValue, num, LiteralFormat.DecimalNumber);
 					} else {
 						errors.Error(y, x, String.Format("Can't parse float {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue, 0f);
+						return new Token(Tokens.Literal, x, y, stringValue, 0f, LiteralFormat.DecimalNumber);
 					}
 				}
 				if (isdecimal) {
 					decimal num;
 					if (decimal.TryParse(digit, NumberStyles.Any, CultureInfo.InvariantCulture, out num)) {
-						return new Token(Tokens.Literal, x, y, stringValue, num);
+						return new Token(Tokens.Literal, x, y, stringValue, num, LiteralFormat.DecimalNumber);
 					} else {
 						errors.Error(y, x, String.Format("Can't parse decimal {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue, 0m);
+						return new Token(Tokens.Literal, x, y, stringValue, 0m, LiteralFormat.DecimalNumber);
 					}
 				}
 				if (isdouble) {
 					double num;
 					if (double.TryParse(digit, NumberStyles.Any, CultureInfo.InvariantCulture, out num)) {
-						return new Token(Tokens.Literal, x, y, stringValue, num);
+						return new Token(Tokens.Literal, x, y, stringValue, num, LiteralFormat.DecimalNumber);
 					} else {
 						errors.Error(y, x, String.Format("Can't parse double {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue, 0d);
+						return new Token(Tokens.Literal, x, y, stringValue, 0d, LiteralFormat.DecimalNumber);
 					}
 				}
 				
@@ -330,12 +332,12 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				if (ishex) {
 					if (!ulong.TryParse(digit, NumberStyles.HexNumber, null, out result)) {
 						errors.Error(y, x, String.Format("Can't parse hexadecimal constant {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0);
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0, LiteralFormat.HexadecimalNumber);
 					}
 				} else {
 					if (!ulong.TryParse(digit, NumberStyles.Integer, null, out result)) {
 						errors.Error(y, x, String.Format("Can't parse integral constant {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0);
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0, LiteralFormat.DecimalNumber);
 					}
 				}
 				
@@ -350,40 +352,41 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				
 				Token token;
 				
+				LiteralFormat literalFormat = ishex ? LiteralFormat.HexadecimalNumber : LiteralFormat.DecimalNumber;
 				if (islong) {
 					if (isunsigned) {
 						ulong num;
 						if (ulong.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
-							token = new Token(Tokens.Literal, x, y, stringValue, num);
+							token = new Token(Tokens.Literal, x, y, stringValue, num, literalFormat);
 						} else {
 							errors.Error(y, x, String.Format("Can't parse unsigned long {0}", digit));
-							token = new Token(Tokens.Literal, x, y, stringValue, 0UL);
+							token = new Token(Tokens.Literal, x, y, stringValue, 0UL, literalFormat);
 						}
 					} else {
 						long num;
 						if (long.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
-							token = new Token(Tokens.Literal, x, y, stringValue, num);
+							token = new Token(Tokens.Literal, x, y, stringValue, num, literalFormat);
 						} else {
 							errors.Error(y, x, String.Format("Can't parse long {0}", digit));
-							token = new Token(Tokens.Literal, x, y, stringValue, 0L);
+							token = new Token(Tokens.Literal, x, y, stringValue, 0L, literalFormat);
 						}
 					}
 				} else {
 					if (isunsigned) {
 						uint num;
 						if (uint.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
-							token = new Token(Tokens.Literal, x, y, stringValue, num);
+							token = new Token(Tokens.Literal, x, y, stringValue, num, literalFormat);
 						} else {
 							errors.Error(y, x, String.Format("Can't parse unsigned int {0}", digit));
-							token = new Token(Tokens.Literal, x, y, stringValue, (uint)0);
+							token = new Token(Tokens.Literal, x, y, stringValue, (uint)0, literalFormat);
 						}
 					} else {
 						int num;
 						if (int.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
-							token = new Token(Tokens.Literal, x, y, stringValue, num);
+							token = new Token(Tokens.Literal, x, y, stringValue, num, literalFormat);
 						} else {
 							errors.Error(y, x, String.Format("Can't parse int {0}", digit));
-							token = new Token(Tokens.Literal, x, y, stringValue, 0);
+							token = new Token(Tokens.Literal, x, y, stringValue, 0, literalFormat);
 						}
 					}
 				}
@@ -420,8 +423,8 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 					} else {
 						sb.Append(ch);
 					}
-				} else if (ch == '\n') {
-					HandleLineEnd(ch); // ensure line numbers are still correct after the error
+				} else if (HandleLineEnd(ch)) {
+					// call HandleLineEnd to ensure line numbers are still correct after the error
 					errors.Error(y, x, String.Format("No new line is allowed inside a string literal"));
 					break;
 				} else {
@@ -434,7 +437,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				errors.Error(y, x, String.Format("End of file reached inside string literal"));
 			}
 			
-			return new Token(Tokens.Literal, x, y, originalValue.ToString(), sb.ToString());
+			return new Token(Tokens.Literal, x, y, originalValue.ToString(), sb.ToString(), LiteralFormat.StringLiteral);
 		}
 		
 		Token ReadVerbatimString()
@@ -442,8 +445,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			sb.Length            = 0;
 			originalValue.Length = 0;
 			originalValue.Append("@\"");
-			int x = Col - 2; // @ and " already read
-			int y = Line;
+			Location startLocation = new Location(Col - 2, Line); // @ and " already read
 			int nextChar;
 			while ((nextChar = ReaderRead()) != -1) {
 				char ch = (char)nextChar;
@@ -466,13 +468,13 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			}
 			
 			if (nextChar == -1) {
-				errors.Error(y, x, String.Format("End of file reached inside verbatim string literal"));
+				errors.Error(startLocation.Line, startLocation.Column, String.Format("End of file reached inside verbatim string literal"));
 			}
 			
-			return new Token(Tokens.Literal, x, y, originalValue.ToString(), sb.ToString());
+			return new Token(Tokens.Literal, startLocation, new Location(Col, Line), originalValue.ToString(), sb.ToString(), LiteralFormat.VerbatimStringLiteral);
 		}
 		
-		char[] escapeSequenceBuffer = new char[12];
+		readonly char[] escapeSequenceBuffer = new char[12];
 		
 		/// <summary>
 		/// reads an escape sequence
@@ -588,8 +590,8 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			int x = Col - 1;
 			int y = Line;
 			int nextChar = ReaderRead();
-			if (nextChar == -1) {
-				errors.Error(y, x, String.Format("End of file reached inside character literal"));
+			if (nextChar == -1 || HandleLineEnd((char)nextChar)) {
+				errors.Error(y, x, String.Format("End of line reached inside character literal"));
 				return null;
 			}
 			char ch = (char)nextChar;
@@ -608,7 +610,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 					errors.Error(y, x, String.Format("Char not terminated"));
 				}
 			}
-			return new Token(Tokens.Literal, x, y, "'" + ch + escapeSequence + "'", chValue);
+			return new Token(Tokens.Literal, x, y, "'" + ch + escapeSequence + "'", chValue, LiteralFormat.CharLiteral);
 		}
 		
 		Token ReadOperator(char ch)
@@ -792,6 +794,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			switch (ReaderRead()) {
 				case '*':
 					ReadMultiLineComment();
+					isAtLineBegin = false;
 					break;
 				case '/':
 					if (ReaderPeek() == '/') {
@@ -800,6 +803,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 					} else {
 						ReadSingleLineComment(CommentType.SingleLine);
 					}
+					isAtLineBegin = true;
 					break;
 				default:
 					errors.Error(Line, Col, String.Format("Error while reading comment"));
@@ -832,7 +836,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 					if (specialCommentHash.ContainsKey(tag)) {
 						Location p = new Location(Col, Line);
 						string comment = ch + ReadToEndOfLine();
-						this.TagComments.Add(new TagComment(tag, comment, p, new Location(Col, Line)));
+						this.TagComments.Add(new TagComment(tag, comment, isAtLineBegin, p, new Location(Col, Line)));
 						sb.Append(comment);
 						break;
 					}
@@ -846,7 +850,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			if (this.SkipAllComments) {
 				SkipToEndOfLine();
 			} else {
-				specialTracker.StartComment(commentType, new Location(Col, Line));
+				specialTracker.StartComment(commentType, isAtLineBegin, new Location(Col, Line));
 				specialTracker.AddString(ReadCommentToEOL());
 				specialTracker.FinishComment(new Location(Col, Line));
 			}
@@ -866,7 +870,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 					}
 				}
 			} else {
-				specialTracker.StartComment(CommentType.Block, new Location(Col, Line));
+				specialTracker.StartComment(CommentType.Block, isAtLineBegin, new Location(Col, Line));
 				
 				// sc* = special comment handling (TO DO markers)
 				string scTag = null; // is set to non-null value when we are inside a comment marker
@@ -878,7 +882,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 					
 					if (HandleLineEnd(ch)) {
 						if (scTag != null) {
-							this.TagComments.Add(new TagComment(scTag, scCurWord.ToString(), scStartLocation, new Location(Col, Line)));
+							this.TagComments.Add(new TagComment(scTag, scCurWord.ToString(), isAtLineBegin, scStartLocation, new Location(Col, Line)));
 							scTag = null;
 						}
 						scCurWord.Length = 0;
@@ -889,7 +893,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 					// End of multiline comment reached ?
 					if (ch == '*' && ReaderPeek() == '/') {
 						if (scTag != null) {
-							this.TagComments.Add(new TagComment(scTag, scCurWord.ToString(), scStartLocation, new Location(Col, Line)));
+							this.TagComments.Add(new TagComment(scTag, scCurWord.ToString(), isAtLineBegin, scStartLocation, new Location(Col, Line)));
 						}
 						ReaderRead();
 						specialTracker.FinishComment(new Location(Col, Line));
@@ -931,13 +935,16 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				lastToken = curToken;
 				curToken = curToken.next;
 			}
+			isAtLineBegin = true;
 			int nextChar;
 			while ((nextChar = ReaderRead()) != -1) {
 				switch (nextChar) {
 					case '{':
+						isAtLineBegin = false;
 						braceCount++;
 						break;
 					case '}':
+						isAtLineBegin = false;
 						if (--braceCount < 0) {
 							curToken = new Token(Tokens.CloseCurlyBrace, Col - 1, Line);
 							return;
@@ -948,19 +955,24 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 						if (peek == '/' || peek == '*') {
 							ReadComment();
 						}
+						isAtLineBegin = false;
 						break;
 					case '#':
 						ReadPreProcessingDirective();
+						isAtLineBegin = false;
 						break;
 					case '"':
 						ReadString();
+						isAtLineBegin = false;
 						break;
 					case '\'':
 						ReadChar();
+						isAtLineBegin = false;
 						break;
 					case '\r':
 					case '\n':
 						HandleLineEnd((char)nextChar);
+						isAtLineBegin = true;
 						break;
 					case '@':
 						int next = ReaderRead();
@@ -969,10 +981,233 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 						} else if (next == '"') {
 							ReadVerbatimString();
 						}
+						isAtLineBegin = false;
 						break;
 				}
 			}
 			curToken = new Token(Tokens.EOF, Col, Line);
+		}
+		
+		public override IDictionary<string, object> ConditionalCompilationSymbols {
+			get { return conditionalCompilation.Symbols; }
+		}
+		
+		public override void SetConditionalCompilationSymbols (string symbols)
+		{
+			foreach (string symbol in GetSymbols (symbols)) {
+				conditionalCompilation.Define (symbol);
+			}
+		}
+		
+		
+		ConditionalCompilation conditionalCompilation = new ConditionalCompilation();
+		
+		void ReadPreProcessingDirective()
+		{
+			PreprocessingDirective d = ReadPreProcessingDirectiveInternal(true, true);
+			this.specialTracker.AddPreprocessingDirective(d);
+			
+			if (EvaluateConditionalCompilation) {
+				switch (d.Cmd) {
+					case "#define":
+						conditionalCompilation.Define(d.Arg);
+						break;
+					case "#undef":
+						conditionalCompilation.Undefine(d.Arg);
+						break;
+					case "#if":
+						if (!conditionalCompilation.Evaluate(d.Expression)) {
+							// skip to valid #elif or #else or #endif
+							int level = 1;
+							while (true) {
+								d = SkipToPreProcessingDirective(false, level == 1);
+								if (d == null)
+									break;
+								if (d.Cmd == "#if") {
+									level++;
+								} else if (d.Cmd == "#endif") {
+									level--;
+									if (level == 0)
+										break;
+								} else if (level == 1 &&  (d.Cmd == "#else"
+								                           || d.Cmd == "#elif" && conditionalCompilation.Evaluate(d.Expression)))
+								{
+									break;
+								}
+							}
+							if (d != null)
+								this.specialTracker.AddPreprocessingDirective(d);
+						}
+						break;
+					case "#elif":
+					case "#else":
+						// we already visited the #if part or a previous #elif part, so skip until #endif
+						{
+							int level = 1;
+							while (true) {
+								d = SkipToPreProcessingDirective(false, false);
+								if (d == null)
+									break;
+								if (d.Cmd == "#if") {
+									level++;
+								} else if (d.Cmd == "#endif") {
+									level--;
+									if (level == 0)
+										break;
+								}
+							}
+							if (d != null)
+								this.specialTracker.AddPreprocessingDirective(d);
+						}
+						break;
+				}
+			}
+		}
+		
+		PreprocessingDirective SkipToPreProcessingDirective(bool parseIfExpression, bool parseElifExpression)
+		{
+			int c;
+			while (true) {
+				PPWhitespace();
+				c = ReaderRead();
+				if (c == -1) {
+					errors.Error(Line, Col, String.Format("Reached EOF but expected #endif"));
+					return null;
+				} else if (c == '#') {
+					break;
+				} else {
+					SkipToEndOfLine();
+				}
+			}
+			return ReadPreProcessingDirectiveInternal(parseIfExpression, parseElifExpression);
+		}
+		
+		PreprocessingDirective ReadPreProcessingDirectiveInternal(bool parseIfExpression, bool parseElifExpression)
+		{
+			Location start = new Location(Col - 1, Line);
+			
+			// skip spaces between # and the directive
+			PPWhitespace();
+			
+			bool canBeKeyword;
+			string directive = ReadIdent('#', out canBeKeyword);
+			
+			PPWhitespace();
+			if (parseIfExpression && directive == "#if" || parseElifExpression && directive == "#elif") {
+				recordedText.Length = 0;
+				recordRead = true;
+				Ast.Expression expr = PPExpression();
+				string arg = recordedText.ToString ();
+				recordRead = false;
+				
+				Location endLocation = new Location(Col, Line);
+				int c = ReaderRead();
+				if (c >= 0 && !HandleLineEnd((char)c)) {
+					if (c == '/' && ReaderRead() == '/') {
+						// comment to end of line
+					} else {
+						errors.Error(Col, Line, "Expected end of line");
+					}
+					SkipToEndOfLine(); // skip comment
+				}
+				return new PreprocessingDirective(directive, arg, start, endLocation) { Expression = expr, LastLineEnd = lastLineEnd };
+			} else {
+				Location endLocation = new Location(Col, Line);
+				string arg = ReadToEndOfLine();
+				endLocation.Column += arg.Length;
+				int pos = arg.IndexOf("//");
+				if (pos >= 0)
+					arg = arg.Substring(0, pos);
+				arg = arg.Trim();
+				return new PreprocessingDirective(directive, arg, start, endLocation) { LastLineEnd = lastLineEnd };
+			}
+		}
+		
+		void PPWhitespace()
+		{
+			while (ReaderPeek() == ' ' || ReaderPeek() == '\t')
+				ReaderRead();
+		}
+		
+		Ast.Expression PPExpression()
+		{
+			Ast.Expression expr = PPAndExpression();
+			while (ReaderPeek() == '|') {
+				Token token = ReadOperator((char)ReaderRead());
+				if (token == null || token.kind != Tokens.LogicalOr) {
+					return expr;
+				}
+				Ast.Expression expr2 = PPAndExpression();
+				expr = new Ast.BinaryOperatorExpression(expr, Ast.BinaryOperatorType.LogicalOr, expr2);
+			}
+			return expr;
+		}
+		
+		Ast.Expression PPAndExpression()
+		{
+			Ast.Expression expr = PPEqualityExpression();
+			while (ReaderPeek() == '&') {
+				Token token = ReadOperator((char)ReaderRead());
+				if (token == null || token.kind != Tokens.LogicalAnd) {
+					break;
+				}
+				Ast.Expression expr2 = PPEqualityExpression();
+				expr = new Ast.BinaryOperatorExpression(expr, Ast.BinaryOperatorType.LogicalAnd, expr2);
+			}
+			return expr;
+		}
+		
+		Ast.Expression PPEqualityExpression()
+		{
+			Ast.Expression expr = PPUnaryExpression();
+			while (ReaderPeek() == '=' || ReaderPeek() == '!') {
+				Token token = ReadOperator((char)ReaderRead());
+				if (token == null || token.kind != Tokens.Equals && token.kind != Tokens.NotEqual) {
+					break;
+				}
+				Ast.Expression expr2 = PPUnaryExpression();
+				expr = new Ast.BinaryOperatorExpression(expr, token.kind == Tokens.Equals ? Ast.BinaryOperatorType.Equality : Ast.BinaryOperatorType.InEquality, expr2);
+			}
+			return expr;
+		}
+		
+		Ast.Expression PPUnaryExpression()
+		{
+			PPWhitespace();
+			if (ReaderPeek() == '!') {
+				ReaderRead();
+				PPWhitespace();
+				return new Ast.UnaryOperatorExpression(PPUnaryExpression(), Ast.UnaryOperatorType.Not);
+			} else {
+				return PPPrimaryExpression();
+			}
+		}
+		
+		Ast.Expression PPPrimaryExpression()
+		{
+			int c = ReaderRead();
+			if (c < 0)
+				return Ast.Expression.Null;
+			if (c == '(') {
+				Ast.Expression expr = new Ast.ParenthesizedExpression(PPExpression());
+				PPWhitespace();
+				if (ReaderRead() != ')')
+					errors.Error(Col, Line, "Expected ')'");
+				PPWhitespace();
+				return expr;
+			} else {
+				if (c != '_' && !char.IsLetterOrDigit((char)c) && c != '\\')
+					errors.Error(Col, Line, "Expected conditional symbol");
+				bool canBeKeyword;
+				string symbol = ReadIdent((char)c, out canBeKeyword);
+				PPWhitespace();
+				if (canBeKeyword && symbol == "true")
+					return new Ast.PrimitiveExpression(true, "true");
+				else if (canBeKeyword && symbol == "false")
+					return new Ast.PrimitiveExpression(false, "false");
+				else
+					return new Ast.IdentifierExpression(symbol);
+			}
 		}
 	}
 }

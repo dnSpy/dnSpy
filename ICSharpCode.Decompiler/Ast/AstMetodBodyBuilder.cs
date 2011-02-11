@@ -575,7 +575,7 @@ namespace Decompiler
 						return new Ast.AssignmentExpression(
 							new Ast.IndexerExpression(target, methodArgs),
 							AssignmentOperatorType.Assign,
-							Convert(val, ((Cecil.ArrayType)target.UserData["Type"]).ElementType)
+							Convert(val, ((Cecil.ArrayType)((target.UserData as Dictionary<string, object>)["Type"])).ElementType)
 						);
 					}
 					

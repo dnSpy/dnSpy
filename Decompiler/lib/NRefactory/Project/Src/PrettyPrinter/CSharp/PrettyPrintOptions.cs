@@ -1,17 +1,21 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 namespace ICSharpCode.NRefactory.PrettyPrinter
 {
 	public enum BraceStyle {
 		EndOfLine,
+		EndOfLineWithoutSpace,
 		NextLine,
 		NextLineShifted,
 		NextLineShifted2
+	}
+	
+	public enum BraceForcement {
+		DoNotChange,
+		RemoveBraces,
+		AddBraces,
+		RemoveBracesForSingleLine
 	}
 	
 	/// <summary>
@@ -29,12 +33,18 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		BraceStyle constructorBraceStyle  = BraceStyle.NextLine;
 		BraceStyle destructorBraceStyle   = BraceStyle.NextLine;
 		BraceStyle methodBraceStyle       = BraceStyle.NextLine;
+		BraceStyle anonymousMethodBraceStyle  = BraceStyle.EndOfLine;
 		
 		BraceStyle propertyBraceStyle     = BraceStyle.EndOfLine;
+		bool      allowPropertyGetBlockInline = true;
 		BraceStyle propertyGetBraceStyle  = BraceStyle.EndOfLine;
+		bool      allowPropertySetBlockInline = true;
 		BraceStyle propertySetBraceStyle  = BraceStyle.EndOfLine;
 		
+		BraceStyle eventBraceStyle        = BraceStyle.EndOfLine;
+		bool      allowEventAddBlockInline = true;
 		BraceStyle eventAddBraceStyle     = BraceStyle.EndOfLine;
+		bool      allowEventRemoveBlockInline = true;
 		BraceStyle eventRemoveBraceStyle  = BraceStyle.EndOfLine;
 		
 		BraceStyle statementBraceStyle = BraceStyle.EndOfLine;
@@ -121,6 +131,15 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			}
 		}
 		
+		public BraceStyle AnonymousMethodBraceStyle {
+			get {
+				return anonymousMethodBraceStyle;
+			}
+			set {
+				anonymousMethodBraceStyle = value;
+			}
+		}
+		
 		public BraceStyle PropertyBraceStyle {
 			get {
 				return propertyBraceStyle;
@@ -137,12 +156,39 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				propertyGetBraceStyle = value;
 			}
 		}
+		
+		public bool AllowPropertyGetBlockInline {
+			get {
+				return allowPropertyGetBlockInline;
+			}
+			set {
+				allowPropertyGetBlockInline = value;
+			}
+		}
+		
 		public BraceStyle PropertySetBraceStyle {
 			get {
 				return propertySetBraceStyle;
 			}
 			set {
 				propertySetBraceStyle = value;
+			}
+		}
+		public bool AllowPropertySetBlockInline {
+			get {
+				return allowPropertySetBlockInline;
+			}
+			set {
+				allowPropertySetBlockInline = value;
+			}
+		}
+		
+		public BraceStyle EventBraceStyle {
+			get {
+				return eventBraceStyle;
+			}
+			set {
+				eventBraceStyle = value;
 			}
 		}
 		
@@ -154,6 +200,15 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				eventAddBraceStyle = value;
 			}
 		}
+		public bool AllowEventAddBlockInline {
+			get {
+				return allowEventAddBlockInline;
+			}
+			set {
+				allowEventAddBlockInline = value;
+			}
+		}
+		
 		public BraceStyle EventRemoveBraceStyle {
 			get {
 				return eventRemoveBraceStyle;
@@ -162,7 +217,213 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				eventRemoveBraceStyle = value;
 			}
 		}
+		public bool AllowEventRemoveBlockInline {
+			get {
+				return allowEventRemoveBlockInline;
+			}
+			set {
+				allowEventRemoveBlockInline = value;
+			}
+		}
 		#endregion
+		
+		#region Force Braces
+		BraceForcement ifElseBraceForcement = BraceForcement.DoNotChange;
+		public BraceForcement IfElseBraceForcement {
+			get {
+				return ifElseBraceForcement;
+			}
+			set {
+				ifElseBraceForcement = value;
+			}
+		}
+		
+		BraceForcement forBraceForcement = BraceForcement.DoNotChange;
+		public BraceForcement ForBraceForcement {
+			get {
+				return forBraceForcement;
+			}
+			set {
+				forBraceForcement = value;
+			}
+		}
+		
+		BraceForcement foreachBraceForcement = BraceForcement.DoNotChange;
+		public BraceForcement ForEachBraceForcement {
+			get {
+				return foreachBraceForcement;
+			}
+			set {
+				foreachBraceForcement = value;
+			}
+		}
+		
+		BraceForcement whileBraceForcement = BraceForcement.DoNotChange;
+		public BraceForcement WhileBraceForcement {
+			get {
+				return whileBraceForcement;
+			}
+			set {
+				whileBraceForcement = value;
+			}
+		}
+		
+		BraceForcement usingBraceForcement = BraceForcement.DoNotChange;
+		public BraceForcement UsingBraceForcement {
+			get {
+				return usingBraceForcement;
+			}
+			set {
+				usingBraceForcement = value;
+			}
+		}
+		
+		BraceForcement fixedBraceForcement = BraceForcement.DoNotChange;
+		public BraceForcement FixedBraceForcement {
+			get {
+				return fixedBraceForcement;
+			}
+			set {
+				fixedBraceForcement = value;
+			}
+		}
+		#endregion
+		
+		#region Indentation
+		bool indentNamespaceBody = true;
+		bool indentClassBody     = true;
+		bool indentInterfaceBody = true;
+		bool indentStructBody    = true;
+		bool indentEnumBody      = true;
+		
+		bool indentMethodBody    = true;
+		bool indentPropertyBody  = true;
+		bool indentEventBody     = true;
+		bool indentBlocks        = true;
+		
+		bool indentSwitchBody = true;
+		bool indentCaseBody   = true;
+		bool indentBreakStatements = true;
+		
+		public bool IndentBlocks {
+			get {
+				return indentBlocks;
+			}
+			set {
+				indentBlocks = value;
+			}
+		}
+
+		public bool IndentClassBody {
+			get {
+				return indentClassBody;
+			}
+			set {
+				indentClassBody = value;
+			}
+		}
+
+		public bool IndentStructBody {
+			get {
+				return indentStructBody;
+			}
+			set {
+				indentStructBody = value;
+			}
+		}
+		
+		public bool IndentPropertyBody {
+			get {
+				return indentPropertyBody;
+			}
+			set {
+				indentPropertyBody = value;
+			}
+		}
+		
+		public bool IndentNamespaceBody {
+			get {
+				return indentNamespaceBody;
+			}
+			set {
+				indentNamespaceBody = value;
+			}
+		}
+
+		public bool IndentMethodBody {
+			get {
+				return indentMethodBody;
+			}
+			set {
+				indentMethodBody = value;
+			}
+		}
+
+		public bool IndentInterfaceBody {
+			get {
+				return indentInterfaceBody;
+			}
+			set {
+				indentInterfaceBody = value;
+			}
+		}
+
+		public bool IndentEventBody {
+			get {
+				return indentEventBody;
+			}
+			set {
+				indentEventBody = value;
+			}
+		}
+	
+		public bool IndentEnumBody {
+			get {
+				return indentEnumBody;
+			}
+			set {
+				indentEnumBody = value;
+			}
+		}
+		
+		public bool IndentBreakStatements {
+			get {
+				return indentBreakStatements;
+			}
+			set {
+				indentBreakStatements = value;
+			}
+		}
+		
+		public bool IndentSwitchBody {
+			get {
+				return indentSwitchBody;
+			}
+			set {
+				indentSwitchBody = value;
+			}
+		}
+
+		public bool IndentCaseBody {
+			get {
+				return indentCaseBody;
+			}
+			set {
+				indentCaseBody = value;
+			}
+		}
+
+		#endregion
+		
+		#region NewLines
+		public bool PlaceCatchOnNewLine { get; set; }
+		public bool PlaceFinallyOnNewLine { get; set; }
+		public bool PlaceElseOnNewLine { get; set; }
+		public bool PlaceNonBlockElseOnNewLine { get; set; }
+		public bool PlaceWhileOnNewLine { get; set; }
+		#endregion
+		
+		#region Spaces
 		
 		#region Before Parentheses
 		bool beforeMethodCallParentheses        = false;
@@ -415,6 +676,159 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		}
 		#endregion
 		
+		#region WithinParentheses
+		bool withinCheckedExpressionParantheses = false;
+		public bool WithinCheckedExpressionParantheses {
+			get {
+				return withinCheckedExpressionParantheses;
+			}
+			set {
+				withinCheckedExpressionParantheses = value;
+			}
+		}
+		
+		bool withinTypeOfParentheses = false;
+		public bool WithinTypeOfParentheses {
+			get {
+				return withinTypeOfParentheses;
+			}
+			set {
+				withinTypeOfParentheses = value;
+			}
+		}
+		
+		bool withinSizeOfParentheses = false;
+		public bool WithinSizeOfParentheses {
+			get {
+				return withinSizeOfParentheses;
+			}
+			set {
+				withinSizeOfParentheses = value;
+			}
+		}
+		
+		bool withinCastParentheses = false;
+		public bool WithinCastParentheses {
+			get {
+				return withinCastParentheses;
+			}
+			set {
+				withinCastParentheses = value;
+			}
+		}
+		
+		bool withinUsingParentheses = false;
+		public bool WithinUsingParentheses {
+			get {
+				return withinUsingParentheses;
+			}
+			set {
+				withinUsingParentheses = value;
+			}
+		}
+		
+		bool withinLockParentheses = false;
+		public bool WithinLockParentheses {
+			get {
+				return withinLockParentheses;
+			}
+			set {
+				withinLockParentheses = value;
+			}
+		}
+		
+		bool withinSwitchParentheses = false;
+		public bool WithinSwitchParentheses {
+			get {
+				return withinSwitchParentheses;
+			}
+			set {
+				withinSwitchParentheses = value;
+			}
+		}
+		
+		bool withinCatchParentheses = false;
+		public bool WithinCatchParentheses {
+			get {
+				return withinCatchParentheses;
+			}
+			set {
+				withinCatchParentheses = value;
+			}
+		}
+		
+		bool withinForEachParentheses = false;
+		public bool WithinForEachParentheses {
+			get {
+				return withinForEachParentheses;
+			}
+			set {
+				withinForEachParentheses = value;
+			}
+		}
+		
+		bool withinForParentheses = false;
+		public bool WithinForParentheses {
+			get {
+				return withinForParentheses;
+			}
+			set {
+				withinForParentheses = value;
+			}
+		}
+		
+		bool withinWhileParentheses = false;
+		public bool WithinWhileParentheses {
+			get {
+				return withinWhileParentheses;
+			}
+			set {
+				withinWhileParentheses = value;
+			}
+		}
+		
+		bool withinIfParentheses = false;
+		public bool WithinIfParentheses {
+			get {
+				return withinIfParentheses;
+			}
+			set {
+				withinIfParentheses = value;
+			}
+		}
+		
+		bool withinMethodDeclarationParentheses = false;
+		public bool WithinMethodDeclarationParentheses {
+			get {
+				return withinMethodDeclarationParentheses;
+			}
+			set {
+				withinMethodDeclarationParentheses = value;
+			}
+		}
+		
+		bool withinMethodCallParentheses = false;
+		public bool WithinMethodCallParentheses {
+			get {
+				return withinMethodCallParentheses;
+			}
+			set {
+				withinMethodCallParentheses = value;
+			}
+		}
+		
+		bool withinParentheses = false;
+		public bool WithinParentheses {
+			get {
+				return withinParentheses;
+			}
+			set {
+				withinParentheses = value;
+			}
+		}
+		
+		#endregion
+		
 		#region SpacesInConditionalOperator
 		bool conditionalOperatorBeforeConditionSpace = true;
 		bool conditionalOperatorAfterConditionSpace = true;
@@ -457,12 +871,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		#endregion
 
 		#region OtherSpaces
-		bool spacesWithinBrackets = false;
 		bool spacesAfterComma     = true;
-		bool spacesBeforeComma    = false;
-		bool spacesAfterSemicolon = true;
-		bool spacesAfterTypecast  = false;
-		
 		public bool SpacesAfterComma {
 			get {
 				return spacesAfterComma;
@@ -471,6 +880,8 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				spacesAfterComma = value;
 			}
 		}
+		
+		bool spacesAfterSemicolon = true;
 		public bool SpacesAfterSemicolon {
 			get {
 				return spacesAfterSemicolon;
@@ -479,6 +890,8 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				spacesAfterSemicolon = value;
 			}
 		}
+		
+		bool spacesAfterTypecast  = false;
 		public bool SpacesAfterTypecast {
 			get {
 				return spacesAfterTypecast;
@@ -487,6 +900,8 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				spacesAfterTypecast = value;
 			}
 		}
+		
+		bool spacesBeforeComma    = false;
 		public bool SpacesBeforeComma {
 			get {
 				return spacesBeforeComma;
@@ -495,6 +910,8 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 				spacesBeforeComma = value;
 			}
 		}
+		
+		bool spacesWithinBrackets = false;
 		public bool SpacesWithinBrackets {
 			get {
 				return spacesWithinBrackets;
@@ -504,5 +921,11 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			}
 		}
 		#endregion
+		#endregion
+		
+		public PrettyPrintOptions ()
+		{
+			PlaceNonBlockElseOnNewLine = true;
+		}
 	}
 }

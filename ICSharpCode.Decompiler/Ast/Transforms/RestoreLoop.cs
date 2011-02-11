@@ -1,8 +1,8 @@
 using System;
-
-using Ast = ICSharpCode.NRefactory.Ast;
+using System.Linq;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Visitors;
+using Ast = ICSharpCode.NRefactory.Ast;
 
 namespace Decompiler.Transforms.Ast
 {
@@ -42,12 +42,12 @@ namespace Decompiler.Transforms.Ast
 			
 			// Restore loop condition (version 2)
 			if (forStatement.Condition.IsNull) {
-				IfElseStatement condition = forStatement.EmbeddedStatement.Children.First as IfElseStatement;
+				IfElseStatement condition = forStatement.EmbeddedStatement.Children.First() as IfElseStatement;
 				if (condition != null &&
 				    condition.TrueStatement.Count == 1 &&
 				    condition.TrueStatement[0] is BlockStatement &&
 				    condition.TrueStatement[0].Children.Count == 1 &&
-				    condition.TrueStatement[0].Children.First is BreakStatement &&
+				    condition.TrueStatement[0].Children.First() is BreakStatement &&
 				    condition.FalseStatement.Count == 1 &&
 				    condition.FalseStatement[0] is BlockStatement &&
 				    condition.FalseStatement[0].Children.Count == 0)
@@ -61,7 +61,7 @@ namespace Decompiler.Transforms.Ast
 			if (forStatement.EmbeddedStatement.Children.Count > 0 &&
 			    forStatement.Iterator.Count == 0)
 			{
-				ExpressionStatement lastStmt = forStatement.EmbeddedStatement.Children.Last as ExpressionStatement;
+				ExpressionStatement lastStmt = forStatement.EmbeddedStatement.Children.Last() as ExpressionStatement;
 				if (lastStmt != null &&
 				    (lastStmt.Expression is AssignmentExpression || lastStmt.Expression is UnaryOperatorExpression)) {
 					lastStmt.Remove();

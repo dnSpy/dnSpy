@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using ICSharpCode.NRefactory.Parser.VB;
@@ -55,9 +51,13 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			if (IsInMemberBody
 			    && (string.Equals(directive.Cmd, "#Region", StringComparison.InvariantCultureIgnoreCase)
 			        || string.Equals(directive.Cmd, "#End", StringComparison.InvariantCultureIgnoreCase)
-			        && directive.Arg.ToLowerInvariant().StartsWith("region")))
+			        && directive.Arg.StartsWith("Region", StringComparison.InvariantCultureIgnoreCase)))
 			{
 				WriteLineInPreviousLine("'" + directive.Cmd + " " + directive.Arg, forceWriteInPreviousBlock);
+			} else if (!directive.Expression.IsNull) {
+				VBNetOutputVisitor visitor = new VBNetOutputVisitor();
+				directive.Expression.AcceptVisitor(visitor, null);
+				WriteLineInPreviousLine(directive.Cmd + " " + visitor.Text + " Then", forceWriteInPreviousBlock);
 			} else {
 				base.PrintPreprocessingDirective(directive, forceWriteInPreviousBlock);
 			}
@@ -67,7 +67,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		{
 			if (!LastCharacterIsWhiteSpace)
 				Space();
-			PrintText("_\r\n");
+			PrintText("_" + Environment.NewLine);
 		}
 	}
 }

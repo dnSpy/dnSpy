@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.CodeDom;
@@ -78,22 +74,40 @@ namespace ICSharpCode.NRefactory.Visitors
 			variables.Clear();
 			parameters.Clear();
 		}
-
+		
+		string GetDotNetNameFromTypeReference(TypeReference type)
+		{
+			string name;
+			InnerClassTypeReference ictr = type as InnerClassTypeReference;
+			if (ictr != null) {
+				name = GetDotNetNameFromTypeReference(ictr.BaseType) + "+" + ictr.Type;
+			} else {
+				name = type.Type;
+			}
+			if (type.GenericTypes.Count != 0)
+				name = name + "`" + type.GenericTypes.Count.ToString();
+			return name;
+		}
+		
 		CodeTypeReference ConvType(TypeReference type)
 		{
 			if (type == null) {
 				throw new ArgumentNullException("type");
 			}
-			if (string.IsNullOrEmpty(type.SystemType)) {
-				throw new InvalidOperationException("empty type");
-			}
 			
-			CodeTypeReference t = new CodeTypeReference(type.SystemType);
+			CodeTypeReference t = new CodeTypeReference(GetDotNetNameFromTypeReference(type));
+			InnerClassTypeReference ictr = type as InnerClassTypeReference;
+			if (ictr != null) {
+				type = ictr.CombineToNormalTypeReference();
+			}
 			foreach (TypeReference gt in type.GenericTypes) {
 				t.TypeArguments.Add(ConvType(gt));
 			}
 			if (type.IsArrayType) {
-				t = new CodeTypeReference(t, type.RankSpecifier.Length);
+				for (int i = type.RankSpecifier.Length - 1; i >= 0; --i)
+				{
+					t = new CodeTypeReference(t, type.RankSpecifier[i] + 1);
+				}
 			}
 			
 			return t;
@@ -317,6 +331,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			CodeMemberMethod memberMethod = new CodeMemberMethod();
 			memberMethod.Name = methodDeclaration.Name;
 			memberMethod.Attributes = ConvMemberAttributes(methodDeclaration.Modifier);
+			memberMethod.ReturnType = ConvType(methodDeclaration.TypeReference);
 
 			// RG: Private Interface Decl
 			if ((memberMethod.Attributes & MemberAttributes.Public) != MemberAttributes.Public &&
@@ -457,7 +472,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			CodeVariableDeclarationStatement declStmt = null;
 			
 			for (int i = 0; i < localVariableDeclaration.Variables.Count; ++i) {
-				CodeTypeReference type = ConvType(localVariableDeclaration.GetTypeForVariable(i) ?? new TypeReference("object"));
+				CodeTypeReference type = ConvType(localVariableDeclaration.GetTypeForVariable(i) ?? new TypeReference("System.Object", true));
 				VariableDeclaration var = (VariableDeclaration)localVariableDeclaration.Variables[i];
 				if (!var.Initializer.IsNull) {
 					declStmt = new CodeVariableDeclarationStatement(type,
@@ -790,7 +805,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		
 		public override object VisitLabelStatement(LabelStatement labelStatement, object data)
 		{
-			System.CodeDom.CodeLabeledStatement labelStmt = new CodeLabeledStatement(labelStatement.Label,(CodeStatement)labelStatement.AcceptVisitor(this, data));
+			System.CodeDom.CodeLabeledStatement labelStmt = new CodeLabeledStatement(labelStatement.Label);
 			
 			// Add Statement to Current Statement Collection
 			AddStmt(labelStmt);
@@ -1054,10 +1069,8 @@ namespace ICSharpCode.NRefactory.Visitors
 					op = CodeBinaryOperatorType.GreaterThanOrEqual;
 					break;
 				case BinaryOperatorType.Equality:
-					op = CodeBinaryOperatorType.IdentityEquality;
-					break;
 				case BinaryOperatorType.InEquality:
-					op = CodeBinaryOperatorType.IdentityInequality;
+					op = CodeBinaryOperatorType.ValueEquality;
 					break;
 				case BinaryOperatorType.LessThan:
 					op = CodeBinaryOperatorType.LessThan;
@@ -1074,9 +1087,6 @@ namespace ICSharpCode.NRefactory.Visitors
 				case BinaryOperatorType.Subtract:
 					op = CodeBinaryOperatorType.Subtract;
 					break;
-					//case BinaryOperatorType.ValueEquality:
-					//	op = CodeBinaryOperatorType.ValueEquality;
-					//	break;
 				case BinaryOperatorType.ShiftLeft:
 				case BinaryOperatorType.ShiftRight:
 					// CodeDOM suxx
@@ -1098,9 +1108,14 @@ namespace ICSharpCode.NRefactory.Visitors
 			System.Diagnostics.Debug.Assert(!binaryOperatorExpression.Left.IsNull);
 			System.Diagnostics.Debug.Assert(!binaryOperatorExpression.Right.IsNull);
 
-			return new CodeBinaryOperatorExpression((CodeExpression)binaryOperatorExpression.Left.AcceptVisitor(this, data),
-			                                        op,
-			                                        (CodeExpression)binaryOperatorExpression.Right.AcceptVisitor(this, data));
+			var cboe = new CodeBinaryOperatorExpression(
+				(CodeExpression)binaryOperatorExpression.Left.AcceptVisitor(this, data),
+				op,
+				(CodeExpression)binaryOperatorExpression.Right.AcceptVisitor(this, data));
+			if (binaryOperatorExpression.Op == BinaryOperatorType.InEquality) {
+				cboe = new CodeBinaryOperatorExpression(cboe, CodeBinaryOperatorType.ValueEquality, new CodePrimitiveExpression(false));
+			}
+			return cboe;
 		}
 		
 		public override object VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
@@ -1281,8 +1296,13 @@ namespace ICSharpCode.NRefactory.Visitors
 				case UnaryOperatorType.Not:
 					// emulate !a with a == false
 					var = (CodeExpression)unaryOperatorExpression.Expression.AcceptVisitor(this, data);
-
-					return new CodeBinaryOperatorExpression(var,CodeBinaryOperatorType.ValueEquality, new CodePrimitiveExpression(false));
+					
+					CodeBinaryOperatorExpression cboe = var as CodeBinaryOperatorExpression;
+					if (cboe != null && cboe.Operator == CodeBinaryOperatorType.IdentityEquality) {
+						return new CodeBinaryOperatorExpression(cboe.Left, CodeBinaryOperatorType.IdentityInequality, cboe.Right);
+					} else {
+						return new CodeBinaryOperatorExpression(var,CodeBinaryOperatorType.ValueEquality, new CodePrimitiveExpression(false));
+					}
 
 				default:
 					throw new NotSupportedException("CodeDom does not support Unary Operators");
@@ -1434,7 +1454,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		
 		public override object VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
 		{
-			if (arrayCreateExpression.ArrayInitializer == null) {
+			if (arrayCreateExpression.ArrayInitializer.IsNull) {
 				return new CodeArrayCreateExpression(ConvType(arrayCreateExpression.CreateType),
 				                                     arrayCreateExpression.Arguments[0].AcceptVisitor(this, data) as CodeExpression);
 			}
@@ -1510,19 +1530,9 @@ namespace ICSharpCode.NRefactory.Visitors
 			return continueStmt;
 		}
 
-		bool IsField(string type, int typeParameterCount, string fieldName)
+		bool IsField(string reflectionTypeName, string fieldName)
 		{
-			bool isField = environmentInformationProvider.HasField(type, typeParameterCount, fieldName);
-			
-			if (!isField) {
-				int idx = type.LastIndexOf('.');
-				if (idx >= 0) {
-					type = type.Substring(0, idx) + "+" + type.Substring(idx + 1);
-					isField = IsField(type, typeParameterCount, fieldName);
-				}
-			}
-			
-			return isField;
+			return environmentInformationProvider.HasField(reflectionTypeName, 0, fieldName);
 		}
 		
 		bool IsFieldReferenceExpression(MemberReferenceExpression fieldReferenceExpression)
@@ -1549,7 +1559,7 @@ namespace ICSharpCode.NRefactory.Visitors
 				if (fieldReferenceExpression.TargetObject is MemberReferenceExpression) {
 					if (IsPossibleTypeReference((MemberReferenceExpression)fieldReferenceExpression.TargetObject)) {
 						CodeTypeReferenceExpression typeRef = ConvertToTypeReference((MemberReferenceExpression)fieldReferenceExpression.TargetObject);
-						if (IsField(typeRef.Type.BaseType, typeRef.Type.TypeArguments.Count, fieldReferenceExpression.MemberName)) {
+						if (IsField(typeRef.Type.BaseType, fieldReferenceExpression.MemberName)) {
 							return new CodeFieldReferenceExpression(typeRef,
 							                                        fieldReferenceExpression.MemberName);
 						} else {
@@ -1612,7 +1622,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			}
 			//field detection for fields\props inherited from base classes
 			if (currentTypeDeclaration.BaseTypes.Count > 0) {
-				return IsField(currentTypeDeclaration.BaseTypes[0].Type, currentTypeDeclaration.BaseTypes[0].GenericTypes.Count, identifier);
+				return environmentInformationProvider.HasField(currentTypeDeclaration.BaseTypes[0].Type, currentTypeDeclaration.BaseTypes[0].GenericTypes.Count, identifier);
 			}
 			return false;
 		}
@@ -1649,7 +1659,7 @@ namespace ICSharpCode.NRefactory.Visitors
 				}
 				return new CodeTypeReferenceExpression(type.ToString());
 			} else if (fieldReferenceExpression.TargetObject is TypeReferenceExpression) {
-				type.Insert(0, ((TypeReferenceExpression)fieldReferenceExpression.TargetObject).TypeReference.SystemType);
+				type.Insert(0, ((TypeReferenceExpression)fieldReferenceExpression.TargetObject).TypeReference.Type);
 				return new CodeTypeReferenceExpression(type.ToString());
 			} else {
 				return null;

@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -19,6 +15,8 @@ namespace NRefactoryASTGenerator
 	class MainClass
 	{
 		public const string VisitPrefix = "Visit";
+		
+		static readonly string[] lineEndings = { "\r\n", "\r", "\n" };
 		
 		public static void Main(string[] args)
 		{
@@ -42,13 +40,13 @@ namespace NRefactoryASTGenerator
 			}
 			nodeTypes.Sort(delegate(Type a, Type b) { return a.Name.CompareTo(b.Name); });
 			
-			EasyCompileUnit ccu = new EasyCompileUnit();
-			EasyNamespace cns = ccu.AddNamespace("ICSharpCode.NRefactory.Ast");
+			CodeCompileUnit ccu = new CodeCompileUnit();
+			CodeNamespace cns = ccu.AddNamespace("ICSharpCode.NRefactory.Ast");
 			cns.AddImport("System");
 			cns.AddImport("System.Collections.Generic");
 			foreach (Type type in nodeTypes) {
 				if (type.GetCustomAttributes(typeof(CustomImplementationAttribute), false).Length == 0) {
-					EasyTypeDeclaration ctd = cns.AddType(type.Name);
+					CodeTypeDeclaration ctd = cns.AddType(type.Name);
 					if (type.IsAbstract) {
 						ctd.TypeAttributes |= TypeAttributes.Abstract;
 					}
@@ -92,10 +90,10 @@ namespace NRefactoryASTGenerator
 			
 			using (StringWriter writer = new StringWriter()) {
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
-				File.WriteAllText(directory + "Generated.cs", writer.ToString());
+				File.WriteAllText(directory + "Generated.cs", NormalizeNewLines(writer));
 			}
 			
-			ccu = new EasyCompileUnit();
+			ccu = new CodeCompileUnit();
 			cns = ccu.AddNamespace("ICSharpCode.NRefactory");
 			cns.AddImport("System");
 			cns.AddImport("ICSharpCode.NRefactory.Ast");
@@ -103,10 +101,10 @@ namespace NRefactoryASTGenerator
 			
 			using (StringWriter writer = new StringWriter()) {
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
-				File.WriteAllText(visitorsDir + "../IAstVisitor.cs", writer.ToString());
+				File.WriteAllText(visitorsDir + "../IAstVisitor.cs", NormalizeNewLines(writer));
 			}
 			
-			ccu = new EasyCompileUnit();
+			ccu = new CodeCompileUnit();
 			cns = ccu.AddNamespace("ICSharpCode.NRefactory.Visitors");
 			cns.AddImport("System");
 			cns.AddImport("System.Collections.Generic");
@@ -116,10 +114,10 @@ namespace NRefactoryASTGenerator
 			
 			using (StringWriter writer = new StringWriter()) {
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
-				File.WriteAllText(visitorsDir + "AbstractAstVisitor.cs", writer.ToString());
+				File.WriteAllText(visitorsDir + "AbstractAstVisitor.cs", NormalizeNewLines(writer));
 			}
 			
-			ccu = new EasyCompileUnit();
+			ccu = new CodeCompileUnit();
 			cns = ccu.AddNamespace("ICSharpCode.NRefactory.Visitors");
 			cns.AddImport("System");
 			cns.AddImport("System.Collections.Generic");
@@ -129,10 +127,10 @@ namespace NRefactoryASTGenerator
 			
 			using (StringWriter writer = new StringWriter()) {
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
-				File.WriteAllText(visitorsDir + "AbstractAstTransformer.cs", writer.ToString());
+				File.WriteAllText(visitorsDir + "AbstractAstTransformer.cs", NormalizeNewLines(writer));
 			}
 			
-			ccu = new EasyCompileUnit();
+			ccu = new CodeCompileUnit();
 			cns = ccu.AddNamespace("ICSharpCode.NRefactory.Visitors");
 			cns.AddImport("System");
 			cns.AddImport("ICSharpCode.NRefactory.Ast");
@@ -142,13 +140,37 @@ namespace NRefactoryASTGenerator
 				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
 				// CodeDom cannot output "sealed", so we need to use this hack:
 				File.WriteAllText(visitorsDir + "NodeTrackingAstVisitor.cs",
-				                  writer.ToString().Replace("public override object", "public sealed override object"));
+				                  NormalizeNewLines(writer).Replace("public override object", "public sealed override object"));
 			}
+			
+			//NotImplementedAstVisitor
+			ccu = new CodeCompileUnit();
+			cns = ccu.AddNamespace("ICSharpCode.NRefactory.Visitors");
+			cns.AddImport("System");
+			cns.AddImport("ICSharpCode.NRefactory.Ast");
+			cns.Types.Add(CreateNotImplementedAstVisitorClass(nodeTypes));
+			
+			using (StringWriter writer = new StringWriter()) {
+				new Microsoft.CSharp.CSharpCodeProvider().GenerateCodeFromCompileUnit(ccu, writer, settings);
+				File.WriteAllText(visitorsDir + "NotImplementedAstVisitor.cs", NormalizeNewLines(writer));
+			}
+			Debug.WriteLine("AST Generator done!");
+			
+			Debug.WriteLine("start keyword list generation...");
+			
+			KeywordGenerator.Generate();
+			
+			Debug.WriteLine("keyword list generation done!");
+		}
+		
+		static string NormalizeNewLines(StringWriter writer)
+		{
+			return string.Join(Environment.NewLine, writer.ToString().Split(lineEndings, StringSplitOptions.None));
 		}
 		
 		static CodeTypeDeclaration CreateAstVisitorInterface(List<Type> nodeTypes)
 		{
-			EasyTypeDeclaration td = new EasyTypeDeclaration("IAstVisitor");
+			CodeTypeDeclaration td = new CodeTypeDeclaration("IAstVisitor");
 			td.IsInterface = true;
 			
 			foreach (Type t in nodeTypes) {
@@ -163,7 +185,7 @@ namespace NRefactoryASTGenerator
 		
 		static CodeTypeDeclaration CreateAstVisitorClass(List<Type> nodeTypes, bool transformer)
 		{
-			EasyTypeDeclaration td = new EasyTypeDeclaration(transformer ? "AbstractAstTransformer" : "AbstractAstVisitor");
+			CodeTypeDeclaration td = new CodeTypeDeclaration(transformer ? "AbstractAstTransformer" : "AbstractAstVisitor");
 			td.TypeAttributes = TypeAttributes.Public | TypeAttributes.Abstract;
 			td.BaseTypes.Add(new CodeTypeReference("IAstVisitor"));
 			
@@ -178,7 +200,7 @@ namespace NRefactoryASTGenerator
 					"or remove the current node, totally independent from the type of the parent node.";
 				Easy.AddSummary(td, comment);
 				
-				EasyField field = td.AddField(Easy.TypeRef("Stack", "INode"), "nodeStack");
+				CodeMemberField field = td.AddField(Easy.TypeRef("Stack", "INode"), "nodeStack");
 				field.InitExpression = Easy.New(field.Type);
 				
 				/*
@@ -212,7 +234,7 @@ namespace NRefactoryASTGenerator
 					
 					List<CodeStatement> assertions = new List<CodeStatement>();
 					string varVariableName = GetFieldName(type.Name);
-					EasyExpression var = Easy.Var(varVariableName);
+					CodeExpression var = Easy.Var(varVariableName);
 					assertions.Add(AssertIsNotNull(var));
 					
 					AddFieldVisitCode(m, type, var, assertions, transformer);
@@ -245,7 +267,7 @@ namespace NRefactoryASTGenerator
 			return td;
 		}
 		
-		static void AddFieldVisitCode(EasyMethod m, Type type, EasyExpression var, List<CodeStatement> assertions, bool transformer)
+		static void AddFieldVisitCode(EasyMethod m, Type type, CodeExpression var, List<CodeStatement> assertions, bool transformer)
 		{
 			if (type != null) {
 				if (type.BaseType != typeof(StatementWithEmbeddedStatement)) {
@@ -296,10 +318,10 @@ namespace NRefactoryASTGenerator
 				"\t\t\t}";
 		}
 		
-		static bool AddVisitCode(EasyMethod m, FieldInfo field, EasyExpression var, List<CodeStatement> assertions, bool transformer)
+		static bool AddVisitCode(EasyMethod m, FieldInfo field, CodeExpression var, List<CodeStatement> assertions, bool transformer)
 		{
-			EasyExpression prop = var.Property(GetPropertyName(field.Name));
-			EasyExpression nodeStack = Easy.Var("nodeStack");
+			CodeExpression prop = var.Property(GetPropertyName(field.Name));
+			CodeExpression nodeStack = Easy.Var("nodeStack");
 			if (field.FieldType.FullName.StartsWith("System.Collections.Generic.List")) {
 				Type elType = field.FieldType.GetGenericArguments()[0];
 				if (!typeof(INode).IsAssignableFrom(elType))
@@ -363,7 +385,7 @@ namespace NRefactoryASTGenerator
 			//	                     Body);
 		}
 		
-		static void ProcessType(Type type, EasyTypeDeclaration ctd)
+		static void ProcessType(Type type, CodeTypeDeclaration ctd)
 		{
 			foreach (FieldInfo field in type.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic)) {
 				ctd.AddField(ConvertType(field.FieldType), field.Name).Attributes = 0;
@@ -377,11 +399,15 @@ namespace NRefactoryASTGenerator
 				else
 					ex = GetDefaultValue("value", field);
 				p.Setter.Assign(Easy.Var(field.Name), ex);
-				if (typeof(INode).IsAssignableFrom(field.FieldType) && typeof(INullable).IsAssignableFrom(field.FieldType)) {
-					p.SetStatements.Add(new CodeSnippetStatement("\t\t\t\tif (!" +field.Name+".IsNull) "+field.Name+".Parent = this;"));
+				if (typeof(INode).IsAssignableFrom(field.FieldType)) {
+					if (typeof(INullable).IsAssignableFrom(field.FieldType)) {
+						p.SetStatements.Add(new CodeSnippetStatement("\t\t\t\tif (!" +field.Name+".IsNull) "+field.Name+".Parent = this;"));
+					} else {
+						p.SetStatements.Add(new CodeSnippetStatement("\t\t\t\t"+field.Name+".Parent = this;"));
+					}
 				}
 			}
-			foreach (ConstructorInfo ctor in type.GetConstructors()) {
+			foreach (ConstructorInfo ctor in type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 				CodeConstructor c = new CodeConstructor();
 				if (type.IsAbstract)
 					c.Attributes = MemberAttributes.Family;
@@ -477,7 +503,7 @@ namespace NRefactoryASTGenerator
 		
 		static CodeTypeDeclaration CreateNodeTrackingAstVisitorClass(List<Type> nodeTypes)
 		{
-			EasyTypeDeclaration td = new EasyTypeDeclaration("NodeTrackingAstVisitor");
+			CodeTypeDeclaration td = new CodeTypeDeclaration("NodeTrackingAstVisitor");
 			td.TypeAttributes = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Abstract;
 			td.BaseTypes.Add(new CodeTypeReference("AbstractAstVisitor"));
 			
@@ -512,10 +538,6 @@ namespace NRefactoryASTGenerator
 					
 					CodeExpression var = Easy.Var(GetFieldName(type.Name));
 					
-//					m.Statements.Add(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(), "BeginVisit"), new CodeExpression[] { var }));
-//					m.Statements.Add(new CodeVariableDeclarationStatement(new CodeTypeReference(typeof(object)), "result", new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(), "TrackedVisit"), new CodeExpression[] { var, new CodeVariableReferenceExpression("data") })));
-//					m.Statements.Add(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(new CodeThisReferenceExpression(), "EndVisit"), new CodeExpression[] { var }));
-//					m.Statements.Add(new CodeMethodReturnStatement(new CodeVariableReferenceExpression("result")));
 					m.Body.InvokeMethod(Easy.This, "BeginVisit", var);
 					m.Body.DeclareVariable(typeof(object), "result").InitExpression
 						= Easy.This.InvokeMethod("TrackedVisit" + type.Name, var, Easy.Var("data"));
@@ -533,6 +555,32 @@ namespace NRefactoryASTGenerator
 					m.AddParameter(new CodeTypeReference(typeof(object)), "data");
 					
 					m.Body.Return(Easy.Base.InvokeMethod(VisitPrefix + type.Name, Easy.Var(GetFieldName(type.Name)), Easy.Var("data")));
+				}
+			}
+			
+			return td;
+		}
+		
+		static CodeTypeDeclaration CreateNotImplementedAstVisitorClass(List<Type> nodeTypes)
+		{
+			CodeTypeDeclaration td = new CodeTypeDeclaration("NotImplementedAstVisitor");
+			td.TypeAttributes = TypeAttributes.Public | TypeAttributes.Class;
+			td.BaseTypes.Add(new CodeTypeReference("IAstVisitor"));
+			
+			string comment = "<summary>\n " +
+				"IAstVisitor implementation that always throws NotImplementedExceptions.\n " +
+				"</summary>";
+			td.Comments.Add(new CodeCommentStatement(comment, true));
+			
+			foreach (Type type in nodeTypes) {
+				if (!type.IsAbstract) {
+					
+					EasyMethod m = td.AddMethod(typeof(object), VisitPrefix + type.Name);
+					m.Attributes = MemberAttributes.Public;
+					m.AddParameter(ConvertType(type), GetFieldName(type.Name));
+					m.AddParameter(new CodeTypeReference(typeof(object)), "data");
+					
+					m.Body.Throw(Easy.New(typeof(NotImplementedException), Easy.Prim(type.Name)));
 				}
 			}
 			

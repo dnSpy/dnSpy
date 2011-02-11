@@ -1,9 +1,5 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="none" email=""/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -18,16 +14,12 @@ namespace ICSharpCode.NRefactory.Parser
 		CommentType   currentCommentType;
 		StringBuilder sb = new StringBuilder();
 		Location         startPosition;
+		bool commentStartsLine;
 		
 		public List<ISpecial> CurrentSpecials {
 			get {
 				return currentSpecials;
 			}
-		}
-		
-		public void InformToken(int kind)
-		{
-			
 		}
 		
 		/// <summary>
@@ -45,17 +37,20 @@ namespace ICSharpCode.NRefactory.Parser
 			currentSpecials.Add(new BlankLine(point));
 		}
 		
-		public void AddPreprocessingDirective(string cmd, string arg, Location start, Location end)
+		public void AddPreprocessingDirective(PreprocessingDirective directive)
 		{
-			currentSpecials.Add(new PreprocessingDirective(cmd, arg, start, end));
+			if (directive == null)
+				throw new ArgumentNullException("directive");
+			currentSpecials.Add(directive);
 		}
 		
 		// used for comment tracking
-		public void StartComment(CommentType commentType, Location startPosition)
+		public void StartComment(CommentType commentType, bool commentStartsLine, Location startPosition)
 		{
 			this.currentCommentType = commentType;
 			this.startPosition      = startPosition;
 			this.sb.Length          = 0;
+			this.commentStartsLine  = commentStartsLine;
 		}
 		
 		public void AddChar(char c)
@@ -70,7 +65,7 @@ namespace ICSharpCode.NRefactory.Parser
 		
 		public void FinishComment(Location endPosition)
 		{
-			currentSpecials.Add(new Comment(currentCommentType, sb.ToString(), startPosition, endPosition));
+			currentSpecials.Add(new Comment(currentCommentType, sb.ToString(), commentStartsLine, startPosition, endPosition));
 		}
 	}
 }

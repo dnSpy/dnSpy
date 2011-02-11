@@ -1,15 +1,11 @@
-// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
+using ICSharpCode.NRefactory.Visitors;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-
+using System.Text;
 using ICSharpCode.NRefactory.Ast;
 
 namespace ICSharpCode.NRefactory.Parser.CSharp
@@ -17,13 +13,31 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 	internal sealed partial class Parser : AbstractParser
 	{
 		Lexer lexer;
+		Stack<INode> blockStack;
 		
 		public Parser(ILexer lexer) : base(lexer)
 		{
 			this.lexer = (Lexer)lexer;
-			// due to anonymous methods, we always need a compilation unit, so
-			// create it in the constructor
-			compilationUnit = new CompilationUnit();
+			this.blockStack = new Stack<INode>();
+		}
+		
+		void BlockStart(INode block)
+		{
+			blockStack.Push(block);
+		}
+		
+		void BlockEnd()
+		{
+			blockStack.Pop();
+		}
+		
+		void AddChild(INode childNode)
+		{
+			if (childNode != null) {
+				INode parent = (INode)blockStack.Peek();
+				parent.Children.Add(childNode);
+				childNode.Parent = parent;
+			}
 		}
 		
 		StringBuilder qualidentBuilder = new StringBuilder();
@@ -50,13 +64,35 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			errDist = 0;
 		}
 
+		public override void Parse()
+		{
+			ParseRoot();
+			compilationUnit.AcceptVisitor(new SetParentVisitor(), null);
+		}
+		
+		public override TypeReference ParseTypeReference ()
+		{
+			lexer.NextToken();
+			TypeReference type;
+			Type(out type);
+			return type;
+		}
+
 		public override Expression ParseExpression()
 		{
 			lexer.NextToken();
+			Location startLocation = la.Location;
 			Expression expr;
 			Expr(out expr);
 			// SEMICOLON HACK : without a trailing semicolon, parsing expressions does not work correctly
 			if (la.kind == Tokens.Semicolon) lexer.NextToken();
+			if (expr != null) {
+				if (expr.StartLocation.IsEmpty)
+					expr.StartLocation = startLocation;
+				if (expr.EndLocation.IsEmpty)
+					expr.EndLocation = (t ?? la).EndLocation;
+				expr.AcceptVisitor(new SetParentVisitor(), null);
+			}
 			Expect(Tokens.EOF);
 			return expr;
 		}
@@ -68,7 +104,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			
 			BlockStatement blockStmt = new BlockStatement();
 			blockStmt.StartLocation = la.Location;
-			compilationUnit.BlockStart(blockStmt);
+			BlockStart(blockStmt);
 			
 			while (la.kind != Tokens.EOF) {
 				Token oldLa = la;
@@ -79,21 +115,25 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				}
 			}
 			
-			compilationUnit.BlockEnd();
+			BlockEnd();
+			// if lexer didn't return any tokens, use position of the EOF token in "la"
+			blockStmt.EndLocation = (t ?? la).EndLocation;
 			Expect(Tokens.EOF);
+			blockStmt.AcceptVisitor(new SetParentVisitor(), null);
 			return blockStmt;
 		}
 		
-		public override IList<INode> ParseTypeMembers()
+		public override List<INode> ParseTypeMembers()
 		{
 			lexer.NextToken();
 			compilationUnit = new CompilationUnit();
 			
 			TypeDeclaration newType = new TypeDeclaration(Modifiers.None, null);
-			compilationUnit.BlockStart(newType);
+			BlockStart(newType);
 			ClassBody();
-			compilationUnit.BlockEnd();
+			BlockEnd();
 			Expect(Tokens.EOF);
+			newType.AcceptVisitor(new SetParentVisitor(), null);
 			return newType.Children;
 		}
 		
@@ -103,26 +143,27 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			if (la.kind != Tokens.OpenParenthesis) {
 				return false;
 			}
-			if (IsSimpleTypeCast()) {
-				return true;
-			}
-			return GuessTypeCast();
-		}
-
-		// "(" ( typeKW [ "[" {","} "]" | "*" ] | void  ( "[" {","} "]" | "*" ) ) ")"
-		// only for built-in types, all others use GuessTypeCast!
-		bool IsSimpleTypeCast ()
-		{
-			// assert: la.kind == _lpar
+			bool isPossibleExpression = true;
+			
 			lexer.StartPeek();
 			Token pt = lexer.Peek();
 			
-			if (!IsTypeKWForTypeCast(ref pt)) {
+			if (!IsTypeNameOrKWForTypeCast(ref pt, ref isPossibleExpression)) {
 				return false;
 			}
-			if (pt.kind == Tokens.Question) // TODO: check if IsTypeKWForTypeCast doesn't already to this
+			
+			// ")"
+			if (pt.kind != Tokens.CloseParenthesis) {
+				return false;
+			}
+			if (isPossibleExpression) {
+				// check successor
 				pt = lexer.Peek();
-			return pt.kind == Tokens.CloseParenthesis;
+				return Tokens.CastFollower[pt.kind];
+			} else {
+				// not possibly an expression: don't check cast follower
+				return true;
+			}
 		}
 
 		/* !!! Proceeds from current peek position !!! */
@@ -139,17 +180,25 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 		}
 
 		/* !!! Proceeds from current peek position !!! */
+		bool IsTypeNameOrKWForTypeCast(ref Token pt, ref bool isPossibleExpression)
+		{
+			if (Tokens.TypeKW[pt.kind] || pt.kind == Tokens.Void) {
+				isPossibleExpression = false;
+				return IsTypeKWForTypeCast(ref pt);
+			} else {
+				return IsTypeNameForTypeCast(ref pt, ref isPossibleExpression);
+			}
+		}
+		
 		bool IsTypeNameOrKWForTypeCast(ref Token pt)
 		{
-			if (Tokens.TypeKW[pt.kind] || pt.kind == Tokens.Void)
-				return IsTypeKWForTypeCast(ref pt);
-			else
-				return IsTypeNameForTypeCast(ref pt);
+			bool tmp = false;
+			return IsTypeNameOrKWForTypeCast(ref pt, ref tmp);
 		}
 
 		// TypeName = ident [ "::" ident ] { ["<" TypeNameOrKW { "," TypeNameOrKW } ">" ] "." ident } ["?"] PointerOrDims
 		/* !!! Proceeds from current peek position !!! */
-		bool IsTypeNameForTypeCast(ref Token pt)
+		bool IsTypeNameForTypeCast(ref Token pt, ref bool isPossibleExpression)
 		{
 			// ident
 			if (!IsIdentifierToken(pt)) {
@@ -191,29 +240,10 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				pt = Peek();
 			}
 			if (pt.kind == Tokens.Times || pt.kind == Tokens.OpenSquareBracket) {
+				isPossibleExpression = false;
 				return IsPointerOrDims(ref pt);
 			}
 			return true;
-		}
-
-		// "(" TypeName ")" castFollower
-		bool GuessTypeCast ()
-		{
-			// assert: la.kind == _lpar
-			StartPeek();
-			Token pt = Peek();
-
-			if (!IsTypeNameForTypeCast(ref pt)) {
-				return false;
-			}
-			
-			// ")"
-			if (pt.kind != Tokens.CloseParenthesis) {
-				return false;
-			}
-			// check successor
-			pt = Peek();
-			return Tokens.CastFollower[pt.kind];
 		}
 		// END IsTypeCast
 		
@@ -234,6 +264,9 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			StartPeek();
 			Token pt = Peek();
 			while (pt.kind != Tokens.CloseParenthesis) {
+				if (pt.kind == Tokens.Out || pt.kind == Tokens.Ref) {
+					pt = Peek();
+				}
 				if (!IsTypeNameOrKWForTypeCast(ref pt)) {
 					return false;
 				}
@@ -363,7 +396,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 
 		/* True, if "checked" or "unchecked" are followed by "{" */
 		bool UnCheckedAndLBrace () {
-			return la.kind == Tokens.Checked || la.kind == Tokens.Unchecked &&
+			return (la.kind == Tokens.Checked || la.kind == Tokens.Unchecked) &&
 				Peek(1).kind == Tokens.OpenCurlyBrace;
 		}
 
@@ -485,9 +518,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			string val = la.val;
 
 			return (cur == Tokens.Event || cur == Tokens.Return ||
-			        (Tokens.IdentifierTokens[cur] &&
-			         (val == "field" || val == "method"   || val == "module" ||
-			          val == "param" || val == "property" || val == "type"))) &&
+			        Tokens.IdentifierTokens[cur]) &&
 				Peek(1).kind == Tokens.Colon;
 		}
 
@@ -533,8 +564,9 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				TypeReference targetType = GetTypeReferenceFromExpression(member.TargetObject);
 				if (targetType != null) {
 					if (targetType.GenericTypes.Count == 0 && targetType.IsArrayType == false) {
-						TypeReference tr = new TypeReference(targetType.Type + "." + member.MemberName, member.TypeArguments);
-						tr.IsGlobal = targetType.IsGlobal;
+						TypeReference tr = targetType.Clone();
+						tr.Type = tr.Type + "." + member.MemberName;
+						tr.GenericTypes.AddRange(member.TypeArguments);
 						return tr;
 					} else {
 						return new InnerClassTypeReference(targetType, member.MemberName, member.TypeArguments);
@@ -592,6 +624,71 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			if (item != null) {
 				list.Add(item);
 				item.Parent = parent;
+			}
+		}
+		
+		internal static string GetReflectionNameForOperator(OverloadableOperatorType op)
+		{
+			switch (op) {
+				case OverloadableOperatorType.Add:
+					return "op_Addition";
+				case OverloadableOperatorType.BitNot:
+					return "op_OnesComplement";
+				case OverloadableOperatorType.BitwiseAnd:
+					return "op_BitwiseAnd";
+				case OverloadableOperatorType.BitwiseOr:
+					return "op_BitwiseOr";
+				case OverloadableOperatorType.Concat:
+				case OverloadableOperatorType.CType:
+					return "op_unknown";
+				case OverloadableOperatorType.Decrement:
+					return "op_Decrement";
+				case OverloadableOperatorType.Divide:
+					return "op_Division";
+				case OverloadableOperatorType.DivideInteger:
+					return "op_unknown";
+				case OverloadableOperatorType.Equality:
+					return "op_Equality";
+				case OverloadableOperatorType.ExclusiveOr:
+					return "op_ExclusiveOr";
+				case OverloadableOperatorType.GreaterThan:
+					return "op_GreaterThan";
+				case OverloadableOperatorType.GreaterThanOrEqual:
+					return "op_GreaterThanOrEqual";
+				case OverloadableOperatorType.Increment:
+					return "op_Increment";
+				case OverloadableOperatorType.InEquality:
+					return "op_Inequality";
+				case OverloadableOperatorType.IsFalse:
+					return "op_False";
+				case OverloadableOperatorType.IsTrue:
+					return "op_True";
+				case OverloadableOperatorType.LessThan:
+					return "op_LessThan";
+				case OverloadableOperatorType.LessThanOrEqual:
+					return "op_LessThanOrEqual";
+				case OverloadableOperatorType.Like:
+					return "op_unknown";
+				case OverloadableOperatorType.Modulus:
+					return "op_Modulus";
+				case OverloadableOperatorType.Multiply:
+					return "op_Multiply";
+				case OverloadableOperatorType.Not:
+					return "op_LogicalNot";
+				case OverloadableOperatorType.Power:
+					return "op_unknown";
+				case OverloadableOperatorType.ShiftLeft:
+					return "op_LeftShift";
+				case OverloadableOperatorType.ShiftRight:
+					return "op_RightShift";
+				case OverloadableOperatorType.Subtract:
+					return "op_Subtraction";
+				case OverloadableOperatorType.UnaryMinus:
+					return "op_UnaryNegation";
+				case OverloadableOperatorType.UnaryPlus:
+					return "op_UnaryPlus";
+				default:
+					return "op_unknown";
 			}
 		}
 	}

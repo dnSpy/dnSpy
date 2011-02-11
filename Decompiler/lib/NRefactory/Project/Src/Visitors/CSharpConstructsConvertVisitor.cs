@@ -1,9 +1,5 @@
-﻿// <file>
-//     <copyright see="prj:///doc/copyright.txt"/>
-//     <license see="prj:///doc/license.txt"/>
-//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
-// </file>
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using ICSharpCode.NRefactory.Ast;
@@ -203,10 +199,15 @@ namespace ICSharpCode.NRefactory.Visitors
 				start = assign.Right;
 			}
 			
-			ReplaceCurrentNode(new ForNextStatement(typeReference, iteratorIdentifier.Identifier,
-			                                        start, end,
-			                                        (step == 1) ? null : new PrimitiveExpression(step, step.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)),
-			                                        forStatement.EmbeddedStatement, null));
+			ReplaceCurrentNode(
+				new ForNextStatement {
+					TypeReference = typeReference,
+					VariableName = iteratorIdentifier.Identifier,
+					Start = start,
+					End = end,
+					Step = (step == 1) ? null : new PrimitiveExpression(step, step.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)),
+					EmbeddedStatement = forStatement.EmbeddedStatement
+				});
 		}
 		
 		public override object VisitCastExpression(CastExpression castExpression, object data)
@@ -216,7 +217,7 @@ namespace ICSharpCode.NRefactory.Visitors
 				// this code only supports primitive types, user-defined value types are handled by
 				// the DOM-aware CSharpToVBNetConvertVisitor
 				string type;
-				if (TypeReference.PrimitiveTypesCSharpReverse.TryGetValue(castExpression.CastTo.SystemType, out type)) {
+				if (TypeReference.PrimitiveTypesCSharpReverse.TryGetValue(castExpression.CastTo.Type, out type)) {
 					if (type != "object" && type != "string") {
 						// type is value type
 						castExpression.CastType = CastType.Conversion;

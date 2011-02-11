@@ -24,7 +24,8 @@
     <FileAlignment>4096</FileAlignment>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA1002;-Microsoft.Design#CA1020;-Microsoft.Design#CA1051;-Microsoft.Design#CA1062;-Microsoft.Globalization#CA1303;-Microsoft.Globalization#CA1305;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1800;-Microsoft.Performance#CA1805;-Microsoft.Usage#CA2211;-Microsoft.Usage#CA2227</CodeAnalysisRules>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>False</Optimize>
@@ -53,11 +54,30 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Src\Lexer\LATextReader.cs" />
+    <Compile Include="Src\Lexer\LexerMemento.cs" />
+    <Compile Include="Src\Lexer\SavepointEventArgs.cs" />
+    <Compile Include="Src\Lexer\VBNet\Block.cs" />
+    <Compile Include="Src\Lexer\VBNet\ExpressionFinder.cs" />
+    <Compile Include="Src\Lexer\VBNet\ExpressionFinderState.cs" />
+    <Compile Include="Src\Lexer\VBNet\Extensions.cs" />
+    <Compile Include="Src\Lexer\VBNet\Parser.cs">
+      <DependentUpon>ExpressionFinder.atg</DependentUpon>
+    </Compile>
     <None Include="Resources\ICSharpCode.NRefactory.snk" />
     <None Include="Src\Lexer\BuildKeywords.pl" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
+    <Compile Include="Src\AstBuilder\ExpressionBuilder.cs" />
+    <Compile Include="Src\AstBuilder\StatementBuilder.cs" />
+    <Compile Include="Src\Lexer\CSharp\ConditionalCompilation.cs" />
+    <Compile Include="Src\Lexer\VBNet\VBLexerMemento.cs" />
+    <Compile Include="Src\Lexer\VBNet\XmlModeInfo.cs" />
     <Compile Include="Src\Ast\NodeCollection.cs" />
     <Compile Include="Src\Lexer\AbstractLexer.cs" />
     <Compile Include="Src\Lexer\CSharp\Keywords.cs" />
@@ -96,6 +116,9 @@
     <Compile Include="Src\PrettyPrinter\IOutputAstVisitor.cs" />
     <Compile Include="Src\PrettyPrinter\SpecialNodesInserter.cs" />
     <Compile Include="Src\SnippetParser.cs" />
+    <Compile Include="Src\Visitors\NotImplementedAstVisitor.cs" />
+    <Compile Include="Src\Visitors\SetParentVisitor.cs" />
+    <Compile Include="Src\Visitors\SetRegionInclusionVisitor.cs" />
     <Compile Include="Src\Visitors\AbstractAstTransformer.cs" />
     <Compile Include="Src\Visitors\AbstractASTVisitor.cs" />
     <Compile Include="Src\Visitors\CodeDOMOutputVisitor.cs" />
@@ -127,6 +150,14 @@
     <Compile Include="Src\Ast\TypeReference.cs" />
     <Compile Include="Src\Parser\VBNet\ParamModifierList.cs" />
     <Compile Include="Src\Visitors\NodeTrackingAstVisitor.cs" />
+    <None Include="Src\Lexer\VBNet\ExpressionFinder.atg">
+      <Generator>CocoParserGenerator</Generator>
+      <CustomToolNamespace>ICSharpCode.NRefactory.Parser.VB</CustomToolNamespace>
+    </None>
+    <None Include="Src\Lexer\VBNet\PushParser.frame">
+      <DependentUpon>ExpressionFinder.atg</DependentUpon>
+    </None>
+    <None Include="Src\Parser\Frames\Parser.frame" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Src\Lexer\CSharp\KeywordList.txt" />
@@ -144,7 +175,10 @@
     <Content Include="Src\Parser\Frames\SharpCoco.exe" />
     <Content Include="Src\Parser\Frames\trace.txt" />
     <Folder Include="Src\Parser\VBNet" />
-    <Content Include="Src\Parser\VBNet\VBNET.ATG" />
+    <None Include="Src\Parser\VBNet\VBNET.ATG">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CustomToolNamespace>ICSharpCode.NRefactory.Parser.VB</CustomToolNamespace>
+    </None>
     <Content Include="Src\Parser\gen.bat" />
     <Folder Include="Src\PrettyPrinter" />
     <Folder Include="Src\PrettyPrinter\CSharp" />
@@ -152,6 +186,9 @@
     <Folder Include="Src\Visitors" />
     <Folder Include="Src\Ast" />
     <Folder Include="Src\Ast\General" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Src\AstBuilder" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 </Project>
