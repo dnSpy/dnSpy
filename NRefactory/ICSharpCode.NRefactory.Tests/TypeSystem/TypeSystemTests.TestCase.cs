@@ -1,0 +1,68 @@
+﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+
+using System;
+using System.Collections.Generic;
+
+[assembly: ICSharpCode.NRefactory.TypeSystem.TestCase.TypeTestAttribute(
+	42, typeof(System.Action<>), typeof(IDictionary<string, IList<NUnit.Framework.TestAttribute>>))]
+
+namespace ICSharpCode.NRefactory.TypeSystem.TestCase
+{
+	public class SimplePublicClass
+	{
+		public void Method() {}
+	}
+	
+	public class TypeTestAttribute : Attribute
+	{
+		public TypeTestAttribute(int a1, Type a2, Type a3) {}
+	}
+	
+	public unsafe class DynamicTest
+	{
+		public dynamic SimpleProperty { get; set; }
+		
+		public List<dynamic> DynamicGenerics1(Action<object, dynamic[], object> param) { return null; }
+		public void DynamicGenerics2(Action<object, dynamic, object> param) { }
+		public void DynamicGenerics3(Action<int, dynamic, object> param) { }
+		public void DynamicGenerics4(Action<int[], dynamic, object> param) { }
+		public void DynamicGenerics5(Action<int*[], dynamic, object> param) { }
+		public void DynamicGenerics6(ref Action<object, dynamic, object> param) { }
+		public void DynamicGenerics7(Action<int[,][], dynamic, object> param) { }
+	}
+	
+	public class GenericClass<A, B> where A : B
+	{
+		public void TestMethod<K, V>(string param) where V: K where K: IComparable<V> {}
+		public void GetIndex<T>(T element) where T : IEquatable<T> {}
+	}
+	
+	public class PropertyTest
+	{
+		public int PropertyWithProtectedSetter { get; protected set; }
+		
+		public object PropertyWithPrivateSetter { get; private set; }
+		
+		public string this[int index] { get { return "Test"; } }
+	}
+	
+	public enum MyEnum : short
+	{
+		First,
+		Second,
+		Flag1 = 0x10,
+		Flag2 = 0x20,
+		CombinedFlags = Flag1 | Flag2
+	}
+	
+	public class Base<T> {
+		public class Nested {}
+	}
+	public class Derived<A, B> : Base<B> {}
+	
+	public struct MyStructWithCtor
+	{
+		public MyStructWithCtor(int a) {}
+	}
+}

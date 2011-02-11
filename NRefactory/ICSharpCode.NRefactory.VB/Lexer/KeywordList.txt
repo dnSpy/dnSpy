@@ -1,0 +1,284 @@
+# this list is used for autogeneration of:
+# - Keywords.cs
+# - Tokens.cs
+# - ATGTokensSection.txt - the TOKENS section of the ATG file
+
+# use BuildKeywords to generate the different lists.
+
+$Namespace=ICSharpCode.NRefactory.VB.Parser
+$UpperCaseKeywords=True
+
+# TERMINAL_CLASSES
+EOF
+EOL
+Identifier
+LiteralString
+LiteralCharacter
+LiteralInteger
+LiteralDouble
+LiteralSingle
+LiteralDecimal
+LiteralDate
+
+# XML_TERMINALS
+XmlOpenTag
+XmlCloseTag
+XmlStartInlineVB
+XmlEndInlineVB
+XmlCloseTagEmptyElement
+XmlOpenEndTag
+XmlContent
+XmlComment
+XmlCData
+XmlProcessingInstruction
+
+# SPECIAL_CHARACTERS
+Assign = "="
+Colon =":"
+Comma = ","
+ConcatString = "&"
+Div ="/"
+DivInteger = "\\"
+Dot = "."
+TripleDot = "..."
+DotAt = ".@"
+# Exclamation mark = Dictionary access operator (not always a token, sometimes it's a type character)
+ExclamationMark = "!"
+Minus = "-"
+Plus = "+"
+Power = "^"
+QuestionMark = "?"
+Times = "*"
+
+OpenCurlyBrace = "{"
+CloseCurlyBrace = "}"
+	
+OpenParenthesis = "("
+CloseParenthesis = ")"
+	
+GreaterThan = ">"
+LessThan = "<"
+	
+NotEqual = "<>"
+GreaterEqual = ">="
+LessEqual = "<="
+	
+ShiftLeft = "<<"
+ShiftRight = ">>"
+	
+PlusAssign = "+="
+PowerAssign = "^="
+MinusAssign = "-="
+TimesAssign = "*="
+DivAssign = "/="
+DivIntegerAssign = "\\="
+ShiftLeftAssign = "<<="
+ShiftRightAssign = ">>="
+ConcatStringAssign = "&="
+ColonAssign = ":="
+
+# keywords according to the spec:
+# Keywordlist
+"AddHandler"
+"AddressOf"
+"Aggregate"
+"Alias"
+"And"
+"AndAlso"
+"Ansi"
+"As"
+"Ascending"
+"Assembly"
+"Auto"
+"Binary"
+"Boolean"
+"ByRef"
+"By"
+"Byte"
+"ByVal"
+"Call"
+"Case"
+"Catch"
+"CBool"
+"CByte"
+"CChar"
+"CDate"
+"CDbl"
+"CDec"
+"Char"
+"CInt"
+"Class"
+"CLng"
+"CObj"
+"Compare"
+"Const"
+"Continue"
+"CSByte"
+"CShort"
+"CSng"
+"CStr"
+"CType"
+"CUInt"
+"CULng"
+"CUShort"
+"Custom"
+"Date"
+"Decimal"
+"Declare"
+"Default"
+"Delegate"
+"Descending"
+"Dim"
+"DirectCast"
+"Distinct"
+"Do"
+"Double"
+"Each"
+"Else"
+"ElseIf"
+"End"
+"EndIf"
+"Enum"
+"Equals"
+"Erase"
+"Error"
+"Event"
+"Exit"
+"Explicit"
+"False"
+"Finally"
+"For"
+"Friend"
+"From"
+"Function"
+"Get"
+"GetType"
+"Global"
+"GoSub"
+"GoTo"
+"Group"
+"Handles"
+"If"
+"Implements"
+"Imports"
+"In"
+"Infer"
+"Inherits"
+"Integer"
+"Interface"
+"Into"
+"Is"
+"IsNot"
+# Note: IsTrue and IsFalse are 'NOT' keywords they're only valid in Operator declarations (like get/set/value are no C# 'keywords')
+"Join"
+"Key"
+"Let"
+"Lib"
+"Like"
+"Long"
+"Loop"
+"Me"
+"Mod"
+"Module"
+"MustInherit"
+"MustOverride"
+"MyBase"
+"MyClass"
+"Namespace"
+"Narrowing"
+"New"
+"Next"
+"Not"
+"Nothing"
+"NotInheritable"
+"NotOverridable"
+"Object"
+"Of"
+"Off"
+"On"
+"Operator"
+"Option"
+"Optional"
+"Or"
+"Order"
+"OrElse"
+"Out"
+"Overloads"
+"Overridable"
+"Overrides"
+"ParamArray"
+"Partial"
+"Preserve"
+"Private"
+"Property"
+"Protected"
+"Public"
+"RaiseEvent"
+"ReadOnly"
+"ReDim"
+# has to be in the keyword list for the output formatter
+"Rem"
+"RemoveHandler"
+"Resume"
+"Return"
+"SByte"
+"Select"
+"Set"
+"Shadows"
+"Shared"
+"Short"
+"Single"
+"Skip"
+"Static"
+"Step"
+"Stop"
+"Strict"
+"String"
+"Structure"
+"Sub"
+"SyncLock"
+"Take"
+"Text"
+"Then"
+"Throw"
+"To"
+"True"
+"Try"
+"TryCast"
+"TypeOf"
+"UInteger"
+"ULong"
+"Unicode"
+"Until"
+"UShort"
+"Using"
+"Variant"
+"Wend"
+"When"
+"Where"
+"While"
+"Widening"
+"With"
+"WithEvents"
+"WriteOnly"
+"Xor"
+
+#XML specific keywords
+"GetXmlNamespace"
+
+#Sets
+Null("Nothing")
+BlockSucc("Case", "Catch", "Else", "ElseIf", "End", "Finally", "Loop", "Next")
+GlobalLevel("Namespace", "Module", "Class", "Structure", "Imports", "Option")
+TypeLevel("Sub", "Function", "Property")
+
+# List of keywords that are valid identifiers, must be the same as the "Identifier" production in VBNET.ATG
+IdentifierTokens("Text", "Binary", "Compare", "Assembly", "Ansi", "Auto", "Preserve", "Unicode", "Until", "Off", "Out", "Key", "Explicit", "Infer", "From", "Join", "Equals", "Distinct", "Where", "Take", "Skip", "Order", "By", "Ascending", "Descending", "Group", "Into", "Aggregate")
+ExpressionStart("Me", "MyBase", "MyClass", @BooleanExpressions, @OperatorsAtStart, "New", @Null, "AddressOf", "GetType", "TypeOf", "GetXmlNamespace", "Global", @TypeKW, @LambdaStart, @CastExpressions)
+StatementStart(@Null, @ExpressionStart, "Dim", "Const", "Static", "For", "While", "Do", "Select")
+SimpleTypeName(@TypeKW, @IdentifierTokens)
+CastExpressions("DirectCast", "TryCast", "CType", "CBool", "CByte", "CChar", "CDate", "CDec", "CDbl", "CInt", "CLng", "CObj", "CSByte", "CShort", "CSng", "CStr", "CUInt", "CULng", "CUShort")
+BooleanExpressions("True", "False")
+LambdaStart("Sub", "Function")
+OperatorsAtStart("Not", "From", "Aggregate")
+TypeKW("Boolean", "Date", "Char", "String", "Decimal", "Byte", "Short", "Integer", "Long", "Single", "Double", "UInteger", "ULong", "UShort", "SByte")

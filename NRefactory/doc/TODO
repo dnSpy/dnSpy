@@ -1,0 +1,15 @@
+﻿TypeSystem API:
+
+* Decide on the fate of ISupportsInterning (depends on how we're going to implement persistence)
+
+* Try to build SharedTypes for void, int, etc.
+	Take care of equality with the real System.Void, System.Int32 etc.
+	This seems to be hard/impossible to do, see comment in SharedTypes.cs.
+	I'm trying to work without those types now.
+	
+	Note that having shared type *references* is possible (typeof(int).ToTypeReference())
+
+* Implement the C# parser producing the DOM
+* Implement ResolveVisitor
+* Implement all the nasty context-dependent stuff (local variables, lambdas) that CSharpResolver doesn't do (yet)
+	Where should that go? I'd like to keep it out of CSharpResolver, that class is bloated enough with the pure logic.
