@@ -361,15 +361,21 @@ namespace Decompiler
 			
 			if (methodDef.IsStatic)
 				modifiers |= Modifiers.Static;
-			else if ((methodDef.IsAbstract || methodDef.IsFinal || methodDef.IsVirtual) && !methodDef.IsNewSlot)
-				modifiers |= Modifiers.Override;
 			
-			if (methodDef.IsAbstract)
+			if (methodDef.IsAbstract) {
 				modifiers |= Modifiers.Abstract;
-			else if (methodDef.IsFinal)
-				modifiers |= Modifiers.Sealed;
-			else if (methodDef.IsVirtual && methodDef.IsNewSlot)
-				modifiers |= Modifiers.Virtual;
+				if (!methodDef.IsNewSlot)
+					modifiers |= Modifiers.Override;
+			} else if (methodDef.IsFinal) {
+				if (!methodDef.IsNewSlot) {
+					modifiers |= Modifiers.Sealed | Modifiers.Override;
+				}
+			} else if (methodDef.IsVirtual) {
+				if (methodDef.IsNewSlot)
+					modifiers |= Modifiers.Virtual;
+				else
+					modifiers |= Modifiers.Override;
+			}
 			return modifiers;
 		}
 		#endregion
