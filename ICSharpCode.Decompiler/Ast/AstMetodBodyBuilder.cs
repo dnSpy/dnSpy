@@ -612,7 +612,7 @@ namespace Decompiler
 					return new AssignmentExpression(
 						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand),
-						arg2);
+						arg1);
 				case Code.Ldflda:
 					case Code.Ldsflda: throw new NotImplementedException();
 					case Code.Ldftn: throw new NotImplementedException();
