@@ -130,6 +130,26 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		/// <summary>
+		/// Gets the ancestors of this node (excluding this node itself)
+		/// </summary>
+		public IEnumerable<AstNode> Ancestors {
+			get {
+				for (AstNode cur = parent; cur != null; cur = cur.parent) {
+					yield return cur;
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Gets all descendants of this node (excluding this node itself).
+		/// </summary>
+		public IEnumerable<AstNode> Descendants {
+			get {
+				return Utils.TreeTraversal.PreOrder(this.Children, n => n.Children);
+			}
+		}
+		
+		/// <summary>
 		/// Gets the first child with the specified role.
 		/// Returns the role's null object if the child is not found.
 		/// </summary>
@@ -291,20 +311,27 @@ namespace ICSharpCode.NRefactory.CSharp
 				Remove();
 				return;
 			}
-			if (this.parent == null) {
+			if (newNode == this)
+				return; // nothing to do...
+			if (parent == null) {
 				throw new InvalidOperationException(this.IsNull ? "Cannot replace the null nodes" : "Cannot replace the root node");
-			}
-			if (newNode.parent != null) {
-				// TODO: what if newNode is used within *this* tree?
-				// e.g. "parenthesizedExpr.ReplaceWith(parenthesizedExpr.Expression);"
-				// We'll probably want to allow that.
-				throw new ArgumentException ("Node is already used in another tree.", "newNode");
 			}
 			// Because this method doesn't statically check the new node's type with the role,
 			// we perform a runtime test:
 			if (!role.IsValid(newNode)) {
 				throw new ArgumentException (string.Format("The new node '{0}' is not valid in the role {1}", newNode.GetType().Name, role.ToString()), "newNode");
 			}
+			if (newNode.parent != null) {
+				// newNode is used within this tree?
+				if (newNode.Ancestors.Contains(this)) {
+					// e.g. "parenthesizedExpr.ReplaceWith(parenthesizedExpr.Expression);"
+					// enable automatic removal
+					newNode.Remove();
+				} else {
+					throw new ArgumentException ("Node is already used in another tree.", "newNode");
+				}
+			}
+			
 			newNode.parent = parent;
 			newNode.role = role;
 			newNode.prevSibling = prevSibling;
@@ -335,6 +362,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			if (replaceFunction == null)
 				throw new ArgumentNullException("replaceFunction");
+			if (parent == null) {
+				throw new InvalidOperationException(this.IsNull ? "Cannot replace the null nodes" : "Cannot replace the root node");
+			}
 			AstNode oldParent = parent;
 			AstNode oldSuccessor = nextSibling;
 			Role oldRole = role;
