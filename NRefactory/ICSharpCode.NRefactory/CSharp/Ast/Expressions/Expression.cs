@@ -117,6 +117,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return new AsExpression { Type = type,  Expression = this };
 		}
+		
+		public IsExpression IsType(AstType type)
+		{
+			return new IsExpression { Type = type,  Expression = this };
+		}
 		#endregion
 	}
 }

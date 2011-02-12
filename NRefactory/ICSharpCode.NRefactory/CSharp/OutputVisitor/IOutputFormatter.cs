@@ -10,8 +10,21 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public interface IOutputFormatter
 	{
-		void WriteIdentifier(string ident);
+		/// <summary>
+		/// Writes an identifier.
+		/// If the identifier conflicts with a keyword, the output visitor will
+		/// call <c>WriteToken("@")</c> before calling WriteIdentifier().
+		/// </summary>
+		void WriteIdentifier(string identifier);
+		
+		/// <summary>
+		/// Writes a keyword to the output.
+		/// </summary>
 		void WriteKeyword(string keyword);
+		
+		/// <summary>
+		/// Writes a token to the output.
+		/// </summary>
 		void WriteToken(string token);
 		void Space();
 		
