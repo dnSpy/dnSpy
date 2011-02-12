@@ -4,8 +4,9 @@ using System;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Dom.CSharp;
 using ICSharpCode.SharpDevelop.Dom.NRefactoryResolver;
+using ILSpy.Debugger.AvalonEdit.Editor;
 
-namespace ILSpy.Debugger.Services.ParserService
+namespace ILSpy.Debugger.Services
 {
 	public class TParser : IParser
 	{
@@ -62,7 +63,7 @@ namespace ILSpy.Debugger.Services.ParserService
 			}
 		}
 		
-		public ICompilationUnit Parse(IProjectContent projectContent, string fileName = null, ITextBuffer fileContent)
+		public ICompilationUnit Parse(IProjectContent projectContent, string fileName, ITextBuffer fileContent)
 		{
 			using (ICSharpCode.NRefactory.IParser p = ICSharpCode.NRefactory.ParserFactory.CreateParser(ICSharpCode.NRefactory.SupportedLanguage.CSharp, fileContent.CreateReader())) {
 				return Parse(p, fileName, projectContent);

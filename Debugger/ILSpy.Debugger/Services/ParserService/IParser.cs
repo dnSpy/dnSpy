@@ -17,6 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.SharpDevelop.Dom;
+using ILSpy.Debugger.AvalonEdit.Editor;
 
 namespace ILSpy.Debugger.Services
 {
@@ -33,7 +35,7 @@ namespace ILSpy.Debugger.Services
 		
 		IExpressionFinder CreateExpressionFinder(string fileName);
 		
-		ICompilationUnit Parse(IProjectContent projectContent, string fileName = null, ITextBuffer fileContent);
+		ICompilationUnit Parse(IProjectContent projectContent, string fileName, ITextBuffer fileContent);
 		
 		IResolver CreateResolver();
 	}

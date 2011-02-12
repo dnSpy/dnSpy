@@ -1,0 +1,100 @@
+﻿// 
+// TryCatchStatement.cs
+//
+// Author:
+//       Mike Krüger <mkrueger@novell.com>
+// 
+// Copyright (c) 2009 Novell, Inc (http://www.novell.com)
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+using System.Collections.Generic;
+using System.Linq;
+
+namespace ICSharpCode.NRefactory.CSharp
+{
+	/// <summary>
+	/// try { TryBlock } CatchClauses finally { FinallyBlock }
+	/// </summary>
+	public class TryCatchStatement : Statement
+	{
+		public static readonly Role<CSharpTokenNode> TryKeywordRole = new Role<CSharpTokenNode>("TryKeyword", CSharpTokenNode.Null);
+		public static readonly Role<BlockStatement> TryBlockRole = new Role<BlockStatement>("TryBlock", BlockStatement.Null);
+		public static readonly Role<CatchClause> CatchClauseRole = new Role<CatchClause>("CatchClause");
+		public static readonly Role<CSharpTokenNode> FinallyKeywordRole = new Role<CSharpTokenNode>("FinallyKeyword", CSharpTokenNode.Null);
+		public static readonly Role<BlockStatement> FinallyBlockRole = new Role<BlockStatement>("FinallyBlock", BlockStatement.Null);
+		
+		public BlockStatement TryBlock {
+			get { return GetChildByRole (TryBlockRole); }
+			set { SetChildByRole (TryBlockRole, value); }
+		}
+		
+		public IEnumerable<CatchClause> CatchClauses {
+			get { return GetChildrenByRole (CatchClauseRole); }
+			set { SetChildrenByRole (CatchClauseRole, value); }
+		}
+		
+		public BlockStatement FinallyBlock {
+			get { return GetChildByRole (FinallyBlockRole); }
+			set { SetChildByRole (FinallyBlockRole, value); }
+		}
+		
+		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		{
+			return visitor.VisitTryCatchStatement (this, data);
+		}
+	}
+	
+	/// <summary>
+	/// catch (Type VariableName) { Body }
+	/// </summary>
+	public class CatchClause : AstNode
+	{
+		public override NodeType NodeType {
+			get {
+				return NodeType.Unknown;
+			}
+		}
+		
+		public AstType Type {
+			get { return GetChildByRole (Roles.Type); }
+			set { SetChildByRole (Roles.Type, value); }
+		}
+		
+		public string VariableName {
+			get { return GetChildByRole (Roles.Identifier).Name; }
+			set {
+				if (string.IsNullOrEmpty(value))
+					SetChildByRole (Roles.Identifier, null);
+				else
+					SetChildByRole (Roles.Identifier, new Identifier(value, AstLocation.Empty));
+			}
+		}
+		
+		public BlockStatement Body {
+			get { return GetChildByRole (Roles.Body); }
+			set { SetChildByRole (Roles.Body, value); }
+		}
+		
+		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		{
+			return visitor.VisitCatchClause (this, data);
+		}
+	}
+}

@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectGuid>{7B82B671-419F-45F4-B778-D9286F996EFA}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ICSharpCode.NRefactory.VB</RootNamespace>
+    <AssemblyName>ICSharpCode.NRefactory.VB</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DomBuilder\ExpressionBuilder.cs" />
+    <Compile Include="DomBuilder\StatementBuilder.cs" />
+    <Compile Include="Dom\AbstractNode.cs" />
+    <Compile Include="Dom\Enums.cs" />
+    <Compile Include="Dom\General\BlockStatement.cs" />
+    <Compile Include="Dom\General\CompilationUnit.cs" />
+    <Compile Include="Dom\General\Expression.cs" />
+    <Compile Include="Dom\General\LocalVariableDeclaration.cs" />
+    <Compile Include="Dom\General\PrimitiveExpression.cs" />
+    <Compile Include="Dom\General\Statement.cs" />
+    <Compile Include="Dom\Generated.cs" />
+    <Compile Include="Dom\INode.cs" />
+    <Compile Include="Dom\INullable.cs" />
+    <Compile Include="Dom\TypeReference.cs" />
+    <Compile Include="EnvironmentInformationProvider.cs" />
+    <Compile Include="IDomVisitor.cs" />
+    <Compile Include="Lexer\Block.cs" />
+    <Compile Include="Lexer\ExpressionFinder.cs" />
+    <Compile Include="Lexer\ExpressionFinderState.cs" />
+    <Compile Include="Lexer\Extensions.cs" />
+    <Compile Include="Lexer\Keywords.cs" />
+    <Compile Include="Lexer\LATextReader.cs" />
+    <Compile Include="Lexer\VBLexer.cs" />
+    <Compile Include="Lexer\LookupTable.cs" />
+    <Compile Include="Lexer\Parser.cs">
+      <DependentUpon>ExpressionFinder.atg</DependentUpon>
+    </Compile>
+    <Compile Include="Lexer\SavepointEventArgs.cs" />
+    <Compile Include="Lexer\Special\BlankLine.cs" />
+    <Compile Include="Lexer\Special\Comment.cs" />
+    <Compile Include="Lexer\Special\CommentType.cs" />
+    <Compile Include="Lexer\Special\ISpecial.cs" />
+    <Compile Include="Lexer\Special\PreProcessingDirective.cs" />
+    <Compile Include="Lexer\Special\SpecialTracker.cs" />
+    <Compile Include="Lexer\Special\TagComment.cs" />
+    <Compile Include="Lexer\Token.cs" />
+    <Compile Include="Lexer\Tokens.cs" />
+    <Compile Include="Lexer\VBLexerMemento.cs" />
+    <Compile Include="Lexer\XmlModeInfo.cs" />
+    <Compile Include="Location.cs" />
+    <Compile Include="OperatorPrecedence.cs" />
+    <Compile Include="ParserFactory.cs" />
+    <Compile Include="Parser\Errors.cs" />
+    <Compile Include="Parser\ModifierList.cs" />
+    <Compile Include="Parser\ParamModifierList.cs" />
+    <Compile Include="Parser\Parser.cs">
+      <DependentUpon>vb.atg</DependentUpon>
+    </Compile>
+    <Compile Include="Parser\VBParser.cs" />
+    <Compile Include="PrettyPrinter\AbstractOutputFormatter.cs" />
+    <Compile Include="PrettyPrinter\AbstractPrettyPrintOptions.cs" />
+    <Compile Include="PrettyPrinter\IOutputAstVisitor.cs" />
+    <Compile Include="PrettyPrinter\SpecialNodesInserter.cs" />
+    <Compile Include="PrettyPrinter\VBNet\VBNetOutputFormatter.cs" />
+    <Compile Include="PrettyPrinter\VBNet\VBNetOutputVisitor.cs" />
+    <Compile Include="PrettyPrinter\VBNet\VBNetPrettyPrintOptions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SnippetParser.cs" />
+    <Compile Include="Visitors\AbstractDomTransformer.cs" />
+    <Compile Include="Visitors\AbstractDomVisitor.cs" />
+    <Compile Include="Visitors\CodeDOMOutputVisitor.cs" />
+    <Compile Include="Visitors\CodeDOMVerboseOutputGenerator.cs" />
+    <Compile Include="Visitors\LookupTableVisitor.cs" />
+    <Compile Include="Visitors\NodeTrackingDomVisitor.cs" />
+    <Compile Include="Visitors\NotImplementedDomVisitor.cs" />
+    <Compile Include="Visitors\PrefixFieldsVisitor.cs" />
+    <Compile Include="Visitors\RenameIdentifierVisitor.cs" />
+    <Compile Include="Visitors\SetParentVisitor.cs" />
+    <Compile Include="Visitors\SetRegionInclusionVisitor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Dom" />
+    <Folder Include="DomBuilder" />
+    <Folder Include="Dom\General" />
+    <Folder Include="Lexer" />
+    <Folder Include="Lexer\Special" />
+    <Folder Include="Parser" />
+    <Folder Include="PrettyPrinter" />
+    <Folder Include="PrettyPrinter\VBNet" />
+    <Folder Include="Visitors" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Lexer\ExpressionFinder.atg">
+      <Generator>CocoParserGenerator</Generator>
+      <CustomToolNamespace>ICSharpCode.NRefactory.VB.Parser</CustomToolNamespace>
+    </None>
+    <None Include="Lexer\KeywordList.txt" />
+    <None Include="Lexer\PushParser.frame">
+      <DependentUpon>ExpressionFinder.atg</DependentUpon>
+    </None>
+    <None Include="Parser\Parser.frame">
+      <DependentUpon>vb.atg</DependentUpon>
+    </None>
+    <None Include="Parser\vb.atg">
+      <CustomToolNamespace>ICSharpCode.NRefactory.VB.Parser</CustomToolNamespace>
+      <Generator>CocoParserGenerator</Generator>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+</Project>

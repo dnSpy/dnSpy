@@ -32,6 +32,7 @@ using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using ILSpy.Debugger.UI;
+
 using Microsoft.Win32;
 using Mono.Cecil.Rocks;
 
@@ -331,7 +332,7 @@ namespace ICSharpCode.ILSpy
 		
 		void AttachToProcessExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			AttachToProcessWindow window = new AttachToProcessWindow();
+			var window = new AttachToProcessWindow();
 			window.Owner = this;
 			window.ShowDialog();
 		}

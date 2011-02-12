@@ -9,6 +9,8 @@
     <AssemblyName>ILSpy.Debugger</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -78,19 +80,7 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AvalonEdit" />
-    <Folder Include="AvalonEdit\Editor" />
-    <Folder Include="Bookmarks" />
-    <Folder Include="Models" />
-    <Folder Include="Images" />
-    <Folder Include="Services\Debugger" />
-    <Folder Include="Services\Debugger\Tooltips" />
-    <Folder Include="Services\ImageService" />
-    <Folder Include="Services" />
-    <Folder Include="Services\ParserService" />
-    <Folder Include="UI" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Page Include="UI\AttachToProcessWindow.xaml" />
   </ItemGroup>

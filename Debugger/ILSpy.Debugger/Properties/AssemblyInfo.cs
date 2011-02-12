@@ -1,20 +1,17 @@
 ﻿#region Using directives
 
 using System;
+using System.Resources;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
 #endregion
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle("ILSpy.Debugger")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ILSpy.Debugger")]
-[assembly: AssemblyCopyright("Copyright 2011")]
+[assembly: AssemblyTitle("ILspy.Debugger")]
+[assembly: AssemblyDescription("ILSpy debugger engine")]
+[assembly: AssemblyCompany("ic#code")]
+[assembly: AssemblyProduct("ILSpy")]
+[assembly: AssemblyCopyright("Copyright 2011 AlphaSierraPara for the SharpDevelop Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -22,10 +19,9 @@ using System.Runtime.InteropServices;
 // If you need to expose a type to COM, use [ComVisible(true)] on that type.
 [assembly: ComVisible(false)]
 
-// The assembly version has following format :
-//
-// Major.Minor.Build.Revision
-//
-// You can specify all the values or you can use the default the Revision and 
-// Build Numbers by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("0.1.0.208")]
+[assembly: AssemblyInformationalVersion("0.1.0.208-Debugger-alpha-5eadd1d9")]
+[assembly: NeutralResourcesLanguage("en-US")]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2243:AttributeStringLiteralsShouldParseCorrectly",
+    Justification = "AssemblyInformationalVersion does not need to be a parsable version")]
