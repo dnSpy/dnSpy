@@ -20,13 +20,21 @@ using System;
 
 namespace ILSpy.Debugger.Services
 {
-	/// <summary>
-	/// Description of IParser.
-	/// </summary>
-	public class IParser
+	public interface IParser
 	{
-		public IParser()
-		{
+		string[] LexerTags {
+			get;
+			set;
 		}
+		
+		LanguageProperties Language {
+			get;
+		}
+		
+		IExpressionFinder CreateExpressionFinder(string fileName);
+		
+		ICompilationUnit Parse(IProjectContent projectContent, string fileName = null, ITextBuffer fileContent);
+		
+		IResolver CreateResolver();
 	}
 }

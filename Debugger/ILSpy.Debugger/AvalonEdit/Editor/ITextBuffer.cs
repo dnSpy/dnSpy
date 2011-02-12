@@ -20,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+using ICSharpCode.AvalonEdit.Document;
+
 namespace ILSpy.Debugger.AvalonEdit.Editor
 {
 	/// <summary>
@@ -132,5 +134,13 @@ namespace ILSpy.Debugger.AvalonEdit.Editor
 		/// </summary>
 		/// <exception cref="ArgumentException">Raised if 'other' belongs to a different document than this checkpoint.</exception>
 		int MoveOffsetTo(ITextBufferVersion other, int oldOffset, AnchorMovementType movement);
+	}
+	
+	public sealed class StringTextBuffer : AvalonEditTextSourceAdapter
+	{
+		public StringTextBuffer(string text)
+			: base(new StringTextSource(text))
+		{
+		}
 	}
 }

@@ -71,6 +71,7 @@
     <Compile Include="Models\RunningProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ParserService\IParser.cs" />
+    <Compile Include="Services\ParserService\Parser.cs" />
     <Compile Include="Services\ParserService\ParserService.cs" />
     <Compile Include="UI\AttachToProcessWindow.xaml.cs">
       <DependentUpon>AttachToProcessWindow.xaml</DependentUpon>
@@ -101,6 +102,10 @@
     <ProjectReference Include="..\..\Decompiler\lib\NRefactory\Project\NRefactory.csproj">
       <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
       <Name>NRefactory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.SharpDevelop.Dom\Project\ICSharpCode.SharpDevelop.Dom.csproj">
+      <Project>{924EE450-603D-49C1-A8E5-4AFAA31CE6F3}</Project>
+      <Name>ICSharpCode.SharpDevelop.Dom</Name>
     </ProjectReference>
     <ProjectReference Include="..\Debugger.Core\Debugger.Core.csproj">
       <Project>{1D18D788-F7EE-4585-A23B-34DC8EC63CB8}</Project>
