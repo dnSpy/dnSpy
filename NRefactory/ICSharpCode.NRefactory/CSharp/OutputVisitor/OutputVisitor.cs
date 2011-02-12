@@ -1795,6 +1795,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			CloseBrace(policy.PropertyBraceStyle);
+			NewLine();
 			return EndNode(propertyDeclaration);
 		}
 		#endregion
