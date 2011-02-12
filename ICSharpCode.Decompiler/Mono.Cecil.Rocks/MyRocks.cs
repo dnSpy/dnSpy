@@ -43,7 +43,7 @@ namespace Decompiler.Mono.Cecil.Rocks
 				case FlowControl.Call:			return true;
 				case FlowControl.Return:			return false;
 				case FlowControl.Throw:			return false;
-				case FlowControl.Meta:			return false;
+				case FlowControl.Meta:			return true;
 				default: throw new NotImplementedException();
 			}
 		}
@@ -53,7 +53,7 @@ namespace Decompiler.Mono.Cecil.Rocks
 			return opCode.FlowControl == FlowControl.Branch || opCode.FlowControl == FlowControl.Cond_Branch;
 		}
 		
-		public static int GetPopCount(this Instruction inst)
+		public static int? GetPopCount(this Instruction inst)
 		{
 			switch(inst.OpCode.StackBehaviourPop) {
 				case StackBehaviour.Pop0:   				return 0;
@@ -74,7 +74,7 @@ namespace Decompiler.Mono.Cecil.Rocks
 				case StackBehaviour.Popref_popi_popr4:  return 3;
 				case StackBehaviour.Popref_popi_popr8:  return 3;
 				case StackBehaviour.Popref_popi_popref: return 3;
-				case StackBehaviour.PopAll: 				return int.MaxValue;
+				case StackBehaviour.PopAll: 				return null;
 				case StackBehaviour.Varpop: 
 					switch(inst.OpCode.Code) {
 						case Code.Call:
@@ -86,7 +86,7 @@ namespace Decompiler.Mono.Cecil.Rocks
 								return cecilMethod.Parameters.Count;
 							}
 						case Code.Calli:    throw new NotImplementedException();
-						case Code.Ret:		return int.MaxValue;
+						case Code.Ret:		return null;
 						case Code.Newobj:
 							MethodReference ctorMethod = ((MethodReference)inst.Operand);
 							return ctorMethod.Parameters.Count;
