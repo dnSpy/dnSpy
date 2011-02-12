@@ -16,7 +16,7 @@ namespace Decompiler.Transforms.Ast
 			MethodReference methodRef = invocationExpression.Annotation<MethodReference>();
 			// Reduce "String.Concat(a, b)" to "a + b"
 			if (methodRef != null && methodRef.FullName == "System.String.Concat"
-			    && methodRef.Parameters.Count >= 2)
+			    && invocationExpression.Arguments.Count() >= 2)
 			{
 				var arguments = invocationExpression.Arguments.ToArray();
 				invocationExpression.Arguments = null; // detach arguments from invocationExpression
@@ -24,9 +24,89 @@ namespace Decompiler.Transforms.Ast
 				for (int i = 1; i < arguments.Length; i++) {
 					expr = new BinaryOperatorExpression(expr, BinaryOperatorType.Add, arguments[i]);
 				}
+				invocationExpression.ReplaceWith(expr);
+			}
+			
+			if (methodRef != null) {
+				BinaryOperatorType? bop = GetBinaryOperatorTypeFromMetadataName(methodRef.Name);
+				if (bop != null && invocationExpression.Arguments.Count() == 2) {
+					var arguments = invocationExpression.Arguments.ToArray();
+					invocationExpression.Arguments = null; // detach arguments from invocationExpression
+					invocationExpression.ReplaceWith(
+						new BinaryOperatorExpression(arguments[0], bop.Value, arguments[1]).WithAnnotation(methodRef)
+					);
+				}
+				UnaryOperatorType? uop = GetUnaryOperatorTypeFromMetadataName(methodRef.Name);
+				if (uop != null && invocationExpression.Arguments.Count() == 1) {
+					var arg = invocationExpression.Arguments.Single();
+					arg.Remove(); // detach argument
+					invocationExpression.ReplaceWith(
+						new UnaryOperatorExpression(uop.Value, arg).WithAnnotation(methodRef)
+					);
+				}
 			}
 			
 			return null;
+		}
+		
+		BinaryOperatorType? GetBinaryOperatorTypeFromMetadataName(string name)
+		{
+			switch (name) {
+				case "op_Addition":
+					return BinaryOperatorType.Add;
+				case "op_Subtraction":
+					return BinaryOperatorType.Subtract;
+				case "op_Multiply":
+					return BinaryOperatorType.Multiply;
+				case "op_Division":
+					return BinaryOperatorType.Divide;
+				case "op_Modulus":
+					return BinaryOperatorType.Modulus;
+				case "op_BitwiseAnd":
+					return BinaryOperatorType.BitwiseAnd;
+				case "op_BitwiseOr":
+					return BinaryOperatorType.BitwiseOr;
+				case "op_ExlusiveOr":
+					return BinaryOperatorType.ExclusiveOr;
+				case "op_LeftShift":
+					return BinaryOperatorType.ShiftLeft;
+				case "op_RightShift":
+					return BinaryOperatorType.ShiftRight;
+				case "op_Equality":
+					return BinaryOperatorType.Equality;
+				case "op_Inequality":
+					return BinaryOperatorType.InEquality;
+				case "op_LessThan":
+					return BinaryOperatorType.LessThan;
+				case "op_LessThanOrEqual":
+					return BinaryOperatorType.LessThanOrEqual;
+				case "op_GreaterThan":
+					return BinaryOperatorType.GreaterThan;
+				case "op_GreaterThanOrEqual":
+					return BinaryOperatorType.GreaterThanOrEqual;
+				default:
+					return null;
+			}
+		}
+		
+		UnaryOperatorType? GetUnaryOperatorTypeFromMetadataName(string name)
+		{
+			switch (name) {
+				case "op_LogicalNot":
+					return UnaryOperatorType.Not;
+				case  "op_OnesComplement":
+					return UnaryOperatorType.BitNot;
+				case "op_UnaryNegation":
+					return UnaryOperatorType.Minus;
+				case "op_UnaryPlus":
+					return UnaryOperatorType.Plus;
+				case "op_Increment":
+					return UnaryOperatorType.Increment;
+				case "op_Decrement":
+					return UnaryOperatorType.Decrement;
+				default:
+					return null;
+			}
 		}
 		
 		public override object VisitAssignmentExpression(AssignmentExpression assignment, object data)

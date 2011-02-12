@@ -24,18 +24,22 @@ namespace Decompiler
 		
 		public void WriteIdentifier(string identifier)
 		{
-			AstNode node = nodeStack.Peek();
-			MemberReference memberRef = node.Annotation<MemberReference>();
-			if (memberRef == null && node.Role == AstNode.Roles.TargetExpression
-			    && (node.Parent is InvocationExpression || node.Parent is ObjectCreateExpression))
-			{
-				memberRef = node.Parent.Annotation<MemberReference>();
-			}
+			MemberReference memberRef = GetCurrentMemberReference();
 			
 			if (memberRef != null)
 				output.WriteReference(identifier, memberRef);
 			else
 				output.Write(identifier);
+		}
+
+		MemberReference GetCurrentMemberReference()
+		{
+			AstNode node = nodeStack.Peek();
+			MemberReference memberRef = node.Annotation<MemberReference>();
+			if (memberRef == null && node.Role == AstNode.Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreateExpression)) {
+				memberRef = node.Parent.Annotation<MemberReference>();
+			}
+			return memberRef;
 		}
 		
 		public void WriteKeyword(string keyword)
@@ -45,7 +49,12 @@ namespace Decompiler
 		
 		public void WriteToken(string token)
 		{
-			output.Write(token);
+			// Attach member reference to token only if there's no identifier in the current node.
+			MemberReference memberRef = GetCurrentMemberReference();
+			if (memberRef != null && nodeStack.Peek().GetChildByRole(AstNode.Roles.Identifier).IsNull)
+				output.WriteReference(token, memberRef);
+			else
+				output.Write(token);
 		}
 		
 		public void Space()
