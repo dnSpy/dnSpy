@@ -143,10 +143,17 @@ namespace Decompiler.Transforms.Ast
 		{
 			// Remove redundant goto which goes to a label that imideately follows
 			INode fallthoughTarget = GetNextStatement(gotoStatement);
-			if ((fallthoughTarget is LabelStatement) &&
-			    (fallthoughTarget as LabelStatement).Label == gotoStatement.Label) {
-				RemoveCurrentNode();
-				return null;
+			while(true) {
+				if (fallthoughTarget is LabelStatement) {
+				    if ((fallthoughTarget as LabelStatement).Label == gotoStatement.Label) {
+						RemoveCurrentNode();
+						return null;
+					} else {
+						fallthoughTarget = GetNextStatement((LabelStatement)fallthoughTarget);
+						continue;
+					}
+				}
+				break;
 			}
 			
 			// Replace goto with 'break'

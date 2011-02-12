@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 using Ast = ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Ast;
 using Cecil = Mono.Cecil;
@@ -21,12 +21,16 @@ namespace Decompiler
 		{
 			AstMetodBodyBuilder builder = new AstMetodBodyBuilder();
 			builder.methodDef = methodDef;
-			try {
+			if (Debugger.IsAttached) {
 				return builder.CreateMethodBody();
-			} catch {
-				BlockStatement block = new BlockStatement();
-				block.Children.Add(MakeComment("Exception during decompilation"));
-				return block;
+			} else {
+				try {
+					return builder.CreateMethodBody();
+				} catch {
+					BlockStatement block = new BlockStatement();
+					block.Children.Add(MakeComment("// Exception during decompilation"));
+					return block;
+				}
 			}
 		}
 		
@@ -53,7 +57,7 @@ namespace Decompiler
 			
 			if (methodDef.Body == null) return astBlock;
 			
-			List<ILNode> body = new ILAstBuilder().Build(methodDef);
+			List<ILNode> body = new ILAstBuilder().Build(methodDef, true);
 			
 			MethodBodyGraph bodyGraph = new MethodBodyGraph(body);
 			bodyGraph.Optimize();
@@ -649,8 +653,8 @@ namespace Decompiler
 				case Code.Ldsflda: throw new NotImplementedException();
 				case Code.Ldftn: throw new NotImplementedException();
 				case Code.Ldloc: 
-					if (operand is ILStackVariable) {
-						return new Ast.IdentifierExpression(((ILStackVariable)operand).Name);
+					if (operand is ILVariable) {
+						return new Ast.IdentifierExpression(((ILVariable)operand).Name);
 					} else {
 						return new Ast.IdentifierExpression(((VariableDefinition)operand).Name);
 					}
@@ -703,8 +707,8 @@ namespace Decompiler
 				case Code.Sizeof: throw new NotImplementedException();
 				case Code.Starg: throw new NotImplementedException();
 				case Code.Stloc: {
-					if (operand is ILStackVariable) {
-						Ast.LocalVariableDeclaration astLocalVar = new Ast.LocalVariableDeclaration(new Ast.VariableDeclaration(((ILStackVariable)operand).Name, arg1));
+					if (operand is ILVariable) {
+						Ast.LocalVariableDeclaration astLocalVar = new Ast.LocalVariableDeclaration(new Ast.VariableDeclaration(((ILVariable)operand).Name, arg1));
 						astLocalVar.TypeReference = new Ast.TypeReference("var");
 						return astLocalVar;
 					}

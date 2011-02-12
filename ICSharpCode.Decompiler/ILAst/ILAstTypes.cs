@@ -41,10 +41,10 @@ namespace Decompiler
 		}
 	}
 	
-	public class ILStackVariable
+	public class ILVariable
 	{
 		public string Name;
-		public int RefCount;
+		public bool   IsGenerated;
 		
 		public override string ToString()
 		{
