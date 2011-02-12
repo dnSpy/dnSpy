@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace ICSharpCode.NRefactory.CSharp
 {
 	[TestFixture]
-	public class AstStructureTest
+	public class AstStructureTests
 	{
 		[Test]
 		public void RolesAreStaticReadOnly()

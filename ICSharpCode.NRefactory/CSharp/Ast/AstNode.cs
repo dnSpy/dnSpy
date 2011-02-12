@@ -63,7 +63,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		AstNode nextSibling;
 		AstNode firstChild;
 		AstNode lastChild;
-		Role role = Roles.Root;
+		Role role = RootRole;
 		
 		public abstract NodeType NodeType {
 			get;
@@ -159,10 +159,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected void SetChildByRole<T>(Role<T> role, T newChild) where T : AstNode
 		{
 			AstNode oldChild = GetChildByRole(role);
-			if (oldChild != null)
-				oldChild.ReplaceWith(newChild);
-			else
+			if (oldChild.IsNull)
 				AddChild(newChild, role);
+			else
+				oldChild.ReplaceWith(newChild);
 		}
 		
 		protected void SetChildrenByRole<T>(Role<T> role, IEnumerable<T> newChildren) where T : AstNode
@@ -229,7 +229,12 @@ namespace ICSharpCode.NRefactory.CSharp
 				throw new ArgumentException ("NextSibling is not a child of this node.", "nextSibling");
 			// No need to test for "Cannot add children to null nodes",
 			// as there isn't any valid nextSibling in null nodes.
-			
+			InsertChildBeforeUnsafe(nextSibling, child, role);
+		}
+		
+		
+		void InsertChildBeforeUnsafe(AstNode nextSibling, AstNode child, Role role)
+		{
 			child.parent = this;
 			child.role = role;
 			child.nextSibling = nextSibling;
@@ -286,6 +291,9 @@ namespace ICSharpCode.NRefactory.CSharp
 				Remove();
 				return;
 			}
+			if (this.parent == null) {
+				throw new InvalidOperationException(this.IsNull ? "Cannot replace the null nodes" : "Cannot replace the root node");
+			}
 			if (newNode.parent != null) {
 				// TODO: what if newNode is used within *this* tree?
 				// e.g. "parenthesizedExpr.ReplaceWith(parenthesizedExpr.Expression);"
@@ -321,6 +329,32 @@ namespace ICSharpCode.NRefactory.CSharp
 				nextSibling = null;
 				role = Roles.Root;
 			}
+		}
+		
+		public AstNode ReplaceWith(Func<AstNode, AstNode> replaceFunction)
+		{
+			if (replaceFunction == null)
+				throw new ArgumentNullException("replaceFunction");
+			AstNode oldParent = parent;
+			AstNode oldSuccessor = nextSibling;
+			Role oldRole = role;
+			Remove();
+			AstNode replacement = replaceFunction(this);
+			if (oldSuccessor != null && oldSuccessor.parent != oldParent)
+				throw new InvalidOperationException("replace function changed nextSibling of node being replaced?");
+			if (!(replacement == null || replacement.IsNull)) {
+				if (replacement.parent != null)
+					throw new InvalidOperationException("replace function must return the root of a tree");
+				if (!oldRole.IsValid(replacement)) {
+					throw new InvalidOperationException (string.Format("The new node '{0}' is not valid in the role {1}", replacement.GetType().Name, oldRole.ToString()));
+				}
+				
+				if (oldSuccessor != null)
+					oldParent.InsertChildBeforeUnsafe(oldSuccessor, replacement, oldRole);
+				else
+					oldParent.AddChildUnsafe(replacement, oldRole);
+			}
+			return replacement;
 		}
 		
 		/// <summary>
@@ -526,12 +560,15 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public abstract S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data);
 		
+		// the Root role must be available when creating the null nodes, so we can't put it in the Roles class
+		static readonly Role<AstNode> RootRole = new Role<AstNode>("Root");
+		
 		public static class Roles
 		{
 			/// <summary>
 			/// Root of an abstract syntax tree.
 			/// </summary>
-			public static readonly Role<AstNode> Root = new Role<AstNode>("Root", CSharp.AstNode.Null);
+			public static readonly Role<AstNode> Root = RootRole;
 			
 			// some pre defined constants for common roles
 			public static readonly Role<Identifier> Identifier = new Role<Identifier>("Identifier", CSharp.Identifier.Null);

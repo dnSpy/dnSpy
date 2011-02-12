@@ -541,7 +541,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		public override ResolveResult VisitCastExpression(CastExpression castExpression, object data)
 		{
 			if (resolverEnabled) {
-				return resolver.ResolveCast(ResolveType(castExpression.CastTo), Resolve(castExpression.Expression));
+				return resolver.ResolveCast(ResolveType(castExpression.Type), Resolve(castExpression.Expression));
 			} else {
 				ScanChildren(castExpression);
 				return null;

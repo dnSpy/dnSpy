@@ -37,6 +37,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		public readonly static Role<CSharpTokenNode> OperatorRole = new Role<CSharpTokenNode>("Operator", CSharpTokenNode.Null);
 		public readonly static Role<Expression> RightRole = new Role<Expression>("Right", Expression.Null);
 		
+		public BinaryOperatorExpression()
+		{
+		}
+		
+		public BinaryOperatorExpression(Expression left, BinaryOperatorType op, Expression right)
+		{
+			this.Left = left;
+			this.Operator = op;
+			this.Right = right;
+		}
+		
 		public BinaryOperatorType Operator {
 			get;
 			set;
@@ -68,9 +79,9 @@ namespace ICSharpCode.NRefactory.CSharp
 					return "&";
 				case BinaryOperatorType.BitwiseOr:
 					return "|";
-				case BinaryOperatorType.LogicalAnd:
+				case BinaryOperatorType.ConditionalAnd:
 					return "&&";
-				case BinaryOperatorType.LogicalOr:
+				case BinaryOperatorType.ConditionalOr:
 					return "||";
 				case BinaryOperatorType.ExclusiveOr:
 					return "^";
@@ -110,14 +121,19 @@ namespace ICSharpCode.NRefactory.CSharp
 	
 	public enum BinaryOperatorType
 	{
+		// We avoid 'logical or' on purpose, because it's not clear if that refers to the bitwise
+		// or to the short-circuiting (conditional) operator:
+		// MCS and old NRefactory used bitwise='|', logical='||'
+		// but the C# spec uses logical='|', conditional='||'
+		
 		/// <summary>left &amp; right</summary>
 		BitwiseAnd,
 		/// <summary>left | right</summary>
 		BitwiseOr,
 		/// <summary>left &amp;&amp; right</summary>
-		LogicalAnd,
+		ConditionalAnd,
 		/// <summary>left || right</summary>
-		LogicalOr,
+		ConditionalOr,
 		/// <summary>left ^ right</summary>
 		ExclusiveOr,
 		

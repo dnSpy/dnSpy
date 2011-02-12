@@ -69,9 +69,9 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			OperatorPrecedenceTest("==", BinaryOperatorType.Equality, "&", BinaryOperatorType.BitwiseAnd, false);
 			OperatorPrecedenceTest("&", BinaryOperatorType.BitwiseAnd, "^", BinaryOperatorType.ExclusiveOr, false);
 			OperatorPrecedenceTest("^", BinaryOperatorType.ExclusiveOr, "|", BinaryOperatorType.BitwiseOr, false);
-			OperatorPrecedenceTest("|", BinaryOperatorType.BitwiseOr, "&&", BinaryOperatorType.LogicalAnd, false);
-			OperatorPrecedenceTest("&&", BinaryOperatorType.LogicalAnd, "||", BinaryOperatorType.LogicalOr, false);
-			OperatorPrecedenceTest("||", BinaryOperatorType.LogicalOr, "??", BinaryOperatorType.NullCoalescing, false);
+			OperatorPrecedenceTest("|", BinaryOperatorType.BitwiseOr, "&&", BinaryOperatorType.ConditionalAnd, false);
+			OperatorPrecedenceTest("&&", BinaryOperatorType.ConditionalAnd, "||", BinaryOperatorType.ConditionalOr, false);
+			OperatorPrecedenceTest("||", BinaryOperatorType.ConditionalOr, "??", BinaryOperatorType.NullCoalescing, false);
 		}
 		#endregion
 		
@@ -116,13 +116,13 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 		[Test]
 		public void LogicalAndTest()
 		{
-			TestBinaryOperatorExpressionTest("a && b", BinaryOperatorType.LogicalAnd);
+			TestBinaryOperatorExpressionTest("a && b", BinaryOperatorType.ConditionalAnd);
 		}
 		
 		[Test]
 		public void LogicalOrTest()
 		{
-			TestBinaryOperatorExpressionTest("a || b", BinaryOperatorType.LogicalOr);
+			TestBinaryOperatorExpressionTest("a || b", BinaryOperatorType.ConditionalOr);
 		}
 		
 		[Test]
@@ -221,7 +221,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 		{
 			const string expr = "i1 < 0 || i1 > (Count - 1)";
 			BinaryOperatorExpression boe = ParseUtilCSharp.ParseExpression<BinaryOperatorExpression>(expr);
-			Assert.AreEqual(BinaryOperatorType.LogicalOr, boe.Operator);
+			Assert.AreEqual(BinaryOperatorType.ConditionalOr, boe.Operator);
 		}
 	}
 }

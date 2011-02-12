@@ -37,6 +37,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			return (Statement)base.Clone();
 		}
 		
+		public Statement ReplaceWith(Func<Statement, Statement> replaceFunction)
+		{
+			if (replaceFunction == null)
+				throw new ArgumentNullException("replaceFunction");
+			return (Statement)base.ReplaceWith(node => replaceFunction((Statement)node));
+		}
+		
 		public override NodeType NodeType {
 			get { return NodeType.Statement; }
 		}

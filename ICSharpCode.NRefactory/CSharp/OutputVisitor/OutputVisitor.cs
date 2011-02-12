@@ -393,7 +393,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(assignmentExpression);
 			assignmentExpression.Left.AcceptVisitor(this, data);
+			Space(policy.AroundAssignmentParentheses);
 			WriteToken(AssignmentExpression.GetOperatorSymbol(assignmentExpression.Operator), AssignmentExpression.OperatorRole);
+			Space(policy.AroundAssignmentParentheses);
 			assignmentExpression.Right.AcceptVisitor(this, data);
 			return EndNode(assignmentExpression);
 		}
@@ -409,7 +411,49 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(binaryOperatorExpression);
 			binaryOperatorExpression.Left.AcceptVisitor(this, data);
+			bool spacePolicy;
+			switch (binaryOperatorExpression.Operator) {
+				case BinaryOperatorType.BitwiseAnd:
+				case BinaryOperatorType.BitwiseOr:
+				case BinaryOperatorType.ExclusiveOr:
+					spacePolicy = policy.AroundBitwiseOperatorParentheses;
+					break;
+				case BinaryOperatorType.ConditionalAnd:
+				case BinaryOperatorType.ConditionalOr:
+					spacePolicy = policy.AroundLogicalOperatorParentheses;
+					break;
+				case BinaryOperatorType.GreaterThan:
+				case BinaryOperatorType.GreaterThanOrEqual:
+				case BinaryOperatorType.LessThanOrEqual:
+				case BinaryOperatorType.LessThan:
+					spacePolicy = policy.AroundRelationalOperatorParentheses;
+					break;
+				case BinaryOperatorType.Equality:
+				case BinaryOperatorType.InEquality:
+					spacePolicy = policy.AroundEqualityOperatorParentheses;
+					break;
+				case BinaryOperatorType.Add:
+				case BinaryOperatorType.Subtract:
+					spacePolicy = policy.AroundAdditiveOperatorParentheses;
+					break;
+				case BinaryOperatorType.Multiply:
+				case BinaryOperatorType.Divide:
+				case BinaryOperatorType.Modulus:
+					spacePolicy = policy.AroundMultiplicativeOperatorParentheses;
+					break;
+				case BinaryOperatorType.ShiftLeft:
+				case BinaryOperatorType.ShiftRight:
+					spacePolicy = policy.AroundShiftOperatorParentheses;
+					break;
+				case BinaryOperatorType.NullCoalescing:
+					spacePolicy = true;
+					break;
+				default:
+					throw new NotSupportedException("Invalid value for BinaryOperatorType");
+			}
+			Space(spacePolicy);
 			WriteToken(BinaryOperatorExpression.GetOperatorSymbol(binaryOperatorExpression.Operator), BinaryOperatorExpression.OperatorRole);
+			Space(spacePolicy);
 			binaryOperatorExpression.Right.AcceptVisitor(this, data);
 			return EndNode(binaryOperatorExpression);
 		}
@@ -419,7 +463,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(castExpression);
 			LPar();
 			Space(policy.WithinCastParentheses);
-			castExpression.CastTo.AcceptVisitor(this, data);
+			castExpression.Type.AcceptVisitor(this, data);
 			Space(policy.WithinCastParentheses);
 			RPar();
 			Space(policy.SpacesAfterTypecast);

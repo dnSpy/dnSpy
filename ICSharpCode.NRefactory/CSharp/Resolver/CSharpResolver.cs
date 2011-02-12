@@ -602,9 +602,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				// - If the user overloads a bitwise operator, that implicitly creates the corresponding logical operator.
 				// - If both inputs are compile-time constants, it doesn't matter that we don't short-circuit.
 				// - If inputs aren't compile-time constants, we don't evaluate anything, so again it doesn't matter that we don't short-circuit
-				if (op == BinaryOperatorType.LogicalAnd) {
+				if (op == BinaryOperatorType.ConditionalAnd) {
 					overloadableOperatorName = GetOverloadableOperatorName(BinaryOperatorType.BitwiseAnd);
-				} else if (op == BinaryOperatorType.LogicalOr) {
+				} else if (op == BinaryOperatorType.ConditionalOr) {
 					overloadableOperatorName = GetOverloadableOperatorName(BinaryOperatorType.BitwiseOr);
 				} else if (op == BinaryOperatorType.NullCoalescing) {
 					// null coalescing operator is not overloadable and needs to be handled separately
@@ -780,10 +780,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 						}
 					}
 					break;
-				case BinaryOperatorType.LogicalAnd:
+				case BinaryOperatorType.ConditionalAnd:
 					methodGroup = logicalAndOperator;
 					break;
-				case BinaryOperatorType.LogicalOr:
+				case BinaryOperatorType.ConditionalOr:
 					methodGroup = logicalOrOperator;
 					break;
 				default:
