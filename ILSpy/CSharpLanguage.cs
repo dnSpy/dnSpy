@@ -43,6 +43,27 @@ namespace ICSharpCode.ILSpy
 			codeDomBuilder.GenerateCode(output);
 		}
 		
+		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
+		{
+			AstBuilder codeDomBuilder = new AstBuilder();
+			codeDomBuilder.AddProperty(property);
+			codeDomBuilder.GenerateCode(output);
+		}
+		
+		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
+		{
+			AstBuilder codeDomBuilder = new AstBuilder();
+			codeDomBuilder.AddField(field);
+			codeDomBuilder.GenerateCode(output);
+		}
+		
+		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
+		{
+			AstBuilder codeDomBuilder = new AstBuilder();
+			codeDomBuilder.AddEvent(ev);
+			codeDomBuilder.GenerateCode(output);
+		}
+		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
 			AstBuilder codeDomBuilder = new AstBuilder();

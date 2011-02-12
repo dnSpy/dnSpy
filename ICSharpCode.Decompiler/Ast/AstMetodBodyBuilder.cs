@@ -17,7 +17,7 @@ namespace Decompiler
 		static Dictionary<string, Cecil.TypeReference> localVarTypes = new Dictionary<string, Cecil.TypeReference>();
 		static Dictionary<string, bool> localVarDefined = new Dictionary<string, bool>();
 		
-		public static BlockStatement CreateMetodBody(MethodDefinition methodDef)
+		public static BlockStatement CreateMethodBody(MethodDefinition methodDef)
 		{
 			AstMethodBodyBuilder builder = new AstMethodBodyBuilder();
 			builder.methodDef = methodDef;
@@ -53,7 +53,7 @@ namespace Decompiler
 		
 		public BlockStatement CreateMethodBody()
 		{
-			if (methodDef.Body == null) return new Ast.BlockStatement();
+			if (methodDef.Body == null) return null;
 			
 			List<ILNode> body = new ILAstBuilder().Build(methodDef, true);
 			
@@ -122,7 +122,7 @@ namespace Decompiler
 		IEnumerable<Statement> TransformNode(Node node)
 		{
 			if (Options.NodeComments) {
-				yield return new CommentStatement("// " + node.Description);
+				yield return new CommentStatement(node.Description);
 			}
 			
 			yield return new Ast.LabelStatement { Label = node.Label };
@@ -547,7 +547,7 @@ namespace Decompiler
 					
 					// TODO: Constructors are ignored
 					if (cecilMethod.Name == ".ctor") {
-						return new CommentStatement("// Constructor");
+						return new CommentStatement("Constructor");
 					}
 					
 					// TODO: Hack, detect properties properly
@@ -602,14 +602,16 @@ namespace Decompiler
 				case Code.Ldc_R8:
 					return new Ast.PrimitiveExpression(operand);
 				case Code.Ldfld:
-					return arg1.Member(((FieldReference) operand).Name);
+					return arg1.Member(((FieldReference) operand).Name).WithAnnotation(operand);
 				case Code.Ldsfld:
-					return AstBuilder.ConvertType(((FieldReference)operand).DeclaringType).Member(((FieldReference)operand).Name);
+					return AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
+						.Member(((FieldReference)operand).Name).WithAnnotation(operand);
 				case Code.Stfld:
-					return new AssignmentExpression(arg1.Member(((FieldReference) operand).Name), arg2);
+					return new AssignmentExpression(arg1.Member(((FieldReference) operand).Name).WithAnnotation(operand), arg2);
 				case Code.Stsfld:
 					return new AssignmentExpression(
-						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType).Member(((FieldReference)operand).Name),
+						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
+						.Member(((FieldReference)operand).Name).WithAnnotation(operand),
 						arg2);
 				case Code.Ldflda:
 					case Code.Ldsflda: throw new NotImplementedException();

@@ -99,6 +99,21 @@ namespace Decompiler
 			astCompileUnit.AddChild(node, CompilationUnit.MemberRole);
 		}
 		
+		public void AddProperty(PropertyDefinition property)
+		{
+			astCompileUnit.AddChild(CreateProperty(property), CompilationUnit.MemberRole);
+		}
+		
+		public void AddField(FieldDefinition field)
+		{
+			astCompileUnit.AddChild(CreateField(field), CompilationUnit.MemberRole);
+		}
+		
+		public void AddEvent(EventDefinition ev)
+		{
+			astCompileUnit.AddChild(CreateEvent(ev), CompilationUnit.MemberRole);
+		}
+		
 		public TypeDeclaration CreateType(TypeDefinition typeDef)
 		{
 			TypeDeclaration astType = new TypeDeclaration();
@@ -111,6 +126,7 @@ namespace Decompiler
 				astType.ClassType = ClassType.Struct;
 			} else if (typeDef.IsInterface) {
 				astType.ClassType = ClassType.Interface;
+				astType.Modifiers &= ~Modifiers.Abstract;
 			} else {
 				astType.ClassType = ClassType.Class;
 			}
@@ -143,10 +159,10 @@ namespace Decompiler
 		public static AstType ConvertType(TypeReference type, ICustomAttributeProvider typeAttributes = null)
 		{
 			int typeIndex = 0;
-			return CreateType(type, typeAttributes, ref typeIndex);
+			return ConvertType(type, typeAttributes, ref typeIndex);
 		}
 		
-		static AstType CreateType(TypeReference type, ICustomAttributeProvider typeAttributes, ref int typeIndex)
+		static AstType ConvertType(TypeReference type, ICustomAttributeProvider typeAttributes, ref int typeIndex)
 		{
 			while (type is OptionalModifierType || type is RequiredModifierType) {
 				type = ((TypeSpecification)type).ElementType;
@@ -158,27 +174,27 @@ namespace Decompiler
 			if (type is Mono.Cecil.ByReferenceType) {
 				typeIndex++;
 				// ignore by reference type (cannot be represented in C#)
-				return CreateType((type as Mono.Cecil.ByReferenceType).ElementType, typeAttributes, ref typeIndex);
+				return ConvertType((type as Mono.Cecil.ByReferenceType).ElementType, typeAttributes, ref typeIndex);
 			} else if (type is Mono.Cecil.PointerType) {
 				typeIndex++;
-				return CreateType((type as Mono.Cecil.PointerType).ElementType, typeAttributes, ref typeIndex)
+				return ConvertType((type as Mono.Cecil.PointerType).ElementType, typeAttributes, ref typeIndex)
 					.MakePointerType();
 			} else if (type is Mono.Cecil.ArrayType) {
 				typeIndex++;
-				return CreateType((type as Mono.Cecil.ArrayType).ElementType, typeAttributes, ref typeIndex)
+				return ConvertType((type as Mono.Cecil.ArrayType).ElementType, typeAttributes, ref typeIndex)
 					.MakeArrayType((type as Mono.Cecil.ArrayType).Rank);
 			} else if (type is GenericInstanceType) {
 				GenericInstanceType gType = (GenericInstanceType)type;
-				AstType baseType = CreateType(gType.ElementType, typeAttributes, ref typeIndex);
+				AstType baseType = ConvertType(gType.ElementType, typeAttributes, ref typeIndex);
 				foreach (var typeArgument in gType.GenericArguments) {
 					typeIndex++;
-					baseType.AddChild(CreateType(typeArgument, typeAttributes, ref typeIndex), AstType.Roles.TypeArgument);
+					baseType.AddChild(ConvertType(typeArgument, typeAttributes, ref typeIndex), AstType.Roles.TypeArgument);
 				}
 				return baseType;
 			} else if (type is GenericParameter) {
 				return new SimpleType(type.Name);
 			} else if (type.IsNested) {
-				AstType typeRef = CreateType(type.DeclaringType, typeAttributes, ref typeIndex);
+				AstType typeRef = ConvertType(type.DeclaringType, typeAttributes, ref typeIndex);
 				string namepart = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name);
 				return new MemberType { Target = typeRef, MemberName = namepart }.WithAnnotation(type);
 			} else {
@@ -309,7 +325,7 @@ namespace Decompiler
 				modifiers |= Modifiers.Abstract;
 			else if (methodDef.IsFinal)
 				modifiers |= Modifiers.Sealed;
-			else if (methodDef.IsVirtual)
+			else if (methodDef.IsVirtual && methodDef.IsNewSlot)
 				modifiers |= Modifiers.Virtual;
 			return modifiers;
 		}
@@ -352,9 +368,11 @@ namespace Decompiler
 			MethodDeclaration astMethod = new MethodDeclaration();
 			astMethod.Name = methodDef.Name;
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
-			astMethod.Modifiers = ConvertModifiers(methodDef);
 			astMethod.Parameters = MakeParameters(methodDef.Parameters);
-			astMethod.Body = AstMethodBodyBuilder.CreateMetodBody(methodDef);
+			if (!methodDef.DeclaringType.IsInterface) {
+				astMethod.Modifiers = ConvertModifiers(methodDef);
+				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef);
+			}
 			return astMethod;
 		}
 
@@ -363,7 +381,7 @@ namespace Decompiler
 			ConstructorDeclaration astMethod = new ConstructorDeclaration();
 			astMethod.Modifiers = ConvertModifiers(methodDef);
 			astMethod.Parameters = MakeParameters(methodDef.Parameters);
-			astMethod.Body = AstMethodBodyBuilder.CreateMetodBody(methodDef);
+			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef);
 			return astMethod;
 		}
 
@@ -375,23 +393,33 @@ namespace Decompiler
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			if (propDef.GetMethod != null) {
 				astProp.Getter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMetodBody(propDef.GetMethod)
+					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod)
 				};
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMetodBody(propDef.SetMethod)
+					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod)
 				};
 			}
 			return astProp;
 		}
 
-		EventDeclaration CreateEvent(EventDefinition eventDef)
+		CustomEventDeclaration CreateEvent(EventDefinition eventDef)
 		{
-			EventDeclaration astEvent = new EventDeclaration();
+			CustomEventDeclaration astEvent = new CustomEventDeclaration();
 			astEvent.Name = eventDef.Name;
 			astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 			astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
+			if (eventDef.AddMethod != null) {
+				astEvent.AddAccessor = new Accessor {
+					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod)
+				};
+			}
+			if (eventDef.RemoveMethod != null) {
+				astEvent.RemoveAccessor = new Accessor {
+					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod)
+				};
+			}
 			return astEvent;
 		}
 

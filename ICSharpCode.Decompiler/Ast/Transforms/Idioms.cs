@@ -14,36 +14,49 @@ namespace Decompiler.Transforms.Ast
 			base.VisitInvocationExpression(invocationExpression, data);
 			
 			MethodReference methodRef = invocationExpression.Annotation<MethodReference>();
+			if (methodRef == null)
+				return null;
+			var arguments = invocationExpression.Arguments.ToArray();
+			
 			// Reduce "String.Concat(a, b)" to "a + b"
-			if (methodRef != null && methodRef.FullName == "System.String.Concat"
-			    && invocationExpression.Arguments.Count() >= 2)
+			if (methodRef != null && methodRef.Name == "Concat" && methodRef.DeclaringType.FullName == "System.String" && arguments.Length >= 2)
 			{
-				var arguments = invocationExpression.Arguments.ToArray();
 				invocationExpression.Arguments = null; // detach arguments from invocationExpression
 				Expression expr = arguments[0];
 				for (int i = 1; i < arguments.Length; i++) {
 					expr = new BinaryOperatorExpression(expr, BinaryOperatorType.Add, arguments[i]);
 				}
 				invocationExpression.ReplaceWith(expr);
+				return null;
 			}
 			
-			if (methodRef != null) {
-				BinaryOperatorType? bop = GetBinaryOperatorTypeFromMetadataName(methodRef.Name);
-				if (bop != null && invocationExpression.Arguments.Count() == 2) {
-					var arguments = invocationExpression.Arguments.ToArray();
-					invocationExpression.Arguments = null; // detach arguments from invocationExpression
-					invocationExpression.ReplaceWith(
-						new BinaryOperatorExpression(arguments[0], bop.Value, arguments[1]).WithAnnotation(methodRef)
-					);
-				}
-				UnaryOperatorType? uop = GetUnaryOperatorTypeFromMetadataName(methodRef.Name);
-				if (uop != null && invocationExpression.Arguments.Count() == 1) {
-					var arg = invocationExpression.Arguments.Single();
-					arg.Remove(); // detach argument
-					invocationExpression.ReplaceWith(
-						new UnaryOperatorExpression(uop.Value, arg).WithAnnotation(methodRef)
-					);
-				}
+			switch (methodRef.FullName) {
+				case "System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)":
+					if (arguments.Length == 1) {
+						MemberReferenceExpression mre = arguments[0] as MemberReferenceExpression;
+						if (mre != null && mre.Target is TypeOfExpression && mre.MemberName == "TypeHandle") {
+							invocationExpression.ReplaceWith(mre.Target);
+							return null;
+						}
+					}
+					break;
+			}
+			
+			BinaryOperatorType? bop = GetBinaryOperatorTypeFromMetadataName(methodRef.Name);
+			if (bop != null && arguments.Length == 2) {
+				invocationExpression.Arguments = null; // detach arguments from invocationExpression
+				invocationExpression.ReplaceWith(
+					new BinaryOperatorExpression(arguments[0], bop.Value, arguments[1]).WithAnnotation(methodRef)
+				);
+				return null;
+			}
+			UnaryOperatorType? uop = GetUnaryOperatorTypeFromMetadataName(methodRef.Name);
+			if (uop != null && arguments.Length == 1) {
+				arguments[0].Remove(); // detach argument
+				invocationExpression.ReplaceWith(
+					new UnaryOperatorExpression(uop.Value, arguments[0]).WithAnnotation(methodRef)
+				);
+				return null;
 			}
 			
 			return null;
