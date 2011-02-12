@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -41,6 +42,7 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	partial class MainWindow : Window
 	{
+		NavigationHistory history = new NavigationHistory();
 		ILSpySettings spySettings;
 		SessionSettings sessionSettings;
 		AssemblyListManager assemblyListManager;
@@ -134,17 +136,27 @@ namespace ICSharpCode.ILSpy
 		
 		void ShowAssemblyList(AssemblyList assemblyList)
 		{
+			history.Clear();
 			this.assemblyList = assemblyList;
+			
+			assemblyList.Assemblies.CollectionChanged += assemblyList_Assemblies_CollectionChanged;
 			
 			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
-			assemblyListTreeNode.Select = SelectNode;
+			assemblyListTreeNode.Select = node => SelectNode(node);
 			treeView.Root = assemblyListTreeNode;
 			
 			if (assemblyList.ListName == AssemblyListManager.DefaultListName)
 				this.Title = "ILSpy";
 			else
 				this.Title = "ILSpy - " + assemblyList.ListName;
+		}
+
+		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.OldItems != null)
+				foreach (AssemblyTreeNode node in e.OldItems)
+					history.RemoveAll(n => n.AncestorsAndSelf().Contains(node));
 		}
 		
 		void LoadInitialAssemblies()
@@ -186,9 +198,13 @@ namespace ICSharpCode.ILSpy
 			get { return assemblyList; }
 		}
 		
-		internal void SelectNode(SharpTreeNode obj)
+		#region Node Selection
+		internal void SelectNode(SharpTreeNode obj, bool recordNavigationInHistory = true)
 		{
 			if (obj != null) {
+				SharpTreeNode oldNode = treeView.SelectedItem as SharpTreeNode;
+				if (oldNode != null && recordNavigationInHistory)
+					history.Record(oldNode);
 				// Set both the selection and focus to ensure that keyboard navigation works as expected.
 				treeView.FocusNode(obj);
 				treeView.SelectedItem = obj;
@@ -232,6 +248,7 @@ namespace ICSharpCode.ILSpy
 			path.Reverse();
 			return path.ToArray();
 		}
+		#endregion
 		
 		#region Debugging CFG
 		#if DEBUG
@@ -293,6 +310,7 @@ namespace ICSharpCode.ILSpy
 		#endif
 		#endregion
 		
+		#region Open/Refresh
 		void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			e.Handled = true;
@@ -317,7 +335,7 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 			if (lastNode != null)
-				treeView.ScrollIntoView(lastNode);
+				treeView.FocusNode(lastNode);
 		}
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -328,6 +346,17 @@ namespace ICSharpCode.ILSpy
 			SelectNode(FindNodeByPath(path, true));
 		}
 		
+		void OpenFromGac_Click(object sender, RoutedEventArgs e)
+		{
+			OpenFromGacDialog dlg = new OpenFromGacDialog();
+			dlg.Owner = this;
+			if (dlg.ShowDialog() == true) {
+				OpenFiles(dlg.SelectedFileNames);
+			}
+		}
+		#endregion
+		
+		#region Exit/About
 		void ExitClick(object sender, RoutedEventArgs e)
 		{
 			Close();
@@ -337,16 +366,9 @@ namespace ICSharpCode.ILSpy
 		{
 			AboutPage.Display(decompilerTextView);
 		}
+		#endregion
 		
-		void OpenFromGac_Click(object sender, RoutedEventArgs e)
-		{
-			OpenFromGacDialog dlg = new OpenFromGacDialog();
-			dlg.Owner = this;
-			if (dlg.ShowDialog() == true) {
-				OpenFiles(dlg.SelectedFileNames);
-			}
-		}
-		
+		#region Decompile / Save
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (treeView.SelectedItems.Count == 1) {
@@ -370,6 +392,37 @@ namespace ICSharpCode.ILSpy
 			                              treeView.GetTopLevelSelection().OfType<ILSpyTreeNodeBase>(),
 			                              new DecompilationOptions());
 		}
+		#endregion
+		
+		#region Back/Forward navigation
+		void BackCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true;
+			e.CanExecute = history.CanNavigateBack;
+		}
+		
+		void BackCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (history.CanNavigateBack) {
+				e.Handled = true;
+				SelectNode(history.GoBack(treeView.SelectedItem as SharpTreeNode), false);
+			}
+		}
+		
+		void ForwardCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true;
+			e.CanExecute = history.CanNavigateForward;
+		}
+		
+		void ForwardCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (history.CanNavigateForward) {
+				e.Handled = true;
+				SelectNode(history.GoForward(treeView.SelectedItem as SharpTreeNode), false);
+			}
+		}
+		#endregion
 		
 		protected override void OnStateChanged(EventArgs e)
 		{

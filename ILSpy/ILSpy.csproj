@@ -94,6 +94,7 @@
     <Compile Include="Language.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="Mono.Cecil.Rocks\MethodBodyRocks.cs" />
+    <Compile Include="NavigationHistory.cs" />
     <Compile Include="OpenFromGacDialog.xaml.cs">
       <DependentUpon>OpenFromGacDialog.xaml</DependentUpon>
       <SubType>Code</SubType>

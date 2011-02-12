@@ -198,6 +198,9 @@ namespace ICSharpCode.TreeView
 				base.OnKeyDown(e);
 		}
 		
+		/// <summary>
+		/// Scrolls the specified node in view and sets keyboard focus on it.
+		/// </summary>
 		public void FocusNode(SharpTreeNode node)
 		{
 			if (node == null)

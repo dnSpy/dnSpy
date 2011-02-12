@@ -26,6 +26,14 @@
 		<CommandBinding
 			Command="Refresh"
 			Executed="RefreshCommandExecuted" />
+		<CommandBinding
+			Command="BrowseBack"
+			CanExecute="BackCommandCanExecute"
+			Executed="BackCommandExecuted" />
+		<CommandBinding
+			Command="BrowseForward"
+			CanExecute="ForwardCommandCanExecute"
+			Executed="ForwardCommandExecuted" />
 	</Window.CommandBindings>
 	<DockPanel>
 		<!-- Main menu -->
@@ -78,6 +86,13 @@
 					</Style.Triggers>
 				</Style>
 			</ToolBar.Resources>
+			<Button Command="BrowseBack" ToolTip="Back">
+				<Image Width="16" Height="16" Source="Images/Back.png" />
+			</Button>
+			<Button Command="BrowseForward" ToolTip="Forward">
+				<Image Width="16" Height="16" Source="Images/Forward.png" />
+			</Button>
+			<Separator />
 			<Button Command="Open" ToolTip="Open">
 				<Image Width="16" Height="16" Source="Images/Open.png" />
 			</Button>
@@ -115,7 +130,7 @@
 			<DockPanel>
 				<!-- Search bar -->
 				<controls:SearchBox DockPanel.Dock="Top" WatermarkText="Search" WatermarkColor="Gray" ToolTip="Search"
-					Text="{Binding FilterSettings.SearchTerm, UpdateSourceTrigger=PropertyChanged}" />				
+					Text="{Binding FilterSettings.SearchTerm, UpdateSourceTrigger=PropertyChanged}" />
 				<!-- Tree View of assemblies and classes -->
 				<tv:SharpTreeView
 					Name="treeView"
