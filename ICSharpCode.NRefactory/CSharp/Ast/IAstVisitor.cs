@@ -42,6 +42,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, T data);
 		S VisitUncheckedExpression(UncheckedExpression uncheckedExpression, T data);
 		
+		S VisitQueryExpression(QueryExpression queryExpression, T data);
+		S VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, T data);
+		S VisitQueryFromClause(QueryFromClause queryFromClause, T data);
+		S VisitQueryLetClause(QueryLetClause queryLetClause, T data);
+		S VisitQueryWhereClause(QueryWhereClause queryWhereClause, T data);
+		S VisitQueryJoinClause(QueryJoinClause queryJoinClause, T data);
+		S VisitQueryOrderClause(QueryOrderClause queryOrderClause, T data);
+		S VisitQueryOrdering(QueryOrdering queryOrdering, T data);
+		S VisitQuerySelectClause(QuerySelectClause querySelectClause, T data);
+		S VisitQueryGroupClause(QueryGroupClause queryGroupClause, T data);
+		
 		S VisitAttribute(Attribute attribute, T data);
 		S VisitAttributeSection(AttributeSection attributeSection, T data);
 		S VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, T data);

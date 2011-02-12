@@ -90,7 +90,22 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public void WriteComment(CommentType commentType, string content)
 		{
-			throw new NotImplementedException();
+			WriteIndentation();
+			switch (commentType) {
+				case CommentType.SingleLine:
+					textWriter.Write("//");
+					textWriter.WriteLine(content);
+					break;
+				case CommentType.MultiLine:
+					textWriter.Write("/*");
+					textWriter.Write(content);
+					textWriter.Write("*/");
+					break;
+				case CommentType.Documentation:
+					textWriter.Write("///");
+					textWriter.WriteLine(content);
+					break;
+			}
 		}
 	}
 }

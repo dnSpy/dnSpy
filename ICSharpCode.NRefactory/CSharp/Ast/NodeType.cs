@@ -42,7 +42,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		Member,
 		Statement,
 		Expression,
-		Token
+		Token,
+		QueryClause
 	}
 
 }

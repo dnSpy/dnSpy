@@ -1,37 +1,98 @@
-﻿// 
-// QueryExpression.cs
-//  
-// Author:
-//       Mike Krüger <mkrueger@novell.com>
-// 
-// Copyright (c) 2009 Novell, Inc (http://www.novell.com)
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace ICSharpCode.NRefactory.CSharp
 {
-	/* TODO: how do we represent clauses? is QueryExpressionFromClause an expression,
-	 * or do we introduce a parent QueryExpression?
-	public class QueryExpressionFromClause : AstNode
+	public class QueryExpression : Expression
 	{
-		public const int FromKeywordRole = 100;
-		public const int InKeywordRole = 101;
+		public static readonly Role<QueryClause> ClauseRole = new Role<QueryClause>("Clause");
+		
+		#region Null
+		public new static readonly QueryExpression Null = new NullQueryExpression ();
+		
+		sealed class NullQueryExpression : QueryExpression
+		{
+			public override bool IsNull {
+				get {
+					return true;
+				}
+			}
+			
+			public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+			{
+				return default (S);
+			}
+		}
+		#endregion
+		
+		public IEnumerable<QueryClause> Clauses {
+			get { return GetChildrenByRole(ClauseRole); }
+			set { SetChildrenByRole(ClauseRole, value); }
+		}
+		
+		public override S AcceptVisitor<T, S>(AstVisitor<T, S> visitor, T data)
+		{
+			return visitor.VisitQueryExpression (this, data);
+		}
+	}
+	
+	public abstract class QueryClause : AstNode
+	{
+		public override NodeType NodeType {
+			get { return NodeType.QueryClause; }
+		}
+	}
+	
+	/// <summary>
+	/// Represents a query continuation.
+	/// "(from .. select ..) into Identifier" or "(from .. group .. by ..) into Identifier"
+	/// Note that "join .. into .." is not a query continuation!
+	/// 
+	/// This is always the first(!!) clause in a query expression.
+	/// The tree for "from a in b select c into d select e" looks like this:
+	/// new QueryExpression {
+	/// 	new QueryContinuationClause {
+	/// 		PrecedingQuery = new QueryExpression {
+	/// 			new QueryFromClause(a in b),
+	/// 			new QuerySelectClause(c)
+	/// 		},
+	/// 		Identifier = d
+	/// 	},
+	/// 	new QuerySelectClause(e)
+	/// }
+	/// </summary>
+	public class QueryContinuationClause : QueryClause
+	{
+		public static readonly Role<QueryExpression> PrecedingQueryRole = new Role<QueryExpression>("PrecedingQuery", QueryExpression.Null);
+		public static readonly Role<CSharpTokenNode> IntoKeywordRole = Roles.Keyword;
+		
+		public QueryExpression PrecedingQuery {
+			get { return GetChildByRole(PrecedingQueryRole); }
+			set { SetChildByRole(PrecedingQueryRole, value); }
+		}
+		
+		public string Identifier {
+			get {
+				return GetChildByRole (Roles.Identifier).Name;
+			}
+			set {
+				SetChildByRole(Roles.Identifier, new Identifier(value, AstLocation.Empty));
+			}
+		}
+		
+		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		{
+			return visitor.VisitQueryContinuationClause (this, data);
+		}
+	}
+	
+	public class QueryFromClause : QueryClause
+	{
+		public static readonly Role<CSharpTokenNode> FromKeywordRole = Roles.Keyword;
+		public static readonly Role<CSharpTokenNode> InKeywordRole = Roles.InKeyword;
 		
 		public AstType Type {
 			get { return GetChildByRole (Roles.Type); }
@@ -40,283 +101,254 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public string Identifier {
 			get {
-				return QueryIdentifier.Name;
+				return GetChildByRole (Roles.Identifier).Name;
+			}
+			set {
+				SetChildByRole(Roles.Identifier, new Identifier(value, AstLocation.Empty));
 			}
 		}
 		
-		public Identifier QueryIdentifier {
-			get {
-				return (Identifier)GetChildByRole (Roles.Identifier) ?? ICSharpCode.NRefactory.CSharp.Identifier.Null;
-			}
-		}
-		
-		public AstNode Expression {
-			get { return GetChildByRole (Roles.Expression) ?? AstNode.Null; }
+		public Expression Expression {
+			get { return GetChildByRole (Roles.Expression); }
+			set { SetChildByRole (Roles.Expression, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitQueryExpressionFromClause (this, data);
+			return visitor.VisitQueryFromClause (this, data);
 		}
 	}
 	
-	public class QueryExpressionJoinClause : QueryExpressionFromClause
+	public class QueryLetClause : QueryClause
 	{
-		public const int OnExpressionRole     = 100;
-		public const int EqualsExpressionRole = 101;
-		public const int IntoIdentifierRole   = 102;
-		
-		public const int JoinKeywordRole     = 110;
-		public new const int InKeywordRole       = 111;
-		public const int OnKeywordRole       = 112;
-		public const int EqualsKeywordRole   = 113;
-		public const int IntoKeywordRole     = 114;
-		
-		public CSharpTokenNode JoinKeyword {
-			get { return (CSharpTokenNode)GetChildByRole (JoinKeywordRole); }
-		}
-		public CSharpTokenNode InKeyword {
-			get { return (CSharpTokenNode)GetChildByRole (InKeywordRole); }
-		}
-		public CSharpTokenNode OnKeyword {
-			get { return (CSharpTokenNode)GetChildByRole (OnKeywordRole); }
-		}
-		public CSharpTokenNode EqualsKeyword {
-			get { return (CSharpTokenNode)GetChildByRole (EqualsKeywordRole); }
-		}
-		public CSharpTokenNode IntoKeyword {
-			get { return (CSharpTokenNode)GetChildByRole (IntoKeywordRole); }
-		}
-		
-		
-		public AstNode OnExpression {
-			get {
-				return GetChildByRole (OnExpressionRole);
-			}
-		}
-		
-		public AstNode EqualsExpression {
-			get {
-				return GetChildByRole (EqualsExpressionRole);
-			}
-		}
-		
-		public string IntoIdentifier {
-			get {
-				return IntoIdentifierIdentifier.Name;
-			}
-		}
-		
-		public Identifier IntoIdentifierIdentifier {
-			get {
-				return (Identifier)GetChildByRole (IntoIdentifierRole);
-			}
-		}
-		
-		public AstNode InExpression {
-			get {
-				return GetChildByRole (Roles.Expression);
-			}
-		}
-		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
-		{
-			return visitor.VisitQueryExpressionJoinClause (this, data);
-		}
-	}
-	
-	public class QueryExpressionGroupClause : AstNode
-	{
-		public override NodeType NodeType {
-			get {
-				return NodeType.Unknown;
-			}
-		}
-		
-		public const int ProjectionExpressionRole = 100;
-		public const int GroupByExpressionRole    = 101;
-		
-		public const int GroupKeywordRole    = 102;
-		public const int ByKeywordRole    = 103;
-		
-		public CSharpTokenNode GroupKeyword {
-			get { return (CSharpTokenNode)GetChildByRole (GroupKeywordRole); }
-		}
-		
-		public CSharpTokenNode ByKeyword {
-			get { return (CSharpTokenNode)GetChildByRole (ByKeywordRole); }
-		}
-		
-		public AstNode Projection {
-			get {
-				return GetChildByRole (ProjectionExpressionRole);
-			}
-		}
-		
-		public AstNode GroupBy {
-			get {
-				return GetChildByRole (GroupByExpressionRole);
-			}
-		}
-		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
-		{
-			return visitor.VisitQueryExpressionGroupClause (this, data);
-		}
-	}
-	
-	public class QueryExpressionLetClause : AstNode 
-	{
-		public override NodeType NodeType {
-			get {
-				return NodeType.Unknown;
-			}
+		public CSharpTokenNode LetKeyword {
+			get { return GetChildByRole(Roles.Keyword); }
 		}
 		
 		public string Identifier {
 			get {
-				return QueryIdentifier.Name;
+				return GetChildByRole(Roles.Identifier).Name;
+			}
+			set {
+				SetChildByRole(Roles.Identifier, new Identifier(value, AstLocation.Empty));
 			}
 		}
 		
-		public Identifier QueryIdentifier {
+		public CSharpTokenNode AssignToken {
+			get { return GetChildByRole(Roles.Assign); }
+		}
+		
+		public Expression Expression {
+			get { return GetChildByRole(Roles.Expression); }
+			set { SetChildByRole(Roles.Expression, value); }
+		}
+		
+		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		{
+			return visitor.VisitQueryLetClause (this, data);
+		}
+	}
+	
+	
+	public class QueryWhereClause : QueryClause
+	{
+		public CSharpTokenNode WhereKeyword {
+			get { return GetChildByRole (Roles.Keyword); }
+		}
+		
+		public Expression Condition {
+			get { return GetChildByRole (Roles.Condition); }
+			set { SetChildByRole (Roles.Condition, value); }
+		}
+		
+		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		{
+			return visitor.VisitQueryWhereClause (this, data);
+		}
+	}
+	
+	/// <summary>
+	/// Represents a join or group join clause.
+	/// </summary>
+	public class QueryJoinClause : QueryClause
+	{
+		public static readonly Role<CSharpTokenNode> JoinKeywordRole = Roles.Keyword;
+		public static readonly Role<AstType> TypeRole = Roles.Type;
+		public static readonly Role<Identifier> JoinIdentifierRole = Roles.Identifier;
+		public static readonly Role<CSharpTokenNode> InKeywordRole = Roles.InKeyword;
+		public static readonly Role<Expression> InExpressionRole = Roles.Expression;
+		public static readonly Role<CSharpTokenNode> OnKeywordRole = new Role<CSharpTokenNode>("OnKeyword", CSharpTokenNode.Null);
+		public static readonly Role<Expression> OnExpressionRole = new Role<Expression>("OnExpression", Expression.Null);
+		public static readonly Role<CSharpTokenNode> EqualsKeywordRole = new Role<CSharpTokenNode>("EqualsKeyword", CSharpTokenNode.Null);
+		public static readonly Role<Expression> EqualsExpressionRole = new Role<Expression>("EqualsExpression", Expression.Null);
+		public static readonly Role<CSharpTokenNode> IntoKeywordRole = new Role<CSharpTokenNode>("IntoKeyword", CSharpTokenNode.Null);
+		public static readonly Role<Identifier> IntoIdentifierRole = new Role<Identifier>("IntoIdentifier", Identifier.Null);
+		
+		public bool IsGroupJoin {
+			get { return !string.IsNullOrEmpty(this.IntoIdentifier); }
+		}
+		
+		public CSharpTokenNode JoinKeyword {
+			get { return GetChildByRole (JoinKeywordRole); }
+		}
+		
+		public AstType Type {
+			get { return GetChildByRole (TypeRole); }
+			set { SetChildByRole (TypeRole, value); }
+		}
+		
+		public string JoinIdentifier {
 			get {
-				return (Identifier)GetChildByRole (Roles.Identifier);
+				return GetChildByRole(JoinIdentifierRole).Name;
+			}
+			set {
+				SetChildByRole(JoinIdentifierRole, new Identifier(value, AstLocation.Empty));
 			}
 		}
 		
-		public AstNode Expression {
+		public CSharpTokenNode InKeyword {
+			get { return GetChildByRole (InKeywordRole); }
+		}
+		
+		public Expression InExpression {
+			get { return GetChildByRole (InExpressionRole); }
+			set { SetChildByRole (InExpressionRole, value); }
+		}
+		
+		public CSharpTokenNode OnKeyword {
+			get { return GetChildByRole (OnKeywordRole); }
+		}
+		
+		public Expression OnExpression {
+			get { return GetChildByRole (OnExpressionRole); }
+			set { SetChildByRole (OnExpressionRole, value); }
+		}
+		
+		public CSharpTokenNode EqualsKeyword {
+			get { return GetChildByRole (EqualsKeywordRole); }
+		}
+		
+		public Expression EqualsExpression {
+			get { return GetChildByRole (EqualsExpressionRole); }
+			set { SetChildByRole (EqualsExpressionRole, value); }
+		}
+		
+		public CSharpTokenNode IntoKeyword {
+			get { return GetChildByRole (IntoKeywordRole); }
+		}
+		
+		public string IntoIdentifier {
 			get {
-				return GetChildByRole (Roles.Expression);
+				return GetChildByRole (IntoIdentifierRole).Name;
 			}
-		}
-		
-		public CSharpTokenNode LetKeyword {
-			get { return (CSharpTokenNode)GetChildByRole (Roles.Keyword); }
-		}
-		
-		public AstNode Assign {
-			get {
-				return GetChildByRole (Roles.Assign);
+			set {
+				SetChildByRole(IntoIdentifierRole, new Identifier(value, AstLocation.Empty));
 			}
 		}
 		
 		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitQueryExpressionLetClause (this, data);
+			return visitor.VisitQueryJoinClause (this, data);
 		}
 	}
 	
-	public class QueryExpressionOrderClause : AstNode
+	public class QueryOrderClause : QueryClause
 	{
-		public const int OrderingRole = 100;
-		
-		public override NodeType NodeType {
-			get {
-				return NodeType.Unknown;
-			}
-		}
-		
-		public bool OrderAscending {
-			get;
-			set;
-		}
-		
-		public AstNode Expression {
-			get {
-				return GetChildByRole (Roles.Expression);
-			}
-		}
+		public static readonly Role<QueryOrdering> OrderingRole = new Role<QueryOrdering>("Ordering");
 		
 		public CSharpTokenNode Keyword {
-			get { return (CSharpTokenNode)GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (Roles.Keyword); }
+		}
+		
+		public IEnumerable<QueryOrdering> Orderings {
+			get { return GetChildrenByRole (OrderingRole); }
+			set { SetChildrenByRole (OrderingRole, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitQueryExpressionOrderClause (this, data);
+			return visitor.VisitQueryOrderClause (this, data);
 		}
 	}
 	
-	public class QueryExpressionOrdering : AstNode
+	public class QueryOrdering : AstNode
 	{
 		public override NodeType NodeType {
-			get {
-				return NodeType.Unknown;
-			}
+			get { return NodeType.Unknown; }
 		}
 		
-		public QueryExpressionOrderingDirection Direction {
+		public Expression Expression {
+			get { return GetChildByRole (Roles.Expression); }
+			set { SetChildByRole (Roles.Expression, value); }
+		}
+		
+		public QueryOrderingDirection Direction {
 			get;
 			set;
 		}
 		
-		public AstNode Criteria {
-			get {
-				return GetChildByRole (Roles.Expression);
-			}
+		public CSharpTokenNode DirectionToken {
+			get { return GetChildByRole (Roles.Keyword); }
 		}
 		
 		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitQueryExpressionOrdering (this, data);
+			return visitor.VisitQueryOrdering (this, data);
 		}
 	}
 	
-	public enum QueryExpressionOrderingDirection
+	public enum QueryOrderingDirection
 	{
-		Unknown,
+		None,
 		Ascending,
 		Descending
 	}
 	
-	public class QueryExpressionSelectClause : AstNode 
+	public class QuerySelectClause : QueryClause
 	{
-		public override NodeType NodeType {
-			get {
-				return NodeType.Unknown;
-			}
-		}
-		
 		public CSharpTokenNode SelectKeyword {
-			get { return (CSharpTokenNode)GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (Roles.Keyword); }
 		}
 		
-		public AstNode Projection {
-			get {
-				return GetChildByRole (Roles.Expression);
-			}
+		public Expression Expression {
+			get { return GetChildByRole (Roles.Expression); }
+			set { SetChildByRole (Roles.Expression, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitQueryExpressionSelectClause (this, data);
+			return visitor.VisitQuerySelectClause (this, data);
 		}
 	}
 	
-	public class QueryExpressionWhereClause : AstNode 
+	public class QueryGroupClause : QueryClause
 	{
-		public override NodeType NodeType {
-			get {
-				return NodeType.Unknown;
-			}
+		public static readonly Role<CSharpTokenNode> GroupKeywordRole = Roles.Keyword;
+		public static readonly Role<Expression> ProjectionRole = new Role<Expression>("Projection", Expression.Null);
+		public static readonly Role<CSharpTokenNode> ByKeywordRole = new Role<CSharpTokenNode>("ByKeyword", CSharpTokenNode.Null);
+		public static readonly Role<Expression> KeyRole = new Role<Expression>("Key", Expression.Null);
+		
+		public CSharpTokenNode GroupKeyword {
+			get { return GetChildByRole (GroupKeywordRole); }
 		}
 		
-		public CSharpTokenNode WhereKeyword {
-			get { return (CSharpTokenNode)GetChildByRole (Roles.Keyword); }
+		public Expression Projection {
+			get { return GetChildByRole (ProjectionRole); }
+			set { SetChildByRole (ProjectionRole, value); }
 		}
 		
-		public AstNode Condition {
-			get {
-				return GetChildByRole (Roles.Condition);
-			}
+		public CSharpTokenNode ByKeyword {
+			get { return GetChildByRole (ByKeywordRole); }
+		}
+		
+		public Expression Key {
+			get { return GetChildByRole (KeyRole); }
+			set { SetChildByRole (KeyRole, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitQueryExpressionWhereClause (this, data);
+			return visitor.VisitQueryGroupClause (this, data);
 		}
-		
 	}
-	*/
 }
