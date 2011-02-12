@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ILSpy.Debugger.Debugging
+namespace ILSpy.Debugger.Models.TreeModel
 {
 	/// <summary>
 	/// Command called from <see cref="VisualizerPicker"/>.

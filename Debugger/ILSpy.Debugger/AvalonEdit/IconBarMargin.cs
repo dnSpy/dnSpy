@@ -26,7 +26,6 @@ using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
 using ILSpy.Debugger.Bookmarks;
-using ILSpy.Debugger.Debugging;
 using ILSpy.Debugger.Services;
 
 namespace ILSpy.Debugger.AvalonEdit

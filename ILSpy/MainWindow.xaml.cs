@@ -334,7 +334,19 @@ namespace ICSharpCode.ILSpy
 		{
 			var window = new AttachToProcessWindow();
 			window.Owner = this;
-			window.ShowDialog();
+			if (window.ShowDialog() == true)
+			{
+				AttachMenuItem.IsEnabled = AttachButton.IsEnabled = false;
+				DetachMenuItem.IsEnabled = true;
+			}
+		}
+		
+		void DetachFromProcessExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			AttachToProcessWindow.Debugger.Detach();
+			
+			AttachMenuItem.IsEnabled = AttachButton.IsEnabled = true;
+			DetachMenuItem.IsEnabled = false;
 		}
 		
 		void ExitClick(object sender, RoutedEventArgs e)

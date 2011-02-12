@@ -63,11 +63,27 @@
     <Compile Include="Bookmarks\BreakpointBookmarkEventArgs.cs" />
     <Compile Include="Bookmarks\CurrentLineBookmark.cs" />
     <Compile Include="Bookmarks\IBookmark.cs" />
+    <Compile Include="Models\TreeModel\ArrayRangeNode.cs" />
+    <Compile Include="Models\TreeModel\ChildNodesOfObject.cs" />
+    <Compile Include="Models\TreeModel\ExpressionNode.cs" />
+    <Compile Include="Models\TreeModel\ICorDebug.cs" />
+    <Compile Include="Models\TreeModel\IEnumerableNode.cs" />
+    <Compile Include="Models\TreeModel\IListNode.cs" />
+    <Compile Include="Models\TreeModel\ISetText.cs" />
+    <Compile Include="Models\TreeModel\ITreeNode.cs" />
+    <Compile Include="Models\TreeModel\IVisualizerCommand.cs" />
+    <Compile Include="Models\TreeModel\SavedTreeNode.cs" />
+    <Compile Include="Models\TreeModel\StackFrameNode.cs" />
+    <Compile Include="Models\TreeModel\TreeNode.cs" />
+    <Compile Include="Models\TreeModel\Utils.cs" />
+    <Compile Include="Services\Debugger\DebuggerHelper.cs" />
     <Compile Include="Services\Debugger\DebuggerService.cs" />
     <Compile Include="Services\Debugger\DefaultDebugger.cs" />
     <Compile Include="Services\Debugger\IDebugger.cs" />
-    <Compile Include="Services\Debugger\Tooltips\ITreeNode.cs" />
-    <Compile Include="Services\Debugger\Tooltips\IVisualizerCommand.cs" />
+    <Compile Include="Services\Debugger\ListHelper.cs" />
+    <Compile Include="Services\Debugger\RemotingConfigurationHelpper.cs" />
+    <Compile Include="Services\Debugger\TypeResolverExtension.cs" />
+    <Compile Include="Services\Debugger\WindowsDebugger.cs" />
     <Compile Include="Services\ImageService\ImageService.cs" />
     <Compile Include="Models\RunningProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -80,6 +96,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Models\TreeModel" />
     <Folder Include="Services\Debugger\Tooltips" />
   </ItemGroup>
   <ItemGroup>

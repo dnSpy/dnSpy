@@ -25,6 +25,7 @@ using System.Linq;
 using System.Windows;
 
 using ILSpy.Debugger.Models;
+using ILSpy.Debugger.Services;
 
 namespace ILSpy.Debugger.UI
 {
@@ -33,6 +34,13 @@ namespace ILSpy.Debugger.UI
 	/// </summary>
 	public partial class AttachToProcessWindow : Window
 	{
+		public static IDebugger Debugger { get; private set; }
+		
+		static AttachToProcessWindow()
+		{
+			Debugger = new WindowsDebugger();
+		}
+		
 		public AttachToProcessWindow()
 		{
 			InitializeComponent();
@@ -89,6 +97,8 @@ namespace ILSpy.Debugger.UI
 			
 			// start attaching
 			var process = ((RunningProcess)this.RunningProcesses.SelectedItem).Process;
+			Debugger.Attach(process);
+			this.DialogResult = true;
 		}
 		
 		void CancelButton_Click(object sender, RoutedEventArgs e)

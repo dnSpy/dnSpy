@@ -26,8 +26,11 @@ namespace ICSharpCode.ILSpy.Commands
 		static RoutedUICommands()
 		{
 			AttachToProcess = new RoutedUICommand("Attach to running process...", "AttachToProcess", typeof(RoutedUICommands));
+			DetachFromProcess = new RoutedUICommand("Detach from process...", "DetachFromProcess", typeof(RoutedUICommands));
 		}
 		
 		public static RoutedUICommand AttachToProcess { get; private set; }
+		
+		public static RoutedUICommand DetachFromProcess { get; private set; }
 	}
 }

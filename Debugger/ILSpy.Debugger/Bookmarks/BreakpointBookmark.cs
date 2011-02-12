@@ -28,8 +28,8 @@ namespace ILSpy.Debugger.Bookmarks
 	public enum BreakpointAction
 	{
 		Break,
-//		Trace,
-//		Condition
+		Trace,
+		Condition
 	}
 	
 	public class BreakpointBookmark : BookmarkBase

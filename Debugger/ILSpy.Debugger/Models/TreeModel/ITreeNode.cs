@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace ILSpy.Debugger.Debugging
+namespace ILSpy.Debugger.Models.TreeModel
 {
 	/// <summary>
 	/// Node that can be bound to <see cref="DebuggerTooltipControl" />.

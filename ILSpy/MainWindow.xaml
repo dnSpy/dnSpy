@@ -25,6 +25,9 @@
 			Command="routedCommands:RoutedUICommands.AttachToProcess"
 			Executed="AttachToProcessExecuted" />
 		<CommandBinding
+			Command="routedCommands:RoutedUICommands.DetachFromProcess"
+			Executed="DetachFromProcessExecuted" />
+		<CommandBinding
 			Command="Open"
 			Executed="OpenCommandExecuted" />
 		<CommandBinding
@@ -63,11 +66,12 @@
 				</MenuItem>
 			</MenuItem>
 			<MenuItem Header="_Debugger">
-				<MenuItem Header="Attach to _running application" Command="routedCommands:RoutedUICommands.AttachToProcess">
+				<MenuItem x:Name="AttachMenuItem" Header="Attach to _running application" Command="routedCommands:RoutedUICommands.AttachToProcess">
 					<MenuItem.Icon>
 						<Image Width="16" Height="16" Source="Images/bug.png" />
 					</MenuItem.Icon>
 				</MenuItem>
+				<MenuItem x:Name="DetachMenuItem" IsEnabled="False" Header="Detach from running application" Command="routedCommands:RoutedUICommands.DetachFromProcess"/>
 			</MenuItem>
 			<MenuItem Header="_Help">
 				<MenuItem Header="_About" Click="AboutClick" />
@@ -104,9 +108,9 @@
 			          ItemsSource="{x:Static local:Languages.AllLanguages}"
 			          SelectedItem="{Binding FilterSettings.Language}" />
 			<Separator />
-			<Button Command="routedCommands:RoutedUICommands.AttachToProcess" ToolTip="Attach to running process...">
+			<Button x:Name="AttachButton" Command="routedCommands:RoutedUICommands.AttachToProcess" ToolTip="Attach to running process...">
 				<Image Width="16" Height="16" Source="Images/bug.png" />
-			</Button>			
+			</Button>
 		</ToolBar>
 		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
 		<Grid>

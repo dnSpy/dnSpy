@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace ILSpy.Debugger.Services
@@ -32,5 +33,10 @@ namespace ILSpy.Debugger.Services
 		
 		public static readonly BitmapImage Breakpoint = LoadBitmap("Breakpoint");
 		public static readonly BitmapImage CurrentLine = LoadBitmap("CurrentLine");
+		
+		public static ImageSource GetImage(string imageName)
+		{
+			return LoadBitmap(imageName);
+		}
 	}
 }
