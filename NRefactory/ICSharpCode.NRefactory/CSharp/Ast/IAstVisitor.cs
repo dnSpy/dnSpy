@@ -39,6 +39,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitStackAllocExpression(StackAllocExpression stackAllocExpression, T data);
 		S VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, T data);
 		S VisitTypeOfExpression(TypeOfExpression typeOfExpression, T data);
+		S VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, T data);
 		S VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, T data);
 		S VisitUncheckedExpression(UncheckedExpression uncheckedExpression, T data);
 		

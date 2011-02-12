@@ -1,86 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using ICSharpCode.NRefactory.Ast;
-using ICSharpCode.NRefactory.Visitors;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace Decompiler.Transforms.Ast
 {
-	public class PushNegation: AbstractAstTransformer
+	public class PushNegation: DepthFirstAstVisitor<object, object>
 	{
 		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unary, object data)
 		{
 			// Remove double negation
 			// !!a
-			if (unary.Op == UnaryOperatorType.Not &&
+			if (unary.Operator == UnaryOperatorType.Not &&
 			    unary.Expression is UnaryOperatorExpression &&
-			    (unary.Expression as UnaryOperatorExpression).Op == UnaryOperatorType.Not) {
-				Expression newParenth = new ParenthesizedExpression((unary.Expression as UnaryOperatorExpression).Expression);
-				ReplaceCurrentNode(newParenth);
-				return newParenth.AcceptVisitor(this, data);
+			    (unary.Expression as UnaryOperatorExpression).Operator == UnaryOperatorType.Not)
+			{
+				AstNode newNode = (unary.Expression as UnaryOperatorExpression).Expression;
+				unary.ReplaceWith(newNode);
+				return newNode.AcceptVisitor(this, data);
 			}
 			
-			// Basic assumtion is that we have something in form !(a)
-			if (unary.Op == UnaryOperatorType.Not &&
-			    unary.Expression is ParenthesizedExpression) {
-				ParenthesizedExpression parenth = ((ParenthesizedExpression)unary.Expression);
-				
-				// Push through two parenthesis
-				// !((a))
-				if (parenth.Expression is ParenthesizedExpression) {
-					parenth.Expression = new UnaryOperatorExpression(parenth.Expression, UnaryOperatorType.Not);
-					ReplaceCurrentNode(parenth);
-					return parenth.AcceptVisitor(this, data);
+			// Push through binary operation
+			// !((a) op (b))
+			BinaryOperatorExpression binaryOp = unary.Expression as BinaryOperatorExpression;
+			if (unary.Operator == UnaryOperatorType.Not && binaryOp != null) {
+				bool sucessful = true;
+				switch (binaryOp.Operator) {
+					case BinaryOperatorType.Equality:           binaryOp.Operator = BinaryOperatorType.InEquality; break;
+					case BinaryOperatorType.InEquality:         binaryOp.Operator = BinaryOperatorType.Equality; break;
+					// TODO: these are invalid for floats (stupid NaN)
+					case BinaryOperatorType.GreaterThan:        binaryOp.Operator = BinaryOperatorType.LessThanOrEqual; break;
+					case BinaryOperatorType.GreaterThanOrEqual: binaryOp.Operator = BinaryOperatorType.LessThan; break;
+					case BinaryOperatorType.LessThanOrEqual:    binaryOp.Operator = BinaryOperatorType.GreaterThan; break;
+					case BinaryOperatorType.LessThan:           binaryOp.Operator = BinaryOperatorType.GreaterThanOrEqual; break;
+					default: sucessful = false; break;
+				}
+				if (sucessful) {
+					unary.ReplaceWith(binaryOp);
+					return binaryOp.AcceptVisitor(this, data);
 				}
 				
-				// Remove double negation
-				// !(!a)
-				if (parenth.Expression is UnaryOperatorExpression &&
-				    (parenth.Expression as UnaryOperatorExpression).Op == UnaryOperatorType.Not) {
-					parenth.Expression = (parenth.Expression as UnaryOperatorExpression).Expression;
-					ReplaceCurrentNode(parenth);
-					return parenth.AcceptVisitor(this, data);
+				sucessful = true;
+				switch (binaryOp.Operator) {
+					case BinaryOperatorType.ConditionalAnd: binaryOp.Operator = BinaryOperatorType.ConditionalOr; break;
+					case BinaryOperatorType.ConditionalOr:  binaryOp.Operator = BinaryOperatorType.ConditionalAnd; break;
+					default: sucessful = false; break;
 				}
-				
-				// Push through binary operation
-				// !((a) op (b))
-				BinaryOperatorExpression binaryOp = parenth.Expression as BinaryOperatorExpression;
-				if (binaryOp != null &&
-				    binaryOp.Left is ParenthesizedExpression &&
-				    binaryOp.Right is ParenthesizedExpression) {
-					
-					bool sucessful = true;
-					switch(binaryOp.Op) {
-						case BinaryOperatorType.Equality:           binaryOp.Op = BinaryOperatorType.InEquality; break;
-						case BinaryOperatorType.InEquality:         binaryOp.Op = BinaryOperatorType.Equality; break;
-						case BinaryOperatorType.GreaterThan:        binaryOp.Op = BinaryOperatorType.LessThanOrEqual; break;
-						case BinaryOperatorType.GreaterThanOrEqual: binaryOp.Op = BinaryOperatorType.LessThan; break;
-						case BinaryOperatorType.LessThanOrEqual:    binaryOp.Op = BinaryOperatorType.GreaterThan; break;
-						case BinaryOperatorType.LessThan:           binaryOp.Op = BinaryOperatorType.GreaterThanOrEqual; break;
-						default: sucessful = false; break;
-					}
-					if (sucessful) {
-						ReplaceCurrentNode(parenth);
-						return parenth.AcceptVisitor(this, data);
-					}
-					
-					sucessful = true;
-					switch(binaryOp.Op) {
-						case BinaryOperatorType.BitwiseAnd: binaryOp.Op = BinaryOperatorType.BitwiseOr; break;
-						case BinaryOperatorType.BitwiseOr:  binaryOp.Op = BinaryOperatorType.BitwiseAnd; break;
-						case BinaryOperatorType.LogicalAnd: binaryOp.Op = BinaryOperatorType.LogicalOr; break;
-						case BinaryOperatorType.LogicalOr:  binaryOp.Op = BinaryOperatorType.LogicalAnd; break;
-						default: sucessful = false; break;
-					}
-					if (sucessful) {
-						binaryOp.Left = new UnaryOperatorExpression(binaryOp.Left, UnaryOperatorType.Not);
-						binaryOp.Right = new UnaryOperatorExpression(binaryOp.Right, UnaryOperatorType.Not);
-						ReplaceCurrentNode(parenth);
-						return parenth.AcceptVisitor(this, data);
-					}
+				if (sucessful) {
+					binaryOp.Left.ReplaceWith(e => new UnaryOperatorExpression(UnaryOperatorType.Not, e));
+					binaryOp.Right.ReplaceWith(e => new UnaryOperatorExpression(UnaryOperatorType.Not, e));
+					unary.ReplaceWith(binaryOp);
+					return binaryOp.AcceptVisitor(this, data);
 				}
 			}
-			
 			return base.VisitUnaryOperatorExpression(unary, data);
 		}
 	}

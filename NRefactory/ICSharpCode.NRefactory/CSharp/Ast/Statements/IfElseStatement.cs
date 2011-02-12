@@ -73,5 +73,16 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitIfElseStatement (this, data);
 		}
+		
+		public IfElseStatement()
+		{
+		}
+		
+		public IfElseStatement(Expression condition, Statement trueStatement, Statement falseStatement = null)
+		{
+			this.Condition = condition;
+			this.TrueStatement = trueStatement;
+			this.FalseStatement = falseStatement;
+		}
 	}
 }

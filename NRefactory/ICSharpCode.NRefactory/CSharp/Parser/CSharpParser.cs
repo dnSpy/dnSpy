@@ -1009,7 +1009,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			
 			public override object Visit (Goto gotoStatement)
 			{
-				var result = new GotoStatement (GotoType.Label);
+				var result = new GotoStatement ();
+				result.GotoType = GotoType.Label;
 				var location = LocationsBag.GetLocations (gotoStatement);
 				result.AddChild (new CSharpTokenNode (Convert (gotoStatement.loc), "goto".Length), GotoStatement.Roles.Keyword);
 				result.AddChild (new Identifier (gotoStatement.Target, Convert (gotoStatement.loc)), GotoStatement.Roles.Identifier);
@@ -1028,7 +1029,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			
 			public override object Visit (GotoDefault gotoDefault)
 			{
-				var result = new GotoStatement (GotoType.CaseDefault);
+				var result = new GotoStatement ();
+				result.GotoType = GotoType.CaseDefault;
 				result.AddChild (new CSharpTokenNode (Convert (gotoDefault.loc), "goto".Length), GotoStatement.Roles.Keyword);
 				var location = LocationsBag.GetLocations (gotoDefault);
 				if (location != null) {
@@ -1041,7 +1043,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			
 			public override object Visit (GotoCase gotoCase)
 			{
-				var result = new GotoStatement (GotoType.Case);
+				var result = new GotoStatement ();
+				result.GotoType = GotoType.Case;
 				result.AddChild (new CSharpTokenNode (Convert (gotoCase.loc), "goto".Length), GotoStatement.Roles.Keyword);
 				
 				var location = LocationsBag.GetLocations (gotoCase);

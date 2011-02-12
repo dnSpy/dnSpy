@@ -893,6 +893,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			return EndNode(typeOfExpression);
 		}
 		
+		public object VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, object data)
+		{
+			StartNode(typeReferenceExpression);
+			typeReferenceExpression.Type.AcceptVisitor(this, data);
+			return EndNode(typeReferenceExpression);
+		}
+		
 		public object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
 			StartNode(unaryOperatorExpression);

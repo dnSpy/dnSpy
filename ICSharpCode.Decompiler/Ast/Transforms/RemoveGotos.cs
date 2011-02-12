@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 
-using ICSharpCode.NRefactory.Ast;
-using ICSharpCode.NRefactory.Visitors;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace Decompiler.Transforms.Ast
 {
-	public class RemoveGotos: AbstractAstTransformer
+	/*
+	public class RemoveGotos: DepthFirstAstVisitor<object, object>
 	{
-		Stack<StatementWithEmbeddedStatement> enteredLoops = new Stack<StatementWithEmbeddedStatement>();
+		Stack<Statement> enteredLoops = new Stack<Statement>();
 		
-		StatementWithEmbeddedStatement CurrentLoop {
+		Statement CurrentLoop {
 			get {
 				if (enteredLoops.Count > 0) {
 					return enteredLoops.Peek();
@@ -28,10 +28,10 @@ namespace Decompiler.Transforms.Ast
 			return null;
 		}
 		
-		public override object VisitDoLoopStatement(DoLoopStatement doLoopStatement, object data)
+		public override object VisitWhileStatement(WhileStatement whileStatement, object data)
 		{
-			enteredLoops.Push(doLoopStatement);
-			base.VisitDoLoopStatement(doLoopStatement, data);
+			enteredLoops.Push(whileStatement);
+			base.VisitWhileStatement(whileStatement, data);
 			enteredLoops.Pop();
 			return null;
 		}
@@ -70,7 +70,7 @@ namespace Decompiler.Transforms.Ast
 		
 		// Get the next statement that will be executed after this one 
 		// May return null
-		public static INode GetNextStatement(Statement statement)
+		public static AstNode GetNextStatement(Statement statement)
 		{
 			if (statement == null) throw new ArgumentNullException();
 			
@@ -90,7 +90,7 @@ namespace Decompiler.Transforms.Ast
 		
 		// Get the statement that will be executed once the given block exits by the end brace
 		// May return null
-		public static INode ExitBlockStatement(Statement statement)
+		public static AstNode ExitBlockStatement(Statement statement)
 		{
 			if (statement == null) throw new ArgumentNullException();
 			
@@ -117,7 +117,7 @@ namespace Decompiler.Transforms.Ast
 		}
 		
 		// Get the first statement that will be executed in the given block
-		public static INode EnterBlockStatement(Statement statement)
+		public static AstNode EnterBlockStatement(Statement statement)
 		{
 			if (statement == null) throw new ArgumentNullException();
 			
@@ -189,5 +189,5 @@ namespace Decompiler.Transforms.Ast
 			
 			return null;
 		}
-	}
+	}*/
 }

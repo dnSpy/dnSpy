@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-# SharpDevelop 4.0.1.7088
+# SharpDevelop 4.0.1.7096
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy", "ILSpy\ILSpy.csproj", "{1E85EFF9-E370-4683-83E4-8A3D063FF791}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.TreeView", "SharpTreeView\ICSharpCode.TreeView.csproj", "{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}"
@@ -11,8 +11,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.AvalonEdit", "AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj", "{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler", "ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj", "{984CC812-9470-4A13-AFF9-CC44068D666C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRefactory", "Decompiler\lib\NRefactory\Project\NRefactory.csproj", "{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory", "NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj", "{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}"
 EndProject
@@ -64,14 +62,6 @@ Global
 		{984CC812-9470-4A13-AFF9-CC44068D666C}.Release|x86.ActiveCfg = Release|Any CPU
 		{984CC812-9470-4A13-AFF9-CC44068D666C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{984CC812-9470-4A13-AFF9-CC44068D666C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Debug|x86.Build.0 = Debug|Any CPU
-		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Release|x86.Build.0 = Release|Any CPU
-		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Release|x86.ActiveCfg = Release|Any CPU
-		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Debug|x86.Build.0 = Debug|Any CPU
 		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Debug|Any CPU.Build.0 = Debug|Any CPU

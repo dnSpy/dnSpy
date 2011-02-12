@@ -55,6 +55,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSharp\Ast\AstComparer.cs" />
+    <Compile Include="CSharp\Ast\Expressions\TypeReferenceExpression.cs" />
     <Compile Include="CSharp\Ast\IAstVisitor.cs" />
     <Compile Include="CSharp\Ast\CompilationUnit.cs" />
     <Compile Include="CSharp\Ast\CSharpModifierToken.cs" />

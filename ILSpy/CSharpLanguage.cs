@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy
 		{
 			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddType(type);
-			output.Write(codeDomBuilder.GenerateCode());
+			codeDomBuilder.GenerateCode(output);
 		}
 	}
 }

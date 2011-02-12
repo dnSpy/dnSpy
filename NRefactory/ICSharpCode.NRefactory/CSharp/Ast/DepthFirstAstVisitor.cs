@@ -445,6 +445,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			return VisitChildren (typeOfExpression, data);
 		}
 		
+		public virtual S VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, T data)
+		{
+			return VisitChildren (typeReferenceExpression, data);
+		}
+		
 		public virtual S VisitUnaryOperatorExpression (UnaryOperatorExpression unaryOperatorExpression, T data)
 		{
 			return VisitChildren (unaryOperatorExpression, data);

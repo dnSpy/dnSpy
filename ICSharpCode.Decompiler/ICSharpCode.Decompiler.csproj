@@ -51,12 +51,13 @@
   <ItemGroup>
     <Compile Include="Ast\AstBuilder.cs" />
     <Compile Include="Ast\AstMetodBodyBuilder.cs" />
+    <Compile Include="Ast\CommentStatement.cs" />
+    <Compile Include="Ast\TextOutputFormatter.cs" />
     <Compile Include="Ast\Transforms\Idioms.cs" />
     <Compile Include="Ast\Transforms\PushNegation.cs" />
     <Compile Include="Ast\Transforms\RemoveDeadLabels.cs" />
     <Compile Include="Ast\Transforms\RemoveEmptyElseBody.cs" />
     <Compile Include="Ast\Transforms\RemoveGotos.cs" />
-    <Compile Include="Ast\Transforms\RemoveParenthesis.cs" />
     <Compile Include="Ast\Transforms\RestoreLoop.cs" />
     <Compile Include="Ast\Transforms\SimplifyTypeReferences.cs" />
     <Compile Include="CecilExtensions.cs" />
@@ -96,13 +97,13 @@
     <None Include="Properties\AssemblyInfo.template.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Decompiler\lib\NRefactory\Project\NRefactory.csproj">
-      <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
-      <Name>NRefactory</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

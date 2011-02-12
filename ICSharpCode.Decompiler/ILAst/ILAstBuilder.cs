@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Decompiler.Mono.Cecil.Rocks;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 using Cecil = Mono.Cecil;
+using Decompiler.Rocks;
 
 namespace Decompiler
 {
