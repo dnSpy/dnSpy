@@ -122,8 +122,10 @@ namespace Decompiler
 			
 			if (typeDef.IsEnum) {  // NB: Enum is value type
 				astType.ClassType = ClassType.Enum;
+				astType.Modifiers &= ~Modifiers.Sealed;
 			} else if (typeDef.IsValueType) {
 				astType.ClassType = ClassType.Struct;
+				astType.Modifiers &= ~Modifiers.Sealed;
 			} else if (typeDef.IsInterface) {
 				astType.ClassType = ClassType.Interface;
 				astType.Modifiers &= ~Modifiers.Abstract;
@@ -136,14 +138,29 @@ namespace Decompiler
 				astType.AddChild(CreateType(nestedTypeDef), TypeDeclaration.MemberRole);
 			}
 			
-			// Base type
-			if (typeDef.BaseType != null && !typeDef.IsValueType && typeDef.BaseType.FullName != Constants.Object) {
-				astType.AddChild(ConvertType(typeDef.BaseType), TypeDeclaration.BaseTypeRole);
-			}
-			foreach (var i in typeDef.Interfaces)
-				astType.AddChild(ConvertType(i), TypeDeclaration.BaseTypeRole);
 			
-			AddTypeMembers(astType, typeDef);
+			if (typeDef.IsEnum) {
+				foreach (FieldDefinition field in typeDef.Fields) {
+					if (field.IsRuntimeSpecialName) {
+						// the value__ field
+						astType.AddChild(ConvertType(field.FieldType), TypeDeclaration.BaseTypeRole);
+					} else {
+						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
+						enumMember.Name = field.Name;
+						astType.AddChild(enumMember, TypeDeclaration.MemberRole);
+					}
+				}
+			} else {
+				// Base type
+				if (typeDef.BaseType != null && !typeDef.IsValueType && typeDef.BaseType.FullName != Constants.Object) {
+					astType.AddChild(ConvertType(typeDef.BaseType), TypeDeclaration.BaseTypeRole);
+				}
+				foreach (var i in typeDef.Interfaces)
+					astType.AddChild(ConvertType(i), TypeDeclaration.BaseTypeRole);
+				
+				
+				AddTypeMembers(astType, typeDef);
+			}
 			
 			return astType;
 		}
@@ -279,27 +296,53 @@ namespace Decompiler
 		#region ConvertModifiers
 		Modifiers ConvertModifiers(TypeDefinition typeDef)
 		{
-			return
-				(typeDef.IsNestedPrivate            ? Modifiers.Private    : Modifiers.None) |
-				(typeDef.IsNestedFamilyAndAssembly  ? Modifiers.Protected  : Modifiers.None) | // TODO: Extended access
-				(typeDef.IsNestedAssembly           ? Modifiers.Internal   : Modifiers.None) |
-				(typeDef.IsNestedFamily             ? Modifiers.Protected  : Modifiers.None) |
-				(typeDef.IsNestedFamilyOrAssembly   ? Modifiers.Protected | Modifiers.Internal : Modifiers.None) |
-				(typeDef.IsPublic                   ? Modifiers.Public     : Modifiers.None) |
-				(typeDef.IsAbstract                 ? Modifiers.Abstract   : Modifiers.None);
+			Modifiers modifiers = Modifiers.None;
+			if (typeDef.IsNestedPrivate)
+				modifiers |= Modifiers.Private;
+			else if (typeDef.IsNestedAssembly || typeDef.IsNestedFamilyAndAssembly || typeDef.IsNotPublic)
+				modifiers |= Modifiers.Internal;
+			else if (typeDef.IsNestedFamily)
+				modifiers |= Modifiers.Protected;
+			else if (typeDef.IsNestedFamilyOrAssembly)
+				modifiers |= Modifiers.Protected | Modifiers.Internal;
+			else if (typeDef.IsPublic || typeDef.IsNestedPublic)
+				modifiers |= Modifiers.Public;
+			
+			if (typeDef.IsAbstract && typeDef.IsSealed)
+				modifiers |= Modifiers.Static;
+			else if (typeDef.IsAbstract)
+				modifiers |= Modifiers.Abstract;
+			else if (typeDef.IsSealed)
+				modifiers |= Modifiers.Sealed;
+			
+			return modifiers;
 		}
 		
 		Modifiers ConvertModifiers(FieldDefinition fieldDef)
 		{
-			return
-				(fieldDef.IsPrivate            ? Modifiers.Private    : Modifiers.None) |
-				(fieldDef.IsFamilyAndAssembly  ? Modifiers.Protected  : Modifiers.None) | // TODO: Extended access
-				(fieldDef.IsAssembly           ? Modifiers.Internal   : Modifiers.None) |
-				(fieldDef.IsFamily             ? Modifiers.Protected  : Modifiers.None) |
-				(fieldDef.IsFamilyOrAssembly   ? Modifiers.Protected | Modifiers.Internal : Modifiers.None) |
-				(fieldDef.IsPublic             ? Modifiers.Public     : Modifiers.None) |
-				(fieldDef.IsLiteral            ? Modifiers.Const      : Modifiers.None) |
-				(fieldDef.IsStatic             ? Modifiers.Static     : Modifiers.None);
+			Modifiers modifiers = Modifiers.None;
+			if (fieldDef.IsPrivate)
+				modifiers |= Modifiers.Private;
+			else if (fieldDef.IsAssembly || fieldDef.IsFamilyAndAssembly)
+				modifiers |= Modifiers.Internal;
+			else if (fieldDef.IsFamily)
+				modifiers |= Modifiers.Protected;
+			else if (fieldDef.IsFamilyOrAssembly)
+				modifiers |= Modifiers.Protected | Modifiers.Internal;
+			else if (fieldDef.IsPublic)
+				modifiers |= Modifiers.Public;
+			
+			if (fieldDef.IsLiteral) {
+				modifiers |= Modifiers.Const;
+			} else {
+				if (fieldDef.IsStatic)
+					modifiers |= Modifiers.Static;
+				
+				if (fieldDef.IsInitOnly)
+					modifiers |= Modifiers.Readonly;
+			}
+			
+			return modifiers;
 		}
 		
 		Modifiers ConvertModifiers(MethodDefinition methodDef)
