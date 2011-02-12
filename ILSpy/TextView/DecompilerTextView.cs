@@ -35,6 +35,7 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
 using ILSpy.Debugger.AvalonEdit;
+using ILSpy.Debugger.Bookmarks;
 using Microsoft.Win32;
 using Mono.Cecil;
 
@@ -53,6 +54,8 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		DefinitionLookup definitionLookup;
 		CancellationTokenSource currentCancellationTokenSource;
+		
+		IconBarMargin iconMargin;
 		
 		#region Constructor
 		public DecompilerTextView()
@@ -75,7 +78,8 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
 			
 			// add margin
-			textEditor.TextArea.LeftMargins.Add(new IconBarMargin(IconBarManager.Instance));
+			iconMargin = new IconBarMargin();
+			textEditor.TextArea.LeftMargins.Add(iconMargin);
 		}
 		#endregion
 		
@@ -192,6 +196,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNodeBase> treeNodes, DecompilationOptions options)
 		{
+			IconBarMargin.CurrentTypeName = string.Empty;
 			// Some actions like loading an assembly list cause several selection changes in the tree view,
 			// and each of those will start a decompilation action.
 			bool isDecompilationScheduled = this.nextDecompilationRun != null;
@@ -248,6 +253,10 @@ namespace ICSharpCode.ILSpy.TextView
 							output.WriteLine(ex.ToString());
 						}
 						ShowOutput(output);
+					}
+					finally {
+						// repaint bookmarks
+						iconMargin.InvalidateVisual();
 					}
 				});
 		}

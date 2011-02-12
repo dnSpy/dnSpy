@@ -81,7 +81,7 @@ namespace ILSpy.Debugger.Bookmarks
 		
 		protected virtual void RemoveMark()
 		{
-			IconBarManager.Instance.Bookmarks.Remove(this);
+			
 		}
 		
 		/// <summary>
@@ -116,11 +116,7 @@ namespace ILSpy.Debugger.Bookmarks
 		
 		protected virtual void Redraw()
 		{
-			if (document != null) {
-				IBookmarkMargin bookmarkMargin = IconBarManager.Instance;
-				if (bookmarkMargin != null)
-					bookmarkMargin.Redraw();
-			}
+			
 		}
 		
 		public string TypeName { get; set; }

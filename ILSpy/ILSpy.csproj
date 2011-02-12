@@ -221,6 +221,5 @@
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

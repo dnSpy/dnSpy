@@ -32,33 +32,18 @@ using ILSpy.Debugger.Services;
 namespace ILSpy.Debugger.AvalonEdit
 {
 	public class IconBarMargin : AbstractMargin, IDisposable
-	{
-		readonly IconBarManager manager;
+	{		
+		static string currentTypeName;
 		
-		public IconBarMargin(IconBarManager manager)
-		{
-			if (manager == null)
-				throw new ArgumentNullException("manager");
-			this.manager = manager;
+		public static string CurrentTypeName {
+			get {
+				return currentTypeName; }
+			set { currentTypeName = value; }
 		}
 		
 		#region OnTextViewChanged
 		/// <inheritdoc/>
 		protected override void OnTextViewChanged(TextView oldTextView, TextView newTextView)
-		{
-			if (oldTextView != null) {
-				oldTextView.VisualLinesChanged -= OnRedrawRequested;
-				manager.RedrawRequested -= OnRedrawRequested;
-			}
-			base.OnTextViewChanged(oldTextView, newTextView);
-			if (newTextView != null) {
-				newTextView.VisualLinesChanged += OnRedrawRequested;
-				manager.RedrawRequested += OnRedrawRequested;
-			}
-			InvalidateVisual();
-		}
-		
-		void OnRedrawRequested(object sender, EventArgs e)
 		{
 			InvalidateVisual();
 		}
@@ -94,17 +79,20 @@ namespace ILSpy.Debugger.AvalonEdit
 			TextView textView = this.TextView;
 			if (textView != null && textView.VisualLinesValid) {
 				// create a dictionary line number => first bookmark
-				Dictionary<int, IBookmark> bookmarkDict = new Dictionary<int, IBookmark>();
-				foreach (IBookmark bm in manager.Bookmarks) {
+				Dictionary<int, BookmarkBase> bookmarkDict = new Dictionary<int, BookmarkBase>();
+				foreach (var bm in BookmarkManager.Bookmarks) {
+					if (bm.TypeName != IconBarMargin.CurrentTypeName)
+						continue;
+					
 					int line = bm.LineNumber;
-					IBookmark existingBookmark;
+					BookmarkBase existingBookmark;
 					if (!bookmarkDict.TryGetValue(line, out existingBookmark) || bm.ZOrder > existingBookmark.ZOrder)
 						bookmarkDict[line] = bm;
 				}
 				Size pixelSize = PixelSnapHelpers.GetPixelSize(this);
 				foreach (VisualLine line in textView.VisualLines) {
 					int lineNumber = line.FirstDocumentLine.LineNumber;
-					IBookmark bm;
+					BookmarkBase bm;
 					if (bookmarkDict.TryGetValue(lineNumber, out bm)) {
 						Rect rect = new Rect(0, PixelSnapHelpers.Round(line.VisualTop - textView.VerticalOffset, pixelSize.Height), 16, 16);
 						if (dragDropBookmark == bm && dragStarted)
@@ -148,11 +136,11 @@ namespace ILSpy.Debugger.AvalonEdit
 				e.Handled = true;
 		}
 		
-		IBookmark GetBookmarkFromLine(int line)
+		BookmarkBase GetBookmarkFromLine(int line)
 		{
-			IBookmark result = null;
-			foreach (IBookmark bm in manager.Bookmarks) {
-				if (bm.LineNumber == line) {
+			BookmarkBase result = null;
+			foreach (BookmarkBase bm in BookmarkManager.Bookmarks) {
+				if (bm.LineNumber == line && bm.TypeName == IconBarMargin.CurrentTypeName) {
 					if (result == null || bm.ZOrder > result.ZOrder)
 						result = bm;
 				}
@@ -238,13 +226,18 @@ namespace ILSpy.Debugger.AvalonEdit
 				IBookmark bm = GetBookmarkFromLine(line);
 				if (bm != null) {
 					bm.MouseUp(e);
+					if (!string.IsNullOrEmpty(IconBarMargin.CurrentTypeName)) {
+						DebuggerService.ToggleBreakpointAt(IconBarMargin.CurrentTypeName, line);
+					}
 					InvalidateVisual();
 					if (e.Handled)
 						return;
 				}
 				if (e.ChangedButton == MouseButton.Left && TextView != null) {
-					// no bookmark on the line: create a new breakpoint
-					DebuggerService.ToggleBreakpointAt("test", line);
+					if (!string.IsNullOrEmpty(IconBarMargin.CurrentTypeName)) {
+						// no bookmark on the line: create a new breakpoint
+						DebuggerService.ToggleBreakpointAt(IconBarMargin.CurrentTypeName, line);
+					}
 				}
 				InvalidateVisual();
 			}

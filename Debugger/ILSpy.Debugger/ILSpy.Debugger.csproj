@@ -55,7 +55,6 @@
     <Compile Include="AvalonEdit\Editor\ITextAnchor.cs" />
     <Compile Include="AvalonEdit\Editor\ITextBuffer.cs" />
     <Compile Include="AvalonEdit\Editor\TextChangeEventArgs.cs" />
-    <Compile Include="AvalonEdit\IconBarManager.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="Bookmarks\BookmarkBase.cs" />
     <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
@@ -80,7 +79,9 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Services\Debugger\Tooltips" />
+  </ItemGroup>
   <ItemGroup>
     <Page Include="UI\AttachToProcessWindow.xaml" />
   </ItemGroup>
