@@ -2,14 +2,18 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
+using Mono.Cecil;
 
 namespace Decompiler
 {
 	public class TextOutputFormatter : IOutputFormatter
 	{
 		readonly ITextOutput output;
+		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
 		
 		public TextOutputFormatter(ITextOutput output)
 		{
@@ -20,7 +24,18 @@ namespace Decompiler
 		
 		public void WriteIdentifier(string identifier)
 		{
-			output.Write(identifier);
+			AstNode node = nodeStack.Peek();
+			MemberReference memberRef = node.Annotation<MemberReference>();
+			if (memberRef == null && node.Role == AstNode.Roles.TargetExpression
+			    && (node.Parent is InvocationExpression || node.Parent is ObjectCreateExpression))
+			{
+				memberRef = node.Parent.Annotation<MemberReference>();
+			}
+			
+			if (memberRef != null)
+				output.WriteReference(identifier, memberRef);
+			else
+				output.Write(identifier);
 		}
 		
 		public void WriteKeyword(string keyword)
@@ -40,7 +55,8 @@ namespace Decompiler
 		
 		public void OpenBrace(BraceStyle style)
 		{
-			output.MarkFoldStart();
+			if (nodeStack.OfType<BlockStatement>().Count() <= 1)
+				output.MarkFoldStart();
 			output.WriteLine(" {");
 			output.Indent();
 		}
@@ -49,7 +65,8 @@ namespace Decompiler
 		{
 			output.Unindent();
 			output.Write('}');
-			output.MarkFoldEnd();
+			if (nodeStack.OfType<BlockStatement>().Count() <= 1)
+				output.MarkFoldEnd();
 		}
 		
 		public void Indent()
@@ -84,6 +101,17 @@ namespace Decompiler
 					output.WriteLine(content);
 					break;
 			}
+		}
+		
+		public void StartNode(AstNode node)
+		{
+			nodeStack.Push(node);
+		}
+		
+		public void EndNode(AstNode node)
+		{
+			if (nodeStack.Pop() != node)
+				throw new InvalidOperationException();
 		}
 	}
 }

@@ -67,6 +67,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				WriteSpecialsUpToNode(node);
 			currentContainerNode = node;
 			positionStack.Push(node.FirstChild);
+			formatter.StartNode(node);
 		}
 		
 		object EndNode(AstNode node)
@@ -76,6 +77,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			Debug.Assert(pos == null || pos.Parent == node);
 			WriteSpecials(pos, null);
 			currentContainerNode = node.Parent;
+			formatter.EndNode(node);
 			return null;
 		}
 		#endregion

@@ -542,7 +542,7 @@ namespace Decompiler
 						target = methodArgs[0];
 						methodArgs.RemoveAt(0);
 					} else {
-						target = new Ast.IdentifierExpression(cecilMethod.DeclaringType.FullName);
+						target = new TypeReferenceExpression { Type = AstBuilder.ConvertType(cecilMethod.DeclaringType)};
 					}
 					
 					// TODO: Constructors are ignored
@@ -552,10 +552,10 @@ namespace Decompiler
 					
 					// TODO: Hack, detect properties properly
 					if (cecilMethod.Name.StartsWith("get_")) {
-						return target.Member(cecilMethod.Name.Remove(0, 4));
+						return target.Member(cecilMethod.Name.Remove(0, 4)).WithAnnotation(cecilMethod);
 					} else if (cecilMethod.Name.StartsWith("set_")) {
 						return new Ast.AssignmentExpression(
-							target.Member(cecilMethod.Name.Remove(0, 4)),
+							target.Member(cecilMethod.Name.Remove(0, 4)).WithAnnotation(cecilMethod),
 							methodArgs[0]
 						);
 					}
@@ -575,7 +575,7 @@ namespace Decompiler
 					}*/
 					
 					// Default invocation
-					return target.Invoke(cecilMethod.Name, methodArgs);
+					return target.Invoke(cecilMethod.Name, methodArgs).WithAnnotation(cecilMethod);
 					case Code.Calli: throw new NotImplementedException();
 					case Code.Castclass: return arg1.CastTo(operandAsTypeRef);
 					case Code.Ckfinite: throw new NotImplementedException();

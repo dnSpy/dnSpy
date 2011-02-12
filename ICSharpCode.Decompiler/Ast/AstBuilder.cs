@@ -172,7 +172,7 @@ namespace Decompiler
 			} else if (type.IsNested) {
 				AstType typeRef = CreateType(type.DeclaringType, typeAttributes, ref typeIndex);
 				string namepart = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name);
-				return new MemberType { Target = typeRef, MemberName = namepart };
+				return new MemberType { Target = typeRef, MemberName = namepart }.WithAnnotation(type);
 			} else {
 				string ns = type.Namespace ?? string.Empty;
 				string name = type.Name;
@@ -190,7 +190,7 @@ namespace Decompiler
 					for (int i = 1; i < parts.Length; i++) {
 						nsType = new MemberType { Target = nsType, MemberName = parts[i] };
 					}
-					return new MemberType { Target = nsType, MemberName = name };
+					return new MemberType { Target = nsType, MemberName = name }.WithAnnotation(type);
 				}
 			}
 		}

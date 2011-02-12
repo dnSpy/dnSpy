@@ -448,6 +448,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			if (annotation == null)
 				throw new ArgumentNullException("annotation");
+			if (this.IsNull)
+				throw new InvalidOperationException("Cannot add annotations to the null node");
 		retry: // Retry until successful
 			object oldAnnotation = Interlocked.CompareExchange(ref this.annotations, annotation, null);
 			if (oldAnnotation == null) {

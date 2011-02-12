@@ -52,6 +52,7 @@
     <Compile Include="Ast\AstBuilder.cs" />
     <Compile Include="Ast\AstMetodBodyBuilder.cs" />
     <Compile Include="Ast\CommentStatement.cs" />
+    <Compile Include="Ast\NRefactoryExtensions.cs" />
     <Compile Include="Ast\TextOutputFormatter.cs" />
     <Compile Include="Ast\Transforms\Idioms.cs" />
     <Compile Include="Ast\Transforms\PushNegation.cs" />
