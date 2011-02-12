@@ -1157,8 +1157,22 @@ namespace ICSharpCode.NRefactory.CSharp
 				constraint.AcceptVisitor(this, data);
 			}
 			OpenBrace(braceStyle);
-			foreach (var member in typeDeclaration.Members) {
-				member.AcceptVisitor(this, data);
+			if (typeDeclaration.ClassType == ClassType.Enum) {
+				bool first = true;
+				foreach (var member in typeDeclaration.Members) {
+					if (first) {
+						first = false;
+					} else {
+						Comma(member);
+						NewLine();
+					}
+					member.AcceptVisitor(this, data);
+				}
+				NewLine();
+			} else {
+				foreach (var member in typeDeclaration.Members) {
+					member.AcceptVisitor(this, data);
+				}
 			}
 			CloseBrace(braceStyle);
 			NewLine();
