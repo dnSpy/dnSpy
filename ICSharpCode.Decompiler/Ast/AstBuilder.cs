@@ -39,6 +39,8 @@ namespace Decompiler
 				//astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
 			}
 			
+			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
+			
 			var outputFormatter = new TextOutputFormatter(output);
 			var formattingPolicy = new CSharpFormattingPolicy();
 			// disable whitespace in front of parentheses:
@@ -89,6 +91,12 @@ namespace Decompiler
 			} else {
 				astCompileUnit.AddChild(astType, CompilationUnit.MemberRole);
 			}
+		}
+		
+		public void AddMethod(MethodDefinition method)
+		{
+			AstNode node = method.IsConstructor ? (AstNode)CreateConstructor(method) : CreateMethod(method);
+			astCompileUnit.AddChild(node, CompilationUnit.MemberRole);
 		}
 		
 		public TypeDeclaration CreateType(TypeDefinition typeDef)
@@ -182,6 +190,43 @@ namespace Decompiler
 				if (name == "Object" && ns == "System" && HasDynamicAttribute(typeAttributes, typeIndex)) {
 					return new PrimitiveType("dynamic");
 				} else {
+					if (ns == "System") {
+						switch (name) {
+							case "SByte":
+								return new PrimitiveType("sbyte");
+							case "Int16":
+								return new PrimitiveType("short");
+							case "Int32":
+								return new PrimitiveType("int");
+							case "Int64":
+								return new PrimitiveType("long");
+							case "Byte":
+								return new PrimitiveType("byte");
+							case "UInt16":
+								return new PrimitiveType("ushort");
+							case "UInt32":
+								return new PrimitiveType("uint");
+							case "UInt64":
+								return new PrimitiveType("ulong");
+							case "String":
+								return new PrimitiveType("string");
+							case "Single":
+								return new PrimitiveType("float");
+							case "Double":
+								return new PrimitiveType("double");
+							case "Decimal":
+								return new PrimitiveType("decimal");
+							case "Char":
+								return new PrimitiveType("char");
+							case "Boolean":
+								return new PrimitiveType("bool");
+							case "Void":
+								return new PrimitiveType("void");
+							case "Object":
+								return new PrimitiveType("object");
+						}
+					}
+					
 					name = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(name);
 					if (ns.Length == 0)
 						return new SimpleType(name);
@@ -243,17 +288,30 @@ namespace Decompiler
 		
 		Modifiers ConvertModifiers(MethodDefinition methodDef)
 		{
-			return
-				(methodDef.IsCompilerControlled ? Modifiers.None       : Modifiers.None) |
-				(methodDef.IsPrivate            ? Modifiers.Private    : Modifiers.None) |
-				(methodDef.IsFamilyAndAssembly  ? Modifiers.Protected  : Modifiers.None) | // TODO: Extended access
-				(methodDef.IsAssembly           ? Modifiers.Internal   : Modifiers.None) |
-				(methodDef.IsFamily             ? Modifiers.Protected  : Modifiers.None) |
-				(methodDef.IsFamilyOrAssembly   ? Modifiers.Protected | Modifiers.Internal : Modifiers.None) |
-				(methodDef.IsPublic             ? Modifiers.Public     : Modifiers.None) |
-				(methodDef.IsStatic             ? Modifiers.Static     : Modifiers.None) |
-				(methodDef.IsVirtual            ? Modifiers.Virtual    : Modifiers.None) |
-				(methodDef.IsAbstract           ? Modifiers.Abstract   : Modifiers.None);
+			Modifiers modifiers = Modifiers.None;
+			if (methodDef.IsPrivate)
+				modifiers |= Modifiers.Private;
+			else if (methodDef.IsAssembly || methodDef.IsFamilyAndAssembly)
+				modifiers |= Modifiers.Internal;
+			else if (methodDef.IsFamily)
+				modifiers |= Modifiers.Protected;
+			else if (methodDef.IsFamilyOrAssembly)
+				modifiers |= Modifiers.Protected | Modifiers.Internal;
+			else if (methodDef.IsPublic)
+				modifiers |= Modifiers.Public;
+			
+			if (methodDef.IsStatic)
+				modifiers |= Modifiers.Static;
+			else if ((methodDef.IsAbstract || methodDef.IsFinal || methodDef.IsVirtual) && !methodDef.IsNewSlot)
+				modifiers |= Modifiers.Override;
+			
+			if (methodDef.IsAbstract)
+				modifiers |= Modifiers.Abstract;
+			else if (methodDef.IsFinal)
+				modifiers |= Modifiers.Sealed;
+			else if (methodDef.IsVirtual)
+				modifiers |= Modifiers.Virtual;
+			return modifiers;
 		}
 		#endregion
 		

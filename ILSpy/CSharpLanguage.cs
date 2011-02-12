@@ -38,7 +38,9 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
-			throw new NotImplementedException("Currently we can decompile only whole types.");
+			AstBuilder codeDomBuilder = new AstBuilder();
+			codeDomBuilder.AddMethod(method);
+			codeDomBuilder.GenerateCode(output);
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
