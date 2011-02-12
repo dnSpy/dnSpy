@@ -146,6 +146,7 @@
     <Compile Include="CSharp\Formatter\DomIndentationVisitor.cs" />
     <Compile Include="CSharp\Formatter\DomSpacingVisitor.cs" />
     <Compile Include="CSharp\Formatter\Indent.cs" />
+    <Compile Include="CSharp\OutputVisitor\InsertParenthesesVisitor.cs" />
     <Compile Include="CSharp\OutputVisitor\IOutputFormatter.cs" />
     <Compile Include="CSharp\OutputVisitor\OutputVisitor.cs" />
     <Compile Include="CSharp\OutputVisitor\TextWriterOutputFormatter.cs" />

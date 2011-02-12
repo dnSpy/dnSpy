@@ -133,7 +133,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 		public void IntMaxValueToBigInt()
 		{
 			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(BigInt)int.MaxValue");
-			Assert.AreEqual("BigInt", ce.CastTo.ToString());
+			Assert.AreEqual("BigInt", ce.Type.ToString());
 			Assert.IsTrue(ce.Expression is MemberReferenceExpression);
 		}
 	}

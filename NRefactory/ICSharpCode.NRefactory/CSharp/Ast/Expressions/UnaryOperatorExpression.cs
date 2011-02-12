@@ -35,6 +35,16 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		public readonly static Role<CSharpTokenNode> OperatorRole = BinaryOperatorExpression.OperatorRole;
 		
+		public UnaryOperatorExpression()
+		{
+		}
+		
+		public UnaryOperatorExpression(UnaryOperatorType op, Expression expression)
+		{
+			this.Operator = op;
+			this.Expression = expression;
+		}
+		
 		public UnaryOperatorType Operator {
 			get;
 			set;

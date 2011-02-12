@@ -45,6 +45,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			return (Expression)base.Clone();
 		}
 		
+		public Expression ReplaceWith(Func<Expression, Expression> replaceFunction)
+		{
+			if (replaceFunction == null)
+				throw new ArgumentNullException("replaceFunction");
+			return (Expression)base.ReplaceWith(node => replaceFunction((Expression)node));
+		}
+		
 		#region Builder methods
 		/// <summary>
 		/// Builds an member reference expression using this expression as target.
@@ -99,6 +106,16 @@ namespace ICSharpCode.NRefactory.CSharp
 				},
 				Arguments = arguments
 			};
+		}
+		
+		public CastExpression CastTo(AstType type)
+		{
+			return new CastExpression { Type = type,  Expression = this };
+		}
+		
+		public AsExpression CastAs(AstType type)
+		{
+			return new AsExpression { Type = type,  Expression = this };
 		}
 		#endregion
 	}

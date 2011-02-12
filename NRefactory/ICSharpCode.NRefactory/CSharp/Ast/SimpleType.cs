@@ -33,6 +33,15 @@ namespace ICSharpCode.NRefactory.CSharp
 {
 	public class SimpleType : AstType
 	{
+		public SimpleType()
+		{
+		}
+		
+		public SimpleType(string identifier)
+		{
+			this.Identifier = identifier;
+		}
+		
 		public string Identifier {
 			get {
 				return GetChildByRole (Roles.Identifier).Name;

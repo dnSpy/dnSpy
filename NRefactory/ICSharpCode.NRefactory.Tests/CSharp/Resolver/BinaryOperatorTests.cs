@@ -345,26 +345,26 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		public void LogicalAnd()
 		{
 			AssertConstant(true, resolver.ResolveBinaryOperator(
-				BinaryOperatorType.LogicalAnd, MakeConstant(true), MakeConstant(true)));
+				BinaryOperatorType.ConditionalAnd, MakeConstant(true), MakeConstant(true)));
 			
 			AssertConstant(false, resolver.ResolveBinaryOperator(
-				BinaryOperatorType.LogicalAnd, MakeConstant(false), MakeConstant(true)));
+				BinaryOperatorType.ConditionalAnd, MakeConstant(false), MakeConstant(true)));
 			
 			AssertError(typeof(bool), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.LogicalAnd, MakeConstant(false), MakeResult(typeof(bool?))));
+				BinaryOperatorType.ConditionalAnd, MakeConstant(false), MakeResult(typeof(bool?))));
 		}
 		
 		[Test]
 		public void LogicalOr()
 		{
 			AssertConstant(true, resolver.ResolveBinaryOperator(
-				BinaryOperatorType.LogicalOr, MakeConstant(false), MakeConstant(true)));
+				BinaryOperatorType.ConditionalOr, MakeConstant(false), MakeConstant(true)));
 			
 			AssertConstant(false, resolver.ResolveBinaryOperator(
-				BinaryOperatorType.LogicalOr, MakeConstant(false), MakeConstant(false)));
+				BinaryOperatorType.ConditionalOr, MakeConstant(false), MakeConstant(false)));
 			
 			AssertError(typeof(bool), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.LogicalOr, MakeConstant(false), MakeResult(typeof(bool?))));
+				BinaryOperatorType.ConditionalOr, MakeConstant(false), MakeResult(typeof(bool?))));
 		}
 		
 		[Test]

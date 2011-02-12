@@ -38,6 +38,16 @@ namespace ICSharpCode.NRefactory.CSharp
 		public readonly static Role<CSharpTokenNode> OperatorRole = BinaryOperatorExpression.OperatorRole;
 		public readonly static Role<Expression> RightRole = BinaryOperatorExpression.RightRole;
 		
+		public AssignmentExpression()
+		{
+		}
+		
+		public AssignmentExpression(Expression left, Expression right)
+		{
+			this.Left = left;
+			this.Right = right;
+		}
+		
 		public AssignmentOperatorType Operator {
 			get;
 			set;

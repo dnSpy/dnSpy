@@ -1693,11 +1693,11 @@ namespace ICSharpCode.NRefactory.CSharp
 						result.Operator = BinaryOperatorType.BitwiseOr;
 						break;
 					case Binary.Operator.LogicalAnd:
-						result.Operator = BinaryOperatorType.LogicalAnd;
+						result.Operator = BinaryOperatorType.ConditionalAnd;
 						opLength = 2;
 						break;
 					case Binary.Operator.LogicalOr:
-						result.Operator = BinaryOperatorType.LogicalOr;
+						result.Operator = BinaryOperatorType.ConditionalOr;
 						opLength = 2;
 						break;
 				}
