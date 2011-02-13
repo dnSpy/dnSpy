@@ -60,6 +60,7 @@
     <Compile Include="Ast\Transforms\RestoreLoop.cs" />
     <Compile Include="Ast\Transforms\SimplifyTypeReferences.cs" />
     <Compile Include="CecilExtensions.cs" />
+    <Compile Include="Disassembler\CodeMappings.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
     <Compile Include="Disassembler\ILStructure.cs" />
     <Compile Include="Disassembler\MethodBodyDisassembler.cs" />

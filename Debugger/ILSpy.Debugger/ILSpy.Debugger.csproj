@@ -78,7 +78,6 @@
     <Compile Include="Models\TreeModel\Utils.cs" />
     <Compile Include="Services\Debugger\DebuggerHelper.cs" />
     <Compile Include="Services\Debugger\DebuggerService.cs" />
-    <Compile Include="Services\Debugger\DefaultDebugger.cs" />
     <Compile Include="Services\Debugger\IDebugger.cs" />
     <Compile Include="Services\Debugger\ListHelper.cs" />
     <Compile Include="Services\Debugger\RemotingConfigurationHelpper.cs" />

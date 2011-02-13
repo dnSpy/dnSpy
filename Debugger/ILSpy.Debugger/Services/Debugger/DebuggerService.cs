@@ -22,7 +22,7 @@ namespace ILSpy.Debugger.Services
 		
 		static IDebugger GetCompatibleDebugger()
 		{
-			return new DefaultDebugger();
+			return new WindowsDebugger();
 		}
 		
 		/// <summary>

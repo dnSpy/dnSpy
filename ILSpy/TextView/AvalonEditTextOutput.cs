@@ -86,6 +86,11 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
 		public readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
 		
+		public AvalonEditTextOutput()
+		{
+			CurrentLine = 1;
+		}
+		
 		/// <summary>
 		/// Gets the list of references (hyperlinks).
 		/// </summary>
@@ -103,6 +108,8 @@ namespace ICSharpCode.ILSpy.TextView
 		public int TextLength {
 			get { return b.Length; }
 		}
+		
+		public int CurrentLine { get; set; }
 		
 		#region Text Document
 		TextDocument textDocument;
@@ -173,6 +180,7 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			Debug.Assert(textDocument == null);
 			b.AppendLine();
+			++CurrentLine;
 			needsIndent = true;
 			if (this.TextLength > LengthLimit) {
 				throw new OutputLengthExceededException();
