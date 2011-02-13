@@ -20,7 +20,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-
+using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
@@ -45,10 +45,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public Language Language {
 			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
-		}
-		
-		public SharpTreeNodeCollection VisibleChildren {
-			get { return base.Children; }
 		}
 		
 		public virtual FilterResult Filter(FilterSettings settings)
@@ -87,7 +83,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return false;
 		}
 		
-		bool FilterChild(ILSpyTreeNode child)
+		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
+		{
+			if (e.NewItems != null) {
+				foreach (ILSpyTreeNode node in e.NewItems)
+					ApplyFilterToChild(node);
+			}
+			base.OnChildrenChanged(e);
+		}
+		
+		void ApplyFilterToChild(ILSpyTreeNode child)
 		{
 			FilterResult r;
 			if (this.FilterSettings == null)
@@ -96,18 +101,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				r = child.Filter(this.FilterSettings);
 			switch (r) {
 				case FilterResult.Hidden:
-					return false;
+					child.IsHidden = true;
+					break;
 				case FilterResult.Match:
 					child.FilterSettings = StripSearchTerm(this.FilterSettings);
-					return true;
+					child.IsHidden = false;
+					break;
 				case FilterResult.Recurse:
 					child.FilterSettings = this.FilterSettings;
 					child.EnsureLazyChildren();
-					return child.VisibleChildren.Count > 0;
+					child.IsHidden = child.Children.All(c => c.IsHidden);
+					break;
 				case FilterResult.MatchAndRecurse:
 					child.FilterSettings = StripSearchTerm(this.FilterSettings);
 					child.EnsureLazyChildren();
-					return child.VisibleChildren.Count > 0;
+					child.IsHidden = child.Children.All(c => c.IsHidden);
+					break;
 				default:
 					throw new InvalidEnumArgumentException();
 			}
@@ -127,6 +136,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected virtual void OnFilterSettingsChanged()
 		{
 			RaisePropertyChanged("Text");
+			foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
+				ApplyFilterToChild(node);
 		}
 	}
 	
