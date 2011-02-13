@@ -87,7 +87,7 @@ namespace ICSharpCode.TreeView
 				OnIsEditingChanged();
 			} else if (e.PropertyName == "IsLast") {
 				if (ParentTreeView.ShowLines) {
-					foreach (var child in Node.ExpandedDescendantsAndSelf()) {
+					foreach (var child in Node.VisibleDescendantsAndSelf()) {
 						var container = ParentTreeView.ItemContainerGenerator.ContainerFromItem(child) as SharpTreeViewItem;
 						if (container != null) {
 							container.NodeView.LinesRenderer.InvalidateVisual();

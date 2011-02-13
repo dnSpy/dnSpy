@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Windows.Threading;
 
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
@@ -51,7 +52,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			EnsureLazyChildren();
+			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
 			foreach (var child in this.Children) {
 				child.Decompile(language, output, options);
 				output.WriteLine();

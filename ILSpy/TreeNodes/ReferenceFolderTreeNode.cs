@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Windows.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
@@ -60,7 +61,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			EnsureLazyChildren();
+			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
 			foreach (var child in this.Children) {
 				child.Decompile(language, output, options);
 			}

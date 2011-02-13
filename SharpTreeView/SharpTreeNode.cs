@@ -21,6 +21,56 @@ namespace ICSharpCode.TreeView
 		internal SharpTreeNode modelParent;
 		bool isVisible = true;
 		
+		void UpdateIsVisible(bool parentIsVisible, bool updateFlattener)
+		{
+			bool newIsVisible = parentIsVisible && !isHidden;
+			if (isVisible != newIsVisible) {
+				isVisible = newIsVisible;
+				// invalidate the augmented data
+				SharpTreeNode node = this;
+				while (node != null && node.totalListLength >= 0) {
+					node.totalListLength = -1;
+					node = node.listParent;
+				}
+				// Remember the removed nodes:
+				List<SharpTreeNode> removedNodes = null;
+				if (updateFlattener && !newIsVisible) {
+					removedNodes = VisibleDescendantsAndSelf().ToList();
+				}
+				// also update the model children:
+				UpdateChildIsVisible(false);
+				
+				// Validate our invariants:
+				if (updateFlattener)
+					GetListRoot().CheckInvariants();
+				
+				// Tell the flattener about the removed nodes:
+				if (removedNodes != null) {
+					var flattener = GetListRoot().treeFlattener;
+					if (flattener != null) {
+						flattener.NodesRemoved(GetVisibleIndexForNode(this), removedNodes);
+					}
+				}
+				// Tell the flattener about the new nodes:
+				if (updateFlattener && newIsVisible) {
+					var flattener = GetListRoot().treeFlattener;
+					if (flattener != null) {
+						flattener.NodesInserted(GetVisibleIndexForNode(this), VisibleDescendantsAndSelf());
+					}
+				}
+			}
+		}
+		
+		void UpdateChildIsVisible(bool updateFlattener)
+		{
+			if (modelChildren != null && modelChildren.Count > 0) {
+				bool showChildren = isVisible && isExpanded;
+				foreach (SharpTreeNode child in modelChildren) {
+					child.UpdateIsVisible(showChildren, updateFlattener);
+				}
+			}
+		}
+		
 		#region Main
 		
 		public SharpTreeNode()
@@ -72,6 +122,8 @@ namespace ICSharpCode.TreeView
 			set {
 				if (isHidden != value) {
 					isHidden = value;
+					if (modelParent != null)
+						UpdateIsVisible(modelParent.isVisible && modelParent.isExpanded, true);
 					RaisePropertyChanged("IsHidden");
 				}
 			}
@@ -110,17 +162,28 @@ namespace ICSharpCode.TreeView
 			if (e.NewItems != null) {
 				SharpTreeNode insertionPos;
 				if (e.NewStartingIndex == 0)
-					insertionPos = this;
+					insertionPos = null;
 				else
 					insertionPos = modelChildren[e.NewStartingIndex - 1];
 				foreach (SharpTreeNode node in e.NewItems) {
 					Debug.Assert(node.modelParent == null);
 					node.modelParent = this;
-					Debug.WriteLine("Inserting {0} after {1}", node.ToString(), insertionPos.ToString());
-					InsertNodeAfter(insertionPos, node);
+					node.UpdateIsVisible(isVisible && isExpanded, false);
+					Debug.WriteLine("Inserting {0} after {1}", node, insertionPos);
+					
+					while (insertionPos != null && insertionPos.modelChildren != null && insertionPos.modelChildren.Count > 0) {
+						insertionPos = insertionPos.modelChildren.Last();
+					}
+					InsertNodeAfter(insertionPos ?? this, node);
+					
 					insertionPos = node;
+					if (node.isVisible) {
+						var flattener = GetListRoot().treeFlattener;
+						if (flattener != null) {
+							flattener.NodesInserted(GetVisibleIndexForNode(node), node.VisibleDescendantsAndSelf());
+						}
+					}
 				}
-				DumpTree(this);
 			}
 			
 			RaisePropertyChanged("ShowExpander");
@@ -149,6 +212,7 @@ namespace ICSharpCode.TreeView
 			{
 				if (isExpanded != value) {
 					isExpanded = value;
+					UpdateChildIsVisible(true);
 					if (isExpanded) {
 						EnsureLazyChildren();
 					}
@@ -208,14 +272,14 @@ namespace ICSharpCode.TreeView
 			return TreeTraversal.PreOrder(this, n => n.Children);
 		}
 		
-		public IEnumerable<SharpTreeNode> ExpandedDescendants()
+		internal IEnumerable<SharpTreeNode> VisibleDescendants()
 		{
-			return TreeTraversal.PreOrder(this.Children, n => n.IsExpanded ? n.Children : null);
+			return TreeTraversal.PreOrder(this.Children.Where(c => c.isVisible), n => n.Children.Where(c => c.isVisible));
 		}
 		
-		public IEnumerable<SharpTreeNode> ExpandedDescendantsAndSelf()
+		internal IEnumerable<SharpTreeNode> VisibleDescendantsAndSelf()
 		{
-			return TreeTraversal.PreOrder(this, n => n.IsExpanded ? n.Children : null);
+			return TreeTraversal.PreOrder(this, n => n.Children.Where(c => c.isVisible));
 		}
 		
 		public IEnumerable<SharpTreeNode> Ancestors()

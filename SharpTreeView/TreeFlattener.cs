@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -32,6 +33,28 @@ namespace ICSharpCode.TreeView
 
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 		
+		public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs e)
+		{
+			if (CollectionChanged != null)
+				CollectionChanged(this, e);
+		}
+		
+		public void NodesInserted(int index, IEnumerable<SharpTreeNode> nodes)
+		{
+			if (!includeRoot) index--;
+			foreach (SharpTreeNode node in nodes) {
+				RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node, index++));
+			}
+		}
+		
+		public void NodesRemoved(int index, IEnumerable<SharpTreeNode> nodes)
+		{
+			if (!includeRoot) index--;
+			foreach (SharpTreeNode node in nodes) {
+				RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, node, index));
+			}
+		}
+		
 		public void Stop()
 		{
 			Debug.Assert(root.treeFlattener == this);
@@ -51,7 +74,7 @@ namespace ICSharpCode.TreeView
 		
 		public int Count {
 			get {
-				return includeRoot ? root.totalListLength : root.totalListLength - 1;
+				return includeRoot ? root.GetTotalListLength() : root.GetTotalListLength() - 1;
 			}
 		}
 		

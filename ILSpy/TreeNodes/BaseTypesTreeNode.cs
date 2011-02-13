@@ -19,6 +19,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Threading;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
@@ -63,7 +64,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			EnsureLazyChildren();
+			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
 			foreach (var child in this.Children) {
 				child.Decompile(language, output, options);
 			}

@@ -153,7 +153,7 @@ namespace ICSharpCode.TreeView
 		
 		internal void HandleCollapsing(SharpTreeNode Node)
 		{
-			var selectedChilds = Node.ExpandedDescendants().Where(n => n.IsSelected);
+			var selectedChilds = Node.VisibleDescendants().Where(n => n.IsSelected);
 			if (selectedChilds.Any()) {
 				var list = SelectedItems.Cast<SharpTreeNode>().Except(selectedChilds).ToList();
 				list.AddOnce(Node);

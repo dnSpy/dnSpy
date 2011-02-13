@@ -134,6 +134,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (def == null)
 				return null;
+			App.Current.Dispatcher.VerifyAccess();
 			if (def.DeclaringType != null) {
 				TypeTreeNode decl = FindTypeNode(def.DeclaringType);
 				if (decl != null) {

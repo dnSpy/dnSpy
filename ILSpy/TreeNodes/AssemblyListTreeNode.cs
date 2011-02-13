@@ -45,6 +45,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.assemblyList = assemblyList;
 		}
 		
+		public override object Text {
+			get { return assemblyList.ListName; }
+		}
+		
 		/*
 		public override DropEffect CanDrop(IDataObject data, DropEffect requestedEffect)
 		{
