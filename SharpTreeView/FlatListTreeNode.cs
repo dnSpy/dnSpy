@@ -288,26 +288,46 @@ namespace ICSharpCode.TreeView
 						pos.right = null;
 					}
 				}
+				SharpTreeNode succ = pos.Successor();
 				DeleteNode(pos); // this will also rebalance out the deletion of the right subtree
 				
 				oldPos = pos;
-				pos = pos.Successor();
+				pos = succ;
 			} while (oldPos != end);
 			
 			// merge back together the removed subtrees:
-			
+			SharpTreeNode removed = removedSubtrees[0];
+			for (int i = 1; i < removedSubtrees.Count; i++) {
+				removed = ConcatTrees(removed, removedSubtrees[i]);
+			}
+		}
+		
+		static SharpTreeNode ConcatTrees(SharpTreeNode first, SharpTreeNode second)
+		{
+			SharpTreeNode tmp = first;
+			while (tmp.right != null)
+				tmp = tmp.right;
+			InsertNodeAfter(tmp, second);
+			return tmp.GetListRoot();
 		}
 		
 		SharpTreeNode Successor()
 		{
-			SharpTreeNode node = this;
-			SharpTreeNode oldNode;
-			do {
-				oldNode = node;
-				node = node.listParent;
-				// loop while we are on the way up from the right part
-			} while (node != null && node.right == oldNode);
-			return node;
+			if (right != null) {
+				SharpTreeNode node = right;
+				while (node.left != null)
+					node = node.left;
+				return node;
+			} else {
+				SharpTreeNode node = this;
+				SharpTreeNode oldNode;
+				do {
+					oldNode = node;
+					node = node.listParent;
+					// loop while we are on the way up from the right part
+				} while (node != null && node.right == oldNode);
+				return node;
+			}
 		}
 		
 		static void DeleteNode(SharpTreeNode node)
