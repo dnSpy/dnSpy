@@ -36,7 +36,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				throw new ArgumentNullException("property");
 			this.property = property;
 			this.isIndexer = isIndexer;
-			this.LazyLoading = true;
+			
+			if (property.GetMethod != null)
+				this.Children.Add(new MethodTreeNode(property.GetMethod));
+			if (property.SetMethod != null)
+				this.Children.Add(new MethodTreeNode(property.SetMethod));
+			if (property.HasOtherMethods) {
+				foreach (var m in property.OtherMethods)
+					this.Children.Add(new MethodTreeNode(m));
+			}
 		}
 		
 		public PropertyDefinition PropertyDefinition {
@@ -53,21 +61,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
-		protected override void LoadChildren()
-		{
-			if (property.GetMethod != null)
-				this.Children.Add(new MethodTreeNode(property.GetMethod));
-			if (property.SetMethod != null)
-				this.Children.Add(new MethodTreeNode(property.SetMethod));
-			if (property.HasOtherMethods) {
-				foreach (var m in property.OtherMethods)
-					this.Children.Add(new MethodTreeNode(m));
-			}
-		}
-		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(property.Name))
+			if (settings.SearchTermMatches(property.Name) && settings.Language.ShowMember(property))
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;

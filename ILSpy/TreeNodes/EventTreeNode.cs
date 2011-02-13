@@ -34,7 +34,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (ev == null)
 				throw new ArgumentNullException("ev");
 			this.ev = ev;
-			this.LazyLoading = true;
+			
+			if (ev.AddMethod != null)
+				this.Children.Add(new MethodTreeNode(ev.AddMethod));
+			if (ev.RemoveMethod != null)
+				this.Children.Add(new MethodTreeNode(ev.RemoveMethod));
+			if (ev.InvokeMethod != null)
+				this.Children.Add(new MethodTreeNode(ev.InvokeMethod));
+			if (ev.HasOtherMethods) {
+				foreach (var m in ev.OtherMethods)
+					this.Children.Add(new MethodTreeNode(m));
+			}
 		}
 		
 		public EventDefinition EventDefinition {
@@ -51,23 +61,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
-		protected override void LoadChildren()
-		{
-			if (ev.AddMethod != null)
-				this.Children.Add(new MethodTreeNode(ev.AddMethod));
-			if (ev.RemoveMethod != null)
-				this.Children.Add(new MethodTreeNode(ev.RemoveMethod));
-			if (ev.InvokeMethod != null)
-				this.Children.Add(new MethodTreeNode(ev.InvokeMethod));
-			if (ev.HasOtherMethods) {
-				foreach (var m in ev.OtherMethods)
-					this.Children.Add(new MethodTreeNode(m));
-			}
-		}
-		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(ev.Name))
+			if (settings.SearchTermMatches(ev.Name) && settings.Language.ShowMember(ev))
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;

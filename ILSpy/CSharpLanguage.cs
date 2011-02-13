@@ -110,5 +110,13 @@ namespace ICSharpCode.ILSpy
 				return null;
 			}
 		}
+		
+		public override bool ShowMember(MemberReference member)
+		{
+			MethodDefinition method = member as MethodDefinition;
+			if (method != null && (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn))
+				return false;
+			return true;
+		}
 	}
 }

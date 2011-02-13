@@ -108,6 +108,11 @@ namespace ICSharpCode.ILSpy
 		{
 			return Name;
 		}
+		
+		public virtual bool ShowMember(MemberReference member)
+		{
+			return true;
+		}
 	}
 	
 	public static class Languages

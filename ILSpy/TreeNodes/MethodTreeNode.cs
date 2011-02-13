@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(method.Name))
+			if (settings.SearchTermMatches(method.Name) && settings.Language.ShowMember(method))
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;

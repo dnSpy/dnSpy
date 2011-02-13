@@ -80,10 +80,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (!settings.ShowInternalApi && !IsPublicAPI)
 				return FilterResult.Hidden;
-			if (settings.SearchTermMatches(type.Name))
-				return FilterResult.Match;
-			else
+			if (settings.SearchTermMatches(type.Name)) {
+				if (type.IsNested && !settings.Language.ShowMember(type))
+					return FilterResult.Hidden;
+				else
+					return FilterResult.Match;
+			} else {
 				return FilterResult.Recurse;
+			}
 		}
 		
 		protected override void LoadChildren()
