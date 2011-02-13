@@ -51,27 +51,27 @@ namespace ICSharpCode.ILSpy
 		
 		public virtual void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, TypeToString(method.DeclaringType) + "." + method.Name);
+			WriteCommentLine(output, TypeToString(method.DeclaringType, true) + "." + method.Name);
 		}
 		
 		public virtual void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, TypeToString(property.DeclaringType) + "." + property.Name);
+			WriteCommentLine(output, TypeToString(property.DeclaringType, true) + "." + property.Name);
 		}
 		
 		public virtual void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, TypeToString(field.DeclaringType) + "." + field.Name);
+			WriteCommentLine(output, TypeToString(field.DeclaringType, true) + "." + field.Name);
 		}
 		
 		public virtual void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, TypeToString(ev.DeclaringType) + "." + ev.Name);
+			WriteCommentLine(output, TypeToString(ev.DeclaringType, true) + "." + ev.Name);
 		}
 		
 		public virtual void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, TypeToString(type));
+			WriteCommentLine(output, TypeToString(type, true));
 		}
 		
 		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)
@@ -93,9 +93,12 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Converts a type reference into a string. This method is used by the member tree node for parameter and return types.
 		/// </summary>
-		public virtual string TypeToString(TypeReference t)
+		public virtual string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes = null)
 		{
-			return t.Name;
+			if (includeNamespace)
+				return type.FullName;
+			else
+				return type.Name;
 		}
 		
 		/// <summary>

@@ -136,7 +136,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.WriteCommentLine(output, language.TypeToString(tr));
+			language.WriteCommentLine(output, language.TypeToString(tr, true));
 		}
 	}
 }

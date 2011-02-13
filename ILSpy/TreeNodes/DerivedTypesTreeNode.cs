@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 							if (IsSameType(typeRef, type))
 								children.Add(new DerivedTypesEntryNode(td, list));
 						}
-					} else if (!type.IsInterface && IsSameType(td.BaseType, type)) {
+					} else if (!type.IsInterface && td.BaseType != null && IsSameType(td.BaseType, type)) {
 						children.Add(new DerivedTypesEntryNode(td, list));
 					}
 				}
@@ -112,7 +112,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.WriteCommentLine(output, language.TypeToString(def));
+			language.WriteCommentLine(output, language.TypeToString(def, true));
 		}
 	}
 }

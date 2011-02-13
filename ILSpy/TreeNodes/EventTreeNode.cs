@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get { return HighlightSearchMatch(ev.Name, " : " + this.Language.TypeToString(ev.EventType)); }
+			get { return HighlightSearchMatch(ev.Name, " : " + this.Language.TypeToString(ev.EventType, false, ev)); }
 		}
 		
 		public override object Icon {

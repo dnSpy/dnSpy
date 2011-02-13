@@ -17,8 +17,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
+using System.Linq;
 using Decompiler;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
@@ -69,6 +72,43 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddType(type);
 			codeDomBuilder.GenerateCode(output);
+		}
+		
+		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes)
+		{
+			AstType astType = AstBuilder.ConvertType(type, typeAttributes);
+			if (!includeNamespace) {
+				var tre = new TypeReferenceExpression { Type = astType };
+				tre.AcceptVisitor(new RemoveNamespaceFromType(), null);
+				astType = tre.Type;
+			}
+			
+			StringWriter w = new StringWriter();
+			if (type.IsByReference) {
+				ParameterDefinition pd = typeAttributes as ParameterDefinition;
+				if (pd != null && (!pd.IsIn && pd.IsOut))
+					w.Write("out ");
+				else
+					w.Write("ref ");
+			}
+			
+			astType.AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
+			return w.ToString();
+		}
+		
+		sealed class RemoveNamespaceFromType : DepthFirstAstVisitor<object, object>
+		{
+			public override object VisitMemberType(MemberType memberType, object data)
+			{
+				base.VisitMemberType(memberType, data);
+				SimpleType st = memberType.Target as SimpleType;
+				if (st != null && !st.TypeArguments.Any()) {
+					var ta = memberType.TypeArguments.ToArray();
+					memberType.TypeArguments = null;
+					memberType.ReplaceWith(new SimpleType { Identifier = memberType.MemberName, TypeArguments = ta });
+				}
+				return null;
+			}
 		}
 	}
 }
