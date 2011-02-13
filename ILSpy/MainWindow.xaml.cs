@@ -93,7 +93,7 @@ namespace ICSharpCode.ILSpy
 			for (int i = 1; i < args.Length; i++) {
 				assemblyList.OpenAssembly(args[i]);
 			}
-			if (assemblyList.Assemblies.Count == 0)
+			if (assemblyList.GetAssemblies().Length == 0)
 				LoadInitialAssemblies();
 			
 			SharpTreeNode node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
@@ -139,7 +139,7 @@ namespace ICSharpCode.ILSpy
 			history.Clear();
 			this.assemblyList = assemblyList;
 			
-			assemblyList.Assemblies.CollectionChanged += assemblyList_Assemblies_CollectionChanged;
+			assemblyList.assemblies.CollectionChanged += assemblyList_Assemblies_CollectionChanged;
 			
 			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();

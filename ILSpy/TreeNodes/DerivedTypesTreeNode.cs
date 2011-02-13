@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected override IEnumerable<ILSpyTreeNodeBase> FetchChildren(CancellationToken cancellationToken)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
-			var assemblies = list.Assemblies.Select(node => node.AssemblyDefinition).Where(asm => asm != null).ToArray();
+			var assemblies = list.GetAssemblies().Select(node => node.AssemblyDefinition).Where(asm => asm != null).ToArray();
 			return FindDerivedTypes(type, assemblies, cancellationToken);
 		}
 		

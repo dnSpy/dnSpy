@@ -358,7 +358,7 @@ namespace ICSharpCode.ILSpy.TextView
 			} else if (reference is EventReference) {
 				mainWindow.SelectNode(assemblyList.FindEventNode(((EventReference)reference).Resolve()));
 			} else if (reference is AssemblyDefinition) {
-				mainWindow.SelectNode(assemblyList.Assemblies.FirstOrDefault(node => node.AssemblyDefinition == reference));
+				mainWindow.SelectNode(assemblyList.GetAssemblies().FirstOrDefault(node => node.AssemblyDefinition == reference));
 			}
 		}
 		#endregion

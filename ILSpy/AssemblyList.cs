@@ -41,8 +41,10 @@ namespace ICSharpCode.ILSpy
 		
 		/// <summary>
 		/// The assemblies in this list.
+		/// Needs locking for multi-threaded access!
+		/// Write accesses are allowed on the GUI thread only (but still need locking!)
 		/// </summary>
-		public readonly ObservableCollection<AssemblyTreeNode> Assemblies = new ObservableCollection<AssemblyTreeNode>();
+		internal readonly ObservableCollection<AssemblyTreeNode> assemblies = new ObservableCollection<AssemblyTreeNode>();
 		
 		/// <summary>
 		/// Dictionary for quickly finding types (used in hyperlink navigation)
@@ -52,7 +54,7 @@ namespace ICSharpCode.ILSpy
 		public AssemblyList(string listName)
 		{
 			this.listName = listName;
-			Assemblies.CollectionChanged += Assemblies_CollectionChanged;
+			assemblies.CollectionChanged += Assemblies_CollectionChanged;
 		}
 		
 		/// <summary>
@@ -68,6 +70,16 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		/// <summary>
+		/// Gets the loaded assemblies. This method is thread-safe.
+		/// </summary>
+		public AssemblyTreeNode[] GetAssemblies()
+		{
+			lock (assemblies) {
+				return assemblies.ToArray();
+			}
+		}
+		
+		/// <summary>
 		/// Saves this assembly list to XML.
 		/// </summary>
 		public XElement SaveAsXml()
@@ -75,7 +87,7 @@ namespace ICSharpCode.ILSpy
 			return new XElement(
 				"List",
 				new XAttribute("name", this.ListName),
-				Assemblies.Select(asm => new XElement("Assembly", asm.FileName))
+				assemblies.Select(asm => new XElement("Assembly", asm.FileName))
 			);
 		}
 		
@@ -215,13 +227,13 @@ namespace ICSharpCode.ILSpy
 			
 			file = Path.GetFullPath(file);
 			
-			foreach (AssemblyTreeNode node in this.Assemblies) {
+			foreach (AssemblyTreeNode node in this.assemblies) {
 				if (file.Equals(node.FileName, StringComparison.OrdinalIgnoreCase))
 					return node;
 			}
 			
 			var newNode = new AssemblyTreeNode(file, this);
-			this.Assemblies.Add(newNode);
+			this.assemblies.Add(newNode);
 			return newNode;
 		}
 	}

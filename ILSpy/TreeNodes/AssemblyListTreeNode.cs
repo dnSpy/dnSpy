@@ -38,7 +38,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public AssemblyListTreeNode(AssemblyList assemblyList)
-			: base(assemblyList.Assemblies)
+			: base(assemblyList.assemblies)
 		{
 			if (assemblyList == null)
 				throw new ArgumentNullException("assemblyList");
@@ -61,20 +61,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (files == null)
 				files = data.GetData(DataFormats.FileDrop) as string[];
 			if (files != null) {
-				var nodes = (from file in files
-				             where file != null
-				             select assemblyList.OpenAssembly(file) into node
-				             where node != null
-				             select node).Distinct().ToList();
-				foreach (AssemblyTreeNode node in nodes) {
-					int nodeIndex = this.Children.IndexOf(node);
-					if (nodeIndex < index)
-						index--;
-					this.Children.RemoveAt(nodeIndex);
-				}
-				nodes.Reverse();
-				foreach (AssemblyTreeNode node in nodes) {
-					this.Children.Insert(index, node);
+				lock (assemblyList.assemblies) {
+					var nodes = (from file in files
+					             where file != null
+					             select assemblyList.OpenAssembly(file) into node
+					             where node != null
+					             select node).Distinct().ToList();
+					foreach (AssemblyTreeNode node in nodes) {
+						int nodeIndex = assemblyList.assemblies.IndexOf(node);
+						if (nodeIndex < index)
+							index--;
+						assemblyList.assemblies.RemoveAt(nodeIndex);
+					}
+					nodes.Reverse();
+					foreach (AssemblyTreeNode node in nodes) {
+						assemblyList.assemblies.Insert(index, node);
+					}
 				}
 			}
 		}
@@ -85,7 +87,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			language.WriteCommentLine(output, "List: " + assemblyList.ListName);
 			output.WriteLine();
-			foreach (AssemblyTreeNode asm in assemblyList.Assemblies) {
+			foreach (AssemblyTreeNode asm in assemblyList.GetAssemblies()) {
 				language.WriteCommentLine(output, new string('-', 60));
 				output.WriteLine();
 				asm.Decompile(language, output, options);

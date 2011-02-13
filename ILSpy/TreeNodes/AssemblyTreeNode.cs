@@ -25,7 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-
+using System.Windows.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
@@ -128,18 +128,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
-		MenuItem CreateRemoveAssemblyItem()
-		{
-			MenuItem item = new MenuItem() {
-				Header = "Remove assembly",
-				Icon = new Image() { Source = Images.Delete }
-			};
-			
-			item.Click += delegate { Delete(); };
-			
-			return item;
-		}
-		
 		sealed class MyAssemblyResolver : IAssemblyResolver
 		{
 			readonly AssemblyTreeNode parent;
@@ -178,7 +166,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			// specific to AssemblyTreeNode
 			var menu = new ContextMenu();
-			menu.Items.Add(CreateRemoveAssemblyItem());
+			
+			MenuItem item = new MenuItem() {
+				Header = "Remove assembly",
+				Icon = new Image() { Source = Images.Delete }
+			};
+			item.Click += delegate { Delete(); };
+			menu.Items.Add(item);
 			
 			return menu;
 		}
@@ -229,7 +223,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void DeleteCore()
 		{
-			assemblyList.Assemblies.Remove(this);
+			lock (assemblyList.assemblies) {
+				assemblyList.assemblies.Remove(this);
+			}
 		}
 		
 		internal const string DataFormat = "ILSpyAssemblies";
@@ -243,9 +239,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public AssemblyTreeNode LookupReferencedAssembly(string fullName)
 		{
-			foreach (AssemblyTreeNode node in assemblyList.Assemblies) {
+			foreach (AssemblyTreeNode node in assemblyList.GetAssemblies()) {
 				if (node.AssemblyDefinition != null && fullName.Equals(node.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
 					return node;
+			}
+			
+			if (!App.Current.Dispatcher.CheckAccess()) {
+				// Call this method on the GUI thread.
+				return (AssemblyTreeNode)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, AssemblyTreeNode>(LookupReferencedAssembly), fullName);
 			}
 			
 			var name = AssemblyNameReference.Parse(fullName);
