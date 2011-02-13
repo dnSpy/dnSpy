@@ -205,9 +205,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			WriteSpecialsUpToRole(identifierRole ?? AstNode.Roles.Identifier);
 			if (IsKeyword(identifier, currentContainerNode)) {
+				if (lastWritten == LastWritten.KeywordOrIdentifier)
+					Space(); // this space is not strictly required, so we call Space()
 				formatter.WriteToken("@");
 			} else if (lastWritten == LastWritten.KeywordOrIdentifier) {
-				formatter.Space();
+				formatter.Space(); // this space is strictly required, so we directly call the formatter
 			}
 			formatter.WriteIdentifier(identifier);
 			lastWritten = LastWritten.KeywordOrIdentifier;
@@ -1097,6 +1099,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteModifiers(delegateDeclaration.ModifierTokens);
 			WriteKeyword("delegate");
 			delegateDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WriteIdentifier(delegateDeclaration.Name);
 			WriteTypeParameters(delegateDeclaration.TypeParameters);
 			Space(policy.BeforeDelegateDeclarationParentheses);
@@ -1297,6 +1300,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			LPar();
 			Space(policy.WithinForEachParentheses);
 			foreachStatement.VariableType.AcceptVisitor(this, data);
+			Space();
 			WriteIdentifier(foreachStatement.VariableName);
 			WriteKeyword("in", ForeachStatement.Roles.InKeyword);
 			Space();
@@ -1681,6 +1685,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			CloseBrace(policy.EventBraceStyle);
+			NewLine();
 			return EndNode(customEventDeclaration);
 		}
 		
@@ -1713,6 +1718,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			CloseBrace(policy.PropertyBraceStyle);
+			NewLine();
 			return EndNode(indexerDeclaration);
 		}
 		
@@ -1722,6 +1728,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(methodDeclaration.Attributes);
 			WriteModifiers(methodDeclaration.ModifierTokens);
 			methodDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WritePrivateImplementationType(methodDeclaration.PrivateImplementationType);
 			WriteIdentifier(methodDeclaration.Name);
 			WriteTypeParameters(methodDeclaration.TypeParameters);
@@ -1799,6 +1806,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(propertyDeclaration.Attributes);
 			WriteModifiers(propertyDeclaration.ModifierTokens);
 			propertyDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WritePrivateImplementationType(propertyDeclaration.PrivateImplementationType);
 			WriteIdentifier(propertyDeclaration.Name);
 			OpenBrace(policy.PropertyBraceStyle);

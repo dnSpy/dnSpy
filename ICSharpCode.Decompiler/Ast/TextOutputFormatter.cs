@@ -66,7 +66,8 @@ namespace Decompiler
 		{
 			if (nodeStack.OfType<BlockStatement>().Count() <= 1)
 				output.MarkFoldStart();
-			output.WriteLine(" {");
+			output.WriteLine();
+			output.WriteLine("{");
 			output.Indent();
 		}
 		
