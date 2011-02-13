@@ -33,10 +33,10 @@ namespace ICSharpCode.TreeView
 		{
 			switch (e.Key) {
 				case Key.F2:
-					if (SharpTreeNode.ActiveNodes.Count == 1 && Node.IsEditable) {
-						Node.IsEditing = true;
-						e.Handled = true;
-					}
+//					if (SharpTreeNode.ActiveNodes.Count == 1 && Node.IsEditable) {
+//						Node.IsEditing = true;
+//						e.Handled = true;
+//					}
 					break;
 				case Key.Escape:
 					Node.IsEditing = false;
@@ -84,9 +84,9 @@ namespace ICSharpCode.TreeView
 				if (Math.Abs(currentPoint.X - startPoint.X) >= SystemParameters.MinimumHorizontalDragDistance ||
 				    Math.Abs(currentPoint.Y - startPoint.Y) >= SystemParameters.MinimumVerticalDragDistance) {
 
-					if (Node.InternalCanDrag()) {
-						Node.InternalDrag(this);
-					}
+//					if (Node.InternalCanDrag()) {
+//						Node.InternalDrag(this);
+//					}
 				}
 			}
 		}
@@ -107,30 +107,6 @@ namespace ICSharpCode.TreeView
 			if (wasSelected) {
 				base.OnMouseLeftButtonDown(e);
 			}
-		}
-
-		#endregion
-
-		#region Drag and Drop
-
-		protected override void OnDragEnter(DragEventArgs e)
-		{
-			ParentTreeView.HandleDragEnter(this, e);
-		}
-
-		protected override void OnDragOver(DragEventArgs e)
-		{
-			ParentTreeView.HandleDragOver(this, e);
-		}
-
-		protected override void OnDrop(DragEventArgs e)
-		{
-			ParentTreeView.HandleDrop(this, e);
-		}
-
-		protected override void OnDragLeave(DragEventArgs e)
-		{
-			ParentTreeView.HandleDragLeave(this, e);
 		}
 
 		#endregion

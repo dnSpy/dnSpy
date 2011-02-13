@@ -80,6 +80,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
+    <Compile Include="FlatListTreeNode.cs" />
     <Compile Include="SharpGridView.cs" />
     <Compile Include="SharpTreeNode.cs" />
     <Compile Include="SharpTreeNodeCollection.cs" />
@@ -88,6 +89,11 @@
     <Compile Include="SharpTreeViewItem.cs" />
     <Compile Include="TreeFlattener.cs" />
     <AppDesigner Include="Properties\" />
+    <Compile Include="TreeTraversal.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="copyright.txt" />
+    <None Include="license.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

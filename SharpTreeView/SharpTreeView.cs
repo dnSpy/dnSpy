@@ -130,7 +130,7 @@ namespace ICSharpCode.TreeView
 					Root.IsExpanded = true;
 				}
 				flattener = new TreeFlattener(Root, ShowRoot);
-				ItemsSource = flattener.List;
+				this.ItemsSource = flattener;
 				flattener.Start();
 			}
 		}
@@ -151,10 +151,10 @@ namespace ICSharpCode.TreeView
 			SharpTreeViewItem container = element as SharpTreeViewItem;
 			container.ParentTreeView = this;
 		}
-
+		
 		internal void HandleCollapsing(SharpTreeNode Node)
 		{
-			var selectedChilds = Node.Descendants().Where(n => SharpTreeNode.SelectedNodes.Contains(n));
+			var selectedChilds = Node.ExpandedDescendants().Where(n => n.IsSelected);
 			if (selectedChilds.Any()) {
 				var list = SelectedItems.Cast<SharpTreeNode>().Except(selectedChilds).ToList();
 				list.AddOnce(Node);
@@ -237,41 +237,18 @@ namespace ICSharpCode.TreeView
 		protected override void OnSelectionChanged(SelectionChangedEventArgs e)
 		{
 			foreach (SharpTreeNode node in e.RemovedItems) {
-				SharpTreeNode.SelectedNodes.Remove(node);
+				node.IsSelected = false;
 			}
 			foreach (SharpTreeNode node in e.AddedItems) {
-				SharpTreeNode.SelectedNodes.Add(node);
-			}
-
-			if (IsKeyboardFocusWithin) {
-				foreach (SharpTreeNode node in e.RemovedItems) {
-					SharpTreeNode.ActiveNodes.Remove(node);
-				}
-				foreach (SharpTreeNode node in e.AddedItems) {
-					SharpTreeNode.ActiveNodes.Add(node);
-				}
+				node.IsSelected = true;
 			}
 			base.OnSelectionChanged(e);
-		}
-
-		protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
-		{
-			foreach (SharpTreeNode node in SelectedItems) {
-				SharpTreeNode.ActiveNodes.Add(node);
-			}
-		}
-
-		protected override void OnPreviewLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
-		{
-			foreach (SharpTreeNode node in SelectedItems) {
-				SharpTreeNode.ActiveNodes.Remove(node);
-			}
 		}
 		
 		#endregion
 		
 		#region Drag and Drop
-
+		/*
 		protected override void OnDragEnter(DragEventArgs e)
 		{
 			OnDragOver(e);
@@ -521,7 +498,7 @@ namespace ICSharpCode.TreeView
 				previewNodeView = null;
 			}
 		}
-
+*/
 		#endregion
 		
 		#region Cut / Copy / Paste / Delete Commands

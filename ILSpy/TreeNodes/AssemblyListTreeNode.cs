@@ -45,6 +45,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.assemblyList = assemblyList;
 		}
 		
+		/*
 		public override DropEffect CanDrop(IDataObject data, DropEffect requestedEffect)
 		{
 			if (data.GetDataPresent(AssemblyTreeNode.DataFormat))
@@ -79,7 +80,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					}
 				}
 			}
-		}
+		}*/
 		
 		public Action<SharpTreeNode> Select = delegate {};
 		

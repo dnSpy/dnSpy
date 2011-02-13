@@ -20,7 +20,7 @@ namespace ICSharpCode.TreeView
 		static SharpTreeNodeView()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(SharpTreeNodeView),
-				new FrameworkPropertyMetadata(typeof(SharpTreeNodeView)));
+			                                         new FrameworkPropertyMetadata(typeof(SharpTreeNodeView)));
 		}
 
 		public static readonly DependencyProperty TextBackgroundProperty =
@@ -71,14 +71,12 @@ namespace ICSharpCode.TreeView
 		void UpdateDataContext(SharpTreeNode oldNode, SharpTreeNode newNode)
 		{
 			if (newNode != null) {
-				newNode.Collapsing += Node_Collapsing;
 				newNode.PropertyChanged += Node_PropertyChanged;
 				if (Template != null) {
 					UpdateTemplate();
 				}
 			}
 			if (oldNode != null) {
-				oldNode.Collapsing -= Node_Collapsing;
 				oldNode.PropertyChanged -= Node_PropertyChanged;
 			}
 		}
@@ -87,8 +85,7 @@ namespace ICSharpCode.TreeView
 		{
 			if (e.PropertyName == "IsEditing") {
 				OnIsEditingChanged();
-			}
-			else if (e.PropertyName == "IsLast") {
+			} else if (e.PropertyName == "IsLast") {
 				if (ParentTreeView.ShowLines) {
 					foreach (var child in Node.ExpandedDescendantsAndSelf()) {
 						var container = ParentTreeView.ItemContainerGenerator.ContainerFromItem(child) as SharpTreeViewItem;
@@ -97,13 +94,11 @@ namespace ICSharpCode.TreeView
 						}
 					}
 				}
+			} else if (e.PropertyName == "IsExpanded") {
+				if (Node.IsExpanded == false)
+					ParentTreeView.HandleCollapsing(Node);
 			}
 		}
-
-		void Node_Collapsing(object sender, EventArgs e)
-		{
-			ParentTreeView.HandleCollapsing(Node);
-		}		
 
 		void OnIsEditingChanged()
 		{
@@ -146,6 +141,6 @@ namespace ICSharpCode.TreeView
 			if (result < 0)
 				throw new InvalidOperationException();
 			return result;
-		}		
+		}
 	}
 }
