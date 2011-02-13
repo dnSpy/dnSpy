@@ -2,9 +2,10 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-
+using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
@@ -14,7 +15,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Lists the super types of a class.
 	/// </summary>
-	sealed class DerivedTypesTreeNode : ILSpyTreeNode<DerivedTypesEntryNode>
+	sealed class DerivedTypesTreeNode : ThreadedTreeNode
 	{
 		readonly AssemblyList list;
 		readonly TypeDefinition type;
@@ -23,7 +24,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.list = list;
 			this.type = type;
-			this.LazyLoading = true;
 		}
 		
 		public override object Text {
@@ -34,25 +34,25 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return Images.SubTypes; }
 		}
 		
-		protected override void LoadChildren()
+		protected override IEnumerable<ILSpyTreeNodeBase> FetchChildren(CancellationToken cancellationToken)
 		{
-			AddDerivedTypes(this.Children, type, list);
+			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
+			var assemblies = list.Assemblies.Select(node => node.AssemblyDefinition).Where(asm => asm != null).ToArray();
+			return FindDerivedTypes(type, assemblies, cancellationToken);
 		}
 		
-		internal static void AddDerivedTypes(ObservableCollection<DerivedTypesEntryNode> children, TypeDefinition type, AssemblyList list)
+		internal static IEnumerable<DerivedTypesEntryNode> FindDerivedTypes(TypeDefinition type, AssemblyDefinition[] assemblies, CancellationToken cancellationToken)
 		{
-			foreach (var asmNode in list.Assemblies) {
-				AssemblyDefinition asm = asmNode.AssemblyDefinition;
-				if (asm == null)
-					continue;
+			foreach (AssemblyDefinition asm in assemblies) {
 				foreach (TypeDefinition td in TreeTraversal.PreOrder(asm.MainModule.Types, t => t.NestedTypes)) {
+					cancellationToken.ThrowIfCancellationRequested();
 					if (type.IsInterface && td.HasInterfaces) {
 						foreach (TypeReference typeRef in td.Interfaces) {
 							if (IsSameType(typeRef, type))
-								children.Add(new DerivedTypesEntryNode(td, list));
+								yield return new DerivedTypesEntryNode(td, assemblies);
 						}
 					} else if (!type.IsInterface && td.BaseType != null && IsSameType(td.BaseType, type)) {
-						children.Add(new DerivedTypesEntryNode(td, list));
+						yield return new DerivedTypesEntryNode(td, assemblies);
 					}
 				}
 			}
@@ -62,26 +62,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			return typeRef.FullName == type.FullName;
 		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			EnsureLazyChildren();
-			foreach (var child in this.Children) {
-				child.Decompile(language, output, options);
-			}
-		}
 	}
 	
-	class DerivedTypesEntryNode : ILSpyTreeNode<DerivedTypesEntryNode>
+	class DerivedTypesEntryNode : ThreadedTreeNode
 	{
 		TypeDefinition def;
-		AssemblyList list;
+		AssemblyDefinition[] assemblies;
 		
-		public DerivedTypesEntryNode(TypeDefinition def, AssemblyList list)
+		public DerivedTypesEntryNode(TypeDefinition def, AssemblyDefinition[] assemblies)
 		{
 			this.def = def;
-			this.list = list;
-			this.LazyLoading = true;
+			this.assemblies = assemblies;
 		}
 		
 		public override bool ShowExpander {
@@ -100,9 +91,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
-		protected override void LoadChildren()
+		protected override IEnumerable<ILSpyTreeNodeBase> FetchChildren(CancellationToken ct)
 		{
-			DerivedTypesTreeNode.AddDerivedTypes(this.Children, def, list);
+			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
+			return DerivedTypesTreeNode.FindDerivedTypes(def, assemblies, ct);
 		}
 		
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
