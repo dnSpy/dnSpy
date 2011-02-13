@@ -46,6 +46,8 @@ namespace Decompiler
 			// disable whitespace in front of parentheses:
 			formattingPolicy.BeforeMethodCallParentheses = false;
 			formattingPolicy.BeforeMethodDeclarationParentheses = false;
+			formattingPolicy.BeforeConstructorDeclarationParentheses = false;
+			formattingPolicy.BeforeDelegateDeclarationParentheses = false;
 			astCompileUnit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
 		}
 		
@@ -429,6 +431,10 @@ namespace Decompiler
 		{
 			ConstructorDeclaration astMethod = new ConstructorDeclaration();
 			astMethod.Modifiers = ConvertModifiers(methodDef);
+			if (methodDef.IsStatic) {
+				// don't show visibility for static ctors
+				astMethod.Modifiers &= ~Modifiers.VisibilityMask;
+			}
 			astMethod.Parameters = MakeParameters(methodDef.Parameters);
 			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef);
 			return astMethod;

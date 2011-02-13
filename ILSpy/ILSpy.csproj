@@ -128,6 +128,7 @@
     <Compile Include="TreeNodes\AssemblyReferenceTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyTreeNode.cs" />
     <Compile Include="TreeNodes\BaseTypesTreeNode.cs" />
+    <Compile Include="TreeNodes\DerivedTypesTreeNode.cs" />
     <Compile Include="TreeNodes\EventTreeNode.cs" />
     <Compile Include="TreeNodes\FieldTreeNode.cs" />
     <Compile Include="TreeNodes\ILSpyTreeNode.cs" />
@@ -207,6 +208,10 @@
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
       <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>
       <Name>ICSharpCode.AvalonEdit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpTreeView\ICSharpCode.TreeView.csproj">
       <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>

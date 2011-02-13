@@ -65,6 +65,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return fileName; }
 		}
 		
+		public AssemblyList AssemblyList {
+			get { return assemblyList; }
+		}
+		
 		public AssemblyDefinition AssemblyDefinition {
 			get {
 				try {

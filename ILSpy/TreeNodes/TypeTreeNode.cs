@@ -90,6 +90,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (type.BaseType != null || type.HasInterfaces)
 				this.Children.Add(new BaseTypesTreeNode(type));
+			if (!type.IsSealed)
+				this.Children.Add(new DerivedTypesTreeNode(parentAssemblyNode.AssemblyList, type));
 			foreach (TypeDefinition nestedType in type.NestedTypes) {
 				this.Children.Add(new TypeTreeNode(nestedType, parentAssemblyNode));
 			}
