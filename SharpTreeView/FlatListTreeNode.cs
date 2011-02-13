@@ -33,7 +33,7 @@ namespace ICSharpCode.TreeView
 			return node != null ? node.height : 0;
 		}
 		
-		SharpTreeNode GetListRoot()
+		internal SharpTreeNode GetListRoot()
 		{
 			SharpTreeNode node = this;
 			while (node.listParent != null)

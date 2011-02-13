@@ -81,7 +81,7 @@ namespace ICSharpCode.TreeView
 		public int IndexOf(object item)
 		{
 			SharpTreeNode node = item as SharpTreeNode;
-			if (node != null && node.AncestorsAndSelf().Last() == root) {
+			if (node != null && node.GetListRoot() == root) {
 				if (includeRoot)
 					return SharpTreeNode.GetVisibleIndexForNode(node);
 				else
