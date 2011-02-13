@@ -81,12 +81,8 @@
     <Compile Include="FlowAnalysis\SsaVariable.cs" />
     <Compile Include="FlowAnalysis\TransformToSsa.cs" />
     <Compile Include="GraphVizGraph.cs" />
-    <Compile Include="ILAst\ControlFlow\Node-Optimize.cs" />
-    <Compile Include="ILAst\ControlFlow\Node-Structure.cs" />
-    <Compile Include="ILAst\ControlFlow\Node-Transforms.cs" />
-    <Compile Include="ILAst\ControlFlow\NodeCollection.cs" />
-    <Compile Include="ILAst\ControlFlow\Nodes.cs" />
     <Compile Include="ILAst\ILAstBuilder.cs" />
+    <Compile Include="ILAst\ILAstOptimizer.cs" />
     <Compile Include="ILAst\ILAstTypes.cs" />
     <Compile Include="ITextOutput.cs" />
     <Compile Include="Mono.Cecil.Rocks\Constants.cs" />
@@ -112,7 +108,6 @@
     <Folder Include="Ast\Transforms" />
     <Folder Include="Disassembler" />
     <Folder Include="ILAst" />
-    <Folder Include="ILAst\ControlFlow" />
     <Folder Include="Mono.Cecil.Rocks" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
