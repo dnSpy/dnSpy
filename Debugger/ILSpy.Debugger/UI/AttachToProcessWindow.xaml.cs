@@ -85,12 +85,7 @@ namespace ILSpy.Debugger.UI
 			RunningProcesses.ItemsSource = list;
 		}
 		
-		void OnLoaded(object sender, RoutedEventArgs e)
-		{
-			RefreshProcessList();
-		}
-		
-		void AttachButton_Click(object sender, RoutedEventArgs e)
+		void Attach()
 		{
 			if (this.RunningProcesses.SelectedItem == null)
 				return;
@@ -101,6 +96,16 @@ namespace ILSpy.Debugger.UI
 			this.DialogResult = true;
 		}
 		
+		void OnLoaded(object sender, RoutedEventArgs e)
+		{
+			RefreshProcessList();
+		}
+		
+		void AttachButton_Click(object sender, RoutedEventArgs e)
+		{
+			Attach();
+		}
+		
 		void CancelButton_Click(object sender, RoutedEventArgs e)
 		{
 			this.Close();
@@ -109,6 +114,11 @@ namespace ILSpy.Debugger.UI
 		void RefreshButton_Click(object sender, RoutedEventArgs e)
 		{
 			RefreshProcessList();
+		}
+		
+		void RunningProcesses_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			Attach();
 		}
 	}
 }

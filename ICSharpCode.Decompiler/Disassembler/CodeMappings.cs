@@ -17,7 +17,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 	{
 		public string TypeName { get; set; }
 		
-		public int MetadataToken { get; set; }
+		public uint MetadataToken { get; set; }
 		
 		public List<ILCodeMapping> MethodCodeMappings { get; set; }
 		
@@ -61,6 +61,64 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			
 			return -1;
+		}
+	}
+	
+	public static class CodeMappings
+	{
+		static Dictionary<string, List<MethodMapping>> ilCodeMappings = new Dictionary<string, List<MethodMapping>>();
+		
+		/// <summary>
+		/// Stores the source codes mappings: IL &lt;-&gt; editor lines
+		/// </summary>
+		public static Dictionary<string, List<MethodMapping>> ILSourceCodeMappings {
+			get { return ilCodeMappings; }
+			set { ilCodeMappings = value; }
+		}
+		
+		public static ILCodeMapping GetInstructionByTypeAndLine(string typeName, int lineNumber, out uint metadataToken)
+		{
+			if (!ilCodeMappings.ContainsKey(typeName)) {
+				metadataToken = 0;
+				return null;
+			}
+			
+			if (lineNumber <= 0) {
+				metadataToken = 0;
+				return null;
+			}
+			
+			var methodMappings = ilCodeMappings[typeName];
+			foreach (var maping in methodMappings) {
+				var ilMap = maping.MethodCodeMappings.Find(m => m.SourceCodeLine == lineNumber);
+				if (ilMap != null) {
+					metadataToken = maping.MetadataToken;
+					return ilMap;
+				}
+			}
+			
+			metadataToken = 0;
+			return null;
+		}
+		
+		public static void GetSourceCodeFromMetadataTokenAndOffset(uint token, int ilOffset, out string typeName, out int line)
+		{
+			typeName = null;
+			line = 0;
+			
+			foreach (var typename in ilCodeMappings.Keys) {
+				var mapping = ilCodeMappings[typename].Find(m => m.MetadataToken == token);
+				if (mapping == null)
+					continue;
+				
+				var ilCodeMapping = mapping.MethodCodeMappings.Find(cm => cm.ILInstruction.Offset == ilOffset);
+				if (ilCodeMapping == null)
+					continue;
+				
+				typeName = typename;
+				line = ilCodeMapping.SourceCodeLine;
+				break;
+			}
 		}
 	}
 }

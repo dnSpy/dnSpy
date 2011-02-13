@@ -36,16 +36,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 		bool isInType; // whether we are currently disassembling a whole type (-> defaultCollapsed for foldings)
 		MethodBodyDisassembler methodBodyDisassembler;
 		
-		static Dictionary<string, List<MethodMapping>> ilCodeMappings = new Dictionary<string, List<MethodMapping>>();
-		
-		/// <summary>
-		/// Stores the source codes mappings: IL &lt;-&gt; editor lines
-		/// </summary>
-		public static Dictionary<string, List<MethodMapping>> ILSourceCodeMappings {
-			get { return ilCodeMappings; }
-			set { ilCodeMappings = value; }
-		}
-		
 		public ReflectionDisassembler(ITextOutput output, bool detectControlStructure, CancellationToken cancellationToken)
 		{
 			if (output == null)
@@ -112,8 +102,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 		void DisassembleMethodInternal(MethodDefinition method)
 		{
 			// create mappings for types that were not disassebled
-			if (!ilCodeMappings.ContainsKey(method.DeclaringType.FullName)) {
-				ilCodeMappings.Add(method.DeclaringType.FullName, new List<MethodMapping>());
+			if (!CodeMappings.ILSourceCodeMappings.ContainsKey(method.DeclaringType.FullName)) {
+				CodeMappings.ILSourceCodeMappings.Add(method.DeclaringType.FullName, new List<MethodMapping>());
 			}
 			
 			//    .method public hidebysig  specialname

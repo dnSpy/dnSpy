@@ -182,12 +182,9 @@ namespace ILSpy.Debugger.Services
 			CurrentLineBookmark.Remove();
 		}
 		
-		public static void JumpToCurrentLine(string SourceFullFilename, int StartLine, int StartColumn, int EndLine, int EndColumn)
+		public static void JumpToCurrentLine(string typeName, int startLine, int startColumn, int endLine, int endColumn)
 		{
-//			IViewContent viewContent = FileService.OpenFile(SourceFullFilename);
-//			if (viewContent is ITextEditorProvider)
-//				((ITextEditorProvider)viewContent).TextEditor.JumpTo(StartLine, StartColumn);
-//			CurrentLineBookmark.SetPosition(viewContent, StartLine, StartColumn, EndLine, EndColumn);
+			CurrentLineBookmark.SetPosition(typeName, startLine, startColumn, endLine, endColumn);
 		}
 		
 		#region Tool tips

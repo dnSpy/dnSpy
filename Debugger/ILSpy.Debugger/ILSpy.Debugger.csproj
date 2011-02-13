@@ -108,6 +108,14 @@
       <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
       <Name>NRefactory</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
+      <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
+      <Name>ICSharpCode.Decompiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">
+      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Debugger.Core\Debugger.Core.csproj">
       <Project>{1D18D788-F7EE-4585-A23B-34DC8EC63CB8}</Project>
       <Name>Debugger.Core</Name>

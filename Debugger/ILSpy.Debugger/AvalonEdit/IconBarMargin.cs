@@ -27,31 +27,23 @@ using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Services;
+using Mono.Cecil;
 
 namespace ILSpy.Debugger.AvalonEdit
 {
 	public class IconBarMargin : AbstractMargin, IDisposable
-	{		
-		static string currentTypeName;
+	{
+		static TypeDefinition currentTypeName;
 		
-		public static string CurrentTypeName {
-			get {
-				return currentTypeName; }
+		public static TypeDefinition CurrentType {
+			get { return currentTypeName; }
 			set { currentTypeName = value; }
-		}
-		
-		#region OnTextViewChanged
-		/// <inheritdoc/>
-		protected override void OnTextViewChanged(TextView oldTextView, TextView newTextView)
-		{
-			InvalidateVisual();
 		}
 		
 		public virtual void Dispose()
 		{
 			this.TextView = null; // detach from TextView (will also detach from manager)
 		}
-		#endregion
 		
 		/// <inheritdoc/>
 		protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
@@ -80,7 +72,7 @@ namespace ILSpy.Debugger.AvalonEdit
 				// create a dictionary line number => first bookmark
 				Dictionary<int, BookmarkBase> bookmarkDict = new Dictionary<int, BookmarkBase>();
 				foreach (var bm in BookmarkManager.Bookmarks) {
-					if (bm.TypeName != IconBarMargin.CurrentTypeName)
+					if (IconBarMargin.CurrentType == null || bm.TypeName != IconBarMargin.CurrentType.FullName)
 						continue;
 					
 					int line = bm.LineNumber;
@@ -139,7 +131,9 @@ namespace ILSpy.Debugger.AvalonEdit
 		{
 			BookmarkBase result = null;
 			foreach (BookmarkBase bm in BookmarkManager.Bookmarks) {
-				if (bm.LineNumber == line && bm.TypeName == IconBarMargin.CurrentTypeName) {
+				if (bm.LineNumber == line &&
+				    IconBarMargin.CurrentType != null &&
+				    bm.TypeName == IconBarMargin.CurrentType.FullName) {
 					if (result == null || bm.ZOrder > result.ZOrder)
 						result = bm;
 				}
@@ -225,17 +219,17 @@ namespace ILSpy.Debugger.AvalonEdit
 				IBookmark bm = GetBookmarkFromLine(line);
 				if (bm != null) {
 					bm.MouseUp(e);
-					if (!string.IsNullOrEmpty(IconBarMargin.CurrentTypeName)) {
-						DebuggerService.ToggleBreakpointAt(IconBarMargin.CurrentTypeName, line);
+					if (IconBarMargin.CurrentType != null) {
+						DebuggerService.ToggleBreakpointAt(IconBarMargin.CurrentType.FullName, line);
 					}
 					InvalidateVisual();
 					if (e.Handled)
 						return;
 				}
 				if (e.ChangedButton == MouseButton.Left && TextView != null) {
-					if (!string.IsNullOrEmpty(IconBarMargin.CurrentTypeName)) {
+					if (IconBarMargin.CurrentType != null) {
 						// no bookmark on the line: create a new breakpoint
-						DebuggerService.ToggleBreakpointAt(IconBarMargin.CurrentTypeName, line);
+						DebuggerService.ToggleBreakpointAt(IconBarMargin.CurrentType.FullName, line);
 					}
 				}
 				InvalidateVisual();

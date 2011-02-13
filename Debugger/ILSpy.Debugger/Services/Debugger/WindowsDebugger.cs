@@ -9,12 +9,14 @@ using System.Windows.Media;
 
 using Debugger;
 using Debugger.Interop.CorPublish;
+using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Visitors;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Models.TreeModel;
 using ILSpy.Debugger.Services.Debugger;
+using Mono.Cecil.Cil;
 using CorDbg = Debugger;
 using Process = Debugger.Process;
 
@@ -486,7 +488,13 @@ namespace ILSpy.Debugger.Services
 		
 		void AddBreakpoint(BreakpointBookmark bookmark)
 		{
-			Breakpoint breakpoint = debugger.Breakpoints.Add(bookmark.TypeName, null, bookmark.LineNumber, 0, bookmark.IsEnabled);
+			uint token;
+			ILCodeMapping map = CodeMappings.GetInstructionByTypeAndLine(bookmark.TypeName, bookmark.LineNumber, out token);
+			
+			if (map != null) {
+				Breakpoint breakpoint = new ILBreakpoint(debugger, bookmark.LineNumber, token, map.ILInstruction.Offset , bookmark.IsEnabled);
+				debugger.Breakpoints.Add(breakpoint);
+				
 //			Action setBookmarkColor = delegate {
 //				if (debugger.Processes.Count == 0) {
 //					bookmark.IsHealthy = true;
@@ -515,64 +523,65 @@ namespace ILSpy.Debugger.Services
 //					}
 //				}
 //			};
-			
-			// event handlers on bookmark and breakpoint don't need deregistration
-			bookmark.IsEnabledChanged += delegate {
-				breakpoint.Enabled = bookmark.IsEnabled;
-			};
-			breakpoint.Set += delegate { 
-				//setBookmarkColor(); 
-			};
-			
-			//setBookmarkColor();
-			
-			EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessStarted = (sender, e) => {
+				
+				// event handlers on bookmark and breakpoint don't need deregistration
+				bookmark.IsEnabledChanged += delegate {
+					breakpoint.Enabled = bookmark.IsEnabled;
+				};
+				breakpoint.Set += delegate {
+					//setBookmarkColor();
+				};
+				
 				//setBookmarkColor();
-				// User can change line number by inserting or deleting lines
-				breakpoint.Line = bookmark.LineNumber;
-			};
-			EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessExited = (sender, e) => {
-				//setBookmarkColor();
-			};
-			
-			EventHandler<BreakpointEventArgs> bp_debugger_BreakpointHit =
-				new EventHandler<BreakpointEventArgs>(
-					delegate(object sender, BreakpointEventArgs e)
-					{
-						//LoggingService.Debug(bookmark.Action + " " + bookmark.ScriptLanguage + " " + bookmark.Condition);
-						
-						switch (bookmark.Action) {
-							case BreakpointAction.Break:
-								break;
-							case BreakpointAction.Condition:
+				
+				EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessStarted = (sender, e) => {
+					//setBookmarkColor();
+					// User can change line number by inserting or deleting lines
+					breakpoint.Line = bookmark.LineNumber;
+				};
+				EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessExited = (sender, e) => {
+					//setBookmarkColor();
+				};
+				
+				EventHandler<BreakpointEventArgs> bp_debugger_BreakpointHit =
+					new EventHandler<BreakpointEventArgs>(
+						delegate(object sender, BreakpointEventArgs e)
+						{
+							//LoggingService.Debug(bookmark.Action + " " + bookmark.ScriptLanguage + " " + bookmark.Condition);
+							
+							switch (bookmark.Action) {
+								case BreakpointAction.Break:
+									break;
+								case BreakpointAction.Condition:
 //								if (Evaluate(bookmark.Condition, bookmark.ScriptLanguage))
 //									DebuggerService.PrintDebugMessage(string.Format(StringParser.Parse("${res:MainWindow.Windows.Debug.Conditional.Breakpoints.BreakpointHitAtBecause}") + "\n", bookmark.LineNumber, bookmark.FileName, bookmark.Condition));
 //								else
 //									this.debuggedProcess.AsyncContinue();
-								break;
-							case BreakpointAction.Trace:
-								//DebuggerService.PrintDebugMessage(string.Format(StringParser.Parse("${res:MainWindow.Windows.Debug.Conditional.Breakpoints.BreakpointHitAt}") + "\n", bookmark.LineNumber, bookmark.FileName));
-								break;
-						}
-					});
-			
-			BookmarkEventHandler bp_bookmarkManager_Removed = null;
-			bp_bookmarkManager_Removed = (sender, e) => {
-				if (bookmark == e.Bookmark) {
-					debugger.Breakpoints.Remove(breakpoint);
-					
-					// unregister the events
-					debugger.Processes.Added -= bp_debugger_ProcessStarted;
-					debugger.Processes.Removed -= bp_debugger_ProcessExited;
-					breakpoint.Hit -= bp_debugger_BreakpointHit;
-					BookmarkManager.Removed -= bp_bookmarkManager_Removed;
-				}
-			};
-			// register the events
-			debugger.Processes.Added += bp_debugger_ProcessStarted;
-			debugger.Processes.Removed += bp_debugger_ProcessExited;
-			breakpoint.Hit += bp_debugger_BreakpointHit;
-			BookmarkManager.Removed += bp_bookmarkManager_Removed;
+									break;
+								case BreakpointAction.Trace:
+									//DebuggerService.PrintDebugMessage(string.Format(StringParser.Parse("${res:MainWindow.Windows.Debug.Conditional.Breakpoints.BreakpointHitAt}") + "\n", bookmark.LineNumber, bookmark.FileName));
+									break;
+							}
+						});
+				
+				BookmarkEventHandler bp_bookmarkManager_Removed = null;
+				bp_bookmarkManager_Removed = (sender, e) => {
+					if (bookmark == e.Bookmark) {
+						debugger.Breakpoints.Remove(breakpoint);
+						
+						// unregister the events
+						debugger.Processes.Added -= bp_debugger_ProcessStarted;
+						debugger.Processes.Removed -= bp_debugger_ProcessExited;
+						breakpoint.Hit -= bp_debugger_BreakpointHit;
+						BookmarkManager.Removed -= bp_bookmarkManager_Removed;
+					}
+				};
+				// register the events
+				debugger.Processes.Added += bp_debugger_ProcessStarted;
+				debugger.Processes.Removed += bp_debugger_ProcessExited;
+				breakpoint.Hit += bp_debugger_BreakpointHit;
+				BookmarkManager.Removed += bp_bookmarkManager_Removed;
+			}
 		}
 		
 		bool Evaluate(string code, string language)
@@ -652,7 +661,7 @@ namespace ILSpy.Debugger.Services
 			OnIsProcessRunningChanged(EventArgs.Empty);
 			
 			//using(new PrintTimes("Jump to current line")) {
-				JumpToCurrentLine();
+			JumpToCurrentLine();
 			//}
 			// TODO update tooltip
 			/*if (currentTooltipRow != null && currentTooltipRow.IsShown) {
@@ -711,10 +720,15 @@ namespace ILSpy.Debugger.Services
 		public void JumpToCurrentLine()
 		{
 			DebuggerService.RemoveCurrentLineMarker();
-			if (debuggedProcess != null) {
-				SourcecodeSegment nextStatement = debuggedProcess.NextStatement;
-				if (nextStatement != null) {
-					DebuggerService.JumpToCurrentLine(nextStatement.Filename, nextStatement.StartLine, nextStatement.StartColumn, nextStatement.EndLine, nextStatement.EndColumn);
+			
+			if (debuggedProcess != null && debuggedProcess.SelectedStackFrame != null) {
+				uint token = (uint)debuggedProcess.SelectedStackFrame.MethodInfo.MetadataToken;
+				int ilOffset = debuggedProcess.SelectedStackFrame.IP;
+				int line;
+				string typeName;
+				CodeMappings.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line);
+				if (typeName != null) {
+					DebuggerService.JumpToCurrentLine(typeName, line, 0, line, 0);
 				}
 			}
 		}

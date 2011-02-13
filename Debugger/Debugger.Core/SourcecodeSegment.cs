@@ -16,6 +16,7 @@ namespace Debugger
 		Module module;
 		
 		string filename;
+		string typename;
 		byte[] checkSum;
 		int startLine;
 		int startColumn;
@@ -33,6 +34,10 @@ namespace Debugger
 		
 		public string Filename {
 			get { return filename; }
+		}
+		
+		public string Typename {
+			get { return typename; }
 		}
 		
 		public byte[] CheckSum {
@@ -336,7 +341,27 @@ namespace Debugger
 		
 		public override string ToString()
 		{
-			return string.Format("{0}:{1},{2}-{3},{4}", Path.GetFileName(this.Filename), this.startLine, this.startColumn, this.endLine, this.endColumn);
+			return string.Format("{0}:{1},{2}-{3},{4}", 
+			                     Path.GetFileName(this.Filename ?? string.Empty), 
+			                     this.startLine, this.startColumn, this.endLine, this.endColumn);
+		}
+		
+		public static SourcecodeSegment CreateForIL(Module module, int line, int metadataToken, int iLOffset)
+		{
+			SourcecodeSegment segment = new SourcecodeSegment();
+			segment.module        = module;
+			segment.typename      = null;
+			segment.checkSum      = null;
+			segment.startLine     = line;
+			segment.startColumn   = 0;
+			segment.endLine       = line;
+			segment.endColumn     = 0;
+			segment.corFunction   = module.CorModule.GetFunctionFromToken((uint)metadataToken);
+			segment.ilStart = iLOffset;
+			segment.ilEnd   = iLOffset;
+			segment.stepRanges    = null;
+			
+			return segment;
 		}
 	}
 }

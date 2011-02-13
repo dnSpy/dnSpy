@@ -322,6 +322,8 @@ namespace ICSharpCode.ILSpy
 				treeView.ScrollIntoView(lastNode);
 		}
 		
+		#region Debugger commands
+		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			e.Handled = true;
@@ -332,22 +334,83 @@ namespace ICSharpCode.ILSpy
 		
 		void AttachToProcessExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var window = new AttachToProcessWindow();
-			window.Owner = this;
-			if (window.ShowDialog() == true)
-			{
-				AttachMenuItem.IsEnabled = AttachButton.IsEnabled = false;
-				DetachMenuItem.IsEnabled = true;
+			if (!AttachToProcessWindow.Debugger.IsDebugging) {
+				var window = new AttachToProcessWindow();
+				window.Owner = this;
+				if (window.ShowDialog() == true)
+				{
+					AttachMenuItem.IsEnabled = AttachButton.IsEnabled = false;
+					ContinueDebuggingMenuItem.IsEnabled =
+						StepIntoMenuItem.IsEnabled =
+						StepOverMenuItem.IsEnabled =
+						StepOutMenuItem.IsEnabled =
+						DetachMenuItem.IsEnabled = true;
+				}
 			}
 		}
 		
 		void DetachFromProcessExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			AttachToProcessWindow.Debugger.Detach();
-			
-			AttachMenuItem.IsEnabled = AttachButton.IsEnabled = true;
-			DetachMenuItem.IsEnabled = false;
+			if (AttachToProcessWindow.Debugger.IsDebugging){
+				AttachToProcessWindow.Debugger.Detach();
+				
+				AttachMenuItem.IsEnabled = AttachButton.IsEnabled = true;
+				ContinueDebuggingMenuItem.IsEnabled =
+					StepIntoMenuItem.IsEnabled =
+					StepOverMenuItem.IsEnabled =
+					StepOutMenuItem.IsEnabled =
+					DetachMenuItem.IsEnabled = false;
+			}
 		}
+		
+		void ContinueDebuggingExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (AttachToProcessWindow.Debugger.IsDebugging)
+				AttachToProcessWindow.Debugger.Continue();
+		}
+		
+		void StepIntoExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (AttachToProcessWindow.Debugger.IsDebugging)
+				AttachToProcessWindow.Debugger.StepInto();
+		}
+		
+		void StepOverExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (AttachToProcessWindow.Debugger.IsDebugging)
+				AttachToProcessWindow.Debugger.StepOver();
+		}
+		
+		void StepOutExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (AttachToProcessWindow.Debugger.IsDebugging)
+				AttachToProcessWindow.Debugger.StepOut();
+		}
+		
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			switch (e.Key) {
+				case Key.F5:
+					ContinueDebuggingExecuted(null, null);
+					e.Handled = true;
+					break;
+				case Key.System:
+					StepOverExecuted(null, null);
+					e.Handled = true;
+					break;
+				case Key.F11:
+					StepIntoExecuted(null, null);
+					e.Handled = true;
+					break;
+				default:
+					// do nothing
+					break;
+			}
+			
+			base.OnKeyUp(e);
+		}
+		
+		#endregion
 		
 		void ExitClick(object sender, RoutedEventArgs e)
 		{

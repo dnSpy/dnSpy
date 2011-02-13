@@ -80,6 +80,16 @@ namespace ICSharpCode.ILSpy.TextView
 			// add margin
 			iconMargin = new IconBarMargin();
 			textEditor.TextArea.LeftMargins.Add(iconMargin);
+			textEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconMargin.InvalidateVisual();
+			BookmarkManager.Added += BookmarkManager_Added;
+			BookmarkManager.Removed += (s, e) => iconMargin.InvalidateVisual();
+		}
+
+		void BookmarkManager_Added(object sender, BookmarkEventArgs e)
+		{
+			if (e.Bookmark is CurrentLineBookmark) {
+				iconMargin.InvalidateVisual();
+			}
 		}
 		#endregion
 		
@@ -196,7 +206,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNodeBase> treeNodes, DecompilationOptions options)
 		{
-			IconBarMargin.CurrentTypeName = string.Empty;
+			IconBarMargin.CurrentType = null;
 			// Some actions like loading an assembly list cause several selection changes in the tree view,
 			// and each of those will start a decompilation action.
 			bool isDecompilationScheduled = this.nextDecompilationRun != null;

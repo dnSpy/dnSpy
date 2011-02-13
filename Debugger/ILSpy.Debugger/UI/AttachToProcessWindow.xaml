@@ -16,6 +16,7 @@
 				Height="0.17*" />
 		</Grid.RowDefinitions>
 		<ListView
+			MouseDoubleClick="RunningProcesses_MouseDoubleClick"
 			x:Name="RunningProcesses">
 			<ListView.View>
 				<GridView>

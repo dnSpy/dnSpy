@@ -17,40 +17,19 @@ namespace ILSpy.Debugger.Bookmarks
 		static int endLine;
 		static int endColumn;
 		
-//		public static void SetPosition(IViewContent viewContent,  int makerStartLine, int makerStartColumn, int makerEndLine, int makerEndColumn)
-//		{
-//			ITextEditorProvider tecp = viewContent as ITextEditorProvider;
-//			if (tecp != null)
-//				SetPosition(tecp.TextEditor.FileName, tecp.TextEditor.Document, makerStartLine, makerStartColumn, makerEndLine, makerEndColumn);
-//			else
-//				Remove();
-//		}
-//		
-//		public static void SetPosition(FileName fileName, IDocument document, int makerStartLine, int makerStartColumn, int makerEndLine, int makerEndColumn)
-//		{
-//			Remove();
-//			
-//			startLine   = makerStartLine;
-//			startColumn = makerStartColumn;
-//			endLine     = makerEndLine;
-//			endColumn   = makerEndColumn;
-//			
-//			if (startLine < 1 || startLine > document.TotalNumberOfLines)
-//				return;
-//			if (endLine < 1 || endLine > document.TotalNumberOfLines) {
-//				endLine = startLine;
-//				endColumn = int.MaxValue;
-//			}
-//			if (startColumn < 1)
-//				startColumn = 1;
-//			
-//			IDocumentLine line = document.GetLine(startLine);
-//			if (endColumn < 1 || endColumn > line.Length)
-//				endColumn = line.Length;
-//			instance = new CurrentLineBookmark(fileName, new Location(startColumn, startLine));
-//			BookmarkManager.AddMark(instance);
-//		}
-//		
+		public static void SetPosition(string typeName, int makerStartLine, int makerStartColumn, int makerEndLine, int makerEndColumn)
+		{
+			Remove();
+			
+			startLine   = makerStartLine;
+			startColumn = makerStartColumn;
+			endLine     = makerEndLine;
+			endColumn   = makerEndColumn;
+			
+			instance = new CurrentLineBookmark(typeName, new Location(startColumn, startLine));
+			BookmarkManager.AddMark(instance);
+		}
+		
 		public static void Remove()
 		{
 			if (instance != null) {
@@ -60,9 +39,7 @@ namespace ILSpy.Debugger.Bookmarks
 		}
 		
 		public override bool CanToggle {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		public override int ZOrder {
@@ -79,7 +56,7 @@ namespace ILSpy.Debugger.Bookmarks
 		}
 		
 		public override bool CanDragDrop {
-			get { return true; }
+			get { return false; }
 		}
 		
 		public override void Drop(int lineNumber)

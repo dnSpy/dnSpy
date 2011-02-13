@@ -28,6 +28,18 @@
 			Command="routedCommands:RoutedUICommands.DetachFromProcess"
 			Executed="DetachFromProcessExecuted" />
 		<CommandBinding
+			Command="routedCommands:RoutedUICommands.ContinueDebugging"
+			Executed="ContinueDebuggingExecuted" />
+		<CommandBinding
+			Command="routedCommands:RoutedUICommands.StepInto"
+			Executed="StepIntoExecuted" />
+		<CommandBinding
+			Command="routedCommands:RoutedUICommands.StepOver"
+			Executed="StepOverExecuted" />
+		<CommandBinding
+			Command="routedCommands:RoutedUICommands.StepOut"
+			Executed="StepOutExecuted" />
+		<CommandBinding
 			Command="Open"
 			Executed="OpenCommandExecuted" />
 		<CommandBinding
@@ -71,7 +83,29 @@
 						<Image Width="16" Height="16" Source="Images/bug.png" />
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem x:Name="DetachMenuItem" IsEnabled="False" Header="Detach from running application" Command="routedCommands:RoutedUICommands.DetachFromProcess"/>
+				<MenuItem x:Name="ContinueDebuggingMenuItem" IsEnabled="False" Header="Continue debugging" InputGestureText="F5" Command="routedCommands:RoutedUICommands.ContinueDebugging">
+					<MenuItem.Icon>
+						<Image Width="16" Height="16" Source="Images/ContinueDebugging.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem x:Name="StepIntoMenuItem" IsEnabled="False" Header="Step into" InputGestureText="F11" Command="routedCommands:RoutedUICommands.StepInto">
+					<MenuItem.Icon>
+						<Image Width="16" Height="16" Source="Images/StepInto.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem x:Name="StepOverMenuItem" IsEnabled="False" Header="Step over" InputGestureText="F10" Command="routedCommands:RoutedUICommands.StepOver">
+					<MenuItem.Icon>
+						<Image Width="16" Height="16" Source="Images/StepOver.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem x:Name="StepOutMenuItem" IsEnabled="False" Header="Step out" Command="routedCommands:RoutedUICommands.StepOut">
+					<MenuItem.Icon>
+						<Image Width="16" Height="16" Source="Images/StepOut.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem x:Name="DetachMenuItem" IsEnabled="False"
+				          Header="Detach from running application" 
+				          Command="routedCommands:RoutedUICommands.DetachFromProcess"/>
 			</MenuItem>
 			<MenuItem Header="_Help">
 				<MenuItem Header="_About" Click="AboutClick" />

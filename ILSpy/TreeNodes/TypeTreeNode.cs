@@ -122,7 +122,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			IconBarMargin.CurrentTypeName = type.FullName;
+			IconBarMargin.CurrentType = type;
 			language.DecompileType(type, output, options);
 		}
 		

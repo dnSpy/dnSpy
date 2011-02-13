@@ -27,10 +27,22 @@ namespace ICSharpCode.ILSpy.Commands
 		{
 			AttachToProcess = new RoutedUICommand("Attach to running process...", "AttachToProcess", typeof(RoutedUICommands));
 			DetachFromProcess = new RoutedUICommand("Detach from process...", "DetachFromProcess", typeof(RoutedUICommands));
+			ContinueDebugging = new RoutedUICommand("Continue debugging", "ContinueDebugging", typeof(RoutedUICommands));
+			StepInto = new RoutedUICommand("Step into", "StepInto", typeof(RoutedUICommands));
+			StepOver = new RoutedUICommand("Step over", "StepOver", typeof(RoutedUICommands));
+			StepOut = new RoutedUICommand("Step out", "StepOut", typeof(RoutedUICommands));
 		}
 		
 		public static RoutedUICommand AttachToProcess { get; private set; }
 		
 		public static RoutedUICommand DetachFromProcess { get; private set; }
+		
+		public static RoutedUICommand ContinueDebugging { get; private set; }
+		
+		public static RoutedUICommand StepInto { get; private set; }
+		
+		public static RoutedUICommand StepOver { get; private set; }
+		
+		public static RoutedUICommand StepOut { get; private set; }
 	}
 }
