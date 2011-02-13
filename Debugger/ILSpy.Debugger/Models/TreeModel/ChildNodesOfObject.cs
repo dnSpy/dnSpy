@@ -6,7 +6,6 @@ using System.Reflection;
 
 using Debugger;
 using Debugger.MetaData;
-using ICSharpCode.Core;
 using ICSharpCode.NRefactory.Ast;
 using ILSpy.Debugger.Services;
 using ILSpy.Debugger.Services.Debugger;
