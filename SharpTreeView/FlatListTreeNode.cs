@@ -48,7 +48,7 @@ namespace ICSharpCode.TreeView
 			GetListRoot().CheckInvariants();
 		}
 		
-		[Conditional("DEBUG")]
+		[Conditional("DATACONSISTENCYCHECK")]
 		void CheckInvariants()
 		{
 			Debug.Assert(left == null || left.listParent == this);

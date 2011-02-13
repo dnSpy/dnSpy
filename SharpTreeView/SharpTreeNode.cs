@@ -150,7 +150,7 @@ namespace ICSharpCode.TreeView
 		#endregion
 		
 		#region OnChildrenChanged
-		internal void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
+		internal protected virtual void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
 		{
 			if (e.OldItems != null) {
 				foreach (SharpTreeNode node in e.OldItems) {
@@ -189,7 +189,7 @@ namespace ICSharpCode.TreeView
 					Debug.Assert(node.modelParent == null);
 					node.modelParent = this;
 					node.UpdateIsVisible(isVisible && isExpanded, false);
-					Debug.WriteLine("Inserting {0} after {1}", node, insertionPos);
+					//Debug.WriteLine("Inserting {0} after {1}", node, insertionPos);
 					
 					while (insertionPos != null && insertionPos.modelChildren != null && insertionPos.modelChildren.Count > 0) {
 						insertionPos = insertionPos.modelChildren.Last();
