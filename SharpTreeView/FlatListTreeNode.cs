@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ICSharpCode.TreeView
@@ -32,6 +33,21 @@ namespace ICSharpCode.TreeView
 			return node != null ? node.height : 0;
 		}
 		
+		SharpTreeNode GetListRoot()
+		{
+			SharpTreeNode node = this;
+			while (node.listParent != null)
+				node = node.listParent;
+			return node;
+		}
+		
+		#region Debugging
+		[Conditional("DEBUG")]
+		void CheckRootInvariants()
+		{
+			GetListRoot().CheckInvariants();
+		}
+		
 		[Conditional("DEBUG")]
 		void CheckInvariants()
 		{
@@ -44,13 +60,26 @@ namespace ICSharpCode.TreeView
 			if (right != null) right.CheckInvariants();
 		}
 		
-		SharpTreeNode GetListRoot()
+		[Conditional("DEBUG")]
+		static void DumpTree(SharpTreeNode node)
 		{
-			SharpTreeNode node = this;
-			while (node.listParent != null)
-				node = node.listParent;
-			return node;
+			node.GetListRoot().DumpTree();
 		}
+		
+		[Conditional("DEBUG")]
+		void DumpTree()
+		{
+			Debug.Indent();
+			if (left != null)
+				left.DumpTree();
+			Debug.Unindent();
+			Debug.WriteLine("{0}, totalListLength={1}, height={2}, Balance={3}, isVisible={4}", ToString(), totalListLength, height, Balance, isVisible);
+			Debug.Indent();
+			if (right != null)
+				right.DumpTree();
+			Debug.Unindent();
+		}
+		#endregion
 		
 		#region GetNodeByVisibleIndex / GetVisibleIndexForNode
 		internal static SharpTreeNode GetNodeByVisibleIndex(SharpTreeNode root, int index)
@@ -189,27 +218,6 @@ namespace ICSharpCode.TreeView
 			newTop.right = Rebalance(this);
 			return newTop;
 		}
-		#endregion
-		
-		#region Insertion
-		static void InsertNodeAfter(SharpTreeNode pos, SharpTreeNode newNode)
-		{
-			// newNode might be the model root of a whole subtree, so go to the list root of that subtree:
-			newNode = newNode.GetListRoot();
-			if (pos.right == null) {
-				pos.right = newNode;
-				newNode.listParent = pos;
-			} else {
-				// insert before pos.right's leftmost:
-				pos = pos.right;
-				while (pos.left != null)
-					pos = pos.left;
-				Debug.Assert(pos.left == null);
-				pos.left = newNode;
-				newNode.listParent = pos;
-			}
-			RebalanceUntilRoot(pos);
-		}
 		
 		static void RebalanceUntilRoot(SharpTreeNode pos)
 		{
@@ -232,25 +240,137 @@ namespace ICSharpCode.TreeView
 			Debug.Assert(newRoot.listParent == null);
 			newRoot.CheckInvariants();
 		}
+		#endregion
 		
-		[Conditional("DEBUG")]
-		static void DumpTree(SharpTreeNode node)
+		#region Insertion
+		static void InsertNodeAfter(SharpTreeNode pos, SharpTreeNode newNode)
 		{
-			node.GetListRoot().DumpTree();
+			// newNode might be the model root of a whole subtree, so go to the list root of that subtree:
+			newNode = newNode.GetListRoot();
+			if (pos.right == null) {
+				pos.right = newNode;
+				newNode.listParent = pos;
+			} else {
+				// insert before pos.right's leftmost:
+				pos = pos.right;
+				while (pos.left != null)
+					pos = pos.left;
+				Debug.Assert(pos.left == null);
+				pos.left = newNode;
+				newNode.listParent = pos;
+			}
+			RebalanceUntilRoot(pos);
+		}
+		#endregion
+		
+		#region Removal
+		void RemoveNodes(SharpTreeNode start, SharpTreeNode end)
+		{
+			// Removes all nodes from start to end (inclusive)
+			// All removed nodes will be reorganized in a separate tree, do not delete
+			// regions that don't belong together in the tree model!
+			
+			List<SharpTreeNode> removedSubtrees = new List<SharpTreeNode>();
+			SharpTreeNode oldPos;
+			SharpTreeNode pos = start;
+			do {
+				// recalculate the endAncestors every time, because the tree might have been rebalanced
+				HashSet<SharpTreeNode> endAncestors = new HashSet<SharpTreeNode>();
+				for (SharpTreeNode tmp = end; tmp != null; tmp = tmp.listParent)
+					endAncestors.Add(tmp);
+				
+				removedSubtrees.Add(pos);
+				if (!endAncestors.Contains(pos)) {
+					// we can remove pos' right subtree in a single step:
+					if (pos.right != null) {
+						removedSubtrees.Add(pos.right);
+						pos.right.listParent = null;
+						pos.right = null;
+					}
+				}
+				DeleteNode(pos); // this will also rebalance out the deletion of the right subtree
+				
+				oldPos = pos;
+				pos = pos.Successor();
+			} while (oldPos != end);
+			
+			// merge back together the removed subtrees:
+			
 		}
 		
-		[Conditional("DEBUG")]
-		void DumpTree()
+		SharpTreeNode Successor()
 		{
-			Debug.Indent();
-			if (left != null)
-				left.DumpTree();
-			Debug.Unindent();
-			Debug.WriteLine("{0}, totalListLength={1}, height={2}, Balance={3}, isVisible={4}", ToString(), totalListLength, height, Balance, isVisible);
-			Debug.Indent();
-			if (right != null)
-				right.DumpTree();
-			Debug.Unindent();
+			SharpTreeNode node = this;
+			SharpTreeNode oldNode;
+			do {
+				oldNode = node;
+				node = node.listParent;
+				// loop while we are on the way up from the right part
+			} while (node != null && node.right == oldNode);
+			return node;
+		}
+		
+		static void DeleteNode(SharpTreeNode node)
+		{
+			SharpTreeNode balancingNode;
+			if (node.left == null) {
+				balancingNode = node.listParent;
+				node.ReplaceWith(node.right);
+				node.right = null;
+			} else if (node.right == null) {
+				balancingNode = node.listParent;
+				node.ReplaceWith(node.left);
+				node.left = null;
+			} else {
+				SharpTreeNode tmp = node.right;
+				while (tmp.left != null)
+					tmp = tmp.left;
+				// First replace tmp with tmp.right
+				balancingNode = tmp.listParent;
+				tmp.ReplaceWith(tmp.right);
+				tmp.right = null;
+				Debug.Assert(tmp.left == null);
+				Debug.Assert(tmp.listParent == null);
+				// Now move node's children to tmp:
+				tmp.left = node.left; node.left = null;
+				tmp.right = node.right; node.right = null;
+				if (tmp.left != null) tmp.left.listParent = tmp;
+				if (tmp.right != null) tmp.right.listParent = tmp;
+				// Then replace node with tmp
+				node.ReplaceWith(tmp);
+				if (balancingNode == node)
+					balancingNode = tmp;
+			}
+			Debug.Assert(node.listParent == null);
+			Debug.Assert(node.left == null);
+			Debug.Assert(node.right == null);
+			if (balancingNode != null)
+				RebalanceUntilRoot(balancingNode);
+		}
+		
+		void ReplaceWith(SharpTreeNode node)
+		{
+			if (listParent != null) {
+				if (listParent.left == this) {
+					listParent.left = node;
+				} else {
+					Debug.Assert(listParent.right == this);
+					listParent.right = node;
+				}
+				if (node != null)
+					node.listParent = listParent;
+				listParent = null;
+			} else {
+				// this was a root node
+				Debug.Assert(node != null); // cannot delete the only node in the tree
+				node.listParent = null;
+				if (treeFlattener != null) {
+					Debug.Assert(node.treeFlattener == null);
+					node.treeFlattener = this.treeFlattener;
+					this.treeFlattener = null;
+					node.treeFlattener.root = node;
+				}
+			}
 		}
 		#endregion
 	}

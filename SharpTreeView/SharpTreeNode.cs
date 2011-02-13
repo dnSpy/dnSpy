@@ -42,7 +42,7 @@ namespace ICSharpCode.TreeView
 				
 				// Validate our invariants:
 				if (updateFlattener)
-					GetListRoot().CheckInvariants();
+					CheckRootInvariants();
 				
 				// Tell the flattener about the removed nodes:
 				if (removedNodes != null) {
@@ -154,9 +154,28 @@ namespace ICSharpCode.TreeView
 		{
 			if (e.OldItems != null) {
 				foreach (SharpTreeNode node in e.OldItems) {
-					throw new NotImplementedException();
 					Debug.Assert(node.modelParent == this);
 					node.modelParent = null;
+					Debug.WriteLine("Removing {0} from {1}", node, this);
+					SharpTreeNode removeEnd = node;
+					while (removeEnd.modelChildren != null && removeEnd.modelChildren.Count > 0)
+						removeEnd = removeEnd.modelChildren.Last();
+					
+					List<SharpTreeNode> removedNodes = null;
+					int visibleIndexOfRemoval = 0;
+					if (node.isVisible) {
+						visibleIndexOfRemoval = GetVisibleIndexForNode(node);
+						removedNodes = node.VisibleDescendantsAndSelf().ToList();
+					}
+					
+					RemoveNodes(node, removeEnd);
+					
+					if (removedNodes != null) {
+						var flattener = GetListRoot().treeFlattener;
+						if (flattener != null) {
+							flattener.NodesRemoved(visibleIndexOfRemoval, removedNodes);
+						}
+					}
 				}
 			}
 			if (e.NewItems != null) {
@@ -165,6 +184,7 @@ namespace ICSharpCode.TreeView
 					insertionPos = null;
 				else
 					insertionPos = modelChildren[e.NewStartingIndex - 1];
+				
 				foreach (SharpTreeNode node in e.NewItems) {
 					Debug.Assert(node.modelParent == null);
 					node.modelParent = this;

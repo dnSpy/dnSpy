@@ -93,6 +93,19 @@ namespace ICSharpCode.TreeView
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node, index));
 		}
 		
+		public void InsertRange(int index, IEnumerable<SharpTreeNode> nodes)
+		{
+			if (nodes == null)
+				throw new ArgumentNullException("nodes");
+			ThrowOnReentrancy();
+			List<SharpTreeNode> newNodes = nodes.ToList();
+			foreach (SharpTreeNode node in newNodes) {
+				ThrowIfValueIsNullOrHasParent(node);
+			}
+			list.InsertRange(index, newNodes);
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newNodes, index));
+		}
+		
 		public void RemoveAt(int index)
 		{
 			ThrowOnReentrancy();
@@ -101,12 +114,25 @@ namespace ICSharpCode.TreeView
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, index));
 		}
 		
+		public void RemoveRange(int index, int count)
+		{
+			ThrowOnReentrancy();
+			var oldItems = list.GetRange(index, count);
+			list.RemoveRange(index, count);
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems, index));
+		}
+		
 		public void Add(SharpTreeNode node)
 		{
 			ThrowOnReentrancy();
 			ThrowIfValueIsNullOrHasParent(node);
 			list.Add(node);
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node, list.Count - 1));
+		}
+		
+		public void AddRange(IEnumerable<SharpTreeNode> nodes)
+		{
+			InsertRange(this.Count, nodes);
 		}
 		
 		public void Clear()
@@ -146,6 +172,31 @@ namespace ICSharpCode.TreeView
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return list.GetEnumerator();
+		}
+		
+		public void BindToObservableCollection<T>(ObservableCollection<T> collection) where T : SharpTreeNode
+		{
+			Clear();
+			AddRange(collection);
+			collection.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
+				switch (e.Action) {
+					case NotifyCollectionChangedAction.Add:
+						InsertRange(e.NewStartingIndex, e.NewItems.Cast<SharpTreeNode>());
+						break;
+					case NotifyCollectionChangedAction.Remove:
+						RemoveRange(e.OldStartingIndex, e.OldItems.Count);
+						break;
+					case NotifyCollectionChangedAction.Replace:
+					case NotifyCollectionChangedAction.Move:
+						throw new NotImplementedException();
+					case NotifyCollectionChangedAction.Reset:
+						Clear();
+						AddRange(collection);
+						break;
+					default:
+						throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
+				}
+			};
 		}
 	}
 }
