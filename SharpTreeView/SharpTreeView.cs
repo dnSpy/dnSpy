@@ -131,7 +131,6 @@ namespace ICSharpCode.TreeView
 				}
 				flattener = new TreeFlattener(Root, ShowRoot);
 				this.ItemsSource = flattener;
-				flattener.Start();
 			}
 		}
 

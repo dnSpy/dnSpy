@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -12,33 +13,36 @@ namespace ICSharpCode.TreeView
 {
 	sealed class TreeFlattener : IList, INotifyCollectionChanged
 	{
-		readonly SharpTreeNode root;
+		/// <summary>
+		/// The root node of the flat list tree.
+		/// Tjis is not necessarily the root of the model!
+		/// </summary>
+		internal SharpTreeNode root;
 		readonly bool includeRoot;
 		readonly object syncRoot = new object();
 		
-		public TreeFlattener(SharpTreeNode root, bool includeRoot)
+		public TreeFlattener(SharpTreeNode modelRoot, bool includeRoot)
 		{
-			this.root = root;
+			this.root = modelRoot;
+			while (root.listParent != null)
+				root = root.listParent;
+			root.treeFlattener = this;
 			this.includeRoot = includeRoot;
 		}
 
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 		
-		public void Start()
-		{
-			
-		}
-		
 		public void Stop()
 		{
-			
+			Debug.Assert(root.treeFlattener == this);
+			root.treeFlattener = null;
 		}
 		
 		public object this[int index] {
 			get {
 				if (index < 0 || index >= this.Count)
 					throw new ArgumentOutOfRangeException();
-				return SharpTreeNode.GetNodeByVisibleIndex(root, includeRoot ? index : index - 1);
+				return SharpTreeNode.GetNodeByVisibleIndex(root, includeRoot ? index : index + 1);
 			}
 			set {
 				throw new NotSupportedException();

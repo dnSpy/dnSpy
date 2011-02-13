@@ -102,16 +102,26 @@ namespace ICSharpCode.TreeView
 		{
 			if (e.OldItems != null) {
 				foreach (SharpTreeNode node in e.OldItems) {
+					throw new NotImplementedException();
 					Debug.Assert(node.modelParent == this);
 					node.modelParent = null;
 				}
 			}
 			if (e.NewItems != null) {
+				SharpTreeNode insertionPos;
+				if (e.NewStartingIndex == 0)
+					insertionPos = this;
+				else
+					insertionPos = modelChildren[e.NewStartingIndex - 1];
 				foreach (SharpTreeNode node in e.NewItems) {
 					Debug.Assert(node.modelParent == null);
 					node.modelParent = this;
+					Debug.WriteLine("Inserting {0} after {1}", node.ToString(), insertionPos.ToString());
+					InsertNodeAfter(insertionPos, node);
+					insertionPos = node;
 				}
-			}	
+				DumpTree(this);
+			}
 			
 			RaisePropertyChanged("ShowExpander");
 			RaiseIsLastChangedIfNeeded(e);
