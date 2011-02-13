@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Base class of all ILSpy tree nodes.
 	/// </summary>
-	abstract class ILSpyTreeNodeBase : SharpTreeNode
+	abstract class ILSpyTreeNode : SharpTreeNode
 	{
 		FilterSettings filterSettings;
 		
@@ -44,14 +44,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public Language Language {
-			get { return filterSettings.Language; }
+			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
 		}
 		
 		public SharpTreeNodeCollection VisibleChildren {
 			get { return base.Children; }
 		}
-		
-		protected abstract void OnFilterSettingsChanged();
 		
 		public virtual FilterResult Filter(FilterSettings settings)
 		{
@@ -88,85 +86,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			return false;
 		}
-	}
-	
-	enum FilterResult
-	{
-		/// <summary>
-		/// Hides the node.
-		/// </summary>
-		Hidden,
-		/// <summary>
-		/// Shows the node (and resets the search term for child nodes).
-		/// </summary>
-		Match,
-		/// <summary>
-		/// Hides the node only if all children are hidden (and resets the search term for child nodes).
-		/// </summary>
-		MatchAndRecurse,
-		/// <summary>
-		/// Hides the node only if all children are hidden (doesn't reset the search term for child nodes).
-		/// </summary>
-		Recurse
-	}
-	
-	/// <summary>
-	/// Base class for ILSpy tree nodes.
-	/// </summary>
-	abstract class ILSpyTreeNode<T> : ILSpyTreeNodeBase where T : ILSpyTreeNodeBase
-	{
-		public ILSpyTreeNode()
-			: this(new ObservableCollection<T>())
-		{
-		}
 		
-		public ILSpyTreeNode(ObservableCollection<T> children)
-		{
-			if (children == null)
-				throw new ArgumentNullException("children");
-			this.allChildren = children;
-			children.CollectionChanged += allChildren_CollectionChanged;
-		}
-		
-		void allChildren_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			var visibleChildren = this.VisibleChildren;
-			
-			switch (e.Action) {
-				case NotifyCollectionChangedAction.Add:
-					if (e.NewItems.Count == 1 && e.NewStartingIndex == allChildren.Count - 1) {
-						T newChild = (T)e.NewItems[0];
-						if (FilterChild(newChild))
-							visibleChildren.Add(newChild);
-						break;
-					} else {
-						goto default;
-					}
-				case NotifyCollectionChangedAction.Remove:
-					if (e.OldItems.Count == 1) {
-						visibleChildren.Remove((T)e.OldItems[0]);
-						break;
-					} else {
-						goto default;
-					}
-				default:
-					ResetChildren();
-					break;
-			}
-		}
-		
-		void ResetChildren()
-		{
-			var visibleChildren = this.VisibleChildren;
-			
-			visibleChildren.Clear();
-			foreach (T child in allChildren) {
-				if (FilterChild(child))
-					visibleChildren.Add(child);
-			}
-		}
-		
-		bool FilterChild(T child)
+		bool FilterChild(ILSpyTreeNode child)
 		{
 			FilterResult r;
 			if (this.FilterSettings == null)
@@ -203,35 +124,29 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return filterSettings;
 		}
 		
-		protected override void OnFilterSettingsChanged()
+		protected virtual void OnFilterSettingsChanged()
 		{
-			var visibleChildren = this.VisibleChildren;
-			var allChildren = this.Children;
-			int j = 0;
-			for (int i = 0; i < allChildren.Count; i++) {
-				T child = allChildren[i];
-				if (j < visibleChildren.Count && visibleChildren[j] == child) {
-					// it was visible before
-					if (FilterChild(child)) {
-						j++; // keep it visible
-					} else {
-						visibleChildren.RemoveAt(j); // hide it
-					}
-				} else {
-					// it wasn't visible before
-					if (FilterChild(child)) {
-						// make it visible
-						visibleChildren.Insert(j++, child);
-					}
-				}
-			}
 			RaisePropertyChanged("Text");
 		}
-		
-		readonly ObservableCollection<T> allChildren;
-		
-		public new ObservableCollection<T> Children {
-			get { return allChildren; }
-		}
+	}
+	
+	enum FilterResult
+	{
+		/// <summary>
+		/// Hides the node.
+		/// </summary>
+		Hidden,
+		/// <summary>
+		/// Shows the node (and resets the search term for child nodes).
+		/// </summary>
+		Match,
+		/// <summary>
+		/// Hides the node only if all children are hidden (and resets the search term for child nodes).
+		/// </summary>
+		MatchAndRecurse,
+		/// <summary>
+		/// Hides the node only if all children are hidden (doesn't reset the search term for child nodes).
+		/// </summary>
+		Recurse
 	}
 }

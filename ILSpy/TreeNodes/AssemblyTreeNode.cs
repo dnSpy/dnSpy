@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// Tree node representing an assembly.
 	/// This class is responsible for loading both namespace and type nodes.
 	/// </summary>
-	sealed class AssemblyTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+	sealed class AssemblyTreeNode : ILSpyTreeNode
 	{
 		
 		readonly AssemblyList assemblyList;

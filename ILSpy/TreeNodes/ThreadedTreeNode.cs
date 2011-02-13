@@ -13,9 +13,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Node that is lazy-loaded and loads its children on a background thread.
 	/// </summary>
-	abstract class ThreadedTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+	abstract class ThreadedTreeNode : ILSpyTreeNode
 	{
-		Task<List<ILSpyTreeNodeBase>> loadChildrenTask;
+		Task<List<ILSpyTreeNode>> loadChildrenTask;
 		
 		public ThreadedTreeNode()
 		{
@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// <summary>
 		/// FetchChildren() runs on the main thread; but the enumerator is consumed on a background thread
 		/// </summary>
-		protected abstract IEnumerable<ILSpyTreeNodeBase> FetchChildren(CancellationToken ct);
+		protected abstract IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct);
 		
 		protected override sealed void LoadChildren()
 		{
@@ -41,15 +41,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			CancellationToken ct = CancellationToken.None;
 			
 			var fetchChildrenEnumerable = FetchChildren(ct);
-			Task<List<ILSpyTreeNodeBase>> thisTask = null;
-			thisTask = new Task<List<ILSpyTreeNodeBase>>(
+			Task<List<ILSpyTreeNode>> thisTask = null;
+			thisTask = new Task<List<ILSpyTreeNode>>(
 				delegate {
-					List<ILSpyTreeNodeBase> result = new List<ILSpyTreeNodeBase>();
-					foreach (ILSpyTreeNodeBase child in fetchChildrenEnumerable) {
+					List<ILSpyTreeNode> result = new List<ILSpyTreeNode>();
+					foreach (ILSpyTreeNode child in fetchChildrenEnumerable) {
 						ct.ThrowIfCancellationRequested();
 						result.Add(child);
-						App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<ILSpyTreeNodeBase>(
-							delegate (ILSpyTreeNodeBase newChild) {
+						App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<ILSpyTreeNode>(
+							delegate (ILSpyTreeNode newChild) {
 								// don't access "child" here the background thread might already be running
 								// the next loop iteration
 								if (loadChildrenTask == thisTask) {
@@ -86,7 +86,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
-		sealed class LoadingTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+		sealed class LoadingTreeNode : ILSpyTreeNode
 		{
 			public override object Text {
 				get { return "Loading..."; }

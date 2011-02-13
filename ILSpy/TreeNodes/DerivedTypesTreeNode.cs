@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return Images.SubTypes; }
 		}
 		
-		protected override IEnumerable<ILSpyTreeNodeBase> FetchChildren(CancellationToken cancellationToken)
+		protected override IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
 			var assemblies = list.GetAssemblies().Select(node => node.AssemblyDefinition).Where(asm => asm != null).ToArray();
@@ -91,7 +91,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
-		protected override IEnumerable<ILSpyTreeNodeBase> FetchChildren(CancellationToken ct)
+		protected override IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
 			return DerivedTypesTreeNode.FindDerivedTypes(def, assemblies, ct);

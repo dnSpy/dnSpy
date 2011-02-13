@@ -27,7 +27,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// References folder.
 	/// </summary>
-	sealed class ReferenceFolderTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+	sealed class ReferenceFolderTreeNode : ILSpyTreeNode
 	{
 		readonly ModuleDefinition module;
 		readonly AssemblyTreeNode parentAssembly;
@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
-			foreach (var child in this.Children) {
+			foreach (ILSpyTreeNode child in this.Children) {
 				child.Decompile(language, output, options);
 			}
 		}

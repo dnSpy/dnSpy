@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Tree Node representing a field, method, property, or event.
 	/// </summary>
-	sealed class MethodTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+	sealed class MethodTreeNode : ILSpyTreeNode
 	{
 		MethodDefinition method;
 		

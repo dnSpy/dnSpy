@@ -44,6 +44,10 @@ namespace ICSharpCode.ILSpy
 		/// Needs locking for multi-threaded access!
 		/// Write accesses are allowed on the GUI thread only (but still need locking!)
 		/// </summary>
+		/// <remarks>
+		/// Technically read accesses need locking on when done on non-GUI threads... but whenever possible, use the
+		/// thread-safe <see cref="GetAssemblies()"/> method.
+		/// </remarks>
 		internal readonly ObservableCollection<AssemblyTreeNode> assemblies = new ObservableCollection<AssemblyTreeNode>();
 		
 		/// <summary>
@@ -167,10 +171,10 @@ namespace ICSharpCode.ILSpy
 			MethodTreeNode methodNode = typeNode.VisibleChildren.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
 			if (methodNode != null)
 				return methodNode;
-			foreach (var p in typeNode.VisibleChildren.OfType<ILSpyTreeNode<MethodTreeNode>>()) {
+			foreach (var p in typeNode.VisibleChildren.OfType<ILSpyTreeNode>()) {
 				// method might be a child or a property or events
 				p.EnsureLazyChildren();
-				methodNode = p.Children.FirstOrDefault(m => m.MethodDefinition == def);
+				methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
 				if (methodNode != null)
 					return methodNode;
 			}

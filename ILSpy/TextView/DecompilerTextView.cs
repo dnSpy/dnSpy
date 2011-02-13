@@ -188,7 +188,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// Starts the decompilation of the given nodes.
 		/// The result is displayed in the text view.
 		/// </summary>
-		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNodeBase> treeNodes, DecompilationOptions options)
+		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
 		{
 			// Some actions like loading an assembly list cause several selection changes in the tree view,
 			// and each of those will start a decompilation action.
@@ -209,10 +209,10 @@ namespace ICSharpCode.ILSpy.TextView
 		sealed class DecompilationContext
 		{
 			public readonly ILSpy.Language Language;
-			public readonly ILSpyTreeNodeBase[] TreeNodes;
+			public readonly ILSpyTreeNode[] TreeNodes;
 			public readonly DecompilationOptions Options;
 			
-			public DecompilationContext(ILSpy.Language language, ILSpyTreeNodeBase[] treeNodes, DecompilationOptions options)
+			public DecompilationContext(ILSpy.Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
 			{
 				this.Language = language;
 				this.TreeNodes = treeNodes;
@@ -367,7 +367,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>
 		/// Shows the 'save file dialog', prompting the user to save the decompiled nodes to disk.
 		/// </summary>
-		public void SaveToDisk(ILSpy.Language language, IEnumerable<ILSpyTreeNodeBase> treeNodes, DecompilationOptions options)
+		public void SaveToDisk(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
 		{
 			if (!treeNodes.Any())
 				return;

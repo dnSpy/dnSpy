@@ -18,7 +18,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Lists the embedded resources in an assembly.
 	/// </summary>
-	sealed class ResourceListTreeNode : ILSpyTreeNode<ResourceTreeNode>
+	sealed class ResourceListTreeNode : ILSpyTreeNode
 	{
 		readonly ModuleDefinition module;
 		
@@ -53,14 +53,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
-			foreach (var child in this.Children) {
+			foreach (ILSpyTreeNode child in this.Children) {
 				child.Decompile(language, output, options);
 				output.WriteLine();
 			}
 		}
 	}
 	
-	class ResourceTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+	class ResourceTreeNode : ILSpyTreeNode
 	{
 		Resource r;
 		

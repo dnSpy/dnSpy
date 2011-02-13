@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// Represents a list of assemblies.
 	/// This is used as (invisible) root node of the tree view.
 	/// </summary>
-	sealed class AssemblyListTreeNode : ILSpyTreeNode<AssemblyTreeNode>
+	sealed class AssemblyListTreeNode : ILSpyTreeNode
 	{
 		readonly AssemblyList assemblyList;
 		
@@ -38,11 +38,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public AssemblyListTreeNode(AssemblyList assemblyList)
-			: base(assemblyList.assemblies)
 		{
 			if (assemblyList == null)
 				throw new ArgumentNullException("assemblyList");
 			this.assemblyList = assemblyList;
+			this.Children.BindToObservableCollection(assemblyList.assemblies);
 		}
 		
 		public override object Text {
