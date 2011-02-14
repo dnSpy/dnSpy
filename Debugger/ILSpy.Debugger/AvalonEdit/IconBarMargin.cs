@@ -25,6 +25,7 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
+using ICSharpCode.Decompiler.Disassembler;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Services;
 using Mono.Cecil;

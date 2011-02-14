@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 
 using Debugger;
@@ -149,9 +151,13 @@ namespace ICSharpCode.NRefactory.Ast
 		public static string PrettyPrint(this AstNode code)
 		{
 			if (code == null) return string.Empty;
-			CSharpOutputVisitor csOutVisitor = new CSharpOutputVisitor();
-			code.AcceptVisitor(csOutVisitor, null);
-			return csOutVisitor.Text;
+
+			using (var sw = new StringWriter())
+			{
+				OutputVisitor csOutVisitor = new OutputVisitor(sw, new CSharpFormattingPolicy());
+				code.AcceptVisitor(csOutVisitor, null);
+				return sw.ToString();
+			}
 		}
 		
 		public static AstType GetTypeReference(this Type type)
@@ -190,12 +196,21 @@ namespace ICSharpCode.NRefactory.Ast
 			
 			if (type.DeclaringType != null) {
 				var outterRef = type.DeclaringType.GetTypeReference();
-				var innerRef = new InnerClassTypeReference(outterRef, name, genTypeRefs);
-				innerRef.PointerNestingLevel = pointerNest;
-				innerRef.RankSpecifier = arrayRanks.ToArray();
+				var innerRef = new ComposedType() {
+					PointerRank = pointerNest,
+					ArraySpecifiers = arrayRanks.ConvertAll(r => new ArraySpecifier(r)),
+					BaseType = new MemberType() {
+						Target = outterRef, MemberName = name, TypeArguments = genTypeRefs }
+				};
+				
 				return innerRef.SetStaticType((DebugType)type);
 			} else {
-				return new TypeReference(name, pointerNest, arrayRanks.ToArray(), genTypeRefs).SetStaticType((DebugType)type);
+				return (new ComposedType() {
+				        	PointerRank = pointerNest,
+				        	ArraySpecifiers = arrayRanks.ConvertAll(r => new ArraySpecifier(r)),
+				        	BaseType = new SimpleType() {
+				        		Identifier = name,
+				        		TypeArguments = genTypeRefs }}).SetStaticType((DebugType)type);
 			}
 		}
 		
@@ -204,61 +219,75 @@ namespace ICSharpCode.NRefactory.Ast
 		/// Dotted names are split into separate nodes.
 		/// It does not normalize generic arguments.
 		/// </summary>
-		static SimpleType NormalizeTypeReference(this AstNode expr)
+		static AstType NormalizeTypeReference(this AstNode expr)
 		{
 			if (expr is IdentifierExpression) {
-				return new SimpleType() { 
+				return new SimpleType() {
 					Identifier = ((IdentifierExpression)expr).Identifier,
 					TypeArguments = ((IdentifierExpression)expr).TypeArguments};
 			} else if (expr is MemberReferenceExpression) {
 				var outter = NormalizeTypeReference(((MemberReferenceExpression)expr).Target);
-				return new InnerClassTypeReference(
-					outter,
-					((MemberReferenceExpression)expr).MemberName,
-					((MemberReferenceExpression)expr).TypeArguments
-				);
+				return new MemberType() { Target = outter,
+					MemberName = ((MemberReferenceExpression)expr).MemberName,
+					TypeArguments = ((MemberReferenceExpression)expr).TypeArguments };
 			} else if (expr is TypeReferenceExpression) {
-				return NormalizeTypeReference(((TypeReferenceExpression)expr).TypeReference);
-			} else if (expr is InnerClassTypeReference) { // Frist - it is also TypeReference
-				InnerClassTypeReference typeRef = (InnerClassTypeReference)expr;
-				string[] names = typeRef.Type.Split('.');
-				var newRef = NormalizeTypeReference(typeRef.BaseType);
+				return NormalizeTypeReference(((TypeReferenceExpression)expr).Type);
+			} else if (expr is ComposedType) { // Frist - it is also TypeReference
+				var typeRef = (ComposedType)expr;
+				string[] names = null;
+				if (typeRef.BaseType is SimpleType)
+					names = (((SimpleType)typeRef.BaseType)).Identifier.Split('.');
+				else
+					names = (((MemberType)typeRef.BaseType)).MemberName.Split('.');
+				
+				var newRef = NormalizeTypeReference(typeRef.BaseType) as ComposedType;
 				foreach(string name in names) {
-					newRef = new InnerClassTypeReference(newRef, name, new List<TypeReference>());
+					newRef = new ComposedType() {
+						BaseType = new SimpleType() { Identifier = name, TypeArguments = new List<AstType>() }
+					};
 				}
-				newRef.GenericTypes.AddRange(typeRef.GenericTypes);
-				newRef.PointerNestingLevel = typeRef.PointerNestingLevel;
-				newRef.RankSpecifier = typeRef.RankSpecifier;
+				//(((MemberType)newRef).TypeArguments as List<AstType>).AddRange(typeRef.TypeArguments);
+				newRef.PointerRank = typeRef.PointerRank;
+				newRef.ArraySpecifiers = typeRef.ArraySpecifiers;
 				return newRef;
-			} else if (expr is TypeReference) {
-				var typeRef = (TypeReference)expr;
-				string[] names = typeRef.Type.Split('.');
-				if (names.Length == 1)
-					return typeRef;
-				TypeReference newRef = null;
-				foreach(string name in names) {
-					if (newRef == null) {
-						newRef = new TypeReference(name, new List<TypeReference>());
-					} else {
-						newRef = new TypeReference(newRef, name, new List<TypeReference>());
-					}
-				}
-				newRef.GenericTypes.AddRange(typeRef.GenericTypes);
-				newRef.PointerNestingLevel = typeRef.PointerNestingLevel;
-				newRef.RankSpecifier = typeRef.RankSpecifier;
-				return newRef;
-			} else {
+			}
+//			else if (expr is SimpleType) {
+//				var typeRef = (SimpleType)expr;
+//				string[] names = typeRef.Identifier.Split('.');
+//				if (names.Length == 1)
+//					return typeRef;
+//				SimpleType newRef = null;
+//				foreach(string name in names) {
+//					if (newRef == null) {
+//						newRef = new SimpleType() { Identifier = name, TypeArguments = new List<AstType>() };
+//					} else {
+//						newRef = new MemberType() { Target = newRef, MemberName = name, TypeArguments = new List<AstType>() };
+//					}
+//				}
+//				((List<AstType>)newRef.TypeArguments).AddRange(typeRef.TypeArguments);
+//				newRef.PointerNestingLevel = typeRef.PointerNestingLevel;
+//				newRef.RankSpecifier = typeRef.RankSpecifier;
+//				return newRef;
+//			}
+			else {
 				throw new EvaluateException(expr, "Type expected. {0} seen.", expr.GetType().FullName);
 			}
 		}
 		
-		static string GetNameWithArgCounts(SimpleType typeRef)
+		static string GetNameWithArgCounts(AstType typeRef)
 		{
-			string name = typeRef.Type;
-			if (typeRef.GenericTypes.Count > 0)
-				name += "`" + typeRef.GenericTypes.Count.ToString();
-			if (typeRef is InnerClassTypeReference) {
-				return GetNameWithArgCounts(((InnerClassTypeReference)typeRef).BaseType) + "." + name;
+			string name = string.Empty;
+			
+			if (typeRef is SimpleType)
+			{
+				name = ((SimpleType)typeRef).Identifier;
+				if (((SimpleType)typeRef).TypeArguments.Count() > 0)
+					name += "`" + ((SimpleType)typeRef).TypeArguments.Count().ToString();
+			}
+			
+			if (typeRef is MemberType) {
+				name = ((MemberType)typeRef).MemberName;
+				return GetNameWithArgCounts(((MemberType)typeRef).Target) + "." + name;
 			} else {
 				return name;
 			}
@@ -266,24 +295,26 @@ namespace ICSharpCode.NRefactory.Ast
 		
 		public static DebugType ResolveType(this AstNode expr, Debugger.AppDomain appDomain)
 		{
-			if (expr is TypeReference && expr.GetStaticType() != null)
+			if (expr is AstType && expr.GetStaticType() != null)
 				return expr.GetStaticType();
-			if (expr is TypeReferenceExpression && ((TypeReferenceExpression)expr).TypeReference.GetStaticType() != null)
-				return ((TypeReferenceExpression)expr).TypeReference.GetStaticType();
+			if (expr is TypeReferenceExpression && ((TypeReferenceExpression)expr).Type.GetStaticType() != null)
+				return ((TypeReferenceExpression)expr).Type.GetStaticType();
 			
 			appDomain.Process.TraceMessage("Resolving {0}", expr.PrettyPrint());
 			
-			TypeReference typeRef = NormalizeTypeReference(expr);
+			var typeRef = NormalizeTypeReference(expr);
 			
-			List<TypeReference> genTypeRefs;
-			if (typeRef is InnerClassTypeReference) {
-				genTypeRefs = ((InnerClassTypeReference)typeRef).CombineToNormalTypeReference().GenericTypes;
+			List<AstType> genTypeRefs = null;
+			if (typeRef is MemberType) {
+				//FIXME genTypeRefs = ((MemberType)typeRef).CombineToNormalTypeReference().TypeArguments as List<AstType>;
 			} else {
-				genTypeRefs = typeRef.GenericTypes;
+				if (typeRef is SimpleType) {
+					genTypeRefs = ((SimpleType)typeRef).TypeArguments as List<AstType>;
+				}
 			}
 			
 			List<DebugType> genArgs = new List<DebugType>();
-			foreach(TypeReference genTypeRef in genTypeRefs) {
+			foreach(var genTypeRef in genTypeRefs) {
 				genArgs.Add(ResolveType(genTypeRef, appDomain));
 			}
 			
@@ -294,37 +325,46 @@ namespace ICSharpCode.NRefactory.Ast
 		/// For performance this is separate method.
 		/// 'genArgs' should hold type for each generic parameter in 'typeRef'.
 		/// </summary>
-		static DebugType ResolveTypeInternal(SimpleType typeRef, DebugType[] genArgs, Debugger.AppDomain appDomain)
+		static DebugType ResolveTypeInternal(AstType typeRef, DebugType[] genArgs, Debugger.AppDomain appDomain)
 		{
 			DebugType type = null;
 			
-			// Try to construct non-nested type
-			// If there are generic types up in the tree, it must be nested type
-			if (genArgs.Length == typeRef.GenericTypes.Count) {
-				string name = GetNameWithArgCounts(typeRef);
-				type = DebugType.CreateFromNameOrNull(appDomain, name, null, genArgs);
+			if (typeRef is SimpleType) {
+				// Try to construct non-nested type
+				// If there are generic types up in the tree, it must be nested type
+				var simple = (SimpleType)typeRef;
+				
+				if (genArgs.Length == simple.TypeArguments.Count()) {
+					string name = GetNameWithArgCounts(simple);
+					type = DebugType.CreateFromNameOrNull(appDomain, name, null, genArgs);
+				}
 			}
-			
 			// Try to construct nested type
-			if (type == null && typeRef is InnerClassTypeReference) {
+			if (type == null && typeRef is MemberType) {
+				var member = (MemberType)typeRef;
 				DebugType[] outterGenArgs = genArgs;
 				// Do not pass our generic arguments to outter type
-				Array.Resize(ref outterGenArgs, genArgs.Length - typeRef.GenericTypes.Count);
+				Array.Resize(ref outterGenArgs, genArgs.Length - member.TypeArguments.Count());
 				
-				DebugType outter = ResolveTypeInternal(((InnerClassTypeReference)typeRef).BaseType, outterGenArgs, appDomain);
-				string nestedName = typeRef.GenericTypes.Count == 0 ? typeRef.Type : typeRef.Type + "`" + typeRef.GenericTypes.Count;
+				DebugType outter = ResolveTypeInternal(member.Target, outterGenArgs, appDomain);
+				string nestedName = member.TypeArguments.Count() == 0 ?
+					member.MemberName : member.MemberName + "`" + member.TypeArguments.Count();
 				type = DebugType.CreateFromNameOrNull(appDomain, nestedName, outter, genArgs);
 			}
 			
 			if (type == null)
 				throw new GetValueException("Can not resolve " + typeRef.PrettyPrint());
 			
-			for(int i = 0; i < typeRef.PointerNestingLevel; i++) {
-				type = (DebugType)type.MakePointerType();
-			}
-			if (typeRef.RankSpecifier != null) {
-				for(int i = typeRef.RankSpecifier.Length - 1; i >= 0; i--) {
-					type = (DebugType)type.MakeArrayType(typeRef.RankSpecifier[i] + 1);
+			if (typeRef is ComposedType) {
+				
+				for(int i = 0; i < ((ComposedType)typeRef).PointerRank; i++) {
+					type = (DebugType)type.MakePointerType();
+				}
+				if (((ComposedType)typeRef).ArraySpecifiers != null) {
+					var enumerator = ((ComposedType)typeRef).ArraySpecifiers.Reverse().GetEnumerator();
+						while (enumerator.MoveNext()) {
+						type = (DebugType)type.MakeArrayType(enumerator.Current.Dimensions + 1);
+					}
 				}
 			}
 			return type;

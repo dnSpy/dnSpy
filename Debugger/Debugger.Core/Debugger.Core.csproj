@@ -19,7 +19,7 @@
     <FileAlignment>4096</FileAlignment>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <OutputPath>\bin</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <PublishUrl>http://localhost/Debugger.Core/</PublishUrl>
     <Install>true</Install>

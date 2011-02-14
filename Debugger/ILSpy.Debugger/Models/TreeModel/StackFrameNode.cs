@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Debugger;
 using Debugger.MetaData;
 using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {

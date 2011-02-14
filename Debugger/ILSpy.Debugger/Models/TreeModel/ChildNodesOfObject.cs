@@ -97,11 +97,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 		public static IEnumerable<TreeNode> LazyGetItemsOfIList(Expression targetObject)
 		{
 			// This is needed for expanding IEnumerable<T>
-			targetObject = new CastExpression(
-				new TypeReference(typeof(IList).FullName),
-				targetObject,
-				CastType.Cast
-			);
+			targetObject = new CastExpression() { Expression = targetObject, Type = new SimpleType() { Identifier = typeof(IList).FullName } };
 			int count = 0;
 			GetValueException error = null;
 			try {
