@@ -174,15 +174,17 @@ namespace Decompiler
 	
 	public class ILCondition: ILNode
 	{
-		public ILBlock ConditionBlock;
-		public ILBlock Block1;
-		public ILBlock Block2;
+		public ILExpression Condition;
+		public ILBlock TrueBlock;   // Branch was taken
+		public ILLabel TrueTarget;  // Entry label
+		public ILBlock FalseBlock;  // Fall-though
+		public ILLabel FalseTarget; // Entry label
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			yield return ConditionBlock;
-			yield return Block1;
-			yield return Block2;
+			yield return Condition;
+			yield return TrueBlock;
+			yield return FalseBlock;
 		}
 	}
 }

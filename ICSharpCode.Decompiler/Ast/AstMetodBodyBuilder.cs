@@ -150,15 +150,12 @@ namespace Decompiler
 			*/
 			} else if (node is ILCondition) {
 				ILCondition conditionalNode = (ILCondition)node;
-				yield return TransformBlock(conditionalNode.ConditionBlock);
-				
-				Ast.IfElseStatement ifElseStmt = new Ast.IfElseStatement {
-					Condition = new PrimitiveExpression(true),
-					TrueStatement = TransformBlock(conditionalNode.Block1),
-					FalseStatement = TransformBlock(conditionalNode.Block2)
+				// Swap bodies
+				yield return new Ast.IfElseStatement {
+					Condition = new UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(conditionalNode.Condition)),
+					TrueStatement = TransformBlock(conditionalNode.FalseBlock),
+					FalseStatement = TransformBlock(conditionalNode.TrueBlock)
 				};
-				
-				yield return ifElseStmt;
 			} else if (node is ILTryCatchBlock) {
 				ILTryCatchBlock tryCachNode = ((ILTryCatchBlock)node);
 				List<Ast.CatchClause> catchClauses = new List<CatchClause>();
@@ -197,35 +194,27 @@ namespace Decompiler
 			return TransformByteCode(methodDef, expr, args);
 		}
 		
-		/*
-		
-		Ast.Expression MakeBranchCondition(Branch branch)
+		Ast.Expression MakeBranchCondition(ILExpression expr)
 		{
-			return MakeBranchCondition_Internal(branch);
-		}
-		
-		Ast.Expression MakeBranchCondition_Internal(Branch branch)
-		{
-			if (branch is SimpleBranch) {
-				List<Ast.Expression> args = TransformExpressionArguments((ILExpression)((SimpleBranch)branch).BasicBlock.Body[0]);
-				Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
-				Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
-				switch(((ILExpression)((SimpleBranch)branch).BasicBlock.Body[0]).OpCode.Code) {
-						case Code.Brfalse: return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
-						case Code.Brtrue:  return arg1;
-						case Code.Beq:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
-						case Code.Bge:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-						case Code.Bge_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-						case Code.Bgt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-						case Code.Bgt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-						case Code.Ble:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-						case Code.Ble_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-						case Code.Blt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-						case Code.Blt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-						case Code.Bne_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
-						case Code.Leave:   return new Ast.PrimitiveExpression(true);
-						default: throw new Exception("Bad opcode");
-				}
+			List<Ast.Expression> args = TransformExpressionArguments(expr);
+			Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
+			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
+			switch(expr.OpCode.Code) {
+				case Code.Brfalse: return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
+				case Code.Brtrue:  return arg1;
+				case Code.Beq:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
+				case Code.Bge:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
+				case Code.Bge_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
+				case Code.Bgt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+				case Code.Bgt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+				case Code.Ble:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+				case Code.Ble_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+				case Code.Blt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+				case Code.Blt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+				case Code.Bne_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
+				default: throw new Exception("Bad opcode");
+			}
+			/*
 			} else if (branch is ShortCircuitBranch) {
 				ShortCircuitBranch scBranch = (ShortCircuitBranch)branch;
 				switch(scBranch.Operator) {
@@ -259,9 +248,8 @@ namespace Decompiler
 			} else {
 				throw new Exception("Bad type");
 			}
+			*/
 		}
-		
-		*/
 		
 		static object TransformByteCode(MethodDefinition methodDef, ILExpression byteCode, List<Ast.Expression> args)
 		{

@@ -10,6 +10,8 @@ namespace Decompiler.ControlFlow
 {
 	public class ILAstOptimizer
 	{
+		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
+		
 		public void Optimize(ref List<ILNode> ast)
 		{
 			OptimizeRecursive(ref ast);
@@ -17,6 +19,7 @@ namespace Decompiler.ControlFlow
 			// Provide a container for the algorithms below
 			ILBlock astBlock = new ILBlock(ast);
 			
+			OrderNodes(astBlock);
 			FlattenNestedMovableBlocks(astBlock);
 			SimpleGotoRemoval(astBlock);
 			RemoveDeadLabels(astBlock);
@@ -52,14 +55,11 @@ namespace Decompiler.ControlFlow
 				Optimize(ref tryCatchBlock.FinallyBlock.Body);
 			}
 			
-			// Sort the nodes in the original order
-			ast = ast.OrderBy(n => n.GetSelfAndChildrenRecursive<ILMoveAbleBlock>().First().OriginalOrder).ToList();
-			
 			ast.Insert(0, new ILExpression(OpCodes.Br, entryLabel));
 		}
 		
 		
-		class ILMoveAbleBlock: ILBlock
+		class ILMoveableBlock: ILBlock
 		{
 			public int OriginalOrder;
 		}
@@ -75,7 +75,7 @@ namespace Decompiler.ControlFlow
 		{
 			List<ILNode> blocks = new List<ILNode>();
 			
-			ILMoveAbleBlock block = new ILMoveAbleBlock() { OriginalOrder = (nextBlockIndex++) };
+			ILMoveableBlock block = new ILMoveableBlock() { OriginalOrder = (nextBlockIndex++) };
 			blocks.Add(block);
 			entryLabel = new ILLabel() { Name = "Block_" + block.OriginalOrder };
 			block.Body.Add(entryLabel);
@@ -96,7 +96,7 @@ namespace Decompiler.ControlFlow
 				    (currNode is ILExpression) && ((ILExpression)currNode).OpCode.IsBranch())
 				{
 					ILBlock lastBlock = block;
-					block = new ILMoveAbleBlock() { OriginalOrder = (nextBlockIndex++) };
+					block = new ILMoveableBlock() { OriginalOrder = (nextBlockIndex++) };
 					blocks.Add(block);
 					
 					// Explicit branch from one block to other
@@ -126,7 +126,7 @@ namespace Decompiler.ControlFlow
 			cfNodes.Add(exceptionalExit);
 			
 			// Create graph nodes
-			Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
+			labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 			Dictionary<ILNode, ControlFlowNode>  astNodeToCfNode = new Dictionary<ILNode, ControlFlowNode>();
 			foreach(ILNode node in nodes) {
 				ControlFlowNode cfNode = new ControlFlowNode(index++, -1, ControlFlowNodeType.Normal);
@@ -214,6 +214,83 @@ namespace Decompiler.ControlFlow
 			}
 		}
 		
+		List<ILNode> FindConditions(HashSet<ControlFlowNode> nodes, ControlFlowNode entryNode)
+		{
+			List<ILNode> result = new List<ILNode>();
+			
+			Queue<ControlFlowNode> agenda  = new Queue<ControlFlowNode>();
+			agenda.Enqueue(entryNode);
+			while(agenda.Count > 0) {
+				ControlFlowNode node = agenda.Dequeue();
+				
+				ILMoveableBlock block = node.UserData as ILMoveableBlock;
+				
+				// Find a block that represents a simple condition
+				if (nodes.Contains(node) && block != null && block.Body.Count == 3) {
+					
+					ILLabel      label      = block.Body[0] as ILLabel;
+					ILExpression condBranch = block.Body[1] as ILExpression;
+					ILExpression statBranch = block.Body[2] as ILExpression;
+					
+					if (label != null &&  
+					    condBranch != null && condBranch.Operand is ILLabel && condBranch.Arguments.Count > 0 &&
+					    statBranch != null && statBranch.Operand is ILLabel && statBranch.Arguments.Count == 0)
+					{
+						ControlFlowNode condTarget;
+						ControlFlowNode statTarget;
+						if (labelToCfNode.TryGetValue((ILLabel)condBranch.Operand, out condTarget) &&
+						    labelToCfNode.TryGetValue((ILLabel)statBranch.Operand, out statTarget))
+						{
+							ILCondition condition = new ILCondition() {
+							    Condition   = condBranch,
+							    TrueTarget  = (ILLabel)condBranch.Operand,
+							    FalseTarget = (ILLabel)statBranch.Operand
+							};
+							
+							// TODO: Use the labels to ensre correctness
+							// TODO: Ensure that the labels are considered live in dead label removal
+							
+							// Replace the two branches with a conditional structure
+							block.Body.Remove(condBranch);
+							block.Body.Remove(statBranch);
+							block.Body.Add(condition);
+							result.Add(block);
+							
+							// Pull in the conditional code
+							HashSet<ControlFlowNode> frontiers = new HashSet<ControlFlowNode>();
+							frontiers.UnionWith(condTarget.DominanceFrontier);
+							frontiers.UnionWith(statTarget.DominanceFrontier);
+							
+							if (!frontiers.Contains(condTarget)) {
+								HashSet<ControlFlowNode> content = FindDominatedNodes(nodes, condTarget);
+								nodes.ExceptWith(content);
+							    condition.TrueBlock = new ILBlock(FindConditions(content, condTarget));
+							}
+							if (!frontiers.Contains(statTarget)) {
+								HashSet<ControlFlowNode> content = FindDominatedNodes(nodes, statTarget);
+								nodes.ExceptWith(content);
+							    condition.FalseBlock = new ILBlock(FindConditions(content, statTarget));
+							}
+							
+							nodes.Remove(node);
+						}
+					}
+				}
+
+				// Using the dominator tree should ensure we find the the widest loop first
+				foreach(var child in node.DominatorTreeChildren) {
+					agenda.Enqueue(child);
+				}
+			}
+			
+			// Add whatever is left
+			foreach(var node in nodes) {
+				result.Add((ILNode)node.UserData);
+			}
+			
+			return result;
+		}
+		
 		static HashSet<ControlFlowNode> FindDominatedNodes(HashSet<ControlFlowNode> nodes, ControlFlowNode head)
 		{
 			var exitNodes = head.DominanceFrontier.SelectMany(n => n.Predecessors);
@@ -231,50 +308,6 @@ namespace Decompiler.ControlFlow
 				}
 			}
 			result.Add(head);
-			
-			return result;
-		}
-		
-		static List<ILNode> FindConditions(HashSet<ControlFlowNode> nodes, ControlFlowNode entryNode)
-		{
-			List<ILNode> result = new List<ILNode>();
-			
-			Queue<ControlFlowNode> agenda  = new Queue<ControlFlowNode>();
-			agenda.Enqueue(entryNode);
-			while(agenda.Count > 0) {
-				ControlFlowNode node = agenda.Dequeue();
-				
-				if (nodes.Contains(node) && node.Outgoing.Count == 2) {
-					ILCondition condition = new ILCondition() {
-					    ConditionBlock = new ILBlock((ILNode)node.UserData)
-					};
-					HashSet<ControlFlowNode> frontiers = new HashSet<ControlFlowNode>();
-					frontiers.UnionWith(node.Outgoing[0].Target.DominanceFrontier);
-					frontiers.UnionWith(node.Outgoing[1].Target.DominanceFrontier);
-					if (!frontiers.Contains(node.Outgoing[0].Target)) {
-						HashSet<ControlFlowNode> content1 = FindDominatedNodes(nodes, node.Outgoing[0].Target);
-						nodes.ExceptWith(content1);
-					    condition.Block1 = new ILBlock(FindConditions(content1, node.Outgoing[0].Target));
-					}
-					if (!frontiers.Contains(node.Outgoing[1].Target)) {
-						HashSet<ControlFlowNode> content2 = FindDominatedNodes(nodes, node.Outgoing[1].Target);
-						nodes.ExceptWith(content2);
-					    condition.Block2 = new ILBlock(FindConditions(content2, node.Outgoing[1].Target));
-					}
-					nodes.Remove(node);
-					result.Add(condition);
-				}
-
-				// Using the dominator tree should ensure we find the the widest loop first
-				foreach(var child in node.DominatorTreeChildren) {
-					agenda.Enqueue(child);
-				}
-			}
-			
-			// Add whatever is left
-			foreach(var node in nodes) {
-				result.Add((ILNode)node.UserData);
-			}
 			
 			return result;
 		}
@@ -345,6 +378,15 @@ namespace Decompiler.ControlFlow
 		
 		*/
 		
+		void OrderNodes(ILBlock ast)
+		{
+			var blocks = ast.GetSelfAndChildrenRecursive<ILBlock>().ToList();
+			ILMoveableBlock first = new ILMoveableBlock() { OriginalOrder = -1 };
+			foreach(ILBlock block in blocks) {
+				block.Body = block.Body.OrderBy(n => (n.GetSelfAndChildrenRecursive<ILMoveableBlock>().FirstOrDefault() ?? first).OriginalOrder).ToList();
+			}
+		}
+		
 		/// <summary>
 		/// Flattens all nested movable blocks, except the the top level 'node' argument
 		/// </summary>
@@ -355,8 +397,8 @@ namespace Decompiler.ControlFlow
 				List<ILNode> flatBody = new List<ILNode>();
 				foreach (ILNode child in block.Body) {
 					FlattenNestedMovableBlocks(child);
-					if (child is ILMoveAbleBlock) {
-						flatBody.AddRange(((ILMoveAbleBlock)child).Body);
+					if (child is ILMoveableBlock) {
+						flatBody.AddRange(((ILMoveableBlock)child).Body);
 					} else {
 						flatBody.Add(child);
 					}
