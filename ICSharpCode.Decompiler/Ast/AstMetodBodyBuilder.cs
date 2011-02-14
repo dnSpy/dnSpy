@@ -326,6 +326,7 @@ namespace Decompiler
 					case Code.Sub_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 					case Code.Sub_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 					case Code.And:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.BitwiseAnd, arg2);
+					case Code.Or:         return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.BitwiseOr, arg2);
 					case Code.Xor:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ExclusiveOr, arg2);
 					case Code.Shl:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftLeft, arg2);
 					case Code.Shr:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftRight, arg2);
@@ -360,7 +361,7 @@ namespace Decompiler
 				case Code.Ldelem_Any:
 					throw new NotImplementedException();
 				case Code.Ldelema:
-					return arg1.Indexer(arg2);
+					return MakeRef(arg1.Indexer(arg2));
 					
 				case Code.Stelem_I:
 				case Code.Stelem_I1:
@@ -521,7 +522,12 @@ namespace Decompiler
 					} else {
 						return new Ast.IdentifierExpression(((ParameterDefinition)operand).Name);
 					}
-					case Code.Ldarga: throw new NotImplementedException();
+				case Code.Ldarga:
+					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
+						return MakeRef(new Ast.ThisReferenceExpression());
+					} else {
+						return MakeRef(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name));
+					}
 				case Code.Ldc_I4:
 				case Code.Ldc_I8:
 				case Code.Ldc_R4:
@@ -540,7 +546,11 @@ namespace Decompiler
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand),
 						arg1);
 				case Code.Ldflda:
-					case Code.Ldsflda: throw new NotImplementedException();
+					return MakeRef(arg1.Member(((FieldReference) operand).Name).WithAnnotation(operand));
+				case Code.Ldsflda:
+					return MakeRef(
+						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
+						.Member(((FieldReference)operand).Name).WithAnnotation(operand));
 					case Code.Ldftn: throw new NotImplementedException();
 				case Code.Ldloc:
 					if (operand is ILVariable) {
@@ -548,7 +558,12 @@ namespace Decompiler
 					} else {
 						return new Ast.IdentifierExpression(((VariableDefinition)operand).Name);
 					}
-					case Code.Ldloca: throw new NotImplementedException();
+				case Code.Ldloca:
+					if (operand is ILVariable) {
+						return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name));
+					} else {
+						return MakeRef(new Ast.IdentifierExpression(((VariableDefinition)operand).Name));
+					}
 					case Code.Ldnull: return new Ast.PrimitiveExpression(null);
 					case Code.Ldobj: throw new NotImplementedException();
 					case Code.Ldstr: return new Ast.PrimitiveExpression(operand);
@@ -577,7 +592,6 @@ namespace Decompiler
 					};
 					case Code.No: throw new NotImplementedException();
 					case Code.Nop: return null;
-					case Code.Or: throw new NotImplementedException();
 					case Code.Pop: return arg1;
 					case Code.Readonly: throw new NotImplementedException();
 					case Code.Refanytype: throw new NotImplementedException();
@@ -591,7 +605,7 @@ namespace Decompiler
 						}
 					}
 					case Code.Rethrow: return new Ast.ThrowStatement();
-					case Code.Sizeof: throw new NotImplementedException();
+					case Code.Sizeof: return new Ast.SizeOfExpression { Type = AstBuilder.ConvertType(operand as TypeReference) };
 					case Code.Starg: throw new NotImplementedException();
 					case Code.Stloc: {
 						if (operand is ILVariable) {
@@ -629,6 +643,11 @@ namespace Decompiler
 					case Code.Volatile: throw new NotImplementedException();
 					default: throw new Exception("Unknown OpCode: " + opCode);
 			}
+		}
+		
+		static Ast.DirectionExpression MakeRef(Ast.Expression expr)
+		{
+			return new DirectionExpression { Expression = expr, FieldDirection = FieldDirection.Ref };
 		}
 		
 		static Ast.Expression Convert(Ast.Expression expr, Cecil.TypeReference reqType)
