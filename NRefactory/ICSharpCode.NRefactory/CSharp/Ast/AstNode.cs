@@ -432,13 +432,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			
 			public object Clone()
 			{
-				AnnotationList copy = new AnnotationList(this.Count);
-				for (int i = 0; i < this.Count; i++) {
-					object obj = this[i];
-					ICloneable c = obj as ICloneable;
-					copy.Add(c != null ? c.Clone() : obj);
+				lock (this) {
+					AnnotationList copy = new AnnotationList(this.Count);
+					for (int i = 0; i < this.Count; i++) {
+						object obj = this[i];
+						ICloneable c = obj as ICloneable;
+						copy.Add(c != null ? c.Clone() : obj);
+					}
+					return copy;
 				}
-				return copy;
 			}
 		}
 		
@@ -446,6 +448,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			if (annotation == null)
 				throw new ArgumentNullException("annotation");
+			if (this.IsNull)
+				throw new InvalidOperationException("Cannot add annotations to the null node");
 		retry: // Retry until successful
 			object oldAnnotation = Interlocked.CompareExchange(ref this.annotations, annotation, null);
 			if (oldAnnotation == null) {

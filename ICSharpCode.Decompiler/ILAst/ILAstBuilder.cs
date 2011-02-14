@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Decompiler.Mono.Cecil.Rocks;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 using Cecil = Mono.Cecil;
+using Decompiler.Rocks;
 
 namespace Decompiler
 {
@@ -312,7 +312,7 @@ namespace Decompiler
 					List<ExceptionHandler> nestedEHs = ehs.Where(eh => (tryStart <= eh.TryStart.Offset && eh.TryEnd.Offset < tryEnd) || (tryStart < eh.TryStart.Offset && eh.TryEnd.Offset <= tryEnd)).ToList();
 					int tryEndIdx;
 					for (tryEndIdx = 0; tryEndIdx < body.Count && body[tryEndIdx].Offset != tryEnd; tryEndIdx++);
-					tryCatchBlock.TryBlock = ConvertToAst(body.CutRange(0, tryEndIdx), nestedEHs);
+					tryCatchBlock.TryBlock = new ILBlock(ConvertToAst(body.CutRange(0, tryEndIdx), nestedEHs));
 				}
 				
 				// Cut all handlers
@@ -331,7 +331,7 @@ namespace Decompiler
 							Body = handlerAst
 						});
 					} else if (eh.HandlerType == ExceptionHandlerType.Finally) {
-						tryCatchBlock.FinallyBlock = handlerAst;
+						tryCatchBlock.FinallyBlock = new ILBlock(handlerAst);
 					} else {
 						// TODO
 					}

@@ -58,6 +58,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			{ Modifiers.Volatile, "volatile".Length },
 			{ Modifiers.Extern, "extern".Length },
 			{ Modifiers.Partial, "partial".Length },
+			{ Modifiers.Const, "const".Length },
 		};
 		
 		public static ICollection<Modifiers> AllModifiers {

@@ -18,7 +18,7 @@
 
 using System;
 using System.Collections.Generic;
-using ICSharpCode.NRefactory;
+using Mono.CSharp;
 
 namespace ILSpy.Debugger.Bookmarks
 {

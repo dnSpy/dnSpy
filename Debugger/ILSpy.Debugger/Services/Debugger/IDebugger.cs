@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using ICSharpCode.NRefactory;
+using Mono.CSharp;
 
 namespace ILSpy.Debugger.Services
 {

@@ -6,15 +6,13 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Media;
 
 using Debugger;
-using Debugger.Interop.CorDebug;
 using Debugger.MetaData;
 using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.Services;
-using ILSpy.Debugger.Services.Debugger;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {

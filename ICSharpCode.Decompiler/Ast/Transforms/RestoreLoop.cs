@@ -1,12 +1,11 @@
 using System;
-using System.Linq;
-using ICSharpCode.NRefactory.Ast;
-using ICSharpCode.NRefactory.Visitors;
-using Ast = ICSharpCode.NRefactory.Ast;
+
+using ICSharpCode.NRefactory.CSharp;
 
 namespace Decompiler.Transforms.Ast
 {
-	public class RestoreLoop: AbstractAstTransformer
+	/*
+	public class RestoreLoop: DepthFirstAstVisitor<object, object>
 	{
 		public override object VisitForStatement(ForStatement forStatement, object data)
 		{
@@ -71,5 +70,5 @@ namespace Decompiler.Transforms.Ast
 			
 			return null;
 		}
-	}
+	}*/
 }

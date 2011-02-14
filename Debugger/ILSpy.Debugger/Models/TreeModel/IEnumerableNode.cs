@@ -2,7 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
 using Debugger.MetaData;
-using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.Services.Debugger;
 
 namespace ILSpy.Debugger.Models.TreeModel

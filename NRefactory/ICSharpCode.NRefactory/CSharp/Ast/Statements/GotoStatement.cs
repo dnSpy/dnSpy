@@ -74,9 +74,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			return visitor.VisitGotoStatement (this, data);
 		}
 		
-		public GotoStatement (GotoType gotoType)
+		public GotoStatement ()
 		{
-			this.GotoType = gotoType;
+		}
+		
+		public GotoStatement (string label)
+		{
+			this.Label = label;
 		}
 	}
 	

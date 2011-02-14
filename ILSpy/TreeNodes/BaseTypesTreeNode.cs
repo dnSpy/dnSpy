@@ -119,18 +119,24 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (def != null)
 					this.LazyLoading = true; // re-load children
 			}
+			e.Handled = ActivateItem(this, def);
+		}
+		
+		internal static bool ActivateItem(SharpTreeNode node, TypeDefinition def)
+		{
 			if (def != null) {
-				var assemblyListNode = this.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();
+				var assemblyListNode = node.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();
 				if (assemblyListNode != null) {
 					assemblyListNode.Select(assemblyListNode.AssemblyList.FindTypeNode(def));
-					e.Handled = true;
+					return true;
 				}
 			}
+			return false;
 		}
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.WriteCommentLine(output, language.TypeToString(tr));
+			language.WriteCommentLine(output, language.TypeToString(tr, true));
 		}
 	}
 }

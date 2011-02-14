@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace Decompiler.Mono.Cecil.Rocks
+namespace Decompiler.Rocks
 {
 	static class MyRocks
 	{

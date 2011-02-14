@@ -17,7 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using ICSharpCode.NRefactory;
+using Mono.CSharp;
 
 namespace ILSpy.Debugger.AvalonEdit.Editor
 {

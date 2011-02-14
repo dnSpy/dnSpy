@@ -36,25 +36,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				throw new ArgumentNullException("property");
 			this.property = property;
 			this.isIndexer = isIndexer;
-			this.LazyLoading = true;
-		}
-		
-		public PropertyDefinition PropertyDefinition {
-			get { return property; }
-		}
-		
-		public override object Text {
-			get { return HighlightSearchMatch(property.Name, " : " + this.Language.TypeToString(property.PropertyType)); }
-		}
-		
-		public override object Icon {
-			get {
-				return isIndexer ? Images.Indexer : Images.Property;
-			}
-		}
-		
-		protected override void LoadChildren()
-		{
+			
 			if (property.GetMethod != null)
 				this.Children.Add(new MethodTreeNode(property.GetMethod));
 			if (property.SetMethod != null)
@@ -65,9 +47,23 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
+		public PropertyDefinition PropertyDefinition {
+			get { return property; }
+		}
+		
+		public override object Text {
+			get { return HighlightSearchMatch(property.Name, " : " + this.Language.TypeToString(property.PropertyType, false, property)); }
+		}
+		
+		public override object Icon {
+			get {
+				return isIndexer ? Images.Indexer : Images.Property;
+			}
+		}
+		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(property.Name))
+			if (settings.SearchTermMatches(property.Name) && settings.Language.ShowMember(property))
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;

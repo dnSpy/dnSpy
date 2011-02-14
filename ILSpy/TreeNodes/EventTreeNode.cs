@@ -34,25 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (ev == null)
 				throw new ArgumentNullException("ev");
 			this.ev = ev;
-			this.LazyLoading = true;
-		}
-		
-		public EventDefinition EventDefinition {
-			get { return ev; }
-		}
-		
-		public override object Text {
-			get { return HighlightSearchMatch(ev.Name, " : " + this.Language.TypeToString(ev.EventType)); }
-		}
-		
-		public override object Icon {
-			get {
-				return Images.Event;
-			}
-		}
-		
-		protected override void LoadChildren()
-		{
+			
 			if (ev.AddMethod != null)
 				this.Children.Add(new MethodTreeNode(ev.AddMethod));
 			if (ev.RemoveMethod != null)
@@ -65,9 +47,23 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
+		public EventDefinition EventDefinition {
+			get { return ev; }
+		}
+		
+		public override object Text {
+			get { return HighlightSearchMatch(ev.Name, " : " + this.Language.TypeToString(ev.EventType, false, ev)); }
+		}
+		
+		public override object Icon {
+			get {
+				return Images.Event;
+			}
+		}
+		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(ev.Name))
+			if (settings.SearchTermMatches(ev.Name) && settings.Language.ShowMember(ev))
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;

@@ -20,9 +20,8 @@ using System;
 using System.Windows.Input;
 using System.Windows.Media;
 
-using ICSharpCode.NRefactory;
-using ILSpy.Debugger.AvalonEdit;
 using ILSpy.Debugger.AvalonEdit.Editor;
+using Mono.CSharp;
 
 namespace ILSpy.Debugger.Bookmarks
 {
@@ -56,7 +55,7 @@ namespace ILSpy.Debugger.Bookmarks
 		void CreateAnchor()
 		{
 			if (document != null) {
-				int lineNumber = Math.Max(1, Math.Min(location.Line, document.TotalNumberOfLines));
+				int lineNumber = Math.Max(1, Math.Min(location.Row, document.TotalNumberOfLines));
 				int lineLength = document.GetLine(lineNumber).Length;
 				int offset = document.PositionToOffset(
 					lineNumber,
@@ -74,7 +73,7 @@ namespace ILSpy.Debugger.Bookmarks
 		void AnchorDeleted(object sender, EventArgs e)
 		{
 			// the anchor just became invalid, so don't try to use it again
-			location = Location.Empty;
+			location = Location.Null;
 			anchor = null;
 			RemoveMark();
 		}
@@ -126,7 +125,7 @@ namespace ILSpy.Debugger.Bookmarks
 				if (anchor != null)
 					return anchor.Line;
 				else
-					return location.Line;
+					return location.Row;
 			}
 		}
 		

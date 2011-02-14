@@ -22,7 +22,22 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		AstNode currentContainerNode;
 		readonly Stack<AstNode> positionStack = new Stack<AstNode>();
-		char lastChar;
+		
+		/// <summary>
+		/// Used to insert the minimal amount of spaces so that the lexer recognizes the tokens that were written.
+		/// </summary>
+		LastWritten lastWritten;
+		
+		enum LastWritten
+		{
+			Whitespace,
+			Other,
+			KeywordOrIdentifier,
+			Plus,
+			Minus,
+			QuestionMark,
+			Division
+		}
 		
 		public OutputVisitor(TextWriter textWriter, CSharpFormattingPolicy formattingPolicy)
 		{
@@ -52,6 +67,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				WriteSpecialsUpToNode(node);
 			currentContainerNode = node;
 			positionStack.Push(node.FirstChild);
+			formatter.StartNode(node);
 		}
 		
 		object EndNode(AstNode node)
@@ -61,6 +77,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			Debug.Assert(pos == null || pos.Parent == node);
 			WriteSpecials(pos, null);
 			currentContainerNode = node.Parent;
+			formatter.EndNode(node);
 			return null;
 		}
 		#endregion
@@ -131,7 +148,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteSpecialsUpToRole(AstNode.Roles.Comma, nextNode);
 			Space(policy.SpacesBeforeComma);
 			formatter.WriteToken(",");
-			lastChar = ',';
+			lastWritten = LastWritten.Other;
 			Space(policy.SpacesAfterComma);
 		}
 		
@@ -178,26 +195,52 @@ namespace ICSharpCode.NRefactory.CSharp
 		void WriteKeyword(string keyword, Role<CSharpTokenNode> tokenRole = null)
 		{
 			WriteSpecialsUpToRole(tokenRole ?? AstNode.Roles.Keyword);
-			if (lastChar == 'a')
-				Space();
+			if (lastWritten == LastWritten.KeywordOrIdentifier)
+				formatter.Space();
 			formatter.WriteKeyword(keyword);
-			lastChar = 'a';
+			lastWritten = LastWritten.KeywordOrIdentifier;
 		}
 		
 		void WriteIdentifier(string identifier, Role<Identifier> identifierRole = null)
 		{
 			WriteSpecialsUpToRole(identifierRole ?? AstNode.Roles.Identifier);
-			if (lastChar == 'a')
-				Space();
+			if (IsKeyword(identifier, currentContainerNode)) {
+				if (lastWritten == LastWritten.KeywordOrIdentifier)
+					Space(); // this space is not strictly required, so we call Space()
+				formatter.WriteToken("@");
+			} else if (lastWritten == LastWritten.KeywordOrIdentifier) {
+				formatter.Space(); // this space is strictly required, so we directly call the formatter
+			}
 			formatter.WriteIdentifier(identifier);
-			lastChar = 'a';
+			lastWritten = LastWritten.KeywordOrIdentifier;
 		}
 		
 		void WriteToken(string token, Role<CSharpTokenNode> tokenRole)
 		{
 			WriteSpecialsUpToRole(tokenRole);
+			// Avoid that two +, - or ? tokens are combined into a ++, -- or ?? token.
+			// Note that we don't need to handle tokens like = because there's no valid
+			// C# program that contains the single token twice in a row.
+			// (for + and -, this can happen with unary operators;
+			// and for ?, this can happen in "a is int? ? b : c" or "a as int? ?? 0")
+			if (lastWritten == LastWritten.Plus && token[0] == '+'
+			    || lastWritten == LastWritten.Minus && token[0] == '-'
+			    || lastWritten == LastWritten.QuestionMark && token[0] == '?'
+			    || lastWritten == LastWritten.Division && token[0] == '*')
+			{
+				formatter.Space();
+			}
 			formatter.WriteToken(token);
-			lastChar = token[token.Length - 1];
+			if (token == "+")
+				lastWritten = LastWritten.Plus;
+			else if (token == "-")
+				lastWritten = LastWritten.Minus;
+			else if (token == "?")
+				lastWritten = LastWritten.QuestionMark;
+			else if (token == "/")
+				lastWritten = LastWritten.Division;
+			else
+				lastWritten = LastWritten.Other;
 		}
 		
 		void LPar()
@@ -228,28 +271,62 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			if (addSpace) {
 				formatter.Space();
-				lastChar = ' ';
+				lastWritten = LastWritten.Whitespace;
 			}
 		}
 		
 		void NewLine()
 		{
 			formatter.NewLine();
-			lastChar = '\n';
+			lastWritten = LastWritten.Whitespace;
 		}
 		
 		void OpenBrace(BraceStyle style)
 		{
 			WriteSpecialsUpToRole(AstNode.Roles.LBrace);
 			formatter.OpenBrace(style);
-			lastChar = '{';
+			lastWritten = LastWritten.Other;
 		}
 		
 		void CloseBrace(BraceStyle style)
 		{
 			WriteSpecialsUpToRole(AstNode.Roles.RBrace);
 			formatter.CloseBrace(style);
-			lastChar = '}';
+			lastWritten = LastWritten.Other;
+		}
+		#endregion
+		
+		#region IsKeyword Test
+		static readonly HashSet<string> unconditionalKeywords = new HashSet<string> {
+			"abstract", "as", "base", "bool", "break", "byte", "case", "catch",
+			"char", "checked", "class", "const", "continue", "decimal", "default", "delegate",
+			"do", "double", "else", "enum", "event", "explicit", "extern", "false",
+			"finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit",
+			"in", "int", "interface", "internal", "is", "lock", "long", "namespace",
+			"new", "null", "object", "operator", "out", "override", "params", "private",
+			"protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short",
+			"sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw",
+			"true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort",
+			"using", "virtual", "void", "volatile", "while"
+		};
+		
+		static readonly HashSet<string> queryKeywords = new HashSet<string> {
+			"from", "where", "join", "on", "equals", "into", "let", "orderby",
+			"ascending", "descending", "select", "group", "by"
+		};
+		
+		/// <summary>
+		/// Determines whether the specified identifier is a keyword in the given context.
+		/// </summary>
+		public static bool IsKeyword(string identifier, AstNode context)
+		{
+			if (unconditionalKeywords.Contains(identifier))
+				return true;
+			if (context.Ancestors.Any(a => a is QueryExpression)) {
+				if (queryKeywords.Contains(identifier))
+					return true;
+			}
+			return false;
 		}
 		#endregion
 		
@@ -285,13 +362,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			foreach (Identifier ident in identifiers) {
 				if (first) {
 					first = false;
+					if (lastWritten == LastWritten.KeywordOrIdentifier)
+						formatter.Space();
 				} else {
 					WriteSpecialsUpToRole(AstNode.Roles.Dot, ident);
 					
 				}
 				WriteSpecialsUpToNode(ident);
 				formatter.WriteIdentifier(ident.Name);
-				lastChar = 'a';
+				lastWritten = LastWritten.KeywordOrIdentifier;
 			}
 		}
 		
@@ -660,7 +739,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(primitiveExpression);
 			formatter.WriteToken(ToCSharpString(primitiveExpression));
-			lastChar = 'a';
+			lastWritten = LastWritten.Other;
 			return EndNode(primitiveExpression);
 		}
 		
@@ -818,11 +897,23 @@ namespace ICSharpCode.NRefactory.CSharp
 			return EndNode(typeOfExpression);
 		}
 		
+		public object VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, object data)
+		{
+			StartNode(typeReferenceExpression);
+			typeReferenceExpression.Type.AcceptVisitor(this, data);
+			return EndNode(typeReferenceExpression);
+		}
+		
 		public object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
 			StartNode(unaryOperatorExpression);
-			WriteToken(UnaryOperatorExpression.GetOperatorSymbol(unaryOperatorExpression.Operator), UnaryOperatorExpression.OperatorRole);
+			UnaryOperatorType opType = unaryOperatorExpression.Operator;
+			string opSymbol = UnaryOperatorExpression.GetOperatorSymbol(opType);
+			if (!(opType == UnaryOperatorType.PostIncrement || opType == UnaryOperatorType.PostDecrement))
+				WriteToken(opSymbol, UnaryOperatorExpression.OperatorRole);
 			unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+			if (opType == UnaryOperatorType.PostIncrement || opType == UnaryOperatorType.PostDecrement)
+				WriteToken(opSymbol, UnaryOperatorExpression.OperatorRole);
 			return EndNode(unaryOperatorExpression);
 		}
 		
@@ -836,6 +927,143 @@ namespace ICSharpCode.NRefactory.CSharp
 			Space(policy.WithinCheckedExpressionParantheses);
 			RPar();
 			return EndNode(uncheckedExpression);
+		}
+		#endregion
+		
+		#region Query Expressions
+		public object VisitQueryExpression(QueryExpression queryExpression, object data)
+		{
+			StartNode(queryExpression);
+			bool first = true;
+			foreach (var clause in queryExpression.Clauses) {
+				if (first) {
+					first = false;
+				} else {
+					NewLine();
+				}
+				clause.AcceptVisitor(this, data);
+			}
+			return EndNode(queryExpression);
+		}
+		
+		public object VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, object data)
+		{
+			StartNode(queryContinuationClause);
+			queryContinuationClause.PrecedingQuery.AcceptVisitor(this, data);
+			Space();
+			WriteKeyword("into", QueryContinuationClause.IntoKeywordRole);
+			Space();
+			WriteIdentifier(queryContinuationClause.Identifier);
+			return EndNode(queryContinuationClause);
+		}
+		
+		public object VisitQueryFromClause(QueryFromClause queryFromClause, object data)
+		{
+			StartNode(queryFromClause);
+			WriteKeyword("from", QueryFromClause.FromKeywordRole);
+			queryFromClause.Type.AcceptVisitor(this, data);
+			Space();
+			WriteIdentifier(queryFromClause.Identifier);
+			WriteKeyword("in", QueryFromClause.InKeywordRole);
+			queryFromClause.Expression.AcceptVisitor(this, data);
+			return EndNode(queryFromClause);
+		}
+		
+		public object VisitQueryLetClause(QueryLetClause queryLetClause, object data)
+		{
+			StartNode(queryLetClause);
+			WriteKeyword("let");
+			Space();
+			WriteIdentifier(queryLetClause.Identifier);
+			Space(policy.AroundAssignmentParentheses);
+			WriteToken("=", QueryLetClause.Roles.Assign);
+			Space(policy.AroundAssignmentParentheses);
+			queryLetClause.Expression.AcceptVisitor(this, data);
+			return EndNode(queryLetClause);
+		}
+		
+		public object VisitQueryWhereClause(QueryWhereClause queryWhereClause, object data)
+		{
+			StartNode(queryWhereClause);
+			WriteKeyword("where");
+			Space();
+			queryWhereClause.Condition.AcceptVisitor(this, data);
+			return EndNode(queryWhereClause);
+		}
+		
+		public object VisitQueryJoinClause(QueryJoinClause queryJoinClause, object data)
+		{
+			StartNode(queryJoinClause);
+			WriteKeyword("join", QueryJoinClause.JoinKeywordRole);
+			queryJoinClause.Type.AcceptVisitor(this, data);
+			Space();
+			WriteIdentifier(queryJoinClause.JoinIdentifier, QueryJoinClause.JoinIdentifierRole);
+			Space();
+			WriteKeyword("in", QueryJoinClause.InKeywordRole);
+			Space();
+			queryJoinClause.InExpression.AcceptVisitor(this, data);
+			Space();
+			WriteKeyword("on", QueryJoinClause.OnKeywordRole);
+			Space();
+			queryJoinClause.OnExpression.AcceptVisitor(this, data);
+			Space();
+			WriteKeyword("equals", QueryJoinClause.EqualsKeywordRole);
+			Space();
+			queryJoinClause.EqualsExpression.AcceptVisitor(this, data);
+			if (queryJoinClause.IsGroupJoin) {
+				Space();
+				WriteKeyword("into", QueryJoinClause.IntoKeywordRole);
+				WriteIdentifier(queryJoinClause.IntoIdentifier, QueryJoinClause.IntoIdentifierRole);
+			}
+			return EndNode(queryJoinClause);
+		}
+		
+		public object VisitQueryOrderClause(QueryOrderClause queryOrderClause, object data)
+		{
+			StartNode(queryOrderClause);
+			WriteKeyword("orderby");
+			Space();
+			WriteCommaSeparatedList(queryOrderClause.Orderings);
+			return EndNode(queryOrderClause);
+		}
+		
+		public object VisitQueryOrdering(QueryOrdering queryOrdering, object data)
+		{
+			StartNode(queryOrdering);
+			queryOrdering.Expression.AcceptVisitor(this, data);
+			switch (queryOrdering.Direction) {
+				case QueryOrderingDirection.Ascending:
+					Space();
+					WriteKeyword("ascending");
+					break;
+				case QueryOrderingDirection.Descending:
+					Space();
+					WriteKeyword("descending");
+					break;
+			}
+			return EndNode(queryOrdering);
+		}
+		
+		public object VisitQuerySelectClause(QuerySelectClause querySelectClause, object data)
+		{
+			StartNode(querySelectClause);
+			WriteKeyword("select");
+			Space();
+			querySelectClause.Expression.AcceptVisitor(this, data);
+			return EndNode(querySelectClause);
+		}
+		
+		public object VisitQueryGroupClause(QueryGroupClause queryGroupClause, object data)
+		{
+			StartNode(queryGroupClause);
+			WriteKeyword("group", QueryGroupClause.GroupKeywordRole);
+			Space();
+			queryGroupClause.Projection.AcceptVisitor(this, data);
+			Space();
+			WriteKeyword("by", QueryGroupClause.ByKeywordRole);
+			Space();
+			queryGroupClause.Key.AcceptVisitor(this, data);
+			return EndNode(queryGroupClause);
 		}
 		#endregion
 		
@@ -871,6 +1099,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteModifiers(delegateDeclaration.ModifierTokens);
 			WriteKeyword("delegate");
 			delegateDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WriteIdentifier(delegateDeclaration.Name);
 			WriteTypeParameters(delegateDeclaration.TypeParameters);
 			Space(policy.BeforeDelegateDeclarationParentheses);
@@ -931,8 +1160,22 @@ namespace ICSharpCode.NRefactory.CSharp
 				constraint.AcceptVisitor(this, data);
 			}
 			OpenBrace(braceStyle);
-			foreach (var member in typeDeclaration.Members) {
-				member.AcceptVisitor(this, data);
+			if (typeDeclaration.ClassType == ClassType.Enum) {
+				bool first = true;
+				foreach (var member in typeDeclaration.Members) {
+					if (first) {
+						first = false;
+					} else {
+						Comma(member);
+						NewLine();
+					}
+					member.AcceptVisitor(this, data);
+				}
+				NewLine();
+			} else {
+				foreach (var member in typeDeclaration.Members) {
+					member.AcceptVisitor(this, data);
+				}
 			}
 			CloseBrace(braceStyle);
 			NewLine();
@@ -1057,6 +1300,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			LPar();
 			Space(policy.WithinForEachParentheses);
 			foreachStatement.VariableType.AcceptVisitor(this, data);
+			Space();
 			WriteIdentifier(foreachStatement.VariableName);
 			WriteKeyword("in", ForeachStatement.Roles.InKeyword);
 			Space();
@@ -1441,6 +1685,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			CloseBrace(policy.EventBraceStyle);
+			NewLine();
 			return EndNode(customEventDeclaration);
 		}
 		
@@ -1473,6 +1718,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			CloseBrace(policy.PropertyBraceStyle);
+			NewLine();
 			return EndNode(indexerDeclaration);
 		}
 		
@@ -1482,6 +1728,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(methodDeclaration.Attributes);
 			WriteModifiers(methodDeclaration.ModifierTokens);
 			methodDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WritePrivateImplementationType(methodDeclaration.PrivateImplementationType);
 			WriteIdentifier(methodDeclaration.Name);
 			WriteTypeParameters(methodDeclaration.TypeParameters);
@@ -1559,6 +1806,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(propertyDeclaration.Attributes);
 			WriteModifiers(propertyDeclaration.ModifierTokens);
 			propertyDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WritePrivateImplementationType(propertyDeclaration.PrivateImplementationType);
 			WriteIdentifier(propertyDeclaration.Name);
 			OpenBrace(policy.PropertyBraceStyle);
@@ -1569,6 +1817,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			CloseBrace(policy.PropertyBraceStyle);
+			NewLine();
 			return EndNode(propertyDeclaration);
 		}
 		#endregion
@@ -1633,7 +1882,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			foreach (var comma in arraySpecifier.GetChildrenByRole(ArraySpecifier.Roles.Comma)) {
 				WriteSpecialsUpToNode(comma);
 				formatter.WriteToken(",");
-				lastChar = ',';
+				lastWritten = LastWritten.Other;
 			}
 			WriteToken("]", ArraySpecifier.Roles.RBracket);
 			return EndNode(arraySpecifier);
@@ -1648,7 +1897,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public object VisitComment(Comment comment, object data)
 		{
+			if (lastWritten == LastWritten.Division) {
+				// When there's a comment starting after a division operator
+				// "1.0 / /*comment*/a", then we need to insert a space in front of the comment.
+				formatter.Space();
+			}
 			formatter.WriteComment(comment.CommentType, comment.Content);
+			lastWritten = LastWritten.Whitespace;
 			return null;
 		}
 		

@@ -17,11 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Windows.Input;
 using System.Windows.Media;
-
-using ICSharpCode.NRefactory;
 using ILSpy.Debugger.Services;
+using Mono.CSharp;
 
 namespace ILSpy.Debugger.Bookmarks
 {

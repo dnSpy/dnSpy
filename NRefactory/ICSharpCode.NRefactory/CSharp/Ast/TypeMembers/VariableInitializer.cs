@@ -33,6 +33,16 @@ namespace ICSharpCode.NRefactory.CSharp
 				return NodeType.Unknown;
 			}
 		}
+		
+		public VariableInitializer()
+		{
+		}
+		
+		public VariableInitializer(string name, Expression initializer = null)
+		{
+			this.Name = name;
+			this.Initializer = initializer;
+		}
 
 		public string Name {
 			get {

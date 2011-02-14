@@ -81,16 +81,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (!settings.ShowInternalApi && !IsPublicAPI)
 				return FilterResult.Hidden;
-			if (settings.SearchTermMatches(type.Name))
-				return FilterResult.Match;
-			else
+			if (settings.SearchTermMatches(type.Name)) {
+				if (type.IsNested && !settings.Language.ShowMember(type))
+					return FilterResult.Hidden;
+				else
+					return FilterResult.Match;
+			} else {
 				return FilterResult.Recurse;
+			}
 		}
 		
 		protected override void LoadChildren()
 		{
 			if (type.BaseType != null || type.HasInterfaces)
 				this.Children.Add(new BaseTypesTreeNode(type));
+			if (!type.IsSealed)
+				this.Children.Add(new DerivedTypesTreeNode(parentAssemblyNode.AssemblyList, type));
 			foreach (TypeDefinition nestedType in type.NestedTypes) {
 				this.Children.Add(new TypeTreeNode(nestedType, parentAssemblyNode));
 			}

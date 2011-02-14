@@ -1,12 +1,14 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
-using Debugger.Interop.CorDebug;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+
 using Debugger;
+using Debugger.Interop.CorDebug;
 using Debugger.MetaData;
 using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace ILSpy.Debugger.Services.Debugger
 {

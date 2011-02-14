@@ -10,13 +10,11 @@ using System.Windows.Media;
 using Debugger;
 using Debugger.Interop.CorPublish;
 using ICSharpCode.Decompiler.Disassembler;
-using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Visitors;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Models.TreeModel;
 using ILSpy.Debugger.Services.Debugger;
-using Mono.Cecil.Cil;
+using Mono.CSharp;
 using CorDbg = Debugger;
 using Process = Debugger.Process;
 
@@ -337,7 +335,7 @@ namespace ILSpy.Debugger.Services
 		/// Gets Expression for given variable. Can throw GetValueException.
 		/// <exception cref="GetValueException">Thrown when getting expression fails. Exception message explains reason.</exception>
 		/// </summary>
-		public ICSharpCode.NRefactory.Ast.Expression GetExpression(string variableName)
+		public ICSharpCode.NRefactory.CSharp.Expression GetExpression(string variableName)
 		{
 			if (!CanEvaluate) {
 				throw new GetValueException("Cannot evaluate now - debugged process is either null or running or has no selected stack frame");

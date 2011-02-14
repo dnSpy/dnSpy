@@ -445,6 +445,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			return VisitChildren (typeOfExpression, data);
 		}
 		
+		public virtual S VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, T data)
+		{
+			return VisitChildren (typeReferenceExpression, data);
+		}
+		
 		public virtual S VisitUnaryOperatorExpression (UnaryOperatorExpression unaryOperatorExpression, T data)
 		{
 			return VisitChildren (unaryOperatorExpression, data);
@@ -455,47 +460,55 @@ namespace ICSharpCode.NRefactory.CSharp
 			return VisitChildren (uncheckedExpression, data);
 		}
 		
-		/*
-		public virtual S VisitQueryExpressionFromClause (QueryExpressionFromClause queryExpressionFromClause, T data)
+		public virtual S VisitQueryExpression(QueryExpression queryExpression, T data)
 		{
-			return VisitChildren (queryExpressionFromClause, data);
+			return VisitChildren (queryExpression, data);
 		}
 		
-		public virtual S VisitQueryExpressionWhereClause (QueryExpressionWhereClause queryExpressionWhereClause, T data)
+		public virtual S VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, T data)
 		{
-			return VisitChildren (queryExpressionWhereClause, data);
+			return VisitChildren (queryContinuationClause, data);
 		}
 		
-		public virtual S VisitQueryExpressionJoinClause (QueryExpressionJoinClause queryExpressionJoinClause, T data)
+		public virtual S VisitQueryFromClause(QueryFromClause queryFromClause, T data)
 		{
-			return VisitChildren (queryExpressionJoinClause, data);
+			return VisitChildren (queryFromClause, data);
 		}
 		
-		public virtual S VisitQueryExpressionGroupClause (QueryExpressionGroupClause queryExpressionGroupClause, T data)
+		public virtual S VisitQueryLetClause(QueryLetClause queryLetClause, T data)
 		{
-			return VisitChildren (queryExpressionGroupClause, data);
+			return VisitChildren (queryLetClause, data);
 		}
 		
-		public virtual S VisitQueryExpressionLetClause (QueryExpressionLetClause queryExpressionLetClause, T data)
+		public virtual S VisitQueryWhereClause(QueryWhereClause queryWhereClause, T data)
 		{
-			return VisitChildren (queryExpressionLetClause, data);
+			return VisitChildren (queryWhereClause, data);
 		}
 		
-		public virtual S VisitQueryExpressionOrderClause (QueryExpressionOrderClause queryExpressionOrderClause, T data)
+		public virtual S VisitQueryJoinClause(QueryJoinClause queryJoinClause, T data)
 		{
-			return VisitChildren (queryExpressionOrderClause, data);
+			return VisitChildren (queryJoinClause, data);
 		}
 		
-		public virtual S VisitQueryExpressionOrdering (QueryExpressionOrdering queryExpressionOrdering, T data)
+		public virtual S VisitQueryOrderClause(QueryOrderClause queryOrderClause, T data)
 		{
-			return VisitChildren (queryExpressionOrdering, data);
+			return VisitChildren (queryOrderClause, data);
 		}
 		
-		public virtual S VisitQueryExpressionSelectClause (QueryExpressionSelectClause queryExpressionSelectClause, T data)
+		public virtual S VisitQueryOrdering(QueryOrdering queryOrdering, T data)
 		{
-			return VisitChildren (queryExpressionSelectClause, data);
+			return VisitChildren (queryOrdering, data);
 		}
-		*/
+		
+		public virtual S VisitQuerySelectClause(QuerySelectClause querySelectClause, T data)
+		{
+			return VisitChildren (querySelectClause, data);
+		}
+		
+		public virtual S VisitQueryGroupClause(QueryGroupClause queryGroupClause, T data)
+		{
+			return VisitChildren (queryGroupClause, data);
+		}
 		
 		public virtual S VisitAsExpression (AsExpression asExpression, T data)
 		{

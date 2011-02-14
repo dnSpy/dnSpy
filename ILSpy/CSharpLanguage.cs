@@ -17,8 +17,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
+using System.Linq;
 using Decompiler;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
@@ -38,14 +41,82 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
-			throw new NotImplementedException("Currently we can decompile only whole types.");
+			AstBuilder codeDomBuilder = new AstBuilder();
+			codeDomBuilder.AddMethod(method);
+			codeDomBuilder.GenerateCode(output);
+		}
+		
+		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
+		{
+			AstBuilder codeDomBuilder = new AstBuilder();
+			codeDomBuilder.AddProperty(property);
+			codeDomBuilder.GenerateCode(output);
+		}
+		
+		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
+		{
+			AstBuilder codeDomBuilder = new AstBuilder();
+			codeDomBuilder.AddField(field);
+			codeDomBuilder.GenerateCode(output);
+		}
+		
+		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
+		{
+			AstBuilder codeDomBuilder = new AstBuilder();
+			codeDomBuilder.AddEvent(ev);
+			codeDomBuilder.GenerateCode(output);
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
 			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddType(type);
-			output.Write(codeDomBuilder.GenerateCode());
+			codeDomBuilder.GenerateCode(output);
+		}
+		
+		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes)
+		{
+			AstType astType = AstBuilder.ConvertType(type, typeAttributes);
+			if (!includeNamespace) {
+				var tre = new TypeReferenceExpression { Type = astType };
+				tre.AcceptVisitor(new RemoveNamespaceFromType(), null);
+				astType = tre.Type;
+			}
+			
+			StringWriter w = new StringWriter();
+			if (type.IsByReference) {
+				ParameterDefinition pd = typeAttributes as ParameterDefinition;
+				if (pd != null && (!pd.IsIn && pd.IsOut))
+					w.Write("out ");
+				else
+					w.Write("ref ");
+			}
+			
+			astType.AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
+			return w.ToString();
+		}
+		
+		sealed class RemoveNamespaceFromType : DepthFirstAstVisitor<object, object>
+		{
+			public override object VisitMemberType(MemberType memberType, object data)
+			{
+				base.VisitMemberType(memberType, data);
+				SimpleType st = memberType.Target as SimpleType;
+				if (st != null && !st.TypeArguments.Any()) {
+					var ta = memberType.TypeArguments.ToArray();
+					memberType.TypeArguments = null;
+					memberType.ReplaceWith(new SimpleType { Identifier = memberType.MemberName, TypeArguments = ta });
+				}
+				return null;
+			}
+		}
+		
+		public override bool ShowMember(MemberReference member)
+		{
+			MethodDefinition method = member as MethodDefinition;
+			if (method != null && (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn))
+				return false;
+			return true;
 		}
 	}
 }

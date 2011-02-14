@@ -69,6 +69,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
+		public Comment (string content, CommentType type = CommentType.SingleLine)
+		{
+			this.CommentType = type;
+			this.Content = content;
+		}
+		
 		public Comment (CommentType commentType, AstLocation startLocation, AstLocation endLocation)
 		{
 			this.CommentType = commentType;

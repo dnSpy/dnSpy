@@ -47,10 +47,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				b.Append('(');
 				for (int i = 0; i < method.Parameters.Count; i++) {
 					if (i > 0) b.Append(", ");
-					b.Append(this.Language.TypeToString(method.Parameters[i].ParameterType));
+					b.Append(this.Language.TypeToString(method.Parameters[i].ParameterType, false, method.Parameters[i]));
 				}
 				b.Append(") : ");
-				b.Append(this.Language.TypeToString(method.ReturnType));
+				b.Append(this.Language.TypeToString(method.ReturnType, false, method.MethodReturnType));
 				return HighlightSearchMatch(method.Name, b.ToString());
 			}
 		}
@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(method.Name))
+			if (settings.SearchTermMatches(method.Name) && settings.Language.ShowMember(method))
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;

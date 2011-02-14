@@ -88,10 +88,10 @@ namespace ICSharpCode.ILSpy
 			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).WriteAssemblyHeader(assembly);
 		}
 		
-		public override string TypeToString(TypeReference t)
+		public override string TypeToString(TypeReference t, bool includeNamespace, ICustomAttributeProvider attributeProvider)
 		{
 			PlainTextOutput output = new PlainTextOutput();
-			t.WriteTo(output, true, true);
+			t.WriteTo(output, true, shortName: !includeNamespace);
 			return output.ToString();
 		}
 	}

@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get { return HighlightSearchMatch(field.Name, " : " + this.Language.TypeToString(field.FieldType)); }
+			get { return HighlightSearchMatch(field.Name, " : " + this.Language.TypeToString(field.FieldType, false, field)); }
 		}
 		
 		public override object Icon {
@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(field.Name))
+			if (settings.SearchTermMatches(field.Name) && settings.Language.ShowMember(field))
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;

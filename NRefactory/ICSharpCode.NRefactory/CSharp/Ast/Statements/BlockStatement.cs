@@ -81,6 +81,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			AddChild(new ExpressionStatement { Expression = expression }, StatementRole);
 		}
 		
+		public void AddStatements(IEnumerable<Statement> statements)
+		{
+			foreach (Statement st in statements)
+				AddChild(st, StatementRole);
+		}
+		
 		public void AddAssignment(Expression left, Expression right)
 		{
 			AddStatement(new AssignmentExpression { Left = left, Operator = AssignmentOperatorType.Assign, Right = right });

@@ -275,22 +275,32 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			Debug.WriteLine("Start decompilation of {0} tree nodes", context.TreeNodes.Length);
 			
+			TaskCompletionSource<AvalonEditTextOutput> tcs = new TaskCompletionSource<AvalonEditTextOutput>();
 			if (context.TreeNodes.Length == 0) {
 				// If there's nothing to be decompiled, don't bother starting up a thread.
 				// (Improves perf in some cases since we don't have to wait for the thread-pool to accept our task)
-				TaskCompletionSource<AvalonEditTextOutput> tcs = new TaskCompletionSource<AvalonEditTextOutput>();
 				tcs.SetResult(new AvalonEditTextOutput());
 				return tcs.Task;
 			}
 			
-			return Task.Factory.StartNew(
+			Thread thread = new Thread(new ThreadStart(
 				delegate {
-					AvalonEditTextOutput textOutput = new AvalonEditTextOutput();
-					textOutput.LengthLimit = outputLengthLimit;
-					DecompileNodes(context, textOutput);
-					textOutput.PrepareDocument();
-					return textOutput;
-				}, TaskCreationOptions.LongRunning);
+					try {
+						AvalonEditTextOutput textOutput = new AvalonEditTextOutput();
+						textOutput.LengthLimit = outputLengthLimit;
+						DecompileNodes(context, textOutput);
+						textOutput.PrepareDocument();
+						tcs.SetResult(textOutput);
+						#if DEBUG
+					} catch (OperationCanceledException ex) {
+						#else
+					} catch (Exception ex) {
+						#endif
+						tcs.SetException(ex);
+					}
+				}));
+			thread.Start();
+			return tcs.Task;
 		}
 		
 		static void DecompileNodes(DecompilationContext context, ITextOutput textOutput)
@@ -369,7 +379,7 @@ namespace ICSharpCode.ILSpy.TextView
 			} else if (reference is EventReference) {
 				mainWindow.SelectNode(assemblyList.FindEventNode(((EventReference)reference).Resolve()));
 			} else if (reference is AssemblyDefinition) {
-				mainWindow.SelectNode(assemblyList.Assemblies.FirstOrDefault(node => node.AssemblyDefinition == reference));
+				mainWindow.SelectNode(assemblyList.GetAssemblies().FirstOrDefault(node => node.AssemblyDefinition == reference));
 			}
 		}
 		#endregion
