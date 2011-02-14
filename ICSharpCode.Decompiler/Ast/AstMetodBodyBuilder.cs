@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Ast = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp;
 using Cecil = Mono.Cecil;
@@ -21,17 +22,7 @@ namespace Decompiler
 		{
 			AstMethodBodyBuilder builder = new AstMethodBodyBuilder();
 			builder.methodDef = methodDef;
-			if (Debugger.IsAttached) {
-				return builder.CreateMethodBody();
-			} else {
-				try {
-					return builder.CreateMethodBody();
-				} catch {
-					BlockStatement block = new BlockStatement();
-					block.AddChild(new Comment("// Exception during decompilation"), BlockStatement.Roles.Comment);
-					return block;
-				}
-			}
+			return builder.CreateMethodBody();
 		}
 		
 		static readonly Dictionary<string, string> typeNameToVariableNameDict = new Dictionary<string, string> {
@@ -57,8 +48,8 @@ namespace Decompiler
 			
 			List<ILNode> body = new ILAstBuilder().Build(methodDef, true);
 			
-			MethodBodyGraph bodyGraph = new MethodBodyGraph(body);
-			bodyGraph.Optimize();
+			ILAstOptimizer bodyGraph = new ILAstOptimizer();
+			bodyGraph.Optimize(ref body);
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
 			Dictionary<string, int> typeNames = new Dictionary<string, int>();
@@ -104,62 +95,42 @@ namespace Decompiler
 //				astBlock.Children.Add(astLocalVar);
 			}
 			
-			Ast.BlockStatement astBlock = new Ast.BlockStatement();
-			astBlock.Statements = TransformNodes(bodyGraph.Childs);
+			Ast.BlockStatement astBlock = TransformBlock(new ILBlock(body));
 			CommentStatement.ReplaceAll(astBlock); // convert CommentStatements to Comments
 			return astBlock;
 		}
 		
-		IEnumerable<Statement> TransformNodes(IEnumerable<Node> nodes)
+		Ast.BlockStatement TransformBlock(ILBlock block)
 		{
-			foreach(Node node in nodes) {
-				foreach(Ast.Statement stmt in TransformNode(node)) {
-					yield return stmt;
+			Ast.BlockStatement astBlock = new BlockStatement();
+			if (block != null) {
+				foreach(ILNode node in block.Body) {
+					astBlock.AddStatements(TransformNode(node));
 				}
 			}
+			return astBlock;
 		}
 		
-		IEnumerable<Statement> TransformNode(Node node)
+		IEnumerable<Statement> TransformNode(ILNode node)
 		{
-			if (Options.NodeComments) {
-				yield return new CommentStatement(node.Description);
-			}
-			
-			yield return new Ast.LabelStatement { Label = node.Label };
-			
-			if (node is BasicBlock) {
-				foreach(ILNode expr in ((BasicBlock)node).Body) {
-					if (expr is ILLabel) {
-						yield return new Ast.LabelStatement { Label = ((ILLabel)expr).Name };
+			if (node is ILLabel) {
+				yield return new Ast.LabelStatement { Label = ((ILLabel)node).Name };
+			} else if (node is ILExpression) {
+				object codeExpr = TransformExpression((ILExpression)node);
+				if (codeExpr != null) {
+					if (codeExpr is Ast.Expression) {
+						yield return new Ast.ExpressionStatement { Expression = (Ast.Expression)codeExpr };
+					} else if (codeExpr is Ast.Statement) {
+						yield return (Ast.Statement)codeExpr;
 					} else {
-						Statement stmt = TransformExpressionToStatement((ILExpression)expr);
-						if (stmt != null) {
-							yield return stmt;
-						}
+						throw new Exception();
 					}
 				}
-				foreach(Statement inode in TransformNodes(node.Childs)) {
-					yield return inode;
-				}
-				Node fallThroughNode = ((BasicBlock)node).FallThroughBasicBlock;
-				// If there is default branch and it is not the following node
-				if (fallThroughNode != null) {
-					yield return new Ast.GotoStatement { GotoType = GotoType.Label, Label = fallThroughNode.Label };
-				}
-			} else if (node is AcyclicGraph) {
-				foreach(Statement inode in TransformNodes(node.Childs)) {
-					yield return inode;
-				}
-			} else if (node is Loop) {
-				Ast.BlockStatement blockStatement = new Ast.BlockStatement();
-				blockStatement.Statements = TransformNodes(node.Childs);
+			} else if (node is ILLoop) {
 				yield return new Ast.ForStatement {
-					EmbeddedStatement = blockStatement
+					EmbeddedStatement = TransformBlock(((ILLoop)node).ContentBlock)
 				};
-			} else if (node is Block) {
-				foreach(Statement inode in TransformNodes(node.Childs)) {
-					yield return inode;
-				}
+			/*
 			} else if (node is Branch) {
 				yield return new Ast.LabelStatement { Label = ((Branch)node).FirstBasicBlock.Label };
 				
@@ -176,62 +147,34 @@ namespace Decompiler
 				};
 				
 				yield return ifElseStmt;
-			} else if (node is ConditionalNode) {
-				ConditionalNode conditionalNode = (ConditionalNode)node;
-				yield return new Ast.LabelStatement { Label = conditionalNode.Condition.FirstBasicBlock.Label };
-				
-				Ast.BlockStatement trueBlock = new Ast.BlockStatement();
-				// The block entry code
-				trueBlock.AddStatement(new Ast.GotoStatement(conditionalNode.Condition.TrueSuccessor.Label));
-				// Sugested content
-				trueBlock.AddStatements(TransformNode(conditionalNode.TrueBody));
-				
-				Ast.BlockStatement falseBlock = new Ast.BlockStatement();
-				// The block entry code
-				falseBlock.AddStatement(new Ast.GotoStatement(conditionalNode.Condition.FalseSuccessor.Label));
-				// Sugested content
-				falseBlock.AddStatements(TransformNode(conditionalNode.FalseBody));
-				
-				Ast.IfElseStatement ifElseStmt = new Ast.IfElseStatement {
-					// Method bodies are swapped
-					Condition = new Ast.UnaryOperatorExpression(
-						UnaryOperatorType.Not,
-						MakeBranchCondition(conditionalNode.Condition)
-					),
-					TrueStatement = falseBlock,
-					FalseStatement = trueBlock
+			*/
+			} else if (node is ILCondition) {
+				ILCondition conditionalNode = (ILCondition)node;
+				// Swap bodies
+				yield return new Ast.IfElseStatement {
+					Condition = new UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(conditionalNode.Condition)),
+					TrueStatement = TransformBlock(conditionalNode.FalseBlock),
+					FalseStatement = TransformBlock(conditionalNode.TrueBlock)
 				};
-				
-				yield return ifElseStmt;
-			} else if (node is TryCatchNode) {
-				TryCatchNode tryCachNode = ((TryCatchNode)node);
-				Ast.BlockStatement tryBlock = new Ast.BlockStatement();
-				tryBlock.Statements = TransformNode(tryCachNode.Childs[0]);
-				Ast.BlockStatement finallyBlock = null;
-				if (tryCachNode.Childs[1].Childs.Count > 0) {
-					finallyBlock = new Ast.BlockStatement();
-					finallyBlock.Statements = TransformNode(tryCachNode.Childs[1]);
-				}
-				List<Ast.CatchClause> ccs = new List<CatchClause>();
-				for (int i = 0; i < tryCachNode.Types.Count; i++) {
-					Ast.BlockStatement catchBlock = new Ast.BlockStatement();
-					catchBlock.Statements = TransformNode(tryCachNode.Childs[i + 2]);
-					Ast.CatchClause cc = new Ast.CatchClause {
-						Type = AstBuilder.ConvertType(tryCachNode.Types[i]),
+			} else if (node is ILTryCatchBlock) {
+				ILTryCatchBlock tryCachNode = ((ILTryCatchBlock)node);
+				List<Ast.CatchClause> catchClauses = new List<CatchClause>();
+				foreach (var catchClause in tryCachNode.CatchBlocks) {
+					catchClauses.Add(new Ast.CatchClause {
+						Type = AstBuilder.ConvertType(catchClause.ExceptionType),
 						VariableName = "exception",
-						Body = catchBlock
-					};
-					ccs.Add(cc);
+						Body = TransformBlock(catchClause)
+					});
 				}
 				yield return new Ast.TryCatchStatement {
-					TryBlock = tryBlock, CatchClauses = ccs, FinallyBlock = finallyBlock
+					TryBlock = TransformBlock(tryCachNode.TryBlock),
+					CatchClauses = catchClauses,
+					FinallyBlock = TransformBlock(tryCachNode.FinallyBlock)
 				};
+			} else if (node is ILBlock) {
+				yield return TransformBlock((ILBlock)node);
 			} else {
-				throw new Exception("Bad node type");
-			}
-			
-			if (Options.NodeComments) {
-				yield return new CommentStatement("");
+				throw new Exception("Unknown node type");
 			}
 		}
 		
@@ -251,47 +194,27 @@ namespace Decompiler
 			return TransformByteCode(methodDef, expr, args);
 		}
 		
-		Ast.Statement TransformExpressionToStatement(ILExpression expr)
+		Ast.Expression MakeBranchCondition(ILExpression expr)
 		{
-			object codeExpr = TransformExpression(expr);
-			if (codeExpr == null) {
-				return null;
-			} else if (codeExpr is Ast.Expression) {
-				return new Ast.ExpressionStatement { Expression = (Ast.Expression)codeExpr };
-			} else if (codeExpr is Ast.Statement) {
-				return (Ast.Statement)codeExpr;
-			} else {
-				throw new Exception();
+			List<Ast.Expression> args = TransformExpressionArguments(expr);
+			Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
+			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
+			switch(expr.OpCode.Code) {
+				case Code.Brfalse: return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
+				case Code.Brtrue:  return arg1;
+				case Code.Beq:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
+				case Code.Bge:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
+				case Code.Bge_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
+				case Code.Bgt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+				case Code.Bgt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+				case Code.Ble:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+				case Code.Ble_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+				case Code.Blt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+				case Code.Blt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+				case Code.Bne_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
+				default: throw new Exception("Bad opcode");
 			}
-		}
-		
-		Ast.Expression MakeBranchCondition(Branch branch)
-		{
-			return MakeBranchCondition_Internal(branch);
-		}
-		
-		Ast.Expression MakeBranchCondition_Internal(Branch branch)
-		{
-			if (branch is SimpleBranch) {
-				List<Ast.Expression> args = TransformExpressionArguments((ILExpression)((SimpleBranch)branch).BasicBlock.Body[0]);
-				Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
-				Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
-				switch(((ILExpression)((SimpleBranch)branch).BasicBlock.Body[0]).OpCode.Code) {
-						case Code.Brfalse: return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
-						case Code.Brtrue:  return arg1;
-						case Code.Beq:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
-						case Code.Bge:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-						case Code.Bge_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-						case Code.Bgt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-						case Code.Bgt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-						case Code.Ble:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-						case Code.Ble_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-						case Code.Blt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-						case Code.Blt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-						case Code.Bne_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
-						case Code.Leave:   return new Ast.PrimitiveExpression(true);
-						default: throw new Exception("Bad opcode");
-				}
+			/*
 			} else if (branch is ShortCircuitBranch) {
 				ShortCircuitBranch scBranch = (ShortCircuitBranch)branch;
 				switch(scBranch.Operator) {
@@ -325,6 +248,7 @@ namespace Decompiler
 			} else {
 				throw new Exception("Bad type");
 			}
+			*/
 		}
 		
 		static object TransformByteCode(MethodDefinition methodDef, ILExpression byteCode, List<Ast.Expression> args)
@@ -379,9 +303,10 @@ namespace Decompiler
 			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
 			Ast.Expression arg3 = args.Count >= 3 ? args[2] : null;
 			
-			Ast.Statement branchCommand = null;
+			BlockStatement branchCommand = null;
 			if (byteCode.Operand is ILLabel) {
-				branchCommand = new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
+				branchCommand = new BlockStatement();
+				branchCommand.AddStatement(new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name));
 			}
 			
 			switch(opCode.Code) {
@@ -449,7 +374,7 @@ namespace Decompiler
 					throw new NotImplementedException();
 					#endregion
 					#region Branching
-					case Code.Br:      return branchCommand;
+					case Code.Br:      return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
 					case Code.Brfalse: return new Ast.IfElseStatement(new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1), branchCommand);
 					case Code.Brtrue:  return new Ast.IfElseStatement(arg1, branchCommand);
 					case Code.Beq:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2), branchCommand);

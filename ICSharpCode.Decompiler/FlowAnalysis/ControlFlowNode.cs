@@ -158,6 +158,11 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// </summary>
 		public readonly List<ControlFlowEdge> Outgoing = new List<ControlFlowEdge>();
 		
+		/// <summary>
+		/// Any user data
+		/// </summary>
+		public object UserData;
+		
 		internal ControlFlowNode(int blockIndex, int offset, ControlFlowNodeType nodeType)
 		{
 			this.BlockIndex = blockIndex;
