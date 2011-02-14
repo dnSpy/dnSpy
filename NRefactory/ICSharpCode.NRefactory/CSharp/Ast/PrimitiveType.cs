@@ -1,4 +1,4 @@
-﻿// 
+// 
 // FullTypeName.cs
 //
 // Author:
@@ -43,6 +43,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			this.Keyword = keyword;
 		}
 		
+		public PrimitiveType(string keyword, AstLocation location)
+		{
+			this.Keyword = keyword;
+			this.Location = location;
+		}
+		
 		public override AstLocation StartLocation {
 			get {
 				return Location;
@@ -50,11 +56,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		public override AstLocation EndLocation {
 			get {
-				return new AstLocation (Location.Line, Location.Column + Keyword != null ? Keyword.Length : 0);
+				return new AstLocation (Location.Line, Location.Column + (Keyword != null ? Keyword.Length : 0));
 			}
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitPrimitiveType (this, data);
 		}

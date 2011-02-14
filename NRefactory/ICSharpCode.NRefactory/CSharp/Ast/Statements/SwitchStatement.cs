@@ -1,4 +1,4 @@
-﻿// 
+// 
 // SwitchStatement.cs
 //
 // Author:
@@ -66,7 +66,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RBrace); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitSwitchStatement (this, data);
 		}
@@ -92,7 +92,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildrenByRole (Roles.EmbeddedStatement, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitSwitchSection (this, data);
 		}
@@ -111,7 +111,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Expression, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCaseLabel (this, data);
 		}

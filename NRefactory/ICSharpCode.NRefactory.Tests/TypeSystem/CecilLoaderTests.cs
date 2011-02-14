@@ -153,7 +153,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			IProperty count = valueCollection.Properties.Single(p => p.Name == "Count");
 			Assert.AreEqual(Accessibility.Public, count.Accessibility);
-			Assert.IsTrue(count.IsSealed);
+			// It's sealed on the IL level; but in C# it's just a normal non-virtual method that happens to implement an interface
+			Assert.IsFalse(count.IsSealed);
 			Assert.IsFalse(count.IsVirtual);
 			Assert.IsFalse(count.IsAbstract);
 		}

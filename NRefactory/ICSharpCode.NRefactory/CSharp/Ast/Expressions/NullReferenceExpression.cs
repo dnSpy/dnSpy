@@ -1,4 +1,4 @@
-﻿// 
+// 
 // NullReferenceExpression.cs
 //  
 // Author:
@@ -31,7 +31,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class NullReferenceExpression : Expression
 	{
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitNullReferenceExpression (this, data);
 		}

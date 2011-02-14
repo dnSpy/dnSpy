@@ -8,7 +8,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// AST visitor.
 	/// </summary>
-	public interface AstVisitor<in T, out S>
+	public interface IAstVisitor<in T, out S>
 	{
 		S VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, T data);
 		S VisitArgListExpression(ArgListExpression argListExpression, T data);
@@ -66,11 +66,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitBreakStatement(BreakStatement breakStatement, T data);
 		S VisitCheckedStatement(CheckedStatement checkedStatement, T data);
 		S VisitContinueStatement(ContinueStatement continueStatement, T data);
+		S VisitDoWhileStatement(DoWhileStatement doWhileStatement, T data);
 		S VisitEmptyStatement(EmptyStatement emptyStatement, T data);
 		S VisitExpressionStatement(ExpressionStatement expressionStatement, T data);
 		S VisitFixedStatement(FixedStatement fixedStatement, T data);
 		S VisitForeachStatement(ForeachStatement foreachStatement, T data);
 		S VisitForStatement(ForStatement forStatement, T data);
+		S VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement, T data);
+		S VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement, T data);
 		S VisitGotoStatement(GotoStatement gotoStatement, T data);
 		S VisitIfElseStatement(IfElseStatement ifElseStatement, T data);
 		S VisitLabelStatement(LabelStatement labelStatement, T data);
@@ -87,6 +90,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitUsingStatement(UsingStatement usingStatement, T data);
 		S VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, T data);
 		S VisitWhileStatement(WhileStatement whileStatement, T data);
+		S VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement, T data);
 		S VisitYieldStatement(YieldStatement yieldStatement, T data);
 		
 		S VisitAccessor(Accessor accessor, T data);

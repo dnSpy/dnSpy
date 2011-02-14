@@ -1,4 +1,4 @@
-﻿// 
+// 
 // AstNode.cs
 //
 // Author:
@@ -51,7 +51,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			
-			public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 			{
 				return default (S);
 			}
@@ -592,7 +592,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		#endregion
 		
-		public abstract S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data);
+		public abstract S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data);
 		
 		// the Root role must be available when creating the null nodes, so we can't put it in the Roles class
 		static readonly Role<AstNode> RootRole = new Role<AstNode>("Root");

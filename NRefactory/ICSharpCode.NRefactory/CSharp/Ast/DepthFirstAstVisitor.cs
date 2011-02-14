@@ -1,5 +1,5 @@
-﻿// 
-// AstVisitor.cs
+// 
+// IAstVisitor.cs
 //
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
@@ -31,7 +31,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// AST visitor with a default implementation that visits all node depth-first.
 	/// </summary>
-	public abstract class DepthFirstAstVisitor<T, S> : AstVisitor<T, S>
+	public abstract class DepthFirstAstVisitor<T, S> : IAstVisitor<T, S>
 	{
 		protected virtual S VisitChildren (AstNode node, T data)
 		{
@@ -225,6 +225,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			return VisitChildren (continueStatement, data);
 		}
 		
+		public virtual S VisitDoWhileStatement (DoWhileStatement doWhileStatement, T data)
+		{
+			return VisitChildren (doWhileStatement, data);
+		}
+		
 		public virtual S VisitEmptyStatement (EmptyStatement emptyStatement, T data)
 		{
 			return VisitChildren (emptyStatement, data);
@@ -243,6 +248,16 @@ namespace ICSharpCode.NRefactory.CSharp
 		public virtual S VisitForStatement (ForStatement forStatement, T data)
 		{
 			return VisitChildren (forStatement, data);
+		}
+		
+		public virtual S VisitGotoCaseStatement (GotoCaseStatement gotoCaseStatement, T data)
+		{
+			return VisitChildren (gotoCaseStatement, data);
+		}
+		
+		public virtual S VisitGotoDefaultStatement (GotoDefaultStatement gotoDefaultStatement, T data)
+		{
+			return VisitChildren (gotoDefaultStatement, data);
 		}
 		
 		public virtual S VisitGotoStatement (GotoStatement gotoStatement, T data)
@@ -323,6 +338,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		public virtual S VisitWhileStatement (WhileStatement whileStatement, T data)
 		{
 			return VisitChildren (whileStatement, data);
+		}
+		
+		public virtual S VisitYieldBreakStatement (YieldBreakStatement yieldBreakStatement, T data)
+		{
+			return VisitChildren (yieldBreakStatement, data);
 		}
 		
 		public virtual S VisitYieldStatement (YieldStatement yieldStatement, T data)

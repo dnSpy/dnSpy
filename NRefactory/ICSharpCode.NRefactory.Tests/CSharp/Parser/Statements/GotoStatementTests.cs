@@ -13,23 +13,20 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 		[Test, Ignore("regular goto statement is broken")]
 		public void GotoStatementTest()
 		{
-			GotoStatement gotoStmt = ParseUtilCSharp.ParseStatement<GotoStatement>("goto myLabel;");
-			Assert.AreEqual(GotoType.Label, gotoStmt.GotoType);
+			var gotoStmt = ParseUtilCSharp.ParseStatement<GotoStatement>("goto myLabel;");
 			Assert.AreEqual("myLabel", gotoStmt.Label);
 		}
 		
 		[Test]
 		public void GotoDefaultStatementTest()
 		{
-			GotoStatement gotoCaseStmt = ParseUtilCSharp.ParseStatement<GotoStatement>("goto default;");
-			Assert.AreEqual(GotoType.CaseDefault, gotoCaseStmt.GotoType);
+			var gotoCaseStmt = ParseUtilCSharp.ParseStatement<GotoDefaultStatement>("goto default;");
 		}
 		
 		[Test]
 		public void GotoCaseStatementTest()
 		{
-			GotoStatement gotoCaseStmt = ParseUtilCSharp.ParseStatement<GotoStatement>("goto case 6;");
-			Assert.AreEqual(GotoType.Case, gotoCaseStmt.GotoType);
+			var gotoCaseStmt = ParseUtilCSharp.ParseStatement<GotoCaseStatement>("goto case 6;");
 			Assert.IsTrue(gotoCaseStmt.LabelExpression is PrimitiveExpression);
 		}
 		

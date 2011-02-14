@@ -1,4 +1,3 @@
-﻿using System.Collections.Generic;
 // 
 // IdentifierExpression.cs
 //  
@@ -24,6 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -36,6 +36,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		public IdentifierExpression(string identifier)
 		{
 			this.Identifier = identifier;
+		}
+		
+		public IdentifierExpression(string identifier, AstLocation location)
+		{
+			SetChildByRole(Roles.Identifier, new Identifier(identifier, location));
 		}
 		
 //		public Identifier IdentifierToken {
@@ -56,7 +61,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildrenByRole (Roles.TypeArgument, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIdentifierExpression (this, data);
 		}
