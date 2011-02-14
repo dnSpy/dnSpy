@@ -49,22 +49,24 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return assemblyList.ListName; }
 		}
 		
-		/*
-		public override DropEffect CanDrop(IDataObject data, DropEffect requestedEffect)
+		public override bool CanDrop(DragEventArgs e, int index)
 		{
-			if (data.GetDataPresent(AssemblyTreeNode.DataFormat))
-				return DropEffect.Move;
-			else if (data.GetDataPresent(DataFormats.FileDrop))
-				return DropEffect.Move;
-			else
-				return DropEffect.None;
+			e.Effects = DragDropEffects.Move;
+			if (e.Data.GetDataPresent(AssemblyTreeNode.DataFormat))
+				return true;
+			else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+				return true;
+			else {
+				e.Effects = DragDropEffects.None;
+				return false;
+			}
 		}
 		
-		public override void Drop(IDataObject data, int index, DropEffect finalEffect)
+		public override void Drop(DragEventArgs e, int index)
 		{
-			string[] files = data.GetData(AssemblyTreeNode.DataFormat) as string[];
+			string[] files = e.Data.GetData(AssemblyTreeNode.DataFormat) as string[];
 			if (files == null)
-				files = data.GetData(DataFormats.FileDrop) as string[];
+				files = e.Data.GetData(DataFormats.FileDrop) as string[];
 			if (files != null) {
 				lock (assemblyList.assemblies) {
 					var nodes = (from file in files
@@ -84,7 +86,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					}
 				}
 			}
-		}*/
+		}
 		
 		public Action<SharpTreeNode> Select = delegate {};
 		

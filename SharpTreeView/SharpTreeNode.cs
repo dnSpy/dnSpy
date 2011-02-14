@@ -569,99 +569,42 @@ namespace ICSharpCode.TreeView
 		#endregion
 		
 		#region Drag and Drop
-		/*
-			internal bool InternalCanDrag()
-			{
-				return CanDrag(ActiveNodesArray);
+		public virtual bool CanDrag(SharpTreeNode[] nodes)
+		{
+			return false;
+		}
+		
+		public virtual void StartDrag(DependencyObject dragSource, SharpTreeNode[] nodes)
+		{
+			DragDropEffects effects = DragDropEffects.All;
+			if (!nodes.All(n => n.CanDelete()))
+				effects &= ~DragDropEffects.Move;
+			DragDropEffects result = DragDrop.DoDragDrop(dragSource, Copy(nodes), effects);
+			if (result == DragDropEffects.Move) {
+				foreach (SharpTreeNode node in nodes)
+					node.DeleteCore();
 			}
-	
-			internal void InternalDrag(DependencyObject dragSource)
-			{
-				DragDrop.DoDragDrop(dragSource, Copy(ActiveNodesArray), DragDropEffects.All);
+		}
+		
+		public virtual bool CanDrop(DragEventArgs e, int index)
+		{
+			return false;
+		}
+		
+		internal void InternalDrop(DragEventArgs e, int index)
+		{
+			if (LazyLoading) {
+				EnsureLazyChildren();
+				index = Children.Count;
 			}
-	
-			internal bool InternalCanDrop(DragEventArgs e, int index)
-			{
-				var finalEffect = GetFinalEffect(e, index);
-				e.Effects = GetDragDropEffects(finalEffect);
-				return finalEffect != DropEffect.None;
-			}
-	
-			internal void InternalDrop(DragEventArgs e, int index)
-			{
-				if (LazyLoading) {
-					EnsureLazyChildren();
-					index = Children.Count;
-				}
-	
-				var finalEffect = GetFinalEffect(e, index);
-				Drop(e.Data, index, finalEffect);
-	
-				if (finalEffect == DropEffect.Move) {
-					foreach (SharpTreeNode node in ActiveNodesArray)
-						node.DeleteCore();
-				}
-			}
-	
-			DropEffect GetFinalEffect(DragEventArgs e, int index)
-			{
-				var requestedEffect = GetDropEffect(e);
-				var result = CanDrop(e.Data, requestedEffect);
-				if (result == DropEffect.Move) {
-					if (!ActiveNodesArray.All(n => n.CanDelete())) {
-						return DropEffect.None;
-					}
-				}
-				return result;
-			}
-	
-			static DropEffect GetDropEffect(DragEventArgs e)
-			{
-				if (e.Data != null) {
-					var all = DragDropKeyStates.ControlKey | DragDropKeyStates.ShiftKey | DragDropKeyStates.AltKey;
-	
-					if ((e.KeyStates & all) == DragDropKeyStates.ControlKey) {
-						return DropEffect.Copy;
-					}
-					if ((e.KeyStates & all) == DragDropKeyStates.AltKey) {
-						return DropEffect.Link;
-					}
-					if ((e.KeyStates & all) == (DragDropKeyStates.ControlKey | DragDropKeyStates.ShiftKey)) {
-						return DropEffect.Link;
-					}
-					return DropEffect.Move;
-				}
-				return DropEffect.None;
-			}
-	
-			static DragDropEffects GetDragDropEffects(DropEffect effect)
-			{
-				switch (effect) {
-					case DropEffect.Copy:
-						return DragDropEffects.Copy;
-					case DropEffect.Link:
-						return DragDropEffects.Link;
-					case DropEffect.Move:
-						return DragDropEffects.Move;
-				}
-				return DragDropEffects.None;
-			}
-	
-			public virtual bool CanDrag(SharpTreeNode[] nodes)
-			{
-				return false;
-			}
-	
-			public virtual DropEffect CanDrop(IDataObject data, DropEffect requestedEffect)
-			{
-				return DropEffect.None;
-			}
-	
-			public virtual void Drop(IDataObject data, int index, DropEffect finalEffect)
-			{
-				throw new NotSupportedException(GetType().Name + " does not support Drop()");
-			}
-		 */
+			
+			Drop(e, index);
+		}
+		
+		public virtual void Drop(DragEventArgs e, int index)
+		{
+			throw new NotSupportedException(GetType().Name + " does not support Drop()");
+		}
 		#endregion
 		
 		#region IsLast (for TreeView lines)

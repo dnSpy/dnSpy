@@ -206,10 +206,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
-		/*public override bool CanDrag(SharpTreeNode[] nodes)
+		public override bool CanDrag(SharpTreeNode[] nodes)
 		{
 			return nodes.All(n => n is AssemblyTreeNode);
-		}*/
+		}
+		
+		public override void StartDrag(DependencyObject dragSource, SharpTreeNode[] nodes)
+		{
+			DragDrop.DoDragDrop(dragSource, Copy(nodes), DragDropEffects.All);
+		}
 		
 		public override bool CanDelete()
 		{

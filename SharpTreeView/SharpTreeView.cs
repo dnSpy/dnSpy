@@ -247,7 +247,6 @@ namespace ICSharpCode.TreeView
 		#endregion
 		
 		#region Drag and Drop
-		/*
 		protected override void OnDragEnter(DragEventArgs e)
 		{
 			OnDragOver(e);
@@ -256,20 +255,20 @@ namespace ICSharpCode.TreeView
 		protected override void OnDragOver(DragEventArgs e)
 		{
 			e.Effects = DragDropEffects.None;
-			e.Handled = true;
-
-			if (Root != null && !ShowRoot && Root.Children.Count == 0) {
-				Root.InternalCanDrop(e, 0);
+			
+			if (Root != null && !ShowRoot) {
+				e.Handled = true;
+				Root.CanDrop(e, Root.Children.Count);
 			}
 		}
 
 		protected override void OnDrop(DragEventArgs e)
 		{
 			e.Effects = DragDropEffects.None;
-			e.Handled = true;
 
-			if (Root != null && !ShowRoot && Root.Children.Count == 0) {
-				Root.InternalDrop(e, 0);
+			if (Root != null && !ShowRoot) {
+				e.Handled = true;
+				Root.InternalDrop(e, Root.Children.Count);
 			}
 		}
 
@@ -281,10 +280,10 @@ namespace ICSharpCode.TreeView
 		internal void HandleDragOver(SharpTreeViewItem item, DragEventArgs e)
 		{
 			HidePreview();
-			e.Handled = true;
 
 			var target = GetDropTarget(item, e);
 			if (target != null) {
+				e.Handled = true;
 				ShowPreview(target.Item, target.Place);
 			}
 		}
@@ -293,10 +292,10 @@ namespace ICSharpCode.TreeView
 		{
 			try {
 				HidePreview();
-				e.Handled = true;
 
 				var target = GetDropTarget(item, e);
 				if (target != null) {
+					e.Handled = true;
 					target.Node.InternalDrop(e, target.Index);
 				}
 			} catch (Exception ex) {
@@ -390,7 +389,7 @@ namespace ICSharpCode.TreeView
 
 			if (node != null) {
 				e.Effects = DragDropEffects.None;
-				if (node.InternalCanDrop(e, index)) {
+				if (node.CanDrop(e, index)) {
 					DropTarget target = new DropTarget() {
 						Item = item,
 						Place = place,
@@ -464,14 +463,14 @@ namespace ICSharpCode.TreeView
 				insertMarker.Margin = new Thickness(p.X, p.Y, 0, 0);
 				
 				SharpTreeNodeView secondNodeView = null;
-				var index = flattener.List.IndexOf(item.Node);
+				var index = flattener.IndexOf(item.Node);
 
 				if (place == DropPlace.Before) {
 					if (index > 0) {
 						secondNodeView = (ItemContainerGenerator.ContainerFromIndex(index - 1) as SharpTreeViewItem).NodeView;
 					}
 				}
-				else if (index + 1 < flattener.List.Count) {
+				else if (index + 1 < flattener.Count) {
 					secondNodeView = (ItemContainerGenerator.ContainerFromIndex(index + 1) as SharpTreeViewItem).NodeView;
 				}
 				
@@ -497,7 +496,6 @@ namespace ICSharpCode.TreeView
 				previewNodeView = null;
 			}
 		}
-*/
 		#endregion
 		
 		#region Cut / Copy / Paste / Delete Commands

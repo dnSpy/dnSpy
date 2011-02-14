@@ -271,6 +271,8 @@ namespace ICSharpCode.ILSpy.TextView
 						textOutput.PrepareDocument();
 						tcs.SetResult(textOutput);
 						#if DEBUG
+					} catch (AggregateException ex) {
+						tcs.SetException(ex);
 					} catch (OperationCanceledException ex) {
 						#else
 					} catch (Exception ex) {

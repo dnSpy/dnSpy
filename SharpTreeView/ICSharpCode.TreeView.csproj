@@ -70,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters.cs" />
-    <Compile Include="DropEffect.cs" />
     <Compile Include="EditTextBox.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="GeneralAdorner.cs" />

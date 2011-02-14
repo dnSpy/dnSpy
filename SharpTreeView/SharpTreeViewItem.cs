@@ -84,9 +84,10 @@ namespace ICSharpCode.TreeView
 				if (Math.Abs(currentPoint.X - startPoint.X) >= SystemParameters.MinimumHorizontalDragDistance ||
 				    Math.Abs(currentPoint.Y - startPoint.Y) >= SystemParameters.MinimumVerticalDragDistance) {
 
-//					if (Node.InternalCanDrag()) {
-//						Node.InternalDrag(this);
-//					}
+					var selection = ParentTreeView.GetTopLevelSelection().ToArray();
+					if (Node.CanDrag(selection)) {
+						Node.StartDrag(this, selection);
+					}
 				}
 			}
 		}
@@ -107,6 +108,30 @@ namespace ICSharpCode.TreeView
 			if (wasSelected) {
 				base.OnMouseLeftButtonDown(e);
 			}
+		}
+
+		#endregion
+		
+		#region Drag and Drop
+
+		protected override void OnDragEnter(DragEventArgs e)
+		{
+			ParentTreeView.HandleDragEnter(this, e);
+		}
+
+		protected override void OnDragOver(DragEventArgs e)
+		{
+			ParentTreeView.HandleDragOver(this, e);
+		}
+
+		protected override void OnDrop(DragEventArgs e)
+		{
+			ParentTreeView.HandleDrop(this, e);
+		}
+
+		protected override void OnDragLeave(DragEventArgs e)
+		{
+			ParentTreeView.HandleDragLeave(this, e);
 		}
 
 		#endregion
