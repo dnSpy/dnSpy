@@ -479,9 +479,12 @@ namespace Decompiler
 						target = new TypeReferenceExpression { Type = AstBuilder.ConvertType(cecilMethod.DeclaringType)};
 					}
 					
-					// TODO: Constructors are ignored
-					if (cecilMethod.Name == ".ctor") {
-						return new CommentStatement("Constructor");
+					if (target is ThisReferenceExpression && opCode.Code == Code.Call) {
+						// a non-virtual call on "this" might be a "base"-call.
+						if (cecilMethod.DeclaringType != methodDef.DeclaringType) {
+							// If we're not calling a method in the current class; we must be calling one in the base class.
+							target = new BaseReferenceExpression();
+						}
 					}
 					
 					// Resolve the method to figure out whether it is an accessor:
