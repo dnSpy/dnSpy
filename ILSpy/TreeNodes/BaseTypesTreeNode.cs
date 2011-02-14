@@ -19,6 +19,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Threading;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
@@ -29,7 +30,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Lists the base types of a class.
 	/// </summary>
-	sealed class BaseTypesTreeNode : ILSpyTreeNode<BaseTypesEntryNode>
+	sealed class BaseTypesTreeNode : ILSpyTreeNode
 	{
 		readonly TypeDefinition type;
 		
@@ -52,7 +53,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			AddBaseTypes(this.Children, type);
 		}
 		
-		internal static void AddBaseTypes(ObservableCollection<BaseTypesEntryNode> children, TypeDefinition type)
+		internal static void AddBaseTypes(SharpTreeNodeCollection children, TypeDefinition type)
 		{
 			if (type.BaseType != null)
 				children.Add(new BaseTypesEntryNode(type.BaseType, false));
@@ -63,14 +64,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			EnsureLazyChildren();
-			foreach (var child in this.Children) {
+			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
+			foreach (ILSpyTreeNode child in this.Children) {
 				child.Decompile(language, output, options);
 			}
 		}
 	}
 	
-	sealed class BaseTypesEntryNode : ILSpyTreeNode<BaseTypesEntryNode>
+	sealed class BaseTypesEntryNode : ILSpyTreeNode
 	{
 		TypeReference tr;
 		TypeDefinition def;

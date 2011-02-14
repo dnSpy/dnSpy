@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
@@ -10,44 +11,192 @@ using System.Collections.Specialized;
 
 namespace ICSharpCode.TreeView
 {
-	public class SharpTreeNodeCollection : ObservableCollection<SharpTreeNode>
+	/// <summary>
+	/// Collection that validates that inserted nodes do not have another parent.
+	/// </summary>
+	public sealed class SharpTreeNodeCollection : IList<SharpTreeNode>, INotifyCollectionChanged
 	{
+		readonly SharpTreeNode parent;
+		List<SharpTreeNode> list = new List<SharpTreeNode>();
+		bool isRaisingEvent;
+		
 		public SharpTreeNodeCollection(SharpTreeNode parent)
 		{
-			Parent = parent;
+			this.parent = parent;
 		}
-
-		public SharpTreeNode Parent { get; private set; }
-
-		protected override void InsertItem(int index, SharpTreeNode node)
+		
+		public event NotifyCollectionChangedEventHandler CollectionChanged;
+		
+		void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
 		{
-			node.Parent = Parent;
-			base.InsertItem(index, node);
-		}
-
-		protected override void RemoveItem(int index)
-		{
-			var node = this[index];
-			node.Parent = null;
-			base.RemoveItem(index);
-		}
-
-		protected override void ClearItems()
-		{
-			/*foreach (var node in this) {
-				node.Parent = null;
+			Debug.Assert(!isRaisingEvent);
+			isRaisingEvent = true;
+			try {
+				parent.OnChildrenChanged(e);
+				if (CollectionChanged != null)
+					CollectionChanged(this, e);
+			} finally {
+				isRaisingEvent = false;
 			}
-			base.ClearItems();*/
-			
-			// workaround for bug (reproducable when using ILSpy search filter)
-			while (Count > 0)
-				RemoveAt(Count - 1);
 		}
-
-		protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+		
+		void ThrowOnReentrancy()
 		{
-			base.OnCollectionChanged(e);
-			Parent.OnChildrenChanged(e);
+			if (isRaisingEvent)
+				throw new InvalidOperationException();
+		}
+		
+		void ThrowIfValueIsNullOrHasParent(SharpTreeNode node)
+		{
+			if (node == null)
+				throw new ArgumentNullException("node");
+			if (node.modelParent != null)
+				throw new ArgumentException("The node already has a parent", "node");
+		}
+		
+		public SharpTreeNode this[int index] {
+			get {
+				return list[index];
+			}
+			set {
+				ThrowOnReentrancy();
+				var oldItem = list[index];
+				if (oldItem == value)
+					return;
+				ThrowIfValueIsNullOrHasParent(value);
+				list[index] = value;
+				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, oldItem, index));
+			}
+		}
+		
+		public int Count {
+			get { return list.Count; }
+		}
+		
+		bool ICollection<SharpTreeNode>.IsReadOnly {
+			get { return false; }
+		}
+		
+		public int IndexOf(SharpTreeNode node)
+		{
+			if (node == null || node.modelParent != parent)
+				return -1;
+			else
+				return list.IndexOf(node);
+		}
+		
+		public void Insert(int index, SharpTreeNode node)
+		{
+			ThrowOnReentrancy();
+			ThrowIfValueIsNullOrHasParent(node);
+			list.Insert(index, node);
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node, index));
+		}
+		
+		public void InsertRange(int index, IEnumerable<SharpTreeNode> nodes)
+		{
+			if (nodes == null)
+				throw new ArgumentNullException("nodes");
+			ThrowOnReentrancy();
+			List<SharpTreeNode> newNodes = nodes.ToList();
+			foreach (SharpTreeNode node in newNodes) {
+				ThrowIfValueIsNullOrHasParent(node);
+			}
+			list.InsertRange(index, newNodes);
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newNodes, index));
+		}
+		
+		public void RemoveAt(int index)
+		{
+			ThrowOnReentrancy();
+			var oldItem = list[index];
+			list.RemoveAt(index);
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, index));
+		}
+		
+		public void RemoveRange(int index, int count)
+		{
+			ThrowOnReentrancy();
+			var oldItems = list.GetRange(index, count);
+			list.RemoveRange(index, count);
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems, index));
+		}
+		
+		public void Add(SharpTreeNode node)
+		{
+			ThrowOnReentrancy();
+			ThrowIfValueIsNullOrHasParent(node);
+			list.Add(node);
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node, list.Count - 1));
+		}
+		
+		public void AddRange(IEnumerable<SharpTreeNode> nodes)
+		{
+			InsertRange(this.Count, nodes);
+		}
+		
+		public void Clear()
+		{
+			ThrowOnReentrancy();
+			var oldList = list;
+			list = new List<SharpTreeNode>();
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list, 0));
+		}
+		
+		public bool Contains(SharpTreeNode node)
+		{
+			return IndexOf(node) >= 0;
+		}
+		
+		public void CopyTo(SharpTreeNode[] array, int arrayIndex)
+		{
+			list.CopyTo(array, arrayIndex);
+		}
+		
+		public bool Remove(SharpTreeNode item)
+		{
+			int pos = IndexOf(item);
+			if (pos >= 0) {
+				RemoveAt(pos);
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		public IEnumerator<SharpTreeNode> GetEnumerator()
+		{
+			return list.GetEnumerator();
+		}
+		
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return list.GetEnumerator();
+		}
+		
+		public void BindToObservableCollection<T>(ObservableCollection<T> collection) where T : SharpTreeNode
+		{
+			Clear();
+			AddRange(collection);
+			collection.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
+				switch (e.Action) {
+					case NotifyCollectionChangedAction.Add:
+						InsertRange(e.NewStartingIndex, e.NewItems.Cast<SharpTreeNode>());
+						break;
+					case NotifyCollectionChangedAction.Remove:
+						RemoveRange(e.OldStartingIndex, e.OldItems.Count);
+						break;
+					case NotifyCollectionChangedAction.Replace:
+					case NotifyCollectionChangedAction.Move:
+						throw new NotImplementedException();
+					case NotifyCollectionChangedAction.Reset:
+						Clear();
+						AddRange(collection);
+						break;
+					default:
+						throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
+				}
+			};
 		}
 	}
 }

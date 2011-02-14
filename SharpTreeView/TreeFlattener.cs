@@ -2,148 +2,153 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Collections.Specialized;
 
 namespace ICSharpCode.TreeView
 {
-	class TreeFlattener
+	sealed class TreeFlattener : IList, INotifyCollectionChanged
 	{
-		public TreeFlattener(SharpTreeNode root, bool includeRoot)
+		/// <summary>
+		/// The root node of the flat list tree.
+		/// Tjis is not necessarily the root of the model!
+		/// </summary>
+		internal SharpTreeNode root;
+		readonly bool includeRoot;
+		readonly object syncRoot = new object();
+		
+		public TreeFlattener(SharpTreeNode modelRoot, bool includeRoot)
 		{
-			this.root = root;
+			this.root = modelRoot;
+			while (root.listParent != null)
+				root = root.listParent;
+			root.treeFlattener = this;
 			this.includeRoot = includeRoot;
-			List = new ObservableCollection<SharpTreeNode>();
 		}
 
-		SharpTreeNode root;
-		bool includeRoot;
-
-		public ObservableCollection<SharpTreeNode> List { get; private set; }
-
-		public void Start()
+		public event NotifyCollectionChangedEventHandler CollectionChanged;
+		
+		public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs e)
 		{
-			if (includeRoot) {
-				Add(root);
-			}
-			else {
-				root.Children.CollectionChanged += node_ChildrenChanged;
-			}
-
-			foreach (var node in root.ExpandedDescendants()) {
-				Add(node);
+			if (CollectionChanged != null)
+				CollectionChanged(this, e);
+		}
+		
+		public void NodesInserted(int index, IEnumerable<SharpTreeNode> nodes)
+		{
+			if (!includeRoot) index--;
+			foreach (SharpTreeNode node in nodes) {
+				RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node, index++));
 			}
 		}
-
+		
+		public void NodesRemoved(int index, IEnumerable<SharpTreeNode> nodes)
+		{
+			if (!includeRoot) index--;
+			foreach (SharpTreeNode node in nodes) {
+				RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, node, index));
+			}
+		}
+		
 		public void Stop()
 		{
-			while (List.Count > 0) {
-				RemoveAt(0);
+			Debug.Assert(root.treeFlattener == this);
+			root.treeFlattener = null;
+		}
+		
+		public object this[int index] {
+			get {
+				if (index < 0 || index >= this.Count)
+					throw new ArgumentOutOfRangeException();
+				return SharpTreeNode.GetNodeByVisibleIndex(root, includeRoot ? index : index + 1);
+			}
+			set {
+				throw new NotSupportedException();
 			}
 		}
-
-		void Add(SharpTreeNode node)
-		{
-			Insert(List.Count, node);
-		}
-
-		void Insert(int index, SharpTreeNode node)
-		{
-			List.Insert(index, node);
-			node.PropertyChanged += node_PropertyChanged;
-			if (node.IsExpanded) {
-				node.Children.CollectionChanged += node_ChildrenChanged;
+		
+		public int Count {
+			get {
+				return includeRoot ? root.GetTotalListLength() : root.GetTotalListLength() - 1;
 			}
 		}
-
-		void RemoveAt(int index)
+		
+		public int IndexOf(object item)
 		{
-			var node = List[index];
-			List.RemoveAt(index);
-			node.PropertyChanged -= node_PropertyChanged;
-			if (node.IsExpanded) {
-				node.Children.CollectionChanged -= node_ChildrenChanged;
+			SharpTreeNode node = item as SharpTreeNode;
+			if (node != null && node.GetListRoot() == root) {
+				if (includeRoot)
+					return SharpTreeNode.GetVisibleIndexForNode(node);
+				else
+					return SharpTreeNode.GetVisibleIndexForNode(node) - 1;
+			} else {
+				return -1;
 			}
 		}
-
-		void ClearDescendants(SharpTreeNode node)
-		{
-			var index = List.IndexOf(node);
-			while (index + 1 < List.Count && List[index + 1].Level > node.Level) {
-				RemoveAt(index + 1);
+		
+		bool IList.IsReadOnly {
+			get { return true; }
+		}
+		
+		bool IList.IsFixedSize {
+			get { return false; }
+		}
+		
+		bool ICollection.IsSynchronized {
+			get { return false; }
+		}
+		
+		object ICollection.SyncRoot {
+			get {
+				return syncRoot;
 			}
 		}
-
-		void node_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		
+		void IList.Insert(int index, object item)
 		{
-			if (e.PropertyName == "IsExpanded") {
-				var node = sender as SharpTreeNode;
-
-				if (node.IsExpanded) {
-					var index = List.IndexOf(node);
-					foreach (var childNode in node.ExpandedDescendants()) {
-						Insert(++index, childNode);
-					}
-					node.Children.CollectionChanged += node_ChildrenChanged;
-				}
-				else {
-					ClearDescendants(node);
-					node.Children.CollectionChanged -= node_ChildrenChanged;
-				}
-			}
+			throw new NotSupportedException();
 		}
-
-		void Insert(SharpTreeNode parent, int index, SharpTreeNode node)
+		
+		void IList.RemoveAt(int index)
 		{
-			int finalIndex = 0;
-			if (index > 0) {
-				finalIndex = List.IndexOf(parent.Children[index - 1]) + 1;
-				while (finalIndex < List.Count && List[finalIndex].Level > node.Level) {
-					finalIndex++;
-				}
-			}
-			else {
-				finalIndex = List.IndexOf(parent) + 1;
-			}
-			Insert(finalIndex, node);
+			throw new NotSupportedException();
 		}
-
-		void RemoveAt(SharpTreeNode parent, int index, SharpTreeNode node)
+		
+		int IList.Add(object item)
 		{
-			var i = List.IndexOf(node);
-			foreach (var child in node.ExpandedDescendantsAndSelf()) {
-				RemoveAt(i);
-			}			
+			throw new NotSupportedException();
 		}
-
-		void node_ChildrenChanged(object sender, NotifyCollectionChangedEventArgs e)
+		
+		void IList.Clear()
 		{
-			var collection = sender as SharpTreeNodeCollection;
-			var parent = collection.Parent;
-			var index = List.IndexOf(collection.Parent) + 1;
-
-			switch (e.Action) {
-				case NotifyCollectionChangedAction.Add:
-					Insert(parent, e.NewStartingIndex, e.NewItems[0] as SharpTreeNode);
-					break;
-				case NotifyCollectionChangedAction.Remove:
-					RemoveAt(parent, e.OldStartingIndex, e.OldItems[0] as SharpTreeNode);
-					break;
-				case NotifyCollectionChangedAction.Move:
-					RemoveAt(parent, e.OldStartingIndex, e.OldItems[0] as SharpTreeNode);
-					Insert(parent, e.NewStartingIndex, e.NewItems[0] as SharpTreeNode);
-					break;
-				case NotifyCollectionChangedAction.Replace:
-					RemoveAt(parent, e.OldStartingIndex, e.OldItems[0] as SharpTreeNode);
-					Insert(parent, e.NewStartingIndex, e.NewItems[0] as SharpTreeNode);
-					break;
-				case NotifyCollectionChangedAction.Reset:
-					ClearDescendants(parent);
-					break;
+			throw new NotSupportedException();
+		}
+		
+		public bool Contains(object item)
+		{
+			return IndexOf(item) >= 0;
+		}
+		
+		public void CopyTo(Array array, int arrayIndex)
+		{
+			foreach (object item in this)
+				array.SetValue(item, arrayIndex++);
+		}
+		
+		void IList.Remove(object item)
+		{
+			throw new NotSupportedException();
+		}
+		
+		public IEnumerator GetEnumerator()
+		{
+			for (int i = 0; i < this.Count; i++) {
+				yield return this[i];
 			}
 		}
 	}

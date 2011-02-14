@@ -72,7 +72,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildrenByRole (ArraySpecifierRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitComposedType (this, data);
 		}
@@ -129,6 +129,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			this.Dimensions = dimensions;
 		}
 		
+		public CSharpTokenNode LBracketToken {
+			get { return GetChildByRole (Roles.LBracket); }
+		}
+		
 		public int Dimensions {
 			get { return 1 + GetChildrenByRole(Roles.Comma).Count(); }
 			set {
@@ -144,7 +148,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public CSharpTokenNode RBracketToken {
+			get { return GetChildByRole (Roles.RBracket); }
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitArraySpecifier(this, data);
 		}

@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Namespace node. The loading of the type nodes is handled by the parent AssemblyTreeNode.
 	/// </summary>
-	sealed class NamespaceTreeNode : ILSpyTreeNode<TypeTreeNode>
+	sealed class NamespaceTreeNode : ILSpyTreeNode
 	{
 		string name;
 		
@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.DecompileNamespace(name, this.Children.Select(t => t.TypeDefinition), output, options);
+			language.DecompileNamespace(name, this.Children.OfType<TypeTreeNode>().Select(t => t.TypeDefinition), output, options);
 		}
 	}
 }

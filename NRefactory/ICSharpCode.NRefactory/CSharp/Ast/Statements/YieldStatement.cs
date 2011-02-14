@@ -1,4 +1,4 @@
-﻿// 
+// 
 // YieldStatement.cs
 //
 // Author:
@@ -26,11 +26,13 @@
 
 namespace ICSharpCode.NRefactory.CSharp
 {
+	/// <summary>
+	/// yield return Expression;
+	/// </summary>
 	public class YieldStatement : Statement
 	{
 		public static readonly Role<CSharpTokenNode> YieldKeywordRole = new Role<CSharpTokenNode>("YieldKeyword", CSharpTokenNode.Null);
 		public static readonly Role<CSharpTokenNode> ReturnKeywordRole = new Role<CSharpTokenNode>("ReturnKeyword", CSharpTokenNode.Null);
-		public static readonly Role<CSharpTokenNode> BreakKeywordRole = new Role<CSharpTokenNode>("BreakKeyword", CSharpTokenNode.Null);
 		
 		public CSharpTokenNode YieldToken {
 			get { return GetChildByRole (YieldKeywordRole); }
@@ -38,10 +40,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public CSharpTokenNode ReturnToken {
 			get { return GetChildByRole (ReturnKeywordRole); }
-		}
-		
-		public CSharpTokenNode BreakToken {
-			get { return GetChildByRole (BreakKeywordRole); }
 		}
 		
 		public Expression Expression {
@@ -53,7 +51,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitYieldStatement (this, data);
 		}

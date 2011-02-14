@@ -20,7 +20,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-
+using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
@@ -29,9 +29,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Base class of all ILSpy tree nodes.
 	/// </summary>
-	abstract class ILSpyTreeNodeBase : SharpTreeNode
+	abstract class ILSpyTreeNode : SharpTreeNode
 	{
 		FilterSettings filterSettings;
+		bool childrenNeedFiltering;
 		
 		public FilterSettings FilterSettings {
 			get { return filterSettings; }
@@ -44,14 +45,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public Language Language {
-			get { return filterSettings.Language; }
+			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
 		}
-		
-		public SharpTreeNodeCollection VisibleChildren {
-			get { return base.Children; }
-		}
-		
-		protected abstract void OnFilterSettingsChanged();
 		
 		public virtual FilterResult Filter(FilterSettings settings)
 		{
@@ -88,6 +83,87 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			return false;
 		}
+		
+		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
+		{
+			if (e.NewItems != null) {
+				if (IsVisible) {
+					foreach (ILSpyTreeNode node in e.NewItems)
+						ApplyFilterToChild(node);
+				} else {
+					childrenNeedFiltering = true;
+				}
+			}
+			base.OnChildrenChanged(e);
+		}
+		
+		void ApplyFilterToChild(ILSpyTreeNode child)
+		{
+			FilterResult r;
+			if (this.FilterSettings == null)
+				r = FilterResult.Match;
+			else
+				r = child.Filter(this.FilterSettings);
+			switch (r) {
+				case FilterResult.Hidden:
+					child.IsHidden = true;
+					break;
+				case FilterResult.Match:
+					child.FilterSettings = StripSearchTerm(this.FilterSettings);
+					child.IsHidden = false;
+					break;
+				case FilterResult.Recurse:
+					child.FilterSettings = this.FilterSettings;
+					child.EnsureChildrenFiltered();
+					child.IsHidden = child.Children.All(c => c.IsHidden);
+					break;
+				case FilterResult.MatchAndRecurse:
+					child.FilterSettings = StripSearchTerm(this.FilterSettings);
+					child.EnsureChildrenFiltered();
+					child.IsHidden = child.Children.All(c => c.IsHidden);
+					break;
+				default:
+					throw new InvalidEnumArgumentException();
+			}
+		}
+		
+		FilterSettings StripSearchTerm(FilterSettings filterSettings)
+		{
+			if (filterSettings == null)
+				return null;
+			if (!string.IsNullOrEmpty(filterSettings.SearchTerm)) {
+				filterSettings = filterSettings.Clone();
+				filterSettings.SearchTerm = null;
+			}
+			return filterSettings;
+		}
+		
+		protected virtual void OnFilterSettingsChanged()
+		{
+			RaisePropertyChanged("Text");
+			if (IsVisible) {
+				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
+					ApplyFilterToChild(node);
+			} else {
+				childrenNeedFiltering = true;
+			}
+		}
+		
+		protected override void OnIsVisibleChanged()
+		{
+			base.OnIsVisibleChanged();
+			EnsureChildrenFiltered();
+		}
+		
+		void EnsureChildrenFiltered()
+		{
+			EnsureLazyChildren();
+			if (childrenNeedFiltering) {
+				childrenNeedFiltering = false;
+				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
+					ApplyFilterToChild(node);
+			}
+		}
 	}
 	
 	enum FilterResult
@@ -108,130 +184,5 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// Hides the node only if all children are hidden (doesn't reset the search term for child nodes).
 		/// </summary>
 		Recurse
-	}
-	
-	/// <summary>
-	/// Base class for ILSpy tree nodes.
-	/// </summary>
-	abstract class ILSpyTreeNode<T> : ILSpyTreeNodeBase where T : ILSpyTreeNodeBase
-	{
-		public ILSpyTreeNode()
-			: this(new ObservableCollection<T>())
-		{
-		}
-		
-		public ILSpyTreeNode(ObservableCollection<T> children)
-		{
-			if (children == null)
-				throw new ArgumentNullException("children");
-			this.allChildren = children;
-			children.CollectionChanged += allChildren_CollectionChanged;
-		}
-		
-		void allChildren_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			var visibleChildren = this.VisibleChildren;
-			
-			switch (e.Action) {
-				case NotifyCollectionChangedAction.Add:
-					if (e.NewItems.Count == 1 && e.NewStartingIndex == allChildren.Count - 1) {
-						T newChild = (T)e.NewItems[0];
-						if (FilterChild(newChild))
-							visibleChildren.Add(newChild);
-						break;
-					} else {
-						goto default;
-					}
-				case NotifyCollectionChangedAction.Remove:
-					if (e.OldItems.Count == 1) {
-						visibleChildren.Remove((T)e.OldItems[0]);
-						break;
-					} else {
-						goto default;
-					}
-				default:
-					ResetChildren();
-					break;
-			}
-		}
-		
-		void ResetChildren()
-		{
-			var visibleChildren = this.VisibleChildren;
-			
-			visibleChildren.Clear();
-			foreach (T child in allChildren) {
-				if (FilterChild(child))
-					visibleChildren.Add(child);
-			}
-		}
-		
-		bool FilterChild(T child)
-		{
-			FilterResult r;
-			if (this.FilterSettings == null)
-				r = FilterResult.Match;
-			else
-				r = child.Filter(this.FilterSettings);
-			switch (r) {
-				case FilterResult.Hidden:
-					return false;
-				case FilterResult.Match:
-					child.FilterSettings = StripSearchTerm(this.FilterSettings);
-					return true;
-				case FilterResult.Recurse:
-					child.FilterSettings = this.FilterSettings;
-					child.EnsureLazyChildren();
-					return child.VisibleChildren.Count > 0;
-				case FilterResult.MatchAndRecurse:
-					child.FilterSettings = StripSearchTerm(this.FilterSettings);
-					child.EnsureLazyChildren();
-					return child.VisibleChildren.Count > 0;
-				default:
-					throw new InvalidEnumArgumentException();
-			}
-		}
-		
-		FilterSettings StripSearchTerm(FilterSettings filterSettings)
-		{
-			if (filterSettings == null)
-				return null;
-			if (!string.IsNullOrEmpty(filterSettings.SearchTerm)) {
-				filterSettings = filterSettings.Clone();
-				filterSettings.SearchTerm = null;
-			}
-			return filterSettings;
-		}
-		
-		protected override void OnFilterSettingsChanged()
-		{
-			var visibleChildren = this.VisibleChildren;
-			var allChildren = this.Children;
-			int j = 0;
-			for (int i = 0; i < allChildren.Count; i++) {
-				T child = allChildren[i];
-				if (j < visibleChildren.Count && visibleChildren[j] == child) {
-					// it was visible before
-					if (FilterChild(child)) {
-						j++; // keep it visible
-					} else {
-						visibleChildren.RemoveAt(j); // hide it
-					}
-				} else {
-					// it wasn't visible before
-					if (FilterChild(child)) {
-						// make it visible
-						visibleChildren.Insert(j++, child);
-					}
-				}
-			}
-			RaisePropertyChanged("Text");
-		}
-		
-		readonly ObservableCollection<T> allChildren;
-		
-		public new ObservableCollection<T> Children {
-			get { return allChildren; }
-		}
 	}
 }

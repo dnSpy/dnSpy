@@ -27,7 +27,7 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
-	sealed class TypeTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+	sealed class TypeTreeNode : ILSpyTreeNode
 	{
 		readonly TypeDefinition type;
 		readonly AssemblyTreeNode parentAssemblyNode;

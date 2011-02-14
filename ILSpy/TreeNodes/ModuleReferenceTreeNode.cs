@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Module reference in ReferenceFolderTreeNode.
 	/// </summary>
-	sealed class ModuleReferenceTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+	sealed class ModuleReferenceTreeNode : ILSpyTreeNode
 	{
 		ModuleReference r;
 		

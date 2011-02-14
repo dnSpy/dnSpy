@@ -456,24 +456,24 @@ namespace ICSharpCode.ILSpy
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (treeView.SelectedItems.Count == 1) {
-				ILSpyTreeNodeBase node = treeView.SelectedItem as ILSpyTreeNodeBase;
+				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
 				if (node != null && node.View(decompilerTextView))
 					return;
 			}
 			decompilerTextView.Decompile(sessionSettings.FilterSettings.Language,
-			                             treeView.GetTopLevelSelection().OfType<ILSpyTreeNodeBase>(),
+			                             treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>(),
 			                             new DecompilationOptions());
 		}
 		
 		void saveCode_Click(object sender, RoutedEventArgs e)
 		{
 			if (treeView.SelectedItems.Count == 1) {
-				ILSpyTreeNodeBase node = treeView.SelectedItem as ILSpyTreeNodeBase;
+				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
 				if (node != null && node.Save())
 					return;
 			}
 			decompilerTextView.SaveToDisk(sessionSettings.FilterSettings.Language,
-			                              treeView.GetTopLevelSelection().OfType<ILSpyTreeNodeBase>(),
+			                              treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>(),
 			                              new DecompilationOptions());
 		}
 		#endregion

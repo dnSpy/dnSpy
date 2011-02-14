@@ -232,5 +232,13 @@
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controls" />
+    <Folder Include="TreeNodes" />
+    <Folder Include="TextView" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ProfilingSessions\Session20110214_003955.sdps" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

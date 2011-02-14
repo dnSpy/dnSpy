@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Windows.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
@@ -26,7 +27,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// References folder.
 	/// </summary>
-	sealed class ReferenceFolderTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+	sealed class ReferenceFolderTreeNode : ILSpyTreeNode
 	{
 		readonly ModuleDefinition module;
 		readonly AssemblyTreeNode parentAssembly;
@@ -60,8 +61,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			EnsureLazyChildren();
-			foreach (var child in this.Children) {
+			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
+			foreach (ILSpyTreeNode child in this.Children) {
 				child.Decompile(language, output, options);
 			}
 		}

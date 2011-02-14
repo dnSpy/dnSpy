@@ -44,6 +44,10 @@ namespace ICSharpCode.ILSpy
 		/// Needs locking for multi-threaded access!
 		/// Write accesses are allowed on the GUI thread only (but still need locking!)
 		/// </summary>
+		/// <remarks>
+		/// Technically read accesses need locking on when done on non-GUI threads... but whenever possible, use the
+		/// thread-safe <see cref="GetAssemblies()"/> method.
+		/// </remarks>
 		internal readonly ObservableCollection<AssemblyTreeNode> assemblies = new ObservableCollection<AssemblyTreeNode>();
 		
 		/// <summary>
@@ -134,11 +138,12 @@ namespace ICSharpCode.ILSpy
 		{
 			if (def == null)
 				return null;
+			App.Current.Dispatcher.VerifyAccess();
 			if (def.DeclaringType != null) {
 				TypeTreeNode decl = FindTypeNode(def.DeclaringType);
 				if (decl != null) {
 					decl.EnsureLazyChildren();
-					return decl.VisibleChildren.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def);
+					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def && !t.IsHidden);
 				}
 			} else {
 				TypeTreeNode node;
@@ -163,13 +168,15 @@ namespace ICSharpCode.ILSpy
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
 			typeNode.EnsureLazyChildren();
-			MethodTreeNode methodNode = typeNode.VisibleChildren.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
+			MethodTreeNode methodNode = typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def && !m.IsHidden);
 			if (methodNode != null)
 				return methodNode;
-			foreach (var p in typeNode.VisibleChildren.OfType<ILSpyTreeNode<MethodTreeNode>>()) {
+			foreach (var p in typeNode.Children.OfType<ILSpyTreeNode>()) {
+				if (p.IsHidden)
+					continue;
 				// method might be a child or a property or events
 				p.EnsureLazyChildren();
-				methodNode = p.Children.FirstOrDefault(m => m.MethodDefinition == def);
+				methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def && !m.IsHidden);
 				if (methodNode != null)
 					return methodNode;
 			}
@@ -187,7 +194,7 @@ namespace ICSharpCode.ILSpy
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
 			typeNode.EnsureLazyChildren();
-			return typeNode.VisibleChildren.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def);
+			return typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def && !m.IsHidden);
 		}
 		
 		/// <summary>
@@ -200,7 +207,7 @@ namespace ICSharpCode.ILSpy
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
 			typeNode.EnsureLazyChildren();
-			return typeNode.VisibleChildren.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def);
+			return typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def && !m.IsHidden);
 		}
 		
 		/// <summary>
@@ -213,7 +220,7 @@ namespace ICSharpCode.ILSpy
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
 			typeNode.EnsureLazyChildren();
-			return typeNode.VisibleChildren.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def);
+			return typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def && !m.IsHidden);
 		}
 		#endregion
 		

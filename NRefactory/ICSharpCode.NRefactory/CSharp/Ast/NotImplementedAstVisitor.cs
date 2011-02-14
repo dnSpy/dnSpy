@@ -5,7 +5,7 @@ using System;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class NotImplementedAstVisitor<T, S> : AstVisitor<T, S>
+	public class NotImplementedAstVisitor<T, S> : IAstVisitor<T, S>
 	{	
 		public S VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, T data)
 		{
@@ -272,6 +272,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			throw new NotImplementedException();
 		}
 		
+		public S VisitDoWhileStatement(DoWhileStatement doWhileStatement, T data)
+		{
+			throw new NotImplementedException();
+		}
+		
 		public S VisitEmptyStatement(EmptyStatement emptyStatement, T data)
 		{
 			throw new NotImplementedException();
@@ -293,6 +298,16 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public S VisitForStatement(ForStatement forStatement, T data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public S VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement, T data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public S VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
@@ -373,6 +388,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public S VisitWhileStatement(WhileStatement whileStatement, T data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public S VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement, T data)
 		{
 			throw new NotImplementedException();
 		}

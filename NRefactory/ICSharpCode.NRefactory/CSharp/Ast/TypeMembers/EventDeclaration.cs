@@ -1,4 +1,4 @@
-﻿// 
+// 
 // EventDeclaration.cs
 //
 // Author:
@@ -35,7 +35,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildrenByRole (Roles.Variable, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitEventDeclaration (this, data);
 		}
@@ -45,6 +45,10 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		public static readonly Role<Accessor> AddAccessorRole = new Role<Accessor>("AddAccessor", Accessor.Null);
 		public static readonly Role<Accessor> RemoveAccessorRole = new Role<Accessor>("RemoveAccessor", Accessor.Null);
+		
+		public CSharpTokenNode LBraceToken {
+			get { return GetChildByRole (Roles.LBrace); }
+		}
 		
 		public Accessor AddAccessor {
 			get { return GetChildByRole (AddAccessorRole); }
@@ -56,7 +60,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (RemoveAccessorRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public CSharpTokenNode RBraceToken {
+			get { return GetChildByRole (Roles.RBrace); }
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCustomEventDeclaration (this, data);
 		}

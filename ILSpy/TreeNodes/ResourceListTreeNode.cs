@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Windows.Threading;
 
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
@@ -17,7 +18,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Lists the embedded resources in an assembly.
 	/// </summary>
-	sealed class ResourceListTreeNode : ILSpyTreeNode<ResourceTreeNode>
+	sealed class ResourceListTreeNode : ILSpyTreeNode
 	{
 		readonly ModuleDefinition module;
 		
@@ -51,15 +52,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			EnsureLazyChildren();
-			foreach (var child in this.Children) {
+			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
+			foreach (ILSpyTreeNode child in this.Children) {
 				child.Decompile(language, output, options);
 				output.WriteLine();
 			}
 		}
 	}
 	
-	class ResourceTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+	class ResourceTreeNode : ILSpyTreeNode
 	{
 		Resource r;
 		

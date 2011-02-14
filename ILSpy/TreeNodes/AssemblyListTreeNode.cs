@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// Represents a list of assemblies.
 	/// This is used as (invisible) root node of the tree view.
 	/// </summary>
-	sealed class AssemblyListTreeNode : ILSpyTreeNode<AssemblyTreeNode>
+	sealed class AssemblyListTreeNode : ILSpyTreeNode
 	{
 		readonly AssemblyList assemblyList;
 		
@@ -38,28 +38,35 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public AssemblyListTreeNode(AssemblyList assemblyList)
-			: base(assemblyList.assemblies)
 		{
 			if (assemblyList == null)
 				throw new ArgumentNullException("assemblyList");
 			this.assemblyList = assemblyList;
+			this.Children.BindToObservableCollection(assemblyList.assemblies);
 		}
 		
-		public override DropEffect CanDrop(IDataObject data, DropEffect requestedEffect)
-		{
-			if (data.GetDataPresent(AssemblyTreeNode.DataFormat))
-				return DropEffect.Move;
-			else if (data.GetDataPresent(DataFormats.FileDrop))
-				return DropEffect.Move;
-			else
-				return DropEffect.None;
+		public override object Text {
+			get { return assemblyList.ListName; }
 		}
 		
-		public override void Drop(IDataObject data, int index, DropEffect finalEffect)
+		public override bool CanDrop(DragEventArgs e, int index)
 		{
-			string[] files = data.GetData(AssemblyTreeNode.DataFormat) as string[];
+			e.Effects = DragDropEffects.Move;
+			if (e.Data.GetDataPresent(AssemblyTreeNode.DataFormat))
+				return true;
+			else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+				return true;
+			else {
+				e.Effects = DragDropEffects.None;
+				return false;
+			}
+		}
+		
+		public override void Drop(DragEventArgs e, int index)
+		{
+			string[] files = e.Data.GetData(AssemblyTreeNode.DataFormat) as string[];
 			if (files == null)
-				files = data.GetData(DataFormats.FileDrop) as string[];
+				files = e.Data.GetData(DataFormats.FileDrop) as string[];
 			if (files != null) {
 				lock (assemblyList.assemblies) {
 					var nodes = (from file in files

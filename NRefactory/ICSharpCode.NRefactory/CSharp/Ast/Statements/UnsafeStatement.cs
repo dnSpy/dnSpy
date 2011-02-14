@@ -1,4 +1,4 @@
-﻿// 
+// 
 // UnsafeStatement.cs
 //
 // Author:
@@ -40,7 +40,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Body, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUnsafeStatement (this, data);
 		}

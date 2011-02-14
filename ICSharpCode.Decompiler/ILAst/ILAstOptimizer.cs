@@ -12,52 +12,31 @@ namespace Decompiler.ControlFlow
 	{
 		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 		
-		public void Optimize(ref List<ILNode> ast)
+		public void Optimize(ILBlock method)
 		{
-			OptimizeRecursive(ref ast);
+			var blocks = method.GetSelfAndChildrenRecursive<ILBlock>().ToList();
 			
-			// Provide a container for the algorithms below
-			ILBlock astBlock = new ILBlock(ast);
-			
-			OrderNodes(astBlock);
-			FlattenNestedMovableBlocks(astBlock);
-			SimpleGotoRemoval(astBlock);
-			RemoveDeadLabels(astBlock);
-			
-			ast = astBlock.Body;
-		}
-		
-		void OptimizeRecursive(ref List<ILNode> ast)
-		{
-			ILLabel entryLabel;
-			List<ILTryCatchBlock> tryCatchBlocks = ast.OfType<ILTryCatchBlock>().ToList();
-			
-			ControlFlowGraph graph;
-			
-			ast = SplitToMovableBlocks(ast, out entryLabel);
-			
-			graph = BuildGraph(ast, entryLabel);
-			graph.ComputeDominance();
-			graph.ComputeDominanceFrontier();
-			ast = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
-
-			graph = BuildGraph(ast, entryLabel);
-			graph.ComputeDominance();
-			graph.ComputeDominanceFrontier();
-			ast = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
-			
-			// Recursively optimze try-cath blocks
-			foreach(ILTryCatchBlock tryCatchBlock in tryCatchBlocks) {
-				Optimize(ref tryCatchBlock.TryBlock.Body);
-				foreach(ILTryCatchBlock.CatchBlock catchBlock in tryCatchBlock.CatchBlocks) {
-					Optimize(ref catchBlock.Body);
-				}
-				Optimize(ref tryCatchBlock.FinallyBlock.Body);
+			foreach(ILBlock block in blocks) {
+				ControlFlowGraph graph;
+				
+				SplitToMovableBlocks(block);
+				
+				graph = BuildGraph(block.Body, block.EntryPoint);
+				graph.ComputeDominance();
+				graph.ComputeDominanceFrontier();
+				block.Body = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
+	
+				graph = BuildGraph(block.Body, block.EntryPoint);
+				graph.ComputeDominance();
+				graph.ComputeDominanceFrontier();
+				block.Body = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
 			}
 			
-			ast.Insert(0, new ILExpression(OpCodes.Br, entryLabel));
+			OrderNodes(method);
+			FlattenNestedMovableBlocks(method);
+			SimpleGotoRemoval(method);
+			RemoveDeadLabels(method);
 		}
-		
 		
 		class ILMoveableBlock: ILBlock
 		{
@@ -71,47 +50,51 @@ namespace Decompiler.ControlFlow
 		/// The method adds necessary branches to make control flow between blocks
 		/// explicit and thus order independent.
 		/// </summary>
-		List<ILNode> SplitToMovableBlocks(List<ILNode> ast, out ILLabel entryLabel)
+		void SplitToMovableBlocks(ILBlock block)
 		{
-			List<ILNode> blocks = new List<ILNode>();
+			// Remve no-ops
+			block.Body = block.Body.Where(n => !(n is ILExpression && ((ILExpression)n).OpCode == OpCodes.Nop)).ToList();
 			
-			ILMoveableBlock block = new ILMoveableBlock() { OriginalOrder = (nextBlockIndex++) };
-			blocks.Add(block);
-			entryLabel = new ILLabel() { Name = "Block_" + block.OriginalOrder };
-			block.Body.Add(entryLabel);
+			List<ILNode> moveableBlocks = new List<ILNode>();
 			
-			if (ast.Count == 0)
-				return blocks;
-			block.Body.Add(ast[0]);
+			ILMoveableBlock moveableBlock = new ILMoveableBlock() { OriginalOrder = (nextBlockIndex++) };
+			moveableBlocks.Add(moveableBlock);
+			block.EntryPoint = new ILLabel() { Name = "Block_" + moveableBlock.OriginalOrder };
+			moveableBlock.Body.Add(block.EntryPoint);
 			
-			for (int i = 1; i < ast.Count; i++) {
-				ILNode lastNode = ast[i - 1];
-				ILNode currNode = ast[i];
+			if (block.Body.Count > 0) {
+				moveableBlock.Body.Add(block.Body[0]);
 				
-				// Insert split
-				if ((currNode is ILLabel && !(lastNode is ILLabel)) ||
-					lastNode is ILTryCatchBlock ||
-					currNode is ILTryCatchBlock ||
-				    (lastNode is ILExpression) && ((ILExpression)lastNode).OpCode.IsBranch() ||
-				    (currNode is ILExpression) && ((ILExpression)currNode).OpCode.IsBranch())
-				{
-					ILBlock lastBlock = block;
-					block = new ILMoveableBlock() { OriginalOrder = (nextBlockIndex++) };
-					blocks.Add(block);
+				for (int i = 1; i < block.Body.Count; i++) {
+					ILNode lastNode = block.Body[i - 1];
+					ILNode currNode = block.Body[i];
 					
-					// Explicit branch from one block to other
-					// (unless the last expression was unconditional branch)
-					if (!(lastNode is ILExpression) || ((ILExpression)lastNode).OpCode.CanFallThough()) {
-						ILLabel blockLabel = new ILLabel() { Name = "Block_" + block.OriginalOrder };
-						lastBlock.Body.Add(new ILExpression(OpCodes.Br, blockLabel));
-						block.Body.Add(blockLabel);
+					// Insert split
+					if ((currNode is ILLabel && !(lastNode is ILLabel)) ||
+						lastNode is ILTryCatchBlock ||
+						currNode is ILTryCatchBlock ||
+					    (lastNode is ILExpression) && ((ILExpression)lastNode).OpCode.IsBranch() ||
+					    (currNode is ILExpression) && ((ILExpression)currNode).OpCode.IsBranch())
+					{
+						ILBlock lastBlock = moveableBlock;
+						moveableBlock = new ILMoveableBlock() { OriginalOrder = (nextBlockIndex++) };
+						moveableBlocks.Add(moveableBlock);
+						
+						// Explicit branch from one block to other
+						// (unless the last expression was unconditional branch)
+						if (!(lastNode is ILExpression) || ((ILExpression)lastNode).OpCode.CanFallThough()) {
+							ILLabel blockLabel = new ILLabel() { Name = "Block_" + moveableBlock.OriginalOrder };
+							lastBlock.Body.Add(new ILExpression(OpCodes.Br, blockLabel));
+							moveableBlock.Body.Add(blockLabel);
+						}
 					}
+					
+					moveableBlock.Body.Add(currNode);
 				}
-				
-				block.Body.Add(currNode);
 			}
 			
-			return blocks;
+			block.Body = moveableBlocks;
+			return;
 		}
 		
 		ControlFlowGraph BuildGraph(List<ILNode> nodes, ILLabel entryLabel)
@@ -242,13 +225,13 @@ namespace Decompiler.ControlFlow
 						    labelToCfNode.TryGetValue((ILLabel)statBranch.Operand, out statTarget))
 						{
 							ILCondition condition = new ILCondition() {
-							    Condition   = condBranch,
-							    TrueTarget  = (ILLabel)condBranch.Operand,
-							    FalseTarget = (ILLabel)statBranch.Operand
+							    Condition  = condBranch,
+							    TrueBlock  = new ILBlock() { EntryPoint = (ILLabel)condBranch.Operand },
+							    FalseBlock = new ILBlock() { EntryPoint = (ILLabel)statBranch.Operand }
 							};
 							
-							// TODO: Use the labels to ensre correctness
-							// TODO: Ensure that the labels are considered live in dead label removal
+							// The label will not be used - kill it
+							condBranch.Operand = null;
 							
 							// Replace the two branches with a conditional structure
 							block.Body.Remove(condBranch);
@@ -264,12 +247,12 @@ namespace Decompiler.ControlFlow
 							if (!frontiers.Contains(condTarget)) {
 								HashSet<ControlFlowNode> content = FindDominatedNodes(nodes, condTarget);
 								nodes.ExceptWith(content);
-							    condition.TrueBlock = new ILBlock(FindConditions(content, condTarget));
+								condition.TrueBlock.Body.AddRange(FindConditions(content, condTarget));
 							}
 							if (!frontiers.Contains(statTarget)) {
 								HashSet<ControlFlowNode> content = FindDominatedNodes(nodes, statTarget);
 								nodes.ExceptWith(content);
-							    condition.FalseBlock = new ILBlock(FindConditions(content, statTarget));
+								condition.FalseBlock.Body.AddRange(FindConditions(content, statTarget));
 							}
 							
 							nodes.Remove(node);
@@ -380,7 +363,8 @@ namespace Decompiler.ControlFlow
 		
 		void OrderNodes(ILBlock ast)
 		{
-			var blocks = ast.GetSelfAndChildrenRecursive<ILBlock>().ToList();
+			// Order movable nodes
+			var blocks = ast.GetSelfAndChildrenRecursive<ILBlock>().Where(b => !(b is ILMoveableBlock)).ToList();
 			ILMoveableBlock first = new ILMoveableBlock() { OriginalOrder = -1 };
 			foreach(ILBlock block in blocks) {
 				block.Body = block.Body.OrderBy(n => (n.GetSelfAndChildrenRecursive<ILMoveableBlock>().FirstOrDefault() ?? first).OriginalOrder).ToList();
@@ -395,6 +379,10 @@ namespace Decompiler.ControlFlow
 			ILBlock block = node as ILBlock;
 			if (block != null) {
 				List<ILNode> flatBody = new List<ILNode>();
+				if (block.EntryPoint != null) {
+					flatBody.Add(new ILExpression(OpCodes.Br, block.EntryPoint));
+					block.EntryPoint = null;
+				}
 				foreach (ILNode child in block.Body) {
 					FlattenNestedMovableBlocks(child);
 					if (child is ILMoveableBlock) {

@@ -13,7 +13,6 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 		public void WhileStatementTest()
 		{
 			WhileStatement loopStmt = ParseUtilCSharp.ParseStatement<WhileStatement>("while (true) { }");
-			Assert.AreEqual(WhilePosition.Begin, loopStmt.WhilePosition);
 			Assert.IsTrue(loopStmt.Condition is PrimitiveExpression);
 			Assert.IsTrue(loopStmt.EmbeddedStatement is BlockStatement);
 		}
@@ -21,8 +20,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 		[Test]
 		public void DoWhileStatementTest()
 		{
-			WhileStatement loopStmt = ParseUtilCSharp.ParseStatement<WhileStatement>("do { } while (true);");
-			Assert.AreEqual(WhilePosition.End, loopStmt.WhilePosition);
+			DoWhileStatement loopStmt = ParseUtilCSharp.ParseStatement<DoWhileStatement>("do { } while (true);");
 			Assert.IsTrue(loopStmt.Condition is PrimitiveExpression);
 			Assert.IsTrue(loopStmt.EmbeddedStatement is BlockStatement);
 		}

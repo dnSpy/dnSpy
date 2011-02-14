@@ -160,8 +160,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (child.StartOffset <= newStructure.StartOffset && newStructure.EndOffset <= child.EndOffset) {
 					return child.AddNestedStructure(newStructure);
 				} else if (!(child.EndOffset <= newStructure.StartOffset || newStructure.EndOffset <= child.StartOffset)) {
-					// Overlap (invalid nesting), can't build a tree. -> Don't add the new structure.
-					return false;
+					// child and newStructure overlap
+					if (!(newStructure.StartOffset <= child.StartOffset && child.EndOffset <= newStructure.EndOffset)) {
+						// Invalid nesting, can't build a tree. -> Don't add the new structure.
+						return false;
+					}
 				}
 			}
 			// Move existing structures into the new structure:

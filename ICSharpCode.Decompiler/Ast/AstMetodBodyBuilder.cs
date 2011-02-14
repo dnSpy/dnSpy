@@ -46,10 +46,11 @@ namespace Decompiler
 		{
 			if (methodDef.Body == null) return null;
 			
-			List<ILNode> body = new ILAstBuilder().Build(methodDef, true);
+			ILBlock ilMethod = new ILBlock();
+			ilMethod.Body = new ILAstBuilder().Build(methodDef, true);
 			
 			ILAstOptimizer bodyGraph = new ILAstOptimizer();
-			bodyGraph.Optimize(ref body);
+			bodyGraph.Optimize(ilMethod);
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
 			Dictionary<string, int> typeNames = new Dictionary<string, int>();
@@ -95,7 +96,7 @@ namespace Decompiler
 //				astBlock.Children.Add(astLocalVar);
 			}
 			
-			Ast.BlockStatement astBlock = TransformBlock(new ILBlock(body));
+			Ast.BlockStatement astBlock = TransformBlock(ilMethod);
 			CommentStatement.ReplaceAll(astBlock); // convert CommentStatements to Comments
 			return astBlock;
 		}
@@ -157,9 +158,9 @@ namespace Decompiler
 					FalseStatement = TransformBlock(conditionalNode.TrueBlock)
 				};
 			} else if (node is ILTryCatchBlock) {
-				ILTryCatchBlock tryCachNode = ((ILTryCatchBlock)node);
+				ILTryCatchBlock tryCatchNode = ((ILTryCatchBlock)node);
 				List<Ast.CatchClause> catchClauses = new List<CatchClause>();
-				foreach (var catchClause in tryCachNode.CatchBlocks) {
+				foreach (var catchClause in tryCatchNode.CatchBlocks) {
 					catchClauses.Add(new Ast.CatchClause {
 						Type = AstBuilder.ConvertType(catchClause.ExceptionType),
 						VariableName = "exception",
@@ -167,9 +168,9 @@ namespace Decompiler
 					});
 				}
 				yield return new Ast.TryCatchStatement {
-					TryBlock = TransformBlock(tryCachNode.TryBlock),
+					TryBlock = TransformBlock(tryCatchNode.TryBlock),
 					CatchClauses = catchClauses,
-					FinallyBlock = TransformBlock(tryCachNode.FinallyBlock)
+					FinallyBlock = tryCatchNode.FinallyBlock != null ? TransformBlock(tryCatchNode.FinallyBlock) : null
 				};
 			} else if (node is ILBlock) {
 				yield return TransformBlock((ILBlock)node);

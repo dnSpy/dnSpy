@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// Tree node representing an assembly.
 	/// This class is responsible for loading both namespace and type nodes.
 	/// </summary>
-	sealed class AssemblyTreeNode : ILSpyTreeNode<ILSpyTreeNodeBase>
+	sealed class AssemblyTreeNode : ILSpyTreeNode
 	{
 		
 		readonly AssemblyList assemblyList;
@@ -209,6 +209,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override bool CanDrag(SharpTreeNode[] nodes)
 		{
 			return nodes.All(n => n is AssemblyTreeNode);
+		}
+		
+		public override void StartDrag(DependencyObject dragSource, SharpTreeNode[] nodes)
+		{
+			DragDrop.DoDragDrop(dragSource, Copy(nodes), DragDropEffects.All);
 		}
 		
 		public override bool CanDelete()

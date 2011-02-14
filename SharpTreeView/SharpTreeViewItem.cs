@@ -33,10 +33,10 @@ namespace ICSharpCode.TreeView
 		{
 			switch (e.Key) {
 				case Key.F2:
-					if (SharpTreeNode.ActiveNodes.Count == 1 && Node.IsEditable) {
-						Node.IsEditing = true;
-						e.Handled = true;
-					}
+//					if (SharpTreeNode.ActiveNodes.Count == 1 && Node.IsEditable) {
+//						Node.IsEditing = true;
+//						e.Handled = true;
+//					}
 					break;
 				case Key.Escape:
 					Node.IsEditing = false;
@@ -84,8 +84,9 @@ namespace ICSharpCode.TreeView
 				if (Math.Abs(currentPoint.X - startPoint.X) >= SystemParameters.MinimumHorizontalDragDistance ||
 				    Math.Abs(currentPoint.Y - startPoint.Y) >= SystemParameters.MinimumVerticalDragDistance) {
 
-					if (Node.InternalCanDrag()) {
-						Node.InternalDrag(this);
+					var selection = ParentTreeView.GetTopLevelSelection().ToArray();
+					if (Node.CanDrag(selection)) {
+						Node.StartDrag(this, selection);
 					}
 				}
 			}
@@ -110,7 +111,7 @@ namespace ICSharpCode.TreeView
 		}
 
 		#endregion
-
+		
 		#region Drag and Drop
 
 		protected override void OnDragEnter(DragEventArgs e)
