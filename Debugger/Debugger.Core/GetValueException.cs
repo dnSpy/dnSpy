@@ -2,17 +2,17 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
-using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace Debugger
 {
 	public class GetValueException: DebuggerException
 	{
-		INode expression;
+		AstNode expression;
 		string error;
 		
 		/// <summary> Expression that has caused this exception to occur </summary>
-		public INode Expression {
+		public AstNode Expression {
 			get { return expression; }
 			set { expression = value; }
 		}
@@ -32,7 +32,7 @@ namespace Debugger
 			}
 		}
 		
-		public GetValueException(INode expression, string error):base(error)
+		public GetValueException(AstNode expression, string error):base(error)
 		{
 			this.expression = expression;
 			this.error = error;

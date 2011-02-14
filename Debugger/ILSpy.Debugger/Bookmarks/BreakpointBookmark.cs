@@ -18,8 +18,8 @@
 
 using System;
 using System.Windows.Media;
+using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.Services;
-using Mono.CSharp;
 
 namespace ILSpy.Debugger.Bookmarks
 {
@@ -83,7 +83,7 @@ namespace ILSpy.Debugger.Bookmarks
 			set { tooltip = value; }
 		}
 		
-		public BreakpointBookmark(string typeName, Location location, BreakpointAction action) : base(typeName, location)
+		public BreakpointBookmark(string typeName, AstLocation location, BreakpointAction action) : base(typeName, location)
 		{
 			this.action = action;
 		}

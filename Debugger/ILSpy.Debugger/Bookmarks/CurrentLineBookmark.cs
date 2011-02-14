@@ -3,6 +3,7 @@
 
 using System;
 using System.Windows.Media;
+using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.Services;
 using Mono.CSharp;
 
@@ -26,7 +27,7 @@ namespace ILSpy.Debugger.Bookmarks
 			endLine     = makerEndLine;
 			endColumn   = makerEndColumn;
 			
-			instance = new CurrentLineBookmark(typeName, new Location(startColumn, startLine));
+			instance = new CurrentLineBookmark(typeName, new AstLocation(startColumn, startLine));
 			BookmarkManager.AddMark(instance);
 		}
 		
@@ -46,7 +47,7 @@ namespace ILSpy.Debugger.Bookmarks
 			get { return 100; }
 		}
 		
-		public CurrentLineBookmark(string typeName, Location location) : base(typeName, location)
+		public CurrentLineBookmark(string typeName, AstLocation location) : base(typeName, location)
 		{
 			
 		}

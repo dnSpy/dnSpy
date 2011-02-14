@@ -4,19 +4,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
 using Debugger;
 using Debugger.MetaData;
 using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.NRefactory.Visitors
 {
 	public class EvaluateException: GetValueException
 	{
-		public EvaluateException(INode code, string msg):base(code, msg) {}
-		public EvaluateException(INode code, string msgFmt, params string[] msgArgs):base(code, string.Format(msgFmt, msgArgs)) {}
+		public EvaluateException(AstNode code, string msg):base(code, msg) {}
+		public EvaluateException(AstNode code, string msgFmt, params string[] msgArgs):base(code, string.Format(msgFmt, msgArgs)) {}
 	}
 	
 	class TypedValue
@@ -43,7 +45,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		}
 	}
 	
-	public class ExpressionEvaluator : NotImplementedAstVisitor
+	public class ExpressionEvaluator : NotImplementedAstVisitor<object, object>
 	{
 		StackFrame context;
 		
@@ -56,10 +58,10 @@ namespace ICSharpCode.NRefactory.Visitors
 			this.context = context;
 		}
 		
-		public static INode Parse(string code, SupportedLanguage language)
+		public static AstNode Parse(string code, SupportedLanguage language)
 		{
 			SnippetParser parser = new SnippetParser(language);
-			INode astRoot = parser.Parse(code);
+			AstNode astRoot = parser.Parse(code);
 			if (parser.Errors.Count > 0) {
 				throw new GetValueException(parser.Errors.ErrorOutput);
 			}
@@ -76,7 +78,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			return Evaluate(Parse(code, language), context);
 		}
 		
-		public static Value Evaluate(INode code, Process context)
+		public static Value Evaluate(AstNode code, Process context)
 		{
 			if (context.SelectedStackFrame != null) {
 				return Evaluate(code, context.SelectedStackFrame);
@@ -88,7 +90,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			}
 		}
 		
-		public static Value Evaluate(INode code, StackFrame context)
+		public static Value Evaluate(AstNode code, StackFrame context)
 		{
 			if (context == null) throw new ArgumentNullException("context");
 			if (context.IsInvalid) throw new DebuggerException("The context is no longer valid");
@@ -105,7 +107,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		public static Expression ParseExpression(string code, SupportedLanguage language)
 		{
 			SnippetParser parser = new SnippetParser(language);
-			INode astRoot = parser.Parse(code);
+			AstNode astRoot = parser.Parse(code);
 			if (parser.Errors.Count > 0) {
 				throw new GetValueException(parser.Errors.ErrorOutput);
 			}
@@ -159,12 +161,12 @@ namespace ICSharpCode.NRefactory.Visitors
 			}
 		}
 		
-		TypedValue Evaluate(INode expression)
+		TypedValue Evaluate(AstNode expression)
 		{
 			return Evaluate(expression, true);
 		}
 		
-		TypedValue Evaluate(INode expression, bool permRef)
+		TypedValue Evaluate(AstNode expression, bool permRef)
 		{
 			// Try to get the value from cache
 			// (the cache is cleared when the process is resumed)
@@ -199,16 +201,16 @@ namespace ICSharpCode.NRefactory.Visitors
 			return val;
 		}
 		
-		List<TypedValue> EvaluateAll(List<Expression> exprs)
+		IList<TypedValue> EvaluateAll(IEnumerable<Expression> exprs)
 		{
-			List<TypedValue> vals = new List<TypedValue>(exprs.Count);
+			var vals = new List<TypedValue>(exprs.Count());
 			foreach(Expression expr in exprs) {
 				vals.Add(Evaluate(expr));
 			}
 			return vals;
 		}
 		
-		int EvaluateAsInt(INode expression)
+		int EvaluateAsInt(AstNode expression)
 		{
 			if (expression is PrimitiveExpression) {
 				int? i = ((PrimitiveExpression)expression).Value as int?;
@@ -226,7 +228,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			}
 		}
 		
-		TypedValue EvaluateAs(INode expression, DebugType type)
+		TypedValue EvaluateAs(AstNode expression, DebugType type)
 		{
 			TypedValue val = Evaluate(expression);
 			if (val.Type == type)
@@ -249,7 +251,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			}
 		}
 		
-		Value[] GetValues(List<TypedValue> typedVals)
+		Value[] GetValues(IList<TypedValue> typedVals)
 		{
 			List<Value> vals = new List<Value>(typedVals.Count);
 			foreach(TypedValue typedVal in typedVals) {
@@ -258,7 +260,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			return vals.ToArray();
 		}
 		
-		DebugType[] GetTypes(List<TypedValue> typedVals)
+		DebugType[] GetTypes(IList<TypedValue> typedVals)
 		{
 			List<DebugType> types = new List<DebugType>(typedVals.Count);
 			foreach(TypedValue typedVal in typedVals) {
@@ -276,22 +278,22 @@ namespace ICSharpCode.NRefactory.Visitors
 		public object VisitAssignmentExpression(AssignmentExpression assignmentExpression, object data)
 		{
 			BinaryOperatorType op;
-			switch (assignmentExpression.Op) {
-				case AssignmentOperatorType.Assign:        op = BinaryOperatorType.None; break;
+			switch (assignmentExpression.Operator) {
+				//case AssignmentOperatorType.Assign:        op = BinaryOperatorType.None; break;
 				case AssignmentOperatorType.Add:           op = BinaryOperatorType.Add; break;
-				case AssignmentOperatorType.ConcatString:  op = BinaryOperatorType.Concat; break;
+				//case AssignmentOperatorType.ConcatString:  op = BinaryOperatorType.Concat; break;
 				case AssignmentOperatorType.Subtract:      op = BinaryOperatorType.Subtract; break;
 				case AssignmentOperatorType.Multiply:      op = BinaryOperatorType.Multiply; break;
 				case AssignmentOperatorType.Divide:        op = BinaryOperatorType.Divide; break;
-				case AssignmentOperatorType.DivideInteger: op = BinaryOperatorType.DivideInteger; break;
+				//case AssignmentOperatorType.DivideInteger: op = BinaryOperatorType.DivideInteger; break;
 				case AssignmentOperatorType.ShiftLeft:     op = BinaryOperatorType.ShiftLeft; break;
 				case AssignmentOperatorType.ShiftRight:    op = BinaryOperatorType.ShiftRight; break;
 				case AssignmentOperatorType.ExclusiveOr:   op = BinaryOperatorType.ExclusiveOr; break;
 				case AssignmentOperatorType.Modulus:       op = BinaryOperatorType.Modulus; break;
 				case AssignmentOperatorType.BitwiseAnd:    op = BinaryOperatorType.BitwiseAnd; break;
 				case AssignmentOperatorType.BitwiseOr:     op = BinaryOperatorType.BitwiseOr; break;
-				case AssignmentOperatorType.Power:         op = BinaryOperatorType.Power; break;
-				default: throw new GetValueException("Unknown operator " + assignmentExpression.Op);
+				//case AssignmentOperatorType.Power:         op = BinaryOperatorType.Power; break;
+				default: throw new GetValueException("Unknown operator " + assignmentExpression.Operator);
 			}
 			
 			TypedValue right;
@@ -300,7 +302,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			} else {
 				BinaryOperatorExpression binOpExpr = new BinaryOperatorExpression();
 				binOpExpr.Left  = assignmentExpression.Left;
-				binOpExpr.Op    = op;
+				binOpExpr.Operator    = op;
 				binOpExpr.Right = assignmentExpression.Right;
 				right = Evaluate(binOpExpr);
 			}
@@ -321,7 +323,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		
 		public object VisitBlockStatement(BlockStatement blockStatement, object data)
 		{
-			foreach(INode statement in blockStatement.Children) {
+			foreach(var statement in blockStatement.Children) {
 				Evaluate(statement);
 			}
 			return null;
@@ -341,7 +343,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		public object VisitCastExpression(CastExpression castExpression, object data)
 		{
 			TypedValue val = Evaluate(castExpression.Expression);
-			DebugType castTo = castExpression.CastTo.ResolveType(context.AppDomain);
+			DebugType castTo = castExpression.ResolveType(context.AppDomain).CastTo();
 			if (castTo.IsPrimitive && val.Type.IsPrimitive && castTo != val.Type) {
 				object oldVal = val.PrimitiveValue;
 				object newVal;
@@ -403,11 +405,11 @@ namespace ICSharpCode.NRefactory.Visitors
 		
 		public object VisitIndexerExpression(IndexerExpression indexerExpression, object data)
 		{
-			TypedValue target = Evaluate(indexerExpression.TargetObject);
+			TypedValue target = Evaluate(indexerExpression.Target);
 			
 			if (target.Type.IsArray) {
 				List<int> intIndexes = new List<int>();
-				foreach(Expression indexExpr in indexerExpression.Indexes) {
+				foreach(Expression indexExpr in indexerExpression.Arguments) {
 					intIndexes.Add(EvaluateAsInt(indexExpr));
 				}
 				return new TypedValue(
@@ -415,16 +417,16 @@ namespace ICSharpCode.NRefactory.Visitors
 					(DebugType)target.Type.GetElementType()
 				);
 			} else if (target.Type.FullName == typeof(string).FullName) {
-				if (indexerExpression.Indexes.Count != 1)
+				if (indexerExpression.Arguments.Count() != 1)
 					throw new GetValueException("Single index expected");
 				
-				int index = EvaluateAsInt(indexerExpression.Indexes[0]);
+				int index = EvaluateAsInt(indexerExpression.Arguments.First());
 				string str = (string)target.PrimitiveValue;
 				if (index < 0 || index >= str.Length)
 					throw new GetValueException("Index was outside the bounds of the array.");
 				return CreateValue(str[index]);
 			} else {
-				List<TypedValue> indexes = EvaluateAll(indexerExpression.Indexes);
+				var indexes = EvaluateAll(indexerExpression.Arguments);
 				DebugPropertyInfo pi = (DebugPropertyInfo)target.Type.GetProperty("Item", GetTypes(indexes));
 				if (pi == null)
 					throw new GetValueException("The object does not have an indexer property");
@@ -440,21 +442,21 @@ namespace ICSharpCode.NRefactory.Visitors
 			TypedValue target;
 			DebugType targetType;
 			string methodName;
-			MemberReferenceExpression memberRef = invocationExpression.TargetObject as MemberReferenceExpression;
+			MemberReferenceExpression memberRef = invocationExpression.Target as MemberReferenceExpression;
 			if (memberRef != null) {
 				// TODO: Optimize
 				try {
 					// Instance
-					target = Evaluate(memberRef.TargetObject);
+					target = Evaluate(memberRef.Target);
 					targetType = target.Type;
 				} catch (GetValueException) {
 					// Static
 					target = null;
-					targetType = memberRef.TargetObject.ResolveType(context.AppDomain);
+					targetType = memberRef.Target.ResolveType(context.AppDomain);
 				}
 				methodName = memberRef.MemberName;
 			} else {
-				IdentifierExpression ident = invocationExpression.TargetObject as IdentifierExpression;
+				IdentifierExpression ident = invocationExpression.Target as IdentifierExpression;
 				if (ident != null) {
 					target = Evaluate(new ThisReferenceExpression());
 					targetType = target.Type;
@@ -463,7 +465,7 @@ namespace ICSharpCode.NRefactory.Visitors
 					throw new GetValueException("Member reference expected for method invocation");
 				}
 			}
-			List<TypedValue> args = EvaluateAll(invocationExpression.Arguments);
+			var args = EvaluateAll(invocationExpression.Arguments);
 			MethodInfo method = targetType.GetMethod(methodName, DebugType.BindingFlagsAllInScope, null, GetTypes(args), null);
 			if (method == null)
 				throw new GetValueException("Method " + methodName + " not found");
@@ -475,11 +477,11 @@ namespace ICSharpCode.NRefactory.Visitors
 		
 		public object VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, object data)
 		{
-			if (!objectCreateExpression.ObjectInitializer.IsNull)
-				throw new EvaluateException(objectCreateExpression.ObjectInitializer, "Object initializers not supported");
+			if (!objectCreateExpression.Initializer.IsNull)
+				throw new EvaluateException(objectCreateExpression.Initializer, "Object initializers not supported");
 			
-			DebugType type = objectCreateExpression.CreateType.ResolveType(context.AppDomain);
-			List<TypedValue> ctorArgs = EvaluateAll(objectCreateExpression.Parameters);
+			DebugType type = objectCreateExpression.Type.ResolveType(context.AppDomain);
+			var ctorArgs = EvaluateAll(objectCreateExpression.Arguments);
 			ConstructorInfo ctor = type.GetConstructor(BindingFlags.Default, null, CallingConventions.Any, GetTypes(ctorArgs), null);
 			if (ctor == null)
 				throw new EvaluateException(objectCreateExpression, "Constructor not found");
@@ -489,24 +491,26 @@ namespace ICSharpCode.NRefactory.Visitors
 		
 		public object VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
 		{
-			if (arrayCreateExpression.CreateType.RankSpecifier[0] != 0)
+			if (arrayCreateExpression.Initializer.RankSpecifier[0] != 0)
 				throw new EvaluateException(arrayCreateExpression, "Multi-dimensional arrays are not suppored");
 			
 			DebugType type = arrayCreateExpression.CreateType.ResolveType(context.AppDomain);
 			int length = 0;
-			if (arrayCreateExpression.Arguments.Count == 1) {
-				length = EvaluateAsInt(arrayCreateExpression.Arguments[0]);
-			} else if (!arrayCreateExpression.ArrayInitializer.IsNull) {
-				length = arrayCreateExpression.ArrayInitializer.CreateExpressions.Count;
+			if (arrayCreateExpression.Arguments.Count() == 1) {
+				length = EvaluateAsInt(arrayCreateExpression.Arguments.First());
+			} else if (!arrayCreateExpression.Initializer.IsNull) {
+				length = arrayCreateExpression.Initializer.Elements.Count();
 			}
 			Value array = Eval.NewArray((DebugType)type.GetElementType(), (uint)length, null);
-			if (!arrayCreateExpression.ArrayInitializer.IsNull) {
-				List<Expression> inits = arrayCreateExpression.ArrayInitializer.CreateExpressions;
-				if (inits.Count != length)
+			if (!arrayCreateExpression.Initializer.IsNull) {
+				var inits = arrayCreateExpression.Initializer.Elements;
+				if (inits.Count() != length)
 					throw new EvaluateException(arrayCreateExpression, "Incorrect initializer length");
-				for(int i = 0; i < length; i++) {
-					TypedValue init = EvaluateAs(inits[i], (DebugType)type.GetElementType());
-					array.SetArrayElement(new int[] { i }, init.Value);
+				int i = 0;
+				var enumerator = inits.GetEnumerator();
+				while (enumerator.MoveNext()) {
+					TypedValue init = EvaluateAs(enumerator.Current, (DebugType)type.GetElementType());
+					array.SetArrayElement(new int[] { i++ }, init.Value);
 				}
 			}
 			return new TypedValue(array, type);
@@ -518,13 +522,13 @@ namespace ICSharpCode.NRefactory.Visitors
 			DebugType targetType;
 			try {
 				// Instance
-				target = Evaluate(memberReferenceExpression.TargetObject);
+				target = Evaluate(memberReferenceExpression.Target);
 				targetType = target.Type;
 			} catch (GetValueException e) {
 				// Static
 				target = null;
 				try {
-					targetType = memberReferenceExpression.TargetObject.ResolveType(context.AppDomain);
+					targetType = memberReferenceExpression.Target.ResolveType(context.AppDomain);
 				} catch (GetValueException) {
 					throw e;  // Use the other, nicer message
 				}
@@ -570,7 +574,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		public object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
 			TypedValue value = Evaluate(unaryOperatorExpression.Expression);
-			UnaryOperatorType op = unaryOperatorExpression.Op;
+			UnaryOperatorType op = unaryOperatorExpression.Operator;
 			
 			if (op == UnaryOperatorType.Dereference) {
 				if (!value.Type.IsPointer)
@@ -588,9 +592,9 @@ namespace ICSharpCode.NRefactory.Visitors
 				TypedValue newValue = null;
 				try {
 					if (op == UnaryOperatorType.Decrement || op == UnaryOperatorType.PostDecrement)
-						newValue = (TypedValue)VisitAssignmentExpression(new AssignmentExpression(unaryOperatorExpression.Expression, AssignmentOperatorType.Subtract, new PrimitiveExpression(1)), null);
+						newValue = (TypedValue)VisitAssignmentExpression(new AssignmentExpression(unaryOperatorExpression.Expression, AssignmentOperatorType.Subtract), null);
 					if (op == UnaryOperatorType.Increment || op == UnaryOperatorType.PostIncrement)
-						newValue = (TypedValue)VisitAssignmentExpression(new AssignmentExpression(unaryOperatorExpression.Expression, AssignmentOperatorType.Add, new PrimitiveExpression(1)), null);
+						newValue = (TypedValue)VisitAssignmentExpression(new AssignmentExpression(unaryOperatorExpression.Expression, AssignmentOperatorType.Add), null);
 				} catch (EvaluateException e) {
 					throw new EvaluateException(unaryOperatorExpression, e.Message);
 				}
@@ -714,7 +718,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		
 		public object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
 		{
-			BinaryOperatorType op = binaryOperatorExpression.Op;
+			BinaryOperatorType op = binaryOperatorExpression.Operator;
 			
 			TypedValue left = Evaluate(binaryOperatorExpression.Left);
 			TypedValue right = Evaluate(binaryOperatorExpression.Right);
@@ -849,8 +853,8 @@ namespace ICSharpCode.NRefactory.Visitors
 						case BinaryOperatorType.ExclusiveOr: return a ^ b;
 						case BinaryOperatorType.BitwiseAnd:  return a & b;
 						case BinaryOperatorType.BitwiseOr:   return a | b;
-						case BinaryOperatorType.LogicalAnd:  return a && b;
-						case BinaryOperatorType.LogicalOr:   return a || b;
+						case BinaryOperatorType.ConditionalAnd:  return a && b;
+						case BinaryOperatorType.ConditionalOr:   return a || b;
 					}
 				}
 				
@@ -870,7 +874,6 @@ namespace ICSharpCode.NRefactory.Visitors
 						case BinaryOperatorType.Multiply:      return a * b;
 						case BinaryOperatorType.Divide:        return a / b;
 						case BinaryOperatorType.Modulus:       return a % b;
-						case BinaryOperatorType.Concat:        return a + b;
 					}
 				}
 				
@@ -890,7 +893,6 @@ namespace ICSharpCode.NRefactory.Visitors
 						case BinaryOperatorType.Multiply:      return a * b;
 						case BinaryOperatorType.Divide:        return a / b;
 						case BinaryOperatorType.Modulus:       return a % b;
-						case BinaryOperatorType.Concat:        return a + b;
 					}
 				}
 				
@@ -918,7 +920,6 @@ namespace ICSharpCode.NRefactory.Visitors
 						case BinaryOperatorType.Multiply:      return a * b;
 						case BinaryOperatorType.Divide:        return a / b;
 						case BinaryOperatorType.Modulus:       return a % b;
-						case BinaryOperatorType.Concat:        return a + b;
 					}
 				}
 				
@@ -946,7 +947,6 @@ namespace ICSharpCode.NRefactory.Visitors
 						case BinaryOperatorType.Multiply:      return a * b;
 						case BinaryOperatorType.Divide:        return a / b;
 						case BinaryOperatorType.Modulus:       return a % b;
-						case BinaryOperatorType.Concat:        return a + b;
 					}
 				}
 				
@@ -974,7 +974,6 @@ namespace ICSharpCode.NRefactory.Visitors
 						case BinaryOperatorType.Multiply:      return a * b;
 						case BinaryOperatorType.Divide:        return a / b;
 						case BinaryOperatorType.Modulus:       return a % b;
-						case BinaryOperatorType.Concat:        return a + b;
 					}
 				}
 				
@@ -1002,7 +1001,6 @@ namespace ICSharpCode.NRefactory.Visitors
 						case BinaryOperatorType.Multiply:      return a * b;
 						case BinaryOperatorType.Divide:        return a / b;
 						case BinaryOperatorType.Modulus:       return a % b;
-						case BinaryOperatorType.Concat:        return a + b;
 					}
 				}
 			

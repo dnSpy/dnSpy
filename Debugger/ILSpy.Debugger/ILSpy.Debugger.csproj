@@ -93,7 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\TreeModel" />
-    <Folder Include="Services\Debugger\Tooltips" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="UI\AttachToProcessWindow.xaml" />

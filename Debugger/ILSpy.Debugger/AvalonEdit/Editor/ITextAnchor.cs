@@ -17,7 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Mono.CSharp;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace ILSpy.Debugger.AvalonEdit.Editor
 {
@@ -30,7 +30,7 @@ namespace ILSpy.Debugger.AvalonEdit.Editor
 		/// Gets the text location of this anchor.
 		/// </summary>
 		/// <exception cref="InvalidOperationException">Thrown when trying to get the Offset from a deleted anchor.</exception>
-		Location Location { get; }
+		AstLocation Location { get; }
 		
 		/// <summary>
 		/// Gets the offset of the text anchor.

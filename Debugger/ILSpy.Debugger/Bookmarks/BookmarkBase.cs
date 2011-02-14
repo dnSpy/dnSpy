@@ -20,8 +20,8 @@ using System;
 using System.Windows.Input;
 using System.Windows.Media;
 
+using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.AvalonEdit.Editor;
-using Mono.CSharp;
 
 namespace ILSpy.Debugger.Bookmarks
 {
@@ -30,7 +30,7 @@ namespace ILSpy.Debugger.Bookmarks
 	/// </summary>
 	public class BookmarkBase : IBookmark
 	{
-		Location location;
+		AstLocation location;
 		
 		IDocument document;
 		ITextAnchor anchor;
@@ -55,7 +55,7 @@ namespace ILSpy.Debugger.Bookmarks
 		void CreateAnchor()
 		{
 			if (document != null) {
-				int lineNumber = Math.Max(1, Math.Min(location.Row, document.TotalNumberOfLines));
+				int lineNumber = Math.Max(1, Math.Min(location.Line, document.TotalNumberOfLines));
 				int lineLength = document.GetLine(lineNumber).Length;
 				int offset = document.PositionToOffset(
 					lineNumber,
@@ -73,7 +73,7 @@ namespace ILSpy.Debugger.Bookmarks
 		void AnchorDeleted(object sender, EventArgs e)
 		{
 			// the anchor just became invalid, so don't try to use it again
-			location = Location.Null;
+			location = AstLocation.Empty;
 			anchor = null;
 			RemoveMark();
 		}
@@ -91,7 +91,7 @@ namespace ILSpy.Debugger.Bookmarks
 			get { return anchor; }
 		}
 		
-		public Location Location {
+		public AstLocation Location {
 			get {
 				if (anchor != null)
 					return anchor.Location;
@@ -125,7 +125,7 @@ namespace ILSpy.Debugger.Bookmarks
 				if (anchor != null)
 					return anchor.Line;
 				else
-					return location.Row;
+					return location.Line;
 			}
 		}
 		
@@ -151,7 +151,7 @@ namespace ILSpy.Debugger.Bookmarks
 			}
 		}
 		
-		public BookmarkBase(string typeName, Location location)
+		public BookmarkBase(string typeName, AstLocation location)
 		{
 			this.TypeName = typeName;
 			this.Location = location;

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 using Debugger.Interop.CorDebug;
 using Debugger.Interop.CorSym;
-using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Visitors;
 
 namespace Debugger
@@ -258,7 +258,7 @@ namespace Debugger
 		
 		internal bool TerminateCommandIssued = false;
 		internal Queue<Breakpoint> BreakpointHitEventQueue = new Queue<Breakpoint>();
-		internal Dictionary<INode, TypedValue> ExpressionsCache = new Dictionary<INode, TypedValue>();
+		internal Dictionary<AstNode, TypedValue> ExpressionsCache = new Dictionary<AstNode, TypedValue>();
 		
 		#region Events
 		

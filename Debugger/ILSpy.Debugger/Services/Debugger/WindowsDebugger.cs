@@ -10,11 +10,12 @@ using System.Windows.Media;
 using Debugger;
 using Debugger.Interop.CorPublish;
 using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Visitors;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Models.TreeModel;
 using ILSpy.Debugger.Services.Debugger;
-using Mono.CSharp;
 using CorDbg = Debugger;
 using Process = Debugger.Process;
 
@@ -381,7 +382,7 @@ namespace ILSpy.Debugger.Services
 		/// Gets the tooltip control that shows the value of given variable.
 		/// Return null if no tooltip is available.
 		/// </summary>
-		public object GetTooltipControl(Location logicalPosition, string variableName)
+		public object GetTooltipControl(AstLocation logicalPosition, string variableName)
 		{
 			try {
 				var tooltipExpression = GetExpression(variableName);

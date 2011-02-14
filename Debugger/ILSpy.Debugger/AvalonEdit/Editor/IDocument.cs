@@ -17,7 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Mono.CSharp;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace ILSpy.Debugger.AvalonEdit.Editor
 {
@@ -50,7 +50,7 @@ namespace ILSpy.Debugger.AvalonEdit.Editor
 		IDocumentLine GetLineForOffset(int offset);
 		
 		int PositionToOffset(int line, int column);
-		Location OffsetToPosition(int offset);
+		AstLocation OffsetToPosition(int offset);
 		
 		void Insert(int offset, string text);
 		void Insert(int offset, string text, AnchorMovementType defaultAnchorMovementType);
