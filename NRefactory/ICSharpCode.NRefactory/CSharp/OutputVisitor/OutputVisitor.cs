@@ -1328,6 +1328,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			foreachStatement.InExpression.AcceptVisitor(this, data);
 			Space(policy.WithinForEachParentheses);
 			RPar();
+			WriteEmbeddedStatement(foreachStatement.EmbeddedStatement);
 			return EndNode(foreachStatement);
 		}
 		
@@ -1351,6 +1352,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			
 			Space(policy.WithinForParentheses);
 			RPar();
+			WriteEmbeddedStatement(forStatement.EmbeddedStatement);
 			return EndNode(forStatement);
 		}
 		
