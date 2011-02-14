@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-# SharpDevelop 4.0.1.7088
+# SharpDevelop 4.0.1.7096
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC98210E-1646-483B-819A-2BB8272461E4}"
 	ProjectSection(SolutionItems) = postProject
 		README = README
@@ -19,6 +19,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB", "ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj", "{7B82B671-419F-45F4-B778-D9286F996EFA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB.Tests", "ICSharpCode.NRefactory.VB.Tests\ICSharpCode.NRefactory.VB.Tests.csproj", "{870115DD-960A-4406-A6B9-600BCDC36A03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "..\Mono.Cecil\Mono.Cecil.csproj", "{D68133BD-1E63-496E-9EDE-4FBDBF77B486}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +70,14 @@ Global
 		{870115DD-960A-4406-A6B9-600BCDC36A03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{870115DD-960A-4406-A6B9-600BCDC36A03}.Release|x86.Build.0 = Release|Any CPU
 		{870115DD-960A-4406-A6B9-600BCDC36A03}.Release|x86.ActiveCfg = Release|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|Any CPU.Build.0 = net_4_0_Debug|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|Any CPU.ActiveCfg = net_4_0_Debug|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|x86.Build.0 = net_4_0_Debug|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|x86.ActiveCfg = net_4_0_Debug|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|Any CPU.Build.0 = net_4_0_Debug|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|Any CPU.ActiveCfg = net_4_0_Release|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|x86.Build.0 = net_4_0_Debug|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|x86.ActiveCfg = net_4_0_Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj

@@ -1,4 +1,4 @@
-﻿// 
+// 
 // IndexerDeclaration.cs
 //  
 // Author:
@@ -31,12 +31,20 @@ namespace ICSharpCode.NRefactory.CSharp
 {
 	public class IndexerDeclaration : PropertyDeclaration
 	{
+		public CSharpTokenNode LBracketToken {
+			get { return GetChildByRole (Roles.LBracket); }
+		}
+		
 		public IEnumerable<ParameterDeclaration> Parameters { 
 			get { return GetChildrenByRole (Roles.Parameter); }
 			set { SetChildrenByRole (Roles.Parameter, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public CSharpTokenNode RBracketToken {
+			get { return GetChildByRole (Roles.RBracket); }
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIndexerDeclaration (this, data);
 		}

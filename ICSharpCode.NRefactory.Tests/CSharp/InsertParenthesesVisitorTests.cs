@@ -109,6 +109,27 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		[Test]
+		public void AdditionWithConditional()
+		{
+			Expression expr = new BinaryOperatorExpression {
+				Left = new IdentifierExpression("a"),
+				Operator = BinaryOperatorType.Add,
+				Right = new ConditionalExpression {
+					Condition = new BinaryOperatorExpression {
+						Left = new IdentifierExpression("b"),
+						Operator = BinaryOperatorType.Equality,
+						Right = new PrimitiveExpression(null)
+					},
+					TrueExpression = new IdentifierExpression("c"),
+					FalseExpression = new IdentifierExpression("d")
+				}
+			};
+			
+			Assert.AreEqual("a + (b == null ? c : d)", InsertRequired(expr));
+			Assert.AreEqual("a + ((b == null) ? c : d)", InsertReadable(expr));
+		}
+		
+		[Test]
 		public void TypeTestInConditional()
 		{
 			Expression expr = new ConditionalExpression {

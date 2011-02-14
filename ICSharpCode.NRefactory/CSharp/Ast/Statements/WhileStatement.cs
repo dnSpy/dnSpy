@@ -1,4 +1,4 @@
-﻿// 
+// 
 // WhileStatement.cs
 //  
 // Author:
@@ -28,21 +28,10 @@ namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
 	/// "while (Condition) EmbeddedStatement"
-	/// or "do EmbeddedStatement while(Condition);"
 	/// </summary>
 	public class WhileStatement : Statement
 	{
-		public static readonly Role<CSharpTokenNode> DoKeywordRole = new Role<CSharpTokenNode>("DoKeyword", CSharpTokenNode.Null);
 		public static readonly Role<CSharpTokenNode> WhileKeywordRole = new Role<CSharpTokenNode>("WhileKeyword", CSharpTokenNode.Null);
-		
-		public WhilePosition WhilePosition {
-			get;
-			set;
-		}
-		
-		public CSharpTokenNode DoToken {
-			get { return GetChildByRole (DoKeywordRole); }
-		}
 		
 		public CSharpTokenNode WhileToken {
 			get { return GetChildByRole (WhileKeywordRole); }
@@ -66,19 +55,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.EmbeddedStatement, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitWhileStatement (this, data);
 		}
-		
-		public WhileStatement (WhilePosition whilePosition)
-		{
-			this.WhilePosition = whilePosition;
-		}
-	}
-	
-	public enum WhilePosition {
-		Begin,
-		End
 	}
 }

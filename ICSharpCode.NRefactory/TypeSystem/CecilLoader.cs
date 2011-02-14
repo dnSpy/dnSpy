@@ -179,6 +179,16 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			{
 				return null;
 			}
+			
+			public AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
+			{
+				return null;
+			}
+			
+			public AssemblyDefinition Resolve(string fullName, ReaderParameters parameters)
+			{
+				return null;
+			}
 		}
 		#endregion
 		
@@ -749,8 +759,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 					m.IsAbstract = true;
 					m.IsOverride = !method.IsNewSlot;
 				} else if (method.IsFinal) {
-					m.IsSealed = true;
-					m.IsOverride = !method.IsNewSlot;
+					if (!method.IsNewSlot) {
+						m.IsSealed = true;
+						m.IsOverride = true;
+					}
 				} else if (method.IsVirtual) {
 					if (method.IsNewSlot)
 						m.IsVirtual = true;

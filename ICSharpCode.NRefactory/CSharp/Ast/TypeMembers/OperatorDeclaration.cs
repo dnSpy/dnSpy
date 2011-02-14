@@ -1,4 +1,4 @@
-﻿// 
+// 
 // OperatorDeclaration.cs
 //  
 // Author:
@@ -104,7 +104,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			return Mono.CSharp.Operator.GetName((Mono.CSharp.Operator.OpType)type);
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitOperatorDeclaration (this, data);
 		}

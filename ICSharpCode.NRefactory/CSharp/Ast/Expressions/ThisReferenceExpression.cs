@@ -1,4 +1,4 @@
-﻿// 
+// 
 // ThisReferenceExpression.cs
 //  
 // Author:
@@ -26,6 +26,9 @@
 
 namespace ICSharpCode.NRefactory.CSharp
 {
+	/// <summary>
+	/// this
+	/// </summary>
 	public class ThisReferenceExpression : Expression
 	{
 		public AstLocation Location {
@@ -44,7 +47,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitThisReferenceExpression (this, data);
 		}

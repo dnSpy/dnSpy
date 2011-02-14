@@ -1,4 +1,4 @@
-﻿// 
+// 
 // VariableInitializer.cs
 //
 // Author:
@@ -33,6 +33,16 @@ namespace ICSharpCode.NRefactory.CSharp
 				return NodeType.Unknown;
 			}
 		}
+		
+		public VariableInitializer()
+		{
+		}
+		
+		public VariableInitializer(string name, Expression initializer = null)
+		{
+			this.Name = name;
+			this.Initializer = initializer;
+		}
 
 		public string Name {
 			get {
@@ -52,10 +62,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Expression, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitVariableInitializer (this, data);
 		}
-
 	}
 }

@@ -10,6 +10,9 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public interface IOutputFormatter
 	{
+		void StartNode(AstNode node);
+		void EndNode(AstNode node);
+		
 		/// <summary>
 		/// Writes an identifier.
 		/// If the identifier conflicts with a keyword, the output visitor will

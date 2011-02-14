@@ -55,12 +55,14 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildrenByRole(PointerRole).Count();
 			}
 			set {
-				// remove old children
-				foreach (AstNode node in GetChildrenByRole(PointerRole))
-					node.Remove();
-				// add new children
-				for (int i = 0; i < value; i++) {
-					AddChild(new CSharpTokenNode(AstLocation.Empty, 1), PointerRole);
+				int d = this.PointerRank;
+				while (d > value) {
+					GetChildByRole(PointerRole).Remove();
+					d--;
+				}
+				while (d < value) {
+					InsertChildBefore(GetChildByRole(PointerRole), new CSharpTokenNode(AstLocation.Empty, 1), PointerRole);
+					d++;
 				}
 			}
 		}
@@ -70,7 +72,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildrenByRole (ArraySpecifierRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitComposedType (this, data);
 		}
@@ -89,6 +91,22 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 			return b.ToString();
 		}
+		
+		public override AstType MakePointerType()
+		{
+			if (ArraySpecifiers.Any()) {
+				return base.MakePointerType();
+			} else {
+				this.PointerRank++;
+				return this;
+			}
+		}
+		
+		public override AstType MakeArrayType(int dimensions)
+		{
+			InsertChildBefore(this.ArraySpecifiers.FirstOrDefault(), new ArraySpecifier(dimensions), ArraySpecifierRole);
+			return this;
+		}
 	}
 	
 	/// <summary>
@@ -100,6 +118,19 @@ namespace ICSharpCode.NRefactory.CSharp
 			get {
 				return NodeType.Unknown;
 			}
+		}
+		
+		public ArraySpecifier()
+		{
+		}
+		
+		public ArraySpecifier(int dimensions)
+		{
+			this.Dimensions = dimensions;
+		}
+		
+		public CSharpTokenNode LBracketToken {
+			get { return GetChildByRole (Roles.LBracket); }
 		}
 		
 		public int Dimensions {
@@ -117,7 +148,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public CSharpTokenNode RBracketToken {
+			get { return GetChildByRole (Roles.RBracket); }
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitArraySpecifier(this, data);
 		}

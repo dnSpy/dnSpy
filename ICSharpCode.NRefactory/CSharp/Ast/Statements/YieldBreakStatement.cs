@@ -1,10 +1,10 @@
 // 
-// UsingAliasDeclaration.cs
-//  
+// YieldBreakStatement.cs
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
-// Copyright (c) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,39 +27,19 @@
 namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
-	/// using Alias = Import;
+	/// yield break;
 	/// </summary>
-	public class UsingAliasDeclaration : AstNode
+	public class YieldBreakStatement : Statement
 	{
-		public static readonly Role<Identifier> AliasRole = new Role<Identifier>("Alias", Identifier.Null);
-		public static readonly Role<AstType> ImportRole = UsingDeclaration.ImportRole;
+		public static readonly Role<CSharpTokenNode> YieldKeywordRole = new Role<CSharpTokenNode>("YieldKeyword", CSharpTokenNode.Null);
+		public static readonly Role<CSharpTokenNode> BreakKeywordRole = new Role<CSharpTokenNode>("BreakKeyword", CSharpTokenNode.Null);
 		
-		public override NodeType NodeType {
-			get {
-				return NodeType.Unknown;
-			}
+		public CSharpTokenNode YieldToken {
+			get { return GetChildByRole (YieldKeywordRole); }
 		}
 		
-		public CSharpTokenNode UsingToken {
-			get { return GetChildByRole (Roles.Keyword); }
-		}
-		
-		public string Alias {
-			get {
-				return GetChildByRole (AliasRole).Name;
-			}
-			set {
-				SetChildByRole(AliasRole, new Identifier(value, AstLocation.Empty));
-			}
-		}
-		
-		public CSharpTokenNode AssignToken {
-			get { return GetChildByRole (Roles.Assign); }
-		}
-		
-		public AstType Import {
-			get { return GetChildByRole (ImportRole); }
-			set { SetChildByRole (ImportRole, value); }
+		public CSharpTokenNode BreakToken {
+			get { return GetChildByRole (BreakKeywordRole); }
 		}
 		
 		public CSharpTokenNode SemicolonToken {
@@ -68,7 +48,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitUsingAliasDeclaration (this, data);
+			return visitor.VisitYieldBreakStatement (this, data);
 		}
 	}
 }

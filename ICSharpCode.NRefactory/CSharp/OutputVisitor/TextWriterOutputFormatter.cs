@@ -107,5 +107,13 @@ namespace ICSharpCode.NRefactory.CSharp
 					break;
 			}
 		}
+		
+		public virtual void StartNode(AstNode node)
+		{
+		}
+		
+		public virtual void EndNode(AstNode node)
+		{
+		}
 	}
 }

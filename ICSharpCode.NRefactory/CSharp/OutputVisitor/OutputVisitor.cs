@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
@@ -15,7 +15,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// Outputs the AST.
 	/// </summary>
-	public class OutputVisitor : AstVisitor<object, object>
+	public class OutputVisitor : IAstVisitor<object, object>
 	{
 		readonly IOutputFormatter formatter;
 		readonly CSharpFormattingPolicy policy;
@@ -35,6 +35,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			KeywordOrIdentifier,
 			Plus,
 			Minus,
+			Ampersand,
 			QuestionMark,
 			Division
 		}
@@ -67,6 +68,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				WriteSpecialsUpToNode(node);
 			currentContainerNode = node;
 			positionStack.Push(node.FirstChild);
+			formatter.StartNode(node);
 		}
 		
 		object EndNode(AstNode node)
@@ -76,6 +78,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			Debug.Assert(pos == null || pos.Parent == node);
 			WriteSpecials(pos, null);
 			currentContainerNode = node.Parent;
+			formatter.EndNode(node);
 			return null;
 		}
 		#endregion
@@ -203,9 +206,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			WriteSpecialsUpToRole(identifierRole ?? AstNode.Roles.Identifier);
 			if (IsKeyword(identifier, currentContainerNode)) {
+				if (lastWritten == LastWritten.KeywordOrIdentifier)
+					Space(); // this space is not strictly required, so we call Space()
 				formatter.WriteToken("@");
 			} else if (lastWritten == LastWritten.KeywordOrIdentifier) {
-				formatter.Space();
+				formatter.Space(); // this space is strictly required, so we directly call the formatter
 			}
 			formatter.WriteIdentifier(identifier);
 			lastWritten = LastWritten.KeywordOrIdentifier;
@@ -217,10 +222,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			// Avoid that two +, - or ? tokens are combined into a ++, -- or ?? token.
 			// Note that we don't need to handle tokens like = because there's no valid
 			// C# program that contains the single token twice in a row.
-			// (for + and -, this can happen with unary operators;
-			// and for ?, this can happen in "a is int? ? b : c" or "a as int? ?? 0")
+			// (for +, - and &, this can happen with unary operators;
+			// for ?, this can happen in "a is int? ? b : c" or "a as int? ?? 0";
+			// and for /, this can happen with "1/ *ptr" or "1/ //comment".)
 			if (lastWritten == LastWritten.Plus && token[0] == '+'
 			    || lastWritten == LastWritten.Minus && token[0] == '-'
+			    || lastWritten == LastWritten.Ampersand && token[0] == '&'
 			    || lastWritten == LastWritten.QuestionMark && token[0] == '?'
 			    || lastWritten == LastWritten.Division && token[0] == '*')
 			{
@@ -231,6 +238,8 @@ namespace ICSharpCode.NRefactory.CSharp
 				lastWritten = LastWritten.Plus;
 			else if (token == "-")
 				lastWritten = LastWritten.Minus;
+			else if (token == "&")
+				lastWritten = LastWritten.Ampersand;
 			else if (token == "?")
 				lastWritten = LastWritten.QuestionMark;
 			else if (token == "/")
@@ -893,6 +902,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			return EndNode(typeOfExpression);
 		}
 		
+		public object VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, object data)
+		{
+			StartNode(typeReferenceExpression);
+			typeReferenceExpression.Type.AcceptVisitor(this, data);
+			return EndNode(typeReferenceExpression);
+		}
+		
 		public object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
 			StartNode(unaryOperatorExpression);
@@ -1088,6 +1104,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteModifiers(delegateDeclaration.ModifierTokens);
 			WriteKeyword("delegate");
 			delegateDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WriteIdentifier(delegateDeclaration.Name);
 			WriteTypeParameters(delegateDeclaration.TypeParameters);
 			Space(policy.BeforeDelegateDeclarationParentheses);
@@ -1148,8 +1165,22 @@ namespace ICSharpCode.NRefactory.CSharp
 				constraint.AcceptVisitor(this, data);
 			}
 			OpenBrace(braceStyle);
-			foreach (var member in typeDeclaration.Members) {
-				member.AcceptVisitor(this, data);
+			if (typeDeclaration.ClassType == ClassType.Enum) {
+				bool first = true;
+				foreach (var member in typeDeclaration.Members) {
+					if (first) {
+						first = false;
+					} else {
+						Comma(member);
+						NewLine();
+					}
+					member.AcceptVisitor(this, data);
+				}
+				NewLine();
+			} else {
+				foreach (var member in typeDeclaration.Members) {
+					member.AcceptVisitor(this, data);
+				}
 			}
 			CloseBrace(braceStyle);
 			NewLine();
@@ -1239,6 +1270,22 @@ namespace ICSharpCode.NRefactory.CSharp
 			return EndNode(continueStatement);
 		}
 		
+		public object VisitDoWhileStatement(DoWhileStatement doWhileStatement, object data)
+		{
+			StartNode(doWhileStatement);
+			WriteKeyword("do", DoWhileStatement.DoKeywordRole);
+			WriteEmbeddedStatement(doWhileStatement.EmbeddedStatement);
+			WriteKeyword("while", DoWhileStatement.WhileKeywordRole);
+			Space(policy.WhileParentheses);
+			LPar();
+			Space(policy.WithinWhileParentheses);
+			doWhileStatement.Condition.AcceptVisitor(this, data);
+			Space(policy.WithinWhileParentheses);
+			RPar();
+			Semicolon();
+			return EndNode(doWhileStatement);
+		}
+		
 		public object VisitEmptyStatement(EmptyStatement emptyStatement, object data)
 		{
 			StartNode(emptyStatement);
@@ -1274,6 +1321,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			LPar();
 			Space(policy.WithinForEachParentheses);
 			foreachStatement.VariableType.AcceptVisitor(this, data);
+			Space();
 			WriteIdentifier(foreachStatement.VariableName);
 			WriteKeyword("in", ForeachStatement.Roles.InKeyword);
 			Space();
@@ -1306,25 +1354,31 @@ namespace ICSharpCode.NRefactory.CSharp
 			return EndNode(forStatement);
 		}
 		
+		public object VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement, object data)
+		{
+			StartNode(gotoCaseStatement);
+			WriteKeyword("goto");
+			WriteKeyword("case", GotoCaseStatement.CaseKeywordRole);
+			Space();
+			gotoCaseStatement.LabelExpression.AcceptVisitor(this, data);
+			Semicolon();
+			return EndNode(gotoCaseStatement);
+		}
+		
+		public object VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement, object data)
+		{
+			StartNode(gotoDefaultStatement);
+			WriteKeyword("goto");
+			WriteKeyword("default", GotoDefaultStatement.DefaultKeywordRole);
+			Semicolon();
+			return EndNode(gotoDefaultStatement);
+		}
+		
 		public object VisitGotoStatement(GotoStatement gotoStatement, object data)
 		{
 			StartNode(gotoStatement);
 			WriteKeyword("goto");
-			switch (gotoStatement.GotoType) {
-				case GotoType.Label:
-					WriteIdentifier(gotoStatement.Label);
-					break;
-				case GotoType.Case:
-					WriteKeyword("case", GotoStatement.CaseKeywordRole);
-					Space();
-					gotoStatement.LabelExpression.AcceptVisitor(this, data);
-					break;
-				case GotoType.CaseDefault:
-					WriteKeyword("default", GotoStatement.DefaultKeywordRole);
-					break;
-				default:
-					throw new NotSupportedException("Invalid value for GotoType");
-			}
+			WriteIdentifier(gotoStatement.Label);
 			Semicolon();
 			return EndNode(gotoStatement);
 		}
@@ -1512,11 +1566,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		public object VisitWhileStatement(WhileStatement whileStatement, object data)
 		{
 			StartNode(whileStatement);
-			if (whileStatement.WhilePosition == WhilePosition.End) {
-				// do .. while
-				WriteKeyword("do", WhileStatement.DoKeywordRole);
-				WriteEmbeddedStatement(whileStatement.EmbeddedStatement);
-			}
 			WriteKeyword("while", WhileStatement.WhileKeywordRole);
 			Space(policy.WhileParentheses);
 			LPar();
@@ -1524,25 +1573,26 @@ namespace ICSharpCode.NRefactory.CSharp
 			whileStatement.Condition.AcceptVisitor(this, data);
 			Space(policy.WithinWhileParentheses);
 			RPar();
-			if (whileStatement.WhilePosition == WhilePosition.Begin) {
-				WriteEmbeddedStatement(whileStatement.EmbeddedStatement);
-			} else {
-				Semicolon();
-			}
+			WriteEmbeddedStatement(whileStatement.EmbeddedStatement);
 			return EndNode(whileStatement);
+		}
+		
+		public object VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement, object data)
+		{
+			StartNode(yieldBreakStatement);
+			WriteKeyword("yield", YieldBreakStatement.YieldKeywordRole);
+			WriteKeyword("break", YieldBreakStatement.BreakKeywordRole);
+			Semicolon();
+			return EndNode(yieldBreakStatement);
 		}
 		
 		public object VisitYieldStatement(YieldStatement yieldStatement, object data)
 		{
 			StartNode(yieldStatement);
 			WriteKeyword("yield", YieldStatement.YieldKeywordRole);
-			if (yieldStatement.Expression.IsNull) {
-				WriteKeyword("break", YieldStatement.BreakKeywordRole);
-			} else {
-				WriteKeyword("return", YieldStatement.ReturnKeywordRole);
-				Space();
-				yieldStatement.Expression.AcceptVisitor(this, data);
-			}
+			WriteKeyword("return", YieldStatement.ReturnKeywordRole);
+			Space();
+			yieldStatement.Expression.AcceptVisitor(this, data);
 			Semicolon();
 			return EndNode(yieldStatement);
 		}
@@ -1658,6 +1708,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			CloseBrace(policy.EventBraceStyle);
+			NewLine();
 			return EndNode(customEventDeclaration);
 		}
 		
@@ -1690,6 +1741,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			CloseBrace(policy.PropertyBraceStyle);
+			NewLine();
 			return EndNode(indexerDeclaration);
 		}
 		
@@ -1699,6 +1751,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(methodDeclaration.Attributes);
 			WriteModifiers(methodDeclaration.ModifierTokens);
 			methodDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WritePrivateImplementationType(methodDeclaration.PrivateImplementationType);
 			WriteIdentifier(methodDeclaration.Name);
 			WriteTypeParameters(methodDeclaration.TypeParameters);
@@ -1776,6 +1829,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(propertyDeclaration.Attributes);
 			WriteModifiers(propertyDeclaration.ModifierTokens);
 			propertyDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WritePrivateImplementationType(propertyDeclaration.PrivateImplementationType);
 			WriteIdentifier(propertyDeclaration.Name);
 			OpenBrace(policy.PropertyBraceStyle);
@@ -1786,6 +1840,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			CloseBrace(policy.PropertyBraceStyle);
+			NewLine();
 			return EndNode(propertyDeclaration);
 		}
 		#endregion

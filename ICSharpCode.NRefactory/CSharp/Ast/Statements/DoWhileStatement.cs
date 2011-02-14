@@ -1,10 +1,10 @@
 // 
-// UsingAliasDeclaration.cs
+// DoWhileStatement.cs
 //  
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
-// Copyright (c) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,44 +22,42 @@
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
+// THE SOFTWARE.using System;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
-	/// using Alias = Import;
+	/// "do EmbeddedStatement while(Condition);"
 	/// </summary>
-	public class UsingAliasDeclaration : AstNode
+	public class DoWhileStatement : Statement
 	{
-		public static readonly Role<Identifier> AliasRole = new Role<Identifier>("Alias", Identifier.Null);
-		public static readonly Role<AstType> ImportRole = UsingDeclaration.ImportRole;
+		public static readonly Role<CSharpTokenNode> DoKeywordRole = new Role<CSharpTokenNode>("DoKeyword", CSharpTokenNode.Null);
+		public static readonly Role<CSharpTokenNode> WhileKeywordRole = new Role<CSharpTokenNode>("WhileKeyword", CSharpTokenNode.Null);
 		
-		public override NodeType NodeType {
-			get {
-				return NodeType.Unknown;
-			}
+		public CSharpTokenNode DoToken {
+			get { return GetChildByRole (DoKeywordRole); }
 		}
 		
-		public CSharpTokenNode UsingToken {
-			get { return GetChildByRole (Roles.Keyword); }
+		public Statement EmbeddedStatement {
+			get { return GetChildByRole (Roles.EmbeddedStatement); }
+			set { SetChildByRole (Roles.EmbeddedStatement, value); }
 		}
 		
-		public string Alias {
-			get {
-				return GetChildByRole (AliasRole).Name;
-			}
-			set {
-				SetChildByRole(AliasRole, new Identifier(value, AstLocation.Empty));
-			}
+		public CSharpTokenNode WhileToken {
+			get { return GetChildByRole (WhileKeywordRole); }
 		}
 		
-		public CSharpTokenNode AssignToken {
-			get { return GetChildByRole (Roles.Assign); }
+		public CSharpTokenNode LParToken {
+			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public AstType Import {
-			get { return GetChildByRole (ImportRole); }
-			set { SetChildByRole (ImportRole, value); }
+		public Expression Condition {
+			get { return GetChildByRole (Roles.Condition); }
+			set { SetChildByRole (Roles.Condition, value); }
+		}
+		
+		public CSharpTokenNode RParToken {
+			get { return GetChildByRole (Roles.RPar); }
 		}
 		
 		public CSharpTokenNode SemicolonToken {
@@ -68,7 +66,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitUsingAliasDeclaration (this, data);
+			return visitor.VisitDoWhileStatement (this, data);
 		}
 	}
 }
+

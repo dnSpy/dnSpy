@@ -1,4 +1,4 @@
-﻿// 
+// 
 // IndexerExpression.cs
 //  
 // Author:
@@ -51,7 +51,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RBracket); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIndexerExpression (this, data);
 		}

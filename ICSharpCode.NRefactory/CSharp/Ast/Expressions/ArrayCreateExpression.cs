@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp
@@ -35,7 +35,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (InitializerRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitArrayCreateExpression (this, data);
 		}

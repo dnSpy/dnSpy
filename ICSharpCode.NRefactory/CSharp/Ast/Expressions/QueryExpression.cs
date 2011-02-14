@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
@@ -21,7 +21,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			
-			public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 			{
 				return default (S);
 			}
@@ -33,7 +33,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildrenByRole(ClauseRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S>(AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryExpression (this, data);
 		}
@@ -83,7 +83,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryContinuationClause (this, data);
 		}
@@ -113,7 +113,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Expression, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryFromClause (this, data);
 		}
@@ -143,7 +143,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole(Roles.Expression, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryLetClause (this, data);
 		}
@@ -161,7 +161,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Condition, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryWhereClause (this, data);
 		}
@@ -246,7 +246,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryJoinClause (this, data);
 		}
@@ -265,7 +265,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildrenByRole (OrderingRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryOrderClause (this, data);
 		}
@@ -291,7 +291,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Keyword); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryOrdering (this, data);
 		}
@@ -315,7 +315,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Expression, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQuerySelectClause (this, data);
 		}
@@ -346,7 +346,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (KeyRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (AstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryGroupClause (this, data);
 		}
