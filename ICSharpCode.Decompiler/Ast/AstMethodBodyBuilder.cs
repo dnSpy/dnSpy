@@ -461,13 +461,20 @@ namespace Decompiler
 					case Code.Break: throw new NotImplementedException();
 				case Code.Call:
 				case Code.Callvirt:
-					// TODO: Diferentiate vitual and non-vitual dispach
+					// TODO: Diferentiate virtual and non-vitual dispach
 					Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 					Ast.Expression target;
 					List<Ast.Expression> methodArgs = new List<Ast.Expression>(args);
 					if (cecilMethod.HasThis) {
 						target = methodArgs[0];
 						methodArgs.RemoveAt(0);
+						
+						// Unpack any DirectionExpression that is used as target for the call
+						// (calling methods on value types implicitly passes the first argument by reference)
+						if (target is DirectionExpression) {
+							target = ((DirectionExpression)target).Expression;
+							target.Remove(); // detach from DirectionExpression
+						}
 					} else {
 						target = new TypeReferenceExpression { Type = AstBuilder.ConvertType(cecilMethod.DeclaringType)};
 					}
@@ -477,14 +484,42 @@ namespace Decompiler
 						return new CommentStatement("Constructor");
 					}
 					
-					// TODO: Hack, detect properties properly
-					if (cecilMethod.Name.StartsWith("get_")) {
-						return target.Member(cecilMethod.Name.Remove(0, 4)).WithAnnotation(cecilMethod);
-					} else if (cecilMethod.Name.StartsWith("set_")) {
-						return new Ast.AssignmentExpression(
-							target.Member(cecilMethod.Name.Remove(0, 4)).WithAnnotation(cecilMethod),
-							methodArgs[0]
-						);
+					// Resolve the method to figure out whether it is an accessor:
+					Cecil.MethodDefinition cecilMethodDef = cecilMethod.Resolve();
+					if (cecilMethodDef != null) {
+						if (cecilMethodDef.IsGetter && methodArgs.Count == 0) {
+							foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
+								if (prop.GetMethod == cecilMethodDef)
+									return target.Member(prop.Name).WithAnnotation(prop);
+							}
+						} else if (cecilMethodDef.IsSetter && methodArgs.Count == 1) {
+							foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
+								if (prop.SetMethod == cecilMethodDef)
+									return new Ast.AssignmentExpression(
+										target.Member(prop.Name).WithAnnotation(prop),
+										methodArgs[0]);
+							}
+						} else if (cecilMethodDef.IsAddOn && methodArgs.Count == 1) {
+							foreach (var ev in cecilMethodDef.DeclaringType.Events) {
+								if (ev.AddMethod == cecilMethodDef) {
+									return new Ast.AssignmentExpression {
+										Left = target.Member(ev.Name).WithAnnotation(ev),
+										Operator = AssignmentOperatorType.Add,
+										Right = methodArgs[0]
+									};
+								}
+							}
+						} else if (cecilMethodDef.IsRemoveOn && methodArgs.Count == 1) {
+							foreach (var ev in cecilMethodDef.DeclaringType.Events) {
+								if (ev.RemoveMethod == cecilMethodDef) {
+									return new Ast.AssignmentExpression {
+										Left = target.Member(ev.Name).WithAnnotation(ev),
+										Operator = AssignmentOperatorType.Subtract,
+										Right = methodArgs[0]
+									};
+								}
+							}
+						}
 					}
 					
 					// Multi-dimensional array acces // TODO: do properly
