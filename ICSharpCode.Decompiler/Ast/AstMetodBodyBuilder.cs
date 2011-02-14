@@ -46,10 +46,11 @@ namespace Decompiler
 		{
 			if (methodDef.Body == null) return null;
 			
-			List<ILNode> body = new ILAstBuilder().Build(methodDef, true);
+			ILBlock ilMethod = new ILBlock();
+			ilMethod.Body = new ILAstBuilder().Build(methodDef, true);
 			
 			ILAstOptimizer bodyGraph = new ILAstOptimizer();
-			bodyGraph.Optimize(ref body);
+			bodyGraph.Optimize(ilMethod);
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
 			Dictionary<string, int> typeNames = new Dictionary<string, int>();
@@ -95,7 +96,7 @@ namespace Decompiler
 //				astBlock.Children.Add(astLocalVar);
 			}
 			
-			Ast.BlockStatement astBlock = TransformBlock(new ILBlock(body));
+			Ast.BlockStatement astBlock = TransformBlock(ilMethod);
 			CommentStatement.ReplaceAll(astBlock); // convert CommentStatements to Comments
 			return astBlock;
 		}

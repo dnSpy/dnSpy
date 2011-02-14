@@ -48,6 +48,8 @@ namespace Decompiler
 	
 	public class ILBlock: ILNode
 	{
+		public ILLabel EntryPoint;
+		
 		public List<ILNode> Body;
 		
 		public ILBlock(params ILNode[] body)
@@ -62,7 +64,10 @@ namespace Decompiler
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			return this.Body;
+			yield return EntryPoint;
+			foreach(ILNode child in this.Body) {
+				yield return child;
+			}
 		}
 	}
 	
@@ -177,9 +182,7 @@ namespace Decompiler
 	{
 		public ILExpression Condition;
 		public ILBlock TrueBlock;   // Branch was taken
-		public ILLabel TrueTarget;  // Entry label
 		public ILBlock FalseBlock;  // Fall-though
-		public ILLabel FalseTarget; // Entry label
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
