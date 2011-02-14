@@ -52,7 +52,8 @@ namespace Decompiler.ControlFlow
 				foreach(ILTryCatchBlock.CatchBlock catchBlock in tryCatchBlock.CatchBlocks) {
 					Optimize(ref catchBlock.Body);
 				}
-				Optimize(ref tryCatchBlock.FinallyBlock.Body);
+				if (tryCatchBlock.FinallyBlock != null)
+					Optimize(ref tryCatchBlock.FinallyBlock.Body);
 			}
 			
 			ast.Insert(0, new ILExpression(OpCodes.Br, entryLabel));

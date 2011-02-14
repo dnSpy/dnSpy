@@ -93,7 +93,8 @@ namespace Decompiler
 			foreach (var catchBlock in this.CatchBlocks) {
 				yield return catchBlock;
 			}
-			yield return this.FinallyBlock;
+			if (this.FinallyBlock != null)
+				yield return this.FinallyBlock;
 		}
 		
 		public override string ToString()
