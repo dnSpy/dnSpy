@@ -32,6 +32,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	abstract class ILSpyTreeNode : SharpTreeNode
 	{
 		FilterSettings filterSettings;
+		bool childrenNeedFiltering;
 		
 		public FilterSettings FilterSettings {
 			get { return filterSettings; }
@@ -86,8 +87,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
 		{
 			if (e.NewItems != null) {
-				foreach (ILSpyTreeNode node in e.NewItems)
-					ApplyFilterToChild(node);
+				if (IsVisible) {
+					foreach (ILSpyTreeNode node in e.NewItems)
+						ApplyFilterToChild(node);
+				} else {
+					childrenNeedFiltering = true;
+				}
 			}
 			base.OnChildrenChanged(e);
 		}
@@ -109,12 +114,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					break;
 				case FilterResult.Recurse:
 					child.FilterSettings = this.FilterSettings;
-					child.EnsureLazyChildren();
+					child.EnsureChildrenFiltered();
 					child.IsHidden = child.Children.All(c => c.IsHidden);
 					break;
 				case FilterResult.MatchAndRecurse:
 					child.FilterSettings = StripSearchTerm(this.FilterSettings);
-					child.EnsureLazyChildren();
+					child.EnsureChildrenFiltered();
 					child.IsHidden = child.Children.All(c => c.IsHidden);
 					break;
 				default:
@@ -136,8 +141,28 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected virtual void OnFilterSettingsChanged()
 		{
 			RaisePropertyChanged("Text");
-			foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
-				ApplyFilterToChild(node);
+			if (IsVisible) {
+				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
+					ApplyFilterToChild(node);
+			} else {
+				childrenNeedFiltering = true;
+			}
+		}
+		
+		protected override void OnIsVisibleChanged()
+		{
+			base.OnIsVisibleChanged();
+			EnsureChildrenFiltered();
+		}
+		
+		void EnsureChildrenFiltered()
+		{
+			EnsureLazyChildren();
+			if (childrenNeedFiltering) {
+				childrenNeedFiltering = false;
+				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
+					ApplyFilterToChild(node);
+			}
 		}
 	}
 	

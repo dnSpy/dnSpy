@@ -26,6 +26,7 @@ namespace ICSharpCode.TreeView
 			bool newIsVisible = parentIsVisible && !isHidden;
 			if (isVisible != newIsVisible) {
 				isVisible = newIsVisible;
+				
 				// invalidate the augmented data
 				SharpTreeNode node = this;
 				while (node != null && node.totalListLength >= 0) {
@@ -49,6 +50,8 @@ namespace ICSharpCode.TreeView
 					var flattener = GetListRoot().treeFlattener;
 					if (flattener != null) {
 						flattener.NodesRemoved(GetVisibleIndexForNode(this), removedNodes);
+						foreach (var n in removedNodes)
+							n.OnIsVisibleChanged();
 					}
 				}
 				// Tell the flattener about the new nodes:
@@ -56,10 +59,14 @@ namespace ICSharpCode.TreeView
 					var flattener = GetListRoot().treeFlattener;
 					if (flattener != null) {
 						flattener.NodesInserted(GetVisibleIndexForNode(this), VisibleDescendantsAndSelf());
+						foreach (var n in VisibleDescendantsAndSelf())
+							n.OnIsVisibleChanged();
 					}
 				}
 			}
 		}
+		
+		protected virtual void OnIsVisibleChanged() {}
 		
 		void UpdateChildIsVisible(bool updateFlattener)
 		{
@@ -125,14 +132,22 @@ namespace ICSharpCode.TreeView
 					if (modelParent != null)
 						UpdateIsVisible(modelParent.isVisible && modelParent.isExpanded, true);
 					RaisePropertyChanged("IsHidden");
+					if (Parent != null)
+						Parent.RaisePropertyChanged("ShowExpander");
 				}
 			}
 		}
 		
+		/// <summary>
+		/// Return true when this node is not hidden and when all parent nodes are expanded and not hidden.
+		/// </summary>
+		public bool IsVisible {
+			get { return isVisible; }
+		}
+		
 		bool isSelected;
 		
-		public bool IsSelected
-		{
+		public bool IsSelected {
 			get { return isSelected; }
 			set {
 				if (isSelected != value) {
@@ -220,7 +235,7 @@ namespace ICSharpCode.TreeView
 		
 		public virtual bool ShowExpander
 		{
-			get { return Children.Count > 0 || LazyLoading; }
+			get { return LazyLoading || Children.Any(c => !c.isHidden); }
 		}
 		
 		bool isExpanded;
@@ -232,14 +247,20 @@ namespace ICSharpCode.TreeView
 			{
 				if (isExpanded != value) {
 					isExpanded = value;
-					UpdateChildIsVisible(true);
 					if (isExpanded) {
 						EnsureLazyChildren();
+						OnExpanding();
+					} else {
+						OnCollapsing();
 					}
+					UpdateChildIsVisible(true);
 					RaisePropertyChanged("IsExpanded");
 				}
 			}
 		}
+		
+		protected virtual void OnExpanding() {}
+		protected virtual void OnCollapsing() {}
 		
 		bool lazyLoading;
 		
