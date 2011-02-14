@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Ast = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp;
 using Cecil = Mono.Cecil;
@@ -48,7 +49,7 @@ namespace Decompiler
 			List<ILNode> body = new ILAstBuilder().Build(methodDef, true);
 			
 			ILAstOptimizer bodyGraph = new ILAstOptimizer();
-			bodyGraph.Optimize(body);
+			bodyGraph.Optimize(ref body);
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
 			Dictionary<string, int> typeNames = new Dictionary<string, int>();
@@ -385,7 +386,7 @@ namespace Decompiler
 					throw new NotImplementedException();
 					#endregion
 					#region Branching
-					case Code.Br:      return branchCommand;
+					case Code.Br:      return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
 					case Code.Brfalse: return new Ast.IfElseStatement(new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1), branchCommand);
 					case Code.Brtrue:  return new Ast.IfElseStatement(arg1, branchCommand);
 					case Code.Beq:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2), branchCommand);

@@ -56,7 +56,6 @@
     <Compile Include="Ast\TextOutputFormatter.cs" />
     <Compile Include="Ast\Transforms\Idioms.cs" />
     <Compile Include="Ast\Transforms\PushNegation.cs" />
-    <Compile Include="Ast\Transforms\RemoveDeadLabels.cs" />
     <Compile Include="Ast\Transforms\RemoveEmptyElseBody.cs" />
     <Compile Include="Ast\Transforms\RemoveGotos.cs" />
     <Compile Include="Ast\Transforms\RestoreLoop.cs" />

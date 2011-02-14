@@ -11,19 +11,24 @@ namespace Decompiler
 {
 	public abstract class ILNode
 	{
-		public IEnumerable<T> GetChildrenRecursive<T>() where T: ILNode
+		public IEnumerable<T> GetSelfAndChildrenRecursive<T>() where T: ILNode
 		{
+			if (this is T)
+				yield return (T)this;
+			
 			Stack<IEnumerator<ILNode>> stack = new Stack<IEnumerator<ILNode>>();
 			try {
 				stack.Push(GetChildren().GetEnumerator());
 				while (stack.Count > 0) {
 					while (stack.Peek().MoveNext()) {
 						ILNode element = stack.Peek().Current;
-						if (element is T)
-							yield return (T)element;
-						IEnumerable<ILNode> children = element.GetChildren();
-						if (children != null) {
-							stack.Push(children.GetEnumerator());
+						if (element != null) {
+							if (element is T)
+								yield return (T)element;
+							IEnumerable<ILNode> children = element.GetChildren();
+							if (children != null) {
+								stack.Push(children.GetEnumerator());
+							}
 						}
 					}
 					stack.Pop().Dispose();
@@ -37,17 +42,7 @@ namespace Decompiler
 		
 		public virtual IEnumerable<ILNode> GetChildren()
 		{
-			return null;
-		}
-	}
-	
-	public class ILLabel: ILNode
-	{
-		public string Name;
-
-		public override string ToString()
-		{
-			return Name + ":";
+			yield break;
 		}
 	}
 	
@@ -68,6 +63,16 @@ namespace Decompiler
 		public override IEnumerable<ILNode> GetChildren()
 		{
 			return this.Body;
+		}
+	}
+	
+	public class ILLabel: ILNode
+	{
+		public string Name;
+
+		public override string ToString()
+		{
+			return Name + ":";
 		}
 	}
 	
@@ -128,7 +133,7 @@ namespace Decompiler
 			} else if (this.Operand is ILLabel[]) {
 				return (ILLabel[])this.Operand;
 			} else {
-				return null;
+				return new ILLabel[] { };
 			}
 		}
 		
