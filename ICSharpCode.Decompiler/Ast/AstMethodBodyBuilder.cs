@@ -151,12 +151,20 @@ namespace Decompiler
 			*/
 			} else if (node is ILCondition) {
 				ILCondition conditionalNode = (ILCondition)node;
-				// Swap bodies
-				yield return new Ast.IfElseStatement {
-					Condition = new UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(conditionalNode.Condition)),
-					TrueStatement = TransformBlock(conditionalNode.FalseBlock),
-					FalseStatement = TransformBlock(conditionalNode.TrueBlock)
-				};
+				if (conditionalNode.FalseBlock.Body.Any()) {
+					// Swap bodies
+					yield return new Ast.IfElseStatement {
+						Condition = new UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(conditionalNode.Condition)),
+						TrueStatement = TransformBlock(conditionalNode.FalseBlock),
+						FalseStatement = TransformBlock(conditionalNode.TrueBlock)
+					};
+				} else {
+					yield return new Ast.IfElseStatement {
+						Condition = MakeBranchCondition(conditionalNode.Condition),
+						TrueStatement = TransformBlock(conditionalNode.TrueBlock),
+						FalseStatement = TransformBlock(conditionalNode.FalseBlock)
+					};
+				}
 			} else if (node is ILTryCatchBlock) {
 				ILTryCatchBlock tryCatchNode = ((ILTryCatchBlock)node);
 				List<Ast.CatchClause> catchClauses = new List<CatchClause>();

@@ -14,18 +14,20 @@ namespace Decompiler.ControlFlow
 		
 		public void Optimize(ILBlock method)
 		{
-			var blocks = method.GetSelfAndChildrenRecursive<ILBlock>().ToList();
-			
-			foreach(ILBlock block in blocks) {
-				ControlFlowGraph graph;
-				
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				SplitToMovableBlocks(block);
-				
+			}
+			
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().Where(b => !(b is ILMoveableBlock)).ToList()) {
+				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, block.EntryPoint);
 				graph.ComputeDominance();
 				graph.ComputeDominanceFrontier();
 				block.Body = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
-	
+			}
+			
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().Where(b => !(b is ILMoveableBlock)).ToList()) {
+				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, block.EntryPoint);
 				graph.ComputeDominance();
 				graph.ComputeDominanceFrontier();
@@ -153,7 +155,7 @@ namespace Decompiler.ControlFlow
 			return new ControlFlowGraph(cfNodes.ToArray());
 		}
 		
-		static List<ILNode> FindLoops(HashSet<ControlFlowNode> nodes, ControlFlowNode entryPoint)
+		List<ILNode> FindLoops(HashSet<ControlFlowNode> nodes, ControlFlowNode entryPoint)
 		{
 			List<ILNode> result = new List<ILNode>();
 			
@@ -171,7 +173,9 @@ namespace Decompiler.ControlFlow
 					
 					// Move the content into loop block
 					nodes.ExceptWith(loopContents);
-					result.Add(new ILLoop() { ContentBlock = new ILBlock(FindLoops(loopContents, node)) });
+					ILLabel entryLabel = new ILLabel() { Name = "Loop_" + (nextBlockIndex++) };
+					((ILBlock)node.UserData).Body.Insert(0, entryLabel);
+					result.Add(new ILLoop() { ContentBlock = new ILBlock(FindLoops(loopContents, node)) { EntryPoint = entryLabel } });
 				}
 
 				// Using the dominator tree should ensure we find the the widest loop first
