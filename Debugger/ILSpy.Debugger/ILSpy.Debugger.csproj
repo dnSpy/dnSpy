@@ -34,10 +34,14 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.Aero">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -55,6 +59,7 @@
     <Compile Include="AvalonEdit\Editor\ITextBuffer.cs" />
     <Compile Include="AvalonEdit\Editor\TextChangeEventArgs.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
+    <Compile Include="AvalonEdit\IToolTip.cs" />
     <Compile Include="Bookmarks\BookmarkBase.cs" />
     <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
     <Compile Include="Bookmarks\BookmarkManager.cs" />
@@ -82,10 +87,17 @@
     <Compile Include="Services\Debugger\RemotingConfigurationHelpper.cs" />
     <Compile Include="Services\Debugger\TypeResolverExtension.cs" />
     <Compile Include="Services\Debugger\WindowsDebugger.cs" />
+    <Compile Include="Services\ExtensionMethods.cs" />
     <Compile Include="Services\ImageService\ImageService.cs" />
     <Compile Include="Models\RunningProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ParserService\ParserService.cs" />
+    <Compile Include="ToolTips\DebuggerPopup.cs" />
+    <Compile Include="ToolTips\DebuggerTooltipControl.xaml.cs">
+      <DependentUpon>DebuggerTooltipControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolTips\LazyItemsControl.cs" />
+    <Compile Include="ToolTips\VirtualizingIEnumerable.cs" />
     <Compile Include="UI\AttachToProcessWindow.xaml.cs">
       <DependentUpon>AttachToProcessWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -93,8 +105,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\TreeModel" />
+    <Folder Include="ToolTips" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ToolTips\DebuggerTooltipControl.xaml" />
+    <Page Include="ToolTips\PinControlsDictionary.xaml" />
     <Page Include="UI\AttachToProcessWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
