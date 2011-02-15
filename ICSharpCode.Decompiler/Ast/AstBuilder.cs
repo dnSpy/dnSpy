@@ -26,19 +26,20 @@ namespace Decompiler
 					//astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
 				}
 				if (Options.ReduceAstOther) {
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.Idioms(), null);
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.PushNegation(), null);
 				}
 			}
 			if (Options.ReduceAstOther) {
 				astCompileUnit.AcceptVisitor(new Transforms.Ast.SimplifyTypeReferences(), null);
-				astCompileUnit.AcceptVisitor(new Transforms.Ast.Idioms(), null);
 			}
 			if (Options.ReduceAstLoops) {
 				//astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
 			}
 			
+			// Run ReplaceMethodCallsWithOperators at the end only - this step transforms custom operator calls
+			// into operator expressions, and we don't want other simplification steps to change those later on.
+			astCompileUnit.AcceptVisitor(new Transforms.Ast.ReplaceMethodCallsWithOperators(), null);
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			
 			var outputFormatter = new TextOutputFormatter(output);

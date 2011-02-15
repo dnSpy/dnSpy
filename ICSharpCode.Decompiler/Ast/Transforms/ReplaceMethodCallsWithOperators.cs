@@ -7,7 +7,11 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace Decompiler.Transforms.Ast
 {
-	public class Idioms: DepthFirstAstVisitor<object, object>
+	/// <summary>
+	/// Replaces method calls with the appropriate operator expressions.
+	/// Also simplifies "x = x op y" into "x op= y" where possible.
+	/// </summary>
+	public class ReplaceMethodCallsWithOperators : DepthFirstAstVisitor<object, object>
 	{
 		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
 		{
@@ -162,7 +166,7 @@ namespace Decompiler.Transforms.Ast
 							break;
 					}
 					if (assignment.Operator != AssignmentOperatorType.Assign) {
-						// If we found a shorter operators, get rid of the BinaryOperatorExpression:
+						// If we found a shorter operator, get rid of the BinaryOperatorExpression:
 						assignment.Right = binary.Right;
 					}
 				}
@@ -174,18 +178,5 @@ namespace Decompiler.Transforms.Ast
 		{
 			return left is IdentifierExpression; // TODO
 		}
-		
-		/*
-		public override object VisitCastExpression(CastExpression castExpression, object data)
-		{
-			MethodReference typeRef = invocationExpression.Annotation<TypeReference>();
-			if (typeRef.FullName == Constants.Int32 &&
-			    castExpression.Expression is MemberReferenceExpression &&
-			    (castExpression.Expression as MemberReferenceExpression).MemberName == "Length") {
-				ReplaceCurrentNode(castExpression.Expression);
-				return null;
-			}
-			return base.VisitCastExpression(castExpression, data);
-		}*/
 	}
 }

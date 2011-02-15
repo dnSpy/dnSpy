@@ -54,7 +54,7 @@
     <Compile Include="Ast\CommentStatement.cs" />
     <Compile Include="Ast\NRefactoryExtensions.cs" />
     <Compile Include="Ast\TextOutputFormatter.cs" />
-    <Compile Include="Ast\Transforms\Idioms.cs" />
+    <Compile Include="Ast\Transforms\ReplaceMethodCallsWithOperators.cs" />
     <Compile Include="Ast\Transforms\PushNegation.cs" />
     <Compile Include="Ast\Transforms\RemoveEmptyElseBody.cs" />
     <Compile Include="Ast\Transforms\RemoveGotos.cs" />
