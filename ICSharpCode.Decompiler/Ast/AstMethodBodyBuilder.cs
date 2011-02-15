@@ -117,7 +117,8 @@ namespace Decompiler
 			if (node is ILLabel) {
 				yield return new Ast.LabelStatement { Label = ((ILLabel)node).Name };
 			} else if (node is ILExpression) {
-				object codeExpr = TransformExpression((ILExpression)node);
+				List<ILRange> ilRanges = ((ILExpression)node).GetILRanges();
+				AstNode codeExpr = TransformExpression((ILExpression)node).WithAnnotation(ilRanges);
 				if (codeExpr != null) {
 					if (codeExpr is Ast.Expression) {
 						yield return new Ast.ExpressionStatement { Expression = (Ast.Expression)codeExpr };
@@ -197,7 +198,7 @@ namespace Decompiler
 			return args;
 		}
 		
-		object TransformExpression(ILExpression expr)
+		AstNode TransformExpression(ILExpression expr)
 		{
 			List<Ast.Expression> args = TransformExpressionArguments(expr);
 			return TransformByteCode(methodDef, expr, args);
@@ -260,7 +261,7 @@ namespace Decompiler
 			*/
 		}
 		
-		static object TransformByteCode(MethodDefinition methodDef, ILExpression byteCode, List<Ast.Expression> args)
+		static AstNode TransformByteCode(MethodDefinition methodDef, ILExpression byteCode, List<Ast.Expression> args)
 		{
 			try {
 				AstNode ret = TransformByteCode_Internal(methodDef, byteCode, args);

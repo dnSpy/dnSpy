@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-
 using Decompiler.ControlFlow;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -119,17 +119,31 @@ namespace Decompiler
 		}
 	}
 	
+	public class ILRange
+	{
+		public int From;
+		public int To;   // Exlusive
+		
+		public override string ToString()
+		{
+			return string.Format("{0}-{1}", From, To);
+		}
+	}
+	
 	public class ILExpression: ILNode
 	{
 		public OpCode OpCode { get; set; }
 		public object Operand { get; set; }
 		public List<ILExpression> Arguments { get; set; }
+		// Mapping to the original instructions (useful for debugging)
+		public List<ILRange> ILRanges { get; set; }
 		
 		public ILExpression(OpCode opCode, object operand, params ILExpression[] args)
 		{
 			this.OpCode = opCode;
 			this.Operand = operand;
 			this.Arguments = new List<ILExpression>(args);
+			this.ILRanges  = new List<ILRange>(1);
 		}
 		
 		public IEnumerable<ILLabel> GetBranchTargets()
@@ -141,6 +155,27 @@ namespace Decompiler
 			} else {
 				return new ILLabel[] { };
 			}
+		}
+		
+		public List<ILRange> GetILRanges()
+		{
+			List<ILRange> ranges = new List<ILRange>();
+			foreach(ILExpression expr in this.GetSelfAndChildrenRecursive<ILExpression>()) {
+				ranges.AddRange(expr.ILRanges);
+			}
+			ranges = ranges.OrderBy(r => r.From).ToList();
+			for (int i = 0; i < ranges.Count - 1;) {
+				ILRange curr = ranges[i];
+				ILRange next = ranges[i + 1];
+				// Merge consequtive ranges if they intersect
+				if (curr.From <= next.From && next.From <= curr.To) {
+					curr.To = Math.Max(curr.To, next.To);
+					ranges.RemoveAt(i + 1);
+				} else {
+					i++;
+				}
+			}
+			return ranges;
 		}
 		
 		public override IEnumerable<ILNode> GetChildren()

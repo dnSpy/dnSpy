@@ -55,6 +55,7 @@ namespace Decompiler.ControlFlow
 		void SplitToMovableBlocks(ILBlock block)
 		{
 			// Remve no-ops
+			// TODO: Assign the no-op range to someting
 			block.Body = block.Body.Where(n => !(n is ILExpression && ((ILExpression)n).OpCode == OpCodes.Nop)).ToList();
 			
 			List<ILNode> moveableBlocks = new List<ILNode>();
@@ -417,6 +418,7 @@ namespace Decompiler.ControlFlow
 		
 		void SimpleGotoRemoval(ILBlock ast)
 		{
+			// TODO: Assign IL ranges from br to something else
 			var blocks = ast.GetSelfAndChildrenRecursive<ILBlock>().ToList();
 			foreach(ILBlock block in blocks) {
 				for (int i = 0; i < block.Body.Count; i++) {
