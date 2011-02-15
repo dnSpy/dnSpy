@@ -10,6 +10,7 @@ namespace Decompiler.Transforms
 {
 	/// <summary>
 	/// Converts "new Action(obj, ldftn(func))" into "new Action(obj.func)".
+	/// For anonymous methods, creates an AnonymousMethodExpression.
 	/// </summary>
 	public class DelegateConstruction : DepthFirstAstVisitor<object, object>
 	{
@@ -42,7 +43,9 @@ namespace Decompiler.Transforms
 					IdentifierExpression methodIdent = (IdentifierExpression)((InvocationExpression)func).Arguments.Single();
 					MethodReference method = methodIdent.Annotation<MethodReference>();
 					if (method != null) {
-						// Perform the transformation:
+						if (HandleAnonymousMethod(objectCreateExpression, obj, method, annotation.ContainingType))
+							return null;
+						// Perform the transformation to "new Action(obj.func)".
 						obj.Remove();
 						methodIdent.Remove();
 						if (!annotation.IsVirtual && obj is ThisReferenceExpression) {
@@ -82,6 +85,56 @@ namespace Decompiler.Transforms
 				}
 			}
 			return base.VisitObjectCreateExpression(objectCreateExpression, data);
+		}
+		
+		bool HandleAnonymousMethod(ObjectCreateExpression objectCreateExpression, Expression target, MethodReference methodRef, TypeDefinition containingType)
+		{
+			// Anonymous methods are defined in the same assembly, so there's no need to Resolve().
+			MethodDefinition method = methodRef as MethodDefinition;
+			if (method == null || !method.Name.StartsWith("<", StringComparison.Ordinal))
+				return false;
+			if (!(IsCompilerGenerated(method) || IsCompilerGenerated(method.DeclaringType)))
+				return false;
+			TypeDefinition methodContainingType = method.DeclaringType;
+			// check that methodContainingType is within containingType
+			while (methodContainingType != containingType) {
+				methodContainingType = methodContainingType.DeclaringType;
+				if (methodContainingType == null)
+					return false;
+			}
+			
+			// Decompile the anonymous method:
+			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method);
+			TransformationPipeline.RunTransformationsUntil(body, v => v is DelegateConstruction);
+			body.AcceptVisitor(this, null);
+			
+			AnonymousMethodExpression ame = new AnonymousMethodExpression();
+			if (method.Parameters.All(p => string.IsNullOrEmpty(p.Name))) {
+				ame.HasParameterList = false;
+			} else {
+				ame.HasParameterList = true;
+				ame.Parameters = AstBuilder.MakeParameters(method.Parameters);
+			}
+			ame.Body = body;
+			// Replace all occurrences of 'this' in the method body with the delegate's target:
+			foreach (AstNode node in body.Descendants) {
+				if (node is ThisReferenceExpression)
+					node.ReplaceWith(target.Clone());
+				
+			}
+			objectCreateExpression.ReplaceWith(ame);
+			return true;
+		}
+		
+		bool IsCompilerGenerated(ICustomAttributeProvider provider)
+		{
+			if (provider.HasCustomAttributes) {
+				foreach (CustomAttribute a in provider.CustomAttributes) {
+					if (a.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute")
+						return true;
+				}
+			}
+			return false;
 		}
 	}
 }

@@ -5,7 +5,7 @@ using Mono.Cecil;
 using Ast = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace Decompiler.Transforms.Ast
+namespace Decompiler.Transforms
 {
 	/// <summary>
 	/// Replaces method calls with the appropriate operator expressions.

@@ -17,30 +17,7 @@ namespace Decompiler
 		
 		public void GenerateCode(ITextOutput output)
 		{
-			astCompileUnit.AcceptVisitor(new Transforms.DelegateConstruction(), null);
-			
-			for (int i = 0; i < 4; i++) {
-				if (Options.ReduceAstJumps) {
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
-				}
-				if (Options.ReduceAstLoops) {
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
-				}
-				if (Options.ReduceAstOther) {
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.PushNegation(), null);
-				}
-			}
-			if (Options.ReduceAstOther) {
-				astCompileUnit.AcceptVisitor(new Transforms.Ast.SimplifyTypeReferences(), null);
-			}
-			if (Options.ReduceAstLoops) {
-				//astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
-			}
-			
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.ConvertConstructorCallIntoInitializer(), null);
-			astCompileUnit.AcceptVisitor(new Transforms.Ast.ReplaceMethodCallsWithOperators(), null);
+			Transforms.TransformationPipeline.RunTransformations(astCompileUnit);
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			
 			var outputFormatter = new TextOutputFormatter(output);
@@ -489,7 +466,7 @@ namespace Decompiler
 			return astField;
 		}
 		
-		IEnumerable<ParameterDeclaration> MakeParameters(IEnumerable<ParameterDefinition> paramCol)
+		public static IEnumerable<ParameterDeclaration> MakeParameters(IEnumerable<ParameterDefinition> paramCol)
 		{
 			foreach(ParameterDefinition paramDef in paramCol) {
 				ParameterDeclaration astParam = new ParameterDeclaration();

@@ -6,7 +6,7 @@ using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
-namespace Decompiler.Transforms.Ast
+namespace Decompiler.Transforms
 {
 	public class ConvertConstructorCallIntoInitializer : DepthFirstAstVisitor<object, object>
 	{
