@@ -120,11 +120,15 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// A list of all languages.
 		/// </summary>
-		public static readonly ReadOnlyCollection<Language> AllLanguages = Array.AsReadOnly(
+		public static readonly ReadOnlyCollection<Language> AllLanguages = new List<Language>(
 			new Language[] {
 				new CSharpLanguage(),
 				new ILLanguage(true)
-			});
+			}
+			#if DEBUG
+			.Concat(CSharpLanguage.GetDebugLanguages())
+			#endif
+		).AsReadOnly();
 		
 		/// <summary>
 		/// Gets a language using its name.

@@ -17,7 +17,12 @@ namespace Decompiler
 		
 		public void GenerateCode(ITextOutput output)
 		{
-			Transforms.TransformationPipeline.RunTransformations(astCompileUnit);
+			GenerateCode(output, null);
+		}
+		
+		public void GenerateCode(ITextOutput output, Predicate<IAstVisitor<object, object>> transformAbortCondition)
+		{
+			Transforms.TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition);
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			
 			var outputFormatter = new TextOutputFormatter(output);

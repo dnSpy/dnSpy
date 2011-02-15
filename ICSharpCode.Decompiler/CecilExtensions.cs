@@ -158,5 +158,16 @@ namespace ICSharpCode.Decompiler
 			}
 			return accessorMethods;
 		}
+		
+		public static bool IsCompilerGenerated(this ICustomAttributeProvider provider)
+		{
+			if (provider.HasCustomAttributes) {
+				foreach (CustomAttribute a in provider.CustomAttributes) {
+					if (a.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute")
+						return true;
+				}
+			}
+			return false;
+		}
 	}
 }

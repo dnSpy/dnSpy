@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -93,7 +94,7 @@ namespace Decompiler.Transforms
 			MethodDefinition method = methodRef as MethodDefinition;
 			if (method == null || !method.Name.StartsWith("<", StringComparison.Ordinal))
 				return false;
-			if (!(IsCompilerGenerated(method) || IsCompilerGenerated(method.DeclaringType)))
+			if (!(method.IsCompilerGenerated() || method.DeclaringType.IsCompilerGenerated()))
 				return false;
 			TypeDefinition methodContainingType = method.DeclaringType;
 			// check that methodContainingType is within containingType
@@ -124,17 +125,6 @@ namespace Decompiler.Transforms
 			}
 			objectCreateExpression.ReplaceWith(ame);
 			return true;
-		}
-		
-		bool IsCompilerGenerated(ICustomAttributeProvider provider)
-		{
-			if (provider.HasCustomAttributes) {
-				foreach (CustomAttribute a in provider.CustomAttributes) {
-					if (a.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute")
-						return true;
-				}
-			}
-			return false;
 		}
 	}
 }

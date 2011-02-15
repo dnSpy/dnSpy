@@ -8,7 +8,7 @@ namespace Decompiler.Transforms
 {
 	public static class TransformationPipeline
 	{
-		static IAstVisitor<object, object>[] CreatePipeline()
+		public static IAstVisitor<object, object>[] CreatePipeline()
 		{
 			return new IAstVisitor<object, object>[] {
 				new DelegateConstruction(),
@@ -19,7 +19,7 @@ namespace Decompiler.Transforms
 		
 		public static void RunTransformations(AstNode node)
 		{
-			RunTransformationsUntil(node, v => false);
+			RunTransformationsUntil(node, null);
 		}
 		
 		public static void RunTransformationsUntil(AstNode node, Predicate<IAstVisitor<object, object>> abortCondition)
@@ -41,7 +41,7 @@ namespace Decompiler.Transforms
 			}
 			
 			foreach (var visitor in CreatePipeline()) {
-				if (abortCondition(visitor))
+				if (abortCondition != null && abortCondition(visitor))
 					return;
 				node.AcceptVisitor(visitor, null);
 			}
