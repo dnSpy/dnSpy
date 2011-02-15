@@ -348,19 +348,19 @@ namespace ICSharpCode.ILSpy.TextView
 					return;
 				}
 			}
-			var assemblyList = mainWindow.AssemblyList;
+			var assemblyListTreeNode = mainWindow.AssemblyListTreeNode;
 			if (reference is TypeReference) {
-				mainWindow.SelectNode(assemblyList.FindTypeNode(((TypeReference)reference).Resolve()));
+				mainWindow.SelectNode(assemblyListTreeNode.FindTypeNode(((TypeReference)reference).Resolve()));
 			} else if (reference is MethodReference) {
-				mainWindow.SelectNode(assemblyList.FindMethodNode(((MethodReference)reference).Resolve()));
+				mainWindow.SelectNode(assemblyListTreeNode.FindMethodNode(((MethodReference)reference).Resolve()));
 			} else if (reference is FieldReference) {
-				mainWindow.SelectNode(assemblyList.FindFieldNode(((FieldReference)reference).Resolve()));
+				mainWindow.SelectNode(assemblyListTreeNode.FindFieldNode(((FieldReference)reference).Resolve()));
 			} else if (reference is PropertyReference) {
-				mainWindow.SelectNode(assemblyList.FindPropertyNode(((PropertyReference)reference).Resolve()));
+				mainWindow.SelectNode(assemblyListTreeNode.FindPropertyNode(((PropertyReference)reference).Resolve()));
 			} else if (reference is EventReference) {
-				mainWindow.SelectNode(assemblyList.FindEventNode(((EventReference)reference).Resolve()));
+				mainWindow.SelectNode(assemblyListTreeNode.FindEventNode(((EventReference)reference).Resolve()));
 			} else if (reference is AssemblyDefinition) {
-				mainWindow.SelectNode(assemblyList.GetAssemblies().FirstOrDefault(node => node.AssemblyDefinition == reference));
+				mainWindow.SelectNode(assemblyListTreeNode.FindAssemblyNode((AssemblyDefinition)reference));
 			}
 		}
 		#endregion

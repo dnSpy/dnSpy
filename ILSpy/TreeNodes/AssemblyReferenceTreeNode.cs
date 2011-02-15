@@ -63,19 +63,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
 			if (assemblyListNode != null) {
-				assemblyListNode.Select(parentAssembly.LookupReferencedAssembly(r.FullName));
+				assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r.FullName)));
 				e.Handled = true;
 			}
 		}
 		
 		protected override void LoadChildren()
 		{
-			var refNode = parentAssembly.LookupReferencedAssembly(r.FullName);
-			if (refNode != null) {
-				AssemblyDefinition asm = refNode.AssemblyDefinition;
-				if (asm != null) {
-					foreach (var childRef in asm.MainModule.AssemblyReferences)
-						this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode));
+			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
+			if (assemblyListNode != null) {
+				var refNode = assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r.FullName));
+				if (refNode != null) {
+					AssemblyDefinition asm = refNode.LoadedAssembly.AssemblyDefinition;
+					if (asm != null) {
+						foreach (var childRef in asm.MainModule.AssemblyReferences)
+							this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode));
+					}
 				}
 			}
 		}

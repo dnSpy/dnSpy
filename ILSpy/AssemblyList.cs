@@ -45,15 +45,10 @@ namespace ICSharpCode.ILSpy
 		/// Write accesses are allowed on the GUI thread only (but still need locking!)
 		/// </summary>
 		/// <remarks>
-		/// Technically read accesses need locking on when done on non-GUI threads... but whenever possible, use the
+		/// Technically read accesses need locking when done on non-GUI threads... but whenever possible, use the
 		/// thread-safe <see cref="GetAssemblies()"/> method.
 		/// </remarks>
-		internal readonly ObservableCollection<AssemblyTreeNode> assemblies = new ObservableCollection<AssemblyTreeNode>();
-		
-		/// <summary>
-		/// Dictionary for quickly finding types (used in hyperlink navigation)
-		/// </summary>
-		readonly ConcurrentDictionary<TypeDefinition, TypeTreeNode> typeDict = new ConcurrentDictionary<TypeDefinition, TypeTreeNode>();
+		internal readonly ObservableCollection<LoadedAssembly> assemblies = new ObservableCollection<LoadedAssembly>();
 		
 		public AssemblyList(string listName)
 		{
@@ -76,7 +71,7 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Gets the loaded assemblies. This method is thread-safe.
 		/// </summary>
-		public AssemblyTreeNode[] GetAssemblies()
+		public LoadedAssembly[] GetAssemblies()
 		{
 			lock (assemblies) {
 				return assemblies.ToArray();
@@ -120,128 +115,23 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		/// <summary>
-		/// Registers a type node in the dictionary for quick type lookup.
-		/// </summary>
-		/// <remarks>This method is called by the assembly loading code (on a background thread)</remarks>
-		public void RegisterTypeNode(TypeTreeNode node)
-		{
-			// called on background loading thread, so we need to use a ConcurrentDictionary
-			typeDict[node.TypeDefinition] = node;
-		}
-		
-		#region Find*Node
-		/// <summary>
-		/// Looks up the type node corresponding to the type definition.
-		/// Returns null if no matching node is found.
-		/// </summary>
-		public TypeTreeNode FindTypeNode(TypeDefinition def)
-		{
-			if (def == null)
-				return null;
-			App.Current.Dispatcher.VerifyAccess();
-			if (def.DeclaringType != null) {
-				TypeTreeNode decl = FindTypeNode(def.DeclaringType);
-				if (decl != null) {
-					decl.EnsureLazyChildren();
-					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def && !t.IsHidden);
-				}
-			} else {
-				TypeTreeNode node;
-				if (typeDict.TryGetValue(def, out node)) {
-					// Ensure that the node is connected to the tree
-					node.ParentAssemblyNode.EnsureLazyChildren();
-					// Validate that the node wasn't removed due to visibility settings:
-					if (node.Ancestors().OfType<AssemblyListTreeNode>().Any(n => n.AssemblyList == this))
-						return node;
-				}
-			}
-			return null;
-		}
-		
-		/// <summary>
-		/// Looks up the method node corresponding to the method definition.
-		/// Returns null if no matching node is found.
-		/// </summary>
-		public MethodTreeNode FindMethodNode(MethodDefinition def)
-		{
-			if (def == null)
-				return null;
-			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
-			typeNode.EnsureLazyChildren();
-			MethodTreeNode methodNode = typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def && !m.IsHidden);
-			if (methodNode != null)
-				return methodNode;
-			foreach (var p in typeNode.Children.OfType<ILSpyTreeNode>()) {
-				if (p.IsHidden)
-					continue;
-				// method might be a child or a property or events
-				p.EnsureLazyChildren();
-				methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def && !m.IsHidden);
-				if (methodNode != null)
-					return methodNode;
-			}
-			
-			return null;
-		}
-		
-		/// <summary>
-		/// Looks up the field node corresponding to the field definition.
-		/// Returns null if no matching node is found.
-		/// </summary>
-		public FieldTreeNode FindFieldNode(FieldDefinition def)
-		{
-			if (def == null)
-				return null;
-			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
-			typeNode.EnsureLazyChildren();
-			return typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def && !m.IsHidden);
-		}
-		
-		/// <summary>
-		/// Looks up the property node corresponding to the property definition.
-		/// Returns null if no matching node is found.
-		/// </summary>
-		public PropertyTreeNode FindPropertyNode(PropertyDefinition def)
-		{
-			if (def == null)
-				return null;
-			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
-			typeNode.EnsureLazyChildren();
-			return typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def && !m.IsHidden);
-		}
-		
-		/// <summary>
-		/// Looks up the event node corresponding to the event definition.
-		/// Returns null if no matching node is found.
-		/// </summary>
-		public EventTreeNode FindEventNode(EventDefinition def)
-		{
-			if (def == null)
-				return null;
-			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
-			typeNode.EnsureLazyChildren();
-			return typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def && !m.IsHidden);
-		}
-		#endregion
-		
-		/// <summary>
 		/// Opens an assembly from disk.
 		/// Returns the existing assembly node if it is already loaded.
 		/// </summary>
-		public AssemblyTreeNode OpenAssembly(string file)
+		public LoadedAssembly OpenAssembly(string file)
 		{
 			App.Current.Dispatcher.VerifyAccess();
 			
 			file = Path.GetFullPath(file);
 			
-			foreach (AssemblyTreeNode node in this.assemblies) {
-				if (file.Equals(node.FileName, StringComparison.OrdinalIgnoreCase))
-					return node;
+			foreach (LoadedAssembly asm in this.assemblies) {
+				if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
+					return asm;
 			}
 			
-			var newNode = new AssemblyTreeNode(file, this);
-			this.assemblies.Add(newNode);
-			return newNode;
+			var newAsm = new LoadedAssembly(this, file);
+			this.assemblies.Add(newAsm);
+			return newAsm;
 		}
 	}
 }

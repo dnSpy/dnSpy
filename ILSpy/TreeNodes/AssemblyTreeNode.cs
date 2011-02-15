@@ -38,55 +38,38 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// </summary>
 	sealed class AssemblyTreeNode : ILSpyTreeNode
 	{
-		
-		readonly AssemblyList assemblyList;
-		readonly string fileName;
-		string shortName;
-		readonly Task<AssemblyDefinition> assemblyTask;
+		readonly LoadedAssembly assembly;
 		readonly List<TypeTreeNode> classes = new List<TypeTreeNode>();
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
 		
-		public AssemblyTreeNode(string fileName, AssemblyList assemblyList)
+		public AssemblyTreeNode(LoadedAssembly assembly)
 		{
-			if (fileName == null)
-				throw new ArgumentNullException("fileName");
+			if (assembly == null)
+				throw new ArgumentNullException("assembly");
 			
-			this.fileName = fileName;
-			this.assemblyList = assemblyList;
-			this.assemblyTask = Task.Factory.StartNew<AssemblyDefinition>(LoadAssembly); // requires that this.fileName is set
-			this.shortName = Path.GetFileNameWithoutExtension(fileName);
+			this.assembly = assembly;
 			
-			assemblyTask.ContinueWith(OnAssemblyLoaded, TaskScheduler.FromCurrentSynchronizationContext());
+			assembly.ContinueWhenLoaded(OnAssemblyLoaded, TaskScheduler.FromCurrentSynchronizationContext());
 			
 			this.LazyLoading = true;
 		}
 		
-		public string FileName {
-			get { return fileName; }
-		}
-		
 		public AssemblyList AssemblyList {
-			get { return assemblyList; }
+			get { return assembly.AssemblyList; }
 		}
 		
-		public AssemblyDefinition AssemblyDefinition {
-			get {
-				try {
-					return assemblyTask.Result;
-				} catch {
-					return null;
-				}
-			}
+		public LoadedAssembly LoadedAssembly {
+			get { return assembly; }
 		}
 		
 		public override object Text {
-			get { return HighlightSearchMatch(shortName); }
+			get { return HighlightSearchMatch(assembly.ShortName); }
 		}
 		
 		public override object Icon {
 			get {
-				if (assemblyTask.IsCompleted) {
-					return assemblyTask.IsFaulted ? Images.AssemblyWarning : Images.Assembly;
+				if (assembly.IsLoaded) {
+					return assembly.HasLoadError ? Images.AssemblyWarning : Images.Assembly;
 				} else {
 					return Images.AssemblyLoading;
 				}
@@ -94,22 +77,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override bool ShowExpander {
-			get { return !assemblyTask.IsFaulted; }
-		}
-		
-		AssemblyDefinition LoadAssembly()
-		{
-			// runs on background thread
-			ReaderParameters p = new ReaderParameters();
-			p.AssemblyResolver = new MyAssemblyResolver(this);
-			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(fileName, p);
-			foreach (TypeDefinition type in assembly.MainModule.Types.OrderBy(t => t.FullName)) {
-				TypeTreeNode node = new TypeTreeNode(type, this);
-				classes.Add(node);
-				assemblyList.RegisterTypeNode(node);
-			}
-			
-			return assembly;
+			get { return !assembly.HasLoadError; }
 		}
 		
 		void OnAssemblyLoaded(Task<AssemblyDefinition> assemblyTask)
@@ -120,45 +88,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (assemblyTask.IsFaulted) {
 				RaisePropertyChanged("ShowExpander"); // cannot expand assemblies with load error
 			} else {
-				AssemblyDefinition assembly = assemblyTask.Result;
-				if (shortName != assembly.Name.Name) {
-					shortName = assembly.Name.Name;
-					RaisePropertyChanged("Text");
-				}
-			}
-		}
-		
-		sealed class MyAssemblyResolver : IAssemblyResolver
-		{
-			readonly AssemblyTreeNode parent;
-			
-			public MyAssemblyResolver(AssemblyTreeNode parent)
-			{
-				this.parent = parent;
-			}
-			
-			public AssemblyDefinition Resolve(AssemblyNameReference name)
-			{
-				var node = parent.LookupReferencedAssembly(name.FullName);
-				return node != null ? node.AssemblyDefinition : null;
-			}
-			
-			public AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
-			{
-				var node = parent.LookupReferencedAssembly(name.FullName);
-				return node != null ? node.AssemblyDefinition : null;
-			}
-			
-			public AssemblyDefinition Resolve(string fullName)
-			{
-				var node = parent.LookupReferencedAssembly(fullName);
-				return node != null ? node.AssemblyDefinition : null;
-			}
-			
-			public AssemblyDefinition Resolve(string fullName, ReaderParameters parameters)
-			{
-				var node = parent.LookupReferencedAssembly(fullName);
-				return node != null ? node.AssemblyDefinition : null;
+				RaisePropertyChanged("Text"); // shortname might have changed
 			}
 		}
 		
@@ -177,33 +107,49 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return menu;
 		}
 		
+		Dictionary<TypeDefinition, TypeTreeNode> typeDict = new Dictionary<TypeDefinition, TypeTreeNode>();
+		
 		protected override void LoadChildren()
 		{
-			try {
-				assemblyTask.Wait();
-			} catch (AggregateException) {
+			AssemblyDefinition assemblyDefinition = assembly.AssemblyDefinition;
+			if (assemblyDefinition == null) {
 				// if we crashed on loading, then we don't have any children
 				return;
 			}
-			ModuleDefinition mainModule = assemblyTask.Result.MainModule;
+			ModuleDefinition mainModule = assemblyDefinition.MainModule;
+			
 			this.Children.Add(new ReferenceFolderTreeNode(mainModule, this));
 			if (mainModule.HasResources)
 				this.Children.Add(new ResourceListTreeNode(mainModule));
 			foreach (NamespaceTreeNode ns in namespaces.Values) {
 				ns.Children.Clear();
 			}
-			foreach (TypeTreeNode type in classes) {
+			foreach (TypeDefinition type in mainModule.Types.OrderBy(t => t.FullName)) {
 				NamespaceTreeNode ns;
 				if (!namespaces.TryGetValue(type.Namespace, out ns)) {
 					ns = new NamespaceTreeNode(type.Namespace);
 					namespaces[type.Namespace] = ns;
 				}
-				ns.Children.Add(type);
+				TypeTreeNode node = new TypeTreeNode(type, this);
+				typeDict[type] = node;
+				ns.Children.Add(node);
 			}
 			foreach (NamespaceTreeNode ns in namespaces.Values.OrderBy(n => n.Name)) {
 				if (ns.Children.Count > 0)
 					this.Children.Add(ns);
 			}
+		}
+		
+		public TypeTreeNode FindTypeNode(TypeDefinition def)
+		{
+			if (def == null)
+				return null;
+			EnsureLazyChildren();
+			TypeTreeNode node;
+			if (typeDict.TryGetValue(def, out node))
+				return node;
+			else
+				return null;
 		}
 		
 		public override bool CanDrag(SharpTreeNode[] nodes)
@@ -228,8 +174,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void DeleteCore()
 		{
-			lock (assemblyList.assemblies) {
-				assemblyList.assemblies.Remove(this);
+			lock (assembly.AssemblyList.assemblies) {
+				assembly.AssemblyList.assemblies.Remove(assembly);
 			}
 		}
 		
@@ -238,41 +184,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override IDataObject Copy(SharpTreeNode[] nodes)
 		{
 			DataObject dataObject = new DataObject();
-			dataObject.SetData(DataFormat, nodes.OfType<AssemblyTreeNode>().Select(n => n.fileName).ToArray());
+			dataObject.SetData(DataFormat, nodes.OfType<AssemblyTreeNode>().Select(n => n.LoadedAssembly.FileName).ToArray());
 			return dataObject;
-		}
-		
-		public AssemblyTreeNode LookupReferencedAssembly(string fullName)
-		{
-			foreach (AssemblyTreeNode node in assemblyList.GetAssemblies()) {
-				if (node.AssemblyDefinition != null && fullName.Equals(node.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
-					return node;
-			}
-			
-			if (!App.Current.Dispatcher.CheckAccess()) {
-				// Call this method on the GUI thread.
-				return (AssemblyTreeNode)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, AssemblyTreeNode>(LookupReferencedAssembly), fullName);
-			}
-			
-			var name = AssemblyNameReference.Parse(fullName);
-			string file = GacInterop.FindAssemblyInNetGac(name);
-			if (file == null) {
-				string dir = Path.GetDirectoryName(this.fileName);
-				if (File.Exists(Path.Combine(dir, name.Name + ".dll")))
-					file = Path.Combine(dir, name.Name + ".dll");
-				else if (File.Exists(Path.Combine(dir, name.Name + ".exe")))
-					file = Path.Combine(dir, name.Name + ".exe");
-			}
-			if (file != null) {
-				return assemblyList.OpenAssembly(file);
-			} else {
-				return null;
-			}
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(shortName))
+			if (settings.SearchTermMatches(assembly.ShortName))
 				return FilterResult.Match;
 			else
 				return FilterResult.Recurse;
@@ -280,8 +198,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			// use assemblyTask.Result instead of this.AssemblyDefinition so that load errors are passed on to the caller
-			language.DecompileAssembly(assemblyTask.Result, fileName, output, options);
+			assembly.WaitUntilLoaded(); // necessary so that load errors are passed on to the caller
+			language.DecompileAssembly(assembly.AssemblyDefinition, assembly.FileName, output, options);
 		}
 	}
 }
