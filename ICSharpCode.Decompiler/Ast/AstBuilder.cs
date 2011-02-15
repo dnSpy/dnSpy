@@ -17,6 +17,8 @@ namespace Decompiler
 		
 		public void GenerateCode(ITextOutput output)
 		{
+			astCompileUnit.AcceptVisitor(new Transforms.DelegateConstruction(), null);
+			
 			for (int i = 0; i < 4; i++) {
 				if (Options.ReduceAstJumps) {
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
