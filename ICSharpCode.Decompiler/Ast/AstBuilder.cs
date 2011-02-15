@@ -19,11 +19,11 @@ namespace Decompiler
 		{
 			for (int i = 0; i < 4; i++) {
 				if (Options.ReduceAstJumps) {
-					//astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
-					//astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
 				}
 				if (Options.ReduceAstLoops) {
-					//astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
+					astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
 				}
 				if (Options.ReduceAstOther) {
 					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);

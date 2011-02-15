@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace Decompiler.Transforms.Ast
 {
-	/*
 	public class RemoveGotos: DepthFirstAstVisitor<object, object>
 	{
-		Stack<Statement> enteredLoops = new Stack<Statement>();
+		Stack<ForStatement> enteredLoops = new Stack<ForStatement>();
 		
-		Statement CurrentLoop {
+		ForStatement CurrentLoop {
 			get {
 				if (enteredLoops.Count > 0) {
 					return enteredLoops.Peek();
@@ -28,27 +27,20 @@ namespace Decompiler.Transforms.Ast
 			return null;
 		}
 		
-		public override object VisitWhileStatement(WhileStatement whileStatement, object data)
-		{
-			enteredLoops.Push(whileStatement);
-			base.VisitWhileStatement(whileStatement, data);
-			enteredLoops.Pop();
-			return null;
-		}
+//		public override object VisitWhileStatement(WhileStatement whileStatement, object data)
+//		{
+//			enteredLoops.Push(whileStatement);
+//			base.VisitWhileStatement(whileStatement, data);
+//			enteredLoops.Pop();
+//			return null;
+//		}
 		
 		public override object VisitBlockStatement(BlockStatement blockStatement, object data)
 		{
 			base.VisitBlockStatement(blockStatement, data);
 			
 			// Remove redundant jump at the end of block
-			INode lastStmt = blockStatement.Children.Last;
-			// End of while loop
-			if (lastStmt is ContinueStatement && 
-			    blockStatement.Parent is DoLoopStatement)
-			{
-				lastStmt.Remove();
-				return null;
-			}
+			AstNode lastStmt = blockStatement.Children.LastOrDefault();
 			// End of for loop
 			if (lastStmt is ContinueStatement && 
 			    blockStatement.Parent is ForStatement)
@@ -74,7 +66,7 @@ namespace Decompiler.Transforms.Ast
 		{
 			if (statement == null) throw new ArgumentNullException();
 			
-			Statement next = (Statement)statement.Next();
+			Statement next = (Statement)statement.NextSibling;
 			
 			if (next != null) {
 				return EnterBlockStatement(next);
@@ -104,12 +96,12 @@ namespace Decompiler.Transforms.Ast
 			// Iterator; Condition; Body
 			if (statement is ForStatement) {
 				ForStatement forLoop = statement as ForStatement;
-				if (forLoop.Iterator.Count > 0) {
-					return forLoop.Iterator[0];
+				if (forLoop.Iterators.Any()) {
+					return forLoop.Iterators.First();
 				} else if (!forLoop.Condition.IsNull) {
 					return forLoop.Condition;
 				} else {
-					return EnterBlockStatement((Statement)forLoop.EmbeddedStatement.Children.First);
+					return EnterBlockStatement((Statement)forLoop.EmbeddedStatement.FirstChild);
 				}
 			}
 			
@@ -124,14 +116,12 @@ namespace Decompiler.Transforms.Ast
 			// For loop starts as follows: Initializers; Condition; Body
 			if (statement is ForStatement) {
 				ForStatement forLoop = statement as ForStatement;
-				if (forLoop.Initializers.Count > 0) {
-					return forLoop.Initializers[0];
+				if (forLoop.Initializers.Any()) {
+				    	return forLoop.Initializers.First();
 				} else if (!forLoop.Condition.IsNull) {
 					return forLoop.Condition;
-				} else if (forLoop.EmbeddedStatement is BlockStatement &&
-					       forLoop.EmbeddedStatement.Children.Count > 0) {
-					statement = (Statement)forLoop.EmbeddedStatement.Children.First;
-					return EnterBlockStatement(statement);  // Simplify again
+				} else if (forLoop.EmbeddedStatement.Children.FirstOrDefault() is Statement) {
+					return EnterBlockStatement((Statement)forLoop.EmbeddedStatement.FirstChild);  // Simplify again
 				}
 			}
 			
@@ -141,11 +131,11 @@ namespace Decompiler.Transforms.Ast
 		public override object VisitGotoStatement(GotoStatement gotoStatement, object data)
 		{
 			// Remove redundant goto which goes to a label that imideately follows
-			INode fallthoughTarget = GetNextStatement(gotoStatement);
+			AstNode fallthoughTarget = GetNextStatement(gotoStatement);
 			while(true) {
 				if (fallthoughTarget is LabelStatement) {
 				    if ((fallthoughTarget as LabelStatement).Label == gotoStatement.Label) {
-						RemoveCurrentNode();
+						gotoStatement.Remove();
 						return null;
 					} else {
 						fallthoughTarget = GetNextStatement((LabelStatement)fallthoughTarget);
@@ -158,10 +148,10 @@ namespace Decompiler.Transforms.Ast
 			// Replace goto with 'break'
 			// Break statement moves right outside the looop
 			if (CurrentLoop != null) {
-				INode breakTarget = GetNextStatement(CurrentLoop);
+				AstNode breakTarget = GetNextStatement(CurrentLoop);
 				if ((breakTarget is LabelStatement) &&
 				    (breakTarget as LabelStatement).Label == gotoStatement.Label) {
-					ReplaceCurrentNode(new BreakStatement());
+					gotoStatement.ReplaceWith(new BreakStatement());
 					return null;
 				}
 			}
@@ -170,24 +160,24 @@ namespace Decompiler.Transforms.Ast
 			// Continue statement which moves at the very end of loop
 			if (CurrentLoop != null &&
 			    (CurrentLoop.EmbeddedStatement is BlockStatement) &&
-			    ((CurrentLoop.EmbeddedStatement as BlockStatement).Children.Last as LabelStatement) != null &&
-			    ((CurrentLoop.EmbeddedStatement as BlockStatement).Children.Last as LabelStatement).Label == gotoStatement.Label) {
-				ReplaceCurrentNode(new ContinueStatement());
+			    ((CurrentLoop.EmbeddedStatement as BlockStatement).LastChild as LabelStatement) != null &&
+			    ((CurrentLoop.EmbeddedStatement as BlockStatement).LastChild as LabelStatement).Label == gotoStatement.Label) {
+				gotoStatement.ReplaceWith(new ContinueStatement());
 				return null;
 			}
 			
 			// Replace goto with 'continue'
 			// Continue statement which moves at the very start of for loop
 			if (CurrentLoop != null) {
-				INode continueTarget = ExitBlockStatement(CurrentLoop); // The start of the loop
+				AstNode continueTarget = ExitBlockStatement(CurrentLoop); // The start of the loop
 				if ((continueTarget is LabelStatement) &&
 				    (continueTarget as LabelStatement).Label == gotoStatement.Label) {
-					ReplaceCurrentNode(new ContinueStatement());
+					gotoStatement.ReplaceWith(new ContinueStatement());
 					return null;
 				}
 			}
 			
 			return null;
 		}
-	}*/
+	}
 }
