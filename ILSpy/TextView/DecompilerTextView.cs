@@ -29,6 +29,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.Xml;
 
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
@@ -36,6 +37,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
 using ILSpy.Debugger.AvalonEdit;
 using ILSpy.Debugger.Bookmarks;
+using ILSpy.Debugger.ToolTips;
 using Microsoft.Win32;
 using Mono.Cecil;
 
@@ -80,6 +82,10 @@ namespace ICSharpCode.ILSpy.TextView
 			// add margin
 			iconMargin = new IconBarMargin();
 			textEditor.TextArea.LeftMargins.Add(iconMargin);
+			
+			// wire the mouse events
+			TextEditorWeakEventManager.MouseHover.AddListener(textEditor, TextEditorListener.Instance);
+			TextEditorWeakEventManager.MouseHoverStopped.AddListener(textEditor, TextEditorListener.Instance);
 			textEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconMargin.InvalidateVisual();
 			BookmarkManager.Added += BookmarkManager_Added;
 			BookmarkManager.Removed += (s, e) => iconMargin.InvalidateVisual();

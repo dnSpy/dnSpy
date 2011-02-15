@@ -3,10 +3,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.Resolver;
 using ILSpy.Debugger.Bookmarks;
+using ILSpy.Debugger.ToolTips;
 
 namespace ILSpy.Debugger.Services
 {
@@ -194,52 +199,72 @@ namespace ILSpy.Debugger.Services
 		/// showing its current value (when in debugging mode) can be returned
 		/// through the ToolTipRequestEventArgs.SetTooltip() method.
 		/// </summary>
-//		internal static void HandleToolTipRequest(ToolTipRequestEventArgs e)
-//		{
+		internal static void HandleToolTipRequest(ToolTipRequestEventArgs e)
+		{
+			if (currentDebugger == null || !currentDebugger.IsDebugging) {
+				e.ContentToShow = "test";
+			}
+			else {
+				e.ContentToShow = currentDebugger.GetTooltipControl(e.LogicalPosition, "test");
+			}
+			
+			// FIXME
 //			if (!e.InDocument)
 //				return;
-//			Location logicPos = e.LogicalPosition;
-//			var doc = e.Editor.Document;
-//			IExpressionFinder expressionFinder = ParserService.GetExpressionFinder(e.Editor.FileName);
-//			if (expressionFinder == null)
-//				return;
-//			var currentLine = doc.GetLine(logicPos.Y);
-//			if (logicPos.X > currentLine.Length)
-//				return;
-//			string textContent = doc.Text;
-//			ExpressionResult expressionResult = expressionFinder.FindFullExpression(textContent, doc.PositionToOffset(logicPos.Line, logicPos.Column));
-//			string expression = (expressionResult.Expression ?? "").Trim();
-//			if (expression.Length > 0) {
-//				// Look if it is variable
-//				ResolveResult result = ParserService.Resolve(expressionResult, logicPos.Y, logicPos.X, e.Editor.FileName, textContent);
-//				bool debuggerCanShowValue;
-//				string toolTipText = GetText(result, expression, out debuggerCanShowValue);
-//				if (Control.ModifierKeys == Keys.Control) {
-//					toolTipText = "expr: " + expressionResult.ToString() + "\n" + toolTipText;
-//					debuggerCanShowValue = false;
-//				}
-//				if (toolTipText != null) {
-//					if (debuggerCanShowValue && currentDebugger != null) {
-//						object toolTip = currentDebugger.GetTooltipControl(e.LogicalPosition, expressionResult.Expression);
-//						if (toolTip != null)
-//							e.SetToolTip(toolTip);
-//						else
+//			var logicPos = e.LogicalPosition;
+//			var doc = (TextDocument)e.Editor.Document;
+//			
+//			using (var sr = new StringReader(doc.Text))
+//			{
+//				var parser = new CSharpParser();
+//				parser.Parse(sr);
+//				
+//				IExpressionFinder expressionFinder = ParserService.GetExpressionFinder();
+//				if (expressionFinder == null)
+//					return;
+//				var currentLine = doc.GetLine(logicPos.Y);
+//				if (logicPos.X > currentLine.Length)
+//					return;
+//				string textContent = doc.Text;
+//				ExpressionResult expressionResult = expressionFinder.FindFullExpression(textContent, doc.GetOffset(new TextLocation(logicPos.Line, logicPos.Column)));
+//				string expression = (expressionResult.Expression ?? "").Trim();
+//				if (expression.Length > 0) {
+//					// Look if it is variable
+//					ResolveResult result = ParserService.Resolve(expressionResult, logicPos.Y, logicPos.X, e.Editor.FileName, textContent);
+//					bool debuggerCanShowValue;
+//					string toolTipText = GetText(result, expression, out debuggerCanShowValue);
+//					if (Control.ModifierKeys == Keys.Control) {
+//						toolTipText = "expr: " + expressionResult.ToString() + "\n" + toolTipText;
+//						debuggerCanShowValue = false;
+//					}
+//					if (toolTipText != null) {
+//						if (debuggerCanShowValue && currentDebugger != null) {
+//							object toolTip = currentDebugger.GetTooltipControl(e.LogicalPosition, expressionResult.Expression);
+//							if (toolTip != null)
+//								e.SetToolTip(toolTip);
+//							else
+//								e.SetToolTip(toolTipText);
+//						} else {
 //							e.SetToolTip(toolTipText);
-//					} else {
-//						e.SetToolTip(toolTipText);
+//						}
 //					}
 //				}
-//			} else {
-//				#if DEBUG
-//				if (Control.ModifierKeys == Keys.Control) {
-//					e.SetToolTip("no expr: " + expressionResult.ToString());
+//				else {
+//					#if DEBUG
+//					if (Control.ModifierKeys == Keys.Control) {
+//						e.SetToolTip("no expr: " + expressionResult.ToString());
+//					}
+//					#endif
 //				}
-//				#endif
 //			}
-//		}
-//
-//		static string GetText(ResolveResult result, string expression, out bool debuggerCanShowValue)
-//		{
+		}
+
+		static string GetText(ResolveResult result, string expression, out bool debuggerCanShowValue)
+		{
+			debuggerCanShowValue = false;
+			return "FIXME";
+			
+			// FIXME
 //			debuggerCanShowValue = false;
 //			if (result == null) {
 //				// when pressing control, show the expression even when it could not be resolved
@@ -303,8 +328,8 @@ namespace ILSpy.Debugger.Services
 //					return null;
 //				}
 //			}
-//		}
-//
+		}
+
 //		static string GetMemberText(IAmbience ambience, IEntity member, string expression, out bool debuggerCanShowValue)
 //		{
 //			bool tryDisplayValue = false;
@@ -344,18 +369,4 @@ namespace ILSpy.Debugger.Services
 //		}
 		#endregion
 	}
-	
-	/// <summary>
-	/// Provides the default debugger tooltips on the text area.
-	/// </summary>
-	/// <remarks>
-	/// This class must be public because it is accessed via the AddInTree.
-	/// </remarks>
-//	public class DebuggerTextAreaToolTipProvider : ITextAreaToolTipProvider
-//	{
-//		public void HandleToolTipRequest(ToolTipRequestEventArgs e)
-//		{
-//			DebuggerService.HandleToolTipRequest(e);
-//		}
-//	}
 }

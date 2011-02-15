@@ -52,6 +52,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
     <Compile Include="AvalonEdit\Editor\AvalonEditTextSourceAdapter.cs" />
     <Compile Include="AvalonEdit\Editor\IDocument.cs" />
     <Compile Include="AvalonEdit\Editor\IDocumentLine.cs" />
@@ -97,6 +98,8 @@
       <DependentUpon>DebuggerTooltipControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ToolTips\LazyItemsControl.cs" />
+    <Compile Include="ToolTips\Models\ToolTipRequestEventArgs.cs" />
+    <Compile Include="ToolTips\TextEditorListener.cs" />
     <Compile Include="ToolTips\VirtualizingIEnumerable.cs" />
     <Compile Include="UI\AttachToProcessWindow.xaml.cs">
       <DependentUpon>AttachToProcessWindow.xaml</DependentUpon>
@@ -106,6 +109,7 @@
   <ItemGroup>
     <Folder Include="Models\TreeModel" />
     <Folder Include="ToolTips" />
+    <Folder Include="ToolTips\Models" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="ToolTips\DebuggerTooltipControl.xaml" />

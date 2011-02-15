@@ -16,6 +16,7 @@ using ICSharpCode.NRefactory.Visitors;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Models.TreeModel;
 using ILSpy.Debugger.Services.Debugger;
+using ILSpy.Debugger.Tooltips;
 using CorDbg = Debugger;
 using Process = Debugger.Process;
 
@@ -384,17 +385,18 @@ namespace ILSpy.Debugger.Services
 		/// </summary>
 		public object GetTooltipControl(AstLocation logicalPosition, string variableName)
 		{
-			try {
-				var tooltipExpression = GetExpression(variableName);
-				string imageName;
-				var image = ExpressionNode.GetImageForLocalVariable(out imageName);
-				ExpressionNode expressionNode = new ExpressionNode(image, variableName, tooltipExpression);
-				expressionNode.ImageName = imageName;
-				return null;
-				// return new DebuggerTooltipControl(logicalPosition, expressionNode);
-			} catch (GetValueException) {
-				return null;
-			}
+			return new DebuggerTooltipControl(logicalPosition, new ExpressionNode(ImageService.Breakpoint, variableName, null));
+			//FIXME
+//			try {
+//				var tooltipExpression = GetExpression(variableName);
+//				string imageName;
+//				var image = ExpressionNode.GetImageForLocalVariable(out imageName);
+//				ExpressionNode expressionNode = new ExpressionNode(image, variableName, tooltipExpression);
+//				expressionNode.ImageName = imageName;
+//				return new DebuggerTooltipControl(logicalPosition, expressionNode);
+//			} catch (GetValueException) {
+//				return null;
+//			}
 		}
 		
 		public ITreeNode GetNode(string variable, string currentImageName = null)
