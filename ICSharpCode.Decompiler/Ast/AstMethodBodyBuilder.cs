@@ -118,8 +118,9 @@ namespace Decompiler
 				yield return new Ast.LabelStatement { Label = ((ILLabel)node).Name };
 			} else if (node is ILExpression) {
 				List<ILRange> ilRanges = ((ILExpression)node).GetILRanges();
-				AstNode codeExpr = TransformExpression((ILExpression)node).WithAnnotation(ilRanges);
+				AstNode codeExpr = TransformExpression((ILExpression)node);
 				if (codeExpr != null) {
+					codeExpr = codeExpr.WithAnnotation(ilRanges);
 					if (codeExpr is Ast.Expression) {
 						yield return new Ast.ExpressionStatement { Expression = (Ast.Expression)codeExpr };
 					} else if (codeExpr is Ast.Statement) {
