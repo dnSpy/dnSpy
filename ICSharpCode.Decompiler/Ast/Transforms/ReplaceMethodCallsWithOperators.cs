@@ -62,6 +62,19 @@ namespace Decompiler.Transforms
 				);
 				return null;
 			}
+			if (methodRef.Name == "op_Explicit" && arguments.Length == 1) {
+				arguments[0].Remove(); // detach argument
+				invocationExpression.ReplaceWith(
+					arguments[0].CastTo(AstBuilder.ConvertType(methodRef.ReturnType, methodRef.MethodReturnType))
+					.WithAnnotation(methodRef)
+				);
+				return null;
+			}
+			if (methodRef.Name == "op_Implicit" && arguments.Length == 1) {
+				arguments[0].Remove(); // detach argument
+				invocationExpression.ReplaceWith(arguments[0]);
+				return null;
+			}
 			
 			return null;
 		}
