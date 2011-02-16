@@ -247,14 +247,18 @@ namespace Decompiler
 					}
 					
 					name = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(name);
-					if (ns.Length == 0)
-						return new SimpleType(name);
-					string[] parts = ns.Split('.');
-					AstType nsType = new SimpleType(parts[0]);
-					for (int i = 1; i < parts.Length; i++) {
-						nsType = new MemberType { Target = nsType, MemberName = parts[i] };
-					}
-					return new MemberType { Target = nsType, MemberName = name }.WithAnnotation(type);
+					
+					// TODO: Until we can simplify type with 'using', use just the name without namesapce
+					return new SimpleType(name).WithAnnotation(type);
+					
+//					if (ns.Length == 0)
+//						return new SimpleType(name).WithAnnotation(type);
+//					string[] parts = ns.Split('.');
+//					AstType nsType = new SimpleType(parts[0]);
+//					for (int i = 1; i < parts.Length; i++) {
+//						nsType = new MemberType { Target = nsType, MemberName = parts[i] };
+//					}
+//					return new MemberType { Target = nsType, MemberName = name }.WithAnnotation(type);
 				}
 			}
 		}
