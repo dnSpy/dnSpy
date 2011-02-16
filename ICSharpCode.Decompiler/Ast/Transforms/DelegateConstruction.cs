@@ -74,10 +74,12 @@ namespace Decompiler.Transforms
 							}
 						}
 						// now transform the identifier into a member reference
+						var typeArguments = methodIdent.TypeArguments.ToArray();
+						methodIdent.TypeArguments = null;
 						MemberReferenceExpression mre = new MemberReferenceExpression {
 							Target = obj,
 							MemberName = methodIdent.Identifier,
-							TypeArguments = methodIdent.TypeArguments
+							TypeArguments = typeArguments
 						};
 						mre.AddAnnotation(method);
 						objectCreateExpression.Arguments = new [] { mre };

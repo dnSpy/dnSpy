@@ -15,7 +15,7 @@ namespace ICSharpCode.Decompiler
 		public MethodDefinition DecompiledMethod { get; set; }
 		
 		public DecompilerException(MethodDefinition decompiledMethod, Exception innerException) 
-			: base("Error decompiling " + decompiledMethod.FullName, innerException)
+			: base("Error decompiling " + decompiledMethod.FullName + Environment.NewLine, innerException)
 		{
 		}
 
