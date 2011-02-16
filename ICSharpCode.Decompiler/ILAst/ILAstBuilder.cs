@@ -322,13 +322,14 @@ namespace Decompiler
 				// Cut all handlers
 				tryCatchBlock.CatchBlocks = new List<ILTryCatchBlock.CatchBlock>();
 				foreach(ExceptionHandler eh in handlers) {
-					int start;
-					for (start = 0; body[start].Offset != eh.HandlerStart.Offset; start++);
-					int end;
-					for (end = 0; body[end].Offset != eh.HandlerEnd.Offset; end++);
-					int count = end - start;
-					List<ExceptionHandler> nestedEHs = ehs.Where(e => (start <= e.TryStart.Offset && e.TryEnd.Offset < end) || (start < e.TryStart.Offset && e.TryEnd.Offset <= end)).ToList();
-					List<ILNode> handlerAst = ConvertToAst(body.CutRange(start, count), nestedEHs);
+					int startIndex;
+					for (startIndex = 0; body[startIndex].Offset != eh.HandlerStart.Offset; startIndex++);
+					int endInclusiveIndex;
+					// Note that the end(exclusiove) instruction may not necessarly be in our body
+					for (endInclusiveIndex = 0; body[endInclusiveIndex].Next.Offset != eh.HandlerEnd.Offset; endInclusiveIndex++);
+					int count = 1 + endInclusiveIndex - startIndex;
+					List<ExceptionHandler> nestedEHs = ehs.Where(e => (eh.HandlerStart.Offset <= e.TryStart.Offset && e.TryEnd.Offset < eh.HandlerEnd.Offset) || (eh.HandlerStart.Offset < e.TryStart.Offset && e.TryEnd.Offset <= eh.HandlerEnd.Offset)).ToList();
+					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIndex, count), nestedEHs);
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
 						tryCatchBlock.CatchBlocks.Add(new ILTryCatchBlock.CatchBlock() {
 							ExceptionType = eh.CatchType,
