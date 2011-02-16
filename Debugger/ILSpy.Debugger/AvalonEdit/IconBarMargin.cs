@@ -40,6 +40,12 @@ namespace ILSpy.Debugger.AvalonEdit
 			set { currentTypeName = value; }
 		}
 		
+		public IconBarMargin()
+		{
+			BookmarkManager.Added += delegate { InvalidateVisual(); };
+			BookmarkManager.Removed += delegate { InvalidateVisual(); };
+		}
+		
 		public virtual void Dispose()
 		{
 			this.TextView = null; // detach from TextView (will also detach from manager)
@@ -200,6 +206,13 @@ namespace ILSpy.Debugger.AvalonEdit
 					dragStarted = true;
 				InvalidateVisual();
 			}
+			
+			BreakpointBookmark bm = BookmarkManager.Bookmarks.Find(
+				b => b.TypeName == CurrentType.FullName &&
+				b.LineNumber == GetLineFromMousePosition(e)
+				&& b is BreakpointBookmark) as BreakpointBookmark;
+			
+			this.ToolTip = (bm != null) ? bm.Tooltip : null;			
 		}
 		
 		protected override void OnMouseUp(MouseButtonEventArgs e)
@@ -215,11 +228,11 @@ namespace ILSpy.Debugger.AvalonEdit
 				CancelDragDrop();
 			}
 			if (!e.Handled && line != 0) {
-				IBookmark bm = GetBookmarkFromLine(line);
+				BookmarkBase bm = GetBookmarkFromLine(line);
 				if (bm != null) {
 					bm.MouseUp(e);
 					if (CurrentType != null) {
-						DebuggerService.ToggleBreakpointAt(CurrentType.FullName, line);
+						BookmarkManager.RemoveMark(bm);
 					}
 					InvalidateVisual();
 					if (e.Handled)
@@ -228,7 +241,10 @@ namespace ILSpy.Debugger.AvalonEdit
 				if (e.ChangedButton == MouseButton.Left) {
 					if (CurrentType != null) {
 						// no bookmark on the line: create a new breakpoint
-						DebuggerService.ToggleBreakpointAt(CurrentType.FullName, line);
+						DebuggerService.ToggleBreakpointAt(
+							CurrentType.FullName, 
+							line,
+							DebuggerService.CurrentDebugger.Language);
 					}
 				}
 				InvalidateVisual();

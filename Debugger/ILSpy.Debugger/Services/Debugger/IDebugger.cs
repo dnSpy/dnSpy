@@ -9,8 +9,24 @@ using Mono.CSharp;
 
 namespace ILSpy.Debugger.Services
 {
+	public enum DecompiledLanguages
+	{
+		IL,
+		CSharp
+	}
+	
 	public interface IDebugger : IDisposable
 	{
+		/// <summary>
+		/// Gets or sets the decompiled language.
+		/// </summary>
+		DecompiledLanguages Language { get; set; }
+		
+		/// <summary>
+		/// Gets whether the debugger can evaluate the expression.
+		/// </summary>
+		bool CanEvaluate { get; }
+		
 		/// <summary>
 		/// Returns true if debuger is attached to a process
 		/// </summary>

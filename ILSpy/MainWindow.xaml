@@ -156,7 +156,9 @@
 			<Separator />
 			<ComboBox Name="languageComboBox" DisplayMemberPath="Name" Width="100"
 			          ItemsSource="{x:Static local:Languages.AllLanguages}"
-			          SelectedItem="{Binding FilterSettings.Language}" />
+			          SelectedItem="{Binding FilterSettings.Language}"
+					SelectionChanged="LanguageComboBox_SelectionChanged"
+			/>
 			<Separator />
 			<Button x:Name="AttachButton" Command="routedCommands:RoutedUICommands.AttachToProcess" ToolTip="Attach to running process...">
 				<Image Width="16" Height="16" Source="Images/bug.png" />

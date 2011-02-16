@@ -27,13 +27,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
+using ILSpy.Debugger.AvalonEdit;
+using ILSpy.Debugger.Services;
 using ILSpy.Debugger.UI;
-
 using Microsoft.Win32;
 using Mono.Cecil.Rocks;
 
@@ -340,6 +340,17 @@ namespace ICSharpCode.ILSpy
 				treeView.FocusNode(lastNode);
 		}
 		
+		void OpenFromGac_Click(object sender, RoutedEventArgs e)
+		{
+			OpenFromGacDialog dlg = new OpenFromGacDialog();
+			dlg.Owner = this;
+			if (dlg.ShowDialog() == true) {
+				OpenFiles(dlg.SelectedFileNames);
+			}
+		}
+		
+		#endregion
+		
 		#region Debugger commands
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -352,7 +363,7 @@ namespace ICSharpCode.ILSpy
 		
 		void AttachToProcessExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (!AttachToProcessWindow.Debugger.IsDebugging) {
+			if (!DebuggerService.CurrentDebugger.IsDebugging) {
 				var window = new AttachToProcessWindow();
 				window.Owner = this;
 				if (window.ShowDialog() == true)
@@ -369,8 +380,8 @@ namespace ICSharpCode.ILSpy
 		
 		void DetachFromProcessExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (AttachToProcessWindow.Debugger.IsDebugging){
-				AttachToProcessWindow.Debugger.Detach();
+			if (DebuggerService.CurrentDebugger.IsDebugging){
+				DebuggerService.CurrentDebugger.Detach();
 				
 				AttachMenuItem.IsEnabled = AttachButton.IsEnabled = true;
 				ContinueDebuggingMenuItem.IsEnabled =
@@ -383,26 +394,26 @@ namespace ICSharpCode.ILSpy
 		
 		void ContinueDebuggingExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (AttachToProcessWindow.Debugger.IsDebugging)
-				AttachToProcessWindow.Debugger.Continue();
+			if (DebuggerService.CurrentDebugger.IsDebugging)
+				DebuggerService.CurrentDebugger.Continue();
 		}
 		
 		void StepIntoExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (AttachToProcessWindow.Debugger.IsDebugging)
-				AttachToProcessWindow.Debugger.StepInto();
+			if (DebuggerService.CurrentDebugger.IsDebugging)
+				DebuggerService.CurrentDebugger.StepInto();
 		}
 		
 		void StepOverExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (AttachToProcessWindow.Debugger.IsDebugging)
-				AttachToProcessWindow.Debugger.StepOver();
+			if (DebuggerService.CurrentDebugger.IsDebugging)
+				DebuggerService.CurrentDebugger.StepOver();
 		}
 		
 		void StepOutExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (AttachToProcessWindow.Debugger.IsDebugging)
-				AttachToProcessWindow.Debugger.StepOut();
+			if (DebuggerService.CurrentDebugger.IsDebugging)
+				DebuggerService.CurrentDebugger.StepOut();
 		}
 		
 		protected override void OnKeyUp(KeyEventArgs e)
@@ -428,16 +439,6 @@ namespace ICSharpCode.ILSpy
 			base.OnKeyUp(e);
 		}
 		
-		#endregion
-		
-		void OpenFromGac_Click(object sender, RoutedEventArgs e)
-		{
-			OpenFromGacDialog dlg = new OpenFromGacDialog();
-			dlg.Owner = this;
-			if (dlg.ShowDialog() == true) {
-				OpenFiles(dlg.SelectedFileNames);
-			}
-		}
 		#endregion
 		
 		#region Exit/About
@@ -524,6 +525,12 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.WindowBounds = this.RestoreBounds;
 			sessionSettings.SplitterPosition = leftColumn.Width.Value / (leftColumn.Width.Value + rightColumn.Width.Value);
 			sessionSettings.Save();
+		}
+		
+		void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			DebuggerService.CurrentDebugger.Language = 
+				sessionSettings.FilterSettings.Language.Name == "IL" ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 		}
 	}
 }

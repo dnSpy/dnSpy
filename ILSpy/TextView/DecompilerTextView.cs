@@ -87,16 +87,8 @@ namespace ICSharpCode.ILSpy.TextView
 			TextEditorWeakEventManager.MouseHover.AddListener(textEditor, TextEditorListener.Instance);
 			TextEditorWeakEventManager.MouseHoverStopped.AddListener(textEditor, TextEditorListener.Instance);
 			textEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconMargin.InvalidateVisual();
-			BookmarkManager.Added += BookmarkManager_Added;
-			BookmarkManager.Removed += (s, e) => iconMargin.InvalidateVisual();
 		}
-
-		void BookmarkManager_Added(object sender, BookmarkEventArgs e)
-		{
-			if (e.Bookmark is CurrentLineBookmark) {
-				iconMargin.InvalidateVisual();
-			}
-		}
+		
 		#endregion
 		
 		#region RunWithCancellation

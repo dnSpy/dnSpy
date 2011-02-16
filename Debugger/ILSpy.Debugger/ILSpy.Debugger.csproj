@@ -114,6 +114,7 @@
   <ItemGroup>
     <Page Include="ToolTips\DebuggerTooltipControl.xaml" />
     <Page Include="ToolTips\PinControlsDictionary.xaml" />
+    <Page Include="ToolTips\VisualizerPicker.xaml" />
     <Page Include="UI\AttachToProcessWindow.xaml" />
   </ItemGroup>
   <ItemGroup>

@@ -27,7 +27,7 @@ namespace ILSpy.Debugger.Services
 		
 		static IDebugger GetCompatibleDebugger()
 		{
-			return new WindowsDebugger();
+			return currentDebugger = new WindowsDebugger();
 		}
 		
 		/// <summary>
@@ -166,12 +166,12 @@ namespace ILSpy.Debugger.Services
 			}
 		}
 		
-		public static void ToggleBreakpointAt(string typeName, int lineNumber)
+		public static void ToggleBreakpointAt(string typeName, int lineNumber, DecompiledLanguages language)
 		{
 			BookmarkManager.ToggleBookmark(
 				typeName, lineNumber,
 				b => b.CanToggle && b is BreakpointBookmark,
-				location => new BreakpointBookmark(typeName, location, BreakpointAction.Break));
+				location => new BreakpointBookmark(typeName, location, BreakpointAction.Break, language));
 		}
 		
 		/* TODO: reimplement this stuff
@@ -209,9 +209,8 @@ namespace ILSpy.Debugger.Services
 			
 			string variable = 
 				ParserService.SimpleParseAt(doc.Text, doc.GetOffset(new TextLocation(logicPos.Line, logicPos.Column)));
-				
 			
-			if (currentDebugger == null || !currentDebugger.IsDebugging) {
+			if (currentDebugger == null || !currentDebugger.IsDebugging || !currentDebugger.CanEvaluate) {
 				e.ContentToShow = variable;
 			}
 			else {

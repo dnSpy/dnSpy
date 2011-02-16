@@ -30,7 +30,7 @@ namespace ILSpy.Debugger.Tooltips
 		private const int InitialItemsCount = 12;
 		private const int VisibleItemsCount = 11;
 		
-		private bool showPins = true;
+		private bool showPins;
 		private LazyItemsControl<ITreeNode> lazyGrid;
 		private IEnumerable<ITreeNode> itemsSource;
 		readonly AstLocation logicalPosition;
@@ -55,7 +55,7 @@ namespace ILSpy.Debugger.Tooltips
 			this.itemsSource = nodes;
 		}
 
-		public DebuggerTooltipControl(DebuggerTooltipControl parentControl, AstLocation logicalPosition, bool showPins = true)
+		public DebuggerTooltipControl(DebuggerTooltipControl parentControl, AstLocation logicalPosition, bool showPins = false)
 			: this(logicalPosition)
 		{
 			this.parentControl = parentControl;
@@ -65,7 +65,7 @@ namespace ILSpy.Debugger.Tooltips
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			if (!showPins) {
-				dataGrid.Columns[5].Visibility = Visibility.Collapsed;
+				dataGrid.Columns[4].Visibility = Visibility.Collapsed;
 			}
 			
 			SetItemsSource(this.itemsSource);

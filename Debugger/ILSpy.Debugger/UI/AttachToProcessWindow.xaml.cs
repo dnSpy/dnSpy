@@ -34,13 +34,6 @@ namespace ILSpy.Debugger.UI
 	/// </summary>
 	public partial class AttachToProcessWindow : Window
 	{
-		public static IDebugger Debugger { get; private set; }
-		
-		static AttachToProcessWindow()
-		{
-			Debugger = new WindowsDebugger();
-		}
-		
 		public AttachToProcessWindow()
 		{
 			InitializeComponent();
@@ -92,7 +85,7 @@ namespace ILSpy.Debugger.UI
 			
 			// start attaching
 			var process = ((RunningProcess)this.RunningProcesses.SelectedItem).Process;
-			Debugger.Attach(process);
+			DebuggerService.CurrentDebugger.Attach(process);
 			this.DialogResult = true;
 		}
 		

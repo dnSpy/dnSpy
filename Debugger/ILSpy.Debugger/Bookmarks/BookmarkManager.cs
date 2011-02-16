@@ -118,6 +118,7 @@ namespace ILSpy.Debugger.Bookmarks
 					return;
 				}
 			}
+			
 			// no bookmark at that line: create a new bookmark			
 			BookmarkManager.AddMark(bookmarkFactory(new AstLocation(line, 0)));
 		}

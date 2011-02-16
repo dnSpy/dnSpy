@@ -83,9 +83,10 @@ namespace ILSpy.Debugger.Bookmarks
 			set { tooltip = value; }
 		}
 		
-		public BreakpointBookmark(string typeName, AstLocation location, BreakpointAction action) : base(typeName, location)
+		public BreakpointBookmark(string typeName, AstLocation location, BreakpointAction action, DecompiledLanguages language) : base(typeName, location)
 		{
 			this.action = action;
+			this.tooltip = language.ToString();
 		}
 		
 		public override ImageSource Image {

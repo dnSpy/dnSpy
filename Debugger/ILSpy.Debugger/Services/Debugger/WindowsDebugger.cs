@@ -99,6 +99,8 @@ namespace ILSpy.Debugger.Services
 		string errorProcessPaused  = "Error.ProcessPaused";
 		string errorCannotStepNoActiveFunction = "Threads.CannotStepNoActiveFunction";
 		
+		public DecompiledLanguages Language { get; set; }
+		
 		public bool IsDebugging {
 			get {
 				return ServiceInitialized && debuggedProcess != null;
@@ -372,7 +374,8 @@ namespace ILSpy.Debugger.Services
 			}
 		}
 		
-		bool CanEvaluate
+		/// <inheritdoc/>
+		public bool CanEvaluate
 		{
 			get {
 				return debuggedProcess != null && !debuggedProcess.IsRunning && debuggedProcess.SelectedStackFrame != null;
@@ -385,7 +388,7 @@ namespace ILSpy.Debugger.Services
 		/// </summary>
 		public object GetTooltipControl(AstLocation logicalPosition, string variableName)
 		{
-			return new DebuggerTooltipControl(logicalPosition, new ExpressionNode(ImageService.Breakpoint, variableName, null));
+			return new DebuggerTooltipControl(logicalPosition, new ExpressionNode(null, variableName, null));
 			//FIXME
 //			try {
 //				var tooltipExpression = GetExpression(variableName);
@@ -489,13 +492,29 @@ namespace ILSpy.Debugger.Services
 		
 		void AddBreakpoint(BreakpointBookmark bookmark)
 		{
-			uint token;
-			ILCodeMapping map = ILCodeMappings.GetInstructionByTypeAndLine(bookmark.TypeName, bookmark.LineNumber, out token);
+			Breakpoint breakpoint = null;
 			
-			if (map != null) {
-				Breakpoint breakpoint = new ILBreakpoint(debugger, bookmark.LineNumber, token, map.ILInstruction.Offset , bookmark.IsEnabled);
-				debugger.Breakpoints.Add(breakpoint);
-				
+			switch (Language) {
+				case DecompiledLanguages.IL:
+					uint token;
+					ILCodeMapping map = ILCodeMappings.GetInstructionByTypeAndLine(bookmark.TypeName, bookmark.LineNumber, out token);
+					
+					if (map != null) {
+						breakpoint = new ILBreakpoint(debugger, bookmark.LineNumber, token, map.ILInstruction.Offset , bookmark.IsEnabled);
+						debugger.Breakpoints.Add(breakpoint);
+					}
+					break;
+					
+				case DecompiledLanguages.CSharp:
+					break;
+					
+				default:
+					throw new NotImplementedException("Not implemented!");
+			}
+			
+			if (breakpoint == null)
+				return;
+			
 //			Action setBookmarkColor = delegate {
 //				if (debugger.Processes.Count == 0) {
 //					bookmark.IsHealthy = true;
@@ -524,65 +543,64 @@ namespace ILSpy.Debugger.Services
 //					}
 //				}
 //			};
-				
-				// event handlers on bookmark and breakpoint don't need deregistration
-				bookmark.IsEnabledChanged += delegate {
-					breakpoint.Enabled = bookmark.IsEnabled;
-				};
-				breakpoint.Set += delegate {
-					//setBookmarkColor();
-				};
-				
+			
+			// event handlers on bookmark and breakpoint don't need deregistration
+			bookmark.IsEnabledChanged += delegate {
+				breakpoint.Enabled = bookmark.IsEnabled;
+			};
+			breakpoint.Set += delegate {
 				//setBookmarkColor();
-				
-				EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessStarted = (sender, e) => {
-					//setBookmarkColor();
-					// User can change line number by inserting or deleting lines
-					breakpoint.Line = bookmark.LineNumber;
-				};
-				EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessExited = (sender, e) => {
-					//setBookmarkColor();
-				};
-				
-				EventHandler<BreakpointEventArgs> bp_debugger_BreakpointHit =
-					new EventHandler<BreakpointEventArgs>(
-						delegate(object sender, BreakpointEventArgs e)
-						{
-							//LoggingService.Debug(bookmark.Action + " " + bookmark.ScriptLanguage + " " + bookmark.Condition);
-							
-							switch (bookmark.Action) {
-								case BreakpointAction.Break:
-									break;
-								case BreakpointAction.Condition:
+			};
+			
+			//setBookmarkColor();
+			
+			EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessStarted = (sender, e) => {
+				//setBookmarkColor();
+				// User can change line number by inserting or deleting lines
+				breakpoint.Line = bookmark.LineNumber;
+			};
+			EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessExited = (sender, e) => {
+				//setBookmarkColor();
+			};
+			
+			EventHandler<BreakpointEventArgs> bp_debugger_BreakpointHit =
+				new EventHandler<BreakpointEventArgs>(
+					delegate(object sender, BreakpointEventArgs e)
+					{
+						//LoggingService.Debug(bookmark.Action + " " + bookmark.ScriptLanguage + " " + bookmark.Condition);
+						
+						switch (bookmark.Action) {
+							case BreakpointAction.Break:
+								break;
+							case BreakpointAction.Condition:
 //								if (Evaluate(bookmark.Condition, bookmark.ScriptLanguage))
 //									DebuggerService.PrintDebugMessage(string.Format(StringParser.Parse("${res:MainWindow.Windows.Debug.Conditional.Breakpoints.BreakpointHitAtBecause}") + "\n", bookmark.LineNumber, bookmark.FileName, bookmark.Condition));
 //								else
 //									this.debuggedProcess.AsyncContinue();
-									break;
-								case BreakpointAction.Trace:
-									//DebuggerService.PrintDebugMessage(string.Format(StringParser.Parse("${res:MainWindow.Windows.Debug.Conditional.Breakpoints.BreakpointHitAt}") + "\n", bookmark.LineNumber, bookmark.FileName));
-									break;
-							}
-						});
-				
-				BookmarkEventHandler bp_bookmarkManager_Removed = null;
-				bp_bookmarkManager_Removed = (sender, e) => {
-					if (bookmark == e.Bookmark) {
-						debugger.Breakpoints.Remove(breakpoint);
-						
-						// unregister the events
-						debugger.Processes.Added -= bp_debugger_ProcessStarted;
-						debugger.Processes.Removed -= bp_debugger_ProcessExited;
-						breakpoint.Hit -= bp_debugger_BreakpointHit;
-						BookmarkManager.Removed -= bp_bookmarkManager_Removed;
-					}
-				};
-				// register the events
-				debugger.Processes.Added += bp_debugger_ProcessStarted;
-				debugger.Processes.Removed += bp_debugger_ProcessExited;
-				breakpoint.Hit += bp_debugger_BreakpointHit;
-				BookmarkManager.Removed += bp_bookmarkManager_Removed;
-			}
+								break;
+							case BreakpointAction.Trace:
+								//DebuggerService.PrintDebugMessage(string.Format(StringParser.Parse("${res:MainWindow.Windows.Debug.Conditional.Breakpoints.BreakpointHitAt}") + "\n", bookmark.LineNumber, bookmark.FileName));
+								break;
+						}
+					});
+			
+			BookmarkEventHandler bp_bookmarkManager_Removed = null;
+			bp_bookmarkManager_Removed = (sender, e) => {
+				if (bookmark == e.Bookmark) {
+					debugger.Breakpoints.Remove(breakpoint);
+					
+					// unregister the events
+					debugger.Processes.Added -= bp_debugger_ProcessStarted;
+					debugger.Processes.Removed -= bp_debugger_ProcessExited;
+					breakpoint.Hit -= bp_debugger_BreakpointHit;
+					BookmarkManager.Removed -= bp_bookmarkManager_Removed;
+				}
+			};
+			// register the events
+			debugger.Processes.Added += bp_debugger_ProcessStarted;
+			debugger.Processes.Removed += bp_debugger_ProcessExited;
+			breakpoint.Hit += bp_debugger_BreakpointHit;
+			BookmarkManager.Removed += bp_bookmarkManager_Removed;
 		}
 		
 		bool Evaluate(string code, string language)
@@ -723,13 +741,24 @@ namespace ILSpy.Debugger.Services
 			DebuggerService.RemoveCurrentLineMarker();
 			
 			if (debuggedProcess != null && debuggedProcess.SelectedStackFrame != null) {
-				uint token = (uint)debuggedProcess.SelectedStackFrame.MethodInfo.MetadataToken;
-				int ilOffset = debuggedProcess.SelectedStackFrame.IP;
-				int line;
-				string typeName;
-				ILCodeMappings.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line);
-				if (typeName != null) {
-					DebuggerService.JumpToCurrentLine(typeName, line, 0, line, 0);
+				switch (Language) {
+					case DecompiledLanguages.IL:
+						// IL mapping
+						uint token = (uint)debuggedProcess.SelectedStackFrame.MethodInfo.MetadataToken;
+						int ilOffset = debuggedProcess.SelectedStackFrame.IP;
+						int line;
+						string typeName;
+						ILCodeMappings.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line);
+						if (typeName != null)
+							DebuggerService.JumpToCurrentLine(typeName, line, 0, line, 0);
+						break;
+						
+					case DecompiledLanguages.CSharp:
+						// FIXME CSharp mappings
+						break;
+						
+					default:
+						throw new NotImplementedException("The language is not supported!");
 				}
 			}
 		}

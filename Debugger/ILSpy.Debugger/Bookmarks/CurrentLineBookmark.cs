@@ -27,7 +27,7 @@ namespace ILSpy.Debugger.Bookmarks
 			endLine     = makerEndLine;
 			endColumn   = makerEndColumn;
 			
-			instance = new CurrentLineBookmark(typeName, new AstLocation(startColumn, startLine));
+			instance = new CurrentLineBookmark(typeName, new AstLocation(startLine, startColumn));
 			BookmarkManager.AddMark(instance);
 		}
 		
