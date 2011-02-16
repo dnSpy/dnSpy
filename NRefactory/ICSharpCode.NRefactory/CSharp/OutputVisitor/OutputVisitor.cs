@@ -371,7 +371,8 @@ namespace ICSharpCode.NRefactory.CSharp
 						formatter.Space();
 				} else {
 					WriteSpecialsUpToRole(AstNode.Roles.Dot, ident);
-					
+					formatter.WriteToken(".");
+					lastWritten = LastWritten.Other;
 				}
 				WriteSpecialsUpToNode(ident);
 				formatter.WriteIdentifier(ident.Name);
@@ -1630,7 +1631,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 			Space(policy.BeforeConstructorDeclarationParentheses);
 			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, policy.WithinMethodDeclarationParentheses);
-			constructorDeclaration.Initializer.AcceptVisitor(this, data);
+			if (!constructorDeclaration.Initializer.IsNull) {
+				Space();
+				constructorDeclaration.Initializer.AcceptVisitor(this, data);
+			}
 			WriteMethodBody(constructorDeclaration.Body);
 			return EndNode(constructorDeclaration);
 		}
@@ -1720,6 +1724,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(fieldDeclaration.Attributes);
 			WriteModifiers(fieldDeclaration.ModifierTokens);
 			fieldDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WriteCommaSeparatedList(fieldDeclaration.Variables);
 			Semicolon();
 			return EndNode(fieldDeclaration);
