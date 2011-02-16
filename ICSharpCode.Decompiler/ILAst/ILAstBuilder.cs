@@ -95,6 +95,8 @@ namespace Decompiler
 		Dictionary<Instruction, ByteCode> instrToByteCode = new Dictionary<Instruction, ByteCode>();
 		Dictionary<ILVariable, bool> allowInline = new Dictionary<ILVariable, bool>();
 		
+		public List<ILVariable> Variables;
+		
 		public List<ILNode> Build(MethodDefinition methodDef, bool optimize)
 		{
 			this.methodDef = methodDef;
@@ -249,27 +251,27 @@ namespace Decompiler
 			}
 			
 			// Convert local varibles
-			List<ILVariable> vars = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name }).ToList();
-			int[] numReads  = new int[vars.Count];
-			int[] numWrites = new int[vars.Count];
+			Variables = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name, Type = v.VariableType }).ToList();
+			int[] numReads  = new int[Variables.Count];
+			int[] numWrites = new int[Variables.Count];
 			foreach(ByteCode byteCode in body) {
 				if (byteCode.OpCode == OpCodes.Ldloc) {
 					int index = ((VariableDefinition)byteCode.Operand).Index;
-					byteCode.Operand = vars[index];
+					byteCode.Operand = Variables[index];
 					numReads[index]++;
 				}
 				if (byteCode.OpCode == OpCodes.Stloc) {
 					int index = ((VariableDefinition)byteCode.Operand).Index;
-					byteCode.Operand = vars[index];
+					byteCode.Operand = Variables[index];
 					numWrites[index]++;
 				}
 			}
 			
 			// Find which variables we can inline
 			if (this.optimize) {
-				for (int i = 0; i < vars.Count; i++) {
+				for (int i = 0; i < Variables.Count; i++) {
 					if (numReads[i] == 1 && numWrites[i] == 1) {
-						allowInline[vars[i]] = true;
+						allowInline[Variables[i]] = true;
 					}
 				}
 			}

@@ -44,6 +44,11 @@ namespace Decompiler
 		{
 			yield break;
 		}
+		
+		public override string ToString()
+		{
+			return this.GetType().Name;
+		}
 	}
 	
 	public class ILBlock: ILNode
@@ -102,17 +107,13 @@ namespace Decompiler
 			if (this.FinallyBlock != null)
 				yield return this.FinallyBlock;
 		}
-		
-		public override string ToString()
-		{
-			return "Try-Catch{}";
-		}
 	}
 	
 	public class ILVariable
 	{
 		public string Name;
 		public bool   IsGenerated;
+		public TypeReference Type;
 		
 		public override string ToString()
 		{

@@ -15,8 +15,7 @@ namespace Decompiler
 	public class AstMethodBodyBuilder
 	{
 		MethodDefinition methodDef;
-		static Dictionary<string, Cecil.TypeReference> localVarTypes = new Dictionary<string, Cecil.TypeReference>();
-		static Dictionary<string, bool> localVarDefined = new Dictionary<string, bool>();
+		HashSet<ILVariable> definedLocalVars = new HashSet<ILVariable>();
 		
 		public static BlockStatement CreateMethodBody(MethodDefinition methodDef)
 		{
@@ -47,48 +46,45 @@ namespace Decompiler
 			if (methodDef.Body == null) return null;
 			
 			ILBlock ilMethod = new ILBlock();
-			ilMethod.Body = new ILAstBuilder().Build(methodDef, true);
+			ILAstBuilder astBuilder = new ILAstBuilder();
+			ilMethod.Body = astBuilder.Build(methodDef, true);
 			
 			ILAstOptimizer bodyGraph = new ILAstOptimizer();
 			bodyGraph.Optimize(ilMethod);
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
 			Dictionary<string, int> typeNames = new Dictionary<string, int>();
-			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
-				if (string.IsNullOrEmpty(varDef.Name)) {
-					if (varDef.VariableType.FullName == Constants.Int32 && intNames.Count > 0) {
-						varDef.Name = intNames[0];
-						intNames.RemoveAt(0);
-					} else {
-						string name;
-						if (varDef.VariableType.IsArray) {
-							name = "array";
-						} else if (!typeNameToVariableNameDict.TryGetValue(varDef.VariableType.FullName, out name)) {
-							name = varDef.VariableType.Name;
-							// remove the 'I' for interfaces
-							if (name.Length >= 3 && name[0] == 'I' && char.IsUpper(name[1]) && char.IsLower(name[2]))
-								name = name.Substring(1);
-							// remove the backtick (generics)
-							int pos = name.IndexOf('`');
-							if (pos >= 0)
-								name = name.Substring(0, pos);
-							if (name.Length == 0)
-								name = "obj";
-							else
-								name = char.ToLower(name[0]) + name.Substring(1);
-						}
-						if (!typeNames.ContainsKey(name)) {
-							typeNames.Add(name, 0);
-						}
-						int count = typeNames[name];
-						if (count > 0) {
-							name += count.ToString();
-						}
-						varDef.Name = name;
+			foreach(ILVariable varDef in astBuilder.Variables) {
+				if (varDef.Type.FullName == Constants.Int32 && intNames.Count > 0) {
+					varDef.Name = intNames[0];
+					intNames.RemoveAt(0);
+				} else {
+					string name;
+					if (varDef.Type.IsArray) {
+						name = "array";
+					} else if (!typeNameToVariableNameDict.TryGetValue(varDef.Type.FullName, out name)) {
+						name = varDef.Type.Name;
+						// remove the 'I' for interfaces
+						if (name.Length >= 3 && name[0] == 'I' && char.IsUpper(name[1]) && char.IsLower(name[2]))
+							name = name.Substring(1);
+						// remove the backtick (generics)
+						int pos = name.IndexOf('`');
+						if (pos >= 0)
+							name = name.Substring(0, pos);
+						if (name.Length == 0)
+							name = "obj";
+						else
+							name = char.ToLower(name[0]) + name.Substring(1);
 					}
+					if (!typeNames.ContainsKey(name)) {
+						typeNames.Add(name, 0);
+					}
+					int count = typeNames[name];
+					if (count > 0) {
+						name += count.ToString();
+					}
+					varDef.Name = name;
 				}
-				localVarTypes[varDef.Name] = varDef.VariableType;
-				localVarDefined[varDef.Name] = false;
 				
 //				Ast.VariableDeclaration astVar = new Ast.VariableDeclaration(varDef.Name);
 //				Ast.LocalVariableDeclaration astLocalVar = new Ast.LocalVariableDeclaration(astVar);
@@ -172,8 +168,8 @@ namespace Decompiler
 				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition.Arguments[0]) };
 				for (int i = 0; i < ilSwitch.CaseBlocks.Count; i++) {
 					switchStmt.AddChild(new SwitchSection() {
-					    	CaseLabels = new CaseLabel[] { new CaseLabel() { Expression = new PrimitiveExpression(i) } },
-					    	Statements = new Statement[] { TransformBlock(ilSwitch.CaseBlocks[i]) }
+					    	CaseLabels = new[] { new CaseLabel() { Expression = new PrimitiveExpression(i) } },
+					    	Statements = new[] { TransformBlock(ilSwitch.CaseBlocks[i]) }
 					}, SwitchStatement.SwitchSectionRole);
 				}
 				yield return switchStmt;
@@ -272,7 +268,7 @@ namespace Decompiler
 			*/
 		}
 		
-		static AstNode TransformByteCode(MethodDefinition methodDef, ILExpression byteCode, List<Ast.Expression> args)
+		AstNode TransformByteCode(MethodDefinition methodDef, ILExpression byteCode, List<Ast.Expression> args)
 		{
 			try {
 				AstNode ret = TransformByteCode_Internal(methodDef, byteCode, args);
@@ -287,7 +283,7 @@ namespace Decompiler
 			}
 		}
 		
-		static string FormatByteCodeOperand(object operand)
+		string FormatByteCodeOperand(object operand)
 		{
 			if (operand == null) {
 				return string.Empty;
@@ -312,7 +308,7 @@ namespace Decompiler
 			}
 		}
 		
-		static AstNode TransformByteCode_Internal(MethodDefinition methodDef, ILExpression byteCode, List<Ast.Expression> args)
+		AstNode TransformByteCode_Internal(MethodDefinition methodDef, ILExpression byteCode, List<Ast.Expression> args)
 		{
 			// throw new NotImplementedException();
 			
@@ -605,29 +601,15 @@ namespace Decompiler
 					case Code.Sizeof: return new Ast.SizeOfExpression { Type = AstBuilder.ConvertType(operand as TypeReference) };
 					case Code.Starg: throw new NotImplementedException();
 					case Code.Stloc: {
-						if (operand is ILVariable) {
-							var astLocalVar = new Ast.VariableDeclarationStatement();
-							astLocalVar.Type = new Ast.PrimitiveType("var");
-							astLocalVar.Variables = new [] {
-								new Ast.VariableInitializer(((ILVariable)operand).Name, arg1)
+						ILVariable locVar = (ILVariable)operand;
+						if (!definedLocalVars.Contains(locVar)) {
+							definedLocalVars.Add(locVar);
+							return new Ast.VariableDeclarationStatement() {
+								Type = locVar.Type != null ? AstBuilder.ConvertType(locVar.Type) : new Ast.PrimitiveType("var"),
+								Variables = new[] { new Ast.VariableInitializer(locVar.Name, arg1) }
 							};
-							return astLocalVar;
-						}
-						VariableDefinition locVar = (VariableDefinition)operand;
-						string name = locVar.Name;
-						arg1 = Convert(arg1, locVar.VariableType);
-						if (localVarDefined.ContainsKey(name)) {
-							if (localVarDefined[name]) {
-								return new Ast.AssignmentExpression(new Ast.IdentifierExpression(name), arg1);
-							} else {
-								var astLocalVar = new Ast.VariableDeclarationStatement();
-								astLocalVar.Type = AstBuilder.ConvertType(localVarTypes[name]);
-								astLocalVar.Variables = new[] { new Ast.VariableInitializer(name, arg1) };
-								localVarDefined[name] = true;
-								return astLocalVar;
-							}
 						} else {
-							return new Ast.AssignmentExpression(new Ast.IdentifierExpression(name), arg1);
+							return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name), arg1);
 						}
 					}
 					case Code.Stobj: throw new NotImplementedException();
