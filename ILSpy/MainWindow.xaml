@@ -131,7 +131,7 @@
 			<DockPanel>
 				<!-- Search bar -->
 				<controls:SearchBox DockPanel.Dock="Top" WatermarkText="Search" WatermarkColor="Gray" ToolTip="Search"
-					Text="{Binding FilterSettings.SearchTerm, UpdateSourceTrigger=PropertyChanged}" />
+					Text="{Binding FilterSettings.SearchTerm}" />
 				<!-- Tree View of assemblies and classes -->
 				<tv:SharpTreeView
 					Name="treeView"

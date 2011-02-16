@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace ICSharpCode.ILSpy.Controls
 {
@@ -39,6 +40,10 @@ namespace ICSharpCode.ILSpy.Controls
 		public static DependencyProperty WatermarkColorProperty = DependencyProperty.Register("WatermarkColor", typeof(Brush), typeof(SearchBox));
 		
 		public static DependencyProperty HasTextProperty = DependencyProperty.Register("HasText", typeof(bool), typeof(SearchBox));
+		
+		public static readonly DependencyProperty UpdateDelayProperty =
+			DependencyProperty.Register("UpdateDelay", typeof(TimeSpan), typeof(SearchBox),
+			                            new FrameworkPropertyMetadata(TimeSpan.FromMilliseconds(200)));
 		
 		#endregion
         
@@ -59,6 +64,11 @@ namespace ICSharpCode.ILSpy.Controls
 			private set { SetValue(HasTextProperty, value); }
 		}
 
+		public TimeSpan UpdateDelay {
+			get { return (TimeSpan)GetValue(UpdateDelayProperty); }
+			set { SetValue(UpdateDelayProperty, value); }
+		}
+        
         #endregion
         
         #region Handlers
@@ -72,10 +82,29 @@ namespace ICSharpCode.ILSpy.Controls
         
         #region Overrides
         
+        DispatcherTimer timer;
+        
         protected override void OnTextChanged(TextChangedEventArgs e) {
             base.OnTextChanged(e);
             
             HasText = this.Text.Length > 0;
+            if (timer == null) {
+            	timer = new DispatcherTimer();
+            	timer.Tick += timer_Tick;
+            }
+            timer.Stop();
+            timer.Interval = this.UpdateDelay;
+            timer.Start();
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+        	timer.Stop();
+        	timer = null;
+        	var textBinding = GetBindingExpression(TextProperty);
+        	if (textBinding != null) {
+        		textBinding.UpdateSource();
+        	}
         }
         
 		protected override void OnLostFocus(RoutedEventArgs e)
