@@ -14,6 +14,7 @@ namespace Decompiler
 	{
 		readonly ITextOutput output;
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
+		int braceLevelWithinType = -1;
 		
 		public TextOutputFormatter(ITextOutput output)
 		{
@@ -64,8 +65,11 @@ namespace Decompiler
 		
 		public void OpenBrace(BraceStyle style)
 		{
-			if (nodeStack.OfType<BlockStatement>().Count() <= 1)
-				output.MarkFoldStart();
+			if (braceLevelWithinType >= 0 || nodeStack.Peek() is TypeDeclaration)
+				braceLevelWithinType++;
+			if (nodeStack.OfType<BlockStatement>().Count() <= 1) {
+				output.MarkFoldStart(defaultCollapsed: braceLevelWithinType == 1);
+			}
 			output.WriteLine();
 			output.WriteLine("{");
 			output.Indent();
@@ -77,6 +81,8 @@ namespace Decompiler
 			output.Write('}');
 			if (nodeStack.OfType<BlockStatement>().Count() <= 1)
 				output.MarkFoldEnd();
+			if (braceLevelWithinType >= 0)
+				braceLevelWithinType--;
 		}
 		
 		public void Indent()
