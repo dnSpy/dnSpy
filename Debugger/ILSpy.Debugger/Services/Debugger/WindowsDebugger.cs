@@ -490,7 +490,7 @@ namespace ILSpy.Debugger.Services
 		void AddBreakpoint(BreakpointBookmark bookmark)
 		{
 			uint token;
-			ILCodeMapping map = CodeMappings.GetInstructionByTypeAndLine(bookmark.TypeName, bookmark.LineNumber, out token);
+			ILCodeMapping map = ILCodeMappings.GetInstructionByTypeAndLine(bookmark.TypeName, bookmark.LineNumber, out token);
 			
 			if (map != null) {
 				Breakpoint breakpoint = new ILBreakpoint(debugger, bookmark.LineNumber, token, map.ILInstruction.Offset , bookmark.IsEnabled);
@@ -727,7 +727,7 @@ namespace ILSpy.Debugger.Services
 				int ilOffset = debuggedProcess.SelectedStackFrame.IP;
 				int line;
 				string typeName;
-				CodeMappings.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line);
+				ILCodeMappings.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line);
 				if (typeName != null) {
 					DebuggerService.JumpToCurrentLine(typeName, line, 0, line, 0);
 				}

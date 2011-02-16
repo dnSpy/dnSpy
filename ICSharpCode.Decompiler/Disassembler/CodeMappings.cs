@@ -64,7 +64,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		}
 	}
 	
-	public static class CodeMappings
+	public static class ILCodeMappings
 	{
 		static Dictionary<string, List<MethodMapping>> ilCodeMappings = new Dictionary<string, List<MethodMapping>>();
 		

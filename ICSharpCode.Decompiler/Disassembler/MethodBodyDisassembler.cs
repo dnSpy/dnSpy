@@ -49,8 +49,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			// create mappings
 			MethodMapping currentMethodMapping = null;
-			if (CodeMappings.ILSourceCodeMappings.ContainsKey(body.Method.DeclaringType.FullName)) {
-				var mapping = CodeMappings.ILSourceCodeMappings[body.Method.DeclaringType.FullName];
+			if (ILCodeMappings.ILSourceCodeMappings.ContainsKey(body.Method.DeclaringType.FullName)) {
+				var mapping = ILCodeMappings.ILSourceCodeMappings[body.Method.DeclaringType.FullName];
 				if (mapping.Find(map => (int)map.MetadataToken == body.Method.MetadataToken.ToInt32()) == null) {
 					currentMethodMapping = new MethodMapping() {
 						MetadataToken = (uint)body.Method.MetadataToken.ToInt32(),

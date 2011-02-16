@@ -82,7 +82,7 @@ namespace ILSpy.Debugger.ToolTips
 			args.InDocument = pos.HasValue;
 			
 			if (pos.HasValue) {
-				args.LogicalPosition = new AstLocation(pos.Value.Column, pos.Value.Line);
+				args.LogicalPosition = new AstLocation(pos.Value.Line, pos.Value.Column);
 			}
 
 			DebuggerService.HandleToolTipRequest(args);
@@ -116,7 +116,7 @@ namespace ILSpy.Debugger.ToolTips
 					if(args.ContentToShow is string) {
 						toolTip.Content = new TextBlock
 						{
-							Text = args.ContentToShow as string,
+							Text = (args.ContentToShow as string),
 							TextWrapping = TextWrapping.Wrap
 						};
 					}

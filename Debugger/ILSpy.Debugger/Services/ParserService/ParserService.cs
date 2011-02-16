@@ -17,14 +17,76 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 
 namespace ILSpy.Debugger.Services
 {
-	/// <summary>
-	/// Description of ParserService.
-	/// </summary>
 	public static class ParserService
 	{
+		static HashSet<string> mySet = new HashSet<string>();
 		
+		static ParserService()
+		{
+			mySet.AddRange((new [] {
+			                	".",
+			                	"{",
+			                	"}",
+			                	"(",
+			                	")",
+			                	"[",
+			                	"]",
+			                	" ",
+			                	"=",
+			                	"+",
+			                	"-",
+			                	"/",
+			                	"%",
+			                	"*",
+			                	"&",
+			                	Environment.NewLine,
+			                	";",
+			                	",",
+			                	"~",
+			                	"!",
+			                	"?",
+			                	@"\n",
+			                	@"\t",
+			                	@"\r",
+			                	"|"
+			                }).AsReadOnly());
+		}
+		
+		/// <summary>
+		/// Returns the variable name
+		/// </summary>
+		/// <param name="fullText"></param>
+		/// <param name="offset"></param>
+		/// <returns></returns>
+		public static string SimpleParseAt(string fullText, int offset)
+		{
+			if (string.IsNullOrEmpty(fullText))
+				return string.Empty;
+			
+			if (offset <= 0 || offset >= fullText.Length)
+				return string.Empty;
+			
+			string currentValue = fullText[offset].ToString();
+			
+			if (mySet.Contains(currentValue))
+				return string.Empty;
+			
+			int left = offset, right = offset;
+			
+			//search left
+			while((!mySet.Contains(currentValue) || currentValue == ".") && offset >= 0)
+				currentValue = fullText[--left].ToString();
+			
+			currentValue = fullText[offset].ToString();
+			// searh right
+			while(!mySet.Contains(currentValue) && offset < fullText.Length)
+				currentValue = fullText[++right].ToString();
+			
+			return fullText.Substring(left + 1, right - 1 - left).Trim();
+		}
 	}
 }

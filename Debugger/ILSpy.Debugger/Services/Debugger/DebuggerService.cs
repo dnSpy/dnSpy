@@ -201,18 +201,24 @@ namespace ILSpy.Debugger.Services
 		/// </summary>
 		internal static void HandleToolTipRequest(ToolTipRequestEventArgs e)
 		{
+			if (!e.InDocument)
+				return;
+			
+			var logicPos = e.LogicalPosition;
+			var doc = (TextDocument)e.Editor.Document;
+			
+			string variable = 
+				ParserService.SimpleParseAt(doc.Text, doc.GetOffset(new TextLocation(logicPos.Line, logicPos.Column)));
+				
+			
 			if (currentDebugger == null || !currentDebugger.IsDebugging) {
-				e.ContentToShow = "test";
+				e.ContentToShow = variable;
 			}
 			else {
-				e.ContentToShow = currentDebugger.GetTooltipControl(e.LogicalPosition, "test");
+				e.ContentToShow = currentDebugger.GetTooltipControl(e.LogicalPosition, variable);
 			}
 			
-			// FIXME
-//			if (!e.InDocument)
-//				return;
-//			var logicPos = e.LogicalPosition;
-//			var doc = (TextDocument)e.Editor.Document;
+			// FIXME Do proper parsing
 //			
 //			using (var sr = new StringReader(doc.Text))
 //			{
