@@ -106,7 +106,7 @@ namespace Decompiler
 			
 			List<ByteCode> body = StackAnalysis(methodDef);
 			
-			List<ILNode> ast = ConvertToAst(body, methodDef.Body.ExceptionHandlers);
+			List<ILNode> ast = ConvertToAst(body, new HashSet<ExceptionHandler>(methodDef.Body.ExceptionHandlers));
 			
 			return ast;
 		}
@@ -292,7 +292,7 @@ namespace Decompiler
 			return body;
 		}
 		
-		List<ILNode> ConvertToAst(List<ByteCode> body, IEnumerable<ExceptionHandler> ehs)
+		List<ILNode> ConvertToAst(List<ByteCode> body, HashSet<ExceptionHandler> ehs)
 		{
 			List<ILNode> ast = new List<ILNode>();
 			
@@ -313,7 +313,8 @@ namespace Decompiler
 				
 				// Cut the try block
 				{
-					List<ExceptionHandler> nestedEHs = ehs.Where(eh => (tryStart <= eh.TryStart.Offset && eh.TryEnd.Offset < tryEnd) || (tryStart < eh.TryStart.Offset && eh.TryEnd.Offset <= tryEnd)).ToList();
+					HashSet<ExceptionHandler> nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(eh => (tryStart <= eh.TryStart.Offset && eh.TryEnd.Offset < tryEnd) || (tryStart < eh.TryStart.Offset && eh.TryEnd.Offset <= tryEnd)));
+					ehs.ExceptWith(nestedEHs);
 					int tryEndIdx;
 					for (tryEndIdx = 0; tryEndIdx < body.Count && body[tryEndIdx].Offset != tryEnd; tryEndIdx++);
 					tryCatchBlock.TryBlock = new ILBlock(ConvertToAst(body.CutRange(0, tryEndIdx), nestedEHs));
@@ -328,7 +329,8 @@ namespace Decompiler
 					// Note that the end(exclusiove) instruction may not necessarly be in our body
 					for (endInclusiveIndex = 0; body[endInclusiveIndex].Next.Offset != eh.HandlerEnd.Offset; endInclusiveIndex++);
 					int count = 1 + endInclusiveIndex - startIndex;
-					List<ExceptionHandler> nestedEHs = ehs.Where(e => (eh.HandlerStart.Offset <= e.TryStart.Offset && e.TryEnd.Offset < eh.HandlerEnd.Offset) || (eh.HandlerStart.Offset < e.TryStart.Offset && e.TryEnd.Offset <= eh.HandlerEnd.Offset)).ToList();
+					HashSet<ExceptionHandler> nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(e => (eh.HandlerStart.Offset <= e.TryStart.Offset && e.TryEnd.Offset < eh.HandlerEnd.Offset) || (eh.HandlerStart.Offset < e.TryStart.Offset && e.TryEnd.Offset <= eh.HandlerEnd.Offset)));
+					ehs.ExceptWith(nestedEHs);
 					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIndex, count), nestedEHs);
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
 						tryCatchBlock.CatchBlocks.Add(new ILTryCatchBlock.CatchBlock() {
@@ -342,7 +344,7 @@ namespace Decompiler
 					}
 				}
 				
-				ehs = ehs.Where(eh => eh.TryStart.Offset > tryEnd).ToList();
+				ehs.ExceptWith(handlers);
 				
 				ast.Add(tryCatchBlock);
 			}
