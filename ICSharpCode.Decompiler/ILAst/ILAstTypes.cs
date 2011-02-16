@@ -48,6 +48,7 @@ namespace Decompiler
 	
 	public class ILBlock: ILNode
 	{
+		// TODO: This should really be a goto, not a label
 		public ILLabel EntryPoint;
 		
 		public List<ILNode> Body;
@@ -224,6 +225,20 @@ namespace Decompiler
 			yield return Condition;
 			yield return TrueBlock;
 			yield return FalseBlock;
+		}
+	}
+	
+	public class ILSwitch: ILNode
+	{
+		public ILExpression Condition;
+		public List<ILBlock> CaseBlocks = new List<ILBlock>();
+		
+		public override IEnumerable<ILNode> GetChildren()
+		{
+			yield return Condition;
+			foreach (ILBlock caseBlock in this.CaseBlocks) {
+				yield return caseBlock;
+			}
 		}
 	}
 }

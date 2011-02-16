@@ -167,6 +167,16 @@ namespace Decompiler
 						FalseStatement = TransformBlock(conditionalNode.FalseBlock)
 					};
 				}
+			} else if (node is ILSwitch) {
+				ILSwitch ilSwitch = (ILSwitch)node;
+				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition.Arguments[0]) };
+				for (int i = 0; i < ilSwitch.CaseBlocks.Count; i++) {
+					switchStmt.AddChild(new SwitchSection() {
+					    	CaseLabels = new CaseLabel[] { new CaseLabel() { Expression = new PrimitiveExpression(i) } },
+					    	Statements = new Statement[] { TransformBlock(ilSwitch.CaseBlocks[i]) }
+					}, SwitchStatement.SwitchSectionRole);
+				}
+				yield return switchStmt;
 			} else if (node is ILTryCatchBlock) {
 				ILTryCatchBlock tryCatchNode = ((ILTryCatchBlock)node);
 				List<Ast.CatchClause> catchClauses = new List<CatchClause>();
