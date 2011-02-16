@@ -837,7 +837,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				case '\v':
 					return "\\v";
 				default:
-					if (char.IsControl(ch)) {
+					if (char.IsControl(ch) || char.IsSurrogate(ch)) {
 						return "\\u" + ((int)ch).ToString("x4");
 					} else {
 						return ch.ToString();
