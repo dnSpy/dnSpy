@@ -97,10 +97,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				this.Children.Add(new BaseTypesTreeNode(type));
 			if (!type.IsSealed)
 				this.Children.Add(new DerivedTypesTreeNode(parentAssemblyNode.AssemblyList, type));
-			foreach (TypeDefinition nestedType in type.NestedTypes) {
+			foreach (TypeDefinition nestedType in type.NestedTypes.OrderBy(m => m.Name)) {
 				this.Children.Add(new TypeTreeNode(nestedType, parentAssemblyNode));
 			}
-			foreach (FieldDefinition field in type.Fields) {
+			foreach (FieldDefinition field in type.Fields.OrderBy(m => m.Name)) {
 				this.Children.Add(new FieldTreeNode(field));
 			}
 			
@@ -112,14 +112,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				defaultMemberName = defaultMemberAttribute.ConstructorArguments[0].Value as string;
 			}
 			
-			foreach (PropertyDefinition property in type.Properties) {
+			foreach (PropertyDefinition property in type.Properties.OrderBy(m => m.Name)) {
 				this.Children.Add(new PropertyTreeNode(property, property.Name == defaultMemberName));
 			}
-			foreach (EventDefinition ev in type.Events) {
+			foreach (EventDefinition ev in type.Events.OrderBy(m => m.Name)) {
 				this.Children.Add(new EventTreeNode(ev));
 			}
 			HashSet<MethodDefinition> accessorMethods = type.GetAccessorMethods();
-			foreach (MethodDefinition method in type.Methods) {
+			foreach (MethodDefinition method in type.Methods.OrderBy(m => m.Name)) {
 				if (!accessorMethods.Contains(method)) {
 					this.Children.Add(new MethodTreeNode(method));
 				}

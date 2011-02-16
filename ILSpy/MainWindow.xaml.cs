@@ -482,7 +482,7 @@ namespace ICSharpCode.ILSpy
 			}
 			decompilerTextView.SaveToDisk(sessionSettings.FilterSettings.Language,
 			                              treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>(),
-			                              new DecompilationOptions());
+			                              new DecompilationOptions() { FullDecompilation = true });
 		}
 		#endregion
 		

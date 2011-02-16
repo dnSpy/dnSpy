@@ -240,7 +240,7 @@ namespace ICSharpCode.ILSpy.TextView
 			RunWithCancellation(
 				delegate (CancellationToken ct) { // creation of the background task
 					context.Options.CancellationToken = ct;
-					return RunDecompiler(context, outputLengthLimit);
+					return DecompileAsync(context, outputLengthLimit);
 				},
 				delegate (Task<AvalonEditTextOutput> task) { // handling the result
 					try {
@@ -269,7 +269,7 @@ namespace ICSharpCode.ILSpy.TextView
 				});
 		}
 		
-		static Task<AvalonEditTextOutput> RunDecompiler(DecompilationContext context, int outputLengthLimit)
+		static Task<AvalonEditTextOutput> DecompileAsync(DecompilationContext context, int outputLengthLimit)
 		{
 			Debug.WriteLine("Start decompilation of {0} tree nodes", context.TreeNodes.Length);
 			
@@ -293,10 +293,11 @@ namespace ICSharpCode.ILSpy.TextView
 					} catch (AggregateException ex) {
 						tcs.SetException(ex);
 					} catch (OperationCanceledException ex) {
+						tcs.SetException(ex);
 						#else
 					} catch (Exception ex) {
-						#endif
 						tcs.SetException(ex);
+						#endif
 					}
 				}));
 			thread.Start();
@@ -411,29 +412,7 @@ namespace ICSharpCode.ILSpy.TextView
 			RunWithCancellation(
 				delegate (CancellationToken ct) {
 					context.Options.CancellationToken = ct;
-					return Task.Factory.StartNew(
-						delegate {
-							using (StreamWriter w = new StreamWriter(fileName)) {
-								try {
-									DecompileNodes(context, new PlainTextOutput(w));
-								} catch (OperationCanceledException) {
-									w.WriteLine();
-									w.WriteLine("Decompiled was cancelled.");
-									throw;
-								}
-							}
-							AvalonEditTextOutput output = new AvalonEditTextOutput();
-							output.WriteLine("Decompilation complete.");
-							output.WriteLine();
-							output.AddButton(
-								null, "Open Explorer",
-								delegate {
-									Process.Start("explorer", "/select,\"" + fileName + "\"");
-								}
-							);
-							output.WriteLine();
-							return output;
-						}, TaskCreationOptions.LongRunning);
+					return SaveToDiskAsync(context, fileName);
 				},
 				delegate (Task<AvalonEditTextOutput> task) {
 					try {
@@ -451,6 +430,42 @@ namespace ICSharpCode.ILSpy.TextView
 						ShowOutput(output);
 					}
 				});
+		}
+
+		Task<AvalonEditTextOutput> SaveToDiskAsync(DecompilationContext context, string fileName)
+		{
+			TaskCompletionSource<AvalonEditTextOutput> tcs = new TaskCompletionSource<AvalonEditTextOutput>();
+			Thread thread = new Thread(new ThreadStart(
+				delegate {
+					try {
+						using (StreamWriter w = new StreamWriter(fileName)) {
+							try {
+								DecompileNodes(context, new PlainTextOutput(w));
+							} catch (OperationCanceledException) {
+								w.WriteLine();
+								w.WriteLine("Decompiled was cancelled.");
+								throw;
+							}
+						}
+						AvalonEditTextOutput output = new AvalonEditTextOutput();
+						output.WriteLine("Decompilation complete.");
+						output.WriteLine();
+						output.AddButton(null, "Open Explorer", delegate { Process.Start("explorer", "/select,\"" + fileName + "\""); });
+						output.WriteLine();
+						tcs.SetResult(output);
+						#if DEBUG
+					} catch (OperationCanceledException ex) {
+						tcs.SetException(ex);
+					} catch (AggregateException ex) {
+						tcs.SetException(ex);
+						#else
+					} catch (Exception ex) {
+						tcs.SetException(ex);
+						#endif
+					}
+				}));
+			thread.Start();
+			return tcs.Task;
 		}
 		
 		/// <summary>

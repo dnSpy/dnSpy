@@ -337,6 +337,8 @@ namespace Decompiler
 		
 		Modifiers ConvertModifiers(MethodDefinition methodDef)
 		{
+			if (methodDef == null)
+				return Modifiers.None;
 			Modifiers modifiers = Modifiers.None;
 			if (methodDef.IsPrivate)
 				modifiers |= Modifiers.Private;
@@ -431,7 +433,7 @@ namespace Decompiler
 		PropertyDeclaration CreateProperty(PropertyDefinition propDef)
 		{
 			PropertyDeclaration astProp = new PropertyDeclaration();
-			astProp.Modifiers = ConvertModifiers(propDef.GetMethod);
+			astProp.Modifiers = ConvertModifiers(propDef.GetMethod ?? propDef.SetMethod);
 			astProp.Name = propDef.Name;
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			if (propDef.GetMethod != null) {
@@ -469,9 +471,16 @@ namespace Decompiler
 		FieldDeclaration CreateField(FieldDefinition fieldDef)
 		{
 			FieldDeclaration astField = new FieldDeclaration();
-			astField.AddChild(new VariableInitializer(fieldDef.Name), FieldDeclaration.Roles.Variable);
+			VariableInitializer initializer = new VariableInitializer(fieldDef.Name);
+			astField.AddChild(initializer, FieldDeclaration.Roles.Variable);
 			astField.ReturnType = ConvertType(fieldDef.FieldType, fieldDef);
 			astField.Modifiers = ConvertModifiers(fieldDef);
+			if (fieldDef.HasConstant) {
+				if (fieldDef.Constant == null)
+					initializer.Initializer = new NullReferenceExpression();
+				else
+					initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
+			}
 			return astField;
 		}
 		

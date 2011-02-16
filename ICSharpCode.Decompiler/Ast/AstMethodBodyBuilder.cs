@@ -21,7 +21,17 @@ namespace Decompiler
 		{
 			AstMethodBodyBuilder builder = new AstMethodBodyBuilder();
 			builder.methodDef = methodDef;
-			return builder.CreateMethodBody();
+			if (Debugger.IsAttached) {
+				return builder.CreateMethodBody();
+			} else {
+				try {
+					return builder.CreateMethodBody();
+				} catch (OperationCanceledException) {
+					throw;
+				} catch (Exception ex) {
+					throw new ICSharpCode.Decompiler.DecompilerException(methodDef, ex);
+				}
+			}
 		}
 		
 		static readonly Dictionary<string, string> typeNameToVariableNameDict = new Dictionary<string, string> {
