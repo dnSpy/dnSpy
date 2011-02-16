@@ -157,8 +157,8 @@ namespace ICSharpCode.ILSpy
 		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.OldItems != null)
-				foreach (AssemblyTreeNode node in e.OldItems)
-					history.RemoveAll(n => n.AncestorsAndSelf().Contains(node));
+				foreach (LoadedAssembly asm in e.OldItems)
+					history.RemoveAll(n => n.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(a => a.LoadedAssembly == asm));
 		}
 		
 		void LoadInitialAssemblies()
@@ -198,6 +198,10 @@ namespace ICSharpCode.ILSpy
 		
 		internal AssemblyList AssemblyList {
 			get { return assemblyList; }
+		}
+		
+		internal AssemblyListTreeNode AssemblyListTreeNode {
+			get { return assemblyListTreeNode; }
 		}
 		
 		#region Node Selection
@@ -332,8 +336,11 @@ namespace ICSharpCode.ILSpy
 			foreach (string file in fileNames) {
 				var asm = assemblyList.OpenAssembly(file);
 				if (asm != null) {
-					treeView.SelectedItems.Add(asm);
-					lastNode = asm;
+					var node = assemblyListTreeNode.FindAssemblyNode(asm);
+					if (node != null) {
+						treeView.SelectedItems.Add(node);
+						lastNode = node;
+					}
 				}
 			}
 			if (lastNode != null)

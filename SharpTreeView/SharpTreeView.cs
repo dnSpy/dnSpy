@@ -192,6 +192,18 @@ namespace ICSharpCode.TreeView
 						container.Node.ActivateItem(e);
 					}
 					break;
+				case Key.Add:
+					if (container != null && ItemsControl.ItemsControlFromItemContainer(container) == this) {
+						container.Node.IsExpanded = true;
+						e.Handled = true;
+					}
+					break;
+				case Key.Subtract:
+					if (container != null && ItemsControl.ItemsControlFromItemContainer(container) == this) {
+						container.Node.IsExpanded = false;
+						e.Handled = true;
+					}
+					break;
 			}
 			if (!e.Handled)
 				base.OnKeyDown(e);

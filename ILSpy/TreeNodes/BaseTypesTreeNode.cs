@@ -128,7 +128,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (def != null) {
 				var assemblyListNode = node.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();
 				if (assemblyListNode != null) {
-					assemblyListNode.Select(assemblyListNode.AssemblyList.FindTypeNode(def));
+					assemblyListNode.Select(assemblyListNode.FindTypeNode(def));
 					return true;
 				}
 			}

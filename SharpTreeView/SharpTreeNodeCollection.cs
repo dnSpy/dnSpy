@@ -173,30 +173,5 @@ namespace ICSharpCode.TreeView
 		{
 			return list.GetEnumerator();
 		}
-		
-		public void BindToObservableCollection<T>(ObservableCollection<T> collection) where T : SharpTreeNode
-		{
-			Clear();
-			AddRange(collection);
-			collection.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
-				switch (e.Action) {
-					case NotifyCollectionChangedAction.Add:
-						InsertRange(e.NewStartingIndex, e.NewItems.Cast<SharpTreeNode>());
-						break;
-					case NotifyCollectionChangedAction.Remove:
-						RemoveRange(e.OldStartingIndex, e.OldItems.Count);
-						break;
-					case NotifyCollectionChangedAction.Replace:
-					case NotifyCollectionChangedAction.Move:
-						throw new NotImplementedException();
-					case NotifyCollectionChangedAction.Reset:
-						Clear();
-						AddRange(collection);
-						break;
-					default:
-						throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
-				}
-			};
-		}
 	}
 }

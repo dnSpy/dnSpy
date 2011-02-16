@@ -16,10 +16,14 @@
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <SourceAnalysisOverrideSettingsFile>C:\Documents and Settings\Administrator\Application Data\ICSharpCode/SharpDevelop4.1\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
+    <ApplicationIcon>Images\ILSpy.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -96,6 +100,7 @@
     <Compile Include="ISmartTextOutput.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Images\Images.cs" />
+    <Compile Include="LoadedAssembly.cs" />
     <Compile Include="Mono.Cecil.Rocks\MethodBodyRocks.cs" />
     <Compile Include="NavigationHistory.cs" />
     <Compile Include="OpenFromGacDialog.xaml.cs">
@@ -114,6 +119,8 @@
     <Resource Include="Images\ClearSearch.png" />
     <Resource Include="Images\Search.png" />
     <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\ILSpy.ico" />
+    <Resource Include="Images\FindAssembly.png" />
     <Resource Include="Images\bug.png" />
     <None Include="app.config" />
     <Resource Include="Images\ContinueDebugging.png" />

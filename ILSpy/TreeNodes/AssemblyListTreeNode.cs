@@ -17,11 +17,13 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -42,11 +44,36 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (assemblyList == null)
 				throw new ArgumentNullException("assemblyList");
 			this.assemblyList = assemblyList;
-			this.Children.BindToObservableCollection(assemblyList.assemblies);
+			BindToObservableCollection(assemblyList.assemblies);
 		}
 		
 		public override object Text {
 			get { return assemblyList.ListName; }
+		}
+		
+		void BindToObservableCollection(ObservableCollection<LoadedAssembly> collection)
+		{
+			this.Children.Clear();
+			this.Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
+			collection.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
+				switch (e.Action) {
+					case NotifyCollectionChangedAction.Add:
+						this.Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<LoadedAssembly>().Select(a => new AssemblyTreeNode(a)));
+						break;
+					case NotifyCollectionChangedAction.Remove:
+						this.Children.RemoveRange(e.OldStartingIndex, e.OldItems.Count);
+						break;
+					case NotifyCollectionChangedAction.Replace:
+					case NotifyCollectionChangedAction.Move:
+						throw new NotImplementedException();
+					case NotifyCollectionChangedAction.Reset:
+						this.Children.Clear();
+						this.Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
+						break;
+					default:
+						throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
+				}
+			};
 		}
 		
 		public override bool CanDrop(DragEventArgs e, int index)
@@ -69,20 +96,20 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				files = e.Data.GetData(DataFormats.FileDrop) as string[];
 			if (files != null) {
 				lock (assemblyList.assemblies) {
-					var nodes = (from file in files
-					             where file != null
-					             select assemblyList.OpenAssembly(file) into node
-					             where node != null
-					             select node).Distinct().ToList();
-					foreach (AssemblyTreeNode node in nodes) {
-						int nodeIndex = assemblyList.assemblies.IndexOf(node);
+					var assemblies = (from file in files
+					                  where file != null
+					                  select assemblyList.OpenAssembly(file) into node
+					                  where node != null
+					                  select node).Distinct().ToList();
+					foreach (LoadedAssembly asm in assemblies) {
+						int nodeIndex = assemblyList.assemblies.IndexOf(asm);
 						if (nodeIndex < index)
 							index--;
 						assemblyList.assemblies.RemoveAt(nodeIndex);
 					}
-					nodes.Reverse();
-					foreach (AssemblyTreeNode node in nodes) {
-						assemblyList.assemblies.Insert(index, node);
+					assemblies.Reverse();
+					foreach (LoadedAssembly asm in assemblies) {
+						assemblyList.assemblies.Insert(index, asm);
 					}
 				}
 			}
@@ -94,11 +121,126 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			language.WriteCommentLine(output, "List: " + assemblyList.ListName);
 			output.WriteLine();
-			foreach (AssemblyTreeNode asm in assemblyList.GetAssemblies()) {
+			foreach (AssemblyTreeNode asm in this.Children) {
 				language.WriteCommentLine(output, new string('-', 60));
 				output.WriteLine();
 				asm.Decompile(language, output, options);
 			}
 		}
+		
+		#region Find*Node
+		
+		public AssemblyTreeNode FindAssemblyNode(AssemblyDefinition asm)
+		{
+			if (asm == null)
+				return null;
+			App.Current.Dispatcher.VerifyAccess();
+			foreach (AssemblyTreeNode node in this.Children) {
+				if (node.LoadedAssembly.IsLoaded && node.LoadedAssembly.AssemblyDefinition == asm)
+					return node;
+			}
+			return null;
+		}
+		
+		public AssemblyTreeNode FindAssemblyNode(LoadedAssembly asm)
+		{
+			if (asm == null)
+				return null;
+			App.Current.Dispatcher.VerifyAccess();
+			foreach (AssemblyTreeNode node in this.Children) {
+				if (node.LoadedAssembly == asm)
+					return node;
+			}
+			return null;
+		}
+		
+		/// <summary>
+		/// Looks up the type node corresponding to the type definition.
+		/// Returns null if no matching node is found.
+		/// </summary>
+		public TypeTreeNode FindTypeNode(TypeDefinition def)
+		{
+			if (def == null)
+				return null;
+			if (def.DeclaringType != null) {
+				TypeTreeNode decl = FindTypeNode(def.DeclaringType);
+				if (decl != null) {
+					decl.EnsureLazyChildren();
+					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def && !t.IsHidden);
+				}
+			} else {
+				AssemblyTreeNode asm = FindAssemblyNode(def.Module.Assembly);
+				if (asm != null) {
+					return asm.FindTypeNode(def);
+				}
+			}
+			return null;
+		}
+		
+		/// <summary>
+		/// Looks up the method node corresponding to the method definition.
+		/// Returns null if no matching node is found.
+		/// </summary>
+		public MethodTreeNode FindMethodNode(MethodDefinition def)
+		{
+			if (def == null)
+				return null;
+			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
+			typeNode.EnsureLazyChildren();
+			MethodTreeNode methodNode = typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def && !m.IsHidden);
+			if (methodNode != null)
+				return methodNode;
+			foreach (var p in typeNode.Children.OfType<ILSpyTreeNode>()) {
+				if (p.IsHidden)
+					continue;
+				// method might be a child or a property or events
+				p.EnsureLazyChildren();
+				methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def && !m.IsHidden);
+				if (methodNode != null)
+					return methodNode;
+			}
+			
+			return null;
+		}
+		
+		/// <summary>
+		/// Looks up the field node corresponding to the field definition.
+		/// Returns null if no matching node is found.
+		/// </summary>
+		public FieldTreeNode FindFieldNode(FieldDefinition def)
+		{
+			if (def == null)
+				return null;
+			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
+			typeNode.EnsureLazyChildren();
+			return typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def && !m.IsHidden);
+		}
+		
+		/// <summary>
+		/// Looks up the property node corresponding to the property definition.
+		/// Returns null if no matching node is found.
+		/// </summary>
+		public PropertyTreeNode FindPropertyNode(PropertyDefinition def)
+		{
+			if (def == null)
+				return null;
+			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
+			typeNode.EnsureLazyChildren();
+			return typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def && !m.IsHidden);
+		}
+		
+		/// <summary>
+		/// Looks up the event node corresponding to the event definition.
+		/// Returns null if no matching node is found.
+		/// </summary>
+		public EventTreeNode FindEventNode(EventDefinition def)
+		{
+			if (def == null)
+				return null;
+			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
+			typeNode.EnsureLazyChildren();
+			return typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def && !m.IsHidden);
+		}
+		#endregion
 	}
 }
