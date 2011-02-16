@@ -10,7 +10,8 @@ namespace Decompiler
 	{
 		public static T WithAnnotation<T>(this T node, object annotation) where T : AstNode
 		{
-			node.AddAnnotation(annotation);
+			if (annotation != null)
+				node.AddAnnotation(annotation);
 			return node;
 		}
 	}

@@ -31,6 +31,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			bool? result = true;
 			while (result != false && (child1 != null || child2 != null)) {
 				result &= AreEqual(child1, child2);
+				child1 = child1.NextSibling;
+				child2 = child2.NextSibling;
 			}
 			if (nodeTypesWithoutExtraInfo.Contains(nodeType))
 				return result;

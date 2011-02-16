@@ -14,25 +14,27 @@ namespace Decompiler.ControlFlow
 		
 		public void Optimize(ILBlock method)
 		{
-			var blocks = method.GetSelfAndChildrenRecursive<ILBlock>().ToList();
-			
-			foreach(ILBlock block in blocks) {
-				ControlFlowGraph graph;
-				
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				SplitToMovableBlocks(block);
-				
+			}
+			
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().Where(b => !(b is ILMoveableBlock)).ToList()) {
+				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, block.EntryPoint);
 				graph.ComputeDominance();
 				graph.ComputeDominanceFrontier();
-				block.Body = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
-	
+				block.Body = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint, true);
+			}
+			
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().Where(b => !(b is ILMoveableBlock)).ToList()) {
+				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, block.EntryPoint);
 				graph.ComputeDominance();
 				graph.ComputeDominanceFrontier();
 				block.Body = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
 			}
 			
-			OrderNodes(method);
+			// OrderNodes(method);
 			FlattenNestedMovableBlocks(method);
 			SimpleGotoRemoval(method);
 			RemoveDeadLabels(method);
@@ -53,6 +55,7 @@ namespace Decompiler.ControlFlow
 		void SplitToMovableBlocks(ILBlock block)
 		{
 			// Remve no-ops
+			// TODO: Assign the no-op range to someting
 			block.Body = block.Body.Where(n => !(n is ILExpression && ((ILExpression)n).OpCode == OpCodes.Nop)).ToList();
 			
 			List<ILNode> moveableBlocks = new List<ILNode>();
@@ -153,7 +156,7 @@ namespace Decompiler.ControlFlow
 			return new ControlFlowGraph(cfNodes.ToArray());
 		}
 		
-		static List<ILNode> FindLoops(HashSet<ControlFlowNode> nodes, ControlFlowNode entryPoint)
+		List<ILNode> FindLoops(HashSet<ControlFlowNode> nodes, ControlFlowNode entryPoint, bool excludeEntryPoint)
 		{
 			List<ILNode> result = new List<ILNode>();
 			
@@ -164,14 +167,16 @@ namespace Decompiler.ControlFlow
 				
 				if (nodes.Contains(node)
 			    		&& node.DominanceFrontier.Contains(node)
-			    		&& node != entryPoint)
+			    		&& (node != entryPoint || !excludeEntryPoint))
 				{
 					HashSet<ControlFlowNode> loopContents = new HashSet<ControlFlowNode>();
 					FindLoopContents(nodes, loopContents, node, node);
 					
 					// Move the content into loop block
 					nodes.ExceptWith(loopContents);
-					result.Add(new ILLoop() { ContentBlock = new ILBlock(FindLoops(loopContents, node)) });
+					ILLabel entryLabel = new ILLabel() { Name = "Loop_" + (nextBlockIndex++) };
+					((ILBlock)node.UserData).Body.Insert(0, entryLabel);
+					result.Add(new ILLoop() { ContentBlock = new ILBlock(FindLoops(loopContents, node, true)) { EntryPoint = entryLabel } });
 				}
 
 				// Using the dominator tree should ensure we find the the widest loop first
@@ -206,57 +211,117 @@ namespace Decompiler.ControlFlow
 			while(agenda.Count > 0) {
 				ControlFlowNode node = agenda.Dequeue();
 				
-				ILMoveableBlock block = node.UserData as ILMoveableBlock;
-				
 				// Find a block that represents a simple condition
-				if (nodes.Contains(node) && block != null && block.Body.Count == 3) {
+				if (nodes.Contains(node)) {
 					
-					ILLabel      label      = block.Body[0] as ILLabel;
-					ILExpression condBranch = block.Body[1] as ILExpression;
-					ILExpression statBranch = block.Body[2] as ILExpression;
+					ILMoveableBlock block = node.UserData as ILMoveableBlock;
 					
-					if (label != null &&  
-					    condBranch != null && condBranch.Operand is ILLabel && condBranch.Arguments.Count > 0 &&
-					    statBranch != null && statBranch.Operand is ILLabel && statBranch.Arguments.Count == 0)
-					{
-						ControlFlowNode condTarget;
-						ControlFlowNode statTarget;
-						if (labelToCfNode.TryGetValue((ILLabel)condBranch.Operand, out condTarget) &&
-						    labelToCfNode.TryGetValue((ILLabel)statBranch.Operand, out statTarget))
+					if (block != null && block.Body.Count == 3) {
+						
+						ILLabel      label      = block.Body[0] as ILLabel;
+						ILExpression condBranch = block.Body[1] as ILExpression;
+						ILExpression statBranch = block.Body[2] as ILExpression;
+						
+						// Switch
+						if (label != null &&  
+						    condBranch != null && condBranch.Operand is ILLabel[] && condBranch.Arguments.Count > 0 &&
+						    statBranch != null && statBranch.Operand is ILLabel   && statBranch.Arguments.Count == 0)
 						{
+							ILSwitch ilSwitch = new ILSwitch() { Condition = condBranch };
+							
+							// Replace the two branches with a conditional structure - this preserves the node label
+							block.Body.Remove(condBranch);
+							block.Body.Remove(statBranch);
+							block.Body.Add(ilSwitch);
+							
+							ControlFlowNode statTarget = null;
+							labelToCfNode.TryGetValue((ILLabel)statBranch.Operand, out statTarget);
+							
+							// Pull in the conditional code
+							HashSet<ControlFlowNode> frontiers = new HashSet<ControlFlowNode>();
+							
+							if (statTarget != null)
+								frontiers.UnionWith(statTarget.DominanceFrontier);
+							
+							foreach(ILLabel condLabel in (ILLabel[])condBranch.Operand) {
+								ControlFlowNode condTarget = null;
+								labelToCfNode.TryGetValue(condLabel, out condTarget);
+								
+								if (condTarget != null)
+									frontiers.UnionWith(condTarget.DominanceFrontier);
+							}
+							
+							foreach(ILLabel condLabel in (ILLabel[])condBranch.Operand) {
+								ControlFlowNode condTarget = null;
+								labelToCfNode.TryGetValue(condLabel, out condTarget);
+								
+								ILBlock caseBlock = new ILBlock() { EntryPoint = condLabel };
+								if (condTarget != null && !frontiers.Contains(condTarget)) {
+									HashSet<ControlFlowNode> content = FindDominatedNodes(nodes, condTarget);
+									nodes.ExceptWith(content);
+									caseBlock.Body.AddRange(FindConditions(content, condTarget));
+								}
+								ilSwitch.CaseBlocks.Add(caseBlock);
+							}
+							
+							// The labels will not be used - kill them
+							condBranch.Operand = null;
+							
+							result.Add(block);
+							nodes.Remove(node);
+						}
+						
+						// Two-way branch
+						if (label != null &&  
+						    condBranch != null && condBranch.Operand is ILLabel && condBranch.Arguments.Count > 0 &&
+						    statBranch != null && statBranch.Operand is ILLabel && statBranch.Arguments.Count == 0)
+						{
+							ControlFlowNode statTarget = null;
+							labelToCfNode.TryGetValue((ILLabel)statBranch.Operand, out statTarget);
+							ControlFlowNode condTarget = null;
+							labelToCfNode.TryGetValue((ILLabel)condBranch.Operand, out condTarget);
+							
 							ILCondition condition = new ILCondition() {
 							    Condition  = condBranch,
 							    TrueBlock  = new ILBlock() { EntryPoint = (ILLabel)condBranch.Operand },
 							    FalseBlock = new ILBlock() { EntryPoint = (ILLabel)statBranch.Operand }
 							};
 							
-							// The label will not be used - kill it
-							condBranch.Operand = null;
-							
-							// Replace the two branches with a conditional structure
+							// Replace the two branches with a conditional structure - this preserves the node label
 							block.Body.Remove(condBranch);
 							block.Body.Remove(statBranch);
 							block.Body.Add(condition);
-							result.Add(block);
 							
 							// Pull in the conditional code
 							HashSet<ControlFlowNode> frontiers = new HashSet<ControlFlowNode>();
-							frontiers.UnionWith(condTarget.DominanceFrontier);
-							frontiers.UnionWith(statTarget.DominanceFrontier);
+							if (statTarget != null)
+								frontiers.UnionWith(statTarget.DominanceFrontier);
+							if (condTarget != null)
+								frontiers.UnionWith(condTarget.DominanceFrontier);
 							
-							if (!frontiers.Contains(condTarget)) {
+							if (condTarget != null && !frontiers.Contains(condTarget)) {
 								HashSet<ControlFlowNode> content = FindDominatedNodes(nodes, condTarget);
 								nodes.ExceptWith(content);
 								condition.TrueBlock.Body.AddRange(FindConditions(content, condTarget));
 							}
-							if (!frontiers.Contains(statTarget)) {
+							if (statTarget != null && !frontiers.Contains(statTarget)) {
 								HashSet<ControlFlowNode> content = FindDominatedNodes(nodes, statTarget);
 								nodes.ExceptWith(content);
 								condition.FalseBlock.Body.AddRange(FindConditions(content, statTarget));
 							}
 							
+							// The label will not be used - kill it
+							condBranch.Operand = null;
+							
+							result.Add(block);
 							nodes.Remove(node);
 						}
+					}
+					
+					// Add the node now so that we have good ordering
+					if (nodes.Contains(node)) {
+						result.Add((ILNode)node.UserData);
+						nodes.Remove(node);
 					}
 				}
 
@@ -290,7 +355,8 @@ namespace Decompiler.ControlFlow
 					}
 				}
 			}
-			result.Add(head);
+			if (nodes.Contains(head))
+				result.Add(head);
 			
 			return result;
 		}
@@ -404,6 +470,7 @@ namespace Decompiler.ControlFlow
 		
 		void SimpleGotoRemoval(ILBlock ast)
 		{
+			// TODO: Assign IL ranges from br to something else
 			var blocks = ast.GetSelfAndChildrenRecursive<ILBlock>().ToList();
 			foreach(ILBlock block in blocks) {
 				for (int i = 0; i < block.Body.Count; i++) {

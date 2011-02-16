@@ -25,10 +25,8 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
-using ICSharpCode.Decompiler.Disassembler;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Services;
-using ILSpy.Debugger.ToolTips;
 using Mono.Cecil;
 
 namespace ILSpy.Debugger.AvalonEdit
@@ -74,7 +72,7 @@ namespace ILSpy.Debugger.AvalonEdit
 				// create a dictionary line number => first bookmark
 				Dictionary<int, BookmarkBase> bookmarkDict = new Dictionary<int, BookmarkBase>();
 				foreach (var bm in BookmarkManager.Bookmarks) {
-					if (IconBarMargin.CurrentType == null || bm.TypeName != IconBarMargin.CurrentType.FullName)
+					if (CurrentType == null || bm.TypeName != CurrentType.FullName)
 						continue;
 					
 					int line = bm.LineNumber;
@@ -88,10 +86,44 @@ namespace ILSpy.Debugger.AvalonEdit
 					BookmarkBase bm;
 					if (bookmarkDict.TryGetValue(lineNumber, out bm)) {
 						Rect rect = new Rect(0, PixelSnapHelpers.Round(line.VisualTop - textView.VerticalOffset, pixelSize.Height), 16, 16);
-						drawingContext.DrawImage(bm.Image, rect);						
+						if (dragDropBookmark == bm && dragStarted)
+							drawingContext.PushOpacity(0.5);
+						drawingContext.DrawImage(bm.Image, rect);
+						if (dragDropBookmark == bm && dragStarted)
+							drawingContext.Pop();
 					}
-				}				
+				}
+				if (dragDropBookmark != null && dragStarted) {
+					Rect rect = new Rect(0, PixelSnapHelpers.Round(dragDropCurrentPoint - 8, pixelSize.Height), 16, 16);
+					drawingContext.DrawImage(dragDropBookmark.Image, rect);
+				}
 			}
+		}
+		
+		IBookmark dragDropBookmark; // bookmark being dragged (!=null if drag'n'drop is active)
+		double dragDropStartPoint;
+		double dragDropCurrentPoint;
+		bool dragStarted; // whether drag'n'drop operation has started (mouse was moved minimum distance)
+		
+		protected override void OnMouseDown(MouseButtonEventArgs e)
+		{
+			base.OnMouseDown(e);
+			int line = GetLineFromMousePosition(e);
+			if (!e.Handled && line > 0) {
+				IBookmark bm = GetBookmarkFromLine(line);
+				if (bm != null) {
+					bm.MouseDown(e);
+					if (!e.Handled) {
+						if (e.ChangedButton == MouseButton.Left && bm.CanDragDrop && CaptureMouse()) {
+							StartDragDrop(bm, e);
+							e.Handled = true;
+						}
+					}
+				}
+			}
+			// don't allow selecting text through the IconBarMargin
+			if (e.ChangedButton == MouseButton.Left)
+				e.Handled = true;
 		}
 		
 		BookmarkBase GetBookmarkFromLine(int line)
@@ -99,13 +131,53 @@ namespace ILSpy.Debugger.AvalonEdit
 			BookmarkBase result = null;
 			foreach (BookmarkBase bm in BookmarkManager.Bookmarks) {
 				if (bm.LineNumber == line &&
-				    IconBarMargin.CurrentType != null &&
-				    bm.TypeName == IconBarMargin.CurrentType.FullName) {
+				    CurrentType != null &&
+				    bm.TypeName == CurrentType.FullName) {
 					if (result == null || bm.ZOrder > result.ZOrder)
 						result = bm;
 				}
 			}
 			return result;
+		}
+		
+		protected override void OnLostMouseCapture(MouseEventArgs e)
+		{
+			CancelDragDrop();
+			base.OnLostMouseCapture(e);
+		}
+		
+		void StartDragDrop(IBookmark bm, MouseEventArgs e)
+		{
+			dragDropBookmark = bm;
+			dragDropStartPoint = dragDropCurrentPoint = e.GetPosition(this).Y;
+			if (TextView != null) {
+				TextArea area = TextView.Services.GetService(typeof(TextArea)) as TextArea;
+				if (area != null)
+					area.PreviewKeyDown += TextArea_PreviewKeyDown;
+			}
+		}
+		
+		void CancelDragDrop()
+		{
+			if (dragDropBookmark != null) {
+				dragDropBookmark = null;
+				dragStarted = false;
+				if (TextView != null) {
+					TextArea area = TextView.Services.GetService(typeof(TextArea)) as TextArea;
+					if (area != null)
+						area.PreviewKeyDown -= TextArea_PreviewKeyDown;
+				}
+				ReleaseMouseCapture();
+				InvalidateVisual();
+			}
+		}
+		
+		void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			// any key press cancels drag'n'drop
+			CancelDragDrop();
+			if (e.Key == Key.Escape)
+				e.Handled = true;
 		}
 		
 		int GetLineFromMousePosition(MouseEventArgs e)
@@ -119,10 +191,29 @@ namespace ILSpy.Debugger.AvalonEdit
 			return vl.FirstDocumentLine.LineNumber;
 		}
 		
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			base.OnMouseMove(e);
+			if (dragDropBookmark != null) {
+				dragDropCurrentPoint = e.GetPosition(this).Y;
+				if (Math.Abs(dragDropCurrentPoint - dragDropStartPoint) > SystemParameters.MinimumVerticalDragDistance)
+					dragStarted = true;
+				InvalidateVisual();
+			}
+		}
+		
 		protected override void OnMouseUp(MouseButtonEventArgs e)
 		{
 			base.OnMouseUp(e);
 			int line = GetLineFromMousePosition(e);
+			if (!e.Handled && dragDropBookmark != null) {
+				if (dragStarted) {
+					if (line != 0)
+						dragDropBookmark.Drop(line);
+					e.Handled = true;
+				}
+				CancelDragDrop();
+			}
 			if (!e.Handled && line != 0) {
 				IBookmark bm = GetBookmarkFromLine(line);
 				if (bm != null) {

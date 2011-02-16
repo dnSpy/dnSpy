@@ -17,28 +17,12 @@ namespace Decompiler
 		
 		public void GenerateCode(ITextOutput output)
 		{
-			for (int i = 0; i < 4; i++) {
-				if (Options.ReduceAstJumps) {
-					//astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
-					//astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
-				}
-				if (Options.ReduceAstLoops) {
-					//astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
-				}
-				if (Options.ReduceAstOther) {
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.Idioms(), null);
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
-					astCompileUnit.AcceptVisitor(new Transforms.Ast.PushNegation(), null);
-				}
-			}
-			if (Options.ReduceAstOther) {
-				astCompileUnit.AcceptVisitor(new Transforms.Ast.SimplifyTypeReferences(), null);
-				astCompileUnit.AcceptVisitor(new Transforms.Ast.Idioms(), null);
-			}
-			if (Options.ReduceAstLoops) {
-				//astCompileUnit.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
-			}
-			
+			GenerateCode(output, null);
+		}
+		
+		public void GenerateCode(ITextOutput output, Predicate<IAstVisitor<object, object>> transformAbortCondition)
+		{
+			Transforms.TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition);
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			
 			var outputFormatter = new TextOutputFormatter(output);
@@ -263,14 +247,18 @@ namespace Decompiler
 					}
 					
 					name = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(name);
-					if (ns.Length == 0)
-						return new SimpleType(name);
-					string[] parts = ns.Split('.');
-					AstType nsType = new SimpleType(parts[0]);
-					for (int i = 1; i < parts.Length; i++) {
-						nsType = new MemberType { Target = nsType, MemberName = parts[i] };
-					}
-					return new MemberType { Target = nsType, MemberName = name }.WithAnnotation(type);
+					
+					// TODO: Until we can simplify type with 'using', use just the name without namesapce
+					return new SimpleType(name).WithAnnotation(type);
+					
+//					if (ns.Length == 0)
+//						return new SimpleType(name).WithAnnotation(type);
+//					string[] parts = ns.Split('.');
+//					AstType nsType = new SimpleType(parts[0]);
+//					for (int i = 1; i < parts.Length; i++) {
+//						nsType = new MemberType { Target = nsType, MemberName = parts[i] };
+//					}
+//					return new MemberType { Target = nsType, MemberName = name }.WithAnnotation(type);
 				}
 			}
 		}
@@ -487,7 +475,7 @@ namespace Decompiler
 			return astField;
 		}
 		
-		IEnumerable<ParameterDeclaration> MakeParameters(IEnumerable<ParameterDefinition> paramCol)
+		public static IEnumerable<ParameterDeclaration> MakeParameters(IEnumerable<ParameterDefinition> paramCol)
 		{
 			foreach(ParameterDefinition paramDef in paramCol) {
 				ParameterDeclaration astParam = new ParameterDeclaration();

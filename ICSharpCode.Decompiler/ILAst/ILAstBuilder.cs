@@ -32,6 +32,7 @@ namespace Decompiler
 		{
 			public ILLabel  Label;    // Non-null only if needed
 			public int      Offset;
+			public int      EndOffset;
 			public OpCode   OpCode;
 			public object   Operand;
 			public int?     PopCount; // Null means pop all
@@ -94,6 +95,8 @@ namespace Decompiler
 		Dictionary<Instruction, ByteCode> instrToByteCode = new Dictionary<Instruction, ByteCode>();
 		Dictionary<ILVariable, bool> allowInline = new Dictionary<ILVariable, bool>();
 		
+		public List<ILVariable> Variables;
+		
 		public List<ILNode> Build(MethodDefinition methodDef, bool optimize)
 		{
 			this.methodDef = methodDef;
@@ -118,6 +121,7 @@ namespace Decompiler
 				MethodBodyRocks.ExpandMacro(ref opCode, ref operand, methodDef.Body);
 				ByteCode byteCode = new ByteCode() {
 					Offset      = inst.Offset,
+					EndOffset   = inst.Next != null ? inst.Next.Offset : methodDef.Body.CodeSize,
 					OpCode      = opCode,
 					Operand     = operand,
 					PopCount    = inst.GetPopCount(),
@@ -247,27 +251,27 @@ namespace Decompiler
 			}
 			
 			// Convert local varibles
-			List<ILVariable> vars = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name }).ToList();
-			int[] numReads  = new int[vars.Count];
-			int[] numWrites = new int[vars.Count];
+			Variables = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name, Type = v.VariableType }).ToList();
+			int[] numReads  = new int[Variables.Count];
+			int[] numWrites = new int[Variables.Count];
 			foreach(ByteCode byteCode in body) {
 				if (byteCode.OpCode == OpCodes.Ldloc) {
 					int index = ((VariableDefinition)byteCode.Operand).Index;
-					byteCode.Operand = vars[index];
+					byteCode.Operand = Variables[index];
 					numReads[index]++;
 				}
 				if (byteCode.OpCode == OpCodes.Stloc) {
 					int index = ((VariableDefinition)byteCode.Operand).Index;
-					byteCode.Operand = vars[index];
+					byteCode.Operand = Variables[index];
 					numWrites[index]++;
 				}
 			}
 			
 			// Find which variables we can inline
 			if (this.optimize) {
-				for (int i = 0; i < vars.Count; i++) {
+				for (int i = 0; i < Variables.Count; i++) {
 					if (numReads[i] == 1 && numWrites[i] == 1) {
-						allowInline[vars[i]] = true;
+						allowInline[Variables[i]] = true;
 					}
 				}
 			}
@@ -360,6 +364,7 @@ namespace Decompiler
 				MethodBodyRocks.ExpandMacro(ref opCode, ref operand, methodDef.Body);
 				
 				ILExpression expr = new ILExpression(opCode, operand);
+				expr.ILRanges.Add(new ILRange() { From = byteCode.Offset, To = byteCode.EndOffset });
 				
 				// Label for this instruction
 				if (byteCode.Label != null) {
@@ -417,6 +422,9 @@ namespace Decompiler
 							bool canInline;
 							allowInline.TryGetValue((ILVariable)arg.Operand, out canInline);
 							if (arg.Operand == currExpr.Operand && canInline) {
+								// Assigne the ranges for optimized away instrustions somewhere
+								currExpr.Arguments[0].ILRanges.AddRange(currExpr.ILRanges);
+								currExpr.Arguments[0].ILRanges.AddRange(nextExpr.Arguments[j].ILRanges);
 								ast.RemoveAt(i);
 								nextExpr.Arguments[j] = currExpr.Arguments[0]; // Inline the stloc body
 								i -= 2; // Try the same index again

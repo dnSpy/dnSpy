@@ -17,9 +17,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Decompiler;
+using Decompiler.Transforms;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
@@ -31,8 +33,33 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public class CSharpLanguage : Language
 	{
+		string name = "C#";
+		Predicate<IAstVisitor<object, object>> transformAbortCondition;
+		
+		public CSharpLanguage()
+		{
+		}
+		
+		#if DEBUG
+		internal static IEnumerable<CSharpLanguage> GetDebugLanguages()
+		{
+			string lastTransformName = "no transforms";
+			foreach (Type _transformType in TransformationPipeline.CreatePipeline().Select(v => v.GetType()).Distinct()) {
+				Type transformType = _transformType; // copy for lambda
+				yield return new CSharpLanguage {
+					transformAbortCondition = v => transformType.IsInstanceOfType(v),
+					name = "C# - " + lastTransformName
+				};
+				lastTransformName = "after " + transformType.Name;
+			}
+			yield return new CSharpLanguage {
+				name = "C# - " + lastTransformName
+			};
+		}
+		#endif
+		
 		public override string Name {
-			get { return "C#"; }
+			get { return name; }
 		}
 		
 		public override string FileExtension {
@@ -43,35 +70,35 @@ namespace ICSharpCode.ILSpy
 		{
 			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddMethod(method);
-			codeDomBuilder.GenerateCode(output);
+			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
 			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddProperty(property);
-			codeDomBuilder.GenerateCode(output);
+			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
 			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddField(field);
-			codeDomBuilder.GenerateCode(output);
+			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
 			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddEvent(ev);
-			codeDomBuilder.GenerateCode(output);
+			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
 			AstBuilder codeDomBuilder = new AstBuilder();
 			codeDomBuilder.AddType(type);
-			codeDomBuilder.GenerateCode(output);
+			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
 		
 		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes)

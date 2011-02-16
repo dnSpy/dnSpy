@@ -1,10 +1,9 @@
 using System;
-
+using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace Decompiler.Transforms.Ast
 {
-	/*
 	public class RestoreLoop: DepthFirstAstVisitor<object, object>
 	{
 		public override object VisitForStatement(ForStatement forStatement, object data)
@@ -12,25 +11,25 @@ namespace Decompiler.Transforms.Ast
 			base.VisitForStatement(forStatement, data);
 			
 			// Restore loop initializer
-			if (forStatement.Initializers.Count == 0) {
-				LocalVariableDeclaration varDeclr = forStatement.Previous() as LocalVariableDeclaration;
+			if (!forStatement.Initializers.Any()) {
+				VariableDeclarationStatement varDeclr = forStatement.PrevSibling as VariableDeclarationStatement;
 				if (varDeclr != null) {
 					varDeclr.ReplaceWith(Statement.Null);
-					forStatement.Initializers.Add(varDeclr);
+					forStatement.Initializers = new Statement[] { varDeclr };
 				}
 			}
 			
 			// Restore loop condition
 			if (forStatement.Condition.IsNull &&
-				forStatement.EmbeddedStatement.Children.Count >= 3)
+			    forStatement.EmbeddedStatement.Children.Count() >= 3)
 			{
-				IfElseStatement  condition = forStatement.EmbeddedStatement.Children[0] as IfElseStatement;
-				BreakStatement   breakStmt = forStatement.EmbeddedStatement.Children[1] as BreakStatement;
-				LabelStatement   label     = forStatement.EmbeddedStatement.Children[2] as LabelStatement;
+				IfElseStatement  condition = forStatement.EmbeddedStatement.Children.First() as IfElseStatement;
+				BreakStatement   breakStmt = forStatement.EmbeddedStatement.Children.Skip(1).First() as BreakStatement;
+				LabelStatement   label     = forStatement.EmbeddedStatement.Children.Skip(2).First() as LabelStatement;
 				if (condition != null && breakStmt != null && label != null &&
-				    condition.TrueStatement.Count == 1)
+				    condition.TrueStatement.Children.Count() == 1)
 				{
-					GotoStatement gotoStmt = condition.TrueStatement[0] as GotoStatement;
+					GotoStatement gotoStmt = condition.TrueStatement.FirstChild as GotoStatement;
 					if (gotoStmt != null && gotoStmt.Label == label.Label) {
 						condition.Remove();
 						breakStmt.Remove();
@@ -41,34 +40,34 @@ namespace Decompiler.Transforms.Ast
 			
 			// Restore loop condition (version 2)
 			if (forStatement.Condition.IsNull) {
-				IfElseStatement condition = forStatement.EmbeddedStatement.Children.First() as IfElseStatement;
+				IfElseStatement condition = forStatement.EmbeddedStatement.FirstChild as IfElseStatement;
 				if (condition != null &&
-				    condition.TrueStatement.Count == 1 &&
-				    condition.TrueStatement[0] is BlockStatement &&
-				    condition.TrueStatement[0].Children.Count == 1 &&
-				    condition.TrueStatement[0].Children.First() is BreakStatement &&
-				    condition.FalseStatement.Count == 1 &&
-				    condition.FalseStatement[0] is BlockStatement &&
-				    condition.FalseStatement[0].Children.Count == 0)
+				    condition.TrueStatement.Children.Any() &&
+				    condition.TrueStatement.FirstChild is BlockStatement &&
+				    condition.TrueStatement.Children.Count() == 1 &&
+				    condition.TrueStatement.FirstChild.FirstChild is BreakStatement &&
+				    condition.FalseStatement.Children.Any() &&
+				    condition.FalseStatement.FirstChild is BlockStatement &&
+				    condition.FalseStatement.Children.Count() == 0)
 				{
 					condition.Remove();
-					forStatement.Condition = new UnaryOperatorExpression(condition.Condition, UnaryOperatorType.Not);
+					forStatement.Condition = new UnaryOperatorExpression() { Expression = condition.Condition, Operator = UnaryOperatorType.Not };
 				}
 			}
 			
 			// Restore loop iterator
-			if (forStatement.EmbeddedStatement.Children.Count > 0 &&
-			    forStatement.Iterator.Count == 0)
+			if (forStatement.EmbeddedStatement.Children.Any() &&
+			    !forStatement.Iterators.Any())
 			{
-				ExpressionStatement lastStmt = forStatement.EmbeddedStatement.Children.Last() as ExpressionStatement;
+				ExpressionStatement lastStmt = forStatement.EmbeddedStatement.LastChild as ExpressionStatement;
 				if (lastStmt != null &&
 				    (lastStmt.Expression is AssignmentExpression || lastStmt.Expression is UnaryOperatorExpression)) {
 					lastStmt.Remove();
-					forStatement.Iterator.Add(lastStmt);
+					forStatement.Iterators = new Statement[] { lastStmt };
 				}
 			}
 			
 			return null;
 		}
-	}*/
+	}
 }

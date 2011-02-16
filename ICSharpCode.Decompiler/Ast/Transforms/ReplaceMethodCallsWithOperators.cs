@@ -5,9 +5,13 @@ using Mono.Cecil;
 using Ast = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace Decompiler.Transforms.Ast
+namespace Decompiler.Transforms
 {
-	public class Idioms: DepthFirstAstVisitor<object, object>
+	/// <summary>
+	/// Replaces method calls with the appropriate operator expressions.
+	/// Also simplifies "x = x op y" into "x op= y" where possible.
+	/// </summary>
+	public class ReplaceMethodCallsWithOperators : DepthFirstAstVisitor<object, object>
 	{
 		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
 		{
@@ -56,6 +60,19 @@ namespace Decompiler.Transforms.Ast
 				invocationExpression.ReplaceWith(
 					new UnaryOperatorExpression(uop.Value, arguments[0]).WithAnnotation(methodRef)
 				);
+				return null;
+			}
+			if (methodRef.Name == "op_Explicit" && arguments.Length == 1) {
+				arguments[0].Remove(); // detach argument
+				invocationExpression.ReplaceWith(
+					arguments[0].CastTo(AstBuilder.ConvertType(methodRef.ReturnType, methodRef.MethodReturnType))
+					.WithAnnotation(methodRef)
+				);
+				return null;
+			}
+			if (methodRef.Name == "op_Implicit" && arguments.Length == 1) {
+				arguments[0].Remove(); // detach argument
+				invocationExpression.ReplaceWith(arguments[0]);
 				return null;
 			}
 			
@@ -162,7 +179,7 @@ namespace Decompiler.Transforms.Ast
 							break;
 					}
 					if (assignment.Operator != AssignmentOperatorType.Assign) {
-						// If we found a shorter operators, get rid of the BinaryOperatorExpression:
+						// If we found a shorter operator, get rid of the BinaryOperatorExpression:
 						assignment.Right = binary.Right;
 					}
 				}
@@ -174,18 +191,5 @@ namespace Decompiler.Transforms.Ast
 		{
 			return left is IdentifierExpression; // TODO
 		}
-		
-		/*
-		public override object VisitCastExpression(CastExpression castExpression, object data)
-		{
-			MethodReference typeRef = invocationExpression.Annotation<TypeReference>();
-			if (typeRef.FullName == Constants.Int32 &&
-			    castExpression.Expression is MemberReferenceExpression &&
-			    (castExpression.Expression as MemberReferenceExpression).MemberName == "Length") {
-				ReplaceCurrentNode(castExpression.Expression);
-				return null;
-			}
-			return base.VisitCastExpression(castExpression, data);
-		}*/
 	}
 }
