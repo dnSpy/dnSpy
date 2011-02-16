@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Decompiler.ControlFlow;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Disassembler;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Cecil = Mono.Cecil;
@@ -47,8 +50,12 @@ namespace Decompiler
 		
 		public override string ToString()
 		{
-			return this.GetType().Name;
+			StringWriter w = new StringWriter();
+			WriteTo(new PlainTextOutput(w));
+			return w.ToString();
 		}
+		
+		public abstract void WriteTo(ITextOutput output);
 	}
 	
 	public class ILBlock: ILNode
@@ -75,15 +82,24 @@ namespace Decompiler
 				yield return child;
 			}
 		}
+		
+		public override void WriteTo(ITextOutput output)
+		{
+			EntryPoint.WriteTo(output);
+			foreach(ILNode child in this.Body) {
+				child.WriteTo(output);
+				output.WriteLine();
+			}
+		}
 	}
 	
 	public class ILLabel: ILNode
 	{
 		public string Name;
 
-		public override string ToString()
+		public override void WriteTo(ITextOutput output)
 		{
-			return Name + ":";
+			output.WriteDefinition(Name + ":", this);
 		}
 	}
 	
@@ -92,6 +108,15 @@ namespace Decompiler
 		public class CatchBlock: ILBlock
 		{
 			public TypeReference ExceptionType;
+			
+			public override void WriteTo(ITextOutput output)
+			{
+				output.Write("catch ");
+				output.WriteReference(ExceptionType.FullName, ExceptionType);
+				output.WriteLine(" {");
+				base.WriteTo(output);
+				output.WriteLine("}");
+			}
 		}
 		
 		public ILBlock          TryBlock;
@@ -106,6 +131,21 @@ namespace Decompiler
 			}
 			if (this.FinallyBlock != null)
 				yield return this.FinallyBlock;
+		}
+		
+		public override void WriteTo(ITextOutput output)
+		{
+			output.WriteLine(".try {");
+			TryBlock.WriteTo(output);
+			output.WriteLine("}");
+			foreach (CatchBlock block in CatchBlocks) {
+				block.WriteTo(output);
+			}
+			if (FinallyBlock != null) {
+				output.WriteLine("finally {");
+				FinallyBlock.WriteTo(output);
+				output.WriteLine("}");
+			}
 		}
 	}
 	
@@ -185,23 +225,35 @@ namespace Decompiler
 			return Arguments;
 		}
 		
-		public override string ToString()
+		public override void WriteTo(ITextOutput output)
 		{
-			StringBuilder sb = new StringBuilder();
-			sb.Append(OpCode.Name);
-			sb.Append('(');
+			if (Operand is ILVariable && ((ILVariable)Operand).IsGenerated) {
+				if (OpCode.Name == "stloc") {
+					output.Write(((ILVariable)Operand).Name + " = ");
+					Arguments.First().WriteTo(output);
+					return;
+				} else if (OpCode.Name == "ldloc") {
+					output.Write(((ILVariable)Operand).Name);
+					return;
+				}
+			}
+			
+			output.Write(OpCode.Name);
+			output.Write('(');
 			bool first = true;
 			if (Operand != null) {
-				sb.Append(Operand.ToString());
+				if (Operand is ILLabel)
+					output.Write(((ILLabel)Operand).Name);
+				else
+					DisassemblerHelpers.WriteOperand(output, Operand);
 				first = false;
 			}
 			foreach (ILExpression arg in this.Arguments) {
-				if (!first) sb.Append(",");
-				sb.Append(arg.ToString());
+				if (!first) output.Write(',');
+				arg.WriteTo(output);
 				first = false;
 			}
-			sb.Append(')');
-			return sb.ToString();
+			output.Write(')');
 		}
 	}
 	
@@ -212,6 +264,15 @@ namespace Decompiler
 		public override IEnumerable<ILNode> GetChildren()
 		{
 			yield return ContentBlock;
+		}
+		
+		public override void WriteTo(ITextOutput output)
+		{
+			output.WriteLine("loop {");
+			output.Indent();
+			ContentBlock.WriteTo(output);
+			output.Unindent();
+			output.WriteLine("}");
 		}
 	}
 	
@@ -227,6 +288,24 @@ namespace Decompiler
 			yield return TrueBlock;
 			yield return FalseBlock;
 		}
+		
+		public override void WriteTo(ITextOutput output)
+		{
+			output.Write("if (");
+			Condition.WriteTo(output);
+			output.WriteLine(") {");
+			output.Indent();
+			TrueBlock.WriteTo(output);
+			output.Unindent();
+			output.Write("}");
+			if (FalseBlock != null) {
+				output.WriteLine(" else {");
+				output.Indent();
+				FalseBlock.WriteTo(output);
+				output.Unindent();
+				output.WriteLine("}");
+			}
+		}
 	}
 	
 	public class ILSwitch: ILNode
@@ -240,6 +319,22 @@ namespace Decompiler
 			foreach (ILBlock caseBlock in this.CaseBlocks) {
 				yield return caseBlock;
 			}
+		}
+		
+		public override void WriteTo(ITextOutput output)
+		{
+			output.Write("switch (");
+			Condition.WriteTo(output);
+			output.WriteLine(") {");
+			output.Indent();
+			for (int i = 0; i < CaseBlocks.Count; i++) {
+				output.WriteLine("case {0}:", i);
+				output.Indent();
+				CaseBlocks[i].WriteTo(output);
+				output.Unindent();
+			}
+			output.Unindent();
+			output.WriteLine("}");
 		}
 	}
 }
