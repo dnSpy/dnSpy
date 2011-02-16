@@ -101,6 +101,20 @@ namespace ICSharpCode.ILSpy
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
 		
+		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
+		{
+			if (options.FullDecompilation) {
+				foreach (TypeDefinition type in assembly.MainModule.Types) {
+					AstBuilder codeDomBuilder = new AstBuilder();
+					codeDomBuilder.AddType(type);
+					codeDomBuilder.GenerateCode(output, transformAbortCondition);
+					output.WriteLine();
+				}
+			} else {
+				base.DecompileAssembly(assembly, fileName, output, options);
+			}
+		}
+		
 		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes)
 		{
 			AstType astType = AstBuilder.ConvertType(type, typeAttributes);
