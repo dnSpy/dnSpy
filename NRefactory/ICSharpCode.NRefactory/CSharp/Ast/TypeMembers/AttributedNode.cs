@@ -42,7 +42,9 @@ namespace ICSharpCode.NRefactory.CSharp
 				if ((m & newValue) != 0) {
 					if ((m & oldValue) == 0) {
 						// Modifier was added
-						node.InsertChildAfter(insertionPos, new CSharpModifierToken(AstLocation.Empty, m), ModifierRole);
+						var newToken = new CSharpModifierToken(AstLocation.Empty, m);
+						node.InsertChildAfter(insertionPos, newToken, ModifierRole);
+						insertionPos = newToken;
 					} else {
 						// Modifier already exists
 						insertionPos = node.GetChildrenByRole(ModifierRole).First(t => t.Modifier == m);

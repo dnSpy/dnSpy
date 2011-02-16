@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -36,33 +37,40 @@ namespace ICSharpCode.NRefactory.CSharp
 		public Modifiers Modifier {
 			get { return modifier; }
 			set {
-				modifier = value;
-				if (!lengthTable.TryGetValue (modifier, out tokenLength))
-					throw new InvalidOperationException ("Modifier " + modifier + " is invalid.");
+				for (int i = 0; i < lengthTable.Count; i++) {
+					if (lengthTable[i].Key == value) {
+						this.modifier = value;
+						this.tokenLength = lengthTable[i].Value;
+						return;
+					}
+				}
+				throw new ArgumentException ("Modifier " + value + " is invalid.");
 			}
 		}
 		
-		static Dictionary<Modifiers, int> lengthTable = new Dictionary<Modifiers, int> () {
-			{ Modifiers.Public, "public".Length },
-			{ Modifiers.Protected, "protected".Length },
-			{ Modifiers.Private, "private".Length },
-			{ Modifiers.Internal, "internal".Length },
-			{ Modifiers.New, "new".Length },
-			{ Modifiers.Unsafe, "unsafe".Length },
-			{ Modifiers.Abstract, "abstract".Length },
-			{ Modifiers.Virtual, "virtual".Length },
-			{ Modifiers.Sealed, "sealed".Length },
-			{ Modifiers.Static, "static".Length },
-			{ Modifiers.Override, "override".Length },
-			{ Modifiers.Readonly, "readonly".Length },
-			{ Modifiers.Volatile, "volatile".Length },
-			{ Modifiers.Extern, "extern".Length },
-			{ Modifiers.Partial, "partial".Length },
-			{ Modifiers.Const, "const".Length },
+		// Not worth using a dictionary for such few elements.
+		// This table is sorted in the order that modifiers should be output when generating code.
+		static readonly List<KeyValuePair<Modifiers, int>> lengthTable = new List<KeyValuePair<Modifiers, int>> () {
+			new KeyValuePair<Modifiers, int>(Modifiers.Public, "public".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Protected, "protected".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Private, "private".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Internal, "internal".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.New, "new".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Unsafe, "unsafe".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Abstract, "abstract".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Virtual, "virtual".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Sealed, "sealed".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Static, "static".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Override, "override".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Readonly, "readonly".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Volatile, "volatile".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Extern, "extern".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Partial, "partial".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Const, "const".Length)
 		};
 		
-		public static ICollection<Modifiers> AllModifiers {
-			get { return lengthTable.Keys; }
+		public static IEnumerable<Modifiers> AllModifiers {
+			get { return lengthTable.Select(p => p.Key); }
 		}
 		
 		public CSharpModifierToken (AstLocation location, Modifiers modifier) : base (location, 0)
