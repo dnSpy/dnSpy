@@ -79,8 +79,8 @@ namespace Decompiler
 					if (!typeNames.ContainsKey(name)) {
 						typeNames.Add(name, 0);
 					}
-					int count = typeNames[name];
-					if (count > 0) {
+					int count = ++(typeNames[name]);
+					if (count > 1) {
 						name += count.ToString();
 					}
 					varDef.Name = name;
