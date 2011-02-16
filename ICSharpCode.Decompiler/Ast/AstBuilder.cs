@@ -471,9 +471,16 @@ namespace Decompiler
 		FieldDeclaration CreateField(FieldDefinition fieldDef)
 		{
 			FieldDeclaration astField = new FieldDeclaration();
-			astField.AddChild(new VariableInitializer(fieldDef.Name), FieldDeclaration.Roles.Variable);
+			VariableInitializer initializer = new VariableInitializer(fieldDef.Name);
+			astField.AddChild(initializer, FieldDeclaration.Roles.Variable);
 			astField.ReturnType = ConvertType(fieldDef.FieldType, fieldDef);
 			astField.Modifiers = ConvertModifiers(fieldDef);
+			if (fieldDef.HasConstant) {
+				if (fieldDef.Constant == null)
+					initializer.Initializer = new NullReferenceExpression();
+				else
+					initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
+			}
 			return astField;
 		}
 		
