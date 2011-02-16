@@ -355,7 +355,8 @@ namespace Decompiler.ControlFlow
 					}
 				}
 			}
-			result.Add(head);
+			if (nodes.Contains(head))
+				result.Add(head);
 			
 			return result;
 		}
