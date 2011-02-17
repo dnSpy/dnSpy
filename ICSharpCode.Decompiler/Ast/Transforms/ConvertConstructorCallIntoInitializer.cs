@@ -38,5 +38,20 @@ namespace Decompiler.Transforms
 			}
 			return null;
 		}
+		
+		public override object VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
+		{
+			base.VisitTypeDeclaration(typeDeclaration, data);
+			// Remove single empty constructor:
+			var ctors = typeDeclaration.Members.OfType<ConstructorDeclaration>().Where(c => (c.Modifiers & Modifiers.Static) == 0).ToArray();
+			if (ctors.Length == 1 && ctors[0].Body.Children.Count() == 0
+			    && ctors[0].Initializer.ConstructorInitializerType == ConstructorInitializerType.Base
+			    && ctors[0].Initializer.Arguments.Count() == 0
+			    && ctors[0].Modifiers == ((typeDeclaration.Modifiers & Modifiers.Abstract) == Modifiers.Abstract ? Modifiers.Protected : Modifiers.Public))
+			{
+				ctors[0].Remove();
+			}
+			return null;
+		}
 	}
 }
