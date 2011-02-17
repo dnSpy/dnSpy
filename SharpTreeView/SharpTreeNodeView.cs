@@ -95,7 +95,9 @@ namespace ICSharpCode.TreeView
 					}
 				}
 			} else if (e.PropertyName == "IsExpanded") {
-				if (Node.IsExpanded == false)
+				if (Node.IsExpanded)
+					ParentTreeView.HandleExpanding(Node);
+				else
 					ParentTreeView.HandleCollapsing(Node);
 			}
 		}

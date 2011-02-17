@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Decompiler;
+using Decompiler.ControlFlow;
 using Decompiler.Transforms;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
@@ -33,17 +34,26 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public class ILAstLanguage : Language
 	{
+		string name;
+		bool inlineVariables = true;
+		ILAstOptimizationStep? abortBeforeStep;
+		
 		public override string Name {
 			get {
-				return "ILAst";
+				return name;
 			}
 		}
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
-			var body = new ILAstBuilder().Build(method, false);
+			ILBlock ilMethod = new ILBlock();
+			ilMethod.Body = new ILAstBuilder().Build(method, inlineVariables);
 			
-			foreach (ILNode node in body) {
+			if (abortBeforeStep != null) {
+				new ILAstOptimizer().Optimize(ilMethod, abortBeforeStep.Value);
+			}
+			
+			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output);
 				output.WriteLine();
 			}
@@ -52,7 +62,13 @@ namespace ICSharpCode.ILSpy
 		#if DEBUG
 		internal static IEnumerable<ILAstLanguage> GetDebugLanguages()
 		{
-			yield return new ILAstLanguage();
+			yield return new ILAstLanguage { name = "ILAst (unoptimized)", inlineVariables = false };
+			string nextName = "ILAst (variable inlining)";
+			foreach (ILAstOptimizationStep step in Enum.GetValues(typeof(ILAstOptimizationStep))) {
+				yield return new ILAstLanguage { name = nextName, abortBeforeStep = step };
+				nextName = "ILAst (after " + step + ")";
+				
+			}
 		}
 		#endif
 		

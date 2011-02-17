@@ -151,12 +151,35 @@ namespace ICSharpCode.TreeView
 			container.ParentTreeView = this;
 		}
 		
-		internal void HandleCollapsing(SharpTreeNode Node)
+		internal void HandleExpanding(SharpTreeNode node)
 		{
-			var selectedChilds = Node.VisibleDescendants().Where(n => n.IsSelected);
+			SharpTreeNode lastVisibleChild = node;
+			while (true) {
+				SharpTreeNode tmp = lastVisibleChild.Children.LastOrDefault(c => c.IsVisible);
+				if (tmp != null) {
+					lastVisibleChild = tmp;
+				} else {
+					break;
+				}
+			}
+			if (lastVisibleChild != node) {
+				// Make the the expanded children are visible; but don't scroll down
+				// to much (keep node itself visible)
+				base.ScrollIntoView(lastVisibleChild);
+				// For some reason, this only works properly when delaying it...
+				Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(
+					delegate {
+						base.ScrollIntoView(node);
+					}));
+			}
+		}
+		
+		internal void HandleCollapsing(SharpTreeNode node)
+		{
+			var selectedChilds = node.VisibleDescendants().Where(n => n.IsSelected);
 			if (selectedChilds.Any()) {
 				var list = SelectedItems.Cast<SharpTreeNode>().Except(selectedChilds).ToList();
-				list.AddOnce(Node);
+				list.AddOnce(node);
 				SetSelectedItems(list);
 			}
 		}
