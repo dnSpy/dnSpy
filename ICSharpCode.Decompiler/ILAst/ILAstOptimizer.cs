@@ -8,16 +8,29 @@ using Decompiler.Rocks;
 
 namespace Decompiler.ControlFlow
 {
+	public enum ILAstOptimizationStep
+	{
+		SplitToMovableBlocks,
+		FindLoops,
+		FindConditions,
+		FlattenNestedMovableBlocks,
+		SimpleGotoRemoval,
+		RemoveDeadLabels,
+		None
+	}
+	
 	public class ILAstOptimizer
 	{
 		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 		
-		public void Optimize(ILBlock method)
+		public void Optimize(ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
+			if (abortBeforeStep == ILAstOptimizationStep.SplitToMovableBlocks) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				SplitToMovableBlocks(block);
 			}
 			
+			if (abortBeforeStep == ILAstOptimizationStep.FindLoops) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().Where(b => !(b is ILMoveableBlock)).ToList()) {
 				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, block.EntryPoint);
@@ -26,6 +39,7 @@ namespace Decompiler.ControlFlow
 				block.Body = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint, true);
 			}
 			
+			if (abortBeforeStep == ILAstOptimizationStep.FindConditions) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().Where(b => !(b is ILMoveableBlock)).ToList()) {
 				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, block.EntryPoint);
@@ -35,8 +49,11 @@ namespace Decompiler.ControlFlow
 			}
 			
 			// OrderNodes(method);
+			if (abortBeforeStep == ILAstOptimizationStep.FlattenNestedMovableBlocks) return;
 			FlattenNestedMovableBlocks(method);
+			if (abortBeforeStep == ILAstOptimizationStep.SimpleGotoRemoval) return;
 			SimpleGotoRemoval(method);
+			if (abortBeforeStep == ILAstOptimizationStep.RemoveDeadLabels) return;
 			RemoveDeadLabels(method);
 		}
 		

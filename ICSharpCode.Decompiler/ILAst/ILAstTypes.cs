@@ -85,7 +85,8 @@ namespace Decompiler
 		
 		public override void WriteTo(ITextOutput output)
 		{
-			EntryPoint.WriteTo(output);
+			if (EntryPoint != null)
+				EntryPoint.WriteTo(output);
 			foreach(ILNode child in this.Body) {
 				child.WriteTo(output);
 				output.WriteLine();
