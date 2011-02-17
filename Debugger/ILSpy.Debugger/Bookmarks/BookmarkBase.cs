@@ -21,7 +21,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 using ICSharpCode.NRefactory.CSharp;
-using ILSpy.Debugger.AvalonEdit.Editor;
 
 namespace ILSpy.Debugger.Bookmarks
 {
@@ -32,76 +31,14 @@ namespace ILSpy.Debugger.Bookmarks
 	{
 		AstLocation location;
 		
-		IDocument document;
-		ITextAnchor anchor;
-		
-		public IDocument Document {
-			get {
-				return document;
-			}
-			set {
-				if (document != value) {
-					if (anchor != null) {
-						location = anchor.Location;
-						anchor = null;
-					}
-					document = value;
-					CreateAnchor();
-					OnDocumentChanged(EventArgs.Empty);
-				}
-			}
-		}
-		
-		void CreateAnchor()
-		{
-			if (document != null) {
-				int lineNumber = Math.Max(1, Math.Min(location.Line, document.TotalNumberOfLines));
-				int lineLength = document.GetLine(lineNumber).Length;
-				int offset = document.PositionToOffset(
-					lineNumber,
-					Math.Max(1, Math.Min(location.Column, lineLength + 1))
-				);
-				anchor = document.CreateAnchor(offset);
-				// after insertion: keep bookmarks after the initial whitespace (see DefaultFormattingStrategy.SmartReplaceLine)
-				anchor.MovementType = AnchorMovementType.AfterInsertion;
-				anchor.Deleted += AnchorDeleted;
-			} else {
-				anchor = null;
-			}
-		}
-		
-		void AnchorDeleted(object sender, EventArgs e)
-		{
-			// the anchor just became invalid, so don't try to use it again
-			location = AstLocation.Empty;
-			anchor = null;
-			RemoveMark();
-		}
-		
 		protected virtual void RemoveMark()
 		{
 			
 		}
 		
-		/// <summary>
-		/// Gets the TextAnchor used for this bookmark.
-		/// Is null if the bookmark is not connected to a document.
-		/// </summary>
-		public ITextAnchor Anchor {
-			get { return anchor; }
-		}
-		
 		public AstLocation Location {
-			get {
-				if (anchor != null)
-					return anchor.Location;
-				else
-					return location;
-			}
-			set {
-				location = value;
-				CreateAnchor();
-			}
+			get { return location; }
+			set { location = value; }
 		}
 		
 		public event EventHandler DocumentChanged;
@@ -121,21 +58,11 @@ namespace ILSpy.Debugger.Bookmarks
 		public string TypeName { get; set; }
 		
 		public int LineNumber {
-			get {
-				if (anchor != null)
-					return anchor.Line;
-				else
-					return location.Line;
-			}
+			get { return location.Line; }
 		}
 		
 		public int ColumnNumber {
-			get {
-				if (anchor != null)
-					return anchor.Column;
-				else
-					return location.Column;
-			}
+			get {  return location.Column; }
 		}
 		
 		public virtual int ZOrder {

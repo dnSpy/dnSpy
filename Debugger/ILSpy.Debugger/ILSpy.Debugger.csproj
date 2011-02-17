@@ -53,12 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
-    <Compile Include="AvalonEdit\Editor\AvalonEditTextSourceAdapter.cs" />
-    <Compile Include="AvalonEdit\Editor\IDocument.cs" />
-    <Compile Include="AvalonEdit\Editor\IDocumentLine.cs" />
-    <Compile Include="AvalonEdit\Editor\ITextAnchor.cs" />
-    <Compile Include="AvalonEdit\Editor\ITextBuffer.cs" />
-    <Compile Include="AvalonEdit\Editor\TextChangeEventArgs.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="AvalonEdit\IToolTip.cs" />
     <Compile Include="Bookmarks\BookmarkBase.cs" />
