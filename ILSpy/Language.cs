@@ -126,6 +126,7 @@ namespace ICSharpCode.ILSpy
 				new ILLanguage(true)
 			}
 			#if DEBUG
+			.Concat(ILAstLanguage.GetDebugLanguages())
 			.Concat(CSharpLanguage.GetDebugLanguages())
 			#endif
 		).AsReadOnly();
