@@ -157,7 +157,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		void EnsureChildrenFiltered()
 		{
-			EnsureLazyChildren();
+			// No need to ensure lazy children here:
+			// if the children get lazy-loaded later, they'll still be filtered.
 			if (childrenNeedFiltering) {
 				childrenNeedFiltering = false;
 				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
