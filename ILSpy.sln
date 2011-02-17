@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory", "NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj", "{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler.Tests", "ICSharpCode.Decompiler\Tests\ICSharpCode.Decompiler.Tests.csproj", "{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -70,5 +72,13 @@ Global
 		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Release|x86.ActiveCfg = Release|Any CPU
 		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Debug|x86.Build.0 = Debug|x86
+		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Debug|x86.ActiveCfg = Debug|x86
+		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Debug|Any CPU.Build.0 = Debug|x86
+		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Release|x86.Build.0 = Release|x86
+		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Release|x86.ActiveCfg = Release|x86
+		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Release|Any CPU.Build.0 = Release|x86
+		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Release|Any CPU.ActiveCfg = Release|x86
 	EndGlobalSection
 EndGlobal
