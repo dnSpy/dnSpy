@@ -231,7 +231,7 @@ namespace ILSpy.Debugger.AvalonEdit
 				BookmarkBase bm = GetBookmarkFromLine(line);
 				if (bm != null) {
 					bm.MouseUp(e);
-					if (CurrentType != null) {
+					if (bm.CanToggle) {
 						BookmarkManager.RemoveMark(bm);
 					}
 					InvalidateVisual();

@@ -537,7 +537,7 @@ namespace ICSharpCode.ILSpy
 		void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			DebuggerService.CurrentDebugger.Language = 
-				sessionSettings.FilterSettings.Language.Name == "IL" ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
+				sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 		}
 	}
 }
