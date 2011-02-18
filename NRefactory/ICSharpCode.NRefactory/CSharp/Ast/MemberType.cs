@@ -1,4 +1,4 @@
-// 
+﻿// 
 // FullTypeName.cs
 //
 // Author:
@@ -51,9 +51,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public IEnumerable<AstType> TypeArguments {
+		public AstNodeCollection<AstType> TypeArguments {
 			get { return GetChildrenByRole (Roles.TypeArgument); }
-			set { SetChildrenByRole (Roles.TypeArgument, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)

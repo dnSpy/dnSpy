@@ -1,4 +1,4 @@
-// 
+﻿// 
 // TypeDeclaration.cs
 //
 // Author:
@@ -59,28 +59,24 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public IEnumerable<TypeParameterDeclaration> TypeParameters {
+		public AstNodeCollection<TypeParameterDeclaration> TypeParameters {
 			get { return GetChildrenByRole (Roles.TypeParameter); }
-			set { SetChildrenByRole (Roles.TypeParameter, value); }
 		}
 		
-		public IEnumerable<AstType> BaseTypes {
+		public AstNodeCollection<AstType> BaseTypes {
 			get { return GetChildrenByRole (BaseTypeRole); }
-			set { SetChildrenByRole (BaseTypeRole, value); }
 		}
 		
-		public IEnumerable<Constraint> Constraints {
+		public AstNodeCollection<Constraint> Constraints {
 			get { return GetChildrenByRole (Roles.Constraint); }
-			set { SetChildrenByRole (Roles.Constraint, value); }
 		}
 		
 		public CSharpTokenNode LBraceToken {
 			get { return GetChildByRole (Roles.LBrace); }
 		}
 		
-		public IEnumerable<AttributedNode> Members {
+		public AstNodeCollection<AttributedNode> Members {
 			get { return GetChildrenByRole (MemberRole); }
-			set { SetChildrenByRole (MemberRole, value); }
 		}
 		
 		public CSharpTokenNode RBraceToken {

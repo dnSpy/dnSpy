@@ -16,18 +16,16 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Type, value); }
 		}
 		
-		public IEnumerable<Expression> Arguments {
+		public AstNodeCollection<Expression> Arguments {
 			get { return GetChildrenByRole (Roles.Argument); }
-			set { SetChildrenByRole (Roles.Argument, value); }
 		}
 		
 		/// <summary>
 		/// Gets additional array ranks (those without size info).
 		/// Empty for "new int[5,1]"; will contain a single element for "new int[5][]".
 		/// </summary>
-		public IEnumerable<ArraySpecifier> AdditionalArraySpecifiers {
+		public AstNodeCollection<ArraySpecifier> AdditionalArraySpecifiers {
 			get { return GetChildrenByRole(AdditionalArraySpecifierRole); }
-			set { SetChildrenByRole (AdditionalArraySpecifierRole, value); }
 		}
 		
 		public ArrayInitializerExpression Initializer {

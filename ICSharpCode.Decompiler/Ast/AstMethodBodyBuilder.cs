@@ -193,27 +193,27 @@ namespace Decompiler
 				ILSwitch ilSwitch = (ILSwitch)node;
 				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition.Arguments[0]) };
 				for (int i = 0; i < ilSwitch.CaseBlocks.Count; i++) {
-					switchStmt.AddChild(new SwitchSection() {
-					                    	CaseLabels = new[] { new CaseLabel() { Expression = new PrimitiveExpression(i) } },
-					                    	Statements = new[] { TransformBlock(ilSwitch.CaseBlocks[i]) }
-					                    }, SwitchStatement.SwitchSectionRole);
+					SwitchSection section = new SwitchSection();
+					section.CaseLabels.Add(new CaseLabel() { Expression = new PrimitiveExpression(i) });
+					section.Statements.Add(TransformBlock(ilSwitch.CaseBlocks[i]));
+					switchStmt.SwitchSections.Add(section);
 				}
 				yield return switchStmt;
 			} else if (node is ILTryCatchBlock) {
 				ILTryCatchBlock tryCatchNode = ((ILTryCatchBlock)node);
-				List<Ast.CatchClause> catchClauses = new List<CatchClause>();
+				var tryCatchStmt = new Ast.TryCatchStatement();
+				tryCatchStmt.TryBlock = TransformBlock(tryCatchNode.TryBlock);
 				foreach (var catchClause in tryCatchNode.CatchBlocks) {
-					catchClauses.Add(new Ast.CatchClause {
-					                 	Type = AstBuilder.ConvertType(catchClause.ExceptionType),
-					                 	VariableName = "exception",
-					                 	Body = TransformBlock(catchClause)
-					                 });
+					tryCatchStmt.CatchClauses.Add(
+						new Ast.CatchClause {
+							Type = AstBuilder.ConvertType(catchClause.ExceptionType),
+							VariableName = "exception",
+							Body = TransformBlock(catchClause)
+						});
 				}
-				yield return new Ast.TryCatchStatement {
-					TryBlock = TransformBlock(tryCatchNode.TryBlock),
-					CatchClauses = catchClauses,
-					FinallyBlock = tryCatchNode.FinallyBlock != null ? TransformBlock(tryCatchNode.FinallyBlock) : null
-				};
+				if (tryCatchNode.FinallyBlock != null)
+					tryCatchStmt.FinallyBlock = TransformBlock(tryCatchNode.FinallyBlock);
+				yield return tryCatchStmt;
 			} else if (node is ILBlock) {
 				yield return TransformBlock((ILBlock)node);
 			} else {
@@ -402,12 +402,12 @@ namespace Decompiler
 					#endregion
 					#region Arrays
 				case Code.Newarr:
-					operandAsTypeRef = operandAsTypeRef.MakeArrayType(0);
-					return new Ast.ArrayCreateExpression {
-						Type = operandAsTypeRef,
-						Arguments = new Expression[] {arg1}
-					};
-					
+					{
+						var ace = new Ast.ArrayCreateExpression();
+						ace.Type = operandAsTypeRef;
+						ace.Arguments.Add(arg1);
+						return ace;
+					}
 				case Code.Ldlen:
 					return arg1.Member("Length");
 					
@@ -532,7 +532,7 @@ namespace Decompiler
 					{
 						Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 						var expr = new Ast.IdentifierExpression(cecilMethod.Name);
-						expr.TypeArguments = ConvertTypeArguments(cecilMethod);
+						expr.TypeArguments.AddRange(ConvertTypeArguments(cecilMethod));
 						expr.AddAnnotation(cecilMethod);
 						return new IdentifierExpression("ldftn").Invoke(expr)
 							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(false));
@@ -541,7 +541,7 @@ namespace Decompiler
 					{
 						Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 						var expr = new Ast.IdentifierExpression(cecilMethod.Name);
-						expr.TypeArguments = ConvertTypeArguments(cecilMethod);
+						expr.TypeArguments.AddRange(ConvertTypeArguments(cecilMethod));
 						expr.AddAnnotation(cecilMethod);
 						return new IdentifierExpression("ldvirtftn").Invoke(expr)
 							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(true));
@@ -634,18 +634,21 @@ namespace Decompiler
 					case Code.Localloc: throw new NotImplementedException();
 					case Code.Mkrefany: throw new NotImplementedException();
 				case Code.Newobj:
-					Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
-					// TODO: Ensure that the corrent overloaded constructor is called
-					if (declaringType is ArrayType) {
+					{
+						Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
+						// TODO: Ensure that the corrent overloaded constructor is called
+						
+						/*if (declaringType is ArrayType) { shouldn't this be newarr?
 						return new Ast.ArrayCreateExpression {
 							Type = AstBuilder.ConvertType((ArrayType)declaringType),
 							Arguments = args
 						};
+					}*/
+						var oce = new Ast.ObjectCreateExpression();
+						oce.Type = AstBuilder.ConvertType(declaringType);
+						oce.Arguments.AddRange(args);
+						return oce.WithAnnotation(operand);
 					}
-					return new Ast.ObjectCreateExpression {
-						Type = AstBuilder.ConvertType(declaringType),
-						Arguments = args
-					};
 					case Code.No: throw new NotImplementedException();
 					case Code.Nop: return null;
 					case Code.Pop: return arg1;
@@ -667,10 +670,10 @@ namespace Decompiler
 						ILVariable locVar = (ILVariable)operand;
 						if (!definedLocalVars.Contains(locVar)) {
 							definedLocalVars.Add(locVar);
-							return new Ast.VariableDeclarationStatement() {
-								Type = locVar.Type != null ? AstBuilder.ConvertType(locVar.Type) : new Ast.PrimitiveType("var"),
-								Variables = new[] { new Ast.VariableInitializer(locVar.Name, arg1) }
-							};
+							return new Ast.VariableDeclarationStatement(
+								locVar.Type != null ? AstBuilder.ConvertType(locVar.Type) : new Ast.PrimitiveType("var"),
+								locVar.Name,
+								arg1);
 						} else {
 							return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name), arg1);
 						}

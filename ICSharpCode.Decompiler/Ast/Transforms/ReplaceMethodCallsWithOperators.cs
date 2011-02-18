@@ -25,7 +25,7 @@ namespace Decompiler.Transforms
 			// Reduce "String.Concat(a, b)" to "a + b"
 			if (methodRef != null && methodRef.Name == "Concat" && methodRef.DeclaringType.FullName == "System.String" && arguments.Length >= 2)
 			{
-				invocationExpression.Arguments = null; // detach arguments from invocationExpression
+				invocationExpression.Arguments.Clear(); // detach arguments from invocationExpression
 				Expression expr = arguments[0];
 				for (int i = 1; i < arguments.Length; i++) {
 					expr = new BinaryOperatorExpression(expr, BinaryOperatorType.Add, arguments[i]);
@@ -48,7 +48,7 @@ namespace Decompiler.Transforms
 			
 			BinaryOperatorType? bop = GetBinaryOperatorTypeFromMetadataName(methodRef.Name);
 			if (bop != null && arguments.Length == 2) {
-				invocationExpression.Arguments = null; // detach arguments from invocationExpression
+				invocationExpression.Arguments.Clear(); // detach arguments from invocationExpression
 				invocationExpression.ReplaceWith(
 					new BinaryOperatorExpression(arguments[0], bop.Value, arguments[1]).WithAnnotation(methodRef)
 				);

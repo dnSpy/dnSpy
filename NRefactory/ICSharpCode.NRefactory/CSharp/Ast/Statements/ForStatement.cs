@@ -1,4 +1,4 @@
-// 
+﻿// 
 // ForStatement.cs
 //  
 // Author:
@@ -49,9 +49,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// Note: this contains multiple statements for "for (a = 2, b = 1; a > b; a--)", but contains
 		/// only a single statement for "for (int a = 2, b = 1; a > b; a--)" (a single VariableDeclarationStatement with two variables)
 		/// </summary>
-		public IEnumerable<Statement> Initializers {
+		public AstNodeCollection<Statement> Initializers {
 			get { return GetChildrenByRole (InitializerRole); }
-			set { SetChildrenByRole (InitializerRole, value); }
 		}
 		
 		public Expression Condition {
@@ -59,9 +58,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Condition, value); }
 		}
 		
-		public IEnumerable<Statement> Iterators {
+		public AstNodeCollection<Statement> Iterators {
 			get { return GetChildrenByRole (IteratorRole); }
-			set { SetChildrenByRole (IteratorRole, value); }
 		}
 		
 		public CSharpTokenNode RParToken {

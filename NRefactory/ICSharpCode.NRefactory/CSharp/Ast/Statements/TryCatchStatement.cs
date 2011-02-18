@@ -1,4 +1,4 @@
-// 
+﻿// 
 // TryCatchStatement.cs
 //
 // Author:
@@ -49,9 +49,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (TryBlockRole, value); }
 		}
 		
-		public IEnumerable<CatchClause> CatchClauses {
+		public AstNodeCollection<CatchClause> CatchClauses {
 			get { return GetChildrenByRole (CatchClauseRole); }
-			set { SetChildrenByRole (CatchClauseRole, value); }
 		}
 		
 		public CSharpTokenNode FinallyToken {

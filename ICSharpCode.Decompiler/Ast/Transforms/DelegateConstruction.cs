@@ -74,15 +74,13 @@ namespace Decompiler.Transforms
 							}
 						}
 						// now transform the identifier into a member reference
-						var typeArguments = methodIdent.TypeArguments.ToArray();
-						methodIdent.TypeArguments = null;
-						MemberReferenceExpression mre = new MemberReferenceExpression {
-							Target = obj,
-							MemberName = methodIdent.Identifier,
-							TypeArguments = typeArguments
-						};
+						MemberReferenceExpression mre = new MemberReferenceExpression();
+						mre.Target = obj;
+						mre.MemberName = methodIdent.Identifier;
+						methodIdent.TypeArguments.MoveTo(mre.TypeArguments);
 						mre.AddAnnotation(method);
-						objectCreateExpression.Arguments = new [] { mre };
+						objectCreateExpression.Arguments.Clear();
+						objectCreateExpression.Arguments.Add(mre);
 						return null;
 					}
 				}
@@ -112,7 +110,7 @@ namespace Decompiler.Transforms
 				ame.HasParameterList = false;
 			} else {
 				ame.HasParameterList = true;
-				ame.Parameters = AstBuilder.MakeParameters(method.Parameters);
+				ame.Parameters.AddRange(AstBuilder.MakeParameters(method.Parameters));
 			}
 			ame.Body = body;
 			// Replace all occurrences of 'this' in the method body with the delegate's target:
@@ -193,7 +191,7 @@ namespace Decompiler.Transforms
 						continue;
 					VariableDeclarationStatement newVarDecl = new VariableDeclarationStatement();
 					newVarDecl.Type = AstBuilder.ConvertType(field.FieldType, field);
-					newVarDecl.Variables = new [] { new VariableInitializer(field.Name) };
+					newVarDecl.Variables.Add(new VariableInitializer(field.Name));
 					blockStatement.InsertChildBefore(cur, newVarDecl, BlockStatement.StatementRole);
 					dict[field.Name] = new IdentifierExpression(field.Name);
 				}

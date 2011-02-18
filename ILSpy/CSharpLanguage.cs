@@ -157,9 +157,9 @@ namespace ICSharpCode.ILSpy
 				base.VisitMemberType(memberType, data);
 				SimpleType st = memberType.Target as SimpleType;
 				if (st != null && !st.TypeArguments.Any()) {
-					var ta = memberType.TypeArguments.ToArray();
-					memberType.TypeArguments = null;
-					memberType.ReplaceWith(new SimpleType { Identifier = memberType.MemberName, TypeArguments = ta });
+					SimpleType newSt = new SimpleType(memberType.MemberName);
+					memberType.TypeArguments.MoveTo(newSt.TypeArguments);
+					memberType.ReplaceWith(newSt);
 				}
 				return null;
 			}

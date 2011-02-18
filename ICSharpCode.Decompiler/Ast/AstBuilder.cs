@@ -420,7 +420,7 @@ namespace Decompiler
 			astMethod.AddAnnotation(methodDef);
 			astMethod.Name = methodDef.Name;
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
-			astMethod.Parameters = MakeParameters(methodDef.Parameters);
+			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 			if (!methodDef.DeclaringType.IsInterface) {
 				astMethod.Modifiers = ConvertModifiers(methodDef);
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
@@ -437,7 +437,7 @@ namespace Decompiler
 				// don't show visibility for static ctors
 				astMethod.Modifiers &= ~Modifiers.VisibilityMask;
 			}
-			astMethod.Parameters = MakeParameters(methodDef.Parameters);
+			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			return astMethod;
 		}

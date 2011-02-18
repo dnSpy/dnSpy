@@ -1,4 +1,4 @@
-// 
+﻿// 
 // ParameterDeclarationExpression.cs
 //
 // Author:
@@ -49,9 +49,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public IEnumerable<AttributeSection> Attributes {
+		public AstNodeCollection<AttributeSection> Attributes {
 			get { return GetChildrenByRole (AttributeRole); }
-			set { SetChildrenByRole (AttributeRole, value); }
 		}
 		
 		public ParameterModifier ParameterModifier {

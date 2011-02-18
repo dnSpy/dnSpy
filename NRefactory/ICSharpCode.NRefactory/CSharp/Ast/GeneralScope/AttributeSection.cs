@@ -1,4 +1,4 @@
-// 
+﻿// 
 // AttributeSection.cs
 //
 // Author:
@@ -49,9 +49,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			set;
 		}
 		
-		public IEnumerable<Attribute> Attributes {
+		public AstNodeCollection<Attribute> Attributes {
 			get { return base.GetChildrenByRole (AttributeRole); }
-			set { SetChildrenByRole (AttributeRole, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)

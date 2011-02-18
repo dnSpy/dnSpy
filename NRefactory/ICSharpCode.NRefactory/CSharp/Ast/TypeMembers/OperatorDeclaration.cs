@@ -1,4 +1,4 @@
-// 
+﻿// 
 // OperatorDeclaration.cs
 //  
 // Author:
@@ -80,9 +80,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public IEnumerable<ParameterDeclaration> Parameters { 
+		public AstNodeCollection<ParameterDeclaration> Parameters { 
 			get { return GetChildrenByRole (Roles.Parameter); }
-			set { SetChildrenByRole (Roles.Parameter, value); }
 		}
 		
 		public CSharpTokenNode RParToken {

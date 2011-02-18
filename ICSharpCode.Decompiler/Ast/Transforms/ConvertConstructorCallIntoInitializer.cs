@@ -28,9 +28,7 @@ namespace Decompiler.Transforms
 				else
 					return null;
 				// Move arguments from invocation to initializer:
-				var arguments = invocation.Arguments.ToArray();
-				invocation.Arguments = null;
-				ci.Arguments = arguments;
+				invocation.Arguments.MoveTo(ci.Arguments);
 				// Add the initializer:
 				constructorDeclaration.Initializer = ci.WithAnnotation(invocation.Annotation<MethodReference>());
 				// Remove the statement:

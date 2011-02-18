@@ -28,9 +28,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		#endregion
 		
-		public IEnumerable<QueryClause> Clauses {
+		public AstNodeCollection<QueryClause> Clauses {
 			get { return GetChildrenByRole(ClauseRole); }
-			set { SetChildrenByRole(ClauseRole, value); }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
@@ -260,9 +259,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Keyword); }
 		}
 		
-		public IEnumerable<QueryOrdering> Orderings {
+		public AstNodeCollection<QueryOrdering> Orderings {
 			get { return GetChildrenByRole (OrderingRole); }
-			set { SetChildrenByRole (OrderingRole, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)

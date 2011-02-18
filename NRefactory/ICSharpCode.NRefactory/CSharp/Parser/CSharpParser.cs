@@ -122,9 +122,7 @@ namespace ICSharpCode.NRefactory.CSharp
 						if (location != null)
 							spec.AddChild (new CSharpTokenNode (Convert (location[0]), 1), FieldDeclaration.Roles.RBracket);
 						
-						result.ArraySpecifiers = new ArraySpecifier[] {
-							spec
-						};
+						result.ArraySpecifiers.Add(spec);
 					}
 					return result;
 				}

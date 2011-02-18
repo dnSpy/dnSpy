@@ -1,4 +1,4 @@
-// 
+﻿// 
 // EventDeclaration.cs
 //
 // Author:
@@ -30,9 +30,8 @@ namespace ICSharpCode.NRefactory.CSharp
 {
 	public class EventDeclaration : MemberDeclaration
 	{
-		public IEnumerable<VariableInitializer> Variables {
+		public AstNodeCollection<VariableInitializer> Variables {
 			get { return GetChildrenByRole (Roles.Variable); }
-			set { SetChildrenByRole (Roles.Variable, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)

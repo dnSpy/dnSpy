@@ -1,4 +1,4 @@
-// 
+﻿// 
 // BlockStatement.cs
 //
 // Author:
@@ -56,9 +56,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LBrace); }
 		}
 		
-		public IEnumerable<Statement> Statements {
+		public AstNodeCollection<Statement> Statements {
 			get { return GetChildrenByRole (StatementRole); }
-			set { SetChildrenByRole (StatementRole, value); }
 		}
 		
 		public CSharpTokenNode RBraceToken {

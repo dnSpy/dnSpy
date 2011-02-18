@@ -1,4 +1,4 @@
-// 
+﻿// 
 // LambdaExpression.cs
 //  
 // Author:
@@ -36,9 +36,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		public readonly static Role<CSharpTokenNode> ArrowRole = new Role<CSharpTokenNode>("Arrow", CSharpTokenNode.Null);
 		public static readonly Role<AstNode> BodyRole = new Role<AstNode>("Body", AstNode.Null);
 		
-		public IEnumerable<ParameterDeclaration> Parameters { 
+		public AstNodeCollection<ParameterDeclaration> Parameters { 
 			get { return GetChildrenByRole (Roles.Parameter); }
-			set { SetChildrenByRole (Roles.Parameter, value); }
 		}
 		
 		public CSharpTokenNode ArrowToken {

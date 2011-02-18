@@ -1,4 +1,4 @@
-// 
+﻿// 
 // FixedStatement.cs
 //
 // Author:
@@ -46,9 +46,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Type, value); }
 		}
 		
-		public IEnumerable<VariableInitializer> Variables {
+		public AstNodeCollection<VariableInitializer> Variables {
 			get { return GetChildrenByRole (Roles.Variable); }
-			set { SetChildrenByRole (Roles.Variable, value); }
 		}
 		
 		public CSharpTokenNode RParToken {

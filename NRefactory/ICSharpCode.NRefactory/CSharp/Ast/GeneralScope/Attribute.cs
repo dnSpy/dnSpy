@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Attribute.cs
 //
 // Author:
@@ -44,9 +44,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Type, value); }
 		}
 		
-		public IEnumerable<Expression> Arguments {
+		public AstNodeCollection<Expression> Arguments {
 			get { return base.GetChildrenByRole (Roles.Argument); }
-			set { SetChildrenByRole (Roles.Argument, value); }
 		}
 
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)

@@ -11,9 +11,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		public static readonly Role<AttributeSection> AttributeRole = new Role<AttributeSection>("Attribute");
 		public static readonly Role<CSharpModifierToken> ModifierRole = new Role<CSharpModifierToken>("Modifier");
 		
-		public IEnumerable<AttributeSection> Attributes {
+		public AstNodeCollection<AttributeSection> Attributes {
 			get { return base.GetChildrenByRole (AttributeRole); }
-			set { SetChildrenByRole (AttributeRole, value); }
 		}
 		
 		public Modifiers Modifiers {
