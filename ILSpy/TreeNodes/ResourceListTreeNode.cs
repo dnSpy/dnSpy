@@ -7,12 +7,8 @@ using System.IO;
 using System.Resources;
 using System.Text;
 using System.Windows;
-using System.Windows.Baml2006;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using System.Xaml;
+
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
@@ -159,88 +155,18 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (er != null) {
 				try {
 					Stream s = er.GetResourceStream();
-					ResourceSet set = new ResourceSet(s);
-					foreach (DictionaryEntry entry in set) {
-						if (entry.Value is Stream) {
-							Children.Add(new ResourceEntryNode(entry.Key.ToString(), entry.Value as Stream));
+					FileType type = GuessFileType.DetectFileType(s);
+					s.Position = 0;
+					if (type == FileType.Binary) {
+						ResourceSet set = new ResourceSet(s);
+						foreach (DictionaryEntry entry in set) {
+							Children.Add(new ResourceEntryNode(entry.Key.ToString(), (Stream)entry.Value));
 						}
 					}
-				} catch (Exception) {
-//					MessageBox.Show(ex.ToString());
+				} catch (Exception ex) {
+					MessageBox.Show(ex.ToString());
 				}
 			}
-		}
-	}
-	
-	class ResourceEntryNode : ILSpyTreeNode
-	{
-		string key;
-		Stream value;
-		
-		public override object Text {
-			get { return key.ToString(); }
-		}
-		
-		public override object Icon {
-			get { return Images.Resource; }
-		}
-		
-		public ResourceEntryNode(string key, Stream value)
-		{
-			this.key = key;
-			this.value = value;
-		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.WriteCommentLine(output, string.Format("{0} = {1}", key, value));
-		}
-		
-		internal override bool View(DecompilerTextView textView)
-		{
-			AvalonEditTextOutput output = new AvalonEditTextOutput();
-			if (LoadImage(output))
-				textView.Show(output, null);
-			else if (LoadBaml(output))
-				textView.Show(output, null);
-			else
-				return false;
-			return true;
-		}
-
-		bool LoadImage(AvalonEditTextOutput output)
-		{
-			try {
-				BitmapImage image = new BitmapImage();
-				image.BeginInit();
-				image.StreamSource = value;
-				image.EndInit();
-				output.AddUIElement(() => new Image { Source = image });
-				output.WriteLine();
-				output.AddButton(Images.Save, "Save", delegate { Save(); });
-			} catch (Exception ex) {
-				MessageBox.Show(ex.ToString());
-				return false;
-			}
-			return true;
-		}
-		
-		bool LoadBaml(AvalonEditTextOutput output)
-		{
-			return false;
-		}
-		
-		public override bool Save()
-		{
-			SaveFileDialog dlg = new SaveFileDialog();
-			dlg.FileName = Path.GetFileName(DecompilerTextView.CleanUpName(key));
-			if (dlg.ShowDialog() == true) {
-				value.Position = 0;
-				using (var fs = dlg.OpenFile()) {
-					value.CopyTo(fs);
-				}
-			}
-			return true;
 		}
 	}
 }
