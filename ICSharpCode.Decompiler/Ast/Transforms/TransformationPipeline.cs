@@ -12,9 +12,10 @@ namespace Decompiler.Transforms
 		public static IAstVisitor<object, object>[] CreatePipeline(CancellationToken cancellationToken)
 		{
 			return new IAstVisitor<object, object>[] {
+				new PushNegation(),
 				new DelegateConstruction() { CancellationToken = cancellationToken },
 				new ConvertConstructorCallIntoInitializer(),
-				new ReplaceMethodCallsWithOperators()
+				new ReplaceMethodCallsWithOperators(),
 			};
 		}
 		
@@ -33,7 +34,6 @@ namespace Decompiler.Transforms
 				}
 				if (Options.ReduceAstOther) {
 					node.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
-					node.AcceptVisitor(new Transforms.Ast.PushNegation(), null);
 				}
 			}
 			
