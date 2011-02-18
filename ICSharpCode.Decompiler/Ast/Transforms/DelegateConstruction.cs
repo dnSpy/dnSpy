@@ -2,9 +2,9 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
@@ -15,10 +15,8 @@ namespace Decompiler.Transforms
 	/// Converts "new Action(obj, ldftn(func))" into "new Action(obj.func)".
 	/// For anonymous methods, creates an AnonymousMethodExpression.
 	/// </summary>
-	public class DelegateConstruction : DepthFirstAstVisitor<object, object>
+	public class DelegateConstruction : ContextTrackingVisitor
 	{
-		public CancellationToken CancellationToken { get; set; }
-		
 		internal sealed class Annotation
 		{
 			/// <summary>
@@ -26,16 +24,14 @@ namespace Decompiler.Transforms
 			/// </summary>
 			public readonly bool IsVirtual;
 			
-			/// <summary>
-			/// The method being decompiled.
-			/// </summary>
-			public readonly TypeDefinition ContainingType;
-			
-			public Annotation(bool isVirtual, TypeDefinition containingType)
+			public Annotation(bool isVirtual)
 			{
 				this.IsVirtual = isVirtual;
-				this.ContainingType = containingType;
 			}
+		}
+		
+		public DelegateConstruction(DecompilerContext context) : base(context)
+		{
 		}
 		
 		public override object VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, object data)
@@ -48,14 +44,14 @@ namespace Decompiler.Transforms
 					IdentifierExpression methodIdent = (IdentifierExpression)((InvocationExpression)func).Arguments.Single();
 					MethodReference method = methodIdent.Annotation<MethodReference>();
 					if (method != null) {
-						if (HandleAnonymousMethod(objectCreateExpression, obj, method, annotation.ContainingType))
+						if (HandleAnonymousMethod(objectCreateExpression, obj, method))
 							return null;
 						// Perform the transformation to "new Action(obj.func)".
 						obj.Remove();
 						methodIdent.Remove();
 						if (!annotation.IsVirtual && obj is ThisReferenceExpression) {
 							// maybe it's getting the pointer of a base method?
-							if (method.DeclaringType != annotation.ContainingType) {
+							if (method.DeclaringType != context.CurrentType) {
 								obj = new BaseReferenceExpression();
 							}
 						}
@@ -94,25 +90,21 @@ namespace Decompiler.Transforms
 			return base.VisitObjectCreateExpression(objectCreateExpression, data);
 		}
 		
-		bool HandleAnonymousMethod(ObjectCreateExpression objectCreateExpression, Expression target, MethodReference methodRef, TypeDefinition containingType)
+		bool HandleAnonymousMethod(ObjectCreateExpression objectCreateExpression, Expression target, MethodReference methodRef)
 		{
 			// Anonymous methods are defined in the same assembly, so there's no need to Resolve().
 			MethodDefinition method = methodRef as MethodDefinition;
 			if (method == null || !method.Name.StartsWith("<", StringComparison.Ordinal))
 				return false;
-			if (!(method.IsCompilerGenerated() || method.DeclaringType.IsCompilerGenerated()))
+			if (!(method.IsCompilerGenerated() || IsPotentialClosure(method.DeclaringType)))
 				return false;
-			TypeDefinition methodContainingType = method.DeclaringType;
-			// check that methodContainingType is within containingType
-			while (methodContainingType != containingType) {
-				methodContainingType = methodContainingType.DeclaringType;
-				if (methodContainingType == null)
-					return false;
-			}
 			
 			// Decompile the anonymous method:
-			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, this.CancellationToken);
-			TransformationPipeline.RunTransformationsUntil(body, v => v is DelegateConstruction, this.CancellationToken);
+			
+			DecompilerContext subContext = context.Clone();
+			subContext.CurrentMethod = method;
+			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, subContext);
+			TransformationPipeline.RunTransformationsUntil(body, v => v is DelegateConstruction, subContext);
 			body.AcceptVisitor(this, null);
 			
 			AnonymousMethodExpression ame = new AnonymousMethodExpression();
@@ -131,6 +123,101 @@ namespace Decompiler.Transforms
 			}
 			objectCreateExpression.ReplaceWith(ame);
 			return true;
+		}
+		
+		bool IsPotentialClosure(TypeDefinition potentialDisplayClass)
+		{
+			if (potentialDisplayClass == null || !potentialDisplayClass.IsCompilerGenerated())
+				return false;
+			// check that methodContainingType is within containingType
+			while (potentialDisplayClass != context.CurrentType) {
+				potentialDisplayClass = potentialDisplayClass.DeclaringType;
+				if (potentialDisplayClass == null)
+					return false;
+			}
+			return true;
+		}
+		
+		public override object VisitBlockStatement(BlockStatement blockStatement, object data)
+		{
+			base.VisitBlockStatement(blockStatement, data);
+			foreach (VariableDeclarationStatement stmt in blockStatement.Statements.OfType<VariableDeclarationStatement>()) {
+				if (stmt.Variables.Count() != 1)
+					continue;
+				var variable = stmt.Variables.Single();
+				TypeDefinition type = stmt.Type.Annotation<TypeDefinition>();
+				if (!IsPotentialClosure(type))
+					continue;
+				ObjectCreateExpression oce = variable.Initializer as ObjectCreateExpression;
+				if (oce == null || oce.Type.Annotation<TypeReference>() != type || oce.Arguments.Any() || !oce.Initializer.IsNull)
+					continue;
+				// Looks like we found a display class creation. Now let's verify that the variable is used only for field accesses:
+				bool ok = true;
+				foreach (var identExpr in blockStatement.Descendants.OfType<IdentifierExpression>()) {
+					if (identExpr.Identifier == variable.Name) {
+						if (!(identExpr.Parent is MemberReferenceExpression && identExpr.Parent.Annotation<FieldReference>() != null))
+							ok = false;
+					}
+				}
+				if (!ok)
+					continue;
+				Dictionary<string, Expression> dict = new Dictionary<string, Expression>();
+				// Delete the variable declaration statement:
+				AstNode cur;
+				AstNode next = stmt.NextSibling;
+				stmt.Remove();
+				for (cur = next; cur != null; cur = next) {
+					next = cur.NextSibling;
+					
+					// Delete any following statements as long as they assign simple variables to the display class:
+					// Test for the pattern:
+					// "variableName.MemberName = right;"
+					ExpressionStatement es = cur as ExpressionStatement;
+					if (es == null)
+						break;
+					AssignmentExpression ae = es.Expression as AssignmentExpression;
+					if (ae == null || ae.Operator != AssignmentOperatorType.Assign)
+						break;
+					MemberReferenceExpression left = ae.Left as MemberReferenceExpression;
+					if (left == null || !IsParameter(ae.Right))
+						break;
+					if (!(left.Target is IdentifierExpression) || (left.Target as IdentifierExpression).Identifier != variable.Name)
+						break;
+					dict[left.MemberName] = ae.Right;
+					es.Remove();
+				}
+				
+				// Now create variables for all fields of the display class (except for those that we already handled)
+				foreach (FieldDefinition field in type.Fields) {
+					if (dict.ContainsKey(field.Name))
+						continue;
+					VariableDeclarationStatement newVarDecl = new VariableDeclarationStatement();
+					newVarDecl.Type = AstBuilder.ConvertType(field.FieldType, field);
+					newVarDecl.Variables = new [] { new VariableInitializer(field.Name) };
+					blockStatement.InsertChildBefore(cur, newVarDecl, BlockStatement.StatementRole);
+					dict[field.Name] = new IdentifierExpression(field.Name);
+				}
+				
+				// Now figure out where the closure was accessed and use the simpler replacement expression there:
+				foreach (var identExpr in blockStatement.Descendants.OfType<IdentifierExpression>()) {
+					if (identExpr.Identifier == variable.Name) {
+						MemberReferenceExpression mre = (MemberReferenceExpression)identExpr.Parent;
+						Expression replacement;
+						if (dict.TryGetValue(mre.MemberName, out replacement)) {
+							mre.ReplaceWith(replacement.Clone());
+						}
+					}
+				}
+			}
+			return null;
+		}
+		
+		bool IsParameter(Expression expr)
+		{
+			if (expr is ThisReferenceExpression)
+				return true;
+			IdentifierExpression ident = expr as IdentifierExpression;
+			return ident != null && ident.Annotation<ParameterReference>() != null;
 		}
 	}
 }

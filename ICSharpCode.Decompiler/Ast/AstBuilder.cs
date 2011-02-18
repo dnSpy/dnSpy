@@ -13,9 +13,16 @@ namespace Decompiler
 {
 	public class AstBuilder
 	{
-		public CancellationToken CancellationToken { get; set; }
+		DecompilerContext context = new DecompilerContext();
 		CompilationUnit astCompileUnit = new CompilationUnit();
 		Dictionary<string, NamespaceDeclaration> astNamespaces = new Dictionary<string, NamespaceDeclaration>();
+		
+		public AstBuilder(DecompilerContext context)
+		{
+			if (context == null)
+				throw new ArgumentNullException("context");
+			this.context = context;
+		}
 		
 		public void GenerateCode(ITextOutput output)
 		{
@@ -24,7 +31,7 @@ namespace Decompiler
 		
 		public void GenerateCode(ITextOutput output, Predicate<IAstVisitor<object, object>> transformAbortCondition)
 		{
-			Transforms.TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition, this.CancellationToken);
+			Transforms.TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition, context);
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			
 			var outputFormatter = new TextOutputFormatter(output);
@@ -105,6 +112,7 @@ namespace Decompiler
 		public TypeDeclaration CreateType(TypeDefinition typeDef)
 		{
 			TypeDeclaration astType = new TypeDeclaration();
+			astType.AddAnnotation(typeDef);
 			astType.Modifiers = ConvertModifiers(typeDef);
 			astType.Name = typeDef.Name;
 			
@@ -409,12 +417,13 @@ namespace Decompiler
 		MethodDeclaration CreateMethod(MethodDefinition methodDef)
 		{
 			MethodDeclaration astMethod = new MethodDeclaration();
+			astMethod.AddAnnotation(methodDef);
 			astMethod.Name = methodDef.Name;
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
 			astMethod.Parameters = MakeParameters(methodDef.Parameters);
 			if (!methodDef.DeclaringType.IsInterface) {
 				astMethod.Modifiers = ConvertModifiers(methodDef);
-				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, this.CancellationToken);
+				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			}
 			return astMethod;
 		}
@@ -422,31 +431,33 @@ namespace Decompiler
 		ConstructorDeclaration CreateConstructor(MethodDefinition methodDef)
 		{
 			ConstructorDeclaration astMethod = new ConstructorDeclaration();
+			astMethod.AddAnnotation(methodDef);
 			astMethod.Modifiers = ConvertModifiers(methodDef);
 			if (methodDef.IsStatic) {
 				// don't show visibility for static ctors
 				astMethod.Modifiers &= ~Modifiers.VisibilityMask;
 			}
 			astMethod.Parameters = MakeParameters(methodDef.Parameters);
-			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, this.CancellationToken);
+			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			return astMethod;
 		}
 
 		PropertyDeclaration CreateProperty(PropertyDefinition propDef)
 		{
 			PropertyDeclaration astProp = new PropertyDeclaration();
+			astProp.AddAnnotation(propDef);
 			astProp.Modifiers = ConvertModifiers(propDef.GetMethod ?? propDef.SetMethod);
 			astProp.Name = propDef.Name;
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			if (propDef.GetMethod != null) {
 				astProp.Getter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, this.CancellationToken)
-				};
+					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context)
+				}.WithAnnotation(propDef.GetMethod);
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, this.CancellationToken)
-				};
+					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context)
+				}.WithAnnotation(propDef.SetMethod);
 			}
 			return astProp;
 		}
@@ -454,18 +465,19 @@ namespace Decompiler
 		CustomEventDeclaration CreateEvent(EventDefinition eventDef)
 		{
 			CustomEventDeclaration astEvent = new CustomEventDeclaration();
+			astEvent.AddAnnotation(eventDef);
 			astEvent.Name = eventDef.Name;
 			astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 			astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
 			if (eventDef.AddMethod != null) {
 				astEvent.AddAccessor = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, this.CancellationToken)
-				};
+					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
+				}.WithAnnotation(eventDef.AddMethod);
 			}
 			if (eventDef.RemoveMethod != null) {
 				astEvent.RemoveAccessor = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, this.CancellationToken)
-				};
+					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, context)
+				}.WithAnnotation(eventDef.RemoveMethod);
 			}
 			return astEvent;
 		}
@@ -473,6 +485,7 @@ namespace Decompiler
 		FieldDeclaration CreateField(FieldDefinition fieldDef)
 		{
 			FieldDeclaration astField = new FieldDeclaration();
+			astField.AddAnnotation(fieldDef);
 			VariableInitializer initializer = new VariableInitializer(fieldDef.Name);
 			astField.AddChild(initializer, FieldDeclaration.Roles.Variable);
 			astField.ReturnType = ConvertType(fieldDef.FieldType, fieldDef);

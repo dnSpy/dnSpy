@@ -17,25 +17,32 @@ namespace Decompiler
 	{
 		MethodDefinition methodDef;
 		TypeSystem typeSystem;
-		CancellationToken cancellationToken;
+		DecompilerContext context;
 		HashSet<ILVariable> definedLocalVars = new HashSet<ILVariable>();
 		
-		public static BlockStatement CreateMethodBody(MethodDefinition methodDef, CancellationToken cancellationToken)
+		public static BlockStatement CreateMethodBody(MethodDefinition methodDef, DecompilerContext context)
 		{
-			AstMethodBodyBuilder builder = new AstMethodBodyBuilder();
-			builder.cancellationToken = cancellationToken;
-			builder.methodDef = methodDef;
-			builder.typeSystem = methodDef.Module.TypeSystem;
-			if (Debugger.IsAttached) {
-				return builder.CreateMethodBody();
-			} else {
-				try {
+			MethodDefinition oldCurrentMethod = context.CurrentMethod;
+			Debug.Assert(oldCurrentMethod == null || oldCurrentMethod == methodDef);
+			context.CurrentMethod = methodDef;
+			try {
+				AstMethodBodyBuilder builder = new AstMethodBodyBuilder();
+				builder.methodDef = methodDef;
+				builder.context = context;
+				builder.typeSystem = methodDef.Module.TypeSystem;
+				if (Debugger.IsAttached) {
 					return builder.CreateMethodBody();
-				} catch (OperationCanceledException) {
-					throw;
-				} catch (Exception ex) {
-					throw new ICSharpCode.Decompiler.DecompilerException(methodDef, ex);
+				} else {
+					try {
+						return builder.CreateMethodBody();
+					} catch (OperationCanceledException) {
+						throw;
+					} catch (Exception ex) {
+						throw new ICSharpCode.Decompiler.DecompilerException(methodDef, ex);
+					}
 				}
+			} finally {
+				context.CurrentMethod = oldCurrentMethod;
 			}
 		}
 		
@@ -60,15 +67,15 @@ namespace Decompiler
 		{
 			if (methodDef.Body == null) return null;
 			
-			cancellationToken.ThrowIfCancellationRequested();
+			context.CancellationToken.ThrowIfCancellationRequested();
 			ILBlock ilMethod = new ILBlock();
 			ILAstBuilder astBuilder = new ILAstBuilder();
 			ilMethod.Body = astBuilder.Build(methodDef, true);
 			
-			cancellationToken.ThrowIfCancellationRequested();
+			context.CancellationToken.ThrowIfCancellationRequested();
 			ILAstOptimizer bodyGraph = new ILAstOptimizer();
 			bodyGraph.Optimize(methodDef, ilMethod);
-			cancellationToken.ThrowIfCancellationRequested();
+			context.CancellationToken.ThrowIfCancellationRequested();
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
 			Dictionary<string, int> typeNames = new Dictionary<string, int>();
@@ -110,7 +117,7 @@ namespace Decompiler
 //				astBlock.Children.Add(astLocalVar);
 			}
 			
-			cancellationToken.ThrowIfCancellationRequested();
+			context.CancellationToken.ThrowIfCancellationRequested();
 			Ast.BlockStatement astBlock = TransformBlock(ilMethod);
 			CommentStatement.ReplaceAll(astBlock); // convert CommentStatements to Comments
 			return astBlock;
@@ -528,7 +535,7 @@ namespace Decompiler
 						expr.TypeArguments = ConvertTypeArguments(cecilMethod);
 						expr.AddAnnotation(cecilMethod);
 						return new IdentifierExpression("ldftn").Invoke(expr)
-							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(false, methodDef.DeclaringType));
+							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(false));
 					}
 				case Code.Ldvirtftn:
 					{
@@ -537,7 +544,7 @@ namespace Decompiler
 						expr.TypeArguments = ConvertTypeArguments(cecilMethod);
 						expr.AddAnnotation(cecilMethod);
 						return new IdentifierExpression("ldvirtftn").Invoke(expr)
-							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(true, methodDef.DeclaringType));
+							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(true));
 					}
 					
 					case Code.Calli: throw new NotImplementedException();
@@ -557,13 +564,13 @@ namespace Decompiler
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
 						return new Ast.ThisReferenceExpression();
 					} else {
-						return new Ast.IdentifierExpression(((ParameterDefinition)operand).Name);
+						return new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand);
 					}
 				case Code.Ldarga:
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
 						return MakeRef(new Ast.ThisReferenceExpression());
 					} else {
-						return MakeRef(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name));
+						return MakeRef(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand));
 					}
 				case Code.Ldc_I4:
 					if (byteCode.InferredType == typeSystem.Boolean && (int)operand == 0)

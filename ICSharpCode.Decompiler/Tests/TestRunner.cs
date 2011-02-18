@@ -27,7 +27,7 @@ namespace ICSharpCode.Decompiler.Tests
 		{
 			string code = File.ReadAllText(fileName);
 			AssemblyDefinition assembly = Compile(code);
-			AstBuilder decompiler = new AstBuilder();
+			AstBuilder decompiler = new AstBuilder(new DecompilerContext());
 			decompiler.AddAssembly(assembly);
 			StringWriter output = new StringWriter();
 			decompiler.GenerateCode(new PlainTextOutput(output));
