@@ -96,7 +96,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			// Create the second AppDomain.
 			AppDomain bamlDecompilerAppDomain = AppDomain.CreateDomain("BamlDecompiler AD", null, bamlDecompilerAppDomainSetup);
 			
-			BamlDecompiler decompiler = (BamlDecompiler)bamlDecompilerAppDomain.CreateInstanceAndUnwrap(Assembly.GetEntryAssembly().FullName, typeof(BamlDecompiler).FullName);
+			BamlDecompiler decompiler = (BamlDecompiler)bamlDecompilerAppDomain.CreateInstanceFromAndUnwrap(typeof(BamlDecompiler).Assembly.Location, typeof(BamlDecompiler).FullName);
 			
 			MemoryStream bamlStream = new MemoryStream();
 			value.Position = 0;
