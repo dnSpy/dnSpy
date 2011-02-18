@@ -3,12 +3,11 @@
 
 using System;
 using System.IO;
-using System.Windows;
-using System.Windows.Baml2006;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using System.Xaml;
-using System.Xml;
 
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
@@ -44,17 +43,23 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		internal override bool View(DecompilerTextView textView)
 		{
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
-			try {
-				if (LoadImage(output))
-					textView.Show(output, null);
-				else if (LoadBaml(output)) {
-					textView.Show(output, HighlightingManager.Instance.GetDefinitionByExtension(".xml"));
-				} else
-					return false;
-			} catch (Exception ex) {
-				output.Write(ex.ToString());
-				textView.Show(output, null);
-			}
+			IHighlightingDefinition highlighting = null;
+			
+			textView.RunWithCancellation(
+				token => Task.Factory.StartNew(
+					() => {
+						try {
+							if (LoadImage(output))
+								highlighting = null;
+							else if (LoadBaml(output))
+								highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
+						} catch (Exception ex) {
+							output.Write(ex.ToString());
+						}
+						return output;
+					}),
+				t => textView.Show(t.Result, highlighting)
+			);
 			return true;
 		}
 		
@@ -77,42 +82,25 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		bool LoadBaml(AvalonEditTextOutput output)
 		{
+			var asm = this.Ancestors().OfType<AssemblyTreeNode>().FirstOrDefault().LoadedAssembly;
+			
+			// Construct and initialize settings for a second AppDomain.
+			AppDomainSetup bamlDecompilerAppDomainSetup = new AppDomainSetup();
+			bamlDecompilerAppDomainSetup.ApplicationBase = "file:///" + Path.GetDirectoryName(asm.FileName);
+			bamlDecompilerAppDomainSetup.DisallowBindingRedirects = false;
+			bamlDecompilerAppDomainSetup.DisallowCodeDownload = true;
+			bamlDecompilerAppDomainSetup.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+
+			// Create the second AppDomain.
+			AppDomain bamlDecompilerAppDomain = AppDomain.CreateDomain("BamlDecompiler AD", null, bamlDecompilerAppDomainSetup);
+			
+			BamlDecompiler decompiler = (BamlDecompiler)bamlDecompilerAppDomain.CreateInstanceAndUnwrap(Assembly.GetEntryAssembly().FullName, typeof(BamlDecompiler).FullName);
+			
+			MemoryStream bamlStream = new MemoryStream();
 			value.Position = 0;
-			TextWriter w = new StringWriter();
-			Baml2006Reader reader = new Baml2006Reader(value, new XamlReaderSettings() { ValuesMustBeString = true });
-			XamlXmlWriter writer = new XamlXmlWriter(new XmlTextWriter(w) { Formatting = Formatting.Indented }, reader.SchemaContext);
-			while (reader.Read()) {
-				switch (reader.NodeType) {
-					case XamlNodeType.None:
-						
-						break;
-					case XamlNodeType.StartObject:
-						writer.WriteStartObject(reader.Type);
-						break;
-					case XamlNodeType.GetObject:
-						writer.WriteGetObject();
-						break;
-					case XamlNodeType.EndObject:
-						writer.WriteEndObject();
-						break;
-					case XamlNodeType.StartMember:
-						writer.WriteStartMember(reader.Member);
-						break;
-					case XamlNodeType.EndMember:
-						writer.WriteEndMember();
-						break;
-					case XamlNodeType.Value:
-						// requires XamlReaderSettings.ValuesMustBeString = true to work properly
-						writer.WriteValue(reader.Value);
-						break;
-					case XamlNodeType.NamespaceDeclaration:
-						writer.WriteNamespace(reader.Namespace);
-						break;
-					default:
-						throw new Exception("Invalid value for XamlNodeType");
-				}
-			}
-			output.Write(w.ToString());
+			value.CopyTo(bamlStream);
+			
+			output.Write(decompiler.DecompileBaml(bamlStream, asm.FileName));
 			return true;
 		}
 		

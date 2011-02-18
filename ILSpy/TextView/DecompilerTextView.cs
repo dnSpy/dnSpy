@@ -86,7 +86,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// When the task is cancelled before completing, the callback is not called; and any result
 		/// of the task (including exceptions) are ignored.
 		/// </summary>
-		void RunWithCancellation<T>(Func<CancellationToken, Task<T>> taskCreation, Action<Task<T>> taskCompleted)
+		public void RunWithCancellation<T>(Func<CancellationToken, Task<T>> taskCreation, Action<Task<T>> taskCompleted)
 		{
 			if (waitAdorner.Visibility != Visibility.Visible) {
 				waitAdorner.Visibility = Visibility.Visible;
