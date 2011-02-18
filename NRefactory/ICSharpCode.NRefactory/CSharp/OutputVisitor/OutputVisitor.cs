@@ -675,10 +675,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		bool LambdaNeedsParenthesis(LambdaExpression lambdaExpression)
 		{
-			if (lambdaExpression.Parameters.Count() != 1)
+			if (lambdaExpression.Parameters.Count != 1)
 				return true;
 			var p = lambdaExpression.Parameters.Single();
-			return p.Type.IsNull && p.ParameterModifier == ParameterModifier.None;
+			return !(p.Type.IsNull && p.ParameterModifier == ParameterModifier.None);
 		}
 		
 		public object VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
