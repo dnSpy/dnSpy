@@ -235,19 +235,42 @@ namespace Decompiler
 			List<Ast.Expression> args = TransformExpressionArguments(expr);
 			Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
+			TypeReference arg1Type = args.Count >= 1 ? expr.Arguments[0].InferredType : null;
 			switch(expr.OpCode.Code) {
-					case Code.Brfalse: return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
-					case Code.Brtrue:  return arg1;
-					case Code.Beq:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
-					case Code.Bge:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-					case Code.Bge_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-					case Code.Bgt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-					case Code.Bgt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-					case Code.Ble:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-					case Code.Ble_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-					case Code.Blt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-					case Code.Blt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-					case Code.Bne_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
+				case Code.Brfalse:
+					if (arg1Type == typeSystem.Boolean)
+						return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
+					else if (TypeAnalysis.IsIntegerOrEnum(typeSystem, arg1Type))
+						return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, new PrimitiveExpression(0));
+					else
+						return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, new NullReferenceExpression());
+				case Code.Brtrue:
+					if (arg1Type == typeSystem.Boolean)
+						return arg1;
+					else if (TypeAnalysis.IsIntegerOrEnum(typeSystem, arg1Type))
+						return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, new PrimitiveExpression(0));
+					else
+						return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, new NullReferenceExpression());
+				case Code.Beq:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
+				case Code.Bge:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
+				case Code.Bge_Un:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
+				case Code.Bgt:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+				case Code.Bgt_Un:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+				case Code.Ble:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+				case Code.Ble_Un:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+				case Code.Blt:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+				case Code.Blt_Un:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+				case Code.Bne_Un:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
 					default: throw new Exception("Bad opcode");
 			}
 			/*

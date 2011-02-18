@@ -99,6 +99,10 @@ namespace Decompiler
 						}
 						return ctor.DeclaringType;
 					}
+				case Code.Ldfld:
+					return UnpackModifiers(((FieldReference)expr.Operand).FieldType);
+				case Code.Ldsfld:
+					return UnpackModifiers(((FieldReference)expr.Operand).FieldType);
 				case Code.Or:
 					return InferArgumentsInBinaryOperator(expr);
 				case Code.Shl:
@@ -107,9 +111,9 @@ namespace Decompiler
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
 					return InferTypeForExpression(expr.Arguments[0], expectedType);
 				case Code.Ldc_I4:
-					return (IsSigned(expectedType) != null || expectedType == typeSystem.Boolean) ? expectedType : typeSystem.Int32;
+					return (IsIntegerOrEnum(expectedType) || expectedType == typeSystem.Boolean) ? expectedType : typeSystem.Int32;
 				case Code.Ldc_I8:
-					return (IsSigned(expectedType) != null) ? expectedType : typeSystem.Int64;
+					return (IsIntegerOrEnum(expectedType)) ? expectedType : typeSystem.Int64;
 				case Code.Conv_I8:
 					return (GetInformationAmount(expectedType) == 64 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int64;
 				case Code.Dup:
@@ -133,6 +137,13 @@ namespace Decompiler
 					//throw new NotImplementedException("Can't handle " + expr.OpCode.Name);
 					return null;
 			}
+		}
+		
+		static TypeReference UnpackModifiers(TypeReference type)
+		{
+			while (type is OptionalModifierType || type is RequiredModifierType)
+				type = ((TypeSpecification)type).ElementType;
+			return type;
 		}
 		
 		TypeReference InferArgumentsInBinaryOperator(ILExpression expr)
@@ -192,6 +203,16 @@ namespace Decompiler
 			else if (type == typeSystem.Int64 || type == typeSystem.UInt64)
 				return 64;
 			return 100; // we consider structs/objects to have more information than any primitives
+		}
+		
+		bool IsIntegerOrEnum(TypeReference type)
+		{
+			return IsIntegerOrEnum(typeSystem, type);
+		}
+		
+		public static bool IsIntegerOrEnum(TypeSystem typeSystem, TypeReference type)
+		{
+			return IsSigned(typeSystem, type) != null;
 		}
 		
 		bool? IsSigned(TypeReference type)
