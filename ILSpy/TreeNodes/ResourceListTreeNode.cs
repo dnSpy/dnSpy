@@ -156,16 +156,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (er != null) {
 				try {
 					Stream s = er.GetResourceStream();
-					FileType type = GuessFileType.DetectFileType(s);
-					s.Position = 0;
-					if (type == FileType.Binary) {
+					if (er.Name.EndsWith(".resources", StringComparison.OrdinalIgnoreCase)) {
 						ResourceSet set = new ResourceSet(s);
 						foreach (DictionaryEntry entry in set.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
-							Children.Add(new ResourceEntryNode(entry.Key.ToString(), (Stream)entry.Value));
+							if (entry.Value is Stream)
+								Children.Add(new ResourceEntryNode(entry.Key.ToString(), (Stream)entry.Value));
 						}
 					}
-				} catch (Exception ex) {
-					MessageBox.Show(ex.ToString());
+				} catch (ArgumentException) {
 				}
 			}
 		}
