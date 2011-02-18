@@ -74,7 +74,7 @@ namespace Decompiler
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
 			ILAstOptimizer bodyGraph = new ILAstOptimizer();
-			bodyGraph.Optimize(methodDef, ilMethod);
+			bodyGraph.Optimize(context, ilMethod);
 			context.CancellationToken.ThrowIfCancellationRequested();
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
@@ -410,7 +410,6 @@ namespace Decompiler
 					}
 				case Code.Ldlen:
 					return arg1.Member("Length");
-					
 				case Code.Ldelem_I:
 				case Code.Ldelem_I1:
 				case Code.Ldelem_I2:

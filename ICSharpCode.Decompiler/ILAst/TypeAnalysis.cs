@@ -20,14 +20,18 @@ namespace Decompiler
 	/// </remarks>
 	public class TypeAnalysis
 	{
-		public static void Run(TypeSystem typeSystem, ILNode node)
+		public static void Run(DecompilerContext context, ILNode node)
 		{
 			TypeAnalysis ta = new TypeAnalysis();
-			ta.typeSystem = typeSystem;
+			ta.context = context;
+			ta.module = context.CurrentMethod.Module;
+			ta.typeSystem = ta.module.TypeSystem;
 			ta.InferTypes(node);
 		}
 		
+		DecompilerContext context;
 		TypeSystem typeSystem;
+		ModuleDefinition module;
 		List<ILExpression> storedToGeneratedVariables = new List<ILExpression>();
 		
 		void InferTypes(ILNode node)
@@ -67,14 +71,25 @@ namespace Decompiler
 		TypeReference DoInferTypeForExpression(ILExpression expr, TypeReference expectedType, bool forceInferChildren = false)
 		{
 			switch (expr.OpCode.Code) {
+					#region Variable load/store
 				case Code.Stloc:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments.Single(), ((ILVariable)expr.Operand).Type);
 					return null;
 				case Code.Ldloc:
 					return ((ILVariable)expr.Operand).Type;
+				case Code.Starg:
+					if (forceInferChildren)
+						InferTypeForExpression(expr.Arguments.Single(), ((ParameterReference)expr.Operand).ParameterType);
+					return null;
 				case Code.Ldarg:
-					return ((ParameterDefinition)expr.Operand).ParameterType;
+					return ((ParameterReference)expr.Operand).ParameterType;
+				case Code.Ldloca:
+					return new ByReferenceType(((VariableDefinition)expr.Operand).VariableType);
+				case Code.Ldarga:
+					return new ByReferenceType(((ParameterReference)expr.Operand).ParameterType);
+					#endregion
+					#region Call / NewObj
 				case Code.Call:
 				case Code.Callvirt:
 					{
@@ -99,42 +114,201 @@ namespace Decompiler
 						}
 						return ctor.DeclaringType;
 					}
+					#endregion
+					#region Load/Store Fields
 				case Code.Ldfld:
 					return UnpackModifiers(((FieldReference)expr.Operand).FieldType);
 				case Code.Ldsfld:
 					return UnpackModifiers(((FieldReference)expr.Operand).FieldType);
+				case Code.Ldflda:
+					return new ByReferenceType(UnpackModifiers(((FieldReference)expr.Operand).FieldType));
+				case Code.Stfld:
+					if (forceInferChildren)
+						InferTypeForExpression(expr.Arguments[1], ((FieldReference)expr.Operand).FieldType);
+					return null;
+				case Code.Stsfld:
+					if (forceInferChildren)
+						InferTypeForExpression(expr.Arguments[0], ((FieldReference)expr.Operand).FieldType);
+					return null;
+					#endregion
+					#region Arithmetic instructions
+				case Code.Add:
+				case Code.Sub:
+				case Code.Mul:
 				case Code.Or:
-					return InferArgumentsInBinaryOperator(expr);
+				case Code.And:
+					return InferArgumentsInBinaryOperator(expr, null);
+				case Code.Add_Ovf:
+				case Code.Sub_Ovf:
+				case Code.Mul_Ovf:
+				case Code.Div:
+					return InferArgumentsInBinaryOperator(expr, true);
+				case Code.Add_Ovf_Un:
+				case Code.Sub_Ovf_Un:
+				case Code.Mul_Ovf_Un:
+				case Code.Div_Un:
+					return InferArgumentsInBinaryOperator(expr, false);
 				case Code.Shl:
 				case Code.Shr:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
 					return InferTypeForExpression(expr.Arguments[0], expectedType);
+					#endregion
+					#region Constant loading instructions
+				case Code.Ldnull:
+					return typeSystem.Object;
+				case Code.Ldstr:
+					return typeSystem.String;
+				case Code.Ldftn:
+					return typeSystem.IntPtr;
 				case Code.Ldc_I4:
 					return (IsIntegerOrEnum(expectedType) || expectedType == typeSystem.Boolean) ? expectedType : typeSystem.Int32;
 				case Code.Ldc_I8:
 					return (IsIntegerOrEnum(expectedType)) ? expectedType : typeSystem.Int64;
+				case Code.Ldc_R8:
+					return typeSystem.Double;
+				case Code.Ldtoken:
+					if (expr.Operand is TypeReference)
+						return new TypeReference("System", "RuntimeTypeHandle", module, module, true);
+					else if (expr.Operand is FieldReference)
+						return new TypeReference("System", "RuntimeFieldHandle", module, module, true);
+					else
+						return new TypeReference("System", "RuntimeMethodHandle", module, module, true);
+					#endregion
+					#region Array instructions
+				case Code.Newarr:
+					if (forceInferChildren)
+						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Int32);
+					return new ArrayType((TypeReference)expr.Operand);
+				case Code.Ldlen:
+					return typeSystem.Int32;
+				case Code.Ldelem_U1:
+				case Code.Ldelem_U2:
+				case Code.Ldelem_U4:
+				case Code.Ldelem_I1:
+				case Code.Ldelem_I2:
+				case Code.Ldelem_I4:
+				case Code.Ldelem_I8:
+				case Code.Ldelem_I:
+				case Code.Ldelem_Ref:
+					{
+						ArrayType arrayType = InferTypeForExpression(expr.Arguments[0], null) as ArrayType;
+						if (forceInferChildren) {
+							InferTypeForExpression(expr.Arguments[0], new ArrayType(typeSystem.Byte));
+							InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
+						}
+						return arrayType != null ? arrayType.ElementType : null;
+					}
+				case Code.Ldelema:
+					{
+						ArrayType arrayType = InferTypeForExpression(expr.Arguments[0], null) as ArrayType;
+						if (forceInferChildren)
+							InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
+						return arrayType != null ? new ByReferenceType(arrayType.ElementType) : null;
+					}
+				case Code.Stelem_I:
+				case Code.Stelem_I1:
+				case Code.Stelem_I2:
+				case Code.Stelem_I4:
+				case Code.Stelem_I8:
+				case Code.Stelem_R4:
+				case Code.Stelem_R8:
+				case Code.Stelem_Ref:
+				case Code.Stelem_Any:
+					if (forceInferChildren) {
+						ArrayType arrayType = InferTypeForExpression(expr.Arguments[0], null) as ArrayType;
+						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
+						if (arrayType != null) {
+							InferTypeForExpression(expr.Arguments[2], arrayType.ElementType);
+						}
+					}
+					return null;
+					#endregion
+					#region Conversion instructions
+				case Code.Conv_I1:
+					return (GetInformationAmount(expectedType) == 8 && IsSigned(expectedType) == true) ? expectedType : typeSystem.SByte;
+				case Code.Conv_I2:
+					return (GetInformationAmount(expectedType) == 16 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int16;
+				case Code.Conv_I4:
+					return (GetInformationAmount(expectedType) == 32 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int32;
 				case Code.Conv_I8:
 					return (GetInformationAmount(expectedType) == 64 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int64;
-				case Code.Dup:
-					return InferTypeForExpression(expr.Arguments.Single(), expectedType);
+				case Code.Conv_U1:
+					return (GetInformationAmount(expectedType) == 8 && IsSigned(expectedType) == false) ? expectedType : typeSystem.Byte;
+				case Code.Conv_U2:
+					return (GetInformationAmount(expectedType) == 16 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt16;
+				case Code.Conv_U4:
+					return (GetInformationAmount(expectedType) == 32 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt32;
+				case Code.Conv_U8:
+					return (GetInformationAmount(expectedType) == 64 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt64;
+				case Code.Castclass:
+				case Code.Isinst:
+				case Code.Unbox_Any:
+					return (TypeReference)expr.Operand;
+				case Code.Box:
+					if (forceInferChildren)
+						InferTypeForExpression(expr.Arguments.Single(), (TypeReference)expr.Operand);
+					return (TypeReference)expr.Operand;
+					#endregion
+					#region Comparison instructions
 				case Code.Ceq:
-				case Code.Clt:
 					if (forceInferChildren)
-						InferArgumentsInBinaryOperator(expr);
+						InferArgumentsInBinaryOperator(expr, null);
 					return typeSystem.Boolean;
-				case Code.Beq:
-				case Code.Blt:
+				case Code.Clt:
+				case Code.Cgt:
 					if (forceInferChildren)
-						InferArgumentsInBinaryOperator(expr);
+						InferArgumentsInBinaryOperator(expr, true);
+					return typeSystem.Boolean;
+				case Code.Clt_Un:
+				case Code.Cgt_Un:
+					if (forceInferChildren)
+						InferArgumentsInBinaryOperator(expr, false);
+					return typeSystem.Boolean;
+					#endregion
+					#region Branch instructions
+				case Code.Beq:
+				case Code.Bne_Un:
+					if (forceInferChildren)
+						InferArgumentsInBinaryOperator(expr, null);
 					return null;
 				case Code.Brtrue:
 				case Code.Brfalse:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Boolean);
 					return null;
+				case Code.Blt:
+				case Code.Ble:
+				case Code.Bgt:
+				case Code.Bge:
+					if (forceInferChildren)
+						InferArgumentsInBinaryOperator(expr, true);
+					return null;
+				case Code.Blt_Un:
+				case Code.Ble_Un:
+				case Code.Bgt_Un:
+				case Code.Bge_Un:
+					if (forceInferChildren)
+						InferArgumentsInBinaryOperator(expr, false);
+					return null;
+				case Code.Br:
+				case Code.Leave:
+				case Code.Endfinally:
+				case Code.Switch:
+				case Code.Throw:
+				case Code.Rethrow:
+					return null;
+				case Code.Ret:
+					if (forceInferChildren && expr.Arguments.Count == 1)
+						InferTypeForExpression(expr.Arguments[0], context.CurrentMethod.ReturnType);
+					return null;
+					#endregion
+				case Code.Pop:
+					return null;
+				case Code.Dup:
+					return InferTypeForExpression(expr.Arguments.Single(), expectedType);
 				default:
-					//throw new NotImplementedException("Can't handle " + expr.OpCode.Name);
+					Debug.WriteLine("Type Inference: Can't handle " + expr.OpCode.Name);
 					return null;
 			}
 		}
@@ -146,7 +320,7 @@ namespace Decompiler
 			return type;
 		}
 		
-		TypeReference InferArgumentsInBinaryOperator(ILExpression expr)
+		TypeReference InferArgumentsInBinaryOperator(ILExpression expr, bool? isSigned)
 		{
 			ILExpression left = expr.Arguments[0];
 			ILExpression right = expr.Arguments[1];

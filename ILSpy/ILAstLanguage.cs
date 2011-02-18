@@ -52,13 +52,14 @@ namespace ICSharpCode.ILSpy
 			ilMethod.Body = astBuilder.Build(method, inlineVariables);
 			
 			if (abortBeforeStep != null) {
-				new ILAstOptimizer().Optimize(method, ilMethod, abortBeforeStep.Value);
+				DecompilerContext context = new DecompilerContext { CurrentType = method.DeclaringType, CurrentMethod = method };
+				new ILAstOptimizer().Optimize(context, ilMethod, abortBeforeStep.Value);
 			}
 			
 			var allVariables = astBuilder.Variables
 				.Concat(ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable).Where(v => v != null)).Distinct();
 			foreach (ILVariable v in allVariables) {
-				output.Write(v.Name);
+				output.WriteDefinition(v.Name, v);
 				if (v.Type != null) {
 					output.Write(" : ");
 					v.Type.WriteTo(output, true, true);

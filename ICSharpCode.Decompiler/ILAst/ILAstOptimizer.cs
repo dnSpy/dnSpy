@@ -24,7 +24,7 @@ namespace Decompiler.ControlFlow
 	{
 		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 		
-		public void Optimize(MethodDefinition cecilMethod, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
+		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
 			if (abortBeforeStep == ILAstOptimizationStep.SplitToMovableBlocks) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
@@ -57,7 +57,7 @@ namespace Decompiler.ControlFlow
 			if (abortBeforeStep == ILAstOptimizationStep.RemoveDeadLabels) return;
 			RemoveDeadLabels(method);
 			if (abortBeforeStep == ILAstOptimizationStep.TypeInference) return;
-			TypeAnalysis.Run(cecilMethod.Module.TypeSystem, method);
+			TypeAnalysis.Run(context, method);
 		}
 		
 		class ILMoveableBlock: ILBlock
