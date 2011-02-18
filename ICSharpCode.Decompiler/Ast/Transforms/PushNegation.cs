@@ -83,7 +83,7 @@ namespace Decompiler.Transforms
 				rightOperand = ((PrimitiveExpression)binaryOperatorExpression.Right).Value as bool?;
 			if (op == BinaryOperatorType.Equality && rightOperand == true || op == BinaryOperatorType.InEquality && rightOperand == false) {
 				// 'b == true' or 'b != false' is useless
-				binaryOperatorExpression.AcceptVisitor(this, data);
+				binaryOperatorExpression.Left.AcceptVisitor(this, data);
 				binaryOperatorExpression.ReplaceWith(binaryOperatorExpression.Left);
 				return null;
 			} else if (op == BinaryOperatorType.Equality && rightOperand == false || op == BinaryOperatorType.InEquality && rightOperand == true) {
