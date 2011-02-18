@@ -87,6 +87,7 @@
     <Compile Include="ILAst\ILAstBuilder.cs" />
     <Compile Include="ILAst\ILAstOptimizer.cs" />
     <Compile Include="ILAst\ILAstTypes.cs" />
+    <Compile Include="ILAst\TypeAnalysis.cs" />
     <Compile Include="ITextOutput.cs" />
     <Compile Include="Mono.Cecil.Rocks\Constants.cs" />
     <Compile Include="Mono.Cecil.Rocks\MethodBodyRocks.cs" />

@@ -24,6 +24,7 @@ using Decompiler;
 using Decompiler.ControlFlow;
 using Decompiler.Transforms;
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -46,12 +47,25 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
+			ILAstBuilder astBuilder = new ILAstBuilder();
 			ILBlock ilMethod = new ILBlock();
-			ilMethod.Body = new ILAstBuilder().Build(method, inlineVariables);
+			ilMethod.Body = astBuilder.Build(method, inlineVariables);
 			
 			if (abortBeforeStep != null) {
-				new ILAstOptimizer().Optimize(ilMethod, abortBeforeStep.Value);
+				new ILAstOptimizer().Optimize(method, ilMethod, abortBeforeStep.Value);
 			}
+			
+			var allVariables = astBuilder.Variables
+				.Concat(ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable).Where(v => v != null)).Distinct();
+			foreach (ILVariable v in allVariables) {
+				output.Write(v.Name);
+				if (v.Type != null) {
+					output.Write(" : ");
+					v.Type.WriteTo(output, true, true);
+				}
+				output.WriteLine();
+			}
+			output.WriteLine();
 			
 			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output);

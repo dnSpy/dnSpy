@@ -16,6 +16,7 @@ namespace Decompiler
 	public class AstMethodBodyBuilder
 	{
 		MethodDefinition methodDef;
+		TypeSystem typeSystem;
 		CancellationToken cancellationToken;
 		HashSet<ILVariable> definedLocalVars = new HashSet<ILVariable>();
 		
@@ -24,6 +25,7 @@ namespace Decompiler
 			AstMethodBodyBuilder builder = new AstMethodBodyBuilder();
 			builder.cancellationToken = cancellationToken;
 			builder.methodDef = methodDef;
+			builder.typeSystem = methodDef.Module.TypeSystem;
 			if (Debugger.IsAttached) {
 				return builder.CreateMethodBody();
 			} else {
@@ -65,7 +67,7 @@ namespace Decompiler
 			
 			cancellationToken.ThrowIfCancellationRequested();
 			ILAstOptimizer bodyGraph = new ILAstOptimizer();
-			bodyGraph.Optimize(ilMethod);
+			bodyGraph.Optimize(methodDef, ilMethod);
 			cancellationToken.ThrowIfCancellationRequested();
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
@@ -146,7 +148,7 @@ namespace Decompiler
 				yield return new Ast.ForStatement {
 					EmbeddedStatement = TransformBlock(((ILLoop)node).ContentBlock)
 				};
-			/*
+				/*
 			} else if (node is Branch) {
 				yield return new Ast.LabelStatement { Label = ((Branch)node).FirstBasicBlock.Label };
 				
@@ -163,7 +165,7 @@ namespace Decompiler
 				};
 				
 				yield return ifElseStmt;
-			*/
+				 */
 			} else if (node is ILCondition) {
 				ILCondition conditionalNode = (ILCondition)node;
 				if (conditionalNode.FalseBlock.Body.Any()) {
@@ -185,9 +187,9 @@ namespace Decompiler
 				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition.Arguments[0]) };
 				for (int i = 0; i < ilSwitch.CaseBlocks.Count; i++) {
 					switchStmt.AddChild(new SwitchSection() {
-					    	CaseLabels = new[] { new CaseLabel() { Expression = new PrimitiveExpression(i) } },
-					    	Statements = new[] { TransformBlock(ilSwitch.CaseBlocks[i]) }
-					}, SwitchStatement.SwitchSectionRole);
+					                    	CaseLabels = new[] { new CaseLabel() { Expression = new PrimitiveExpression(i) } },
+					                    	Statements = new[] { TransformBlock(ilSwitch.CaseBlocks[i]) }
+					                    }, SwitchStatement.SwitchSectionRole);
 				}
 				yield return switchStmt;
 			} else if (node is ILTryCatchBlock) {
@@ -195,10 +197,10 @@ namespace Decompiler
 				List<Ast.CatchClause> catchClauses = new List<CatchClause>();
 				foreach (var catchClause in tryCatchNode.CatchBlocks) {
 					catchClauses.Add(new Ast.CatchClause {
-						Type = AstBuilder.ConvertType(catchClause.ExceptionType),
-						VariableName = "exception",
-						Body = TransformBlock(catchClause)
-					});
+					                 	Type = AstBuilder.ConvertType(catchClause.ExceptionType),
+					                 	VariableName = "exception",
+					                 	Body = TransformBlock(catchClause)
+					                 });
 				}
 				yield return new Ast.TryCatchStatement {
 					TryBlock = TransformBlock(tryCatchNode.TryBlock),
@@ -225,7 +227,7 @@ namespace Decompiler
 		AstNode TransformExpression(ILExpression expr)
 		{
 			List<Ast.Expression> args = TransformExpressionArguments(expr);
-			return TransformByteCode(methodDef, expr, args);
+			return TransformByteCode(expr, args);
 		}
 		
 		Ast.Expression MakeBranchCondition(ILExpression expr)
@@ -234,19 +236,19 @@ namespace Decompiler
 			Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
 			switch(expr.OpCode.Code) {
-				case Code.Brfalse: return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
-				case Code.Brtrue:  return arg1;
-				case Code.Beq:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
-				case Code.Bge:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-				case Code.Bge_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-				case Code.Bgt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-				case Code.Bgt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-				case Code.Ble:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-				case Code.Ble_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-				case Code.Blt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-				case Code.Blt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-				case Code.Bne_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
-				default: throw new Exception("Bad opcode");
+					case Code.Brfalse: return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
+					case Code.Brtrue:  return arg1;
+					case Code.Beq:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
+					case Code.Bge:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
+					case Code.Bge_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
+					case Code.Bgt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+					case Code.Bgt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+					case Code.Ble:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+					case Code.Ble_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+					case Code.Blt:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+					case Code.Blt_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+					case Code.Bne_Un:  return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
+					default: throw new Exception("Bad opcode");
 			}
 			/*
 			} else if (branch is ShortCircuitBranch) {
@@ -282,13 +284,13 @@ namespace Decompiler
 			} else {
 				throw new Exception("Bad type");
 			}
-			*/
+			 */
 		}
 		
-		AstNode TransformByteCode(MethodDefinition methodDef, ILExpression byteCode, List<Ast.Expression> args)
+		AstNode TransformByteCode(ILExpression byteCode, List<Ast.Expression> args)
 		{
 			try {
-				AstNode ret = TransformByteCode_Internal(methodDef, byteCode, args);
+				AstNode ret = TransformByteCode_Internal(byteCode, args);
 				// ret.UserData["Type"] = byteCode.Type;
 				return ret;
 			} catch (NotImplementedException) {
@@ -325,7 +327,7 @@ namespace Decompiler
 			}
 		}
 		
-		AstNode TransformByteCode_Internal(MethodDefinition methodDef, ILExpression byteCode, List<Ast.Expression> args)
+		AstNode TransformByteCode_Internal(ILExpression byteCode, List<Ast.Expression> args)
 		{
 			// throw new NotImplementedException();
 			
@@ -541,6 +543,20 @@ namespace Decompiler
 						return MakeRef(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name));
 					}
 				case Code.Ldc_I4:
+					if (byteCode.InferredType == typeSystem.Boolean && (int)operand == 0)
+						return new Ast.PrimitiveExpression(false);
+					else if (byteCode.InferredType == typeSystem.Boolean && (int)operand == 1)
+						return new Ast.PrimitiveExpression(true);
+					if (byteCode.InferredType != null && byteCode.InferredType.IsValueType) {
+						TypeDefinition enumDefinition = byteCode.InferredType.Resolve();
+						if (enumDefinition != null && enumDefinition.IsEnum) {
+							foreach (FieldDefinition field in enumDefinition.Fields) {
+								if (field.IsStatic && object.Equals(field.Constant, operand))
+									return AstBuilder.ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
+							}
+						}
+					}
+					return new Ast.PrimitiveExpression(operand);
 				case Code.Ldc_I8:
 				case Code.Ldc_R4:
 				case Code.Ldc_R8:
@@ -724,24 +740,8 @@ namespace Decompiler
 			if (reqType == null) {
 				return expr;
 			} else {
-				return Convert(expr, reqType.FullName);
+				return expr;
 			}
-		}
-		
-		static Ast.Expression Convert(Ast.Expression expr, string reqType)
-		{
-//			if (expr.UserData.ContainsKey("Type")) {
-//			    Cecil.TypeReference exprType = (Cecil.TypeReference)expr.UserData["Type"];
-//				if (exprType == ByteCode.TypeZero &&
-//				    reqType == ByteCode.TypeBool.FullName) {
-//					return new PrimitiveExpression(false, "false");
-//				}
-//				if (exprType == ByteCode.TypeOne &&
-//				    reqType == ByteCode.TypeBool.FullName) {
-//					return new PrimitiveExpression(true, "true");
-//				}
-//			}
-			return expr;
 		}
 		
 		static Ast.Expression ConvertIntToBool(Ast.Expression astInt)

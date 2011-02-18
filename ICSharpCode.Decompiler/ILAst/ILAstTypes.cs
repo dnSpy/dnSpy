@@ -55,7 +55,8 @@ namespace Decompiler
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			yield return EntryPoint;
+			if (EntryPoint != null)
+				yield return EntryPoint;
 			foreach(ILNode child in this.Body) {
 				yield return child;
 			}
@@ -157,13 +158,15 @@ namespace Decompiler
 		}
 	}
 	
-	public class ILExpression: ILNode
+	public class ILExpression : ILNode
 	{
 		public OpCode OpCode { get; set; }
 		public object Operand { get; set; }
 		public List<ILExpression> Arguments { get; set; }
 		// Mapping to the original instructions (useful for debugging)
 		public List<ILRange> ILRanges { get; set; }
+		
+		public TypeReference InferredType { get; set; }
 		
 		public ILExpression(OpCode opCode, object operand, params ILExpression[] args)
 		{
@@ -213,24 +216,39 @@ namespace Decompiler
 		public override void WriteTo(ITextOutput output)
 		{
 			if (Operand is ILVariable && ((ILVariable)Operand).IsGenerated) {
-				if (OpCode.Name == "stloc") {
-					output.Write(((ILVariable)Operand).Name + " = ");
+				if (OpCode == OpCodes.Stloc && this.InferredType == null) {
+					output.Write(((ILVariable)Operand).Name);
+					output.Write(" = ");
 					Arguments.First().WriteTo(output);
 					return;
-				} else if (OpCode.Name == "ldloc") {
+				} else if (OpCode == OpCodes.Ldloc) {
 					output.Write(((ILVariable)Operand).Name);
+					if (this.InferredType != null) {
+						output.Write(':');
+						this.InferredType.WriteTo(output, true, true);
+					}
 					return;
 				}
 			}
 			
 			output.Write(OpCode.Name);
+			if (this.InferredType != null) {
+				output.Write(':');
+				this.InferredType.WriteTo(output, true, true);
+			}
 			output.Write('(');
 			bool first = true;
 			if (Operand != null) {
-				if (Operand is ILLabel)
-					output.Write(((ILLabel)Operand).Name);
-				else
+				if (Operand is ILLabel) {
+					output.WriteReference(((ILLabel)Operand).Name, Operand);
+				} else if (Operand is MethodReference) {
+					MethodReference method = (MethodReference)Operand;
+					method.DeclaringType.WriteTo(output, true, true);
+					output.Write("::");
+					output.WriteReference(method.Name, method);
+				} else {
 					DisassemblerHelpers.WriteOperand(output, Operand);
+				}
 				first = false;
 			}
 			foreach (ILExpression arg in this.Arguments) {
@@ -242,7 +260,7 @@ namespace Decompiler
 		}
 	}
 	
-	public class ILLoop: ILNode
+	public class ILLoop : ILNode
 	{
 		public ILBlock ContentBlock;
 		
@@ -261,7 +279,7 @@ namespace Decompiler
 		}
 	}
 	
-	public class ILCondition: ILNode
+	public class ILCondition : ILNode
 	{
 		public ILExpression Condition;
 		public ILBlock TrueBlock;   // Branch was taken
@@ -271,7 +289,8 @@ namespace Decompiler
 		{
 			yield return Condition;
 			yield return TrueBlock;
-			yield return FalseBlock;
+			if (FalseBlock != null)
+				yield return FalseBlock;
 		}
 		
 		public override void WriteTo(ITextOutput output)

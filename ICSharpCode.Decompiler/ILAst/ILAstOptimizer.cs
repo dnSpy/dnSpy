@@ -16,6 +16,7 @@ namespace Decompiler.ControlFlow
 		FlattenNestedMovableBlocks,
 		SimpleGotoRemoval,
 		RemoveDeadLabels,
+		TypeInference,
 		None
 	}
 	
@@ -23,7 +24,7 @@ namespace Decompiler.ControlFlow
 	{
 		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 		
-		public void Optimize(ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
+		public void Optimize(MethodDefinition cecilMethod, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
 			if (abortBeforeStep == ILAstOptimizationStep.SplitToMovableBlocks) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
@@ -55,6 +56,8 @@ namespace Decompiler.ControlFlow
 			SimpleGotoRemoval(method);
 			if (abortBeforeStep == ILAstOptimizationStep.RemoveDeadLabels) return;
 			RemoveDeadLabels(method);
+			if (abortBeforeStep == ILAstOptimizationStep.TypeInference) return;
+			TypeAnalysis.Run(cecilMethod.Module.TypeSystem, method);
 		}
 		
 		class ILMoveableBlock: ILBlock
