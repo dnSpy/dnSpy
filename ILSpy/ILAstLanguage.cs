@@ -91,5 +91,12 @@ namespace ICSharpCode.ILSpy
 				return ".il";
 			}
 		}
+		
+		public override string TypeToString(TypeReference t, bool includeNamespace, ICustomAttributeProvider attributeProvider)
+		{
+			PlainTextOutput output = new PlainTextOutput();
+			t.WriteTo(output, true, shortName: !includeNamespace);
+			return output.ToString();
+		}
 	}
 }

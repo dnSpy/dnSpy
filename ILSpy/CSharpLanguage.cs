@@ -35,6 +35,7 @@ namespace ICSharpCode.ILSpy
 	public class CSharpLanguage : Language
 	{
 		string name = "C#";
+		bool showAllMembers;
 		Predicate<IAstVisitor<object, object>> transformAbortCondition = null;
 		
 		public CSharpLanguage()
@@ -49,12 +50,14 @@ namespace ICSharpCode.ILSpy
 				Type transformType = _transformType; // copy for lambda
 				yield return new CSharpLanguage {
 					transformAbortCondition = v => transformType.IsInstanceOfType(v),
-					name = "C# - " + lastTransformName
+					name = "C# - " + lastTransformName,
+					showAllMembers = true
 				};
 				lastTransformName = "after " + transformType.Name;
 			}
 			yield return new CSharpLanguage {
-				name = "C# - " + lastTransformName
+				name = "C# - " + lastTransformName,
+				showAllMembers = true
 			};
 		}
 		#endif
@@ -164,6 +167,9 @@ namespace ICSharpCode.ILSpy
 		
 		public override bool ShowMember(MemberReference member)
 		{
+			if (showAllMembers) {
+				return true;
+			}
 			MethodDefinition method = member as MethodDefinition;
 			if (method != null && (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn))
 				return false;
