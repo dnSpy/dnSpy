@@ -45,21 +45,23 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			IHighlightingDefinition highlighting = null;
 			
-			textView.RunWithCancellation(
-				token => Task.Factory.StartNew(
-					() => {
-						try {
-							if (LoadImage(output))
-								highlighting = null;
-							else if (LoadBaml(output))
-								highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
-						} catch (Exception ex) {
-							output.Write(ex.ToString());
-						}
-						return output;
-					}),
-				t => textView.Show(t.Result, highlighting)
-			);
+			if (LoadImage(output)) {
+				textView.Show(output, highlighting);
+			} else {
+				textView.RunWithCancellation(
+					token => Task.Factory.StartNew(
+						() => {
+							try {
+								if (LoadBaml(output))
+									highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
+							} catch (Exception ex) {
+								output.Write(ex.ToString());
+							}
+							return output;
+						}),
+					t => textView.Show(t.Result, highlighting)
+				);
+			}
 			return true;
 		}
 		
