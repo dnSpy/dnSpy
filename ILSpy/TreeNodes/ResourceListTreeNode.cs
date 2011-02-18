@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Resources;
 using System.Text;
 using System.Windows;
@@ -159,7 +160,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					s.Position = 0;
 					if (type == FileType.Binary) {
 						ResourceSet set = new ResourceSet(s);
-						foreach (DictionaryEntry entry in set) {
+						foreach (DictionaryEntry entry in set.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
 							Children.Add(new ResourceEntryNode(entry.Key.ToString(), (Stream)entry.Value));
 						}
 					}
