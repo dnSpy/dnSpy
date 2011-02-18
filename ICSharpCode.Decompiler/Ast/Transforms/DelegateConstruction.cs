@@ -3,6 +3,8 @@
 
 using System;
 using System.Linq;
+using System.Threading;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
@@ -15,6 +17,8 @@ namespace Decompiler.Transforms
 	/// </summary>
 	public class DelegateConstruction : DepthFirstAstVisitor<object, object>
 	{
+		public CancellationToken CancellationToken { get; set; }
+		
 		internal sealed class Annotation
 		{
 			/// <summary>
@@ -107,8 +111,8 @@ namespace Decompiler.Transforms
 			}
 			
 			// Decompile the anonymous method:
-			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method);
-			TransformationPipeline.RunTransformationsUntil(body, v => v is DelegateConstruction);
+			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, this.CancellationToken);
+			TransformationPipeline.RunTransformationsUntil(body, v => v is DelegateConstruction, this.CancellationToken);
 			body.AcceptVisitor(this, null);
 			
 			AnonymousMethodExpression ame = new AnonymousMethodExpression();

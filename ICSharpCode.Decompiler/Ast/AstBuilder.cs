@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
@@ -12,6 +13,7 @@ namespace Decompiler
 {
 	public class AstBuilder
 	{
+		public CancellationToken CancellationToken { get; set; }
 		CompilationUnit astCompileUnit = new CompilationUnit();
 		Dictionary<string, NamespaceDeclaration> astNamespaces = new Dictionary<string, NamespaceDeclaration>();
 		
@@ -22,7 +24,7 @@ namespace Decompiler
 		
 		public void GenerateCode(ITextOutput output, Predicate<IAstVisitor<object, object>> transformAbortCondition)
 		{
-			Transforms.TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition);
+			Transforms.TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition, this.CancellationToken);
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			
 			var outputFormatter = new TextOutputFormatter(output);
@@ -412,7 +414,7 @@ namespace Decompiler
 			astMethod.Parameters = MakeParameters(methodDef.Parameters);
 			if (!methodDef.DeclaringType.IsInterface) {
 				astMethod.Modifiers = ConvertModifiers(methodDef);
-				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef);
+				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, this.CancellationToken);
 			}
 			return astMethod;
 		}
@@ -426,7 +428,7 @@ namespace Decompiler
 				astMethod.Modifiers &= ~Modifiers.VisibilityMask;
 			}
 			astMethod.Parameters = MakeParameters(methodDef.Parameters);
-			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef);
+			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, this.CancellationToken);
 			return astMethod;
 		}
 
@@ -438,12 +440,12 @@ namespace Decompiler
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			if (propDef.GetMethod != null) {
 				astProp.Getter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod)
+					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, this.CancellationToken)
 				};
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod)
+					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, this.CancellationToken)
 				};
 			}
 			return astProp;
@@ -457,12 +459,12 @@ namespace Decompiler
 			astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
 			if (eventDef.AddMethod != null) {
 				astEvent.AddAccessor = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod)
+					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, this.CancellationToken)
 				};
 			}
 			if (eventDef.RemoveMethod != null) {
 				astEvent.RemoveAccessor = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod)
+					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, this.CancellationToken)
 				};
 			}
 			return astEvent;

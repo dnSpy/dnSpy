@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Ast = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp;
 using Cecil = Mono.Cecil;
@@ -15,11 +16,13 @@ namespace Decompiler
 	public class AstMethodBodyBuilder
 	{
 		MethodDefinition methodDef;
+		CancellationToken cancellationToken;
 		HashSet<ILVariable> definedLocalVars = new HashSet<ILVariable>();
 		
-		public static BlockStatement CreateMethodBody(MethodDefinition methodDef)
+		public static BlockStatement CreateMethodBody(MethodDefinition methodDef, CancellationToken cancellationToken)
 		{
 			AstMethodBodyBuilder builder = new AstMethodBodyBuilder();
+			builder.cancellationToken = cancellationToken;
 			builder.methodDef = methodDef;
 			if (Debugger.IsAttached) {
 				return builder.CreateMethodBody();
@@ -55,12 +58,15 @@ namespace Decompiler
 		{
 			if (methodDef.Body == null) return null;
 			
+			cancellationToken.ThrowIfCancellationRequested();
 			ILBlock ilMethod = new ILBlock();
 			ILAstBuilder astBuilder = new ILAstBuilder();
 			ilMethod.Body = astBuilder.Build(methodDef, true);
 			
+			cancellationToken.ThrowIfCancellationRequested();
 			ILAstOptimizer bodyGraph = new ILAstOptimizer();
 			bodyGraph.Optimize(ilMethod);
+			cancellationToken.ThrowIfCancellationRequested();
 			
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
 			Dictionary<string, int> typeNames = new Dictionary<string, int>();
@@ -102,6 +108,7 @@ namespace Decompiler
 //				astBlock.Children.Add(astLocalVar);
 			}
 			
+			cancellationToken.ThrowIfCancellationRequested();
 			Ast.BlockStatement astBlock = TransformBlock(ilMethod);
 			CommentStatement.ReplaceAll(astBlock); // convert CommentStatements to Comments
 			return astBlock;

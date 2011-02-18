@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Decompiler;
 using Decompiler.Transforms;
 using ICSharpCode.Decompiler;
@@ -34,7 +35,7 @@ namespace ICSharpCode.ILSpy
 	public class CSharpLanguage : Language
 	{
 		string name = "C#";
-		Predicate<IAstVisitor<object, object>> transformAbortCondition;
+		Predicate<IAstVisitor<object, object>> transformAbortCondition = null;
 		
 		public CSharpLanguage()
 		{
@@ -44,7 +45,7 @@ namespace ICSharpCode.ILSpy
 		internal static IEnumerable<CSharpLanguage> GetDebugLanguages()
 		{
 			string lastTransformName = "no transforms";
-			foreach (Type _transformType in TransformationPipeline.CreatePipeline().Select(v => v.GetType()).Distinct()) {
+			foreach (Type _transformType in TransformationPipeline.CreatePipeline(CancellationToken.None).Select(v => v.GetType()).Distinct()) {
 				Type transformType = _transformType; // copy for lambda
 				yield return new CSharpLanguage {
 					transformAbortCondition = v => transformType.IsInstanceOfType(v),
@@ -68,35 +69,35 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
-			AstBuilder codeDomBuilder = new AstBuilder();
+			AstBuilder codeDomBuilder = CreateAstBuilder(options);
 			codeDomBuilder.AddMethod(method);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
-			AstBuilder codeDomBuilder = new AstBuilder();
+			AstBuilder codeDomBuilder = CreateAstBuilder(options);
 			codeDomBuilder.AddProperty(property);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
-			AstBuilder codeDomBuilder = new AstBuilder();
+			AstBuilder codeDomBuilder = CreateAstBuilder(options);
 			codeDomBuilder.AddField(field);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
-			AstBuilder codeDomBuilder = new AstBuilder();
+			AstBuilder codeDomBuilder = CreateAstBuilder(options);
 			codeDomBuilder.AddEvent(ev);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
-			AstBuilder codeDomBuilder = new AstBuilder();
+			AstBuilder codeDomBuilder = CreateAstBuilder(options);
 			codeDomBuilder.AddType(type);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
 		}
@@ -105,7 +106,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (options.FullDecompilation) {
 				foreach (TypeDefinition type in assembly.MainModule.Types) {
-					AstBuilder codeDomBuilder = new AstBuilder();
+					AstBuilder codeDomBuilder = CreateAstBuilder(options);
 					codeDomBuilder.AddType(type);
 					codeDomBuilder.GenerateCode(output, transformAbortCondition);
 					output.WriteLine();
@@ -113,6 +114,11 @@ namespace ICSharpCode.ILSpy
 			} else {
 				base.DecompileAssembly(assembly, fileName, output, options);
 			}
+		}
+		
+		AstBuilder CreateAstBuilder(DecompilationOptions options)
+		{
+			return new AstBuilder { CancellationToken = options.CancellationToken };
 		}
 		
 		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes)

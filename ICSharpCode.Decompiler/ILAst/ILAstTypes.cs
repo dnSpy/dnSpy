@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+
 using Decompiler.ControlFlow;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Cecil = Mono.Cecil;
@@ -16,31 +18,7 @@ namespace Decompiler
 	{
 		public IEnumerable<T> GetSelfAndChildrenRecursive<T>() where T: ILNode
 		{
-			if (this is T)
-				yield return (T)this;
-			
-			Stack<IEnumerator<ILNode>> stack = new Stack<IEnumerator<ILNode>>();
-			try {
-				stack.Push(GetChildren().GetEnumerator());
-				while (stack.Count > 0) {
-					while (stack.Peek().MoveNext()) {
-						ILNode element = stack.Peek().Current;
-						if (element != null) {
-							if (element is T)
-								yield return (T)element;
-							IEnumerable<ILNode> children = element.GetChildren();
-							if (children != null) {
-								stack.Push(children.GetEnumerator());
-							}
-						}
-					}
-					stack.Pop().Dispose();
-				}
-			} finally {
-				while (stack.Count > 0) {
-					stack.Pop().Dispose();
-				}
-			}
+			return TreeTraversal.PreOrder(this, c => c != null ? c.GetChildren() : null).OfType<T>();
 		}
 		
 		public virtual IEnumerable<ILNode> GetChildren()
@@ -115,7 +93,9 @@ namespace Decompiler
 				output.Write("catch ");
 				output.WriteReference(ExceptionType.FullName, ExceptionType);
 				output.WriteLine(" {");
+				output.Indent();
 				base.WriteTo(output);
+				output.Unindent();
 				output.WriteLine("}");
 			}
 		}
@@ -137,14 +117,18 @@ namespace Decompiler
 		public override void WriteTo(ITextOutput output)
 		{
 			output.WriteLine(".try {");
+			output.Indent();
 			TryBlock.WriteTo(output);
+			output.Unindent();
 			output.WriteLine("}");
 			foreach (CatchBlock block in CatchBlocks) {
 				block.WriteTo(output);
 			}
 			if (FinallyBlock != null) {
 				output.WriteLine("finally {");
+				output.Indent();
 				FinallyBlock.WriteTo(output);
+				output.Unindent();
 				output.WriteLine("}");
 			}
 		}
@@ -250,7 +234,7 @@ namespace Decompiler
 				first = false;
 			}
 			foreach (ILExpression arg in this.Arguments) {
-				if (!first) output.Write(',');
+				if (!first) output.Write(", ");
 				arg.WriteTo(output);
 				first = false;
 			}
