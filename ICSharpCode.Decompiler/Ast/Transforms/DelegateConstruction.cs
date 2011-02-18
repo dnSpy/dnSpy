@@ -106,20 +106,34 @@ namespace Decompiler.Transforms
 			body.AcceptVisitor(this, null);
 			
 			AnonymousMethodExpression ame = new AnonymousMethodExpression();
+			bool isLambda = false;
 			if (method.Parameters.All(p => string.IsNullOrEmpty(p.Name))) {
 				ame.HasParameterList = false;
 			} else {
 				ame.HasParameterList = true;
 				ame.Parameters.AddRange(AstBuilder.MakeParameters(method.Parameters));
+				if (ame.Parameters.All(p => p.ParameterModifier == ParameterModifier.None)) {
+					isLambda = (body.Statements.Count == 1 && body.Statements.Single() is ReturnStatement);
+				}
 			}
-			ame.Body = body;
+			
 			// Replace all occurrences of 'this' in the method body with the delegate's target:
 			foreach (AstNode node in body.Descendants) {
 				if (node is ThisReferenceExpression)
 					node.ReplaceWith(target.Clone());
 				
 			}
-			objectCreateExpression.ReplaceWith(ame);
+			if (isLambda) {
+				LambdaExpression lambda = new LambdaExpression();
+				ame.Parameters.MoveTo(lambda.Parameters);
+				Expression returnExpr = ((ReturnStatement)body.Statements.Single()).Expression;
+				returnExpr.Remove();
+				lambda.Body = returnExpr;
+				objectCreateExpression.ReplaceWith(lambda);
+			} else {
+				ame.Body = body;
+				objectCreateExpression.ReplaceWith(ame);
+			}
 			return true;
 		}
 		
