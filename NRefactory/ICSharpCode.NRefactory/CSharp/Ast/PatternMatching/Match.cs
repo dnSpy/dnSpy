@@ -14,6 +14,16 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 	{
 		List<KeyValuePair<string, AstNode>> results = new List<KeyValuePair<string, AstNode>>();
 		
+		internal int CheckPoint()
+		{
+			return results.Count;
+		}
+		
+		internal void RestoreCheckPoint(int checkPoint)
+		{
+			results.RemoveRange(checkPoint, results.Count - checkPoint);
+		}
+		
 		public IEnumerable<AstNode> this[string groupName] {
 			get {
 				foreach (var pair in results) {

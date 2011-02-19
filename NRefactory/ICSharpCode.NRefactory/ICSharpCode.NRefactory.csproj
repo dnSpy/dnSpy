@@ -95,6 +95,7 @@
     <Compile Include="CSharp\Ast\Expressions\UncheckedExpression.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\TypeParameterDeclaration.cs" />
     <Compile Include="CSharp\Ast\MemberType.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\Choice.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\AnyNode.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\Backreference.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\Match.cs" />
