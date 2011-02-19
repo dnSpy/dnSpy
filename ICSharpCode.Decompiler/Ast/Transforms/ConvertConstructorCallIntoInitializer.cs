@@ -8,6 +8,9 @@ using Mono.Cecil;
 
 namespace Decompiler.Transforms
 {
+	/// <summary>
+	/// If the first element of a constructor is a chained constructor call, convert it into a constructor initializer.
+	/// </summary>
 	public class ConvertConstructorCallIntoInitializer : DepthFirstAstVisitor<object, object>, IAstTransform
 	{
 		public override object VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, object data)

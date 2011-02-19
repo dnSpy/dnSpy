@@ -5,6 +5,9 @@ using System;
 
 namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 {
+	/// <summary>
+	/// Base class for all patterns.
+	/// </summary>
 	public abstract class Pattern : AstNode
 	{
 		public override NodeType NodeType {

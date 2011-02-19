@@ -7,7 +7,10 @@ using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 {
-	public class Match
+	/// <summary>
+	/// Represents the result of a pattern matching operation.
+	/// </summary>
+	public sealed class Match
 	{
 		List<KeyValuePair<string, AstNode>> results = new List<KeyValuePair<string, AstNode>>();
 		

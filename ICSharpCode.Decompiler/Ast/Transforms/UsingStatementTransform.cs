@@ -10,7 +10,7 @@ using ICSharpCode.NRefactory.CSharp.PatternMatching;
 namespace Decompiler.Transforms
 {
 	/// <summary>
-	/// Description of UsingStatementTransform.
+	/// Finds the expanded form of using statements using pattern matching and replaces it with a UsingStatement.
 	/// </summary>
 	public class UsingStatementTransform : IAstTransform
 	{

@@ -578,6 +578,19 @@ namespace ICSharpCode.NRefactory.CSharp
 		public abstract S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data);
 		
 		#region Pattern Matching
+		/// <summary>
+		/// Performs a pattern matching operation.
+		/// <c>this</c> is the pattern, <paramref name="other"/> is the AST that is being matched.
+		/// </summary>
+		/// <returns>
+		/// If successful, a match object containing the matched groups.
+		/// If the match failed, returns <c>null</c>.
+		/// </returns>
+		/// <remarks>
+		/// Patterns are ASTs that contain special pattern nodes (from the PatternMatching namespace).
+		/// However, it is also possible to match two ASTs without any pattern nodes - doing so will produce an empty match object
+		/// if the two ASTs are structurally identical; or will return <c>null</c> if the ASTs are not identical.
+		/// </remarks>
 		public Match Match(AstNode other)
 		{
 			Match match = new Match();

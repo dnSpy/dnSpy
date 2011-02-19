@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 {
+	/// <summary>
+	/// Matches the last entry in the specified named group.
+	/// </summary>
 	public class Backreference : Pattern
 	{
 		readonly string referencedGroupName;
