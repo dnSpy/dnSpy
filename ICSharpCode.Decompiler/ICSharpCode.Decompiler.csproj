@@ -114,7 +114,6 @@
     <Folder Include="Ast\Transforms" />
     <Folder Include="Disassembler" />
     <Folder Include="ILAst" />
-    <Folder Include="Mono.Cecil.Rocks" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <Target Name="BeforeBuild">

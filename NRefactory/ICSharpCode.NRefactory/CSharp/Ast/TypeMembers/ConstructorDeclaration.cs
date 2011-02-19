@@ -33,6 +33,13 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		public static readonly Role<ConstructorInitializer> InitializerRole = new Role<ConstructorInitializer>("Initializer", ConstructorInitializer.Null);
 		
+		/// <summary>
+		/// Gets/Sets the name of the class containing the constructor.
+		/// This property can be used to inform the output visitor about the class name when writing a constructor declaration
+		/// without writing the complete type declaration. It is ignored when the constructor has a type declaration as parent.
+		/// </summary>
+		public string Name { get; set; }
+		
 		public CSharpTokenNode LParToken {
 			get { return GetChildByRole (Roles.LPar); }
 		}

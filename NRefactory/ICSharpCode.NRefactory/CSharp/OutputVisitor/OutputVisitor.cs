@@ -1626,9 +1626,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(constructorDeclaration.Attributes);
 			WriteModifiers(constructorDeclaration.ModifierTokens);
 			TypeDeclaration type = constructorDeclaration.Parent as TypeDeclaration;
-			if (type != null) {
-				WriteIdentifier(type.Name);
-			}
+			WriteIdentifier(type != null ? type.Name : constructorDeclaration.Name);
 			Space(policy.BeforeConstructorDeclarationParentheses);
 			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, policy.WithinMethodDeclarationParentheses);
 			if (!constructorDeclaration.Initializer.IsNull) {
@@ -1661,9 +1659,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteModifiers(destructorDeclaration.ModifierTokens);
 			WriteToken("~", DestructorDeclaration.TildeRole);
 			TypeDeclaration type = destructorDeclaration.Parent as TypeDeclaration;
-			if (type != null) {
-				WriteIdentifier(type.Name);
-			}
+			WriteIdentifier(type != null ? type.Name : destructorDeclaration.Name);
 			Space(policy.BeforeConstructorDeclarationParentheses);
 			LPar();
 			RPar();
