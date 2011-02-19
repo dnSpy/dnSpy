@@ -608,17 +608,9 @@ namespace Decompiler
 						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand));
 				case Code.Ldloc:
-					if (operand is ILVariable) {
-						return new Ast.IdentifierExpression(((ILVariable)operand).Name);
-					} else {
-						return new Ast.IdentifierExpression(((VariableDefinition)operand).Name);
-					}
+					return new Ast.IdentifierExpression(((ILVariable)operand).Name);
 				case Code.Ldloca:
-					if (operand is ILVariable) {
-						return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name));
-					} else {
-						return MakeRef(new Ast.IdentifierExpression(((VariableDefinition)operand).Name));
-					}
+					return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name));
 					case Code.Ldnull: return new Ast.NullReferenceExpression();
 					case Code.Ldobj: throw new NotImplementedException();
 					case Code.Ldstr: return new Ast.PrimitiveExpression(operand);

@@ -262,11 +262,16 @@ namespace Decompiler
 					int index = ((VariableDefinition)byteCode.Operand).Index;
 					byteCode.Operand = Variables[index];
 					numReads[index]++;
-				}
-				if (byteCode.Code == ILCode.Stloc) {
+				} else if (byteCode.Code == ILCode.Stloc) {
 					int index = ((VariableDefinition)byteCode.Operand).Index;
 					byteCode.Operand = Variables[index];
 					numWrites[index]++;
+				} else if (byteCode.Code == ILCode.Ldloca) {
+					int index = ((VariableDefinition)byteCode.Operand).Index;
+					byteCode.Operand = Variables[index];
+					// ldloca leads to an unknown numbers of reads/writes, so ensure we don't inline the variable
+					numReads[index] += 2;
+					numWrites[index] += 2;
 				}
 			}
 			

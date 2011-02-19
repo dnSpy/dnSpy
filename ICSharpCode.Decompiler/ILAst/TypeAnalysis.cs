@@ -85,7 +85,7 @@ namespace Decompiler
 				case Code.Ldarg:
 					return ((ParameterReference)expr.Operand).ParameterType;
 				case Code.Ldloca:
-					return new ByReferenceType(((VariableDefinition)expr.Operand).VariableType);
+					return new ByReferenceType(((ILVariable)expr.Operand).Type);
 				case Code.Ldarga:
 					return new ByReferenceType(((ParameterReference)expr.Operand).ParameterType);
 					#endregion
