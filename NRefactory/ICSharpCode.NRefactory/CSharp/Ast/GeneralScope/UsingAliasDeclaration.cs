@@ -1,4 +1,4 @@
-// 
+﻿// 
 // UsingAliasDeclaration.cs
 //  
 // Author:
@@ -69,6 +69,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUsingAliasDeclaration (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			UsingAliasDeclaration o = other as UsingAliasDeclaration;
+			return o != null && MatchString(this.Alias, o.Alias) && this.Import.DoMatch(o.Import, match);
 		}
 	}
 }

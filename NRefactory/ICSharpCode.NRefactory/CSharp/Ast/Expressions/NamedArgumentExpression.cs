@@ -28,5 +28,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitNamedArgumentExpression(this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			NamedArgumentExpression o = other as NamedArgumentExpression;
+			return o != null && MatchString(this.Identifier, o.Identifier) && this.Expression.DoMatch(o.Expression, match);
+		}
 	}
 }

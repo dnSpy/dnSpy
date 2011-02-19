@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Identifier.cs
 //  
 // Author:
@@ -90,6 +90,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIdentifier (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			Identifier o = other as Identifier;
+			return o != null && MatchString(this.Name, o.Name);
 		}
 	}
 }

@@ -53,5 +53,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitLambdaExpression (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			LambdaExpression o = other as LambdaExpression;
+			return o != null && this.Parameters.DoMatch(o.Parameters, match) && this.Body.DoMatch(o.Body, match);
+		}
 	}
 }

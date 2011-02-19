@@ -93,6 +93,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitSwitchSection (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			SwitchSection o = other as SwitchSection;
+			return o != null && this.CaseLabels.DoMatch(o.CaseLabels, match) && this.Statements.DoMatch(o.Statements, match);
+		}
 	}
 	
 	public class CaseLabel : AstNode
@@ -111,6 +117,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCaseLabel (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			CaseLabel o = other as CaseLabel;
+			return o != null && this.Expression.DoMatch(o.Expression, match);
 		}
 	}
 }

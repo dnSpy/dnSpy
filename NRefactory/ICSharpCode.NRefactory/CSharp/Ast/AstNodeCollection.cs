@@ -5,13 +5,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
 	/// Represents the children of an AstNode that have a specific role.
 	/// </summary>
-	public struct AstNodeCollection<T> : ICollection<T> where T : AstNode
+	public class AstNodeCollection<T> : ICollection<T> where T : AstNode
 	{
 		readonly AstNode node;
 		readonly Role<T> role;
@@ -152,5 +153,24 @@ namespace ICSharpCode.NRefactory.CSharp
 			return !(left.role == right.role && left.node == right.node);
 		}
 		#endregion
+		
+		internal bool DoMatch(AstNodeCollection<T> other, Match match)
+		{
+			AstNode cur1 = this.node.FirstChild;
+			AstNode cur2 = other.node.FirstChild;
+			while (true) {
+				while (cur1 != null && cur1.Role != role)
+					cur1 = cur1.NextSibling;
+				while (cur2 != null && cur2.Role != role)
+					cur2 = cur2.NextSibling;
+				if (cur1 == null || cur2 == null)
+					break;
+				if (!cur1.DoMatch(cur2, match))
+					return false;
+				cur1 = cur1.NextSibling;
+				cur2 = cur2.NextSibling;
+			}
+			return cur1 == null && cur2 == null;
+		}
 	}
 }

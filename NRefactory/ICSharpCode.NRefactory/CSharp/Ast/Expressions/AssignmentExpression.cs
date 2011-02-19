@@ -1,4 +1,4 @@
-// 
+﻿// 
 // AssignmentExpression.cs
 //
 // Author:
@@ -70,6 +70,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitAssignmentExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			AssignmentExpression o = other as AssignmentExpression;
+			return o != null && this.Left.DoMatch(o.Left, match) && this.Operator == o.Operator && this.Right.DoMatch(o.Right, match);
 		}
 		
 		public static string GetOperatorSymbol(AssignmentOperatorType op)

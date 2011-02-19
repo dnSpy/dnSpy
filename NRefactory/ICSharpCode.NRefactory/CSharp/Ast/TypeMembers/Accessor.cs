@@ -1,4 +1,4 @@
-// 
+﻿// 
 // PropertyDeclaration.cs
 //  
 // Author:
@@ -23,6 +23,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+using System;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -58,6 +60,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitAccessor (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

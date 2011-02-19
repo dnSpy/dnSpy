@@ -1,6 +1,6 @@
-// 
+﻿// 
 // BreakStatement.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -38,6 +38,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitBreakStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			BreakStatement o = other as BreakStatement;
+			return o != null;
 		}
 	}
 }

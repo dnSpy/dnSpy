@@ -25,10 +25,13 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -54,6 +57,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 			{
 				return default (S);
+			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
 			}
 		}
 		#endregion
@@ -568,6 +576,24 @@ namespace ICSharpCode.NRefactory.CSharp
 		#endregion
 		
 		public abstract S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data);
+		
+		#region Pattern Matching
+		public Match Match(AstNode other)
+		{
+			Match match = new Match();
+			if (DoMatch(other, match))
+				return match;
+			else
+				return null;
+		}
+		
+		protected static bool MatchString(string name1, string name2)
+		{
+			return string.IsNullOrEmpty(name1) || name1 == name2;
+		}
+		
+		protected internal abstract bool DoMatch(AstNode other, Match match);
+		#endregion
 		
 		// the Root role must be available when creating the null nodes, so we can't put it in the Roles class
 		static readonly Role<AstNode> RootRole = new Role<AstNode>("Root");

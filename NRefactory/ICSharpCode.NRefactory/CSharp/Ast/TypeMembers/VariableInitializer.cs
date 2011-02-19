@@ -1,4 +1,4 @@
-// 
+﻿// 
 // VariableInitializer.cs
 //
 // Author:
@@ -65,6 +65,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitVariableInitializer (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.CSharp.PatternMatching.Match match)
+		{
+			VariableInitializer o = other as VariableInitializer;
+			return o != null && MatchString(this.Name, o.Name) && this.Initializer.DoMatch(o.Initializer, match);
 		}
 	}
 }

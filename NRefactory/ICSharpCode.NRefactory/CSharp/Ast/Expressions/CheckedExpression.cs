@@ -1,4 +1,4 @@
-// 
+﻿// 
 // CheckedExpression.cs
 //  
 // Author:
@@ -51,6 +51,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCheckedExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			CheckedExpression o = other as CheckedExpression;
+			return o != null && this.Expression.DoMatch(o.Expression, match);
 		}
 	}
 }

@@ -64,5 +64,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitAnonymousMethodExpression (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			AnonymousMethodExpression o = other as AnonymousMethodExpression;
+			return o != null && this.HasParameterList == o.HasParameterList && this.Parameters.DoMatch(o.Parameters, match) && this.Body.DoMatch(o.Body, match);
+		}
 	}
 }
