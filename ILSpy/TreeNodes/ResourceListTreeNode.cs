@@ -2,8 +2,12 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections;
 using System.IO;
+using System.Linq;
+using System.Resources;
 using System.Text;
+using System.Windows;
 using System.Windows.Threading;
 
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -66,6 +70,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public ResourceTreeNode(Resource r)
 		{
+			this.LazyLoading = true;
 			this.r = r;
 		}
 		
@@ -143,6 +148,24 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return true;
 			}
 			return false;
+		}
+		
+		protected override void LoadChildren()
+		{
+			EmbeddedResource er = r as EmbeddedResource;
+			if (er != null) {
+				try {
+					Stream s = er.GetResourceStream();
+					if (er.Name.EndsWith(".resources", StringComparison.OrdinalIgnoreCase)) {
+						ResourceSet set = new ResourceSet(s);
+						foreach (DictionaryEntry entry in set.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
+							if (entry.Value is Stream)
+								Children.Add(new ResourceEntryNode(entry.Key.ToString(), (Stream)entry.Value));
+						}
+					}
+				} catch (ArgumentException) {
+				}
+			}
 		}
 	}
 }

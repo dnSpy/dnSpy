@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Cecil.Rocks;
 using Cecil = Mono.Cecil;
-using Decompiler.Rocks;
 
 namespace Decompiler
 {
@@ -33,7 +31,7 @@ namespace Decompiler
 			public ILLabel  Label;    // Non-null only if needed
 			public int      Offset;
 			public int      EndOffset;
-			public OpCode   OpCode;
+			public ILCode   Code;
 			public object   Operand;
 			public int?     PopCount; // Null means pop all
 			public int      PushCount;
@@ -59,7 +57,7 @@ namespace Decompiler
 			public override string ToString()
 			{
 				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("{0}:{1} {2} {3}", this.Name, this.Label != null ? " *" : "", this.OpCode, this.Operand);
+				sb.AppendFormat("{0}:{1} {2} {3}", this.Name, this.Label != null ? " *" : "", this.Code.GetName(), this.Operand);
 				if (this.StackBefore != null) {
 					sb.Append(" StackBefore = {");
 					bool first = true;
@@ -95,6 +93,9 @@ namespace Decompiler
 		Dictionary<Instruction, ByteCode> instrToByteCode = new Dictionary<Instruction, ByteCode>();
 		Dictionary<ILVariable, bool> allowInline = new Dictionary<ILVariable, bool>();
 		
+		// Virtual instructions to load exception on stack
+		Dictionary<ExceptionHandler, ByteCode> ldexceptions = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
+		
 		public List<ILVariable> Variables;
 		
 		public List<ILNode> Build(MethodDefinition methodDef, bool optimize)
@@ -116,13 +117,13 @@ namespace Decompiler
 			// Create temporary structure for the stack analysis
 			List<ByteCode> body = new List<ByteCode>(methodDef.Body.Instructions.Count);
 			foreach(Instruction inst in methodDef.Body.Instructions) {
-				OpCode opCode  = inst.OpCode;
+				ILCode code  = (ILCode)inst.OpCode.Code;
 				object operand = inst.Operand;
-				MethodBodyRocks.ExpandMacro(ref opCode, ref operand, methodDef.Body);
+				ILCodeUtil.ExpandMacro(ref code, ref operand, methodDef.Body);
 				ByteCode byteCode = new ByteCode() {
 					Offset      = inst.Offset,
 					EndOffset   = inst.Next != null ? inst.Next.Offset : methodDef.Body.CodeSize,
-					OpCode      = opCode,
+					Code        = code,
 					Operand     = operand,
 					PopCount    = inst.GetPopCount(),
 					PushCount   = inst.GetPushCount()
@@ -149,7 +150,14 @@ namespace Decompiler
 					ByteCode handlerStart = instrToByteCode[ex.HandlerType == ExceptionHandlerType.Filter ? ex.FilterStart : ex.HandlerStart];
 					handlerStart.StackBefore = new List<StackSlot>();
 					if (ex.HandlerType == ExceptionHandlerType.Catch || ex.HandlerType == ExceptionHandlerType.Filter) {
-						handlerStart.StackBefore.Add(new StackSlot(null));
+						ByteCode ldexception = new ByteCode() {
+							Code = ILCode.Ldexception,
+							Operand = ex.CatchType,
+							PopCount = 0,
+							PushCount = 1
+						};
+						ldexceptions[ex] = ldexception;
+						handlerStart.StackBefore.Add(new StackSlot(ldexception));
 					}
 					agenda.Enqueue(handlerStart);
 					
@@ -173,26 +181,24 @@ namespace Decompiler
 				
 				// Apply the state to any successors
 				List<ByteCode> branchTargets = new List<ByteCode>();
-				if (byteCode.OpCode.CanFallThough()) {
+				if (byteCode.Code.CanFallThough()) {
 					branchTargets.Add(byteCode.Next);
 				}
-				if (byteCode.OpCode.IsBranch()) {
-					if (byteCode.Operand is Instruction[]) {
-						foreach(Instruction inst in (Instruction[])byteCode.Operand) {
-							ByteCode target = instrToByteCode[inst];
-							branchTargets.Add(target);
-							// The target of a branch must have label
-							if (target.Label == null) {
-								target.Label = new ILLabel() { Name = target.Name };
-							}
-						}
-					} else {
-						ByteCode target = instrToByteCode[(Instruction)byteCode.Operand];
+				if (byteCode.Operand is Instruction[]) {
+					foreach(Instruction inst in (Instruction[])byteCode.Operand) {
+						ByteCode target = instrToByteCode[inst];
 						branchTargets.Add(target);
 						// The target of a branch must have label
 						if (target.Label == null) {
 							target.Label = new ILLabel() { Name = target.Name };
 						}
+					}
+				} else if (byteCode.Operand is Instruction) {
+					ByteCode target = instrToByteCode[(Instruction)byteCode.Operand];
+					branchTargets.Add(target);
+					// The target of a branch must have label
+					if (target.Label == null) {
+						target.Label = new ILLabel() { Name = target.Name };
 					}
 				}
 				foreach (ByteCode branchTarget in branchTargets) {
@@ -235,13 +241,10 @@ namespace Decompiler
 					ILVariable tmpVar = new ILVariable() { Name = string.Format("arg_{0:X2}_{1}", byteCode.Offset, argIdx), IsGenerated = true };
 					arg.LoadFrom = tmpVar;
 					foreach(ByteCode pushedBy in arg.PushedBy) {
-						// TODO: Handle exception variables
-						if (pushedBy != null) {
-							if (pushedBy.StoreTo == null) {
-								pushedBy.StoreTo = new List<ILVariable>(1);
-							}
-							pushedBy.StoreTo.Add(tmpVar);
+						if (pushedBy.StoreTo == null) {
+							pushedBy.StoreTo = new List<ILVariable>(1);
 						}
+						pushedBy.StoreTo.Add(tmpVar);
 					}
 					if (arg.PushedBy.Count == 1) {
 						allowInline[tmpVar] = true;
@@ -255,15 +258,20 @@ namespace Decompiler
 			int[] numReads  = new int[Variables.Count];
 			int[] numWrites = new int[Variables.Count];
 			foreach(ByteCode byteCode in body) {
-				if (byteCode.OpCode == OpCodes.Ldloc) {
+				if (byteCode.Code == ILCode.Ldloc) {
 					int index = ((VariableDefinition)byteCode.Operand).Index;
 					byteCode.Operand = Variables[index];
 					numReads[index]++;
-				}
-				if (byteCode.OpCode == OpCodes.Stloc) {
+				} else if (byteCode.Code == ILCode.Stloc) {
 					int index = ((VariableDefinition)byteCode.Operand).Index;
 					byteCode.Operand = Variables[index];
 					numWrites[index]++;
+				} else if (byteCode.Code == ILCode.Ldloca) {
+					int index = ((VariableDefinition)byteCode.Operand).Index;
+					byteCode.Operand = Variables[index];
+					// ldloca leads to an unknown numbers of reads/writes, so ensure we don't inline the variable
+					numReads[index] += 2;
+					numWrites[index] += 2;
 				}
 			}
 			
@@ -333,12 +341,38 @@ namespace Decompiler
 					ehs.ExceptWith(nestedEHs);
 					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIndex, count), nestedEHs);
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
-						tryCatchBlock.CatchBlocks.Add(new ILTryCatchBlock.CatchBlock() {
+						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
 							ExceptionType = eh.CatchType,
 							Body = handlerAst
-						});
+						};
+						// Handle the automatically pushed exception on the stack
+						ByteCode ldexception = ldexceptions[eh];
+						if (ldexception.StoreTo.Count == 0) {
+							throw new Exception("Exception should be consumed by something");
+						} else if (ldexception.StoreTo.Count == 1) {
+							ILExpression first = catchBlock.Body[0] as ILExpression;
+							if (first != null &&
+							    first.Code == ILCode.Pop &&
+							    first.Arguments[0].Code == ILCode.Ldloc &&
+							    first.Arguments[0].Operand == ldexception.StoreTo[0])
+							{
+								// The exception is just poped - optimize it all away;
+								catchBlock.ExceptionVariable = null;
+								catchBlock.Body.RemoveAt(0);
+							} else {
+								catchBlock.ExceptionVariable = ldexception.StoreTo[0];
+							}
+						} else {
+							ILVariable exTemp = new ILVariable() { Name = "ex_" + eh.HandlerStart.Offset.ToString("X2"), IsGenerated = true };
+							catchBlock.ExceptionVariable = exTemp;
+							foreach(ILVariable storeTo in ldexception.StoreTo) {
+								catchBlock.Body.Insert(0, new ILExpression(ILCode.Stloc, storeTo, new ILExpression(ILCode.Ldloc, exTemp)));
+							}
+						}
+						tryCatchBlock.CatchBlocks.Add(catchBlock);
 					} else if (eh.HandlerType == ExceptionHandlerType.Finally) {
 						tryCatchBlock.FinallyBlock = new ILBlock(handlerAst);
+						// TODO: ldexception
 					} else {
 						// TODO
 					}
@@ -361,12 +395,7 @@ namespace Decompiler
 			
 			// Convert stack-based IL code to ILAst tree
 			foreach(ByteCode byteCode in body) {
-				OpCode opCode  = byteCode.OpCode;
-				object operand = byteCode.Operand;
-				
-				MethodBodyRocks.ExpandMacro(ref opCode, ref operand, methodDef.Body);
-				
-				ILExpression expr = new ILExpression(opCode, operand);
+				ILExpression expr = new ILExpression(byteCode.Code, byteCode.Operand);
 				expr.ILRanges.Add(new ILRange() { From = byteCode.Offset, To = byteCode.EndOffset });
 				
 				// Label for this instruction
@@ -378,25 +407,19 @@ namespace Decompiler
 				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Count;
 				for (int i = byteCode.StackBefore.Count - popCount; i < byteCode.StackBefore.Count; i++) {
 					StackSlot slot = byteCode.StackBefore[i];
-					if (slot.PushedBy != null) {
-						ILExpression ldExpr = new ILExpression(OpCodes.Ldloc, slot.LoadFrom);
-						expr.Arguments.Add(ldExpr);
-					} else {
-						ILExpression ldExpr = new ILExpression(OpCodes.Ldloc, new ILVariable() { Name = "ex", IsGenerated = true });
-						expr.Arguments.Add(ldExpr);
-					}
+					expr.Arguments.Add(new ILExpression(ILCode.Ldloc, slot.LoadFrom));
 				}
 			
 				// Store the result to temporary variable(s) if needed
 				if (byteCode.StoreTo == null || byteCode.StoreTo.Count == 0) {
 					ast.Add(expr);
 				} else if (byteCode.StoreTo.Count == 1) {
-					ast.Add(new ILExpression(OpCodes.Stloc, byteCode.StoreTo[0], expr));
+					ast.Add(new ILExpression(ILCode.Stloc, byteCode.StoreTo[0], expr));
 				} else {
 					ILVariable tmpVar = new ILVariable() { Name = "expr_" + byteCode.Offset.ToString("X2"), IsGenerated = true };
-					ast.Add(new ILExpression(OpCodes.Stloc, tmpVar, expr));
+					ast.Add(new ILExpression(ILCode.Stloc, tmpVar, expr));
 					foreach(ILVariable storeTo in byteCode.StoreTo) {
-						ast.Add(new ILExpression(OpCodes.Stloc, storeTo, new ILExpression(OpCodes.Ldloc, tmpVar)));
+						ast.Add(new ILExpression(ILCode.Stloc, storeTo, new ILExpression(ILCode.Ldloc, tmpVar)));
 					}
 				}
 			}
@@ -408,10 +431,10 @@ namespace Decompiler
 				ILExpression currExpr = ast[i] as ILExpression;
 				ILExpression nextExpr = ast[i + 1] as ILExpression;
 				
-				if (currExpr != null && nextExpr != null && currExpr.OpCode.Code == Code.Stloc) {
+				if (currExpr != null && nextExpr != null && currExpr.Code == ILCode.Stloc) {
 					
 					// If the next expression is generated stloc, look inside 
-					if (nextExpr.OpCode.Code == Code.Stloc && ((ILVariable)nextExpr.Operand).IsGenerated) {
+					if (nextExpr.Code == ILCode.Stloc && ((ILVariable)nextExpr.Operand).IsGenerated) {
 						nextExpr = nextExpr.Arguments[0];
 					}
 					
@@ -421,7 +444,7 @@ namespace Decompiler
 						
 						// We are moving the expression evaluation past the other aguments.
 						// It is ok to pass ldloc because the expression can not contain stloc and thus the ldcoc will still return the same value
-						if (arg.OpCode.Code == Code.Ldloc) {
+						if (arg.Code == ILCode.Ldloc) {
 							bool canInline;
 							allowInline.TryGetValue((ILVariable)arg.Operand, out canInline);
 							if (arg.Operand == currExpr.Operand && canInline) {
@@ -441,6 +464,19 @@ namespace Decompiler
 			}
 			
 			return ast;
+		}
+	}
+	
+	public static class ILAstBuilderExtensionMethods
+	{
+		public static List<T> CutRange<T>(this List<T> list, int start, int count)
+		{
+			List<T> ret = new List<T>(count);
+			for (int i = 0; i < count; i++) {
+				ret.Add(list[start + i]);
+			}
+			list.RemoveRange(start, count);
+			return ret;
 		}
 	}
 }

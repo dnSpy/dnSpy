@@ -1,4 +1,4 @@
-// 
+﻿// 
 // MethodDeclaration.cs
 //  
 // Author:
@@ -31,27 +31,24 @@ namespace ICSharpCode.NRefactory.CSharp
 {
 	public class MethodDeclaration : MemberDeclaration
 	{
-		public IEnumerable<TypeParameterDeclaration> TypeParameters {
+		public AstNodeCollection<TypeParameterDeclaration> TypeParameters {
 			get { return GetChildrenByRole (Roles.TypeParameter); }
-			set { SetChildrenByRole (Roles.TypeParameter, value); }
 		}
 		
 		public CSharpTokenNode LParToken {
 			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public IEnumerable<ParameterDeclaration> Parameters { 
+		public AstNodeCollection<ParameterDeclaration> Parameters { 
 			get { return GetChildrenByRole (Roles.Parameter); }
-			set { SetChildrenByRole (Roles.Parameter, value); }
 		}
 		
 		public CSharpTokenNode RParToken {
 			get { return GetChildByRole (Roles.RPar); }
 		}
 		
-		public IEnumerable<Constraint> Constraints { 
+		public AstNodeCollection<Constraint> Constraints { 
 			get { return GetChildrenByRole (Roles.Constraint); }
-			set { SetChildrenByRole (Roles.Constraint, value); }
 		}
 		
 		public BlockStatement Body {

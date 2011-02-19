@@ -4,7 +4,6 @@ using System.Linq;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Decompiler.Rocks;
 
 namespace Decompiler.ControlFlow
 {
@@ -16,6 +15,7 @@ namespace Decompiler.ControlFlow
 		FlattenNestedMovableBlocks,
 		SimpleGotoRemoval,
 		RemoveDeadLabels,
+		TypeInference,
 		None
 	}
 	
@@ -23,7 +23,7 @@ namespace Decompiler.ControlFlow
 	{
 		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 		
-		public void Optimize(ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
+		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
 			if (abortBeforeStep == ILAstOptimizationStep.SplitToMovableBlocks) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
@@ -55,6 +55,8 @@ namespace Decompiler.ControlFlow
 			SimpleGotoRemoval(method);
 			if (abortBeforeStep == ILAstOptimizationStep.RemoveDeadLabels) return;
 			RemoveDeadLabels(method);
+			if (abortBeforeStep == ILAstOptimizationStep.TypeInference) return;
+			TypeAnalysis.Run(context, method);
 		}
 		
 		class ILMoveableBlock: ILBlock
@@ -73,7 +75,7 @@ namespace Decompiler.ControlFlow
 		{
 			// Remve no-ops
 			// TODO: Assign the no-op range to someting
-			block.Body = block.Body.Where(n => !(n is ILExpression && ((ILExpression)n).OpCode == OpCodes.Nop)).ToList();
+			block.Body = block.Body.Where(n => !(n is ILExpression && ((ILExpression)n).Code == ILCode.Nop)).ToList();
 			
 			List<ILNode> moveableBlocks = new List<ILNode>();
 			
@@ -93,8 +95,8 @@ namespace Decompiler.ControlFlow
 					if ((currNode is ILLabel && !(lastNode is ILLabel)) ||
 						lastNode is ILTryCatchBlock ||
 						currNode is ILTryCatchBlock ||
-					    (lastNode is ILExpression) && ((ILExpression)lastNode).OpCode.IsBranch() ||
-					    (currNode is ILExpression) && ((ILExpression)currNode).OpCode.IsBranch())
+					    (lastNode is ILExpression) && ((ILExpression)lastNode).IsBranch() ||
+					    (currNode is ILExpression) && ((ILExpression)currNode).IsBranch())
 					{
 						ILBlock lastBlock = moveableBlock;
 						moveableBlock = new ILMoveableBlock() { OriginalOrder = (nextBlockIndex++) };
@@ -102,9 +104,9 @@ namespace Decompiler.ControlFlow
 						
 						// Explicit branch from one block to other
 						// (unless the last expression was unconditional branch)
-						if (!(lastNode is ILExpression) || ((ILExpression)lastNode).OpCode.CanFallThough()) {
+						if (!(lastNode is ILExpression) || ((ILExpression)lastNode).Code.CanFallThough()) {
 							ILLabel blockLabel = new ILLabel() { Name = "Block_" + moveableBlock.OriginalOrder };
-							lastBlock.Body.Add(new ILExpression(OpCodes.Br, blockLabel));
+							lastBlock.Body.Add(new ILExpression(ILCode.Br, blockLabel));
 							moveableBlock.Body.Add(blockLabel);
 						}
 					}
@@ -463,7 +465,7 @@ namespace Decompiler.ControlFlow
 			if (block != null) {
 				List<ILNode> flatBody = new List<ILNode>();
 				if (block.EntryPoint != null) {
-					flatBody.Add(new ILExpression(OpCodes.Br, block.EntryPoint));
+					flatBody.Add(new ILExpression(ILCode.Br, block.EntryPoint));
 					block.EntryPoint = null;
 				}
 				foreach (ILNode child in block.Body) {
@@ -493,7 +495,7 @@ namespace Decompiler.ControlFlow
 				for (int i = 0; i < block.Body.Count; i++) {
 					ILExpression expr = block.Body[i] as ILExpression;
 					// Uncoditional branch
-					if (expr != null && (expr.OpCode == OpCodes.Br || expr.OpCode == OpCodes.Br_S)) {
+					if (expr != null && (expr.Code == ILCode.Br)) {
 						// Check that branch is followed by its label (allow multiple labels)
 						for (int j = i + 1; j < block.Body.Count; j++) {
 							ILLabel label = block.Body[j] as ILLabel;

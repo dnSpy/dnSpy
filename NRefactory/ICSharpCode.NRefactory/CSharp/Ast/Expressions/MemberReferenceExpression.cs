@@ -1,4 +1,4 @@
-// 
+﻿// 
 // MemberReferenceExpression.cs
 //
 // Author:
@@ -51,9 +51,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LChevron); }
 		}
 		
-		public IEnumerable<AstType> TypeArguments {
+		public AstNodeCollection<AstType> TypeArguments {
 			get { return GetChildrenByRole (Roles.TypeArgument); }
-			set { SetChildrenByRole (Roles.TypeArgument, value); }
 		}
 		
 		public CSharpTokenNode RChevronToken {

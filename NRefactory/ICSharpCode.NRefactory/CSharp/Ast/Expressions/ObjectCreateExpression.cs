@@ -1,4 +1,4 @@
-// 
+﻿// 
 // ObjectCreateExpression.cs
 //  
 // Author:
@@ -48,9 +48,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public IEnumerable<Expression> Arguments {
+		public AstNodeCollection<Expression> Arguments {
 			get { return GetChildrenByRole (Roles.Argument); }
-			set { SetChildrenByRole (Roles.Argument, value); }
 		}
 		
 		public CSharpTokenNode RParToken {

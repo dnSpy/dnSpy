@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
@@ -12,8 +13,16 @@ namespace Decompiler
 {
 	public class AstBuilder
 	{
+		DecompilerContext context = new DecompilerContext();
 		CompilationUnit astCompileUnit = new CompilationUnit();
 		Dictionary<string, NamespaceDeclaration> astNamespaces = new Dictionary<string, NamespaceDeclaration>();
+		
+		public AstBuilder(DecompilerContext context)
+		{
+			if (context == null)
+				throw new ArgumentNullException("context");
+			this.context = context;
+		}
 		
 		public void GenerateCode(ITextOutput output)
 		{
@@ -22,7 +31,7 @@ namespace Decompiler
 		
 		public void GenerateCode(ITextOutput output, Predicate<IAstVisitor<object, object>> transformAbortCondition)
 		{
-			Transforms.TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition);
+			Transforms.TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition, context);
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			
 			var outputFormatter = new TextOutputFormatter(output);
@@ -103,6 +112,7 @@ namespace Decompiler
 		public TypeDeclaration CreateType(TypeDefinition typeDef)
 		{
 			TypeDeclaration astType = new TypeDeclaration();
+			astType.AddAnnotation(typeDef);
 			astType.Modifiers = ConvertModifiers(typeDef);
 			astType.Name = typeDef.Name;
 			
@@ -138,7 +148,7 @@ namespace Decompiler
 				}
 			} else {
 				// Base type
-				if (typeDef.BaseType != null && !typeDef.IsValueType && typeDef.BaseType.FullName != Constants.Object) {
+				if (typeDef.BaseType != null && !typeDef.IsValueType && typeDef.BaseType.FullName != "System.Object") {
 					astType.AddChild(ConvertType(typeDef.BaseType), TypeDeclaration.BaseTypeRole);
 				}
 				foreach (var i in typeDef.Interfaces)
@@ -188,6 +198,13 @@ namespace Decompiler
 					.MakeArrayType((type as Mono.Cecil.ArrayType).Rank);
 			} else if (type is GenericInstanceType) {
 				GenericInstanceType gType = (GenericInstanceType)type;
+				if (gType.ElementType.Namespace == "System" && gType.ElementType.Name == "Nullable`1" && gType.GenericArguments.Count == 1) {
+					typeIndex++;
+					return new ComposedType {
+						BaseType = ConvertType(gType.GenericArguments[0], typeAttributes, ref typeIndex),
+						HasNullableSpecifier = true
+					};
+				}
 				AstType baseType = ConvertType(gType.ElementType, typeAttributes, ref typeIndex);
 				foreach (var typeArgument in gType.GenericArguments) {
 					typeIndex++;
@@ -407,12 +424,13 @@ namespace Decompiler
 		MethodDeclaration CreateMethod(MethodDefinition methodDef)
 		{
 			MethodDeclaration astMethod = new MethodDeclaration();
+			astMethod.AddAnnotation(methodDef);
 			astMethod.Name = methodDef.Name;
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
-			astMethod.Parameters = MakeParameters(methodDef.Parameters);
+			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 			if (!methodDef.DeclaringType.IsInterface) {
 				astMethod.Modifiers = ConvertModifiers(methodDef);
-				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef);
+				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			}
 			return astMethod;
 		}
@@ -420,31 +438,33 @@ namespace Decompiler
 		ConstructorDeclaration CreateConstructor(MethodDefinition methodDef)
 		{
 			ConstructorDeclaration astMethod = new ConstructorDeclaration();
+			astMethod.AddAnnotation(methodDef);
 			astMethod.Modifiers = ConvertModifiers(methodDef);
 			if (methodDef.IsStatic) {
 				// don't show visibility for static ctors
 				astMethod.Modifiers &= ~Modifiers.VisibilityMask;
 			}
-			astMethod.Parameters = MakeParameters(methodDef.Parameters);
-			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef);
+			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
+			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			return astMethod;
 		}
 
 		PropertyDeclaration CreateProperty(PropertyDefinition propDef)
 		{
 			PropertyDeclaration astProp = new PropertyDeclaration();
+			astProp.AddAnnotation(propDef);
 			astProp.Modifiers = ConvertModifiers(propDef.GetMethod ?? propDef.SetMethod);
 			astProp.Name = propDef.Name;
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			if (propDef.GetMethod != null) {
 				astProp.Getter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod)
-				};
+					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context)
+				}.WithAnnotation(propDef.GetMethod);
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod)
-				};
+					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context)
+				}.WithAnnotation(propDef.SetMethod);
 			}
 			return astProp;
 		}
@@ -452,18 +472,19 @@ namespace Decompiler
 		CustomEventDeclaration CreateEvent(EventDefinition eventDef)
 		{
 			CustomEventDeclaration astEvent = new CustomEventDeclaration();
+			astEvent.AddAnnotation(eventDef);
 			astEvent.Name = eventDef.Name;
 			astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 			astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
 			if (eventDef.AddMethod != null) {
 				astEvent.AddAccessor = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod)
-				};
+					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
+				}.WithAnnotation(eventDef.AddMethod);
 			}
 			if (eventDef.RemoveMethod != null) {
 				astEvent.RemoveAccessor = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod)
-				};
+					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, context)
+				}.WithAnnotation(eventDef.RemoveMethod);
 			}
 			return astEvent;
 		}
@@ -471,6 +492,7 @@ namespace Decompiler
 		FieldDeclaration CreateField(FieldDefinition fieldDef)
 		{
 			FieldDeclaration astField = new FieldDeclaration();
+			astField.AddAnnotation(fieldDef);
 			VariableInitializer initializer = new VariableInitializer(fieldDef.Name);
 			astField.AddChild(initializer, FieldDeclaration.Roles.Variable);
 			astField.ReturnType = ConvertType(fieldDef.FieldType, fieldDef);

@@ -79,7 +79,7 @@ namespace ICSharpCode.NRefactory.Ast
 			foreach(int index in indices) {
 				args.Add(new PrimitiveExpression(index));
 			}
-			indexerExpr.Arguments = args;
+			//indexerExpr.Arguments = args;
 			
 			DebugType staticType = expression.GetStaticType();
 			if (staticType != null && staticType.IsArray)
@@ -108,7 +108,10 @@ namespace ICSharpCode.NRefactory.Ast
 			
 			if (memberInfo is MethodInfo) {
 				var mre = new MemberReferenceExpression() { Target = target, MemberName = memberInfo.Name };
-				var ie = new InvocationExpression() { Target = mre, Arguments = AddExplicitTypes((MethodInfo)memberInfo, args) };
+				var ie = new InvocationExpression() { 
+					Target = mre/*, 
+					Arguments = AddExplicitTypes((MethodInfo)memberInfo, args) */
+				};
 				
 				return ie.SetStaticType(memberInfo.MemberType);
 			}
@@ -118,7 +121,12 @@ namespace ICSharpCode.NRefactory.Ast
 				if (args.Length > 0) {
 					if (memberInfo.Name != "Item")
 						throw new DebuggerException("Arguments expected only for the Item property");
-					return (new IndexerExpression() { Target = target, Arguments = AddExplicitTypes(propInfo.GetGetMethod() ?? propInfo.GetSetMethod(), args) }).SetStaticType(memberInfo.MemberType);
+					return (new IndexerExpression() { 
+					        	Target = target/*, 
+					        	Arguments = AddExplicitTypes(propInfo.GetGetMethod() ?? propInfo.GetSetMethod()
+					        	                             , args) */
+					        }
+					       ).SetStaticType(memberInfo.MemberType);
 				} else {
 					return (new MemberReferenceExpression() { Target = target, MemberName = memberInfo.Name }).SetStaticType(memberInfo.MemberType);
 				}
@@ -198,19 +206,19 @@ namespace ICSharpCode.NRefactory.Ast
 				var outterRef = type.DeclaringType.GetTypeReference();
 				var innerRef = new ComposedType() {
 					PointerRank = pointerNest,
-					ArraySpecifiers = arrayRanks.ConvertAll(r => new ArraySpecifier(r)),
-					BaseType = new MemberType() {
-						Target = outterRef, MemberName = name, TypeArguments = genTypeRefs }
+					//ArraySpecifiers = arrayRanks.ConvertAll(r => new ArraySpecifier(r)),
+//					BaseType = new MemberType() {
+//						Target = outterRef, MemberName = name, TypeArguments = genTypeRefs }
 				};
 				
 				return innerRef.SetStaticType((DebugType)type);
 			} else {
 				return (new ComposedType() {
 				        	PointerRank = pointerNest,
-				        	ArraySpecifiers = arrayRanks.ConvertAll(r => new ArraySpecifier(r)),
+				        	//ArraySpecifiers = arrayRanks.ConvertAll(r => new ArraySpecifier(r)),
 				        	BaseType = new SimpleType() {
 				        		Identifier = name,
-				        		TypeArguments = genTypeRefs }}).SetStaticType((DebugType)type);
+				        		/*TypeArguments = genTypeRefs*/ }}).SetStaticType((DebugType)type);
 			}
 		}
 		
@@ -223,13 +231,14 @@ namespace ICSharpCode.NRefactory.Ast
 		{
 			if (expr is IdentifierExpression) {
 				return new SimpleType() {
-					Identifier = ((IdentifierExpression)expr).Identifier,
-					TypeArguments = ((IdentifierExpression)expr).TypeArguments};
+					Identifier = ((IdentifierExpression)expr).Identifier/*,
+					TypeArguments = ((IdentifierExpression)expr).TypeArguments*/
+				};
 			} else if (expr is MemberReferenceExpression) {
 				var outter = NormalizeTypeReference(((MemberReferenceExpression)expr).Target);
 				return new MemberType() { Target = outter,
-					MemberName = ((MemberReferenceExpression)expr).MemberName,
-					TypeArguments = ((MemberReferenceExpression)expr).TypeArguments };
+					MemberName = ((MemberReferenceExpression)expr).MemberName/*,
+					TypeArguments = ((MemberReferenceExpression)expr).TypeArguments*/ };
 			} else if (expr is TypeReferenceExpression) {
 				return NormalizeTypeReference(((TypeReferenceExpression)expr).Type);
 			} else if (expr is ComposedType) { // Frist - it is also TypeReference
@@ -243,12 +252,12 @@ namespace ICSharpCode.NRefactory.Ast
 				var newRef = NormalizeTypeReference(typeRef.BaseType) as ComposedType;
 				foreach(string name in names) {
 					newRef = new ComposedType() {
-						BaseType = new SimpleType() { Identifier = name, TypeArguments = new List<AstType>() }
+						BaseType = new SimpleType() { Identifier = name/*, TypeArguments = new List<AstType>() */}
 					};
 				}
 				//(((MemberType)newRef).TypeArguments as List<AstType>).AddRange(typeRef.TypeArguments);
 				newRef.PointerRank = typeRef.PointerRank;
-				newRef.ArraySpecifiers = typeRef.ArraySpecifiers;
+				//newRef.ArraySpecifiers = typeRef.ArraySpecifiers;
 				return newRef;
 			}
 //			else if (expr is SimpleType) {
@@ -309,7 +318,7 @@ namespace ICSharpCode.NRefactory.Ast
 				//FIXME genTypeRefs = ((MemberType)typeRef).CombineToNormalTypeReference().TypeArguments as List<AstType>;
 			} else {
 				if (typeRef is SimpleType) {
-					genTypeRefs = ((SimpleType)typeRef).TypeArguments as List<AstType>;
+					//genTypeRefs = ((SimpleType)typeRef).TypeArguments as List<AstType>;
 				}
 			}
 			

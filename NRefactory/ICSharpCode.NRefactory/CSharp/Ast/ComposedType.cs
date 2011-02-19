@@ -67,9 +67,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public IEnumerable<ArraySpecifier> ArraySpecifiers {
+		public AstNodeCollection<ArraySpecifier> ArraySpecifiers {
 			get { return GetChildrenByRole (ArraySpecifierRole); }
-			set { SetChildrenByRole (ArraySpecifierRole, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)

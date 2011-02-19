@@ -1,4 +1,4 @@
-// 
+﻿// 
 // NamespaceDeclaration.cs
 //  
 // Author:
@@ -54,13 +54,12 @@ namespace ICSharpCode.NRefactory.CSharp
 				return builder.ToString ();
 			}
 			set {
-				SetChildrenByRole (Roles.Identifier, value.Split('.').Select(ident => new Identifier(ident, AstLocation.Empty)));
+				GetChildrenByRole(Roles.Identifier).ReplaceWith(value.Split('.').Select(ident => new Identifier(ident, AstLocation.Empty)));
 			}
 		}
 		
-		public IEnumerable<Identifier> Identifiers {
+		public AstNodeCollection<Identifier> Identifiers {
 			get { return GetChildrenByRole (Roles.Identifier); }
-			set { SetChildrenByRole (Roles.Identifier, value); }
 		}
 		
 		/// <summary>
@@ -79,9 +78,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LBrace); }
 		}
 		
-		public IEnumerable<AstNode> Members {
+		public AstNodeCollection<AstNode> Members {
 			get { return GetChildrenByRole(MemberRole); }
-			set { SetChildrenByRole(MemberRole, value); }
 		}
 		
 		public CSharpTokenNode RBraceToken {

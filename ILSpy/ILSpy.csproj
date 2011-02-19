@@ -85,6 +85,7 @@
     </Compile>
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
+    <Compile Include="BamlDecompiler.cs" />
     <Compile Include="Commands\RoutedUICommands.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="TreeNodes\NamespaceTreeNode.cs" />
     <Compile Include="TreeNodes\PropertyTreeNode.cs" />
     <Compile Include="TreeNodes\ReferenceFolderTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceListTreeNode.cs" />
     <Compile Include="TreeNodes\ThreadedTreeNode.cs" />
     <Compile Include="TreeNodes\TypeTreeNode.cs" />

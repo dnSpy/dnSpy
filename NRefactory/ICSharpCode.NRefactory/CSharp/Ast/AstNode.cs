@@ -1,4 +1,4 @@
-// 
+﻿// 
 // AstNode.cs
 //
 // Author:
@@ -164,16 +164,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			return role.NullObject;
 		}
 		
-		public IEnumerable<T> GetChildrenByRole<T>(Role<T> role) where T : AstNode
+		public AstNodeCollection<T> GetChildrenByRole<T>(Role<T> role) where T : AstNode
 		{
-			AstNode next;
-			for (AstNode cur = firstChild; cur != null; cur = next) {
-				// Remember next before yielding cur.
-				// This allows removing/replacing nodes while iterating through the list.
-				next = cur.nextSibling;
-				if (cur.role == role)
-					yield return (T)cur;
-			}
+			return new AstNodeCollection<T>(this, role);
 		}
 		
 		protected void SetChildByRole<T>(Role<T> role, T newChild) where T : AstNode
@@ -183,24 +176,6 @@ namespace ICSharpCode.NRefactory.CSharp
 				AddChild(newChild, role);
 			else
 				oldChild.ReplaceWith(newChild);
-		}
-		
-		protected void SetChildrenByRole<T>(Role<T> role, IEnumerable<T> newChildren) where T : AstNode
-		{
-			// Evaluate 'newChildren' first, since it might change when we remove the old children
-			// Example: SetChildren(role, GetChildrenByRole(role));
-			if (newChildren != null)
-				newChildren = newChildren.ToList();
-			
-			// remove old children
-			foreach (AstNode node in GetChildrenByRole(role))
-				node.Remove();
-			// add new children
-			if (newChildren != null) {
-				foreach (T node in newChildren) {
-					AddChild(node, role);
-				}
-			}
 		}
 		
 		public void AddChild<T>(T child, Role<T> role) where T : AstNode

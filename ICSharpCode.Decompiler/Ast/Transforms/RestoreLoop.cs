@@ -15,7 +15,7 @@ namespace Decompiler.Transforms.Ast
 				VariableDeclarationStatement varDeclr = forStatement.PrevSibling as VariableDeclarationStatement;
 				if (varDeclr != null) {
 					varDeclr.ReplaceWith(Statement.Null);
-					forStatement.Initializers = new Statement[] { varDeclr };
+					forStatement.Initializers.Add(varDeclr);
 				}
 			}
 			
@@ -63,7 +63,7 @@ namespace Decompiler.Transforms.Ast
 				if (lastStmt != null &&
 				    (lastStmt.Expression is AssignmentExpression || lastStmt.Expression is UnaryOperatorExpression)) {
 					lastStmt.Remove();
-					forStatement.Iterators = new Statement[] { lastStmt };
+					forStatement.Iterators.Add(lastStmt);
 				}
 			}
 			

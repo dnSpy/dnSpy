@@ -1,4 +1,4 @@
-// 
+﻿// 
 // VariableDeclarationStatement.cs
 //  
 // Author:
@@ -33,6 +33,16 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		public static readonly Role<CSharpModifierToken> ModifierRole = AttributedNode.ModifierRole;
 		
+		public VariableDeclarationStatement()
+		{
+		}
+		
+		public VariableDeclarationStatement(AstType type, string name, Expression initializer = null)
+		{
+			this.Type = type;
+			this.Variables.Add(new VariableInitializer(name, initializer));
+		}
+		
 		public Modifiers Modifiers {
 			get { return AttributedNode.GetModifiers(this); }
 			set { AttributedNode.SetModifiers(this, value); }
@@ -43,9 +53,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Type, value); }
 		}
 		
-		public IEnumerable<VariableInitializer> Variables {
+		public AstNodeCollection<VariableInitializer> Variables {
 			get { return GetChildrenByRole (Roles.Variable); }
-			set { SetChildrenByRole (Roles.Variable, value); }
 		}
 		
 		public CSharpTokenNode SemicolonToken {

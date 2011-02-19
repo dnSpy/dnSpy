@@ -1,4 +1,4 @@
-// 
+﻿// 
 // ArrayInitializerExpression.cs
 //
 // Author:
@@ -55,9 +55,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LBrace); }
 		}
 		
-		public IEnumerable<Expression> Elements {
+		public AstNodeCollection<Expression> Elements {
 			get { return GetChildrenByRole(Roles.Expression); }
-			set { SetChildrenByRole(Roles.Expression, value); }
 		}
 		
 		public CSharpTokenNode RBraceToken {

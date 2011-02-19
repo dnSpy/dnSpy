@@ -13,3 +13,4 @@ Included open-source libraries:
 ILSpy Contributors:
 	Daniel Grunwald
 	David Srbecky
+	Siegfried Pammer

@@ -66,7 +66,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public IndexerExpression Indexer(IEnumerable<Expression> arguments)
 		{
-			return new IndexerExpression { Target = this, Arguments = arguments };
+			IndexerExpression expr = new IndexerExpression();
+			expr.Target = this;
+			expr.Arguments.AddRange(arguments);
+			return expr;
 		}
 		
 		/// <summary>
@@ -74,7 +77,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public IndexerExpression Indexer(params Expression[] arguments)
 		{
-			return new IndexerExpression { Target = this, Arguments = arguments };
+			IndexerExpression expr = new IndexerExpression();
+			expr.Target = this;
+			expr.Arguments.AddRange(arguments);
+			return expr;
 		}
 		
 		/// <summary>
@@ -98,14 +104,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
 		{
-			return new InvocationExpression {
-				Target = new MemberReferenceExpression {
-					Target = this,
-					MemberName = methodName,
-					TypeArguments = typeArguments
-				},
-				Arguments = arguments
-			};
+			InvocationExpression ie = new InvocationExpression();
+			MemberReferenceExpression mre = new MemberReferenceExpression();
+			mre.Target = this;
+			mre.MemberName = methodName;
+			mre.TypeArguments.AddRange(typeArguments);
+			ie.Target = mre;
+			ie.Arguments.AddRange(arguments);
+			return ie;
 		}
 		
 		/// <summary>
@@ -113,10 +119,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public InvocationExpression Invoke(IEnumerable<Expression> arguments)
 		{
-			return new InvocationExpression {
-				Target = this,
-				Arguments = arguments
-			};
+			InvocationExpression ie = new InvocationExpression();
+			ie.Target = this;
+			ie.Arguments.AddRange(arguments);
+			return ie;
 		}
 		
 		/// <summary>
@@ -124,7 +130,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public InvocationExpression Invoke(params Expression[] arguments)
 		{
-			return Invoke(arguments.AsEnumerable());
+			InvocationExpression ie = new InvocationExpression();
+			ie.Target = this;
+			ie.Arguments.AddRange(arguments);
+			return ie;
 		}
 		
 		public CastExpression CastTo(AstType type)
