@@ -45,23 +45,6 @@ namespace Decompiler
 			}
 		}
 		
-		static readonly Dictionary<string, string> typeNameToVariableNameDict = new Dictionary<string, string> {
-			{ "System.Boolean", "flag" },
-			{ "System.Byte", "b" },
-			{ "System.SByte", "b" },
-			{ "System.Int16", "num" },
-			{ "System.Int32", "num" },
-			{ "System.Int64", "num" },
-			{ "System.UInt16", "num" },
-			{ "System.UInt32", "num" },
-			{ "System.UInt64", "num" },
-			{ "System.Single", "num" },
-			{ "System.Double", "num" },
-			{ "System.Decimal", "num" },
-			{ "System.String", "text" },
-			{ "System.Object", "obj" },
-		};
-		
 		public BlockStatement CreateMethodBody()
 		{
 			if (methodDef.Body == null) return null;
@@ -76,45 +59,7 @@ namespace Decompiler
 			bodyGraph.Optimize(context, ilMethod);
 			context.CancellationToken.ThrowIfCancellationRequested();
 			
-			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
-			Dictionary<string, int> typeNames = new Dictionary<string, int>();
-			foreach(ILVariable varDef in astBuilder.Variables) {
-				if (varDef.Type.FullName == "System.Int32" && intNames.Count > 0) {
-					varDef.Name = intNames[0];
-					intNames.RemoveAt(0);
-				} else {
-					string name;
-					if (varDef.Type.IsArray) {
-						name = "array";
-					} else if (!typeNameToVariableNameDict.TryGetValue(varDef.Type.FullName, out name)) {
-						name = varDef.Type.Name;
-						// remove the 'I' for interfaces
-						if (name.Length >= 3 && name[0] == 'I' && char.IsUpper(name[1]) && char.IsLower(name[2]))
-							name = name.Substring(1);
-						// remove the backtick (generics)
-						int pos = name.IndexOf('`');
-						if (pos >= 0)
-							name = name.Substring(0, pos);
-						if (name.Length == 0)
-							name = "obj";
-						else
-							name = char.ToLower(name[0]) + name.Substring(1);
-					}
-					if (!typeNames.ContainsKey(name)) {
-						typeNames.Add(name, 0);
-					}
-					int count = ++(typeNames[name]);
-					if (count > 1) {
-						name += count.ToString();
-					}
-					varDef.Name = name;
-				}
-				
-//				Ast.VariableDeclaration astVar = new Ast.VariableDeclaration(varDef.Name);
-//				Ast.LocalVariableDeclaration astLocalVar = new Ast.LocalVariableDeclaration(astVar);
-//				astLocalVar.TypeReference = new Ast.TypeReference(varDef.VariableType.FullName);
-//				astBlock.Children.Add(astLocalVar);
-			}
+			NameVariables.AssignNamesToVariables(methodDef.Parameters.Select(p => p.Name), astBuilder.Variables, ilMethod);
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
 			Ast.BlockStatement astBlock = TransformBlock(ilMethod);

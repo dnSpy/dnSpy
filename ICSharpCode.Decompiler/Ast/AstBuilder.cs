@@ -198,6 +198,13 @@ namespace Decompiler
 					.MakeArrayType((type as Mono.Cecil.ArrayType).Rank);
 			} else if (type is GenericInstanceType) {
 				GenericInstanceType gType = (GenericInstanceType)type;
+				if (gType.ElementType.Namespace == "System" && gType.ElementType.Name == "Nullable`1" && gType.GenericArguments.Count == 1) {
+					typeIndex++;
+					return new ComposedType {
+						BaseType = ConvertType(gType.GenericArguments[0], typeAttributes, ref typeIndex),
+						HasNullableSpecifier = true
+					};
+				}
 				AstType baseType = ConvertType(gType.ElementType, typeAttributes, ref typeIndex);
 				foreach (var typeArgument in gType.GenericArguments) {
 					typeIndex++;
