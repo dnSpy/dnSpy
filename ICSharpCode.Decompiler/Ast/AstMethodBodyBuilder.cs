@@ -8,7 +8,6 @@ using ICSharpCode.NRefactory.CSharp;
 using Cecil = Mono.Cecil;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Cecil.Rocks;
 using Decompiler.ControlFlow;
 
 namespace Decompiler
@@ -80,7 +79,7 @@ namespace Decompiler
 			List<string> intNames = new List<string>(new string[] {"i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"});
 			Dictionary<string, int> typeNames = new Dictionary<string, int>();
 			foreach(ILVariable varDef in astBuilder.Variables) {
-				if (varDef.Type.FullName == Constants.Int32 && intNames.Count > 0) {
+				if (varDef.Type.FullName == "System.Int32" && intNames.Count > 0) {
 					varDef.Name = intNames[0];
 					intNames.RemoveAt(0);
 				} else {
@@ -243,7 +242,7 @@ namespace Decompiler
 			Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
 			TypeReference arg1Type = args.Count >= 1 ? expr.Arguments[0].InferredType : null;
-			switch(expr.OpCode.Code) {
+			switch((Code)expr.Code) {
 				case Code.Brfalse:
 					if (arg1Type == typeSystem.Boolean)
 						return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
@@ -328,7 +327,7 @@ namespace Decompiler
 				if (byteCode.Operand != null) {
 					args.Insert(0, new IdentifierExpression(FormatByteCodeOperand(byteCode.Operand)));
 				}
-				return new IdentifierExpression(byteCode.OpCode.Name).Invoke(args);
+				return new IdentifierExpression(byteCode.Code.GetName()).Invoke(args);
 			}
 		}
 		
@@ -361,7 +360,7 @@ namespace Decompiler
 		{
 			// throw new NotImplementedException();
 			
-			OpCode opCode = byteCode.OpCode;
+			ILCode opCode = byteCode.Code;
 			object operand = byteCode.Operand;
 			AstType operandAsTypeRef = AstBuilder.ConvertType(operand as Cecil.TypeReference);
 			ILExpression operandAsByteCode = operand as ILExpression;
@@ -375,7 +374,7 @@ namespace Decompiler
 				branchCommand.AddStatement(new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name));
 			}
 			
-			switch(opCode.Code) {
+			switch((Code)opCode) {
 					#region Arithmetic
 					case Code.Add:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
 					case Code.Add_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
@@ -655,7 +654,7 @@ namespace Decompiler
 					case Code.Refanytype: throw new NotImplementedException();
 					case Code.Refanyval: throw new NotImplementedException();
 					case Code.Ret: {
-						if (methodDef.ReturnType.FullName != Constants.Void) {
+						if (methodDef.ReturnType.FullName != "System.Void") {
 							arg1 = Convert(arg1, methodDef.ReturnType);
 							return new Ast.ReturnStatement { Expression = arg1 };
 						} else {

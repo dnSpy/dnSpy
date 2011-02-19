@@ -148,7 +148,7 @@ namespace Decompiler
 				}
 			} else {
 				// Base type
-				if (typeDef.BaseType != null && !typeDef.IsValueType && typeDef.BaseType.FullName != Constants.Object) {
+				if (typeDef.BaseType != null && !typeDef.IsValueType && typeDef.BaseType.FullName != "System.Object") {
 					astType.AddChild(ConvertType(typeDef.BaseType), TypeDeclaration.BaseTypeRole);
 				}
 				foreach (var i in typeDef.Interfaces)

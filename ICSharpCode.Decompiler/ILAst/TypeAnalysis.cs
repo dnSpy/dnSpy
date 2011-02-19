@@ -40,7 +40,7 @@ namespace Decompiler
 				ILExpression expr = child as ILExpression;
 				if (expr != null) {
 					ILVariable v = expr.Operand as ILVariable;
-					if (v != null && v.IsGenerated && v.Type == null && expr.OpCode == OpCodes.Stloc) {
+					if (v != null && v.IsGenerated && v.Type == null && expr.Code == ILCode.Stloc) {
 						// don't deal with this node or its children yet,
 						// wait for the expected type to be inferred first
 						storedToGeneratedVariables.Add(expr);
@@ -70,7 +70,7 @@ namespace Decompiler
 		
 		TypeReference DoInferTypeForExpression(ILExpression expr, TypeReference expectedType, bool forceInferChildren = false)
 		{
-			switch (expr.OpCode.Code) {
+			switch ((Code)expr.Code) {
 					#region Variable load/store
 				case Code.Stloc:
 					if (forceInferChildren)
@@ -387,7 +387,7 @@ namespace Decompiler
 				case Code.Dup:
 					return InferTypeForExpression(expr.Arguments.Single(), expectedType);
 				default:
-					Debug.WriteLine("Type Inference: Can't handle " + expr.OpCode.Name);
+					Debug.WriteLine("Type Inference: Can't handle " + expr.Code.GetName());
 					return null;
 			}
 		}

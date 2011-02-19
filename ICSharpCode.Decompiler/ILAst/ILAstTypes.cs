@@ -160,7 +160,7 @@ namespace Decompiler
 	
 	public class ILExpression : ILNode
 	{
-		public OpCode OpCode { get; set; }
+		public ILCode Code { get; set; }
 		public object Operand { get; set; }
 		public List<ILExpression> Arguments { get; set; }
 		// Mapping to the original instructions (useful for debugging)
@@ -168,12 +168,17 @@ namespace Decompiler
 		
 		public TypeReference InferredType { get; set; }
 		
-		public ILExpression(OpCode opCode, object operand, params ILExpression[] args)
+		public ILExpression(ILCode code, object operand, params ILExpression[] args)
 		{
-			this.OpCode = opCode;
+			this.Code = code;
 			this.Operand = operand;
 			this.Arguments = new List<ILExpression>(args);
 			this.ILRanges  = new List<ILRange>(1);
+		}
+		
+		public bool IsBranch()
+		{
+			return this.Operand is ILLabel || this.Operand is ILLabel[];
 		}
 		
 		public IEnumerable<ILLabel> GetBranchTargets()
@@ -216,12 +221,12 @@ namespace Decompiler
 		public override void WriteTo(ITextOutput output)
 		{
 			if (Operand is ILVariable && ((ILVariable)Operand).IsGenerated) {
-				if (OpCode == OpCodes.Stloc && this.InferredType == null) {
+				if (Code == ILCode.Stloc && this.InferredType == null) {
 					output.Write(((ILVariable)Operand).Name);
 					output.Write(" = ");
 					Arguments.First().WriteTo(output);
 					return;
-				} else if (OpCode == OpCodes.Ldloc) {
+				} else if (Code == ILCode.Ldloc) {
 					output.Write(((ILVariable)Operand).Name);
 					if (this.InferredType != null) {
 						output.Write(':');
@@ -231,7 +236,7 @@ namespace Decompiler
 				}
 			}
 			
-			output.Write(OpCode.Name);
+			output.Write(Code.GetName());
 			if (this.InferredType != null) {
 				output.Write(':');
 				this.InferredType.WriteTo(output, true, true);
