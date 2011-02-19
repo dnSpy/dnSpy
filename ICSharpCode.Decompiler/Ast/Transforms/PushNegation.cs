@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 
 namespace Decompiler.Transforms
 {
@@ -75,6 +76,18 @@ namespace Decompiler.Transforms
 			return base.VisitUnaryOperatorExpression(unary, data);
 		}
 		
+		readonly static AstNode asCastIsNullPattern = new BinaryOperatorExpression(
+			new AnyNode("expr").ToExpression().CastAs(new AnyNode("type").ToType()),
+			BinaryOperatorType.Equality,
+			new NullReferenceExpression()
+		);
+		
+		readonly static AstNode asCastIsNotNullPattern = new BinaryOperatorExpression(
+			new AnyNode("expr").ToExpression().CastAs(new AnyNode("type").ToType()),
+			BinaryOperatorType.InEquality,
+			new NullReferenceExpression()
+		);
+		
 		public override object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
 		{
 			BinaryOperatorType op = binaryOperatorExpression.Operator;
@@ -94,7 +107,21 @@ namespace Decompiler.Transforms
 				binaryOperatorExpression.ReplaceWith(uoe);
 				return uoe.AcceptVisitor(this, data);
 			} else {
-				return base.VisitBinaryOperatorExpression(binaryOperatorExpression, data);
+				bool negate = false;
+				Match m = asCastIsNotNullPattern.Match(binaryOperatorExpression);
+				if (m == null) {
+					m = asCastIsNullPattern.Match(binaryOperatorExpression);
+					negate = true;
+				}
+				if (m != null) {
+					Expression expr = ((Expression)m["expr"].Single()).Detach().IsType((AstType)m["type"].Single().Detach());
+					if (negate)
+						expr = new UnaryOperatorExpression(UnaryOperatorType.Not, expr);
+					binaryOperatorExpression.ReplaceWith(expr);
+					return expr.AcceptVisitor(this, data);
+				} else {
+					return base.VisitBinaryOperatorExpression(binaryOperatorExpression, data);
+				}
 			}
 		}
 		void IAstTransform.Run(AstNode node)

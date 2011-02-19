@@ -14,5 +14,11 @@ namespace Decompiler
 				node.AddAnnotation(annotation);
 			return node;
 		}
+		
+		public static T Detach<T>(this T node) where T : AstNode
+		{
+			node.Remove();
+			return node;
+		}
 	}
 }
