@@ -88,6 +88,7 @@ namespace Decompiler
 		public class CatchBlock: ILBlock
 		{
 			public TypeReference ExceptionType;
+			public ILVariable ExceptionVariable;
 			
 			public override void WriteTo(ITextOutput output)
 			{

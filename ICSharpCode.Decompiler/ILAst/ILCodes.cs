@@ -253,7 +253,8 @@ namespace Decompiler
 		Refanytype,
 		Readonly,
 		
-		// Virtual codes - defined for convenience	
+		// Virtual codes - defined for convenience
+		Ldexception,  // Operand holds the CatchType for catch handler, null for filter
 	}
 	
 	public static class ILCodeUtil

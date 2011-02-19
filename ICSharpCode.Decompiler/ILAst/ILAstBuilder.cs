@@ -93,6 +93,9 @@ namespace Decompiler
 		Dictionary<Instruction, ByteCode> instrToByteCode = new Dictionary<Instruction, ByteCode>();
 		Dictionary<ILVariable, bool> allowInline = new Dictionary<ILVariable, bool>();
 		
+		// Virtual instructions to load exception on stack
+		Dictionary<ExceptionHandler, ByteCode> ldexceptions = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
+		
 		public List<ILVariable> Variables;
 		
 		public List<ILNode> Build(MethodDefinition methodDef, bool optimize)
@@ -147,7 +150,14 @@ namespace Decompiler
 					ByteCode handlerStart = instrToByteCode[ex.HandlerType == ExceptionHandlerType.Filter ? ex.FilterStart : ex.HandlerStart];
 					handlerStart.StackBefore = new List<StackSlot>();
 					if (ex.HandlerType == ExceptionHandlerType.Catch || ex.HandlerType == ExceptionHandlerType.Filter) {
-						handlerStart.StackBefore.Add(new StackSlot(null));
+						ByteCode ldexception = new ByteCode() {
+							Code = ILCode.Ldexception,
+							Operand = ex.CatchType,
+							PopCount = 0,
+							PushCount = 1
+						};
+						ldexceptions[ex] = ldexception;
+						handlerStart.StackBefore.Add(new StackSlot(ldexception));
 					}
 					agenda.Enqueue(handlerStart);
 					
@@ -231,13 +241,10 @@ namespace Decompiler
 					ILVariable tmpVar = new ILVariable() { Name = string.Format("arg_{0:X2}_{1}", byteCode.Offset, argIdx), IsGenerated = true };
 					arg.LoadFrom = tmpVar;
 					foreach(ByteCode pushedBy in arg.PushedBy) {
-						// TODO: Handle exception variables
-						if (pushedBy != null) {
-							if (pushedBy.StoreTo == null) {
-								pushedBy.StoreTo = new List<ILVariable>(1);
-							}
-							pushedBy.StoreTo.Add(tmpVar);
+						if (pushedBy.StoreTo == null) {
+							pushedBy.StoreTo = new List<ILVariable>(1);
 						}
+						pushedBy.StoreTo.Add(tmpVar);
 					}
 					if (arg.PushedBy.Count == 1) {
 						allowInline[tmpVar] = true;
@@ -329,12 +336,38 @@ namespace Decompiler
 					ehs.ExceptWith(nestedEHs);
 					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIndex, count), nestedEHs);
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
-						tryCatchBlock.CatchBlocks.Add(new ILTryCatchBlock.CatchBlock() {
+						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
 							ExceptionType = eh.CatchType,
 							Body = handlerAst
-						});
+						};
+						// Handle the automatically pushed exception on the stack
+						ByteCode ldexception = ldexceptions[eh];
+						if (ldexception.StoreTo.Count == 0) {
+							throw new Exception("Exception should be consumed by something");
+						} else if (ldexception.StoreTo.Count == 1) {
+							ILExpression first = catchBlock.Body[0] as ILExpression;
+							if (first != null &&
+							    first.Code == ILCode.Pop &&
+							    first.Arguments[0].Code == ILCode.Ldloc &&
+							    first.Arguments[0].Operand == ldexception.StoreTo[0])
+							{
+								// The exception is just poped - optimize it all away;
+								catchBlock.ExceptionVariable = null;
+								catchBlock.Body.RemoveAt(0);
+							} else {
+								catchBlock.ExceptionVariable = ldexception.StoreTo[0];
+							}
+						} else {
+							ILVariable exTemp = new ILVariable() { Name = "ex_" + eh.HandlerStart.Offset.ToString("X2"), IsGenerated = true };
+							catchBlock.ExceptionVariable = exTemp;
+							foreach(ILVariable storeTo in ldexception.StoreTo) {
+								catchBlock.Body.Insert(0, new ILExpression(ILCode.Stloc, storeTo, new ILExpression(ILCode.Ldloc, exTemp)));
+							}
+						}
+						tryCatchBlock.CatchBlocks.Add(catchBlock);
 					} else if (eh.HandlerType == ExceptionHandlerType.Finally) {
 						tryCatchBlock.FinallyBlock = new ILBlock(handlerAst);
+						// TODO: ldexception
 					} else {
 						// TODO
 					}
@@ -369,13 +402,7 @@ namespace Decompiler
 				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Count;
 				for (int i = byteCode.StackBefore.Count - popCount; i < byteCode.StackBefore.Count; i++) {
 					StackSlot slot = byteCode.StackBefore[i];
-					if (slot.PushedBy != null) {
-						ILExpression ldExpr = new ILExpression(ILCode.Ldloc, slot.LoadFrom);
-						expr.Arguments.Add(ldExpr);
-					} else {
-						ILExpression ldExpr = new ILExpression(ILCode.Ldloc, new ILVariable() { Name = "ex", IsGenerated = true });
-						expr.Arguments.Add(ldExpr);
-					}
+					expr.Arguments.Add(new ILExpression(ILCode.Ldloc, slot.LoadFrom));
 				}
 			
 				// Store the result to temporary variable(s) if needed

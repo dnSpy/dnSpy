@@ -206,7 +206,7 @@ namespace Decompiler
 					tryCatchStmt.CatchClauses.Add(
 						new Ast.CatchClause {
 							Type = AstBuilder.ConvertType(catchClause.ExceptionType),
-							VariableName = "exception",
+							VariableName = catchClause.ExceptionVariable == null ? null : catchClause.ExceptionVariable.Name,
 							Body = TransformBlock(catchClause)
 						});
 				}
