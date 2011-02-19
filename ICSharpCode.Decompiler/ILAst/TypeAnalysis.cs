@@ -121,6 +121,7 @@ namespace Decompiler
 				case Code.Ldsfld:
 					return UnpackModifiers(((FieldReference)expr.Operand).FieldType);
 				case Code.Ldflda:
+				case Code.Ldsflda:
 					return new ByReferenceType(UnpackModifiers(((FieldReference)expr.Operand).FieldType));
 				case Code.Stfld:
 					if (forceInferChildren)
@@ -131,28 +132,76 @@ namespace Decompiler
 						InferTypeForExpression(expr.Arguments[0], ((FieldReference)expr.Operand).FieldType);
 					return null;
 					#endregion
+					#region Reference/Pointer instructions
+				case Code.Ldind_I:
+				case Code.Ldind_I1:
+				case Code.Ldind_I2:
+				case Code.Ldind_I4:
+				case Code.Ldind_I8:
+				case Code.Ldind_U1:
+				case Code.Ldind_U2:
+				case Code.Ldind_U4:
+				case Code.Ldind_R4:
+				case Code.Ldind_R8:
+				case Code.Ldind_Ref:
+					return UnpackPointer(InferTypeForExpression(expr.Arguments[0], null));
+				case Code.Stind_I1:
+				case Code.Stind_I2:
+				case Code.Stind_I4:
+				case Code.Stind_I8:
+				case Code.Stind_R4:
+				case Code.Stind_R8:
+				case Code.Stind_I:
+				case Code.Stind_Ref:
+					if (forceInferChildren) {
+						TypeReference elementType = UnpackPointer(InferTypeForExpression(expr.Arguments[0], null));
+						InferTypeForExpression(expr.Arguments[1], elementType);
+					}
+					return null;
+				case Code.Ldobj:
+					return (TypeReference)expr.Operand;
+				case Code.Stobj:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[1], (TypeReference)expr.Operand);
+					}
+					return null;
+				case Code.Initobj:
+					return null;
+				case Code.Localloc:
+					return typeSystem.IntPtr;
+					#endregion
 					#region Arithmetic instructions
+				case Code.Not: // bitwise complement
+				case Code.Neg:
+					return InferTypeForExpression(expr.Arguments.Single(), expectedType);
 				case Code.Add:
 				case Code.Sub:
 				case Code.Mul:
 				case Code.Or:
 				case Code.And:
+				case Code.Xor:
 					return InferArgumentsInBinaryOperator(expr, null);
 				case Code.Add_Ovf:
 				case Code.Sub_Ovf:
 				case Code.Mul_Ovf:
 				case Code.Div:
+				case Code.Rem:
 					return InferArgumentsInBinaryOperator(expr, true);
 				case Code.Add_Ovf_Un:
 				case Code.Sub_Ovf_Un:
 				case Code.Mul_Ovf_Un:
 				case Code.Div_Un:
+				case Code.Rem_Un:
 					return InferArgumentsInBinaryOperator(expr, false);
 				case Code.Shl:
 				case Code.Shr:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
-					return InferTypeForExpression(expr.Arguments[0], expectedType);
+					return InferTypeForExpression(expr.Arguments[0], typeSystem.Int32);
+				case Code.Shr_Un:
+					if (forceInferChildren)
+						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
+					return InferTypeForExpression(expr.Arguments[0], typeSystem.UInt32);
 					#endregion
 					#region Constant loading instructions
 				case Code.Ldnull:
@@ -160,11 +209,14 @@ namespace Decompiler
 				case Code.Ldstr:
 					return typeSystem.String;
 				case Code.Ldftn:
+				case Code.Ldvirtftn:
 					return typeSystem.IntPtr;
 				case Code.Ldc_I4:
 					return (IsIntegerOrEnum(expectedType) || expectedType == typeSystem.Boolean) ? expectedType : typeSystem.Int32;
 				case Code.Ldc_I8:
 					return (IsIntegerOrEnum(expectedType)) ? expectedType : typeSystem.Int64;
+				case Code.Ldc_R4:
+					return typeSystem.Single;
 				case Code.Ldc_R8:
 					return typeSystem.Double;
 				case Code.Ldtoken:
@@ -174,6 +226,8 @@ namespace Decompiler
 						return new TypeReference("System", "RuntimeFieldHandle", module, module, true);
 					else
 						return new TypeReference("System", "RuntimeMethodHandle", module, module, true);
+				case Code.Arglist:
+					return new TypeReference("System", "RuntimeArgumentHandle", module, module, true);
 					#endregion
 					#region Array instructions
 				case Code.Newarr:
@@ -199,6 +253,11 @@ namespace Decompiler
 						}
 						return arrayType != null ? arrayType.ElementType : null;
 					}
+				case Code.Ldelem_Any:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
+					}
+					return (TypeReference)expr.Operand;
 				case Code.Ldelema:
 					{
 						ArrayType arrayType = InferTypeForExpression(expr.Arguments[0], null) as ArrayType;
@@ -226,21 +285,41 @@ namespace Decompiler
 					#endregion
 					#region Conversion instructions
 				case Code.Conv_I1:
+				case Code.Conv_Ovf_I1:
 					return (GetInformationAmount(expectedType) == 8 && IsSigned(expectedType) == true) ? expectedType : typeSystem.SByte;
 				case Code.Conv_I2:
+				case Code.Conv_Ovf_I2:
 					return (GetInformationAmount(expectedType) == 16 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int16;
 				case Code.Conv_I4:
+				case Code.Conv_Ovf_I4:
 					return (GetInformationAmount(expectedType) == 32 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int32;
 				case Code.Conv_I8:
+				case Code.Conv_Ovf_I8:
 					return (GetInformationAmount(expectedType) == 64 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int64;
 				case Code.Conv_U1:
+				case Code.Conv_Ovf_U1:
 					return (GetInformationAmount(expectedType) == 8 && IsSigned(expectedType) == false) ? expectedType : typeSystem.Byte;
 				case Code.Conv_U2:
+				case Code.Conv_Ovf_U2:
 					return (GetInformationAmount(expectedType) == 16 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt16;
 				case Code.Conv_U4:
+				case Code.Conv_Ovf_U4:
 					return (GetInformationAmount(expectedType) == 32 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt32;
 				case Code.Conv_U8:
+				case Code.Conv_Ovf_U8:
 					return (GetInformationAmount(expectedType) == 64 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt64;
+				case Code.Conv_I:
+				case Code.Conv_Ovf_I:
+					return (GetInformationAmount(expectedType) == nativeInt && IsSigned(expectedType) == true) ? expectedType : typeSystem.IntPtr;
+				case Code.Conv_U:
+				case Code.Conv_Ovf_U:
+					return (GetInformationAmount(expectedType) == nativeInt && IsSigned(expectedType) == false) ? expectedType : typeSystem.UIntPtr;
+				case Code.Conv_R4:
+					return typeSystem.Single;
+				case Code.Conv_R8:
+					return typeSystem.Double;
+				case Code.Conv_R_Un:
+					return (expectedType == typeSystem.Single) ? typeSystem.Single : typeSystem.Double;
 				case Code.Castclass:
 				case Code.Isinst:
 				case Code.Unbox_Any:
@@ -313,6 +392,17 @@ namespace Decompiler
 			}
 		}
 		
+		TypeReference UnpackPointer(TypeReference pointerOrManagedReference)
+		{
+			ByReferenceType refType = pointerOrManagedReference as ByReferenceType;
+			if (refType != null)
+				return refType.ElementType;
+			PointerType ptrType = pointerOrManagedReference as PointerType;
+			if (ptrType != null)
+				return ptrType.ElementType;
+			return null;
+		}
+		
 		static TypeReference UnpackModifiers(TypeReference type)
 		{
 			while (type is OptionalModifierType || type is RequiredModifierType)
@@ -352,6 +442,8 @@ namespace Decompiler
 			return GetInformationAmount(typeSystem, type);
 		}
 		
+		const int nativeInt = 33; // treat native int as between int32 and int64
+		
 		static int GetInformationAmount(TypeSystem typeSystem, TypeReference type)
 		{
 			if (type == null)
@@ -373,7 +465,7 @@ namespace Decompiler
 			else if (type == typeSystem.Int32 || type == typeSystem.UInt32)
 				return 32;
 			else if (type == typeSystem.IntPtr || type == typeSystem.UIntPtr)
-				return 33; // treat native int as between int32 and int64
+				return nativeInt;
 			else if (type == typeSystem.Int64 || type == typeSystem.UInt64)
 				return 64;
 			return 100; // we consider structs/objects to have more information than any primitives
