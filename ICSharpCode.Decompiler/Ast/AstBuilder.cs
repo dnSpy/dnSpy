@@ -24,6 +24,17 @@ namespace Decompiler
 			this.context = context;
 		}
 		
+		public static bool MemberIsHidden(MemberReference member)
+		{
+			MethodDefinition method = member as MethodDefinition;
+			if (method != null && (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn))
+				return true;
+			TypeDefinition type = member as TypeDefinition;
+			if (type != null && type.DeclaringType != null && type.Name.StartsWith("<>c__DisplayClass", StringComparison.Ordinal) && type.IsCompilerGenerated())
+				return true;
+			return false;
+		}
+		
 		public void GenerateCode(ITextOutput output)
 		{
 			GenerateCode(output, null);
@@ -131,6 +142,8 @@ namespace Decompiler
 			
 			// Nested types
 			foreach(TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
+				if (MemberIsHidden(nestedTypeDef))
+					continue;
 				astType.AddChild(CreateType(nestedTypeDef), TypeDeclaration.MemberRole);
 			}
 			
@@ -415,7 +428,7 @@ namespace Decompiler
 			
 			// Add methods
 			foreach(MethodDefinition methodDef in typeDef.Methods) {
-				if (methodDef.IsSpecialName) continue;
+				if (methodDef.IsConstructor || MemberIsHidden(methodDef)) continue;
 				
 				astType.AddChild(CreateMethod(methodDef), TypeDeclaration.MemberRole);
 			}
