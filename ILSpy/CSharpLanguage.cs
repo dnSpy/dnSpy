@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy
 	{
 		string name = "C#";
 		bool showAllMembers;
-		Predicate<IAstVisitor<object, object>> transformAbortCondition = null;
+		Predicate<IAstTransform> transformAbortCondition = null;
 		
 		public CSharpLanguage()
 		{

@@ -11,7 +11,7 @@ namespace Decompiler.Transforms
 	/// Replaces method calls with the appropriate operator expressions.
 	/// Also simplifies "x = x op y" into "x op= y" where possible.
 	/// </summary>
-	public class ReplaceMethodCallsWithOperators : DepthFirstAstVisitor<object, object>
+	public class ReplaceMethodCallsWithOperators : DepthFirstAstVisitor<object, object>, IAstTransform
 	{
 		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
 		{
@@ -145,7 +145,7 @@ namespace Decompiler.Transforms
 			// First, combine "x = x op y" into "x op= y"
 			BinaryOperatorExpression binary = assignment.Right as BinaryOperatorExpression;
 			if (binary != null && assignment.Operator == AssignmentOperatorType.Assign) {
-				if (IsWithoutSideEffects(assignment.Left) && AstComparer.AreEqual(assignment.Left, binary.Left) == true) {
+				if (IsWithoutSideEffects(assignment.Left) && assignment.Left.Match(binary.Left) != null) {
 					switch (binary.Operator) {
 						case BinaryOperatorType.Add:
 							assignment.Operator = AssignmentOperatorType.Add;
@@ -190,6 +190,11 @@ namespace Decompiler.Transforms
 		bool IsWithoutSideEffects(Expression left)
 		{
 			return left is IdentifierExpression; // TODO
+		}
+		
+		void IAstTransform.Run(AstNode node)
+		{
+			node.AcceptVisitor(this, null);
 		}
 	}
 }

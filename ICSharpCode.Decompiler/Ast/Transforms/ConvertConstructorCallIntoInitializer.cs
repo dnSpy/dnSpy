@@ -8,7 +8,7 @@ using Mono.Cecil;
 
 namespace Decompiler.Transforms
 {
-	public class ConvertConstructorCallIntoInitializer : DepthFirstAstVisitor<object, object>
+	public class ConvertConstructorCallIntoInitializer : DepthFirstAstVisitor<object, object>, IAstTransform
 	{
 		public override object VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, object data)
 		{
@@ -50,6 +50,11 @@ namespace Decompiler.Transforms
 				ctors[0].Remove();
 			}
 			return null;
+		}
+		
+		void IAstTransform.Run(AstNode node)
+		{
+			node.AcceptVisitor(this, null);
 		}
 	}
 }

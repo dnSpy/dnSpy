@@ -66,6 +66,7 @@
     <Compile Include="Ast\Transforms\RemoveGotos.cs" />
     <Compile Include="Ast\Transforms\RestoreLoop.cs" />
     <Compile Include="Ast\Transforms\TransformationPipeline.cs" />
+    <Compile Include="Ast\Transforms\UsingStatementTransform.cs" />
     <Compile Include="CecilExtensions.cs" />
     <Compile Include="DecompilerException.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
@@ -113,6 +114,7 @@
     <Folder Include="Ast\Transforms" />
     <Folder Include="Disassembler" />
     <Folder Include="ILAst" />
+    <Folder Include="Mono.Cecil.Rocks" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <Target Name="BeforeBuild">

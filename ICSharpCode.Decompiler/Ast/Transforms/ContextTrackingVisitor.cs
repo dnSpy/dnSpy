@@ -11,7 +11,7 @@ namespace Decompiler.Transforms
 	/// <summary>
 	/// Base class for AST visitors that need the current type/method context info.
 	/// </summary>
-	public abstract class ContextTrackingVisitor : DepthFirstAstVisitor<object, object>
+	public abstract class ContextTrackingVisitor : DepthFirstAstVisitor<object, object>, IAstTransform
 	{
 		protected readonly DecompilerContext context;
 		
@@ -64,6 +64,11 @@ namespace Decompiler.Transforms
 			} finally {
 				context.CurrentMethod = null;
 			}
+		}
+		
+		void IAstTransform.Run(AstNode node)
+		{
+			node.AcceptVisitor(this, null);
 		}
 	}
 }

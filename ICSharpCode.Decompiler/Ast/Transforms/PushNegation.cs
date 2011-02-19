@@ -5,7 +5,7 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace Decompiler.Transforms
 {
-	public class PushNegation: DepthFirstAstVisitor<object, object>
+	public class PushNegation: DepthFirstAstVisitor<object, object>, IAstTransform
 	{
 		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unary, object data)
 		{
@@ -96,6 +96,10 @@ namespace Decompiler.Transforms
 			} else {
 				return base.VisitBinaryOperatorExpression(binaryOperatorExpression, data);
 			}
+		}
+		void IAstTransform.Run(AstNode node)
+		{
+			node.AcceptVisitor(this, null);
 		}
 	}
 }

@@ -7,19 +7,25 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace Decompiler.Transforms
 {
+	public interface IAstTransform
+	{
+		void Run(AstNode node);
+	}
+	
 	public static class TransformationPipeline
 	{
-		public static IAstVisitor<object, object>[] CreatePipeline(DecompilerContext context)
+		public static IAstTransform[] CreatePipeline(DecompilerContext context)
 		{
-			return new IAstVisitor<object, object>[] {
+			return new IAstTransform[] {
 				new PushNegation(),
 				new DelegateConstruction(context),
+				new UsingStatementTransform(),
 				new ConvertConstructorCallIntoInitializer(),
 				new ReplaceMethodCallsWithOperators(),
 			};
 		}
 		
-		public static void RunTransformationsUntil(AstNode node, Predicate<IAstVisitor<object, object>> abortCondition, DecompilerContext context)
+		public static void RunTransformationsUntil(AstNode node, Predicate<IAstTransform> abortCondition, DecompilerContext context)
 		{
 			if (node == null)
 				return;
@@ -37,11 +43,11 @@ namespace Decompiler.Transforms
 				}
 			}
 			
-			foreach (var visitor in CreatePipeline(context)) {
+			foreach (var transform in CreatePipeline(context)) {
 				context.CancellationToken.ThrowIfCancellationRequested();
-				if (abortCondition != null && abortCondition(visitor))
+				if (abortCondition != null && abortCondition(transform))
 					return;
-				node.AcceptVisitor(visitor, null);
+				transform.Run(node);
 			}
 		}
 	}

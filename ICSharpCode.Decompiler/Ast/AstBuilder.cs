@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Decompiler.Transforms;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
@@ -40,9 +41,9 @@ namespace Decompiler
 			GenerateCode(output, null);
 		}
 		
-		public void GenerateCode(ITextOutput output, Predicate<IAstVisitor<object, object>> transformAbortCondition)
+		public void GenerateCode(ITextOutput output, Predicate<IAstTransform> transformAbortCondition)
 		{
-			Transforms.TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition, context);
+			TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition, context);
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			
 			var outputFormatter = new TextOutputFormatter(output);
