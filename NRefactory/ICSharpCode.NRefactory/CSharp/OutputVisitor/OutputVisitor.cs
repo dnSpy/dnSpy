@@ -263,7 +263,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		void Semicolon()
 		{
-			if (!(currentContainerNode.Parent is ForStatement)) {
+			if (currentContainerNode.Role != ForStatement.InitializerRole && currentContainerNode.Role != ForStatement.IteratorRole && currentContainerNode.Role != UsingStatement.ResourceAcquisitionRole) {
 				WriteToken(";", AstNode.Roles.Semicolon);
 				NewLine();
 			}
