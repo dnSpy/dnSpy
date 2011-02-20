@@ -43,8 +43,12 @@ namespace Decompiler
 			if (expr != null) {
 				ILVariable v = expr.Operand as ILVariable;
 				if (v != null && v.IsGenerated && v.Type == null && expr.Code == ILCode.Stloc && HasSingleLoad(v)) {
-					// don't deal with this node or its children yet,
-					// wait for the expected type to be inferred first
+					// Don't deal with this node or its children yet,
+					// wait for the expected type to be inferred first.
+					// This happens with the arg_... variables introduced by the ILAst - we skip inferring the whole statement,
+					// and first infer the statement that reads from the arg_... variable.
+					// The ldloc inference will write the expected type to the variable, and the next InferRemainingStores() pass
+					// will then infer this statement with the correct expected type.
 					storedToGeneratedVariables.Add(expr);
 					return;
 				}

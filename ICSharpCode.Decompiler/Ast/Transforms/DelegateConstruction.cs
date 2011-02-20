@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using Mono.Cecil;
 
 namespace Decompiler.Transforms
@@ -182,22 +183,22 @@ namespace Decompiler.Transforms
 				for (cur = next; cur != null; cur = next) {
 					next = cur.NextSibling;
 					
-					// Delete any following statements as long as they assign simple variables to the display class:
+					// Delete any following statements as long as they assign parameters to the display class:
 					// Test for the pattern:
 					// "variableName.MemberName = right;"
-					ExpressionStatement es = cur as ExpressionStatement;
-					if (es == null)
+					ExpressionStatement closureFieldAssignmentPattern = new ExpressionStatement(
+						new AssignmentExpression(
+							new NamedNode("left", new MemberReferenceExpression { Target = new IdentifierExpression(variable.Name) }).ToExpression(),
+							new AnyNode("right").ToExpression()
+						)
+					);
+					Match m = closureFieldAssignmentPattern.Match(cur);
+					if (m != null && IsParameter(m.Get<Expression>("right").Single())) {
+						dict[m.Get<MemberReferenceExpression>("left").Single().MemberName] = m.Get<Expression>("right").Single();
+						cur.Remove();
+					} else {
 						break;
-					AssignmentExpression ae = es.Expression as AssignmentExpression;
-					if (ae == null || ae.Operator != AssignmentOperatorType.Assign)
-						break;
-					MemberReferenceExpression left = ae.Left as MemberReferenceExpression;
-					if (left == null || !IsParameter(ae.Right))
-						break;
-					if (!(left.Target is IdentifierExpression) || (left.Target as IdentifierExpression).Identifier != variable.Name)
-						break;
-					dict[left.MemberName] = ae.Right;
-					es.Remove();
+					}
 				}
 				
 				// Now create variables for all fields of the display class (except for those that we already handled)
