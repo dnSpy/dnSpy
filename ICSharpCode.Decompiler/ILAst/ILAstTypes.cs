@@ -287,6 +287,11 @@ namespace Decompiler
 					method.DeclaringType.WriteTo(output, true, true);
 					output.Write("::");
 					output.WriteReference(method.Name, method);
+				} else if (Operand is FieldReference) {
+					FieldReference field = (FieldReference)Operand;
+					field.DeclaringType.WriteTo(output, true, true);
+					output.Write("::");
+					output.WriteReference(field.Name, field);
 				} else {
 					DisassemblerHelpers.WriteOperand(output, Operand);
 				}
