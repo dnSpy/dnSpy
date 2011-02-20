@@ -18,6 +18,7 @@
 
 using System;
 using System.Windows.Media;
+using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.Services;
 
@@ -35,8 +36,9 @@ namespace ILSpy.Debugger.Bookmarks
 		bool isHealthy = true;
 		bool isEnabled = true;
 		string tooltip;
-		
 		BreakpointAction action = BreakpointAction.Break;
+		
+		public DecompiledLanguages Laguage { get; private set; }
 		
 		public BreakpointAction Action {
 			get {
@@ -87,6 +89,7 @@ namespace ILSpy.Debugger.Bookmarks
 		{
 			this.action = action;
 			this.tooltip = language.ToString();
+			this.Laguage = language;
 		}
 		
 		public override ImageSource Image {

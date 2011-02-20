@@ -3,18 +3,11 @@
 
 using System;
 using System.Diagnostics;
-using ICSharpCode.NRefactory;
+using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.CSharp;
 
 namespace ILSpy.Debugger.Services
 {
-	public enum DecompiledLanguages
-	{
-		IL,
-		CSharp
-	}
-	
 	public interface IDebugger : IDisposable
 	{
 		/// <summary>

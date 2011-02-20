@@ -3,12 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
 using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.ToolTips;

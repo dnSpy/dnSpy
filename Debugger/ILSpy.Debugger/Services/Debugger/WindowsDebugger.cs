@@ -1,6 +1,7 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -9,6 +10,8 @@ using System.Windows.Media;
 
 using Debugger;
 using Debugger.Interop.CorPublish;
+using Decompiler;
+using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
@@ -494,22 +497,24 @@ namespace ILSpy.Debugger.Services
 		{
 			Breakpoint breakpoint = null;
 			
-			switch (Language) {
-				case DecompiledLanguages.IL:
-					uint token;
-					ILCodeMapping map = ILCodeMappings.GetInstructionByTypeAndLine(bookmark.TypeName, bookmark.LineNumber, out token);
+			var storage = CodeMappings.GetStorage(Language);
+			
+			if (Language == bookmark.Laguage) {
+				uint token;
+				SourceCodeMapping map =
+					storage.GetInstructionByTypeAndLine(
+						bookmark.TypeName, bookmark.LineNumber, out token);
+				
+				if (map != null) {
+					breakpoint = new ILBreakpoint(
+						debugger,
+						bookmark.LineNumber,
+						token,
+						map.ILInstructionOffset.From,
+						bookmark.IsEnabled);
 					
-					if (map != null) {
-						breakpoint = new ILBreakpoint(debugger, bookmark.LineNumber, token, map.ILInstruction.Offset , bookmark.IsEnabled);
-						debugger.Breakpoints.Add(breakpoint);
-					}
-					break;
-					
-				case DecompiledLanguages.CSharp:
-					break;
-					
-				default:
-					throw new NotImplementedException("Not implemented!");
+					debugger.Breakpoints.Add(breakpoint);
+				}
 			}
 			
 			if (breakpoint == null)
@@ -741,25 +746,15 @@ namespace ILSpy.Debugger.Services
 			DebuggerService.RemoveCurrentLineMarker();
 			
 			if (debuggedProcess != null && debuggedProcess.SelectedStackFrame != null) {
-				switch (Language) {
-					case DecompiledLanguages.IL:
-						// IL mapping
-						uint token = (uint)debuggedProcess.SelectedStackFrame.MethodInfo.MetadataToken;
-						int ilOffset = debuggedProcess.SelectedStackFrame.IP;
-						int line;
-						string typeName;
-						ILCodeMappings.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line);
-						if (typeName != null)
-							DebuggerService.JumpToCurrentLine(typeName, line, 0, line, 0);
-						break;
-						
-					case DecompiledLanguages.CSharp:
-						// FIXME CSharp mappings
-						break;
-						
-					default:
-						throw new NotImplementedException("The language is not supported!");
-				}
+				var storage = CodeMappings.GetStorage(Language);
+				
+				uint token = (uint)debuggedProcess.SelectedStackFrame.MethodInfo.MetadataToken;
+				int ilOffset = debuggedProcess.SelectedStackFrame.IP;
+				int line;
+				string typeName;
+				storage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line);
+				if (typeName != null)
+					DebuggerService.JumpToCurrentLine(typeName, line, 0, line, 0);
 			}
 		}
 		

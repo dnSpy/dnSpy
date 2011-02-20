@@ -20,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+
+using Decompiler;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil;
@@ -47,20 +49,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public void Disassemble(MethodBody body)
 		{
-			// create mappings
-			MethodMapping currentMethodMapping = null;
-			if (ILCodeMappings.ILSourceCodeMappings.ContainsKey(body.Method.DeclaringType.FullName)) {
-				var mapping = ILCodeMappings.ILSourceCodeMappings[body.Method.DeclaringType.FullName];
-				if (mapping.Find(map => (int)map.MetadataToken == body.Method.MetadataToken.ToInt32()) == null) {
-					currentMethodMapping = new MethodMapping() {
-						MetadataToken = (uint)body.Method.MetadataToken.ToInt32(),
-						TypeName = body.Method.DeclaringType.FullName,
-						MethodCodeMappings = new List<ILCodeMapping>()
-					};
-					mapping.Add(currentMethodMapping);
-				}
-			}
+			// create IL code mappings - used in debugger
+			MethodMapping methodMapping = body.Method.CreateCodeMapping(ILCodeMapping.SourceCodeMappings);
 			
+			// start writing IL code
 			MethodDefinition method = body.Method;
 			output.WriteLine("// Method begins at RVA 0x{0:x4}", method.RVA);
 			output.WriteLine("// Code size {0} (0x{0:x})", body.CodeSize);
@@ -88,14 +80,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			if (detectControlStructure && body.Instructions.Count > 0) {
 				Instruction inst = body.Instructions[0];
-				WriteStructureBody(new ILStructure(body), ref inst, currentMethodMapping);
+				WriteStructureBody(new ILStructure(body), ref inst, methodMapping);
 			} else {
 				foreach (var inst in method.Body.Instructions) {
 					// add IL code mappings
-					currentMethodMapping.MethodCodeMappings.Add(new ILCodeMapping() {
-					                                            	SourceCodeLine = output.CurrentLine,
-					                                            	ILInstruction = inst
-					                                            });
+					methodMapping.MethodCodeMappings.Add(
+						new SourceCodeMapping() {
+							SourceCodeLine = output.CurrentLine,
+					        ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Offset }
+						});
 					
 					inst.WriteTo(output);
 					output.WriteLine();
@@ -157,12 +150,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			int childIndex = 0;
 			while (inst != null && inst.Offset < s.EndOffset) {
-				// add IL code mappings
+				// add IL code mappings - used in debugger
 				if (currentMethodMapping != null) {
-					currentMethodMapping.MethodCodeMappings.Add(new ILCodeMapping() {
-					                                            	SourceCodeLine = output.CurrentLine,
-					                                            	ILInstruction = inst
-					                                            });
+					currentMethodMapping.MethodCodeMappings.Add(
+						new SourceCodeMapping() {
+							SourceCodeLine = output.CurrentLine,
+							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Offset }
+						});
 				}
 				
 				int offset = inst.Offset;
