@@ -21,19 +21,15 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
-using Mono.Cecil.Rocks;
 
 namespace ICSharpCode.ILSpy
 {
