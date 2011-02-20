@@ -103,6 +103,20 @@ namespace Decompiler
 		
 		TypeReference DoInferTypeForExpression(ILExpression expr, TypeReference expectedType, bool forceInferChildren = false)
 		{
+			switch (expr.Code) {
+				case ILCode.LogicNot:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Boolean);
+					}
+					return typeSystem.Boolean;
+				case ILCode.LogicAnd:
+				case ILCode.LogicOr:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
+						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
+					}
+					return typeSystem.Boolean;
+			}
 			switch ((Code)expr.Code) {
 					#region Variable load/store
 				case Code.Stloc:

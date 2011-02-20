@@ -76,6 +76,8 @@ namespace Decompiler
 		{
 			Ast.BlockStatement astBlock = new BlockStatement();
 			if (block != null) {
+				if (block.EntryGoto != null)
+					astBlock.AddStatement((Statement)TransformExpression(block.EntryGoto));
 				foreach(ILNode node in block.Body) {
 					astBlock.AddStatements(TransformNode(node));
 				}
@@ -104,24 +106,6 @@ namespace Decompiler
 				yield return new Ast.ForStatement {
 					EmbeddedStatement = TransformBlock(((ILLoop)node).ContentBlock)
 				};
-				/*
-			} else if (node is Branch) {
-				yield return new Ast.LabelStatement { Label = ((Branch)node).FirstBasicBlock.Label };
-				
-				Ast.BlockStatement trueBlock = new Ast.BlockStatement();
-				trueBlock.AddStatement(new Ast.GotoStatement(((Branch)node).TrueSuccessor.Label));
-				
-				Ast.BlockStatement falseBlock = new Ast.BlockStatement();
-				falseBlock.AddStatement(new Ast.GotoStatement(((Branch)node).FalseSuccessor.Label));
-				
-				Ast.IfElseStatement ifElseStmt = new Ast.IfElseStatement {
-					Condition = MakeBranchCondition((Branch)node),
-					TrueStatement = trueBlock,
-					FalseStatement = falseBlock
-				};
-				
-				yield return ifElseStmt;
-				 */
 			} else if (node is ILCondition) {
 				ILCondition conditionalNode = (ILCondition)node;
 				if (conditionalNode.FalseBlock.Body.Any()) {
@@ -148,6 +132,8 @@ namespace Decompiler
 					switchStmt.SwitchSections.Add(section);
 				}
 				yield return switchStmt;
+				if (ilSwitch.DefaultGoto != null)
+					yield return (Statement)TransformExpression(ilSwitch.DefaultGoto);
 			} else if (node is ILTryCatchBlock) {
 				ILTryCatchBlock tryCatchNode = ((ILTryCatchBlock)node);
 				var tryCatchStmt = new Ast.TryCatchStatement();
@@ -190,6 +176,23 @@ namespace Decompiler
 		
 		Ast.Expression MakeBranchCondition(ILExpression expr)
 		{
+			switch(expr.Code) {
+				case ILCode.LogicNot:
+					return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(expr.Arguments[0]));
+				case ILCode.LogicAnd:
+					return new Ast.BinaryOperatorExpression(
+						MakeBranchCondition(expr.Arguments[0]),
+						BinaryOperatorType.ConditionalAnd,
+						MakeBranchCondition(expr.Arguments[1])
+					);
+				case ILCode.LogicOr:
+					return new Ast.BinaryOperatorExpression(
+						MakeBranchCondition(expr.Arguments[0]),
+						BinaryOperatorType.ConditionalOr,
+						MakeBranchCondition(expr.Arguments[1])
+					);
+			}
+			
 			List<Ast.Expression> args = TransformExpressionArguments(expr);
 			Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
@@ -229,43 +232,9 @@ namespace Decompiler
 					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 				case Code.Bne_Un:
 					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
-					default: throw new Exception("Bad opcode");
+				default:
+					throw new Exception("Bad opcode");
 			}
-			/*
-			} else if (branch is ShortCircuitBranch) {
-				ShortCircuitBranch scBranch = (ShortCircuitBranch)branch;
-				switch(scBranch.Operator) {
-					case ShortCircuitOperator.LeftAndRight:
-						return new BinaryOperatorExpression(
-							MakeBranchCondition(scBranch.Left),
-							BinaryOperatorType.ConditionalAnd,
-							MakeBranchCondition(scBranch.Right)
-						);
-					case ShortCircuitOperator.LeftOrRight:
-						return new BinaryOperatorExpression(
-							MakeBranchCondition(scBranch.Left),
-							BinaryOperatorType.ConditionalOr,
-							MakeBranchCondition(scBranch.Right)
-						);
-					case ShortCircuitOperator.NotLeftAndRight:
-						return new BinaryOperatorExpression(
-							new UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(scBranch.Left)),
-							BinaryOperatorType.ConditionalAnd,
-							MakeBranchCondition(scBranch.Right)
-						);
-					case ShortCircuitOperator.NotLeftOrRight:
-						return new BinaryOperatorExpression(
-							new UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(scBranch.Left)),
-							BinaryOperatorType.ConditionalOr,
-							MakeBranchCondition(scBranch.Right)
-						);
-					default:
-						throw new Exception("Bad operator");
-				}
-			} else {
-				throw new Exception("Bad type");
-			}
-			 */
 		}
 		
 		AstNode TransformByteCode(ILExpression byteCode, List<Ast.Expression> args)
