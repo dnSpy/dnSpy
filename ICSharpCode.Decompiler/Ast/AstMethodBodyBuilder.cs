@@ -18,7 +18,7 @@ namespace Decompiler
 		MethodDefinition methodDef;
 		TypeSystem typeSystem;
 		DecompilerContext context;
-		HashSet<ILVariable> definedLocalVars = new HashSet<ILVariable>();
+		HashSet<ILVariable> localVariablesToDefine = new HashSet<ILVariable>(); // local variables that are missing a definition
 		
 		public static BlockStatement CreateMethodBody(MethodDefinition methodDef, DecompilerContext context)
 		{
@@ -65,6 +65,10 @@ namespace Decompiler
 			context.CancellationToken.ThrowIfCancellationRequested();
 			Ast.BlockStatement astBlock = TransformBlock(ilMethod);
 			CommentStatement.ReplaceAll(astBlock); // convert CommentStatements to Comments
+			foreach (ILVariable v in localVariablesToDefine) {
+				DeclareVariableInSmallestScope.DeclareVariable(astBlock, AstBuilder.ConvertType(v.Type), v.Name);
+			}
+			
 			return astBlock;
 		}
 		
@@ -607,19 +611,14 @@ namespace Decompiler
 					}
 					case Code.Rethrow: return new Ast.ThrowStatement();
 					case Code.Sizeof: return new Ast.SizeOfExpression { Type = AstBuilder.ConvertType(operand as TypeReference) };
-					case Code.Starg: 
-						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand), arg1);
+				case Code.Starg:
+					return new Ast.AssignmentExpression(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand), arg1);
 					case Code.Stloc: {
 						ILVariable locVar = (ILVariable)operand;
-						if (!definedLocalVars.Contains(locVar)) {
-							definedLocalVars.Add(locVar);
-							return new Ast.VariableDeclarationStatement(
-								locVar.Type != null ? AstBuilder.ConvertType(locVar.Type) : new Ast.PrimitiveType("var"),
-								locVar.Name,
-								arg1);
-						} else {
-							return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name).WithAnnotation(locVar), arg1);
+						if (!localVariablesToDefine.Contains(locVar)) {
+							localVariablesToDefine.Add(locVar);
 						}
+						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name).WithAnnotation(locVar), arg1);
 					}
 					case Code.Stobj: return InlineAssembly(byteCode, args);
 					case Code.Switch: return InlineAssembly(byteCode, args);
