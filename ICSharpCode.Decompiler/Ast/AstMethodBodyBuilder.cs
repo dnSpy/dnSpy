@@ -160,6 +160,8 @@ namespace Decompiler
 				yield return tryCatchStmt;
 			} else if (node is ILBlock) {
 				yield return TransformBlock((ILBlock)node);
+			} else if (node is ILComment) {
+				yield return new CommentStatement(((ILComment)node).Text).WithAnnotation(((ILComment)node).ILRanges);
 			} else {
 				throw new Exception("Unknown node type");
 			}

@@ -83,6 +83,17 @@ namespace Decompiler
 		}
 	}
 	
+	public class ILComment: ILNode
+	{
+		public string Text;
+		public List<ILRange> ILRanges { get; set; }
+		
+		public override void WriteTo(ITextOutput output)
+		{
+			output.WriteLine("// " + this.Text);
+		}
+	}
+	
 	public class ILTryCatchBlock: ILNode
 	{
 		public class CatchBlock: ILBlock
