@@ -20,37 +20,66 @@ namespace Decompiler
 	/// </remarks>
 	public class TypeAnalysis
 	{
-		public static void Run(DecompilerContext context, ILNode node)
+		public static void Run(DecompilerContext context, ILBlock method)
 		{
 			TypeAnalysis ta = new TypeAnalysis();
 			ta.context = context;
 			ta.module = context.CurrentMethod.Module;
 			ta.typeSystem = ta.module.TypeSystem;
-			ta.InferTypes(node);
+			ta.method = method;
+			ta.InferTypes(method);
+			ta.InferRemainingStores();
 		}
 		
 		DecompilerContext context;
 		TypeSystem typeSystem;
+		ILBlock method;
 		ModuleDefinition module;
 		List<ILExpression> storedToGeneratedVariables = new List<ILExpression>();
 		
 		void InferTypes(ILNode node)
 		{
-			foreach (ILNode child in node.GetChildren()) {
-				ILExpression expr = child as ILExpression;
-				if (expr != null) {
-					ILVariable v = expr.Operand as ILVariable;
-					if (v != null && v.IsGenerated && v.Type == null && expr.Code == ILCode.Stloc) {
-						// don't deal with this node or its children yet,
-						// wait for the expected type to be inferred first
-						storedToGeneratedVariables.Add(expr);
-						continue;
-					}
-					bool anyArgumentIsMissingType = expr.Arguments.Any(a => a.InferredType == null);
-					if (expr.InferredType == null || anyArgumentIsMissingType)
-						expr.InferredType = InferTypeForExpression(expr, null, forceInferChildren: anyArgumentIsMissingType);
+			ILExpression expr = node as ILExpression;
+			if (expr != null) {
+				ILVariable v = expr.Operand as ILVariable;
+				if (v != null && v.IsGenerated && v.Type == null && expr.Code == ILCode.Stloc && HasSingleLoad(v)) {
+					// don't deal with this node or its children yet,
+					// wait for the expected type to be inferred first
+					storedToGeneratedVariables.Add(expr);
+					return;
 				}
+				bool anyArgumentIsMissingType = expr.Arguments.Any(a => a.InferredType == null);
+				if (expr.InferredType == null || anyArgumentIsMissingType)
+					expr.InferredType = InferTypeForExpression(expr, null, forceInferChildren: anyArgumentIsMissingType);
+			}
+			foreach (ILNode child in node.GetChildren()) {
 				InferTypes(child);
+			}
+		}
+		
+		bool HasSingleLoad(ILVariable v)
+		{
+			int loads = 0;
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				if (expr.Operand == v) {
+					if (expr.Code == ILCode.Ldloc)
+						loads++;
+					else if (expr.Code != ILCode.Stloc)
+						return false;
+				}
+			}
+			return loads == 1;
+		}
+		
+		void InferRemainingStores()
+		{
+			while (storedToGeneratedVariables.Count > 0) {
+				List<ILExpression> stored = storedToGeneratedVariables;
+				storedToGeneratedVariables = new List<ILExpression>();
+				foreach (ILExpression expr in stored)
+					InferTypes(expr);
+				if (!(storedToGeneratedVariables.Count < stored.Count))
+					throw new InvalidOperationException("Infinite loop in type analysis detected.");
 			}
 		}
 		
@@ -73,11 +102,22 @@ namespace Decompiler
 			switch ((Code)expr.Code) {
 					#region Variable load/store
 				case Code.Stloc:
-					if (forceInferChildren)
-						InferTypeForExpression(expr.Arguments.Single(), ((ILVariable)expr.Operand).Type);
+					{
+						ILVariable v = (ILVariable)expr.Operand;
+						if (forceInferChildren || v.Type == null) {
+							TypeReference t = InferTypeForExpression(expr.Arguments.Single(), ((ILVariable)expr.Operand).Type);
+							if (v.Type == null)
+								v.Type = t;
+						}
+					}
 					return null;
 				case Code.Ldloc:
-					return ((ILVariable)expr.Operand).Type;
+					{
+						ILVariable v = (ILVariable)expr.Operand;
+						if (v.Type == null)
+							v.Type = expectedType;
+						return v.Type;
+					}
 				case Code.Starg:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments.Single(), ((ParameterReference)expr.Operand).ParameterType);
