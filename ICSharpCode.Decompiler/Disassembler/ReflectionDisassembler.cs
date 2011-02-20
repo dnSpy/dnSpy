@@ -314,7 +314,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			// create IL code mappings - used for debugger
 			if (!ILCodeMapping.SourceCodeMappings.ContainsKey(type.FullName)) {
-				ILCodeMapping.SourceCodeMappings.Add(type.FullName, new List<MethodMapping>());
+				ILCodeMapping.SourceCodeMappings.TryAdd(type.FullName, new List<MethodMapping>());
+			} else {
+				ILCodeMapping.SourceCodeMappings.Clear();
 			}
 			
 			// start writing IL

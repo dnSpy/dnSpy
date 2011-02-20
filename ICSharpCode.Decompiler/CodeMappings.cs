@@ -2,7 +2,9 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+
 using Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using Mono.Cecil;
@@ -39,9 +41,9 @@ namespace ICSharpCode.Decompiler
 	
 	public static class CodeMappings
 	{
-		public static Dictionary<string, List<MethodMapping>> GetStorage(DecompiledLanguages language)
+		public static ConcurrentDictionary<string, List<MethodMapping>> GetStorage(DecompiledLanguages language)
 		{
-			Dictionary<string, List<MethodMapping>> storage = null;
+			ConcurrentDictionary<string, List<MethodMapping>> storage = null;
 			
 			switch (language) {
 				case DecompiledLanguages.IL:
@@ -64,7 +66,7 @@ namespace ICSharpCode.Decompiler
 		/// <param name="sourceCodeMappings">Source code mapping storage.</param>
 		public static MethodMapping CreateCodeMapping(
 			this MethodDefinition method,
-			Dictionary<string, List<MethodMapping>> sourceCodeMappings)
+			ConcurrentDictionary<string, List<MethodMapping>> sourceCodeMappings)
 		{
 			// create IL code mappings - used in debugger
 			MethodMapping currentMethodMapping = null;
@@ -92,7 +94,7 @@ namespace ICSharpCode.Decompiler
 		/// <param name="metadataToken">Metadata token.</param>
 		/// <returns></returns>
 		public static SourceCodeMapping GetInstructionByTypeAndLine(
-			this Dictionary<string, List<MethodMapping>> codeMappings,
+			this ConcurrentDictionary<string, List<MethodMapping>> codeMappings,
 			string typeName,
 			int lineNumber,
 			out uint metadataToken)
@@ -129,7 +131,7 @@ namespace ICSharpCode.Decompiler
 		/// <param name="typeName">Type name.</param>
 		/// <param name="line">Line number.</param>
 		public static void GetSourceCodeFromMetadataTokenAndOffset(
-			this Dictionary<string, List<MethodMapping>> codeMappings,
+			this ConcurrentDictionary<string, List<MethodMapping>> codeMappings,
 			uint token,
 			int ilOffset,
 			out string typeName,

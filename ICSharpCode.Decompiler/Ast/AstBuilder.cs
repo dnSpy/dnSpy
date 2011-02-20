@@ -125,7 +125,7 @@ namespace Decompiler
 		{
 			// create IL code mappings - used for debugger
 			if (!CSharpCodeMapping.SourceCodeMappings.ContainsKey(typeDef.FullName)) {
-				CSharpCodeMapping.SourceCodeMappings.Add(typeDef.FullName, new List<MethodMapping>());
+				CSharpCodeMapping.SourceCodeMappings.TryAdd(typeDef.FullName, new List<MethodMapping>());
 			} else {
 				CSharpCodeMapping.SourceCodeMappings[typeDef.FullName].Clear();
 			}

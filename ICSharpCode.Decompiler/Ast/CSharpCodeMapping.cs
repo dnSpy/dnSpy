@@ -2,7 +2,9 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+
 using ICSharpCode.Decompiler;
 
 namespace Decompiler
@@ -12,12 +14,12 @@ namespace Decompiler
 	/// </summary>
 	public static class CSharpCodeMapping
 	{
-		static Dictionary<string, List<MethodMapping>> codeMappings = new Dictionary<string, List<MethodMapping>>();
+		static ConcurrentDictionary<string, List<MethodMapping>> codeMappings = new ConcurrentDictionary<string, List<MethodMapping>>();
 		
 		/// <summary>
 		/// Stores the source codes mappings: CSharp &lt;-&gt; editor lines
 		/// </summary>
-		public static Dictionary<string, List<MethodMapping>> SourceCodeMappings {
+		public static ConcurrentDictionary<string, List<MethodMapping>> SourceCodeMappings {
 			get { return codeMappings; }
 			set { codeMappings = value; }
 		}

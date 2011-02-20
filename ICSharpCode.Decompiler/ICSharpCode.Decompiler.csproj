@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
@@ -52,8 +51,8 @@
   <ItemGroup>
     <Compile Include="Ast\AstBuilder.cs" />
     <Compile Include="Ast\AstMethodBodyBuilder.cs" />
-    <Compile Include="Ast\CSharpCodeMapping.cs" />
     <Compile Include="Ast\CommentStatement.cs" />
+    <Compile Include="Ast\CSharpCodeMapping.cs" />
     <Compile Include="Ast\DecompilerContext.cs" />
     <Compile Include="Ast\NameVariables.cs" />
     <Compile Include="Ast\NRefactoryExtensions.cs" />
@@ -72,132 +71,8 @@
     <Compile Include="CecilExtensions.cs" />
     <Compile Include="CodeMappings.cs" />
     <Compile Include="DecompilerException.cs" />
+    <Compile Include="Disassembler\DisassemblerHelpers.cs" />
     <Compile Include="Disassembler\ILCodeMapping.cs" />
-    <Compile Include="Disassembler\DisassemblerHelpers.cs" />
-    <Compile Include="Disassembler\ILStructure.cs" />
-    <Compile Include="Disassembler\MethodBodyDisassembler.cs" />
-    <Compile Include="Disassembler\ReflectionDisassembler.cs" />
-    <Compile Include="FlowAnalysis\ControlFlowEdge.cs" />
-    <Compile Include="FlowAnalysis\ControlFlowGraph.cs" />
-    <Compile Include="FlowAnalysis\ControlFlowGraphBuilder.cs" />
-    <Compile Include="FlowAnalysis\ControlFlowNode.cs" />
-    <Compile Include="FlowAnalysis\ControlStructureDetector.cs" />
-    <Compile Include="FlowAnalysis\OpCodeInfo.cs" />
-    <Compile Include="FlowAnalysis\SimplifyByRefCalls.cs" />
-    <Compile Include="FlowAnalysis\SsaBlock.cs" />
-    <Compile Include="FlowAnalysis\SsaForm.cs" />
-    <Compile Include="FlowAnalysis\SsaFormBuilder.cs" />
-    <Compile Include="FlowAnalysis\SsaInstruction.cs" />
-    <Compile Include="FlowAnalysis\SsaOptimization.cs" />
-    <Compile Include="FlowAnalysis\SsaVariable.cs" />
-    <Compile Include="FlowAnalysis\TransformToSsa.cs" />
-    <Compile Include="GraphVizGraph.cs" />
-    <Compile Include="ILAst\ILAstBuilder.cs" />
-    <Compile Include="ILAst\ILAstOptimizer.cs" />
-    <Compile Include="ILAst\ILAstTypes.cs" />
-    <Compile Include="ILAst\ILCodes.cs" />
-    <Compile Include="ILAst\TypeAnalysis.cs" />
-    <Compile Include="ITextOutput.cs" />
-    <Compile Include="Options.cs" />
-    <Compile Include="PlainTextOutput.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="Properties\AssemblyInfo.template.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Mono.Cecil\Mono.Cecil.csproj">
-      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
-      <Name>Mono.Cecil</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
-      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
-      <Name>ICSharpCode.NRefactory</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Ast" />
-    <Folder Include="Ast\Transforms" />
-    <Folder Include="Disassembler" />
-    <Folder Include="ILAst" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
-  <Target Name="BeforeBuild">
-    <MSBuild Projects="$(MSBuildProjectDirectory)\..\BuildTools\UpdateAssemblyInfo\UpdateAssemblyInfo.csproj" Targets="Build" Properties="Configuration=Debug" />
-    <Exec WorkingDirectory="$(MSBuildProjectDirectory)\..\BuildTools\UpdateAssemblyInfo\bin\Debug" Command="UpdateAssemblyInfo.exe --branchname $(BranchName)" Timeout="60000" Condition=" '$(BranchName)' != '' " />
-    <Exec WorkingDirectory="$(MSBuildProjectDirectory)\..\BuildTools\UpdateAssemblyInfo\bin\Debug" Command="UpdateAssemblyInfo.exe" Timeout="60000" Condition=" '$(BranchName)' == '' " />
-  </Target>
-=======
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
-  <PropertyGroup>
-    <ProjectGuid>{984CC812-9470-4A13-AFF9-CC44068D666C}</ProjectGuid>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <OutputType>Library</OutputType>
-    <RootNamespace>ICSharpCode.Decompiler</RootNamespace>
-    <AssemblyName>ICSharpCode.Decompiler</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-    <NoStdLib>False</NoStdLib>
-    <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <RegisterForComInterop>False</RegisterForComInterop>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <BaseAddress>4194304</BaseAddress>
-    <FileAlignment>4096</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>bin\Debug\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>Full</DebugType>
-    <Optimize>False</Optimize>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>bin\Release\</OutputPath>
-    <DebugSymbols>False</DebugSymbols>
-    <DebugType>None</DebugType>
-    <Optimize>True</Optimize>
-    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <DefineConstants>TRACE</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Ast\AstBuilder.cs" />
-    <Compile Include="Ast\AstMethodBodyBuilder.cs" />
-    <Compile Include="Ast\CommentStatement.cs" />
-    <Compile Include="Ast\DecompilerContext.cs" />
-    <Compile Include="Ast\NameVariables.cs" />
-    <Compile Include="Ast\NRefactoryExtensions.cs" />
-    <Compile Include="Ast\TextOutputFormatter.cs" />
-    <Compile Include="Ast\Transforms\ContextTrackingVisitor.cs" />
-    <Compile Include="Ast\Transforms\ConvertConstructorCallIntoInitializer.cs" />
-    <Compile Include="Ast\Transforms\DelegateConstruction.cs" />
-    <Compile Include="Ast\Transforms\ReplaceMethodCallsWithOperators.cs" />
-    <Compile Include="Ast\Transforms\PushNegation.cs" />
-    <Compile Include="Ast\Transforms\RemoveDeadLabels.cs" />
-    <Compile Include="Ast\Transforms\RemoveEmptyElseBody.cs" />
-    <Compile Include="Ast\Transforms\RemoveGotos.cs" />
-    <Compile Include="Ast\Transforms\RestoreLoop.cs" />
-    <Compile Include="Ast\Transforms\TransformationPipeline.cs" />
-    <Compile Include="Ast\Transforms\UsingStatementTransform.cs" />
-    <Compile Include="CecilExtensions.cs" />
-    <Compile Include="DecompilerException.cs" />
-    <Compile Include="Disassembler\DisassemblerHelpers.cs" />
     <Compile Include="Disassembler\ILStructure.cs" />
     <Compile Include="Disassembler\MethodBodyDisassembler.cs" />
     <Compile Include="Disassembler\ReflectionDisassembler.cs" />
@@ -250,5 +125,4 @@
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)\..\BuildTools\UpdateAssemblyInfo\bin\Debug" Command="UpdateAssemblyInfo.exe --branchname $(BranchName)" Timeout="60000" Condition=" '$(BranchName)' != '' " />
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)\..\BuildTools\UpdateAssemblyInfo\bin\Debug" Command="UpdateAssemblyInfo.exe" Timeout="60000" Condition=" '$(BranchName)' == '' " />
   </Target>
->>>>>>> 758f18c73f2667591014666e73ee139fe449c022
 </Project>
