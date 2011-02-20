@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using Mono.Cecil;
 
 namespace Decompiler.Transforms
@@ -174,63 +175,75 @@ namespace Decompiler.Transforms
 				}
 				if (!ok)
 					continue;
-				Dictionary<string, Expression> dict = new Dictionary<string, Expression>();
+				Dictionary<FieldReference, AstNode> dict = new Dictionary<FieldReference, AstNode>();
 				// Delete the variable declaration statement:
-				AstNode cur;
-				AstNode next = stmt.NextSibling;
+				AstNode cur = stmt.NextSibling;
 				stmt.Remove();
-				for (cur = next; cur != null; cur = next) {
-					next = cur.NextSibling;
-					
-					// Delete any following statements as long as they assign simple variables to the display class:
-					// Test for the pattern:
-					// "variableName.MemberName = right;"
-					ExpressionStatement es = cur as ExpressionStatement;
-					if (es == null)
-						break;
-					AssignmentExpression ae = es.Expression as AssignmentExpression;
-					if (ae == null || ae.Operator != AssignmentOperatorType.Assign)
-						break;
-					MemberReferenceExpression left = ae.Left as MemberReferenceExpression;
-					if (left == null || !IsParameter(ae.Right))
-						break;
-					if (!(left.Target is IdentifierExpression) || (left.Target as IdentifierExpression).Identifier != variable.Name)
-						break;
-					dict[left.MemberName] = ae.Right;
-					es.Remove();
+				if (blockStatement.Parent.NodeType == NodeType.Member || blockStatement.Parent is Accessor) {
+					// Delete any following statements as long as they assign parameters to the display class
+					// Do parameter handling only for closures created in the top scope (direct child of method/accessor)
+					List<ParameterReference> parameterOccurrances = blockStatement.Descendants.OfType<IdentifierExpression>()
+						.Select(n => n.Annotation<ParameterReference>()).Where(p => p != null).ToList();
+					AstNode next;
+					for (; cur != null; cur = next) {
+						next = cur.NextSibling;
+						
+						// Test for the pattern:
+						// "variableName.MemberName = right;"
+						ExpressionStatement closureFieldAssignmentPattern = new ExpressionStatement(
+							new AssignmentExpression(
+								new NamedNode("left", new MemberReferenceExpression { Target = new IdentifierExpression(variable.Name) }).ToExpression(),
+								new AnyNode("right").ToExpression()
+							)
+						);
+						Match m = closureFieldAssignmentPattern.Match(cur);
+						if (m != null) {
+							AstNode right = m.Get("right").Single();
+							bool isParameter = false;
+							if (right is ThisReferenceExpression) {
+								isParameter = true;
+							} else if (right is IdentifierExpression) {
+								// handle parameters only if the whole method contains no other occurrance except for 'right'
+								ParameterReference param = right.Annotation<ParameterReference>();
+								isParameter = parameterOccurrances.Count(c => c == param) == 1;
+							}
+							if (isParameter) {
+								dict[m.Get<MemberReferenceExpression>("left").Single().Annotation<FieldReference>()] = right;
+								cur.Remove();
+							} else {
+								break;
+							}
+						} else {
+							break;
+						}
+					}
 				}
 				
-				// Now create variables for all fields of the display class (except for those that we already handled)
+				// Now create variables for all fields of the display class (except for those that we already handled as parameters)
+				List<Tuple<AstType, string>> variablesToDeclare = new List<Tuple<AstType, string>>();
 				foreach (FieldDefinition field in type.Fields) {
-					if (dict.ContainsKey(field.Name))
+					if (dict.ContainsKey(field))
 						continue;
-					VariableDeclarationStatement newVarDecl = new VariableDeclarationStatement();
-					newVarDecl.Type = AstBuilder.ConvertType(field.FieldType, field);
-					newVarDecl.Variables.Add(new VariableInitializer(field.Name));
-					blockStatement.InsertChildBefore(cur, newVarDecl, BlockStatement.StatementRole);
-					dict[field.Name] = new IdentifierExpression(field.Name);
+					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(field.FieldType, field), field.Name));
+					dict[field] = new IdentifierExpression(field.Name);
 				}
 				
 				// Now figure out where the closure was accessed and use the simpler replacement expression there:
 				foreach (var identExpr in blockStatement.Descendants.OfType<IdentifierExpression>()) {
 					if (identExpr.Identifier == variable.Name) {
 						MemberReferenceExpression mre = (MemberReferenceExpression)identExpr.Parent;
-						Expression replacement;
-						if (dict.TryGetValue(mre.MemberName, out replacement)) {
+						AstNode replacement;
+						if (dict.TryGetValue(mre.Annotation<FieldReference>(), out replacement)) {
 							mre.ReplaceWith(replacement.Clone());
 						}
 					}
 				}
+				// Now insert the variable declarations (we can do this after the replacements only so that the scope detection works):
+				foreach (var tuple in variablesToDeclare) {
+					DeclareVariableInSmallestScope.DeclareVariable(blockStatement, tuple.Item1, tuple.Item2, allowPassIntoLoops: false);
+				}
 			}
 			return null;
-		}
-		
-		bool IsParameter(Expression expr)
-		{
-			if (expr is ThisReferenceExpression)
-				return true;
-			IdentifierExpression ident = expr as IdentifierExpression;
-			return ident != null && ident.Annotation<ParameterReference>() != null;
 		}
 	}
 }

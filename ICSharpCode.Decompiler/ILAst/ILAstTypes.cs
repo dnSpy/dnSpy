@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
 using Decompiler.ControlFlow;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.CSharp;
 using Cecil = Mono.Cecil;
 
 namespace Decompiler
@@ -38,8 +38,7 @@ namespace Decompiler
 	
 	public class ILBlock: ILNode
 	{
-		// TODO: This should really be a goto, not a label
-		public ILLabel EntryPoint;
+		public ILExpression EntryGoto;
 		
 		public List<ILNode> Body;
 		
@@ -55,8 +54,8 @@ namespace Decompiler
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			if (EntryPoint != null)
-				yield return EntryPoint;
+			if (this.EntryGoto != null)
+				yield return this.EntryGoto;
 			foreach(ILNode child in this.Body) {
 				yield return child;
 			}
@@ -64,9 +63,33 @@ namespace Decompiler
 		
 		public override void WriteTo(ITextOutput output)
 		{
-			if (EntryPoint != null)
-				EntryPoint.WriteTo(output);
-			foreach(ILNode child in this.Body) {
+			foreach(ILNode child in this.GetChildren()) {
+				child.WriteTo(output);
+				output.WriteLine();
+			}
+		}
+	}
+	
+	public class ILBasicBlock: ILNode
+	{
+		public ILLabel      EntryLabel;
+		public List<ILNode> Body = new List<ILNode>();
+		public ILExpression FallthoughGoto;
+		
+		public override IEnumerable<ILNode> GetChildren()
+		{
+			if (this.EntryLabel != null)
+				yield return this.EntryLabel;
+			foreach (ILNode child in this.Body) {
+				yield return child;
+			}
+			if (this.FallthoughGoto != null)
+				yield return this.FallthoughGoto;
+		}
+		
+		public override void WriteTo(ITextOutput output)
+		{
+			foreach(ILNode child in this.GetChildren()) {
 				child.WriteTo(output);
 				output.WriteLine();
 			}
@@ -119,7 +142,8 @@ namespace Decompiler
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			yield return this.TryBlock;
+			if (this.TryBlock != null)
+				yield return this.TryBlock;
 			foreach (var catchBlock in this.CatchBlocks) {
 				yield return catchBlock;
 			}
@@ -188,6 +212,11 @@ namespace Decompiler
 			this.ILRanges  = new List<ILRange>(1);
 		}
 		
+		public override IEnumerable<ILNode> GetChildren()
+		{
+			return Arguments;
+		}
+		
 		public bool IsBranch()
 		{
 			return this.Operand is ILLabel || this.Operand is ILLabel[];
@@ -223,11 +252,6 @@ namespace Decompiler
 				}
 			}
 			return ranges;
-		}
-		
-		public override IEnumerable<ILNode> GetChildren()
-		{
-			return Arguments;
 		}
 		
 		public override void WriteTo(ITextOutput output)
@@ -283,7 +307,8 @@ namespace Decompiler
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			yield return ContentBlock;
+			if (this.ContentBlock != null)
+				yield return ContentBlock;
 		}
 		
 		public override void WriteTo(ITextOutput output)
@@ -304,10 +329,12 @@ namespace Decompiler
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			yield return Condition;
-			yield return TrueBlock;
-			if (FalseBlock != null)
-				yield return FalseBlock;
+			if (this.Condition != null)
+				yield return this.Condition;
+			if (this.TrueBlock != null)
+				yield return this.TrueBlock;
+			if (this.FalseBlock != null)
+				yield return this.FalseBlock;
 		}
 		
 		public override void WriteTo(ITextOutput output)
@@ -333,13 +360,17 @@ namespace Decompiler
 	{
 		public ILExpression Condition;
 		public List<ILBlock> CaseBlocks = new List<ILBlock>();
+		public ILExpression DefaultGoto;
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			yield return Condition;
+			if (this.Condition != null)
+				yield return this.Condition;
 			foreach (ILBlock caseBlock in this.CaseBlocks) {
 				yield return caseBlock;
 			}
+			if (this.DefaultGoto != null)
+				yield return this.DefaultGoto;
 		}
 		
 		public override void WriteTo(ITextOutput output)
