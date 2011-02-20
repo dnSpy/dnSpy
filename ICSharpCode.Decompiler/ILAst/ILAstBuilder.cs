@@ -468,16 +468,25 @@ namespace Decompiler
 						// We are moving the expression evaluation past the other aguments.
 						// It is ok to pass ldloc because the expression can not contain stloc and thus the ldcoc will still return the same value
 						if (arg.Code == ILCode.Ldloc) {
-							bool canInline;
-							allowInline.TryGetValue((ILVariable)arg.Operand, out canInline);
-							if (arg.Operand == currExpr.Operand && canInline) {
+							if (arg.Operand == currExpr.Operand) {
+								bool canInline;
+								allowInline.TryGetValue((ILVariable)arg.Operand, out canInline);
+								
 								// Assigne the ranges for optimized away instrustions somewhere
 								currExpr.Arguments[0].ILRanges.AddRange(currExpr.ILRanges);
 								currExpr.Arguments[0].ILRanges.AddRange(nextExpr.Arguments[j].ILRanges);
-								ast.RemoveAt(i);
-								nextExpr.Arguments[j] = currExpr.Arguments[0]; // Inline the stloc body
-								i -= 2; // Try the same index again
-								break;  // Found
+								
+								if (canInline) {
+									ast.RemoveAt(i);
+									nextExpr.Arguments[j] = currExpr.Arguments[0]; // Inline the stloc body
+									i -= 2; // Try the same index again
+									break;  // Found
+								} else {
+									ast.RemoveAt(i);
+									nextExpr.Arguments[j] = currExpr; // Inline the whole stloc
+									i -= 2; // Try the same index again
+									break;  // Found
+								}
 							}
 						} else {
 							break;  // Side-effects
