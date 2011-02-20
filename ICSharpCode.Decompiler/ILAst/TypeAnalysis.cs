@@ -127,9 +127,8 @@ namespace Decompiler
 							TypeReference t = InferTypeForExpression(expr.Arguments.Single(), ((ILVariable)expr.Operand).Type);
 							if (v.Type == null)
 								v.Type = t;
-							return t;
 						}
-						return null;
+						return v.Type;
 					}
 				case Code.Ldloc:
 					{
