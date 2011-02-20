@@ -199,6 +199,7 @@ namespace Decompiler
 		public ILCode Code { get; set; }
 		public object Operand { get; set; }
 		public List<ILExpression> Arguments { get; set; }
+		public Instruction[] Prefixes { get; set; }
 		// Mapping to the original instructions (useful for debugging)
 		public List<ILRange> ILRanges { get; set; }
 		
@@ -210,6 +211,18 @@ namespace Decompiler
 			this.Operand = operand;
 			this.Arguments = new List<ILExpression>(args);
 			this.ILRanges  = new List<ILRange>(1);
+		}
+		
+		public Instruction GetPrefix(Code code)
+		{
+			var prefixes = this.Prefixes;
+			if (prefixes != null) {
+				foreach (Instruction i in prefixes) {
+					if (i.OpCode.Code == code)
+						return i;
+				}
+			}
+			return null;
 		}
 		
 		public override IEnumerable<ILNode> GetChildren()
@@ -269,6 +282,13 @@ namespace Decompiler
 						this.InferredType.WriteTo(output, true, true);
 					}
 					return;
+				}
+			}
+			
+			if (this.Prefixes != null) {
+				foreach (Instruction prefix in this.Prefixes) {
+					output.Write(prefix.OpCode.Name);
+					output.Write(' ');
 				}
 			}
 			

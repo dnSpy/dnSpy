@@ -37,6 +37,7 @@ namespace Decompiler
 			public int      PushCount;
 			public string   Name { get { return "IL_" + this.Offset.ToString("X2"); } }
 			public ByteCode Next;
+			public Instruction[] Prefixes; // Non-null only if needed
 			public List<StackSlot> StackBefore;
 			public List<ILVariable> StoreTo;
 			
@@ -57,7 +58,14 @@ namespace Decompiler
 			public override string ToString()
 			{
 				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("{0}:{1} {2} ", this.Name, this.Label != null ? " *" : "", this.Code.GetName());
+				sb.AppendFormat("{0}:{1} ", this.Name, this.Label != null ? " *" : "");
+				if (this.Prefixes != null) {
+					foreach (var prefix in this.Prefixes) {
+						sb.Append(prefix.OpCode.Name);
+						sb.Append(' ');
+					}
+				}
+				sb.Append(this.Code.GetName());
 				if (this.Operand is ILLabel) {
 					sb.Append(((ILLabel)this.Operand).Name);
 				} else if (this.Operand is ILLabel[]) {
@@ -126,7 +134,14 @@ namespace Decompiler
 		{
 			// Create temporary structure for the stack analysis
 			List<ByteCode> body = new List<ByteCode>(methodDef.Body.Instructions.Count);
+			List<Instruction> prefixes = null;
 			foreach(Instruction inst in methodDef.Body.Instructions) {
+				if (inst.OpCode.OpCodeType == OpCodeType.Prefix) {
+					if (prefixes == null)
+						prefixes = new List<Instruction>(1);
+					prefixes.Add(inst);
+					continue;
+				}
 				ILCode code  = (ILCode)inst.OpCode.Code;
 				object operand = inst.Operand;
 				ILCodeUtil.ExpandMacro(ref code, ref operand, methodDef.Body);
@@ -138,6 +153,11 @@ namespace Decompiler
 					PopCount    = inst.GetPopCount(),
 					PushCount   = inst.GetPushCount()
 				};
+				if (prefixes != null) {
+					byteCode.Offset = prefixes[0].Offset;
+					byteCode.Prefixes = prefixes.ToArray();
+					prefixes = null;
+				}
 				instrToByteCode[inst] = byteCode;
 				body.Add(byteCode);
 			}
@@ -420,6 +440,7 @@ namespace Decompiler
 				
 				ILExpression expr = new ILExpression(byteCode.Code, byteCode.Operand);
 				expr.ILRanges.Add(ilRange);
+				expr.Prefixes = byteCode.Prefixes;
 				
 				// Label for this instruction
 				if (byteCode.Label != null) {

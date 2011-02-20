@@ -160,10 +160,15 @@ namespace Decompiler
 						MethodReference method = (MethodReference)expr.Operand;
 						if (forceInferChildren) {
 							for (int i = 0; i < expr.Arguments.Count; i++) {
-								if (i == 0 && method.HasThis)
-									InferTypeForExpression(expr.Arguments[i], method.DeclaringType);
-								else
+								if (i == 0 && method.HasThis) {
+									Instruction constraint = expr.GetPrefix(Code.Constrained);
+									if (constraint != null)
+										InferTypeForExpression(expr.Arguments[i], new ByReferenceType((TypeReference)constraint.Operand));
+									else
+										InferTypeForExpression(expr.Arguments[i], method.DeclaringType);
+								} else {
 									InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(method.Parameters[method.HasThis ? i - 1: i].ParameterType, method));
+								}
 							}
 						}
 						return SubstituteTypeArgs(method.ReturnType, method);
