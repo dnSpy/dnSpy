@@ -2,20 +2,25 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections;
 
 namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 {
 	/// <summary>
 	/// Matches one of several alternatives.
 	/// </summary>
-	public class Choice : Pattern
+	public class Choice : Pattern, IEnumerable
 	{
 		public static readonly Role<AstNode> AlternativeRole = new Role<AstNode>("Alternative", AstNode.Null);
 		
-		public Choice(params AstNode[] alternatives)
+		public void Add(string name, AstNode alternative)
 		{
-			foreach (AstNode node in alternatives)
-				AddChild(node, AlternativeRole);
+			AddChild(new NamedNode(name, alternative), AlternativeRole);
+		}
+		
+		public void Add(AstNode alternative)
+		{
+			AddChild(alternative, AlternativeRole);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
@@ -28,6 +33,11 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 					match.RestoreCheckPoint(checkPoint);
 			}
 			return false;
+		}
+		
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetChildrenByRole(AlternativeRole).GetEnumerator();
 		}
 	}
 }

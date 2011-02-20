@@ -6,6 +6,7 @@ using System.Linq;
 using Decompiler.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
+using Mono.Cecil;
 
 namespace Decompiler.Transforms
 {
@@ -29,18 +30,25 @@ namespace Decompiler.Transforms
 			TryBlock = new AnyNode("body").ToBlock(),
 			FinallyBlock = new BlockStatement {
 				Statements = {
-					new IfElseStatement {
-						Condition = new BinaryOperatorExpression(
-							new NamedNode("ident", new IdentifierExpression()).ToExpression(),
-							BinaryOperatorType.InEquality,
-							new NullReferenceExpression()
-						),
-						TrueStatement = new BlockStatement {
-							Statements = {
-								new ExpressionStatement(new Backreference("ident").ToExpression().Invoke("Dispose"))
+					new Choice {
+						{ "valueType",
+							new ExpressionStatement(new NamedNode("ident", new IdentifierExpression()).ToExpression().Invoke("Dispose"))
+						},
+						{ "referenceType",
+							new IfElseStatement {
+								Condition = new BinaryOperatorExpression(
+									new NamedNode("ident", new IdentifierExpression()).ToExpression(),
+									BinaryOperatorType.InEquality,
+									new NullReferenceExpression()
+								),
+								TrueStatement = new BlockStatement {
+									Statements = {
+										new ExpressionStatement(new Backreference("ident").ToExpression().Invoke("Dispose"))
+									}
+								}
 							}
 						}
-					}
+					}.ToStatement()
 				}
 			}
 		};
@@ -52,8 +60,14 @@ namespace Decompiler.Transforms
 				if (m1 == null) continue;
 				Match m2 = usingTryCatchPattern.Match(node.NextSibling);
 				if (m2 == null) continue;
-				if (((VariableInitializer)m1["variable"].Single()).Name == ((IdentifierExpression)m2["ident"].Single()).Identifier) {
-					BlockStatement body = (BlockStatement)m2["body"].Single();
+				if (m1.Get<VariableInitializer>("variable").Single().Name == m2.Get<IdentifierExpression>("ident").Single().Identifier) {
+					if (m2.Has("valueType")) {
+						// if there's no if(x!=null), then it must be a value type
+						TypeReference tr = m1.Get<AstType>("type").Single().Annotation<TypeReference>();
+						if (tr == null || !tr.IsValueType)
+							continue;
+					}
+					BlockStatement body = m2.Get<BlockStatement>("body").Single();
 					body.Remove();
 					node.NextSibling.Remove();
 					node.ReplaceWith(

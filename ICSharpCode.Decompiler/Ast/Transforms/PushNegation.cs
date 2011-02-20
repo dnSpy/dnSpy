@@ -114,7 +114,7 @@ namespace Decompiler.Transforms
 					negate = true;
 				}
 				if (m != null) {
-					Expression expr = ((Expression)m["expr"].Single()).Detach().IsType((AstType)m["type"].Single().Detach());
+					Expression expr = m.Get<Expression>("expr").Single().Detach().IsType(m.Get<AstType>("type").Single().Detach());
 					if (negate)
 						expr = new UnaryOperatorExpression(UnaryOperatorType.Not, expr);
 					binaryOperatorExpression.ReplaceWith(expr);

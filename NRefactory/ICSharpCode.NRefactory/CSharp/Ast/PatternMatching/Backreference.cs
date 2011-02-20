@@ -22,7 +22,7 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
 		{
-			return match[referencedGroupName].Last().Match(other) != null;
+			return match.Get(referencedGroupName).Last().Match(other) != null;
 		}
 	}
 }

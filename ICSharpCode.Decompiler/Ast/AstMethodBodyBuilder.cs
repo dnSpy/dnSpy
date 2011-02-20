@@ -278,7 +278,7 @@ namespace Decompiler
 			}
 		}
 		
-		string FormatByteCodeOperand(object operand)
+		static string FormatByteCodeOperand(object operand)
 		{
 			if (operand == null) {
 				return string.Empty;
