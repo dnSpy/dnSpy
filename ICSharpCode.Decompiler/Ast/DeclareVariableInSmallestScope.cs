@@ -59,15 +59,19 @@ namespace Decompiler
 				}
 				node = node.NextSibling;
 			}
-			if (withinPos != null && withinPos.Role == BlockStatement.StatementRole && (allowPassIntoLoops || !IsLoop(pos)))
+			if (withinPos != null && withinPos.Role == BlockStatement.StatementRole && AllowPassInto(pos, allowPassIntoLoops))
 				return withinPos;
 			else
 				return pos;
 		}
 		
-		static bool IsLoop(AstNode node)
+		static bool AllowPassInto(AstNode node, bool allowPassIntoLoops)
 		{
-			return node is ForStatement || node is ForeachStatement || node is DoWhileStatement || node is WhileStatement;
+			if (node is AnonymousMethodExpression || node is LambdaExpression)
+				return false;
+			if (node is ForStatement || node is ForeachStatement || node is DoWhileStatement || node is WhileStatement)
+				return allowPassIntoLoops;
+			return true;
 		}
 	}
 }
