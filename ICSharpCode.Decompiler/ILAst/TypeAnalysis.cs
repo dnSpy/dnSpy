@@ -164,17 +164,17 @@ namespace Decompiler
 								if (i == 0 && method.HasThis)
 									InferTypeForExpression(expr.Arguments[i], method.DeclaringType);
 								else
-									InferTypeForExpression(expr.Arguments[i], method.Parameters[method.HasThis ? i - 1: i].ParameterType);
+									InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(method.Parameters[method.HasThis ? i - 1: i].ParameterType, method));
 							}
 						}
-						return method.ReturnType;
+						return SubstituteTypeArgs(method.ReturnType, method);
 					}
 				case Code.Newobj:
 					{
 						MethodReference ctor = (MethodReference)expr.Operand;
 						if (forceInferChildren) {
 							for (int i = 0; i < ctor.Parameters.Count; i++) {
-								InferTypeForExpression(expr.Arguments[i], ctor.Parameters[i].ParameterType);
+								InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(ctor.Parameters[i].ParameterType, ctor));
 							}
 						}
 						return ctor.DeclaringType;
@@ -182,19 +182,23 @@ namespace Decompiler
 					#endregion
 					#region Load/Store Fields
 				case Code.Ldfld:
-					return UnpackModifiers(((FieldReference)expr.Operand).FieldType);
+					if (forceInferChildren)
+						InferTypeForExpression(expr.Arguments[0], ((FieldReference)expr.Operand).DeclaringType);
+					return GetFieldType((FieldReference)expr.Operand);
 				case Code.Ldsfld:
-					return UnpackModifiers(((FieldReference)expr.Operand).FieldType);
+					return GetFieldType((FieldReference)expr.Operand);
 				case Code.Ldflda:
 				case Code.Ldsflda:
-					return new ByReferenceType(UnpackModifiers(((FieldReference)expr.Operand).FieldType));
+					return new ByReferenceType(GetFieldType((FieldReference)expr.Operand));
 				case Code.Stfld:
-					if (forceInferChildren)
-						InferTypeForExpression(expr.Arguments[1], ((FieldReference)expr.Operand).FieldType);
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], ((FieldReference)expr.Operand).DeclaringType);
+						InferTypeForExpression(expr.Arguments[1], GetFieldType((FieldReference)expr.Operand));
+					}
 					return null;
 				case Code.Stsfld:
 					if (forceInferChildren)
-						InferTypeForExpression(expr.Arguments[0], ((FieldReference)expr.Operand).FieldType);
+						InferTypeForExpression(expr.Arguments[0], GetFieldType((FieldReference)expr.Operand));
 					return null;
 					#endregion
 					#region Reference/Pointer instructions
@@ -457,7 +461,69 @@ namespace Decompiler
 			}
 		}
 		
-		TypeReference UnpackPointer(TypeReference pointerOrManagedReference)
+		static TypeReference GetFieldType(FieldReference fieldReference)
+		{
+			return SubstituteTypeArgs(UnpackModifiers(fieldReference.FieldType), fieldReference);
+		}
+		
+		static TypeReference SubstituteTypeArgs(TypeReference type, MemberReference member)
+		{
+			if (type is TypeSpecification) {
+				ArrayType arrayType = type as ArrayType;
+				if (arrayType != null) {
+					TypeReference elementType = SubstituteTypeArgs(arrayType.ElementType, member);
+					if (elementType != arrayType.ElementType) {
+						ArrayType newArrayType = new ArrayType(elementType);
+						foreach (ArrayDimension d in arrayType.Dimensions)
+							newArrayType.Dimensions.Add(d);
+						return newArrayType;
+					} else {
+						return type;
+					}
+				}
+				ByReferenceType refType = type as ByReferenceType;
+				if (refType != null) {
+					TypeReference elementType = SubstituteTypeArgs(refType.ElementType, member);
+					return elementType != refType.ElementType ? new ByReferenceType(elementType) : type;
+				}
+				GenericInstanceType giType = type as GenericInstanceType;
+				if (giType != null) {
+					GenericInstanceType newType = new GenericInstanceType(giType.ElementType);
+					bool isChanged = false;
+					for (int i = 0; i < giType.GenericArguments.Count; i++) {
+						newType.GenericArguments.Add(SubstituteTypeArgs(giType.GenericArguments[i], member));
+						isChanged |= newType.GenericArguments[i] != giType.GenericArguments[i];
+					}
+					return isChanged ? newType : type;
+				}
+				OptionalModifierType optmodType = type as OptionalModifierType;
+				if (optmodType != null) {
+					TypeReference elementType = SubstituteTypeArgs(optmodType.ElementType, member);
+					return elementType != optmodType.ElementType ? new OptionalModifierType(optmodType.ModifierType, elementType) : type;
+				}
+				RequiredModifierType reqmodType = type as RequiredModifierType;
+				if (reqmodType != null) {
+					TypeReference elementType = SubstituteTypeArgs(reqmodType.ElementType, member);
+					return elementType != reqmodType.ElementType ? new RequiredModifierType(reqmodType.ModifierType, elementType) : type;
+				}
+				PointerType ptrType = type as PointerType;
+				if (ptrType != null) {
+					TypeReference elementType = SubstituteTypeArgs(ptrType.ElementType, member);
+					return elementType != ptrType.ElementType ? new PointerType(elementType) : type;
+				}
+			}
+			GenericParameter gp = type as GenericParameter;
+			if (gp != null) {
+				if (gp.Owner.GenericParameterType == GenericParameterType.Method) {
+					return ((GenericInstanceMethod)member).GenericArguments[gp.Position];
+				} else {
+					return ((GenericInstanceType)member.DeclaringType).GenericArguments[gp.Position];
+				}
+			}
+			return type;
+		}
+		
+		static TypeReference UnpackPointer(TypeReference pointerOrManagedReference)
 		{
 			ByReferenceType refType = pointerOrManagedReference as ByReferenceType;
 			if (refType != null)
