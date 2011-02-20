@@ -1689,6 +1689,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteModifiers(eventDeclaration.ModifierTokens);
 			WriteKeyword("event");
 			eventDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WriteCommaSeparatedList(eventDeclaration.Variables);
 			Semicolon();
 			return EndNode(eventDeclaration);
@@ -1700,6 +1701,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(customEventDeclaration.Attributes);
 			WriteModifiers(customEventDeclaration.ModifierTokens);
 			WriteKeyword("event");
+			customEventDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WritePrivateImplementationType(customEventDeclaration.PrivateImplementationType);
 			WriteIdentifier(customEventDeclaration.Name);
 			OpenBrace(policy.EventBraceStyle);
