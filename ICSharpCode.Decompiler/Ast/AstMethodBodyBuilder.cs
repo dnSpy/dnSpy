@@ -442,6 +442,15 @@ namespace Decompiler
 					case Code.Conv_Ovf_U2_Un: return arg1.CastTo(typeof(UInt16));
 					case Code.Conv_Ovf_U4_Un: return arg1.CastTo(typeof(UInt32));
 					case Code.Conv_Ovf_U8_Un: return arg1.CastTo(typeof(UInt64));
+				case Code.Castclass:
+				case Code.Unbox_Any:
+					return arg1.CastTo(operandAsTypeRef);
+				case Code.Isinst:
+					return arg1.CastAs(operandAsTypeRef);
+				case Code.Box:
+					return arg1;
+				case Code.Unbox:
+					return InlineAssembly(byteCode, args);
 					#endregion
 					#region Indirect
 					case Code.Ldind_I: return InlineAssembly(byteCode, args);
@@ -466,7 +475,6 @@ namespace Decompiler
 					case Code.Stind_Ref: return InlineAssembly(byteCode, args);
 					#endregion
 					case Code.Arglist: return InlineAssembly(byteCode, args);
-					case Code.Box: return InlineAssembly(byteCode, args);
 					case Code.Break: return InlineAssembly(byteCode, args);
 				case Code.Call:
 					return TransformCall(false, operand, methodDef, args);
@@ -492,7 +500,6 @@ namespace Decompiler
 					}
 					
 					case Code.Calli: return InlineAssembly(byteCode, args);
-					case Code.Castclass: return arg1.CastTo(operandAsTypeRef);
 					case Code.Ckfinite: return InlineAssembly(byteCode, args);
 					case Code.Constrained: return InlineAssembly(byteCode, args);
 					case Code.Cpblk: return InlineAssembly(byteCode, args);
@@ -502,7 +509,6 @@ namespace Decompiler
 					case Code.Endfinally: return null;
 					case Code.Initblk: return InlineAssembly(byteCode, args);
 					case Code.Initobj: return InlineAssembly(byteCode, args);
-					case Code.Isinst: return arg1.CastAs(AstBuilder.ConvertType((Cecil.TypeReference)operand));
 					case Code.Jmp: return InlineAssembly(byteCode, args);
 				case Code.Ldarg:
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
@@ -554,9 +560,9 @@ namespace Decompiler
 						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand));
 				case Code.Ldloc:
-					return new Ast.IdentifierExpression(((ILVariable)operand).Name);
+					return new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand);
 				case Code.Ldloca:
-					return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name));
+					return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand));
 					case Code.Ldnull: return new Ast.NullReferenceExpression();
 					case Code.Ldobj: return InlineAssembly(byteCode, args);
 					case Code.Ldstr: return new Ast.PrimitiveExpression(operand);
@@ -601,7 +607,8 @@ namespace Decompiler
 					}
 					case Code.Rethrow: return new Ast.ThrowStatement();
 					case Code.Sizeof: return new Ast.SizeOfExpression { Type = AstBuilder.ConvertType(operand as TypeReference) };
-					case Code.Starg: return InlineAssembly(byteCode, args);
+					case Code.Starg: 
+						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand), arg1);
 					case Code.Stloc: {
 						ILVariable locVar = (ILVariable)operand;
 						if (!definedLocalVars.Contains(locVar)) {
@@ -611,7 +618,7 @@ namespace Decompiler
 								locVar.Name,
 								arg1);
 						} else {
-							return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name), arg1);
+							return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name).WithAnnotation(locVar), arg1);
 						}
 					}
 					case Code.Stobj: return InlineAssembly(byteCode, args);
@@ -619,8 +626,6 @@ namespace Decompiler
 					case Code.Tail: return InlineAssembly(byteCode, args);
 					case Code.Throw: return new Ast.ThrowStatement { Expression = arg1 };
 					case Code.Unaligned: return InlineAssembly(byteCode, args);
-					case Code.Unbox: return InlineAssembly(byteCode, args);
-					case Code.Unbox_Any: return InlineAssembly(byteCode, args);
 					case Code.Volatile: return InlineAssembly(byteCode, args);
 					default: throw new Exception("Unknown OpCode: " + opCode);
 			}
