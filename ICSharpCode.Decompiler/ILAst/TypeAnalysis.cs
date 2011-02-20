@@ -36,13 +36,14 @@ namespace Decompiler
 		ILBlock method;
 		ModuleDefinition module;
 		List<ILExpression> storedToGeneratedVariables = new List<ILExpression>();
+		HashSet<ILVariable> inferredVariables = new HashSet<ILVariable>();
 		
 		void InferTypes(ILNode node)
 		{
 			ILExpression expr = node as ILExpression;
 			if (expr != null) {
 				ILVariable v = expr.Operand as ILVariable;
-				if (v != null && v.IsGenerated && v.Type == null && expr.Code == ILCode.Stloc && HasSingleLoad(v)) {
+				if (v != null && v.IsGenerated && v.Type == null && expr.Code == ILCode.Stloc && !inferredVariables.Contains(v) && HasSingleLoad(v)) {
 					// Don't deal with this node or its children yet,
 					// wait for the expected type to be inferred first.
 					// This happens with the arg_... variables introduced by the ILAst - we skip inferring the whole statement,
@@ -132,8 +133,13 @@ namespace Decompiler
 				case Code.Ldloc:
 					{
 						ILVariable v = (ILVariable)expr.Operand;
-						if (v.Type == null)
+						if (v.Type == null) {
 							v.Type = expectedType;
+							// Mark the variable as inferred. This is necessary because expectedType might be null
+							// (e.g. the only use of an arg_*-Variable is a pop statement),
+							// so we can't tell from v.Type whether it was already inferred.
+							inferredVariables.Add(v);
+						}
 						return v.Type;
 					}
 				case Code.Starg:
