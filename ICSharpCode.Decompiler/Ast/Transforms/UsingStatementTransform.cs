@@ -26,6 +26,12 @@ namespace Decompiler.Transforms
 				).ToVariable()
 			}
 		};
+		static readonly AstNode simpleVariableDefinition = new VariableDeclarationStatement {
+			Type = new AnyNode().ToType(),
+			Variables = {
+				new VariableInitializer() // any name but no initializer
+			}
+		};
 		static readonly AstNode usingTryCatchPattern = new TryCatchStatement {
 			TryBlock = new AnyNode("body").ToBlock(),
 			FinallyBlock = new BlockStatement {
@@ -58,7 +64,10 @@ namespace Decompiler.Transforms
 			foreach (AstNode node in compilationUnit.Descendants.ToArray()) {
 				Match m1 = usingVarDeclPattern.Match(node);
 				if (m1 == null) continue;
-				Match m2 = usingTryCatchPattern.Match(node.NextSibling);
+				AstNode tryCatch = node.NextSibling;
+				while (simpleVariableDefinition.Match(tryCatch) != null)
+					tryCatch = tryCatch.NextSibling;
+				Match m2 = usingTryCatchPattern.Match(tryCatch);
 				if (m2 == null) continue;
 				if (m1.Get<VariableInitializer>("variable").Single().Name == m2.Get<IdentifierExpression>("ident").Single().Identifier) {
 					if (m2.Has("valueType")) {
@@ -68,12 +77,10 @@ namespace Decompiler.Transforms
 							continue;
 					}
 					BlockStatement body = m2.Get<BlockStatement>("body").Single();
-					body.Remove();
-					node.NextSibling.Remove();
-					node.ReplaceWith(
-						varDecl => new UsingStatement {
-							ResourceAcquisition = varDecl,
-							EmbeddedStatement = body
+					tryCatch.ReplaceWith(
+						new UsingStatement {
+							ResourceAcquisition = node.Detach(),
+							EmbeddedStatement = body.Detach()
 						});
 				}
 			}
