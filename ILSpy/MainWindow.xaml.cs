@@ -74,9 +74,6 @@ namespace ICSharpCode.ILSpy
 			}
 			sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
 			
-			#if DEBUG
-			AddDebugItemsToToolbar();
-			#endif
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
 		}
 
@@ -256,66 +253,6 @@ namespace ICSharpCode.ILSpy
 		}
 		#endregion
 		
-		#region Debugging CFG
-		#if DEBUG
-		void AddDebugItemsToToolbar()
-		{
-			toolBar.Items.Add(new Separator());
-			
-			Button cfg = new Button() { Content = "CFG" };
-			cfg.Click += new RoutedEventHandler(cfg_Click);
-			toolBar.Items.Add(cfg);
-			
-			Button ssa = new Button() { Content = "SSA" };
-			ssa.Click += new RoutedEventHandler(ssa_Click);
-			toolBar.Items.Add(ssa);
-			
-			Button varGraph = new Button() { Content = "Var" };
-			varGraph.Click += new RoutedEventHandler(varGraph_Click);
-			toolBar.Items.Add(varGraph);
-		}
-		
-		void cfg_Click(object sender, RoutedEventArgs e)
-		{
-			MethodTreeNode node = treeView.SelectedItem as MethodTreeNode;
-			if (node != null && node.MethodDefinition.HasBody) {
-				var cfg = ControlFlowGraphBuilder.Build(node.MethodDefinition.Body);
-				cfg.ComputeDominance();
-				cfg.ComputeDominanceFrontier();
-				ShowGraph(node.MethodDefinition.Name + "-cfg", cfg.ExportGraph());
-			}
-		}
-		
-		void ssa_Click(object sender, RoutedEventArgs e)
-		{
-			MethodTreeNode node = treeView.SelectedItem as MethodTreeNode;
-			if (node != null && node.MethodDefinition.HasBody) {
-				node.MethodDefinition.Body.SimplifyMacros();
-				ShowGraph(node.MethodDefinition.Name + "-ssa", SsaFormBuilder.Build(node.MethodDefinition).ExportBlockGraph());
-			}
-		}
-		
-		void varGraph_Click(object sender, RoutedEventArgs e)
-		{
-			MethodTreeNode node = treeView.SelectedItem as MethodTreeNode;
-			if (node != null && node.MethodDefinition.HasBody) {
-				node.MethodDefinition.Body.SimplifyMacros();
-				ShowGraph(node.MethodDefinition.Name + "-var", SsaFormBuilder.Build(node.MethodDefinition).ExportVariableGraph());
-			}
-		}
-		
-		void ShowGraph(string name, GraphVizGraph graph)
-		{
-			foreach (char c in Path.GetInvalidFileNameChars())
-				name = name.Replace(c, '-');
-			string fileName = Path.Combine(Path.GetTempPath(), name);
-			graph.Save(fileName + ".gv");
-			Process.Start("dot", "\"" + fileName + ".gv\" -Tpng -o \"" + fileName + ".png\"").WaitForExit();
-			Process.Start(fileName + ".png");
-		}
-		#endif
-		#endregion
-		
 		#region Open/Refresh
 		void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
@@ -477,7 +414,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (treeView.SelectedItems.Count == 1) {
 				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
-				if (node != null && node.Save())
+				if (node != null && node.Save(decompilerTextView))
 					return;
 			}
 			decompilerTextView.SaveToDisk(sessionSettings.FilterSettings.Language,

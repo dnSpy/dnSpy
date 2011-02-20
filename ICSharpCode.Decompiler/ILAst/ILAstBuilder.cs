@@ -57,7 +57,17 @@ namespace Decompiler
 			public override string ToString()
 			{
 				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("{0}:{1} {2} {3}", this.Name, this.Label != null ? " *" : "", this.Code.GetName(), this.Operand);
+				sb.AppendFormat("{0}:{1} {2} ", this.Name, this.Label != null ? " *" : "", this.Code.GetName());
+				if (this.Operand is ILLabel) {
+					sb.Append(((ILLabel)this.Operand).Name);
+				} else if (this.Operand is ILLabel[]) {
+					foreach(ILLabel label in (ILLabel[])this.Operand) {
+						sb.Append(label.Name);
+						sb.Append(" ");
+					}
+				} else {
+					sb.Append(this.Operand.ToString());
+				}
 				if (this.StackBefore != null) {
 					sb.Append(" StackBefore = {");
 					bool first = true;
@@ -234,6 +244,9 @@ namespace Decompiler
 			
 			// Genertate temporary variables to replace stack
 			foreach(ByteCode byteCode in body) {
+				if (byteCode.StackBefore == null)
+					continue;
+				
 				int argIdx = 0;
 				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Count;
 				for (int i = byteCode.StackBefore.Count - popCount; i < byteCode.StackBefore.Count; i++) {
@@ -395,8 +408,18 @@ namespace Decompiler
 			
 			// Convert stack-based IL code to ILAst tree
 			foreach(ByteCode byteCode in body) {
+				ILRange ilRange = new ILRange() { From = byteCode.Offset, To = byteCode.EndOffset };
+				
+				if (byteCode.StackBefore == null) {
+					ast.Add(new ILComment() {
+						Text = "Unreachable code: " + byteCode.Code.GetName(),
+						ILRanges = new List<ILRange>(new[] { ilRange })
+					});
+					continue;
+				}
+				
 				ILExpression expr = new ILExpression(byteCode.Code, byteCode.Operand);
-				expr.ILRanges.Add(new ILRange() { From = byteCode.Offset, To = byteCode.EndOffset });
+				expr.ILRanges.Add(ilRange);
 				
 				// Label for this instruction
 				if (byteCode.Label != null) {

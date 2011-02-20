@@ -18,41 +18,38 @@
 
 using System;
 using System.IO;
+using System.Text;
 
 namespace ICSharpCode.Decompiler
 {
-	public interface ITextOutput
+	public class TextOutputWriter : TextWriter
 	{
-		int CurrentLine { get; set; }
+		readonly ITextOutput output;
 		
-		void Indent();
-		void Unindent();
-		void Write(char ch);
-		void Write(string text);
-		void WriteLine();
-		void WriteDefinition(string text, object definition);
-		void WriteReference(string text, object reference);
-		
-		void MarkFoldStart(string collapsedText = "...", bool defaultCollapsed = false);
-		void MarkFoldEnd();
-	}
-	
-	public static class TextOutputExtensions
-	{
-		public static void Write(this ITextOutput output, string format, params object[] args)
+		public TextOutputWriter(ITextOutput output)
 		{
-			output.Write(string.Format(format, args));
+			if (output == null)
+				throw new ArgumentNullException("output");
+			this.output = output;
 		}
 		
-		public static void WriteLine(this ITextOutput output, string text)
+		public override Encoding Encoding {
+			get { return Encoding.UTF8; }
+		}
+		
+		public override void Write(char value)
 		{
-			output.Write(text);
+			output.Write(value);
+		}
+		
+		public override void Write(string value)
+		{
+			output.Write(value);
+		}
+		
+		public override void WriteLine()
+		{
 			output.WriteLine();
-		}
-		
-		public static void WriteLine(this ITextOutput output, string format, params object[] args)
-		{
-			output.WriteLine(string.Format(format, args));
 		}
 	}
 }

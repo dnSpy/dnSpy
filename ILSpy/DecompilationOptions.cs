@@ -33,6 +33,11 @@ namespace ICSharpCode.ILSpy
 		public bool FullDecompilation { get; set; }
 		
 		/// <summary>
+		/// Gets/Sets the directory into which the project is saved.
+		/// </summary>
+		public string SaveAsProjectDirectory { get; set; }
+		
+		/// <summary>
 		/// Gets the cancellation token that is used to abort the decompiler.
 		/// </summary>
 		/// <remarks>

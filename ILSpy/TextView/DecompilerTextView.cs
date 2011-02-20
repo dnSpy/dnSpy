@@ -403,6 +403,11 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
+		public void SaveToDisk(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options, string fileName)
+		{
+			SaveToDisk(new DecompilationContext(language, treeNodes.ToArray(), options), fileName);
+		}
+		
 		/// <summary>
 		/// Starts the decompilation of the given nodes.
 		/// The result will be saved to the given file name.
@@ -438,6 +443,8 @@ namespace ICSharpCode.ILSpy.TextView
 			Thread thread = new Thread(new ThreadStart(
 				delegate {
 					try {
+						Stopwatch stopwatch = new Stopwatch();
+						stopwatch.Start();
 						using (StreamWriter w = new StreamWriter(fileName)) {
 							try {
 								DecompileNodes(context, new PlainTextOutput(w));
@@ -447,8 +454,9 @@ namespace ICSharpCode.ILSpy.TextView
 								throw;
 							}
 						}
+						stopwatch.Stop();
 						AvalonEditTextOutput output = new AvalonEditTextOutput();
-						output.WriteLine("Decompilation complete.");
+						output.WriteLine("Decompilation complete in " + stopwatch.Elapsed.TotalSeconds.ToString("F1") + " seconds.");
 						output.WriteLine();
 						output.AddButton(null, "Open Explorer", delegate { Process.Start("explorer", "/select,\"" + fileName + "\""); });
 						output.WriteLine();
@@ -474,6 +482,9 @@ namespace ICSharpCode.ILSpy.TextView
 		internal static string CleanUpName(string text)
 		{
 			int pos = text.IndexOf(':');
+			if (pos > 0)
+				text = text.Substring(0, pos);
+			pos = text.IndexOf('`');
 			if (pos > 0)
 				text = text.Substring(0, pos);
 			text = text.Trim();

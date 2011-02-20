@@ -102,7 +102,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			
 			ISmartTextOutput smartOutput = output as ISmartTextOutput;
 			if (smartOutput != null && r is EmbeddedResource) {
-				smartOutput.AddButton(Images.Save, "Save", delegate { Save(); });
+				smartOutput.AddButton(Images.Save, "Save", delegate { Save(null); });
 				output.WriteLine();
 			}
 		}
@@ -132,7 +132,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return false;
 		}
 		
-		public override bool Save()
+		public override bool Save(TextView.DecompilerTextView textView)
 		{
 			EmbeddedResource er = r as EmbeddedResource;
 			if (er != null) {

@@ -79,7 +79,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// This method is called on the main thread when only a single item is selected.
 		/// If it returns false, normal decompilation is used to save the item.
 		/// </summary>
-		public virtual bool Save()
+		public virtual bool Save(TextView.DecompilerTextView textView)
 		{
 			return false;
 		}

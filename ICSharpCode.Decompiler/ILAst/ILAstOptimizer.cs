@@ -225,10 +225,15 @@ namespace Decompiler.ControlFlow
 		{
 			List<ILNode> result = new List<ILNode>();
 			
-			Queue<ControlFlowNode> agenda  = new Queue<ControlFlowNode>();
-			agenda.Enqueue(entryNode);
-			while(agenda.Count > 0) {
-				ControlFlowNode node = agenda.Dequeue();
+			HashSet<ControlFlowNode> agenda  = new HashSet<ControlFlowNode>();
+			agenda.Add(entryNode);
+			while(agenda.Any()) {
+				ControlFlowNode node = agenda.First();
+				// Attempt for a good order
+				while(agenda.Contains(node.ImmediateDominator)) {
+					node = node.ImmediateDominator;
+				}
+				agenda.Remove(node);
 				
 				// Find a block that represents a simple condition
 				if (nodes.Contains(node)) {
@@ -346,7 +351,7 @@ namespace Decompiler.ControlFlow
 
 				// Using the dominator tree should ensure we find the the widest loop first
 				foreach(var child in node.DominatorTreeChildren) {
-					agenda.Enqueue(child);
+					agenda.Add(child);
 				}
 			}
 			

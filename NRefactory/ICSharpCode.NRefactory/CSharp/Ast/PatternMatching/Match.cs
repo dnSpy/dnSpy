@@ -24,13 +24,29 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			results.RemoveRange(checkPoint, results.Count - checkPoint);
 		}
 		
-		public IEnumerable<AstNode> this[string groupName] {
-			get {
-				foreach (var pair in results) {
-					if (pair.Key == groupName)
-						yield return pair.Value;
-				}
+		public IEnumerable<AstNode> Get(string groupName)
+		{
+			foreach (var pair in results) {
+				if (pair.Key == groupName)
+					yield return pair.Value;
 			}
+		}
+		
+		public IEnumerable<T> Get<T>(string groupName) where T : AstNode
+		{
+			foreach (var pair in results) {
+				if (pair.Key == groupName)
+					yield return (T)pair.Value;
+			}
+		}
+		
+		public bool Has(string groupName)
+		{
+			foreach (var pair in results) {
+				if (pair.Key == groupName)
+					return true;
+			}
+			return false;
 		}
 		
 		public void Add(string groupName, AstNode node)

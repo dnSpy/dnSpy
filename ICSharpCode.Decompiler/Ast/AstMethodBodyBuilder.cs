@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -160,6 +161,8 @@ namespace Decompiler
 				yield return tryCatchStmt;
 			} else if (node is ILBlock) {
 				yield return TransformBlock((ILBlock)node);
+			} else if (node is ILComment) {
+				yield return new CommentStatement(((ILComment)node).Text).WithAnnotation(((ILComment)node).ILRanges);
 			} else {
 				throw new Exception("Unknown node type");
 			}
@@ -276,7 +279,7 @@ namespace Decompiler
 			}
 		}
 		
-		string FormatByteCodeOperand(object operand)
+		static string FormatByteCodeOperand(object operand)
 		{
 			if (operand == null) {
 				return string.Empty;
@@ -303,8 +306,6 @@ namespace Decompiler
 		
 		AstNode TransformByteCode_Internal(ILExpression byteCode, List<Ast.Expression> args)
 		{
-			// throw new NotImplementedException();
-			
 			ILCode opCode = byteCode.Code;
 			object operand = byteCode.Operand;
 			AstType operandAsTypeRef = AstBuilder.ConvertType(operand as Cecil.TypeReference);
@@ -367,7 +368,7 @@ namespace Decompiler
 				case Code.Ldelem_Ref:
 					return arg1.Indexer(arg2);
 				case Code.Ldelem_Any:
-					throw new NotImplementedException();
+					return InlineAssembly(byteCode, args);
 				case Code.Ldelema:
 					return MakeRef(arg1.Indexer(arg2));
 					
@@ -381,7 +382,7 @@ namespace Decompiler
 				case Code.Stelem_Ref:
 					return new Ast.AssignmentExpression(arg1.Indexer(arg2), arg3);
 				case Code.Stelem_Any:
-					throw new NotImplementedException();
+					return InlineAssembly(byteCode, args);
 					#endregion
 					#region Branching
 					case Code.Br:      return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
@@ -443,30 +444,30 @@ namespace Decompiler
 					case Code.Conv_Ovf_U8_Un: return arg1.CastTo(typeof(UInt64));
 					#endregion
 					#region Indirect
-					case Code.Ldind_I: throw new NotImplementedException();
-					case Code.Ldind_I1: throw new NotImplementedException();
-					case Code.Ldind_I2: throw new NotImplementedException();
-					case Code.Ldind_I4: throw new NotImplementedException();
-					case Code.Ldind_I8: throw new NotImplementedException();
-					case Code.Ldind_U1: throw new NotImplementedException();
-					case Code.Ldind_U2: throw new NotImplementedException();
-					case Code.Ldind_U4: throw new NotImplementedException();
-					case Code.Ldind_R4: throw new NotImplementedException();
-					case Code.Ldind_R8: throw new NotImplementedException();
-					case Code.Ldind_Ref: throw new NotImplementedException();
+					case Code.Ldind_I: return InlineAssembly(byteCode, args);
+					case Code.Ldind_I1: return InlineAssembly(byteCode, args);
+					case Code.Ldind_I2: return InlineAssembly(byteCode, args);
+					case Code.Ldind_I4: return InlineAssembly(byteCode, args);
+					case Code.Ldind_I8: return InlineAssembly(byteCode, args);
+					case Code.Ldind_U1: return InlineAssembly(byteCode, args);
+					case Code.Ldind_U2: return InlineAssembly(byteCode, args);
+					case Code.Ldind_U4: return InlineAssembly(byteCode, args);
+					case Code.Ldind_R4: return InlineAssembly(byteCode, args);
+					case Code.Ldind_R8: return InlineAssembly(byteCode, args);
+					case Code.Ldind_Ref: return InlineAssembly(byteCode, args);
 					
-					case Code.Stind_I: throw new NotImplementedException();
-					case Code.Stind_I1: throw new NotImplementedException();
-					case Code.Stind_I2: throw new NotImplementedException();
-					case Code.Stind_I4: throw new NotImplementedException();
-					case Code.Stind_I8: throw new NotImplementedException();
-					case Code.Stind_R4: throw new NotImplementedException();
-					case Code.Stind_R8: throw new NotImplementedException();
-					case Code.Stind_Ref: throw new NotImplementedException();
+					case Code.Stind_I: return InlineAssembly(byteCode, args);
+					case Code.Stind_I1: return InlineAssembly(byteCode, args);
+					case Code.Stind_I2: return InlineAssembly(byteCode, args);
+					case Code.Stind_I4: return InlineAssembly(byteCode, args);
+					case Code.Stind_I8: return InlineAssembly(byteCode, args);
+					case Code.Stind_R4: return InlineAssembly(byteCode, args);
+					case Code.Stind_R8: return InlineAssembly(byteCode, args);
+					case Code.Stind_Ref: return InlineAssembly(byteCode, args);
 					#endregion
-					case Code.Arglist: throw new NotImplementedException();
-					case Code.Box: throw new NotImplementedException();
-					case Code.Break: throw new NotImplementedException();
+					case Code.Arglist: return InlineAssembly(byteCode, args);
+					case Code.Box: return InlineAssembly(byteCode, args);
+					case Code.Break: return InlineAssembly(byteCode, args);
 				case Code.Call:
 					return TransformCall(false, operand, methodDef, args);
 				case Code.Callvirt:
@@ -490,19 +491,19 @@ namespace Decompiler
 							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(true));
 					}
 					
-					case Code.Calli: throw new NotImplementedException();
+					case Code.Calli: return InlineAssembly(byteCode, args);
 					case Code.Castclass: return arg1.CastTo(operandAsTypeRef);
-					case Code.Ckfinite: throw new NotImplementedException();
-					case Code.Constrained: throw new NotImplementedException();
-					case Code.Cpblk: throw new NotImplementedException();
-					case Code.Cpobj: throw new NotImplementedException();
+					case Code.Ckfinite: return InlineAssembly(byteCode, args);
+					case Code.Constrained: return InlineAssembly(byteCode, args);
+					case Code.Cpblk: return InlineAssembly(byteCode, args);
+					case Code.Cpobj: return InlineAssembly(byteCode, args);
 					case Code.Dup: return arg1;
-					case Code.Endfilter: throw new NotImplementedException();
+					case Code.Endfilter: return InlineAssembly(byteCode, args);
 					case Code.Endfinally: return null;
-					case Code.Initblk: throw new NotImplementedException();
-					case Code.Initobj: throw new NotImplementedException();
+					case Code.Initblk: return InlineAssembly(byteCode, args);
+					case Code.Initobj: return InlineAssembly(byteCode, args);
 					case Code.Isinst: return arg1.CastAs(AstBuilder.ConvertType((Cecil.TypeReference)operand));
-					case Code.Jmp: throw new NotImplementedException();
+					case Code.Jmp: return InlineAssembly(byteCode, args);
 				case Code.Ldarg:
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
 						return new Ast.ThisReferenceExpression();
@@ -557,17 +558,17 @@ namespace Decompiler
 				case Code.Ldloca:
 					return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name));
 					case Code.Ldnull: return new Ast.NullReferenceExpression();
-					case Code.Ldobj: throw new NotImplementedException();
+					case Code.Ldobj: return InlineAssembly(byteCode, args);
 					case Code.Ldstr: return new Ast.PrimitiveExpression(operand);
 				case Code.Ldtoken:
 					if (operand is Cecil.TypeReference) {
 						return new Ast.TypeOfExpression { Type = operandAsTypeRef }.Member("TypeHandle");
 					} else {
-						throw new NotImplementedException();
+						return InlineAssembly(byteCode, args);
 					}
 					case Code.Leave: return null;
-					case Code.Localloc: throw new NotImplementedException();
-					case Code.Mkrefany: throw new NotImplementedException();
+					case Code.Localloc: return InlineAssembly(byteCode, args);
+					case Code.Mkrefany: return InlineAssembly(byteCode, args);
 				case Code.Newobj:
 					{
 						Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
@@ -584,12 +585,12 @@ namespace Decompiler
 						oce.Arguments.AddRange(args);
 						return oce.WithAnnotation(operand);
 					}
-					case Code.No: throw new NotImplementedException();
+					case Code.No: return InlineAssembly(byteCode, args);
 					case Code.Nop: return null;
 					case Code.Pop: return arg1;
-					case Code.Readonly: throw new NotImplementedException();
-					case Code.Refanytype: throw new NotImplementedException();
-					case Code.Refanyval: throw new NotImplementedException();
+					case Code.Readonly: return InlineAssembly(byteCode, args);
+					case Code.Refanytype: return InlineAssembly(byteCode, args);
+					case Code.Refanyval: return InlineAssembly(byteCode, args);
 					case Code.Ret: {
 						if (methodDef.ReturnType.FullName != "System.Void") {
 							arg1 = Convert(arg1, methodDef.ReturnType);
@@ -600,7 +601,7 @@ namespace Decompiler
 					}
 					case Code.Rethrow: return new Ast.ThrowStatement();
 					case Code.Sizeof: return new Ast.SizeOfExpression { Type = AstBuilder.ConvertType(operand as TypeReference) };
-					case Code.Starg: throw new NotImplementedException();
+					case Code.Starg: return InlineAssembly(byteCode, args);
 					case Code.Stloc: {
 						ILVariable locVar = (ILVariable)operand;
 						if (!definedLocalVars.Contains(locVar)) {
@@ -613,14 +614,14 @@ namespace Decompiler
 							return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name), arg1);
 						}
 					}
-					case Code.Stobj: throw new NotImplementedException();
-					case Code.Switch: throw new NotImplementedException();
-					case Code.Tail: throw new NotImplementedException();
+					case Code.Stobj: return InlineAssembly(byteCode, args);
+					case Code.Switch: return InlineAssembly(byteCode, args);
+					case Code.Tail: return InlineAssembly(byteCode, args);
 					case Code.Throw: return new Ast.ThrowStatement { Expression = arg1 };
-					case Code.Unaligned: throw new NotImplementedException();
-					case Code.Unbox: throw new NotImplementedException();
-					case Code.Unbox_Any: throw new NotImplementedException();
-					case Code.Volatile: throw new NotImplementedException();
+					case Code.Unaligned: return InlineAssembly(byteCode, args);
+					case Code.Unbox: return InlineAssembly(byteCode, args);
+					case Code.Unbox_Any: return InlineAssembly(byteCode, args);
+					case Code.Volatile: return InlineAssembly(byteCode, args);
 					default: throw new Exception("Unknown OpCode: " + opCode);
 			}
 		}
@@ -688,6 +689,40 @@ namespace Decompiler
 			}
 			// Default invocation
 			return target.Invoke(cecilMethod.Name, ConvertTypeArguments(cecilMethod), methodArgs).WithAnnotation(cecilMethod);
+		}
+		
+		#if DEBUG
+		static readonly ConcurrentDictionary<ILCode, int> unhandledOpcodes = new ConcurrentDictionary<ILCode, int>();
+		#endif
+		
+		[Conditional("DEBUG")]
+		public static void ClearUnhandledOpcodes()
+		{
+			#if DEBUG
+			unhandledOpcodes.Clear();
+			#endif
+		}
+		
+		[Conditional("DEBUG")]
+		public static void PrintNumberOfUnhandledOpcodes()
+		{
+			#if DEBUG
+			foreach (var pair in unhandledOpcodes) {
+				Debug.WriteLine("AddMethodBodyBuilder unhandled opcode: {1}x {0}", pair.Key, pair.Value);
+			}
+			#endif
+		}
+		
+		static Expression InlineAssembly(ILExpression byteCode, List<Ast.Expression> args)
+		{
+			#if DEBUG
+			unhandledOpcodes.AddOrUpdate(byteCode.Code, c => 1, (c, n) => n+1);
+			#endif
+			// Output the operand of the unknown IL code as well
+			if (byteCode.Operand != null) {
+				args.Insert(0, new IdentifierExpression(FormatByteCodeOperand(byteCode.Operand)));
+			}
+			return new IdentifierExpression(byteCode.Code.GetName()).Invoke(args);
 		}
 		
 		static IEnumerable<AstType> ConvertTypeArguments(MethodReference cecilMethod)

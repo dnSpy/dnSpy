@@ -7,113 +7,113 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 {
 	sealed class TypePlaceholder : AstType
 	{
-		public static readonly Role<Pattern> PatternRole = new Role<Pattern>("Pattern");
+		public static readonly Role<AstNode> ChildRole = new Role<AstNode>("Child", AstNode.Null);
 		
-		public TypePlaceholder(Pattern pattern)
+		public TypePlaceholder(AstNode child)
 		{
-			AddChild(pattern, TypePlaceholder.PatternRole);
+			AddChild(child, TypePlaceholder.ChildRole);
 		}
 		
 		public override NodeType NodeType {
-			get { return NodeType.Pattern; }
+			get { return GetChildByRole(TypePlaceholder.ChildRole).NodeType; }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return default(S);
+			return GetChildByRole(TypePlaceholder.ChildRole).AcceptVisitor(visitor, data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
 		{
-			return GetChildByRole(TypePlaceholder.PatternRole).DoMatch(other, match);
+			return GetChildByRole(TypePlaceholder.ChildRole).DoMatch(other, match);
 		}
 	}
 	
 	sealed class ExpressionPlaceholder : Expression
 	{
-		public ExpressionPlaceholder(Pattern pattern)
+		public ExpressionPlaceholder(AstNode child)
 		{
-			AddChild(pattern, TypePlaceholder.PatternRole);
+			AddChild(child, TypePlaceholder.ChildRole);
 		}
 		
 		public override NodeType NodeType {
-			get { return NodeType.Pattern; }
+			get { return GetChildByRole(TypePlaceholder.ChildRole).NodeType; }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return default(S);
+			return GetChildByRole(TypePlaceholder.ChildRole).AcceptVisitor(visitor, data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
 		{
-			return GetChildByRole(TypePlaceholder.PatternRole).DoMatch(other, match);
+			return GetChildByRole(TypePlaceholder.ChildRole).DoMatch(other, match);
 		}
 	}
 	
 	sealed class StatementPlaceholder : Statement
 	{
-		public StatementPlaceholder(Pattern pattern)
+		public StatementPlaceholder(AstNode child)
 		{
-			AddChild(pattern, TypePlaceholder.PatternRole);
+			AddChild(child, TypePlaceholder.ChildRole);
 		}
 		
 		public override NodeType NodeType {
-			get { return NodeType.Pattern; }
+			get { return GetChildByRole(TypePlaceholder.ChildRole).NodeType; }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return default(S);
+			return GetChildByRole(TypePlaceholder.ChildRole).AcceptVisitor(visitor, data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
 		{
-			return GetChildByRole(TypePlaceholder.PatternRole).DoMatch(other, match);
+			return GetChildByRole(TypePlaceholder.ChildRole).DoMatch(other, match);
 		}
 	}
 	
 	sealed class BlockStatementPlaceholder : BlockStatement
 	{
-		public BlockStatementPlaceholder(Pattern pattern)
+		public BlockStatementPlaceholder(AstNode child)
 		{
-			AddChild(pattern, TypePlaceholder.PatternRole);
+			AddChild(child, TypePlaceholder.ChildRole);
 		}
 		
 		public override NodeType NodeType {
-			get { return NodeType.Pattern; }
+			get { return GetChildByRole(TypePlaceholder.ChildRole).NodeType; }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return default(S);
+			return GetChildByRole(TypePlaceholder.ChildRole).AcceptVisitor(visitor, data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
 		{
-			return GetChildByRole(TypePlaceholder.PatternRole).DoMatch(other, match);
+			return GetChildByRole(TypePlaceholder.ChildRole).DoMatch(other, match);
 		}
 	}
 	
 	sealed class VariablePlaceholder : VariableInitializer
 	{
-		public VariablePlaceholder(Pattern pattern)
+		public VariablePlaceholder(AstNode child)
 		{
-			AddChild(pattern, TypePlaceholder.PatternRole);
+			AddChild(child, TypePlaceholder.ChildRole);
 		}
 		
 		public override NodeType NodeType {
-			get { return NodeType.Pattern; }
+			get { return GetChildByRole(TypePlaceholder.ChildRole).NodeType; }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return default(S);
+			return GetChildByRole(TypePlaceholder.ChildRole).AcceptVisitor(visitor, data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
 		{
-			return GetChildByRole(TypePlaceholder.PatternRole).DoMatch(other, match);
+			return GetChildByRole(TypePlaceholder.ChildRole).DoMatch(other, match);
 		}
 	}
 }

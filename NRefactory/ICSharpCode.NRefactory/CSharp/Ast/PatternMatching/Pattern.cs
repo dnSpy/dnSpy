@@ -29,6 +29,11 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			return new ExpressionPlaceholder(this);
 		}
 		
+		public Statement ToStatement()
+		{
+			return new StatementPlaceholder(this);
+		}
+		
 		public BlockStatement ToBlock()
 		{
 			return new BlockStatementPlaceholder(this);
