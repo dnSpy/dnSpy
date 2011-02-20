@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using ICSharpCode.NRefactory.Utils;
 using Ast = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp;
 using Cecil = Mono.Cecil;
@@ -500,11 +501,11 @@ namespace Decompiler
 						return new Ast.PrimitiveExpression(false);
 					else if (byteCode.InferredType == typeSystem.Boolean && (int)operand == 1)
 						return new Ast.PrimitiveExpression(true);
-					if (byteCode.InferredType != null && byteCode.InferredType.IsValueType) {
+					if (byteCode.InferredType != null) { // cannot rely on IsValueType, it's not set for typerefs (but is set for typespecs)
 						TypeDefinition enumDefinition = byteCode.InferredType.Resolve();
 						if (enumDefinition != null && enumDefinition.IsEnum) {
 							foreach (FieldDefinition field in enumDefinition.Fields) {
-								if (field.IsStatic && object.Equals(field.Constant, operand))
+								if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int32, field.Constant, false), operand))
 									return AstBuilder.ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
 							}
 						}

@@ -620,13 +620,11 @@ namespace Decompiler
 		{
 			if (type == null)
 				return null;
-			if (type.IsValueType) {
-				// value type might be an enum
-				TypeDefinition typeDef = type.Resolve() as TypeDefinition;
-				if (typeDef != null && typeDef.IsEnum) {
-					TypeReference underlyingType = typeDef.Fields.Single(f => f.IsRuntimeSpecialName && !f.IsStatic).FieldType;
-					return IsSigned(typeDef.Module.TypeSystem, underlyingType);
-				}
+			// unfortunately we cannot rely on type.IsValueType here - it's not set when the instruction operand is a typeref (as opposed to a typespec)
+			TypeDefinition typeDef = type.Resolve() as TypeDefinition;
+			if (typeDef != null && typeDef.IsEnum) {
+				TypeReference underlyingType = typeDef.Fields.Single(f => f.IsRuntimeSpecialName && !f.IsStatic).FieldType;
+				return IsSigned(typeDef.Module.TypeSystem, underlyingType);
 			}
 			if (type == typeSystem.Byte || type == typeSystem.UInt16 || type == typeSystem.UInt32 || type == typeSystem.UInt64 || type == typeSystem.UIntPtr)
 				return false;
