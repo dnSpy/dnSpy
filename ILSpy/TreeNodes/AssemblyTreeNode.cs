@@ -27,7 +27,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
+using Microsoft.Win32;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -200,6 +202,37 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			assembly.WaitUntilLoaded(); // necessary so that load errors are passed on to the caller
 			language.DecompileAssembly(assembly.AssemblyDefinition, assembly.FileName, output, options);
+		}
+		
+		public override bool Save(DecompilerTextView textView)
+		{
+			Language language = this.Language;
+			if (string.IsNullOrEmpty(language.ProjectFileExtension))
+				return false;
+			SaveFileDialog dlg = new SaveFileDialog();
+			dlg.FileName = DecompilerTextView.CleanUpName(assembly.ShortName);
+			dlg.Filter = language.Name + " project|*" + language.ProjectFileExtension + "|" + language.Name + " single file|*" + language.FileExtension + "|All files|*.*";
+			if (dlg.ShowDialog() == true) {
+				DecompilationOptions options = new DecompilationOptions();
+				options.FullDecompilation = true;
+				if (dlg.FilterIndex == 1) {
+					options.SaveAsProjectDirectory = Path.GetDirectoryName(dlg.FileName);
+					foreach (string entry in Directory.GetFileSystemEntries(options.SaveAsProjectDirectory)) {
+						if (!string.Equals(entry, dlg.FileName, StringComparison.OrdinalIgnoreCase)) {
+							var result = MessageBox.Show(
+								"The directory is not empty. File will be overwritten." + Environment.NewLine +
+								"Are you sure you want to continue?",
+								"Project Directory not empty",
+								MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+							if (result == MessageBoxResult.No)
+								return true; // don't save, but mark the Save operation as handled
+							break;
+						}
+					}
+				}
+				textView.SaveToDisk(language, new[]{this}, options, dlg.FileName);
+			}
+			return true;
 		}
 	}
 }

@@ -384,6 +384,11 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
+		public void SaveToDisk(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options, string fileName)
+		{
+			SaveToDisk(new DecompilationContext(language, treeNodes.ToArray(), options), fileName);
+		}
+		
 		/// <summary>
 		/// Starts the decompilation of the given nodes.
 		/// The result will be saved to the given file name.
@@ -458,6 +463,9 @@ namespace ICSharpCode.ILSpy.TextView
 		internal static string CleanUpName(string text)
 		{
 			int pos = text.IndexOf(':');
+			if (pos > 0)
+				text = text.Substring(0, pos);
+			pos = text.IndexOf('`');
 			if (pos > 0)
 				text = text.Substring(0, pos);
 			text = text.Trim();

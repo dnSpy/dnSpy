@@ -17,33 +17,39 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Threading;
+using System.IO;
+using System.Text;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.Decompiler
 {
-	/// <summary>
-	/// Options passed to the decompiler.
-	/// </summary>
-	public class DecompilationOptions
+	public class TextOutputWriter : TextWriter
 	{
-		/// <summary>
-		/// Gets whether a full decompilation (all members recursively) is desired.
-		/// If this option is false, language bindings are allowed to show the only headers of the decompiled element's children.
-		/// </summary>
-		public bool FullDecompilation { get; set; }
+		readonly ITextOutput output;
 		
-		/// <summary>
-		/// Gets/Sets the directory into which the project is saved.
-		/// </summary>
-		public string SaveAsProjectDirectory { get; set; }
+		public TextOutputWriter(ITextOutput output)
+		{
+			if (output == null)
+				throw new ArgumentNullException("output");
+			this.output = output;
+		}
 		
-		/// <summary>
-		/// Gets the cancellation token that is used to abort the decompiler.
-		/// </summary>
-		/// <remarks>
-		/// Decompilers should regularly call <c>options.CancellationToken.ThrowIfCancellationRequested();</c>
-		/// to allow for cooperative cancellation of the decompilation task.
-		/// </remarks>
-		public CancellationToken CancellationToken { get; set; }
+		public override Encoding Encoding {
+			get { return Encoding.UTF8; }
+		}
+		
+		public override void Write(char value)
+		{
+			output.Write(value);
+		}
+		
+		public override void Write(string value)
+		{
+			output.Write(value);
+		}
+		
+		public override void WriteLine()
+		{
+			output.WriteLine();
+		}
 	}
 }

@@ -392,7 +392,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (treeView.SelectedItems.Count == 1) {
 				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
-				if (node != null && node.Save())
+				if (node != null && node.Save(decompilerTextView))
 					return;
 			}
 			decompilerTextView.SaveToDisk(sessionSettings.FilterSettings.Language,

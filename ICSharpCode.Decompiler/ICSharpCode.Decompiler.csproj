@@ -97,6 +97,7 @@
     <Compile Include="Options.cs" />
     <Compile Include="PlainTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextOutputWriter.cs" />
     <None Include="Properties\AssemblyInfo.template.cs" />
   </ItemGroup>
   <ItemGroup>

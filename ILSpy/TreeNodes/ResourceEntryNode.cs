@@ -75,7 +75,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				image.EndInit();
 				output.AddUIElement(() => new Image { Source = image });
 				output.WriteLine();
-				output.AddButton(Images.Save, "Save", delegate { Save(); });
+				output.AddButton(Images.Save, "Save", delegate { Save(null); });
 			} catch (Exception) {
 				return false;
 			}
@@ -106,7 +106,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return true;
 		}
 		
-		public override bool Save()
+		public override bool Save(DecompilerTextView textView)
 		{
 			SaveFileDialog dlg = new SaveFileDialog();
 			dlg.FileName = Path.GetFileName(DecompilerTextView.CleanUpName(key));

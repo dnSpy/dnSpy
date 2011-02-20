@@ -40,6 +40,10 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public abstract string FileExtension { get; }
 		
+		public virtual string ProjectFileExtension {
+			get { return null; }
+		}
+		
 		/// <summary>
 		/// Gets the syntax highlighting used for this language.
 		/// </summary>

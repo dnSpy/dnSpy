@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -690,8 +691,33 @@ namespace Decompiler
 			return target.Invoke(cecilMethod.Name, ConvertTypeArguments(cecilMethod), methodArgs).WithAnnotation(cecilMethod);
 		}
 		
+		#if DEBUG
+		static readonly ConcurrentDictionary<ILCode, int> unhandledOpcodes = new ConcurrentDictionary<ILCode, int>();
+		#endif
+		
+		[Conditional("DEBUG")]
+		public static void ClearUnhandledOpcodes()
+		{
+			#if DEBUG
+			unhandledOpcodes.Clear();
+			#endif
+		}
+		
+		[Conditional("DEBUG")]
+		public static void PrintNumberOfUnhandledOpcodes()
+		{
+			#if DEBUG
+			foreach (var pair in unhandledOpcodes) {
+				Debug.WriteLine("AddMethodBodyBuilder unhandled opcode: {1}x {0}", pair.Key, pair.Value);
+			}
+			#endif
+		}
+		
 		static Expression InlineAssembly(ILExpression byteCode, List<Ast.Expression> args)
 		{
+			#if DEBUG
+			unhandledOpcodes.AddOrUpdate(byteCode.Code, c => 1, (c, n) => n+1);
+			#endif
 			// Output the operand of the unknown IL code as well
 			if (byteCode.Operand != null) {
 				args.Insert(0, new IdentifierExpression(FormatByteCodeOperand(byteCode.Operand)));
