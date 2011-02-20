@@ -419,6 +419,8 @@ namespace ICSharpCode.ILSpy.TextView
 			Thread thread = new Thread(new ThreadStart(
 				delegate {
 					try {
+						Stopwatch stopwatch = new Stopwatch();
+						stopwatch.Start();
 						using (StreamWriter w = new StreamWriter(fileName)) {
 							try {
 								DecompileNodes(context, new PlainTextOutput(w));
@@ -428,8 +430,9 @@ namespace ICSharpCode.ILSpy.TextView
 								throw;
 							}
 						}
+						stopwatch.Stop();
 						AvalonEditTextOutput output = new AvalonEditTextOutput();
-						output.WriteLine("Decompilation complete.");
+						output.WriteLine("Decompilation complete in " + stopwatch.Elapsed.TotalSeconds.ToString("F1") + " seconds.");
 						output.WriteLine();
 						output.AddButton(null, "Open Explorer", delegate { Process.Start("explorer", "/select,\"" + fileName + "\""); });
 						output.WriteLine();
