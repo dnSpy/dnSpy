@@ -57,6 +57,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitArgListExpression (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ArgListExpression o = other as ArgListExpression;
+			return o != null && this.IsAccess == o.IsAccess && this.Arguments.DoMatch(o.Arguments, match);
+		}
 	}
 }
 

@@ -29,6 +29,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			{
 				return default (S);
 			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
+			}
 		}
 		#endregion
 		
@@ -46,6 +51,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public override NodeType NodeType {
 			get { return NodeType.Statement; }
+		}
+		
+		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.CSharp.PatternMatching.Match match)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

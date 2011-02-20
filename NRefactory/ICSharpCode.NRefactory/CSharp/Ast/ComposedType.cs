@@ -76,6 +76,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			return visitor.VisitComposedType (this, data);
 		}
 		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ComposedType o = other as ComposedType;
+			return o != null && this.HasNullableSpecifier == o.HasNullableSpecifier && this.PointerRank == o.PointerRank && this.ArraySpecifiers.DoMatch(o.ArraySpecifiers, match);
+		}
+		
 		public override string ToString()
 		{
 			StringBuilder b = new StringBuilder();
@@ -154,6 +160,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitArraySpecifier(this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ArraySpecifier o = other as ArraySpecifier;
+			return o != null && this.Dimensions == o.Dimensions;
 		}
 		
 		public override string ToString()

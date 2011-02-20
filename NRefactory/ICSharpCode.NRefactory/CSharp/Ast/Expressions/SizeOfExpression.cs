@@ -1,4 +1,4 @@
-// 
+﻿// 
 // SizeOfExpression.cs
 //  
 // Author:
@@ -51,6 +51,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitSizeOfExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			SizeOfExpression o = other as SizeOfExpression;
+			return o != null && this.Type.DoMatch(o.Type, match);
 		}
 	}
 }

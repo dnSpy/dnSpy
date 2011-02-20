@@ -54,5 +54,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitInvocationExpression (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			InvocationExpression o = other as InvocationExpression;
+			return o != null && this.Target.DoMatch(o.Target, match) && this.Arguments.DoMatch(o.Arguments, match);
+		}
 	}
 }

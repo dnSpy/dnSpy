@@ -65,6 +65,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			return visitor.VisitSimpleType (this, data);
 		}
 		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			SimpleType o = other as SimpleType;
+			return o != null && MatchString(this.Identifier, o.Identifier) && this.TypeArguments.DoMatch(o.TypeArguments, match);
+		}
+		
 		public override string ToString()
 		{
 			StringBuilder b = new StringBuilder(this.Identifier);

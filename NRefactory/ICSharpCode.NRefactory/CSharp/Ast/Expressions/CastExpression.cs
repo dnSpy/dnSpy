@@ -1,4 +1,4 @@
-// 
+﻿// 
 // CastExpression.cs
 //  
 // Author:
@@ -52,6 +52,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCastExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			CastExpression o = other as CastExpression;
+			return o != null && this.Type.DoMatch(o.Type, match) && this.Expression.DoMatch(o.Expression, match);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Comment.cs
 //  
 // Author:
@@ -85,6 +85,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitComment (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			Comment o = other as Comment;
+			return o != null && this.CommentType == o.CommentType && MatchString(this.Content, o.Content);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// 
+﻿// 
 // UnaryOperatorExpression.cs
 //  
 // Author:
@@ -62,6 +62,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUnaryOperatorExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			UnaryOperatorExpression o = other as UnaryOperatorExpression;
+			return o != null && this.Operator == o.Operator && this.Expression.DoMatch(o.Expression, match);
 		}
 		
 		public static string GetOperatorSymbol(UnaryOperatorType op)

@@ -25,10 +25,13 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -54,6 +57,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 			{
 				return default (S);
+			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
 			}
 		}
 		#endregion
@@ -568,6 +576,37 @@ namespace ICSharpCode.NRefactory.CSharp
 		#endregion
 		
 		public abstract S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data);
+		
+		#region Pattern Matching
+		/// <summary>
+		/// Performs a pattern matching operation.
+		/// <c>this</c> is the pattern, <paramref name="other"/> is the AST that is being matched.
+		/// </summary>
+		/// <returns>
+		/// If successful, a match object containing the matched groups.
+		/// If the match failed, returns <c>null</c>.
+		/// </returns>
+		/// <remarks>
+		/// Patterns are ASTs that contain special pattern nodes (from the PatternMatching namespace).
+		/// However, it is also possible to match two ASTs without any pattern nodes - doing so will produce an empty match object
+		/// if the two ASTs are structurally identical; or will return <c>null</c> if the ASTs are not identical.
+		/// </remarks>
+		public Match Match(AstNode other)
+		{
+			Match match = new Match();
+			if (DoMatch(other, match))
+				return match;
+			else
+				return null;
+		}
+		
+		protected static bool MatchString(string name1, string name2)
+		{
+			return string.IsNullOrEmpty(name1) || name1 == name2;
+		}
+		
+		protected internal abstract bool DoMatch(AstNode other, Match match);
+		#endregion
 		
 		// the Root role must be available when creating the null nodes, so we can't put it in the Roles class
 		static readonly Role<AstNode> RootRole = new Role<AstNode>("Root");

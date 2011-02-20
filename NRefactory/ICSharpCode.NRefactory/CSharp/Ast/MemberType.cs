@@ -60,6 +60,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			return visitor.VisitMemberType (this, data);
 		}
 		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			MemberType o = other as MemberType;
+			return o != null && this.IsDoubleColon == o.IsDoubleColon && MatchString(this.MemberName, o.MemberName) && this.Target.DoMatch(o.Target, match);
+		}
+		
 		public override string ToString()
 		{
 			StringBuilder b = new StringBuilder();

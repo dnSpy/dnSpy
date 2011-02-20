@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy
 	{
 		string name = "C#";
 		bool showAllMembers;
-		Predicate<IAstVisitor<object, object>> transformAbortCondition = null;
+		Predicate<IAstTransform> transformAbortCondition = null;
 		
 		public CSharpLanguage()
 		{
@@ -167,16 +167,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override bool ShowMember(MemberReference member)
 		{
-			if (showAllMembers) {
-				return true;
-			}
-			MethodDefinition method = member as MethodDefinition;
-			if (method != null && (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn))
-				return false;
-			TypeDefinition type = member as TypeDefinition;
-			if (type != null && type.Name.StartsWith("<>c__DisplayClass", StringComparison.Ordinal) && type.IsCompilerGenerated())
-				return false;
-			return true;
+			return showAllMembers || !AstBuilder.MemberIsHidden(member);
 		}
 	}
 }

@@ -20,5 +20,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitTypeReferenceExpression(this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			TypeReferenceExpression o = other as TypeReferenceExpression;
+			return o != null && this.Type.DoMatch(o.Type, match);
+		}
 	}
 }

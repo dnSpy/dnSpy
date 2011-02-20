@@ -501,7 +501,7 @@ namespace Decompiler
 					case Code.Endfinally: return null;
 					case Code.Initblk: throw new NotImplementedException();
 					case Code.Initobj: throw new NotImplementedException();
-					case Code.Isinst: return arg1.IsType(AstBuilder.ConvertType((Cecil.TypeReference)operand));
+					case Code.Isinst: return arg1.CastAs(AstBuilder.ConvertType((Cecil.TypeReference)operand));
 					case Code.Jmp: throw new NotImplementedException();
 				case Code.Ldarg:
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {

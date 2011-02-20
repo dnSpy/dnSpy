@@ -14,6 +14,7 @@ namespace Decompiler.Transforms
 	/// <summary>
 	/// Converts "new Action(obj, ldftn(func))" into "new Action(obj.func)".
 	/// For anonymous methods, creates an AnonymousMethodExpression.
+	/// Also gets rid of any "Display Classes" left over after inlining an anonymous method.
 	/// </summary>
 	public class DelegateConstruction : ContextTrackingVisitor
 	{

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Decompiler.Transforms;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
@@ -24,14 +25,25 @@ namespace Decompiler
 			this.context = context;
 		}
 		
+		public static bool MemberIsHidden(MemberReference member)
+		{
+			MethodDefinition method = member as MethodDefinition;
+			if (method != null && (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn))
+				return true;
+			TypeDefinition type = member as TypeDefinition;
+			if (type != null && type.DeclaringType != null && type.Name.StartsWith("<>c__DisplayClass", StringComparison.Ordinal) && type.IsCompilerGenerated())
+				return true;
+			return false;
+		}
+		
 		public void GenerateCode(ITextOutput output)
 		{
 			GenerateCode(output, null);
 		}
 		
-		public void GenerateCode(ITextOutput output, Predicate<IAstVisitor<object, object>> transformAbortCondition)
+		public void GenerateCode(ITextOutput output, Predicate<IAstTransform> transformAbortCondition)
 		{
-			Transforms.TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition, context);
+			TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition, context);
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			
 			var outputFormatter = new TextOutputFormatter(output);
@@ -139,6 +151,8 @@ namespace Decompiler
 			
 			// Nested types
 			foreach(TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
+				if (MemberIsHidden(nestedTypeDef))
+					continue;
 				astType.AddChild(CreateType(nestedTypeDef), TypeDeclaration.MemberRole);
 			}
 			
@@ -423,7 +437,7 @@ namespace Decompiler
 			
 			// Add methods
 			foreach(MethodDefinition methodDef in typeDef.Methods) {
-				if (methodDef.IsSpecialName) continue;
+				if (methodDef.IsConstructor || MemberIsHidden(methodDef)) continue;
 				
 				astType.AddChild(CreateMethod(methodDef), TypeDeclaration.MemberRole);
 			}
@@ -460,6 +474,7 @@ namespace Decompiler
 				// don't show visibility for static ctors
 				astMethod.Modifiers &= ~Modifiers.VisibilityMask;
 			}
+			astMethod.Name = methodDef.DeclaringType.Name;
 			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			return astMethod;

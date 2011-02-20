@@ -42,6 +42,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 		}
 		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			CompilationUnit o = other as CompilationUnit;
+			return o != null && GetChildrenByRole(MemberRole).DoMatch(o.GetChildrenByRole(MemberRole), match);
+		}
+		
 		public AstNode GetNodeAt (int line, int column)
 		{
 			return GetNodeAt (new AstLocation (line, column));
@@ -99,7 +105,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitCompilationUnit (this, data);
 		}
-		
 	}
 }
 

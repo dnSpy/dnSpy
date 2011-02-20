@@ -65,5 +65,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitObjectCreateExpression (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ObjectCreateExpression o = other as ObjectCreateExpression;
+			return o != null && this.Type.DoMatch(o.Type, match) && this.Arguments.DoMatch(o.Arguments, match) && this.Initializer.DoMatch(o.Initializer, match);
+		}
 	}
 }

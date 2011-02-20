@@ -61,6 +61,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitConstraint (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			Constraint o = other as Constraint;
+			return o != null && MatchString(this.TypeParameter, o.TypeParameter) && this.BaseTypes.DoMatch(o.BaseTypes, match);
+		}
 	}
 }
 

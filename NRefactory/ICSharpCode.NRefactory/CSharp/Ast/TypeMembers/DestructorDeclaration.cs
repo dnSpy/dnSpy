@@ -1,4 +1,4 @@
-// 
+﻿// 
 // DestructorDeclaration.cs
 //  
 // Author:
@@ -33,6 +33,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		public CSharpTokenNode TildeToken {
 			get { return GetChildByRole (TildeRole); }
 		}
+		
+		/// <summary>
+		/// Gets/Sets the name of the class containing the destructor.
+		/// This property can be used to inform the output visitor about the class name when writing a destructor declaration
+		/// without writing the complete type declaration. It is ignored when the destructor has a type declaration as parent.
+		/// </summary>
+		public string Name { get; set; }
 		
 		public CSharpTokenNode LParToken {
 			get { return GetChildByRole (Roles.LPar); }
