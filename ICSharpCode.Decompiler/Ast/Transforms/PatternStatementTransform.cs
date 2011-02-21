@@ -19,26 +19,35 @@ namespace Decompiler.Transforms
 		{
 			TransformUsings(compilationUnit);
 			TransformForeach(compilationUnit);
+			TransformFor(compilationUnit);
 		}
 		
-		#region using
-		static readonly AstNode usingVarDeclPattern = new VariableDeclarationStatement {
+		/// <summary>
+		/// $type $variable = $initializer;
+		/// </summary>
+		static readonly AstNode variableDeclPattern = new VariableDeclarationStatement {
 			Type = new AnyNode("type").ToType(),
 			Variables = {
 				new NamedNode(
 					"variable",
 					new VariableInitializer {
-						Initializer = new AnyNode().ToExpression()
+						Initializer = new AnyNode("initializer").ToExpression()
 					}
 				).ToVariable()
 			}
 		};
+		
+		/// <summary>
+		/// Variable declaration without initializer.
+		/// </summary>
 		static readonly AstNode simpleVariableDefinition = new VariableDeclarationStatement {
 			Type = new AnyNode().ToType(),
 			Variables = {
 				new VariableInitializer() // any name but no initializer
 			}
 		};
+		
+		#region using
 		static readonly AstNode usingTryCatchPattern = new TryCatchStatement {
 			TryBlock = new AnyNode("body").ToBlock(),
 			FinallyBlock = new BlockStatement {
@@ -65,7 +74,7 @@ namespace Decompiler.Transforms
 		public void TransformUsings(AstNode compilationUnit)
 		{
 			foreach (AstNode node in compilationUnit.Descendants.ToArray()) {
-				Match m1 = usingVarDeclPattern.Match(node);
+				Match m1 = variableDeclPattern.Match(node);
 				if (m1 == null) continue;
 				AstNode tryCatch = node.NextSibling;
 				while (simpleVariableDefinition.Match(tryCatch) != null)
@@ -173,6 +182,56 @@ namespace Decompiler.Transforms
 						VariableType = m.Get<AstType>("itemType").Single().Detach(),
 						VariableName = itemVar.Name,
 						InExpression = m.Get<Expression>("collection").Single().Detach(),
+						EmbeddedStatement = newBody
+					});
+			}
+		}
+		#endregion
+		
+		#region for
+		WhileStatement forPattern = new WhileStatement {
+			Condition = new BinaryOperatorExpression {
+				Left = new NamedNode("ident", new IdentifierExpression()).ToExpression(),
+				Operator = BinaryOperatorType.Any,
+				Right = new AnyNode("endExpr").ToExpression()
+			},
+			EmbeddedStatement = new BlockStatement {
+				new Repeat(new AnyNode("statement")).ToStatement(),
+				new NamedNode(
+					"increment",
+					new ExpressionStatement(
+						new AssignmentExpression {
+							Left = new Backreference("ident").ToExpression(),
+							Operator = AssignmentOperatorType.Any,
+							Right = new AnyNode().ToExpression()
+						})).ToStatement(),
+				new ContinueStatement()
+			}
+		};
+		
+		public void TransformFor(AstNode compilationUnit)
+		{
+			foreach (AstNode node in compilationUnit.Descendants.ToArray()) {
+				Match m1 = variableDeclPattern.Match(node);
+				if (m1 == null) continue;
+				AstNode next = node.NextSibling;
+				while (simpleVariableDefinition.Match(next) != null)
+					next = next.NextSibling;
+				Match m2 = forPattern.Match(next);
+				if (m2 == null) continue;
+				// ensure the variable in the for pattern is the same as in the declaration
+				if (m1.Get<VariableInitializer>("variable").Single().Name != m2.Get<IdentifierExpression>("ident").Single().Identifier)
+					continue;
+				WhileStatement loop = (WhileStatement)next;
+				node.Remove();
+				BlockStatement newBody = new BlockStatement();
+				foreach (Statement stmt in m2.Get<Statement>("statement"))
+					newBody.Add(stmt.Detach());
+				loop.ReplaceWith(
+					new ForStatement {
+						Initializers = { (VariableDeclarationStatement)node },
+						Condition = loop.Condition.Detach(),
+						Iterators = { m2.Get<Statement>("increment").Single().Detach() },
 						EmbeddedStatement = newBody
 					});
 			}

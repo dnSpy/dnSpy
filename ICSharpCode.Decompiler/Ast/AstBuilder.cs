@@ -31,8 +31,13 @@ namespace Decompiler
 			MethodDefinition method = member as MethodDefinition;
 			if (method != null && (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn))
 				return true;
+			if (method != null && method.Name.StartsWith("<", StringComparison.Ordinal) && method.IsCompilerGenerated())
+				return true;
 			TypeDefinition type = member as TypeDefinition;
 			if (type != null && type.DeclaringType != null && type.Name.StartsWith("<>c__DisplayClass", StringComparison.Ordinal) && type.IsCompilerGenerated())
+				return true;
+			FieldDefinition field = member as FieldDefinition;
+			if (field != null && field.Name.StartsWith("CS$<>", StringComparison.Ordinal) && field.IsCompilerGenerated())
 				return true;
 			return false;
 		}
@@ -411,6 +416,7 @@ namespace Decompiler
 		{
 			// Add fields
 			foreach(FieldDefinition fieldDef in typeDef.Fields) {
+				if (MemberIsHidden(fieldDef)) continue;
 				astType.AddChild(CreateField(fieldDef), TypeDeclaration.MemberRole);
 			}
 			
