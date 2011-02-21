@@ -103,10 +103,17 @@ namespace Decompiler
 						throw new Exception();
 					}
 				}
-			} else if (node is ILLoop) {
-				yield return new Ast.ForStatement {
-					EmbeddedStatement = TransformBlock(((ILLoop)node).ContentBlock)
+			} else if (node is ILWhileLoop) {
+				ILWhileLoop ilLoop = (ILWhileLoop)node;
+				if (ilLoop.PreLoopLabel != null)
+					yield return TransformNode(ilLoop.PreLoopLabel).Single();
+				WhileStatement whileStmt = new WhileStatement() {
+					Condition = ilLoop.Condition != null ? MakeBranchCondition(ilLoop.Condition) : new PrimitiveExpression(true),
+					EmbeddedStatement = TransformBlock(ilLoop.BodyBlock)
 				};
+				yield return whileStmt;
+				if (ilLoop.PostLoopGoto != null)
+					yield return (Statement)TransformExpression(ilLoop.PostLoopGoto);
 			} else if (node is ILCondition) {
 				ILCondition conditionalNode = (ILCondition)node;
 				if (conditionalNode.FalseBlock.Body.Any()) {

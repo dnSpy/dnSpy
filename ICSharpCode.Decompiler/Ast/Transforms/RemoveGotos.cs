@@ -7,12 +7,26 @@ namespace Decompiler.Transforms.Ast
 {
 	public class RemoveGotos: DepthFirstAstVisitor<object, object>
 	{
-		Stack<ForStatement> enteredLoops = new Stack<ForStatement>();
+		Stack<Statement> enteredLoops = new Stack<Statement>();
 		
-		ForStatement CurrentLoop {
+		Statement CurrentLoop {
 			get {
 				if (enteredLoops.Count > 0) {
 					return enteredLoops.Peek();
+				} else {
+					return null;
+				}
+			}
+		}
+		
+		Statement CurrentLoopBody {
+			get {
+				if (this.CurrentLoop == null) {
+					return null;
+				} else if (this.CurrentLoop is ForStatement) {
+					return ((ForStatement)this.CurrentLoop).EmbeddedStatement;
+				} else if (this.CurrentLoop is WhileStatement) {
+					return ((WhileStatement)this.CurrentLoop).EmbeddedStatement;
 				} else {
 					return null;
 				}
@@ -27,13 +41,13 @@ namespace Decompiler.Transforms.Ast
 			return null;
 		}
 		
-//		public override object VisitWhileStatement(WhileStatement whileStatement, object data)
-//		{
-//			enteredLoops.Push(whileStatement);
-//			base.VisitWhileStatement(whileStatement, data);
-//			enteredLoops.Pop();
-//			return null;
-//		}
+		public override object VisitWhileStatement(WhileStatement whileStatement, object data)
+		{
+			enteredLoops.Push(whileStatement);
+			base.VisitWhileStatement(whileStatement, data);
+			enteredLoops.Pop();
+			return null;
+		}
 		
 		public override object VisitBlockStatement(BlockStatement blockStatement, object data)
 		{
@@ -159,9 +173,19 @@ namespace Decompiler.Transforms.Ast
 			// Replace goto with 'continue'
 			// Continue statement which moves at the very end of loop
 			if (CurrentLoop != null &&
-			    (CurrentLoop.EmbeddedStatement is BlockStatement) &&
-			    ((CurrentLoop.EmbeddedStatement as BlockStatement).LastChild as LabelStatement) != null &&
-			    ((CurrentLoop.EmbeddedStatement as BlockStatement).LastChild as LabelStatement).Label == gotoStatement.Label) {
+			    (CurrentLoopBody is BlockStatement) &&
+			    ((CurrentLoopBody as BlockStatement).LastChild as LabelStatement) != null &&
+			    ((CurrentLoopBody as BlockStatement).LastChild as LabelStatement).Label == gotoStatement.Label) {
+				gotoStatement.ReplaceWith(new ContinueStatement());
+				return null;
+			}
+			
+			// Replace goto with 'continue'
+			// Jump before while
+			if (CurrentLoop is WhileStatement &&
+			    CurrentLoop.PrevSibling != null &&
+			    CurrentLoop.PrevSibling is LabelStatement &&
+			    (CurrentLoop.PrevSibling as LabelStatement).Label == gotoStatement.Label) {
 				gotoStatement.ReplaceWith(new ContinueStatement());
 				return null;
 			}

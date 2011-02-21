@@ -382,6 +382,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		void WriteEmbeddedStatement(Statement embeddedStatement)
 		{
+			if (embeddedStatement.IsNull)
+				return;
 			BlockStatement block = embeddedStatement as BlockStatement;
 			if (block != null)
 				VisitBlockStatement(block, null);
