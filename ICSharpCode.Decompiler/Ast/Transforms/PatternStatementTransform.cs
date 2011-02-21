@@ -13,7 +13,7 @@ namespace Decompiler.Transforms
 	/// <summary>
 	/// Finds the expanded form of using statements using pattern matching and replaces it with a UsingStatement.
 	/// </summary>
-	public class UsingStatementTransform : IAstTransform
+	public class PatternStatementTransform : IAstTransform
 	{
 		public void Run(AstNode compilationUnit)
 		{
