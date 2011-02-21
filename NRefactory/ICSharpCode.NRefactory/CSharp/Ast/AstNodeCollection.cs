@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
 
@@ -156,29 +157,44 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		internal bool DoMatch(AstNodeCollection<T> other, Match match)
 		{
-			AstNode cur1 = this.node.FirstChild;
-			AstNode cur2 = other.node.FirstChild;
-			while (true) {
-				while (cur1 != null && cur1.Role != role)
+			Stack<AstNode> patternStack = new Stack<AstNode>();
+			Stack<Pattern.PossibleMatch> stack = new Stack<Pattern.PossibleMatch>();
+			patternStack.Push(this.node.FirstChild);
+			stack.Push(new Pattern.PossibleMatch(other.node.FirstChild, match.CheckPoint()));
+			while (stack.Count > 0) {
+				AstNode cur1 = patternStack.Pop();
+				AstNode cur2 = stack.Peek().NextOther;
+				match.RestoreCheckPoint(stack.Pop().Checkpoint);
+				bool success = true;
+				while (cur1 != null && success) {
+					while (cur1 != null && cur1.Role != role)
+						cur1 = cur1.NextSibling;
+					while (cur2 != null && cur2.Role != role)
+						cur2 = cur2.NextSibling;
+					if (cur1 == null)
+						break;
+					
+					Pattern pattern = cur1 as Pattern;
+					if (pattern == null && cur1.NodeType == NodeType.Pattern)
+						pattern = cur1.GetChildByRole(TypePlaceholder.ChildRole) as Pattern;
+					if (pattern != null) {
+						Debug.Assert(stack.Count == patternStack.Count);
+						success = pattern.DoMatchCollection(role, cur2, match, stack);
+						Debug.Assert(stack.Count >= patternStack.Count);
+						while (stack.Count > patternStack.Count)
+							patternStack.Push(cur1.NextSibling);
+					} else {
+						success = cur1.DoMatch(cur2, match);
+					}
 					cur1 = cur1.NextSibling;
-				while (cur2 != null && cur2.Role != role)
-					cur2 = cur2.NextSibling;
-				if (cur1 == null || cur2 == null)
-					break;
-				Pattern pattern = cur1 as Pattern;
-				if (pattern == null && cur1.NodeType == NodeType.Pattern)
-					pattern = cur1.GetChildByRole(TypePlaceholder.ChildRole) as Pattern;
-				if (pattern != null) {
-					if (!pattern.DoMatchCollection(role, ref cur2, match))
-						return false;
-				} else {
-					if (!cur1.DoMatch(cur2, match))
-						return false;
 					cur2 = cur2.NextSibling;
 				}
-				cur1 = cur1.NextSibling;
+				while (cur2 != null && cur2.Role != role)
+					cur2 = cur2.NextSibling;
+				if (success && cur2 == null)
+					return true;
 			}
-			return cur1 == null && cur2 == null;
+			return false;
 		}
 	}
 }

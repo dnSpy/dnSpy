@@ -2,6 +2,8 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 {
@@ -14,11 +16,21 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			get { return NodeType.Pattern; }
 		}
 		
-		protected internal virtual bool DoMatchCollection(Role role, ref AstNode other, Match match)
+		internal struct PossibleMatch
 		{
-			bool result = DoMatch(other, match);
-			other = other.NextSibling;
-			return result;
+			public readonly AstNode NextOther; // next node after the last matched node
+			public readonly int Checkpoint; // checkpoint
+			
+			public PossibleMatch(AstNode nextOther, int checkpoint)
+			{
+				this.NextOther = nextOther;
+				this.Checkpoint = checkpoint;
+			}
+		}
+		
+		internal virtual bool DoMatchCollection(Role role, AstNode pos, Match match, Stack<PossibleMatch> backtrackingStack)
+		{
+			return DoMatch(pos, match);
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)

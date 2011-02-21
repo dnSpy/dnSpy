@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ICSharpCode.NRefactory.CSharp.PatternMatching
@@ -20,24 +21,22 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			AddChild(childNode, ElementRole);
 		}
 		
-		protected internal override bool DoMatchCollection(Role role, ref AstNode other, Match match)
+		internal override bool DoMatchCollection(Role role, AstNode pos, Match match, Stack<Pattern.PossibleMatch> backtrackingStack)
 		{
-			Debug.Assert(other != null && other.Role == role);
+			Debug.Assert(pos == null || pos.Role == role);
 			int matchCount = 0;
-			var lastValidCheckpoint = match.CheckPoint();
+			if (this.MinCount <= 0)
+				backtrackingStack.Push(new PossibleMatch(pos, match.CheckPoint()));
 			AstNode element = GetChildByRole(ElementRole);
-			AstNode pos = other;
-			while (pos != null && element.DoMatch(pos, match)) {
+			while (matchCount < this.MaxCount && pos != null && element.DoMatch(pos, match)) {
 				matchCount++;
-				lastValidCheckpoint = match.CheckPoint();
 				do {
 					pos = pos.NextSibling;
 				} while (pos != null && pos.Role != role);
-				// set 'other' (=pointer in collection) to the next node after the valid match
-				other = pos;
+				if (matchCount >= this.MinCount)
+					backtrackingStack.Push(new PossibleMatch(pos, match.CheckPoint()));
 			}
-			match.RestoreCheckPoint(lastValidCheckpoint); // restote old checkpoint after failed match
-			return matchCount >= MinCount && matchCount <= MaxCount;
+			return false; // never do a normal (single-element) match; always make the caller look at the results on the back-tracking stack.
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
@@ -45,7 +44,7 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			if (other == null || other.IsNull)
 				return this.MinCount <= 0;
 			else
-				return GetChildByRole(ElementRole).DoMatch(other, match);
+				return this.MaxCount >= 1 && GetChildByRole(ElementRole).DoMatch(other, match);
 		}
 	}
 }
