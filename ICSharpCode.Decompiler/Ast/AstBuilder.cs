@@ -408,6 +408,9 @@ namespace Decompiler
 				else
 					modifiers |= Modifiers.Override;
 			}
+			if (!methodDef.HasBody && !methodDef.IsAbstract)
+				modifiers |= Modifiers.Extern;
+			
 			return modifiers;
 		}
 		#endregion
