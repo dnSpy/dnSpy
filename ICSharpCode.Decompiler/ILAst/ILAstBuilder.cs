@@ -495,18 +495,13 @@ namespace Decompiler
 								bool canInline;
 								allowInline.TryGetValue((ILVariable)arg.Operand, out canInline);
 								
-								// Assigne the ranges for optimized away instrustions somewhere
-								currExpr.Arguments[0].ILRanges.AddRange(currExpr.ILRanges);
-								currExpr.Arguments[0].ILRanges.AddRange(nextExpr.Arguments[j].ILRanges);
-								
 								if (canInline) {
+									// Assigne the ranges for optimized away instrustions somewhere
+									currExpr.Arguments[0].ILRanges.AddRange(currExpr.ILRanges);
+									currExpr.Arguments[0].ILRanges.AddRange(nextExpr.Arguments[j].ILRanges);
+									
 									ast.RemoveAt(i);
 									nextExpr.Arguments[j] = currExpr.Arguments[0]; // Inline the stloc body
-									i -= 2; // Try the same index again
-									break;  // Found
-								} else {
-									ast.RemoveAt(i);
-									nextExpr.Arguments[j] = currExpr; // Inline the whole stloc
 									i -= 2; // Try the same index again
 									break;  // Found
 								}
