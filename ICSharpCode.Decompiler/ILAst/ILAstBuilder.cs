@@ -154,11 +154,13 @@ namespace Decompiler
 					PushCount   = inst.GetPushCount()
 				};
 				if (prefixes != null) {
+					instrToByteCode[prefixes[0]] = byteCode;
 					byteCode.Offset = prefixes[0].Offset;
 					byteCode.Prefixes = prefixes.ToArray();
 					prefixes = null;
+				} else {
+					instrToByteCode[inst] = byteCode;
 				}
-				instrToByteCode[inst] = byteCode;
 				body.Add(byteCode);
 			}
 			for (int i = 0; i < body.Count - 1; i++) {
