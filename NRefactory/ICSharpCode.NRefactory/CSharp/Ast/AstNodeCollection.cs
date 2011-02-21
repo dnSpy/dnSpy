@@ -187,7 +187,8 @@ namespace ICSharpCode.NRefactory.CSharp
 						success = cur1.DoMatch(cur2, match);
 					}
 					cur1 = cur1.NextSibling;
-					cur2 = cur2.NextSibling;
+					if (cur2 != null)
+						cur2 = cur2.NextSibling;
 				}
 				while (cur2 != null && cur2.Role != role)
 					cur2 = cur2.NextSibling;

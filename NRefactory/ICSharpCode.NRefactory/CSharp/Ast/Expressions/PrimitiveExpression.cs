@@ -31,6 +31,8 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class PrimitiveExpression : Expression
 	{
+		public static readonly object AnyValue = new object();
+		
 		AstLocation startLocation;
 		public override AstLocation StartLocation {
 			get {
@@ -70,7 +72,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			PrimitiveExpression o = other as PrimitiveExpression;
-			return o != null && object.Equals(this.Value, o.Value);
+			return o != null && (this.Value == AnyValue || object.Equals(this.Value, o.Value));
 		}
 	}
 }
