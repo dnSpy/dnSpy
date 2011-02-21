@@ -363,46 +363,55 @@ namespace Decompiler
 					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
 					case Code.Cgt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
 				case Code.Cgt_Un:
-					// TODO: can also mean Inequality, when used with object references
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+					// can also mean Inequality, when used with object references
+					{
+						TypeReference arg1Type = byteCode.Arguments[0].InferredType;
+						if (arg1Type != null && !arg1Type.IsValueType)
+							return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
+						else
+							return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+					}
 					case Code.Clt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					case Code.Clt_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					#endregion
 					#region Conversions
-					case Code.Conv_I:    return arg1.CastTo(typeof(int)); // TODO
-					case Code.Conv_I1:   return arg1.CastTo(typeof(SByte));
-					case Code.Conv_I2:   return arg1.CastTo(typeof(Int16));
-					case Code.Conv_I4:   return arg1.CastTo(typeof(Int32));
-					case Code.Conv_I8:   return arg1.CastTo(typeof(Int64));
-					case Code.Conv_U:    return arg1.CastTo(typeof(uint)); // TODO
-					case Code.Conv_U1:   return arg1.CastTo(typeof(Byte));
-					case Code.Conv_U2:   return arg1.CastTo(typeof(UInt16));
-					case Code.Conv_U4:   return arg1.CastTo(typeof(UInt32));
-					case Code.Conv_U8:   return arg1.CastTo(typeof(UInt64));
+				case Code.Conv_I1:
+				case Code.Conv_I2:
+				case Code.Conv_I4:
+				case Code.Conv_I8:
+				case Code.Conv_U1:
+				case Code.Conv_U2:
+				case Code.Conv_U4:
+				case Code.Conv_U8:
+					return arg1; // conversion is handled by Convert() function using the info from type analysis
+					case Code.Conv_I:    return arg1.CastTo(typeof(IntPtr)); // TODO
+					case Code.Conv_U:    return arg1.CastTo(typeof(UIntPtr)); // TODO
 					case Code.Conv_R4:   return arg1.CastTo(typeof(float));
 					case Code.Conv_R8:   return arg1.CastTo(typeof(double));
 					case Code.Conv_R_Un: return arg1.CastTo(typeof(double)); // TODO
 					
-					case Code.Conv_Ovf_I:  return arg1.CastTo(typeof(int));
-					case Code.Conv_Ovf_I1: return arg1.CastTo(typeof(SByte));
-					case Code.Conv_Ovf_I2: return arg1.CastTo(typeof(Int16));
-					case Code.Conv_Ovf_I4: return arg1.CastTo(typeof(Int32));
-					case Code.Conv_Ovf_I8: return arg1.CastTo(typeof(Int64));
-					case Code.Conv_Ovf_U:  return arg1.CastTo(typeof(uint));
-					case Code.Conv_Ovf_U1: return arg1.CastTo(typeof(Byte));
-					case Code.Conv_Ovf_U2: return arg1.CastTo(typeof(UInt16));
-					case Code.Conv_Ovf_U4: return arg1.CastTo(typeof(UInt32));
-					case Code.Conv_Ovf_U8: return arg1.CastTo(typeof(UInt64));
+				case Code.Conv_Ovf_I1:
+				case Code.Conv_Ovf_I2:
+				case Code.Conv_Ovf_I4:
+				case Code.Conv_Ovf_I8:
+				case Code.Conv_Ovf_U1:
+				case Code.Conv_Ovf_U2:
+				case Code.Conv_Ovf_U4:
+				case Code.Conv_Ovf_U8:
+				case Code.Conv_Ovf_I1_Un:
+				case Code.Conv_Ovf_I2_Un:
+				case Code.Conv_Ovf_I4_Un:
+				case Code.Conv_Ovf_I8_Un:
+				case Code.Conv_Ovf_U1_Un:
+				case Code.Conv_Ovf_U2_Un:
+				case Code.Conv_Ovf_U4_Un:
+				case Code.Conv_Ovf_U8_Un:
+					return arg1; // conversion was handled by Convert() function using the info from type analysis
+					case Code.Conv_Ovf_I:  return arg1.CastTo(typeof(IntPtr)); // TODO
+					case Code.Conv_Ovf_U:  return arg1.CastTo(typeof(UIntPtr));
+					case Code.Conv_Ovf_I_Un:  return arg1.CastTo(typeof(IntPtr));
+					case Code.Conv_Ovf_U_Un:  return arg1.CastTo(typeof(UIntPtr));
 					
-					case Code.Conv_Ovf_I_Un:  return arg1.CastTo(typeof(int));
-					case Code.Conv_Ovf_I1_Un: return arg1.CastTo(typeof(SByte));
-					case Code.Conv_Ovf_I2_Un: return arg1.CastTo(typeof(Int16));
-					case Code.Conv_Ovf_I4_Un: return arg1.CastTo(typeof(Int32));
-					case Code.Conv_Ovf_I8_Un: return arg1.CastTo(typeof(Int64));					case Code.Conv_Ovf_U_Un:  return arg1.CastTo(typeof(uint));
-					case Code.Conv_Ovf_U1_Un: return arg1.CastTo(typeof(Byte));
-					case Code.Conv_Ovf_U2_Un: return arg1.CastTo(typeof(UInt16));
-					case Code.Conv_Ovf_U4_Un: return arg1.CastTo(typeof(UInt32));
-					case Code.Conv_Ovf_U8_Un: return arg1.CastTo(typeof(UInt64));
 				case Code.Castclass:
 				case Code.Unbox_Any:
 					return arg1.CastTo(operandAsTypeRef);
@@ -690,19 +699,25 @@ namespace Decompiler
 			if (reqType == null || actualType == reqType) {
 				return expr;
 			} else {
+				bool actualIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(typeSystem, actualType);
+				bool requiredIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(typeSystem, reqType);
+				
 				if (reqType == typeSystem.Boolean) {
-					if (TypeAnalysis.IsIntegerOrEnum(typeSystem, actualType)) {
+					if (actualIsIntegerOrEnum) {
 						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, PrimitiveExpression(0, actualType));
 					} else {
 						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, new NullReferenceExpression());
 					}
 				}
-				if (actualType == typeSystem.Boolean && TypeAnalysis.IsIntegerOrEnum(typeSystem, reqType)) {
+				if (actualType == typeSystem.Boolean && requiredIsIntegerOrEnum) {
 					return new ConditionalExpression {
 						Condition = expr,
 						TrueExpression = PrimitiveExpression(1, reqType),
 						FalseExpression = PrimitiveExpression(0, reqType)
 					};
+				}
+				if (actualIsIntegerOrEnum && requiredIsIntegerOrEnum) {
+					return expr.CastTo(AstBuilder.ConvertType(reqType));
 				}
 				return expr;
 			}
