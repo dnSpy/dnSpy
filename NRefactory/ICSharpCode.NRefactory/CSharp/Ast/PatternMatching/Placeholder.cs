@@ -15,12 +15,12 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		}
 		
 		public override NodeType NodeType {
-			get { return GetChildByRole(TypePlaceholder.ChildRole).NodeType; }
+			get { return NodeType.Placeholder; }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return GetChildByRole(TypePlaceholder.ChildRole).AcceptVisitor(visitor, data);
+			return ((IPatternAstVisitor<T, S>)visitor).VisitPlaceholder(this, GetChildByRole(TypePlaceholder.ChildRole), data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
@@ -37,12 +37,12 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		}
 		
 		public override NodeType NodeType {
-			get { return GetChildByRole(TypePlaceholder.ChildRole).NodeType; }
+			get { return NodeType.Placeholder; }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return GetChildByRole(TypePlaceholder.ChildRole).AcceptVisitor(visitor, data);
+			return ((IPatternAstVisitor<T, S>)visitor).VisitPlaceholder(this, GetChildByRole(TypePlaceholder.ChildRole), data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
@@ -59,12 +59,12 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		}
 		
 		public override NodeType NodeType {
-			get { return GetChildByRole(TypePlaceholder.ChildRole).NodeType; }
+			get { return NodeType.Placeholder; }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return GetChildByRole(TypePlaceholder.ChildRole).AcceptVisitor(visitor, data);
+			return ((IPatternAstVisitor<T, S>)visitor).VisitPlaceholder(this, GetChildByRole(TypePlaceholder.ChildRole), data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
@@ -81,12 +81,12 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		}
 		
 		public override NodeType NodeType {
-			get { return GetChildByRole(TypePlaceholder.ChildRole).NodeType; }
+			get { return NodeType.Placeholder; }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return GetChildByRole(TypePlaceholder.ChildRole).AcceptVisitor(visitor, data);
+			return ((IPatternAstVisitor<T, S>)visitor).VisitPlaceholder(this, GetChildByRole(TypePlaceholder.ChildRole), data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)
@@ -103,12 +103,12 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		}
 		
 		public override NodeType NodeType {
-			get { return GetChildByRole(TypePlaceholder.ChildRole).NodeType; }
+			get { return NodeType.Placeholder; }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return GetChildByRole(TypePlaceholder.ChildRole).AcceptVisitor(visitor, data);
+			return ((IPatternAstVisitor<T, S>)visitor).VisitPlaceholder(this, GetChildByRole(TypePlaceholder.ChildRole), data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, Match match)

@@ -175,7 +175,7 @@ namespace ICSharpCode.NRefactory.CSharp
 						break;
 					
 					Pattern pattern = cur1 as Pattern;
-					if (pattern == null && cur1.NodeType == NodeType.Pattern)
+					if (pattern == null && cur1.NodeType == NodeType.Placeholder)
 						pattern = cur1.GetChildByRole(TypePlaceholder.ChildRole) as Pattern;
 					if (pattern != null) {
 						Debug.Assert(stack.Count == patternStack.Count);

@@ -8,6 +8,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
@@ -15,7 +17,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// Outputs the AST.
 	/// </summary>
-	public class OutputVisitor : IAstVisitor<object, object>
+	public class OutputVisitor : IPatternAstVisitor<object, object>
 	{
 		readonly IOutputFormatter formatter;
 		readonly CSharpFormattingPolicy policy;
@@ -1987,6 +1989,92 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(identifier);
 			WriteIdentifier(identifier.Name);
 			return EndNode(identifier);
+		}
+		#endregion
+		
+		#region Pattern Nodes
+		object IPatternAstVisitor<object, object>.VisitPlaceholder(AstNode placeholder, AstNode child, object data)
+		{
+			StartNode(placeholder);
+			child.AcceptVisitor(this, data);
+			return EndNode(placeholder);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitAnyNode(AnyNode anyNode, object data)
+		{
+			StartNode(anyNode);
+			if (!string.IsNullOrEmpty(anyNode.GroupName)) {
+				WriteIdentifier(anyNode.GroupName);
+				WriteToken(":", AstNode.Roles.Colon);
+			}
+			WriteKeyword("anyNode");
+			return EndNode(anyNode);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitBackreference(Backreference backreference, object data)
+		{
+			StartNode(backreference);
+			WriteKeyword("backreference");
+			LPar();
+			WriteIdentifier(backreference.ReferencedGroupName);
+			RPar();
+			return EndNode(backreference);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitIdentifierExpressionBackreference(IdentifierExpressionBackreference identifierExpressionBackreference, object data)
+		{
+			StartNode(identifierExpressionBackreference);
+			WriteKeyword("identifierBackreference");
+			LPar();
+			WriteIdentifier(identifierExpressionBackreference.ReferencedGroupName);
+			RPar();
+			return EndNode(identifierExpressionBackreference);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitChoice(Choice choice, object data)
+		{
+			StartNode(choice);
+			WriteKeyword("choice");
+			Space();
+			LPar();
+			NewLine();
+			formatter.Indent();
+			foreach (AstNode alternative in choice) {
+				alternative.AcceptVisitor(this, data);
+				if (alternative != choice.LastChild)
+					WriteToken(",", AstNode.Roles.Comma);
+				NewLine();
+			}
+			formatter.Unindent();
+			RPar();
+			return EndNode(choice);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitNamedNode(NamedNode namedNode, object data)
+		{
+			StartNode(namedNode);
+			if (!string.IsNullOrEmpty(namedNode.GroupName)) {
+				WriteIdentifier(namedNode.GroupName);
+				WriteToken(":", AstNode.Roles.Colon);
+			}
+			namedNode.GetChildByRole(NamedNode.ElementRole).AcceptVisitor(this, data);
+			return EndNode(namedNode);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitRepeat(Repeat repeat, object data)
+		{
+			StartNode(repeat);
+			WriteKeyword("repeat");
+			LPar();
+			if (repeat.MinCount != 0 || repeat.MaxCount != int.MaxValue) {
+				WriteIdentifier(repeat.MinCount.ToString());
+				WriteToken(",", AstNode.Roles.Comma);
+				WriteIdentifier(repeat.MaxCount.ToString());
+				WriteToken(",", AstNode.Roles.Comma);
+			}
+			repeat.GetChildByRole(Repeat.ElementRole).AcceptVisitor(this, data);
+			RPar();
+			return EndNode(repeat);
 		}
 		#endregion
 	}

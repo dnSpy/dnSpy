@@ -12,6 +12,10 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 	{
 		readonly string groupName;
 		
+		public string GroupName {
+			get { return groupName; }
+		}
+		
 		public AnyNode(string groupName = null)
 		{
 			this.groupName = groupName;
@@ -21,6 +25,11 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		{
 			match.Add(this.groupName, other);
 			return other != null && !other.IsNull;
+		}
+		
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		{
+			return ((IPatternAstVisitor<T, S>)visitor).VisitAnyNode(this, data);
 		}
 	}
 }

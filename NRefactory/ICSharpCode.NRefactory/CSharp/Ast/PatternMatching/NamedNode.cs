@@ -14,6 +14,10 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		
 		readonly string groupName;
 		
+		public string GroupName {
+			get { return groupName; }
+		}
+		
 		public NamedNode(string groupName, AstNode childNode)
 		{
 			this.groupName = groupName;
@@ -24,6 +28,11 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		{
 			match.Add(this.groupName, other);
 			return GetChildByRole(ElementRole).DoMatch(other, match);
+		}
+		
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		{
+			return ((IPatternAstVisitor<T, S>)visitor).VisitNamedNode(this, data);
 		}
 	}
 }

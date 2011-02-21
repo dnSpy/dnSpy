@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 {
@@ -33,11 +34,6 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			return DoMatch(pos, match);
 		}
 		
-		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
-		{
-			return default(S);
-		}
-		
 		public AstType ToType()
 		{
 			return new TypePlaceholder(this);
@@ -61,6 +57,14 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		public VariableInitializer ToVariable()
 		{
 			return new VariablePlaceholder(this);
+		}
+		
+		// Make debugging easier by giving Patterns a ToString() implementation
+		public override string ToString()
+		{
+			StringWriter w = new StringWriter();
+			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
+			return w.ToString();
 		}
 	}
 }

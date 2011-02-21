@@ -46,5 +46,10 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			else
 				return this.MaxCount >= 1 && GetChildByRole(ElementRole).DoMatch(other, match);
 		}
+		
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		{
+			return ((IPatternAstVisitor<T, S>)visitor).VisitRepeat(this, data);
+		}
 	}
 }
