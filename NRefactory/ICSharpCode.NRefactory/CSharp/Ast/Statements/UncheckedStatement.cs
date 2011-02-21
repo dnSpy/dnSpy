@@ -1,4 +1,4 @@
-// 
+﻿// 
 // UncheckedStatement.cs
 //  
 // Author:
@@ -43,6 +43,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUncheckedStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			UncheckedStatement o = other as UncheckedStatement;
+			return o != null && this.Body.DoMatch(o.Body, match);
 		}
 	}
 }

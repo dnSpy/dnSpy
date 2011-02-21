@@ -1,4 +1,4 @@
-// 
+﻿// 
 // YieldBreakStatement.cs
 //
 // Author:
@@ -49,6 +49,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitYieldBreakStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			YieldBreakStatement o = other as YieldBreakStatement;
+			return o != null;
 		}
 	}
 }

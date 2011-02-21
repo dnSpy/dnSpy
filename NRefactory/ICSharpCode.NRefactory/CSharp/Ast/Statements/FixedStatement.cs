@@ -63,5 +63,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitFixedStatement (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			FixedStatement o = other as FixedStatement;
+			return o != null && this.Variables.DoMatch(o.Variables, match) && this.EmbeddedStatement.DoMatch(o.EmbeddedStatement, match);
+		}
 	}
 }
