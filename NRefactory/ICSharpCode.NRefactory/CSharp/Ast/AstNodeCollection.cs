@@ -165,10 +165,18 @@ namespace ICSharpCode.NRefactory.CSharp
 					cur2 = cur2.NextSibling;
 				if (cur1 == null || cur2 == null)
 					break;
-				if (!cur1.DoMatch(cur2, match))
-					return false;
+				Pattern pattern = cur1 as Pattern;
+				if (pattern == null && cur1.NodeType == NodeType.Pattern)
+					pattern = cur1.GetChildByRole(TypePlaceholder.ChildRole) as Pattern;
+				if (pattern != null) {
+					if (!pattern.DoMatchCollection(role, ref cur2, match))
+						return false;
+				} else {
+					if (!cur1.DoMatch(cur2, match))
+						return false;
+					cur2 = cur2.NextSibling;
+				}
 				cur1 = cur1.NextSibling;
-				cur2 = cur2.NextSibling;
 			}
 			return cur1 == null && cur2 == null;
 		}

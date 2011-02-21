@@ -68,7 +68,7 @@
     <Compile Include="Ast\Transforms\RemoveGotos.cs" />
     <Compile Include="Ast\Transforms\RestoreLoop.cs" />
     <Compile Include="Ast\Transforms\TransformationPipeline.cs" />
-    <Compile Include="Ast\Transforms\UsingStatementTransform.cs" />
+    <Compile Include="Ast\Transforms\PatternStatementTransform.cs" />
     <Compile Include="CecilExtensions.cs" />
     <Compile Include="CodeMappings.cs" />
     <Compile Include="DecompilerException.cs" />

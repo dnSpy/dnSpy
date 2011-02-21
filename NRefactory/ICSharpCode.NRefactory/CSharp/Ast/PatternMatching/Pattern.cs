@@ -14,6 +14,13 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			get { return NodeType.Pattern; }
 		}
 		
+		protected internal virtual bool DoMatchCollection(Role role, ref AstNode other, Match match)
+		{
+			bool result = DoMatch(other, match);
+			other = other.NextSibling;
+			return result;
+		}
+		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
 			return default(S);

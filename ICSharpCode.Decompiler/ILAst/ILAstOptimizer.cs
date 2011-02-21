@@ -32,12 +32,13 @@ namespace Decompiler.ControlFlow
 			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindLoops) return;
+			UpdateLabelRefCounts(method);
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, (ILLabel)block.EntryGoto.Operand);
 				graph.ComputeDominance();
 				graph.ComputeDominanceFrontier();
-				block.Body = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint, true);
+				block.Body = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint, false);
 			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindConditions) return;
@@ -45,6 +46,9 @@ namespace Decompiler.ControlFlow
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, (ILLabel)block.EntryGoto.Operand);
+				// TODO: Fix
+				if (graph == null)
+					continue;
 				graph.ComputeDominance();
 				graph.ComputeDominanceFrontier();
 				block.Body = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
@@ -94,11 +98,11 @@ namespace Decompiler.ControlFlow
 					bool added = false;
 					
 					// Insert split
-					if ((currNode is ILLabel && !(lastNode is ILLabel)) ||
+					if (currNode is ILLabel ||
 						lastNode is ILTryCatchBlock ||
 						currNode is ILTryCatchBlock ||
 					    (lastNode is ILExpression) && ((ILExpression)lastNode).IsBranch() ||
-					    (currNode is ILExpression) && ((ILExpression)currNode).IsBranch())
+					    (currNode is ILExpression) && (((ILExpression)currNode).IsBranch() && basicBlock.Body.Count > 0))
 					{
 						ILBasicBlock lastBlock = basicBlock;
 						basicBlock = new ILBasicBlock();
@@ -140,7 +144,7 @@ namespace Decompiler.ControlFlow
 			
 			// Create graph nodes
 			labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
-			Dictionary<ILNode, ControlFlowNode>  astNodeToCfNode = new Dictionary<ILNode, ControlFlowNode>();
+			Dictionary<ILNode, ControlFlowNode> astNodeToCfNode = new Dictionary<ILNode, ControlFlowNode>();
 			foreach(ILNode node in nodes) {
 				ControlFlowNode cfNode = new ControlFlowNode(index++, -1, ControlFlowNodeType.Normal);
 				cfNodes.Add(cfNode);
@@ -152,6 +156,9 @@ namespace Decompiler.ControlFlow
 					labelToCfNode[label] = cfNode;
 				}
 			}
+			
+			if (!labelToCfNode.ContainsKey(entryLabel))
+				return null;
 			
 			// Entry endge
 			ControlFlowNode entryNode = labelToCfNode[entryLabel];
@@ -196,18 +203,32 @@ namespace Decompiler.ControlFlow
 			    		&& node.DominanceFrontier.Contains(node)
 			    		&& (node != entryPoint || !excludeEntryPoint))
 				{
-					HashSet<ControlFlowNode> loopContents = new HashSet<ControlFlowNode>();
-					FindLoopContents(scope, loopContents, node, node);
+					HashSet<ControlFlowNode> loopContents = FindDominatedNodes(scope, node);
+					
+					ILWhileLoop loop = new ILWhileLoop();
+					
+					ILCondition cond;
+					HashSet<ControlFlowNode> condNodes;
+					ILLabel condLabel;
+					if (TryMatchCondition(loopContents, new ControlFlowNode[]{}, node, out cond, out condNodes, out condLabel)) {
+						loopContents.ExceptWith(condNodes);
+						scope.ExceptWith(condNodes);
+						// Use loop to implement condition
+						loop.Condition      = cond.Condition;
+						loop.PreLoopLabel   = condLabel;
+						loop.PostLoopGoto   = cond.FalseBlock.EntryGoto;
+						loop.BodyBlock      = new ILBlock() { EntryGoto = cond.TrueBlock.EntryGoto };
+					} else {
+						// Give the block some explicit entry point
+						ILLabel entryLabel  = new ILLabel() { Name = "Loop_" + (nextBlockIndex++) };
+						loop.BodyBlock      = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, entryLabel) };
+						((ILBasicBlock)node.UserData).Body.Insert(0, entryLabel);
+					}
+					loop.BodyBlock.Body = FindLoops(loopContents, node, true);
 					
 					// Move the content into loop block
 					scope.ExceptWith(loopContents);
-					ILLabel entryLabel = new ILLabel() { Name = "Loop_" + (nextBlockIndex++) };
-					((ILBasicBlock)node.UserData).Body.Insert(0, entryLabel);
-					result.Add(new ILLoop() {
-						ContentBlock = new ILBlock(FindLoops(loopContents, node, true)) {
- 							EntryGoto = new ILExpression(ILCode.Br, entryLabel)
-					    }
-					});
+					result.Add(loop);
 				}
 
 				// Using the dominator tree should ensure we find the the widest loop first
@@ -224,22 +245,12 @@ namespace Decompiler.ControlFlow
 			return result;
 		}
 		
-		static void FindLoopContents(HashSet<ControlFlowNode> scope, HashSet<ControlFlowNode> loopContents, ControlFlowNode loopHead, ControlFlowNode addNode)
-		{
-			if (scope.Contains(addNode) && loopHead.Dominates(addNode) && loopContents.Add(addNode)) {
-				foreach (var edge in addNode.Incoming) {
-					FindLoopContents(scope, loopContents, loopHead, edge.Source);
-				}
-			}
-		}
-		
 		void UpdateLabelRefCounts(ILBlock method)
 		{
 			labelRefCount = new Dictionary<ILLabel, int>();
-			foreach(ILLabel label in method.GetSelfAndChildrenRecursive<ILLabel>()) {
-				labelRefCount[label] = 0;
-			}
 			foreach(ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets())) {
+				if (!labelRefCount.ContainsKey(target))
+					labelRefCount[target] = 0;
 				labelRefCount[target]++;
 			}
 		}

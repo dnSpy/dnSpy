@@ -9,6 +9,7 @@ using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using ClassType = ICSharpCode.NRefactory.TypeSystem.ClassType;
+using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
 
 namespace Decompiler
 {
@@ -148,6 +149,9 @@ namespace Decompiler
 			} else {
 				astType.ClassType = ClassType.Class;
 			}
+			
+			astType.TypeParameters.AddRange(MakeTypeParameters(typeDef.GenericParameters));
+			astType.Constraints.AddRange(MakeConstraints(typeDef.GenericParameters));
 			
 			// Nested types
 			foreach(TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
@@ -451,16 +455,33 @@ namespace Decompiler
 			MethodDeclaration astMethod = new MethodDeclaration();
 			astMethod.AddAnnotation(methodDef);
 			astMethod.AddAnnotation(methodMapping);
-			astMethod.Name = methodDef.Name;
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
+			astMethod.Name = methodDef.Name;
+			astMethod.TypeParameters.AddRange(MakeTypeParameters(methodDef.GenericParameters));
 			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
+			astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
 				astMethod.Modifiers = ConvertModifiers(methodDef);
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			}
 			return astMethod;
 		}
-
+		
+		IEnumerable<TypeParameterDeclaration> MakeTypeParameters(IEnumerable<GenericParameter> genericParameters)
+		{
+			return genericParameters.Select(
+				gp => new TypeParameterDeclaration {
+					Name = gp.Name,
+					Variance = gp.IsContravariant ? VarianceModifier.Contravariant : gp.IsCovariant ? VarianceModifier.Covariant : VarianceModifier.Invariant
+				});
+		}
+		
+		IEnumerable<Constraint> MakeConstraints(IEnumerable<GenericParameter> genericParameters)
+		{
+			// TODO
+			return Enumerable.Empty<Constraint>();
+		}
+		
 		ConstructorDeclaration CreateConstructor(MethodDefinition methodDef)
 		{
 			// Create mapping - used in debugger

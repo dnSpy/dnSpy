@@ -31,7 +31,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// { Statements }
 	/// </summary>
-	public class BlockStatement : Statement
+	public class BlockStatement : Statement, IEnumerable<Statement>
 	{
 		public static readonly Role<Statement> StatementRole = new Role<Statement>("Statement", Statement.Null);
 		
@@ -81,17 +81,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		#region Builder methods
-		public void AddStatement(Statement statement)
+		public void Add(Statement statement)
 		{
 			AddChild(statement, StatementRole);
 		}
 		
-		public void AddStatement(Expression expression)
+		public void Add(Expression expression)
 		{
 			AddChild(new ExpressionStatement { Expression = expression }, StatementRole);
 		}
 		
-		public void AddStatements(IEnumerable<Statement> statements)
+		public void AddRange(IEnumerable<Statement> statements)
 		{
 			foreach (Statement st in statements)
 				AddChild(st, StatementRole);
@@ -99,13 +99,23 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public void AddAssignment(Expression left, Expression right)
 		{
-			AddStatement(new AssignmentExpression { Left = left, Operator = AssignmentOperatorType.Assign, Right = right });
+			Add(new AssignmentExpression { Left = left, Operator = AssignmentOperatorType.Assign, Right = right });
 		}
 		
 		public void AddReturnStatement(Expression expression)
 		{
-			AddStatement(new ReturnStatement { Expression = expression });
+			Add(new ReturnStatement { Expression = expression });
 		}
 		#endregion
+		
+		IEnumerator<Statement> IEnumerable<Statement>.GetEnumerator()
+		{
+			return this.Statements.GetEnumerator();
+		}
+		
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return this.Statements.GetEnumerator();
+		}
 	}
 }

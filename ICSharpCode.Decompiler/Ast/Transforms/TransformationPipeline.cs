@@ -19,7 +19,7 @@ namespace Decompiler.Transforms
 			return new IAstTransform[] {
 				new PushNegation(),
 				new DelegateConstruction(context),
-				new UsingStatementTransform(),
+				new PatternStatementTransform(),
 				new ConvertConstructorCallIntoInitializer(),
 				new ReplaceMethodCallsWithOperators(),
 			};

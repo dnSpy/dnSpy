@@ -199,6 +199,7 @@ namespace Decompiler
 		public ILCode Code { get; set; }
 		public object Operand { get; set; }
 		public List<ILExpression> Arguments { get; set; }
+		public Instruction[] Prefixes { get; set; }
 		// Mapping to the original instructions (useful for debugging)
 		public List<ILRange> ILRanges { get; set; }
 		
@@ -210,6 +211,18 @@ namespace Decompiler
 			this.Operand = operand;
 			this.Arguments = new List<ILExpression>(args);
 			this.ILRanges  = new List<ILRange>(1);
+		}
+		
+		public Instruction GetPrefix(Code code)
+		{
+			var prefixes = this.Prefixes;
+			if (prefixes != null) {
+				foreach (Instruction i in prefixes) {
+					if (i.OpCode.Code == code)
+						return i;
+				}
+			}
+			return null;
 		}
 		
 		public override IEnumerable<ILNode> GetChildren()
@@ -272,6 +285,13 @@ namespace Decompiler
 				}
 			}
 			
+			if (this.Prefixes != null) {
+				foreach (Instruction prefix in this.Prefixes) {
+					output.Write(prefix.OpCode.Name);
+					output.Write(' ');
+				}
+			}
+			
 			output.Write(Code.GetName());
 			if (this.InferredType != null) {
 				output.Write(':');
@@ -287,6 +307,11 @@ namespace Decompiler
 					method.DeclaringType.WriteTo(output, true, true);
 					output.Write("::");
 					output.WriteReference(method.Name, method);
+				} else if (Operand is FieldReference) {
+					FieldReference field = (FieldReference)Operand;
+					field.DeclaringType.WriteTo(output, true, true);
+					output.Write("::");
+					output.WriteReference(field.Name, field);
 				} else {
 					DisassemblerHelpers.WriteOperand(output, Operand);
 				}
@@ -301,23 +326,40 @@ namespace Decompiler
 		}
 	}
 	
-	public class ILLoop : ILNode
+	public class ILWhileLoop : ILNode
 	{
-		public ILBlock ContentBlock;
+		public ILLabel      PreLoopLabel;  // Label allowing to jump to condition
+		public ILExpression Condition;
+		public ILBlock      BodyBlock;     // BodyBlock.EntryGoto performs the goto for a met condition
+		public ILExpression PostLoopGoto;  // Performs the goto for a failed condition
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			if (this.ContentBlock != null)
-				yield return ContentBlock;
+			if (this.PreLoopLabel != null)
+				yield return this.PreLoopLabel;
+			if (this.Condition != null)
+				yield return this.Condition;
+			if (this.BodyBlock != null)
+				yield return this.BodyBlock;
+			if (this.PostLoopGoto != null)
+				yield return this.PostLoopGoto;
 		}
 		
 		public override void WriteTo(ITextOutput output)
 		{
-			output.WriteLine("loop {");
+			if (this.PreLoopLabel != null)
+				this.PreLoopLabel.WriteTo(output);
+			output.WriteLine("");
+			output.Write("loop (");
+			if (this.Condition != null)
+				this.Condition.WriteTo(output);
+			output.WriteLine(") {");
 			output.Indent();
-			ContentBlock.WriteTo(output);
+			this.BodyBlock.WriteTo(output);
 			output.Unindent();
 			output.WriteLine("}");
+			if (this.PostLoopGoto != null)
+				this.PostLoopGoto.WriteTo(output);
 		}
 	}
 	

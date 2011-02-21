@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using ICSharpCode.NRefactory.Utils;
 using Ast = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp;
 using Cecil = Mono.Cecil;
@@ -77,9 +78,9 @@ namespace Decompiler
 			Ast.BlockStatement astBlock = new BlockStatement();
 			if (block != null) {
 				if (block.EntryGoto != null)
-					astBlock.AddStatement((Statement)TransformExpression(block.EntryGoto));
+					astBlock.Add((Statement)TransformExpression(block.EntryGoto));
 				foreach(ILNode node in block.Body) {
-					astBlock.AddStatements(TransformNode(node));
+					astBlock.AddRange(TransformNode(node));
 				}
 			}
 			return astBlock;
@@ -102,10 +103,17 @@ namespace Decompiler
 						throw new Exception();
 					}
 				}
-			} else if (node is ILLoop) {
-				yield return new Ast.ForStatement {
-					EmbeddedStatement = TransformBlock(((ILLoop)node).ContentBlock)
+			} else if (node is ILWhileLoop) {
+				ILWhileLoop ilLoop = (ILWhileLoop)node;
+				if (ilLoop.PreLoopLabel != null)
+					yield return TransformNode(ilLoop.PreLoopLabel).Single();
+				WhileStatement whileStmt = new WhileStatement() {
+					Condition = ilLoop.Condition != null ? MakeBranchCondition(ilLoop.Condition) : new PrimitiveExpression(true),
+					EmbeddedStatement = TransformBlock(ilLoop.BodyBlock)
 				};
+				yield return whileStmt;
+				if (ilLoop.PostLoopGoto != null)
+					yield return (Statement)TransformExpression(ilLoop.PostLoopGoto);
 			} else if (node is ILCondition) {
 				ILCondition conditionalNode = (ILCondition)node;
 				if (conditionalNode.FalseBlock.Body.Any()) {
@@ -290,7 +298,7 @@ namespace Decompiler
 			BlockStatement branchCommand = null;
 			if (byteCode.Operand is ILLabel) {
 				branchCommand = new BlockStatement();
-				branchCommand.AddStatement(new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name));
+				branchCommand.Add(new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name));
 			}
 			
 			switch((Code)opCode) {
@@ -500,11 +508,11 @@ namespace Decompiler
 						return new Ast.PrimitiveExpression(false);
 					else if (byteCode.InferredType == typeSystem.Boolean && (int)operand == 1)
 						return new Ast.PrimitiveExpression(true);
-					if (byteCode.InferredType != null && byteCode.InferredType.IsValueType) {
+					if (byteCode.InferredType != null) { // cannot rely on IsValueType, it's not set for typerefs (but is set for typespecs)
 						TypeDefinition enumDefinition = byteCode.InferredType.Resolve();
 						if (enumDefinition != null && enumDefinition.IsEnum) {
 							foreach (FieldDefinition field in enumDefinition.Fields) {
-								if (field.IsStatic && object.Equals(field.Constant, operand))
+								if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int32, field.Constant, false), operand))
 									return AstBuilder.ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
 							}
 						}
