@@ -78,9 +78,9 @@ namespace Decompiler
 			Ast.BlockStatement astBlock = new BlockStatement();
 			if (block != null) {
 				if (block.EntryGoto != null)
-					astBlock.AddStatement((Statement)TransformExpression(block.EntryGoto));
+					astBlock.Add((Statement)TransformExpression(block.EntryGoto));
 				foreach(ILNode node in block.Body) {
-					astBlock.AddStatements(TransformNode(node));
+					astBlock.AddRange(TransformNode(node));
 				}
 			}
 			return astBlock;
@@ -291,7 +291,7 @@ namespace Decompiler
 			BlockStatement branchCommand = null;
 			if (byteCode.Operand is ILLabel) {
 				branchCommand = new BlockStatement();
-				branchCommand.AddStatement(new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name));
+				branchCommand.Add(new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name));
 			}
 			
 			switch((Code)opCode) {

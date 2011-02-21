@@ -15,6 +15,13 @@ namespace Decompiler.Transforms
 	/// </summary>
 	public class UsingStatementTransform : IAstTransform
 	{
+		public void Run(AstNode compilationUnit)
+		{
+			TransformUsings(compilationUnit);
+			TransformForeach(compilationUnit);
+		}
+		
+		#region using
 		static readonly AstNode usingVarDeclPattern = new VariableDeclarationStatement {
 			Type = new AnyNode("type").ToType(),
 			Variables = {
@@ -35,31 +42,27 @@ namespace Decompiler.Transforms
 		static readonly AstNode usingTryCatchPattern = new TryCatchStatement {
 			TryBlock = new AnyNode("body").ToBlock(),
 			FinallyBlock = new BlockStatement {
-				Statements = {
-					new Choice {
-						{ "valueType",
-							new ExpressionStatement(new NamedNode("ident", new IdentifierExpression()).ToExpression().Invoke("Dispose"))
-						},
-						{ "referenceType",
-							new IfElseStatement {
-								Condition = new BinaryOperatorExpression(
-									new NamedNode("ident", new IdentifierExpression()).ToExpression(),
-									BinaryOperatorType.InEquality,
-									new NullReferenceExpression()
-								),
-								TrueStatement = new BlockStatement {
-									Statements = {
-										new ExpressionStatement(new Backreference("ident").ToExpression().Invoke("Dispose"))
-									}
-								}
+				new Choice {
+					{ "valueType",
+						new ExpressionStatement(new NamedNode("ident", new IdentifierExpression()).ToExpression().Invoke("Dispose"))
+					},
+					{ "referenceType",
+						new IfElseStatement {
+							Condition = new BinaryOperatorExpression(
+								new NamedNode("ident", new IdentifierExpression()).ToExpression(),
+								BinaryOperatorType.InEquality,
+								new NullReferenceExpression()
+							),
+							TrueStatement = new BlockStatement {
+								new ExpressionStatement(new Backreference("ident").ToExpression().Invoke("Dispose"))
 							}
 						}
-					}.ToStatement()
-				}
+					}
+				}.ToStatement()
 			}
 		};
 		
-		public void Run(AstNode compilationUnit)
+		public void TransformUsings(AstNode compilationUnit)
 		{
 			foreach (AstNode node in compilationUnit.Descendants.ToArray()) {
 				Match m1 = usingVarDeclPattern.Match(node);
@@ -85,5 +88,74 @@ namespace Decompiler.Transforms
 				}
 			}
 		}
+		#endregion
+		
+		#region foreach
+		UsingStatement foreachPattern = new UsingStatement {
+			ResourceAcquisition = new VariableDeclarationStatement {
+				Type = new AnyNode("enumeratorType").ToType(),
+				Variables = {
+					new NamedNode(
+						"enumeratorVariable",
+						new VariableInitializer {
+							Initializer = new AnyNode("collection").ToExpression().Invoke("GetEnumerator")
+						}
+					).ToVariable()
+				}
+			},
+			EmbeddedStatement = new BlockStatement {
+				new ForStatement {
+					EmbeddedStatement = new BlockStatement {
+						new IfElseStatement {
+							Condition = new UnaryOperatorExpression(
+								UnaryOperatorType.Not,
+								new NamedNode("enumeratorIdent", new IdentifierExpression()).ToExpression().Invoke("MoveNext")
+							),
+							TrueStatement = new BlockStatement {
+								new BreakStatement()
+							},
+							FalseStatement = new BlockStatement {
+								new VariableDeclarationStatement {
+									Type = new AnyNode("itemType").ToType(),
+									Variables = {
+										new NamedNode(
+											"itemVariable",
+											new VariableInitializer {
+												Initializer = new Backreference("enumeratorIdent").ToExpression().Member("Current")
+											}
+										).ToVariable()
+									}
+								},
+								new Repeat(new AnyNode("statement")).ToStatement()
+							}
+						}
+					}
+				}
+			}
+		};
+		
+		public void TransformForeach(AstNode compilationUnit)
+		{
+			foreach (AstNode node in compilationUnit.Descendants.ToArray()) {
+				Match m = foreachPattern.Match(node);
+				if (m == null)
+					continue;
+				VariableInitializer enumeratorVar = m.Get<VariableInitializer>("enumeratorVariable").Single();
+				if (enumeratorVar.Name != m.Get<IdentifierExpression>("enumeratorIdent").Single().Identifier)
+					continue;
+				VariableInitializer itemVar = m.Get<VariableInitializer>("itemVariable").Single();
+				BlockStatement newBody = new BlockStatement();
+				foreach (Statement stmt in m.Get<Statement>("statement"))
+					newBody.Add(stmt.Detach());
+				node.ReplaceWith(
+					new ForeachStatement {
+						VariableType = m.Get<AstType>("itemType").Single().Detach(),
+						VariableName = enumeratorVar.Name,
+						InExpression = m.Get<Expression>("collection").Single().Detach(),
+						EmbeddedStatement = newBody
+					});
+			}
+		}
+		#endregion
 	}
 }

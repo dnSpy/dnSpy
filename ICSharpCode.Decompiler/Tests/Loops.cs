@@ -13,6 +13,14 @@ public class Loops
 		}
 	}
 	
+	public void ForEachOverList(List<string> list)
+	{
+		// List has a struct as enumerator, so produces quite different IL than foreach over the IEnumerable interface
+		foreach (string text in list) {
+			text.ToLower();
+		}
+	}
+	
 	public void ForEachOverArray(string[] array)
 	{
 		foreach (string text in array) {
