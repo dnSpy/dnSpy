@@ -55,7 +55,7 @@ namespace Decompiler
 				}
 				bool anyArgumentIsMissingType = expr.Arguments.Any(a => a.InferredType == null);
 				if (expr.InferredType == null || anyArgumentIsMissingType)
-					expr.InferredType = InferTypeForExpression(expr, null, forceInferChildren: anyArgumentIsMissingType);
+					expr.InferredType = InferTypeForExpression(expr, expr.ExpectedType, forceInferChildren: anyArgumentIsMissingType);
 			}
 			foreach (ILNode child in node.GetChildren()) {
 				InferTypes(child);
@@ -97,6 +97,7 @@ namespace Decompiler
 		/// <returns>The inferred type</returns>
 		TypeReference InferTypeForExpression(ILExpression expr, TypeReference expectedType, bool forceInferChildren = false)
 		{
+			expr.ExpectedType = expectedType;
 			if (forceInferChildren || expr.InferredType == null)
 				expr.InferredType = DoInferTypeForExpression(expr, expectedType, forceInferChildren);
 			return expr.InferredType;
@@ -552,13 +553,16 @@ namespace Decompiler
 			TypeReference leftPreferred = DoInferTypeForExpression(left, null);
 			TypeReference rightPreferred = DoInferTypeForExpression(right, null);
 			if (leftPreferred == rightPreferred) {
-				return left.InferredType = right.InferredType = leftPreferred;
+				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
 			} else if (rightPreferred == DoInferTypeForExpression(left, rightPreferred)) {
-				return left.InferredType = right.InferredType = rightPreferred;
+				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
 			} else if (leftPreferred == DoInferTypeForExpression(right, leftPreferred)) {
-				return left.InferredType = right.InferredType = leftPreferred;
+				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
 			} else {
-				return left.InferredType = right.InferredType = TypeWithMoreInformation(leftPreferred, rightPreferred);
+				left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
+				left.InferredType = DoInferTypeForExpression(left, left.ExpectedType);
+				right.InferredType = DoInferTypeForExpression(left, right.ExpectedType);
+				return left.ExpectedType;
 			}
 		}
 		
@@ -636,6 +640,40 @@ namespace Decompiler
 			if (type == typeSystem.SByte || type == typeSystem.Int16 || type == typeSystem.Int32 || type == typeSystem.Int64 || type == typeSystem.IntPtr)
 				return true;
 			return null;
+		}
+		
+		public static TypeCode GetTypeCode(TypeSystem typeSystem, TypeReference type)
+		{
+			if (type == typeSystem.Boolean)
+				return TypeCode.Boolean;
+			else if (type == typeSystem.Byte)
+				return TypeCode.Byte;
+			else if (type == typeSystem.Char)
+				return TypeCode.Char;
+			else if (type == typeSystem.Double)
+				return TypeCode.Double;
+			else if (type == typeSystem.Int16)
+				return TypeCode.Int16;
+			else if (type == typeSystem.Int32)
+				return TypeCode.Int32;
+			else if (type == typeSystem.Int64)
+				return TypeCode.Int64;
+			else if (type == typeSystem.Single)
+				return TypeCode.Single;
+			else if (type == typeSystem.Double)
+				return TypeCode.Double;
+			else if (type == typeSystem.SByte)
+				return TypeCode.SByte;
+			else if (type == typeSystem.UInt16)
+				return TypeCode.UInt16;
+			else if (type == typeSystem.UInt32)
+				return TypeCode.UInt32;
+			else if (type == typeSystem.UInt64)
+				return TypeCode.UInt64;
+			else if (type == typeSystem.String)
+				return TypeCode.String;
+			else
+				return TypeCode.Object;
 		}
 	}
 }
