@@ -26,17 +26,21 @@ namespace Decompiler
 		/// <param name="type">The type of the new variable</param>
 		/// <param name="name">The name of the new variable</param>
 		/// <param name="allowPassIntoLoops">Whether the variable is allowed to be placed inside a loop</param>
-		public static void DeclareVariable(AstNode node, AstType type, string name, bool allowPassIntoLoops = true)
+		public static VariableDeclarationStatement DeclareVariable(AstNode node, AstType type, string name, bool allowPassIntoLoops = true)
 		{
+			VariableDeclarationStatement result = null;
 			AstNode pos = FindInsertPos(node, name, allowPassIntoLoops);
 			if (pos != null) {
 				Match m = assignmentPattern.Match(pos);
 				if (m != null && m.Get<IdentifierExpression>("ident").Single().Identifier == name) {
-					pos.ReplaceWith(new VariableDeclarationStatement(type, name, m.Get<Expression>("init").Single().Detach()));
+					result = new VariableDeclarationStatement(type, name, m.Get<Expression>("init").Single().Detach());
+					pos.ReplaceWith(result);
 				} else {
-					pos.Parent.InsertChildBefore(pos, new VariableDeclarationStatement(type, name), BlockStatement.StatementRole);
+					result = new VariableDeclarationStatement(type, name);
+					pos.Parent.InsertChildBefore(pos, result, BlockStatement.StatementRole);
 				}
 			}
+			return result;
 		}
 		
 		static AstNode FindInsertPos(AstNode node, string name, bool allowPassIntoLoops)

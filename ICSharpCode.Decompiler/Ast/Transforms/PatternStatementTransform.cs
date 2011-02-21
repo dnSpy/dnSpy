@@ -103,25 +103,23 @@ namespace Decompiler.Transforms
 					).ToVariable()
 				}
 			},
-			EmbeddedStatement = new BlockStatement {
-				new ForStatement {
-					EmbeddedStatement = new BlockStatement {
-						new IfElseStatement {
-							Condition = new UnaryOperatorExpression(
-								UnaryOperatorType.Not,
-								new NamedNode("enumeratorIdent", new IdentifierExpression()).ToExpression().Invoke("MoveNext")
-							),
-							TrueStatement = new BlockStatement {
-								new BreakStatement()
-							},
-							FalseStatement = new BlockStatement {
+			EmbeddedStatement = new Choice {
+				// There are two forms of the foreach statement:
+				// one where the item variable is declared inside the loop,
+				// and one where it is declared outside of the loop.
+				// In the former case, we can apply the foreach pattern only if the variable wasn't captured.
+				{ "itemVariableInsideLoop",
+					new BlockStatement {
+						new WhileStatement {
+							Condition = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Invoke("MoveNext"),
+							EmbeddedStatement = new BlockStatement {
 								new VariableDeclarationStatement {
 									Type = new AnyNode("itemType").ToType(),
 									Variables = {
 										new NamedNode(
 											"itemVariable",
 											new VariableInitializer {
-												Initializer = new Backreference("enumeratorIdent").ToExpression().Member("Current")
+												Initializer = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current")
 											}
 										).ToVariable()
 									}
@@ -130,8 +128,29 @@ namespace Decompiler.Transforms
 							}
 						}
 					}
+				},
+				{ "itemVariableOutsideLoop",
+					new BlockStatement {
+						new VariableDeclarationStatement {
+							Type = new AnyNode("itemType").ToType(),
+							Variables = {
+								new NamedNode("itemVariable", new VariableInitializer()).ToVariable()
+							}
+						},
+						new WhileStatement {
+							Condition = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Invoke("MoveNext"),
+							EmbeddedStatement = new BlockStatement {
+								new AssignmentExpression {
+									Left = new IdentifierExpressionBackreference("itemVariable").ToExpression(),
+									Operator = AssignmentOperatorType.Assign,
+									Right = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current")
+								},
+								new Repeat(new AnyNode("statement")).ToStatement()
+							}
+						}
+					}
 				}
-			}
+			}.ToStatement()
 		};
 		
 		public void TransformForeach(AstNode compilationUnit)
@@ -141,16 +160,18 @@ namespace Decompiler.Transforms
 				if (m == null)
 					continue;
 				VariableInitializer enumeratorVar = m.Get<VariableInitializer>("enumeratorVariable").Single();
-				if (enumeratorVar.Name != m.Get<IdentifierExpression>("enumeratorIdent").Single().Identifier)
-					continue;
 				VariableInitializer itemVar = m.Get<VariableInitializer>("itemVariable").Single();
+				if (m.Has("itemVariableInsideLoop") && itemVar.Annotation<DelegateConstruction.CapturedVariableAnnotation>() != null) {
+					// cannot move captured variables out of loops
+					continue;
+				}
 				BlockStatement newBody = new BlockStatement();
 				foreach (Statement stmt in m.Get<Statement>("statement"))
 					newBody.Add(stmt.Detach());
 				node.ReplaceWith(
 					new ForeachStatement {
 						VariableType = m.Get<AstType>("itemType").Single().Detach(),
-						VariableName = enumeratorVar.Name,
+						VariableName = itemVar.Name,
 						InExpression = m.Get<Expression>("collection").Single().Detach(),
 						EmbeddedStatement = newBody
 					});
