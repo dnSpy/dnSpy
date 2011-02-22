@@ -699,17 +699,19 @@ namespace Decompiler
 			if (reqType == null || actualType == reqType) {
 				return expr;
 			} else {
-				bool actualIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(typeSystem, actualType);
-				bool requiredIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(typeSystem, reqType);
+				bool actualIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(actualType);
+				bool requiredIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(reqType);
 				
-				if (reqType == typeSystem.Boolean) {
+				if (TypeAnalysis.IsBoolean(reqType)) {
+					if (TypeAnalysis.IsBoolean(actualType))
+						return expr;
 					if (actualIsIntegerOrEnum) {
 						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, PrimitiveExpression(0, actualType));
 					} else {
 						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, new NullReferenceExpression());
 					}
 				}
-				if (actualType == typeSystem.Boolean && requiredIsIntegerOrEnum) {
+				if (TypeAnalysis.IsBoolean(actualType) && requiredIsIntegerOrEnum) {
 					return new ConditionalExpression {
 						Condition = expr,
 						TrueExpression = PrimitiveExpression(1, reqType),
@@ -725,9 +727,9 @@ namespace Decompiler
 		
 		Expression PrimitiveExpression(long val, TypeReference type)
 		{
-			if (type == typeSystem.Boolean && val == 0)
+			if (TypeAnalysis.IsBoolean(type) && val == 0)
 				return new Ast.PrimitiveExpression(false);
-			else if (type == typeSystem.Boolean && val == 1)
+			else if (TypeAnalysis.IsBoolean(type) && val == 1)
 				return new Ast.PrimitiveExpression(true);
 			if (type != null) { // cannot rely on type.IsValueType, it's not set for typerefs (but is set for typespecs)
 				TypeDefinition enumDefinition = type.Resolve();
@@ -740,7 +742,7 @@ namespace Decompiler
 					}
 				}
 			}
-			TypeCode code = TypeAnalysis.GetTypeCode(typeSystem, type);
+			TypeCode code = TypeAnalysis.GetTypeCode(type);
 			if (code == TypeCode.Object)
 				return new Ast.PrimitiveExpression((int)val);
 			else

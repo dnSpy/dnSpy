@@ -286,7 +286,7 @@ namespace Decompiler
 				case ILCode.Ldvirtftn:
 					return typeSystem.IntPtr;
 				case ILCode.Ldc_I4:
-					return (IsIntegerOrEnum(expectedType) || expectedType == typeSystem.Boolean) ? expectedType : typeSystem.Int32;
+					return (IsIntegerOrEnum(expectedType) || IsBoolean(expectedType)) ? expectedType : typeSystem.Int32;
 				case ILCode.Ldc_I8:
 					return (IsIntegerOrEnum(expectedType)) ? expectedType : typeSystem.Int64;
 				case ILCode.Ldc_R4:
@@ -393,7 +393,7 @@ namespace Decompiler
 				case ILCode.Conv_R8:
 					return typeSystem.Double;
 				case ILCode.Conv_R_Un:
-					return (expectedType == typeSystem.Single) ? typeSystem.Single : typeSystem.Double;
+					return (expectedType != null  && expectedType.MetadataType == MetadataType.Single) ? typeSystem.Single : typeSystem.Double;
 				case ILCode.Castclass:
 				case ILCode.Isinst:
 				case ILCode.Unbox_Any:
@@ -568,22 +568,17 @@ namespace Decompiler
 		
 		TypeReference TypeWithMoreInformation(TypeReference leftPreferred, TypeReference rightPreferred)
 		{
-			int left = GetInformationAmount(typeSystem, leftPreferred);
-			int right = GetInformationAmount(typeSystem, rightPreferred);
+			int left = GetInformationAmount(leftPreferred);
+			int right = GetInformationAmount(rightPreferred);
 			if (left < right)
 				return rightPreferred;
 			else
 				return leftPreferred;
 		}
 		
-		int GetInformationAmount(TypeReference type)
-		{
-			return GetInformationAmount(typeSystem, type);
-		}
-		
 		const int nativeInt = 33; // treat native int as between int32 and int64
 		
-		static int GetInformationAmount(TypeSystem typeSystem, TypeReference type)
+		static int GetInformationAmount(TypeReference type)
 		{
 			if (type == null)
 				return 0;
@@ -592,40 +587,48 @@ namespace Decompiler
 				TypeDefinition typeDef = type.Resolve() as TypeDefinition;
 				if (typeDef != null && typeDef.IsEnum) {
 					TypeReference underlyingType = typeDef.Fields.Single(f => f.IsRuntimeSpecialName && !f.IsStatic).FieldType;
-					return GetInformationAmount(typeDef.Module.TypeSystem, underlyingType);
+					return GetInformationAmount(underlyingType);
 				}
 			}
-			if (type == typeSystem.Boolean)
-				return 1;
-			else if (type == typeSystem.Byte || type == typeSystem.SByte)
-				return 8;
-			else if (type == typeSystem.Int16 || type == typeSystem.UInt16)
-				return 16;
-			else if (type == typeSystem.Int32 || type == typeSystem.UInt32)
-				return 32;
-			else if (type == typeSystem.IntPtr || type == typeSystem.UIntPtr)
-				return nativeInt;
-			else if (type == typeSystem.Int64 || type == typeSystem.UInt64)
-				return 64;
-			return 100; // we consider structs/objects to have more information than any primitives
+			switch (type.MetadataType) {
+				case MetadataType.Void:
+					return 0;
+				case MetadataType.Boolean:
+					return 1;
+				case MetadataType.SByte:
+				case MetadataType.Byte:
+					return 8;
+				case MetadataType.Char:
+				case MetadataType.Int16:
+				case MetadataType.UInt16:
+					return 16;
+				case MetadataType.Int32:
+				case MetadataType.UInt32:
+				case MetadataType.Single:
+					return 32;
+				case MetadataType.Int64:
+				case MetadataType.UInt64:
+				case MetadataType.Double:
+					return 64;
+				case MetadataType.IntPtr:
+				case MetadataType.UIntPtr:
+					return nativeInt;
+				default:
+					return 100; // we consider structs/objects to have more information than any primitives
+			}
 		}
 		
-		bool IsIntegerOrEnum(TypeReference type)
+		public static bool IsBoolean(TypeReference type)
 		{
-			return IsIntegerOrEnum(typeSystem, type);
+			return type != null && type.MetadataType == MetadataType.Boolean;
 		}
 		
-		public static bool IsIntegerOrEnum(TypeSystem typeSystem, TypeReference type)
+		public static bool IsIntegerOrEnum(TypeReference type)
 		{
-			return IsSigned(typeSystem, type) != null;
+			return IsSigned(type) != null;
 		}
 		
-		bool? IsSigned(TypeReference type)
-		{
-			return IsSigned(typeSystem, type);
-		}
-		
-		static bool? IsSigned(TypeSystem typeSystem, TypeReference type)
+		static bool? IsSigned(TypeReference type)
 		{
 			if (type == null)
 				return null;
@@ -633,47 +636,60 @@ namespace Decompiler
 			TypeDefinition typeDef = type.Resolve() as TypeDefinition;
 			if (typeDef != null && typeDef.IsEnum) {
 				TypeReference underlyingType = typeDef.Fields.Single(f => f.IsRuntimeSpecialName && !f.IsStatic).FieldType;
-				return IsSigned(typeDef.Module.TypeSystem, underlyingType);
+				return IsSigned(underlyingType);
 			}
-			if (type == typeSystem.Byte || type == typeSystem.UInt16 || type == typeSystem.UInt32 || type == typeSystem.UInt64 || type == typeSystem.UIntPtr)
-				return false;
-			if (type == typeSystem.SByte || type == typeSystem.Int16 || type == typeSystem.Int32 || type == typeSystem.Int64 || type == typeSystem.IntPtr)
-				return true;
-			return null;
+			switch (type.MetadataType) {
+				case MetadataType.SByte:
+				case MetadataType.Int16:
+				case MetadataType.Int32:
+				case MetadataType.Int64:
+				case MetadataType.IntPtr:
+					return true;
+				case MetadataType.Byte:
+				case MetadataType.UInt16:
+				case MetadataType.UInt32:
+				case MetadataType.UInt64:
+				case MetadataType.UIntPtr:
+					return false;
+				default:
+					return null;
+			}
 		}
 		
-		public static TypeCode GetTypeCode(TypeSystem typeSystem, TypeReference type)
+		public static TypeCode GetTypeCode(TypeReference type)
 		{
-			if (type == typeSystem.Boolean)
-				return TypeCode.Boolean;
-			else if (type == typeSystem.Byte)
-				return TypeCode.Byte;
-			else if (type == typeSystem.Char)
-				return TypeCode.Char;
-			else if (type == typeSystem.Double)
-				return TypeCode.Double;
-			else if (type == typeSystem.Int16)
-				return TypeCode.Int16;
-			else if (type == typeSystem.Int32)
-				return TypeCode.Int32;
-			else if (type == typeSystem.Int64)
-				return TypeCode.Int64;
-			else if (type == typeSystem.Single)
-				return TypeCode.Single;
-			else if (type == typeSystem.Double)
-				return TypeCode.Double;
-			else if (type == typeSystem.SByte)
-				return TypeCode.SByte;
-			else if (type == typeSystem.UInt16)
-				return TypeCode.UInt16;
-			else if (type == typeSystem.UInt32)
-				return TypeCode.UInt32;
-			else if (type == typeSystem.UInt64)
-				return TypeCode.UInt64;
-			else if (type == typeSystem.String)
-				return TypeCode.String;
-			else
-				return TypeCode.Object;
+			if (type == null)
+				return TypeCode.Empty;
+			switch (type.MetadataType) {
+				case MetadataType.Boolean:
+					return TypeCode.Boolean;
+				case MetadataType.Char:
+					return TypeCode.Char;
+				case MetadataType.SByte:
+					return TypeCode.SByte;
+				case MetadataType.Byte:
+					return TypeCode.Byte;
+				case MetadataType.Int16:
+					return TypeCode.Int16;
+				case MetadataType.UInt16:
+					return TypeCode.UInt16;
+				case MetadataType.Int32:
+					return TypeCode.Int32;
+				case MetadataType.UInt32:
+					return TypeCode.UInt32;
+				case MetadataType.Int64:
+					return TypeCode.Int64;
+				case MetadataType.UInt64:
+					return TypeCode.UInt64;
+				case MetadataType.Single:
+					return TypeCode.Single;
+				case MetadataType.Double:
+					return TypeCode.Double;
+				case MetadataType.String:
+					return TypeCode.String;
+				default:
+					return TypeCode.Object;
+			}
 		}
 	}
 }
