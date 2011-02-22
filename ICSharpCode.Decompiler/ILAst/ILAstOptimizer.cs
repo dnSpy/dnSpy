@@ -194,6 +194,9 @@ namespace Decompiler.ControlFlow
 		{
 			List<ILNode> result = new List<ILNode>();
 			
+			// Do not modify entry data
+			scope = new HashSet<ControlFlowNode>(scope);
+			
 			Queue<ControlFlowNode> agenda  = new Queue<ControlFlowNode>();
 			agenda.Enqueue(entryPoint);
 			while(agenda.Count > 0) {
@@ -241,6 +244,7 @@ namespace Decompiler.ControlFlow
 			foreach(var node in scope) {
 				result.Add((ILNode)node.UserData);
 			}
+			scope.Clear();
 			
 			return result;
 		}
@@ -258,6 +262,9 @@ namespace Decompiler.ControlFlow
 		List<ILNode> FindConditions(HashSet<ControlFlowNode> scope, ControlFlowNode entryNode)
 		{
 			List<ILNode> result = new List<ILNode>();
+			
+			// Do not modify entry data
+			scope = new HashSet<ControlFlowNode>(scope);
 			
 			HashSet<ControlFlowNode> agenda  = new HashSet<ControlFlowNode>();
 			agenda.Add(entryNode);
