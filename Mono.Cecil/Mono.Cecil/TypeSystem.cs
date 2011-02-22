@@ -174,18 +174,27 @@ namespace Mono.Cecil {
 
 		internal abstract TypeReference LookupType (string @namespace, string name);
 
-		TypeReference LookupSystemType (string name, ElementType element_type)
+		TypeReference LookupSystemType (ref TypeReference typeRef, string name, ElementType element_type)
 		{
-			var type = LookupType ("System", name);
-			type.etype = element_type;
-			return type;
+			lock (module.SyncRoot) {
+				if (typeRef != null)
+					return typeRef;
+				var type = LookupType ("System", name);
+				type.etype = element_type;
+				return typeRef = type;
+			}
 		}
 
-		TypeReference LookupSystemValueType (string name, ElementType element_type)
+		TypeReference LookupSystemValueType (ref TypeReference typeRef, string name, ElementType element_type)
 		{
-			var type = LookupSystemType (name, element_type);
-			type.IsValueType = true;
-			return type;
+			lock (module.SyncRoot) {
+				if (typeRef != null)
+					return typeRef;
+				var type = LookupType ("System", name);
+				type.etype = element_type;
+				type.IsValueType = true;
+				return typeRef = type;
+			}
 		}
 
 		public IMetadataScope Corlib {
@@ -199,75 +208,75 @@ namespace Mono.Cecil {
 		}
 
 		public TypeReference Object {
-			get { return type_object ?? (type_object = LookupSystemType ("Object", ElementType.Object)); }
+			get { return type_object ?? (LookupSystemType (ref type_object, "Object", ElementType.Object)); }
 		}
 
 		public TypeReference Void {
-			get { return type_void ?? (type_void = LookupSystemType ("Void", ElementType.Void)); }
+			get { return type_void ?? (LookupSystemType (ref type_void, "Void", ElementType.Void)); }
 		}
 
 		public TypeReference Boolean {
-			get { return type_bool ?? (type_bool = LookupSystemValueType ("Boolean", ElementType.Boolean)); }
+			get { return type_bool ?? (LookupSystemValueType (ref type_bool, "Boolean", ElementType.Boolean)); }
 		}
 
 		public TypeReference Char {
-			get { return type_char ?? (type_char = LookupSystemValueType ("Char", ElementType.Char)); }
+			get { return type_char ?? (LookupSystemValueType (ref type_char, "Char", ElementType.Char)); }
 		}
 
 		public TypeReference SByte {
-			get { return type_sbyte ?? (type_sbyte = LookupSystemValueType ("SByte", ElementType.I1)); }
+			get { return type_sbyte ?? (LookupSystemValueType (ref type_sbyte, "SByte", ElementType.I1)); }
 		}
 
 		public TypeReference Byte {
-			get { return type_byte ?? (type_byte = LookupSystemValueType ("Byte", ElementType.U1)); }
+			get { return type_byte ?? (LookupSystemValueType (ref type_byte, "Byte", ElementType.U1)); }
 		}
 
 		public TypeReference Int16 {
-			get { return type_int16 ?? (type_int16 = LookupSystemValueType ("Int16", ElementType.I2)); }
+			get { return type_int16 ?? (LookupSystemValueType (ref type_int16, "Int16", ElementType.I2)); }
 		}
 
 		public TypeReference UInt16 {
-			get { return type_uint16 ?? (type_uint16 = LookupSystemValueType ("UInt16", ElementType.U2)); }
+			get { return type_uint16 ?? (LookupSystemValueType (ref type_uint16, "UInt16", ElementType.U2)); }
 		}
 
 		public TypeReference Int32 {
-			get { return type_int32 ?? (type_int32 = LookupSystemValueType ("Int32", ElementType.I4)); }
+			get { return type_int32 ?? (LookupSystemValueType (ref type_int32, "Int32", ElementType.I4)); }
 		}
 
 		public TypeReference UInt32 {
-			get { return type_uint32 ?? (type_uint32 = LookupSystemValueType ("UInt32", ElementType.U4)); }
+			get { return type_uint32 ?? (LookupSystemValueType (ref type_uint32, "UInt32", ElementType.U4)); }
 		}
 
 		public TypeReference Int64 {
-			get { return type_int64 ?? (type_int64 = LookupSystemValueType ("Int64", ElementType.I8)); }
+			get { return type_int64 ?? (LookupSystemValueType (ref type_int64, "Int64", ElementType.I8)); }
 		}
 
 		public TypeReference UInt64 {
-			get { return type_uint64 ?? (type_uint64 = LookupSystemValueType ("UInt64", ElementType.U8)); }
+			get { return type_uint64 ?? (LookupSystemValueType (ref type_uint64, "UInt64", ElementType.U8)); }
 		}
 
 		public TypeReference Single {
-			get { return type_single ?? (type_single = LookupSystemValueType ("Single", ElementType.R4)); }
+			get { return type_single ?? (LookupSystemValueType (ref type_single, "Single", ElementType.R4)); }
 		}
 
 		public TypeReference Double {
-			get { return type_double ?? (type_double = LookupSystemValueType ("Double", ElementType.R8)); }
+			get { return type_double ?? (LookupSystemValueType (ref type_double, "Double", ElementType.R8)); }
 		}
 
 		public TypeReference IntPtr {
-			get { return type_intptr ?? (type_intptr = LookupSystemValueType ("IntPtr", ElementType.I)); }
+			get { return type_intptr ?? (LookupSystemValueType (ref type_intptr, "IntPtr", ElementType.I)); }
 		}
 
 		public TypeReference UIntPtr {
-			get { return type_uintptr ?? (type_uintptr = LookupSystemValueType ("UIntPtr", ElementType.U)); }
+			get { return type_uintptr ?? (LookupSystemValueType (ref type_uintptr, "UIntPtr", ElementType.U)); }
 		}
 
 		public TypeReference String {
-			get { return type_string ?? (type_string = LookupSystemType ("String", ElementType.String)); }
+			get { return type_string ?? (LookupSystemType (ref type_string, "String", ElementType.String)); }
 		}
 
 		public TypeReference TypedReference {
-			get { return type_typedref ?? (type_typedref = LookupSystemValueType ("TypedReference", ElementType.TypedByRef)); }
+			get { return type_typedref ?? (LookupSystemValueType (ref type_typedref, "TypedReference", ElementType.TypedByRef)); }
 		}
 	}
 }

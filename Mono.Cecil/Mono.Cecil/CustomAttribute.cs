@@ -191,7 +191,7 @@ namespace Mono.Cecil {
 			if (!HasImage || signature == 0)
 				throw new NotSupportedException ();
 
-			return blob = Module.Read (this, (attribute, reader) => reader.ReadCustomAttributeBlob (attribute.signature));
+			return Module.Read (ref blob, this, (attribute, reader) => reader.ReadCustomAttributeBlob (attribute.signature));
 		}
 
 		void Resolve ()
@@ -199,23 +199,22 @@ namespace Mono.Cecil {
 			if (resolved || !HasImage)
 				return;
 
-			try {
-				Module.Read (this, (attribute, reader) => {
+			Module.Read (this, (attribute, reader) => {
+				try {
 					reader.ReadCustomAttributeSignature (attribute);
-					return this;
-				});
-
-				resolved = true;
-			} catch (ResolutionException) {
-				if (arguments != null)
-					arguments.Clear ();
-				if (fields != null)
-					fields.Clear ();
-				if (properties != null)
-					properties.Clear ();
-
-				resolved = false;
-			}
+					resolved = true;
+				} catch (ResolutionException) {
+					if (arguments != null)
+						arguments.Clear ();
+					if (fields != null)
+						fields.Clear ();
+					if (properties != null)
+						properties.Clear ();
+					
+					resolved = false;
+				}
+				return this;
+			});
 		}
 	}
 

@@ -29,8 +29,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using SR = System.Reflection;
-
 using Mono.Cecil.Cil;
 using Mono.Cecil.Metadata;
 using Mono.Cecil.PE;
@@ -261,7 +261,11 @@ namespace Mono.Cecil {
 
 #if !READ_ONLY
 		internal MetadataImporter MetadataImporter {
-			get { return importer ?? (importer = new MetadataImporter (this)); }
+			get {
+				if (importer == null)
+					Interlocked.CompareExchange(ref importer, new MetadataImporter(this), null);
+				return importer;
+			}
 		}
 #endif
 
@@ -270,7 +274,11 @@ namespace Mono.Cecil {
 		}
 
 		public TypeSystem TypeSystem {
-			get { return type_system ?? (type_system = TypeSystem.CreateTypeSystem (this)); }
+			get {
+				if (type_system == null)
+					Interlocked.CompareExchange(ref type_system, TypeSystem.CreateTypeSystem (this), null);
+				return type_system;
+			}
 		}
 
 		public bool HasAssemblyReferences {
@@ -288,7 +296,7 @@ namespace Mono.Cecil {
 					return references;
 
 				if (HasImage)
-					return references = Read (this, (_, reader) => reader.ReadAssemblyReferences ());
+					return Read (ref references, this, (_, reader) => reader.ReadAssemblyReferences ());
 
 				return references = new Collection<AssemblyNameReference> ();
 			}
@@ -309,7 +317,7 @@ namespace Mono.Cecil {
 					return modules;
 
 				if (HasImage)
-					return modules = Read (this, (_, reader) => reader.ReadModuleReferences ());
+					return Read (ref modules, this, (_, reader) => reader.ReadModuleReferences ());
 
 				return modules = new Collection<ModuleReference> ();
 			}
@@ -333,7 +341,7 @@ namespace Mono.Cecil {
 					return resources;
 
 				if (HasImage)
-					return resources = Read (this, (_, reader) => reader.ReadResources ());
+					return Read (ref resources, this, (_, reader) => reader.ReadResources ());
 
 				return resources = new Collection<Resource> ();
 			}
@@ -349,7 +357,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (this)); }
+			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, this)); }
 		}
 
 		public bool HasTypes {
@@ -367,7 +375,7 @@ namespace Mono.Cecil {
 					return types;
 
 				if (HasImage)
-					return types = Read (this, (_, reader) => reader.ReadTypes ());
+					return Read (ref types, this, (_, reader) => reader.ReadTypes ());
 
 				return types = new TypeDefinitionCollection (this);
 			}
@@ -388,7 +396,7 @@ namespace Mono.Cecil {
 					return exported_types;
 
 				if (HasImage)
-					return exported_types = Read (this, (_, reader) => reader.ReadExportedTypes ());
+					return Read (ref exported_types, this, (_, reader) => reader.ReadExportedTypes ());
 
 				return exported_types = new Collection<ExportedType> ();
 			}
@@ -400,7 +408,7 @@ namespace Mono.Cecil {
 					return entry_point;
 
 				if (HasImage)
-					return entry_point = Read (this, (_, reader) => reader.ReadEntryPoint ());
+					return Read (ref entry_point, this, (_, reader) => reader.ReadEntryPoint ());
 
 				return entry_point = null;
 			}
@@ -760,6 +768,10 @@ namespace Mono.Cecil {
 		
 		readonly object module_lock = new object();
 
+		internal object SyncRoot {
+			get { return module_lock; }
+		}
+
 		internal TRet Read<TItem, TRet> (TItem item, Func<TItem, MetadataReader, TRet> read)
 		{
 			lock (module_lock) {
@@ -772,6 +784,24 @@ namespace Mono.Cecil {
 				reader.context = context;
 
 				return ret;
+			}
+		}
+		
+		internal TRet Read<TItem, TRet> (ref TRet variable, TItem item, Func<TItem, MetadataReader, TRet> read) where TRet : class
+		{
+			lock (module_lock) {
+				if (variable != null)
+					return variable;
+				
+				var position = reader.position;
+				var context = reader.context;
+
+				var ret = read (item, reader);
+
+				reader.position = position;
+				reader.context = context;
+
+				return variable = ret;
 			}
 		}
 

@@ -616,11 +616,22 @@ namespace Decompiler
 						if (prop.GetMethod == cecilMethodDef)
 							return target.Member(prop.Name).WithAnnotation(prop);
 					}
+				} else if (cecilMethodDef.IsGetter) { // with parameters
+					PropertyDefinition indexer = GetIndexer(cecilMethodDef);
+					if (indexer != null)
+						return target.Indexer(methodArgs).WithAnnotation(indexer);
 				} else if (cecilMethodDef.IsSetter && methodArgs.Count == 1) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
 						if (prop.SetMethod == cecilMethodDef)
 							return new Ast.AssignmentExpression(target.Member(prop.Name).WithAnnotation(prop), methodArgs[0]);
 					}
+				} else if (cecilMethodDef.IsSetter && methodArgs.Count > 1) {
+					PropertyDefinition indexer = GetIndexer(cecilMethodDef);
+					if (indexer != null)
+						return new AssignmentExpression(
+							target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)).WithAnnotation(indexer),
+							methodArgs[methodArgs.Count - 1]
+						);
 				} else if (cecilMethodDef.IsAddOn && methodArgs.Count == 1) {
 					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
 						if (ev.AddMethod == cecilMethodDef) {
@@ -645,6 +656,27 @@ namespace Decompiler
 			}
 			// Default invocation
 			return target.Invoke(cecilMethod.Name, ConvertTypeArguments(cecilMethod), methodArgs).WithAnnotation(cecilMethod);
+		}
+		
+		static PropertyDefinition GetIndexer(MethodDefinition cecilMethodDef)
+		{
+			TypeDefinition typeDef = cecilMethodDef.DeclaringType;
+			string indexerName = null;
+			foreach (CustomAttribute ca in typeDef.CustomAttributes) {
+				if (ca.Constructor.FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
+					indexerName = ca.ConstructorArguments.Single().Value as string;
+					break;
+				}
+			}
+			if (indexerName == null)
+				return null;
+			foreach (PropertyDefinition prop in typeDef.Properties) {
+				if (prop.Name == indexerName) {
+					if (prop.GetMethod == cecilMethodDef || prop.SetMethod == cecilMethodDef)
+						return prop;
+				}
+			}
+			return null;
 		}
 		
 		#if DEBUG
@@ -699,17 +731,19 @@ namespace Decompiler
 			if (reqType == null || actualType == reqType) {
 				return expr;
 			} else {
-				bool actualIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(typeSystem, actualType);
-				bool requiredIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(typeSystem, reqType);
+				bool actualIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(actualType);
+				bool requiredIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(reqType);
 				
-				if (reqType == typeSystem.Boolean) {
+				if (TypeAnalysis.IsBoolean(reqType)) {
+					if (TypeAnalysis.IsBoolean(actualType))
+						return expr;
 					if (actualIsIntegerOrEnum) {
 						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, PrimitiveExpression(0, actualType));
 					} else {
 						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, new NullReferenceExpression());
 					}
 				}
-				if (actualType == typeSystem.Boolean && requiredIsIntegerOrEnum) {
+				if (TypeAnalysis.IsBoolean(actualType) && requiredIsIntegerOrEnum) {
 					return new ConditionalExpression {
 						Condition = expr,
 						TrueExpression = PrimitiveExpression(1, reqType),
@@ -725,9 +759,9 @@ namespace Decompiler
 		
 		Expression PrimitiveExpression(long val, TypeReference type)
 		{
-			if (type == typeSystem.Boolean && val == 0)
+			if (TypeAnalysis.IsBoolean(type) && val == 0)
 				return new Ast.PrimitiveExpression(false);
-			else if (type == typeSystem.Boolean && val == 1)
+			else if (TypeAnalysis.IsBoolean(type) && val == 1)
 				return new Ast.PrimitiveExpression(true);
 			if (type != null) { // cannot rely on type.IsValueType, it's not set for typerefs (but is set for typespecs)
 				TypeDefinition enumDefinition = type.Resolve();
@@ -740,7 +774,7 @@ namespace Decompiler
 					}
 				}
 			}
-			TypeCode code = TypeAnalysis.GetTypeCode(typeSystem, type);
+			TypeCode code = TypeAnalysis.GetTypeCode(type);
 			if (code == TypeCode.Object)
 				return new Ast.PrimitiveExpression((int)val);
 			else

@@ -25,6 +25,7 @@ namespace Decompiler
 			{ "System.Decimal", "num" },
 			{ "System.String", "text" },
 			{ "System.Object", "obj" },
+			{ "System.Char", "c" }
 		};
 		
 		
@@ -105,10 +106,13 @@ namespace Decompiler
 				case ILCode.Call:
 				case ILCode.Callvirt:
 					MethodReference mr = (MethodReference)expr.Operand;
-					if (mr.Name.StartsWith("get_", StringComparison.Ordinal))
+					if (mr.Name.StartsWith("get_", StringComparison.Ordinal) && mr.Parameters.Count == 0) {
+						// use name from properties, but not from indexers
 						return CleanUpVariableName(mr.Name.Substring(4));
-					else if (mr.Name.StartsWith("Get", StringComparison.Ordinal) && mr.Name.Length >= 4 && char.IsUpper(mr.Name[3]))
+					} else if (mr.Name.StartsWith("Get", StringComparison.Ordinal) && mr.Name.Length >= 4 && char.IsUpper(mr.Name[3])) {
+						// use name from Get-methods
 						return CleanUpVariableName(mr.Name.Substring(3));
+					}
 					break;
 			}
 			return null;

@@ -51,7 +51,7 @@ namespace Mono.Cecil {
 
 		public bool HasConstant {
 			get {
-				ResolveConstant ();
+				this.ResolveConstant (ref constant, parameter_type.Module);
 
 				return constant != Mixin.NoValue;
 			}
@@ -61,14 +61,6 @@ namespace Mono.Cecil {
 		public object Constant {
 			get { return HasConstant ? constant : null;	}
 			set { constant = value; }
-		}
-
-		void ResolveConstant ()
-		{
-			if (constant != Mixin.NotResolved)
-				return;
-
-			this.ResolveConstant (ref constant, parameter_type.Module);
 		}
 
 		public bool HasCustomAttributes {
@@ -81,7 +73,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (parameter_type.Module)); }
+			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, parameter_type.Module)); }
 		}
 
 		public bool HasMarshalInfo {
@@ -94,7 +86,7 @@ namespace Mono.Cecil {
 		}
 
 		public MarshalInfo MarshalInfo {
-			get { return marshal_info ?? (marshal_info = this.GetMarshalInfo (parameter_type.Module)); }
+			get { return marshal_info ?? (this.GetMarshalInfo (ref marshal_info, parameter_type.Module)); }
 			set { marshal_info = value; }
 		}
 

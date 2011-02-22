@@ -65,11 +65,12 @@ namespace Mono.Cecil {
 
 		public static Collection<GenericParameter> GetGenericParameters (
 			this IGenericParameterProvider self,
+			ref Collection<GenericParameter> collection,
 			ModuleDefinition module)
 		{
 			return module.HasImage ()
-				? module.Read (self, (provider, reader) => reader.ReadGenericParameters (provider))
-				: new Collection<GenericParameter> ();
+				? module.Read (ref collection, self, (provider, reader) => reader.ReadGenericParameters (provider))
+				: collection = new Collection<GenericParameter> ();
 		}
 	}
 }
