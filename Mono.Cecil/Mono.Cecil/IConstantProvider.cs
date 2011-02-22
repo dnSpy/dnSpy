@@ -44,10 +44,14 @@ namespace Mono.Cecil {
 			ref object constant,
 			ModuleDefinition module)
 		{
-			if (module.HasImage ())
-				module.Read (ref constant, self, (provider, reader) => reader.ReadConstant (provider));
-			else
-				constant = Mixin.NoValue;
+			lock (module.SyncRoot) {
+				if (constant != Mixin.NotResolved)
+					return;
+				if (module.HasImage ())
+					constant = module.Read (self, (provider, reader) => reader.ReadConstant (provider));
+				else
+					constant = Mixin.NoValue;
+			}
 		}
 	}
 }

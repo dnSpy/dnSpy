@@ -168,7 +168,7 @@ namespace Mono.Cecil {
 
 		public bool HasConstant {
 			get {
-				ResolveConstant ();
+				this.ResolveConstant (ref constant, Module);
 
 				return constant != Mixin.NoValue;
 			}
@@ -178,14 +178,6 @@ namespace Mono.Cecil {
 		public object Constant {
 			get { return HasConstant ? constant : null;	}
 			set { constant = value; }
-		}
-
-		void ResolveConstant ()
-		{
-			if (constant != Mixin.NotResolved)
-				return;
-
-			this.ResolveConstant (ref constant, Module);
 		}
 
 		#region PropertyAttributes
