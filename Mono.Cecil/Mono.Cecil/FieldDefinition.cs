@@ -154,7 +154,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (Module)); }
+			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, Module)); }
 		}
 
 		public bool HasMarshalInfo {
@@ -167,7 +167,7 @@ namespace Mono.Cecil {
 		}
 
 		public MarshalInfo MarshalInfo {
-			get { return marshal_info ?? (marshal_info = this.GetMarshalInfo (Module)); }
+			get { return marshal_info ?? (this.GetMarshalInfo (ref marshal_info, Module)); }
 			set { marshal_info = value; }
 		}
 

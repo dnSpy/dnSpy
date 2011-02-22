@@ -62,7 +62,7 @@ namespace Mono.Cecil {
 					return modules;
 
 				if (main_module.HasImage)
-					return modules = main_module.Read (this, (_, reader) => reader.ReadModules ());
+					return main_module.Read (ref modules, this, (_, reader) => reader.ReadModules ());
 
 				return modules = new Collection<ModuleDefinition> { main_module };
 			}
@@ -87,7 +87,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (main_module)); }
+			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, main_module)); }
 		}
 
 		public bool HasSecurityDeclarations {
@@ -100,7 +100,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<SecurityDeclaration> SecurityDeclarations {
-			get { return security_declarations ?? (security_declarations = this.GetSecurityDeclarations (main_module)); }
+			get { return security_declarations ?? (this.GetSecurityDeclarations (ref security_declarations, main_module)); }
 		}
 
 		internal AssemblyDefinition ()

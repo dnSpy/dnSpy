@@ -1558,10 +1558,11 @@ namespace Mono.Cecil {
 			var methods = type.Methods;
 			for (int i = 0; i < methods.Count; i++) {
 				var method = methods [i];
-				if (method.sem_attrs.HasValue)
+				if (method.sem_attrs_ready)
 					continue;
 
 				method.sem_attrs = ReadMethodSemantics (method);
+				method.sem_attrs_ready = true;
 			}
 		}
 

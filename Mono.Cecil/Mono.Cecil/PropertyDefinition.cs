@@ -76,7 +76,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (custom_attributes = this.GetCustomAttributes (Module)); }
+			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, Module)); }
 		}
 
 		public MethodDefinition GetMethod {
@@ -245,14 +245,16 @@ namespace Mono.Cecil {
 
 		void InitializeMethods ()
 		{
-			if (get_method != null || set_method != null)
-				return;
-
 			var module = this.Module;
-			if (!module.HasImage ())
-				return;
+			lock (module.SyncRoot) {
+				if (get_method != null || set_method != null)
+					return;
 
-			module.Read (this, (property, reader) => reader.ReadMethods (property));
+				if (!module.HasImage ())
+					return;
+
+				module.Read (this, (property, reader) => reader.ReadMethods (property));
+			}
 		}
 
 		public override PropertyDefinition Resolve ()

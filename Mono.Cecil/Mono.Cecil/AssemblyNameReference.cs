@@ -107,9 +107,10 @@ namespace Mono.Cecil {
 				if (public_key_token.IsNullOrEmpty () && !public_key.IsNullOrEmpty ()) {
 					var hash = HashPublicKey ();
 					// we need the last 8 bytes in reverse order
-					public_key_token = new byte [8];
-					Array.Copy (hash, (hash.Length - 8), public_key_token, 0, 8);
-					Array.Reverse (public_key_token, 0, 8);
+					byte[] local_public_key_token = new byte [8];
+					Array.Copy (hash, (hash.Length - 8), local_public_key_token, 0, 8);
+					Array.Reverse (local_public_key_token, 0, 8);
+					public_key_token = local_public_key_token; // publish only once finished (required for thread-safety)
 				}
 				return public_key_token;
 			}
