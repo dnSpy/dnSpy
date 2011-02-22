@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using System.Windows.Media.Imaging;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
@@ -50,6 +50,11 @@ namespace ICSharpCode.ILSpy
 			spySettings = ILSpySettings.Load();
 			this.sessionSettings = new SessionSettings(spySettings);
 			this.assemblyListManager = new AssemblyListManager(spySettings);
+			
+			if (Environment.OSVersion.Version.Major >= 6)
+				this.Icon = new BitmapImage(new Uri("pack://application:,,,/ILSpy;component/images/ILSpy.ico"));
+			else
+				this.Icon = Images.AssemblyLoading;
 			
 			this.DataContext = sessionSettings;
 			this.Left = sessionSettings.WindowBounds.Left;
