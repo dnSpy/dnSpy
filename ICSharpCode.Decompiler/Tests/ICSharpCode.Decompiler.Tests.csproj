@@ -52,6 +52,7 @@
     <Compile Include="Loops.cs" />
     <Compile Include="PropertiesAndEvents.cs" />
     <Compile Include="TestRunner.cs" />
+    <Compile Include="ValueTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">

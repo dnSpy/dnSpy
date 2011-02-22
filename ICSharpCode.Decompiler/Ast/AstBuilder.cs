@@ -599,8 +599,9 @@ namespace Decompiler
 				astParam.Type = ConvertType(paramDef.ParameterType, paramDef);
 				astParam.Name = paramDef.Name;
 				
-				if (!paramDef.IsIn && paramDef.IsOut) astParam.ParameterModifier = ParameterModifier.Out;
-				if (paramDef.IsIn && paramDef.IsOut)  astParam.ParameterModifier = ParameterModifier.Ref;
+				if (paramDef.ParameterType is ByReferenceType) {
+					astParam.ParameterModifier = paramDef.IsOut ? ParameterModifier.Out : ParameterModifier.Ref;
+				}
 				// TODO: params, this
 				
 				yield return astParam;
