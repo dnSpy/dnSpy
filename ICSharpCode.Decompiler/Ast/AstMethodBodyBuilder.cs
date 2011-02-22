@@ -478,13 +478,24 @@ namespace Decompiler
 					case Code.Endfilter: return InlineAssembly(byteCode, args);
 					case Code.Endfinally: return null;
 					case Code.Initblk: return InlineAssembly(byteCode, args);
-					case Code.Initobj: return InlineAssembly(byteCode, args);
+				case Code.Initobj:
+					if (args[0] is DirectionExpression)
+						return new AssignmentExpression(((DirectionExpression)args[0]).Expression.Detach(), new DefaultValueExpression { Type = operandAsTypeRef });
+					else
+						return InlineAssembly(byteCode, args);
 					case Code.Jmp: return InlineAssembly(byteCode, args);
 				case Code.Ldarg:
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
-						return new Ast.ThisReferenceExpression();
+						if (context.CurrentMethod.DeclaringType.IsValueType)
+							return MakeRef(new Ast.ThisReferenceExpression());
+						else
+							return new Ast.ThisReferenceExpression();
 					} else {
-						return new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand);
+						var expr = new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand);
+						if (((ParameterDefinition)operand).ParameterType is ByReferenceType)
+							return MakeRef(expr);
+						else
+							return expr;
 					}
 				case Code.Ldarga:
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
@@ -499,11 +510,15 @@ namespace Decompiler
 				case Code.Ldc_R8:
 					return new Ast.PrimitiveExpression(operand);
 				case Code.Ldfld:
+					if (arg1 is DirectionExpression)
+						arg1 = ((DirectionExpression)arg1).Expression.Detach();
 					return arg1.Member(((FieldReference) operand).Name).WithAnnotation(operand);
 				case Code.Ldsfld:
 					return AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand);
 				case Code.Stfld:
+					if (arg1 is DirectionExpression)
+						arg1 = ((DirectionExpression)arg1).Expression.Detach();
 					return new AssignmentExpression(arg1.Member(((FieldReference) operand).Name).WithAnnotation(operand), arg2);
 				case Code.Stsfld:
 					return new AssignmentExpression(
@@ -517,11 +532,18 @@ namespace Decompiler
 						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand));
 				case Code.Ldloc:
+					localVariablesToDefine.Add((ILVariable)operand);
 					return new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand);
 				case Code.Ldloca:
+					localVariablesToDefine.Add((ILVariable)operand);
 					return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand));
-					case Code.Ldnull: return new Ast.NullReferenceExpression();
-					case Code.Ldobj: return InlineAssembly(byteCode, args);
+				case Code.Ldnull:
+					return new Ast.NullReferenceExpression();
+				case Code.Ldobj:
+					if (args[0] is DirectionExpression)
+						return ((DirectionExpression)args[0]).Expression.Detach();
+					else
+						return InlineAssembly(byteCode, args);
 					case Code.Ldstr: return new Ast.PrimitiveExpression(operand);
 				case Code.Ldtoken:
 					if (operand is Cecil.TypeReference) {
@@ -562,17 +584,20 @@ namespace Decompiler
 						}
 					}
 					case Code.Rethrow: return new Ast.ThrowStatement();
-					case Code.Sizeof: return new Ast.SizeOfExpression { Type = AstBuilder.ConvertType(operand as TypeReference) };
+				case Code.Sizeof:
+					return new Ast.SizeOfExpression { Type = operandAsTypeRef };
 				case Code.Starg:
 					return new Ast.AssignmentExpression(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand), arg1);
 					case Code.Stloc: {
 						ILVariable locVar = (ILVariable)operand;
-						if (!localVariablesToDefine.Contains(locVar)) {
-							localVariablesToDefine.Add(locVar);
-						}
+						localVariablesToDefine.Add(locVar);
 						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name).WithAnnotation(locVar), arg1);
 					}
-					case Code.Stobj: return InlineAssembly(byteCode, args);
+				case Code.Stobj:
+					if (args[0] is DirectionExpression)
+						return new AssignmentExpression(((DirectionExpression)args[0]).Expression.Detach(), args[1]);
+					else
+						return InlineAssembly(byteCode, args);
 					case Code.Switch: return InlineAssembly(byteCode, args);
 					case Code.Tail: return InlineAssembly(byteCode, args);
 					case Code.Throw: return new Ast.ThrowStatement { Expression = arg1 };
