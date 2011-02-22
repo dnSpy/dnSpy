@@ -12,8 +12,8 @@ namespace Decompiler
 	{
 		class StackSlot
 		{
-			public List<ByteCode> PushedBy;  // Pushed by one of these;  null element means exception pushed by CLR
-			public ILVariable LoadFrom;
+			public List<ByteCode> PushedBy;  // One of those
+			public ILVariable     LoadFrom;  // Where can we get the value from in AST
 			
 			public StackSlot()
 			{
@@ -24,41 +24,91 @@ namespace Decompiler
 				this.PushedBy = new List<ByteCode>(1);
 				this.PushedBy.Add(pushedBy);
 			}
-		}
-		
-		class ByteCode
-		{
-			public ILLabel  Label;    // Non-null only if needed
-			public int      Offset;
-			public int      EndOffset;
-			public ILCode   Code;
-			public object   Operand;
-			public int?     PopCount; // Null means pop all
-			public int      PushCount;
-			public string   Name { get { return "IL_" + this.Offset.ToString("X2"); } }
-			public ByteCode Next;
-			public Instruction[] Prefixes; // Non-null only if needed
-			public List<StackSlot> StackBefore;
-			public List<ILVariable> StoreTo;
 			
-			public List<StackSlot> CloneStack(int? popCount)
+			public static List<StackSlot> CloneStack(List<StackSlot> stack, int? popCount)
 			{
 				List<StackSlot> clone = new List<StackSlot>();
 				if (popCount.HasValue) {
-					if (popCount.Value > this.StackBefore.Count) {
+					if (popCount.Value > stack.Count) {
 						throw new Exception("Can not pop - the stack is empty");
 					}
-					for(int i = 0; i < this.StackBefore.Count - popCount.Value; i++) {
-						clone.Add(new StackSlot() { PushedBy = new List<ByteCode>(this.StackBefore[i].PushedBy) });
+					for(int i = 0; i < stack.Count - popCount.Value; i++) {
+						clone.Add(new StackSlot() { PushedBy = new List<ByteCode>(stack[i].PushedBy) });
 					}
 				}
 				return clone;
 			}
+		}
+		
+		class VariableSlot
+		{
+			public static List<ByteCode> Empty = new List<ByteCode>();
+			
+			public List<ByteCode> StoredBy = Empty;  // One of those
+			public bool           StoredByAll;       // Overestimate which is useful for exceptional control flow.
+			
+			public static VariableSlot[] CloneVariableState(VariableSlot[] state)
+			{
+				VariableSlot[] clone = new ILAstBuilder.VariableSlot[state.Length];
+				if (VariableSlot.Empty.Count > 0)
+					throw new Exception("Constant data corrupted");
+				for (int i = 0; i < clone.Length; i++) {
+					VariableSlot varSlot = state[i];
+					clone[i] = new VariableSlot() {
+						StoredBy = varSlot.StoredBy.Count == 0 ? VariableSlot.Empty : new List<ByteCode>(varSlot.StoredBy),
+						StoredByAll  = varSlot.StoredByAll
+					};
+				}
+				return clone;
+			}
+			
+			public static VariableSlot[] MakeEmptyState(int varCount)
+			{
+				VariableSlot[] emptyVariableState = new VariableSlot[varCount];
+				for (int i = 0; i < emptyVariableState.Length; i++) {
+					emptyVariableState[i] = new VariableSlot();
+				}
+				return emptyVariableState;
+			}
+			
+			public static VariableSlot[] MakeFullState(int varCount)
+			{
+				VariableSlot[] unknownVariableState = new VariableSlot[varCount];
+				for (int i = 0; i < unknownVariableState.Length; i++) {
+					unknownVariableState[i] = new VariableSlot() { StoredByAll = true };
+				}
+				return unknownVariableState;
+			}
+		}
+		
+		class ByteCode
+		{
+			public ILLabel  Label;      // Non-null only if needed
+			public int      Offset;
+			public int      EndOffset;
+			public ILCode   Code;
+			public object   Operand;
+			public int?     PopCount;   // Null means pop all
+			public int      PushCount;
+			public string   Name { get { return "IL_" + this.Offset.ToString("X2"); } }
+			public ByteCode Next;
+			public Instruction[]    Prefixes;        // Non-null only if needed
+			public List<StackSlot>  StackBefore;
+			public List<ILVariable> StoreTo;         // Store result of instruction to those AST variables
+			public VariableSlot[]   VariablesBefore;
 			
 			public override string ToString()
 			{
 				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("{0}:{1} ", this.Name, this.Label != null ? " *" : "");
+				
+				// Label
+				sb.Append(this.Name);
+				sb.Append(':');
+				if (this.Label != null)
+					sb.Append('*');
+				
+				// Name
+				sb.Append(' ');
 				if (this.Prefixes != null) {
 					foreach (var prefix in this.Prefixes) {
 						sb.Append(prefix.OpCode.Name);
@@ -66,18 +116,30 @@ namespace Decompiler
 					}
 				}
 				sb.Append(this.Code.GetName());
-				if (this.Operand is ILLabel) {
-					sb.Append(((ILLabel)this.Operand).Name);
-				} else if (this.Operand is ILLabel[]) {
-					foreach(ILLabel label in (ILLabel[])this.Operand) {
-						sb.Append(label.Name);
-						sb.Append(" ");
+				
+				if (this.Operand != null) {
+					sb.Append(' ');
+					if (this.Operand is Instruction) {
+						sb.Append("IL_" + ((Instruction)this.Operand).Offset.ToString("X2"));
+					} else if (this.Operand is Instruction[]) {
+						foreach(Instruction inst in (Instruction[])this.Operand) {
+							sb.Append("IL_" + inst.Offset.ToString("X2"));
+							sb.Append(" ");
+						}
+					} else if (this.Operand is ILLabel) {
+						sb.Append(((ILLabel)this.Operand).Name);
+					} else if (this.Operand is ILLabel[]) {
+						foreach(ILLabel label in (ILLabel[])this.Operand) {
+							sb.Append(label.Name);
+							sb.Append(" ");
+						}
+					} else {
+						sb.Append(this.Operand.ToString());
 					}
-				} else {
-					sb.Append(this.Operand.ToString());
 				}
+				
 				if (this.StackBefore != null) {
-					sb.Append(" StackBefore = {");
+					sb.Append(" StackBefore={");
 					bool first = true;
 					foreach (StackSlot slot in this.StackBefore) {
 						if (!first) sb.Append(",");
@@ -91,8 +153,9 @@ namespace Decompiler
 					}
 					sb.Append("}");
 				}
+				
 				if (this.StoreTo != null && this.StoreTo.Count > 0) {
-					sb.Append(" StoreTo = {");
+					sb.Append(" StoreTo={");
 					bool first = true;
 					foreach (ILVariable stackVar in this.StoreTo) {
 						if (!first) sb.Append(",");
@@ -101,6 +164,29 @@ namespace Decompiler
 					}
 					sb.Append("}");
 				}
+				
+				if (this.VariablesBefore != null) {
+					sb.Append(" VarsBefore={");
+					bool first = true;
+					foreach (VariableSlot varSlot in this.VariablesBefore) {
+						if (!first) sb.Append(",");
+						if (varSlot.StoredByAll) {
+							sb.Append("*");
+						} else if (varSlot.StoredBy.Count == 0) {
+							sb.Append("_");
+						} else {
+							bool first2 = true;
+							foreach (ByteCode storedBy in varSlot.StoredBy) {
+								if (!first2) sb.Append("|");
+								sb.AppendFormat("IL_{0:X2}", storedBy.Offset);
+								first2 = false;
+							}
+						}
+						first = false;
+					}
+					sb.Append("}");
+				}
+				
 				return sb.ToString();
 			}
 		}
@@ -167,18 +253,13 @@ namespace Decompiler
 				body[i].Next = body[i + 1];
 			}
 			
-			Queue<ByteCode> agenda = new Queue<ByteCode>();
+			Stack<ByteCode> agenda = new Stack<ByteCode>();
+			
+			int varCount = methodDef.Body.Variables.Count;
 			
 			// Add known states
-			body[0].StackBefore = new List<StackSlot>();
-			agenda.Enqueue(body[0]);
-			
 			if(methodDef.Body.HasExceptionHandlers) {
 				foreach(ExceptionHandler ex in methodDef.Body.ExceptionHandlers) {
-					ByteCode tryStart = instrToByteCode[ex.TryStart];
-					tryStart.StackBefore = new List<StackSlot>();
-					agenda.Enqueue(tryStart);
-					
 					ByteCode handlerStart = instrToByteCode[ex.HandlerType == ExceptionHandlerType.Filter ? ex.FilterStart : ex.HandlerStart];
 					handlerStart.StackBefore = new List<StackSlot>();
 					if (ex.HandlerType == ExceptionHandlerType.Catch || ex.HandlerType == ExceptionHandlerType.Filter) {
@@ -191,27 +272,39 @@ namespace Decompiler
 						ldexceptions[ex] = ldexception;
 						handlerStart.StackBefore.Add(new StackSlot(ldexception));
 					}
-					agenda.Enqueue(handlerStart);
-					
-					// Control flow is not required to reach endfilter
-					if (ex.HandlerType == ExceptionHandlerType.Filter) {
-						ByteCode endFilter = instrToByteCode[ex.FilterEnd.Previous];
-						endFilter.StackBefore = new List<StackSlot>();
-					}
+					handlerStart.VariablesBefore = VariableSlot.MakeFullState(varCount);
+					agenda.Push(handlerStart);
 				}
 			}
 			
+			body[0].StackBefore = new List<StackSlot>();
+			body[0].VariablesBefore = VariableSlot.MakeEmptyState(varCount);
+			agenda.Push(body[0]);
+			
 			// Process agenda
 			while(agenda.Count > 0) {
-				ByteCode byteCode = agenda.Dequeue();
+				ByteCode byteCode = agenda.Pop();
 				
 				// Calculate new stack
-				List<StackSlot> newStack = byteCode.CloneStack(byteCode.PopCount);
+				List<StackSlot> newStack = StackSlot.CloneStack(byteCode.StackBefore, byteCode.PopCount);
 				for (int i = 0; i < byteCode.PushCount; i++) {
 					newStack.Add(new StackSlot(byteCode));
 				}
 				
-				// Apply the state to any successors
+				// Calculate new variable state
+				VariableSlot[] newVariableState = VariableSlot.CloneVariableState(byteCode.VariablesBefore);
+				if (byteCode.Code == ILCode.Stloc) {
+					int varIndex = ((VariableReference)byteCode.Operand).Index;
+					newVariableState[varIndex].StoredBy = new List<ByteCode>(1) { byteCode };
+					newVariableState[varIndex].StoredByAll = false;
+				}
+				
+				// After the leave, finally block might have touched the variables
+				if (byteCode.Code == ILCode.Leave) {
+					newVariableState = VariableSlot.MakeFullState(varCount);
+				}
+				
+				// Find all successors
 				List<ByteCode> branchTargets = new List<ByteCode>();
 				if (byteCode.Code.CanFallThough()) {
 					branchTargets.Add(byteCode.Next);
@@ -233,21 +326,30 @@ namespace Decompiler
 						target.Label = new ILLabel() { Name = target.Name };
 					}
 				}
+				
+				// Apply the state to successors
 				foreach (ByteCode branchTarget in branchTargets) {
-					if (branchTarget.StackBefore == null) {
-						branchTarget.StackBefore = newStack;
-						// Do not share one stack for several bytecodes
-						if (branchTargets.Count > 1) {
-							branchTarget.StackBefore = branchTarget.CloneStack(0);
+					if (branchTarget.StackBefore == null && branchTarget.VariablesBefore == null) {
+						if (branchTargets.Count == 1) {
+							branchTarget.StackBefore = newStack;
+							branchTarget.VariablesBefore = newVariableState;
+						} else {
+							// Do not share data for several bytecodes
+							branchTarget.StackBefore = StackSlot.CloneStack(newStack, 0);
+							branchTarget.VariablesBefore = VariableSlot.CloneVariableState(newVariableState);
 						}
-						agenda.Enqueue(branchTarget);
+						agenda.Push(branchTarget);
 					} else {
 						if (branchTarget.StackBefore.Count != newStack.Count) {
 							throw new Exception("Inconsistent stack size at " + byteCode.Name);
 						}
 						
-						// Merge stacks
+						// Be careful not to change our new data - it might be reused for several branch targets.
+						// In general, be careful that two bytecodes never share data structures.
+						
 						bool modified = false;
+						
+						// Merge stacks - modify the target
 						for (int i = 0; i < newStack.Count; i++) {
 							List<ByteCode> oldPushedBy = branchTarget.StackBefore[i].PushedBy;
 							List<ByteCode> newPushedBy = oldPushedBy.Union(newStack[i].PushedBy).ToList();
@@ -257,8 +359,28 @@ namespace Decompiler
 							}
 						}
 						
+						// Merge variables - modify the target
+						for (int i = 0; i < newVariableState.Length; i++) {
+							VariableSlot oldSlot = branchTarget.VariablesBefore[i];
+							VariableSlot newSlot = newVariableState[i];
+							// All can not be unioned further
+							if (!oldSlot.StoredByAll) {
+								if (newSlot.StoredByAll) {
+									oldSlot.StoredByAll = true;
+									modified = true;
+								} else {
+									List<ByteCode> oldStoredBy = oldSlot.StoredBy;
+									List<ByteCode> newStoredBy = oldStoredBy.Union(newSlot.StoredBy).ToList();
+									if (newStoredBy.Count > oldStoredBy.Count) {
+										oldSlot.StoredBy = newStoredBy;
+										modified = true;
+									}
+								}
+							}
+						}
+						
 						if (modified) {
-							agenda.Enqueue(branchTarget);
+							agenda.Push(branchTarget);
 						}
 					}
 				}
