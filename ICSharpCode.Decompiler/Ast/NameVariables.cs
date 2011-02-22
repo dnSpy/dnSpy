@@ -99,10 +99,10 @@ namespace Decompiler
 				case ILCode.Ldfld:
 					// Use the field name only if it's not a field on this (avoid confusion between local variables and fields)
 					if (!(expr.Arguments[0].Code == ILCode.Ldarg && ((ParameterDefinition)expr.Arguments[0].Operand).Index < 0))
-						return ((FieldReference)expr.Operand).Name;
+						return CleanUpVariableName(((FieldReference)expr.Operand).Name);
 					break;
 				case ILCode.Ldsfld:
-					return ((FieldReference)expr.Operand).Name;
+					return CleanUpVariableName(((FieldReference)expr.Operand).Name);
 				case ILCode.Call:
 				case ILCode.Callvirt:
 					MethodReference mr = (MethodReference)expr.Operand;

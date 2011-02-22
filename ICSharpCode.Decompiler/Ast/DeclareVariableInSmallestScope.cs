@@ -34,6 +34,8 @@ namespace Decompiler
 				Match m = assignmentPattern.Match(pos);
 				if (m != null && m.Get<IdentifierExpression>("ident").Single().Identifier == name) {
 					result = new VariableDeclarationStatement(type, name, m.Get<Expression>("init").Single().Detach());
+					result.Variables.Single().CopyAnnotationsFrom(((ExpressionStatement)pos).Expression);
+					result.CopyAnnotationsFrom(pos);
 					pos.ReplaceWith(result);
 				} else {
 					result = new VariableDeclarationStatement(type, name);

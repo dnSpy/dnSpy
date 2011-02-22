@@ -15,6 +15,14 @@ namespace Decompiler
 			return node;
 		}
 		
+		public static T CopyAnnotationsFrom<T>(this T node, AstNode other) where T : AstNode
+		{
+			foreach (var annotation in other.Annotations<object>()) {
+				node.AddAnnotation(annotation);
+			}
+			return node;
+		}
+		
 		public static T Detach<T>(this T node) where T : AstNode
 		{
 			node.Remove();

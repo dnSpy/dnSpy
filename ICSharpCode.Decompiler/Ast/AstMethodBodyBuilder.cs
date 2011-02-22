@@ -514,7 +514,7 @@ namespace Decompiler
 						return MakeRef(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand));
 					}
 				case Code.Ldc_I4:
-					return PrimitiveExpression((int)operand, byteCode.InferredType);
+					return MakePrimitive((int)operand, byteCode.InferredType);
 				case Code.Ldc_I8:
 				case Code.Ldc_R4:
 				case Code.Ldc_R8:
@@ -763,7 +763,7 @@ namespace Decompiler
 					if (TypeAnalysis.IsBoolean(actualType))
 						return expr;
 					if (actualIsIntegerOrEnum) {
-						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, PrimitiveExpression(0, actualType));
+						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, MakePrimitive(0, actualType));
 					} else {
 						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, new NullReferenceExpression());
 					}
@@ -771,8 +771,8 @@ namespace Decompiler
 				if (TypeAnalysis.IsBoolean(actualType) && requiredIsIntegerOrEnum) {
 					return new ConditionalExpression {
 						Condition = expr,
-						TrueExpression = PrimitiveExpression(1, reqType),
-						FalseExpression = PrimitiveExpression(0, reqType)
+						TrueExpression = MakePrimitive(1, reqType),
+						FalseExpression = MakePrimitive(0, reqType)
 					};
 				}
 				if (actualIsIntegerOrEnum && requiredIsIntegerOrEnum) {
@@ -782,7 +782,7 @@ namespace Decompiler
 			}
 		}
 		
-		Expression PrimitiveExpression(long val, TypeReference type)
+		Expression MakePrimitive(long val, TypeReference type)
 		{
 			if (TypeAnalysis.IsBoolean(type) && val == 0)
 				return new Ast.PrimitiveExpression(false);
