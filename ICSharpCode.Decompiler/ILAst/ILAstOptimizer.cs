@@ -36,7 +36,7 @@ namespace Decompiler.ControlFlow
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, (ILLabel)block.EntryGoto.Operand);
-				graph.ComputeDominance();
+				graph.ComputeDominance(context.CancellationToken);
 				graph.ComputeDominanceFrontier();
 				block.Body = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint, false);
 			}
@@ -49,7 +49,7 @@ namespace Decompiler.ControlFlow
 				// TODO: Fix
 				if (graph == null)
 					continue;
-				graph.ComputeDominance();
+				graph.ComputeDominance(context.CancellationToken);
 				graph.ComputeDominanceFrontier();
 				block.Body = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
 			}
