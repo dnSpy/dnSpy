@@ -180,7 +180,8 @@ namespace Decompiler
 				
 				AddTypeMembers(astType, typeDef);
 			}
-			
+
+			ConvertCustomAtributes(astType, typeDef);
 			return astType;
 		}
 		
@@ -461,6 +462,7 @@ namespace Decompiler
 				astMethod.Modifiers = ConvertModifiers(methodDef);
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			}
+			ConvertCustomAtributes(astMethod, methodDef);
 			return astMethod;
 		}
 		
@@ -563,6 +565,25 @@ namespace Decompiler
 				// TODO: params, this
 				
 				yield return astParam;
+			}
+		}
+
+		static void ConvertCustomAtributes(AttributedNode attributedNode, ICustomAttributeProvider customAttributeProvider)
+		{
+			if (customAttributeProvider.HasCustomAttributes)
+			{
+				var section = new AttributeSection();
+				//section.AttributeTarget = target;
+				foreach (var customAttribute in customAttributeProvider.CustomAttributes)
+				{
+					ICSharpCode.NRefactory.CSharp.Attribute attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
+					//customAttribute.
+					attribute.Type = ConvertType(customAttribute.AttributeType);
+					section.Attributes.Add(attribute);
+
+				}
+
+				attributedNode.Attributes.Add(section);
 			}
 		}
 	}

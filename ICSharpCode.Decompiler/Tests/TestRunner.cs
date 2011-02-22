@@ -9,6 +9,7 @@ using System.Text;
 using Decompiler;
 using Microsoft.CSharp;
 using Mono.Cecil;
+using MbUnit.Framework;
 
 namespace ICSharpCode.Decompiler.Tests
 {
@@ -16,14 +17,31 @@ namespace ICSharpCode.Decompiler.Tests
 	{
 		public static void Main()
 		{
-			Test(@"..\..\Tests\DelegateConstruction.cs");
-			
+			TestFile(@"..\..\Tests\DelegateConstruction.cs");
+
 			Console.ReadKey();
 		}
-		
-		
-		
-		static void Test(string fileName)
+
+		[Test]
+		//[Row(@"..\..\Tests\DelegateConstruction.cs")]
+		//[Row(@"..\..\Tests\Loops.cs")]
+		[Row(@"..\..\Tests\CustomAttributes.cs")]
+		public void RoundtripFile(string fileName)
+		{
+			string code = File.ReadAllText(fileName);
+			AssemblyDefinition assembly = Compile(code);
+			AstBuilder decompiler = new AstBuilder(new DecompilerContext());
+			decompiler.AddAssembly(assembly);
+			StringWriter output = new StringWriter();
+			decompiler.GenerateCode(new PlainTextOutput(output));
+
+			var decompiledCode = output.ToString();
+			var onlyCode = "using System;" + Environment.NewLine + StripCodeFileHeader(code);
+
+			Assert.AreEqual(onlyCode, decompiledCode);
+		}
+
+		static void TestFile(string fileName)
 		{
 			string code = File.ReadAllText(fileName);
 			AssemblyDefinition assembly = Compile(code);
@@ -32,11 +50,45 @@ namespace ICSharpCode.Decompiler.Tests
 			StringWriter output = new StringWriter();
 			decompiler.GenerateCode(new PlainTextOutput(output));
 			StringWriter diff = new StringWriter();
-			if (!Compare(code, output.ToString(), diff)) {
+			if (!Compare(code, output.ToString(), diff))
+			{
 				throw new Exception("Test failure." + Environment.NewLine + diff.ToString());
 			}
 		}
-		
+
+		static string StripCodeFileHeader(string code)
+		{
+			var reader = new StringReader(code);
+
+			var buffer = new StringWriter();
+
+			string line;
+			var skipBlankLine = false;
+			while ((line = reader.ReadLine()) != null)
+			{
+				if (line.Trim().StartsWith("//"))
+				{
+					skipBlankLine = true;
+					continue;
+				}
+				else if (line.StartsWith("using "))
+				{
+					skipBlankLine = true;
+					continue;
+				}
+				else if (skipBlankLine && String.IsNullOrWhiteSpace(line))
+				{
+					continue;
+				}
+
+				skipBlankLine = false;
+
+				buffer.WriteLine(line);
+			}
+
+			return buffer.ToString();
+		}
+
 		static bool Compare(string input1, string input2, StringWriter diff)
 		{
 			bool ok = true;
@@ -44,55 +96,67 @@ namespace ICSharpCode.Decompiler.Tests
 			StringReader r1 = new StringReader(input1);
 			StringReader r2 = new StringReader(input2);
 			string line1, line2;
-			while ((line1 = r1.ReadLine()) != null) {
+			while ((line1 = r1.ReadLine()) != null)
+			{
 				string trimmed = line1.Trim();
-				if (trimmed.Length == 0 || trimmed.StartsWith("//", StringComparison.Ordinal) || line1.StartsWith("using ", StringComparison.Ordinal)) {
+				if (trimmed.Length == 0 || trimmed.StartsWith("//", StringComparison.Ordinal) || line1.StartsWith("using ", StringComparison.Ordinal))
+				{
 					diff.WriteLine(" " + line1);
 					continue;
 				}
 				line2 = r2.ReadLine();
 				while (line2 != null && (line2.StartsWith("using ", StringComparison.Ordinal) || line2.Trim().Length == 0))
 					line2 = r2.ReadLine();
-				if (line2 == null) {
+				if (line2 == null)
+				{
 					ok = false;
 					diff.WriteLine("-" + line1);
 					continue;
 				}
-				if (line1 != line2) {
+				if (line1 != line2)
+				{
 					ok = false;
 					if (numberOfContinuousMistakes++ > 5)
 						return false;
 					diff.WriteLine("-" + line1);
 					diff.WriteLine("+" + line2);
-				} else {
+				}
+				else
+				{
 					if (numberOfContinuousMistakes > 0)
 						numberOfContinuousMistakes--;
 					diff.WriteLine(" " + line1);
 				}
 			}
-			while ((line2 = r2.ReadLine()) != null) {
+			while ((line2 = r2.ReadLine()) != null)
+			{
 				ok = false;
 				diff.WriteLine("+" + line2);
 			}
 			return ok;
 		}
-		
+
 		static AssemblyDefinition Compile(string code)
 		{
-			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> {{ "CompilerVersion", "v4.0" }});
+			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
 			CompilerParameters options = new CompilerParameters();
 			options.ReferencedAssemblies.Add("System.Core.dll");
 			CompilerResults results = provider.CompileAssemblyFromSource(options, code);
-			try {
-				if (results.Errors.Count > 0) {
+			try
+			{
+				if (results.Errors.Count > 0)
+				{
 					StringBuilder b = new StringBuilder("Compiler error:");
-					foreach (var error in results.Errors) {
+					foreach (var error in results.Errors)
+					{
 						b.AppendLine(error.ToString());
 					}
 					throw new Exception(b.ToString());
 				}
 				return AssemblyDefinition.ReadAssembly(results.PathToAssembly);
-			} finally {
+			}
+			finally
+			{
 				File.Delete(results.PathToAssembly);
 				results.TempFiles.Delete();
 			}

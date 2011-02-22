@@ -1083,7 +1083,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(attribute);
 			attribute.Type.AcceptVisitor(this, data);
 			Space(policy.BeforeMethodCallParentheses);
-			WriteCommaSeparatedListInParenthesis(attribute.Arguments, policy.WithinMethodCallParentheses);
+			if (attribute.Arguments.Count != 0)
+				WriteCommaSeparatedListInParenthesis(attribute.Arguments, policy.WithinMethodCallParentheses);
 			return EndNode(attribute);
 		}
 		
@@ -1879,8 +1880,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public object VisitSimpleType(SimpleType simpleType, object data)
 		{
+			bool inAttribute = currentContainerNode is Attribute;
 			StartNode(simpleType);
-			WriteIdentifier(simpleType.Identifier);
+
+			var identifier = simpleType.Identifier;
+			if (inAttribute && identifier.EndsWith("Attribute"))
+				identifier = identifier.Substring(0, identifier.Length - 9);
+			WriteIdentifier(identifier);
+
 			WriteTypeArguments(simpleType.TypeArguments);
 			return EndNode(simpleType);
 		}
