@@ -3,13 +3,14 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 {
 	/// <summary>
 	/// Matches one of several alternatives.
 	/// </summary>
-	public class Choice : Pattern, IEnumerable
+	public class Choice : Pattern, IEnumerable<AstNode>
 	{
 		public static readonly Role<AstNode> AlternativeRole = new Role<AstNode>("Alternative", AstNode.Null);
 		
@@ -35,9 +36,19 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			return false;
 		}
 		
+		IEnumerator<AstNode> IEnumerable<AstNode>.GetEnumerator()
+		{
+			return GetChildrenByRole(AlternativeRole).GetEnumerator();
+		}
+		
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetChildrenByRole(AlternativeRole).GetEnumerator();
+		}
+		
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		{
+			return ((IPatternAstVisitor<T, S>)visitor).VisitChoice(this, data);
 		}
 	}
 }

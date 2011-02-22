@@ -69,6 +69,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitSwitchStatement (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			SwitchStatement o = other as SwitchStatement;
+			return o != null && this.Expression.DoMatch(o.Expression, match) && this.SwitchSections.DoMatch(o.SwitchSections, match);
+		}
 	}
 	
 	public class SwitchSection : AstNode

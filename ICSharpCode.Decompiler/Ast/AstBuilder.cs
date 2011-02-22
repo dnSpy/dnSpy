@@ -31,8 +31,13 @@ namespace Decompiler
 			MethodDefinition method = member as MethodDefinition;
 			if (method != null && (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn))
 				return true;
+			if (method != null && method.Name.StartsWith("<", StringComparison.Ordinal) && method.IsCompilerGenerated())
+				return true;
 			TypeDefinition type = member as TypeDefinition;
 			if (type != null && type.DeclaringType != null && type.Name.StartsWith("<>c__DisplayClass", StringComparison.Ordinal) && type.IsCompilerGenerated())
+				return true;
+			FieldDefinition field = member as FieldDefinition;
+			if (field != null && field.Name.StartsWith("CS$<>", StringComparison.Ordinal) && field.IsCompilerGenerated())
 				return true;
 			return false;
 		}
@@ -411,6 +416,9 @@ namespace Decompiler
 				else
 					modifiers |= Modifiers.Override;
 			}
+			if (!methodDef.HasBody && !methodDef.IsAbstract)
+				modifiers |= Modifiers.Extern;
+			
 			return modifiers;
 		}
 		#endregion
@@ -419,6 +427,7 @@ namespace Decompiler
 		{
 			// Add fields
 			foreach(FieldDefinition fieldDef in typeDef.Fields) {
+				if (MemberIsHidden(fieldDef)) continue;
 				astType.AddChild(CreateField(fieldDef), TypeDeclaration.MemberRole);
 			}
 			
@@ -489,7 +498,8 @@ namespace Decompiler
 			
 			ConstructorDeclaration astMethod = new ConstructorDeclaration();
 			astMethod.AddAnnotation(methodDef);
-			astMethod.AddAnnotation(methodMapping);
+			if (methodMapping != null)
+				astMethod.AddAnnotation(methodMapping);
 			astMethod.Modifiers = ConvertModifiers(methodDef);
 			if (methodDef.IsStatic) {
 				// don't show visibility for static ctors
@@ -515,7 +525,9 @@ namespace Decompiler
 				astProp.Getter = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context)
 				}.WithAnnotation(propDef.GetMethod);
-				astProp.Getter.AddAnnotation(methodMapping);
+				
+				if (methodMapping != null)
+					astProp.Getter.AddAnnotation(methodMapping);
 			}
 			if (propDef.SetMethod != null) {
 				// Create mapping - used in debugger
@@ -524,7 +536,9 @@ namespace Decompiler
 				astProp.Setter = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context)
 				}.WithAnnotation(propDef.SetMethod);
-				astProp.Setter.AddAnnotation(methodMapping);
+				
+				if (methodMapping != null)
+					astProp.Setter.AddAnnotation(methodMapping);
 			}
 			return astProp;
 		}
@@ -543,7 +557,9 @@ namespace Decompiler
 				astEvent.AddAccessor = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
 				}.WithAnnotation(eventDef.AddMethod);
-				astEvent.AddAccessor.AddAnnotation(methodMapping);
+				
+				if (methodMapping != null)
+					astEvent.AddAccessor.AddAnnotation(methodMapping);
 			}
 			if (eventDef.RemoveMethod != null) {
 				// Create mapping - used in debugger
@@ -552,7 +568,9 @@ namespace Decompiler
 				astEvent.RemoveAccessor = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, context)
 				}.WithAnnotation(eventDef.RemoveMethod);
-				astEvent.RemoveAccessor.AddAnnotation(methodMapping);
+
+				if (methodMapping != null)
+					astEvent.RemoveAccessor.AddAnnotation(methodMapping);
 			}
 			return astEvent;
 		}

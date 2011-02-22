@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp
@@ -48,6 +49,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		public new Expression Clone()
 		{
 			return (Expression)base.Clone();
+		}
+		
+		// Make debugging easier by giving Expressions a ToString() implementation
+		public override string ToString()
+		{
+			StringWriter w = new StringWriter();
+			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
+			return w.ToString();
 		}
 		
 		public Expression ReplaceWith(Func<Expression, Expression> replaceFunction)

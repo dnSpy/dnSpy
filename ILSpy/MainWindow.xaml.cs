@@ -26,6 +26,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using ILSpy.Debugger.AvalonEdit;

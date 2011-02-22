@@ -203,6 +203,7 @@ namespace Decompiler
 		// Mapping to the original instructions (useful for debugging)
 		public List<ILRange> ILRanges { get; set; }
 		
+		public TypeReference ExpectedType { get; set; }
 		public TypeReference InferredType { get; set; }
 		
 		public ILExpression(ILCode code, object operand, params ILExpression[] args)
@@ -296,6 +297,15 @@ namespace Decompiler
 			if (this.InferredType != null) {
 				output.Write(':');
 				this.InferredType.WriteTo(output, true, true);
+				if (this.ExpectedType != null && this.ExpectedType.FullName != this.InferredType.FullName) {
+					output.Write("[exp:");
+					this.ExpectedType.WriteTo(output, true, true);
+					output.Write(']');
+				}
+			} else if (this.ExpectedType != null) {
+				output.Write("[exp:");
+				this.ExpectedType.WriteTo(output, true, true);
+				output.Write(']');
 			}
 			output.Write('(');
 			bool first = true;

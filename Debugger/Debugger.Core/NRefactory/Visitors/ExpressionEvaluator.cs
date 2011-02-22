@@ -304,7 +304,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			}
 			
 			TypedValue right;
-			if (op == BinaryOperatorType.None) {
+			if (op == BinaryOperatorType.Any) {
 				right = Evaluate(assignmentExpression.Right);
 			} else {
 				BinaryOperatorExpression binOpExpr = new BinaryOperatorExpression();

@@ -1,4 +1,4 @@
-// 
+﻿// 
 // LabelStatement.cs
 //
 // Author:
@@ -40,9 +40,19 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
+		public CSharpTokenNode Colon {
+			get { return GetChildByRole (Roles.Colon); }
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitLabelStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			LabelStatement o = other as LabelStatement;
+			return o != null && MatchString(this.Label, o.Label);
 		}
 	}
 }

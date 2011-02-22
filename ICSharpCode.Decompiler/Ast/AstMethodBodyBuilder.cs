@@ -176,12 +176,6 @@ namespace Decompiler
 			return args;
 		}
 		
-		AstNode TransformExpression(ILExpression expr)
-		{
-			List<Ast.Expression> args = TransformExpressionArguments(expr);
-			return TransformByteCode(expr, args);
-		}
-		
 		Ast.Expression MakeBranchCondition(ILExpression expr)
 		{
 			switch(expr.Code) {
@@ -204,22 +198,11 @@ namespace Decompiler
 			List<Ast.Expression> args = TransformExpressionArguments(expr);
 			Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
-			TypeReference arg1Type = args.Count >= 1 ? expr.Arguments[0].InferredType : null;
 			switch((Code)expr.Code) {
 				case Code.Brfalse:
-					if (arg1Type == typeSystem.Boolean)
-						return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
-					else if (TypeAnalysis.IsIntegerOrEnum(typeSystem, arg1Type))
-						return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, new PrimitiveExpression(0));
-					else
-						return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, new NullReferenceExpression());
+					return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
 				case Code.Brtrue:
-					if (arg1Type == typeSystem.Boolean)
-						return arg1;
-					else if (TypeAnalysis.IsIntegerOrEnum(typeSystem, arg1Type))
-						return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, new PrimitiveExpression(0));
-					else
-						return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, new NullReferenceExpression());
+					return arg1;
 				case Code.Beq:
 					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
 				case Code.Bge:
@@ -242,21 +225,6 @@ namespace Decompiler
 					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
 				default:
 					throw new Exception("Bad opcode");
-			}
-		}
-		
-		AstNode TransformByteCode(ILExpression byteCode, List<Ast.Expression> args)
-		{
-			try {
-				AstNode ret = TransformByteCode_Internal(byteCode, args);
-				// ret.UserData["Type"] = byteCode.Type;
-				return ret;
-			} catch (NotImplementedException) {
-				// Output the operand of the unknown IL code as well
-				if (byteCode.Operand != null) {
-					args.Insert(0, new IdentifierExpression(FormatByteCodeOperand(byteCode.Operand)));
-				}
-				return new IdentifierExpression(byteCode.Code.GetName()).Invoke(args);
 			}
 		}
 		
@@ -285,7 +253,18 @@ namespace Decompiler
 			}
 		}
 		
-		AstNode TransformByteCode_Internal(ILExpression byteCode, List<Ast.Expression> args)
+		AstNode TransformExpression(ILExpression expr)
+		{
+			List<Ast.Expression> args = TransformExpressionArguments(expr);
+			AstNode node = TransformByteCode(expr, args);
+			Expression astExpr = node as Expression;
+			if (astExpr != null)
+				return Convert(astExpr, expr.InferredType, expr.ExpectedType);
+			else
+				return node;
+		}
+		
+		AstNode TransformByteCode(ILExpression byteCode, List<Ast.Expression> args)
 		{
 			ILCode opCode = byteCode.Code;
 			object operand = byteCode.Operand;
@@ -381,48 +360,58 @@ namespace Decompiler
 					case Code.Bne_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2), branchCommand);
 					#endregion
 					#region Comparison
-					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, ConvertIntToBool(arg2));
+					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
 					case Code.Cgt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-					case Code.Cgt_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+				case Code.Cgt_Un:
+					// can also mean Inequality, when used with object references
+					{
+						TypeReference arg1Type = byteCode.Arguments[0].InferredType;
+						if (arg1Type != null && !arg1Type.IsValueType)
+							return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
+						else
+							return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+					}
 					case Code.Clt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					case Code.Clt_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					#endregion
 					#region Conversions
-					case Code.Conv_I:    return arg1.CastTo(typeof(int)); // TODO
-					case Code.Conv_I1:   return arg1.CastTo(typeof(SByte));
-					case Code.Conv_I2:   return arg1.CastTo(typeof(Int16));
-					case Code.Conv_I4:   return arg1.CastTo(typeof(Int32));
-					case Code.Conv_I8:   return arg1.CastTo(typeof(Int64));
-					case Code.Conv_U:    return arg1.CastTo(typeof(uint)); // TODO
-					case Code.Conv_U1:   return arg1.CastTo(typeof(Byte));
-					case Code.Conv_U2:   return arg1.CastTo(typeof(UInt16));
-					case Code.Conv_U4:   return arg1.CastTo(typeof(UInt32));
-					case Code.Conv_U8:   return arg1.CastTo(typeof(UInt64));
+				case Code.Conv_I1:
+				case Code.Conv_I2:
+				case Code.Conv_I4:
+				case Code.Conv_I8:
+				case Code.Conv_U1:
+				case Code.Conv_U2:
+				case Code.Conv_U4:
+				case Code.Conv_U8:
+					return arg1; // conversion is handled by Convert() function using the info from type analysis
+					case Code.Conv_I:    return arg1.CastTo(typeof(IntPtr)); // TODO
+					case Code.Conv_U:    return arg1.CastTo(typeof(UIntPtr)); // TODO
 					case Code.Conv_R4:   return arg1.CastTo(typeof(float));
 					case Code.Conv_R8:   return arg1.CastTo(typeof(double));
 					case Code.Conv_R_Un: return arg1.CastTo(typeof(double)); // TODO
 					
-					case Code.Conv_Ovf_I:  return arg1.CastTo(typeof(int));
-					case Code.Conv_Ovf_I1: return arg1.CastTo(typeof(SByte));
-					case Code.Conv_Ovf_I2: return arg1.CastTo(typeof(Int16));
-					case Code.Conv_Ovf_I4: return arg1.CastTo(typeof(Int32));
-					case Code.Conv_Ovf_I8: return arg1.CastTo(typeof(Int64));
-					case Code.Conv_Ovf_U:  return arg1.CastTo(typeof(uint));
-					case Code.Conv_Ovf_U1: return arg1.CastTo(typeof(Byte));
-					case Code.Conv_Ovf_U2: return arg1.CastTo(typeof(UInt16));
-					case Code.Conv_Ovf_U4: return arg1.CastTo(typeof(UInt32));
-					case Code.Conv_Ovf_U8: return arg1.CastTo(typeof(UInt64));
+				case Code.Conv_Ovf_I1:
+				case Code.Conv_Ovf_I2:
+				case Code.Conv_Ovf_I4:
+				case Code.Conv_Ovf_I8:
+				case Code.Conv_Ovf_U1:
+				case Code.Conv_Ovf_U2:
+				case Code.Conv_Ovf_U4:
+				case Code.Conv_Ovf_U8:
+				case Code.Conv_Ovf_I1_Un:
+				case Code.Conv_Ovf_I2_Un:
+				case Code.Conv_Ovf_I4_Un:
+				case Code.Conv_Ovf_I8_Un:
+				case Code.Conv_Ovf_U1_Un:
+				case Code.Conv_Ovf_U2_Un:
+				case Code.Conv_Ovf_U4_Un:
+				case Code.Conv_Ovf_U8_Un:
+					return arg1; // conversion was handled by Convert() function using the info from type analysis
+					case Code.Conv_Ovf_I:  return arg1.CastTo(typeof(IntPtr)); // TODO
+					case Code.Conv_Ovf_U:  return arg1.CastTo(typeof(UIntPtr));
+					case Code.Conv_Ovf_I_Un:  return arg1.CastTo(typeof(IntPtr));
+					case Code.Conv_Ovf_U_Un:  return arg1.CastTo(typeof(UIntPtr));
 					
-					case Code.Conv_Ovf_I_Un:  return arg1.CastTo(typeof(int));
-					case Code.Conv_Ovf_I1_Un: return arg1.CastTo(typeof(SByte));
-					case Code.Conv_Ovf_I2_Un: return arg1.CastTo(typeof(Int16));
-					case Code.Conv_Ovf_I4_Un: return arg1.CastTo(typeof(Int32));
-					case Code.Conv_Ovf_I8_Un: return arg1.CastTo(typeof(Int64));
-					case Code.Conv_Ovf_U_Un:  return arg1.CastTo(typeof(uint));
-					case Code.Conv_Ovf_U1_Un: return arg1.CastTo(typeof(Byte));
-					case Code.Conv_Ovf_U2_Un: return arg1.CastTo(typeof(UInt16));
-					case Code.Conv_Ovf_U4_Un: return arg1.CastTo(typeof(UInt32));
-					case Code.Conv_Ovf_U8_Un: return arg1.CastTo(typeof(UInt64));
 				case Code.Castclass:
 				case Code.Unbox_Any:
 					return arg1.CastTo(operandAsTypeRef);
@@ -504,20 +493,7 @@ namespace Decompiler
 						return MakeRef(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand));
 					}
 				case Code.Ldc_I4:
-					if (byteCode.InferredType == typeSystem.Boolean && (int)operand == 0)
-						return new Ast.PrimitiveExpression(false);
-					else if (byteCode.InferredType == typeSystem.Boolean && (int)operand == 1)
-						return new Ast.PrimitiveExpression(true);
-					if (byteCode.InferredType != null) { // cannot rely on IsValueType, it's not set for typerefs (but is set for typespecs)
-						TypeDefinition enumDefinition = byteCode.InferredType.Resolve();
-						if (enumDefinition != null && enumDefinition.IsEnum) {
-							foreach (FieldDefinition field in enumDefinition.Fields) {
-								if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int32, field.Constant, false), operand))
-									return AstBuilder.ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
-							}
-						}
-					}
-					return new Ast.PrimitiveExpression(operand);
+					return PrimitiveExpression((int)operand, byteCode.InferredType);
 				case Code.Ldc_I8:
 				case Code.Ldc_R4:
 				case Code.Ldc_R8:
@@ -580,7 +556,6 @@ namespace Decompiler
 					case Code.Refanyval: return InlineAssembly(byteCode, args);
 					case Code.Ret: {
 						if (methodDef.ReturnType.FullName != "System.Void") {
-							arg1 = Convert(arg1, methodDef.ReturnType);
 							return new Ast.ReturnStatement { Expression = arg1 };
 						} else {
 							return new Ast.ReturnStatement();
@@ -719,19 +694,57 @@ namespace Decompiler
 			return new DirectionExpression { Expression = expr, FieldDirection = FieldDirection.Ref };
 		}
 		
-		static Ast.Expression Convert(Ast.Expression expr, Cecil.TypeReference reqType)
+		Ast.Expression Convert(Ast.Expression expr, Cecil.TypeReference actualType, Cecil.TypeReference reqType)
 		{
-			if (reqType == null) {
+			if (reqType == null || actualType == reqType) {
 				return expr;
 			} else {
+				bool actualIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(typeSystem, actualType);
+				bool requiredIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(typeSystem, reqType);
+				
+				if (reqType == typeSystem.Boolean) {
+					if (actualIsIntegerOrEnum) {
+						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, PrimitiveExpression(0, actualType));
+					} else {
+						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, new NullReferenceExpression());
+					}
+				}
+				if (actualType == typeSystem.Boolean && requiredIsIntegerOrEnum) {
+					return new ConditionalExpression {
+						Condition = expr,
+						TrueExpression = PrimitiveExpression(1, reqType),
+						FalseExpression = PrimitiveExpression(0, reqType)
+					};
+				}
+				if (actualIsIntegerOrEnum && requiredIsIntegerOrEnum) {
+					return expr.CastTo(AstBuilder.ConvertType(reqType));
+				}
 				return expr;
 			}
 		}
 		
-		static Ast.Expression ConvertIntToBool(Ast.Expression astInt)
+		Expression PrimitiveExpression(long val, TypeReference type)
 		{
-			return astInt;
-			// return new Ast.ParenthesizedExpression(new Ast.BinaryOperatorExpression(astInt, BinaryOperatorType.InEquality, new Ast.PrimitiveExpression(0, "0")));
+			if (type == typeSystem.Boolean && val == 0)
+				return new Ast.PrimitiveExpression(false);
+			else if (type == typeSystem.Boolean && val == 1)
+				return new Ast.PrimitiveExpression(true);
+			if (type != null) { // cannot rely on type.IsValueType, it's not set for typerefs (but is set for typespecs)
+				TypeDefinition enumDefinition = type.Resolve();
+				if (enumDefinition != null && enumDefinition.IsEnum) {
+					foreach (FieldDefinition field in enumDefinition.Fields) {
+						if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false), val))
+							return AstBuilder.ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
+						else if (!field.IsStatic && field.IsRuntimeSpecialName)
+							type = field.FieldType; // use primitive type of the enum
+					}
+				}
+			}
+			TypeCode code = TypeAnalysis.GetTypeCode(typeSystem, type);
+			if (code == TypeCode.Object)
+				return new Ast.PrimitiveExpression((int)val);
+			else
+				return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
 		}
 	}
 }

@@ -56,14 +56,6 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		/// <summary>
-		/// Used for "goto case LabelExpression;"
-		/// </summary>
-		public Expression LabelExpression {
-			get { return GetChildByRole (Roles.Expression); }
-			set { SetChildByRole (Roles.Expression, value); }
-		}
-		
 		public CSharpTokenNode SemicolonToken {
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
@@ -71,6 +63,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitGotoStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			GotoStatement o = other as GotoStatement;
+			return o != null && MatchString(this.Label, o.Label);
 		}
 	}
 	
@@ -89,18 +87,6 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (CaseKeywordRole); }
 		}
 		
-		public string Label {
-			get {
-				return GetChildByRole (Roles.Identifier).Name;
-			}
-			set {
-				if (string.IsNullOrEmpty(value))
-					SetChildByRole(Roles.Identifier, null);
-				else
-					SetChildByRole(Roles.Identifier, new Identifier(value, AstLocation.Empty));
-			}
-		}
-		
 		/// <summary>
 		/// Used for "goto case LabelExpression;"
 		/// </summary>
@@ -116,6 +102,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitGotoCaseStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			GotoCaseStatement o = other as GotoCaseStatement;
+			return o != null && this.LabelExpression.DoMatch(o.LabelExpression, match);
 		}
 	}
 	
@@ -141,6 +133,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitGotoDefaultStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			GotoDefaultStatement o = other as GotoDefaultStatement;
+			return o != null;
 		}
 	}
 }

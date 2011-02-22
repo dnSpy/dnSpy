@@ -32,6 +32,10 @@ namespace Decompiler.Transforms
 			}
 		}
 		
+		internal sealed class CapturedVariableAnnotation
+		{
+		}
+		
 		public DelegateConstruction(DecompilerContext context) : base(context)
 		{
 		}
@@ -240,7 +244,9 @@ namespace Decompiler.Transforms
 				}
 				// Now insert the variable declarations (we can do this after the replacements only so that the scope detection works):
 				foreach (var tuple in variablesToDeclare) {
-					DeclareVariableInSmallestScope.DeclareVariable(blockStatement, tuple.Item1, tuple.Item2, allowPassIntoLoops: false);
+					var newVarDecl = DeclareVariableInSmallestScope.DeclareVariable(blockStatement, tuple.Item1, tuple.Item2, allowPassIntoLoops: false);
+					if (newVarDecl != null)
+						newVarDecl.Variables.Single().AddAnnotation(new CapturedVariableAnnotation());
 				}
 			}
 			return null;

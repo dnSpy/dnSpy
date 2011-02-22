@@ -1,6 +1,6 @@
 ﻿// 
 // BinaryOperatorExpression.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -75,7 +75,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			BinaryOperatorExpression o = other as BinaryOperatorExpression;
-			return o != null && this.Left.DoMatch(o.Left, match) && this.Operator == o.Operator && this.Right.DoMatch(o.Right, match);
+			return o != null && (this.Operator == BinaryOperatorType.Any || this.Operator == o.Operator)
+				&& this.Left.DoMatch(o.Left, match) && this.Right.DoMatch(o.Right, match);
 		}
 		
 		public static string GetOperatorSymbol(BinaryOperatorType op)
@@ -175,6 +176,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>left ?? right</summary>
 		NullCoalescing,
 		
-		None
+		/// <summary>
+		/// Any binary operator (used in pattern matching)
+		/// </summary>
+		Any
 	}
 }

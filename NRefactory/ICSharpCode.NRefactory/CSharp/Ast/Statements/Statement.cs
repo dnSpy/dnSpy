@@ -52,10 +52,5 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override NodeType NodeType {
 			get { return NodeType.Statement; }
 		}
-		
-		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.CSharp.PatternMatching.Match match)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

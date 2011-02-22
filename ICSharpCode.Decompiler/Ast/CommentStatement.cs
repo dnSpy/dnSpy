@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 
 namespace Decompiler
 {
@@ -33,6 +34,12 @@ namespace Decompiler
 				cs.Parent.InsertChildBefore(cs, new Comment(cs.comment), Roles.Comment);
 				cs.Remove();
 			}
+		}
+		
+		protected override bool DoMatch(AstNode other, Match match)
+		{
+			CommentStatement o = other as CommentStatement;
+			return o != null && MatchString(comment, o.comment);
 		}
 	}
 }

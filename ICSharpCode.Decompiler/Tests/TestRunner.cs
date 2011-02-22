@@ -72,7 +72,7 @@ namespace ICSharpCode.Decompiler.Tests
 			}
 			while ((line2 = r2.ReadLine()) != null) {
 				ok = false;
-				diff.WriteLine("+" + line1);
+				diff.WriteLine("+" + line2);
 			}
 			return ok;
 		}
