@@ -423,26 +423,36 @@ namespace Decompiler
 					return InlineAssembly(byteCode, args);
 					#endregion
 					#region Indirect
-					case Code.Ldind_I: return InlineAssembly(byteCode, args);
-					case Code.Ldind_I1: return InlineAssembly(byteCode, args);
-					case Code.Ldind_I2: return InlineAssembly(byteCode, args);
-					case Code.Ldind_I4: return InlineAssembly(byteCode, args);
-					case Code.Ldind_I8: return InlineAssembly(byteCode, args);
-					case Code.Ldind_U1: return InlineAssembly(byteCode, args);
-					case Code.Ldind_U2: return InlineAssembly(byteCode, args);
-					case Code.Ldind_U4: return InlineAssembly(byteCode, args);
-					case Code.Ldind_R4: return InlineAssembly(byteCode, args);
-					case Code.Ldind_R8: return InlineAssembly(byteCode, args);
-					case Code.Ldind_Ref: return InlineAssembly(byteCode, args);
+				case Code.Ldind_I:
+				case Code.Ldind_I1:
+				case Code.Ldind_I2:
+				case Code.Ldind_I4:
+				case Code.Ldind_I8:
+				case Code.Ldind_U1:
+				case Code.Ldind_U2:
+				case Code.Ldind_U4:
+				case Code.Ldind_R4:
+				case Code.Ldind_R8:
+				case Code.Ldind_Ref:
+				case Code.Ldobj:
+					if (args[0] is DirectionExpression)
+						return ((DirectionExpression)args[0]).Expression.Detach();
+					else
+						return InlineAssembly(byteCode, args);
 					
-					case Code.Stind_I: return InlineAssembly(byteCode, args);
-					case Code.Stind_I1: return InlineAssembly(byteCode, args);
-					case Code.Stind_I2: return InlineAssembly(byteCode, args);
-					case Code.Stind_I4: return InlineAssembly(byteCode, args);
-					case Code.Stind_I8: return InlineAssembly(byteCode, args);
-					case Code.Stind_R4: return InlineAssembly(byteCode, args);
-					case Code.Stind_R8: return InlineAssembly(byteCode, args);
-					case Code.Stind_Ref: return InlineAssembly(byteCode, args);
+				case Code.Stind_I:
+				case Code.Stind_I1:
+				case Code.Stind_I2:
+				case Code.Stind_I4:
+				case Code.Stind_I8:
+				case Code.Stind_R4:
+				case Code.Stind_R8:
+				case Code.Stind_Ref:
+				case Code.Stobj:
+					if (args[0] is DirectionExpression)
+						return new AssignmentExpression(((DirectionExpression)args[0]).Expression.Detach(), args[1]);
+					else
+						return InlineAssembly(byteCode, args);
 					#endregion
 					case Code.Arglist: return InlineAssembly(byteCode, args);
 					case Code.Break: return InlineAssembly(byteCode, args);
@@ -539,11 +549,6 @@ namespace Decompiler
 					return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand));
 				case Code.Ldnull:
 					return new Ast.NullReferenceExpression();
-				case Code.Ldobj:
-					if (args[0] is DirectionExpression)
-						return ((DirectionExpression)args[0]).Expression.Detach();
-					else
-						return InlineAssembly(byteCode, args);
 					case Code.Ldstr: return new Ast.PrimitiveExpression(operand);
 				case Code.Ldtoken:
 					if (operand is Cecil.TypeReference) {
@@ -593,11 +598,6 @@ namespace Decompiler
 						localVariablesToDefine.Add(locVar);
 						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name).WithAnnotation(locVar), arg1);
 					}
-				case Code.Stobj:
-					if (args[0] is DirectionExpression)
-						return new AssignmentExpression(((DirectionExpression)args[0]).Expression.Detach(), args[1]);
-					else
-						return InlineAssembly(byteCode, args);
 					case Code.Switch: return InlineAssembly(byteCode, args);
 					case Code.Tail: return InlineAssembly(byteCode, args);
 					case Code.Throw: return new Ast.ThrowStatement { Expression = arg1 };
