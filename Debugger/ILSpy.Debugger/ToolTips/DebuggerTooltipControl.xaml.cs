@@ -84,6 +84,10 @@ namespace ILSpy.Debugger.Tooltips
 		}
 		
 		public void SetItemsSource(IEnumerable<ITreeNode> value) {
+			
+			if (value == null)
+				return;
+			
 			this.itemsSource = value;
 			this.lazyGrid = new LazyItemsControl<ITreeNode>(this.dataGrid, InitialItemsCount);
 			

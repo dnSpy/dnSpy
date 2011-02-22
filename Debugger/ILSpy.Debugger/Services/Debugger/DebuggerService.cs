@@ -207,7 +207,7 @@ namespace ILSpy.Debugger.Services
 				ParserService.SimpleParseAt(doc.Text, doc.GetOffset(new TextLocation(logicPos.Line, logicPos.Column)));
 			
 			if (currentDebugger == null || !currentDebugger.IsDebugging || !currentDebugger.CanEvaluate) {
-				e.ContentToShow = variable;
+				e.ContentToShow = null;
 			}
 			else {
 				e.ContentToShow = currentDebugger.GetTooltipControl(e.LogicalPosition, variable);

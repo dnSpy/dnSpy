@@ -89,7 +89,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 				exp.ImageName = imageName;
 				nodes.Add(exp);
 			}
-			nodes.Sort();
+			
 			return nodes;
 		}
 

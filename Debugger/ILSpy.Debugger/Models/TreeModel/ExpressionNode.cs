@@ -13,6 +13,7 @@ using Debugger.MetaData;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.Services;
+using ILSpy.Debugger.Services.Debugger;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
@@ -121,10 +122,10 @@ namespace ILSpy.Debugger.Models.TreeModel
 				// no visualizers if evaluated value is null
 				yield break;
 			}
-			/*if (this.expressionType.IsPrimitive || this.expressionType.IsSystemDotObject() || this.expressionType.IsEnum()) {
+			if (this.expressionType.IsPrimitive || this.expressionType.IsSystemDotObject() || this.expressionType.IsEnum()) {
 				// no visualizers for primitive types
 				yield break;
-			}*/
+			}
 			
 			yield break;
 //			foreach (var descriptor in VisualizerDescriptors.GetAllDescriptors()) {
@@ -180,10 +181,10 @@ namespace ILSpy.Debugger.Models.TreeModel
 				}
 			}
 			
-			if (true) {
-				TreeNode info = ICorDebug.GetDebugInfoRoot(val.AppDomain, val.CorValue);
-				this.ChildNodes = Utils.PrependNode(info, this.ChildNodes);
-			}
+//			if (DebuggingOptions.Instance.ICorDebugVisualizerEnabled) {
+//				TreeNode info = ICorDebug.GetDebugInfoRoot(val.AppDomain, val.CorValue);
+//				this.ChildNodes = Utils.PrependNode(info, this.ChildNodes);
+//			}
 			
 			// Do last since it may expire the object
 			if (val.Type.IsInteger) {
@@ -229,6 +230,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 		
 		string FormatInteger(object i)
 		{
+			// if (DebuggingOptions.Instance.ShowIntegersAs == ShowIntegersAs.Decimal)
 			if (true)
 				return i.ToString();
 			

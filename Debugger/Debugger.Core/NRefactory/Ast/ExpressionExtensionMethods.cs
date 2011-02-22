@@ -95,7 +95,7 @@ namespace ICSharpCode.NRefactory.Ast
 			if (memberInfo.IsStatic) {
 				target = new TypeReferenceExpression() { Type = memberInfo.DeclaringType.GetTypeReference() };
 			} else {
-				target = expresion.CastTo((DebugType)memberInfo.DeclaringType);
+				target = expresion.Clone().CastTo((DebugType)memberInfo.DeclaringType);
 			}
 			
 			if (memberInfo is DebugFieldInfo) {
@@ -141,7 +141,7 @@ namespace ICSharpCode.NRefactory.Ast
 				throw new DebuggerException("Incorrect number of arguments");
 			List<Expression> typedArgs = new List<Expression>(args.Length);
 			for(int i = 0; i < args.Length; i++) {
-				typedArgs.Add(args[i].CastTo((DebugType)method.GetParameters()[i].ParameterType));
+				typedArgs.Add(args[i].Clone().CastTo((DebugType)method.GetParameters()[i].ParameterType));
 			}
 			return typedArgs;
 		}
@@ -260,24 +260,24 @@ namespace ICSharpCode.NRefactory.Ast
 				//newRef.ArraySpecifiers = typeRef.ArraySpecifiers;
 				return newRef;
 			}
-//			else if (expr is SimpleType) {
-//				var typeRef = (SimpleType)expr;
-//				string[] names = typeRef.Identifier.Split('.');
-//				if (names.Length == 1)
-//					return typeRef;
-//				SimpleType newRef = null;
-//				foreach(string name in names) {
-//					if (newRef == null) {
-//						newRef = new SimpleType() { Identifier = name, TypeArguments = new List<AstType>() };
-//					} else {
-//						newRef = new MemberType() { Target = newRef, MemberName = name, TypeArguments = new List<AstType>() };
-//					}
-//				}
-//				((List<AstType>)newRef.TypeArguments).AddRange(typeRef.TypeArguments);
-//				newRef.PointerNestingLevel = typeRef.PointerNestingLevel;
-//				newRef.RankSpecifier = typeRef.RankSpecifier;
-//				return newRef;
-//			}
+			else if (expr is SimpleType) {
+				var typeRef = (SimpleType)expr;
+				string[] names = typeRef.Identifier.Split('.');
+				if (names.Length == 1)
+					return typeRef;
+				AstType newRef = null;
+				foreach(string name in names) {
+					if (newRef == null) {
+						newRef = new SimpleType() { Identifier = name/*, TypeArguments = new List<AstType>()*/ };
+					} else {
+						newRef = new MemberType() { Target = newRef, MemberName = name/*, TypeArguments = new List<AstType>() */};
+					}
+				}
+				//((List<AstType>)newRef.TypeArguments).AddRange(typeRef.TypeArguments);
+				//newRef.PointerNestingLevel = typeRef.PointerNestingLevel;
+				//newRef.RankSpecifier = typeRef.RankSpecifier;
+				return newRef;
+			}
 			else {
 				throw new EvaluateException(expr, "Type expected. {0} seen.", expr.GetType().FullName);
 			}

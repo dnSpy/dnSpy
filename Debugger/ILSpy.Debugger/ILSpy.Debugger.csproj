@@ -101,6 +101,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Images" />
     <Folder Include="Models\TreeModel" />
     <Folder Include="ToolTips" />
     <Folder Include="ToolTips\Models" />
@@ -136,6 +137,57 @@
   <ItemGroup>
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\CurrentLine.png" />
+    <Resource Include="Images\Icons.16x16.Class.png"/>
+    <Resource Include="Images\Icons.16x16.Delegate.png" />
+    <Resource Include="Images\Icons.16x16.Enum.png" />
+    <Resource Include="Images\Icons.16x16.Event.png" />
+    <Resource Include="Images\Icons.16x16.ExtensionMethod.png" />
+    <Resource Include="Images\Icons.16x16.Field.png" />
+    <Resource Include="Images\Icons.16x16.Indexer.png" />
+    <Resource Include="Images\Icons.16x16.Interface.png" />
+    <Resource Include="Images\Icons.16x16.InternalClass.png" />
+    <Resource Include="Images\Icons.16x16.InternalDelegate.png" />
+    <Resource Include="Images\Icons.16x16.InternalEnum.png" />
+    <Resource Include="Images\Icons.16x16.InternalEvent.png" />
+    <Resource Include="Images\Icons.16x16.InternalExtensionMethod.png" />
+    <Resource Include="Images\Icons.16x16.InternalField.png" />
+    <Resource Include="Images\Icons.16x16.InternalIndexer.png" />
+    <Resource Include="Images\Icons.16x16.InternalInterface.png" />
+    <Resource Include="Images\Icons.16x16.InternalMethod.png" />
+    <Resource Include="Images\Icons.16x16.InternalProperty.png" />
+    <Resource Include="Images\Icons.16x16.InternalStruct.png" />
+    <Resource Include="Images\Icons.16x16.Keyword.png" />
+    <Resource Include="Images\Icons.16x16.Literal.png" />
+    <Resource Include="Images\Icons.16x16.Local.png" />
+    <Resource Include="Images\Icons.16x16.Method.png" />
+    <Resource Include="Images\Icons.16x16.NameSpace.png" />
+    <Resource Include="Images\Icons.16x16.Operator.png" />
+    <Resource Include="Images\Icons.16x16.Parameter.png" />
+    <Resource Include="Images\Icons.16x16.PrivateClass.png" />
+    <Resource Include="Images\Icons.16x16.PrivateDelegate.png" />
+    <Resource Include="Images\Icons.16x16.PrivateEnum.png" />
+    <Resource Include="Images\Icons.16x16.PrivateEvent.png" />
+    <Resource Include="Images\Icons.16x16.PrivateExtensionMethod.png" />
+    <Resource Include="Images\Icons.16x16.PrivateField.png" />
+    <Resource Include="Images\Icons.16x16.PrivateIndexer.png" />
+    <Resource Include="Images\Icons.16x16.PrivateInterface.png" />
+    <Resource Include="Images\Icons.16x16.PrivateMethod.png" />
+    <Resource Include="Images\Icons.16x16.PrivateProperty.png" />
+    <Resource Include="Images\Icons.16x16.PrivateStruct.png" />
+    <Resource Include="Images\Icons.16x16.Property.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedClass.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedDelegate.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedEnum.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedEvent.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedExtensionMethod.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedField.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedIndexer.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedInterface.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedMethod.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedProperty.png" />
+    <Resource Include="Images\Icons.16x16.ProtectedStruct.png" />
+    <Resource Include="Images\Icons.16x16.Reference.png" />
+    <Resource Include="Images\Icons.16x16.Struct.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

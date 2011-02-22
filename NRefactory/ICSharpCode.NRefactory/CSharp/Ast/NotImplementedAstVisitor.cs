@@ -7,522 +7,522 @@ namespace ICSharpCode.NRefactory.CSharp
 {
 	public class NotImplementedAstVisitor<T, S> : IAstVisitor<T, S>
 	{	
-		public S VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, T data)
+		public virtual S VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitArgListExpression(ArgListExpression argListExpression, T data)
+		public virtual S VisitArgListExpression(ArgListExpression argListExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, T data)
+		public virtual S VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, T data)
+		public virtual S VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitAsExpression(AsExpression asExpression, T data)
+		public virtual S VisitAsExpression(AsExpression asExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitAssignmentExpression(AssignmentExpression assignmentExpression, T data)
+		public virtual S VisitAssignmentExpression(AssignmentExpression assignmentExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, T data)
+		public virtual S VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, T data)
+		public virtual S VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitCastExpression(CastExpression castExpression, T data)
+		public virtual S VisitCastExpression(CastExpression castExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitCheckedExpression(CheckedExpression checkedExpression, T data)
+		public virtual S VisitCheckedExpression(CheckedExpression checkedExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitConditionalExpression(ConditionalExpression conditionalExpression, T data)
+		public virtual S VisitConditionalExpression(ConditionalExpression conditionalExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, T data)
+		public virtual S VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitDirectionExpression(DirectionExpression directionExpression, T data)
+		public virtual S VisitDirectionExpression(DirectionExpression directionExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitIdentifierExpression(IdentifierExpression identifierExpression, T data)
+		public virtual S VisitIdentifierExpression(IdentifierExpression identifierExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitIndexerExpression(IndexerExpression indexerExpression, T data)
+		public virtual S VisitIndexerExpression(IndexerExpression indexerExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitInvocationExpression(InvocationExpression invocationExpression, T data)
+		public virtual S VisitInvocationExpression(InvocationExpression invocationExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitIsExpression(IsExpression isExpression, T data)
+		public virtual S VisitIsExpression(IsExpression isExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitLambdaExpression(LambdaExpression lambdaExpression, T data)
+		public virtual S VisitLambdaExpression(LambdaExpression lambdaExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, T data)
+		public virtual S VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, T data)
+		public virtual S VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, T data)
+		public virtual S VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, T data)
+		public virtual S VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, T data)
+		public virtual S VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, T data)
+		public virtual S VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, T data)
+		public virtual S VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitSizeOfExpression(SizeOfExpression sizeOfExpression, T data)
+		public virtual S VisitSizeOfExpression(SizeOfExpression sizeOfExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitStackAllocExpression(StackAllocExpression stackAllocExpression, T data)
+		public virtual S VisitStackAllocExpression(StackAllocExpression stackAllocExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, T data)
+		public virtual S VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitTypeOfExpression(TypeOfExpression typeOfExpression, T data)
+		public virtual S VisitTypeOfExpression(TypeOfExpression typeOfExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, T data)
+		public virtual S VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, T data)
+		public virtual S VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitUncheckedExpression(UncheckedExpression uncheckedExpression, T data)
+		public virtual S VisitUncheckedExpression(UncheckedExpression uncheckedExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitQueryExpression(QueryExpression queryExpression, T data)
+		public virtual S VisitQueryExpression(QueryExpression queryExpression, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, T data)
+		public virtual S VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitQueryFromClause(QueryFromClause queryFromClause, T data)
+		public virtual S VisitQueryFromClause(QueryFromClause queryFromClause, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitQueryLetClause(QueryLetClause queryLetClause, T data)
+		public virtual S VisitQueryLetClause(QueryLetClause queryLetClause, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitQueryWhereClause(QueryWhereClause queryWhereClause, T data)
+		public virtual S VisitQueryWhereClause(QueryWhereClause queryWhereClause, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitQueryJoinClause(QueryJoinClause queryJoinClause, T data)
+		public virtual S VisitQueryJoinClause(QueryJoinClause queryJoinClause, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitQueryOrderClause(QueryOrderClause queryOrderClause, T data)
+		public virtual S VisitQueryOrderClause(QueryOrderClause queryOrderClause, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitQueryOrdering(QueryOrdering queryOrdering, T data)
+		public virtual S VisitQueryOrdering(QueryOrdering queryOrdering, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitQuerySelectClause(QuerySelectClause querySelectClause, T data)
+		public virtual S VisitQuerySelectClause(QuerySelectClause querySelectClause, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitQueryGroupClause(QueryGroupClause queryGroupClause, T data)
+		public virtual S VisitQueryGroupClause(QueryGroupClause queryGroupClause, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitAttribute(Attribute attribute, T data)
+		public virtual S VisitAttribute(Attribute attribute, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitAttributeSection(AttributeSection attributeSection, T data)
+		public virtual S VisitAttributeSection(AttributeSection attributeSection, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, T data)
+		public virtual S VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, T data)
+		public virtual S VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitTypeDeclaration(TypeDeclaration typeDeclaration, T data)
+		public virtual S VisitTypeDeclaration(TypeDeclaration typeDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, T data)
+		public virtual S VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitUsingDeclaration(UsingDeclaration usingDeclaration, T data)
+		public virtual S VisitUsingDeclaration(UsingDeclaration usingDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitBlockStatement(BlockStatement blockStatement, T data)
+		public virtual S VisitBlockStatement(BlockStatement blockStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitBreakStatement(BreakStatement breakStatement, T data)
+		public virtual S VisitBreakStatement(BreakStatement breakStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitCheckedStatement(CheckedStatement checkedStatement, T data)
+		public virtual S VisitCheckedStatement(CheckedStatement checkedStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitContinueStatement(ContinueStatement continueStatement, T data)
+		public virtual S VisitContinueStatement(ContinueStatement continueStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitDoWhileStatement(DoWhileStatement doWhileStatement, T data)
+		public virtual S VisitDoWhileStatement(DoWhileStatement doWhileStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitEmptyStatement(EmptyStatement emptyStatement, T data)
+		public virtual S VisitEmptyStatement(EmptyStatement emptyStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitExpressionStatement(ExpressionStatement expressionStatement, T data)
+		public virtual S VisitExpressionStatement(ExpressionStatement expressionStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitFixedStatement(FixedStatement fixedStatement, T data)
+		public virtual S VisitFixedStatement(FixedStatement fixedStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitForeachStatement(ForeachStatement foreachStatement, T data)
+		public virtual S VisitForeachStatement(ForeachStatement foreachStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitForStatement(ForStatement forStatement, T data)
+		public virtual S VisitForStatement(ForStatement forStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement, T data)
+		public virtual S VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement, T data)
+		public virtual S VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitGotoStatement(GotoStatement gotoStatement, T data)
+		public virtual S VisitGotoStatement(GotoStatement gotoStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitIfElseStatement(IfElseStatement ifElseStatement, T data)
+		public virtual S VisitIfElseStatement(IfElseStatement ifElseStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitLabelStatement(LabelStatement labelStatement, T data)
+		public virtual S VisitLabelStatement(LabelStatement labelStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitLockStatement(LockStatement lockStatement, T data)
+		public virtual S VisitLockStatement(LockStatement lockStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitReturnStatement(ReturnStatement returnStatement, T data)
+		public virtual S VisitReturnStatement(ReturnStatement returnStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitSwitchStatement(SwitchStatement switchStatement, T data)
+		public virtual S VisitSwitchStatement(SwitchStatement switchStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitSwitchSection(SwitchSection switchSection, T data)
+		public virtual S VisitSwitchSection(SwitchSection switchSection, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitCaseLabel(CaseLabel caseLabel, T data)
+		public virtual S VisitCaseLabel(CaseLabel caseLabel, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitThrowStatement(ThrowStatement throwStatement, T data)
+		public virtual S VisitThrowStatement(ThrowStatement throwStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitTryCatchStatement(TryCatchStatement tryCatchStatement, T data)
+		public virtual S VisitTryCatchStatement(TryCatchStatement tryCatchStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitCatchClause(CatchClause catchClause, T data)
+		public virtual S VisitCatchClause(CatchClause catchClause, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitUncheckedStatement(UncheckedStatement uncheckedStatement, T data)
+		public virtual S VisitUncheckedStatement(UncheckedStatement uncheckedStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitUnsafeStatement(UnsafeStatement unsafeStatement, T data)
+		public virtual S VisitUnsafeStatement(UnsafeStatement unsafeStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitUsingStatement(UsingStatement usingStatement, T data)
+		public virtual S VisitUsingStatement(UsingStatement usingStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, T data)
+		public virtual S VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitWhileStatement(WhileStatement whileStatement, T data)
+		public virtual S VisitWhileStatement(WhileStatement whileStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement, T data)
+		public virtual S VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitYieldStatement(YieldStatement yieldStatement, T data)
+		public virtual S VisitYieldStatement(YieldStatement yieldStatement, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitAccessor(Accessor accessor, T data)
+		public virtual S VisitAccessor(Accessor accessor, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, T data)
+		public virtual S VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitConstructorInitializer(ConstructorInitializer constructorInitializer, T data)
+		public virtual S VisitConstructorInitializer(ConstructorInitializer constructorInitializer, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, T data)
+		public virtual S VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, T data)
+		public virtual S VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitEventDeclaration(EventDeclaration eventDeclaration, T data)
+		public virtual S VisitEventDeclaration(EventDeclaration eventDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, T data)
+		public virtual S VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitFieldDeclaration(FieldDeclaration fieldDeclaration, T data)
+		public virtual S VisitFieldDeclaration(FieldDeclaration fieldDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, T data)
+		public virtual S VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitMethodDeclaration(MethodDeclaration methodDeclaration, T data)
+		public virtual S VisitMethodDeclaration(MethodDeclaration methodDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, T data)
+		public virtual S VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, T data)
+		public virtual S VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, T data)
+		public virtual S VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitVariableInitializer(VariableInitializer variableInitializer, T data)
+		public virtual S VisitVariableInitializer(VariableInitializer variableInitializer, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitCompilationUnit(CompilationUnit compilationUnit, T data)
+		public virtual S VisitCompilationUnit(CompilationUnit compilationUnit, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitSimpleType(SimpleType simpleType, T data)
+		public virtual S VisitSimpleType(SimpleType simpleType, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitMemberType(MemberType memberType, T data)
+		public virtual S VisitMemberType(MemberType memberType, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitComposedType(ComposedType composedType, T data)
+		public virtual S VisitComposedType(ComposedType composedType, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitArraySpecifier(ArraySpecifier arraySpecifier, T data)
+		public virtual S VisitArraySpecifier(ArraySpecifier arraySpecifier, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitPrimitiveType(PrimitiveType primitiveType, T data)
+		public virtual S VisitPrimitiveType(PrimitiveType primitiveType, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitComment(Comment comment, T data)
+		public virtual S VisitComment(Comment comment, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, T data)
+		public virtual S VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitConstraint(Constraint constraint, T data)
+		public virtual S VisitConstraint(Constraint constraint, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode, T data)
+		public virtual S VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode, T data)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public S VisitIdentifier(Identifier identifier, T data)
+		public virtual S VisitIdentifier(Identifier identifier, T data)
 		{
 			throw new NotImplementedException();
 		}

@@ -286,7 +286,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			return new TypedValue(val, val.Type);
 		}
 		
-		public object VisitAssignmentExpression(AssignmentExpression assignmentExpression, object data)
+		public override object VisitAssignmentExpression(AssignmentExpression assignmentExpression, object data)
 		{
 			BinaryOperatorType op;
 			switch (assignmentExpression.Operator) {
@@ -328,7 +328,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			return right;
 		}
 		
-		public object VisitBlockStatement(BlockStatement blockStatement, object data)
+		public override object VisitBlockStatement(BlockStatement blockStatement, object data)
 		{
 			foreach(var statement in blockStatement.Children) {
 				Evaluate(statement);
@@ -336,21 +336,21 @@ namespace ICSharpCode.NRefactory.Visitors
 			return null;
 		}
 		
-		public object VisitEmptyStatement(EmptyStatement emptyStatement, object data)
+		public override object VisitEmptyStatement(EmptyStatement emptyStatement, object data)
 		{
 			return null;
 		}
 		
-		public object VisitExpressionStatement(ExpressionStatement expressionStatement, object data)
+		public override object VisitExpressionStatement(ExpressionStatement expressionStatement, object data)
 		{
 			Evaluate(expressionStatement.Expression);
 			return null;
 		}
 		
-		public object VisitCastExpression(CastExpression castExpression, object data)
+		public override object VisitCastExpression(CastExpression castExpression, object data)
 		{
 			TypedValue val = Evaluate(castExpression.Expression);
-			DebugType castTo = null;// FIXME castExpression.CastTo().ResolveType(context.AppDomain);
+			DebugType castTo = castExpression.Type.ResolveType(context.AppDomain);
 			if (castTo.IsPrimitive && val.Type.IsPrimitive && castTo != val.Type) {
 				object oldVal = val.PrimitiveValue;
 				object newVal;
@@ -368,7 +368,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			return new TypedValue(val.Value, castTo);
 		}
 		
-		public object VisitIdentifierExpression(IdentifierExpression identifierExpression, object data)
+		public override object VisitIdentifierExpression(IdentifierExpression identifierExpression, object data)
 		{
 			string identifier = identifierExpression.Identifier;
 			
@@ -410,7 +410,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			throw new GetValueException("Identifier \"" + identifier + "\" not found in this context");
 		}
 		
-		public object VisitIndexerExpression(IndexerExpression indexerExpression, object data)
+		public override object VisitIndexerExpression(IndexerExpression indexerExpression, object data)
 		{
 			TypedValue target = Evaluate(indexerExpression.Target);
 			
@@ -444,7 +444,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			}
 		}
 		
-		public object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
+		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
 		{
 			TypedValue target;
 			DebugType targetType;
@@ -482,7 +482,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			return new TypedValue(retVal, (DebugType)method.ReturnType);
 		}
 		
-		public object VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, object data)
+		public override object VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, object data)
 		{
 			if (!objectCreateExpression.Initializer.IsNull)
 				throw new EvaluateException(objectCreateExpression.Initializer, "Object initializers not supported");
@@ -496,7 +496,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			return new TypedValue(val, type);
 		}
 		
-		public object VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
+		public override object VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
 		{
 			if (arrayCreateExpression.AdditionalArraySpecifiers.Count() != 0)
 				throw new EvaluateException(arrayCreateExpression, "Multi-dimensional arrays are not suppored");
@@ -523,7 +523,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			return new TypedValue(array, type);
 		}
 		
-		public object VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
+		public override object VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
 		{
 			TypedValue target;
 			DebugType targetType;
@@ -549,12 +549,12 @@ namespace ICSharpCode.NRefactory.Visitors
 			);
 		}
 		
-		public object VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
+		public override object VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
 		{
 			return Evaluate(parenthesizedExpression.Expression);
 		}
 		
-		public object VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, object data)
+		public override object VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, object data)
 		{
 			return CreateValue(primitiveExpression.Value);
 		}
@@ -568,7 +568,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			return null;
 		}
 		
-		public object VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, object data)
+		public override object VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, object data)
 		{
 			TypedValue thisValue = GetThisValue();
 			if (thisValue == null)
@@ -578,7 +578,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		
 		#region Binary and unary expressions
 		
-		public object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
+		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
 			TypedValue value = Evaluate(unaryOperatorExpression.Expression);
 			UnaryOperatorType op = unaryOperatorExpression.Operator;
@@ -723,7 +723,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			return null;
 		}
 		
-		public object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
+		public override object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
 		{
 			BinaryOperatorType op = binaryOperatorExpression.Operator;
 			

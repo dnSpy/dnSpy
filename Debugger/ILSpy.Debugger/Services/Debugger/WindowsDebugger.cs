@@ -391,18 +391,19 @@ namespace ILSpy.Debugger.Services
 		/// </summary>
 		public object GetTooltipControl(AstLocation logicalPosition, string variableName)
 		{
-			return new DebuggerTooltipControl(logicalPosition, new ExpressionNode(null, variableName, null));
-			//FIXME
-//			try {
-//				var tooltipExpression = GetExpression(variableName);
-//				string imageName;
-//				var image = ExpressionNode.GetImageForLocalVariable(out imageName);
-//				ExpressionNode expressionNode = new ExpressionNode(image, variableName, tooltipExpression);
-//				expressionNode.ImageName = imageName;
-//				return new DebuggerTooltipControl(logicalPosition, expressionNode);
-//			} catch (GetValueException) {
-//				return null;
-//			}
+			try {
+				var tooltipExpression = GetExpression(variableName);
+				if (tooltipExpression == null) return null;
+				
+				string imageName;
+				var image = ExpressionNode.GetImageForLocalVariable(out imageName);
+				ExpressionNode expressionNode = new ExpressionNode(image, variableName, tooltipExpression);
+				expressionNode.ImageName = imageName;
+				
+				return new DebuggerTooltipControl(logicalPosition, expressionNode);
+			} catch (GetValueException) {
+				return null;
+			}
 		}
 		
 		public ITreeNode GetNode(string variable, string currentImageName = null)

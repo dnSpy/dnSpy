@@ -26,9 +26,17 @@ namespace ILSpy.Debugger.Services
 	{
 		static BitmapImage LoadBitmap(string name)
 		{
-			BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/ILSpy.Debugger;component/Images/" + name + ".png"));
-			image.Freeze();
-			return image;
+			try {
+				BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/ILSpy.Debugger;component/Images/" + name + ".png"));
+				if (image == null)
+					return null;
+				image.Freeze();
+				return image;
+			}
+			catch {
+				// resource not found
+				return null;
+			}
 		}
 		
 		public static readonly BitmapImage Breakpoint = LoadBitmap("Breakpoint");

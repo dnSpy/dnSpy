@@ -83,7 +83,7 @@ namespace ILSpy.Debugger.Services
 			
 			currentValue = fullText[offset].ToString();
 			// searh right
-			while(!mySet.Contains(currentValue) && offset < fullText.Length)
+			while(!mySet.Contains(currentValue) && offset < fullText.Length - 2)
 				currentValue = fullText[++right].ToString();
 			
 			return fullText.Substring(left + 1, right - 1 - left).Trim();

@@ -146,7 +146,8 @@ namespace ICSharpCode.Decompiler
 					continue;
 				
 				var codeMapping = mapping.MethodCodeMappings.Find(
-					cm => cm.ILInstructionOffset.From <= ilOffset && ilOffset <= cm.ILInstructionOffset.To);
+					cm => (cm.ILInstructionOffset.From <= ilOffset && ilOffset <= cm.ILInstructionOffset.To - 1) || // for CSharp
+						  (cm.ILInstructionOffset.From == ilOffset && ilOffset == cm.ILInstructionOffset.To)); // for IL
 				if (codeMapping == null)
 					continue;
 				

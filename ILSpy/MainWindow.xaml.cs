@@ -310,12 +310,14 @@ namespace ICSharpCode.ILSpy
 				window.Owner = this;
 				if (window.ShowDialog() == true)
 				{
-					AttachMenuItem.IsEnabled = AttachButton.IsEnabled = false;
-					ContinueDebuggingMenuItem.IsEnabled =
-						StepIntoMenuItem.IsEnabled =
-						StepOverMenuItem.IsEnabled =
-						StepOutMenuItem.IsEnabled =
-						DetachMenuItem.IsEnabled = true;
+					if (DebuggerService.CurrentDebugger.IsDebugging) {
+						AttachMenuItem.IsEnabled = AttachButton.IsEnabled = false;
+						ContinueDebuggingMenuItem.IsEnabled =
+							StepIntoMenuItem.IsEnabled =
+							StepOverMenuItem.IsEnabled =
+							StepOutMenuItem.IsEnabled =
+							DetachMenuItem.IsEnabled = true;
+					}
 				}
 			}
 		}
@@ -471,7 +473,7 @@ namespace ICSharpCode.ILSpy
 		
 		void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			DebuggerService.CurrentDebugger.Language = 
+			DebuggerService.CurrentDebugger.Language =
 				sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 		}
 	}
