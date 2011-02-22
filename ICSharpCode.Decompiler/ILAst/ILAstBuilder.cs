@@ -97,6 +97,8 @@ namespace Decompiler
 			public List<ILVariable> StoreTo;         // Store result of instruction to those AST variables
 			public VariableSlot[]   VariablesBefore;
 			
+			public VariableDefinition OperandAsVariable { get { return (VariableDefinition)this.Operand; } }
+			
 			public override string ToString()
 			{
 				StringBuilder sb = new StringBuilder();
@@ -410,36 +412,8 @@ namespace Decompiler
 				}
 			}
 			
-			// Convert local varibles
-			Variables = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name, Type = v.VariableType }).ToList();
-			int[] numReads  = new int[Variables.Count];
-			int[] numWrites = new int[Variables.Count];
-			foreach(ByteCode byteCode in body) {
-				if (byteCode.Code == ILCode.Ldloc) {
-					int index = ((VariableDefinition)byteCode.Operand).Index;
-					byteCode.Operand = Variables[index];
-					numReads[index]++;
-				} else if (byteCode.Code == ILCode.Stloc) {
-					int index = ((VariableDefinition)byteCode.Operand).Index;
-					byteCode.Operand = Variables[index];
-					numWrites[index]++;
-				} else if (byteCode.Code == ILCode.Ldloca) {
-					int index = ((VariableDefinition)byteCode.Operand).Index;
-					byteCode.Operand = Variables[index];
-					// ldloca leads to an unknown numbers of reads/writes, so ensure we don't inline the variable
-					numReads[index] += 2;
-					numWrites[index] += 2;
-				}
-			}
-			
-			// Find which variables we can inline
-			if (this.optimize) {
-				for (int i = 0; i < Variables.Count; i++) {
-					if (numReads[i] == 1 && numWrites[i] == 1) {
-						allowInline[Variables[i]] = true;
-					}
-				}
-			}
+			// Split and convert the normal local variables
+			ConvertLocalVariables(body);
 			
 			// Convert branch targets to labels
 			foreach(ByteCode byteCode in body) {
@@ -455,6 +429,106 @@ namespace Decompiler
 			}
 			
 			return body;
+		}
+		
+		class VariableInfo
+		{
+			public ILVariable Variable;
+			public List<ByteCode> Stores;
+			public List<ByteCode> Loads;
+		}
+		
+		/// <summary>
+		/// If possible, separates local variables into several independent variables.
+		/// It should undo any compilers merging.
+		/// </summary>
+		void ConvertLocalVariables(List<ByteCode> body)
+		{
+			if (optimize) {
+				int varCount = methodDef.Body.Variables.Count;
+				this.Variables = new List<ILVariable>(varCount * 2);
+				
+				for(int variableIndex = 0; variableIndex < varCount; variableIndex++) {
+					// Find all stores and loads for this variable
+					List<ByteCode> stores = body.Where(b => b.Code == ILCode.Stloc && b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
+					List<ByteCode> loads  = body.Where(b => (b.Code == ILCode.Ldloc || b.Code == ILCode.Ldloca) && b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
+					TypeReference varType = methodDef.Body.Variables[variableIndex].VariableType;
+					
+					List<VariableInfo> newVars;
+						
+					// If any of the loads is from "all", use single variable
+					// If any of the loads is ldloca, fallback to single variable as well
+					if (loads.Any(b => b.VariablesBefore[variableIndex].StoredByAll || b.Code == ILCode.Ldloca)) {
+						newVars = new List<VariableInfo>(1) { new VariableInfo() {
+							Variable = new ILVariable() {
+								Name = "var_" + variableIndex,
+						    		Type = varType
+							},
+							Stores = stores,
+							Loads  = loads
+						}};
+					} else {
+						// Create a new variable for each store
+						newVars = stores.Select(st => new VariableInfo() {
+							Variable = new ILVariable() {
+						    		Name = "var_" + variableIndex + "_" + st.Offset.ToString("X2"),
+						    		Type = varType
+						    },
+						    Stores = new List<ByteCode>() {st},
+						    Loads  = new List<ByteCode>()
+						}).ToList();
+						
+						// Add loads to the data structure; merge variables if necessary
+						foreach(ByteCode load in loads) {
+							List<ByteCode> storedBy = load.VariablesBefore[variableIndex].StoredBy;
+							if (storedBy.Count == 0) {
+								throw new Exception("Load of uninitialized variable");
+							} else if (storedBy.Count == 1) {
+								VariableInfo newVar = newVars.Where(v => v.Stores.Contains(storedBy[0])).Single();
+								newVar.Loads.Add(load);
+							} else {
+								List<VariableInfo> mergeVars = newVars.Where(v => v.Stores.Union(storedBy).Any()).ToList();
+								VariableInfo mergedVar = new VariableInfo() {
+									Variable = mergeVars[0].Variable,
+									Stores = mergeVars.SelectMany(v => v.Stores).ToList(),
+									Loads  = mergeVars.SelectMany(v => v.Loads).ToList()
+								};
+								mergedVar.Loads.Add(load);
+								newVars = newVars.Except(mergeVars).ToList();
+								newVars.Add(mergedVar);
+							}
+						}
+						
+						// Permit inlining
+						foreach(VariableInfo newVar in newVars) {
+							if (newVar.Stores.Count == 1 && newVar.Loads.Count == 1) {
+								allowInline[newVar.Variable] = true;
+							}
+						}
+					}
+					
+					// Set bytecode operands
+					foreach(VariableInfo newVar in newVars) {
+						foreach(ByteCode store in newVar.Stores) {
+							store.Operand = newVar.Variable;
+						}
+						foreach(ByteCode load in newVar.Loads) {
+							load.Operand = newVar.Variable;
+						}
+					}
+					
+					// Record new variables to global list
+					this.Variables.AddRange(newVars.Select(v => v.Variable));
+				}
+			} else {
+				this.Variables = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name, Type = v.VariableType }).ToList();
+				foreach(ByteCode byteCode in body) {
+					if (byteCode.Code == ILCode.Ldloc || byteCode.Code == ILCode.Stloc || byteCode.Code == ILCode.Ldloca) {
+						int index = ((VariableDefinition)byteCode.Operand).Index;
+						byteCode.Operand = this.Variables[index];
+					}
+				}
+			}
 		}
 		
 		List<ILNode> ConvertToAst(List<ByteCode> body, HashSet<ExceptionHandler> ehs)
@@ -612,6 +686,7 @@ namespace Decompiler
 						
 						// We are moving the expression evaluation past the other aguments.
 						// It is ok to pass ldloc because the expression can not contain stloc and thus the ldcoc will still return the same value
+						// Do not inline ldloca
 						if (arg.Code == ILCode.Ldloc) {
 							if (arg.Operand == currExpr.Operand) {
 								bool canInline;
@@ -621,6 +696,9 @@ namespace Decompiler
 									// Assigne the ranges for optimized away instrustions somewhere
 									currExpr.Arguments[0].ILRanges.AddRange(currExpr.ILRanges);
 									currExpr.Arguments[0].ILRanges.AddRange(nextExpr.Arguments[j].ILRanges);
+									
+									// Remove from global list, if present
+									this.Variables.Remove((ILVariable)arg.Operand);
 									
 									ast.RemoveAt(i);
 									nextExpr.Arguments[j] = currExpr.Arguments[0]; // Inline the stloc body
