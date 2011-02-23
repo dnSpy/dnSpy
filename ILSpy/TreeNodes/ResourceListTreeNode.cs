@@ -156,9 +156,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (er != null) {
 				try {
 					Stream s = er.GetResourceStream();
+					s.Position = 0;
 					if (er.Name.EndsWith(".resources", StringComparison.OrdinalIgnoreCase)) {
-						ResourceSet set = new ResourceSet(s);
-						foreach (DictionaryEntry entry in set.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
+						ResourceReader reader = new ResourceReader(s);
+						foreach (DictionaryEntry entry in reader.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
 							if (entry.Value is Stream)
 								Children.Add(new ResourceEntryNode(entry.Key.ToString(), (Stream)entry.Value));
 						}
