@@ -6,8 +6,10 @@ using System.Threading;
 using Decompiler.Transforms;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Ast = ICSharpCode.NRefactory.CSharp;
 using ClassType = ICSharpCode.NRefactory.TypeSystem.ClassType;
 using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
 
@@ -583,13 +585,80 @@ namespace Decompiler
 
 					foreach (var parameter in customAttribute.ConstructorArguments)
 					{
-						attribute.Arguments.Add(new PrimitiveExpression(parameter.Value));
+						var isEnum = parameter.Type.IsValueType && !parameter.Type.IsPrimitive;
+						Expression parameterValue;
+						if (isEnum)
+						{
+							parameterValue = MakePrimitive(Convert.ToInt64(parameter.Value), parameter.Type);
+						}
+						else
+						{
+							parameterValue = new PrimitiveExpression(parameter.Value);
+						}
+						attribute.Arguments.Add(parameterValue);
 					}
 
 				}
 
 				attributedNode.Attributes.Add(section);
 			}
+		}
+
+
+		internal static Expression MakePrimitive(long val, TypeReference type)
+		{
+			if (TypeAnalysis.IsBoolean(type) && val == 0)
+				return new Ast.PrimitiveExpression(false);
+			else if (TypeAnalysis.IsBoolean(type) && val == 1)
+				return new Ast.PrimitiveExpression(true);
+			if (type != null)
+			{ // cannot rely on type.IsValueType, it's not set for typerefs (but is set for typespecs)
+				TypeDefinition enumDefinition = type.Resolve();
+				if (enumDefinition != null && enumDefinition.IsEnum)
+				{
+					foreach (FieldDefinition field in enumDefinition.Fields)
+					{
+						if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false), val))
+							return AstBuilder.ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
+						else if (!field.IsStatic && field.IsRuntimeSpecialName)
+							type = field.FieldType; // use primitive type of the enum
+					}
+					if (IsFlagsEnum(enumDefinition))
+					{
+						Expression expr = null;
+						foreach (FieldDefinition field in enumDefinition.Fields.Where(fld => fld.IsStatic))
+						{
+							long fieldValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false);
+							if (fieldValue == 0)
+								continue;	// skip None enum value
+
+							if ((fieldValue & val) == fieldValue)
+							{
+								var fieldExpression = AstBuilder.ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
+								if (expr == null)
+									expr = fieldExpression;
+								else
+									expr = new BinaryOperatorExpression(expr, BinaryOperatorType.BitwiseOr, fieldExpression);
+							}
+						}
+						if (expr != null)
+							return expr;
+					}
+				}
+			}
+			TypeCode code = TypeAnalysis.GetTypeCode(type);
+			if (code == TypeCode.Object)
+				return new Ast.PrimitiveExpression((int)val);
+			else
+				return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
+		}
+
+		static bool IsFlagsEnum(TypeDefinition type)
+		{
+			if (!type.HasCustomAttributes)
+				return false;
+
+			return type.CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.FlagsAttribute");
 		}
 	}
 }

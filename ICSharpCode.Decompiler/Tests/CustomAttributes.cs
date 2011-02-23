@@ -12,8 +12,16 @@ public static class CustomAtributes
 //		Item1,
 		Item2
 	}
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttribute : Attribute
+	{
+	}
 	[Obsolete("some message")]
 	public static void ObsoletedMethod()
 	{
+		//Console.WriteLine("{0} $$$ {1}", AttributeTargets.Interface, (AttributeTargets)(AttributeTargets.Property | AttributeTargets.Field));
+		Console.WriteLine("{0} $$$ {1}", AttributeTargets.Interface, AttributeTargets.Property | AttributeTargets.Field);
+		AttributeTargets attributeTargets = AttributeTargets.Property | AttributeTargets.Field;
+		Console.WriteLine("{0} $$$ {1}", AttributeTargets.Interface, attributeTargets);
 	}
 }
