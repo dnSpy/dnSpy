@@ -1161,7 +1161,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 			WriteIdentifier(typeDeclaration.Name);
 			WriteTypeParameters(typeDeclaration.TypeParameters);
-			if (typeDeclaration.BaseTypes.Any()) {
+			if (typeDeclaration.BaseTypes.Any() && !IsStandardEnum(typeDeclaration)) {
 				Space();
 				WriteToken(":", TypeDeclaration.ColonRole);
 				Space();
@@ -1191,6 +1191,22 @@ namespace ICSharpCode.NRefactory.CSharp
 			CloseBrace(braceStyle);
 			NewLine();
 			return EndNode(typeDeclaration);
+		}
+
+		private static bool IsStandardEnum(TypeDeclaration typeDeclaration)
+		{
+			if (typeDeclaration.ClassType != ClassType.Enum)
+			{
+				return false;
+			}
+
+			if (typeDeclaration.BaseTypes.Count != 1)	// is is possible?
+			{
+				return false;
+			}
+
+			var baseType = typeDeclaration.BaseTypes.First() as PrimitiveType;
+			return baseType != null && baseType.Keyword == "int";
 		}
 		
 		public object VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, object data)
