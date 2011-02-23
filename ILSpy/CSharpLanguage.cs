@@ -115,7 +115,9 @@ namespace ICSharpCode.ILSpy
 		{
 			if (options.FullDecompilation) {
 				if (options.SaveAsProjectDirectory != null) {
-					var files = WriteFilesInProject(assembly, options);
+					HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+					var files = WriteCodeFilesInProject(assembly, options, directories).ToList();
+					files.AddRange(WriteResourceFilesInProject(assembly, options, directories));
 					WriteProjectFile(new TextOutputWriter(output), files, assembly.MainModule);
 				} else {
 					foreach (TypeDefinition type in assembly.MainModule.Types) {
@@ -130,7 +132,8 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		void WriteProjectFile(TextWriter writer, IEnumerable<string> files, ModuleDefinition module)
+		#region WriteProjectFile
+		void WriteProjectFile(TextWriter writer, IEnumerable<Tuple<string, string>> files, ModuleDefinition module)
 		{
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName;
@@ -236,13 +239,15 @@ namespace ICSharpCode.ILSpy
 				}
 				w.WriteEndElement(); // </ItemGroup> (References)
 				
-				w.WriteStartElement("ItemGroup"); // Code
-				foreach (string file in files.OrderBy(f => f, StringComparer.OrdinalIgnoreCase)) {
-					w.WriteStartElement("Compile");
-					w.WriteAttributeString("Include", file);
+				foreach (IGrouping<string, string> gr in (from f in files group f.Item2 by f.Item1 into g orderby g.Key select g)) {
+					w.WriteStartElement("ItemGroup");
+					foreach (string file in gr.OrderBy(f => f, StringComparer.OrdinalIgnoreCase)) {
+						w.WriteStartElement(gr.Key);
+						w.WriteAttributeString("Include", file);
+						w.WriteEndElement();
+					}
 					w.WriteEndElement();
 				}
-				w.WriteEndElement();
 				
 				w.WriteStartElement("Import");
 				w.WriteAttributeString("Project", "$(MSBuildToolsPath)\\Microsoft.CSharp.targets");
@@ -251,8 +256,10 @@ namespace ICSharpCode.ILSpy
 				w.WriteEndDocument();
 			}
 		}
+		#endregion
 		
-		IEnumerable<string> WriteFilesInProject(AssemblyDefinition assembly, DecompilationOptions options)
+		#region WriteCodeFilesInProject
+		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(AssemblyDefinition assembly, DecompilationOptions options, HashSet<string> directories)
 		{
 			var files = assembly.MainModule.Types.Where(t => t.Name != "<Module>").GroupBy(
 				delegate (TypeDefinition type) {
@@ -261,11 +268,11 @@ namespace ICSharpCode.ILSpy
 						return file;
 					} else {
 						string dir = TextView.DecompilerTextView.CleanUpName(type.Namespace);
-						Directory.CreateDirectory(Path.Combine(options.SaveAsProjectDirectory, dir));
+						if (directories.Add(dir))
+							Directory.CreateDirectory(Path.Combine(options.SaveAsProjectDirectory, dir));
 						return Path.Combine(dir, file);
 					}
 				}, StringComparer.OrdinalIgnoreCase).ToList();
-			
 			AstMethodBodyBuilder.ClearUnhandledOpcodes();
 			Parallel.ForEach(
 				files,
@@ -279,8 +286,33 @@ namespace ICSharpCode.ILSpy
 					}
 				});
 			AstMethodBodyBuilder.PrintNumberOfUnhandledOpcodes();
-			return files.Select(f => f.Key);
+			return files.Select(f => Tuple.Create("Compile", f.Key));
 		}
+		#endregion
+		
+		#region WriteResourceFilesInProject
+		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(AssemblyDefinition assembly, DecompilationOptions options, HashSet<string> directories)
+		{
+			foreach (EmbeddedResource r in assembly.MainModule.Resources.OfType<EmbeddedResource>()) {
+				string[] splitName = r.Name.Split('.');
+				string fileName = TextView.DecompilerTextView.CleanUpName(r.Name);
+				for (int i = splitName.Length - 1; i > 0; i--) {
+					string ns = string.Join(".", splitName, 0, i);
+					if (directories.Contains(ns)) {
+						string name = string.Join(".", splitName, i, splitName.Length - i);
+						fileName = Path.Combine(ns, TextView.DecompilerTextView.CleanUpName(name));
+						break;
+					}
+				}
+				Stream s = r.GetResourceStream();
+				s.Position = 0;
+				using (FileStream fs = new FileStream(Path.Combine(options.SaveAsProjectDirectory, fileName), FileMode.Create, FileAccess.Write)) {
+					s.CopyTo(fs);
+				}
+				yield return Tuple.Create("EmbeddedResource", fileName);
+			}
+		}
+		#endregion
 		
 		AstBuilder CreateAstBuilder(DecompilationOptions options, TypeDefinition currentType)
 		{
