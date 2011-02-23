@@ -9,7 +9,11 @@ public static class CustomAtributes
 	[Flags]
 	public enum EnumWithFlag
 	{
-		Item1,
+//		Item1,
 		Item2
+	}
+	[Obsolete("some message")]
+	public static void ObsoletedMethod()
+	{
 	}
 }

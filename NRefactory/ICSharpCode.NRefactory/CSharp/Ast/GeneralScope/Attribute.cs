@@ -25,12 +25,14 @@
 // THE SOFTWARE.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
 	/// Attribute(Arguments)
 	/// </summary>
+	[DebuggerDisplay("Attribute {Type}")]
 	public class Attribute : AstNode
 	{
 		public override NodeType NodeType {

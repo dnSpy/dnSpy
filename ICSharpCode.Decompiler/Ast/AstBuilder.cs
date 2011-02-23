@@ -578,9 +578,13 @@ namespace Decompiler
 				foreach (var customAttribute in customAttributeProvider.CustomAttributes)
 				{
 					ICSharpCode.NRefactory.CSharp.Attribute attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
-					//customAttribute.
 					attribute.Type = ConvertType(customAttribute.AttributeType);
 					section.Attributes.Add(attribute);
+
+					foreach (var parameter in customAttribute.ConstructorArguments)
+					{
+						attribute.Arguments.Add(new PrimitiveExpression(parameter.Value));
+					}
 
 				}
 
