@@ -92,7 +92,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				AddNestedStructure(new ILStructure(ILStructureType.Try, eh.TryStart.Offset, eh.TryEnd.Offset, eh));
 				if (eh.HandlerType == ExceptionHandlerType.Filter)
 					AddNestedStructure(new ILStructure(ILStructureType.Filter, eh.FilterStart.Offset, eh.FilterEnd.Offset, eh));
-				AddNestedStructure(new ILStructure(ILStructureType.Handler, eh.HandlerStart.Offset, eh.HandlerEnd.Offset, eh));
+				AddNestedStructure(new ILStructure(ILStructureType.Handler, eh.HandlerStart.Offset, eh.HandlerEnd == null ? body.CodeSize : eh.HandlerEnd.Offset, eh));
 			}
 			// Very simple loop detection: look for backward branches
 			List<KeyValuePair<Instruction, Instruction>> allBranches = FindAllBranches(body);

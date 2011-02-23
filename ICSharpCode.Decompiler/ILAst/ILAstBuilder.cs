@@ -567,8 +567,9 @@ namespace Decompiler
 					int startIndex;
 					for (startIndex = 0; body[startIndex].Offset != eh.HandlerStart.Offset; startIndex++);
 					int endInclusiveIndex;
-					// Note that the end(exclusiove) instruction may not necessarly be in our body
-					for (endInclusiveIndex = 0; body[endInclusiveIndex].Next.Offset != eh.HandlerEnd.Offset; endInclusiveIndex++);
+					if (eh.HandlerEnd == null) endInclusiveIndex = body.Count - 1;
+					// Note that the end(exclusive) instruction may not necessarly be in our body
+					else for (endInclusiveIndex = 0; body[endInclusiveIndex].Next.Offset != eh.HandlerEnd.Offset; endInclusiveIndex++);
 					int count = 1 + endInclusiveIndex - startIndex;
 					HashSet<ExceptionHandler> nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(e => (eh.HandlerStart.Offset <= e.TryStart.Offset && e.TryEnd.Offset < eh.HandlerEnd.Offset) || (eh.HandlerStart.Offset < e.TryStart.Offset && e.TryEnd.Offset <= eh.HandlerEnd.Offset)));
 					ehs.ExceptWith(nestedEHs);
