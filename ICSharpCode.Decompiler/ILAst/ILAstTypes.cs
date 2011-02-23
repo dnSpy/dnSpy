@@ -30,7 +30,7 @@ namespace Decompiler
 		{
 			StringWriter w = new StringWriter();
 			WriteTo(new PlainTextOutput(w));
-			return w.ToString();
+			return w.ToString().Replace("\r\n", "; ");
 		}
 		
 		public abstract void WriteTo(ITextOutput output);
@@ -176,6 +176,7 @@ namespace Decompiler
 		public string Name;
 		public bool   IsGenerated;
 		public TypeReference Type;
+		public VariableDefinition OriginalVariable;
 		
 		public override string ToString()
 		{

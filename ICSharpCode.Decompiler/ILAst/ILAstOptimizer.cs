@@ -36,7 +36,7 @@ namespace Decompiler.ControlFlow
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, (ILLabel)block.EntryGoto.Operand);
-				graph.ComputeDominance();
+				graph.ComputeDominance(context.CancellationToken);
 				graph.ComputeDominanceFrontier();
 				block.Body = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint, false);
 			}
@@ -49,7 +49,7 @@ namespace Decompiler.ControlFlow
 				// TODO: Fix
 				if (graph == null)
 					continue;
-				graph.ComputeDominance();
+				graph.ComputeDominance(context.CancellationToken);
 				graph.ComputeDominanceFrontier();
 				block.Body = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
 			}
@@ -194,6 +194,9 @@ namespace Decompiler.ControlFlow
 		{
 			List<ILNode> result = new List<ILNode>();
 			
+			// Do not modify entry data
+			scope = new HashSet<ControlFlowNode>(scope);
+			
 			Queue<ControlFlowNode> agenda  = new Queue<ControlFlowNode>();
 			agenda.Enqueue(entryPoint);
 			while(agenda.Count > 0) {
@@ -241,6 +244,7 @@ namespace Decompiler.ControlFlow
 			foreach(var node in scope) {
 				result.Add((ILNode)node.UserData);
 			}
+			scope.Clear();
 			
 			return result;
 		}
@@ -258,6 +262,9 @@ namespace Decompiler.ControlFlow
 		List<ILNode> FindConditions(HashSet<ControlFlowNode> scope, ControlFlowNode entryNode)
 		{
 			List<ILNode> result = new List<ILNode>();
+			
+			// Do not modify entry data
+			scope = new HashSet<ControlFlowNode>(scope);
 			
 			HashSet<ControlFlowNode> agenda  = new HashSet<ControlFlowNode>();
 			agenda.Add(entryNode);

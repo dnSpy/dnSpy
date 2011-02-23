@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using Mono.Cecil;
 using Ast = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp;
@@ -142,7 +143,7 @@ namespace Decompiler.Transforms
 		public override object VisitAssignmentExpression(AssignmentExpression assignment, object data)
 		{
 			base.VisitAssignmentExpression(assignment, data);
-			// First, combine "x = x op y" into "x op= y"
+			// Combine "x = x op y" into "x op= y"
 			BinaryOperatorExpression binary = assignment.Right as BinaryOperatorExpression;
 			if (binary != null && assignment.Operator == AssignmentOperatorType.Assign) {
 				if (IsWithoutSideEffects(assignment.Left) && assignment.Left.Match(binary.Left) != null) {
@@ -180,7 +181,24 @@ namespace Decompiler.Transforms
 					}
 					if (assignment.Operator != AssignmentOperatorType.Assign) {
 						// If we found a shorter operator, get rid of the BinaryOperatorExpression:
+						assignment.CopyAnnotationsFrom(binary);
 						assignment.Right = binary.Right;
+					}
+				}
+			}
+			if (assignment.Operator == AssignmentOperatorType.Add || assignment.Operator == AssignmentOperatorType.Subtract) {
+				// detect increment/decrement
+				if (assignment.Right.Match(new PrimitiveExpression(1)) != null) {
+					// only if it's not a custom operator
+					if (assignment.Annotation<MethodReference>() == null) {
+						UnaryOperatorType type;
+						// When the parent is an expression statement, pre- or post-increment doesn't matter;
+						// so we can pick post-increment which is more commonly used (for (int i = 0; i < x; i++))
+						if (assignment.Parent is ExpressionStatement)
+							type = (assignment.Operator == AssignmentOperatorType.Add) ? UnaryOperatorType.PostIncrement : UnaryOperatorType.PostDecrement;
+						else 
+							type = (assignment.Operator == AssignmentOperatorType.Add) ? UnaryOperatorType.Increment : UnaryOperatorType.Decrement;
+						assignment.ReplaceWith(new UnaryOperatorExpression(type, assignment.Left.Detach()).CopyAnnotationsFrom(assignment));
 					}
 				}
 			}

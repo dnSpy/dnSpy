@@ -25,6 +25,7 @@ namespace Decompiler
 			{ "System.Decimal", "num" },
 			{ "System.String", "text" },
 			{ "System.Object", "obj" },
+			{ "System.Char", "c" }
 		};
 		
 		
@@ -98,17 +99,20 @@ namespace Decompiler
 				case ILCode.Ldfld:
 					// Use the field name only if it's not a field on this (avoid confusion between local variables and fields)
 					if (!(expr.Arguments[0].Code == ILCode.Ldarg && ((ParameterDefinition)expr.Arguments[0].Operand).Index < 0))
-						return ((FieldReference)expr.Operand).Name;
+						return CleanUpVariableName(((FieldReference)expr.Operand).Name);
 					break;
 				case ILCode.Ldsfld:
-					return ((FieldReference)expr.Operand).Name;
+					return CleanUpVariableName(((FieldReference)expr.Operand).Name);
 				case ILCode.Call:
 				case ILCode.Callvirt:
 					MethodReference mr = (MethodReference)expr.Operand;
-					if (mr.Name.StartsWith("get_", StringComparison.Ordinal))
+					if (mr.Name.StartsWith("get_", StringComparison.Ordinal) && mr.Parameters.Count == 0) {
+						// use name from properties, but not from indexers
 						return CleanUpVariableName(mr.Name.Substring(4));
-					else if (mr.Name.StartsWith("Get", StringComparison.Ordinal) && mr.Name.Length >= 4 && char.IsUpper(mr.Name[3]))
+					} else if (mr.Name.StartsWith("Get", StringComparison.Ordinal) && mr.Name.Length >= 4 && char.IsUpper(mr.Name[3])) {
+						// use name from Get-methods
 						return CleanUpVariableName(mr.Name.Substring(3));
+					}
 					break;
 			}
 			return null;

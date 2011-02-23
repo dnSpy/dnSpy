@@ -10,7 +10,6 @@
 	MinHeight="200"
 	UseLayoutRounding="True"
 	TextOptions.TextFormattingMode="Display"
-	Icon="pack://application:,,,/ILSpy;component/images/ILSpy.ico"
 	FocusManager.FocusedElement="{Binding ElementName=treeView}"
 >
 	<Window.Resources>

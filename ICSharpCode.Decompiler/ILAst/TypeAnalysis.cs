@@ -646,6 +646,7 @@ namespace Decompiler
 				case MetadataType.IntPtr:
 					return true;
 				case MetadataType.Byte:
+				case MetadataType.Char:
 				case MetadataType.UInt16:
 				case MetadataType.UInt32:
 				case MetadataType.UInt64:
