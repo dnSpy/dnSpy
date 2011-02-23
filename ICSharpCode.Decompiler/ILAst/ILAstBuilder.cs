@@ -462,7 +462,8 @@ namespace Decompiler
 						newVars = new List<VariableInfo>(1) { new VariableInfo() {
 							Variable = new ILVariable() {
 								Name = "var_" + variableIndex,
-						    		Type = varType
+						    		Type = varType,
+						    		OriginalVariable = methodDef.Body.Variables[variableIndex]
 							},
 							Stores = stores,
 							Loads  = loads
@@ -472,7 +473,8 @@ namespace Decompiler
 						newVars = stores.Select(st => new VariableInfo() {
 							Variable = new ILVariable() {
 						    		Name = "var_" + variableIndex + "_" + st.Offset.ToString("X2"),
-						    		Type = varType
+						    		Type = varType,
+						    		OriginalVariable = methodDef.Body.Variables[variableIndex]
 						    },
 						    Stores = new List<ByteCode>() {st},
 						    Loads  = new List<ByteCode>()
@@ -521,7 +523,7 @@ namespace Decompiler
 					this.Variables.AddRange(newVars.Select(v => v.Variable));
 				}
 			} else {
-				this.Variables = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name, Type = v.VariableType }).ToList();
+				this.Variables = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name, Type = v.VariableType, OriginalVariable = v }).ToList();
 				foreach(ByteCode byteCode in body) {
 					if (byteCode.Code == ILCode.Ldloc || byteCode.Code == ILCode.Stloc || byteCode.Code == ILCode.Ldloca) {
 						int index = ((VariableDefinition)byteCode.Operand).Index;

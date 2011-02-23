@@ -176,6 +176,7 @@ namespace Decompiler
 		public string Name;
 		public bool   IsGenerated;
 		public TypeReference Type;
+		public VariableDefinition OriginalVariable;
 		
 		public override string ToString()
 		{
