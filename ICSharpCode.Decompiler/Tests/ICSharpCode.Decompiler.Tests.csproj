@@ -65,5 +65,12 @@
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="StackTests" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BooleanConsumedAsInteger.il" />
+    <None Include="StackTests\StackTests.il" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
