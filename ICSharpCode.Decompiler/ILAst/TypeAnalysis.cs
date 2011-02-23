@@ -286,7 +286,9 @@ namespace Decompiler
 				case ILCode.Ldvirtftn:
 					return typeSystem.IntPtr;
 				case ILCode.Ldc_I4:
-					return (IsIntegerOrEnum(expectedType) || IsBoolean(expectedType)) ? expectedType : typeSystem.Int32;
+					if (IsBoolean(expectedType) && ((int)expr.Operand == 0 || (int)expr.Operand == 1))
+						return typeSystem.Boolean;
+					return IsIntegerOrEnum(expectedType) ? expectedType : typeSystem.Int32;
 				case ILCode.Ldc_I8:
 					return (IsIntegerOrEnum(expectedType)) ? expectedType : typeSystem.Int64;
 				case ILCode.Ldc_R4:
@@ -561,7 +563,7 @@ namespace Decompiler
 			} else {
 				left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
 				left.InferredType = DoInferTypeForExpression(left, left.ExpectedType);
-				right.InferredType = DoInferTypeForExpression(left, right.ExpectedType);
+				right.InferredType = DoInferTypeForExpression(right, right.ExpectedType);
 				return left.ExpectedType;
 			}
 		}

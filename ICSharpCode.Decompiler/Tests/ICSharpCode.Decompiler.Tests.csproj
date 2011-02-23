@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DelegateConstruction.cs" />
+    <Compile Include="ExceptionHandling.cs" />
     <Compile Include="Loops.cs" />
     <Compile Include="PropertiesAndEvents.cs" />
     <Compile Include="TestRunner.cs" />
@@ -63,6 +64,13 @@
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="StackTests" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BooleanConsumedAsInteger.il" />
+    <None Include="StackTests\StackTests.il" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

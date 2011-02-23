@@ -343,16 +343,6 @@
     <Compile Include="CSharp\Ast\Statements\YieldBreakStatement.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="CSharp\" />
-    <Folder Include="CSharp\Ast\PatternMatching" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">
-      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
-      <Name>Mono.Cecil</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
