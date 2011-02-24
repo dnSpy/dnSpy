@@ -3,10 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using ICSharpCode.Decompiler;
+using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -15,27 +17,39 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// </summary>
 	class ThreadingSupport
 	{
-		Task<List<ILSpyTreeNode>> loadChildrenTask;
+		Task<List<SharpTreeNode>> loadChildrenTask;
+		CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+		
+		public bool IsRunning {
+			get { return !loadChildrenTask.IsCompleted; }
+		}
+		
+		public void Cancel()
+		{
+			cancellationTokenSource.Cancel();
+			loadChildrenTask = null;
+			cancellationTokenSource = new CancellationTokenSource();
+		}
 		
 		/// <summary>
-		/// 
+		/// Starts loading the children of the specified node.
 		/// </summary>
-		public void LoadChildren(ILSpyTreeNode node, Func<CancellationToken, IEnumerable<ILSpyTreeNode>> fetchChildren)
+		public void LoadChildren(SharpTreeNode node, Func<CancellationToken, IEnumerable<SharpTreeNode>> fetchChildren)
 		{
 			node.Children.Add(new LoadingTreeNode());
 			
-			CancellationToken ct = CancellationToken.None;
+			CancellationToken ct = cancellationTokenSource.Token;
 			
 			var fetchChildrenEnumerable = fetchChildren(ct);
-			Task<List<ILSpyTreeNode>> thisTask = null;
-			thisTask = new Task<List<ILSpyTreeNode>>(
+			Task<List<SharpTreeNode>> thisTask = null;
+			thisTask = new Task<List<SharpTreeNode>>(
 				delegate {
-					List<ILSpyTreeNode> result = new List<ILSpyTreeNode>();
-					foreach (ILSpyTreeNode child in fetchChildrenEnumerable) {
+					List<SharpTreeNode> result = new List<SharpTreeNode>();
+					foreach (SharpTreeNode child in fetchChildrenEnumerable) {
 						ct.ThrowIfCancellationRequested();
 						result.Add(child);
-						App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<ILSpyTreeNode>(
-							delegate (ILSpyTreeNode newChild) {
+						App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action<SharpTreeNode>(
+							delegate (SharpTreeNode newChild) {
 								// don't access "child" here the
 								// background thread might already be running the next loop iteration
 								if (loadChildrenTask == thisTask) {
@@ -43,16 +57,27 @@ namespace ICSharpCode.ILSpy.TreeNodes
 								}
 							}), child);
 					}
+					return result;
+				}, ct);
+			loadChildrenTask = thisTask;
+			thisTask.Start();
+			thisTask.ContinueWith(
+				delegate (Task continuation) {
 					App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(
 						delegate {
 							if (loadChildrenTask == thisTask) {
 								node.Children.RemoveAt(node.Children.Count - 1); // remove 'Loading...'
 							}
+							if (continuation.Exception != null) { // observe exception even when task isn't current
+								if (loadChildrenTask == thisTask) {
+									foreach (Exception ex in continuation.Exception.InnerExceptions) {
+										node.Children.Add(new ErrorTreeNode(ex.ToString()));
+									}
+								}
+							}
 						}));
-					return result;
-				}, ct);
-			loadChildrenTask = thisTask;
-			thisTask.Start();
+				});
+			
 			// Give the task a bit time to complete before we return to WPF - this keeps "Loading..."
 			// from showing up for very short waits.
 			thisTask.Wait(TimeSpan.FromMilliseconds(200));
@@ -66,7 +91,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				loadChildrenTask = this.loadChildrenTask;
 			}
 			if (loadChildrenTask != null) {
-				foreach (var child in loadChildrenTask.Result) {
+				foreach (ILSpyTreeNode child in loadChildrenTask.Result.Cast<ILSpyTreeNode>()) {
 					child.Decompile(language, output, options);
 				}
 			}
@@ -76,6 +101,29 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			public override object Text {
 				get { return "Loading..."; }
+			}
+			
+			public override FilterResult Filter(FilterSettings settings)
+			{
+				return FilterResult.Match;
+			}
+			
+			public override void Decompile(Language language, ICSharpCode.Decompiler.ITextOutput output, DecompilationOptions options)
+			{
+			}
+		}
+		
+		sealed class ErrorTreeNode : ILSpyTreeNode
+		{
+			string text;
+			
+			public override object Text {
+				get { return text; }
+			}
+			
+			public ErrorTreeNode(string text)
+			{
+				this.text = text;
 			}
 			
 			public override FilterResult Filter(FilterSettings settings)

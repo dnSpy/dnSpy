@@ -18,15 +18,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
-
+using System.Threading.Tasks;
 using ICSharpCode.NRefactory.Utils;
+using ICSharpCode.TreeView;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedMethodUsedByTreeNode : ILSpyTreeNode
+	class AnalyzedMethodUsedByTreeNode : AnalyzerTreeNode
 	{
 		MethodDefinition analyzedMethod;
 		ThreadingSupport threading;
@@ -54,39 +56,46 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			threading.LoadChildren(this, FetchChildren);
 		}
 		
-		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct)
+		protected override void OnCollapsing()
+		{
+			if (threading.IsRunning) {
+				this.LazyLoading = true;
+				threading.Cancel();
+				this.Children.Clear();
+			}
+		}
+		
+		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
 			return FindReferences(MainWindow.Instance.AssemblyList.GetAssemblies(), ct);
 		}
 		
-		IEnumerable<ILSpyTreeNode> FindReferences(LoadedAssembly[] assemblies, CancellationToken ct)
+		IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly[] assemblies, CancellationToken ct)
 		{
-			foreach (LoadedAssembly asm in assemblies) {
-				ct.ThrowIfCancellationRequested();
-				foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
-					ct.ThrowIfCancellationRequested();
-					foreach (MethodDefinition method in type.Methods) {
-						ct.ThrowIfCancellationRequested();
-						bool found = false;
-						if (!method.HasBody)
-							continue;
-						foreach (Instruction instr in method.Body.Instructions) {
-							if (instr.Operand is MethodReference
-							    && ((MethodReference)instr.Operand).Resolve() == analyzedMethod) {
-								found = true;
-								break;
-							}
-						}
-						if (found)
-							yield return new MethodTreeNode(method);
-					}
-				}
-			}
+			// use parallelism only on the assembly level (avoid locks within Cecil)
+			return assemblies.AsParallel().WithCancellation(ct).SelectMany((LoadedAssembly asm) => FindReferences(asm, ct));
 		}
 		
-		public override void Decompile(Language language, ICSharpCode.Decompiler.ITextOutput output, DecompilationOptions options)
+		IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
 		{
-			throw new NotImplementedException();
+			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
+				ct.ThrowIfCancellationRequested();
+				foreach (MethodDefinition method in type.Methods) {
+					ct.ThrowIfCancellationRequested();
+					bool found = false;
+					if (!method.HasBody)
+						continue;
+					foreach (Instruction instr in method.Body.Instructions) {
+						if (instr.Operand is MethodReference
+						    && ((MethodReference)instr.Operand).Resolve() == analyzedMethod) {
+							found = true;
+							break;
+						}
+					}
+					if (found)
+						yield return new AnalyzedMethodTreeNode(method);
+				}
+			}
 		}
 	}
 }

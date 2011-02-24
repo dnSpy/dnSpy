@@ -41,6 +41,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return MethodTreeNode.GetText(analyzedMethod, Language); }
 		}
 		
+		public override void ActivateItem(System.Windows.RoutedEventArgs e)
+		{
+			e.Handled = true;
+			MainWindow.Instance.JumpToReference(analyzedMethod);
+		}
+		
 		protected override void LoadChildren()
 		{
 			this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));

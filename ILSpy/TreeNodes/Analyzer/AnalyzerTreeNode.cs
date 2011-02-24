@@ -17,12 +17,48 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
 	class AnalyzerTreeNode : SharpTreeNode
 	{
-		public Language Language { get; set; }
+		Language language;
+		
+		public Language Language {
+			get { return language; }
+			set {
+				if (language != value) {
+					language = value;
+					foreach (var child in this.Children.OfType<AnalyzerTreeNode>())
+						child.Language = value;
+				}
+			}
+		}
+		
+		public override bool CanDelete()
+		{
+			return Parent != null && Parent.IsRoot;
+		}
+		
+		public override void DeleteCore()
+		{
+			Parent.Children.Remove(this);
+		}
+		
+		public override void Delete()
+		{
+			DeleteCore();
+		}
+		
+		protected override void OnChildrenChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			if (e.NewItems != null) {
+				foreach (AnalyzerTreeNode a in e.NewItems.OfType<AnalyzerTreeNode>())
+					a.Language = this.Language;
+			}
+			base.OnChildrenChanged(e);
+		}
 	}
 }

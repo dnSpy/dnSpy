@@ -33,6 +33,7 @@ using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
@@ -260,6 +261,23 @@ namespace ICSharpCode.ILSpy
 			path.Reverse();
 			return path.ToArray();
 		}
+		
+		public void JumpToReference(object reference)
+		{
+			if (reference is TypeReference) {
+				SelectNode(assemblyListTreeNode.FindTypeNode(((TypeReference)reference).Resolve()));
+			} else if (reference is MethodReference) {
+				SelectNode(assemblyListTreeNode.FindMethodNode(((MethodReference)reference).Resolve()));
+			} else if (reference is FieldReference) {
+				SelectNode(assemblyListTreeNode.FindFieldNode(((FieldReference)reference).Resolve()));
+			} else if (reference is PropertyReference) {
+				SelectNode(assemblyListTreeNode.FindPropertyNode(((PropertyReference)reference).Resolve()));
+			} else if (reference is EventReference) {
+				SelectNode(assemblyListTreeNode.FindEventNode(((EventReference)reference).Resolve()));
+			} else if (reference is AssemblyDefinition) {
+				SelectNode(assemblyListTreeNode.FindAssemblyNode((AssemblyDefinition)reference));
+			}
+		}
 		#endregion
 		
 		#region Open/Refresh
@@ -380,20 +398,18 @@ namespace ICSharpCode.ILSpy
 		#endregion
 		
 		#region Analyzer
-		public void Analyze(MethodTreeNode method)
+		public void AddToAnalyzer(AnalyzerTreeNode node)
 		{
 			if (analyzerTree.Root == null)
-				analyzerTree.Root = new SharpTreeNode();
+				analyzerTree.Root = new AnalyzerTreeNode { Language = sessionSettings.FilterSettings.Language };
 			
-			if (analyzerPanel.Visibility != Visibility.Visible)
-				analyzerPanel.Visibility = Visibility.Visible;
+			if (!showAnalyzer.IsChecked)
+				showAnalyzer.IsChecked = true;
 			
-			var newNode = new AnalyzedMethodTreeNode(method.MethodDefinition) {
-				Language = sessionSettings.FilterSettings.Language,
-				IsExpanded = true
-			};
-			
-			analyzerTree.Root.Children.Add(newNode);
+			node.IsExpanded = true;
+			analyzerTree.Root.Children.Add(node);
+			analyzerTree.SelectedItem = node;
+			analyzerTree.FocusNode(node);
 		}
 		#endregion
 		
@@ -412,7 +428,25 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 			sessionSettings.WindowBounds = this.RestoreBounds;
 			sessionSettings.SplitterPosition = leftColumn.Width.Value / (leftColumn.Width.Value + rightColumn.Width.Value);
+			if (showAnalyzer.IsChecked)
+				sessionSettings.AnalyzerSplitterPosition = analyzerRow.Height.Value / (analyzerRow.Height.Value + textViewRow.Height.Value);
 			sessionSettings.Save();
+		}
+		
+		void ShowAnalyzer_Checked(object sender, RoutedEventArgs e)
+		{
+			analyzerRow.MinHeight = 100;
+			if (sessionSettings.AnalyzerSplitterPosition > 0 && sessionSettings.AnalyzerSplitterPosition < 1) {
+				textViewRow.Height = new GridLength(1 - sessionSettings.AnalyzerSplitterPosition, GridUnitType.Star);
+				analyzerRow.Height = new GridLength(sessionSettings.AnalyzerSplitterPosition, GridUnitType.Star);
+			}
+		}
+		
+		void ShowAnalyzer_Unchecked(object sender, RoutedEventArgs e)
+		{
+			sessionSettings.AnalyzerSplitterPosition = analyzerRow.Height.Value / (analyzerRow.Height.Value + textViewRow.Height.Value);
+			analyzerRow.MinHeight = 0;
+			analyzerRow.Height = new GridLength(0);
 		}
 	}
 }

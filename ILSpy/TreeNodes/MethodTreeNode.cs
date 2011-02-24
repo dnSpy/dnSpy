@@ -21,6 +21,7 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -99,7 +100,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			ContextMenu menu = new ContextMenu();
 			MenuItem item = new MenuItem() { Header = "Analyze", Icon = new Image() { Source = Images.Search } };
-			item.Click += delegate { MainWindow.Instance.Analyze(this); };
+			item.Click += delegate { MainWindow.Instance.AddToAnalyzer(new AnalyzedMethodTreeNode(method)); };
 			
 			menu.Items.Add(item);
 			
