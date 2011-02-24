@@ -462,7 +462,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			else
 				style = BraceStyle.EndOfLine;
 			OpenBrace(style);
-			WriteCommaSeparatedList(arrayInitializerExpression.Children);
+			bool isFirst = true;
+			foreach (AstNode node in arrayInitializerExpression.Children) {
+				if (isFirst) {
+					isFirst = false;
+				} else {
+					Comma(node);
+					NewLine();
+				}
+				node.AcceptVisitor(this, null);
+			}
+			NewLine();
 			CloseBrace(style);
 			return EndNode(arrayInitializerExpression);
 		}

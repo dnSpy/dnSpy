@@ -68,6 +68,10 @@ namespace Decompiler
 		/// <returns>true = found; false = cannot continue search; null = not found</returns>
 		static bool? FindLoadInNext(ILExpression expr, ILVariable v, out ILExpression parent, out int pos)
 		{
+			parent = null;
+			pos = 0;
+			if (expr == null)
+				return false;
 			for (int i = 0; i < expr.Arguments.Count; i++) {
 				ILExpression arg = expr.Arguments[i];
 				if (arg.Code == ILCode.Ldloc && arg.Operand == v) {
@@ -79,8 +83,6 @@ namespace Decompiler
 				if (r != null)
 					return r;
 			}
-			parent = null;
-			pos = 0;
 			return IsWithoutSideEffects(expr.Code) ? (bool?)null : false;
 		}
 		
