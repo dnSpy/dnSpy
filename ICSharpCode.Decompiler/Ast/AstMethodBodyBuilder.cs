@@ -328,18 +328,21 @@ namespace Decompiler
 					#endregion
 					#region Arrays
 				case Code.Newarr:
-					{
-						var ace = new Ast.ArrayCreateExpression();
-						ace.Type = operandAsTypeRef;
-						ace.Arguments.Add(arg1);
-						return ace;
-					}
 				case (Code)ILCode.InitArray:
 					{
 						var ace = new Ast.ArrayCreateExpression();
 						ace.Type = operandAsTypeRef;
-						ace.Initializer = new ArrayInitializerExpression();
-						ace.Initializer.Elements.AddRange(args);
+						ComposedType ct = operandAsTypeRef as ComposedType;
+						if (ct != null) {
+							// change "new (int[,])[10] to new int[10][,]"
+							ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
+						}
+						if (opCode == ILCode.InitArray) {
+							ace.Initializer = new ArrayInitializerExpression();
+							ace.Initializer.Elements.AddRange(args);
+						} else {
+							ace.Arguments.Add(arg1);
+						}
 						return ace;
 					}
 				case Code.Ldlen:
