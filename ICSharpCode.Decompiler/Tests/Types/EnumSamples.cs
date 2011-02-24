@@ -102,3 +102,13 @@ public enum TS_DeclarationByteWithInitializers : byte
 	Item2 = 20,
 	Item3
 }
+//$$ DeclarationFlags
+[Flags]
+public enum TS_DeclarationFlags
+{
+	None = 0,
+	Item1 = 1,
+	Item2 = 2,
+	Item3 = 4,
+	All = 7
+}

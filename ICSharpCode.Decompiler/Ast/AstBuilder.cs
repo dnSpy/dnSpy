@@ -162,6 +162,7 @@ namespace Decompiler
 			
 			if (typeDef.IsEnum) {
 				long expectedEnumMemberValue = 0;
+				bool forcePrintingInitializers = IsFlagsEnum(typeDef);
 				foreach (FieldDefinition field in typeDef.Fields) {
 					if (field.IsRuntimeSpecialName) {
 						// the value__ field
@@ -170,7 +171,7 @@ namespace Decompiler
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
 						enumMember.Name = CleanName(field.Name);
 						long memberValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false);
-						if (memberValue != expectedEnumMemberValue) {
+						if (forcePrintingInitializers || memberValue != expectedEnumMemberValue) {
 							enumMember.AddChild(new PrimitiveExpression(field.Constant), EnumMemberDeclaration.InitializerRole);
 						}
 						expectedEnumMemberValue = memberValue + 1;
