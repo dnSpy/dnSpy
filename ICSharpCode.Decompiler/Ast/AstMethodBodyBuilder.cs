@@ -116,20 +116,11 @@ namespace Decompiler
 					yield return (Statement)TransformExpression(ilLoop.PostLoopGoto);
 			} else if (node is ILCondition) {
 				ILCondition conditionalNode = (ILCondition)node;
-				if (conditionalNode.FalseBlock.Body.Any()) {
-					// Swap bodies
-					yield return new Ast.IfElseStatement {
-						Condition = new UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(conditionalNode.Condition)),
-						TrueStatement = TransformBlock(conditionalNode.FalseBlock),
-						FalseStatement = TransformBlock(conditionalNode.TrueBlock)
-					};
-				} else {
-					yield return new Ast.IfElseStatement {
-						Condition = MakeBranchCondition(conditionalNode.Condition),
-						TrueStatement = TransformBlock(conditionalNode.TrueBlock),
-						FalseStatement = TransformBlock(conditionalNode.FalseBlock)
-					};
-				}
+				yield return new Ast.IfElseStatement {
+					Condition = MakeBranchCondition(conditionalNode.Condition),
+					TrueStatement = TransformBlock(conditionalNode.TrueBlock),
+					FalseStatement = TransformBlock(conditionalNode.FalseBlock)
+				};
 			} else if (node is ILSwitch) {
 				ILSwitch ilSwitch = (ILSwitch)node;
 				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition.Arguments[0]) };

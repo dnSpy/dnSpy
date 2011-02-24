@@ -314,7 +314,7 @@ namespace Decompiler.ControlFlow
 				    && node.DominanceFrontier.Contains(node)
 				    && (node != entryPoint || !excludeEntryPoint))
 				{
-					HashSet<ControlFlowNode> loopContents = FindDominatedNodes(scope, node);
+					HashSet<ControlFlowNode> loopContents = FindLoopContent(scope, node);
 					
 					ILWhileLoop loop = new ILWhileLoop();
 					
@@ -484,6 +484,35 @@ namespace Decompiler.ControlFlow
 								scope.ExceptWith(content);
 								ilCond.FalseBlock.Body.AddRange(FindConditions(content, falseTarget));
 							}
+							
+							if (scope.Count == 0) {
+								// We have removed the whole scope - eliminte one of the condition bodies
+								int trueSize = ilCond.TrueBlock.GetSelfAndChildrenRecursive<ILNode>().Count();
+								int falseSize = ilCond.FalseBlock.GetSelfAndChildrenRecursive<ILNode>().Count();
+								
+								// The block are protected
+								Debug.Assert(ilCond.TrueBlock.EntryGoto != null);
+								Debug.Assert(ilCond.FalseBlock.EntryGoto != null);
+								
+								if (falseSize > trueSize) {
+									// Move the false body out
+									result.AddRange(ilCond.FalseBlock.Body);
+									ilCond.FalseBlock.Body.Clear();
+								} else {
+									// Move the true body out
+									result.AddRange(ilCond.TrueBlock.Body);
+									ilCond.TrueBlock.Body.Clear();
+								}
+							}
+							
+							// If true body is empty, swap bodies.
+							// Might happend because there was not any to start with or we moved it out.
+							if (ilCond.TrueBlock.Body.Count == 0) {
+								ILBlock tmp = ilCond.TrueBlock;
+								ilCond.TrueBlock = ilCond.FalseBlock;
+								ilCond.FalseBlock = tmp;
+								ilCond.Condition = new ILExpression(ILCode.LogicNot, null, ilCond.Condition);
+							}
 						}
 					}
 					
@@ -509,6 +538,26 @@ namespace Decompiler.ControlFlow
 		}
 		
 		static HashSet<ControlFlowNode> FindDominatedNodes(HashSet<ControlFlowNode> scope, ControlFlowNode head)
+		{
+			HashSet<ControlFlowNode> agenda = new HashSet<ControlFlowNode>();
+			HashSet<ControlFlowNode> result = new HashSet<ControlFlowNode>();
+			agenda.Add(head);
+			
+			while(agenda.Count > 0) {
+				ControlFlowNode addNode = agenda.First();
+				agenda.Remove(addNode);
+				
+				if (scope.Contains(addNode) && head.Dominates(addNode) && result.Add(addNode)) {
+					foreach (var successor in addNode.Successors) {
+						agenda.Add(successor);
+					}
+				}
+			}
+			
+			return result;
+		}
+		
+		static HashSet<ControlFlowNode> FindLoopContent(HashSet<ControlFlowNode> scope, ControlFlowNode head)
 		{
 			var exitNodes = head.DominanceFrontier.SelectMany(n => n.Predecessors);
 			HashSet<ControlFlowNode> agenda = new HashSet<ControlFlowNode>(exitNodes);
