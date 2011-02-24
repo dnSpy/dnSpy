@@ -63,7 +63,19 @@ namespace ILSpy.Debugger.ToolTips
 				OnMouseHoverStopped((MouseEventArgs)e);
 			}
 			
+			if (managerType == typeof(ILSpy.Debugger.AvalonEdit.TextEditorWeakEventManager.MouseDown)) {
+				OnMouseDown((MouseEventArgs)e);
+			}
+			
 			return true;
+		}
+		
+		void OnMouseDown(MouseEventArgs mouseEventArgs0)
+		{
+			if (toolTip != null)
+				toolTip.IsOpen = false;
+			
+			TryCloseExistingPopup(true);
 		}
 		
 		void OnMouseHoverStopped(MouseEventArgs e)
@@ -184,7 +196,6 @@ namespace ILSpy.Debugger.ToolTips
 			popup.StaysOpen = true;
 			return popup;
 		}
-
 		
 		bool IWeakEventListener.ReceiveWeakEvent(Type managerType, object sender, EventArgs e)
 		{

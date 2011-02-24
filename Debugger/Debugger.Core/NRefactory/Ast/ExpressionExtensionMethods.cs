@@ -54,7 +54,7 @@ namespace ICSharpCode.NRefactory.Ast
 				if (val != null && val.GetType().FullName == castTo.FullName)
 					return expresion;
 			}
-			return new CastExpression() { Expression = expresion.Parenthesize(), Type = castTo.GetTypeReference() };
+			return new CastExpression() { Expression = expresion.Clone().Parenthesize(), Type = castTo.GetTypeReference() };
 		}
 		
 		public static Expression GetExpression(this DebugLocalVariableInfo locVar)
@@ -95,7 +95,7 @@ namespace ICSharpCode.NRefactory.Ast
 			if (memberInfo.IsStatic) {
 				target = new TypeReferenceExpression() { Type = memberInfo.DeclaringType.GetTypeReference() };
 			} else {
-				target = expresion.Clone().CastTo((DebugType)memberInfo.DeclaringType);
+				target = CastTo(expresion, (DebugType)memberInfo.DeclaringType);
 			}
 			
 			if (memberInfo is DebugFieldInfo) {
@@ -141,7 +141,7 @@ namespace ICSharpCode.NRefactory.Ast
 				throw new DebuggerException("Incorrect number of arguments");
 			List<Expression> typedArgs = new List<Expression>(args.Length);
 			for(int i = 0; i < args.Length; i++) {
-				typedArgs.Add(args[i].Clone().CastTo((DebugType)method.GetParameters()[i].ParameterType));
+				typedArgs.Add(CastTo(args[i], (DebugType)method.GetParameters()[i].ParameterType));
 			}
 			return typedArgs;
 		}

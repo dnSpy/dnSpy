@@ -50,5 +50,18 @@ namespace ILSpy.Debugger.AvalonEdit
 				source.MouseHoverStopped += DeliverEvent;
 			}
 		}
+		
+		public sealed class MouseDown : WeakEventManagerBase<MouseDown, TextEditor>
+		{
+			protected override void StopListening(TextEditor source)
+			{
+				source.MouseDown -= DeliverEvent;
+			}
+			
+			protected override void StartListening(TextEditor source)
+			{
+				source.MouseDown += DeliverEvent;
+			}
+		}
 	}
 }

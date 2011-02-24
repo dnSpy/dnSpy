@@ -210,7 +210,11 @@ namespace ILSpy.Debugger.Services
 				e.ContentToShow = null;
 			}
 			else {
-				e.ContentToShow = currentDebugger.GetTooltipControl(e.LogicalPosition, variable);
+				try {
+					e.ContentToShow = currentDebugger.GetTooltipControl(e.LogicalPosition, variable);
+				} catch {
+					return;
+				}
 			}
 			
 			// FIXME Do proper parsing

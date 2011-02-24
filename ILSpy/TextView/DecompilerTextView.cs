@@ -86,6 +86,7 @@ namespace ICSharpCode.ILSpy.TextView
 			// wire the mouse events
 			TextEditorWeakEventManager.MouseHover.AddListener(textEditor, TextEditorListener.Instance);
 			TextEditorWeakEventManager.MouseHoverStopped.AddListener(textEditor, TextEditorListener.Instance);
+			TextEditorWeakEventManager.MouseDown.AddListener(textEditor, TextEditorListener.Instance);
 			textEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconMargin.InvalidateVisual();
 		}
 		
