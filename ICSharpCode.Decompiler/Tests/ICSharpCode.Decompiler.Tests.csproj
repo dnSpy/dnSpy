@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="DelegateConstruction.cs" />
     <Compile Include="ExceptionHandling.cs" />
+    <Compile Include="MultidimensionalArray.cs" />
     <Compile Include="Loops.cs" />
     <Compile Include="PropertiesAndEvents.cs" />
     <Compile Include="TestRunner.cs" />

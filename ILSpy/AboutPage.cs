@@ -77,7 +77,7 @@ namespace ICSharpCode.ILSpy
 					delegate (Task<AvailableVersionInfo> task) {
 						try {
 							stackPanel.Children.Clear();
-							ShowAvailableVersion(latestAvailableVersion, stackPanel);
+							ShowAvailableVersion(task.Result, stackPanel);
 						} catch (Exception ex) {
 							AvalonEditTextOutput exceptionOutput = new AvalonEditTextOutput();
 							exceptionOutput.WriteLine(ex.ToString());
@@ -128,6 +128,7 @@ namespace ICSharpCode.ILSpy
 		{
 			var tcs = new TaskCompletionSource<AvailableVersionInfo>();
 			WebClient wc = new WebClient();
+			wc.Proxy = new WebProxy() { UseDefaultCredentials = true };
 			wc.DownloadDataCompleted += delegate(object sender, DownloadDataCompletedEventArgs e) {
 				if (e.Error != null) {
 					tcs.SetException(e.Error);

@@ -116,7 +116,7 @@ namespace Decompiler
 				case ILCode.BrLogicOr:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
-						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
+						InferTypeForExpression(expr.Arguments[1], typeSystem.Boolean);
 					}
 					return null;
 					#endregion
@@ -524,7 +524,11 @@ namespace Decompiler
 				if (gp.Owner.GenericParameterType == GenericParameterType.Method) {
 					return ((GenericInstanceMethod)member).GenericArguments[gp.Position];
 				} else {
-					return ((GenericInstanceType)member.DeclaringType).GenericArguments[gp.Position];
+					if (member.DeclaringType is ArrayType) {
+						return ((ArrayType)member.DeclaringType).ElementType;
+					} else {
+						return ((GenericInstanceType)member.DeclaringType).GenericArguments[gp.Position];
+					}
 				}
 			}
 			return type;
