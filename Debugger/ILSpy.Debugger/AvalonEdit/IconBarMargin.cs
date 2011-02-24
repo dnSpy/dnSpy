@@ -80,6 +80,9 @@ namespace ILSpy.Debugger.AvalonEdit
 				foreach (var bm in BookmarkManager.Bookmarks) {
 					if (CurrentType == null || bm.TypeName != CurrentType.FullName)
 						continue;
+					if (bm is BreakpointBookmark && 
+					    ((BreakpointBookmark)bm).Language != DebuggerService.CurrentDebugger.Language)
+						continue;
 					
 					int line = bm.LineNumber;
 					BookmarkBase existingBookmark;

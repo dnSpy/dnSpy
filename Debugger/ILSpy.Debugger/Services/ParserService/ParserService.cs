@@ -78,12 +78,12 @@ namespace ILSpy.Debugger.Services
 			int left = offset, right = offset;
 			
 			//search left
-			while((!mySet.Contains(currentValue) || currentValue == ".") && offset >= 0)
+			while((!mySet.Contains(currentValue) || currentValue == ".") && left > 0)
 				currentValue = fullText[--left].ToString();
 			
 			currentValue = fullText[offset].ToString();
 			// searh right
-			while(!mySet.Contains(currentValue) && offset < fullText.Length - 2)
+			while(!mySet.Contains(currentValue) && right < fullText.Length - 2)
 				currentValue = fullText[++right].ToString();
 			
 			return fullText.Substring(left + 1, right - 1 - left).Trim();

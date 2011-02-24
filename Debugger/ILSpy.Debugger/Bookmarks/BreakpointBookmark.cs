@@ -38,7 +38,7 @@ namespace ILSpy.Debugger.Bookmarks
 		string tooltip;
 		BreakpointAction action = BreakpointAction.Break;
 		
-		public DecompiledLanguages Laguage { get; private set; }
+		public DecompiledLanguages Language { get; private set; }
 		
 		public BreakpointAction Action {
 			get {
@@ -89,7 +89,7 @@ namespace ILSpy.Debugger.Bookmarks
 		{
 			this.action = action;
 			this.tooltip = language.ToString();
-			this.Laguage = language;
+			this.Language = language;
 		}
 		
 		public override ImageSource Image {

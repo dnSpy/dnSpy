@@ -66,6 +66,13 @@ namespace Debugger
 			base.Remove(breakpoint);
 		}
 		
+		public void RemoveAll()
+		{
+			for (int i = Count - 1; i >= 0; --i) {
+				this[i].Remove();
+			}
+		}
+		
 		protected override void OnRemoved(Breakpoint breakpoint)
 		{
 			breakpoint.Deactivate();

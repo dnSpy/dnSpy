@@ -500,7 +500,7 @@ namespace ILSpy.Debugger.Services
 			
 			var storage = CodeMappings.GetStorage(Language);
 			
-			if (Language == bookmark.Laguage) {
+			if (Language == bookmark.Language) {
 				uint token;
 				SourceCodeMapping map =
 					storage.GetInstructionByTypeAndLine(

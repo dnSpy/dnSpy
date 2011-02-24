@@ -319,15 +319,17 @@ namespace ICSharpCode.ILSpy
 				if (window.ShowDialog() == true)
 				{
 					if (DebuggerService.CurrentDebugger.IsDebugging) {
-						AttachMenuItem.IsEnabled = AttachButton.IsEnabled = false;
-						ContinueDebuggingMenuItem.IsEnabled =
-							StepIntoMenuItem.IsEnabled =
-							StepOverMenuItem.IsEnabled =
-							StepOutMenuItem.IsEnabled =
-							DetachMenuItem.IsEnabled = true;
+						EnableDebuggerUI(false);
+						DebuggerService.CurrentDebugger.DebugStopped += OnDebugStopped;
 					}
 				}
 			}
+		}
+
+		void OnDebugStopped(object sender, EventArgs e)
+		{
+			EnableDebuggerUI(true);
+			DebuggerService.CurrentDebugger.DebugStopped -= OnDebugStopped;
 		}
 		
 		void DetachFromProcessExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -335,12 +337,8 @@ namespace ICSharpCode.ILSpy
 			if (DebuggerService.CurrentDebugger.IsDebugging){
 				DebuggerService.CurrentDebugger.Detach();
 				
-				AttachMenuItem.IsEnabled = AttachButton.IsEnabled = true;
-				ContinueDebuggingMenuItem.IsEnabled =
-					StepIntoMenuItem.IsEnabled =
-					StepOverMenuItem.IsEnabled =
-					StepOutMenuItem.IsEnabled =
-					DetachMenuItem.IsEnabled = false;
+				EnableDebuggerUI(true);
+				DebuggerService.CurrentDebugger.DebugStopped -= OnDebugStopped;
 			}
 		}
 		
@@ -389,6 +387,16 @@ namespace ICSharpCode.ILSpy
 			}
 			
 			base.OnKeyUp(e);
+		}
+		
+		void EnableDebuggerUI(bool enable)
+		{
+			AttachMenuItem.IsEnabled = AttachButton.IsEnabled = enable;
+			ContinueDebuggingMenuItem.IsEnabled =
+				StepIntoMenuItem.IsEnabled =
+				StepOverMenuItem.IsEnabled =
+				StepOutMenuItem.IsEnabled =
+				DetachMenuItem.IsEnabled = !enable;
 		}
 		
 		#endregion
