@@ -94,6 +94,7 @@
     <Compile Include="ILAst\ILAstOptimizer.cs" />
     <Compile Include="ILAst\ILAstTypes.cs" />
     <Compile Include="ILAst\ILCodes.cs" />
+    <Compile Include="ILAst\ILInlining.cs" />
     <Compile Include="ILAst\Pattern.cs" />
     <Compile Include="ILAst\TypeAnalysis.cs" />
     <Compile Include="ITextOutput.cs" />

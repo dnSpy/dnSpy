@@ -41,7 +41,9 @@ namespace Decompiler
 						continue;
 					if (arg1.Match(block.Body.ElementAtOrDefault(i + 1)) && arg2.Match(block.Body.ElementAtOrDefault(i + 2))) {
 						if (initializeArrayPattern.Match(block.Body.ElementAtOrDefault(i + 3))) {
-							HandleStaticallyInitializedArray(arg1, block, i, newArrInst, arrayLength);
+							if (HandleStaticallyInitializedArray(arg2, block, i, newArrInst, arrayLength)) {
+								i -= ILInlining.InlineInto(block, i + 1, method) - 1;
+							}
 							continue;
 						}
 					}
@@ -62,6 +64,7 @@ namespace Decompiler
 						((ILExpression)block.Body[i]).Arguments[0] = new ILExpression(
 							ILCode.InitArray, newArrInst.Operand, operands.ToArray());
 						block.Body.RemoveRange(i + 1, arrayLength);
+						i -= ILInlining.InlineInto(block, i + 1, method) - 1;
 					}
 				}
 			}
@@ -85,7 +88,7 @@ namespace Decompiler
 			}
 		}
 		
-		static bool HandleStaticallyInitializedArray(StoreToVariable arg1, ILBlock block, int i, ILExpression newArrInst, int arrayLength)
+		static bool HandleStaticallyInitializedArray(StoreToVariable arg2, ILBlock block, int i, ILExpression newArrInst, int arrayLength)
 		{
 			FieldDefinition field = ((ILExpression)block.Body[i + 3]).Arguments[1].Operand as FieldDefinition;
 			if (field == null || field.InitialValue == null)
@@ -98,7 +101,7 @@ namespace Decompiler
 						for (int j = 0; j < newArr.Length; j++) {
 							newArr[j] = new ILExpression(ILCode.Ldc_I4, BitConverter.ToInt32(field.InitialValue, j * 4));
 						}
-						block.Body[i] = new ILExpression(ILCode.Stloc, arg1.LastVariable, new ILExpression(ILCode.InitArray, newArrInst.Operand, newArr));
+						block.Body[i] = new ILExpression(ILCode.Stloc, arg2.LastVariable, new ILExpression(ILCode.InitArray, newArrInst.Operand, newArr));
 						block.Body.RemoveRange(i + 1, 3);
 						return true;
 					}
