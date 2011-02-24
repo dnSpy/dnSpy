@@ -181,13 +181,13 @@ namespace Decompiler
 			switch(expr.Code) {
 				case ILCode.LogicNot:
 					return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(expr.Arguments[0]));
-				case ILCode.LogicAnd:
+				case ILCode.BrLogicAnd:
 					return new Ast.BinaryOperatorExpression(
 						MakeBranchCondition(expr.Arguments[0]),
 						BinaryOperatorType.ConditionalAnd,
 						MakeBranchCondition(expr.Arguments[1])
 					);
-				case ILCode.LogicOr:
+				case ILCode.BrLogicOr:
 					return new Ast.BinaryOperatorExpression(
 						MakeBranchCondition(expr.Arguments[0]),
 						BinaryOperatorType.ConditionalOr,
@@ -255,8 +255,7 @@ namespace Decompiler
 		
 		AstNode TransformExpression(ILExpression expr)
 		{
-			List<Ast.Expression> args = TransformExpressionArguments(expr);
-			AstNode node = TransformByteCode(expr, args);
+			AstNode node = TransformByteCode(expr);
 			Expression astExpr = node as Expression;
 			if (astExpr != null)
 				return Convert(astExpr, expr.InferredType, expr.ExpectedType);
@@ -264,21 +263,43 @@ namespace Decompiler
 				return node;
 		}
 		
-		AstNode TransformByteCode(ILExpression byteCode, List<Ast.Expression> args)
+		AstNode TransformByteCode(ILExpression byteCode)
 		{
 			ILCode opCode = byteCode.Code;
 			object operand = byteCode.Operand;
 			AstType operandAsTypeRef = AstBuilder.ConvertType(operand as Cecil.TypeReference);
 			ILExpression operandAsByteCode = operand as ILExpression;
+
+			// Do branches first because TransformExpressionArguments does not work on arguments that are branches themselfs
+			// TODO:  We should probably have virtual instructions for these and not abuse branch codes as expressions
+			switch(opCode) {
+					case ILCode.Br: return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
+				case ILCode.Brfalse:
+				case ILCode.Brtrue:
+				case ILCode.Beq:
+				case ILCode.Bge:
+				case ILCode.Bge_Un:
+				case ILCode.Bgt:
+				case ILCode.Bgt_Un:
+				case ILCode.Ble:
+				case ILCode.Ble_Un:
+				case ILCode.Blt:
+				case ILCode.Blt_Un:
+				case ILCode.Bne_Un:
+				case ILCode.BrLogicAnd:
+				case ILCode.BrLogicOr:
+					return new Ast.IfElseStatement() {
+						Condition = MakeBranchCondition(byteCode),
+						TrueStatement = new BlockStatement() {
+							new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name)
+						}
+					};
+			}
+			
+			List<Ast.Expression> args = TransformExpressionArguments(byteCode);
 			Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
 			Ast.Expression arg3 = args.Count >= 3 ? args[2] : null;
-			
-			BlockStatement branchCommand = null;
-			if (byteCode.Operand is ILLabel) {
-				branchCommand = new BlockStatement();
-				branchCommand.Add(new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name));
-			}
 			
 			switch((Code)opCode) {
 					#region Arithmetic
@@ -307,10 +328,21 @@ namespace Decompiler
 					#endregion
 					#region Arrays
 				case Code.Newarr:
+				case (Code)ILCode.InitArray:
 					{
 						var ace = new Ast.ArrayCreateExpression();
 						ace.Type = operandAsTypeRef;
-						ace.Arguments.Add(arg1);
+						ComposedType ct = operandAsTypeRef as ComposedType;
+						if (ct != null) {
+							// change "new (int[,])[10] to new int[10][,]"
+							ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
+						}
+						if (opCode == ILCode.InitArray) {
+							ace.Initializer = new ArrayInitializerExpression();
+							ace.Initializer.Elements.AddRange(args);
+						} else {
+							ace.Arguments.Add(arg1);
+						}
 						return ace;
 					}
 				case Code.Ldlen:
@@ -340,24 +372,8 @@ namespace Decompiler
 				case Code.Stelem_R4:
 				case Code.Stelem_R8:
 				case Code.Stelem_Ref:
-					return new Ast.AssignmentExpression(arg1.Indexer(arg2), arg3);
 				case Code.Stelem_Any:
-					return InlineAssembly(byteCode, args);
-					#endregion
-					#region Branching
-					case Code.Br:      return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
-					case Code.Brfalse: return new Ast.IfElseStatement(new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1), branchCommand);
-					case Code.Brtrue:  return new Ast.IfElseStatement(arg1, branchCommand);
-					case Code.Beq:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2), branchCommand);
-					case Code.Bge:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), branchCommand);
-					case Code.Bge_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2), branchCommand);
-					case Code.Bgt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), branchCommand);
-					case Code.Bgt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2), branchCommand);
-					case Code.Ble:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), branchCommand);
-					case Code.Ble_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2), branchCommand);
-					case Code.Blt:     return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), branchCommand);
-					case Code.Blt_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2), branchCommand);
-					case Code.Bne_Un:  return new Ast.IfElseStatement(new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2), branchCommand);
+					return new Ast.AssignmentExpression(arg1.Indexer(arg2), arg3);
 					#endregion
 					#region Comparison
 					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
@@ -562,14 +578,18 @@ namespace Decompiler
 				case Code.Newobj:
 					{
 						Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
-						// TODO: Ensure that the corrent overloaded constructor is called
 						
-						/*if (declaringType is ArrayType) { shouldn't this be newarr?
-						return new Ast.ArrayCreateExpression {
-							Type = AstBuilder.ConvertType((ArrayType)declaringType),
-							Arguments = args
-						};
-					}*/
+						if (declaringType is ArrayType) {
+							ComposedType ct = AstBuilder.ConvertType((ArrayType)declaringType) as ComposedType;
+							if (ct != null && ct.ArraySpecifiers.Count >= 1) {
+								var ace = new Ast.ArrayCreateExpression();
+								ct.ArraySpecifiers.First().Remove();
+								ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
+								ace.Type = ct;
+								ace.Arguments.AddRange(args);
+								return ace;
+							}
+						}
 						var oce = new Ast.ObjectCreateExpression();
 						oce.Type = AstBuilder.ConvertType(declaringType);
 						oce.Arguments.AddRange(args);
@@ -631,6 +651,12 @@ namespace Decompiler
 					// If we're not calling a method in the current class; we must be calling one in the base class.
 					target = new BaseReferenceExpression();
 				}
+			}
+			
+			if (cecilMethod.Name == "Get" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 1) {
+				return target.Indexer(methodArgs);
+			} else if (cecilMethod.Name == "Set" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 2) {
+				return new AssignmentExpression(target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)), methodArgs.Last());
 			}
 			
 			// Resolve the method to figure out whether it is an accessor:

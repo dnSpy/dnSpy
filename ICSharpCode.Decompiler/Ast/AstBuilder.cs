@@ -134,7 +134,7 @@ namespace Decompiler
 			TypeDeclaration astType = new TypeDeclaration();
 			astType.AddAnnotation(typeDef);
 			astType.Modifiers = ConvertModifiers(typeDef);
-			astType.Name = typeDef.Name;
+			astType.Name = CleanName(typeDef.Name);
 			
 			if (typeDef.IsEnum) {  // NB: Enum is value type
 				astType.ClassType = ClassType.Enum;
@@ -167,7 +167,7 @@ namespace Decompiler
 						astType.AddChild(ConvertType(field.FieldType), TypeDeclaration.BaseTypeRole);
 					} else {
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
-						enumMember.Name = field.Name;
+						enumMember.Name = CleanName(field.Name);
 						astType.AddChild(enumMember, TypeDeclaration.MemberRole);
 					}
 				}
@@ -185,6 +185,14 @@ namespace Decompiler
 
 			ConvertCustomAtributes(astType, typeDef);
 			return astType;
+		}
+		
+		string CleanName(string name)
+		{
+			int pos = name.LastIndexOf('`');
+			if (pos >= 0)
+				name = name.Substring(0, pos);
+			return name;
 		}
 		
 		#region Convert Type Reference
@@ -456,7 +464,7 @@ namespace Decompiler
 			MethodDeclaration astMethod = new MethodDeclaration();
 			astMethod.AddAnnotation(methodDef);
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
-			astMethod.Name = methodDef.Name;
+			astMethod.Name = CleanName(methodDef.Name);
 			astMethod.TypeParameters.AddRange(MakeTypeParameters(methodDef.GenericParameters));
 			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 			astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
@@ -472,7 +480,7 @@ namespace Decompiler
 		{
 			return genericParameters.Select(
 				gp => new TypeParameterDeclaration {
-					Name = gp.Name,
+					Name = CleanName(gp.Name),
 					Variance = gp.IsContravariant ? VarianceModifier.Contravariant : gp.IsCovariant ? VarianceModifier.Covariant : VarianceModifier.Invariant
 				});
 		}
@@ -492,7 +500,7 @@ namespace Decompiler
 				// don't show visibility for static ctors
 				astMethod.Modifiers &= ~Modifiers.VisibilityMask;
 			}
-			astMethod.Name = methodDef.DeclaringType.Name;
+			astMethod.Name = CleanName(methodDef.DeclaringType.Name);
 			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			return astMethod;
@@ -503,7 +511,7 @@ namespace Decompiler
 			PropertyDeclaration astProp = new PropertyDeclaration();
 			astProp.AddAnnotation(propDef);
 			astProp.Modifiers = ConvertModifiers(propDef.GetMethod ?? propDef.SetMethod);
-			astProp.Name = propDef.Name;
+			astProp.Name = CleanName(propDef.Name);
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			if (propDef.GetMethod != null) {
 				astProp.Getter = new Accessor {
@@ -523,7 +531,7 @@ namespace Decompiler
 		{
 			CustomEventDeclaration astEvent = new CustomEventDeclaration();
 			astEvent.AddAnnotation(eventDef);
-			astEvent.Name = eventDef.Name;
+			astEvent.Name = CleanName(eventDef.Name);
 			astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 			astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
 			if (eventDef.AddMethod != null) {
@@ -543,7 +551,7 @@ namespace Decompiler
 		{
 			FieldDeclaration astField = new FieldDeclaration();
 			astField.AddAnnotation(fieldDef);
-			VariableInitializer initializer = new VariableInitializer(fieldDef.Name);
+			VariableInitializer initializer = new VariableInitializer(CleanName(fieldDef.Name));
 			astField.AddChild(initializer, FieldDeclaration.Roles.Variable);
 			astField.ReturnType = ConvertType(fieldDef.FieldType, fieldDef);
 			astField.Modifiers = ConvertModifiers(fieldDef);

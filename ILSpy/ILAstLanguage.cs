@@ -47,6 +47,10 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
+			if (!method.HasBody) {
+				return;
+			}
+			
 			ILAstBuilder astBuilder = new ILAstBuilder();
 			ILBlock ilMethod = new ILBlock();
 			ilMethod.Body = astBuilder.Build(method, inlineVariables);

@@ -112,13 +112,13 @@ namespace Decompiler
 						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Boolean);
 					}
 					return typeSystem.Boolean;
-				case ILCode.LogicAnd:
-				case ILCode.LogicOr:
+				case ILCode.BrLogicAnd:
+				case ILCode.BrLogicOr:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
-						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
+						InferTypeForExpression(expr.Arguments[1], typeSystem.Boolean);
 					}
-					return typeSystem.Boolean;
+					return null;
 					#endregion
 					#region Variable load/store
 				case ILCode.Stloc:
@@ -286,7 +286,9 @@ namespace Decompiler
 				case ILCode.Ldvirtftn:
 					return typeSystem.IntPtr;
 				case ILCode.Ldc_I4:
-					return (IsIntegerOrEnum(expectedType) || IsBoolean(expectedType)) ? expectedType : typeSystem.Int32;
+					if (IsBoolean(expectedType) && ((int)expr.Operand == 0 || (int)expr.Operand == 1))
+						return typeSystem.Boolean;
+					return IsIntegerOrEnum(expectedType) ? expectedType : typeSystem.Int32;
 				case ILCode.Ldc_I8:
 					return (IsIntegerOrEnum(expectedType)) ? expectedType : typeSystem.Int64;
 				case ILCode.Ldc_R4:
@@ -307,6 +309,12 @@ namespace Decompiler
 				case ILCode.Newarr:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Int32);
+					return new ArrayType((TypeReference)expr.Operand);
+				case ILCode.InitArray:
+					if (forceInferChildren) {
+						foreach (ILExpression arg in expr.Arguments)
+							InferTypeForExpression(arg, (TypeReference)expr.Operand);
+					}
 					return new ArrayType((TypeReference)expr.Operand);
 				case ILCode.Ldlen:
 					return typeSystem.Int32;
@@ -522,7 +530,11 @@ namespace Decompiler
 				if (gp.Owner.GenericParameterType == GenericParameterType.Method) {
 					return ((GenericInstanceMethod)member).GenericArguments[gp.Position];
 				} else {
-					return ((GenericInstanceType)member.DeclaringType).GenericArguments[gp.Position];
+					if (member.DeclaringType is ArrayType) {
+						return ((ArrayType)member.DeclaringType).ElementType;
+					} else {
+						return ((GenericInstanceType)member.DeclaringType).GenericArguments[gp.Position];
+					}
 				}
 			}
 			return type;
@@ -561,7 +573,7 @@ namespace Decompiler
 			} else {
 				left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
 				left.InferredType = DoInferTypeForExpression(left, left.ExpectedType);
-				right.InferredType = DoInferTypeForExpression(left, right.ExpectedType);
+				right.InferredType = DoInferTypeForExpression(right, right.ExpectedType);
 				return left.ExpectedType;
 			}
 		}

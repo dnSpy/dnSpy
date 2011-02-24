@@ -462,7 +462,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			else
 				style = BraceStyle.EndOfLine;
 			OpenBrace(style);
-			WriteCommaSeparatedList(arrayInitializerExpression.Children);
+			bool isFirst = true;
+			foreach (AstNode node in arrayInitializerExpression.Children) {
+				if (isFirst) {
+					isFirst = false;
+				} else {
+					Comma(node);
+					NewLine();
+				}
+				node.AcceptVisitor(this, null);
+			}
+			NewLine();
 			CloseBrace(style);
 			return EndNode(arrayInitializerExpression);
 		}
@@ -566,7 +576,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteKeyword("checked");
 			LPar();
 			Space(policy.WithinCheckedExpressionParantheses);
-			checkedExpression.AcceptVisitor(this, data);
+			checkedExpression.Expression.AcceptVisitor(this, data);
 			Space(policy.WithinCheckedExpressionParantheses);
 			RPar();
 			return EndNode(checkedExpression);
@@ -933,7 +943,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteKeyword("unchecked");
 			LPar();
 			Space(policy.WithinCheckedExpressionParantheses);
-			uncheckedExpression.AcceptVisitor(this, data);
+			uncheckedExpression.Expression.AcceptVisitor(this, data);
 			Space(policy.WithinCheckedExpressionParantheses);
 			RPar();
 			return EndNode(uncheckedExpression);

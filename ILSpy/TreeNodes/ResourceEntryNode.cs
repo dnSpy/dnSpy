@@ -86,24 +86,36 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			var asm = this.Ancestors().OfType<AssemblyTreeNode>().FirstOrDefault().LoadedAssembly;
 			
-			// Construct and initialize settings for a second AppDomain.
-			AppDomainSetup bamlDecompilerAppDomainSetup = new AppDomainSetup();
-			bamlDecompilerAppDomainSetup.ApplicationBase = "file:///" + Path.GetDirectoryName(asm.FileName);
-			bamlDecompilerAppDomainSetup.DisallowBindingRedirects = false;
-			bamlDecompilerAppDomainSetup.DisallowCodeDownload = true;
-			bamlDecompilerAppDomainSetup.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+			AppDomain bamlDecompilerAppDomain = null;
+			try {
+				BamlDecompiler decompiler = CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, asm.FileName);
+				
+				MemoryStream bamlStream = new MemoryStream();
+				value.Position = 0;
+				value.CopyTo(bamlStream);
+				
+				output.Write(decompiler.DecompileBaml(bamlStream, asm.FileName));
+				return true;
+			} finally {
+				if (bamlDecompilerAppDomain != null)
+					AppDomain.Unload(bamlDecompilerAppDomain);
+			}
+		}
+		
+		public static BamlDecompiler CreateBamlDecompilerInAppDomain(ref AppDomain appDomain, string assemblyFileName)
+		{
+			if (appDomain == null) {
+				// Construct and initialize settings for a second AppDomain.
+				AppDomainSetup bamlDecompilerAppDomainSetup = new AppDomainSetup();
+				bamlDecompilerAppDomainSetup.ApplicationBase = "file:///" + Path.GetDirectoryName(assemblyFileName);
+				bamlDecompilerAppDomainSetup.DisallowBindingRedirects = false;
+				bamlDecompilerAppDomainSetup.DisallowCodeDownload = true;
+				bamlDecompilerAppDomainSetup.ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 
-			// Create the second AppDomain.
-			AppDomain bamlDecompilerAppDomain = AppDomain.CreateDomain("BamlDecompiler AD", null, bamlDecompilerAppDomainSetup);
-			
-			BamlDecompiler decompiler = (BamlDecompiler)bamlDecompilerAppDomain.CreateInstanceFromAndUnwrap(typeof(BamlDecompiler).Assembly.Location, typeof(BamlDecompiler).FullName);
-			
-			MemoryStream bamlStream = new MemoryStream();
-			value.Position = 0;
-			value.CopyTo(bamlStream);
-			
-			output.Write(decompiler.DecompileBaml(bamlStream, asm.FileName));
-			return true;
+				// Create the second AppDomain.
+				appDomain = AppDomain.CreateDomain("BamlDecompiler AD", null, bamlDecompilerAppDomainSetup);
+			}
+			return (BamlDecompiler)appDomain.CreateInstanceFromAndUnwrap(typeof(BamlDecompiler).Assembly.Location, typeof(BamlDecompiler).FullName);
 		}
 		
 		public override bool Save(DecompilerTextView textView)

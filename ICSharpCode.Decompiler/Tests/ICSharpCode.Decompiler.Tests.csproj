@@ -67,6 +67,10 @@
     <Compile Include="CodeSampleFileParser.cs" />
     <Compile Include="CustomAttributes\CustomAttributeTests.cs" />
     <Compile Include="DecompilerTestBase.cs" />
+    <Compile Include="ArrayInitializers.cs" />
+    <Compile Include="ExceptionHandling.cs" />
+    <Compile Include="MultidimensionalArray.cs" />
+
     <Compile Include="TestRunner.cs" />
     <None Include="Types\ValueTypes.cs" />
   </ItemGroup>
@@ -80,6 +84,12 @@
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="StackTests" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BooleanConsumedAsInteger.il" />
+    <None Include="StackTests\StackTests.il" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
