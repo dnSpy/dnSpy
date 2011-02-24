@@ -38,7 +38,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		}
 		
 		public override object Text {
-			get { return MethodTreeNode.GetText(analyzedMethod, Language); }
+			get { return Language.TypeToString(analyzedMethod.DeclaringType, true) + "." + MethodTreeNode.GetText(analyzedMethod, Language); }
 		}
 		
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)

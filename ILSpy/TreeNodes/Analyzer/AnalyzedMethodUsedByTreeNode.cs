@@ -78,6 +78,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		
 		IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
 		{
+			string name = analyzedMethod.Name;
+			string declTypeName = analyzedMethod.DeclaringType.FullName;
 			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 				foreach (MethodDefinition method in type.Methods) {
@@ -86,8 +88,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					if (!method.HasBody)
 						continue;
 					foreach (Instruction instr in method.Body.Instructions) {
-						if (instr.Operand is MethodReference
-						    && ((MethodReference)instr.Operand).Resolve() == analyzedMethod) {
+						MethodReference mr = instr.Operand as MethodReference;
+						if (mr != null && mr.Name == name && mr.DeclaringType.FullName == declTypeName && mr.Resolve() == analyzedMethod) {
 							found = true;
 							break;
 						}
