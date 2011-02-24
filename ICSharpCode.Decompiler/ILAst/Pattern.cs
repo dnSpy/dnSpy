@@ -11,8 +11,9 @@ namespace Decompiler
 		bool MatchVariable(ILVariable v);
 	}
 	
-	public class StoreToGenerated : ILExpression, IVariablePattern
+	public class StoreToVariable : ILExpression, IVariablePattern
 	{
+		public bool MustBeGenerated;
 		public ILExpression LastMatch;
 		
 		public ILVariable LastVariable {
@@ -21,14 +22,14 @@ namespace Decompiler
 			}
 		}
 		
-		public StoreToGenerated(ILExpression arg) : base(ILCode.Pattern, null, arg)
+		public StoreToVariable(ILExpression arg) : base(ILCode.Pattern, null, arg)
 		{
 		}
 		
 		public override bool Match(ILNode other)
 		{
 			ILExpression expr = other as ILExpression;
-			if (expr != null && expr.Code == ILCode.Stloc && ((ILVariable)expr.Operand).IsGenerated && Match(this.Arguments, expr.Arguments)) {
+			if (expr != null && expr.Code == ILCode.Stloc && (!MustBeGenerated || ((ILVariable)expr.Operand).IsGenerated) && Match(this.Arguments, expr.Arguments)) {
 				this.LastMatch = expr;
 				return true;
 			} else {
