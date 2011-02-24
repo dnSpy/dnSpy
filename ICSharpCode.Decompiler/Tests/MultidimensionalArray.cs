@@ -24,4 +24,9 @@ public static class MultidimensionalArray
 			b[5, 3][2] = y;
 		}
 	}
+	
+	public static int[][,] MakeArray()
+	{
+		return new int[10][,];
+	}
 }

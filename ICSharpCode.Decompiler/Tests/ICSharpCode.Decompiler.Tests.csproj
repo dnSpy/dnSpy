@@ -48,6 +48,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrayInitializers.cs" />
     <Compile Include="DelegateConstruction.cs" />
     <Compile Include="ExceptionHandling.cs" />
     <Compile Include="MultidimensionalArray.cs" />

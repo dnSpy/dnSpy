@@ -92,10 +92,13 @@
     <Compile Include="FlowAnalysis\SsaVariable.cs" />
     <Compile Include="FlowAnalysis\TransformToSsa.cs" />
     <Compile Include="GraphVizGraph.cs" />
+    <Compile Include="ILAst\ArrayInitializers.cs" />
     <Compile Include="ILAst\ILAstBuilder.cs" />
     <Compile Include="ILAst\ILAstOptimizer.cs" />
     <Compile Include="ILAst\ILAstTypes.cs" />
     <Compile Include="ILAst\ILCodes.cs" />
+    <Compile Include="ILAst\ILInlining.cs" />
+    <Compile Include="ILAst\Pattern.cs" />
     <Compile Include="ILAst\TypeAnalysis.cs" />
     <Compile Include="ITextOutput.cs" />
     <Compile Include="Options.cs" />
