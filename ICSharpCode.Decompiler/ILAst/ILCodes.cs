@@ -256,8 +256,8 @@ namespace Decompiler
 		// Virtual codes - defined for convenience
 		Ldexception,  // Operand holds the CatchType for catch handler, null for filter
 		LogicNot,
-		LogicAnd,
-		LogicOr
+		BrLogicAnd,
+		BrLogicOr
 	}
 	
 	public static class ILCodeUtil
