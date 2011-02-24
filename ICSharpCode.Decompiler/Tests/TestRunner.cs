@@ -22,10 +22,6 @@ namespace ICSharpCode.Decompiler.Tests
 			Console.ReadKey();
 		}
 
-		[Test]
-		//[Row(@"..\..\Tests\DelegateConstruction.cs")]
-		//[Row(@"..\..\Tests\Loops.cs")]
-		[Row(@"..\..\Tests\CustomAttributes.cs")]
 		public void RoundtripFile(string fileName)
 		{
 			string code = File.ReadAllText(fileName);
@@ -37,6 +33,9 @@ namespace ICSharpCode.Decompiler.Tests
 
 			var decompiledCode = output.ToString();
 			var onlyCode = "using System;" + Environment.NewLine + StripCodeFileHeader(code);
+
+			File.WriteAllText(Path.ChangeExtension(fileName, ".decomp.cs"), decompiledCode);
+			File.WriteAllText(Path.ChangeExtension(fileName, ".code.cs"), onlyCode);
 
 			Assert.AreEqual(onlyCode, decompiledCode);
 		}

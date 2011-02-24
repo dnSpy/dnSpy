@@ -1,0 +1,89 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Mono.Cecil;
+using System.IO;
+using Decompiler;
+using Microsoft.CSharp;
+using System.CodeDom.Compiler;
+using MbUnit.Framework;
+
+namespace ICSharpCode.Decompiler.Tests
+{
+	public abstract class DecompilerTestBase
+	{
+		protected static IEnumerable<Test> GenerateSectionTests(string samplesFileName)
+		{
+			string code = File.ReadAllText(Path.Combine(@"..\..\Tests", samplesFileName));
+			foreach (var sectionName in CodeSampleFileParser.ListSections(code))
+			{
+				if (sectionName.EndsWith("(ignored)", StringComparison.OrdinalIgnoreCase))
+					continue;
+
+				var testedSectionName = sectionName;
+				yield return new TestCase(testedSectionName, () =>
+				{
+					var testCode = CodeSampleFileParser.GetSection(testedSectionName, code);
+					System.Diagnostics.Debug.WriteLine(testCode);
+					var decompiledTestCode = RoundtripCode(testCode);
+					Assert.AreEqual(testCode, decompiledTestCode);
+				});
+			}
+		}
+
+		protected static void ValidateFileRoundtrip(string samplesFileName)
+		{
+			var lines = File.ReadAllLines(Path.Combine(@"..\..\Tests", samplesFileName));
+			var testCode = RemoveIgnorableLines(lines);
+			var decompiledTestCode = RoundtripCode(testCode);
+			Assert.AreEqual(testCode, decompiledTestCode);
+		}
+
+		static string RemoveIgnorableLines(IEnumerable<string> lines)
+		{
+			return CodeSampleFileParser.ConcatLines(lines.Where(l => !CodeSampleFileParser.IsCommentOrBlank(l)));
+		}
+
+		/// <summary>
+		/// Compiles and decompiles a source code.
+		/// </summary>
+		/// <param name="code">The source code to copile.</param>
+		/// <returns>The decompilation result of compiled source code.</returns>
+		static string RoundtripCode(string code)
+		{
+			AssemblyDefinition assembly = Compile(code);
+			AstBuilder decompiler = new AstBuilder(new DecompilerContext());
+			decompiler.AddAssembly(assembly);
+			StringWriter output = new StringWriter();
+			decompiler.GenerateCode(new PlainTextOutput(output));
+			return output.ToString();
+		}
+
+		static AssemblyDefinition Compile(string code)
+		{
+			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
+			CompilerParameters options = new CompilerParameters();
+			options.ReferencedAssemblies.Add("System.Core.dll");
+			CompilerResults results = provider.CompileAssemblyFromSource(options, code);
+			try
+			{
+				if (results.Errors.Count > 0)
+				{
+					StringBuilder b = new StringBuilder("Compiler error:");
+					foreach (var error in results.Errors)
+					{
+						b.AppendLine(error.ToString());
+					}
+					throw new Exception(b.ToString());
+				}
+				return AssemblyDefinition.ReadAssembly(results.PathToAssembly);
+			}
+			finally
+			{
+				File.Delete(results.PathToAssembly);
+				results.TempFiles.Delete();
+			}
+		}
+	}
+}
