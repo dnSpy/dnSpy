@@ -56,6 +56,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Types\EnumSamples.cs" />
+    <Compile Include="Types\EnumTests.cs" />
     <Compile Include="Types\TypeTests.cs" />
     <None Include="Types\DelegateConstruction.cs" />
     <None Include="CustomAttributes\CustomAttributes.cs" />

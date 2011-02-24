@@ -515,6 +515,7 @@ namespace Decompiler
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context)
 				}.WithAnnotation(propDef.SetMethod);
 			}
+			ConvertCustomAtributes(astProp, propDef);
 			return astProp;
 		}
 
@@ -552,6 +553,7 @@ namespace Decompiler
 				else
 					initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
 			}
+			ConvertCustomAtributes(astField, fieldDef);
 			return astField;
 		}
 		
@@ -619,12 +621,13 @@ namespace Decompiler
 					foreach (FieldDefinition field in enumDefinition.Fields)
 					{
 						if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false), val))
-							return AstBuilder.ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
+							return ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
 						else if (!field.IsStatic && field.IsRuntimeSpecialName)
 							type = field.FieldType; // use primitive type of the enum
 					}
 					if (IsFlagsEnum(enumDefinition))
 					{
+						long enumValue = val;
 						Expression expr = null;
 						foreach (FieldDefinition field in enumDefinition.Fields.Where(fld => fld.IsStatic))
 						{
@@ -632,18 +635,24 @@ namespace Decompiler
 							if (fieldValue == 0)
 								continue;	// skip None enum value
 
-							if ((fieldValue & val) == fieldValue)
+							if ((fieldValue & enumValue) == fieldValue)
 							{
-								var fieldExpression = AstBuilder.ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
+								var fieldExpression = ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
 								if (expr == null)
 									expr = fieldExpression;
 								else
 									expr = new BinaryOperatorExpression(expr, BinaryOperatorType.BitwiseOr, fieldExpression);
+
+								enumValue &= ~fieldValue;
+								if (enumValue == 0)
+									break;
 							}
 						}
-						if (expr != null)
+						if(enumValue == 0 && expr != null)
 							return expr;
 					}
+					TypeCode enumBaseTypeCode = TypeAnalysis.GetTypeCode(type);
+					return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(enumBaseTypeCode, val, false)).CastTo(ConvertType(enumDefinition));
 				}
 			}
 			TypeCode code = TypeAnalysis.GetTypeCode(type);
