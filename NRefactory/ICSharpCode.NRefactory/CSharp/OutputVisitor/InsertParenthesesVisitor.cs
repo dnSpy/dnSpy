@@ -186,7 +186,13 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			} else {
 				if (InsertParenthesesForReadability && precedence < Equality) {
-					ParenthesizeIfRequired(binaryOperatorExpression.Left, Equality);
+					// In readable mode, boost the priority of the left-hand side if the operator
+					// there isn't the same as the operator on this expression.
+					if (GetBinaryOperatorType(binaryOperatorExpression.Left) == binaryOperatorExpression.Operator) {
+						ParenthesizeIfRequired(binaryOperatorExpression.Left, precedence);
+					} else {
+						ParenthesizeIfRequired(binaryOperatorExpression.Left, Equality);
+					}
 					ParenthesizeIfRequired(binaryOperatorExpression.Right, Equality);
 				} else {
 					// all other binary operators are left-associative
@@ -195,6 +201,15 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			return base.VisitBinaryOperatorExpression(binaryOperatorExpression, data);
+		}
+		
+		BinaryOperatorType? GetBinaryOperatorType(Expression expr)
+		{
+			BinaryOperatorExpression boe = expr as BinaryOperatorExpression;
+			if (boe != null)
+				return boe.Operator;
+			else
+				return null;
 		}
 		
 		public override object VisitIsExpression(IsExpression isExpression, object data)

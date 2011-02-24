@@ -566,7 +566,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteKeyword("checked");
 			LPar();
 			Space(policy.WithinCheckedExpressionParantheses);
-			checkedExpression.AcceptVisitor(this, data);
+			checkedExpression.Expression.AcceptVisitor(this, data);
 			Space(policy.WithinCheckedExpressionParantheses);
 			RPar();
 			return EndNode(checkedExpression);
@@ -933,7 +933,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteKeyword("unchecked");
 			LPar();
 			Space(policy.WithinCheckedExpressionParantheses);
-			uncheckedExpression.AcceptVisitor(this, data);
+			uncheckedExpression.Expression.AcceptVisitor(this, data);
 			Space(policy.WithinCheckedExpressionParantheses);
 			RPar();
 			return EndNode(uncheckedExpression);
