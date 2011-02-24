@@ -17,6 +17,7 @@ namespace Decompiler.ControlFlow
 		FlattenNestedMovableBlocks,
 		SimpleGotoRemoval,
 		RemoveDeadLabels,
+		HandleArrayInitializers,
 		TypeInference,
 		None
 	}
@@ -63,6 +64,9 @@ namespace Decompiler.ControlFlow
 			
 			if (abortBeforeStep == ILAstOptimizationStep.RemoveDeadLabels) return;
 			RemoveDeadLabels(method);
+			
+			if (abortBeforeStep == ILAstOptimizationStep.HandleArrayInitializers) return;
+			ArrayInitializers.Transform(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.TypeInference) return;
 			TypeAnalysis.Run(context, method);

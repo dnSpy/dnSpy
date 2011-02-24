@@ -310,6 +310,12 @@ namespace Decompiler
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Int32);
 					return new ArrayType((TypeReference)expr.Operand);
+				case ILCode.InitArray:
+					if (forceInferChildren) {
+						foreach (ILExpression arg in expr.Arguments)
+							InferTypeForExpression(arg, (TypeReference)expr.Operand);
+					}
+					return new ArrayType((TypeReference)expr.Operand);
 				case ILCode.Ldlen:
 					return typeSystem.Int32;
 				case ILCode.Ldelem_U1:

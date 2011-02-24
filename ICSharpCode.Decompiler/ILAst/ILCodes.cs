@@ -257,7 +257,10 @@ namespace Decompiler
 		Ldexception,  // Operand holds the CatchType for catch handler, null for filter
 		LogicNot,
 		BrLogicAnd,
-		BrLogicOr
+		BrLogicOr,
+		InitArray, // Array Initializer
+		
+		Pattern // used for ILAst pattern nodes
 	}
 	
 	public static class ILCodeUtil
@@ -288,26 +291,26 @@ namespace Decompiler
 		public static int? GetPopCount(this Instruction inst)
 		{
 			switch(inst.OpCode.StackBehaviourPop) {
-				case StackBehaviour.Pop0:   				return 0;
-				case StackBehaviour.Pop1:   				return 1;
-				case StackBehaviour.Popi:   				return 1;
-				case StackBehaviour.Popref: 				return 1;
-				case StackBehaviour.Pop1_pop1:   		return 2;
-				case StackBehaviour.Popi_pop1:   		return 2;
-				case StackBehaviour.Popi_popi:   		return 2;
-				case StackBehaviour.Popi_popi8:  		return 2;
-				case StackBehaviour.Popi_popr4:  		return 2;
-				case StackBehaviour.Popi_popr8:  		return 2;
-				case StackBehaviour.Popref_pop1: 		return 2;
-				case StackBehaviour.Popref_popi: 		return 2;
-				case StackBehaviour.Popi_popi_popi:     return 3;
-				case StackBehaviour.Popref_popi_popi:   return 3;
-				case StackBehaviour.Popref_popi_popi8:  return 3;
-				case StackBehaviour.Popref_popi_popr4:  return 3;
-				case StackBehaviour.Popref_popi_popr8:  return 3;
-				case StackBehaviour.Popref_popi_popref: return 3;
-				case StackBehaviour.PopAll: 				return null;
-				case StackBehaviour.Varpop: 
+					case StackBehaviour.Pop0:   				return 0;
+					case StackBehaviour.Pop1:   				return 1;
+					case StackBehaviour.Popi:   				return 1;
+					case StackBehaviour.Popref: 				return 1;
+					case StackBehaviour.Pop1_pop1:   		return 2;
+					case StackBehaviour.Popi_pop1:   		return 2;
+					case StackBehaviour.Popi_popi:   		return 2;
+					case StackBehaviour.Popi_popi8:  		return 2;
+					case StackBehaviour.Popi_popr4:  		return 2;
+					case StackBehaviour.Popi_popr8:  		return 2;
+					case StackBehaviour.Popref_pop1: 		return 2;
+					case StackBehaviour.Popref_popi: 		return 2;
+					case StackBehaviour.Popi_popi_popi:     return 3;
+					case StackBehaviour.Popref_popi_popi:   return 3;
+					case StackBehaviour.Popref_popi_popi8:  return 3;
+					case StackBehaviour.Popref_popi_popr4:  return 3;
+					case StackBehaviour.Popref_popi_popr8:  return 3;
+					case StackBehaviour.Popref_popi_popref: return 3;
+					case StackBehaviour.PopAll: 				return null;
+				case StackBehaviour.Varpop:
 					switch(inst.OpCode.Code) {
 						case Code.Call:
 						case Code.Callvirt:
@@ -317,28 +320,28 @@ namespace Decompiler
 							} else {
 								return cecilMethod.Parameters.Count;
 							}
-						case Code.Calli:    throw new NotImplementedException();
-						case Code.Ret:		return null;
+							case Code.Calli:    throw new NotImplementedException();
+							case Code.Ret:		return null;
 						case Code.Newobj:
 							MethodReference ctorMethod = ((MethodReference)inst.Operand);
 							return ctorMethod.Parameters.Count;
-						default: throw new Exception("Unknown Varpop opcode");
+							default: throw new Exception("Unknown Varpop opcode");
 					}
-				default: throw new Exception("Unknown pop behaviour: " + inst.OpCode.StackBehaviourPop);
+					default: throw new Exception("Unknown pop behaviour: " + inst.OpCode.StackBehaviourPop);
 			}
 		}
 		
 		public static int GetPushCount(this Instruction inst)
 		{
 			switch(inst.OpCode.StackBehaviourPush) {
-				case StackBehaviour.Push0:       return 0;
-				case StackBehaviour.Push1:       return 1;
-				case StackBehaviour.Push1_push1: return 2;
-				case StackBehaviour.Pushi:       return 1;
-				case StackBehaviour.Pushi8:      return 1;
-				case StackBehaviour.Pushr4:      return 1;
-				case StackBehaviour.Pushr8:      return 1;
-				case StackBehaviour.Pushref:     return 1;
+					case StackBehaviour.Push0:       return 0;
+					case StackBehaviour.Push1:       return 1;
+					case StackBehaviour.Push1_push1: return 2;
+					case StackBehaviour.Pushi:       return 1;
+					case StackBehaviour.Pushi8:      return 1;
+					case StackBehaviour.Pushr4:      return 1;
+					case StackBehaviour.Pushr8:      return 1;
+					case StackBehaviour.Pushref:     return 1;
 				case StackBehaviour.Varpush:     // Happens only for calls
 					switch(inst.OpCode.Code) {
 						case Code.Call:
@@ -349,59 +352,59 @@ namespace Decompiler
 							} else {
 								return 1;
 							}
-						case Code.Calli:    throw new NotImplementedException();
-						default: throw new Exception("Unknown Varpush opcode");
+							case Code.Calli:    throw new NotImplementedException();
+							default: throw new Exception("Unknown Varpush opcode");
 					}
-				default: throw new Exception("Unknown push behaviour: " + inst.OpCode.StackBehaviourPush);
+					default: throw new Exception("Unknown push behaviour: " + inst.OpCode.StackBehaviourPush);
 			}
 		}
 		
 		public static void ExpandMacro(ref ILCode code, ref object operand, MethodBody methodBody)
 		{
 			switch (code) {
-				case ILCode.__Ldarg_0: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(0); break;
-				case ILCode.__Ldarg_1: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(1); break;
-				case ILCode.__Ldarg_2: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(2); break;
-				case ILCode.__Ldarg_3: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(3); break;
-				case ILCode.__Ldloc_0: 		code = ILCode.Ldloc; operand = methodBody.Variables[0]; break;
-				case ILCode.__Ldloc_1: 		code = ILCode.Ldloc; operand = methodBody.Variables[1]; break;
-				case ILCode.__Ldloc_2: 		code = ILCode.Ldloc; operand = methodBody.Variables[2]; break;
-				case ILCode.__Ldloc_3: 		code = ILCode.Ldloc; operand = methodBody.Variables[3]; break;
-				case ILCode.__Stloc_0: 		code = ILCode.Stloc; operand = methodBody.Variables[0]; break;
-				case ILCode.__Stloc_1: 		code = ILCode.Stloc; operand = methodBody.Variables[1]; break;
-				case ILCode.__Stloc_2: 		code = ILCode.Stloc; operand = methodBody.Variables[2]; break;
-				case ILCode.__Stloc_3: 		code = ILCode.Stloc; operand = methodBody.Variables[3]; break;
-				case ILCode.__Ldarg_S: 		code = ILCode.Ldarg; break;
-				case ILCode.__Ldarga_S: 		code = ILCode.Ldarga; break;
-				case ILCode.__Starg_S: 		code = ILCode.Starg; break;
-				case ILCode.__Ldloc_S: 		code = ILCode.Ldloc; break;
-				case ILCode.__Ldloca_S: 		code = ILCode.Ldloca; break;
-				case ILCode.__Stloc_S: 		code = ILCode.Stloc; break;
-				case ILCode.__Ldc_I4_M1: 	code = ILCode.Ldc_I4; operand = -1; break;
-				case ILCode.__Ldc_I4_0: 		code = ILCode.Ldc_I4; operand = 0; break;
-				case ILCode.__Ldc_I4_1: 		code = ILCode.Ldc_I4; operand = 1; break;
-				case ILCode.__Ldc_I4_2: 		code = ILCode.Ldc_I4; operand = 2; break;
-				case ILCode.__Ldc_I4_3: 		code = ILCode.Ldc_I4; operand = 3; break;
-				case ILCode.__Ldc_I4_4: 		code = ILCode.Ldc_I4; operand = 4; break;
-				case ILCode.__Ldc_I4_5: 		code = ILCode.Ldc_I4; operand = 5; break;
-				case ILCode.__Ldc_I4_6: 		code = ILCode.Ldc_I4; operand = 6; break;
-				case ILCode.__Ldc_I4_7: 		code = ILCode.Ldc_I4; operand = 7; break;
-				case ILCode.__Ldc_I4_8: 		code = ILCode.Ldc_I4; operand = 8; break;
-				case ILCode.__Ldc_I4_S: 		code = ILCode.Ldc_I4; operand = (int) (sbyte) operand; break;
-				case ILCode.__Br_S: 			code = ILCode.Br; break;
-				case ILCode.__Brfalse_S: 	code = ILCode.Brfalse; break;
-				case ILCode.__Brtrue_S: 		code = ILCode.Brtrue; break;
-				case ILCode.__Beq_S: 		code = ILCode.Beq; break;
-				case ILCode.__Bge_S: 		code = ILCode.Bge; break;
-				case ILCode.__Bgt_S: 		code = ILCode.Bgt; break;
-				case ILCode.__Ble_S: 		code = ILCode.Ble; break;
-				case ILCode.__Blt_S: 		code = ILCode.Blt; break;
-				case ILCode.__Bne_Un_S: 		code = ILCode.Bne_Un; break;
-				case ILCode.__Bge_Un_S: 		code = ILCode.Bge_Un; break;
-				case ILCode.__Bgt_Un_S: 		code = ILCode.Bgt_Un; break;
-				case ILCode.__Ble_Un_S: 		code = ILCode.Ble_Un; break;
-				case ILCode.__Blt_Un_S:		code = ILCode.Blt_Un; break;
-				case ILCode.__Leave_S:		code = ILCode.Leave; break;
+					case ILCode.__Ldarg_0: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(0); break;
+					case ILCode.__Ldarg_1: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(1); break;
+					case ILCode.__Ldarg_2: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(2); break;
+					case ILCode.__Ldarg_3: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(3); break;
+					case ILCode.__Ldloc_0: 		code = ILCode.Ldloc; operand = methodBody.Variables[0]; break;
+					case ILCode.__Ldloc_1: 		code = ILCode.Ldloc; operand = methodBody.Variables[1]; break;
+					case ILCode.__Ldloc_2: 		code = ILCode.Ldloc; operand = methodBody.Variables[2]; break;
+					case ILCode.__Ldloc_3: 		code = ILCode.Ldloc; operand = methodBody.Variables[3]; break;
+					case ILCode.__Stloc_0: 		code = ILCode.Stloc; operand = methodBody.Variables[0]; break;
+					case ILCode.__Stloc_1: 		code = ILCode.Stloc; operand = methodBody.Variables[1]; break;
+					case ILCode.__Stloc_2: 		code = ILCode.Stloc; operand = methodBody.Variables[2]; break;
+					case ILCode.__Stloc_3: 		code = ILCode.Stloc; operand = methodBody.Variables[3]; break;
+					case ILCode.__Ldarg_S: 		code = ILCode.Ldarg; break;
+					case ILCode.__Ldarga_S: 		code = ILCode.Ldarga; break;
+					case ILCode.__Starg_S: 		code = ILCode.Starg; break;
+					case ILCode.__Ldloc_S: 		code = ILCode.Ldloc; break;
+					case ILCode.__Ldloca_S: 		code = ILCode.Ldloca; break;
+					case ILCode.__Stloc_S: 		code = ILCode.Stloc; break;
+					case ILCode.__Ldc_I4_M1: 	code = ILCode.Ldc_I4; operand = -1; break;
+					case ILCode.__Ldc_I4_0: 		code = ILCode.Ldc_I4; operand = 0; break;
+					case ILCode.__Ldc_I4_1: 		code = ILCode.Ldc_I4; operand = 1; break;
+					case ILCode.__Ldc_I4_2: 		code = ILCode.Ldc_I4; operand = 2; break;
+					case ILCode.__Ldc_I4_3: 		code = ILCode.Ldc_I4; operand = 3; break;
+					case ILCode.__Ldc_I4_4: 		code = ILCode.Ldc_I4; operand = 4; break;
+					case ILCode.__Ldc_I4_5: 		code = ILCode.Ldc_I4; operand = 5; break;
+					case ILCode.__Ldc_I4_6: 		code = ILCode.Ldc_I4; operand = 6; break;
+					case ILCode.__Ldc_I4_7: 		code = ILCode.Ldc_I4; operand = 7; break;
+					case ILCode.__Ldc_I4_8: 		code = ILCode.Ldc_I4; operand = 8; break;
+					case ILCode.__Ldc_I4_S: 		code = ILCode.Ldc_I4; operand = (int) (sbyte) operand; break;
+					case ILCode.__Br_S: 			code = ILCode.Br; break;
+					case ILCode.__Brfalse_S: 	code = ILCode.Brfalse; break;
+					case ILCode.__Brtrue_S: 		code = ILCode.Brtrue; break;
+					case ILCode.__Beq_S: 		code = ILCode.Beq; break;
+					case ILCode.__Bge_S: 		code = ILCode.Bge; break;
+					case ILCode.__Bgt_S: 		code = ILCode.Bgt; break;
+					case ILCode.__Ble_S: 		code = ILCode.Ble; break;
+					case ILCode.__Blt_S: 		code = ILCode.Blt; break;
+					case ILCode.__Bne_Un_S: 		code = ILCode.Bne_Un; break;
+					case ILCode.__Bge_Un_S: 		code = ILCode.Bge_Un; break;
+					case ILCode.__Bgt_Un_S: 		code = ILCode.Bgt_Un; break;
+					case ILCode.__Ble_Un_S: 		code = ILCode.Ble_Un; break;
+					case ILCode.__Blt_Un_S:		code = ILCode.Blt_Un; break;
+					case ILCode.__Leave_S:		code = ILCode.Leave; break;
 			}
 		}
 		

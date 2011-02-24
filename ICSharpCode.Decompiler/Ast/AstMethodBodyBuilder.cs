@@ -334,6 +334,14 @@ namespace Decompiler
 						ace.Arguments.Add(arg1);
 						return ace;
 					}
+				case (Code)ILCode.InitArray:
+					{
+						var ace = new Ast.ArrayCreateExpression();
+						ace.Type = operandAsTypeRef;
+						ace.Initializer = new ArrayInitializerExpression();
+						ace.Initializer.Elements.AddRange(args);
+						return ace;
+					}
 				case Code.Ldlen:
 					return arg1.Member("Length");
 				case Code.Ldelem_I:
