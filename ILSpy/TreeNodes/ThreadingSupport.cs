@@ -11,36 +11,22 @@ using ICSharpCode.Decompiler;
 namespace ICSharpCode.ILSpy.TreeNodes
 {
 	/// <summary>
-	/// Node that is lazy-loaded and loads its children on a background thread.
+	/// Adds threading support to nodes
 	/// </summary>
-	abstract class ThreadedTreeNode : ILSpyTreeNode
+	class ThreadingSupport
 	{
 		Task<List<ILSpyTreeNode>> loadChildrenTask;
 		
-		public ThreadedTreeNode()
-		{
-			this.LazyLoading = true;
-		}
-		
-		public void Invalidate()
-		{
-			this.LazyLoading = true;
-			this.Children.Clear();
-			loadChildrenTask = null;
-		}
-		
 		/// <summary>
-		/// FetchChildren() runs on the main thread; but the enumerator is consumed on a background thread
+		/// 
 		/// </summary>
-		protected abstract IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct);
-		
-		protected override sealed void LoadChildren()
+		public void LoadChildren(ILSpyTreeNode node, Func<CancellationToken, IEnumerable<ILSpyTreeNode>> fetchChildren)
 		{
-			this.Children.Add(new LoadingTreeNode());
+			node.Children.Add(new LoadingTreeNode());
 			
 			CancellationToken ct = CancellationToken.None;
 			
-			var fetchChildrenEnumerable = FetchChildren(ct);
+			var fetchChildrenEnumerable = fetchChildren(ct);
 			Task<List<ILSpyTreeNode>> thisTask = null;
 			thisTask = new Task<List<ILSpyTreeNode>>(
 				delegate {
@@ -53,14 +39,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 								// don't access "child" here the
 								// background thread might already be running the next loop iteration
 								if (loadChildrenTask == thisTask) {
-									this.Children.Insert(this.Children.Count - 1, newChild);
+									node.Children.Insert(node.Children.Count - 1, newChild);
 								}
 							}), child);
 					}
 					App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(
 						delegate {
 							if (loadChildrenTask == thisTask) {
-								this.Children.RemoveAt(this.Children.Count - 1); // remove 'Loading...'
+								node.Children.RemoveAt(node.Children.Count - 1); // remove 'Loading...'
 							}
 						}));
 					return result;
@@ -72,11 +58,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			thisTask.Wait(TimeSpan.FromMilliseconds(200));
 		}
 		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		public void Decompile(Language language, ITextOutput output, DecompilationOptions options, Action ensureLazyChildren)
 		{
 			var loadChildrenTask = this.loadChildrenTask;
 			if (loadChildrenTask == null) {
-				App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
+				App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, ensureLazyChildren);
 				loadChildrenTask = this.loadChildrenTask;
 			}
 			if (loadChildrenTask != null) {

@@ -22,4 +22,8 @@
 			      Data            = "M 5,5 L 10,10 L 15,5 L 5,5"/>
 		</StackPanel>
 	</DataTemplate>
+	
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="../Controls/SearchBoxStyle.xaml" />
+	</ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

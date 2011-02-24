@@ -13,11 +13,7 @@
 	FocusManager.FocusedElement="{Binding ElementName=treeView}"
 >
 	<Window.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="Controls/SearchBoxStyle.xaml" />
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 	</Window.Resources>
 	<Window.CommandBindings>
 		<CommandBinding
@@ -65,6 +61,7 @@
 						<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
 					</MenuItem.Icon>
 				</MenuItem>
+				<MenuItem Header="Show _analyzer" Name="showAnalyzer" IsCheckable="True" />
 			</MenuItem>
 			<MenuItem Header="_Help">
 				<MenuItem Header="_About" Click="AboutClick" />
@@ -157,6 +154,13 @@
 							<TextBlock Margin="4,0" VerticalAlignment="Center">A new ILSpy version is available.</TextBlock>
 							<Button Click="downloadUpdateButtonClick">Download</Button>
 						</StackPanel>
+					</DockPanel>
+				</Border>
+				
+				<Border BorderBrush="Gray" BorderThickness="1" DockPanel.Dock="Bottom" Name="analyzerPanel" Visibility="{Binding IsChecked, ElementName=showAnalyzer, Converter={StaticResource BooleanToVisibilityConverter}}" MinHeight="100" MaxHeight="300">
+					<DockPanel>
+						<Label DockPanel.Dock="Top">Analyzer</Label>
+						<tv:SharpTreeView Name="analyzerTree" ShowRoot="False" />
 					</DockPanel>
 				</Border>
 				

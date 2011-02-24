@@ -27,7 +27,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 
@@ -45,8 +48,15 @@ namespace ICSharpCode.ILSpy
 		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
 		
+		static MainWindow instance;
+		
+		public static MainWindow Instance {
+			get { return instance; }
+		}
+		
 		public MainWindow()
 		{
+			instance = this;
 			spySettings = ILSpySettings.Load();
 			this.sessionSettings = new SessionSettings(spySettings);
 			this.assemblyListManager = new AssemblyListManager(spySettings);
@@ -366,6 +376,26 @@ namespace ICSharpCode.ILSpy
 				e.Handled = true;
 				SelectNode(history.GoForward(treeView.SelectedItem as SharpTreeNode), false);
 			}
+		}
+		#endregion
+		
+		#region Analyzer
+		public void Analyze(MethodTreeNode method)
+		{
+			if (analyzerTree.Root == null)
+				analyzerTree.Root = new SharpTreeNode();
+			
+			if (analyzerPanel.Visibility != Visibility.Visible)
+				analyzerPanel.Visibility = Visibility.Visible;
+			
+			var newNode = new AnalyzedMethodTreeNode(method.MethodDefinition) {
+				Language = sessionSettings.FilterSettings.Language
+			};
+			
+			if (analyzerTree.Root.Children.Contains(newNode))
+				analyzerTree.Root.Children.Remove(newNode);
+			
+			analyzerTree.Root.Children.Add(newNode);
 		}
 		#endregion
 		
