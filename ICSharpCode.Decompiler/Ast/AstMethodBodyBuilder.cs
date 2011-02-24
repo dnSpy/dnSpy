@@ -273,7 +273,7 @@ namespace Decompiler
 			// Do branches first because TransformExpressionArguments does not work on arguments that are branches themselfs
 			// TODO:  We should probably have virtual instructions for these and not abuse branch codes as expressions
 			switch(opCode) {
-				case ILCode.Br: return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
+					case ILCode.Br: return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
 				case ILCode.Brfalse:
 				case ILCode.Brtrue:
 				case ILCode.Beq:
@@ -293,7 +293,7 @@ namespace Decompiler
 						TrueStatement = new BlockStatement() {
 							new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name)
 						}
-					};	
+					};
 			}
 			
 			List<Ast.Expression> args = TransformExpressionArguments(byteCode);
@@ -361,14 +361,13 @@ namespace Decompiler
 				case Code.Stelem_R4:
 				case Code.Stelem_R8:
 				case Code.Stelem_Ref:
-					return new Ast.AssignmentExpression(arg1.Indexer(arg2), arg3);
 				case Code.Stelem_Any:
-					return InlineAssembly(byteCode, args);
+					return new Ast.AssignmentExpression(arg1.Indexer(arg2), arg3);
 					#endregion
 					#region Comparison
 					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
 					case Code.Cgt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-					case Code.Cgt_Un:
+				case Code.Cgt_Un:
 					// can also mean Inequality, when used with object references
 					{
 						TypeReference arg1Type = byteCode.Arguments[0].InferredType;
@@ -568,14 +567,18 @@ namespace Decompiler
 				case Code.Newobj:
 					{
 						Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
-						// TODO: Ensure that the corrent overloaded constructor is called
 						
-						/*if (declaringType is ArrayType) { shouldn't this be newarr?
-						return new Ast.ArrayCreateExpression {
-							Type = AstBuilder.ConvertType((ArrayType)declaringType),
-							Arguments = args
-						};
-					}*/
+						if (declaringType is ArrayType) {
+							ComposedType ct = AstBuilder.ConvertType((ArrayType)declaringType) as ComposedType;
+							if (ct != null && ct.ArraySpecifiers.Count >= 1) {
+								var ace = new Ast.ArrayCreateExpression();
+								ct.ArraySpecifiers.First().Remove();
+								ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
+								ace.Type = ct;
+								ace.Arguments.AddRange(args);
+								return ace;
+							}
+						}
 						var oce = new Ast.ObjectCreateExpression();
 						oce.Type = AstBuilder.ConvertType(declaringType);
 						oce.Arguments.AddRange(args);
@@ -637,6 +640,12 @@ namespace Decompiler
 					// If we're not calling a method in the current class; we must be calling one in the base class.
 					target = new BaseReferenceExpression();
 				}
+			}
+			
+			if (cecilMethod.Name == "Get" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 1) {
+				return target.Indexer(methodArgs);
+			} else if (cecilMethod.Name == "Set" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 2) {
+				return new AssignmentExpression(target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)), methodArgs.Last());
 			}
 			
 			// Resolve the method to figure out whether it is an accessor:
