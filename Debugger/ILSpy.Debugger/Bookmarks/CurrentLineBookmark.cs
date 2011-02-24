@@ -13,6 +13,10 @@ namespace ILSpy.Debugger.Bookmarks
 	{
 		static CurrentLineBookmark instance;
 		
+		public static CurrentLineBookmark Instance {
+			get { return instance; }
+		}
+		
 		static int startLine;
 		static int startColumn;
 		static int endLine;

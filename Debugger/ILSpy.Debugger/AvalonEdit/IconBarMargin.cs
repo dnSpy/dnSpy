@@ -25,6 +25,7 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
+using ICSharpCode.Decompiler;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Services;
 using Mono.Cecil;
@@ -237,15 +238,27 @@ namespace ILSpy.Debugger.AvalonEdit
 				BookmarkBase bm = GetBookmarkFromLine(line);
 				if (bm != null) {
 					bm.MouseUp(e);
+					
 					if (bm.CanToggle) {
 						BookmarkManager.RemoveMark(bm);
+						InvalidateVisual();
 					}
-					InvalidateVisual();
+					
 					if (e.Handled)
 						return;
 				}
 				if (e.ChangedButton == MouseButton.Left) {
 					if (CurrentType != null) {
+						
+						// check if the codemappings exists for this line
+						var storage = CodeMappings.GetStorage(DebuggerService.CurrentDebugger.Language);
+						uint token;
+						if (storage.GetInstructionByTypeAndLine(CurrentType.FullName, line, out token) == null) {
+							MessageBox.Show(string.Format("Missing code mappings for {0} at line {1}", CurrentType.FullName, line),
+							                "Code mappings", MessageBoxButton.OK, MessageBoxImage.Information);
+							return;
+						}
+						
 						// no bookmark on the line: create a new breakpoint
 						DebuggerService.ToggleBreakpointAt(
 							CurrentType.FullName, 

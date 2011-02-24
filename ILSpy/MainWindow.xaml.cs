@@ -298,10 +298,6 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		#endregion
-		
-		#region Debugger commands
-		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			if (!DebuggerService.CurrentDebugger.IsDebugging) {
@@ -312,6 +308,10 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		#endregion
+		
+		#region Debugger commands
+
 		void AttachToProcessExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			if (!DebuggerService.CurrentDebugger.IsDebugging) {
@@ -335,7 +335,7 @@ namespace ICSharpCode.ILSpy
 		
 		void DetachFromProcessExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (DebuggerService.CurrentDebugger.IsDebugging){
+			if (DebuggerService.CurrentDebugger.IsDebugging && !DebuggerService.CurrentDebugger.IsProcessRunning){
 				DebuggerService.CurrentDebugger.Detach();
 				
 				EnableDebuggerUI(true);
@@ -351,19 +351,19 @@ namespace ICSharpCode.ILSpy
 		
 		void StepIntoExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (DebuggerService.CurrentDebugger.IsDebugging)
+			if (DebuggerService.CurrentDebugger.IsDebugging && !DebuggerService.CurrentDebugger.IsProcessRunning)
 				DebuggerService.CurrentDebugger.StepInto();
 		}
 		
 		void StepOverExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (DebuggerService.CurrentDebugger.IsDebugging)
+			if (DebuggerService.CurrentDebugger.IsDebugging && !DebuggerService.CurrentDebugger.IsProcessRunning)
 				DebuggerService.CurrentDebugger.StepOver();
 		}
 		
 		void StepOutExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (DebuggerService.CurrentDebugger.IsDebugging)
+			if (DebuggerService.CurrentDebugger.IsDebugging && !DebuggerService.CurrentDebugger.IsProcessRunning)
 				DebuggerService.CurrentDebugger.StepOut();
 		}
 		

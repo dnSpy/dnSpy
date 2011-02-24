@@ -76,6 +76,9 @@ namespace ILSpy.Debugger.ToolTips
 				toolTip.IsOpen = false;
 			
 			TryCloseExistingPopup(true);
+			
+			if (popup != null)
+				popup.IsOpen = false;
 		}
 		
 		void OnMouseHoverStopped(MouseEventArgs e)

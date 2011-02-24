@@ -139,9 +139,13 @@ namespace Debugger
 			}
 		}
 		
+		public int[] ILRanges { get; set; }
+		
+		public int SourceCodeLine { get; set; }
+		
 		SourcecodeSegment GetSegmentForOffet(int offset)
 		{
-			return SourcecodeSegment.Resolve(this.MethodInfo.DebugModule, corFunction, offset);
+			return SourcecodeSegment.ResolveForIL(this.MethodInfo.DebugModule, corFunction, SourceCodeLine, offset, ILRanges);
 		}
 		
 		/// <summary> Step into next instruction </summary>
@@ -187,10 +191,6 @@ namespace Debugger
 		
 		void AsyncStep(bool stepIn)
 		{
-			if (this.MethodInfo.DebugModule.HasSymbols == false) {
-				throw new DebuggerException("Unable to step. No symbols loaded.");
-			}
-			
 			SourcecodeSegment nextSt = NextStatement;
 			if (nextSt == null) {
 				throw new DebuggerException("Unable to step. Next statement not aviable");

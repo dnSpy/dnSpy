@@ -227,17 +227,26 @@ namespace ILSpy.Debugger.Tooltips
 
 		private void handleScroll(object sender, ScrollChangedEventArgs e)
 		{
+			if (this.lazyGrid == null)
+				return;
+			
 			btnUp.IsEnabled = !this.lazyGrid.IsScrolledToStart;
 			btnDown.IsEnabled = !this.lazyGrid.IsScrolledToEnd;
 		}
 
 		void BtnUp_Click(object sender, RoutedEventArgs e)
 		{
+			if (this.lazyGrid == null)
+				return;
+			
 			this.lazyGrid.ScrollViewer.ScrollUp(1);
 		}
 
 		void BtnDown_Click(object sender, RoutedEventArgs e)
 		{
+			if (this.lazyGrid == null)
+				return;
+			
 			this.lazyGrid.ScrollViewer.ScrollDown(1);
 		}
 		

@@ -187,7 +187,8 @@ namespace Debugger
 		internal override bool SetBreakpoint(Module module)
 		{
 			SourcecodeSegment segment = SourcecodeSegment.CreateForIL(module, this.Line, (int)MetadataToken, ILOffset);
-			
+			if (segment == null)
+				return false;
 			try {
 				ICorDebugFunctionBreakpoint corBreakpoint = segment.CorFunction.GetILCode().CreateBreakpoint((uint)segment.ILStart);
 				corBreakpoint.Activate(Enabled ? 1 : 0);
@@ -197,8 +198,7 @@ namespace Debugger
 				OnSet(new BreakpointEventArgs(this));
 				
 				return true;
-			}
-			catch (COMException) {
+			} catch {
 				return false;
 			}
 		}

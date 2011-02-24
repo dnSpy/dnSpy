@@ -1,8 +1,10 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -44,6 +46,12 @@ namespace ILSpy.Debugger.Services
 		
 		//DynamicTreeDebuggerRow currentTooltipRow;
 		//Expression             currentTooltipExpression;
+		
+		private ConcurrentDictionary<string, List<MethodMapping>> CodeMappingsStorage {
+			get {
+				return CodeMappings.GetStorage(Language);
+			}
+		}
 		
 		public event EventHandler<ProcessEventArgs> ProcessSelected;
 		
@@ -274,16 +282,43 @@ namespace ILSpy.Debugger.Services
 		
 		// Stepping:
 		
+		SourceCodeMapping GetNextCodeMapping()
+		{
+			uint token;
+			var instruction = CodeMappingsStorage.GetInstructionByTypeAndLine(
+				CurrentLineBookmark.Instance.TypeName,
+				CurrentLineBookmark.Instance.LineNumber, out token);
+			
+			var val = CodeMappingsStorage[CurrentLineBookmark.Instance.TypeName];
+			
+			var mapping = val.Find(m => m.MetadataToken == token);
+			
+			return mapping.MethodCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From <= instruction.ILInstructionOffset.To);
+		}
+		
 		public void StepInto()
 		{
 			if (!IsDebugging) {
 				MessageBox.Show(errorNotDebugging, "StepInto");
 				return;
 			}
-			if (debuggedProcess.SelectedStackFrame == null || debuggedProcess.IsRunning) {
+			
+			// use most recent stack frame because we don't have the symbols
+			if (debuggedProcess.SelectedThread == null ||
+			    debuggedProcess.SelectedThread.MostRecentStackFrame == null ||
+			    debuggedProcess.IsRunning) {
 				MessageBox.Show(errorCannotStepNoActiveFunction, "StepInto");
 			} else {
-				debuggedProcess.SelectedStackFrame.AsyncStepInto();
+				var map = GetNextCodeMapping();
+				if (map == null) {
+					CurrentLineBookmark.Remove();
+					Continue();
+				} else {
+					var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
+					frame.SourceCodeLine = map.SourceCodeLine;
+					frame.ILRanges = (new List<int> { map.ILInstructionOffset.From, map.ILInstructionOffset.To }).ToArray();
+					frame.AsyncStepInto();
+				}
 			}
 		}
 		
@@ -292,11 +327,24 @@ namespace ILSpy.Debugger.Services
 			if (!IsDebugging) {
 				MessageBox.Show(errorNotDebugging, "StepOver");
 				return;
+				
 			}
-			if (debuggedProcess.SelectedStackFrame == null || debuggedProcess.IsRunning) {
+			// use most recent stack frame because we don't have the symbols
+			if (debuggedProcess.SelectedThread == null ||
+			    debuggedProcess.SelectedThread.MostRecentStackFrame == null ||
+			    debuggedProcess.IsRunning) {
 				MessageBox.Show(errorCannotStepNoActiveFunction, "StepOver");
 			} else {
-				debuggedProcess.SelectedStackFrame.AsyncStepOver();
+				var map = GetNextCodeMapping();
+				if (map == null) {
+					CurrentLineBookmark.Remove();
+					Continue();
+				} else {
+					var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
+					frame.SourceCodeLine = map.SourceCodeLine;
+					frame.ILRanges = (new List<int> { map.ILInstructionOffset.From, map.ILInstructionOffset.To }).ToArray();
+					frame.AsyncStepOver();
+				}
 			}
 		}
 		
@@ -306,10 +354,23 @@ namespace ILSpy.Debugger.Services
 				MessageBox.Show(errorNotDebugging, "StepOut");
 				return;
 			}
-			if (debuggedProcess.SelectedStackFrame == null || debuggedProcess.IsRunning) {
+			
+			// use most recent stack frame because we don't have the symbols
+			if (debuggedProcess.SelectedThread == null ||
+			    debuggedProcess.SelectedThread.MostRecentStackFrame == null ||
+			    debuggedProcess.IsRunning) {
 				MessageBox.Show(errorCannotStepNoActiveFunction, "StepOut");
 			} else {
-				debuggedProcess.SelectedStackFrame.AsyncStepOut();
+				var map = GetNextCodeMapping();
+				if (map == null) {
+					CurrentLineBookmark.Remove();
+					Continue();
+				} else {
+					var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
+					frame.SourceCodeLine = map.SourceCodeLine;
+					frame.ILRanges = (new List<int> { map.ILInstructionOffset.From, map.ILInstructionOffset.To }).ToArray();
+					frame.AsyncStepOut();
+				}
 			}
 		}
 		
@@ -335,7 +396,7 @@ namespace ILSpy.Debugger.Services
 			if (!CanEvaluate) {
 				return null;
 			}
-			return ExpressionEvaluator.Evaluate(variableName, SupportedLanguage.CSharp, debuggedProcess.SelectedStackFrame);
+			return ExpressionEvaluator.Evaluate(variableName, SupportedLanguage.CSharp, debuggedProcess.SelectedThread.MostRecentStackFrame);
 		}
 		
 		/// <summary>
@@ -381,7 +442,10 @@ namespace ILSpy.Debugger.Services
 		public bool CanEvaluate
 		{
 			get {
-				return debuggedProcess != null && !debuggedProcess.IsRunning && debuggedProcess.SelectedStackFrame != null;
+				return debuggedProcess != null &&
+					!debuggedProcess.IsRunning &&
+					debuggedProcess.SelectedThread != null &&
+					debuggedProcess.SelectedThread.MostRecentStackFrame != null;
 			}
 		}
 		
@@ -429,8 +493,9 @@ namespace ILSpy.Debugger.Services
 		
 		public bool CanSetInstructionPointer(string filename, int line, int column)
 		{
-			if (debuggedProcess != null && debuggedProcess.IsPaused && debuggedProcess.SelectedStackFrame != null) {
-				SourcecodeSegment seg = debuggedProcess.SelectedStackFrame.CanSetIP(filename, line, column);
+			if (debuggedProcess != null && debuggedProcess.IsPaused &&
+			    debuggedProcess.SelectedThread != null && debuggedProcess.SelectedThread.MostRecentStackFrame != null) {
+				SourcecodeSegment seg = debuggedProcess.SelectedThread.MostRecentStackFrame.CanSetIP(filename, line, column);
 				return seg != null;
 			} else {
 				return false;
@@ -440,7 +505,7 @@ namespace ILSpy.Debugger.Services
 		public bool SetInstructionPointer(string filename, int line, int column)
 		{
 			if (CanSetInstructionPointer(filename, line, column)) {
-				SourcecodeSegment seg = debuggedProcess.SelectedStackFrame.SetIP(filename, line, column);
+				SourcecodeSegment seg = debuggedProcess.SelectedThread.MostRecentStackFrame.SetIP(filename, line, column);
 				return seg != null;
 			} else {
 				return false;
@@ -498,12 +563,10 @@ namespace ILSpy.Debugger.Services
 		{
 			Breakpoint breakpoint = null;
 			
-			var storage = CodeMappings.GetStorage(Language);
-			
 			if (Language == bookmark.Language) {
 				uint token;
 				SourceCodeMapping map =
-					storage.GetInstructionByTypeAndLine(
+					CodeMappingsStorage.GetInstructionByTypeAndLine(
 						bookmark.TypeName, bookmark.LineNumber, out token);
 				
 				if (map != null) {
@@ -613,7 +676,7 @@ namespace ILSpy.Debugger.Services
 		{
 			try {
 				SupportedLanguage supportedLanguage = (SupportedLanguage)Enum.Parse(typeof(SupportedLanguage), language, true);
-				Value val = ExpressionEvaluator.Evaluate(code, supportedLanguage, debuggedProcess.SelectedStackFrame);
+				Value val = ExpressionEvaluator.Evaluate(code, supportedLanguage, debuggedProcess.SelectedThread.MostRecentStackFrame);
 				
 				if (val != null && val.Type.IsPrimitive && val.PrimitiveValue is bool)
 					return (bool)val.PrimitiveValue;
@@ -746,14 +809,19 @@ namespace ILSpy.Debugger.Services
 		{
 			DebuggerService.RemoveCurrentLineMarker();
 			
-			if (debuggedProcess != null && debuggedProcess.SelectedStackFrame != null) {
-				var storage = CodeMappings.GetStorage(Language);
+			if (debuggedProcess != null &&  debuggedProcess.SelectedThread != null) {
 				
-				uint token = (uint)debuggedProcess.SelectedStackFrame.MethodInfo.MetadataToken;
-				int ilOffset = debuggedProcess.SelectedStackFrame.IP;
+				// use most recent stack frame because we don't have the symbols
+				var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
+				
+				if (frame == null)
+					return;
+				
+				uint token = (uint)frame.MethodInfo.MetadataToken;
+				int ilOffset = frame.IP;
 				int line;
 				string typeName;
-				storage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line);
+				CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line);
 				if (typeName != null)
 					DebuggerService.JumpToCurrentLine(typeName, line, 0, line, 0);
 			}
