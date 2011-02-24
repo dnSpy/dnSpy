@@ -140,7 +140,7 @@ namespace ICSharpCode.TreeView
 			ThrowOnReentrancy();
 			var oldList = list;
 			list = new List<SharpTreeNode>();
-			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, list, 0));
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldList, 0));
 		}
 		
 		public bool Contains(SharpTreeNode node)
