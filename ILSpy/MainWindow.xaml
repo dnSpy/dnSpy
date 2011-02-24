@@ -144,10 +144,13 @@
 				BorderBrush="Transparent"
 				HorizontalAlignment="Stretch" />
 			<!-- Right pane: Text Editor -->
-			<DockPanel
-				Grid.Column="2">
-				
-				<Border BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Top" Name="updateAvailablePanel" Visibility="Collapsed">
+			<Grid Grid.Column="2">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Border BorderBrush="Black" BorderThickness="1" Name="updateAvailablePanel" Visibility="Collapsed">
 					<DockPanel>
 						<Button DockPanel.Dock="Right" Click="updateAvailablePanelCloseButtonClick" MinWidth="0">X</Button>
 						<StackPanel Orientation="Horizontal">
@@ -157,15 +160,25 @@
 					</DockPanel>
 				</Border>
 				
-				<Border BorderBrush="Gray" BorderThickness="1" DockPanel.Dock="Bottom" Name="analyzerPanel" Visibility="{Binding IsChecked, ElementName=showAnalyzer, Converter={StaticResource BooleanToVisibilityConverter}}" MinHeight="100" MaxHeight="300">
+				<textView:DecompilerTextView x:Name="decompilerTextView" Grid.Row="1" />
+				
+				<GridSplitter
+					Grid.ZIndex="2"
+					Grid.Row="1"
+					Margin="0,-2"
+					BorderThickness="0,2"
+					BorderBrush="Transparent"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Bottom"
+					Visibility="{Binding IsChecked, ElementName=showAnalyzer, Converter={StaticResource BooleanToVisibilityConverter}}" />
+				
+				<Border BorderBrush="Gray" BorderThickness="1" Grid.Row="2" Name="analyzerPanel" Visibility="{Binding IsChecked, ElementName=showAnalyzer, Converter={StaticResource BooleanToVisibilityConverter}}" MinHeight="100">
 					<DockPanel>
 						<Label DockPanel.Dock="Top">Analyzer</Label>
 						<tv:SharpTreeView Name="analyzerTree" ShowRoot="False" />
 					</DockPanel>
 				</Border>
-				
-				<textView:DecompilerTextView x:Name="decompilerTextView" />
-			</DockPanel>
+			</Grid>
 		</Grid>
 	</DockPanel>
 </Window>

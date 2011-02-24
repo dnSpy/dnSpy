@@ -45,25 +45,5 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));
 		}
-		
-		#region Equals and GetHashCode implementation
-		public override bool Equals(object obj)
-		{
-			AnalyzedMethodTreeNode other = obj as AnalyzedMethodTreeNode;
-			if (other == null)
-				return false;
-			return object.Equals(this.analyzedMethod, other.analyzedMethod);
-		}
-		
-		public override int GetHashCode()
-		{
-			int hashCode = 0;
-			unchecked {
-				if (analyzedMethod != null)
-					hashCode += 1000000007 * analyzedMethod.GetHashCode();
-			}
-			return hashCode;
-		}
-		#endregion
 	}
 }

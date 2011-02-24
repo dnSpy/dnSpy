@@ -389,11 +389,9 @@ namespace ICSharpCode.ILSpy
 				analyzerPanel.Visibility = Visibility.Visible;
 			
 			var newNode = new AnalyzedMethodTreeNode(method.MethodDefinition) {
-				Language = sessionSettings.FilterSettings.Language
+				Language = sessionSettings.FilterSettings.Language,
+				IsExpanded = true
 			};
-			
-			if (analyzerTree.Root.Children.Contains(newNode))
-				analyzerTree.Root.Children.Remove(newNode);
 			
 			analyzerTree.Root.Children.Add(newNode);
 		}
