@@ -8,6 +8,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
@@ -15,7 +17,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// Outputs the AST.
 	/// </summary>
-	public class OutputVisitor : IAstVisitor<object, object>
+	public class OutputVisitor : IPatternAstVisitor<object, object>
 	{
 		readonly IOutputFormatter formatter;
 		readonly CSharpFormattingPolicy policy;
@@ -263,7 +265,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		void Semicolon()
 		{
-			if (!(currentContainerNode.Parent is ForStatement)) {
+			if (currentContainerNode.Role != ForStatement.InitializerRole && currentContainerNode.Role != ForStatement.IteratorRole && currentContainerNode.Role != UsingStatement.ResourceAcquisitionRole) {
 				WriteToken(";", AstNode.Roles.Semicolon);
 				NewLine();
 			}
@@ -371,7 +373,8 @@ namespace ICSharpCode.NRefactory.CSharp
 						formatter.Space();
 				} else {
 					WriteSpecialsUpToRole(AstNode.Roles.Dot, ident);
-					
+					formatter.WriteToken(".");
+					lastWritten = LastWritten.Other;
 				}
 				WriteSpecialsUpToNode(ident);
 				formatter.WriteIdentifier(ident.Name);
@@ -381,6 +384,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		void WriteEmbeddedStatement(Statement embeddedStatement)
 		{
+			if (embeddedStatement.IsNull)
+				return;
 			BlockStatement block = embeddedStatement as BlockStatement;
 			if (block != null)
 				VisitBlockStatement(block, null);
@@ -561,7 +566,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteKeyword("checked");
 			LPar();
 			Space(policy.WithinCheckedExpressionParantheses);
-			checkedExpression.AcceptVisitor(this, data);
+			checkedExpression.Expression.AcceptVisitor(this, data);
 			Space(policy.WithinCheckedExpressionParantheses);
 			RPar();
 			return EndNode(checkedExpression);
@@ -674,10 +679,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		bool LambdaNeedsParenthesis(LambdaExpression lambdaExpression)
 		{
-			if (lambdaExpression.Parameters.Count() != 1)
+			if (lambdaExpression.Parameters.Count != 1)
 				return true;
 			var p = lambdaExpression.Parameters.Single();
-			return p.Type.IsNull && p.ParameterModifier == ParameterModifier.None;
+			return !(p.Type.IsNull && p.ParameterModifier == ParameterModifier.None);
 		}
 		
 		public object VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
@@ -837,7 +842,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				case '\v':
 					return "\\v";
 				default:
-					if (char.IsControl(ch)) {
+					if (char.IsControl(ch) || char.IsSurrogate(ch)) {
 						return "\\u" + ((int)ch).ToString("x4");
 					} else {
 						return ch.ToString();
@@ -928,7 +933,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteKeyword("unchecked");
 			LPar();
 			Space(policy.WithinCheckedExpressionParantheses);
-			uncheckedExpression.AcceptVisitor(this, data);
+			uncheckedExpression.Expression.AcceptVisitor(this, data);
 			Space(policy.WithinCheckedExpressionParantheses);
 			RPar();
 			return EndNode(uncheckedExpression);
@@ -1625,12 +1630,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(constructorDeclaration.Attributes);
 			WriteModifiers(constructorDeclaration.ModifierTokens);
 			TypeDeclaration type = constructorDeclaration.Parent as TypeDeclaration;
-			if (type != null) {
-				WriteIdentifier(type.Name);
-			}
+			WriteIdentifier(type != null ? type.Name : constructorDeclaration.Name);
 			Space(policy.BeforeConstructorDeclarationParentheses);
 			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, policy.WithinMethodDeclarationParentheses);
-			constructorDeclaration.Initializer.AcceptVisitor(this, data);
+			if (!constructorDeclaration.Initializer.IsNull) {
+				Space();
+				constructorDeclaration.Initializer.AcceptVisitor(this, data);
+			}
 			WriteMethodBody(constructorDeclaration.Body);
 			return EndNode(constructorDeclaration);
 		}
@@ -1657,9 +1663,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteModifiers(destructorDeclaration.ModifierTokens);
 			WriteToken("~", DestructorDeclaration.TildeRole);
 			TypeDeclaration type = destructorDeclaration.Parent as TypeDeclaration;
-			if (type != null) {
-				WriteIdentifier(type.Name);
-			}
+			WriteIdentifier(type != null ? type.Name : destructorDeclaration.Name);
 			Space(policy.BeforeConstructorDeclarationParentheses);
 			LPar();
 			RPar();
@@ -1689,6 +1693,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteModifiers(eventDeclaration.ModifierTokens);
 			WriteKeyword("event");
 			eventDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WriteCommaSeparatedList(eventDeclaration.Variables);
 			Semicolon();
 			return EndNode(eventDeclaration);
@@ -1700,6 +1705,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(customEventDeclaration.Attributes);
 			WriteModifiers(customEventDeclaration.ModifierTokens);
 			WriteKeyword("event");
+			customEventDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WritePrivateImplementationType(customEventDeclaration.PrivateImplementationType);
 			WriteIdentifier(customEventDeclaration.Name);
 			OpenBrace(policy.EventBraceStyle);
@@ -1720,6 +1727,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(fieldDeclaration.Attributes);
 			WriteModifiers(fieldDeclaration.ModifierTokens);
 			fieldDeclaration.ReturnType.AcceptVisitor(this, data);
+			Space();
 			WriteCommaSeparatedList(fieldDeclaration.Variables);
 			Semicolon();
 			return EndNode(fieldDeclaration);
@@ -1981,6 +1989,92 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(identifier);
 			WriteIdentifier(identifier.Name);
 			return EndNode(identifier);
+		}
+		#endregion
+		
+		#region Pattern Nodes
+		object IPatternAstVisitor<object, object>.VisitPlaceholder(AstNode placeholder, AstNode child, object data)
+		{
+			StartNode(placeholder);
+			child.AcceptVisitor(this, data);
+			return EndNode(placeholder);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitAnyNode(AnyNode anyNode, object data)
+		{
+			StartNode(anyNode);
+			if (!string.IsNullOrEmpty(anyNode.GroupName)) {
+				WriteIdentifier(anyNode.GroupName);
+				WriteToken(":", AstNode.Roles.Colon);
+			}
+			WriteKeyword("anyNode");
+			return EndNode(anyNode);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitBackreference(Backreference backreference, object data)
+		{
+			StartNode(backreference);
+			WriteKeyword("backreference");
+			LPar();
+			WriteIdentifier(backreference.ReferencedGroupName);
+			RPar();
+			return EndNode(backreference);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitIdentifierExpressionBackreference(IdentifierExpressionBackreference identifierExpressionBackreference, object data)
+		{
+			StartNode(identifierExpressionBackreference);
+			WriteKeyword("identifierBackreference");
+			LPar();
+			WriteIdentifier(identifierExpressionBackreference.ReferencedGroupName);
+			RPar();
+			return EndNode(identifierExpressionBackreference);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitChoice(Choice choice, object data)
+		{
+			StartNode(choice);
+			WriteKeyword("choice");
+			Space();
+			LPar();
+			NewLine();
+			formatter.Indent();
+			foreach (AstNode alternative in choice) {
+				alternative.AcceptVisitor(this, data);
+				if (alternative != choice.LastChild)
+					WriteToken(",", AstNode.Roles.Comma);
+				NewLine();
+			}
+			formatter.Unindent();
+			RPar();
+			return EndNode(choice);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitNamedNode(NamedNode namedNode, object data)
+		{
+			StartNode(namedNode);
+			if (!string.IsNullOrEmpty(namedNode.GroupName)) {
+				WriteIdentifier(namedNode.GroupName);
+				WriteToken(":", AstNode.Roles.Colon);
+			}
+			namedNode.GetChildByRole(NamedNode.ElementRole).AcceptVisitor(this, data);
+			return EndNode(namedNode);
+		}
+		
+		object IPatternAstVisitor<object, object>.VisitRepeat(Repeat repeat, object data)
+		{
+			StartNode(repeat);
+			WriteKeyword("repeat");
+			LPar();
+			if (repeat.MinCount != 0 || repeat.MaxCount != int.MaxValue) {
+				WriteIdentifier(repeat.MinCount.ToString());
+				WriteToken(",", AstNode.Roles.Comma);
+				WriteIdentifier(repeat.MaxCount.ToString());
+				WriteToken(",", AstNode.Roles.Comma);
+			}
+			repeat.GetChildByRole(Repeat.ElementRole).AcceptVisitor(this, data);
+			RPar();
+			return EndNode(repeat);
 		}
 		#endregion
 	}

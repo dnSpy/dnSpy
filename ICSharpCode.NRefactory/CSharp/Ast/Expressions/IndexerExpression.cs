@@ -1,4 +1,4 @@
-// 
+﻿// 
 // IndexerExpression.cs
 //  
 // Author:
@@ -42,9 +42,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LBracket); }
 		}
 		
-		public IEnumerable<Expression> Arguments {
+		public AstNodeCollection<Expression> Arguments {
 			get { return GetChildrenByRole<Expression>(Roles.Argument); }
-			set { SetChildrenByRole(Roles.Argument, value); }
 		}
 		
 		public CSharpTokenNode RBracketToken {
@@ -54,6 +53,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIndexerExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			IndexerExpression o = other as IndexerExpression;
+			return o != null && this.Target.DoMatch(o.Target, match) && this.Arguments.DoMatch(o.Arguments, match);
 		}
 	}
 }

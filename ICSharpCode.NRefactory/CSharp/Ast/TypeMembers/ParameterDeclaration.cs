@@ -1,4 +1,4 @@
-// 
+﻿// 
 // ParameterDeclarationExpression.cs
 //
 // Author:
@@ -49,9 +49,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public IEnumerable<AttributeSection> Attributes {
+		public AstNodeCollection<AttributeSection> Attributes {
 			get { return GetChildrenByRole (AttributeRole); }
-			set { SetChildrenByRole (AttributeRole, value); }
 		}
 		
 		public ParameterModifier ParameterModifier {
@@ -81,6 +80,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitParameterDeclaration (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ParameterDeclaration o = other as ParameterDeclaration;
+			return o != null && this.Attributes.DoMatch(o.Attributes, match) && this.ParameterModifier == o.ParameterModifier && MatchString(this.Name, o.Name) && this.DefaultExpression.DoMatch(o.DefaultExpression, match);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// 
+﻿// 
 // AnonymousMethodExpression.cs
 //
 // Author:
@@ -47,9 +47,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public IEnumerable<ParameterDeclaration> Parameters {
+		public AstNodeCollection<ParameterDeclaration> Parameters {
 			get { return GetChildrenByRole (Roles.Parameter); }
-			set { SetChildrenByRole (Roles.Parameter, value); }
 		}
 		
 		public CSharpTokenNode RParToken {
@@ -64,6 +63,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitAnonymousMethodExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			AnonymousMethodExpression o = other as AnonymousMethodExpression;
+			return o != null && this.HasParameterList == o.HasParameterList && this.Parameters.DoMatch(o.Parameters, match) && this.Body.DoMatch(o.Body, match);
 		}
 	}
 }

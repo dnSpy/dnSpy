@@ -1,4 +1,4 @@
-// 
+﻿// 
 // UsingStatement.cs
 //  
 // Author:
@@ -61,6 +61,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUsingStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			UsingStatement o = other as UsingStatement;
+			return o != null && this.ResourceAcquisition.DoMatch(o.ResourceAcquisition, match) && this.EmbeddedStatement.DoMatch(o.EmbeddedStatement, match);
 		}
 	}
 }

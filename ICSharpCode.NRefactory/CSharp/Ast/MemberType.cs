@@ -1,4 +1,4 @@
-// 
+﻿// 
 // FullTypeName.cs
 //
 // Author:
@@ -51,14 +51,19 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public IEnumerable<AstType> TypeArguments {
+		public AstNodeCollection<AstType> TypeArguments {
 			get { return GetChildrenByRole (Roles.TypeArgument); }
-			set { SetChildrenByRole (Roles.TypeArgument, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitMemberType (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			MemberType o = other as MemberType;
+			return o != null && this.IsDoubleColon == o.IsDoubleColon && MatchString(this.MemberName, o.MemberName) && this.Target.DoMatch(o.Target, match);
 		}
 		
 		public override string ToString()

@@ -25,17 +25,27 @@ namespace ICSharpCode.NRefactory.CSharp
 			{
 				return default (S);
 			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
+			}
 		}
 		#endregion
 		
-		public IEnumerable<QueryClause> Clauses {
+		public AstNodeCollection<QueryClause> Clauses {
 			get { return GetChildrenByRole(ClauseRole); }
-			set { SetChildrenByRole(ClauseRole, value); }
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QueryExpression o = other as QueryExpression;
+			return o != null && this.Clauses.DoMatch(o.Clauses, match);
 		}
 	}
 	
@@ -43,6 +53,12 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		public override NodeType NodeType {
 			get { return NodeType.QueryClause; }
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QueryClause o = other as QueryClause;
+			throw new NotImplementedException();
 		}
 	}
 	
@@ -260,9 +276,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Keyword); }
 		}
 		
-		public IEnumerable<QueryOrdering> Orderings {
+		public AstNodeCollection<QueryOrdering> Orderings {
 			get { return GetChildrenByRole (OrderingRole); }
-			set { SetChildrenByRole (OrderingRole, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
@@ -294,6 +309,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryOrdering (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QueryOrdering o = other as QueryOrdering;
+			return o != null && this.Direction == o.Direction && this.Expression.DoMatch(o.Expression, match);
 		}
 	}
 	

@@ -16,18 +16,16 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Type, value); }
 		}
 		
-		public IEnumerable<Expression> Arguments {
+		public AstNodeCollection<Expression> Arguments {
 			get { return GetChildrenByRole (Roles.Argument); }
-			set { SetChildrenByRole (Roles.Argument, value); }
 		}
 		
 		/// <summary>
 		/// Gets additional array ranks (those without size info).
 		/// Empty for "new int[5,1]"; will contain a single element for "new int[5][]".
 		/// </summary>
-		public IEnumerable<ArraySpecifier> AdditionalArraySpecifiers {
+		public AstNodeCollection<ArraySpecifier> AdditionalArraySpecifiers {
 			get { return GetChildrenByRole(AdditionalArraySpecifierRole); }
-			set { SetChildrenByRole (AdditionalArraySpecifierRole, value); }
 		}
 		
 		public ArrayInitializerExpression Initializer {
@@ -38,6 +36,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitArrayCreateExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ArrayCreateExpression o = other as ArrayCreateExpression;
+			return o != null && this.Type.DoMatch(o.Type, match) && this.Arguments.DoMatch(o.Arguments, match) && this.Initializer.DoMatch(o.Initializer, match);
 		}
 	}
 }

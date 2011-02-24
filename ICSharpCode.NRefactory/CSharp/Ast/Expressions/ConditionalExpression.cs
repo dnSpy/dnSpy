@@ -1,4 +1,4 @@
-// 
+﻿// 
 // ConditionalExpression.cs
 //
 // Author:
@@ -63,6 +63,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitConditionalExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ConditionalExpression o = other as ConditionalExpression;
+			return o != null && this.Condition.DoMatch(o.Condition, match) && this.TrueExpression.DoMatch(o.TrueExpression, match) && this.FalseExpression.DoMatch(o.FalseExpression, match);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-// 
+﻿// 
 // TryCatchStatement.cs
 //
 // Author:
@@ -49,9 +49,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (TryBlockRole, value); }
 		}
 		
-		public IEnumerable<CatchClause> CatchClauses {
+		public AstNodeCollection<CatchClause> CatchClauses {
 			get { return GetChildrenByRole (CatchClauseRole); }
-			set { SetChildrenByRole (CatchClauseRole, value); }
 		}
 		
 		public CSharpTokenNode FinallyToken {
@@ -66,6 +65,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitTryCatchStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			TryCatchStatement o = other as TryCatchStatement;
+			return o != null && this.TryBlock.DoMatch(o.TryBlock, match) && this.CatchClauses.DoMatch(o.CatchClauses, match) && this.FinallyBlock.DoMatch(o.FinallyBlock, match);
 		}
 	}
 	
@@ -115,6 +120,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCatchClause (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			CatchClause o = other as CatchClause;
+			return o != null && this.Type.DoMatch(o.Type, match) && MatchString(this.VariableName, o.VariableName) && this.Body.DoMatch(o.Body, match);
 		}
 	}
 }

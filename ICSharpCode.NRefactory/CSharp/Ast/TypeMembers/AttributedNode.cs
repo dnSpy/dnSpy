@@ -1,6 +1,7 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,9 +12,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		public static readonly Role<AttributeSection> AttributeRole = new Role<AttributeSection>("Attribute");
 		public static readonly Role<CSharpModifierToken> ModifierRole = new Role<CSharpModifierToken>("Modifier");
 		
-		public IEnumerable<AttributeSection> Attributes {
+		public AstNodeCollection<AttributeSection> Attributes {
 			get { return base.GetChildrenByRole (AttributeRole); }
-			set { SetChildrenByRole (AttributeRole, value); }
 		}
 		
 		public Modifiers Modifiers {
@@ -42,7 +42,9 @@ namespace ICSharpCode.NRefactory.CSharp
 				if ((m & newValue) != 0) {
 					if ((m & oldValue) == 0) {
 						// Modifier was added
-						node.InsertChildAfter(insertionPos, new CSharpModifierToken(AstLocation.Empty, m), ModifierRole);
+						var newToken = new CSharpModifierToken(AstLocation.Empty, m);
+						node.InsertChildAfter(insertionPos, newToken, ModifierRole);
+						insertionPos = newToken;
 					} else {
 						// Modifier already exists
 						insertionPos = node.GetChildrenByRole(ModifierRole).First(t => t.Modifier == m);
@@ -54,6 +56,11 @@ namespace ICSharpCode.NRefactory.CSharp
 					}
 				}
 			}
+		}
+		
+		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.CSharp.PatternMatching.Match match)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

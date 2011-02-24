@@ -1,6 +1,6 @@
-// 
+﻿// 
 // ForStatement.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -49,9 +49,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// Note: this contains multiple statements for "for (a = 2, b = 1; a > b; a--)", but contains
 		/// only a single statement for "for (int a = 2, b = 1; a > b; a--)" (a single VariableDeclarationStatement with two variables)
 		/// </summary>
-		public IEnumerable<Statement> Initializers {
+		public AstNodeCollection<Statement> Initializers {
 			get { return GetChildrenByRole (InitializerRole); }
-			set { SetChildrenByRole (InitializerRole, value); }
 		}
 		
 		public Expression Condition {
@@ -59,9 +58,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Condition, value); }
 		}
 		
-		public IEnumerable<Statement> Iterators {
+		public AstNodeCollection<Statement> Iterators {
 			get { return GetChildrenByRole (IteratorRole); }
-			set { SetChildrenByRole (IteratorRole, value); }
 		}
 		
 		public CSharpTokenNode RParToken {
@@ -76,6 +74,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitForStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ForStatement o = other as ForStatement;
+			return o != null && this.Initializers.DoMatch(o.Initializers, match) && this.Condition.DoMatch(o.Condition, match)
+				&& this.Iterators.DoMatch(o.Iterators, match) && this.EmbeddedStatement.DoMatch(o.EmbeddedStatement, match);
 		}
 	}
 }

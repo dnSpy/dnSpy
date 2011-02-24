@@ -1,4 +1,4 @@
-// 
+﻿// 
 // DelegateDeclaration.cs
 //
 // Author:
@@ -54,27 +54,24 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Type, value); }
 		}
 		
-		public IEnumerable<TypeParameterDeclaration> TypeParameters {
+		public AstNodeCollection<TypeParameterDeclaration> TypeParameters {
 			get { return GetChildrenByRole (Roles.TypeParameter); }
-			set { SetChildrenByRole (Roles.TypeParameter, value); }
 		}
 		
 		public CSharpTokenNode LParToken {
 			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public IEnumerable<ParameterDeclaration> Parameters {
+		public AstNodeCollection<ParameterDeclaration> Parameters {
 			get { return GetChildrenByRole (Roles.Parameter); }
-			set { SetChildrenByRole (Roles.Parameter, value); }
 		}
 		
 		public CSharpTokenNode RParToken {
 			get { return GetChildByRole (Roles.RPar); }
 		}
 		
-		public IEnumerable<Constraint> Constraints {
+		public AstNodeCollection<Constraint> Constraints {
 			get { return GetChildrenByRole (Roles.Constraint); }
-			set { SetChildrenByRole (Roles.Constraint, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)

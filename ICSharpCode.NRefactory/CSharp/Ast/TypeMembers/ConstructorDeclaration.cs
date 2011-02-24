@@ -1,4 +1,4 @@
-// 
+﻿// 
 // ConstructorDeclaration.cs
 //
 // Author:
@@ -33,13 +33,19 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		public static readonly Role<ConstructorInitializer> InitializerRole = new Role<ConstructorInitializer>("Initializer", ConstructorInitializer.Null);
 		
+		/// <summary>
+		/// Gets/Sets the name of the class containing the constructor.
+		/// This property can be used to inform the output visitor about the class name when writing a constructor declaration
+		/// without writing the complete type declaration. It is ignored when the constructor has a type declaration as parent.
+		/// </summary>
+		public string Name { get; set; }
+		
 		public CSharpTokenNode LParToken {
 			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public IEnumerable<ParameterDeclaration> Parameters {
+		public AstNodeCollection<ParameterDeclaration> Parameters {
 			get { return GetChildrenByRole (Roles.Parameter); }
-			set { SetChildrenByRole (Roles.Parameter, value); }
 		}
 		
 		public CSharpTokenNode RParToken {
@@ -105,14 +111,19 @@ namespace ICSharpCode.NRefactory.CSharp
 			set;
 		}
 		
-		public IEnumerable<Expression> Arguments {
+		public AstNodeCollection<Expression> Arguments {
 			get { return GetChildrenByRole (Roles.Argument); }
-			set { SetChildrenByRole (Roles.Argument, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitConstructorInitializer (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ConstructorInitializer o = other as ConstructorInitializer;
+			return o != null && this.ConstructorInitializerType == o.ConstructorInitializerType && this.Arguments.DoMatch(o.Arguments, match);
 		}
 	}
 }

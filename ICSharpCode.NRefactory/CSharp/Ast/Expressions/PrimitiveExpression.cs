@@ -1,4 +1,4 @@
-// 
+﻿// 
 // PrimitiveExpression.cs
 //  
 // Author:
@@ -31,6 +31,8 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class PrimitiveExpression : Expression
 	{
+		public static readonly object AnyValue = new object();
+		
 		AstLocation startLocation;
 		public override AstLocation StartLocation {
 			get {
@@ -65,6 +67,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitPrimitiveExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			PrimitiveExpression o = other as PrimitiveExpression;
+			return o != null && (this.Value == AnyValue || object.Equals(this.Value, o.Value));
 		}
 	}
 }

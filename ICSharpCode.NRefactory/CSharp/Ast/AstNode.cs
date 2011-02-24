@@ -1,4 +1,4 @@
-// 
+﻿// 
 // AstNode.cs
 //
 // Author:
@@ -25,10 +25,13 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -54,6 +57,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 			{
 				return default (S);
+			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
 			}
 		}
 		#endregion
@@ -164,16 +172,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			return role.NullObject;
 		}
 		
-		public IEnumerable<T> GetChildrenByRole<T>(Role<T> role) where T : AstNode
+		public AstNodeCollection<T> GetChildrenByRole<T>(Role<T> role) where T : AstNode
 		{
-			AstNode next;
-			for (AstNode cur = firstChild; cur != null; cur = next) {
-				// Remember next before yielding cur.
-				// This allows removing/replacing nodes while iterating through the list.
-				next = cur.nextSibling;
-				if (cur.role == role)
-					yield return (T)cur;
-			}
+			return new AstNodeCollection<T>(this, role);
 		}
 		
 		protected void SetChildByRole<T>(Role<T> role, T newChild) where T : AstNode
@@ -183,24 +184,6 @@ namespace ICSharpCode.NRefactory.CSharp
 				AddChild(newChild, role);
 			else
 				oldChild.ReplaceWith(newChild);
-		}
-		
-		protected void SetChildrenByRole<T>(Role<T> role, IEnumerable<T> newChildren) where T : AstNode
-		{
-			// Evaluate 'newChildren' first, since it might change when we remove the old children
-			// Example: SetChildren(role, GetChildrenByRole(role));
-			if (newChildren != null)
-				newChildren = newChildren.ToList();
-			
-			// remove old children
-			foreach (AstNode node in GetChildrenByRole(role))
-				node.Remove();
-			// add new children
-			if (newChildren != null) {
-				foreach (T node in newChildren) {
-					AddChild(node, role);
-				}
-			}
 		}
 		
 		public void AddChild<T>(T child, Role<T> role) where T : AstNode
@@ -593,6 +576,37 @@ namespace ICSharpCode.NRefactory.CSharp
 		#endregion
 		
 		public abstract S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data);
+		
+		#region Pattern Matching
+		/// <summary>
+		/// Performs a pattern matching operation.
+		/// <c>this</c> is the pattern, <paramref name="other"/> is the AST that is being matched.
+		/// </summary>
+		/// <returns>
+		/// If successful, a match object containing the matched groups.
+		/// If the match failed, returns <c>null</c>.
+		/// </returns>
+		/// <remarks>
+		/// Patterns are ASTs that contain special pattern nodes (from the PatternMatching namespace).
+		/// However, it is also possible to match two ASTs without any pattern nodes - doing so will produce an empty match object
+		/// if the two ASTs are structurally identical; or will return <c>null</c> if the ASTs are not identical.
+		/// </remarks>
+		public Match Match(AstNode other)
+		{
+			Match match = new Match();
+			if (DoMatch(other, match))
+				return match;
+			else
+				return null;
+		}
+		
+		protected static bool MatchString(string name1, string name2)
+		{
+			return string.IsNullOrEmpty(name1) || name1 == name2;
+		}
+		
+		protected internal abstract bool DoMatch(AstNode other, Match match);
+		#endregion
 		
 		// the Root role must be available when creating the null nodes, so we can't put it in the Roles class
 		static readonly Role<AstNode> RootRole = new Role<AstNode>("Root");

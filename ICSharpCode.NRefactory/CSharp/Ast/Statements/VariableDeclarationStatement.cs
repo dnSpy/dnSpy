@@ -1,4 +1,4 @@
-// 
+﻿// 
 // VariableDeclarationStatement.cs
 //  
 // Author:
@@ -33,6 +33,16 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		public static readonly Role<CSharpModifierToken> ModifierRole = AttributedNode.ModifierRole;
 		
+		public VariableDeclarationStatement()
+		{
+		}
+		
+		public VariableDeclarationStatement(AstType type, string name, Expression initializer = null)
+		{
+			this.Type = type;
+			this.Variables.Add(new VariableInitializer(name, initializer));
+		}
+		
 		public Modifiers Modifiers {
 			get { return AttributedNode.GetModifiers(this); }
 			set { AttributedNode.SetModifiers(this, value); }
@@ -43,9 +53,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Type, value); }
 		}
 		
-		public IEnumerable<VariableInitializer> Variables {
+		public AstNodeCollection<VariableInitializer> Variables {
 			get { return GetChildrenByRole (Roles.Variable); }
-			set { SetChildrenByRole (Roles.Variable, value); }
 		}
 		
 		public CSharpTokenNode SemicolonToken {
@@ -55,6 +64,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitVariableDeclarationStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			VariableDeclarationStatement o = other as VariableDeclarationStatement;
+			return o != null && this.Modifiers == o.Modifiers && this.Type.DoMatch(o.Type, match) && this.Variables.DoMatch(o.Variables, match);
 		}
 	}
 }

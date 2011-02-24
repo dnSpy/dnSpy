@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Constraint.cs
 //
 // Author:
@@ -53,14 +53,19 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		// TODO: what about new(), struct and class constraints?
 		
-		public IEnumerable<AstType> BaseTypes {
+		public AstNodeCollection<AstType> BaseTypes {
 			get { return GetChildrenByRole (BaseTypeRole); }
-			set { SetChildrenByRole (BaseTypeRole, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitConstraint (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			Constraint o = other as Constraint;
+			return o != null && MatchString(this.TypeParameter, o.TypeParameter) && this.BaseTypes.DoMatch(o.BaseTypes, match);
 		}
 	}
 }

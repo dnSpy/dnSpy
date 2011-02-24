@@ -1,4 +1,4 @@
-// 
+﻿// 
 // ObjectCreateExpression.cs
 //  
 // Author:
@@ -48,9 +48,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public IEnumerable<Expression> Arguments {
+		public AstNodeCollection<Expression> Arguments {
 			get { return GetChildrenByRole (Roles.Argument); }
-			set { SetChildrenByRole (Roles.Argument, value); }
 		}
 		
 		public CSharpTokenNode RParToken {
@@ -65,6 +64,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitObjectCreateExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ObjectCreateExpression o = other as ObjectCreateExpression;
+			return o != null && this.Type.DoMatch(o.Type, match) && this.Arguments.DoMatch(o.Arguments, match) && this.Initializer.DoMatch(o.Initializer, match);
 		}
 	}
 }

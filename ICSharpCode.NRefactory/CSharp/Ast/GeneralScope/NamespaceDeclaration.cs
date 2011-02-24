@@ -1,4 +1,4 @@
-// 
+﻿// 
 // NamespaceDeclaration.cs
 //  
 // Author:
@@ -54,13 +54,12 @@ namespace ICSharpCode.NRefactory.CSharp
 				return builder.ToString ();
 			}
 			set {
-				SetChildrenByRole (Roles.Identifier, value.Split('.').Select(ident => new Identifier(ident, AstLocation.Empty)));
+				GetChildrenByRole(Roles.Identifier).ReplaceWith(value.Split('.').Select(ident => new Identifier(ident, AstLocation.Empty)));
 			}
 		}
 		
-		public IEnumerable<Identifier> Identifiers {
+		public AstNodeCollection<Identifier> Identifiers {
 			get { return GetChildrenByRole (Roles.Identifier); }
-			set { SetChildrenByRole (Roles.Identifier, value); }
 		}
 		
 		/// <summary>
@@ -79,9 +78,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LBrace); }
 		}
 		
-		public IEnumerable<AstNode> Members {
+		public AstNodeCollection<AstNode> Members {
 			get { return GetChildrenByRole(MemberRole); }
-			set { SetChildrenByRole(MemberRole, value); }
 		}
 		
 		public CSharpTokenNode RBraceToken {
@@ -101,6 +99,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitNamespaceDeclaration (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			NamespaceDeclaration o = other as NamespaceDeclaration;
+			return o != null && MatchString(this.Name, o.Name) && this.Members.DoMatch(o.Members, match);
 		}
 	}
 };

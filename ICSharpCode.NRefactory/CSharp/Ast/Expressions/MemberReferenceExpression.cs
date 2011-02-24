@@ -1,4 +1,4 @@
-// 
+﻿// 
 // MemberReferenceExpression.cs
 //
 // Author:
@@ -51,9 +51,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LChevron); }
 		}
 		
-		public IEnumerable<AstType> TypeArguments {
+		public AstNodeCollection<AstType> TypeArguments {
 			get { return GetChildrenByRole (Roles.TypeArgument); }
-			set { SetChildrenByRole (Roles.TypeArgument, value); }
 		}
 		
 		public CSharpTokenNode RChevronToken {
@@ -63,6 +62,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitMemberReferenceExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			MemberReferenceExpression o = other as MemberReferenceExpression;
+			return o != null && this.Target.DoMatch(o.Target, match) && MatchString(this.MemberName, o.MemberName) && this.TypeArguments.DoMatch(o.TypeArguments, match);
 		}
 	}
 }

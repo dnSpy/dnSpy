@@ -1,4 +1,4 @@
-// 
+﻿// 
 // FullTypeName.cs
 //
 // Author:
@@ -63,6 +63,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitPrimitiveType (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			PrimitiveType o = other as PrimitiveType;
+			return o != null && MatchString(this.Keyword, o.Keyword);
 		}
 		
 		public override string ToString()

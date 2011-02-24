@@ -1,4 +1,4 @@
-// 
+﻿// 
 // LambdaExpression.cs
 //  
 // Author:
@@ -36,9 +36,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		public readonly static Role<CSharpTokenNode> ArrowRole = new Role<CSharpTokenNode>("Arrow", CSharpTokenNode.Null);
 		public static readonly Role<AstNode> BodyRole = new Role<AstNode>("Body", AstNode.Null);
 		
-		public IEnumerable<ParameterDeclaration> Parameters { 
+		public AstNodeCollection<ParameterDeclaration> Parameters { 
 			get { return GetChildrenByRole (Roles.Parameter); }
-			set { SetChildrenByRole (Roles.Parameter, value); }
 		}
 		
 		public CSharpTokenNode ArrowToken {
@@ -53,6 +52,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitLambdaExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			LambdaExpression o = other as LambdaExpression;
+			return o != null && this.Parameters.DoMatch(o.Parameters, match) && this.Body.DoMatch(o.Body, match);
 		}
 	}
 }

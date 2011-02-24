@@ -1,4 +1,4 @@
-// 
+﻿// 
 // FixedStatement.cs
 //
 // Author:
@@ -46,9 +46,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Type, value); }
 		}
 		
-		public IEnumerable<VariableInitializer> Variables {
+		public AstNodeCollection<VariableInitializer> Variables {
 			get { return GetChildrenByRole (Roles.Variable); }
-			set { SetChildrenByRole (Roles.Variable, value); }
 		}
 		
 		public CSharpTokenNode RParToken {
@@ -63,6 +62,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitFixedStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			FixedStatement o = other as FixedStatement;
+			return o != null && this.Variables.DoMatch(o.Variables, match) && this.EmbeddedStatement.DoMatch(o.EmbeddedStatement, match);
 		}
 	}
 }

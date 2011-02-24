@@ -1,4 +1,4 @@
-// 
+﻿// 
 // ArgListExpression.cs
 //  
 // Author:
@@ -45,9 +45,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public IEnumerable<Expression> Arguments {
+		public AstNodeCollection<Expression> Arguments {
 			get { return GetChildrenByRole(Roles.Argument); }
-			set { SetChildrenByRole(Roles.Argument, value); }
 		}
 		
 		public CSharpTokenNode RParToken {
@@ -57,6 +56,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitArgListExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ArgListExpression o = other as ArgListExpression;
+			return o != null && this.IsAccess == o.IsAccess && this.Arguments.DoMatch(o.Arguments, match);
 		}
 	}
 }

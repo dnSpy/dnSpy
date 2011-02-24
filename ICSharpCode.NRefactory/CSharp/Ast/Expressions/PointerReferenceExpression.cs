@@ -1,4 +1,4 @@
-// 
+﻿// 
 // PointerReferenceExpression.cs
 //  
 // Author:
@@ -49,14 +49,19 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public IEnumerable<AstType> TypeArguments {
+		public AstNodeCollection<AstType> TypeArguments {
 			get { return GetChildrenByRole (Roles.TypeArgument); }
-			set { SetChildrenByRole (Roles.TypeArgument, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitPointerReferenceExpression (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			PointerReferenceExpression o = other as PointerReferenceExpression;
+			return o != null && MatchString(this.MemberName, o.MemberName) && this.TypeArguments.DoMatch(o.TypeArguments, match);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectGuid>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</ProjectGuid>
@@ -55,7 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CSharp\Ast\AstComparer.cs" />
+    <Compile Include="CSharp\Ast\AstNodeCollection.cs" />
     <Compile Include="CSharp\Ast\Expressions\TypeReferenceExpression.cs" />
     <Compile Include="CSharp\Ast\IAstVisitor.cs" />
     <Compile Include="CSharp\Ast\CompilationUnit.cs" />
@@ -95,6 +95,15 @@
     <Compile Include="CSharp\Ast\Expressions\UncheckedExpression.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\TypeParameterDeclaration.cs" />
     <Compile Include="CSharp\Ast\MemberType.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\Choice.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\AnyNode.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\Backreference.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\IPatternAstVisitor.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\Match.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\NamedNode.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\Repeat.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\Pattern.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\Placeholder.cs" />
     <Compile Include="CSharp\Ast\PrimitiveType.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\Attribute.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\AttributeSection.cs" />
@@ -333,6 +342,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CSharp\" />
+    <Folder Include="CSharp\Ast\PatternMatching" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">
+      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
+      <Name>Mono.Cecil</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">

@@ -159,7 +159,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void MethodCallOnQueryExpression()
 		{
 			Expression expr = new QueryExpression {
-				Clauses = new QueryClause[] {
+				Clauses = {
 					new QueryFromClause {
 						Identifier = "a",
 						Expression = new IdentifierExpression("b")
@@ -178,7 +178,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void SumOfQueries()
 		{
 			QueryExpression query = new QueryExpression {
-				Clauses = new QueryClause[] {
+				Clauses = {
 					new QueryFromClause {
 						Identifier = "a",
 						Expression = new IdentifierExpression("b")
@@ -206,7 +206,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void QueryInTypeTest()
 		{
 			Expression expr = new QueryExpression {
-				Clauses = new QueryClause[] {
+				Clauses = {
 					new QueryFromClause {
 						Identifier = "a",
 						Expression = new IdentifierExpression("b")
@@ -251,6 +251,74 @@ namespace ICSharpCode.NRefactory.CSharp
 			
 			Assert.AreEqual("(++a)++", InsertRequired(expr));
 			Assert.AreEqual("(++a)++", InsertReadable(expr));
+		}
+		
+		[Test]
+		public void Logical1()
+		{
+			Expression expr = new BinaryOperatorExpression(
+				new BinaryOperatorExpression(
+					new IdentifierExpression("a"),
+					BinaryOperatorType.ConditionalAnd,
+					new IdentifierExpression("b")
+				),
+				BinaryOperatorType.ConditionalAnd,
+				new IdentifierExpression("c")
+			);
+			
+			Assert.AreEqual("a && b && c", InsertRequired(expr));
+			Assert.AreEqual("a && b && c", InsertReadable(expr));
+		}
+		
+		[Test]
+		public void Logical2()
+		{
+			Expression expr = new BinaryOperatorExpression(
+				new IdentifierExpression("a"),
+				BinaryOperatorType.ConditionalAnd,
+				new BinaryOperatorExpression(
+					new IdentifierExpression("b"),
+					BinaryOperatorType.ConditionalAnd,
+					new IdentifierExpression("c")
+				)
+			);
+			
+			Assert.AreEqual("a && (b && c)", InsertRequired(expr));
+			Assert.AreEqual("a && (b && c)", InsertReadable(expr));
+		}
+		
+		[Test]
+		public void Logical3()
+		{
+			Expression expr = new BinaryOperatorExpression(
+				new IdentifierExpression("a"),
+				BinaryOperatorType.ConditionalOr,
+				new BinaryOperatorExpression(
+					new IdentifierExpression("b"),
+					BinaryOperatorType.ConditionalAnd,
+					new IdentifierExpression("c")
+				)
+			);
+			
+			Assert.AreEqual("a || b && c", InsertRequired(expr));
+			Assert.AreEqual("a || (b && c)", InsertReadable(expr));
+		}
+		
+		[Test]
+		public void Logical4()
+		{
+			Expression expr = new BinaryOperatorExpression(
+				new IdentifierExpression("a"),
+				BinaryOperatorType.ConditionalAnd,
+				new BinaryOperatorExpression(
+					new IdentifierExpression("b"),
+					BinaryOperatorType.ConditionalOr,
+					new IdentifierExpression("c")
+				)
+			);
+			
+			Assert.AreEqual("a && (b || c)", InsertRequired(expr));
+			Assert.AreEqual("a && (b || c)", InsertReadable(expr));
 		}
 	}
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp
@@ -31,6 +32,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			{
 				return default (S);
 			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
+			}
 		}
 		#endregion
 		
@@ -43,6 +49,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		public new Expression Clone()
 		{
 			return (Expression)base.Clone();
+		}
+		
+		// Make debugging easier by giving Expressions a ToString() implementation
+		public override string ToString()
+		{
+			StringWriter w = new StringWriter();
+			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
+			return w.ToString();
 		}
 		
 		public Expression ReplaceWith(Func<Expression, Expression> replaceFunction)
@@ -66,7 +80,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public IndexerExpression Indexer(IEnumerable<Expression> arguments)
 		{
-			return new IndexerExpression { Target = this, Arguments = arguments };
+			IndexerExpression expr = new IndexerExpression();
+			expr.Target = this;
+			expr.Arguments.AddRange(arguments);
+			return expr;
 		}
 		
 		/// <summary>
@@ -74,7 +91,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public IndexerExpression Indexer(params Expression[] arguments)
 		{
-			return new IndexerExpression { Target = this, Arguments = arguments };
+			IndexerExpression expr = new IndexerExpression();
+			expr.Target = this;
+			expr.Arguments.AddRange(arguments);
+			return expr;
 		}
 		
 		/// <summary>
@@ -98,14 +118,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
 		{
-			return new InvocationExpression {
-				Target = new MemberReferenceExpression {
-					Target = this,
-					MemberName = methodName,
-					TypeArguments = typeArguments
-				},
-				Arguments = arguments
-			};
+			InvocationExpression ie = new InvocationExpression();
+			MemberReferenceExpression mre = new MemberReferenceExpression();
+			mre.Target = this;
+			mre.MemberName = methodName;
+			mre.TypeArguments.AddRange(typeArguments);
+			ie.Target = mre;
+			ie.Arguments.AddRange(arguments);
+			return ie;
 		}
 		
 		/// <summary>
@@ -113,10 +133,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public InvocationExpression Invoke(IEnumerable<Expression> arguments)
 		{
-			return new InvocationExpression {
-				Target = this,
-				Arguments = arguments
-			};
+			InvocationExpression ie = new InvocationExpression();
+			ie.Target = this;
+			ie.Arguments.AddRange(arguments);
+			return ie;
 		}
 		
 		/// <summary>
@@ -124,7 +144,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public InvocationExpression Invoke(params Expression[] arguments)
 		{
-			return Invoke(arguments.AsEnumerable());
+			InvocationExpression ie = new InvocationExpression();
+			ie.Target = this;
+			ie.Arguments.AddRange(arguments);
+			return ie;
 		}
 		
 		public CastExpression CastTo(AstType type)

@@ -1,4 +1,4 @@
-// 
+﻿// 
 // AttributeSection.cs
 //
 // Author:
@@ -49,14 +49,19 @@ namespace ICSharpCode.NRefactory.CSharp
 			set;
 		}
 		
-		public IEnumerable<Attribute> Attributes {
+		public AstNodeCollection<Attribute> Attributes {
 			get { return base.GetChildrenByRole (AttributeRole); }
-			set { SetChildrenByRole (AttributeRole, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitAttributeSection (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			AttributeSection o = other as AttributeSection;
+			return o != null && this.AttributeTarget == o.AttributeTarget && this.Attributes.DoMatch(o.Attributes, match);
 		}
 		
 		public static string GetAttributeTargetName(AttributeTarget attributeTarget)

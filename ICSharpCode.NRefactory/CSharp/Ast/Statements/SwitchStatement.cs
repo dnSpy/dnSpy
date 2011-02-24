@@ -1,4 +1,4 @@
-// 
+﻿// 
 // SwitchStatement.cs
 //
 // Author:
@@ -57,9 +57,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LBrace); }
 		}
 		
-		public IEnumerable<SwitchSection> SwitchSections {
+		public AstNodeCollection<SwitchSection> SwitchSections {
 			get { return GetChildrenByRole (SwitchSectionRole); }
-			set { SetChildrenByRole (SwitchSectionRole, value); }
 		}
 		
 		public CSharpTokenNode RBraceToken {
@@ -69,6 +68,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitSwitchStatement (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			SwitchStatement o = other as SwitchStatement;
+			return o != null && this.Expression.DoMatch(o.Expression, match) && this.SwitchSections.DoMatch(o.SwitchSections, match);
 		}
 	}
 	
@@ -82,19 +87,23 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public IEnumerable<CaseLabel> CaseLabels {
+		public AstNodeCollection<CaseLabel> CaseLabels {
 			get { return GetChildrenByRole (CaseLabelRole); }
-			set { SetChildrenByRole (CaseLabelRole, value); }
 		}
 		
-		public IEnumerable<Statement> Statements {
+		public AstNodeCollection<Statement> Statements {
 			get { return GetChildrenByRole (Roles.EmbeddedStatement); }
-			set { SetChildrenByRole (Roles.EmbeddedStatement, value); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitSwitchSection (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			SwitchSection o = other as SwitchSection;
+			return o != null && this.CaseLabels.DoMatch(o.CaseLabels, match) && this.Statements.DoMatch(o.Statements, match);
 		}
 	}
 	
@@ -114,6 +123,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCaseLabel (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			CaseLabel o = other as CaseLabel;
+			return o != null && this.Expression.DoMatch(o.Expression, match);
 		}
 	}
 }
