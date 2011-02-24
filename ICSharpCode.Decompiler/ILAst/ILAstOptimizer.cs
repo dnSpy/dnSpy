@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+
 using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -22,7 +24,6 @@ namespace Decompiler.ControlFlow
 	public class ILAstOptimizer
 	{
 		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
-		Dictionary<ILLabel, int> labelRefCount;
 		
 		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
@@ -31,8 +32,9 @@ namespace Decompiler.ControlFlow
 				SplitToBasicBlocks(block);
 			}
 			
+			OptimizeShortCircuits(method);
+			
 			if (abortBeforeStep == ILAstOptimizationStep.FindLoops) return;
-			UpdateLabelRefCounts(method);
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, (ILLabel)block.EntryGoto.Operand);
@@ -42,7 +44,6 @@ namespace Decompiler.ControlFlow
 			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindConditions) return;
-			UpdateLabelRefCounts(method);
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ControlFlowGraph graph;
 				graph = BuildGraph(block.Body, (ILLabel)block.EntryGoto.Operand);
@@ -99,8 +100,8 @@ namespace Decompiler.ControlFlow
 					
 					// Insert split
 					if (currNode is ILLabel ||
-						lastNode is ILTryCatchBlock ||
-						currNode is ILTryCatchBlock ||
+					    lastNode is ILTryCatchBlock ||
+					    currNode is ILTryCatchBlock ||
 					    (lastNode is ILExpression) && ((ILExpression)lastNode).IsBranch() ||
 					    (currNode is ILExpression) && (((ILExpression)currNode).IsBranch() && basicBlock.Body.Count > 0))
 					{
@@ -129,6 +130,109 @@ namespace Decompiler.ControlFlow
 			
 			block.Body = basicBlocks;
 			return;
+		}
+		
+		void OptimizeShortCircuits(ILBlock method)
+		{
+			AnalyseLabels(method);
+			
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+				bool modified;
+				do {
+					modified = false;
+					for (int i = 0; i < block.Body.Count;) {
+						if (TrySimplifyShortCircuit(block.Body, (ILBasicBlock)block.Body[i])) {
+							modified = true;
+						} else {
+							i++;
+						}
+					}
+				} while(modified);
+			}
+		}
+		
+		Dictionary<ILLabel, int> labelGlobalRefCount;
+		Dictionary<ILLabel, ILBasicBlock> labelToBasicBlock;
+		
+		void AnalyseLabels(ILBlock method)
+		{
+			labelGlobalRefCount = new Dictionary<ILLabel, int>();
+			foreach(ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets())) {
+				if (!labelGlobalRefCount.ContainsKey(target))
+					labelGlobalRefCount[target] = 0;
+				labelGlobalRefCount[target]++;
+			}
+			
+			labelToBasicBlock = new Dictionary<ILLabel, ILBasicBlock>();
+			foreach(ILBasicBlock bb in method.GetSelfAndChildrenRecursive<ILBasicBlock>()) {
+				foreach(ILLabel label in bb.GetChildren().OfType<ILLabel>()) {
+					labelToBasicBlock[label] = bb;
+				}
+			}
+		}
+		
+		bool IsConditionalBranch(ILBasicBlock bb, ref ILExpression branchExpr, ref ILLabel trueLabel, ref ILLabel falseLabel)
+		{
+			if (bb.Body.Count == 1) {
+				branchExpr = bb.Body[0] as ILExpression;
+				if (branchExpr != null && branchExpr.Operand is ILLabel && branchExpr.Arguments.Count > 0) {
+					trueLabel  = (ILLabel)branchExpr.Operand;
+					falseLabel = (ILLabel)((ILExpression)bb.FallthoughGoto).Operand;
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		// scope is modified if successful
+		bool TrySimplifyShortCircuit(List<ILNode> scope, ILBasicBlock head)
+		{
+			Debug.Assert(scope.Contains(head));
+			
+			ILExpression branchExpr = null;
+			ILLabel trueLabel = null;
+			ILLabel falseLabel = null;
+			if(IsConditionalBranch(head, ref branchExpr, ref trueLabel, ref falseLabel)) {
+				for (int pass = 0; pass < 2; pass++) {
+					
+					// On the second pass, swap labels and negate expression of the first branch
+					// It is slightly ugly, but much better then copy-pasting this whole block
+					ILLabel nextLabel   = (pass == 0) ? trueLabel  : falseLabel;
+					ILLabel otherLablel = (pass == 0) ? falseLabel : trueLabel;
+					bool    negate      = (pass == 1);
+					
+					ILBasicBlock nextBasicBlock = labelToBasicBlock[nextLabel];
+					ILExpression nextBranchExpr = null;
+					ILLabel nextTrueLablel = null;
+					ILLabel nextFalseLabel = null;
+					if (scope.Contains(nextBasicBlock) &&
+					    nextBasicBlock != head &&
+					    labelGlobalRefCount[nextBasicBlock.EntryLabel] == 1 &&
+					    IsConditionalBranch(nextBasicBlock, ref nextBranchExpr, ref nextTrueLablel, ref nextFalseLabel) &&
+					    (otherLablel == nextFalseLabel || otherLablel == nextTrueLablel))
+					{
+						// We are using the branches as expressions now, so do not keep their labels alive
+						branchExpr.Operand = null;
+						nextBranchExpr.Operand = null;
+						
+						// Create short cicuit branch
+						if (otherLablel == nextFalseLabel) {
+							head.Body[0] = new ILExpression(ILCode.BrLogicAnd, nextTrueLablel, negate ? new ILExpression(ILCode.LogicNot, null, branchExpr) : branchExpr, nextBranchExpr);
+						} else {
+							head.Body[0] = new ILExpression(ILCode.BrLogicOr, nextTrueLablel, negate ? branchExpr : new ILExpression(ILCode.LogicNot, null, branchExpr), nextBranchExpr);
+						}
+						head.FallthoughGoto = new ILExpression(ILCode.Br, nextFalseLabel);
+						
+						// Remove the inlined branch from scope
+						labelGlobalRefCount[nextBasicBlock.EntryLabel] = 0;
+						if (!scope.Remove(nextBasicBlock))
+							throw new Exception("Element not found");
+						
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 		
 		ControlFlowGraph BuildGraph(List<ILNode> nodes, ILLabel entryLabel)
@@ -203,24 +307,27 @@ namespace Decompiler.ControlFlow
 				ControlFlowNode node = agenda.Dequeue();
 				
 				if (scope.Contains(node)
-			    		&& node.DominanceFrontier.Contains(node)
-			    		&& (node != entryPoint || !excludeEntryPoint))
+				    && node.DominanceFrontier.Contains(node)
+				    && (node != entryPoint || !excludeEntryPoint))
 				{
 					HashSet<ControlFlowNode> loopContents = FindDominatedNodes(scope, node);
 					
 					ILWhileLoop loop = new ILWhileLoop();
 					
-					ILCondition cond;
-					HashSet<ControlFlowNode> condNodes;
-					ILLabel condLabel;
-					if (TryMatchCondition(loopContents, new ControlFlowNode[]{}, node, out cond, out condNodes, out condLabel)) {
-						loopContents.ExceptWith(condNodes);
-						scope.ExceptWith(condNodes);
+					ILBasicBlock basicBlock = node.UserData as ILBasicBlock;
+					ILExpression branchExpr = null;
+					ILLabel trueLabel = null;
+					ILLabel falseLabel = null;
+					if(basicBlock != null && IsConditionalBranch(basicBlock, ref branchExpr, ref trueLabel, ref falseLabel)) {
+						loopContents.Remove(node);
+						scope.Remove(node);
+						branchExpr.Operand = null;  // Do not keep label alive
+						
 						// Use loop to implement condition
-						loop.Condition      = cond.Condition;
-						loop.PreLoopLabel   = condLabel;
-						loop.PostLoopGoto   = cond.FalseBlock.EntryGoto;
-						loop.BodyBlock      = new ILBlock() { EntryGoto = cond.TrueBlock.EntryGoto };
+						loop.Condition      = branchExpr;
+						loop.PreLoopLabel   = basicBlock.EntryLabel;
+						loop.PostLoopGoto   = new ILExpression(ILCode.Br, falseLabel);
+						loop.BodyBlock      = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, trueLabel) };
 					} else {
 						// Give the block some explicit entry point
 						ILLabel entryLabel  = new ILLabel() { Name = "Loop_" + (nextBlockIndex++) };
@@ -247,16 +354,6 @@ namespace Decompiler.ControlFlow
 			scope.Clear();
 			
 			return result;
-		}
-		
-		void UpdateLabelRefCounts(ILBlock method)
-		{
-			labelRefCount = new Dictionary<ILLabel, int>();
-			foreach(ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets())) {
-				if (!labelRefCount.ContainsKey(target))
-					labelRefCount[target] = 0;
-				labelRefCount[target]++;
-			}
 		}
 		
 		List<ILNode> FindConditions(HashSet<ControlFlowNode> scope, ControlFlowNode entryNode)
@@ -288,11 +385,25 @@ namespace Decompiler.ControlFlow
 						// Switch
 						if (condBranch != null && condBranch.Operand is ILLabel[] && condBranch.Arguments.Count > 0) {
 							
+							ILLabel[] caseLabels = (ILLabel[])condBranch.Operand;
+							
+							// The labels will not be used - kill them
+							condBranch.Operand = null;
+							
 							ILSwitch ilSwitch = new ILSwitch() {
 								Condition = condBranch,
 								DefaultGoto = block.FallthoughGoto
 							};
+							result.Add(new ILBasicBlock() {
+								EntryLabel = block.EntryLabel,  // Keep the entry label
+								Body = { ilSwitch }
+							});
+
+							// Remove the item so that it is not picked up as content
+							if (!scope.Remove(node))
+								throw new Exception("Item is not in set");
 							
+							// Pull in code of cases
 							ControlFlowNode fallTarget = null;
 							labelToCfNode.TryGetValue((ILLabel)block.FallthoughGoto.Operand, out fallTarget);
 							
@@ -300,14 +411,14 @@ namespace Decompiler.ControlFlow
 							if (fallTarget != null)
 								frontiers.UnionWith(fallTarget.DominanceFrontier);
 							
-							foreach(ILLabel condLabel in (ILLabel[])condBranch.Operand) {
+							foreach(ILLabel condLabel in caseLabels) {
 								ControlFlowNode condTarget = null;
 								labelToCfNode.TryGetValue(condLabel, out condTarget);
 								if (condTarget != null)
 									frontiers.UnionWith(condTarget.DominanceFrontier);
 							}
 							
-							foreach(ILLabel condLabel in (ILLabel[])condBranch.Operand) {
+							foreach(ILLabel condLabel in caseLabels) {
 								ControlFlowNode condTarget = null;
 								labelToCfNode.TryGetValue(condLabel, out condTarget);
 								
@@ -321,34 +432,36 @@ namespace Decompiler.ControlFlow
 								}
 								ilSwitch.CaseBlocks.Add(caseBlock);
 							}
-							
-							// The labels will not be used - kill them
-							condBranch.Operand = null;
-							
-							result.Add(new ILBasicBlock() {
-								EntryLabel = block.EntryLabel,  // Keep the entry label
-								Body = { ilSwitch }
-							});
-							scope.Remove(node);
 						}
 						
 						// Two-way branch
-						ILCondition ilCond;
-						HashSet<ControlFlowNode> matchedNodes;
-						ILLabel condEntryLabel;
-						if (TryMatchCondition(scope, new ControlFlowNode[] {}, node, out ilCond, out matchedNodes, out condEntryLabel)) {
+						ILExpression branchExpr = null;
+						ILLabel trueLabel = null;
+						ILLabel falseLabel = null;
+						if(IsConditionalBranch(block, ref branchExpr, ref trueLabel, ref falseLabel)) {
 							
-							// The branch labels will not be used - kill them
-							foreach(ILExpression expr in ilCond.Condition.GetSelfAndChildrenRecursive<ILExpression>()) {
-								if (expr.GetBranchTargets().Any()) {
-									expr.Operand = null;
-								}
-							}
+							// The branch label will not be used - kill it
+							branchExpr.Operand = null;
+							
+							// Convert the basic block to ILCondition
+							ILCondition ilCond = new ILCondition() {
+								Condition  = branchExpr,
+								TrueBlock  = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, trueLabel) },
+								FalseBlock = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, falseLabel) }
+							};
+							result.Add(new ILBasicBlock() {
+									EntryLabel = block.EntryLabel,  // Keep the entry label
+									Body = { ilCond }
+							});
+							
+							// Remove the item immediately so that it is not picked up as content
+							if (!scope.Remove(node))
+								throw new Exception("Item is not in set");
 							
 							ControlFlowNode trueTarget = null;
-							labelToCfNode.TryGetValue((ILLabel)ilCond.TrueBlock.EntryGoto.Operand, out trueTarget);
+							labelToCfNode.TryGetValue(trueLabel, out trueTarget);
 							ControlFlowNode falseTarget = null;
-							labelToCfNode.TryGetValue((ILLabel)ilCond.FalseBlock.EntryGoto.Operand, out falseTarget);
+							labelToCfNode.TryGetValue(falseLabel, out falseTarget);
 							
 							// Pull in the conditional code
 							HashSet<ControlFlowNode> frontiers = new HashSet<ControlFlowNode>();
@@ -367,12 +480,6 @@ namespace Decompiler.ControlFlow
 								scope.ExceptWith(content);
 								ilCond.FalseBlock.Body.AddRange(FindConditions(content, falseTarget));
 							}
-							
-							result.Add(new ILBasicBlock() {
-								EntryLabel = condEntryLabel,  // Keep the entry label
-								Body = { ilCond }
-							});
-							scope.ExceptWith(matchedNodes);
 						}
 					}
 					
@@ -397,107 +504,6 @@ namespace Decompiler.ControlFlow
 			return result;
 		}
 		
-		bool TryMatchCondition(HashSet<ControlFlowNode> scope, IEnumerable<ControlFlowNode> scopeExcept, ControlFlowNode head, out ILCondition condition, out HashSet<ControlFlowNode> matchedNodes, out ILLabel entryLabel)
-		{
-			condition = null;
-			matchedNodes = null;
-			entryLabel = null;
-			if (!scope.Contains(head) || scopeExcept.Contains(head))
-				return false;
-			
-			ILBasicBlock basicBlock = head.UserData as ILBasicBlock;
-			
-			if (basicBlock == null || basicBlock.Body.Count != 1)
-				return false;
-			
-			ILExpression condBranch = basicBlock.Body[0] as ILExpression;
-			
-			if (condBranch != null && condBranch.Operand is ILLabel && condBranch.Arguments.Count > 0) {
-				
-				// We have found a two-way condition
-				condition = new ILCondition() {
-				    Condition  = condBranch,
-				    TrueBlock  = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, condBranch.Operand) },
-				    FalseBlock = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, basicBlock.FallthoughGoto.Operand) }
-				};
-				// We are done with the node so "remove" it from scope
-				scopeExcept  = scopeExcept.Union(new[] {head});
-				matchedNodes = new HashSet<ControlFlowNode>() { head };
-				entryLabel   = basicBlock.EntryLabel;
-				
-				// Optimize short-circut expressions
-				while(true) {
-					
-					// Consider condition.TrueBlock
-					{
-						ILLabel nextLabel = (ILLabel)condition.TrueBlock.EntryGoto.Operand;
-						ControlFlowNode nextTarget;
-						labelToCfNode.TryGetValue(nextLabel, out nextTarget);				
-						ILCondition nextCond;
-						HashSet<ControlFlowNode> nextMatchedNodes;
-						ILLabel nextEnteryLabel;
-						if (nextTarget != null &&
-							TryMatchCondition(scope, scopeExcept, nextTarget, out nextCond, out nextMatchedNodes, out nextEnteryLabel) &&
-							labelRefCount[nextEnteryLabel] == 1)
-						{
-							if (condition.FalseBlock.EntryGoto.Operand == nextCond.FalseBlock.EntryGoto.Operand) {
-						    		condition.Condition  = new ILExpression(ILCode.LogicAnd, null, condition.Condition, nextCond.Condition);
-						    		condition.TrueBlock  = nextCond.TrueBlock;
-						    		condition.FalseBlock = nextCond.FalseBlock;
-						    		scopeExcept = scopeExcept.Union(nextMatchedNodes);
-						    		matchedNodes.UnionWith(nextMatchedNodes);
-						    		continue;
-							}
-							
-							if (condition.FalseBlock.EntryGoto.Operand == nextCond.TrueBlock.EntryGoto.Operand) {
-								condition.Condition  = new ILExpression(ILCode.LogicOr, null, new ILExpression(ILCode.LogicNot, null, condition.Condition), nextCond.Condition);
-						    		condition.TrueBlock  = nextCond.TrueBlock;
-						    		condition.FalseBlock = nextCond.FalseBlock;
-						    		scopeExcept = scopeExcept.Union(nextMatchedNodes);
-						    		matchedNodes.UnionWith(nextMatchedNodes);
-						    		continue;
-							}
-						}
-					}
-					
-					// Consider condition.FalseBlock
-					{
-						ILLabel nextLabel = (ILLabel)condition.FalseBlock.EntryGoto.Operand;
-						ControlFlowNode nextTarget;
-						labelToCfNode.TryGetValue(nextLabel, out nextTarget);				
-						ILCondition nextCond;
-						HashSet<ControlFlowNode> nextMatchedNodes;
-						ILLabel nextEnteryLabel;
-						if (nextTarget != null &&
-							TryMatchCondition(scope, scopeExcept, nextTarget, out nextCond, out nextMatchedNodes, out nextEnteryLabel) &&
-							labelRefCount[nextEnteryLabel] == 1)
-						{
-							if (condition.TrueBlock.EntryGoto.Operand == nextCond.FalseBlock.EntryGoto.Operand) {
-								condition.Condition  = new ILExpression(ILCode.LogicAnd, null, new ILExpression(ILCode.LogicNot, null, condition.Condition), nextCond.Condition);
-						    		condition.TrueBlock  = nextCond.TrueBlock;
-						    		condition.FalseBlock = nextCond.FalseBlock;
-						    		scopeExcept = scopeExcept.Union(nextMatchedNodes);
-						    		matchedNodes.UnionWith(nextMatchedNodes);
-						    		continue;
-							}
-							
-							if (condition.TrueBlock.EntryGoto.Operand == nextCond.TrueBlock.EntryGoto.Operand) {
-								condition.Condition  = new ILExpression(ILCode.LogicOr, null, condition.Condition, nextCond.Condition);
-						    		condition.TrueBlock  = nextCond.TrueBlock;
-						    		condition.FalseBlock = nextCond.FalseBlock;
-						    		scopeExcept = scopeExcept.Union(nextMatchedNodes);
-						    		matchedNodes.UnionWith(nextMatchedNodes);
-						    		continue;
-							}
-						}
-					}
-					break;
-				}
-				return true;
-			}
-			return false;
-		}
-		
 		static HashSet<ControlFlowNode> FindDominatedNodes(HashSet<ControlFlowNode> scope, ControlFlowNode head)
 		{
 			var exitNodes = head.DominanceFrontier.SelectMany(n => n.Predecessors);
@@ -507,7 +513,7 @@ namespace Decompiler.ControlFlow
 			while(agenda.Count > 0) {
 				ControlFlowNode addNode = agenda.First();
 				agenda.Remove(addNode);
-			
+				
 				if (scope.Contains(addNode) && head.Dominates(addNode) && result.Add(addNode)) {
 					foreach (var predecessor in addNode.Predecessors) {
 						agenda.Add(predecessor);

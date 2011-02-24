@@ -112,13 +112,13 @@ namespace Decompiler
 						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Boolean);
 					}
 					return typeSystem.Boolean;
-				case ILCode.LogicAnd:
-				case ILCode.LogicOr:
+				case ILCode.BrLogicAnd:
+				case ILCode.BrLogicOr:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
 					}
-					return typeSystem.Boolean;
+					return null;
 					#endregion
 					#region Variable load/store
 				case ILCode.Stloc:
