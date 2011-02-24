@@ -146,13 +146,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// Writes a comma.
 		/// </summary>
 		/// <param name="nextNode">The next node after the comma.</param>
-		void Comma(AstNode nextNode)
+		/// <param name="noSpacesAfterComma">When set prevents printing a space after comma.</param>
+		void Comma(AstNode nextNode, bool noSpacesAfterComma = false)
 		{
 			WriteSpecialsUpToRole(AstNode.Roles.Comma, nextNode);
 			Space(policy.SpacesBeforeComma);
 			formatter.WriteToken(",");
 			lastWritten = LastWritten.Other;
-			Space(policy.SpacesAfterComma);
+			Space(!noSpacesAfterComma && policy.SpacesAfterComma);
 		}
 		
 		void WriteCommaSeparatedList(IEnumerable<AstNode> list)
@@ -1187,7 +1188,7 @@ namespace ICSharpCode.NRefactory.CSharp
 					if (first) {
 						first = false;
 					} else {
-						Comma(member);
+						Comma(member, noSpacesAfterComma: true);
 						NewLine();
 					}
 					member.AcceptVisitor(this, data);
