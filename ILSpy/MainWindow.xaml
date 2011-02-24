@@ -22,6 +22,9 @@
 	</Window.Resources>
 	<Window.CommandBindings>
 		<CommandBinding
+			Command="routedCommands:RoutedUICommands.RemoveAllBreakpoint"
+			Executed="RemoveAllBreakpointExecuted" />
+		<CommandBinding
 			Command="routedCommands:RoutedUICommands.AttachToProcess"
 			Executed="AttachToProcessExecuted" />
 		<CommandBinding
@@ -88,32 +91,39 @@
 			<MenuItem Header="_Debugger">
 				<MenuItem x:Name="AttachMenuItem" Header="Attach to _running application" Command="routedCommands:RoutedUICommands.AttachToProcess">
 					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/bug.png" />
+						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/bug.png" />
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem x:Name="ContinueDebuggingMenuItem" IsEnabled="False" Header="Continue debugging" InputGestureText="F5" Command="routedCommands:RoutedUICommands.ContinueDebugging">
 					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/ContinueDebugging.png" />
+						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/ContinueDebugging.png" />
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem x:Name="StepIntoMenuItem" IsEnabled="False" Header="Step into" InputGestureText="F11" Command="routedCommands:RoutedUICommands.StepInto">
 					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/StepInto.png" />
+						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/StepInto.png" />
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem x:Name="StepOverMenuItem" IsEnabled="False" Header="Step over" InputGestureText="F10" Command="routedCommands:RoutedUICommands.StepOver">
 					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/StepOver.png" />
+						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/StepOver.png" />
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem x:Name="StepOutMenuItem" IsEnabled="False" Header="Step out" Command="routedCommands:RoutedUICommands.StepOut">
 					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/StepOut.png" />
+						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/StepOut.png" />
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem x:Name="DetachMenuItem" IsEnabled="False"
 				          Header="Detach from running application" 
 				          Command="routedCommands:RoutedUICommands.DetachFromProcess"/>
+				<Separator/>
+				<MenuItem x:Name="RemoveAllBreakpointsItem" Header="Remove all breakpoints" Command="routedCommands:RoutedUICommands.RemoveAllBreakpoint">
+					<MenuItem.Icon>
+						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/DeleteAllBreakpoints.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				
 			</MenuItem>
 			<MenuItem Header="_Help">
 				<MenuItem Header="_About" Click="AboutClick" />
@@ -160,7 +170,7 @@
 			/>
 			<Separator />
 			<Button x:Name="AttachButton" Command="routedCommands:RoutedUICommands.AttachToProcess" ToolTip="Attach to running process...">
-				<Image Width="16" Height="16" Source="Images/bug.png" />
+				<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/bug.png" />
 			</Button>
 		</ToolBar>
 		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->

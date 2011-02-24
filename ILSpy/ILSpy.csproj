@@ -122,12 +122,7 @@
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\ILSpy.ico" />
     <Resource Include="Images\FindAssembly.png" />
-    <Resource Include="Images\bug.png" />
     <None Include="app.config" />
-    <Resource Include="Images\ContinueDebugging.png" />
-    <Resource Include="Images\StepInto.png" />
-    <Resource Include="Images\StepOut.png" />
-    <Resource Include="Images\StepOver.png" />
     <None Include="Properties\AssemblyInfo.template.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">

@@ -32,6 +32,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using ILSpy.Debugger.AvalonEdit;
+using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Services;
 using ILSpy.Debugger.UI;
 using Microsoft.Win32;
@@ -364,6 +365,16 @@ namespace ICSharpCode.ILSpy
 		{
 			if (DebuggerService.CurrentDebugger.IsDebugging)
 				DebuggerService.CurrentDebugger.StepOut();
+		}
+		
+		void RemoveAllBreakpointExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
+				var bookmark = BookmarkManager.Bookmarks[i];
+				if (bookmark is BreakpointBookmark) {
+					BookmarkManager.RemoveMark(bookmark);
+				}
+			}
 		}
 		
 		protected override void OnKeyUp(KeyEventArgs e)

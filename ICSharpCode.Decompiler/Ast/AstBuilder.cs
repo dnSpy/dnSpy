@@ -471,7 +471,8 @@ namespace Decompiler
 			
 			MethodDeclaration astMethod = new MethodDeclaration();
 			astMethod.AddAnnotation(methodDef);
-			astMethod.AddAnnotation(methodMapping);
+			if (methodMapping != null)
+				astMethod.AddAnnotation(methodMapping);
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
 			astMethod.Name = CleanName(methodDef.Name);
 			astMethod.TypeParameters.AddRange(MakeTypeParameters(methodDef.GenericParameters));

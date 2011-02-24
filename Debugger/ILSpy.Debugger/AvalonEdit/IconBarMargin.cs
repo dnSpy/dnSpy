@@ -210,6 +210,9 @@ namespace ILSpy.Debugger.AvalonEdit
 				InvalidateVisual();
 			}
 			
+			if (CurrentType == null)
+				return;
+			
 			BreakpointBookmark bm = BookmarkManager.Bookmarks.Find(
 				b => b.TypeName == CurrentType.FullName &&
 				b.LineNumber == GetLineFromMousePosition(e)

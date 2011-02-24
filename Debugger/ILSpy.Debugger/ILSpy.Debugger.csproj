@@ -137,7 +137,7 @@
   <ItemGroup>
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\CurrentLine.png" />
-    <Resource Include="Images\Icons.16x16.Class.png"/>
+    <Resource Include="Images\Icons.16x16.Class.png" />
     <Resource Include="Images\Icons.16x16.Delegate.png" />
     <Resource Include="Images\Icons.16x16.Enum.png" />
     <Resource Include="Images\Icons.16x16.Event.png" />
@@ -188,6 +188,18 @@
     <Resource Include="Images\Icons.16x16.ProtectedStruct.png" />
     <Resource Include="Images\Icons.16x16.Reference.png" />
     <Resource Include="Images\Icons.16x16.Struct.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DeleteAllBreakpoints.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\bug.png" />
+    <Resource Include="Images\ContinueDebugging.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\StepInto.png" />
+    <Resource Include="Images\StepOut.png" />
+    <Resource Include="Images\StepOver.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

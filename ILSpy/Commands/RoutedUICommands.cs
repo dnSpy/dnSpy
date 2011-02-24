@@ -31,6 +31,8 @@ namespace ICSharpCode.ILSpy.Commands
 			StepInto = new RoutedUICommand("Step into", "StepInto", typeof(RoutedUICommands));
 			StepOver = new RoutedUICommand("Step over", "StepOver", typeof(RoutedUICommands));
 			StepOut = new RoutedUICommand("Step out", "StepOut", typeof(RoutedUICommands));
+			
+			RemoveAllBreakpoint = new RoutedUICommand("Remove all breakpoints", "RemoveAllBreakpoint", typeof(RoutedUICommands));
 		}
 		
 		public static RoutedUICommand AttachToProcess { get; private set; }
@@ -44,5 +46,7 @@ namespace ICSharpCode.ILSpy.Commands
 		public static RoutedUICommand StepOver { get; private set; }
 		
 		public static RoutedUICommand StepOut { get; private set; }
+		
+		public static RoutedUICommand RemoveAllBreakpoint { get; private set; }
 	}
 }
