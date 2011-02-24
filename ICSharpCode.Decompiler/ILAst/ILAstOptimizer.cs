@@ -507,7 +507,7 @@ namespace Decompiler.ControlFlow
 							
 							// If true body is empty, swap bodies.
 							// Might happend because there was not any to start with or we moved it out.
-							if (ilCond.TrueBlock.Body.Count == 0) {
+							if (ilCond.TrueBlock.Body.Count == 0 && ilCond.FalseBlock.Body.Count > 0) {
 								ILBlock tmp = ilCond.TrueBlock;
 								ilCond.TrueBlock = ilCond.FalseBlock;
 								ilCond.FalseBlock = tmp;
