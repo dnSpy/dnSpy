@@ -38,6 +38,22 @@ namespace AttributeWithStringExpressionArgument
 	{
 	}
 }
+//$$ AttributeWithTypeArgument
+namespace AttributeWithTypeArgument
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyTypeAttribute : Attribute
+	{
+		public MyTypeAttribute(Type t)
+		{
+		}
+	}
+
+	[MyType(typeof(Attribute))]
+	public class SomeClass
+	{
+	}
+}
 //$$ AttributeAppliedToEvent (ignored)
 namespace AttributeAppliedToEvent
 {
@@ -64,6 +80,24 @@ namespace AttributeAppliedToField
 		public int Field;
 	}
 }
+//$$ AttributeAppliedToProperty
+namespace AttributeAppliedToProperty
+{
+	public class TestClass
+	{
+		[Obsolete("reason")]
+		public int Property
+		{
+			get
+			{
+				return 0;
+			}
+		}
+	}
+}
+//$$ AttributeAppliedToDelegate
+[Obsolete("reason")]
+public delegate int  AttributeAppliedToDelegate();
 //$$ AttributeAppliedToMethod
 namespace AttributeAppliedToMethod
 {
@@ -78,6 +112,17 @@ namespace AttributeAppliedToMethod
 		{
 		}
 	}
+}
+//$$ AttributeAppliedToInterface
+[Obsolete("reason")]
+public interface AttributeAppliedToInterface
+{
+}
+//$$ AttributeAppliedToStruct
+[Obsolete("reason")]
+public struct AttributeAppliedToStruct
+{
+	public int Field;
 }
 //$$ NamedParameter
 namespace NamedParameter

@@ -609,6 +609,13 @@ namespace Decompiler
 							{
 								parameterValue = MakePrimitive(Convert.ToInt64(parameter.Value), parameter.Type);
 							}
+							else if (parameter.Value is TypeReference)
+							{
+								parameterValue = new TypeOfExpression()
+								{
+									Type = ConvertType((TypeReference)parameter.Value),
+								};
+							}
 							else
 							{
 								parameterValue = new PrimitiveExpression(parameter.Value);
