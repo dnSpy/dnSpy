@@ -349,9 +349,8 @@ namespace Decompiler
 				case Code.Ldelem_R4:
 				case Code.Ldelem_R8:
 				case Code.Ldelem_Ref:
-					return arg1.Indexer(arg2);
 				case Code.Ldelem_Any:
-					return InlineAssembly(byteCode, args);
+					return arg1.Indexer(arg2);
 				case Code.Ldelema:
 					return MakeRef(arg1.Indexer(arg2));
 					
