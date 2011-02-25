@@ -25,6 +25,15 @@ namespace ICSharpCode.Decompiler
 		public int SourceCodeLine { get; set; }
 		
 		public ILRange ILInstructionOffset { get; set; }
+		
+		public int[] ToArray()
+		{
+			int[] result = new int[2];
+			result[0] = ILInstructionOffset.From;
+			result[1] = ILInstructionOffset.To;
+			
+			return result;
+		}
 	}
 	
 	/// <summary>

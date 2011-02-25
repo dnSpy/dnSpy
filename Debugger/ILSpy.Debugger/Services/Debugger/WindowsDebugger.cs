@@ -282,7 +282,7 @@ namespace ILSpy.Debugger.Services
 		
 		// Stepping:
 		
-		MethodMapping GetNextCodeMapping()
+		SourceCodeMapping GetNextCodeMapping()
 		{
 			uint token;
 			var instruction = CodeMappingsStorage.GetInstructionByTypeAndLine(
@@ -291,9 +291,9 @@ namespace ILSpy.Debugger.Services
 			
 			var val = CodeMappingsStorage[CurrentLineBookmark.Instance.TypeName];
 			
-			return val.Find(m => m.MetadataToken == token);
+			var mapping = val.Find(m => m.MetadataToken == token);
 			
-			//return mapping.MethodCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From <= instruction.ILInstructionOffset.To);
+			return mapping.MethodCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From <= instruction.ILInstructionOffset.To);
 		}
 		
 		public void StepInto()
