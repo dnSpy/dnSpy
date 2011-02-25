@@ -124,11 +124,80 @@ public struct AttributeAppliedToStruct
 {
 	public int Field;
 }
-//$$ NamedParameter
-namespace NamedParameter
+//$$ NamedPropertyParameter
+namespace NamedPropertyParameter
 {
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 	public class MyAttributeAttribute : Attribute
+	{
+	}
+}
+//$$ NamedStringPropertyParameter
+namespace NamedStringPropertyParameter
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+		public string Prop
+		{
+			get
+			{
+				return "";
+			}
+			set
+			{
+				return;
+			}
+		}
+	}
+	[MyAttribute(Prop = "value")]
+	public class MyClass
+	{
+	}
+}
+//$$ NamedTypePropertyParameter
+namespace NamedTypePropertyParameter
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+		public Type Prop
+		{
+			get
+			{
+				return null;
+			}
+			set
+			{
+				return;
+			}
+		}
+	}
+	[MyAttribute(Prop = typeof(Enum))]
+	public class MyClass
+	{
+	}
+}
+//$$ NamedEnumPropertyParameter
+namespace NamedEnumPropertyParameter
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+		public AttributeTargets Prop
+		{
+			get
+			{
+				return AttributeTargets.All;
+			}
+			set
+			{
+				return;
+			}
+		}
+	}
+	[MyAttribute(Prop = (AttributeTargets.Class | AttributeTargets.Method))]
+	public class MyClass
 	{
 	}
 }

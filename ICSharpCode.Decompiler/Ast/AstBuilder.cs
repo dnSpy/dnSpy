@@ -603,23 +603,7 @@ namespace Decompiler
 					if(customAttribute.HasConstructorArguments)
 						foreach (var parameter in customAttribute.ConstructorArguments)
 						{
-							var isEnum = parameter.Type.IsValueType && !parameter.Type.IsPrimitive;
-							Expression parameterValue;
-							if (isEnum)
-							{
-								parameterValue = MakePrimitive(Convert.ToInt64(parameter.Value), parameter.Type);
-							}
-							else if (parameter.Value is TypeReference)
-							{
-								parameterValue = new TypeOfExpression()
-								{
-									Type = ConvertType((TypeReference)parameter.Value),
-								};
-							}
-							else
-							{
-								parameterValue = new PrimitiveExpression(parameter.Value);
-							}
+							Expression parameterValue = ConvertArgumentValue(parameter);
 							attribute.Arguments.Add(parameterValue);
 						}
 
@@ -628,13 +612,35 @@ namespace Decompiler
 						{
 							var propertyReference = customAttribute.AttributeType.Resolve().Properties.First(pr => pr.Name == property.Name);
 							var propertyName = new IdentifierExpression(property.Name).WithAnnotation(propertyReference);
-							var propertyArgument = new PrimitiveExpression(property.Argument.Value);
-							attribute.Arguments.Add(new AssignmentExpression(propertyName, propertyArgument));
+							var argumentValue = ConvertArgumentValue(property.Argument);
+							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
 						}
 				}
 
 				attributedNode.Attributes.Add(section);
 			}
+		}
+
+		private static Expression ConvertArgumentValue(CustomAttributeArgument parameter)
+		{
+			var type = parameter.Type.Resolve();
+			Expression parameterValue;
+			if (type.IsEnum)
+			{
+				parameterValue = MakePrimitive(Convert.ToInt64(parameter.Value), type);
+			}
+			else if (parameter.Value is TypeReference)
+			{
+				parameterValue = new TypeOfExpression()
+				{
+					Type = ConvertType((TypeReference)parameter.Value),
+				};
+			}
+			else
+			{
+				parameterValue = new PrimitiveExpression(parameter.Value);
+			}
+			return parameterValue;
 		}
 
 
