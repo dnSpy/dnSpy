@@ -377,25 +377,25 @@ namespace ICSharpCode.ILSpy
 		
 		void ContinueDebuggingExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (CurrentDebugger.IsDebugging)
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
 				CurrentDebugger.Continue();
 		}
 		
 		void StepIntoExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (CurrentDebugger.IsDebugging)
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
 				CurrentDebugger.StepInto();
 		}
 		
 		void StepOverExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (CurrentDebugger.IsDebugging)
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
 				CurrentDebugger.StepOver();
 		}
 		
 		void StepOutExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (CurrentDebugger.IsDebugging)
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
 				CurrentDebugger.StepOut();
 		}
 		

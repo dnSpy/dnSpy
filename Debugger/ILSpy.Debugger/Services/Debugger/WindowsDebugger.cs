@@ -24,6 +24,7 @@ using ILSpy.Debugger.Services.Debugger;
 using ILSpy.Debugger.Tooltips;
 using CorDbg = Debugger;
 using Process = Debugger.Process;
+using StackFrame = Debugger.StackFrame;
 
 namespace ILSpy.Debugger.Services
 {
@@ -284,6 +285,10 @@ namespace ILSpy.Debugger.Services
 		
 		SourceCodeMapping GetNextCodeMapping()
 		{
+			if (CurrentLineBookmark.Instance == null)
+				return null;
+			
+			// get the mapped instruction from the current line marker or the next one
 			uint token;
 			var instruction = CodeMappingsStorage.GetInstructionByTypeAndLine(
 				CurrentLineBookmark.Instance.TypeName,
@@ -293,7 +298,22 @@ namespace ILSpy.Debugger.Services
 			
 			var mapping = val.Find(m => m.MetadataToken == token);
 			
-			return mapping.MethodCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From <= instruction.ILInstructionOffset.To);
+			return mapping.MethodCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From == instruction.ILInstructionOffset.From);
+		}
+		
+		StackFrame GetStackFrame()
+		{
+			var map = GetNextCodeMapping();
+			if (map == null) {
+				CurrentLineBookmark.Remove();
+				Continue();
+				return null;
+			} else {
+				var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
+				frame.SourceCodeLine = CurrentLineBookmark.Instance.LineNumber;
+				frame.ILRanges = map.ToArray();
+				return frame;
+			}
 		}
 		
 		public void StepInto()
@@ -309,16 +329,9 @@ namespace ILSpy.Debugger.Services
 			    debuggedProcess.IsRunning) {
 				MessageBox.Show(errorCannotStepNoActiveFunction, "StepInto");
 			} else {
-				var map = GetNextCodeMapping();
-				if (map == null) {
-					CurrentLineBookmark.Remove();
-					Continue();
-				} else {
-					var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-					frame.SourceCodeLine = CurrentLineBookmark.Instance.LineNumber;
-					frame.ILRanges = map.ToArray();
+				var frame = GetStackFrame();
+				if (frame != null)
 					frame.AsyncStepInto();
-				}
 			}
 		}
 		
@@ -335,16 +348,9 @@ namespace ILSpy.Debugger.Services
 			    debuggedProcess.IsRunning) {
 				MessageBox.Show(errorCannotStepNoActiveFunction, "StepOver");
 			} else {
-				var map = GetNextCodeMapping();
-				if (map == null) {
-					CurrentLineBookmark.Remove();
-					Continue();
-				} else {
-					var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-					frame.SourceCodeLine = CurrentLineBookmark.Instance.LineNumber;
-					frame.ILRanges = map.ToArray();
+				var frame = GetStackFrame();
+				if (frame != null)
 					frame.AsyncStepOver();
-				}
 			}
 		}
 		
@@ -361,16 +367,9 @@ namespace ILSpy.Debugger.Services
 			    debuggedProcess.IsRunning) {
 				MessageBox.Show(errorCannotStepNoActiveFunction, "StepOut");
 			} else {
-				var map = GetNextCodeMapping();
-				if (map == null) {
-					CurrentLineBookmark.Remove();
-					Continue();
-				} else {
-					var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-					frame.SourceCodeLine = CurrentLineBookmark.Instance.LineNumber;
-					frame.ILRanges = map.ToArray();
+				var frame = GetStackFrame();
+				if (frame != null)
 					frame.AsyncStepOut();
-				}
 			}
 		}
 		

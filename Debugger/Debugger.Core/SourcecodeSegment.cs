@@ -383,7 +383,7 @@ namespace Debugger
 				segment.endColumn     = 0;
 				segment.corFunction   = corFunction;
 				segment.ilStart 	  = offset;
-				segment.ilEnd   	  = offset;
+				segment.ilEnd   	  = ranges[ranges.Length - 1];
 				segment.stepRanges    = ranges;
 				
 				return segment;

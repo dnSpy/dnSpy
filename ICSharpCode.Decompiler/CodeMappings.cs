@@ -49,14 +49,15 @@ namespace ICSharpCode.Decompiler
 		
 		public int[] ToArray()
 		{
-			int[] result = new int[MethodCodeMappings.Count + 1];
+			int[] result = new int[MethodCodeMappings.Count * 2];
 			int i = 0;
 			foreach (var element in MethodCodeMappings) {
-				result[i] = MethodCodeMappings[i].ILInstructionOffset.From;	
-				++i;
+				result[i] = element.ILInstructionOffset.From;	
+				result[i+1] = element.ILInstructionOffset.To;	
+				i+=2;
 			}
 			
-			result[MethodCodeMappings.Count] = MethodCodeMappings[MethodCodeMappings.Count - 1].ILInstructionOffset.To;
+			//result[MethodCodeMappings.Count] = MethodCodeMappings[MethodCodeMappings.Count - 1].ILInstructionOffset.To;
 			
 			return result;
 		}
@@ -171,8 +172,12 @@ namespace ICSharpCode.Decompiler
 				var codeMapping = mapping.MethodCodeMappings.Find(
 					cm => (cm.ILInstructionOffset.From <= ilOffset && ilOffset <= cm.ILInstructionOffset.To - 1) || // for CSharp
 						  (cm.ILInstructionOffset.From == ilOffset && ilOffset == cm.ILInstructionOffset.To)); // for IL
-				if (codeMapping == null)
-					continue;
+				if (codeMapping == null) {
+					codeMapping = mapping.MethodCodeMappings.Find(cm => (cm.ILInstructionOffset.From >= ilOffset));
+					if (codeMapping == null)
+						continue;
+				}
+					
 				
 				typeName = typename;
 				line = codeMapping.SourceCodeLine;

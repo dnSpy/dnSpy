@@ -6,7 +6,7 @@ namespace Debugger
 	public class Options
 	{
 		public bool EnableJustMyCode = true;
-		public bool StepOverNoSymbols = true;
+		public bool StepOverNoSymbols = false;
 		public bool StepOverDebuggerAttributes = true;
 		public bool StepOverAllProperties = false;
 		public bool StepOverSingleLineProperties = false;

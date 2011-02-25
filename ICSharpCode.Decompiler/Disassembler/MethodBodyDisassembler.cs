@@ -80,14 +80,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			if (detectControlStructure && body.Instructions.Count > 0) {
 				Instruction inst = body.Instructions[0];
-				WriteStructureBody(new ILStructure(body), ref inst, methodMapping);
+				WriteStructureBody(new ILStructure(body), ref inst, methodMapping, method.Body.CodeSize);
 			} else {
 				foreach (var inst in method.Body.Instructions) {
 					// add IL code mappings
 					methodMapping.MethodCodeMappings.Add(
 						new SourceCodeMapping() {
 							SourceCodeLine = output.CurrentLine,
-					        ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Offset }
+							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? method.Body.CodeSize : inst.Next.Offset }
 						});
 					
 					inst.WriteTo(output);
@@ -146,7 +146,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Indent();
 		}
 		
-		void WriteStructureBody(ILStructure s, ref Instruction inst, MethodMapping currentMethodMapping)
+		void WriteStructureBody(ILStructure s, ref Instruction inst, MethodMapping currentMethodMapping, int codeSize)
 		{
 			int childIndex = 0;
 			while (inst != null && inst.Offset < s.EndOffset) {
@@ -155,7 +155,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					currentMethodMapping.MethodCodeMappings.Add(
 						new SourceCodeMapping() {
 							SourceCodeLine = output.CurrentLine,
-							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Offset }
+							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? codeSize : inst.Next.Offset }
 						});
 				}
 				
@@ -163,7 +163,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (childIndex < s.Children.Count && s.Children[childIndex].StartOffset <= offset && offset < s.Children[childIndex].EndOffset) {
 					ILStructure child = s.Children[childIndex++];
 					WriteStructureHeader(child);
-					WriteStructureBody(child, ref inst, currentMethodMapping);
+					WriteStructureBody(child, ref inst, currentMethodMapping, codeSize);
 					WriteStructureFooter(child);
 				} else {
 					inst.WriteTo(output);

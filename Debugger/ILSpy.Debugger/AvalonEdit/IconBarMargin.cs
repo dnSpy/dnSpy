@@ -253,7 +253,9 @@ namespace ILSpy.Debugger.AvalonEdit
 						// check if the codemappings exists for this line
 						var storage = CodeMappings.GetStorage(DebuggerService.CurrentDebugger.Language);
 						uint token;
-						if (storage.GetInstructionByTypeAndLine(CurrentType.FullName, line, out token) == null) {
+						var instruction = storage.GetInstructionByTypeAndLine(CurrentType.FullName, line, out token);
+						
+						if (instruction == null || instruction.ILInstructionOffset.From == 0) {
 							MessageBox.Show(string.Format("Missing code mappings for {0} at line {1}", CurrentType.FullName, line),
 							                "Code mappings", MessageBoxButton.OK, MessageBoxImage.Information);
 							return;
