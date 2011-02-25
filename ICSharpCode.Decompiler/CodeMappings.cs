@@ -37,6 +37,20 @@ namespace ICSharpCode.Decompiler
 		public uint MetadataToken { get; set; }
 		
 		public List<SourceCodeMapping> MethodCodeMappings { get; set; }
+		
+		public int[] ToArray()
+		{
+			int[] result = new int[MethodCodeMappings.Count + 1];
+			int i = 0;
+			foreach (var element in MethodCodeMappings) {
+				result[i] = MethodCodeMappings[i].ILInstructionOffset.From;	
+				++i;
+			}
+			
+			result[MethodCodeMappings.Count] = MethodCodeMappings[MethodCodeMappings.Count - 1].ILInstructionOffset.To;
+			
+			return result;
+		}
 	}
 	
 	public static class CodeMappings

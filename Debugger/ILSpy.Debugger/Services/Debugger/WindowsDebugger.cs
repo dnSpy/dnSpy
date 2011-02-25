@@ -282,7 +282,7 @@ namespace ILSpy.Debugger.Services
 		
 		// Stepping:
 		
-		SourceCodeMapping GetNextCodeMapping()
+		MethodMapping GetNextCodeMapping()
 		{
 			uint token;
 			var instruction = CodeMappingsStorage.GetInstructionByTypeAndLine(
@@ -291,9 +291,9 @@ namespace ILSpy.Debugger.Services
 			
 			var val = CodeMappingsStorage[CurrentLineBookmark.Instance.TypeName];
 			
-			var mapping = val.Find(m => m.MetadataToken == token);
+			return val.Find(m => m.MetadataToken == token);
 			
-			return mapping.MethodCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From <= instruction.ILInstructionOffset.To);
+			//return mapping.MethodCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From <= instruction.ILInstructionOffset.To);
 		}
 		
 		public void StepInto()
@@ -315,8 +315,8 @@ namespace ILSpy.Debugger.Services
 					Continue();
 				} else {
 					var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-					frame.SourceCodeLine = map.SourceCodeLine;
-					frame.ILRanges = (new List<int> { map.ILInstructionOffset.From, map.ILInstructionOffset.To }).ToArray();
+					frame.SourceCodeLine = CurrentLineBookmark.Instance.LineNumber;
+					frame.ILRanges = map.ToArray();
 					frame.AsyncStepInto();
 				}
 			}
@@ -341,8 +341,8 @@ namespace ILSpy.Debugger.Services
 					Continue();
 				} else {
 					var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-					frame.SourceCodeLine = map.SourceCodeLine;
-					frame.ILRanges = (new List<int> { map.ILInstructionOffset.From, map.ILInstructionOffset.To }).ToArray();
+					frame.SourceCodeLine = CurrentLineBookmark.Instance.LineNumber;
+					frame.ILRanges = map.ToArray();
 					frame.AsyncStepOver();
 				}
 			}
@@ -367,8 +367,8 @@ namespace ILSpy.Debugger.Services
 					Continue();
 				} else {
 					var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-					frame.SourceCodeLine = map.SourceCodeLine;
-					frame.ILRanges = (new List<int> { map.ILInstructionOffset.From, map.ILInstructionOffset.To }).ToArray();
+					frame.SourceCodeLine = CurrentLineBookmark.Instance.LineNumber;
+					frame.ILRanges = map.ToArray();
 					frame.AsyncStepOut();
 				}
 			}
