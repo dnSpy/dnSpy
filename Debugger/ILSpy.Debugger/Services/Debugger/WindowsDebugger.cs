@@ -572,18 +572,18 @@ namespace ILSpy.Debugger.Services
 				if (map != null) {
 					breakpoint = new ILBreakpoint(
 						debugger,
+						bookmark.TypeName,
 						bookmark.LineNumber,
 						token,
 						map.ILInstructionOffset.From,
 						bookmark.IsEnabled);
-					
-					debugger.Breakpoints.Add(breakpoint);
 				}
 			}
 			
 			if (breakpoint == null)
 				return;
 			
+			debugger.Breakpoints.Add(breakpoint);
 //			Action setBookmarkColor = delegate {
 //				if (debugger.Processes.Count == 0) {
 //					bookmark.IsHealthy = true;
@@ -728,12 +728,14 @@ namespace ILSpy.Debugger.Services
 				debuggedProcess.Paused          -= debuggedProcess_DebuggingPaused;
 				debuggedProcess.ExceptionThrown -= debuggedProcess_ExceptionThrown;
 				debuggedProcess.Resumed         -= debuggedProcess_DebuggingResumed;
+				debuggedProcess.ModulesAdded 	-= debuggedProcess_ModulesAdded;
 			}
 			debuggedProcess = process;
 			if (debuggedProcess != null) {
 				debuggedProcess.Paused          += debuggedProcess_DebuggingPaused;
 				debuggedProcess.ExceptionThrown += debuggedProcess_ExceptionThrown;
 				debuggedProcess.Resumed         += debuggedProcess_DebuggingResumed;
+				debuggedProcess.ModulesAdded 	+= debuggedProcess_ModulesAdded;
 				
 				debuggedProcess.BreakAtBeginning = BreakAtBeginning;
 			}
@@ -742,6 +744,19 @@ namespace ILSpy.Debugger.Services
 			
 			JumpToCurrentLine();
 			OnProcessSelected(new ProcessEventArgs(process));
+		}
+
+		void debuggedProcess_ModulesAdded(object sender, ModuleEventArgs e)
+		{
+			foreach (var bookmark in DebuggerService.Breakpoints) {
+				var breakpoint =
+					debugger.Breakpoints.FirstOrDefault(
+						b => b.Line == bookmark.LineNumber && b.TypeName == bookmark.TypeName);
+				if (breakpoint == null)
+					continue;
+				
+				breakpoint.SetBreakpoint(e.Module);
+			}
 		}
 		
 		void debuggedProcess_DebuggingPaused(object sender, ProcessEventArgs e)

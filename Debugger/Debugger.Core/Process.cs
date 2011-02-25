@@ -687,8 +687,13 @@ namespace Debugger
 				}
 				BreakAtBeginning = false;
 			}
+			
+			if (ModulesAdded != null)
+				ModulesAdded(this, new ModuleEventArgs(e.Item));
 		}
 		
 		#endregion
+		
+		public event EventHandler<ModuleEventArgs> ModulesAdded;
 	}
 }

@@ -337,17 +337,23 @@ namespace ICSharpCode.ILSpy
 		#endregion
 		
 		#region Debugger commands
+		
+		IDebugger CurrentDebugger { 
+			get {
+				return DebuggerService.CurrentDebugger;
+			}
+		}
 
 		void AttachToProcessExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (!DebuggerService.CurrentDebugger.IsDebugging) {
+			if (!CurrentDebugger.IsDebugging) {
 				var window = new AttachToProcessWindow();
 				window.Owner = this;
 				if (window.ShowDialog() == true)
 				{
-					if (DebuggerService.CurrentDebugger.IsDebugging) {
+					if (CurrentDebugger.IsDebugging) {
 						EnableDebuggerUI(false);
-						DebuggerService.CurrentDebugger.DebugStopped += OnDebugStopped;
+						CurrentDebugger.DebugStopped += OnDebugStopped;
 					}
 				}
 			}
@@ -361,36 +367,36 @@ namespace ICSharpCode.ILSpy
 		
 		void DetachFromProcessExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (DebuggerService.CurrentDebugger.IsDebugging && !DebuggerService.CurrentDebugger.IsProcessRunning){
-				DebuggerService.CurrentDebugger.Detach();
+			if (CurrentDebugger.IsDebugging){
+				CurrentDebugger.Detach();
 				
 				EnableDebuggerUI(true);
-				DebuggerService.CurrentDebugger.DebugStopped -= OnDebugStopped;
+				CurrentDebugger.DebugStopped -= OnDebugStopped;
 			}
 		}
 		
 		void ContinueDebuggingExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (DebuggerService.CurrentDebugger.IsDebugging)
-				DebuggerService.CurrentDebugger.Continue();
+			if (CurrentDebugger.IsDebugging)
+				CurrentDebugger.Continue();
 		}
 		
 		void StepIntoExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (DebuggerService.CurrentDebugger.IsDebugging && !DebuggerService.CurrentDebugger.IsProcessRunning)
-				DebuggerService.CurrentDebugger.StepInto();
+			if (CurrentDebugger.IsDebugging)
+				CurrentDebugger.StepInto();
 		}
 		
 		void StepOverExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (DebuggerService.CurrentDebugger.IsDebugging && !DebuggerService.CurrentDebugger.IsProcessRunning)
-				DebuggerService.CurrentDebugger.StepOver();
+			if (CurrentDebugger.IsDebugging)
+				CurrentDebugger.StepOver();
 		}
 		
 		void StepOutExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (DebuggerService.CurrentDebugger.IsDebugging && !DebuggerService.CurrentDebugger.IsProcessRunning)
-				DebuggerService.CurrentDebugger.StepOut();
+			if (CurrentDebugger.IsDebugging)
+				CurrentDebugger.StepOut();
 		}
 		
 		void RemoveAllBreakpointExecuted(object sender, ExecutedRoutedEventArgs e)

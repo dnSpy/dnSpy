@@ -45,6 +45,11 @@ namespace Debugger
 			set { line = value; }
 		}
 		
+		public string TypeName {
+			get;
+			set;
+		}
+		
 		public int Column {
 			get { return column; }
 			protected set { column = value; }
@@ -142,7 +147,7 @@ namespace Debugger
 			corBreakpoints.Clear();
 		}
 		
-		internal virtual bool SetBreakpoint(Module module)
+		public virtual bool SetBreakpoint(Module module)
 		{
 			if (this.fileName == null)
 				return false;
@@ -171,12 +176,13 @@ namespace Debugger
 	
 	public class ILBreakpoint : Breakpoint
 	{
-		public ILBreakpoint(NDebugger debugger, int line, uint metadataToken, int ilOffset, bool enabled)
+		public ILBreakpoint(NDebugger debugger, string typeName, int line, uint metadataToken, int offset, bool enabled)
 		{
 			this.Debugger = debugger;
 			this.Line = line;
+			this.TypeName = typeName;
 			this.MetadataToken = metadataToken;
-			this.ILOffset = ilOffset;
+			this.ILOffset = offset;
 			this.Enabled = enabled;
 		}
 		
@@ -184,7 +190,7 @@ namespace Debugger
 		
 		public int ILOffset { get; private set; }
 		
-		internal override bool SetBreakpoint(Module module)
+		public override bool SetBreakpoint(Module module)
 		{
 			SourcecodeSegment segment = SourcecodeSegment.CreateForIL(module, this.Line, (int)MetadataToken, ILOffset);
 			if (segment == null)

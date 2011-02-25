@@ -203,7 +203,7 @@ namespace ILSpy.Debugger.Services
 			var logicPos = e.LogicalPosition;
 			var doc = (TextDocument)e.Editor.Document;
 			
-			string variable = 
+			string variable =
 				ParserService.SimpleParseAt(doc.Text, doc.GetOffset(new TextLocation(logicPos.Line, logicPos.Column)));
 			
 			if (currentDebugger == null || !currentDebugger.IsDebugging || !currentDebugger.CanEvaluate) {
@@ -218,12 +218,12 @@ namespace ILSpy.Debugger.Services
 			}
 			
 			// FIXME Do proper parsing
-//			
+//
 //			using (var sr = new StringReader(doc.Text))
 //			{
 //				var parser = new CSharpParser();
 //				parser.Parse(sr);
-//				
+//
 //				IExpressionFinder expressionFinder = ParserService.GetExpressionFinder();
 //				if (expressionFinder == null)
 //					return;
