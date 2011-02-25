@@ -186,6 +186,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (def == null)
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
+			if (typeNode == null)
+				return null;
 			typeNode.EnsureLazyChildren();
 			MethodTreeNode methodNode = typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def && !m.IsHidden);
 			if (methodNode != null)
@@ -212,6 +214,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (def == null)
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
+			if (typeNode == null)
+				return null;
 			typeNode.EnsureLazyChildren();
 			return typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def && !m.IsHidden);
 		}
@@ -225,6 +229,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (def == null)
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
+			if (typeNode == null)
+				return null;
 			typeNode.EnsureLazyChildren();
 			return typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def && !m.IsHidden);
 		}
@@ -238,6 +244,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (def == null)
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
+			if (typeNode == null)
+				return null;
 			typeNode.EnsureLazyChildren();
 			return typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def && !m.IsHidden);
 		}

@@ -67,5 +67,6 @@ namespace ICSharpCode.ILSpy
 		public static readonly BitmapImage ProtectedStruct = LoadBitmap("ProtectedStruct");
 		
 		public static readonly BitmapImage Delete = LoadBitmap("Delete");
+		public static readonly BitmapImage Search = LoadBitmap("Search");
 	}
 }

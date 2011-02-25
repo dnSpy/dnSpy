@@ -18,7 +18,10 @@
 
 using System;
 using System.Text;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -43,30 +46,41 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override object Text {
 			get {
-				StringBuilder b = new StringBuilder();
-				b.Append('(');
-				for (int i = 0; i < method.Parameters.Count; i++) {
-					if (i > 0) b.Append(", ");
-					b.Append(this.Language.TypeToString(method.Parameters[i].ParameterType, false, method.Parameters[i]));
-				}
-				b.Append(") : ");
-				b.Append(this.Language.TypeToString(method.ReturnType, false, method.MethodReturnType));
-				return HighlightSearchMatch(method.Name, b.ToString());
+				return GetText(method, Language);
 			}
+		}
+
+		public static object GetText(MethodDefinition method, Language language)
+		{
+			StringBuilder b = new StringBuilder();
+			b.Append('(');
+			for (int i = 0; i < method.Parameters.Count; i++) {
+				if (i > 0)
+					b.Append(", ");
+				b.Append(language.TypeToString(method.Parameters[i].ParameterType, false, method.Parameters[i]));
+			}
+			b.Append(") : ");
+			b.Append(language.TypeToString(method.ReturnType, false, method.MethodReturnType));
+			return HighlightSearchMatch(method.Name, b.ToString());
 		}
 		
 		public override object Icon {
 			get {
-				if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal))
-					return Images.Operator;
-				if (method.IsStatic && method.HasCustomAttributes) {
-					foreach (var ca in method.CustomAttributes) {
-						if (ca.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
-							return Images.ExtensionMethod;
-					}
-				}
-				return Images.Method;
+				return GetIcon(method);
 			}
+		}
+
+		public static BitmapImage GetIcon(MethodDefinition method)
+		{
+			if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal))
+				return Images.Operator;
+			if (method.IsStatic && method.HasCustomAttributes) {
+				foreach (var ca in method.CustomAttributes) {
+					if (ca.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
+						return Images.ExtensionMethod;
+				}
+			}
+			return Images.Method;
 		}
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
@@ -80,6 +94,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FilterResult.Match;
 			else
 				return FilterResult.Hidden;
+		}
+		
+		public override System.Windows.Controls.ContextMenu GetContextMenu()
+		{
+			ContextMenu menu = new ContextMenu();
+			MenuItem item = new MenuItem() { Header = "Analyze", Icon = new Image() { Source = Images.Search } };
+			item.Click += delegate { MainWindow.Instance.AddToAnalyzer(new AnalyzedMethodTreeNode(method)); };
+			
+			menu.Items.Add(item);
+			
+			return menu;
 		}
 	}
 }

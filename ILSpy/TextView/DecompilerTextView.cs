@@ -379,20 +379,7 @@ namespace ICSharpCode.ILSpy.TextView
 					return;
 				}
 			}
-			var assemblyListTreeNode = mainWindow.AssemblyListTreeNode;
-			if (reference is TypeReference) {
-				mainWindow.SelectNode(assemblyListTreeNode.FindTypeNode(((TypeReference)reference).Resolve()));
-			} else if (reference is MethodReference) {
-				mainWindow.SelectNode(assemblyListTreeNode.FindMethodNode(((MethodReference)reference).Resolve()));
-			} else if (reference is FieldReference) {
-				mainWindow.SelectNode(assemblyListTreeNode.FindFieldNode(((FieldReference)reference).Resolve()));
-			} else if (reference is PropertyReference) {
-				mainWindow.SelectNode(assemblyListTreeNode.FindPropertyNode(((PropertyReference)reference).Resolve()));
-			} else if (reference is EventReference) {
-				mainWindow.SelectNode(assemblyListTreeNode.FindEventNode(((EventReference)reference).Resolve()));
-			} else if (reference is AssemblyDefinition) {
-				mainWindow.SelectNode(assemblyListTreeNode.FindAssemblyNode((AssemblyDefinition)reference));
-			}
+			mainWindow.JumpToReference(reference);
 		}
 		#endregion
 		
