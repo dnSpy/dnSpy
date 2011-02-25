@@ -11,7 +11,7 @@ namespace ParameterLessAttributeUsage
 	[Flags]
 	public enum EnumWithFlagsAttribute
 	{
-		None
+		None = 0
 	}
 }
 //$$ AttributeWithEnumArgument
@@ -77,5 +77,13 @@ namespace AttributeAppliedToMethod
 		public void Method()
 		{
 		}
+	}
+}
+//$$ NamedParameter
+namespace NamedParameter
+{
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+	public class MyAttributeAttribute : Attribute
+	{
 	}
 }

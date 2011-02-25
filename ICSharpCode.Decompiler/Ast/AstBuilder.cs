@@ -600,21 +600,30 @@ namespace Decompiler
 					attribute.Type = ConvertType(customAttribute.AttributeType);
 					section.Attributes.Add(attribute);
 
-					foreach (var parameter in customAttribute.ConstructorArguments)
-					{
-						var isEnum = parameter.Type.IsValueType && !parameter.Type.IsPrimitive;
-						Expression parameterValue;
-						if (isEnum)
+					if(customAttribute.HasConstructorArguments)
+						foreach (var parameter in customAttribute.ConstructorArguments)
 						{
-							parameterValue = MakePrimitive(Convert.ToInt64(parameter.Value), parameter.Type);
+							var isEnum = parameter.Type.IsValueType && !parameter.Type.IsPrimitive;
+							Expression parameterValue;
+							if (isEnum)
+							{
+								parameterValue = MakePrimitive(Convert.ToInt64(parameter.Value), parameter.Type);
+							}
+							else
+							{
+								parameterValue = new PrimitiveExpression(parameter.Value);
+							}
+							attribute.Arguments.Add(parameterValue);
 						}
-						else
-						{
-							parameterValue = new PrimitiveExpression(parameter.Value);
-						}
-						attribute.Arguments.Add(parameterValue);
-					}
 
+					if (customAttribute.HasProperties)
+						foreach (var property in customAttribute.Properties)
+						{
+							var propertyReference = customAttribute.AttributeType.Resolve().Properties.First(pr => pr.Name == property.Name);
+							var propertyName = new IdentifierExpression(property.Name).WithAnnotation(propertyReference);
+							var propertyArgument = new PrimitiveExpression(property.Argument.Value);
+							attribute.Arguments.Add(new AssignmentExpression(propertyName, propertyArgument));
+						}
 				}
 
 				attributedNode.Attributes.Add(section);
