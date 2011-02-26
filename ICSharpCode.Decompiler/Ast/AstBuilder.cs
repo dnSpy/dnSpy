@@ -64,21 +64,25 @@ namespace Decompiler
 			astCompileUnit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
 		}
 		
-		public void AddAssembly(AssemblyDefinition assemblyDefinition)
+		public void AddAssembly(AssemblyDefinition assemblyDefinition, bool onlyAssemblyLevel = false)
 		{
 			astCompileUnit.AddChild(
 				new UsingDeclaration {
 					Import = new SimpleType("System")
 				}, CompilationUnit.MemberRole);
 			
-			foreach(TypeDefinition typeDef in assemblyDefinition.MainModule.Types) {
-				// Skip nested types - they will be added by the parent type
-				if (typeDef.DeclaringType != null) continue;
-				// Skip the <Module> class
-				if (typeDef.Name == "<Module>") continue;
-				
-				AddType(typeDef);
-			}
+			ConvertCustomAtributes(astCompileUnit, assemblyDefinition, AttributeTarget.Assembly);
+
+			if(!onlyAssemblyLevel)
+				foreach (TypeDefinition typeDef in assemblyDefinition.MainModule.Types)
+				{
+					// Skip nested types - they will be added by the parent type
+					if (typeDef.DeclaringType != null) continue;
+					// Skip the <Module> class
+					if (typeDef.Name == "<Module>") continue;
+
+					AddType(typeDef);
+				}
 		}
 		
 		NamespaceDeclaration GetCodeNamespace(string name)
@@ -192,6 +196,11 @@ namespace Decompiler
 
 			ConvertCustomAtributes(astType, typeDef);
 			return astType;
+		}
+
+		public void Transform(IAstTransform transform)
+		{
+			transform.Run(astCompileUnit);
 		}
 		
 		string CleanName(string name)
@@ -525,11 +534,16 @@ namespace Decompiler
 				astProp.Getter = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context)
 				}.WithAnnotation(propDef.GetMethod);
+				ConvertCustomAtributes(astProp.Getter, propDef.GetMethod);
+				ConvertCustomAtributes(astProp.Getter, propDef.GetMethod.MethodReturnType, AttributeTarget.Return);
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context)
 				}.WithAnnotation(propDef.SetMethod);
+				ConvertCustomAtributes(astProp.Setter, propDef.SetMethod);
+				ConvertCustomAtributes(astProp.Setter, propDef.SetMethod.MethodReturnType, AttributeTarget.Return);
+				ConvertCustomAtributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), AttributeTarget.Param);
 			}
 			ConvertCustomAtributes(astProp, propDef);
 			return astProp;

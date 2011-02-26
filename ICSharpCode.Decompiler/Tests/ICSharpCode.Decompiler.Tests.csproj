@@ -57,6 +57,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Types\EnumSamples.cs" />
+    <None Include="CustomAttributes\AssemblyCustomAttribute.cs" />
+    <Compile Include="Helpers\RemoveCompilerAttribute.cs" />
     <Compile Include="Types\EnumTests.cs" />
     <Compile Include="Types\TypeTests.cs" />
     <None Include="Types\DelegateConstruction.cs" />
@@ -70,7 +72,6 @@
     <Compile Include="ArrayInitializers.cs" />
     <Compile Include="ExceptionHandling.cs" />
     <Compile Include="MultidimensionalArray.cs" />
-
     <Compile Include="TestRunner.cs" />
     <None Include="Types\ValueTypes.cs" />
   </ItemGroup>
@@ -79,14 +80,16 @@
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler.csproj">
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="StackTests" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="BooleanConsumedAsInteger.il" />
     <None Include="StackTests\StackTests.il" />

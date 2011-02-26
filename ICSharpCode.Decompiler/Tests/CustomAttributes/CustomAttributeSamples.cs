@@ -5,6 +5,8 @@
 using System;
 //$CE
 
+//$$ TargetModule (ignored)
+//[module: CLSCompliantAttribute(false)]
 //$$ ParameterlessAttributeUsage
 namespace ParameterLessAttributeUsage
 {
@@ -91,6 +93,48 @@ namespace AppliedToProperty
 			get
 			{
 				return 0;
+			}
+		}
+	}
+}
+//$$ AppliedToPropertyGet
+namespace AppliedToPropertyGet
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class TestClass
+	{
+		public int Property
+		{
+			[MyAttribute]
+			get
+			{
+				return 0;
+			}
+		}
+	}
+}
+//$$ AppliedToPropertySet
+namespace AppliedToPropertySet
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class TestClass
+	{
+		public int Property
+		{
+			get
+			{
+				return 3;
+			}
+			[MyAttribute]
+			set
+			{
+				return;
 			}
 		}
 	}
@@ -241,6 +285,114 @@ namespace TargetReturn
 		public int MyMethod()
 		{
 			return 5;
+		}
+	}
+}
+//$$ TargetPropertyGetReturn
+namespace TargetPropertyGetReturn
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class MyClass
+	{
+		public int Prop
+		{
+			[return: MyAttribute]
+			get
+			{
+				return 3;
+			}
+		}
+	}
+}
+//$$ TargetPropertySetParam
+namespace TargetPropertySetParam
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class MyClass
+	{
+		public int Prop
+		{
+			[param: MyAttribute]
+			set
+			{
+				return;
+			}
+		}
+	}
+}
+//$$ TargetPropertySetReturn
+namespace TargetPropertySetReturn
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class MyClass
+	{
+		public int Prop
+		{
+			get
+			{
+				return 3;
+			}
+			[return: MyAttribute]
+			set
+			{
+				return;
+			}
+		}
+	}
+}
+//$$ TargetPropertyIndexSetParam
+namespace TargetPropertyIndexSetParam
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class MyClass
+	{
+		public string this[int index]
+		{
+			get
+			{
+				return "";
+			}
+			[param: MyAttribute]
+			set
+			{
+				return;
+			}
+		}
+	}
+}
+//$$ TargetPropertyIndexSetMultiParam
+namespace TargetPropertyIndexSetMultiParam
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+		public int Field;
+	}
+	public class MyClass
+	{
+		public string this[[MyAttribute(Field = 2)]int index1, [MyAttribute(Field = 3)]int index2]
+		{
+			get
+			{
+				return "";
+			}
+			[param: MyAttribute]
+			set
+			{
+				return;
+			}
 		}
 	}
 }

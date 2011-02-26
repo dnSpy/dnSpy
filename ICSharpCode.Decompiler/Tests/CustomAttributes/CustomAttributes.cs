@@ -3,7 +3,6 @@
 
 using System;
 
-
 namespace aa
 {
 	public static class CustomAtributes
