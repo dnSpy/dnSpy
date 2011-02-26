@@ -228,3 +228,19 @@ namespace NamedInitializerFieldEnum
 	{
 	}
 }
+//$$ TargetReturn
+namespace TargetReturn
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class MyClass
+	{
+		[return: MyAttribute]
+		public int MyMethod()
+		{
+			return 5;
+		}
+	}
+}

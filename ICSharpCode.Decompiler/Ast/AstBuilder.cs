@@ -480,6 +480,7 @@ namespace Decompiler
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			}
 			ConvertCustomAtributes(astMethod, methodDef);
+			ConvertCustomAtributes(astMethod, methodDef.MethodReturnType, AttributeTarget.Return);
 			return astMethod;
 		}
 		
@@ -589,12 +590,12 @@ namespace Decompiler
 			}
 		}
 
-		static void ConvertCustomAtributes(AttributedNode attributedNode, ICustomAttributeProvider customAttributeProvider)
+		static void ConvertCustomAtributes(AttributedNode attributedNode, ICustomAttributeProvider customAttributeProvider, AttributeTarget target = AttributeTarget.None)
 		{
 			if (customAttributeProvider.HasCustomAttributes)
 			{
 				var section = new AttributeSection();
-				//section.AttributeTarget = target;
+				section.AttributeTarget = target;
 				foreach (var customAttribute in customAttributeProvider.CustomAttributes)
 				{
 					ICSharpCode.NRefactory.CSharp.Attribute attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
