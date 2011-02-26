@@ -17,41 +17,69 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedMethodTreeNode : AnalyzerTreeNode
+	/// <summary>
+	/// Shows the methods that are used by this method.
+	/// </summary>
+	sealed class AnalyzedMethodUsesNode : AnalyzerTreeNode
 	{
 		MethodDefinition analyzedMethod;
 		
-		public AnalyzedMethodTreeNode(MethodDefinition analyzedMethod)
+		public AnalyzedMethodUsesNode(MethodDefinition analyzedMethod)
 		{
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
+			
 			this.analyzedMethod = analyzedMethod;
 			this.LazyLoading = true;
 		}
 		
-		public override object Icon {
-			get { return MethodTreeNode.GetIcon(analyzedMethod); }
-		}
-		
 		public override object Text {
-			get { return Language.TypeToString(analyzedMethod.DeclaringType, true) + "." + MethodTreeNode.GetText(analyzedMethod, Language); }
+			get { return "Uses"; }
 		}
 		
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
-		{
-			e.Handled = true;
-			MainWindow.Instance.JumpToReference(analyzedMethod);
+		public override object Icon {
+			get { return Images.Search; }
 		}
 		
 		protected override void LoadChildren()
 		{
-			if (analyzedMethod.HasBody)
-				this.Children.Add(new AnalyzedMethodUsesNode(analyzedMethod));
-			this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));
+			foreach (var f in GetUsedFields().Distinct()) {
+				this.Children.Add(new AnalyzedFieldNode(f));
+			}
+			foreach (var m in GetUsedMethods().Distinct()) {
+				this.Children.Add(new AnalyzedMethodTreeNode(m));
+			}
+		}
+		
+		IEnumerable<MethodDefinition> GetUsedMethods()
+		{
+			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
+				MethodReference mr = instr.Operand as MethodReference;
+				if (mr != null) {
+					MethodDefinition def = mr.Resolve();
+					if (def != null)
+						yield return def;
+				}
+			}
+		}
+		
+		IEnumerable<FieldDefinition> GetUsedFields()
+		{
+			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
+				FieldReference fr = instr.Operand as FieldReference;
+				if (fr != null) {
+					FieldDefinition def = fr.Resolve();
+					if (def != null)
+						yield return def;
+				}
+			}
 		}
 	}
 }

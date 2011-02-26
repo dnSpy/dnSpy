@@ -136,8 +136,11 @@
     <Compile Include="TextView\ReferenceElementGenerator.cs" />
     <Compile Include="TextView\AvalonEditTextOutput.cs" />
     <Compile Include="TextView\UIElementGenerator.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedFieldAccessNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedFieldNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedMethodTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedMethodUsedByTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedMethodUsesNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzerTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyListTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyReferenceTreeNode.cs" />
