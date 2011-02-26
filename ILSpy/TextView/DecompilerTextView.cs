@@ -19,8 +19,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,12 +32,13 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.Xml;
-
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.NRefactory.Documentation;
 using Microsoft.Win32;
 using Mono.Cecil;
 
@@ -69,11 +72,99 @@ namespace ICSharpCode.ILSpy.TextView
 				});
 			
 			InitializeComponent();
-			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference);
+			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
+			textEditor.TextArea.TextView.MouseHover += TextViewMouseHover;
+			textEditor.TextArea.TextView.MouseHoverStopped += TextViewMouseHoverStopped;
+		}
+		#endregion
+		
+		#region Tooltip support
+		ToolTip tooltip;
+		
+		void TextViewMouseHoverStopped(object sender, MouseEventArgs e)
+		{
+			if (tooltip != null)
+				tooltip.IsOpen = false;
+		}
+
+		void TextViewMouseHover(object sender, MouseEventArgs e)
+		{
+			TextViewPosition? position = textEditor.TextArea.TextView.GetPosition(e.GetPosition(textEditor.TextArea.TextView) + textEditor.TextArea.TextView.ScrollOffset);
+			if (position == null)
+				return;
+			int offset = textEditor.Document.GetOffset(position.Value);
+			ReferenceSegment seg = referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
+			if (seg == null)
+				return;
+			object content = GenerateTooltip(seg);
+			if (tooltip != null)
+				tooltip.IsOpen = false;
+			if (content != null)
+				tooltip = new ToolTip() { Content = content, IsOpen = true };
+		}
+		
+		object GenerateTooltip(ReferenceSegment segment)
+		{
+			if (segment.Reference is Mono.Cecil.Cil.OpCode) {
+				Mono.Cecil.Cil.OpCode code = (Mono.Cecil.Cil.OpCode)segment.Reference;
+				string encodedName = code.Code.ToString();
+				string opCodeHex = code.Size > 1 ? string.Format("0x{0:x2}{1:x2}", code.Op1, code.Op2) : string.Format("0x{0:x2}", code.Op2);
+				string documentationFile = FindDocumentation("mscorlib.xml");
+				string text = "";
+				if (documentationFile != null){
+					XmlDocumentationProvider provider = new XmlDocumentationProvider(documentationFile);
+					string documentation = provider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + encodedName);
+					if (documentation != null)
+						text = StripXml(documentation);
+				}
+				return string.Format("{0} ({1}): {2}", code.Name, opCodeHex, text);
+			}
+			
+			return null;
+		}
+		
+		string StripXml(string xml)
+		{
+			return Regex.Replace(xml, "</?.*>", "").Trim();
+		}
+		
+		string FindDocumentation(string fileName)
+		{
+			string path = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+			List<string> names = new List<string>();
+			EnumerateCultures(CultureInfo.CurrentCulture, names);
+			names.Add("en");
+			names.Add("en-US");
+			names.Add("en-GB");
+			
+			foreach (string name in names) {
+				string location = Path.Combine(path, name, fileName);
+				if (File.Exists(location))
+					return location;
+			}
+			
+			path = Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)") ?? Environment.GetEnvironmentVariable("PROGRAMFILES"), @"Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0");
+			
+			string loc = Path.Combine(path, fileName);
+			
+			if (File.Exists(loc))
+				return loc;
+			
+			return null;
+		}
+
+		void EnumerateCultures(CultureInfo info, List<string> names)
+		{
+			while (info != null) {
+				names.Add(info.Name);
+				info = info.Parent;
+				if (info == info.Parent)
+					return;
+			}
 		}
 		#endregion
 		
@@ -360,6 +451,14 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 			}
 			mainWindow.JumpToReference(reference);
+		}
+		
+		/// <summary>
+		/// Filters all ReferenceSegments that are no real links.
+		/// </summary>
+		bool IsLink(ReferenceSegment referenceSegment)
+		{
+			return true;
 		}
 		#endregion
 		

@@ -29,17 +29,21 @@ namespace ICSharpCode.ILSpy.TextView
 	sealed class ReferenceElementGenerator : VisualLineElementGenerator
 	{
 		Action<ReferenceSegment> referenceClicked;
+		Predicate<ReferenceSegment> isLink;
 		
 		/// <summary>
 		/// The collection of references (hyperlinks).
 		/// </summary>
 		public TextSegmentCollection<ReferenceSegment> References { get; set; }
 		
-		public ReferenceElementGenerator(Action<ReferenceSegment> referenceClicked)
+		public ReferenceElementGenerator(Action<ReferenceSegment> referenceClicked, Predicate<ReferenceSegment> isLink)
 		{
 			if (referenceClicked == null)
 				throw new ArgumentNullException("referenceClicked");
+			if (isLink == null)
+				throw new ArgumentNullException("isLink");
 			this.referenceClicked = referenceClicked;
+			this.isLink = isLink;
 		}
 		
 		public override int GetFirstInterestedOffset(int startOffset)
@@ -56,6 +60,9 @@ namespace ICSharpCode.ILSpy.TextView
 			if (this.References == null)
 				return null;
 			foreach (var segment in this.References.FindSegmentsContaining(offset)) {
+				// skip all non-links
+				if (!isLink(segment))
+					continue;
 				// ensure that hyperlinks don't span several lines (VisualLineElements can't contain line breaks)
 				int endOffset = Math.Min(segment.EndOffset, CurrentContext.VisualLine.LastDocumentLine.EndOffset);
 				// don't create hyperlinks with length 0
