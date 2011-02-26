@@ -201,3 +201,16 @@ namespace NamedEnumPropertyParameter
 	{
 	}
 }
+//$$ NamedEnumFieldParameter
+namespace NamedEnumFieldParameter
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+		public AttributeTargets Field;
+	}
+	[MyAttribute(Field = (AttributeTargets.Class | AttributeTargets.Method))]
+	public class MyClass
+	{
+	}
+}

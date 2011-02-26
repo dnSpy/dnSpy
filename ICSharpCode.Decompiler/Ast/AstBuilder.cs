@@ -608,12 +608,21 @@ namespace Decompiler
 						}
 
 					if (customAttribute.HasProperties)
-						foreach (var property in customAttribute.Properties)
+						foreach (var propertyNamedArg in customAttribute.Properties)
 						{
-							var propertyReference = customAttribute.AttributeType.Resolve().Properties.First(pr => pr.Name == property.Name);
-							var propertyName = new IdentifierExpression(property.Name).WithAnnotation(propertyReference);
-							var argumentValue = ConvertArgumentValue(property.Argument);
+							var propertyReference = customAttribute.AttributeType.Resolve().Properties.First(pr => pr.Name == propertyNamedArg.Name);
+							var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
+							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
+						}
+
+					if (customAttribute.HasFields)
+						foreach (var fieldNamedArg in customAttribute.Fields)
+						{
+							var fieldReference = customAttribute.AttributeType.Resolve().Fields.First(f => f.Name == fieldNamedArg.Name);
+							var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
+							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
+							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
 						}
 				}
 
