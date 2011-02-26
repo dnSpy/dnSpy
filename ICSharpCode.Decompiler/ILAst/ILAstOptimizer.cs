@@ -12,6 +12,7 @@ namespace Decompiler.ControlFlow
 	public enum ILAstOptimizationStep
 	{
 		SplitToMovableBlocks,
+		PeepholeOptimizations,
 		FindLoops,
 		FindConditions,
 		FlattenNestedMovableBlocks,
@@ -33,7 +34,11 @@ namespace Decompiler.ControlFlow
 				SplitToBasicBlocks(block);
 			}
 			
-			OptimizeShortCircuits(method);
+			if (abortBeforeStep == ILAstOptimizationStep.PeepholeOptimizations) return;
+			AnalyseLabels(method);
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+				PeepholeOptimizations(block);
+			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindLoops) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
@@ -100,24 +105,23 @@ namespace Decompiler.ControlFlow
 					ILNode lastNode = block.Body[i - 1];
 					ILNode currNode = block.Body[i];
 					
-					bool added = false;
-					
 					// Insert split
 					if (currNode is ILLabel ||
 					    lastNode is ILTryCatchBlock ||
 					    currNode is ILTryCatchBlock ||
 					    (lastNode is ILExpression) && ((ILExpression)lastNode).IsBranch() ||
-					    (currNode is ILExpression) && (((ILExpression)currNode).IsBranch() && basicBlock.Body.Count > 0))
+					    (currNode is ILExpression) && (((ILExpression)currNode).IsBranch() && ((ILExpression)currNode).Code.CanFallThough() && basicBlock.Body.Count > 0))
 					{
 						ILBasicBlock lastBlock = basicBlock;
 						basicBlock = new ILBasicBlock();
 						basicBlocks.Add(basicBlock);
+						
 						if (currNode is ILLabel) {
-							// Reuse the first label
+							// Insert as entry label
 							basicBlock.EntryLabel = (ILLabel)currNode;
-							added = true;
 						} else {
 							basicBlock.EntryLabel = new ILLabel() { Name = "Block_" + (nextBlockIndex++) };
+							basicBlock.Body.Add(currNode);
 						}
 						
 						// Explicit branch from one block to other
@@ -125,34 +129,25 @@ namespace Decompiler.ControlFlow
 						if (!(lastNode is ILExpression) || ((ILExpression)lastNode).Code.CanFallThough()) {
 							lastBlock.FallthoughGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel);
 						}
+					} else {
+						basicBlock.Body.Add(currNode);						
 					}
-					
-					if (!added)
-						basicBlock.Body.Add(currNode);
+				}
+			}
+			
+			foreach (ILBasicBlock bb in basicBlocks) {
+				if (bb.Body.Count > 0 &&
+				    bb.Body.Last() is ILExpression &&
+				    ((ILExpression)bb.Body.Last()).Code == ILCode.Br)
+				{
+					Debug.Assert(bb.FallthoughGoto == null);
+					bb.FallthoughGoto = (ILExpression)bb.Body.Last();
+					bb.Body.RemoveAt(bb.Body.Count - 1);
 				}
 			}
 			
 			block.Body = basicBlocks;
 			return;
-		}
-		
-		void OptimizeShortCircuits(ILBlock method)
-		{
-			AnalyseLabels(method);
-			
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
-				bool modified;
-				do {
-					modified = false;
-					for (int i = 0; i < block.Body.Count;) {
-						if (TrySimplifyShortCircuit(block.Body, (ILBasicBlock)block.Body[i])) {
-							modified = true;
-						} else {
-							i++;
-						}
-					}
-				} while(modified);
-			}
 		}
 		
 		Dictionary<ILLabel, int> labelGlobalRefCount;
@@ -175,15 +170,103 @@ namespace Decompiler.ControlFlow
 			}
 		}
 		
+		void PeepholeOptimizations(ILBlock block)
+		{
+			bool modified;
+			do {
+				modified = false;
+				for (int i = 0; i < block.Body.Count;) {
+					if (TrySimplifyShortCircuit(block.Body, (ILBasicBlock)block.Body[i])) {
+						modified = true;
+						continue;
+					} 
+					if (TrySimplifyTernaryOperator(block.Body, (ILBasicBlock)block.Body[i])) {
+						modified = true;
+						continue;
+					}
+					i++;
+				}
+			} while(modified);
+		}
+		
 		bool IsConditionalBranch(ILBasicBlock bb, ref ILExpression branchExpr, ref ILLabel trueLabel, ref ILLabel falseLabel)
 		{
 			if (bb.Body.Count == 1) {
 				branchExpr = bb.Body[0] as ILExpression;
-				if (branchExpr != null && branchExpr.Operand is ILLabel && branchExpr.Arguments.Count > 0) {
+				if (branchExpr != null &&
+				    branchExpr.Operand is ILLabel &&
+				    branchExpr.Arguments.Count > 0 &&
+				    branchExpr.Prefixes == null)
+				{
 					trueLabel  = (ILLabel)branchExpr.Operand;
 					falseLabel = (ILLabel)((ILExpression)bb.FallthoughGoto).Operand;
 					return true;
 				}
+			}
+			return false;
+		}
+		
+		bool IsStloc(ILBasicBlock bb, ref ILVariable locVar, ref ILExpression val, ref ILLabel fallLabel)
+		{
+			if (bb.Body.Count == 1) {
+				ILExpression expr = bb.Body[0] as ILExpression;
+				if (expr != null &&
+				    expr.Code == ILCode.Stloc &&
+				    expr.Prefixes == null)
+				{
+					locVar = (ILVariable)expr.Operand;
+					val    = expr.Arguments[0];
+					fallLabel = (ILLabel)bb.FallthoughGoto.Operand;
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		// scope is modified if successful
+		bool TrySimplifyTernaryOperator(List<ILNode> scope, ILBasicBlock head)
+		{
+			Debug.Assert(scope.Contains(head));
+			
+			ILExpression branchExpr = null;
+			ILLabel trueLabel = null;
+			ILLabel falseLabel = null;
+			ILVariable trueLocVar = null;
+			ILExpression trueExpr = null;
+			ILLabel trueFall = null;
+			ILVariable falseLocVar = null;
+			ILExpression falseExpr = null;
+			ILLabel falseFall = null;
+			
+			if(IsConditionalBranch(head, ref branchExpr, ref trueLabel, ref falseLabel) &&
+			   labelGlobalRefCount[trueLabel] == 1 &&
+			   labelGlobalRefCount[falseLabel] == 1 &&
+			   IsStloc(labelToBasicBlock[trueLabel], ref trueLocVar, ref trueExpr, ref trueFall) &&
+			   IsStloc(labelToBasicBlock[falseLabel], ref falseLocVar, ref falseExpr, ref falseFall) &&
+			   trueLocVar == falseLocVar &&
+			   trueFall == falseFall)
+			{
+				// Create the ternary expression
+				head.Body = new List<ILNode>() {
+					new ILExpression(ILCode.Stloc, trueLocVar,
+						new ILExpression(ILCode.TernaryOp, null,
+					    		new ILExpression(branchExpr.Code, null, branchExpr.Arguments.ToArray()),
+					    		trueExpr,
+					    		falseExpr
+					    )
+					)
+				};
+				head.FallthoughGoto = new ILExpression(ILCode.Br, trueFall);
+				
+				// Remove the old basic blocks
+				scope.Remove(labelToBasicBlock[trueLabel]);
+				scope.Remove(labelToBasicBlock[falseLabel]);
+				labelToBasicBlock.Remove(trueLabel);
+				labelToBasicBlock.Remove(falseLabel);
+				labelGlobalRefCount.Remove(trueLabel);
+				labelGlobalRefCount.Remove(falseLabel);
+				
+				return true;
 			}
 			return false;
 		}
@@ -228,7 +311,8 @@ namespace Decompiler.ControlFlow
 						head.FallthoughGoto = new ILExpression(ILCode.Br, nextFalseLabel);
 						
 						// Remove the inlined branch from scope
-						labelGlobalRefCount[nextBasicBlock.EntryLabel] = 0;
+						labelGlobalRefCount.Remove(nextBasicBlock.EntryLabel);
+						labelToBasicBlock.Remove(nextBasicBlock.EntryLabel);
 						if (!scope.Remove(nextBasicBlock))
 							throw new Exception("Element not found");
 						

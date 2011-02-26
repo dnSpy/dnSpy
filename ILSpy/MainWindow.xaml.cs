@@ -280,6 +280,13 @@ namespace ICSharpCode.ILSpy
 				SelectNode(assemblyListTreeNode.FindEventNode(((EventReference)reference).Resolve()));
 			} else if (reference is AssemblyDefinition) {
 				SelectNode(assemblyListTreeNode.FindAssemblyNode((AssemblyDefinition)reference));
+			} else if (reference is Mono.Cecil.Cil.OpCode) {
+				string link = "http://msdn.microsoft.com/library/system.reflection.emit.opcodes." + ((Mono.Cecil.Cil.OpCode)reference).Code.ToString().ToLowerInvariant() + ".aspx";
+				try {
+					Process.Start(link);
+				} catch {
+					
+				}
 			}
 		}
 		#endregion

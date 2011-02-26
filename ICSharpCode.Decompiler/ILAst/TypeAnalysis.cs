@@ -119,6 +119,14 @@ namespace Decompiler
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Boolean);
 					}
 					return null;
+				case ILCode.TernaryOp:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
+					}
+					return TypeWithMoreInformation(
+						InferTypeForExpression(expr.Arguments[1], expectedType, forceInferChildren),
+						InferTypeForExpression(expr.Arguments[2], expectedType, forceInferChildren)
+					);
 					#endregion
 					#region Variable load/store
 				case ILCode.Stloc:

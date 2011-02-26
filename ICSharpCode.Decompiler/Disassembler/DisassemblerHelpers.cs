@@ -57,7 +57,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			writer.WriteDefinition(CecilExtensions.OffsetToString(instruction.Offset), instruction);
 			writer.Write(": ");
-			writer.Write(instruction.OpCode.Name);
+			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode);
 			if(null != instruction.Operand) {
 				writer.Write(' ');
 				WriteOperand(writer, instruction.Operand);
