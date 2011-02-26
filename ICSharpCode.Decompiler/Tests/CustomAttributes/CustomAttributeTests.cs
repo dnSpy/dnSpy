@@ -11,19 +11,19 @@ namespace ICSharpCode.Decompiler.Tests.CustomAttributes
 		[StaticTestFactory]
 		public static IEnumerable<Test> CustomAttributeSamples()
 		{			
-			return GenerateSectionTests(@"CustomAttributes\CustomAttributeSamples.cs");
+			return GenerateSectionTests(@"CustomAttributes\S_CustomAttributeSamples.cs");
 		}
 
 		[Test]
 		public void CustomAttributesMultiTest()
 		{
-			ValidateFileRoundtrip(@"CustomAttributes\CustomAttributes.cs");
+			ValidateFileRoundtrip(@"CustomAttributes\S_CustomAttributes.cs");
 		}
 
 		[Test]
 		public void AssemblyCustomAttributesMultiTest()
 		{
-			ValidateFileRoundtrip(@"CustomAttributes\AssemblyCustomAttribute.cs");
+			ValidateFileRoundtrip(@"CustomAttributes\S_AssemblyCustomAttribute.cs");
 		}
 	}
 }

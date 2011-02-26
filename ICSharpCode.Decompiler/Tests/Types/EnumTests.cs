@@ -11,7 +11,7 @@ namespace ICSharpCode.Decompiler.Tests.Types
 		[StaticTestFactory]
 		public static IEnumerable<Test> EnumSamples()
 		{
-			return GenerateSectionTests(@"Types\EnumSamples.cs");
+			return GenerateSectionTests(@"Types\S_EnumSamples.cs");
 		}
 	}
 }

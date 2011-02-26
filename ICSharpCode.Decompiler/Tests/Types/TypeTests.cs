@@ -11,19 +11,19 @@ namespace ICSharpCode.Decompiler.Tests.Types
 		[Test]
 		public void ValueTypes()
 		{
-			ValidateFileRoundtrip(@"Types\ValueTypes.cs");
+			ValidateFileRoundtrip(@"Types\S_ValueTypes.cs");
 		}
 
 		[Test]
 		public void PropertiesAndEvents()
 		{
-			ValidateFileRoundtrip(@"Types\PropertiesAndEvents.cs");
+			ValidateFileRoundtrip(@"Types\S_PropertiesAndEvents.cs");
 		}
 
 		[Test]
 		public void DelegateConstruction()
 		{
-			ValidateFileRoundtrip(@"Types\DelegateConstruction.cs");
+			ValidateFileRoundtrip(@"Types\S_DelegateConstruction.cs");
 		}
 	}
 }

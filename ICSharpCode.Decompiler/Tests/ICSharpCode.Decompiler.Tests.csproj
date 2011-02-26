@@ -54,16 +54,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Types\EnumSamples.cs" />
-    <None Include="CustomAttributes\AssemblyCustomAttribute.cs" />
+    <None Include="Types\S_EnumSamples.cs" />
+    <None Include="CustomAttributes\S_AssemblyCustomAttribute.cs" />
     <Compile Include="Helpers\RemoveCompilerAttribute.cs" />
     <Compile Include="Types\EnumTests.cs" />
     <Compile Include="Types\TypeTests.cs" />
-    <None Include="Types\DelegateConstruction.cs" />
-    <None Include="CustomAttributes\CustomAttributes.cs" />
+    <None Include="Types\S_DelegateConstruction.cs" />
+    <None Include="CustomAttributes\S_CustomAttributes.cs" />
     <None Include="Loops.cs" />
-    <None Include="Types\PropertiesAndEvents.cs" />
-    <None Include="CustomAttributes\CustomAttributeSamples.cs" />
+    <None Include="Types\S_PropertiesAndEvents.cs" />
+    <None Include="CustomAttributes\S_CustomAttributeSamples.cs" />
     <Compile Include="CodeSampleFileParser.cs" />
     <Compile Include="CustomAttributes\CustomAttributeTests.cs" />
     <Compile Include="DecompilerTestBase.cs" />
@@ -72,7 +72,7 @@
     <Compile Include="Generics.cs" />
     <Compile Include="MultidimensionalArray.cs" />
     <Compile Include="TestRunner.cs" />
-    <None Include="Types\ValueTypes.cs" />
+    <None Include="Types\S_ValueTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">
