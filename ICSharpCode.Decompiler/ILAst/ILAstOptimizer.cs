@@ -12,6 +12,7 @@ namespace Decompiler.ControlFlow
 	public enum ILAstOptimizationStep
 	{
 		SplitToMovableBlocks,
+		ShortCircuits,
 		FindLoops,
 		FindConditions,
 		FlattenNestedMovableBlocks,
@@ -33,6 +34,7 @@ namespace Decompiler.ControlFlow
 				SplitToBasicBlocks(block);
 			}
 			
+			if (abortBeforeStep == ILAstOptimizationStep.ShortCircuits) return;
 			OptimizeShortCircuits(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindLoops) return;
@@ -100,24 +102,23 @@ namespace Decompiler.ControlFlow
 					ILNode lastNode = block.Body[i - 1];
 					ILNode currNode = block.Body[i];
 					
-					bool added = false;
-					
 					// Insert split
 					if (currNode is ILLabel ||
 					    lastNode is ILTryCatchBlock ||
 					    currNode is ILTryCatchBlock ||
 					    (lastNode is ILExpression) && ((ILExpression)lastNode).IsBranch() ||
-					    (currNode is ILExpression) && (((ILExpression)currNode).IsBranch() && basicBlock.Body.Count > 0))
+					    (currNode is ILExpression) && (((ILExpression)currNode).IsBranch() && ((ILExpression)currNode).Code.CanFallThough() && basicBlock.Body.Count > 0))
 					{
 						ILBasicBlock lastBlock = basicBlock;
 						basicBlock = new ILBasicBlock();
 						basicBlocks.Add(basicBlock);
+						
 						if (currNode is ILLabel) {
-							// Reuse the first label
+							// Insert as entry label
 							basicBlock.EntryLabel = (ILLabel)currNode;
-							added = true;
 						} else {
 							basicBlock.EntryLabel = new ILLabel() { Name = "Block_" + (nextBlockIndex++) };
+							basicBlock.Body.Add(currNode);
 						}
 						
 						// Explicit branch from one block to other
@@ -125,10 +126,9 @@ namespace Decompiler.ControlFlow
 						if (!(lastNode is ILExpression) || ((ILExpression)lastNode).Code.CanFallThough()) {
 							lastBlock.FallthoughGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel);
 						}
+					} else {
+						basicBlock.Body.Add(currNode);						
 					}
-					
-					if (!added)
-						basicBlock.Body.Add(currNode);
 				}
 			}
 			
