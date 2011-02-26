@@ -12,9 +12,7 @@ using System.Windows.Media;
 
 using Debugger;
 using Debugger.Interop.CorPublish;
-using Decompiler;
 using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Visitors;

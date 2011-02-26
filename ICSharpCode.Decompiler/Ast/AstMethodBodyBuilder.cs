@@ -70,6 +70,11 @@ namespace Decompiler
 				DeclareVariableInSmallestScope.DeclareVariable(astBlock, AstBuilder.ConvertType(v.Type), v.Name);
 			}
 			
+			// store the variables - used for debugger
+			int token = methodDef.MetadataToken.ToInt32();
+			ILAstBuilder.MemberLocalVariables.AddOrUpdate(
+								token, astBuilder.Variables, (key, oldValue) => astBuilder.Variables);
+			
 			return astBlock;
 		}
 		

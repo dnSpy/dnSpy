@@ -10,6 +10,7 @@ using System.Windows.Media;
 
 using Debugger;
 using Debugger.MetaData;
+using Decompiler;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.Services;
@@ -148,6 +149,18 @@ namespace ILSpy.Debugger.Models.TreeModel
 			
 			Value val;
 			try {
+				if (expression is IdentifierExpression) {
+					var frame = WindowsDebugger.DebuggedProcess.SelectedThread.MostRecentStackFrame;
+					int token = frame.MethodInfo.MetadataToken;
+					List<ILVariable> list;
+					if (ILAstBuilder.MemberLocalVariables.TryGetValue(token, out list)) {
+						var variable = list.Find(v => v.Name == Name);
+						if (variable != null) {
+							expression.AddAnnotation(new int[] { variable.OriginalVariable.Index });
+						}
+					}
+				}
+				
 				val = expression.Evaluate(WindowsDebugger.DebuggedProcess);
 			} catch (GetValueException e) {
 				error = e;

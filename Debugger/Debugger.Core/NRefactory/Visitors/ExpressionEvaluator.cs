@@ -383,13 +383,23 @@ namespace ICSharpCode.NRefactory.Visitors
 				}
 			}
 			
+			// get parameter
 			DebugParameterInfo par = context.MethodInfo.GetParameter(identifier);
 			if (par != null)
 				return new TypedValue(par.GetValue(context), (DebugType)par.ParameterType);
 			
-			DebugLocalVariableInfo loc = context.MethodInfo.GetLocalVariable(context.IP, identifier);
-			if (loc != null)
-				return new TypedValue(loc.GetValue(context), (DebugType)loc.LocalType);
+			//get local variables
+			
+//			DebugLocalVariableInfo loc = context.MethodInfo.GetLocalVariable(context.IP, identifier);
+//			if (loc != null)
+//				return new TypedValue(loc.GetValue(context), (DebugType)loc.LocalType);
+			
+			object localIndex = identifierExpression.Annotation(typeof(int[]));
+			
+			if (localIndex != null) {
+				Value localValue = DebugMethodInfo.GetLocalVariableValue(context, ((int[])localIndex)[0]);
+				return new TypedValue(localValue, localValue.Type);
+			}
 			
 			// Instance class members
 			// Note that the method might be generated instance method that represents anonymous method

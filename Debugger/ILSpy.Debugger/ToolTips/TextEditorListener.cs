@@ -33,11 +33,11 @@ namespace ILSpy.Debugger.ToolTips
 	/// <summary>
 	/// Description of TextEditorListener.
 	/// </summary>
-	public class TextEditorListener : IWeakEventListener 
+	public class TextEditorListener : IWeakEventListener
 	{
 		private static readonly TextEditorListener instance;
 		
-		static TextEditorListener() 
+		static TextEditorListener()
 		{
 			instance = new TextEditorListener();
 		}
@@ -45,7 +45,6 @@ namespace ILSpy.Debugger.ToolTips
 		private TextEditorListener() { }
 		
 		Popup popup;
-		ToolTip toolTip;
 		TextEditor editor;
 		
 		public static TextEditorListener Instance {
@@ -72,9 +71,6 @@ namespace ILSpy.Debugger.ToolTips
 		
 		void OnMouseDown(MouseEventArgs mouseEventArgs0)
 		{
-			if (toolTip != null)
-				toolTip.IsOpen = false;
-			
 			TryCloseExistingPopup(true);
 			
 			if (popup != null)
@@ -82,14 +78,13 @@ namespace ILSpy.Debugger.ToolTips
 		}
 		
 		void OnMouseHoverStopped(MouseEventArgs e)
-		{			
-			if (toolTip != null)
-				toolTip.IsOpen = false;
+		{
+			
 		}
 		
 		void OnMouseHover(MouseEventArgs e)
 		{
-			ToolTipRequestEventArgs args = new ToolTipRequestEventArgs(editor);			
+			ToolTipRequestEventArgs args = new ToolTipRequestEventArgs(editor);
 			var pos = editor.GetPositionFromPoint(e.GetPosition(editor));
 			args.InDocument = pos.HasValue;
 			
@@ -117,25 +112,6 @@ namespace ILSpy.Debugger.ToolTips
 						SetPopupPosition(popup, e);
 						popup.IsOpen = true;
 					}
-					e.Handled = true;
-				} else {
-					if (toolTip == null) {
-						toolTip = new ToolTip();
-						toolTip.Closed += delegate { toolTip = null; };
-					}
-					toolTip.PlacementTarget = editor; // required for property inheritance
-					
-					if(args.ContentToShow is string) {
-						toolTip.Content = new TextBlock
-						{
-							Text = (args.ContentToShow as string),
-							TextWrapping = TextWrapping.Wrap
-						};
-					}
-					else
-						toolTip.Content = args.ContentToShow;
-					
-					toolTip.IsOpen = true;
 					e.Handled = true;
 				}
 			} else {

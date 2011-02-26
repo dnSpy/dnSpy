@@ -10,6 +10,7 @@ using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.Services;
 using ILSpy.Debugger.Services.Debugger;
+using Module = Debugger.Module;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
@@ -97,7 +98,12 @@ namespace ILSpy.Debugger.Models.TreeModel
 		public static IEnumerable<TreeNode> LazyGetItemsOfIList(Expression targetObject)
 		{
 			// This is needed for expanding IEnumerable<T>
-			targetObject = new CastExpression() { Expression = targetObject, Type = new SimpleType() { Identifier = typeof(IList).FullName } };
+			
+			var type = new SimpleType() { Identifier = typeof(IList).FullName };
+			type.AddAnnotation(DebugType.CreateFromType(Mscorlib, typeof(IList)));
+			
+			targetObject = new CastExpression() { Expression = targetObject.Clone(), Type = type };
+
 			int count = 0;
 			GetValueException error = null;
 			try {
@@ -143,6 +149,25 @@ namespace ILSpy.Debugger.Models.TreeModel
 				foreach(TreeNode absNode in rest) {
 					yield return absNode;
 				}
+			}
+		}
+		
+		static Module mscorlib;
+		
+		public static Module Mscorlib {
+			get {
+				if (mscorlib != null) return mscorlib;
+				foreach (var appDomain in WindowsDebugger.CurrentProcess.AppDomains) {
+					foreach(Module m in appDomain.Process.Modules) {
+						if (m.Name == "mscorlib.dll" &&
+						    m.AppDomain == appDomain) {
+							mscorlib = m;
+							return mscorlib;
+						}
+					}
+				}
+				
+				throw new DebuggerException("Mscorlib not loaded");
 			}
 		}
 	}

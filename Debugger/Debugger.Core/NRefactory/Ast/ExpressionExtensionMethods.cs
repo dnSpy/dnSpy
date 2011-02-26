@@ -74,7 +74,7 @@ namespace ICSharpCode.NRefactory.Ast
 		
 		public static IndexerExpression AppendIndexer(this Expression expression, params int[] indices)
 		{
-			IndexerExpression indexerExpr = new IndexerExpression() { Target = Parenthesize(expression) };
+			IndexerExpression indexerExpr = new IndexerExpression() { Target = expression.Clone().Parenthesize() };
 			var args = new List<Expression>();
 			foreach(int index in indices) {
 				args.Add(new PrimitiveExpression(index));

@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Cecil = Mono.Cecil;
@@ -10,6 +12,11 @@ namespace Decompiler
 {
 	public class ILAstBuilder
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		public static ConcurrentDictionary<int, List<ILVariable>> MemberLocalVariables = new ConcurrentDictionary<int, List<ILVariable>>();
+		
 		class StackSlot
 		{
 			public List<ByteCode> PushedBy;  // One of those
