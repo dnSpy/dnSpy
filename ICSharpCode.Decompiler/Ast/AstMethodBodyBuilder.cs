@@ -285,6 +285,12 @@ namespace Decompiler
 							new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name)
 						}
 					};
+				case ILCode.TernaryOp:
+					return new Ast.ConditionalExpression() {
+						Condition = MakeBranchCondition(byteCode.Arguments[0]),
+						TrueExpression = (Expression)TransformExpression(byteCode.Arguments[1]),
+						FalseExpression = (Expression)TransformExpression(byteCode.Arguments[2]),
+					};
 			}
 			
 			List<Ast.Expression> args = TransformExpressionArguments(byteCode);

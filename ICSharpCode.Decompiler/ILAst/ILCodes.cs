@@ -259,6 +259,7 @@ namespace Decompiler
 		BrLogicAnd,
 		BrLogicOr,
 		InitArray, // Array Initializer
+		TernaryOp, // ?:
 		
 		Pattern // used for ILAst pattern nodes
 	}
