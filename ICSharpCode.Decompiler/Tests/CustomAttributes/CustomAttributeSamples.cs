@@ -54,8 +54,8 @@ namespace AttributeWithTypeArgument
 	{
 	}
 }
-//$$ AttributeAppliedToEvent (ignored)
-namespace AttributeAppliedToEvent
+//$$ AppliedToEvent
+namespace AppliedToEvent
 {
 	[AttributeUsage(AttributeTargets.Event)]
 	public class MyAttributeAttribute : Attribute
@@ -67,8 +67,8 @@ namespace AttributeAppliedToEvent
 		public event EventHandler MyEvent;
 	}
 }
-//$$ AttributeAppliedToField
-namespace AttributeAppliedToField
+//$$ AppliedToField
+namespace AppliedToField
 {
 	[AttributeUsage(AttributeTargets.Field)]
 	public class MyAttributeAttribute : Attribute
@@ -80,8 +80,8 @@ namespace AttributeAppliedToField
 		public int Field;
 	}
 }
-//$$ AttributeAppliedToProperty
-namespace AttributeAppliedToProperty
+//$$ AppliedToProperty
+namespace AppliedToProperty
 {
 	public class TestClass
 	{
@@ -95,11 +95,11 @@ namespace AttributeAppliedToProperty
 		}
 	}
 }
-//$$ AttributeAppliedToDelegate
+//$$ AppliedToDelegate
 [Obsolete("reason")]
-public delegate int  AttributeAppliedToDelegate();
-//$$ AttributeAppliedToMethod
-namespace AttributeAppliedToMethod
+public delegate int AppliedToDelegate();
+//$$ AppliedToMethod
+namespace AppliedToMethod
 {
 	[AttributeUsage(AttributeTargets.Method)]
 	public class MyAttributeAttribute : Attribute
@@ -113,27 +113,41 @@ namespace AttributeAppliedToMethod
 		}
 	}
 }
-//$$ AttributeAppliedToInterface
+//$$ AppliedToInterface
 [Obsolete("reason")]
-public interface AttributeAppliedToInterface
+public interface AppliedToInterface
 {
 }
-//$$ AttributeAppliedToStruct
+//$$ AppliedToStruct
 [Obsolete("reason")]
-public struct AttributeAppliedToStruct
+public struct AppliedToStruct
 {
 	public int Field;
 }
-//$$ NamedPropertyParameter
-namespace NamedPropertyParameter
+//$$ AppliedToParameter
+namespace AppliedToParameter
+{
+	[AttributeUsage(AttributeTargets.Parameter)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class MyClass
+	{
+		public void Method([MyAttribute]int val)
+		{
+		}
+	}
+}
+//$$ NamedInitializerProperty
+namespace NamedInitializerProperty
 {
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 	public class MyAttributeAttribute : Attribute
 	{
 	}
 }
-//$$ NamedStringPropertyParameter
-namespace NamedStringPropertyParameter
+//$$ NamedInitializerPropertyString
+namespace NamedInitializerPropertyString
 {
 	[AttributeUsage(AttributeTargets.All)]
 	public class MyAttributeAttribute : Attribute
@@ -155,8 +169,8 @@ namespace NamedStringPropertyParameter
 	{
 	}
 }
-//$$ NamedTypePropertyParameter
-namespace NamedTypePropertyParameter
+//$$ NamedInitializerPropertyType
+namespace NamedInitializerPropertyType
 {
 	[AttributeUsage(AttributeTargets.All)]
 	public class MyAttributeAttribute : Attribute
@@ -178,8 +192,8 @@ namespace NamedTypePropertyParameter
 	{
 	}
 }
-//$$ NamedEnumPropertyParameter
-namespace NamedEnumPropertyParameter
+//$$ NamedInitializerPropertyEnum
+namespace NamedInitializerPropertyEnum
 {
 	[AttributeUsage(AttributeTargets.All)]
 	public class MyAttributeAttribute : Attribute
@@ -201,8 +215,8 @@ namespace NamedEnumPropertyParameter
 	{
 	}
 }
-//$$ NamedEnumFieldParameter
-namespace NamedEnumFieldParameter
+//$$ NamedInitializerFieldEnum
+namespace NamedInitializerFieldEnum
 {
 	[AttributeUsage(AttributeTargets.All)]
 	public class MyAttributeAttribute : Attribute

@@ -1110,7 +1110,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 			WriteCommaSeparatedList(attributeSection.Attributes);
 			WriteToken("]", AstNode.Roles.RBracket);
-			NewLine();
+			if (!(attributeSection.Parent is ParameterDeclaration))
+				NewLine();
 			return EndNode(attributeSection);
 		}
 		

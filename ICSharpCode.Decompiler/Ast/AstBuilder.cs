@@ -584,6 +584,7 @@ namespace Decompiler
 				}
 				// TODO: params, this
 				
+				ConvertCustomAtributes(astParam, paramDef);
 				yield return astParam;
 			}
 		}
