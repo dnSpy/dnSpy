@@ -116,20 +116,11 @@ namespace Decompiler
 					yield return (Statement)TransformExpression(ilLoop.PostLoopGoto);
 			} else if (node is ILCondition) {
 				ILCondition conditionalNode = (ILCondition)node;
-				if (conditionalNode.FalseBlock.Body.Any()) {
-					// Swap bodies
-					yield return new Ast.IfElseStatement {
-						Condition = new UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(conditionalNode.Condition)),
-						TrueStatement = TransformBlock(conditionalNode.FalseBlock),
-						FalseStatement = TransformBlock(conditionalNode.TrueBlock)
-					};
-				} else {
-					yield return new Ast.IfElseStatement {
-						Condition = MakeBranchCondition(conditionalNode.Condition),
-						TrueStatement = TransformBlock(conditionalNode.TrueBlock),
-						FalseStatement = TransformBlock(conditionalNode.FalseBlock)
-					};
-				}
+				yield return new Ast.IfElseStatement {
+					Condition = MakeBranchCondition(conditionalNode.Condition),
+					TrueStatement = TransformBlock(conditionalNode.TrueBlock),
+					FalseStatement = TransformBlock(conditionalNode.FalseBlock)
+				};
 			} else if (node is ILSwitch) {
 				ILSwitch ilSwitch = (ILSwitch)node;
 				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition.Arguments[0]) };
@@ -358,9 +349,8 @@ namespace Decompiler
 				case Code.Ldelem_R4:
 				case Code.Ldelem_R8:
 				case Code.Ldelem_Ref:
-					return arg1.Indexer(arg2);
 				case Code.Ldelem_Any:
-					return InlineAssembly(byteCode, args);
+					return arg1.Indexer(arg2);
 				case Code.Ldelema:
 					return MakeRef(arg1.Indexer(arg2));
 					
@@ -647,7 +637,7 @@ namespace Decompiler
 			}
 			if (target is ThisReferenceExpression && !isVirtual) {
 				// a non-virtual call on "this" might be a "base"-call.
-				if (cecilMethod.DeclaringType != methodDef.DeclaringType) {
+				if ((cecilMethod.DeclaringType.IsGenericInstance ? cecilMethod.DeclaringType.GetElementType() : cecilMethod.DeclaringType) != methodDef.DeclaringType) {
 					// If we're not calling a method in the current class; we must be calling one in the base class.
 					target = new BaseReferenceExpression();
 				}

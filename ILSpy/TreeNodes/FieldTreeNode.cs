@@ -17,7 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Windows.Controls;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -45,12 +47,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get {
-				if (field.IsLiteral)
-					return Images.Literal;
-				else
-					return Images.Field;
-			}
+			get { return GetIcon(field); }
+		}
+		
+		public static object GetIcon(FieldDefinition field)
+		{
+			if (field.IsLiteral)
+				return Images.Literal;
+			else
+				return Images.Field;
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)
@@ -64,6 +69,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.DecompileField(field, output, options);
+		}
+		
+		public override System.Windows.Controls.ContextMenu GetContextMenu()
+		{
+			ContextMenu menu = new ContextMenu();
+			MenuItem item = new MenuItem() { Header = "Analyze", Icon = new Image() { Source = Images.Search } };
+			item.Click += delegate { MainWindow.Instance.AddToAnalyzer(new AnalyzedFieldNode(field)); };
+			
+			menu.Items.Add(item);
+			
+			return menu;
 		}
 	}
 }

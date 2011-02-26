@@ -71,6 +71,7 @@
     <Compile Include="DecompilerTestBase.cs" />
     <Compile Include="ArrayInitializers.cs" />
     <Compile Include="ExceptionHandling.cs" />
+    <Compile Include="Generics.cs" />
     <Compile Include="MultidimensionalArray.cs" />
     <Compile Include="TestRunner.cs" />
     <None Include="Types\ValueTypes.cs" />

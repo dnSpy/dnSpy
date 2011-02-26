@@ -50,7 +50,7 @@ namespace Decompiler
 		{
 			if (expr.Code != ILCode.Stloc)
 				throw new ArgumentException("expr must be stloc");
-			// ensure the variable is only accessed only a single time
+			// ensure the variable is accessed only a single time
 			if (method.GetSelfAndChildrenRecursive<ILExpression>().Count(e => e != expr && e.Operand == expr.Operand) != 1)
 				return false;
 			ILExpression parent;

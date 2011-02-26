@@ -133,6 +133,12 @@
     <Compile Include="TextView\ReferenceElementGenerator.cs" />
     <Compile Include="TextView\AvalonEditTextOutput.cs" />
     <Compile Include="TextView\UIElementGenerator.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedFieldAccessNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedFieldNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedMethodTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedMethodUsedByTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedMethodUsesNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzerTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyListTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyReferenceTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyTreeNode.cs" />
@@ -148,7 +154,7 @@
     <Compile Include="TreeNodes\ReferenceFolderTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceListTreeNode.cs" />
-    <Compile Include="TreeNodes\ThreadedTreeNode.cs" />
+    <Compile Include="TreeNodes\ThreadingSupport.cs" />
     <Compile Include="TreeNodes\TypeTreeNode.cs" />
     <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />
   </ItemGroup>
@@ -233,6 +239,7 @@
     <Folder Include="Controls" />
     <Folder Include="TreeNodes" />
     <Folder Include="TextView" />
+    <Folder Include="TreeNodes\Analyzer" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

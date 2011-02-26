@@ -15,15 +15,18 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Lists the super types of a class.
 	/// </summary>
-	sealed class DerivedTypesTreeNode : ThreadedTreeNode
+	sealed class DerivedTypesTreeNode : ILSpyTreeNode
 	{
 		readonly AssemblyList list;
 		readonly TypeDefinition type;
+		ThreadingSupport threading;
 		
 		public DerivedTypesTreeNode(AssemblyList list, TypeDefinition type)
 		{
 			this.list = list;
 			this.type = type;
+			this.LazyLoading = true;
+			this.threading = new ThreadingSupport();
 		}
 		
 		public override object Text {
@@ -34,7 +37,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return Images.SubTypes; }
 		}
 		
-		protected override IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
+		protected override void LoadChildren()
+		{
+			threading.LoadChildren(this, FetchChildren);
+		}
+		
+		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
 			var assemblies = list.GetAssemblies().Select(node => node.AssemblyDefinition).Where(asm => asm != null).ToArray();
@@ -62,17 +70,24 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			return typeRef.FullName == type.FullName;
 		}
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			threading.Decompile(language, output, options, EnsureLazyChildren);
+		}
 	}
 	
-	class DerivedTypesEntryNode : ThreadedTreeNode
+	class DerivedTypesEntryNode : ILSpyTreeNode
 	{
 		TypeDefinition def;
 		AssemblyDefinition[] assemblies;
+		ThreadingSupport threading;
 		
 		public DerivedTypesEntryNode(TypeDefinition def, AssemblyDefinition[] assemblies)
 		{
 			this.def = def;
 			this.assemblies = assemblies;
+			threading = new ThreadingSupport();
 		}
 		
 		public override bool ShowExpander {
@@ -91,7 +106,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
-		protected override IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct)
+		protected override void LoadChildren()
+		{
+			threading.LoadChildren(this, FetchChildren);
+		}
+		
+		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
 			return DerivedTypesTreeNode.FindDerivedTypes(def, assemblies, ct);
