@@ -18,7 +18,19 @@ namespace Decompiler
 	{
 		public IEnumerable<T> GetSelfAndChildrenRecursive<T>() where T: ILNode
 		{
-			return TreeTraversal.PreOrder(this, c => c != null ? c.GetChildren() : null).OfType<T>();
+			List<T> result = new List<T>(16);
+			AccumulateSelfAndChildrenRecursive(result);
+			return result;
+		}
+		
+		void AccumulateSelfAndChildrenRecursive<T>(List<T> list) where T:ILNode
+		{
+			if (this is T)
+				list.Add((T)this);
+			foreach (ILNode node in this.GetChildren()) {
+				if (node != null)
+					node.AccumulateSelfAndChildrenRecursive(list);
+			}
 		}
 		
 		public virtual IEnumerable<ILNode> GetChildren()
