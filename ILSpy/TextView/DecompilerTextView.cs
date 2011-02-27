@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -127,9 +128,34 @@ namespace ICSharpCode.ILSpy.TextView
 			return null;
 		}
 		
-		string StripXml(string xml)
+		string StripXml(string xmlText)
 		{
-			return Regex.Replace(xml, "</?.*>", "").Trim();
+			try {
+				using (XmlTextReader xml = new XmlTextReader(new StringReader(xmlText))) {
+					StringBuilder ret = new StringBuilder();
+					while (xml.Read()) {
+						if (xml.NodeType == XmlNodeType.Element) {
+							string elname = xml.Name.ToLowerInvariant();
+							switch (elname) {
+								case "summary":
+									break;
+								case "br":
+								case "para":
+									ret.AppendLine();
+									break;
+								default:
+									xml.Skip();
+									break;
+							}
+						} else if (xml.NodeType == XmlNodeType.Text) {
+							ret.Append(Regex.Replace(xml.Value, @"\s+", " "));
+						}
+					}
+					return ret.ToString();
+				}
+			} catch (XmlException) {
+				return null; // invalid XML docu
+			}
 		}
 		
 		string FindDocumentation(string fileName)
@@ -147,12 +173,13 @@ namespace ICSharpCode.ILSpy.TextView
 					return location;
 			}
 			
-			path = Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)") ?? Environment.GetEnvironmentVariable("PROGRAMFILES"), @"Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0");
+			path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0");
 			
 			string loc = Path.Combine(path, fileName);
 			
-			if (File.Exists(loc))
+			if (File.Exists(loc)) {
 				return loc;
+			}
 			
 			return null;
 		}
