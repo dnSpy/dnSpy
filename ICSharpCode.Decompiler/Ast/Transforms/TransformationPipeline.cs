@@ -29,19 +29,6 @@ namespace Decompiler.Transforms
 		{
 			if (node == null)
 				return;
-			for (int i = 0; i < 4; i++) {
-				context.CancellationToken.ThrowIfCancellationRequested();
-				if (Options.ReduceAstJumps) {
-					node.AcceptVisitor(new Transforms.Ast.RemoveGotos(), null);
-					node.AcceptVisitor(new Transforms.Ast.RemoveDeadLabels(), null);
-				}
-				if (Options.ReduceAstLoops) {
-					node.AcceptVisitor(new Transforms.Ast.RestoreLoop(), null);
-				}
-				if (Options.ReduceAstOther) {
-					node.AcceptVisitor(new Transforms.Ast.RemoveEmptyElseBody(), null);
-				}
-			}
 			
 			foreach (var transform in CreatePipeline(context)) {
 				context.CancellationToken.ThrowIfCancellationRequested();

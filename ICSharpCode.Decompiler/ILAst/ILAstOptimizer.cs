@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
 using ICSharpCode.Decompiler.FlowAnalysis;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.CSharp;
 
 namespace Decompiler.ControlFlow
 {
@@ -16,8 +16,7 @@ namespace Decompiler.ControlFlow
 		FindLoops,
 		FindConditions,
 		FlattenNestedMovableBlocks,
-		SimpleGotoRemoval,
-		RemoveDeadLabels,
+		GotoRemoval,
 		HandleArrayInitializers,
 		TypeInference,
 		None
@@ -63,19 +62,16 @@ namespace Decompiler.ControlFlow
 				block.Body = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
 			}
 			
-			AnalyseLabels(method);
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
-				ReturnOptimizations(block);
-			}
+//			AnalyseLabels(method);
+//			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+//				ReturnOptimizations(block);
+//			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FlattenNestedMovableBlocks) return;
 			FlattenBasicBlocks(method);
 			
-			if (abortBeforeStep == ILAstOptimizationStep.SimpleGotoRemoval) return;
-			SimpleGotoRemoval(method);
-			
-			if (abortBeforeStep == ILAstOptimizationStep.RemoveDeadLabels) return;
-			RemoveDeadLabels(method);
+			if (abortBeforeStep == ILAstOptimizationStep.GotoRemoval) return;
+			new GotoRemoval().RemoveGotos(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.HandleArrayInitializers) return;
 			ArrayInitializers.Transform(method);
@@ -494,33 +490,47 @@ namespace Decompiler.ControlFlow
 				{
 					HashSet<ControlFlowNode> loopContents = FindLoopContent(scope, node);
 					
-					ILWhileLoop loop = new ILWhileLoop();
-					
-					ILBasicBlock basicBlock = node.UserData as ILBasicBlock;
+					ILBasicBlock basicBlock = (ILBasicBlock)node.UserData;
 					ILExpression branchExpr = null;
 					ILLabel trueLabel = null;
 					ILLabel falseLabel = null;
-					if(basicBlock != null && IsConditionalBranch(basicBlock, ref branchExpr, ref trueLabel, ref falseLabel)) {
+					if(IsConditionalBranch(basicBlock, ref branchExpr, ref trueLabel, ref falseLabel)) {
 						loopContents.Remove(node);
 						scope.Remove(node);
 						branchExpr.Operand = null;  // Do not keep label alive
 						
-						// Use loop to implement condition
-						loop.Condition      = branchExpr;
-						loop.PreLoopLabel   = basicBlock.EntryLabel;
-						loop.PostLoopGoto   = new ILExpression(ILCode.Br, falseLabel);
-						loop.BodyBlock      = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, trueLabel) };
+						// Use loop to implement the condition
+						result.Add(new ILBasicBlock() {
+						    EntryLabel = basicBlock.EntryLabel,
+							Body = new List<ILNode>() {
+								new ILWhileLoop() {
+									Condition = branchExpr,
+									BodyBlock = new ILBlock() {
+										EntryGoto = new ILExpression(ILCode.Br, trueLabel),
+										Body = FindLoops(loopContents, node, true)
+									}
+								},
+								new ILExpression(ILCode.Br, falseLabel)
+							},
+							FallthoughGoto = null
+						});
 					} else {
-						// Give the block some explicit entry point
-						ILLabel entryLabel  = new ILLabel() { Name = "Loop_" + (nextLabelIndex++) };
-						loop.BodyBlock      = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, entryLabel) };
-						((ILBasicBlock)node.UserData).Body.Insert(0, entryLabel);
+						result.Add(new ILBasicBlock() {
+						    EntryLabel = new ILLabel() { Name = "Loop_" + (nextLabelIndex++) },
+							Body = new List<ILNode>() {
+								new ILWhileLoop() {
+									BodyBlock = new ILBlock() {
+										EntryGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel),
+										Body = FindLoops(loopContents, node, true)
+									}
+								},
+							},
+							FallthoughGoto = null
+						});
 					}
-					loop.BodyBlock.Body = FindLoops(loopContents, node, true);
 					
 					// Move the content into loop block
 					scope.ExceptWith(loopContents);
-					result.Add(loop);
 				}
 
 				// Using the dominator tree should ensure we find the the widest loop first
@@ -784,45 +794,14 @@ namespace Decompiler.ControlFlow
 				}
 			}
 		}
-		
-		void SimpleGotoRemoval(ILBlock ast)
+	}
+	
+	public static class ILAstOptimizerExtensionMethods
+	{
+		public static bool Matches(this ILNode node, ILCode code)
 		{
-			// TODO: Assign IL ranges from br to something else
-			var blocks = ast.GetSelfAndChildrenRecursive<ILBlock>().ToList();
-			foreach(ILBlock block in blocks) {
-				for (int i = 0; i < block.Body.Count; i++) {
-					ILExpression expr = block.Body[i] as ILExpression;
-					// Uncoditional branch
-					if (expr != null && (expr.Code == ILCode.Br)) {
-						// Check that branch is followed by its label (allow multiple labels)
-						for (int j = i + 1; j < block.Body.Count; j++) {
-							ILLabel label = block.Body[j] as ILLabel;
-							if (label == null)
-								break;  // Can not optimize
-							if (expr.Operand == label) {
-								block.Body.RemoveAt(i);
-								break;  // Branch removed
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		void RemoveDeadLabels(ILBlock ast)
-		{
-			HashSet<ILLabel> liveLabels = new HashSet<ILLabel>(ast.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets()));
-			var blocks = ast.GetSelfAndChildrenRecursive<ILBlock>().ToList();
-			foreach(ILBlock block in blocks) {
-				for (int i = 0; i < block.Body.Count;) {
-					ILLabel label = block.Body[i] as ILLabel;
-					if (label != null && !liveLabels.Contains(label)) {
-						block.Body.RemoveAt(i);
-					} else {
-						i++;
-					}
-				}
-			}
+			ILExpression expr = node as ILExpression;
+			return expr != null && expr.Prefixes == null && expr.Code == code;
 		}
 	}
 }

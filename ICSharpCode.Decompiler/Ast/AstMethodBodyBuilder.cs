@@ -105,21 +105,18 @@ namespace Decompiler
 				}
 			} else if (node is ILWhileLoop) {
 				ILWhileLoop ilLoop = (ILWhileLoop)node;
-				if (ilLoop.PreLoopLabel != null)
-					yield return TransformNode(ilLoop.PreLoopLabel).Single();
 				WhileStatement whileStmt = new WhileStatement() {
 					Condition = ilLoop.Condition != null ? MakeBranchCondition(ilLoop.Condition) : new PrimitiveExpression(true),
 					EmbeddedStatement = TransformBlock(ilLoop.BodyBlock)
 				};
 				yield return whileStmt;
-				if (ilLoop.PostLoopGoto != null)
-					yield return (Statement)TransformExpression(ilLoop.PostLoopGoto);
 			} else if (node is ILCondition) {
 				ILCondition conditionalNode = (ILCondition)node;
+				bool hasFalseBlock = conditionalNode.FalseBlock.EntryGoto != null || conditionalNode.FalseBlock.Body.Count > 0;
 				yield return new Ast.IfElseStatement {
 					Condition = MakeBranchCondition(conditionalNode.Condition),
 					TrueStatement = TransformBlock(conditionalNode.TrueBlock),
-					FalseStatement = TransformBlock(conditionalNode.FalseBlock)
+					FalseStatement = hasFalseBlock ? TransformBlock(conditionalNode.FalseBlock) : null
 				};
 			} else if (node is ILSwitch) {
 				ILSwitch ilSwitch = (ILSwitch)node;
@@ -291,6 +288,10 @@ namespace Decompiler
 						TrueExpression = (Expression)TransformExpression(byteCode.Arguments[1]),
 						FalseExpression = (Expression)TransformExpression(byteCode.Arguments[2]),
 					};
+				case ILCode.LoopBreak:
+					return new Ast.BreakStatement();
+				case ILCode.LoopContinue:
+					return new Ast.ContinueStatement();
 			}
 			
 			List<Ast.Expression> args = TransformExpressionArguments(byteCode);
@@ -568,7 +569,7 @@ namespace Decompiler
 					} else {
 						return InlineAssembly(byteCode, args);
 					}
-					case Code.Leave: return null;
+					case Code.Leave: return new GotoStatement() { Label = ((ILLabel)operand).Name };
 					case Code.Localloc: return InlineAssembly(byteCode, args);
 					case Code.Mkrefany: return InlineAssembly(byteCode, args);
 				case Code.Newobj:

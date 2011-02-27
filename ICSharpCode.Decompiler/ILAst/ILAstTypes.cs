@@ -360,27 +360,19 @@ namespace Decompiler
 	
 	public class ILWhileLoop : ILNode
 	{
-		public ILLabel      PreLoopLabel;  // Label allowing to jump to condition
 		public ILExpression Condition;
-		public ILBlock      BodyBlock;     // BodyBlock.EntryGoto performs the goto for a met condition
-		public ILExpression PostLoopGoto;  // Performs the goto for a failed condition
+		public ILBlock      BodyBlock;
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			if (this.PreLoopLabel != null)
-				yield return this.PreLoopLabel;
 			if (this.Condition != null)
 				yield return this.Condition;
 			if (this.BodyBlock != null)
 				yield return this.BodyBlock;
-			if (this.PostLoopGoto != null)
-				yield return this.PostLoopGoto;
 		}
 		
 		public override void WriteTo(ITextOutput output)
 		{
-			if (this.PreLoopLabel != null)
-				this.PreLoopLabel.WriteTo(output);
 			output.WriteLine("");
 			output.Write("loop (");
 			if (this.Condition != null)
@@ -390,8 +382,6 @@ namespace Decompiler
 			this.BodyBlock.WriteTo(output);
 			output.Unindent();
 			output.WriteLine("}");
-			if (this.PostLoopGoto != null)
-				this.PostLoopGoto.WriteTo(output);
 		}
 	}
 	
