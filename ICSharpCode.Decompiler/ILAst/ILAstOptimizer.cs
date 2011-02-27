@@ -17,6 +17,7 @@ namespace Decompiler.ControlFlow
 		FindConditions,
 		FlattenNestedMovableBlocks,
 		GotoRemoval,
+		DuplicateReturns,
 		HandleArrayInitializers,
 		TypeInference,
 		None
@@ -62,16 +63,15 @@ namespace Decompiler.ControlFlow
 				block.Body = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
 			}
 			
-//			AnalyseLabels(method);
-//			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
-//				ReturnOptimizations(block);
-//			}
-			
 			if (abortBeforeStep == ILAstOptimizationStep.FlattenNestedMovableBlocks) return;
 			FlattenBasicBlocks(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.GotoRemoval) return;
 			new GotoRemoval().RemoveGotos(method);
+			
+			if (abortBeforeStep == ILAstOptimizationStep.DuplicateReturns) return;
+			DuplicateReturnStatements(method);
+			GotoRemoval.RemoveDeadLabels(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.HandleArrayInitializers) return;
 			ArrayInitializers.Transform(method);
@@ -325,92 +325,48 @@ namespace Decompiler.ControlFlow
 			return false;
 		}
 		
-		void ReturnOptimizations(ILBlock block)
+		void DuplicateReturnStatements(ILBlock method)
 		{
-			bool modified;
-			do {
-				modified = false;
-				for (int i = 0; i < block.Body.Count;) {
-					ILBasicBlock bb = block.Body[i] as ILBasicBlock;
-					// TODO: Isn't basicblock?
-					if (bb != null && TryDuplicateFollowingReturn(block.Body, bb)) {
-						modified = true;
-						continue;
-					}
-					i++;
-				}
-			} while(modified);
-		}
-		
-		bool TryDuplicateFollowingReturn(List<ILNode> scope, ILBasicBlock head)
-		{
-			bool modified = false;
-			if (head.FallthoughGoto != null) {
-				ILLabel fallLabel = (ILLabel)head.FallthoughGoto.Operand;
-				ILLabel dupLabel = null;
-			    if (labelGlobalRefCount[fallLabel] > 1 &&
-				    TryDuplicateReturn(scope, fallLabel, ref dupLabel)) {
-					labelGlobalRefCount[fallLabel]--;
-					labelGlobalRefCount[dupLabel] = 1;
-					head.FallthoughGoto.Operand = dupLabel;
-					modified = true;
-				}
-			}
-			if (head.Body.Count == 1) {
-				ILExpression brExpr = head.Body[0] as ILExpression;
-				if (brExpr != null && brExpr.Operand is ILLabel) {
-					ILLabel brLabel = (ILLabel)brExpr.Operand;
-					ILLabel dupLabel = null;
-				    if (labelGlobalRefCount[brLabel] > 1 &&
-					    TryDuplicateReturn(scope, brLabel, ref dupLabel)) {
-						labelGlobalRefCount[brLabel]--;
-						labelGlobalRefCount[dupLabel] = 1;
-						brExpr.Operand = dupLabel;
-						modified = true;
+			Dictionary<ILLabel, ILNode> nextSibling = new Dictionary<ILLabel, ILNode>();
+			
+			// Build navigation data
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				for (int i = 0; i < block.Body.Count - 1; i++) {
+					ILLabel curr = block.Body[i] as ILLabel;
+					if (curr != null) {
+						nextSibling[curr] = block.Body[i + 1];
 					}
 				}
 			}
-			return modified;
-		}
-		
-		bool TryDuplicateReturn(List<ILNode> scope, ILLabel head, ref ILLabel newHead)
-		{
-			ILBasicBlock bb;
-			// TODO: mapping missing?
-			if (labelToBasicBlock.TryGetValue(head, out bb) && bb.Body.Count == 1 && !scope.Contains(bb)) {
-				ILExpression retExpr = bb.Body[0] as ILExpression;
-				if (retExpr != null &&
-					retExpr.Prefixes == null &&
-					retExpr.Code == ILCode.Ret)
-				{
-					if (retExpr.Arguments.Count == 0) {
-						newHead = new ILLabel() { Name = "Return_" + (nextLabelIndex++) };
-						ILBasicBlock newBB = new ILBasicBlock() {
-							EntryLabel = newHead,
-							Body = { new ILExpression(ILCode.Ret, null) }
-						};
-						scope.Add(newBB);
-						labelToBasicBlock[newHead] = newBB;
-						return true;
-					} else {
-						ILExpression argExpr = retExpr.Arguments[0] as ILExpression;
-						if (argExpr != null &&
-							argExpr.Prefixes == null &&
-							argExpr.Code == ILCode.Ldloc)
+			
+			// Duplicate returns
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				for (int i = 0; i < block.Body.Count; i++) {
+					ILLabel targetLabel;
+					if (block.Body[i].Match(ILCode.Br, out targetLabel) ||
+					    block.Body[i].Match(ILCode.Leave, out targetLabel))
+					{
+						// Skip extra labels
+						while(nextSibling.ContainsKey(targetLabel) && nextSibling[targetLabel] is ILLabel) {
+							targetLabel = (ILLabel)nextSibling[targetLabel];
+						}
+						
+						// Inline return statement
+						ILNode target;
+						ILExpression retExpr;
+						ILVariable locVar = null;
+						if (nextSibling.TryGetValue(targetLabel, out target) &&
+						    target.Match(ILCode.Ret, out retExpr) &&
+						    (retExpr.Arguments.Count == 0 || retExpr.Arguments.Single().Match(ILCode.Ldloc, out locVar)))
 						{
-							newHead = new ILLabel() { Name = "Return_" + (nextLabelIndex++) };
-							ILBasicBlock newBB = new ILBasicBlock() {
-								EntryLabel = newHead,
-								Body = { new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldloc, argExpr.Operand)) }
-							};
-							scope.Add(newBB);
-							labelToBasicBlock[newHead] = newBB;
-							return true;
+							ILExpression dup = new ILExpression(ILCode.Ret, null);
+							if (locVar != null)
+								dup.Arguments = new List<ILExpression>() { new ILExpression(ILCode.Ldloc, locVar) };
+							block.Body[i] = dup;
 						}
 					}
 				}
 			}
-			return false;
 		}
 		
 		ControlFlowGraph BuildGraph(List<ILNode> nodes, ILLabel entryLabel)
@@ -798,10 +754,28 @@ namespace Decompiler.ControlFlow
 	
 	public static class ILAstOptimizerExtensionMethods
 	{
-		public static bool Matches(this ILNode node, ILCode code)
+		public static bool Match(this ILNode node, ILCode code)
 		{
 			ILExpression expr = node as ILExpression;
 			return expr != null && expr.Prefixes == null && expr.Code == code;
+		}
+		
+		public static bool Match(this ILNode node, ILCode code, out ILExpression expr)
+		{
+			expr = node as ILExpression;
+			return expr != null && expr.Prefixes == null && expr.Code == code;
+		}
+		
+		public static bool Match<T>(this ILNode node, ILCode code, out T operand)
+		{
+			ILExpression expr = node as ILExpression;
+			if (expr != null && expr.Prefixes == null && expr.Code == code) {
+				operand = (T)expr.Operand;
+				return true;
+			} else {
+				operand = default(T);
+				return false;
+			}
 		}
 	}
 }

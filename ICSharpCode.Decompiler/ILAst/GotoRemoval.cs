@@ -12,7 +12,7 @@ namespace Decompiler
 		Dictionary<ILNode, ILNode> parent = new Dictionary<ILNode, ILNode>();
 		Dictionary<ILNode, ILNode> nextSibling = new Dictionary<ILNode, ILNode>();
 		
-		public bool RemoveGotos(ILBlock method)
+		public void RemoveGotos(ILBlock method)
 		{
 			// Build the navigation data
 			parent[method] = null;
@@ -30,33 +30,33 @@ namespace Decompiler
 			}
 			
 			// Simplify gotos
-			bool modified = false;
 			foreach (ILExpression gotoExpr in method.GetSelfAndChildrenRecursive<ILExpression>().Where(e => e.Code == ILCode.Br || e.Code == ILCode.Leave)) {
-				modified |= TrySimplifyGoto(gotoExpr);
+				TrySimplifyGoto(gotoExpr);
 			}
 			
 			// Remove dead lables and nops
-			HashSet<ILLabel> liveLabels = new HashSet<ILLabel>(method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets()));
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
-				int oldBodyCount = block.Body.Count;
-				block.Body = block.Body.Where(n => !n.Matches(ILCode.Nop) && !(n is ILLabel && !liveLabels.Contains((ILLabel)n))).ToList();
-				modified |= block.Body.Count < oldBodyCount;
-			}
+			RemoveDeadLabels(method);
 			
 			// Remove redundant continue
 			foreach(ILWhileLoop loop in method.GetSelfAndChildrenRecursive<ILWhileLoop>()) {
 				var body = loop.BodyBlock.Body;
-				if (body.Count > 0 && body.Last().Matches(ILCode.LoopContinue)) {
+				if (body.Count > 0 && body.Last().Match(ILCode.LoopContinue)) {
 					body.RemoveAt(body.Count - 1);
 				}
 			}
 			
 			// Remove redundant return
-			if (method.Body.Count > 0 && method.Body.Last().Matches(ILCode.Ret) && ((ILExpression)method.Body.Last()).Arguments.Count == 0) {
+			if (method.Body.Count > 0 && method.Body.Last().Match(ILCode.Ret) && ((ILExpression)method.Body.Last()).Arguments.Count == 0) {
 				method.Body.RemoveAt(method.Body.Count - 1);
 			}
-			
-			return modified;
+		}
+		
+		public static void RemoveDeadLabels(ILNode method)
+		{
+			HashSet<ILLabel> liveLabels = new HashSet<ILLabel>(method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets()));
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+				block.Body = block.Body.Where(n => !n.Match(ILCode.Nop) && !(n is ILLabel && !liveLabels.Contains((ILLabel)n))).ToList();
+			}
 		}
 		
 		bool TrySimplifyGoto(ILExpression gotoExpr)
