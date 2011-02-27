@@ -25,6 +25,8 @@ namespace Decompiler.ControlFlow
 	
 	public class ILAstOptimizer
 	{
+		int nextLabelIndex = 0;
+		
 		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 		
 		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
@@ -61,6 +63,11 @@ namespace Decompiler.ControlFlow
 				block.Body = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
 			}
 			
+			AnalyseLabels(method);
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+				ReturnOptimizations(block);
+			}
+			
 			if (abortBeforeStep == ILAstOptimizationStep.FlattenNestedMovableBlocks) return;
 			FlattenBasicBlocks(method);
 			
@@ -77,8 +84,6 @@ namespace Decompiler.ControlFlow
 			TypeAnalysis.Run(context, method);
 		}
 		
-		int nextBlockIndex = 0;
-		
 		/// <summary>
 		/// Group input into a set of blocks that can be later arbitraliby schufled.
 		/// The method adds necessary branches to make control flow between blocks
@@ -93,7 +98,7 @@ namespace Decompiler.ControlFlow
 			List<ILNode> basicBlocks = new List<ILNode>();
 			
 			ILBasicBlock basicBlock = new ILBasicBlock() {
-				EntryLabel = new ILLabel() { Name = "Block_" + (nextBlockIndex++) }
+				EntryLabel = new ILLabel() { Name = "Block_" + (nextLabelIndex++) }
 			};
 			basicBlocks.Add(basicBlock);
 			block.EntryGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel);
@@ -120,7 +125,7 @@ namespace Decompiler.ControlFlow
 							// Insert as entry label
 							basicBlock.EntryLabel = (ILLabel)currNode;
 						} else {
-							basicBlock.EntryLabel = new ILLabel() { Name = "Block_" + (nextBlockIndex++) };
+							basicBlock.EntryLabel = new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
 							basicBlock.Body.Add(currNode);
 						}
 						
@@ -176,11 +181,12 @@ namespace Decompiler.ControlFlow
 			do {
 				modified = false;
 				for (int i = 0; i < block.Body.Count;) {
-					if (TrySimplifyShortCircuit(block.Body, (ILBasicBlock)block.Body[i])) {
+					ILBasicBlock bb = (ILBasicBlock)block.Body[i];
+					if (TrySimplifyShortCircuit(block.Body, bb)) {
 						modified = true;
 						continue;
 					} 
-					if (TrySimplifyTernaryOperator(block.Body, (ILBasicBlock)block.Body[i])) {
+					if (TrySimplifyTernaryOperator(block.Body, bb)) {
 						modified = true;
 						continue;
 					}
@@ -323,6 +329,94 @@ namespace Decompiler.ControlFlow
 			return false;
 		}
 		
+		void ReturnOptimizations(ILBlock block)
+		{
+			bool modified;
+			do {
+				modified = false;
+				for (int i = 0; i < block.Body.Count;) {
+					ILBasicBlock bb = block.Body[i] as ILBasicBlock;
+					// TODO: Isn't basicblock?
+					if (bb != null && TryDuplicateFollowingReturn(block.Body, bb)) {
+						modified = true;
+						continue;
+					}
+					i++;
+				}
+			} while(modified);
+		}
+		
+		bool TryDuplicateFollowingReturn(List<ILNode> scope, ILBasicBlock head)
+		{
+			bool modified = false;
+			if (head.FallthoughGoto != null) {
+				ILLabel fallLabel = (ILLabel)head.FallthoughGoto.Operand;
+				ILLabel dupLabel = null;
+			    if (labelGlobalRefCount[fallLabel] > 1 &&
+				    TryDuplicateReturn(scope, fallLabel, ref dupLabel)) {
+					labelGlobalRefCount[fallLabel]--;
+					labelGlobalRefCount[dupLabel] = 1;
+					head.FallthoughGoto.Operand = dupLabel;
+					modified = true;
+				}
+			}
+			if (head.Body.Count == 1) {
+				ILExpression brExpr = head.Body[0] as ILExpression;
+				if (brExpr != null && brExpr.Operand is ILLabel) {
+					ILLabel brLabel = (ILLabel)brExpr.Operand;
+					ILLabel dupLabel = null;
+				    if (labelGlobalRefCount[brLabel] > 1 &&
+					    TryDuplicateReturn(scope, brLabel, ref dupLabel)) {
+						labelGlobalRefCount[brLabel]--;
+						labelGlobalRefCount[dupLabel] = 1;
+						brExpr.Operand = dupLabel;
+						modified = true;
+					}
+				}
+			}
+			return modified;
+		}
+		
+		bool TryDuplicateReturn(List<ILNode> scope, ILLabel head, ref ILLabel newHead)
+		{
+			ILBasicBlock bb;
+			// TODO: mapping missing?
+			if (labelToBasicBlock.TryGetValue(head, out bb) && bb.Body.Count == 1 && !scope.Contains(bb)) {
+				ILExpression retExpr = bb.Body[0] as ILExpression;
+				if (retExpr != null &&
+					retExpr.Prefixes == null &&
+					retExpr.Code == ILCode.Ret)
+				{
+					if (retExpr.Arguments.Count == 0) {
+						newHead = new ILLabel() { Name = "Return_" + (nextLabelIndex++) };
+						ILBasicBlock newBB = new ILBasicBlock() {
+							EntryLabel = newHead,
+							Body = { new ILExpression(ILCode.Ret, null) }
+						};
+						scope.Add(newBB);
+						labelToBasicBlock[newHead] = newBB;
+						return true;
+					} else {
+						ILExpression argExpr = retExpr.Arguments[0] as ILExpression;
+						if (argExpr != null &&
+							argExpr.Prefixes == null &&
+							argExpr.Code == ILCode.Ldloc)
+						{
+							newHead = new ILLabel() { Name = "Return_" + (nextLabelIndex++) };
+							ILBasicBlock newBB = new ILBasicBlock() {
+								EntryLabel = newHead,
+								Body = { new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldloc, argExpr.Operand)) }
+							};
+							scope.Add(newBB);
+							labelToBasicBlock[newHead] = newBB;
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+		
 		ControlFlowGraph BuildGraph(List<ILNode> nodes, ILLabel entryLabel)
 		{
 			int index = 0;
@@ -418,7 +512,7 @@ namespace Decompiler.ControlFlow
 						loop.BodyBlock      = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, trueLabel) };
 					} else {
 						// Give the block some explicit entry point
-						ILLabel entryLabel  = new ILLabel() { Name = "Loop_" + (nextBlockIndex++) };
+						ILLabel entryLabel  = new ILLabel() { Name = "Loop_" + (nextLabelIndex++) };
 						loop.BodyBlock      = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, entryLabel) };
 						((ILBasicBlock)node.UserData).Body.Insert(0, entryLabel);
 					}
