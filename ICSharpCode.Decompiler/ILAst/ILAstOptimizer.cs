@@ -354,15 +354,18 @@ namespace Decompiler.ControlFlow
 						// Inline return statement
 						ILNode target;
 						ILExpression retExpr;
-						ILVariable locVar = null;
 						if (nextSibling.TryGetValue(targetLabel, out target) &&
-						    target.Match(ILCode.Ret, out retExpr) &&
-						    (retExpr.Arguments.Count == 0 || retExpr.Arguments.Single().Match(ILCode.Ldloc, out locVar)))
+						    target.Match(ILCode.Ret, out retExpr))
 						{
-							ILExpression dup = new ILExpression(ILCode.Ret, null);
-							if (locVar != null)
-								dup.Arguments = new List<ILExpression>() { new ILExpression(ILCode.Ldloc, locVar) };
-							block.Body[i] = dup;
+							ILVariable locVar;
+							object constValue;
+							if (retExpr.Arguments.Count == 0) {
+								block.Body[i] = new ILExpression(ILCode.Ret, null);
+							} else if (retExpr.Arguments.Single().Match(ILCode.Ldloc, out locVar)) {
+								block.Body[i] = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldloc, locVar));
+							} else if (retExpr.Arguments.Single().Match(ILCode.Ldc_I4, out constValue)) {
+								block.Body[i] = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldc_I4, constValue));
+							}
 						}
 					}
 				}
