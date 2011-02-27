@@ -18,8 +18,10 @@
 
 using System;
 using System.Windows.Media;
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
+using ILSpy.Debugger.AvalonEdit;
 using ILSpy.Debugger.Services;
 
 namespace ILSpy.Debugger.Bookmarks
@@ -31,7 +33,7 @@ namespace ILSpy.Debugger.Bookmarks
 		Condition
 	}
 	
-	public class BreakpointBookmark : BookmarkBase
+	public class BreakpointBookmark : MarkerBookmark
 	{
 		bool isHealthy = true;
 		bool isEnabled = true;
@@ -96,6 +98,14 @@ namespace ILSpy.Debugger.Bookmarks
 			get {
 				return ImageService.Breakpoint;
 			}
+		}
+		
+		public override ITextMarker CreateMarker(ITextMarkerService markerService, int offset, int length)
+		{
+			ITextMarker marker = markerService.Create(offset, length);
+			marker.BackgroundColor = Color.FromRgb(180, 38, 38);
+			marker.ForegroundColor = Colors.White;
+			return marker;
 		}
 	}
 }

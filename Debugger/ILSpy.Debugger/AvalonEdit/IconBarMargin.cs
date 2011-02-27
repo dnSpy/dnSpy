@@ -81,7 +81,7 @@ namespace ILSpy.Debugger.AvalonEdit
 				foreach (var bm in BookmarkManager.Bookmarks) {
 					if (CurrentType == null || bm.TypeName != CurrentType.FullName)
 						continue;
-					if (bm is BreakpointBookmark && 
+					if (bm is BreakpointBookmark &&
 					    ((BreakpointBookmark)bm).Language != DebuggerService.CurrentDebugger.Language)
 						continue;
 					
@@ -219,7 +219,7 @@ namespace ILSpy.Debugger.AvalonEdit
 				b.LineNumber == GetLineFromMousePosition(e)
 				&& b is BreakpointBookmark) as BreakpointBookmark;
 			
-			this.ToolTip = (bm != null) ? bm.Tooltip : null;			
+			this.ToolTip = (bm != null) ? bm.Tooltip : null;
 		}
 		
 		protected override void OnMouseUp(MouseButtonEventArgs e)
@@ -263,7 +263,7 @@ namespace ILSpy.Debugger.AvalonEdit
 						
 						// no bookmark on the line: create a new breakpoint
 						DebuggerService.ToggleBreakpointAt(
-							CurrentType.FullName, 
+							CurrentType.FullName,
 							line,
 							DebuggerService.CurrentDebugger.Language);
 					}

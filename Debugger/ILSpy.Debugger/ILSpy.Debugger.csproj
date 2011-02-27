@@ -52,9 +52,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AvalonEdit\ITextMarker.cs" />
     <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="AvalonEdit\IToolTip.cs" />
+    <Compile Include="AvalonEdit\TextMarkerService.cs" />
     <Compile Include="Bookmarks\BookmarkBase.cs" />
     <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
     <Compile Include="Bookmarks\BookmarkManager.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="Bookmarks\BreakpointBookmarkEventArgs.cs" />
     <Compile Include="Bookmarks\CurrentLineBookmark.cs" />
     <Compile Include="Bookmarks\IBookmark.cs" />
+    <Compile Include="Bookmarks\MarkerBookmark.cs" />
     <Compile Include="Models\TreeModel\ArrayRangeNode.cs" />
     <Compile Include="Models\TreeModel\ChildNodesOfObject.cs" />
     <Compile Include="Models\TreeModel\ExpressionNode.cs" />

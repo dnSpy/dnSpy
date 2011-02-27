@@ -63,6 +63,7 @@ namespace ICSharpCode.ILSpy.TextView
 		CancellationTokenSource currentCancellationTokenSource;
 		
 		IconBarMargin iconMargin;
+		TextMarkerService textMarkerService;
 		
 		#region Constructor
 		public DecompilerTextView()
@@ -86,7 +87,11 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.MouseHover += TextViewMouseHover;
 			textEditor.TextArea.TextView.MouseHoverStopped += TextViewMouseHoverStopped;
 			
-			// add margin
+			// add marker service & margin
+			textMarkerService = new TextMarkerService(textEditor);
+			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
+			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
+			
 			iconMargin = new IconBarMargin();
 			textEditor.TextArea.LeftMargins.Add(iconMargin);
 			
