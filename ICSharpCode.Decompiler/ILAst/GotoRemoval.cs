@@ -34,8 +34,16 @@ namespace Decompiler
 				TrySimplifyGoto(gotoExpr);
 			}
 			
+			RemoveRedundantCode(method);
+		}
+		
+		public static void RemoveRedundantCode(ILBlock method)
+		{
 			// Remove dead lables and nops
-			RemoveDeadLabels(method);
+			HashSet<ILLabel> liveLabels = new HashSet<ILLabel>(method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets()));
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+				block.Body = block.Body.Where(n => !n.Match(ILCode.Nop) && !(n is ILLabel && !liveLabels.Contains((ILLabel)n))).ToList();
+			}
 			
 			// Remove redundant continue
 			foreach(ILWhileLoop loop in method.GetSelfAndChildrenRecursive<ILWhileLoop>()) {
@@ -48,14 +56,6 @@ namespace Decompiler
 			// Remove redundant return
 			if (method.Body.Count > 0 && method.Body.Last().Match(ILCode.Ret) && ((ILExpression)method.Body.Last()).Arguments.Count == 0) {
 				method.Body.RemoveAt(method.Body.Count - 1);
-			}
-		}
-		
-		public static void RemoveDeadLabels(ILNode method)
-		{
-			HashSet<ILLabel> liveLabels = new HashSet<ILLabel>(method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets()));
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
-				block.Body = block.Body.Where(n => !n.Match(ILCode.Nop) && !(n is ILLabel && !liveLabels.Contains((ILLabel)n))).ToList();
 			}
 		}
 		

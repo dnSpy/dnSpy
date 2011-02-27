@@ -18,6 +18,7 @@ namespace Decompiler.ControlFlow
 		FlattenNestedMovableBlocks,
 		GotoRemoval,
 		DuplicateReturns,
+		FlattenIfStatements,
 		HandleArrayInitializers,
 		TypeInference,
 		None
@@ -71,13 +72,17 @@ namespace Decompiler.ControlFlow
 			
 			if (abortBeforeStep == ILAstOptimizationStep.DuplicateReturns) return;
 			DuplicateReturnStatements(method);
-			GotoRemoval.RemoveDeadLabels(method);
+			
+			if (abortBeforeStep == ILAstOptimizationStep.FlattenIfStatements) return;
+			FlattenIfStatements(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.HandleArrayInitializers) return;
 			ArrayInitializers.Transform(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.TypeInference) return;
 			TypeAnalysis.Run(context, method);
+			
+			GotoRemoval.RemoveRedundantCode(method);
 		}
 		
 		/// <summary>
@@ -594,6 +599,12 @@ namespace Decompiler.ControlFlow
 							// The branch label will not be used - kill it
 							branchExpr.Operand = null;
 							
+							// Swap bodies since that seems to be the usual C# order
+							ILLabel temp = trueLabel;
+							trueLabel = falseLabel;
+							falseLabel = temp;
+							branchExpr = new ILExpression(ILCode.LogicNot, null, branchExpr);
+							
 							// Convert the basic block to ILCondition
 							ILCondition ilCond = new ILCondition() {
 								Condition  = branchExpr,
@@ -601,8 +612,8 @@ namespace Decompiler.ControlFlow
 								FalseBlock = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, falseLabel) }
 							};
 							result.Add(new ILBasicBlock() {
-									EntryLabel = block.EntryLabel,  // Keep the entry label
-									Body = { ilCond }
+								EntryLabel = block.EntryLabel,  // Keep the entry label
+								Body = { ilCond }
 							});
 							
 							// Remove the item immediately so that it is not picked up as content
@@ -630,35 +641,6 @@ namespace Decompiler.ControlFlow
 								HashSet<ControlFlowNode> content = FindDominatedNodes(scope, falseTarget);
 								scope.ExceptWith(content);
 								ilCond.FalseBlock.Body.AddRange(FindConditions(content, falseTarget));
-							}
-							
-							if (scope.Count == 0) {
-								// We have removed the whole scope - eliminte one of the condition bodies
-								int trueSize = ilCond.TrueBlock.GetSelfAndChildrenRecursive<ILNode>().Count();
-								int falseSize = ilCond.FalseBlock.GetSelfAndChildrenRecursive<ILNode>().Count();
-								
-								// The block are protected
-								Debug.Assert(ilCond.TrueBlock.EntryGoto != null);
-								Debug.Assert(ilCond.FalseBlock.EntryGoto != null);
-								
-								if (falseSize > trueSize) {
-									// Move the false body out
-									result.AddRange(ilCond.FalseBlock.Body);
-									ilCond.FalseBlock.Body.Clear();
-								} else {
-									// Move the true body out
-									result.AddRange(ilCond.TrueBlock.Body);
-									ilCond.TrueBlock.Body.Clear();
-								}
-							}
-							
-							// If true body is empty, swap bodies.
-							// Might happend because there was not any to start with or we moved it out.
-							if (ilCond.TrueBlock.Body.Count == 0 && ilCond.FalseBlock.Body.Count > 0) {
-								ILBlock tmp = ilCond.TrueBlock;
-								ilCond.TrueBlock = ilCond.FalseBlock;
-								ilCond.FalseBlock = tmp;
-								ilCond.Condition = new ILExpression(ILCode.LogicNot, null, ilCond.Condition);
 							}
 						}
 					}
@@ -753,6 +735,49 @@ namespace Decompiler.ControlFlow
 				}
 			}
 		}
+		
+		/// <summary>
+		/// Reduce the nesting of conditions.
+		/// It should be done on flat data that already had most gotos removed
+		/// </summary>
+		void FlattenIfStatements(ILNode node)
+		{
+			ILBlock block = node as ILBlock;
+			if (block != null) {
+				for (int i = 0; i < block.Body.Count; i++) {
+					ILCondition cond = block.Body[i] as ILCondition;
+					if (cond != null) {
+						bool trueExits = cond.TrueBlock.Body.Count > 0 && !cond.TrueBlock.Body.Last().CanFallthough();
+						bool falseExits = cond.FalseBlock.Body.Count > 0 && !cond.FalseBlock.Body.Last().CanFallthough();
+						
+						if (trueExits) {
+							// Move the false block after the condition
+							block.Body.InsertRange(i + 1, cond.FalseBlock.GetChildren());
+							cond.FalseBlock = new ILBlock();
+						} else if (falseExits) {
+							// Move the true block after the condition
+							block.Body.InsertRange(i + 1, cond.TrueBlock.GetChildren());
+							cond.TrueBlock = new ILBlock();
+						}
+						
+						// Eliminate empty true block
+						if (!cond.TrueBlock.GetChildren().Any() && cond.FalseBlock.GetChildren().Any()) {
+							// Swap bodies
+							ILBlock tmp = cond.TrueBlock;
+							cond.TrueBlock = cond.FalseBlock;
+							cond.FalseBlock = tmp;
+							cond.Condition = new ILExpression(ILCode.LogicNot, null, cond.Condition);
+						}
+					}
+				}
+			}
+			
+			// We are changing the number of blocks so we use plain old recursion to get all blocks
+			foreach(ILNode child in node.GetChildren()) {
+				if (child != null && !(child is ILExpression))
+					FlattenIfStatements(child);
+			}
+		}
 	}
 	
 	public static class ILAstOptimizerExtensionMethods
@@ -779,6 +804,23 @@ namespace Decompiler.ControlFlow
 				operand = default(T);
 				return false;
 			}
+		}
+		
+		public static bool CanFallthough(this ILNode node)
+		{
+			ILExpression expr = node as ILExpression;
+			if (expr != null) {
+				switch(expr.Code) {
+					case ILCode.Br:
+					case ILCode.Ret:
+					case ILCode.Throw:
+					case ILCode.Rethrow:
+					case ILCode.LoopContinue:
+					case ILCode.LoopBreak:
+						return false;
+				}
+			}
+			return true;
 		}
 	}
 }
