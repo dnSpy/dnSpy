@@ -63,10 +63,6 @@
     <Compile Include="Ast\Transforms\DelegateConstruction.cs" />
     <Compile Include="Ast\Transforms\ReplaceMethodCallsWithOperators.cs" />
     <Compile Include="Ast\Transforms\PushNegation.cs" />
-    <Compile Include="Ast\Transforms\RemoveDeadLabels.cs" />
-    <Compile Include="Ast\Transforms\RemoveEmptyElseBody.cs" />
-    <Compile Include="Ast\Transforms\RemoveGotos.cs" />
-    <Compile Include="Ast\Transforms\RestoreLoop.cs" />
     <Compile Include="Ast\Transforms\TransformationPipeline.cs" />
     <Compile Include="Ast\Transforms\PatternStatementTransform.cs" />
     <Compile Include="CecilExtensions.cs" />
@@ -93,6 +89,7 @@
     <Compile Include="FlowAnalysis\TransformToSsa.cs" />
     <Compile Include="GraphVizGraph.cs" />
     <Compile Include="ILAst\ArrayInitializers.cs" />
+    <Compile Include="ILAst\GotoRemoval.cs" />
     <Compile Include="ILAst\ILAstBuilder.cs" />
     <Compile Include="ILAst\ILAstOptimizer.cs" />
     <Compile Include="ILAst\ILAstTypes.cs" />
@@ -101,7 +98,6 @@
     <Compile Include="ILAst\Pattern.cs" />
     <Compile Include="ILAst\TypeAnalysis.cs" />
     <Compile Include="ITextOutput.cs" />
-    <Compile Include="Options.cs" />
     <Compile Include="PlainTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextOutputWriter.cs" />

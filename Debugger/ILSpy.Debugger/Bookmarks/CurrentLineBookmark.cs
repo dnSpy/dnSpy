@@ -92,7 +92,7 @@ namespace ILSpy.Debugger.Bookmarks
 		
 		public override ITextMarker CreateMarker(ITextMarkerService markerService, int offset, int length)
 		{
-			ITextMarker marker = markerService.Create(offset + startColumn - 1, Math.Max(endColumn - startColumn, 1));
+			ITextMarker marker = markerService.Create(offset + startColumn - 1, length);
 			marker.BackgroundColor = Colors.Yellow;
 			marker.ForegroundColor = Colors.Blue;
 			return marker;

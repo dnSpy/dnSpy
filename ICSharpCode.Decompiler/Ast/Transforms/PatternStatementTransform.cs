@@ -204,8 +204,7 @@ namespace Decompiler.Transforms
 							Left = new Backreference("ident").ToExpression(),
 							Operator = AssignmentOperatorType.Any,
 							Right = new AnyNode().ToExpression()
-						})).ToStatement(),
-				new ContinueStatement()
+						})).ToStatement()
 			}
 		};
 		

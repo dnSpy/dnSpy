@@ -126,7 +126,7 @@ namespace ILSpy.Debugger.AvalonEdit
 				return;
 			int lineStart = line.Offset;
 			int lineEnd = lineStart + line.Length;
-			foreach (TextMarker marker in markers.FindOverlappingSegments(lineStart, line.Length)) {
+			foreach (TextMarker marker in markers.FindOverlappingSegments(lineStart, line.Length).Reverse()) {
 				Brush foregroundBrush = null;
 				if (marker.ForegroundColor != null) {
 					foregroundBrush = new SolidColorBrush(marker.ForegroundColor.Value);
@@ -166,7 +166,7 @@ namespace ILSpy.Debugger.AvalonEdit
 				return;
 			int viewStart = visualLines.First().FirstDocumentLine.Offset;
 			int viewEnd = visualLines.Last().LastDocumentLine.Offset + visualLines.Last().LastDocumentLine.Length;
-			foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart)) {
+			foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart).Reverse()) {
 				if (marker.BackgroundColor != null) {
 					BackgroundGeometryBuilder geoBuilder = new BackgroundGeometryBuilder();
 					geoBuilder.AlignToWholePixels = true;

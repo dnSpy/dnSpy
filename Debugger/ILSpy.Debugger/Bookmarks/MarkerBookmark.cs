@@ -22,9 +22,6 @@ using ILSpy.Debugger.AvalonEdit;
 
 namespace ILSpy.Debugger.Bookmarks
 {
-	/// <summary>
-	/// Description of MarkerBookmark.
-	/// </summary>
 	public abstract class MarkerBookmark : BookmarkBase
 	{
 		public MarkerBookmark(string typeName, AstLocation location) : base(typeName, location)
