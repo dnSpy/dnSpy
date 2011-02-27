@@ -74,12 +74,11 @@ namespace ICSharpCode.NRefactory.Ast
 		
 		public static IndexerExpression AppendIndexer(this Expression expression, params int[] indices)
 		{
-			IndexerExpression indexerExpr = new IndexerExpression() { Target = expression.Clone().Parenthesize() };
 			var args = new List<Expression>();
 			foreach(int index in indices) {
 				args.Add(new PrimitiveExpression(index));
 			}
-			//indexerExpr.Arguments = args;
+			IndexerExpression indexerExpr = expression.Clone().Indexer(args);
 			
 			DebugType staticType = expression.GetStaticType();
 			if (staticType != null && staticType.IsArray)
