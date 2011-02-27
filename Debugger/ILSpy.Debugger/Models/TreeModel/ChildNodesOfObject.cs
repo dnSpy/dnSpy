@@ -100,7 +100,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 			// This is needed for expanding IEnumerable<T>
 			
 			var type = new SimpleType() { Identifier = typeof(IList).FullName };
-			type.AddAnnotation(DebugType.CreateFromType(Mscorlib, typeof(IList)));
+			type.AddAnnotation(typeof(IList));
 			
 			targetObject = new CastExpression() { Expression = targetObject.Clone(), Type = type };
 
@@ -149,25 +149,6 @@ namespace ILSpy.Debugger.Models.TreeModel
 				foreach(TreeNode absNode in rest) {
 					yield return absNode;
 				}
-			}
-		}
-		
-		static Module mscorlib;
-		
-		public static Module Mscorlib {
-			get {
-				if (mscorlib != null) return mscorlib;
-				foreach (var appDomain in WindowsDebugger.CurrentProcess.AppDomains) {
-					foreach(Module m in appDomain.Process.Modules) {
-						if (m.Name == "mscorlib.dll" &&
-						    m.AppDomain == appDomain) {
-							mscorlib = m;
-							return mscorlib;
-						}
-					}
-				}
-				
-				throw new DebuggerException("Mscorlib not loaded");
 			}
 		}
 	}

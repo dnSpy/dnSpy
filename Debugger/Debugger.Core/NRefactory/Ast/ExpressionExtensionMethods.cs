@@ -305,7 +305,11 @@ namespace ICSharpCode.NRefactory.Ast
 //		
 		public static DebugType ResolveType(this AstNode expr, Debugger.AppDomain appDomain)
 		{
-			return expr.GetStaticType();
+			var result = expr.GetStaticType();
+			if (result != null)
+				return result;
+			
+			return DebugType.CreateFromType(appDomain, expr.Annotation<Type>());
 			
 //			if (expr is AstType && expr.GetStaticType() != null)
 //				return expr.GetStaticType();

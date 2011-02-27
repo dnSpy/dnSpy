@@ -351,6 +351,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		{
 			TypedValue val = Evaluate(castExpression.Expression);
 			DebugType castTo = castExpression.Type.ResolveType(context.AppDomain);
+			
 			if (castTo.IsPrimitive && val.Type.IsPrimitive && castTo != val.Type) {
 				object oldVal = val.PrimitiveValue;
 				object newVal;
@@ -367,7 +368,7 @@ namespace ICSharpCode.NRefactory.Visitors
 				throw new GetValueException("Can not cast {0} to {1}", val.Value.Type.FullName, castTo.FullName);
 			return new TypedValue(val.Value, castTo);
 		}
-		
+
 		public override object VisitIdentifierExpression(IdentifierExpression identifierExpression, object data)
 		{
 			string identifier = identifierExpression.Identifier;
@@ -403,7 +404,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			
 			// Instance class members
 			// Note that the method might be generated instance method that represents anonymous method
-			TypedValue thisValue = GetThisValue();
+			TypedValue thisValue = this.GetThisValue();
 			if (thisValue != null) {
 				IDebugMemberInfo instMember = (IDebugMemberInfo)thisValue.Type.GetMember<MemberInfo>(identifier, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, DebugType.IsFieldOrNonIndexedProperty);
 				if (instMember != null)
@@ -419,7 +420,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			
 			throw new GetValueException("Identifier \"" + identifier + "\" not found in this context");
 		}
-		
+
 		public override object VisitIndexerExpression(IndexerExpression indexerExpression, object data)
 		{
 			TypedValue target = Evaluate(indexerExpression.Target);
@@ -453,7 +454,7 @@ namespace ICSharpCode.NRefactory.Visitors
 				);
 			}
 		}
-		
+
 		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
 		{
 			TypedValue target;
@@ -491,7 +492,7 @@ namespace ICSharpCode.NRefactory.Visitors
 				return null;
 			return new TypedValue(retVal, (DebugType)method.ReturnType);
 		}
-		
+
 		public override object VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, object data)
 		{
 			if (!objectCreateExpression.Initializer.IsNull)
@@ -505,7 +506,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			Value val = (Value)ctor.Invoke(GetValues(ctorArgs));
 			return new TypedValue(val, type);
 		}
-		
+
 		public override object VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
 		{
 			if (arrayCreateExpression.AdditionalArraySpecifiers.Count() != 0)
@@ -532,7 +533,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			}
 			return new TypedValue(array, type);
 		}
-		
+
 		public override object VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
 		{
 			TypedValue target;
@@ -558,26 +559,23 @@ namespace ICSharpCode.NRefactory.Visitors
 				((IDebugMemberInfo)memberInfos[0]).MemberType
 			);
 		}
-		
+
 		public override object VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
 		{
 			return Evaluate(parenthesizedExpression.Expression);
 		}
-		
+
 		public override object VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, object data)
 		{
 			return CreateValue(primitiveExpression.Value);
 		}
-		
+
 		TypedValue GetThisValue()
 		{
 			// This is needed so that captured 'this' is supported
-			DebugLocalVariableInfo thisVar = context.MethodInfo.GetLocalVariableThis();
-			if (thisVar != null)
-				return new TypedValue(thisVar.GetValue(context), (DebugType)thisVar.LocalType);
-			return null;
+			return new TypedValue(context.GetThisValue(), (DebugType)context.MethodInfo.DeclaringType);
 		}
-		
+
 		public override object VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, object data)
 		{
 			TypedValue thisValue = GetThisValue();
@@ -585,9 +583,9 @@ namespace ICSharpCode.NRefactory.Visitors
 				throw new GetValueException(context.MethodInfo.FullName + " is static method and does not have \"this\"");
 			return thisValue;
 		}
-		
+
 		#region Binary and unary expressions
-		
+
 		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
 			TypedValue value = Evaluate(unaryOperatorExpression.Expression);
@@ -664,7 +662,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			
 			throw new EvaluateException(unaryOperatorExpression, "Can not use the unary operator {0} on type {1}", op.ToString(), value.Type.FullName);
 		}
-		
+
 		/// <summary>
 		/// Perform given arithmetic operation.
 		/// The arguments must be already converted to the correct types.
@@ -732,7 +730,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			
 			return null;
 		}
-		
+
 		public override object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
 		{
 			BinaryOperatorType op = binaryOperatorExpression.Operator;
@@ -843,7 +841,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			
 			throw new EvaluateException(binaryOperatorExpression, "Can not use the binary operator {0} on types {1} and {2}", op.ToString(), left.Type.FullName, right.Type.FullName);
 		}
-		
+
 		/// <summary>
 		/// Perform given arithmetic operation.
 		/// The arguments must be already converted to the correct types.
@@ -1024,7 +1022,7 @@ namespace ICSharpCode.NRefactory.Visitors
 				return null;
 			}
 		}
-		
+
 		#endregion
 	}
 }

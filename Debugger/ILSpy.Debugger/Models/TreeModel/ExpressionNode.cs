@@ -149,13 +149,23 @@ namespace ILSpy.Debugger.Models.TreeModel
 			
 			Value val;
 			try {
-				if (expression is IdentifierExpression) {
-					var frame = WindowsDebugger.DebuggedProcess.SelectedThread.MostRecentStackFrame;
-					int token = frame.MethodInfo.MetadataToken;
-					List<ILVariable> list;
-					if (ILAstBuilder.MemberLocalVariables.TryGetValue(token, out list)) {
-						var variable = list.Find(v => v.Name == Name);
-						if (variable != null) {
+				var frame = WindowsDebugger.DebuggedProcess.SelectedThread.MostRecentStackFrame;
+				int token = frame.MethodInfo.MetadataToken;
+				// get the target name
+				int index = Name.IndexOf('.');
+				string targetName = Name;
+				if (index != -1) {
+					targetName = Name.Substring(0, index);
+				}
+				
+				List<ILVariable> list;
+				if (ILAstBuilder.MemberLocalVariables.TryGetValue(token, out list)) {
+					var variable = list.Find(v => v.Name == targetName);
+					if (variable != null) {
+						if (expression is MemberReferenceExpression) {
+							var memberExpression = (MemberReferenceExpression)expression;
+							memberExpression.Target.AddAnnotation(new int[] { variable.OriginalVariable.Index });
+						} else {
 							expression.AddAnnotation(new int[] { variable.OriginalVariable.Index });
 						}
 					}
