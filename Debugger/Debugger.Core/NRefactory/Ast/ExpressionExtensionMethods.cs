@@ -108,9 +108,7 @@ namespace ICSharpCode.NRefactory.Ast
 			if (memberInfo is MethodInfo) {
 				var mre = new MemberReferenceExpression() { Target = target, MemberName = memberInfo.Name };
 				var ie = new InvocationExpression() { Target = mre.Clone() };
-				foreach (var element in AddExplicitTypes((MethodInfo)memberInfo, args)) {
-					ie.AddChild(element, AstNode.Roles.Argument);
-				}
+				ie.Arguments.AddRange(AddExplicitTypes((MethodInfo)memberInfo, args));
 				
 				return ie.SetStaticType(memberInfo.MemberType);
 			}
@@ -121,13 +119,13 @@ namespace ICSharpCode.NRefactory.Ast
 					if (memberInfo.Name != "Item")
 						throw new DebuggerException("Arguments expected only for the Item property");
 					var ie = new IndexerExpression() { Target = target.Clone() };
+					ie.Arguments.AddRange(AddExplicitTypes(propInfo.GetGetMethod() ?? propInfo.GetSetMethod(), args));
 					
-					foreach (var element in AddExplicitTypes(propInfo.GetGetMethod() ?? propInfo.GetSetMethod(), args)) {
-						ie.AddChild(element, AstNode.Roles.Argument);
-					}
 					return ie.SetStaticType(memberInfo.MemberType);
 				} else {
-					return (new MemberReferenceExpression() { Target = target.Clone(), MemberName = memberInfo.Name }).SetStaticType(memberInfo.MemberType);
+					return (new MemberReferenceExpression() {
+					        	Target = target.Clone(),
+					        	MemberName = memberInfo.Name }).SetStaticType(memberInfo.MemberType);
 				}
 			}
 			

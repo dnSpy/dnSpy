@@ -30,9 +30,7 @@ namespace ILSpy.Debugger.Services.Debugger
 			Expression iEnumerableVariableExplicitCast = new CastExpression { Expression = iEnumerableVariable.Clone() , Type = iEnumerableType.GetTypeReference() };
 			
 			var obj = new ObjectCreateExpression() { Type = listType.GetTypeReference() };			
-			foreach (var element in iEnumerableVariableExplicitCast.ToList()) {
-				obj.AddChild(element, AstNode.Roles.Argument);
-			}
+			obj.Arguments.AddRange(iEnumerableVariableExplicitCast.ToList());
 			
 			return obj;
 		}
