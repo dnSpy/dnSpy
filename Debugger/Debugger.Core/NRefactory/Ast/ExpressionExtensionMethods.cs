@@ -107,10 +107,10 @@ namespace ICSharpCode.NRefactory.Ast
 			
 			if (memberInfo is MethodInfo) {
 				var mre = new MemberReferenceExpression() { Target = target, MemberName = memberInfo.Name };
-				var ie = new InvocationExpression() { 
-					Target = mre.Clone()/*,
-					Arguments = AddExplicitTypes((MethodInfo)memberInfo, args) */
-				};
+				var ie = new InvocationExpression() { Target = mre.Clone() };
+				foreach (var element in AddExplicitTypes((MethodInfo)memberInfo, args)) {
+					ie.AddChild(element, AstNode.Roles.Argument);
+				}
 				
 				return ie.SetStaticType(memberInfo.MemberType);
 			}
@@ -120,12 +120,12 @@ namespace ICSharpCode.NRefactory.Ast
 				if (args.Length > 0) {
 					if (memberInfo.Name != "Item")
 						throw new DebuggerException("Arguments expected only for the Item property");
-					return (new IndexerExpression() { 
-					        	Target = target.Clone()/*, 
-					        	Arguments = AddExplicitTypes(propInfo.GetGetMethod() ?? propInfo.GetSetMethod()
-					        	                             , args) */
-					        }
-					       ).SetStaticType(memberInfo.MemberType);
+					var ie = new IndexerExpression() { Target = target.Clone() };
+					
+					foreach (var element in AddExplicitTypes(propInfo.GetGetMethod() ?? propInfo.GetSetMethod(), args)) {
+						ie.AddChild(element, AstNode.Roles.Argument);
+					}
+					return ie.SetStaticType(memberInfo.MemberType);
 				} else {
 					return (new MemberReferenceExpression() { Target = target.Clone(), MemberName = memberInfo.Name }).SetStaticType(memberInfo.MemberType);
 				}
@@ -170,139 +170,8 @@ namespace ICSharpCode.NRefactory.Ast
 		public static AstType GetTypeReference(this Type type)
 		{
 			return new SimpleType(type.Name).SetStaticType((DebugType)type);
-			
-//			List<int> arrayRanks = new List<int>();
-//			while(type.IsArray) {
-//				// C# uses reverse array order
-//				arrayRanks.Add(type.GetArrayRank() - 1);
-//				type = type.GetElementType();
-//			}
-//			
-//			int pointerNest = 0;
-//			while(type.IsPointer) {
-//				pointerNest++;
-//				type = type.GetElementType();
-//			}
-//			
-//			if (type.IsArray)
-//				throw new DebuggerException("C# does not support pointers to arrays");
-//			
-//			string name = type.Name;
-//			if (name.IndexOf('`') != -1)
-//				name = name.Substring(0, name.IndexOf('`'));
-//			if (!string.IsNullOrEmpty(type.Namespace))
-//				name = type.Namespace + "." + name;
-//			
-//			List<Type> genArgs = new List<Type>();
-//			// This inludes the generic arguments of the outter types
-//			genArgs.AddRange(type.GetGenericArguments());
-//			if (type.DeclaringType != null)
-//				genArgs.RemoveRange(0, type.DeclaringType.GetGenericArguments().Length);
-//			List<AstType> genTypeRefs = new List<AstType>();
-//			foreach(Type genArg in genArgs) {
-//				genTypeRefs.Add(genArg.GetTypeReference());
-//			}
-//			
-//			if (type.DeclaringType != null) {
-//				var outterRef = type.DeclaringType.GetTypeReference();
-//				var innerRef = new ComposedType() {
-//					PointerRank = pointerNest,
-//					//ArraySpecifiers = arrayRanks.ConvertAll(r => new ArraySpecifier(r)),
-////					BaseType = new MemberType() {
-////						Target = outterRef, MemberName = name, TypeArguments = genTypeRefs }
-//				};
-//				
-//				return innerRef.SetStaticType((DebugType)type);
-//			} else {
-//				return (new ComposedType() {
-//				        	PointerRank = pointerNest,
-//				        	//ArraySpecifiers = arrayRanks.ConvertAll(r => new ArraySpecifier(r)),
-//				        	BaseType = new SimpleType() {
-//				        		Identifier = name,
-//				        		/*TypeArguments = genTypeRefs*/ }}).SetStaticType((DebugType)type);
-//			}
 		}
 		
-		/// <summary>
-		/// Converts tree into nested TypeReference/InnerClassTypeReference.
-		/// Dotted names are split into separate nodes.
-		/// It does not normalize generic arguments.
-		/// </summary>
-//		static AstType NormalizeTypeReference(this AstNode expr)
-//		{
-//			if (expr is IdentifierExpression) {
-//				return new SimpleType() {
-//					Identifier = ((IdentifierExpression)expr).Identifier/*,
-//					TypeArguments = ((IdentifierExpression)expr).TypeArguments*/
-//				};
-//			} else if (expr is MemberReferenceExpression) {
-//				var outter = NormalizeTypeReference(((MemberReferenceExpression)expr).Target);
-//				return new MemberType() { Target = outter,
-//					MemberName = ((MemberReferenceExpression)expr).MemberName/*,
-//					TypeArguments = ((MemberReferenceExpression)expr).TypeArguments*/ };
-//			} else if (expr is TypeReferenceExpression) {
-//				return NormalizeTypeReference(((TypeReferenceExpression)expr).Type);
-//			} else if (expr is ComposedType) { // Frist - it is also TypeReference
-//				var typeRef = (ComposedType)expr;
-//				string[] names = null;
-//				if (typeRef.BaseType is SimpleType)
-//					names = (((SimpleType)typeRef.BaseType)).Identifier.Split('.');
-//				else
-//					names = (((MemberType)typeRef.BaseType)).MemberName.Split('.');
-//				
-//				var newRef = NormalizeTypeReference(typeRef.BaseType) as ComposedType;
-//				foreach(string name in names) {
-//					newRef = new ComposedType() {
-//						BaseType = new SimpleType() { Identifier = name/*, TypeArguments = new List<AstType>() */}
-//					};
-//				}
-//				//(((MemberType)newRef).TypeArguments as List<AstType>).AddRange(typeRef.TypeArguments);
-//				newRef.PointerRank = typeRef.PointerRank;
-//				//newRef.ArraySpecifiers = typeRef.ArraySpecifiers;
-//				return newRef;
-//			} else if (expr is SimpleType) {
-//				var typeRef = (SimpleType)expr;
-//				string[] names = typeRef.Identifier.Split('.');
-//				if (names.Length == 1)
-//					return typeRef;
-//				AstType newRef = null;
-//				foreach(string name in names) {
-//					if (newRef == null) {
-//						newRef = new SimpleType() { Identifier = name/*, TypeArguments = new List<AstType>()*/ };
-//					} else {
-//						newRef = new MemberType() { Target = newRef, MemberName = name/*, TypeArguments = new List<AstType>() */};
-//					}
-//				}
-//				//((List<AstType>)newRef.TypeArguments).AddRange(typeRef.TypeArguments);
-//				//newRef.PointerNestingLevel = typeRef.PointerNestingLevel;
-//				//newRef.RankSpecifier = typeRef.RankSpecifier;
-//				return newRef;
-//			} else if (expr is PrimitiveType) {
-//				return (PrimitiveType)expr;
-//			} else {
-//				throw new EvaluateException(expr, "Type expected. {0} seen.", expr.GetType().FullName);
-//			}
-//		}
-//		
-//		static string GetNameWithArgCounts(AstType typeRef)
-//		{
-//			string name = string.Empty;
-//			
-//			if (typeRef is SimpleType)
-//			{
-//				name = ((SimpleType)typeRef).Identifier;
-//				if (((SimpleType)typeRef).TypeArguments.Count() > 0)
-//					name += "`" + ((SimpleType)typeRef).TypeArguments.Count().ToString();
-//			}
-//			
-//			if (typeRef is MemberType) {
-//				name = ((MemberType)typeRef).MemberName;
-//				return GetNameWithArgCounts(((MemberType)typeRef).Target) + "." + name;
-//			} else {
-//				return name;
-//			}
-//		}
-//		
 		public static DebugType ResolveType(this AstNode expr, Debugger.AppDomain appDomain)
 		{
 			var result = expr.GetStaticType();
@@ -310,80 +179,6 @@ namespace ICSharpCode.NRefactory.Ast
 				return result;
 			
 			return DebugType.CreateFromType(appDomain, expr.Annotation<Type>());
-			
-//			if (expr is AstType && expr.GetStaticType() != null)
-//				return expr.GetStaticType();
-//			if (expr is TypeReferenceExpression && ((TypeReferenceExpression)expr).Type.GetStaticType() != null)
-//				return ((TypeReferenceExpression)expr).Type.GetStaticType();
-//			
-//			appDomain.Process.TraceMessage("Resolving {0}", expr.PrettyPrint());
-//			
-//			var typeRef = NormalizeTypeReference(expr);
-//			
-//			List<AstType> genTypeRefs = null;
-//			if (typeRef is MemberType) {
-//				//FIXME genTypeRefs = ((MemberType)typeRef).CombineToNormalTypeReference().TypeArguments as List<AstType>;
-//			} else {
-//				if (typeRef is SimpleType) {
-//					//genTypeRefs = ((SimpleType)typeRef).TypeArguments as List<AstType>;
-//				}
-//			}
-//			
-//			List<DebugType> genArgs = new List<DebugType>();
-//			foreach(var genTypeRef in genTypeRefs) {
-//				genArgs.Add(ResolveType(genTypeRef, appDomain));
-//			}
-//			
-//			return ResolveTypeInternal(typeRef, genArgs.ToArray(), appDomain);
 		}
-		
-		/// <summary>
-		/// For performance this is separate method.
-		/// 'genArgs' should hold type for each generic parameter in 'typeRef'.
-		/// </summary>
-//		static DebugType ResolveTypeInternal(AstType typeRef, DebugType[] genArgs, Debugger.AppDomain appDomain)
-//		{
-//			DebugType type = null;
-//			
-//			if (typeRef is SimpleType) {
-//				// Try to construct non-nested type
-//				// If there are generic types up in the tree, it must be nested type
-//				var simple = (SimpleType)typeRef;
-//				
-//				if (genArgs.Length == simple.TypeArguments.Count()) {
-//					string name = GetNameWithArgCounts(simple);
-//					type = DebugType.CreateFromNameOrNull(appDomain, name, null, genArgs);
-//				}
-//			}
-//			// Try to construct nested type
-//			if (type == null && typeRef is MemberType) {
-//				var member = (MemberType)typeRef;
-//				DebugType[] outterGenArgs = genArgs;
-//				// Do not pass our generic arguments to outter type
-//				Array.Resize(ref outterGenArgs, genArgs.Length - member.TypeArguments.Count());
-//				
-//				DebugType outter = ResolveTypeInternal(member.Target, outterGenArgs, appDomain);
-//				string nestedName = member.TypeArguments.Count() == 0 ?
-//					member.MemberName : member.MemberName + "`" + member.TypeArguments.Count();
-//				type = DebugType.CreateFromNameOrNull(appDomain, nestedName, outter, genArgs);
-//			}
-//			
-//			if (type == null)
-//				throw new GetValueException("Can not resolve " + typeRef.PrettyPrint());
-//			
-//			if (typeRef is ComposedType) {
-//				
-//				for(int i = 0; i < ((ComposedType)typeRef).PointerRank; i++) {
-//					type = (DebugType)type.MakePointerType();
-//				}
-//				if (((ComposedType)typeRef).ArraySpecifiers != null) {
-//					var enumerator = ((ComposedType)typeRef).ArraySpecifiers.Reverse().GetEnumerator();
-//						while (enumerator.MoveNext()) {
-//						type = (DebugType)type.MakeArrayType(enumerator.Current.Dimensions + 1);
-//					}
-//				}
-//			}
-//			return type;
-//		}
 	}
 }
