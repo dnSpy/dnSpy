@@ -28,10 +28,16 @@ namespace ILSpy.Debugger.Services.Debugger
 			var iEnumerableType = DebugType.CreateFromType(itemType.AppDomain, typeof(IEnumerable<>), itemType);
 			// explicitely cast the variable to IEnumerable<T>, where T is itemType
 			Expression iEnumerableVariableExplicitCast = new CastExpression { Expression = iEnumerableVariable.Clone() , Type = iEnumerableType.GetTypeReference() };
-			return new ObjectCreateExpression() { 
+			var obj = new ObjectCreateExpression() {
 				Type = listType.GetTypeReference()/*,
 				Arguments = iEnumerableVariableExplicitCast.ToList() */
 			};
+			
+			foreach (var element in iEnumerableVariableExplicitCast.ToList()) {
+				obj.AddChild(element, AstNode.Roles.Argument);
+			}
+			
+			return obj;
 		}
 		
 		/// <summary>
