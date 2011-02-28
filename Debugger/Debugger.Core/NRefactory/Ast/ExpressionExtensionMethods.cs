@@ -101,14 +101,14 @@ namespace ICSharpCode.NRefactory.Ast
 				if (args.Length > 0)
 					throw new DebuggerException("No arguments expected for a field");
 				
-				var mre = new MemberReferenceExpression() { Target = target, MemberName = memberInfo.Name };
+				var mre = new MemberReferenceExpression() { Target = target.Clone(), MemberName = memberInfo.Name };
 				return mre.SetStaticType(memberInfo.MemberType);
 			}
 			
 			if (memberInfo is MethodInfo) {
 				var mre = new MemberReferenceExpression() { Target = target, MemberName = memberInfo.Name };
 				var ie = new InvocationExpression() { 
-					Target = mre/*, 
+					Target = mre.Clone()/*,
 					Arguments = AddExplicitTypes((MethodInfo)memberInfo, args) */
 				};
 				
@@ -121,13 +121,13 @@ namespace ICSharpCode.NRefactory.Ast
 					if (memberInfo.Name != "Item")
 						throw new DebuggerException("Arguments expected only for the Item property");
 					return (new IndexerExpression() { 
-					        	Target = target/*, 
+					        	Target = target.Clone()/*, 
 					        	Arguments = AddExplicitTypes(propInfo.GetGetMethod() ?? propInfo.GetSetMethod()
 					        	                             , args) */
 					        }
 					       ).SetStaticType(memberInfo.MemberType);
 				} else {
-					return (new MemberReferenceExpression() { Target = target, MemberName = memberInfo.Name }).SetStaticType(memberInfo.MemberType);
+					return (new MemberReferenceExpression() { Target = target.Clone(), MemberName = memberInfo.Name }).SetStaticType(memberInfo.MemberType);
 				}
 			}
 			
