@@ -87,6 +87,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.def = def;
 			this.assemblies = assemblies;
+			this.LazyLoading = true;
 			threading = new ThreadingSupport();
 		}
 		
