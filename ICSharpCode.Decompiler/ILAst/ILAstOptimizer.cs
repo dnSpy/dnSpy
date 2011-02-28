@@ -463,6 +463,17 @@ namespace Decompiler.ControlFlow
 						scope.Remove(node);
 						branchExpr.Operand = null;  // Do not keep label alive
 						
+						// TODO: Does 'true' really point into the loop body?  Swap if necessary
+						
+						ControlFlowNode postLoopTarget;
+						labelToCfNode.TryGetValue(falseLabel, out postLoopTarget);
+						if (postLoopTarget != null) {
+							// Pull more nodes into the loop
+							HashSet<ControlFlowNode> postLoopContents = FindDominatedNodes(scope, postLoopTarget);
+							var pullIn = scope.Except(postLoopContents).Where(n => node.Dominates(n));
+							loopContents.UnionWith(pullIn);
+						}
+						
 						// Use loop to implement the condition
 						result.Add(new ILBasicBlock() {
 						    EntryLabel = basicBlock.EntryLabel,
