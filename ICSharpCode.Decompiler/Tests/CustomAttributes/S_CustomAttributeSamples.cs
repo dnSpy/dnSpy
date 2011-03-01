@@ -46,7 +46,7 @@ namespace AttributeWithTypeArgument
 	[AttributeUsage(AttributeTargets.All)]
 	public class MyTypeAttribute : Attribute
 	{
-		public MyTypeAttribute(Type t)
+		public MyTypeAttribute(Type t) : base()
 		{
 		}
 	}

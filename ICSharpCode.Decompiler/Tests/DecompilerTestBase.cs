@@ -7,31 +7,12 @@ using System.IO;
 using Decompiler;
 using Microsoft.CSharp;
 using System.CodeDom.Compiler;
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace ICSharpCode.Decompiler.Tests
 {
 	public abstract class DecompilerTestBase
 	{
-		protected static IEnumerable<Test> GenerateSectionTests(string samplesFileName)
-		{
-			string code = File.ReadAllText(Path.Combine(@"..\..\Tests", samplesFileName));
-			foreach (var sectionName in CodeSampleFileParser.ListSections(code))
-			{
-				if (sectionName.EndsWith("(ignored)", StringComparison.OrdinalIgnoreCase))
-					continue;
-
-				var testedSectionName = sectionName;
-				yield return new TestCase(testedSectionName, () =>
-				{
-					var testCode = CodeSampleFileParser.GetSection(testedSectionName, code);
-					System.Diagnostics.Debug.WriteLine(testCode);
-					var decompiledTestCode = RoundtripCode(testCode);
-					Assert.AreEqual(testCode, decompiledTestCode);
-				});
-			}
-		}
-
 		protected static void ValidateFileRoundtrip(string samplesFileName)
 		{
 			var lines = File.ReadAllLines(Path.Combine(@"..\..\Tests", samplesFileName));

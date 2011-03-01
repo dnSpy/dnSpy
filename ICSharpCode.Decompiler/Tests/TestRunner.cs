@@ -9,7 +9,6 @@ using System.Text;
 using Decompiler;
 using Microsoft.CSharp;
 using Mono.Cecil;
-using MbUnit.Framework;
 
 namespace ICSharpCode.Decompiler.Tests
 {
@@ -20,24 +19,6 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\DelegateConstruction.cs");
 
 			Console.ReadKey();
-		}
-
-		public void RoundtripFile(string fileName)
-		{
-			string code = File.ReadAllText(fileName);
-			AssemblyDefinition assembly = Compile(code);
-			AstBuilder decompiler = new AstBuilder(new DecompilerContext());
-			decompiler.AddAssembly(assembly);
-			StringWriter output = new StringWriter();
-			decompiler.GenerateCode(new PlainTextOutput(output));
-
-			var decompiledCode = output.ToString();
-			var onlyCode = "using System;" + Environment.NewLine + StripCodeFileHeader(code);
-
-			File.WriteAllText(Path.ChangeExtension(fileName, ".decomp.cs"), decompiledCode);
-			File.WriteAllText(Path.ChangeExtension(fileName, ".code.cs"), onlyCode);
-
-			Assert.AreEqual(onlyCode, decompiledCode);
 		}
 
 		static void TestFile(string fileName)
@@ -53,39 +34,6 @@ namespace ICSharpCode.Decompiler.Tests
 			{
 				throw new Exception("Test failure." + Environment.NewLine + diff.ToString());
 			}
-		}
-
-		static string StripCodeFileHeader(string code)
-		{
-			var reader = new StringReader(code);
-
-			var buffer = new StringWriter();
-
-			string line;
-			var skipBlankLine = false;
-			while ((line = reader.ReadLine()) != null)
-			{
-				if (line.Trim().StartsWith("//"))
-				{
-					skipBlankLine = true;
-					continue;
-				}
-				else if (line.StartsWith("using "))
-				{
-					skipBlankLine = true;
-					continue;
-				}
-				else if (skipBlankLine && String.IsNullOrWhiteSpace(line))
-				{
-					continue;
-				}
-
-				skipBlankLine = false;
-
-				buffer.WriteLine(line);
-			}
-
-			return buffer.ToString();
 		}
 
 		static bool Compare(string input1, string input2, StringWriter diff)

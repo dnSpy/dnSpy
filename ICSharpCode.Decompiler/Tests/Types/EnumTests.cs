@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MbUnit.Framework;
+using NUnit.Framework;
 
 namespace ICSharpCode.Decompiler.Tests.Types
 {
 	public class EnumTests : DecompilerTestBase
 	{
-		[StaticTestFactory]
-		public static IEnumerable<Test> EnumSamples()
+		[Test]
+		public void EnumSamples()
 		{
-			return GenerateSectionTests(@"Types\S_EnumSamples.cs");
+			ValidateFileRoundtrip(@"Types\S_EnumSamples.cs");
 		}
 	}
 }
