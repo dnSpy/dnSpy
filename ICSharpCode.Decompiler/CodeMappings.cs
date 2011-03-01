@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 using Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
@@ -30,7 +31,7 @@ namespace ICSharpCode.Decompiler
 		{
 			int[] result = new int[2];
 			result[0] = ILInstructionOffset.From;
-			result[1] = ILInstructionOffset.To;
+			result[1] = ILInstructionOffset.To + 1;
 			
 			return result;
 		}
@@ -92,7 +93,7 @@ namespace ICSharpCode.Decompiler
 			this MethodDefinition method,
 			ConcurrentDictionary<string, List<MethodMapping>> sourceCodeMappings)
 		{
-			// create IL code mappings - used in debugger
+			// create IL/CSharp code mappings - used in debugger
 			MethodMapping currentMethodMapping = null;
 			if (sourceCodeMappings.ContainsKey(method.DeclaringType.FullName)) {
 				var mapping = sourceCodeMappings[method.DeclaringType.FullName];
@@ -154,7 +155,7 @@ namespace ICSharpCode.Decompiler
 		/// <param name="ilOffset">IL offset.</param>
 		/// <param name="typeName">Type name.</param>
 		/// <param name="line">Line number.</param>
-		public static void GetSourceCodeFromMetadataTokenAndOffset(
+		public static bool GetSourceCodeFromMetadataTokenAndOffset(
 			this ConcurrentDictionary<string, List<MethodMapping>> codeMappings,
 			uint token,
 			int ilOffset,
@@ -174,15 +175,20 @@ namespace ICSharpCode.Decompiler
 						  (cm.ILInstructionOffset.From == ilOffset && ilOffset == cm.ILInstructionOffset.To)); // for IL
 				if (codeMapping == null) {
 					codeMapping = mapping.MethodCodeMappings.Find(cm => (cm.ILInstructionOffset.From >= ilOffset));
-					if (codeMapping == null)
-						continue;
+					if (codeMapping == null) {
+						codeMapping = mapping.MethodCodeMappings.LastOrDefault();
+						if (codeMapping == null)
+							continue;
+					}
 				}
 					
 				
 				typeName = typename;
 				line = codeMapping.SourceCodeLine;
-				break;
+				return true;
 			}
+			
+			return false;
 		}
 	}
 }

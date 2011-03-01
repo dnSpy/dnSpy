@@ -308,7 +308,7 @@ namespace ILSpy.Debugger.Services
 				return null;
 			} else {
 				var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-				frame.SourceCodeLine = CurrentLineBookmark.Instance.LineNumber;
+				frame.SourceCodeLine = map.SourceCodeLine;
 				frame.ILRanges = map.ToArray();
 				return frame;
 			}
@@ -833,8 +833,7 @@ namespace ILSpy.Debugger.Services
 				int ilOffset = frame.IP;
 				int line;
 				string typeName;
-				CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line);
-				if (typeName != null)
+				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line))
 					DebuggerService.JumpToCurrentLine(typeName, line, 0, line, 0);
 			}
 		}
