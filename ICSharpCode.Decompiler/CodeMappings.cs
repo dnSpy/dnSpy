@@ -31,7 +31,7 @@ namespace ICSharpCode.Decompiler
 		{
 			int[] result = new int[2];
 			result[0] = ILInstructionOffset.From;
-			result[1] = ILInstructionOffset.To + 1;
+			result[1] = ILInstructionOffset.From + 1 == ILInstructionOffset.To ? ILInstructionOffset.To : ILInstructionOffset.To + 1;
 			
 			return result;
 		}
@@ -171,8 +171,7 @@ namespace ICSharpCode.Decompiler
 					continue;
 				
 				var codeMapping = mapping.MethodCodeMappings.Find(
-					cm => (cm.ILInstructionOffset.From <= ilOffset && ilOffset <= cm.ILInstructionOffset.To - 1) || // for CSharp
-						  (cm.ILInstructionOffset.From == ilOffset && ilOffset == cm.ILInstructionOffset.To)); // for IL
+					cm => cm.ILInstructionOffset.From <= ilOffset && ilOffset <= cm.ILInstructionOffset.To - 1);
 				if (codeMapping == null) {
 					codeMapping = mapping.MethodCodeMappings.Find(cm => (cm.ILInstructionOffset.From >= ilOffset));
 					if (codeMapping == null) {
