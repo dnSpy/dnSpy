@@ -20,7 +20,7 @@ namespace aa
 		[AttributeUsage(AttributeTargets.All)]
 		public class MyAttribute : Attribute
 		{
-			public MyAttribute(CustomAtributes.EnumWithFlag en)
+			public MyAttribute(CustomAtributes.EnumWithFlag en) : base()
 			{
 			}
 		}
