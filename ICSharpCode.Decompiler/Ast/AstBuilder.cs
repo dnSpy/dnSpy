@@ -653,6 +653,7 @@ namespace Decompiler
 					var section = new AttributeSection();
 					section.AttributeTarget = target;
 					section.Attributes.AddRange(attributes);
+					attributedNode.AddChild(section, AttributedNode.AttributeRole);
 				}
 			}
 		}
