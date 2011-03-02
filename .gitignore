@@ -3,3 +3,4 @@ obj/
 
 /ICSharpCode.Decompiler/Properties/AssemblyInfo.cs
 /ILSpy/Properties/AssemblyInfo.cs
+*.suo

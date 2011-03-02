@@ -6,8 +6,10 @@ using System.Threading;
 using Decompiler.Transforms;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Ast = ICSharpCode.NRefactory.CSharp;
 using ClassType = ICSharpCode.NRefactory.TypeSystem.ClassType;
 using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
 
@@ -62,21 +64,25 @@ namespace Decompiler
 			astCompileUnit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
 		}
 		
-		public void AddAssembly(AssemblyDefinition assemblyDefinition)
+		public void AddAssembly(AssemblyDefinition assemblyDefinition, bool onlyAssemblyLevel = false)
 		{
 			astCompileUnit.AddChild(
 				new UsingDeclaration {
 					Import = new SimpleType("System")
 				}, CompilationUnit.MemberRole);
 			
-			foreach(TypeDefinition typeDef in assemblyDefinition.MainModule.Types) {
-				// Skip nested types - they will be added by the parent type
-				if (typeDef.DeclaringType != null) continue;
-				// Skip the <Module> class
-				if (typeDef.Name == "<Module>") continue;
-				
-				AddType(typeDef);
-			}
+			ConvertCustomAtributes(astCompileUnit, assemblyDefinition, AttributeTarget.Assembly);
+
+			if(!onlyAssemblyLevel)
+				foreach (TypeDefinition typeDef in assemblyDefinition.MainModule.Types)
+				{
+					// Skip nested types - they will be added by the parent type
+					if (typeDef.DeclaringType != null) continue;
+					// Skip the <Module> class
+					if (typeDef.Name == "<Module>") continue;
+
+					AddType(typeDef);
+				}
 		}
 		
 		NamespaceDeclaration GetCodeNamespace(string name)
@@ -159,6 +165,8 @@ namespace Decompiler
 			
 			
 			if (typeDef.IsEnum) {
+				long expectedEnumMemberValue = 0;
+				bool forcePrintingInitializers = IsFlagsEnum(typeDef);
 				foreach (FieldDefinition field in typeDef.Fields) {
 					if (field.IsRuntimeSpecialName) {
 						// the value__ field
@@ -166,6 +174,11 @@ namespace Decompiler
 					} else {
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
 						enumMember.Name = CleanName(field.Name);
+						long memberValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false);
+						if (forcePrintingInitializers || memberValue != expectedEnumMemberValue) {
+							enumMember.AddChild(new PrimitiveExpression(field.Constant), EnumMemberDeclaration.InitializerRole);
+						}
+						expectedEnumMemberValue = memberValue + 1;
 						astType.AddChild(enumMember, TypeDeclaration.MemberRole);
 					}
 				}
@@ -180,8 +193,14 @@ namespace Decompiler
 				
 				AddTypeMembers(astType, typeDef);
 			}
-			
+
+			ConvertCustomAtributes(astType, typeDef);
 			return astType;
+		}
+
+		public void Transform(IAstTransform transform)
+		{
+			transform.Run(astCompileUnit);
 		}
 		
 		string CleanName(string name)
@@ -469,6 +488,8 @@ namespace Decompiler
 				astMethod.Modifiers = ConvertModifiers(methodDef);
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			}
+			ConvertCustomAtributes(astMethod, methodDef);
+			ConvertCustomAtributes(astMethod, methodDef.MethodReturnType, AttributeTarget.Return);
 			return astMethod;
 		}
 		
@@ -513,12 +534,18 @@ namespace Decompiler
 				astProp.Getter = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context)
 				}.WithAnnotation(propDef.GetMethod);
+				ConvertCustomAtributes(astProp.Getter, propDef.GetMethod);
+				ConvertCustomAtributes(astProp.Getter, propDef.GetMethod.MethodReturnType, AttributeTarget.Return);
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context)
 				}.WithAnnotation(propDef.SetMethod);
+				ConvertCustomAtributes(astProp.Setter, propDef.SetMethod);
+				ConvertCustomAtributes(astProp.Setter, propDef.SetMethod.MethodReturnType, AttributeTarget.Return);
+				ConvertCustomAtributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), AttributeTarget.Param);
 			}
+			ConvertCustomAtributes(astProp, propDef);
 			return astProp;
 		}
 
@@ -556,6 +583,7 @@ namespace Decompiler
 				else
 					initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
 			}
+			ConvertCustomAtributes(astField, fieldDef);
 			return astField;
 		}
 		
@@ -571,8 +599,137 @@ namespace Decompiler
 				}
 				// TODO: params, this
 				
+				ConvertCustomAtributes(astParam, paramDef);
 				yield return astParam;
 			}
+		}
+
+		static void ConvertCustomAtributes(AstNode attributedNode, ICustomAttributeProvider customAttributeProvider, AttributeTarget target = AttributeTarget.None)
+		{
+			if (customAttributeProvider.HasCustomAttributes)
+			{
+				var section = new AttributeSection();
+				section.AttributeTarget = target;
+				foreach (var customAttribute in customAttributeProvider.CustomAttributes)
+				{
+					ICSharpCode.NRefactory.CSharp.Attribute attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
+					attribute.Type = ConvertType(customAttribute.AttributeType);
+					section.Attributes.Add(attribute);
+
+					if(customAttribute.HasConstructorArguments)
+						foreach (var parameter in customAttribute.ConstructorArguments)
+						{
+							Expression parameterValue = ConvertArgumentValue(parameter);
+							attribute.Arguments.Add(parameterValue);
+						}
+
+					if (customAttribute.HasProperties)
+						foreach (var propertyNamedArg in customAttribute.Properties)
+						{
+							var propertyReference = customAttribute.AttributeType.Resolve().Properties.First(pr => pr.Name == propertyNamedArg.Name);
+							var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
+							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
+							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
+						}
+
+					if (customAttribute.HasFields)
+						foreach (var fieldNamedArg in customAttribute.Fields)
+						{
+							var fieldReference = customAttribute.AttributeType.Resolve().Fields.First(f => f.Name == fieldNamedArg.Name);
+							var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
+							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
+							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
+						}
+				}
+
+				attributedNode.AddChild(section, AttributedNode.AttributeRole);
+			}
+		}
+
+		private static Expression ConvertArgumentValue(CustomAttributeArgument parameter)
+		{
+			var type = parameter.Type.Resolve();
+			Expression parameterValue;
+			if (type.IsEnum)
+			{
+				parameterValue = MakePrimitive(Convert.ToInt64(parameter.Value), type);
+			}
+			else if (parameter.Value is TypeReference)
+			{
+				parameterValue = new TypeOfExpression()
+				{
+					Type = ConvertType((TypeReference)parameter.Value),
+				};
+			}
+			else
+			{
+				parameterValue = new PrimitiveExpression(parameter.Value);
+			}
+			return parameterValue;
+		}
+
+
+		internal static Expression MakePrimitive(long val, TypeReference type)
+		{
+			if (TypeAnalysis.IsBoolean(type) && val == 0)
+				return new Ast.PrimitiveExpression(false);
+			else if (TypeAnalysis.IsBoolean(type) && val == 1)
+				return new Ast.PrimitiveExpression(true);
+			if (type != null)
+			{ // cannot rely on type.IsValueType, it's not set for typerefs (but is set for typespecs)
+				TypeDefinition enumDefinition = type.Resolve();
+				if (enumDefinition != null && enumDefinition.IsEnum)
+				{
+					foreach (FieldDefinition field in enumDefinition.Fields)
+					{
+						if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false), val))
+							return ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
+						else if (!field.IsStatic && field.IsRuntimeSpecialName)
+							type = field.FieldType; // use primitive type of the enum
+					}
+					if (IsFlagsEnum(enumDefinition))
+					{
+						long enumValue = val;
+						Expression expr = null;
+						foreach (FieldDefinition field in enumDefinition.Fields.Where(fld => fld.IsStatic))
+						{
+							long fieldValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false);
+							if (fieldValue == 0)
+								continue;	// skip None enum value
+
+							if ((fieldValue & enumValue) == fieldValue)
+							{
+								var fieldExpression = ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
+								if (expr == null)
+									expr = fieldExpression;
+								else
+									expr = new BinaryOperatorExpression(expr, BinaryOperatorType.BitwiseOr, fieldExpression);
+
+								enumValue &= ~fieldValue;
+								if (enumValue == 0)
+									break;
+							}
+						}
+						if(enumValue == 0 && expr != null)
+							return expr;
+					}
+					TypeCode enumBaseTypeCode = TypeAnalysis.GetTypeCode(type);
+					return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(enumBaseTypeCode, val, false)).CastTo(ConvertType(enumDefinition));
+				}
+			}
+			TypeCode code = TypeAnalysis.GetTypeCode(type);
+			if (code == TypeCode.Object)
+				return new Ast.PrimitiveExpression((int)val);
+			else
+				return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
+		}
+
+		static bool IsFlagsEnum(TypeDefinition type)
+		{
+			if (!type.HasCustomAttributes)
+				return false;
+
+			return type.CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.FlagsAttribute");
 		}
 	}
 }
