@@ -40,10 +40,10 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.NRefactory.Documentation;
+using ILSpy.Debugger;
 using ILSpy.Debugger.AvalonEdit;
 using ILSpy.Debugger.ToolTips;
 using Microsoft.Win32;
-
 using TextEditorWeakEventManager = ILSpy.Debugger.AvalonEdit.TextEditorWeakEventManager;
 
 namespace ICSharpCode.ILSpy.TextView
@@ -329,7 +329,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
 		{
-			IconBarMargin.CurrentType = null;
+			DebuggedType.CurrentType = null;
 			// Some actions like loading an assembly list cause several selection changes in the tree view,
 			// and each of those will start a decompilation action.
 			bool isDecompilationScheduled = this.nextDecompilationRun != null;

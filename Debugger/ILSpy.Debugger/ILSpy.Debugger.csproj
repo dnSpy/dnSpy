@@ -65,6 +65,7 @@
     <Compile Include="Bookmarks\CurrentLineBookmark.cs" />
     <Compile Include="Bookmarks\IBookmark.cs" />
     <Compile Include="Bookmarks\MarkerBookmark.cs" />
+    <Compile Include="DebuggedType.cs" />
     <Compile Include="Models\TreeModel\ArrayRangeNode.cs" />
     <Compile Include="Models\TreeModel\ChildNodesOfObject.cs" />
     <Compile Include="Models\TreeModel\ExpressionNode.cs" />
