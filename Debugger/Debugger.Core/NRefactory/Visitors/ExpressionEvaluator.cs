@@ -572,8 +572,13 @@ namespace ICSharpCode.NRefactory.Visitors
 
 		TypedValue GetThisValue()
 		{
-			// This is needed so that captured 'this' is supported
-			return new TypedValue(context.GetThisValue(), (DebugType)context.MethodInfo.DeclaringType);
+			try {
+				// This is needed so that captured 'this' is supported
+				return new TypedValue(context.GetThisValue(), (DebugType)context.MethodInfo.DeclaringType);
+			} catch (GetValueException) {
+				// static method
+				return null;
+			}
 		}
 
 		public override object VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression, object data)
