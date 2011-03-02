@@ -71,9 +71,10 @@ namespace Decompiler
 					Import = new SimpleType("System")
 				}, CompilationUnit.MemberRole);
 			
-			ConvertCustomAtributes(astCompileUnit, assemblyDefinition, AttributeTarget.Assembly);
+			ConvertCustomAttributes(astCompileUnit, assemblyDefinition, AttributeTarget.Assembly);
+			ConvertCustomAttributes(astCompileUnit, assemblyDefinition.MainModule, AttributeTarget.Module);
 
-			if(!onlyAssemblyLevel)
+			if (!onlyAssemblyLevel) {
 				foreach (TypeDefinition typeDef in assemblyDefinition.MainModule.Types)
 				{
 					// Skip nested types - they will be added by the parent type
@@ -83,6 +84,7 @@ namespace Decompiler
 
 					AddType(typeDef);
 				}
+			}
 		}
 		
 		NamespaceDeclaration GetCodeNamespace(string name)
@@ -194,7 +196,7 @@ namespace Decompiler
 				AddTypeMembers(astType, typeDef);
 			}
 
-			ConvertCustomAtributes(astType, typeDef);
+			ConvertCustomAttributes(astType, typeDef);
 			return astType;
 		}
 
@@ -488,8 +490,8 @@ namespace Decompiler
 				astMethod.Modifiers = ConvertModifiers(methodDef);
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			}
-			ConvertCustomAtributes(astMethod, methodDef);
-			ConvertCustomAtributes(astMethod, methodDef.MethodReturnType, AttributeTarget.Return);
+			ConvertCustomAttributes(astMethod, methodDef);
+			ConvertCustomAttributes(astMethod, methodDef.MethodReturnType, AttributeTarget.Return);
 			return astMethod;
 		}
 		
@@ -534,18 +536,18 @@ namespace Decompiler
 				astProp.Getter = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context)
 				}.WithAnnotation(propDef.GetMethod);
-				ConvertCustomAtributes(astProp.Getter, propDef.GetMethod);
-				ConvertCustomAtributes(astProp.Getter, propDef.GetMethod.MethodReturnType, AttributeTarget.Return);
+				ConvertCustomAttributes(astProp.Getter, propDef.GetMethod);
+				ConvertCustomAttributes(astProp.Getter, propDef.GetMethod.MethodReturnType, AttributeTarget.Return);
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context)
 				}.WithAnnotation(propDef.SetMethod);
-				ConvertCustomAtributes(astProp.Setter, propDef.SetMethod);
-				ConvertCustomAtributes(astProp.Setter, propDef.SetMethod.MethodReturnType, AttributeTarget.Return);
-				ConvertCustomAtributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), AttributeTarget.Param);
+				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod);
+				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod.MethodReturnType, AttributeTarget.Return);
+				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), AttributeTarget.Param);
 			}
-			ConvertCustomAtributes(astProp, propDef);
+			ConvertCustomAttributes(astProp, propDef);
 			return astProp;
 		}
 
@@ -583,7 +585,7 @@ namespace Decompiler
 				else
 					initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
 			}
-			ConvertCustomAtributes(astField, fieldDef);
+			ConvertCustomAttributes(astField, fieldDef);
 			return astField;
 		}
 		
@@ -599,50 +601,59 @@ namespace Decompiler
 				}
 				// TODO: params, this
 				
-				ConvertCustomAtributes(astParam, paramDef);
+				ConvertCustomAttributes(astParam, paramDef);
 				yield return astParam;
 			}
 		}
 
-		static void ConvertCustomAtributes(AstNode attributedNode, ICustomAttributeProvider customAttributeProvider, AttributeTarget target = AttributeTarget.None)
+		static void ConvertCustomAttributes(AstNode attributedNode, ICustomAttributeProvider customAttributeProvider, AttributeTarget target = AttributeTarget.None)
 		{
-			if (customAttributeProvider.HasCustomAttributes)
-			{
-				var section = new AttributeSection();
-				section.AttributeTarget = target;
-				foreach (var customAttribute in customAttributeProvider.CustomAttributes)
-				{
-					ICSharpCode.NRefactory.CSharp.Attribute attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
+			if (customAttributeProvider.HasCustomAttributes) {
+				var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
+				foreach (var customAttribute in customAttributeProvider.CustomAttributes) {
+					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
 					attribute.Type = ConvertType(customAttribute.AttributeType);
-					section.Attributes.Add(attribute);
+					attributes.Add(attribute);
 
-					if(customAttribute.HasConstructorArguments)
-						foreach (var parameter in customAttribute.ConstructorArguments)
-						{
+					if(customAttribute.HasConstructorArguments) {
+						foreach (var parameter in customAttribute.ConstructorArguments) {
 							Expression parameterValue = ConvertArgumentValue(parameter);
 							attribute.Arguments.Add(parameterValue);
 						}
-
-					if (customAttribute.HasProperties)
-						foreach (var propertyNamedArg in customAttribute.Properties)
-						{
+					}
+					if (customAttribute.HasProperties) {
+						foreach (var propertyNamedArg in customAttribute.Properties) {
 							var propertyReference = customAttribute.AttributeType.Resolve().Properties.First(pr => pr.Name == propertyNamedArg.Name);
 							var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
 							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
 						}
+					}
 
-					if (customAttribute.HasFields)
-						foreach (var fieldNamedArg in customAttribute.Fields)
-						{
+					if (customAttribute.HasFields) {
+						foreach (var fieldNamedArg in customAttribute.Fields) {
 							var fieldReference = customAttribute.AttributeType.Resolve().Fields.First(f => f.Name == fieldNamedArg.Name);
 							var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
 							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
 						}
+					}
 				}
 
-				attributedNode.AddChild(section, AttributedNode.AttributeRole);
+				if (target == AttributeTarget.Module || target == AttributeTarget.Assembly) {
+					// use separate section for each attribute
+					foreach (var attribute in attributes) {
+						var section = new AttributeSection();
+						section.AttributeTarget = target;
+						section.Attributes.Add(attribute);
+						attributedNode.AddChild(section, AttributedNode.AttributeRole);
+					}
+				} else {
+					// use single section for all attributes
+					var section = new AttributeSection();
+					section.AttributeTarget = target;
+					section.Attributes.AddRange(attributes);
+				}
 			}
 		}
 
