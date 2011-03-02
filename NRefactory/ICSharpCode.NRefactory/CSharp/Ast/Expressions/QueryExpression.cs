@@ -45,7 +45,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			QueryExpression o = other as QueryExpression;
-			return o != null && this.Clauses.DoMatch(o.Clauses, match);
+			return o != null && !o.IsNull && this.Clauses.DoMatch(o.Clauses, match);
 		}
 	}
 	
@@ -53,12 +53,6 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		public override NodeType NodeType {
 			get { return NodeType.QueryClause; }
-		}
-		
-		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
-		{
-			QueryClause o = other as QueryClause;
-			throw new NotImplementedException();
 		}
 	}
 	
@@ -103,6 +97,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitQueryContinuationClause (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QueryContinuationClause o = other as QueryContinuationClause;
+			return o != null && MatchString(this.Identifier, o.Identifier) && this.PrecedingQuery.DoMatch(o.PrecedingQuery, match);
+		}
 	}
 	
 	public class QueryFromClause : QueryClause
@@ -132,6 +132,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryFromClause (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QueryFromClause o = other as QueryFromClause;
+			return o != null && this.Type.DoMatch(o.Type, match) && MatchString(this.Identifier, o.Identifier)
+				&& this.Expression.DoMatch(o.Expression, match);
 		}
 	}
 	
@@ -163,6 +170,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitQueryLetClause (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QueryLetClause o = other as QueryLetClause;
+			return o != null && MatchString(this.Identifier, o.Identifier) && this.Expression.DoMatch(o.Expression, match);
+		}
 	}
 	
 	
@@ -180,6 +193,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryWhereClause (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QueryWhereClause o = other as QueryWhereClause;
+			return o != null && this.Condition.DoMatch(o.Condition, match);
 		}
 	}
 	
@@ -266,6 +285,16 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitQueryJoinClause (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QueryJoinClause o = other as QueryJoinClause;
+			return o != null && this.IsGroupJoin == o.IsGroupJoin
+				&& this.Type.DoMatch(o.Type, match) && MatchString(this.JoinIdentifier, o.JoinIdentifier)
+				&& this.InExpression.DoMatch(o.InExpression, match) && this.OnExpression.DoMatch(o.OnExpression, match)
+				&& this.EqualsExpression.DoMatch(o.EqualsExpression, match)
+				&& MatchString(this.IntoIdentifier, o.IntoIdentifier);
+		}
 	}
 	
 	public class QueryOrderClause : QueryClause
@@ -283,6 +312,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryOrderClause (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QueryOrderClause o = other as QueryOrderClause;
+			return o != null && this.Orderings.DoMatch(o.Orderings, match);
 		}
 	}
 	
@@ -340,6 +375,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitQuerySelectClause (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QuerySelectClause o = other as QuerySelectClause;
+			return o != null && this.Expression.DoMatch(o.Expression, match);
+		}
 	}
 	
 	public class QueryGroupClause : QueryClause
@@ -370,6 +411,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitQueryGroupClause (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			QueryGroupClause o = other as QueryGroupClause;
+			return o != null && this.Projection.DoMatch(o.Projection, match) && this.Key.DoMatch(o.Key, match);
 		}
 	}
 }

@@ -10,7 +10,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Method/field/entity.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IMemberContract))]
+	#endif
 	public interface IMember : IEntity
 	{
 		/// <summary>
@@ -58,6 +60,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IMember))]
 	abstract class IMemberContract : IEntityContract, IMember
 	{
@@ -101,4 +104,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			get { return false; }
 		}
 	}
+	#endif
 }

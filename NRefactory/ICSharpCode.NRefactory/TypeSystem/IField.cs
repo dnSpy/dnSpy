@@ -9,7 +9,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents a field or constant.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IFieldContract))]
+	#endif
 	public interface IField : IMember, IVariable
 	{
 		/// <summary>
@@ -28,6 +30,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool IsVolatile { get; }
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IField))]
 	abstract class IFieldContract : IMemberContract, IField
 	{
@@ -63,4 +66,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			get { return null; }
 		}
 	}
+	#endif
 }

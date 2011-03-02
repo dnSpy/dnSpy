@@ -60,7 +60,6 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				throw new ArgumentNullException("declaringTypeDefinition");
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentException("name");
-			Contract.EndContractBlock();
 			this.projectContent = declaringTypeDefinition.ProjectContent;
 			this.declaringTypeDefinition = declaringTypeDefinition;
 			this.name = name;
@@ -73,18 +72,9 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				throw new ArgumentNullException("projectContent");
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentException("name");
-			Contract.EndContractBlock();
 			this.projectContent = projectContent;
 			this.ns = ns ?? string.Empty;
 			this.name = name;
-		}
-		
-		[ContractInvariantMethod]
-		void ObjectInvariant()
-		{
-			Contract.Invariant(projectContent != null);
-			Contract.Invariant(!string.IsNullOrEmpty(name));
-			Contract.Invariant(ns != null);
 		}
 		
 		public ClassType ClassType {
@@ -164,7 +154,10 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public IEnumerable<IMember> Members {
 			get {
-				return this.Fields.Concat<IMember>(this.Properties).Concat(this.Methods).Concat(this.Events);
+				return this.Fields.SafeCast<IField, IMember>()
+					.Concat(this.Properties.SafeCast<IProperty, IMember>())
+					.Concat(this.Methods.SafeCast<IMethod, IMember>())
+					.Concat(this.Events.SafeCast<IEvent, IMember>());
 			}
 		}
 		
@@ -187,15 +180,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		public string FullName {
 			get {
 				if (declaringTypeDefinition != null) {
-					string combinedName = declaringTypeDefinition.FullName + "." + this.name;
-					Contract.Assume(!string.IsNullOrEmpty(combinedName));
-					return combinedName;
+					return declaringTypeDefinition.FullName + "." + this.name;
 				} else if (string.IsNullOrEmpty(ns)) {
 					return this.name;
 				} else {
-					string combinedName = this.ns + "." + this.name;
-					Contract.Assume(!string.IsNullOrEmpty(combinedName));
-					return combinedName;
+					return this.ns + "." + this.name;
 				}
 			}
 		}

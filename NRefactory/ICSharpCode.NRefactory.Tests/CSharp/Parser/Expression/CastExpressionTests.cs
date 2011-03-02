@@ -9,132 +9,157 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 	[TestFixture, Ignore("Port unit tests to new DOM")]
 	public class CastExpressionTests
 	{
-		/*
 		[Test]
 		public void SimpleCastExpression()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(MyObject)o");
-			Assert.AreEqual("MyObject", ce.CastTo.Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
-			Assert.AreEqual(CastType.Cast, ce.CastType);
+			ParseUtilCSharp.AssertExpression(
+				"(MyObject)o",
+				new CastExpression {
+					Type = new SimpleType("MyObject"),
+					Expression = new IdentifierExpression("o")
+				});
 		}
 		
 		[Test]
 		public void ArrayCastExpression()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(MyType[])o");
-			Assert.AreEqual("MyType", ce.CastTo.Type);
-			Assert.AreEqual(new int[] { 0 }, ce.CastTo.RankSpecifier);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
-			Assert.AreEqual(CastType.Cast, ce.CastType);
+			ParseUtilCSharp.AssertExpression(
+				"(MyType[])o",
+				new CastExpression {
+					Type = new SimpleType("MyType").MakeArrayType(1),
+					Expression = new IdentifierExpression("o")
+				});
 		}
 		
 		[Test]
 		public void NullablePrimitiveCastExpression()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(int?)o");
-			Assert.AreEqual("System.Nullable", ce.CastTo.Type);
-			Assert.AreEqual("System.Int32", ce.CastTo.GenericTypes[0].Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
-			Assert.AreEqual(CastType.Cast, ce.CastType);
+			ParseUtilCSharp.AssertExpression(
+				"(int?)o",
+				new CastExpression {
+					Type = new ComposedType { BaseType = new PrimitiveType("int"), HasNullableSpecifier = true },
+					Expression = new IdentifierExpression("o")
+				});
 		}
 		
 		[Test]
 		public void NullableCastExpression()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(MyType?)o");
-			Assert.AreEqual("System.Nullable", ce.CastTo.Type);
-			Assert.AreEqual("MyType", ce.CastTo.GenericTypes[0].Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
-			Assert.AreEqual(CastType.Cast, ce.CastType);
+			ParseUtilCSharp.AssertExpression(
+				"(MyType?)o",
+				new CastExpression {
+					Type = new ComposedType { BaseType = new SimpleType("MyType"), HasNullableSpecifier = true },
+					Expression = new IdentifierExpression("o")
+				});
 		}
 		
 		[Test]
 		public void NullableTryCastExpression()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("o as int?");
-			Assert.AreEqual("System.Nullable", ce.CastTo.Type);
-			Assert.IsTrue(ce.CastTo.IsKeyword);
-			Assert.AreEqual("System.Int32", ce.CastTo.GenericTypes[0].Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
-			Assert.AreEqual(CastType.TryCast, ce.CastType);
+			ParseUtilCSharp.AssertExpression(
+				"o as int?",
+				new AsExpression {
+					Type = new ComposedType { BaseType = new PrimitiveType("int"), HasNullableSpecifier = true },
+					Expression = new IdentifierExpression("o")
+				});
 		}
 		
 		[Test]
 		public void GenericCastExpression()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(List<string>)o");
-			Assert.AreEqual("List", ce.CastTo.Type);
-			Assert.AreEqual("System.String", ce.CastTo.GenericTypes[0].Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
-			Assert.AreEqual(CastType.Cast, ce.CastType);
+			ParseUtilCSharp.AssertExpression(
+				"(List<string>)o",
+				new CastExpression {
+					Type = new SimpleType("List") { TypeArguments = { new PrimitiveType("string") } },
+					Expression = new IdentifierExpression("o")
+				});
 		}
 		
 		[Test]
 		public void GenericArrayCastExpression()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(List<string>[])o");
-			Assert.AreEqual("List", ce.CastTo.Type);
-			Assert.AreEqual("System.String", ce.CastTo.GenericTypes[0].Type);
-			Assert.AreEqual(new int[] { 0 }, ce.CastTo.RankSpecifier);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
-			Assert.AreEqual(CastType.Cast, ce.CastType);
+			ParseUtilCSharp.AssertExpression(
+				"(List<string>[])o",
+				new CastExpression {
+					Type = new ComposedType {
+						BaseType = new SimpleType("List") { TypeArguments = { new PrimitiveType("string") } },
+						ArraySpecifiers = { new ArraySpecifier(1) }
+					},
+					Expression = new IdentifierExpression("o")
+				});
 		}
 		
 		[Test]
 		public void GenericArrayAsCastExpression()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("o as List<string>[]");
-			Assert.AreEqual("List", ce.CastTo.Type);
-			Assert.AreEqual("System.String", ce.CastTo.GenericTypes[0].Type);
-			Assert.AreEqual(new int[] { 0 }, ce.CastTo.RankSpecifier);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
-			Assert.AreEqual(CastType.TryCast, ce.CastType);
+			ParseUtilCSharp.AssertExpression(
+				"o as List<string>[]",
+				new AsExpression {
+					Type = new ComposedType {
+						BaseType = new SimpleType("List") { TypeArguments = { new PrimitiveType("string") } },
+						ArraySpecifiers = { new ArraySpecifier(1) }
+					},
+					Expression = new IdentifierExpression("o")
+				});
 		}
 		
 		[Test]
 		public void CastMemberReferenceOnParenthesizedExpression()
 		{
-			// yes, we really wanted to evaluate .Member on expr and THEN cast the result to MyType
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(MyType)(expr).Member");
-			Assert.AreEqual("MyType", ce.CastTo.Type);
-			Assert.IsTrue(ce.Expression is MemberReferenceExpression);
-			Assert.AreEqual(CastType.Cast, ce.CastType);
+			// yes, we really want to evaluate .Member on expr and THEN cast the result to MyType
+			ParseUtilCSharp.AssertExpression(
+				"(MyType)(expr).Member",
+				new CastExpression {
+					Type = new SimpleType("MyType"),
+					Expression = new ParenthesizedExpression { Expression = new IdentifierExpression("expr") }.Member("Member")
+				});
 		}
 		
 		[Test]
 		public void TryCastParenthesizedExpression()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(o) as string");
-			Assert.AreEqual("System.String", ce.CastTo.ToString());
-			Assert.IsTrue(ce.Expression is ParenthesizedExpression);
-			Assert.AreEqual(CastType.TryCast, ce.CastType);
+			ParseUtilCSharp.AssertExpression(
+				"(o) as string",
+				new AsExpression {
+					Expression = new ParenthesizedExpression { Expression = new IdentifierExpression("o") },
+					Type = new PrimitiveType("string")
+				});
 		}
 		
 		[Test]
 		public void CastNegation()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(uint)-negativeValue");
-			Assert.AreEqual("System.UInt32", ce.CastTo.ToString());
-			Assert.IsTrue(ce.Expression is UnaryOperatorExpression);
-			Assert.AreEqual(CastType.Cast, ce.CastType);
+			ParseUtilCSharp.AssertExpression(
+				"(uint)-negativeValue",
+				new CastExpression {
+					Type = new PrimitiveType("uint"),
+					Expression = new UnaryOperatorExpression(
+						UnaryOperatorType.Minus,
+						new IdentifierExpression("negativeValue")
+					)});
 		}
-		*/
 		
 		[Test]
 		public void SubtractionIsNotCast()
 		{
-			BinaryOperatorExpression boe = ParseUtilCSharp.ParseExpression<BinaryOperatorExpression>("(BigInt)-negativeValue");
-			Assert.IsTrue(boe.Left is ParenthesizedExpression);
-			Assert.IsTrue(boe.Right is IdentifierExpression);
+			ParseUtilCSharp.AssertExpression(
+				"(BigInt)-negativeValue",
+				new BinaryOperatorExpression {
+					Left = new ParenthesizedExpression { Expression = new IdentifierExpression("BigInt") },
+					Operator = BinaryOperatorType.Subtract,
+					Right = new IdentifierExpression("negativeValue")
+				});
 		}
 		
 		[Test]
 		public void IntMaxValueToBigInt()
 		{
-			CastExpression ce = ParseUtilCSharp.ParseExpression<CastExpression>("(BigInt)int.MaxValue");
-			Assert.AreEqual("BigInt", ce.Type.ToString());
-			Assert.IsTrue(ce.Expression is MemberReferenceExpression);
+			ParseUtilCSharp.AssertExpression(
+				"(BigInt)int.MaxValue",
+				new CastExpression {
+					Type = new SimpleType("BigInt"),
+					Expression = new PrimitiveExpression("int").Member("MaxValue")
+				});
 		}
 	}
 }

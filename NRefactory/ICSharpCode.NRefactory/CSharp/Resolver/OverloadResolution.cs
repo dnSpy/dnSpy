@@ -446,7 +446,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			bool c1IsBetter = false;
 			bool c2IsBetter = false;
-			foreach (var pair in t1.Zip<IType, IType, Tuple<IType, IType>>(t2, Tuple.Create)) {
+			foreach (var pair in t1.Zip(t2, (a,b) => new { Item1 = a, Item2 = b })) {
 				switch (MoreSpecificFormalParameter(pair.Item1, pair.Item2)) {
 					case 1:
 						c1IsBetter = true;

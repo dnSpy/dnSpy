@@ -40,6 +40,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
+		public AstType ReturnType {
+			get { return GetChildByRole (Roles.Type); }
+			set { SetChildByRole (Roles.Type, value); }
+		}
+		
 		public string Name {
 			get {
 				return GetChildByRole (Roles.Identifier).Name;
@@ -47,11 +52,6 @@ namespace ICSharpCode.NRefactory.CSharp
 			set {
 				SetChildByRole (Roles.Identifier, new Identifier(value, AstLocation.Empty));
 			}
-		}
-		
-		public AstType ReturnType {
-			get { return GetChildByRole (Roles.Type); }
-			set { SetChildByRole (Roles.Type, value); }
 		}
 		
 		public AstNodeCollection<TypeParameterDeclaration> TypeParameters {
@@ -77,6 +77,15 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitDelegateDeclaration (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			DelegateDeclaration o = other as DelegateDeclaration;
+			return o != null && this.MatchAttributesAndModifiers(o, match)
+				&& this.ReturnType.DoMatch(o.ReturnType, match) && MatchString(this.Name, o.Name)
+				&& this.TypeParameters.DoMatch(o.TypeParameters, match) && this.Parameters.DoMatch(o.Parameters, match)
+				&& this.Constraints.DoMatch(o.Constraints, match);
 		}
 	}
 }

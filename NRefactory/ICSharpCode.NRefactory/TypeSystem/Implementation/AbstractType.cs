@@ -19,9 +19,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				if (string.IsNullOrEmpty(ns)) {
 					return name;
 				} else {
-					string combinedName = ns + "." + name;
-					Contract.Assume(!string.IsNullOrEmpty(combinedName));
-					return combinedName;
+					return ns + "." + name;
 				}
 			}
 		}

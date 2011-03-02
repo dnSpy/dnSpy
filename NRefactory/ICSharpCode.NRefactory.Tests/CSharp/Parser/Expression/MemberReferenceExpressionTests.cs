@@ -6,71 +6,84 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 {
-	[TestFixture, Ignore]
+	[TestFixture]
 	public class MemberReferenceExpressionTests
 	{
 		[Test]
 		public void SimpleFieldReferenceExpressionTest()
 		{
-			MemberReferenceExpression fre = ParseUtilCSharp.ParseExpression<MemberReferenceExpression>("myTargetObject.myField");
-			//Assert.AreEqual("myField", fre.MemberName);
-			//Assert.IsTrue(fre.TargetObject is IdentifierExpression);
-			//Assert.AreEqual("myTargetObject", ((IdentifierExpression)fre.TargetObject).Identifier);
-			throw new NotImplementedException();
+			ParseUtilCSharp.AssertExpression(
+				"myTargetObject.myField",
+				new IdentifierExpression("myTargetObject").Member("myField")
+			);
 		}
 		
-		/* TODO port unit tests
+		[Test, Ignore("parser is broken and produces IdentifierExpression instead of PrimitiveType")]
+		public void ShortMaxValueTest()
+		{
+			ParseUtilCSharp.AssertExpression(
+				"short.MaxValue",
+				new PrimitiveType("short").Member("MaxValue")
+			);
+		}
+		
+		[Test, Ignore("Parsing of @-identifiers is broken")]
+		public void IdentShortMaxValueTest()
+		{
+			ParseUtilCSharp.AssertExpression(
+				"@short.MaxValue",
+				new IdentifierExpression("short").Member("MaxValue")
+			);
+		}
+		
 		[Test]
 		public void GenericFieldReferenceExpressionTest()
 		{
-			MemberReferenceExpression fre = ParseUtilCSharp.ParseExpression<MemberReferenceExpression>("SomeClass<string>.myField");
-			Assert.AreEqual("myField", fre.MemberName);
-			Assert.IsTrue(fre.TargetObject is TypeReferenceExpression);
-			TypeReference tr = ((TypeReferenceExpression)fre.TargetObject).TypeReference;
-			Assert.AreEqual("SomeClass", tr.Type);
-			Assert.AreEqual(1, tr.GenericTypes.Count);
-			Assert.AreEqual("System.String", tr.GenericTypes[0].Type);
+			ParseUtilCSharp.AssertExpression(
+				"SomeClass<string>.myField",
+				new IdentifierExpression("SomeClass") { TypeArguments = { new PrimitiveType("string") } }.Member("myField")
+			);
 		}
 		
 		[Test]
 		public void FullNamespaceGenericFieldReferenceExpressionTest()
 		{
-			MemberReferenceExpression fre = ParseUtilCSharp.ParseExpression<MemberReferenceExpression>("Namespace.Subnamespace.SomeClass<string>.myField");
-			Assert.AreEqual("myField", fre.MemberName);
-			Assert.IsTrue(fre.TargetObject is TypeReferenceExpression);
-			TypeReference tr = ((TypeReferenceExpression)fre.TargetObject).TypeReference;
-			Assert.AreEqual("Namespace.Subnamespace.SomeClass", tr.Type);
-			Assert.AreEqual(1, tr.GenericTypes.Count);
-			Assert.AreEqual("System.String", tr.GenericTypes[0].Type);
+			ParseUtilCSharp.AssertExpression(
+				"Namespace.Subnamespace.SomeClass<string>.myField",
+				new MemberReferenceExpression {
+					Target = new IdentifierExpression("Namespace").Member("Subnamespace"),
+					TypeArguments = { new PrimitiveType("string") }
+				}.Member("myField")
+			);
 		}
 		
-		[Test]
+		[Test, Ignore("Aliases not yet implemented")]
 		public void GlobalFullNamespaceGenericFieldReferenceExpressionTest()
 		{
-			MemberReferenceExpression fre = ParseUtilCSharp.ParseExpression<MemberReferenceExpression>("global::Namespace.Subnamespace.SomeClass<string>.myField");
-			Assert.AreEqual("myField", fre.MemberName);
-			Assert.IsTrue(fre.TargetObject is TypeReferenceExpression);
-			TypeReference tr = ((TypeReferenceExpression)fre.TargetObject).TypeReference;
-			Assert.IsFalse(tr is InnerClassTypeReference);
-			Assert.AreEqual("Namespace.Subnamespace.SomeClass", tr.Type);
-			Assert.AreEqual(1, tr.GenericTypes.Count);
-			Assert.AreEqual("System.String", tr.GenericTypes[0].Type);
-			Assert.IsTrue(tr.IsGlobal);
+			ParseUtilCSharp.AssertExpression(
+				"global::Namespace.Subnamespace.SomeClass<string>.myField",
+				new MemberReferenceExpression {
+					Target = new MemberType {
+						Target = new SimpleType("global"),
+						IsDoubleColon = true,
+						MemberName = "Namespace"
+					}.Member("Subnamespace"),
+					TypeArguments = { new PrimitiveType("string") }
+				}.Member("myField")
+			);
 		}
 		
 		[Test]
 		public void NestedGenericFieldReferenceExpressionTest()
 		{
-			MemberReferenceExpression fre = ParseUtilCSharp.ParseExpression<MemberReferenceExpression>("MyType<string>.InnerClass<int>.myField");
-			Assert.AreEqual("myField", fre.MemberName);
-			Assert.IsTrue(fre.TargetObject is TypeReferenceExpression);
-			InnerClassTypeReference ic = (InnerClassTypeReference)((TypeReferenceExpression)fre.TargetObject).TypeReference;
-			Assert.AreEqual("InnerClass", ic.Type);
-			Assert.AreEqual(1, ic.GenericTypes.Count);
-			Assert.AreEqual("System.Int32", ic.GenericTypes[0].Type);
-			Assert.AreEqual("MyType", ic.BaseType.Type);
-			Assert.AreEqual(1, ic.BaseType.GenericTypes.Count);
-			Assert.AreEqual("System.String", ic.BaseType.GenericTypes[0].Type);
-		}*/
+			ParseUtilCSharp.AssertExpression(
+				"MyType<string>.InnerClass<int>.myField",
+				new MemberReferenceExpression {
+					Target = new IdentifierExpression("MyType") { TypeArguments = { new PrimitiveType("string") } },
+					MemberName = "InnerClass",
+					TypeArguments = { new PrimitiveType("int") }
+				}.Member("myField")
+			);
+		}
 	}
 }

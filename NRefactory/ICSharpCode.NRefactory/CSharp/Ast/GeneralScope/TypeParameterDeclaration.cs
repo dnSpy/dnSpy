@@ -15,10 +15,15 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class TypeParameterDeclaration : AstNode
 	{
+		public static readonly Role<AttributeSection> AttributeRole = AttributedNode.AttributeRole;
 		public static readonly Role<CSharpTokenNode> VarianceRole = new Role<CSharpTokenNode>("Variance");
 		
 		public override NodeType NodeType {
 			get { return NodeType.Unknown; }
+		}
+		
+		public AstNodeCollection<AttributeSection> Attributes {
+			get { return GetChildrenByRole (AttributeRole); }
 		}
 		
 		public VarianceModifier Variance {
@@ -42,7 +47,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			TypeParameterDeclaration o = other as TypeParameterDeclaration;
-			return o != null && this.Variance == o.Variance && MatchString(this.Name, o.Name);
+			return o != null && this.Variance == o.Variance && MatchString(this.Name, o.Name) && this.Attributes.DoMatch(o.Attributes, match);
 		}
 	}
 }

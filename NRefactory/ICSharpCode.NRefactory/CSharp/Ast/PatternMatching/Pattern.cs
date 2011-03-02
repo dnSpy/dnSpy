@@ -29,34 +29,29 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			}
 		}
 		
-		internal virtual bool DoMatchCollection(Role role, AstNode pos, Match match, Stack<PossibleMatch> backtrackingStack)
+		public static implicit operator AstType(Pattern p)
 		{
-			return DoMatch(pos, match);
+			return p != null ? new TypePlaceholder(p) : null;
 		}
 		
-		public AstType ToType()
+		public static implicit operator Expression(Pattern p)
 		{
-			return new TypePlaceholder(this);
+			return p != null ? new ExpressionPlaceholder(p) : null;
 		}
 		
-		public Expression ToExpression()
+		public static implicit operator Statement(Pattern p)
 		{
-			return new ExpressionPlaceholder(this);
+			return p != null ? new StatementPlaceholder(p) : null;
 		}
 		
-		public Statement ToStatement()
+		public static implicit operator BlockStatement(Pattern p)
 		{
-			return new StatementPlaceholder(this);
+			return p != null ? new BlockStatementPlaceholder(p) : null;
 		}
 		
-		public BlockStatement ToBlock()
+		public static implicit operator VariableInitializer(Pattern p)
 		{
-			return new BlockStatementPlaceholder(this);
-		}
-		
-		public VariableInitializer ToVariable()
-		{
-			return new VariablePlaceholder(this);
+			return p != null ? new VariablePlaceholder(p) : null;
 		}
 		
 		// Make debugging easier by giving Patterns a ToString() implementation

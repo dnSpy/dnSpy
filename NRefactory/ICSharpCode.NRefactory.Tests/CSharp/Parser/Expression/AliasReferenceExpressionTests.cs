@@ -8,27 +8,43 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 {
-	[TestFixture]
+	[TestFixture, Ignore("Aliases not yet implemented")]
 	public class AliasReferenceExpressionTests
 	{
-		[Test, Ignore]
+		[Test]
 		public void GlobalReferenceExpressionTest()
 		{
 			CSharpParser parser = new CSharpParser();
-			parser.ParseTypeReference(new StringReader("global::System"));
-			//Assert.IsTrue(tre.TypeReference.IsGlobal);
-			//Assert.AreEqual("System", tre.TypeReference.Type);
-			throw new NotImplementedException();
+			AstType type = parser.ParseTypeReference(new StringReader("global::System"));
+			Assert.IsNotNull(
+				new MemberType {
+					Target = new SimpleType("global"),
+					IsDoubleColon = true,
+					MemberName = "System"
+				}.Match(type)
+			);
 		}
 		
-		[Test, Ignore]
+		[Test]
 		public void GlobalTypeDeclaration()
 		{
 			VariableDeclarationStatement lvd = ParseUtilCSharp.ParseStatement<VariableDeclarationStatement>("global::System.String a;");
-			//TypeReference typeRef = lvd.GetTypeForVariable(0);
-			//Assert.IsTrue(typeRef.IsGlobal);
-			//Assert.AreEqual("System.String", typeRef.Type);
-			throw new NotImplementedException();
+			Assert.IsNotNull(
+				new VariableDeclarationStatement {
+					Type = new MemberType {
+						Target = new MemberType {
+							Target = new SimpleType("global"),
+							IsDoubleColon = true,
+							MemberName = "System"
+						},
+						IsDoubleColon = false,
+						MemberName = "String",
+					},
+					Variables = {
+						new VariableInitializer("a")
+					}
+				}.Match(lvd)
+			);
 		}
 		
 		// TODO: add tests for aliases other than 'global'

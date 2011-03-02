@@ -145,9 +145,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			else if (td.ClassType == ClassType.Enum || td.ClassType == ClassType.Struct)
 				td.IsSealed = true; // enums/structs are implicitly sealed
 			
-			//TODO ConvertTypeParameters(td.TypeParameters, typeDeclaration.TypeParameters, typeDeclaration.Constraints);
+			ConvertTypeParameters(td.TypeParameters, typeDeclaration.TypeParameters, typeDeclaration.Constraints);
 			
-			// TODO: base type references?
+			foreach (AstType baseType in typeDeclaration.BaseTypes) {
+				td.BaseTypes.Add(ConvertType(baseType));
+			}
 			
 			foreach (AttributedNode member in typeDeclaration.Members) {
 				member.AcceptVisitor(this, data);
@@ -159,7 +161,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public override IEntity VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, object data)
 		{
-			var td = CreateTypeDefinition(delegateDeclaration.Name);
+			var td = currentTypeDefinition = CreateTypeDefinition(delegateDeclaration.Name);
 			td.ClassType = ClassType.Delegate;
 			td.Region = MakeRegion(delegateDeclaration);
 			td.BaseTypes.Add(multicastDelegateReference);
@@ -168,9 +170,14 @@ namespace ICSharpCode.NRefactory.CSharp
 			ApplyModifiers(td, delegateDeclaration.Modifiers);
 			td.IsSealed = true; // delegates are implicitly sealed
 			
-			// TODO: convert return type, convert parameters
-			AddDefaultMethodsToDelegate(td, SharedTypes.UnknownType, EmptyList<IParameter>.Instance);
+			ConvertTypeParameters(td.TypeParameters, delegateDeclaration.TypeParameters, delegateDeclaration.Constraints);
 			
+			ITypeReference returnType = ConvertType(delegateDeclaration.ReturnType);
+			List<IParameter> parameters = new List<IParameter>();
+			ConvertParameters(parameters, delegateDeclaration.Parameters);
+			AddDefaultMethodsToDelegate(td, returnType, parameters);
+			
+			currentTypeDefinition = (DefaultTypeDefinition)currentTypeDefinition.DeclaringTypeDefinition;
 			return td;
 		}
 		
@@ -299,7 +306,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			m.BodyRegion = MakeRegion(methodDeclaration.Body);
 			
 			
-			//TODO ConvertTypeParameters(m.TypeParameters, methodDeclaration.TypeParameters, methodDeclaration.Constraints);
+			ConvertTypeParameters(m.TypeParameters, methodDeclaration.TypeParameters, methodDeclaration.Constraints);
 			m.ReturnType = ConvertType(methodDeclaration.ReturnType);
 			ConvertAttributes(m.Attributes, methodDeclaration.Attributes.Where(s => s.AttributeTarget != AttributeTarget.Return));
 			ConvertAttributes(m.ReturnTypeAttributes, methodDeclaration.Attributes.Where(s => s.AttributeTarget == AttributeTarget.Return));
@@ -318,7 +325,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			return m;
 		}
 		
-		DefaultExplicitInterfaceImplementation ConvertInterfaceImplementation(AstNode interfaceType, string memberName)
+		void ConvertTypeParameters(IList<ITypeParameter> output, IEnumerable<TypeParameterDeclaration> typeParameters, IEnumerable<Constraint> constraints)
+		{
+			if (typeParameters.Any())
+				throw new NotImplementedException();
+		}
+		
+		DefaultExplicitInterfaceImplementation ConvertInterfaceImplementation(AstType interfaceType, string memberName)
 		{
 			return new DefaultExplicitInterfaceImplementation(ConvertType(interfaceType), memberName);
 		}
@@ -327,7 +340,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		#region Operators
 		public override IEntity VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, object data)
 		{
-			DefaultMethod m = new DefaultMethod(currentTypeDefinition, OperatorDeclaration.GetName(operatorDeclaration.OperatorType));
+			DefaultMethod m = new DefaultMethod(currentTypeDefinition, operatorDeclaration.Name);
 			m.EntityType = EntityType.Operator;
 			m.Region = MakeRegion(operatorDeclaration);
 			m.BodyRegion = MakeRegion(operatorDeclaration.Body);
@@ -395,13 +408,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override IEntity VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, object data)
 		{
 			DefaultProperty p = new DefaultProperty(currentTypeDefinition, propertyDeclaration.Name);
-			HandlePropertyOrIndexer(p, propertyDeclaration);
-			currentTypeDefinition.Properties.Add(p);
-			return p;
-		}
-		
-		void HandlePropertyOrIndexer(DefaultProperty p, PropertyDeclaration propertyDeclaration)
-		{
 			p.Region = MakeRegion(propertyDeclaration);
 			p.BodyRegion = MakeBraceRegion(propertyDeclaration);
 			ApplyModifiers(p, propertyDeclaration.Modifiers);
@@ -413,13 +419,25 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 			p.Getter = ConvertAccessor(propertyDeclaration.Getter, p.Accessibility);
 			p.Setter = ConvertAccessor(propertyDeclaration.Setter, p.Accessibility);
+			currentTypeDefinition.Properties.Add(p);
+			return p;
 		}
 		
 		public override IEntity VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, object data)
 		{
 			DefaultProperty p = new DefaultProperty(currentTypeDefinition, "Items");
 			p.EntityType = EntityType.Indexer;
-			HandlePropertyOrIndexer(p, indexerDeclaration);
+			p.Region = MakeRegion(indexerDeclaration);
+			p.BodyRegion = MakeBraceRegion(indexerDeclaration);
+			ApplyModifiers(p, indexerDeclaration.Modifiers);
+			p.ReturnType = ConvertType(indexerDeclaration.ReturnType);
+			ConvertAttributes(p.Attributes, indexerDeclaration.Attributes);
+			if (!indexerDeclaration.PrivateImplementationType.IsNull) {
+				p.Accessibility = Accessibility.None;
+				p.InterfaceImplementations.Add(ConvertInterfaceImplementation(indexerDeclaration.PrivateImplementationType, p.Name));
+			}
+			p.Getter = ConvertAccessor(indexerDeclaration.Getter, p.Accessibility);
+			p.Setter = ConvertAccessor(indexerDeclaration.Setter, p.Accessibility);
 			ConvertParameters(p.Parameters, indexerDeclaration.Parameters);
 			currentTypeDefinition.Properties.Add(p);
 			return p;
@@ -528,14 +546,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		#endregion
 		
 		#region Types
-		ITypeReference ConvertType(AstNode node, bool isInUsingDeclaration = false)
+		ITypeReference ConvertType(AstType type, bool isInUsingDeclaration = false)
 		{
-			return ConvertType(node, currentTypeDefinition, currentMethod, usingScope, isInUsingDeclaration);
+			return ConvertType(type, currentTypeDefinition, currentMethod, usingScope, isInUsingDeclaration);
 		}
 		
-		internal static ITypeReference ConvertType(AstNode node, ITypeDefinition parentTypeDefinition, IMethod parentMethodDefinition, UsingScope parentUsingScope, bool isInUsingDeclaration)
+		internal static ITypeReference ConvertType(AstType type, ITypeDefinition parentTypeDefinition, IMethod parentMethodDefinition, UsingScope parentUsingScope, bool isInUsingDeclaration)
 		{
-			SimpleType s = node as SimpleType;
+			SimpleType s = type as SimpleType;
 			if (s != null) {
 				List<ITypeReference> typeArguments = new List<ITypeReference>();
 				foreach (var ta in s.TypeArguments) {
@@ -551,25 +569,8 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 				return new SimpleTypeOrNamespaceReference(s.Identifier, typeArguments, parentTypeDefinition, parentUsingScope, isInUsingDeclaration);
 			}
-			IdentifierExpression ident = node as IdentifierExpression;
-			if (ident != null) {
-				// TODO: get rid of this code once the parser produces SimpleType instead of IdentifierExpression
-				List<ITypeReference> typeArguments = new List<ITypeReference>();
-				foreach (var ta in ident.TypeArguments) {
-					typeArguments.Add(ConvertType(ta, parentTypeDefinition, parentMethodDefinition, parentUsingScope, isInUsingDeclaration));
-				}
-				if (typeArguments.Count == 0 && parentMethodDefinition != null) {
-					// SimpleTypeOrNamespaceReference doesn't support method type parameters,
-					// so we directly handle them here.
-					foreach (ITypeParameter tp in parentMethodDefinition.TypeParameters) {
-						if (tp.Name == s.Identifier)
-							return tp;
-					}
-				}
-				return new SimpleTypeOrNamespaceReference(ident.Identifier, typeArguments, parentTypeDefinition, parentUsingScope, isInUsingDeclaration);
-			}
 			
-			PrimitiveType p = node as PrimitiveType;
+			PrimitiveType p = type as PrimitiveType;
 			if (p != null) {
 				switch (p.Keyword) {
 					case "string":
@@ -608,7 +609,7 @@ namespace ICSharpCode.NRefactory.CSharp
 						return SharedTypes.UnknownType;
 				}
 			}
-			MemberType m = node as MemberType;
+			MemberType m = type as MemberType;
 			if (m != null) {
 				ITypeOrNamespaceReference t;
 				if (m.IsDoubleColon) {
@@ -629,7 +630,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 				return new MemberTypeOrNamespaceReference(t, m.MemberName, typeArguments, parentTypeDefinition, parentUsingScope);
 			}
-			ComposedType c = node as ComposedType;
+			ComposedType c = type as ComposedType;
 			if (c != null) {
 				ITypeReference t = ConvertType(c.BaseType, parentTypeDefinition, parentMethodDefinition, parentUsingScope, isInUsingDeclaration);
 				if (c.HasNullableSpecifier) {
@@ -643,7 +644,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 				return t;
 			}
-			Debug.WriteLine("Unknown node used as type: " + node);
+			Debug.WriteLine("Unknown node used as type: " + type);
 			return SharedTypes.UnknownType;
 		}
 		#endregion

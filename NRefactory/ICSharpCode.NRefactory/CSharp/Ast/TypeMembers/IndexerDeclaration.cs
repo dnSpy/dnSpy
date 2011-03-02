@@ -1,6 +1,6 @@
 ﻿// 
 // IndexerDeclaration.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -29,13 +29,16 @@ using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class IndexerDeclaration : PropertyDeclaration
+	public class IndexerDeclaration : MemberDeclaration
 	{
+		public static readonly Role<Accessor> GetterRole = PropertyDeclaration.GetterRole;
+		public static readonly Role<Accessor> SetterRole = PropertyDeclaration.SetterRole;
+		
 		public CSharpTokenNode LBracketToken {
 			get { return GetChildByRole (Roles.LBracket); }
 		}
 		
-		public AstNodeCollection<ParameterDeclaration> Parameters { 
+		public AstNodeCollection<ParameterDeclaration> Parameters {
 			get { return GetChildrenByRole (Roles.Parameter); }
 		}
 		
@@ -43,9 +46,34 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RBracket); }
 		}
 		
+		public CSharpTokenNode LBraceToken {
+			get { return GetChildByRole (Roles.LBrace); }
+		}
+		
+		public Accessor Getter {
+			get { return GetChildByRole(GetterRole); }
+			set { SetChildByRole(GetterRole, value); }
+		}
+		
+		public Accessor Setter {
+			get { return GetChildByRole(SetterRole); }
+			set { SetChildByRole(SetterRole, value); }
+		}
+		
+		public CSharpTokenNode RBraceToken {
+			get { return GetChildByRole (Roles.RBrace); }
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIndexerDeclaration (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			IndexerDeclaration o = other as IndexerDeclaration;
+			return o != null && this.MatchMember(o, match) && this.Parameters.DoMatch(o.Parameters, match)
+				&& this.Getter.DoMatch(o.Getter, match) && this.Setter.DoMatch(o.Setter, match);
 		}
 	}
 }

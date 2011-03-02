@@ -174,18 +174,12 @@ namespace ICSharpCode.NRefactory.CSharp
 					if (cur1 == null)
 						break;
 					
-					Pattern pattern = cur1 as Pattern;
-					if (pattern == null && cur1.NodeType == NodeType.Placeholder)
-						pattern = cur1.GetChildByRole(TypePlaceholder.ChildRole) as Pattern;
-					if (pattern != null) {
-						Debug.Assert(stack.Count == patternStack.Count);
-						success = pattern.DoMatchCollection(role, cur2, match, stack);
-						Debug.Assert(stack.Count >= patternStack.Count);
-						while (stack.Count > patternStack.Count)
-							patternStack.Push(cur1.NextSibling);
-					} else {
-						success = cur1.DoMatch(cur2, match);
-					}
+					Debug.Assert(stack.Count == patternStack.Count);
+					success = cur1.DoMatchCollection(role, cur2, match, stack);
+					Debug.Assert(stack.Count >= patternStack.Count);
+					while (stack.Count > patternStack.Count)
+						patternStack.Push(cur1.NextSibling);
+					
 					cur1 = cur1.NextSibling;
 					if (cur2 != null)
 						cur2 = cur2.NextSibling;

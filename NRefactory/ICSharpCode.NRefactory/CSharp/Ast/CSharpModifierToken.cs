@@ -48,6 +48,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			CSharpModifierToken o = other as CSharpModifierToken;
+			return o != null && this.modifier == o.modifier;
+		}
+		
 		// Not worth using a dictionary for such few elements.
 		// This table is sorted in the order that modifiers should be output when generating code.
 		static readonly List<KeyValuePair<Modifiers, int>> lengthTable = new List<KeyValuePair<Modifiers, int>> () {

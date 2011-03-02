@@ -10,7 +10,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents an attribute.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IAttributeContract))]
+	#endif
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public interface IAttribute : IFreezable
 	{
@@ -35,6 +37,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IList<KeyValuePair<string, IConstantValue>> NamedArguments { get; }
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IAttribute))]
 	abstract class IAttributeContract : IFreezableContract, IAttribute
 	{
@@ -63,4 +66,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 	}
+	#endif
 }

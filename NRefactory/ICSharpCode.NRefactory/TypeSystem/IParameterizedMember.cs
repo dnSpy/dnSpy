@@ -10,12 +10,15 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents a method or property.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IParameterizedMemberContract))]
+	#endif
 	public interface IParameterizedMember : IMember
 	{
 		IList<IParameter> Parameters { get; }
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IParameterizedMember))]
 	abstract class IParameterizedMemberContract : IMemberContract, IParameterizedMember
 	{
@@ -26,4 +29,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 	}
+	#endif
 }

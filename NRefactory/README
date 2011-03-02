@@ -6,14 +6,21 @@ ICSharpCode.NRefactory.TypeSystem:
 ICSharpCode.NRefactory.TypeSystem.Implementation:
 	Contains base classes that help implementing the type system interfaces.
 
-ICSharpCode.NRefactory.CSharp.Dom:
+ICSharpCode.NRefactory.CSharp.Ast:
 	Abstract Syntax Tree for C#
 
 ICSharpCode.NRefactory.CSharp.Resolver:
 	Semantic analysis for C#
 	
-ICSharpCode.NRefactory.VB.Dom:
+ICSharpCode.NRefactory.Util:
+	Various helper classes.
+
+ICSharpCode.NRefactory.VB.Dom: (in the separate ICSharpCode.NRefactory.VB assembly)
 	Abstract Syntax Tree for VB
+
+Dependencies:
+	.NET 3.5 or .NET 4.0
+	Mono.Cecil 0.9.4
 
 Null-Object pattern:
 	The NRefactory library makes extensive use of the null object pattern.
@@ -32,6 +39,10 @@ Null-Object pattern:
 	error cases. Use ResolveResult.IsError to detect resolver errors.
 	Also note that many resolver errors still have a meaningful type attached, this allows code
 	completion to work in the presence of minor semantic errors.
+	
+	The C# AST makes use of special null nodes when accessing the getter of an AST property and no
+	child node with that role exists. Check the IsNull property to test whether a node is a null node.
+	Null nodes are not considered to be part of the AST (e.g. they don't have a parent).
 
 FAQ:
 Q:	What is the difference between types and type definitions?
@@ -193,3 +204,13 @@ A:	Because if you're asking whether a type is a struct, it's very likely that yo
 	If you really need to know, you can do
 		"type.GetDefinition() != null && type.GetDefinition().ClassType == WhatIWant"
 	yourself, but for the most part you should be fine with IsReferenceType, IsEnum and IsDelegate.
+
+
+Q:	What's the difference between the .NET 3.5 and .NET 4.0 versions?
+
+A:	As for visible API difference, not much. The .NET 4.0 build has some additional overloads for a few methods,
+	taking a System.Threading.CancellationToken to allow aborting a resolve run.
+	Internally, the .NET 4.0 version might be tiny bit more performant because it uses covariance for IEnumerable,
+	where the .NET 3.5 version has to allocate wrapper objects instead.
+	
+	Both versions support loading assemblies of all .NET versions (1.0 to 4.0); and both support C# 4.0.

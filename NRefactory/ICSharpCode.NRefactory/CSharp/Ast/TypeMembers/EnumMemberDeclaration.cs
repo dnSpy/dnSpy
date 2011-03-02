@@ -1,6 +1,6 @@
-// 
+﻿// 
 // EnumMemberDeclaration.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -52,6 +52,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitEnumMemberDeclaration (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			EnumMemberDeclaration o = other as EnumMemberDeclaration;
+			return o != null && this.MatchAttributesAndModifiers(o, match)
+				&& MatchString(this.Name, o.Name) && this.Initializer.DoMatch(o.Initializer, match);
 		}
 	}
 }

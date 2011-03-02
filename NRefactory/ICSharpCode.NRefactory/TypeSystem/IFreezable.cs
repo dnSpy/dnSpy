@@ -6,7 +6,9 @@ using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IFreezableContract))]
+	#endif
 	public interface IFreezable
 	{
 		/// <summary>
@@ -20,6 +22,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		void Freeze();
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IFreezable))]
 	abstract class IFreezableContract : IFreezable
 	{
@@ -33,4 +36,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			Contract.Ensures(self.IsFrozen);
 		}
 	}
+	#endif
 }

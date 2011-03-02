@@ -31,6 +31,9 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// where TypeParameter : BaseTypes
 	/// </summary>
+	/// <remarks>
+	/// new(), struct and class constraints are represented using a PrimitiveType "new", "struct" or "class"
+	/// </remarks>
 	public class Constraint : AstNode
 	{
 		public readonly static Role<CSharpTokenNode> ColonRole = TypeDeclaration.ColonRole;
@@ -50,8 +53,6 @@ namespace ICSharpCode.NRefactory.CSharp
 				SetChildByRole(Roles.Identifier, new Identifier(value, AstLocation.Empty));
 			}
 		}
-		
-		// TODO: what about new(), struct and class constraints?
 		
 		public AstNodeCollection<AstType> BaseTypes {
 			get { return GetChildrenByRole (BaseTypeRole); }

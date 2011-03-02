@@ -9,7 +9,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents a variable (name/return type pair).
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IVariableContract))]
+	#endif
 	public interface IVariable
 	{
 		/// <summary>
@@ -33,6 +35,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IConstantValue ConstantValue { get; }
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IVariable))]
 	abstract class IVariableContract : IVariable
 	{
@@ -62,4 +65,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			get { return null; }
 		}
 	}
+	#endif
 }

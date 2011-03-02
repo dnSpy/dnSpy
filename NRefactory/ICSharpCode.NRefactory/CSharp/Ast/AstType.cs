@@ -40,7 +40,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			return new ComposedType { BaseType = this }.MakePointerType();
 		}
 		
-		public virtual AstType MakeArrayType(int rank)
+		public virtual AstType MakeArrayType(int rank = 1)
 		{
 			return new ComposedType { BaseType = this }.MakeArrayType(rank);
 		}

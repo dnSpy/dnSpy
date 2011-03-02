@@ -7,7 +7,9 @@ using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(ITypeContract))]
+	#endif
 	public interface IType : ITypeReference, INamedElement, IEquatable<IType>
 	{
 		/// <summary>
@@ -90,6 +92,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IEnumerable<IEvent> GetEvents(ITypeResolveContext context, Predicate<IEvent> filter = null);
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IType))]
 	abstract class ITypeContract : ITypeReferenceContract, IType
 	{
@@ -209,4 +212,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return this;
 		}
 	}
+	#endif
 }

@@ -10,12 +10,15 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Mutable container of all classes in an assembly.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IProjectContentContract))]
+	#endif
 	public interface IProjectContent : ITypeResolveContext
 	{
 		IList<IAttribute> AssemblyAttributes { get; }
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IProjectContent))]
 	abstract class IProjectContentContract : ITypeResolveContextContract, IProjectContent
 	{
@@ -26,4 +29,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 	}
+	#endif
 }

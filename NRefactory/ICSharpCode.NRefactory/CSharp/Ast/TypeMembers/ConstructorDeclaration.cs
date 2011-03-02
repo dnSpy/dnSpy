@@ -70,6 +70,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return visitor.VisitConstructorDeclaration (this, data);
 		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			ConstructorDeclaration o = other as ConstructorDeclaration;
+			return o != null && this.MatchAttributesAndModifiers(o, match) && this.Parameters.DoMatch(o.Parameters, match)
+				&& this.Initializer.DoMatch(o.Initializer, match) && this.Body.DoMatch(o.Body, match);
+		}
 	}
 	
 	public enum ConstructorInitializerType {
@@ -98,6 +105,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			{
 				return default (S);
 			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
+			}
 		}
 		
 		public override NodeType NodeType {
@@ -123,7 +135,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			ConstructorInitializer o = other as ConstructorInitializer;
-			return o != null && this.ConstructorInitializerType == o.ConstructorInitializerType && this.Arguments.DoMatch(o.Arguments, match);
+			return o != null && !o.IsNull && this.ConstructorInitializerType == o.ConstructorInitializerType && this.Arguments.DoMatch(o.Arguments, match);
 		}
 	}
 }

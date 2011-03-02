@@ -11,7 +11,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// Represents a reference to a type.
 	/// Must be resolved before it can be used as type.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(ITypeReferenceContract))]
+	#endif
 	public interface ITypeReference
 	{
 		// Keep this interface simple: I decided against having GetMethods/GetEvents etc. here,
@@ -26,6 +28,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IType Resolve(ITypeResolveContext context);
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(ITypeReference))]
 	abstract class ITypeReferenceContract : ITypeReference
 	{
@@ -36,4 +39,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return null;
 		}
 	}
+	#endif
 }
