@@ -39,9 +39,19 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			return p != null ? new ExpressionPlaceholder(p) : null;
 		}
 		
+		public Expression ToExpression()
+		{
+			return new ExpressionPlaceholder(this);
+		}
+		
 		public static implicit operator Statement(Pattern p)
 		{
 			return p != null ? new StatementPlaceholder(p) : null;
+		}
+		
+		public Statement ToStatement()
+		{
+			return new StatementPlaceholder(this);
 		}
 		
 		public static implicit operator BlockStatement(Pattern p)

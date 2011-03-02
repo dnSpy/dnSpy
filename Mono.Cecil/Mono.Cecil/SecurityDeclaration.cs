@@ -177,7 +177,7 @@ namespace Mono.Cecil {
 		{
 			return module.HasImage ()
 				? module.Read (ref variable, self, (provider, reader) => reader.ReadSecurityDeclarations (provider))
-				: LazyInitializer.EnsureInitialized(ref variable);
+				: variable = new Collection<SecurityDeclaration>();
 		}
 	}
 }

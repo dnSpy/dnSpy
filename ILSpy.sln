@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
+# SharpDevelop 4.0.1.7096
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy", "ILSpy\ILSpy.csproj", "{1E85EFF9-E370-4683-83E4-8A3D063FF791}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.TreeView", "SharpTreeView\ICSharpCode.TreeView.csproj", "{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}"
@@ -39,13 +40,13 @@ Global
 		{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}.Release|x86.ActiveCfg = Release|Any CPU
 		{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}.Release|x86.Build.0 = Release|Any CPU
-		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|Any CPU.ActiveCfg = net_4_0_Debug|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|Any CPU.ActiveCfg = net_3_5_Debug|Any CPU
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|Any CPU.Build.0 = net_4_0_Debug|Any CPU
-		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|x86.ActiveCfg = net_4_0_Debug|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|x86.ActiveCfg = net_3_5_Debug|Any CPU
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|x86.Build.0 = net_2_0_Debug|Any CPU
-		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|Any CPU.ActiveCfg = net_4_0_Release|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|Any CPU.ActiveCfg = net_3_5_Release|Any CPU
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|Any CPU.Build.0 = net_4_0_Release|Any CPU
-		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|x86.ActiveCfg = net_4_0_Release|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|x86.ActiveCfg = net_3_5_Release|Any CPU
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|x86.Build.0 = net_2_0_Debug|Any CPU
 		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}.Debug|Any CPU.Build.0 = Debug|Any CPU

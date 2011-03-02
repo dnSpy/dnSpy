@@ -77,13 +77,13 @@ namespace Decompiler.Transforms
 		}
 		
 		readonly static AstNode asCastIsNullPattern = new BinaryOperatorExpression(
-			new AnyNode("expr").ToExpression().CastAs(new AnyNode("type").ToType()),
+			new AnyNode("expr").ToExpression().CastAs(new AnyNode("type")),
 			BinaryOperatorType.Equality,
 			new NullReferenceExpression()
 		);
 		
 		readonly static AstNode asCastIsNotNullPattern = new BinaryOperatorExpression(
-			new AnyNode("expr").ToExpression().CastAs(new AnyNode("type").ToType()),
+			new AnyNode("expr").ToExpression().CastAs(new AnyNode("type")),
 			BinaryOperatorType.InEquality,
 			new NullReferenceExpression()
 		);

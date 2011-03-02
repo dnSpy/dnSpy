@@ -196,8 +196,8 @@ namespace Decompiler.Transforms
 						// "variableName.MemberName = right;"
 						ExpressionStatement closureFieldAssignmentPattern = new ExpressionStatement(
 							new AssignmentExpression(
-								new NamedNode("left", new MemberReferenceExpression { Target = new IdentifierExpression(variable.Name) }).ToExpression(),
-								new AnyNode("right").ToExpression()
+								new NamedNode("left", new MemberReferenceExpression { Target = new IdentifierExpression(variable.Name) }),
+								new AnyNode("right")
 							)
 						);
 						Match m = closureFieldAssignmentPattern.Match(cur);
