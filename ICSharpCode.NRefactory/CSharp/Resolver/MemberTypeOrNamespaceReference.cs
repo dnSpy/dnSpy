@@ -62,7 +62,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (typeArguments.Count == 0)
 				return target.ToString() + "." + identifier;
 			else
-				return target.ToString() + "." + identifier + "<" + string.Join(",", typeArguments) + ">";
+				return target.ToString() + "." + identifier + "<" + DotNet35Compat.StringJoin(",", typeArguments) + ">";
 		}
 	}
 }

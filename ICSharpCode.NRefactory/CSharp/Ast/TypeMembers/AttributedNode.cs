@@ -58,9 +58,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.CSharp.PatternMatching.Match match)
+		protected bool MatchAttributesAndModifiers(AttributedNode o, PatternMatching.Match match)
 		{
-			throw new NotImplementedException();
+			return this.Modifiers == o.Modifiers && this.Attributes.DoMatch(o.Attributes, match);
 		}
 	}
 }

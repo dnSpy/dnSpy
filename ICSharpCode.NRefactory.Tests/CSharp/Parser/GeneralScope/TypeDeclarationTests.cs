@@ -70,85 +70,111 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 			Assert.AreEqual(Modifiers.Static, td.Modifiers);
 		}
 		
-		[Test, Ignore]
+		[Test, Ignore("Generics not yet supported")]
 		public void GenericClassTypeDeclarationTest()
 		{
-			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("public class G<T> {}");
-			
-			Assert.AreEqual(ClassType.Class, td.ClassType);
-			Assert.AreEqual("G", td.Name);
-			Assert.AreEqual(Modifiers.Public, td.Modifiers);
-			/*Assert.AreEqual(0, td.BaseTypes.Count);
-			Assert.AreEqual(1, td.TypeArguments.Count());
-			Assert.AreEqual("T", td.TypeArguments.Single().Name);*/ throw new NotImplementedException();
+			ParseUtilCSharp.AssertGlobal(
+				"public class G<T> {}",
+				new TypeDeclaration {
+					Modifiers = Modifiers.Public,
+					ClassType = ClassType.Class,
+					Name = "G",
+					TypeParameters = { new TypeParameterDeclaration { Name = "T" } }
+				});
 		}
 		
-		
-		[Test, Ignore]
+		[Test, Ignore("Constraints not yet supported")]
 		public void GenericClassWithWhere()
 		{
-			string declr = @"
-public class Test<T> where T : IMyInterface
-{
-}
-";
-			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(declr);
-			
-			Assert.AreEqual(ClassType.Class, td.ClassType);
-			Assert.AreEqual("Test", td.Name);
-			
-			/*Assert.AreEqual(1, td.Templates.Count);
-			Assert.AreEqual("T", td.Templates[0].Name);
-			Assert.AreEqual("IMyInterface", td.Templates[0].Bases[0].Type);*/ throw new NotImplementedException();
+			ParseUtilCSharp.AssertGlobal(
+				@"public class Test<T> where T : IMyInterface { }",
+				new TypeDeclaration {
+					Modifiers = Modifiers.Public,
+					ClassType = ClassType.Class,
+					Name = "Test",
+					TypeParameters = { new TypeParameterDeclaration { Name = "T" } },
+					Constraints = {
+						new Constraint {
+							TypeParameter = "T",
+							BaseTypes = { new SimpleType("IMyInterface") }
+						}
+					}});
 		}
 		
-		[Test, Ignore]
+		[Test, Ignore("Generic classes not yet supported")]
 		public void ComplexGenericClassTypeDeclarationTest()
 		{
-			string declr = @"
-public class Generic<T, S> : System.IComparable where S : G<T[]> where  T : MyNamespace.IMyInterface
-{
-}
-";
-			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(declr);
-			
-			Assert.AreEqual(ClassType.Class, td.ClassType);
-			Assert.AreEqual("Generic", td.Name);
-			Assert.AreEqual(Modifiers.Public, td.Modifiers);
-			/*Assert.AreEqual(1, td.BaseTypes.Count);
-			Assert.AreEqual("System.IComparable", td.BaseTypes[0].Type);
-			
-			Assert.AreEqual(2, td.Templates.Count);
-			Assert.AreEqual("T", td.Templates[0].Name);
-			Assert.AreEqual("MyNamespace.IMyInterface", td.Templates[0].Bases[0].Type);
-			
-			Assert.AreEqual("S", td.Templates[1].Name);
-			Assert.AreEqual("G", td.Templates[1].Bases[0].Type);
-			Assert.AreEqual(1, td.Templates[1].Bases[0].GenericTypes.Count);
-			Assert.IsTrue(td.Templates[1].Bases[0].GenericTypes[0].IsArrayType);
-			Assert.AreEqual("T", td.Templates[1].Bases[0].GenericTypes[0].Type);
-			Assert.AreEqual(new int[] {0}, td.Templates[1].Bases[0].GenericTypes[0].RankSpecifier);*/  throw new NotImplementedException();
+			ParseUtilCSharp.AssertGlobal(
+				"public class Generic<in T, out S> : System.IComparable where S : G<T[]>, new() where  T : MyNamespace.IMyInterface",
+				new TypeDeclaration {
+					Modifiers = Modifiers.Public,
+					ClassType = ClassType.Class,
+					Name = "Generic",
+					TypeParameters = {
+						new TypeParameterDeclaration { Variance = VarianceModifier.Contravariant, Name = "T" },
+						new TypeParameterDeclaration { Variance = VarianceModifier.Covariant, Name = "S" }
+					},
+					BaseTypes = {
+						new MemberType {
+							Target = new SimpleType("System"),
+							MemberName = "IComparable"
+						}
+					},
+					Constraints = {
+						new Constraint {
+							TypeParameter = "S",
+							BaseTypes = {
+								new SimpleType {
+									Identifier = "G",
+									TypeArguments = { new SimpleType("T").MakeArrayType() }
+								},
+								new PrimitiveType("new")
+							}
+						},
+						new Constraint {
+							TypeParameter = "T",
+							BaseTypes = {
+								new MemberType {
+									Target = new SimpleType("MyNamespace"),
+									MemberName = "IMyInterface"
+								}
+							}
+						}
+					}
+				});
 		}
 		
-		[Test, Ignore]
+		[Test, Ignore("Base types not yet implemented")]
 		public void ComplexClassTypeDeclarationTest()
 		{
-			string declr = @"
+			ParseUtilCSharp.AssertGlobal(
+				@"
 [MyAttr()]
 public abstract class MyClass : MyBase, Interface1, My.Test.Interface2
 {
-}
-";
-			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(declr);
-			
-			Assert.AreEqual(ClassType.Class, td.ClassType);
-			Assert.AreEqual("MyClass", td.Name);
-			Assert.AreEqual(Modifiers.Public | Modifiers.Abstract, td.Modifiers);
-			Assert.AreEqual(1, td.Attributes.Count());
-			/*			Assert.AreEqual(3, td.BaseTypes.Count);
-			Assert.AreEqual("MyBase", td.BaseTypes[0].Type);
-			Assert.AreEqual("Interface1", td.BaseTypes[1].Type);
-			Assert.AreEqual("My.Test.Interface2", td.BaseTypes[2].Type);*/  throw new NotImplementedException();
+}",
+				new TypeDeclaration {
+					Attributes = {
+						new AttributeSection {
+							Attributes = {
+								new Attribute { Type = new SimpleType("MyAttr") }
+							}
+						}
+					},
+					Modifiers = Modifiers.Public | Modifiers.Abstract,
+					ClassType = ClassType.Class,
+					Name = "MyClass",
+					BaseTypes = {
+						new SimpleType("MyBase"),
+						new SimpleType("Interface1"),
+						new MemberType {
+							Target = new MemberType {
+								Target = new SimpleType("My"),
+								MemberName = "Test"
+							},
+							MemberName = "Interface2"
+						}
+					}});
 		}
 		
 		[Test]
@@ -178,27 +204,37 @@ public abstract class MyClass : MyBase, Interface1, My.Test.Interface2
 			Assert.AreEqual("MyEnum", td.Name);
 		}
 		
-		[Test, Ignore]
+		[Test, Ignore("Mono parser bug?")]
 		public void ContextSensitiveKeywordTest()
 		{
-			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("partial class partial<[partial: where] where> where where : partial<where> { }");
-			
-			Assert.AreEqual(Modifiers.Partial, td.Modifiers);
-			Assert.AreEqual("partial", td.Name);
-			
-			/*
-			Assert.AreEqual(1, td.Templates.Count);
-			TemplateDefinition tp = td.Templates[0];
-			Assert.AreEqual("where", tp.Name);
-			
-			Assert.AreEqual(1, tp.Attributes.Count);
-			Assert.AreEqual("partial", tp.Attributes[0].AttributeTarget);
-			Assert.AreEqual(1, tp.Attributes[0].Attributes.Count);
-			Assert.AreEqual("where", tp.Attributes[0].Attributes[0].Name);
-			
-			Assert.AreEqual(1, tp.Bases.Count);
-			Assert.AreEqual("partial", tp.Bases[0].Type);
-			Assert.AreEqual("where", tp.Bases[0].GenericTypes[0].Type);*/ throw new NotImplementedException();
+			ParseUtilCSharp.AssertGlobal(
+				"partial class partial<[partial: where] where> where where : partial<where> { }",
+				new TypeDeclaration {
+					Modifiers = Modifiers.Partial,
+					ClassType = ClassType.Class,
+					Name = "partial",
+					TypeParameters = {
+						new TypeParameterDeclaration {
+							Attributes = {
+								new AttributeSection {
+									AttributeTarget = AttributeTarget.Unknown,
+									Attributes = { new Attribute { Type = new SimpleType("where") } }
+								}
+							},
+							Name = "where"
+						}
+					},
+					Constraints = {
+						new Constraint {
+							TypeParameter = "where",
+							BaseTypes = {
+								new SimpleType {
+									Identifier = "partial",
+									TypeArguments = { new SimpleType("where") }
+								}
+							}
+						}
+					}});
 		}
 		
 		[Test]

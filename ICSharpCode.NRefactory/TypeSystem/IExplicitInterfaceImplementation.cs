@@ -9,7 +9,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents an explicit interface implementation.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IExplicitInterfaceImplementationContract))]
+	#endif
 	public interface IExplicitInterfaceImplementation : IFreezable
 	{
 		/// <summary>
@@ -23,6 +25,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		string MemberName { get; }
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IExplicitInterfaceImplementation))]
 	abstract class IExplicitInterfaceImplementationContract : IFreezableContract, IExplicitInterfaceImplementation
 	{
@@ -40,4 +43,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 	}
+	#endif
 }

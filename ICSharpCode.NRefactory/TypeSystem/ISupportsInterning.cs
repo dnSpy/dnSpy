@@ -11,7 +11,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// Interface for TypeSystem objects that support interning.
 	/// See <see cref="IInterningProvider"/> for more information.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(ISupportsInterningContract))]
+	#endif
 	public interface ISupportsInterning
 	{
 		/// <summary>
@@ -30,6 +32,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool EqualsForInterning(ISupportsInterning other);
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(ISupportsInterning))]
 	abstract class ISupportsInterningContract : ISupportsInterning
 	{
@@ -48,4 +51,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return false;
 		}
 	}
+	#endif
 }

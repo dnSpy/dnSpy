@@ -70,15 +70,17 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				throw new ArgumentNullException("context");
 			
 			HashSet<ITypeDefinition> typeDefinitions = new HashSet<ITypeDefinition>();
-			Func<IType, IEnumerable<ITypeDefinition>> recursion =
+			Func<ITypeDefinition, IEnumerable<ITypeDefinition>> recursion =
 				t => t.GetBaseTypes(context).Select(b => b.GetDefinition()).Where(d => d != null && typeDefinitions.Add(d));
 			
 			ITypeDefinition typeDef = type as ITypeDefinition;
 			if (typeDef != null) {
 				typeDefinitions.Add(typeDef);
-				return TreeTraversal.PreOrder<ITypeDefinition>(typeDef, recursion);
+				return TreeTraversal.PreOrder(typeDef, recursion);
 			} else {
-				return TreeTraversal.PreOrder<ITypeDefinition>(recursion(type), recursion);
+				return TreeTraversal.PreOrder(
+					type.GetBaseTypes(context).Select(b => b.GetDefinition()).Where(d => d != null && typeDefinitions.Add(d)),
+					recursion);
 			}
 		}
 		

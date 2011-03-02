@@ -10,11 +10,17 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 	[TestFixture]
 	public class ForStatementTests
 	{
-		[Test]
+		[Test, Ignore("variable type in foreach is broken")]
 		public void ForeachStatementTest()
 		{
-			ForeachStatement foreachStmt = ParseUtilCSharp.ParseStatement<ForeachStatement>("foreach (int i in myColl) {} ");
-			// TODO : Extend test.
+			ParseUtilCSharp.AssertStatement(
+				"foreach (int i in myColl) {} ",
+				new ForeachStatement {
+					VariableType = new PrimitiveType("int"),
+					VariableName = "i",
+					InExpression = new IdentifierExpression("myColl"),
+					EmbeddedStatement = new BlockStatement()
+				});
 		}
 		
 		[Test, Ignore("for statement is broken when Initializers.Count()!=1")]
@@ -40,7 +46,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 			Assert.IsTrue(inc.Expression is UnaryOperatorExpression);
 		}
 		
-		[Test, Ignore("for statement is broken when Initializers.Count()!=1")]
+		[Test]
 		public void ForStatementTestMultipleInitializers()
 		{
 			ForStatement forStmt = ParseUtilCSharp.ParseStatement<ForStatement>("for (i = 0, j = 1; i < 6; ++i) {} ");
@@ -48,10 +54,12 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 			Assert.IsTrue(forStmt.Iterators.All(i => i is ExpressionStatement));
 		}
 		
-		[Test, Ignore("for statement is broken when Iterators.Count()!=1")]
+		[Test]
 		public void ForStatementTestMultipleIterators()
 		{
-			ForStatement forStmt = ParseUtilCSharp.ParseStatement<ForStatement>("for (int i = 5; i < 6; ++i, j--) {} ");
+			ForStatement forStmt = ParseUtilCSharp.ParseStatement<ForStatement>("for (int i = 5, j = 10; i < 6; ++i, j--) {} ");
+			Assert.AreEqual(1, forStmt.Initializers.Count());
+			Assert.AreEqual(2, ((VariableDeclarationStatement)forStmt.Initializers.Single()).Variables.Count());
 			Assert.AreEqual(2, forStmt.Iterators.Count());
 			Assert.IsTrue(forStmt.Iterators.All(i => i is ExpressionStatement));
 		}

@@ -88,7 +88,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			CSharpTokenNode o = other as CSharpTokenNode;
-			return o != null;
+			return o != null && !o.IsNull && !(o is CSharpModifierToken);
 		}
 		
 		public override string ToString ()

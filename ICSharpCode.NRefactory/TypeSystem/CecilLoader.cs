@@ -297,7 +297,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
-		static readonly string DynamicAttributeFullName = typeof(DynamicAttribute).FullName;
+		const string DynamicAttributeFullName = "System.Runtime.CompilerServices.DynamicAttribute";
 		
 		static bool HasDynamicAttribute(ICustomAttributeProvider attributeProvider, int typeIndex)
 		{

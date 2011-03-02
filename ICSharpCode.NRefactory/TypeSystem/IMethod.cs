@@ -10,7 +10,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents a method, constructor, destructor or operator.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IMethodContract))]
+	#endif
 	public interface IMethod : IParameterizedMember
 	{
 		/// <summary>
@@ -30,6 +32,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool IsOperator { get; }
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IMethod))]
 	abstract class IMethodContract : IParameterizedMemberContract, IMethod
 	{
@@ -47,13 +50,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
-//		IList<string> IMethod.HandlesClauses {
-//			get {
-//				Contract.Ensures(Contract.Result<IList<string>>() != null);
-//				return null;
-//			}
-//		}
-		
 		bool IMethod.IsExtensionMethod {
 			get { return false; }
 		}
@@ -70,4 +66,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			get { return false; }
 		}
 	}
+	#endif
 }

@@ -7,7 +7,9 @@ using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IParameterContract))]
+	#endif
 	public interface IParameter : IVariable, IFreezable
 	{
 		/// <summary>
@@ -46,6 +48,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool IsOptional { get; }
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IParameter))]
 	abstract class IParameterContract : IVariableContract, IParameter
 	{
@@ -92,4 +95,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 		}
 	}
+	#endif
 }

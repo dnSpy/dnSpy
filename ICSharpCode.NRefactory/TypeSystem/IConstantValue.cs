@@ -6,7 +6,9 @@ using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IConstantValueContract))]
+	#endif
 	public interface IConstantValue : IFreezable
 	{
 		/// <summary>
@@ -30,6 +32,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		object GetValue(ITypeResolveContext context);
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IConstantValue))]
 	abstract class IConstantValueContract : IFreezableContract, IConstantValue
 	{
@@ -46,4 +49,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return null;
 		}
 	}
+	#endif
 }

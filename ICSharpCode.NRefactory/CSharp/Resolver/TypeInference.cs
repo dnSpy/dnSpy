@@ -856,7 +856,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					bool success;
 					IType[] result = InferTypeArgumentsFromBounds(
 						candidateDef.TypeParameters,
-						new ParameterizedType(candidateDef, candidateDef.TypeParameters),
+						new ParameterizedType(candidateDef, candidateDef.TypeParameters.SafeCast<ITypeParameter, IType>()),
 						lowerBounds, upperBounds,
 						out success);
 					if (success) {

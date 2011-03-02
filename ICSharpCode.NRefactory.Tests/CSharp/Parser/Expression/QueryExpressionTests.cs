@@ -6,104 +6,220 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 {
-	[TestFixture, Ignore]
+	[TestFixture, Ignore("Query expressions not yet implemented")]
 	public class QueryExpressionTests
 	{
 		[Test]
 		public void SimpleExpression()
 		{
-			/* 
-			QueryExpression qe = ParseUtilCSharp.ParseExpression<QueryExpression>(
-				"from c in customers where c.City == \"London\" select c"
-			);
-			Assert.AreEqual("c", qe.FromClause.Sources.First().Identifier);
-			Assert.AreEqual("customers", ((IdentifierExpression)qe.FromClause.Sources.First().Expression).Identifier);
-			Assert.AreEqual(1, qe.MiddleClauses.Count);
-			Assert.IsInstanceOf(typeof(QueryExpressionWhereClause), qe.MiddleClauses[0]);
-			QueryExpressionWhereClause wc = (QueryExpressionWhereClause)qe.MiddleClauses[0];
-			Assert.IsInstanceOf(typeof(BinaryOperatorExpression), wc.Condition);
-			Assert.IsInstanceOf(typeof(QueryExpressionSelectClause), qe.SelectOrGroupClause);*/
-			throw new NotImplementedException();
+			ParseUtilCSharp.AssertExpression(
+				"from c in customers where c.City == \"London\" select c",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QueryWhereClause {
+							Condition = new BinaryOperatorExpression {
+								Left = new IdentifierExpression("c").Member("City"),
+								Operator = BinaryOperatorType.Equality,
+								Right = new PrimitiveExpression("London")
+							}
+						},
+						new QuerySelectClause {
+							Expression = new IdentifierExpression("c")
+						}
+					}});
 		}
 		
-		/* TODO port unit tests
 		[Test]
 		public void ExpressionWithType1()
 		{
-			QueryExpression qe = ParseUtilCSharp.ParseExpression<QueryExpression>(
-				"from Customer c in customers select c"
-			);
-			Assert.AreEqual("c", qe.FromClause.Sources.First().Identifier);
-			Assert.AreEqual("Customer", qe.FromClause.Sources.First().Type.ToString());
-			Assert.AreEqual("customers", ((IdentifierExpression)qe.FromClause.Sources.First().Expression).Identifier);
-			Assert.IsInstanceOf(typeof(QueryExpressionSelectClause), qe.SelectOrGroupClause);
+			ParseUtilCSharp.AssertExpression(
+				"from Customer c in customers select c",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Type = new SimpleType("Customer"),
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QuerySelectClause {
+							Expression = new IdentifierExpression("c")
+						}
+					}});
 		}
 		
 		[Test]
 		public void ExpressionWithType2()
 		{
-			QueryExpression qe = ParseUtilCSharp.ParseExpression<QueryExpression>(
-				"from int c in customers select c"
-			);
-			Assert.AreEqual("c", qe.FromClause.Sources.First().Identifier);
-			Assert.AreEqual("System.Int32", qe.FromClause.Sources.First().Type.Type);
-			Assert.AreEqual("customers", ((IdentifierExpression)qe.FromClause.Sources.First().Expression).Identifier);
-			Assert.IsInstanceOf(typeof(QueryExpressionSelectClause), qe.SelectOrGroupClause);
+			ParseUtilCSharp.AssertExpression(
+				"from int c in customers select c",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Type = new PrimitiveType("int"),
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QuerySelectClause {
+							Expression = new IdentifierExpression("c")
+						}
+					}});
 		}
 		
 		
 		[Test]
 		public void ExpressionWithType3()
 		{
-			QueryExpression qe = ParseUtilCSharp.ParseExpression<QueryExpression>(
-				"from S<int[]>? c in customers select c"
-			);
-			Assert.AreEqual("c", qe.FromClause.Sources.First().Identifier);
-			Assert.AreEqual("System.Nullable<S<System.Int32[]>>", qe.FromClause.Sources.First().Type.ToString());
-			Assert.AreEqual("customers", ((IdentifierExpression)qe.FromClause.Sources.First().Expression).Identifier);
-			Assert.IsInstanceOf(typeof(QueryExpressionSelectClause), qe.SelectOrGroupClause);
+			ParseUtilCSharp.AssertExpression(
+				"from S<int[]>? c in customers select c",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Type = new ComposedType {
+								BaseType = new SimpleType {
+									Identifier = "S",
+									TypeArguments = {
+										new PrimitiveType("int").MakeArrayType()
+									}
+								},
+								HasNullableSpecifier = true
+							},
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QuerySelectClause {
+							Expression = new IdentifierExpression("c")
+						}
+					}});
 		}
 		
 		[Test]
 		public void MultipleGenerators()
 		{
-			QueryExpression qe = ParseUtilCSharp.ParseExpression<QueryExpression>(@"
+			ParseUtilCSharp.AssertExpression(
+				@"
 from c in customers
 where c.City == ""London""
 from o in c.Orders
 where o.OrderDate.Year == 2005
-select new { c.Name, o.OrderID, o.Total }");
-			Assert.AreEqual(3, qe.MiddleClauses.Count);
-			Assert.IsInstanceOf(typeof(QueryExpressionWhereClause), qe.MiddleClauses[0]);
-			Assert.IsInstanceOf(typeof(QueryExpressionFromClause), qe.MiddleClauses[1]);
-			Assert.IsInstanceOf(typeof(QueryExpressionWhereClause), qe.MiddleClauses[2]);
-			
-			Assert.IsInstanceOf(typeof(QueryExpressionSelectClause), qe.SelectOrGroupClause);
+select new { c.Name, o.OrderID, o.Total }",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QueryWhereClause {
+							Condition = new BinaryOperatorExpression {
+								Left = new IdentifierExpression("c").Member("City"),
+								Operator = BinaryOperatorType.Equality,
+								Right = new PrimitiveExpression("London")
+							}
+						},
+						new QueryFromClause {
+							Identifier = "o",
+							Expression = new IdentifierExpression("c").Member("Orders")
+						},
+						new QueryWhereClause {
+							Condition = new BinaryOperatorExpression {
+								Left = new IdentifierExpression("c").Member("OrderDate").Member("Year"),
+								Operator = BinaryOperatorType.Equality,
+								Right = new PrimitiveExpression(2005)
+							}
+						},
+						new QuerySelectClause {
+							Expression = new ObjectCreateExpression {
+								Initializer = new ArrayInitializerExpression {
+									Elements = {
+										new IdentifierExpression("c").Member("Name"),
+										new IdentifierExpression("o").Member("OrderID"),
+										new IdentifierExpression("o").Member("Total")
+									}
+								}
+							}
+						}
+					}});
 		}
 		
 		[Test]
 		public void ExpressionWithOrderBy()
 		{
-			QueryExpression qe = ParseUtilCSharp.ParseExpression<QueryExpression>(
-				"from c in customers orderby c.Name select c"
-			);
-			Assert.AreEqual("c", qe.FromClause.Sources.First().Identifier);
-			Assert.AreEqual("customers", ((IdentifierExpression)qe.FromClause.Sources.First().Expression).Identifier);
-			Assert.IsInstanceOf(typeof(QueryExpressionOrderClause), qe.MiddleClauses[0]);
-			Assert.IsInstanceOf(typeof(QueryExpressionSelectClause), qe.SelectOrGroupClause);
+			ParseUtilCSharp.AssertExpression(
+				"from c in customers orderby c.Name select c",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QueryOrderClause {
+							Orderings = {
+								new QueryOrdering {
+									Expression = new IdentifierExpression("c").Member("Name")
+								}
+							}
+						},
+						new QuerySelectClause {
+							Expression = new IdentifierExpression("c")
+						}
+					}});
 		}
 		
 		[Test]
 		public void ExpressionWithOrderByAndLet()
 		{
-			QueryExpression qe = ParseUtilCSharp.ParseExpression<QueryExpression>(
-				"from c in customers orderby c.Name let x = c select x"
+			ParseUtilCSharp.AssertExpression(
+				"from c in customers orderby c.Name descending let x = c select x",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QueryOrderClause {
+							Orderings = {
+								new QueryOrdering {
+									Expression = new IdentifierExpression("c").Member("Name"),
+									Direction = QueryOrderingDirection.Descending
+								}
+							}
+						},
+						new QueryLetClause {
+							Identifier = "x",
+							Expression = new IdentifierExpression("c")
+						},
+						new QuerySelectClause {
+							Expression = new IdentifierExpression("x")
+						}
+					}});
+		}
+		
+		[Test]
+		public void QueryContinuation()
+		{
+			ParseUtilCSharp.AssertExpression(
+				"from a in b select c into d select e",
+				new QueryExpression {
+					Clauses = {
+						new QueryContinuationClause {
+							PrecedingQuery = new QueryExpression {
+								Clauses = {
+									new QueryFromClause {
+										Identifier = "a",
+										Expression = new IdentifierExpression("b")
+									},
+									new QuerySelectClause { Expression = new IdentifierExpression("c") }
+								}
+							},
+							Identifier = "d"
+						},
+						new QuerySelectClause { Expression = new IdentifierExpression("e") }
+					}
+				}
 			);
-			Assert.AreEqual("c", qe.FromClause.Sources.First().Identifier);
-			Assert.AreEqual("customers", ((IdentifierExpression)qe.FromClause.Sources.First().Expression).Identifier);
-			Assert.IsInstanceOf(typeof(QueryExpressionOrderClause), qe.MiddleClauses[0]);
-			Assert.IsInstanceOf(typeof(QueryExpressionLetClause), qe.MiddleClauses[1]);
-			Assert.IsInstanceOf(typeof(QueryExpressionSelectClause), qe.SelectOrGroupClause);
-		}*/
+		}
 	}
 }

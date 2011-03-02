@@ -9,11 +9,11 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 	[TestFixture]
 	public class SizeOfExpressionTests
 	{
-		[Test, Ignore("type references not implemented yet")]
+		[Test]
 		public void SizeOfExpressionTest()
 		{
 			SizeOfExpression soe = ParseUtilCSharp.ParseExpression<SizeOfExpression>("sizeof(MyType)");
-			Assert.AreEqual("MyType", soe.Type);
+			Assert.AreEqual("MyType", ((SimpleType)soe.Type).Identifier);
 		}
 	}
 }

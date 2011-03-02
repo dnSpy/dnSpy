@@ -84,9 +84,9 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			Assert.AreEqual(UnaryOperatorType.Dereference, uoe.Operator);
 			ParenthesizedExpression pe = (ParenthesizedExpression)uoe.Expression;
 			CastExpression ce = (CastExpression)pe.Expression;
-			//Assert.AreEqual("SomeType", ce.CastTo.Type);
-			//Assert.AreEqual(1, ce.CastTo.PointerNestingLevel);
-			Assert.Ignore("need to check target type"); // TODO
+			ComposedType type = (ComposedType)ce.Type;
+			Assert.AreEqual("SomeType", ((SimpleType)type.BaseType).Identifier);
+			Assert.AreEqual(1, type.PointerRank);
 			
 			UnaryOperatorExpression adrOf = (UnaryOperatorExpression)ce.Expression;
 			Assert.AreEqual(UnaryOperatorType.AddressOf, adrOf.Operator);

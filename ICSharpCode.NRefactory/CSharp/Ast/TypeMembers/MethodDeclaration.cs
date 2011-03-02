@@ -1,6 +1,6 @@
 ﻿// 
 // MethodDeclaration.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -39,7 +39,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public AstNodeCollection<ParameterDeclaration> Parameters { 
+		public AstNodeCollection<ParameterDeclaration> Parameters {
 			get { return GetChildrenByRole (Roles.Parameter); }
 		}
 		
@@ -47,7 +47,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RPar); }
 		}
 		
-		public AstNodeCollection<Constraint> Constraints { 
+		public AstNodeCollection<Constraint> Constraints {
 			get { return GetChildrenByRole (Roles.Constraint); }
 		}
 		
@@ -66,6 +66,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitMethodDeclaration (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			MethodDeclaration o = other as MethodDeclaration;
+			return o != null && this.MatchMember(o, match) && this.TypeParameters.DoMatch(o.TypeParameters, match)
+				&& this.Parameters.DoMatch(o.Parameters, match) && this.Constraints.DoMatch(o.Constraints, match)
+				&& this.Body.DoMatch(o.Body, match);
 		}
 	}
 }

@@ -6,7 +6,9 @@ using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(INamedElementContract))]
+	#endif
 	public interface INamedElement
 	{
 		/// <summary>
@@ -63,6 +65,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(INamedElement))]
 	abstract class INamedElementContract : INamedElement
 	{
@@ -94,4 +97,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 	}
+	#endif
 }

@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -51,16 +52,27 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		sealed class ListComparer : IEqualityComparer<IEnumerable<object>>
+		sealed class ListComparer : IEqualityComparer<IEnumerable>
 		{
-			public bool Equals(IEnumerable<object> a, IEnumerable<object> b)
+			public bool Equals(IEnumerable a, IEnumerable b)
 			{
 				if (a.GetType() != b.GetType())
 					return false;
-				return Enumerable.SequenceEqual(a, b, ReferenceComparer.Instance);
+				IEnumerator e1 = a.GetEnumerator();
+				IEnumerator e2 = b.GetEnumerator();
+				while (e1.MoveNext()) {
+					// e1 has more elements than e2; or elements are different
+					if (!e2.MoveNext() || e1.Current != e2.Current)
+						return false;
+				}
+				if (e2.MoveNext()) // e2 has more elements than e1
+					return false;
+				// No need to dispose e1/e2: non-generic IEnumerator doesn't implement IDisposable,
+				// and the underlying enumerator will likely be a List<T>.Enumerator which has an empty Dispose() method.
+				return true;
 			}
 			
-			public int GetHashCode(IEnumerable<object> obj)
+			public int GetHashCode(IEnumerable obj)
 			{
 				int hashCode = obj.GetType().GetHashCode();
 				unchecked {
@@ -75,7 +87,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		Dictionary<object, object> byValueDict = new Dictionary<object, object>();
 		Dictionary<ISupportsInterning, ISupportsInterning> supportsInternDict = new Dictionary<ISupportsInterning, ISupportsInterning>(new InterningComparer());
-		Dictionary<IEnumerable<object>, IEnumerable<object>> listDict = new Dictionary<IEnumerable<object>, IEnumerable<object>>(new ListComparer());
+		Dictionary<IEnumerable, IEnumerable> listDict = new Dictionary<IEnumerable, IEnumerable>(new ListComparer());
 		
 		public T Intern<T>(T obj) where T : class
 		{
@@ -118,7 +130,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 			if (!list.IsReadOnly)
 				list = new ReadOnlyCollection<T>(list);
-			IEnumerable<object> output;
+			IEnumerable output;
 			if (listDict.TryGetValue(list, out output))
 				list = (IList<T>)output;
 			else

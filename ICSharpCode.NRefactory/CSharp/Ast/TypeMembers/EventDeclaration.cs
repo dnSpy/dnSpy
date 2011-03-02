@@ -28,8 +28,17 @@ using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class EventDeclaration : MemberDeclaration
+	public class EventDeclaration : AttributedNode
 	{
+		public override NodeType NodeType {
+			get { return NodeType.Member; }
+		}
+		
+		public AstType ReturnType {
+			get { return GetChildByRole (Roles.Type); }
+			set { SetChildByRole(Roles.Type, value); }
+		}
+		
 		public AstNodeCollection<VariableInitializer> Variables {
 			get { return GetChildrenByRole (Roles.Variable); }
 		}
@@ -37,6 +46,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitEventDeclaration (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			EventDeclaration o = other as EventDeclaration;
+			return o != null && this.MatchAttributesAndModifiers(o, match)
+				&& this.ReturnType.DoMatch(o.ReturnType, match) && this.Variables.DoMatch(o.Variables, match);
 		}
 	}
 	
@@ -66,6 +82,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCustomEventDeclaration (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			CustomEventDeclaration o = other as CustomEventDeclaration;
+			return o != null && this.MatchMember(o, match)
+				&& this.AddAccessor.DoMatch(o.AddAccessor, match) && this.RemoveAccessor.DoMatch(o.RemoveAccessor, match);
 		}
 	}
 }

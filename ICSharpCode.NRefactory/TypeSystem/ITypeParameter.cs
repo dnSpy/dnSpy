@@ -11,7 +11,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Type parameter of a generic class/method.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(ITypeParameterContract))]
+	#endif
 	public interface ITypeParameter : IType, IFreezable
 	{
 		/// <summary>
@@ -99,6 +101,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		Contravariant
 	};
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(ITypeParameter))]
 	abstract class ITypeParameterContract : ITypeContract, ITypeParameter
 	{
@@ -178,4 +181,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 		}
 	}
+	#endif
 }

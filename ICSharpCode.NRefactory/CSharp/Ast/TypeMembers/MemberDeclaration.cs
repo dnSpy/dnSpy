@@ -55,5 +55,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override NodeType NodeType {
 			get { return NodeType.Member; }
 		}
+		
+		protected bool MatchMember(MemberDeclaration o, PatternMatching.Match match)
+		{
+			return MatchAttributesAndModifiers(o, match) && this.ReturnType.DoMatch(o.ReturnType, match)
+				&& this.PrivateImplementationType.DoMatch(o.PrivateImplementationType, match) && MatchString(this.Name, o.Name);
+		}
 	}
 }
