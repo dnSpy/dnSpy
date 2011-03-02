@@ -30,10 +30,11 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
+	#if DEBUG
 	/// <summary>
 	/// Represents the ILAst "language" used for debugging purposes.
 	/// </summary>
-	public class ILAstLanguage : Language
+	sealed class ILAstLanguage : Language
 	{
 		string name;
 		bool inlineVariables = true;
@@ -78,7 +79,6 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		#if DEBUG
 		internal static IEnumerable<ILAstLanguage> GetDebugLanguages()
 		{
 			yield return new ILAstLanguage { name = "ILAst (unoptimized)", inlineVariables = false };
@@ -89,7 +89,6 @@ namespace ICSharpCode.ILSpy
 				
 			}
 		}
-		#endif
 		
 		public override string FileExtension {
 			get {
@@ -104,4 +103,5 @@ namespace ICSharpCode.ILSpy
 			return output.ToString();
 		}
 	}
+	#endif
 }

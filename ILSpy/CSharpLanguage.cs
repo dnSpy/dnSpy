@@ -40,7 +40,7 @@ namespace ICSharpCode.ILSpy
 	public class CSharpLanguage : Language
 	{
 		string name = "C#";
-		bool showAllMembers;
+		bool showAllMembers = false;
 		Predicate<IAstTransform> transformAbortCondition = null;
 		
 		public CSharpLanguage()
