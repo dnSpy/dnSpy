@@ -204,5 +204,8 @@
     <Resource Include="Images\StepOut.png" />
     <Resource Include="Images\StepOver.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\application-x-executable.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

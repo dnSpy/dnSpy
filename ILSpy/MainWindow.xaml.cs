@@ -345,9 +345,33 @@ namespace ICSharpCode.ILSpy
 		
 		#region Debugger commands
 		
-		IDebugger CurrentDebugger { 
+		IDebugger CurrentDebugger {
 			get {
 				return DebuggerService.CurrentDebugger;
+			}
+		}
+		
+		void DebugExecutableExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			OpenFileDialog dialog = new OpenFileDialog() {
+				Filter = ".NET Executable (*.exe) | *.exe", 
+				RestoreDirectory = true, 
+				DefaultExt = "exe" 
+			};
+			
+			var result = dialog.ShowDialog();
+			if (result.HasValue && result.Value) {
+				string fileName = dialog.FileName;
+				
+				// add it to references
+				OpenFiles(new [] { fileName });
+				
+				if (!CurrentDebugger.IsDebugging) {
+					// execute the process
+					CurrentDebugger.Attach(Process.Start(fileName));
+					EnableDebuggerUI(false);
+					CurrentDebugger.DebugStopped += OnDebugStopped;
+				}
 			}
 		}
 
@@ -442,6 +466,8 @@ namespace ICSharpCode.ILSpy
 		void EnableDebuggerUI(bool enable)
 		{
 			AttachMenuItem.IsEnabled = AttachButton.IsEnabled = enable;
+			DebugExecutableButton.IsEnabled = DebugExecutableItem.IsEnabled = enable;
+			
 			ContinueDebuggingMenuItem.IsEnabled =
 				StepIntoMenuItem.IsEnabled =
 				StepOverMenuItem.IsEnabled =

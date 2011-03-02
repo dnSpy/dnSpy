@@ -33,6 +33,8 @@ namespace ICSharpCode.ILSpy.Commands
 			StepOut = new RoutedUICommand("Step out", "StepOut", typeof(RoutedUICommands));
 			
 			RemoveAllBreakpoint = new RoutedUICommand("Remove all breakpoints", "RemoveAllBreakpoint", typeof(RoutedUICommands));
+			
+			DebugExecutable = new RoutedUICommand("Debug an executable", "DebugExecutable", typeof(RoutedUICommands));
 		}
 		
 		public static RoutedUICommand AttachToProcess { get; private set; }
@@ -48,5 +50,7 @@ namespace ICSharpCode.ILSpy.Commands
 		public static RoutedUICommand StepOut { get; private set; }
 		
 		public static RoutedUICommand RemoveAllBreakpoint { get; private set; }
+		
+		public static RoutedUICommand DebugExecutable { get; private set; }
 	}
 }

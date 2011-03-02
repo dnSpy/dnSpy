@@ -18,6 +18,9 @@
 	</Window.Resources>
 	<Window.CommandBindings>
 		<CommandBinding
+			Command="routedCommands:RoutedUICommands.DebugExecutable"
+			Executed="DebugExecutableExecuted" />
+		<CommandBinding
 			Command="routedCommands:RoutedUICommands.RemoveAllBreakpoint"
 			Executed="RemoveAllBreakpointExecuted" />
 		<CommandBinding
@@ -112,7 +115,7 @@
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem x:Name="DetachMenuItem" IsEnabled="False"
-				          Header="Detach from running application" 
+				          Header="Detach from running application"
 				          Command="routedCommands:RoutedUICommands.DetachFromProcess"/>
 				<Separator/>
 				<MenuItem x:Name="RemoveAllBreakpointsItem" Header="Remove all breakpoints" Command="routedCommands:RoutedUICommands.RemoveAllBreakpoint">
@@ -120,7 +123,13 @@
 						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/DeleteAllBreakpoints.png" />
 					</MenuItem.Icon>
 				</MenuItem>
-				
+				<Separator/>
+				<MenuItem x:Name="DebugExecutableItem" Header="Debug an executable" Command="routedCommands:RoutedUICommands.DebugExecutable">
+					<MenuItem.Icon>
+						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/application-x-executable.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+			
 			</MenuItem>
 			<MenuItem Header="_Help">
 				<MenuItem Header="_About" Click="AboutClick" />
@@ -163,11 +172,14 @@
 			<ComboBox Name="languageComboBox" DisplayMemberPath="Name" Width="100"
 			          ItemsSource="{x:Static local:Languages.AllLanguages}"
 			          SelectedItem="{Binding FilterSettings.Language}"
-					SelectionChanged="LanguageComboBox_SelectionChanged"
+			          SelectionChanged="LanguageComboBox_SelectionChanged"
 			/>
 			<Separator />
 			<Button x:Name="AttachButton" Command="routedCommands:RoutedUICommands.AttachToProcess" ToolTip="Attach to running process...">
 				<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/bug.png" />
+			</Button>
+			<Button x:Name="DebugExecutableButton" Command="routedCommands:RoutedUICommands.DebugExecutable" ToolTip="Debug an executable">
+				<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/application-x-executable.png" />
 			</Button>
 		</ToolBar>
 		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
