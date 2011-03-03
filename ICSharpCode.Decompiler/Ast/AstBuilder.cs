@@ -155,8 +155,11 @@ namespace Decompiler
 				astType.ClassType = ClassType.Class;
 			}
 			
-			astType.TypeParameters.AddRange(MakeTypeParameters(typeDef.GenericParameters));
-			astType.Constraints.AddRange(MakeConstraints(typeDef.GenericParameters));
+			IEnumerable<GenericParameter> genericParameters = typeDef.GenericParameters;
+			if (typeDef.DeclaringType != null && typeDef.DeclaringType.HasGenericParameters)
+				genericParameters = genericParameters.Skip(typeDef.DeclaringType.GenericParameters.Count);
+			astType.TypeParameters.AddRange(MakeTypeParameters(genericParameters));
+			astType.Constraints.AddRange(MakeConstraints(genericParameters));
 			
 			// Nested types
 			foreach(TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
@@ -548,10 +551,13 @@ namespace Decompiler
 				if (gp.HasNotNullableValueTypeConstraint)
 					c.BaseTypes.Add(new PrimitiveType("struct"));
 				
-				foreach (var constraintType in gp.Constraints)
+				foreach (var constraintType in gp.Constraints) {
+					if (gp.HasNotNullableValueTypeConstraint && constraintType.FullName == "System.ValueType")
+						continue;
 					c.BaseTypes.Add(ConvertType(constraintType));
+				}
 				
-				if (gp.HasDefaultConstructorConstraint)
+				if (gp.HasDefaultConstructorConstraint && !gp.HasNotNullableValueTypeConstraint)
 					c.BaseTypes.Add(new PrimitiveType("new")); // new() must be last
 				if (c.BaseTypes.Any())
 					yield return c;
