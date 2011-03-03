@@ -14,21 +14,23 @@ namespace ICSharpCode.Decompiler.Tests
 {
 	public class TestRunner
 	{
-		public static void Main()
+		public static void Main(string[] args)
 		{
-			Test(@"..\..\Tests\DelegateConstruction.cs");
-			
+			if (args.Length == 1)
+				TestFile(args[0]);
+			else
+				TestFile(@"..\..\Tests\DelegateConstruction.cs");
+
 			Console.ReadKey();
 		}
-		
-		
-		
-		static void Test(string fileName)
+
+		static void TestFile(string fileName)
 		{
 			string code = File.ReadAllText(fileName);
 			AssemblyDefinition assembly = Compile(code);
 			AstBuilder decompiler = new AstBuilder(new DecompilerContext());
 			decompiler.AddAssembly(assembly);
+			decompiler.Transform(new Helpers.RemoveCompilerAttribute());
 			StringWriter output = new StringWriter();
 			decompiler.GenerateCode(new PlainTextOutput(output));
 			StringWriter diff = new StringWriter();
@@ -79,7 +81,7 @@ namespace ICSharpCode.Decompiler.Tests
 		
 		static AssemblyDefinition Compile(string code)
 		{
-			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> {{ "CompilerVersion", "v4.0" }});
+			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
 			CompilerParameters options = new CompilerParameters();
 			options.ReferencedAssemblies.Add("System.Core.dll");
 			CompilerResults results = provider.CompileAssemblyFromSource(options, code);

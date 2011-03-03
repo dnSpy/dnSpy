@@ -9,15 +9,16 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 	[TestFixture]
 	public class IsExpressionTests
 	{
-		[Test, Ignore]
+		[Test]
 		public void GenericArrayIsExpression()
 		{
-			/* TODO
-			TypeOfIsExpression ce = ParseUtilCSharp.ParseExpression<TypeOfIsExpression>("o is List<string>[]");
-			Assert.AreEqual("List", ce.TypeReference.Type);
-			Assert.AreEqual("System.String", ce.TypeReference.GenericTypes[0].Type);
-			Assert.AreEqual(new int[] { 0 }, ce.TypeReference.RankSpecifier);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);*/
+			ParseUtilCSharp.AssertExpression(
+				"o is List<string>[]",
+				new IsExpression {
+					Expression = new IdentifierExpression("o"),
+					Type = new SimpleType("List") { TypeArguments = { new PrimitiveType("string") } }.MakeArrayType(1)
+				}
+			);
 		}
 		
 		[Test]

@@ -48,6 +48,7 @@ namespace Decompiler.Transforms
 			if (ctors.Length == 1 && ctors[0].Body.Children.Count() == 0
 			    && ctors[0].Initializer.ConstructorInitializerType == ConstructorInitializerType.Base
 			    && ctors[0].Initializer.Arguments.Count() == 0
+				&& ctors[0].Parameters.Count == 0
 			    && ctors[0].Modifiers == ((typeDeclaration.Modifiers & Modifiers.Abstract) == Modifiers.Abstract ? Modifiers.Protected : Modifiers.Public))
 			{
 				ctors[0].Remove();

@@ -57,11 +57,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return column; }
 		}
 		
-		public override bool Equals (object other)
+		public override bool Equals (object obj)
 		{
-			if (!(other is AstLocation))
+			if (!(obj is AstLocation))
 				return false;
-			return (AstLocation)other == this;
+			return (AstLocation)obj == this;
 		}
 		
 		public override int GetHashCode ()

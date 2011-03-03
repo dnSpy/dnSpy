@@ -647,6 +647,15 @@ namespace Decompiler
 		{
 			return IsSigned(type) != null;
 		}
+
+		public static bool IsEnum(TypeReference type)
+		{
+			if (type == null)
+				return false;
+			// unfortunately we cannot rely on type.IsValueType here - it's not set when the instruction operand is a typeref (as opposed to a typespec)
+			TypeDefinition typeDef = type.Resolve() as TypeDefinition;
+			return typeDef != null && typeDef.IsEnum;
+		}
 		
 		static bool? IsSigned(TypeReference type)
 		{

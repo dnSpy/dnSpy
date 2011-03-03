@@ -40,7 +40,7 @@ namespace ICSharpCode.ILSpy
 	public class CSharpLanguage : Language
 	{
 		string name = "C#";
-		bool showAllMembers;
+		bool showAllMembers = false;
 		Predicate<IAstTransform> transformAbortCondition = null;
 		
 		public CSharpLanguage()
@@ -132,6 +132,9 @@ namespace ICSharpCode.ILSpy
 				}
 			} else {
 				base.DecompileAssembly(assembly, fileName, output, options);
+				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: null);
+				codeDomBuilder.AddAssembly(assembly, onlyAssemblyLevel: true);
+				codeDomBuilder.GenerateCode(output, transformAbortCondition);
 			}
 		}
 		
@@ -375,7 +378,7 @@ namespace ICSharpCode.ILSpy
 					CurrentType = currentType
 				});
 		}
-		
+
 		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes)
 		{
 			AstType astType = AstBuilder.ConvertType(type, typeAttributes);

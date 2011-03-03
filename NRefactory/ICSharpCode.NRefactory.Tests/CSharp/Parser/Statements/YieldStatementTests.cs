@@ -21,8 +21,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 		[Test]
 		public void YieldBreakStatementTest()
 		{
-			YieldStatement yieldStmt = ParseUtilCSharp.ParseStatement<YieldStatement>("yield break;");
-			Assert.IsTrue(yieldStmt.Expression.IsNull);
+			ParseUtilCSharp.ParseStatement<YieldBreakStatement>("yield break;");
 		}
 		
 		[Test]

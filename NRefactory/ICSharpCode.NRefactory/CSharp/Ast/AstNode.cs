@@ -606,6 +606,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		protected internal abstract bool DoMatch(AstNode other, Match match);
+		
+		internal virtual bool DoMatchCollection(Role role, AstNode pos, Match match, Stack<Pattern.PossibleMatch> backtrackingStack)
+		{
+			return DoMatch(pos, match);
+		}
 		#endregion
 		
 		// the Root role must be available when creating the null nodes, so we can't put it in the Roles class

@@ -47,6 +47,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 		public void SimpleAnonymousMethod()
 		{
 			AnonymousMethodExpression ame = Parse("delegate(int a, int b) { return a + b; }");
+			Assert.IsTrue(ame.HasParameterList);
 			Assert.AreEqual(2, ame.Parameters.Count());
 			Assert.AreEqual(1, ame.Body.Statements.Count());
 			Assert.IsTrue(ame.Body.Children.First() is ReturnStatement);

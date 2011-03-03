@@ -535,7 +535,7 @@ namespace Decompiler
 						return MakeRef(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand));
 					}
 				case Code.Ldc_I4:
-					return MakePrimitive((int)operand, byteCode.InferredType);
+					return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType);
 				case Code.Ldc_I8:
 				case Code.Ldc_R4:
 				case Code.Ldc_R8:
@@ -794,7 +794,7 @@ namespace Decompiler
 					if (TypeAnalysis.IsBoolean(actualType))
 						return expr;
 					if (actualIsIntegerOrEnum) {
-						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, MakePrimitive(0, actualType));
+						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, AstBuilder.MakePrimitive(0, actualType));
 					} else {
 						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, new NullReferenceExpression());
 					}
@@ -802,39 +802,21 @@ namespace Decompiler
 				if (TypeAnalysis.IsBoolean(actualType) && requiredIsIntegerOrEnum) {
 					return new ConditionalExpression {
 						Condition = expr,
-						TrueExpression = MakePrimitive(1, reqType),
-						FalseExpression = MakePrimitive(0, reqType)
+						TrueExpression = AstBuilder.MakePrimitive(1, reqType),
+						FalseExpression = AstBuilder.MakePrimitive(0, reqType)
 					};
 				}
+
+				if (expr is PrimitiveExpression && !requiredIsIntegerOrEnum && TypeAnalysis.IsEnum(actualType))
+				{
+					return expr.CastTo(AstBuilder.ConvertType(actualType));
+				}
+
 				if (actualIsIntegerOrEnum && requiredIsIntegerOrEnum) {
 					return expr.CastTo(AstBuilder.ConvertType(reqType));
 				}
 				return expr;
 			}
-		}
-		
-		Expression MakePrimitive(long val, TypeReference type)
-		{
-			if (TypeAnalysis.IsBoolean(type) && val == 0)
-				return new Ast.PrimitiveExpression(false);
-			else if (TypeAnalysis.IsBoolean(type) && val == 1)
-				return new Ast.PrimitiveExpression(true);
-			if (type != null) { // cannot rely on type.IsValueType, it's not set for typerefs (but is set for typespecs)
-				TypeDefinition enumDefinition = type.Resolve();
-				if (enumDefinition != null && enumDefinition.IsEnum) {
-					foreach (FieldDefinition field in enumDefinition.Fields) {
-						if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false), val))
-							return AstBuilder.ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
-						else if (!field.IsStatic && field.IsRuntimeSpecialName)
-							type = field.FieldType; // use primitive type of the enum
-					}
-				}
-			}
-			TypeCode code = TypeAnalysis.GetTypeCode(type);
-			if (code == TypeCode.Object)
-				return new Ast.PrimitiveExpression((int)val);
-			else
-				return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
 		}
 	}
 }

@@ -7,7 +7,9 @@ using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(IEntityContract))]
+	#endif
 	public interface IEntity : INamedElement, IFreezable
 	{
 		EntityType EntityType { get; }
@@ -75,6 +77,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		//bool IsAccessible(IClass callingClass, bool isAccessThoughReferenceOfCurrentClass);
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IEntity))]
 	abstract class IEntityContract : INamedElementContract, IEntity
 	{
@@ -144,4 +147,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 		}
 	}
+	#endif
 }

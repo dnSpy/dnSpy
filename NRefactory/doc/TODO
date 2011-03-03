@@ -1,15 +1,24 @@
-﻿TypeSystem API:
+﻿
+Parser:
+- "extern alias" declarations
+- "fixed int Field[100];" (fixed-size field declarations)
+- support generics
+- fix bugs (see currently ignored unit tests)
+- put newlines into the AST
+- add API to report errors
+- allow multithreaded parsing
 
-* Decide on the fate of ISupportsInterning (depends on how we're going to implement persistence)
+Resolver:
+- Tons of unit tests for TypeSystemConvertVisitor
+- Lambda expressions
+- Handle attributes
+- Port all #D resolver unit tests to NR
+- Port all MD resolver unit tests to NR
 
-* Try to build SharedTypes for void, int, etc.
-	Take care of equality with the real System.Void, System.Int32 etc.
-	This seems to be hard/impossible to do, see comment in SharedTypes.cs.
-	I'm trying to work without those types now.
-	
-	Note that having shared type *references* is possible (typeof(int).ToTypeReference())
+Features:
+- Code Completion
+- Find References
+- Extract Method refactoring
 
-* Implement the C# parser producing the DOM
-* Implement ResolveVisitor
-* Implement all the nasty context-dependent stuff (local variables, lambdas) that CSharpResolver doesn't do (yet)
-	Where should that go? I'd like to keep it out of CSharpResolver, that class is bloated enough with the pure logic.
+For integration into SharpDevelop:
+- Review NR and DOM changes done in the timeframe

@@ -6,48 +6,74 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 {
-	[TestFixture, Ignore("tests need to be ported")]
+	[TestFixture, Ignore("Aliases not yet implemented")]
 	public class DefaultValueExpressionTests
 	{
 		[Test]
 		public void SimpleDefaultValue()
 		{
 			DefaultValueExpression toe = ParseUtilCSharp.ParseExpression<DefaultValueExpression>("default(T)");
-			Assert.AreEqual("T", toe.Type);
+			Assert.AreEqual("T", ((SimpleType)toe.Type).Identifier);
 		}
 		
-		/*
 		[Test]
 		public void FullQualifiedDefaultValue()
 		{
-			DefaultValueExpression toe = ParseUtilCSharp.ParseExpression<DefaultValueExpression>("default(global::MyNamespace.N1.MyType)");
-			Assert.IsTrue(toe.TypeReference.IsGlobal);
-			Assert.AreEqual("MyNamespace.N1.MyType", toe.TypeReference.Type);
+			ParseUtilCSharp.AssertExpression(
+				"default(global::MyNamespace.N1.MyType)",
+				new DefaultValueExpression {
+					Type = new MemberType {
+						Target = new MemberType {
+							Target = new MemberType {
+								Target = new SimpleType("global"),
+								IsDoubleColon = true,
+								MemberName = "MyNamespace"
+							},
+							MemberName = "N1"
+						},
+						MemberName = "MyType"
+					}
+				});
 		}
 		
 		[Test]
 		public void GenericDefaultValue()
 		{
-			DefaultValueExpression toe = ParseUtilCSharp.ParseExpression<DefaultValueExpression>("default(MyNamespace.N1.MyType<string>)");
-			Assert.AreEqual("MyNamespace.N1.MyType", toe.TypeReference.Type);
-			Assert.AreEqual("System.String", toe.TypeReference.GenericTypes[0].Type);
+			ParseUtilCSharp.AssertExpression(
+				"default(MyNamespace.N1.MyType<string>)",
+				new DefaultValueExpression {
+					Type = new MemberType {
+						Target = new MemberType {
+							Target = new SimpleType("MyNamespace"),
+							MemberName = "N1"
+						},
+						MemberName = "MyType",
+						TypeArguments = { new PrimitiveType("string") }
+					}
+				});
 		}
 		
 		[Test]
 		public void DefaultValueAsIntializer()
 		{
-			// This test is failing because we need a resolver for the "default:" / "default(" conflict.
-			LocalVariableDeclaration lvd = ParseUtilCSharp.ParseStatement<LocalVariableDeclaration>("T a = default(T);");
-			DefaultValueExpression dve = (DefaultValueExpression)lvd.Variables[0].Initializer;
-			Assert.AreEqual("T", dve.TypeReference.Type);
+			// This test was problematic (in old NRefactory) because we need a resolver for the "default:" / "default(" conflict.
+			ParseUtilCSharp.AssertStatement(
+				"T a = default(T);",
+				new VariableDeclarationStatement {
+					Type = new SimpleType("T"),
+					Variables = {
+						new VariableInitializer("a", new DefaultValueExpression { Type = new SimpleType("T") })
+					}});
 		}
 		
 		[Test]
 		public void DefaultValueInReturnStatement()
 		{
-			ReturnStatement rs = ParseUtilCSharp.ParseStatement<ReturnStatement>("return default(T);");
-			DefaultValueExpression dve = (DefaultValueExpression)rs.Expression;
-			Assert.AreEqual("T", dve.TypeReference.Type);
-		}*/
+			ParseUtilCSharp.AssertStatement(
+				"return default(T);",
+				new ReturnStatement {
+					Expression = new DefaultValueExpression { Type = new SimpleType("T") }
+				});
+		}
 	}
 }

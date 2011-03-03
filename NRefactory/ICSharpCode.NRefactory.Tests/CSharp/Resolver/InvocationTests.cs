@@ -122,7 +122,7 @@ class A {
 			Assert.AreEqual("System.Void", Resolve(program).Type.ReflectionName);
 		}
 		
-		[Test]
+		[Test, Ignore("parser is broken for events")]
 		public void EventCallTest()
 		{
 			string program = @"using System;

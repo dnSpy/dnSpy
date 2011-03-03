@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 {
-	[TestFixture, Ignore("Port unit tests to new DOM")]
+	[TestFixture]
 	public class InvocationExpressionTests
 	{
 		[Test]
@@ -19,55 +19,71 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			Assert.AreEqual("myMethod", ((IdentifierExpression)ie.Target).Identifier);
 		}
 		
-		/* TODO port unit tests to new DOM
 		[Test]
 		public void GenericInvocationExpressionTest()
 		{
-			var expr = ParseUtilCSharp.ParseExpression<InvocationExpression>("myMethod<char>('a')");
-			Assert.AreEqual(1, expr.Arguments.Count());
-			Assert.IsTrue(expr.TargetObject is IdentifierExpression);
-			IdentifierExpression ident = (IdentifierExpression)expr.TargetObject;
-			Assert.AreEqual("myMethod", ident.Identifier);
-			Assert.AreEqual(1, ident.TypeArguments.Count);
-			Assert.AreEqual("System.Char", ident.TypeArguments[0].Type);
+			ParseUtilCSharp.AssertExpression(
+				"myMethod<char>('a')",
+				new InvocationExpression {
+					Target = new IdentifierExpression {
+						Identifier = "myMethod",
+						TypeArguments = { new PrimitiveType("char") }
+					},
+					Arguments = { new PrimitiveExpression('a') }
+				}
+			);
 		}
 		
 		[Test]
 		public void GenericInvocation2ExpressionTest()
 		{
-			var expr = ParseUtilCSharp.ParseExpression<InvocationExpression>("myMethod<T,bool>()");
-			Assert.AreEqual(0, expr.Arguments.Count);
-			Assert.IsTrue(expr.TargetObject is IdentifierExpression);
-			IdentifierExpression ident = (IdentifierExpression)expr.TargetObject;
-			Assert.AreEqual("myMethod", ident.Identifier);
-			Assert.AreEqual(2, ident.TypeArguments.Count);
-			Assert.AreEqual("T", ident.TypeArguments[0].Type);
-			Assert.IsFalse(ident.TypeArguments[0].IsKeyword);
-			Assert.AreEqual("System.Boolean", ident.TypeArguments[1].Type);
-			Assert.IsTrue(ident.TypeArguments[1].IsKeyword);
+			ParseUtilCSharp.AssertExpression(
+				"myMethod<T,bool>()",
+				new InvocationExpression {
+					Target = new IdentifierExpression {
+						Identifier = "myMethod",
+						TypeArguments = {
+							new SimpleType("T"),
+							new PrimitiveType("bool")
+						}
+					}
+				}
+			);
 		}
 		
 		[Test]
 		public void AmbiguousGrammarGenericMethodCall()
 		{
-			InvocationExpression ie = ParseUtilCSharp.ParseExpression<InvocationExpression>("F(G<A,B>(7))");
-			Assert.IsTrue(ie.TargetObject is IdentifierExpression);
-			Assert.AreEqual(1, ie.Arguments.Count);
-			ie = (InvocationExpression)ie.Arguments[0];
-			Assert.AreEqual(1, ie.Arguments.Count);
-			Assert.IsTrue(ie.Arguments[0] is PrimitiveExpression);
-			IdentifierExpression ident = (IdentifierExpression)ie.TargetObject;
-			Assert.AreEqual("G", ident.Identifier);
-			Assert.AreEqual(2, ident.TypeArguments.Count);
+			ParseUtilCSharp.AssertExpression(
+				"F(G<A,B>(7))",
+				new InvocationExpression {
+					Target = new IdentifierExpression("F"),
+					Arguments = {
+						new InvocationExpression {
+							Target = new IdentifierExpression {
+								Identifier = "G",
+								TypeArguments = { new SimpleType("A"), new SimpleType("B") }
+							},
+							Arguments = { new PrimitiveExpression(7) }
+						}}});
 		}
 		
-		[Test]
+		[Test, Ignore("Mono Parser Bug???")]
 		public void AmbiguousGrammarNotAGenericMethodCall()
 		{
-			BinaryOperatorExpression boe = ParseUtilCSharp.ParseExpression<BinaryOperatorExpression>("F<A>+y");
-			Assert.AreEqual(BinaryOperatorType.GreaterThan, boe.Op);
-			Assert.IsTrue(boe.Left is BinaryOperatorExpression);
-			Assert.IsTrue(boe.Right is UnaryOperatorExpression);
+			ParseUtilCSharp.AssertExpression(
+				"F<A>+y",
+				new BinaryOperatorExpression {
+					Left = new BinaryOperatorExpression {
+						Left = new IdentifierExpression("F"),
+						Operator = BinaryOperatorType.LessThan,
+						Right = new IdentifierExpression("A")
+					},
+					Operator = BinaryOperatorType.GreaterThan,
+					Right = new UnaryOperatorExpression {
+						Operator = UnaryOperatorType.Plus,
+						Expression = new IdentifierExpression("y")
+					}});
 		}
 		
 		[Test]
@@ -76,80 +92,81 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			// this test was written because this bug caused the AbstractASTVisitor to crash
 			
 			InvocationExpression expr = ParseUtilCSharp.ParseExpression<InvocationExpression>("WriteLine(myMethod(,))", true);
-			Assert.IsTrue(expr.TargetObject is IdentifierExpression);
-			Assert.AreEqual("WriteLine", ((IdentifierExpression)expr.TargetObject).Identifier);
+			Assert.IsTrue(expr.Target is IdentifierExpression);
+			Assert.AreEqual("WriteLine", ((IdentifierExpression)expr.Target).Identifier);
 			
 			Assert.AreEqual(1, expr.Arguments.Count); // here a second null parameter was added incorrectly
 			
-			Assert.IsTrue(expr.Arguments[0] is InvocationExpression);
-			CheckSimpleInvoke((InvocationExpression)expr.Arguments[0]);
+			Assert.IsTrue(expr.Arguments.Single() is InvocationExpression);
 		}
 		
-		[Test]
+		[Test, Ignore("Positions not yet accurate when parsing expression only (because class/method is added around it)")]
 		public void NestedInvocationPositions()
 		{
 			InvocationExpression expr = ParseUtilCSharp.ParseExpression<InvocationExpression>("a.B().C(args)");
-			Assert.AreEqual(new Location(8, 1), expr.StartLocation);
-			Assert.AreEqual(new Location(14, 1), expr.EndLocation);
-			MemberReferenceExpression mre = (MemberReferenceExpression)expr.TargetObject;
-			Assert.AreEqual(new Location(6, 1), mre.StartLocation);
-			Assert.AreEqual(new Location(8, 1), mre.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 8), expr.StartLocation);
+			Assert.AreEqual(new AstLocation(1, 14), expr.EndLocation);
+			MemberReferenceExpression mre = (MemberReferenceExpression)expr.Target;
+			Assert.AreEqual(new AstLocation(1, 6), mre.StartLocation);
+			Assert.AreEqual(new AstLocation(1, 8), mre.EndLocation);
 			
-			Assert.AreEqual(new Location(4, 1), mre.TargetObject.StartLocation);
-			Assert.AreEqual(new Location(6, 1), mre.TargetObject.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 4), mre.Target.StartLocation);
+			Assert.AreEqual(new AstLocation(1, 6), mre.Target.EndLocation);
 		}
 		
 		[Test]
 		public void InvocationOnGenericType()
 		{
-			InvocationExpression expr = ParseUtilCSharp.ParseExpression<InvocationExpression>("A<T>.Foo()");
-			MemberReferenceExpression mre = (MemberReferenceExpression)expr.TargetObject;
-			Assert.AreEqual("Foo", mre.MemberName);
-			TypeReferenceExpression tre = (TypeReferenceExpression)mre.TargetObject;
-			Assert.AreEqual("A", tre.TypeReference.Type);
-			Assert.AreEqual("T", tre.TypeReference.GenericTypes[0].Type);
+			ParseUtilCSharp.AssertExpression(
+				"A<T>.Foo()",
+				new IdentifierExpression {
+					Identifier = "A",
+					TypeArguments = { new SimpleType("T") }
+				}.Invoke("Foo")
+			);
 		}
 		
 		[Test]
 		public void InvocationOnInnerClassInGenericType()
 		{
-			InvocationExpression expr = ParseUtilCSharp.ParseExpression<InvocationExpression>("A<T>.B.Foo()");
-			MemberReferenceExpression mre = (MemberReferenceExpression)expr.TargetObject;
-			Assert.AreEqual("Foo", mre.MemberName);
-			MemberReferenceExpression mre2 = (MemberReferenceExpression)mre.TargetObject;
-			Assert.AreEqual("B", mre2.MemberName);
-			TypeReferenceExpression tre = (TypeReferenceExpression)mre2.TargetObject;
-			Assert.AreEqual("A", tre.TypeReference.Type);
-			Assert.AreEqual("T", tre.TypeReference.GenericTypes[0].Type);
+			ParseUtilCSharp.AssertExpression(
+				"A<T>.B.Foo()",
+				new IdentifierExpression {
+					Identifier = "A",
+					TypeArguments = { new SimpleType("T") }
+				}.Member("B").Invoke("Foo")
+			);
 		}
 		
 		[Test]
 		public void InvocationOnGenericInnerClassInGenericType()
 		{
-			InvocationExpression expr = ParseUtilCSharp.ParseExpression<InvocationExpression>("A<T>.B.C<U>.Foo()");
-			MemberReferenceExpression mre = (MemberReferenceExpression)expr.TargetObject;
-			Assert.AreEqual("Foo", mre.MemberName);
-			TypeReferenceExpression tre = (TypeReferenceExpression)mre.TargetObject;
-			InnerClassTypeReference ictr = (InnerClassTypeReference)tre.TypeReference;
-			Assert.AreEqual("B.C", ictr.Type);
-			Assert.AreEqual(1, ictr.GenericTypes.Count);
-			Assert.AreEqual("U", ictr.GenericTypes[0].Type);
-			
-			Assert.AreEqual("A", ictr.BaseType.Type);
-			Assert.AreEqual(1, ictr.BaseType.GenericTypes.Count);
-			Assert.AreEqual("T", ictr.BaseType.GenericTypes[0].Type);
+			ParseUtilCSharp.AssertExpression(
+				"A<T>.B.C<U>.Foo()",
+				new MemberReferenceExpression {
+					Target = new IdentifierExpression {
+						Identifier = "A",
+						TypeArguments = { new SimpleType("T") }
+					}.Member("B"),
+					MemberName = "C",
+					TypeArguments = { new SimpleType("U") }
+				}.Invoke("Foo"));
 		}
 		
-		[Test]
+		[Test, Ignore("named arguments not yet supported")]
 		public void InvocationWithNamedArgument()
 		{
-			InvocationExpression expr = ParseUtilCSharp.ParseExpression<InvocationExpression>("a(arg: ref v)");
-			Assert.AreEqual(1, expr.Arguments.Count);
-			NamedArgumentExpression nae = (NamedArgumentExpression)expr.Arguments[0];
-			Assert.AreEqual("arg", nae.Name);
-			DirectionExpression dir = (DirectionExpression)nae.Expression;
-			Assert.AreEqual(FieldDirection.Ref, dir.FieldDirection);
-			Assert.IsInstanceOf<IdentifierExpression>(dir.Expression);
-		}*/
+			ParseUtilCSharp.AssertExpression(
+				"a(arg: ref v)",
+				new InvocationExpression {
+					Target = new IdentifierExpression("a"),
+					Arguments = {
+						new NamedArgumentExpression {
+							Identifier = "arg",
+							Expression = new DirectionExpression {
+								FieldDirection = FieldDirection.Ref,
+								Expression = new IdentifierExpression("v")
+							}}}});
+		}
 	}
 }

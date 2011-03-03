@@ -13,13 +13,16 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 		[Test]
 		public void IndexerDeclarationTest()
 		{
-			IndexerDeclaration id = ParseUtilCSharp.ParseTypeMember<IndexerDeclaration>("int this[int a, string b] { get { } set { } }");
+			IndexerDeclaration id = ParseUtilCSharp.ParseTypeMember<IndexerDeclaration>("public int this[int a, string b] { get { } protected set { } }");
 			Assert.AreEqual(2, id.Parameters.Count());
 			Assert.IsNotNull(id.Getter, "No get region found!");
 			Assert.IsNotNull(id.Setter, "No set region found!");
+			Assert.AreEqual(Modifiers.Public, id.Modifiers);
+			Assert.AreEqual(Modifiers.None, id.Getter.Modifiers);
+			Assert.AreEqual(Modifiers.Protected, id.Setter.Modifiers);
 		}
 		
-		[Test, Ignore("type reference is not yet implemented")]
+		[Test, Ignore("explicit interface implementation not yet supported")]
 		public void IndexerImplementingInterfaceTest()
 		{
 			IndexerDeclaration id = ParseUtilCSharp.ParseTypeMember<IndexerDeclaration>("int MyInterface.this[int a, string b] { get { } set { } }");
@@ -27,21 +30,29 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.IsNotNull(id.Getter, "No get region found!");
 			Assert.IsNotNull(id.Setter, "No set region found!");
 			
-			Assert.AreEqual("MyInterface", id.PrivateImplementationType);
+			Assert.AreEqual("MyInterface", ((SimpleType)id.PrivateImplementationType).Identifier);
 		}
 		
-		[Test, Ignore]
+		[Test, Ignore("explicit interface implementation not yet supported")]
 		public void IndexerImplementingGenericInterfaceTest()
 		{
-			throw new NotImplementedException();
-			/*
-			IndexerDeclaration id = ParseUtilCSharp.ParseTypeMember<IndexerDeclaration>("int MyInterface<string>.this[int a, string b] { get { } set { } }");
-			Assert.AreEqual(2, id.Parameters.Count);
-			Assert.IsNotNull(id.GetAccessor, "No get region found!");
-			Assert.IsNotNull(id.SetAccessor, "No set region found!");
-			
-			Assert.AreEqual("MyInterface", id.InterfaceImplementations[0].InterfaceType.Type);
-			Assert.AreEqual("System.String", id.InterfaceImplementations[0].InterfaceType.GenericTypes[0].Type);*/
+			ParseUtilCSharp.AssertTypeMember(
+				"int MyInterface<string>.this[int a, string b] { get { } [Attr] set { } }",
+				new IndexerDeclaration {
+					ReturnType = new PrimitiveType("int"),
+					PrivateImplementationType = new SimpleType {
+						Identifier = "MyInterface",
+						TypeArguments = { new PrimitiveType("string") }
+					},
+					Parameters = {
+						new ParameterDeclaration(new PrimitiveType("int"), "a"),
+						new ParameterDeclaration(new PrimitiveType("string"), "b")
+					},
+					Getter = new Accessor { Body = new BlockStatement() },
+					Setter = new Accessor {
+						Attributes = { new AttributeSection(new Attribute { Type = new SimpleType("Attr") }) },
+						Body = new BlockStatement()
+					}});
 		}
 	}
 }

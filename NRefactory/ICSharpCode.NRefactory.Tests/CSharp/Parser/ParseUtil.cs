@@ -11,7 +11,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 	/// <summary>
 	/// Helper methods for parser unit tests.
 	/// </summary>
-	public class ParseUtilCSharp
+	public static class ParseUtilCSharp
 	{
 		public static T ParseGlobal<T>(string code, bool expectErrors = false) where T : AstNode
 		{
@@ -26,6 +26,14 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			return (T)node;
 		}
 		
+		public static void AssertGlobal(string code, AstNode expectedNode)
+		{
+			var node = ParseGlobal<AstNode>(code);
+			if (expectedNode.Match(node) == null) {
+				Assert.Fail("Expected '{0}' but was '{1}'", ToCSharp(expectedNode), ToCSharp(node));
+			}
+		}
+		
 		public static T ParseStatement<T>(string stmt, bool expectErrors = false) where T : AstNode
 		{
 			CSharpParser parser = new CSharpParser();
@@ -37,6 +45,14 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			Type type = typeof(T);
 			Assert.IsTrue(type.IsAssignableFrom(statement.GetType()), String.Format("Parsed statement was {0} instead of {1} ({2})", statement.GetType(), type, statement));
 			return (T)statement;
+		}
+		
+		public static void AssertStatement(string code, CSharp.Statement expectedStmt)
+		{
+			var stmt = ParseStatement<CSharp.Statement>(code);
+			if (expectedStmt.Match(stmt) == null) {
+				Assert.Fail("Expected '{0}' but was '{1}'", ToCSharp(expectedStmt), ToCSharp(stmt));
+			}
 		}
 		
 		public static T ParseExpression<T>(string expr, bool expectErrors = false) where T : AstNode
@@ -53,6 +69,14 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			return (T)parsedExpression;
 		}
 		
+		public static void AssertExpression(string code, CSharp.Expression expectedExpr)
+		{
+			var expr = ParseExpression<CSharp.Expression>(code);
+			if (expectedExpr.Match(expr) == null) {
+				Assert.Fail("Expected '{0}' but was '{1}'", ToCSharp(expectedExpr), ToCSharp(expr));
+			}
+		}
+		
 		public static T ParseTypeMember<T>(string expr, bool expectErrors = false) where T : AttributedNode
 		{
 			if (expectErrors) Assert.Ignore("errors not yet implemented");
@@ -66,6 +90,21 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			Type type = typeof(T);
 			Assert.IsTrue(type.IsAssignableFrom(m.GetType()), String.Format("Parsed member was {0} instead of {1} ({2})", m.GetType(), type, m));
 			return (T)m;
+		}
+		
+		public static void AssertTypeMember(string code, CSharp.AttributedNode expectedMember)
+		{
+			var member = ParseTypeMember<CSharp.AttributedNode>(code);
+			if (expectedMember.Match(member) == null) {
+				Assert.Fail("Expected '{0}' but was '{1}'", ToCSharp(expectedMember), ToCSharp(member));
+			}
+		}
+		
+		static string ToCSharp(AstNode node)
+		{
+			StringWriter w = new StringWriter();
+			node.AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
+			return w.ToString();
 		}
 	}
 }

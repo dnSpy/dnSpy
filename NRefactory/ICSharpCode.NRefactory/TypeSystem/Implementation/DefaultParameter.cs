@@ -53,19 +53,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			base.FreezeInternal();
 		}
 		
-		[ContractInvariantMethod]
-		void ObjectInvariant()
-		{
-			Contract.Invariant(type != null);
-			Contract.Invariant(name != null);
-		}
-		
 		public string Name {
 			get { return name; }
 			set {
 				if (value == null)
 					throw new ArgumentNullException();
-				Contract.EndContractBlock();
 				CheckBeforeMutation();
 				name = value;
 			}
@@ -76,7 +68,6 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			set {
 				if (value == null)
 					throw new ArgumentNullException();
-				Contract.EndContractBlock();
 				CheckBeforeMutation();
 				type = value;
 			}

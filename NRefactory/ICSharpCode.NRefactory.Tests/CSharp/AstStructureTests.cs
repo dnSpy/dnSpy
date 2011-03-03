@@ -27,5 +27,20 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 		}
+		
+		[Test]
+		public void AstNodesDoNotDeriveFromEachOther()
+		{
+			// Ast nodes should derive only from abstract classes; not from concrete types.
+			// For example, we want to avoid that an AST consumer doing "if (node is PropertyDeclaration)"
+			// unknowingly also handles IndexerDeclarations.
+			foreach (Type type in typeof(AstNode).Assembly.GetExportedTypes()) {
+				if (type == typeof(CSharpModifierToken)) // CSharpModifierToken is the exception (though I'm not too happy about that)
+					continue;
+				if (type.IsSubclassOf(typeof(AstNode))) {
+					Assert.IsTrue(type.BaseType.IsAbstract, type.FullName);
+				}
+			}
+		}
 	}
 }

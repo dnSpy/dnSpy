@@ -22,7 +22,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		readonly IOutputFormatter formatter;
 		readonly CSharpFormattingPolicy policy;
 		
-		AstNode currentContainerNode;
+		readonly Stack<AstNode> containerStack = new Stack<AstNode>();
 		readonly Stack<AstNode> positionStack = new Stack<AstNode>();
 		
 		/// <summary>
@@ -65,21 +65,23 @@ namespace ICSharpCode.NRefactory.CSharp
 		#region StartNode/EndNode
 		void StartNode(AstNode node)
 		{
-			Debug.Assert(currentContainerNode == null || node.Parent == currentContainerNode);
+			// Ensure that nodes are visited in the proper nested order.
+			// Jumps to different subtrees are allowed only for the child of a placeholder node.
+			Debug.Assert(containerStack.Count == 0 || node.Parent == containerStack.Peek() || containerStack.Peek().NodeType == NodeType.Placeholder);
 			if (positionStack.Count > 0)
 				WriteSpecialsUpToNode(node);
-			currentContainerNode = node;
+			containerStack.Push(node);
 			positionStack.Push(node.FirstChild);
 			formatter.StartNode(node);
 		}
 		
 		object EndNode(AstNode node)
 		{
-			Debug.Assert(node == currentContainerNode);
+			Debug.Assert(node == containerStack.Peek());
 			AstNode pos = positionStack.Pop();
 			Debug.Assert(pos == null || pos.Parent == node);
 			WriteSpecials(pos, null);
-			currentContainerNode = node.Parent;
+			containerStack.Pop();
 			formatter.EndNode(node);
 			return null;
 		}
@@ -146,13 +148,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// Writes a comma.
 		/// </summary>
 		/// <param name="nextNode">The next node after the comma.</param>
-		void Comma(AstNode nextNode)
+		/// <param name="noSpacesAfterComma">When set prevents printing a space after comma.</param>
+		void Comma(AstNode nextNode, bool noSpaceAfterComma = false)
 		{
 			WriteSpecialsUpToRole(AstNode.Roles.Comma, nextNode);
 			Space(policy.SpacesBeforeComma);
 			formatter.WriteToken(",");
 			lastWritten = LastWritten.Other;
-			Space(policy.SpacesAfterComma);
+			Space(!noSpaceAfterComma && policy.SpacesAfterComma);
 		}
 		
 		void WriteCommaSeparatedList(IEnumerable<AstNode> list)
@@ -179,12 +182,34 @@ namespace ICSharpCode.NRefactory.CSharp
 			RPar();
 		}
 		
-		void WriteCommaSeparatedListInBrackets(IEnumerable<AstNode> list)
+		#if DOTNET35
+		void WriteCommaSeparatedList(IEnumerable<VariableInitializer> list)
+		{
+			WriteCommaSeparatedList(list.SafeCast<VariableInitializer, AstNode>());
+		}
+		
+		void WriteCommaSeparatedList(IEnumerable<AstType> list)
+		{
+			WriteCommaSeparatedList(list.SafeCast<AstType, AstNode>());
+		}
+		
+		void WriteCommaSeparatedListInParenthesis(IEnumerable<Expression> list, bool spaceWithin)
+		{
+			WriteCommaSeparatedListInParenthesis(list.SafeCast<Expression, AstNode>(), spaceWithin);
+		}
+		
+		void WriteCommaSeparatedListInParenthesis(IEnumerable<ParameterDeclaration> list, bool spaceWithin)
+		{
+			WriteCommaSeparatedListInParenthesis(list.SafeCast<ParameterDeclaration, AstNode>(), spaceWithin);
+		}
+		#endif
+		
+		void WriteCommaSeparatedListInBrackets(IEnumerable<Expression> list)
 		{
 			WriteToken("[", AstNode.Roles.LBracket);
 			if (list.Any()) {
 				Space(policy.SpacesWithinBrackets);
-				WriteCommaSeparatedList(list);
+				WriteCommaSeparatedList(list.SafeCast<Expression, AstNode>());
 				Space(policy.SpacesWithinBrackets);
 			}
 			WriteToken("]", AstNode.Roles.RBracket);
@@ -207,7 +232,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		void WriteIdentifier(string identifier, Role<Identifier> identifierRole = null)
 		{
 			WriteSpecialsUpToRole(identifierRole ?? AstNode.Roles.Identifier);
-			if (IsKeyword(identifier, currentContainerNode)) {
+			if (IsKeyword(identifier, containerStack.Peek())) {
 				if (lastWritten == LastWritten.KeywordOrIdentifier)
 					Space(); // this space is not strictly required, so we call Space()
 				formatter.WriteToken("@");
@@ -265,7 +290,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		void Semicolon()
 		{
-			if (currentContainerNode.Role != ForStatement.InitializerRole && currentContainerNode.Role != ForStatement.IteratorRole && currentContainerNode.Role != UsingStatement.ResourceAcquisitionRole) {
+			Role role = containerStack.Peek().Role; // get the role of the current node
+			if (!(role == ForStatement.InitializerRole || role == ForStatement.IteratorRole || role == UsingStatement.ResourceAcquisitionRole)) {
 				WriteToken(";", AstNode.Roles.Semicolon);
 				NewLine();
 			}
@@ -351,7 +377,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			if (typeParameters.Any()) {
 				WriteToken("<", AstNode.Roles.LChevron);
-				WriteCommaSeparatedList(typeParameters);
+				WriteCommaSeparatedList(typeParameters.SafeCast<TypeParameterDeclaration, AstNode>());
 				WriteToken(">", AstNode.Roles.RChevron);
 			}
 		}
@@ -758,52 +784,75 @@ namespace ICSharpCode.NRefactory.CSharp
 		public object VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, object data)
 		{
 			StartNode(primitiveExpression);
-			formatter.WriteToken(ToCSharpString(primitiveExpression));
-			lastWritten = LastWritten.Other;
+			WritePrimitiveValue(primitiveExpression.Value);
 			return EndNode(primitiveExpression);
 		}
 		
-		internal static string ToCSharpString(PrimitiveExpression primitiveExpression)
+		void WritePrimitiveValue(object val)
 		{
-			if (primitiveExpression.Value == null) {
-				return "null";
+			if (val == null) {
+				// usually NullReferenceExpression should be used for this, but we'll handle it anyways
+				WriteKeyword("null");
+				return;
 			}
-			
-			object val = primitiveExpression.Value;
 			
 			if (val is bool) {
 				if ((bool)val) {
-					return "true";
+					WriteKeyword("true");
 				} else {
-					return "false";
+					WriteKeyword("false");
 				}
+				return;
 			}
 			
 			if (val is string) {
-				return "\"" + ConvertString(val.ToString()) + "\"";
-			}
-			
-			if (val is char) {
-				return "'" + ConvertCharLiteral((char)val) + "'";
-			}
-			
-			if (val is decimal) {
-				return ((decimal)val).ToString(NumberFormatInfo.InvariantInfo) + "m";
-			}
-			
-			if (val is float) {
-				return ((float)val).ToString(NumberFormatInfo.InvariantInfo) + "f";
-			}
-			
-			if (val is double) {
-				string text = ((double)val).ToString(NumberFormatInfo.InvariantInfo);
-				if (text.IndexOf('.') < 0 && text.IndexOf('E') < 0)
-					return text + ".0";
-				else
-					return text;
-			}
-			
-			if (val is IFormattable) {
+				formatter.WriteToken("\"" + ConvertString(val.ToString()) + "\"");
+				lastWritten = LastWritten.Other;
+			} else if (val is char) {
+				formatter.WriteToken("'" + ConvertCharLiteral((char)val) + "'");
+				lastWritten = LastWritten.Other;
+			} else if (val is decimal) {
+				formatter.WriteToken(((decimal)val).ToString(NumberFormatInfo.InvariantInfo) + "m");
+				lastWritten = LastWritten.Other;
+			} else if (val is float) {
+				float f = (float)val;
+				if (float.IsInfinity(f) || float.IsNaN(f)) {
+					// Strictly speaking, these aren't PrimitiveExpressions;
+					// but we still support writing these to make life easier for code generators.
+					WriteKeyword("float");
+					WriteToken(".", AstNode.Roles.Dot);
+					if (float.IsPositiveInfinity(f))
+						WriteIdentifier("PositiveInfinity");
+					else if (float.IsNegativeInfinity(f))
+						WriteIdentifier("NegativeInfinity");
+					else
+						WriteIdentifier("NaN");
+					return;
+				}
+				formatter.WriteToken(f.ToString("R", NumberFormatInfo.InvariantInfo) + "f");
+				lastWritten = LastWritten.Other;
+			} else if (val is double) {
+				double f = (double)val;
+				if (double.IsInfinity(f) || double.IsNaN(f)) {
+					// Strictly speaking, these aren't PrimitiveExpressions;
+					// but we still support writing these to make life easier for code generators.
+					WriteKeyword("double");
+					WriteToken(".", AstNode.Roles.Dot);
+					if (double.IsPositiveInfinity(f))
+						WriteIdentifier("PositiveInfinity");
+					else if (double.IsNegativeInfinity(f))
+						WriteIdentifier("NegativeInfinity");
+					else
+						WriteIdentifier("NaN");
+					return;
+				}
+				string number = f.ToString("R", NumberFormatInfo.InvariantInfo);
+				if (number.IndexOf('.') < 0 && number.IndexOf('E') < 0)
+					number += ".0";
+				formatter.WriteToken(number);
+				// needs space if identifier follows number; this avoids mistaking the following identifier as type suffix
+				lastWritten = LastWritten.KeywordOrIdentifier;
+			} else if (val is IFormattable) {
 				StringBuilder b = new StringBuilder();
 //				if (primitiveExpression.LiteralFormat == LiteralFormat.HexadecimalNumber) {
 //					b.Append("0x");
@@ -817,12 +866,14 @@ namespace ICSharpCode.NRefactory.CSharp
 				if (val is long || val is ulong) {
 					b.Append("L");
 				}
-				return b.ToString();
+				formatter.WriteToken(b.ToString());
+				// needs space if identifier follows number; this avoids mistaking the following identifier as type suffix
+				lastWritten = LastWritten.KeywordOrIdentifier;
 			} else {
-				return val.ToString();
+				formatter.WriteToken(val.ToString());
+				lastWritten = LastWritten.Other;
 			}
 		}
-		
 		
 		static string ConvertCharLiteral(char ch)
 		{
@@ -1043,7 +1094,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(queryOrderClause);
 			WriteKeyword("orderby");
 			Space();
-			WriteCommaSeparatedList(queryOrderClause.Orderings);
+			WriteCommaSeparatedList(queryOrderClause.Orderings.SafeCast<QueryOrdering, AstNode>());
 			return EndNode(queryOrderClause);
 		}
 		
@@ -1093,7 +1144,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(attribute);
 			attribute.Type.AcceptVisitor(this, data);
 			Space(policy.BeforeMethodCallParentheses);
-			WriteCommaSeparatedListInParenthesis(attribute.Arguments, policy.WithinMethodCallParentheses);
+			if (attribute.Arguments.Count != 0 || !attribute.GetChildByRole(AstNode.Roles.LPar).IsNull)
+				WriteCommaSeparatedListInParenthesis(attribute.Arguments, policy.WithinMethodCallParentheses);
 			return EndNode(attribute);
 		}
 		
@@ -1106,9 +1158,12 @@ namespace ICSharpCode.NRefactory.CSharp
 				WriteToken(":", AttributeSection.Roles.Colon);
 				Space();
 			}
-			WriteCommaSeparatedList(attributeSection.Attributes);
+			WriteCommaSeparatedList(attributeSection.Attributes.SafeCast<Attribute, AstNode>());
 			WriteToken("]", AstNode.Roles.RBracket);
-			NewLine();
+			if (attributeSection.Parent is ParameterDeclaration || attributeSection.Parent is TypeParameterDeclaration)
+				Space();
+			else
+				NewLine();
 			return EndNode(attributeSection);
 		}
 		
@@ -1186,7 +1241,7 @@ namespace ICSharpCode.NRefactory.CSharp
 					if (first) {
 						first = false;
 					} else {
-						Comma(member);
+						Comma(member, noSpaceAfterComma: true);
 						NewLine();
 					}
 					member.AcceptVisitor(this, data);
@@ -1355,7 +1410,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			LPar();
 			Space(policy.WithinForParentheses);
 			
-			WriteCommaSeparatedList(forStatement.Initializers);
+			WriteCommaSeparatedList(forStatement.Initializers.SafeCast<Statement, AstNode>());
 			WriteToken(";", AstNode.Roles.Semicolon);
 			Space(policy.SpacesAfterSemicolon);
 			
@@ -1363,7 +1418,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteToken(";", AstNode.Roles.Semicolon);
 			Space(policy.SpacesAfterSemicolon);
 			
-			WriteCommaSeparatedList(forStatement.Iterators);
+			WriteCommaSeparatedList(forStatement.Iterators.SafeCast<Statement, AstNode>());
 			
 			Space(policy.WithinForParentheses);
 			RPar();
@@ -1899,7 +1954,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(memberType);
 			memberType.Target.AcceptVisitor(this, data);
-			WriteToken(".", MemberType.Roles.Dot);
+			if (memberType.IsDoubleColon)
+				WriteToken("::", MemberType.Roles.Dot);
+			else
+				WriteToken(".", MemberType.Roles.Dot);
 			WriteIdentifier(memberType.MemberName);
 			WriteTypeArguments(memberType.TypeArguments);
 			return EndNode(memberType);
@@ -1935,6 +1993,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(primitiveType);
 			WriteKeyword(primitiveType.Keyword);
+			if (primitiveType.Keyword == "new") {
+				// new() constraint
+				LPar();
+				RPar();
+			}
 			return EndNode(primitiveType);
 		}
 		
@@ -1953,6 +2016,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public object VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, object data)
 		{
 			StartNode(typeParameterDeclaration);
+			WriteAttributes(typeParameterDeclaration.Attributes);
 			switch (typeParameterDeclaration.Variance) {
 				case VarianceModifier.Invariant:
 					break;

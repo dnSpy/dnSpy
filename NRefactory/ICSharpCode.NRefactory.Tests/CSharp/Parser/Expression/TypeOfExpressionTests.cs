@@ -6,86 +6,113 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 {
-	[TestFixture, Ignore]
+	[TestFixture]
 	public class TypeOfExpressionTests
 	{
 		[Test]
 		public void SimpleTypeOfExpressionTest()
 		{
-			//TypeOfExpression toe = ParseUtilCSharp.ParseExpression<TypeOfExpression>("typeof(MyNamespace.N1.MyType)");
-			//Assert.AreEqual("MyNamespace.N1.MyType", toe.TypeReference.Type);
-			throw new NotImplementedException();
+			ParseUtilCSharp.AssertExpression(
+				"typeof(MyNamespace.N1.MyType)",
+				new TypeOfExpression {
+					Type = new MemberType {
+						Target = new MemberType {
+							Target = new SimpleType("MyNamespace"),
+							MemberName = "N1"
+						},
+						MemberName = "MyType"
+					}});
 		}
 		
-		/* TODO
-		[Test]
+		[Test, Ignore("Aliases not yet implemented")]
 		public void GlobalTypeOfExpressionTest()
 		{
-			TypeOfExpression toe = ParseUtilCSharp.ParseExpression<TypeOfExpression>("typeof(global::System.Console)");
-			Assert.AreEqual("System.Console", toe.TypeReference.Type);
+			ParseUtilCSharp.AssertExpression(
+				"typeof(global::System.Console)",
+				new TypeOfExpression {
+					Type = new MemberType {
+						Target = new MemberType {
+							Target = new SimpleType("global"),
+							IsDoubleColon = true,
+							MemberName = "System"
+						},
+						MemberName = "Console"
+					}});
 		}
 		
 		[Test]
 		public void PrimitiveTypeOfExpressionTest()
 		{
 			TypeOfExpression toe = ParseUtilCSharp.ParseExpression<TypeOfExpression>("typeof(int)");
-			Assert.AreEqual("System.Int32", toe.TypeReference.Type);
+			Assert.AreEqual("int", ((PrimitiveType)toe.Type).Keyword);
 		}
 		
 		[Test]
 		public void VoidTypeOfExpressionTest()
 		{
 			TypeOfExpression toe = ParseUtilCSharp.ParseExpression<TypeOfExpression>("typeof(void)");
-			Assert.AreEqual("System.Void", toe.TypeReference.Type);
+			Assert.AreEqual("void", ((PrimitiveType)toe.Type).Keyword);
 		}
 		
 		[Test]
 		public void ArrayTypeOfExpressionTest()
 		{
-			TypeOfExpression toe = ParseUtilCSharp.ParseExpression<TypeOfExpression>("typeof(MyType[])");
-			Assert.AreEqual("MyType", toe.TypeReference.Type);
-			Assert.AreEqual(new int[] {0}, toe.TypeReference.RankSpecifier);
+			ParseUtilCSharp.AssertExpression(
+				"typeof(MyType[])",
+				new TypeOfExpression {
+					Type = new SimpleType("MyType").MakeArrayType()
+				});
 		}
 		
 		[Test]
 		public void GenericTypeOfExpressionTest()
 		{
-			TypeOfExpression toe = ParseUtilCSharp.ParseExpression<TypeOfExpression>("typeof(MyNamespace.N1.MyType<string>)");
-			Assert.AreEqual("MyNamespace.N1.MyType", toe.TypeReference.Type);
-			Assert.AreEqual("System.String", toe.TypeReference.GenericTypes[0].Type);
+			ParseUtilCSharp.AssertExpression(
+				"typeof(MyNamespace.N1.MyType<string>)",
+				new TypeOfExpression {
+					Type = new MemberType {
+						Target = new MemberType {
+							Target = new SimpleType("MyNamespace"),
+							MemberName = "N1"
+						},
+						MemberName = "MyType",
+						TypeArguments = { new PrimitiveType("string") }
+					}});
 		}
 		
 		[Test]
 		public void NestedGenericTypeOfExpressionTest()
 		{
-			TypeOfExpression toe = ParseUtilCSharp.ParseExpression<TypeOfExpression>("typeof(MyType<string>.InnerClass<int>.InnerInnerClass)");
-			InnerClassTypeReference ic = (InnerClassTypeReference)toe.TypeReference;
-			Assert.AreEqual("InnerInnerClass", ic.Type);
-			Assert.AreEqual(0, ic.GenericTypes.Count);
-			ic = (InnerClassTypeReference)ic.BaseType;
-			Assert.AreEqual("InnerClass", ic.Type);
-			Assert.AreEqual(1, ic.GenericTypes.Count);
-			Assert.AreEqual("System.Int32", ic.GenericTypes[0].Type);
-			Assert.AreEqual("MyType", ic.BaseType.Type);
-			Assert.AreEqual(1, ic.BaseType.GenericTypes.Count);
-			Assert.AreEqual("System.String", ic.BaseType.GenericTypes[0].Type);
+			ParseUtilCSharp.AssertExpression(
+				"typeof(MyType<string>.InnerClass<int>.InnerInnerClass)",
+				new TypeOfExpression {
+					Type = new MemberType {
+						Target = new MemberType {
+							Target = new SimpleType("MyType") { TypeArguments = { new PrimitiveType("string") } },
+							MemberName = "InnerClass",
+							TypeArguments = { new PrimitiveType("int") }
+						},
+						MemberName = "InnerInnerClass"
+					}});
 		}
 		
 		[Test]
 		public void NullableTypeOfExpressionTest()
 		{
-			TypeOfExpression toe = ParseUtilCSharp.ParseExpression<TypeOfExpression>("typeof(MyStruct?)");
-			Assert.AreEqual("System.Nullable", toe.TypeReference.Type);
-			Assert.AreEqual("MyStruct", toe.TypeReference.GenericTypes[0].Type);
+			ParseUtilCSharp.AssertExpression(
+				"typeof(MyStruct?)",
+				new TypeOfExpression {
+					Type = new ComposedType {
+						BaseType = new SimpleType("MyType"),
+						HasNullableSpecifier = true
+					}});
 		}
 		
-		[Test]
+		[Test, Ignore("How do we represent unbound types in the AST?")]
 		public void UnboundTypeOfExpressionTest()
 		{
 			TypeOfExpression toe = ParseUtilCSharp.ParseExpression<TypeOfExpression>("typeof(MyType<,>)");
-			Assert.AreEqual("MyType", toe.TypeReference.Type);
-			Assert.IsTrue(toe.TypeReference.GenericTypes[0].IsNull);
-			Assert.IsTrue(toe.TypeReference.GenericTypes[1].IsNull);
-		}*/
+			throw new NotImplementedException("How do we represent unbound types in the AST?");
+		}
 	}
 }

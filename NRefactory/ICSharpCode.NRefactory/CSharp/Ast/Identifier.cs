@@ -43,6 +43,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			{
 				return default (S);
 			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
+			}
 		}
 		
 		public override NodeType NodeType {
@@ -95,7 +100,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			Identifier o = other as Identifier;
-			return o != null && MatchString(this.Name, o.Name);
+			return o != null && !o.IsNull && MatchString(this.Name, o.Name);
 		}
 	}
 }

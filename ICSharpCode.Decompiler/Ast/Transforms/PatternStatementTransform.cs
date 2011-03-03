@@ -26,14 +26,14 @@ namespace Decompiler.Transforms
 		/// $type $variable = $initializer;
 		/// </summary>
 		static readonly AstNode variableDeclPattern = new VariableDeclarationStatement {
-			Type = new AnyNode("type").ToType(),
+			Type = new AnyNode("type"),
 			Variables = {
 				new NamedNode(
 					"variable",
 					new VariableInitializer {
-						Initializer = new AnyNode("initializer").ToExpression()
+						Initializer = new AnyNode("initializer")
 					}
-				).ToVariable()
+				)
 			}
 		};
 		
@@ -41,7 +41,7 @@ namespace Decompiler.Transforms
 		/// Variable declaration without initializer.
 		/// </summary>
 		static readonly AstNode simpleVariableDefinition = new VariableDeclarationStatement {
-			Type = new AnyNode().ToType(),
+			Type = new AnyNode(),
 			Variables = {
 				new VariableInitializer() // any name but no initializer
 			}
@@ -49,7 +49,7 @@ namespace Decompiler.Transforms
 		
 		#region using
 		static readonly AstNode usingTryCatchPattern = new TryCatchStatement {
-			TryBlock = new AnyNode("body").ToBlock(),
+			TryBlock = new AnyNode("body"),
 			FinallyBlock = new BlockStatement {
 				new Choice {
 					{ "valueType",
@@ -58,7 +58,7 @@ namespace Decompiler.Transforms
 					{ "referenceType",
 						new IfElseStatement {
 							Condition = new BinaryOperatorExpression(
-								new NamedNode("ident", new IdentifierExpression()).ToExpression(),
+								new NamedNode("ident", new IdentifierExpression()),
 								BinaryOperatorType.InEquality,
 								new NullReferenceExpression()
 							),
@@ -102,14 +102,14 @@ namespace Decompiler.Transforms
 		#region foreach
 		UsingStatement foreachPattern = new UsingStatement {
 			ResourceAcquisition = new VariableDeclarationStatement {
-				Type = new AnyNode("enumeratorType").ToType(),
+				Type = new AnyNode("enumeratorType"),
 				Variables = {
 					new NamedNode(
 						"enumeratorVariable",
 						new VariableInitializer {
 							Initializer = new AnyNode("collection").ToExpression().Invoke("GetEnumerator")
 						}
-					).ToVariable()
+					)
 				}
 			},
 			EmbeddedStatement = new Choice {
@@ -123,14 +123,14 @@ namespace Decompiler.Transforms
 							Condition = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Invoke("MoveNext"),
 							EmbeddedStatement = new BlockStatement {
 								new VariableDeclarationStatement {
-									Type = new AnyNode("itemType").ToType(),
+									Type = new AnyNode("itemType"),
 									Variables = {
 										new NamedNode(
 											"itemVariable",
 											new VariableInitializer {
 												Initializer = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current")
 											}
-										).ToVariable()
+										)
 									}
 								},
 								new Repeat(new AnyNode("statement")).ToStatement()
@@ -141,16 +141,16 @@ namespace Decompiler.Transforms
 				{ "itemVariableOutsideLoop",
 					new BlockStatement {
 						new VariableDeclarationStatement {
-							Type = new AnyNode("itemType").ToType(),
+							Type = new AnyNode("itemType"),
 							Variables = {
-								new NamedNode("itemVariable", new VariableInitializer()).ToVariable()
+								new NamedNode("itemVariable", new VariableInitializer())
 							}
 						},
 						new WhileStatement {
 							Condition = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Invoke("MoveNext"),
 							EmbeddedStatement = new BlockStatement {
 								new AssignmentExpression {
-									Left = new IdentifierExpressionBackreference("itemVariable").ToExpression(),
+									Left = new IdentifierExpressionBackreference("itemVariable"),
 									Operator = AssignmentOperatorType.Assign,
 									Right = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current")
 								},
@@ -191,20 +191,22 @@ namespace Decompiler.Transforms
 		#region for
 		WhileStatement forPattern = new WhileStatement {
 			Condition = new BinaryOperatorExpression {
-				Left = new NamedNode("ident", new IdentifierExpression()).ToExpression(),
+				Left = new NamedNode("ident", new IdentifierExpression()),
 				Operator = BinaryOperatorType.Any,
-				Right = new AnyNode("endExpr").ToExpression()
+				Right = new AnyNode("endExpr")
 			},
 			EmbeddedStatement = new BlockStatement {
-				new Repeat(new AnyNode("statement")).ToStatement(),
-				new NamedNode(
-					"increment",
-					new ExpressionStatement(
-						new AssignmentExpression {
-							Left = new Backreference("ident").ToExpression(),
-							Operator = AssignmentOperatorType.Any,
-							Right = new AnyNode().ToExpression()
-						})).ToStatement()
+				Statements = {
+					new Repeat(new AnyNode("statement")),
+					new NamedNode(
+						"increment",
+						new ExpressionStatement(
+							new AssignmentExpression {
+								Left = new Backreference("ident"),
+								Operator = AssignmentOperatorType.Any,
+								Right = new AnyNode()
+							}))
+				}
 			}
 		};
 		

@@ -10,7 +10,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents a class, enum, interface, struct, delegate or VB module.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(ITypeDefinitionContract))]
+	#endif
 	public interface ITypeDefinition : IType, IEntity
 	{
 		ClassType ClassType { get; }
@@ -44,6 +46,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IEnumerable<IMember> Members { get; }
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(ITypeDefinition))]
 	abstract class ITypeDefinitionContract : ITypeContract, ITypeDefinition
 	{
@@ -181,4 +184,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		#endregion
 	}
+	#endif
 }

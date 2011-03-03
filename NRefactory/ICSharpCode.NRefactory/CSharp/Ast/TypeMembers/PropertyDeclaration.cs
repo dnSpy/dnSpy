@@ -1,6 +1,6 @@
-// 
+﻿// 
 // PropertyDeclaration.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -52,6 +52,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitPropertyDeclaration (this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			PropertyDeclaration o = other as PropertyDeclaration;
+			return o != null && this.MatchMember(o, match)
+				&& this.Getter.DoMatch(o.Getter, match) && this.Setter.DoMatch(o.Setter, match);
 		}
 	}
 }

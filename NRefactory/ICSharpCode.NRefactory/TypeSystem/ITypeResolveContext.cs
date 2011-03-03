@@ -12,7 +12,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Context representing the set of assemblies in which a type is being searched.
 	/// </summary>
+	#if WITH_CONTRACTS
 	[ContractClass(typeof(ITypeResolveContextContract))]
+	#endif
 	public interface ITypeResolveContext
 	{
 		/// <summary>
@@ -91,6 +93,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		CacheManager CacheManager { get; }
 	}
 	
+	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(ITypeResolveContext))]
 	abstract class ITypeResolveContextContract : ITypeResolveContext
 	{
@@ -140,4 +143,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return null;
 		}
 	}
+	#endif
 }

@@ -66,7 +66,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.AreEqual(new AstLocation(4, code.IndexOf("}\n\t}") + 1 - line4Pos + 1), pd.Setter.Body.EndLocation);
 		}
 		
-		[Test, Ignore("type references not yet implemented")]
+		[Test, Ignore("explicit interface implementation not yet implemented")]
 		public void PropertyImplementingInterfaceTest()
 		{
 			PropertyDeclaration pd = ParseUtilCSharp.ParseTypeMember<PropertyDeclaration>("int MyInterface.MyProperty { get {} } ");
@@ -74,10 +74,10 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.IsFalse(pd.Getter.IsNull);
 			Assert.IsTrue(pd.Setter.IsNull);
 			
-			Assert.AreEqual("MyInterface", pd.PrivateImplementationType);
+			Assert.AreEqual("MyInterface", ((SimpleType)pd.PrivateImplementationType).Identifier);
 		}
 		
-		[Test, Ignore("type references not yet implemented")]
+		[Test, Ignore("explicit interface implementation not yet implemented")]
 		public void PropertyImplementingGenericInterfaceTest()
 		{
 			PropertyDeclaration pd = ParseUtilCSharp.ParseTypeMember<PropertyDeclaration>("int MyInterface<string>.MyProperty { get {} } ");
@@ -85,9 +85,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.IsFalse(pd.Getter.IsNull);
 			Assert.IsTrue(pd.Setter.IsNull);
 			
-			throw new NotImplementedException();
-			//Assert.AreEqual("MyInterface", pd.InterfaceImplementations[0].InterfaceType.Type);
-			//Assert.AreEqual("System.String", pd.InterfaceImplementations[0].InterfaceType.GenericTypes[0].Type);
+			Assert.IsNotNull(new SimpleType { Identifier = "MyInterface", TypeArguments = { new PrimitiveType("string") } }.Match(pd.PrivateImplementationType));
 		}
 	}
 }

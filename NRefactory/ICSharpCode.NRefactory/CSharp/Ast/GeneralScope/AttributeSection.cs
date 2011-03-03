@@ -64,6 +64,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			return o != null && this.AttributeTarget == o.AttributeTarget && this.Attributes.DoMatch(o.Attributes, match);
 		}
 		
+		public AttributeSection()
+		{
+		}
+		
+		public AttributeSection(Attribute attr)
+		{
+			this.Attributes.Add(attr);
+		}
+		
 		public static string GetAttributeTargetName(AttributeTarget attributeTarget)
 		{
 			switch (attributeTarget) {

@@ -26,13 +26,22 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		internal readonly CancellationToken cancellationToken;
 		
 		#region Constructor
-		public CSharpResolver(ITypeResolveContext context, CancellationToken cancellationToken = default(CancellationToken))
+		public CSharpResolver(ITypeResolveContext context)
+		{
+			if (context == null)
+				throw new ArgumentNullException("context");
+			this.context = context;
+		}
+		
+		#if !DOTNET35
+		public CSharpResolver(ITypeResolveContext context, CancellationToken cancellationToken)
 		{
 			if (context == null)
 				throw new ArgumentNullException("context");
 			this.context = context;
 			this.cancellationToken = cancellationToken;
 		}
+		#endif
 		#endregion
 		
 		#region Properties
@@ -1513,12 +1522,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				}
 			}
 			
-			ResolveResult rr = LookupSimpleNameOrTypeName(
+			return LookupSimpleNameOrTypeName(
 				identifier, typeArguments,
 				isInvocationTarget ? SimpleNameLookupMode.InvocationTarget : SimpleNameLookupMode.Expression);
-			if (rr == ErrorResult && typeArguments.Count == 0)
-				rr = new UnknownIdentifierResolveResult(identifier);
-			return rr;
 		}
 		
 		public ResolveResult LookupSimpleNamespaceOrTypeName(string identifier, IList<IType> typeArguments, bool isUsingDeclaration = false)
@@ -1633,7 +1639,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				}
 				// if we didn't find anything: repeat lookup with parent namespace
 			}
-			return ErrorResult;
+			if (typeArguments.Count == 0)
+				return new UnknownIdentifierResolveResult(identifier);
+			else
+				return ErrorResult;
 		}
 		
 		/// <summary>
@@ -1822,7 +1831,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				} else {
 					// No candidate found at all (not even an inapplicable one).
 					// This can happen with empty method groups (as sometimes used with extension methods)
-					return new UnknownMethodResolveResult(mgrr.TargetType, mgrr.MethodName, mgrr.TypeArguments, CreateParameters(arguments, argumentNames));
+					return new UnknownMethodResolveResult(
+						mgrr.TargetType, mgrr.MethodName, mgrr.TypeArguments, CreateParameters(arguments, argumentNames));
 				}
 			}
 			UnknownMemberResolveResult umrr = target as UnknownMemberResolveResult;
@@ -1840,9 +1850,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return ErrorResult;
 		}
 		
-		static List<DefaultParameter> CreateParameters(ResolveResult[] arguments, string[] argumentNames)
+		static List<IParameter> CreateParameters(ResolveResult[] arguments, string[] argumentNames)
 		{
-			List<DefaultParameter> list = new List<DefaultParameter>();
+			List<IParameter> list = new List<IParameter>();
 			if (argumentNames == null) {
 				argumentNames = new string[arguments.Length];
 			} else {

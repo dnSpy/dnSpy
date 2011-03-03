@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 {
-	[TestFixture, Ignore]
+	[TestFixture]
 	public class TryCatchStatementTests
 	{
 		[Test]
@@ -20,28 +20,54 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 			Assert.AreEqual(string.Empty, tryCatchStatement.CatchClauses.Single().VariableName);
 		}
 		
-		/* TODO port tests
 		[Test]
 		public void SimpleTryCatchStatementTest2()
 		{
-			TryCatchStatement tryCatchStatement = ParseUtilCSharp.ParseStatement<TryCatchStatement>("try { } catch (Exception e) { } ");
-			Assert.IsTrue(tryCatchStatement.FinallyBlock.IsNull);
-			Assert.AreEqual(1, tryCatchStatement.CatchClauses.Count);
-			Assert.AreEqual("Exception", tryCatchStatement.CatchClauses[0].TypeReference.Type);
-			Assert.AreEqual("e", tryCatchStatement.CatchClauses[0].VariableName);
+			ParseUtilCSharp.AssertStatement(
+				"try { } catch (Exception e) { } ",
+				new TryCatchStatement {
+					TryBlock = new BlockStatement(),
+					CatchClauses = {
+						new CatchClause {
+							Type = new SimpleType("Exception"),
+							VariableName = "e",
+							Body = new BlockStatement()
+						}
+					}});
 		}
 		
 		[Test]
 		public void SimpleTryCatchFinallyStatementTest()
 		{
-			TryCatchStatement tryCatchStatement = ParseUtilCSharp.ParseStatement<TryCatchStatement>("try { } catch (Exception) { } catch { } finally { } ");
-			Assert.IsFalse(tryCatchStatement.FinallyBlock.IsNull);
-			Assert.AreEqual(2, tryCatchStatement.CatchClauses.Count);
-			Assert.AreEqual("Exception", tryCatchStatement.CatchClauses[0].TypeReference.Type);
-			Assert.IsEmpty(tryCatchStatement.CatchClauses[0].VariableName);
-			Assert.IsTrue(tryCatchStatement.CatchClauses[1].TypeReference.IsNull);
-			Assert.IsEmpty(tryCatchStatement.CatchClauses[1].VariableName);
+			ParseUtilCSharp.AssertStatement(
+				"try { } catch (Exception) { } catch { } finally { } ",
+				new TryCatchStatement {
+					TryBlock = new BlockStatement(),
+					CatchClauses = {
+						new CatchClause {
+							Type = new SimpleType("Exception"),
+							Body = new BlockStatement()
+						},
+						new CatchClause { Body = new BlockStatement() }
+					},
+					FinallyBlock = new BlockStatement()
+				});
 		}
-		*/
+		
+		[Test]
+		public void TestEmptyFinallyDoesNotMatchNullFinally()
+		{
+			TryCatchStatement c1 = new TryCatchStatement {
+				TryBlock = new BlockStatement(),
+				CatchClauses = { new CatchClause { Body = new BlockStatement() } }
+			};
+			TryCatchStatement c2 = new TryCatchStatement {
+				TryBlock = new BlockStatement(),
+				CatchClauses = { new CatchClause { Body = new BlockStatement() } },
+				FinallyBlock = new BlockStatement()
+			};
+			Assert.IsNull(c1.Match(c2));
+			Assert.IsNull(c2.Match(c1)); // and vice versa
+		}
 	}
 }

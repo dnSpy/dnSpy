@@ -15,8 +15,8 @@ namespace Decompiler
 	{
 		static readonly ExpressionStatement assignmentPattern = new ExpressionStatement(
 			new AssignmentExpression(
-				new NamedNode("ident", new IdentifierExpression()).ToExpression(),
-				new AnyNode("init").ToExpression()
+				new NamedNode("ident", new IdentifierExpression()),
+				new AnyNode("init")
 			));
 		
 		/// <summary>
