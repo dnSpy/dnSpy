@@ -8,6 +8,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.AvalonEdit;
 using ILSpy.Debugger.Services;
+using Mono.Cecil;
 
 namespace ILSpy.Debugger.Bookmarks
 {
@@ -72,7 +73,7 @@ namespace ILSpy.Debugger.Bookmarks
 			set { tooltip = value; }
 		}
 		
-		public BreakpointBookmark(string typeName, AstLocation location, BreakpointAction action, DecompiledLanguages language) : base(typeName, location)
+		public BreakpointBookmark(TypeDefinition type, AstLocation location, BreakpointAction action, DecompiledLanguages language) : base(type, location)
 		{
 			this.action = action;
 			this.tooltip = language.ToString();

@@ -45,8 +45,11 @@ namespace ILSpy.Debugger.AvalonEdit
 		{
 			if (e.Bookmark is MarkerBookmark) {
 				var bm = (MarkerBookmark)e.Bookmark;
-				DocumentLine line = codeEditor.Document.GetLineByNumber(bm.LineNumber);
-				bm.Marker = bm.CreateMarker(this, line.Offset, line.Length);
+				if (DebuggedData.CurrentType != null && DebuggedData.CurrentType.FullName.Equals(bm.Type.FullName, StringComparison.OrdinalIgnoreCase)) {
+					// add bookmark for the current type
+					DocumentLine line = codeEditor.Document.GetLineByNumber(bm.LineNumber);
+					bm.Marker = bm.CreateMarker(this, line.Offset, line.Length);
+				}
 			}
 		}
 		

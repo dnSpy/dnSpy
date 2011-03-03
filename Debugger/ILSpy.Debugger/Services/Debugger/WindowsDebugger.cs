@@ -20,6 +20,7 @@ using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Models.TreeModel;
 using ILSpy.Debugger.Services.Debugger;
 using ILSpy.Debugger.Tooltips;
+using Mono.Cecil;
 using CorDbg = Debugger;
 using Process = Debugger.Process;
 using StackFrame = Debugger.StackFrame;
@@ -48,7 +49,7 @@ namespace ILSpy.Debugger.Services
 		
 		private ConcurrentDictionary<string, List<MethodMapping>> CodeMappingsStorage {
 			get {
-				return CodeMappings.GetStorage(Language);
+				return CodeMappings.GetStorage(DebuggedData.Language);
 			}
 		}
 		
@@ -108,8 +109,6 @@ namespace ILSpy.Debugger.Services
 		string errorProcessRunning = "Error.ProcessRunning";
 		string errorProcessPaused  = "Error.ProcessPaused";
 		string errorCannotStepNoActiveFunction = "Threads.CannotStepNoActiveFunction";
-		
-		public DecompiledLanguages Language { get; set; }
 		
 		public bool IsDebugging {
 			get {
@@ -289,10 +288,10 @@ namespace ILSpy.Debugger.Services
 			// get the mapped instruction from the current line marker or the next one
 			uint token;
 			var instruction = CodeMappingsStorage.GetInstructionByTypeAndLine(
-				CurrentLineBookmark.Instance.TypeName,
+				CurrentLineBookmark.Instance.Type.FullName,
 				CurrentLineBookmark.Instance.LineNumber, out token);
 			
-			var val = CodeMappingsStorage[CurrentLineBookmark.Instance.TypeName];
+			var val = CodeMappingsStorage[CurrentLineBookmark.Instance.Type.FullName];
 			
 			var mapping = val.Find(m => m.MetadataToken == token);
 			
@@ -560,21 +559,19 @@ namespace ILSpy.Debugger.Services
 		{
 			Breakpoint breakpoint = null;
 			
-			if (Language == bookmark.Language) {
-				uint token;
-				SourceCodeMapping map =
-					CodeMappingsStorage.GetInstructionByTypeAndLine(
-						bookmark.TypeName, bookmark.LineNumber, out token);
-				
-				if (map != null) {
-					breakpoint = new ILBreakpoint(
-						debugger,
-						bookmark.TypeName,
-						bookmark.LineNumber,
-						token,
-						map.ILInstructionOffset.From,
-						bookmark.IsEnabled);
-				}
+			uint token;
+			SourceCodeMapping map = CodeMappings
+										.GetStorage(bookmark.Language)
+										.GetInstructionByTypeAndLine(bookmark.Type.FullName, bookmark.LineNumber, out token);
+			
+			if (map != null) {
+				breakpoint = new ILBreakpoint(
+					debugger,
+					bookmark.Type.FullName,
+					bookmark.LineNumber,
+					token,
+					map.ILInstructionOffset.From,
+					bookmark.IsEnabled);
 			}
 			
 			if (breakpoint == null)
@@ -748,7 +745,7 @@ namespace ILSpy.Debugger.Services
 			foreach (var bookmark in DebuggerService.Breakpoints) {
 				var breakpoint =
 					debugger.Breakpoints.FirstOrDefault(
-						b => b.Line == bookmark.LineNumber && b.TypeName == bookmark.TypeName);
+						b => b.Line == bookmark.LineNumber && b.TypeName == bookmark.Type.FullName);
 				if (breakpoint == null)
 					continue;
 				
@@ -758,22 +755,8 @@ namespace ILSpy.Debugger.Services
 		
 		void debuggedProcess_DebuggingPaused(object sender, ProcessEventArgs e)
 		{
-			OnIsProcessRunningChanged(EventArgs.Empty);
-			
-			//using(new PrintTimes("Jump to current line")) {
 			JumpToCurrentLine();
-			//}
-			// TODO update tooltip
-			/*if (currentTooltipRow != null && currentTooltipRow.IsShown) {
-				using(new PrintTimes("Update tooltip")) {
-					try {
-						Utils.DoEvents(debuggedProcess);
-						AbstractNode updatedNode = ValueNode.Create(currentTooltipExpression);
-						currentTooltipRow.SetContentRecursive(updatedNode);
-					} catch (AbortedBecauseDebuggeeResumedException) {
-					}
-				}
-			}*/
+			OnIsProcessRunningChanged(EventArgs.Empty);
 		}
 		
 		void debuggedProcess_DebuggingResumed(object sender, CorDbg.ProcessEventArgs e)
@@ -832,9 +815,10 @@ namespace ILSpy.Debugger.Services
 				uint token = (uint)frame.MethodInfo.MetadataToken;
 				int ilOffset = frame.IP;
 				int line;
-				string typeName;
-				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out typeName, out line))
-					DebuggerService.JumpToCurrentLine(typeName, line, 0, line, 0);
+				TypeDefinition type;
+				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out type, out line)) {
+					DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
+				}
 			}
 		}
 		

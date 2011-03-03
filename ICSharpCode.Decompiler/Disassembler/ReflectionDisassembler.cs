@@ -316,7 +316,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (!ILCodeMapping.SourceCodeMappings.ContainsKey(type.FullName)) {
 				ILCodeMapping.SourceCodeMappings.TryAdd(type.FullName, new List<MethodMapping>());
 			} else {
-				ILCodeMapping.SourceCodeMappings.Clear();
+				ILCodeMapping.SourceCodeMappings[type.FullName].Clear();
 			}
 			
 			// start writing IL

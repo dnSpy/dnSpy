@@ -29,7 +29,7 @@ namespace ILSpy.Debugger.Bookmarks
 			List<BookmarkBase> marks = new List<BookmarkBase>();
 			
 			foreach (BookmarkBase mark in bookmarks) {
-				if (typeName == mark.TypeName) {
+				if (typeName == mark.Type.FullName) {
 					marks.Add(mark);
 				}
 			}
@@ -54,7 +54,7 @@ namespace ILSpy.Debugger.Bookmarks
 				return false;
 			if (a.GetType() != b.GetType())
 				return false;
-			if (a.TypeName != b.TypeName)
+			if (a.Type.FullName != b.Type.FullName)
 				return false;
 			return a.LineNumber == b.LineNumber;
 		}

@@ -42,7 +42,7 @@ namespace ICSharpCode.Decompiler
 	/// </summary>
 	public sealed class MethodMapping
 	{
-		public string TypeName { get; set; }
+		public TypeDefinition Type { get; set; }
 		
 		public uint MetadataToken { get; set; }
 		
@@ -100,7 +100,7 @@ namespace ICSharpCode.Decompiler
 				if (mapping.Find(map => (int)map.MetadataToken == method.MetadataToken.ToInt32()) == null) {
 					currentMethodMapping = new MethodMapping() {
 						MetadataToken = (uint)method.MetadataToken.ToInt32(),
-						TypeName = method.DeclaringType.FullName,
+						Type = method.DeclaringType,
 						MethodCodeMappings = new List<SourceCodeMapping>()
 					};
 					mapping.Add(currentMethodMapping);
@@ -153,16 +153,16 @@ namespace ICSharpCode.Decompiler
 		/// <param name="codeMappings">Code mappings storage.</param>
 		/// <param name="token">Metadata token.</param>
 		/// <param name="ilOffset">IL offset.</param>
-		/// <param name="typeName">Type name.</param>
+		/// <param name="typeName">Type definition.</param>
 		/// <param name="line">Line number.</param>
 		public static bool GetSourceCodeFromMetadataTokenAndOffset(
 			this ConcurrentDictionary<string, List<MethodMapping>> codeMappings,
 			uint token,
 			int ilOffset,
-			out string typeName,
+			out TypeDefinition type,
 			out int line)
 		{
-			typeName = null;
+			type = null;
 			line = 0;
 			
 			foreach (var typename in codeMappings.Keys) {
@@ -182,7 +182,7 @@ namespace ICSharpCode.Decompiler
 				}
 					
 				
-				typeName = typename;
+				type = mapping.Type;
 				line = codeMapping.SourceCodeLine;
 				return true;
 			}

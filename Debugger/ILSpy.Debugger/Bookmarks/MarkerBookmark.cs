@@ -4,12 +4,13 @@
 using System;
 using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.AvalonEdit;
+using Mono.Cecil;
 
 namespace ILSpy.Debugger.Bookmarks
 {
 	public abstract class MarkerBookmark : BookmarkBase
 	{
-		public MarkerBookmark(string typeName, AstLocation location) : base(typeName, location)
+		public MarkerBookmark(TypeDefinition type, AstLocation location) : base(type, location)
 		{
 		}
 		

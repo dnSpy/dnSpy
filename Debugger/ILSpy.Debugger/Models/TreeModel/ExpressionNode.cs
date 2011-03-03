@@ -257,22 +257,22 @@ namespace ILSpy.Debugger.Models.TreeModel
 			if (true)
 				return i.ToString();
 			
-			string hex = null;
-			for(int len = 1;; len *= 2) {
-				hex = string.Format("{0:X" + len + "}", i);
-				if (hex.Length == len)
-					break;
-			}
-			
-			if (true) {
-				return "0x" + hex;
-			} else {
-				if (ShowAsHex(i)) {
-					return String.Format("{0} (0x{1})", i, hex);
-				} else {
-					return i.ToString();
-				}
-			}
+//			string hex = null;
+//			for(int len = 1;; len *= 2) {
+//				hex = string.Format("{0:X" + len + "}", i);
+//				if (hex.Length == len)
+//					break;
+//			}
+//			
+//			if (true) {
+//				return "0x" + hex;
+//			} else {
+//				if (ShowAsHex(i)) {
+//					return String.Format("{0} (0x{1})", i, hex);
+//				} else {
+//					return i.ToString();
+//				}
+//			}
 		}
 		
 		bool ShowAsHex(object i)

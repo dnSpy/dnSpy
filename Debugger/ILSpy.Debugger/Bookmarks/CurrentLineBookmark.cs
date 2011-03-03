@@ -6,6 +6,7 @@ using System.Windows.Media;
 using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.AvalonEdit;
 using ILSpy.Debugger.Services;
+using Mono.Cecil;
 using Mono.CSharp;
 
 namespace ILSpy.Debugger.Bookmarks
@@ -23,7 +24,7 @@ namespace ILSpy.Debugger.Bookmarks
 		static int endLine;
 		static int endColumn;
 		
-		public static void SetPosition(string typeName, int makerStartLine, int makerStartColumn, int makerEndLine, int makerEndColumn)
+		public static void SetPosition(TypeDefinition type, int makerStartLine, int makerStartColumn, int makerEndLine, int makerEndColumn)
 		{
 			Remove();
 			
@@ -32,7 +33,7 @@ namespace ILSpy.Debugger.Bookmarks
 			endLine     = makerEndLine;
 			endColumn   = makerEndColumn;
 			
-			instance = new CurrentLineBookmark(typeName, new AstLocation(startLine, startColumn));
+			instance = new CurrentLineBookmark(type, new AstLocation(startLine, startColumn));
 			BookmarkManager.AddMark(instance);
 		}
 		
@@ -52,7 +53,7 @@ namespace ILSpy.Debugger.Bookmarks
 			get { return 100; }
 		}
 		
-		public CurrentLineBookmark(string typeName, AstLocation location) : base(typeName, location)
+		public CurrentLineBookmark(TypeDefinition type, AstLocation location) : base(type, location)
 		{
 			
 		}

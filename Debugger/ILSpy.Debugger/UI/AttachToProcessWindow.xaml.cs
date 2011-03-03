@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows;
 
 using ILSpy.Debugger.Models;
-using ILSpy.Debugger.Services;
 
 namespace ILSpy.Debugger.UI
 {
@@ -24,6 +23,15 @@ namespace ILSpy.Debugger.UI
 			InitializeComponent();
 			
 			Loaded += OnLoaded;
+		}
+		
+		public Process SelectedProcess {
+			get {
+				if (this.RunningProcesses.SelectedItem != null)
+					return ((RunningProcess)this.RunningProcesses.SelectedItem).Process;
+				
+				return null;
+			}
 		}
 
 		void RefreshProcessList()
@@ -51,8 +59,8 @@ namespace ILSpy.Debugger.UI
 							         	FileName = process.MainModule.FileName,
 							         	WindowTitle = process.MainWindowTitle,
 							         	Managed = "Managed",
-							         	Process = process							         		
-							         });							
+							         	Process = process
+							         });
 						}
 					}
 				} catch (Win32Exception) {
@@ -68,9 +76,6 @@ namespace ILSpy.Debugger.UI
 			if (this.RunningProcesses.SelectedItem == null)
 				return;
 			
-			// start attaching
-			var process = ((RunningProcess)this.RunningProcesses.SelectedItem).Process;
-			DebuggerService.CurrentDebugger.Attach(process);
 			this.DialogResult = true;
 		}
 		

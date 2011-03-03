@@ -26,12 +26,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
+using ILSpy.Debugger;
 using ILSpy.Debugger.AvalonEdit;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Services;
@@ -304,22 +307,25 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		void OpenFiles(string[] fileNames)
+		void OpenFiles(string[] fileNames, bool focusNode = true)
 		{
-			treeView.UnselectAll();
-			SharpTreeNode lastNode = null;
-			foreach (string file in fileNames) {
-				var asm = assemblyList.OpenAssembly(file);
-				if (asm != null) {
-					var node = assemblyListTreeNode.FindAssemblyNode(asm);
-					if (node != null) {
-						treeView.SelectedItems.Add(node);
-						lastNode = node;
+			if (focusNode) {
+				treeView.UnselectAll();
+				
+				SharpTreeNode lastNode = null;
+				foreach (string file in fileNames) {
+					var asm = assemblyList.OpenAssembly(file);
+					if (asm != null) {
+						var node = assemblyListTreeNode.FindAssemblyNode(asm);
+						if (node != null) {
+							treeView.SelectedItems.Add(node);
+							lastNode = node;
+						}
 					}
 				}
+				if (lastNode != null)
+					treeView.FocusNode(lastNode);
 			}
-			if (lastNode != null)
-				treeView.FocusNode(lastNode);
 		}
 		
 		void OpenFromGac_Click(object sender, RoutedEventArgs e)
@@ -345,32 +351,77 @@ namespace ICSharpCode.ILSpy
 		
 		#region Debugger commands
 		
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		static extern bool SetWindowPos(
+			IntPtr hWnd,
+			IntPtr hWndInsertAfter,
+			int X,
+			int Y,
+			int cx,
+			int cy,
+			uint uFlags);
+
+		const UInt32 SWP_NOSIZE = 0x0001;
+		const UInt32 SWP_NOMOVE = 0x0002;
+
+		static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+		static readonly IntPtr HWND_TOP = new IntPtr(0);
+
+		static void SendWpfWindowPos(Window window, IntPtr place)
+		{
+			var hWnd = new WindowInteropHelper(window).Handle;
+			SetWindowPos(hWnd, place, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+		}
+		
 		IDebugger CurrentDebugger {
 			get {
 				return DebuggerService.CurrentDebugger;
 			}
 		}
 		
+		void StartDebugging(Process process)
+		{
+			CurrentDebugger.Attach(process);
+			EnableDebuggerUI(false);
+			CurrentDebugger.DebugStopped += OnDebugStopped;
+			CurrentDebugger.IsProcessRunningChanged += CurrentDebugger_IsProcessRunningChanged;
+		}
+
+		void CurrentDebugger_IsProcessRunningChanged(object sender, EventArgs e)
+		{
+			if (CurrentDebugger.IsProcessRunning) {
+				//SendWpfWindowPos(this, HWND_BOTTOM);
+				return;
+			}
+			
+			// breakpoint was hit => bring to front the main window
+			SendWpfWindowPos(this, HWND_TOP);
+			this.Activate();
+			
+			// jump to type & expand folding
+			if (CurrentLineBookmark.Instance != null) {
+				JumpToReference(CurrentLineBookmark.Instance.Type);
+				decompilerTextView.UnfoldAndScroll(CurrentLineBookmark.Instance.LineNumber);
+			}
+		}
+		
 		void DebugExecutableExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			OpenFileDialog dialog = new OpenFileDialog() {
-				Filter = ".NET Executable (*.exe) | *.exe", 
-				RestoreDirectory = true, 
-				DefaultExt = "exe" 
+				Filter = ".NET Executable (*.exe) | *.exe",
+				RestoreDirectory = true,
+				DefaultExt = "exe"
 			};
 			
-			var result = dialog.ShowDialog();
-			if (result.HasValue && result.Value) {
+			if (dialog.ShowDialog() == true) {
 				string fileName = dialog.FileName;
 				
 				// add it to references
-				OpenFiles(new [] { fileName });
+				OpenFiles(new [] { fileName }, false);
 				
 				if (!CurrentDebugger.IsDebugging) {
 					// execute the process
-					CurrentDebugger.Attach(Process.Start(fileName));
-					EnableDebuggerUI(false);
-					CurrentDebugger.DebugStopped += OnDebugStopped;
+					this.StartDebugging(Process.Start(fileName));
 				}
 			}
 		}
@@ -383,8 +434,7 @@ namespace ICSharpCode.ILSpy
 				if (window.ShowDialog() == true)
 				{
 					if (CurrentDebugger.IsDebugging) {
-						EnableDebuggerUI(false);
-						CurrentDebugger.DebugStopped += OnDebugStopped;
+						this.StartDebugging(window.SelectedProcess);
 					}
 				}
 			}
@@ -393,7 +443,8 @@ namespace ICSharpCode.ILSpy
 		void OnDebugStopped(object sender, EventArgs e)
 		{
 			EnableDebuggerUI(true);
-			DebuggerService.CurrentDebugger.DebugStopped -= OnDebugStopped;
+			CurrentDebugger.DebugStopped -= OnDebugStopped;
+			CurrentDebugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
 		}
 		
 		void DetachFromProcessExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -599,8 +650,7 @@ namespace ICSharpCode.ILSpy
 		
 		void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			DebuggerService.CurrentDebugger.Language =
-				sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
+			DebuggedData.Language = sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 		}
 	}
 }

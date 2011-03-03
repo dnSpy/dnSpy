@@ -34,6 +34,7 @@ using System.Windows.Threading;
 using System.Xml;
 
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
@@ -42,6 +43,7 @@ using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.NRefactory.Documentation;
 using ILSpy.Debugger;
 using ILSpy.Debugger.AvalonEdit;
+using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.ToolTips;
 using Microsoft.Win32;
 using TextEditorWeakEventManager = ILSpy.Debugger.AvalonEdit.TextEditorWeakEventManager;
@@ -329,7 +331,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
 		{
-			DebuggedType.CurrentType = null;
+			DebuggedData.CurrentType = null;
 			// Some actions like loading an assembly list cause several selection changes in the tree view,
 			// and each of those will start a decompilation action.
 			bool isDecompilationScheduled = this.nextDecompilationRun != null;
@@ -390,6 +392,16 @@ namespace ICSharpCode.ILSpy.TextView
 					finally {
 						// repaint bookmarks
 						iconMargin.InvalidateVisual();
+						
+						// show the currentline marker
+						var bm = CurrentLineBookmark.Instance;
+						if (bm != null && DebuggedData.CurrentType != null) {
+							if (DebuggedData.CurrentType.FullName.Equals(bm.Type.FullName, StringComparison.OrdinalIgnoreCase)) {
+								DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
+								bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
+								UnfoldAndScroll(bm.LineNumber);
+							}
+						}
 					}
 				});
 		}
@@ -621,6 +633,28 @@ namespace ICSharpCode.ILSpy.TextView
 			foreach (char c in Path.GetInvalidFileNameChars())
 				text = text.Replace(c, '-');
 			return text;
+		}
+		#endregion
+		
+		#region Unfold
+		public void UnfoldAndScroll(int lineNumber)
+		{
+			if (lineNumber <= 0 || lineNumber > textEditor.Document.LineCount)
+				return;
+			
+			var line = textEditor.Document.GetLineByNumber(lineNumber);
+			
+			// unfold
+			var foldings = foldingManager.GetFoldingsContaining(line.Offset);
+			if (foldings != null) {
+				foreach (var folding in foldings) {
+					if (folding.IsFolded) {
+						folding.IsFolded = false;
+					}
+				}
+			}
+			// scroll to
+			textEditor.ScrollTo(lineNumber, 0);
 		}
 		#endregion
 	}

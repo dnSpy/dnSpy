@@ -17,17 +17,24 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
 namespace ILSpy.Debugger
 {
-	public static class DebuggedType
+	/// <summary>
+	/// Contains the data important for debugger from the main application.
+	/// </summary>
+	public static class DebuggedData
 	{
-		static TypeDefinition currentTypeName;
-	
-		public static TypeDefinition CurrentType {
-			get { return currentTypeName; }
-			set { currentTypeName = value; }
-		}
+		/// <summary>
+		/// Gets or sets the current debugged type
+		/// </summary>
+		public static TypeDefinition CurrentType { get; set; }
+
+		/// <summary>
+		/// Gets or sets the decompiled language.
+		/// </summary>
+		public static DecompiledLanguages Language { get; set; }
 	}
 }

@@ -137,7 +137,7 @@ namespace Decompiler
 		
 		public TypeDeclaration CreateType(TypeDefinition typeDef)
 		{
-			// create IL code mappings - used for debugger
+			// create CSharp code mappings - used for debugger
 			if (!CSharpCodeMapping.SourceCodeMappings.ContainsKey(typeDef.FullName)) {
 				CSharpCodeMapping.SourceCodeMappings.TryAdd(typeDef.FullName, new List<MethodMapping>());
 			} else {

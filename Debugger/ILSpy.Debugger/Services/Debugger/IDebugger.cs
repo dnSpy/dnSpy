@@ -11,11 +11,6 @@ namespace ILSpy.Debugger.Services
 	public interface IDebugger : IDisposable
 	{
 		/// <summary>
-		/// Gets or sets the decompiled language.
-		/// </summary>
-		DecompiledLanguages Language { get; set; }
-		
-		/// <summary>
 		/// Gets whether the debugger can evaluate the expression.
 		/// </summary>
 		bool CanEvaluate { get; }

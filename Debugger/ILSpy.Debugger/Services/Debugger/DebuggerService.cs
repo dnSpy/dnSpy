@@ -8,6 +8,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.ToolTips;
+using Mono.Cecil;
 
 namespace ILSpy.Debugger.Services
 {
@@ -162,12 +163,12 @@ namespace ILSpy.Debugger.Services
 			}
 		}
 		
-		public static void ToggleBreakpointAt(string typeName, int lineNumber, DecompiledLanguages language)
+		public static void ToggleBreakpointAt(TypeDefinition type, int lineNumber, DecompiledLanguages language)
 		{
 			BookmarkManager.ToggleBookmark(
-				typeName, lineNumber,
+				type.FullName, lineNumber,
 				b => b.CanToggle && b is BreakpointBookmark,
-				location => new BreakpointBookmark(typeName, location, BreakpointAction.Break, language));
+				location => new BreakpointBookmark(type, location, BreakpointAction.Break, language));
 		}
 		
 		/* TODO: reimplement this stuff
@@ -183,9 +184,9 @@ namespace ILSpy.Debugger.Services
 			CurrentLineBookmark.Remove();
 		}
 		
-		public static void JumpToCurrentLine(string typeName, int startLine, int startColumn, int endLine, int endColumn)
+		public static void JumpToCurrentLine(TypeDefinition type, int startLine, int startColumn, int endLine, int endColumn)
 		{
-			CurrentLineBookmark.SetPosition(typeName, startLine, startColumn, endLine, endColumn);
+			CurrentLineBookmark.SetPosition(type, startLine, startColumn, endLine, endColumn);
 		}
 		
 		#region Tool tips

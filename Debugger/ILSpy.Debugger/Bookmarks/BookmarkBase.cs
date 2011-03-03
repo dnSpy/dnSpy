@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 using ICSharpCode.NRefactory.CSharp;
+using Mono.Cecil;
 
 namespace ILSpy.Debugger.Bookmarks
 {
@@ -40,7 +41,7 @@ namespace ILSpy.Debugger.Bookmarks
 			
 		}
 		
-		public string TypeName { get; set; }
+		public TypeDefinition Type { get; set; }
 		
 		public int LineNumber {
 			get { return location.Line; }
@@ -63,9 +64,9 @@ namespace ILSpy.Debugger.Bookmarks
 			}
 		}
 		
-		public BookmarkBase(string typeName, AstLocation location)
+		public BookmarkBase(TypeDefinition type, AstLocation location)
 		{
-			this.TypeName = typeName;
+			this.Type = type;
 			this.Location = location;
 		}
 		
