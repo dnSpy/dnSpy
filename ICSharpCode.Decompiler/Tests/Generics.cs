@@ -2,11 +2,18 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 
 public static class Generics
 {
-	class MyArray<T>
+	public class MyArray<T>
 	{
+		public class NestedClass<Y>
+		{
+			public T Item1;
+			public Y Item2;
+		}
+		
 		private T[] arr;
 		
 		public MyArray(int capacity)
@@ -30,5 +37,15 @@ public static class Generics
 	
 	public static void MethodWithConstraint<T, S>() where T : class, S where S : ICloneable, new()
 	{
+	}
+	
+	public static void MethodWithStructConstraint<T>() where T : struct
+	{
+	}
+	
+	public static Dictionary<string, string>.KeyCollection.Enumerator GetEnumerator(Dictionary<string, string> d, MyArray<string>.NestedClass<int> nc)
+	{
+		// Tests references to inner classes in generic classes
+		return d.Keys.GetEnumerator();
 	}
 }

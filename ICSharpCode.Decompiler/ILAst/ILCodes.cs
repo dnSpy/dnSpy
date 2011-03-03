@@ -262,6 +262,7 @@ namespace Decompiler
 		TernaryOp, // ?:
 		LoopBreak,
 		LoopContinue,
+		Ldc_Decimal,
 		
 		Pattern // used for ILAst pattern nodes
 	}

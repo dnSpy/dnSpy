@@ -19,7 +19,7 @@ namespace Decompiler.ControlFlow
 		GotoRemoval,
 		DuplicateReturns,
 		FlattenIfStatements,
-		HandleArrayInitializers,
+		PeepholeTransforms,
 		TypeInference,
 		None
 	}
@@ -76,8 +76,8 @@ namespace Decompiler.ControlFlow
 			if (abortBeforeStep == ILAstOptimizationStep.FlattenIfStatements) return;
 			FlattenIfStatements(method);
 			
-			if (abortBeforeStep == ILAstOptimizationStep.HandleArrayInitializers) return;
-			ArrayInitializers.Transform(method);
+			if (abortBeforeStep == ILAstOptimizationStep.PeepholeTransforms) return;
+			PeepholeTransforms.Run(context, method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.TypeInference) return;
 			TypeAnalysis.Run(context, method);
@@ -562,9 +562,9 @@ namespace Decompiler.ControlFlow
 								DefaultGoto = block.FallthoughGoto
 							};
 							result.Add(new ILBasicBlock() {
-								EntryLabel = block.EntryLabel,  // Keep the entry label
-								Body = { ilSwitch }
-							});
+							           	EntryLabel = block.EntryLabel,  // Keep the entry label
+							           	Body = { ilSwitch }
+							           });
 
 							// Remove the item so that it is not picked up as content
 							if (!scope.Remove(node))
