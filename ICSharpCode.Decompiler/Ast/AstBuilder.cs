@@ -260,10 +260,12 @@ namespace Decompiler
 					};
 				}
 				AstType baseType = ConvertType(gType.ElementType, typeAttributes, ref typeIndex);
+				List<AstType> typeArguments = new List<AstType>();
 				foreach (var typeArgument in gType.GenericArguments) {
 					typeIndex++;
-					baseType.AddChild(ConvertType(typeArgument, typeAttributes, ref typeIndex), AstType.Roles.TypeArgument);
+					typeArguments.Add(ConvertType(typeArgument, typeAttributes, ref typeIndex));
 				}
+				ApplyTypeArgumentsTo(baseType, typeArguments);
 				return baseType;
 			} else if (type is GenericParameter) {
 				return new SimpleType(type.Name);
@@ -330,6 +332,30 @@ namespace Decompiler
 //						nsType = new MemberType { Target = nsType, MemberName = parts[i] };
 //					}
 //					return new MemberType { Target = nsType, MemberName = name }.WithAnnotation(type);
+				}
+			}
+		}
+		
+		static void ApplyTypeArgumentsTo(AstType baseType, List<AstType> typeArguments)
+		{
+			SimpleType st = baseType as SimpleType;
+			if (st != null) {
+				st.TypeArguments.AddRange(typeArguments);
+			}
+			MemberType mt = baseType as MemberType;
+			if (mt != null) {
+				TypeReference type = mt.Annotation<TypeReference>();
+				if (type != null) {
+					int typeParameterCount;
+					ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name, out typeParameterCount);
+					if (typeParameterCount > typeArguments.Count)
+						typeParameterCount = typeArguments.Count;
+					mt.TypeArguments.AddRange(typeArguments.GetRange(typeArguments.Count - typeParameterCount, typeParameterCount));
+					typeArguments.RemoveRange(typeArguments.Count - typeParameterCount, typeParameterCount);
+					if (typeArguments.Count > 0)
+						ApplyTypeArgumentsTo(mt.Target, typeArguments);
+				} else {
+					mt.TypeArguments.AddRange(typeArguments);
 				}
 			}
 		}

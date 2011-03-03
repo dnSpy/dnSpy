@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 
 public static class Generics
 {
@@ -30,5 +31,10 @@ public static class Generics
 	
 	public static void MethodWithConstraint<T, S>() where T : class, S where S : ICloneable, new()
 	{
+	}
+	
+	public static Dictionary<string, string>.KeyCollection.Enumerator GetEnumerator(Dictionary<string, string> d)
+	{
+		return d.Keys.GetEnumerator();
 	}
 }
