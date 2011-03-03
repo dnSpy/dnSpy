@@ -90,7 +90,8 @@ namespace ILSpy.Debugger.AvalonEdit
 		public void Remove(ITextMarker marker)
 		{
 			if (marker == null)
-				throw new ArgumentNullException("marker");
+				return;
+			
 			TextMarker m = marker as TextMarker;
 			if (markers.Remove(m)) {
 				Redraw(m);

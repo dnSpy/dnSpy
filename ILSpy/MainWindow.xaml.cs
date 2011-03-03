@@ -400,8 +400,10 @@ namespace ICSharpCode.ILSpy
 			
 			// jump to type & expand folding
 			if (CurrentLineBookmark.Instance != null) {
-				JumpToReference(CurrentLineBookmark.Instance.Type);
-				decompilerTextView.UnfoldAndScroll(CurrentLineBookmark.Instance.LineNumber);
+				if (CurrentLineBookmark.Instance.Type != DebuggedData.CurrentType) {
+					JumpToReference(CurrentLineBookmark.Instance.Type);
+					decompilerTextView.UnfoldAndScroll(CurrentLineBookmark.Instance.LineNumber);
+				}
 			}
 		}
 		
@@ -429,13 +431,9 @@ namespace ICSharpCode.ILSpy
 		void AttachToProcessExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			if (!CurrentDebugger.IsDebugging) {
-				var window = new AttachToProcessWindow();
-				window.Owner = this;
-				if (window.ShowDialog() == true)
-				{
-					if (CurrentDebugger.IsDebugging) {
-						this.StartDebugging(window.SelectedProcess);
-					}
+				var window = new AttachToProcessWindow { Owner = this };
+				if (window.ShowDialog() == true) {
+					this.StartDebugging(window.SelectedProcess);
 				}
 			}
 		}
@@ -536,6 +534,7 @@ namespace ICSharpCode.ILSpy
 		
 		void AboutClick(object sender, RoutedEventArgs e)
 		{
+			treeView.UnselectAll();
 			AboutPage.Display(decompilerTextView);
 		}
 		#endregion
