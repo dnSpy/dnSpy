@@ -299,34 +299,34 @@ namespace Decompiler
 			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
 			Ast.Expression arg3 = args.Count >= 3 ? args[2] : null;
 			
-			switch((Code)opCode) {
+			switch(opCode) {
 					#region Arithmetic
-					case Code.Add:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
-					case Code.Add_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
-					case Code.Add_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
-					case Code.Div:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Divide, arg2);
-					case Code.Div_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Divide, arg2);
-					case Code.Mul:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
-					case Code.Mul_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
-					case Code.Mul_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
-					case Code.Rem:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Modulus, arg2);
-					case Code.Rem_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Modulus, arg2);
-					case Code.Sub:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
-					case Code.Sub_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
-					case Code.Sub_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
-					case Code.And:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.BitwiseAnd, arg2);
-					case Code.Or:         return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.BitwiseOr, arg2);
-					case Code.Xor:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ExclusiveOr, arg2);
-					case Code.Shl:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftLeft, arg2);
-					case Code.Shr:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftRight, arg2);
-					case Code.Shr_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftRight, arg2);
+					case ILCode.Add:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+					case ILCode.Add_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+					case ILCode.Add_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+					case ILCode.Div:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Divide, arg2);
+					case ILCode.Div_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Divide, arg2);
+					case ILCode.Mul:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
+					case ILCode.Mul_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
+					case ILCode.Mul_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
+					case ILCode.Rem:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Modulus, arg2);
+					case ILCode.Rem_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Modulus, arg2);
+					case ILCode.Sub:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
+					case ILCode.Sub_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
+					case ILCode.Sub_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
+					case ILCode.And:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.BitwiseAnd, arg2);
+					case ILCode.Or:         return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.BitwiseOr, arg2);
+					case ILCode.Xor:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ExclusiveOr, arg2);
+					case ILCode.Shl:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftLeft, arg2);
+					case ILCode.Shr:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftRight, arg2);
+					case ILCode.Shr_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftRight, arg2);
 					
-					case Code.Neg:        return new Ast.UnaryOperatorExpression(UnaryOperatorType.Minus, arg1);
-					case Code.Not:        return new Ast.UnaryOperatorExpression(UnaryOperatorType.BitNot, arg1);
+					case ILCode.Neg:        return new Ast.UnaryOperatorExpression(UnaryOperatorType.Minus, arg1);
+					case ILCode.Not:        return new Ast.UnaryOperatorExpression(UnaryOperatorType.BitNot, arg1);
 					#endregion
 					#region Arrays
-				case Code.Newarr:
-				case (Code)ILCode.InitArray:
+				case ILCode.Newarr:
+				case ILCode.InitArray:
 					{
 						var ace = new Ast.ArrayCreateExpression();
 						ace.Type = operandAsTypeRef;
@@ -343,39 +343,41 @@ namespace Decompiler
 						}
 						return ace;
 					}
-				case Code.Ldlen:
+				case ILCode.Ldlen:
 					return arg1.Member("Length");
-				case Code.Ldelem_I:
-				case Code.Ldelem_I1:
-				case Code.Ldelem_I2:
-				case Code.Ldelem_I4:
-				case Code.Ldelem_I8:
-				case Code.Ldelem_U1:
-				case Code.Ldelem_U2:
-				case Code.Ldelem_U4:
-				case Code.Ldelem_R4:
-				case Code.Ldelem_R8:
-				case Code.Ldelem_Ref:
-				case Code.Ldelem_Any:
+				case ILCode.Ldelem_I:
+				case ILCode.Ldelem_I1:
+				case ILCode.Ldelem_I2:
+				case ILCode.Ldelem_I4:
+				case ILCode.Ldelem_I8:
+				case ILCode.Ldelem_U1:
+				case ILCode.Ldelem_U2:
+				case ILCode.Ldelem_U4:
+				case ILCode.Ldelem_R4:
+				case ILCode.Ldelem_R8:
+				case ILCode.Ldelem_Ref:
+				case ILCode.Ldelem_Any:
 					return arg1.Indexer(arg2);
-				case Code.Ldelema:
+				case ILCode.Ldelema:
 					return MakeRef(arg1.Indexer(arg2));
 					
-				case Code.Stelem_I:
-				case Code.Stelem_I1:
-				case Code.Stelem_I2:
-				case Code.Stelem_I4:
-				case Code.Stelem_I8:
-				case Code.Stelem_R4:
-				case Code.Stelem_R8:
-				case Code.Stelem_Ref:
-				case Code.Stelem_Any:
+				case ILCode.Stelem_I:
+				case ILCode.Stelem_I1:
+				case ILCode.Stelem_I2:
+				case ILCode.Stelem_I4:
+				case ILCode.Stelem_I8:
+				case ILCode.Stelem_R4:
+				case ILCode.Stelem_R8:
+				case ILCode.Stelem_Ref:
+				case ILCode.Stelem_Any:
 					return new Ast.AssignmentExpression(arg1.Indexer(arg2), arg3);
 					#endregion
 					#region Comparison
-					case Code.Ceq:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
-					case Code.Cgt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-				case Code.Cgt_Un:
+				case ILCode.Ceq:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
+				case ILCode.Cgt:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+				case ILCode.Cgt_Un:
 					// can also mean Inequality, when used with object references
 					{
 						TypeReference arg1Type = byteCode.Arguments[0].InferredType;
@@ -384,96 +386,98 @@ namespace Decompiler
 						else
 							return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
 					}
-					case Code.Clt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-					case Code.Clt_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+				case ILCode.Clt:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+				case ILCode.Clt_Un:
+					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					#endregion
 					#region Conversions
-				case Code.Conv_I1:
-				case Code.Conv_I2:
-				case Code.Conv_I4:
-				case Code.Conv_I8:
-				case Code.Conv_U1:
-				case Code.Conv_U2:
-				case Code.Conv_U4:
-				case Code.Conv_U8:
+				case ILCode.Conv_I1:
+				case ILCode.Conv_I2:
+				case ILCode.Conv_I4:
+				case ILCode.Conv_I8:
+				case ILCode.Conv_U1:
+				case ILCode.Conv_U2:
+				case ILCode.Conv_U4:
+				case ILCode.Conv_U8:
 					return arg1; // conversion is handled by Convert() function using the info from type analysis
-					case Code.Conv_I:    return arg1.CastTo(typeof(IntPtr)); // TODO
-					case Code.Conv_U:    return arg1.CastTo(typeof(UIntPtr)); // TODO
-					case Code.Conv_R4:   return arg1.CastTo(typeof(float));
-					case Code.Conv_R8:   return arg1.CastTo(typeof(double));
-					case Code.Conv_R_Un: return arg1.CastTo(typeof(double)); // TODO
+					case ILCode.Conv_I:    return arg1.CastTo(typeof(IntPtr)); // TODO
+					case ILCode.Conv_U:    return arg1.CastTo(typeof(UIntPtr)); // TODO
+					case ILCode.Conv_R4:   return arg1.CastTo(typeof(float));
+					case ILCode.Conv_R8:   return arg1.CastTo(typeof(double));
+					case ILCode.Conv_R_Un: return arg1.CastTo(typeof(double)); // TODO
 					
-				case Code.Conv_Ovf_I1:
-				case Code.Conv_Ovf_I2:
-				case Code.Conv_Ovf_I4:
-				case Code.Conv_Ovf_I8:
-				case Code.Conv_Ovf_U1:
-				case Code.Conv_Ovf_U2:
-				case Code.Conv_Ovf_U4:
-				case Code.Conv_Ovf_U8:
-				case Code.Conv_Ovf_I1_Un:
-				case Code.Conv_Ovf_I2_Un:
-				case Code.Conv_Ovf_I4_Un:
-				case Code.Conv_Ovf_I8_Un:
-				case Code.Conv_Ovf_U1_Un:
-				case Code.Conv_Ovf_U2_Un:
-				case Code.Conv_Ovf_U4_Un:
-				case Code.Conv_Ovf_U8_Un:
+				case ILCode.Conv_Ovf_I1:
+				case ILCode.Conv_Ovf_I2:
+				case ILCode.Conv_Ovf_I4:
+				case ILCode.Conv_Ovf_I8:
+				case ILCode.Conv_Ovf_U1:
+				case ILCode.Conv_Ovf_U2:
+				case ILCode.Conv_Ovf_U4:
+				case ILCode.Conv_Ovf_U8:
+				case ILCode.Conv_Ovf_I1_Un:
+				case ILCode.Conv_Ovf_I2_Un:
+				case ILCode.Conv_Ovf_I4_Un:
+				case ILCode.Conv_Ovf_I8_Un:
+				case ILCode.Conv_Ovf_U1_Un:
+				case ILCode.Conv_Ovf_U2_Un:
+				case ILCode.Conv_Ovf_U4_Un:
+				case ILCode.Conv_Ovf_U8_Un:
 					return arg1; // conversion was handled by Convert() function using the info from type analysis
-					case Code.Conv_Ovf_I:  return arg1.CastTo(typeof(IntPtr)); // TODO
-					case Code.Conv_Ovf_U:  return arg1.CastTo(typeof(UIntPtr));
-					case Code.Conv_Ovf_I_Un:  return arg1.CastTo(typeof(IntPtr));
-					case Code.Conv_Ovf_U_Un:  return arg1.CastTo(typeof(UIntPtr));
+					case ILCode.Conv_Ovf_I:  return arg1.CastTo(typeof(IntPtr)); // TODO
+					case ILCode.Conv_Ovf_U:  return arg1.CastTo(typeof(UIntPtr));
+					case ILCode.Conv_Ovf_I_Un:  return arg1.CastTo(typeof(IntPtr));
+					case ILCode.Conv_Ovf_U_Un:  return arg1.CastTo(typeof(UIntPtr));
 					
-				case Code.Castclass:
-				case Code.Unbox_Any:
+				case ILCode.Castclass:
+				case ILCode.Unbox_Any:
 					return arg1.CastTo(operandAsTypeRef);
-				case Code.Isinst:
+				case ILCode.Isinst:
 					return arg1.CastAs(operandAsTypeRef);
-				case Code.Box:
+				case ILCode.Box:
 					return arg1;
-				case Code.Unbox:
+				case ILCode.Unbox:
 					return InlineAssembly(byteCode, args);
 					#endregion
 					#region Indirect
-				case Code.Ldind_I:
-				case Code.Ldind_I1:
-				case Code.Ldind_I2:
-				case Code.Ldind_I4:
-				case Code.Ldind_I8:
-				case Code.Ldind_U1:
-				case Code.Ldind_U2:
-				case Code.Ldind_U4:
-				case Code.Ldind_R4:
-				case Code.Ldind_R8:
-				case Code.Ldind_Ref:
-				case Code.Ldobj:
+				case ILCode.Ldind_I:
+				case ILCode.Ldind_I1:
+				case ILCode.Ldind_I2:
+				case ILCode.Ldind_I4:
+				case ILCode.Ldind_I8:
+				case ILCode.Ldind_U1:
+				case ILCode.Ldind_U2:
+				case ILCode.Ldind_U4:
+				case ILCode.Ldind_R4:
+				case ILCode.Ldind_R8:
+				case ILCode.Ldind_Ref:
+				case ILCode.Ldobj:
 					if (args[0] is DirectionExpression)
 						return ((DirectionExpression)args[0]).Expression.Detach();
 					else
 						return InlineAssembly(byteCode, args);
 					
-				case Code.Stind_I:
-				case Code.Stind_I1:
-				case Code.Stind_I2:
-				case Code.Stind_I4:
-				case Code.Stind_I8:
-				case Code.Stind_R4:
-				case Code.Stind_R8:
-				case Code.Stind_Ref:
-				case Code.Stobj:
+				case ILCode.Stind_I:
+				case ILCode.Stind_I1:
+				case ILCode.Stind_I2:
+				case ILCode.Stind_I4:
+				case ILCode.Stind_I8:
+				case ILCode.Stind_R4:
+				case ILCode.Stind_R8:
+				case ILCode.Stind_Ref:
+				case ILCode.Stobj:
 					if (args[0] is DirectionExpression)
 						return new AssignmentExpression(((DirectionExpression)args[0]).Expression.Detach(), args[1]);
 					else
 						return InlineAssembly(byteCode, args);
 					#endregion
-					case Code.Arglist: return InlineAssembly(byteCode, args);
-					case Code.Break: return InlineAssembly(byteCode, args);
-				case Code.Call:
+					case ILCode.Arglist: return InlineAssembly(byteCode, args);
+					case ILCode.Break: return InlineAssembly(byteCode, args);
+				case ILCode.Call:
 					return TransformCall(false, operand, methodDef, args);
-				case Code.Callvirt:
+				case ILCode.Callvirt:
 					return TransformCall(true, operand, methodDef, args);
-				case Code.Ldftn:
+				case ILCode.Ldftn:
 					{
 						Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 						var expr = new Ast.IdentifierExpression(cecilMethod.Name);
@@ -482,7 +486,7 @@ namespace Decompiler
 						return new IdentifierExpression("ldftn").Invoke(expr)
 							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(false));
 					}
-				case Code.Ldvirtftn:
+				case ILCode.Ldvirtftn:
 					{
 						Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 						var expr = new Ast.IdentifierExpression(cecilMethod.Name);
@@ -492,22 +496,23 @@ namespace Decompiler
 							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(true));
 					}
 					
-					case Code.Calli: return InlineAssembly(byteCode, args);
-					case Code.Ckfinite: return InlineAssembly(byteCode, args);
-					case Code.Constrained: return InlineAssembly(byteCode, args);
-					case Code.Cpblk: return InlineAssembly(byteCode, args);
-					case Code.Cpobj: return InlineAssembly(byteCode, args);
-					case Code.Dup: return arg1;
-					case Code.Endfilter: return InlineAssembly(byteCode, args);
-					case Code.Endfinally: return null;
-					case Code.Initblk: return InlineAssembly(byteCode, args);
-				case Code.Initobj:
+					case ILCode.Calli: return InlineAssembly(byteCode, args);
+					case ILCode.Ckfinite: return InlineAssembly(byteCode, args);
+					case ILCode.Constrained: return InlineAssembly(byteCode, args);
+					case ILCode.Cpblk: return InlineAssembly(byteCode, args);
+					case ILCode.Cpobj: return InlineAssembly(byteCode, args);
+					case ILCode.Dup: return arg1;
+					case ILCode.Endfilter: return InlineAssembly(byteCode, args);
+					case ILCode.Endfinally: return null;
+					case ILCode.Initblk: return InlineAssembly(byteCode, args);
+				case ILCode.Initobj:
 					if (args[0] is DirectionExpression)
 						return new AssignmentExpression(((DirectionExpression)args[0]).Expression.Detach(), new DefaultValueExpression { Type = operandAsTypeRef });
 					else
 						return InlineAssembly(byteCode, args);
-					case Code.Jmp: return InlineAssembly(byteCode, args);
-				case Code.Ldarg:
+				case ILCode.Jmp:
+					return InlineAssembly(byteCode, args);
+				case ILCode.Ldarg:
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
 						if (context.CurrentMethod.DeclaringType.IsValueType)
 							return MakeRef(new Ast.ThisReferenceExpression());
@@ -520,60 +525,61 @@ namespace Decompiler
 						else
 							return expr;
 					}
-				case Code.Ldarga:
+				case ILCode.Ldarga:
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
 						return MakeRef(new Ast.ThisReferenceExpression());
 					} else {
 						return MakeRef(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand));
 					}
-				case Code.Ldc_I4:
+				case ILCode.Ldc_I4:
 					return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType);
-				case Code.Ldc_I8:
-				case Code.Ldc_R4:
-				case Code.Ldc_R8:
-				case (Code)ILCode.Ldc_Decimal:
+				case ILCode.Ldc_I8:
+				case ILCode.Ldc_R4:
+				case ILCode.Ldc_R8:
+				case ILCode.Ldc_Decimal:
 					return new Ast.PrimitiveExpression(operand);
-				case Code.Ldfld:
+				case ILCode.Ldfld:
 					if (arg1 is DirectionExpression)
 						arg1 = ((DirectionExpression)arg1).Expression.Detach();
 					return arg1.Member(((FieldReference) operand).Name).WithAnnotation(operand);
-				case Code.Ldsfld:
+				case ILCode.Ldsfld:
 					return AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand);
-				case Code.Stfld:
+				case ILCode.Stfld:
 					if (arg1 is DirectionExpression)
 						arg1 = ((DirectionExpression)arg1).Expression.Detach();
 					return new AssignmentExpression(arg1.Member(((FieldReference) operand).Name).WithAnnotation(operand), arg2);
-				case Code.Stsfld:
+				case ILCode.Stsfld:
 					return new AssignmentExpression(
 						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand),
 						arg1);
-				case Code.Ldflda:
+				case ILCode.Ldflda:
 					return MakeRef(arg1.Member(((FieldReference) operand).Name).WithAnnotation(operand));
-				case Code.Ldsflda:
+				case ILCode.Ldsflda:
 					return MakeRef(
 						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand));
-				case Code.Ldloc:
+				case ILCode.Ldloc:
 					localVariablesToDefine.Add((ILVariable)operand);
 					return new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand);
-				case Code.Ldloca:
+				case ILCode.Ldloca:
 					localVariablesToDefine.Add((ILVariable)operand);
 					return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand));
-				case Code.Ldnull:
+				case ILCode.Ldnull:
 					return new Ast.NullReferenceExpression();
-					case Code.Ldstr: return new Ast.PrimitiveExpression(operand);
-				case Code.Ldtoken:
+				case ILCode.Ldstr:
+					return new Ast.PrimitiveExpression(operand);
+				case ILCode.Ldtoken:
 					if (operand is Cecil.TypeReference) {
 						return new Ast.TypeOfExpression { Type = operandAsTypeRef }.Member("TypeHandle");
 					} else {
 						return InlineAssembly(byteCode, args);
 					}
-					case Code.Leave: return new GotoStatement() { Label = ((ILLabel)operand).Name };
-					case Code.Localloc: return InlineAssembly(byteCode, args);
-					case Code.Mkrefany: return InlineAssembly(byteCode, args);
-				case Code.Newobj:
+					case ILCode.Leave: return new GotoStatement() { Label = ((ILLabel)operand).Name };
+					case ILCode.Localloc: return InlineAssembly(byteCode, args);
+					case ILCode.Mkrefany: return InlineAssembly(byteCode, args);
+				case ILCode.Newobj:
 					{
 						Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
 						
@@ -593,34 +599,34 @@ namespace Decompiler
 						oce.Arguments.AddRange(args);
 						return oce.WithAnnotation(operand);
 					}
-					case Code.No: return InlineAssembly(byteCode, args);
-					case Code.Nop: return null;
-					case Code.Pop: return arg1;
-					case Code.Readonly: return InlineAssembly(byteCode, args);
-					case Code.Refanytype: return InlineAssembly(byteCode, args);
-					case Code.Refanyval: return InlineAssembly(byteCode, args);
-					case Code.Ret: {
+					case ILCode.No: return InlineAssembly(byteCode, args);
+					case ILCode.Nop: return null;
+					case ILCode.Pop: return arg1;
+					case ILCode.Readonly: return InlineAssembly(byteCode, args);
+					case ILCode.Refanytype: return InlineAssembly(byteCode, args);
+					case ILCode.Refanyval: return InlineAssembly(byteCode, args);
+					case ILCode.Ret: {
 						if (methodDef.ReturnType.FullName != "System.Void") {
 							return new Ast.ReturnStatement { Expression = arg1 };
 						} else {
 							return new Ast.ReturnStatement();
 						}
 					}
-					case Code.Rethrow: return new Ast.ThrowStatement();
-				case Code.Sizeof:
+					case ILCode.Rethrow: return new Ast.ThrowStatement();
+				case ILCode.Sizeof:
 					return new Ast.SizeOfExpression { Type = operandAsTypeRef };
-				case Code.Starg:
+				case ILCode.Starg:
 					return new Ast.AssignmentExpression(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand), arg1);
-					case Code.Stloc: {
+					case ILCode.Stloc: {
 						ILVariable locVar = (ILVariable)operand;
 						localVariablesToDefine.Add(locVar);
 						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name).WithAnnotation(locVar), arg1);
 					}
-					case Code.Switch: return InlineAssembly(byteCode, args);
-					case Code.Tail: return InlineAssembly(byteCode, args);
-					case Code.Throw: return new Ast.ThrowStatement { Expression = arg1 };
-					case Code.Unaligned: return InlineAssembly(byteCode, args);
-					case Code.Volatile: return InlineAssembly(byteCode, args);
+					case ILCode.Switch: return InlineAssembly(byteCode, args);
+					case ILCode.Tail: return InlineAssembly(byteCode, args);
+					case ILCode.Throw: return new Ast.ThrowStatement { Expression = arg1 };
+					case ILCode.Unaligned: return InlineAssembly(byteCode, args);
+					case ILCode.Volatile: return InlineAssembly(byteCode, args);
 					default: throw new Exception("Unknown OpCode: " + opCode);
 			}
 		}
