@@ -13,12 +13,20 @@ namespace ICSharpCode.Decompiler.ILAst
 	/// <summary>
 	/// Handles peephole transformations on the ILAst.
 	/// </summary>
-	public static class PeepholeTransforms
+	public class PeepholeTransforms
 	{
+		DecompilerContext context;
+		ILBlock method;
+		
 		public static void Run(DecompilerContext context, ILBlock method)
 		{
+			PeepholeTransforms transforms = new PeepholeTransforms();
+			transforms.context = context;
+			transforms.method = method;
+			
 			PeepholeTransform[] blockTransforms = {
-				ArrayInitializers.Transform(method)
+				ArrayInitializers.Transform(method),
+				transforms.CachedDelegateInitialization
 			};
 			Func<ILExpression, ILExpression>[] exprTransforms = {
 				EliminateDups,
@@ -67,6 +75,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				return expr;
 		}
 		
+		#region HandleDecimalConstants
 		static ILExpression HandleDecimalConstants(ILExpression expr)
 		{
 			if (expr.Code == ILCode.Newobj) {
@@ -105,5 +114,69 @@ namespace ICSharpCode.Decompiler.ILAst
 			else
 				return null;
 		}
+		#endregion
+		
+		#region CachedDelegateInitialization
+		void CachedDelegateInitialization(ILBlock block, ref int i)
+		{
+			// if (logicnot(brtrue(ldsfld(field)))) {
+			//     stsfld(field, newobj(Action::.ctor, ldnull(), ldftn(method)))
+			// } else {
+			// }
+			// ...(..., ldsfld(field), ...)
+			
+			ILCondition c = block.Body[i] as ILCondition;
+			if (c == null || c.Condition == null && c.TrueBlock == null || c.FalseBlock == null)
+				return;
+			if (!(c.TrueBlock.Body.Count == 1 && c.FalseBlock.Body.Count == 0))
+				return;
+			ILExpression condition = UnpackBrFalse(c.Condition);
+			if (condition == null || condition.Code != ILCode.Ldsfld)
+				return;
+			FieldDefinition field = condition.Operand as FieldDefinition; // field is defined in current assembly
+			if (field == null || !field.IsCompilerGeneratedOrIsInCompilerGeneratedClass())
+				return;
+			ILExpression stsfld = c.TrueBlock.Body[0] as ILExpression;
+			if (!(stsfld != null && stsfld.Code == ILCode.Stsfld && stsfld.Operand == field))
+				return;
+			ILExpression newObj = stsfld.Arguments[0];
+			if (!(newObj.Code == ILCode.Newobj && newObj.Arguments.Count == 2))
+				return;
+			if (newObj.Arguments[0].Code != ILCode.Ldnull)
+				return;
+			if (newObj.Arguments[1].Code != ILCode.Ldftn)
+				return;
+			MethodDefinition anonymousMethod = newObj.Arguments[1].Operand as MethodDefinition; // method is defined in current assembly
+			if (!Ast.Transforms.DelegateConstruction.IsAnonymousMethod(context, anonymousMethod))
+				return;
+			
+			ILExpression expr = block.Body.ElementAtOrDefault(i + 1) as ILExpression;
+			if (expr != null && expr.GetSelfAndChildrenRecursive<ILExpression>().Count(e => e.Code == ILCode.Ldsfld && e.Operand == field) == 1) {
+				foreach (ILExpression parent in expr.GetSelfAndChildrenRecursive<ILExpression>()) {
+					for (int j = 0; j < parent.Arguments.Count; j++) {
+						if (parent.Arguments[j].Code == ILCode.Ldsfld && parent.Arguments[j].Operand == field) {
+							parent.Arguments[j] = newObj;
+							block.Body.RemoveAt(i);
+							i -= ILInlining.InlineInto(block, i, method);
+							return;
+						}
+					}
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Returns 'result' in brfalse(result) or logicnot(brtrue(result)).
+		/// </summary>
+		static ILExpression UnpackBrFalse(ILExpression condition)
+		{
+			if (condition.Code == ILCode.Brfalse) {
+				return condition.Arguments.Single();
+			} else if (condition.Code == ILCode.LogicNot && condition.Arguments.Single().Code == ILCode.Brtrue) {
+				return condition.Arguments.Single().Arguments.Single();
+			}
+			return null;
+		}
+		#endregion
 	}
 }

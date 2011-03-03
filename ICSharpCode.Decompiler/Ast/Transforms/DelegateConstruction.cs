@@ -94,13 +94,20 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return base.VisitObjectCreateExpression(objectCreateExpression, data);
 		}
 		
+		internal static bool IsAnonymousMethod(DecompilerContext context, MethodDefinition method)
+		{
+			if (method == null || !method.Name.StartsWith("<", StringComparison.Ordinal))
+				return false;
+			if (!(method.IsCompilerGenerated() || IsPotentialClosure(context, method.DeclaringType)))
+				return false;
+			return true;
+		}
+		
 		bool HandleAnonymousMethod(ObjectCreateExpression objectCreateExpression, Expression target, MethodReference methodRef)
 		{
 			// Anonymous methods are defined in the same assembly, so there's no need to Resolve().
 			MethodDefinition method = methodRef as MethodDefinition;
-			if (method == null || !method.Name.StartsWith("<", StringComparison.Ordinal))
-				return false;
-			if (!(method.IsCompilerGenerated() || IsPotentialClosure(method.DeclaringType)))
+			if (!IsAnonymousMethod(context, method))
 				return false;
 			
 			// Decompile the anonymous method:
@@ -143,7 +150,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return true;
 		}
 		
-		bool IsPotentialClosure(TypeDefinition potentialDisplayClass)
+		static bool IsPotentialClosure(DecompilerContext context, TypeDefinition potentialDisplayClass)
 		{
 			if (potentialDisplayClass == null || !potentialDisplayClass.IsCompilerGenerated())
 				return false;
@@ -164,7 +171,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					continue;
 				var variable = stmt.Variables.Single();
 				TypeDefinition type = stmt.Type.Annotation<TypeDefinition>();
-				if (!IsPotentialClosure(type))
+				if (!IsPotentialClosure(context, type))
 					continue;
 				ObjectCreateExpression oce = variable.Initializer as ObjectCreateExpression;
 				if (oce == null || oce.Type.Annotation<TypeReference>() != type || oce.Arguments.Any() || !oce.Initializer.IsNull)

@@ -169,5 +169,14 @@ namespace ICSharpCode.Decompiler
 			}
 			return false;
 		}
+		
+		public static bool IsCompilerGeneratedOrIsInCompilerGeneratedClass(this IMemberDefinition member)
+		{
+			if (member == null)
+				return false;
+			if (member.IsCompilerGenerated())
+				return true;
+			return IsCompilerGeneratedOrIsInCompilerGeneratedClass(member.DeclaringType);
+		}
 	}
 }
