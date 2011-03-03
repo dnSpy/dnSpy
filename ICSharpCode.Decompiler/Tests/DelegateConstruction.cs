@@ -59,4 +59,9 @@ public static class DelegateConstruction
 		}
 		return list;
 	}
+	
+	public static Action StaticAnonymousMethodNoClosure()
+	{
+		return delegate { Console.WriteLine(); };
+	}
 }

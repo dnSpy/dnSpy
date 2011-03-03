@@ -5,11 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Decompiler;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.ILAst
 {
 	/// <summary>
 	/// Assigns C# types to IL expressions.

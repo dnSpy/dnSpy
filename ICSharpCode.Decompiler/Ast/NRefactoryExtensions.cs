@@ -4,7 +4,7 @@
 using System;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.Ast
 {
 	static class NRefactoryExtensions
 	{

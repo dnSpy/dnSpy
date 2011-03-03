@@ -10,7 +10,7 @@ using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using Mono.Cecil;
 
-namespace Decompiler.Transforms
+namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	/// <summary>
 	/// Converts "new Action(obj, ldftn(func))" into "new Action(obj.func)".

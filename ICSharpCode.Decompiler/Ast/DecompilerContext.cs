@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using Mono.Cecil;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler
 {
 	public class DecompilerContext
 	{

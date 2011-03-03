@@ -6,7 +6,7 @@ using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.Ast
 {
 	/// <summary>
 	/// Helper class for declaring variables.

@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.ILAst
 {
 	/// <summary>
 	/// Performs inlining transformations.

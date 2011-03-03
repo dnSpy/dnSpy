@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Decompiler.ControlFlow;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory.Utils;
@@ -12,7 +11,7 @@ using Mono.Cecil.Cil;
 using Mono.CSharp;
 using Cecil = Mono.Cecil;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.ILAst
 {
 	public abstract class ILNode
 	{

@@ -6,7 +6,7 @@ using System.Linq;
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.ILAst
 {
 	public delegate void PeepholeTransform(ILBlock block, ref int i);
 	

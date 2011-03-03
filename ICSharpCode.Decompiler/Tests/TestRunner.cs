@@ -6,7 +6,8 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Decompiler;
+
+using ICSharpCode.Decompiler.Ast;
 using Microsoft.CSharp;
 using Mono.Cecil;
 

@@ -7,7 +7,7 @@ using System.Linq;
 
 using Mono.Cecil;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.ILAst
 {
 	/// <summary>
 	/// IL AST transformation that introduces array initializers.

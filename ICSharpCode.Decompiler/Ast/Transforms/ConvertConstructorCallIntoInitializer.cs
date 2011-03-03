@@ -6,7 +6,7 @@ using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
-namespace Decompiler.Transforms
+namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	/// <summary>
 	/// If the first element of a constructor is a chained constructor call, convert it into a constructor initializer.

@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Decompiler.Transforms;
+
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast.Transforms;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Ast = ICSharpCode.NRefactory.CSharp;
-using ClassType = ICSharpCode.NRefactory.TypeSystem.ClassType;
-using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.Ast
 {
+	using Ast = ICSharpCode.NRefactory.CSharp;
+	using ClassType = ICSharpCode.NRefactory.TypeSystem.ClassType;
+	using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
+
 	public class AstBuilder
 	{
 		DecompilerContext context = new DecompilerContext();

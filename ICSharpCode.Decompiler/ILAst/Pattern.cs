@@ -4,7 +4,7 @@
 using System;
 using Mono.Cecil;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.ILAst
 {
 	public interface IVariablePattern
 	{

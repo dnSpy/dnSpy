@@ -3,9 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using Decompiler.ControlFlow;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.ILAst
 {
 	public class GotoRemoval
 	{

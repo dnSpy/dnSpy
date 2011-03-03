@@ -26,9 +26,9 @@ using System.Threading.Tasks;
 using System.Xaml;
 using System.Xml;
 
-using Decompiler;
-using Decompiler.Transforms;
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 

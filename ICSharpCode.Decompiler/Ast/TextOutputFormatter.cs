@@ -8,7 +8,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.Ast
 {
 	public class TextOutputFormatter : IOutputFormatter
 	{

@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace Decompiler.Transforms
+namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	public interface IAstTransform
 	{

@@ -7,7 +7,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.CSharp;
 
-namespace Decompiler.ControlFlow
+namespace ICSharpCode.Decompiler.ILAst
 {
 	public enum ILAstOptimizationStep
 	{
