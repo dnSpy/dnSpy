@@ -531,6 +531,7 @@ namespace Decompiler
 				case Code.Ldc_I8:
 				case Code.Ldc_R4:
 				case Code.Ldc_R8:
+				case (Code)ILCode.Ldc_Decimal:
 					return new Ast.PrimitiveExpression(operand);
 				case Code.Ldfld:
 					if (arg1 is DirectionExpression)

@@ -303,6 +303,9 @@ namespace Decompiler
 					return typeSystem.Single;
 				case ILCode.Ldc_R8:
 					return typeSystem.Double;
+				case ILCode.Ldc_Decimal:
+					Debug.Assert(expr.InferredType != null && expr.InferredType.FullName == "System.Decimal");
+					return expr.InferredType;
 				case ILCode.Ldtoken:
 					if (expr.Operand is TypeReference)
 						return new TypeReference("System", "RuntimeTypeHandle", module, module, true);
