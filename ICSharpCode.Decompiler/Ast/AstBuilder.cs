@@ -513,8 +513,23 @@ namespace Decompiler
 		
 		IEnumerable<Constraint> MakeConstraints(IEnumerable<GenericParameter> genericParameters)
 		{
-			// TODO
-			return Enumerable.Empty<Constraint>();
+			foreach (var gp in genericParameters) {
+				Constraint c = new Constraint();
+				c.TypeParameter = CleanName(gp.Name);
+				// class/struct must be first
+				if (gp.HasReferenceTypeConstraint)
+					c.BaseTypes.Add(new PrimitiveType("class"));
+				if (gp.HasNotNullableValueTypeConstraint)
+					c.BaseTypes.Add(new PrimitiveType("struct"));
+				
+				foreach (var constraintType in gp.Constraints)
+					c.BaseTypes.Add(ConvertType(constraintType));
+				
+				if (gp.HasDefaultConstructorConstraint)
+					c.BaseTypes.Add(new PrimitiveType("new")); // new() must be last
+				if (c.BaseTypes.Any())
+					yield return c;
+			}
 		}
 		
 		ConstructorDeclaration CreateConstructor(MethodDefinition methodDef)
