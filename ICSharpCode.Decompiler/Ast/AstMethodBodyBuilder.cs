@@ -703,7 +703,18 @@ namespace Decompiler
 				}
 			}
 			// Default invocation
+			AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
 			return target.Invoke(cecilMethod.Name, ConvertTypeArguments(cecilMethod), methodArgs).WithAnnotation(cecilMethod);
+		}
+		
+		static void AdjustArgumentsForMethodCall(MethodReference cecilMethod, List<Expression> methodArgs)
+		{
+			// Convert 'ref' into 'out' where necessary
+			for (int i = 0; i < methodArgs.Count && i < cecilMethod.Parameters.Count; i++) {
+				DirectionExpression dir = methodArgs[i] as DirectionExpression;
+				if (dir != null && cecilMethod.Parameters[i].IsOut)
+					dir.FieldDirection = FieldDirection.Out;
+			}
 		}
 		
 		static PropertyDefinition GetIndexer(MethodDefinition cecilMethodDef)
