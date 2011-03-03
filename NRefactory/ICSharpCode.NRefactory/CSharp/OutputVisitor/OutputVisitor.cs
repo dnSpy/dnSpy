@@ -784,52 +784,75 @@ namespace ICSharpCode.NRefactory.CSharp
 		public object VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, object data)
 		{
 			StartNode(primitiveExpression);
-			formatter.WriteToken(ToCSharpString(primitiveExpression));
-			lastWritten = LastWritten.Other;
+			WritePrimitiveValue(primitiveExpression.Value);
 			return EndNode(primitiveExpression);
 		}
 		
-		internal static string ToCSharpString(PrimitiveExpression primitiveExpression)
+		void WritePrimitiveValue(object val)
 		{
-			if (primitiveExpression.Value == null) {
-				return "null";
+			if (val == null) {
+				// usually NullReferenceExpression should be used for this, but we'll handle it anyways
+				WriteKeyword("null");
+				return;
 			}
-			
-			object val = primitiveExpression.Value;
 			
 			if (val is bool) {
 				if ((bool)val) {
-					return "true";
+					WriteKeyword("true");
 				} else {
-					return "false";
+					WriteKeyword("false");
 				}
+				return;
 			}
 			
 			if (val is string) {
-				return "\"" + ConvertString(val.ToString()) + "\"";
-			}
-			
-			if (val is char) {
-				return "'" + ConvertCharLiteral((char)val) + "'";
-			}
-			
-			if (val is decimal) {
-				return ((decimal)val).ToString(NumberFormatInfo.InvariantInfo) + "m";
-			}
-			
-			if (val is float) {
-				return ((float)val).ToString(NumberFormatInfo.InvariantInfo) + "f";
-			}
-			
-			if (val is double) {
-				string text = ((double)val).ToString(NumberFormatInfo.InvariantInfo);
-				if (text.IndexOf('.') < 0 && text.IndexOf('E') < 0)
-					return text + ".0";
-				else
-					return text;
-			}
-			
-			if (val is IFormattable) {
+				formatter.WriteToken("\"" + ConvertString(val.ToString()) + "\"");
+				lastWritten = LastWritten.Other;
+			} else if (val is char) {
+				formatter.WriteToken("'" + ConvertCharLiteral((char)val) + "'");
+				lastWritten = LastWritten.Other;
+			} else if (val is decimal) {
+				formatter.WriteToken(((decimal)val).ToString(NumberFormatInfo.InvariantInfo) + "m");
+				lastWritten = LastWritten.Other;
+			} else if (val is float) {
+				float f = (float)val;
+				if (float.IsInfinity(f) || float.IsNaN(f)) {
+					// Strictly speaking, these aren't PrimitiveExpressions;
+					// but we still support writing these to make life easier for code generators.
+					WriteKeyword("float");
+					WriteToken(".", AstNode.Roles.Dot);
+					if (float.IsPositiveInfinity(f))
+						WriteIdentifier("PositiveInfinity");
+					else if (float.IsNegativeInfinity(f))
+						WriteIdentifier("NegativeInfinity");
+					else
+						WriteIdentifier("NaN");
+					return;
+				}
+				formatter.WriteToken(f.ToString("R", NumberFormatInfo.InvariantInfo) + "f");
+				lastWritten = LastWritten.Other;
+			} else if (val is double) {
+				double f = (double)val;
+				if (double.IsInfinity(f) || double.IsNaN(f)) {
+					// Strictly speaking, these aren't PrimitiveExpressions;
+					// but we still support writing these to make life easier for code generators.
+					WriteKeyword("double");
+					WriteToken(".", AstNode.Roles.Dot);
+					if (double.IsPositiveInfinity(f))
+						WriteIdentifier("PositiveInfinity");
+					else if (double.IsNegativeInfinity(f))
+						WriteIdentifier("NegativeInfinity");
+					else
+						WriteIdentifier("NaN");
+					return;
+				}
+				string number = f.ToString("R", NumberFormatInfo.InvariantInfo);
+				if (number.IndexOf('.') < 0 && number.IndexOf('E') < 0)
+					number += ".0";
+				formatter.WriteToken(number);
+				// needs space if identifier follows number; this avoids mistaking the following identifier as type suffix
+				lastWritten = LastWritten.KeywordOrIdentifier;
+			} else if (val is IFormattable) {
 				StringBuilder b = new StringBuilder();
 //				if (primitiveExpression.LiteralFormat == LiteralFormat.HexadecimalNumber) {
 //					b.Append("0x");
@@ -843,12 +866,14 @@ namespace ICSharpCode.NRefactory.CSharp
 				if (val is long || val is ulong) {
 					b.Append("L");
 				}
-				return b.ToString();
+				formatter.WriteToken(b.ToString());
+				// needs space if identifier follows number; this avoids mistaking the following identifier as type suffix
+				lastWritten = LastWritten.KeywordOrIdentifier;
 			} else {
-				return val.ToString();
+				formatter.WriteToken(val.ToString());
+				lastWritten = LastWritten.Other;
 			}
 		}
-		
 		
 		static string ConvertCharLiteral(char ch)
 		{
