@@ -172,7 +172,9 @@ namespace Decompiler
 				foreach (FieldDefinition field in typeDef.Fields) {
 					if (field.IsRuntimeSpecialName) {
 						// the value__ field
-						astType.AddChild(ConvertType(field.FieldType), TypeDeclaration.BaseTypeRole);
+						if (field.FieldType != typeDef.Module.TypeSystem.Int32) {
+							astType.AddChild(ConvertType(field.FieldType), TypeDeclaration.BaseTypeRole);
+						}
 					} else {
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
 						enumMember.Name = CleanName(field.Name);
