@@ -499,11 +499,16 @@ namespace Decompiler
 		
 		IEnumerable<TypeParameterDeclaration> MakeTypeParameters(IEnumerable<GenericParameter> genericParameters)
 		{
-			return genericParameters.Select(
-				gp => new TypeParameterDeclaration {
-					Name = CleanName(gp.Name),
-					Variance = gp.IsContravariant ? VarianceModifier.Contravariant : gp.IsCovariant ? VarianceModifier.Covariant : VarianceModifier.Invariant
-				});
+			foreach (var gp in genericParameters) {
+				TypeParameterDeclaration tp = new TypeParameterDeclaration();
+				tp.Name = CleanName(gp.Name);
+				if (gp.IsContravariant)
+					tp.Variance = VarianceModifier.Contravariant;
+				else if (gp.IsCovariant)
+					tp.Variance = VarianceModifier.Covariant;
+				ConvertCustomAttributes(tp, gp);
+				yield return tp;
+			}
 		}
 		
 		IEnumerable<Constraint> MakeConstraints(IEnumerable<GenericParameter> genericParameters)
@@ -616,6 +621,11 @@ namespace Decompiler
 					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
 					attribute.Type = ConvertType(customAttribute.AttributeType);
 					attributes.Add(attribute);
+					
+					SimpleType st = attribute.Type as SimpleType;
+					if (st != null && st.Identifier.EndsWith("Attribute", StringComparison.Ordinal)) {
+						st.Identifier = st.Identifier.Substring(0, st.Identifier.Length - "Attribute".Length);
+					}
 
 					if(customAttribute.HasConstructorArguments) {
 						foreach (var parameter in customAttribute.ConstructorArguments) {
