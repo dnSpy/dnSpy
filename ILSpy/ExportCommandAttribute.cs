@@ -10,11 +10,11 @@ namespace ICSharpCode.ILSpy
 	#region Toolbar
 	public interface IToolbarCommandMetadata
 	{
-		string Icon { get; }
+		string ToolbarIcon { get; }
 		string ToolTip { get; }
-		string Category { get; }
+		string ToolbarCategory { get; }
 		
-		double Order { get; }
+		double ToolbarOrder { get; }
 	}
 	
 	[MetadataAttribute]
@@ -27,21 +27,21 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public string ToolTip { get; set; }
-		public string Icon { get; set; }
-		public string Category { get; set; }
-		public double Order { get; set; }
+		public string ToolbarIcon { get; set; }
+		public string ToolbarCategory { get; set; }
+		public double ToolbarOrder { get; set; }
 	}
 	#endregion
 	
 	#region Main Menu
 	public interface IMainMenuCommandMetadata
 	{
-		string Icon { get; }
+		string MenuIcon { get; }
 		string Header { get; }
 		string Menu { get; }
-		string Category { get; }
+		string MenuCategory { get; }
 		
-		double Order { get; }
+		double MenuOrder { get; }
 	}
 	
 	[MetadataAttribute]
@@ -53,11 +53,11 @@ namespace ICSharpCode.ILSpy
 		{
 		}
 		
-		public string Icon { get; set; }
+		public string MenuIcon { get; set; }
 		public string Header { get; set; }
 		public string Menu { get; set; }
-		public string Category { get; set; }
-		public double Order { get; set; }
+		public string MenuCategory { get; set; }
+		public double MenuOrder { get; set; }
 	}
 	#endregion
 }

@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Represents a property in the TreeView.
 	/// </summary>
-	sealed class PropertyTreeNode : ILSpyTreeNode
+	public sealed class PropertyTreeNode : ILSpyTreeNode
 	{
 		readonly PropertyDefinition property;
 		readonly bool isIndexer;

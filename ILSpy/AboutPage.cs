@@ -21,7 +21,7 @@ using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy
 {
-	[ExportMainMenuCommand(Menu = "_Help", Header = "_About", Order = 99999)]
+	[ExportMainMenuCommand(Menu = "_Help", Header = "_About", MenuOrder = 99999)]
 	sealed class AboutPage : SimpleCommand
 	{
 		[Import]

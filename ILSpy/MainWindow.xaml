@@ -34,25 +34,7 @@
 	<DockPanel>
 		<!-- Main menu -->
 		<Menu DockPanel.Dock="Top" Name="mainMenu">
-			<MenuItem Header="_File">
-				<MenuItem Command="Open">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/Open.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<MenuItem Header="Open from _GAC" Click="OpenFromGac_Click" />
-				<MenuItem Command="Refresh" Header="_Reload">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/Refresh.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<Separator />
-				<MenuItem Header="_Save Code" Click="saveCode_Click">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/SaveFile.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-			</MenuItem>
+			<MenuItem Header="_File" /> <!-- contents of file menu are added using MEF -->
 			<MenuItem Header="_View">
 				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
 					<MenuItem.Icon>

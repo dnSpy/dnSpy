@@ -14,7 +14,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Represents an assembly loaded into ILSpy.
 	/// </summary>
-	sealed class LoadedAssembly
+	public sealed class LoadedAssembly
 	{
 		readonly Task<AssemblyDefinition> assemblyTask;
 		readonly AssemblyList assemblyList;

@@ -107,7 +107,7 @@ namespace ICSharpCode.ILSpy
 		{
 			int navigationPos = 0;
 			int openPos = 1;
-			foreach (var commandGroup in toolbarCommands.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
+			foreach (var commandGroup in toolbarCommands.OrderBy(c => c.Metadata.ToolbarOrder).GroupBy(c => c.Metadata.ToolbarCategory)) {
 				if (commandGroup.Key == "Navigation") {
 					foreach (var command in commandGroup) {
 						toolBar.Items.Insert(navigationPos++, MakeToolbarItem(command));
@@ -130,12 +130,12 @@ namespace ICSharpCode.ILSpy
 		Button MakeToolbarItem(Lazy<ICommand, IToolbarCommandMetadata> command)
 		{
 			return new Button {
-				Command = command.Value,
+				Command = CommandWrapper.Unwrap(command.Value),
 				ToolTip = command.Metadata.ToolTip,
 				Content = new Image {
 					Width = 16,
 					Height = 16,
-					Source = Images.LoadImage(command.Value, command.Metadata.Icon)
+					Source = Images.LoadImage(command.Value, command.Metadata.ToolbarIcon)
 				}
 			};
 		}
@@ -147,25 +147,26 @@ namespace ICSharpCode.ILSpy
 		
 		void InitMainMenu()
 		{
-			foreach (var topLevelMenu in mainMenuCommands.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Menu)) {
+			foreach (var topLevelMenu in mainMenuCommands.OrderBy(c => c.Metadata.MenuOrder).GroupBy(c => c.Metadata.Menu)) {
 				var topLevelMenuItem = mainMenu.Items.OfType<MenuItem>().FirstOrDefault(m => (m.Header as string) == topLevelMenu.Key);
-				foreach (var category in topLevelMenu.GroupBy(c => c.Metadata.Category)) {
+				foreach (var category in topLevelMenu.GroupBy(c => c.Metadata.MenuCategory)) {
 					if (topLevelMenuItem == null) {
 						topLevelMenuItem = new MenuItem();
 						topLevelMenuItem.Header = topLevelMenu.Key;
 						mainMenu.Items.Add(topLevelMenuItem);
-					} else {
+					} else if (topLevelMenuItem.Items.Count > 0) {
 						topLevelMenuItem.Items.Add(new Separator());
 					}
 					foreach (var entry in category) {
 						MenuItem menuItem = new MenuItem();
-						menuItem.Header = entry.Metadata.Header;
-						menuItem.Command = entry.Value;
-						if (!string.IsNullOrEmpty(entry.Metadata.Icon)) {
+						menuItem.Command = CommandWrapper.Unwrap(entry.Value);
+						if (!string.IsNullOrEmpty(entry.Metadata.Header))
+							menuItem.Header = entry.Metadata.Header;
+						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon)) {
 							menuItem.Icon = new Image {
 								Width = 16,
 								Height = 16,
-								Source = Images.LoadImage(entry.Value, entry.Metadata.Icon)
+								Source = Images.LoadImage(entry.Value, entry.Metadata.MenuIcon)
 							};
 						}
 						topLevelMenuItem.Items.Add(menuItem);
@@ -388,8 +389,10 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		void OpenFiles(string[] fileNames)
+		public void OpenFiles(string[] fileNames)
 		{
+			if (fileNames == null)
+				throw new ArgumentNullException("fileNames");
 			treeView.UnselectAll();
 			SharpTreeNode lastNode = null;
 			foreach (string file in fileNames) {
@@ -413,18 +416,9 @@ namespace ICSharpCode.ILSpy
 			ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
 			SelectNode(FindNodeByPath(path, true));
 		}
-		
-		void OpenFromGac_Click(object sender, RoutedEventArgs e)
-		{
-			OpenFromGacDialog dlg = new OpenFromGacDialog();
-			dlg.Owner = this;
-			if (dlg.ShowDialog() == true) {
-				OpenFiles(dlg.SelectedFileNames);
-			}
-		}
 		#endregion
 		
-		#region Decompile / Save
+		#region Decompile (TreeView_SelectionChanged)
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (treeView.SelectedItems.Count == 1) {
@@ -432,21 +426,23 @@ namespace ICSharpCode.ILSpy
 				if (node != null && node.View(decompilerTextView))
 					return;
 			}
-			decompilerTextView.Decompile(sessionSettings.FilterSettings.Language,
-			                             treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>(),
-			                             new DecompilationOptions());
+			decompilerTextView.Decompile(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions());
 		}
 		
-		void saveCode_Click(object sender, RoutedEventArgs e)
-		{
-			if (treeView.SelectedItems.Count == 1) {
-				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
-				if (node != null && node.Save(decompilerTextView))
-					return;
+		public DecompilerTextView TextView {
+			get { return decompilerTextView; }
+		}
+		
+		public Language CurrentLanguage {
+			get {
+				return sessionSettings.FilterSettings.Language;
 			}
-			decompilerTextView.SaveToDisk(sessionSettings.FilterSettings.Language,
-			                              treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>(),
-			                              new DecompilationOptions() { FullDecompilation = true });
+		}
+		
+		public IEnumerable<ILSpyTreeNode> SelectedNodes {
+			get {
+				return treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>();
+			}
 		}
 		#endregion
 		

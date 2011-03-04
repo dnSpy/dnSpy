@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Namespace node. The loading of the type nodes is handled by the parent AssemblyTreeNode.
 	/// </summary>
-	sealed class NamespaceTreeNode : ILSpyTreeNode
+	public sealed class NamespaceTreeNode : ILSpyTreeNode
 	{
 		string name;
 		
