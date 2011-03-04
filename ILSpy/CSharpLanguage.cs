@@ -19,13 +19,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Resources;
 using System.Threading.Tasks;
 using System.Xaml;
 using System.Xml;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
@@ -37,6 +37,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Decompiler logic for C#.
 	/// </summary>
+	[Export(typeof(Language))]
 	public class CSharpLanguage : Language
 	{
 		string name = "C#";

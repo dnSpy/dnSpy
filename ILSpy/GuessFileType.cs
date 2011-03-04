@@ -12,7 +12,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Static methods for determining the type of a file.
 	/// </summary>
-	public static class GuessFileType
+	static class GuessFileType
 	{
 		public static FileType DetectFileType(Stream stream)
 		{
@@ -120,7 +120,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 	
-	public enum FileType
+	enum FileType
 	{
 		Binary,
 		Text,

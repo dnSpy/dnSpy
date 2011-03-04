@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
@@ -121,19 +122,29 @@ namespace ICSharpCode.ILSpy
 	
 	public static class Languages
 	{
+		static ReadOnlyCollection<Language> allLanguages;
+		
 		/// <summary>
 		/// A list of all languages.
 		/// </summary>
-		public static readonly ReadOnlyCollection<Language> AllLanguages = new List<Language>(
-			new Language[] {
-				new CSharpLanguage(),
-				new ILLanguage(true)
+		public static ReadOnlyCollection<Language> AllLanguages {
+			get {
+				return allLanguages;
 			}
+		}
+		
+		
+		internal static void Initialize(CompositionContainer composition)
+		{
+			List<Language> languages = new List<Language>();
+			languages.AddRange(composition.GetExportedValues<Language>());
+			languages.Add(new ILLanguage(true));
 			#if DEBUG
-			.Concat(ILAstLanguage.GetDebugLanguages())
-			.Concat(CSharpLanguage.GetDebugLanguages())
+			languages.AddRange(ILAstLanguage.GetDebugLanguages());
+			languages.AddRange(CSharpLanguage.GetDebugLanguages());
 			#endif
-		).AsReadOnly();
+			allLanguages = languages.AsReadOnly();
+		}
 		
 		/// <summary>
 		/// Gets a language using its name.
