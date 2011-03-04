@@ -6,6 +6,15 @@ using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy
 {
+	[ExportMainMenuCommand(Menu = "_File", Header = "E_xit", Order = 99999, Category = "Exit")]
+	sealed class ExitCommand : SimpleCommand
+	{
+		public override void Execute(object parameter)
+		{
+			MainWindow.Instance.Close();
+		}
+	}
+	
 	[ExportToolbarCommand(ToolTip = "Back", Icon = "Images/Back.png", Category = "Navigation")]
 	sealed class BrowseBackCommand : CommandWrapper {
 		public BrowseBackCommand() : base(NavigationCommands.BrowseBack) {}
@@ -48,6 +57,21 @@ namespace ICSharpCode.ILSpy
 		public bool CanExecute(object parameter)
 		{
 			return wrappedCommand.CanExecute(parameter);
+		}
+	}
+	
+	public abstract class SimpleCommand : ICommand
+	{
+		public event EventHandler CanExecuteChanged {
+			add { CommandManager.RequerySuggested += value; }
+			remove { CommandManager.RequerySuggested -= value; }
+		}
+		
+		public abstract void Execute(object parameter);
+		
+		public virtual bool CanExecute(object parameter)
+		{
+			return true;
 		}
 	}
 }

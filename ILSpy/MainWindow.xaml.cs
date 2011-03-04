@@ -29,8 +29,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
@@ -50,6 +52,9 @@ namespace ICSharpCode.ILSpy
 		AssemblyListManager assemblyListManager;
 		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
+		
+		[Import]
+		DecompilerTextView decompilerTextView = null;
 		
 		static MainWindow instance;
 		
@@ -78,7 +83,9 @@ namespace ICSharpCode.ILSpy
 			this.WindowState = sessionSettings.WindowState;
 			
 			InitializeComponent();
-			decompilerTextView.mainWindow = this;
+			App.CompositionContainer.ComposeParts(this);
+			Grid.SetRow(decompilerTextView, 1);
+			rightPane.Children.Add(decompilerTextView);
 			
 			if (sessionSettings.SplitterPosition > 0 && sessionSettings.SplitterPosition < 1) {
 				leftColumn.Width = new GridLength(sessionSettings.SplitterPosition, GridUnitType.Star);
@@ -86,28 +93,38 @@ namespace ICSharpCode.ILSpy
 			}
 			sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
 			
-			App.CompositionContainer.ComposeParts(this);
+			InitMainMenu();
+			InitToolbar();
+			
+			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
+		}
+		
+		#region Toolbar extensibility
+		[ImportMany("ToolbarCommand", typeof(ICommand))]
+		Lazy<ICommand, IToolbarCommandMetadata>[] toolbarCommands = null;
+		
+		void InitToolbar()
+		{
 			int navigationPos = 0;
 			int openPos = 1;
-			foreach (var commandGroup in ToolbarCommands.GroupBy(c => c.Metadata.Category)) {
+			foreach (var commandGroup in toolbarCommands.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
 				if (commandGroup.Key == "Navigation") {
-					foreach (var command in commandGroup.OrderBy(c => c.Metadata.Order)) {
+					foreach (var command in commandGroup) {
 						toolBar.Items.Insert(navigationPos++, MakeToolbarItem(command));
 						openPos++;
 					}
 				} else if (commandGroup.Key == "Open") {
-					foreach (var command in commandGroup.OrderBy(c => c.Metadata.Order)) {
+					foreach (var command in commandGroup) {
 						toolBar.Items.Insert(openPos++, MakeToolbarItem(command));
 					}
 				} else {
 					toolBar.Items.Add(new Separator());
-					foreach (var command in commandGroup.OrderBy(c => c.Metadata.Order)) {
+					foreach (var command in commandGroup) {
 						toolBar.Items.Add(MakeToolbarItem(command));
 					}
 				}
 			}
 			
-			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
 		}
 		
 		Button MakeToolbarItem(Lazy<ICommand, IToolbarCommandMetadata> command)
@@ -122,9 +139,41 @@ namespace ICSharpCode.ILSpy
 				}
 			};
 		}
+		#endregion
 		
-		[ImportMany]
-		internal Lazy<ICommand, IToolbarCommandMetadata>[] ToolbarCommands { get; set; }
+		#region Main Menu extensibility
+		[ImportMany("MainMenuCommand", typeof(ICommand))]
+		Lazy<ICommand, IMainMenuCommandMetadata>[] mainMenuCommands = null;
+		
+		void InitMainMenu()
+		{
+			foreach (var topLevelMenu in mainMenuCommands.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Menu)) {
+				var topLevelMenuItem = mainMenu.Items.OfType<MenuItem>().FirstOrDefault(m => (m.Header as string) == topLevelMenu.Key);
+				foreach (var category in topLevelMenu.GroupBy(c => c.Metadata.Category)) {
+					if (topLevelMenuItem == null) {
+						topLevelMenuItem = new MenuItem();
+						topLevelMenuItem.Header = topLevelMenu.Key;
+						mainMenu.Items.Add(topLevelMenuItem);
+					} else {
+						topLevelMenuItem.Items.Add(new Separator());
+					}
+					foreach (var entry in category) {
+						MenuItem menuItem = new MenuItem();
+						menuItem.Header = entry.Metadata.Header;
+						menuItem.Command = entry.Value;
+						if (!string.IsNullOrEmpty(entry.Metadata.Icon)) {
+							menuItem.Icon = new Image {
+								Width = 16,
+								Height = 16,
+								Source = Images.LoadImage(entry.Value, entry.Metadata.Icon)
+							};
+						}
+						topLevelMenuItem.Items.Add(menuItem);
+					}
+				}
+			}
+		}
+		#endregion
 		
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -372,18 +421,6 @@ namespace ICSharpCode.ILSpy
 			if (dlg.ShowDialog() == true) {
 				OpenFiles(dlg.SelectedFileNames);
 			}
-		}
-		#endregion
-		
-		#region Exit/About
-		void ExitClick(object sender, RoutedEventArgs e)
-		{
-			Close();
-		}
-		
-		void AboutClick(object sender, RoutedEventArgs e)
-		{
-			AboutPage.Display(decompilerTextView);
 		}
 		#endregion
 		

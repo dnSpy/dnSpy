@@ -22,12 +22,40 @@ namespace ICSharpCode.ILSpy
 	public class ExportToolbarCommandAttribute : ExportAttribute
 	{
 		public ExportToolbarCommandAttribute()
-			: base(typeof(ICommand))
+			: base("ToolbarCommand", typeof(ICommand))
 		{
 		}
 		
 		public string ToolTip { get; set; }
 		public string Icon { get; set; }
+		public string Category { get; set; }
+		public double Order { get; set; }
+	}
+	#endregion
+	
+	#region Main Menu
+	public interface IMainMenuCommandMetadata
+	{
+		string Icon { get; }
+		string Header { get; }
+		string Menu { get; }
+		string Category { get; }
+		
+		double Order { get; }
+	}
+	
+	[MetadataAttribute]
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
+	public class ExportMainMenuCommandAttribute : ExportAttribute
+	{
+		public ExportMainMenuCommandAttribute()
+			: base("MainMenuCommand", typeof(ICommand))
+		{
+		}
+		
+		public string Icon { get; set; }
+		public string Header { get; set; }
+		public string Menu { get; set; }
 		public string Category { get; set; }
 		public double Order { get; set; }
 	}

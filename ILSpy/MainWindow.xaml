@@ -33,7 +33,7 @@
 	</Window.CommandBindings>
 	<DockPanel>
 		<!-- Main menu -->
-		<Menu DockPanel.Dock="Top">
+		<Menu DockPanel.Dock="Top" Name="mainMenu">
 			<MenuItem Header="_File">
 				<MenuItem Command="Open">
 					<MenuItem.Icon>
@@ -52,8 +52,6 @@
 						<Image Width="16" Height="16" Source="Images/SaveFile.png" />
 					</MenuItem.Icon>
 				</MenuItem>
-				<Separator />
-				<MenuItem Header="E_xit" Click="ExitClick" />
 			</MenuItem>
 			<MenuItem Header="_View">
 				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
@@ -62,9 +60,6 @@
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem Header="Show _analyzer" Name="showAnalyzer" IsCheckable="True" Checked="ShowAnalyzer_Checked" Unchecked="ShowAnalyzer_Unchecked" />
-			</MenuItem>
-			<MenuItem Header="_Help">
-				<MenuItem Header="_About" Click="AboutClick" />
 			</MenuItem>
 		</Menu>
 		<!-- ToolBar -->
@@ -135,7 +130,7 @@
 				VerticalAlignment="Stretch"
 				BorderBrush="Transparent" />
 			<!-- Right pane: Text Editor -->
-			<Grid Grid.Column="2">
+			<Grid Grid.Column="2" Name="rightPane">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition
 						Width="*" />
@@ -156,7 +151,7 @@
 					</DockPanel>
 				</Border>
 				
-				<textView:DecompilerTextView x:Name="decompilerTextView" Grid.Row="1" />
+				<!-- decompilerTextView is inserted into row 1 by code -->
 				
 				<GridSplitter
 					Grid.ZIndex="1"
