@@ -157,6 +157,7 @@
     <Compile Include="TreeNodes\ReferenceFolderTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceListTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceTreeNode.cs" />
     <Compile Include="TreeNodes\ThreadingSupport.cs" />
     <Compile Include="TreeNodes\TypeTreeNode.cs" />
     <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />

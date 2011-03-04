@@ -52,6 +52,8 @@ namespace ICSharpCode.ILSpy
 					};
 				});
 			output.WriteLine();
+			foreach (var plugin in App.CompositionContainer.GetExportedValues<IAboutPageAddition>())
+				plugin.Write(output);
 			output.WriteLine();
 			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(AboutPage), "README.txt")) {
 				using (StreamReader r = new StreamReader(s)) {
@@ -255,5 +257,13 @@ namespace ICSharpCode.ILSpy
 			}
 			return tcs.Task;
 		}
+	}
+	
+	/// <summary>
+	/// Interface that allows plugins to extend the about page.
+	/// </summary>
+	public interface IAboutPageAddition
+	{
+		void Write(ISmartTextOutput textOutput);
 	}
 }

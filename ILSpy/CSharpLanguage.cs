@@ -324,7 +324,7 @@ namespace ICSharpCode.ILSpy
 								if (fileName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
 									MemoryStream ms = new MemoryStream();
 									entryStream.CopyTo(ms);
-									BamlDecompiler decompiler = TreeNodes.ResourceEntryNode.CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, assemblyFileName);
+									var decompiler = Baml.BamlResourceEntryNode.CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, assemblyFileName);
 									string xaml = null;
 									try {
 										xaml = decompiler.DecompileBaml(ms, assemblyFileName);

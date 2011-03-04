@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.TextView
 	/// <summary>
 	/// Text output implementation for AvalonEdit.
 	/// </summary>
-	sealed class AvalonEditTextOutput : ISmartTextOutput
+	public sealed class AvalonEditTextOutput : ISmartTextOutput
 	{
 		readonly StringBuilder b = new StringBuilder();
 		
@@ -78,18 +78,17 @@ namespace ICSharpCode.ILSpy.TextView
 		Stack<NewFolding> openFoldings = new Stack<NewFolding>();
 		
 		/// <summary>List of all foldings that were written to the output</summary>
-		public readonly List<NewFolding> Foldings = new List<NewFolding>();
+		internal readonly List<NewFolding> Foldings = new List<NewFolding>();
 		
-		
-		public readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
+		internal readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
 		
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
-		public readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
+		internal readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
 		
 		/// <summary>
 		/// Gets the list of references (hyperlinks).
 		/// </summary>
-		public TextSegmentCollection<ReferenceSegment> References {
+		internal TextSegmentCollection<ReferenceSegment> References {
 			get { return references; }
 		}
 		

@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Base class of all ILSpy tree nodes.
 	/// </summary>
-	abstract class ILSpyTreeNode : SharpTreeNode
+	public abstract class ILSpyTreeNode : SharpTreeNode
 	{
 		FilterSettings filterSettings;
 		bool childrenNeedFiltering;
@@ -166,7 +166,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 	
-	enum FilterResult
+	public enum FilterResult
 	{
 		/// <summary>
 		/// Hides the node.
