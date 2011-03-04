@@ -18,8 +18,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -84,9 +86,46 @@ namespace ICSharpCode.ILSpy
 			}
 			sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
 			
+			App.CompositionContainer.ComposeParts(this);
+			int navigationPos = 0;
+			int openPos = 1;
+			foreach (var commandGroup in ToolbarCommands.GroupBy(c => c.Metadata.Category)) {
+				if (commandGroup.Key == "Navigation") {
+					foreach (var command in commandGroup.OrderBy(c => c.Metadata.Order)) {
+						toolBar.Items.Insert(navigationPos++, MakeToolbarItem(command));
+						openPos++;
+					}
+				} else if (commandGroup.Key == "Open") {
+					foreach (var command in commandGroup.OrderBy(c => c.Metadata.Order)) {
+						toolBar.Items.Insert(openPos++, MakeToolbarItem(command));
+					}
+				} else {
+					toolBar.Items.Add(new Separator());
+					foreach (var command in commandGroup.OrderBy(c => c.Metadata.Order)) {
+						toolBar.Items.Add(MakeToolbarItem(command));
+					}
+				}
+			}
+			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
 		}
-
+		
+		Button MakeToolbarItem(Lazy<ICommand, IToolbarCommandMetadata> command)
+		{
+			return new Button {
+				Command = command.Value,
+				ToolTip = command.Metadata.ToolTip,
+				Content = new Image {
+					Width = 16,
+					Height = 16,
+					Source = Images.LoadImage(command.Value, command.Metadata.Icon)
+				}
+			};
+		}
+		
+		[ImportMany]
+		internal Lazy<ICommand, IToolbarCommandMetadata>[] ToolbarCommands { get; set; }
+		
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			ILSpySettings spySettings = this.spySettings;
