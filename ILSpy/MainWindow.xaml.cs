@@ -400,10 +400,10 @@ namespace ICSharpCode.ILSpy
 			
 			// jump to type & expand folding
 			if (CurrentLineBookmark.Instance != null) {
-				if (CurrentLineBookmark.Instance.Type != DebuggedData.CurrentType) {
+				if (CurrentLineBookmark.Instance.Type != DebuggedData.CurrentType)
 					JumpToReference(CurrentLineBookmark.Instance.Type);
-					decompilerTextView.UnfoldAndScroll(CurrentLineBookmark.Instance.LineNumber);
-				}
+				
+				decompilerTextView.UnfoldAndScroll(CurrentLineBookmark.Instance.LineNumber);
 			}
 		}
 		
