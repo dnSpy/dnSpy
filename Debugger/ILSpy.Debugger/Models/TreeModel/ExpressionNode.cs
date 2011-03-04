@@ -158,6 +158,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 					targetName = Name.Substring(0, index);
 				}
 				
+				// get local variable index
 				List<ILVariable> list;
 				if (ILAstBuilder.MemberLocalVariables.TryGetValue(token, out list)) {
 					var variable = list.Find(v => v.Name == targetName);
@@ -171,6 +172,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 					}
 				}
 				
+				// evaluate expression
 				val = expression.Evaluate(WindowsDebugger.DebuggedProcess);
 			} catch (GetValueException e) {
 				error = e;
