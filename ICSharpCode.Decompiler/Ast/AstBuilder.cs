@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 using ICSharpCode.Decompiler;
@@ -204,7 +205,7 @@ namespace ICSharpCode.Decompiler.Ast
 				AddTypeMembers(astType, typeDef);
 			}
 
-			ConvertCustomAttributes(astType, typeDef);
+			ConvertAttributes(astType, typeDef);
 			return astType;
 		}
 
@@ -662,7 +663,67 @@ namespace ICSharpCode.Decompiler.Ast
 				yield return astParam;
 			}
 		}
-
+		
+		void ConvertAttributes(AttributedNode attributedNode, TypeDefinition typeDefinition)
+		{
+			ConvertCustomAttributes(attributedNode, typeDefinition);
+			
+			// Handle the non-custom attributes:
+			#region SerializableAttribute
+			if (typeDefinition.IsSerializable)
+				attributedNode.Attributes.Add(new AttributeSection(new Ast.Attribute { Type = new SimpleType("Serializable") }));
+			#endregion
+			
+			#region StructLayoutAttribute
+			LayoutKind layoutKind = LayoutKind.Auto;
+			switch (typeDefinition.Attributes & TypeAttributes.LayoutMask) {
+				case TypeAttributes.SequentialLayout:
+					layoutKind = LayoutKind.Sequential;
+					break;
+				case TypeAttributes.ExplicitLayout:
+					layoutKind = LayoutKind.Explicit;
+					break;
+			}
+			CharSet charSet = CharSet.None;
+			switch (typeDefinition.Attributes & TypeAttributes.StringFormatMask) {
+				case TypeAttributes.AnsiClass:
+					charSet = CharSet.Ansi;
+					break;
+				case TypeAttributes.AutoClass:
+					charSet = CharSet.Auto;
+					break;
+				case TypeAttributes.UnicodeClass:
+					charSet = CharSet.Unicode;
+					break;
+			}
+			LayoutKind defaultLayoutKind = (typeDefinition.IsValueType && !typeDefinition.IsEnum) ? LayoutKind.Sequential: LayoutKind.Auto;
+			if (layoutKind != defaultLayoutKind || charSet != CharSet.Ansi || typeDefinition.PackingSize > 0 || typeDefinition.ClassSize > 0) {
+				var structLayout = new Ast.Attribute();
+				structLayout.Type = new SimpleType("StructLayout");
+				structLayout.Arguments.Add(new IdentifierExpression("LayoutKind").Member(layoutKind.ToString()));
+				if (charSet != CharSet.Ansi) {
+					structLayout.Arguments.Add(new AssignmentExpression(
+						new IdentifierExpression("CharSet"),
+						new IdentifierExpression("CharSet").Member(charSet.ToString())
+					));
+				}
+				if (typeDefinition.PackingSize > 0) {
+					structLayout.Arguments.Add(new AssignmentExpression(
+						new IdentifierExpression("Pack"),
+						new PrimitiveExpression((int)typeDefinition.PackingSize)
+					));
+				}
+				if (typeDefinition.ClassSize > 0) {
+					structLayout.Arguments.Add(new AssignmentExpression(
+						new IdentifierExpression("Size"),
+						new PrimitiveExpression((int)typeDefinition.ClassSize)
+					));
+				}
+				attributedNode.Attributes.Add(new AttributeSection(structLayout));
+			}
+			#endregion
+		}
+		
 		static void ConvertCustomAttributes(AstNode attributedNode, ICustomAttributeProvider customAttributeProvider, AttributeTarget target = AttributeTarget.None)
 		{
 			if (customAttributeProvider.HasCustomAttributes) {
