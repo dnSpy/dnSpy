@@ -39,6 +39,14 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		void InferTypes(ILNode node)
 		{
+			ILCondition cond = node as ILCondition;
+			if (cond != null) {
+				InferTypeForExpression(cond.Condition, typeSystem.Boolean, false);
+			}
+			ILWhileLoop loop = node as ILWhileLoop;
+			if (loop != null && loop.Condition != null) {
+				InferTypeForExpression(loop.Condition, typeSystem.Boolean, false);
+			}
 			ILExpression expr = node as ILExpression;
 			if (expr != null) {
 				ILVariable v = expr.Operand as ILVariable;
@@ -111,13 +119,13 @@ namespace ICSharpCode.Decompiler.ILAst
 						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Boolean);
 					}
 					return typeSystem.Boolean;
-				case ILCode.BrLogicAnd:
-				case ILCode.BrLogicOr:
+				case ILCode.LogicAnd:
+				case ILCode.LogicOr:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Boolean);
 					}
-					return null;
+					return typeSystem.Boolean;
 				case ILCode.TernaryOp:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
@@ -438,29 +446,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					return typeSystem.Boolean;
 					#endregion
 					#region Branch instructions
-				case ILCode.Beq:
-				case ILCode.Bne_Un:
-					if (forceInferChildren)
-						InferArgumentsInBinaryOperator(expr, null);
-					return null;
 				case ILCode.Brtrue:
-				case ILCode.Brfalse:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Boolean);
-					return null;
-				case ILCode.Blt:
-				case ILCode.Ble:
-				case ILCode.Bgt:
-				case ILCode.Bge:
-					if (forceInferChildren)
-						InferArgumentsInBinaryOperator(expr, true);
-					return null;
-				case ILCode.Blt_Un:
-				case ILCode.Ble_Un:
-				case ILCode.Bgt_Un:
-				case ILCode.Bge_Un:
-					if (forceInferChildren)
-						InferArgumentsInBinaryOperator(expr, false);
 					return null;
 				case ILCode.Br:
 				case ILCode.Leave:

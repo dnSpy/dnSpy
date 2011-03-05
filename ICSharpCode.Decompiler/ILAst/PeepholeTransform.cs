@@ -123,7 +123,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		#region CachedDelegateInitialization
 		void CachedDelegateInitialization(ILBlock block, ref int i)
 		{
-			// if (logicnot(brtrue(ldsfld(field)))) {
+			// if (logicnot(ldsfld(field))) {
 			//     stsfld(field, newobj(Action::.ctor, ldnull(), ldftn(method)))
 			// } else {
 			// }
@@ -134,7 +134,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				return;
 			if (!(c.TrueBlock.Body.Count == 1 && c.FalseBlock.Body.Count == 0))
 				return;
-			ILExpression condition = UnpackBrFalse(c.Condition);
+			if (!c.Condition.Match(ILCode.LogicNot))
+				return;
+			ILExpression condition = c.Condition.Arguments.Single() as ILExpression;
 			if (condition == null || condition.Code != ILCode.Ldsfld)
 				return;
 			FieldDefinition field = condition.Operand as FieldDefinition; // field is defined in current assembly
@@ -167,19 +169,6 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 			}
-		}
-		
-		/// <summary>
-		/// Returns 'result' in brfalse(result) or logicnot(brtrue(result)).
-		/// </summary>
-		static ILExpression UnpackBrFalse(ILExpression condition)
-		{
-			if (condition.Code == ILCode.Brfalse) {
-				return condition.Arguments.Single();
-			} else if (condition.Code == ILCode.LogicNot && condition.Arguments.Single().Code == ILCode.Brtrue) {
-				return condition.Arguments.Single().Arguments.Single();
-			}
-			return null;
 		}
 		#endregion
 	}

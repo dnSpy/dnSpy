@@ -108,7 +108,7 @@ namespace ICSharpCode.Decompiler.Ast
 			} else if (node is ILWhileLoop) {
 				ILWhileLoop ilLoop = (ILWhileLoop)node;
 				WhileStatement whileStmt = new WhileStatement() {
-					Condition = ilLoop.Condition != null ? MakeBranchCondition(ilLoop.Condition) : new PrimitiveExpression(true),
+					Condition = ilLoop.Condition != null ? (Expression)TransformExpression(ilLoop.Condition) : new PrimitiveExpression(true),
 					EmbeddedStatement = TransformBlock(ilLoop.BodyBlock)
 				};
 				yield return whileStmt;
@@ -116,7 +116,7 @@ namespace ICSharpCode.Decompiler.Ast
 				ILCondition conditionalNode = (ILCondition)node;
 				bool hasFalseBlock = conditionalNode.FalseBlock.EntryGoto != null || conditionalNode.FalseBlock.Body.Count > 0;
 				yield return new Ast.IfElseStatement {
-					Condition = MakeBranchCondition(conditionalNode.Condition),
+					Condition = (Expression)TransformExpression(conditionalNode.Condition),
 					TrueStatement = TransformBlock(conditionalNode.TrueBlock),
 					FalseStatement = hasFalseBlock ? TransformBlock(conditionalNode.FalseBlock) : null
 				};
@@ -166,58 +166,6 @@ namespace ICSharpCode.Decompiler.Ast
 			return args;
 		}
 		
-		Ast.Expression MakeBranchCondition(ILExpression expr)
-		{
-			switch(expr.Code) {
-				case ILCode.LogicNot:
-					return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, MakeBranchCondition(expr.Arguments[0]));
-				case ILCode.BrLogicAnd:
-					return new Ast.BinaryOperatorExpression(
-						MakeBranchCondition(expr.Arguments[0]),
-						BinaryOperatorType.ConditionalAnd,
-						MakeBranchCondition(expr.Arguments[1])
-					);
-				case ILCode.BrLogicOr:
-					return new Ast.BinaryOperatorExpression(
-						MakeBranchCondition(expr.Arguments[0]),
-						BinaryOperatorType.ConditionalOr,
-						MakeBranchCondition(expr.Arguments[1])
-					);
-			}
-			
-			List<Ast.Expression> args = TransformExpressionArguments(expr);
-			Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
-			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
-			switch((Code)expr.Code) {
-				case Code.Brfalse:
-					return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
-				case Code.Brtrue:
-					return arg1;
-				case Code.Beq:
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
-				case Code.Bge:
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-				case Code.Bge_Un:
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-				case Code.Bgt:
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-				case Code.Bgt_Un:
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
-				case Code.Ble:
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-				case Code.Ble_Un:
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-				case Code.Blt:
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-				case Code.Blt_Un:
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-				case Code.Bne_Un:
-					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
-				default:
-					throw new Exception("Bad opcode");
-			}
-		}
-		
 		static string FormatByteCodeOperand(object operand)
 		{
 			if (operand == null) {
@@ -255,53 +203,15 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		AstNode TransformByteCode(ILExpression byteCode)
 		{
-			ILCode opCode = byteCode.Code;
 			object operand = byteCode.Operand;
 			AstType operandAsTypeRef = AstBuilder.ConvertType(operand as Cecil.TypeReference);
-			ILExpression operandAsByteCode = operand as ILExpression;
 
-			// Do branches first because TransformExpressionArguments does not work on arguments that are branches themselfs
-			// TODO:  We should probably have virtual instructions for these and not abuse branch codes as expressions
-			switch(opCode) {
-					case ILCode.Br: return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
-				case ILCode.Brfalse:
-				case ILCode.Brtrue:
-				case ILCode.Beq:
-				case ILCode.Bge:
-				case ILCode.Bge_Un:
-				case ILCode.Bgt:
-				case ILCode.Bgt_Un:
-				case ILCode.Ble:
-				case ILCode.Ble_Un:
-				case ILCode.Blt:
-				case ILCode.Blt_Un:
-				case ILCode.Bne_Un:
-				case ILCode.BrLogicAnd:
-				case ILCode.BrLogicOr:
-					return new Ast.IfElseStatement() {
-						Condition = MakeBranchCondition(byteCode),
-						TrueStatement = new BlockStatement() {
-							new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name)
-						}
-					};
-				case ILCode.TernaryOp:
-					return new Ast.ConditionalExpression() {
-						Condition = MakeBranchCondition(byteCode.Arguments[0]),
-						TrueExpression = (Expression)TransformExpression(byteCode.Arguments[1]),
-						FalseExpression = (Expression)TransformExpression(byteCode.Arguments[2]),
-					};
-				case ILCode.LoopBreak:
-					return new Ast.BreakStatement();
-				case ILCode.LoopContinue:
-					return new Ast.ContinueStatement();
-			}
-			
 			List<Ast.Expression> args = TransformExpressionArguments(byteCode);
 			Ast.Expression arg1 = args.Count >= 1 ? args[0] : null;
 			Ast.Expression arg2 = args.Count >= 2 ? args[1] : null;
 			Ast.Expression arg3 = args.Count >= 3 ? args[2] : null;
 			
-			switch(opCode) {
+			switch(byteCode.Code) {
 					#region Arithmetic
 					case ILCode.Add:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
 					case ILCode.Add_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
@@ -337,7 +247,7 @@ namespace ICSharpCode.Decompiler.Ast
 							// change "new (int[,])[10] to new int[10][,]"
 							ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
 						}
-						if (opCode == ILCode.InitArray) {
+						if (byteCode.Code == ILCode.InitArray) {
 							ace.Initializer = new ArrayInitializerExpression();
 							ace.Initializer.Elements.AddRange(args);
 						} else {
@@ -392,6 +302,24 @@ namespace ICSharpCode.Decompiler.Ast
 					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 				case ILCode.Clt_Un:
 					return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+					#endregion
+					#region Logical
+				case ILCode.LogicNot:   return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
+				case ILCode.LogicAnd:   return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ConditionalAnd, arg2);
+				case ILCode.LogicOr:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ConditionalOr, arg2);
+				case ILCode.TernaryOp:  return new Ast.ConditionalExpression() { Condition = arg1, TrueExpression = arg2, FalseExpression = arg3 };
+					#endregion
+					#region Branch
+				case ILCode.Br:         return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
+				case ILCode.Brtrue:
+					return new Ast.IfElseStatement() {
+						Condition = arg1,
+						TrueStatement = new BlockStatement() {
+							new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name)
+						}
+					};
+				case ILCode.LoopBreak:    return new Ast.BreakStatement();
+				case ILCode.LoopContinue: return new Ast.ContinueStatement();
 					#endregion
 					#region Conversions
 				case ILCode.Conv_I1:
@@ -629,7 +557,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Throw: return new Ast.ThrowStatement { Expression = arg1 };
 					case ILCode.Unaligned: return InlineAssembly(byteCode, args);
 					case ILCode.Volatile: return InlineAssembly(byteCode, args);
-					default: throw new Exception("Unknown OpCode: " + opCode);
+					default: throw new Exception("Unknown OpCode: " + byteCode.Code);
 			}
 		}
 		

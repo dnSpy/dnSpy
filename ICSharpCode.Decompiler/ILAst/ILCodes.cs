@@ -32,7 +32,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	public enum ILCode
 	{
 		// For convenience, the start is exactly identical to Mono.Cecil.Cil.Code
-		// The macro instructions should never be used and are therefore prepended by __
+		// Instructions that should not be used are prepended by __
 		Nop,
 		Break,
 		__Ldarg_0,
@@ -89,18 +89,18 @@ namespace ICSharpCode.Decompiler.ILAst
 		__Ble_Un_S,
 		__Blt_Un_S,
 		Br,
-		Brfalse,
+		__Brfalse,
 		Brtrue,
-		Beq,
-		Bge,
-		Bgt,
-		Ble,
-		Blt,
-		Bne_Un,
-		Bge_Un,
-		Bgt_Un,
-		Ble_Un,
-		Blt_Un,
+		__Beq,
+		__Bge,
+		__Bgt,
+		__Ble,
+		__Blt,
+		__Bne_Un,
+		__Bge_Un,
+		__Bgt_Un,
+		__Ble_Un,
+		__Blt_Un,
 		Switch,
 		Ldind_I1,
 		Ldind_U1,
@@ -256,8 +256,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		// Virtual codes - defined for convenience
 		Ldexception,  // Operand holds the CatchType for catch handler, null for filter
 		LogicNot,
-		BrLogicAnd,
-		BrLogicOr,
+		LogicAnd,
+		LogicOr,
 		InitArray, // Array Initializer
 		TernaryOp, // ?:
 		LoopBreak,
@@ -271,7 +271,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	{
 		public static string GetName(this ILCode code)
 		{
-			return code.ToString().ToLowerInvariant().Replace('_','.');
+			return code.ToString().ToLowerInvariant().TrimStart('_').Replace('_','.');
 		}
 		
 		public static bool CanFallThough(this ILCode code)
@@ -396,18 +396,18 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.__Ldc_I4_8: 		code = ILCode.Ldc_I4; operand = 8; break;
 					case ILCode.__Ldc_I4_S: 		code = ILCode.Ldc_I4; operand = (int) (sbyte) operand; break;
 					case ILCode.__Br_S: 			code = ILCode.Br; break;
-					case ILCode.__Brfalse_S: 	code = ILCode.Brfalse; break;
+					case ILCode.__Brfalse_S: 	code = ILCode.__Brfalse; break;
 					case ILCode.__Brtrue_S: 		code = ILCode.Brtrue; break;
-					case ILCode.__Beq_S: 		code = ILCode.Beq; break;
-					case ILCode.__Bge_S: 		code = ILCode.Bge; break;
-					case ILCode.__Bgt_S: 		code = ILCode.Bgt; break;
-					case ILCode.__Ble_S: 		code = ILCode.Ble; break;
-					case ILCode.__Blt_S: 		code = ILCode.Blt; break;
-					case ILCode.__Bne_Un_S: 		code = ILCode.Bne_Un; break;
-					case ILCode.__Bge_Un_S: 		code = ILCode.Bge_Un; break;
-					case ILCode.__Bgt_Un_S: 		code = ILCode.Bgt_Un; break;
-					case ILCode.__Ble_Un_S: 		code = ILCode.Ble_Un; break;
-					case ILCode.__Blt_Un_S:		code = ILCode.Blt_Un; break;
+					case ILCode.__Beq_S: 		code = ILCode.__Beq; break;
+					case ILCode.__Bge_S: 		code = ILCode.__Bge; break;
+					case ILCode.__Bgt_S: 		code = ILCode.__Bgt; break;
+					case ILCode.__Ble_S: 		code = ILCode.__Ble; break;
+					case ILCode.__Blt_S: 		code = ILCode.__Blt; break;
+					case ILCode.__Bne_Un_S: 		code = ILCode.__Bne_Un; break;
+					case ILCode.__Bge_Un_S: 		code = ILCode.__Bge_Un; break;
+					case ILCode.__Bgt_Un_S: 		code = ILCode.__Bgt_Un; break;
+					case ILCode.__Ble_Un_S: 		code = ILCode.__Ble_Un; break;
+					case ILCode.__Blt_Un_S:		code = ILCode.__Blt_Un; break;
 					case ILCode.__Leave_S:		code = ILCode.Leave; break;
 			}
 		}

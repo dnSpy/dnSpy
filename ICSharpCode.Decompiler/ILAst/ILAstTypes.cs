@@ -220,6 +220,14 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public static readonly object AnyOperand = new object();
 		
+		public ILExpression(ILCode code, object operand, List<ILExpression> args)
+		{
+			this.Code = code;
+			this.Operand = operand;
+			this.Arguments = new List<ILExpression>(args);
+			this.ILRanges  = new List<ILRange>(1);
+		}
+		
 		public ILExpression(ILCode code, object operand, params ILExpression[] args)
 		{
 			this.Code = code;
