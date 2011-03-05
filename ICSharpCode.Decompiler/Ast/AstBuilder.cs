@@ -939,23 +939,15 @@ namespace ICSharpCode.Decompiler.Ast
 		private static Expression ConvertArgumentValue(CustomAttributeArgument parameter)
 		{
 			var type = parameter.Type.Resolve();
-			Expression parameterValue;
-			if (type.IsEnum)
-			{
-				parameterValue = MakePrimitive(Convert.ToInt64(parameter.Value), type);
-			}
-			else if (parameter.Value is TypeReference)
-			{
-				parameterValue = new TypeOfExpression()
-				{
+			if (type != null && type.IsEnum) {
+				return MakePrimitive(Convert.ToInt64(parameter.Value), type);
+			} else if (parameter.Value is TypeReference) {
+				return new TypeOfExpression() {
 					Type = ConvertType((TypeReference)parameter.Value),
 				};
+			} else {
+				return new PrimitiveExpression(parameter.Value);
 			}
-			else
-			{
-				parameterValue = new PrimitiveExpression(parameter.Value);
-			}
-			return parameterValue;
 		}
 		#endregion
 
