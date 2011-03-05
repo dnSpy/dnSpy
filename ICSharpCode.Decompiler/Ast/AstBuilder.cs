@@ -804,6 +804,13 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			#endregion
 			
+			#region PreserveSigAttribute
+			if (implAttributes == MethodImplAttributes.PreserveSig) {
+				attributedNode.Attributes.Add(new AttributeSection(CreateNonCustomAttribute(typeof(PreserveSigAttribute))));
+				implAttributes = 0;
+			}
+			#endregion
+			
 			#region MethodImplAttribute
 			if (implAttributes != 0) {
 				Ast.Attribute methodImpl = CreateNonCustomAttribute(typeof(MethodImplAttribute));
