@@ -454,12 +454,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			while(agenda.Count > 0) {
 				ControlFlowNode node = agenda.Dequeue();
 				
+				// If the node is a loop header
 				if (scope.Contains(node)
 				    && node.DominanceFrontier.Contains(node)
 				    && (node != entryPoint || !excludeEntryPoint))
 				{
 					HashSet<ControlFlowNode> loopContents = FindLoopContent(scope, node);
 					
+					// If the first expression is a loop condition
 					ILBasicBlock basicBlock = (ILBasicBlock)node.UserData;
 					ILExpression condExpr;
 					ILLabel trueLabel;
@@ -471,13 +473,22 @@ namespace ICSharpCode.Decompiler.ILAst
 						ControlFlowNode falseTarget;
 						labelToCfNode.TryGetValue(falseLabel, out falseTarget);
 					
+						// If one point inside the loop and the other outside
 						if ((!loopContents.Contains(trueTarget) && loopContents.Contains(falseTarget)) ||
 						    (loopContents.Contains(trueTarget) && !loopContents.Contains(falseTarget)) )
 						{
 							loopContents.RemoveOrThrow(node);
 							scope.RemoveOrThrow(node);
 							
-							// TODO: Does 'true' really point into the loop body?  Swap if necessary
+							// If false means enter the loop
+							if (loopContents.Contains(falseTarget))
+							{
+								// Negate the condition
+								condExpr = new ILExpression(ILCode.LogicNot, null, condExpr);
+								ILLabel tmp = trueLabel;
+								trueLabel = falseLabel;
+								falseLabel = tmp;
+							}
 							
 							ControlFlowNode postLoopTarget;
 							labelToCfNode.TryGetValue(falseLabel, out postLoopTarget);
