@@ -464,37 +464,50 @@ namespace ICSharpCode.Decompiler.ILAst
 					ILExpression condExpr;
 					ILLabel trueLabel;
 					ILLabel falseLabel;
-					if(basicBlock.MatchBrTure(out condExpr, out trueLabel, out falseLabel)) {
-						loopContents.RemoveOrThrow(node);
-						scope.RemoveOrThrow(node);
-						
-						// TODO: Does 'true' really point into the loop body?  Swap if necessary
-						
-						ControlFlowNode postLoopTarget;
-						labelToCfNode.TryGetValue(falseLabel, out postLoopTarget);
-						if (postLoopTarget != null) {
-							// Pull more nodes into the loop
-							HashSet<ControlFlowNode> postLoopContents = FindDominatedNodes(scope, postLoopTarget);
-							var pullIn = scope.Except(postLoopContents).Where(n => node.Dominates(n));
-							loopContents.UnionWith(pullIn);
-						}
-						
-						// Use loop to implement the condition
-						result.Add(new ILBasicBlock() {
-						    EntryLabel = basicBlock.EntryLabel,
-							Body = new List<ILNode>() {
-								new ILWhileLoop() {
-									Condition = condExpr,
-									BodyBlock = new ILBlock() {
-										EntryGoto = new ILExpression(ILCode.Br, trueLabel),
-										Body = FindLoops(loopContents, node, true)
-									}
+					if(basicBlock.MatchBrTure(out condExpr, out trueLabel, out falseLabel))
+					{
+						ControlFlowNode trueTarget;
+						labelToCfNode.TryGetValue(trueLabel, out trueTarget);
+						ControlFlowNode falseTarget;
+						labelToCfNode.TryGetValue(falseLabel, out falseTarget);
+					
+						if ((!loopContents.Contains(trueTarget) && loopContents.Contains(falseTarget)) ||
+						    (loopContents.Contains(trueTarget) && !loopContents.Contains(falseTarget)) )
+						{
+							loopContents.RemoveOrThrow(node);
+							scope.RemoveOrThrow(node);
+							
+							// TODO: Does 'true' really point into the loop body?  Swap if necessary
+							
+							ControlFlowNode postLoopTarget;
+							labelToCfNode.TryGetValue(falseLabel, out postLoopTarget);
+							if (postLoopTarget != null) {
+								// Pull more nodes into the loop
+								HashSet<ControlFlowNode> postLoopContents = FindDominatedNodes(scope, postLoopTarget);
+								var pullIn = scope.Except(postLoopContents).Where(n => node.Dominates(n));
+								loopContents.UnionWith(pullIn);
+							}
+							
+							// Use loop to implement the condition
+							result.Add(new ILBasicBlock() {
+							    EntryLabel = basicBlock.EntryLabel,
+								Body = new List<ILNode>() {
+									new ILWhileLoop() {
+										Condition = condExpr,
+										BodyBlock = new ILBlock() {
+											EntryGoto = new ILExpression(ILCode.Br, trueLabel),
+											Body = FindLoops(loopContents, node, true)
+										}
+									},
+									new ILExpression(ILCode.Br, falseLabel)
 								},
-								new ILExpression(ILCode.Br, falseLabel)
-							},
-							FallthoughGoto = null
-						});
-					} else {
+								FallthoughGoto = null
+							});
+						}
+					}
+					
+					// Fallback method: while(true)
+					if (scope.Contains(node)) {
 						result.Add(new ILBasicBlock() {
 						    EntryLabel = new ILLabel() { Name = "Loop_" + (nextLabelIndex++) },
 							Body = new List<ILNode>() {
