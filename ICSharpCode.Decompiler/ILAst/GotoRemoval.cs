@@ -76,6 +76,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				return true;
 			}
 			
+			// TODO: Swich also qualifies for break;
 			ILWhileLoop loop = null;
 			ILNode current = gotoExpr;
 			while(loop == null && current != null) {
@@ -184,11 +185,12 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 			
-			if (nodeParent is ILCondition ||
-			    nodeParent is ILTryCatchBlock ||
-			    nodeParent is ILSwitch)
-			{
+			if (nodeParent is ILCondition || nodeParent is ILTryCatchBlock) {
 				return Exit(nodeParent, visitedNodes);
+			}
+			
+			if (nodeParent is ILSwitch) {
+				return null;  // Implicit exit from switch is not allowed
 			}
 			
 			if (nodeParent is ILWhileLoop) {

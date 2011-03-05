@@ -130,8 +130,6 @@ namespace ICSharpCode.Decompiler.Ast
 					switchStmt.SwitchSections.Add(section);
 				}
 				yield return switchStmt;
-				if (ilSwitch.DefaultGoto != null)
-					yield return (Statement)TransformExpression(ilSwitch.DefaultGoto);
 			} else if (node is ILTryCatchBlock) {
 				ILTryCatchBlock tryCatchNode = ((ILTryCatchBlock)node);
 				var tryCatchStmt = new Ast.TryCatchStatement();

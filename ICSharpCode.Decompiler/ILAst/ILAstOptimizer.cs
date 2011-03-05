@@ -586,13 +586,11 @@ namespace ICSharpCode.Decompiler.ILAst
 							// The labels will not be used - kill them
 							condBranch.Operand = null;
 							
-							ILSwitch ilSwitch = new ILSwitch() {
-								Condition = condBranch,
-								DefaultGoto = block.FallthoughGoto
-							};
+							ILSwitch ilSwitch = new ILSwitch() { Condition = condBranch };
 							result.Add(new ILBasicBlock() {
 							           	EntryLabel = block.EntryLabel,  // Keep the entry label
-							           	Body = { ilSwitch }
+							           	Body = { ilSwitch },
+							           	FallthoughGoto = block.FallthoughGoto
 							           });
 
 							// Remove the item so that it is not picked up as content

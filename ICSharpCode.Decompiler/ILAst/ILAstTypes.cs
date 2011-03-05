@@ -443,7 +443,6 @@ namespace ICSharpCode.Decompiler.ILAst
 	{
 		public ILExpression Condition;
 		public List<ILBlock> CaseBlocks = new List<ILBlock>();
-		public ILExpression DefaultGoto;
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
@@ -452,8 +451,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach (ILBlock caseBlock in this.CaseBlocks) {
 				yield return caseBlock;
 			}
-			if (this.DefaultGoto != null)
-				yield return this.DefaultGoto;
 		}
 		
 		public override void WriteTo(ITextOutput output)
