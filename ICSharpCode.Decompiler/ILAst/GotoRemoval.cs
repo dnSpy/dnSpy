@@ -29,9 +29,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			
 			// Simplify gotos
-			foreach (ILExpression gotoExpr in method.GetSelfAndChildrenRecursive<ILExpression>().Where(e => e.Code == ILCode.Br || e.Code == ILCode.Leave)) {
-				TrySimplifyGoto(gotoExpr);
-			}
+			bool modified;
+			do {
+				modified = false;
+				foreach (ILExpression gotoExpr in method.GetSelfAndChildrenRecursive<ILExpression>().Where(e => e.Code == ILCode.Br || e.Code == ILCode.Leave)) {
+					modified |= TrySimplifyGoto(gotoExpr);
+				}
+			} while(modified);
 			
 			RemoveRedundantCode(method);
 		}
@@ -58,20 +62,38 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
+		IEnumerable<ILNode> GetParents(ILNode node)
+		{
+			ILNode current = node;
+			while(true) {
+				current = parent[current];
+				if (current == null)
+					yield break;
+				yield return current;
+			}
+		}
+		
 		bool TrySimplifyGoto(ILExpression gotoExpr)
 		{
 			Debug.Assert(gotoExpr.Code == ILCode.Br || gotoExpr.Code == ILCode.Leave);
 			Debug.Assert(gotoExpr.Prefixes == null);
 			Debug.Assert(gotoExpr.Operand != null);
 			
-			ILExpression target = Enter(gotoExpr, new HashSet<ILNode>());
+			ILNode target = Enter(gotoExpr, new HashSet<ILNode>());
 			if (target == null)
 				return false;
+			
+			// The gotoExper is marked as visited because we do not want to
+			// walk over node which we plan to modify
+			
+			// The simulated path always has to start in the same try-block
+			// in other for the same finally blocks to be executed.
 			
 			if (target == Exit(gotoExpr, new HashSet<ILNode>() { gotoExpr })) {
 				gotoExpr.Code = ILCode.Nop;
 				gotoExpr.Operand = null;
-				target.ILRanges.AddRange(gotoExpr.ILRanges);
+				if (target is ILExpression)
+					((ILExpression)target).ILRanges.AddRange(gotoExpr.ILRanges);
 				gotoExpr.ILRanges.Clear();
 				return true;
 			}
@@ -100,9 +122,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		/// <summary>
-		/// Get the first expression to be excecuted if the instruction pointer is at the start of the given node
+		/// Get the first expression to be excecuted if the instruction pointer is at the start of the given node.
+		/// Try blocks may not be entered in any way.  If possible, the try block is returned as the node to be executed.
 		/// </summary>
-		ILExpression Enter(ILNode node, HashSet<ILNode> visitedNodes)
+		ILNode Enter(ILNode node, HashSet<ILNode> visitedNodes)
 		{
 			if (node == null)
 				throw new ArgumentNullException();
@@ -118,7 +141,35 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression expr = node as ILExpression;
 			if (expr != null) {
 				if (expr.Code == ILCode.Br || expr.Code == ILCode.Leave) {
-					return Enter((ILLabel)expr.Operand, visitedNodes);
+					ILLabel target = (ILLabel)expr.Operand;
+					// Early exit - same try-block
+					if (GetParents(expr).OfType<ILTryCatchBlock>().FirstOrDefault() == GetParents(target).OfType<ILTryCatchBlock>().FirstOrDefault())
+						return Enter(target, visitedNodes);
+					// Make sure we are not entering any try-block
+					var srcTryBlocks = GetParents(expr).OfType<ILTryCatchBlock>().Reverse().ToList();
+					var dstTryBlocks = GetParents(target).OfType<ILTryCatchBlock>().Reverse().ToList();
+					// Skip blocks that we are already in
+					int i = 0;
+					while(i < srcTryBlocks.Count && i < dstTryBlocks.Count && srcTryBlocks[i] == dstTryBlocks[i]) i++;
+					if (i == dstTryBlocks.Count) {
+						return Enter(target, visitedNodes);
+					} else {
+						ILTryCatchBlock dstTryBlock = dstTryBlocks[i];
+						// Check that the goto points to the start
+						ILTryCatchBlock current = dstTryBlock;
+						while(current != null) {
+							foreach(ILNode n in current.TryBlock.Body) {
+								if (n is ILLabel) {
+									if (n == target)
+										return dstTryBlock;
+								} else if (!n.Match(ILCode.Nop)) {
+									current = n as ILTryCatchBlock;
+									break;
+								}
+							}
+						}
+						return null;
+					}
 				} else if (expr.Code == ILCode.Nop) {
 					return Exit(expr, visitedNodes);
 				} else {
@@ -153,7 +204,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			ILTryCatchBlock tryCatch = node as ILTryCatchBlock;
 			if (tryCatch != null) {
-				return Enter(tryCatch.TryBlock, visitedNodes);
+				return tryCatch;
 			}
 			
 			ILSwitch ilSwitch = node as ILSwitch;
@@ -167,7 +218,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <summary>
 		/// Get the first expression to be excecuted if the instruction pointer is at the end of the given node
 		/// </summary>
-		ILExpression Exit(ILNode node, HashSet<ILNode> visitedNodes)
+		ILNode Exit(ILNode node, HashSet<ILNode> visitedNodes)
 		{
 			if (node == null)
 				throw new ArgumentNullException();
@@ -185,7 +236,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 			
-			if (nodeParent is ILCondition || nodeParent is ILTryCatchBlock) {
+			if (nodeParent is ILCondition) {
+				return Exit(nodeParent, visitedNodes);
+			}
+			
+			if (nodeParent is ILTryCatchBlock) {
+				// Finally blocks are completely ignored.
+				// We rely on the fact that try blocks can not be entered.
 				return Exit(nodeParent, visitedNodes);
 			}
 			
