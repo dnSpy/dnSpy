@@ -27,7 +27,7 @@ using System;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.ILAst
 {
 	public enum ILCode
 	{

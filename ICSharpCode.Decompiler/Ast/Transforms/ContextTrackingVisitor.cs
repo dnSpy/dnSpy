@@ -6,7 +6,7 @@ using System.Diagnostics;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
-namespace Decompiler.Transforms
+namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	/// <summary>
 	/// Base class for AST visitors that need the current type/method context info.

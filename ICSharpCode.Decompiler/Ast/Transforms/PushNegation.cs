@@ -4,7 +4,7 @@ using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
 
-namespace Decompiler.Transforms
+namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	public class PushNegation: DepthFirstAstVisitor<object, object>, IAstTransform
 	{

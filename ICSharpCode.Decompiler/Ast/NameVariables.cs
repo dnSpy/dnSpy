@@ -4,9 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using ICSharpCode.Decompiler.ILAst;
 using Mono.Cecil;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.Ast
 {
 	public class NameVariables
 	{

@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Interop with the .NET GAC.
 	/// </summary>
-	public static class GacInterop
+	static class GacInterop
 	{
 		/// <summary>
 		/// Gets the names of all assemblies in the GAC.

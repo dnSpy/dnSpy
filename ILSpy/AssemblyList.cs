@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// A list of assemblies.
 	/// </summary>
-	sealed class AssemblyList
+	public sealed class AssemblyList
 	{
 		readonly string listName;
 		
@@ -81,7 +81,7 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Saves this assembly list to XML.
 		/// </summary>
-		public XElement SaveAsXml()
+		internal XElement SaveAsXml()
 		{
 			return new XElement(
 				"List",

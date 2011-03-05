@@ -10,7 +10,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Stores the navigation history.
 	/// </summary>
-	public class NavigationHistory
+	sealed class NavigationHistory
 	{
 		List<SharpTreeNode> back = new List<SharpTreeNode>();
 		List<SharpTreeNode> forward = new List<SharpTreeNode>();

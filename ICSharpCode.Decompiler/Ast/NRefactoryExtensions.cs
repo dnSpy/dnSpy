@@ -4,7 +4,7 @@
 using System;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.Ast
 {
 	static class NRefactoryExtensions
 	{
@@ -27,6 +27,11 @@ namespace Decompiler
 		{
 			node.Remove();
 			return node;
+		}
+		
+		public static void AddNamedArgument(this NRefactory.CSharp.Attribute attribute, string name, Expression argument)
+		{
+			attribute.Arguments.Add(new AssignmentExpression(new IdentifierExpression(name), argument));
 		}
 	}
 }

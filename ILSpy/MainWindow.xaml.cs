@@ -18,8 +18,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,6 +33,7 @@ using System.Windows.Media.Imaging;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
@@ -55,6 +58,9 @@ namespace ICSharpCode.ILSpy
 		AssemblyListManager assemblyListManager;
 		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
+		
+		[Import]
+		DecompilerTextView decompilerTextView = null;
 		
 		static MainWindow instance;
 		
@@ -83,7 +89,9 @@ namespace ICSharpCode.ILSpy
 			this.WindowState = sessionSettings.WindowState;
 			
 			InitializeComponent();
-			decompilerTextView.mainWindow = this;
+			App.CompositionContainer.ComposeParts(this);
+			Grid.SetRow(decompilerTextView, 1);
+			rightPane.Children.Add(decompilerTextView);
 			
 			if (sessionSettings.SplitterPosition > 0 && sessionSettings.SplitterPosition < 1) {
 				leftColumn.Width = new GridLength(sessionSettings.SplitterPosition, GridUnitType.Star);
@@ -91,9 +99,89 @@ namespace ICSharpCode.ILSpy
 			}
 			sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
 			
+			InitMainMenu();
+			InitToolbar();
+			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
 		}
-
+		
+		#region Toolbar extensibility
+		[ImportMany("ToolbarCommand", typeof(ICommand))]
+		Lazy<ICommand, IToolbarCommandMetadata>[] toolbarCommands = null;
+		
+		void InitToolbar()
+		{
+			int navigationPos = 0;
+			int openPos = 1;
+			foreach (var commandGroup in toolbarCommands.OrderBy(c => c.Metadata.ToolbarOrder).GroupBy(c => c.Metadata.ToolbarCategory)) {
+				if (commandGroup.Key == "Navigation") {
+					foreach (var command in commandGroup) {
+						toolBar.Items.Insert(navigationPos++, MakeToolbarItem(command));
+						openPos++;
+					}
+				} else if (commandGroup.Key == "Open") {
+					foreach (var command in commandGroup) {
+						toolBar.Items.Insert(openPos++, MakeToolbarItem(command));
+					}
+				} else {
+					toolBar.Items.Add(new Separator());
+					foreach (var command in commandGroup) {
+						toolBar.Items.Add(MakeToolbarItem(command));
+					}
+				}
+			}
+			
+		}
+		
+		Button MakeToolbarItem(Lazy<ICommand, IToolbarCommandMetadata> command)
+		{
+			return new Button {
+				Command = CommandWrapper.Unwrap(command.Value),
+				ToolTip = command.Metadata.ToolTip,
+				Content = new Image {
+					Width = 16,
+					Height = 16,
+					Source = Images.LoadImage(command.Value, command.Metadata.ToolbarIcon)
+				}
+			};
+		}
+		#endregion
+		
+		#region Main Menu extensibility
+		[ImportMany("MainMenuCommand", typeof(ICommand))]
+		Lazy<ICommand, IMainMenuCommandMetadata>[] mainMenuCommands = null;
+		
+		void InitMainMenu()
+		{
+			foreach (var topLevelMenu in mainMenuCommands.OrderBy(c => c.Metadata.MenuOrder).GroupBy(c => c.Metadata.Menu)) {
+				var topLevelMenuItem = mainMenu.Items.OfType<MenuItem>().FirstOrDefault(m => (m.Header as string) == topLevelMenu.Key);
+				foreach (var category in topLevelMenu.GroupBy(c => c.Metadata.MenuCategory)) {
+					if (topLevelMenuItem == null) {
+						topLevelMenuItem = new MenuItem();
+						topLevelMenuItem.Header = topLevelMenu.Key;
+						mainMenu.Items.Add(topLevelMenuItem);
+					} else if (topLevelMenuItem.Items.Count > 0) {
+						topLevelMenuItem.Items.Add(new Separator());
+					}
+					foreach (var entry in category) {
+						MenuItem menuItem = new MenuItem();
+						menuItem.Command = CommandWrapper.Unwrap(entry.Value);
+						if (!string.IsNullOrEmpty(entry.Metadata.Header))
+							menuItem.Header = entry.Metadata.Header;
+						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon)) {
+							menuItem.Icon = new Image {
+								Width = 16,
+								Height = 16,
+								Source = Images.LoadImage(entry.Value, entry.Metadata.MenuIcon)
+							};
+						}
+						topLevelMenuItem.Items.Add(menuItem);
+					}
+				}
+			}
+		}
+		#endregion
+		
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			ILSpySettings spySettings = this.spySettings;
@@ -307,20 +395,19 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		void OpenFiles(string[] fileNames, bool focusNode = true)
+		public void OpenFiles(string[] fileNames)
 		{
-			if (focusNode) {
-				treeView.UnselectAll();
-				
-				SharpTreeNode lastNode = null;
-				foreach (string file in fileNames) {
-					var asm = assemblyList.OpenAssembly(file);
-					if (asm != null) {
-						var node = assemblyListTreeNode.FindAssemblyNode(asm);
-						if (node != null) {
-							treeView.SelectedItems.Add(node);
-							lastNode = node;
-						}
+			if (fileNames == null)
+				throw new ArgumentNullException("fileNames");
+			treeView.UnselectAll();
+			SharpTreeNode lastNode = null;
+			foreach (string file in fileNames) {
+				var asm = assemblyList.OpenAssembly(file);
+				if (asm != null) {
+					var node = assemblyListTreeNode.FindAssemblyNode(asm);
+					if (node != null) {
+						treeView.SelectedItems.Add(node);
+						lastNode = node;
 					}
 				}
 				if (lastNode != null)
@@ -328,18 +415,9 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		void OpenFromGac_Click(object sender, RoutedEventArgs e)
-		{
-			OpenFromGacDialog dlg = new OpenFromGacDialog();
-			dlg.Owner = this;
-			if (dlg.ShowDialog() == true) {
-				OpenFiles(dlg.SelectedFileNames);
-			}
-		}
-		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (!DebuggerService.CurrentDebugger.IsDebugging) {
+			if (!System.Diagnostics.Debugger.IsAttached) {
 				e.Handled = true;
 				var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 				ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
@@ -349,197 +427,7 @@ namespace ICSharpCode.ILSpy
 		
 		#endregion
 		
-		#region Debugger commands
-		
-		[System.Runtime.InteropServices.DllImport("user32.dll")]
-		static extern bool SetWindowPos(
-			IntPtr hWnd,
-			IntPtr hWndInsertAfter,
-			int X,
-			int Y,
-			int cx,
-			int cy,
-			uint uFlags);
-
-		const UInt32 SWP_NOSIZE = 0x0001;
-		const UInt32 SWP_NOMOVE = 0x0002;
-
-		static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
-		static readonly IntPtr HWND_TOP = new IntPtr(0);
-
-		static void SendWpfWindowPos(Window window, IntPtr place)
-		{
-			var hWnd = new WindowInteropHelper(window).Handle;
-			SetWindowPos(hWnd, place, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-		}
-		
-		IDebugger CurrentDebugger {
-			get {
-				return DebuggerService.CurrentDebugger;
-			}
-		}
-		
-		void StartDebugging(Process process)
-		{
-			CurrentDebugger.Attach(process);
-			EnableDebuggerUI(false);
-			CurrentDebugger.DebugStopped += OnDebugStopped;
-			CurrentDebugger.IsProcessRunningChanged += CurrentDebugger_IsProcessRunningChanged;
-		}
-
-		void CurrentDebugger_IsProcessRunningChanged(object sender, EventArgs e)
-		{
-			if (CurrentDebugger.IsProcessRunning) {
-				//SendWpfWindowPos(this, HWND_BOTTOM);
-				return;
-			}
-			
-			// breakpoint was hit => bring to front the main window
-			SendWpfWindowPos(this, HWND_TOP);
-			this.Activate();
-			
-			// jump to type & expand folding
-			if (CurrentLineBookmark.Instance != null) {
-				if (CurrentLineBookmark.Instance.Type != DebuggedData.CurrentType)
-					JumpToReference(CurrentLineBookmark.Instance.Type);
-				
-				decompilerTextView.UnfoldAndScroll(CurrentLineBookmark.Instance.LineNumber);
-			}
-		}
-		
-		void DebugExecutableExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			OpenFileDialog dialog = new OpenFileDialog() {
-				Filter = ".NET Executable (*.exe) | *.exe",
-				RestoreDirectory = true,
-				DefaultExt = "exe"
-			};
-			
-			if (dialog.ShowDialog() == true) {
-				string fileName = dialog.FileName;
-				
-				// add it to references
-				OpenFiles(new [] { fileName }, false);
-				
-				if (!CurrentDebugger.IsDebugging) {
-					// execute the process
-					this.StartDebugging(Process.Start(fileName));
-				}
-			}
-		}
-
-		void AttachToProcessExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			if (!CurrentDebugger.IsDebugging) {
-				var window = new AttachToProcessWindow { Owner = this };
-				if (window.ShowDialog() == true) {
-					this.StartDebugging(window.SelectedProcess);
-				}
-			}
-		}
-
-		void OnDebugStopped(object sender, EventArgs e)
-		{
-			EnableDebuggerUI(true);
-			CurrentDebugger.DebugStopped -= OnDebugStopped;
-			CurrentDebugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
-		}
-		
-		void DetachFromProcessExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			if (CurrentDebugger.IsDebugging){
-				CurrentDebugger.Detach();
-				
-				EnableDebuggerUI(true);
-				CurrentDebugger.DebugStopped -= OnDebugStopped;
-			}
-		}
-		
-		void ContinueDebuggingExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
-				CurrentDebugger.Continue();
-		}
-		
-		void StepIntoExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
-				CurrentDebugger.StepInto();
-		}
-		
-		void StepOverExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
-				CurrentDebugger.StepOver();
-		}
-		
-		void StepOutExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
-				CurrentDebugger.StepOut();
-		}
-		
-		void RemoveAllBreakpointExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
-				var bookmark = BookmarkManager.Bookmarks[i];
-				if (bookmark is BreakpointBookmark) {
-					BookmarkManager.RemoveMark(bookmark);
-				}
-			}
-		}
-		
-		protected override void OnKeyUp(KeyEventArgs e)
-		{
-			switch (e.Key) {
-				case Key.F5:
-					ContinueDebuggingExecuted(null, null);
-					e.Handled = true;
-					break;
-				case Key.System:
-					StepOverExecuted(null, null);
-					e.Handled = true;
-					break;
-				case Key.F11:
-					StepIntoExecuted(null, null);
-					e.Handled = true;
-					break;
-				default:
-					// do nothing
-					break;
-			}
-			
-			base.OnKeyUp(e);
-		}
-		
-		void EnableDebuggerUI(bool enable)
-		{
-			AttachMenuItem.IsEnabled = AttachButton.IsEnabled = enable;
-			DebugExecutableButton.IsEnabled = DebugExecutableItem.IsEnabled = enable;
-			
-			ContinueDebuggingMenuItem.IsEnabled =
-				StepIntoMenuItem.IsEnabled =
-				StepOverMenuItem.IsEnabled =
-				StepOutMenuItem.IsEnabled =
-				DetachMenuItem.IsEnabled = !enable;
-		}
-		
-		#endregion
-		
-		#region Exit/About
-		void ExitClick(object sender, RoutedEventArgs e)
-		{
-			Close();
-		}
-		
-		void AboutClick(object sender, RoutedEventArgs e)
-		{
-			treeView.UnselectAll();
-			AboutPage.Display(decompilerTextView);
-		}
-		#endregion
-		
-		#region Decompile / Save
+		#region Decompile (TreeView_SelectionChanged)
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (treeView.SelectedItems.Count == 1) {
@@ -547,21 +435,23 @@ namespace ICSharpCode.ILSpy
 				if (node != null && node.View(decompilerTextView))
 					return;
 			}
-			decompilerTextView.Decompile(sessionSettings.FilterSettings.Language,
-			                             treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>(),
-			                             new DecompilationOptions());
+			decompilerTextView.Decompile(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions());
 		}
 		
-		void saveCode_Click(object sender, RoutedEventArgs e)
-		{
-			if (treeView.SelectedItems.Count == 1) {
-				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
-				if (node != null && node.Save(decompilerTextView))
-					return;
+		public DecompilerTextView TextView {
+			get { return decompilerTextView; }
+		}
+		
+		public Language CurrentLanguage {
+			get {
+				return sessionSettings.FilterSettings.Language;
 			}
-			decompilerTextView.SaveToDisk(sessionSettings.FilterSettings.Language,
-			                              treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>(),
-			                              new DecompilationOptions() { FullDecompilation = true });
+		}
+		
+		public IEnumerable<ILSpyTreeNode> SelectedNodes {
+			get {
+				return treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>();
+			}
 		}
 		#endregion
 		

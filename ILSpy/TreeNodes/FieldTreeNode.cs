@@ -27,7 +27,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Represents a field in the TreeView.
 	/// </summary>
-	sealed class FieldTreeNode : ILSpyTreeNode
+	public sealed class FieldTreeNode : ILSpyTreeNode
 	{
 		readonly FieldDefinition field;
 		

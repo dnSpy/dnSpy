@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
+using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
-using Decompiler.Transforms;
 
 namespace ICSharpCode.Decompiler.Tests.Helpers
 {

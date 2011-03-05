@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Window
 	x:Class="ICSharpCode.ILSpy.MainWindow"
-	x:ClassModifier="internal"
+	x:ClassModifier="public"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
 	xmlns:local="clr-namespace:ICSharpCode.ILSpy" xmlns:textView="clr-namespace:ICSharpCode.ILSpy.TextView"
 	xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
-	xmlns:routedCommands="clr-namespace:ICSharpCode.ILSpy.Commands"
 	Title="ILSpy"
 	MinWidth="250"
 	MinHeight="200"
@@ -17,30 +16,6 @@
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 	</Window.Resources>
 	<Window.CommandBindings>
-		<CommandBinding
-			Command="routedCommands:RoutedUICommands.DebugExecutable"
-			Executed="DebugExecutableExecuted" />
-		<CommandBinding
-			Command="routedCommands:RoutedUICommands.RemoveAllBreakpoint"
-			Executed="RemoveAllBreakpointExecuted" />
-		<CommandBinding
-			Command="routedCommands:RoutedUICommands.AttachToProcess"
-			Executed="AttachToProcessExecuted" />
-		<CommandBinding
-			Command="routedCommands:RoutedUICommands.DetachFromProcess"
-			Executed="DetachFromProcessExecuted" />
-		<CommandBinding
-			Command="routedCommands:RoutedUICommands.ContinueDebugging"
-			Executed="ContinueDebuggingExecuted" />
-		<CommandBinding
-			Command="routedCommands:RoutedUICommands.StepInto"
-			Executed="StepIntoExecuted" />
-		<CommandBinding
-			Command="routedCommands:RoutedUICommands.StepOver"
-			Executed="StepOverExecuted" />
-		<CommandBinding
-			Command="routedCommands:RoutedUICommands.StepOut"
-			Executed="StepOutExecuted" />
 		<CommandBinding
 			Command="Open"
 			Executed="OpenCommandExecuted" />
@@ -58,28 +33,8 @@
 	</Window.CommandBindings>
 	<DockPanel>
 		<!-- Main menu -->
-		<Menu DockPanel.Dock="Top">
-			<MenuItem Header="_File">
-				<MenuItem Command="Open">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/Open.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<MenuItem Header="Open from _GAC" Click="OpenFromGac_Click" />
-				<MenuItem Command="Refresh" Header="_Reload">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/Refresh.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<Separator />
-				<MenuItem Header="_Save Code" Click="saveCode_Click">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/SaveFile.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<Separator />
-				<MenuItem Header="E_xit" Click="ExitClick" />
-			</MenuItem>
+		<Menu DockPanel.Dock="Top" Name="mainMenu">
+			<MenuItem Header="_File" /> <!-- contents of file menu are added using MEF -->
 			<MenuItem Header="_View">
 				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
 					<MenuItem.Icon>
@@ -87,52 +42,6 @@
 					</MenuItem.Icon>
 				</MenuItem>
 				<MenuItem Header="Show _analyzer" Name="showAnalyzer" IsCheckable="True" Checked="ShowAnalyzer_Checked" Unchecked="ShowAnalyzer_Unchecked" />
-			</MenuItem>
-			<MenuItem Header="_Debugger">
-				<MenuItem x:Name="AttachMenuItem" Header="Attach to _running application" Command="routedCommands:RoutedUICommands.AttachToProcess">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/bug.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<MenuItem x:Name="ContinueDebuggingMenuItem" IsEnabled="False" Header="Continue debugging" InputGestureText="F5" Command="routedCommands:RoutedUICommands.ContinueDebugging">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/ContinueDebugging.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<MenuItem x:Name="StepIntoMenuItem" IsEnabled="False" Header="Step into" InputGestureText="F11" Command="routedCommands:RoutedUICommands.StepInto">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/StepInto.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<MenuItem x:Name="StepOverMenuItem" IsEnabled="False" Header="Step over" InputGestureText="F10" Command="routedCommands:RoutedUICommands.StepOver">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/StepOver.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<MenuItem x:Name="StepOutMenuItem" IsEnabled="False" Header="Step out" Command="routedCommands:RoutedUICommands.StepOut">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/StepOut.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<MenuItem x:Name="DetachMenuItem" IsEnabled="False"
-				          Header="Detach from running application"
-				          Command="routedCommands:RoutedUICommands.DetachFromProcess"/>
-				<Separator/>
-				<MenuItem x:Name="RemoveAllBreakpointsItem" Header="Remove all breakpoints" Command="routedCommands:RoutedUICommands.RemoveAllBreakpoint">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/DeleteAllBreakpoints.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<Separator/>
-				<MenuItem x:Name="DebugExecutableItem" Header="Debug an executable" Command="routedCommands:RoutedUICommands.DebugExecutable">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/application-x-executable.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-			
-			</MenuItem>
-			<MenuItem Header="_Help">
-				<MenuItem Header="_About" Click="AboutClick" />
 			</MenuItem>
 		</Menu>
 		<!-- ToolBar -->
@@ -151,19 +60,9 @@
 					</Style.Triggers>
 				</Style>
 			</ToolBar.Resources>
-			<Button Command="BrowseBack" ToolTip="Back">
-				<Image Width="16" Height="16" Source="Images/Back.png" />
-			</Button>
-			<Button Command="BrowseForward" ToolTip="Forward">
-				<Image Width="16" Height="16" Source="Images/Forward.png" />
-			</Button>
+			<!-- 'Navigation' toolbar category is inserted here -->
 			<Separator />
-			<Button Command="Open" ToolTip="Open">
-				<Image Width="16" Height="16" Source="Images/Open.png" />
-			</Button>
-			<Button Command="Refresh" ToolTip="Reload all assemblies">
-				<Image Width="16" Height="16" Source="Images/Refresh.png" />
-			</Button>
+			<!-- 'Open' toolbar category is inserted here -->
 			<Separator />
 			<CheckBox IsChecked="{Binding FilterSettings.ShowInternalApi}" ToolTip="Show internal types and members">
 				<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
@@ -174,13 +73,6 @@
 			          SelectedItem="{Binding FilterSettings.Language}"
 			          SelectionChanged="LanguageComboBox_SelectionChanged"
 			/>
-			<Separator />
-			<Button x:Name="AttachButton" Command="routedCommands:RoutedUICommands.AttachToProcess" ToolTip="Attach to running process...">
-				<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/bug.png" />
-			</Button>
-			<Button x:Name="DebugExecutableButton" Command="routedCommands:RoutedUICommands.DebugExecutable" ToolTip="Debug an executable">
-				<Image Width="16" Height="16" Source="pack://application:,,,/ILSpy.Debugger;component/Images/application-x-executable.png" />
-			</Button>
 		</ToolBar>
 		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
 		<Grid>
@@ -222,7 +114,7 @@
 				VerticalAlignment="Stretch"
 				BorderBrush="Transparent" />
 			<!-- Right pane: Text Editor -->
-			<Grid Grid.Column="2">
+			<Grid Grid.Column="2" Name="rightPane">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition
 						Width="*" />
@@ -243,7 +135,7 @@
 					</DockPanel>
 				</Border>
 				
-				<textView:DecompilerTextView x:Name="decompilerTextView" Grid.Row="1" />
+				<!-- decompilerTextView is inserted into row 1 by code -->
 				
 				<GridSplitter
 					Grid.ZIndex="1"

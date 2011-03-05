@@ -4,16 +4,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using ICSharpCode.NRefactory.Utils;
-using Ast = ICSharpCode.NRefactory.CSharp;
+
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
-using Cecil = Mono.Cecil;
+using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Decompiler.ControlFlow;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.Ast
 {
+	using Ast = ICSharpCode.NRefactory.CSharp;
+	using Cecil = Mono.Cecil;
+	
 	public class AstMethodBodyBuilder
 	{
 		MethodDefinition methodDef;

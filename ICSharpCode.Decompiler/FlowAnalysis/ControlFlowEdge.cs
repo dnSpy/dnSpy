@@ -21,7 +21,7 @@ using System;
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
 	/// <summary>
-	/// 
+	/// Describes the type of a control flow egde.
 	/// </summary>
 	public enum JumpType
 	{

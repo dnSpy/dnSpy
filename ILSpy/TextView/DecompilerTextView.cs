@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -54,12 +55,12 @@ namespace ICSharpCode.ILSpy.TextView
 	/// Manages the TextEditor showing the decompiled code.
 	/// Contains all the threading logic that makes the decompiler work in the background.
 	/// </summary>
-	sealed partial class DecompilerTextView : UserControl
+	[Export, PartCreationPolicy(CreationPolicy.Shared)]
+	public sealed partial class DecompilerTextView : UserControl
 	{
 		readonly ReferenceElementGenerator referenceElementGenerator;
 		readonly UIElementGenerator uiElementGenerator;
 		FoldingManager foldingManager;
-		internal MainWindow mainWindow;
 		
 		DefinitionLookup definitionLookup;
 		CancellationTokenSource currentCancellationTokenSource;
@@ -515,7 +516,7 @@ namespace ICSharpCode.ILSpy.TextView
 					return;
 				}
 			}
-			mainWindow.JumpToReference(reference);
+			MainWindow.Instance.JumpToReference(reference);
 		}
 		
 		/// <summary>

@@ -6,8 +6,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-using Decompiler;
+using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.Decompiler.ILAst;
 using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler

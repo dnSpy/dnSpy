@@ -68,5 +68,17 @@ namespace ICSharpCode.ILSpy
 		
 		public static readonly BitmapImage Delete = LoadBitmap("Delete");
 		public static readonly BitmapImage Search = LoadBitmap("Search");
+		
+		public static BitmapImage LoadImage(object part, string icon)
+		{
+			Uri uri;
+			if (part.GetType().Assembly == typeof(Images).Assembly)
+				uri = new Uri("pack://application:,,,/" + icon);
+			else
+				throw new NotImplementedException();
+			BitmapImage image = new BitmapImage(uri);
+			image.Freeze();
+			return image;
+		}
 	}
 }

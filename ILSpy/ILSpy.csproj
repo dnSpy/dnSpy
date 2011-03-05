@@ -56,6 +56,9 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -86,11 +89,12 @@
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="BamlDecompiler.cs" />
-    <Compile Include="Commands\RoutedUICommands.cs" />
+    <Compile Include="Commands.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
     <Compile Include="CSharpLanguage.cs" />
     <Compile Include="DecompilationOptions.cs" />
+    <Compile Include="ExportCommandAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FilterSettings.cs" />
     <Compile Include="Fusion.cs" />
@@ -157,6 +161,7 @@
     <Compile Include="TreeNodes\ReferenceFolderTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceListTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceTreeNode.cs" />
     <Compile Include="TreeNodes\ThreadingSupport.cs" />
     <Compile Include="TreeNodes\TypeTreeNode.cs" />
     <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />

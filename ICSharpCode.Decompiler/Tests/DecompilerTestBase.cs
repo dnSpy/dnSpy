@@ -1,12 +1,13 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using Mono.Cecil;
-using System.IO;
-using Decompiler;
+
+using ICSharpCode.Decompiler.Ast;
 using Microsoft.CSharp;
-using System.CodeDom.Compiler;
+using Mono.Cecil;
 using NUnit.Framework;
 
 namespace ICSharpCode.Decompiler.Tests

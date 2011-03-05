@@ -1,20 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
-using Decompiler.Transforms;
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast.Transforms;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Ast = ICSharpCode.NRefactory.CSharp;
-using ClassType = ICSharpCode.NRefactory.TypeSystem.ClassType;
-using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.Ast
 {
+	using Ast = ICSharpCode.NRefactory.CSharp;
+	using ClassType = ICSharpCode.NRefactory.TypeSystem.ClassType;
+	using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
+
 	public class AstBuilder
 	{
 		DecompilerContext context = new DecompilerContext();
@@ -209,7 +214,7 @@ namespace Decompiler
 				AddTypeMembers(astType, typeDef);
 			}
 
-			ConvertCustomAttributes(astType, typeDef);
+			ConvertAttributes(astType, typeDef);
 			return astType;
 		}
 
@@ -534,8 +539,7 @@ namespace Decompiler
 				astMethod.Modifiers = ConvertModifiers(methodDef);
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			}
-			ConvertCustomAttributes(astMethod, methodDef);
-			ConvertCustomAttributes(astMethod, methodDef.MethodReturnType, AttributeTarget.Return);
+			ConvertAttributes(astMethod, methodDef);
 			return astMethod;
 		}
 		
@@ -594,6 +598,7 @@ namespace Decompiler
 			astMethod.Name = CleanName(methodDef.DeclaringType.Name);
 			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
+			ConvertAttributes(astMethod, methodDef);
 			return astMethod;
 		}
 
@@ -611,8 +616,7 @@ namespace Decompiler
 				astProp.Getter = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context)
 				}.WithAnnotation(propDef.GetMethod);
-				ConvertCustomAttributes(astProp.Getter, propDef.GetMethod);
-				ConvertCustomAttributes(astProp.Getter, propDef.GetMethod.MethodReturnType, AttributeTarget.Return);
+				ConvertAttributes(astProp.Getter, propDef.GetMethod);
 				
 				if (methodMapping != null)
 					astProp.Getter.AddAnnotation(methodMapping);
@@ -624,8 +628,7 @@ namespace Decompiler
 				astProp.Setter = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context)
 				}.WithAnnotation(propDef.SetMethod);
-				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod);
-				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod.MethodReturnType, AttributeTarget.Return);
+				ConvertAttributes(astProp.Setter, propDef.SetMethod);
 				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), AttributeTarget.Param);
 				
 				if (methodMapping != null)
@@ -649,6 +652,7 @@ namespace Decompiler
 				astEvent.AddAccessor = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
 				}.WithAnnotation(eventDef.AddMethod);
+				ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
 				
 				if (methodMapping != null)
 					astEvent.AddAccessor.AddAnnotation(methodMapping);
@@ -660,6 +664,7 @@ namespace Decompiler
 				astEvent.RemoveAccessor = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, context)
 				}.WithAnnotation(eventDef.RemoveMethod);
+				ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
 
 				if (methodMapping != null)
 					astEvent.RemoveAccessor.AddAnnotation(methodMapping);
@@ -681,7 +686,7 @@ namespace Decompiler
 				else
 					initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
 			}
-			ConvertCustomAttributes(astField, fieldDef);
+			ConvertAttributes(astField, fieldDef);
 			return astField;
 		}
 		
@@ -693,15 +698,227 @@ namespace Decompiler
 				astParam.Name = paramDef.Name;
 				
 				if (paramDef.ParameterType is ByReferenceType) {
-					astParam.ParameterModifier = paramDef.IsOut ? ParameterModifier.Out : ParameterModifier.Ref;
+					astParam.ParameterModifier = (!paramDef.IsIn && paramDef.IsOut) ? ParameterModifier.Out : ParameterModifier.Ref;
 				}
 				// TODO: params, this
 				
 				ConvertCustomAttributes(astParam, paramDef);
+				ModuleDefinition module = ((MethodDefinition)paramDef.Method).Module;
+				if (paramDef.HasMarshalInfo) {
+					astParam.Attributes.Add(new AttributeSection(ConvertMarshalInfo(paramDef, module)));
+				}
+				if (astParam.ParameterModifier != ParameterModifier.Out) {
+					if (paramDef.IsIn)
+						astParam.Attributes.Add(new AttributeSection(CreateNonCustomAttribute(typeof(InAttribute), module)));
+					if (paramDef.IsOut)
+						astParam.Attributes.Add(new AttributeSection(CreateNonCustomAttribute(typeof(OutAttribute), module)));
+				}
 				yield return astParam;
 			}
 		}
-
+		
+		#region ConvertAttributes
+		void ConvertAttributes(AttributedNode attributedNode, TypeDefinition typeDefinition)
+		{
+			ConvertCustomAttributes(attributedNode, typeDefinition);
+			
+			// Handle the non-custom attributes:
+			#region SerializableAttribute
+			if (typeDefinition.IsSerializable)
+				attributedNode.Attributes.Add(new AttributeSection(CreateNonCustomAttribute(typeof(SerializableAttribute))));
+			#endregion
+			
+			#region StructLayoutAttribute
+			LayoutKind layoutKind = LayoutKind.Auto;
+			switch (typeDefinition.Attributes & TypeAttributes.LayoutMask) {
+				case TypeAttributes.SequentialLayout:
+					layoutKind = LayoutKind.Sequential;
+					break;
+				case TypeAttributes.ExplicitLayout:
+					layoutKind = LayoutKind.Explicit;
+					break;
+			}
+			CharSet charSet = CharSet.None;
+			switch (typeDefinition.Attributes & TypeAttributes.StringFormatMask) {
+				case TypeAttributes.AnsiClass:
+					charSet = CharSet.Ansi;
+					break;
+				case TypeAttributes.AutoClass:
+					charSet = CharSet.Auto;
+					break;
+				case TypeAttributes.UnicodeClass:
+					charSet = CharSet.Unicode;
+					break;
+			}
+			LayoutKind defaultLayoutKind = (typeDefinition.IsValueType && !typeDefinition.IsEnum) ? LayoutKind.Sequential: LayoutKind.Auto;
+			if (layoutKind != defaultLayoutKind || charSet != CharSet.Ansi || typeDefinition.PackingSize > 0 || typeDefinition.ClassSize > 0) {
+				var structLayout = CreateNonCustomAttribute(typeof(StructLayoutAttribute));
+				structLayout.Arguments.Add(new IdentifierExpression("LayoutKind").Member(layoutKind.ToString()));
+				if (charSet != CharSet.Ansi) {
+					structLayout.AddNamedArgument("CharSet", new IdentifierExpression("CharSet").Member(charSet.ToString()));
+				}
+				if (typeDefinition.PackingSize > 0) {
+					structLayout.AddNamedArgument("Pack", new PrimitiveExpression((int)typeDefinition.PackingSize));
+				}
+				if (typeDefinition.ClassSize > 0) {
+					structLayout.AddNamedArgument("Size", new PrimitiveExpression((int)typeDefinition.ClassSize));
+				}
+				attributedNode.Attributes.Add(new AttributeSection(structLayout));
+			}
+			#endregion
+		}
+		
+		void ConvertAttributes(AttributedNode attributedNode, MethodDefinition methodDefinition)
+		{
+			ConvertCustomAttributes(attributedNode, methodDefinition);
+			
+			MethodImplAttributes implAttributes = methodDefinition.ImplAttributes & ~MethodImplAttributes.CodeTypeMask;
+			
+			#region DllImportAttribute
+			if (methodDefinition.HasPInvokeInfo) {
+				PInvokeInfo info = methodDefinition.PInvokeInfo;
+				Ast.Attribute dllImport = CreateNonCustomAttribute(typeof(DllImportAttribute));
+				dllImport.Arguments.Add(new PrimitiveExpression(info.Module.Name));
+				
+				if (info.IsBestFitDisabled)
+					dllImport.AddNamedArgument("BestFitMapping", new PrimitiveExpression(false));
+				if (info.IsBestFitEnabled)
+					dllImport.AddNamedArgument("BestFitMapping", new PrimitiveExpression(true));
+				
+				CallingConvention callingConvention;
+				switch (info.Attributes & PInvokeAttributes.CallConvMask) {
+					case PInvokeAttributes.CallConvCdecl:
+						callingConvention = CallingConvention.Cdecl;
+						break;
+					case PInvokeAttributes.CallConvFastcall:
+						callingConvention = CallingConvention.FastCall;
+						break;
+					case PInvokeAttributes.CallConvStdCall:
+						callingConvention = CallingConvention.StdCall;
+						break;
+					case PInvokeAttributes.CallConvThiscall:
+						callingConvention = CallingConvention.ThisCall;
+						break;
+					case PInvokeAttributes.CallConvWinapi:
+						callingConvention = CallingConvention.Winapi;
+						break;
+					default:
+						throw new NotSupportedException("unknown calling convention");
+				}
+				if (callingConvention != CallingConvention.Winapi)
+					dllImport.AddNamedArgument("CallingConvention", new IdentifierExpression("CallingConvention").Member(callingConvention.ToString()));
+				
+				CharSet charSet = CharSet.None;
+				switch (info.Attributes & PInvokeAttributes.CharSetMask) {
+					case PInvokeAttributes.CharSetAnsi:
+						charSet = CharSet.Ansi;
+						break;
+					case PInvokeAttributes.CharSetAuto:
+						charSet = CharSet.Auto;
+						break;
+					case PInvokeAttributes.CharSetUnicode:
+						charSet = CharSet.Unicode;
+						break;
+				}
+				if (charSet != CharSet.None)
+					dllImport.AddNamedArgument("CharSet", new IdentifierExpression("CharSet").Member(charSet.ToString()));
+				
+				if (!string.IsNullOrEmpty(info.EntryPoint) && info.EntryPoint != methodDefinition.Name)
+					dllImport.AddNamedArgument("EntryPoint", new PrimitiveExpression(info.EntryPoint));
+				
+				if (info.IsNoMangle)
+					dllImport.AddNamedArgument("ExactSpelling", new PrimitiveExpression(true));
+				
+				if ((implAttributes & MethodImplAttributes.PreserveSig) == MethodImplAttributes.PreserveSig)
+					implAttributes &= ~MethodImplAttributes.PreserveSig;
+				else
+					dllImport.AddNamedArgument("PreserveSig", new PrimitiveExpression(false));
+				
+				if (info.SupportsLastError)
+					dllImport.AddNamedArgument("SetLastError", new PrimitiveExpression(true));
+				
+				if (info.IsThrowOnUnmappableCharDisabled)
+					dllImport.AddNamedArgument("ThrowOnUnmappableChar", new PrimitiveExpression(false));
+				if (info.IsThrowOnUnmappableCharEnabled)
+					dllImport.AddNamedArgument("ThrowOnUnmappableChar", new PrimitiveExpression(true));
+				
+				attributedNode.Attributes.Add(new AttributeSection(dllImport));
+			}
+			#endregion
+			
+			#region PreserveSigAttribute
+			if (implAttributes == MethodImplAttributes.PreserveSig) {
+				attributedNode.Attributes.Add(new AttributeSection(CreateNonCustomAttribute(typeof(PreserveSigAttribute))));
+				implAttributes = 0;
+			}
+			#endregion
+			
+			#region MethodImplAttribute
+			if (implAttributes != 0) {
+				Ast.Attribute methodImpl = CreateNonCustomAttribute(typeof(MethodImplAttribute));
+				TypeReference methodImplOptions = new TypeReference(
+					"System.Runtime.CompilerServices", "MethodImplOptions",
+					methodDefinition.Module, methodDefinition.Module.TypeSystem.Corlib);
+				methodImpl.Arguments.Add(MakePrimitive((long)implAttributes, methodImplOptions));
+				attributedNode.Attributes.Add(new AttributeSection(methodImpl));
+			}
+			#endregion
+			
+			ConvertCustomAttributes(attributedNode, methodDefinition.MethodReturnType, AttributeTarget.Return);
+			if (methodDefinition.MethodReturnType.HasMarshalInfo) {
+				var marshalInfo = ConvertMarshalInfo(methodDefinition.MethodReturnType, methodDefinition.Module);
+				attributedNode.Attributes.Add(new AttributeSection(marshalInfo) { AttributeTarget = AttributeTarget.Return });
+			}
+		}
+		
+		void ConvertAttributes(AttributedNode attributedNode, FieldDefinition fieldDefinition)
+		{
+			ConvertCustomAttributes(attributedNode, fieldDefinition);
+			
+			#region FieldOffsetAttribute
+			if (fieldDefinition.HasLayoutInfo) {
+				Ast.Attribute fieldOffset = CreateNonCustomAttribute(typeof(FieldOffsetAttribute));
+				fieldOffset.Arguments.Add(new PrimitiveExpression(fieldDefinition.Offset));
+				attributedNode.Attributes.Add(new AttributeSection(fieldOffset));
+			}
+			#endregion
+			
+			if (fieldDefinition.HasMarshalInfo) {
+				attributedNode.Attributes.Add(new AttributeSection(ConvertMarshalInfo(fieldDefinition, fieldDefinition.Module)));
+			}
+		}
+		
+		#region MarshalAsAttribute (ConvertMarshalInfo)
+		static Ast.Attribute ConvertMarshalInfo(IMarshalInfoProvider marshalInfoProvider, ModuleDefinition module)
+		{
+			MarshalInfo marshalInfo = marshalInfoProvider.MarshalInfo;
+			Ast.Attribute attr = CreateNonCustomAttribute(typeof(MarshalAsAttribute), module);
+			string memberName;
+			if (marshalInfo.NativeType == NativeType.Boolean)
+				memberName = "Bool";
+			else
+				memberName = marshalInfo.NativeType.ToString();
+			attr.Arguments.Add(new IdentifierExpression("UnmanagedType").Member(memberName));
+			return attr;
+		}
+		#endregion
+		
+		Ast.Attribute CreateNonCustomAttribute(Type attributeType)
+		{
+			return CreateNonCustomAttribute(attributeType, context.CurrentType != null ? context.CurrentType.Module : null);
+		}
+		
+		static Ast.Attribute CreateNonCustomAttribute(Type attributeType, ModuleDefinition module)
+		{
+			Debug.Assert(attributeType.Name.EndsWith("Attribute", StringComparison.Ordinal));
+			Ast.Attribute attr = new Ast.Attribute();
+			attr.Type = new SimpleType(attributeType.Name.Substring(0, attributeType.Name.Length - "Attribute".Length));
+			if (module != null) {
+				attr.Type.AddAnnotation(new TypeReference(attributeType.Namespace, attributeType.Name, module, module.TypeSystem.Corlib));
+			}
+			return attr;
+		}
+		
 		static void ConvertCustomAttributes(AstNode attributedNode, ICustomAttributeProvider customAttributeProvider, AttributeTarget target = AttributeTarget.None)
 		{
 			if (customAttributeProvider.HasCustomAttributes) {
@@ -723,8 +940,9 @@ namespace Decompiler
 						}
 					}
 					if (customAttribute.HasProperties) {
+						TypeDefinition resolvedAttributeType = customAttribute.AttributeType.Resolve();
 						foreach (var propertyNamedArg in customAttribute.Properties) {
-							var propertyReference = customAttribute.AttributeType.Resolve().Properties.First(pr => pr.Name == propertyNamedArg.Name);
+							var propertyReference = resolvedAttributeType != null ? resolvedAttributeType.Properties.FirstOrDefault(pr => pr.Name == propertyNamedArg.Name) : null;
 							var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
 							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
@@ -732,8 +950,9 @@ namespace Decompiler
 					}
 
 					if (customAttribute.HasFields) {
+						TypeDefinition resolvedAttributeType = customAttribute.AttributeType.Resolve();
 						foreach (var fieldNamedArg in customAttribute.Fields) {
-							var fieldReference = customAttribute.AttributeType.Resolve().Fields.First(f => f.Name == fieldNamedArg.Name);
+							var fieldReference = resolvedAttributeType != null ? resolvedAttributeType.Fields.FirstOrDefault(f => f.Name == fieldNamedArg.Name) : null;
 							var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
 							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
@@ -758,7 +977,7 @@ namespace Decompiler
 				}
 			}
 		}
-
+		
 		private static Expression ConvertArgumentValue(CustomAttributeArgument parameter)
 		{
 			var type = parameter.Type.Resolve();
@@ -780,7 +999,7 @@ namespace Decompiler
 			}
 			return parameterValue;
 		}
-
+		#endregion
 
 		internal static Expression MakePrimitive(long val, TypeReference type)
 		{

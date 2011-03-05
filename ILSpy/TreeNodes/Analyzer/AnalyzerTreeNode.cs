@@ -22,7 +22,7 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzerTreeNode : SharpTreeNode
+	public class AnalyzerTreeNode : SharpTreeNode
 	{
 		Language language;
 		

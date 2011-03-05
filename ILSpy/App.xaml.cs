@@ -17,6 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
@@ -31,9 +33,23 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public partial class App : Application
 	{
+		static CompositionContainer compositionContainer;
+		
+		public static CompositionContainer CompositionContainer {
+			get { return compositionContainer; }
+		}
+		
 		public App()
 		{
 			InitializeComponent();
+			
+			var catalog = new AggregateCatalog();
+			catalog.Catalogs.Add(new AssemblyCatalog(typeof(App).Assembly));
+			catalog.Catalogs.Add(new DirectoryCatalog(".", "*.Plugin.dll"));
+			
+			compositionContainer = new CompositionContainer(catalog);
+			
+			Languages.Initialize(compositionContainer);
 			
 			if (!Debugger.IsAttached) {
 				AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;

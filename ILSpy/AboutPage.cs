@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,13 +15,23 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Linq;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy
 {
-	static class AboutPage
+	[ExportMainMenuCommand(Menu = "_Help", Header = "_About", MenuOrder = 99999)]
+	sealed class AboutPage : SimpleCommand
 	{
+		[Import]
+		DecompilerTextView decompilerTextView = null;
+		
+		public override void Execute(object parameter)
+		{
+			Display(decompilerTextView);
+		}
+		
 		static readonly Uri UpdateUrl = new Uri("http://www.ilspy.net/updates.xml");
 		
 		static AvailableVersionInfo latestAvailableVersion;
@@ -52,6 +63,8 @@ namespace ICSharpCode.ILSpy
 					};
 				});
 			output.WriteLine();
+			foreach (var plugin in App.CompositionContainer.GetExportedValues<IAboutPageAddition>())
+				plugin.Write(output);
 			output.WriteLine();
 			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(AboutPage), "README.txt")) {
 				using (StreamReader r = new StreamReader(s)) {
@@ -255,5 +268,13 @@ namespace ICSharpCode.ILSpy
 			}
 			return tcs.Task;
 		}
+	}
+	
+	/// <summary>
+	/// Interface that allows plugins to extend the about page.
+	/// </summary>
+	public interface IAboutPageAddition
+	{
+		void Write(ISmartTextOutput textOutput);
 	}
 }

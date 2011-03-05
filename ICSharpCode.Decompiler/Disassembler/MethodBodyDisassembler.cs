@@ -21,9 +21,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-using Decompiler;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
+using ICSharpCode.Decompiler.ILAst;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 

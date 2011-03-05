@@ -3,12 +3,11 @@
 
 using System;
 using System.Linq;
-using Decompiler.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using Mono.Cecil;
 
-namespace Decompiler.Transforms
+namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	/// <summary>
 	/// Finds the expanded form of using statements using pattern matching and replaces it with a UsingStatement.

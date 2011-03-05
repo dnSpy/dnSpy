@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 using ICSharpCode.Decompiler;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.Ast
 {
 	/// <summary>
 	/// Stores the C# code mappings.

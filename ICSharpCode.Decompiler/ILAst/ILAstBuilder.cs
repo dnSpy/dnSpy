@@ -8,7 +8,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Cecil = Mono.Cecil;
 
-namespace Decompiler
+namespace ICSharpCode.Decompiler.ILAst
 {
 	public class ILAstBuilder
 	{
@@ -17,54 +17,59 @@ namespace Decompiler
 		/// </summary>
 		public static ConcurrentDictionary<int, List<ILVariable>> MemberLocalVariables = new ConcurrentDictionary<int, List<ILVariable>>();
 		
+		static ByteCode[] EmptyByteCodeArray = new ByteCode[] {};
+		
+		/// <summary> Immutable </summary>
 		class StackSlot
 		{
-			public List<ByteCode> PushedBy;  // One of those
-			public ILVariable     LoadFrom;  // Where can we get the value from in AST
+			public readonly ByteCode[] PushedBy;  // One of those
+			public readonly ILVariable LoadFrom;  // Where can we get the value from in AST
 			
-			public StackSlot()
+			public StackSlot(ByteCode[] pushedBy, ILVariable loadFrom)
 			{
+				this.PushedBy = pushedBy;
+				this.LoadFrom = loadFrom;
 			}
 			
 			public StackSlot(ByteCode pushedBy)
 			{
-				this.PushedBy = new List<ByteCode>(1);
-				this.PushedBy.Add(pushedBy);
+				this.PushedBy = new[] { pushedBy };
+				this.LoadFrom = null;
 			}
 			
 			public static List<StackSlot> CloneStack(List<StackSlot> stack, int? popCount)
 			{
-				List<StackSlot> clone = new List<StackSlot>();
 				if (popCount.HasValue) {
-					if (popCount.Value > stack.Count) {
-						throw new Exception("Can not pop - the stack is empty");
-					}
-					for(int i = 0; i < stack.Count - popCount.Value; i++) {
-						clone.Add(new StackSlot() { PushedBy = new List<ByteCode>(stack[i].PushedBy) });
-					}
+					return stack.GetRange(0, stack.Count - popCount.Value);
+				} else {
+					return new List<StackSlot>(0);
 				}
-				return clone;
 			}
 		}
 		
+		/// <summary> Immutable </summary>
 		class VariableSlot
-		{
-			public static List<ByteCode> Empty = new List<ByteCode>();
+		{			
+			public readonly ByteCode[] StoredBy;    // One of those
+			public readonly bool       StoredByAll; // Overestimate which is useful for exceptional control flow.
 			
-			public List<ByteCode> StoredBy = Empty;  // One of those
-			public bool           StoredByAll;       // Overestimate which is useful for exceptional control flow.
+			public VariableSlot(ByteCode[] storedBy, bool storedByAll)
+			{
+				this.StoredBy = storedBy;
+				this.StoredByAll = storedByAll;
+			}
+			
+			public VariableSlot(ByteCode storedBy)
+			{
+				this.StoredBy = new[] { storedBy };
+				this.StoredByAll = false;
+			}
 			
 			public static VariableSlot[] CloneVariableState(VariableSlot[] state)
 			{
-				VariableSlot[] clone = new ILAstBuilder.VariableSlot[state.Length];
-				if (VariableSlot.Empty.Count > 0)
-					throw new Exception("Constant data corrupted");
+				VariableSlot[] clone = new VariableSlot[state.Length];
 				for (int i = 0; i < clone.Length; i++) {
-					VariableSlot varSlot = state[i];
-					clone[i] = new VariableSlot() {
-						StoredBy = varSlot.StoredBy.Count == 0 ? VariableSlot.Empty : new List<ByteCode>(varSlot.StoredBy),
-						StoredByAll  = varSlot.StoredByAll
-					};
+					clone[i] = state[i];
 				}
 				return clone;
 			}
@@ -73,7 +78,7 @@ namespace Decompiler
 			{
 				VariableSlot[] emptyVariableState = new VariableSlot[varCount];
 				for (int i = 0; i < emptyVariableState.Length; i++) {
-					emptyVariableState[i] = new VariableSlot();
+					emptyVariableState[i] = new VariableSlot(EmptyByteCodeArray, false);
 				}
 				return emptyVariableState;
 			}
@@ -82,7 +87,7 @@ namespace Decompiler
 			{
 				VariableSlot[] unknownVariableState = new VariableSlot[varCount];
 				for (int i = 0; i < unknownVariableState.Length; i++) {
-					unknownVariableState[i] = new VariableSlot() { StoredByAll = true };
+					unknownVariableState[i] = new VariableSlot(EmptyByteCodeArray, true);
 				}
 				return unknownVariableState;
 			}
@@ -100,9 +105,9 @@ namespace Decompiler
 			public string   Name { get { return "IL_" + this.Offset.ToString("X2"); } }
 			public ByteCode Next;
 			public Instruction[]    Prefixes;        // Non-null only if needed
-			public List<StackSlot>  StackBefore;
+			public List<StackSlot>  StackBefore;     // Unique per bytecode; not shared
 			public List<ILVariable> StoreTo;         // Store result of instruction to those AST variables
-			public VariableSlot[]   VariablesBefore;
+			public VariableSlot[]   VariablesBefore; // Unique per bytecode; not shared
 			
 			public VariableDefinition OperandAsVariable { get { return (VariableDefinition)this.Operand; } }
 			
@@ -181,7 +186,7 @@ namespace Decompiler
 						if (!first) sb.Append(",");
 						if (varSlot.StoredByAll) {
 							sb.Append("*");
-						} else if (varSlot.StoredBy.Count == 0) {
+						} else if (varSlot.StoredBy.Length == 0) {
 							sb.Append("_");
 						} else {
 							bool first2 = true;
@@ -304,8 +309,7 @@ namespace Decompiler
 				VariableSlot[] newVariableState = VariableSlot.CloneVariableState(byteCode.VariablesBefore);
 				if (byteCode.Code == ILCode.Stloc) {
 					int varIndex = ((VariableReference)byteCode.Operand).Index;
-					newVariableState[varIndex].StoredBy = new List<ByteCode>(1) { byteCode };
-					newVariableState[varIndex].StoredByAll = false;
+					newVariableState[varIndex] = new VariableSlot(byteCode);
 				}
 				
 				// After the leave, finally block might have touched the variables
@@ -360,10 +364,10 @@ namespace Decompiler
 						
 						// Merge stacks - modify the target
 						for (int i = 0; i < newStack.Count; i++) {
-							List<ByteCode> oldPushedBy = branchTarget.StackBefore[i].PushedBy;
-							List<ByteCode> newPushedBy = oldPushedBy.Union(newStack[i].PushedBy).ToList();
-							if (newPushedBy.Count > oldPushedBy.Count) {
-								branchTarget.StackBefore[i].PushedBy = newPushedBy;
+							ByteCode[] oldPushedBy = branchTarget.StackBefore[i].PushedBy;
+							ByteCode[] newPushedBy = oldPushedBy.Union(newStack[i].PushedBy);
+							if (newPushedBy.Length > oldPushedBy.Length) {
+								branchTarget.StackBefore[i] = new StackSlot(newPushedBy, null);
 								modified = true;
 							}
 						}
@@ -375,13 +379,13 @@ namespace Decompiler
 							// All can not be unioned further
 							if (!oldSlot.StoredByAll) {
 								if (newSlot.StoredByAll) {
-									oldSlot.StoredByAll = true;
+									branchTarget.VariablesBefore[i] = newSlot;
 									modified = true;
 								} else {
-									List<ByteCode> oldStoredBy = oldSlot.StoredBy;
-									List<ByteCode> newStoredBy = oldStoredBy.Union(newSlot.StoredBy).ToList();
-									if (newStoredBy.Count > oldStoredBy.Count) {
-										oldSlot.StoredBy = newStoredBy;
+									ByteCode[] oldStoredBy = oldSlot.StoredBy;
+									ByteCode[] newStoredBy = oldStoredBy.Union(newSlot.StoredBy);
+									if (newStoredBy.Length > oldStoredBy.Length) {
+										branchTarget.VariablesBefore[i] = new VariableSlot(newStoredBy, false);
 										modified = true;
 									}
 								}
@@ -403,16 +407,15 @@ namespace Decompiler
 				int argIdx = 0;
 				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Count;
 				for (int i = byteCode.StackBefore.Count - popCount; i < byteCode.StackBefore.Count; i++) {
-					StackSlot arg = byteCode.StackBefore[i];
 					ILVariable tmpVar = new ILVariable() { Name = string.Format("arg_{0:X2}_{1}", byteCode.Offset, argIdx), IsGenerated = true };
-					arg.LoadFrom = tmpVar;
-					foreach(ByteCode pushedBy in arg.PushedBy) {
+					byteCode.StackBefore[i] = new StackSlot(byteCode.StackBefore[i].PushedBy, tmpVar);
+					foreach(ByteCode pushedBy in byteCode.StackBefore[i].PushedBy) {
 						if (pushedBy.StoreTo == null) {
 							pushedBy.StoreTo = new List<ILVariable>(1);
 						}
 						pushedBy.StoreTo.Add(tmpVar);
 					}
-					if (arg.PushedBy.Count == 1) {
+					if (byteCode.StackBefore[i].PushedBy.Length == 1) {
 						allowInline[tmpVar] = true;
 					}
 					argIdx++;
@@ -489,10 +492,10 @@ namespace Decompiler
 						
 						// Add loads to the data structure; merge variables if necessary
 						foreach(ByteCode load in loads) {
-							List<ByteCode> storedBy = load.VariablesBefore[variableIndex].StoredBy;
-							if (storedBy.Count == 0) {
+							ByteCode[] storedBy = load.VariablesBefore[variableIndex].StoredBy;
+							if (storedBy.Length == 0) {
 								throw new Exception("Load of uninitialized variable");
-							} else if (storedBy.Count == 1) {
+							} else if (storedBy.Length == 1) {
 								VariableInfo newVar = newVars.Where(v => v.Stores.Contains(storedBy[0])).Single();
 								newVar.Loads.Add(load);
 							} else {
@@ -737,6 +740,17 @@ namespace Decompiler
 			}
 			list.RemoveRange(start, count);
 			return ret;
+		}
+		
+		public static T[] Union<T>(this T[] a, T[] b)
+		{
+			if (a.Length == 0)
+				return b;
+			if (b.Length == 0)
+				return a;
+			if (a.Length == 1 && b.Length == 1 && a[0].Equals(b[0]))
+				return a;
+			return Enumerable.Union(a, b).ToArray();
 		}
 	}
 }

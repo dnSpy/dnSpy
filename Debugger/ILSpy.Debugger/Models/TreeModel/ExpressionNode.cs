@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 using Debugger;
 using Debugger.MetaData;
-using Decompiler;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.Services;
