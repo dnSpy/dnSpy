@@ -68,7 +68,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (target == null)
 				return false;
 			
-			if (target == Exit(gotoExpr, new HashSet<ILNode>())) {
+			if (target == Exit(gotoExpr, new HashSet<ILNode>() { gotoExpr })) {
 				gotoExpr.Code = ILCode.Nop;
 				gotoExpr.Operand = null;
 				target.ILRanges.AddRange(gotoExpr.ILRanges);
@@ -83,13 +83,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				loop = current as ILWhileLoop;
 			}
 			
-			if (loop != null && target == Exit(loop, new HashSet<ILNode>())) {
+			if (loop != null && target == Exit(loop, new HashSet<ILNode>() { gotoExpr })) {
 				gotoExpr.Code = ILCode.LoopBreak;
 				gotoExpr.Operand = null;
 				return true;
 			}
 			
-			if (loop != null && target == Enter(loop, new HashSet<ILNode>())) {
+			if (loop != null && target == Enter(loop, new HashSet<ILNode>() { gotoExpr })) {
 				gotoExpr.Code = ILCode.LoopContinue;
 				gotoExpr.Operand = null;
 				return true;
