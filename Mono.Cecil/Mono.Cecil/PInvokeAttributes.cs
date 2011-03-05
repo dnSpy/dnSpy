@@ -53,7 +53,7 @@ namespace Mono.Cecil {
 
 		BestFitMask			= 0x0030,
 		BestFitEnabled		= 0x0010,
-		BestFidDisabled		= 0x0020,
+		BestFitDisabled		= 0x0020,
 
 		ThrowOnUnmappableCharMask = 0x3000,
 		ThrowOnUnmappableCharEnabled = 0x1000,
