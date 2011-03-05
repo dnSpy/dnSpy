@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("IL decompiler engine")]
 [assembly: AssemblyCompany("ic#code")]
 [assembly: AssemblyProduct("ILSpy")]
-[assembly: AssemblyCopyright("Copyright 2011 AlphaSierraPara for the SharpDevelop Team")]
+[assembly: AssemblyCopyright("Copyright 2011 AlphaSierraPapa for the SharpDevelop Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
