@@ -66,6 +66,7 @@
     <Compile Include="Ast\Transforms\PatternStatementTransform.cs" />
     <Compile Include="CecilExtensions.cs" />
     <Compile Include="DecompilerException.cs" />
+    <Compile Include="DecompilerSettings.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
     <Compile Include="Disassembler\ILStructure.cs" />
     <Compile Include="Disassembler\MethodBodyDisassembler.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="ILAst\Pattern.cs" />
     <Compile Include="ILAst\PeepholeTransform.cs" />
     <Compile Include="ILAst\TypeAnalysis.cs" />
+    <Compile Include="ILAst\YieldReturnDecompiler.cs" />
     <Compile Include="ITextOutput.cs" />
     <Compile Include="PlainTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

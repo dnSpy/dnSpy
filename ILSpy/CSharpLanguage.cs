@@ -376,7 +376,8 @@ namespace ICSharpCode.ILSpy
 			return new AstBuilder(
 				new DecompilerContext {
 					CancellationToken = options.CancellationToken,
-					CurrentType = currentType
+					CurrentType = currentType,
+					Settings = options.DecompilerSettings
 				});
 		}
 

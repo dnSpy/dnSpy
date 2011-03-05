@@ -429,6 +429,11 @@ namespace ICSharpCode.ILSpy
 			decompilerTextView.Decompile(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions());
 		}
 		
+		public void RefreshDecompiledView()
+		{
+			TreeView_SelectionChanged(null, null);
+		}
+		
 		public DecompilerTextView TextView {
 			get { return decompilerTextView; }
 		}
