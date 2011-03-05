@@ -134,7 +134,6 @@ namespace AppliedToPropertySet
 			[MyAttribute]
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -177,7 +176,7 @@ namespace AppliedToParameter
 	}
 	public class MyClass
 	{
-		public void Method([MyAttribute]int val)
+		public void Method([MyAttribute] int val)
 		{
 		}
 	}
@@ -204,7 +203,6 @@ namespace NamedInitializerPropertyString
 			}
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -227,7 +225,6 @@ namespace NamedInitializerPropertyType
 			}
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -250,7 +247,6 @@ namespace NamedInitializerPropertyEnum
 			}
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -321,7 +317,6 @@ namespace TargetPropertySetParam
 			[param: MyAttribute]
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -344,7 +339,6 @@ namespace TargetPropertySetReturn
 			[return: MyAttribute]
 			set
 			{
-				return;
 			}
 		}
 	}
