@@ -28,5 +28,10 @@ namespace ICSharpCode.Decompiler.Ast
 			node.Remove();
 			return node;
 		}
+		
+		public static void AddNamedArgument(this NRefactory.CSharp.Attribute attribute, string name, Expression argument)
+		{
+			attribute.Arguments.Add(new AssignmentExpression(new IdentifierExpression(name), argument));
+		}
 	}
 }

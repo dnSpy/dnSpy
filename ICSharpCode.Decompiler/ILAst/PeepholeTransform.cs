@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
@@ -51,6 +52,9 @@ namespace ICSharpCode.Decompiler.ILAst
 						// apply block transforms
 						foreach (var t in blockTransforms) {
 							t(block, ref i);
+							Debug.Assert(i <= block.Body.Count && i >= 0);
+							if (i == block.Body.Count) // special case: retry all transforms
+								break;
 						}
 					}
 				}
