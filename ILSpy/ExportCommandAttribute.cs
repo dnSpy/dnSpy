@@ -13,7 +13,7 @@ namespace ICSharpCode.ILSpy
 		string ToolbarIcon { get; }
 		string ToolTip { get; }
 		string ToolbarCategory { get; }
-		
+		object Tag { get; }
 		double ToolbarOrder { get; }
 	}
 	
@@ -30,6 +30,7 @@ namespace ICSharpCode.ILSpy
 		public string ToolbarIcon { get; set; }
 		public string ToolbarCategory { get; set; }
 		public double ToolbarOrder { get; set; }
+		public object Tag { get; set; }
 	}
 	#endregion
 	

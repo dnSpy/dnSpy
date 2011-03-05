@@ -138,6 +138,7 @@ namespace ICSharpCode.ILSpy
 			return new Button {
 				Command = CommandWrapper.Unwrap(command.Value),
 				ToolTip = command.Metadata.ToolTip,
+				Tag = command.Metadata.Tag,
 				Content = new Image {
 					Width = 16,
 					Height = 16,
@@ -395,22 +396,25 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public void OpenFiles(string[] fileNames)
+		public void OpenFiles(string[] fileNames, bool focusNode = true)
 		{
 			if (fileNames == null)
 				throw new ArgumentNullException("fileNames");
-			treeView.UnselectAll();
+			
+			if (focusNode)
+				treeView.UnselectAll();
+			
 			SharpTreeNode lastNode = null;
 			foreach (string file in fileNames) {
 				var asm = assemblyList.OpenAssembly(file);
 				if (asm != null) {
 					var node = assemblyListTreeNode.FindAssemblyNode(asm);
-					if (node != null) {
+					if (node != null && focusNode) {
 						treeView.SelectedItems.Add(node);
 						lastNode = node;
 					}
 				}
-				if (lastNode != null)
+				if (lastNode != null && focusNode)
 					treeView.FocusNode(lastNode);
 			}
 		}
@@ -539,7 +543,12 @@ namespace ICSharpCode.ILSpy
 		
 		void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			DebuggedData.Language = sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
+			DebugData.Language = sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
+		}
+		
+		public void UnselectAll()
+		{
+			treeView.UnselectAll();
 		}
 	}
 }

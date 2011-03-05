@@ -332,7 +332,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
 		{
-			DebuggedData.CurrentType = null;
+			DebugData.CurrentType = null;
 			// Some actions like loading an assembly list cause several selection changes in the tree view,
 			// and each of those will start a decompilation action.
 			bool isDecompilationScheduled = this.nextDecompilationRun != null;
@@ -396,8 +396,8 @@ namespace ICSharpCode.ILSpy.TextView
 						
 						// show the currentline marker
 						var bm = CurrentLineBookmark.Instance;
-						if (bm != null && DebuggedData.CurrentType != null) {
-							if (DebuggedData.CurrentType.FullName.Equals(bm.Type.FullName, StringComparison.OrdinalIgnoreCase)) {
+						if (bm != null && DebugData.CurrentType != null) {
+							if (DebugData.CurrentType.FullName.Equals(bm.Type.FullName, StringComparison.OrdinalIgnoreCase)) {
 								DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
 								bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
 								UnfoldAndScroll(bm.LineNumber);

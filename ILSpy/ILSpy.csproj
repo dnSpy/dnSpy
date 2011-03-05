@@ -90,6 +90,7 @@
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="BamlDecompiler.cs" />
     <Compile Include="Commands.cs" />
+    <Compile Include="Commands\DebuggerCommands.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
     <Compile Include="CSharpLanguage.cs" />

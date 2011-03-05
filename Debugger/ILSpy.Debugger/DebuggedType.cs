@@ -25,7 +25,7 @@ namespace ILSpy.Debugger
 	/// <summary>
 	/// Contains the data important for debugger from the main application.
 	/// </summary>
-	public static class DebuggedData
+	public static class DebugData
 	{
 		/// <summary>
 		/// Gets or sets the current debugged type

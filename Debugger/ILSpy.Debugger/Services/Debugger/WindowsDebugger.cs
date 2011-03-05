@@ -49,7 +49,7 @@ namespace ILSpy.Debugger.Services
 		
 		private ConcurrentDictionary<string, List<MethodMapping>> CodeMappingsStorage {
 			get {
-				return CodeMappings.GetStorage(DebuggedData.Language);
+				return CodeMappings.GetStorage(DebugData.Language);
 			}
 		}
 		
