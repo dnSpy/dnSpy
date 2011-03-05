@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy
 		string Header { get; }
 		string Menu { get; }
 		string MenuCategory { get; }
-		
+		string InputGestureText { get; }
 		bool IsEnabled { get; }
 		
 		double MenuOrder { get; }
@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy
 		public string Header { get; set; }
 		public string Menu { get; set; }
 		public string MenuCategory { get; set; }
-		
+		public string InputGestureText { get; set; }
 		public bool IsEnabled {
 			get { return isEnabled; }
 			set { isEnabled = value; }

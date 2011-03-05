@@ -168,6 +168,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       MenuIcon = "ILSpy.Debugger;component/Images/ContinueDebugging.png",
 	                       MenuCategory = "Debugger1",
 	                       Header = "Continue debugging",
+	                       InputGestureText = "F5",
 	                       IsEnabled = false,
 	                       MenuOrder = 1)]
 	internal sealed class ContinueDebuggingCommand : DebuggerCommands
@@ -183,6 +184,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       MenuIcon = "ILSpy.Debugger;component/Images/StepInto.png",
 	                       MenuCategory = "Debugger1",
 	                       Header = "Step into",
+	                       InputGestureText = "F11",
 	                       IsEnabled = false,
 	                       MenuOrder = 2)]
 	internal sealed class StepIntoCommand : DebuggerCommands
@@ -198,6 +200,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       MenuIcon = "ILSpy.Debugger;component/Images/StepOver.png",
 	                       MenuCategory = "Debugger1",
 	                       Header = "Step over",
+	                       InputGestureText = "F10",
 	                       IsEnabled = false,
 	                       MenuOrder = 3)]
 	internal sealed class StepOverCommand : DebuggerCommands

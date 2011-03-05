@@ -178,7 +178,7 @@ namespace ICSharpCode.ILSpy
 						}
 						
 						menuItem.IsEnabled = entry.Metadata.IsEnabled;
-						
+						menuItem.InputGestureText = entry.Metadata.InputGestureText;
 						topLevelMenuItem.Items.Add(menuItem);
 					}
 				}
