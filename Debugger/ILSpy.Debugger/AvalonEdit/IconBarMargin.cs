@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -17,6 +18,7 @@ using Mono.Cecil;
 
 namespace ILSpy.Debugger.AvalonEdit
 {
+	[Export("IconMargin"), PartCreationPolicy(CreationPolicy.Shared)]
 	public class IconBarMargin : AbstractMargin, IDisposable
 	{
 		public IconBarMargin()

@@ -42,6 +42,8 @@ namespace ICSharpCode.ILSpy
 		string Menu { get; }
 		string MenuCategory { get; }
 		
+		bool IsEnabled { get; }
+		
 		double MenuOrder { get; }
 	}
 	
@@ -49,6 +51,8 @@ namespace ICSharpCode.ILSpy
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
 	public class ExportMainMenuCommandAttribute : ExportAttribute
 	{
+		bool isEnabled = true;
+		
 		public ExportMainMenuCommandAttribute()
 			: base("MainMenuCommand", typeof(ICommand))
 		{
@@ -58,6 +62,11 @@ namespace ICSharpCode.ILSpy
 		public string Header { get; set; }
 		public string Menu { get; set; }
 		public string MenuCategory { get; set; }
+		
+		public bool IsEnabled {
+			get { return isEnabled; }
+			set { isEnabled = value; }
+		}
 		public double MenuOrder { get; set; }
 	}
 	#endregion

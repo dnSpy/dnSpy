@@ -104,6 +104,9 @@ namespace ICSharpCode.ILSpy.Commands
 			var items = menuItems.OfType<MenuItem>().Where(m => (m.Header as string) == "_Debugger");
 			foreach (var item in items.First().Items.OfType<MenuItem>()) {
 				string header = (string)item.Header;
+				
+				if (header.StartsWith("Remove")) continue;
+				
 				if (header.StartsWith("Attach") || header.StartsWith("Debug"))
 					item.IsEnabled = enable;
 				else
@@ -165,6 +168,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       MenuIcon = "ILSpy.Debugger;component/Images/ContinueDebugging.png",
 	                       MenuCategory = "Debugger1",
 	                       Header = "Continue debugging",
+	                       IsEnabled = false,
 	                       MenuOrder = 1)]
 	internal sealed class ContinueDebuggingCommand : DebuggerCommands
 	{
@@ -179,6 +183,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       MenuIcon = "ILSpy.Debugger;component/Images/StepInto.png",
 	                       MenuCategory = "Debugger1",
 	                       Header = "Step into",
+	                       IsEnabled = false,
 	                       MenuOrder = 2)]
 	internal sealed class StepIntoCommand : DebuggerCommands
 	{
@@ -193,6 +198,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       MenuIcon = "ILSpy.Debugger;component/Images/StepOver.png",
 	                       MenuCategory = "Debugger1",
 	                       Header = "Step over",
+	                       IsEnabled = false,
 	                       MenuOrder = 3)]
 	internal sealed class StepOverCommand : DebuggerCommands
 	{
@@ -207,6 +213,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       MenuIcon = "ILSpy.Debugger;component/Images/StepOut.png",
 	                       MenuCategory = "Debugger1",
 	                       Header = "Step out",
+	                       IsEnabled = false,
 	                       MenuOrder = 4)]
 	internal sealed class StepOutCommand : DebuggerCommands
 	{
@@ -220,6 +227,7 @@ namespace ICSharpCode.ILSpy.Commands
 	[ExportMainMenuCommand(Menu = "_Debugger",
 	                       MenuCategory = "Debugger1",
 	                       Header = "_Detach from running application",
+	                       IsEnabled = false,
 	                       MenuOrder = 5)]
 	internal sealed class DetachCommand : DebuggerCommands
 	{

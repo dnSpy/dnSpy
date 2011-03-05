@@ -65,8 +65,11 @@ namespace ICSharpCode.ILSpy.TextView
 		DefinitionLookup definitionLookup;
 		CancellationTokenSource currentCancellationTokenSource;
 		
-		IconBarMargin iconMargin;
-		TextMarkerService textMarkerService;
+		[Import("IconMargin")]
+		IconBarMargin iconMargin = null;
+		
+		[Import("TextMarkerService")]
+		TextMarkerService textMarkerService = null;
 		
 		#region Constructor
 		public DecompilerTextView()
@@ -82,6 +85,7 @@ namespace ICSharpCode.ILSpy.TextView
 				});
 			
 			InitializeComponent();
+			
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			this.uiElementGenerator = new UIElementGenerator();
@@ -90,19 +94,23 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.MouseHover += TextViewMouseHover;
 			textEditor.TextArea.TextView.MouseHoverStopped += TextViewMouseHoverStopped;
 			
+			// wire the events
+			TextEditorWeakEventManager.MouseHover.AddListener(textEditor, TextEditorListener.Instance);
+			TextEditorWeakEventManager.MouseHoverStopped.AddListener(textEditor, TextEditorListener.Instance);
+			TextEditorWeakEventManager.MouseDown.AddListener(textEditor, TextEditorListener.Instance);			
+			textEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconMargin.InvalidateVisual();
+			
+			this.Loaded += new RoutedEventHandler(DecompilerTextView_Loaded);
+		}
+
+		void DecompilerTextView_Loaded(object sender, RoutedEventArgs e)
+		{
 			// add marker service & margin
-			textMarkerService = new TextMarkerService(textEditor);
+			textMarkerService.CodeEditor = textEditor;
 			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 			
-			iconMargin = new IconBarMargin();
 			textEditor.TextArea.LeftMargins.Add(iconMargin);
-			
-			// wire the mouse events
-			TextEditorWeakEventManager.MouseHover.AddListener(textEditor, TextEditorListener.Instance);
-			TextEditorWeakEventManager.MouseHoverStopped.AddListener(textEditor, TextEditorListener.Instance);
-			TextEditorWeakEventManager.MouseDown.AddListener(textEditor, TextEditorListener.Instance);
-			textEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconMargin.InvalidateVisual();
 		}
 		
 		#endregion

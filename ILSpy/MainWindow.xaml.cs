@@ -176,6 +176,9 @@ namespace ICSharpCode.ILSpy
 								Source = Images.LoadImage(entry.Value, entry.Metadata.MenuIcon)
 							};
 						}
+						
+						menuItem.IsEnabled = entry.Metadata.IsEnabled;
+						
 						topLevelMenuItem.Items.Add(menuItem);
 					}
 				}
@@ -421,7 +424,7 @@ namespace ICSharpCode.ILSpy
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (!System.Diagnostics.Debugger.IsAttached) {
+			if (!DebuggerService.CurrentDebugger.IsDebugging) {
 				e.Handled = true;
 				var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 				ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));

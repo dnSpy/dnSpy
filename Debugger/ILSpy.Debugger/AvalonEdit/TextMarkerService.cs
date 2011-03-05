@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -18,19 +19,22 @@ namespace ILSpy.Debugger.AvalonEdit
 	/// <summary>
 	/// Handles the text markers for a code editor.
 	/// </summary>
+	[Export("TextMarkerService"), PartCreationPolicy(CreationPolicy.Shared)]
 	public sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService
 	{
-		readonly TextEditor codeEditor;
+		TextEditor codeEditor;
+		
 		TextSegmentCollection<TextMarker> markers = new TextSegmentCollection<TextMarker>();
 		
-		public TextMarkerService(TextEditor codeEditor)
-		{
-			if (codeEditor == null)
-				throw new ArgumentNullException("codeEditor");
-			this.codeEditor = codeEditor;
-			
+		public TextMarkerService()
+		{			
 			BookmarkManager.Added += new BookmarkEventHandler(BookmarkManager_Added);
 			BookmarkManager.Removed += new BookmarkEventHandler(BookmarkManager_Removed);
+		}
+		
+		public TextEditor CodeEditor {
+			get { return codeEditor; }
+			set { codeEditor = value; }
 		}
 
 		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
