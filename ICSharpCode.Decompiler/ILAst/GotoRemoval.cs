@@ -60,6 +60,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Remove redundant case blocks altogether
 			foreach(ILSwitch ilSwitch in method.GetSelfAndChildrenRecursive<ILSwitch>()) {
 				foreach(ILBlock ilCase in ilSwitch.CaseBlocks) {
+					Debug.Assert(ilCase.EntryGoto == null);
+					
 					int count = ilCase.Body.Count;
 					if (count >= 2) {
 						if (!ilCase.Body[count - 2].CanFallthough() &&
@@ -68,7 +70,12 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 					}
 				}
-				ilSwitch.CaseBlocks.RemoveAll(b => b.Body.Count == 1 && b.Body.Single().Match(ILCode.LoopOrSwitchBreak));
+				
+				var defaultCase = ilSwitch.CaseBlocks.Where(cb => cb.Values == null).SingleOrDefault();
+				// If there is no default block, remove empty case blocks
+				if (defaultCase == null || (defaultCase.Body.Count == 1 && defaultCase.Body.Single().Match(ILCode.LoopOrSwitchBreak))) {
+					ilSwitch.CaseBlocks.RemoveAll(b => b.Body.Count == 1 && b.Body.Single().Match(ILCode.LoopOrSwitchBreak));
+				}
 			}
 			
 			// Remove redundant return

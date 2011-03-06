@@ -1529,8 +1529,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		public object VisitSwitchSection(SwitchSection switchSection, object data)
 		{
 			StartNode(switchSection);
-			foreach (var label in switchSection.CaseLabels)
+			bool first = true;
+			foreach (var label in switchSection.CaseLabels) {
+				if (!first)
+					NewLine();
 				label.AcceptVisitor(this, data);
+				first = false;
+			}
 			foreach (var statement in switchSection.Statements)
 				statement.AcceptVisitor(this, data);
 			return EndNode(switchSection);
@@ -1539,11 +1544,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		public object VisitCaseLabel(CaseLabel caseLabel, object data)
 		{
 			StartNode(caseLabel);
-			WriteKeyword("case");
-			Space();
-			caseLabel.Expression.AcceptVisitor(this, data);
+			if (caseLabel.Expression.IsNull) {
+				WriteKeyword("default");
+			} else {
+				WriteKeyword("case");
+				Space();
+				caseLabel.Expression.AcceptVisitor(this, data);
+			}
 			WriteToken(":", CaseLabel.Roles.Colon);
-			NewLine();
 			return EndNode(caseLabel);
 		}
 		

@@ -123,7 +123,11 @@ namespace ICSharpCode.Decompiler.Ast
 				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition) };
 				foreach (var caseBlock in ilSwitch.CaseBlocks) {
 					SwitchSection section = new SwitchSection();
-					section.CaseLabels.AddRange(caseBlock.Values.Select(i => new CaseLabel() { Expression = AstBuilder.MakePrimitive(i, ilSwitch.Condition.InferredType) }));
+					if (caseBlock.Values != null) {
+						section.CaseLabels.AddRange(caseBlock.Values.Select(i => new CaseLabel() { Expression = AstBuilder.MakePrimitive(i, ilSwitch.Condition.InferredType) }));
+					} else {
+						section.CaseLabels.Add(new CaseLabel());
+					}
 					section.Statements.Add(TransformBlock(caseBlock));
 					switchStmt.SwitchSections.Add(section);
 				}

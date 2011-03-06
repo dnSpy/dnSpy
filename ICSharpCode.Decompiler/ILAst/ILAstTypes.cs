@@ -444,7 +444,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	{
 		public class CaseBlock: ILBlock
 		{
-			public List<int> Values = new List<int>();
+			public List<int> Values;  // null for the default case
 			
 			public override void WriteTo(ITextOutput output)
 			{

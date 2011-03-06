@@ -584,18 +584,20 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (condBranch.Match(ILCode.Switch, out caseLabels)) {
 							
 							ILSwitch ilSwitch = new ILSwitch() { Condition = condBranch.Arguments.Single() };
-							result.Add(new ILBasicBlock() {
+							ILBasicBlock newBB = new ILBasicBlock() {
 								EntryLabel = block.EntryLabel,  // Keep the entry label
 								Body = { ilSwitch },
 								FallthoughGoto = block.FallthoughGoto
-							});
+							};
+							result.Add(newBB);
 
 							// Remove the item so that it is not picked up as content
 							scope.RemoveOrThrow(node);
 							
 							// Pull in code of cases
+							ILLabel fallLabel = (ILLabel)block.FallthoughGoto.Operand;
 							ControlFlowNode fallTarget = null;
-							labelToCfNode.TryGetValue((ILLabel)block.FallthoughGoto.Operand, out fallTarget);
+							labelToCfNode.TryGetValue(fallLabel, out fallTarget);
 							
 							HashSet<ControlFlowNode> frontiers = new HashSet<ControlFlowNode>();
 							if (fallTarget != null)
@@ -614,7 +616,10 @@ namespace ICSharpCode.Decompiler.ILAst
 								// Find or create new case block
 								ILSwitch.CaseBlock caseBlock = ilSwitch.CaseBlocks.Where(b => b.EntryGoto.Operand == condLabel).FirstOrDefault();
 								if (caseBlock == null) {
-									caseBlock = new ILSwitch.CaseBlock() { EntryGoto = new ILExpression(ILCode.Br, condLabel) };
+									caseBlock = new ILSwitch.CaseBlock() {
+										Values = new List<int>(),
+										EntryGoto = new ILExpression(ILCode.Br, condLabel)
+									};
 									ilSwitch.CaseBlocks.Add(caseBlock);
 									
 									ControlFlowNode condTarget = null;
@@ -628,6 +633,21 @@ namespace ICSharpCode.Decompiler.ILAst
 									}
 								}
 								caseBlock.Values.Add(i);
+							}
+							
+							// Heuristis to determine if we want to use fallthough as default case
+							if (fallTarget != null && !frontiers.Contains(fallTarget)) {
+								HashSet<ControlFlowNode> content = FindDominatedNodes(scope, fallTarget);
+								if (content.Any()) {
+									var caseBlock = new ILSwitch.CaseBlock() { EntryGoto = new ILExpression(ILCode.Br, fallLabel) };
+									ilSwitch.CaseBlocks.Add(caseBlock);
+									newBB.FallthoughGoto = null;
+								
+									scope.ExceptWith(content);
+									caseBlock.Body.AddRange(FindConditions(content, fallTarget));
+									// Add explicit break which should not be used by default, but the goto removal might decide to use it
+									caseBlock.Body.Add(new ILBasicBlock() { Body = { new ILExpression(ILCode.LoopOrSwitchBreak, null) } });
+								}
 							}
 						}
 						
