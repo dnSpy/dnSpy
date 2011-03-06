@@ -420,7 +420,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override bool ShowMember(MemberReference member)
 		{
-			return showAllMembers || !AstBuilder.MemberIsHidden(member);
+			return showAllMembers || !AstBuilder.MemberIsHidden(member, new DecompilationOptions().DecompilerSettings);
 		}
 	}
 }

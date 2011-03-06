@@ -31,6 +31,14 @@ namespace ICSharpCode.ILSpy
 			this.DataContext = LoadDecompilerSettings(settings);
 		}
 		
+		static DecompilerSettings currentDecompilerSettings;
+		
+		public static DecompilerSettings CurrentDecompilerSettings {
+			get {
+				return currentDecompilerSettings ?? (currentDecompilerSettings = LoadDecompilerSettings(ILSpySettings.Load()));
+			}
+		}
+		
 		public static DecompilerSettings LoadDecompilerSettings(ILSpySettings settings)
 		{
 			XElement e = settings["DecompilerSettings"];
@@ -52,6 +60,8 @@ namespace ICSharpCode.ILSpy
 				existingElement.ReplaceWith(section);
 			else
 				root.Add(section);
+			
+			currentDecompilerSettings = null; // invalidate cached settings
 		}
 	}
 }

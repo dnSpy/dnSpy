@@ -86,8 +86,10 @@ namespace ICSharpCode.ILSpy
 		{
 			OptionsDialog dlg = new OptionsDialog();
 			dlg.Owner = MainWindow.Instance;
-			if (dlg.ShowDialog() == true)
+			if (dlg.ShowDialog() == true) {
+				MainWindow.Instance.RefreshTreeViewFilter();
 				MainWindow.Instance.RefreshDecompiledView();
+			}
 		}
 	}
 }

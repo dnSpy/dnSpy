@@ -54,7 +54,7 @@ namespace ICSharpCode.ILSpy
 		
 		public DecompilationOptions()
 		{
-			this.DecompilerSettings = DecompilerSettingsPanel.LoadDecompilerSettings(ILSpySettings.Load());
+			this.DecompilerSettings = DecompilerSettingsPanel.CurrentDecompilerSettings;
 		}
 	}
 }
