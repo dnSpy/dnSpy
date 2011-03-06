@@ -147,6 +147,12 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 				if (tryCatchNode.FinallyBlock != null)
 					tryCatchStmt.FinallyBlock = TransformBlock(tryCatchNode.FinallyBlock);
+				if (tryCatchNode.FaultBlock != null) {
+					CatchClause cc = new CatchClause();
+					cc.Body = TransformBlock(tryCatchNode.FaultBlock);
+					cc.Body.Add(new ThrowStatement()); // rethrow
+					tryCatchStmt.CatchClauses.Add(cc);
+				}
 				yield return tryCatchStmt;
 			} else if (node is ILBlock) {
 				yield return TransformBlock((ILBlock)node);
