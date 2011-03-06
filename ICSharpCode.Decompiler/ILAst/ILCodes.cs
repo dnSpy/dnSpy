@@ -288,6 +288,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Endfinally:
 				case ILCode.Throw:
 				case ILCode.Rethrow:
+				case ILCode.YieldBreak:
 					return false;
 				default:
 					return true;

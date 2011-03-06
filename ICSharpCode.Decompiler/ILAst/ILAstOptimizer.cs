@@ -179,7 +179,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							lastBlock.FallthoughGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel);
 						}
 					} else {
-						basicBlock.Body.Add(currNode);						
+						basicBlock.Body.Add(currNode);
 					}
 				}
 			}
@@ -229,7 +229,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (TrySimplifyShortCircuit(block.Body, bb)) {
 						modified = true;
 						continue;
-					} 
+					}
 					if (TrySimplifyTernaryOperator(block.Body, bb)) {
 						modified = true;
 						continue;
@@ -476,7 +476,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						labelToCfNode.TryGetValue(trueLabel, out trueTarget);
 						ControlFlowNode falseTarget;
 						labelToCfNode.TryGetValue(falseLabel, out falseTarget);
-					
+						
 						// If one point inside the loop and the other outside
 						if ((!loopContents.Contains(trueTarget) && loopContents.Contains(falseTarget)) ||
 						    (loopContents.Contains(trueTarget) && !loopContents.Contains(falseTarget)) )
@@ -859,6 +859,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public static bool CanFallthough(this ILNode node)
 		{
+			// TODO: similar to ILCodes.CanFallThough, but handles slightly different cases??
 			ILExpression expr = node as ILExpression;
 			if (expr != null) {
 				switch(expr.Code) {
@@ -868,6 +869,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.Rethrow:
 					case ILCode.LoopContinue:
 					case ILCode.LoopBreak:
+					case ILCode.YieldBreak:
 						return false;
 				}
 			}

@@ -31,7 +31,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		MethodDefinition disposeMethod;
 		FieldDefinition stateField;
 		FieldDefinition currentField;
-		Dictionary<ParameterDefinition, FieldDefinition> parameterToFieldMap;
+		Dictionary<FieldDefinition, ParameterDefinition> fieldToParameterMap;
 		List<ILNode> newBody;
 		
 		#region Run() method
@@ -49,16 +49,18 @@ namespace ICSharpCode.Decompiler.ILAst
 				#endif
 				yrd.AnalyzeCtor();
 				yrd.AnalyzeCurrentProperty();
+				yrd.ResolveIEnumerableIEnumeratorFieldMapping();
 				yrd.ConstructExceptionTable();
 				yrd.AnalyzeMoveNext();
-				method.Body.Clear();
-				method.EntryGoto = null;
-				method.Body.AddRange(yrd.newBody);
+				yrd.TranslateFieldsToLocalAccess();
 				#if !DEBUG
 			} catch (YieldAnalysisFailedException) {
 				return;
 			}
 			#endif
+			method.Body.Clear();
+			method.EntryGoto = null;
+			method.Body.AddRange(yrd.newBody);
 		}
 		#endregion
 		
@@ -82,7 +84,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!MatchEnumeratorCreationNewObj(stloc.Arguments[0], out enumeratorCtor))
 				return false;
 			
-			parameterToFieldMap = new Dictionary<ParameterDefinition, FieldDefinition>();
+			fieldToParameterMap = new Dictionary<FieldDefinition, ParameterDefinition>();
 			int i = 1;
 			ILExpression stfld;
 			while (i < method.Body.Count && method.Body[i].Match(ILCode.Stfld, out stfld)) {
@@ -92,7 +94,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return false;
 				if (ldloc.Operand != stloc.Operand || !(stfld.Operand is FieldDefinition))
 					return false;
-				parameterToFieldMap[(ParameterDefinition)ldarg.Operand] = (FieldDefinition)stfld.Operand;
+				fieldToParameterMap[(FieldDefinition)stfld.Operand] = (ParameterDefinition)ldarg.Operand;
 				i++;
 			}
 			ILExpression stloc2;
@@ -213,6 +215,35 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			if (currentField == null)
 				throw new YieldAnalysisFailedException();
+		}
+		#endregion
+		
+		#region Figure out the mapping of IEnumerable fields to IEnumerator fields
+		void ResolveIEnumerableIEnumeratorFieldMapping()
+		{
+			MethodDefinition getEnumeratorMethod = enumeratorType.Methods.FirstOrDefault(
+				m => m.Name.StartsWith("System.Collections.Generic.IEnumerable", StringComparison.Ordinal)
+				&& m.Name.EndsWith(".GetEnumerator", StringComparison.Ordinal));
+			if (getEnumeratorMethod == null)
+				return; // no mappings (maybe it's just an IEnumerator implementation?)
+			
+			ILExpression mappingPattern = new ILExpression(
+				ILCode.Stfld, ILExpression.AnyOperand, new AnyILExpression(),
+				new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromThis.Instance));
+			
+			ILBlock method = CreateILAst(getEnumeratorMethod);
+			foreach (ILNode node in method.Body) {
+				if (mappingPattern.Match(node)) {
+					ILExpression stfld = (ILExpression)node;
+					FieldDefinition storedField = stfld.Operand as FieldDefinition;
+					FieldDefinition loadedField = stfld.Arguments[1].Operand as FieldDefinition;
+					if (storedField != null && loadedField != null) {
+						ParameterDefinition mappedParameter;
+						if (fieldToParameterMap.TryGetValue(loadedField, out mappedParameter))
+							fieldToParameterMap[storedField] = mappedParameter;
+					}
+				}
+			}
 		}
 		#endregion
 		
@@ -457,7 +488,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		#endregion
 		#endregion
 		
-		#region Analysis of MoveNext()
+		#region Analysis and Transformation of MoveNext()
 		ILVariable returnVariable;
 		ILLabel returnLabel;
 		ILLabel returnFalseLabel;
@@ -615,9 +646,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILLabel[] switchLabels = (ILLabel[])((ILExpression)body[0]).Operand;
 			newBody.Add(MakeGoTo(switchLabels[0]));
 			int currentState = -1;
+			// Copy all instructions from the old body to newBody.
 			for (int pos = 2; pos < bodyLength; pos++) {
 				ILExpression expr = body[pos] as ILExpression;
 				if (expr != null && expr.Code == ILCode.Stfld && LoadFromThis.Instance.Match(expr.Arguments[0])) {
+					// Handle stores to 'state' or 'current'
 					if (expr.Operand == stateField) {
 						if (expr.Arguments[1].Code != ILCode.Ldc_I4)
 							throw new YieldAnalysisFailedException();
@@ -626,28 +659,35 @@ namespace ICSharpCode.Decompiler.ILAst
 						newBody.Add(new ILExpression(ILCode.YieldReturn, null, expr.Arguments[1]));
 					} else {
 						newBody.Add(body[pos]);
-						// TODO convert field to local
 					}
 				} else if (returnVariable != null && expr != null && expr.Code == ILCode.Stloc && expr.Operand == returnVariable) {
+					// handle store+branch to the returnVariable
 					ILExpression br = body.ElementAtOrDefault(++pos) as ILExpression;
 					if (br == null || !(br.Code == ILCode.Br || br.Code == ILCode.Leave) || br.Operand != returnLabel || expr.Arguments[0].Code != ILCode.Ldc_I4)
 						throw new YieldAnalysisFailedException();
 					int val = (int)expr.Arguments[0].Operand;
 					if (val == 0) {
-						newBody.Add(new ILExpression(ILCode.YieldBreak, null));
+						newBody.Add(MakeGoTo(returnFalseLabel));
 					} else if (val == 1) {
 						if (currentState >= 0 && currentState < switchLabels.Length)
 							newBody.Add(MakeGoTo(switchLabels[currentState]));
 						else
-							newBody.Add(new ILExpression(ILCode.YieldBreak, null));
+							newBody.Add(MakeGoTo(returnFalseLabel));
 					} else {
 						throw new YieldAnalysisFailedException();
 					}
+				} else if (expr != null && expr.Code == ILCode.Call && expr.Operand == disposeMethod && expr.Arguments.Count == 1 && LoadFromThis.Instance.Match(expr.Arguments[0])) {
+					// Explicit call to dispose is used for "yield break;" within the method.
+					ILExpression br = body.ElementAtOrDefault(++pos) as ILExpression;
+					if (br == null || !(br.Code == ILCode.Br || br.Code == ILCode.Leave) || br.Operand != returnFalseLabel)
+						throw new YieldAnalysisFailedException();
+					newBody.Add(MakeGoTo(returnFalseLabel));
 				} else {
 					newBody.Add(body[pos]);
 				}
 			}
 			newBody.Add(returnFalseLabel);
+			newBody.Add(new ILExpression(ILCode.YieldBreak, null));
 		}
 		
 		ILExpression MakeGoTo(ILLabel targetLabel)
@@ -656,6 +696,56 @@ namespace ICSharpCode.Decompiler.ILAst
 				return new ILExpression(ILCode.YieldBreak, null);
 			else
 				return new ILExpression(ILCode.Br, targetLabel);
+		}
+		#endregion
+		
+		#region TranslateFieldsToLocalAccess
+		void TranslateFieldsToLocalAccess()
+		{
+			var fieldToLocalMap = new DefaultDictionary<FieldDefinition, ILVariable>(f => new ILVariable { Name = f.Name, Type = f.FieldType });
+			foreach (ILNode node in newBody) {
+				foreach (ILExpression expr in node.GetSelfAndChildrenRecursive<ILExpression>()) {
+					FieldDefinition field = expr.Operand as FieldDefinition;
+					if (field != null) {
+						switch (expr.Code) {
+							case ILCode.Ldfld:
+								if (LoadFromThis.Instance.Match(expr.Arguments[0])) {
+									if (fieldToParameterMap.ContainsKey(field)) {
+										expr.Code = ILCode.Ldarg;
+										expr.Operand = fieldToParameterMap[field];
+									} else {
+										expr.Code = ILCode.Ldloc;
+										expr.Operand = fieldToLocalMap[field];
+									}
+									expr.Arguments.Clear();
+								}
+								break;
+							case ILCode.Stfld:
+								if (LoadFromThis.Instance.Match(expr.Arguments[0])) {
+									if (fieldToParameterMap.ContainsKey(field)) {
+										expr.Code = ILCode.Starg;
+										expr.Operand = fieldToParameterMap[field];
+									} else {
+										expr.Code = ILCode.Stloc;
+										expr.Operand = fieldToLocalMap[field];
+									}
+									expr.Arguments.RemoveAt(0);
+								}
+								break;
+							case ILCode.Ldflda:
+								if (fieldToParameterMap.ContainsKey(field)) {
+									expr.Code = ILCode.Ldarga;
+									expr.Operand = fieldToParameterMap[field];
+								} else {
+									expr.Code = ILCode.Ldloca;
+									expr.Operand = fieldToLocalMap[field];
+								}
+								expr.Arguments.Clear();
+								break;
+						}
+					}
+				}
+			}
 		}
 		#endregion
 	}
