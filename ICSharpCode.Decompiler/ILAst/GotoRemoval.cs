@@ -57,6 +57,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			
 			// Remove redundant break at the end of case
+			// Remove redundant case blocks altogether
 			foreach(ILSwitch ilSwitch in method.GetSelfAndChildrenRecursive<ILSwitch>()) {
 				foreach(ILBlock ilCase in ilSwitch.CaseBlocks) {
 					int count = ilCase.Body.Count;
@@ -67,6 +68,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 					}
 				}
+				ilSwitch.CaseBlocks.RemoveAll(b => b.Body.Count == 1 && b.Body.Single().Match(ILCode.LoopOrSwitchBreak));
 			}
 			
 			// Remove redundant return

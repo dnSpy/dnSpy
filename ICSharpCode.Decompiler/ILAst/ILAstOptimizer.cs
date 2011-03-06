@@ -101,6 +101,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression expr = block.Body[i] as ILExpression;
 				if (expr != null && expr.Prefixes == null) {
 					switch(expr.Code) {
+						case ILCode.Switch:
 						case ILCode.Brtrue:
 							expr.Arguments.Single().ILRanges.AddRange(expr.ILRanges);
 							expr.ILRanges.Clear();
@@ -579,19 +580,15 @@ namespace ICSharpCode.Decompiler.ILAst
 						ILExpression condBranch = block.Body[0] as ILExpression;
 						
 						// Switch
-						if (condBranch != null && condBranch.Operand is ILLabel[] && condBranch.Arguments.Count > 0) {
+						ILLabel[] caseLabels;
+						if (condBranch.Match(ILCode.Switch, out caseLabels)) {
 							
-							ILLabel[] caseLabels = (ILLabel[])condBranch.Operand;
-							
-							// The labels will not be used - kill them
-							condBranch.Operand = null;
-							
-							ILSwitch ilSwitch = new ILSwitch() { Condition = condBranch };
+							ILSwitch ilSwitch = new ILSwitch() { Condition = condBranch.Arguments.Single() };
 							result.Add(new ILBasicBlock() {
-							           	EntryLabel = block.EntryLabel,  // Keep the entry label
-							           	Body = { ilSwitch },
-							           	FallthoughGoto = block.FallthoughGoto
-							           });
+								EntryLabel = block.EntryLabel,  // Keep the entry label
+								Body = { ilSwitch },
+								FallthoughGoto = block.FallthoughGoto
+							});
 
 							// Remove the item so that it is not picked up as content
 							scope.RemoveOrThrow(node);
@@ -611,21 +608,26 @@ namespace ICSharpCode.Decompiler.ILAst
 									frontiers.UnionWith(condTarget.DominanceFrontier);
 							}
 							
-							foreach(ILLabel condLabel in caseLabels) {
-								ControlFlowNode condTarget = null;
-								labelToCfNode.TryGetValue(condLabel, out condTarget);
+							for (int i = 0; i < caseLabels.Length; i++) {
+								ILLabel condLabel = caseLabels[i];
 								
-								ILBlock caseBlock = new ILBlock() {
-									EntryGoto = new ILExpression(ILCode.Br, condLabel)
-								};
-								if (condTarget != null && !frontiers.Contains(condTarget)) {
-									HashSet<ControlFlowNode> content = FindDominatedNodes(scope, condTarget);
-									scope.ExceptWith(content);
-									caseBlock.Body.AddRange(FindConditions(content, condTarget));
-									// Add explicit break which should not be used by default, but the goto removal might decide to use it
-									caseBlock.Body.Add(new ILBasicBlock() { Body = { new ILExpression(ILCode.LoopOrSwitchBreak, null) } });
+								// Find or create new case block
+								ILSwitch.CaseBlock caseBlock = ilSwitch.CaseBlocks.Where(b => b.EntryGoto.Operand == condLabel).FirstOrDefault();
+								if (caseBlock == null) {
+									caseBlock = new ILSwitch.CaseBlock() { EntryGoto = new ILExpression(ILCode.Br, condLabel) };
+									ilSwitch.CaseBlocks.Add(caseBlock);
+									
+									ControlFlowNode condTarget = null;
+									labelToCfNode.TryGetValue(condLabel, out condTarget);
+									if (condTarget != null && !frontiers.Contains(condTarget)) {
+										HashSet<ControlFlowNode> content = FindDominatedNodes(scope, condTarget);
+										scope.ExceptWith(content);
+										caseBlock.Body.AddRange(FindConditions(content, condTarget));
+										// Add explicit break which should not be used by default, but the goto removal might decide to use it
+										caseBlock.Body.Add(new ILBasicBlock() { Body = { new ILExpression(ILCode.LoopOrSwitchBreak, null) } });
+									}
 								}
-								ilSwitch.CaseBlocks.Add(caseBlock);
+								caseBlock.Values.Add(i);
 							}
 						}
 						

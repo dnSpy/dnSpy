@@ -122,11 +122,11 @@ namespace ICSharpCode.Decompiler.Ast
 				};
 			} else if (node is ILSwitch) {
 				ILSwitch ilSwitch = (ILSwitch)node;
-				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition.Arguments[0]) };
-				for (int i = 0; i < ilSwitch.CaseBlocks.Count; i++) {
+				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition) };
+				foreach (var caseBlock in ilSwitch.CaseBlocks) {
 					SwitchSection section = new SwitchSection();
-					section.CaseLabels.Add(new CaseLabel() { Expression = new PrimitiveExpression(i) });
-					section.Statements.Add(TransformBlock(ilSwitch.CaseBlocks[i]));
+					section.CaseLabels.AddRange(caseBlock.Values.Select(i => new CaseLabel() { Expression = new PrimitiveExpression(i) }));
+					section.Statements.Add(TransformBlock(caseBlock));
 					switchStmt.SwitchSections.Add(section);
 				}
 				yield return switchStmt;
