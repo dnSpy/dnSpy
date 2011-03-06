@@ -594,6 +594,13 @@ namespace ICSharpCode.Decompiler.ILAst
 							// Remove the item so that it is not picked up as content
 							scope.RemoveOrThrow(node);
 							
+							// Find the switch offset
+							int addValue = 0;
+							List<ILExpression> subArgs;
+							if (ilSwitch.Condition.Match(ILCode.Sub, out subArgs) && subArgs[1].Match(ILCode.Ldc_I4, out addValue)) {
+								ilSwitch.Condition = subArgs[0];
+							}
+							
 							// Pull in code of cases
 							ILLabel fallLabel = (ILLabel)block.FallthoughGoto.Operand;
 							ControlFlowNode fallTarget = null;
@@ -632,7 +639,7 @@ namespace ICSharpCode.Decompiler.ILAst
 										caseBlock.Body.Add(new ILBasicBlock() { Body = { new ILExpression(ILCode.LoopOrSwitchBreak, null) } });
 									}
 								}
-								caseBlock.Values.Add(i);
+								caseBlock.Values.Add(i + addValue);
 							}
 							
 							// Heuristis to determine if we want to use fallthough as default case
@@ -859,6 +866,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				return true;
 			}
 			operand = default(T);
+			return false;
+		}
+		
+		public static bool Match(this ILNode node, ILCode code, out List<ILExpression> args)
+		{
+			ILExpression expr = node as ILExpression;
+			if (expr != null && expr.Prefixes == null && expr.Code == code) {
+				args = expr.Arguments;
+				return true;
+			}
+			args = null;
 			return false;
 		}
 		
