@@ -363,6 +363,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (Operand != null) {
 				if (Operand is ILLabel) {
 					output.WriteReference(((ILLabel)Operand).Name, Operand);
+				} else if (Operand is ILLabel[]) {
+					ILLabel[] labels = (ILLabel[])Operand;
+					for (int i = 0; i < labels.Length; i++) {
+						if (i > 0)
+							output.Write(", ");
+						output.WriteReference(labels[i].Name, labels[i]);
+					}
 				} else if (Operand is MethodReference) {
 					MethodReference method = (MethodReference)Operand;
 					method.DeclaringType.WriteTo(output, true, true);

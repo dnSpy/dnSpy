@@ -263,6 +263,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		LoopBreak,
 		LoopContinue,
 		Ldc_Decimal,
+		YieldBreak,
+		YieldReturn,
 		
 		Pattern // used for ILAst pattern nodes
 	}

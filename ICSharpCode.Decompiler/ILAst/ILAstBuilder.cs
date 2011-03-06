@@ -207,8 +207,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		// Virtual instructions to load exception on stack
 		Dictionary<ExceptionHandler, ByteCode> ldexceptions = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
 		
-		public List<ILVariable> Variables;
-		
 		public List<ILNode> Build(MethodDefinition methodDef, bool optimize)
 		{
 			this.methodDef = methodDef;
@@ -449,7 +447,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (optimize) {
 				int varCount = methodDef.Body.Variables.Count;
-				this.Variables = new List<ILVariable>(varCount * 2);
 				
 				for(int variableIndex = 0; variableIndex < varCount; variableIndex++) {
 					// Find all stores and loads for this variable
@@ -521,16 +518,13 @@ namespace ICSharpCode.Decompiler.ILAst
 							load.Operand = newVar.Variable;
 						}
 					}
-					
-					// Record new variables to global list
-					this.Variables.AddRange(newVars.Select(v => v.Variable));
 				}
 			} else {
-				this.Variables = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name, Type = v.VariableType, OriginalVariable = v }).ToList();
+				var variables = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name, Type = v.VariableType, OriginalVariable = v }).ToList();
 				foreach(ByteCode byteCode in body) {
 					if (byteCode.Code == ILCode.Ldloc || byteCode.Code == ILCode.Stloc || byteCode.Code == ILCode.Ldloca) {
 						int index = ((VariableDefinition)byteCode.Operand).Index;
-						byteCode.Operand = this.Variables[index];
+						byteCode.Operand = variables[index];
 					}
 				}
 			}
@@ -703,9 +697,6 @@ namespace ICSharpCode.Decompiler.ILAst
 									// Assigne the ranges for optimized away instrustions somewhere
 									currExpr.Arguments[0].ILRanges.AddRange(currExpr.ILRanges);
 									currExpr.Arguments[0].ILRanges.AddRange(nextExpr.Arguments[j].ILRanges);
-									
-									// Remove from global list, if present
-									this.Variables.Remove((ILVariable)arg.Operand);
 									
 									ast.RemoveAt(i);
 									nextExpr.Arguments[j] = currExpr.Arguments[0]; // Inline the stloc body

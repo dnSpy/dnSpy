@@ -45,7 +45,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	
 	public class LoadFromVariable : ILExpression
 	{
-		IVariablePattern v;
+		readonly IVariablePattern v;
 		
 		public LoadFromVariable(IVariablePattern v) : base(ILCode.Pattern, null)
 		{
@@ -56,6 +56,21 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILExpression expr = other as ILExpression;
 			return expr != null && expr.Code == ILCode.Ldloc && v.MatchVariable(expr.Operand as ILVariable);
+		}
+	}
+	
+	public class LoadFromThis : ILExpression
+	{
+		public static readonly LoadFromThis Instance = new LoadFromThis();
+		
+		public LoadFromThis() : base(ILCode.Pattern, null)
+		{
+		}
+		
+		public override bool Match(ILNode other)
+		{
+			ILExpression expr = other as ILExpression;
+			return expr != null && expr.Code == ILCode.Ldarg && ((ParameterDefinition)expr.Operand).Index < 0;
 		}
 	}
 	
