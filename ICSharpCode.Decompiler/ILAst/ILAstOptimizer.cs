@@ -742,8 +742,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		static HashSet<ControlFlowNode> FindLoopContent(HashSet<ControlFlowNode> scope, ControlFlowNode head)
 		{
-			var exitNodes = head.DominanceFrontier.SelectMany(n => n.Predecessors);
-			HashSet<ControlFlowNode> agenda = new HashSet<ControlFlowNode>(exitNodes);
+			var viaBackEdges = head.Predecessors.Where(p => head.Dominates(p));
+			HashSet<ControlFlowNode> agenda = new HashSet<ControlFlowNode>(viaBackEdges);
 			HashSet<ControlFlowNode> result = new HashSet<ControlFlowNode>();
 			
 			while(agenda.Count > 0) {
