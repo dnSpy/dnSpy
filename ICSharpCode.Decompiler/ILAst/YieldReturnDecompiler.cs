@@ -471,12 +471,19 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.Brtrue:
 						{
 							SymbolicValue val = Eval(expr.Arguments[0]);
-							if (val.Type != SymbolicValueType.StateEquals)
+							if (val.Type == SymbolicValueType.StateEquals) {
+								ranges[(ILLabel)expr.Operand].UnionWith(nodeRange, val.Constant, val.Constant);
+								StateRange nextRange = ranges[body[i + 1]];
+								nextRange.UnionWith(nodeRange, int.MinValue, val.Constant - 1);
+								nextRange.UnionWith(nodeRange, val.Constant + 1, int.MaxValue);
+							} else if (val.Type == SymbolicValueType.StateInEquals) {
+								ranges[body[i + 1]].UnionWith(nodeRange, val.Constant, val.Constant);
+								StateRange targetRange = ranges[(ILLabel)expr.Operand];
+								targetRange.UnionWith(nodeRange, int.MinValue, val.Constant - 1);
+								targetRange.UnionWith(nodeRange, val.Constant + 1, int.MaxValue);
+							} else {
 								throw new YieldAnalysisFailedException();
-							ranges[(ILLabel)expr.Operand].UnionWith(nodeRange, val.Constant, val.Constant);
-							StateRange nextRange = ranges[body[i + 1]];
-							nextRange.UnionWith(nodeRange, int.MinValue, val.Constant - 1);
-							nextRange.UnionWith(nodeRange, val.Constant + 1, int.MaxValue);
+							}
 							break;
 						}
 					case ILCode.Nop:
@@ -531,7 +538,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			/// <summary>
 			/// bool: State == Constant
 			/// </summary>
-			StateEquals
+			StateEquals,
+			/// <summary>
+			/// bool: State != Constant
+			/// </summary>
+			StateInEquals
 		}
 		
 		struct SymbolicValue
@@ -589,6 +600,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					// bool: (state + left.Constant == right.Constant)
 					// bool: (state == right.Constant - left.Constant)
 					return new SymbolicValue(SymbolicValueType.StateEquals, unchecked ( right.Constant - left.Constant ));
+				case ILCode.LogicNot:
+					SymbolicValue val = Eval(expr.Arguments[0]);
+					if (val.Type == SymbolicValueType.StateEquals)
+						return new SymbolicValue(SymbolicValueType.StateInEquals, val.Constant);
+					else if (val.Type == SymbolicValueType.StateInEquals)
+						return new SymbolicValue(SymbolicValueType.StateEquals, val.Constant);
+					else
+						throw new YieldAnalysisFailedException();
 				default:
 					throw new YieldAnalysisFailedException();
 			}
@@ -679,14 +698,24 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				bodyLength -= 2; // don't conside the 'ret(false)' part of the body
 			}
-			returnFalseLabel = body.ElementAtOrDefault(--bodyLength) as ILLabel;
-			if (returnFalseLabel == null || bodyLength == 0)
+			// verify that the last element in the body is a label pointing to the 'ret(false)'
+			returnFalseLabel = body.ElementAtOrDefault(bodyLength - 1) as ILLabel;
+			if (returnFalseLabel == null)
 				throw new YieldAnalysisFailedException();
 			
 			InitStateRanges(body[0]);
 			int pos = AssignStateRanges(body, bodyLength, forDispose: false);
-			while (pos > 0 && body[pos - 1] is ILLabel)
+			if (pos > 0 && body[pos - 1] is ILLabel) {
 				pos--;
+			} else {
+				// ensure that the first element at body[pos] is a label:
+				ILLabel newLabel = new ILLabel();
+				newLabel.Name = "YieldReturnEntryPoint";
+				ranges[newLabel] = ranges[body[pos]]; // give the label the range of the instruction at body[pos]
+				
+				body.Insert(pos, newLabel);
+				bodyLength++;
+			}
 			
 			List<KeyValuePair<ILLabel, StateRange>> labels = new List<KeyValuePair<ILLabel, StateRange>>();
 			for (int i = pos; i < bodyLength; i++) {
@@ -795,7 +824,6 @@ namespace ICSharpCode.Decompiler.ILAst
 					newBody.Add(body[pos]);
 				}
 			}
-			newBody.Add(returnFalseLabel);
 			newBody.Add(new ILExpression(ILCode.YieldBreak, null));
 		}
 		
