@@ -350,17 +350,22 @@ namespace ICSharpCode.Decompiler.ILAst
 						// Inline return statement
 						ILNode target;
 						List<ILExpression> retArgs;
-						if (nextSibling.TryGetValue(targetLabel, out target) &&
-						    target.Match(ILCode.Ret, out retArgs))
-						{
-							ILVariable locVar;
-							object constValue;
-							if (retArgs.Count == 0) {
+						if (nextSibling.TryGetValue(targetLabel, out target)) {
+							if (target.Match(ILCode.Ret, out retArgs)) {
+								ILVariable locVar;
+								object constValue;
+								if (retArgs.Count == 0) {
+									block.Body[i] = new ILExpression(ILCode.Ret, null);
+								} else if (retArgs.Single().Match(ILCode.Ldloc, out locVar)) {
+									block.Body[i] = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldloc, locVar));
+								} else if (retArgs.Single().Match(ILCode.Ldc_I4, out constValue)) {
+									block.Body[i] = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldc_I4, constValue));
+								}
+							}
+						} else {
+							if (method.Body.Count > 0 && method.Body.Last() == targetLabel) {
+								// It exits the main method - so it is same as return;
 								block.Body[i] = new ILExpression(ILCode.Ret, null);
-							} else if (retArgs.Single().Match(ILCode.Ldloc, out locVar)) {
-								block.Body[i] = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldloc, locVar));
-							} else if (retArgs.Single().Match(ILCode.Ldc_I4, out constValue)) {
-								block.Body[i] = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldc_I4, constValue));
 							}
 						}
 					}
@@ -796,8 +801,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				for (int i = 0; i < block.Body.Count; i++) {
 					ILCondition cond = block.Body[i] as ILCondition;
 					if (cond != null) {
-						bool trueExits = cond.TrueBlock.Body.Count > 0 && !cond.TrueBlock.Body.Last().CanFallthough();
-						bool falseExits = cond.FalseBlock.Body.Count > 0 && !cond.FalseBlock.Body.Last().CanFallthough();
+						bool trueExits = cond.TrueBlock.Body.Count > 0 && !cond.TrueBlock.Body.Last().CanFallThough();
+						bool falseExits = cond.FalseBlock.Body.Count > 0 && !cond.FalseBlock.Body.Last().CanFallThough();
 						
 						if (trueExits) {
 							// Move the false block after the condition
@@ -899,19 +904,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
-		public static bool CanFallthough(this ILNode node)
+		public static bool CanFallThough(this ILNode node)
 		{
 			ILExpression expr = node as ILExpression;
 			if (expr != null) {
-				switch(expr.Code) {
-					case ILCode.Br:
-					case ILCode.Ret:
-					case ILCode.Throw:
-					case ILCode.Rethrow:
-					case ILCode.LoopContinue:
-					case ILCode.LoopOrSwitchBreak:
-						return false;
-				}
+				return expr.Code.CanFallThough();
 			}
 			return true;
 		}
