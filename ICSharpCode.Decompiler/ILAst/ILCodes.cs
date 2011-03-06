@@ -260,7 +260,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		LogicOr,
 		InitArray, // Array Initializer
 		TernaryOp, // ?:
-		LoopBreak,
+		LoopOrSwitchBreak,
 		LoopContinue,
 		Ldc_Decimal,
 		YieldBreak,
@@ -288,6 +288,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Endfinally:
 				case ILCode.Throw:
 				case ILCode.Rethrow:
+				case ILCode.LoopContinue:
+				case ILCode.LoopOrSwitchBreak:
 				case ILCode.YieldBreak:
 					return false;
 				default:
