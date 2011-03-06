@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -80,9 +81,23 @@ namespace ICSharpCode.ILSpy.Commands
 			}
 		}
 		
-		protected void StartDebugging(Process process)
+		protected void StartExecutable(string fileName)
+		{
+			CurrentDebugger.Start(new ProcessStartInfo {
+			                      	FileName = fileName,
+			                      	WorkingDirectory = Path.GetDirectoryName(fileName)
+			                      });
+			Finish();
+		}
+		
+		protected void StartAttaching(Process process)
 		{
 			CurrentDebugger.Attach(process);
+			Finish();
+		}
+		
+		protected void Finish()
+		{
 			EnableDebuggerUI(false);
 			CurrentDebugger.DebugStopped += OnDebugStopped;
 			CurrentDebugger.IsProcessRunningChanged += CurrentDebugger_IsProcessRunningChanged;
@@ -158,7 +173,7 @@ namespace ICSharpCode.ILSpy.Commands
 			if (!CurrentDebugger.IsDebugging) {
 				var window = new AttachToProcessWindow { Owner = MainWindow.Instance };
 				if (window.ShowDialog() == true) {
-					StartDebugging(window.SelectedProcess);
+					StartAttaching(window.SelectedProcess);
 				}
 			}
 		}
@@ -291,7 +306,7 @@ namespace ICSharpCode.ILSpy.Commands
 				
 				if (!CurrentDebugger.IsDebugging) {
 					// execute the process
-					this.StartDebugging(Process.Start(fileName));
+					this.StartExecutable(fileName);
 				}
 			}
 		}

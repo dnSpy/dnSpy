@@ -189,7 +189,6 @@ namespace Debugger
 			this.appDomain = appDomain;
 			this.process = appDomain.Process;
 			this.corModule = corModule;
-			SetJITCompilerFlags();
 			
 			metaData = new MetaDataImport(corModule);
 			
@@ -199,6 +198,8 @@ namespace Debugger
 				fullPath = corModule.GetName();
 				name     = System.IO.Path.GetFileName(FullPath);
 			}
+			
+			SetJITCompilerFlags();
 			
 			LoadSymbolsFromDisk(process.Options.SymbolsSearchPaths);
 			ResetJustMyCodeStatus();

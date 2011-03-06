@@ -155,6 +155,9 @@ namespace ILSpy.Debugger.Services
 					DebugStarting(this, EventArgs.Empty);
 				
 				try {
+					// set the JIT flag for evaluating optimized code
+					Process.DebugMode = DebugModeFlag.Debug;
+					
 					Process process = debugger.Start(processStartInfo.FileName,
 					                                 processStartInfo.WorkingDirectory,
 					                                 processStartInfo.Arguments);
@@ -206,6 +209,9 @@ namespace ILSpy.Debugger.Services
 					DebugStarting(this, EventArgs.Empty);
 				
 				try {
+					// set the JIT flag for evaluating optimized code
+					Process.DebugMode = DebugModeFlag.Debug;
+					
 					Process process = debugger.Attach(existingProcess);
 					attached = true;
 					SelectProcess(process);
