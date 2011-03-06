@@ -101,6 +101,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression expr = block.Body[i] as ILExpression;
 				if (expr != null && expr.Prefixes == null) {
 					switch(expr.Code) {
+						case ILCode.Switch:
 						case ILCode.Brtrue:
 							expr.Arguments.Single().ILRanges.AddRange(expr.ILRanges);
 							expr.ILRanges.Clear();
@@ -235,40 +236,26 @@ namespace ICSharpCode.Decompiler.ILAst
 			} while(modified);
 		}
 		
-		bool IsStloc(ILBasicBlock bb, ref ILVariable locVar, ref ILExpression val, ref ILLabel fallLabel)
-		{
-			if (bb.Body.Count == 1) {
-				ILExpression expr;
-				if (bb.Body[0].Match(ILCode.Stloc, out expr)) {
-					locVar = (ILVariable)expr.Operand;
-					val    = expr.Arguments[0];
-					fallLabel = (ILLabel)bb.FallthoughGoto.Operand;
-					return true;
-				}
-			}
-			return false;
-		}
-		
 		// scope is modified if successful
 		bool TrySimplifyTernaryOperator(List<ILNode> scope, ILBasicBlock head)
 		{
 			Debug.Assert(scope.Contains(head));
 			
-			ILExpression condExpr = null;
-			ILLabel trueLabel = null;
-			ILLabel falseLabel = null;
-			ILVariable trueLocVar = null;
-			ILExpression trueExpr = null;
-			ILLabel trueFall = null;
-			ILVariable falseLocVar = null;
-			ILExpression falseExpr = null;
-			ILLabel falseFall = null;
+			ILExpression condExpr;
+			ILLabel trueLabel;
+			ILLabel falseLabel;
+			ILVariable trueLocVar;
+			ILExpression trueExpr;
+			ILLabel trueFall;
+			ILVariable falseLocVar;
+			ILExpression falseExpr;
+			ILLabel falseFall;
 			
-			if(head.MatchBrTure(out condExpr, out trueLabel, out falseLabel) &&
+			if(head.Match(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel) &&
 			   labelGlobalRefCount[trueLabel] == 1 &&
 			   labelGlobalRefCount[falseLabel] == 1 &&
-			   IsStloc(labelToBasicBlock[trueLabel], ref trueLocVar, ref trueExpr, ref trueFall) &&
-			   IsStloc(labelToBasicBlock[falseLabel], ref falseLocVar, ref falseExpr, ref falseFall) &&
+			   labelToBasicBlock[trueLabel].Match(ILCode.Stloc, out trueLocVar, out trueExpr, out trueFall) &&
+			   labelToBasicBlock[falseLabel].Match(ILCode.Stloc, out falseLocVar, out falseExpr, out falseFall) &&
 			   trueLocVar == falseLocVar &&
 			   trueFall == falseFall)
 			{
@@ -297,7 +284,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression condExpr;
 			ILLabel trueLabel;
 			ILLabel falseLabel;
-			if(head.MatchBrTure(out condExpr, out trueLabel, out falseLabel)) {
+			if(head.Match(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel)) {
 				for (int pass = 0; pass < 2; pass++) {
 					
 					// On the second pass, swap labels and negate expression of the first branch
@@ -313,7 +300,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (scope.Contains(nextBasicBlock) &&
 					    nextBasicBlock != head &&
 					    labelGlobalRefCount[nextBasicBlock.EntryLabel] == 1 &&
-					    nextBasicBlock.MatchBrTure(out nextCondExpr, out nextTrueLablel, out nextFalseLabel) &&
+					    nextBasicBlock.Match(ILCode.Brtrue, out nextTrueLablel, out nextCondExpr, out nextFalseLabel) &&
 					    (otherLablel == nextFalseLabel || otherLablel == nextTrueLablel))
 					{
 						// Create short cicuit branch
@@ -354,9 +341,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				for (int i = 0; i < block.Body.Count; i++) {
 					ILLabel targetLabel;
-					if (block.Body[i].Match(ILCode.Br, out targetLabel) ||
-					    block.Body[i].Match(ILCode.Leave, out targetLabel))
-					{
+					if (block.Body[i].Match(ILCode.Br, out targetLabel) || block.Body[i].Match(ILCode.Leave, out targetLabel)) {
 						// Skip extra labels
 						while(nextSibling.ContainsKey(targetLabel) && nextSibling[targetLabel] is ILLabel) {
 							targetLabel = (ILLabel)nextSibling[targetLabel];
@@ -364,18 +349,23 @@ namespace ICSharpCode.Decompiler.ILAst
 						
 						// Inline return statement
 						ILNode target;
-						ILExpression retExpr;
-						if (nextSibling.TryGetValue(targetLabel, out target) &&
-						    target.Match(ILCode.Ret, out retExpr))
-						{
-							ILVariable locVar;
-							object constValue;
-							if (retExpr.Arguments.Count == 0) {
+						List<ILExpression> retArgs;
+						if (nextSibling.TryGetValue(targetLabel, out target)) {
+							if (target.Match(ILCode.Ret, out retArgs)) {
+								ILVariable locVar;
+								object constValue;
+								if (retArgs.Count == 0) {
+									block.Body[i] = new ILExpression(ILCode.Ret, null);
+								} else if (retArgs.Single().Match(ILCode.Ldloc, out locVar)) {
+									block.Body[i] = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldloc, locVar));
+								} else if (retArgs.Single().Match(ILCode.Ldc_I4, out constValue)) {
+									block.Body[i] = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldc_I4, constValue));
+								}
+							}
+						} else {
+							if (method.Body.Count > 0 && method.Body.Last() == targetLabel) {
+								// It exits the main method - so it is same as return;
 								block.Body[i] = new ILExpression(ILCode.Ret, null);
-							} else if (retExpr.Arguments.Single().Match(ILCode.Ldloc, out locVar)) {
-								block.Body[i] = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldloc, locVar));
-							} else if (retExpr.Arguments.Single().Match(ILCode.Ldc_I4, out constValue)) {
-								block.Body[i] = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldc_I4, constValue));
 							}
 						}
 					}
@@ -466,7 +456,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					ILExpression condExpr;
 					ILLabel trueLabel;
 					ILLabel falseLabel;
-					if(basicBlock.MatchBrTure(out condExpr, out trueLabel, out falseLabel))
+					if(basicBlock.Match(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel))
 					{
 						ControlFlowNode trueTarget;
 						labelToCfNode.TryGetValue(trueLabel, out trueTarget);
@@ -579,28 +569,32 @@ namespace ICSharpCode.Decompiler.ILAst
 						ILExpression condBranch = block.Body[0] as ILExpression;
 						
 						// Switch
-						if (condBranch != null && condBranch.Operand is ILLabel[] && condBranch.Arguments.Count > 0) {
+						ILLabel[] caseLabels;
+						List<ILExpression> switchArgs;
+						if (condBranch.Match(ILCode.Switch, out caseLabels, out switchArgs)) {
 							
-							ILLabel[] caseLabels = (ILLabel[])condBranch.Operand;
-							
-							// The labels will not be used - kill them
-							condBranch.Operand = null;
-							
-							ILSwitch ilSwitch = new ILSwitch() {
-								Condition = condBranch,
-								DefaultGoto = block.FallthoughGoto
+							ILSwitch ilSwitch = new ILSwitch() { Condition = switchArgs.Single() };
+							ILBasicBlock newBB = new ILBasicBlock() {
+								EntryLabel = block.EntryLabel,  // Keep the entry label
+								Body = { ilSwitch },
+								FallthoughGoto = block.FallthoughGoto
 							};
-							result.Add(new ILBasicBlock() {
-							           	EntryLabel = block.EntryLabel,  // Keep the entry label
-							           	Body = { ilSwitch }
-							           });
+							result.Add(newBB);
 
 							// Remove the item so that it is not picked up as content
 							scope.RemoveOrThrow(node);
 							
+							// Find the switch offset
+							int addValue = 0;
+							List<ILExpression> subArgs;
+							if (ilSwitch.Condition.Match(ILCode.Sub, out subArgs) && subArgs[1].Match(ILCode.Ldc_I4, out addValue)) {
+								ilSwitch.Condition = subArgs[0];
+							}
+							
 							// Pull in code of cases
+							ILLabel fallLabel = (ILLabel)block.FallthoughGoto.Operand;
 							ControlFlowNode fallTarget = null;
-							labelToCfNode.TryGetValue((ILLabel)block.FallthoughGoto.Operand, out fallTarget);
+							labelToCfNode.TryGetValue(fallLabel, out fallTarget);
 							
 							HashSet<ControlFlowNode> frontiers = new HashSet<ControlFlowNode>();
 							if (fallTarget != null)
@@ -613,19 +607,44 @@ namespace ICSharpCode.Decompiler.ILAst
 									frontiers.UnionWith(condTarget.DominanceFrontier);
 							}
 							
-							foreach(ILLabel condLabel in caseLabels) {
-								ControlFlowNode condTarget = null;
-								labelToCfNode.TryGetValue(condLabel, out condTarget);
+							for (int i = 0; i < caseLabels.Length; i++) {
+								ILLabel condLabel = caseLabels[i];
 								
-								ILBlock caseBlock = new ILBlock() {
-									EntryGoto = new ILExpression(ILCode.Br, condLabel)
-								};
-								if (condTarget != null && !frontiers.Contains(condTarget)) {
-									HashSet<ControlFlowNode> content = FindDominatedNodes(scope, condTarget);
-									scope.ExceptWith(content);
-									caseBlock.Body.AddRange(FindConditions(content, condTarget));
+								// Find or create new case block
+								ILSwitch.CaseBlock caseBlock = ilSwitch.CaseBlocks.Where(b => b.EntryGoto.Operand == condLabel).FirstOrDefault();
+								if (caseBlock == null) {
+									caseBlock = new ILSwitch.CaseBlock() {
+										Values = new List<int>(),
+										EntryGoto = new ILExpression(ILCode.Br, condLabel)
+									};
+									ilSwitch.CaseBlocks.Add(caseBlock);
+									
+									ControlFlowNode condTarget = null;
+									labelToCfNode.TryGetValue(condLabel, out condTarget);
+									if (condTarget != null && !frontiers.Contains(condTarget)) {
+										HashSet<ControlFlowNode> content = FindDominatedNodes(scope, condTarget);
+										scope.ExceptWith(content);
+										caseBlock.Body.AddRange(FindConditions(content, condTarget));
+										// Add explicit break which should not be used by default, but the goto removal might decide to use it
+										caseBlock.Body.Add(new ILBasicBlock() { Body = { new ILExpression(ILCode.LoopOrSwitchBreak, null) } });
+									}
 								}
-								ilSwitch.CaseBlocks.Add(caseBlock);
+								caseBlock.Values.Add(i + addValue);
+							}
+							
+							// Heuristis to determine if we want to use fallthough as default case
+							if (fallTarget != null && !frontiers.Contains(fallTarget)) {
+								HashSet<ControlFlowNode> content = FindDominatedNodes(scope, fallTarget);
+								if (content.Any()) {
+									var caseBlock = new ILSwitch.CaseBlock() { EntryGoto = new ILExpression(ILCode.Br, fallLabel) };
+									ilSwitch.CaseBlocks.Add(caseBlock);
+									newBB.FallthoughGoto = null;
+								
+									scope.ExceptWith(content);
+									caseBlock.Body.AddRange(FindConditions(content, fallTarget));
+									// Add explicit break which should not be used by default, but the goto removal might decide to use it
+									caseBlock.Body.Add(new ILBasicBlock() { Body = { new ILExpression(ILCode.LoopOrSwitchBreak, null) } });
+								}
 							}
 						}
 						
@@ -633,7 +652,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						ILExpression condExpr;
 						ILLabel trueLabel;
 						ILLabel falseLabel;
-						if(block.MatchBrTure(out condExpr, out trueLabel, out falseLabel)) {
+						if(block.Match(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel)) {
 							
 							// Swap bodies since that seems to be the usual C# order
 							ILLabel temp = trueLabel;
@@ -782,8 +801,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				for (int i = 0; i < block.Body.Count; i++) {
 					ILCondition cond = block.Body[i] as ILCondition;
 					if (cond != null) {
-						bool trueExits = cond.TrueBlock.Body.Count > 0 && !cond.TrueBlock.Body.Last().CanFallthough();
-						bool falseExits = cond.FalseBlock.Body.Count > 0 && !cond.FalseBlock.Body.Last().CanFallthough();
+						bool trueExits = cond.TrueBlock.Body.Count > 0 && !cond.TrueBlock.Body.Last().CanFallThough();
+						bool falseExits = cond.FalseBlock.Body.Count > 0 && !cond.FalseBlock.Body.Last().CanFallThough();
 						
 						if (trueExits) {
 							// Move the false block after the condition
@@ -823,51 +842,73 @@ namespace ICSharpCode.Decompiler.ILAst
 			return expr != null && expr.Prefixes == null && expr.Code == code;
 		}
 		
-		public static bool Match(this ILNode node, ILCode code, out ILExpression expr)
-		{
-			expr = node as ILExpression;
-			return expr != null && expr.Prefixes == null && expr.Code == code;
-		}
-		
 		public static bool Match<T>(this ILNode node, ILCode code, out T operand)
 		{
 			ILExpression expr = node as ILExpression;
 			if (expr != null && expr.Prefixes == null && expr.Code == code) {
 				operand = (T)expr.Operand;
+				Debug.Assert(expr.Arguments.Count == 0);
 				return true;
 			}
 			operand = default(T);
 			return false;
 		}
 		
-		public static bool MatchBrTure(this ILBasicBlock bb, out ILExpression condition, out ILLabel trueLabel, out ILLabel falseLabel)
+		public static bool Match(this ILNode node, ILCode code, out List<ILExpression> args)
 		{
-			if (bb.Body.Count == 1) {
-				if (bb.Body[0].Match(ILCode.Brtrue, out trueLabel)) {
-					condition  = ((ILExpression)bb.Body[0]).Arguments.Single();
-					falseLabel = (ILLabel)((ILExpression)bb.FallthoughGoto).Operand;
-					return true;
-				}
+			ILExpression expr = node as ILExpression;
+			if (expr != null && expr.Prefixes == null && expr.Code == code) {
+				Debug.Assert(expr.Operand == null);
+				args = expr.Arguments;
+				return true;
 			}
-			condition  = null;
-			trueLabel  = null;
-			falseLabel = null;
+			args = null;
 			return false;
 		}
 		
-		public static bool CanFallthough(this ILNode node)
+		public static bool Match<T>(this ILNode node, ILCode code, out T operand, out List<ILExpression> args)
+		{
+			ILExpression expr = node as ILExpression;
+			if (expr != null && expr.Prefixes == null && expr.Code == code) {
+				operand = (T)expr.Operand;
+				args = expr.Arguments;
+				return true;
+			}
+			operand = default(T);
+			args = null;
+			return false;
+		}
+		
+		public static bool Match<T>(this ILNode node, ILCode code, out T operand, out ILExpression arg)
+		{
+			List<ILExpression> args;
+			if (node.Match(code, out operand, out args)) {
+				arg = args.Single();
+				return true;
+			}
+			arg = null;
+			return false;
+		}
+		
+		public static bool Match<T>(this ILBasicBlock bb, ILCode code, out T operand, out ILExpression arg, out ILLabel fallLabel)
+		{
+			if (bb.Body.Count == 1) {
+				if (bb.Body[0].Match(code, out operand, out arg)) {
+					fallLabel = (ILLabel)bb.FallthoughGoto.Operand;
+					return true;
+				}
+			}
+			operand = default(T);
+			arg = null;
+			fallLabel = null;
+			return false;
+		}
+		
+		public static bool CanFallThough(this ILNode node)
 		{
 			ILExpression expr = node as ILExpression;
 			if (expr != null) {
-				switch(expr.Code) {
-					case ILCode.Br:
-					case ILCode.Ret:
-					case ILCode.Throw:
-					case ILCode.Rethrow:
-					case ILCode.LoopContinue:
-					case ILCode.LoopBreak:
-						return false;
-				}
+				return expr.Code.CanFallThough();
 			}
 			return true;
 		}

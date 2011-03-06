@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -441,9 +442,24 @@ namespace ICSharpCode.Decompiler.ILAst
 	
 	public class ILSwitch: ILNode
 	{
+		public class CaseBlock: ILBlock
+		{
+			public List<int> Values;  // null for the default case
+			
+			public override void WriteTo(ITextOutput output)
+			{
+				Debug.Assert(Values.Count > 0);
+				foreach (int i in this.Values) {
+					output.WriteLine("case {0}:", i);
+				}
+				output.Indent();
+				base.WriteTo(output);
+				output.Unindent();
+			}
+		}
+		
 		public ILExpression Condition;
-		public List<ILBlock> CaseBlocks = new List<ILBlock>();
-		public ILExpression DefaultGoto;
+		public List<CaseBlock> CaseBlocks = new List<CaseBlock>();
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
@@ -452,8 +468,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach (ILBlock caseBlock in this.CaseBlocks) {
 				yield return caseBlock;
 			}
-			if (this.DefaultGoto != null)
-				yield return this.DefaultGoto;
 		}
 		
 		public override void WriteTo(ITextOutput output)
@@ -462,11 +476,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			Condition.WriteTo(output);
 			output.WriteLine(") {");
 			output.Indent();
-			for (int i = 0; i < CaseBlocks.Count; i++) {
-				output.WriteLine("case {0}:", i);
-				output.Indent();
-				CaseBlocks[i].WriteTo(output);
-				output.Unindent();
+			foreach (CaseBlock caseBlock in this.CaseBlocks) {
+				caseBlock.WriteTo(output);
 			}
 			output.Unindent();
 			output.WriteLine("}");
