@@ -347,6 +347,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		#endregion
 		
 		DefaultDictionary<ILNode, StateRange> ranges;
+		Dictionary<MethodDefinition, Interval> finallyMethodToStateInterval = new Dictionary<MethodDefinition, Interval>();
 		
 		void ConstructExceptionTable()
 		{
@@ -373,8 +374,14 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (!finallyBody[finallyBody.Count - 1].Match(ILCode.Endfinally))
 					throw new YieldAnalysisFailedException();
 				
-				Debug.WriteLine("State " + interval + " -> " + call.Operand.ToString());
+				MethodDefinition mdef = call.Operand as MethodDefinition;
+				if (mdef != null) {
+					if (finallyMethodToStateInterval.ContainsKey(mdef))
+						throw new YieldAnalysisFailedException();
+					finallyMethodToStateInterval.Add(mdef, interval);
+				}
 			}
+			ranges = null;
 		}
 
 		#region Assign StateRanges / Symbolic Execution
@@ -640,11 +647,24 @@ namespace ICSharpCode.Decompiler.ILAst
 			bodyLength -= simplications.Count * 2;
 		}
 		
+		struct SetState
+		{
+			public readonly int NewBodyPos;
+			public readonly int NewState;
+			
+			public SetState(int newBodyPos, int newState)
+			{
+				this.NewBodyPos = newBodyPos;
+				this.NewState = newState;
+			}
+		}
+		
 		void ConvertBody(List<ILNode> body, int bodyLength)
 		{
 			newBody = new List<ILNode>();
 			ILLabel[] switchLabels = (ILLabel[])((ILExpression)body[0]).Operand;
 			newBody.Add(MakeGoTo(switchLabels[0]));
+			List<SetState> stateChanges = new List<SetState>();
 			int currentState = -1;
 			// Copy all instructions from the old body to newBody.
 			for (int pos = 2; pos < bodyLength; pos++) {
@@ -655,6 +675,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (expr.Arguments[1].Code != ILCode.Ldc_I4)
 							throw new YieldAnalysisFailedException();
 						currentState = (int)expr.Arguments[1].Operand;
+						stateChanges.Add(new SetState(newBody.Count, currentState));
 					} else if (expr.Operand == currentField) {
 						newBody.Add(new ILExpression(ILCode.YieldReturn, null, expr.Arguments[1]));
 					} else {
@@ -676,12 +697,31 @@ namespace ICSharpCode.Decompiler.ILAst
 					} else {
 						throw new YieldAnalysisFailedException();
 					}
-				} else if (expr != null && expr.Code == ILCode.Call && expr.Operand == disposeMethod && expr.Arguments.Count == 1 && LoadFromThis.Instance.Match(expr.Arguments[0])) {
-					// Explicit call to dispose is used for "yield break;" within the method.
-					ILExpression br = body.ElementAtOrDefault(++pos) as ILExpression;
-					if (br == null || !(br.Code == ILCode.Br || br.Code == ILCode.Leave) || br.Operand != returnFalseLabel)
+				} else if (expr != null && expr.Code == ILCode.Call && expr.Arguments.Count == 1 && LoadFromThis.Instance.Match(expr.Arguments[0])) {
+					MethodDefinition method = expr.Operand as MethodDefinition;
+					if (method == null)
 						throw new YieldAnalysisFailedException();
-					newBody.Add(MakeGoTo(returnFalseLabel));
+					Interval interval;
+					if (method == disposeMethod) {
+						// Explicit call to dispose is used for "yield break;" within the method.
+						ILExpression br = body.ElementAtOrDefault(++pos) as ILExpression;
+						if (br == null || !(br.Code == ILCode.Br || br.Code == ILCode.Leave) || br.Operand != returnFalseLabel)
+							throw new YieldAnalysisFailedException();
+						newBody.Add(MakeGoTo(returnFalseLabel));
+					} else if (finallyMethodToStateInterval.TryGetValue(method, out interval)) {
+						// Call to Finally-method
+						int index = stateChanges.FindIndex(ss => ss.NewState >= interval.Start && ss.NewState <= interval.End);
+						if (index < 0)
+							throw new YieldAnalysisFailedException();
+						SetState stateChange = stateChanges[index];
+						stateChanges.RemoveRange(index, stateChanges.Count - index); // remove all state changes up to the one we found
+						ILTryCatchBlock tryFinally = new ILTryCatchBlock();
+						tryFinally.TryBlock = new ILBlock(newBody.GetRange(stateChange.NewBodyPos, newBody.Count - stateChange.NewBodyPos));
+						newBody.RemoveRange(stateChange.NewBodyPos, newBody.Count - stateChange.NewBodyPos); // remove all nodes that we just moved into the try block
+						tryFinally.CatchBlocks = new List<ILTryCatchBlock.CatchBlock>();
+						tryFinally.FinallyBlock = ConvertFinallyBlock(method);
+						newBody.Add(tryFinally);
+					}
 				} else {
 					newBody.Add(body[pos]);
 				}
@@ -696,6 +736,24 @@ namespace ICSharpCode.Decompiler.ILAst
 				return new ILExpression(ILCode.YieldBreak, null);
 			else
 				return new ILExpression(ILCode.Br, targetLabel);
+		}
+		
+		ILBlock ConvertFinallyBlock(MethodDefinition finallyMethod)
+		{
+			ILBlock block = CreateILAst(finallyMethod);
+			block.Body.RemoveAll(n => n.Match(ILCode.Nop));
+			// Get rid of assignment to state
+			ILExpression stfld;
+			if (block.Body.Count > 0 && block.Body[0].Match(ILCode.Stfld, out stfld)) {
+				if (stfld.Operand == stateField && LoadFromThis.Instance.Match(stfld.Arguments[0]))
+					block.Body.RemoveAt(0);
+			}
+			// Convert ret to endfinally
+			foreach (ILExpression expr in block.GetSelfAndChildrenRecursive<ILExpression>()) {
+				if (expr.Code == ILCode.Ret)
+					expr.Code = ILCode.Endfinally;
+			}
+			return block;
 		}
 		#endregion
 		
