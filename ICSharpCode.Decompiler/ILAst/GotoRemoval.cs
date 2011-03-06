@@ -56,6 +56,19 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 			
+			// Remove redundant break at the end of case
+			foreach(ILSwitch ilSwitch in method.GetSelfAndChildrenRecursive<ILSwitch>()) {
+				foreach(ILBlock ilCase in ilSwitch.CaseBlocks) {
+					int count = ilCase.Body.Count;
+					if (count >= 2) {
+						if (!ilCase.Body[count - 2].CanFallthough() &&
+						    ilCase.Body[count - 1].Match(ILCode.LoopOrSwitchBreak)) {
+							ilCase.Body.RemoveAt(count - 1);
+						}
+					}
+				}
+			}
+			
 			// Remove redundant return
 			if (method.Body.Count > 0 && method.Body.Last().Match(ILCode.Ret) && ((ILExpression)method.Body.Last()).Arguments.Count == 0) {
 				method.Body.RemoveAt(method.Body.Count - 1);
@@ -98,21 +111,15 @@ namespace ICSharpCode.Decompiler.ILAst
 				return true;
 			}
 			
-			// TODO: Swich also qualifies for break;
-			ILWhileLoop loop = null;
-			ILNode current = gotoExpr;
-			while(loop == null && current != null) {
-				current = parent[current];
-				loop = current as ILWhileLoop;
-			}
-			
-			if (loop != null && target == Exit(loop, new HashSet<ILNode>() { gotoExpr })) {
-				gotoExpr.Code = ILCode.LoopBreak;
+			ILNode breakBlock = GetParents(gotoExpr).Where(n => n is ILWhileLoop || n is ILSwitch).FirstOrDefault();
+			if (breakBlock != null && target == Exit(breakBlock, new HashSet<ILNode>() { gotoExpr })) {
+				gotoExpr.Code = ILCode.LoopOrSwitchBreak;
 				gotoExpr.Operand = null;
 				return true;
 			}
 			
-			if (loop != null && target == Enter(loop, new HashSet<ILNode>() { gotoExpr })) {
+			ILNode continueBlock = GetParents(gotoExpr).Where(n => n is ILWhileLoop).FirstOrDefault();
+			if (continueBlock != null && target == Enter(continueBlock, new HashSet<ILNode>() { gotoExpr })) {
 				gotoExpr.Code = ILCode.LoopContinue;
 				gotoExpr.Operand = null;
 				return true;
@@ -172,6 +179,12 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				} else if (expr.Code == ILCode.Nop) {
 					return Exit(expr, visitedNodes);
+				} else if (expr.Code == ILCode.LoopOrSwitchBreak) {
+					ILNode breakBlock = GetParents(expr).Where(n => n is ILWhileLoop || n is ILSwitch).First();
+					return Exit(breakBlock, new HashSet<ILNode>() { expr });
+				} else if (expr.Code == ILCode.LoopContinue) {
+					ILNode continueBlock = GetParents(expr).Where(n => n is ILWhileLoop).First();
+					return Enter(continueBlock, new HashSet<ILNode>() { expr });
 				} else {
 					return expr;
 				}

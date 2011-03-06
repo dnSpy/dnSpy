@@ -622,6 +622,8 @@ namespace ICSharpCode.Decompiler.ILAst
 									HashSet<ControlFlowNode> content = FindDominatedNodes(scope, condTarget);
 									scope.ExceptWith(content);
 									caseBlock.Body.AddRange(FindConditions(content, condTarget));
+									// Add explicit break which should not be used by default, but the goto removal might decide to use it
+									caseBlock.Body.Add(new ILBasicBlock() { Body = { new ILExpression(ILCode.LoopOrSwitchBreak, null) } });
 								}
 								ilSwitch.CaseBlocks.Add(caseBlock);
 							}
@@ -863,7 +865,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.Throw:
 					case ILCode.Rethrow:
 					case ILCode.LoopContinue:
-					case ILCode.LoopBreak:
+					case ILCode.LoopOrSwitchBreak:
 						return false;
 				}
 			}

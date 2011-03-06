@@ -260,7 +260,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		LogicOr,
 		InitArray, // Array Initializer
 		TernaryOp, // ?:
-		LoopBreak,
+		LoopOrSwitchBreak,
 		LoopContinue,
 		Ldc_Decimal,
 		

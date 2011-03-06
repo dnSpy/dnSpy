@@ -456,6 +456,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Switch:
 				case ILCode.Throw:
 				case ILCode.Rethrow:
+				case ILCode.LoopOrSwitchBreak:
+				case ILCode.LoopContinue:
 					return null;
 				case ILCode.Ret:
 					if (forceInferChildren && expr.Arguments.Count == 1)

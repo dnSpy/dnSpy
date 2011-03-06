@@ -316,7 +316,7 @@ namespace ICSharpCode.Decompiler.Ast
 							new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name)
 						}
 					};
-				case ILCode.LoopBreak:    return new Ast.BreakStatement();
+				case ILCode.LoopOrSwitchBreak:    return new Ast.BreakStatement();
 				case ILCode.LoopContinue: return new Ast.ContinueStatement();
 					#endregion
 					#region Conversions
