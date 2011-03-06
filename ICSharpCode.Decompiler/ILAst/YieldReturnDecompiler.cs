@@ -713,7 +713,13 @@ namespace ICSharpCode.Decompiler.ILAst
 						int index = stateChanges.FindIndex(ss => ss.NewState >= interval.Start && ss.NewState <= interval.End);
 						if (index < 0)
 							throw new YieldAnalysisFailedException();
+						
+						ILLabel label = new ILLabel();
+						label.Name = "JumpOutOfTryFinally" + interval.Start + "_" + interval.End;
+						newBody.Add(new ILExpression(ILCode.Leave, label));
+						
 						SetState stateChange = stateChanges[index];
+						// Move all instructions from stateChange.Pos to newBody.Count into a try-block
 						stateChanges.RemoveRange(index, stateChanges.Count - index); // remove all state changes up to the one we found
 						ILTryCatchBlock tryFinally = new ILTryCatchBlock();
 						tryFinally.TryBlock = new ILBlock(newBody.GetRange(stateChange.NewBodyPos, newBody.Count - stateChange.NewBodyPos));
@@ -721,6 +727,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						tryFinally.CatchBlocks = new List<ILTryCatchBlock.CatchBlock>();
 						tryFinally.FinallyBlock = ConvertFinallyBlock(method);
 						newBody.Add(tryFinally);
+						newBody.Add(label);
 					}
 				} else {
 					newBody.Add(body[pos]);
