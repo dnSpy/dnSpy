@@ -44,23 +44,32 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!yrd.MatchEnumeratorCreationPattern(method))
 				return;
 			yrd.enumeratorType = yrd.enumeratorCtor.DeclaringType;
-			#if !DEBUG
-			try {
+			#if DEBUG
+			if (Debugger.IsAttached) {
+				yrd.Run();
+			} else {
 				#endif
-				yrd.AnalyzeCtor();
-				yrd.AnalyzeCurrentProperty();
-				yrd.ResolveIEnumerableIEnumeratorFieldMapping();
-				yrd.ConstructExceptionTable();
-				yrd.AnalyzeMoveNext();
-				yrd.TranslateFieldsToLocalAccess();
-				#if !DEBUG
-			} catch (YieldAnalysisFailedException) {
-				return;
+				try {
+					yrd.Run();
+				} catch (YieldAnalysisFailedException) {
+					return;
+				}
+				#if DEBUG
 			}
 			#endif
 			method.Body.Clear();
 			method.EntryGoto = null;
 			method.Body.AddRange(yrd.newBody);
+		}
+		
+		void Run()
+		{
+			AnalyzeCtor();
+			AnalyzeCurrentProperty();
+			ResolveIEnumerableIEnumeratorFieldMapping();
+			ConstructExceptionTable();
+			AnalyzeMoveNext();
+			TranslateFieldsToLocalAccess();
 		}
 		#endregion
 		
@@ -139,11 +148,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			if (expr.Arguments[0].Code != ILCode.Ldc_I4 || (int)expr.Arguments[0].Operand != -2)
 				return false;
-			if (ctor == null || !ctor.DeclaringType.IsCompilerGenerated())
+			if (ctor == null || ctor.DeclaringType.DeclaringType != context.CurrentType)
 				return false;
-			if (ctor.DeclaringType.DeclaringType != context.CurrentType)
+			return IsCompilerGeneratorEnumerator(ctor.DeclaringType);
+		}
+		
+		public static bool IsCompilerGeneratorEnumerator(TypeDefinition type)
+		{
+			if (!(type.Name.StartsWith("<", StringComparison.Ordinal) && type.IsCompilerGenerated()))
 				return false;
-			foreach (TypeReference i in ctor.DeclaringType.Interfaces) {
+			foreach (TypeReference i in type.Interfaces) {
 				if (i.Namespace == "System.Collections" && i.Name == "IEnumerator")
 					return true;
 			}
@@ -151,7 +165,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		#endregion
 		
-		#region Figure out what the 'state' field is
+		#region Figure out what the 'state' field is (analysis of .ctor())
 		/// <summary>
 		/// Looks at the enumerator's ctor and figures out which of the fields holds the state.
 		/// </summary>
@@ -187,7 +201,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		#endregion
 		
-		#region Figure out what the 'current' field is
+		#region Figure out what the 'current' field is (analysis of get_Current())
 		static readonly ILExpression returnFieldFromThisPattern = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromArgument.This));
 		
 		/// <summary>
@@ -220,7 +234,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		#endregion
 		
-		#region Figure out the mapping of IEnumerable fields to IEnumerator fields
+		#region Figure out the mapping of IEnumerable fields to IEnumerator fields  (analysis of GetEnumerator())
 		void ResolveIEnumerableIEnumeratorFieldMapping()
 		{
 			MethodDefinition getEnumeratorMethod = enumeratorType.Methods.FirstOrDefault(
@@ -249,7 +263,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		#endregion
 		
-		#region Construction of the exception table
+		#region Construction of the exception table (analysis of Dispose())
 		// We construct the exception table by analyzing the enumerator's Dispose() method.
 		
 		// Assumption: there are no loops/backward jumps
@@ -259,6 +273,44 @@ namespace ICSharpCode.Decompiler.ILAst
 		// This is (int.MinValue, int.MaxValue) for the first instruction.
 		// These ranges are propagated depending on the conditional jumps performed by the code.
 		
+		Dictionary<MethodDefinition, Interval> finallyMethodToStateInterval;
+		
+		void ConstructExceptionTable()
+		{
+			disposeMethod = enumeratorType.Methods.FirstOrDefault(m => m.Name == "System.IDisposable.Dispose");
+			ILBlock ilMethod = CreateILAst(disposeMethod);
+			
+			finallyMethodToStateInterval = new Dictionary<MethodDefinition, Interval>();
+			
+			InitStateRanges(ilMethod.Body[0]);
+			AssignStateRanges(ilMethod.Body, ilMethod.Body.Count, forDispose: true);
+			
+			// Now look at the finally blocks:
+			foreach (var tryFinally in ilMethod.GetSelfAndChildrenRecursive<ILTryCatchBlock>()) {
+				Interval interval = ranges[tryFinally.TryBlock.Body[0]].ToEnclosingInterval();
+				var finallyBody = tryFinally.FinallyBlock.Body;
+				if (!(finallyBody.Count == 2 || finallyBody.Count == 3))
+					throw new YieldAnalysisFailedException();
+				ILExpression call = finallyBody[0] as ILExpression;
+				if (call == null || call.Code != ILCode.Call || call.Arguments.Count != 1)
+					throw new YieldAnalysisFailedException();
+				if (call.Arguments[0].Code != ILCode.Ldarg || ((ParameterDefinition)call.Arguments[0].Operand).Index >= 0)
+					throw new YieldAnalysisFailedException();
+				if (finallyBody.Count == 3 && !finallyBody[1].Match(ILCode.Nop))
+					throw new YieldAnalysisFailedException();
+				if (!finallyBody[finallyBody.Count - 1].Match(ILCode.Endfinally))
+					throw new YieldAnalysisFailedException();
+				
+				MethodDefinition mdef = call.Operand as MethodDefinition;
+				if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
+					throw new YieldAnalysisFailedException();
+				finallyMethodToStateInterval.Add(mdef, interval);
+			}
+			ranges = null;
+		}
+		#endregion
+		
+		#region Assign StateRanges / Symbolic Execution (used for analysis of Dispose() and MoveNext())
 		#region struct Interval / class StateRange
 		struct Interval
 		{
@@ -288,6 +340,15 @@ namespace ICSharpCode.Decompiler.ILAst
 			public StateRange(int start, int end)
 			{
 				this.data.Add(new Interval(start, end));
+			}
+			
+			public bool Contains(int val)
+			{
+				foreach (Interval v in data) {
+					if (v.Start <= val && val <= v.End)
+						return true;
+				}
+				return false;
 			}
 			
 			public void UnionWith(StateRange other)
@@ -338,120 +399,139 @@ namespace ICSharpCode.Decompiler.ILAst
 				return string.Join(",", data);
 			}
 			
-			public Interval ToInterval()
+			public Interval ToEnclosingInterval()
 			{
-				if (data.Count == 1)
-					return data[0];
-				else
+				if (data.Count == 0)
 					throw new YieldAnalysisFailedException();
+				return new Interval(data[0].Start, data[data.Count - 1].End);
 			}
 		}
 		#endregion
 		
 		DefaultDictionary<ILNode, StateRange> ranges;
-		Dictionary<MethodDefinition, Interval> finallyMethodToStateInterval = new Dictionary<MethodDefinition, Interval>();
+		ILVariable rangeAnalysisStateVariable;
 		
-		void ConstructExceptionTable()
+		/// <summary>
+		/// Initializes the state range logic:
+		/// Clears 'ranges' and sets 'ranges[entryPoint]' to the full range (int.MinValue to int.MaxValue)
+		/// </summary>
+		void InitStateRanges(ILNode entryPoint)
 		{
-			disposeMethod = enumeratorType.Methods.FirstOrDefault(m => m.Name == "System.IDisposable.Dispose");
-			ILBlock ilMethod = CreateILAst(disposeMethod);
-			
-			ranges = new DefaultDictionary<ILNode, StateRange>(node => new StateRange());
-			ranges[ilMethod] = new StateRange(int.MinValue, int.MaxValue);
-			AssignStateRanges(ilMethod);
-			
-			// Now look at the finally blocks:
-			foreach (var tryFinally in ilMethod.GetSelfAndChildrenRecursive<ILTryCatchBlock>()) {
-				Interval interval = ranges[tryFinally.TryBlock.Body[0]].ToInterval();
-				var finallyBody = tryFinally.FinallyBlock.Body;
-				if (!(finallyBody.Count == 2 || finallyBody.Count == 3))
-					throw new YieldAnalysisFailedException();
-				ILExpression call = finallyBody[0] as ILExpression;
-				if (call == null || call.Code != ILCode.Call || call.Arguments.Count != 1)
-					throw new YieldAnalysisFailedException();
-				if (call.Arguments[0].Code != ILCode.Ldarg || ((ParameterDefinition)call.Arguments[0].Operand).Index >= 0)
-					throw new YieldAnalysisFailedException();
-				if (finallyBody.Count == 3 && !finallyBody[1].Match(ILCode.Nop))
-					throw new YieldAnalysisFailedException();
-				if (!finallyBody[finallyBody.Count - 1].Match(ILCode.Endfinally))
-					throw new YieldAnalysisFailedException();
-				
-				MethodDefinition mdef = call.Operand as MethodDefinition;
-				if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
-					throw new YieldAnalysisFailedException();
-				finallyMethodToStateInterval.Add(mdef, interval);
-			}
-			ranges = null;
+			ranges = new DefaultDictionary<ILNode, StateRange>(n => new StateRange());
+			ranges[entryPoint] = new StateRange(int.MinValue, int.MaxValue);
+			rangeAnalysisStateVariable = null;
 		}
-
-		#region Assign StateRanges / Symbolic Execution
-		void AssignStateRanges(ILBlock block)
+		
+		int AssignStateRanges(List<ILNode> body, int bodyLength, bool forDispose)
 		{
-			if (block.Body.Count == 0)
-				return;
-			ranges[block.Body[0]].UnionWith(ranges[block]);
-			for (int i = 0; i < block.Body.Count; i++) {
-				StateRange nodeRange = ranges[block.Body[i]];
+			if (bodyLength == 0)
+				return 0;
+			for (int i = 0; i < bodyLength; i++) {
+				StateRange nodeRange = ranges[body[i]];
 				nodeRange.Simplify();
 				
-				ILLabel label = block.Body[i] as ILLabel;
+				ILLabel label = body[i] as ILLabel;
 				if (label != null) {
-					ranges[block.Body[i + 1]].UnionWith(nodeRange);
+					ranges[body[i + 1]].UnionWith(nodeRange);
 					continue;
 				}
 				
-				ILTryCatchBlock tryFinally = block.Body[i] as ILTryCatchBlock;
+				ILTryCatchBlock tryFinally = body[i] as ILTryCatchBlock;
 				if (tryFinally != null) {
-					if (tryFinally.CatchBlocks.Count != 0 || tryFinally.FaultBlock != null || tryFinally.FinallyBlock == null)
+					if (!forDispose || tryFinally.CatchBlocks.Count != 0 || tryFinally.FaultBlock != null || tryFinally.FinallyBlock == null)
 						throw new YieldAnalysisFailedException();
 					ranges[tryFinally.TryBlock].UnionWith(nodeRange);
-					AssignStateRanges(tryFinally.TryBlock);
+					AssignStateRanges(tryFinally.TryBlock.Body, tryFinally.TryBlock.Body.Count, forDispose);
 					continue;
 				}
 				
-				ILExpression expr = block.Body[i] as ILExpression;
+				ILExpression expr = body[i] as ILExpression;
 				if (expr == null)
 					throw new YieldAnalysisFailedException();
 				switch (expr.Code) {
 					case ILCode.Switch:
-						SymbolicValue val = Eval(expr.Arguments[0]);
-						if (val.Type != SymbolicValueType.State)
-							throw new YieldAnalysisFailedException();
-						ILLabel[] targetLabels = (ILLabel[])expr.Operand;
-						for (int j = 0; j < targetLabels.Length; j++) {
-							int state = j - val.Constant;
-							ranges[targetLabels[j]].UnionWith(nodeRange, state, state);
+						{
+							SymbolicValue val = Eval(expr.Arguments[0]);
+							if (val.Type != SymbolicValueType.State)
+								throw new YieldAnalysisFailedException();
+							ILLabel[] targetLabels = (ILLabel[])expr.Operand;
+							for (int j = 0; j < targetLabels.Length; j++) {
+								int state = j - val.Constant;
+								ranges[targetLabels[j]].UnionWith(nodeRange, state, state);
+							}
+							StateRange nextRange = ranges[body[i + 1]];
+							nextRange.UnionWith(nodeRange, int.MinValue, -1 - val.Constant);
+							nextRange.UnionWith(nodeRange, targetLabels.Length - val.Constant, int.MaxValue);
+							break;
 						}
-						ranges[block.Body[i + 1]].UnionWith(nodeRange, int.MinValue, -1 - val.Constant);
-						ranges[block.Body[i + 1]].UnionWith(nodeRange, targetLabels.Length - val.Constant, int.MaxValue);
-						break;
 					case ILCode.Br:
 					case ILCode.Leave:
 						ranges[(ILLabel)expr.Operand].UnionWith(nodeRange);
 						break;
+					case ILCode.Brtrue:
+						{
+							SymbolicValue val = Eval(expr.Arguments[0]);
+							if (val.Type != SymbolicValueType.StateEquals)
+								throw new YieldAnalysisFailedException();
+							ranges[(ILLabel)expr.Operand].UnionWith(nodeRange, val.Constant, val.Constant);
+							StateRange nextRange = ranges[body[i + 1]];
+							nextRange.UnionWith(nodeRange, int.MinValue, val.Constant - 1);
+							nextRange.UnionWith(nodeRange, val.Constant + 1, int.MaxValue);
+							break;
+						}
 					case ILCode.Nop:
-						ranges[block.Body[i + 1]].UnionWith(nodeRange);
+						ranges[body[i + 1]].UnionWith(nodeRange);
 						break;
 					case ILCode.Ret:
 						break;
+					case ILCode.Stloc:
+						{
+							SymbolicValue val = Eval(expr.Arguments[0]);
+							if (val.Type == SymbolicValueType.State && val.Constant == 0 && rangeAnalysisStateVariable == null)
+								rangeAnalysisStateVariable = (ILVariable)expr.Operand;
+							else
+								throw new YieldAnalysisFailedException();
+							goto case ILCode.Nop;
+						}
 					case ILCode.Call:
 						// in some cases (e.g. foreach over array) the C# compiler produces a finally method outside of try-finally blocks
-						MethodDefinition mdef = expr.Operand as MethodDefinition;
-						if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
+						if (forDispose) {
+							MethodDefinition mdef = expr.Operand as MethodDefinition;
+							if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
+								throw new YieldAnalysisFailedException();
+							finallyMethodToStateInterval.Add(mdef, nodeRange.ToEnclosingInterval());
+						} else {
 							throw new YieldAnalysisFailedException();
-						finallyMethodToStateInterval.Add(mdef, nodeRange.ToInterval());
+						}
 						break;
 					default:
-						throw new YieldAnalysisFailedException();
+						if (forDispose)
+							throw new YieldAnalysisFailedException();
+						else
+							return i;
 				}
 			}
+			return bodyLength;
 		}
 		
 		enum SymbolicValueType
 		{
+			/// <summary>
+			/// int: Constant (result of ldc.i4)
+			/// </summary>
 			IntegerConstant,
+			/// <summary>
+			/// int: State + Constant
+			/// </summary>
 			State,
-			This
+			/// <summary>
+			/// This pointer (result of ldarg.0)
+			/// </summary>
+			This,
+			/// <summary>
+			/// bool: State == Constant
+			/// </summary>
+			StateEquals
 		}
 		
 		struct SymbolicValue
@@ -473,11 +553,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		SymbolicValue Eval(ILExpression expr)
 		{
+			SymbolicValue left, right;
 			switch (expr.Code) {
 				case ILCode.Sub:
-					SymbolicValue left = Eval(expr.Arguments[0]);
-					SymbolicValue right = Eval(expr.Arguments[1]);
-					if (left.Type != SymbolicValueType.State && right.Type != SymbolicValueType.IntegerConstant)
+					left = Eval(expr.Arguments[0]);
+					right = Eval(expr.Arguments[1]);
+					if (left.Type != SymbolicValueType.State && left.Type != SymbolicValueType.IntegerConstant)
 						throw new YieldAnalysisFailedException();
 					if (right.Type != SymbolicValueType.IntegerConstant)
 						throw new YieldAnalysisFailedException();
@@ -488,6 +569,11 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (expr.Operand != stateField)
 						throw new YieldAnalysisFailedException();
 					return new SymbolicValue(SymbolicValueType.State);
+				case ILCode.Ldloc:
+					if (expr.Operand == rangeAnalysisStateVariable)
+						return new SymbolicValue(SymbolicValueType.State);
+					else
+						throw new YieldAnalysisFailedException();
 				case ILCode.Ldarg:
 					if (((ParameterDefinition)expr.Operand).Index < 0)
 						return new SymbolicValue(SymbolicValueType.This);
@@ -495,14 +581,21 @@ namespace ICSharpCode.Decompiler.ILAst
 						throw new YieldAnalysisFailedException();
 				case ILCode.Ldc_I4:
 					return new SymbolicValue(SymbolicValueType.IntegerConstant, (int)expr.Operand);
+				case ILCode.Ceq:
+					left = Eval(expr.Arguments[0]);
+					right = Eval(expr.Arguments[1]);
+					if (left.Type != SymbolicValueType.State || right.Type != SymbolicValueType.IntegerConstant)
+						throw new YieldAnalysisFailedException();
+					// bool: (state + left.Constant == right.Constant)
+					// bool: (state == right.Constant - left.Constant)
+					return new SymbolicValue(SymbolicValueType.StateEquals, unchecked ( right.Constant - left.Constant ));
 				default:
 					throw new YieldAnalysisFailedException();
 			}
 		}
 		#endregion
-		#endregion
 		
-		#region Analysis and Transformation of MoveNext()
+		#region Analysis of MoveNext()
 		ILVariable returnVariable;
 		ILLabel returnLabel;
 		ILLabel returnFalseLabel;
@@ -547,7 +640,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (tryFaultBlock.CatchBlocks.Count != 0 || tryFaultBlock.FinallyBlock != null || tryFaultBlock.FaultBlock == null)
 					throw new YieldAnalysisFailedException();
 				
-				VerifyFaultBlock(tryFaultBlock.FaultBlock);
+				ILBlock faultBlock = tryFaultBlock.FaultBlock;
+				// Ensure the fault block contains the call to Dispose().
+				if (!(faultBlock.Body.Count == 2 || faultBlock.Body.Count == 3))
+					throw new YieldAnalysisFailedException();
+				if (!new ILExpression(ILCode.Call, disposeMethod, LoadFromArgument.This).Match(faultBlock.Body[0]))
+					throw new YieldAnalysisFailedException();
+				if (faultBlock.Body.Count == 3 && !faultBlock.Body[1].Match(ILCode.Nop))
+					throw new YieldAnalysisFailedException();
+				if (!faultBlock.Body[faultBlock.Body.Count - 1].Match(ILCode.Endfinally))
+					throw new YieldAnalysisFailedException();
 				
 				body = tryFaultBlock.TryBlock.Body;
 				body.RemoveAll(n => n.Match(ILCode.Nop)); // remove nops
@@ -578,81 +680,27 @@ namespace ICSharpCode.Decompiler.ILAst
 				bodyLength -= 2; // don't conside the 'ret(false)' part of the body
 			}
 			returnFalseLabel = body.ElementAtOrDefault(--bodyLength) as ILLabel;
-			if (returnFalseLabel == null || bodyLength < 2)
+			if (returnFalseLabel == null || bodyLength == 0)
 				throw new YieldAnalysisFailedException();
 			
-			// Verify that the first instruction is a switch on this.state, and that the 2nd instruction is br
-			if (!new ILExpression(ILCode.Switch, ILExpression.AnyOperand, new ILExpression(ILCode.Ldfld, stateField, LoadFromArgument.This)).Match(body[0]))
-				throw new YieldAnalysisFailedException();
+			InitStateRanges(body[0]);
+			int pos = AssignStateRanges(body, bodyLength, forDispose: false);
+			while (pos > 0 && body[pos - 1] is ILLabel)
+				pos--;
 			
-			if (!body[1].Match(ILCode.Br))
-				throw new YieldAnalysisFailedException();
-			
-			SimplifySwitch(body, ref bodyLength);
-			
-			// verify that the br (if no state is matched) leads to 'return false'
-			if (((ILExpression)body[1]).Operand != returnFalseLabel)
-				throw new YieldAnalysisFailedException();
-			
-			ConvertBody(body, bodyLength);
-		}
-		
-		/// <summary>
-		/// Ensure the fault block contains the call to Dispose().
-		/// </summary>
-		void VerifyFaultBlock(ILBlock faultBlock)
-		{
-			ILExpression call;
-			if (!(faultBlock.Body.Count == 2 || faultBlock.Body.Count == 3))
-				throw new YieldAnalysisFailedException();
-			if (!new ILExpression(ILCode.Call, disposeMethod, LoadFromArgument.This).Match(faultBlock.Body[0]))
-				throw new YieldAnalysisFailedException();
-			if (faultBlock.Body.Count == 3 && !faultBlock.Body[1].Match(ILCode.Nop))
-				throw new YieldAnalysisFailedException();
-			if (!faultBlock.Body[faultBlock.Body.Count - 1].Match(ILCode.Endfinally))
-				throw new YieldAnalysisFailedException();
-		}
-		
-		/// <summary>
-		/// Simplifies the switch statement at body[0], and the branch at body[1].
-		/// </summary>
-		void SimplifySwitch(List<ILNode> body, ref int bodyLength)
-		{
-			HashSet<ILLabel> regularLabels = new HashSet<ILLabel>();
-			Dictionary<ILLabel, ILLabel> simplications = new Dictionary<ILLabel, ILLabel>();
-			for (int i = 2; i < bodyLength; i++) {
-				ILExpression expr = body[i] as ILExpression;
-				if (expr != null && expr.Operand is ILLabel)
-					regularLabels.Add((ILLabel)expr.Operand);
-			}
-			for (int i = 2; i + 1 < bodyLength; i += 2) {
+			List<KeyValuePair<ILLabel, StateRange>> labels = new List<KeyValuePair<ILLabel, StateRange>>();
+			for (int i = pos; i < bodyLength; i++) {
 				ILLabel label = body[i] as ILLabel;
-				if (label == null || regularLabels.Contains(label))
-					break;
-				ILExpression expr = body[i + 1] as ILExpression;
-				if (expr != null && expr.Code == ILCode.Br) {
-					simplications.Add(label, (ILLabel)expr.Operand);
-				} else {
-					break;
+				if (label != null) {
+					labels.Add(new KeyValuePair<ILLabel, StateRange>(label, ranges[label]));
 				}
 			}
-			ILExpression switchExpr = (ILExpression)body[0];
-			ILExpression brExpr = (ILExpression)body[1];
-			Debug.Assert(switchExpr.Code == ILCode.Switch);
-			Debug.Assert(brExpr.Code == ILCode.Br);
-			ILLabel targetLabel;
-			if (simplications.TryGetValue((ILLabel)brExpr.Operand, out targetLabel))
-				brExpr.Operand = targetLabel;
-			ILLabel[] labels = (ILLabel[])switchExpr.Operand;
-			for (int i = 0; i < labels.Length; i++) {
-				if (simplications.TryGetValue(labels[i], out targetLabel))
-					labels[i] = targetLabel;
-			}
-			// remove the labels that aren't used anymore
-			body.RemoveRange(2, simplications.Count * 2);
-			bodyLength -= simplications.Count * 2;
+			
+			ConvertBody(body, pos, bodyLength, labels);
 		}
+		#endregion
 		
+		#region ConvertBody
 		struct SetState
 		{
 			public readonly int NewBodyPos;
@@ -665,15 +713,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		void ConvertBody(List<ILNode> body, int bodyLength)
+		void ConvertBody(List<ILNode> body, int startPos, int bodyLength, List<KeyValuePair<ILLabel, StateRange>> labels)
 		{
 			newBody = new List<ILNode>();
-			ILLabel[] switchLabels = (ILLabel[])((ILExpression)body[0]).Operand;
-			newBody.Add(MakeGoTo(switchLabels[0]));
+			newBody.Add(MakeGoTo(labels, 0));
 			List<SetState> stateChanges = new List<SetState>();
 			int currentState = -1;
 			// Copy all instructions from the old body to newBody.
-			for (int pos = 2; pos < bodyLength; pos++) {
+			for (int pos = startPos; pos < bodyLength; pos++) {
 				ILExpression expr = body[pos] as ILExpression;
 				if (expr != null && expr.Code == ILCode.Stfld && LoadFromArgument.This.Match(expr.Arguments[0])) {
 					// Handle stores to 'state' or 'current'
@@ -696,10 +743,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (val == 0) {
 						newBody.Add(MakeGoTo(returnFalseLabel));
 					} else if (val == 1) {
-						if (currentState >= 0 && currentState < switchLabels.Length)
-							newBody.Add(MakeGoTo(switchLabels[currentState]));
-						else
-							newBody.Add(MakeGoTo(returnFalseLabel));
+						newBody.Add(MakeGoTo(labels, currentState));
 					} else {
 						throw new YieldAnalysisFailedException();
 					}
@@ -711,10 +755,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (val == 0) {
 						newBody.Add(MakeGoTo(returnFalseLabel));
 					} else if (val == 1) {
-						if (currentState >= 0 && currentState < switchLabels.Length)
-							newBody.Add(MakeGoTo(switchLabels[currentState]));
-						else
-							newBody.Add(MakeGoTo(returnFalseLabel));
+						newBody.Add(MakeGoTo(labels, currentState));
 					} else {
 						throw new YieldAnalysisFailedException();
 					}
@@ -764,6 +805,15 @@ namespace ICSharpCode.Decompiler.ILAst
 				return new ILExpression(ILCode.YieldBreak, null);
 			else
 				return new ILExpression(ILCode.Br, targetLabel);
+		}
+		
+		ILExpression MakeGoTo(List<KeyValuePair<ILLabel, StateRange>> labels, int state)
+		{
+			foreach (var pair in labels) {
+				if (pair.Value.Contains(state))
+					return MakeGoTo(pair.Key);
+			}
+			throw new YieldAnalysisFailedException();
 		}
 		
 		ILBlock ConvertFinallyBlock(MethodDefinition finallyMethod)
