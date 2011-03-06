@@ -471,7 +471,8 @@ namespace Debugger.MetaData
 				corVal = context.CorILFrame.GetLocalVariable((uint)varIndex);
 			} catch (COMException e) {
 				if ((uint)e.ErrorCode == 0x80131304) throw new GetValueException("Unavailable in optimized code");
-				throw;
+				// show the message in case of bad index
+				throw new GetValueException(e.Message);
 			}
 			return new Value(context.AppDomain, corVal);
 		}

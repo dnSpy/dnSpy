@@ -163,12 +163,12 @@ namespace ILSpy.Debugger.Models.TreeModel
 				IEnumerable<ILVariable> list;
 				if (ILAstBuilder.MemberLocalVariables.TryGetValue(token, out list)) {
 					var variable = list.FirstOrDefault(v => v.Name == targetName);
-					if (variable != null) {
+					if (variable != null && variable.OriginalVariable != null) {
 						if (expression is MemberReferenceExpression) {
 							var memberExpression = (MemberReferenceExpression)expression;
-							memberExpression.Target.AddAnnotation(new int[] { variable.OriginalVariable.Index });
+							memberExpression.Target.AddAnnotation(new [] { variable.OriginalVariable.Index });
 						} else {
-							expression.AddAnnotation(new int[] { variable.OriginalVariable.Index });
+							expression.AddAnnotation(new [] { variable.OriginalVariable.Index });
 						}
 					}
 				}
