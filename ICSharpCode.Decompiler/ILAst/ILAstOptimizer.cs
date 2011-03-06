@@ -12,6 +12,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	public enum ILAstOptimizationStep
 	{
 		ReduceBranchInstructionSet,
+		YieldReturn,
 		SplitToMovableBlocks,
 		PeepholeOptimizations,
 		FindLoops,
@@ -37,6 +38,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ReduceBranchInstructionSet(block);
 			}
+			
+			if (abortBeforeStep == ILAstOptimizationStep.YieldReturn) return;
+			YieldReturnDecompiler.Run(context, method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.SplitToMovableBlocks) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {

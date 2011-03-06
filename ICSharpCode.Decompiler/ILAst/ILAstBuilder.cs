@@ -609,9 +609,10 @@ namespace ICSharpCode.Decompiler.ILAst
 						tryCatchBlock.CatchBlocks.Add(catchBlock);
 					} else if (eh.HandlerType == ExceptionHandlerType.Finally) {
 						tryCatchBlock.FinallyBlock = new ILBlock(handlerAst);
-						// TODO: ldexception
+					} else if (eh.HandlerType == ExceptionHandlerType.Fault) {
+						tryCatchBlock.FaultBlock = new ILBlock(handlerAst);
 					} else {
-						// TODO
+						// TODO: ExceptionHandlerType.Filter
 					}
 				}
 				
