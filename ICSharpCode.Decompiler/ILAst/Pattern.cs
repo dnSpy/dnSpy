@@ -59,18 +59,20 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 	}
 	
-	public class LoadFromThis : ILExpression
+	public class LoadFromArgument : ILExpression
 	{
-		public static readonly LoadFromThis Instance = new LoadFromThis();
+		int index;
+		public static readonly LoadFromArgument This = new LoadFromArgument(-1);
 		
-		public LoadFromThis() : base(ILCode.Pattern, null)
+		public LoadFromArgument(int index) : base(ILCode.Pattern, null)
 		{
+			this.index = index;
 		}
 		
 		public override bool Match(ILNode other)
 		{
 			ILExpression expr = other as ILExpression;
-			return expr != null && expr.Code == ILCode.Ldarg && ((ParameterDefinition)expr.Operand).Index < 0;
+			return expr != null && expr.Code == ILCode.Ldarg && ((ParameterDefinition)expr.Operand).Index == index;
 		}
 	}
 	

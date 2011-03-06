@@ -69,47 +69,51 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (method.Body.Count == 0)
 				return false;
-			ILExpression ret;
+			ILExpression newObj;
 			if (method.Body.Count == 1) {
 				// ret(newobj(...))
-				if (method.Body[0].Match(ILCode.Ret, out ret) && ret.Arguments.Count == 1)
-					return MatchEnumeratorCreationNewObj(ret.Arguments[0], out enumeratorCtor);
+				if (method.Body[0].Match(ILCode.Ret, out newObj))
+					return MatchEnumeratorCreationNewObj(newObj, out enumeratorCtor);
 				else
 					return false;
 			}
 			// stloc(var_1, newobj(..)
-			ILExpression stloc;
-			if (!method.Body[0].Match(ILCode.Stloc, out stloc))
+			ILVariable var1;
+			if (!method.Body[0].Match(ILCode.Stloc, out var1, out newObj))
 				return false;
-			if (!MatchEnumeratorCreationNewObj(stloc.Arguments[0], out enumeratorCtor))
+			if (!MatchEnumeratorCreationNewObj(newObj, out enumeratorCtor))
 				return false;
 			
-			int i = 1;
-			ILExpression stfld;
-			while (i < method.Body.Count && method.Body[i].Match(ILCode.Stfld, out stfld)) {
+			int i;
+			for (i = 1; i < method.Body.Count; i++) {
 				// stfld(..., ldloc(var_1), ldarg(...))
+				FieldReference storedField;
 				ILExpression ldloc, ldarg;
-				if (!(stfld.Arguments[0].Match(ILCode.Ldloc, out ldloc) && stfld.Arguments[1].Match(ILCode.Ldarg, out ldarg)))
+				if (!method.Body[i].Match(ILCode.Stfld, out storedField, out ldloc, out ldarg))
+					break;
+				if (ldloc.Code != ILCode.Ldloc || ldarg.Code != ILCode.Ldarg)
 					return false;
-				if (ldloc.Operand != stloc.Operand || !(stfld.Operand is FieldDefinition))
+				if (ldloc.Operand != storedField || !(storedField is FieldDefinition))
 					return false;
-				fieldToParameterMap[(FieldDefinition)stfld.Operand] = (ParameterDefinition)ldarg.Operand;
-				i++;
+				fieldToParameterMap[(FieldDefinition)storedField] = (ParameterDefinition)ldarg.Operand;
 			}
-			ILExpression stloc2;
-			if (i < method.Body.Count && method.Body[i].Match(ILCode.Stloc, out stloc2)) {
+			ILVariable var2;
+			ILExpression ldlocForStloc2;
+			if (i < method.Body.Count && method.Body[i].Match(ILCode.Stloc, out var2, out ldlocForStloc2)) {
 				// stloc(var_2, ldloc(var_1))
-				if (stloc2.Arguments[0].Code != ILCode.Ldloc || stloc2.Arguments[0].Operand != stloc.Operand)
+				if (ldlocForStloc2.Code != ILCode.Ldloc || ldlocForStloc2.Operand != var1)
 					return false;
 				i++;
 			} else {
 				// the compiler might skip the above instruction in release builds; in that case, it directly returns stloc.Operand
-				stloc2 = stloc;
+				var2 = var1;
 			}
 			if (!SkipDummyBr(method, ref i))
 				return false;
-			if (i < method.Body.Count && method.Body[i].Match(ILCode.Ret, out ret)) {
-				if (ret.Arguments[0].Code == ILCode.Ldloc && ret.Arguments[0].Operand == stloc2.Operand) {
+			ILExpression retArg;
+			if (i < method.Body.Count && method.Body[i].Match(ILCode.Ret, out retArg)) {
+				// ret(ldloc(var_2))
+				if (retArg.Code == ILCode.Ldloc && retArg.Operand == var2) {
 					return true;
 				}
 			}
@@ -118,9 +122,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		bool SkipDummyBr(ILBlock method, ref int i)
 		{
-			ILExpression br;
-			if (i + 1 < method.Body.Count && method.Body[i].Match(ILCode.Br, out br)) {
-				if (br.Operand != method.Body[i + 1])
+			ILLabel target;
+			if (i + 1 < method.Body.Count && method.Body[i].Match(ILCode.Br, out target)) {
+				if (target != method.Body[i + 1])
 					return false;
 				i += 2;
 			}
@@ -154,13 +158,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		void AnalyzeCtor()
 		{
 			ILBlock method = CreateILAst(enumeratorCtor);
+			
+			ILExpression stfldPattern = new ILExpression(ILCode.Stfld, ILExpression.AnyOperand, LoadFromArgument.This, new LoadFromArgument(0));
+			
 			foreach (ILNode node in method.Body) {
-				ILExpression stfld;
-				if (node.Match(ILCode.Stfld, out stfld)
-				    && stfld.Arguments[0].Code == ILCode.Ldarg && ((ParameterDefinition)stfld.Arguments[0].Operand).Index < 0
-				    && stfld.Arguments[1].Code == ILCode.Ldarg && ((ParameterDefinition)stfld.Arguments[1].Operand).Index == 0)
-				{
-					stateField = stfld.Operand as FieldDefinition;
+				if (stfldPattern.Match(node)) {
+					stateField = ((ILExpression)node).Operand as FieldDefinition;
 				}
 			}
 			if (stateField == null)
@@ -185,7 +188,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		#endregion
 		
 		#region Figure out what the 'current' field is
-		static readonly ILExpression returnFieldFromThisPattern = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromThis.Instance));
+		static readonly ILExpression returnFieldFromThisPattern = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromArgument.This));
 		
 		/// <summary>
 		/// Looks at the enumerator's get_Current method and figures out which of the fields holds the current value.
@@ -202,7 +205,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					currentField = ((ILExpression)method.Body[0]).Arguments[0].Operand as FieldDefinition;
 				}
 			} else {
-				StoreToVariable v = new StoreToVariable(new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromThis.Instance));
+				StoreToVariable v = new StoreToVariable(new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromArgument.This));
 				if (v.Match(method.Body[0])) {
 					int i = 1;
 					if (SkipDummyBr(method, ref i) && i == method.Body.Count - 1) {
@@ -228,7 +231,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			ILExpression mappingPattern = new ILExpression(
 				ILCode.Stfld, ILExpression.AnyOperand, new AnyILExpression(),
-				new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromThis.Instance));
+				new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromArgument.This));
 			
 			ILBlock method = CreateILAst(getEnumeratorMethod);
 			foreach (ILNode node in method.Body) {
@@ -506,16 +509,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (ilMethod.Body.Count == 0)
 				throw new YieldAnalysisFailedException();
-			ILExpression lastReturn;
-			if (!ilMethod.Body.Last().Match(ILCode.Ret, out lastReturn))
+			ILExpression lastReturnArg;
+			if (!ilMethod.Body.Last().Match(ILCode.Ret, out lastReturnArg))
 				throw new YieldAnalysisFailedException();
 			
 			ilMethod.Body.RemoveAll(n => n.Match(ILCode.Nop)); // remove nops
 			
 			// There are two possibilities:
-			if (lastReturn.Arguments[0].Code == ILCode.Ldloc) {
+			if (lastReturnArg.Code == ILCode.Ldloc) {
 				// a) the compiler uses a variable for returns (in debug builds, or when there are try-finally blocks)
-				returnVariable = (ILVariable)lastReturn.Arguments[0].Operand;
+				returnVariable = (ILVariable)lastReturnArg.Operand;
 				returnLabel = ilMethod.Body.ElementAtOrDefault(ilMethod.Body.Count - 2) as ILLabel;
 				if (returnLabel == null)
 					throw new YieldAnalysisFailedException();
@@ -524,7 +527,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				returnVariable = null;
 				returnLabel = null;
 				// In this case, the last return must return false.
-				if (lastReturn.Arguments[0].Code != ILCode.Ldc_I4 || (int)lastReturn.Arguments[0].Operand != 0)
+				if (lastReturnArg.Code != ILCode.Ldc_I4 || (int)lastReturnArg.Operand != 0)
 					throw new YieldAnalysisFailedException();
 			}
 			
@@ -574,7 +577,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				throw new YieldAnalysisFailedException();
 			
 			// Verify that the first instruction is a switch on this.state, and that the 2nd instruction is br
-			if (!new ILExpression(ILCode.Switch, ILExpression.AnyOperand, new ILExpression(ILCode.Ldfld, stateField, LoadFromThis.Instance)).Match(body[0]))
+			if (!new ILExpression(ILCode.Switch, ILExpression.AnyOperand, new ILExpression(ILCode.Ldfld, stateField, LoadFromArgument.This)).Match(body[0]))
 				throw new YieldAnalysisFailedException();
 			
 			if (!body[1].Match(ILCode.Br))
@@ -597,8 +600,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression call;
 			if (!(faultBlock.Body.Count == 2 || faultBlock.Body.Count == 3))
 				throw new YieldAnalysisFailedException();
-			if (!faultBlock.Body[0].Match(ILCode.Call, out call) && call.Operand == disposeMethod
-			    && call.Arguments.Count == 1 && LoadFromThis.Instance.Match(call.Arguments[0]))
+			if (!new ILExpression(ILCode.Call, disposeMethod, LoadFromArgument.This).Match(faultBlock.Body[0]))
 				throw new YieldAnalysisFailedException();
 			if (faultBlock.Body.Count == 3 && !faultBlock.Body[1].Match(ILCode.Nop))
 				throw new YieldAnalysisFailedException();
@@ -668,7 +670,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Copy all instructions from the old body to newBody.
 			for (int pos = 2; pos < bodyLength; pos++) {
 				ILExpression expr = body[pos] as ILExpression;
-				if (expr != null && expr.Code == ILCode.Stfld && LoadFromThis.Instance.Match(expr.Arguments[0])) {
+				if (expr != null && expr.Code == ILCode.Stfld && LoadFromArgument.This.Match(expr.Arguments[0])) {
 					// Handle stores to 'state' or 'current'
 					if (expr.Operand == stateField) {
 						if (expr.Arguments[1].Code != ILCode.Ldc_I4)
@@ -711,7 +713,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					} else {
 						throw new YieldAnalysisFailedException();
 					}
-				} else if (expr != null && expr.Code == ILCode.Call && expr.Arguments.Count == 1 && LoadFromThis.Instance.Match(expr.Arguments[0])) {
+				} else if (expr != null && expr.Code == ILCode.Call && expr.Arguments.Count == 1 && LoadFromArgument.This.Match(expr.Arguments[0])) {
 					MethodDefinition method = expr.Operand as MethodDefinition;
 					if (method == null)
 						throw new YieldAnalysisFailedException();
@@ -764,9 +766,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILBlock block = CreateILAst(finallyMethod);
 			block.Body.RemoveAll(n => n.Match(ILCode.Nop));
 			// Get rid of assignment to state
-			ILExpression stfld;
-			if (block.Body.Count > 0 && block.Body[0].Match(ILCode.Stfld, out stfld)) {
-				if (stfld.Operand == stateField && LoadFromThis.Instance.Match(stfld.Arguments[0]))
+			FieldReference stfld;
+			List<ILExpression> args;
+			if (block.Body.Count > 0 && block.Body[0].Match(ILCode.Stfld, out stfld, out args)) {
+				if (stfld == stateField && LoadFromArgument.This.Match(args[0]))
 					block.Body.RemoveAt(0);
 			}
 			// Convert ret to endfinally
@@ -788,7 +791,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (field != null) {
 						switch (expr.Code) {
 							case ILCode.Ldfld:
-								if (LoadFromThis.Instance.Match(expr.Arguments[0])) {
+								if (LoadFromArgument.This.Match(expr.Arguments[0])) {
 									if (fieldToParameterMap.ContainsKey(field)) {
 										expr.Code = ILCode.Ldarg;
 										expr.Operand = fieldToParameterMap[field];
@@ -800,7 +803,7 @@ namespace ICSharpCode.Decompiler.ILAst
 								}
 								break;
 							case ILCode.Stfld:
-								if (LoadFromThis.Instance.Match(expr.Arguments[0])) {
+								if (LoadFromArgument.This.Match(expr.Arguments[0])) {
 									if (fieldToParameterMap.ContainsKey(field)) {
 										expr.Code = ILCode.Starg;
 										expr.Operand = fieldToParameterMap[field];
