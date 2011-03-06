@@ -142,6 +142,8 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public TypeDeclaration CreateType(TypeDefinition typeDef)
 		{
+			TypeDefinition oldCurrentType = context.CurrentType;
+			context.CurrentType = typeDef;
 			TypeDeclaration astType = new TypeDeclaration();
 			astType.AddAnnotation(typeDef);
 			astType.Modifiers = ConvertModifiers(typeDef);
@@ -207,6 +209,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 
 			ConvertAttributes(astType, typeDef);
+			context.CurrentType = oldCurrentType;
 			return astType;
 		}
 

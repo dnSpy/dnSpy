@@ -93,7 +93,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					break;
 				if (ldloc.Code != ILCode.Ldloc || ldarg.Code != ILCode.Ldarg)
 					return false;
-				if (ldloc.Operand != storedField || !(storedField is FieldDefinition))
+				if (ldloc.Operand != var1 || !(storedField is FieldDefinition))
 					return false;
 				fieldToParameterMap[(FieldDefinition)storedField] = (ParameterDefinition)ldarg.Operand;
 			}
@@ -377,11 +377,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					throw new YieldAnalysisFailedException();
 				
 				MethodDefinition mdef = call.Operand as MethodDefinition;
-				if (mdef != null) {
-					if (finallyMethodToStateInterval.ContainsKey(mdef))
-						throw new YieldAnalysisFailedException();
-					finallyMethodToStateInterval.Add(mdef, interval);
-				}
+				if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
+					throw new YieldAnalysisFailedException();
+				finallyMethodToStateInterval.Add(mdef, interval);
 			}
 			ranges = null;
 		}
@@ -435,6 +433,13 @@ namespace ICSharpCode.Decompiler.ILAst
 						ranges[block.Body[i + 1]].UnionWith(nodeRange);
 						break;
 					case ILCode.Ret:
+						break;
+					case ILCode.Call:
+						// in some cases (e.g. foreach over array) the C# compiler produces a finally method outside of try-finally blocks
+						MethodDefinition mdef = expr.Operand as MethodDefinition;
+						if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
+							throw new YieldAnalysisFailedException();
+						finallyMethodToStateInterval.Add(mdef, nodeRange.ToInterval());
 						break;
 					default:
 						throw new YieldAnalysisFailedException();
