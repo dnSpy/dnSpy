@@ -146,7 +146,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			ctor = expr.Operand as MethodDefinition;
 			if (expr.Code != ILCode.Newobj || expr.Arguments.Count != 1)
 				return false;
-			if (expr.Arguments[0].Code != ILCode.Ldc_I4 || (int)expr.Arguments[0].Operand != -2)
+			if (expr.Arguments[0].Code != ILCode.Ldc_I4)
+				return false;
+			int initialState = (int)expr.Arguments[0].Operand;
+			if (!(initialState == -2 || initialState == 0))
 				return false;
 			if (ctor == null || ctor.DeclaringType.DeclaringType != context.CurrentType)
 				return false;
