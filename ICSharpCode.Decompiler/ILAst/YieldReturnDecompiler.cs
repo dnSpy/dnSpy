@@ -31,7 +31,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		MethodDefinition disposeMethod;
 		FieldDefinition stateField;
 		FieldDefinition currentField;
-		Dictionary<FieldDefinition, ParameterDefinition> fieldToParameterMap;
+		Dictionary<FieldDefinition, ParameterDefinition> fieldToParameterMap = new Dictionary<FieldDefinition, ParameterDefinition>();
 		List<ILNode> newBody;
 		
 		#region Run() method
@@ -84,7 +84,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!MatchEnumeratorCreationNewObj(stloc.Arguments[0], out enumeratorCtor))
 				return false;
 			
-			fieldToParameterMap = new Dictionary<FieldDefinition, ParameterDefinition>();
 			int i = 1;
 			ILExpression stfld;
 			while (i < method.Body.Count && method.Body[i].Match(ILCode.Stfld, out stfld)) {
@@ -686,6 +685,21 @@ namespace ICSharpCode.Decompiler.ILAst
 					ILExpression br = body.ElementAtOrDefault(++pos) as ILExpression;
 					if (br == null || !(br.Code == ILCode.Br || br.Code == ILCode.Leave) || br.Operand != returnLabel || expr.Arguments[0].Code != ILCode.Ldc_I4)
 						throw new YieldAnalysisFailedException();
+					int val = (int)expr.Arguments[0].Operand;
+					if (val == 0) {
+						newBody.Add(MakeGoTo(returnFalseLabel));
+					} else if (val == 1) {
+						if (currentState >= 0 && currentState < switchLabels.Length)
+							newBody.Add(MakeGoTo(switchLabels[currentState]));
+						else
+							newBody.Add(MakeGoTo(returnFalseLabel));
+					} else {
+						throw new YieldAnalysisFailedException();
+					}
+				} else if (expr != null && expr.Code == ILCode.Ret) {
+					if (expr.Arguments.Count != 1 || expr.Arguments[0].Code != ILCode.Ldc_I4)
+						throw new YieldAnalysisFailedException();
+					// handle direct return (e.g. in release builds)
 					int val = (int)expr.Arguments[0].Operand;
 					if (val == 0) {
 						newBody.Add(MakeGoTo(returnFalseLabel));
