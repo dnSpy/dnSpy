@@ -12,6 +12,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	public enum ILAstOptimizationStep
 	{
 		ReduceBranchInstructionSet,
+		YieldReturn,
 		SplitToMovableBlocks,
 		PeepholeOptimizations,
 		FindLoops,
@@ -37,6 +38,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ReduceBranchInstructionSet(block);
 			}
+			
+			if (abortBeforeStep == ILAstOptimizationStep.YieldReturn) return;
+			YieldReturnDecompiler.Run(context, method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.SplitToMovableBlocks) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
@@ -106,17 +110,17 @@ namespace ICSharpCode.Decompiler.ILAst
 							expr.Arguments.Single().ILRanges.AddRange(expr.ILRanges);
 							expr.ILRanges.Clear();
 							continue;
-						case ILCode.__Brfalse:  block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, expr.Arguments.Single())); break;
-						case ILCode.__Beq:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Ceq, null, expr.Arguments)); break;
-						case ILCode.__Bne_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Ceq, null, expr.Arguments))); break;
-						case ILCode.__Bgt:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Cgt, null, expr.Arguments)); break;
-						case ILCode.__Bgt_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Cgt_Un, null, expr.Arguments)); break;
-						case ILCode.__Ble:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Cgt, null, expr.Arguments))); break;
-						case ILCode.__Ble_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Cgt_Un, null, expr.Arguments))); break;
-						case ILCode.__Blt:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Clt, null, expr.Arguments)); break;
-						case ILCode.__Blt_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Clt_Un, null, expr.Arguments)); break;
-						case ILCode.__Bge:	    block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Clt, null, expr.Arguments))); break;
-						case ILCode.__Bge_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Clt_Un, null, expr.Arguments))); break;
+							case ILCode.__Brfalse:  block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, expr.Arguments.Single())); break;
+							case ILCode.__Beq:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Ceq, null, expr.Arguments)); break;
+							case ILCode.__Bne_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Ceq, null, expr.Arguments))); break;
+							case ILCode.__Bgt:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Cgt, null, expr.Arguments)); break;
+							case ILCode.__Bgt_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Cgt_Un, null, expr.Arguments)); break;
+							case ILCode.__Ble:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Cgt, null, expr.Arguments))); break;
+							case ILCode.__Ble_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Cgt_Un, null, expr.Arguments))); break;
+							case ILCode.__Blt:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Clt, null, expr.Arguments)); break;
+							case ILCode.__Blt_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Clt_Un, null, expr.Arguments)); break;
+							case ILCode.__Bge:	    block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Clt, null, expr.Arguments))); break;
+							case ILCode.__Bge_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Clt_Un, null, expr.Arguments))); break;
 						default:
 							continue;
 					}
@@ -176,7 +180,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							lastBlock.FallthoughGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel);
 						}
 					} else {
-						basicBlock.Body.Add(currNode);						
+						basicBlock.Body.Add(currNode);
 					}
 				}
 			}
@@ -226,7 +230,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (TrySimplifyShortCircuit(block.Body, bb)) {
 						modified = true;
 						continue;
-					} 
+					}
 					if (TrySimplifyTernaryOperator(block.Body, bb)) {
 						modified = true;
 						continue;
@@ -462,7 +466,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						labelToCfNode.TryGetValue(trueLabel, out trueTarget);
 						ControlFlowNode falseTarget;
 						labelToCfNode.TryGetValue(falseLabel, out falseTarget);
-					
+						
 						// If one point inside the loop and the other outside
 						if ((!loopContents.Contains(trueTarget) && loopContents.Contains(falseTarget)) ||
 						    (loopContents.Contains(trueTarget) && !loopContents.Contains(falseTarget)) )
@@ -491,36 +495,36 @@ namespace ICSharpCode.Decompiler.ILAst
 							
 							// Use loop to implement the condition
 							result.Add(new ILBasicBlock() {
-							    EntryLabel = basicBlock.EntryLabel,
-								Body = new List<ILNode>() {
-									new ILWhileLoop() {
-										Condition = condExpr,
-										BodyBlock = new ILBlock() {
-											EntryGoto = new ILExpression(ILCode.Br, trueLabel),
-											Body = FindLoops(loopContents, node, true)
-										}
-									},
-									new ILExpression(ILCode.Br, falseLabel)
-								},
-								FallthoughGoto = null
-							});
+							           	EntryLabel = basicBlock.EntryLabel,
+							           	Body = new List<ILNode>() {
+							           		new ILWhileLoop() {
+							           			Condition = condExpr,
+							           			BodyBlock = new ILBlock() {
+							           				EntryGoto = new ILExpression(ILCode.Br, trueLabel),
+							           				Body = FindLoops(loopContents, node, true)
+							           			}
+							           		},
+							           		new ILExpression(ILCode.Br, falseLabel)
+							           	},
+							           	FallthoughGoto = null
+							           });
 						}
 					}
 					
 					// Fallback method: while(true)
 					if (scope.Contains(node)) {
 						result.Add(new ILBasicBlock() {
-						    EntryLabel = new ILLabel() { Name = "Loop_" + (nextLabelIndex++) },
-							Body = new List<ILNode>() {
-								new ILWhileLoop() {
-									BodyBlock = new ILBlock() {
-										EntryGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel),
-										Body = FindLoops(loopContents, node, true)
-									}
-								},
-							},
-							FallthoughGoto = null
-						});
+						           	EntryLabel = new ILLabel() { Name = "Loop_" + (nextLabelIndex++) },
+						           	Body = new List<ILNode>() {
+						           		new ILWhileLoop() {
+						           			BodyBlock = new ILBlock() {
+						           				EntryGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel),
+						           				Body = FindLoops(loopContents, node, true)
+						           			}
+						           		},
+						           	},
+						           	FallthoughGoto = null
+						           });
 					}
 					
 					// Move the content into loop block
@@ -639,7 +643,7 @@ namespace ICSharpCode.Decompiler.ILAst
 									var caseBlock = new ILSwitch.CaseBlock() { EntryGoto = new ILExpression(ILCode.Br, fallLabel) };
 									ilSwitch.CaseBlocks.Add(caseBlock);
 									newBB.FallthoughGoto = null;
-								
+									
 									scope.ExceptWith(content);
 									caseBlock.Body.AddRange(FindConditions(content, fallTarget));
 									// Add explicit break which should not be used by default, but the goto removal might decide to use it
@@ -667,9 +671,9 @@ namespace ICSharpCode.Decompiler.ILAst
 								FalseBlock = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, falseLabel) }
 							};
 							result.Add(new ILBasicBlock() {
-								EntryLabel = block.EntryLabel,  // Keep the entry label
-								Body = { ilCond }
-							});
+							           	EntryLabel = block.EntryLabel,  // Keep the entry label
+							           	Body = { ilCond }
+							           });
 							
 							// Remove the item immediately so that it is not picked up as content
 							scope.RemoveOrThrow(node);
@@ -742,8 +746,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		static HashSet<ControlFlowNode> FindLoopContent(HashSet<ControlFlowNode> scope, ControlFlowNode head)
 		{
-			var exitNodes = head.DominanceFrontier.SelectMany(n => n.Predecessors);
-			HashSet<ControlFlowNode> agenda = new HashSet<ControlFlowNode>(exitNodes);
+			var viaBackEdges = head.Predecessors.Where(p => head.Dominates(p));
+			HashSet<ControlFlowNode> agenda = new HashSet<ControlFlowNode>(viaBackEdges);
 			HashSet<ControlFlowNode> result = new HashSet<ControlFlowNode>();
 			
 			while(agenda.Count > 0) {
@@ -866,6 +870,17 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
+		public static bool Match(this ILNode node, ILCode code, out ILExpression arg)
+		{
+			List<ILExpression> args;
+			if (node.Match(code, out args) && args.Count == 1) {
+				arg = args[0];
+				return true;
+			}
+			arg = null;
+			return false;
+		}
+		
 		public static bool Match<T>(this ILNode node, ILCode code, out T operand, out List<ILExpression> args)
 		{
 			ILExpression expr = node as ILExpression;
@@ -882,11 +897,24 @@ namespace ICSharpCode.Decompiler.ILAst
 		public static bool Match<T>(this ILNode node, ILCode code, out T operand, out ILExpression arg)
 		{
 			List<ILExpression> args;
-			if (node.Match(code, out operand, out args)) {
-				arg = args.Single();
+			if (node.Match(code, out operand, out args) && args.Count == 1) {
+				arg = args[0];
 				return true;
 			}
 			arg = null;
+			return false;
+		}
+		
+		public static bool Match<T>(this ILNode node, ILCode code, out T operand, out ILExpression arg1, out ILExpression arg2)
+		{
+			List<ILExpression> args;
+			if (node.Match(code, out operand, out args) && args.Count == 2) {
+				arg1 = args[0];
+				arg2 = args[1];
+				return true;
+			}
+			arg1 = null;
+			arg2 = null;
 			return false;
 		}
 		

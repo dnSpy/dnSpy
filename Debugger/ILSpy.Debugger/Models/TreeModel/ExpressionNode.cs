@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
@@ -159,9 +160,9 @@ namespace ILSpy.Debugger.Models.TreeModel
 				}
 				
 				// get local variable index
-				List<ILVariable> list;
+				IEnumerable<ILVariable> list;
 				if (ILAstBuilder.MemberLocalVariables.TryGetValue(token, out list)) {
-					var variable = list.Find(v => v.Name == targetName);
+					var variable = list.FirstOrDefault(v => v.Name == targetName);
 					if (variable != null) {
 						if (expression is MemberReferenceExpression) {
 							var memberExpression = (MemberReferenceExpression)expression;

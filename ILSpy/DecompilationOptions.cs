@@ -18,6 +18,7 @@
 
 using System;
 using System.Threading;
+using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy
 {
@@ -45,5 +46,15 @@ namespace ICSharpCode.ILSpy
 		/// to allow for cooperative cancellation of the decompilation task.
 		/// </remarks>
 		public CancellationToken CancellationToken { get; set; }
+		
+		/// <summary>
+		/// Gets the settings for the decompiler.
+		/// </summary>
+		public DecompilerSettings DecompilerSettings { get; set; }
+		
+		public DecompilationOptions()
+		{
+			this.DecompilerSettings = DecompilerSettingsPanel.CurrentDecompilerSettings;
+		}
 	}
 }

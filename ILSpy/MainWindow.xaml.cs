@@ -292,14 +292,19 @@ namespace ICSharpCode.ILSpy
 
 		void filterSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			RefreshTreeViewFilter();
+			if (e.PropertyName == "Language") {
+				TreeView_SelectionChanged(null, null);
+			}
+		}
+		
+		public void RefreshTreeViewFilter()
+		{
 			// filterSettings is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
 			// Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
 			// mutable instance changes.
 			if (assemblyListTreeNode != null)
 				assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
-			if (e.PropertyName == "Language") {
-				TreeView_SelectionChanged(null, null);
-			}
 		}
 		
 		internal AssemblyList AssemblyList {
@@ -443,6 +448,11 @@ namespace ICSharpCode.ILSpy
 					return;
 			}
 			decompilerTextView.Decompile(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions());
+		}
+		
+		public void RefreshDecompiledView()
+		{
+			TreeView_SelectionChanged(null, null);
 		}
 		
 		public DecompilerTextView TextView {

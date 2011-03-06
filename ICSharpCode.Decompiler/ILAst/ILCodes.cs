@@ -263,6 +263,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		LoopOrSwitchBreak,
 		LoopContinue,
 		Ldc_Decimal,
+		YieldBreak,
+		YieldReturn,
 		
 		Pattern // used for ILAst pattern nodes
 	}
@@ -288,6 +290,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Rethrow:
 				case ILCode.LoopContinue:
 				case ILCode.LoopOrSwitchBreak:
+				case ILCode.YieldBreak:
 					return false;
 				default:
 					return true;

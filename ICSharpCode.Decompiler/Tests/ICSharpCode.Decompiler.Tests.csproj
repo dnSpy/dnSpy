@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="YieldReturn.cs" />
     <None Include="Types\S_EnumSamples.cs" />
     <None Include="CustomAttributes\S_AssemblyCustomAttribute.cs" />
     <Compile Include="Helpers\RemoveCompilerAttribute.cs" />

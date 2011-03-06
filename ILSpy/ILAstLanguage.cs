@@ -60,8 +60,7 @@ namespace ICSharpCode.ILSpy
 				new ILAstOptimizer().Optimize(context, ilMethod, abortBeforeStep.Value);
 			}
 			
-			var allVariables = astBuilder.Variables
-				.Concat(ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable).Where(v => v != null)).Distinct();
+			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable).Where(v => v != null).Distinct();
 			foreach (ILVariable v in allVariables) {
 				output.WriteDefinition(v.Name, v);
 				if (v.Type != null) {

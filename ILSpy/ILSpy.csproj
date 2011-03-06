@@ -91,6 +91,10 @@
     <Compile Include="BamlDecompiler.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Commands\DebuggerCommands.cs" />
+    <Compile Include="DecompilerSettingsPanel.xaml.cs">
+      <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
     <Compile Include="CSharpLanguage.cs" />
@@ -111,6 +115,10 @@
     <Compile Include="NavigationHistory.cs" />
     <Compile Include="OpenFromGacDialog.xaml.cs">
       <DependentUpon>OpenFromGacDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OptionsDialog.xaml.cs">
+      <DependentUpon>OptionsDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -171,8 +179,10 @@
     <Page Include="Controls\SearchBoxStyle.xaml">
       <DependentUpon>SearchBox.cs</DependentUpon>
     </Page>
+    <Page Include="DecompilerSettingsPanel.xaml" />
     <Page Include="MainWindow.xaml" />
     <Page Include="OpenFromGacDialog.xaml" />
+    <Page Include="OptionsDialog.xaml" />
     <Page Include="TextView\DecompilerTextView.xaml">
       <DependentUpon>DecompilerTextView.cs</DependentUpon>
     </Page>

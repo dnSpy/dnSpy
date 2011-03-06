@@ -151,6 +151,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		public ILBlock          TryBlock;
 		public List<CatchBlock> CatchBlocks;
 		public ILBlock          FinallyBlock;
+		public ILBlock          FaultBlock;
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
@@ -159,6 +160,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach (var catchBlock in this.CatchBlocks) {
 				yield return catchBlock;
 			}
+			if (this.FaultBlock != null)
+				yield return this.FaultBlock;
 			if (this.FinallyBlock != null)
 				yield return this.FinallyBlock;
 		}
@@ -172,6 +175,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			output.WriteLine("}");
 			foreach (CatchBlock block in CatchBlocks) {
 				block.WriteTo(output);
+			}
+			if (FaultBlock != null) {
+				output.WriteLine("fault {");
+				output.Indent();
+				FaultBlock.WriteTo(output);
+				output.Unindent();
+				output.WriteLine("}");
 			}
 			if (FinallyBlock != null) {
 				output.WriteLine("finally {");
@@ -354,6 +364,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (Operand != null) {
 				if (Operand is ILLabel) {
 					output.WriteReference(((ILLabel)Operand).Name, Operand);
+				} else if (Operand is ILLabel[]) {
+					ILLabel[] labels = (ILLabel[])Operand;
+					for (int i = 0; i < labels.Length; i++) {
+						if (i > 0)
+							output.Write(", ");
+						output.WriteReference(labels[i].Name, labels[i]);
+					}
 				} else if (Operand is MethodReference) {
 					MethodReference method = (MethodReference)Operand;
 					method.DeclaringType.WriteTo(output, true, true);

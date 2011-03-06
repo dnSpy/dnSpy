@@ -63,7 +63,8 @@ namespace ICSharpCode.Decompiler.Ast
 			bodyGraph.Optimize(context, ilMethod);
 			context.CancellationToken.ThrowIfCancellationRequested();
 			
-			NameVariables.AssignNamesToVariables(methodDef.Parameters.Select(p => p.Name), astBuilder.Variables, ilMethod);
+			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable).Where(v => v != null && !v.IsGenerated).Distinct();
+			NameVariables.AssignNamesToVariables(methodDef.Parameters.Select(p => p.Name), allVariables, ilMethod);
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
 			Ast.BlockStatement astBlock = TransformBlock(ilMethod);
@@ -75,7 +76,7 @@ namespace ICSharpCode.Decompiler.Ast
 			// store the variables - used for debugger
 			int token = methodDef.MetadataToken.ToInt32();
 			ILAstBuilder.MemberLocalVariables.AddOrUpdate(
-								token, astBuilder.Variables, (key, oldValue) => astBuilder.Variables);
+								token, allVariables, (key, oldValue) => allVariables);
 			
 			return astBlock;
 		}
@@ -499,6 +500,10 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Throw: return new Ast.ThrowStatement { Expression = arg1 };
 				case ILCode.Unaligned: return InlineAssembly(byteCode, args);
 				case ILCode.Volatile: return InlineAssembly(byteCode, args);
+				case ILCode.YieldBreak:
+					return new Ast.YieldBreakStatement();
+				case ILCode.YieldReturn:
+					return new Ast.YieldStatement { Expression = arg1 };
 				default: throw new Exception("Unknown OpCode: " + byteCode.Code);
 			}
 		}

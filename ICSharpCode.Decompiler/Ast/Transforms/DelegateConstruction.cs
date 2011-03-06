@@ -105,6 +105,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		bool HandleAnonymousMethod(ObjectCreateExpression objectCreateExpression, Expression target, MethodReference methodRef)
 		{
+			if (!context.Settings.AnonymousMethods)
+				return false; // anonymous method decompilation is disabled
+			
 			// Anonymous methods are defined in the same assembly, so there's no need to Resolve().
 			MethodDefinition method = methodRef as MethodDefinition;
 			if (!IsAnonymousMethod(context, method))

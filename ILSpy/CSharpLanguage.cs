@@ -376,7 +376,8 @@ namespace ICSharpCode.ILSpy
 			return new AstBuilder(
 				new DecompilerContext {
 					CancellationToken = options.CancellationToken,
-					CurrentType = currentType
+					CurrentType = currentType,
+					Settings = options.DecompilerSettings
 				});
 		}
 
@@ -419,7 +420,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override bool ShowMember(MemberReference member)
 		{
-			return showAllMembers || !AstBuilder.MemberIsHidden(member);
+			return showAllMembers || !AstBuilder.MemberIsHidden(member, new DecompilationOptions().DecompilerSettings);
 		}
 	}
 }

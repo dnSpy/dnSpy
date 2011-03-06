@@ -68,6 +68,7 @@
     <Compile Include="CecilExtensions.cs" />
     <Compile Include="CodeMappings.cs" />
     <Compile Include="DecompilerException.cs" />
+    <Compile Include="DecompilerSettings.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
     <Compile Include="Disassembler\ILCodeMapping.cs" />
     <Compile Include="Disassembler\ILStructure.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="FlowAnalysis\TransformToSsa.cs" />
     <Compile Include="GraphVizGraph.cs" />
     <Compile Include="ILAst\ArrayInitializers.cs" />
+    <Compile Include="ILAst\DefaultDictionary.cs" />
     <Compile Include="ILAst\GotoRemoval.cs" />
     <Compile Include="ILAst\ILAstBuilder.cs" />
     <Compile Include="ILAst\ILAstOptimizer.cs" />
@@ -98,6 +100,7 @@
     <Compile Include="ILAst\Pattern.cs" />
     <Compile Include="ILAst\PeepholeTransform.cs" />
     <Compile Include="ILAst\TypeAnalysis.cs" />
+    <Compile Include="ILAst\YieldReturnDecompiler.cs" />
     <Compile Include="ITextOutput.cs" />
     <Compile Include="PlainTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

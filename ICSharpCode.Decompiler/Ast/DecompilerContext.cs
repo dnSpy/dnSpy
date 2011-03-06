@@ -12,6 +12,7 @@ namespace ICSharpCode.Decompiler
 		public CancellationToken CancellationToken;
 		public TypeDefinition CurrentType;
 		public MethodDefinition CurrentMethod;
+		public DecompilerSettings Settings = new DecompilerSettings();
 		
 		public DecompilerContext Clone()
 		{
