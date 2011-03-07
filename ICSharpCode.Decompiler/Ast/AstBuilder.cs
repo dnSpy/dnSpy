@@ -153,6 +153,7 @@ namespace ICSharpCode.Decompiler.Ast
 			TypeDefinition oldCurrentType = context.CurrentType;
 			context.CurrentType = typeDef;
 			TypeDeclaration astType = new TypeDeclaration();
+			ConvertAttributes(astType, typeDef);
 			astType.AddAnnotation(typeDef);
 			astType.Modifiers = ConvertModifiers(typeDef);
 			astType.Name = CleanName(typeDef.Name);
@@ -216,7 +217,6 @@ namespace ICSharpCode.Decompiler.Ast
 				AddTypeMembers(astType, typeDef);
 			}
 
-			ConvertAttributes(astType, typeDef);
 			context.CurrentType = oldCurrentType;
 			return astType;
 		}
@@ -506,7 +506,25 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			// Add properties
 			foreach(PropertyDefinition propDef in typeDef.Properties) {
-				astType.AddChild(CreateProperty(propDef), TypeDeclaration.MemberRole);
+				MemberDeclaration astProp = CreateProperty(propDef);
+
+				if (astProp.Name == "Item" && propDef.HasParameters)
+				{
+					var defaultMember = GetDefaultMember(astType.Annotation<TypeDefinition>());
+					if (defaultMember.Item1 == "Item")
+					{
+						astProp = ConvertPropertyToIndexer((PropertyDeclaration)astProp, propDef);
+
+						var astAttr = astType.Attributes.SelectMany(sec => sec.Attributes).First(attr => attr.Annotation<CustomAttribute>() == defaultMember.Item2);
+						var attrSection = (AttributeSection)astAttr.Parent;
+						if (attrSection.Attributes.Count == 1)
+							attrSection.Remove();
+						else
+							astAttr.Remove();
+					}
+				}
+
+				astType.AddChild(astProp, TypeDeclaration.MemberRole);
 			}
 			
 			// Add constructors
@@ -593,6 +611,19 @@ namespace ICSharpCode.Decompiler.Ast
 			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			ConvertAttributes(astMethod, methodDef);
 			return astMethod;
+		}
+
+		IndexerDeclaration ConvertPropertyToIndexer(PropertyDeclaration astProp, PropertyDefinition propDef)
+		{
+			var astIndexer = new IndexerDeclaration();
+			astIndexer.Name = astProp.Name;
+			astIndexer.CopyAnnotationsFrom(astProp);
+			astIndexer.Modifiers = astProp.Modifiers;
+			astIndexer.ReturnType = astProp.ReturnType.Detach();
+			astIndexer.Getter = astProp.Getter.Detach();
+			astIndexer.Setter = astProp.Setter.Detach();
+			astIndexer.Parameters.AddRange(MakeParameters(propDef.Parameters));
+			return astIndexer;
 		}
 
 		PropertyDeclaration CreateProperty(PropertyDefinition propDef)
@@ -894,6 +925,7 @@ namespace ICSharpCode.Decompiler.Ast
 				var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
 				foreach (var customAttribute in customAttributeProvider.CustomAttributes) {
 					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
+					attribute.AddAnnotation(customAttribute);
 					attribute.Type = ConvertType(customAttribute.AttributeType);
 					attributes.Add(attribute);
 					
@@ -1024,5 +1056,23 @@ namespace ICSharpCode.Decompiler.Ast
 
 			return type.CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.FlagsAttribute");
 		}
+
+		/// <summary>
+		/// Gets the name of the default member of the type pointed by the <see cref="System.Reflection.DefaultMemberAttribute"/> attribute.
+		/// </summary>
+		/// <param name="type">The type definition.</param>
+		/// <returns>The name of the default member or null if no <see cref="System.Reflection.DefaultMemberAttribute"/> attribute has been found.</returns>
+		private static Tuple<string, CustomAttribute> GetDefaultMember(TypeDefinition type)
+		{
+			foreach (CustomAttribute ca in type.CustomAttributes)
+			{
+				if (ca.Constructor.FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)")
+				{
+					return Tuple.Create(ca.ConstructorArguments.Single().Value as string, ca);
+				}
+			}
+			return new Tuple<string,CustomAttribute>(null, null);
+		}
+
 	}
 }

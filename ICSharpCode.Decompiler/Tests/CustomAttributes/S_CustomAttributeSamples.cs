@@ -138,6 +138,21 @@ namespace AppliedToPropertySet
 		}
 	}
 }
+//$$ AppliedToIndexer
+namespace AppliedToIndexer
+{
+	public class TestClass
+	{
+		[Obsolete("reason")]
+		public int this[int i]
+		{
+			get
+			{
+				return 0;
+			}
+		}
+	}
+}
 //$$ AppliedToDelegate
 [Obsolete("reason")]
 public delegate int AppliedToDelegate();
@@ -361,7 +376,6 @@ namespace TargetPropertyIndexSetParam
 			[param: MyAttribute]
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -385,7 +399,6 @@ namespace TargetPropertyIndexSetMultiParam
 			[param: MyAttribute]
 			set
 			{
-				return;
 			}
 		}
 	}

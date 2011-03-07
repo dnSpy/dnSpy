@@ -202,8 +202,21 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			WriteCommaSeparatedListInParenthesis(list.SafeCast<ParameterDeclaration, AstNode>(), spaceWithin);
 		}
+
 		#endif
-		
+
+		void WriteCommaSeparatedListInBrackets(IEnumerable<ParameterDeclaration> list, bool spaceWithin)
+		{
+			WriteToken("[", AstNode.Roles.LBracket);
+			if (list.Any())
+			{
+				Space(spaceWithin);
+				WriteCommaSeparatedList(list.SafeCast<ParameterDeclaration, AstNode>());
+				Space(spaceWithin);
+			}
+			WriteToken("]", AstNode.Roles.RBracket);
+		}
+
 		void WriteCommaSeparatedListInBrackets(IEnumerable<Expression> list)
 		{
 			WriteToken("[", AstNode.Roles.LBracket);
@@ -1815,7 +1828,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WritePrivateImplementationType(indexerDeclaration.PrivateImplementationType);
 			WriteKeyword("this");
 			Space(policy.BeforeMethodDeclarationParentheses);
-			WriteCommaSeparatedListInParenthesis(indexerDeclaration.Parameters, policy.WithinMethodDeclarationParentheses);
+			WriteCommaSeparatedListInBrackets(indexerDeclaration.Parameters, policy.WithinMethodDeclarationParentheses);
 			OpenBrace(policy.PropertyBraceStyle);
 			// output get/set in their original order
 			foreach (AstNode node in indexerDeclaration.Children) {
