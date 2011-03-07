@@ -1087,12 +1087,8 @@ namespace ICSharpCode.Decompiler.Ast
 		private static Tuple<string, CustomAttribute> GetDefaultMember(TypeDefinition type)
 		{
 			foreach (CustomAttribute ca in type.CustomAttributes)
-			{
 				if (ca.Constructor.FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)")
-				{
 					return Tuple.Create(ca.ConstructorArguments.Single().Value as string, ca);
-				}
-			}
 			return new Tuple<string,CustomAttribute>(null, null);
 		}
 

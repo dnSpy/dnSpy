@@ -208,8 +208,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		void WriteCommaSeparatedListInBrackets(IEnumerable<ParameterDeclaration> list, bool spaceWithin)
 		{
 			WriteToken("[", AstNode.Roles.LBracket);
-			if (list.Any())
-			{
+			if (list.Any()) {
 				Space(spaceWithin);
 				WriteCommaSeparatedList(list.SafeCast<ParameterDeclaration, AstNode>());
 				Space(spaceWithin);
