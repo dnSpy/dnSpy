@@ -118,8 +118,6 @@ namespace ICSharpCode.Decompiler.ILAst
 				// the compiler might skip the above instruction in release builds; in that case, it directly returns stloc.Operand
 				var2 = var1;
 			}
-			if (!SkipDummyBr(method, ref i))
-				return false;
 			ILExpression retArg;
 			if (i < method.Body.Count && method.Body[i].Match(ILCode.Ret, out retArg)) {
 				// ret(ldloc(var_2))
@@ -144,17 +142,6 @@ namespace ICSharpCode.Decompiler.ILAst
 				return method.Resolve();
 			else
 				return method as MethodDefinition;
-		}
-		
-		bool SkipDummyBr(ILBlock method, ref int i)
-		{
-			ILLabel target;
-			if (i + 1 < method.Body.Count && method.Body[i].Match(ILCode.Br, out target)) {
-				if (target != method.Body[i + 1])
-					return false;
-				i += 2;
-			}
-			return true;
 		}
 		
 		bool MatchEnumeratorCreationNewObj(ILExpression expr, out MethodDefinition ctor)
@@ -243,7 +230,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				StoreToVariable v = new StoreToVariable(new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromArgument.This));
 				if (v.Match(method.Body[0])) {
 					int i = 1;
-					if (SkipDummyBr(method, ref i) && i == method.Body.Count - 1) {
+					if (i == method.Body.Count - 1) {
 						if (new ILExpression(ILCode.Ret, null, new LoadFromVariable(v)).Match(method.Body[i])) {
 							currentField = GetFieldDefinition(((ILExpression)method.Body[0]).Arguments[0].Operand as FieldReference);
 						}
@@ -310,16 +297,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach (var tryFinally in ilMethod.GetSelfAndChildrenRecursive<ILTryCatchBlock>()) {
 				Interval interval = ranges[tryFinally.TryBlock.Body[0]].ToEnclosingInterval();
 				var finallyBody = tryFinally.FinallyBlock.Body;
-				if (!(finallyBody.Count == 2 || finallyBody.Count == 3))
+				if (finallyBody.Count != 2)
 					throw new YieldAnalysisFailedException();
 				ILExpression call = finallyBody[0] as ILExpression;
 				if (call == null || call.Code != ILCode.Call || call.Arguments.Count != 1)
 					throw new YieldAnalysisFailedException();
 				if (call.Arguments[0].Code != ILCode.Ldarg || ((ParameterDefinition)call.Arguments[0].Operand).Index >= 0)
 					throw new YieldAnalysisFailedException();
-				if (finallyBody.Count == 3 && !finallyBody[1].Match(ILCode.Nop))
-					throw new YieldAnalysisFailedException();
-				if (!finallyBody[finallyBody.Count - 1].Match(ILCode.Endfinally))
+				if (!finallyBody[1].Match(ILCode.Endfinally))
 					throw new YieldAnalysisFailedException();
 				
 				MethodDefinition mdef = GetMethodDefinition(call.Operand as MethodReference);
@@ -651,8 +636,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!ilMethod.Body.Last().Match(ILCode.Ret, out lastReturnArg))
 				throw new YieldAnalysisFailedException();
 			
-			ilMethod.Body.RemoveAll(n => n.Match(ILCode.Nop)); // remove nops
-			
 			// There are two possibilities:
 			if (lastReturnArg.Code == ILCode.Ldloc) {
 				// a) the compiler uses a variable for returns (in debug builds, or when there are try-finally blocks)
@@ -682,7 +665,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				ILBlock faultBlock = tryFaultBlock.FaultBlock;
 				// Ensure the fault block contains the call to Dispose().
-				if (!(faultBlock.Body.Count == 2 || faultBlock.Body.Count == 3))
+				if (faultBlock.Body.Count != 2)
 					throw new YieldAnalysisFailedException();
 				MethodReference disposeMethodRef;
 				ILExpression disposeArg;
@@ -690,13 +673,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					throw new YieldAnalysisFailedException();
 				if (GetMethodDefinition(disposeMethodRef) != disposeMethod || !LoadFromArgument.This.Match(disposeArg))
 					throw new YieldAnalysisFailedException();
-				if (faultBlock.Body.Count == 3 && !faultBlock.Body[1].Match(ILCode.Nop))
-					throw new YieldAnalysisFailedException();
-				if (!faultBlock.Body[faultBlock.Body.Count - 1].Match(ILCode.Endfinally))
+				if (!faultBlock.Body[1].Match(ILCode.Endfinally))
 					throw new YieldAnalysisFailedException();
 				
 				body = tryFaultBlock.TryBlock.Body;
-				body.RemoveAll(n => n.Match(ILCode.Nop)); // remove nops
 				bodyLength = body.Count;
 			} else {
 				// no try-finally blocks
@@ -872,7 +852,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		ILBlock ConvertFinallyBlock(MethodDefinition finallyMethod)
 		{
 			ILBlock block = CreateILAst(finallyMethod);
-			block.Body.RemoveAll(n => n.Match(ILCode.Nop));
 			// Get rid of assignment to state
 			FieldReference stfld;
 			List<ILExpression> args;
