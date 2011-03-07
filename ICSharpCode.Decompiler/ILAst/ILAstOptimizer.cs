@@ -11,6 +11,7 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public enum ILAstOptimizationStep
 	{
+		InlineVariables,
 		ReduceBranchInstructionSet,
 		YieldReturn,
 		SplitToMovableBlocks,
@@ -34,6 +35,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
+			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables) return;
+			InlineVariables(method);
+			
 			if (abortBeforeStep == ILAstOptimizationStep.ReduceBranchInstructionSet) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ReduceBranchInstructionSet(block);
@@ -93,6 +97,83 @@ namespace ICSharpCode.Decompiler.ILAst
 			TypeAnalysis.Run(context, method);
 			
 			GotoRemoval.RemoveRedundantCode(method);
+		}
+		
+		void InlineVariables(ILBlock method)
+		{
+			// Analyse the whole method
+			Dictionary<ILVariable, int> numStloc  = new Dictionary<ILVariable, int>();
+			Dictionary<ILVariable, int> numLdloc  = new Dictionary<ILVariable, int>();
+			Dictionary<ILVariable, int> numLdloca = new Dictionary<ILVariable, int>();
+			
+			foreach(ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				ILVariable locVar = expr.Operand as ILVariable;
+				if (locVar != null) {
+					if (expr.Code == ILCode.Stloc) {
+						numStloc[locVar] = numStloc.GetOrDefault(locVar) + 1;
+					} else if (expr.Code == ILCode.Ldloc) {
+						numLdloc[locVar] = numLdloc.GetOrDefault(locVar) + 1;
+					} else if (expr.Code == ILCode.Ldloca) {
+						numLdloca[locVar] = numLdloca.GetOrDefault(locVar) + 1;
+					} else {
+						throw new NotSupportedException(expr.Code.ToString());
+					}
+				}
+			}
+			
+			// Inline all blocks
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				List<ILNode> body = block.Body;
+				for(int i = 0; i < body.Count - 1;) {
+					ILExpression nextExpr = body[i + 1] as ILExpression;
+					ILVariable locVar;
+					ILExpression expr;
+					ILExpression ldParent;
+					int ldPos;
+					if (body[i].Match(ILCode.Stloc, out locVar, out expr) &&
+					    numStloc.GetOrDefault(locVar) == 1 &&
+					    numLdloc.GetOrDefault(locVar) == 1 &&
+					    numLdloca.GetOrDefault(locVar) == 0 &&
+						nextExpr != null &&
+					    FindLdloc(nextExpr, locVar, out ldParent, out ldPos) == true &&
+					    ldParent != null)
+					{
+						// Assign the ranges of the optimized instrustions
+						expr.ILRanges.AddRange(((ILExpression)body[i]).ILRanges);
+						expr.ILRanges.AddRange(ldParent.Arguments[ldPos].ILRanges);
+						
+						// We are moving the expression evaluation past the other aguments.
+						// It is ok to pass ldloc because the expression can not contain stloc and thus the ldloc will still return the same value
+						body.RemoveAt(i);
+						ldParent.Arguments[ldPos] = expr; // Inline the stloc body
+						i = Math.Max(0, i - 1); // Go back one step
+					} else {
+						i++;
+					}
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Finds the position to inline to.
+		/// </summary>
+		/// <returns>true = found; false = cannot continue search; null = not found</returns>
+		static bool? FindLdloc(ILExpression expr, ILVariable v, out ILExpression parent, out int pos)
+		{
+			parent = null;
+			pos = 0;
+			for (int i = 0; i < expr.Arguments.Count; i++) {
+				ILExpression arg = expr.Arguments[i];
+				if (arg.Code == ILCode.Ldloc && arg.Operand == v) {
+					parent = expr;
+					pos = i;
+					return true;
+				}
+				bool? r = FindLdloc(arg, v, out parent, out pos);
+				if (r != null)
+					return r;
+			}
+			return expr.Code == ILCode.Ldloc ? (bool?)null : false;
 		}
 		
 		/// <summary>
@@ -939,6 +1020,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				return expr.Code.CanFallThough();
 			}
 			return true;
+		}
+		
+		public static V GetOrDefault<K,V>(this Dictionary<K, V> dict, K key)
+		{
+			V ret;
+			dict.TryGetValue(key, out ret);
+			return ret;
 		}
 		
 		public static void RemoveOrThrow<T>(this ICollection<T> collection, T item)
