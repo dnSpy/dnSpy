@@ -24,9 +24,20 @@ namespace ICSharpCode.Decompiler
 	/// </summary>
 	public class SourceCodeMapping
 	{
+		/// <summary>
+		/// Gets or sets the source code line number in the output.
+		/// </summary>
 		public int SourceCodeLine { get; set; }
 		
+		/// <summary>
+		/// Gets or sets IL Range offset for the source code line. E.g.: 13-19 &lt;-&gt; 135.
+		/// </summary>
 		public ILRange ILInstructionOffset { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the current types at the source code line. E.g.: for int a = dictionary.Count; the list will contain System.Int32 and System.Collections.Generic.Dictionary&lt;TKey, TValue&gt;.
+		/// </summary>
+		public List<TypeDefinition> InnerTypes { get; set; }
 		
 		public int[] ToArray()
 		{
@@ -43,10 +54,19 @@ namespace ICSharpCode.Decompiler
 	/// </summary>
 	public sealed class MethodMapping
 	{
+		/// <summary>
+		/// Gets or sets the type of the mapping.
+		/// </summary>
 		public TypeDefinition Type { get; set; }
 		
+		/// <summary>
+		/// Metadata token of the method.
+		/// </summary>
 		public uint MetadataToken { get; set; }
 		
+		/// <summary>
+		/// Gets or sets the source code mappings.
+		/// </summary>
 		public List<SourceCodeMapping> MethodCodeMappings { get; set; }
 		
 		public int[] ToArray()
