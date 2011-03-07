@@ -535,6 +535,16 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			
+			if (cecilMethod.Name == ".ctor" && cecilMethod.DeclaringType.IsValueType) {
+				// On value types, the constructor can be called.
+				// This is equivalent to 'target = new ValueType(args);'.
+				ObjectCreateExpression oce = new ObjectCreateExpression();
+				oce.Type = AstBuilder.ConvertType(cecilMethod.DeclaringType);
+				AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
+				oce.Arguments.AddRange(methodArgs);
+				return new AssignmentExpression(target, oce);
+			}
+			
 			if (cecilMethod.Name == "Get" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 1) {
 				return target.Indexer(methodArgs);
 			} else if (cecilMethod.Name == "Set" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 2) {
