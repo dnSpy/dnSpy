@@ -650,7 +650,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				} else {
 					ILVariable tmpVar = new ILVariable() { Name = "expr_" + byteCode.Offset.ToString("X2"), IsGenerated = true };
 					ast.Add(new ILExpression(ILCode.Stloc, tmpVar, expr));
-					foreach(ILVariable storeTo in byteCode.StoreTo) {
+					foreach(ILVariable storeTo in byteCode.StoreTo.AsEnumerable().Reverse()) {
 						ast.Add(new ILExpression(ILCode.Stloc, storeTo, new ILExpression(ILCode.Ldloc, tmpVar)));
 					}
 				}
