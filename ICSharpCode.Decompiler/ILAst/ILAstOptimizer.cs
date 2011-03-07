@@ -24,6 +24,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		DuplicateReturns,
 		FlattenIfStatements,
 		PeepholeTransforms,
+		InlineVariables2,
 		TypeInference,
 		None
 	}
@@ -40,7 +41,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			SimpleGotoAndNopRemoval(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables) return;
-			// Works better are simple goto removal because of the following pattern: stloc X; br Next; Next:; ldloc X
+			// Works better after simple goto removal because of the following debug pattern: stloc X; br Next; Next:; ldloc X
 			InlineVariables(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.ReduceBranchInstructionSet) return;
@@ -98,6 +99,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (abortBeforeStep == ILAstOptimizationStep.PeepholeTransforms) return;
 			PeepholeTransforms.Run(context, method);
+			
+			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
+			InlineVariables(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.TypeInference) return;
 			TypeAnalysis.Run(context, method);
@@ -195,6 +199,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			parent = null;
 			pos = 0;
 			for (int i = 0; i < expr.Arguments.Count; i++) {
+				// Stop when seeing an opcode that does not guarantee that its operands will be evaluated
+				// Inlining in that case migth result in the inlined expresion not being evaluted
+				if (i == 1 && (expr.Code == ILCode.LogicAnd || expr.Code == ILCode.LogicOr || expr.Code == ILCode.TernaryOp))
+					return false;
+				
 				ILExpression arg = expr.Arguments[i];
 				if (arg.Code == ILCode.Ldloc && arg.Operand == v) {
 					parent = expr;
