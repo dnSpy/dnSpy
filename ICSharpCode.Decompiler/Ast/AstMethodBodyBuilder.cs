@@ -152,6 +152,12 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 				if (tryCatchNode.FinallyBlock != null)
 					tryCatchStmt.FinallyBlock = TransformBlock(tryCatchNode.FinallyBlock);
+				if (tryCatchNode.FaultBlock != null) {
+					CatchClause cc = new CatchClause();
+					cc.Body = TransformBlock(tryCatchNode.FaultBlock);
+					cc.Body.Add(new ThrowStatement()); // rethrow
+					tryCatchStmt.CatchClauses.Add(cc);
+				}
 				yield return tryCatchStmt;
 			} else if (node is ILBlock) {
 				yield return TransformBlock((ILBlock)node);
@@ -532,6 +538,16 @@ namespace ICSharpCode.Decompiler.Ast
 					// If we're not calling a method in the current class; we must be calling one in the base class.
 					target = new BaseReferenceExpression();
 				}
+			}
+			
+			if (cecilMethod.Name == ".ctor" && cecilMethod.DeclaringType.IsValueType) {
+				// On value types, the constructor can be called.
+				// This is equivalent to 'target = new ValueType(args);'.
+				ObjectCreateExpression oce = new ObjectCreateExpression();
+				oce.Type = AstBuilder.ConvertType(cecilMethod.DeclaringType);
+				AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
+				oce.Arguments.AddRange(methodArgs);
+				return new AssignmentExpression(target, oce);
 			}
 			
 			if (cecilMethod.Name == "Get" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 1) {

@@ -41,8 +41,6 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
-		public event EventHandler YieldReturnChanged;
-		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)

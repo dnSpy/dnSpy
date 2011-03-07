@@ -9,6 +9,11 @@ public static class ValueTypes
 	{
 		public int Field;
 		
+		public S(int field)
+		{
+			this.Field = field;
+		}
+		
 		public void SetField()
 		{
 			this.Field = 5;
@@ -44,6 +49,17 @@ public static class ValueTypes
 	public static void InitObj3(out S p)
 	{
 		p = default(S);
+	}
+	
+	public static S CallValueTypeCtor1()
+	{
+		return new S(10);
+	}
+	
+	public static S CallValueTypeCtor2()
+	{
+		S s = new S(10);
+		return s;
 	}
 	
 	public static S Copy1(S p)

@@ -11,6 +11,8 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public enum ILAstOptimizationStep
 	{
+		SimpleGotoAndNopRemoval,
+		InlineVariables,
 		ReduceBranchInstructionSet,
 		YieldReturn,
 		SplitToMovableBlocks,
@@ -22,6 +24,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		DuplicateReturns,
 		FlattenIfStatements,
 		PeepholeTransforms,
+		InlineVariables2,
 		TypeInference,
 		None
 	}
@@ -34,6 +37,13 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
+			if (abortBeforeStep == ILAstOptimizationStep.SimpleGotoAndNopRemoval) return;
+			SimpleGotoAndNopRemoval(method);
+			
+			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables) return;
+			// Works better after simple goto removal because of the following debug pattern: stloc X; br Next; Next:; ldloc X
+			InlineVariables(method);
+			
 			if (abortBeforeStep == ILAstOptimizationStep.ReduceBranchInstructionSet) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ReduceBranchInstructionSet(block);
@@ -78,6 +88,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			FlattenBasicBlocks(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.GotoRemoval) return;
+			SimpleGotoAndNopRemoval(method);
 			new GotoRemoval().RemoveGotos(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.DuplicateReturns) return;
@@ -89,10 +100,121 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (abortBeforeStep == ILAstOptimizationStep.PeepholeTransforms) return;
 			PeepholeTransforms.Run(context, method);
 			
+			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
+			InlineVariables(method);
+			
 			if (abortBeforeStep == ILAstOptimizationStep.TypeInference) return;
 			TypeAnalysis.Run(context, method);
 			
 			GotoRemoval.RemoveRedundantCode(method);
+		}
+		
+		void SimpleGotoAndNopRemoval(ILBlock method)
+		{
+			Dictionary<ILLabel, int> labelRefCount = new Dictionary<ILLabel, int>();
+			foreach (ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets())) {
+				labelRefCount[target] = labelRefCount.GetOrDefault(target) + 1;
+			}
+			
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+				List<ILNode> body = block.Body;
+				List<ILNode> newBody = new List<ILNode>(body.Count);
+				for (int i = 0; i < body.Count; i++) {
+					ILLabel target;
+					if (body[i].Match(ILCode.Br, out target) && i+1 < body.Count && body[i+1] == target) {
+						// Ignore the branch  TODO: ILRanges
+						if (labelRefCount[target] == 1)
+							i++;  // Ignore the label as well
+					} else if (body[i].Match(ILCode.Nop)){
+						// Ignore nop  TODO: ILRanges
+					} else {
+						newBody.Add(body[i]);
+					}
+				}
+				block.Body = newBody;
+			}
+		}
+		
+		void InlineVariables(ILBlock method)
+		{
+			// Analyse the whole method
+			Dictionary<ILVariable, int> numStloc  = new Dictionary<ILVariable, int>();
+			Dictionary<ILVariable, int> numLdloc  = new Dictionary<ILVariable, int>();
+			Dictionary<ILVariable, int> numLdloca = new Dictionary<ILVariable, int>();
+			
+			foreach(ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				ILVariable locVar = expr.Operand as ILVariable;
+				if (locVar != null) {
+					if (expr.Code == ILCode.Stloc) {
+						numStloc[locVar] = numStloc.GetOrDefault(locVar) + 1;
+					} else if (expr.Code == ILCode.Ldloc) {
+						numLdloc[locVar] = numLdloc.GetOrDefault(locVar) + 1;
+					} else if (expr.Code == ILCode.Ldloca) {
+						numLdloca[locVar] = numLdloca.GetOrDefault(locVar) + 1;
+					} else {
+						throw new NotSupportedException(expr.Code.ToString());
+					}
+				}
+			}
+			
+			// Inline all blocks
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				List<ILNode> body = block.Body;
+				for(int i = 0; i < body.Count - 1;) {
+					ILExpression nextExpr = body[i + 1] as ILExpression;
+					ILVariable locVar;
+					ILExpression expr;
+					ILExpression ldParent;
+					int ldPos;
+					if (body[i].Match(ILCode.Stloc, out locVar, out expr) &&
+					    numStloc.GetOrDefault(locVar) == 1 &&
+					    numLdloc.GetOrDefault(locVar) == 1 &&
+					    numLdloca.GetOrDefault(locVar) == 0 &&
+						nextExpr != null &&
+					    FindLdloc(nextExpr, locVar, out ldParent, out ldPos) == true &&
+					    ldParent != null)
+					{
+						// Assign the ranges of the optimized instrustions
+						expr.ILRanges.AddRange(((ILExpression)body[i]).ILRanges);
+						expr.ILRanges.AddRange(ldParent.Arguments[ldPos].ILRanges);
+						
+						// We are moving the expression evaluation past the other aguments.
+						// It is ok to pass ldloc because the expression can not contain stloc and thus the ldloc will still return the same value
+						body.RemoveAt(i);
+						ldParent.Arguments[ldPos] = expr; // Inline the stloc body
+						i = Math.Max(0, i - 1); // Go back one step
+					} else {
+						i++;
+					}
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Finds the position to inline to.
+		/// </summary>
+		/// <returns>true = found; false = cannot continue search; null = not found</returns>
+		static bool? FindLdloc(ILExpression expr, ILVariable v, out ILExpression parent, out int pos)
+		{
+			parent = null;
+			pos = 0;
+			for (int i = 0; i < expr.Arguments.Count; i++) {
+				// Stop when seeing an opcode that does not guarantee that its operands will be evaluated
+				// Inlining in that case migth result in the inlined expresion not being evaluted
+				if (i == 1 && (expr.Code == ILCode.LogicAnd || expr.Code == ILCode.LogicOr || expr.Code == ILCode.TernaryOp))
+					return false;
+				
+				ILExpression arg = expr.Arguments[i];
+				if (arg.Code == ILCode.Ldloc && arg.Operand == v) {
+					parent = expr;
+					pos = i;
+					return true;
+				}
+				bool? r = FindLdloc(arg, v, out parent, out pos);
+				if (r != null)
+					return r;
+			}
+			return expr.Code == ILCode.Ldloc ? (bool?)null : false;
 		}
 		
 		/// <summary>
@@ -136,10 +258,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		void SplitToBasicBlocks(ILBlock block)
 		{
-			// Remve no-ops
-			// TODO: Assign the no-op range to someting
-			block.Body = block.Body.Where(n => !(n is ILExpression && ((ILExpression)n).Code == ILCode.Nop)).ToList();
-			
 			List<ILNode> basicBlocks = new List<ILNode>();
 			
 			ILBasicBlock basicBlock = new ILBasicBlock() {
@@ -939,6 +1057,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				return expr.Code.CanFallThough();
 			}
 			return true;
+		}
+		
+		public static V GetOrDefault<K,V>(this Dictionary<K, V> dict, K key)
+		{
+			V ret;
+			dict.TryGetValue(key, out ret);
+			return ret;
 		}
 		
 		public static void RemoveOrThrow<T>(this ICollection<T> collection, T item)
