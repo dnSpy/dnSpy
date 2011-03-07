@@ -11,6 +11,7 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public enum ILAstOptimizationStep
 	{
+		SimpleGotoAndNopRemoval,
 		InlineVariables,
 		ReduceBranchInstructionSet,
 		YieldReturn,
@@ -35,7 +36,11 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
+			if (abortBeforeStep == ILAstOptimizationStep.SimpleGotoAndNopRemoval) return;
+			SimpleGotoAndNopRemoval(method);
+			
 			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables) return;
+			// Works better are simple goto removal because of the following pattern: stloc X; br Next; Next:; ldloc X
 			InlineVariables(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.ReduceBranchInstructionSet) return;
@@ -82,6 +87,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			FlattenBasicBlocks(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.GotoRemoval) return;
+			SimpleGotoAndNopRemoval(method);
 			new GotoRemoval().RemoveGotos(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.DuplicateReturns) return;
@@ -97,6 +103,32 @@ namespace ICSharpCode.Decompiler.ILAst
 			TypeAnalysis.Run(context, method);
 			
 			GotoRemoval.RemoveRedundantCode(method);
+		}
+		
+		void SimpleGotoAndNopRemoval(ILBlock method)
+		{
+			Dictionary<ILLabel, int> labelRefCount = new Dictionary<ILLabel, int>();
+			foreach (ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets())) {
+				labelRefCount[target] = labelRefCount.GetOrDefault(target) + 1;
+			}
+			
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+				List<ILNode> body = block.Body;
+				List<ILNode> newBody = new List<ILNode>(body.Count);
+				for (int i = 0; i < body.Count; i++) {
+					ILLabel target;
+					if (body[i].Match(ILCode.Br, out target) && i+1 < body.Count && body[i+1] == target) {
+						// Ignore the branch  TODO: ILRanges
+						if (labelRefCount[target] == 1)
+							i++;  // Ignore the label as well
+					} else if (body[i].Match(ILCode.Nop)){
+						// Ignore nop  TODO: ILRanges
+					} else {
+						newBody.Add(body[i]);
+					}
+				}
+				block.Body = newBody;
+			}
 		}
 		
 		void InlineVariables(ILBlock method)
@@ -217,10 +249,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		void SplitToBasicBlocks(ILBlock block)
 		{
-			// Remve no-ops
-			// TODO: Assign the no-op range to someting
-			block.Body = block.Body.Where(n => !(n is ILExpression && ((ILExpression)n).Code == ILCode.Nop)).ToList();
-			
 			List<ILNode> basicBlocks = new List<ILNode>();
 			
 			ILBasicBlock basicBlock = new ILBasicBlock() {
