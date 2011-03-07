@@ -231,9 +231,12 @@ namespace ICSharpCode.Decompiler.Ast
 			int pos = name.LastIndexOf('`');
 			if (pos >= 0)
 				name = name.Substring(0, pos);
+			pos = name.LastIndexOf('.');
+			if (pos >= 0)
+				name = name.Substring(pos + 1);
 			return name;
 		}
-		
+
 		#region Convert Type Reference
 		/// <summary>
 		/// Converts a type reference.
@@ -489,6 +492,7 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			return modifiers;
 		}
+
 		#endregion
 		
 		void AddTypeMembers(TypeDeclaration astType, TypeDefinition typeDef)
@@ -503,29 +507,9 @@ namespace ICSharpCode.Decompiler.Ast
 			foreach(EventDefinition eventDef in typeDef.Events) {
 				astType.AddChild(CreateEvent(eventDef), TypeDeclaration.MemberRole);
 			}
-			
+
 			// Add properties
-			foreach(PropertyDefinition propDef in typeDef.Properties) {
-				MemberDeclaration astProp = CreateProperty(propDef);
-
-				if (astProp.Name == "Item" && propDef.HasParameters)
-				{
-					var defaultMember = GetDefaultMember(astType.Annotation<TypeDefinition>());
-					if (defaultMember.Item1 == "Item")
-					{
-						astProp = ConvertPropertyToIndexer((PropertyDeclaration)astProp, propDef);
-
-						var astAttr = astType.Attributes.SelectMany(sec => sec.Attributes).First(attr => attr.Annotation<CustomAttribute>() == defaultMember.Item2);
-						var attrSection = (AttributeSection)astAttr.Parent;
-						if (attrSection.Attributes.Count == 1)
-							attrSection.Remove();
-						else
-							astAttr.Remove();
-					}
-				}
-
-				astType.AddChild(astProp, TypeDeclaration.MemberRole);
-			}
+			CreateProperties(astType, typeDef);
 			
 			// Add constructors
 			foreach(MethodDefinition methodDef in typeDef.Methods) {
@@ -542,6 +526,35 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 
+		private void CreateProperties(TypeDeclaration astType, TypeDefinition typeDef)
+		{
+			CustomAttribute attributeToRemove = null;
+			foreach (PropertyDefinition propDef in typeDef.Properties) {
+				MemberDeclaration astProp = CreateProperty(propDef);
+
+				if (astProp.Name == "Item" && propDef.HasParameters) {
+					var defaultMember = GetDefaultMember(astType.Annotation<TypeDefinition>());
+					if (defaultMember.Item1 == "Item") {
+						astProp = ConvertPropertyToIndexer((PropertyDeclaration)astProp, propDef);
+						attributeToRemove = defaultMember.Item2;
+					} else if ((propDef.GetMethod ?? propDef.SetMethod).HasOverrides) {
+						astProp = ConvertPropertyToIndexer((PropertyDeclaration)astProp, propDef);
+					}
+				}
+
+				astType.AddChild(astProp, TypeDeclaration.MemberRole);
+			}
+
+			if (attributeToRemove != null) {
+				var astAttr = astType.Attributes.SelectMany(sec => sec.Attributes).First(attr => attr.Annotation<CustomAttribute>() == attributeToRemove);
+				var attrSection = (AttributeSection)astAttr.Parent;
+				if (attrSection.Attributes.Count == 1)
+					attrSection.Remove();
+				else
+					astAttr.Remove();
+			}
+		}
+
 		MethodDeclaration CreateMethod(MethodDefinition methodDef)
 		{
 			MethodDeclaration astMethod = new MethodDeclaration();
@@ -552,7 +565,10 @@ namespace ICSharpCode.Decompiler.Ast
 			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 			astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
-				astMethod.Modifiers = ConvertModifiers(methodDef);
+				if (!methodDef.HasOverrides)
+					astMethod.Modifiers = ConvertModifiers(methodDef);
+				else
+					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			}
 			ConvertAttributes(astMethod, methodDef);
@@ -618,7 +634,9 @@ namespace ICSharpCode.Decompiler.Ast
 			var astIndexer = new IndexerDeclaration();
 			astIndexer.Name = astProp.Name;
 			astIndexer.CopyAnnotationsFrom(astProp);
+			astProp.Attributes.MoveTo(astIndexer.Attributes);
 			astIndexer.Modifiers = astProp.Modifiers;
+			astIndexer.PrivateImplementationType = astProp.PrivateImplementationType.Detach();
 			astIndexer.ReturnType = astProp.ReturnType.Detach();
 			astIndexer.Getter = astProp.Getter.Detach();
 			astIndexer.Setter = astProp.Setter.Detach();
@@ -630,7 +648,11 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			PropertyDeclaration astProp = new PropertyDeclaration();
 			astProp.AddAnnotation(propDef);
-			astProp.Modifiers = ConvertModifiers(propDef.GetMethod ?? propDef.SetMethod);
+			var accessor = propDef.SetMethod ?? propDef.GetMethod;
+			if (!propDef.DeclaringType.IsInterface && !accessor.HasOverrides) {
+				astProp.Modifiers = ConvertModifiers(accessor);
+			} else if (accessor.HasOverrides)
+				astProp.PrivateImplementationType = ConvertType(accessor.Overrides.First().DeclaringType);
 			astProp.Name = CleanName(propDef.Name);
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			if (propDef.GetMethod != null) {
