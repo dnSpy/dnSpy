@@ -172,11 +172,20 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			AstNode node = TransformByteCode(expr);
 			Expression astExpr = node as Expression;
+			
+			// get IL ranges - used in debugger
 			List<ILRange> ilRanges = expr.GetILRanges();
+			AstNode result;
+			
 			if (astExpr != null)
-				return Convert(astExpr, expr.InferredType, expr.ExpectedType).WithAnnotation(ilRanges);
+				result = Convert(astExpr, expr.InferredType, expr.ExpectedType);
 			else
-				return node.WithAnnotation(ilRanges);
+				result = node;
+			
+			if (result != null)
+				return result.WithAnnotation(ilRanges);
+			
+			return result;
 		}
 		
 		AstNode TransformByteCode(ILExpression byteCode)
