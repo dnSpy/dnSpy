@@ -644,29 +644,53 @@ namespace ICSharpCode.Decompiler.Ast
 			return astIndexer;
 		}
 
+		Modifiers FixUpVisibility(Modifiers m)
+		{
+			Modifiers v = m & Modifiers.VisibilityMask;
+			// If any of the modifiers is public, use that
+			if ((v & Modifiers.Public) == Modifiers.Public)
+				return Modifiers.Public | (m & ~Modifiers.VisibilityMask);
+			// If both modifiers are private, no need to fix anything
+			if (v == Modifiers.Private)
+				return m;
+			// Otherwise, use the other modifiers (internal and/or protected)
+			return m & ~Modifiers.Private;
+		}
+
 		PropertyDeclaration CreateProperty(PropertyDefinition propDef)
 		{
 			PropertyDeclaration astProp = new PropertyDeclaration();
 			astProp.AddAnnotation(propDef);
-			var accessor = propDef.SetMethod ?? propDef.GetMethod;
+			var accessor = propDef.GetMethod ?? propDef.SetMethod;
+			Modifiers getterModifiers = Modifiers.None;
+			Modifiers setterModifiers = Modifiers.None;
 			if (!propDef.DeclaringType.IsInterface && !accessor.HasOverrides) {
-				astProp.Modifiers = ConvertModifiers(accessor);
-			} else if (accessor.HasOverrides)
+				getterModifiers = ConvertModifiers(propDef.GetMethod);
+				setterModifiers = ConvertModifiers(propDef.SetMethod);
+				astProp.Modifiers = FixUpVisibility(getterModifiers | setterModifiers);
+			} else if (accessor.HasOverrides) {
 				astProp.PrivateImplementationType = ConvertType(accessor.Overrides.First().DeclaringType);
+			}
 			astProp.Name = CleanName(propDef.Name);
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			if (propDef.GetMethod != null) {
-				astProp.Getter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context)
-				}.WithAnnotation(propDef.GetMethod);
+				astProp.Getter = new Accessor();
+				astProp.Getter.Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context);
+				astProp.AddAnnotation(propDef.GetMethod);
 				ConvertAttributes(astProp.Getter, propDef.GetMethod);
+				
+				if ((getterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
+					astProp.Getter.Modifiers = getterModifiers & Modifiers.VisibilityMask;
 			}
 			if (propDef.SetMethod != null) {
-				astProp.Setter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context)
-				}.WithAnnotation(propDef.SetMethod);
+				astProp.Setter = new Accessor();
+				astProp.Setter.Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context);
+				astProp.Setter.AddAnnotation(propDef.SetMethod);
 				ConvertAttributes(astProp.Setter, propDef.SetMethod);
 				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), AttributeTarget.Param);
+				
+				if ((setterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
+					astProp.Setter.Modifiers = setterModifiers & Modifiers.VisibilityMask;
 			}
 			ConvertCustomAttributes(astProp, propDef);
 			return astProp;
