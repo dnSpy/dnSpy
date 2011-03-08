@@ -4,7 +4,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -829,7 +828,6 @@ namespace ILSpy.Debugger.Services
 				} else {
 					var debugType = frame.MethodInfo.DeclaringType;
 					string fullName = debugType.Namespace + "." + debugType.Name;
-					FileStream ds = new FileStream("dasda", FileMode.Create);
 					
 					// search for type in the current assembly list
 					TypeReference typeRef = null;
