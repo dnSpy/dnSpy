@@ -64,6 +64,11 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			return p != null ? new VariablePlaceholder(p) : null;
 		}
 		
+		public static implicit operator AttributeSection(Pattern p)
+		{
+			return p != null ? new AttributeSectionPlaceholder(p) : null;
+		}
+		
 		// Make debugging easier by giving Patterns a ToString() implementation
 		public override string ToString()
 		{
