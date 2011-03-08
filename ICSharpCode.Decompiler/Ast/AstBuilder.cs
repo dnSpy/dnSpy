@@ -702,7 +702,10 @@ namespace ICSharpCode.Decompiler.Ast
 			astEvent.AddAnnotation(eventDef);
 			astEvent.Name = CleanName(eventDef.Name);
 			astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
-			astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
+			if (eventDef.AddMethod == null || !eventDef.AddMethod.HasOverrides)
+				astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
+			else
+				astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().DeclaringType);
 			if (eventDef.AddMethod != null) {
 				astEvent.AddAccessor = new Accessor {
 					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
