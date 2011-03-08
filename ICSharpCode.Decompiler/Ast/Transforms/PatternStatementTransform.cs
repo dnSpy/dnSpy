@@ -14,11 +14,24 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 	/// </summary>
 	public class PatternStatementTransform : IAstTransform
 	{
+		DecompilerContext context;
+		
+		public PatternStatementTransform(DecompilerContext context)
+		{
+			if (context == null)
+				throw new ArgumentNullException("context");
+			this.context = context;
+		}
+		
 		public void Run(AstNode compilationUnit)
 		{
+			if (context.Settings.UsingStatement)
 			TransformUsings(compilationUnit);
-			TransformForeach(compilationUnit);
+			if (context.Settings.ForEachStatement)
+				TransformForeach(compilationUnit);
 			TransformFor(compilationUnit);
+			if (context.Settings.AutomaticProperties)
+				TransformAutomaticProperties(compilationUnit);
 		}
 		
 		/// <summary>
@@ -99,7 +112,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		#endregion
 		
 		#region foreach
-		UsingStatement foreachPattern = new UsingStatement {
+		static readonly UsingStatement foreachPattern = new UsingStatement {
 			ResourceAcquisition = new VariableDeclarationStatement {
 				Type = new AnyNode("enumeratorType"),
 				Variables = {
@@ -188,7 +201,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		#endregion
 		
 		#region for
-		WhileStatement forPattern = new WhileStatement {
+		static readonly WhileStatement forPattern = new WhileStatement {
 			Condition = new BinaryOperatorExpression {
 				Left = new NamedNode("ident", new IdentifierExpression()),
 				Operator = BinaryOperatorType.Any,
@@ -234,6 +247,66 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						Iterators = { m2.Get<Statement>("increment").Single().Detach() },
 						EmbeddedStatement = newBody
 					});
+			}
+		}
+		#endregion
+		
+		#region Automatic Properties
+		static readonly PropertyDeclaration automaticPropertyPattern = new PropertyDeclaration {
+			Attributes = { new Repeat(new AnyNode()) },
+			Modifiers = Modifiers.Any,
+			ReturnType = new AnyNode(),
+			Getter = new Accessor {
+				Attributes = { new Repeat(new AnyNode()) },
+				Modifiers = Modifiers.Any,
+				Body = new BlockStatement {
+					new ReturnStatement {
+						Expression = new NamedNode("fieldReference", new MemberReferenceExpression { Target = new ThisReferenceExpression() })
+					}
+				}
+			},
+			Setter = new Accessor {
+				Attributes = { new Repeat(new AnyNode()) },
+				Modifiers = Modifiers.Any,
+				Body = new BlockStatement {
+					new AssignmentExpression {
+						Left = new Backreference("fieldReference"),
+						Right = new IdentifierExpression("value")
+					}
+				}}};
+		
+		void TransformAutomaticProperties(AstNode compilationUnit)
+		{
+			foreach (var property in compilationUnit.Descendants.OfType<PropertyDeclaration>()) {
+				PropertyDefinition cecilProperty = property.Annotation<PropertyDefinition>();
+				if (cecilProperty == null || cecilProperty.GetMethod == null || cecilProperty.SetMethod == null)
+					continue;
+				if (!(cecilProperty.GetMethod.IsCompilerGenerated() && cecilProperty.SetMethod.IsCompilerGenerated()))
+					continue;
+				Match m = automaticPropertyPattern.Match(property);
+				if (m != null) {
+					FieldDefinition field = m.Get("fieldReference").Single().Annotation<FieldDefinition>();
+					if (field.IsCompilerGenerated()) {
+						RemoveCompilerGeneratedAttribute(property.Getter.Attributes);
+						RemoveCompilerGeneratedAttribute(property.Setter.Attributes);
+						property.Getter.Body = null;
+						property.Setter.Body = null;
+					}
+				}
+			}
+		}
+		
+		void RemoveCompilerGeneratedAttribute(AstNodeCollection<AttributeSection> attributeSections)
+		{
+			foreach (AttributeSection section in attributeSections) {
+				foreach (var attr in section.Attributes) {
+					TypeReference tr = attr.Type.Annotation<TypeReference>();
+					if (tr != null && tr.Namespace == "System.Runtime.CompilerServices" && tr.Name == "CompilerGeneratedAttribute") {
+						attr.Remove();
+					}
+				}
+				if (section.Attributes.Count == 0)
+					section.Remove();
 			}
 		}
 		#endregion

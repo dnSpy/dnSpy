@@ -50,8 +50,10 @@ namespace ICSharpCode.Decompiler.Ast
 					return true;
 			}
 			FieldDefinition field = member as FieldDefinition;
-			if (field != null) {
-				if (settings.AnonymousMethods && field.Name.StartsWith("CS$<>", StringComparison.Ordinal) && field.IsCompilerGenerated())
+			if (field != null && field.IsCompilerGenerated()) {
+				if (settings.AnonymousMethods && field.Name.StartsWith("CS$<>", StringComparison.Ordinal))
+					return true;
+				if (settings.AutomaticProperties && field.Name.StartsWith("<", StringComparison.Ordinal) && field.Name.EndsWith("BackingField", StringComparison.Ordinal))
 					return true;
 			}
 			return false;
