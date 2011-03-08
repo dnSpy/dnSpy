@@ -17,9 +17,9 @@ using Microsoft.Win32;
 
 namespace ICSharpCode.ILSpy.Commands
 {
-	internal abstract class DebuggerCommands : SimpleCommand
+	internal abstract class DebuggerCommand : SimpleCommand
 	{
-		public DebuggerCommands()
+		public DebuggerCommand()
 		{
 			MainWindow.Instance.KeyUp += OnKeyUp;
 		}
@@ -74,6 +74,11 @@ namespace ICSharpCode.ILSpy.Commands
 			SetWindowPos(hWnd, place, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 		}
 		#endregion
+		
+		public override void Execute(object parameter)
+		{
+			DebugData.LoadedAssemblies = MainWindow.Instance.AssemblyList.assemblies.Select(a => a.AssemblyDefinition);
+		}
 		
 		protected static IDebugger CurrentDebugger {
 			get {
@@ -166,7 +171,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       MenuCategory = "Debugger1",
 	                       Header = "Attach to _running application",
 	                       MenuOrder = 0)]
-	internal sealed class AttachCommand : DebuggerCommands
+	internal sealed class AttachCommand : DebuggerCommand
 	{
 		public override void Execute(object parameter)
 		{
@@ -186,7 +191,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       InputGestureText = "F5",
 	                       IsEnabled = false,
 	                       MenuOrder = 1)]
-	internal sealed class ContinueDebuggingCommand : DebuggerCommands
+	internal sealed class ContinueDebuggingCommand : DebuggerCommand
 	{
 		public override void Execute(object parameter)
 		{
@@ -202,12 +207,14 @@ namespace ICSharpCode.ILSpy.Commands
 	                       InputGestureText = "F11",
 	                       IsEnabled = false,
 	                       MenuOrder = 2)]
-	internal sealed class StepIntoCommand : DebuggerCommands
+	internal sealed class StepIntoCommand : DebuggerCommand
 	{
 		public override void Execute(object parameter)
 		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
+				base.Execute(null);
 				CurrentDebugger.StepInto();
+			}
 		}
 	}
 	
@@ -218,7 +225,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       InputGestureText = "F10",
 	                       IsEnabled = false,
 	                       MenuOrder = 3)]
-	internal sealed class StepOverCommand : DebuggerCommands
+	internal sealed class StepOverCommand : DebuggerCommand
 	{
 		public override void Execute(object parameter)
 		{
@@ -233,7 +240,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       Header = "Step out",
 	                       IsEnabled = false,
 	                       MenuOrder = 4)]
-	internal sealed class StepOutCommand : DebuggerCommands
+	internal sealed class StepOutCommand : DebuggerCommand
 	{
 		public override void Execute(object parameter)
 		{
@@ -247,7 +254,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       Header = "_Detach from running application",
 	                       IsEnabled = false,
 	                       MenuOrder = 5)]
-	internal sealed class DetachCommand : DebuggerCommands
+	internal sealed class DetachCommand : DebuggerCommand
 	{
 		public override void Execute(object parameter)
 		{
@@ -265,7 +272,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       MenuCategory = "Debugger2",
 	                       Header = "Remove all _breakpoints",
 	                       MenuOrder = 6)]
-	internal sealed class RemoveBreakpointsCommand : DebuggerCommands
+	internal sealed class RemoveBreakpointsCommand : DebuggerCommand
 	{
 		public override void Execute(object parameter)
 		{
@@ -288,7 +295,7 @@ namespace ICSharpCode.ILSpy.Commands
 	                       MenuCategory = "Debugger3",
 	                       Header = "Debug an _executable",
 	                       MenuOrder = 7)]
-	internal sealed class DebugExecutableCommand : DebuggerCommands
+	internal sealed class DebugExecutableCommand : DebuggerCommand
 	{
 		public override void Execute(object parameter)
 		{

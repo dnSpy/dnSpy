@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using Debugger;
 using Debugger.Interop.CorPublish;
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Visitors;
@@ -567,8 +569,8 @@ namespace ILSpy.Debugger.Services
 			
 			uint token;
 			SourceCodeMapping map = CodeMappings
-										.GetStorage(bookmark.Language)
-										.GetInstructionByTypeAndLine(bookmark.Type.FullName, bookmark.LineNumber, out token);
+				.GetStorage(bookmark.Language)
+				.GetInstructionByTypeAndLine(bookmark.Type.FullName, bookmark.LineNumber, out token);
 			
 			if (map != null) {
 				breakpoint = new ILBreakpoint(
@@ -824,6 +826,38 @@ namespace ILSpy.Debugger.Services
 				TypeDefinition type;
 				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out type, out line)) {
 					DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
+				} else {
+					var debugType = frame.MethodInfo.DeclaringType;
+					string fullName = debugType.Namespace + "." + debugType.Name;
+					FileStream ds = new FileStream("dasda", FileMode.Create);
+					
+					// search for type in the current assembly list
+					TypeReference typeRef = null;
+					foreach (var assembly in DebugData.LoadedAssemblies) {
+						foreach (var module in assembly.Modules) {
+							if (module.TryGetTypeReference(fullName, out typeRef)) {
+								break;
+							}
+						}
+						
+						if (typeRef != null)
+							break;
+					}
+					
+					if (typeRef != null) {
+						// decompile on demand
+						AstBuilder builder = new AstBuilder(new DecompilerContext());
+						builder.AddType(typeRef.Resolve());
+						builder.GenerateCode(new PlainTextOutput());
+						
+						// jump
+						if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out type, out line)) {
+							DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
+						}
+					} else {
+						// continue since we cannot find the debugged type
+						Continue();
+					}
 				}
 			}
 		}

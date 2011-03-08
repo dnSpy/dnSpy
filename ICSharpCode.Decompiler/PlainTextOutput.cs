@@ -38,6 +38,7 @@ namespace ICSharpCode.Decompiler
 		public PlainTextOutput()
 		{
 			this.writer = new StringWriter();
+			CurrentLine = 1;
 		}
 		
 		public int CurrentLine { get; set; }

@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
@@ -36,5 +37,10 @@ namespace ILSpy.Debugger
 		/// Gets or sets the decompiled language.
 		/// </summary>
 		public static DecompiledLanguages Language { get; set; }
+		
+		/// <summary>
+		/// List of loaded assemblies.
+		/// </summary>
+		public static IEnumerable<AssemblyDefinition> LoadedAssemblies { get; set; }
 	}
 }
