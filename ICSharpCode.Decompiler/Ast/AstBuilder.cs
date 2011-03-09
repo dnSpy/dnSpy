@@ -56,6 +56,9 @@ namespace ICSharpCode.Decompiler.Ast
 				if (settings.AutomaticProperties && field.Name.StartsWith("<", StringComparison.Ordinal) && field.Name.EndsWith("BackingField", StringComparison.Ordinal))
 					return true;
 			}
+			// event-fields are not [CompilerGenerated]
+			if (field != null && settings.AutomaticEvents && field.DeclaringType.Events.Any(ev => ev.Name == field.Name))
+				return true;
 			return false;
 		}
 		
@@ -922,20 +925,27 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		void ConvertAttributes(AttributedNode attributedNode, FieldDefinition fieldDefinition)
+		internal static void ConvertAttributes(AttributedNode attributedNode, FieldDefinition fieldDefinition, AttributeTarget target = AttributeTarget.None)
 		{
 			ConvertCustomAttributes(attributedNode, fieldDefinition);
 			
 			#region FieldOffsetAttribute
 			if (fieldDefinition.HasLayoutInfo) {
-				Ast.Attribute fieldOffset = CreateNonCustomAttribute(typeof(FieldOffsetAttribute));
+				Ast.Attribute fieldOffset = CreateNonCustomAttribute(typeof(FieldOffsetAttribute), fieldDefinition.Module);
 				fieldOffset.Arguments.Add(new PrimitiveExpression(fieldDefinition.Offset));
-				attributedNode.Attributes.Add(new AttributeSection(fieldOffset));
+				attributedNode.Attributes.Add(new AttributeSection(fieldOffset) { AttributeTarget = target });
+			}
+			#endregion
+			
+			#region NonSerializedAttribute
+			if (fieldDefinition.IsNotSerialized) {
+				Ast.Attribute nonSerialized = CreateNonCustomAttribute(typeof(NonSerializedAttribute), fieldDefinition.Module);
+				attributedNode.Attributes.Add(new AttributeSection(nonSerialized) { AttributeTarget = target });
 			}
 			#endregion
 			
 			if (fieldDefinition.HasMarshalInfo) {
-				attributedNode.Attributes.Add(new AttributeSection(ConvertMarshalInfo(fieldDefinition, fieldDefinition.Module)));
+				attributedNode.Attributes.Add(new AttributeSection(ConvertMarshalInfo(fieldDefinition, fieldDefinition.Module))  { AttributeTarget = target });
 			}
 		}
 		

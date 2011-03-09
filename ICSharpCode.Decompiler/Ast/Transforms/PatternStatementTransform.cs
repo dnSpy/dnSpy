@@ -33,6 +33,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			TransformDoWhile(compilationUnit);
 			if (context.Settings.AutomaticProperties)
 				TransformAutomaticProperties(compilationUnit);
+			if (context.Settings.AutomaticEvents)
+				TransformAutomaticEvents(compilationUnit);
 		}
 		
 		/// <summary>
@@ -354,6 +356,101 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 				if (section.Attributes.Count == 0)
 					section.Remove();
+			}
+		}
+		#endregion
+		
+		#region Automatic Events
+		Accessor automaticEventPatternV4 = new Accessor {
+			Body = new BlockStatement {
+				new VariableDeclarationStatement {
+					Type = new AnyNode("type"),
+					Variables = {
+						new NamedNode(
+							"var1", new VariableInitializer {
+								Initializer = new NamedNode("field", new MemberReferenceExpression { Target = new ThisReferenceExpression() })
+							})}
+				},
+				new VariableDeclarationStatement {
+					Type = new Backreference("type"),
+					Variables = { new NamedNode("var2", new VariableInitializer()) }
+				},
+				new DoWhileStatement {
+					EmbeddedStatement = new BlockStatement {
+						new AssignmentExpression(new IdentifierExpressionBackreference("var2"), new IdentifierExpressionBackreference("var1")),
+						new VariableDeclarationStatement {
+							Type = new Backreference("type"),
+							Variables = {
+								new NamedNode(
+									"var3", new VariableInitializer {
+										Initializer = new AnyNode("delegateCombine").ToExpression().Invoke(
+											new IdentifierExpressionBackreference("var2"),
+											new IdentifierExpression("value")
+										).CastTo(new Backreference("type"))
+									})
+							}},
+						new AssignmentExpression {
+							Left = new IdentifierExpressionBackreference("var1"),
+							Right = new AnyNode("Interlocked").ToType().Invoke(
+								"CompareExchange",
+								new AstType[] { new Backreference("type") }, // type argument
+								new Expression[] { // arguments
+									new DirectionExpression { FieldDirection = FieldDirection.Ref, Expression = new Backreference("field") },
+									new IdentifierExpressionBackreference("var3"),
+									new IdentifierExpressionBackreference("var2")
+								}
+							)}
+					},
+					Condition = new BinaryOperatorExpression {
+						Left = new IdentifierExpressionBackreference("var1"),
+						Operator = BinaryOperatorType.InEquality,
+						Right = new IdentifierExpressionBackreference("var2")
+					}}
+			}};
+		
+		bool CheckAutomaticEventV4Match(Match m, CustomEventDeclaration ev, bool isAddAccessor)
+		{
+			if (m == null)
+				return false;
+			if (m.Get<MemberReferenceExpression>("field").Single().MemberName != ev.Name)
+				return false; // field name must match event name
+			if (ev.ReturnType.Match(m.Get("type").Single()) == null)
+				return false; // variable types must match event type
+			var combineMethod = m.Get("delegateCombine").Single().Parent.Annotation<MethodReference>();
+			if (combineMethod == null || combineMethod.Name != (isAddAccessor ? "Combine" : "Remove"))
+				return false;
+			if (combineMethod.DeclaringType.FullName != "System.Delegate")
+				return false;
+			var ice = m.Get("Interlocked").Single().Annotation<TypeReference>();
+			return ice != null && ice.FullName == "System.Threading.Interlocked";
+		}
+		
+		void TransformAutomaticEvents(AstNode compilationUnit)
+		{
+			foreach (var ev in compilationUnit.Descendants.OfType<CustomEventDeclaration>().ToArray()) {
+				Match m1 = automaticEventPatternV4.Match(ev.AddAccessor);
+				if (!CheckAutomaticEventV4Match(m1, ev, true))
+					continue;
+				Match m2 = automaticEventPatternV4.Match(ev.RemoveAccessor);
+				if (!CheckAutomaticEventV4Match(m2, ev, false))
+					continue;
+				EventDeclaration ed = new EventDeclaration();
+				ev.Attributes.MoveTo(ed.Attributes);
+				ed.ReturnType = ev.ReturnType.Detach();
+				ed.Modifiers = ev.Modifiers;
+				ed.Variables.Add(new VariableInitializer(ev.Name));
+				ed.CopyAnnotationsFrom(ev);
+				
+				EventDefinition eventDef = ev.Annotation<EventDefinition>();
+				if (eventDef != null) {
+					FieldDefinition field = eventDef.DeclaringType.Fields.FirstOrDefault(f => f.Name == ev.Name);
+					if (field != null) {
+						ed.AddAnnotation(field);
+						AstBuilder.ConvertAttributes(ed, field, AttributeTarget.Field);
+					}
+				}
+				
+				ev.ReplaceWith(ed);
 			}
 		}
 		#endregion

@@ -65,8 +65,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					FieldDefinition fieldDef = m.Get("fieldAccess").Single().Annotation<FieldDefinition>();
 					if (fieldDef == null)
 						break;
-					FieldDeclaration fieldDecl = typeDeclaration.Members.OfType<FieldDeclaration>().FirstOrDefault(f => f.Annotation<FieldDefinition>() == fieldDef);
-					if (fieldDecl == null)
+					AttributedNode fieldOrEventDecl = typeDeclaration.Members.FirstOrDefault(f => f.Annotation<FieldDefinition>() == fieldDef);
+					if (fieldOrEventDecl == null)
 						break;
 					
 					allSame = true;
@@ -77,7 +77,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (allSame) {
 						foreach (var ctor in instanceCtors)
 							ctor.Body.First().Remove();
-						fieldDecl.Variables.Single().Initializer = m.Get<Expression>("initializer").Single().Detach();
+						fieldOrEventDecl.GetChildrenByRole(AstNode.Roles.Variable).Single().Initializer = m.Get<Expression>("initializer").Single().Detach();
 					}
 				} while (allSame);
 			}

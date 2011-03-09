@@ -56,6 +56,21 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		bool automaticEvents = true;
+		
+		/// <summary>
+		/// Decompile automatic events
+		/// </summary>
+		public bool AutomaticEvents {
+			get { return automaticEvents; }
+			set {
+				if (automaticEvents != value) {
+					automaticEvents = value;
+					OnPropertyChanged("AutomaticEvents");
+				}
+			}
+		}
+		
 		bool usingStatement = true;
 		
 		/// <summary>
