@@ -34,6 +34,11 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			return p != null ? new TypePlaceholder(p) : null;
 		}
 		
+		public AstType ToType()
+		{
+			return new TypePlaceholder(this);
+		}
+		
 		public static implicit operator Expression(Pattern p)
 		{
 			return p != null ? new ExpressionPlaceholder(p) : null;
