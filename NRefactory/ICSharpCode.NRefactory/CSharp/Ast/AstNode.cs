@@ -158,6 +158,15 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		/// <summary>
+		/// Gets all descendants of this node (including this node itself).
+		/// </summary>
+		public IEnumerable<AstNode> DescendantsAndSelf {
+			get {
+				return Utils.TreeTraversal.PreOrder(this, n => n.Children);
+			}
+		}
+		
+		/// <summary>
 		/// Gets the first child with the specified role.
 		/// Returns the role's null object if the child is not found.
 		/// </summary>
