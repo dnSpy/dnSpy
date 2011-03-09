@@ -739,6 +739,8 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 
 				if (actualIsIntegerOrEnum && requiredIsIntegerOrEnum) {
+					if (actualType.FullName == reqType.FullName)
+						return expr;
 					return expr.CastTo(AstBuilder.ConvertType(reqType));
 				}
 				return expr;
