@@ -47,13 +47,13 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		static AstNode FindInsertPos(AstNode node, string name, bool allowPassIntoLoops)
 		{
-			IdentifierExpression ident = node as IdentifierExpression;
-			if (ident != null && ident.Identifier == name && ident.TypeArguments.Count == 0)
-				return node;
-			
 			AstNode pos = null;
 			AstNode withinPos = null;
 			while (node != null) {
+				IdentifierExpression ident = node as IdentifierExpression;
+				if (ident != null && ident.Identifier == name && ident.TypeArguments.Count == 0)
+					return node;
+				
 				AstNode withinCurrent = FindInsertPos(node.FirstChild, name, allowPassIntoLoops);
 				if (withinCurrent != null) {
 					if (pos == null) {

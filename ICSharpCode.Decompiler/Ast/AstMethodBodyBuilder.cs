@@ -22,6 +22,7 @@ namespace ICSharpCode.Decompiler.Ast
 		TypeSystem typeSystem;
 		DecompilerContext context;
 		HashSet<ILVariable> localVariablesToDefine = new HashSet<ILVariable>(); // local variables that are missing a definition
+		HashSet<ILVariable> implicitlyDefinedVariables = new HashSet<ILVariable>(); // local variables that are implicitly defined (e.g. catch handler)
 		
 		public static BlockStatement CreateMethodBody(MethodDefinition methodDef, DecompilerContext context)
 		{
@@ -69,7 +70,7 @@ namespace ICSharpCode.Decompiler.Ast
 			context.CancellationToken.ThrowIfCancellationRequested();
 			Ast.BlockStatement astBlock = TransformBlock(ilMethod);
 			CommentStatement.ReplaceAll(astBlock); // convert CommentStatements to Comments
-			foreach (ILVariable v in localVariablesToDefine) {
+			foreach (ILVariable v in localVariablesToDefine.Except(implicitlyDefinedVariables)) {
 				DeclareVariableInSmallestScope.DeclareVariable(astBlock, AstBuilder.ConvertType(v.Type), v.Name);
 			}
 			
@@ -138,6 +139,8 @@ namespace ICSharpCode.Decompiler.Ast
 				var tryCatchStmt = new Ast.TryCatchStatement();
 				tryCatchStmt.TryBlock = TransformBlock(tryCatchNode.TryBlock);
 				foreach (var catchClause in tryCatchNode.CatchBlocks) {
+					if (catchClause.ExceptionVariable != null)
+						implicitlyDefinedVariables.Add(catchClause.ExceptionVariable);
 					tryCatchStmt.CatchClauses.Add(
 						new Ast.CatchClause {
 							Type = AstBuilder.ConvertType(catchClause.ExceptionType),
