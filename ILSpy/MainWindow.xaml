@@ -33,17 +33,25 @@
 	</Window.CommandBindings>
 	<DockPanel>
 		<!-- Main menu -->
-		<Menu DockPanel.Dock="Top" Name="mainMenu">
-			<MenuItem Header="_File" /> <!-- contents of file menu are added using MEF -->
-			<MenuItem Header="_View">
-				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
-					</MenuItem.Icon>
+		<DockPanel DockPanel.Dock="Top" Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
+			<Menu DockPanel.Dock="Left" Name="mainMenu">
+				<MenuItem Header="_File" /> <!-- contents of file menu are added using MEF -->
+				<MenuItem Header="_View">
+					<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
+						<MenuItem.Icon>
+							<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="Show _analyzer" Name="showAnalyzer" IsCheckable="True" Checked="ShowAnalyzer_Checked" Unchecked="ShowAnalyzer_Unchecked" />
 				</MenuItem>
-				<MenuItem Header="Show _analyzer" Name="showAnalyzer" IsCheckable="True" Checked="ShowAnalyzer_Checked" Unchecked="ShowAnalyzer_Unchecked" />
-			</MenuItem>
-		</Menu>
+			</Menu>
+			<TextBlock VerticalAlignment="Center"
+			           HorizontalAlignment="Right"
+			           DockPanel.Dock="Right"
+			           x:Name="StatusLabel"
+			           Width="70"
+			           Text="Stand by..."/>
+		</DockPanel>
 		<!-- ToolBar -->
 		<ToolBar
 			Name="toolBar"

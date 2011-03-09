@@ -323,7 +323,11 @@ namespace Debugger
 			// disable NGen
 			ICorDebugProcess2 pProcess2 = pProcess as ICorDebugProcess2;
 			if (pProcess2 != null && Process.DebugMode == DebugModeFlag.Debug) {
-				pProcess2.SetDesiredNGENCompilerFlags((uint)CorDebugJITCompilerFlags.CORDEBUG_JIT_DISABLE_OPTIMIZATION);
+				try {
+					pProcess2.SetDesiredNGENCompilerFlags((uint)CorDebugJITCompilerFlags.CORDEBUG_JIT_DISABLE_OPTIMIZATION);
+				} catch (COMException) {
+					// we cannot set the NGEN flag => no evaluation for optimized code.
+				}
 			}
 			
 			ExitCallback();

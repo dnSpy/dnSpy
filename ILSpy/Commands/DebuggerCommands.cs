@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 
 using ILSpy.Debugger;
 using ILSpy.Debugger.Bookmarks;
@@ -106,6 +107,8 @@ namespace ICSharpCode.ILSpy.Commands
 			EnableDebuggerUI(false);
 			CurrentDebugger.DebugStopped += OnDebugStopped;
 			CurrentDebugger.IsProcessRunningChanged += CurrentDebugger_IsProcessRunningChanged;
+			
+			MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 		}
 		
 		protected void OnDebugStopped(object sender, EventArgs e)
@@ -113,6 +116,8 @@ namespace ICSharpCode.ILSpy.Commands
 			EnableDebuggerUI(true);
 			CurrentDebugger.DebugStopped -= OnDebugStopped;
 			CurrentDebugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
+			
+			MainWindow.Instance.SetStatus("Stand by...", Brushes.Black);
 		}
 		
 		protected void EnableDebuggerUI(bool enable)
@@ -144,6 +149,7 @@ namespace ICSharpCode.ILSpy.Commands
 		{
 			if (CurrentDebugger.IsProcessRunning) {
 				//SendWpfWindowPos(this, HWND_BOTTOM);
+				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 				return;
 			}
 			
@@ -158,6 +164,8 @@ namespace ICSharpCode.ILSpy.Commands
 				
 				MainWindow.Instance.TextView.UnfoldAndScroll(CurrentLineBookmark.Instance.LineNumber);
 			}
+			
+			MainWindow.Instance.SetStatus("Debugging...", Brushes.Red);
 		}
 	}
 	
@@ -195,8 +203,10 @@ namespace ICSharpCode.ILSpy.Commands
 	{
 		public override void Execute(object parameter)
 		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
 				CurrentDebugger.Continue();
+				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
+			}
 		}
 	}
 	

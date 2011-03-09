@@ -29,6 +29,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using ICSharpCode.Decompiler;
@@ -562,6 +563,12 @@ namespace ICSharpCode.ILSpy
 		public void UnselectAll()
 		{
 			treeView.UnselectAll();
+		}
+		
+		public void SetStatus(string status, Brush foreground)
+		{
+			this.StatusLabel.Foreground = foreground;
+			this.StatusLabel.Text = status;
 		}
 	}
 }
