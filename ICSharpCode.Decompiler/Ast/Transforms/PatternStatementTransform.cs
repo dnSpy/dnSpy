@@ -26,10 +26,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public void Run(AstNode compilationUnit)
 		{
 			if (context.Settings.UsingStatement)
-			TransformUsings(compilationUnit);
+				TransformUsings(compilationUnit);
 			if (context.Settings.ForEachStatement)
 				TransformForeach(compilationUnit);
 			TransformFor(compilationUnit);
+			TransformDoWhile(compilationUnit);
 			if (context.Settings.AutomaticProperties)
 				TransformAutomaticProperties(compilationUnit);
 		}
@@ -219,8 +220,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								Right = new AnyNode()
 							}))
 				}
-			}
-		};
+			}};
 		
 		public void TransformFor(AstNode compilationUnit)
 		{
@@ -247,6 +247,53 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						Iterators = { m2.Get<Statement>("increment").Single().Detach() },
 						EmbeddedStatement = newBody
 					});
+			}
+		}
+		#endregion
+		
+		#region doWhile
+		static readonly WhileStatement doWhilePattern = new WhileStatement {
+			Condition = new PrimitiveExpression(true),
+			EmbeddedStatement = new BlockStatement {
+				Statements = {
+					new Repeat(new AnyNode("statement")),
+					new IfElseStatement {
+						Condition = new AnyNode("condition"),
+						TrueStatement = new BlockStatement { new BreakStatement() }
+					}
+				}
+			}};
+		
+		public void TransformDoWhile(AstNode compilationUnit)
+		{
+			foreach (WhileStatement whileLoop in compilationUnit.Descendants.OfType<WhileStatement>().ToArray()) {
+				Match m = doWhilePattern.Match(whileLoop);
+				if (m != null) {
+					DoWhileStatement doLoop = new DoWhileStatement();
+					doLoop.Condition = new UnaryOperatorExpression(UnaryOperatorType.Not, m.Get<Expression>("condition").Single().Detach());
+					doLoop.Condition.AcceptVisitor(new PushNegation(), null);
+					BlockStatement block = (BlockStatement)whileLoop.EmbeddedStatement;
+					block.Statements.Last().Remove(); // remove if statement
+					doLoop.EmbeddedStatement = block.Detach();
+					whileLoop.ReplaceWith(doLoop);
+					
+					// we may have to extract variable definitions out of the loop if they were used in the condition:
+					foreach (var varDecl in block.Statements.OfType<VariableDeclarationStatement>()) {
+						VariableInitializer v = varDecl.Variables.Single();
+						if (doLoop.Condition.DescendantsAndSelf.OfType<IdentifierExpression>().Any(i => i.Identifier == v.Name)) {
+							AssignmentExpression assign = new AssignmentExpression(new IdentifierExpression(v.Name), v.Initializer.Detach());
+							// move annotations from v to assign:
+							assign.CopyAnnotationsFrom(v);
+							v.RemoveAnnotations<object>();
+							// remove varDecl with assignment; and move annotations from varDecl to the ExpressionStatement:
+							varDecl.ReplaceWith(new ExpressionStatement(assign).CopyAnnotationsFrom(varDecl));
+							varDecl.RemoveAnnotations<object>();
+							
+							// insert the varDecl above the do-while loop:
+							doLoop.Parent.InsertChildBefore(doLoop, varDecl, BlockStatement.StatementRole);
+						}
+					}
+				}
 			}
 		}
 		#endregion
