@@ -97,7 +97,7 @@ namespace ICSharpCode.ILSpy.TextView
 			// wire the events
 			TextEditorWeakEventManager.MouseHover.AddListener(textEditor, TextEditorListener.Instance);
 			TextEditorWeakEventManager.MouseHoverStopped.AddListener(textEditor, TextEditorListener.Instance);
-			TextEditorWeakEventManager.MouseDown.AddListener(textEditor, TextEditorListener.Instance);			
+			TextEditorWeakEventManager.MouseDown.AddListener(textEditor, TextEditorListener.Instance);
 			textEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconMargin.InvalidateVisual();
 			
 			this.Loaded += new RoutedEventHandler(DecompilerTextView_Loaded);
@@ -399,17 +399,23 @@ namespace ICSharpCode.ILSpy.TextView
 						ShowOutput(output);
 					}
 					finally {
-						// repaint bookmarks
-						iconMargin.InvalidateVisual();
-						
-						// show the currentline marker
-						var bm = CurrentLineBookmark.Instance;
-						if (bm != null && DebugData.CurrentType != null) {
-							if (DebugData.CurrentType.FullName.Equals(bm.Type.FullName, StringComparison.OrdinalIgnoreCase)) {
-								DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
-								bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
-								UnfoldAndScroll(bm.LineNumber);
+						if (DebugData.CurrentType != null && context.TreeNodes.Count() == 1) {
+							iconMargin.Visibility = Visibility.Visible;
+							// repaint bookmarks
+							iconMargin.InvalidateVisual();
+							
+							// show the currentline marker
+							var bm = CurrentLineBookmark.Instance;
+							if (bm != null && DebugData.CurrentType != null) {
+								if (DebugData.CurrentType.FullName.Equals(bm.Type.FullName, StringComparison.OrdinalIgnoreCase)) {
+									DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
+									bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
+									UnfoldAndScroll(bm.LineNumber);
+								}
 							}
+						} else {
+							// hide the margin
+							iconMargin.Visibility = Visibility.Collapsed;
 						}
 					}
 				});

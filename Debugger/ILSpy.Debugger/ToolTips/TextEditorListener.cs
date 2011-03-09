@@ -54,12 +54,9 @@ namespace ILSpy.Debugger.ToolTips
 			return true;
 		}
 		
-		void OnMouseDown(MouseEventArgs mouseEventArgs0)
+		void OnMouseDown(MouseEventArgs e)
 		{
-			TryCloseExistingPopup(true);
-			
-			if (popup != null)
-				popup.IsOpen = false;
+			ClosePopup();
 		}
 		
 		void OnMouseHoverStopped(MouseEventArgs e)
@@ -75,6 +72,8 @@ namespace ILSpy.Debugger.ToolTips
 			
 			if (pos.HasValue) {
 				args.LogicalPosition = new AstLocation(pos.Value.Line, pos.Value.Column);
+			} else { 
+				return;
 			}
 
 			DebuggerService.HandleToolTipRequest(args);
@@ -164,6 +163,14 @@ namespace ILSpy.Debugger.ToolTips
 		bool IWeakEventListener.ReceiveWeakEvent(Type managerType, object sender, EventArgs e)
 		{
 			return ReceiveWeakEvent(managerType, sender, e);
+		}
+		
+		public void ClosePopup()
+		{
+			TryCloseExistingPopup(true);
+			
+			if (popup != null)
+				popup.IsOpen = false;
 		}
 	}
 }

@@ -203,6 +203,11 @@ namespace ILSpy.Debugger.Services
 			
 			var logicPos = e.LogicalPosition;
 			var doc = (TextDocument)e.Editor.Document;
+			var line = doc.GetLineByNumber(logicPos.Line);
+			
+			var c = doc.GetText(line.Offset + logicPos.Column, 1);			
+			if (string.IsNullOrEmpty(c) || c == "\n" || c == "\t")
+				return;
 			
 			string variable =
 				ParserService.SimpleParseAt(doc.Text, doc.GetOffset(new TextLocation(logicPos.Line, logicPos.Column)));

@@ -42,6 +42,7 @@ using ILSpy.Debugger;
 using ILSpy.Debugger.AvalonEdit;
 using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Services;
+using ILSpy.Debugger.ToolTips;
 using ILSpy.Debugger.UI;
 using Microsoft.Win32;
 using Mono.Cecil;
@@ -443,6 +444,8 @@ namespace ICSharpCode.ILSpy
 		#region Decompile (TreeView_SelectionChanged)
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			TextEditorListener.Instance.ClosePopup();
+			
 			if (treeView.SelectedItems.Count == 1) {
 				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
 				if (node != null && node.View(decompilerTextView))
