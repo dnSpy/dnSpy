@@ -43,7 +43,8 @@ public static class DelegateConstruction
 	public static List<Action<int>> AnonymousMethodStoreWithinLoop()
 	{
 		List<Action<int>> list = new List<Action<int>>();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++)
+		{
 			int counter;
 			list.Add(x => counter = x);
 		}
@@ -54,7 +55,8 @@ public static class DelegateConstruction
 	{
 		List<Action<int>> list = new List<Action<int>>();
 		int counter;
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++)
+		{
 			list.Add(x => counter = x);
 		}
 		return list;

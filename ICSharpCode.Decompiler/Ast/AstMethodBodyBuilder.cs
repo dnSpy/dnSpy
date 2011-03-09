@@ -610,6 +610,9 @@ namespace ICSharpCode.Decompiler.Ast
 							};
 						}
 					}
+				} else if (cecilMethodDef.Name == "Invoke" && cecilMethodDef.DeclaringType.BaseType.FullName == "System.MulticastDelegate") {
+					AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
+					return target.Invoke(methodArgs);
 				}
 			}
 			// Default invocation

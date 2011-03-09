@@ -458,10 +458,21 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Rethrow:
 				case ILCode.LoopOrSwitchBreak:
 				case ILCode.LoopContinue:
+				case ILCode.YieldBreak:
 					return null;
 				case ILCode.Ret:
 					if (forceInferChildren && expr.Arguments.Count == 1)
 						InferTypeForExpression(expr.Arguments[0], context.CurrentMethod.ReturnType);
+					return null;
+				case ILCode.YieldReturn:
+					if (forceInferChildren) {
+						GenericInstanceType genericType = context.CurrentMethod.ReturnType as GenericInstanceType;
+						if (genericType != null) { // IEnumerable<T> or IEnumerator<T>
+							InferTypeForExpression(expr.Arguments[0], genericType.GenericArguments[0]);
+						} else { // non-generic IEnumerable or IEnumerator
+							InferTypeForExpression(expr.Arguments[0], typeSystem.Object);
+						}
+					}
 					return null;
 					#endregion
 				case ILCode.Pop:

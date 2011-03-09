@@ -8,5 +8,10 @@ namespace ICSharpCode.Decompiler.Tests.Types
 {
 	public class TypeTests : DecompilerTestBase
 	{
+		[Test]
+		public void TypeMemberDeclarations()
+		{
+			ValidateFileRoundtrip(@"Types\S_TypeMemberDeclarations.cs");
+		}
 	}
 }

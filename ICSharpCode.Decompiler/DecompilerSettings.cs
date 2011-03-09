@@ -41,6 +41,66 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		bool automaticProperties = true;
+		
+		/// <summary>
+		/// Decompile automatic properties
+		/// </summary>
+		public bool AutomaticProperties {
+			get { return automaticProperties; }
+			set {
+				if (automaticProperties != value) {
+					automaticProperties = value;
+					OnPropertyChanged("AutomaticProperties");
+				}
+			}
+		}
+		
+		bool automaticEvents = true;
+		
+		/// <summary>
+		/// Decompile automatic events
+		/// </summary>
+		public bool AutomaticEvents {
+			get { return automaticEvents; }
+			set {
+				if (automaticEvents != value) {
+					automaticEvents = value;
+					OnPropertyChanged("AutomaticEvents");
+				}
+			}
+		}
+		
+		bool usingStatement = true;
+		
+		/// <summary>
+		/// Decompile using statements.
+		/// </summary>
+		public bool UsingStatement {
+			get { return usingStatement; }
+			set {
+				if (usingStatement != value) {
+					usingStatement = value;
+					OnPropertyChanged("UsingStatement");
+				}
+			}
+		}
+		
+		bool forEachStatement = true;
+		
+		/// <summary>
+		/// Decompile foreach statements.
+		/// </summary>
+		public bool ForEachStatement {
+			get { return forEachStatement; }
+			set {
+				if (forEachStatement != value) {
+					forEachStatement = value;
+					OnPropertyChanged("ForEachStatement");
+				}
+			}
+		}
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)

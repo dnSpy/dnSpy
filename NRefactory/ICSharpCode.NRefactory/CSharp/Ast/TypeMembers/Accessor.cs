@@ -56,8 +56,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Body); }
 			set { SetChildByRole (Roles.Body, value); }
 		}
-		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
+
+		public AstNodeCollection<ParameterDeclaration> Parameters {
+			get { return GetChildrenByRole(Roles.Parameter); }
+		}
+
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitAccessor (this, data);
 		}

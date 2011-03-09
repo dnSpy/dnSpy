@@ -14,11 +14,27 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 	/// </summary>
 	public class PatternStatementTransform : IAstTransform
 	{
+		DecompilerContext context;
+		
+		public PatternStatementTransform(DecompilerContext context)
+		{
+			if (context == null)
+				throw new ArgumentNullException("context");
+			this.context = context;
+		}
+		
 		public void Run(AstNode compilationUnit)
 		{
-			TransformUsings(compilationUnit);
-			TransformForeach(compilationUnit);
+			if (context.Settings.UsingStatement)
+				TransformUsings(compilationUnit);
+			if (context.Settings.ForEachStatement)
+				TransformForeach(compilationUnit);
 			TransformFor(compilationUnit);
+			TransformDoWhile(compilationUnit);
+			if (context.Settings.AutomaticProperties)
+				TransformAutomaticProperties(compilationUnit);
+			if (context.Settings.AutomaticEvents)
+				TransformAutomaticEvents(compilationUnit);
 		}
 		
 		/// <summary>
@@ -99,7 +115,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		#endregion
 		
 		#region foreach
-		UsingStatement foreachPattern = new UsingStatement {
+		static readonly UsingStatement foreachPattern = new UsingStatement {
 			ResourceAcquisition = new VariableDeclarationStatement {
 				Type = new AnyNode("enumeratorType"),
 				Variables = {
@@ -188,7 +204,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		#endregion
 		
 		#region for
-		WhileStatement forPattern = new WhileStatement {
+		static readonly WhileStatement forPattern = new WhileStatement {
 			Condition = new BinaryOperatorExpression {
 				Left = new NamedNode("ident", new IdentifierExpression()),
 				Operator = BinaryOperatorType.Any,
@@ -206,8 +222,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								Right = new AnyNode()
 							}))
 				}
-			}
-		};
+			}};
 		
 		public void TransformFor(AstNode compilationUnit)
 		{
@@ -234,6 +249,208 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						Iterators = { m2.Get<Statement>("increment").Single().Detach() },
 						EmbeddedStatement = newBody
 					});
+			}
+		}
+		#endregion
+		
+		#region doWhile
+		static readonly WhileStatement doWhilePattern = new WhileStatement {
+			Condition = new PrimitiveExpression(true),
+			EmbeddedStatement = new BlockStatement {
+				Statements = {
+					new Repeat(new AnyNode("statement")),
+					new IfElseStatement {
+						Condition = new AnyNode("condition"),
+						TrueStatement = new BlockStatement { new BreakStatement() }
+					}
+				}
+			}};
+		
+		public void TransformDoWhile(AstNode compilationUnit)
+		{
+			foreach (WhileStatement whileLoop in compilationUnit.Descendants.OfType<WhileStatement>().ToArray()) {
+				Match m = doWhilePattern.Match(whileLoop);
+				if (m != null) {
+					DoWhileStatement doLoop = new DoWhileStatement();
+					doLoop.Condition = new UnaryOperatorExpression(UnaryOperatorType.Not, m.Get<Expression>("condition").Single().Detach());
+					doLoop.Condition.AcceptVisitor(new PushNegation(), null);
+					BlockStatement block = (BlockStatement)whileLoop.EmbeddedStatement;
+					block.Statements.Last().Remove(); // remove if statement
+					doLoop.EmbeddedStatement = block.Detach();
+					whileLoop.ReplaceWith(doLoop);
+					
+					// we may have to extract variable definitions out of the loop if they were used in the condition:
+					foreach (var varDecl in block.Statements.OfType<VariableDeclarationStatement>()) {
+						VariableInitializer v = varDecl.Variables.Single();
+						if (doLoop.Condition.DescendantsAndSelf.OfType<IdentifierExpression>().Any(i => i.Identifier == v.Name)) {
+							AssignmentExpression assign = new AssignmentExpression(new IdentifierExpression(v.Name), v.Initializer.Detach());
+							// move annotations from v to assign:
+							assign.CopyAnnotationsFrom(v);
+							v.RemoveAnnotations<object>();
+							// remove varDecl with assignment; and move annotations from varDecl to the ExpressionStatement:
+							varDecl.ReplaceWith(new ExpressionStatement(assign).CopyAnnotationsFrom(varDecl));
+							varDecl.RemoveAnnotations<object>();
+							
+							// insert the varDecl above the do-while loop:
+							doLoop.Parent.InsertChildBefore(doLoop, varDecl, BlockStatement.StatementRole);
+						}
+					}
+				}
+			}
+		}
+		#endregion
+		
+		#region Automatic Properties
+		static readonly PropertyDeclaration automaticPropertyPattern = new PropertyDeclaration {
+			Attributes = { new Repeat(new AnyNode()) },
+			Modifiers = Modifiers.Any,
+			ReturnType = new AnyNode(),
+			Getter = new Accessor {
+				Attributes = { new Repeat(new AnyNode()) },
+				Modifiers = Modifiers.Any,
+				Body = new BlockStatement {
+					new ReturnStatement {
+						Expression = new NamedNode("fieldReference", new MemberReferenceExpression { Target = new ThisReferenceExpression() })
+					}
+				}
+			},
+			Setter = new Accessor {
+				Attributes = { new Repeat(new AnyNode()) },
+				Modifiers = Modifiers.Any,
+				Body = new BlockStatement {
+					new AssignmentExpression {
+						Left = new Backreference("fieldReference"),
+						Right = new IdentifierExpression("value")
+					}
+				}}};
+		
+		void TransformAutomaticProperties(AstNode compilationUnit)
+		{
+			foreach (var property in compilationUnit.Descendants.OfType<PropertyDeclaration>()) {
+				PropertyDefinition cecilProperty = property.Annotation<PropertyDefinition>();
+				if (cecilProperty == null || cecilProperty.GetMethod == null || cecilProperty.SetMethod == null)
+					continue;
+				if (!(cecilProperty.GetMethod.IsCompilerGenerated() && cecilProperty.SetMethod.IsCompilerGenerated()))
+					continue;
+				Match m = automaticPropertyPattern.Match(property);
+				if (m != null) {
+					FieldDefinition field = m.Get("fieldReference").Single().Annotation<FieldDefinition>();
+					if (field.IsCompilerGenerated()) {
+						RemoveCompilerGeneratedAttribute(property.Getter.Attributes);
+						RemoveCompilerGeneratedAttribute(property.Setter.Attributes);
+						property.Getter.Body = null;
+						property.Setter.Body = null;
+					}
+				}
+			}
+		}
+		
+		void RemoveCompilerGeneratedAttribute(AstNodeCollection<AttributeSection> attributeSections)
+		{
+			foreach (AttributeSection section in attributeSections) {
+				foreach (var attr in section.Attributes) {
+					TypeReference tr = attr.Type.Annotation<TypeReference>();
+					if (tr != null && tr.Namespace == "System.Runtime.CompilerServices" && tr.Name == "CompilerGeneratedAttribute") {
+						attr.Remove();
+					}
+				}
+				if (section.Attributes.Count == 0)
+					section.Remove();
+			}
+		}
+		#endregion
+		
+		#region Automatic Events
+		Accessor automaticEventPatternV4 = new Accessor {
+			Body = new BlockStatement {
+				new VariableDeclarationStatement {
+					Type = new AnyNode("type"),
+					Variables = {
+						new NamedNode(
+							"var1", new VariableInitializer {
+								Initializer = new NamedNode("field", new MemberReferenceExpression { Target = new ThisReferenceExpression() })
+							})}
+				},
+				new VariableDeclarationStatement {
+					Type = new Backreference("type"),
+					Variables = { new NamedNode("var2", new VariableInitializer()) }
+				},
+				new DoWhileStatement {
+					EmbeddedStatement = new BlockStatement {
+						new AssignmentExpression(new IdentifierExpressionBackreference("var2"), new IdentifierExpressionBackreference("var1")),
+						new VariableDeclarationStatement {
+							Type = new Backreference("type"),
+							Variables = {
+								new NamedNode(
+									"var3", new VariableInitializer {
+										Initializer = new AnyNode("delegateCombine").ToExpression().Invoke(
+											new IdentifierExpressionBackreference("var2"),
+											new IdentifierExpression("value")
+										).CastTo(new Backreference("type"))
+									})
+							}},
+						new AssignmentExpression {
+							Left = new IdentifierExpressionBackreference("var1"),
+							Right = new AnyNode("Interlocked").ToType().Invoke(
+								"CompareExchange",
+								new AstType[] { new Backreference("type") }, // type argument
+								new Expression[] { // arguments
+									new DirectionExpression { FieldDirection = FieldDirection.Ref, Expression = new Backreference("field") },
+									new IdentifierExpressionBackreference("var3"),
+									new IdentifierExpressionBackreference("var2")
+								}
+							)}
+					},
+					Condition = new BinaryOperatorExpression {
+						Left = new IdentifierExpressionBackreference("var1"),
+						Operator = BinaryOperatorType.InEquality,
+						Right = new IdentifierExpressionBackreference("var2")
+					}}
+			}};
+		
+		bool CheckAutomaticEventV4Match(Match m, CustomEventDeclaration ev, bool isAddAccessor)
+		{
+			if (m == null)
+				return false;
+			if (m.Get<MemberReferenceExpression>("field").Single().MemberName != ev.Name)
+				return false; // field name must match event name
+			if (ev.ReturnType.Match(m.Get("type").Single()) == null)
+				return false; // variable types must match event type
+			var combineMethod = m.Get("delegateCombine").Single().Parent.Annotation<MethodReference>();
+			if (combineMethod == null || combineMethod.Name != (isAddAccessor ? "Combine" : "Remove"))
+				return false;
+			if (combineMethod.DeclaringType.FullName != "System.Delegate")
+				return false;
+			var ice = m.Get("Interlocked").Single().Annotation<TypeReference>();
+			return ice != null && ice.FullName == "System.Threading.Interlocked";
+		}
+		
+		void TransformAutomaticEvents(AstNode compilationUnit)
+		{
+			foreach (var ev in compilationUnit.Descendants.OfType<CustomEventDeclaration>().ToArray()) {
+				Match m1 = automaticEventPatternV4.Match(ev.AddAccessor);
+				if (!CheckAutomaticEventV4Match(m1, ev, true))
+					continue;
+				Match m2 = automaticEventPatternV4.Match(ev.RemoveAccessor);
+				if (!CheckAutomaticEventV4Match(m2, ev, false))
+					continue;
+				EventDeclaration ed = new EventDeclaration();
+				ev.Attributes.MoveTo(ed.Attributes);
+				ed.ReturnType = ev.ReturnType.Detach();
+				ed.Modifiers = ev.Modifiers;
+				ed.Variables.Add(new VariableInitializer(ev.Name));
+				ed.CopyAnnotationsFrom(ev);
+				
+				EventDefinition eventDef = ev.Annotation<EventDefinition>();
+				if (eventDef != null) {
+					FieldDefinition field = eventDef.DeclaringType.Fields.FirstOrDefault(f => f.Name == ev.Name);
+					if (field != null) {
+						ed.AddAnnotation(field);
+						AstBuilder.ConvertAttributes(ed, field, AttributeTarget.Field);
+					}
+				}
+				
+				ev.ReplaceWith(ed);
 			}
 		}
 		#endregion

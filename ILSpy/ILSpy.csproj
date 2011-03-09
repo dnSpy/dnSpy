@@ -122,6 +122,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XamlResourceNode.cs" />
     <EmbeddedResource Include="..\README.txt">
       <Link>README.txt</Link>
     </EmbeddedResource>

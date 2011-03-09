@@ -100,4 +100,19 @@ public static class YieldReturn
 			yield return () => copy;
 		}
 	}
+	
+	public static IEnumerable<int> GetEvenNumbers(int n)
+	{
+		for (int i = 0; i < n; i++) {
+			if (i % 2 == 0)
+				yield return i;
+		}
+	}
+	
+	public static IEnumerable<char> YieldChars()
+	{
+		yield return 'a';
+		yield return 'b';
+		yield return 'c';
+	}
 }

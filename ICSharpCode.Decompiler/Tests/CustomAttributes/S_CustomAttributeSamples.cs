@@ -134,7 +134,21 @@ namespace AppliedToPropertySet
 			[MyAttribute]
 			set
 			{
-				return;
+			}
+		}
+	}
+}
+//$$ AppliedToIndexer
+namespace AppliedToIndexer
+{
+	public class TestClass
+	{
+		[Obsolete("reason")]
+		public int this[int i]
+		{
+			get
+			{
+				return 0;
 			}
 		}
 	}
@@ -177,7 +191,7 @@ namespace AppliedToParameter
 	}
 	public class MyClass
 	{
-		public void Method([MyAttribute]int val)
+		public void Method([MyAttribute] int val)
 		{
 		}
 	}
@@ -204,7 +218,6 @@ namespace NamedInitializerPropertyString
 			}
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -227,7 +240,6 @@ namespace NamedInitializerPropertyType
 			}
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -250,7 +262,6 @@ namespace NamedInitializerPropertyEnum
 			}
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -321,7 +332,6 @@ namespace TargetPropertySetParam
 			[param: MyAttribute]
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -344,13 +354,66 @@ namespace TargetPropertySetReturn
 			[return: MyAttribute]
 			set
 			{
-				return;
 			}
 		}
 	}
 }
-//$$ TargetPropertyIndexSetParam
-namespace TargetPropertyIndexSetParam
+//$$ TargetPropertyIndexGetReturn
+namespace TargetPropertyIndexGetReturn
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class MyClass
+	{
+		public int this[string s]
+		{
+			[return: MyAttribute]
+			get
+			{
+				return 3;
+			}
+		}
+	}
+}
+//$$ TargetPropertyIndexParamOnlySet
+namespace TargetPropertyIndexParamOnlySet
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class MyClass
+	{
+		public int this[[MyAttribute] string s]
+		{
+			set
+			{
+			}
+		}
+	}
+}
+//$$ TargetPropertyIndexParamOnlyGet
+namespace TargetPropertyIndexParamOnlyGet
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class MyClass
+	{
+		public int this[[MyAttribute] string s]
+		{
+			get
+			{
+				return 3;
+			}
+		}
+	}
+}
+//$$ TargetPropertyIndexSetReturn
+namespace TargetPropertyIndexSetReturn
 {
 	[AttributeUsage(AttributeTargets.All)]
 	public class MyAttributeAttribute : Attribute
@@ -364,10 +427,9 @@ namespace TargetPropertyIndexSetParam
 			{
 				return "";
 			}
-			[param: MyAttribute]
+			[return: MyAttribute]
 			set
 			{
-				return;
 			}
 		}
 	}
@@ -391,7 +453,6 @@ namespace TargetPropertyIndexSetMultiParam
 			[param: MyAttribute]
 			set
 			{
-				return;
 			}
 		}
 	}

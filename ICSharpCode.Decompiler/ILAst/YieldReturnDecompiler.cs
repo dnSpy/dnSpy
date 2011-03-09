@@ -690,18 +690,19 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Now verify that the last instruction in the body is 'ret(false)'
 			if (returnVariable != null) {
 				// If we don't have a return variable, we already verified that above.
-				if (bodyLength < 2)
-					throw new YieldAnalysisFailedException();
-				ILExpression leave = body[bodyLength - 1] as ILExpression;
-				if (leave == null || leave.Operand != returnLabel || !(leave.Code == ILCode.Br || leave.Code == ILCode.Leave))
-					throw new YieldAnalysisFailedException();
-				ILExpression store0 = body[bodyLength - 2] as ILExpression;
+				// If we do have one, check for 'stloc(returnVariable, ldc.i4(0))'
+				
+				// Maybe might be a jump to the return label after the stloc:
+				ILExpression leave = body.ElementAtOrDefault(bodyLength - 1) as ILExpression;
+				if (leave != null && (leave.Code == ILCode.Br || leave.Code == ILCode.Leave) && leave.Operand == returnLabel)
+					bodyLength--;
+				ILExpression store0 = body.ElementAtOrDefault(bodyLength - 1) as ILExpression;
 				if (store0 == null || store0.Code != ILCode.Stloc || store0.Operand != returnVariable)
 					throw new YieldAnalysisFailedException();
 				if (store0.Arguments[0].Code != ILCode.Ldc_I4 || (int)store0.Arguments[0].Operand != 0)
 					throw new YieldAnalysisFailedException();
 				
-				bodyLength -= 2; // don't conside the 'ret(false)' part of the body
+				bodyLength--; // don't conside the stloc instruction to be part of the body
 			}
 			// verify that the last element in the body is a label pointing to the 'ret(false)'
 			returnFalseLabel = body.ElementAtOrDefault(bodyLength - 1) as ILLabel;
