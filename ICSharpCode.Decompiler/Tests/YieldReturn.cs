@@ -108,4 +108,11 @@ public static class YieldReturn
 				yield return i;
 		}
 	}
+	
+	public static IEnumerable<char> YieldChars()
+	{
+		yield return 'a';
+		yield return 'b';
+		yield return 'c';
+	}
 }
