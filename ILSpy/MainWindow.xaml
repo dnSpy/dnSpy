@@ -49,6 +49,7 @@
 			           HorizontalAlignment="Right"
 			           DockPanel.Dock="Right"
 			           x:Name="StatusLabel"
+			           ToolTip="Debugger status"
 			           Width="70"
 			           Text="Stand by..."/>
 		</DockPanel>

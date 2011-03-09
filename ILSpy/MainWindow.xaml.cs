@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
@@ -28,22 +27,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
 using ILSpy.Debugger;
-using ILSpy.Debugger.AvalonEdit;
-using ILSpy.Debugger.Bookmarks;
 using ILSpy.Debugger.Services;
-using ILSpy.Debugger.ToolTips;
-using ILSpy.Debugger.UI;
 using Microsoft.Win32;
 using Mono.Cecil;
 
@@ -444,8 +437,6 @@ namespace ICSharpCode.ILSpy
 		#region Decompile (TreeView_SelectionChanged)
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			TextEditorListener.Instance.ClosePopup();
-			
 			if (treeView.SelectedItems.Count == 1) {
 				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
 				if (node != null && node.View(decompilerTextView))

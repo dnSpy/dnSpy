@@ -39,9 +39,13 @@ namespace ILSpy.Debugger.AvalonEdit
 
 		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
 		{
-			if (e.Bookmark is MarkerBookmark) {
+			if (e.Bookmark is BreakpointBookmark) {
 				var bm = (MarkerBookmark)e.Bookmark;
 				Remove(bm.Marker);
+			}
+			
+			if (e.Bookmark is CurrentLineBookmark) {
+				RemoveAll(m => m.Bookmark is CurrentLineBookmark);
 			}
 		}
 
