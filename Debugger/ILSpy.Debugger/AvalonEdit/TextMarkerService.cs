@@ -49,10 +49,10 @@ namespace ILSpy.Debugger.AvalonEdit
 		{
 			if (e.Bookmark is MarkerBookmark) {
 				var bm = (MarkerBookmark)e.Bookmark;
-				if (DebugData.CurrentType != null && DebugData.CurrentType.FullName.Equals(bm.Type.FullName, StringComparison.OrdinalIgnoreCase)) {
+				if (DebugData.CurrentType != null && DebugData.CurrentType == bm.Type) {
 					// add bookmark for the current type
 					DocumentLine line = codeEditor.Document.GetLineByNumber(bm.LineNumber);
-					bm.Marker = bm.CreateMarker(this, line.Offset, line.Length);
+					bm.CreateMarker(this, line.Offset, line.Length);
 				}
 			}
 		}
@@ -120,6 +120,9 @@ namespace ILSpy.Debugger.AvalonEdit
 			int lineStart = line.Offset;
 			int lineEnd = lineStart + line.Length;
 			foreach (TextMarker marker in markers.FindOverlappingSegments(lineStart, line.Length).Reverse()) {
+				if (!marker.IsVisible(marker.Bookmark))
+					continue;
+				
 				Brush foregroundBrush = null;
 				if (marker.ForegroundColor != null) {
 					foregroundBrush = new SolidColorBrush(marker.ForegroundColor.Value);
@@ -160,6 +163,9 @@ namespace ILSpy.Debugger.AvalonEdit
 			int viewStart = visualLines.First().FirstDocumentLine.Offset;
 			int viewEnd = visualLines.Last().LastDocumentLine.Offset + visualLines.Last().LastDocumentLine.Length;
 			foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart).Reverse()) {
+				if (!marker.IsVisible(marker.Bookmark))
+					continue;
+				
 				if (marker.BackgroundColor != null) {
 					BackgroundGeometryBuilder geoBuilder = new BackgroundGeometryBuilder();
 					geoBuilder.AlignToWholePixels = true;
@@ -295,8 +301,15 @@ namespace ILSpy.Debugger.AvalonEdit
 					Redraw();
 				}
 			}
-		}
 		
+		}
+		/// <inheritdoc/>
 		public object ToolTip { get; set; }
+		
+		/// <inheritdoc/>
+		public Predicate<object> IsVisible { get; set; }
+		
+		/// <inheritdoc/>
+		public IBookmark Bookmark { get; set; }
 	}
 }

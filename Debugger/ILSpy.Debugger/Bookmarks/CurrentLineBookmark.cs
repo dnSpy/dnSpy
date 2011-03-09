@@ -81,6 +81,9 @@ namespace ILSpy.Debugger.Bookmarks
 			ITextMarker marker = markerService.Create(offset + startColumn - 1, length);
 			marker.BackgroundColor = Colors.Yellow;
 			marker.ForegroundColor = Colors.Blue;
+			marker.IsVisible = b => b is MarkerBookmark && ((MarkerBookmark)b).Type == DebugData.CurrentType;
+			marker.Bookmark = this;
+			this.Marker = marker;
 			return marker;
 		}
 	}
