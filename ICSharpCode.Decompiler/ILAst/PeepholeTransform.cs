@@ -163,7 +163,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (parent.Arguments[j].Code == ILCode.Ldsfld && parent.Arguments[j].Operand == field) {
 							parent.Arguments[j] = newObj;
 							block.Body.RemoveAt(i);
-							i -= ILInlining.InlineInto(block, i, method);
+							i -= new ILInlining(method).InlineInto(block, i);
 							return;
 						}
 					}

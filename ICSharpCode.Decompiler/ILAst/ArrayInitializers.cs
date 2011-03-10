@@ -33,7 +33,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (arg1.Match(block.Body.ElementAtOrDefault(i + 1)) && arg2.Match(block.Body.ElementAtOrDefault(i + 2))) {
 					if (initializeArrayPattern.Match(block.Body.ElementAtOrDefault(i + 3))) {
 						if (HandleStaticallyInitializedArray(arg2, block, i, newArrInst, arrayLength)) {
-							i -= ILInlining.InlineInto(block, i + 1, method) - 1;
+							i -= new ILInlining(method).InlineInto(block, i + 1) - 1;
 						}
 						return;
 					}
@@ -55,7 +55,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					((ILExpression)block.Body[i]).Arguments[0] = new ILExpression(
 						ILCode.InitArray, newArrInst.Operand, operands.ToArray());
 					block.Body.RemoveRange(i + 1, arrayLength);
-					i -= ILInlining.InlineInto(block, i + 1, method) - 1;
+					i -= new ILInlining(method).InlineInto(block, i + 1) - 1;
 				}
 			};
 		}
