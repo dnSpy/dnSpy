@@ -33,26 +33,17 @@
 	</Window.CommandBindings>
 	<DockPanel>
 		<!-- Main menu -->
-		<DockPanel DockPanel.Dock="Top" Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
-			<Menu DockPanel.Dock="Left" Name="mainMenu">
-				<MenuItem Header="_File" /> <!-- contents of file menu are added using MEF -->
-				<MenuItem Header="_View">
-					<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
-						<MenuItem.Icon>
-							<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
-						</MenuItem.Icon>
-					</MenuItem>
-					<MenuItem Header="Show _analyzer" Name="showAnalyzer" IsCheckable="True" Checked="ShowAnalyzer_Checked" Unchecked="ShowAnalyzer_Unchecked" />
+		<Menu DockPanel.Dock="Top" Name="mainMenu">
+			<MenuItem Header="_File" /> <!-- contents of file menu are added using MEF -->
+			<MenuItem Header="_View">
+				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
+					<MenuItem.Icon>
+						<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
+					</MenuItem.Icon>
 				</MenuItem>
-			</Menu>
-			<TextBlock VerticalAlignment="Center"
-			           HorizontalAlignment="Right"
-			           DockPanel.Dock="Right"
-			           x:Name="StatusLabel"
-			           ToolTip="Debugger status"
-			           Width="70"
-			           Text="Stand by..."/>
-		</DockPanel>
+				<MenuItem Header="Show _analyzer" Name="showAnalyzer" IsCheckable="True" Checked="ShowAnalyzer_Checked" Unchecked="ShowAnalyzer_Unchecked" />
+			</MenuItem>
+		</Menu>
 		<!-- ToolBar -->
 		<ToolBar
 			Name="toolBar"
@@ -83,6 +74,16 @@
 			          SelectionChanged="LanguageComboBox_SelectionChanged"
 			/>
 		</ToolBar>
+		<!-- Status bar -->
+		<StatusBar x:Name="statusBar" DockPanel.Dock="Bottom" Height="26">
+			<StatusBarItem DockPanel.Dock="Right">
+				<TextBlock VerticalAlignment="Center"
+				           HorizontalAlignment="Right"				           
+				           x:Name="StatusLabel"
+				           ToolTip="Debugger status"
+				           Text="Stand by..."/>
+			</StatusBarItem>
+		</StatusBar>
 		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
 		<Grid>
 			<Grid.ColumnDefinitions>
