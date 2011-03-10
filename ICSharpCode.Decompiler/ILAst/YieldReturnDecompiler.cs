@@ -130,18 +130,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		static FieldDefinition GetFieldDefinition(FieldReference field)
 		{
-			if (field != null && field.DeclaringType.IsGenericInstance)
-				return field.Resolve();
-			else
-				return field as FieldDefinition;
+			return CecilExtensions.ResolveWithinSameModule(field);
 		}
 		
 		static MethodDefinition GetMethodDefinition(MethodReference method)
 		{
-				if (method != null && method.DeclaringType.IsGenericInstance)
-				return method.Resolve();
-			else
-				return method as MethodDefinition;
+			return CecilExtensions.ResolveWithinSameModule(method);
 		}
 		
 		bool MatchEnumeratorCreationNewObj(ILExpression expr, out MethodDefinition ctor)
