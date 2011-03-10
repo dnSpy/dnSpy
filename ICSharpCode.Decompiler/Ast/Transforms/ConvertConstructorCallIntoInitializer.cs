@@ -62,7 +62,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (m == null)
 						break;
 					
-					FieldDefinition fieldDef = m.Get("fieldAccess").Single().Annotation<FieldDefinition>();
+					FieldDefinition fieldDef = m.Get("fieldAccess").Single().Annotation<FieldReference>().ResolveWithinSameModule();
 					if (fieldDef == null)
 						break;
 					AttributedNode fieldOrEventDecl = typeDeclaration.Members.FirstOrDefault(f => f.Annotation<FieldDefinition>() == fieldDef);
@@ -106,7 +106,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						AssignmentExpression assignment = es.Expression as AssignmentExpression;
 						if (assignment == null || assignment.Operator != AssignmentOperatorType.Assign)
 							break;
-						FieldDefinition fieldDef = assignment.Left.Annotation<FieldDefinition>();
+						FieldDefinition fieldDef = assignment.Left.Annotation<FieldReference>().ResolveWithinSameModule();
 						if (fieldDef == null || !fieldDef.IsStatic)
 							break;
 						FieldDeclaration fieldDecl = typeDeclaration.Members.OfType<FieldDeclaration>().FirstOrDefault(f => f.Annotation<FieldDefinition>() == fieldDef);

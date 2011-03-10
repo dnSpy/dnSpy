@@ -465,9 +465,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			public override void WriteTo(ITextOutput output)
 			{
-				Debug.Assert(Values.Count > 0);
-				foreach (int i in this.Values) {
-					output.WriteLine("case {0}:", i);
+				if (this.Values != null) {
+					foreach (int i in this.Values) {
+						output.WriteLine("case {0}:", i);
+					}
+				} else {
+					output.WriteLine("default:");
 				}
 				output.Indent();
 				base.WriteTo(output);

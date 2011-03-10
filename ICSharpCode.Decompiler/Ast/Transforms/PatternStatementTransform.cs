@@ -334,7 +334,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					continue;
 				Match m = automaticPropertyPattern.Match(property);
 				if (m != null) {
-					FieldDefinition field = m.Get("fieldReference").Single().Annotation<FieldDefinition>();
+					FieldDefinition field = m.Get("fieldReference").Single().Annotation<FieldReference>().ResolveWithinSameModule();
 					if (field.IsCompilerGenerated()) {
 						RemoveCompilerGeneratedAttribute(property.Getter.Attributes);
 						RemoveCompilerGeneratedAttribute(property.Setter.Attributes);

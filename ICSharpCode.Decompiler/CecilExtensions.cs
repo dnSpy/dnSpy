@@ -159,9 +159,25 @@ namespace ICSharpCode.Decompiler
 			return accessorMethods;
 		}
 		
+		public static FieldDefinition ResolveWithinSameModule(this FieldReference field)
+		{
+			if (field != null && field.DeclaringType.GetElementType().Module == field.Module)
+				return field.Resolve();
+			else
+				return null;
+		}
+		
+		public static MethodDefinition ResolveWithinSameModule(this MethodReference method)
+		{
+			if (method != null && method.DeclaringType.GetElementType().Module == method.Module)
+				return method.Resolve();
+			else
+				return null;
+		}
+		
 		public static bool IsCompilerGenerated(this ICustomAttributeProvider provider)
 		{
-			if (provider.HasCustomAttributes) {
+			if (provider != null && provider.HasCustomAttributes) {
 				foreach (CustomAttribute a in provider.CustomAttributes) {
 					if (a.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute")
 						return true;

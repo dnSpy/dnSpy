@@ -123,7 +123,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void AddType(TypeDefinition typeDef)
 		{
-			TypeDeclaration astType = CreateType(typeDef);
+			var astType = CreateType(typeDef);
 			NamespaceDeclaration astNS = GetCodeNamespace(typeDef.Namespace);
 			if (astNS != null) {
 				astNS.AddChild(astType, NamespaceDeclaration.MemberRole);
@@ -153,7 +153,12 @@ namespace ICSharpCode.Decompiler.Ast
 			astCompileUnit.AddChild(CreateEvent(ev), CompilationUnit.MemberRole);
 		}
 		
-		public TypeDeclaration CreateType(TypeDefinition typeDef)
+		/// <summary>
+		/// Creates the AST for a type definition.
+		/// </summary>
+		/// <param name="typeDef"></param>
+		/// <returns>TypeDeclaration or DelegateDeclaration.</returns>
+		public AttributedNode CreateType(TypeDefinition typeDef)
 		{
 			// create CSharp code mappings - used for debugger
 			if (!CSharpCodeMapping.SourceCodeMappings.ContainsKey(typeDef.FullName)) {
@@ -191,13 +196,13 @@ namespace ICSharpCode.Decompiler.Ast
 			astType.Constraints.AddRange(MakeConstraints(genericParameters));
 			
 			// Nested types
-			foreach(TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
+			foreach (TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
 				if (MemberIsHidden(nestedTypeDef, context.Settings))
 					continue;
 				astType.AddChild(CreateType(nestedTypeDef), TypeDeclaration.MemberRole);
 			}
 			
-			
+			AttributedNode result = astType;
 			if (typeDef.IsEnum) {
 				long expectedEnumMemberValue = 0;
 				bool forcePrintingInitializers = IsFlagsEnum(typeDef);
@@ -218,6 +223,21 @@ namespace ICSharpCode.Decompiler.Ast
 						astType.AddChild(enumMember, TypeDeclaration.MemberRole);
 					}
 				}
+			} else if (typeDef.BaseType != null && typeDef.BaseType.FullName == "System.MulticastDelegate") {
+				DelegateDeclaration dd = new DelegateDeclaration();
+				dd.Modifiers = astType.Modifiers & ~Modifiers.Sealed;
+				dd.Name = astType.Name;
+				dd.AddAnnotation(typeDef);
+				astType.Attributes.MoveTo(dd.Attributes);
+				astType.TypeParameters.MoveTo(dd.TypeParameters);
+				astType.Constraints.MoveTo(dd.Constraints);
+				foreach (var m in typeDef.Methods) {
+					if (m.Name == "Invoke") {
+						dd.ReturnType = ConvertType(m.ReturnType, m.MethodReturnType);
+						dd.Parameters.AddRange(MakeParameters(m.Parameters));
+					}
+				}
+				result = dd;
 			} else {
 				// Base type
 				if (typeDef.BaseType != null && !typeDef.IsValueType && typeDef.BaseType.FullName != "System.Object") {
@@ -231,7 +251,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 
 			context.CurrentType = oldCurrentType;
-			return astType;
+			return result;
 		}
 
 		public void Transform(IAstTransform transform)
@@ -736,6 +756,7 @@ namespace ICSharpCode.Decompiler.Ast
 		CustomEventDeclaration CreateEvent(EventDefinition eventDef)
 		{
 			CustomEventDeclaration astEvent = new CustomEventDeclaration();
+			ConvertCustomAttributes(astEvent, eventDef);
 			astEvent.AddAnnotation(eventDef);
 			astEvent.Name = CleanName(eventDef.Name);
 			astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
@@ -1148,7 +1169,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			TypeCode code = TypeAnalysis.GetTypeCode(type);
-			if (code == TypeCode.Object)
+			if (code == TypeCode.Object || code == TypeCode.Empty)
 				return new Ast.PrimitiveExpression((int)val);
 			else
 				return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
