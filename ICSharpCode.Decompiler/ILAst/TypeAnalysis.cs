@@ -28,6 +28,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			ta.method = method;
 			ta.InferTypes(method);
 			ta.InferRemainingStores();
+			// Now that stores were inferred, we can infer the remaining instructions that depended on those stored
+			// (but which didn't provide an expected type for the store)
+			// For example, this is necessary to make a switch() over a generated variable work correctly.
+			ta.InferTypes(method);
 		}
 		
 		DecompilerContext context;
@@ -356,7 +360,6 @@ namespace ICSharpCode.Decompiler.ILAst
 					{
 						ArrayType arrayType = InferTypeForExpression(expr.Arguments[0], null) as ArrayType;
 						if (forceInferChildren) {
-							InferTypeForExpression(expr.Arguments[0], new ArrayType(typeSystem.Byte));
 							InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
 						}
 						return arrayType != null ? arrayType.ElementType : null;

@@ -1125,7 +1125,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			TypeCode code = TypeAnalysis.GetTypeCode(type);
-			if (code == TypeCode.Object)
+			if (code == TypeCode.Object || code == TypeCode.Empty)
 				return new Ast.PrimitiveExpression((int)val);
 			else
 				return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
