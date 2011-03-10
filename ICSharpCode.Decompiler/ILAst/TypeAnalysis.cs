@@ -257,7 +257,15 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Initobj:
 					return null;
 				case ILCode.Localloc:
-					return typeSystem.IntPtr;
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], typeSystem.Int32);
+					}
+					if (expectedType is PointerType)
+						return expectedType;
+					else
+						return typeSystem.IntPtr;
+				case ILCode.Sizeof:
+					return typeSystem.Int32;
 					#endregion
 					#region Arithmetic instructions
 				case ILCode.Not: // bitwise complement
@@ -386,33 +394,43 @@ namespace ICSharpCode.Decompiler.ILAst
 					#region Conversion instructions
 				case ILCode.Conv_I1:
 				case ILCode.Conv_Ovf_I1:
+				case ILCode.Conv_Ovf_I1_Un:
 					return (GetInformationAmount(expectedType) == 8 && IsSigned(expectedType) == true) ? expectedType : typeSystem.SByte;
 				case ILCode.Conv_I2:
 				case ILCode.Conv_Ovf_I2:
+				case ILCode.Conv_Ovf_I2_Un:
 					return (GetInformationAmount(expectedType) == 16 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int16;
 				case ILCode.Conv_I4:
 				case ILCode.Conv_Ovf_I4:
+				case ILCode.Conv_Ovf_I4_Un:
 					return (GetInformationAmount(expectedType) == 32 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int32;
 				case ILCode.Conv_I8:
 				case ILCode.Conv_Ovf_I8:
+				case ILCode.Conv_Ovf_I8_Un:
 					return (GetInformationAmount(expectedType) == 64 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int64;
 				case ILCode.Conv_U1:
 				case ILCode.Conv_Ovf_U1:
+				case ILCode.Conv_Ovf_U1_Un:
 					return (GetInformationAmount(expectedType) == 8 && IsSigned(expectedType) == false) ? expectedType : typeSystem.Byte;
 				case ILCode.Conv_U2:
 				case ILCode.Conv_Ovf_U2:
+				case ILCode.Conv_Ovf_U2_Un:
 					return (GetInformationAmount(expectedType) == 16 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt16;
 				case ILCode.Conv_U4:
 				case ILCode.Conv_Ovf_U4:
+				case ILCode.Conv_Ovf_U4_Un:
 					return (GetInformationAmount(expectedType) == 32 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt32;
 				case ILCode.Conv_U8:
 				case ILCode.Conv_Ovf_U8:
+				case ILCode.Conv_Ovf_U8_Un:
 					return (GetInformationAmount(expectedType) == 64 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt64;
 				case ILCode.Conv_I:
 				case ILCode.Conv_Ovf_I:
+				case ILCode.Conv_Ovf_I_Un:
 					return (GetInformationAmount(expectedType) == nativeInt && IsSigned(expectedType) == true) ? expectedType : typeSystem.IntPtr;
 				case ILCode.Conv_U:
 				case ILCode.Conv_Ovf_U:
+				case ILCode.Conv_Ovf_U_Un:
 					return (GetInformationAmount(expectedType) == nativeInt && IsSigned(expectedType) == false) ? expectedType : typeSystem.UIntPtr;
 				case ILCode.Conv_R4:
 					return typeSystem.Single;
