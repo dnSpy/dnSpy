@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
@@ -13,19 +14,17 @@ namespace ICSharpCode.Decompiler.ILAst
 	/// </summary>
 	public class ILInlining
 	{
-		public static void InlineAllVariables(ILBlock method)
-		{
-			ILInlining i = new ILInlining(method);
-			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>())
-				i.InlineAllInBlock(block);
-		}
-		
+		readonly ILBlock method;
 		Dictionary<ILVariable, int> numStloc  = new Dictionary<ILVariable, int>();
 		Dictionary<ILVariable, int> numLdloc  = new Dictionary<ILVariable, int>();
 		Dictionary<ILVariable, int> numLdloca = new Dictionary<ILVariable, int>();
 		
+		Dictionary<ParameterDefinition, int> numStarg  = new Dictionary<ParameterDefinition, int>();
+		Dictionary<ParameterDefinition, int> numLdarga = new Dictionary<ParameterDefinition, int>();
+		
 		public ILInlining(ILBlock method)
 		{
+			this.method = method;
 			// Analyse the whole method
 			foreach(ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
 				ILVariable locVar = expr.Operand as ILVariable;
@@ -39,8 +38,23 @@ namespace ICSharpCode.Decompiler.ILAst
 					} else {
 						throw new NotSupportedException(expr.Code.ToString());
 					}
+				} else {
+					ParameterDefinition pd = expr.Operand as ParameterDefinition;
+					if (pd != null) {
+						if (expr.Code == ILCode.Starg)
+							numStarg[pd] = numStarg.GetOrDefault(pd) + 1;
+						else if (expr.Code == ILCode.Ldarga)
+							numLdarga[pd] = numLdarga.GetOrDefault(pd) + 1;
+					}
 				}
 			}
+		}
+		
+		public void InlineAllVariables()
+		{
+			ILInlining i = new ILInlining(method);
+			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>())
+				i.InlineAllInBlock(block);
 		}
 		
 		public void InlineAllInBlock(ILBlock block)
@@ -50,14 +64,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression nextExpr = body[i + 1] as ILExpression;
 				ILVariable locVar;
 				ILExpression expr;
-				ILExpression ldParent;
-				int ldPos;
-				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineIfPossible(block, i)) {
-					
-					
-					// We are moving the expression evaluation past the other aguments.
-					// It is ok to pass ldloc because the expression can not contain stloc and thus the ldloc will still return the same value
-					
+				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineIfPossible(block, i, aggressive: false)) {
 					i = Math.Max(0, i - 1); // Go back one step
 				} else {
 					i++;
@@ -71,6 +78,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <returns>The number of instructions that were inlined.</returns>
 		public int InlineInto(ILBlock block, int pos)
 		{
+			if (pos >= block.Body.Count)
+				return 0;
 			int count = 0;
 			while (--pos >= 0) {
 				ILExpression expr = block.Body[pos] as ILExpression;
@@ -87,12 +96,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <summary>
 		/// Inlines the stloc instruction at block.Body[pos] into the next instruction, if possible.
 		/// </summary>
-		public bool InlineIfPossible(ILBlock block, int pos)
+		public bool InlineIfPossible(ILBlock block, int pos, bool aggressive = true)
 		{
 			ILVariable v;
 			ILExpression inlinedExpression;
 			if (block.Body[pos].Match(ILCode.Stloc, out v, out inlinedExpression)
-			    && InlineIfPossible(v, inlinedExpression, block.Body.ElementAtOrDefault(pos+1)))
+			    && InlineIfPossible(v, inlinedExpression, block.Body.ElementAtOrDefault(pos+1), aggressive))
 			{
 				// Assign the ranges of the stloc instruction:
 				inlinedExpression.ILRanges.AddRange(((ILExpression)block.Body[pos]).ILRanges);
@@ -106,19 +115,17 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <summary>
 		/// Inlines 'expr' into 'next', if possible.
 		/// </summary>
-		bool InlineIfPossible(ILVariable v, ILExpression inlinedExpression, ILNode next)
+		bool InlineIfPossible(ILVariable v, ILExpression inlinedExpression, ILNode next, bool aggressive)
 		{
 			// ensure the variable is accessed only a single time
 			if (!(numStloc.GetOrDefault(v) == 1 && numLdloc.GetOrDefault(v) == 1 && numLdloca.GetOrDefault(v) == 0))
 				return false;
-			HashSet<ILVariable> forbiddenVariables = new HashSet<ILVariable>();
-			foreach (ILExpression potentialStore in inlinedExpression.GetSelfAndChildrenRecursive<ILExpression>()) {
-				if (potentialStore.Code == ILCode.Stloc)
-					forbiddenVariables.Add((ILVariable)potentialStore.Operand);
-			}
 			ILExpression parent;
 			int pos;
-			if (FindLoadInNext(next as ILExpression, v, forbiddenVariables, out parent, out pos) == true) {
+			if (FindLoadInNext(next as ILExpression, v, inlinedExpression, out parent, out pos) == true) {
+				if (!aggressive && !v.IsGenerated && !NonAggressiveInlineInto((ILExpression)next, parent))
+					return false;
+				
 				// Assign the ranges of the ldloc instruction:
 				inlinedExpression.ILRanges.AddRange(parent.Arguments[pos].ILRanges);
 				
@@ -129,11 +136,25 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
+		bool NonAggressiveInlineInto(ILExpression next, ILExpression parent)
+		{
+			switch (next.Code) {
+				case ILCode.Ret:
+					return parent.Code == ILCode.Ret;
+				case ILCode.Brtrue:
+					return parent.Code == ILCode.Brtrue;
+				case ILCode.Switch:
+					return parent.Code == ILCode.Switch || parent.Code == ILCode.Sub;
+				default:
+					return false;
+			}
+		}
+		
 		/// <summary>
 		/// Finds the position to inline to.
 		/// </summary>
 		/// <returns>true = found; false = cannot continue search; null = not found</returns>
-		bool? FindLoadInNext(ILExpression expr, ILVariable v, HashSet<ILVariable> forbiddenVariables, out ILExpression parent, out int pos)
+		bool? FindLoadInNext(ILExpression expr, ILVariable v, ILExpression expressionBeingMoved, out ILExpression parent, out int pos)
 		{
 			parent = null;
 			pos = 0;
@@ -152,20 +173,92 @@ namespace ICSharpCode.Decompiler.ILAst
 					pos = i;
 					return true;
 				}
-				bool? r = FindLoadInNext(arg, v, forbiddenVariables, out parent, out pos);
+				bool? r = FindLoadInNext(arg, v, expressionBeingMoved, out parent, out pos);
 				if (r != null)
 					return r;
 			}
-			if (expr.Code == ILCode.Ldloc) {
-				ILVariable loadedVar = (ILVariable)expr.Operand;
-				if (!forbiddenVariables.Contains(loadedVar) && numLdloca.GetOrDefault(loadedVar) == 0) {
+			switch (expr.Code) {
+				case ILCode.Ldloc:
+					ILVariable loadedVar = (ILVariable)expr.Operand;
+					if (numLdloca.GetOrDefault(loadedVar) != 0) {
+						// abort, inlining is not possible
+						return false;
+					}
+					foreach (ILExpression potentialStore in expressionBeingMoved.GetSelfAndChildrenRecursive<ILExpression>()) {
+						if (potentialStore.Code == ILCode.Stloc && potentialStore.Operand == loadedVar)
+							return false;
+					}
 					// the expression is loading a non-forbidden variable:
 					// we're allowed to continue searching
 					return null;
+				case ILCode.Ldarg:
+					// Also try moving over ldarg instructions - this is necessary because an earlier copy propagation
+					// step might have introduced ldarg in place of an ldloc that would be skipped.
+					ParameterDefinition loadedParam = (ParameterDefinition)expr.Operand;
+					if (numLdarga.GetOrDefault(loadedParam) != 0)
+						return false;
+					foreach (ILExpression potentialStore in expressionBeingMoved.GetSelfAndChildrenRecursive<ILExpression>()) {
+						if (potentialStore.Code == ILCode.Starg && potentialStore.Operand == loadedParam)
+							return false;
+					}
+					return null;
+				case ILCode.Ldloca:
+				case ILCode.Ldarga:
+					// Continue searching:
+					// It is always safe to move code past an instruction that loads a constant.
+					return null;
+				default:
+					// abort, inlining is not possible
+					return false;
+			}
+		}
+		
+		/// <summary>
+		/// Runs a very simple form of copy propagation.
+		/// Copy propagation is used in two cases:
+		/// 1) assignments from arguments to local variables
+		///    If the target variable is assigned to only once (so always is that argument) and the argument is never changed (no ldarga/starg),
+		///    then we can replace the variable with the argument.
+		/// 2) assignments of 'ldloca/ldarga' to local variables
+		/// </summary>
+		public void CopyPropagation()
+		{
+			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				for (int i = block.Body.Count - 1; i >= 0; i--) {
+					ILVariable v;
+					ILExpression ldArg;
+					if (block.Body[i].Match(ILCode.Stloc, out v, out ldArg)
+					    && numStloc.GetOrDefault(v) == 1 && numLdloca.GetOrDefault(v) == 0
+					    && CanPerformCopyPropagation(ldArg))
+					{
+						// perform copy propagation:
+						foreach (var expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+							if (expr.Code == ILCode.Ldloc && expr.Operand == v) {
+								expr.Code = ldArg.Code;
+								expr.Operand = ldArg.Operand;
+							}
+						}
+						
+						block.Body.RemoveAt(i);
+						InlineInto(block, i); // maybe inlining gets possible after the removal of block.Body[i]
+					}
 				}
 			}
-			// otherwise: abort, inlining is not possible
-			return false;
+		}
+		
+		bool CanPerformCopyPropagation(ILExpression ldArg)
+		{
+			switch (ldArg.Code) {
+				case ILCode.Ldloca:
+				case ILCode.Ldarga:
+					return true; // ldloca/ldarga always return the same value for a given operand, so they can be safely copied
+				case ILCode.Ldarg:
+					// arguments can be copied only if they aren't assigned to (directly or indirectly via ldarga)
+					ParameterDefinition pd = (ParameterDefinition)ldArg.Operand;
+					return numLdarga.GetOrDefault(pd) == 0 && numStarg.GetOrDefault(pd) == 0;
+				default:
+					return false;
+			}
 		}
 	}
 }

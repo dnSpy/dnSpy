@@ -12,8 +12,9 @@ namespace ICSharpCode.Decompiler.ILAst
 	public enum ILAstOptimizationStep
 	{
 		SimpleGotoAndNopRemoval,
-		InlineVariables,
 		ReduceBranchInstructionSet,
+		InlineVariables,
+		CopyPropagation,
 		YieldReturn,
 		SplitToMovableBlocks,
 		PeepholeOptimizations,
@@ -40,14 +41,20 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (abortBeforeStep == ILAstOptimizationStep.SimpleGotoAndNopRemoval) return;
 			SimpleGotoAndNopRemoval(method);
 			
-			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables) return;
-			// Works better after simple goto removal because of the following debug pattern: stloc X; br Next; Next:; ldloc X
-			ILInlining.InlineAllVariables(method);
-			
 			if (abortBeforeStep == ILAstOptimizationStep.ReduceBranchInstructionSet) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
 				ReduceBranchInstructionSet(block);
 			}
+			// ReduceBranchInstructionSet runs before inlining because the non-aggressive inlining heuristic
+			// looks at which type of instruction consumes the inlined variable.
+			
+			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables) return;
+			// Works better after simple goto removal because of the following debug pattern: stloc X; br Next; Next:; ldloc X
+			ILInlining inlining1 = new ILInlining(method);
+			inlining1.InlineAllVariables();
+			
+			if (abortBeforeStep == ILAstOptimizationStep.CopyPropagation) return;
+			inlining1.CopyPropagation();
 			
 			if (abortBeforeStep == ILAstOptimizationStep.YieldReturn) return;
 			YieldReturnDecompiler.Run(context, method);
@@ -98,7 +105,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			FlattenIfStatements(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
-			ILInlining.InlineAllVariables(method);
+			// The 2nd inlining pass is necessary because DuplicateReturns and the introduction of ternary operators
+			// open up additional inlining possibilities.
+			new ILInlining(method).InlineAllVariables();
 			
 			if (abortBeforeStep == ILAstOptimizationStep.PeepholeTransforms) return;
 			PeepholeTransforms.Run(context, method);
