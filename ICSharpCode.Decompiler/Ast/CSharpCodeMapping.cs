@@ -14,12 +14,12 @@ namespace ICSharpCode.Decompiler.Ast
 	/// </summary>
 	public static class CSharpCodeMapping
 	{
-		static ConcurrentDictionary<string, List<MethodMapping>> codeMappings = new ConcurrentDictionary<string, List<MethodMapping>>();
+		static ConcurrentDictionary<string, List<MemberMapping>> codeMappings = new ConcurrentDictionary<string, List<MemberMapping>>();
 		
 		/// <summary>
 		/// Stores the source codes mappings: CSharp &lt;-&gt; editor lines
 		/// </summary>
-		public static ConcurrentDictionary<string, List<MethodMapping>> SourceCodeMappings {
+		public static ConcurrentDictionary<string, List<MemberMapping>> SourceCodeMappings {
 			get { return codeMappings; }
 			set { codeMappings = value; }
 		}

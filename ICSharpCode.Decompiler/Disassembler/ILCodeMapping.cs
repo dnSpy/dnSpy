@@ -12,12 +12,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 	/// </summary>
 	public static class ILCodeMapping
 	{
-		static ConcurrentDictionary<string, List<MethodMapping>> codeMappings = new ConcurrentDictionary<string, List<MethodMapping>>();
+		static ConcurrentDictionary<string, List<MemberMapping>> codeMappings = new ConcurrentDictionary<string, List<MemberMapping>>();
 		
 		/// <summary>
 		/// Stores the source codes mappings: IL &lt;-&gt; editor lines
 		/// </summary>
-		public static ConcurrentDictionary<string, List<MethodMapping>> SourceCodeMappings {
+		public static ConcurrentDictionary<string, List<MemberMapping>> SourceCodeMappings {
 			get { return codeMappings; }
 			set { codeMappings = value; }
 		}

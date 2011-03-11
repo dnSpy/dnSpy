@@ -48,7 +48,7 @@ namespace ILSpy.Debugger.Services
 		//DynamicTreeDebuggerRow currentTooltipRow;
 		//Expression             currentTooltipExpression;
 		
-		private ConcurrentDictionary<string, List<MethodMapping>> CodeMappingsStorage {
+		private ConcurrentDictionary<string, List<MemberMapping>> CodeMappingsStorage {
 			get {
 				return CodeMappings.GetStorage(DebugData.Language);
 			}
@@ -302,7 +302,7 @@ namespace ILSpy.Debugger.Services
 			
 			var mapping = val.Find(m => m.MetadataToken == token);
 			
-			return mapping.MethodCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From == instruction.ILInstructionOffset.From);
+			return mapping.MemberCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From == instruction.ILInstructionOffset.From);
 		}
 		
 		StackFrame GetStackFrame()

@@ -47,7 +47,7 @@ namespace ICSharpCode.Decompiler
 	/// <summary>
 	/// Stores the method information and its source code mappings.
 	/// </summary>
-	public sealed class MethodMapping
+	public sealed class MemberMapping
 	{
 		/// <summary>
 		/// Gets or sets the type of the mapping.
@@ -62,19 +62,17 @@ namespace ICSharpCode.Decompiler
 		/// <summary>
 		/// Gets or sets the source code mappings.
 		/// </summary>
-		public List<SourceCodeMapping> MethodCodeMappings { get; set; }
+		public List<SourceCodeMapping> MemberCodeMappings { get; set; }
 		
 		public int[] ToArray()
 		{
-			int[] result = new int[MethodCodeMappings.Count * 2];
+			int[] result = new int[MemberCodeMappings.Count * 2];
 			int i = 0;
-			foreach (var element in MethodCodeMappings) {
-				result[i] = element.ILInstructionOffset.From;	
-				result[i+1] = element.ILInstructionOffset.To;	
+			foreach (var element in MemberCodeMappings) {
+				result[i] = element.ILInstructionOffset.From;
+				result[i+1] = element.ILInstructionOffset.To;
 				i+=2;
 			}
-			
-			//result[MethodCodeMappings.Count] = MethodCodeMappings[MethodCodeMappings.Count - 1].ILInstructionOffset.To;
 			
 			return result;
 		}
@@ -82,16 +80,16 @@ namespace ICSharpCode.Decompiler
 	
 	public static class CodeMappings
 	{
-		public static ConcurrentDictionary<string, List<MethodMapping>> GetStorage(DecompiledLanguages language)
+		public static ConcurrentDictionary<string, List<MemberMapping>> GetStorage(DecompiledLanguages language)
 		{
-			ConcurrentDictionary<string, List<MethodMapping>> storage = null;
+			ConcurrentDictionary<string, List<MemberMapping>> storage = null;
 			
 			switch (language) {
 				case DecompiledLanguages.IL:
-						storage = ILCodeMapping.SourceCodeMappings;
+					storage = ILCodeMapping.SourceCodeMappings;
 					break;
 				case DecompiledLanguages.CSharp:
-						storage = CSharpCodeMapping.SourceCodeMappings;
+					storage = CSharpCodeMapping.SourceCodeMappings;
 					break;
 				default:
 					throw new System.Exception("Invalid value for DecompiledLanguages");
@@ -105,25 +103,25 @@ namespace ICSharpCode.Decompiler
 		/// </summary>
 		/// <param name="method">Method to create the mapping for.</param>
 		/// <param name="sourceCodeMappings">Source code mapping storage.</param>
-		public static MethodMapping CreateCodeMapping(
-			this MethodDefinition method,
-			ConcurrentDictionary<string, List<MethodMapping>> sourceCodeMappings)
+		public static MemberMapping CreateCodeMapping(
+			this MemberReference member,
+			ConcurrentDictionary<string, List<MemberMapping>> codeMappings)
 		{
 			// create IL/CSharp code mappings - used in debugger
-			MethodMapping currentMethodMapping = null;
-			if (sourceCodeMappings.ContainsKey(method.DeclaringType.FullName)) {
-				var mapping = sourceCodeMappings[method.DeclaringType.FullName];
-				if (mapping.Find(map => (int)map.MetadataToken == method.MetadataToken.ToInt32()) == null) {
-					currentMethodMapping = new MethodMapping() {
-						MetadataToken = (uint)method.MetadataToken.ToInt32(),
-						Type = method.DeclaringType,
-						MethodCodeMappings = new List<SourceCodeMapping>()
+			MemberMapping currentMemberMapping = null;
+			if (codeMappings.ContainsKey(member.DeclaringType.FullName)) {
+				var mapping = codeMappings[member.DeclaringType.FullName];
+				if (mapping.Find(map => (int)map.MetadataToken == member.MetadataToken.ToInt32()) == null) {
+					currentMemberMapping = new MemberMapping() {
+						MetadataToken = (uint)member.MetadataToken.ToInt32(),
+						Type = member.DeclaringType.Resolve(),
+						MemberCodeMappings = new List<SourceCodeMapping>()
 					};
-					mapping.Add(currentMethodMapping);
+					mapping.Add(currentMemberMapping);
 				}
 			}
 			
-			return currentMethodMapping;
+			return currentMemberMapping;
 		}
 		
 		/// <summary>
@@ -135,7 +133,7 @@ namespace ICSharpCode.Decompiler
 		/// <param name="metadataToken">Metadata token.</param>
 		/// <returns></returns>
 		public static SourceCodeMapping GetInstructionByTypeAndLine(
-			this ConcurrentDictionary<string, List<MethodMapping>> codeMappings,
+			this ConcurrentDictionary<string, List<MemberMapping>> codeMappings,
 			string typeName,
 			int lineNumber,
 			out uint metadataToken)
@@ -152,7 +150,7 @@ namespace ICSharpCode.Decompiler
 			
 			var methodMappings = codeMappings[typeName];
 			foreach (var maping in methodMappings) {
-				var map = maping.MethodCodeMappings.Find(m => m.SourceCodeLine == lineNumber);
+				var map = maping.MemberCodeMappings.Find(m => m.SourceCodeLine == lineNumber);
 				if (map != null) {
 					metadataToken = maping.MetadataToken;
 					return map;
@@ -172,7 +170,7 @@ namespace ICSharpCode.Decompiler
 		/// <param name="typeName">Type definition.</param>
 		/// <param name="line">Line number.</param>
 		public static bool GetSourceCodeFromMetadataTokenAndOffset(
-			this ConcurrentDictionary<string, List<MethodMapping>> codeMappings,
+			this ConcurrentDictionary<string, List<MemberMapping>> codeMappings,
 			uint token,
 			int ilOffset,
 			out TypeDefinition type,
@@ -186,17 +184,17 @@ namespace ICSharpCode.Decompiler
 				if (mapping == null)
 					continue;
 				
-				var codeMapping = mapping.MethodCodeMappings.Find(
+				var codeMapping = mapping.MemberCodeMappings.Find(
 					cm => cm.ILInstructionOffset.From <= ilOffset && ilOffset <= cm.ILInstructionOffset.To - 1);
 				if (codeMapping == null) {
-					codeMapping = mapping.MethodCodeMappings.Find(cm => (cm.ILInstructionOffset.From >= ilOffset));
+					codeMapping = mapping.MemberCodeMappings.Find(cm => (cm.ILInstructionOffset.From >= ilOffset));
 					if (codeMapping == null) {
-						codeMapping = mapping.MethodCodeMappings.LastOrDefault();
+						codeMapping = mapping.MemberCodeMappings.LastOrDefault();
 						if (codeMapping == null)
 							continue;
 					}
 				}
-					
+				
 				
 				type = mapping.Type;
 				line = codeMapping.SourceCodeLine;

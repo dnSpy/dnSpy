@@ -129,11 +129,11 @@ namespace ICSharpCode.Decompiler.Ast
 				// find the ancestor that has method mapping as annotation
 				if (node.Ancestors != null && node.Ancestors.Count() > 0)
 				{
-					var n = node.Ancestors.FirstOrDefault(a => a.Annotation<MethodMapping>() != null);
+					var n = node.Ancestors.FirstOrDefault(a => a.Annotation<MemberMapping>() != null);
 					if (n != default(AstType)) {
-						MethodMapping mapping = n.Annotation<MethodMapping>();
+						MemberMapping mapping = n.Annotation<MemberMapping>();
 						foreach (var range in ranges) {
-							mapping.MethodCodeMappings.Add(new SourceCodeMapping {
+							mapping.MemberCodeMappings.Add(new SourceCodeMapping {
 							                               	ILInstructionOffset = range,
 							                               	SourceCodeLine = output.CurrentLine
 							                               });

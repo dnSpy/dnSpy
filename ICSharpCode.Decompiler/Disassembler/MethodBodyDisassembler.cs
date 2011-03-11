@@ -50,7 +50,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		public void Disassemble(MethodBody body)
 		{
 			// create IL code mappings - used in debugger
-			MethodMapping methodMapping = body.Method.CreateCodeMapping(ILCodeMapping.SourceCodeMappings);
+			MemberMapping methodMapping = body.Method.CreateCodeMapping(ILCodeMapping.SourceCodeMappings);
 			
 			// start writing IL code
 			MethodDefinition method = body.Method;
@@ -84,7 +84,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			} else {
 				foreach (var inst in method.Body.Instructions) {
 					// add IL code mappings
-					methodMapping.MethodCodeMappings.Add(
+					methodMapping.MemberCodeMappings.Add(
 						new SourceCodeMapping() {
 							SourceCodeLine = output.CurrentLine,
 							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? method.Body.CodeSize : inst.Next.Offset }
@@ -146,13 +146,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Indent();
 		}
 		
-		void WriteStructureBody(ILStructure s, ref Instruction inst, MethodMapping currentMethodMapping, int codeSize)
+		void WriteStructureBody(ILStructure s, ref Instruction inst, MemberMapping currentMethodMapping, int codeSize)
 		{
 			int childIndex = 0;
 			while (inst != null && inst.Offset < s.EndOffset) {
 				// add IL code mappings - used in debugger
 				if (currentMethodMapping != null) {
-					currentMethodMapping.MethodCodeMappings.Add(
+					currentMethodMapping.MemberCodeMappings.Add(
 						new SourceCodeMapping() {
 							SourceCodeLine = output.CurrentLine,
 							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? codeSize : inst.Next.Offset }
