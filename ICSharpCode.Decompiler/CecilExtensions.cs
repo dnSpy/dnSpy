@@ -159,6 +159,14 @@ namespace ICSharpCode.Decompiler
 			return accessorMethods;
 		}
 		
+		public static TypeDefinition ResolveWithinSameModule(this TypeReference type)
+		{
+			if (type != null && type.GetElementType().Module == type.Module)
+				return type.Resolve();
+			else
+				return null;
+		}
+		
 		public static FieldDefinition ResolveWithinSameModule(this FieldReference field)
 		{
 			if (field != null && field.DeclaringType.GetElementType().Module == field.Module)
