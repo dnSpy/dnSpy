@@ -15,9 +15,32 @@ public static class Switch
 		}
 	}
 	
-	public static string SwitchOverString(string text)
+	public static string SwitchOverString1(string text)
 	{
 		switch (text) {
+			case "First case":
+				return "Text1";
+			case "Second case":
+			case "2nd case":
+				return "Text2";
+			case "Third case":
+				return "Text3";
+			case "Fourth case":
+				return "Text4";
+			case "Fifth case":
+				return "Text5";
+			case "Sixth case":
+				return "Text6";
+			case null:
+				return null;
+			default:
+				return "Default";
+		}
+	}
+	
+	public static string SwitchOverString2()
+	{
+		switch (Environment.UserName) {
 			case "First case":
 				return "Text1";
 			case "Second case":

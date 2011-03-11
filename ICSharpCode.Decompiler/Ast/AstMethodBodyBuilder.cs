@@ -645,7 +645,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			// Default invocation
-			AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
+			AdjustArgumentsForMethodCall(cecilMethodDef ?? cecilMethod, methodArgs);
 			return target.Invoke(cecilMethod.Name, ConvertTypeArguments(cecilMethod), methodArgs).WithAnnotation(cecilMethod);
 		}
 		

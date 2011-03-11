@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
@@ -33,6 +34,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			TransformDoWhile(compilationUnit);
 			if (context.Settings.LockStatement)
 				TransformLock(compilationUnit);
+			if (context.Settings.SwitchStatementOnString)
+				TransformSwitchOnString(compilationUnit);
 			if (context.Settings.AutomaticProperties)
 				TransformAutomaticProperties(compilationUnit);
 			if (context.Settings.AutomaticEvents)
@@ -90,7 +93,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public void TransformUsings(AstNode compilationUnit)
 		{
-			foreach (AstNode node in compilationUnit.Descendants.ToArray()) {
+			foreach (AstNode node in compilationUnit.Descendants.OfType<VariableDeclarationStatement>().ToArray()) {
 				Match m1 = variableDeclPattern.Match(node);
 				if (m1 == null) continue;
 				AstNode tryCatch = node.NextSibling;
@@ -181,7 +184,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public void TransformForeach(AstNode compilationUnit)
 		{
-			foreach (AstNode node in compilationUnit.Descendants.ToArray()) {
+			foreach (AstNode node in compilationUnit.Descendants.OfType<UsingStatement>().ToArray()) {
 				Match m = foreachPattern.Match(node);
 				if (m == null)
 					continue;
@@ -228,7 +231,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public void TransformFor(AstNode compilationUnit)
 		{
-			foreach (AstNode node in compilationUnit.Descendants.ToArray()) {
+			foreach (AstNode node in compilationUnit.Descendants.OfType<VariableDeclarationStatement>().ToArray()) {
 				Match m1 = variableDeclPattern.Match(node);
 				if (m1 == null) continue;
 				AstNode next = node.NextSibling;
@@ -335,7 +338,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public void TransformLock(AstNode compilationUnit)
 		{
-			foreach (AstNode node in compilationUnit.Descendants.ToArray()) {
+			foreach (AstNode node in compilationUnit.Descendants.OfType<VariableDeclarationStatement>().ToArray()) {
 				Match m1 = lockFlagInitPattern.Match(node);
 				if (m1 == null) continue;
 				AstNode tryCatch = node.NextSibling;
@@ -376,6 +379,117 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					node.Remove(); // remove flag variable
 				}
 			}
+		}
+		#endregion
+		
+		#region switch on strings
+		static readonly IfElseStatement switchOnStringPattern = new IfElseStatement {
+			Condition = new BinaryOperatorExpression {
+				Left = new NamedNode("switchVar", new IdentifierExpression()),
+				Operator = BinaryOperatorType.InEquality,
+				Right = new NullReferenceExpression()
+			},
+			TrueStatement = new BlockStatement {
+				new IfElseStatement {
+					Condition = new BinaryOperatorExpression {
+						Left = new AnyNode("cachedDict"),
+						Operator = BinaryOperatorType.Equality,
+						Right = new NullReferenceExpression()
+					},
+					TrueStatement = new AnyNode("dictCreation")
+				},
+				new VariableDeclarationStatement {
+					Type = new PrimitiveType("int"),
+					Variables = { new NamedNode("intVar", new VariableInitializer()) }
+				},
+				new IfElseStatement {
+					Condition = new Backreference("cachedDict").ToExpression().Invoke(
+						"TryGetValue",
+						new Backreference("switchVar"),
+						new DirectionExpression {
+							FieldDirection = FieldDirection.Out,
+							Expression = new IdentifierExpressionBackreference("intVar")
+						}),
+					TrueStatement = new BlockStatement {
+						Statements = {
+							new NamedNode(
+								"switch", new SwitchStatement {
+									Expression = new IdentifierExpressionBackreference("intVar"),
+									SwitchSections = { new Repeat(new AnyNode()) }
+								})
+						}
+					}
+				},
+				new Repeat(new AnyNode("nonNullDefaultStmt")).ToStatement()
+			},
+			FalseStatement = new OptionalNode("nullStmt", new BlockStatement { Statements = { new Repeat(new AnyNode()) } })
+		};
+		
+		public void TransformSwitchOnString(AstNode compilationUnit)
+		{
+			foreach (AstNode node in compilationUnit.Descendants.OfType<IfElseStatement>().ToArray()) {
+				Match m = switchOnStringPattern.Match(node);
+				if (m == null)
+					continue;
+				if (m.Has("nonNullDefaultStmt") && !m.Has("nullStmt"))
+					continue;
+				FieldReference cachedDictField = m.Get("cachedDict").Single().Annotation<FieldReference>();
+				if (cachedDictField == null || !cachedDictField.DeclaringType.Name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
+					continue;
+				List<Statement> dictCreation = m.Get<BlockStatement>("dictCreation").Single().Statements.ToList();
+				List<KeyValuePair<string, int>> dict = BuildDictionary(dictCreation);
+				SwitchStatement sw = m.Get<SwitchStatement>("switch").Single();
+				foreach (SwitchSection section in sw.SwitchSections) {
+					List<CaseLabel> labels = section.CaseLabels.ToList();
+					section.CaseLabels.Clear();
+					foreach (CaseLabel label in labels) {
+						PrimitiveExpression expr = label.Expression as PrimitiveExpression;
+						if (expr == null || !(expr.Value is int))
+							continue;
+						int val = (int)expr.Value;
+						foreach (var pair in dict) {
+							if (pair.Value == val)
+								section.CaseLabels.Add(new CaseLabel { Expression = new PrimitiveExpression(pair.Key) });
+						}
+					}
+				}
+				if (m.Has("nullStmt")) {
+					SwitchSection section = new SwitchSection();
+					section.CaseLabels.Add(new CaseLabel { Expression = new NullReferenceExpression() });
+					BlockStatement block = m.Get<BlockStatement>("nullStmt").Single();
+					block.Statements.Add(new BreakStatement());
+					section.Statements.Add(block.Detach());
+					sw.SwitchSections.Add(section);
+					if (m.Has("nonNullDefaultStmt")) {
+						section = new SwitchSection();
+						section.CaseLabels.Add(new CaseLabel());
+						block = new BlockStatement();
+						block.Statements.AddRange(m.Get<Statement>("nonNullDefaultStmt").Select(s => s.Detach()));
+						block.Add(new BreakStatement());
+						section.Statements.Add(block);
+						sw.SwitchSections.Add(section);
+					}
+				}
+				node.ReplaceWith(sw);
+			}
+		}
+		
+		List<KeyValuePair<string, int>> BuildDictionary(List<Statement> dictCreation)
+		{
+			List<KeyValuePair<string, int>> dict = new List<KeyValuePair<string, int>>();
+			for (int i = 0; i < dictCreation.Count; i++) {
+				ExpressionStatement es = dictCreation[i] as ExpressionStatement;
+				if (es == null)
+					continue;
+				InvocationExpression ie = es.Expression as InvocationExpression;
+				if (ie == null)
+					continue;
+				PrimitiveExpression arg1 = ie.Arguments.ElementAtOrDefault(0) as PrimitiveExpression;
+				PrimitiveExpression arg2 = ie.Arguments.ElementAtOrDefault(1) as PrimitiveExpression;
+				if (arg1 != null && arg2 != null && arg1.Value is string && arg2.Value is int)
+					dict.Add(new KeyValuePair<string, int>((string)arg1.Value, (int)arg2.Value));
+			}
+			return dict;
 		}
 		#endregion
 		
@@ -440,7 +554,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		#endregion
 		
 		#region Automatic Events
-		Accessor automaticEventPatternV4 = new Accessor {
+		static readonly Accessor automaticEventPatternV4 = new Accessor {
 			Body = new BlockStatement {
 				new VariableDeclarationStatement {
 					Type = new AnyNode("type"),
