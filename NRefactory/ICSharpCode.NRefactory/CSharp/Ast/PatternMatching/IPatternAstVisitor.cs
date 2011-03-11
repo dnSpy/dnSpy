@@ -17,6 +17,7 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		S VisitChoice(Choice choice, T data);
 		S VisitNamedNode(NamedNode namedNode, T data);
 		S VisitRepeat(Repeat repeat, T data);
+		S VisitOptionalNode(OptionalNode optionalNode, T data);
 		S VisitIdentifierExpressionBackreference(IdentifierExpressionBackreference identifierExpressionBackreference, T data);
 	}
 }

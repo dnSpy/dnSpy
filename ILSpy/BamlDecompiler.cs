@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Baml2006;
 using System.Xaml;
 using System.Xml;
-
+using System.Xml.Linq;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -32,7 +32,8 @@ namespace ICSharpCode.ILSpy.Baml
 			Assembly assembly = Assembly.LoadFile(containingAssemblyFile);
 			
 			Baml2006Reader reader = new Baml2006Reader(bamlCode, new XamlReaderSettings() { ValuesMustBeString = true, LocalAssembly = assembly });
-			XamlXmlWriter writer = new XamlXmlWriter(new XmlTextWriter(w) { Formatting = Formatting.Indented }, reader.SchemaContext);
+			XDocument doc = new XDocument();
+			XamlXmlWriter writer = new XamlXmlWriter(doc.CreateWriter(), reader.SchemaContext);
 			while (reader.Read()) {
 				switch (reader.NodeType) {
 					case XamlNodeType.None:
@@ -64,7 +65,43 @@ namespace ICSharpCode.ILSpy.Baml
 						throw new Exception("Invalid value for XamlNodeType");
 				}
 			}
-			return w.ToString();
+			writer.Close();
+			
+			// Fix namespace references
+			string suffixToRemove = ";assembly=" + assembly.GetName().Name;
+			foreach (XAttribute attrib in doc.Root.Attributes()) {
+				if (attrib.Name.Namespace == XNamespace.Xmlns) {
+					if (attrib.Value.EndsWith(suffixToRemove, StringComparison.Ordinal)) {
+						string newNamespace = attrib.Value.Substring(0, attrib.Value.Length - suffixToRemove.Length);
+						ChangeXmlNamespace(doc, attrib.Value, newNamespace);
+						attrib.Value = newNamespace;
+					}
+				}
+			}
+			// Convert x:Key into an attribute where possible
+			XName xKey = XName.Get("Key", "http://schemas.microsoft.com/winfx/2006/xaml");
+			foreach (XElement e in doc.Descendants(xKey).ToList()) {
+				if (e.Nodes().Count() != 1)
+					continue;
+				XText text = e.Nodes().Single() as XText;
+				if (text != null) {
+					e.Parent.SetAttributeValue(xKey, text.Value);
+					e.Remove();
+				}
+			}
+			
+			return doc.ToString();
+		}
+		
+		/// <summary>
+		/// Changes all references from oldNamespace to newNamespace in the document.
+		/// </summary>
+		void ChangeXmlNamespace(XDocument doc, XNamespace oldNamespace, XNamespace newNamespace)
+		{
+			foreach (XElement e in doc.Descendants()) {
+				if (e.Name.Namespace == oldNamespace)
+					e.Name = newNamespace + e.Name.LocalName;
+			}
 		}
 	}
 	

@@ -2170,6 +2170,16 @@ namespace ICSharpCode.NRefactory.CSharp
 			RPar();
 			return EndNode(repeat);
 		}
+		
+		object IPatternAstVisitor<object, object>.VisitOptionalNode(OptionalNode optionalNode, object data)
+		{
+			StartNode(optionalNode);
+			WriteKeyword("optional");
+			LPar();
+			optionalNode.GetChildByRole(OptionalNode.ElementRole).AcceptVisitor(this, data);
+			RPar();
+			return EndNode(optionalNode);
+		}
 		#endregion
 	}
 }

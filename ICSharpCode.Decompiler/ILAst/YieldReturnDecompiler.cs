@@ -60,6 +60,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			method.Body.Clear();
 			method.EntryGoto = null;
 			method.Body.AddRange(yrd.newBody);
+			
+			// Repeat the inlining/copy propagation optimization because the conversion of field access
+			// to local variables can open up additional inlining possibilities.
+			ILInlining inlining = new ILInlining(method);
+			inlining.InlineAllVariables();
+			inlining.CopyPropagation();
 		}
 		
 		void Run()

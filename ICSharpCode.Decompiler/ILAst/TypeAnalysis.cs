@@ -203,6 +203,18 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 						return ctor.DeclaringType;
 					}
+				case ILCode.InitCollection:
+					return InferTypeForExpression(expr.Arguments[0], expectedType);
+				case ILCode.InitCollectionAddMethod:
+					{
+						MethodReference addMethod = (MethodReference)expr.Operand;
+						if (forceInferChildren) {
+							for (int i = 1; i < addMethod.Parameters.Count; i++) {
+								InferTypeForExpression(expr.Arguments[i-1], SubstituteTypeArgs(addMethod.Parameters[i].ParameterType, addMethod));
+							}
+						}
+						return addMethod.DeclaringType;
+					}
 					#endregion
 					#region Load/Store Fields
 				case ILCode.Ldfld:
@@ -219,11 +231,11 @@ namespace ICSharpCode.Decompiler.ILAst
 						InferTypeForExpression(expr.Arguments[0], ((FieldReference)expr.Operand).DeclaringType);
 						InferTypeForExpression(expr.Arguments[1], GetFieldType((FieldReference)expr.Operand));
 					}
-					return null;
+					return GetFieldType((FieldReference)expr.Operand);
 				case ILCode.Stsfld:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments[0], GetFieldType((FieldReference)expr.Operand));
-					return null;
+					return GetFieldType((FieldReference)expr.Operand);
 					#endregion
 					#region Reference/Pointer instructions
 				case ILCode.Ldind_I:
@@ -260,6 +272,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					return null;
 				case ILCode.Initobj:
 					return null;
+				case ILCode.DefaultValue:
+					return (TypeReference)expr.Operand;
 				case ILCode.Localloc:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Int32);

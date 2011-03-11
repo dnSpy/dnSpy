@@ -15,8 +15,8 @@ namespace ICSharpCode.Decompiler.ILAst
 	public class ILInlining
 	{
 		readonly ILBlock method;
-		Dictionary<ILVariable, int> numStloc  = new Dictionary<ILVariable, int>();
-		Dictionary<ILVariable, int> numLdloc  = new Dictionary<ILVariable, int>();
+		internal Dictionary<ILVariable, int> numStloc  = new Dictionary<ILVariable, int>();
+		internal Dictionary<ILVariable, int> numLdloc  = new Dictionary<ILVariable, int>();
 		Dictionary<ILVariable, int> numLdloca = new Dictionary<ILVariable, int>();
 		
 		Dictionary<ParameterDefinition, int> numStarg  = new Dictionary<ParameterDefinition, int>();
@@ -25,6 +25,17 @@ namespace ICSharpCode.Decompiler.ILAst
 		public ILInlining(ILBlock method)
 		{
 			this.method = method;
+			AnalyzeMethod();
+		}
+		
+		void AnalyzeMethod()
+		{
+			numStloc.Clear();
+			numLdloc.Clear();
+			numLdloca.Clear();
+			numStarg.Clear();
+			numLdarga.Clear();
+			
 			// Analyse the whole method
 			foreach(ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
 				ILVariable locVar = expr.Operand as ILVariable;
@@ -64,7 +75,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression nextExpr = body[i + 1] as ILExpression;
 				ILVariable locVar;
 				ILExpression expr;
-				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineIfPossible(block, i, aggressive: false)) {
+				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineOneIfPossible(block, i, aggressive: false)) {
 					i = Math.Max(0, i - 1); // Go back one step
 				} else {
 					i++;
@@ -76,7 +87,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Inlines instructions before pos into block.Body[pos].
 		/// </summary>
 		/// <returns>The number of instructions that were inlined.</returns>
-		public int InlineInto(ILBlock block, int pos)
+		public int InlineInto(ILBlock block, int pos, bool aggressive)
 		{
 			if (pos >= block.Body.Count)
 				return 0;
@@ -85,7 +96,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression expr = block.Body[pos] as ILExpression;
 				if (expr == null || expr.Code != ILCode.Stloc)
 					break;
-				if (InlineIfPossible(block, pos))
+				if (InlineOneIfPossible(block, pos, aggressive))
 					count++;
 				else
 					break;
@@ -94,9 +105,25 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		/// <summary>
+		/// Aggressively inlines the stloc instruction at block.Body[pos] into the next instruction, if possible.
+		/// If inlining was possible; we will continue to inline (non-aggressively) into the the combined instruction.
+		/// </summary>
+		/// <remarks>
+		/// After the operation, pos will point to the new combined instruction.
+		/// </remarks>
+		public bool InlineIfPossible(ILBlock block, ref int pos)
+		{
+			if (InlineOneIfPossible(block, pos, true)) {
+				pos -= InlineInto(block, pos, false);
+				return true;
+			}
+			return false;
+		}
+		
+		/// <summary>
 		/// Inlines the stloc instruction at block.Body[pos] into the next instruction, if possible.
 		/// </summary>
-		public bool InlineIfPossible(ILBlock block, int pos, bool aggressive = true)
+		public bool InlineOneIfPossible(ILBlock block, int pos, bool aggressive)
 		{
 			ILVariable v;
 			ILExpression inlinedExpression;
@@ -120,6 +147,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			// ensure the variable is accessed only a single time
 			if (!(numStloc.GetOrDefault(v) == 1 && numLdloc.GetOrDefault(v) == 1 && numLdloca.GetOrDefault(v) == 0))
 				return false;
+			
+			if (next is ILCondition)
+				next = ((ILCondition)next).Condition;
+			else if (next is ILWhileLoop)
+				next = ((ILWhileLoop)next).Condition;
+			
 			ILExpression parent;
 			int pos;
 			if (FindLoadInNext(next as ILExpression, v, inlinedExpression, out parent, out pos) == true) {
@@ -151,6 +184,16 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		/// <summary>
+		/// Gets whether 'expressionBeingMoved' can be inlined into 'expr'.
+		/// </summary>
+		public bool CanInlineInto(ILExpression expr, ILVariable v, ILExpression expressionBeingMoved)
+		{
+			ILExpression parent;
+			int pos;
+			return FindLoadInNext(expr, v, expressionBeingMoved, out parent, out pos) == true;
+		}
+		
+		/// <summary>
 		/// Finds the position to inline to.
 		/// </summary>
 		/// <returns>true = found; false = cannot continue search; null = not found</returns>
@@ -177,6 +220,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (r != null)
 					return r;
 			}
+			if (IsSafeForInlineOver(expr, expressionBeingMoved))
+				return null; // continue searching
+			else
+				return false; // abort, inlining not possible
+		}
+		
+		/// <summary>
+		/// Determines whether it is save to move 'expressionBeingMoved' past 'expr'
+		/// </summary>
+		bool IsSafeForInlineOver(ILExpression expr, ILExpression expressionBeingMoved)
+		{
 			switch (expr.Code) {
 				case ILCode.Ldloc:
 					ILVariable loadedVar = (ILVariable)expr.Operand;
@@ -188,9 +242,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (potentialStore.Code == ILCode.Stloc && potentialStore.Operand == loadedVar)
 							return false;
 					}
-					// the expression is loading a non-forbidden variable:
-					// we're allowed to continue searching
-					return null;
+					// the expression is loading a non-forbidden variable
+					return true;
 				case ILCode.Ldarg:
 					// Also try moving over ldarg instructions - this is necessary because an earlier copy propagation
 					// step might have introduced ldarg in place of an ldloc that would be skipped.
@@ -201,12 +254,18 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (potentialStore.Code == ILCode.Starg && potentialStore.Operand == loadedParam)
 							return false;
 					}
-					return null;
+					return true;
 				case ILCode.Ldloca:
 				case ILCode.Ldarga:
-					// Continue searching:
-					// It is always safe to move code past an instruction that loads a constant.
-					return null;
+				case ILCode.Ldflda:
+				case ILCode.Ldsflda:
+				case ILCode.Ldelema:
+					// address-loading instructions are safe if their arguments are safe
+					foreach (ILExpression arg in expr.Arguments) {
+						if (!IsSafeForInlineOver(arg, expressionBeingMoved))
+							return false;
+					}
+					return true;
 				default:
 					// abort, inlining is not possible
 					return false;
@@ -223,24 +282,50 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		public void CopyPropagation()
 		{
+			// Perform 'dup' removal prior to copy propagation:
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				for (int i = 0; i < expr.Arguments.Count; i++) {
+					if (expr.Arguments[i].Code == ILCode.Dup) {
+						ILExpression child = expr.Arguments[i].Arguments[0];
+						child.ILRanges.AddRange(expr.Arguments[i].ILRanges);
+						expr.Arguments[i] = child;
+					}
+				}
+			}
+			
 			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
-				for (int i = block.Body.Count - 1; i >= 0; i--) {
+				for (int i = 0; i < block.Body.Count; i++) {
 					ILVariable v;
 					ILExpression ldArg;
 					if (block.Body[i].Match(ILCode.Stloc, out v, out ldArg)
 					    && numStloc.GetOrDefault(v) == 1 && numLdloca.GetOrDefault(v) == 0
 					    && CanPerformCopyPropagation(ldArg))
 					{
+						// un-inline the arguments of the ldArg instruction
+						ILVariable[] uninlinedArgs = new ILVariable[ldArg.Arguments.Count];
+						for (int j = 0; j < uninlinedArgs.Length; j++) {
+							uninlinedArgs[j] = new ILVariable { IsGenerated = true, Name = v.Name + "_cp_" + j };
+							block.Body.Insert(i++, new ILExpression(ILCode.Stloc, uninlinedArgs[j], ldArg.Arguments[j]));
+						}
+						
 						// perform copy propagation:
 						foreach (var expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
 							if (expr.Code == ILCode.Ldloc && expr.Operand == v) {
 								expr.Code = ldArg.Code;
 								expr.Operand = ldArg.Operand;
+								for (int j = 0; j < uninlinedArgs.Length; j++) {
+									expr.Arguments.Add(new ILExpression(ILCode.Ldloc, uninlinedArgs[j]));
+								}
 							}
 						}
 						
 						block.Body.RemoveAt(i);
-						InlineInto(block, i); // maybe inlining gets possible after the removal of block.Body[i]
+						if (uninlinedArgs.Length > 0) {
+							// if we un-inlined stuff; we need to update the usage counters
+							AnalyzeMethod();
+						}
+						InlineInto(block, i, aggressive: false); // maybe inlining gets possible after the removal of block.Body[i]
+						i -= uninlinedArgs.Length + 1;
 					}
 				}
 			}
@@ -251,7 +336,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			switch (ldArg.Code) {
 				case ILCode.Ldloca:
 				case ILCode.Ldarga:
-					return true; // ldloca/ldarga always return the same value for a given operand, so they can be safely copied
+				case ILCode.Ldelema:
+				case ILCode.Ldflda:
+				case ILCode.Ldsflda:
+					// All address-loading instructions always return the same value for a given operand/argument combination,
+					// so they can be safely copied.
+					return true;
 				case ILCode.Ldarg:
 					// arguments can be copied only if they aren't assigned to (directly or indirectly via ldarga)
 					ParameterDefinition pd = (ParameterDefinition)ldArg.Operand;

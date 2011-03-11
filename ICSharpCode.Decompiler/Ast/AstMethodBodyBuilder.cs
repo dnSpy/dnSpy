@@ -408,9 +408,11 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Initblk:     return InlineAssembly(byteCode, args);
 				case ILCode.Initobj:
 					if (args[0] is DirectionExpression)
-						return new AssignmentExpression(((DirectionExpression)args[0]).Expression.Detach(), new DefaultValueExpression { Type = operandAsTypeRef });
+						return new AssignmentExpression(((DirectionExpression)args[0]).Expression.Detach(), MakeDefaultValue((TypeReference)operand));
 					else
 						return InlineAssembly(byteCode, args);
+				case ILCode.DefaultValue:
+					return MakeDefaultValue((TypeReference)operand);
 				case ILCode.Jmp: return InlineAssembly(byteCode, args);
 				case ILCode.Ldarg: {
 					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
@@ -433,7 +435,7 @@ namespace ICSharpCode.Decompiler.Ast
 						return MakeRef(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand));
 					}
 				case ILCode.Ldc_I4: return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType);
-				case ILCode.Ldc_I8:
+				case ILCode.Ldc_I8: return AstBuilder.MakePrimitive((long)operand, byteCode.InferredType);
 				case ILCode.Ldc_R4:
 				case ILCode.Ldc_R8:
 				case ILCode.Ldc_Decimal:
@@ -523,8 +525,47 @@ namespace ICSharpCode.Decompiler.Ast
 					return new Ast.YieldBreakStatement();
 				case ILCode.YieldReturn:
 					return new Ast.YieldStatement { Expression = arg1 };
+				case ILCode.InitCollection: {
+					ObjectCreateExpression oce = (ObjectCreateExpression)arg1;
+					oce.Initializer = new ArrayInitializerExpression();
+					for (int i = 1; i < args.Count; i++) {
+						ArrayInitializerExpression aie = args[i] as ArrayInitializerExpression;
+						if (aie != null && aie.Elements.Count == 1)
+							oce.Initializer.Elements.Add(aie.Elements.Single().Detach());
+						else
+							oce.Initializer.Elements.Add(args[i]);
+					}
+					return oce;
+				}
+				case ILCode.InitCollectionAddMethod: {
+					var collectionInit = new ArrayInitializerExpression();
+					collectionInit.Elements.AddRange(args);
+					return collectionInit;
+				}
 				default: throw new Exception("Unknown OpCode: " + byteCode.Code);
 			}
+		}
+		
+		Expression MakeDefaultValue(TypeReference type)
+		{
+			TypeDefinition typeDef = type.Resolve();
+			if (typeDef != null) {
+				if (TypeAnalysis.IsIntegerOrEnum(typeDef))
+					return AstBuilder.MakePrimitive(0, typeDef);
+				else if (!typeDef.IsValueType)
+					return new NullReferenceExpression();
+				switch (typeDef.FullName) {
+					case "System.Nullable`1":
+						return new NullReferenceExpression();
+					case "System.Single":
+						return new PrimitiveExpression(0f);
+					case "System.Double":
+						return new PrimitiveExpression(0.0);
+					case "System.Decimal":
+						return new PrimitiveExpression(0m);
+				}
+			}
+			return new DefaultValueExpression { Type = AstBuilder.ConvertType(type) };
 		}
 		
 		static AstNode TransformCall(bool isVirtual, object operand, MethodDefinition methodDef, List<Ast.Expression> args)
@@ -619,7 +660,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			// Default invocation
-			AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
+			AdjustArgumentsForMethodCall(cecilMethodDef ?? cecilMethod, methodArgs);
 			return target.Invoke(cecilMethod.Name, ConvertTypeArguments(cecilMethod), methodArgs).WithAnnotation(cecilMethod);
 		}
 		

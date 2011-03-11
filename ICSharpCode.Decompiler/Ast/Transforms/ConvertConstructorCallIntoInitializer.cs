@@ -50,15 +50,18 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 		};
 		
+		static readonly AstNode thisCallPattern = new ExpressionStatement(new ThisReferenceExpression().Invoke(".ctor", new Repeat(new AnyNode())));
+		
 		public override object VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
 		{
 			var instanceCtors = typeDeclaration.Members.OfType<ConstructorDeclaration>().Where(c => (c.Modifiers & Modifiers.Static) == 0).ToArray();
-			if (instanceCtors.Length > 0 && typeDeclaration.ClassType == NRefactory.TypeSystem.ClassType.Class) {
+			var instanceCtorsNotChainingWithThis = instanceCtors.Where(ctor => thisCallPattern.Match(ctor.Body.Statements.FirstOrDefault()) == null).ToArray();
+			if (instanceCtorsNotChainingWithThis.Length > 0 && typeDeclaration.ClassType == NRefactory.TypeSystem.ClassType.Class) {
 				// Recognize field initializers:
 				// Convert first statement in all ctors (if all ctors have the same statement) into a field initializer.
 				bool allSame;
 				do {
-					Match m = fieldInitializerPattern.Match(instanceCtors[0].Body.FirstOrDefault());
+					Match m = fieldInitializerPattern.Match(instanceCtorsNotChainingWithThis[0].Body.FirstOrDefault());
 					if (m == null)
 						break;
 					
@@ -70,12 +73,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						break;
 					
 					allSame = true;
-					for (int i = 1; i < instanceCtors.Length; i++) {
-						if (instanceCtors[0].Body.First().Match(instanceCtors[i].Body.FirstOrDefault()) == null)
+					for (int i = 1; i < instanceCtorsNotChainingWithThis.Length; i++) {
+						if (instanceCtors[0].Body.First().Match(instanceCtorsNotChainingWithThis[i].Body.FirstOrDefault()) == null)
 							allSame = false;
 					}
 					if (allSame) {
-						foreach (var ctor in instanceCtors)
+						foreach (var ctor in instanceCtorsNotChainingWithThis)
 							ctor.Body.First().Remove();
 						fieldOrEventDecl.GetChildrenByRole(AstNode.Roles.Variable).Single().Initializer = m.Get<Expression>("initializer").Single().Detach();
 					}

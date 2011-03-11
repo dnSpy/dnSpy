@@ -125,6 +125,8 @@ namespace ICSharpCode.ILSpy
 					WriteProjectFile(new TextOutputWriter(output), files, assembly.MainModule);
 				} else {
 					foreach (TypeDefinition type in assembly.MainModule.Types) {
+						if (AstBuilder.MemberIsHidden(type, options.DecompilerSettings))
+							continue;
 						AstBuilder codeDomBuilder = CreateAstBuilder(options, type);
 						codeDomBuilder.AddType(type);
 						codeDomBuilder.GenerateCode(output, transformAbortCondition);
@@ -266,9 +268,18 @@ namespace ICSharpCode.ILSpy
 		#endregion
 		
 		#region WriteCodeFilesInProject
+		bool IncludeTypeWhenDecompilingProject(TypeDefinition type, DecompilationOptions options)
+		{
+			if (type.Name == "<Module>" || AstBuilder.MemberIsHidden(type, options.DecompilerSettings))
+				return false;
+			if (type.Namespace == "XamlGeneratedNamespace" && type.Name == "GeneratedInternalTypeHelper")
+				return false;
+			return true;
+		}
+		
 		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(AssemblyDefinition assembly, DecompilationOptions options, HashSet<string> directories)
 		{
-			var files = assembly.MainModule.Types.Where(t => t.Name != "<Module>").GroupBy(
+			var files = assembly.MainModule.Types.Where(t => IncludeTypeWhenDecompilingProject(t, options)).GroupBy(
 				delegate (TypeDefinition type) {
 					string file = TextView.DecompilerTextView.CleanUpName(type.Name) + this.FileExtension;
 					if (string.IsNullOrEmpty(type.Namespace)) {

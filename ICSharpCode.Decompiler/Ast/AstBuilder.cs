@@ -48,6 +48,11 @@ namespace ICSharpCode.Decompiler.Ast
 					return true;
 				if (settings.YieldReturn && YieldReturnDecompiler.IsCompilerGeneratorEnumerator(type))
 					return true;
+			} else if (type != null && type.IsCompilerGenerated()) {
+				if (type.Name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
+					return true;
+				if (type.Name.StartsWith("<>", StringComparison.Ordinal) && type.Name.Contains("AnonymousType"))
+					return true;
 			}
 			FieldDefinition field = member as FieldDefinition;
 			if (field != null && field.IsCompilerGenerated()) {
@@ -752,43 +757,55 @@ namespace ICSharpCode.Decompiler.Ast
 			ConvertCustomAttributes(astProp, propDef);
 			return astProp;
 		}
-
-		CustomEventDeclaration CreateEvent(EventDefinition eventDef)
+		
+		AttributedNode CreateEvent(EventDefinition eventDef)
 		{
-			CustomEventDeclaration astEvent = new CustomEventDeclaration();
-			ConvertCustomAttributes(astEvent, eventDef);
-			astEvent.AddAnnotation(eventDef);
-			astEvent.Name = CleanName(eventDef.Name);
-			astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
-			if (eventDef.AddMethod == null || !eventDef.AddMethod.HasOverrides)
-				astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
-			else
-				astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().DeclaringType);
-			if (eventDef.AddMethod != null) {
-				// Create mapping - used in debugger
-				MethodMapping methodMapping = eventDef.AddMethod.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
-				
-				astEvent.AddAccessor = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
-				}.WithAnnotation(eventDef.AddMethod);
-				ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
-				
-				if (methodMapping != null)
-					astEvent.AddAccessor.AddAnnotation(methodMapping);
+			if (eventDef.AddMethod != null && eventDef.AddMethod.IsAbstract) {
+				// An abstract event cannot be custom
+				EventDeclaration astEvent = new EventDeclaration();
+				ConvertCustomAttributes(astEvent, eventDef);
+				astEvent.AddAnnotation(eventDef);
+				astEvent.Variables.Add(new VariableInitializer(CleanName(eventDef.Name)));
+				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
+				if (!eventDef.DeclaringType.IsInterface)
+					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
+				return astEvent;
+			} else {
+				CustomEventDeclaration astEvent = new CustomEventDeclaration();
+				ConvertCustomAttributes(astEvent, eventDef);
+				astEvent.AddAnnotation(eventDef);
+				astEvent.Name = CleanName(eventDef.Name);
+				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
+				if (eventDef.AddMethod == null || !eventDef.AddMethod.HasOverrides)
+					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
+				else
+					astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().DeclaringType);
+				if (eventDef.AddMethod != null) {
+					// Create mapping - used in debugger
+					MethodMapping methodMapping = eventDef.AddMethod.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
+					
+					astEvent.AddAccessor = new Accessor {
+						Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
+					}.WithAnnotation(eventDef.AddMethod);
+					ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
+					
+					if (methodMapping != null)
+						astEvent.AddAccessor.AddAnnotation(methodMapping);
+				}
+				if (eventDef.RemoveMethod != null) {
+					// Create mapping - used in debugger
+					MethodMapping methodMapping = eventDef.RemoveMethod.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
+					
+					astEvent.RemoveAccessor = new Accessor {
+						Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, context)
+					}.WithAnnotation(eventDef.RemoveMethod);
+					ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
+					
+					if (methodMapping != null)
+						astEvent.RemoveAccessor.AddAnnotation(methodMapping);
+				}
+				return astEvent;
 			}
-			if (eventDef.RemoveMethod != null) {
-				// Create mapping - used in debugger
-				MethodMapping methodMapping = eventDef.RemoveMethod.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
-				
-				astEvent.RemoveAccessor = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, context)
-				}.WithAnnotation(eventDef.RemoveMethod);
-				ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
-
-				if (methodMapping != null)
-					astEvent.RemoveAccessor.AddAnnotation(methodMapping);
-			}
-			return astEvent;
 		}
 
 		FieldDeclaration CreateField(FieldDefinition fieldDef)

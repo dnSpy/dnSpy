@@ -101,6 +101,33 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		bool lockStatement = true;
+		
+		/// <summary>
+		/// Decompile lock statements.
+		/// </summary>
+		public bool LockStatement {
+			get { return lockStatement; }
+			set {
+				if (lockStatement != value) {
+					lockStatement = value;
+					OnPropertyChanged("LockStatement");
+				}
+			}
+		}
+		
+		bool switchStatementOnString = true;
+		
+		public bool SwitchStatementOnString {
+			get { return switchStatementOnString; }
+			set {
+				if (switchStatementOnString != value) {
+					switchStatementOnString = value;
+					OnPropertyChanged("SwitchStatementOnString");
+				}
+			}
+		}
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)

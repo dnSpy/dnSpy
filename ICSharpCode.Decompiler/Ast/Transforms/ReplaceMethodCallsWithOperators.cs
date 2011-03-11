@@ -205,9 +205,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return null;
 		}
 		
-		bool IsWithoutSideEffects(Expression left)
+		static bool IsWithoutSideEffects(Expression left)
 		{
-			return left is IdentifierExpression; // TODO
+			if (left is ThisReferenceExpression)
+				return true;
+			if (left is IdentifierExpression)
+				return true;
+			MemberReferenceExpression mre = left as MemberReferenceExpression;
+			if (mre != null)
+				return mre.Annotation<FieldReference>() != null && IsWithoutSideEffects(mre.Target);
+			return false;
 		}
 		
 		void IAstTransform.Run(AstNode node)

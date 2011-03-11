@@ -108,8 +108,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (!context.Settings.AnonymousMethods)
 				return false; // anonymous method decompilation is disabled
 			
-			// Anonymous methods are defined in the same assembly, so there's no need to Resolve().
-			MethodDefinition method = methodRef as MethodDefinition;
+			// Anonymous methods are defined in the same assembly
+			MethodDefinition method = methodRef.ResolveWithinSameModule();
 			if (!IsAnonymousMethod(context, method))
 				return false;
 			
@@ -173,11 +173,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (stmt.Variables.Count() != 1)
 					continue;
 				var variable = stmt.Variables.Single();
-				TypeDefinition type = stmt.Type.Annotation<TypeDefinition>();
+				TypeDefinition type = stmt.Type.Annotation<TypeReference>().ResolveWithinSameModule();
 				if (!IsPotentialClosure(context, type))
 					continue;
 				ObjectCreateExpression oce = variable.Initializer as ObjectCreateExpression;
-				if (oce == null || oce.Type.Annotation<TypeReference>() != type || oce.Arguments.Any() || !oce.Initializer.IsNull)
+				if (oce == null || oce.Type.Annotation<TypeReference>().ResolveWithinSameModule() != type || oce.Arguments.Any() || !oce.Initializer.IsNull)
 					continue;
 				// Looks like we found a display class creation. Now let's verify that the variable is used only for field accesses:
 				bool ok = true;
@@ -222,7 +222,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								isParameter = parameterOccurrances.Count(c => c == param) == 1;
 							}
 							if (isParameter) {
-								dict[m.Get<MemberReferenceExpression>("left").Single().Annotation<FieldReference>()] = right;
+								dict[m.Get<MemberReferenceExpression>("left").Single().Annotation<FieldReference>().ResolveWithinSameModule()] = right;
 								cur.Remove();
 							} else {
 								break;
@@ -247,7 +247,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (identExpr.Identifier == variable.Name) {
 						MemberReferenceExpression mre = (MemberReferenceExpression)identExpr.Parent;
 						AstNode replacement;
-						if (dict.TryGetValue(mre.Annotation<FieldReference>(), out replacement)) {
+						if (dict.TryGetValue(mre.Annotation<FieldReference>().ResolveWithinSameModule(), out replacement)) {
 							mre.ReplaceWith(replacement.Clone());
 						}
 					}

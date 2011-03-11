@@ -25,13 +25,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			transforms.context = context;
 			transforms.method = method;
 			
+			InitializerPeepholeTransforms initializerTransforms = new InitializerPeepholeTransforms(method);
 			PeepholeTransform[] blockTransforms = {
-				ArrayInitializers.Transform(method),
-				transforms.CachedDelegateInitialization
+				initializerTransforms.TransformArrayInitializers,
+				initializerTransforms.TransformCollectionInitializers,
+				transforms.CachedDelegateInitialization,
+				transforms.MakeAssignmentExpression
 			};
 			Func<ILExpression, ILExpression>[] exprTransforms = {
-				EliminateDups,
-				HandleDecimalConstants
+				HandleDecimalConstants,
+				SimplifyLdObjAndStObj
 			};
 			// Traverse in post order so that nested blocks are transformed first. This is required so that
 			// patterns on the parent block can assume that all nested blocks are already transformed.
@@ -45,9 +48,15 @@ namespace ICSharpCode.Decompiler.ILAst
 						expr = block.Body[i] as ILExpression;
 						if (expr != null) {
 							// apply expr transforms to top-level expr in block
-							foreach (var t in exprTransforms)
-								expr = t(expr);
+							bool modified = ApplyExpressionTransforms(ref expr, exprTransforms);
 							block.Body[i] = expr;
+							if (modified) {
+								ILInlining inlining = new ILInlining(method);
+								if (inlining.InlineIfPossible(block, ref i)) {
+									i++; // retry all transforms on the new combined instruction
+									continue;
+								}
+							}
 						}
 						// apply block transforms
 						foreach (var t in blockTransforms) {
@@ -63,20 +72,29 @@ namespace ICSharpCode.Decompiler.ILAst
 					// apply expr transforms to all arguments
 					for (int i = 0; i < expr.Arguments.Count; i++) {
 						ILExpression arg = expr.Arguments[i];
-						foreach (var t in exprTransforms)
-							arg = t(arg);
+						ApplyExpressionTransforms(ref arg, exprTransforms);
 						expr.Arguments[i] = arg;
 					}
 				}
 			}
 		}
 		
-		static ILExpression EliminateDups(ILExpression expr)
+		static bool ApplyExpressionTransforms(ref ILExpression expr, Func<ILExpression, ILExpression>[] exprTransforms)
 		{
-			if (expr.Code == ILCode.Dup)
-				return expr.Arguments.Single();
-			else
-				return expr;
+			bool modifiedInAnyIteration = false;
+			bool modified;
+			do {
+				modified = false;
+				ILExpression oldExpr = expr;
+				ILCode oldOpCode = oldExpr.Code;
+				foreach (var t in exprTransforms)
+					expr = t(expr);
+				if (expr != oldExpr || oldOpCode != expr.Code) {
+					modified = true;
+					modifiedInAnyIteration = true;
+				}
+			} while (modified);
+			return modifiedInAnyIteration;
 		}
 		
 		#region HandleDecimalConstants
@@ -120,6 +138,54 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		#endregion
 		
+		#region SimplifyLdObjAndStObj
+		static ILExpression SimplifyLdObjAndStObj(ILExpression expr)
+		{
+			if (expr.Code == ILCode.Initobj) {
+				expr.Code = ILCode.Stobj;
+				expr.Arguments.Add(new ILExpression(ILCode.DefaultValue, expr.Operand));
+			}
+			if (expr.Code == ILCode.Stobj) {
+				switch (expr.Arguments[0].Code) {
+					case ILCode.Ldelema:
+						return SimplifyLdObjOrStObj(expr, ILCode.Stelem_Any);
+					case ILCode.Ldloca:
+						return SimplifyLdObjOrStObj(expr, ILCode.Stloc);
+					case ILCode.Ldarga:
+						return SimplifyLdObjOrStObj(expr, ILCode.Starg);
+					case ILCode.Ldflda:
+						return SimplifyLdObjOrStObj(expr, ILCode.Stfld);
+					case ILCode.Ldsflda:
+						return SimplifyLdObjOrStObj(expr, ILCode.Stsfld);
+				}
+			} else if (expr.Code == ILCode.Ldobj) {
+				switch (expr.Arguments[0].Code) {
+					case ILCode.Ldelema:
+						return SimplifyLdObjOrStObj(expr, ILCode.Ldelem_Any);
+					case ILCode.Ldloca:
+						return SimplifyLdObjOrStObj(expr, ILCode.Ldloc);
+					case ILCode.Ldarga:
+						return SimplifyLdObjOrStObj(expr, ILCode.Ldarg);
+					case ILCode.Ldflda:
+						return SimplifyLdObjOrStObj(expr, ILCode.Ldfld);
+					case ILCode.Ldsflda:
+						return SimplifyLdObjOrStObj(expr, ILCode.Ldsfld);
+				}
+			}
+			return expr;
+		}
+		
+		static ILExpression SimplifyLdObjOrStObj(ILExpression expr, ILCode newCode)
+		{
+			ILExpression lda = expr.Arguments[0];
+			lda.Code = newCode;
+			if (expr.Code == ILCode.Stobj)
+				lda.Arguments.Add(expr.Arguments[1]);
+			lda.ILRanges.AddRange(expr.ILRanges);
+			return lda;
+		}
+		#endregion
+		
 		#region CachedDelegateInitialization
 		void CachedDelegateInitialization(ILBlock block, ref int i)
 		{
@@ -139,11 +205,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression condition = c.Condition.Arguments.Single() as ILExpression;
 			if (condition == null || condition.Code != ILCode.Ldsfld)
 				return;
-			FieldDefinition field = condition.Operand as FieldDefinition; // field is defined in current assembly
+			FieldDefinition field = ((FieldReference)condition.Operand).ResolveWithinSameModule(); // field is defined in current assembly
 			if (field == null || !field.IsCompilerGeneratedOrIsInCompilerGeneratedClass())
 				return;
 			ILExpression stsfld = c.TrueBlock.Body[0] as ILExpression;
-			if (!(stsfld != null && stsfld.Code == ILCode.Stsfld && stsfld.Operand == field))
+			if (!(stsfld != null && stsfld.Code == ILCode.Stsfld && ((FieldReference)stsfld.Operand).ResolveWithinSameModule() == field))
 				return;
 			ILExpression newObj = stsfld.Arguments[0];
 			if (!(newObj.Code == ILCode.Newobj && newObj.Arguments.Count == 2))
@@ -152,23 +218,82 @@ namespace ICSharpCode.Decompiler.ILAst
 				return;
 			if (newObj.Arguments[1].Code != ILCode.Ldftn)
 				return;
-			MethodDefinition anonymousMethod = newObj.Arguments[1].Operand as MethodDefinition; // method is defined in current assembly
+			MethodDefinition anonymousMethod = ((MethodReference)newObj.Arguments[1].Operand).ResolveWithinSameModule(); // method is defined in current assembly
 			if (!Ast.Transforms.DelegateConstruction.IsAnonymousMethod(context, anonymousMethod))
 				return;
 			
-			ILExpression expr = block.Body.ElementAtOrDefault(i + 1) as ILExpression;
-			if (expr != null && expr.GetSelfAndChildrenRecursive<ILExpression>().Count(e => e.Code == ILCode.Ldsfld && e.Operand == field) == 1) {
-				foreach (ILExpression parent in expr.GetSelfAndChildrenRecursive<ILExpression>()) {
+			ILNode followingNode = block.Body.ElementAtOrDefault(i + 1);
+			if (followingNode != null && followingNode.GetSelfAndChildrenRecursive<ILExpression>().Count(
+				e => e.Code == ILCode.Ldsfld && ((FieldReference)e.Operand).ResolveWithinSameModule() == field) == 1)
+			{
+				foreach (ILExpression parent in followingNode.GetSelfAndChildrenRecursive<ILExpression>()) {
 					for (int j = 0; j < parent.Arguments.Count; j++) {
-						if (parent.Arguments[j].Code == ILCode.Ldsfld && parent.Arguments[j].Operand == field) {
+						if (parent.Arguments[j].Code == ILCode.Ldsfld && ((FieldReference)parent.Arguments[j].Operand).ResolveWithinSameModule() == field) {
 							parent.Arguments[j] = newObj;
 							block.Body.RemoveAt(i);
-							i -= new ILInlining(method).InlineInto(block, i);
+							i -= new ILInlining(method).InlineInto(block, i, aggressive: true);
 							return;
 						}
 					}
 				}
 			}
+		}
+		#endregion
+		
+		#region MakeAssignmentExpression
+		void MakeAssignmentExpression(ILBlock block, ref int i)
+		{
+			// expr_44 = ...
+			// stloc(v, expr_44)
+			// ->
+			// expr_44 = stloc(v, ...))
+			ILVariable exprVar;
+			ILExpression initializer;
+			if (!(block.Body[i].Match(ILCode.Stloc, out exprVar, out initializer) && exprVar.IsGenerated))
+				return;
+			ILExpression stloc1 = block.Body.ElementAtOrDefault(i + 1) as ILExpression;
+			if (!(stloc1 != null && stloc1.Code == ILCode.Stloc && stloc1.Arguments[0].Code == ILCode.Ldloc && stloc1.Arguments[0].Operand == exprVar))
+				return;
+			
+			ILInlining inlining;
+			ILExpression store2 = block.Body.ElementAtOrDefault(i + 2) as ILExpression;
+			if (StoreCanBeConvertedToAssignment(store2, exprVar)) {
+				// expr_44 = ...
+				// stloc(v1, expr_44)
+				// anystore(v2, expr_44)
+				// ->
+				// stloc(v1, anystore(v2, ...))
+				inlining = new ILInlining(method);
+				if (inlining.numLdloc.GetOrDefault(exprVar) == 2 && inlining.numStloc.GetOrDefault(exprVar) == 1) {
+					block.Body.RemoveAt(i + 2); // remove store2
+					block.Body.RemoveAt(i); // remove expr = ...
+					stloc1.Arguments[0] = store2;
+					store2.Arguments[store2.Arguments.Count - 1] = initializer;
+					
+					if (inlining.InlineIfPossible(block, ref i)) {
+						i++; // retry transformations on the new combined instruction
+					}
+					return;
+				}
+			}
+			
+			
+			block.Body.RemoveAt(i + 1); // remove stloc
+			stloc1.Arguments[0] = initializer;
+			((ILExpression)block.Body[i]).Arguments[0] = stloc1;
+			
+			inlining = new ILInlining(method);
+			if (inlining.InlineIfPossible(block, ref i)) {
+				i++; // retry transformations on the new combined instruction
+			}
+		}
+		
+		bool StoreCanBeConvertedToAssignment(ILExpression store, ILVariable exprVar)
+		{
+			if (store != null && (store.Code == ILCode.Stloc || store.Code == ILCode.Stfld || store.Code == ILCode.Stsfld)) {
+				return store.Arguments.Last().Code == ILCode.Ldloc && store.Arguments.Last().Operand == exprVar;
+			}
+			return false;
 		}
 		#endregion
 	}
