@@ -25,6 +25,17 @@ namespace ICSharpCode.Decompiler.ILAst
 		public ILInlining(ILBlock method)
 		{
 			this.method = method;
+			AnalyzeMethod();
+		}
+		
+		void AnalyzeMethod()
+		{
+			numStloc.Clear();
+			numLdloc.Clear();
+			numLdloca.Clear();
+			numStarg.Clear();
+			numLdarga.Clear();
+			
 			// Analyse the whole method
 			foreach(ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
 				ILVariable locVar = expr.Operand as ILVariable;
@@ -203,6 +214,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (r != null)
 					return r;
 			}
+			if (IsSafeForInlineOver(expr, expressionBeingMoved))
+				return null; // continue searching
+			else
+				return false; // abort, inlining not possible
+		}
+		
+		/// <summary>
+		/// Determines whether it is save to move 'expressionBeingMoved' past 'expr'
+		/// </summary>
+		bool IsSafeForInlineOver(ILExpression expr, ILExpression expressionBeingMoved)
+		{
 			switch (expr.Code) {
 				case ILCode.Ldloc:
 					ILVariable loadedVar = (ILVariable)expr.Operand;
@@ -214,9 +236,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (potentialStore.Code == ILCode.Stloc && potentialStore.Operand == loadedVar)
 							return false;
 					}
-					// the expression is loading a non-forbidden variable:
-					// we're allowed to continue searching
-					return null;
+					// the expression is loading a non-forbidden variable
+					return true;
 				case ILCode.Ldarg:
 					// Also try moving over ldarg instructions - this is necessary because an earlier copy propagation
 					// step might have introduced ldarg in place of an ldloc that would be skipped.
@@ -227,12 +248,18 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (potentialStore.Code == ILCode.Starg && potentialStore.Operand == loadedParam)
 							return false;
 					}
-					return null;
+					return true;
 				case ILCode.Ldloca:
 				case ILCode.Ldarga:
-					// Continue searching:
-					// It is always safe to move code past an instruction that loads a constant.
-					return null;
+				case ILCode.Ldflda:
+				case ILCode.Ldsflda:
+				case ILCode.Ldelema:
+					// address-loading instructions are safe if their arguments are safe
+					foreach (ILExpression arg in expr.Arguments) {
+						if (!IsSafeForInlineOver(arg, expressionBeingMoved))
+							return false;
+					}
+					return true;
 				default:
 					// abort, inlining is not possible
 					return false;
@@ -268,17 +295,31 @@ namespace ICSharpCode.Decompiler.ILAst
 					    && numStloc.GetOrDefault(v) == 1 && numLdloca.GetOrDefault(v) == 0
 					    && CanPerformCopyPropagation(ldArg))
 					{
+						// un-inline the arguments of the ldArg instruction
+						ILVariable[] uninlinedArgs = new ILVariable[ldArg.Arguments.Count];
+						for (int j = 0; j < uninlinedArgs.Length; j++) {
+							uninlinedArgs[j] = new ILVariable { IsGenerated = true, Name = v.Name + "_cp_" + j };
+							block.Body.Insert(i++, new ILExpression(ILCode.Stloc, uninlinedArgs[j], ldArg.Arguments[j]));
+						}
+						
 						// perform copy propagation:
 						foreach (var expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
 							if (expr.Code == ILCode.Ldloc && expr.Operand == v) {
 								expr.Code = ldArg.Code;
 								expr.Operand = ldArg.Operand;
+								for (int j = 0; j < uninlinedArgs.Length; j++) {
+									expr.Arguments.Add(new ILExpression(ILCode.Ldloc, uninlinedArgs[j]));
+								}
 							}
 						}
 						
 						block.Body.RemoveAt(i);
+						if (uninlinedArgs.Length > 0) {
+							// if we un-inlined stuff; we need to update the usage counters
+							AnalyzeMethod();
+						}
 						InlineInto(block, i, aggressive: false); // maybe inlining gets possible after the removal of block.Body[i]
-						i--;
+						i -= uninlinedArgs.Length + 1;
 					}
 				}
 			}
@@ -289,7 +330,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			switch (ldArg.Code) {
 				case ILCode.Ldloca:
 				case ILCode.Ldarga:
-					return true; // ldloca/ldarga always return the same value for a given operand, so they can be safely copied
+				case ILCode.Ldelema:
+				case ILCode.Ldflda:
+				case ILCode.Ldsflda:
+					// All address-loading instructions always return the same value for a given operand/argument combination,
+					// so they can be safely copied.
+					return true; 
 				case ILCode.Ldarg:
 					// arguments can be copied only if they aren't assigned to (directly or indirectly via ldarga)
 					ParameterDefinition pd = (ParameterDefinition)ldArg.Operand;

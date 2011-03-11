@@ -87,4 +87,27 @@ public static class ValueTypes
 		// test passing through by-ref arguments
 		Copy4(ref p, out o);
 	}
+	
+	public static void Issue56(int i, out string str)
+	{
+		str = "qq";
+		str += i.ToString();
+	}
+	
+	public static void CopyAroundAndModifyField(S s)
+	{
+		S locS = s;
+		locS.Field += 10;
+		s = locS;
+	}
+	
+	static int[] MakeArray()
+	{
+		return null;
+	}
+	
+	public static void IncrementArrayLocation()
+	{
+		MakeArray()[Environment.TickCount]++;
+	}
 }
