@@ -47,8 +47,13 @@ namespace ICSharpCode.Decompiler.ILAst
 							// apply expr transforms to top-level expr in block
 							bool modified = ApplyExpressionTransforms(ref expr, exprTransforms);
 							block.Body[i] = expr;
-							if (modified)
-								new ILInlining(method).InlineIfPossible(block, i, aggressive: false);
+							if (modified) {
+								ILInlining inlining = new ILInlining(method);
+								if (inlining.InlineIfPossible(block, i, aggressive: true)) {
+									i -= inlining.InlineInto(block, i, aggressive: false) - 1;
+									continue;
+								}
+							}
 						}
 						// apply block transforms
 						foreach (var t in blockTransforms) {
