@@ -222,11 +222,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!Ast.Transforms.DelegateConstruction.IsAnonymousMethod(context, anonymousMethod))
 				return;
 			
-			ILExpression expr = block.Body.ElementAtOrDefault(i + 1) as ILExpression;
-			if (expr != null && expr.GetSelfAndChildrenRecursive<ILExpression>().Count(
+			ILNode followingNode = block.Body.ElementAtOrDefault(i + 1);
+			if (followingNode != null && followingNode.GetSelfAndChildrenRecursive<ILExpression>().Count(
 				e => e.Code == ILCode.Ldsfld && ((FieldReference)e.Operand).ResolveWithinSameModule() == field) == 1)
 			{
-				foreach (ILExpression parent in expr.GetSelfAndChildrenRecursive<ILExpression>()) {
+				foreach (ILExpression parent in followingNode.GetSelfAndChildrenRecursive<ILExpression>()) {
 					for (int j = 0; j < parent.Arguments.Count; j++) {
 						if (parent.Arguments[j].Code == ILCode.Ldsfld && ((FieldReference)parent.Arguments[j].Operand).ResolveWithinSameModule() == field) {
 							parent.Arguments[j] = newObj;
