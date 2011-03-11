@@ -224,7 +224,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		public void CopyPropagation()
 		{
 			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
-				for (int i = block.Body.Count - 1; i >= 0; i--) {
+				for (int i = 0; i < block.Body.Count; i++) {
 					ILVariable v;
 					ILExpression ldArg;
 					if (block.Body[i].Match(ILCode.Stloc, out v, out ldArg)
@@ -241,6 +241,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						
 						block.Body.RemoveAt(i);
 						InlineInto(block, i); // maybe inlining gets possible after the removal of block.Body[i]
+						i--;
 					}
 				}
 			}

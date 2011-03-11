@@ -17,11 +17,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		public static PeepholeTransform Transform(ILBlock method)
 		{
 			var newArrPattern = new StoreToVariable(new ILExpression(ILCode.Newarr, ILExpression.AnyOperand, new ILExpression(ILCode.Ldc_I4, ILExpression.AnyOperand)));
-			var arg1 = new StoreToVariable(new LoadFromVariable(newArrPattern)) { MustBeGenerated = true };
-			var arg2 = new StoreToVariable(new LoadFromVariable(newArrPattern)) { MustBeGenerated = true };
 			var initializeArrayPattern = new ILCall(
 				"System.Runtime.CompilerServices.RuntimeHelpers", "InitializeArray",
-				new LoadFromVariable(arg1), new ILExpression(ILCode.Ldtoken, ILExpression.AnyOperand));
+				new LoadFromVariable(newArrPattern), new ILExpression(ILCode.Ldtoken, ILExpression.AnyOperand));
 			
 			return delegate(ILBlock block, ref int i) {
 				if (!newArrPattern.Match(block.Body[i]))
@@ -30,13 +28,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				int arrayLength = (int)newArrInst.Arguments[0].Operand;
 				if (arrayLength == 0)
 					return;
-				if (arg1.Match(block.Body.ElementAtOrDefault(i + 1)) && arg2.Match(block.Body.ElementAtOrDefault(i + 2))) {
-					if (initializeArrayPattern.Match(block.Body.ElementAtOrDefault(i + 3))) {
-						if (HandleStaticallyInitializedArray(arg2, block, i, newArrInst, arrayLength)) {
-							i -= new ILInlining(method).InlineInto(block, i + 1) - 1;
-						}
-						return;
+				if (initializeArrayPattern.Match(block.Body.ElementAtOrDefault(i + 1))) {
+					if (HandleStaticallyInitializedArray(newArrPattern, block, i, newArrInst, arrayLength)) {
+						i -= new ILInlining(method).InlineInto(block, i + 1) - 1;
 					}
+					return;
 				}
 				if (i + 1 + arrayLength > block.Body.Count)
 					return;
@@ -78,9 +74,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		static bool HandleStaticallyInitializedArray(StoreToVariable arg2, ILBlock block, int i, ILExpression newArrInst, int arrayLength)
+		static bool HandleStaticallyInitializedArray(StoreToVariable newArrPattern, ILBlock block, int i, ILExpression newArrInst, int arrayLength)
 		{
-			FieldDefinition field = ((ILExpression)block.Body[i + 3]).Arguments[1].Operand as FieldDefinition;
+			FieldDefinition field = ((ILExpression)block.Body[i + 1]).Arguments[1].Operand as FieldDefinition;
 			if (field == null || field.InitialValue == null)
 				return false;
 			switch (TypeAnalysis.GetTypeCode(newArrInst.Operand as TypeReference)) {
@@ -91,8 +87,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						for (int j = 0; j < newArr.Length; j++) {
 							newArr[j] = new ILExpression(ILCode.Ldc_I4, BitConverter.ToInt32(field.InitialValue, j * 4));
 						}
-						block.Body[i] = new ILExpression(ILCode.Stloc, arg2.LastVariable, new ILExpression(ILCode.InitArray, newArrInst.Operand, newArr));
-						block.Body.RemoveRange(i + 1, 3);
+						block.Body[i] = new ILExpression(ILCode.Stloc, newArrPattern.LastVariable, new ILExpression(ILCode.InitArray, newArrInst.Operand, newArr));
+						block.Body.RemoveAt(i + 1);
 						return true;
 					}
 					break;
