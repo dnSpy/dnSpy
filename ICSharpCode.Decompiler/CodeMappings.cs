@@ -38,7 +38,7 @@ namespace ICSharpCode.Decompiler
 		{
 			int[] result = new int[2];
 			result[0] = ILInstructionOffset.From;
-			result[1] = ILInstructionOffset.From + 1 == ILInstructionOffset.To ? ILInstructionOffset.To : ILInstructionOffset.To + 1;
+			result[1] = ILInstructionOffset.To;
 			
 			return result;
 		}
@@ -183,7 +183,6 @@ namespace ICSharpCode.Decompiler
 				var mapping = codeMappings[typename].Find(m => m.MetadataToken == token);
 				if (mapping == null)
 					continue;
-				
 				var codeMapping = mapping.MemberCodeMappings.Find(
 					cm => cm.ILInstructionOffset.From <= ilOffset && ilOffset <= cm.ILInstructionOffset.To - 1);
 				if (codeMapping == null) {
@@ -194,7 +193,6 @@ namespace ICSharpCode.Decompiler
 							continue;
 					}
 				}
-				
 				
 				type = mapping.Type;
 				line = codeMapping.SourceCodeLine;
