@@ -385,7 +385,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		#region switch on strings
 		static readonly IfElseStatement switchOnStringPattern = new IfElseStatement {
 			Condition = new BinaryOperatorExpression {
-				Left = new NamedNode("switchVar", new IdentifierExpression()),
+				Left = new AnyNode("switchExpr"),
 				Operator = BinaryOperatorType.InEquality,
 				Right = new NullReferenceExpression()
 			},
@@ -405,7 +405,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				new IfElseStatement {
 					Condition = new Backreference("cachedDict").ToExpression().Invoke(
 						"TryGetValue",
-						new Backreference("switchVar"),
+						new NamedNode("switchVar", new IdentifierExpression()),
 						new DirectionExpression {
 							FieldDirection = FieldDirection.Out,
 							Expression = new IdentifierExpressionBackreference("intVar")
@@ -433,13 +433,19 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					continue;
 				if (m.Has("nonNullDefaultStmt") && !m.Has("nullStmt"))
 					continue;
+				// switchVar must be the same as switchExpr; or switchExpr must be an assignment and switchVar the left side of that assignment
+				if (m.Get("switchVar").Single().Match(m.Get("switchExpr").Single()) == null) {
+					AssignmentExpression assign = m.Get("switchExpr").Single() as AssignmentExpression;
+					if (m.Get("switchVar").Single().Match(assign.Left) == null)
+						continue;
+				}
 				FieldReference cachedDictField = m.Get("cachedDict").Single().Annotation<FieldReference>();
 				if (cachedDictField == null || !cachedDictField.DeclaringType.Name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
 					continue;
 				List<Statement> dictCreation = m.Get<BlockStatement>("dictCreation").Single().Statements.ToList();
 				List<KeyValuePair<string, int>> dict = BuildDictionary(dictCreation);
 				SwitchStatement sw = m.Get<SwitchStatement>("switch").Single();
-				sw.Expression = m.Get<Expression>("switchVar").Single().Detach();
+				sw.Expression = m.Get<Expression>("switchExpr").Single().Detach();
 				foreach (SwitchSection section in sw.SwitchSections) {
 					List<CaseLabel> labels = section.CaseLabels.ToList();
 					section.CaseLabels.Clear();

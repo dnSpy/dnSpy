@@ -147,6 +147,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			// ensure the variable is accessed only a single time
 			if (!(numStloc.GetOrDefault(v) == 1 && numLdloc.GetOrDefault(v) == 1 && numLdloca.GetOrDefault(v) == 0))
 				return false;
+			
+			if (next is ILCondition)
+				next = ((ILCondition)next).Condition;
+			else if (next is ILWhileLoop)
+				next = ((ILWhileLoop)next).Condition;
+			
 			ILExpression parent;
 			int pos;
 			if (FindLoadInNext(next as ILExpression, v, inlinedExpression, out parent, out pos) == true) {
@@ -335,7 +341,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldsflda:
 					// All address-loading instructions always return the same value for a given operand/argument combination,
 					// so they can be safely copied.
-					return true; 
+					return true;
 				case ILCode.Ldarg:
 					// arguments can be copied only if they aren't assigned to (directly or indirectly via ldarga)
 					ParameterDefinition pd = (ParameterDefinition)ldArg.Operand;
