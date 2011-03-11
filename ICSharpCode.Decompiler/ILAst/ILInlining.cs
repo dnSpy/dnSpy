@@ -223,6 +223,17 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		public void CopyPropagation()
 		{
+			// Perform 'dup' removal prior to copy propagation:
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				for (int i = 0; i < expr.Arguments.Count; i++) {
+					if (expr.Arguments[i].Code == ILCode.Dup) {
+						ILExpression child = expr.Arguments[i].Arguments[0];
+						child.ILRanges.AddRange(expr.Arguments[i].ILRanges);
+						expr.Arguments[i] = child;
+					}
+				}
+			}
+			
 			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				for (int i = 0; i < block.Body.Count; i++) {
 					ILVariable v;
