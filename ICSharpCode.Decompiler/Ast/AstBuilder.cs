@@ -677,9 +677,6 @@ namespace ICSharpCode.Decompiler.Ast
 
 		IndexerDeclaration ConvertPropertyToIndexer(PropertyDeclaration astProp, PropertyDefinition propDef)
 		{
-			// Create mapping - used in debugger
-			MemberMapping memberMapping = propDef.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
-				
 			var astIndexer = new IndexerDeclaration();
 			astIndexer.Name = astProp.Name;
 			astIndexer.CopyAnnotationsFrom(astProp);
@@ -690,8 +687,18 @@ namespace ICSharpCode.Decompiler.Ast
 			astIndexer.Getter = astProp.Getter.Detach();
 			astIndexer.Setter = astProp.Setter.Detach();
 			astIndexer.Parameters.AddRange(MakeParameters(propDef.Parameters));
+		
+			if (astIndexer.Getter != null && propDef.GetMethod != null) {
+				// Create mapping - used in debugger
+				MemberMapping memberMapping = propDef.GetMethod.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
+				astIndexer.Getter.WithAnnotation(memberMapping);
+			}
 			
-			propDef.WithAnnotation(memberMapping);
+			if (astIndexer.Setter != null && propDef.SetMethod != null) {
+				// Create mapping - used in debugger
+				MemberMapping memberMapping = propDef.SetMethod.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
+				astIndexer.Setter.WithAnnotation(memberMapping);
+			}
 			
 			return astIndexer;
 		}
