@@ -48,6 +48,11 @@ namespace ICSharpCode.Decompiler.Ast
 					return true;
 				if (settings.YieldReturn && YieldReturnDecompiler.IsCompilerGeneratorEnumerator(type))
 					return true;
+			} else if (type != null && type.IsCompilerGenerated()) {
+				if (type.Name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
+					return true;
+				if (type.Name.StartsWith("<>", StringComparison.Ordinal) && type.Name.Contains("AnonymousType"))
+					return true;
 			}
 			FieldDefinition field = member as FieldDefinition;
 			if (field != null && field.IsCompilerGenerated()) {

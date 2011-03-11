@@ -108,8 +108,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (!context.Settings.AnonymousMethods)
 				return false; // anonymous method decompilation is disabled
 			
-			// Anonymous methods are defined in the same assembly, so there's no need to Resolve().
-			MethodDefinition method = methodRef as MethodDefinition;
+			// Anonymous methods are defined in the same assembly
+			MethodDefinition method = methodRef.ResolveWithinSameModule();
 			if (!IsAnonymousMethod(context, method))
 				return false;
 			

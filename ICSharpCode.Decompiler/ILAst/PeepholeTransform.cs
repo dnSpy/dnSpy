@@ -205,11 +205,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression condition = c.Condition.Arguments.Single() as ILExpression;
 			if (condition == null || condition.Code != ILCode.Ldsfld)
 				return;
-			FieldDefinition field = condition.Operand as FieldDefinition; // field is defined in current assembly
+			FieldDefinition field = ((FieldReference)condition.Operand).ResolveWithinSameModule(); // field is defined in current assembly
 			if (field == null || !field.IsCompilerGeneratedOrIsInCompilerGeneratedClass())
 				return;
 			ILExpression stsfld = c.TrueBlock.Body[0] as ILExpression;
-			if (!(stsfld != null && stsfld.Code == ILCode.Stsfld && stsfld.Operand == field))
+			if (!(stsfld != null && stsfld.Code == ILCode.Stsfld && ((FieldReference)stsfld.Operand).ResolveWithinSameModule() == field))
 				return;
 			ILExpression newObj = stsfld.Arguments[0];
 			if (!(newObj.Code == ILCode.Newobj && newObj.Arguments.Count == 2))
@@ -218,15 +218,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				return;
 			if (newObj.Arguments[1].Code != ILCode.Ldftn)
 				return;
-			MethodDefinition anonymousMethod = newObj.Arguments[1].Operand as MethodDefinition; // method is defined in current assembly
+			MethodDefinition anonymousMethod = ((MethodReference)newObj.Arguments[1].Operand).ResolveWithinSameModule(); // method is defined in current assembly
 			if (!Ast.Transforms.DelegateConstruction.IsAnonymousMethod(context, anonymousMethod))
 				return;
 			
 			ILExpression expr = block.Body.ElementAtOrDefault(i + 1) as ILExpression;
-			if (expr != null && expr.GetSelfAndChildrenRecursive<ILExpression>().Count(e => e.Code == ILCode.Ldsfld && e.Operand == field) == 1) {
+			if (expr != null && expr.GetSelfAndChildrenRecursive<ILExpression>().Count(
+				e => e.Code == ILCode.Ldsfld && ((FieldReference)e.Operand).ResolveWithinSameModule() == field) == 1)
+			{
 				foreach (ILExpression parent in expr.GetSelfAndChildrenRecursive<ILExpression>()) {
 					for (int j = 0; j < parent.Arguments.Count; j++) {
-						if (parent.Arguments[j].Code == ILCode.Ldsfld && parent.Arguments[j].Operand == field) {
+						if (parent.Arguments[j].Code == ILCode.Ldsfld && ((FieldReference)parent.Arguments[j].Operand).ResolveWithinSameModule() == field) {
 							parent.Arguments[j] = newObj;
 							block.Body.RemoveAt(i);
 							i -= new ILInlining(method).InlineInto(block, i, aggressive: true);
