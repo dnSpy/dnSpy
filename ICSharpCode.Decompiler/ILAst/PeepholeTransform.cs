@@ -252,19 +252,19 @@ namespace ICSharpCode.Decompiler.ILAst
 				return;
 			
 			ILInlining inlining;
-			ILExpression stloc2 = block.Body.ElementAtOrDefault(i + 2) as ILExpression;
-			if (stloc2 != null && stloc2.Code == ILCode.Stloc && stloc2.Arguments[0].Code == ILCode.Ldloc && stloc2.Arguments[0].Operand == exprVar) {
+			ILExpression store2 = block.Body.ElementAtOrDefault(i + 2) as ILExpression;
+			if (StoreCanBeConvertedToAssignment(store2, exprVar)) {
 				// expr_44 = ...
 				// stloc(v1, expr_44)
-				// stloc(v2, expr_44)
+				// anystore(v2, expr_44)
 				// ->
-				// stloc(v1, stloc(v2, ...))
+				// stloc(v1, anystore(v2, ...))
 				inlining = new ILInlining(method);
 				if (inlining.numLdloc.GetOrDefault(exprVar) == 2 && inlining.numStloc.GetOrDefault(exprVar) == 1) {
-					block.Body.RemoveAt(i + 2); // remove stloc2
+					block.Body.RemoveAt(i + 2); // remove store2
 					block.Body.RemoveAt(i); // remove expr = ...
-					stloc1.Arguments[0] = stloc2;
-					stloc2.Arguments[0] = initializer;
+					stloc1.Arguments[0] = store2;
+					store2.Arguments[store2.Arguments.Count - 1] = initializer;
 					
 					if (inlining.InlineIfPossible(block, ref i)) {
 						i++; // retry transformations on the new combined instruction
@@ -282,6 +282,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (inlining.InlineIfPossible(block, ref i)) {
 				i++; // retry transformations on the new combined instruction
 			}
+		}
+		
+		bool StoreCanBeConvertedToAssignment(ILExpression store, ILVariable exprVar)
+		{
+			if (store != null && (store.Code == ILCode.Stloc || store.Code == ILCode.Stfld || store.Code == ILCode.Stsfld)) {
+				return store.Arguments.Last().Code == ILCode.Ldloc && store.Arguments.Last().Operand == exprVar;
+			}
+			return false;
 		}
 		#endregion
 	}

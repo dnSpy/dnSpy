@@ -219,11 +219,11 @@ namespace ICSharpCode.Decompiler.ILAst
 						InferTypeForExpression(expr.Arguments[0], ((FieldReference)expr.Operand).DeclaringType);
 						InferTypeForExpression(expr.Arguments[1], GetFieldType((FieldReference)expr.Operand));
 					}
-					return null;
+					return GetFieldType((FieldReference)expr.Operand);
 				case ILCode.Stsfld:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments[0], GetFieldType((FieldReference)expr.Operand));
-					return null;
+					return GetFieldType((FieldReference)expr.Operand);
 					#endregion
 					#region Reference/Pointer instructions
 				case ILCode.Ldind_I:
