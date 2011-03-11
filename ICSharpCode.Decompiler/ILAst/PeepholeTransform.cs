@@ -30,8 +30,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				transforms.CachedDelegateInitialization
 			};
 			Func<ILExpression, ILExpression>[] exprTransforms = {
-				EliminateDups,
-				HandleDecimalConstants
+				HandleDecimalConstants,
+				SimplifyLdObjAndStObj
 			};
 			// Traverse in post order so that nested blocks are transformed first. This is required so that
 			// patterns on the parent block can assume that all nested blocks are already transformed.
@@ -45,9 +45,10 @@ namespace ICSharpCode.Decompiler.ILAst
 						expr = block.Body[i] as ILExpression;
 						if (expr != null) {
 							// apply expr transforms to top-level expr in block
-							foreach (var t in exprTransforms)
-								expr = t(expr);
+							bool modified = ApplyExpressionTransforms(ref expr, exprTransforms);
 							block.Body[i] = expr;
+							if (modified)
+								new ILInlining(method).InlineIfPossible(block, i, aggressive: false);
 						}
 						// apply block transforms
 						foreach (var t in blockTransforms) {
@@ -63,20 +64,29 @@ namespace ICSharpCode.Decompiler.ILAst
 					// apply expr transforms to all arguments
 					for (int i = 0; i < expr.Arguments.Count; i++) {
 						ILExpression arg = expr.Arguments[i];
-						foreach (var t in exprTransforms)
-							arg = t(arg);
+						ApplyExpressionTransforms(ref arg, exprTransforms);
 						expr.Arguments[i] = arg;
 					}
 				}
 			}
 		}
 		
-		static ILExpression EliminateDups(ILExpression expr)
+		static bool ApplyExpressionTransforms(ref ILExpression expr, Func<ILExpression, ILExpression>[] exprTransforms)
 		{
-			if (expr.Code == ILCode.Dup)
-				return expr.Arguments.Single();
-			else
-				return expr;
+			bool modifiedInAnyIteration = false;
+			bool modified;
+			do {
+				modified = false;
+				ILExpression oldExpr = expr;
+				ILCode oldOpCode = oldExpr.Code;
+				foreach (var t in exprTransforms)
+					expr = t(expr);
+				if (expr != oldExpr || oldOpCode != expr.Code) {
+					modified = true;
+					modifiedInAnyIteration = true;
+				}
+			} while (modified);
+			return modifiedInAnyIteration;
 		}
 		
 		#region HandleDecimalConstants
@@ -117,6 +127,54 @@ namespace ICSharpCode.Decompiler.ILAst
 				return (int)expr.Operand;
 			else
 				return null;
+		}
+		#endregion
+		
+		#region SimplifyLdObjAndStObj
+		static ILExpression SimplifyLdObjAndStObj(ILExpression expr)
+		{
+			if (expr.Code == ILCode.Initobj) {
+				expr.Code = ILCode.Stobj;
+				expr.Arguments.Add(new ILExpression(ILCode.DefaultValue, expr.Operand));
+			}
+			if (expr.Code == ILCode.Stobj) {
+				switch (expr.Arguments[0].Code) {
+					case ILCode.Ldelema:
+						return SimplifyLdObjOrStObj(expr, ILCode.Stelem_Any);
+					case ILCode.Ldloca:
+						return SimplifyLdObjOrStObj(expr, ILCode.Stloc);
+					case ILCode.Ldarga:
+						return SimplifyLdObjOrStObj(expr, ILCode.Starg);
+					case ILCode.Ldflda:
+						return SimplifyLdObjOrStObj(expr, ILCode.Stfld);
+					case ILCode.Ldsflda:
+						return SimplifyLdObjOrStObj(expr, ILCode.Stsfld);
+				}
+			} else if (expr.Code == ILCode.Ldobj) {
+				switch (expr.Arguments[0].Code) {
+					case ILCode.Ldelema:
+						return SimplifyLdObjOrStObj(expr, ILCode.Ldelem_Any);
+					case ILCode.Ldloca:
+						return SimplifyLdObjOrStObj(expr, ILCode.Ldloc);
+					case ILCode.Ldarga:
+						return SimplifyLdObjOrStObj(expr, ILCode.Ldarg);
+					case ILCode.Ldflda:
+						return SimplifyLdObjOrStObj(expr, ILCode.Ldfld);
+					case ILCode.Ldsflda:
+						return SimplifyLdObjOrStObj(expr, ILCode.Ldsfld);
+				}
+			}
+			return expr;
+		}
+		
+		static ILExpression SimplifyLdObjOrStObj(ILExpression expr, ILCode newCode)
+		{
+			ILExpression lda = expr.Arguments[0];
+			lda.Code = newCode;
+			if (expr.Code == ILCode.Stobj)
+				lda.Arguments.Add(expr.Arguments[1]);
+			lda.ILRanges.AddRange(expr.ILRanges);
+			return lda;
 		}
 		#endregion
 		
@@ -163,7 +221,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (parent.Arguments[j].Code == ILCode.Ldsfld && parent.Arguments[j].Operand == field) {
 							parent.Arguments[j] = newObj;
 							block.Body.RemoveAt(i);
-							i -= new ILInlining(method).InlineInto(block, i);
+							i -= new ILInlining(method).InlineInto(block, i, aggressive: true);
 							return;
 						}
 					}

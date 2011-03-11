@@ -30,28 +30,33 @@ namespace ICSharpCode.Decompiler.ILAst
 					return;
 				if (initializeArrayPattern.Match(block.Body.ElementAtOrDefault(i + 1))) {
 					if (HandleStaticallyInitializedArray(newArrPattern, block, i, newArrInst, arrayLength)) {
-						i -= new ILInlining(method).InlineInto(block, i + 1) - 1;
+						i -= new ILInlining(method).InlineInto(block, i + 1, aggressive: true) - 1;
 					}
 					return;
 				}
-				if (i + 1 + arrayLength > block.Body.Count)
-					return;
 				List<ILExpression> operands = new List<ILExpression>();
-				for (int j = 0; j < arrayLength; j++) {
-					ILExpression expr = block.Body[i + 1 + j] as ILExpression;
+				int numberOfInstructionsToRemove = 0;
+				for (int j = i + 1; j < block.Body.Count; j++) {
+					ILExpression expr = block.Body[j] as ILExpression;
 					if (expr == null || !IsStoreToArray(expr.Code))
 						break;
 					if (!(expr.Arguments[0].Code == ILCode.Ldloc && expr.Arguments[0].Operand == newArrPattern.LastVariable))
 						break;
-					if (!(expr.Arguments[1].Code == ILCode.Ldc_I4 && (int)expr.Arguments[1].Operand == j))
+					if (expr.Arguments[1].Code != ILCode.Ldc_I4)
 						break;
+					int pos = (int)expr.Arguments[1].Operand;
+					if (pos < operands.Count || pos > operands.Count + 10)
+						break;
+					while (operands.Count < pos)
+						operands.Add(new ILExpression(ILCode.DefaultValue, newArrInst.Operand));
 					operands.Add(expr.Arguments[2]);
+					numberOfInstructionsToRemove++;
 				}
 				if (operands.Count == arrayLength) {
 					((ILExpression)block.Body[i]).Arguments[0] = new ILExpression(
 						ILCode.InitArray, newArrInst.Operand, operands.ToArray());
-					block.Body.RemoveRange(i + 1, arrayLength);
-					i -= new ILInlining(method).InlineInto(block, i + 1) - 1;
+					block.Body.RemoveRange(i + 1, numberOfInstructionsToRemove);
+					i -= new ILInlining(method).InlineInto(block, i + 1, aggressive: true) - 1;
 				}
 			};
 		}
@@ -79,21 +84,75 @@ namespace ICSharpCode.Decompiler.ILAst
 			FieldDefinition field = ((ILExpression)block.Body[i + 1]).Arguments[1].Operand as FieldDefinition;
 			if (field == null || field.InitialValue == null)
 				return false;
-			switch (TypeAnalysis.GetTypeCode(newArrInst.Operand as TypeReference)) {
-				case TypeCode.Int32:
-				case TypeCode.UInt32:
-					if (field.InitialValue.Length == arrayLength * 4) {
-						ILExpression[] newArr = new ILExpression[arrayLength];
-						for (int j = 0; j < newArr.Length; j++) {
-							newArr[j] = new ILExpression(ILCode.Ldc_I4, BitConverter.ToInt32(field.InitialValue, j * 4));
-						}
-						block.Body[i] = new ILExpression(ILCode.Stloc, newArrPattern.LastVariable, new ILExpression(ILCode.InitArray, newArrInst.Operand, newArr));
-						block.Body.RemoveAt(i + 1);
-						return true;
-					}
-					break;
+			ILExpression[] newArr = new ILExpression[arrayLength];
+			if (DecodeArrayInitializer(TypeAnalysis.GetTypeCode(newArrInst.Operand as TypeReference), field.InitialValue, newArr)) {
+				block.Body[i] = new ILExpression(ILCode.Stloc, newArrPattern.LastVariable, new ILExpression(ILCode.InitArray, newArrInst.Operand, newArr));
+				block.Body.RemoveAt(i + 1);
+				return true;
 			}
 			return false;
+		}
+		
+		static bool DecodeArrayInitializer(TypeCode elementType, byte[] initialValue, ILExpression[] output)
+		{
+			switch (elementType) {
+				case TypeCode.Boolean:
+				case TypeCode.SByte:
+				case TypeCode.Byte:
+					if (initialValue.Length == output.Length) {
+						for (int j = 0; j < output.Length; j++) {
+							output[j] = new ILExpression(ILCode.Ldc_I4, (int)initialValue[j]);
+						}
+						return true;
+					}
+					return false;
+				case TypeCode.Char:
+				case TypeCode.Int16:
+				case TypeCode.UInt16:
+					if (initialValue.Length == output.Length * 2) {
+						for (int j = 0; j < output.Length; j++) {
+							output[j] = new ILExpression(ILCode.Ldc_I4, (int)BitConverter.ToInt16(initialValue, j * 2));
+						}
+						return true;
+					}
+					return false;
+				case TypeCode.Int32:
+				case TypeCode.UInt32:
+					if (initialValue.Length == output.Length * 4) {
+						for (int j = 0; j < output.Length; j++) {
+							output[j] = new ILExpression(ILCode.Ldc_I4, BitConverter.ToInt32(initialValue, j * 4));
+						}
+						return true;
+					}
+					return false;
+				case TypeCode.Int64:
+				case TypeCode.UInt64:
+					if (initialValue.Length == output.Length * 8) {
+						for (int j = 0; j < output.Length; j++) {
+							output[j] = new ILExpression(ILCode.Ldc_I8, BitConverter.ToInt64(initialValue, j * 8));
+						}
+						return true;
+					}
+					return false;
+				case TypeCode.Single:
+					if (initialValue.Length == output.Length * 4) {
+						for (int j = 0; j < output.Length; j++) {
+							output[j] = new ILExpression(ILCode.Ldc_R4, BitConverter.ToSingle(initialValue, j * 4));
+						}
+						return true;
+					}
+					return false;
+				case TypeCode.Double:
+					if (initialValue.Length == output.Length * 8) {
+						for (int j = 0; j < output.Length; j++) {
+							output[j] = new ILExpression(ILCode.Ldc_R8, BitConverter.ToDouble(initialValue, j * 8));
+						}
+						return true;
+					}
+					return false;
+				default:
+					return false;
+			}
 		}
 	}
 }

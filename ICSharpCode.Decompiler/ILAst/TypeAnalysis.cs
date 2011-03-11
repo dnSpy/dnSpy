@@ -260,6 +260,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					return null;
 				case ILCode.Initobj:
 					return null;
+				case ILCode.DefaultValue:
+					return (TypeReference)expr.Operand;
 				case ILCode.Localloc:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Int32);

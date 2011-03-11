@@ -76,7 +76,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Inlines instructions before pos into block.Body[pos].
 		/// </summary>
 		/// <returns>The number of instructions that were inlined.</returns>
-		public int InlineInto(ILBlock block, int pos)
+		public int InlineInto(ILBlock block, int pos, bool aggressive)
 		{
 			if (pos >= block.Body.Count)
 				return 0;
@@ -85,7 +85,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression expr = block.Body[pos] as ILExpression;
 				if (expr == null || expr.Code != ILCode.Stloc)
 					break;
-				if (InlineIfPossible(block, pos))
+				if (InlineIfPossible(block, pos, aggressive))
 					count++;
 				else
 					break;
@@ -96,7 +96,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <summary>
 		/// Inlines the stloc instruction at block.Body[pos] into the next instruction, if possible.
 		/// </summary>
-		public bool InlineIfPossible(ILBlock block, int pos, bool aggressive = true)
+		public bool InlineIfPossible(ILBlock block, int pos, bool aggressive)
 		{
 			ILVariable v;
 			ILExpression inlinedExpression;
@@ -251,7 +251,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 						
 						block.Body.RemoveAt(i);
-						InlineInto(block, i); // maybe inlining gets possible after the removal of block.Body[i]
+						InlineInto(block, i, aggressive: false); // maybe inlining gets possible after the removal of block.Body[i]
 						i--;
 					}
 				}

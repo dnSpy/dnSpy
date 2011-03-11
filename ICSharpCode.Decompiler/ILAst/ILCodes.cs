@@ -265,6 +265,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		Ldc_Decimal,
 		YieldBreak,
 		YieldReturn,
+		DefaultValue, // default(T)
 		
 		Pattern // used for ILAst pattern nodes
 	}
