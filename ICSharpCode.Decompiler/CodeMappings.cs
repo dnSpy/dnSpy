@@ -34,11 +34,6 @@ namespace ICSharpCode.Decompiler
 		/// </summary>
 		public ILRange ILInstructionOffset { get; set; }
 		
-		/// <summary>
-		/// Gets or sets the current types at the source code line. E.g.: for int a = dictionary.Count; the list will contain System.Int32 and System.Collections.Generic.Dictionary&lt;TKey, TValue&gt;.
-		/// </summary>
-		public List<TypeDefinition> InnerTypes { get; set; }
-		
 		public int[] ToArray()
 		{
 			int[] result = new int[2];

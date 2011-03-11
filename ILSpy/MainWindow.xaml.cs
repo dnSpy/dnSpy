@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy
 	{
 		NavigationHistory history = new NavigationHistory();
 		ILSpySettings spySettings;
-		SessionSettings sessionSettings;
+		internal SessionSettings sessionSettings;
 		AssemblyListManager assemblyListManager;
 		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
@@ -548,12 +548,7 @@ namespace ICSharpCode.ILSpy
 			analyzerRow.MinHeight = 0;
 			analyzerRow.Height = new GridLength(0);
 		}
-		
-		void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			DebugData.Language = sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
-		}
-		
+
 		public void UnselectAll()
 		{
 			treeView.UnselectAll();

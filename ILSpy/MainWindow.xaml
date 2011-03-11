@@ -70,9 +70,7 @@
 			<Separator />
 			<ComboBox Name="languageComboBox" DisplayMemberPath="Name" Width="100"
 			          ItemsSource="{x:Static local:Languages.AllLanguages}"
-			          SelectedItem="{Binding FilterSettings.Language}"
-			          SelectionChanged="LanguageComboBox_SelectionChanged"
-			/>
+			          SelectedItem="{Binding FilterSettings.Language}"/>
 		</ToolBar>
 		<!-- Status bar -->
 		<StatusBar x:Name="statusBar" DockPanel.Dock="Bottom" Height="26">

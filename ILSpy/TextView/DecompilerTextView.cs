@@ -401,6 +401,10 @@ namespace ICSharpCode.ILSpy.TextView
 						ShowOutput(output);
 					}
 					finally {
+						
+						// set the language
+						DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
+						
 						if (DebugData.CurrentType != null && context.TreeNodes.Count() == 1) {
 							iconMargin.Visibility = Visibility.Visible;
 							// repaint bookmarks

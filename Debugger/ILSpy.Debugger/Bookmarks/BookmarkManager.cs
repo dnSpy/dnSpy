@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
+using Mono.Cecil;
 using Mono.CSharp;
 
 namespace ILSpy.Debugger.Bookmarks
@@ -13,6 +15,53 @@ namespace ILSpy.Debugger.Bookmarks
 	/// </summary>
 	public static class BookmarkManager
 	{
+		static BookmarkManager()
+		{
+			DebugData.LanguageChanged += OnLanguageChanged;
+		}
+
+		static void OnLanguageChanged(object sender, LanguageEventArgs e)
+		{
+			var oldLanguage = e.OldLanguage;
+			var newLanguage = e.NewLanguage;
+			
+			// synchronize the IL<->C# breakpoints
+			
+			// 1. map the breakpoint lines
+			var oldbps = bookmarks.FindAll(b => b is BreakpointBookmark && ((BreakpointBookmark)b).Language == oldLanguage);
+			if (oldbps == null || oldbps.Count == 0)
+				return;
+			
+			var oldMappings = CodeMappings.GetStorage(oldLanguage);
+			var newMappings = CodeMappings.GetStorage(newLanguage);
+			
+			if (oldMappings == null || oldMappings.Count == 0 ||
+			    newMappings == null || newMappings.Count == 0)
+				return;
+			
+			foreach (var bp in oldbps) {
+				uint token;
+				var instruction = oldMappings.GetInstructionByTypeAndLine(DebugData.CurrentType.FullName, bp.LineNumber, out token);
+				if (instruction == null)
+					continue;
+				
+				TypeDefinition type;
+				int line;
+				if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(token, instruction.ILInstructionOffset.From, out type, out line)) {
+					// 2. create breakpoint for new languages
+					var bookmark = new BreakpointBookmark(type, new AstLocation(line, 0), BreakpointAction.Break, newLanguage);
+					AddMark(bookmark);
+				}
+			}
+			
+			// 3. remove all breakpoints for the old language
+			for (int i = bookmarks.Count - 1; i >= 0; --i) {
+				var bm = bookmarks[i];
+				if (bm is BreakpointBookmark && ((BreakpointBookmark)bm).Language == oldLanguage)
+					RemoveMark(bm);
+			}
+		}
+		
 		static List<BookmarkBase> bookmarks = new List<BookmarkBase>();
 		
 		public static List<BookmarkBase> Bookmarks {

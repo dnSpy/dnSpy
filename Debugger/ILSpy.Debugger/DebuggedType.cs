@@ -28,6 +28,8 @@ namespace ILSpy.Debugger
 	/// </summary>
 	public static class DebugData
 	{
+		static DecompiledLanguages language;
+		
 		/// <summary>
 		/// Gets or sets the current debugged type
 		/// </summary>
@@ -36,11 +38,45 @@ namespace ILSpy.Debugger
 		/// <summary>
 		/// Gets or sets the decompiled language.
 		/// </summary>
-		public static DecompiledLanguages Language { get; set; }
+		public static DecompiledLanguages Language {
+			get { return language; }
+			set {
+				var oldLanguage = language;
+				if (value != language) {
+					language = value;
+					OnLanguageChanged(new LanguageEventArgs(oldLanguage, language));
+				}
+			}
+		}
 		
 		/// <summary>
 		/// List of loaded assemblies.
 		/// </summary>
 		public static IEnumerable<AssemblyDefinition> LoadedAssemblies { get; set; }
+		
+		/// <summary>
+		/// Occures when the language is changed.
+		/// </summary>
+		public static event EventHandler<LanguageEventArgs> LanguageChanged;
+		
+		private static void OnLanguageChanged(LanguageEventArgs e)
+		{
+			if (LanguageChanged != null) {
+				LanguageChanged(null, e);
+			}
+		}
+	}
+	
+	public class LanguageEventArgs : EventArgs
+	{
+		public DecompiledLanguages OldLanguage { get; private set; }
+		
+		public DecompiledLanguages NewLanguage { get; private set; }
+		
+		public LanguageEventArgs(DecompiledLanguages oldLanguage, DecompiledLanguages newLanguage)
+		{
+			this.OldLanguage = oldLanguage;
+			this.NewLanguage = newLanguage;
+		}
 	}
 }

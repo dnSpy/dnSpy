@@ -205,6 +205,9 @@ namespace ILSpy.Debugger.Services
 			var doc = (TextDocument)e.Editor.Document;
 			var line = doc.GetLineByNumber(logicPos.Line);
 			
+			if (line.Offset + logicPos.Column >= doc.TextLength)
+				return;
+			
 			var c = doc.GetText(line.Offset + logicPos.Column, 1);			
 			if (string.IsNullOrEmpty(c) || c == "\n" || c == "\t")
 				return;
