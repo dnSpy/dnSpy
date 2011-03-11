@@ -80,7 +80,7 @@ namespace ICSharpCode.ILSpy
 		internal static IEnumerable<ILAstLanguage> GetDebugLanguages()
 		{
 			yield return new ILAstLanguage { name = "ILAst (unoptimized)", inlineVariables = false };
-			string nextName = "ILAst (variable inlining)";
+			string nextName = "ILAst (variable splitting)";
 			foreach (ILAstOptimizationStep step in Enum.GetValues(typeof(ILAstOptimizationStep))) {
 				yield return new ILAstLanguage { name = nextName, abortBeforeStep = step };
 				nextName = "ILAst (after " + step + ")";

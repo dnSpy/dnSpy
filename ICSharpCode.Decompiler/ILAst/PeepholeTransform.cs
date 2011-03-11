@@ -25,8 +25,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			transforms.context = context;
 			transforms.method = method;
 			
+			InitializerPeepholeTransforms initializerTransforms = new InitializerPeepholeTransforms(method);
 			PeepholeTransform[] blockTransforms = {
-				ArrayInitializers.Transform(method),
+				initializerTransforms.TransformArrayInitializers,
+				initializerTransforms.TransformCollectionInitializers,
 				transforms.CachedDelegateInitialization,
 				transforms.MakeAssignmentExpression
 			};

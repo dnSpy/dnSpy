@@ -203,6 +203,18 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 						return ctor.DeclaringType;
 					}
+				case ILCode.InitCollection:
+					return InferTypeForExpression(expr.Arguments[0], expectedType);
+				case ILCode.InitCollectionAddMethod:
+					{
+						MethodReference addMethod = (MethodReference)expr.Operand;
+						if (forceInferChildren) {
+							for (int i = 1; i < addMethod.Parameters.Count; i++) {
+								InferTypeForExpression(expr.Arguments[i-1], SubstituteTypeArgs(addMethod.Parameters[i].ParameterType, addMethod));
+							}
+						}
+						return addMethod.DeclaringType;
+					}
 					#endregion
 					#region Load/Store Fields
 				case ILCode.Ldfld:

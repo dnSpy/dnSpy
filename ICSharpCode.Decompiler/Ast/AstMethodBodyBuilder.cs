@@ -510,6 +510,23 @@ namespace ICSharpCode.Decompiler.Ast
 					return new Ast.YieldBreakStatement();
 				case ILCode.YieldReturn:
 					return new Ast.YieldStatement { Expression = arg1 };
+				case ILCode.InitCollection: {
+					ObjectCreateExpression oce = (ObjectCreateExpression)arg1;
+					oce.Initializer = new ArrayInitializerExpression();
+					for (int i = 1; i < args.Count; i++) {
+						ArrayInitializerExpression aie = args[i] as ArrayInitializerExpression;
+						if (aie != null && aie.Elements.Count == 1)
+							oce.Initializer.Elements.Add(aie.Elements.Single().Detach());
+						else
+							oce.Initializer.Elements.Add(args[i]);
+					}
+					return oce;
+				}
+				case ILCode.InitCollectionAddMethod: {
+					var collectionInit = new ArrayInitializerExpression();
+					collectionInit.Elements.AddRange(args);
+					return collectionInit;
+				}
 				default: throw new Exception("Unknown OpCode: " + byteCode.Code);
 			}
 		}

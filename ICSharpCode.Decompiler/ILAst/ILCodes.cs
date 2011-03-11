@@ -259,6 +259,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		LogicAnd,
 		LogicOr,
 		InitArray, // Array Initializer
+		InitCollection, // Collection Initializer: first arg is newobj, remaining args are InitCollectionAddMethod method calls
+		InitCollectionAddMethod,
 		TernaryOp, // ?:
 		LoopOrSwitchBreak,
 		LoopContinue,

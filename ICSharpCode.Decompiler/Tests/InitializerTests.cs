@@ -2,10 +2,11 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 
-public class ArrayInitializers
+public class InitializerTests
 {
-	// Helper methods used to ensure array initializers used within expressions work correctly
+	// Helper methods used to ensure initializers used within expressions work correctly
 	static void X(object a, object b)
 	{
 	}
@@ -15,6 +16,7 @@ public class ArrayInitializers
 		return null;
 	}
 	
+	#region Array Initializers
 	public static void Array1()
 	{
 		X(Y(), new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
@@ -97,5 +99,20 @@ public class ArrayInitializers
 	public static void ArrayString()
 	{
 		X(Y(), new string[] { "", null, "Hello", "World" });
+	}
+	#endregion
+	
+	public static void CollectionInitializerList()
+	{
+		X(Y(), new List<int> { 1, 2, 3 });
+	}
+	
+	public static void CollectionInitializerDictionary()
+	{
+		X(Y(), new Dictionary<string, int> {
+		  	{ "First", 1 },
+		  	{ "Second", 2 },
+		  	{ "Third" , 3 }
+		  });
 	}
 }
