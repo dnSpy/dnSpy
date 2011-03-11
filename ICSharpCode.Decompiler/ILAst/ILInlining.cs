@@ -15,8 +15,8 @@ namespace ICSharpCode.Decompiler.ILAst
 	public class ILInlining
 	{
 		readonly ILBlock method;
-		Dictionary<ILVariable, int> numStloc  = new Dictionary<ILVariable, int>();
-		Dictionary<ILVariable, int> numLdloc  = new Dictionary<ILVariable, int>();
+		internal Dictionary<ILVariable, int> numStloc  = new Dictionary<ILVariable, int>();
+		internal Dictionary<ILVariable, int> numLdloc  = new Dictionary<ILVariable, int>();
 		Dictionary<ILVariable, int> numLdloca = new Dictionary<ILVariable, int>();
 		
 		Dictionary<ParameterDefinition, int> numStarg  = new Dictionary<ParameterDefinition, int>();
@@ -64,7 +64,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression nextExpr = body[i + 1] as ILExpression;
 				ILVariable locVar;
 				ILExpression expr;
-				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineIfPossible(block, i, aggressive: false)) {
+				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineOneIfPossible(block, i, aggressive: false)) {
 					i = Math.Max(0, i - 1); // Go back one step
 				} else {
 					i++;
@@ -85,7 +85,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression expr = block.Body[pos] as ILExpression;
 				if (expr == null || expr.Code != ILCode.Stloc)
 					break;
-				if (InlineIfPossible(block, pos, aggressive))
+				if (InlineOneIfPossible(block, pos, aggressive))
 					count++;
 				else
 					break;
@@ -94,9 +94,25 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		/// <summary>
+		/// Aggressively inlines the stloc instruction at block.Body[pos] into the next instruction, if possible.
+		/// If inlining was possible; we will continue to inline (non-aggressively) into the the combined instruction.
+		/// </summary>
+		/// <remarks>
+		/// After the operation, pos will point to the new combined instruction.
+		/// </remarks>
+		public bool InlineIfPossible(ILBlock block, ref int pos)
+		{
+			if (InlineOneIfPossible(block, pos, true)) {
+				pos -= InlineInto(block, pos, false);
+				return true;
+			}
+			return false;
+		}
+		
+		/// <summary>
 		/// Inlines the stloc instruction at block.Body[pos] into the next instruction, if possible.
 		/// </summary>
-		public bool InlineIfPossible(ILBlock block, int pos, bool aggressive)
+		public bool InlineOneIfPossible(ILBlock block, int pos, bool aggressive)
 		{
 			ILVariable v;
 			ILExpression inlinedExpression;

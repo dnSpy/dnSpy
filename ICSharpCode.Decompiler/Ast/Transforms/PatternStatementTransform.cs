@@ -31,6 +31,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				TransformForeach(compilationUnit);
 			TransformFor(compilationUnit);
 			TransformDoWhile(compilationUnit);
+			if (context.Settings.LockStatement)
+				TransformLock(compilationUnit);
 			if (context.Settings.AutomaticProperties)
 				TransformAutomaticProperties(compilationUnit);
 			if (context.Settings.AutomaticEvents)
@@ -300,6 +302,83 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		}
 		#endregion
 		
+		#region lock
+		static readonly AstNode lockFlagInitPattern = new VariableDeclarationStatement {
+			Type = new PrimitiveType("bool"),
+			Variables = {
+				new NamedNode(
+					"variable",
+					new VariableInitializer {
+						Initializer = new PrimitiveExpression(false)
+					}
+				)
+			}};
+		
+		static readonly AstNode lockTryCatchPattern = new TryCatchStatement {
+			TryBlock = new BlockStatement {
+				new TypePattern(typeof(System.Threading.Monitor)).ToType().Invoke(
+					"Enter", new AnyNode("enter"),
+					new DirectionExpression {
+						FieldDirection = FieldDirection.Ref,
+						Expression = new NamedNode("flag", new IdentifierExpression())
+					}),
+				new Repeat(new AnyNode()).ToStatement()
+			},
+			FinallyBlock = new BlockStatement {
+				new IfElseStatement {
+					Condition = new Backreference("flag"),
+					TrueStatement = new BlockStatement {
+						new TypePattern(typeof(System.Threading.Monitor)).ToType().Invoke("Exit", new NamedNode("exit", new IdentifierExpression()))
+					}
+				}
+			}};
+		
+		public void TransformLock(AstNode compilationUnit)
+		{
+			foreach (AstNode node in compilationUnit.Descendants.ToArray()) {
+				Match m1 = lockFlagInitPattern.Match(node);
+				if (m1 == null) continue;
+				AstNode tryCatch = node.NextSibling;
+				while (simpleVariableDefinition.Match(tryCatch) != null)
+					tryCatch = tryCatch.NextSibling;
+				Match m2 = lockTryCatchPattern.Match(tryCatch);
+				if (m2 == null) continue;
+				if (m1.Get<VariableInitializer>("variable").Single().Name == m2.Get<IdentifierExpression>("flag").Single().Identifier) {
+					Expression enter = m2.Get<Expression>("enter").Single();
+					IdentifierExpression exit = m2.Get<IdentifierExpression>("exit").Single();
+					if (exit.Match(enter) == null) {
+						// If exit and enter are not the same, then enter must be "exit = ..."
+						AssignmentExpression assign = enter as AssignmentExpression;
+						if (assign == null)
+							continue;
+						if (exit.Match(assign.Left) == null)
+							continue;
+						enter = assign.Right;
+						// Remove 'exit' variable:
+						bool ok = false;
+						for (AstNode tmp = node.NextSibling; tmp != tryCatch; tmp = tmp.NextSibling) {
+							VariableDeclarationStatement v = (VariableDeclarationStatement)tmp;
+							if (v.Variables.Single().Name == exit.Identifier) {
+								ok = true;
+								v.Remove();
+								break;
+							}
+						}
+						if (!ok)
+							continue;
+					}
+					// transform the code into a lock statement:
+					LockStatement l = new LockStatement();
+					l.Expression = enter.Detach();
+					l.EmbeddedStatement = ((TryCatchStatement)tryCatch).TryBlock.Detach();
+					((BlockStatement)l.EmbeddedStatement).Statements.First().Remove(); // Remove 'Enter()' call
+					tryCatch.ReplaceWith(l);
+					node.Remove(); // remove flag variable
+				}
+			}
+		}
+		#endregion
+		
 		#region Automatic Properties
 		static readonly PropertyDeclaration automaticPropertyPattern = new PropertyDeclaration {
 			Attributes = { new Repeat(new AnyNode()) },
@@ -391,7 +470,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							}},
 						new AssignmentExpression {
 							Left = new IdentifierExpressionBackreference("var1"),
-							Right = new AnyNode("Interlocked").ToType().Invoke(
+							Right = new TypePattern(typeof(System.Threading.Interlocked)).ToType().Invoke(
 								"CompareExchange",
 								new AstType[] { new Backreference("type") }, // type argument
 								new Expression[] { // arguments
@@ -419,10 +498,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			var combineMethod = m.Get("delegateCombine").Single().Parent.Annotation<MethodReference>();
 			if (combineMethod == null || combineMethod.Name != (isAddAccessor ? "Combine" : "Remove"))
 				return false;
-			if (combineMethod.DeclaringType.FullName != "System.Delegate")
-				return false;
-			var ice = m.Get("Interlocked").Single().Annotation<TypeReference>();
-			return ice != null && ice.FullName == "System.Threading.Interlocked";
+			return combineMethod.DeclaringType.FullName == "System.Delegate";
 		}
 		
 		void TransformAutomaticEvents(AstNode compilationUnit)
@@ -451,6 +527,33 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 				
 				ev.ReplaceWith(ed);
+			}
+		}
+		#endregion
+		
+		#region Pattern Matching Helpers
+		sealed class TypePattern : Pattern
+		{
+			readonly string ns;
+			readonly string name;
+			
+			public TypePattern(Type type)
+			{
+				this.ns = type.Namespace;
+				this.name = type.Name;
+			}
+			
+			protected override bool DoMatch(AstNode other, Match match)
+			{
+				if (other == null)
+					return false;
+				TypeReference tr = other.Annotation<TypeReference>();
+				return tr != null && tr.Namespace == ns && tr.Name == name;
+			}
+			
+			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+			{
+				throw new NotImplementedException();
 			}
 		}
 		#endregion

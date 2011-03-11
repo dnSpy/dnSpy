@@ -205,7 +205,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return null;
 		}
 		
-		bool IsWithoutSideEffects(Expression left)
+		static bool IsWithoutSideEffects(Expression left)
 		{
 			if (left is ThisReferenceExpression)
 				return true;

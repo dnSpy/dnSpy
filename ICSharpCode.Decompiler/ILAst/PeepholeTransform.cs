@@ -27,7 +27,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			PeepholeTransform[] blockTransforms = {
 				ArrayInitializers.Transform(method),
-				transforms.CachedDelegateInitialization
+				transforms.CachedDelegateInitialization,
+				transforms.MakeAssignmentExpression
 			};
 			Func<ILExpression, ILExpression>[] exprTransforms = {
 				HandleDecimalConstants,
@@ -49,8 +50,8 @@ namespace ICSharpCode.Decompiler.ILAst
 							block.Body[i] = expr;
 							if (modified) {
 								ILInlining inlining = new ILInlining(method);
-								if (inlining.InlineIfPossible(block, i, aggressive: true)) {
-									i -= inlining.InlineInto(block, i, aggressive: false) - 1;
+								if (inlining.InlineIfPossible(block, ref i)) {
+									i++; // retry all transforms on the new combined instruction
 									continue;
 								}
 							}
@@ -231,6 +232,55 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 					}
 				}
+			}
+		}
+		#endregion
+		
+		#region MakeAssignmentExpression
+		void MakeAssignmentExpression(ILBlock block, ref int i)
+		{
+			// expr_44 = ...
+			// stloc(v, expr_44)
+			// ->
+			// expr_44 = stloc(v, ...))
+			ILVariable exprVar;
+			ILExpression initializer;
+			if (!(block.Body[i].Match(ILCode.Stloc, out exprVar, out initializer) && exprVar.IsGenerated))
+				return;
+			ILExpression stloc1 = block.Body.ElementAtOrDefault(i + 1) as ILExpression;
+			if (!(stloc1 != null && stloc1.Code == ILCode.Stloc && stloc1.Arguments[0].Code == ILCode.Ldloc && stloc1.Arguments[0].Operand == exprVar))
+				return;
+			
+			ILInlining inlining;
+			ILExpression stloc2 = block.Body.ElementAtOrDefault(i + 2) as ILExpression;
+			if (stloc2 != null && stloc2.Code == ILCode.Stloc && stloc2.Arguments[0].Code == ILCode.Ldloc && stloc2.Arguments[0].Operand == exprVar) {
+				// expr_44 = ...
+				// stloc(v1, expr_44)
+				// stloc(v2, expr_44)
+				// ->
+				// stloc(v1, stloc(v2, ...))
+				inlining = new ILInlining(method);
+				if (inlining.numLdloc.GetOrDefault(exprVar) == 2 && inlining.numStloc.GetOrDefault(exprVar) == 1) {
+					block.Body.RemoveAt(i + 2); // remove stloc2
+					block.Body.RemoveAt(i); // remove expr = ...
+					stloc1.Arguments[0] = stloc2;
+					stloc2.Arguments[0] = initializer;
+					
+					if (inlining.InlineIfPossible(block, ref i)) {
+						i++; // retry transformations on the new combined instruction
+					}
+					return;
+				}
+			}
+			
+			
+			block.Body.RemoveAt(i + 1); // remove stloc
+			stloc1.Arguments[0] = initializer;
+			((ILExpression)block.Body[i]).Arguments[0] = stloc1;
+			
+			inlining = new ILInlining(method);
+			if (inlining.InlineIfPossible(block, ref i)) {
+				i++; // retry transformations on the new combined instruction
 			}
 		}
 		#endregion

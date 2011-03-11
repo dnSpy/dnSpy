@@ -31,6 +31,21 @@ public static class YieldReturn
 		yield return 2;
 	}
 	
+	public static IEnumerable<int> YieldReturnInLock1(object o)
+	{
+		lock (o) {
+			yield return 1;
+		}
+	}
+	
+	public static IEnumerable<int> YieldReturnInLock2(object o)
+	{
+		lock (o) {
+			yield return 1;
+			o = null;
+			yield return 2;
+		}
+	}
 	
 	public static IEnumerable<string> YieldReturnWithNestedTryFinally(bool breakInMiddle)
 	{
