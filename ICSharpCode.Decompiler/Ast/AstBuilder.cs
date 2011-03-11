@@ -720,31 +720,43 @@ namespace ICSharpCode.Decompiler.Ast
 			ConvertCustomAttributes(astProp, propDef);
 			return astProp;
 		}
-
-		CustomEventDeclaration CreateEvent(EventDefinition eventDef)
+		
+		AttributedNode CreateEvent(EventDefinition eventDef)
 		{
-			CustomEventDeclaration astEvent = new CustomEventDeclaration();
-			ConvertCustomAttributes(astEvent, eventDef);
-			astEvent.AddAnnotation(eventDef);
-			astEvent.Name = CleanName(eventDef.Name);
-			astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
-			if (eventDef.AddMethod == null || !eventDef.AddMethod.HasOverrides)
-				astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
-			else
-				astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().DeclaringType);
-			if (eventDef.AddMethod != null) {
-				astEvent.AddAccessor = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
-				}.WithAnnotation(eventDef.AddMethod);
-				ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
+			if (eventDef.AddMethod != null && eventDef.AddMethod.IsAbstract) {
+				// An abstract event cannot be custom
+				EventDeclaration astEvent = new EventDeclaration();
+				ConvertCustomAttributes(astEvent, eventDef);
+				astEvent.AddAnnotation(eventDef);
+				astEvent.Variables.Add(new VariableInitializer(CleanName(eventDef.Name)));
+				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
+				if (!eventDef.DeclaringType.IsInterface)
+					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
+				return astEvent;
+			} else {
+				CustomEventDeclaration astEvent = new CustomEventDeclaration();
+				ConvertCustomAttributes(astEvent, eventDef);
+				astEvent.AddAnnotation(eventDef);
+				astEvent.Name = CleanName(eventDef.Name);
+				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
+				if (eventDef.AddMethod == null || !eventDef.AddMethod.HasOverrides)
+					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
+				else
+					astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().DeclaringType);
+				if (eventDef.AddMethod != null) {
+					astEvent.AddAccessor = new Accessor {
+						Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
+					}.WithAnnotation(eventDef.AddMethod);
+					ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
+				}
+				if (eventDef.RemoveMethod != null) {
+					astEvent.RemoveAccessor = new Accessor {
+						Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, context)
+					}.WithAnnotation(eventDef.RemoveMethod);
+					ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
+				}
+				return astEvent;
 			}
-			if (eventDef.RemoveMethod != null) {
-				astEvent.RemoveAccessor = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, context)
-				}.WithAnnotation(eventDef.RemoveMethod);
-				ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
-			}
-			return astEvent;
 		}
 
 		FieldDeclaration CreateField(FieldDefinition fieldDef)
