@@ -107,6 +107,7 @@
     <Compile Include="CSharp\Ast\PatternMatching\IPatternAstVisitor.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\Match.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\NamedNode.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\OptionalNode.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\Repeat.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\Pattern.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\Placeholder.cs" />
