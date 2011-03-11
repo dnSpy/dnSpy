@@ -439,6 +439,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				List<Statement> dictCreation = m.Get<BlockStatement>("dictCreation").Single().Statements.ToList();
 				List<KeyValuePair<string, int>> dict = BuildDictionary(dictCreation);
 				SwitchStatement sw = m.Get<SwitchStatement>("switch").Single();
+				sw.Expression = m.Get<Expression>("switchVar").Single().Detach();
 				foreach (SwitchSection section in sw.SwitchSections) {
 					List<CaseLabel> labels = section.CaseLabels.ToList();
 					section.CaseLabels.Clear();
