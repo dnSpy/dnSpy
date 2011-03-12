@@ -138,13 +138,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (inlinedExpression.HasNoSideEffects()) {
 						// Remove completely
 						block.Body.RemoveAt(pos);
-					} else {
+						return true;
+					} else if (inlinedExpression.CanBeExpressionStatement() && v.IsGenerated) {
 						// Assign the ranges of the stloc instruction:
 						inlinedExpression.ILRanges.AddRange(((ILExpression)block.Body[pos]).ILRanges);
 						// Remove the stloc, but keep the inner expression
 						block.Body[pos] = inlinedExpression;
+						return true;
 					}
-					return true;
 				}
 			}
 			return false;

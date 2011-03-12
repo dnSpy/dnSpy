@@ -1069,6 +1069,23 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
+		/// <summary>
+		/// Can the expression be used as a statement in C#?
+		/// </summary>
+		public static bool CanBeExpressionStatement(this ILExpression expr)
+		{
+			switch(expr.Code) {
+				case ILCode.Call:
+				case ILCode.Calli:
+				case ILCode.Callvirt:
+				case ILCode.Newobj:
+				case ILCode.Newarr:
+					return true;
+				default:
+					return false;
+			}
+		}
+		
 		public static V GetOrDefault<K,V>(this Dictionary<K, V> dict, K key)
 		{
 			V ret;
