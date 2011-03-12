@@ -17,6 +17,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		CopyPropagation,
 		YieldReturn,
 		SplitToMovableBlocks,
+		TypeInference,
 		PeepholeOptimizations,
 		FindLoops,
 		FindConditions,
@@ -26,7 +27,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		FlattenIfStatements,
 		InlineVariables2,
 		PeepholeTransforms,
-		TypeInference,
+		TypeInference2,
 		None
 	}
 	
@@ -36,8 +37,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 		
+		TypeSystem typeSystem;
+		
 		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
+			this.typeSystem = context.CurrentMethod.Module.TypeSystem;
+			
 			if (abortBeforeStep == ILAstOptimizationStep.SimpleGotoAndNopRemoval) return;
 			SimpleGotoAndNopRemoval(method);
 			
@@ -64,10 +69,19 @@ namespace ICSharpCode.Decompiler.ILAst
 				SplitToBasicBlocks(block);
 			}
 			
+			if (abortBeforeStep == ILAstOptimizationStep.TypeInference) return;
+			// Types are needed for the ternary operator optimization
+			TypeAnalysis.Run(context, method);
+			
 			if (abortBeforeStep == ILAstOptimizationStep.PeepholeOptimizations) return;
 			AnalyseLabels(method);
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
-				PeepholeOptimizations(block);
+				bool modified;
+				do {
+					modified = false;
+					modified |= block.RunPeepholeOptimization(TrySimplifyShortCircuit);
+					modified |= block.RunPeepholeOptimization(TrySimplifyTernaryOperator);
+				} while(modified);
 			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindLoops) return;
@@ -109,10 +123,15 @@ namespace ICSharpCode.Decompiler.ILAst
 			// open up additional inlining possibilities.
 			new ILInlining(method).InlineAllVariables();
 			
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				expr.InferredType = null;
+				expr.ExpectedType = null;
+			}
+			
 			if (abortBeforeStep == ILAstOptimizationStep.PeepholeTransforms) return;
 			PeepholeTransforms.Run(context, method);
 			
-			if (abortBeforeStep == ILAstOptimizationStep.TypeInference) return;
+			if (abortBeforeStep == ILAstOptimizationStep.TypeInference2) return;
 			TypeAnalysis.Run(context, method);
 			
 			GotoRemoval.RemoveRedundantCode(method);
@@ -265,28 +284,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		void PeepholeOptimizations(ILBlock block)
-		{
-			bool modified;
-			do {
-				modified = false;
-				for (int i = 0; i < block.Body.Count;) {
-					ILBasicBlock bb = (ILBasicBlock)block.Body[i];
-					if (TrySimplifyShortCircuit(block.Body, bb)) {
-						modified = true;
-						continue;
-					}
-					if (TrySimplifyTernaryOperator(block.Body, bb)) {
-						modified = true;
-						continue;
-					}
-					i++;
-				}
-			} while(modified);
-		}
-		
 		// scope is modified if successful
-		bool TrySimplifyTernaryOperator(List<ILNode> scope, ILBasicBlock head)
+		bool TrySimplifyTernaryOperator(List<ILNode> scope, ILBasicBlock head, int index)
 		{
 			Debug.Assert(scope.Contains(head));
 			
@@ -308,8 +307,31 @@ namespace ICSharpCode.Decompiler.ILAst
 			   trueLocVar == falseLocVar &&
 			   trueFall == falseFall)
 			{
-				// Create the ternary expression
-				head.Body = new List<ILNode>() { new ILExpression(ILCode.Stloc, trueLocVar, new ILExpression(ILCode.TernaryOp, null, condExpr, trueExpr, falseExpr)) };
+				int boolVal;
+				ILExpression newExpr;
+				// a ? true : b   is equvalent to  a || b
+				// a ? b : true   is equvalent to  !a || b
+				// a ? b : false  is equvalent to  a && b
+				// a ? false : b  is equvalent to  !a && b
+				if (trueLocVar.Type == typeSystem.Boolean && trueExpr.Match(ILCode.Ldc_I4, out boolVal)) {
+					// It can be expressed as logical expression
+					if (boolVal != 0) {
+						newExpr = new ILExpression(ILCode.LogicOr, null, condExpr, falseExpr);
+					} else {
+						newExpr = new ILExpression(ILCode.LogicAnd, null, new ILExpression(ILCode.LogicNot, null, condExpr), falseExpr);
+					}
+				} else if (trueLocVar.Type == typeSystem.Boolean && falseExpr.Match(ILCode.Ldc_I4, out boolVal)) {
+					// It can be expressed as logical expression
+					if (boolVal != 0) {
+						newExpr = new ILExpression(ILCode.LogicOr, null, new ILExpression(ILCode.LogicNot, null, condExpr), trueExpr);
+					} else {
+						newExpr = new ILExpression(ILCode.LogicAnd, null, condExpr, trueExpr);
+					}
+				} else {
+					// Create ternary expression
+					newExpr = new ILExpression(ILCode.TernaryOp, null, condExpr, trueExpr, falseExpr);
+				}
+				head.Body = new List<ILNode>() { new ILExpression(ILCode.Stloc, trueLocVar, newExpr) };
 				head.FallthoughGoto = new ILExpression(ILCode.Br, trueFall);
 				
 				// Remove the old basic blocks
@@ -326,7 +348,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		// scope is modified if successful
-		bool TrySimplifyShortCircuit(List<ILNode> scope, ILBasicBlock head)
+		bool TrySimplifyShortCircuit(List<ILNode> scope, ILBasicBlock head, int index)
 		{
 			Debug.Assert(scope.Contains(head));
 			
@@ -975,6 +997,25 @@ namespace ICSharpCode.Decompiler.ILAst
 			arg = null;
 			fallLabel = null;
 			return false;
+		}
+		
+		/// <summary>
+		/// Perform one pass of a given optimization on this block.
+		/// This block must consist of only basicblocks.
+		/// </summary>
+		public static bool RunPeepholeOptimization(this ILBlock block, Func<List<ILNode>, ILBasicBlock, int, bool> optimization)
+		{
+			bool modified = false;
+			List<ILNode> body = block.Body;
+			for (int i = 0; i < body.Count;) {
+				if (optimization(body, (ILBasicBlock)body[i], i)) {
+					modified = true;
+					i = Math.Max(0, i - 1); // Go back one step
+				} else {
+					i++;
+				}
+			}
+			return modified;
 		}
 		
 		public static bool CanFallThough(this ILNode node)
