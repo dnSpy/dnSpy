@@ -79,6 +79,11 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			return p != null ? new SwitchSectionPlaceholder(p) : null;
 		}
 		
+		public static implicit operator CatchClause(Pattern p)
+		{
+			return p != null ? new CatchClausePlaceholder(p) : null;
+		}
+		
 		// Make debugging easier by giving Patterns a ToString() implementation
 		public override string ToString()
 		{
