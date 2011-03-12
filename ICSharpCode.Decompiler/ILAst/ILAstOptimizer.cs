@@ -41,10 +41,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 		
+		DecompilerContext context;
 		TypeSystem typeSystem;
 		
 		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
+			this.context = context;
 			this.typeSystem = context.CurrentMethod.Module.TypeSystem;
 			
 			if (abortBeforeStep == ILAstOptimizationStep.RemoveRedundantCode) return;
@@ -325,50 +327,74 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression condExpr;
 			ILLabel trueLabel;
 			ILLabel falseLabel;
-			ILVariable trueLocVar;
+			ILVariable trueLocVar = null;
 			ILExpression trueExpr;
 			ILLabel trueFall;
-			ILVariable falseLocVar;
+			ILVariable falseLocVar = null;
 			ILExpression falseExpr;
 			ILLabel falseFall;
+			object unused;
 			
-			if(head.Match(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel) &&
-			   labelGlobalRefCount[trueLabel] == 1 &&
-			   labelGlobalRefCount[falseLabel] == 1 &&
-			   labelToBasicBlock[trueLabel].Match(ILCode.Stloc, out trueLocVar, out trueExpr, out trueFall) &&
-			   labelToBasicBlock[falseLabel].Match(ILCode.Stloc, out falseLocVar, out falseExpr, out falseFall) &&
-			   trueLocVar == falseLocVar &&
-			   trueFall == falseFall &&
-			   scope.Contains(labelToBasicBlock[trueLabel]) &&
-			   scope.Contains(labelToBasicBlock[falseLabel])
-			  )
+			if (head.Match(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel) &&
+			    labelGlobalRefCount[trueLabel] == 1 &&
+			    labelGlobalRefCount[falseLabel] == 1 &&
+			    ((labelToBasicBlock[trueLabel].Match(ILCode.Stloc, out trueLocVar, out trueExpr, out trueFall) &&
+			      labelToBasicBlock[falseLabel].Match(ILCode.Stloc, out falseLocVar, out falseExpr, out falseFall)) ||
+			     (labelToBasicBlock[trueLabel].Match(ILCode.Ret, out unused, out trueExpr, out trueFall) &&
+			      labelToBasicBlock[falseLabel].Match(ILCode.Ret, out unused, out falseExpr, out falseFall))) &&
+			    trueLocVar == falseLocVar &&
+			    trueFall == falseFall &&
+			    scope.Contains(labelToBasicBlock[trueLabel]) &&
+			    scope.Contains(labelToBasicBlock[falseLabel])
+			   )
 			{
-				int boolVal;
+				ILCode opCode = trueLocVar != null ? ILCode.Stloc : ILCode.Ret;
+				TypeReference retType = trueLocVar != null ? trueLocVar.Type : this.context.CurrentMethod.ReturnType;
+				int leftBoolVal;
+				int rightBoolVal;
 				ILExpression newExpr;
-				// a ? true : b   is equvalent to  a || b
-				// a ? b : true   is equvalent to  !a || b
-				// a ? b : false  is equvalent to  a && b
-				// a ? false : b  is equvalent to  !a && b
-				if (trueLocVar.Type == typeSystem.Boolean && trueExpr.Match(ILCode.Ldc_I4, out boolVal)) {
+				// a ? true:false  is equivalent to  a
+				// a ? false:true  is equivalent to  !a
+				// a ? true : b    is equivalent to  a || b
+				// a ? b : true    is equivalent to  !a || b
+				// a ? b : false   is equivalent to  a && b
+				// a ? false : b   is equivalent to  !a && b
+				if (retType == typeSystem.Boolean &&
+				    trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal) &&
+				    falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal) &&
+				    ((leftBoolVal != 0 && rightBoolVal == 0) || (leftBoolVal == 0 && rightBoolVal != 0))
+				   )
+				{
+					// It can be expressed as trivilal expression
+					if (leftBoolVal != 0) {
+						newExpr = condExpr;
+					} else {
+						newExpr = new ILExpression(ILCode.LogicNot, null, condExpr);
+					}
+				} else if (retType == typeSystem.Boolean && trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal)) {
 					// It can be expressed as logical expression
-					if (boolVal != 0) {
+					if (leftBoolVal != 0) {
 						newExpr = new ILExpression(ILCode.LogicOr, null, condExpr, falseExpr);
 					} else {
 						newExpr = new ILExpression(ILCode.LogicAnd, null, new ILExpression(ILCode.LogicNot, null, condExpr), falseExpr);
 					}
-				} else if (trueLocVar.Type == typeSystem.Boolean && falseExpr.Match(ILCode.Ldc_I4, out boolVal)) {
+				} else if (retType == typeSystem.Boolean && falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal)) {
 					// It can be expressed as logical expression
-					if (boolVal != 0) {
+					if (rightBoolVal != 0) {
 						newExpr = new ILExpression(ILCode.LogicOr, null, new ILExpression(ILCode.LogicNot, null, condExpr), trueExpr);
 					} else {
 						newExpr = new ILExpression(ILCode.LogicAnd, null, condExpr, trueExpr);
 					}
 				} else {
+					// Ternary operator tends to create long complicated return statements					
+					if (opCode == ILCode.Ret)
+						return false;
+					
 					// Create ternary expression
 					newExpr = new ILExpression(ILCode.TernaryOp, null, condExpr, trueExpr, falseExpr);
 				}
-				head.Body = new List<ILNode>() { new ILExpression(ILCode.Stloc, trueLocVar, newExpr) };
-				head.FallthoughGoto = new ILExpression(ILCode.Br, trueFall);
+				head.Body = new List<ILNode>() { new ILExpression(opCode, trueLocVar, newExpr) };
+				head.FallthoughGoto = trueFall != null ? new ILExpression(ILCode.Br, trueFall) : null;
 				
 				// Remove the old basic blocks
 				foreach(ILLabel deleteLabel in new [] { trueLabel, falseLabel }) {
@@ -1082,7 +1108,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (bb.Body.Count == 1) {
 				if (bb.Body[0].Match(code, out operand, out arg)) {
-					fallLabel = (ILLabel)bb.FallthoughGoto.Operand;
+					fallLabel = bb.FallthoughGoto != null ? (ILLabel)bb.FallthoughGoto.Operand : null;
 					return true;
 				}
 			}
