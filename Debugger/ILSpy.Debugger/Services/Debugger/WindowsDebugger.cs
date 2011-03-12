@@ -287,27 +287,27 @@ namespace ILSpy.Debugger.Services
 		
 		// Stepping:
 		
-		SourceCodeMapping GetNextCodeMapping()
+		SourceCodeMapping GetCurrentCodeMapping()
 		{
 			if (CurrentLineBookmark.Instance == null)
 				return null;
 			
 			// get the mapped instruction from the current line marker or the next one
 			uint token;
-			var instruction = CodeMappingsStorage.GetInstructionByTypeAndLine(
+			return CodeMappingsStorage.GetInstructionByTypeAndLine(
 				CurrentLineBookmark.Instance.Type.FullName,
 				CurrentLineBookmark.Instance.LineNumber, out token);
 			
-			var val = CodeMappingsStorage[CurrentLineBookmark.Instance.Type.FullName];
-			
-			var mapping = val.Find(m => m.MetadataToken == token);
-			
-			return mapping.MemberCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From == instruction.ILInstructionOffset.From);
+//			var val = CodeMappingsStorage[CurrentLineBookmark.Instance.Type.FullName];
+//			
+//			var mapping = val.Find(m => m.MetadataToken == token);
+//			
+//			return mapping.MemberCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From == instruction.ILInstructionOffset.From);
 		}
 		
 		StackFrame GetStackFrame()
 		{
-			var map = GetNextCodeMapping();
+			var map = GetCurrentCodeMapping();
 			if (map == null) {
 				CurrentLineBookmark.Remove();
 				Continue();
