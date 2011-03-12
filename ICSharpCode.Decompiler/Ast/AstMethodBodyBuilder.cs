@@ -276,6 +276,7 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.LogicAnd:   return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ConditionalAnd, arg2);
 				case ILCode.LogicOr:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ConditionalOr, arg2);
 				case ILCode.TernaryOp:  return new Ast.ConditionalExpression() { Condition = arg1, TrueExpression = arg2, FalseExpression = arg3 };
+				case ILCode.NullCoalescing: 	return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.NullCoalescing, arg2);
 				#endregion
 				#region Branch
 				case ILCode.Br:         return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);

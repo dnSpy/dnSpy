@@ -19,6 +19,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		SplitToMovableBlocks,
 		TypeInference,
 		PeepholeOptimizations,
+		SimplifyShortCircuit,
+		SimplifyTernaryOperator,
+		SimplifyNullCoalescing,
+		MoreSimplifyPasses,
 		FindLoops,
 		FindConditions,
 		FlattenNestedMovableBlocks,
@@ -79,8 +83,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				bool modified;
 				do {
 					modified = false;
+					
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyShortCircuit) return;
 					modified |= block.RunPeepholeOptimization(TrySimplifyShortCircuit);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyTernaryOperator) return;
 					modified |= block.RunPeepholeOptimization(TrySimplifyTernaryOperator);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyNullCoalescing) return;
+					modified |= block.RunPeepholeOptimization(TrySimplifyNullCoalescing);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.MoreSimplifyPasses) return;
 				} while(modified);
 			}
 			
@@ -160,7 +173,9 @@ namespace ICSharpCode.Decompiler.ILAst
 							i++;  // Ignore the label as well
 					} else if (body[i].Match(ILCode.Nop)){
 						// Ignore nop
-					} else if (body[i].Match(ILCode.Pop, out popExpr) && popExpr.HasNoSideEffects()) {
+					} else if (body[i].Match(ILCode.Pop, out popExpr)) {
+						if (!popExpr.HasNoSideEffects())
+							throw new Exception("Pop should have just ldloc at this stage");
 						// Ignore pop
 					} else {
 						newBody.Add(body[i]);
@@ -323,7 +338,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			   labelToBasicBlock[trueLabel].Match(ILCode.Stloc, out trueLocVar, out trueExpr, out trueFall) &&
 			   labelToBasicBlock[falseLabel].Match(ILCode.Stloc, out falseLocVar, out falseExpr, out falseFall) &&
 			   trueLocVar == falseLocVar &&
-			   trueFall == falseFall)
+			   trueFall == falseFall &&
+			   scope.Contains(labelToBasicBlock[trueLabel]) &&
+			   scope.Contains(labelToBasicBlock[falseLabel])
+			  )
 			{
 				int boolVal;
 				ILExpression newExpr;
@@ -353,13 +371,70 @@ namespace ICSharpCode.Decompiler.ILAst
 				head.FallthoughGoto = new ILExpression(ILCode.Br, trueFall);
 				
 				// Remove the old basic blocks
-				scope.RemoveOrThrow(labelToBasicBlock[trueLabel]);
-				scope.RemoveOrThrow(labelToBasicBlock[falseLabel]);
-				labelToBasicBlock.RemoveOrThrow(trueLabel);
-				labelToBasicBlock.RemoveOrThrow(falseLabel);
-				labelGlobalRefCount.RemoveOrThrow(trueLabel);
-				labelGlobalRefCount.RemoveOrThrow(falseLabel);
+				foreach(ILLabel deleteLabel in new [] { trueLabel, falseLabel }) {
+					scope.RemoveOrThrow(labelToBasicBlock[deleteLabel]);
+					labelGlobalRefCount.RemoveOrThrow(deleteLabel);
+					labelToBasicBlock.RemoveOrThrow(deleteLabel);
+				}
 				
+				return true;
+			}
+			return false;
+		}
+		
+		bool TrySimplifyNullCoalescing(List<ILNode> scope, ILBasicBlock head, int index)
+		{
+			// ...
+			// v = ldloc(leftVar)
+			// br(condBBLabel)
+			//
+			// condBBLabel:
+			// brtrue(endBBLabel, ldloc(leftVar))
+			// br(rightBBLabel)
+			//
+			// rightBBLabel:
+			// v = rightExpr
+			// br(endBBLabel)
+			//
+			// endBBLabel:
+			// ...
+				
+			ILVariable v, v2;
+			ILExpression leftExpr, leftExpr2;
+			ILVariable leftVar, leftVar2;
+			ILLabel condBBLabel;
+			ILBasicBlock condBB;
+			ILLabel endBBLabel, endBBLabel2;
+			ILLabel rightBBLabel;
+			ILBasicBlock rightBB;
+			ILExpression rightExpr;
+			ILBasicBlock endBB;
+			if (head.Body.LastOrDefault().Match(ILCode.Stloc, out v, out leftExpr) &&
+			    leftExpr.Match(ILCode.Ldloc, out leftVar) &&
+			    head.FallthoughGoto.Match(ILCode.Br, out condBBLabel) &&
+			    labelToBasicBlock.TryGetValue(condBBLabel, out condBB) &&
+			    condBB.Match(ILCode.Brtrue, out endBBLabel, out leftExpr2, out rightBBLabel) &&
+			    leftExpr2.Match(ILCode.Ldloc, out leftVar2) &&
+			    leftVar == leftVar2 &&
+			    labelToBasicBlock.TryGetValue(rightBBLabel, out rightBB) &&
+			    rightBB.Match(ILCode.Stloc, out v2, out rightExpr, out endBBLabel2) &&
+			    v == v2 &&
+			    endBBLabel == endBBLabel2 &&
+			    labelToBasicBlock.TryGetValue(endBBLabel, out endBB) &&
+			    labelGlobalRefCount.GetOrDefault(condBBLabel) == 1 &&
+			    labelGlobalRefCount.GetOrDefault(rightBBLabel) == 1 &&
+			    labelGlobalRefCount.GetOrDefault(endBBLabel) == 2 &&
+			    scope.ContainsAll(condBB, rightBB, endBB)
+			   )
+			{
+				head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.NullCoalescing, null, leftExpr, rightExpr));
+				head.FallthoughGoto = new ILExpression(ILCode.Br, endBBLabel);
+				
+				foreach(ILLabel deleteLabel in new [] { condBBLabel, rightBBLabel }) {
+					scope.RemoveOrThrow(labelToBasicBlock[deleteLabel]);
+					labelGlobalRefCount.RemoveOrThrow(deleteLabel);
+					labelToBasicBlock.RemoveOrThrow(deleteLabel);
+				}
 				return true;
 			}
 			return false;
@@ -1091,6 +1166,15 @@ namespace ICSharpCode.Decompiler.ILAst
 			V ret;
 			dict.TryGetValue(key, out ret);
 			return ret;
+		}
+		
+		public static bool ContainsAll<T>(this List<T> list, params T[] items)
+		{
+			foreach (T item in items) {
+				if (!list.Contains(item))
+					return false;
+			}
+			return true;
 		}
 		
 		public static void RemoveOrThrow<T>(this ICollection<T> collection, T item)

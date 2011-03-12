@@ -138,6 +138,11 @@ namespace ICSharpCode.Decompiler.ILAst
 						InferTypeForExpression(expr.Arguments[1], expectedType, forceInferChildren),
 						InferTypeForExpression(expr.Arguments[2], expectedType, forceInferChildren)
 					);
+				case ILCode.NullCoalescing:
+					return TypeWithMoreInformation(
+						InferTypeForExpression(expr.Arguments[0], expectedType, forceInferChildren),
+						InferTypeForExpression(expr.Arguments[1], expectedType, forceInferChildren)
+					);
 					#endregion
 					#region Variable load/store
 				case ILCode.Stloc:
