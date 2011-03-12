@@ -11,7 +11,7 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public enum ILAstOptimizationStep
 	{
-		SimpleGotoAndNopRemoval,
+		RemoveRedundantCode,
 		ReduceBranchInstructionSet,
 		InlineVariables,
 		CopyPropagation,
@@ -43,8 +43,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			this.typeSystem = context.CurrentMethod.Module.TypeSystem;
 			
-			if (abortBeforeStep == ILAstOptimizationStep.SimpleGotoAndNopRemoval) return;
-			SimpleGotoAndNopRemoval(method);
+			if (abortBeforeStep == ILAstOptimizationStep.RemoveRedundantCode) return;
+			RemoveRedundantCode(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.ReduceBranchInstructionSet) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
@@ -109,7 +109,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			FlattenBasicBlocks(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.GotoRemoval) return;
-			SimpleGotoAndNopRemoval(method);
+			RemoveRedundantCode(method);
 			new GotoRemoval().RemoveGotos(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.DuplicateReturns) return;
@@ -137,7 +137,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			GotoRemoval.RemoveRedundantCode(method);
 		}
 		
-		void SimpleGotoAndNopRemoval(ILBlock method)
+		/// <summary>
+		/// Removes redundatant Br, Nop, Dup, Pop
+		/// </summary>
+		/// <param name="method"></param>
+		void RemoveRedundantCode(ILBlock method)
 		{
 			Dictionary<ILLabel, int> labelRefCount = new Dictionary<ILLabel, int>();
 			foreach (ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets())) {
@@ -149,17 +153,31 @@ namespace ICSharpCode.Decompiler.ILAst
 				List<ILNode> newBody = new List<ILNode>(body.Count);
 				for (int i = 0; i < body.Count; i++) {
 					ILLabel target;
+					ILExpression popExpr;
 					if (body[i].Match(ILCode.Br, out target) && i+1 < body.Count && body[i+1] == target) {
-						// Ignore the branch  TODO: ILRanges
+						// Ignore the branch
 						if (labelRefCount[target] == 1)
 							i++;  // Ignore the label as well
 					} else if (body[i].Match(ILCode.Nop)){
-						// Ignore nop  TODO: ILRanges
+						// Ignore nop
+					} else if (body[i].Match(ILCode.Pop, out popExpr) && popExpr.HasNoSideEffects()) {
+						// Ignore pop
 					} else {
 						newBody.Add(body[i]);
 					}
 				}
 				block.Body = newBody;
+			}
+			
+			// 'dup' removal
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				for (int i = 0; i < expr.Arguments.Count; i++) {
+					ILExpression child;
+					if (expr.Arguments[i].Match(ILCode.Dup, out child)) {
+						child.ILRanges.AddRange(expr.Arguments[i].ILRanges);
+						expr.Arguments[i] = child;
+					}
+				}
 			}
 		}
 		
@@ -1025,6 +1043,30 @@ namespace ICSharpCode.Decompiler.ILAst
 				return expr.Code.CanFallThough();
 			}
 			return true;
+		}
+		
+		/// <summary>
+		/// The expression has no effect on the program and can be removed 
+		/// if its return value is not needed.
+		/// </summary>
+		public static bool HasNoSideEffects(this ILExpression expr)
+		{
+			// Remember that if expression can throw an exception, it is a side effect
+			
+			switch(expr.Code) {
+				case ILCode.Ldloc:
+				case ILCode.Ldloca:
+				case ILCode.Ldarg:
+				case ILCode.Ldstr:
+				case ILCode.Ldnull:
+				case ILCode.Ldc_I4:
+				case ILCode.Ldc_I8:
+				case ILCode.Ldc_R4:
+				case ILCode.Ldc_R8:
+					return true;
+				default:
+					return false;
+			}
 		}
 		
 		public static V GetOrDefault<K,V>(this Dictionary<K, V> dict, K key)

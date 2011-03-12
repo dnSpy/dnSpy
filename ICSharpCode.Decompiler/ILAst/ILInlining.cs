@@ -72,7 +72,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			List<ILNode> body = block.Body;
 			for(int i = 0; i < body.Count - 1;) {
-				ILExpression nextExpr = body[i + 1] as ILExpression;
 				ILVariable locVar;
 				ILExpression expr;
 				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineOneIfPossible(block, i, aggressive: false)) {
@@ -127,14 +126,26 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILVariable v;
 			ILExpression inlinedExpression;
-			if (block.Body[pos].Match(ILCode.Stloc, out v, out inlinedExpression)
-			    && InlineIfPossible(v, inlinedExpression, block.Body.ElementAtOrDefault(pos+1), aggressive))
-			{
-				// Assign the ranges of the stloc instruction:
-				inlinedExpression.ILRanges.AddRange(((ILExpression)block.Body[pos]).ILRanges);
-				// Remove the stloc instruction:
-				block.Body.RemoveAt(pos);
-				return true;
+			if (block.Body[pos].Match(ILCode.Stloc, out v, out inlinedExpression)) {
+				if (InlineIfPossible(v, inlinedExpression, block.Body.ElementAtOrDefault(pos+1), aggressive)) {
+					// Assign the ranges of the stloc instruction:
+					inlinedExpression.ILRanges.AddRange(((ILExpression)block.Body[pos]).ILRanges);
+					// Remove the stloc instruction:
+					block.Body.RemoveAt(pos);
+					return true;
+				} else if (numLdloc.GetOrDefault(v) == 0 && numLdloca.GetOrDefault(v) == 0) {
+					// The variable is never loaded
+					if (inlinedExpression.HasNoSideEffects()) {
+						// Remove completely
+						block.Body.RemoveAt(pos);
+					} else {
+						// Assign the ranges of the stloc instruction:
+						inlinedExpression.ILRanges.AddRange(((ILExpression)block.Body[pos]).ILRanges);
+						// Remove the stloc, but keep the inner expression
+						block.Body[pos] = inlinedExpression;
+					}
+					return true;
+				}
 			}
 			return false;
 		}
@@ -282,17 +293,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		public void CopyPropagation()
 		{
-			// Perform 'dup' removal prior to copy propagation:
-			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
-				for (int i = 0; i < expr.Arguments.Count; i++) {
-					if (expr.Arguments[i].Code == ILCode.Dup) {
-						ILExpression child = expr.Arguments[i].Arguments[0];
-						child.ILRanges.AddRange(expr.Arguments[i].ILRanges);
-						expr.Arguments[i] = child;
-					}
-				}
-			}
-			
 			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				for (int i = 0; i < block.Body.Count; i++) {
 					ILVariable v;
