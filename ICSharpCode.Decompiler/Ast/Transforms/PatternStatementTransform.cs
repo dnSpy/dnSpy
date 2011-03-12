@@ -40,6 +40,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				TransformAutomaticProperties(compilationUnit);
 			if (context.Settings.AutomaticEvents)
 				TransformAutomaticEvents(compilationUnit);
+			
+			TransformTryCatchFinally(compilationUnit);
 		}
 		
 		/// <summary>
@@ -648,6 +650,33 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 				
 				ev.ReplaceWith(ed);
+			}
+		}
+		#endregion
+		
+		#region Try-Catch-Finally
+		static readonly TryCatchStatement tryCatchFinallyPattern = new TryCatchStatement {
+			TryBlock = new BlockStatement {
+				new TryCatchStatement {
+					TryBlock = new AnyNode(),
+					CatchClauses = { new Repeat(new AnyNode()) }
+				}
+			},
+			FinallyBlock = new AnyNode()
+		};
+		
+		/// <summary>
+		/// Simplify nested 'try { try {} catch {} } finally {}'.
+		/// This transformation must run after the using/lock tranformations.
+		/// </summary>
+		void TransformTryCatchFinally(AstNode compilationUnit)
+		{
+			foreach (var tryFinally in compilationUnit.Descendants.OfType<TryCatchStatement>()) {
+				if (tryCatchFinallyPattern.Match(tryFinally) != null) {
+					TryCatchStatement tryCatch = (TryCatchStatement)tryFinally.TryBlock.Statements.Single();
+					tryFinally.TryBlock = tryCatch.TryBlock.Detach();
+					tryCatch.CatchClauses.MoveTo(tryFinally.CatchClauses);
+				}
 			}
 		}
 		#endregion
