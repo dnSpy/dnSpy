@@ -22,4 +22,28 @@ public class ExceptionHandling
 			throw;
 		}
 	}
+	
+	public void TryCatchFinally()
+	{
+		try {
+			Console.WriteLine("Try");
+		} catch (Exception ex) {
+			Console.WriteLine(ex.Message);
+		} finally {
+			Console.WriteLine("Finally");
+		}
+	}
+	
+	public void TryCatchMultipleHandlers()
+	{
+		try {
+			Console.WriteLine("Try");
+		} catch (InvalidOperationException ex) {
+			Console.WriteLine(ex.Message);
+		} catch (Exception ex) {
+			Console.WriteLine(ex.Message);
+		} catch {
+			Console.WriteLine("other");
+		}
+	}
 }

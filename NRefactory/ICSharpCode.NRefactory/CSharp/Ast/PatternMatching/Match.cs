@@ -12,6 +12,8 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 	/// </summary>
 	public sealed class Match
 	{
+		// TODO: maybe we should add an implicit Match->bool conversion? (operator implicit bool(Match m) { return m != null; })
+		
 		List<KeyValuePair<string, AstNode>> results = new List<KeyValuePair<string, AstNode>>();
 		
 		internal int CheckPoint()

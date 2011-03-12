@@ -1043,12 +1043,8 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			MarshalInfo marshalInfo = marshalInfoProvider.MarshalInfo;
 			Ast.Attribute attr = CreateNonCustomAttribute(typeof(MarshalAsAttribute), module);
-			string memberName;
-			if (marshalInfo.NativeType == NativeType.Boolean)
-				memberName = "Bool";
-			else
-				memberName = marshalInfo.NativeType.ToString();
-			attr.Arguments.Add(new IdentifierExpression("UnmanagedType").Member(memberName));
+			var unmanagedType = new TypeReference("System.Runtime.InteropServices", "UnmanagedType", module, module.TypeSystem.Corlib);
+			attr.Arguments.Add(MakePrimitive((int)marshalInfo.NativeType, unmanagedType));
 			return attr;
 		}
 		#endregion
