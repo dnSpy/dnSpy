@@ -51,7 +51,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			RemoveRedundantCode(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.ReduceBranchInstructionSet) return;
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				ReduceBranchInstructionSet(block);
 			}
 			// ReduceBranchInstructionSet runs before inlining because the non-aggressive inlining heuristic
@@ -69,7 +69,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			YieldReturnDecompiler.Run(context, method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.SplitToMovableBlocks) return;
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				SplitToBasicBlocks(block);
 			}
 			
@@ -79,7 +79,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (abortBeforeStep == ILAstOptimizationStep.PeepholeOptimizations) return;
 			AnalyseLabels(method);
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				bool modified;
 				do {
 					modified = false;
@@ -98,12 +98,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindLoops) return;
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				new LoopsAndConditions(context).FindLoops(block);
 			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindConditions) return;
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				new LoopsAndConditions(context).FindConditions(block);
 			}
 			
@@ -146,11 +146,11 @@ namespace ICSharpCode.Decompiler.ILAst
 		void RemoveRedundantCode(ILBlock method)
 		{
 			Dictionary<ILLabel, int> labelRefCount = new Dictionary<ILLabel, int>();
-			foreach (ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets())) {
+			foreach (ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>(e => e.IsBranch()).SelectMany(e => e.GetBranchTargets())) {
 				labelRefCount[target] = labelRefCount.GetOrDefault(target) + 1;
 			}
 			
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				List<ILNode> body = block.Body;
 				List<ILNode> newBody = new List<ILNode>(body.Count);
 				for (int i = 0; i < body.Count; i++) {
@@ -292,7 +292,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		void AnalyseLabels(ILBlock method)
 		{
 			labelGlobalRefCount = new Dictionary<ILLabel, int>();
-			foreach(ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets())) {
+			foreach(ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>(e => e.IsBranch()).SelectMany(e => e.GetBranchTargets())) {
 				if (!labelGlobalRefCount.ContainsKey(target))
 					labelGlobalRefCount[target] = 0;
 				labelGlobalRefCount[target]++;

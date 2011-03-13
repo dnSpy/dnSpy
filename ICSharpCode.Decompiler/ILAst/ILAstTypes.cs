@@ -16,20 +16,21 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public abstract class ILNode
 	{
-		public IEnumerable<T> GetSelfAndChildrenRecursive<T>() where T: ILNode
+		public IEnumerable<T> GetSelfAndChildrenRecursive<T>(Func<T, bool> predicate = null) where T: ILNode
 		{
 			List<T> result = new List<T>(16);
-			AccumulateSelfAndChildrenRecursive(result);
+			AccumulateSelfAndChildrenRecursive(result, predicate);
 			return result;
 		}
 		
-		void AccumulateSelfAndChildrenRecursive<T>(List<T> list) where T:ILNode
+		void AccumulateSelfAndChildrenRecursive<T>(List<T> list, Func<T, bool> predicate) where T:ILNode
 		{
-			if (this is T)
-				list.Add((T)this);
+			T thisAsT = this as T;
+			if (thisAsT != null && (predicate == null || predicate(thisAsT)))
+				list.Add(thisAsT);
 			foreach (ILNode node in this.GetChildren()) {
 				if (node != null)
-					node.AccumulateSelfAndChildrenRecursive(list);
+					node.AccumulateSelfAndChildrenRecursive(list, predicate);
 			}
 		}
 		

@@ -374,6 +374,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldelem_I2:
 				case ILCode.Ldelem_I4:
 				case ILCode.Ldelem_I8:
+				case ILCode.Ldelem_R4:
+				case ILCode.Ldelem_R8:
 				case ILCode.Ldelem_I:
 				case ILCode.Ldelem_Ref:
 					{

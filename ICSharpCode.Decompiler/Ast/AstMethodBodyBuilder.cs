@@ -64,7 +64,7 @@ namespace ICSharpCode.Decompiler.Ast
 			bodyGraph.Optimize(context, ilMethod);
 			context.CancellationToken.ThrowIfCancellationRequested();
 			
-			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable).Where(v => v != null && !v.IsGenerated).Distinct();
+			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>(e => e.Operand is ILVariable).Select(e => (ILVariable)e.Operand).Where(v => !v.IsGenerated).Distinct();
 			NameVariables.AssignNamesToVariables(methodDef.Parameters.Select(p => p.Name), allVariables, ilMethod);
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
