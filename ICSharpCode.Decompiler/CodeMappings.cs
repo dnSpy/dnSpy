@@ -49,15 +49,12 @@ namespace ICSharpCode.Decompiler
 			resultList.Add(ILInstructionOffset.From);
 			resultList.Add(ILInstructionOffset.To);
 			
+			// add the next gap if exists
 			var map = MemberMapping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From >= ILInstructionOffset.To);
 			if (map != null && map.ILInstructionOffset.From != ILInstructionOffset.To) {
 				resultList.Add(ILInstructionOffset.To);
 				resultList.Add(map.ILInstructionOffset.From);
 			}
-			
-//			var tempList = MemberMapping.GetAllUnknownMappings(ILInstructionOffset.To);
-//			if (tempList.Count != 0)
-//				resultList.AddRange(tempList);
 			
 			return resultList.ToArray();
 		}
@@ -82,40 +79,6 @@ namespace ICSharpCode.Decompiler
 		/// Gets or sets the source code mappings.
 		/// </summary>
 		public List<SourceCodeMapping> MemberCodeMappings { get; set; }
-		
-		/// <summary>
-		/// Gets the list of all unknown/gaps code mappings greater than a value.<br/>
-		/// Eg.: for (0-9, 11-14, 16-27) the return list is (9,11,14,16) for start value 0 (or lower than 9).
-		/// </summary>
-		/// <param name="startValue">Start value.</param>
-		/// <returns></returns>
-		public List<int> GetAllUnknownMappings(int startValue)
-		{
-			var result = new List<int>();
-			var data = MemberCodeMappings.OrderBy(m => m.ILInstructionOffset.From);
-			var prevMap = data.ElementAt(0);
-			
-			for (int i = 1; i < data.Count(); ++i) {
-				var map = data.ElementAt(i);
-				// consider only the next mappings
-				if (map.ILInstructionOffset.To <= startValue) {
-					prevMap = map;
-					continue;
-				}
-				
-				// if there is not gap, move on
-				if (prevMap.ILInstructionOffset.To == map.ILInstructionOffset.From) {
-					prevMap = map;
-					continue;
-				}
-				
-				result.Add(prevMap.ILInstructionOffset.To);
-				result.Add(map.ILInstructionOffset.From);
-				prevMap = map;
-			}
-			
-			return result;
-		}
 	}
 	
 	public static class CodeMappings
