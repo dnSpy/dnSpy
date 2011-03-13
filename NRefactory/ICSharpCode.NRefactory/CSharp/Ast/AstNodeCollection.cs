@@ -30,10 +30,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public int Count {
 			get {
-				var e = GetEnumerator();
 				int count = 0;
-				while (e.MoveNext())
-					count++;
+				for (AstNode cur = node.FirstChild; cur != null; cur = cur.NextSibling) {
+					if (cur.Role == role)
+						count++;
+				}
 				return count;
 			}
 		}

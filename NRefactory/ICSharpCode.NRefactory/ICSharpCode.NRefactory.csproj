@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSharp\Analysis\ControlFlow.cs" />
+    <Compile Include="CSharp\Analysis\DefiniteAssignmentAnalysis.cs" />
     <Compile Include="CSharp\Ast\AstNodeCollection.cs" />
     <Compile Include="CSharp\Ast\Expressions\TypeReferenceExpression.cs" />
     <Compile Include="CSharp\Ast\IAstVisitor.cs" />
