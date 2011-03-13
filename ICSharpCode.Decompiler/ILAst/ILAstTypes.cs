@@ -214,7 +214,45 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public override string ToString()
 		{
-			return string.Format("{0}-{1}", From, To);
+			return string.Format("{0}-{1}", From.ToString("X"), To.ToString("X"));
+		}
+		
+		public static List<ILRange> OrderAndJoint(IEnumerable<ILRange> input)
+		{
+			List<ILRange> ranges = input.OrderBy(r => r.From).ToList();
+			for (int i = 0; i < ranges.Count - 1;) {
+				ILRange curr = ranges[i];
+				ILRange next = ranges[i + 1];
+				// Merge consequtive ranges if they intersect
+				if (curr.From <= next.From && next.From <= curr.To) {
+					curr.To = Math.Max(curr.To, next.To);
+					ranges.RemoveAt(i + 1);
+				} else {
+					i++;
+				}
+			}
+			return ranges;
+		}
+		
+		public static IEnumerable<ILRange> Invert(IEnumerable<ILRange> input, int codeSize)
+		{
+			var ordered = OrderAndJoint(input);
+			if (ordered.Count == 0) {
+				yield return new ILRange() { From = 0, To = codeSize };
+			} else {
+				// Gap before the first element
+				if (ordered.First().From != 0)
+					yield return new ILRange() { From = 0, To = ordered.First().From };
+				
+				// Gaps between elements
+				for (int i = 0; i < ordered.Count - 1; i++)
+					yield return new ILRange() { From = ordered[i].To, To = ordered[i + 1].From };
+				
+				// Gap after the last element
+				Debug.Assert(ordered.Last().To <= codeSize);
+				if (ordered.Last().To != codeSize)
+					yield return new ILRange() { From = ordered.Last().To, To = codeSize };
+			}
 		}
 	}
 	
@@ -279,27 +317,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			} else {
 				return new ILLabel[] { };
 			}
-		}
-		
-		public List<ILRange> GetILRanges()
-		{
-			List<ILRange> ranges = new List<ILRange>();
-			foreach(ILExpression expr in this.GetSelfAndChildrenRecursive<ILExpression>()) {
-				ranges.AddRange(expr.ILRanges);
-			}
-			ranges = ranges.OrderBy(r => r.From).ToList();
-			for (int i = 0; i < ranges.Count - 1;) {
-				ILRange curr = ranges[i];
-				ILRange next = ranges[i + 1];
-				// Merge consequtive ranges if they intersect
-				if (curr.From <= next.From && next.From <= curr.To) {
-					curr.To = Math.Max(curr.To, next.To);
-					ranges.RemoveAt(i + 1);
-				} else {
-					i++;
-				}
-			}
-			return ranges;
 		}
 		
 		public virtual bool Match(ILNode other)

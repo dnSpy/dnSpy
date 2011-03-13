@@ -137,6 +137,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			TypeAnalysis.Run(context, method);
 			
 			GotoRemoval.RemoveRedundantCode(method);
+			
+			// ReportUnassignedILRanges(method);
 		}
 		
 		/// <summary>
@@ -163,8 +165,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					} else if (body[i].Match(ILCode.Nop)){
 						// Ignore nop
 					} else if (body[i].Match(ILCode.Pop, out popExpr)) {
-						if (!popExpr.HasNoSideEffects())
+						ILVariable v;
+						if (!popExpr.Match(ILCode.Ldloc, out v))
 							throw new Exception("Pop should have just ldloc at this stage");
+						// Best effort to move the ILRange to previous statement
+						ILVariable prevVar;
+						ILExpression prevExpr;
+						if (i - 1 >= 0 && body[i - 1].Match(ILCode.Stloc, out prevVar, out prevExpr) && prevVar == v)
+							prevExpr.ILRanges.AddRange(((ILExpression)body[i]).ILRanges);
 						// Ignore pop
 					} else {
 						newBody.Add(body[i]);
@@ -619,6 +627,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (child != null && !(child is ILExpression))
 					FlattenIfStatements(child);
 			}
+		}
+		
+		void ReportUnassignedILRanges(ILBlock method)
+		{
+			var unassigned = ILRange.Invert(method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges), context.CurrentMethod.Body.CodeSize).ToList();
+			if (unassigned.Count > 0)
+				Debug.WriteLine(string.Format("Unassigned ILRanges for {0}.{1}: {2}", this.context.CurrentMethod.DeclaringType.Name, this.context.CurrentMethod.Name, string.Join(", ", unassigned.Select(r => r.ToString()))));
 		}
 	}
 	
