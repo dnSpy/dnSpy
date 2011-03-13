@@ -278,7 +278,7 @@ namespace ICSharpCode.ILSpy
 				typeof(ICSharpCode.TreeView.SharpTreeView).Assembly,
 				typeof(Mono.Cecil.AssemblyDefinition).Assembly,
 				typeof(ICSharpCode.AvalonEdit.TextEditor).Assembly,
-				typeof(ICSharpCode.Decompiler.GraphVizGraph).Assembly,
+				typeof(ICSharpCode.Decompiler.Ast.AstBuilder).Assembly,
 				typeof(MainWindow).Assembly
 			};
 			foreach (System.Reflection.Assembly asm in initialAssemblies)

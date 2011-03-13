@@ -1,28 +1,14 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-// software and associated documentation files (the "Software"), to deal in the Software
-// without restriction, including without limitation the rights to use, copy, modify, merge,
-// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
-// to whom the Software is furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all copies or
-// substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
+﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace ICSharpCode.Decompiler
+namespace ICSharpCode.NRefactory.Utils
 {
 	/// <summary>
 	/// GraphViz graph.
@@ -33,6 +19,7 @@ namespace ICSharpCode.Decompiler
 		List<GraphVizEdge> edges = new List<GraphVizEdge>();
 		
 		public string rankdir;
+		public string Title;
 		
 		public void AddEdge(GraphVizEdge edge)
 		{
@@ -48,6 +35,24 @@ namespace ICSharpCode.Decompiler
 		{
 			using (StreamWriter writer = new StreamWriter(fileName))
 				Save(writer);
+		}
+		
+		public void Show()
+		{
+			Show(null);
+		}
+		
+		public void Show(string name)
+		{
+			if (name == null)
+				name = Title;
+			if (name != null)
+				foreach (char c in Path.GetInvalidFileNameChars())
+					name = name.Replace(c, '-');
+			string fileName = name != null ? Path.Combine(Path.GetTempPath(), name) : Path.GetTempFileName();
+			Save(fileName + ".gv");
+			Process.Start("dot", "\"" + fileName + ".gv\" -Tpng -o \"" + fileName + ".png\"").WaitForExit();
+			Process.Start(fileName + ".png");
 		}
 		
 		static string Escape(string text)
@@ -92,6 +97,8 @@ namespace ICSharpCode.Decompiler
 		
 		public void Save(TextWriter writer)
 		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
 			writer.WriteLine("digraph G {");
 			writer.WriteLine("node [fontsize = 16];");
 			WriteGraphAttribute(writer, "rankdir", rankdir);

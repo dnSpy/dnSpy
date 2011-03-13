@@ -54,6 +54,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		// Make debugging easier by giving Expressions a ToString() implementation
 		public override string ToString()
 		{
+			if (IsNull)
+				return "Null";
 			StringWriter w = new StringWriter();
 			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
 			return w.ToString();
