@@ -731,6 +731,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
+		public static bool MatchThis(this ILNode node)
+		{
+			ParameterDefinition parDef;
+			return node.Match(ILCode.Ldarg, out parDef) && parDef.Index == -1;
+		}
+		
 		/// <summary>
 		/// Perform one pass of a given optimization on this block.
 		/// This block must consist of only basicblocks.

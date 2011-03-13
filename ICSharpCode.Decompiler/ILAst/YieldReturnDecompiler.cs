@@ -181,11 +181,17 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILBlock method = CreateILAst(enumeratorCtor);
 			
-			ILExpression stfldPattern = new ILExpression(ILCode.Stfld, ILExpression.AnyOperand, LoadFromArgument.This, new LoadFromArgument(0));
-			
 			foreach (ILNode node in method.Body) {
-				if (stfldPattern.Match(node)) {
-					stateField = GetFieldDefinition(((ILExpression)node).Operand as FieldReference);
+				FieldReference field;
+				ILExpression instExpr;
+				ILExpression stExpr;
+				ParameterDefinition arg;
+				if (node.Match(ILCode.Stfld, out field, out instExpr, out stExpr) &&
+				    instExpr.MatchThis() &&
+				    stExpr.Match(ILCode.Ldarg, out arg) &&
+				    arg.Index == 0)
+				{
+					stateField = GetFieldDefinition(field);
 				}
 			}
 			if (stateField == null)
@@ -210,8 +216,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		#endregion
 		
 		#region Figure out what the 'current' field is (analysis of get_Current())
-		static readonly ILExpression returnFieldFromThisPattern = new ILExpression(ILCode.Ret, null, new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromArgument.This));
-		
 		/// <summary>
 		/// Looks at the enumerator's get_Current method and figures out which of the fields holds the current value.
 		/// </summary>
@@ -223,18 +227,29 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILBlock method = CreateILAst(getCurrentMethod);
 			if (method.Body.Count == 1) {
 				// release builds directly return the current field
-				if (returnFieldFromThisPattern.Match(method.Body[0])) {
-					currentField = GetFieldDefinition(((ILExpression)method.Body[0]).Arguments[0].Operand as FieldReference);
+				ILExpression retExpr;
+				FieldReference field;
+				ILExpression ldFromObj;
+				if (method.Body[0].Match(ILCode.Ret, out retExpr) &&
+				    retExpr.Match(ILCode.Ldfld, out field, out ldFromObj) &&
+				    ldFromObj.MatchThis())
+				{
+					currentField = GetFieldDefinition(field);
 				}
-			} else {
-				StoreToVariable v = new StoreToVariable(new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromArgument.This));
-				if (v.Match(method.Body[0])) {
-					int i = 1;
-					if (i == method.Body.Count - 1) {
-						if (new ILExpression(ILCode.Ret, null, new LoadFromVariable(v)).Match(method.Body[i])) {
-							currentField = GetFieldDefinition(((ILExpression)method.Body[0]).Arguments[0].Operand as FieldReference);
-						}
-					}
+			} else if (method.Body.Count == 2) {
+				ILVariable v, v2;
+				ILExpression stExpr;
+				FieldReference field;
+				ILExpression ldFromObj;
+				ILExpression retExpr;
+				if (method.Body[0].Match(ILCode.Stloc, out v, out stExpr) &&
+				    stExpr.Match(ILCode.Ldfld, out field, out ldFromObj) &&
+				    ldFromObj.MatchThis() &&
+				    method.Body[1].Match(ILCode.Ret, out retExpr) &&
+				    retExpr.Match(ILCode.Ldloc, out v2) &&
+				    v == v2)
+				{
+					currentField = GetFieldDefinition(field);
 				}
 			}
 			if (currentField == null)
@@ -251,16 +266,19 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (getEnumeratorMethod == null)
 				return; // no mappings (maybe it's just an IEnumerator implementation?)
 			
-			ILExpression mappingPattern = new ILExpression(
-				ILCode.Stfld, ILExpression.AnyOperand, new AnyILExpression(),
-				new ILExpression(ILCode.Ldfld, ILExpression.AnyOperand, LoadFromArgument.This));
-			
 			ILBlock method = CreateILAst(getEnumeratorMethod);
 			foreach (ILNode node in method.Body) {
-				if (mappingPattern.Match(node)) {
-					ILExpression stfld = (ILExpression)node;
-					FieldDefinition storedField = GetFieldDefinition(stfld.Operand as FieldReference);
-					FieldDefinition loadedField = GetFieldDefinition(stfld.Arguments[1].Operand as FieldReference);
+				FieldReference stField;
+				ILExpression stToObj;
+				ILExpression stExpr;
+				FieldReference ldField;
+				ILExpression ldFromObj;
+				if (node.Match(ILCode.Stfld, out stField, out stToObj, out stExpr) &&
+				    stExpr.Match(ILCode.Ldfld, out ldField, out ldFromObj) &&
+				    ldFromObj.MatchThis())
+				{
+					FieldDefinition storedField = GetFieldDefinition(stField);
+					FieldDefinition loadedField = GetFieldDefinition(ldField);
 					if (storedField != null && loadedField != null) {
 						ParameterDefinition mappedParameter;
 						if (fieldToParameterMap.TryGetValue(loadedField, out mappedParameter))
@@ -671,7 +689,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression disposeArg;
 				if (!faultBlock.Body[0].Match(ILCode.Call, out disposeMethodRef, out disposeArg))
 					throw new YieldAnalysisFailedException();
-				if (GetMethodDefinition(disposeMethodRef) != disposeMethod || !LoadFromArgument.This.Match(disposeArg))
+				if (GetMethodDefinition(disposeMethodRef) != disposeMethod || !disposeArg.MatchThis())
 					throw new YieldAnalysisFailedException();
 				if (!faultBlock.Body[1].Match(ILCode.Endfinally))
 					throw new YieldAnalysisFailedException();
@@ -757,7 +775,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Copy all instructions from the old body to newBody.
 			for (int pos = startPos; pos < bodyLength; pos++) {
 				ILExpression expr = body[pos] as ILExpression;
-				if (expr != null && expr.Code == ILCode.Stfld && LoadFromArgument.This.Match(expr.Arguments[0])) {
+				if (expr != null && expr.Code == ILCode.Stfld && expr.Arguments[0].MatchThis()) {
 					// Handle stores to 'state' or 'current'
 					if (GetFieldDefinition(expr.Operand as FieldReference) == stateField) {
 						if (expr.Arguments[1].Code != ILCode.Ldc_I4)
@@ -794,7 +812,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					} else {
 						throw new YieldAnalysisFailedException();
 					}
-				} else if (expr != null && expr.Code == ILCode.Call && expr.Arguments.Count == 1 && LoadFromArgument.This.Match(expr.Arguments[0])) {
+				} else if (expr != null && expr.Code == ILCode.Call && expr.Arguments.Count == 1 && expr.Arguments[0].MatchThis()) {
 					MethodDefinition method = GetMethodDefinition(expr.Operand as MethodReference);
 					if (method == null)
 						throw new YieldAnalysisFailedException();
@@ -857,7 +875,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			FieldReference stfld;
 			List<ILExpression> args;
 			if (block.Body.Count > 0 && block.Body[0].Match(ILCode.Stfld, out stfld, out args)) {
-				if (GetFieldDefinition(stfld) == stateField && LoadFromArgument.This.Match(args[0]))
+				if (GetFieldDefinition(stfld) == stateField && args[0].MatchThis())
 					block.Body.RemoveAt(0);
 			}
 			// Convert ret to endfinally
@@ -879,7 +897,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (field != null) {
 						switch (expr.Code) {
 							case ILCode.Ldfld:
-								if (LoadFromArgument.This.Match(expr.Arguments[0])) {
+								if (expr.Arguments[0].MatchThis()) {
 									if (fieldToParameterMap.ContainsKey(field)) {
 										expr.Code = ILCode.Ldarg;
 										expr.Operand = fieldToParameterMap[field];
@@ -891,7 +909,7 @@ namespace ICSharpCode.Decompiler.ILAst
 								}
 								break;
 							case ILCode.Stfld:
-								if (LoadFromArgument.This.Match(expr.Arguments[0])) {
+								if (expr.Arguments[0].MatchThis()) {
 									if (fieldToParameterMap.ContainsKey(field)) {
 										expr.Code = ILCode.Starg;
 										expr.Operand = fieldToParameterMap[field];
