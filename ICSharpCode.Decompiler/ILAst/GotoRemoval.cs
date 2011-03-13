@@ -32,7 +32,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			bool modified;
 			do {
 				modified = false;
-				foreach (ILExpression gotoExpr in method.GetSelfAndChildrenRecursive<ILExpression>().Where(e => e.Code == ILCode.Br || e.Code == ILCode.Leave)) {
+				foreach (ILExpression gotoExpr in method.GetSelfAndChildrenRecursive<ILExpression>(e => e.Code == ILCode.Br || e.Code == ILCode.Leave)) {
 					modified |= TrySimplifyGoto(gotoExpr);
 				}
 			} while(modified);
@@ -43,8 +43,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		public static void RemoveRedundantCode(ILBlock method)
 		{
 			// Remove dead lables and nops
-			HashSet<ILLabel> liveLabels = new HashSet<ILLabel>(method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.GetBranchTargets()));
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>().ToList()) {
+			HashSet<ILLabel> liveLabels = new HashSet<ILLabel>(method.GetSelfAndChildrenRecursive<ILExpression>(e => e.IsBranch()).SelectMany(e => e.GetBranchTargets()));
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				block.Body = block.Body.Where(n => !n.Match(ILCode.Nop) && !(n is ILLabel && !liveLabels.Contains((ILLabel)n))).ToList();
 			}
 			

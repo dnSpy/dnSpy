@@ -64,7 +64,7 @@ namespace ICSharpCode.Decompiler.Ast
 			bodyGraph.Optimize(context, ilMethod);
 			context.CancellationToken.ThrowIfCancellationRequested();
 			
-			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable).Where(v => v != null && !v.IsGenerated).Distinct();
+			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>(e => e.Operand is ILVariable).Select(e => (ILVariable)e.Operand).Where(v => !v.IsGenerated).Distinct();
 			NameVariables.AssignNamesToVariables(methodDef.Parameters.Select(p => p.Name), allVariables, ilMethod);
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
@@ -98,7 +98,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (node is ILLabel) {
 				yield return new Ast.LabelStatement { Label = ((ILLabel)node).Name };
 			} else if (node is ILExpression) {
-				List<ILRange> ilRanges = ((ILExpression)node).GetILRanges();
+				List<ILRange> ilRanges = ILRange.OrderAndJoint(node.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges));
 				AstNode codeExpr = TransformExpression((ILExpression)node);
 				if (codeExpr != null) {
 					codeExpr = codeExpr.WithAnnotation(ilRanges);
@@ -291,6 +291,7 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.LogicAnd:   return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ConditionalAnd, arg2);
 				case ILCode.LogicOr:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ConditionalOr, arg2);
 				case ILCode.TernaryOp:  return new Ast.ConditionalExpression() { Condition = arg1, TrueExpression = arg2, FalseExpression = arg3 };
+				case ILCode.NullCoalescing: 	return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.NullCoalescing, arg2);
 				#endregion
 				#region Branch
 				case ILCode.Br:         return new Ast.GotoStatement(((ILLabel)byteCode.Operand).Name);
