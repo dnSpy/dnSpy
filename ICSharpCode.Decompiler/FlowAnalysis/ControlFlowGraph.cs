@@ -23,6 +23,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
+using ICSharpCode.NRefactory.Utils;
+
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
 	/// <summary>
@@ -57,7 +59,6 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			Debug.Assert(ExceptionalExit.NodeType == ControlFlowNodeType.ExceptionalExit);
 		}
 		
-		#if DEBUG
 		public GraphVizGraph ExportGraph()
 		{
 			GraphVizGraph graph = new GraphVizGraph();
@@ -87,7 +88,6 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			}
 			return graph;
 		}
-		#endif
 		
 		/// <summary>
 		/// Resets "Visited" to false for all nodes in this graph.
