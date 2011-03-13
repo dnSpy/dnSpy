@@ -133,9 +133,9 @@ namespace ICSharpCode.Decompiler.Ast
 					if (n != default(AstType)) {
 						MemberMapping mapping = n.Annotation<MemberMapping>();
 						
-						foreach (var range in ranges) {
-							// make sure we have one ILRange per source code line
+						foreach (var range in ranges) {							
 							var map = mapping.MemberCodeMappings.Find(s => s.SourceCodeLine == output.CurrentLine);
+							
 							if (map == null) {
 								// check if the range is in previous mapping
 								var prevmap = mapping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From <= range.From && 

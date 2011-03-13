@@ -177,7 +177,7 @@ namespace ICSharpCode.Decompiler.Ast
 			Expression astExpr = node as Expression;
 			
 			// get IL ranges - used in debugger
-			List<ILRange> ilRanges = expr.GetILRanges();
+			List<ILRange> ilRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges));
 			AstNode result;
 			
 			if (astExpr != null)

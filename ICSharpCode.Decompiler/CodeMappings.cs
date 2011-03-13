@@ -49,11 +49,20 @@ namespace ICSharpCode.Decompiler
 			resultList.Add(ILInstructionOffset.From);
 			resultList.Add(ILInstructionOffset.To);
 			
-			// add the next gap if exists
-			var map = MemberMapping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From >= ILInstructionOffset.To);
-			if (map != null && map.ILInstructionOffset.From != ILInstructionOffset.To) {
-				resultList.Add(ILInstructionOffset.To);
-				resultList.Add(map.ILInstructionOffset.From);
+			var list = MemberMapping.MemberCodeMappings.ConvertAll<ILRange>(s => new ILRange { From = s.ILInstructionOffset.From, To = s.ILInstructionOffset.To });
+			
+			var invertedList = ILRange.Invert(list, MemberMapping.CodeSize);
+			if (invertedList != null && invertedList.Count() > 0) {
+				foreach (var range in invertedList) {
+					resultList.Add(range.From);
+					resultList.Add(range.To);
+				}	
+			}
+			
+			// remove last gap - step on the last line
+			if (resultList[resultList.Count - 1] == MemberMapping.CodeSize) {
+				resultList.RemoveAt(resultList.Count - 1);
+				resultList.RemoveAt(resultList.Count - 1);
 			}
 			
 			return resultList.ToArray();
@@ -74,6 +83,11 @@ namespace ICSharpCode.Decompiler
 		/// Metadata token of the method.
 		/// </summary>
 		public uint MetadataToken { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the code size for the member mapping.
+		/// </summary>
+		public int CodeSize { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the source code mappings.
@@ -107,7 +121,7 @@ namespace ICSharpCode.Decompiler
 		/// <param name="method">Method to create the mapping for.</param>
 		/// <param name="sourceCodeMappings">Source code mapping storage.</param>
 		public static MemberMapping CreateCodeMapping(
-			this MemberReference member,
+			this MethodDefinition member,
 			ConcurrentDictionary<string, List<MemberMapping>> codeMappings)
 		{
 			// create IL/CSharp code mappings - used in debugger
@@ -118,7 +132,8 @@ namespace ICSharpCode.Decompiler
 					currentMemberMapping = new MemberMapping() {
 						MetadataToken = (uint)member.MetadataToken.ToInt32(),
 						Type = member.DeclaringType.Resolve(),
-						MemberCodeMappings = new List<SourceCodeMapping>()
+						MemberCodeMappings = new List<SourceCodeMapping>(),
+						CodeSize = member.Body.CodeSize
 					};
 					mapping.Add(currentMemberMapping);
 				}
