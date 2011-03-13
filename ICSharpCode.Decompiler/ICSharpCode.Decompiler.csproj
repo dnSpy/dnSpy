@@ -94,7 +94,7 @@
     <Compile Include="ILAst\ILCodes.cs" />
     <Compile Include="ILAst\ILInlining.cs" />
     <Compile Include="ILAst\LoopsAndConditions.cs" />
-    <Compile Include="ILAst\Pattern.cs" />
+    <Compile Include="ILAst\PatternMatching.cs" />
     <Compile Include="ILAst\PeepholeTransform.cs" />
     <Compile Include="ILAst\TypeAnalysis.cs" />
     <Compile Include="ILAst\YieldReturnDecompiler.cs" />
