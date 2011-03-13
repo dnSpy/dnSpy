@@ -137,6 +137,13 @@ namespace ICSharpCode.Decompiler.Ast
 							// make sure we have one ILRange per source code line
 							var map = mapping.MemberCodeMappings.Find(s => s.SourceCodeLine == output.CurrentLine);
 							if (map == null) {
+								// check if the range is in previous mapping
+								var prevmap = mapping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From <= range.From && 
+								                                              m.ILInstructionOffset.To >= range.To);
+								
+								if (prevmap != null)
+									continue;
+								
 								mapping.MemberCodeMappings.Add(new SourceCodeMapping {
 								                               	ILInstructionOffset = range,
 								                               	SourceCodeLine = output.CurrentLine,
