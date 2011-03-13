@@ -124,7 +124,7 @@ namespace ICSharpCode.Decompiler.Ast
 		public void StartNode(AstNode node)
 		{
 			var ranges = node.Annotation<List<ILRange>>();
-			if (ranges != null)
+			if (ranges != null && ranges.Count > 0)
 			{
 				// find the ancestor that has method mapping as annotation
 				if (node.Ancestors != null && node.Ancestors.Count() > 0)
@@ -135,10 +135,12 @@ namespace ICSharpCode.Decompiler.Ast
 						var map = mapping.MemberCodeMappings.Find(s => s.SourceCodeLine == output.CurrentLine);
 						
 						foreach (var range in ranges) {
+							// make sure we have one ILRange per source code line
 							if (map == null) {
 								mapping.MemberCodeMappings.Add(new SourceCodeMapping {
 								                               	ILInstructionOffset = range,
-								                               	SourceCodeLine = output.CurrentLine
+								                               	SourceCodeLine = output.CurrentLine,
+								                               	MemberMapping = mapping
 								                               });
 							} else {
 								if (map.ILInstructionOffset.From > range.From)

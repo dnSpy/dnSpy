@@ -78,7 +78,7 @@ namespace ILSpy.Debugger.Bookmarks
 		
 		public override ITextMarker CreateMarker(ITextMarkerService markerService, int offset, int length)
 		{
-			ITextMarker marker = markerService.Create(offset + startColumn - 1, length);
+			ITextMarker marker = markerService.Create(offset + startColumn - 1, length + 1);
 			marker.BackgroundColor = Colors.Yellow;
 			marker.ForegroundColor = Colors.Blue;
 			marker.IsVisible = b => b is MarkerBookmark && ((MarkerBookmark)b).Type == DebugData.CurrentType;

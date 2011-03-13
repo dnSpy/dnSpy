@@ -299,9 +299,9 @@ namespace ILSpy.Debugger.Services
 				CurrentLineBookmark.Instance.LineNumber, out token);
 			
 //			var val = CodeMappingsStorage[CurrentLineBookmark.Instance.Type.FullName];
-//			
+//
 //			var mapping = val.Find(m => m.MetadataToken == token);
-//			
+//
 //			return mapping.MemberCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From == instruction.ILInstructionOffset.From);
 		}
 		
@@ -829,32 +829,38 @@ namespace ILSpy.Debugger.Services
 					var debugType = frame.MethodInfo.DeclaringType;
 					string fullName = debugType.Namespace + "." + debugType.Name;
 					
-					// search for type in the current assembly list
-					TypeReference typeRef = null;
-					foreach (var assembly in DebugData.LoadedAssemblies) {
-						foreach (var module in assembly.Modules) {
-							if (module.TryGetTypeReference(fullName, out typeRef)) {
-								break;
-							}
-						}
-						
-						if (typeRef != null)
-							break;
-					}
-					
-					if (typeRef != null) {
-						// decompile on demand
-						AstBuilder builder = new AstBuilder(new DecompilerContext());
-						builder.AddType(typeRef.Resolve());
-						builder.GenerateCode(new PlainTextOutput());
-						
-						// jump
-						if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out type, out line)) {
-							DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
-						}
-					} else {
-						// continue since we cannot find the debugged type
+					if (DebugData.LoadedAssemblies == null)
 						Continue();
+					else {
+						// search for type in the current assembly list
+						TypeReference typeRef = null;
+						foreach (var assembly in DebugData.LoadedAssemblies) {
+							foreach (var module in assembly.Modules) {
+								if (module.TryGetTypeReference(fullName, out typeRef)) {
+									break;
+								}
+							}
+							
+							if (typeRef != null)
+								break;
+						}
+						
+						if (typeRef != null) {
+							// decompile on demand
+							AstBuilder builder = new AstBuilder(new DecompilerContext());
+							builder.AddType(typeRef.Resolve());
+							builder.GenerateCode(new PlainTextOutput());
+							
+							// jump
+							if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out type, out line)) {
+								DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
+							} else {
+								StepOut();
+							}
+						} else {
+							// continue since we cannot find the debugged type
+							StepOut();
+						}
 					}
 				}
 			}

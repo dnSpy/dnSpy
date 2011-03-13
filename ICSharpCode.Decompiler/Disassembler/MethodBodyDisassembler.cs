@@ -87,7 +87,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 					methodMapping.MemberCodeMappings.Add(
 						new SourceCodeMapping() {
 							SourceCodeLine = output.CurrentLine,
-							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? method.Body.CodeSize : inst.Next.Offset }
+							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? method.Body.CodeSize : inst.Next.Offset },
+							MemberMapping = methodMapping
 						});
 					
 					inst.WriteTo(output);
@@ -155,7 +156,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 					currentMethodMapping.MemberCodeMappings.Add(
 						new SourceCodeMapping() {
 							SourceCodeLine = output.CurrentLine,
-							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? codeSize : inst.Next.Offset }
+							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? codeSize : inst.Next.Offset },
+							MemberMapping = currentMethodMapping
 						});
 				}
 				
