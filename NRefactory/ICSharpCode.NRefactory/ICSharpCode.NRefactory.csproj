@@ -61,6 +61,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSharp\Analysis\ControlFlow.cs" />
     <Compile Include="CSharp\Ast\AstNodeCollection.cs" />
     <Compile Include="CSharp\Ast\Expressions\TypeReferenceExpression.cs" />
     <Compile Include="CSharp\Ast\IAstVisitor.cs" />
@@ -353,6 +354,9 @@
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CSharp\Analysis" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
