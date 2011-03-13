@@ -16,7 +16,7 @@ internal static class DotNet35Compat
 		#endif
 	}
 	
-	public static IEnumerable<U> SafeCast<T, U>(this IEnumerable<T> elements) where T : U
+	public static IEnumerable<U> SafeCast<T, U>(this IEnumerable<T> elements) where T : class, U where U : class
 	{
 		#if DOTNET35
 		foreach (T item in elements)
@@ -26,7 +26,7 @@ internal static class DotNet35Compat
 		#endif
 	}
 	
-	public static Predicate<U> SafeCast<T, U>(this Predicate<T> predicate) where U : T
+	public static Predicate<U> SafeCast<T, U>(this Predicate<T> predicate) where U : class, T where T : class
 	{
 		#if DOTNET35
 		return e => predicate(e);
