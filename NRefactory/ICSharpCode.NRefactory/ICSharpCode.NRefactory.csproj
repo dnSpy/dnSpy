@@ -334,6 +334,7 @@
     <Compile Include="Utils\DotNet35Compat.cs" />
     <Compile Include="Utils\EmptyList.cs" />
     <Compile Include="Utils\ExtensionMethods.cs" />
+    <Compile Include="Utils\GraphVizGraph.cs" />
     <Compile Include="Utils\TreeTraversal.cs" />
     <Compile Include="CSharp\Ast\ComposedType.cs" />
     <Compile Include="CSharp\Ast\Expressions\DirectionExpression.cs" />

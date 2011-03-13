@@ -79,6 +79,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		{
 			if (jumpOutOfTryFinally == null)
 				jumpOutOfTryFinally = new List<TryCatchStatement>();
+			jumpOutOfTryFinally.Add(tryFinally);
 		}
 		
 		/// <summary>

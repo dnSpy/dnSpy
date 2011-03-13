@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.Utils;
 
 namespace ICSharpCode.NRefactory.CSharp.Analysis
 {
@@ -18,10 +19,6 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// The variable might be assigned or unassigned.
 		/// </summary>
 		PotentiallyAssigned,
-		/// <summary>
-		/// The variable is definitely unassigned.
-		/// </summary>
-		DefinitelyUnassigned,
 		/// <summary>
 		/// The variable is definitely assigned.
 		/// </summary>
@@ -82,7 +79,16 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			}
 		}
 		
-		public void Analyze(string variable, DefiniteAssignmentStatus initialStatus = DefiniteAssignmentStatus.DefinitelyUnassigned)
+		/// <summary>
+		/// Gets the unassigned usages of the previously analyzed variable.
+		/// </summary>
+		public IList<IdentifierExpression> UnassignedVariableUses {
+			get {
+				return unassignedVariableUses.AsReadOnly();
+			}
+		}
+		
+		public void Analyze(string variable, DefiniteAssignmentStatus initialStatus = DefiniteAssignmentStatus.PotentiallyAssigned)
 		{
 			this.variableName = variable;
 			// Reset the status:
@@ -93,7 +99,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 					edgeStatus[edge] = DefiniteAssignmentStatus.CodeUnreachable;
 			}
 			
-			ChangeNodeStatus(allNodes[0], DefiniteAssignmentStatus.DefinitelyUnassigned);
+			ChangeNodeStatus(allNodes[0], initialStatus);
 			// Iterate as long as the input status of some nodes is changing:
 			while (nodesWithModifiedInput.Count > 0) {
 				ControlFlowNode node = nodesWithModifiedInput.Dequeue();
@@ -103,6 +109,64 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				}
 				ChangeNodeStatus(node, inputStatus);
 			}
+		}
+		
+		public DefiniteAssignmentStatus GetStatusBefore(Statement statement)
+		{
+			return nodeStatus[beginNodeDict[statement]];
+		}
+		
+		public DefiniteAssignmentStatus GetStatusAfter(Statement statement)
+		{
+			return nodeStatus[endNodeDict[statement]];
+		}
+		
+		/// <summary>
+		/// Exports the CFG. This method is intended to help debugging issues related to definite assignment.
+		/// </summary>
+		public GraphVizGraph ExportGraph()
+		{
+			GraphVizGraph g = new GraphVizGraph();
+			g.Title = "DefiniteAssignment - " + variableName;
+			for (int i = 0; i < allNodes.Count; i++) {
+				string name = nodeStatus[allNodes[i]].ToString() + Environment.NewLine;
+				switch (allNodes[i].Type) {
+					case ControlFlowNodeType.StartNode:
+					case ControlFlowNodeType.BetweenStatements:
+						name += allNodes[i].NextStatement.ToString();
+						break;
+					case ControlFlowNodeType.EndNode:
+						name += "End of " + allNodes[i].PreviousStatement.ToString();
+						break;
+					case ControlFlowNodeType.LoopCondition:
+						name += "Condition in " + allNodes[i].NextStatement.ToString();
+						break;
+					default:
+						name += allNodes[i].Type.ToString();
+						break;
+				}
+				g.AddNode(new GraphVizNode(i) { label = name });
+				foreach (ControlFlowEdge edge in allNodes[i].Outgoing) {
+					GraphVizEdge ge = new GraphVizEdge(i, allNodes.IndexOf(edge.To));
+					if (edgeStatus.Count > 0)
+						ge.label = edgeStatus[edge].ToString();
+					if (edge.IsLeavingTryFinally)
+						ge.style = "dashed";
+					switch (edge.Type) {
+						case ControlFlowEdgeType.ConditionTrue:
+							ge.color = "green";
+							break;
+						case ControlFlowEdgeType.ConditionFalse:
+							ge.color = "red";
+							break;
+						case ControlFlowEdgeType.Jump:
+							ge.color = "blue";
+							break;
+					}
+					g.AddEdge(ge);
+				}
+			}
+			return g;
 		}
 		
 		static DefiniteAssignmentStatus MergeStatus(DefiniteAssignmentStatus a, DefiniteAssignmentStatus b)
@@ -151,9 +215,11 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 						TryCatchStatement tryFinally = (TryCatchStatement)node.PreviousStatement.Parent;
 						// Changing the status on a finally block potentially changes the status of all edges leaving that finally block:
 						foreach (ControlFlowEdge edge in allNodes.SelectMany(n => n.Outgoing)) {
-							DefiniteAssignmentStatus s = edgeStatus[edge];
-							if (s == DefiniteAssignmentStatus.DefinitelyUnassigned || s == DefiniteAssignmentStatus.PotentiallyAssigned) {
-								ChangeEdgeStatus(edge, outputStatus);
+							if (edge.IsLeavingTryFinally && edge.TryFinallyStatements.Contains(tryFinally)) {
+								DefiniteAssignmentStatus s = edgeStatus[edge];
+								if (s == DefiniteAssignmentStatus.PotentiallyAssigned) {
+									ChangeEdgeStatus(edge, outputStatus);
+								}
 							}
 						}
 					}
@@ -197,19 +263,18 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			if (oldStatus == newStatus)
 				return;
 			// Ensure that status can change only in one direction:
-			// CodeUnreachable -> PotentiallyAssigned -> Definitely[Un]Assigned
+			// CodeUnreachable -> PotentiallyAssigned -> DefinitelyAssigned
 			// Going against this direction indicates a bug and could cause infinite loops.
-			switch (newStatus) {
+			switch (oldStatus) {
 				case DefiniteAssignmentStatus.PotentiallyAssigned:
-					if (oldStatus != DefiniteAssignmentStatus.CodeUnreachable)
-						throw new InvalidOperationException("Invalid state transition");
-					break;
-				case DefiniteAssignmentStatus.DefinitelyUnassigned:
-				case DefiniteAssignmentStatus.DefinitelyAssigned:
-					if (!(oldStatus == DefiniteAssignmentStatus.CodeUnreachable || oldStatus == DefiniteAssignmentStatus.PotentiallyAssigned))
+					if (newStatus != DefiniteAssignmentStatus.DefinitelyAssigned)
 						throw new InvalidOperationException("Invalid state transition");
 					break;
 				case DefiniteAssignmentStatus.CodeUnreachable:
+					if (!(newStatus == DefiniteAssignmentStatus.PotentiallyAssigned || newStatus == DefiniteAssignmentStatus.DefinitelyAssigned))
+						throw new InvalidOperationException("Invalid state transition");
+					break;
+				case DefiniteAssignmentStatus.DefinitelyAssigned:
 					throw new InvalidOperationException("Invalid state transition");
 				default:
 					throw new InvalidOperationException("Invalid value for DefiniteAssignmentStatus");
@@ -449,8 +514,6 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 						return DefiniteAssignmentStatus.AssignedAfterTrueExpression;
 					else if (afterLeft == DefiniteAssignmentStatus.AssignedAfterFalseExpression && afterRight == DefiniteAssignmentStatus.AssignedAfterFalseExpression)
 						return DefiniteAssignmentStatus.AssignedAfterFalseExpression;
-					else if (afterRight == DefiniteAssignmentStatus.DefinitelyUnassigned)
-						return afterRight;
 					else
 						return DefiniteAssignmentStatus.PotentiallyAssigned;
 				} else if (binaryOperatorExpression.Operator == BinaryOperatorType.ConditionalOr) {
@@ -477,8 +540,6 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 						return DefiniteAssignmentStatus.AssignedAfterFalseExpression;
 					else if (afterLeft == DefiniteAssignmentStatus.AssignedAfterTrueExpression && afterRight == DefiniteAssignmentStatus.AssignedAfterTrueExpression)
 						return DefiniteAssignmentStatus.AssignedAfterTrueExpression;
-					else if (afterRight == DefiniteAssignmentStatus.DefinitelyUnassigned)
-						return DefiniteAssignmentStatus.DefinitelyUnassigned;
 					else
 						return DefiniteAssignmentStatus.PotentiallyAssigned;
 				} else if (binaryOperatorExpression.Operator == BinaryOperatorType.NullCoalescing) {

@@ -1,4 +1,4 @@
-// 
+﻿// 
 // IAstVisitor.cs
 //
 // Author:
@@ -52,17 +52,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public virtual S VisitComment (Comment comment, T data)
 		{
-			return default (S);
+			return VisitChildren (comment, data);
 		}
 		
 		public virtual S VisitIdentifier (Identifier identifier, T data)
 		{
-			return default (S);
+			return VisitChildren (identifier, data);
 		}
 		
 		public virtual S VisitCSharpTokenNode (CSharpTokenNode token, T data)
 		{
-			return default (S);
+			return VisitChildren (token, data);
 		}
 		
 		public virtual S VisitPrimitiveType (PrimitiveType primitiveType, T data)
