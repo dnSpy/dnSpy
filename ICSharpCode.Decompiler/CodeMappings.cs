@@ -50,9 +50,8 @@ namespace ICSharpCode.Decompiler
 				.FindAll(m => m.SourceCodeLine == this.SourceCodeLine)
 				.ConvertAll<ILRange>(m => m.ILInstructionOffset);
 			
-			
 			// add inverted
-			currentList.AddRange(MemberMapping.GetInvertedList());
+			currentList.AddRange(MemberMapping.InvertedList);
 			
 			var resultList = new List<int>();
 			foreach (var element in ILRange.OrderAndJoint(currentList)) {
@@ -62,38 +61,6 @@ namespace ICSharpCode.Decompiler
 			
 			return resultList.ToArray();
 		}
-		
-		sealed class SourceCodeMappingComparer : IEqualityComparer<SourceCodeMapping>
-		{
-			public bool Equals(SourceCodeMapping x, SourceCodeMapping y)
-			{
-				//Check whether the compared objects reference the same data.
-				if (Object.ReferenceEquals(x, y)) return true;
-				
-				//Check whether any of the compared objects is null.
-				if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
-					return false;
-				
-				return x.ILInstructionOffset.From == y.ILInstructionOffset.From &&
-					x.ILInstructionOffset.To == y.ILInstructionOffset.To &&
-					x.SourceCodeLine == y.SourceCodeLine;
-			}
-			
-			public int GetHashCode(SourceCodeMapping map)
-			{
-				//Check whether the object is null
-				if (Object.ReferenceEquals(map, null)) return 0;
-
-				//Get hash code for the ILInstructionOffset field if it is not null.
-				int hashRange = map.ILInstructionOffset == null ? 0 : map.ILInstructionOffset.GetHashCode();
-
-				//Get hash code for the SourceCodeLine field.
-				int hashLine = map.SourceCodeLine.GetHashCode();
-
-				//Calculate the hash code.
-				return hashRange ^ hashLine;
-			}
-		}
 	}
 	
 	/// <summary>
@@ -101,6 +68,8 @@ namespace ICSharpCode.Decompiler
 	/// </summary>
 	public sealed class MemberMapping
 	{
+		IEnumerable<ILRange> invertedList;
+		
 		/// <summary>
 		/// Gets or sets the type of the mapping.
 		/// </summary>
@@ -126,11 +95,16 @@ namespace ICSharpCode.Decompiler
 		/// E.g.: for (0-9, 11-14, 14-18, 21-25) => (9-11,18-21).
 		/// </summary>
 		/// <returns>IL Range inverted list.</returns>
-		public IEnumerable<ILRange> GetInvertedList()
+		public IEnumerable<ILRange> InvertedList
 		{
-			var list = MemberCodeMappings.ConvertAll<ILRange>(
-				s => new ILRange { From = s.ILInstructionOffset.From, To = s.ILInstructionOffset.To });
-			return ILRange.Invert(list, CodeSize);
+			get {
+				if (invertedList == null) {
+					var list = MemberCodeMappings.ConvertAll<ILRange>(
+						s => new ILRange { From = s.ILInstructionOffset.From, To = s.ILInstructionOffset.To });
+					invertedList = ILRange.Invert(list, CodeSize);
+				}
+				return invertedList;
+			}
 		}
 	}
 	
