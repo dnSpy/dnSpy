@@ -680,7 +680,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			switch(expr.Code) {
 				case ILCode.Ldloc:
 				case ILCode.Ldloca:
-				case ILCode.Ldarg:
 				case ILCode.Ldstr:
 				case ILCode.Ldnull:
 				case ILCode.Ldc_I4:

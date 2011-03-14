@@ -64,9 +64,10 @@ namespace ICSharpCode.Decompiler.Ast
 			bodyGraph.Optimize(context, ilMethod);
 			context.CancellationToken.ThrowIfCancellationRequested();
 			
-			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>(e => e.Operand is ILVariable).Select(e => (ILVariable)e.Operand).Distinct();
+			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
+				.Where(v => v != null && !v.IsParameter).Distinct();
 			Debug.Assert(context.CurrentMethod == methodDef);
-			NameVariables.AssignNamesToVariables(context, allVariables, ilMethod);
+			NameVariables.AssignNamesToVariables(context, astBuilder.Parameters, allVariables, ilMethod);
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
 			Ast.BlockStatement astBlock = TransformBlock(ilMethod);
@@ -401,26 +402,6 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.DefaultValue:
 					return MakeDefaultValue((TypeReference)operand);
 				case ILCode.Jmp: return InlineAssembly(byteCode, args);
-				case ILCode.Ldarg: {
-					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
-						if (context.CurrentMethod.DeclaringType.IsValueType)
-							return MakeRef(new Ast.ThisReferenceExpression());
-						else
-							return new Ast.ThisReferenceExpression();
-					} else {
-						var expr = new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand);
-						if (((ParameterDefinition)operand).ParameterType is ByReferenceType)
-							return MakeRef(expr);
-						else
-							return expr;
-					}
-				}
-				case ILCode.Ldarga:
-					if (methodDef.HasThis && ((ParameterDefinition)operand).Index < 0) {
-						return MakeRef(new Ast.ThisReferenceExpression());
-					} else {
-						return MakeRef(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand));
-					}
 				case ILCode.Ldc_I4: return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType);
 				case ILCode.Ldc_I8: return AstBuilder.MakePrimitive((long)operand, byteCode.InferredType);
 				case ILCode.Ldc_R4:
@@ -448,12 +429,25 @@ namespace ICSharpCode.Decompiler.Ast
 					return MakeRef(
 						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand));
-				case ILCode.Ldloc:
-					localVariablesToDefine.Add((ILVariable)operand);
-					return new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand);
-				case ILCode.Ldloca:
-					localVariablesToDefine.Add((ILVariable)operand);
+				case ILCode.Ldloc: {
+					ILVariable v = (ILVariable)operand;
+					if (!v.IsParameter)
+						localVariablesToDefine.Add((ILVariable)operand);
+					Expression expr;
+					if (v.IsParameter && v.OriginalParameter.Index < 0)
+						expr = new ThisReferenceExpression();
+					else
+						expr = new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand);
+					return v.IsParameter && v.Type is ByReferenceType ? MakeRef(expr) : expr;
+				}
+				case ILCode.Ldloca: {
+					ILVariable v = (ILVariable)operand;
+					if (v.IsParameter && v.OriginalParameter.Index < 0)
+						return MakeRef(new ThisReferenceExpression());
+					if (!v.IsParameter)
+						localVariablesToDefine.Add((ILVariable)operand);
 					return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand));
+				}
 				case ILCode.Ldnull: return new Ast.NullReferenceExpression();
 				case ILCode.Ldstr:  return new Ast.PrimitiveExpression(operand);
 				case ILCode.Ldtoken:
@@ -497,10 +491,10 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 				case ILCode.Rethrow: return new Ast.ThrowStatement();
 				case ILCode.Sizeof:  return new Ast.SizeOfExpression { Type = operandAsTypeRef };
-				case ILCode.Starg:   return new Ast.AssignmentExpression(new Ast.IdentifierExpression(((ParameterDefinition)operand).Name).WithAnnotation(operand), arg1);
 				case ILCode.Stloc: {
 					ILVariable locVar = (ILVariable)operand;
-					localVariablesToDefine.Add(locVar);
+					if (!locVar.IsParameter)
+						localVariablesToDefine.Add(locVar);
 					return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name).WithAnnotation(locVar), arg1);
 				}
 				case ILCode.Switch: return InlineAssembly(byteCode, args);

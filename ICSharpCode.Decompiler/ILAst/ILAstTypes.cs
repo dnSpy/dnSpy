@@ -200,6 +200,11 @@ namespace ICSharpCode.Decompiler.ILAst
 		public bool   IsGenerated;
 		public TypeReference Type;
 		public VariableDefinition OriginalVariable;
+		public ParameterDefinition OriginalParameter;
+		
+		public bool IsParameter {
+			get { return OriginalParameter != null; }
+		}
 		
 		public override string ToString()
 		{

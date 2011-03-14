@@ -17,10 +17,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		readonly ILBlock method;
 		internal Dictionary<ILVariable, int> numStloc  = new Dictionary<ILVariable, int>();
 		internal Dictionary<ILVariable, int> numLdloc  = new Dictionary<ILVariable, int>();
-		Dictionary<ILVariable, int> numLdloca = new Dictionary<ILVariable, int>();
-		
-		Dictionary<ParameterDefinition, int> numStarg  = new Dictionary<ParameterDefinition, int>();
-		Dictionary<ParameterDefinition, int> numLdarga = new Dictionary<ParameterDefinition, int>();
+		internal Dictionary<ILVariable, int> numLdloca = new Dictionary<ILVariable, int>();
 		
 		public ILInlining(ILBlock method)
 		{
@@ -33,8 +30,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			numStloc.Clear();
 			numLdloc.Clear();
 			numLdloca.Clear();
-			numStarg.Clear();
-			numLdarga.Clear();
 			
 			// Analyse the whole method
 			foreach(ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
@@ -48,14 +43,6 @@ namespace ICSharpCode.Decompiler.ILAst
 						numLdloca[locVar] = numLdloca.GetOrDefault(locVar) + 1;
 					} else {
 						throw new NotSupportedException(expr.Code.ToString());
-					}
-				} else {
-					ParameterDefinition pd = expr.Operand as ParameterDefinition;
-					if (pd != null) {
-						if (expr.Code == ILCode.Starg)
-							numStarg[pd] = numStarg.GetOrDefault(pd) + 1;
-						else if (expr.Code == ILCode.Ldarga)
-							numLdarga[pd] = numLdarga.GetOrDefault(pd) + 1;
 					}
 				}
 			}
@@ -256,19 +243,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					// the expression is loading a non-forbidden variable
 					return true;
-				case ILCode.Ldarg:
-					// Also try moving over ldarg instructions - this is necessary because an earlier copy propagation
-					// step might have introduced ldarg in place of an ldloc that would be skipped.
-					ParameterDefinition loadedParam = (ParameterDefinition)expr.Operand;
-					if (numLdarga.GetOrDefault(loadedParam) != 0)
-						return false;
-					foreach (ILExpression potentialStore in expressionBeingMoved.GetSelfAndChildrenRecursive<ILExpression>()) {
-						if (potentialStore.Code == ILCode.Starg && potentialStore.Operand == loadedParam)
-							return false;
-					}
-					return true;
 				case ILCode.Ldloca:
-				case ILCode.Ldarga:
 				case ILCode.Ldflda:
 				case ILCode.Ldsflda:
 				case ILCode.Ldelema:
@@ -290,30 +265,30 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// 1) assignments from arguments to local variables
 		///    If the target variable is assigned to only once (so always is that argument) and the argument is never changed (no ldarga/starg),
 		///    then we can replace the variable with the argument.
-		/// 2) assignments of 'ldloca/ldarga' to local variables
+		/// 2) assignments of address-loading instructions to local variables
 		/// </summary>
 		public void CopyPropagation()
 		{
 			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				for (int i = 0; i < block.Body.Count; i++) {
 					ILVariable v;
-					ILExpression ldArg;
-					if (block.Body[i].Match(ILCode.Stloc, out v, out ldArg)
-					    && numStloc.GetOrDefault(v) == 1 && numLdloca.GetOrDefault(v) == 0
-					    && CanPerformCopyPropagation(ldArg))
+					ILExpression copiedExpr;
+					if (block.Body[i].Match(ILCode.Stloc, out v, out copiedExpr)
+					    && !v.IsParameter && numStloc.GetOrDefault(v) == 1 && numLdloca.GetOrDefault(v) == 0
+					    && CanPerformCopyPropagation(copiedExpr))
 					{
 						// un-inline the arguments of the ldArg instruction
-						ILVariable[] uninlinedArgs = new ILVariable[ldArg.Arguments.Count];
+						ILVariable[] uninlinedArgs = new ILVariable[copiedExpr.Arguments.Count];
 						for (int j = 0; j < uninlinedArgs.Length; j++) {
 							uninlinedArgs[j] = new ILVariable { IsGenerated = true, Name = v.Name + "_cp_" + j };
-							block.Body.Insert(i++, new ILExpression(ILCode.Stloc, uninlinedArgs[j], ldArg.Arguments[j]));
+							block.Body.Insert(i++, new ILExpression(ILCode.Stloc, uninlinedArgs[j], copiedExpr.Arguments[j]));
 						}
 						
 						// perform copy propagation:
 						foreach (var expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
 							if (expr.Code == ILCode.Ldloc && expr.Operand == v) {
-								expr.Code = ldArg.Code;
-								expr.Operand = ldArg.Operand;
+								expr.Code = copiedExpr.Code;
+								expr.Operand = copiedExpr.Operand;
 								for (int j = 0; j < uninlinedArgs.Length; j++) {
 									expr.Arguments.Add(new ILExpression(ILCode.Ldloc, uninlinedArgs[j]));
 								}
@@ -332,21 +307,20 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		bool CanPerformCopyPropagation(ILExpression ldArg)
+		bool CanPerformCopyPropagation(ILExpression expr)
 		{
-			switch (ldArg.Code) {
+			switch (expr.Code) {
 				case ILCode.Ldloca:
-				case ILCode.Ldarga:
 				case ILCode.Ldelema:
 				case ILCode.Ldflda:
 				case ILCode.Ldsflda:
 					// All address-loading instructions always return the same value for a given operand/argument combination,
 					// so they can be safely copied.
 					return true;
-				case ILCode.Ldarg:
-					// arguments can be copied only if they aren't assigned to (directly or indirectly via ldarga)
-					ParameterDefinition pd = (ParameterDefinition)ldArg.Operand;
-					return numLdarga.GetOrDefault(pd) == 0 && numStarg.GetOrDefault(pd) == 0;
+				case ILCode.Ldloc:
+					// Parameters can be copied only if they aren't assigned to (directly or indirectly via ldarga)
+					ILVariable v = (ILVariable)expr.Operand;
+					return v.IsParameter && numLdloca.GetOrDefault(v) == 0 && numStloc.GetOrDefault(v) == 0;
 				default:
 					return false;
 			}

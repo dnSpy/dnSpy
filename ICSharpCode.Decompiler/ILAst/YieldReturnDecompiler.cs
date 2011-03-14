@@ -31,7 +31,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		MethodDefinition disposeMethod;
 		FieldDefinition stateField;
 		FieldDefinition currentField;
-		Dictionary<FieldDefinition, ParameterDefinition> fieldToParameterMap = new Dictionary<FieldDefinition, ParameterDefinition>();
+		Dictionary<FieldDefinition, ILVariable> fieldToParameterMap = new Dictionary<FieldDefinition, ILVariable>();
 		List<ILNode> newBody;
 		
 		#region Run() method
@@ -101,17 +101,18 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			int i;
 			for (i = 1; i < method.Body.Count; i++) {
-				// stfld(..., ldloc(var_1), ldarg(...))
+				// stfld(..., ldloc(var_1), ldloc(parameter))
 				FieldReference storedField;
-				ILExpression ldloc, ldarg;
-				if (!method.Body[i].Match(ILCode.Stfld, out storedField, out ldloc, out ldarg))
+				ILExpression ldloc, loadParameter;
+				if (!method.Body[i].Match(ILCode.Stfld, out storedField, out ldloc, out loadParameter))
 					break;
-				if (ldloc.Code != ILCode.Ldloc || ldarg.Code != ILCode.Ldarg)
+				ILVariable loadedVar, loadedArg;
+				if (!ldloc.Match(ILCode.Ldloc, out loadedVar) || !loadParameter.Match(ILCode.Ldloc, out loadedArg))
 					return false;
 				storedField = GetFieldDefinition(storedField);
-				if (ldloc.Operand != var1 || storedField == null)
+				if (loadedVar != var1 || storedField == null || !loadedArg.IsParameter)
 					return false;
-				fieldToParameterMap[(FieldDefinition)storedField] = (ParameterDefinition)ldarg.Operand;
+				fieldToParameterMap[(FieldDefinition)storedField] = loadedArg;
 			}
 			ILVariable var2;
 			ILExpression ldlocForStloc2;
@@ -185,11 +186,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				FieldReference field;
 				ILExpression instExpr;
 				ILExpression stExpr;
-				ParameterDefinition arg;
+				ILVariable arg;
 				if (node.Match(ILCode.Stfld, out field, out instExpr, out stExpr) &&
 				    instExpr.MatchThis() &&
-				    stExpr.Match(ILCode.Ldarg, out arg) &&
-				    arg.Index == 0)
+				    stExpr.Match(ILCode.Ldloc, out arg) &&
+				    arg.IsParameter && arg.OriginalParameter.Index == 0)
 				{
 					stateField = GetFieldDefinition(field);
 				}
@@ -280,7 +281,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					FieldDefinition storedField = GetFieldDefinition(stField);
 					FieldDefinition loadedField = GetFieldDefinition(ldField);
 					if (storedField != null && loadedField != null) {
-						ParameterDefinition mappedParameter;
+						ILVariable mappedParameter;
 						if (fieldToParameterMap.TryGetValue(loadedField, out mappedParameter))
 							fieldToParameterMap[storedField] = mappedParameter;
 					}
@@ -320,7 +321,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression call = finallyBody[0] as ILExpression;
 				if (call == null || call.Code != ILCode.Call || call.Arguments.Count != 1)
 					throw new YieldAnalysisFailedException();
-				if (call.Arguments[0].Code != ILCode.Ldarg || ((ParameterDefinition)call.Arguments[0].Operand).Index >= 0)
+				if (!call.Arguments[0].MatchThis())
 					throw new YieldAnalysisFailedException();
 				if (!finallyBody[1].Match(ILCode.Endfinally))
 					throw new YieldAnalysisFailedException();
@@ -605,12 +606,10 @@ namespace ICSharpCode.Decompiler.ILAst
 						throw new YieldAnalysisFailedException();
 					return new SymbolicValue(SymbolicValueType.State);
 				case ILCode.Ldloc:
-					if (expr.Operand == rangeAnalysisStateVariable)
+					ILVariable loadedVariable = (ILVariable)expr.Operand;
+					if (loadedVariable == rangeAnalysisStateVariable)
 						return new SymbolicValue(SymbolicValueType.State);
-					else
-						throw new YieldAnalysisFailedException();
-				case ILCode.Ldarg:
-					if (((ParameterDefinition)expr.Operand).Index < 0)
+					else if (loadedVariable.IsParameter && loadedVariable.OriginalParameter.Index < 0)
 						return new SymbolicValue(SymbolicValueType.This);
 					else
 						throw new YieldAnalysisFailedException();
@@ -898,11 +897,10 @@ namespace ICSharpCode.Decompiler.ILAst
 						switch (expr.Code) {
 							case ILCode.Ldfld:
 								if (expr.Arguments[0].MatchThis()) {
+									expr.Code = ILCode.Ldloc;
 									if (fieldToParameterMap.ContainsKey(field)) {
-										expr.Code = ILCode.Ldarg;
 										expr.Operand = fieldToParameterMap[field];
 									} else {
-										expr.Code = ILCode.Ldloc;
 										expr.Operand = fieldToLocalMap[field];
 									}
 									expr.Arguments.Clear();
@@ -910,25 +908,25 @@ namespace ICSharpCode.Decompiler.ILAst
 								break;
 							case ILCode.Stfld:
 								if (expr.Arguments[0].MatchThis()) {
+									expr.Code = ILCode.Stloc;
 									if (fieldToParameterMap.ContainsKey(field)) {
-										expr.Code = ILCode.Starg;
 										expr.Operand = fieldToParameterMap[field];
 									} else {
-										expr.Code = ILCode.Stloc;
 										expr.Operand = fieldToLocalMap[field];
 									}
 									expr.Arguments.RemoveAt(0);
 								}
 								break;
 							case ILCode.Ldflda:
-								if (fieldToParameterMap.ContainsKey(field)) {
-									expr.Code = ILCode.Ldarga;
-									expr.Operand = fieldToParameterMap[field];
-								} else {
+								if (expr.Arguments[0].MatchThis()) {
 									expr.Code = ILCode.Ldloca;
-									expr.Operand = fieldToLocalMap[field];
+									if (fieldToParameterMap.ContainsKey(field)) {
+										expr.Operand = fieldToParameterMap[field];
+									} else {
+										expr.Operand = fieldToLocalMap[field];
+									}
+									expr.Arguments.Clear();
 								}
-								expr.Arguments.Clear();
 								break;
 						}
 					}

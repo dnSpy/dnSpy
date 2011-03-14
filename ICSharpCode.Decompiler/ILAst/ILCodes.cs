@@ -232,9 +232,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		Clt_Un,
 		Ldftn,
 		Ldvirtftn,
-		Ldarg,
-		Ldarga,
-		Starg,
+		__Ldarg,
+		__Ldarga,
+		__Starg,
 		Ldloc,
 		Ldloca,
 		Stloc,
@@ -375,10 +375,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		public static void ExpandMacro(ref ILCode code, ref object operand, MethodBody methodBody)
 		{
 			switch (code) {
-					case ILCode.__Ldarg_0: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(0); break;
-					case ILCode.__Ldarg_1: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(1); break;
-					case ILCode.__Ldarg_2: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(2); break;
-					case ILCode.__Ldarg_3: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(3); break;
+					case ILCode.__Ldarg_0: 		code = ILCode.__Ldarg; operand = methodBody.GetParameter(0); break;
+					case ILCode.__Ldarg_1: 		code = ILCode.__Ldarg; operand = methodBody.GetParameter(1); break;
+					case ILCode.__Ldarg_2: 		code = ILCode.__Ldarg; operand = methodBody.GetParameter(2); break;
+					case ILCode.__Ldarg_3: 		code = ILCode.__Ldarg; operand = methodBody.GetParameter(3); break;
 					case ILCode.__Ldloc_0: 		code = ILCode.Ldloc; operand = methodBody.Variables[0]; break;
 					case ILCode.__Ldloc_1: 		code = ILCode.Ldloc; operand = methodBody.Variables[1]; break;
 					case ILCode.__Ldloc_2: 		code = ILCode.Ldloc; operand = methodBody.Variables[2]; break;
@@ -387,9 +387,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.__Stloc_1: 		code = ILCode.Stloc; operand = methodBody.Variables[1]; break;
 					case ILCode.__Stloc_2: 		code = ILCode.Stloc; operand = methodBody.Variables[2]; break;
 					case ILCode.__Stloc_3: 		code = ILCode.Stloc; operand = methodBody.Variables[3]; break;
-					case ILCode.__Ldarg_S: 		code = ILCode.Ldarg; break;
-					case ILCode.__Ldarga_S: 		code = ILCode.Ldarga; break;
-					case ILCode.__Starg_S: 		code = ILCode.Starg; break;
+					case ILCode.__Ldarg_S: 		code = ILCode.__Ldarg; break;
+					case ILCode.__Ldarga_S: 		code = ILCode.__Ldarga; break;
+					case ILCode.__Starg_S: 		code = ILCode.__Starg; break;
 					case ILCode.__Ldloc_S: 		code = ILCode.Ldloc; break;
 					case ILCode.__Ldloca_S: 		code = ILCode.Ldloca; break;
 					case ILCode.__Stloc_S: 		code = ILCode.Stloc; break;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using Mono.Cecil;
@@ -196,8 +197,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (blockStatement.Parent.NodeType == NodeType.Member || blockStatement.Parent is Accessor) {
 					// Delete any following statements as long as they assign parameters to the display class
 					// Do parameter handling only for closures created in the top scope (direct child of method/accessor)
-					List<ParameterReference> parameterOccurrances = blockStatement.Descendants.OfType<IdentifierExpression>()
-						.Select(n => n.Annotation<ParameterReference>()).Where(p => p != null).ToList();
+					List<ILVariable> parameterOccurrances = blockStatement.Descendants.OfType<IdentifierExpression>()
+						.Select(n => n.Annotation<ILVariable>()).Where(p => p != null && p.IsParameter).ToList();
 					AstNode next;
 					for (; cur != null; cur = next) {
 						next = cur.NextSibling;
@@ -218,8 +219,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								isParameter = true;
 							} else if (right is IdentifierExpression) {
 								// handle parameters only if the whole method contains no other occurrance except for 'right'
-								ParameterReference param = right.Annotation<ParameterReference>();
-								isParameter = parameterOccurrances.Count(c => c == param) == 1;
+								ILVariable param = right.Annotation<ILVariable>();
+								isParameter = param.IsParameter && parameterOccurrances.Count(c => c == param) == 1;
 							}
 							if (isParameter) {
 								dict[m.Get<MemberReferenceExpression>("left").Single().Annotation<FieldReference>().ResolveWithinSameModule()] = right;

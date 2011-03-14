@@ -31,20 +31,20 @@ namespace ICSharpCode.Decompiler.Ast
 		};
 		
 		
-		public static void AssignNamesToVariables(DecompilerContext context, IEnumerable<ILVariable> variables, ILBlock methodBody)
+		public static void AssignNamesToVariables(DecompilerContext context, IEnumerable<ILVariable> parameters, IEnumerable<ILVariable> variables, ILBlock methodBody)
 		{
 			NameVariables nv = new NameVariables();
 			nv.context = context;
 			nv.fieldNamesInCurrentType = context.CurrentType.Fields.Select(f => f.Name).ToList();
-			nv.AddExistingNames(context.CurrentMethod.Parameters.Select(p => p.Name));
+			nv.AddExistingNames(parameters.Select(p => p.Name));
 			nv.AddExistingNames(variables.Where(v => v.IsGenerated).Select(v => v.Name));
-			foreach (ParameterDefinition p in context.CurrentMethod.Parameters) {
+			foreach (ILVariable p in parameters) {
 				if (string.IsNullOrEmpty(p.Name))
-					p.Name = nv.GenerateNameForVariableOrParameter(p, p.ParameterType, methodBody);
+					p.Name = nv.GenerateNameForVariable(p, methodBody);
 			}
 			foreach (ILVariable varDef in variables) {
 				if (!varDef.IsGenerated) {
-					varDef.Name = nv.GenerateNameForVariableOrParameter(varDef, varDef.Type, methodBody);
+					varDef.Name = nv.GenerateNameForVariable(varDef, methodBody);
 				}
 			}
 		}
@@ -80,10 +80,10 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		string GenerateNameForVariableOrParameter(object variableOrParameter, TypeReference varType, ILBlock methodBody)
+		string GenerateNameForVariable(ILVariable variable, ILBlock methodBody)
 		{
 			string proposedName = null;
-			if (varType == context.CurrentType.Module.TypeSystem.Int32) {
+			if (variable.Type == context.CurrentType.Module.TypeSystem.Int32) {
 				// test whether the variable might be a loop counter
 				bool isLoopCounter = false;
 				foreach (ILWhileLoop loop in methodBody.GetSelfAndChildrenRecursive<ILWhileLoop>()) {
@@ -97,7 +97,7 @@ namespace ICSharpCode.Decompiler.Ast
 							case ILCode.Cgt:
 							case ILCode.Cgt_Un:
 								ILVariable loadVar;
-								if (expr.Arguments[0].Match(ILCode.Ldloc, out loadVar) && loadVar == variableOrParameter) {
+								if (expr.Arguments[0].Match(ILCode.Ldloc, out loadVar) && loadVar == variable) {
 									isLoopCounter = true;
 								}
 								break;
@@ -117,7 +117,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (string.IsNullOrEmpty(proposedName)) {
 				var proposedNameForStores =
 					(from expr in methodBody.GetSelfAndChildrenRecursive<ILExpression>()
-					 where expr.Code == ILCode.Stloc && expr.Operand == variableOrParameter
+					 where expr.Code == ILCode.Stloc && expr.Operand == variable
 					 select GetNameFromExpression(expr.Arguments.Single())
 					).Except(fieldNamesInCurrentType).ToList();
 				if (proposedNameForStores.Count == 1) {
@@ -129,7 +129,7 @@ namespace ICSharpCode.Decompiler.Ast
 					(from expr in methodBody.GetSelfAndChildrenRecursive<ILExpression>()
 					 from i in Enumerable.Range(0, expr.Arguments.Count)
 					 let arg = expr.Arguments[i]
-					 where (arg.Code == ILCode.Ldloc || arg.Code == ILCode.Ldarg) && arg.Operand == variableOrParameter
+					 where arg.Code == ILCode.Ldloc && arg.Operand == variable
 					 select GetNameForArgument(expr, i)
 					).Except(fieldNamesInCurrentType).ToList();
 				if (proposedNameForLoads.Count == 1) {
@@ -137,7 +137,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			if (string.IsNullOrEmpty(proposedName)) {
-				proposedName = GetNameByType(varType);
+				proposedName = GetNameByType(variable.Type);
 			}
 			
 			if (!typeNames.ContainsKey(proposedName)) {

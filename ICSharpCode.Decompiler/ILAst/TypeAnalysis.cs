@@ -167,16 +167,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 						return v.Type;
 					}
-				case ILCode.Starg:
-					if (forceInferChildren)
-						InferTypeForExpression(expr.Arguments.Single(), ((ParameterReference)expr.Operand).ParameterType);
-					return null;
-				case ILCode.Ldarg:
-					return ((ParameterReference)expr.Operand).ParameterType;
 				case ILCode.Ldloca:
 					return new ByReferenceType(((ILVariable)expr.Operand).Type);
-				case ILCode.Ldarga:
-					return new ByReferenceType(((ParameterReference)expr.Operand).ParameterType);
 					#endregion
 					#region Call / NewObj
 				case ILCode.Call:

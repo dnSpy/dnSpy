@@ -151,8 +151,6 @@ namespace ICSharpCode.Decompiler.ILAst
 						return SimplifyLdObjOrStObj(expr, ILCode.Stelem_Any);
 					case ILCode.Ldloca:
 						return SimplifyLdObjOrStObj(expr, ILCode.Stloc);
-					case ILCode.Ldarga:
-						return SimplifyLdObjOrStObj(expr, ILCode.Starg);
 					case ILCode.Ldflda:
 						return SimplifyLdObjOrStObj(expr, ILCode.Stfld);
 					case ILCode.Ldsflda:
@@ -164,8 +162,6 @@ namespace ICSharpCode.Decompiler.ILAst
 						return SimplifyLdObjOrStObj(expr, ILCode.Ldelem_Any);
 					case ILCode.Ldloca:
 						return SimplifyLdObjOrStObj(expr, ILCode.Ldloc);
-					case ILCode.Ldarga:
-						return SimplifyLdObjOrStObj(expr, ILCode.Ldarg);
 					case ILCode.Ldflda:
 						return SimplifyLdObjOrStObj(expr, ILCode.Ldfld);
 					case ILCode.Ldsflda:
