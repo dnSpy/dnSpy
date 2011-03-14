@@ -31,12 +31,19 @@ namespace ICSharpCode.Decompiler.Ast
 		};
 		
 		
-		public static void AssignNamesToVariables(IEnumerable<string> existingNames, IEnumerable<ILVariable> variables, ILBlock methodBody)
+		public static void AssignNamesToVariables(IEnumerable<ParameterDefinition> parameters, IEnumerable<ILVariable> variables, ILBlock methodBody)
 		{
 			NameVariables nv = new NameVariables();
-			nv.AddExistingNames(existingNames);
+			nv.AddExistingNames(parameters.Select(p => p.Name));
+			nv.AddExistingNames(variables.Where(v => v.IsGenerated).Select(v => v.Name));
+			foreach (ParameterDefinition p in parameters) {
+				if (string.IsNullOrEmpty(p.Name))
+					p.Name = nv.GenerateNameForVariableOrParameter(p, p.ParameterType, methodBody);
+			}
 			foreach (ILVariable varDef in variables) {
-				nv.AssignNameToVariable(varDef, methodBody.GetSelfAndChildrenRecursive<ILExpression>());
+				if (!varDef.IsGenerated) {
+					varDef.Name = nv.GenerateNameForVariableOrParameter(varDef, varDef.Type, methodBody);
+				}
 			}
 		}
 		
@@ -69,29 +76,31 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		void AssignNameToVariable(ILVariable varDef, IEnumerable<ILExpression> allExpressions)
+		string GenerateNameForVariableOrParameter(object variableOrParameter, TypeReference varType, ILBlock methodBody)
 		{
-			string proposedName = null;
-			foreach (ILExpression expr in allExpressions) {
-				if (expr.Operand != varDef)
-					continue;
-				if (expr.Code == ILCode.Stloc) {
-					proposedName = GetNameFromExpression(expr.Arguments.Single());
-				}
-				if (proposedName != null)
-					break;
+			var proposedNameForStores =
+				(from expr in methodBody.GetSelfAndChildrenRecursive<ILExpression>()
+				 where expr.Code == ILCode.Stloc && expr.Operand == variableOrParameter
+				 select GetNameFromExpression(expr.Arguments.Single()) into name
+				 where !string.IsNullOrEmpty(name)
+				 select name).Distinct().ToList();
+			
+			string proposedName;
+			if (proposedNameForStores.Count == 1) {
+				proposedName = proposedNameForStores[0];
+			} else {
+				// TODO: infer proposed names from loads
+				proposedName = GetNameByType(varType);
 			}
-			if (proposedName == null)
-				proposedName = GetNameByType(varDef.Type);
 			
 			if (!typeNames.ContainsKey(proposedName)) {
 				typeNames.Add(proposedName, 0);
 			}
 			int count = ++typeNames[proposedName];
 			if (count > 1) {
-				varDef.Name = proposedName + count.ToString();
+				return proposedName + count.ToString();
 			} else {
-				varDef.Name = proposedName;
+				return proposedName;
 			}
 		}
 		

@@ -64,8 +64,8 @@ namespace ICSharpCode.Decompiler.Ast
 			bodyGraph.Optimize(context, ilMethod);
 			context.CancellationToken.ThrowIfCancellationRequested();
 			
-			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>(e => e.Operand is ILVariable).Select(e => (ILVariable)e.Operand).Where(v => !v.IsGenerated).Distinct();
-			NameVariables.AssignNamesToVariables(methodDef.Parameters.Select(p => p.Name), allVariables, ilMethod);
+			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>(e => e.Operand is ILVariable).Select(e => (ILVariable)e.Operand).Distinct();
+			NameVariables.AssignNamesToVariables(methodDef.Parameters, allVariables, ilMethod);
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
 			Ast.BlockStatement astBlock = TransformBlock(ilMethod);
