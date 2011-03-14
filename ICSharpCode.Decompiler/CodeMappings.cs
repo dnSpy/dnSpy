@@ -93,7 +93,7 @@ namespace ICSharpCode.Decompiler
 				//Get hash code for the SourceCodeLine field.
 				int hashLine = map.SourceCodeLine.GetHashCode();
 
-				//Calculate the hash code for the product.
+				//Calculate the hash code.
 				return hashRange ^ hashLine;
 			}
 		}

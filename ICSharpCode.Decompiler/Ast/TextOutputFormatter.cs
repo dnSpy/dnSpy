@@ -130,7 +130,7 @@ namespace ICSharpCode.Decompiler.Ast
 				if (node.Ancestors != null && node.Ancestors.Count() > 0)
 				{
 					var n = node.Ancestors.FirstOrDefault(a => a.Annotation<MemberMapping>() != null);
-					if (n != default(AstType)) {
+					if (n != null) {
 						MemberMapping mapping = n.Annotation<MemberMapping>();
 
 						// add all ranges
