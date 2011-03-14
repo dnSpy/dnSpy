@@ -114,23 +114,35 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (!IsAnonymousMethod(context, method))
 				return false;
 			
+			// Create AnonymousMethodExpression and prepare parameters
+			AnonymousMethodExpression ame = new AnonymousMethodExpression();
+			ame.Parameters.AddRange(AstBuilder.MakeParameters(method.Parameters));
+			ame.HasParameterList = true;
+			
 			// Decompile the anonymous method:
 			
 			DecompilerContext subContext = context.Clone();
 			subContext.CurrentMethod = method;
-			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, subContext);
+			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, subContext, ame.Parameters);
 			TransformationPipeline.RunTransformationsUntil(body, v => v is DelegateConstruction, subContext);
 			body.AcceptVisitor(this, null);
 			
-			AnonymousMethodExpression ame = new AnonymousMethodExpression();
+			
 			bool isLambda = false;
-			if (method.Parameters.All(p => string.IsNullOrEmpty(p.Name))) {
-				ame.HasParameterList = false;
-			} else {
-				ame.HasParameterList = true;
-				ame.Parameters.AddRange(AstBuilder.MakeParameters(method.Parameters));
-				if (ame.Parameters.All(p => p.ParameterModifier == ParameterModifier.None)) {
-					isLambda = (body.Statements.Count == 1 && body.Statements.Single() is ReturnStatement);
+			if (ame.Parameters.All(p => p.ParameterModifier == ParameterModifier.None)) {
+				isLambda = (body.Statements.Count == 1 && body.Statements.Single() is ReturnStatement);
+			}
+			// Remove the parameter list from an AnonymousMethodExpression if the original method had no names,
+			// and the parameters are not used in the method body
+			if (!isLambda && method.Parameters.All(p => string.IsNullOrEmpty(p.Name))) {
+				var parameterReferencingIdentifiers =
+					from ident in body.Descendants.OfType<IdentifierExpression>()
+					let v = ident.Annotation<ILVariable>()
+					where v != null && v.IsParameter && method.Parameters.Contains(v.OriginalParameter)
+					select ident;
+				if (!parameterReferencingIdentifiers.Any()) {
+					ame.Parameters.Clear();
+					ame.HasParameterList = false;
 				}
 			}
 			

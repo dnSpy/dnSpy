@@ -17,7 +17,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public static T CopyAnnotationsFrom<T>(this T node, AstNode other) where T : AstNode
 		{
-			foreach (var annotation in other.Annotations<object>()) {
+			foreach (object annotation in other.Annotations) {
 				node.AddAnnotation(annotation);
 			}
 			return node;

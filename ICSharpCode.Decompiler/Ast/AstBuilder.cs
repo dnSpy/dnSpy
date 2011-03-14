@@ -599,7 +599,7 @@ namespace ICSharpCode.Decompiler.Ast
 					astMethod.Modifiers = ConvertModifiers(methodDef);
 				else
 					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
-				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
+				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
 			}
 			ConvertAttributes(astMethod, methodDef);
 			if (methodDef.HasCustomAttributes && astMethod.Parameters.Count > 0) {
@@ -661,7 +661,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			astMethod.Name = CleanName(methodDef.DeclaringType.Name);
 			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
-			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
+			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
 			ConvertAttributes(astMethod, methodDef);
 			return astMethod;
 		}
@@ -793,6 +793,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			foreach(ParameterDefinition paramDef in paramCol) {
 				ParameterDeclaration astParam = new ParameterDeclaration();
+				astParam.AddAnnotation(paramDef);
 				astParam.Type = ConvertType(paramDef.ParameterType, paramDef);
 				astParam.Name = paramDef.Name;
 				
