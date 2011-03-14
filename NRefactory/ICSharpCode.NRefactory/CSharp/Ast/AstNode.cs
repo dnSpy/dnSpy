@@ -537,49 +537,23 @@ namespace ICSharpCode.NRefactory.CSharp
 			return null;
 		}
 		
-		public IEnumerable<T> Annotations<T>() where T: class
-		{
-			object annotations = this.annotations;
-			AnnotationList list = annotations as AnnotationList;
-			if (list != null) {
-				List<T> result = new List<T>();
-				lock (list) {
-					foreach (object obj in list) {
-						T t = obj as T;
-						if (t != null)
-							result.Add(t);
+		/// <summary>
+		/// Gets all annotations stored on this AstNode.
+		/// </summary>
+		public IEnumerable<object> Annotations {
+			get {
+				object annotations = this.annotations;
+				AnnotationList list = annotations as AnnotationList;
+				if (list != null) {
+					lock (list) {
+						return list.ToArray();
 					}
+				} else {
+					if (annotations != null)
+						return new object[] { annotations };
+					else
+						return Enumerable.Empty<object>();
 				}
-				return result;
-			} else {
-				T t = annotations as T;
-				if (t != null)
-					return new T[] { t };
-				else
-					return Enumerable.Empty<T>();
-			}
-		}
-		
-		public IEnumerable<object> Annotations(Type type)
-		{
-			if (type == null)
-				throw new ArgumentNullException("type");
-			object annotations = this.annotations;
-			AnnotationList list = annotations as AnnotationList;
-			if (list != null) {
-				List<object> result = new List<object>();
-				lock (list) {
-					foreach (object obj in list) {
-						if (type.IsInstanceOfType(obj))
-							result.Add(obj);
-					}
-				}
-				return result;
-			} else {
-				if (type.IsInstanceOfType(annotations))
-					return new object[] { annotations };
-				else
-					return Enumerable.Empty<object>();
 			}
 		}
 		#endregion
