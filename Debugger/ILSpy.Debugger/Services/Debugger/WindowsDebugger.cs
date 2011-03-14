@@ -297,12 +297,6 @@ namespace ILSpy.Debugger.Services
 			return CodeMappingsStorage.GetInstructionByTypeAndLine(
 				CurrentLineBookmark.Instance.Type.FullName,
 				CurrentLineBookmark.Instance.LineNumber, out token);
-			
-//			var val = CodeMappingsStorage[CurrentLineBookmark.Instance.Type.FullName];
-//
-//			var mapping = val.Find(m => m.MetadataToken == token);
-//
-//			return mapping.MemberCodeMappings.FirstOrDefault(s => s.ILInstructionOffset.From == instruction.ILInstructionOffset.From);
 		}
 		
 		StackFrame GetStackFrame()

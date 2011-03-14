@@ -413,11 +413,11 @@ namespace ICSharpCode.ILSpy.TextView
 							// show the currentline marker
 							var bm = CurrentLineBookmark.Instance;
 							if (bm != null && DebugData.CurrentType != null) {
-								if (DebugData.CurrentType.FullName.Equals(bm.Type.FullName, StringComparison.OrdinalIgnoreCase)) {
+								if (DebugData.CurrentType == bm.Type) {
 									DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
 									bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
-									UnfoldAndScroll(bm.LineNumber);
 								}
+								UnfoldAndScroll(bm.LineNumber);
 							}
 						} else {
 							// hide the margin
