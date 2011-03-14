@@ -132,29 +132,28 @@ namespace ICSharpCode.Decompiler.Ast
 					var n = node.Ancestors.FirstOrDefault(a => a.Annotation<MemberMapping>() != null);
 					if (n != default(AstType)) {
 						MemberMapping mapping = n.Annotation<MemberMapping>();
+//						var map = mapping.MemberCodeMappings.Find(s => s.SourceCodeLine == output.CurrentLine);
 						
-						foreach (var range in ranges) {							
-							var map = mapping.MemberCodeMappings.Find(s => s.SourceCodeLine == output.CurrentLine);
-							
-							if (map == null) {
-								// check if the range is in previous mapping
-								var prevmap = mapping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From <= range.From && 
-								                                              m.ILInstructionOffset.To >= range.To);
-								
-								if (prevmap != null)
-									continue;
-								
-								mapping.MemberCodeMappings.Add(new SourceCodeMapping {
+						foreach (var range in ranges) {
+//							// check if the range is in previous mapping
+//							var prevmap = mapping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From <= range.From &&
+//							                                              m.ILInstructionOffset.To >= range.To);
+//							
+//							if (prevmap != null)
+//								continue;
+//							
+//							if (map == null) {
+								mapping.MemberCodeMappings.Add(/*map = */new SourceCodeMapping {
 								                               	ILInstructionOffset = range,
 								                               	SourceCodeLine = output.CurrentLine,
 								                               	MemberMapping = mapping
 								                               });
-							} else {
-								if (map.ILInstructionOffset.From > range.From)
-									map.ILInstructionOffset.From = range.From;
-								if (map.ILInstructionOffset.To < range.To)
-									map.ILInstructionOffset.To = range.To;
-							}
+//							} else {
+//								if (map.ILInstructionOffset.From > range.From)
+//									map.ILInstructionOffset.From = range.From;
+//								if (map.ILInstructionOffset.To < range.To)
+//									map.ILInstructionOffset.To = range.To;
+//							}
 						}
 					}
 				}

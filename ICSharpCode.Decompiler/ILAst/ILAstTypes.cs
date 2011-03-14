@@ -319,25 +319,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		public virtual bool Match(ILNode other)
-		{
-			ILExpression expr = other as ILExpression;
-			return expr != null && this.Code == expr.Code
-				&& (this.Operand == AnyOperand || object.Equals(this.Operand, expr.Operand))
-				&& Match(this.Arguments, expr.Arguments);
-		}
-		
-		protected static bool Match(IList<ILExpression> a, IList<ILExpression> b)
-		{
-			if (a.Count != b.Count)
-				return false;
-			for (int i = 0; i < a.Count; i++) {
-				if (!a[i].Match(b[i]))
-					return false;
-			}
-			return true;
-		}
-		
 		public override void WriteTo(ITextOutput output)
 		{
 			if (Operand is ILVariable && ((ILVariable)Operand).IsGenerated) {
