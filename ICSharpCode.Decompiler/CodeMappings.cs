@@ -48,7 +48,9 @@ namespace ICSharpCode.Decompiler
 			var resultList = new List<int>();
 			
 			// add list for the current source code line
-			var currentList = MemberMapping.MemberCodeMappings.FindAll(m => m.SourceCodeLine == this.SourceCodeLine);
+			var currentList = MemberMapping.MemberCodeMappings
+				.FindAll(m => m.SourceCodeLine == this.SourceCodeLine)
+				.OrderBy(m => m.ILInstructionOffset.From);
 			foreach (var element in currentList.Distinct(new SourceCodeMappingComparer())) {
 				resultList.Add(element.ILInstructionOffset.From);
 				resultList.Add(element.ILInstructionOffset.To);
@@ -166,6 +168,12 @@ namespace ICSharpCode.Decompiler
 			this MethodDefinition member,
 			ConcurrentDictionary<string, List<MemberMapping>> codeMappings)
 		{
+			if (member == null || !member.HasBody)
+				return null;
+			
+			if (codeMappings == null)
+				throw new ArgumentNullException("CodeMappings storage must be valid!");
+			
 			// create IL/CSharp code mappings - used in debugger
 			MemberMapping currentMemberMapping = null;
 			if (codeMappings.ContainsKey(member.DeclaringType.FullName)) {
@@ -198,6 +206,9 @@ namespace ICSharpCode.Decompiler
 			int lineNumber,
 			out uint metadataToken)
 		{
+			if (codeMappings == null)
+				throw new ArgumentNullException("CodeMappings storage must be valid!");
+			
 			if (!codeMappings.ContainsKey(typeName)) {
 				metadataToken = 0;
 				return null;

@@ -826,42 +826,51 @@ namespace ILSpy.Debugger.Services
 				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out type, out line)) {
 					DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
 				} else {
-					var debugType = frame.MethodInfo.DeclaringType;
-					string fullName = debugType.Namespace + "." + debugType.Name;
-					
-					if (DebugData.LoadedAssemblies == null)
-						Continue();
-					else {
-						// search for type in the current assembly list
-						TypeReference typeRef = null;
-						foreach (var assembly in DebugData.LoadedAssemblies) {
-							foreach (var module in assembly.Modules) {
-								if (module.TryGetTypeReference(fullName, out typeRef)) {
-									break;
-								}
-							}
-							
-							if (typeRef != null)
-								break;
-						}
-						
-						if (typeRef != null) {
-							// decompile on demand
-							AstBuilder builder = new AstBuilder(new DecompilerContext());
-							builder.AddType(typeRef.Resolve());
-							builder.GenerateCode(new PlainTextOutput());
-							
-							// jump
-							if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out type, out line)) {
-								DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
-							} else {
-								StepOut();
-							}
-						} else {
-							// continue since we cannot find the debugged type
-							StepOut();
+					// is possible that the type is not decompiled yet, so we must do a decompilation on demand
+					DecompileOnDemand(frame);
+				}
+			}
+		}
+
+		void DecompileOnDemand(StackFrame frame)
+		{
+			var debugType = frame.MethodInfo.DeclaringType;
+			uint token = (uint)frame.MethodInfo.MetadataToken;
+			int ilOffset = frame.IP;
+			
+			string fullName = debugType.Namespace + "." + debugType.Name;
+			if (DebugData.LoadedAssemblies == null)
+				Continue();
+			else {
+				// search for type in the current assembly list
+				TypeReference typeRef = null;
+				foreach (var assembly in DebugData.LoadedAssemblies) {
+					foreach (var module in assembly.Modules) {
+						if (module.TryGetTypeReference(fullName, out typeRef)) {
+							break;
 						}
 					}
+					if (typeRef != null)
+						break;
+				}
+				if (typeRef != null) {
+					// decompile on demand
+					AstBuilder builder = new AstBuilder(new DecompilerContext());
+					builder.AddType(typeRef.Resolve());
+					builder.GenerateCode(new PlainTextOutput());
+					
+					// try jump
+					int line;
+					TypeDefinition type;
+					if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out type, out line)) {
+						DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
+					} else {
+						// continue since we cannot find the debugged type
+						Continue();
+					}
+				} else {
+					// continue since we cannot find the debugged type
+					Continue();
 				}
 			}
 		}
