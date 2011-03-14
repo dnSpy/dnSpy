@@ -191,13 +191,8 @@ namespace Debugger
 		
 		void AsyncStep(bool stepIn)
 		{
-			SourcecodeSegment nextSt = NextStatement;
-			if (nextSt == null) {
-				throw new DebuggerException("Unable to step. Next statement not aviable");
-			}
-			
 			if (stepIn) {
-				Stepper stepInStepper = Stepper.StepIn(this, nextSt.StepRanges, "normal");
+				Stepper stepInStepper = Stepper.StepIn(this, ILRanges, "normal");
 				this.Thread.CurrentStepIn = stepInStepper;
 				Stepper clearCurrentStepIn = Stepper.StepOut(this, "clear current step in");
 				clearCurrentStepIn.StepComplete += delegate {
@@ -207,7 +202,7 @@ namespace Debugger
 				};
 				clearCurrentStepIn.Ignore = true;
 			} else {
-				Stepper.StepOver(this, nextSt.StepRanges, "normal");
+				Stepper.StepOver(this, ILRanges, "normal");
 			}
 			
 			AsyncContinue();

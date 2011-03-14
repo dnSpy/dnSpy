@@ -45,24 +45,19 @@ namespace ICSharpCode.Decompiler
 		/// <returns></returns>
 		public int[] ToArray()
 		{
-			var resultList = new List<int>();
-			
 			// add list for the current source code line
 			var currentList = MemberMapping.MemberCodeMappings
 				.FindAll(m => m.SourceCodeLine == this.SourceCodeLine)
-				.OrderBy(m => m.ILInstructionOffset.From);
-			foreach (var element in currentList.Distinct(new SourceCodeMappingComparer())) {
-				resultList.Add(element.ILInstructionOffset.From);
-				resultList.Add(element.ILInstructionOffset.To);
-			}
+				.ConvertAll<ILRange>(m => m.ILInstructionOffset);
+			
 			
 			// add inverted
-			var invertedList = MemberMapping.GetInvertedList();
-			if (invertedList != null && invertedList.Count() > 0) {
-				foreach (var range in invertedList) {
-					resultList.Add(range.From);
-					resultList.Add(range.To);
-				}
+			currentList.AddRange(MemberMapping.GetInvertedList());
+			
+			var resultList = new List<int>();
+			foreach (var element in ILRange.OrderAndJoint(currentList)) {
+				resultList.Add(element.From);
+				resultList.Add(element.To);
 			}
 			
 			return resultList.ToArray();
