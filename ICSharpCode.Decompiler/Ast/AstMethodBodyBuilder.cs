@@ -65,7 +65,8 @@ namespace ICSharpCode.Decompiler.Ast
 			context.CancellationToken.ThrowIfCancellationRequested();
 			
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>(e => e.Operand is ILVariable).Select(e => (ILVariable)e.Operand).Distinct();
-			NameVariables.AssignNamesToVariables(methodDef.Parameters, allVariables, ilMethod);
+			Debug.Assert(context.CurrentMethod == methodDef);
+			NameVariables.AssignNamesToVariables(context, allVariables, ilMethod);
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
 			Ast.BlockStatement astBlock = TransformBlock(ilMethod);

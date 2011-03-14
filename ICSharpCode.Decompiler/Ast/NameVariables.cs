@@ -31,12 +31,13 @@ namespace ICSharpCode.Decompiler.Ast
 		};
 		
 		
-		public static void AssignNamesToVariables(IEnumerable<ParameterDefinition> parameters, IEnumerable<ILVariable> variables, ILBlock methodBody)
+		public static void AssignNamesToVariables(DecompilerContext context, IEnumerable<ILVariable> variables, ILBlock methodBody)
 		{
 			NameVariables nv = new NameVariables();
-			nv.AddExistingNames(parameters.Select(p => p.Name));
+			nv.fieldNamesInCurrentType = context.CurrentType.Fields.Select(f => f.Name).ToList();
+			nv.AddExistingNames(context.CurrentMethod.Parameters.Select(p => p.Name));
 			nv.AddExistingNames(variables.Where(v => v.IsGenerated).Select(v => v.Name));
-			foreach (ParameterDefinition p in parameters) {
+			foreach (ParameterDefinition p in context.CurrentMethod.Parameters) {
 				if (string.IsNullOrEmpty(p.Name))
 					p.Name = nv.GenerateNameForVariableOrParameter(p, p.ParameterType, methodBody);
 			}
@@ -47,6 +48,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
+		List<string> fieldNamesInCurrentType;
 		Dictionary<string, int> typeNames = new Dictionary<string, int>();
 		
 		void AddExistingNames(IEnumerable<string> existingNames)
@@ -83,15 +85,27 @@ namespace ICSharpCode.Decompiler.Ast
 				 where expr.Code == ILCode.Stloc && expr.Operand == variableOrParameter
 				 select GetNameFromExpression(expr.Arguments.Single()) into name
 				 where !string.IsNullOrEmpty(name)
-				 select name).Distinct().ToList();
+				 select name).Except(fieldNamesInCurrentType).ToList();
 			
-			string proposedName;
+			string proposedName = null;
 			if (proposedNameForStores.Count == 1) {
 				proposedName = proposedNameForStores[0];
 			} else {
-				// TODO: infer proposed names from loads
-				proposedName = GetNameByType(varType);
+				var proposedNameForLoads =
+					(from expr in methodBody.GetSelfAndChildrenRecursive<ILExpression>()
+					 from i in Enumerable.Range(0, expr.Arguments.Count)
+					 let arg = expr.Arguments[i]
+					 where (arg.Code == ILCode.Ldloc || arg.Code == ILCode.Ldarg) && arg.Operand == variableOrParameter
+					 select GetNameForArgument(expr, i) into name
+					 where name != null
+					 select name).Except(fieldNamesInCurrentType).ToList();
+				if (proposedNameForLoads.Count == 1) {
+					proposedName = proposedNameForLoads[0];
+				}
 			}
+			
+			if (proposedName == null)
+				proposedName = GetNameByType(varType);
 			
 			if (!typeNames.ContainsKey(proposedName)) {
 				typeNames.Add(proposedName, 0);
@@ -108,10 +122,6 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			switch (expr.Code) {
 				case ILCode.Ldfld:
-					// Use the field name only if it's not a field on this (avoid confusion between local variables and fields)
-					if (!(expr.Arguments[0].Code == ILCode.Ldarg && ((ParameterDefinition)expr.Arguments[0].Operand).Index < 0))
-						return CleanUpVariableName(((FieldReference)expr.Operand).Name);
-					break;
 				case ILCode.Ldsfld:
 					return CleanUpVariableName(((FieldReference)expr.Operand).Name);
 				case ILCode.Call:
@@ -125,6 +135,31 @@ namespace ICSharpCode.Decompiler.Ast
 						return CleanUpVariableName(mr.Name.Substring(3));
 					}
 					break;
+			}
+			return null;
+		}
+		
+		static string GetNameForArgument(ILExpression parent, int i)
+		{
+			switch (parent.Code) {
+				case ILCode.Stfld:
+				case ILCode.Stsfld:
+					if (i == parent.Arguments.Count - 1) // last argument is stored value
+						return CleanUpVariableName(((FieldReference)parent.Operand).Name);
+					else
+						break;
+				case ILCode.Call:
+				case ILCode.Callvirt:
+				case ILCode.Newobj:
+					MethodDefinition methodDef = ((MethodReference)parent.Operand).Resolve();
+					if (methodDef != null) {
+						var p = methodDef.Parameters.ElementAtOrDefault((parent.Code != ILCode.Newobj && methodDef.HasThis) ? i - 1 : i);
+						if (p != null && !string.IsNullOrEmpty(p.Name))
+							return CleanUpVariableName(p.Name);
+					}
+					break;
+				case ILCode.Ret:
+					return "result";
 			}
 			return null;
 		}
@@ -164,6 +199,13 @@ namespace ICSharpCode.Decompiler.Ast
 			int pos = name.IndexOf('`');
 			if (pos >= 0)
 				name = name.Substring(0, pos);
+			
+			// remove field prefix:
+			if (name.Length > 2 && name.StartsWith("m_", StringComparison.Ordinal))
+				name = name.Substring(2);
+			else if (name.Length > 1 && name[0] == '_')
+				name = name.Substring(1);
+			
 			if (name.Length == 0)
 				return "obj";
 			else
