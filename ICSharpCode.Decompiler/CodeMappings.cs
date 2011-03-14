@@ -46,26 +46,56 @@ namespace ICSharpCode.Decompiler
 		public int[] ToArray()
 		{
 			var resultList = new List<int>();
-			resultList.Add(ILInstructionOffset.From);
-			resultList.Add(ILInstructionOffset.To);
 			
-			var list = MemberMapping.MemberCodeMappings.ConvertAll<ILRange>(s => new ILRange { From = s.ILInstructionOffset.From, To = s.ILInstructionOffset.To });
+			// add list for the current source code line
+			var currentList = MemberMapping.MemberCodeMappings.FindAll(m => m.SourceCodeLine == this.SourceCodeLine);
+			foreach (var element in currentList.Distinct(new SourceCodeMappingComparer())) {
+				resultList.Add(element.ILInstructionOffset.From);
+				resultList.Add(element.ILInstructionOffset.To);
+			}
 			
-			var invertedList = ILRange.Invert(list, MemberMapping.CodeSize);
+			// add inverted
+			var invertedList = MemberMapping.GetInvertedList();
 			if (invertedList != null && invertedList.Count() > 0) {
 				foreach (var range in invertedList) {
 					resultList.Add(range.From);
 					resultList.Add(range.To);
-				}	
-			}
-			
-			// remove last gap - step on the last line
-			if (resultList[resultList.Count - 1] == MemberMapping.CodeSize) {
-				resultList.RemoveAt(resultList.Count - 1);
-				resultList.RemoveAt(resultList.Count - 1);
+				}
 			}
 			
 			return resultList.ToArray();
+		}
+		
+		sealed class SourceCodeMappingComparer : IEqualityComparer<SourceCodeMapping>
+		{
+			public bool Equals(SourceCodeMapping x, SourceCodeMapping y)
+			{
+				//Check whether the compared objects reference the same data.
+				if (Object.ReferenceEquals(x, y)) return true;
+				
+				//Check whether any of the compared objects is null.
+				if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
+					return false;
+				
+				return x.ILInstructionOffset.From == y.ILInstructionOffset.From &&
+					x.ILInstructionOffset.To == y.ILInstructionOffset.To &&
+					x.SourceCodeLine == y.SourceCodeLine;
+			}
+			
+			public int GetHashCode(SourceCodeMapping map)
+			{
+				//Check whether the object is null
+				if (Object.ReferenceEquals(map, null)) return 0;
+
+				//Get hash code for the ILInstructionOffset field if it is not null.
+				int hashRange = map.ILInstructionOffset == null ? 0 : map.ILInstructionOffset.GetHashCode();
+
+				//Get hash code for the SourceCodeLine field.
+				int hashLine = map.SourceCodeLine.GetHashCode();
+
+				//Calculate the hash code for the product.
+				return hashRange ^ hashLine;
+			}
 		}
 	}
 	
@@ -93,6 +123,18 @@ namespace ICSharpCode.Decompiler
 		/// Gets or sets the source code mappings.
 		/// </summary>
 		public List<SourceCodeMapping> MemberCodeMappings { get; set; }
+		
+		/// <summary>
+		/// Gets the inverted IL Ranges.<br/>
+		/// E.g.: for (0-9, 11-14, 14-18, 21-25) => (9-11,18-21).
+		/// </summary>
+		/// <returns>IL Range inverted list.</returns>
+		public IEnumerable<ILRange> GetInvertedList()
+		{
+			var list = MemberCodeMappings.ConvertAll<ILRange>(
+				s => new ILRange { From = s.ILInstructionOffset.From, To = s.ILInstructionOffset.To });
+			return ILRange.Invert(list, CodeSize);
+		}
 	}
 	
 	public static class CodeMappings
