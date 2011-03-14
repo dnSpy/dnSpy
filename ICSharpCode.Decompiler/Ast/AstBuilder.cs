@@ -602,6 +602,13 @@ namespace ICSharpCode.Decompiler.Ast
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
 			}
 			ConvertAttributes(astMethod, methodDef);
+			if (methodDef.HasCustomAttributes && astMethod.Parameters.Count > 0) {
+				foreach (CustomAttribute ca in methodDef.CustomAttributes) {
+					if (ca.AttributeType.Name == "ExtensionAttribute" && ca.AttributeType.Namespace == "System.Runtime.CompilerServices") {
+						astMethod.Parameters.First().ParameterModifier = ParameterModifier.This;
+					}
+				}
+			}
 			return astMethod;
 		}
 		
@@ -792,7 +799,12 @@ namespace ICSharpCode.Decompiler.Ast
 				if (paramDef.ParameterType is ByReferenceType) {
 					astParam.ParameterModifier = (!paramDef.IsIn && paramDef.IsOut) ? ParameterModifier.Out : ParameterModifier.Ref;
 				}
-				// TODO: params, this
+				if (paramDef.HasCustomAttributes) {
+					foreach (CustomAttribute ca in paramDef.CustomAttributes) {
+						if (ca.AttributeType.Name == "ParamArrayAttribute" && ca.AttributeType.Namespace == "System")
+							astParam.ParameterModifier = ParameterModifier.Params;
+					}
+				}
 				
 				ConvertCustomAttributes(astParam, paramDef);
 				ModuleDefinition module = ((MethodDefinition)paramDef.Method).Module;
@@ -1019,6 +1031,15 @@ namespace ICSharpCode.Decompiler.Ast
 			if (customAttributeProvider.HasCustomAttributes) {
 				var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
 				foreach (var customAttribute in customAttributeProvider.CustomAttributes) {
+					if (customAttribute.AttributeType.Name == "ExtensionAttribute" && customAttribute.AttributeType.Namespace == "System.Runtime.CompilerServices") {
+						// don't show the ExtensionAttribute (it's converted to the 'this' modifier)
+						continue;
+					}
+					if (customAttribute.AttributeType.Name == "ParamArrayAttribute" && customAttribute.AttributeType.Namespace == "System") {
+						// don't show the ParamArrayAttribute (it's converted to the 'params' modifier)
+						continue;
+					}
+					
 					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
 					attribute.AddAnnotation(customAttribute);
 					attribute.Type = ConvertType(customAttribute.AttributeType);
@@ -1064,7 +1085,7 @@ namespace ICSharpCode.Decompiler.Ast
 						section.Attributes.Add(attribute);
 						attributedNode.AddChild(section, AttributedNode.AttributeRole);
 					}
-				} else {
+				} else if (attributes.Count > 0) {
 					// use single section for all attributes
 					var section = new AttributeSection();
 					section.AttributeTarget = target;
