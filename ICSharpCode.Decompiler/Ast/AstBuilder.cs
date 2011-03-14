@@ -1074,17 +1074,31 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		private static Expression ConvertArgumentValue(CustomAttributeArgument parameter)
+		private static Expression ConvertArgumentValue(CustomAttributeArgument argument)
 		{
-			var type = parameter.Type.Resolve();
+			if (argument.Value is CustomAttributeArgument[]) {
+				ArrayInitializerExpression arrayInit = new ArrayInitializerExpression();
+				foreach (CustomAttributeArgument element in (CustomAttributeArgument[])argument.Value) {
+					arrayInit.Elements.Add(ConvertArgumentValue(element));
+				}
+				ArrayType arrayType = argument.Type as ArrayType;
+				return new ArrayCreateExpression {
+					Type = ConvertType(arrayType != null ? arrayType.ElementType : argument.Type),
+					Initializer = arrayInit
+				};
+			} else if (argument.Value is CustomAttributeArgument) {
+				// occurs with boxed arguments
+				return ConvertArgumentValue((CustomAttributeArgument)argument.Value);
+			}
+			var type = argument.Type.Resolve();
 			if (type != null && type.IsEnum) {
-				return MakePrimitive(Convert.ToInt64(parameter.Value), type);
-			} else if (parameter.Value is TypeReference) {
+				return MakePrimitive(Convert.ToInt64(argument.Value), type);
+			} else if (argument.Value is TypeReference) {
 				return new TypeOfExpression() {
-					Type = ConvertType((TypeReference)parameter.Value),
+					Type = ConvertType((TypeReference)argument.Value),
 				};
 			} else {
-				return new PrimitiveExpression(parameter.Value);
+				return new PrimitiveExpression(argument.Value);
 			}
 		}
 		#endregion
