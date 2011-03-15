@@ -28,6 +28,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public override bool VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, object data)
 		{
+			base.VisitPointerReferenceExpression(pointerReferenceExpression, data);
 			return true;
 		}
 		
@@ -41,10 +42,18 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public override bool VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
-			if (unaryOperatorExpression.Operator == UnaryOperatorType.Dereference || unaryOperatorExpression.Operator == UnaryOperatorType.AddressOf)
+			base.VisitUnaryOperatorExpression(unaryOperatorExpression, data);
+			if (unaryOperatorExpression.Operator == UnaryOperatorType.Dereference) {
+				BinaryOperatorExpression bop = unaryOperatorExpression.Expression as BinaryOperatorExpression;
+				if (bop != null && bop.Operator == BinaryOperatorType.Add) {
+					// TODO: transform "*(ptr + int)" to "ptr[int]"
+				}
 				return true;
-			else
-				return base.VisitUnaryOperatorExpression(unaryOperatorExpression, data);
+			} else if (unaryOperatorExpression.Operator == UnaryOperatorType.AddressOf) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 		
 		public override bool VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
