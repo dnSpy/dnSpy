@@ -275,7 +275,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					ILExpression copiedExpr;
 					if (block.Body[i].Match(ILCode.Stloc, out v, out copiedExpr)
 					    && !v.IsParameter && numStloc.GetOrDefault(v) == 1 && numLdloca.GetOrDefault(v) == 0
-					    && CanPerformCopyPropagation(copiedExpr))
+					    && CanPerformCopyPropagation(copiedExpr, v))
 					{
 						// un-inline the arguments of the ldArg instruction
 						ILVariable[] uninlinedArgs = new ILVariable[copiedExpr.Arguments.Count];
@@ -307,7 +307,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		bool CanPerformCopyPropagation(ILExpression expr)
+		bool CanPerformCopyPropagation(ILExpression expr, ILVariable copyVariable)
 		{
 			switch (expr.Code) {
 				case ILCode.Ldloca:
@@ -318,9 +318,15 @@ namespace ICSharpCode.Decompiler.ILAst
 					// so they can be safely copied.
 					return true;
 				case ILCode.Ldloc:
-					// Parameters can be copied only if they aren't assigned to (directly or indirectly via ldarga)
 					ILVariable v = (ILVariable)expr.Operand;
-					return v.IsParameter && numLdloca.GetOrDefault(v) == 0 && numStloc.GetOrDefault(v) == 0;
+					if (v.IsParameter) {
+						// Parameters can be copied only if they aren't assigned to (directly or indirectly via ldarga)
+						return numLdloca.GetOrDefault(v) == 0 && numStloc.GetOrDefault(v) == 0;
+					} else {
+						// Variables are be copied only if both they and the target copy variable are generated,
+						// and if the variable has only a single assignment
+						return v.IsGenerated && copyVariable.IsGenerated && numLdloca.GetOrDefault(v) == 0 && numStloc.GetOrDefault(v) == 1;
+					}
 				default:
 					return false;
 			}

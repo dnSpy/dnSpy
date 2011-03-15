@@ -317,6 +317,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						block.Body[i] = stmt;
 						if (pinnedVar.Type.IsByReference)
 							pinnedVar.Type = new PointerType(((ByReferenceType)pinnedVar.Type).ElementType);
+						
+						HandleStringFixing(stmt);
 						break;
 					}
 				}
@@ -352,8 +354,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					{
 						ILVariable loadedVariable;
 						if (falseValue.Code == ILCode.Ldelema
-							&& falseValue.Arguments[0].Match(ILCode.Ldloc, out loadedVariable) && loadedVariable == arrayVariable
-							&& IsNullOrZero(falseValue.Arguments[1]))
+						    && falseValue.Arguments[0].Match(ILCode.Ldloc, out loadedVariable) && loadedVariable == arrayVariable
+						    && IsNullOrZero(falseValue.Arguments[1]))
 						{
 							initValue = new ILExpression(ILCode.Stloc, pinnedVar, arrayLoadingExpr);
 							return true;
@@ -391,6 +393,55 @@ namespace ICSharpCode.Decompiler.ILAst
 				return negated;
 			else
 				return expr;
+		}
+		
+		void HandleStringFixing(ILFixedStatement fixedStatement)
+		{
+			// fixed (stloc(pinnedVar, ldloc(text))) {
+			//   var1 = var2 = conv.i(ldloc(pinnedVar))
+			//   if (logicnot(logicnot(var1))) {
+			//     var2 = add(var1, call(RuntimeHelpers::get_OffsetToStringData))
+			//   }
+			//   stloc(ptrVar, var2)
+			//   ...
+			
+			ILVariable pinnedVar = (ILVariable)fixedStatement.Initializer.Operand;
+			Debug.Assert(pinnedVar.IsPinned);
+			var body = fixedStatement.BodyBlock.Body;
+			if (body.Count < 3)
+				return;
+			
+			ILVariable var1, var2;
+			ILExpression varAssignment, ptrInitialization;
+			if (!(body[0].Match(ILCode.Stloc, out var1, out varAssignment) && varAssignment.Match(ILCode.Stloc, out var2, out ptrInitialization)))
+				return;
+			if (!(var1.IsGenerated && var2.IsGenerated))
+				return;
+			if (ptrInitialization.Code == ILCode.Conv_I || ptrInitialization.Code == ILCode.Conv_U)
+				ptrInitialization = ptrInitialization.Arguments[0];
+			if (!ptrInitialization.MatchLdloc(pinnedVar))
+				return;
+			
+			ILCondition ifStmt = body[1] as ILCondition;
+			if (!(ifStmt != null && ifStmt.TrueBlock != null && ifStmt.TrueBlock.Body.Count == 1 && (ifStmt.FalseBlock == null || ifStmt.FalseBlock.Body.Count == 0)))
+				return;
+			if (!UnpackDoubleNegation(ifStmt.Condition).MatchLdloc(var1))
+				return;
+			ILVariable assignedVar;
+			ILExpression assignedExpr;
+			if (!(ifStmt.TrueBlock.Body[0].Match(ILCode.Stloc, out assignedVar, out assignedExpr) && assignedVar == var2 && assignedExpr.Code == ILCode.Add))
+				return;
+			MethodReference calledMethod;
+			if (!(assignedExpr.Arguments[0].MatchLdloc(var1) && assignedExpr.Arguments[1].Match(ILCode.Call, out calledMethod)))
+				return;
+			if (!(calledMethod.Name == "get_OffsetToStringData" && calledMethod.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers"))
+				return;
+			
+			ILVariable pointerVar;
+			if (body[2].Match(ILCode.Stloc, out pointerVar, out assignedExpr) && assignedExpr.MatchLdloc(var2)) {
+				body.RemoveRange(0, 3);
+				fixedStatement.Initializer.Operand = pointerVar;
+			}
 		}
 		#endregion
 	}

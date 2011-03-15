@@ -56,19 +56,9 @@ namespace ICSharpCode.ILSpy
 	}
 	
 	[ExportMainMenuCommand(Menu = "_File", Header = "_Save Code...", MenuIcon = "Images/SaveFile.png", MenuCategory = "Save", MenuOrder = 0)]
-	sealed class SaveCommand : SimpleCommand
+	sealed class SaveCommand : CommandWrapper
 	{
-		public override void Execute(object parameter)
-		{
-			MainWindow mainWindow = MainWindow.Instance;
-			if (mainWindow.SelectedNodes.Count() == 1) {
-				if (mainWindow.SelectedNodes.Single().Save(mainWindow.TextView))
-					return;
-			}
-			mainWindow.TextView.SaveToDisk(mainWindow.CurrentLanguage,
-			                               mainWindow.SelectedNodes,
-			                               new DecompilationOptions() { FullDecompilation = true });
-		}
+		public SaveCommand() : base(ApplicationCommands.Save) {}
 	}
 	
 	class CommandWrapper : ICommand

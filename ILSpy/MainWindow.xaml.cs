@@ -434,6 +434,17 @@ namespace ICSharpCode.ILSpy
 			decompilerTextView.Decompile(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions());
 		}
 		
+		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (this.SelectedNodes.Count() == 1) {
+				if (this.SelectedNodes.Single().Save(this.TextView))
+					return;
+			}
+			this.TextView.SaveToDisk(this.CurrentLanguage,
+			                         this.SelectedNodes,
+			                         new DecompilationOptions() { FullDecompilation = true });
+		}
+		
 		public void RefreshDecompiledView()
 		{
 			TreeView_SelectionChanged(null, null);
