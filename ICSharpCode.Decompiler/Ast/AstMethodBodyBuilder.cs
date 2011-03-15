@@ -178,17 +178,17 @@ namespace ICSharpCode.Decompiler.Ast
 				yield return tryCatchStmt;
 			} else if (node is ILFixedStatement) {
 				ILFixedStatement fixedNode = (ILFixedStatement)node;
-				ILVariable v;
-				ILExpression init;
-				if (!fixedNode.Initializer.Match(ILCode.Stloc, out v, out init))
-					throw new InvalidOperationException("Fixed initializer must be an assignment to a local variable");
 				FixedStatement fixedStatement = new FixedStatement();
-				fixedStatement.Type = AstBuilder.ConvertType(v.Type);
-				fixedStatement.Variables.Add(
-					new VariableInitializer {
-						Name = v.Name,
-						Initializer = (Expression)TransformExpression(init)
-					}.WithAnnotation(v));
+				foreach (ILExpression initializer in fixedNode.Initializers) {
+					Debug.Assert(initializer.Code == ILCode.Stloc);
+					ILVariable v = (ILVariable)initializer.Operand;
+					fixedStatement.Variables.Add(
+						new VariableInitializer {
+							Name = v.Name,
+							Initializer = (Expression)TransformExpression(initializer.Arguments[0])
+						}.WithAnnotation(v));
+				}
+				fixedStatement.Type = AstBuilder.ConvertType(((ILVariable)fixedNode.Initializers[0].Operand).Type);
 				fixedStatement.EmbeddedStatement = TransformBlock(fixedNode.BodyBlock);
 				yield return fixedStatement;
 			} else if (node is ILBlock) {

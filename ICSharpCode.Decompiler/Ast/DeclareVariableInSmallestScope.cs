@@ -55,8 +55,12 @@ namespace ICSharpCode.Decompiler.Ast
 					return node;
 				
 				FixedStatement fixedStatement = node as FixedStatement;
-				if (fixedStatement != null && fixedStatement.Variables.Single().Name == name)
-					return null; // no need to introduce the variable here
+				if (fixedStatement != null) {
+					foreach (VariableInitializer v in fixedStatement.Variables) {
+						if (v.Name == name)
+							return null; // no need to introduce the variable here
+					}
+				}
 				
 				AstNode withinCurrent = FindInsertPos(node.FirstChild, name, allowPassIntoLoops);
 				if (withinCurrent != null) {

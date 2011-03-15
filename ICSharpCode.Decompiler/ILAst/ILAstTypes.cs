@@ -519,13 +519,13 @@ namespace ICSharpCode.Decompiler.ILAst
 	
 	public class ILFixedStatement : ILNode
 	{
-		public ILExpression Initializer;
+		public List<ILExpression> Initializers = new List<ILExpression>();
 		public ILBlock      BodyBlock;
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			if (this.Initializer != null)
-				yield return this.Initializer;
+			foreach (ILExpression initializer in this.Initializers)
+				yield return initializer;
 			if (this.BodyBlock != null)
 				yield return this.BodyBlock;
 		}
@@ -533,8 +533,11 @@ namespace ICSharpCode.Decompiler.ILAst
 		public override void WriteTo(ITextOutput output)
 		{
 			output.Write("fixed (");
-			if (this.Initializer != null)
-				this.Initializer.WriteTo(output);
+			for (int i = 0; i < this.Initializers.Count; i++) {
+				if (i > 0)
+					output.Write(", ");
+				this.Initializers[i].WriteTo(output);
+			}
 			output.WriteLine(") {");
 			output.Indent();
 			this.BodyBlock.WriteTo(output);
