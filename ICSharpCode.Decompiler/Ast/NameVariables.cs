@@ -216,7 +216,7 @@ namespace ICSharpCode.Decompiler.Ast
 			string name;
 			if (type.IsArray) {
 				name = "array";
-			} else if (type.IsPointer) {
+			} else if (type.IsPointer || type.IsByReference) {
 				name = "ptr";
 			} else if (!typeNameToVariableNameDict.TryGetValue(type.FullName, out name)) {
 				name = type.Name;

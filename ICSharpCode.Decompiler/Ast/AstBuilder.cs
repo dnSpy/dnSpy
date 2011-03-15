@@ -292,8 +292,9 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			if (type is Mono.Cecil.ByReferenceType) {
 				typeIndex++;
-				// ignore by reference type (cannot be represented in C#)
-				return ConvertType((type as Mono.Cecil.ByReferenceType).ElementType, typeAttributes, ref typeIndex);
+				// by reference type cannot be represented in C#; so we'll represent it as a pointer instead
+				return ConvertType((type as Mono.Cecil.ByReferenceType).ElementType, typeAttributes, ref typeIndex)
+					.MakePointerType();
 			} else if (type is Mono.Cecil.PointerType) {
 				typeIndex++;
 				return ConvertType((type as Mono.Cecil.PointerType).ElementType, typeAttributes, ref typeIndex)
@@ -799,6 +800,9 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				if (paramDef.ParameterType is ByReferenceType) {
 					astParam.ParameterModifier = (!paramDef.IsIn && paramDef.IsOut) ? ParameterModifier.Out : ParameterModifier.Ref;
+					ComposedType ct = astParam.Type as ComposedType;
+					if (ct != null && ct.PointerRank > 0)
+						ct.PointerRank--;
 				}
 				if (paramDef.HasCustomAttributes) {
 					foreach (CustomAttribute ca in paramDef.CustomAttributes) {

@@ -202,6 +202,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		public VariableDefinition OriginalVariable;
 		public ParameterDefinition OriginalParameter;
 		
+		public bool IsPinned {
+			get { return OriginalVariable != null && OriginalVariable.IsPinned; }
+		}
+		
 		public bool IsParameter {
 			get { return OriginalParameter != null; }
 		}

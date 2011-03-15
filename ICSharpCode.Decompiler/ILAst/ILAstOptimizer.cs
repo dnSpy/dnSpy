@@ -699,8 +699,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			switch(expr.Code) {
 				case ILCode.Call:
-				case ILCode.Calli:
 				case ILCode.Callvirt:
+					// property getters can't be expression statements, but all other method calls can be
+					MethodReference mr = (MethodReference)expr.Operand;
+					return !mr.Name.StartsWith("get_", StringComparison.Ordinal);
 				case ILCode.Newobj:
 				case ILCode.Newarr:
 					return true;

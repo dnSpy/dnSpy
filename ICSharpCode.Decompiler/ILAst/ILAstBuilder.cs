@@ -479,15 +479,17 @@ namespace ICSharpCode.Decompiler.ILAst
 					TypeReference varType = methodDef.Body.Variables[variableIndex].VariableType;
 					
 					List<VariableInfo> newVars;
-						
+					
+					bool isPinned = methodDef.Body.Variables[variableIndex].IsPinned;
+					// If the variable is pinned, use single variable.
 					// If any of the loads is from "all", use single variable
 					// If any of the loads is ldloca, fallback to single variable as well
-					if (loads.Any(b => b.VariablesBefore[variableIndex].StoredByAll || b.Code == ILCode.Ldloca)) {
+					if (isPinned || loads.Any(b => b.VariablesBefore[variableIndex].StoredByAll || b.Code == ILCode.Ldloca)) {
 						newVars = new List<VariableInfo>(1) { new VariableInfo() {
 							Variable = new ILVariable() {
 								Name = "var_" + variableIndex,
-						    		Type = varType,
-						    		OriginalVariable = methodDef.Body.Variables[variableIndex]
+								Type = isPinned ? ((PinnedType)varType).ElementType : varType,
+						    	OriginalVariable = methodDef.Body.Variables[variableIndex]
 							},
 							Stores = stores,
 							Loads  = loads
