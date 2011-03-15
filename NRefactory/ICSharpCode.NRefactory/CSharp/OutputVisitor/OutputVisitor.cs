@@ -1387,9 +1387,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(fixedStatement);
 			WriteKeyword("fixed");
+			Space(policy.UsingParentheses);
 			LPar();
+			Space(policy.WithinUsingParentheses);
 			fixedStatement.Type.AcceptVisitor(this, data);
+			Space();
 			WriteCommaSeparatedList(fixedStatement.Variables);
+			Space(policy.WithinUsingParentheses);
 			RPar();
 			WriteEmbeddedStatement(fixedStatement.EmbeddedStatement);
 			return EndNode(fixedStatement);

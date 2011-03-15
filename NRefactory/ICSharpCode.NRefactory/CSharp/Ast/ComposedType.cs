@@ -55,6 +55,8 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildrenByRole(PointerRole).Count();
 			}
 			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException();
 				int d = this.PointerRank;
 				while (d > value) {
 					GetChildByRole(PointerRole).Remove();
