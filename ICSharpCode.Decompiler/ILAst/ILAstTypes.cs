@@ -341,6 +341,11 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (this.InferredType != null) {
 						output.Write(':');
 						this.InferredType.WriteTo(output, true, true);
+						if (this.ExpectedType != null && this.ExpectedType.FullName != this.InferredType.FullName) {
+							output.Write("[exp:");
+							this.ExpectedType.WriteTo(output, true, true);
+							output.Write(']');
+						}
 					}
 					return;
 				}

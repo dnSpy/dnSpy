@@ -125,10 +125,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			// open up additional inlining possibilities.
 			new ILInlining(method).InlineAllVariables();
 			
-			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
-				expr.InferredType = null;
-				expr.ExpectedType = null;
-			}
+			TypeAnalysis.Reset(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.PeepholeTransforms) return;
 			PeepholeTransforms.Run(context, method);

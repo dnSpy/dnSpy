@@ -26,4 +26,15 @@ public class UnsafeCode
 	{
 		PassRefParameterAsPointer(ref *p);
 	}
+	
+	public unsafe void FixedStringAccess(string text)
+	{
+		fixed (char* c = text) {
+			char* tmp = c;
+			while (*tmp != 0) {
+				*tmp = 'A';
+				tmp++;
+			}
+		}
+	}
 }

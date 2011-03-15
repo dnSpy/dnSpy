@@ -45,24 +45,32 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILCondition cond = node as ILCondition;
 			if (cond != null) {
-				InferTypeForExpression(cond.Condition, typeSystem.Boolean, false);
+				cond.Condition.ExpectedType = typeSystem.Boolean;
 			}
 			ILWhileLoop loop = node as ILWhileLoop;
 			if (loop != null && loop.Condition != null) {
-				InferTypeForExpression(loop.Condition, typeSystem.Boolean, false);
+				loop.Condition.ExpectedType = typeSystem.Boolean;
 			}
 			ILExpression expr = node as ILExpression;
 			if (expr != null) {
-				ILVariable v = expr.Operand as ILVariable;
-				if (v != null && v.IsGenerated && v.Type == null && expr.Code == ILCode.Stloc && !inferredVariables.Contains(v) && HasSingleLoad(v)) {
-					// Don't deal with this node or its children yet,
-					// wait for the expected type to be inferred first.
-					// This happens with the arg_... variables introduced by the ILAst - we skip inferring the whole statement,
-					// and first infer the statement that reads from the arg_... variable.
-					// The ldloc inference will write the expected type to the variable, and the next InferRemainingStores() pass
-					// will then infer this statement with the correct expected type.
-					storedToGeneratedVariables.Add(expr);
-					return;
+				foreach (ILExpression store in expr.GetSelfAndChildrenRecursive<ILExpression>(e => e.Code == ILCode.Stloc)) {
+					ILVariable v = (ILVariable)store.Operand;
+					if (v.IsGenerated && v.Type == null && !inferredVariables.Contains(v) && HasSingleLoad(v)) {
+						// Don't deal with this node or its children yet,
+						// wait for the expected type to be inferred first.
+						// This happens with the arg_... variables introduced by the ILAst - we skip inferring the whole statement,
+						// and first infer the statement that reads from the arg_... variable.
+						// The ldloc inference will write the expected type to the variable, and the next InferRemainingStores() pass
+						// will then infer this statement with the correct expected type.
+						storedToGeneratedVariables.Add(expr);
+						// However, it is possible that this statement both writes to and reads from the variable (think inlined assignments).
+						if (expr.GetSelfAndChildrenRecursive<ILExpression>(e => e.Code == ILCode.Ldlen && e.Operand == v).Any()) {
+							// In this case, we analyze it now anyways, and will re-evaluate it later
+							break;
+						} else {
+							return;
+						}
+					}
 				}
 				bool anyArgumentIsMissingType = expr.Arguments.Any(a => a.InferredType == null);
 				if (expr.InferredType == null || anyArgumentIsMissingType)
@@ -247,18 +255,54 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					return null;
 				case ILCode.Ldobj:
-					if (forceInferChildren) {
-						if (InferTypeForExpression(expr.Arguments[0], new ByReferenceType((TypeReference)expr.Operand)) is PointerType)
-							InferTypeForExpression(expr.Arguments[0], new PointerType((TypeReference)expr.Operand));
+					{
+						TypeReference type = (TypeReference)expr.Operand;
+						if (expectedType != null) {
+							int infoAmount = GetInformationAmount(expectedType);
+							if (infoAmount == 1 && GetInformationAmount(type) == 8) {
+								// A bool can be loaded from both bytes and sbytes.
+								type = expectedType;
+							}
+							if (infoAmount >= 8 && infoAmount <= 64 && infoAmount == GetInformationAmount(type)) {
+								// An integer can be loaded as another integer of the same size.
+								// For integers smaller than 32 bit, the signs must match (as loading performs sign extension)
+								if (infoAmount >= 32 || IsSigned(expectedType) == IsSigned(type))
+									type = expectedType;
+							}
+						}
+						if (forceInferChildren) {
+							if (InferTypeForExpression(expr.Arguments[0], new ByReferenceType(type)) is PointerType)
+								InferTypeForExpression(expr.Arguments[0], new PointerType(type));
+						}
+						return type;
 					}
-					return (TypeReference)expr.Operand;
 				case ILCode.Stobj:
-					if (forceInferChildren) {
-						if (InferTypeForExpression(expr.Arguments[0], new ByReferenceType((TypeReference)expr.Operand)) is PointerType)
-							InferTypeForExpression(expr.Arguments[0], new PointerType((TypeReference)expr.Operand));
-						InferTypeForExpression(expr.Arguments[1], (TypeReference)expr.Operand);
+					{
+						TypeReference operandType = (TypeReference)expr.Operand;
+						TypeReference pointerType = InferTypeForExpression(expr.Arguments[0], new ByReferenceType(operandType));
+						TypeReference elementType;
+						if (pointerType is PointerType)
+							elementType = ((PointerType)pointerType).ElementType;
+						else if (pointerType is ByReferenceType)
+							elementType = ((ByReferenceType)pointerType).ElementType;
+						else
+							elementType = null;
+						if (elementType != null) {
+							// An integer can be stored in any other integer of the same size.
+							int infoAmount = GetInformationAmount(elementType);
+							if (infoAmount == 1) infoAmount = 8;
+							if (infoAmount == GetInformationAmount(operandType))
+								operandType = elementType;
+						}
+						if (forceInferChildren) {
+							if (pointerType is PointerType)
+								InferTypeForExpression(expr.Arguments[0], new PointerType(operandType));
+							else if (operandType != expr.Operand)
+								InferTypeForExpression(expr.Arguments[0], new ByReferenceType(operandType));
+							InferTypeForExpression(expr.Arguments[1], operandType);
+						}
+						return operandType;
 					}
-					return (TypeReference)expr.Operand;
 				case ILCode.Initobj:
 					return null;
 				case ILCode.DefaultValue:
@@ -284,19 +328,19 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Or:
 				case ILCode.And:
 				case ILCode.Xor:
-					return InferArgumentsInBinaryOperator(expr, null);
+					return InferArgumentsInBinaryOperator(expr, null, expectedType);
 				case ILCode.Add_Ovf:
 				case ILCode.Sub_Ovf:
 				case ILCode.Mul_Ovf:
 				case ILCode.Div:
 				case ILCode.Rem:
-					return InferArgumentsInBinaryOperator(expr, true);
+					return InferArgumentsInBinaryOperator(expr, true, expectedType);
 				case ILCode.Add_Ovf_Un:
 				case ILCode.Sub_Ovf_Un:
 				case ILCode.Mul_Ovf_Un:
 				case ILCode.Div_Un:
 				case ILCode.Rem_Un:
-					return InferArgumentsInBinaryOperator(expr, false);
+					return InferArgumentsInBinaryOperator(expr, false, expectedType);
 				case ILCode.Shl:
 				case ILCode.Shr:
 					if (forceInferChildren)
@@ -403,31 +447,31 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Conv_I1:
 				case ILCode.Conv_Ovf_I1:
 				case ILCode.Conv_Ovf_I1_Un:
-					return HandleConversion(8, true, expr.Arguments[0], expectedType, typeSystem.Byte);
+					return HandleConversion(8, true, expr.Arguments[0], expectedType, typeSystem.SByte);
 				case ILCode.Conv_I2:
 				case ILCode.Conv_Ovf_I2:
 				case ILCode.Conv_Ovf_I2_Un:
-					return HandleConversion(16, true, expr.Arguments[0], expectedType, typeSystem.UInt16);
+					return HandleConversion(16, true, expr.Arguments[0], expectedType, typeSystem.Int16);
 				case ILCode.Conv_I4:
 				case ILCode.Conv_Ovf_I4:
 				case ILCode.Conv_Ovf_I4_Un:
-					return HandleConversion(32, true, expr.Arguments[0], expectedType, typeSystem.UInt32);
+					return HandleConversion(32, true, expr.Arguments[0], expectedType, typeSystem.Int32);
 				case ILCode.Conv_I8:
 				case ILCode.Conv_Ovf_I8:
 				case ILCode.Conv_Ovf_I8_Un:
-					return HandleConversion(64, true, expr.Arguments[0], expectedType, typeSystem.UInt64);
+					return HandleConversion(64, true, expr.Arguments[0], expectedType, typeSystem.Int64);
 				case ILCode.Conv_U1:
 				case ILCode.Conv_Ovf_U1:
 				case ILCode.Conv_Ovf_U1_Un:
-					return HandleConversion(8, false, expr.Arguments[0], expectedType, typeSystem.SByte);
+					return HandleConversion(8, false, expr.Arguments[0], expectedType, typeSystem.Byte);
 				case ILCode.Conv_U2:
 				case ILCode.Conv_Ovf_U2:
 				case ILCode.Conv_Ovf_U2_Un:
-					return HandleConversion(16, false, expr.Arguments[0], expectedType, typeSystem.Int16);
+					return HandleConversion(16, false, expr.Arguments[0], expectedType, typeSystem.UInt16);
 				case ILCode.Conv_U4:
 				case ILCode.Conv_Ovf_U4:
 				case ILCode.Conv_Ovf_U4_Un:
-					return HandleConversion(32, false, expr.Arguments[0], expectedType, typeSystem.Int32);
+					return HandleConversion(32, false, expr.Arguments[0], expectedType, typeSystem.UInt32);
 				case ILCode.Conv_U8:
 				case ILCode.Conv_Ovf_U8:
 				case ILCode.Conv_Ovf_U8_Un:
@@ -458,17 +502,17 @@ namespace ICSharpCode.Decompiler.ILAst
 					#region Comparison instructions
 				case ILCode.Ceq:
 					if (forceInferChildren)
-						InferArgumentsInBinaryOperator(expr, null);
+						InferArgumentsInBinaryOperator(expr, null, null);
 					return typeSystem.Boolean;
 				case ILCode.Clt:
 				case ILCode.Cgt:
 					if (forceInferChildren)
-						InferArgumentsInBinaryOperator(expr, true);
+						InferArgumentsInBinaryOperator(expr, true, null);
 					return typeSystem.Boolean;
 				case ILCode.Clt_Un:
 				case ILCode.Cgt_Un:
 					if (forceInferChildren)
-						InferArgumentsInBinaryOperator(expr, false);
+						InferArgumentsInBinaryOperator(expr, false, null);
 					return typeSystem.Boolean;
 					#endregion
 					#region Branch instructions
@@ -613,12 +657,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			return type;
 		}
 		
-		TypeReference InferArgumentsInBinaryOperator(ILExpression expr, bool? isSigned)
+		TypeReference InferArgumentsInBinaryOperator(ILExpression expr, bool? isSigned, TypeReference expectedType)
 		{
 			ILExpression left = expr.Arguments[0];
 			ILExpression right = expr.Arguments[1];
-			TypeReference leftPreferred = DoInferTypeForExpression(left, null);
-			TypeReference rightPreferred = DoInferTypeForExpression(right, null);
+			TypeReference leftPreferred = DoInferTypeForExpression(left, expectedType);
+			TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
 			if (leftPreferred == rightPreferred) {
 				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
 			} else if (rightPreferred == DoInferTypeForExpression(left, rightPreferred)) {
@@ -766,6 +810,20 @@ namespace ICSharpCode.Decompiler.ILAst
 					return TypeCode.String;
 				default:
 					return TypeCode.Object;
+			}
+		}
+		
+		/// <summary>
+		/// Clears the type inference data on the method.
+		/// </summary>
+		public static void Reset(ILBlock method)
+		{
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				expr.InferredType = null;
+				expr.ExpectedType = null;
+				ILVariable v = expr.Operand as ILVariable;
+				if (v != null && v.IsGenerated)
+					v.Type = null;
 			}
 		}
 	}
