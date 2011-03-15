@@ -287,21 +287,22 @@ namespace ILSpy.Debugger.Services
 		
 		// Stepping:
 		
-		SourceCodeMapping GetCurrentCodeMapping()
+		SourceCodeMapping GetCurrentCodeMapping(out bool isMatch)
 		{
+			isMatch = false;
 			if (CurrentLineBookmark.Instance == null)
 				return null;
 			
+			var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 			// get the mapped instruction from the current line marker or the next one
-			uint token;
 			return CodeMappingsStorage.GetInstructionByTypeAndLine(
-				CurrentLineBookmark.Instance.Type.FullName,
-				CurrentLineBookmark.Instance.LineNumber, out token);
+				CurrentLineBookmark.Instance.Type.FullName, (uint)frame.MethodInfo.MetadataToken, frame.IP, out isMatch);
 		}
 		
 		StackFrame GetStackFrame()
 		{
-			var map = GetCurrentCodeMapping();
+			bool isMatch;
+			var map = GetCurrentCodeMapping(out isMatch);
 			if (map == null) {
 				CurrentLineBookmark.Remove();
 				Continue();
@@ -309,7 +310,7 @@ namespace ILSpy.Debugger.Services
 			} else {
 				var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 				frame.SourceCodeLine = map.SourceCodeLine;
-				frame.ILRanges = map.ToArray();
+				frame.ILRanges = map.ToArray(isMatch);
 				return frame;
 			}
 		}

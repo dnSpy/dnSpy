@@ -42,17 +42,26 @@ namespace ICSharpCode.Decompiler
 		/// <summary>
 		/// Retrieves the array that contains the IL range and the missing gaps between ranges.
 		/// </summary>
-		/// <returns></returns>
-		public int[] ToArray()
+		/// <returns>The array representation of the step aranges.</returns>
+		public int[] ToArray(bool isMatch)
 		{
+			var currentList = new List<ILRange>();
+			
 			// add list for the current source code line
-			var currentList = MemberMapping.MemberCodeMappings
-				.FindAll(m => m.SourceCodeLine == this.SourceCodeLine)
-				.ConvertAll<ILRange>(m => m.ILInstructionOffset);
+			currentList.AddRange(ILRange.OrderAndJoint(MemberMapping.MemberCodeMappings
+			                     .FindAll(m => m.SourceCodeLine == this.SourceCodeLine)
+			                     .ConvertAll<ILRange>(m => m.ILInstructionOffset)));
 			
-			// add inverted
-			currentList.AddRange(MemberMapping.InvertedList);
+			if (!isMatch) {
+				// add inverted
+				currentList.AddRange(MemberMapping.InvertedList);
+			} else {
+				// if the current list contains the last mapping, add also the last gap
+				if (currentList.Count == 1)
+					currentList.Add(MemberMapping.InvertedList.LastOrDefault());
+			}
 			
+			// set the output
 			var resultList = new List<int>();
 			foreach (var element in ILRange.OrderAndJoint(currentList)) {
 				resultList.Add(element.From);
@@ -101,7 +110,7 @@ namespace ICSharpCode.Decompiler
 				if (invertedList == null) {
 					var list = MemberCodeMappings.ConvertAll<ILRange>(
 						s => new ILRange { From = s.ILInstructionOffset.From, To = s.ILInstructionOffset.To });
-					invertedList = ILRange.Invert(list, CodeSize);
+					invertedList = ILRange.OrderAndJoint(ILRange.Invert(list, CodeSize));
 				}
 				return invertedList;
 			}
@@ -199,6 +208,40 @@ namespace ICSharpCode.Decompiler
 			
 			metadataToken = 0;
 			return null;
+		}
+		
+		public static SourceCodeMapping GetInstructionByTypeAndLine(
+			this ConcurrentDictionary<string, List<MemberMapping>> codeMappings,
+			string typeName,
+			uint token,
+			int ilOffset, out bool isMatch)
+		{
+			isMatch = false;
+			
+			if (codeMappings == null)
+				throw new ArgumentNullException("CodeMappings storage must be valid!");
+			
+			if (!codeMappings.ContainsKey(typeName)) {
+				return null;
+			}
+			
+			var methodMappings = codeMappings[typeName];
+			var maping = methodMappings.Find(m => m.MetadataToken == token);
+			// try find an exact match
+			var map = maping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From <= ilOffset && ilOffset < m.ILInstructionOffset.To);
+			
+			if (map == null) {
+				// get the immediate next one
+				map = maping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From >= ilOffset);
+				isMatch = false;
+				if (map == null)
+					map = maping.MemberCodeMappings.LastOrDefault(); // get the last
+				
+				return map;
+			}
+			
+			isMatch = true;
+			return map;
 		}
 		
 		/// <summary>
