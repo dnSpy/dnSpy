@@ -68,7 +68,18 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		static bool IsSameType(TypeReference typeRef, TypeDefinition type)
 		{
-			return typeRef.FullName == type.FullName;
+			if (typeRef.FullName == type.FullName)
+				return true;
+			if (typeRef.Name != type.Name || type.Namespace != typeRef.Namespace)
+				return false;
+			if (typeRef.IsNested || type.IsNested)
+				if (!typeRef.IsNested || !type.IsNested || !IsSameType(typeRef.DeclaringType, type.DeclaringType))
+					return false;
+			var gTypeRef = typeRef as GenericInstanceType;
+			if (gTypeRef != null || type.HasGenericParameters)
+				if (gTypeRef == null || !type.HasGenericParameters || gTypeRef.GenericArguments.Count != type.GenericParameters.Count)
+					return false;
+			return true;
 		}
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
