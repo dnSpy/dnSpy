@@ -192,6 +192,8 @@ namespace ICSharpCode.Decompiler.ILAst
 									Instruction constraint = expr.GetPrefix(Code.Constrained);
 									if (constraint != null)
 										InferTypeForExpression(expr.Arguments[i], new ByReferenceType((TypeReference)constraint.Operand));
+									else if (method.DeclaringType.IsValueType)
+										InferTypeForExpression(expr.Arguments[i], new ByReferenceType(method.DeclaringType));
 									else
 										InferTypeForExpression(expr.Arguments[i], method.DeclaringType);
 								} else {
@@ -291,7 +293,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							// An integer can be stored in any other integer of the same size.
 							int infoAmount = GetInformationAmount(elementType);
 							if (infoAmount == 1) infoAmount = 8;
-							if (infoAmount == GetInformationAmount(operandType))
+							if (infoAmount == GetInformationAmount(operandType) && IsSigned(elementType) != null && IsSigned(operandType) != null)
 								operandType = elementType;
 						}
 						if (forceInferChildren) {

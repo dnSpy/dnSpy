@@ -66,6 +66,8 @@ namespace ICSharpCode.ILSpy
 				output.WriteDefinition(v.Name, v);
 				if (v.Type != null) {
 					output.Write(" : ");
+					if (v.IsPinned)
+						output.Write("pinned ");
 					v.Type.WriteTo(output, true, true);
 				}
 				output.WriteLine();

@@ -46,5 +46,21 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			else
 				return base.VisitUnaryOperatorExpression(unaryOperatorExpression, data);
 		}
+		
+		public override bool VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
+		{
+			bool result = base.VisitMemberReferenceExpression(memberReferenceExpression, data);
+			UnaryOperatorExpression uoe = memberReferenceExpression.Target as UnaryOperatorExpression;
+			if (uoe != null && uoe.Operator == UnaryOperatorType.Dereference) {
+				PointerReferenceExpression pre = new PointerReferenceExpression();
+				pre.Target = uoe.Expression.Detach();
+				pre.MemberName = memberReferenceExpression.MemberName;
+				memberReferenceExpression.TypeArguments.MoveTo(pre.TypeArguments);
+				pre.CopyAnnotationsFrom(uoe);
+				pre.CopyAnnotationsFrom(memberReferenceExpression);
+				memberReferenceExpression.ReplaceWith(pre);
+			}
+			return result;
+		}
 	}
 }
