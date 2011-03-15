@@ -102,24 +102,24 @@ namespace ICSharpCode.Decompiler.ILAst
 		__Ble_Un,
 		__Blt_Un,
 		Switch,
-		Ldind_I1,
-		Ldind_U1,
-		Ldind_I2,
-		Ldind_U2,
-		Ldind_I4,
-		Ldind_U4,
-		Ldind_I8,
-		Ldind_I,
-		Ldind_R4,
-		Ldind_R8,
+		__Ldind_I1,
+		__Ldind_U1,
+		__Ldind_I2,
+		__Ldind_U2,
+		__Ldind_I4,
+		__Ldind_U4,
+		__Ldind_I8,
+		__Ldind_I,
+		__Ldind_R4,
+		__Ldind_R8,
 		Ldind_Ref,
 		Stind_Ref,
-		Stind_I1,
-		Stind_I2,
-		Stind_I4,
-		Stind_I8,
-		Stind_R4,
-		Stind_R8,
+		__Stind_I1,
+		__Stind_I2,
+		__Stind_I4,
+		__Stind_I8,
+		__Stind_R4,
+		__Stind_R8,
 		Add,
 		Sub,
 		Mul,
@@ -222,7 +222,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		Endfinally,
 		Leave,
 		__Leave_S,
-		Stind_I,
+		__Stind_I,
 		Conv_U,
 		Arglist,
 		Ceq,
@@ -232,9 +232,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		Clt_Un,
 		Ldftn,
 		Ldvirtftn,
-		Ldarg,
-		Ldarga,
-		Starg,
+		__Ldarg,
+		__Ldarga,
+		__Starg,
 		Ldloc,
 		Ldloca,
 		Stloc,
@@ -375,49 +375,64 @@ namespace ICSharpCode.Decompiler.ILAst
 		public static void ExpandMacro(ref ILCode code, ref object operand, MethodBody methodBody)
 		{
 			switch (code) {
-					case ILCode.__Ldarg_0: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(0); break;
-					case ILCode.__Ldarg_1: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(1); break;
-					case ILCode.__Ldarg_2: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(2); break;
-					case ILCode.__Ldarg_3: 		code = ILCode.Ldarg; operand = methodBody.GetParameter(3); break;
-					case ILCode.__Ldloc_0: 		code = ILCode.Ldloc; operand = methodBody.Variables[0]; break;
-					case ILCode.__Ldloc_1: 		code = ILCode.Ldloc; operand = methodBody.Variables[1]; break;
-					case ILCode.__Ldloc_2: 		code = ILCode.Ldloc; operand = methodBody.Variables[2]; break;
-					case ILCode.__Ldloc_3: 		code = ILCode.Ldloc; operand = methodBody.Variables[3]; break;
-					case ILCode.__Stloc_0: 		code = ILCode.Stloc; operand = methodBody.Variables[0]; break;
-					case ILCode.__Stloc_1: 		code = ILCode.Stloc; operand = methodBody.Variables[1]; break;
-					case ILCode.__Stloc_2: 		code = ILCode.Stloc; operand = methodBody.Variables[2]; break;
-					case ILCode.__Stloc_3: 		code = ILCode.Stloc; operand = methodBody.Variables[3]; break;
-					case ILCode.__Ldarg_S: 		code = ILCode.Ldarg; break;
-					case ILCode.__Ldarga_S: 		code = ILCode.Ldarga; break;
-					case ILCode.__Starg_S: 		code = ILCode.Starg; break;
-					case ILCode.__Ldloc_S: 		code = ILCode.Ldloc; break;
-					case ILCode.__Ldloca_S: 		code = ILCode.Ldloca; break;
-					case ILCode.__Stloc_S: 		code = ILCode.Stloc; break;
-					case ILCode.__Ldc_I4_M1: 	code = ILCode.Ldc_I4; operand = -1; break;
-					case ILCode.__Ldc_I4_0: 		code = ILCode.Ldc_I4; operand = 0; break;
-					case ILCode.__Ldc_I4_1: 		code = ILCode.Ldc_I4; operand = 1; break;
-					case ILCode.__Ldc_I4_2: 		code = ILCode.Ldc_I4; operand = 2; break;
-					case ILCode.__Ldc_I4_3: 		code = ILCode.Ldc_I4; operand = 3; break;
-					case ILCode.__Ldc_I4_4: 		code = ILCode.Ldc_I4; operand = 4; break;
-					case ILCode.__Ldc_I4_5: 		code = ILCode.Ldc_I4; operand = 5; break;
-					case ILCode.__Ldc_I4_6: 		code = ILCode.Ldc_I4; operand = 6; break;
-					case ILCode.__Ldc_I4_7: 		code = ILCode.Ldc_I4; operand = 7; break;
-					case ILCode.__Ldc_I4_8: 		code = ILCode.Ldc_I4; operand = 8; break;
-					case ILCode.__Ldc_I4_S: 		code = ILCode.Ldc_I4; operand = (int) (sbyte) operand; break;
-					case ILCode.__Br_S: 			code = ILCode.Br; break;
-					case ILCode.__Brfalse_S: 	code = ILCode.__Brfalse; break;
-					case ILCode.__Brtrue_S: 		code = ILCode.Brtrue; break;
-					case ILCode.__Beq_S: 		code = ILCode.__Beq; break;
-					case ILCode.__Bge_S: 		code = ILCode.__Bge; break;
-					case ILCode.__Bgt_S: 		code = ILCode.__Bgt; break;
-					case ILCode.__Ble_S: 		code = ILCode.__Ble; break;
-					case ILCode.__Blt_S: 		code = ILCode.__Blt; break;
-					case ILCode.__Bne_Un_S: 		code = ILCode.__Bne_Un; break;
-					case ILCode.__Bge_Un_S: 		code = ILCode.__Bge_Un; break;
-					case ILCode.__Bgt_Un_S: 		code = ILCode.__Bgt_Un; break;
-					case ILCode.__Ble_Un_S: 		code = ILCode.__Ble_Un; break;
-					case ILCode.__Blt_Un_S:		code = ILCode.__Blt_Un; break;
-					case ILCode.__Leave_S:		code = ILCode.Leave; break;
+					case ILCode.__Ldarg_0:   code = ILCode.__Ldarg; operand = methodBody.GetParameter(0); break;
+					case ILCode.__Ldarg_1:   code = ILCode.__Ldarg; operand = methodBody.GetParameter(1); break;
+					case ILCode.__Ldarg_2:   code = ILCode.__Ldarg; operand = methodBody.GetParameter(2); break;
+					case ILCode.__Ldarg_3:   code = ILCode.__Ldarg; operand = methodBody.GetParameter(3); break;
+					case ILCode.__Ldloc_0:   code = ILCode.Ldloc; operand = methodBody.Variables[0]; break;
+					case ILCode.__Ldloc_1:   code = ILCode.Ldloc; operand = methodBody.Variables[1]; break;
+					case ILCode.__Ldloc_2:   code = ILCode.Ldloc; operand = methodBody.Variables[2]; break;
+					case ILCode.__Ldloc_3:   code = ILCode.Ldloc; operand = methodBody.Variables[3]; break;
+					case ILCode.__Stloc_0:   code = ILCode.Stloc; operand = methodBody.Variables[0]; break;
+					case ILCode.__Stloc_1:   code = ILCode.Stloc; operand = methodBody.Variables[1]; break;
+					case ILCode.__Stloc_2:   code = ILCode.Stloc; operand = methodBody.Variables[2]; break;
+					case ILCode.__Stloc_3:   code = ILCode.Stloc; operand = methodBody.Variables[3]; break;
+					case ILCode.__Ldarg_S:   code = ILCode.__Ldarg; break;
+					case ILCode.__Ldarga_S:  code = ILCode.__Ldarga; break;
+					case ILCode.__Starg_S:   code = ILCode.__Starg; break;
+					case ILCode.__Ldloc_S:   code = ILCode.Ldloc; break;
+					case ILCode.__Ldloca_S:  code = ILCode.Ldloca; break;
+					case ILCode.__Stloc_S:   code = ILCode.Stloc; break;
+					case ILCode.__Ldc_I4_M1: code = ILCode.Ldc_I4; operand = -1; break;
+					case ILCode.__Ldc_I4_0:  code = ILCode.Ldc_I4; operand = 0; break;
+					case ILCode.__Ldc_I4_1:  code = ILCode.Ldc_I4; operand = 1; break;
+					case ILCode.__Ldc_I4_2:  code = ILCode.Ldc_I4; operand = 2; break;
+					case ILCode.__Ldc_I4_3:  code = ILCode.Ldc_I4; operand = 3; break;
+					case ILCode.__Ldc_I4_4:  code = ILCode.Ldc_I4; operand = 4; break;
+					case ILCode.__Ldc_I4_5:  code = ILCode.Ldc_I4; operand = 5; break;
+					case ILCode.__Ldc_I4_6:  code = ILCode.Ldc_I4; operand = 6; break;
+					case ILCode.__Ldc_I4_7:  code = ILCode.Ldc_I4; operand = 7; break;
+					case ILCode.__Ldc_I4_8:  code = ILCode.Ldc_I4; operand = 8; break;
+					case ILCode.__Ldc_I4_S:  code = ILCode.Ldc_I4; operand = (int) (sbyte) operand; break;
+					case ILCode.__Br_S:      code = ILCode.Br; break;
+					case ILCode.__Brfalse_S: code = ILCode.__Brfalse; break;
+					case ILCode.__Brtrue_S:  code = ILCode.Brtrue; break;
+					case ILCode.__Beq_S:     code = ILCode.__Beq; break;
+					case ILCode.__Bge_S:     code = ILCode.__Bge; break;
+					case ILCode.__Bgt_S:     code = ILCode.__Bgt; break;
+					case ILCode.__Ble_S:     code = ILCode.__Ble; break;
+					case ILCode.__Blt_S:     code = ILCode.__Blt; break;
+					case ILCode.__Bne_Un_S:  code = ILCode.__Bne_Un; break;
+					case ILCode.__Bge_Un_S:  code = ILCode.__Bge_Un; break;
+					case ILCode.__Bgt_Un_S:  code = ILCode.__Bgt_Un; break;
+					case ILCode.__Ble_Un_S:  code = ILCode.__Ble_Un; break;
+					case ILCode.__Blt_Un_S:  code = ILCode.__Blt_Un; break;
+					case ILCode.__Leave_S:   code = ILCode.Leave; break;
+					case ILCode.__Ldind_I:   code = ILCode.Ldobj; operand = methodBody.Method.Module.TypeSystem.IntPtr; break;
+					case ILCode.__Ldind_I1:  code = ILCode.Ldobj; operand = methodBody.Method.Module.TypeSystem.SByte; break;
+					case ILCode.__Ldind_I2:  code = ILCode.Ldobj; operand = methodBody.Method.Module.TypeSystem.Int16; break;
+					case ILCode.__Ldind_I4:  code = ILCode.Ldobj; operand = methodBody.Method.Module.TypeSystem.Int32; break;
+					case ILCode.__Ldind_I8:  code = ILCode.Ldobj; operand = methodBody.Method.Module.TypeSystem.Int64; break;
+					case ILCode.__Ldind_U1:  code = ILCode.Ldobj; operand = methodBody.Method.Module.TypeSystem.Byte; break;
+					case ILCode.__Ldind_U2:  code = ILCode.Ldobj; operand = methodBody.Method.Module.TypeSystem.UInt16; break;
+					case ILCode.__Ldind_U4:  code = ILCode.Ldobj; operand = methodBody.Method.Module.TypeSystem.UInt32; break;
+					case ILCode.__Ldind_R4:  code = ILCode.Ldobj; operand = methodBody.Method.Module.TypeSystem.Single; break;
+					case ILCode.__Ldind_R8:  code = ILCode.Ldobj; operand = methodBody.Method.Module.TypeSystem.Double; break;
+					case ILCode.__Stind_I:   code = ILCode.Stobj; operand = methodBody.Method.Module.TypeSystem.IntPtr; break;
+					case ILCode.__Stind_I1:  code = ILCode.Stobj; operand = methodBody.Method.Module.TypeSystem.Byte; break;
+					case ILCode.__Stind_I2:  code = ILCode.Stobj; operand = methodBody.Method.Module.TypeSystem.Int16; break;
+					case ILCode.__Stind_I4:  code = ILCode.Stobj; operand = methodBody.Method.Module.TypeSystem.Int32; break;
+					case ILCode.__Stind_I8:  code = ILCode.Stobj; operand = methodBody.Method.Module.TypeSystem.Int64; break;
 			}
 		}
 		

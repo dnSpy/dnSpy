@@ -5,7 +5,7 @@ using System;
 
 namespace aa
 {
-	public static class CustomAtributes
+	public static class CustomAttributes
 	{
 		[Flags]
 		public enum EnumWithFlag
@@ -20,13 +20,13 @@ namespace aa
 		[AttributeUsage(AttributeTargets.All)]
 		public class MyAttribute : Attribute
 		{
-			public MyAttribute(CustomAtributes.EnumWithFlag en)
+			public MyAttribute(object val)
 			{
 			}
 		}
-		[CustomAtributes.MyAttribute(CustomAtributes.EnumWithFlag.Item1 | CustomAtributes.EnumWithFlag.Item2)]
+		[CustomAttributes.MyAttribute(CustomAttributes.EnumWithFlag.Item1 | CustomAttributes.EnumWithFlag.Item2)]
 		private static int field;
-		[CustomAtributes.MyAttribute(CustomAtributes.EnumWithFlag.All)]
+		[CustomAttributes.MyAttribute(CustomAttributes.EnumWithFlag.All)]
 		public static string Property
 		{
 			get
@@ -41,6 +41,24 @@ namespace aa
 			Console.WriteLine("{0} $$$ {1}", AttributeTargets.Interface, AttributeTargets.Property | AttributeTargets.Field);
 			AttributeTargets attributeTargets = AttributeTargets.Property | AttributeTargets.Field;
 			Console.WriteLine("{0} $$$ {1}", AttributeTargets.Interface, attributeTargets);
+		}
+		// No Boxing
+		[CustomAttributes.MyAttribute(new StringComparison[]
+		{
+			StringComparison.Ordinal, 
+			StringComparison.CurrentCulture
+		})]
+		public static void ArrayAsAttribute1()
+		{
+		}
+		// Boxing of each array element
+		[CustomAttributes.MyAttribute(new object[]
+		{
+			StringComparison.Ordinal, 
+			StringComparison.CurrentCulture
+		})]
+		public static void ArrayAsAttribute2()
+		{
 		}
 	}
 }

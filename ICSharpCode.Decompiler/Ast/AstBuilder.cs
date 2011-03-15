@@ -610,9 +610,16 @@ namespace ICSharpCode.Decompiler.Ast
 					astMethod.Modifiers = ConvertModifiers(methodDef);
 				else
 					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
-				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
+				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
 			}
 			ConvertAttributes(astMethod, methodDef);
+			if (methodDef.HasCustomAttributes && astMethod.Parameters.Count > 0) {
+				foreach (CustomAttribute ca in methodDef.CustomAttributes) {
+					if (ca.AttributeType.Name == "ExtensionAttribute" && ca.AttributeType.Namespace == "System.Runtime.CompilerServices") {
+						astMethod.Parameters.First().ParameterModifier = ParameterModifier.This;
+					}
+				}
+			}
 			astMethod.WithAnnotation(methodMapping);
 			return astMethod;
 		}
@@ -669,7 +676,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			astMethod.Name = CleanName(methodDef.DeclaringType.Name);
 			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
-			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context);
+			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
 			ConvertAttributes(astMethod, methodDef);
 			astMethod.WithAnnotation(methodMapping);			
 			return astMethod;
@@ -837,13 +844,19 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			foreach(ParameterDefinition paramDef in paramCol) {
 				ParameterDeclaration astParam = new ParameterDeclaration();
+				astParam.AddAnnotation(paramDef);
 				astParam.Type = ConvertType(paramDef.ParameterType, paramDef);
 				astParam.Name = paramDef.Name;
 				
 				if (paramDef.ParameterType is ByReferenceType) {
 					astParam.ParameterModifier = (!paramDef.IsIn && paramDef.IsOut) ? ParameterModifier.Out : ParameterModifier.Ref;
 				}
-				// TODO: params, this
+				if (paramDef.HasCustomAttributes) {
+					foreach (CustomAttribute ca in paramDef.CustomAttributes) {
+						if (ca.AttributeType.Name == "ParamArrayAttribute" && ca.AttributeType.Namespace == "System")
+							astParam.ParameterModifier = ParameterModifier.Params;
+					}
+				}
 				
 				ConvertCustomAttributes(astParam, paramDef);
 				ModuleDefinition module = ((MethodDefinition)paramDef.Method).Module;
@@ -1070,6 +1083,15 @@ namespace ICSharpCode.Decompiler.Ast
 			if (customAttributeProvider.HasCustomAttributes) {
 				var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
 				foreach (var customAttribute in customAttributeProvider.CustomAttributes) {
+					if (customAttribute.AttributeType.Name == "ExtensionAttribute" && customAttribute.AttributeType.Namespace == "System.Runtime.CompilerServices") {
+						// don't show the ExtensionAttribute (it's converted to the 'this' modifier)
+						continue;
+					}
+					if (customAttribute.AttributeType.Name == "ParamArrayAttribute" && customAttribute.AttributeType.Namespace == "System") {
+						// don't show the ParamArrayAttribute (it's converted to the 'params' modifier)
+						continue;
+					}
+					
 					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
 					attribute.AddAnnotation(customAttribute);
 					attribute.Type = ConvertType(customAttribute.AttributeType);
@@ -1115,7 +1137,7 @@ namespace ICSharpCode.Decompiler.Ast
 						section.Attributes.Add(attribute);
 						attributedNode.AddChild(section, AttributedNode.AttributeRole);
 					}
-				} else {
+				} else if (attributes.Count > 0) {
 					// use single section for all attributes
 					var section = new AttributeSection();
 					section.AttributeTarget = target;
@@ -1125,17 +1147,31 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		private static Expression ConvertArgumentValue(CustomAttributeArgument parameter)
+		private static Expression ConvertArgumentValue(CustomAttributeArgument argument)
 		{
-			var type = parameter.Type.Resolve();
+			if (argument.Value is CustomAttributeArgument[]) {
+				ArrayInitializerExpression arrayInit = new ArrayInitializerExpression();
+				foreach (CustomAttributeArgument element in (CustomAttributeArgument[])argument.Value) {
+					arrayInit.Elements.Add(ConvertArgumentValue(element));
+				}
+				ArrayType arrayType = argument.Type as ArrayType;
+				return new ArrayCreateExpression {
+					Type = ConvertType(arrayType != null ? arrayType.ElementType : argument.Type),
+					Initializer = arrayInit
+				};
+			} else if (argument.Value is CustomAttributeArgument) {
+				// occurs with boxed arguments
+				return ConvertArgumentValue((CustomAttributeArgument)argument.Value);
+			}
+			var type = argument.Type.Resolve();
 			if (type != null && type.IsEnum) {
-				return MakePrimitive(Convert.ToInt64(parameter.Value), type);
-			} else if (parameter.Value is TypeReference) {
+				return MakePrimitive(Convert.ToInt64(argument.Value), type);
+			} else if (argument.Value is TypeReference) {
 				return new TypeOfExpression() {
-					Type = ConvertType((TypeReference)parameter.Value),
+					Type = ConvertType((TypeReference)argument.Value),
 				};
 			} else {
-				return new PrimitiveExpression(parameter.Value);
+				return new PrimitiveExpression(argument.Value);
 			}
 		}
 		#endregion
@@ -1146,6 +1182,8 @@ namespace ICSharpCode.Decompiler.Ast
 				return new Ast.PrimitiveExpression(false);
 			else if (TypeAnalysis.IsBoolean(type) && val == 1)
 				return new Ast.PrimitiveExpression(true);
+			else if (val == 0 && type is PointerType)
+				return new Ast.NullReferenceExpression();
 			if (type != null)
 			{ // cannot rely on type.IsValueType, it's not set for typerefs (but is set for typespecs)
 				TypeDefinition enumDefinition = type.Resolve();

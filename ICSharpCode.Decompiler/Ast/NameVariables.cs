@@ -31,15 +31,26 @@ namespace ICSharpCode.Decompiler.Ast
 		};
 		
 		
-		public static void AssignNamesToVariables(IEnumerable<string> existingNames, IEnumerable<ILVariable> variables, ILBlock methodBody)
+		public static void AssignNamesToVariables(DecompilerContext context, IEnumerable<ILVariable> parameters, IEnumerable<ILVariable> variables, ILBlock methodBody)
 		{
 			NameVariables nv = new NameVariables();
-			nv.AddExistingNames(existingNames);
+			nv.context = context;
+			nv.fieldNamesInCurrentType = context.CurrentType.Fields.Select(f => f.Name).ToList();
+			nv.AddExistingNames(parameters.Select(p => p.Name));
+			nv.AddExistingNames(variables.Where(v => v.IsGenerated).Select(v => v.Name));
+			foreach (ILVariable p in parameters) {
+				if (string.IsNullOrEmpty(p.Name))
+					p.Name = nv.GenerateNameForVariable(p, methodBody);
+			}
 			foreach (ILVariable varDef in variables) {
-				nv.AssignNameToVariable(varDef, methodBody.GetSelfAndChildrenRecursive<ILExpression>());
+				if (!varDef.IsGenerated) {
+					varDef.Name = nv.GenerateNameForVariable(varDef, methodBody);
+				}
 			}
 		}
 		
+		DecompilerContext context;
+		List<string> fieldNamesInCurrentType;
 		Dictionary<string, int> typeNames = new Dictionary<string, int>();
 		
 		void AddExistingNames(IEnumerable<string> existingNames)
@@ -69,29 +80,74 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		void AssignNameToVariable(ILVariable varDef, IEnumerable<ILExpression> allExpressions)
+		string GenerateNameForVariable(ILVariable variable, ILBlock methodBody)
 		{
 			string proposedName = null;
-			foreach (ILExpression expr in allExpressions) {
-				if (expr.Operand != varDef)
-					continue;
-				if (expr.Code == ILCode.Stloc) {
-					proposedName = GetNameFromExpression(expr.Arguments.Single());
+			if (variable.Type == context.CurrentType.Module.TypeSystem.Int32) {
+				// test whether the variable might be a loop counter
+				bool isLoopCounter = false;
+				foreach (ILWhileLoop loop in methodBody.GetSelfAndChildrenRecursive<ILWhileLoop>()) {
+					ILExpression expr = loop.Condition;
+					while (expr != null && expr.Code == ILCode.LogicNot)
+						expr = expr.Arguments[0];
+					if (expr != null) {
+						switch (expr.Code) {
+							case ILCode.Clt:
+							case ILCode.Clt_Un:
+							case ILCode.Cgt:
+							case ILCode.Cgt_Un:
+								ILVariable loadVar;
+								if (expr.Arguments[0].Match(ILCode.Ldloc, out loadVar) && loadVar == variable) {
+									isLoopCounter = true;
+								}
+								break;
+						}
+					}
 				}
-				if (proposedName != null)
-					break;
+				if (isLoopCounter) {
+					// For loop variables, use i,j,k,l,m,n
+					for (char c = 'i'; c <= 'n'; c++) {
+						if (!typeNames.ContainsKey(c.ToString())) {
+							proposedName = c.ToString();
+							break;
+						}
+					}
+				}
 			}
-			if (proposedName == null)
-				proposedName = GetNameByType(varDef.Type);
+			if (string.IsNullOrEmpty(proposedName)) {
+				var proposedNameForStores =
+					(from expr in methodBody.GetSelfAndChildrenRecursive<ILExpression>()
+					 where expr.Code == ILCode.Stloc && expr.Operand == variable
+					 select GetNameFromExpression(expr.Arguments.Single())
+					).Except(fieldNamesInCurrentType).ToList();
+				if (proposedNameForStores.Count == 1) {
+					proposedName = proposedNameForStores[0];
+				}
+			}
+			if (string.IsNullOrEmpty(proposedName)) {
+				var proposedNameForLoads =
+					(from expr in methodBody.GetSelfAndChildrenRecursive<ILExpression>()
+					 from i in Enumerable.Range(0, expr.Arguments.Count)
+					 let arg = expr.Arguments[i]
+					 where arg.Code == ILCode.Ldloc && arg.Operand == variable
+					 select GetNameForArgument(expr, i)
+					).Except(fieldNamesInCurrentType).ToList();
+				if (proposedNameForLoads.Count == 1) {
+					proposedName = proposedNameForLoads[0];
+				}
+			}
+			if (string.IsNullOrEmpty(proposedName)) {
+				proposedName = GetNameByType(variable.Type);
+			}
 			
 			if (!typeNames.ContainsKey(proposedName)) {
 				typeNames.Add(proposedName, 0);
 			}
 			int count = ++typeNames[proposedName];
 			if (count > 1) {
-				varDef.Name = proposedName + count.ToString();
+				return proposedName + count.ToString();
 			} else {
-				varDef.Name = proposedName;
+				return proposedName;
 			}
 		}
 		
@@ -99,23 +155,53 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			switch (expr.Code) {
 				case ILCode.Ldfld:
-					// Use the field name only if it's not a field on this (avoid confusion between local variables and fields)
-					if (!(expr.Arguments[0].Code == ILCode.Ldarg && ((ParameterDefinition)expr.Arguments[0].Operand).Index < 0))
-						return CleanUpVariableName(((FieldReference)expr.Operand).Name);
-					break;
 				case ILCode.Ldsfld:
 					return CleanUpVariableName(((FieldReference)expr.Operand).Name);
 				case ILCode.Call:
 				case ILCode.Callvirt:
 					MethodReference mr = (MethodReference)expr.Operand;
-					if (mr.Name.StartsWith("get_", StringComparison.Ordinal) && mr.Parameters.Count == 0) {
+					if (mr.Name.StartsWith("get_", StringComparison.OrdinalIgnoreCase) && mr.Parameters.Count == 0) {
 						// use name from properties, but not from indexers
 						return CleanUpVariableName(mr.Name.Substring(4));
-					} else if (mr.Name.StartsWith("Get", StringComparison.Ordinal) && mr.Name.Length >= 4 && char.IsUpper(mr.Name[3])) {
+					} else if (mr.Name.StartsWith("Get", StringComparison.OrdinalIgnoreCase) && mr.Name.Length >= 4 && char.IsUpper(mr.Name[3])) {
 						// use name from Get-methods
 						return CleanUpVariableName(mr.Name.Substring(3));
 					}
 					break;
+			}
+			return null;
+		}
+		
+		static string GetNameForArgument(ILExpression parent, int i)
+		{
+			switch (parent.Code) {
+				case ILCode.Stfld:
+				case ILCode.Stsfld:
+					if (i == parent.Arguments.Count - 1) // last argument is stored value
+						return CleanUpVariableName(((FieldReference)parent.Operand).Name);
+					else
+						break;
+				case ILCode.Call:
+				case ILCode.Callvirt:
+				case ILCode.Newobj:
+					MethodReference methodRef = (MethodReference)parent.Operand;
+					if (methodRef.Parameters.Count == 1 && i == parent.Arguments.Count - 1) {
+						// argument might be value of a setter
+						if (methodRef.Name.StartsWith("set_", StringComparison.OrdinalIgnoreCase)) {
+							return CleanUpVariableName(methodRef.Name.Substring(4));
+						} else if (methodRef.Name.StartsWith("Set", StringComparison.OrdinalIgnoreCase) && methodRef.Name.Length >= 4 && char.IsUpper(methodRef.Name[3])) {
+							return CleanUpVariableName(methodRef.Name.Substring(3));
+						}
+					}
+					MethodDefinition methodDef = methodRef.Resolve();
+					if (methodDef != null) {
+						var p = methodDef.Parameters.ElementAtOrDefault((parent.Code != ILCode.Newobj && methodDef.HasThis) ? i - 1 : i);
+						if (p != null && !string.IsNullOrEmpty(p.Name))
+							return CleanUpVariableName(p.Name);
+					}
+					break;
+				case ILCode.Ret:
+					return "result";
 			}
 			return null;
 		}
@@ -127,13 +213,6 @@ namespace ICSharpCode.Decompiler.Ast
 				type = ((GenericInstanceType)type).GenericArguments[0];
 			}
 			
-			if (type.FullName == "System.Int32") {
-				// try i,j,k, etc.
-				for (char c = 'i'; c <= 'n'; c++) {
-					if (!typeNames.ContainsKey(c.ToString()))
-						return c.ToString();
-				}
-			}
 			string name;
 			if (type.IsArray) {
 				name = "array";
@@ -155,6 +234,13 @@ namespace ICSharpCode.Decompiler.Ast
 			int pos = name.IndexOf('`');
 			if (pos >= 0)
 				name = name.Substring(0, pos);
+			
+			// remove field prefix:
+			if (name.Length > 2 && name.StartsWith("m_", StringComparison.Ordinal))
+				name = name.Substring(2);
+			else if (name.Length > 1 && name[0] == '_')
+				name = name.Substring(1);
+			
 			if (name.Length == 0)
 				return "obj";
 			else

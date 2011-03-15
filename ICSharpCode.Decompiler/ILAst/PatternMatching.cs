@@ -105,8 +105,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public static bool MatchThis(this ILNode node)
 		{
-			ParameterDefinition parDef;
-			return node.Match(ILCode.Ldarg, out parDef) && parDef.Index == -1;
+			ILVariable v;
+			return node.Match(ILCode.Ldloc, out v) && v.IsParameter && v.OriginalParameter.Index == -1;
 		}
 	}
 }

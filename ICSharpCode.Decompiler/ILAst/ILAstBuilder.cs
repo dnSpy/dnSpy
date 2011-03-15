@@ -457,6 +457,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 			
+			// Convert parameters to ILVariables
+			ConvertParameters(body);
+			
 			return body;
 		}
 		
@@ -549,6 +552,45 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 			}
+		}
+		
+		public List<ILVariable> Parameters = new List<ILVariable>();
+		
+		void ConvertParameters(List<ByteCode> body)
+		{
+			ILVariable thisParameter = null;
+			if (methodDef.HasThis) {
+				TypeReference type = methodDef.DeclaringType;
+				thisParameter = new ILVariable();
+				thisParameter.Type = type.IsValueType ? new ByReferenceType(type) : type;
+				thisParameter.Name = "this";
+				thisParameter.OriginalParameter = methodDef.Body.ThisParameter;
+			}
+			foreach (ParameterDefinition p in methodDef.Parameters) {
+				this.Parameters.Add(new ILVariable { Type = p.ParameterType, Name = p.Name, OriginalParameter = p });
+			}
+			foreach (ByteCode byteCode in body) {
+				ParameterDefinition p;
+				switch (byteCode.Code) {
+					case ILCode.__Ldarg:
+						p = (ParameterDefinition)byteCode.Operand;
+						byteCode.Code = ILCode.Ldloc;
+						byteCode.Operand = p.Index < 0 ? thisParameter : this.Parameters[p.Index];
+						break;
+					case ILCode.__Starg:
+						p = (ParameterDefinition)byteCode.Operand;
+						byteCode.Code = ILCode.Stloc;
+						byteCode.Operand = p.Index < 0 ? thisParameter : this.Parameters[p.Index];
+						break;
+					case ILCode.__Ldarga:
+						p = (ParameterDefinition)byteCode.Operand;
+						byteCode.Code = ILCode.Ldloca;
+						byteCode.Operand = p.Index < 0 ? thisParameter : this.Parameters[p.Index];
+						break;
+				}
+			}
+			if (thisParameter != null)
+				this.Parameters.Add(thisParameter);
 		}
 		
 		List<ILNode> ConvertToAst(List<ByteCode> body, HashSet<ExceptionHandler> ehs)

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using Mono.Cecil;
@@ -113,23 +114,35 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (!IsAnonymousMethod(context, method))
 				return false;
 			
+			// Create AnonymousMethodExpression and prepare parameters
+			AnonymousMethodExpression ame = new AnonymousMethodExpression();
+			ame.Parameters.AddRange(AstBuilder.MakeParameters(method.Parameters));
+			ame.HasParameterList = true;
+			
 			// Decompile the anonymous method:
 			
 			DecompilerContext subContext = context.Clone();
 			subContext.CurrentMethod = method;
-			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, subContext);
+			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, subContext, ame.Parameters);
 			TransformationPipeline.RunTransformationsUntil(body, v => v is DelegateConstruction, subContext);
 			body.AcceptVisitor(this, null);
 			
-			AnonymousMethodExpression ame = new AnonymousMethodExpression();
+			
 			bool isLambda = false;
-			if (method.Parameters.All(p => string.IsNullOrEmpty(p.Name))) {
-				ame.HasParameterList = false;
-			} else {
-				ame.HasParameterList = true;
-				ame.Parameters.AddRange(AstBuilder.MakeParameters(method.Parameters));
-				if (ame.Parameters.All(p => p.ParameterModifier == ParameterModifier.None)) {
-					isLambda = (body.Statements.Count == 1 && body.Statements.Single() is ReturnStatement);
+			if (ame.Parameters.All(p => p.ParameterModifier == ParameterModifier.None)) {
+				isLambda = (body.Statements.Count == 1 && body.Statements.Single() is ReturnStatement);
+			}
+			// Remove the parameter list from an AnonymousMethodExpression if the original method had no names,
+			// and the parameters are not used in the method body
+			if (!isLambda && method.Parameters.All(p => string.IsNullOrEmpty(p.Name))) {
+				var parameterReferencingIdentifiers =
+					from ident in body.Descendants.OfType<IdentifierExpression>()
+					let v = ident.Annotation<ILVariable>()
+					where v != null && v.IsParameter && method.Parameters.Contains(v.OriginalParameter)
+					select ident;
+				if (!parameterReferencingIdentifiers.Any()) {
+					ame.Parameters.Clear();
+					ame.HasParameterList = false;
 				}
 			}
 			
@@ -196,8 +209,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (blockStatement.Parent.NodeType == NodeType.Member || blockStatement.Parent is Accessor) {
 					// Delete any following statements as long as they assign parameters to the display class
 					// Do parameter handling only for closures created in the top scope (direct child of method/accessor)
-					List<ParameterReference> parameterOccurrances = blockStatement.Descendants.OfType<IdentifierExpression>()
-						.Select(n => n.Annotation<ParameterReference>()).Where(p => p != null).ToList();
+					List<ILVariable> parameterOccurrances = blockStatement.Descendants.OfType<IdentifierExpression>()
+						.Select(n => n.Annotation<ILVariable>()).Where(p => p != null && p.IsParameter).ToList();
 					AstNode next;
 					for (; cur != null; cur = next) {
 						next = cur.NextSibling;
@@ -218,8 +231,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								isParameter = true;
 							} else if (right is IdentifierExpression) {
 								// handle parameters only if the whole method contains no other occurrance except for 'right'
-								ParameterReference param = right.Annotation<ParameterReference>();
-								isParameter = parameterOccurrances.Count(c => c == param) == 1;
+								ILVariable param = right.Annotation<ILVariable>();
+								isParameter = param.IsParameter && parameterOccurrances.Count(c => c == param) == 1;
 							}
 							if (isParameter) {
 								dict[m.Get<MemberReferenceExpression>("left").Single().Annotation<FieldReference>().ResolveWithinSameModule()] = right;
