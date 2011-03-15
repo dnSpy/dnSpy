@@ -108,7 +108,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <returns>The inferred type</returns>
 		TypeReference InferTypeForExpression(ILExpression expr, TypeReference expectedType, bool forceInferChildren = false)
 		{
-			expr.ExpectedType = expectedType;
+			if (expectedType != null && expr.ExpectedType != expectedType) {
+				expr.ExpectedType = expectedType;
+				forceInferChildren = true;
+			}
 			if (forceInferChildren || expr.InferredType == null)
 				expr.InferredType = DoInferTypeForExpression(expr, expectedType, forceInferChildren);
 			return expr.InferredType;
@@ -235,25 +238,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					return GetFieldType((FieldReference)expr.Operand);
 					#endregion
 					#region Reference/Pointer instructions
-				case ILCode.Ldind_I:
-				case ILCode.Ldind_I1:
-				case ILCode.Ldind_I2:
-				case ILCode.Ldind_I4:
-				case ILCode.Ldind_I8:
-				case ILCode.Ldind_U1:
-				case ILCode.Ldind_U2:
-				case ILCode.Ldind_U4:
-				case ILCode.Ldind_R4:
-				case ILCode.Ldind_R8:
 				case ILCode.Ldind_Ref:
 					return UnpackPointer(InferTypeForExpression(expr.Arguments[0], null));
-				case ILCode.Stind_I1:
-				case ILCode.Stind_I2:
-				case ILCode.Stind_I4:
-				case ILCode.Stind_I8:
-				case ILCode.Stind_R4:
-				case ILCode.Stind_R8:
-				case ILCode.Stind_I:
 				case ILCode.Stind_Ref:
 					if (forceInferChildren) {
 						TypeReference elementType = UnpackPointer(InferTypeForExpression(expr.Arguments[0], null));
@@ -261,12 +247,18 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					return null;
 				case ILCode.Ldobj:
+					if (forceInferChildren) {
+						if (InferTypeForExpression(expr.Arguments[0], new ByReferenceType((TypeReference)expr.Operand)) is PointerType)
+							InferTypeForExpression(expr.Arguments[0], new PointerType((TypeReference)expr.Operand));
+					}
 					return (TypeReference)expr.Operand;
 				case ILCode.Stobj:
 					if (forceInferChildren) {
+						if (InferTypeForExpression(expr.Arguments[0], new ByReferenceType((TypeReference)expr.Operand)) is PointerType)
+							InferTypeForExpression(expr.Arguments[0], new PointerType((TypeReference)expr.Operand));
 						InferTypeForExpression(expr.Arguments[1], (TypeReference)expr.Operand);
 					}
-					return null;
+					return (TypeReference)expr.Operand;
 				case ILCode.Initobj:
 					return null;
 				case ILCode.DefaultValue:
@@ -326,9 +318,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldc_I4:
 					if (IsBoolean(expectedType) && ((int)expr.Operand == 0 || (int)expr.Operand == 1))
 						return typeSystem.Boolean;
-					return IsIntegerOrEnum(expectedType) ? expectedType : typeSystem.Int32;
+					return (IsIntegerOrEnum(expectedType) || expectedType is PointerType) ? expectedType : typeSystem.Int32;
 				case ILCode.Ldc_I8:
-					return (IsIntegerOrEnum(expectedType)) ? expectedType : typeSystem.Int64;
+					return (IsIntegerOrEnum(expectedType) || expectedType is PointerType) ? expectedType : typeSystem.Int64;
 				case ILCode.Ldc_R4:
 					return typeSystem.Single;
 				case ILCode.Ldc_R8:
@@ -411,43 +403,43 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Conv_I1:
 				case ILCode.Conv_Ovf_I1:
 				case ILCode.Conv_Ovf_I1_Un:
-					return (GetInformationAmount(expectedType) == 8 && IsSigned(expectedType) == true) ? expectedType : typeSystem.SByte;
+					return HandleConversion(8, true, expr.Arguments[0], expectedType, typeSystem.Byte);
 				case ILCode.Conv_I2:
 				case ILCode.Conv_Ovf_I2:
 				case ILCode.Conv_Ovf_I2_Un:
-					return (GetInformationAmount(expectedType) == 16 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int16;
+					return HandleConversion(16, true, expr.Arguments[0], expectedType, typeSystem.UInt16);
 				case ILCode.Conv_I4:
 				case ILCode.Conv_Ovf_I4:
 				case ILCode.Conv_Ovf_I4_Un:
-					return (GetInformationAmount(expectedType) == 32 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int32;
+					return HandleConversion(32, true, expr.Arguments[0], expectedType, typeSystem.UInt32);
 				case ILCode.Conv_I8:
 				case ILCode.Conv_Ovf_I8:
 				case ILCode.Conv_Ovf_I8_Un:
-					return (GetInformationAmount(expectedType) == 64 && IsSigned(expectedType) == true) ? expectedType : typeSystem.Int64;
+					return HandleConversion(64, true, expr.Arguments[0], expectedType, typeSystem.UInt64);
 				case ILCode.Conv_U1:
 				case ILCode.Conv_Ovf_U1:
 				case ILCode.Conv_Ovf_U1_Un:
-					return (GetInformationAmount(expectedType) == 8 && IsSigned(expectedType) == false) ? expectedType : typeSystem.Byte;
+					return HandleConversion(8, false, expr.Arguments[0], expectedType, typeSystem.SByte);
 				case ILCode.Conv_U2:
 				case ILCode.Conv_Ovf_U2:
 				case ILCode.Conv_Ovf_U2_Un:
-					return (GetInformationAmount(expectedType) == 16 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt16;
+					return HandleConversion(16, false, expr.Arguments[0], expectedType, typeSystem.Int16);
 				case ILCode.Conv_U4:
 				case ILCode.Conv_Ovf_U4:
 				case ILCode.Conv_Ovf_U4_Un:
-					return (GetInformationAmount(expectedType) == 32 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt32;
+					return HandleConversion(32, false, expr.Arguments[0], expectedType, typeSystem.Int32);
 				case ILCode.Conv_U8:
 				case ILCode.Conv_Ovf_U8:
 				case ILCode.Conv_Ovf_U8_Un:
-					return (GetInformationAmount(expectedType) == 64 && IsSigned(expectedType) == false) ? expectedType : typeSystem.UInt64;
+					return HandleConversion(64, false, expr.Arguments[0], expectedType, typeSystem.UInt64);
 				case ILCode.Conv_I:
 				case ILCode.Conv_Ovf_I:
 				case ILCode.Conv_Ovf_I_Un:
-					return (GetInformationAmount(expectedType) == nativeInt && IsSigned(expectedType) == true) ? expectedType : typeSystem.IntPtr;
+					return HandleConversion(nativeInt, true, expr.Arguments[0], expectedType, typeSystem.IntPtr);
 				case ILCode.Conv_U:
 				case ILCode.Conv_Ovf_U:
 				case ILCode.Conv_Ovf_U_Un:
-					return (GetInformationAmount(expectedType) == nativeInt && IsSigned(expectedType) == false) ? expectedType : typeSystem.UIntPtr;
+					return HandleConversion(nativeInt, false, expr.Arguments[0], expectedType, typeSystem.UIntPtr);
 				case ILCode.Conv_R4:
 					return typeSystem.Single;
 				case ILCode.Conv_R8:
@@ -517,6 +509,24 @@ namespace ICSharpCode.Decompiler.ILAst
 					Debug.WriteLine("Type Inference: Can't handle " + expr.Code.GetName());
 					return null;
 			}
+		}
+		
+		TypeReference HandleConversion(int targetBitSize, bool targetSigned, ILExpression arg, TypeReference expectedType, TypeReference targetType)
+		{
+			if (targetBitSize >= nativeInt && expectedType is PointerType) {
+				InferTypeForExpression(arg, expectedType);
+				return expectedType;
+			}
+			TypeReference argType = InferTypeForExpression(arg, null);
+			if (targetBitSize >= nativeInt && argType is ByReferenceType) {
+				// conv instructions on managed references mean that the GC should stop tracking them, so they become pointers:
+				PointerType ptrType = new PointerType(((ByReferenceType)argType).ElementType);
+				InferTypeForExpression(arg, ptrType);
+				return ptrType;
+			} else if (targetBitSize >= nativeInt && argType is PointerType) {
+				return argType;
+			}
+			return (GetInformationAmount(expectedType) == targetBitSize && IsSigned(expectedType) == targetSigned) ? expectedType : targetType;
 		}
 		
 		static TypeReference GetFieldType(FieldReference fieldReference)

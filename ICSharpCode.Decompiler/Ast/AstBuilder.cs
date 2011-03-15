@@ -1131,6 +1131,8 @@ namespace ICSharpCode.Decompiler.Ast
 				return new Ast.PrimitiveExpression(false);
 			else if (TypeAnalysis.IsBoolean(type) && val == 1)
 				return new Ast.PrimitiveExpression(true);
+			else if (val == 0 && type is PointerType)
+				return new Ast.NullReferenceExpression();
 			if (type != null)
 			{ // cannot rely on type.IsValueType, it's not set for typerefs (but is set for typespecs)
 				TypeDefinition enumDefinition = type.Resolve();

@@ -318,9 +318,9 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Conv_U2:
 				case ILCode.Conv_U4:
 				case ILCode.Conv_U8:
+				case ILCode.Conv_I:
+				case ILCode.Conv_U:
 					return arg1; // conversion is handled by Convert() function using the info from type analysis
-					case ILCode.Conv_I:    return arg1.CastTo(typeof(IntPtr)); // TODO
-					case ILCode.Conv_U:    return arg1.CastTo(typeof(UIntPtr)); // TODO
 					case ILCode.Conv_R4:   return arg1.CastTo(typeof(float));
 					case ILCode.Conv_R8:   return arg1.CastTo(typeof(double));
 					case ILCode.Conv_R_Un: return arg1.CastTo(typeof(double)); // TODO
@@ -352,35 +352,18 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Unbox:          return InlineAssembly(byteCode, args);
 					#endregion
 					#region Indirect
-				case ILCode.Ldind_I:
-				case ILCode.Ldind_I1:
-				case ILCode.Ldind_I2:
-				case ILCode.Ldind_I4:
-				case ILCode.Ldind_I8:
-				case ILCode.Ldind_U1:
-				case ILCode.Ldind_U2:
-				case ILCode.Ldind_U4:
-				case ILCode.Ldind_R4:
-				case ILCode.Ldind_R8:
 				case ILCode.Ldind_Ref:
 				case ILCode.Ldobj:
-					if (args[0] is DirectionExpression)
-						return ((DirectionExpression)args[0]).Expression.Detach();
+					if (arg1 is DirectionExpression)
+						return ((DirectionExpression)arg1).Expression.Detach();
 					else
-						return InlineAssembly(byteCode, args);
-				case ILCode.Stind_I:
-				case ILCode.Stind_I1:
-				case ILCode.Stind_I2:
-				case ILCode.Stind_I4:
-				case ILCode.Stind_I8:
-				case ILCode.Stind_R4:
-				case ILCode.Stind_R8:
+						return new UnaryOperatorExpression(UnaryOperatorType.Dereference, arg1);
 				case ILCode.Stind_Ref:
 				case ILCode.Stobj:
-					if (args[0] is DirectionExpression)
-						return new AssignmentExpression(((DirectionExpression)args[0]).Expression.Detach(), args[1]);
+					if (arg1 is DirectionExpression)
+						return new AssignmentExpression(((DirectionExpression)arg1).Expression.Detach(), arg2);
 					else
-						return InlineAssembly(byteCode, args);
+						return new AssignmentExpression(new UnaryOperatorExpression(UnaryOperatorType.Dereference, arg1), arg2);
 					#endregion
 					case ILCode.Arglist:  return InlineAssembly(byteCode, args);
 					case ILCode.Break:    return InlineAssembly(byteCode, args);
@@ -769,6 +752,22 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			if (reqType == null || actualType == reqType) {
 				return expr;
+			} else if (actualType is ByReferenceType && reqType is PointerType && expr is DirectionExpression) {
+				return Convert(
+					new UnaryOperatorExpression(UnaryOperatorType.AddressOf, ((DirectionExpression)expr).Expression.Detach()),
+					new PointerType(((ByReferenceType)actualType).ElementType),
+					reqType);
+			} else if (actualType is PointerType && reqType is ByReferenceType) {
+				expr = Convert(expr, actualType, new PointerType(((ByReferenceType)reqType).ElementType));
+				return new DirectionExpression {
+					FieldDirection = FieldDirection.Ref,
+					Expression = new UnaryOperatorExpression(UnaryOperatorType.Dereference, expr)
+				};
+			} else if (actualType is PointerType && reqType is PointerType) {
+				if (actualType.FullName != reqType.FullName)
+					return expr.CastTo(AstBuilder.ConvertType(reqType));
+				else
+					return expr;
 			} else {
 				bool actualIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(actualType);
 				bool requiredIsIntegerOrEnum = TypeAnalysis.IsIntegerOrEnum(reqType);
