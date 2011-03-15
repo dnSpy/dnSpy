@@ -26,4 +26,34 @@ public class UnsafeCode
 	{
 		PassRefParameterAsPointer(ref *p);
 	}
+	
+	public unsafe void FixedStringAccess(string text)
+	{
+		fixed (char* c = text) {
+			char* tmp = c;
+			while (*tmp != 0) {
+				*tmp = 'A';
+				tmp++;
+			}
+		}
+	}
+	
+	public unsafe void PutDoubleIntoLongArray1(long[] array, int index, double val)
+	{
+		fixed (long* l = array) {
+			((double*)l)[index] = val;
+		}
+	}
+	
+	public unsafe void PutDoubleIntoLongArray2(long[] array, int index, double val)
+	{
+		fixed (long* l = &array[index]) {
+			*(double*)l = val;
+		}
+	}
+	
+	public unsafe string PointerReferenceExpression(double* d)
+	{
+		return d->ToString();
+	}
 }

@@ -30,7 +30,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				initializerTransforms.TransformArrayInitializers,
 				initializerTransforms.TransformCollectionInitializers,
 				transforms.CachedDelegateInitialization,
-				transforms.MakeAssignmentExpression
+				transforms.MakeAssignmentExpression,
+				transforms.IntroduceFixedStatements
 			};
 			Func<ILExpression, ILExpression>[] exprTransforms = {
 				HandleDecimalConstants,
@@ -290,6 +291,106 @@ namespace ICSharpCode.Decompiler.ILAst
 				return store.Arguments.Last().Code == ILCode.Ldloc && store.Arguments.Last().Operand == exprVar;
 			}
 			return false;
+		}
+		#endregion
+		
+		#region IntroduceFixedStatements
+		void IntroduceFixedStatements(ILBlock block, ref int i)
+		{
+			// stloc(pinned_Var, conv.u(ldc.i4(0)))
+			ILExpression initValue;
+			ILVariable pinnedVar;
+			if (!MatchFixedInitializer(block, i, out pinnedVar, out initValue))
+				return;
+			// find initialization of v:
+			int j;
+			for (j = i + 1; j < block.Body.Count; j++) {
+				ILVariable v2;
+				ILExpression storedVal;
+				if (block.Body[j].Match(ILCode.Stloc, out v2, out storedVal) && v2 == pinnedVar) {
+					if (IsNullOrZero(storedVal)) {
+						// Create fixed statement from i to j
+						ILFixedStatement stmt = new ILFixedStatement();
+						stmt.Initializer = initValue;
+						stmt.BodyBlock = new ILBlock(block.Body.GetRange(i + 1, j - i - 1)); // from i+1 to j-1 (inclusive)
+						block.Body.RemoveRange(i + 1, j - i); // from j+1 to i (inclusive)
+						block.Body[i] = stmt;
+						if (pinnedVar.Type.IsByReference)
+							pinnedVar.Type = new PointerType(((ByReferenceType)pinnedVar.Type).ElementType);
+						break;
+					}
+				}
+			}
+		}
+		
+		bool IsNullOrZero(ILExpression expr)
+		{
+			if (expr.Code == ILCode.Conv_U || expr.Code == ILCode.Conv_I)
+				expr = expr.Arguments[0];
+			return (expr.Code == ILCode.Ldc_I4 && (int)expr.Operand == 0) || expr.Code == ILCode.Ldnull;
+		}
+		
+		bool MatchFixedInitializer(ILBlock block, int i, out ILVariable pinnedVar, out ILExpression initValue)
+		{
+			if (block.Body[i].Match(ILCode.Stloc, out pinnedVar, out initValue)) {
+				initValue = (ILExpression)block.Body[i];
+				return pinnedVar.IsPinned;
+			}
+			ILCondition ifStmt = block.Body[i] as ILCondition;
+			ILExpression arrayLoadingExpr;
+			if (ifStmt != null && MatchFixedArrayInitializerCondition(ifStmt.Condition, out arrayLoadingExpr)) {
+				ILVariable arrayVariable = (ILVariable)arrayLoadingExpr.Operand;
+				ILExpression trueValue;
+				if (ifStmt.TrueBlock != null && ifStmt.TrueBlock.Body.Count == 1
+				    && ifStmt.TrueBlock.Body[0].Match(ILCode.Stloc, out pinnedVar, out trueValue)
+				    && pinnedVar.IsPinned && IsNullOrZero(trueValue))
+				{
+					ILVariable stlocVar;
+					ILExpression falseValue;
+					if (ifStmt.FalseBlock != null && ifStmt.FalseBlock.Body.Count == 1
+					    && ifStmt.FalseBlock.Body[0].Match(ILCode.Stloc, out stlocVar, out falseValue) && stlocVar == pinnedVar)
+					{
+						ILVariable loadedVariable;
+						if (falseValue.Code == ILCode.Ldelema
+							&& falseValue.Arguments[0].Match(ILCode.Ldloc, out loadedVariable) && loadedVariable == arrayVariable
+							&& IsNullOrZero(falseValue.Arguments[1]))
+						{
+							initValue = new ILExpression(ILCode.Stloc, pinnedVar, arrayLoadingExpr);
+							return true;
+						}
+					}
+				}
+			}
+			initValue = null;
+			return false;
+		}
+		
+		bool MatchFixedArrayInitializerCondition(ILExpression condition, out ILExpression initValue)
+		{
+			ILExpression logicAnd;
+			ILVariable arrayVar1, arrayVar2;
+			if (condition.Match(ILCode.LogicNot, out logicAnd) && logicAnd.Code == ILCode.LogicAnd) {
+				initValue = UnpackDoubleNegation(logicAnd.Arguments[0]);
+				if (initValue.Match(ILCode.Ldloc, out arrayVar1)) {
+					ILExpression arrayLength = logicAnd.Arguments[1];
+					if (arrayLength.Code == ILCode.Conv_I4)
+						arrayLength = arrayLength.Arguments[0];
+					if (arrayLength.Code == ILCode.Ldlen && arrayLength.Arguments[0].Match(ILCode.Ldloc, out arrayVar2)) {
+						return arrayVar1 == arrayVar2;
+					}
+				}
+			}
+			initValue = null;
+			return false;
+		}
+		
+		ILExpression UnpackDoubleNegation(ILExpression expr)
+		{
+			ILExpression negated;
+			if (expr.Match(ILCode.LogicNot, out negated) && negated.Match(ILCode.LogicNot, out negated))
+				return negated;
+			else
+				return expr;
 		}
 		#endregion
 	}

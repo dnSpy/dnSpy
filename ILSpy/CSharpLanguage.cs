@@ -408,6 +408,9 @@ namespace ICSharpCode.ILSpy
 					w.Write("out ");
 				else
 					w.Write("ref ");
+				
+				if (astType is ComposedType && ((ComposedType)astType).PointerRank > 0)
+					((ComposedType)astType).PointerRank--;
 			}
 			
 			astType.AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);

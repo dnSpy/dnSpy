@@ -433,6 +433,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.__Stind_I2:  code = ILCode.Stobj; operand = methodBody.Method.Module.TypeSystem.Int16; break;
 					case ILCode.__Stind_I4:  code = ILCode.Stobj; operand = methodBody.Method.Module.TypeSystem.Int32; break;
 					case ILCode.__Stind_I8:  code = ILCode.Stobj; operand = methodBody.Method.Module.TypeSystem.Int64; break;
+					case ILCode.__Stind_R4:  code = ILCode.Stobj; operand = methodBody.Method.Module.TypeSystem.Single; break;
+					case ILCode.__Stind_R8:  code = ILCode.Stobj; operand = methodBody.Method.Module.TypeSystem.Double; break;
 			}
 		}
 		

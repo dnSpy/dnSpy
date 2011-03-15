@@ -113,7 +113,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILVariable v;
 			ILExpression inlinedExpression;
-			if (block.Body[pos].Match(ILCode.Stloc, out v, out inlinedExpression)) {
+			if (block.Body[pos].Match(ILCode.Stloc, out v, out inlinedExpression) && !v.IsPinned) {
 				if (InlineIfPossible(v, inlinedExpression, block.Body.ElementAtOrDefault(pos+1), aggressive)) {
 					// Assign the ranges of the stloc instruction:
 					inlinedExpression.ILRanges.AddRange(((ILExpression)block.Body[pos]).ILRanges);

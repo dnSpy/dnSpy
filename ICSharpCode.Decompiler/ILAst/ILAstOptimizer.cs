@@ -125,10 +125,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			// open up additional inlining possibilities.
 			new ILInlining(method).InlineAllVariables();
 			
-			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
-				expr.InferredType = null;
-				expr.ExpectedType = null;
-			}
+			TypeAnalysis.Reset(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.PeepholeTransforms) return;
 			PeepholeTransforms.Run(context, method);
@@ -699,8 +696,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			switch(expr.Code) {
 				case ILCode.Call:
-				case ILCode.Calli:
 				case ILCode.Callvirt:
+					// property getters can't be expression statements, but all other method calls can be
+					MethodReference mr = (MethodReference)expr.Operand;
+					return !mr.Name.StartsWith("get_", StringComparison.Ordinal);
 				case ILCode.Newobj:
 				case ILCode.Newarr:
 					return true;

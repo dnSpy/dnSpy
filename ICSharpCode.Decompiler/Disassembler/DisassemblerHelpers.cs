@@ -118,7 +118,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			if (type is PinnedType) {
 				writer.Write("pinned ");
-				type.GetElementType().WriteTo(writer, onlyName, shortName);
+				((PinnedType)type).ElementType.WriteTo(writer, onlyName, shortName);
 			} else if (type is ArrayType) {
 				ArrayType at = (ArrayType)type;
 				at.ElementType.WriteTo(writer, onlyName, shortName);
@@ -128,10 +128,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			} else if (type is GenericParameter) {
 				writer.WriteReference(type.Name, type);
 			} else if (type is ByReferenceType) {
-				type.GetElementType().WriteTo(writer, onlyName, shortName);
+				((ByReferenceType)type).ElementType.WriteTo(writer, onlyName, shortName);
 				writer.Write('&');
 			} else if (type is PointerType) {
-				type.GetElementType().WriteTo(writer, onlyName, shortName);
+				((PointerType)type).ElementType.WriteTo(writer, onlyName, shortName);
 				writer.Write('*');
 			} else if (type is GenericInstanceType) {
 				type.GetElementType().WriteTo(writer, onlyName, shortName);
@@ -147,12 +147,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 				writer.Write("modopt(");
 				((OptionalModifierType)type).ModifierType.WriteTo(writer, true, shortName);
 				writer.Write(") ");
-				type.GetElementType().WriteTo(writer, onlyName, shortName);
+				((OptionalModifierType)type).ElementType.WriteTo(writer, onlyName, shortName);
 			} else if (type is RequiredModifierType) {
 				writer.Write("modreq(");
 				((RequiredModifierType)type).ModifierType.WriteTo(writer, true, shortName);
 				writer.Write(") ");
-				type.GetElementType().WriteTo(writer, onlyName, shortName);
+				((RequiredModifierType)type).ElementType.WriteTo(writer, onlyName, shortName);
 			} else {
 				string name = PrimitiveTypeName(type);
 				if (name != null) {
