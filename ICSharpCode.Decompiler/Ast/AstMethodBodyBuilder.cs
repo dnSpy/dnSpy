@@ -176,6 +176,21 @@ namespace ICSharpCode.Decompiler.Ast
 					tryCatchStmt.CatchClauses.Add(cc);
 				}
 				yield return tryCatchStmt;
+			} else if (node is ILFixedStatement) {
+				ILFixedStatement fixedNode = (ILFixedStatement)node;
+				ILVariable v;
+				ILExpression init;
+				if (!fixedNode.Initializer.Match(ILCode.Stloc, out v, out init))
+					throw new InvalidOperationException("Fixed initializer must be an assignment to a local variable");
+				FixedStatement fixedStatement = new FixedStatement();
+				fixedStatement.Type = AstBuilder.ConvertType(v.Type);
+				fixedStatement.Variables.Add(
+					new VariableInitializer {
+						Name = v.Name,
+						Initializer = (Expression)TransformExpression(init)
+					}.WithAnnotation(v));
+				fixedStatement.EmbeddedStatement = TransformBlock(fixedNode.BodyBlock);
+				yield return fixedStatement;
 			} else if (node is ILBlock) {
 				yield return TransformBlock((ILBlock)node);
 			} else if (node is ILComment) {

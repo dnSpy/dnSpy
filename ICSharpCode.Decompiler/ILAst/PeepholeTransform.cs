@@ -30,7 +30,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				initializerTransforms.TransformArrayInitializers,
 				initializerTransforms.TransformCollectionInitializers,
 				transforms.CachedDelegateInitialization,
-				transforms.MakeAssignmentExpression
+				transforms.MakeAssignmentExpression,
+				transforms.IntroduceFixedStatements
 			};
 			Func<ILExpression, ILExpression>[] exprTransforms = {
 				HandleDecimalConstants,
@@ -290,6 +291,38 @@ namespace ICSharpCode.Decompiler.ILAst
 				return store.Arguments.Last().Code == ILCode.Ldloc && store.Arguments.Last().Operand == exprVar;
 			}
 			return false;
+		}
+		#endregion
+		
+		#region IntroduceFixedStatements
+		void IntroduceFixedStatements(ILBlock block, ref int i)
+		{
+			// stloc(pinned_Var, conv.u(ldc.i4(0)))
+			ILExpression initValue;
+			ILVariable v;
+			if (!(block.Body[i].Match(ILCode.Stloc, out v, out initValue) && v.IsPinned))
+				return;
+			// find initialization of v:
+			int j;
+			for (j = i + 1; j < block.Body.Count; j++) {
+				ILVariable v2;
+				ILExpression storedVal;
+				if (block.Body[j].Match(ILCode.Stloc, out v2, out storedVal) && v2 == v) {
+					if (storedVal.Code == ILCode.Conv_U)
+						storedVal = storedVal.Arguments[0];
+					if (storedVal.Code == ILCode.Ldc_I4 && (int)storedVal.Operand == 0) {
+						// Create fixed statement from i to j
+						ILFixedStatement stmt = new ILFixedStatement();
+						stmt.Initializer = (ILExpression)block.Body[i];
+						stmt.BodyBlock = new ILBlock(block.Body.GetRange(i + 1, j - i - 1)); // from i+1 to j-1 (inclusive)
+						block.Body.RemoveRange(i + 1, j - i); // from j+1 to i (inclusive)
+						block.Body[i] = stmt;
+						if (v.Type.IsByReference)
+							v.Type = new PointerType(((ByReferenceType)v.Type).ElementType);
+						break;
+					}
+				}
+			}
 		}
 		#endregion
 	}
