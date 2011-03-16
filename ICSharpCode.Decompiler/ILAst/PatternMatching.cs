@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Linq;
 using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler.ILAst
@@ -98,13 +98,25 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
-		public static bool Match<T>(this ILBasicBlock bb, ILCode code, out T operand, out ILExpression arg, out ILLabel fallLabel)
+		public static bool MatchSingle<T>(this ILBasicBlock bb, ILCode code, out T operand, out ILExpression arg, out ILLabel fallLabel)
 		{
 			if (bb.Body.Count == 1) {
 				if (bb.Body[0].Match(code, out operand, out arg)) {
 					fallLabel = bb.FallthoughGoto != null ? (ILLabel)bb.FallthoughGoto.Operand : null;
 					return true;
 				}
+			}
+			operand = default(T);
+			arg = null;
+			fallLabel = null;
+			return false;
+		}
+		
+		public static bool MatchLast<T>(this ILBasicBlock bb, ILCode code, out T operand, out ILExpression arg, out ILLabel fallLabel)
+		{
+			if (bb.Body.LastOrDefault().Match(code, out operand, out arg)) {
+				fallLabel = bb.FallthoughGoto != null ? (ILLabel)bb.FallthoughGoto.Operand : null;
+				return true;
 			}
 			operand = default(T);
 			arg = null;

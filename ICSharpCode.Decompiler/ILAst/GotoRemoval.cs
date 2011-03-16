@@ -18,8 +18,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach (ILNode node in method.GetSelfAndChildrenRecursive<ILNode>()) {
 				ILNode previousChild = null;
 				foreach (ILNode child in node.GetChildren()) {
-					// TODO: Add back
-					// Debug.Assert(!parent.ContainsKey(child));
+					if (parent.ContainsKey(child))
+						throw new Exception("The following expression is linked from several locations: " + child.ToString());
 					parent[child] = node;
 					if (previousChild != null)
 						nextSibling[previousChild] = child;

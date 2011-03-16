@@ -168,6 +168,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (abortBeforeStep == ILAstOptimizationStep.CachedDelegateInitialization) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				for (int i = 0; i < block.Body.Count; i++) {
+					// TODO: Move before loops
 					CachedDelegateInitialization(block, ref i);
 				}
 			}
@@ -175,6 +176,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (abortBeforeStep == ILAstOptimizationStep.IntroduceFixedStatements) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				for (int i = 0; i < block.Body.Count; i++) {
+					// TODO: Move before loops
 					IntroduceFixedStatements(block.Body, i);
 				}
 			}
@@ -285,56 +287,48 @@ namespace ICSharpCode.Decompiler.ILAst
 			List<ILNode> basicBlocks = new List<ILNode>();
 			
 			ILBasicBlock basicBlock = new ILBasicBlock() {
-				EntryLabel = new ILLabel() { Name = "Block_" + (nextLabelIndex++) }
+				EntryLabel = block.Body.FirstOrDefault() as ILLabel ?? new ILLabel() { Name = "Block_" + (nextLabelIndex++) }
 			};
 			basicBlocks.Add(basicBlock);
 			block.EntryGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel);
 			
 			if (block.Body.Count > 0) {
-				basicBlock.Body.Add(block.Body[0]);
+				if (block.Body[0] != basicBlock.EntryLabel)
+					basicBlock.Body.Add(block.Body[0]);
 				
 				for (int i = 1; i < block.Body.Count; i++) {
 					ILNode lastNode = block.Body[i - 1];
 					ILNode currNode = block.Body[i];
 					
-					// Insert split
+					// Start a new basic block if necessary
 					if (currNode is ILLabel ||
 					    lastNode is ILTryCatchBlock ||
 					    currNode is ILTryCatchBlock ||
-					    (lastNode is ILExpression) && ((ILExpression)lastNode).IsBranch() ||
-					    (currNode is ILExpression) && (((ILExpression)currNode).IsBranch() && ((ILExpression)currNode).Code.CanFallThough() && basicBlock.Body.Count > 0))
+					    (lastNode is ILExpression && ((ILExpression)lastNode).IsBranch()))
 					{
-						ILBasicBlock lastBlock = basicBlock;
+						// Try to reuse the label
+						ILLabel label = currNode is ILLabel ? ((ILLabel)currNode) : new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
+						
+						// Terminate the last block
+						if (lastNode.CanFallThough()) {
+							// Explicit branch from one block to other
+							basicBlock.FallthoughGoto = new ILExpression(ILCode.Br, label);
+						} else if (lastNode.Match(ILCode.Br)) {
+							// Reuse the existing goto as FallthoughGoto
+							basicBlock.FallthoughGoto = (ILExpression)lastNode;
+							basicBlock.Body.RemoveAt(basicBlock.Body.Count - 1);
+						}
+						
+						// Start the new block						
 						basicBlock = new ILBasicBlock();
 						basicBlocks.Add(basicBlock);
-						
-						if (currNode is ILLabel) {
-							// Insert as entry label
-							basicBlock.EntryLabel = (ILLabel)currNode;
-						} else {
-							basicBlock.EntryLabel = new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
-							basicBlock.Body.Add(currNode);
-						}
-						
-						// Explicit branch from one block to other
-						// (unless the last expression was unconditional branch)
-						if (!(lastNode is ILExpression) || ((ILExpression)lastNode).Code.CanFallThough()) {
-							lastBlock.FallthoughGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel);
-						}
-					} else {
+						basicBlock.EntryLabel = label;
+					}
+					
+					// Add the node to the basic block
+					if (currNode != basicBlock.EntryLabel) {
 						basicBlock.Body.Add(currNode);
 					}
-				}
-			}
-			
-			foreach (ILBasicBlock bb in basicBlocks) {
-				if (bb.Body.Count > 0 &&
-				    bb.Body.Last() is ILExpression &&
-				    ((ILExpression)bb.Body.Last()).Code == ILCode.Br)
-				{
-					Debug.Assert(bb.FallthoughGoto == null);
-					bb.FallthoughGoto = (ILExpression)bb.Body.Last();
-					bb.Body.RemoveAt(bb.Body.Count - 1);
 				}
 			}
 			
@@ -362,7 +356,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		// scope is modified if successful
 		bool SimplifyTernaryOperator(List<ILNode> body, ILBasicBlock head, int pos)
 		{
 			Debug.Assert(body.Contains(head));
@@ -378,13 +371,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILLabel falseFall;
 			object unused;
 			
-			if (head.Match(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel) &&
+			if (head.MatchLast(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel) &&
 			    labelGlobalRefCount[trueLabel] == 1 &&
 			    labelGlobalRefCount[falseLabel] == 1 &&
-			    ((labelToBasicBlock[trueLabel].Match(ILCode.Stloc, out trueLocVar, out trueExpr, out trueFall) &&
-			      labelToBasicBlock[falseLabel].Match(ILCode.Stloc, out falseLocVar, out falseExpr, out falseFall)) ||
-			     (labelToBasicBlock[trueLabel].Match(ILCode.Ret, out unused, out trueExpr, out trueFall) &&
-			      labelToBasicBlock[falseLabel].Match(ILCode.Ret, out unused, out falseExpr, out falseFall))) &&
+			    ((labelToBasicBlock[trueLabel].MatchSingle(ILCode.Stloc, out trueLocVar, out trueExpr, out trueFall) &&
+			      labelToBasicBlock[falseLabel].MatchSingle(ILCode.Stloc, out falseLocVar, out falseExpr, out falseFall)) ||
+			     (labelToBasicBlock[trueLabel].MatchSingle(ILCode.Ret, out unused, out trueExpr, out trueFall) &&
+			      labelToBasicBlock[falseLabel].MatchSingle(ILCode.Ret, out unused, out falseExpr, out falseFall))) &&
 			    trueLocVar == falseLocVar &&
 			    trueFall == falseFall &&
 			    body.Contains(labelToBasicBlock[trueLabel]) &&
@@ -436,7 +429,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					// Create ternary expression
 					newExpr = new ILExpression(ILCode.TernaryOp, null, condExpr, trueExpr, falseExpr);
 				}
-				head.Body = new List<ILNode>() { new ILExpression(opCode, trueLocVar, newExpr) };
+				head.Body[head.Body.Count - 1] = new ILExpression(opCode, trueLocVar, newExpr);
 				head.FallthoughGoto = trueFall != null ? new ILExpression(ILCode.Br, trueFall) : null;
 				
 				// Remove the old basic blocks
@@ -455,57 +448,45 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			// ...
 			// v = ldloc(leftVar)
-			// br(condBBLabel)
-			//
-			// condBBLabel:
 			// brtrue(endBBLabel, ldloc(leftVar))
 			// br(rightBBLabel)
 			//
 			// rightBBLabel:
 			// v = rightExpr
 			// br(endBBLabel)
-			//
-			// endBBLabel:
 			// ...
+			// =>
+			// ...
+			// v = NullCoalescing(ldloc(leftVar), rightExpr)
+			// br(endBBLabel)
 				
 			ILVariable v, v2;
 			ILExpression leftExpr, leftExpr2;
-			ILVariable leftVar, leftVar2;
-			ILLabel condBBLabel;
-			ILBasicBlock condBB;
+			ILVariable leftVar;
 			ILLabel endBBLabel, endBBLabel2;
 			ILLabel rightBBLabel;
 			ILBasicBlock rightBB;
 			ILExpression rightExpr;
-			ILBasicBlock endBB;
-			if (head.Body.LastOrDefault().Match(ILCode.Stloc, out v, out leftExpr) &&
+			if (head.Body.Count >= 2 &&
+				head.Body[head.Body.Count - 2].Match(ILCode.Stloc, out v, out leftExpr) &&
 			    leftExpr.Match(ILCode.Ldloc, out leftVar) &&
-			    head.FallthoughGoto.Match(ILCode.Br, out condBBLabel) &&
-			    labelToBasicBlock.TryGetValue(condBBLabel, out condBB) &&
-			    condBB.Match(ILCode.Brtrue, out endBBLabel, out leftExpr2, out rightBBLabel) &&
-			    leftExpr2.Match(ILCode.Ldloc, out leftVar2) &&
-			    leftVar == leftVar2 &&
+			    head.MatchLast(ILCode.Brtrue, out endBBLabel, out leftExpr2, out rightBBLabel) &&
+			    leftExpr2.Match(ILCode.Ldloc, leftVar) &&
 			    labelToBasicBlock.TryGetValue(rightBBLabel, out rightBB) &&
-			    rightBB.Match(ILCode.Stloc, out v2, out rightExpr, out endBBLabel2) &&
+			    rightBB.MatchSingle(ILCode.Stloc, out v2, out rightExpr, out endBBLabel2) &&
 			    v == v2 &&
 			    endBBLabel == endBBLabel2 &&
-			    labelToBasicBlock.TryGetValue(endBBLabel, out endBB) &&
-			    labelGlobalRefCount.GetOrDefault(condBBLabel) == 1 &&
 			    labelGlobalRefCount.GetOrDefault(rightBBLabel) == 1 &&
-			    labelGlobalRefCount.GetOrDefault(endBBLabel) == 2 &&
-			    body.Contains(condBB) &&
-			    body.Contains(rightBB) &&
-			    body.Contains(endBB)
+			    body.Contains(rightBB)
 			   )
 			{
-				head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.NullCoalescing, null, leftExpr, rightExpr));
+				head.Body[head.Body.Count - 2] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.NullCoalescing, null, leftExpr, rightExpr));
+				head.Body.RemoveAt(head.Body.Count - 1);
 				head.FallthoughGoto = new ILExpression(ILCode.Br, endBBLabel);
 				
-				foreach(ILLabel deleteLabel in new [] { condBBLabel, rightBBLabel }) {
-					body.RemoveOrThrow(labelToBasicBlock[deleteLabel]);
-					labelGlobalRefCount.RemoveOrThrow(deleteLabel);
-					labelToBasicBlock.RemoveOrThrow(deleteLabel);
-				}
+				body.RemoveOrThrow(labelToBasicBlock[rightBBLabel]);
+				labelGlobalRefCount.RemoveOrThrow(rightBBLabel);
+				labelToBasicBlock.RemoveOrThrow(rightBBLabel);
 				return true;
 			}
 			return false;
@@ -518,7 +499,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression condExpr;
 			ILLabel trueLabel;
 			ILLabel falseLabel;
-			if(head.Match(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel)) {
+			if(head.MatchLast(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel)) {
 				for (int pass = 0; pass < 2; pass++) {
 					
 					// On the second pass, swap labels and negate expression of the first branch
@@ -534,14 +515,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (body.Contains(nextBasicBlock) &&
 					    nextBasicBlock != head &&
 					    labelGlobalRefCount[nextBasicBlock.EntryLabel] == 1 &&
-					    nextBasicBlock.Match(ILCode.Brtrue, out nextTrueLablel, out nextCondExpr, out nextFalseLabel) &&
+					    nextBasicBlock.MatchSingle(ILCode.Brtrue, out nextTrueLablel, out nextCondExpr, out nextFalseLabel) &&
 					    (otherLablel == nextFalseLabel || otherLablel == nextTrueLablel))
 					{
 						// Create short cicuit branch
 						if (otherLablel == nextFalseLabel) {
-							head.Body[0] = new ILExpression(ILCode.Brtrue, nextTrueLablel, new ILExpression(ILCode.LogicAnd, null, negate ? new ILExpression(ILCode.LogicNot, null, condExpr) : condExpr, nextCondExpr));
+							head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Brtrue, nextTrueLablel, new ILExpression(ILCode.LogicAnd, null, negate ? new ILExpression(ILCode.LogicNot, null, condExpr) : condExpr, nextCondExpr));
 						} else {
-							head.Body[0] = new ILExpression(ILCode.Brtrue, nextTrueLablel, new ILExpression(ILCode.LogicOr, null, negate ? condExpr : new ILExpression(ILCode.LogicNot, null, condExpr), nextCondExpr));
+							head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Brtrue, nextTrueLablel, new ILExpression(ILCode.LogicOr, null, negate ? condExpr : new ILExpression(ILCode.LogicNot, null, condExpr), nextCondExpr));
 						}
 						head.FallthoughGoto = new ILExpression(ILCode.Br, nextFalseLabel);
 						
