@@ -143,6 +143,9 @@ namespace ICSharpCode.ILSpy.Commands
 			foreach (var item in buttons) {
 				item.IsEnabled = enable;
 			}
+			
+			// internal types
+			MainWindow.Instance.sessionSettings.FilterSettings.ShowInternalApi = true;
 		}
 		
 		void CurrentDebugger_IsProcessRunningChanged(object sender, EventArgs e)
