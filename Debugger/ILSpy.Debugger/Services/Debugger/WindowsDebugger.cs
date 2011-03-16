@@ -738,7 +738,7 @@ namespace ILSpy.Debugger.Services
 			// reset
 			BreakAtBeginning = false;
 			
-			JumpToCurrentLine();
+			//JumpToCurrentLine();
 			OnProcessSelected(new ProcessEventArgs(process));
 		}
 
@@ -775,7 +775,7 @@ namespace ILSpy.Debugger.Services
 				return;
 			}
 			
-			JumpToCurrentLine();
+			//JumpToCurrentLine();
 			
 			StringBuilder stacktraceBuilder = new StringBuilder();
 			
@@ -839,26 +839,29 @@ namespace ILSpy.Debugger.Services
 				Continue();
 			else {
 				// search for type in the current assembly list
-				TypeReference typeRef = null;
+				TypeDefinition typeDef = null;
 				foreach (var assembly in DebugData.LoadedAssemblies) {
 					foreach (var module in assembly.Modules) {
-						if (module.TryGetTypeReference(fullName, out typeRef)) {
-							break;
+						foreach (var type in module.Types) {
+							if (type.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase)) {
+								typeDef = type;
+								break;
+							}
 						}
 					}
-					if (typeRef != null)
+					if (typeDef != null)
 						break;
 				}
-				if (typeRef != null) {
+				if (typeDef != null) {
 					// decompile on demand
 					AstBuilder builder = new AstBuilder(new DecompilerContext());
-					builder.AddType(typeRef.Resolve());
+					builder.AddType(typeDef);
 					builder.GenerateCode(new PlainTextOutput());
 					
 					// try jump
 					int line;
 					TypeDefinition type;
-					if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(typeRef.FullName, token, ilOffset, out type, out line)) {
+					if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(typeDef.FullName, token, ilOffset, out type, out line)) {
 						DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
 					} else {
 						// continue since we cannot find the debugged type
