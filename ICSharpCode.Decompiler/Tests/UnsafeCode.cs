@@ -56,4 +56,22 @@ public class UnsafeCode
 	{
 		return d->ToString();
 	}
+	
+	public unsafe void FixMultipleStrings(string text)
+	{
+		fixed (char* c = text, d = Environment.UserName, e = text) {
+			*c = 'c';
+			*d = 'd';
+			*e = 'e';
+		}
+	}
+	
+	public unsafe string StackAlloc(int count)
+	{
+		char* a = stackalloc char[count];
+		for (int i = 0; i < count; i++) {
+			a[i] = (char)i;
+		}
+		return PointerReferenceExpression((double*)a);
+	}
 }

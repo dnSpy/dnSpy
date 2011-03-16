@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-
+using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Utils;
@@ -183,17 +183,17 @@ namespace ICSharpCode.Decompiler.Ast
 				yield return tryCatchStmt;
 			} else if (node is ILFixedStatement) {
 				ILFixedStatement fixedNode = (ILFixedStatement)node;
-				ILVariable v;
-				ILExpression init;
-				if (!fixedNode.Initializer.Match(ILCode.Stloc, out v, out init))
-					throw new InvalidOperationException("Fixed initializer must be an assignment to a local variable");
 				FixedStatement fixedStatement = new FixedStatement();
-				fixedStatement.Type = AstBuilder.ConvertType(v.Type);
-				fixedStatement.Variables.Add(
-					new VariableInitializer {
-						Name = v.Name,
-						Initializer = (Expression)TransformExpression(init)
-					}.WithAnnotation(v));
+				foreach (ILExpression initializer in fixedNode.Initializers) {
+					Debug.Assert(initializer.Code == ILCode.Stloc);
+					ILVariable v = (ILVariable)initializer.Operand;
+					fixedStatement.Variables.Add(
+						new VariableInitializer {
+							Name = v.Name,
+							Initializer = (Expression)TransformExpression(initializer.Arguments[0])
+						}.WithAnnotation(v));
+				}
+				fixedStatement.Type = AstBuilder.ConvertType(((ILVariable)fixedNode.Initializers[0].Operand).Type);
 				fixedStatement.EmbeddedStatement = TransformBlock(fixedNode.BodyBlock);
 				yield return fixedStatement;
 			} else if (node is ILBlock) {
@@ -240,9 +240,36 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			switch(byteCode.Code) {
 					#region Arithmetic
-					case ILCode.Add:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
-					case ILCode.Add_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
-					case ILCode.Add_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+				case ILCode.Add:
+				case ILCode.Add_Ovf:
+				case ILCode.Add_Ovf_Un:
+					{
+						if (byteCode.InferredType is PointerType) {
+							if (byteCode.Arguments[0].ExpectedType is PointerType) {
+								arg2 = DivideBySize(arg2, ((PointerType)byteCode.InferredType).ElementType);
+								return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2)
+									.WithAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
+							} else if (byteCode.Arguments[1].ExpectedType is PointerType) {
+								arg1 = DivideBySize(arg1, ((PointerType)byteCode.InferredType).ElementType);
+								return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2)
+									.WithAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
+							}
+						}
+						return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+					}
+				case ILCode.Sub:
+				case ILCode.Sub_Ovf:
+				case ILCode.Sub_Ovf_Un:
+					{
+						if (byteCode.InferredType is PointerType) {
+							if (byteCode.Arguments[0].ExpectedType is PointerType) {
+								arg2 = DivideBySize(arg2, ((PointerType)byteCode.InferredType).ElementType);
+								return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2)
+									.WithAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
+							}
+						}
+						return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
+					}
 					case ILCode.Div:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Divide, arg2);
 					case ILCode.Div_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Divide, arg2);
 					case ILCode.Mul:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
@@ -250,9 +277,6 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Mul_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Multiply, arg2);
 					case ILCode.Rem:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Modulus, arg2);
 					case ILCode.Rem_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Modulus, arg2);
-					case ILCode.Sub:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
-					case ILCode.Sub_Ovf:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
-					case ILCode.Sub_Ovf_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 					case ILCode.And:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.BitwiseAnd, arg2);
 					case ILCode.Or:         return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.BitwiseOr, arg2);
 					case ILCode.Xor:        return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ExclusiveOr, arg2);
@@ -487,7 +511,20 @@ namespace ICSharpCode.Decompiler.Ast
 						return InlineAssembly(byteCode, args);
 					}
 					case ILCode.Leave:    return new GotoStatement() { Label = ((ILLabel)operand).Name };
-					case ILCode.Localloc: return InlineAssembly(byteCode, args);
+				case ILCode.Localloc:
+					{
+						PointerType ptrType = byteCode.InferredType as PointerType;
+						TypeReference type;
+						if (ptrType != null) {
+							type = ptrType.ElementType;
+						} else {
+							type = typeSystem.Byte;
+						}
+						return new StackAllocExpression {
+							Type = AstBuilder.ConvertType(type),
+							CountExpression = DivideBySize(arg1, type)
+						};
+					}
 					case ILCode.Mkrefany: return InlineAssembly(byteCode, args);
 					case ILCode.Newobj: {
 						Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
@@ -555,6 +592,45 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 					default: throw new Exception("Unknown OpCode: " + byteCode.Code);
 			}
+		}
+		
+		/// <summary>
+		/// Divides expr by the size of 'type'.
+		/// </summary>
+		Expression DivideBySize(Expression expr, TypeReference type)
+		{
+			CastExpression cast = expr as CastExpression;
+			if (cast != null && cast.Type is PrimitiveType && ((PrimitiveType)cast.Type).Keyword == "int")
+				expr = cast.Expression.Detach();
+			
+			Expression sizeOfExpression;
+			switch (TypeAnalysis.GetInformationAmount(type)) {
+				case 1:
+				case 8:
+					sizeOfExpression = new PrimitiveExpression(1);
+					break;
+				case 16:
+					sizeOfExpression = new PrimitiveExpression(2);
+					break;
+				case 32:
+					sizeOfExpression = new PrimitiveExpression(4);
+					break;
+				case 64:
+					sizeOfExpression = new PrimitiveExpression(8);
+					break;
+				default:
+					sizeOfExpression = new SizeOfExpression { Type = AstBuilder.ConvertType(type) };
+					break;
+			}
+			
+			BinaryOperatorExpression boe = expr as BinaryOperatorExpression;
+			if (boe != null && boe.Operator == BinaryOperatorType.Multiply && sizeOfExpression.Match(boe.Right) != null)
+				return boe.Left.Detach();
+			
+			if (sizeOfExpression.Match(expr) != null)
+				return new PrimitiveExpression(1);
+			
+			return new BinaryOperatorExpression(expr, BinaryOperatorType.Divide, sizeOfExpression);
 		}
 		
 		Expression MakeDefaultValue(TypeReference type)

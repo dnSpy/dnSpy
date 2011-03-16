@@ -20,9 +20,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		public static bool Match<T>(this ILNode node, ILCode code, out T operand)
 		{
 			ILExpression expr = node as ILExpression;
-			if (expr != null && expr.Prefixes == null && expr.Code == code) {
+			if (expr != null && expr.Prefixes == null && expr.Code == code && expr.Arguments.Count == 0) {
 				operand = (T)expr.Operand;
-				Debug.Assert(expr.Arguments.Count == 0);
 				return true;
 			}
 			operand = default(T);
@@ -107,6 +106,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILVariable v;
 			return node.Match(ILCode.Ldloc, out v) && v.IsParameter && v.OriginalParameter.Index == -1;
+		}
+		
+		public static bool MatchLdloc(this ILNode node, ILVariable expectedVar)
+		{
+			ILVariable v;
+			return node.Match(ILCode.Ldloc, out v) && v == expectedVar;
 		}
 	}
 }

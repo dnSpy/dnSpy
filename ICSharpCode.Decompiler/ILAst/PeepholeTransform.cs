@@ -2,8 +2,10 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 
@@ -297,30 +299,46 @@ namespace ICSharpCode.Decompiler.ILAst
 		#region IntroduceFixedStatements
 		void IntroduceFixedStatements(ILBlock block, ref int i)
 		{
-			// stloc(pinned_Var, conv.u(ldc.i4(0)))
 			ILExpression initValue;
 			ILVariable pinnedVar;
-			if (!MatchFixedInitializer(block, i, out pinnedVar, out initValue))
+			int initEndPos;
+			if (!MatchFixedInitializer(block, i, out pinnedVar, out initValue, out initEndPos))
 				return;
-			// find initialization of v:
+			
+			ILFixedStatement fixedStmt = block.Body.ElementAtOrDefault(initEndPos) as ILFixedStatement;
+			if (fixedStmt != null) {
+				ILExpression expr = fixedStmt.BodyBlock.Body.LastOrDefault() as ILExpression;
+				if (expr != null && expr.Code == ILCode.Stloc && expr.Operand == pinnedVar && IsNullOrZero(expr.Arguments[0])) {
+					// we found a second initializer for the existing fixed statement
+					fixedStmt.Initializers.Insert(0, initValue);
+					block.Body.RemoveRange(i, initEndPos - i);
+					fixedStmt.BodyBlock.Body.RemoveAt(fixedStmt.BodyBlock.Body.Count - 1);
+					if (pinnedVar.Type.IsByReference)
+						pinnedVar.Type = new PointerType(((ByReferenceType)pinnedVar.Type).ElementType);
+					return;
+				}
+			}
+			
+			// find where pinnedVar is reset to 0:
 			int j;
-			for (j = i + 1; j < block.Body.Count; j++) {
+			for (j = initEndPos; j < block.Body.Count; j++) {
 				ILVariable v2;
 				ILExpression storedVal;
+				// stloc(pinned_Var, conv.u(ldc.i4(0)))
 				if (block.Body[j].Match(ILCode.Stloc, out v2, out storedVal) && v2 == pinnedVar) {
 					if (IsNullOrZero(storedVal)) {
-						// Create fixed statement from i to j
-						ILFixedStatement stmt = new ILFixedStatement();
-						stmt.Initializer = initValue;
-						stmt.BodyBlock = new ILBlock(block.Body.GetRange(i + 1, j - i - 1)); // from i+1 to j-1 (inclusive)
-						block.Body.RemoveRange(i + 1, j - i); // from j+1 to i (inclusive)
-						block.Body[i] = stmt;
-						if (pinnedVar.Type.IsByReference)
-							pinnedVar.Type = new PointerType(((ByReferenceType)pinnedVar.Type).ElementType);
 						break;
 					}
 				}
 			}
+			// Create fixed statement from i to j
+			fixedStmt = new ILFixedStatement();
+			fixedStmt.Initializers.Add(initValue);
+			fixedStmt.BodyBlock = new ILBlock(block.Body.GetRange(initEndPos, j - initEndPos)); // from initEndPos to j-1 (inclusive)
+			block.Body.RemoveRange(i + 1, Math.Min(j, block.Body.Count - 1) - i); // from i+1 to j (inclusive)
+			block.Body[i] = fixedStmt;
+			if (pinnedVar.Type.IsByReference)
+				pinnedVar.Type = new PointerType(((ByReferenceType)pinnedVar.Type).ElementType);
 		}
 		
 		bool IsNullOrZero(ILExpression expr)
@@ -330,11 +348,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			return (expr.Code == ILCode.Ldc_I4 && (int)expr.Operand == 0) || expr.Code == ILCode.Ldnull;
 		}
 		
-		bool MatchFixedInitializer(ILBlock block, int i, out ILVariable pinnedVar, out ILExpression initValue)
+		bool MatchFixedInitializer(ILBlock block, int i, out ILVariable pinnedVar, out ILExpression initValue, out int nextPos)
 		{
-			if (block.Body[i].Match(ILCode.Stloc, out pinnedVar, out initValue)) {
+			if (block.Body[i].Match(ILCode.Stloc, out pinnedVar, out initValue) && pinnedVar.IsPinned && !IsNullOrZero(initValue)) {
 				initValue = (ILExpression)block.Body[i];
-				return pinnedVar.IsPinned;
+				nextPos = i + 1;
+				HandleStringFixing(pinnedVar, block.Body, ref nextPos, ref initValue);
+				return true;
 			}
 			ILCondition ifStmt = block.Body[i] as ILCondition;
 			ILExpression arrayLoadingExpr;
@@ -345,23 +365,28 @@ namespace ICSharpCode.Decompiler.ILAst
 				    && ifStmt.TrueBlock.Body[0].Match(ILCode.Stloc, out pinnedVar, out trueValue)
 				    && pinnedVar.IsPinned && IsNullOrZero(trueValue))
 				{
-					ILVariable stlocVar;
-					ILExpression falseValue;
-					if (ifStmt.FalseBlock != null && ifStmt.FalseBlock.Body.Count == 1
-					    && ifStmt.FalseBlock.Body[0].Match(ILCode.Stloc, out stlocVar, out falseValue) && stlocVar == pinnedVar)
-					{
-						ILVariable loadedVariable;
-						if (falseValue.Code == ILCode.Ldelema
-							&& falseValue.Arguments[0].Match(ILCode.Ldloc, out loadedVariable) && loadedVariable == arrayVariable
-							&& IsNullOrZero(falseValue.Arguments[1]))
+					if (ifStmt.FalseBlock != null && ifStmt.FalseBlock.Body.Count == 1 && ifStmt.FalseBlock.Body[0] is ILFixedStatement) {
+						ILFixedStatement fixedStmt = (ILFixedStatement)ifStmt.FalseBlock.Body[0];
+						ILVariable stlocVar;
+						ILExpression falseValue;
+						if (fixedStmt.Initializers.Count == 1 && fixedStmt.BodyBlock.Body.Count == 0
+						    && fixedStmt.Initializers[0].Match(ILCode.Stloc, out stlocVar, out falseValue) && stlocVar == pinnedVar)
 						{
-							initValue = new ILExpression(ILCode.Stloc, pinnedVar, arrayLoadingExpr);
-							return true;
+							ILVariable loadedVariable;
+							if (falseValue.Code == ILCode.Ldelema
+							    && falseValue.Arguments[0].Match(ILCode.Ldloc, out loadedVariable) && loadedVariable == arrayVariable
+							    && IsNullOrZero(falseValue.Arguments[1]))
+							{
+								initValue = new ILExpression(ILCode.Stloc, pinnedVar, arrayLoadingExpr);
+								nextPos = i + 1;
+								return true;
+							}
 						}
 					}
 				}
 			}
 			initValue = null;
+			nextPos = -1;
 			return false;
 		}
 		
@@ -391,6 +416,54 @@ namespace ICSharpCode.Decompiler.ILAst
 				return negated;
 			else
 				return expr;
+		}
+		
+		bool HandleStringFixing(ILVariable pinnedVar, List<ILNode> body, ref int pos, ref ILExpression fixedStmtInitializer)
+		{
+			// fixed (stloc(pinnedVar, ldloc(text))) {
+			//   var1 = var2 = conv.i(ldloc(pinnedVar))
+			//   if (logicnot(logicnot(var1))) {
+			//     var2 = add(var1, call(RuntimeHelpers::get_OffsetToStringData))
+			//   }
+			//   stloc(ptrVar, var2)
+			//   ...
+			
+			if (pos >= body.Count)
+				return false;
+			
+			ILVariable var1, var2;
+			ILExpression varAssignment, ptrInitialization;
+			if (!(body[pos].Match(ILCode.Stloc, out var1, out varAssignment) && varAssignment.Match(ILCode.Stloc, out var2, out ptrInitialization)))
+				return false;
+			if (!(var1.IsGenerated && var2.IsGenerated))
+				return false;
+			if (ptrInitialization.Code == ILCode.Conv_I || ptrInitialization.Code == ILCode.Conv_U)
+				ptrInitialization = ptrInitialization.Arguments[0];
+			if (!ptrInitialization.MatchLdloc(pinnedVar))
+				return false;
+			
+			ILCondition ifStmt = body[pos + 1] as ILCondition;
+			if (!(ifStmt != null && ifStmt.TrueBlock != null && ifStmt.TrueBlock.Body.Count == 1 && (ifStmt.FalseBlock == null || ifStmt.FalseBlock.Body.Count == 0)))
+				return false;
+			if (!UnpackDoubleNegation(ifStmt.Condition).MatchLdloc(var1))
+				return false;
+			ILVariable assignedVar;
+			ILExpression assignedExpr;
+			if (!(ifStmt.TrueBlock.Body[0].Match(ILCode.Stloc, out assignedVar, out assignedExpr) && assignedVar == var2 && assignedExpr.Code == ILCode.Add))
+				return false;
+			MethodReference calledMethod;
+			if (!(assignedExpr.Arguments[0].MatchLdloc(var1) && assignedExpr.Arguments[1].Match(ILCode.Call, out calledMethod)))
+				return false;
+			if (!(calledMethod.Name == "get_OffsetToStringData" && calledMethod.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers"))
+				return false;
+			
+			ILVariable pointerVar;
+			if (body[pos + 2].Match(ILCode.Stloc, out pointerVar, out assignedExpr) && assignedExpr.MatchLdloc(var2)) {
+				pos += 3;
+				fixedStmtInitializer.Operand = pointerVar;
+				return true;
+			}
+			return false;
 		}
 		#endregion
 	}

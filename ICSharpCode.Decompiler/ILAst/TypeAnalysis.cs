@@ -26,22 +26,54 @@ namespace ICSharpCode.Decompiler.ILAst
 			ta.module = context.CurrentMethod.Module;
 			ta.typeSystem = ta.module.TypeSystem;
 			ta.method = method;
-			ta.InferTypes(method);
-			ta.InferRemainingStores();
-			// Now that stores were inferred, we can infer the remaining instructions that depended on those stored
-			// (but which didn't provide an expected type for the store)
-			// For example, this is necessary to make a switch() over a generated variable work correctly.
-			ta.InferTypes(method);
+			ta.CreateDependencyGraph(method);
+			ta.IdentifySingleLoadVariables();
+			ta.RunInference();
+		}
+		
+		sealed class ExpressionToInfer
+		{
+			public ILExpression Expression;
+			
+			public bool Done;
+			
+			/// <summary>
+			/// Set for assignment expressions that should wait until the variable type is available
+			/// from the context where the variable is used.
+			/// </summary>
+			public ILVariable DependsOnSingleLoad;
+			
+			/// <summary>
+			/// The list variables that are read by this expression.
+			/// </summary>
+			public List<ILVariable> Dependencies = new List<ILVariable>();
+			
+			public override string ToString()
+			{
+				if (Done)
+					return "[Done] " + Expression.ToString();
+				else
+					return Expression.ToString();
+			}
+
 		}
 		
 		DecompilerContext context;
 		TypeSystem typeSystem;
 		ILBlock method;
 		ModuleDefinition module;
-		List<ILExpression> storedToGeneratedVariables = new List<ILExpression>();
-		HashSet<ILVariable> inferredVariables = new HashSet<ILVariable>();
+		List<ExpressionToInfer> allExpressions = new List<ExpressionToInfer>();
+		DefaultDictionary<ILVariable, List<ExpressionToInfer>> assignmentExpressions = new DefaultDictionary<ILVariable, List<ExpressionToInfer>>(_ => new List<ExpressionToInfer>());
+		HashSet<ILVariable> singleLoadVariables = new HashSet<ILVariable>();
 		
-		void InferTypes(ILNode node)
+		#region CreateDependencyGraph
+		/// <summary>
+		/// Creates the "ExpressionToInfer" instances (=nodes in dependency graph)
+		/// </summary>
+		/// <remarks>
+		/// We are using a dependency graph to ensure that expressions are analyzed in the correct order.
+		/// </remarks>
+		void CreateDependencyGraph(ILNode node)
 		{
 			ILCondition cond = node as ILCondition;
 			if (cond != null) {
@@ -51,59 +83,142 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (loop != null && loop.Condition != null) {
 				loop.Condition.ExpectedType = typeSystem.Boolean;
 			}
+			ILTryCatchBlock.CatchBlock catchBlock = node as ILTryCatchBlock.CatchBlock;
+			if (catchBlock != null && catchBlock.ExceptionVariable != null && catchBlock.ExceptionType != null && catchBlock.ExceptionVariable.Type == null) {
+				catchBlock.ExceptionVariable.Type = catchBlock.ExceptionType;
+			}
 			ILExpression expr = node as ILExpression;
 			if (expr != null) {
-				foreach (ILExpression store in expr.GetSelfAndChildrenRecursive<ILExpression>(e => e.Code == ILCode.Stloc)) {
-					ILVariable v = (ILVariable)store.Operand;
-					if (v.IsGenerated && v.Type == null && !inferredVariables.Contains(v) && HasSingleLoad(v)) {
-						// Don't deal with this node or its children yet,
-						// wait for the expected type to be inferred first.
-						// This happens with the arg_... variables introduced by the ILAst - we skip inferring the whole statement,
-						// and first infer the statement that reads from the arg_... variable.
-						// The ldloc inference will write the expected type to the variable, and the next InferRemainingStores() pass
-						// will then infer this statement with the correct expected type.
-						storedToGeneratedVariables.Add(expr);
-						// However, it is possible that this statement both writes to and reads from the variable (think inlined assignments).
-						if (expr.GetSelfAndChildrenRecursive<ILExpression>(e => e.Code == ILCode.Ldlen && e.Operand == v).Any()) {
-							// In this case, we analyze it now anyways, and will re-evaluate it later
-							break;
-						} else {
-							return;
+				ExpressionToInfer expressionToInfer = new ExpressionToInfer();
+				expressionToInfer.Expression = expr;
+				allExpressions.Add(expressionToInfer);
+				FindNestedAssignments(expr, expressionToInfer);
+				
+				if (expr.Code == ILCode.Stloc && ((ILVariable)expr.Operand).Type == null)
+					assignmentExpressions[(ILVariable)expr.Operand].Add(expressionToInfer);
+				return;
+			}
+			foreach (ILNode child in node.GetChildren()) {
+				CreateDependencyGraph(child);
+			}
+		}
+		
+		void FindNestedAssignments(ILExpression expr, ExpressionToInfer parent)
+		{
+			foreach (ILExpression arg in expr.Arguments) {
+				if (arg.Code == ILCode.Stloc) {
+					ExpressionToInfer expressionToInfer = new ExpressionToInfer();
+					expressionToInfer.Expression = arg;
+					allExpressions.Add(expressionToInfer);
+					FindNestedAssignments(arg, expressionToInfer);
+					ILVariable v = (ILVariable)arg.Operand;
+					if (v.Type == null) {
+						assignmentExpressions[v].Add(expressionToInfer);
+						// the instruction that consumes the stloc result is handled as if it was reading the variable
+						parent.Dependencies.Add(v);
+					}
+				} else {
+					ILVariable v;
+					if (arg.Match(ILCode.Ldloc, out v) && v.Type == null) {
+						parent.Dependencies.Add(v);
+					}
+					FindNestedAssignments(arg, parent);
+				}
+			}
+		}
+		#endregion
+		
+		void IdentifySingleLoadVariables()
+		{
+			// Find all variables that are assigned to exactly a single time:
+			var q = from expr in allExpressions
+				from v in expr.Dependencies
+				group expr by v;
+			foreach (var g in q.ToArray()) {
+				ILVariable v = g.Key;
+				if (g.Count() == 1 && g.Single().Expression.GetSelfAndChildrenRecursive<ILExpression>().Count(e => e.Operand == v) == 1) {
+					singleLoadVariables.Add(v);
+					// Mark the assignments as dependent on the type from the single load:
+					foreach (var assignment in assignmentExpressions[v]) {
+						assignment.DependsOnSingleLoad = v;
+					}
+				}
+			}
+		}
+		
+		void RunInference()
+		{
+			int numberOfExpressionsAlreadyInferred = 0;
+			// Two flags that allow resolving cycles:
+			bool ignoreSingleLoadDependencies = false;
+			bool assignVariableTypesBasedOnPartialInformation = false;
+			while (numberOfExpressionsAlreadyInferred < allExpressions.Count) {
+				int oldCount = numberOfExpressionsAlreadyInferred;
+				foreach (ExpressionToInfer expr in allExpressions) {
+					if (!expr.Done && expr.Dependencies.TrueForAll(v => v.Type != null || singleLoadVariables.Contains(v))
+					    && (expr.DependsOnSingleLoad == null || expr.DependsOnSingleLoad.Type != null || ignoreSingleLoadDependencies))
+					{
+						RunInference(expr.Expression);
+						expr.Done = true;
+						numberOfExpressionsAlreadyInferred++;
+					}
+				}
+				if (numberOfExpressionsAlreadyInferred == oldCount) {
+					if (ignoreSingleLoadDependencies) {
+						if (assignVariableTypesBasedOnPartialInformation)
+							throw new InvalidOperationException("Could not infer any expression");
+						else
+							assignVariableTypesBasedOnPartialInformation = true;
+					} else {
+						// We have a cyclic dependency; we'll try if we can resolve it by ignoring single-load dependencies.
+						// This can happen if the variable was not actually assigned an expected type by the single-load instruction.
+						ignoreSingleLoadDependencies = true;
+						continue;
+					}
+				} else {
+					assignVariableTypesBasedOnPartialInformation = false;
+					ignoreSingleLoadDependencies = false;
+				}
+				// Now infer types for variables:
+				foreach (var pair in assignmentExpressions) {
+					ILVariable v = pair.Key;
+					if (v.Type == null && (assignVariableTypesBasedOnPartialInformation ? pair.Value.Any(e => e.Done) : pair.Value.All(e => e.Done))) {
+						TypeReference inferredType = null;
+						foreach (ExpressionToInfer expr in pair.Value) {
+							Debug.Assert(expr.Expression.Code == ILCode.Stloc);
+							ILExpression assignedValue = expr.Expression.Arguments.Single();
+							if (assignedValue.InferredType != null) {
+								if (inferredType == null) {
+									inferredType = assignedValue.InferredType;
+								} else {
+									// pick the common base type
+									inferredType = TypeWithMoreInformation(inferredType, assignedValue.InferredType);
+								}
+							}
+						}
+						if (inferredType == null)
+							inferredType = typeSystem.Object;
+						v.Type = inferredType;
+						// Assign inferred type to all the assignments (in case they used different inferred types):
+						foreach (ExpressionToInfer expr in pair.Value) {
+							expr.Expression.InferredType = inferredType;
+							// re-infer if the expected type has changed
+							InferTypeForExpression(expr.Expression.Arguments.Single(), inferredType);
 						}
 					}
 				}
-				bool anyArgumentIsMissingType = expr.Arguments.Any(a => a.InferredType == null);
-				if (expr.InferredType == null || anyArgumentIsMissingType)
-					expr.InferredType = InferTypeForExpression(expr, expr.ExpectedType, forceInferChildren: anyArgumentIsMissingType);
-			}
-			foreach (ILNode child in node.GetChildren()) {
-				InferTypes(child);
 			}
 		}
 		
-		bool HasSingleLoad(ILVariable v)
+		void RunInference(ILExpression expr)
 		{
-			int loads = 0;
-			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
-				if (expr.Operand == v) {
-					if (expr.Code == ILCode.Ldloc)
-						loads++;
-					else if (expr.Code != ILCode.Stloc)
-						return false;
+			bool anyArgumentIsMissingExpectedType = expr.Arguments.Any(a => a.ExpectedType == null);
+			if (expr.InferredType == null || anyArgumentIsMissingExpectedType)
+				InferTypeForExpression(expr, expr.ExpectedType, forceInferChildren: anyArgumentIsMissingExpectedType);
+			foreach (var arg in expr.Arguments) {
+				if (arg.Code != ILCode.Stloc) {
+					RunInference(arg);
 				}
-			}
-			return loads == 1;
-		}
-		
-		void InferRemainingStores()
-		{
-			while (storedToGeneratedVariables.Count > 0) {
-				List<ILExpression> stored = storedToGeneratedVariables;
-				storedToGeneratedVariables = new List<ILExpression>();
-				foreach (ILExpression expr in stored)
-					InferTypes(expr);
-				if (!(storedToGeneratedVariables.Count < stored.Count))
-					throw new InvalidOperationException("Infinite loop in type analysis detected.");
 			}
 		}
 		
@@ -118,7 +233,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (expectedType != null && expr.ExpectedType != expectedType) {
 				expr.ExpectedType = expectedType;
-				forceInferChildren = true;
+				if (expr.Code != ILCode.Stloc) // stloc is special case and never gets re-evaluated
+					forceInferChildren = true;
 			}
 			if (forceInferChildren || expr.InferredType == null)
 				expr.InferredType = DoInferTypeForExpression(expr, expectedType, forceInferChildren);
@@ -159,22 +275,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Stloc:
 					{
 						ILVariable v = (ILVariable)expr.Operand;
-						if (forceInferChildren || v.Type == null) {
-							TypeReference t = InferTypeForExpression(expr.Arguments.Single(), ((ILVariable)expr.Operand).Type);
-							if (v.Type == null)
-								v.Type = t;
+						if (forceInferChildren) {
+							// do not use 'expectedType' in here!
+							InferTypeForExpression(expr.Arguments.Single(), v.Type);
 						}
 						return v.Type;
 					}
 				case ILCode.Ldloc:
 					{
 						ILVariable v = (ILVariable)expr.Operand;
-						if (v.Type == null) {
+						if (v.Type == null && singleLoadVariables.Contains(v)) {
 							v.Type = expectedType;
-							// Mark the variable as inferred. This is necessary because expectedType might be null
-							// (e.g. the only use of an arg_*-Variable is a pop statement),
-							// so we can't tell from v.Type whether it was already inferred.
-							inferredVariables.Add(v);
 						}
 						return v.Type;
 					}
@@ -197,7 +308,7 @@ namespace ICSharpCode.Decompiler.ILAst
 									else
 										InferTypeForExpression(expr.Arguments[i], method.DeclaringType);
 								} else {
-									InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(method.Parameters[method.HasThis ? i - 1: i].ParameterType, method));
+									InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(method.Parameters[method.HasThis ? i - 1 : i].ParameterType, method));
 								}
 							}
 						}
@@ -292,8 +403,9 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (elementType != null) {
 							// An integer can be stored in any other integer of the same size.
 							int infoAmount = GetInformationAmount(elementType);
-							if (infoAmount == 1) infoAmount = 8;
-							if (infoAmount == GetInformationAmount(operandType) && IsSigned(elementType) != null && IsSigned(operandType) != null)
+							if (infoAmount == 1 && GetInformationAmount(operandType) == 8)
+								operandType = elementType;
+							else if (infoAmount == GetInformationAmount(operandType) && IsSigned(elementType) != null && IsSigned(operandType) != null)
 								operandType = elementType;
 						}
 						if (forceInferChildren) {
@@ -325,20 +437,26 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Neg:
 					return InferTypeForExpression(expr.Arguments.Single(), expectedType);
 				case ILCode.Add:
+					return InferArgumentsInAddition(expr, null, expectedType);
 				case ILCode.Sub:
+					return InferArgumentsInSubtraction(expr, null, expectedType);
 				case ILCode.Mul:
 				case ILCode.Or:
 				case ILCode.And:
 				case ILCode.Xor:
 					return InferArgumentsInBinaryOperator(expr, null, expectedType);
 				case ILCode.Add_Ovf:
+					return InferArgumentsInAddition(expr, true, expectedType);
 				case ILCode.Sub_Ovf:
+					return InferArgumentsInSubtraction(expr, true, expectedType);
 				case ILCode.Mul_Ovf:
 				case ILCode.Div:
 				case ILCode.Rem:
 					return InferArgumentsInBinaryOperator(expr, true, expectedType);
 				case ILCode.Add_Ovf_Un:
+					return InferArgumentsInAddition(expr, false, expectedType);
 				case ILCode.Sub_Ovf_Un:
+					return InferArgumentsInSubtraction(expr, false, expectedType);
 				case ILCode.Mul_Ovf_Un:
 				case ILCode.Div_Un:
 				case ILCode.Rem_Un:
@@ -481,11 +599,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Conv_I:
 				case ILCode.Conv_Ovf_I:
 				case ILCode.Conv_Ovf_I_Un:
-					return HandleConversion(nativeInt, true, expr.Arguments[0], expectedType, typeSystem.IntPtr);
+					return HandleConversion(NativeInt, true, expr.Arguments[0], expectedType, typeSystem.IntPtr);
 				case ILCode.Conv_U:
 				case ILCode.Conv_Ovf_U:
 				case ILCode.Conv_Ovf_U_Un:
-					return HandleConversion(nativeInt, false, expr.Arguments[0], expectedType, typeSystem.UIntPtr);
+					return HandleConversion(NativeInt, false, expr.Arguments[0], expectedType, typeSystem.UIntPtr);
 				case ILCode.Conv_R4:
 					return typeSystem.Single;
 				case ILCode.Conv_R8:
@@ -559,17 +677,17 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		TypeReference HandleConversion(int targetBitSize, bool targetSigned, ILExpression arg, TypeReference expectedType, TypeReference targetType)
 		{
-			if (targetBitSize >= nativeInt && expectedType is PointerType) {
+			if (targetBitSize >= NativeInt && expectedType is PointerType) {
 				InferTypeForExpression(arg, expectedType);
 				return expectedType;
 			}
 			TypeReference argType = InferTypeForExpression(arg, null);
-			if (targetBitSize >= nativeInt && argType is ByReferenceType) {
+			if (targetBitSize >= NativeInt && argType is ByReferenceType) {
 				// conv instructions on managed references mean that the GC should stop tracking them, so they become pointers:
 				PointerType ptrType = new PointerType(((ByReferenceType)argType).ElementType);
 				InferTypeForExpression(arg, ptrType);
 				return ptrType;
-			} else if (targetBitSize >= nativeInt && argType is PointerType) {
+			} else if (targetBitSize >= NativeInt && argType is PointerType) {
 				return argType;
 			}
 			return (GetInformationAmount(expectedType) == targetBitSize && IsSigned(expectedType) == targetSigned) ? expectedType : targetType;
@@ -679,19 +797,82 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
+		TypeReference InferArgumentsInAddition(ILExpression expr, bool? isSigned, TypeReference expectedType)
+		{
+			ILExpression left = expr.Arguments[0];
+			ILExpression right = expr.Arguments[1];
+			TypeReference leftPreferred = DoInferTypeForExpression(left, expectedType);
+			if (leftPreferred is PointerType) {
+				left.InferredType = left.ExpectedType = leftPreferred;
+				InferTypeForExpression(right, typeSystem.IntPtr);
+				return leftPreferred;
+			} else {
+				TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
+				if (rightPreferred is PointerType) {
+					InferTypeForExpression(left, typeSystem.IntPtr);
+					right.InferredType = right.ExpectedType = rightPreferred;
+					return rightPreferred;
+				} else if (leftPreferred == rightPreferred) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
+				} else if (rightPreferred == DoInferTypeForExpression(left, rightPreferred)) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
+				} else if (leftPreferred == DoInferTypeForExpression(right, leftPreferred)) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
+				} else {
+					left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
+					left.InferredType = DoInferTypeForExpression(left, left.ExpectedType);
+					right.InferredType = DoInferTypeForExpression(right, right.ExpectedType);
+					return left.ExpectedType;
+				}
+			}
+		}
+		
+		TypeReference InferArgumentsInSubtraction(ILExpression expr, bool? isSigned, TypeReference expectedType)
+		{
+			ILExpression left = expr.Arguments[0];
+			ILExpression right = expr.Arguments[1];
+			TypeReference leftPreferred = DoInferTypeForExpression(left, expectedType);
+			if (leftPreferred is PointerType) {
+				left.InferredType = left.ExpectedType = leftPreferred;
+				InferTypeForExpression(right, typeSystem.IntPtr);
+				return leftPreferred;
+			} else {
+				TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
+				if (leftPreferred == rightPreferred) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
+				} else if (rightPreferred == DoInferTypeForExpression(left, rightPreferred)) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
+				} else if (leftPreferred == DoInferTypeForExpression(right, leftPreferred)) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
+				} else {
+					left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
+					left.InferredType = DoInferTypeForExpression(left, left.ExpectedType);
+					right.InferredType = DoInferTypeForExpression(right, right.ExpectedType);
+					return left.ExpectedType;
+				}
+			}
+		}
+		
 		TypeReference TypeWithMoreInformation(TypeReference leftPreferred, TypeReference rightPreferred)
 		{
 			int left = GetInformationAmount(leftPreferred);
 			int right = GetInformationAmount(rightPreferred);
-			if (left < right)
+			if (left < right) {
 				return rightPreferred;
-			else
+			} else if (left > right) {
 				return leftPreferred;
+			} else {
+				// TODO
+				return leftPreferred;
+			}
 		}
 		
-		const int nativeInt = 33; // treat native int as between int32 and int64
+		/// <summary>
+		/// Information amount used for IntPtr.
+		/// </summary>
+		public const int NativeInt = 33; // treat native int as between int32 and int64
 		
-		static int GetInformationAmount(TypeReference type)
+		public static int GetInformationAmount(TypeReference type)
 		{
 			if (type == null)
 				return 0;
@@ -725,7 +906,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return 64;
 				case MetadataType.IntPtr:
 				case MetadataType.UIntPtr:
-					return nativeInt;
+					return NativeInt;
 				default:
 					return 100; // we consider structs/objects to have more information than any primitives
 			}
