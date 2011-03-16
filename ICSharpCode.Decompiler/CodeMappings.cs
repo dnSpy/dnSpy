@@ -49,8 +49,8 @@ namespace ICSharpCode.Decompiler
 			
 			// add list for the current source code line
 			currentList.AddRange(ILRange.OrderAndJoint(MemberMapping.MemberCodeMappings
-			                     .FindAll(m => m.SourceCodeLine == this.SourceCodeLine)
-			                     .ConvertAll<ILRange>(m => m.ILInstructionOffset)));
+			                                           .FindAll(m => m.SourceCodeLine == this.SourceCodeLine)
+			                                           .ConvertAll<ILRange>(m => m.ILInstructionOffset)));
 			
 			if (!isMatch) {
 				// add inverted
@@ -248,12 +248,15 @@ namespace ICSharpCode.Decompiler
 		/// Gets the source code and type name from metadata token and offset.
 		/// </summary>
 		/// <param name="codeMappings">Code mappings storage.</param>
+		/// <param name="currentTypeFullName">Current type name.</param>
 		/// <param name="token">Metadata token.</param>
 		/// <param name="ilOffset">IL offset.</param>
 		/// <param name="typeName">Type definition.</param>
 		/// <param name="line">Line number.</param>
+		/// <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
 		public static bool GetSourceCodeFromMetadataTokenAndOffset(
 			this ConcurrentDictionary<string, List<MemberMapping>> codeMappings,
+			string currentTypeFullName,
 			uint token,
 			int ilOffset,
 			out TypeDefinition type,
@@ -262,27 +265,25 @@ namespace ICSharpCode.Decompiler
 			type = null;
 			line = 0;
 			
-			foreach (var typename in codeMappings.Keys) {
-				var mapping = codeMappings[typename].Find(m => m.MetadataToken == token);
-				if (mapping == null)
-					continue;
-				var codeMapping = mapping.MemberCodeMappings.Find(
-					cm => cm.ILInstructionOffset.From <= ilOffset && ilOffset <= cm.ILInstructionOffset.To - 1);
+			if (!codeMappings.ContainsKey(currentTypeFullName))
+				return false;
+			
+			var mapping = codeMappings[currentTypeFullName].Find(m => m.MetadataToken == token);
+			if (mapping == null)
+				return false;
+			
+			var codeMapping = mapping.MemberCodeMappings.Find(
+				cm => cm.ILInstructionOffset.From <= ilOffset && ilOffset <= cm.ILInstructionOffset.To - 1);
+			if (codeMapping == null) {
+				codeMapping = mapping.MemberCodeMappings.Find(cm => (cm.ILInstructionOffset.From >= ilOffset));
 				if (codeMapping == null) {
-					codeMapping = mapping.MemberCodeMappings.Find(cm => (cm.ILInstructionOffset.From >= ilOffset));
-					if (codeMapping == null) {
-						codeMapping = mapping.MemberCodeMappings.LastOrDefault();
-						if (codeMapping == null)
-							continue;
-					}
+					codeMapping = mapping.MemberCodeMappings.LastOrDefault();
 				}
-				
-				type = mapping.Type;
-				line = codeMapping.SourceCodeLine;
-				return true;
 			}
 			
-			return false;
+			type = mapping.Type;
+			line = codeMapping.SourceCodeLine;
+			return true;
 		}
 	}
 }

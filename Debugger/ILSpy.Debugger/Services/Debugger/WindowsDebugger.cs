@@ -818,7 +818,8 @@ namespace ILSpy.Debugger.Services
 				int ilOffset = frame.IP;
 				int line;
 				TypeDefinition type;
-				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out type, out line)) {
+			
+				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(frame.MethodInfo.DeclaringType.FullName, token, ilOffset, out type, out line)) {
 					DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
 				} else {
 					// is possible that the type is not decompiled yet, so we must do a decompilation on demand
@@ -857,7 +858,7 @@ namespace ILSpy.Debugger.Services
 					// try jump
 					int line;
 					TypeDefinition type;
-					if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out type, out line)) {
+					if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(typeRef.FullName, token, ilOffset, out type, out line)) {
 						DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
 					} else {
 						// continue since we cannot find the debugged type

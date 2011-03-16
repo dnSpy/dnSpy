@@ -163,7 +163,7 @@ namespace ILSpy.Debugger.Bookmarks
 
 			TypeDefinition type;
 			int newline;
-			if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(token, instruction.ILInstructionOffset.From, out type, out newline)) {
+			if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(markerType.FullName, token, instruction.ILInstructionOffset.From, out type, out newline)) {
 				// 4. create breakpoint for new languages
 				CurrentLineBookmark.SetPosition(type, newline, 0, newline, 0);
 			}
@@ -197,7 +197,7 @@ namespace ILSpy.Debugger.Bookmarks
 
 				TypeDefinition type;
 				int line;
-				if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(token, instruction.ILInstructionOffset.From, out type, out line)) {
+				if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(bp.Type.FullName, token, instruction.ILInstructionOffset.From, out type, out line)) {
 					// 2. create breakpoint for new languages
 					var bookmark = new BreakpointBookmark(type, new AstLocation(line, 0), BreakpointAction.Break, newLanguage);
 					AddMark(bookmark);
