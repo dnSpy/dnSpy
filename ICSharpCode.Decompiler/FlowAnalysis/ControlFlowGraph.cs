@@ -120,7 +120,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					b => b.Successors,
 					b => {
 						if (b != EntryPoint) {
-							ControlFlowNode newIdom = b.Predecessors.First(block => block.Visited);
+							ControlFlowNode newIdom = b.Predecessors.First(block => block.Visited && block != b);
 							// for all other predecessors p of b
 							foreach (ControlFlowNode p in b.Predecessors) {
 								if (p != b && p.ImmediateDominator != null) {
