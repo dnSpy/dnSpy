@@ -65,4 +65,13 @@ public class UnsafeCode
 			*e = 'e';
 		}
 	}
+	
+	public unsafe string StackAlloc(int count)
+	{
+		char* a = stackalloc char[count];
+		for (int i = 0; i < count; i++) {
+			a[i] = (char)i;
+		}
+		return PointerReferenceExpression((double*)a);
+	}
 }

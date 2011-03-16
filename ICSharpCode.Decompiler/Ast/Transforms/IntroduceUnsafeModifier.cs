@@ -8,6 +8,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	public class IntroduceUnsafeModifier : DepthFirstAstVisitor<object, bool>, IAstTransform
 	{
+		public static readonly object PointerArithmeticAnnotation = new PointerArithmetic();
+		
+		sealed class PointerArithmetic {}
+		
 		public void Run(AstNode compilationUnit)
 		{
 			compilationUnit.AcceptVisitor(this, null);
@@ -42,17 +46,23 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public override bool VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
-			base.VisitUnaryOperatorExpression(unaryOperatorExpression, data);
+			bool result = base.VisitUnaryOperatorExpression(unaryOperatorExpression, data);
 			if (unaryOperatorExpression.Operator == UnaryOperatorType.Dereference) {
 				BinaryOperatorExpression bop = unaryOperatorExpression.Expression as BinaryOperatorExpression;
-				if (bop != null && bop.Operator == BinaryOperatorType.Add) {
-					// TODO: transform "*(ptr + int)" to "ptr[int]"
+				if (bop != null && bop.Operator == BinaryOperatorType.Add && bop.Annotation<PointerArithmetic>() != null) {
+					// transform "*(ptr + int)" to "ptr[int]"
+					IndexerExpression indexer = new IndexerExpression();
+					indexer.Target = bop.Left.Detach();
+					indexer.Arguments.Add(bop.Right.Detach());
+					indexer.CopyAnnotationsFrom(unaryOperatorExpression);
+					indexer.CopyAnnotationsFrom(bop);
+					unaryOperatorExpression.ReplaceWith(indexer);
 				}
 				return true;
 			} else if (unaryOperatorExpression.Operator == UnaryOperatorType.AddressOf) {
 				return true;
 			} else {
-				return false;
+				return result;
 			}
 		}
 		
@@ -70,6 +80,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				memberReferenceExpression.ReplaceWith(pre);
 			}
 			return result;
+		}
+		
+		public override bool VisitStackAllocExpression(StackAllocExpression stackAllocExpression, object data)
+		{
+			base.VisitStackAllocExpression(stackAllocExpression, data);
+			return true;
 		}
 	}
 }

@@ -437,20 +437,26 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Neg:
 					return InferTypeForExpression(expr.Arguments.Single(), expectedType);
 				case ILCode.Add:
+					return InferArgumentsInAddition(expr, null, expectedType);
 				case ILCode.Sub:
+					return InferArgumentsInSubtraction(expr, null, expectedType);
 				case ILCode.Mul:
 				case ILCode.Or:
 				case ILCode.And:
 				case ILCode.Xor:
 					return InferArgumentsInBinaryOperator(expr, null, expectedType);
 				case ILCode.Add_Ovf:
+					return InferArgumentsInAddition(expr, true, expectedType);
 				case ILCode.Sub_Ovf:
+					return InferArgumentsInSubtraction(expr, true, expectedType);
 				case ILCode.Mul_Ovf:
 				case ILCode.Div:
 				case ILCode.Rem:
 					return InferArgumentsInBinaryOperator(expr, true, expectedType);
 				case ILCode.Add_Ovf_Un:
+					return InferArgumentsInAddition(expr, false, expectedType);
 				case ILCode.Sub_Ovf_Un:
+					return InferArgumentsInSubtraction(expr, false, expectedType);
 				case ILCode.Mul_Ovf_Un:
 				case ILCode.Div_Un:
 				case ILCode.Rem_Un:
@@ -593,11 +599,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Conv_I:
 				case ILCode.Conv_Ovf_I:
 				case ILCode.Conv_Ovf_I_Un:
-					return HandleConversion(nativeInt, true, expr.Arguments[0], expectedType, typeSystem.IntPtr);
+					return HandleConversion(NativeInt, true, expr.Arguments[0], expectedType, typeSystem.IntPtr);
 				case ILCode.Conv_U:
 				case ILCode.Conv_Ovf_U:
 				case ILCode.Conv_Ovf_U_Un:
-					return HandleConversion(nativeInt, false, expr.Arguments[0], expectedType, typeSystem.UIntPtr);
+					return HandleConversion(NativeInt, false, expr.Arguments[0], expectedType, typeSystem.UIntPtr);
 				case ILCode.Conv_R4:
 					return typeSystem.Single;
 				case ILCode.Conv_R8:
@@ -671,17 +677,17 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		TypeReference HandleConversion(int targetBitSize, bool targetSigned, ILExpression arg, TypeReference expectedType, TypeReference targetType)
 		{
-			if (targetBitSize >= nativeInt && expectedType is PointerType) {
+			if (targetBitSize >= NativeInt && expectedType is PointerType) {
 				InferTypeForExpression(arg, expectedType);
 				return expectedType;
 			}
 			TypeReference argType = InferTypeForExpression(arg, null);
-			if (targetBitSize >= nativeInt && argType is ByReferenceType) {
+			if (targetBitSize >= NativeInt && argType is ByReferenceType) {
 				// conv instructions on managed references mean that the GC should stop tracking them, so they become pointers:
 				PointerType ptrType = new PointerType(((ByReferenceType)argType).ElementType);
 				InferTypeForExpression(arg, ptrType);
 				return ptrType;
-			} else if (targetBitSize >= nativeInt && argType is PointerType) {
+			} else if (targetBitSize >= NativeInt && argType is PointerType) {
 				return argType;
 			}
 			return (GetInformationAmount(expectedType) == targetBitSize && IsSigned(expectedType) == targetSigned) ? expectedType : targetType;
@@ -791,6 +797,62 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
+		TypeReference InferArgumentsInAddition(ILExpression expr, bool? isSigned, TypeReference expectedType)
+		{
+			ILExpression left = expr.Arguments[0];
+			ILExpression right = expr.Arguments[1];
+			TypeReference leftPreferred = DoInferTypeForExpression(left, expectedType);
+			if (leftPreferred is PointerType) {
+				left.InferredType = left.ExpectedType = leftPreferred;
+				InferTypeForExpression(right, typeSystem.IntPtr);
+				return leftPreferred;
+			} else {
+				TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
+				if (rightPreferred is PointerType) {
+					InferTypeForExpression(left, typeSystem.IntPtr);
+					right.InferredType = right.ExpectedType = rightPreferred;
+					return rightPreferred;
+				} else if (leftPreferred == rightPreferred) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
+				} else if (rightPreferred == DoInferTypeForExpression(left, rightPreferred)) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
+				} else if (leftPreferred == DoInferTypeForExpression(right, leftPreferred)) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
+				} else {
+					left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
+					left.InferredType = DoInferTypeForExpression(left, left.ExpectedType);
+					right.InferredType = DoInferTypeForExpression(right, right.ExpectedType);
+					return left.ExpectedType;
+				}
+			}
+		}
+		
+		TypeReference InferArgumentsInSubtraction(ILExpression expr, bool? isSigned, TypeReference expectedType)
+		{
+			ILExpression left = expr.Arguments[0];
+			ILExpression right = expr.Arguments[1];
+			TypeReference leftPreferred = DoInferTypeForExpression(left, expectedType);
+			if (leftPreferred is PointerType) {
+				left.InferredType = left.ExpectedType = leftPreferred;
+				InferTypeForExpression(right, typeSystem.IntPtr);
+				return leftPreferred;
+			} else {
+				TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
+				if (leftPreferred == rightPreferred) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
+				} else if (rightPreferred == DoInferTypeForExpression(left, rightPreferred)) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
+				} else if (leftPreferred == DoInferTypeForExpression(right, leftPreferred)) {
+					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
+				} else {
+					left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
+					left.InferredType = DoInferTypeForExpression(left, left.ExpectedType);
+					right.InferredType = DoInferTypeForExpression(right, right.ExpectedType);
+					return left.ExpectedType;
+				}
+			}
+		}
+		
 		TypeReference TypeWithMoreInformation(TypeReference leftPreferred, TypeReference rightPreferred)
 		{
 			int left = GetInformationAmount(leftPreferred);
@@ -805,9 +867,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		const int nativeInt = 33; // treat native int as between int32 and int64
+		/// <summary>
+		/// Information amount used for IntPtr.
+		/// </summary>
+		public const int NativeInt = 33; // treat native int as between int32 and int64
 		
-		static int GetInformationAmount(TypeReference type)
+		public static int GetInformationAmount(TypeReference type)
 		{
 			if (type == null)
 				return 0;
@@ -841,7 +906,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return 64;
 				case MetadataType.IntPtr:
 				case MetadataType.UIntPtr:
-					return nativeInt;
+					return NativeInt;
 				default:
 					return 100; // we consider structs/objects to have more information than any primitives
 			}
