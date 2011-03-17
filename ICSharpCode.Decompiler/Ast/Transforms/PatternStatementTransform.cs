@@ -41,6 +41,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (context.Settings.AutomaticEvents)
 				TransformAutomaticEvents(compilationUnit);
 			
+			TransformDestructor(compilationUnit);
 			TransformTryCatchFinally(compilationUnit);
 		}
 		
@@ -650,6 +651,38 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 				
 				ev.ReplaceWith(ed);
+			}
+		}
+		#endregion
+		
+		#region Destructor
+		static readonly MethodDeclaration destructorPattern = new MethodDeclaration {
+			Attributes = { new Repeat(new AnyNode()) },
+			Modifiers = Modifiers.Any,
+			ReturnType = new PrimitiveType("void"),
+			Name = "Finalize",
+			Body = new BlockStatement {
+				new TryCatchStatement {
+					TryBlock = new AnyNode("body"),
+					FinallyBlock = new BlockStatement {
+						new BaseReferenceExpression().Invoke("Finalize")
+					}
+				}
+			}
+		};
+		
+		void TransformDestructor(AstNode compilationUnit)
+		{
+			foreach (var methodDef in compilationUnit.Descendants.OfType<MethodDeclaration>()) {
+				Match m = destructorPattern.Match(methodDef);
+				if (m != null) {
+					DestructorDeclaration dd = new DestructorDeclaration();
+					methodDef.Attributes.MoveTo(dd.Attributes);
+					dd.Modifiers = methodDef.Modifiers & ~(Modifiers.Protected | Modifiers.Override);
+					dd.Body = m.Get<BlockStatement>("body").Single().Detach();
+					dd.Name = AstBuilder.CleanName(context.CurrentType.Name);
+					methodDef.ReplaceWith(dd);
+				}
 			}
 		}
 		#endregion

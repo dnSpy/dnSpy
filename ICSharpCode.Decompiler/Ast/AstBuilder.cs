@@ -256,7 +256,7 @@ namespace ICSharpCode.Decompiler.Ast
 			transform.Run(astCompileUnit);
 		}
 		
-		string CleanName(string name)
+		internal static string CleanName(string name)
 		{
 			int pos = name.LastIndexOf('`');
 			if (pos >= 0)
