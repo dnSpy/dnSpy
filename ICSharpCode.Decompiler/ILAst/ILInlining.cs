@@ -48,41 +48,66 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		public void InlineAllVariables()
+		public bool InlineAllVariables()
 		{
+			bool modified = false;
 			ILInlining i = new ILInlining(method);
 			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>())
-				i.InlineAllInBlock(block);
+				modified |= i.InlineAllInBlock(block);
+			return modified;
 		}
 		
-		public void InlineAllInBlock(ILBlock block)
+		public bool InlineAllInBlock(ILBlock block)
 		{
+			bool modified = false;
 			List<ILNode> body = block.Body;
 			for(int i = 0; i < body.Count - 1;) {
 				ILVariable locVar;
 				ILExpression expr;
-				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineOneIfPossible(block, i, aggressive: false)) {
+				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineOneIfPossible(block.Body, i, aggressive: false)) {
+					modified = true;
 					i = Math.Max(0, i - 1); // Go back one step
 				} else {
 					i++;
 				}
 			}
+			foreach(ILBasicBlock bb in body.OfType<ILBasicBlock>()) {
+				modified |= InlineAllInBasicBlock(bb);
+		}
+			return modified;
+		}
+		
+		public bool InlineAllInBasicBlock(ILBasicBlock bb)
+		{
+			bool modified = false;
+			List<ILNode> body = bb.Body;
+			for(int i = 0; i < body.Count - 1;) {
+				ILVariable locVar;
+				ILExpression expr;
+				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineOneIfPossible(bb.Body, i, aggressive: false)) {
+					modified = true;
+					i = Math.Max(0, i - 1); // Go back one step
+				} else {
+					i++;
+				}
+			}
+			return modified;
 		}
 		
 		/// <summary>
 		/// Inlines instructions before pos into block.Body[pos].
 		/// </summary>
 		/// <returns>The number of instructions that were inlined.</returns>
-		public int InlineInto(ILBlock block, int pos, bool aggressive)
+		public int InlineInto(List<ILNode> body, int pos, bool aggressive)
 		{
-			if (pos >= block.Body.Count)
+			if (pos >= body.Count)
 				return 0;
 			int count = 0;
 			while (--pos >= 0) {
-				ILExpression expr = block.Body[pos] as ILExpression;
+				ILExpression expr = body[pos] as ILExpression;
 				if (expr == null || expr.Code != ILCode.Stloc)
 					break;
-				if (InlineOneIfPossible(block, pos, aggressive))
+				if (InlineOneIfPossible(body, pos, aggressive))
 					count++;
 				else
 					break;
@@ -97,10 +122,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <remarks>
 		/// After the operation, pos will point to the new combined instruction.
 		/// </remarks>
-		public bool InlineIfPossible(ILBlock block, ref int pos)
+		public bool InlineIfPossible(List<ILNode> body, ref int pos)
 		{
-			if (InlineOneIfPossible(block, pos, true)) {
-				pos -= InlineInto(block, pos, false);
+			if (InlineOneIfPossible(body, pos, true)) {
+				pos -= InlineInto(body, pos, false);
 				return true;
 			}
 			return false;
@@ -109,28 +134,28 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <summary>
 		/// Inlines the stloc instruction at block.Body[pos] into the next instruction, if possible.
 		/// </summary>
-		public bool InlineOneIfPossible(ILBlock block, int pos, bool aggressive)
+		public bool InlineOneIfPossible(List<ILNode> body, int pos, bool aggressive)
 		{
 			ILVariable v;
 			ILExpression inlinedExpression;
-			if (block.Body[pos].Match(ILCode.Stloc, out v, out inlinedExpression) && !v.IsPinned) {
-				if (InlineIfPossible(v, inlinedExpression, block.Body.ElementAtOrDefault(pos+1), aggressive)) {
+			if (body[pos].Match(ILCode.Stloc, out v, out inlinedExpression) && !v.IsPinned) {
+				if (InlineIfPossible(v, inlinedExpression, body.ElementAtOrDefault(pos+1), aggressive)) {
 					// Assign the ranges of the stloc instruction:
-					inlinedExpression.ILRanges.AddRange(((ILExpression)block.Body[pos]).ILRanges);
+					inlinedExpression.ILRanges.AddRange(((ILExpression)body[pos]).ILRanges);
 					// Remove the stloc instruction:
-					block.Body.RemoveAt(pos);
+					body.RemoveAt(pos);
 					return true;
 				} else if (numLdloc.GetOrDefault(v) == 0 && numLdloca.GetOrDefault(v) == 0) {
 					// The variable is never loaded
 					if (inlinedExpression.HasNoSideEffects()) {
 						// Remove completely
-						block.Body.RemoveAt(pos);
+						body.RemoveAt(pos);
 						return true;
 					} else if (inlinedExpression.CanBeExpressionStatement() && v.IsGenerated) {
 						// Assign the ranges of the stloc instruction:
-						inlinedExpression.ILRanges.AddRange(((ILExpression)block.Body[pos]).ILRanges);
+						inlinedExpression.ILRanges.AddRange(((ILExpression)body[pos]).ILRanges);
 						// Remove the stloc, but keep the inner expression
-						block.Body[pos] = inlinedExpression;
+						body[pos] = inlinedExpression;
 						return true;
 					}
 				}
@@ -155,7 +180,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression parent;
 			int pos;
 			if (FindLoadInNext(next as ILExpression, v, inlinedExpression, out parent, out pos) == true) {
-				if (!aggressive && !v.IsGenerated && !NonAggressiveInlineInto((ILExpression)next, parent))
+				if (!aggressive && !v.IsGenerated && !NonAggressiveInlineInto((ILExpression)next, parent, inlinedExpression))
 					return false;
 				
 				// Assign the ranges of the ldloc instruction:
@@ -168,8 +193,15 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
-		bool NonAggressiveInlineInto(ILExpression next, ILExpression parent)
+		bool NonAggressiveInlineInto(ILExpression next, ILExpression parent, ILExpression inlinedExpression)
 		{
+			switch (inlinedExpression.Code) {
+				case ILCode.InitArray:
+				case ILCode.InitCollection:
+				case ILCode.DefaultValue:
+					return true;
+			}
+			
 			switch (next.Code) {
 				case ILCode.Ret:
 					return parent.Code == ILCode.Ret;
@@ -300,7 +332,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							// if we un-inlined stuff; we need to update the usage counters
 							AnalyzeMethod();
 						}
-						InlineInto(block, i, aggressive: false); // maybe inlining gets possible after the removal of block.Body[i]
+						InlineInto(block.Body, i, aggressive: false); // maybe inlining gets possible after the removal of block.Body[i]
 						i -= uninlinedArgs.Length + 1;
 					}
 				}
