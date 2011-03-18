@@ -18,34 +18,43 @@ namespace ICSharpCode.Decompiler.ILAst
 		YieldReturn,
 		SplitToMovableBlocks,
 		TypeInference,
-		PeepholeOptimizations,
 		SimplifyShortCircuit,
 		SimplifyTernaryOperator,
 		SimplifyNullCoalescing,
-		MoreSimplifyPasses,
+		TransformDecimalCtorToConstant,
+		SimplifyLdObjAndStObj,
+		TransformArrayInitializers,
+		TransformCollectionInitializers,
+		MakeAssignmentExpression,
+		InlineVariables2,
 		FindLoops,
 		FindConditions,
 		FlattenNestedMovableBlocks,
+		RemoveRedundantCode2,
 		GotoRemoval,
 		DuplicateReturns,
-		FlattenIfStatements,
-		InlineVariables2,
-		PeepholeTransforms,
+		ReduceIfNesting,
+		InlineVariables3,
+		CachedDelegateInitialization,
+		IntroduceFixedStatements,
 		TypeInference2,
+		RemoveRedundantCode3,
 		None
 	}
 	
-	public class ILAstOptimizer
+	public partial class ILAstOptimizer
 	{
 		int nextLabelIndex = 0;
 		
 		DecompilerContext context;
 		TypeSystem typeSystem;
+		ILBlock method;
 		
 		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
 			this.context = context;
 			this.typeSystem = context.CurrentMethod.Module.TypeSystem;
+			this.method = method;
 			
 			if (abortBeforeStep == ILAstOptimizationStep.RemoveRedundantCode) return;
 			RemoveRedundantCode(method);
@@ -77,7 +86,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Types are needed for the ternary operator optimization
 			TypeAnalysis.Run(context, method);
 			
-			if (abortBeforeStep == ILAstOptimizationStep.PeepholeOptimizations) return;
 			AnalyseLabels(method);
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				bool modified;
@@ -85,16 +93,46 @@ namespace ICSharpCode.Decompiler.ILAst
 					modified = false;
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyShortCircuit) return;
-					modified |= block.RunPeepholeOptimization(TrySimplifyShortCircuit);
+					modified |= block.RunOptimization(SimplifyShortCircuit);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyTernaryOperator) return;
-					modified |= block.RunPeepholeOptimization(TrySimplifyTernaryOperator);
+					modified |= block.RunOptimization(SimplifyTernaryOperator);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyNullCoalescing) return;
-					modified |= block.RunPeepholeOptimization(TrySimplifyNullCoalescing);
+					modified |= block.RunOptimization(SimplifyNullCoalescing);
 					
-					if (abortBeforeStep == ILAstOptimizationStep.MoreSimplifyPasses) return;
 				} while(modified);
+			}
+			
+			ILInlining inlining2 = new ILInlining(method);
+			inlining2.InlineAllVariables();
+			inlining2.CopyPropagation();
+			
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				
+				// Intentionaly outside the while(modifed) loop,
+				// I will put it there later after more testing
+				
+				bool modified = false;
+				
+				if (abortBeforeStep == ILAstOptimizationStep.TransformDecimalCtorToConstant) return;
+				modified |= block.RunOptimization(TransformDecimalCtorToConstant);
+				
+				if (abortBeforeStep == ILAstOptimizationStep.SimplifyLdObjAndStObj) return;
+				modified |= block.RunOptimization(SimplifyLdObjAndStObj);
+				
+				if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
+				modified |= block.RunOptimization(Initializers.TransformArrayInitializers);
+				modified |= block.RunOptimization(Initializers.TransformArrayInitializers);
+				
+				if (abortBeforeStep == ILAstOptimizationStep.TransformCollectionInitializers) return;
+				modified |= block.RunOptimization(Initializers.TransformCollectionInitializers);
+				
+				if (abortBeforeStep == ILAstOptimizationStep.MakeAssignmentExpression) return;
+				modified |= block.RunOptimization(MakeAssignmentExpression);
+				
+				if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
+				modified |= new ILInlining(method).InlineAllInBlock(block);
 			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindLoops) return;
@@ -110,29 +148,42 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (abortBeforeStep == ILAstOptimizationStep.FlattenNestedMovableBlocks) return;
 			FlattenBasicBlocks(method);
 			
-			if (abortBeforeStep == ILAstOptimizationStep.GotoRemoval) return;
+			if (abortBeforeStep == ILAstOptimizationStep.RemoveRedundantCode2) return;
 			RemoveRedundantCode(method);
+			
+			if (abortBeforeStep == ILAstOptimizationStep.GotoRemoval) return;
 			new GotoRemoval().RemoveGotos(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.DuplicateReturns) return;
 			DuplicateReturnStatements(method);
 			
-			if (abortBeforeStep == ILAstOptimizationStep.FlattenIfStatements) return;
-			FlattenIfStatements(method);
+			if (abortBeforeStep == ILAstOptimizationStep.ReduceIfNesting) return;
+			ReduceIfNesting(method);
 			
-			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
+			if (abortBeforeStep == ILAstOptimizationStep.InlineVariables3) return;
 			// The 2nd inlining pass is necessary because DuplicateReturns and the introduction of ternary operators
 			// open up additional inlining possibilities.
 			new ILInlining(method).InlineAllVariables();
 			
-			TypeAnalysis.Reset(method);
+			if (abortBeforeStep == ILAstOptimizationStep.CachedDelegateInitialization) return;
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				for (int i = 0; i < block.Body.Count; i++) {
+					CachedDelegateInitialization(block, ref i);
+				}
+			}
 			
-			if (abortBeforeStep == ILAstOptimizationStep.PeepholeTransforms) return;
-			PeepholeTransforms.Run(context, method);
+			if (abortBeforeStep == ILAstOptimizationStep.IntroduceFixedStatements) return;
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				for (int i = 0; i < block.Body.Count; i++) {
+					IntroduceFixedStatements(block.Body, i);
+				}
+			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.TypeInference2) return;
+			TypeAnalysis.Reset(method);
 			TypeAnalysis.Run(context, method);
 			
+			if (abortBeforeStep == ILAstOptimizationStep.RemoveRedundantCode3) return;
 			GotoRemoval.RemoveRedundantCode(method);
 			
 			// ReportUnassignedILRanges(method);
@@ -312,9 +363,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		// scope is modified if successful
-		bool TrySimplifyTernaryOperator(List<ILNode> scope, ILBasicBlock head, int index)
+		bool SimplifyTernaryOperator(List<ILNode> body, ILBasicBlock head, int pos)
 		{
-			Debug.Assert(scope.Contains(head));
+			Debug.Assert(body.Contains(head));
 			
 			ILExpression condExpr;
 			ILLabel trueLabel;
@@ -336,8 +387,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			      labelToBasicBlock[falseLabel].Match(ILCode.Ret, out unused, out falseExpr, out falseFall))) &&
 			    trueLocVar == falseLocVar &&
 			    trueFall == falseFall &&
-			    scope.Contains(labelToBasicBlock[trueLabel]) &&
-			    scope.Contains(labelToBasicBlock[falseLabel])
+			    body.Contains(labelToBasicBlock[trueLabel]) &&
+			    body.Contains(labelToBasicBlock[falseLabel])
 			   )
 			{
 				ILCode opCode = trueLocVar != null ? ILCode.Stloc : ILCode.Ret;
@@ -390,7 +441,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				// Remove the old basic blocks
 				foreach(ILLabel deleteLabel in new [] { trueLabel, falseLabel }) {
-					scope.RemoveOrThrow(labelToBasicBlock[deleteLabel]);
+					body.RemoveOrThrow(labelToBasicBlock[deleteLabel]);
 					labelGlobalRefCount.RemoveOrThrow(deleteLabel);
 					labelToBasicBlock.RemoveOrThrow(deleteLabel);
 				}
@@ -400,7 +451,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
-		bool TrySimplifyNullCoalescing(List<ILNode> scope, ILBasicBlock head, int index)
+		bool SimplifyNullCoalescing(List<ILNode> body, ILBasicBlock head, int pos)
 		{
 			// ...
 			// v = ldloc(leftVar)
@@ -442,16 +493,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			    labelGlobalRefCount.GetOrDefault(condBBLabel) == 1 &&
 			    labelGlobalRefCount.GetOrDefault(rightBBLabel) == 1 &&
 			    labelGlobalRefCount.GetOrDefault(endBBLabel) == 2 &&
-			    scope.Contains(condBB) &&
-			    scope.Contains(rightBB) &&
-			    scope.Contains(endBB)
+			    body.Contains(condBB) &&
+			    body.Contains(rightBB) &&
+			    body.Contains(endBB)
 			   )
 			{
 				head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.NullCoalescing, null, leftExpr, rightExpr));
 				head.FallthoughGoto = new ILExpression(ILCode.Br, endBBLabel);
 				
 				foreach(ILLabel deleteLabel in new [] { condBBLabel, rightBBLabel }) {
-					scope.RemoveOrThrow(labelToBasicBlock[deleteLabel]);
+					body.RemoveOrThrow(labelToBasicBlock[deleteLabel]);
 					labelGlobalRefCount.RemoveOrThrow(deleteLabel);
 					labelToBasicBlock.RemoveOrThrow(deleteLabel);
 				}
@@ -460,10 +511,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
-		// scope is modified if successful
-		bool TrySimplifyShortCircuit(List<ILNode> scope, ILBasicBlock head, int index)
+		bool SimplifyShortCircuit(List<ILNode> body, ILBasicBlock head, int pos)
 		{
-			Debug.Assert(scope.Contains(head));
+			Debug.Assert(body.Contains(head));
 			
 			ILExpression condExpr;
 			ILLabel trueLabel;
@@ -481,7 +531,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					ILExpression nextCondExpr;
 					ILLabel nextTrueLablel;
 					ILLabel nextFalseLabel;
-					if (scope.Contains(nextBasicBlock) &&
+					if (body.Contains(nextBasicBlock) &&
 					    nextBasicBlock != head &&
 					    labelGlobalRefCount[nextBasicBlock.EntryLabel] == 1 &&
 					    nextBasicBlock.Match(ILCode.Brtrue, out nextTrueLablel, out nextCondExpr, out nextFalseLabel) &&
@@ -498,7 +548,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						// Remove the inlined branch from scope
 						labelGlobalRefCount.RemoveOrThrow(nextBasicBlock.EntryLabel);
 						labelToBasicBlock.RemoveOrThrow(nextBasicBlock.EntryLabel);
-						scope.RemoveOrThrow(nextBasicBlock);
+						body.RemoveOrThrow(nextBasicBlock);
 						
 						return true;
 					}
@@ -589,7 +639,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Reduce the nesting of conditions.
 		/// It should be done on flat data that already had most gotos removed
 		/// </summary>
-		void FlattenIfStatements(ILNode node)
+		void ReduceIfNesting(ILNode node)
 		{
 			ILBlock block = node as ILBlock;
 			if (block != null) {
@@ -624,7 +674,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			// We are changing the number of blocks so we use plain old recursion to get all blocks
 			foreach(ILNode child in node.GetChildren()) {
 				if (child != null && !(child is ILExpression))
-					FlattenIfStatements(child);
+					ReduceIfNesting(child);
 			}
 		}
 		
@@ -642,7 +692,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Perform one pass of a given optimization on this block.
 		/// This block must consist of only basicblocks.
 		/// </summary>
-		public static bool RunPeepholeOptimization(this ILBlock block, Func<List<ILNode>, ILBasicBlock, int, bool> optimization)
+		public static bool RunOptimization(this ILBlock block, Func<List<ILNode>, ILBasicBlock, int, bool> optimization)
 		{
 			bool modified = false;
 			List<ILNode> body = block.Body;
@@ -652,6 +702,23 @@ namespace ICSharpCode.Decompiler.ILAst
 					i = Math.Max(0, i - 1); // Go back one step
 				} else {
 					i++;
+				}
+			}
+			return modified;
+		}
+		
+		public static bool RunOptimization(this ILBlock block, Func<List<ILNode>, ILExpression, int, bool> optimization)
+		{
+			bool modified = false;
+			foreach (ILBasicBlock bb in block.Body) {
+				for (int j = 0; j < bb.Body.Count;) {
+					ILExpression expr = bb.Body[j] as ILExpression;
+					if (expr != null && optimization(bb.Body, expr, j)) {
+						modified = true;
+						j = Math.Max(0, j - 1); // Go back one step
+					} else {
+						j++;
+					}
 				}
 			}
 			return modified;
@@ -683,6 +750,24 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldc_I8:
 				case ILCode.Ldc_R4:
 				case ILCode.Ldc_R8:
+					return true;
+				default:
+					return false;
+			}
+		}
+		
+		public static bool IsStoreToArray(this ILCode code)
+		{
+			switch (code) {
+				case ILCode.Stelem_Any:
+				case ILCode.Stelem_I:
+				case ILCode.Stelem_I1:
+				case ILCode.Stelem_I2:
+				case ILCode.Stelem_I4:
+				case ILCode.Stelem_I8:
+				case ILCode.Stelem_R4:
+				case ILCode.Stelem_R8:
+				case ILCode.Stelem_Ref:
 					return true;
 				default:
 					return false;

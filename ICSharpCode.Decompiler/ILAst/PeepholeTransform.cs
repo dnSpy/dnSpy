@@ -11,179 +11,83 @@ using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
-	public delegate void PeepholeTransform(ILBlock block, ref int i);
-	
-	/// <summary>
-	/// Handles peephole transformations on the ILAst.
-	/// </summary>
-	public class PeepholeTransforms
+	public partial class ILAstOptimizer
 	{
-		DecompilerContext context;
-		ILBlock method;
-		
-		public static void Run(DecompilerContext context, ILBlock method)
+		static bool TransformDecimalCtorToConstant(List<ILNode> body, ILExpression expr, int pos)
 		{
-			PeepholeTransforms transforms = new PeepholeTransforms();
-			transforms.context = context;
-			transforms.method = method;
-			
-			InitializerPeepholeTransforms initializerTransforms = new InitializerPeepholeTransforms(method);
-			PeepholeTransform[] blockTransforms = {
-				initializerTransforms.TransformArrayInitializers,
-				initializerTransforms.TransformCollectionInitializers,
-				transforms.CachedDelegateInitialization,
-				transforms.MakeAssignmentExpression,
-				transforms.IntroduceFixedStatements
-			};
-			Func<ILExpression, ILExpression>[] exprTransforms = {
-				HandleDecimalConstants,
-				SimplifyLdObjAndStObj
-			};
-			// Traverse in post order so that nested blocks are transformed first. This is required so that
-			// patterns on the parent block can assume that all nested blocks are already transformed.
-			foreach (var node in TreeTraversal.PostOrder<ILNode>(method, c => c != null ? c.GetChildren() : null)) {
-				ILBlock block = node as ILBlock;
-				ILExpression expr;
-				if (block != null) {
-					// go through the instructions in reverse so that transforms can build up nested structures inside-out
-					for (int i = block.Body.Count - 1; i >= 0; i--) {
-						context.CancellationToken.ThrowIfCancellationRequested();
-						expr = block.Body[i] as ILExpression;
-						if (expr != null) {
-							// apply expr transforms to top-level expr in block
-							bool modified = ApplyExpressionTransforms(ref expr, exprTransforms);
-							block.Body[i] = expr;
-							if (modified) {
-								ILInlining inlining = new ILInlining(method);
-								if (inlining.InlineIfPossible(block, ref i)) {
-									i++; // retry all transforms on the new combined instruction
-									continue;
-								}
-							}
-						}
-						// apply block transforms
-						foreach (var t in blockTransforms) {
-							t(block, ref i);
-							Debug.Assert(i <= block.Body.Count && i >= 0);
-							if (i == block.Body.Count) // special case: retry all transforms
-								break;
-						}
+			MethodReference r;
+			List<ILExpression> args;
+			if (expr.Match(ILCode.Newobj, out r, out args) &&
+			    r.DeclaringType.Namespace == "System" &&
+			    r.DeclaringType.Name == "Decimal")
+			{
+				if (args.Count == 1) {
+					int val;
+					if (args[0].Match(ILCode.Ldc_I4, out val)) {
+						expr.Code = ILCode.Ldc_Decimal;
+						expr.Operand = new decimal(val);
+						expr.InferredType = r.DeclaringType;
+						expr.Arguments.Clear();
+						return true;
 					}
-				}
-				expr = node as ILExpression;
-				if (expr != null) {
-					// apply expr transforms to all arguments
-					for (int i = 0; i < expr.Arguments.Count; i++) {
-						ILExpression arg = expr.Arguments[i];
-						ApplyExpressionTransforms(ref arg, exprTransforms);
-						expr.Arguments[i] = arg;
+				} else if (args.Count == 5) {
+					int lo, mid, hi, isNegative, scale;
+					if (expr.Arguments[0].Match(ILCode.Ldc_I4, out lo) &&
+					    expr.Arguments[1].Match(ILCode.Ldc_I4, out mid) &&
+					    expr.Arguments[2].Match(ILCode.Ldc_I4, out hi) &&
+					    expr.Arguments[3].Match(ILCode.Ldc_I4, out isNegative) &&
+					    expr.Arguments[4].Match(ILCode.Ldc_I4, out scale))
+					{
+						expr.Code = ILCode.Ldc_Decimal;
+						expr.Operand = new decimal(lo, mid, hi, isNegative != 0, (byte)scale);
+						expr.InferredType = r.DeclaringType;
+						expr.Arguments.Clear();
+						return true;
 					}
 				}
 			}
-		}
-		
-		static bool ApplyExpressionTransforms(ref ILExpression expr, Func<ILExpression, ILExpression>[] exprTransforms)
-		{
-			bool modifiedInAnyIteration = false;
-			bool modified;
-			do {
-				modified = false;
-				ILExpression oldExpr = expr;
-				ILCode oldOpCode = oldExpr.Code;
-				foreach (var t in exprTransforms)
-					expr = t(expr);
-				if (expr != oldExpr || oldOpCode != expr.Code) {
-					modified = true;
-					modifiedInAnyIteration = true;
-				}
-			} while (modified);
-			return modifiedInAnyIteration;
-		}
-		
-		#region HandleDecimalConstants
-		static ILExpression HandleDecimalConstants(ILExpression expr)
-		{
-			if (expr.Code == ILCode.Newobj) {
-				MethodReference r = (MethodReference)expr.Operand;
-				if (r.DeclaringType.Name == "Decimal" && r.DeclaringType.Namespace == "System") {
-					if (expr.Arguments.Count == 1) {
-						int? val = GetI4Constant(expr.Arguments[0]);
-						if (val != null) {
-							expr.Arguments.Clear();
-							expr.Code = ILCode.Ldc_Decimal;
-							expr.Operand = new decimal(val.Value);
-							expr.InferredType = r.DeclaringType;
-						}
-					} else if (expr.Arguments.Count == 5) {
-						int? lo = GetI4Constant(expr.Arguments[0]);
-						int? mid = GetI4Constant(expr.Arguments[1]);
-						int? hi = GetI4Constant(expr.Arguments[2]);
-						int? isNegative = GetI4Constant(expr.Arguments[3]);
-						int? scale = GetI4Constant(expr.Arguments[4]);
-						if (lo != null && mid != null && hi != null && isNegative != null && scale != null) {
-							expr.Arguments.Clear();
-							expr.Code = ILCode.Ldc_Decimal;
-							expr.Operand = new decimal(lo.Value, mid.Value, hi.Value, isNegative.Value != 0, (byte)scale);
-							expr.InferredType = r.DeclaringType;
-						}
-					}
-				}
+			bool modified = false;
+			foreach(ILExpression arg in expr.Arguments) {
+				modified |= TransformDecimalCtorToConstant(null, arg, -1);
 			}
-			return expr;
+			return modified;
 		}
 		
-		static int? GetI4Constant(ILExpression expr)
-		{
-			if (expr != null && expr.Code == ILCode.Ldc_I4)
-				return (int)expr.Operand;
-			else
-				return null;
-		}
-		#endregion
-		
-		#region SimplifyLdObjAndStObj
-		static ILExpression SimplifyLdObjAndStObj(ILExpression expr)
+		static bool SimplifyLdObjAndStObj(List<ILNode> body, ILExpression expr, int pos)
 		{
 			if (expr.Code == ILCode.Initobj) {
 				expr.Code = ILCode.Stobj;
 				expr.Arguments.Add(new ILExpression(ILCode.DefaultValue, expr.Operand));
+				return true;
 			}
-			if (expr.Code == ILCode.Stobj) {
-				switch (expr.Arguments[0].Code) {
-					case ILCode.Ldelema:
-						return SimplifyLdObjOrStObj(expr, ILCode.Stelem_Any);
-					case ILCode.Ldloca:
-						return SimplifyLdObjOrStObj(expr, ILCode.Stloc);
-					case ILCode.Ldflda:
-						return SimplifyLdObjOrStObj(expr, ILCode.Stfld);
-					case ILCode.Ldsflda:
-						return SimplifyLdObjOrStObj(expr, ILCode.Stsfld);
+			ILExpression arg, arg2;
+			TypeReference type;
+			ILCode? newCode = null;
+			if (expr.Match(ILCode.Stobj, out type, out arg, out arg2)) {
+				switch (arg.Code) {
+					case ILCode.Ldelema: newCode = ILCode.Stelem_Any; break;
+					case ILCode.Ldloca:  newCode = ILCode.Stloc; break;
+					case ILCode.Ldflda:  newCode = ILCode.Stfld; break;
+					case ILCode.Ldsflda: newCode = ILCode.Stsfld; break;
 				}
-			} else if (expr.Code == ILCode.Ldobj) {
-				switch (expr.Arguments[0].Code) {
-					case ILCode.Ldelema:
-						return SimplifyLdObjOrStObj(expr, ILCode.Ldelem_Any);
-					case ILCode.Ldloca:
-						return SimplifyLdObjOrStObj(expr, ILCode.Ldloc);
-					case ILCode.Ldflda:
-						return SimplifyLdObjOrStObj(expr, ILCode.Ldfld);
-					case ILCode.Ldsflda:
-						return SimplifyLdObjOrStObj(expr, ILCode.Ldsfld);
+			} else if (expr.Match(ILCode.Ldobj, out type, out arg)) {
+				switch (arg.Code) {
+					case ILCode.Ldelema: newCode = ILCode.Ldelem_Any; break;
+					case ILCode.Ldloca:  newCode = ILCode.Ldloc; break;
+					case ILCode.Ldflda:  newCode = ILCode.Ldfld; break;
+					case ILCode.Ldsflda: newCode = ILCode.Ldsfld; break;
 				}
 			}
-			return expr;
+			if (newCode != null) {
+				arg.Code = newCode.Value;
+				if (expr.Code == ILCode.Stobj)
+					arg.Arguments.Add(arg2);
+				arg.ILRanges.AddRange(expr.ILRanges);
+				body[pos] = arg;
+				return true;
+			}
+			return false;
 		}
-		
-		static ILExpression SimplifyLdObjOrStObj(ILExpression expr, ILCode newCode)
-		{
-			ILExpression lda = expr.Arguments[0];
-			lda.Code = newCode;
-			if (expr.Code == ILCode.Stobj)
-				lda.Arguments.Add(expr.Arguments[1]);
-			lda.ILRanges.AddRange(expr.ILRanges);
-			return lda;
-		}
-		#endregion
 		
 		#region CachedDelegateInitialization
 		void CachedDelegateInitialization(ILBlock block, ref int i)
@@ -230,7 +134,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (parent.Arguments[j].Code == ILCode.Ldsfld && ((FieldReference)parent.Arguments[j].Operand).ResolveWithinSameModule() == field) {
 							parent.Arguments[j] = newObj;
 							block.Body.RemoveAt(i);
-							i -= new ILInlining(method).InlineInto(block, i, aggressive: true);
+							i -= new ILInlining(method).InlineInto(block.Body, i, aggressive: true);
 							return;
 						}
 					}
@@ -240,51 +144,48 @@ namespace ICSharpCode.Decompiler.ILAst
 		#endregion
 		
 		#region MakeAssignmentExpression
-		void MakeAssignmentExpression(ILBlock block, ref int i)
+		bool MakeAssignmentExpression(List<ILNode> body, ILExpression expr, int pos)
 		{
-			// expr_44 = ...
-			// stloc(v, expr_44)
+			// exprVar = ...
+			// stloc(v, exprVar)
 			// ->
-			// expr_44 = stloc(v, ...))
+			// exprVar = stloc(v, ...))
+			ILExpression nextExpr = body.ElementAtOrDefault(pos + 1) as ILExpression;
 			ILVariable exprVar;
 			ILExpression initializer;
-			if (!(block.Body[i].Match(ILCode.Stloc, out exprVar, out initializer) && exprVar.IsGenerated))
-				return;
-			ILExpression stloc1 = block.Body.ElementAtOrDefault(i + 1) as ILExpression;
-			if (!(stloc1 != null && stloc1.Code == ILCode.Stloc && stloc1.Arguments[0].Code == ILCode.Ldloc && stloc1.Arguments[0].Operand == exprVar))
-				return;
-			
-			ILInlining inlining;
-			ILExpression store2 = block.Body.ElementAtOrDefault(i + 2) as ILExpression;
-			if (StoreCanBeConvertedToAssignment(store2, exprVar)) {
-				// expr_44 = ...
-				// stloc(v1, expr_44)
-				// anystore(v2, expr_44)
-				// ->
-				// stloc(v1, anystore(v2, ...))
-				inlining = new ILInlining(method);
-				if (inlining.numLdloc.GetOrDefault(exprVar) == 2 && inlining.numStloc.GetOrDefault(exprVar) == 1) {
-					block.Body.RemoveAt(i + 2); // remove store2
-					block.Body.RemoveAt(i); // remove expr = ...
-					stloc1.Arguments[0] = store2;
-					store2.Arguments[store2.Arguments.Count - 1] = initializer;
-					
-					if (inlining.InlineIfPossible(block, ref i)) {
-						i++; // retry transformations on the new combined instruction
+			ILVariable v;
+			ILExpression stLocArg;
+			if (expr.Match(ILCode.Stloc, out exprVar, out initializer) &&
+			    exprVar.IsGenerated &&
+			    nextExpr.Match(ILCode.Stloc, out v, out stLocArg) &&
+			    stLocArg.Match(ILCode.Ldloc, exprVar))
+			{
+				ILExpression store2 = body.ElementAtOrDefault(pos + 2) as ILExpression;
+				if (StoreCanBeConvertedToAssignment(store2, exprVar)) {
+					// expr_44 = ...
+					// stloc(v1, expr_44)
+					// anystore(v2, expr_44)
+					// ->
+					// stloc(v1, anystore(v2, ...))
+					ILInlining inlining = new ILInlining(method);
+					if (inlining.numLdloc.GetOrDefault(exprVar) == 2 && inlining.numStloc.GetOrDefault(exprVar) == 1) {
+						body.RemoveAt(pos + 2); // remove store2
+						body.RemoveAt(pos); // remove expr = ...
+						nextExpr.Arguments[0] = store2;
+						store2.Arguments[store2.Arguments.Count - 1] = initializer;
+						
+						inlining.InlineIfPossible(body, ref pos);
+						
+						return true;
 					}
-					return;
 				}
+				
+				body.RemoveAt(pos + 1); // remove stloc
+				nextExpr.Arguments[0] = initializer;
+				((ILExpression)body[pos]).Arguments[0] = nextExpr;
+				return true;
 			}
-			
-			
-			block.Body.RemoveAt(i + 1); // remove stloc
-			stloc1.Arguments[0] = initializer;
-			((ILExpression)block.Body[i]).Arguments[0] = stloc1;
-			
-			inlining = new ILInlining(method);
-			if (inlining.InlineIfPossible(block, ref i)) {
-				i++; // retry transformations on the new combined instruction
-			}
+			return false;
 		}
 		
 		bool StoreCanBeConvertedToAssignment(ILExpression store, ILVariable exprVar)
@@ -297,35 +198,35 @@ namespace ICSharpCode.Decompiler.ILAst
 		#endregion
 		
 		#region IntroduceFixedStatements
-		void IntroduceFixedStatements(ILBlock block, ref int i)
+		bool IntroduceFixedStatements(List<ILNode> body, int i)
 		{
 			ILExpression initValue;
 			ILVariable pinnedVar;
 			int initEndPos;
-			if (!MatchFixedInitializer(block, i, out pinnedVar, out initValue, out initEndPos))
-				return;
+			if (!MatchFixedInitializer(body, i, out pinnedVar, out initValue, out initEndPos))
+				return false;
 			
-			ILFixedStatement fixedStmt = block.Body.ElementAtOrDefault(initEndPos) as ILFixedStatement;
+			ILFixedStatement fixedStmt = body.ElementAtOrDefault(initEndPos) as ILFixedStatement;
 			if (fixedStmt != null) {
 				ILExpression expr = fixedStmt.BodyBlock.Body.LastOrDefault() as ILExpression;
 				if (expr != null && expr.Code == ILCode.Stloc && expr.Operand == pinnedVar && IsNullOrZero(expr.Arguments[0])) {
 					// we found a second initializer for the existing fixed statement
 					fixedStmt.Initializers.Insert(0, initValue);
-					block.Body.RemoveRange(i, initEndPos - i);
+					body.RemoveRange(i, initEndPos - i);
 					fixedStmt.BodyBlock.Body.RemoveAt(fixedStmt.BodyBlock.Body.Count - 1);
 					if (pinnedVar.Type.IsByReference)
 						pinnedVar.Type = new PointerType(((ByReferenceType)pinnedVar.Type).ElementType);
-					return;
+					return true;
 				}
 			}
 			
 			// find where pinnedVar is reset to 0:
 			int j;
-			for (j = initEndPos; j < block.Body.Count; j++) {
+			for (j = initEndPos; j < body.Count; j++) {
 				ILVariable v2;
 				ILExpression storedVal;
 				// stloc(pinned_Var, conv.u(ldc.i4(0)))
-				if (block.Body[j].Match(ILCode.Stloc, out v2, out storedVal) && v2 == pinnedVar) {
+				if (body[j].Match(ILCode.Stloc, out v2, out storedVal) && v2 == pinnedVar) {
 					if (IsNullOrZero(storedVal)) {
 						break;
 					}
@@ -334,11 +235,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Create fixed statement from i to j
 			fixedStmt = new ILFixedStatement();
 			fixedStmt.Initializers.Add(initValue);
-			fixedStmt.BodyBlock = new ILBlock(block.Body.GetRange(initEndPos, j - initEndPos)); // from initEndPos to j-1 (inclusive)
-			block.Body.RemoveRange(i + 1, Math.Min(j, block.Body.Count - 1) - i); // from i+1 to j (inclusive)
-			block.Body[i] = fixedStmt;
+			fixedStmt.BodyBlock = new ILBlock(body.GetRange(initEndPos, j - initEndPos)); // from initEndPos to j-1 (inclusive)
+			body.RemoveRange(i + 1, Math.Min(j, body.Count - 1) - i); // from i+1 to j (inclusive)
+			body[i] = fixedStmt;
 			if (pinnedVar.Type.IsByReference)
 				pinnedVar.Type = new PointerType(((ByReferenceType)pinnedVar.Type).ElementType);
+			
+			return true;
 		}
 		
 		bool IsNullOrZero(ILExpression expr)
@@ -348,15 +251,15 @@ namespace ICSharpCode.Decompiler.ILAst
 			return (expr.Code == ILCode.Ldc_I4 && (int)expr.Operand == 0) || expr.Code == ILCode.Ldnull;
 		}
 		
-		bool MatchFixedInitializer(ILBlock block, int i, out ILVariable pinnedVar, out ILExpression initValue, out int nextPos)
+		bool MatchFixedInitializer(List<ILNode> body, int i, out ILVariable pinnedVar, out ILExpression initValue, out int nextPos)
 		{
-			if (block.Body[i].Match(ILCode.Stloc, out pinnedVar, out initValue) && pinnedVar.IsPinned && !IsNullOrZero(initValue)) {
-				initValue = (ILExpression)block.Body[i];
+			if (body[i].Match(ILCode.Stloc, out pinnedVar, out initValue) && pinnedVar.IsPinned && !IsNullOrZero(initValue)) {
+				initValue = (ILExpression)body[i];
 				nextPos = i + 1;
-				HandleStringFixing(pinnedVar, block.Body, ref nextPos, ref initValue);
+				HandleStringFixing(pinnedVar, body, ref nextPos, ref initValue);
 				return true;
 			}
-			ILCondition ifStmt = block.Body[i] as ILCondition;
+			ILCondition ifStmt = body[i] as ILCondition;
 			ILExpression arrayLoadingExpr;
 			if (ifStmt != null && MatchFixedArrayInitializerCondition(ifStmt.Condition, out arrayLoadingExpr)) {
 				ILVariable arrayVariable = (ILVariable)arrayLoadingExpr.Operand;

@@ -28,6 +28,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
+		public static bool Match<T>(this ILNode node, ILCode code, T operand)
+		{
+			ILExpression expr = node as ILExpression;
+			if (expr != null && expr.Prefixes == null && expr.Code == code) {
+				Debug.Assert(expr.Arguments.Count == 0);
+				return operand.Equals(expr.Operand);
+			}
+			return false;
+		}
+		
 		public static bool Match(this ILNode node, ILCode code, out List<ILExpression> args)
 		{
 			ILExpression expr = node as ILExpression;

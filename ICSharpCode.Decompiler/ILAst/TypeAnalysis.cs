@@ -490,8 +490,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldc_R8:
 					return typeSystem.Double;
 				case ILCode.Ldc_Decimal:
-					Debug.Assert(expr.InferredType != null && expr.InferredType.FullName == "System.Decimal");
-					return expr.InferredType;
+					return new TypeReference("System", "Decimal", module, module, true);
 				case ILCode.Ldtoken:
 					if (expr.Operand is TypeReference)
 						return new TypeReference("System", "RuntimeTypeHandle", module, module, true);
