@@ -677,12 +677,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			bool modified = false;
 			List<ILNode> body = block.Body;
-			for (int i = 0; i < body.Count;) {
-				if (optimization(body, (ILBasicBlock)body[i], i)) {
+			for (int i = body.Count - 1; i >= 0; i--) {
+				if (i < body.Count && optimization(body, (ILBasicBlock)body[i], i)) {
 					modified = true;
-					i = Math.Max(0, i - 1); // Go back one step
-				} else {
-					i++;
 				}
 			}
 			return modified;
@@ -692,13 +689,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			bool modified = false;
 			foreach (ILBasicBlock bb in block.Body) {
-				for (int j = 0; j < bb.Body.Count;) {
-					ILExpression expr = bb.Body[j] as ILExpression;
-					if (expr != null && optimization(bb.Body, expr, j)) {
+				for (int i = bb.Body.Count - 1; i >= 0; i--) {
+					ILExpression expr = bb.Body.ElementAtOrDefault(i) as ILExpression;
+					if (expr != null && optimization(bb.Body, expr, i)) {
 						modified = true;
-						j = Math.Max(0, j - 1); // Go back one step
-					} else {
-						j++;
 					}
 				}
 			}
