@@ -281,6 +281,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public ILExpression(ILCode code, object operand, List<ILExpression> args)
 		{
+			if (operand is ILExpression)
+				throw new ArgumentException("operand");
+			
 			this.Code = code;
 			this.Operand = operand;
 			this.Arguments = new List<ILExpression>(args);
@@ -289,6 +292,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public ILExpression(ILCode code, object operand, params ILExpression[] args)
 		{
+			if (operand is ILExpression)
+				throw new ArgumentException("operand");
+			
 			this.Code = code;
 			this.Operand = operand;
 			this.Arguments = new List<ILExpression>(args);

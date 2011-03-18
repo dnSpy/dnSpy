@@ -410,16 +410,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				} else if (retType == typeSystem.Boolean && trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal)) {
 					// It can be expressed as logical expression
 					if (leftBoolVal != 0) {
-						newExpr = new ILExpression(ILCode.LogicOr, null, condExpr, falseExpr);
+						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, condExpr, falseExpr);
 					} else {
-						newExpr = new ILExpression(ILCode.LogicAnd, null, new ILExpression(ILCode.LogicNot, null, condExpr), falseExpr);
+						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicAnd, new ILExpression(ILCode.LogicNot, null, condExpr), falseExpr);
 					}
 				} else if (retType == typeSystem.Boolean && falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal)) {
 					// It can be expressed as logical expression
 					if (rightBoolVal != 0) {
-						newExpr = new ILExpression(ILCode.LogicOr, null, new ILExpression(ILCode.LogicNot, null, condExpr), trueExpr);
+						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, new ILExpression(ILCode.LogicNot, null, condExpr), trueExpr);
 					} else {
-						newExpr = new ILExpression(ILCode.LogicAnd, null, condExpr, trueExpr);
+						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicAnd, condExpr, trueExpr);
 					}
 				} else {
 					// Ternary operator tends to create long complicated return statements					
@@ -429,6 +429,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					// Create ternary expression
 					newExpr = new ILExpression(ILCode.TernaryOp, null, condExpr, trueExpr, falseExpr);
 				}
+				
 				head.Body[head.Body.Count - 1] = new ILExpression(opCode, trueLocVar, newExpr);
 				head.FallthoughGoto = trueFall != null ? new ILExpression(ILCode.Br, trueFall) : null;
 				
@@ -519,11 +520,13 @@ namespace ICSharpCode.Decompiler.ILAst
 					    (otherLablel == nextFalseLabel || otherLablel == nextTrueLablel))
 					{
 						// Create short cicuit branch
+						ILExpression logicExpr;
 						if (otherLablel == nextFalseLabel) {
-							head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Brtrue, nextTrueLablel, new ILExpression(ILCode.LogicAnd, null, negate ? new ILExpression(ILCode.LogicNot, null, condExpr) : condExpr, nextCondExpr));
+							logicExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicAnd, negate ? new ILExpression(ILCode.LogicNot, null, condExpr) : condExpr, nextCondExpr);
 						} else {
-							head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Brtrue, nextTrueLablel, new ILExpression(ILCode.LogicOr, null, negate ? condExpr : new ILExpression(ILCode.LogicNot, null, condExpr), nextCondExpr));
+							logicExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, negate ? condExpr : new ILExpression(ILCode.LogicNot, null, condExpr), nextCondExpr);
 						}
+						head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Brtrue, nextTrueLablel, logicExpr);
 						head.FallthoughGoto = new ILExpression(ILCode.Br, nextFalseLabel);
 						
 						// Remove the inlined branch from scope
@@ -536,6 +539,21 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 			return false;
+		}
+		
+		ILExpression MakeLeftAssociativeShortCircuit(ILCode code, ILExpression left, ILExpression right)
+		{
+			// Assuming that the inputs are already left associative
+			if (right.Match(code)) {
+				// Find the leftmost logical expression
+				ILExpression current = right;
+				while(current.Arguments[0].Match(code))
+					current = current.Arguments[0];
+				current.Arguments[0] = new ILExpression(code, null, left, current.Arguments[0]);
+				return right;
+			} else {
+				return new ILExpression(code, null, left, right);
+			}
 		}
 		
 		void DuplicateReturnStatements(ILBlock method)
