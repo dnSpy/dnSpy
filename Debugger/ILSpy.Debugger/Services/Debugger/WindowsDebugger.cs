@@ -12,6 +12,7 @@ using System.Windows.Media;
 
 using Debugger;
 using Debugger.Interop.CorPublish;
+using Debugger.MetaData;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory;
@@ -287,28 +288,49 @@ namespace ILSpy.Debugger.Services
 		
 		// Stepping:
 		
-		SourceCodeMapping GetCurrentCodeMapping(out bool isMatch)
+		SourceCodeMapping GetCurrentCodeMapping(out StackFrame frame, out bool isMatch)
 		{
 			isMatch = false;
-			if (CurrentLineBookmark.Instance == null)
-				return null;
+			frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 			
-			var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 			// get the mapped instruction from the current line marker or the next one
-			return CodeMappingsStorage.GetInstructionByTypeAndLine(
-				CurrentLineBookmark.Instance.Type.FullName, (uint)frame.MethodInfo.MetadataToken, frame.IP, out isMatch);
+			return CodeMappingsStorage.GetInstructionByTypeTokenAndOffset(
+				((DebugType)frame.MethodInfo.DeclaringType).FullNameWithoutGenericArguments,
+				(uint)frame.MethodInfo.MetadataToken,
+				frame.IP, out isMatch);
+			
+//			int i = debuggedProcess.SelectedThread.Callstack.Count() - 1;
+//			if (i < 0)
+//				return null;
+//
+//			while (true) {
+//				frame = debuggedProcess.SelectedThread.Callstack.ElementAt(i);
+//
+//				// get the mapped instruction from the current line marker or the next one
+//				var result = CodeMappingsStorage.GetInstructionByTypeTokenAndOffset(
+//					((DebugType)frame.MethodInfo.DeclaringType).FullNameWithoutGenericArguments,
+//					(uint)frame.MethodInfo.MetadataToken,
+//					frame.IP, out isMatch);
+//
+//				if (result == null) {
+//					i--;
+//					if (i < 0)
+//						return result;
+//				} else {
+//					return result;
+//				}
+//			}
 		}
 		
 		StackFrame GetStackFrame()
 		{
 			bool isMatch;
-			var map = GetCurrentCodeMapping(out isMatch);
+			StackFrame frame;
+			var map = GetCurrentCodeMapping(out frame, out isMatch);
 			if (map == null) {
-				CurrentLineBookmark.Remove();
-				Continue();
 				return null;
 			} else {
-				var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
+				//var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 				frame.SourceCodeLine = map.SourceCodeLine;
 				frame.ILRanges = map.ToArray(isMatch);
 				return frame;
@@ -804,8 +826,6 @@ namespace ILSpy.Debugger.Services
 		
 		public void JumpToCurrentLine()
 		{
-			DebuggerService.RemoveCurrentLineMarker();
-			
 			if (debuggedProcess != null &&  debuggedProcess.SelectedThread != null) {
 				
 				// use most recent stack frame because we don't have the symbols
@@ -818,8 +838,9 @@ namespace ILSpy.Debugger.Services
 				int ilOffset = frame.IP;
 				int line;
 				TypeDefinition type;
-			
+				
 				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(frame.MethodInfo.DeclaringType.FullName, token, ilOffset, out type, out line)) {
+					DebuggerService.RemoveCurrentLineMarker();
 					DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
 				} else {
 					// is possible that the type is not decompiled yet, so we must do a decompilation on demand
@@ -830,23 +851,31 @@ namespace ILSpy.Debugger.Services
 
 		void DecompileOnDemand(StackFrame frame)
 		{
-			var debugType = frame.MethodInfo.DeclaringType;
+			var debugType = (DebugType)frame.MethodInfo.DeclaringType;
 			uint token = (uint)frame.MethodInfo.MetadataToken;
 			int ilOffset = frame.IP;
 			
-			string fullName = debugType.Namespace + "." + debugType.Name;
+			string fullName = debugType.FullNameWithoutGenericArguments;
+			fullName = fullName.Replace("+", "/");
 			if (DebugData.LoadedAssemblies == null)
 				Continue();
 			else {
 				// search for type in the current assembly list
 				TypeDefinition typeDef = null;
+				TypeDefinition nestedTypeDef = null;
+				
 				foreach (var assembly in DebugData.LoadedAssemblies) {
 					foreach (var module in assembly.Modules) {
-						foreach (var type in module.Types) {
-							if (type.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase)) {
-								typeDef = type;
-								break;
+						var localType = module.GetType(fullName);
+						if (localType != null) {
+							if (localType.DeclaringType == null)
+								typeDef = localType;
+							else {
+								nestedTypeDef = localType;
+								typeDef = localType.DeclaringType;
 							}
+							
+							break;
 						}
 					}
 					if (typeDef != null)
@@ -854,18 +883,20 @@ namespace ILSpy.Debugger.Services
 				}
 				if (typeDef != null) {
 					// decompile on demand
-					AstBuilder builder = new AstBuilder(new DecompilerContext());
-					builder.AddType(typeDef);
-					builder.GenerateCode(new PlainTextOutput());
-					
+					if (!CodeMappingsStorage.ContainsKey(typeDef.FullName)) {
+						AstBuilder builder = new AstBuilder(new DecompilerContext());
+						builder.AddType(typeDef);
+						builder.GenerateCode(new PlainTextOutput());
+					}
 					// try jump
 					int line;
 					TypeDefinition type;
-					if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(typeDef.FullName, token, ilOffset, out type, out line)) {
-						DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
+					if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset((nestedTypeDef ?? typeDef).FullName, token, ilOffset, out type, out line)) {
+						DebuggerService.RemoveCurrentLineMarker();
+						DebuggerService.JumpToCurrentLine(typeDef, line, 0, line, 0);
 					} else {
 						// continue since we cannot find the debugged type
-						Continue();
+						StepOver();
 					}
 				} else {
 					// continue since we cannot find the debugged type

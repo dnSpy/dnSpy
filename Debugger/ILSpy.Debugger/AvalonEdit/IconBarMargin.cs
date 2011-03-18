@@ -235,7 +235,7 @@ namespace ILSpy.Debugger.AvalonEdit
 						uint token;
 						var instruction = storage.GetInstructionByTypeAndLine(DebugData.CurrentType.FullName, line, out token);
 						
-						if (instruction == null || instruction.ILInstructionOffset.From == 0) {
+						if (instruction == null) {
 							MessageBox.Show(string.Format("Missing code mappings for {0} at line {1}", DebugData.CurrentType.FullName, line),
 							                "Code mappings", MessageBoxButton.OK, MessageBoxImage.Information);
 							return;

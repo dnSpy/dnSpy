@@ -57,8 +57,9 @@ namespace ICSharpCode.Decompiler
 				currentList.AddRange(MemberMapping.InvertedList);
 			} else {
 				// if the current list contains the last mapping, add also the last gap
-				if (currentList.Count == 1)
-					currentList.Add(MemberMapping.InvertedList.LastOrDefault());
+				var lastInverted = MemberMapping.InvertedList.LastOrDefault();
+				if (lastInverted != null && lastInverted.From == currentList[currentList.Count - 1].To)
+					currentList.Add(lastInverted);
 			}
 			
 			// set the output
@@ -210,13 +211,14 @@ namespace ICSharpCode.Decompiler
 			return null;
 		}
 		
-		public static SourceCodeMapping GetInstructionByTypeAndLine(
+		public static SourceCodeMapping GetInstructionByTypeTokenAndOffset(
 			this ConcurrentDictionary<string, List<MemberMapping>> codeMappings,
 			string typeName,
 			uint token,
 			int ilOffset, out bool isMatch)
 		{
 			isMatch = false;
+			typeName = typeName.Replace("+", "/");
 			
 			if (codeMappings == null)
 				throw new ArgumentNullException("CodeMappings storage must be valid!");
@@ -278,6 +280,8 @@ namespace ICSharpCode.Decompiler
 				codeMapping = mapping.MemberCodeMappings.Find(cm => (cm.ILInstructionOffset.From >= ilOffset));
 				if (codeMapping == null) {
 					codeMapping = mapping.MemberCodeMappings.LastOrDefault();
+					if (codeMapping == null)
+						return false;
 				}
 			}
 			
