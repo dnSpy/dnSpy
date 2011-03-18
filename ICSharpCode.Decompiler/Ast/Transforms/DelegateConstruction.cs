@@ -18,7 +18,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 	/// For anonymous methods, creates an AnonymousMethodExpression.
 	/// Also gets rid of any "Display Classes" left over after inlining an anonymous method.
 	/// </summary>
-	public class DelegateConstruction : ContextTrackingVisitor
+	public class DelegateConstruction : ContextTrackingVisitor<object>
 	{
 		internal sealed class Annotation
 		{
