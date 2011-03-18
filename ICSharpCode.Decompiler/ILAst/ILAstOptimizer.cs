@@ -175,9 +175,17 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (abortBeforeStep == ILAstOptimizationStep.IntroduceFixedStatements) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
-				for (int i = 0; i < block.Body.Count; i++) {
+				for (int i = block.Body.Count - 1; i >= 0; i--) {
 					// TODO: Move before loops
-					IntroduceFixedStatements(block.Body, i);
+					if (i < block.Body.Count)
+						IntroduceFixedStatements(block.Body, i);
+				}
+			}
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				for (int i = block.Body.Count - 1; i >= 0; i--) {
+					// TODO: Move before loops
+					if (i < block.Body.Count)
+						IntroduceFixedStatements(block.Body, i);
 				}
 			}
 			
