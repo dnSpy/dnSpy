@@ -858,7 +858,7 @@ namespace ILSpy.Debugger.Services
 			string fullName = debugType.FullNameWithoutGenericArguments;
 			fullName = fullName.Replace("+", "/");
 			if (DebugData.LoadedAssemblies == null)
-				Continue();
+				throw new NullReferenceException("No DebugData assemblies!");
 			else {
 				// search for type in the current assembly list
 				TypeDefinition typeDef = null;
@@ -896,11 +896,11 @@ namespace ILSpy.Debugger.Services
 						DebuggerService.JumpToCurrentLine(typeDef, line, 0, line, 0);
 					} else {
 						// continue since we cannot find the debugged type
-						StepOver();
+						throw new InvalidOperationException(string.Format("No mapping for {0} for token {1} and offset {2}!", fullName, token, ilOffset));
 					}
 				} else {
 					// continue since we cannot find the debugged type
-					Continue();
+					throw new NullReferenceException(string.Format("The type {0} was not found!", fullName));
 				}
 			}
 		}

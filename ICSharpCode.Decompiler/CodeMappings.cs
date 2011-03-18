@@ -250,7 +250,7 @@ namespace ICSharpCode.Decompiler
 		/// Gets the source code and type name from metadata token and offset.
 		/// </summary>
 		/// <param name="codeMappings">Code mappings storage.</param>
-		/// <param name="currentTypeFullName">Current type name.</param>
+		/// <param name="typeName">Current type name.</param>
 		/// <param name="token">Metadata token.</param>
 		/// <param name="ilOffset">IL offset.</param>
 		/// <param name="typeName">Type definition.</param>
@@ -258,7 +258,7 @@ namespace ICSharpCode.Decompiler
 		/// <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
 		public static bool GetSourceCodeFromMetadataTokenAndOffset(
 			this ConcurrentDictionary<string, List<MemberMapping>> codeMappings,
-			string currentTypeFullName,
+			string typeName,
 			uint token,
 			int ilOffset,
 			out TypeDefinition type,
@@ -267,10 +267,14 @@ namespace ICSharpCode.Decompiler
 			type = null;
 			line = 0;
 			
-			if (!codeMappings.ContainsKey(currentTypeFullName))
+			if (codeMappings == null)
+				throw new ArgumentNullException("CodeMappings storage must be valid!");
+			
+			typeName = typeName.Replace("+", "/");
+			if (!codeMappings.ContainsKey(typeName))
 				return false;
 			
-			var mapping = codeMappings[currentTypeFullName].Find(m => m.MetadataToken == token);
+			var mapping = codeMappings[typeName].Find(m => m.MetadataToken == token);
 			if (mapping == null)
 				return false;
 			

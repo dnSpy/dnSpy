@@ -242,8 +242,10 @@ namespace ICSharpCode.ILSpy.Commands
 	{
 		public override void Execute(object parameter)
 		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
+				base.Execute(null);
 				CurrentDebugger.StepOver();
+			}
 		}
 	}
 	
@@ -257,8 +259,10 @@ namespace ICSharpCode.ILSpy.Commands
 	{
 		public override void Execute(object parameter)
 		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning)
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
+				base.Execute(null);
 				CurrentDebugger.StepOut();
+			}
 		}
 	}
 	
