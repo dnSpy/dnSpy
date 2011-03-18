@@ -129,6 +129,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get {
 				AstNode next;
 				for (AstNode cur = firstChild; cur != null; cur = next) {
+					Debug.Assert(cur.parent == this);
 					// Remember next before yielding cur.
 					// This allows removing/replacing nodes while iterating through the list.
 					next = cur.nextSibling;
