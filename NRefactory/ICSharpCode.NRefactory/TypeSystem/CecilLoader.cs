@@ -46,6 +46,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		#endregion
 		
 		#region Load From AssemblyDefinition
+		/// <summary>
+		/// Loads the assembly definition into a project content.
+		/// </summary>
+		/// <returns>IProjectContent that represents the assembly</returns>
 		public IProjectContent LoadAssembly(AssemblyDefinition assemblyDefinition)
 		{
 			if (assemblyDefinition == null)
@@ -144,7 +148,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			public void Dispose()
 			{
-				// Disposibng the synchronization context has no effect
+				// Disposing the synchronization context has no effect
 			}
 			
 			string IDocumentationProvider.GetDocumentation(IEntity entity)
@@ -297,14 +301,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
-		const string DynamicAttributeFullName = "System.Runtime.CompilerServices.DynamicAttribute";
-		
 		static bool HasDynamicAttribute(ICustomAttributeProvider attributeProvider, int typeIndex)
 		{
 			if (attributeProvider == null || !attributeProvider.HasCustomAttributes)
 				return false;
 			foreach (CustomAttribute a in attributeProvider.CustomAttributes) {
-				if (a.Constructor.DeclaringType.FullName == DynamicAttributeFullName) {
+				TypeReference type = a.AttributeType;
+				if (type.Name == "DynamicAttribute" && type.Namespace == "System.Runtime.CompilerServices") {
 					if (a.ConstructorArguments.Count == 1) {
 						CustomAttributeArgument[] values = a.ConstructorArguments[0].Value as CustomAttributeArgument[];
 						if (values != null && typeIndex < values.Length && values[typeIndex].Value is bool)
@@ -325,21 +328,150 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
+		static readonly IAttribute inAttribute = new DefaultAttribute(typeof(InAttribute).ToTypeReference(), null);
+		static readonly IAttribute outAttribute = new DefaultAttribute(typeof(OutAttribute).ToTypeReference(), null);
+		
 		void AddAttributes(ParameterDefinition parameter, DefaultParameter targetParameter)
 		{
+			if (!targetParameter.IsOut) {
+				if (parameter.IsIn)
+					targetParameter.Attributes.Add(inAttribute);
+				if (parameter.IsOut)
+					targetParameter.Attributes.Add(outAttribute);
+			}
 			if (parameter.HasCustomAttributes) {
 				AddCustomAttributes(parameter.CustomAttributes, targetParameter.Attributes);
 			}
 		}
 		
-		void AddAttributes(MethodDefinition accessorMethod, DefaultAccessor targetAccessor)
+		static readonly ITypeReference dllImportAttributeTypeRef = typeof(DllImportAttribute).ToTypeReference();
+		static readonly SimpleConstantValue trueValue = new SimpleConstantValue(KnownTypeReference.Boolean, true);
+		static readonly SimpleConstantValue falseValue = new SimpleConstantValue(KnownTypeReference.Boolean, true);
+		static readonly ITypeReference callingConventionTypeRef = typeof(CallingConvention).ToTypeReference();
+		static readonly IAttribute preserveSigAttribute = new DefaultAttribute(typeof(PreserveSigAttribute).ToTypeReference(), null);
+		static readonly ITypeReference methodImplAttributeTypeRef = typeof(MethodImplAttribute).ToTypeReference();
+		static readonly ITypeReference methodImplOptionsTypeRef = typeof(MethodImplOptions).ToTypeReference();
+		
+		bool HasAnyAttributes(MethodDefinition methodDefinition)
 		{
-			if (accessorMethod.HasCustomAttributes) {
-				AddCustomAttributes(accessorMethod.CustomAttributes, targetAccessor.Attributes);
+			if (methodDefinition.HasPInvokeInfo)
+				return true;
+			if ((methodDefinition.ImplAttributes & ~MethodImplAttributes.CodeTypeMask) != 0)
+				return true;
+			if (methodDefinition.MethodReturnType.HasFieldMarshal)
+				return true;
+			return methodDefinition.HasCustomAttributes || methodDefinition.MethodReturnType.HasCustomAttributes;
+		}
+		
+		void AddAttributes(MethodDefinition methodDefinition, IList<IAttribute> attributes, IList<IAttribute> returnTypeAttributes)
+		{
+			MethodImplAttributes implAttributes = methodDefinition.ImplAttributes & ~MethodImplAttributes.CodeTypeMask;
+			
+			#region DllImportAttribute
+			if (methodDefinition.HasPInvokeInfo) {
+				PInvokeInfo info = methodDefinition.PInvokeInfo;
+				DefaultAttribute dllImport = new DefaultAttribute(dllImportAttributeTypeRef, new[] { KnownTypeReference.String });
+				dllImport.PositionalArguments.Add(new SimpleConstantValue(KnownTypeReference.String, info.Module.Name));
+				
+				if (info.IsBestFitDisabled)
+					AddNamedArgument(dllImport, "BestFitMapping", falseValue);
+				if (info.IsBestFitEnabled)
+					AddNamedArgument(dllImport, "BestFitMapping", trueValue);
+				
+				CallingConvention callingConvention;
+				switch (info.Attributes & PInvokeAttributes.CallConvMask) {
+					case PInvokeAttributes.CallConvCdecl:
+						callingConvention = CallingConvention.Cdecl;
+						break;
+					case PInvokeAttributes.CallConvFastcall:
+						callingConvention = CallingConvention.FastCall;
+						break;
+					case PInvokeAttributes.CallConvStdCall:
+						callingConvention = CallingConvention.StdCall;
+						break;
+					case PInvokeAttributes.CallConvThiscall:
+						callingConvention = CallingConvention.ThisCall;
+						break;
+					case PInvokeAttributes.CallConvWinapi:
+						callingConvention = CallingConvention.Winapi;
+						break;
+					default:
+						throw new NotSupportedException("unknown calling convention");
+				}
+				if (callingConvention != CallingConvention.Winapi)
+					AddNamedArgument(dllImport, "CallingConvention", new SimpleConstantValue(callingConventionTypeRef, (int)callingConvention));
+				
+				CharSet charSet = CharSet.None;
+				switch (info.Attributes & PInvokeAttributes.CharSetMask) {
+					case PInvokeAttributes.CharSetAnsi:
+						charSet = CharSet.Ansi;
+						break;
+					case PInvokeAttributes.CharSetAuto:
+						charSet = CharSet.Auto;
+						break;
+					case PInvokeAttributes.CharSetUnicode:
+						charSet = CharSet.Unicode;
+						break;
+				}
+				if (charSet != CharSet.None)
+					dllImport.NamedArguments.Add(new KeyValuePair<string, IConstantValue>(
+						"CharSet", new SimpleConstantValue(charSetTypeRef, (int)charSet)));
+				
+				if (!string.IsNullOrEmpty(info.EntryPoint) && info.EntryPoint != methodDefinition.Name)
+					AddNamedArgument(dllImport, "EntryPoint", new SimpleConstantValue(KnownTypeReference.String, info.EntryPoint));
+				
+				if (info.IsNoMangle)
+					AddNamedArgument(dllImport, "ExactSpelling", trueValue);
+				
+				if ((implAttributes & MethodImplAttributes.PreserveSig) == MethodImplAttributes.PreserveSig)
+					implAttributes &= ~MethodImplAttributes.PreserveSig;
+				else
+					AddNamedArgument(dllImport, "PreserveSig", falseValue);
+				
+				if (info.SupportsLastError)
+					AddNamedArgument(dllImport, "SetLastError", trueValue);
+				
+				if (info.IsThrowOnUnmappableCharDisabled)
+					AddNamedArgument(dllImport, "ThrowOnUnmappableChar", falseValue);
+				if (info.IsThrowOnUnmappableCharEnabled)
+					AddNamedArgument(dllImport, "ThrowOnUnmappableChar", trueValue);
+				
+				attributes.Add(dllImport);
+			}
+			#endregion
+			
+			#region PreserveSigAttribute
+			if (implAttributes == MethodImplAttributes.PreserveSig) {
+				attributes.Add(preserveSigAttribute);
+				implAttributes = 0;
+			}
+			#endregion
+			
+			#region MethodImplAttribute
+			if (implAttributes != 0) {
+				DefaultAttribute methodImpl = new DefaultAttribute(methodImplAttributeTypeRef, new[] { methodImplOptionsTypeRef });
+				methodImpl.PositionalArguments.Add(new SimpleConstantValue(methodImplOptionsTypeRef, (int)implAttributes));
+				attributes.Add(methodImpl);
+			}
+			#endregion
+			
+			if (methodDefinition.HasCustomAttributes) {
+				AddCustomAttributes(methodDefinition.CustomAttributes, attributes);
+			}
+			if (methodDefinition.MethodReturnType.HasMarshalInfo) {
+				returnTypeAttributes.Add(ConvertMarshalInfo(methodDefinition.MethodReturnType.MarshalInfo));
+			}
+			if (methodDefinition.MethodReturnType.HasCustomAttributes) {
+				AddCustomAttributes(methodDefinition.MethodReturnType.CustomAttributes, returnTypeAttributes);
 			}
 		}
 		
-		static readonly DefaultAttribute serializableAttribute = new DefaultAttribute(typeof(SerializableAttribute).ToTypeReference());
+		static void AddNamedArgument(DefaultAttribute attribute, string name, IConstantValue value)
+		{
+			attribute.NamedArguments.Add(new KeyValuePair<string, IConstantValue>(name, value));
+		}
+		
+		static readonly DefaultAttribute serializableAttribute = new DefaultAttribute(typeof(SerializableAttribute).ToTypeReference(), null);
 		static readonly ITypeReference structLayoutAttributeTypeRef = typeof(StructLayoutAttribute).ToTypeReference();
 		static readonly ITypeReference layoutKindTypeRef = typeof(LayoutKind).ToTypeReference();
 		static readonly ITypeReference charSetTypeRef = typeof(CharSet).ToTypeReference();
@@ -373,8 +505,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 					charSet = CharSet.Unicode;
 					break;
 			}
-			if (layoutKind != LayoutKind.Auto || charSet != CharSet.Ansi || typeDefinition.PackingSize > 0 || typeDefinition.ClassSize > 0) {
-				DefaultAttribute structLayout = new DefaultAttribute(structLayoutAttributeTypeRef);
+			LayoutKind defaultLayoutKind = (typeDefinition.IsValueType && !typeDefinition.IsEnum) ? LayoutKind.Sequential: LayoutKind.Auto;
+			if (layoutKind != defaultLayoutKind || charSet != CharSet.Ansi || typeDefinition.PackingSize > 0 || typeDefinition.ClassSize > 0) {
+				DefaultAttribute structLayout = new DefaultAttribute(structLayoutAttributeTypeRef, new[] { layoutKindTypeRef });
 				structLayout.PositionalArguments.Add(new SimpleConstantValue(layoutKindTypeRef, (int)layoutKind));
 				if (charSet != CharSet.Ansi) {
 					structLayout.NamedArguments.Add(new KeyValuePair<string, IConstantValue>(
@@ -400,12 +533,58 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
+		static readonly ITypeReference fieldOffsetAttributeTypeRef = typeof(FieldOffsetAttribute).ToTypeReference();
+		static readonly DefaultAttribute nonSerializedAttribute = new DefaultAttribute(typeof(NonSerializedAttribute).ToTypeReference(), null);
+		
+		void AddAttributes(FieldDefinition fieldDefinition, IEntity targetEntity)
+		{
+			#region FieldOffsetAttribute
+			if (fieldDefinition.HasLayoutInfo) {
+				DefaultAttribute fieldOffset = new DefaultAttribute(fieldOffsetAttributeTypeRef, new[] { KnownTypeReference.Int32 });
+				fieldOffset.PositionalArguments.Add(new SimpleConstantValue(KnownTypeReference.Int32, fieldDefinition.Offset));
+				targetEntity.Attributes.Add(fieldOffset);
+			}
+			#endregion
+			
+			#region NonSerializedAttribute
+			if (fieldDefinition.IsNotSerialized) {
+				targetEntity.Attributes.Add(nonSerializedAttribute);
+			}
+			#endregion
+			
+			if (fieldDefinition.HasMarshalInfo) {
+				targetEntity.Attributes.Add(ConvertMarshalInfo(fieldDefinition.MarshalInfo));
+			}
+			
+			if (fieldDefinition.HasCustomAttributes) {
+				AddCustomAttributes(fieldDefinition.CustomAttributes, targetEntity.Attributes);
+			}
+		}
+		
+		#region MarshalAsAttribute (ConvertMarshalInfo)
+		static readonly ITypeReference marshalAsAttributeTypeRef = typeof(MarshalAsAttribute).ToTypeReference();
+		static readonly ITypeReference unmanagedTypeTypeRef = typeof(UnmanagedType).ToTypeReference();
+		
+		static IAttribute ConvertMarshalInfo(MarshalInfo marshalInfo)
+		{
+			DefaultAttribute attr = new DefaultAttribute(marshalAsAttributeTypeRef, new[] { unmanagedTypeTypeRef });
+			attr.PositionalArguments.Add(new SimpleConstantValue(unmanagedTypeTypeRef, (int)marshalInfo.NativeType));
+			// TODO: handle classes derived from MarshalInfo
+			return attr;
+		}
+		#endregion
+		
 		void AddCustomAttributes(Mono.Collections.Generic.Collection<CustomAttribute> attributes, IList<IAttribute> targetCollection)
 		{
 			foreach (var cecilAttribute in attributes) {
-				if (cecilAttribute.AttributeType.FullName != DynamicAttributeFullName) {
-					targetCollection.Add(ReadAttribute(cecilAttribute));
+				TypeReference type = cecilAttribute.AttributeType;
+				if (type.Namespace == "System.Runtime.CompilerServices") {
+					if (type.Name == "DynamicAttribute" || type.Name == "ExtensionAttribute")
+						continue;
+				} else if (type.Name == "ParamArrayAttribute" && type.Namespace == "System") {
+					continue;
 				}
+				targetCollection.Add(ReadAttribute(cecilAttribute));
 			}
 		}
 		
@@ -413,7 +592,15 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			if (attribute == null)
 				throw new ArgumentNullException("attribute");
-			DefaultAttribute a = new DefaultAttribute(ReadTypeReference(attribute.AttributeType));
+			MethodReference ctor = attribute.Constructor;
+			ITypeReference[] ctorParameters = null;
+			if (ctor.HasParameters) {
+				ctorParameters = new ITypeReference[ctor.Parameters.Count];
+				for (int i = 0; i < ctorParameters.Length; i++) {
+					ctorParameters[i] = ReadTypeReference(ctor.Parameters[i].ParameterType);
+				}
+			}
+			DefaultAttribute a = new DefaultAttribute(ReadTypeReference(attribute.AttributeType), ctorParameters);
 			try {
 				if (attribute.HasConstructorArguments) {
 					foreach (var arg in attribute.ConstructorArguments) {
@@ -442,8 +629,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		#region Read Constant Value
 		public IConstantValue ReadConstantValue(CustomAttributeArgument arg)
 		{
-			ITypeReference type = ReadTypeReference(arg.Type);
 			object value = arg.Value;
+			if (value is CustomAttributeArgument) {
+				// Cecil uses this representation for boxed values
+				arg = (CustomAttributeArgument)value;
+				value = arg.Value;
+			}
+			ITypeReference type = ReadTypeReference(arg.Type);
 			CustomAttributeArgument[] array = value as CustomAttributeArgument[];
 			if (array != null) {
 				// TODO: write unit test for this
@@ -500,9 +692,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				
 				InitNestedTypes(loader); // nested types can be initialized only after generic parameters were created
 				
-				if (typeDefinition.HasCustomAttributes) {
-					loader.AddAttributes(typeDefinition, this);
-				}
+				loader.AddAttributes(typeDefinition, this);
+				
+				this.HasExtensionMethods = HasExtensionAttribute(typeDefinition);
 				
 				// set base classes
 				if (typeDefinition.IsEnum) {
@@ -699,7 +891,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			else
 				m.ReturnType = ReadTypeReference(method.ReturnType, typeAttributes: method.MethodReturnType, entity: m);
 			
-			AddAttributes(method, m);
+			if (HasAnyAttributes(method))
+				AddAttributes(method, m.Attributes, m.ReturnTypeAttributes);
 			TranslateModifiers(method, m);
 			
 			if (method.HasParameters) {
@@ -708,16 +901,24 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				}
 			}
 			
-			// mark as extension method is the attribute is set
-			if (method.IsStatic && method.HasCustomAttributes) {
-				foreach (var attr in method.CustomAttributes) {
-					if (attr.AttributeType.FullName == typeof(ExtensionAttribute).FullName)
-						m.IsExtensionMethod = true;
-				}
+			// mark as extension method if the attribute is set
+			if (method.IsStatic && HasExtensionAttribute(method)) {
+				m.IsExtensionMethod = true;
 			}
 			
 			FinishReadMember(m);
 			return m;
+		}
+		
+		static bool HasExtensionAttribute(ICustomAttributeProvider provider)
+		{
+			if (provider.HasCustomAttributes) {
+				foreach (var attr in provider.CustomAttributes) {
+					if (attr.AttributeType.Name == "ExtensionAttribute" && attr.AttributeType.Namespace == "System.Runtime.CompilerServices")
+						return true;
+				}
+			}
+			return false;
 		}
 		
 		bool IsVisible(MethodAttributes att)
@@ -782,14 +983,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			var type = ReadTypeReference(parameter.ParameterType, typeAttributes: parameter, entity: parentMember);
 			DefaultParameter p = new DefaultParameter(type, parameter.Name);
 			
-			AddAttributes(parameter, p);
-			
 			if (parameter.ParameterType is Mono.Cecil.ByReferenceType) {
-				if (parameter.IsOut)
+				if (!parameter.IsIn && parameter.IsOut)
 					p.IsOut = true;
 				else
 					p.IsRef = true;
 			}
+			AddAttributes(parameter, p);
 			
 			if (parameter.IsOptional) {
 				p.DefaultValue = ReadConstantValue(new CustomAttributeArgument(parameter.ParameterType, parameter.Constant));
@@ -917,10 +1117,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			if (accessorMethod != null && IsVisible(accessorMethod.Attributes)) {
 				Accessibility accessibility = GetAccessibility(accessorMethod.Attributes);
-				if (accessorMethod.HasCustomAttributes) {
+				if (HasAnyAttributes(accessorMethod)) {
 					DefaultAccessor a = new DefaultAccessor();
 					a.Accessibility = accessibility;
-					AddAttributes(accessorMethod, a);
+					AddAttributes(accessorMethod, a.Attributes, a.ReturnTypeAttributes);
 					return a;
 				} else {
 					return DefaultAccessor.GetFromAccessibility(accessibility);

@@ -22,6 +22,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IList<IAttribute> Attributes { get; }
 		
 		/// <summary>
+		/// Gets the attributes defined on the return type of the accessor. (e.g. [return: MarshalAs(...)])
+		/// </summary>
+		IList<IAttribute> ReturnTypeAttributes { get; }
+		
+		/// <summary>
 		/// Gets the accessibility of this accessor.
 		/// </summary>
 		Accessibility Accessibility { get; }

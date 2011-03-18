@@ -40,6 +40,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		const ushort FlagShadowing = 0x0004;
 		const ushort FlagSynthetic = 0x0008;
 		const ushort FlagAddDefaultConstructorIfRequired = 0x0010;
+		const ushort FlagHasExtensionMethods = 0x0020;
 		
 		protected override void FreezeInternal()
 		{
@@ -309,6 +310,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			set {
 				CheckBeforeMutation();
 				flags[FlagSynthetic] = value;
+			}
+		}
+		
+		public bool HasExtensionMethods {
+			get { return flags[FlagHasExtensionMethods]; }
+			set {
+				CheckBeforeMutation();
+				flags[FlagHasExtensionMethods] = value;
 			}
 		}
 		
