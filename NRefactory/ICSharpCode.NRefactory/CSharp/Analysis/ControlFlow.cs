@@ -146,7 +146,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, ITypeResolveContext context, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return BuildControlFlowGraph(statement, new ResolveVisitor(
-				new CSharpResolver(context, cancellationToken), null, ConstantModeResolveVisitorNavigator.Skip));
+				new CSharpResolver(context, cancellationToken),
+				null, ConstantModeResolveVisitorNavigator.Skip));
 		}
 		
 		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, ResolveVisitor resolveVisitor)
@@ -250,11 +251,20 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		
 		#region Constant evaluation
 		/// <summary>
+		/// Gets/Sets whether to handle only primitive expressions as constants (no complex expressions like "a + b").
+		/// </summary>
+		public bool EvaluateOnlyPrimitiveConstants { get; set; }
+		
+		/// <summary>
 		/// Evaluates an expression.
 		/// </summary>
 		/// <returns>The constant value of the expression; or null if the expression is not a constant.</returns>
-		ConstantResolveResult EvaluateConstant(Expression expr)
+		internal ConstantResolveResult EvaluateConstant(Expression expr)
 		{
+			if (EvaluateOnlyPrimitiveConstants) {
+				if (!(expr is PrimitiveExpression || expr is NullReferenceExpression))
+					return null;
+			}
 			return resolveVisitor.Resolve(expr) as ConstantResolveResult;
 		}
 		
@@ -262,11 +272,11 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// Evaluates an expression.
 		/// </summary>
 		/// <returns>The value of the constant boolean expression; or null if the value is not a constant boolean expression.</returns>
-		bool? EvaluateCondition(Expression expr)
+		internal bool? EvaluateCondition(Expression expr)
 		{
-			ConstantResolveResult crr = EvaluateConstant(expr);
-			if (crr != null)
-				return crr.ConstantValue as bool?;
+			ConstantResolveResult rr = EvaluateConstant(expr);
+			if (rr != null)
+				return rr.ConstantValue as bool?;
 			else
 				return null;
 		}
@@ -328,7 +338,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				foreach (Statement stmt in statements) {
 					if (childNode == null) {
 						childNode = builder.CreateStartNode(stmt);
-						Connect(source, childNode);
+						if (source != null)
+							Connect(source, childNode);
 					}
 					Debug.Assert(childNode.NextStatement == stmt);
 					childNode = stmt.AcceptVisitor(this, childNode);

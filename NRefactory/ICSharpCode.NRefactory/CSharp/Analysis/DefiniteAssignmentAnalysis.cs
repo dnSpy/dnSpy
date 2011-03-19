@@ -44,10 +44,12 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 	/// </summary>
 	public class DefiniteAssignmentAnalysis
 	{
+		readonly ControlFlowGraphBuilder cfgBuilder = new ControlFlowGraphBuilder();
 		readonly DefiniteAssignmentVisitor visitor = new DefiniteAssignmentVisitor();
 		readonly List<ControlFlowNode> allNodes = new List<ControlFlowNode>();
 		readonly Dictionary<Statement, ControlFlowNode> beginNodeDict = new Dictionary<Statement, ControlFlowNode>();
 		readonly Dictionary<Statement, ControlFlowNode> endNodeDict = new Dictionary<Statement, ControlFlowNode>();
+		readonly Dictionary<Statement, ControlFlowNode> conditionNodeDict = new Dictionary<Statement, ControlFlowNode>();
 		readonly ResolveVisitor resolveVisitor;
 		readonly CancellationToken cancellationToken;
 		Dictionary<ControlFlowNode, DefiniteAssignmentStatus> nodeStatus = new Dictionary<ControlFlowNode, DefiniteAssignmentStatus>();
@@ -58,8 +60,14 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		
 		Queue<ControlFlowNode> nodesWithModifiedInput = new Queue<ControlFlowNode>();
 		
+		public DefiniteAssignmentAnalysis(Statement rootStatement, CancellationToken cancellationToken = default(CancellationToken))
+			: this(rootStatement, null, cancellationToken)
+		{
+		}
+		
 		public DefiniteAssignmentAnalysis(Statement rootStatement, ITypeResolveContext context, CancellationToken cancellationToken = default(CancellationToken))
-			: this(rootStatement, new ResolveVisitor(new CSharpResolver(context, cancellationToken), null, ConstantModeResolveVisitorNavigator.Skip))
+			: this(rootStatement, new ResolveVisitor(new CSharpResolver(context ?? MinimalResolveContext.Instance, cancellationToken),
+			                                         null, ConstantModeResolveVisitorNavigator.Skip))
 		{
 		}
 		
@@ -72,16 +80,18 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			this.resolveVisitor = resolveVisitor;
 			this.cancellationToken = resolveVisitor.CancellationToken;
 			visitor.analysis = this;
-			ControlFlowGraphBuilder b = new ControlFlowGraphBuilder();
-			allNodes.AddRange(b.BuildControlFlowGraph(rootStatement, resolveVisitor));
+			if (resolveVisitor.TypeResolveContext is MinimalResolveContext) {
+				cfgBuilder.EvaluateOnlyPrimitiveConstants = true;
+			}
+			allNodes.AddRange(cfgBuilder.BuildControlFlowGraph(rootStatement, resolveVisitor));
 			foreach (AstNode descendant in rootStatement.Descendants) {
 				// Anonymous methods have separate control flow graphs, but we also need to analyze those.
 				AnonymousMethodExpression ame = descendant as AnonymousMethodExpression;
 				if (ame != null)
-					allNodes.AddRange(b.BuildControlFlowGraph(ame.Body, resolveVisitor));
+					allNodes.AddRange(cfgBuilder.BuildControlFlowGraph(ame.Body, resolveVisitor));
 				LambdaExpression lambda = descendant as LambdaExpression;
 				if (lambda != null && lambda.Body is Statement)
-					allNodes.AddRange(b.BuildControlFlowGraph((Statement)lambda.Body, resolveVisitor));
+					allNodes.AddRange(cfgBuilder.BuildControlFlowGraph((Statement)lambda.Body, resolveVisitor));
 			}
 			// Verify that we created nodes for all statements:
 			Debug.Assert(!rootStatement.DescendantsAndSelf.OfType<Statement>().Except(allNodes.Select(n => n.NextStatement)).Any());
@@ -91,6 +101,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 					beginNodeDict.Add(node.NextStatement, node);
 				if (node.Type == ControlFlowNodeType.BetweenStatements || node.Type == ControlFlowNodeType.EndNode)
 					endNodeDict.Add(node.PreviousStatement, node);
+				if (node.Type == ControlFlowNodeType.LoopCondition)
+					conditionNodeDict.Add(node.NextStatement, node);
 			}
 		}
 		
@@ -134,6 +146,11 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		public DefiniteAssignmentStatus GetStatusAfter(Statement statement)
 		{
 			return nodeStatus[endNodeDict[statement]];
+		}
+		
+		public DefiniteAssignmentStatus GetStatusBeforeLoopCondition(Statement statement)
+		{
+			return nodeStatus[conditionNodeDict[statement]];
 		}
 		
 		/// <summary>
@@ -304,7 +321,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// <returns>The constant value of the expression; or null if the expression is not a constant.</returns>
 		ConstantResolveResult EvaluateConstant(Expression expr)
 		{
-			return resolveVisitor.Resolve(expr) as ConstantResolveResult;
+			return cfgBuilder.EvaluateConstant(expr);
 		}
 		
 		/// <summary>
@@ -313,11 +330,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// <returns>The value of the constant boolean expression; or null if the value is not a constant boolean expression.</returns>
 		bool? EvaluateCondition(Expression expr)
 		{
-			ConstantResolveResult crr = EvaluateConstant(expr);
-			if (crr != null)
-				return crr.ConstantValue as bool?;
-			else
-				return null;
+			return cfgBuilder.EvaluateCondition(expr);
 		}
 		
 		static DefiniteAssignmentStatus CleanSpecialValues(DefiniteAssignmentStatus status)
