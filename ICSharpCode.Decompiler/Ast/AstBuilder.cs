@@ -89,11 +89,6 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void AddAssembly(AssemblyDefinition assemblyDefinition, bool onlyAssemblyLevel = false)
 		{
-			astCompileUnit.AddChild(
-				new UsingDeclaration {
-					Import = new SimpleType("System")
-				}, CompilationUnit.MemberRole);
-			
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition, AttributeTarget.Assembly);
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition.MainModule, AttributeTarget.Module);
 

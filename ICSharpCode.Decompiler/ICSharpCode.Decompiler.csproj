@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Ast\AstBuilder.cs" />
     <Compile Include="Ast\AstMethodBodyBuilder.cs" />
+    <Compile Include="Ast\CecilTypeResolveContext.cs" />
     <Compile Include="Ast\CommentStatement.cs" />
     <Compile Include="Ast\DeclareVariableInSmallestScope.cs" />
     <Compile Include="Ast\DecompilerContext.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Ast\Transforms\ConvertConstructorCallIntoInitializer.cs" />
     <Compile Include="Ast\Transforms\DelegateConstruction.cs" />
     <Compile Include="Ast\Transforms\IntroduceUnsafeModifier.cs" />
+    <Compile Include="Ast\Transforms\IntroduceUsingDeclarations.cs" />
     <Compile Include="Ast\Transforms\ReplaceMethodCallsWithOperators.cs" />
     <Compile Include="Ast\Transforms\PushNegation.cs" />
     <Compile Include="Ast\Transforms\TransformationPipeline.cs" />

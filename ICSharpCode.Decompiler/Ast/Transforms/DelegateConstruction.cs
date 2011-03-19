@@ -182,7 +182,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public override object VisitBlockStatement(BlockStatement blockStatement, object data)
 		{
 			base.VisitBlockStatement(blockStatement, data);
-			foreach (VariableDeclarationStatement stmt in blockStatement.Statements.OfType<VariableDeclarationStatement>()) {
+			foreach (VariableDeclarationStatement stmt in blockStatement.Statements.OfType<VariableDeclarationStatement>().ToArray()) {
 				if (stmt.Variables.Count() != 1)
 					continue;
 				var variable = stmt.Variables.Single();
