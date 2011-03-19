@@ -193,5 +193,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 			return false;
 		}
+		
+		public void InsertAfter(T existingItem, T newItem)
+		{
+			node.InsertChildAfter(existingItem, newItem, role);
+		}
+		
+		public void InsertBefore(T existingItem, T newItem)
+		{
+			node.InsertChildBefore(existingItem, newItem, role);
+		}
 	}
 }

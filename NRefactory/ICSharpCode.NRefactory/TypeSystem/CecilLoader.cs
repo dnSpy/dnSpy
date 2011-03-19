@@ -35,7 +35,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public bool IncludeInternalMembers { get; set; }
 		
 		/// <summary>
-		/// Gets/Sets the documentation provider that is used to retrive the XML documentation for all members.
+		/// Gets/Sets the documentation provider that is used to retrieve the XML documentation for all members.
 		/// </summary>
 		public IDocumentationProvider DocumentationProvider { get; set; }
 		
