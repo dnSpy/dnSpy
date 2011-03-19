@@ -61,8 +61,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			    body.Contains(labelToBasicBlock[falseLabel])
 			   )
 			{
-				ILCode opCode = trueLocVar != null ? ILCode.Stloc : ILCode.Ret;
-				TypeReference retType = trueLocVar != null ? trueLocVar.Type : this.context.CurrentMethod.ReturnType;
+				bool isStloc = trueLocVar != null;
+				ILCode opCode = isStloc ? ILCode.Stloc : ILCode.Ret;
+				TypeReference retType = isStloc ? trueLocVar.Type : this.context.CurrentMethod.ReturnType;
 				int leftBoolVal;
 				int rightBoolVal;
 				ILExpression newExpr;
@@ -112,7 +113,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 				
 				head.Body[head.Body.Count - 1] = new ILExpression(opCode, trueLocVar, newExpr);
-				head.FallthoughGoto = trueFall != null ? new ILExpression(ILCode.Br, trueFall) : null;
+				head.FallthoughGoto = isStloc ? new ILExpression(ILCode.Br, trueFall) : null;
 				
 				// Remove the old basic blocks
 				body.RemoveOrThrow(labelToBasicBlock[trueLabel]);
@@ -228,6 +229,30 @@ namespace ICSharpCode.Decompiler.ILAst
 			} else {
 				return new ILExpression(code, null, left, right);
 			}
+		}
+		
+		public bool JointBasicBlocks(List<ILNode> body, ILBasicBlock head, int pos)
+		{
+			ILLabel nextLabel;
+			ILBasicBlock nextBB;
+			ILNode last = head.Body.LastOrDefault();
+			if (!last.IsConditionalControlFlow() && 
+			    !last.IsUnconditionalControlFlow() &&
+			    head.FallthoughGoto.Match(ILCode.Br, out nextLabel) &&
+			    labelGlobalRefCount[nextLabel] == 1 &&
+			    labelToBasicBlock.TryGetValue(nextLabel, out nextBB) &&
+			    body.Contains(nextBB) &&
+			    nextBB.EntryLabel == nextLabel &&
+			    !nextBB.Body.OfType<ILTryCatchBlock>().Any()
+			   )
+			{
+				head.Body.AddRange(nextBB.Body);
+				head.FallthoughGoto = nextBB.FallthoughGoto;
+				
+				body.RemoveOrThrow(nextBB);
+				return true;
+			}
+			return false;
 		}
 	}
 }
