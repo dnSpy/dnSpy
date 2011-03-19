@@ -59,7 +59,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get { return HighlightSearchMatch(type.Name); }
+			get { return HighlightSearchMatch(this.Language.TypeToString(type, includeNamespace: false)); }
 		}
 		
 		public bool IsPublicAPI {

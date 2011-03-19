@@ -387,13 +387,10 @@ namespace ICSharpCode.ILSpy
 
 		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes = null)
 		{
-			AstType astType = AstBuilder.ConvertType(type, typeAttributes);
-			if (includeNamespace) {
-				// embed the type in TypeReferenceExpression so that the whole type can get replaced
-				var tre = new TypeReferenceExpression { Type = astType };
-				tre.AcceptVisitor(new AddNamespaceToType(), null);
-				astType = tre.Type;
-			}
+			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
+			if (includeNamespace)
+				options |= ConvertTypeOptions.IncludeNamespace;
+			AstType astType = AstBuilder.ConvertType(type, typeAttributes, options);
 			
 			StringWriter w = new StringWriter();
 			if (type.IsByReference) {
@@ -409,28 +406,6 @@ namespace ICSharpCode.ILSpy
 			
 			astType.AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
 			return w.ToString();
-		}
-		
-		sealed class AddNamespaceToType : DepthFirstAstVisitor<object, object>
-		{
-			public override object VisitSimpleType(SimpleType simpleType, object data)
-			{
-				base.VisitSimpleType(simpleType, data); // handle type arguments
-				TypeReference tr = simpleType.Annotation<TypeReference>();
-				if (tr != null && !string.IsNullOrEmpty(tr.Namespace)) {
-					string[] parts = tr.Namespace.Split('.');
-					AstType nsType = new SimpleType(parts[0]);
-					for (int i = 1; i < parts.Length; i++) {
-						nsType = new MemberType { Target = nsType, MemberName = parts[i] };
-					}
-					MemberType memberType = new MemberType();
-					memberType.Target = nsType;
-					memberType.MemberName = simpleType.Identifier;
-					simpleType.TypeArguments.MoveTo(memberType.TypeArguments);
-					simpleType.ReplaceWith(memberType);
-				}
-				return null;
-			}
 		}
 		
 		public override bool ShowMember(MemberReference member)
