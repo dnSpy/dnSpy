@@ -85,19 +85,12 @@ namespace ICSharpCode.Decompiler.ILAst
 	
 	public class ILBasicBlock: ILNode
 	{
-		public ILLabel      EntryLabel;
+		/// <remarks> Body has to start with a label and end with unconditional control flow </remarks>
 		public List<ILNode> Body = new List<ILNode>();
-		public ILExpression FallthoughGoto;
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
-			if (this.EntryLabel != null)
-				yield return this.EntryLabel;
-			foreach (ILNode child in this.Body) {
-				yield return child;
-			}
-			if (this.FallthoughGoto != null)
-				yield return this.FallthoughGoto;
+			return this.Body;
 		}
 		
 		public override void WriteTo(ITextOutput output)
@@ -116,17 +109,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		public override void WriteTo(ITextOutput output)
 		{
 			output.WriteDefinition(Name + ":", this);
-		}
-	}
-	
-	public class ILComment: ILNode
-	{
-		public string Text;
-		public List<ILRange> ILRanges { get; set; }
-		
-		public override void WriteTo(ITextOutput output)
-		{
-			output.WriteLine("// " + this.Text);
 		}
 	}
 	

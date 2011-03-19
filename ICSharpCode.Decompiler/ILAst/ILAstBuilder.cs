@@ -688,10 +688,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILRange ilRange = new ILRange() { From = byteCode.Offset, To = byteCode.EndOffset };
 				
 				if (byteCode.StackBefore == null) {
-					ast.Add(new ILComment() {
-						Text = "Unreachable code: " + byteCode.Code.GetName(),
-						ILRanges = new List<ILRange>(new[] { ilRange })
-					});
+					// Unreachable code
 					continue;
 				}
 				

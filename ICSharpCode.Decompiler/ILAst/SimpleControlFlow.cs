@@ -48,15 +48,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILLabel falseFall;
 			object unused;
 			
-			if (head.MatchLast(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel) &&
+			if (head.MatchLastAndBr(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel) &&
 			    labelGlobalRefCount[trueLabel] == 1 &&
 			    labelGlobalRefCount[falseLabel] == 1 &&
-			    ((labelToBasicBlock[trueLabel].MatchSingle(ILCode.Stloc, out trueLocVar, out trueExpr, out trueFall) &&
-			      labelToBasicBlock[falseLabel].MatchSingle(ILCode.Stloc, out falseLocVar, out falseExpr, out falseFall)) ||
-			     (labelToBasicBlock[trueLabel].MatchSingle(ILCode.Ret, out unused, out trueExpr, out trueFall) &&
-			      labelToBasicBlock[falseLabel].MatchSingle(ILCode.Ret, out unused, out falseExpr, out falseFall))) &&
-			    trueLocVar == falseLocVar &&
-			    trueFall == falseFall &&
+			    ((labelToBasicBlock[trueLabel].MatchSingleAndBr(ILCode.Stloc, out trueLocVar, out trueExpr, out trueFall) &&
+			      labelToBasicBlock[falseLabel].MatchSingleAndBr(ILCode.Stloc, out falseLocVar, out falseExpr, out falseFall) &&
+			      trueLocVar == falseLocVar && trueFall == falseFall) ||
+			     (labelToBasicBlock[trueLabel].MatchSingle(ILCode.Ret, out unused, out trueExpr) &&
+			      labelToBasicBlock[falseLabel].MatchSingle(ILCode.Ret, out unused, out falseExpr))) &&
 			    body.Contains(labelToBasicBlock[trueLabel]) &&
 			    body.Contains(labelToBasicBlock[falseLabel])
 			   )
@@ -112,8 +111,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					newExpr = new ILExpression(ILCode.TernaryOp, null, condExpr, trueExpr, falseExpr);
 				}
 				
-				head.Body[head.Body.Count - 1] = new ILExpression(opCode, trueLocVar, newExpr);
-				head.FallthoughGoto = isStloc ? new ILExpression(ILCode.Br, trueFall) : null;
+				head.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
+				head.Body.Add(new ILExpression(opCode, trueLocVar, newExpr));
+				if (isStloc)
+					head.Body.Add(new ILExpression(ILCode.Br, trueFall));
 				
 				// Remove the old basic blocks
 				body.RemoveOrThrow(labelToBasicBlock[trueLabel]);
@@ -147,22 +148,22 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILLabel rightBBLabel;
 			ILBasicBlock rightBB;
 			ILExpression rightExpr;
-			if (head.Body.Count >= 2 &&
-				head.Body[head.Body.Count - 2].Match(ILCode.Stloc, out v, out leftExpr) &&
+			if (head.Body.Count >= 3 &&
+				head.Body[head.Body.Count - 3].Match(ILCode.Stloc, out v, out leftExpr) &&
 			    leftExpr.Match(ILCode.Ldloc, out leftVar) &&
-			    head.MatchLast(ILCode.Brtrue, out endBBLabel, out leftExpr2, out rightBBLabel) &&
+			    head.MatchLastAndBr(ILCode.Brtrue, out endBBLabel, out leftExpr2, out rightBBLabel) &&
 			    leftExpr2.Match(ILCode.Ldloc, leftVar) &&
 			    labelToBasicBlock.TryGetValue(rightBBLabel, out rightBB) &&
-			    rightBB.MatchSingle(ILCode.Stloc, out v2, out rightExpr, out endBBLabel2) &&
+			    rightBB.MatchSingleAndBr(ILCode.Stloc, out v2, out rightExpr, out endBBLabel2) &&
 			    v == v2 &&
 			    endBBLabel == endBBLabel2 &&
 			    labelGlobalRefCount.GetOrDefault(rightBBLabel) == 1 &&
 			    body.Contains(rightBB)
 			   )
 			{
-				head.Body[head.Body.Count - 2] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.NullCoalescing, null, leftExpr, rightExpr));
-				head.Body.RemoveAt(head.Body.Count - 1);
-				head.FallthoughGoto = new ILExpression(ILCode.Br, endBBLabel);
+				head.Body.RemoveTail(ILCode.Stloc, ILCode.Brtrue, ILCode.Br);
+				head.Body.Add(new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.NullCoalescing, null, leftExpr, rightExpr)));
+				head.Body.Add(new ILExpression(ILCode.Br, endBBLabel));
 				
 				body.RemoveOrThrow(labelToBasicBlock[rightBBLabel]);
 				return true;
@@ -177,7 +178,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression condExpr;
 			ILLabel trueLabel;
 			ILLabel falseLabel;
-			if(head.MatchLast(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel)) {
+			if(head.MatchLastAndBr(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel)) {
 				for (int pass = 0; pass < 2; pass++) {
 					
 					// On the second pass, swap labels and negate expression of the first branch
@@ -192,8 +193,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					ILLabel nextFalseLabel;
 					if (body.Contains(nextBasicBlock) &&
 					    nextBasicBlock != head &&
-					    labelGlobalRefCount[nextBasicBlock.EntryLabel] == 1 &&
-					    nextBasicBlock.MatchSingle(ILCode.Brtrue, out nextTrueLablel, out nextCondExpr, out nextFalseLabel) &&
+					    labelGlobalRefCount[(ILLabel)nextBasicBlock.Body.First()] == 1 &&
+					    nextBasicBlock.MatchSingleAndBr(ILCode.Brtrue, out nextTrueLablel, out nextCondExpr, out nextFalseLabel) &&
 					    (otherLablel == nextFalseLabel || otherLablel == nextTrueLablel))
 					{
 						// Create short cicuit branch
@@ -203,8 +204,9 @@ namespace ICSharpCode.Decompiler.ILAst
 						} else {
 							logicExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, negate ? condExpr : new ILExpression(ILCode.LogicNot, null, condExpr), nextCondExpr);
 						}
-						head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Brtrue, nextTrueLablel, logicExpr);
-						head.FallthoughGoto = new ILExpression(ILCode.Br, nextFalseLabel);
+						head.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
+						head.Body.Add(new ILExpression(ILCode.Brtrue, nextTrueLablel, logicExpr));
+						head.Body.Add(new ILExpression(ILCode.Br, nextFalseLabel));
 						
 						// Remove the inlined branch from scope
 						body.RemoveOrThrow(nextBasicBlock);
@@ -235,19 +237,18 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILLabel nextLabel;
 			ILBasicBlock nextBB;
-			ILNode last = head.Body.LastOrDefault();
-			if (!last.IsConditionalControlFlow() && 
-			    !last.IsUnconditionalControlFlow() &&
-			    head.FallthoughGoto.Match(ILCode.Br, out nextLabel) &&
+			if (!head.Body.ElementAtOrDefault(head.Body.Count - 2).IsConditionalControlFlow() &&
+			    head.Body.Last().Match(ILCode.Br, out nextLabel) &&
 			    labelGlobalRefCount[nextLabel] == 1 &&
 			    labelToBasicBlock.TryGetValue(nextLabel, out nextBB) &&
 			    body.Contains(nextBB) &&
-			    nextBB.EntryLabel == nextLabel &&
+			    nextBB.Body.First() == nextLabel &&
 			    !nextBB.Body.OfType<ILTryCatchBlock>().Any()
 			   )
 			{
+				head.Body.RemoveTail(ILCode.Br);
+				nextBB.Body.RemoveAt(0);  // Remove label
 				head.Body.AddRange(nextBB.Body);
-				head.FallthoughGoto = nextBB.FallthoughGoto;
 				
 				body.RemoveOrThrow(nextBB);
 				return true;

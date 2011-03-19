@@ -285,14 +285,14 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			List<ILNode> basicBlocks = new List<ILNode>();
 			
-			ILBasicBlock basicBlock = new ILBasicBlock() {
-				EntryLabel = block.Body.FirstOrDefault() as ILLabel ?? new ILLabel() { Name = "Block_" + (nextLabelIndex++) }
-			};
+			ILLabel entryLabel = block.Body.FirstOrDefault() as ILLabel ?? new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
+			ILBasicBlock basicBlock = new ILBasicBlock();
 			basicBlocks.Add(basicBlock);
-			block.EntryGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel);
+			basicBlock.Body.Add(entryLabel);
+			block.EntryGoto = new ILExpression(ILCode.Br, entryLabel);
 			
 			if (block.Body.Count > 0) {
-				if (block.Body[0] != basicBlock.EntryLabel)
+				if (block.Body[0] != entryLabel)
 					basicBlock.Body.Add(block.Body[0]);
 				
 				for (int i = 1; i < block.Body.Count; i++) {
@@ -301,8 +301,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					// Start a new basic block if necessary
 					if (currNode is ILLabel ||
-					    currNode is ILTryCatchBlock ||
-					    lastNode is ILTryCatchBlock ||
+					    currNode is ILTryCatchBlock || // Counts as label
 					    lastNode.IsConditionalControlFlow() ||
 					    lastNode.IsUnconditionalControlFlow())
 					{
@@ -312,21 +311,18 @@ namespace ICSharpCode.Decompiler.ILAst
 						// Terminate the last block
 						if (!lastNode.IsUnconditionalControlFlow()) {
 							// Explicit branch from one block to other
-							basicBlock.FallthoughGoto = new ILExpression(ILCode.Br, label);
-						} else if (lastNode.Match(ILCode.Br)) {
-							// Reuse the existing goto as FallthoughGoto
-							basicBlock.FallthoughGoto = (ILExpression)lastNode;
-							basicBlock.Body.RemoveAt(basicBlock.Body.Count - 1);
+							basicBlock.Body.Add(new ILExpression(ILCode.Br, label));
 						}
 						
-						// Start the new block						
+						// Start the new block
 						basicBlock = new ILBasicBlock();
 						basicBlocks.Add(basicBlock);
-						basicBlock.EntryLabel = label;
-					}
-					
-					// Add the node to the basic block
-					if (currNode != basicBlock.EntryLabel) {
+						basicBlock.Body.Add(label);
+						
+						// Add the node to the basic block
+						if (currNode != label)
+							basicBlock.Body.Add(currNode);
+					} else {
 						basicBlock.Body.Add(currNode);
 					}
 				}
@@ -396,8 +392,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				List<ILNode> flatBody = new List<ILNode>();
 				foreach (ILNode child in block.GetChildren()) {
 					FlattenBasicBlocks(child);
-					if (child is ILBasicBlock) {
-						flatBody.AddRange(child.GetChildren());
+					ILBasicBlock childAsBB = child as ILBasicBlock;
+					if (childAsBB != null) {
+						if (!(childAsBB.Body.FirstOrDefault() is ILLabel))
+							throw new Exception("Basic block has to start with a label. \n" + childAsBB.ToString());
+						if (childAsBB.Body.LastOrDefault() is ILExpression && !childAsBB.Body.LastOrDefault().IsUnconditionalControlFlow())
+							throw new Exception("Basci block has to end with unconditional control flow. \n" + childAsBB.ToString());
+						flatBody.AddRange(childAsBB.GetChildren());
 					} else {
 						flatBody.Add(child);
 					}
@@ -568,6 +569,15 @@ namespace ICSharpCode.Decompiler.ILAst
 				default:
 					return false;
 			}
+		}
+		
+		public static void RemoveTail(this List<ILNode> body, params ILCode[] codes)
+		{
+			for (int i = 0; i < codes.Length; i++) {
+				if (((ILExpression)body[body.Count - codes.Length + i]).Code != codes[i])
+					throw new Exception("Tailing code does not match expected.");
+			}
+			body.RemoveRange(body.Count - codes.Length, codes.Length);
 		}
 		
 		public static V GetOrDefault<K,V>(this Dictionary<K, V> dict, K key)
