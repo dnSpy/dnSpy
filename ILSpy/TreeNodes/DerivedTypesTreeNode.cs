@@ -109,7 +109,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get { return def.FullName; }
+			get { return this.Language.TypeToString(def, true); }
 		}
 		
 		public override object Icon {
