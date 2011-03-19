@@ -82,6 +82,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(method.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, method.DeclaringType);
 			codeDomBuilder.AddMethod(method);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
@@ -89,6 +90,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(property.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, property.DeclaringType);
 			codeDomBuilder.AddProperty(property);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
@@ -96,6 +98,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(field.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, field.DeclaringType);
 			codeDomBuilder.AddField(field);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
@@ -103,6 +106,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(ev.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, ev.DeclaringType);
 			codeDomBuilder.AddEvent(ev);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
@@ -381,12 +385,13 @@ namespace ICSharpCode.ILSpy
 				});
 		}
 
-		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes)
+		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes = null)
 		{
 			AstType astType = AstBuilder.ConvertType(type, typeAttributes);
-			if (!includeNamespace) {
+			if (includeNamespace) {
+				// embed the type in TypeReferenceExpression so that the whole type can get replaced
 				var tre = new TypeReferenceExpression { Type = astType };
-				tre.AcceptVisitor(new RemoveNamespaceFromType(), null);
+				tre.AcceptVisitor(new AddNamespaceToType(), null);
 				astType = tre.Type;
 			}
 			
@@ -406,16 +411,23 @@ namespace ICSharpCode.ILSpy
 			return w.ToString();
 		}
 		
-		sealed class RemoveNamespaceFromType : DepthFirstAstVisitor<object, object>
+		sealed class AddNamespaceToType : DepthFirstAstVisitor<object, object>
 		{
-			public override object VisitMemberType(MemberType memberType, object data)
+			public override object VisitSimpleType(SimpleType simpleType, object data)
 			{
-				base.VisitMemberType(memberType, data);
-				SimpleType st = memberType.Target as SimpleType;
-				if (st != null && !st.TypeArguments.Any()) {
-					SimpleType newSt = new SimpleType(memberType.MemberName);
-					memberType.TypeArguments.MoveTo(newSt.TypeArguments);
-					memberType.ReplaceWith(newSt);
+				base.VisitSimpleType(simpleType, data); // handle type arguments
+				TypeReference tr = simpleType.Annotation<TypeReference>();
+				if (tr != null && !string.IsNullOrEmpty(tr.Namespace)) {
+					string[] parts = tr.Namespace.Split('.');
+					AstType nsType = new SimpleType(parts[0]);
+					for (int i = 1; i < parts.Length; i++) {
+						nsType = new MemberType { Target = nsType, MemberName = parts[i] };
+					}
+					MemberType memberType = new MemberType();
+					memberType.Target = nsType;
+					memberType.MemberName = simpleType.Identifier;
+					simpleType.TypeArguments.MoveTo(memberType.TypeArguments);
+					simpleType.ReplaceWith(memberType);
 				}
 				return null;
 			}
