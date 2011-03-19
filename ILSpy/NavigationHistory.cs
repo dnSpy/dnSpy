@@ -10,10 +10,10 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Stores the navigation history.
 	/// </summary>
-	sealed class NavigationHistory
+	sealed class NavigationHistory<T>
 	{
-		List<SharpTreeNode> back = new List<SharpTreeNode>();
-		List<SharpTreeNode> forward = new List<SharpTreeNode>();
+		List<T> back = new List<T>();
+		List<T> forward = new List<T>();
 		
 		public bool CanNavigateBack {
 			get { return back.Count > 0; }
@@ -23,27 +23,27 @@ namespace ICSharpCode.ILSpy
 			get { return forward.Count > 0; }
 		}
 		
-		public SharpTreeNode GoBack(SharpTreeNode oldNode)
+		public T GoBack(T oldNode)
 		{
 			if (oldNode != null)
 				forward.Add(oldNode);
 			
-			SharpTreeNode node = back[back.Count - 1];
+			T node = back[back.Count - 1];
 			back.RemoveAt(back.Count - 1);
 			return node;
 		}
 		
-		public SharpTreeNode GoForward(SharpTreeNode oldNode)
+		public T GoForward(T oldNode)
 		{
 			if (oldNode != null)
 				back.Add(oldNode);
 			
-			SharpTreeNode node = forward[forward.Count - 1];
+			T node = forward[forward.Count - 1];
 			forward.RemoveAt(forward.Count - 1);
 			return node;
 		}
 		
-		public void RemoveAll(Predicate<SharpTreeNode> predicate)
+		public void RemoveAll(Predicate<T> predicate)
 		{
 			back.RemoveAll(predicate);
 			forward.RemoveAll(predicate);
@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy
 			forward.Clear();
 		}
 		
-		public void Record(SharpTreeNode node)
+		public void Record(T node)
 		{
 			forward.Clear();
 			back.Add(node);
