@@ -21,7 +21,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		SimplifyShortCircuit,
 		SimplifyTernaryOperator,
 		SimplifyNullCoalescing,
-		JointBasicBlocks,
+		JoinBasicBlocks,
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
 		TransformArrayInitializers,
@@ -101,41 +101,29 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyNullCoalescing) return;
 					modified |= block.RunOptimization(new SimpleControlFlow(context, method).SimplifyNullCoalescing);
 					
-					if (abortBeforeStep == ILAstOptimizationStep.JointBasicBlocks) return;
-					modified |= block.RunOptimization(new SimpleControlFlow(context, method).JointBasicBlocks);
+					if (abortBeforeStep == ILAstOptimizationStep.JoinBasicBlocks) return;
+					modified |= block.RunOptimization(new SimpleControlFlow(context, method).JoinBasicBlocks);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.TransformDecimalCtorToConstant) return;
+					modified |= block.RunOptimization(TransformDecimalCtorToConstant);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyLdObjAndStObj) return;
+					modified |= block.RunOptimization(SimplifyLdObjAndStObj);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
+					modified |= block.RunOptimization(Initializers.TransformArrayInitializers);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.TransformCollectionInitializers) return;
+					modified |= block.RunOptimization(Initializers.TransformCollectionInitializers);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.MakeAssignmentExpression) return;
+					modified |= block.RunOptimization(MakeAssignmentExpression);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
+					modified |= new ILInlining(method).InlineAllInBlock(block);
+					new ILInlining(method).CopyPropagation();
 					
 				} while(modified);
-			}
-			
-			ILInlining inlining2 = new ILInlining(method);
-			inlining2.InlineAllVariables();
-			inlining2.CopyPropagation();
-			
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
-				
-				// Intentionaly outside the while(modifed) loop,
-				// I will put it there later after more testing
-				
-				bool modified = false;
-				
-				if (abortBeforeStep == ILAstOptimizationStep.TransformDecimalCtorToConstant) return;
-				modified |= block.RunOptimization(TransformDecimalCtorToConstant);
-				
-				if (abortBeforeStep == ILAstOptimizationStep.SimplifyLdObjAndStObj) return;
-				modified |= block.RunOptimization(SimplifyLdObjAndStObj);
-				
-				if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
-				modified |= block.RunOptimization(Initializers.TransformArrayInitializers);
-				modified |= block.RunOptimization(Initializers.TransformArrayInitializers);
-				
-				if (abortBeforeStep == ILAstOptimizationStep.TransformCollectionInitializers) return;
-				modified |= block.RunOptimization(Initializers.TransformCollectionInitializers);
-				
-				if (abortBeforeStep == ILAstOptimizationStep.MakeAssignmentExpression) return;
-				modified |= block.RunOptimization(MakeAssignmentExpression);
-				
-				if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
-				modified |= new ILInlining(method).InlineAllInBlock(block);
 			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindLoops) return;
@@ -575,6 +563,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return !mr.Name.StartsWith("get_", StringComparison.Ordinal);
 				case ILCode.Newobj:
 				case ILCode.Newarr:
+				case ILCode.Stloc:
 					return true;
 				default:
 					return false;

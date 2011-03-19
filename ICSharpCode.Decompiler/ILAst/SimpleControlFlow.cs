@@ -231,7 +231,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		public bool JointBasicBlocks(List<ILNode> body, ILBasicBlock head, int pos)
+		public bool JoinBasicBlocks(List<ILNode> body, ILBasicBlock head, int pos)
 		{
 			ILLabel nextLabel;
 			ILBasicBlock nextBB;
