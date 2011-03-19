@@ -117,26 +117,15 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
 		{
-			if (options.FullDecompilation) {
-				if (options.SaveAsProjectDirectory != null) {
-					HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-					var files = WriteCodeFilesInProject(assembly, options, directories).ToList();
-					files.AddRange(WriteResourceFilesInProject(assembly, fileName, options, directories));
-					WriteProjectFile(new TextOutputWriter(output), files, assembly.MainModule);
-				} else {
-					foreach (TypeDefinition type in assembly.MainModule.Types) {
-						if (AstBuilder.MemberIsHidden(type, options.DecompilerSettings))
-							continue;
-						AstBuilder codeDomBuilder = CreateAstBuilder(options, type);
-						codeDomBuilder.AddType(type);
-						codeDomBuilder.GenerateCode(output, transformAbortCondition);
-						output.WriteLine();
-					}
-				}
+			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
+				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				var files = WriteCodeFilesInProject(assembly, options, directories).ToList();
+				files.AddRange(WriteResourceFilesInProject(assembly, fileName, options, directories));
+				WriteProjectFile(new TextOutputWriter(output), files, assembly.MainModule);
 			} else {
 				base.DecompileAssembly(assembly, fileName, output, options);
 				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: null);
-				codeDomBuilder.AddAssembly(assembly, onlyAssemblyLevel: true);
+				codeDomBuilder.AddAssembly(assembly, onlyAssemblyLevel: !options.FullDecompilation);
 				codeDomBuilder.GenerateCode(output, transformAbortCondition);
 			}
 		}

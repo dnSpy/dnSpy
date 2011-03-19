@@ -91,14 +91,14 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition, AttributeTarget.Assembly);
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition.MainModule, AttributeTarget.Module);
-
+			
 			if (!onlyAssemblyLevel) {
-				foreach (TypeDefinition typeDef in assemblyDefinition.MainModule.Types)
-				{
-					// Skip nested types - they will be added by the parent type
-					if (typeDef.DeclaringType != null) continue;
+				foreach (TypeDefinition typeDef in assemblyDefinition.MainModule.Types) {
 					// Skip the <Module> class
 					if (typeDef.Name == "<Module>") continue;
+					// Skip any hidden types
+					if (AstBuilder.MemberIsHidden(typeDef, context.Settings))
+						continue;
 
 					AddType(typeDef);
 				}
