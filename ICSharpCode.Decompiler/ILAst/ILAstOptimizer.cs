@@ -309,15 +309,16 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					// Start a new basic block if necessary
 					if (currNode is ILLabel ||
-					    lastNode is ILTryCatchBlock ||
 					    currNode is ILTryCatchBlock ||
-					    (lastNode is ILExpression && ((ILExpression)lastNode).IsBranch()))
+					    lastNode is ILTryCatchBlock ||
+					    lastNode.IsConditionalControlFlow() ||
+					    lastNode.IsUnconditionalControlFlow())
 					{
 						// Try to reuse the label
 						ILLabel label = currNode is ILLabel ? ((ILLabel)currNode) : new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
 						
 						// Terminate the last block
-						if (lastNode.CanFallThough()) {
+						if (!lastNode.IsUnconditionalControlFlow()) {
 							// Explicit branch from one block to other
 							basicBlock.FallthoughGoto = new ILExpression(ILCode.Br, label);
 						} else if (lastNode.Match(ILCode.Br)) {
@@ -432,8 +433,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				for (int i = 0; i < block.Body.Count; i++) {
 					ILCondition cond = block.Body[i] as ILCondition;
 					if (cond != null) {
-						bool trueExits = cond.TrueBlock.Body.Count > 0 && !cond.TrueBlock.Body.Last().CanFallThough();
-						bool falseExits = cond.FalseBlock.Body.Count > 0 && !cond.FalseBlock.Body.Last().CanFallThough();
+						bool trueExits = cond.TrueBlock.Body.LastOrDefault().IsUnconditionalControlFlow();
+						bool falseExits = cond.FalseBlock.Body.LastOrDefault().IsUnconditionalControlFlow();
 						
 						if (trueExits) {
 							// Move the false block after the condition
@@ -504,13 +505,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			return modified;
 		}
 		
-		public static bool CanFallThough(this ILNode node)
+		public static bool IsConditionalControlFlow(this ILNode node)
 		{
 			ILExpression expr = node as ILExpression;
-			if (expr != null) {
-				return expr.Code.CanFallThough();
-			}
-			return true;
+			return expr != null && expr.Code.IsConditionalControlFlow();
+		}
+		
+		public static bool IsUnconditionalControlFlow(this ILNode node)
+		{
+			ILExpression expr = node as ILExpression;
+			return expr != null && expr.Code.IsUnconditionalControlFlow();
 		}
 		
 		/// <summary>

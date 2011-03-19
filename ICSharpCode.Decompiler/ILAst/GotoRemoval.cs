@@ -65,8 +65,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					int count = ilCase.Body.Count;
 					if (count >= 2) {
-						if (!ilCase.Body[count - 2].CanFallThough() &&
-						    ilCase.Body[count - 1].Match(ILCode.LoopOrSwitchBreak)) {
+						if (ilCase.Body[count - 2].IsUnconditionalControlFlow() &&
+						    ilCase.Body[count - 1].Match(ILCode.LoopOrSwitchBreak)) 
+						{
 							ilCase.Body.RemoveAt(count - 1);
 						}
 					}

@@ -309,7 +309,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				// Find all successors
 				List<ByteCode> branchTargets = new List<ByteCode>();
-				if (byteCode.Code.CanFallThough()) {
+				if (!byteCode.Code.IsUnconditionalControlFlow()) {
 					branchTargets.Add(byteCode.Next);
 				}
 				if (byteCode.Operand is Instruction[]) {
