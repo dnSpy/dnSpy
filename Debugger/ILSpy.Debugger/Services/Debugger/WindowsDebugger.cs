@@ -298,28 +298,6 @@ namespace ILSpy.Debugger.Services
 				((DebugType)frame.MethodInfo.DeclaringType).FullNameWithoutGenericArguments,
 				(uint)frame.MethodInfo.MetadataToken,
 				frame.IP, out isMatch);
-			
-//			int i = debuggedProcess.SelectedThread.Callstack.Count() - 1;
-//			if (i < 0)
-//				return null;
-//
-//			while (true) {
-//				frame = debuggedProcess.SelectedThread.Callstack.ElementAt(i);
-//
-//				// get the mapped instruction from the current line marker or the next one
-//				var result = CodeMappingsStorage.GetInstructionByTypeTokenAndOffset(
-//					((DebugType)frame.MethodInfo.DeclaringType).FullNameWithoutGenericArguments,
-//					(uint)frame.MethodInfo.MetadataToken,
-//					frame.IP, out isMatch);
-//
-//				if (result == null) {
-//					i--;
-//					if (i < 0)
-//						return result;
-//				} else {
-//					return result;
-//				}
-//			}
 		}
 		
 		StackFrame GetStackFrame()
@@ -328,7 +306,7 @@ namespace ILSpy.Debugger.Services
 			StackFrame frame;
 			var map = GetCurrentCodeMapping(out frame, out isMatch);
 			if (map == null) {
-				return null;
+				return debuggedProcess.SelectedThread.MostRecentStackFrame;
 			} else {
 				//var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 				frame.SourceCodeLine = map.SourceCodeLine;
@@ -874,7 +852,6 @@ namespace ILSpy.Debugger.Services
 								nestedTypeDef = localType;
 								typeDef = localType.DeclaringType;
 							}
-							
 							break;
 						}
 					}
@@ -895,12 +872,11 @@ namespace ILSpy.Debugger.Services
 						DebuggerService.RemoveCurrentLineMarker();
 						DebuggerService.JumpToCurrentLine(typeDef, line, 0, line, 0);
 					} else {
-						// continue since we cannot find the debugged type
-						throw new InvalidOperationException(string.Format("No mapping for {0} for token {1} and offset {2}!", fullName, token, ilOffset));
+						StepOut();
 					}
 				} else {
 					// continue since we cannot find the debugged type
-					throw new NullReferenceException(string.Format("The type {0} was not found!", fullName));
+					Debug.Assert(typeDef != null, string.Format("The type {0} was not found!", fullName));
 				}
 			}
 		}
