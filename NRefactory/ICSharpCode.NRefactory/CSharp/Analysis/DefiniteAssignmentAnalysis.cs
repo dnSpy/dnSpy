@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.Utils;
 
 namespace ICSharpCode.NRefactory.CSharp.Analysis
@@ -46,6 +48,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		readonly List<ControlFlowNode> allNodes = new List<ControlFlowNode>();
 		readonly Dictionary<Statement, ControlFlowNode> beginNodeDict = new Dictionary<Statement, ControlFlowNode>();
 		readonly Dictionary<Statement, ControlFlowNode> endNodeDict = new Dictionary<Statement, ControlFlowNode>();
+		readonly ResolveVisitor resolveVisitor;
+		readonly CancellationToken cancellationToken;
 		Dictionary<ControlFlowNode, DefiniteAssignmentStatus> nodeStatus = new Dictionary<ControlFlowNode, DefiniteAssignmentStatus>();
 		Dictionary<ControlFlowEdge, DefiniteAssignmentStatus> edgeStatus = new Dictionary<ControlFlowEdge, DefiniteAssignmentStatus>();
 		
@@ -54,19 +58,30 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		
 		Queue<ControlFlowNode> nodesWithModifiedInput = new Queue<ControlFlowNode>();
 		
-		public DefiniteAssignmentAnalysis(Statement rootStatement)
+		public DefiniteAssignmentAnalysis(Statement rootStatement, ITypeResolveContext context, CancellationToken cancellationToken = default(CancellationToken))
+			: this(rootStatement, new ResolveVisitor(new CSharpResolver(context, cancellationToken), null, ConstantModeResolveVisitorNavigator.Skip))
 		{
+		}
+		
+		public DefiniteAssignmentAnalysis(Statement rootStatement, ResolveVisitor resolveVisitor)
+		{
+			if (rootStatement == null)
+				throw new ArgumentNullException("rootStatement");
+			if (resolveVisitor == null)
+				throw new ArgumentNullException("resolveVisitor");
+			this.resolveVisitor = resolveVisitor;
+			this.cancellationToken = resolveVisitor.CancellationToken;
 			visitor.analysis = this;
 			ControlFlowGraphBuilder b = new ControlFlowGraphBuilder();
-			allNodes.AddRange(b.BuildControlFlowGraph(rootStatement));
+			allNodes.AddRange(b.BuildControlFlowGraph(rootStatement, resolveVisitor));
 			foreach (AstNode descendant in rootStatement.Descendants) {
 				// Anonymous methods have separate control flow graphs, but we also need to analyze those.
 				AnonymousMethodExpression ame = descendant as AnonymousMethodExpression;
 				if (ame != null)
-					allNodes.AddRange(b.BuildControlFlowGraph(ame.Body));
+					allNodes.AddRange(b.BuildControlFlowGraph(ame.Body, resolveVisitor));
 				LambdaExpression lambda = descendant as LambdaExpression;
 				if (lambda != null && lambda.Body is Statement)
-					allNodes.AddRange(b.BuildControlFlowGraph((Statement)lambda.Body));
+					allNodes.AddRange(b.BuildControlFlowGraph((Statement)lambda.Body, resolveVisitor));
 			}
 			// Verify that we created nodes for all statements:
 			Debug.Assert(!rootStatement.DescendantsAndSelf.OfType<Statement>().Except(allNodes.Select(n => n.NextStatement)).Any());
@@ -289,7 +304,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// <returns>The constant value of the expression; or null if the expression is not a constant.</returns>
 		ConstantResolveResult EvaluateConstant(Expression expr)
 		{
-			return null; // TODO: implement this using the C# resolver
+			return resolveVisitor.Resolve(expr) as ConstantResolveResult;
 		}
 		
 		/// <summary>

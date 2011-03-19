@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Analysis
@@ -39,7 +40,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			Statement stmt5 = tryCatchStatement.FinallyBlock.Statements.Single();
 			LabelStatement label = (LabelStatement)block.Statements.ElementAt(1);
 			
-			DefiniteAssignmentAnalysis da = new DefiniteAssignmentAnalysis(block);
+			DefiniteAssignmentAnalysis da = new DefiniteAssignmentAnalysis(block, CecilLoaderTests.Mscorlib);
 			da.Analyze("i");
 			Assert.AreEqual(0, da.UnassignedVariableUses.Count);
 			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(tryCatchStatement));
@@ -89,7 +90,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				TrueStatement = new BlockStatement(),
 				FalseStatement = new BlockStatement()
 			};
-			DefiniteAssignmentAnalysis da = new DefiniteAssignmentAnalysis(ifStmt);
+			DefiniteAssignmentAnalysis da = new DefiniteAssignmentAnalysis(ifStmt, CecilLoaderTests.Mscorlib);
 			da.Analyze("i");
 			Assert.AreEqual(0, da.UnassignedVariableUses.Count);
 			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(ifStmt));
@@ -120,13 +121,32 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				TrueStatement = new BlockStatement(),
 				FalseStatement = new BlockStatement()
 			};
-			DefiniteAssignmentAnalysis da = new DefiniteAssignmentAnalysis(ifStmt);
+			DefiniteAssignmentAnalysis da = new DefiniteAssignmentAnalysis(ifStmt, CecilLoaderTests.Mscorlib);
 			da.Analyze("i");
 			Assert.AreEqual(0, da.UnassignedVariableUses.Count);
 			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(ifStmt));
 			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(ifStmt.TrueStatement));
 			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusBefore(ifStmt.FalseStatement));
 			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusAfter(ifStmt));
+		}
+		
+		[Test]
+		public void WhileTrue()
+		{
+			WhileStatement loop = new WhileStatement {
+				Condition = new PrimitiveExpression(true),
+				EmbeddedStatement = new BlockStatement {
+					new AssignmentExpression(new IdentifierExpression("i"), new PrimitiveExpression(0)),
+					new BreakStatement()
+				}
+			};
+			DefiniteAssignmentAnalysis da = new DefiniteAssignmentAnalysis(loop, CecilLoaderTests.Mscorlib);
+			da.Analyze("i");
+			Assert.AreEqual(0, da.UnassignedVariableUses.Count);
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(loop));
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(loop.EmbeddedStatement));
+			Assert.AreEqual(DefiniteAssignmentStatus.CodeUnreachable, da.GetStatusAfter(loop.EmbeddedStatement));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(loop));
 		}
 	}
 }

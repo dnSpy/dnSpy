@@ -156,6 +156,7 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedMethodUsedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedMethodUsesNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzerTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzerMethodOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyListTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyReferenceTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyTreeNode.cs" />
@@ -259,11 +260,6 @@
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controls" />
-    <Folder Include="TreeNodes" />
-    <Folder Include="TextView" />
-    <Folder Include="TreeNodes\Analyzer" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

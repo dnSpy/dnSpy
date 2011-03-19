@@ -81,7 +81,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			bool modified = false;
 			List<ILNode> body = bb.Body;
-			for(int i = 0; i < body.Count - 1;) {
+			for(int i = 0; i < body.Count;) {
 				ILVariable locVar;
 				ILExpression expr;
 				if (body[i].Match(ILCode.Stloc, out locVar, out expr) && InlineOneIfPossible(bb.Body, i, aggressive: false)) {

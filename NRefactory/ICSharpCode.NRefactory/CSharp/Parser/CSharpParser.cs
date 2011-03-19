@@ -374,9 +374,9 @@ namespace ICSharpCode.NRefactory.CSharp
 				variable.AddChild (new Identifier (em.Name, Convert (em.Location)), AstNode.Roles.Identifier);
 				
 				if (em.Initializer != null) {
-					var initializer = (VariableInitializer)em.Initializer.Accept (this);
+					var initializer = (Expression)em.Initializer.Accept (this);
 					if (initializer != null)
-						variable.AddChild (initializer, AstNode.Roles.Variable);
+						variable.AddChild (initializer, EnumMemberDeclaration.InitializerRole);
 				}
 				
 				newField.AddChild (variable, AstNode.Roles.Variable);

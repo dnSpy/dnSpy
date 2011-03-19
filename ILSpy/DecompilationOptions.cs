@@ -51,7 +51,15 @@ namespace ICSharpCode.ILSpy
 		/// Gets the settings for the decompiler.
 		/// </summary>
 		public DecompilerSettings DecompilerSettings { get; set; }
-		
+
+		/// <summary>
+		/// Gets/sets an optional state of a decompiler text view.
+		/// </summary>
+		/// <remarks>
+		/// This state is used to restore test view's state when decompilation is started by Go Back/Forward action.
+		/// </remarks>
+		public ICSharpCode.ILSpy.TextView.DecompilerTextViewState TextViewState { get; set; }
+
 		public DecompilationOptions()
 		{
 			this.DecompilerSettings = DecompilerSettingsPanel.CurrentDecompilerSettings;

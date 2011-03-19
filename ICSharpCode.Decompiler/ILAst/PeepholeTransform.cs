@@ -55,10 +55,11 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		static bool SimplifyLdObjAndStObj(List<ILNode> body, ILExpression expr, int pos)
 		{
+			bool modified = false;
 			if (expr.Code == ILCode.Initobj) {
 				expr.Code = ILCode.Stobj;
 				expr.Arguments.Add(new ILExpression(ILCode.DefaultValue, expr.Operand));
-				return true;
+				modified = true;
 			}
 			ILExpression arg, arg2;
 			TypeReference type;
@@ -84,9 +85,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					arg.Arguments.Add(arg2);
 				arg.ILRanges.AddRange(expr.ILRanges);
 				body[pos] = arg;
-				return true;
+				modified = true;
 			}
-			return false;
+			return modified;
 		}
 		
 		#region CachedDelegateInitialization

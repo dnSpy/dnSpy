@@ -298,9 +298,9 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>
 		/// Shows the given output in the text view.
 		/// </summary>
-		void ShowOutput(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null)
+		void ShowOutput(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null, DecompilerTextViewState state = null)
 		{
-			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
+			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength); 
 			Stopwatch w = Stopwatch.StartNew();
 			
 			textEditor.ScrollToHome();
@@ -318,6 +318,11 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.Document = textOutput.GetDocument();
 			Debug.WriteLine("  Assigning document: {0}", w.Elapsed); w.Restart();
 			if (textOutput.Foldings.Count > 0) {
+				if (state != null) {
+					state.RestoreFoldings(textOutput.Foldings);
+					textEditor.ScrollToVerticalOffset(state.VerticalOffset);
+					textEditor.ScrollToHorizontalOffset(state.HorizontalOffset);
+				}
 				foldingManager = FoldingManager.Install(textEditor.TextArea);
 				foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
 				Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
@@ -383,7 +388,7 @@ namespace ICSharpCode.ILSpy.TextView
 				delegate (Task<AvalonEditTextOutput> task) { // handling the result
 					try {
 						AvalonEditTextOutput textOutput = task.Result;
-						ShowOutput(textOutput, context.Language.SyntaxHighlighting);
+						ShowOutput(textOutput, context.Language.SyntaxHighlighting, context.Options.TextViewState);
 					} catch (AggregateException aggregateException) {
 						textEditor.SyntaxHighlighting = null;
 						Debug.WriteLine("Decompiler crashed: " + aggregateException.ToString());
@@ -656,6 +661,16 @@ namespace ICSharpCode.ILSpy.TextView
 			return text;
 		}
 		#endregion
+
+		public DecompilerTextViewState GetState()
+		{
+			var state = new DecompilerTextViewState();
+			if (foldingManager != null)
+				state.SaveFoldingsState(foldingManager.AllFoldings);
+			state.VerticalOffset = textEditor.VerticalOffset;
+			state.HorizontalOffset = textEditor.HorizontalOffset;
+			return state;
+		}
 		
 		#region Unfold
 		public void UnfoldAndScroll(int lineNumber)
@@ -678,5 +693,27 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.ScrollTo(lineNumber, 0);
 		}
 		#endregion
+	}
+
+	public class DecompilerTextViewState
+	{
+		private List<Tuple<int, int>> ExpandedFoldings;
+		private int FoldingsChecksum;
+		public double VerticalOffset;
+		public double HorizontalOffset;
+
+		public void SaveFoldingsState(IEnumerable<FoldingSection> foldings)
+		{
+			ExpandedFoldings = foldings.Where(f => !f.IsFolded).Select(f => Tuple.Create(f.StartOffset, f.EndOffset)).ToList();
+			FoldingsChecksum = foldings.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b);
+		}
+
+		internal void RestoreFoldings(List<NewFolding> list)
+		{
+			var checksum = list.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b);
+			if (FoldingsChecksum == checksum)
+				foreach (var folding in list)
+					folding.DefaultClosed = !ExpandedFoldings.Any(f => f.Item1 == folding.StartOffset && f.Item2 == folding.EndOffset);
+		}
 	}
 }

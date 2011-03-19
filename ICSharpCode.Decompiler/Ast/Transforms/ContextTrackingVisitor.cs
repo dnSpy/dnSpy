@@ -11,7 +11,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 	/// <summary>
 	/// Base class for AST visitors that need the current type/method context info.
 	/// </summary>
-	public abstract class ContextTrackingVisitor : DepthFirstAstVisitor<object, object>, IAstTransform
+	public abstract class ContextTrackingVisitor<TResult> : DepthFirstAstVisitor<object, TResult>, IAstTransform
 	{
 		protected readonly DecompilerContext context;
 		
@@ -22,7 +22,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			this.context = context;
 		}
 		
-		public override object VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
+		public override TResult VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
 		{
 			TypeDefinition oldType = context.CurrentType;
 			try {
@@ -33,7 +33,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 		}
 		
-		public override object VisitMethodDeclaration(MethodDeclaration methodDeclaration, object data)
+		public override TResult VisitMethodDeclaration(MethodDeclaration methodDeclaration, object data)
 		{
 			Debug.Assert(context.CurrentMethod == null);
 			try {
@@ -44,7 +44,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 		}
 		
-		public override object VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, object data)
+		public override TResult VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, object data)
 		{
 			Debug.Assert(context.CurrentMethod == null);
 			try {
@@ -55,7 +55,29 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 		}
 		
-		public override object VisitAccessor(Accessor accessor, object data)
+		public override TResult VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, object data)
+		{
+			Debug.Assert(context.CurrentMethod == null);
+			try {
+				context.CurrentMethod = destructorDeclaration.Annotation<MethodDefinition>();
+				return base.VisitDestructorDeclaration(destructorDeclaration, data);
+			} finally {
+				context.CurrentMethod = null;
+			}
+		}
+		
+		public override TResult VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, object data)
+		{
+			Debug.Assert(context.CurrentMethod == null);
+			try {
+				context.CurrentMethod = operatorDeclaration.Annotation<MethodDefinition>();
+				return base.VisitOperatorDeclaration(operatorDeclaration, data);
+			} finally {
+				context.CurrentMethod = null;
+			}
+		}
+		
+		public override TResult VisitAccessor(Accessor accessor, object data)
 		{
 			Debug.Assert(context.CurrentMethod == null);
 			try {

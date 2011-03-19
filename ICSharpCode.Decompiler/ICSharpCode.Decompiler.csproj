@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Ast\AstBuilder.cs" />
     <Compile Include="Ast\AstMethodBodyBuilder.cs" />
+    <Compile Include="Ast\CecilTypeResolveContext.cs" />
     <Compile Include="Ast\CommentStatement.cs" />
     <Compile Include="Ast\DeclareVariableInSmallestScope.cs" />
     <Compile Include="Ast\CSharpCodeMapping.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Ast\Transforms\ConvertConstructorCallIntoInitializer.cs" />
     <Compile Include="Ast\Transforms\DelegateConstruction.cs" />
     <Compile Include="Ast\Transforms\IntroduceUnsafeModifier.cs" />
+    <Compile Include="Ast\Transforms\IntroduceUsingDeclarations.cs" />
     <Compile Include="Ast\Transforms\ReplaceMethodCallsWithOperators.cs" />
     <Compile Include="Ast\Transforms\PushNegation.cs" />
     <Compile Include="Ast\Transforms\TransformationPipeline.cs" />
@@ -100,6 +102,7 @@
     <Compile Include="ILAst\LoopsAndConditions.cs" />
     <Compile Include="ILAst\PatternMatching.cs" />
     <Compile Include="ILAst\PeepholeTransform.cs" />
+    <Compile Include="ILAst\SimpleControlFlow.cs" />
     <Compile Include="ILAst\TypeAnalysis.cs" />
     <Compile Include="ILAst\YieldReturnDecompiler.cs" />
     <Compile Include="ITextOutput.cs" />

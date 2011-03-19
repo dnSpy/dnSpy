@@ -47,7 +47,8 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	partial class MainWindow : Window
 	{
-		NavigationHistory history = new NavigationHistory();
+		NavigationHistory<Tuple<List<SharpTreeNode>, DecompilerTextViewState>> history =
+			new NavigationHistory<Tuple<List<SharpTreeNode>, DecompilerTextViewState>>();
 		ILSpySettings spySettings;
 		internal SessionSettings sessionSettings;
 		AssemblyListManager assemblyListManager;
@@ -259,7 +260,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (e.OldItems != null)
 				foreach (LoadedAssembly asm in e.OldItems)
-					history.RemoveAll(n => n.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(a => a.LoadedAssembly == asm));
+					history.RemoveAll(n => n.Item1.Any(nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(a => a.LoadedAssembly == asm)));
 		}
 		
 		void LoadInitialAssemblies()
@@ -289,7 +290,7 @@ namespace ICSharpCode.ILSpy
 		{
 			RefreshTreeViewFilter();
 			if (e.PropertyName == "Language") {
-				TreeView_SelectionChanged(null, null);
+				DecompileSelectedNodes();
 			}
 		}
 		
@@ -316,7 +317,7 @@ namespace ICSharpCode.ILSpy
 			if (obj != null) {
 				SharpTreeNode oldNode = treeView.SelectedItem as SharpTreeNode;
 				if (oldNode != null && recordNavigationInHistory)
-					history.Record(oldNode);
+					history.Record(Tuple.Create(treeView.SelectedItems.OfType<SharpTreeNode>().ToList(), decompilerTextView.GetState()));
 				// Set both the selection and focus to ensure that keyboard navigation works as expected.
 				treeView.FocusNode(obj);
 				treeView.SelectedItem = obj;
@@ -437,12 +438,22 @@ namespace ICSharpCode.ILSpy
 		#region Decompile (TreeView_SelectionChanged)
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			DecompileSelectedNodes();
+		}
+
+		private bool ignoreDecompilationRequests;
+
+		private void DecompileSelectedNodes(DecompilerTextViewState state = null)
+		{
+			if (ignoreDecompilationRequests)
+				return;
+
 			if (treeView.SelectedItems.Count == 1) {
 				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
 				if (node != null && node.View(decompilerTextView))
 					return;
 			}
-			decompilerTextView.Decompile(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions());
+			decompilerTextView.Decompile(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions() { TextViewState = state });
 		}
 		
 		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -458,7 +469,7 @@ namespace ICSharpCode.ILSpy
 		
 		public void RefreshDecompiledView()
 		{
-			TreeView_SelectionChanged(null, null);
+			DecompileSelectedNodes();
 		}
 		
 		public DecompilerTextView TextView {
@@ -489,7 +500,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (history.CanNavigateBack) {
 				e.Handled = true;
-				SelectNode(history.GoBack(treeView.SelectedItem as SharpTreeNode), false);
+				NavigateHistory(false);
 			}
 		}
 		
@@ -503,9 +514,27 @@ namespace ICSharpCode.ILSpy
 		{
 			if (history.CanNavigateForward) {
 				e.Handled = true;
-				SelectNode(history.GoForward(treeView.SelectedItem as SharpTreeNode), false);
+				NavigateHistory(true);
 			}
 		}
+
+		void NavigateHistory(bool forward)
+		{
+			var currentSelection = treeView.SelectedItems.OfType<SharpTreeNode>().ToList();
+			var state = decompilerTextView.GetState();
+			var combinedState = Tuple.Create(currentSelection, state);
+			var newState = forward ? history.GoForward(combinedState) : history.GoBack(combinedState);
+
+			this.ignoreDecompilationRequests = true;
+			treeView.SelectedItems.Clear();
+			foreach (var node in newState.Item1)
+			{
+				treeView.SelectedItems.Add(node);
+			}
+			ignoreDecompilationRequests = false;
+			DecompileSelectedNodes(newState.Item2);
+		}
+
 		#endregion
 		
 		#region Analyzer

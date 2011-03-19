@@ -74,4 +74,9 @@ public class UnsafeCode
 		}
 		return PointerReferenceExpression((double*)a);
 	}
+	
+	unsafe ~UnsafeCode()
+	{
+		PassPointerAsRefParameter(NullPointer);
+	}
 }

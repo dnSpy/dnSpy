@@ -280,7 +280,41 @@ namespace ICSharpCode.Decompiler.ILAst
 			return code.ToString().ToLowerInvariant().TrimStart('_').Replace('_','.');
 		}
 		
-		public static bool CanFallThough(this ILCode code)
+		public static bool IsConditionalControlFlow(this ILCode code)
+		{
+			switch(code) {
+				case ILCode.__Brfalse_S:
+				case ILCode.__Brtrue_S:
+				case ILCode.__Beq_S:
+				case ILCode.__Bge_S:
+				case ILCode.__Bgt_S:
+				case ILCode.__Ble_S:
+				case ILCode.__Blt_S:
+				case ILCode.__Bne_Un_S:
+				case ILCode.__Bge_Un_S:
+				case ILCode.__Bgt_Un_S:
+				case ILCode.__Ble_Un_S:
+				case ILCode.__Blt_Un_S:
+				case ILCode.__Brfalse:
+				case ILCode.Brtrue:
+				case ILCode.__Beq:
+				case ILCode.__Bge:
+				case ILCode.__Bgt:
+				case ILCode.__Ble:
+				case ILCode.__Blt:
+				case ILCode.__Bne_Un:
+				case ILCode.__Bge_Un:
+				case ILCode.__Bgt_Un:
+				case ILCode.__Ble_Un:
+				case ILCode.__Blt_Un:
+				case ILCode.Switch:
+					return true;
+				default:
+					return false;
+			}
+		}
+		
+		public static bool IsUnconditionalControlFlow(this ILCode code)
 		{
 			switch(code) {
 				case ILCode.Br:
@@ -295,9 +329,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.LoopContinue:
 				case ILCode.LoopOrSwitchBreak:
 				case ILCode.YieldBreak:
-					return false;
-				default:
 					return true;
+				default:
+					return false;
 			}
 		}
 		

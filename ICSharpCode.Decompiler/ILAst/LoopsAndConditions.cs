@@ -88,7 +88,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					ControlFlowNode destination;
 					// Labels which are out of out scope will not be int the collection
 					// Insert self edge only if we are sure we are a loop
-					if (labelToCfNode.TryGetValue(target, out destination) && (destination != source || target == node.EntryLabel)) {
+					if (labelToCfNode.TryGetValue(target, out destination) && (destination != source || target == node.Body.FirstOrDefault())) {
 						ControlFlowEdge edge = new ControlFlowEdge(source, destination, JumpType.Normal);
 						source.Outgoing.Add(edge);
 						destination.Incoming.Add(edge);
@@ -123,7 +123,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					ILExpression condExpr;
 					ILLabel trueLabel;
 					ILLabel falseLabel;
-					if(basicBlock.MatchSingle(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel))
+					// It has to be just brtrue - any preceding code would introduce goto
+					if(basicBlock.MatchSingleAndBr(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel))
 					{
 						ControlFlowNode trueTarget;
 						labelToCfNode.TryGetValue(trueLabel, out trueTarget);
@@ -157,7 +158,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							}
 							
 							// Use loop to implement the brtrue
-							basicBlock.Body.RemoveAt(basicBlock.Body.Count - 1);
+							basicBlock.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
 							basicBlock.Body.Add(new ILWhileLoop() {
 								Condition = condExpr,
 								BodyBlock = new ILBlock() {
@@ -165,7 +166,7 @@ namespace ICSharpCode.Decompiler.ILAst
 									Body = FindLoops(loopContents, node, false)
 								}
 							});
-							basicBlock.FallthoughGoto = new ILExpression(ILCode.Br, falseLabel);
+							basicBlock.Body.Add(new ILExpression(ILCode.Br, falseLabel));
 							result.Add(basicBlock);
 							
 							scope.ExceptWith(loopContents);
@@ -175,16 +176,15 @@ namespace ICSharpCode.Decompiler.ILAst
 					// Fallback method: while(true)
 					if (scope.Contains(node)) {
 						result.Add(new ILBasicBlock() {
-							EntryLabel = new ILLabel() { Name = "Loop_" + (nextLabelIndex++) },
 							Body = new List<ILNode>() {
+								new ILLabel() { Name = "Loop_" + (nextLabelIndex++) },
 								new ILWhileLoop() {
 									BodyBlock = new ILBlock() {
-										EntryGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel),
+										EntryGoto = new ILExpression(ILCode.Br, (ILLabel)basicBlock.Body.First()),
 										Body = FindLoops(loopContents, node, true)
 									}
 								},
 							},
-							FallthoughGoto = null
 						});
 						
 						scope.ExceptWith(loopContents);
@@ -233,12 +233,13 @@ namespace ICSharpCode.Decompiler.ILAst
 						ILLabel[] caseLabels;
 						ILExpression switchArg;
 						ILLabel fallLabel;
-						if (block.MatchLast(ILCode.Switch, out caseLabels, out switchArg, out fallLabel)) {
+						if (block.MatchLastAndBr(ILCode.Switch, out caseLabels, out switchArg, out fallLabel)) {
 							
 							// Replace the switch code with ILSwitch
 							ILSwitch ilSwitch = new ILSwitch() { Condition = switchArg };
-							block.Body.RemoveAt(block.Body.Count - 1);
+							block.Body.RemoveTail(ILCode.Switch, ILCode.Br);
 							block.Body.Add(ilSwitch);
+							block.Body.Add(new ILExpression(ILCode.Br, fallLabel));
 							result.Add(block);
 
 							// Remove the item so that it is not picked up as content
@@ -285,7 +286,12 @@ namespace ICSharpCode.Decompiler.ILAst
 										scope.ExceptWith(content);
 										caseBlock.Body.AddRange(FindConditions(content, condTarget));
 										// Add explicit break which should not be used by default, but the goto removal might decide to use it
-										caseBlock.Body.Add(new ILBasicBlock() { Body = { new ILExpression(ILCode.LoopOrSwitchBreak, null) } });
+										caseBlock.Body.Add(new ILBasicBlock() {
+											Body = {
+												new ILLabel() { Name = "SwitchBreak_" + (nextLabelIndex++) },
+												new ILExpression(ILCode.LoopOrSwitchBreak, null)
+											}
+										});
 									}
 								}
 								caseBlock.Values.Add(i + addValue);
@@ -297,12 +303,17 @@ namespace ICSharpCode.Decompiler.ILAst
 								if (content.Any()) {
 									var caseBlock = new ILSwitch.CaseBlock() { EntryGoto = new ILExpression(ILCode.Br, fallLabel) };
 									ilSwitch.CaseBlocks.Add(caseBlock);
-									block.FallthoughGoto = null;
+									block.Body.RemoveTail(ILCode.Br);
 									
 									scope.ExceptWith(content);
 									caseBlock.Body.AddRange(FindConditions(content, fallTarget));
 									// Add explicit break which should not be used by default, but the goto removal might decide to use it
-									caseBlock.Body.Add(new ILBasicBlock() { Body = { new ILExpression(ILCode.LoopOrSwitchBreak, null) } });
+									caseBlock.Body.Add(new ILBasicBlock() {
+										Body = {
+											new ILLabel() { Name = "SwitchBreak_" + (nextLabelIndex++) },
+											new ILExpression(ILCode.LoopOrSwitchBreak, null)
+										}
+									});
 								}
 							}
 						}
@@ -311,7 +322,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						ILExpression condExpr;
 						ILLabel trueLabel;
 						ILLabel falseLabel;
-						if(block.MatchLast(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel)) {
+						if(block.MatchLastAndBr(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel)) {
 							
 							// Swap bodies since that seems to be the usual C# order
 							ILLabel temp = trueLabel;
@@ -325,9 +336,8 @@ namespace ICSharpCode.Decompiler.ILAst
 								TrueBlock  = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, trueLabel) },
 								FalseBlock = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, falseLabel) }
 							};
-							block.Body.RemoveAt(block.Body.Count - 1);
+							block.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
 							block.Body.Add(ilCond);
-							block.FallthoughGoto = null;
 							result.Add(block);
 							
 							// Remove the item immediately so that it is not picked up as content

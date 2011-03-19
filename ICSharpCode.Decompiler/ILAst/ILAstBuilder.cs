@@ -316,7 +316,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				// Find all successors
 				List<ByteCode> branchTargets = new List<ByteCode>();
-				if (byteCode.Code.CanFallThough()) {
+				if (!byteCode.Code.IsUnconditionalControlFlow()) {
 					branchTargets.Add(byteCode.Next);
 				}
 				if (byteCode.Operand is Instruction[]) {
@@ -695,10 +695,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILRange ilRange = new ILRange() { From = byteCode.Offset, To = byteCode.EndOffset };
 				
 				if (byteCode.StackBefore == null) {
-					ast.Add(new ILComment() {
-						Text = "Unreachable code: " + byteCode.Code.GetName(),
-						ILRanges = new List<ILRange>(new[] { ilRange })
-					});
+					// Unreachable code
 					continue;
 				}
 				

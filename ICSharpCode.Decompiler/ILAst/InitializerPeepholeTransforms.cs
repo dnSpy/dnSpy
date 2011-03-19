@@ -162,7 +162,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (nextExpr.Match(ILCode.Callvirt, out addMethod, out args) &&
 					    addMethod.Name == "Add" &&
 					    addMethod.HasThis &&
-					    args.Count == 2 &&
+					    args.Count >= 2 &&
 					    args[0].Match(ILCode.Ldloc, out v2) &&
 					    v == v2)
 					{

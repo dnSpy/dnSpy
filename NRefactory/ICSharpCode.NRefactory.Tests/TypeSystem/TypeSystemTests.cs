@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using ICSharpCode.NRefactory.TypeSystem.TestCase;
 using NUnit.Framework;
@@ -260,6 +261,106 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			var ctors = typeof(MyStructWithCtor).ToTypeReference().Resolve(ctx).GetConstructors(ctx);
 			Assert.AreEqual(2, ctors.Count());
 			Assert.IsFalse(ctors.Any(c => c.IsStatic));
+		}
+		
+		[Test]
+		public void SerializableAttribute()
+		{
+			IAttribute attr = ctx.GetClass(typeof(NonCustomAttributes)).Attributes.Single();
+			Assert.AreEqual("System.SerializableAttribute", attr.AttributeType.Resolve(ctx).FullName);
+		}
+		
+		[Test]
+		public void NonSerializedAttribute()
+		{
+			IField field = ctx.GetClass(typeof(NonCustomAttributes)).Fields.Single(f => f.Name == "NonSerializedField");
+			Assert.AreEqual("System.NonSerializedAttribute", field.Attributes.Single().AttributeType.Resolve(ctx).FullName);
+		}
+		
+		[Test]
+		public void ExplicitStructLayoutAttribute()
+		{
+			IAttribute attr = ctx.GetClass(typeof(ExplicitFieldLayoutStruct)).Attributes.Single();
+			Assert.AreEqual("System.Runtime.InteropServices.StructLayoutAttribute", attr.AttributeType.Resolve(ctx).FullName);
+			IConstantValue arg1 = attr.PositionalArguments.Single();
+			Assert.AreEqual("System.Runtime.InteropServices.LayoutKind", arg1.GetValueType(ctx).FullName);
+			Assert.AreEqual((int)LayoutKind.Explicit, arg1.GetValue(ctx));
+			
+			var arg2 = attr.NamedArguments[0];
+			Assert.AreEqual("CharSet", arg2.Key);
+			Assert.AreEqual("System.Runtime.InteropServices.CharSet", arg2.Value.GetValueType(ctx).FullName);
+			Assert.AreEqual((int)CharSet.Unicode, arg2.Value.GetValue(ctx));
+			
+			var arg3 = attr.NamedArguments[1];
+			Assert.AreEqual("Pack", arg3.Key);
+			Assert.AreEqual("System.Int32", arg3.Value.GetValueType(ctx).FullName);
+			Assert.AreEqual(8, arg3.Value.GetValue(ctx));
+		}
+		
+		[Test]
+		public void FieldOffsetAttribute()
+		{
+			IField field = ctx.GetClass(typeof(ExplicitFieldLayoutStruct)).Fields.Single(f => f.Name == "Field0");
+			Assert.AreEqual("System.Runtime.InteropServices.FieldOffsetAttribute", field.Attributes.Single().AttributeType.Resolve(ctx).FullName);
+			IConstantValue arg = field.Attributes.Single().PositionalArguments.Single();
+			Assert.AreEqual("System.Int32", arg.GetValueType(ctx).FullName);
+			Assert.AreEqual(0, arg.GetValue(ctx));
+			
+			field = ctx.GetClass(typeof(ExplicitFieldLayoutStruct)).Fields.Single(f => f.Name == "Field100");
+			Assert.AreEqual("System.Runtime.InteropServices.FieldOffsetAttribute", field.Attributes.Single().AttributeType.Resolve(ctx).FullName);
+			arg = field.Attributes.Single().PositionalArguments.Single();
+			Assert.AreEqual("System.Int32", arg.GetValueType(ctx).FullName);
+			Assert.AreEqual(100, arg.GetValue(ctx));
+		}
+		
+		[Test]
+		public void DllImportAttribute()
+		{
+			IMethod method = ctx.GetClass(typeof(NonCustomAttributes)).Methods.Single(m => m.Name == "DllMethod");
+			IAttribute dllImport = method.Attributes.Single();
+			Assert.AreEqual("System.Runtime.InteropServices.DllImportAttribute", dllImport.AttributeType.Resolve(ctx).FullName);
+			Assert.AreEqual("unmanaged.dll", dllImport.PositionalArguments[0].GetValue(ctx));
+			Assert.AreEqual((int)CharSet.Unicode, dllImport.NamedArguments.Single().Value.GetValue(ctx));
+		}
+		
+		[Test]
+		public void InOutParametersOnRefMethod()
+		{
+			IParameter p = ctx.GetClass(typeof(NonCustomAttributes)).Methods.Single(m => m.Name == "DllMethod").Parameters.Single();
+			Assert.IsTrue(p.IsRef);
+			Assert.IsFalse(p.IsOut);
+			Assert.AreEqual(2, p.Attributes.Count);
+			Assert.AreEqual("System.Runtime.InteropServices.InAttribute", p.Attributes[0].AttributeType.Resolve(ctx).FullName);
+			Assert.AreEqual("System.Runtime.InteropServices.OutAttribute", p.Attributes[1].AttributeType.Resolve(ctx).FullName);
+		}
+		
+		[Test]
+		public void MarshalAsAttributeOnMethod()
+		{
+			IMethod method = ctx.GetClass(typeof(NonCustomAttributes)).Methods.Single(m => m.Name == "DllMethod");
+			IAttribute marshalAs = method.ReturnTypeAttributes.Single();
+			Assert.AreEqual((int)UnmanagedType.Bool, marshalAs.PositionalArguments.Single().GetValue(ctx));
+		}
+		
+		[Test]
+		public void MethodWithOutParameter()
+		{
+			IParameter p = ctx.GetClass(typeof(ParameterTests)).Methods.Single(m => m.Name == "MethodWithOutParameter").Parameters.Single();
+			Assert.IsFalse(p.IsRef);
+			Assert.IsTrue(p.IsOut);
+			Assert.AreEqual(0, p.Attributes.Count);
+			Assert.IsTrue(p.Type is ByReferenceTypeReference);
+		}
+		
+		[Test]
+		public void MethodWithParamsArray()
+		{
+			IParameter p = ctx.GetClass(typeof(ParameterTests)).Methods.Single(m => m.Name == "MethodWithParamsArray").Parameters.Single();
+			Assert.IsFalse(p.IsRef);
+			Assert.IsFalse(p.IsOut);
+			Assert.IsTrue(p.IsParams);
+			Assert.AreEqual(0, p.Attributes.Count);
+			Assert.IsTrue(p.Type is ArrayTypeReference);
 		}
 	}
 }

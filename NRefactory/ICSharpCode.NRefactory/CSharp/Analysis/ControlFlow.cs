@@ -5,7 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp.Analysis
 {
@@ -135,12 +138,24 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		}
 		
 		Statement rootStatement;
+		ResolveVisitor resolveVisitor;
 		List<ControlFlowNode> nodes;
 		Dictionary<string, ControlFlowNode> labels;
 		List<ControlFlowNode> gotoStatements;
 		
-		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement)
+		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, ITypeResolveContext context, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			return BuildControlFlowGraph(statement, new ResolveVisitor(
+				new CSharpResolver(context, cancellationToken), null, ConstantModeResolveVisitorNavigator.Skip));
+		}
+		
+		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, ResolveVisitor resolveVisitor)
+		{
+			if (statement == null)
+				throw new ArgumentNullException("statement");
+			if (resolveVisitor == null)
+				throw new ArgumentNullException("resolveVisitor");
+			
 			NodeCreationVisitor nodeCreationVisitor = new NodeCreationVisitor();
 			nodeCreationVisitor.builder = this;
 			try {
@@ -148,6 +163,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				this.labels = new Dictionary<string, ControlFlowNode>();
 				this.gotoStatements = new List<ControlFlowNode>();
 				this.rootStatement = statement;
+				this.resolveVisitor = resolveVisitor;
 				ControlFlowNode entryPoint = CreateStartNode(statement);
 				statement.AcceptVisitor(nodeCreationVisitor, entryPoint);
 				
@@ -167,6 +183,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				this.labels = null;
 				this.gotoStatements = null;
 				this.rootStatement = null;
+				this.resolveVisitor = null;
 			}
 		}
 		
@@ -206,7 +223,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		
 		ControlFlowNode CreateSpecialNode(Statement statement, ControlFlowNodeType type)
 		{
-			ControlFlowNode node = CreateNode(statement, null, type);
+			ControlFlowNode node = CreateNode(null, statement, type);
 			nodes.Add(node);
 			return node;
 		}
@@ -238,7 +255,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// <returns>The constant value of the expression; or null if the expression is not a constant.</returns>
 		ConstantResolveResult EvaluateConstant(Expression expr)
 		{
-			return null; // TODO: implement this using the C# resolver
+			return resolveVisitor.Resolve(expr) as ConstantResolveResult;
 		}
 		
 		/// <summary>
@@ -256,7 +273,11 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		
 		bool AreEqualConstants(ConstantResolveResult c1, ConstantResolveResult c2)
 		{
-			return false; // TODO: implement this using the resolver's operator==
+			if (c1 == null || c2 == null)
+				return false;
+			CSharpResolver r = new CSharpResolver(resolveVisitor.TypeResolveContext, resolveVisitor.CancellationToken);
+			ResolveResult c = r.ResolveBinaryOperator(BinaryOperatorType.Equality, c1, c2);
+			return c.IsCompileTimeConstant && (c.ConstantValue as bool?) == true;
 		}
 		#endregion
 		

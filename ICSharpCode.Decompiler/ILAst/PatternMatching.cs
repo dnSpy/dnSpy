@@ -98,29 +98,44 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
-		public static bool MatchSingle<T>(this ILBasicBlock bb, ILCode code, out T operand, out ILExpression arg, out ILLabel fallLabel)
+		public static bool MatchSingle<T>(this ILBasicBlock bb, ILCode code, out T operand, out ILExpression arg)
 		{
-			if (bb.Body.Count == 1) {
-				if (bb.Body[0].Match(code, out operand, out arg)) {
-					fallLabel = bb.FallthoughGoto != null ? (ILLabel)bb.FallthoughGoto.Operand : null;
-					return true;
-				}
-			}
-			operand = default(T);
-			arg = null;
-			fallLabel = null;
-			return false;
-		}
-		
-		public static bool MatchLast<T>(this ILBasicBlock bb, ILCode code, out T operand, out ILExpression arg, out ILLabel fallLabel)
-		{
-			if (bb.Body.LastOrDefault().Match(code, out operand, out arg)) {
-				fallLabel = bb.FallthoughGoto != null ? (ILLabel)bb.FallthoughGoto.Operand : null;
+			if (bb.Body.Count == 2 &&
+			    bb.Body[0] is ILLabel &&
+			    bb.Body[1].Match(code, out operand, out arg))
+			{
 				return true;
 			}
 			operand = default(T);
 			arg = null;
-			fallLabel = null;
+			return false;
+		}
+		
+		public static bool MatchSingleAndBr<T>(this ILBasicBlock bb, ILCode code, out T operand, out ILExpression arg, out ILLabel brLabel)
+		{
+			if (bb.Body.Count == 3 &&
+			    bb.Body[0] is ILLabel &&
+			    bb.Body[1].Match(code, out operand, out arg) &&
+			    bb.Body[2].Match(ILCode.Br, out brLabel))
+			{
+				return true;
+			}
+			operand = default(T);
+			arg = null;
+			brLabel = null;
+			return false;
+		}
+		
+		public static bool MatchLastAndBr<T>(this ILBasicBlock bb, ILCode code, out T operand, out ILExpression arg, out ILLabel brLabel)
+		{
+			if (bb.Body.ElementAtOrDefault(bb.Body.Count - 2).Match(code, out operand, out arg) &&
+			    bb.Body.LastOrDefault().Match(ILCode.Br, out brLabel))
+			{
+				return true;
+			}
+			operand = default(T);
+			arg = null;
+			brLabel = null;
 			return false;
 		}
 		

@@ -16,7 +16,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	public interface IMethod : IParameterizedMember
 	{
 		/// <summary>
-		/// Gets the attributes associated with the return type.
+		/// Gets the attributes associated with the return type. (e.g. [return: MarshalAs(...)])
 		/// </summary>
 		IList<IAttribute> ReturnTypeAttributes { get; }
 		

@@ -19,7 +19,15 @@ namespace ICSharpCode.Decompiler.Ast
 	using Ast = ICSharpCode.NRefactory.CSharp;
 	using ClassType = ICSharpCode.NRefactory.TypeSystem.ClassType;
 	using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
-
+	
+	[Flags]
+	public enum ConvertTypeOptions
+	{
+		None = 0,
+		IncludeNamespace = 1,
+		IncludeTypeParameterDefinitions = 2
+	}
+	
 	public class AstBuilder
 	{
 		DecompilerContext context = new DecompilerContext();
@@ -89,21 +97,16 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void AddAssembly(AssemblyDefinition assemblyDefinition, bool onlyAssemblyLevel = false)
 		{
-			astCompileUnit.AddChild(
-				new UsingDeclaration {
-					Import = new SimpleType("System")
-				}, CompilationUnit.MemberRole);
-			
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition, AttributeTarget.Assembly);
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition.MainModule, AttributeTarget.Module);
-
+			
 			if (!onlyAssemblyLevel) {
-				foreach (TypeDefinition typeDef in assemblyDefinition.MainModule.Types)
-				{
-					// Skip nested types - they will be added by the parent type
-					if (typeDef.DeclaringType != null) continue;
+				foreach (TypeDefinition typeDef in assemblyDefinition.MainModule.Types) {
 					// Skip the <Module> class
 					if (typeDef.Name == "<Module>") continue;
+					// Skip any hidden types
+					if (AstBuilder.MemberIsHidden(typeDef, context.Settings))
+						continue;
 
 					AddType(typeDef);
 				}
@@ -264,7 +267,7 @@ namespace ICSharpCode.Decompiler.Ast
 			transform.Run(astCompileUnit);
 		}
 		
-		string CleanName(string name)
+		internal static string CleanName(string name)
 		{
 			int pos = name.LastIndexOf('`');
 			if (pos >= 0)
@@ -283,13 +286,13 @@ namespace ICSharpCode.Decompiler.Ast
 		/// a type system type reference.</param>
 		/// <param name="typeAttributes">Attributes associated with the Cecil type reference.
 		/// This is used to support the 'dynamic' type.</param>
-		public static AstType ConvertType(TypeReference type, ICustomAttributeProvider typeAttributes = null)
+		public static AstType ConvertType(TypeReference type, ICustomAttributeProvider typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{
 			int typeIndex = 0;
-			return ConvertType(type, typeAttributes, ref typeIndex);
+			return ConvertType(type, typeAttributes, ref typeIndex, options);
 		}
 		
-		static AstType ConvertType(TypeReference type, ICustomAttributeProvider typeAttributes, ref int typeIndex)
+		static AstType ConvertType(TypeReference type, ICustomAttributeProvider typeAttributes, ref int typeIndex, ConvertTypeOptions options)
 		{
 			while (type is OptionalModifierType || type is RequiredModifierType) {
 				type = ((TypeSpecification)type).ElementType;
@@ -301,39 +304,44 @@ namespace ICSharpCode.Decompiler.Ast
 			if (type is Mono.Cecil.ByReferenceType) {
 				typeIndex++;
 				// by reference type cannot be represented in C#; so we'll represent it as a pointer instead
-				return ConvertType((type as Mono.Cecil.ByReferenceType).ElementType, typeAttributes, ref typeIndex)
+				return ConvertType((type as Mono.Cecil.ByReferenceType).ElementType, typeAttributes, ref typeIndex, options)
 					.MakePointerType();
 			} else if (type is Mono.Cecil.PointerType) {
 				typeIndex++;
-				return ConvertType((type as Mono.Cecil.PointerType).ElementType, typeAttributes, ref typeIndex)
+				return ConvertType((type as Mono.Cecil.PointerType).ElementType, typeAttributes, ref typeIndex, options)
 					.MakePointerType();
 			} else if (type is Mono.Cecil.ArrayType) {
 				typeIndex++;
-				return ConvertType((type as Mono.Cecil.ArrayType).ElementType, typeAttributes, ref typeIndex)
+				return ConvertType((type as Mono.Cecil.ArrayType).ElementType, typeAttributes, ref typeIndex, options)
 					.MakeArrayType((type as Mono.Cecil.ArrayType).Rank);
 			} else if (type is GenericInstanceType) {
 				GenericInstanceType gType = (GenericInstanceType)type;
 				if (gType.ElementType.Namespace == "System" && gType.ElementType.Name == "Nullable`1" && gType.GenericArguments.Count == 1) {
 					typeIndex++;
 					return new ComposedType {
-						BaseType = ConvertType(gType.GenericArguments[0], typeAttributes, ref typeIndex),
+						BaseType = ConvertType(gType.GenericArguments[0], typeAttributes, ref typeIndex, options),
 						HasNullableSpecifier = true
 					};
 				}
-				AstType baseType = ConvertType(gType.ElementType, typeAttributes, ref typeIndex);
+				AstType baseType = ConvertType(gType.ElementType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
 				List<AstType> typeArguments = new List<AstType>();
 				foreach (var typeArgument in gType.GenericArguments) {
 					typeIndex++;
-					typeArguments.Add(ConvertType(typeArgument, typeAttributes, ref typeIndex));
+					typeArguments.Add(ConvertType(typeArgument, typeAttributes, ref typeIndex, options));
 				}
 				ApplyTypeArgumentsTo(baseType, typeArguments);
 				return baseType;
 			} else if (type is GenericParameter) {
 				return new SimpleType(type.Name);
 			} else if (type.IsNested) {
-				AstType typeRef = ConvertType(type.DeclaringType, typeAttributes, ref typeIndex);
+				AstType typeRef = ConvertType(type.DeclaringType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
 				string namepart = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name);
-				return new MemberType { Target = typeRef, MemberName = namepart }.WithAnnotation(type);
+				MemberType memberType = new MemberType { Target = typeRef, MemberName = namepart };
+				memberType.AddAnnotation(type);
+				if ((options & ConvertTypeOptions.IncludeTypeParameterDefinitions) == ConvertTypeOptions.IncludeTypeParameterDefinitions) {
+					AddTypeParameterDefininitionsTo(type, memberType);
+				}
+				return memberType;
 			} else {
 				string ns = type.Namespace ?? string.Empty;
 				string name = type.Name;
@@ -382,18 +390,35 @@ namespace ICSharpCode.Decompiler.Ast
 					
 					name = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(name);
 					
-					// TODO: Until we can simplify type with 'using', use just the name without namesapce
-					return new SimpleType(name).WithAnnotation(type);
+					AstType astType;
+					if ((options & ConvertTypeOptions.IncludeNamespace) == ConvertTypeOptions.IncludeNamespace && ns.Length > 0) {
+						string[] parts = ns.Split('.');
+						AstType nsType = new SimpleType(parts[0]);
+						for (int i = 1; i < parts.Length; i++) {
+							nsType = new MemberType { Target = nsType, MemberName = parts[i] };
+						}
+						astType = new MemberType { Target = nsType, MemberName = name };
+					} else {
+						astType = new SimpleType(name);
+					}
+					astType.AddAnnotation(type);
 					
-//					if (ns.Length == 0)
-//						return new SimpleType(name).WithAnnotation(type);
-//					string[] parts = ns.Split('.');
-//					AstType nsType = new SimpleType(parts[0]);
-//					for (int i = 1; i < parts.Length; i++) {
-//						nsType = new MemberType { Target = nsType, MemberName = parts[i] };
-//					}
-//					return new MemberType { Target = nsType, MemberName = name }.WithAnnotation(type);
+					if ((options & ConvertTypeOptions.IncludeTypeParameterDefinitions) == ConvertTypeOptions.IncludeTypeParameterDefinitions) {
+						AddTypeParameterDefininitionsTo(type, astType);
+					}
+					return astType;
 				}
+			}
+		}
+		
+		static void AddTypeParameterDefininitionsTo(TypeReference type, AstType astType)
+		{
+			if (type.HasGenericParameters) {
+				List<AstType> typeArguments = new List<AstType>();
+				foreach (GenericParameter gp in type.GenericParameters) {
+					typeArguments.Add(new SimpleType(gp.Name));
+				}
+				ApplyTypeArgumentsTo(astType, typeArguments);
 			}
 		}
 		

@@ -21,6 +21,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		SimplifyShortCircuit,
 		SimplifyTernaryOperator,
 		SimplifyNullCoalescing,
+		JoinBasicBlocks,
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
 		TransformArrayInitializers,
@@ -86,53 +87,43 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Types are needed for the ternary operator optimization
 			TypeAnalysis.Run(context, method);
 			
-			AnalyseLabels(method);
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				bool modified;
 				do {
 					modified = false;
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyShortCircuit) return;
-					modified |= block.RunOptimization(SimplifyShortCircuit);
+					modified |= block.RunOptimization(new SimpleControlFlow(context, method).SimplifyShortCircuit);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyTernaryOperator) return;
-					modified |= block.RunOptimization(SimplifyTernaryOperator);
+					modified |= block.RunOptimization(new SimpleControlFlow(context, method).SimplifyTernaryOperator);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyNullCoalescing) return;
-					modified |= block.RunOptimization(SimplifyNullCoalescing);
+					modified |= block.RunOptimization(new SimpleControlFlow(context, method).SimplifyNullCoalescing);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.JoinBasicBlocks) return;
+					modified |= block.RunOptimization(new SimpleControlFlow(context, method).JoinBasicBlocks);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.TransformDecimalCtorToConstant) return;
+					modified |= block.RunOptimization(TransformDecimalCtorToConstant);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyLdObjAndStObj) return;
+					modified |= block.RunOptimization(SimplifyLdObjAndStObj);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
+					modified |= block.RunOptimization(Initializers.TransformArrayInitializers);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.TransformCollectionInitializers) return;
+					modified |= block.RunOptimization(Initializers.TransformCollectionInitializers);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.MakeAssignmentExpression) return;
+					modified |= block.RunOptimization(MakeAssignmentExpression);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
+					modified |= new ILInlining(method).InlineAllInBlock(block);
+					new ILInlining(method).CopyPropagation();
 					
 				} while(modified);
-			}
-			
-			ILInlining inlining2 = new ILInlining(method);
-			inlining2.InlineAllVariables();
-			inlining2.CopyPropagation();
-			
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
-				
-				// Intentionaly outside the while(modifed) loop,
-				// I will put it there later after more testing
-				
-				bool modified = false;
-				
-				if (abortBeforeStep == ILAstOptimizationStep.TransformDecimalCtorToConstant) return;
-				modified |= block.RunOptimization(TransformDecimalCtorToConstant);
-				
-				if (abortBeforeStep == ILAstOptimizationStep.SimplifyLdObjAndStObj) return;
-				modified |= block.RunOptimization(SimplifyLdObjAndStObj);
-				
-				if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
-				modified |= block.RunOptimization(Initializers.TransformArrayInitializers);
-				modified |= block.RunOptimization(Initializers.TransformArrayInitializers);
-				
-				if (abortBeforeStep == ILAstOptimizationStep.TransformCollectionInitializers) return;
-				modified |= block.RunOptimization(Initializers.TransformCollectionInitializers);
-				
-				if (abortBeforeStep == ILAstOptimizationStep.MakeAssignmentExpression) return;
-				modified |= block.RunOptimization(MakeAssignmentExpression);
-				
-				if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
-				modified |= new ILInlining(method).InlineAllInBlock(block);
 			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FindLoops) return;
@@ -175,9 +166,17 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (abortBeforeStep == ILAstOptimizationStep.IntroduceFixedStatements) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
-				for (int i = 0; i < block.Body.Count; i++) {
+				for (int i = block.Body.Count - 1; i >= 0; i--) {
 					// TODO: Move before loops
-					IntroduceFixedStatements(block.Body, i);
+					if (i < block.Body.Count)
+						IntroduceFixedStatements(block.Body, i);
+				}
+			}
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				for (int i = block.Body.Count - 1; i >= 0; i--) {
+					// TODO: Move before loops
+					if (i < block.Body.Count)
+						IntroduceFixedStatements(block.Body, i);
 				}
 			}
 			
@@ -286,14 +285,14 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			List<ILNode> basicBlocks = new List<ILNode>();
 			
-			ILBasicBlock basicBlock = new ILBasicBlock() {
-				EntryLabel = block.Body.FirstOrDefault() as ILLabel ?? new ILLabel() { Name = "Block_" + (nextLabelIndex++) }
-			};
+			ILLabel entryLabel = block.Body.FirstOrDefault() as ILLabel ?? new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
+			ILBasicBlock basicBlock = new ILBasicBlock();
 			basicBlocks.Add(basicBlock);
-			block.EntryGoto = new ILExpression(ILCode.Br, basicBlock.EntryLabel);
+			basicBlock.Body.Add(entryLabel);
+			block.EntryGoto = new ILExpression(ILCode.Br, entryLabel);
 			
 			if (block.Body.Count > 0) {
-				if (block.Body[0] != basicBlock.EntryLabel)
+				if (block.Body[0] != entryLabel)
 					basicBlock.Body.Add(block.Body[0]);
 				
 				for (int i = 1; i < block.Body.Count; i++) {
@@ -302,31 +301,28 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					// Start a new basic block if necessary
 					if (currNode is ILLabel ||
-					    lastNode is ILTryCatchBlock ||
-					    currNode is ILTryCatchBlock ||
-					    (lastNode is ILExpression && ((ILExpression)lastNode).IsBranch()))
+					    currNode is ILTryCatchBlock || // Counts as label
+					    lastNode.IsConditionalControlFlow() ||
+					    lastNode.IsUnconditionalControlFlow())
 					{
 						// Try to reuse the label
 						ILLabel label = currNode is ILLabel ? ((ILLabel)currNode) : new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
 						
 						// Terminate the last block
-						if (lastNode.CanFallThough()) {
+						if (!lastNode.IsUnconditionalControlFlow()) {
 							// Explicit branch from one block to other
-							basicBlock.FallthoughGoto = new ILExpression(ILCode.Br, label);
-						} else if (lastNode.Match(ILCode.Br)) {
-							// Reuse the existing goto as FallthoughGoto
-							basicBlock.FallthoughGoto = (ILExpression)lastNode;
-							basicBlock.Body.RemoveAt(basicBlock.Body.Count - 1);
+							basicBlock.Body.Add(new ILExpression(ILCode.Br, label));
 						}
 						
-						// Start the new block						
+						// Start the new block
 						basicBlock = new ILBasicBlock();
 						basicBlocks.Add(basicBlock);
-						basicBlock.EntryLabel = label;
-					}
-					
-					// Add the node to the basic block
-					if (currNode != basicBlock.EntryLabel) {
+						basicBlock.Body.Add(label);
+						
+						// Add the node to the basic block
+						if (currNode != label)
+							basicBlock.Body.Add(currNode);
+					} else {
 						basicBlock.Body.Add(currNode);
 					}
 				}
@@ -334,208 +330,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			block.Body = basicBlocks;
 			return;
-		}
-		
-		Dictionary<ILLabel, int> labelGlobalRefCount;
-		Dictionary<ILLabel, ILBasicBlock> labelToBasicBlock;
-		
-		void AnalyseLabels(ILBlock method)
-		{
-			labelGlobalRefCount = new Dictionary<ILLabel, int>();
-			foreach(ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>(e => e.IsBranch()).SelectMany(e => e.GetBranchTargets())) {
-				if (!labelGlobalRefCount.ContainsKey(target))
-					labelGlobalRefCount[target] = 0;
-				labelGlobalRefCount[target]++;
-			}
-			
-			labelToBasicBlock = new Dictionary<ILLabel, ILBasicBlock>();
-			foreach(ILBasicBlock bb in method.GetSelfAndChildrenRecursive<ILBasicBlock>()) {
-				foreach(ILLabel label in bb.GetChildren().OfType<ILLabel>()) {
-					labelToBasicBlock[label] = bb;
-				}
-			}
-		}
-		
-		bool SimplifyTernaryOperator(List<ILNode> body, ILBasicBlock head, int pos)
-		{
-			Debug.Assert(body.Contains(head));
-			
-			ILExpression condExpr;
-			ILLabel trueLabel;
-			ILLabel falseLabel;
-			ILVariable trueLocVar = null;
-			ILExpression trueExpr;
-			ILLabel trueFall;
-			ILVariable falseLocVar = null;
-			ILExpression falseExpr;
-			ILLabel falseFall;
-			object unused;
-			
-			if (head.MatchLast(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel) &&
-			    labelGlobalRefCount[trueLabel] == 1 &&
-			    labelGlobalRefCount[falseLabel] == 1 &&
-			    ((labelToBasicBlock[trueLabel].MatchSingle(ILCode.Stloc, out trueLocVar, out trueExpr, out trueFall) &&
-			      labelToBasicBlock[falseLabel].MatchSingle(ILCode.Stloc, out falseLocVar, out falseExpr, out falseFall)) ||
-			     (labelToBasicBlock[trueLabel].MatchSingle(ILCode.Ret, out unused, out trueExpr, out trueFall) &&
-			      labelToBasicBlock[falseLabel].MatchSingle(ILCode.Ret, out unused, out falseExpr, out falseFall))) &&
-			    trueLocVar == falseLocVar &&
-			    trueFall == falseFall &&
-			    body.Contains(labelToBasicBlock[trueLabel]) &&
-			    body.Contains(labelToBasicBlock[falseLabel])
-			   )
-			{
-				ILCode opCode = trueLocVar != null ? ILCode.Stloc : ILCode.Ret;
-				TypeReference retType = trueLocVar != null ? trueLocVar.Type : this.context.CurrentMethod.ReturnType;
-				int leftBoolVal;
-				int rightBoolVal;
-				ILExpression newExpr;
-				// a ? true:false  is equivalent to  a
-				// a ? false:true  is equivalent to  !a
-				// a ? true : b    is equivalent to  a || b
-				// a ? b : true    is equivalent to  !a || b
-				// a ? b : false   is equivalent to  a && b
-				// a ? false : b   is equivalent to  !a && b
-				if (retType == typeSystem.Boolean &&
-				    trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal) &&
-				    falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal) &&
-				    ((leftBoolVal != 0 && rightBoolVal == 0) || (leftBoolVal == 0 && rightBoolVal != 0))
-				   )
-				{
-					// It can be expressed as trivilal expression
-					if (leftBoolVal != 0) {
-						newExpr = condExpr;
-					} else {
-						newExpr = new ILExpression(ILCode.LogicNot, null, condExpr);
-					}
-				} else if (retType == typeSystem.Boolean && trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal)) {
-					// It can be expressed as logical expression
-					if (leftBoolVal != 0) {
-						newExpr = new ILExpression(ILCode.LogicOr, null, condExpr, falseExpr);
-					} else {
-						newExpr = new ILExpression(ILCode.LogicAnd, null, new ILExpression(ILCode.LogicNot, null, condExpr), falseExpr);
-					}
-				} else if (retType == typeSystem.Boolean && falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal)) {
-					// It can be expressed as logical expression
-					if (rightBoolVal != 0) {
-						newExpr = new ILExpression(ILCode.LogicOr, null, new ILExpression(ILCode.LogicNot, null, condExpr), trueExpr);
-					} else {
-						newExpr = new ILExpression(ILCode.LogicAnd, null, condExpr, trueExpr);
-					}
-				} else {
-					// Ternary operator tends to create long complicated return statements					
-					if (opCode == ILCode.Ret)
-						return false;
-					
-					// Create ternary expression
-					newExpr = new ILExpression(ILCode.TernaryOp, null, condExpr, trueExpr, falseExpr);
-				}
-				head.Body[head.Body.Count - 1] = new ILExpression(opCode, trueLocVar, newExpr);
-				head.FallthoughGoto = trueFall != null ? new ILExpression(ILCode.Br, trueFall) : null;
-				
-				// Remove the old basic blocks
-				foreach(ILLabel deleteLabel in new [] { trueLabel, falseLabel }) {
-					body.RemoveOrThrow(labelToBasicBlock[deleteLabel]);
-					labelGlobalRefCount.RemoveOrThrow(deleteLabel);
-					labelToBasicBlock.RemoveOrThrow(deleteLabel);
-				}
-				
-				return true;
-			}
-			return false;
-		}
-		
-		bool SimplifyNullCoalescing(List<ILNode> body, ILBasicBlock head, int pos)
-		{
-			// ...
-			// v = ldloc(leftVar)
-			// brtrue(endBBLabel, ldloc(leftVar))
-			// br(rightBBLabel)
-			//
-			// rightBBLabel:
-			// v = rightExpr
-			// br(endBBLabel)
-			// ...
-			// =>
-			// ...
-			// v = NullCoalescing(ldloc(leftVar), rightExpr)
-			// br(endBBLabel)
-				
-			ILVariable v, v2;
-			ILExpression leftExpr, leftExpr2;
-			ILVariable leftVar;
-			ILLabel endBBLabel, endBBLabel2;
-			ILLabel rightBBLabel;
-			ILBasicBlock rightBB;
-			ILExpression rightExpr;
-			if (head.Body.Count >= 2 &&
-				head.Body[head.Body.Count - 2].Match(ILCode.Stloc, out v, out leftExpr) &&
-			    leftExpr.Match(ILCode.Ldloc, out leftVar) &&
-			    head.MatchLast(ILCode.Brtrue, out endBBLabel, out leftExpr2, out rightBBLabel) &&
-			    leftExpr2.Match(ILCode.Ldloc, leftVar) &&
-			    labelToBasicBlock.TryGetValue(rightBBLabel, out rightBB) &&
-			    rightBB.MatchSingle(ILCode.Stloc, out v2, out rightExpr, out endBBLabel2) &&
-			    v == v2 &&
-			    endBBLabel == endBBLabel2 &&
-			    labelGlobalRefCount.GetOrDefault(rightBBLabel) == 1 &&
-			    body.Contains(rightBB)
-			   )
-			{
-				head.Body[head.Body.Count - 2] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.NullCoalescing, null, leftExpr, rightExpr));
-				head.Body.RemoveAt(head.Body.Count - 1);
-				head.FallthoughGoto = new ILExpression(ILCode.Br, endBBLabel);
-				
-				body.RemoveOrThrow(labelToBasicBlock[rightBBLabel]);
-				labelGlobalRefCount.RemoveOrThrow(rightBBLabel);
-				labelToBasicBlock.RemoveOrThrow(rightBBLabel);
-				return true;
-			}
-			return false;
-		}
-		
-		bool SimplifyShortCircuit(List<ILNode> body, ILBasicBlock head, int pos)
-		{
-			Debug.Assert(body.Contains(head));
-			
-			ILExpression condExpr;
-			ILLabel trueLabel;
-			ILLabel falseLabel;
-			if(head.MatchLast(ILCode.Brtrue, out trueLabel, out condExpr, out falseLabel)) {
-				for (int pass = 0; pass < 2; pass++) {
-					
-					// On the second pass, swap labels and negate expression of the first branch
-					// It is slightly ugly, but much better then copy-pasting this whole block
-					ILLabel nextLabel   = (pass == 0) ? trueLabel  : falseLabel;
-					ILLabel otherLablel = (pass == 0) ? falseLabel : trueLabel;
-					bool    negate      = (pass == 1);
-					
-					ILBasicBlock nextBasicBlock = labelToBasicBlock[nextLabel];
-					ILExpression nextCondExpr;
-					ILLabel nextTrueLablel;
-					ILLabel nextFalseLabel;
-					if (body.Contains(nextBasicBlock) &&
-					    nextBasicBlock != head &&
-					    labelGlobalRefCount[nextBasicBlock.EntryLabel] == 1 &&
-					    nextBasicBlock.MatchSingle(ILCode.Brtrue, out nextTrueLablel, out nextCondExpr, out nextFalseLabel) &&
-					    (otherLablel == nextFalseLabel || otherLablel == nextTrueLablel))
-					{
-						// Create short cicuit branch
-						if (otherLablel == nextFalseLabel) {
-							head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Brtrue, nextTrueLablel, new ILExpression(ILCode.LogicAnd, null, negate ? new ILExpression(ILCode.LogicNot, null, condExpr) : condExpr, nextCondExpr));
-						} else {
-							head.Body[head.Body.Count - 1] = new ILExpression(ILCode.Brtrue, nextTrueLablel, new ILExpression(ILCode.LogicOr, null, negate ? condExpr : new ILExpression(ILCode.LogicNot, null, condExpr), nextCondExpr));
-						}
-						head.FallthoughGoto = new ILExpression(ILCode.Br, nextFalseLabel);
-						
-						// Remove the inlined branch from scope
-						labelGlobalRefCount.RemoveOrThrow(nextBasicBlock.EntryLabel);
-						labelToBasicBlock.RemoveOrThrow(nextBasicBlock.EntryLabel);
-						body.RemoveOrThrow(nextBasicBlock);
-						
-						return true;
-					}
-				}
-			}
-			return false;
 		}
 		
 		void DuplicateReturnStatements(ILBlock method)
@@ -598,8 +392,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				List<ILNode> flatBody = new List<ILNode>();
 				foreach (ILNode child in block.GetChildren()) {
 					FlattenBasicBlocks(child);
-					if (child is ILBasicBlock) {
-						flatBody.AddRange(child.GetChildren());
+					ILBasicBlock childAsBB = child as ILBasicBlock;
+					if (childAsBB != null) {
+						if (!(childAsBB.Body.FirstOrDefault() is ILLabel))
+							throw new Exception("Basic block has to start with a label. \n" + childAsBB.ToString());
+						if (childAsBB.Body.LastOrDefault() is ILExpression && !childAsBB.Body.LastOrDefault().IsUnconditionalControlFlow())
+							throw new Exception("Basci block has to end with unconditional control flow. \n" + childAsBB.ToString());
+						flatBody.AddRange(childAsBB.GetChildren());
 					} else {
 						flatBody.Add(child);
 					}
@@ -627,8 +426,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				for (int i = 0; i < block.Body.Count; i++) {
 					ILCondition cond = block.Body[i] as ILCondition;
 					if (cond != null) {
-						bool trueExits = cond.TrueBlock.Body.Count > 0 && !cond.TrueBlock.Body.Last().CanFallThough();
-						bool falseExits = cond.FalseBlock.Body.Count > 0 && !cond.FalseBlock.Body.Last().CanFallThough();
+						bool trueExits = cond.TrueBlock.Body.LastOrDefault().IsUnconditionalControlFlow();
+						bool falseExits = cond.FalseBlock.Body.LastOrDefault().IsUnconditionalControlFlow();
 						
 						if (trueExits) {
 							// Move the false block after the condition
@@ -677,12 +476,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			bool modified = false;
 			List<ILNode> body = block.Body;
-			for (int i = 0; i < body.Count;) {
-				if (optimization(body, (ILBasicBlock)body[i], i)) {
+			for (int i = body.Count - 1; i >= 0; i--) {
+				if (i < body.Count && optimization(body, (ILBasicBlock)body[i], i)) {
 					modified = true;
-					i = Math.Max(0, i - 1); // Go back one step
-				} else {
-					i++;
 				}
 			}
 			return modified;
@@ -692,26 +488,26 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			bool modified = false;
 			foreach (ILBasicBlock bb in block.Body) {
-				for (int j = 0; j < bb.Body.Count;) {
-					ILExpression expr = bb.Body[j] as ILExpression;
-					if (expr != null && optimization(bb.Body, expr, j)) {
+				for (int i = bb.Body.Count - 1; i >= 0; i--) {
+					ILExpression expr = bb.Body.ElementAtOrDefault(i) as ILExpression;
+					if (expr != null && optimization(bb.Body, expr, i)) {
 						modified = true;
-						j = Math.Max(0, j - 1); // Go back one step
-					} else {
-						j++;
 					}
 				}
 			}
 			return modified;
 		}
 		
-		public static bool CanFallThough(this ILNode node)
+		public static bool IsConditionalControlFlow(this ILNode node)
 		{
 			ILExpression expr = node as ILExpression;
-			if (expr != null) {
-				return expr.Code.CanFallThough();
-			}
-			return true;
+			return expr != null && expr.Code.IsConditionalControlFlow();
+		}
+		
+		public static bool IsUnconditionalControlFlow(this ILNode node)
+		{
+			ILExpression expr = node as ILExpression;
+			return expr != null && expr.Code.IsUnconditionalControlFlow();
 		}
 		
 		/// <summary>
@@ -768,10 +564,20 @@ namespace ICSharpCode.Decompiler.ILAst
 					return !mr.Name.StartsWith("get_", StringComparison.Ordinal);
 				case ILCode.Newobj:
 				case ILCode.Newarr:
+				case ILCode.Stloc:
 					return true;
 				default:
 					return false;
 			}
+		}
+		
+		public static void RemoveTail(this List<ILNode> body, params ILCode[] codes)
+		{
+			for (int i = 0; i < codes.Length; i++) {
+				if (((ILExpression)body[body.Count - codes.Length + i]).Code != codes[i])
+					throw new Exception("Tailing code does not match expected.");
+			}
+			body.RemoveRange(body.Count - codes.Length, codes.Length);
 		}
 		
 		public static V GetOrDefault<K,V>(this Dictionary<K, V> dict, K key)

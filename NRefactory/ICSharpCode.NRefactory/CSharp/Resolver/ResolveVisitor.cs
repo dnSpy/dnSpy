@@ -74,6 +74,20 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		}
 		#endregion
 		
+		/// <summary>
+		/// Gets the TypeResolveContext used by this ResolveVisitor.
+		/// </summary>
+		public ITypeResolveContext TypeResolveContext {
+			get { return resolver.Context; }
+		}
+		
+		/// <summary>
+		/// Gets the CancellationToken used by this ResolveVisitor.
+		/// </summary>
+		public CancellationToken CancellationToken {
+			get { return resolver.cancellationToken; }
+		}
+		
 		#region Scan / Resolve
 		bool resolverEnabled {
 			get { return mode != ResolveVisitorNavigationMode.Scan; }
@@ -118,6 +132,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				mode = ResolveVisitorNavigationMode.Resolve;
 			ResolveResult result;
 			if (!cache.TryGetValue(node, out result)) {
+				resolver.cancellationToken.ThrowIfCancellationRequested();
 				result = cache[node] = node.AcceptVisitor(this, null) ?? errorResult;
 			}
 			if (wasScan)

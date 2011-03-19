@@ -82,6 +82,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(method.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, method.DeclaringType);
 			codeDomBuilder.AddMethod(method);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
@@ -89,6 +90,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(property.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, property.DeclaringType);
 			codeDomBuilder.AddProperty(property);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
@@ -96,6 +98,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(field.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, field.DeclaringType);
 			codeDomBuilder.AddField(field);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
@@ -103,6 +106,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
+			WriteCommentLine(output, TypeToString(ev.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, ev.DeclaringType);
 			codeDomBuilder.AddEvent(ev);
 			codeDomBuilder.GenerateCode(output, transformAbortCondition);
@@ -117,26 +121,15 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
 		{
-			if (options.FullDecompilation) {
-				if (options.SaveAsProjectDirectory != null) {
-					HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-					var files = WriteCodeFilesInProject(assembly, options, directories).ToList();
-					files.AddRange(WriteResourceFilesInProject(assembly, fileName, options, directories));
-					WriteProjectFile(new TextOutputWriter(output), files, assembly.MainModule);
-				} else {
-					foreach (TypeDefinition type in assembly.MainModule.Types) {
-						if (AstBuilder.MemberIsHidden(type, options.DecompilerSettings))
-							continue;
-						AstBuilder codeDomBuilder = CreateAstBuilder(options, type);
-						codeDomBuilder.AddType(type);
-						codeDomBuilder.GenerateCode(output, transformAbortCondition);
-						output.WriteLine();
-					}
-				}
+			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
+				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				var files = WriteCodeFilesInProject(assembly, options, directories).ToList();
+				files.AddRange(WriteResourceFilesInProject(assembly, fileName, options, directories));
+				WriteProjectFile(new TextOutputWriter(output), files, assembly.MainModule);
 			} else {
 				base.DecompileAssembly(assembly, fileName, output, options);
 				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: null);
-				codeDomBuilder.AddAssembly(assembly, onlyAssemblyLevel: true);
+				codeDomBuilder.AddAssembly(assembly, onlyAssemblyLevel: !options.FullDecompilation);
 				codeDomBuilder.GenerateCode(output, transformAbortCondition);
 			}
 		}
@@ -392,14 +385,12 @@ namespace ICSharpCode.ILSpy
 				});
 		}
 
-		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes)
+		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes = null)
 		{
-			AstType astType = AstBuilder.ConvertType(type, typeAttributes);
-			if (!includeNamespace) {
-				var tre = new TypeReferenceExpression { Type = astType };
-				tre.AcceptVisitor(new RemoveNamespaceFromType(), null);
-				astType = tre.Type;
-			}
+			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
+			if (includeNamespace)
+				options |= ConvertTypeOptions.IncludeNamespace;
+			AstType astType = AstBuilder.ConvertType(type, typeAttributes, options);
 			
 			StringWriter w = new StringWriter();
 			if (type.IsByReference) {
@@ -415,21 +406,6 @@ namespace ICSharpCode.ILSpy
 			
 			astType.AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
 			return w.ToString();
-		}
-		
-		sealed class RemoveNamespaceFromType : DepthFirstAstVisitor<object, object>
-		{
-			public override object VisitMemberType(MemberType memberType, object data)
-			{
-				base.VisitMemberType(memberType, data);
-				SimpleType st = memberType.Target as SimpleType;
-				if (st != null && !st.TypeArguments.Any()) {
-					SimpleType newSt = new SimpleType(memberType.MemberName);
-					memberType.TypeArguments.MoveTo(newSt.TypeArguments);
-					memberType.ReplaceWith(newSt);
-				}
-				return null;
-			}
 		}
 		
 		public override bool ShowMember(MemberReference member)
