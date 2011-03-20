@@ -16,17 +16,17 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 	/// </summary>
 	public class DeclareVariables : IAstTransform
 	{
-		sealed class DeclaredVariableAnnotation {
-			public readonly ExpressionStatement OriginalAssignmentStatement;
+		sealed class VariableToDeclare
+		{
+			public AstType Type;
+			public string Name;
 			
-			public DeclaredVariableAnnotation(ExpressionStatement originalAssignmentStatement)
-			{
-				this.OriginalAssignmentStatement = originalAssignmentStatement;
-			}
+			public AssignmentExpression ReplacedAssignment;
+			public Statement InsertionPoint;
 		}
-		static readonly DeclaredVariableAnnotation declaredVariableAnnotation = new DeclaredVariableAnnotation(null);
 		
 		readonly CancellationToken cancellationToken;
+		List<VariableToDeclare> variablesToDeclare = new List<VariableToDeclare>();
 		
 		public DeclareVariables(DecompilerContext context)
 		{
@@ -36,14 +36,41 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public void Run(AstNode node)
 		{
 			Run(node, null);
+			// Declare all the variables at the end, after all the logic has run.
+			// This is done so that definite assignment analysis can work on a single representation and doesn't have to be updated
+			// when we change the AST.
+			foreach (var v in variablesToDeclare) {
+				if (v.ReplacedAssignment == null) {
+					BlockStatement block = (BlockStatement)v.InsertionPoint.Parent;
+					block.Statements.InsertBefore(
+						v.InsertionPoint,
+						new VariableDeclarationStatement((AstType)v.Type.Clone(), v.Name));
+				}
+			}
+			// First do all the insertions, then do all the replacements. This is necessary because a replacement might remove our reference point from the AST.
+			foreach (var v in variablesToDeclare) {
+				if (v.ReplacedAssignment != null) {
+					// We clone the right expression so that it doesn't get removed from the old ExpressionStatement,
+					// which might be still in use by the definite assignment graph.
+					VariableDeclarationStatement varDecl = new VariableDeclarationStatement {
+						Type = (AstType)v.Type.Clone(),
+						Variables = { new VariableInitializer(v.Name, v.ReplacedAssignment.Right.Detach()).CopyAnnotationsFrom(v.ReplacedAssignment) }
+					};
+					ExpressionStatement es = v.ReplacedAssignment.Parent as ExpressionStatement;
+					if (es != null)
+						es.ReplaceWith(varDecl.CopyAnnotationsFrom(es));
+					else
+						v.ReplacedAssignment.ReplaceWith(varDecl);
+				}
+			}
+			variablesToDeclare = null;
 		}
 		
 		void Run(AstNode node, DefiniteAssignmentAnalysis daa)
 		{
 			BlockStatement block = node as BlockStatement;
 			if (block != null) {
-				var variables = block.Statements.TakeWhile(stmt => stmt is VariableDeclarationStatement
-				                                           && stmt.Annotation<DeclaredVariableAnnotation>() == null)
+				var variables = block.Statements.TakeWhile(stmt => stmt is VariableDeclarationStatement)
 					.Cast<VariableDeclarationStatement>().ToList();
 				if (variables.Count > 0) {
 					// remove old variable declarations:
@@ -107,11 +134,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				// Try converting an assignment expression into a VariableDeclarationStatement
 				if (!TryConvertAssignmentExpressionIntoVariableDeclaration(declarationPoint, type, variableName)) {
 					// Declare the variable in front of declarationPoint
-					
-					block.Statements.InsertBefore(
-						declarationPoint,
-						new VariableDeclarationStatement((AstType)type.Clone(), variableName)
-						.WithAnnotation(declaredVariableAnnotation));
+					variablesToDeclare.Add(new VariableToDeclare { Type = type, Name = variableName, InsertionPoint = declarationPoint });
 				}
 			}
 		}
@@ -121,19 +144,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// convert the declarationPoint into a VariableDeclarationStatement
 			ExpressionStatement es = declarationPoint as ExpressionStatement;
 			if (es != null) {
-				AssignmentExpression ae = es.Expression as AssignmentExpression;
-				if (ae != null && ae.Operator == AssignmentOperatorType.Assign) {
-					IdentifierExpression ident = ae.Left as IdentifierExpression;
-					if (ident != null && ident.Identifier == variableName) {
-						// We clone the right expression so that it doesn't get removed from the old ExpressionStatement,
-						// which might be still in use by the definite assignment graph.
-						declarationPoint.ReplaceWith(new VariableDeclarationStatement {
-						                             	Type = (AstType)type.Clone(),
-						                             	Variables = { new VariableInitializer(variableName, ae.Right.Clone()).CopyAnnotationsFrom(ae) }
-						                             }.CopyAnnotationsFrom(es).WithAnnotation(new DeclaredVariableAnnotation(es)));
-						return true;
-					}
-				}
+				return TryConvertAssignmentExpressionIntoVariableDeclaration(es.Expression, type, variableName);
 			}
 			return false;
 		}
@@ -144,10 +155,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (ae != null && ae.Operator == AssignmentOperatorType.Assign) {
 				IdentifierExpression ident = ae.Left as IdentifierExpression;
 				if (ident != null && ident.Identifier == variableName) {
-					expression.ReplaceWith(new VariableDeclarationStatement {
-					                       	Type = (AstType)type.Clone(),
-					                       	Variables = { new VariableInitializer(variableName, ae.Right.Clone()).CopyAnnotationsFrom(ae) }
-					                       }.WithAnnotation(declaredVariableAnnotation));
+					variablesToDeclare.Add(new VariableToDeclare { Type = type, Name = variableName, ReplacedAssignment = ae });
 					return true;
 				}
 			}
@@ -191,19 +199,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					// If we can move the variable into the sub-block, we need to ensure that the remaining code
 					// does not use the value that was assigned by the first sub-block
 					Statement nextStatement = stmt.NextStatement;
-					// The next statement might be a variable declaration that we inserted, and thus does not exist
-					// in the definite assignment graph. Thus we need to look up the corresponding instruction
-					// prior to the introduction of the VariableDeclarationStatement.
-					while (nextStatement is VariableDeclarationStatement) {
-						DeclaredVariableAnnotation annotation = nextStatement.Annotation<DeclaredVariableAnnotation>();
-						if (annotation == null)
-							break;
-						if (annotation.OriginalAssignmentStatement != null) {
-							nextStatement = annotation.OriginalAssignmentStatement;
-							break;
-						}
-						nextStatement = nextStatement.NextStatement;
-					}
 					if (nextStatement != null) {
 						// Analyze the range from the next statement to the end of the block
 						daa.SetAnalyzedRange(nextStatement, block);
