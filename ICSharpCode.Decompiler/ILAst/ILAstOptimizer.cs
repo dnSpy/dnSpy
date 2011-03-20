@@ -38,6 +38,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		InlineVariables3,
 		CachedDelegateInitialization,
 		IntroduceFixedStatements,
+		RecombineVariables,
 		TypeInference2,
 		RemoveRedundantCode3,
 		None
@@ -179,6 +180,9 @@ namespace ICSharpCode.Decompiler.ILAst
 						IntroduceFixedStatements(block.Body, i);
 				}
 			}
+			
+			if (abortBeforeStep == ILAstOptimizationStep.RecombineVariables) return;
+			RecombineVariables(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.TypeInference2) return;
 			TypeAnalysis.Reset(method);
@@ -458,6 +462,25 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
+		void RecombineVariables(ILBlock method)
+		{
+			// Recombine variables that were split when the ILAst was created
+			// This ensures that a single IL variable is a single C# variable (gets assigned only one name)
+			// The DeclareVariables transformation might then split up the C# variable again if it is used indendently in two separate scopes.
+			Dictionary<VariableDefinition, ILVariable> dict = new Dictionary<VariableDefinition, ILVariable>();
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				ILVariable v = expr.Operand as ILVariable;
+				if (v != null && v.OriginalVariable != null) {
+					ILVariable combinedVariable;
+					if (!dict.TryGetValue(v.OriginalVariable, out combinedVariable)) {
+						dict.Add(v.OriginalVariable, v);
+						combinedVariable = v;
+					}
+					expr.Operand = combinedVariable;
+				}
+			}
+		}
+		
 		void ReportUnassignedILRanges(ILBlock method)
 		{
 			var unassigned = ILRange.Invert(method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges), context.CurrentMethod.Body.CodeSize).ToList();
@@ -511,7 +534,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		/// <summary>
-		/// The expression has no effect on the program and can be removed 
+		/// The expression has no effect on the program and can be removed
 		/// if its return value is not needed.
 		/// </summary>
 		public static bool HasNoSideEffects(this ILExpression expr)
