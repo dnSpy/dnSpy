@@ -222,14 +222,15 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			return node;
 		}
 		
-		ControlFlowNode CreateSpecialNode(Statement statement, ControlFlowNodeType type)
+		ControlFlowNode CreateSpecialNode(Statement statement, ControlFlowNodeType type, bool addToNodeList = true)
 		{
 			ControlFlowNode node = CreateNode(null, statement, type);
-			nodes.Add(node);
+			if (addToNodeList)
+				nodes.Add(node);
 			return node;
 		}
 		
-		ControlFlowNode CreateEndNode(Statement statement)
+		ControlFlowNode CreateEndNode(Statement statement, bool addToNodeList = true)
 		{
 			Statement nextStatement;
 			if (statement == rootStatement) {
@@ -244,7 +245,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			}
 			ControlFlowNodeType type = nextStatement != null ? ControlFlowNodeType.BetweenStatements : ControlFlowNodeType.EndNode;
 			ControlFlowNode node = CreateNode(statement, nextStatement, type);
-			nodes.Add(node);
+			if (addToNodeList)
+				nodes.Add(node);
 			return node;
 		}
 		#endregion
@@ -259,7 +261,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// Evaluates an expression.
 		/// </summary>
 		/// <returns>The constant value of the expression; or null if the expression is not a constant.</returns>
-		internal ConstantResolveResult EvaluateConstant(Expression expr)
+		ConstantResolveResult EvaluateConstant(Expression expr)
 		{
 			if (EvaluateOnlyPrimitiveConstants) {
 				if (!(expr is PrimitiveExpression || expr is NullReferenceExpression))
@@ -272,7 +274,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// Evaluates an expression.
 		/// </summary>
 		/// <returns>The value of the constant boolean expression; or null if the value is not a constant boolean expression.</returns>
-		internal bool? EvaluateCondition(Expression expr)
+		bool? EvaluateCondition(Expression expr)
 		{
 			ConstantResolveResult rr = EvaluateConstant(expr);
 			if (rr != null)
@@ -418,7 +420,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				
 				int gotoCaseOrDefaultInOuterScope = gotoCaseOrDefault.Count;
 				
-				ControlFlowNode end = builder.CreateEndNode(switchStatement);
+				ControlFlowNode end = builder.CreateEndNode(switchStatement, addToNodeList: false);
 				breakTargets.Push(end);
 				foreach (SwitchSection section in switchStatement.SwitchSections) {
 					if (constant == null || section == sectionMatchedByConstant) {
@@ -439,6 +441,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 					throw new NotImplementedException();
 				}
 				
+				builder.nodes.Add(end);
 				return end;
 			}
 			
@@ -457,7 +460,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			public override ControlFlowNode VisitWhileStatement(WhileStatement whileStatement, ControlFlowNode data)
 			{
 				// <data> <condition> while (cond) { <bodyStart> embeddedStmt; <bodyEnd> } <end>
-				ControlFlowNode end = builder.CreateEndNode(whileStatement);
+				ControlFlowNode end = builder.CreateEndNode(whileStatement, addToNodeList: false);
 				ControlFlowNode conditionNode = builder.CreateSpecialNode(whileStatement, ControlFlowNodeType.LoopCondition);
 				breakTargets.Push(end);
 				continueTargets.Push(conditionNode);
@@ -475,14 +478,15 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				
 				breakTargets.Pop();
 				continueTargets.Pop();
+				builder.nodes.Add(end);
 				return end;
 			}
 			
 			public override ControlFlowNode VisitDoWhileStatement(DoWhileStatement doWhileStatement, ControlFlowNode data)
 			{
 				// <data> do { <bodyStart> embeddedStmt; <bodyEnd>} <condition> while(cond); <end>
-				ControlFlowNode end = builder.CreateEndNode(doWhileStatement);
-				ControlFlowNode conditionNode = builder.CreateSpecialNode(doWhileStatement, ControlFlowNodeType.LoopCondition);
+				ControlFlowNode end = builder.CreateEndNode(doWhileStatement, addToNodeList: false);
+				ControlFlowNode conditionNode = builder.CreateSpecialNode(doWhileStatement, ControlFlowNodeType.LoopCondition, addToNodeList: false);
 				breakTargets.Push(end);
 				continueTargets.Push(conditionNode);
 				
@@ -499,6 +503,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				
 				breakTargets.Pop();
 				continueTargets.Pop();
+				builder.nodes.Add(conditionNode);
+				builder.nodes.Add(end);
 				return end;
 			}
 			
@@ -506,7 +512,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			{
 				data = HandleStatementList(forStatement.Initializers, data);
 				// for (initializers <data>; <condition>cond; <iteratorStart>iterators<iteratorEnd>) { <bodyStart> embeddedStmt; <bodyEnd> } <end>
-				ControlFlowNode end = builder.CreateEndNode(forStatement);
+				ControlFlowNode end = builder.CreateEndNode(forStatement, addToNodeList: false);
 				ControlFlowNode conditionNode = builder.CreateSpecialNode(forStatement, ControlFlowNodeType.LoopCondition);
 				Connect(data, conditionNode);
 				
@@ -536,6 +542,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				if (cond != true)
 					Connect(conditionNode, end, ControlFlowEdgeType.ConditionFalse);
 				
+				builder.nodes.Add(end);
 				return end;
 			}
 			
@@ -552,7 +559,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			public override ControlFlowNode VisitForeachStatement(ForeachStatement foreachStatement, ControlFlowNode data)
 			{
 				// <data> foreach (<condition>...) { <bodyStart>embeddedStmt<bodyEnd> } <end>
-				ControlFlowNode end = builder.CreateEndNode(foreachStatement);
+				ControlFlowNode end = builder.CreateEndNode(foreachStatement, addToNodeList: false);
 				ControlFlowNode conditionNode = builder.CreateSpecialNode(foreachStatement, ControlFlowNodeType.LoopCondition);
 				Connect(data, conditionNode);
 				
@@ -566,7 +573,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				continueTargets.Pop();
 				
 				Connect(conditionNode, end);
-				
+				builder.nodes.Add(end);
 				return end;
 			}
 			
@@ -602,7 +609,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			
 			public override ControlFlowNode VisitTryCatchStatement(TryCatchStatement tryCatchStatement, ControlFlowNode data)
 			{
-				ControlFlowNode end = builder.CreateEndNode(tryCatchStatement);
+				ControlFlowNode end = builder.CreateEndNode(tryCatchStatement, addToNodeList: false);
 				var edge = Connect(HandleEmbeddedStatement(tryCatchStatement.TryBlock, data), end);
 				if (!tryCatchStatement.FinallyBlock.IsNull)
 					edge.AddJumpOutOfTryFinally(tryCatchStatement);
@@ -616,6 +623,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 					// Consumers of the CFG will have to special-case try-finally.
 					HandleEmbeddedStatement(tryCatchStatement.FinallyBlock, data);
 				}
+				builder.nodes.Add(end);
 				return end;
 			}
 			
