@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.Analysis;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using Mono.Cecil;
 
@@ -155,23 +156,74 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			AstNode tryCatch = node.NextSibling;
 			Match m2 = usingTryCatchPattern.Match(tryCatch);
 			if (m2 == null) return null;
-			if (m1.Get<IdentifierExpression>("variable").Single().Identifier == m2.Get<IdentifierExpression>("ident").Single().Identifier) {
+			string variableName = m1.Get<IdentifierExpression>("variable").Single().Identifier;
+			if (variableName == m2.Get<IdentifierExpression>("ident").Single().Identifier) {
 				if (m2.Has("valueType")) {
 					// if there's no if(x!=null), then it must be a value type
 					ILVariable v = m1.Get("variable").Single().Annotation<ILVariable>();
 					if (v == null || v.Type == null || !v.Type.IsValueType)
 						return null;
 				}
+				node.Remove();
 				BlockStatement body = m2.Get<BlockStatement>("body").Single();
 				UsingStatement usingStatement = new UsingStatement();
-				usingStatement.ResourceAcquisition = node.Detach();
+				usingStatement.ResourceAcquisition = node.Expression.Detach();
 				usingStatement.EmbeddedStatement = body.Detach();
 				tryCatch.ReplaceWith(usingStatement);
-				// TODO: Move the variable declaration into the resource acquisition, if possible
+				// Move the variable declaration into the resource acquisition, if possible
 				// This is necessary for the foreach-pattern to work on the result of the using-pattern
+				VariableDeclarationStatement varDecl = FindVariableDeclaration(usingStatement, variableName);
+				if (varDecl != null && varDecl.Parent is BlockStatement) {
+					Statement declarationPoint;
+					if (CanMoveVariableDeclarationIntoStatement(varDecl, usingStatement, out declarationPoint)) {
+						Debug.Assert(declarationPoint == usingStatement);
+						// Moving the variable into the UsingStatement is allowed:
+						usingStatement.ResourceAcquisition = new VariableDeclarationStatement {
+							Type = (AstType)varDecl.Type.Clone(),
+							Variables = {
+								new VariableInitializer {
+									Name = variableName,
+									Initializer = m1.Get<Expression>("initializer").Single().Detach()
+								}.CopyAnnotationsFrom(usingStatement.ResourceAcquisition)
+							}
+						}.CopyAnnotationsFrom(node);
+					}
+				}
 				return usingStatement;
 			}
 			return null;
+		}
+		
+		VariableDeclarationStatement FindVariableDeclaration(AstNode node, string identifier)
+		{
+			while (node != null) {
+				while (node.PrevSibling != null) {
+					node = node.PrevSibling;
+					VariableDeclarationStatement varDecl = node as VariableDeclarationStatement;
+					if (varDecl != null && varDecl.Variables.Count == 1 && varDecl.Variables.Single().Name == identifier) {
+						return varDecl;
+					}
+				}
+				node = node.Parent;
+			}
+			return null;
+		}
+		
+		bool CanMoveVariableDeclarationIntoStatement(VariableDeclarationStatement varDecl, Statement targetStatement, out Statement declarationPoint)
+		{
+			Debug.Assert(targetStatement.Ancestors.Contains(varDecl.Parent));
+			// Find all blocks between targetStatement and varDecl.Parent
+			List<BlockStatement> blocks = targetStatement.Ancestors.TakeWhile(block => block != varDecl.Parent).OfType<BlockStatement>().ToList();
+			blocks.Add((BlockStatement)varDecl.Parent); // also handle the varDecl.Parent block itself
+			blocks.Reverse(); // go from parent blocks to child blocks
+			DefiniteAssignmentAnalysis daa = new DefiniteAssignmentAnalysis(blocks[0], context.CancellationToken);
+			declarationPoint = null;
+			foreach (BlockStatement block in blocks) {
+				if (!DeclareVariables.FindDeclarationPoint(daa, varDecl, block, out declarationPoint)) {
+					return false;
+				}
+			}
+			return true;
 		}
 		#endregion
 		
@@ -190,19 +242,22 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			},
 			EmbeddedStatement = new BlockStatement {
 				new Repeat(
-					new NamedNode("variableDeclaration", new VariableDeclarationStatement { Type = new AnyNode(), Variables = { new AnyNode() } })
+					new VariableDeclarationStatement { Type = new AnyNode(), Variables = { new VariableInitializer() } }.WithName("variablesOutsideLoop")
 				).ToStatement(),
 				new WhileStatement {
 					Condition = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Invoke("MoveNext"),
 					EmbeddedStatement = new BlockStatement {
+						new Repeat(
+							new VariableDeclarationStatement { Type = new AnyNode(), Variables = { new VariableInitializer() } }.WithName("variablesInsideLoop")
+						).ToStatement(),
 						new AssignmentExpression {
-							Left = new NamedNode("itemVariable", new IdentifierExpression()),
+							Left = new IdentifierExpression().WithName("itemVariable"),
 							Operator = AssignmentOperatorType.Assign,
 							Right = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current")
 						},
 						new Repeat(new AnyNode("statement")).ToStatement()
 					}
-				}
+				}.WithName("loop")
 			}};
 		
 		public ForeachStatement TransformForeach(UsingStatement node)
@@ -210,26 +265,45 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m = foreachPattern.Match(node);
 			if (m == null)
 				return null;
-			VariableInitializer enumeratorVar = m.Get<VariableInitializer>("enumeratorVariable").Single();
-			ILVariable itemVar = m.Get("itemVariable").Single().Annotation<ILVariable>();
-			if (itemVar == null)
+			if (!(node.Parent is BlockStatement) && m.Has("variablesOutsideLoop")) {
+				// if there are variables outside the loop, we need to put those into the parent block, and that won't work if the direct parent isn't a block
 				return null;
-			return null; // TODO
-//			if (m.Has("itemVariableInsideLoop") && itemVar.Annotation<DelegateConstruction.CapturedVariableAnnotation>() != null) {
-//				// cannot move captured variables out of loops
-//				return null;
-//			}
+			}
+			VariableInitializer enumeratorVar = m.Get<VariableInitializer>("enumeratorVariable").Single();
+			IdentifierExpression itemVar = m.Get<IdentifierExpression>("itemVariable").Single();
+			WhileStatement loop = m.Get<WhileStatement>("loop").Single();
+			
+			// Find the declaration of the item variable:
+			// Because we look only outside the loop, we won't make the mistake of moving a captured variable across the loop boundary
+			VariableDeclarationStatement itemVarDecl = FindVariableDeclaration(loop, itemVar.Identifier);
+			if (itemVarDecl == null || !(itemVarDecl.Parent is BlockStatement))
+				return null;
+			
+			// Now verify that we can move the variable declaration in front of the loop:
+			Statement declarationPoint;
+			CanMoveVariableDeclarationIntoStatement(itemVarDecl, loop, out declarationPoint);
+			// We ignore the return value because we don't care whether we can move the variable into the loop
+			// (that is possible only with non-captured variables).
+			// We just care that we can move it in front of the loop:
+			if (declarationPoint != loop)
+				return null;
+			
 			BlockStatement newBody = new BlockStatement();
+			foreach (Statement stmt in m.Get<Statement>("variablesInsideLoop"))
+				newBody.Add(stmt.Detach());
 			foreach (Statement stmt in m.Get<Statement>("statement"))
 				newBody.Add(stmt.Detach());
 			
 			ForeachStatement foreachStatement = new ForeachStatement {
-				VariableType = m.Get<AstType>("itemType").Single().Detach(),
-				VariableName = itemVar.Name,
+				VariableType = (AstType)itemVarDecl.Type.Clone(),
+				VariableName = itemVar.Identifier,
 				InExpression = m.Get<Expression>("collection").Single().Detach(),
 				EmbeddedStatement = newBody
 			};
 			node.ReplaceWith(foreachStatement);
+			foreach (Statement stmt in m.Get<Statement>("variablesOutsideLoop")) {
+				((BlockStatement)foreachStatement.Parent).Statements.InsertAfter(null, stmt);
+			}
 			return foreachStatement;
 		}
 		#endregion

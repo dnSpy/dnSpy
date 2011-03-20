@@ -72,7 +72,103 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// declarationPoint: The point where the variable would be declared, if we decide to declare it in this block
 			Statement declarationPoint = null;
 			// Check whether we can move down the variable into the sub-blocks
-			bool ok = true;
+			bool canMoveVariableIntoSubBlocks = FindDeclarationPoint(daa, variableName, allowPassIntoLoops, block, out declarationPoint);
+			if (declarationPoint == null) {
+				// The variable isn't used at all
+				return;
+			}
+			if (canMoveVariableIntoSubBlocks) {
+				// Declare the variable within the sub-blocks
+				foreach (Statement stmt in block.Statements) {
+					ForStatement forStmt = stmt as ForStatement;
+					if (forStmt != null && forStmt.Initializers.Count == 1) {
+						// handle the special case of moving a variable into the for initializer
+						if (TryConvertAssignmentExpressionIntoVariableDeclaration(forStmt.Initializers.Single(), type, variableName))
+							continue;
+					}
+					UsingStatement usingStmt = stmt as UsingStatement;
+					if (usingStmt != null && usingStmt.ResourceAcquisition is AssignmentExpression) {
+						// handle the special case of moving a variable into a using statement
+						if (TryConvertAssignmentExpressionIntoVariableDeclaration((Expression)usingStmt.ResourceAcquisition, type, variableName))
+							continue;
+					}
+					foreach (BlockStatement subBlock in stmt.Children.OfType<BlockStatement>()) {
+						DeclareVariableInBlock(daa, subBlock, type, variableName, allowPassIntoLoops);
+					}
+				}
+			} else {
+				// Try converting an assignment expression into a VariableDeclarationStatement
+				if (!TryConvertAssignmentExpressionIntoVariableDeclaration(declarationPoint, type, variableName)) {
+					// Declare the variable in front of declarationPoint
+					block.Statements.InsertBefore(
+						declarationPoint,
+						new VariableDeclarationStatement((AstType)type.Clone(), variableName)
+						.WithAnnotation(declaredVariableAnnotation));
+				}
+			}
+		}
+
+		bool TryConvertAssignmentExpressionIntoVariableDeclaration(Statement declarationPoint, AstType type, string variableName)
+		{
+			// convert the declarationPoint into a VariableDeclarationStatement
+			ExpressionStatement es = declarationPoint as ExpressionStatement;
+			if (es != null) {
+				AssignmentExpression ae = es.Expression as AssignmentExpression;
+				if (ae != null && ae.Operator == AssignmentOperatorType.Assign) {
+					IdentifierExpression ident = ae.Left as IdentifierExpression;
+					if (ident != null && ident.Identifier == variableName) {
+						declarationPoint.ReplaceWith(new VariableDeclarationStatement {
+						                             	Type = (AstType)type.Clone(),
+						                             	Variables = { new VariableInitializer(variableName, ae.Right.Detach()).CopyAnnotationsFrom(ae) }
+						                             }.CopyAnnotationsFrom(es).WithAnnotation(new DeclaredVariableAnnotation(es)));
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		bool TryConvertAssignmentExpressionIntoVariableDeclaration(Expression expression, AstType type, string variableName)
+		{
+			AssignmentExpression ae = expression as AssignmentExpression;
+			if (ae != null && ae.Operator == AssignmentOperatorType.Assign) {
+				IdentifierExpression ident = ae.Left as IdentifierExpression;
+				if (ident != null && ident.Identifier == variableName) {
+					expression.ReplaceWith(new VariableDeclarationStatement {
+					                       	Type = (AstType)type.Clone(),
+					                       	Variables = { new VariableInitializer(variableName, ae.Right.Detach()).CopyAnnotationsFrom(ae) }
+					                       }.WithAnnotation(declaredVariableAnnotation));
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		/// <summary>
+		/// Finds the declaration point for the variable within the specified block.
+		/// </summary>
+		/// <param name="daa">
+		/// Definite assignment analysis, must be prepared for 'block' or one of its parents.
+		/// </param>
+		/// <param name="varDecl">The variable to declare</param>
+		/// <param name="block">The block in which the variable should be declared</param>
+		/// <param name="declarationPoint">
+		/// Output parameter: the first statement within 'block' where the variable needs to be declared.
+		/// </param>
+		/// <returns>
+		/// Returns whether it is possible to move the variable declaration into sub-blocks.
+		/// </returns>
+		public static bool FindDeclarationPoint(DefiniteAssignmentAnalysis daa, VariableDeclarationStatement varDecl, BlockStatement block, out Statement declarationPoint)
+		{
+			string variableName = varDecl.Variables.Single().Name;
+			bool allowPassIntoLoops = varDecl.Variables.Single().Annotation<DelegateConstruction.CapturedVariableAnnotation>() == null;
+			return FindDeclarationPoint(daa, variableName, allowPassIntoLoops, block, out declarationPoint);
+		}
+		
+		static bool FindDeclarationPoint(DefiniteAssignmentAnalysis daa, string variableName, bool allowPassIntoLoops, BlockStatement block, out Statement declarationPoint)
+		{
+			// declarationPoint: The point where the variable would be declared, if we decide to declare it in this block
+			declarationPoint = null;
 			foreach (Statement stmt in block.Statements) {
 				if (UsesVariable(stmt, variableName)) {
 					if (declarationPoint == null)
@@ -80,8 +176,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (!CanMoveVariableUseIntoSubBlock(stmt, variableName, allowPassIntoLoops)) {
 						// If it's not possible to move the variable use into a nested block,
 						// we need to declare the variable in this block
-						ok = false;
-						break;
+						return false;
 					}
 					// If we can move the variable into the sub-block, we need to ensure that the remaining code
 					// does not use the value that was assigend by the first sub-block
@@ -104,55 +199,19 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						daa.SetAnalyzedRange(nextStatement, block);
 						daa.Analyze(variableName);
 						if (daa.UnassignedVariableUses.Count > 0) {
-							ok = false;
-							break;
+							return false;
 						}
 					}
 				}
 			}
-			if (declarationPoint == null) {
-				// The variable isn't used at all
-				return;
-			}
-			if (ok) {
-				// Declare the variable within the sub-blocks
-				foreach (Statement stmt in block.Statements) {
-					foreach (BlockStatement subBlock in stmt.Children.OfType<BlockStatement>()) {
-						DeclareVariableInBlock(daa, subBlock, type, variableName, allowPassIntoLoops);
-					}
-				}
-			} else {
-				// Try converting an assignment expression into a VariableDeclarationStatement
-				ExpressionStatement es = declarationPoint as ExpressionStatement;
-				if (es != null) {
-					AssignmentExpression ae = es.Expression as AssignmentExpression;
-					if (ae != null && ae.Operator == AssignmentOperatorType.Assign) {
-						IdentifierExpression ident = ae.Left as IdentifierExpression;
-						if (ident != null && ident.Identifier == variableName) {
-							// convert the declarationPoint into a VariableDeclarationStatement
-							declarationPoint.ReplaceWith(
-								new VariableDeclarationStatement {
-									Type = (AstType)type.Clone(),
-									Variables = {
-										new VariableInitializer(variableName, ae.Right.Detach()).CopyAnnotationsFrom(ae)
-									}
-								}.CopyAnnotationsFrom(es).WithAnnotation(new DeclaredVariableAnnotation(es)));
-							return;
-						}
-					}
-				}
-				// Declare the variable in front of declarationPoint
-				block.Statements.InsertBefore(
-					declarationPoint,
-					new VariableDeclarationStatement((AstType)type.Clone(), variableName)
-					.WithAnnotation(declaredVariableAnnotation));
-			}
+			return true;
 		}
 		
-		bool CanMoveVariableUseIntoSubBlock(Statement stmt, string variableName, bool allowPassIntoLoops)
+		static bool CanMoveVariableUseIntoSubBlock(Statement stmt, string variableName, bool allowPassIntoLoops)
 		{
 			if (!allowPassIntoLoops && (stmt is ForStatement || stmt is ForeachStatement || stmt is DoWhileStatement || stmt is WhileStatement))
 				return false;
+			
 			ForStatement forStatement = stmt as ForStatement;
 			if (forStatement != null && forStatement.Initializers.Count == 1) {
 				// for-statement is special case: we can move variable declarations into the initializer
@@ -167,6 +226,19 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					}
 				}
 			}
+			
+			UsingStatement usingStatement = stmt as UsingStatement;
+			if (usingStatement != null) {
+				// using-statement is special case: we can move variable declarations into the initializer
+				AssignmentExpression ae = usingStatement.ResourceAcquisition as AssignmentExpression;
+				if (ae != null && ae.Operator == AssignmentOperatorType.Assign) {
+					IdentifierExpression ident = ae.Left as IdentifierExpression;
+					if (ident != null && ident.Identifier == variableName) {
+						return !UsesVariable(ae.Right, variableName);
+					}
+				}
+			}
+			
 			// We can move the variable into a sub-block only if the variable is used in only that sub-block
 			for (AstNode child = stmt.FirstChild; child != null; child = child.NextSibling) {
 				if (!(child is BlockStatement) && UsesVariable(child, variableName))
@@ -175,7 +247,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return true;
 		}
 		
-		bool UsesVariable(AstNode node, string variableName)
+		static bool UsesVariable(AstNode node, string variableName)
 		{
 			IdentifierExpression ie = node as IdentifierExpression;
 			if (ie != null && ie.Identifier == variableName)
@@ -195,61 +267,22 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					return false; // no need to introduce the variable here
 			}
 			
+			UsingStatement usingStatement = node as UsingStatement;
+			if (usingStatement != null) {
+				VariableDeclarationStatement varDecl = usingStatement.ResourceAcquisition as VariableDeclarationStatement;
+				if (varDecl != null) {
+					foreach (VariableInitializer v in varDecl.Variables) {
+						if (v.Name == variableName)
+							return false; // no need to introduce the variable here
+					}
+				}
+			}
+			
 			for (AstNode child = node.FirstChild; child != null; child = child.NextSibling) {
 				if (UsesVariable(child, variableName))
 					return true;
 			}
 			return false;
 		}
-		
-		#region FindInsertPos
-		static AstNode FindInsertPos(AstNode node, string name, bool allowPassIntoLoops)
-		{
-			AstNode pos = null;
-			AstNode withinPos = null;
-			while (node != null) {
-				IdentifierExpression ident = node as IdentifierExpression;
-				if (ident != null && ident.Identifier == name && ident.TypeArguments.Count == 0)
-					return node;
-				
-				FixedStatement fixedStatement = node as FixedStatement;
-				if (fixedStatement != null) {
-					foreach (VariableInitializer v in fixedStatement.Variables) {
-						if (v.Name == name)
-							return null; // no need to introduce the variable here
-					}
-				}
-				ForeachStatement foreachStatement = node as ForeachStatement;
-				if (foreachStatement != null) {
-					if (foreachStatement.VariableName == name)
-						return null; // no need to introduce the variable here
-				}
-				
-				AstNode withinCurrent = FindInsertPos(node.FirstChild, name, allowPassIntoLoops);
-				if (withinCurrent != null) {
-					if (pos == null) {
-						pos = node;
-						withinPos = withinCurrent;
-					} else {
-						return pos;
-					}
-				}
-				node = node.NextSibling;
-			}
-			if (withinPos != null && withinPos.Role == BlockStatement.StatementRole && AllowPassInto(pos, allowPassIntoLoops))
-				return withinPos;
-			else
-				return pos;
-		}
-		
-		static bool AllowPassInto(AstNode node, bool allowPassIntoLoops)
-		{
-			if (node is AnonymousMethodExpression || node is LambdaExpression)
-				return false;
-			
-			return allowPassIntoLoops;
-			return true;
-		}
-		#endregion
 	}
 }

@@ -25,7 +25,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public void Run(AstNode compilationUnit)
 		{
 			// Don't show using when decompiling a single method or nested types:
-			if (context.CurrentType != null)
+			if (context.CurrentMethod != null || (context.CurrentType != null && context.CurrentType.DeclaringType != null))
 				return;
 			
 			// First determine all the namespaces that need to be imported:

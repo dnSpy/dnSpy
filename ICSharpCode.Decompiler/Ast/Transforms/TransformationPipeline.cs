@@ -20,10 +20,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				new PushNegation(),
 				new DelegateConstruction(context),
 				new PatternStatementTransform(context),
-				new ConvertConstructorCallIntoInitializer(),
 				new ReplaceMethodCallsWithOperators(),
 				new IntroduceUnsafeModifier(),
-				new DeclareVariables(context),
+				new DeclareVariables(context), // should run after most transforms that modify statements
+				new ConvertConstructorCallIntoInitializer(), // must run after DeclareVariables
 				new IntroduceUsingDeclarations(context)
 			};
 		}
