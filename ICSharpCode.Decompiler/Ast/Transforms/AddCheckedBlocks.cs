@@ -142,8 +142,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		class InsertedBlock : InsertedNode
 		{
-			readonly Statement firstStatement;
-			readonly Statement lastStatement;
+			readonly Statement firstStatement; // inclusive
+			readonly Statement lastStatement; // exclusive
 			readonly bool isChecked;
 			
 			public InsertedBlock(Statement firstStatement, Statement lastStatement, bool isChecked)
@@ -156,13 +156,18 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			public override void Insert()
 			{
 				BlockStatement newBlock = new BlockStatement();
-				for (Statement stmt = firstStatement.NextStatement; stmt != lastStatement; stmt = stmt.NextStatement) {
+				// Move all statements except for the first
+				Statement next;
+				for (Statement stmt = firstStatement.NextStatement; stmt != lastStatement; stmt = next) {
+					next = stmt.NextStatement;
 					newBlock.Add(stmt.Detach());
 				}
+				// Replace the first statement with the new (un)checked block
 				if (isChecked)
 					firstStatement.ReplaceWith(new CheckedStatement { Body = newBlock });
 				else
 					firstStatement.ReplaceWith(new UncheckedStatement { Body = newBlock });
+				// now also move the first node into the new block
 				newBlock.Statements.InsertAfter(null, firstStatement);
 			}
 		}
