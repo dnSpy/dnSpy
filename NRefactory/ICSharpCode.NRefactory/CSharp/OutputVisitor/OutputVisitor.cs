@@ -428,7 +428,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (block != null)
 				VisitBlockStatement(block, null);
 			else
-				throw new NotImplementedException();
+				embeddedStatement.AcceptVisitor(this, null);
 		}
 		
 		void WriteMethodBody(BlockStatement body)

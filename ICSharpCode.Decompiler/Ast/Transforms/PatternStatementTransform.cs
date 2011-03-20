@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.Analysis;
 using ICSharpCode.NRefactory.CSharp.PatternMatching;
 using Mono.Cecil;
 
@@ -37,23 +39,23 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return node;
 		}
 		
-		public override AstNode VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, object data)
+		public override AstNode VisitExpressionStatement(ExpressionStatement expressionStatement, object data)
 		{
 			AstNode result;
 			if (context.Settings.UsingStatement) {
-				result = TransformUsings(variableDeclarationStatement);
+				result = TransformUsings(expressionStatement);
 				if (result != null)
 					return result;
 			}
-			result = TransformFor(variableDeclarationStatement);
+			result = TransformFor(expressionStatement);
 			if (result != null)
 				return result;
 			if (context.Settings.LockStatement) {
-				result = TransformLock(variableDeclarationStatement);
+				result = TransformLock(expressionStatement);
 				if (result != null)
 					return result;
 			}
-			return base.VisitVariableDeclarationStatement(variableDeclarationStatement, data);
+			return base.VisitExpressionStatement(expressionStatement, data);
 		}
 		
 		public override AstNode VisitUsingStatement(UsingStatement usingStatement, object data)
@@ -117,27 +119,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		/// <summary>
 		/// $type $variable = $initializer;
 		/// </summary>
-		static readonly AstNode variableDeclPattern = new VariableDeclarationStatement {
-			Type = new AnyNode("type"),
-			Variables = {
-				new NamedNode(
-					"variable",
-					new VariableInitializer {
-						Initializer = new AnyNode("initializer")
-					}
-				)
-			}
-		};
-		
-		/// <summary>
-		/// Variable declaration without initializer.
-		/// </summary>
-		static readonly AstNode simpleVariableDefinition = new VariableDeclarationStatement {
-			Type = new AnyNode(),
-			Variables = {
-				new VariableInitializer() // any name but no initializer
-			}
-		};
+		static readonly AstNode variableAssignPattern = new ExpressionStatement(
+			new AssignmentExpression(
+				new NamedNode("variable", new IdentifierExpression()),
+				new AnyNode("initializer")
+			));
 		
 		#region using
 		static readonly AstNode usingTryCatchPattern = new TryCatchStatement {
@@ -163,30 +149,81 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 		};
 		
-		public UsingStatement TransformUsings(VariableDeclarationStatement node)
+		public UsingStatement TransformUsings(ExpressionStatement node)
 		{
-			Match m1 = variableDeclPattern.Match(node);
+			Match m1 = variableAssignPattern.Match(node);
 			if (m1 == null) return null;
 			AstNode tryCatch = node.NextSibling;
-			while (simpleVariableDefinition.Match(tryCatch) != null)
-				tryCatch = tryCatch.NextSibling;
 			Match m2 = usingTryCatchPattern.Match(tryCatch);
 			if (m2 == null) return null;
-			if (m1.Get<VariableInitializer>("variable").Single().Name == m2.Get<IdentifierExpression>("ident").Single().Identifier) {
+			string variableName = m1.Get<IdentifierExpression>("variable").Single().Identifier;
+			if (variableName == m2.Get<IdentifierExpression>("ident").Single().Identifier) {
 				if (m2.Has("valueType")) {
 					// if there's no if(x!=null), then it must be a value type
-					TypeReference tr = m1.Get<AstType>("type").Single().Annotation<TypeReference>();
-					if (tr == null || !tr.IsValueType)
+					ILVariable v = m1.Get("variable").Single().Annotation<ILVariable>();
+					if (v == null || v.Type == null || !v.Type.IsValueType)
 						return null;
 				}
+				node.Remove();
 				BlockStatement body = m2.Get<BlockStatement>("body").Single();
 				UsingStatement usingStatement = new UsingStatement();
-				usingStatement.ResourceAcquisition = node.Detach();
+				usingStatement.ResourceAcquisition = node.Expression.Detach();
 				usingStatement.EmbeddedStatement = body.Detach();
 				tryCatch.ReplaceWith(usingStatement);
+				// Move the variable declaration into the resource acquisition, if possible
+				// This is necessary for the foreach-pattern to work on the result of the using-pattern
+				VariableDeclarationStatement varDecl = FindVariableDeclaration(usingStatement, variableName);
+				if (varDecl != null && varDecl.Parent is BlockStatement) {
+					Statement declarationPoint;
+					if (CanMoveVariableDeclarationIntoStatement(varDecl, usingStatement, out declarationPoint)) {
+						Debug.Assert(declarationPoint == usingStatement);
+						// Moving the variable into the UsingStatement is allowed:
+						usingStatement.ResourceAcquisition = new VariableDeclarationStatement {
+							Type = (AstType)varDecl.Type.Clone(),
+							Variables = {
+								new VariableInitializer {
+									Name = variableName,
+									Initializer = m1.Get<Expression>("initializer").Single().Detach()
+								}.CopyAnnotationsFrom(usingStatement.ResourceAcquisition)
+							}
+						}.CopyAnnotationsFrom(node);
+					}
+				}
 				return usingStatement;
 			}
 			return null;
+		}
+		
+		VariableDeclarationStatement FindVariableDeclaration(AstNode node, string identifier)
+		{
+			while (node != null) {
+				while (node.PrevSibling != null) {
+					node = node.PrevSibling;
+					VariableDeclarationStatement varDecl = node as VariableDeclarationStatement;
+					if (varDecl != null && varDecl.Variables.Count == 1 && varDecl.Variables.Single().Name == identifier) {
+						return varDecl;
+					}
+				}
+				node = node.Parent;
+			}
+			return null;
+		}
+		
+		bool CanMoveVariableDeclarationIntoStatement(VariableDeclarationStatement varDecl, Statement targetStatement, out Statement declarationPoint)
+		{
+			Debug.Assert(targetStatement.Ancestors.Contains(varDecl.Parent));
+			// Find all blocks between targetStatement and varDecl.Parent
+			List<BlockStatement> blocks = targetStatement.Ancestors.TakeWhile(block => block != varDecl.Parent).OfType<BlockStatement>().ToList();
+			blocks.Add((BlockStatement)varDecl.Parent); // also handle the varDecl.Parent block itself
+			blocks.Reverse(); // go from parent blocks to child blocks
+			DefiniteAssignmentAnalysis daa = new DefiniteAssignmentAnalysis(blocks[0], context.CancellationToken);
+			declarationPoint = null;
+			foreach (BlockStatement block in blocks) {
+				if (!DeclareVariables.FindDeclarationPoint(daa, varDecl, block, out declarationPoint)) {
+					return false;
+				}
+			}
+			return true;
 		}
 		#endregion
 		
@@ -203,77 +240,70 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					)
 				}
 			},
-			EmbeddedStatement = new Choice {
-				// There are two forms of the foreach statement:
-				// one where the item variable is declared inside the loop,
-				// and one where it is declared outside of the loop.
-				// In the former case, we can apply the foreach pattern only if the variable wasn't captured.
-				{ "itemVariableInsideLoop",
-					new BlockStatement {
-						new WhileStatement {
-							Condition = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Invoke("MoveNext"),
-							EmbeddedStatement = new BlockStatement {
-								new VariableDeclarationStatement {
-									Type = new AnyNode("itemType"),
-									Variables = {
-										new NamedNode(
-											"itemVariable",
-											new VariableInitializer {
-												Initializer = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current")
-											}
-										)
-									}
-								},
-								new Repeat(new AnyNode("statement")).ToStatement()
-							}
-						}
-					}
-				},
-				{ "itemVariableOutsideLoop",
-					new BlockStatement {
-						new VariableDeclarationStatement {
-							Type = new AnyNode("itemType"),
-							Variables = {
-								new NamedNode("itemVariable", new VariableInitializer())
-							}
+			EmbeddedStatement = new BlockStatement {
+				new Repeat(
+					new VariableDeclarationStatement { Type = new AnyNode(), Variables = { new VariableInitializer() } }.WithName("variablesOutsideLoop")
+				).ToStatement(),
+				new WhileStatement {
+					Condition = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Invoke("MoveNext"),
+					EmbeddedStatement = new BlockStatement {
+						new Repeat(
+							new VariableDeclarationStatement { Type = new AnyNode(), Variables = { new VariableInitializer() } }.WithName("variablesInsideLoop")
+						).ToStatement(),
+						new AssignmentExpression {
+							Left = new IdentifierExpression().WithName("itemVariable"),
+							Operator = AssignmentOperatorType.Assign,
+							Right = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current")
 						},
-						new WhileStatement {
-							Condition = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Invoke("MoveNext"),
-							EmbeddedStatement = new BlockStatement {
-								new AssignmentExpression {
-									Left = new IdentifierExpressionBackreference("itemVariable"),
-									Operator = AssignmentOperatorType.Assign,
-									Right = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current")
-								},
-								new Repeat(new AnyNode("statement")).ToStatement()
-							}
-						}
+						new Repeat(new AnyNode("statement")).ToStatement()
 					}
-				}
-			}.ToStatement()
-		};
+				}.WithName("loop")
+			}};
 		
 		public ForeachStatement TransformForeach(UsingStatement node)
 		{
 			Match m = foreachPattern.Match(node);
 			if (m == null)
 				return null;
-			VariableInitializer enumeratorVar = m.Get<VariableInitializer>("enumeratorVariable").Single();
-			VariableInitializer itemVar = m.Get<VariableInitializer>("itemVariable").Single();
-			if (m.Has("itemVariableInsideLoop") && itemVar.Annotation<DelegateConstruction.CapturedVariableAnnotation>() != null) {
-				// cannot move captured variables out of loops
+			if (!(node.Parent is BlockStatement) && m.Has("variablesOutsideLoop")) {
+				// if there are variables outside the loop, we need to put those into the parent block, and that won't work if the direct parent isn't a block
 				return null;
 			}
+			VariableInitializer enumeratorVar = m.Get<VariableInitializer>("enumeratorVariable").Single();
+			IdentifierExpression itemVar = m.Get<IdentifierExpression>("itemVariable").Single();
+			WhileStatement loop = m.Get<WhileStatement>("loop").Single();
+			
+			// Find the declaration of the item variable:
+			// Because we look only outside the loop, we won't make the mistake of moving a captured variable across the loop boundary
+			VariableDeclarationStatement itemVarDecl = FindVariableDeclaration(loop, itemVar.Identifier);
+			if (itemVarDecl == null || !(itemVarDecl.Parent is BlockStatement))
+				return null;
+			
+			// Now verify that we can move the variable declaration in front of the loop:
+			Statement declarationPoint;
+			CanMoveVariableDeclarationIntoStatement(itemVarDecl, loop, out declarationPoint);
+			// We ignore the return value because we don't care whether we can move the variable into the loop
+			// (that is possible only with non-captured variables).
+			// We just care that we can move it in front of the loop:
+			if (declarationPoint != loop)
+				return null;
+			
 			BlockStatement newBody = new BlockStatement();
+			foreach (Statement stmt in m.Get<Statement>("variablesInsideLoop"))
+				newBody.Add(stmt.Detach());
 			foreach (Statement stmt in m.Get<Statement>("statement"))
 				newBody.Add(stmt.Detach());
+			
 			ForeachStatement foreachStatement = new ForeachStatement {
-				VariableType = m.Get<AstType>("itemType").Single().Detach(),
-				VariableName = itemVar.Name,
+				VariableType = (AstType)itemVarDecl.Type.Clone(),
+				VariableName = itemVar.Identifier,
 				InExpression = m.Get<Expression>("collection").Single().Detach(),
 				EmbeddedStatement = newBody
 			};
 			node.ReplaceWith(foreachStatement);
+			foreach (Statement stmt in m.Get<Statement>("variablesOutsideLoop")) {
+				((BlockStatement)foreachStatement.Parent).Statements.InsertAfter(null, stmt);
+			}
 			return foreachStatement;
 		}
 		#endregion
@@ -299,17 +329,15 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 			}};
 		
-		public ForStatement TransformFor(VariableDeclarationStatement node)
+		public ForStatement TransformFor(ExpressionStatement node)
 		{
-			Match m1 = variableDeclPattern.Match(node);
+			Match m1 = variableAssignPattern.Match(node);
 			if (m1 == null) return null;
 			AstNode next = node.NextSibling;
-			while (simpleVariableDefinition.Match(next) != null)
-				next = next.NextSibling;
 			Match m2 = forPattern.Match(next);
 			if (m2 == null) return null;
 			// ensure the variable in the for pattern is the same as in the declaration
-			if (m1.Get<VariableInitializer>("variable").Single().Name != m2.Get<IdentifierExpression>("ident").Single().Identifier)
+			if (m1.Get<IdentifierExpression>("variable").Single().Identifier != m2.Get<IdentifierExpression>("ident").Single().Identifier)
 				return null;
 			WhileStatement loop = (WhileStatement)next;
 			node.Remove();
@@ -374,16 +402,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		#endregion
 		
 		#region lock
-		static readonly AstNode lockFlagInitPattern = new VariableDeclarationStatement {
-			Type = new PrimitiveType("bool"),
-			Variables = {
-				new NamedNode(
-					"variable",
-					new VariableInitializer {
-						Initializer = new PrimitiveExpression(false)
-					}
-				)
-			}};
+		static readonly AstNode lockFlagInitPattern = new ExpressionStatement(
+			new AssignmentExpression(
+				new NamedNode("variable", new IdentifierExpression()),
+				new PrimitiveExpression(false)
+			));
 		
 		static readonly AstNode lockTryCatchPattern = new TryCatchStatement {
 			TryBlock = new BlockStatement {
@@ -404,16 +427,14 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 			}};
 		
-		public LockStatement TransformLock(VariableDeclarationStatement node)
+		public LockStatement TransformLock(ExpressionStatement node)
 		{
 			Match m1 = lockFlagInitPattern.Match(node);
 			if (m1 == null) return null;
 			AstNode tryCatch = node.NextSibling;
-			while (simpleVariableDefinition.Match(tryCatch) != null)
-				tryCatch = tryCatch.NextSibling;
 			Match m2 = lockTryCatchPattern.Match(tryCatch);
 			if (m2 == null) return null;
-			if (m1.Get<VariableInitializer>("variable").Single().Name == m2.Get<IdentifierExpression>("flag").Single().Identifier) {
+			if (m1.Get<IdentifierExpression>("variable").Single().Identifier == m2.Get<IdentifierExpression>("flag").Single().Identifier) {
 				Expression enter = m2.Get<Expression>("enter").Single();
 				IdentifierExpression exit = m2.Get<IdentifierExpression>("exit").Single();
 				if (exit.Match(enter) == null) {
@@ -424,19 +445,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (exit.Match(assign.Left) == null)
 						return null;
 					enter = assign.Right;
-					// Remove 'exit' variable:
-					bool ok = false;
-					for (AstNode tmp = node.NextSibling; tmp != tryCatch; tmp = tmp.NextSibling) {
-						VariableDeclarationStatement v = (VariableDeclarationStatement)tmp;
-						if (v.Variables.Single().Name == exit.Identifier) {
-							ok = true;
-							v.Remove();
-							break;
-						}
-					}
-					if (!ok)
-						return null;
+					// TODO: verify that 'obj' variable can be removed
 				}
+				// TODO: verify that 'flag' variable can be removed
 				// transform the code into a lock statement:
 				LockStatement l = new LockStatement();
 				l.Expression = enter.Detach();
@@ -466,17 +477,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					},
 					TrueStatement = new AnyNode("dictCreation")
 				},
-				new VariableDeclarationStatement {
-					Type = new PrimitiveType("int"),
-					Variables = { new NamedNode("intVar", new VariableInitializer()) }
-				},
 				new IfElseStatement {
 					Condition = new Backreference("cachedDict").ToExpression().Invoke(
 						"TryGetValue",
 						new NamedNode("switchVar", new IdentifierExpression()),
 						new DirectionExpression {
 							FieldDirection = FieldDirection.Out,
-							Expression = new IdentifierExpressionBackreference("intVar")
+							Expression = new IdentifierExpression().WithName("intVar")
 						}),
 					TrueStatement = new BlockStatement {
 						Statements = {
@@ -630,32 +637,25 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		#region Automatic Events
 		static readonly Accessor automaticEventPatternV4 = new Accessor {
 			Body = new BlockStatement {
-				new VariableDeclarationStatement {
-					Type = new AnyNode("type"),
-					Variables = {
-						new NamedNode(
-							"var1", new VariableInitializer {
-								Initializer = new NamedNode("field", new MemberReferenceExpression { Target = new ThisReferenceExpression() })
-							})}
-				},
-				new VariableDeclarationStatement {
-					Type = new Backreference("type"),
-					Variables = { new NamedNode("var2", new VariableInitializer()) }
+				new VariableDeclarationStatement { Type = new AnyNode("type"), Variables = { new AnyNode() } },
+				new VariableDeclarationStatement { Type = new Backreference("type"), Variables = { new AnyNode() } },
+				new VariableDeclarationStatement { Type = new Backreference("type"), Variables = { new AnyNode() } },
+				new AssignmentExpression {
+					Left = new NamedNode("var1", new IdentifierExpression()),
+					Operator = AssignmentOperatorType.Assign,
+					Right = new NamedNode("field", new MemberReferenceExpression { Target = new ThisReferenceExpression() })
 				},
 				new DoWhileStatement {
 					EmbeddedStatement = new BlockStatement {
-						new AssignmentExpression(new IdentifierExpressionBackreference("var2"), new IdentifierExpressionBackreference("var1")),
-						new VariableDeclarationStatement {
-							Type = new Backreference("type"),
-							Variables = {
-								new NamedNode(
-									"var3", new VariableInitializer {
-										Initializer = new AnyNode("delegateCombine").ToExpression().Invoke(
-											new IdentifierExpressionBackreference("var2"),
-											new IdentifierExpression("value")
-										).CastTo(new Backreference("type"))
-									})
-							}},
+						new AssignmentExpression(new NamedNode("var2", new IdentifierExpression()), new IdentifierExpressionBackreference("var1")),
+						new AssignmentExpression {
+							Left = new NamedNode("var3", new IdentifierExpression()),
+							Operator = AssignmentOperatorType.Assign,
+							Right = new AnyNode("delegateCombine").ToExpression().Invoke(
+								new IdentifierExpressionBackreference("var2"),
+								new IdentifierExpression("value")
+							).CastTo(new Backreference("type"))
+						},
 						new AssignmentExpression {
 							Left = new IdentifierExpressionBackreference("var1"),
 							Right = new TypePattern(typeof(System.Threading.Interlocked)).ToType().Invoke(

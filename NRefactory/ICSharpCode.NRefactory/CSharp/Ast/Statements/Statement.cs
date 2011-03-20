@@ -38,6 +38,38 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		#endregion
 		
+		/// <summary>
+		/// Gets the previous statement within the current block.
+		/// This is usually equivalent to <see cref="PrevSibling"/>, but will skip any non-statements (e.g. comments)
+		/// </summary>
+		public Statement PreviousStatement {
+			get {
+				AstNode node = this;
+				while ((node = node.PrevSibling) != null) {
+					Statement stmt = node as Statement;
+					if (stmt != null)
+						return stmt;
+				}
+				return null;
+			}
+		}
+		
+		/// <summary>
+		/// Gets the next statement within the current block.
+		/// This is usually equivalent to <see cref="NextSibling"/>, but will skip any non-statements (e.g. comments)
+		/// </summary>
+		public Statement NextStatement {
+			get {
+				AstNode node = this;
+				while ((node = node.NextSibling) != null) {
+					Statement stmt = node as Statement;
+					if (stmt != null)
+						return stmt;
+				}
+				return null;
+			}
+		}
+		
 		public new Statement Clone()
 		{
 			return (Statement)base.Clone();

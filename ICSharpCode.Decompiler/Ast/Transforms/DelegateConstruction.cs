@@ -179,23 +179,33 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return true;
 		}
 		
+		static readonly ExpressionStatement displayClassAssignmentPattern =
+			new ExpressionStatement(new AssignmentExpression(
+				new NamedNode("variable", new IdentifierExpression()),
+				new ObjectCreateExpression { Type = new AnyNode("type") }
+			));
+		
 		public override object VisitBlockStatement(BlockStatement blockStatement, object data)
 		{
 			base.VisitBlockStatement(blockStatement, data);
-			foreach (VariableDeclarationStatement stmt in blockStatement.Statements.OfType<VariableDeclarationStatement>().ToArray()) {
-				if (stmt.Variables.Count() != 1)
+			foreach (ExpressionStatement stmt in blockStatement.Statements.OfType<ExpressionStatement>().ToArray()) {
+				Match displayClassAssignmentMatch = displayClassAssignmentPattern.Match(stmt);
+				if (displayClassAssignmentMatch == null)
 					continue;
-				var variable = stmt.Variables.Single();
-				TypeDefinition type = stmt.Type.Annotation<TypeReference>().ResolveWithinSameModule();
+				
+				ILVariable variable = displayClassAssignmentMatch.Get("variable").Single().Annotation<ILVariable>();
+				if (variable == null)
+					continue;
+				TypeDefinition type = variable.Type.ResolveWithinSameModule();
 				if (!IsPotentialClosure(context, type))
 					continue;
-				ObjectCreateExpression oce = variable.Initializer as ObjectCreateExpression;
-				if (oce == null || oce.Type.Annotation<TypeReference>().ResolveWithinSameModule() != type || oce.Arguments.Any() || !oce.Initializer.IsNull)
+				if (displayClassAssignmentMatch.Get("type").Single().Annotation<TypeReference>().ResolveWithinSameModule() != type)
 					continue;
+				
 				// Looks like we found a display class creation. Now let's verify that the variable is used only for field accesses:
 				bool ok = true;
 				foreach (var identExpr in blockStatement.Descendants.OfType<IdentifierExpression>()) {
-					if (identExpr.Identifier == variable.Name) {
+					if (identExpr.Identifier == variable.Name && identExpr != displayClassAssignmentMatch.Get("variable").Single()) {
 						if (!(identExpr.Parent is MemberReferenceExpression && identExpr.Parent.Annotation<FieldReference>() != null))
 							ok = false;
 					}
@@ -266,10 +276,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					}
 				}
 				// Now insert the variable declarations (we can do this after the replacements only so that the scope detection works):
+				Statement insertionPoint = blockStatement.Statements.FirstOrDefault();
 				foreach (var tuple in variablesToDeclare) {
-					var newVarDecl = DeclareVariableInSmallestScope.DeclareVariable(blockStatement, tuple.Item1, tuple.Item2, allowPassIntoLoops: false);
-					if (newVarDecl != null)
-						newVarDecl.Variables.Single().AddAnnotation(new CapturedVariableAnnotation());
+					var newVarDecl = new VariableDeclarationStatement(tuple.Item1, tuple.Item2);
+					newVarDecl.Variables.Single().AddAnnotation(new CapturedVariableAnnotation());
+					blockStatement.Statements.InsertBefore(insertionPoint, newVarDecl);
 				}
 			}
 			return null;

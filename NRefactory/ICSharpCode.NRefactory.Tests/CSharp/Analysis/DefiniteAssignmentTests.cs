@@ -148,5 +148,54 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			Assert.AreEqual(DefiniteAssignmentStatus.CodeUnreachable, da.GetStatusAfter(loop.EmbeddedStatement));
 			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(loop));
 		}
+		
+		[Test]
+		public void ForLoop()
+		{
+			ForStatement loop = new ForStatement {
+				Initializers = {
+					new ExpressionStatement(
+						new AssignmentExpression(new IdentifierExpression("i"), new PrimitiveExpression(0))
+					)
+				},
+				Condition = new BinaryOperatorExpression(new IdentifierExpression("i"), BinaryOperatorType.LessThan, new PrimitiveExpression(1000)),
+				Iterators = {
+					new ExpressionStatement(
+						new AssignmentExpression {
+							Left = new IdentifierExpression("i"),
+							Operator = AssignmentOperatorType.Add,
+							Right = new IdentifierExpression("j")
+						}
+					)
+				},
+				EmbeddedStatement = new ExpressionStatement(
+					new AssignmentExpression(new IdentifierExpression("j"), new IdentifierExpression("i"))
+				)};
+			
+			DefiniteAssignmentAnalysis da = new DefiniteAssignmentAnalysis(loop, CecilLoaderTests.Mscorlib);
+			da.Analyze("i");
+			Assert.AreEqual(0, da.UnassignedVariableUses.Count);
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(loop));
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(loop.Initializers.Single()));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(loop.Initializers.Single()));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusBeforeLoopCondition(loop));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusBefore(loop.EmbeddedStatement));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(loop.EmbeddedStatement));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusBefore(loop.Iterators.Single()));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(loop.Iterators.Single()));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(loop));
+			
+			da.Analyze("j");
+			Assert.AreEqual(0, da.UnassignedVariableUses.Count);
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(loop));
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(loop.Initializers.Single()));
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusAfter(loop.Initializers.Single()));
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBeforeLoopCondition(loop));
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(loop.EmbeddedStatement));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(loop.EmbeddedStatement));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusBefore(loop.Iterators.Single()));
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(loop.Iterators.Single()));
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusAfter(loop));
+		}
 	}
 }

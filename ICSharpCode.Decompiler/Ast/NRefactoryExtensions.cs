@@ -3,6 +3,7 @@
 
 using System;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.PatternMatching;
 
 namespace ICSharpCode.Decompiler.Ast
 {
@@ -27,6 +28,16 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			node.Remove();
 			return node;
+		}
+		
+		public static Expression WithName(this Expression node, string patternGroupName)
+		{
+			return new NamedNode(patternGroupName, node);
+		}
+		
+		public static Statement WithName(this Statement node, string patternGroupName)
+		{
+			return new NamedNode(patternGroupName, node);
 		}
 		
 		public static void AddNamedArgument(this NRefactory.CSharp.Attribute attribute, string name, Expression argument)

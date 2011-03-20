@@ -44,22 +44,49 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 	/// </summary>
 	public class DefiniteAssignmentAnalysis
 	{
+		sealed class DefiniteAssignmentNode : ControlFlowNode
+		{
+			public int Index;
+			public DefiniteAssignmentStatus NodeStatus;
+			
+			public DefiniteAssignmentNode(Statement previousStatement, Statement nextStatement, ControlFlowNodeType type)
+				: base(previousStatement, nextStatement, type)
+			{
+			}
+		}
+		
+		sealed class DerivedControlFlowGraphBuilder : ControlFlowGraphBuilder
+		{
+			protected override ControlFlowNode CreateNode(Statement previousStatement, Statement nextStatement, ControlFlowNodeType type)
+			{
+				return new DefiniteAssignmentNode(previousStatement, nextStatement, type);
+			}
+		}
+		
+		readonly DerivedControlFlowGraphBuilder cfgBuilder = new DerivedControlFlowGraphBuilder();
 		readonly DefiniteAssignmentVisitor visitor = new DefiniteAssignmentVisitor();
-		readonly List<ControlFlowNode> allNodes = new List<ControlFlowNode>();
-		readonly Dictionary<Statement, ControlFlowNode> beginNodeDict = new Dictionary<Statement, ControlFlowNode>();
-		readonly Dictionary<Statement, ControlFlowNode> endNodeDict = new Dictionary<Statement, ControlFlowNode>();
+		readonly List<DefiniteAssignmentNode> allNodes = new List<DefiniteAssignmentNode>();
+		readonly Dictionary<Statement, DefiniteAssignmentNode> beginNodeDict = new Dictionary<Statement, DefiniteAssignmentNode>();
+		readonly Dictionary<Statement, DefiniteAssignmentNode> endNodeDict = new Dictionary<Statement, DefiniteAssignmentNode>();
+		readonly Dictionary<Statement, DefiniteAssignmentNode> conditionNodeDict = new Dictionary<Statement, DefiniteAssignmentNode>();
 		readonly ResolveVisitor resolveVisitor;
 		readonly CancellationToken cancellationToken;
-		Dictionary<ControlFlowNode, DefiniteAssignmentStatus> nodeStatus = new Dictionary<ControlFlowNode, DefiniteAssignmentStatus>();
 		Dictionary<ControlFlowEdge, DefiniteAssignmentStatus> edgeStatus = new Dictionary<ControlFlowEdge, DefiniteAssignmentStatus>();
 		
 		string variableName;
 		List<IdentifierExpression> unassignedVariableUses = new List<IdentifierExpression>();
+		int analyzedRangeStart, analyzedRangeEnd;
 		
-		Queue<ControlFlowNode> nodesWithModifiedInput = new Queue<ControlFlowNode>();
+		Queue<DefiniteAssignmentNode> nodesWithModifiedInput = new Queue<DefiniteAssignmentNode>();
+		
+		public DefiniteAssignmentAnalysis(Statement rootStatement, CancellationToken cancellationToken = default(CancellationToken))
+			: this(rootStatement, null, cancellationToken)
+		{
+		}
 		
 		public DefiniteAssignmentAnalysis(Statement rootStatement, ITypeResolveContext context, CancellationToken cancellationToken = default(CancellationToken))
-			: this(rootStatement, new ResolveVisitor(new CSharpResolver(context, cancellationToken), null, ConstantModeResolveVisitorNavigator.Skip))
+			: this(rootStatement, new ResolveVisitor(new CSharpResolver(context ?? MinimalResolveContext.Instance, cancellationToken),
+			                                         null, ConstantModeResolveVisitorNavigator.Skip))
 		{
 		}
 		
@@ -72,25 +99,57 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			this.resolveVisitor = resolveVisitor;
 			this.cancellationToken = resolveVisitor.CancellationToken;
 			visitor.analysis = this;
-			ControlFlowGraphBuilder b = new ControlFlowGraphBuilder();
-			allNodes.AddRange(b.BuildControlFlowGraph(rootStatement, resolveVisitor));
-			foreach (AstNode descendant in rootStatement.Descendants) {
-				// Anonymous methods have separate control flow graphs, but we also need to analyze those.
-				AnonymousMethodExpression ame = descendant as AnonymousMethodExpression;
-				if (ame != null)
-					allNodes.AddRange(b.BuildControlFlowGraph(ame.Body, resolveVisitor));
-				LambdaExpression lambda = descendant as LambdaExpression;
-				if (lambda != null && lambda.Body is Statement)
-					allNodes.AddRange(b.BuildControlFlowGraph((Statement)lambda.Body, resolveVisitor));
+			if (resolveVisitor.TypeResolveContext is MinimalResolveContext) {
+				cfgBuilder.EvaluateOnlyPrimitiveConstants = true;
 			}
-			// Verify that we created nodes for all statements:
-			Debug.Assert(!rootStatement.DescendantsAndSelf.OfType<Statement>().Except(allNodes.Select(n => n.NextStatement)).Any());
-			// Now register the nodes in the dictionaries:
-			foreach (ControlFlowNode node in allNodes) {
+			allNodes.AddRange(cfgBuilder.BuildControlFlowGraph(rootStatement, resolveVisitor).Cast<DefiniteAssignmentNode>());
+			for (int i = 0; i < allNodes.Count; i++) {
+				DefiniteAssignmentNode node = allNodes[i];
+				node.Index = i; // assign numbers to the nodes
+				if (node.Type == ControlFlowNodeType.StartNode || node.Type == ControlFlowNodeType.BetweenStatements) {
+					// Anonymous methods have separate control flow graphs, but we also need to analyze those.
+					// Iterate backwards so that anonymous methods are inserted in the correct order
+					for (AstNode child = node.NextStatement.LastChild; child != null; child = child.PrevSibling) {
+						InsertAnonymousMethods(i + 1, child);
+					}
+				}
+				// Now register the node in the dictionaries:
 				if (node.Type == ControlFlowNodeType.StartNode || node.Type == ControlFlowNodeType.BetweenStatements)
 					beginNodeDict.Add(node.NextStatement, node);
 				if (node.Type == ControlFlowNodeType.BetweenStatements || node.Type == ControlFlowNodeType.EndNode)
 					endNodeDict.Add(node.PreviousStatement, node);
+				if (node.Type == ControlFlowNodeType.LoopCondition)
+					conditionNodeDict.Add(node.NextStatement, node);
+			}
+			// Verify that we created nodes for all statements:
+			Debug.Assert(!rootStatement.DescendantsAndSelf.OfType<Statement>().Except(allNodes.Select(n => n.NextStatement)).Any());
+			// Verify that we put all nodes into the dictionaries:
+			Debug.Assert(rootStatement.DescendantsAndSelf.OfType<Statement>().All(stmt => beginNodeDict.ContainsKey(stmt)));
+			Debug.Assert(rootStatement.DescendantsAndSelf.OfType<Statement>().All(stmt => endNodeDict.ContainsKey(stmt)));
+			
+			this.analyzedRangeStart = 0;
+			this.analyzedRangeEnd = allNodes.Count - 1;
+		}
+		
+		void InsertAnonymousMethods(int insertPos, AstNode node)
+		{
+			// Ignore any statements, as those have their own ControlFlowNode and get handled separately
+			if (node is Statement)
+				return;
+			AnonymousMethodExpression ame = node as AnonymousMethodExpression;
+			if (ame != null) {
+				allNodes.InsertRange(insertPos, cfgBuilder.BuildControlFlowGraph(ame.Body, resolveVisitor).Cast<DefiniteAssignmentNode>());
+				return;
+			}
+			LambdaExpression lambda = node as LambdaExpression;
+			if (lambda != null && lambda.Body is Statement) {
+				allNodes.InsertRange(insertPos, cfgBuilder.BuildControlFlowGraph((Statement)lambda.Body, resolveVisitor).Cast<DefiniteAssignmentNode>());
+				return;
+			}
+			// Descend into child expressions
+			// Iterate backwards so that anonymous methods are inserted in the correct order
+			for (AstNode child = node.LastChild; child != null; child = child.PrevSibling) {
+				InsertAnonymousMethods(insertPos, child);
 			}
 		}
 		
@@ -103,21 +162,38 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			}
 		}
 		
+		/// <summary>
+		/// Sets the range of statements to be analyzed.
+		/// This method can be used to restrict the analysis to only a part of the method.
+		/// Only the control flow paths that are fully contained within the selected part will be analyzed.
+		/// </summary>
+		/// <remarks>Both 'start' and 'end' are inclusive.</remarks>
+		public void SetAnalyzedRange(Statement start, Statement end)
+		{
+			Debug.Assert(beginNodeDict.ContainsKey(start) && endNodeDict.ContainsKey(end));
+			int startIndex = beginNodeDict[start].Index;
+			int endIndex = endNodeDict[end].Index;
+			if (startIndex > endIndex)
+				throw new ArgumentException("The start statement must be lexically preceding the end statement");
+			this.analyzedRangeStart = startIndex;
+			this.analyzedRangeEnd = endIndex;
+		}
+		
 		public void Analyze(string variable, DefiniteAssignmentStatus initialStatus = DefiniteAssignmentStatus.PotentiallyAssigned)
 		{
 			this.variableName = variable;
 			// Reset the status:
 			unassignedVariableUses.Clear();
-			foreach (ControlFlowNode node in allNodes) {
-				nodeStatus[node] = DefiniteAssignmentStatus.CodeUnreachable;
+			foreach (DefiniteAssignmentNode node in allNodes) {
+				node.NodeStatus = DefiniteAssignmentStatus.CodeUnreachable;
 				foreach (ControlFlowEdge edge in node.Outgoing)
 					edgeStatus[edge] = DefiniteAssignmentStatus.CodeUnreachable;
 			}
 			
-			ChangeNodeStatus(allNodes[0], initialStatus);
+			ChangeNodeStatus(allNodes[analyzedRangeStart], initialStatus);
 			// Iterate as long as the input status of some nodes is changing:
 			while (nodesWithModifiedInput.Count > 0) {
-				ControlFlowNode node = nodesWithModifiedInput.Dequeue();
+				DefiniteAssignmentNode node = nodesWithModifiedInput.Dequeue();
 				DefiniteAssignmentStatus inputStatus = DefiniteAssignmentStatus.CodeUnreachable;
 				foreach (ControlFlowEdge edge in node.Incoming) {
 					inputStatus = MergeStatus(inputStatus, edgeStatus[edge]);
@@ -128,12 +204,17 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		
 		public DefiniteAssignmentStatus GetStatusBefore(Statement statement)
 		{
-			return nodeStatus[beginNodeDict[statement]];
+			return beginNodeDict[statement].NodeStatus;
 		}
 		
 		public DefiniteAssignmentStatus GetStatusAfter(Statement statement)
 		{
-			return nodeStatus[endNodeDict[statement]];
+			return endNodeDict[statement].NodeStatus;
+		}
+		
+		public DefiniteAssignmentStatus GetStatusBeforeLoopCondition(Statement statement)
+		{
+			return conditionNodeDict[statement].NodeStatus;
 		}
 		
 		/// <summary>
@@ -144,7 +225,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			GraphVizGraph g = new GraphVizGraph();
 			g.Title = "DefiniteAssignment - " + variableName;
 			for (int i = 0; i < allNodes.Count; i++) {
-				string name = nodeStatus[allNodes[i]].ToString() + Environment.NewLine;
+				string name = "#" + i + " = " + allNodes[i].NodeStatus.ToString() + Environment.NewLine;
 				switch (allNodes[i].Type) {
 					case ControlFlowNodeType.StartNode:
 					case ControlFlowNodeType.BetweenStatements:
@@ -162,7 +243,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				}
 				g.AddNode(new GraphVizNode(i) { label = name });
 				foreach (ControlFlowEdge edge in allNodes[i].Outgoing) {
-					GraphVizEdge ge = new GraphVizEdge(i, allNodes.IndexOf(edge.To));
+					GraphVizEdge ge = new GraphVizEdge(i, ((DefiniteAssignmentNode)edge.To).Index);
 					if (edgeStatus.Count > 0)
 						ge.label = edgeStatus[edge].ToString();
 					if (edge.IsLeavingTryFinally)
@@ -201,11 +282,11 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				return DefiniteAssignmentStatus.PotentiallyAssigned;
 		}
 		
-		void ChangeNodeStatus(ControlFlowNode node, DefiniteAssignmentStatus inputStatus)
+		void ChangeNodeStatus(DefiniteAssignmentNode node, DefiniteAssignmentStatus inputStatus)
 		{
-			if (nodeStatus[node] == inputStatus)
+			if (node.NodeStatus == inputStatus)
 				return;
-			nodeStatus[node] = inputStatus;
+			node.NodeStatus = inputStatus;
 			DefiniteAssignmentStatus outputStatus;
 			switch (node.Type) {
 				case ControlFlowNodeType.StartNode:
@@ -277,25 +358,26 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			DefiniteAssignmentStatus oldStatus = edgeStatus[edge];
 			if (oldStatus == newStatus)
 				return;
-			// Ensure that status can change only in one direction:
-			// CodeUnreachable -> PotentiallyAssigned -> DefinitelyAssigned
-			// Going against this direction indicates a bug and could cause infinite loops.
-			switch (oldStatus) {
-				case DefiniteAssignmentStatus.PotentiallyAssigned:
-					if (newStatus != DefiniteAssignmentStatus.DefinitelyAssigned)
-						throw new InvalidOperationException("Invalid state transition");
-					break;
-				case DefiniteAssignmentStatus.CodeUnreachable:
-					if (!(newStatus == DefiniteAssignmentStatus.PotentiallyAssigned || newStatus == DefiniteAssignmentStatus.DefinitelyAssigned))
-						throw new InvalidOperationException("Invalid state transition");
-					break;
-				case DefiniteAssignmentStatus.DefinitelyAssigned:
-					throw new InvalidOperationException("Invalid state transition");
-				default:
-					throw new InvalidOperationException("Invalid value for DefiniteAssignmentStatus");
+			// Ensure that status can cannot change back to CodeUnreachable after it once was reachable.
+			// Also, don't ever use AssignedAfter... for statements.
+			if (newStatus == DefiniteAssignmentStatus.CodeUnreachable
+			    || newStatus == DefiniteAssignmentStatus.AssignedAfterFalseExpression
+			    || newStatus == DefiniteAssignmentStatus.AssignedAfterTrueExpression)
+			{
+				throw new InvalidOperationException();
 			}
+			// Note that the status can change from DefinitelyAssigned
+			// back to PotentiallyAssigned as unreachable input edges are
+			// discovered to be reachable.
+			
 			edgeStatus[edge] = newStatus;
-			nodesWithModifiedInput.Enqueue(edge.To);
+			DefiniteAssignmentNode targetNode = (DefiniteAssignmentNode)edge.To;
+			if (analyzedRangeStart <= targetNode.Index && targetNode.Index <= analyzedRangeEnd) {
+				// TODO: potential optimization: visit previously unreachable nodes with higher priority
+				// (e.g. use Deque and enqueue previously unreachable nodes at the front, but
+				// other nodes at the end)
+				nodesWithModifiedInput.Enqueue(targetNode);
+			}
 		}
 		
 		/// <summary>
@@ -304,6 +386,10 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// <returns>The constant value of the expression; or null if the expression is not a constant.</returns>
 		ConstantResolveResult EvaluateConstant(Expression expr)
 		{
+			if (resolveVisitor.TypeResolveContext is MinimalResolveContext) {
+				if (!(expr is PrimitiveExpression || expr is NullReferenceExpression))
+					return null;
+			}
 			return resolveVisitor.Resolve(expr) as ConstantResolveResult;
 		}
 		
@@ -313,9 +399,9 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// <returns>The value of the constant boolean expression; or null if the value is not a constant boolean expression.</returns>
 		bool? EvaluateCondition(Expression expr)
 		{
-			ConstantResolveResult crr = EvaluateConstant(expr);
-			if (crr != null)
-				return crr.ConstantValue as bool?;
+			ConstantResolveResult rr = EvaluateConstant(expr);
+			if (rr != null)
+				return rr.ConstantValue as bool?;
 			else
 				return null;
 		}
@@ -477,11 +563,14 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			{
 				IdentifierExpression ident = left as IdentifierExpression;
 				if (ident != null && ident.Identifier == analysis.variableName) {
-					right.AcceptVisitor(this, initialStatus);
+					// right==null is special case when handling 'out' expressions
+					if (right != null)
+						right.AcceptVisitor(this, initialStatus);
 					return DefiniteAssignmentStatus.DefinitelyAssigned;
 				} else {
 					DefiniteAssignmentStatus status = left.AcceptVisitor(this, initialStatus);
-					status = right.AcceptVisitor(this, CleanSpecialValues(status));
+					if (right != null)
+						status = right.AcceptVisitor(this, CleanSpecialValues(status));
 					return CleanSpecialValues(status);
 				}
 			}
@@ -620,10 +709,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			public override DefiniteAssignmentStatus VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, DefiniteAssignmentStatus data)
 			{
 				BlockStatement body = anonymousMethodExpression.Body;
-				foreach (ControlFlowNode node in analysis.allNodes) {
-					if (node.NextStatement == body)
-						analysis.ChangeNodeStatus(node, data);
-				}
+				analysis.ChangeNodeStatus(analysis.beginNodeDict[body], data);
 				return data;
 			}
 			
@@ -631,10 +717,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			{
 				Statement body = lambdaExpression.Body as Statement;
 				if (body != null) {
-					foreach (ControlFlowNode node in analysis.allNodes) {
-						if (node.NextStatement == body)
-							analysis.ChangeNodeStatus(node, data);
-					}
+					analysis.ChangeNodeStatus(analysis.beginNodeDict[body], data);
 				} else {
 					lambdaExpression.Body.AcceptVisitor(this, data);
 				}
