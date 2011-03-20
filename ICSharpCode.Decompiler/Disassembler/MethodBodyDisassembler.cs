@@ -83,7 +83,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 				WriteStructureBody(new ILStructure(body), ref inst, methodMapping, method.Body.CodeSize);
 			} else {
 				foreach (var inst in method.Body.Instructions) {
-					// add IL code mappings
+					inst.WriteTo(output);
+					
+					// add IL code mappings - used in debugger
 					methodMapping.MemberCodeMappings.Add(
 						new SourceCodeMapping() {
 							SourceCodeLine = output.CurrentLine,
@@ -91,7 +93,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 							MemberMapping = methodMapping
 						});
 					
-					inst.WriteTo(output);
 					output.WriteLine();
 				}
 				output.WriteLine();
@@ -151,16 +152,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			int childIndex = 0;
 			while (inst != null && inst.Offset < s.EndOffset) {
-				// add IL code mappings - used in debugger
-				if (currentMethodMapping != null) {
-					currentMethodMapping.MemberCodeMappings.Add(
-						new SourceCodeMapping() {
-							SourceCodeLine = output.CurrentLine,
-							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? codeSize : inst.Next.Offset },
-							MemberMapping = currentMethodMapping
-						});
-				}
-				
 				int offset = inst.Offset;
 				if (childIndex < s.Children.Count && s.Children[childIndex].StartOffset <= offset && offset < s.Children[childIndex].EndOffset) {
 					ILStructure child = s.Children[childIndex++];
@@ -169,6 +160,17 @@ namespace ICSharpCode.Decompiler.Disassembler
 					WriteStructureFooter(child);
 				} else {
 					inst.WriteTo(output);
+					
+					// add IL code mappings - used in debugger
+					if (currentMethodMapping != null) {
+						currentMethodMapping.MemberCodeMappings.Add(
+							new SourceCodeMapping() {
+								SourceCodeLine = output.CurrentLine,
+								ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? codeSize : inst.Next.Offset },
+								MemberMapping = currentMethodMapping
+							});
+					}
+					
 					output.WriteLine();
 					inst = inst.Next;
 				}
