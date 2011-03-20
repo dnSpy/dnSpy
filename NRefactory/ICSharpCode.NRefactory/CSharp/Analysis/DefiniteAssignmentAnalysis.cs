@@ -123,6 +123,10 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			}
 			// Verify that we created nodes for all statements:
 			Debug.Assert(!rootStatement.DescendantsAndSelf.OfType<Statement>().Except(allNodes.Select(n => n.NextStatement)).Any());
+			// Verify that we put all nodes into the dictionaries:
+			Debug.Assert(rootStatement.DescendantsAndSelf.OfType<Statement>().All(stmt => beginNodeDict.ContainsKey(stmt)));
+			Debug.Assert(rootStatement.DescendantsAndSelf.OfType<Statement>().All(stmt => endNodeDict.ContainsKey(stmt)));
+			
 			this.analyzedRangeStart = 0;
 			this.analyzedRangeEnd = allNodes.Count - 1;
 		}
@@ -166,6 +170,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// <remarks>Both 'start' and 'end' are inclusive.</remarks>
 		public void SetAnalyzedRange(Statement start, Statement end)
 		{
+			Debug.Assert(beginNodeDict.ContainsKey(start) && endNodeDict.ContainsKey(end));
 			int startIndex = beginNodeDict[start].Index;
 			int endIndex = endNodeDict[end].Index;
 			if (startIndex > endIndex)
@@ -353,27 +358,26 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			DefiniteAssignmentStatus oldStatus = edgeStatus[edge];
 			if (oldStatus == newStatus)
 				return;
-			// Ensure that status can change only in one direction:
-			// CodeUnreachable -> PotentiallyAssigned -> DefinitelyAssigned
-			// Going against this direction indicates a bug and could cause infinite loops.
-			switch (oldStatus) {
-				case DefiniteAssignmentStatus.PotentiallyAssigned:
-					if (newStatus != DefiniteAssignmentStatus.DefinitelyAssigned)
-						throw new InvalidOperationException("Invalid state transition");
-					break;
-				case DefiniteAssignmentStatus.CodeUnreachable:
-					if (!(newStatus == DefiniteAssignmentStatus.PotentiallyAssigned || newStatus == DefiniteAssignmentStatus.DefinitelyAssigned))
-						throw new InvalidOperationException("Invalid state transition");
-					break;
-				case DefiniteAssignmentStatus.DefinitelyAssigned:
-					throw new InvalidOperationException("Invalid state transition");
-				default:
-					throw new InvalidOperationException("Invalid value for DefiniteAssignmentStatus");
+			// Ensure that status can cannot change back to CodeUnreachable after it once was reachable.
+			// Also, don't ever use AssignedAfter... for statements.
+			if (newStatus == DefiniteAssignmentStatus.CodeUnreachable
+			    || newStatus == DefiniteAssignmentStatus.AssignedAfterFalseExpression
+			    || newStatus == DefiniteAssignmentStatus.AssignedAfterTrueExpression)
+			{
+				throw new InvalidOperationException();
 			}
+			// Note that the status can change from DefinitelyAssigned
+			// back to PotentiallyAssigned as unreachable input edges are
+			// discovered to be reachable.
+			
 			edgeStatus[edge] = newStatus;
 			DefiniteAssignmentNode targetNode = (DefiniteAssignmentNode)edge.To;
-			if (analyzedRangeStart <= targetNode.Index && targetNode.Index <= analyzedRangeEnd)
+			if (analyzedRangeStart <= targetNode.Index && targetNode.Index <= analyzedRangeEnd) {
+				// TODO: potential optimization: visit previously unreachable nodes with higher priority
+				// (e.g. use Deque and enqueue previously unreachable nodes at the front, but
+				// other nodes at the end)
 				nodesWithModifiedInput.Enqueue(targetNode);
+			}
 		}
 		
 		/// <summary>
