@@ -276,11 +276,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					}
 				}
 				// Now insert the variable declarations (we can do this after the replacements only so that the scope detection works):
+				Statement insertionPoint = blockStatement.Statements.FirstOrDefault();
 				foreach (var tuple in variablesToDeclare) {
 					var newVarDecl = new VariableDeclarationStatement(tuple.Item1, tuple.Item2);
-					if (newVarDecl != null)
-						newVarDecl.Variables.Single().AddAnnotation(new CapturedVariableAnnotation());
-					blockStatement.Statements.InsertAfter(null, newVarDecl);
+					newVarDecl.Variables.Single().AddAnnotation(new CapturedVariableAnnotation());
+					blockStatement.Statements.InsertBefore(insertionPoint, newVarDecl);
 				}
 			}
 			return null;

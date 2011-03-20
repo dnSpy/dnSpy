@@ -445,19 +445,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (exit.Match(assign.Left) == null)
 						return null;
 					enter = assign.Right;
-					// Remove 'exit' variable:
-					bool ok = false;
-					for (AstNode tmp = node.NextSibling; tmp != tryCatch; tmp = tmp.NextSibling) {
-						VariableDeclarationStatement v = (VariableDeclarationStatement)tmp;
-						if (v.Variables.Single().Name == exit.Identifier) {
-							ok = true;
-							v.Remove();
-							break;
-						}
-					}
-					if (!ok)
-						return null;
+					// TODO: verify that 'obj' variable can be removed
 				}
+				// TODO: verify that 'flag' variable can be removed
 				// transform the code into a lock statement:
 				LockStatement l = new LockStatement();
 				l.Expression = enter.Detach();
@@ -487,17 +477,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					},
 					TrueStatement = new AnyNode("dictCreation")
 				},
-				new VariableDeclarationStatement {
-					Type = new PrimitiveType("int"),
-					Variables = { new NamedNode("intVar", new VariableInitializer()) }
-				},
 				new IfElseStatement {
 					Condition = new Backreference("cachedDict").ToExpression().Invoke(
 						"TryGetValue",
 						new NamedNode("switchVar", new IdentifierExpression()),
 						new DirectionExpression {
 							FieldDirection = FieldDirection.Out,
-							Expression = new IdentifierExpressionBackreference("intVar")
+							Expression = new IdentifierExpression().WithName("intVar")
 						}),
 					TrueStatement = new BlockStatement {
 						Statements = {

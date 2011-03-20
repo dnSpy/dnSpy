@@ -92,14 +92,22 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						if (TryConvertAssignmentExpressionIntoVariableDeclaration((Expression)usingStmt.ResourceAcquisition, type, variableName))
 							continue;
 					}
-					foreach (BlockStatement subBlock in stmt.Children.OfType<BlockStatement>()) {
-						DeclareVariableInBlock(daa, subBlock, type, variableName, allowPassIntoLoops);
+					foreach (AstNode child in stmt.Children) {
+						BlockStatement subBlock = child as BlockStatement;
+						if (subBlock != null) {
+							DeclareVariableInBlock(daa, subBlock, type, variableName, allowPassIntoLoops);
+						} else if (HasNestedBlocks(child)) {
+							foreach (BlockStatement nestedSubBlock in child.Children.OfType<BlockStatement>()) {
+								DeclareVariableInBlock(daa, nestedSubBlock, type, variableName, allowPassIntoLoops);
+							}
+						}
 					}
 				}
 			} else {
 				// Try converting an assignment expression into a VariableDeclarationStatement
 				if (!TryConvertAssignmentExpressionIntoVariableDeclaration(declarationPoint, type, variableName)) {
 					// Declare the variable in front of declarationPoint
+					
 					block.Statements.InsertBefore(
 						declarationPoint,
 						new VariableDeclarationStatement((AstType)type.Clone(), variableName)
@@ -117,9 +125,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (ae != null && ae.Operator == AssignmentOperatorType.Assign) {
 					IdentifierExpression ident = ae.Left as IdentifierExpression;
 					if (ident != null && ident.Identifier == variableName) {
+						// We clone the right expression so that it doesn't get removed from the old ExpressionStatement,
+						// which might be still in use by the definite assignment graph.
 						declarationPoint.ReplaceWith(new VariableDeclarationStatement {
 						                             	Type = (AstType)type.Clone(),
-						                             	Variables = { new VariableInitializer(variableName, ae.Right.Detach()).CopyAnnotationsFrom(ae) }
+						                             	Variables = { new VariableInitializer(variableName, ae.Right.Clone()).CopyAnnotationsFrom(ae) }
 						                             }.CopyAnnotationsFrom(es).WithAnnotation(new DeclaredVariableAnnotation(es)));
 						return true;
 					}
@@ -136,7 +146,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (ident != null && ident.Identifier == variableName) {
 					expression.ReplaceWith(new VariableDeclarationStatement {
 					                       	Type = (AstType)type.Clone(),
-					                       	Variables = { new VariableInitializer(variableName, ae.Right.Detach()).CopyAnnotationsFrom(ae) }
+					                       	Variables = { new VariableInitializer(variableName, ae.Right.Clone()).CopyAnnotationsFrom(ae) }
 					                       }.WithAnnotation(declaredVariableAnnotation));
 					return true;
 				}
@@ -179,7 +189,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						return false;
 					}
 					// If we can move the variable into the sub-block, we need to ensure that the remaining code
-					// does not use the value that was assigend by the first sub-block
+					// does not use the value that was assigned by the first sub-block
 					Statement nextStatement = stmt.NextStatement;
 					// The next statement might be a variable declaration that we inserted, and thus does not exist
 					// in the definite assignment graph. Thus we need to look up the corresponding instruction
@@ -239,12 +249,26 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 			}
 			
-			// We can move the variable into a sub-block only if the variable is used in only that sub-block
+			// We can move the variable into a sub-block only if the variable is used in only that sub-block (and not in expressions such as the loop condition)
 			for (AstNode child = stmt.FirstChild; child != null; child = child.NextSibling) {
-				if (!(child is BlockStatement) && UsesVariable(child, variableName))
-					return false;
+				if (!(child is BlockStatement) && UsesVariable(child, variableName)) {
+					if (HasNestedBlocks(child)) {
+						// catch clauses/switch sections can contain nested blocks
+						for (AstNode grandchild = child.FirstChild; grandchild != null; grandchild = grandchild.NextSibling) {
+							if (!(grandchild is BlockStatement) && UsesVariable(grandchild, variableName))
+								return false;
+						}
+					} else {
+						return false;
+					}
+				}
 			}
 			return true;
+		}
+		
+		static bool HasNestedBlocks(AstNode node)
+		{
+			return node is CatchClause || node is SwitchSection;
 		}
 		
 		static bool UsesVariable(AstNode node, string variableName)
@@ -276,6 +300,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							return false; // no need to introduce the variable here
 					}
 				}
+			}
+			
+			CatchClause catchClause = node as CatchClause;
+			if (catchClause != null && catchClause.VariableName == variableName) {
+				return false; // no need to introduce the variable here
 			}
 			
 			for (AstNode child = node.FirstChild; child != null; child = child.NextSibling) {

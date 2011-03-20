@@ -88,9 +88,11 @@ namespace ICSharpCode.Decompiler.Ast
 			context.CancellationToken.ThrowIfCancellationRequested();
 			Ast.BlockStatement astBlock = TransformBlock(ilMethod);
 			CommentStatement.ReplaceAll(astBlock); // convert CommentStatements to Comments
+			
+			Statement insertionPoint = astBlock.Statements.FirstOrDefault();
 			foreach (ILVariable v in localVariablesToDefine) {
 				var newVarDecl = new VariableDeclarationStatement(AstBuilder.ConvertType(v.Type), v.Name);
-				astBlock.Statements.InsertAfter(null, newVarDecl);
+				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
 			
 			return astBlock;
