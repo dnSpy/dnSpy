@@ -559,11 +559,14 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			{
 				IdentifierExpression ident = left as IdentifierExpression;
 				if (ident != null && ident.Identifier == analysis.variableName) {
-					right.AcceptVisitor(this, initialStatus);
+					// right==null is special case when handling 'out' expressions
+					if (right != null)
+						right.AcceptVisitor(this, initialStatus);
 					return DefiniteAssignmentStatus.DefinitelyAssigned;
 				} else {
 					DefiniteAssignmentStatus status = left.AcceptVisitor(this, initialStatus);
-					status = right.AcceptVisitor(this, CleanSpecialValues(status));
+					if (right != null)
+						status = right.AcceptVisitor(this, CleanSpecialValues(status));
 					return CleanSpecialValues(status);
 				}
 			}
