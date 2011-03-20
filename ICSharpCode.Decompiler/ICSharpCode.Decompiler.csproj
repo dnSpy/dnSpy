@@ -53,13 +53,13 @@
     <Compile Include="Ast\AstMethodBodyBuilder.cs" />
     <Compile Include="Ast\CecilTypeResolveContext.cs" />
     <Compile Include="Ast\CommentStatement.cs" />
-    <Compile Include="Ast\DeclareVariableInSmallestScope.cs" />
     <Compile Include="Ast\DecompilerContext.cs" />
     <Compile Include="Ast\NameVariables.cs" />
     <Compile Include="Ast\NRefactoryExtensions.cs" />
     <Compile Include="Ast\TextOutputFormatter.cs" />
     <Compile Include="Ast\Transforms\ContextTrackingVisitor.cs" />
     <Compile Include="Ast\Transforms\ConvertConstructorCallIntoInitializer.cs" />
+    <Compile Include="Ast\Transforms\DeclareVariables.cs" />
     <Compile Include="Ast\Transforms\DelegateConstruction.cs" />
     <Compile Include="Ast\Transforms\IntroduceUnsafeModifier.cs" />
     <Compile Include="Ast\Transforms\IntroduceUsingDeclarations.cs" />
