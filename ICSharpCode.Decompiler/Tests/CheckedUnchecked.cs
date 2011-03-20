@@ -19,6 +19,14 @@ public class CheckedUnchecked
 		int u5 = unchecked(a % b);
 	}
 	
+	public void Cast(int a)
+	{
+		short c1 = checked((short)a);
+		short u1 = unchecked((short)a);
+		byte c2 = checked((byte)a);
+		byte u2 = unchecked((byte)a);
+	}
+	
 	public void ForWithCheckedIteratorAndUncheckedBody(int n)
 	{
 		checked {

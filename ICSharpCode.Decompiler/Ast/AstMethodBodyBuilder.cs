@@ -369,7 +369,14 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Conv_U8:
 				case ILCode.Conv_I:
 				case ILCode.Conv_U:
-					return arg1; // conversion is handled by Convert() function using the info from type analysis
+					{
+						// conversion was handled by Convert() function using the info from type analysis
+						CastExpression cast = arg1 as CastExpression;
+						if (cast != null) {
+							cast.AddAnnotation(AddCheckedBlocks.UncheckedAnnotation);
+						}
+						return arg1;
+					}
 					case ILCode.Conv_R4:   return arg1.CastTo(typeof(float));
 					case ILCode.Conv_R8:   return arg1.CastTo(typeof(double));
 					case ILCode.Conv_R_Un: return arg1.CastTo(typeof(double)); // TODO
@@ -389,7 +396,14 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Conv_Ovf_U2_Un:
 				case ILCode.Conv_Ovf_U4_Un:
 				case ILCode.Conv_Ovf_U8_Un:
-					return arg1; // conversion was handled by Convert() function using the info from type analysis
+					{
+						// conversion was handled by Convert() function using the info from type analysis
+						CastExpression cast = arg1 as CastExpression;
+						if (cast != null) {
+							cast.AddAnnotation(AddCheckedBlocks.CheckedAnnotation);
+						}
+						return arg1;
+					}
 					case ILCode.Conv_Ovf_I:     return arg1.CastTo(typeof(IntPtr)); // TODO
 					case ILCode.Conv_Ovf_U:     return arg1.CastTo(typeof(UIntPtr));
 					case ILCode.Conv_Ovf_I_Un:  return arg1.CastTo(typeof(IntPtr));

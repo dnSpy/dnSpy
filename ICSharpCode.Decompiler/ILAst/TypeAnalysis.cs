@@ -689,7 +689,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			} else if (targetBitSize >= NativeInt && argType is PointerType) {
 				return argType;
 			}
-			return (GetInformationAmount(expectedType) == targetBitSize && IsSigned(expectedType) == targetSigned) ? expectedType : targetType;
+			TypeReference resultType = (GetInformationAmount(expectedType) == targetBitSize && IsSigned(expectedType) == targetSigned) ? expectedType : targetType;
+			arg.ExpectedType = resultType; // store the expected type in the argument so that AstMethodBodyBuilder will insert a cast
+			return resultType;
 		}
 		
 		static TypeReference GetFieldType(FieldReference fieldReference)
