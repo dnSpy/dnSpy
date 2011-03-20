@@ -39,6 +39,7 @@ namespace ICSharpCode.ILSpy
 	{
 		ObservableCollection<GacEntry> gacEntries = new ObservableCollection<GacEntry>();
 		ObservableCollection<GacEntry> filteredEntries = new ObservableCollection<GacEntry>();
+		Predicate<GacEntry> filterMethod = _ => true;
 		volatile bool cancelFetchThread;
 
 		public OpenFromGacDialog()
@@ -62,6 +63,7 @@ namespace ICSharpCode.ILSpy
 		{
 			readonly AssemblyNameReference r;
 			readonly string fileName;
+			string formattedVersion;
 
 			public GacEntry(AssemblyNameReference r, string fileName)
 			{
@@ -83,6 +85,14 @@ namespace ICSharpCode.ILSpy
 
 			public Version Version {
 				get { return r.Version; }
+			}
+
+			public string FormattedVersion {
+				get {
+					if (formattedVersion == null)
+						formattedVersion = Version.ToString();
+					return formattedVersion;
+				}
 			}
 
 			public string Culture {
@@ -132,20 +142,28 @@ namespace ICSharpCode.ILSpy
 		void AddNewEntry(GacEntry entry)
 		{
 			gacEntries.Add(entry);
-			string filter = filterTextBox.Text;
-			if (string.IsNullOrEmpty(filter) || entry.ShortName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0)
+			if (filterMethod(entry))
 				filteredEntries.Add(entry);
 		}
 		#endregion
 
 		void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			string filter = filterTextBox.Text;
-			filteredEntries.Clear();
-			foreach (GacEntry entry in gacEntries) {
-				if (string.IsNullOrEmpty(filter) || entry.ShortName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0)
-					filteredEntries.Add(entry);
+			string filterString = filterTextBox.Text.Trim();
+			if (filterString.Length == 0)
+				filterMethod = _ => true;
+			else {
+				var elements = filterString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				filterMethod = entry => elements.All(el => Contains(entry.FullName, el) || Contains(entry.FormattedVersion, el));
 			}
+
+			filteredEntries.Clear();
+			filteredEntries.AddRange(gacEntries.Where(entry => filterMethod(entry)));
+		}
+
+		static bool Contains(string s, string subString)
+		{
+			return s.IndexOf(subString, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
 		void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
