@@ -107,6 +107,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformDecimalCtorToConstant) return;
 					modified |= block.RunOptimization(TransformDecimalCtorToConstant);
+					modified |= block.RunOptimization(SimplifyLdcI4ConvI8);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyLdObjAndStObj) return;
 					modified |= block.RunOptimization(SimplifyLdObjAndStObj);
