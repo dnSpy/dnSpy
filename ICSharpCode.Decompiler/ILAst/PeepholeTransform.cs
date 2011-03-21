@@ -13,6 +13,7 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public partial class ILAstOptimizer
 	{
+		#region TransformDecimalCtorToConstant
 		static bool TransformDecimalCtorToConstant(List<ILNode> body, ILExpression expr, int pos)
 		{
 			MethodReference r;
@@ -52,7 +53,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			return modified;
 		}
+		#endregion
 		
+		#region SimplifyLdObjAndStObj
 		static bool SimplifyLdObjAndStObj(List<ILNode> body, ILExpression expr, int pos)
 		{
 			bool modified = false;
@@ -66,17 +69,17 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILCode? newCode = null;
 			if (expr.Match(ILCode.Stobj, out type, out arg, out arg2)) {
 				switch (arg.Code) {
-					case ILCode.Ldelema: newCode = ILCode.Stelem_Any; break;
-					case ILCode.Ldloca:  newCode = ILCode.Stloc; break;
-					case ILCode.Ldflda:  newCode = ILCode.Stfld; break;
-					case ILCode.Ldsflda: newCode = ILCode.Stsfld; break;
+						case ILCode.Ldelema: newCode = ILCode.Stelem_Any; break;
+						case ILCode.Ldloca:  newCode = ILCode.Stloc; break;
+						case ILCode.Ldflda:  newCode = ILCode.Stfld; break;
+						case ILCode.Ldsflda: newCode = ILCode.Stsfld; break;
 				}
 			} else if (expr.Match(ILCode.Ldobj, out type, out arg)) {
 				switch (arg.Code) {
-					case ILCode.Ldelema: newCode = ILCode.Ldelem_Any; break;
-					case ILCode.Ldloca:  newCode = ILCode.Ldloc; break;
-					case ILCode.Ldflda:  newCode = ILCode.Ldfld; break;
-					case ILCode.Ldsflda: newCode = ILCode.Ldsfld; break;
+						case ILCode.Ldelema: newCode = ILCode.Ldelem_Any; break;
+						case ILCode.Ldloca:  newCode = ILCode.Ldloc; break;
+						case ILCode.Ldflda:  newCode = ILCode.Ldfld; break;
+						case ILCode.Ldsflda: newCode = ILCode.Ldsfld; break;
 				}
 			}
 			if (newCode != null) {
@@ -89,6 +92,26 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			return modified;
 		}
+		#endregion
+		
+		#region SimplifyLdcI4ConvI8
+		static bool SimplifyLdcI4ConvI8(List<ILNode> body, ILExpression expr, int pos)
+		{
+			ILExpression ldc;
+			int val;
+			if (expr.Match(ILCode.Conv_I8, out ldc) && ldc.Match(ILCode.Ldc_I4, out val)) {
+				expr.Code = ILCode.Ldc_I8;
+				expr.Operand = (long)val;
+				expr.Arguments.Clear();
+				return true;
+			}
+			bool modified = false;
+			foreach(ILExpression arg in expr.Arguments) {
+				modified |= SimplifyLdcI4ConvI8(null, arg, -1);
+			}
+			return modified;
+		}
+		#endregion
 		
 		#region CachedDelegateInitialization
 		void CachedDelegateInitialization(ILBlock block, ref int i)

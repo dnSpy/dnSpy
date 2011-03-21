@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckedUnchecked.cs" />
     <Compile Include="Switch.cs" />
     <Compile Include="UnsafeCode.cs" />
     <Compile Include="YieldReturn.cs" />

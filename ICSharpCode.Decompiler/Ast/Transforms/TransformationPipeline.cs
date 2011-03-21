@@ -22,6 +22,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				new PatternStatementTransform(context),
 				new ReplaceMethodCallsWithOperators(),
 				new IntroduceUnsafeModifier(),
+				new AddCheckedBlocks(),
 				new DeclareVariables(context), // should run after most transforms that modify statements
 				new ConvertConstructorCallIntoInitializer(), // must run after DeclareVariables
 				new IntroduceUsingDeclarations(context)
