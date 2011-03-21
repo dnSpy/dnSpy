@@ -27,6 +27,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// First determine all the namespaces that need to be imported:
 			compilationUnit.AcceptVisitor(this, null);
 			
+			if (importedNamespaces.Count == 0) {
+				// abort when no namespaces have to be imported
+				return;
+			}
+			
 			importedNamespaces.Add("System"); // always import System, even when not necessary
 			
 			// Now add using declarations for those namespaces:

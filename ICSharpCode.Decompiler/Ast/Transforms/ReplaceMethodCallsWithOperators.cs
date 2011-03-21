@@ -140,6 +140,36 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 		}
 		
+		/// <summary>
+		/// This annotation is used to convert a compound assignment "a += 2;" or increment operator "a++;"
+		/// back to the original "a = a + 2;". This is sometimes necessary when the checked/unchecked semantics
+		/// cannot be guaranteed otherwise (see CheckedUnchecked.ForWithCheckedInitializerAndUncheckedIterator test)
+		/// </summary>
+		public class RestoreOriginalAssignOperatorAnnotation
+		{
+			readonly BinaryOperatorExpression binaryOperatorExpression;
+			
+			public RestoreOriginalAssignOperatorAnnotation(BinaryOperatorExpression binaryOperatorExpression)
+			{
+				this.binaryOperatorExpression = binaryOperatorExpression;
+			}
+			
+			public AssignmentExpression Restore(Expression expression)
+			{
+				expression.RemoveAnnotations<RestoreOriginalAssignOperatorAnnotation>();
+				AssignmentExpression assign = expression as AssignmentExpression;
+				if (assign == null) {
+					UnaryOperatorExpression uoe = (UnaryOperatorExpression)expression;
+					assign = new AssignmentExpression(uoe.Expression.Detach(), new PrimitiveExpression(1));
+				} else {
+					assign.Operator = AssignmentOperatorType.Assign;
+				}
+				binaryOperatorExpression.Right = assign.Right.Detach();
+				assign.Right = binaryOperatorExpression;
+				return assign;
+			}
+		}
+		
 		public override object VisitAssignmentExpression(AssignmentExpression assignment, object data)
 		{
 			base.VisitAssignmentExpression(assignment, data);
@@ -183,6 +213,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						// If we found a shorter operator, get rid of the BinaryOperatorExpression:
 						assignment.CopyAnnotationsFrom(binary);
 						assignment.Right = binary.Right;
+						assignment.AddAnnotation(new RestoreOriginalAssignOperatorAnnotation(binary));
 					}
 				}
 			}
