@@ -190,16 +190,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			// stloc(v, exprVar)
 			// ->
 			// exprVar = stloc(v, ...))
-			ILExpression nextExpr = body.ElementAtOrDefault(pos + 1) as ILExpression;
 			ILVariable exprVar;
 			ILExpression initializer;
+			if (!(expr.Match(ILCode.Stloc, out exprVar, out initializer) && exprVar.IsGenerated))
+				return false;
+			ILExpression nextExpr = body.ElementAtOrDefault(pos + 1) as ILExpression;
 			ILVariable v;
 			ILExpression stLocArg;
-			if (expr.Match(ILCode.Stloc, out exprVar, out initializer) &&
-			    exprVar.IsGenerated &&
-			    nextExpr.Match(ILCode.Stloc, out v, out stLocArg) &&
-			    stLocArg.Match(ILCode.Ldloc, exprVar))
-			{
+			if (nextExpr.Match(ILCode.Stloc, out v, out stLocArg) && stLocArg.MatchLdloc(exprVar)) {
 				ILExpression store2 = body.ElementAtOrDefault(pos + 2) as ILExpression;
 				if (StoreCanBeConvertedToAssignment(store2, exprVar)) {
 					// expr_44 = ...
@@ -224,6 +222,18 @@ namespace ICSharpCode.Decompiler.ILAst
 				nextExpr.Arguments[0] = initializer;
 				((ILExpression)body[pos]).Arguments[0] = nextExpr;
 				return true;
+			} else {
+				// exprVar = ...
+				// stsfld(fld, exprVar)
+				// ->
+				// exprVar = stsfld(fld, ...))
+				FieldReference field;
+				if (nextExpr.Match(ILCode.Stsfld, out field, out stLocArg) && stLocArg.MatchLdloc(exprVar)) {
+					body.RemoveAt(pos + 1); // remove stfld
+					nextExpr.Arguments[0] = initializer;
+					((ILExpression)body[pos]).Arguments[0] = nextExpr;
+					return true;
+				}
 			}
 			return false;
 		}

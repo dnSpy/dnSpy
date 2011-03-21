@@ -152,7 +152,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				head.Body[head.Body.Count - 3].Match(ILCode.Stloc, out v, out leftExpr) &&
 			    leftExpr.Match(ILCode.Ldloc, out leftVar) &&
 			    head.MatchLastAndBr(ILCode.Brtrue, out endBBLabel, out leftExpr2, out rightBBLabel) &&
-			    leftExpr2.Match(ILCode.Ldloc, leftVar) &&
+			    leftExpr2.MatchLdloc(leftVar) &&
 			    labelToBasicBlock.TryGetValue(rightBBLabel, out rightBB) &&
 			    rightBB.MatchSingleAndBr(ILCode.Stloc, out v2, out rightExpr, out endBBLabel2) &&
 			    v == v2 &&

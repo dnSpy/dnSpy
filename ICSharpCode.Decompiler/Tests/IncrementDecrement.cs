@@ -10,6 +10,8 @@ public class IncrementDecrement
 		public int Field;
 	}
 	
+	public static int StaticField;
+	
 	private IncrementDecrement.MutableClass M()
 	{
 		return new IncrementDecrement.MutableClass();
@@ -35,9 +37,19 @@ public class IncrementDecrement
 		return ++m.Field;
 	}
 	
+	public int PreIncrementStaticField()
+	{
+		return ++IncrementDecrement.StaticField;
+	}
+	
 	public int CompoundMultiplyInstanceField()
 	{
 		return this.M().Field *= 10;
+	}
+	
+	public int CompoundXorStaticField()
+	{
+		return IncrementDecrement.StaticField ^= 100;
 	}
 	
 	public int CompoundMultiplyArrayElement1(int[] array, int pos)
