@@ -54,6 +54,11 @@ namespace Debugger
 		{
 			foreach(Process process in this.Debugger.Processes) {
 				foreach(Module module in process.Modules) {
+					var currentModuleTypes = module.GetNamesOfDefinedTypes();
+					// set the breakpoint only if the module contains the type
+					if (!currentModuleTypes.Contains(breakpoint.TypeName))
+						continue;
+					
 					breakpoint.SetBreakpoint(module);
 				}
 			}
@@ -80,7 +85,7 @@ namespace Debugger
 			base.OnRemoved(breakpoint);
 		}
 		
-		internal void SetInModule(Module module) 
+		internal void SetInModule(Module module)
 		{
 			// This is in case that the client modifies the collection as a response to set breakpoint
 			// NB: If client adds new breakpoint, it will be set directly as a result of his call, not here (because module is already loaded)

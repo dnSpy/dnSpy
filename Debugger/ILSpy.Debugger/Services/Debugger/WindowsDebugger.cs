@@ -746,11 +746,15 @@ namespace ILSpy.Debugger.Services
 
 		void debuggedProcess_ModulesAdded(object sender, ModuleEventArgs e)
 		{
+			var currentModuleTypes = e.Module.GetNamesOfDefinedTypes();
 			foreach (var bookmark in DebuggerService.Breakpoints) {
 				var breakpoint =
 					debugger.Breakpoints.FirstOrDefault(
 						b => b.Line == bookmark.LineNumber && b.TypeName == bookmark.Type.FullName);
 				if (breakpoint == null)
+					continue;
+				// set the breakpoint only if the module contains the type
+				if (!currentModuleTypes.Contains(breakpoint.TypeName))
 					continue;
 				
 				breakpoint.SetBreakpoint(e.Module);
