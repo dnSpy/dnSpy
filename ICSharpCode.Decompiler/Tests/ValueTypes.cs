@@ -22,70 +22,71 @@ public static class ValueTypes
 		public void MethodCalls()
 		{
 			this.SetField();
-			Test(this);
-			Test(ref this);
+			ValueTypes.S.Test(this);
+			ValueTypes.S.Test(ref this);
 		}
 		
-		static void Test(S byVal)
+		private static void Test(ValueTypes.S byVal)
 		{
 		}
 		
-		static void Test(ref S byRef)
+		private static void Test(ref ValueTypes.S byRef)
 		{
 		}
 	}
 	
-	public static S InitObj1()
+	public static ValueTypes.S InitObj1()
 	{
-		S s = default(S);
-		return s;
+		ValueTypes.S result = default(ValueTypes.S);
+		ValueTypes.MakeArray();
+		return result;
 	}
 	
-	public static S InitObj2()
+	public static ValueTypes.S InitObj2()
 	{
-		return default(S);
+		return default(ValueTypes.S);
 	}
 	
-	public static void InitObj3(out S p)
+	public static void InitObj3(out ValueTypes.S p)
 	{
-		p = default(S);
+		p = default(ValueTypes.S);
 	}
 	
-	public static S CallValueTypeCtor1()
+	public static ValueTypes.S CallValueTypeCtor1()
 	{
-		return new S(10);
+		return new ValueTypes.S(10);
 	}
 	
-	public static S CallValueTypeCtor2()
+	public static ValueTypes.S CallValueTypeCtor2()
 	{
-		S s = new S(10);
-		return s;
+		ValueTypes.S result = new ValueTypes.S(10);
+		return result;
 	}
 	
-	public static S Copy1(S p)
+	public static ValueTypes.S Copy1(ValueTypes.S p)
 	{
 		return p;
 	}
 	
-	public static S Copy2(ref S p)
+	public static ValueTypes.S Copy2(ref ValueTypes.S p)
 	{
 		return p;
 	}
 	
-	public static void Copy3(S p, out S o)
+	public static void Copy3(ValueTypes.S p, out ValueTypes.S o)
 	{
 		o = p;
 	}
 	
-	public static void Copy4(ref S p, out S o)
+	public static void Copy4(ref ValueTypes.S p, out ValueTypes.S o)
 	{
 		o = p;
 	}
 	
-	public static void Copy4b(ref S p, out S o)
+	public static void Copy4b(ref ValueTypes.S p, out ValueTypes.S o)
 	{
 		// test passing through by-ref arguments
-		Copy4(ref p, out o);
+		ValueTypes.Copy4(ref p, out o);
 	}
 	
 	public static void Issue56(int i, out string str)
@@ -94,20 +95,20 @@ public static class ValueTypes
 		str += i.ToString();
 	}
 	
-	public static void CopyAroundAndModifyField(S s)
+	public static void CopyAroundAndModifyField(ValueTypes.S s)
 	{
-		S locS = s;
-		locS.Field += 10;
-		s = locS;
+		ValueTypes.S s2 = s;
+		s2.Field += 10;
+		s = s2;
 	}
 	
-	static int[] MakeArray()
+	private static int[] MakeArray()
 	{
 		return null;
 	}
 	
 	public static void IncrementArrayLocation()
 	{
-		MakeArray()[Environment.TickCount]++;
+		ValueTypes.MakeArray()[Environment.TickCount]++;
 	}
 }

@@ -7,42 +7,60 @@ public class ExceptionHandling
 {
 	public void MethodEndingWithEndFinally()
 	{
-		try {
+		try
+		{
 			throw null;
-		} finally {
+		}
+		finally
+		{
 			Console.WriteLine();
 		}
 	}
 	
 	public void MethodEndingWithRethrow()
 	{
-		try {
+		try
+		{
 			throw null;
-		} catch {
+		}
+		catch
+		{
 			throw;
 		}
 	}
 	
 	public void TryCatchFinally()
 	{
-		try {
+		try
+		{
 			Console.WriteLine("Try");
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			Console.WriteLine(ex.Message);
-		} finally {
+		}
+		finally
+		{
 			Console.WriteLine("Finally");
 		}
 	}
 	
 	public void TryCatchMultipleHandlers()
 	{
-		try {
+		try
+		{
 			Console.WriteLine("Try");
-		} catch (InvalidOperationException ex) {
+		}
+		catch (InvalidOperationException ex)
+		{
 			Console.WriteLine(ex.Message);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			Console.WriteLine(ex.Message);
-		} catch {
+		}
+		catch
+		{
 			Console.WriteLine("other");
 		}
 	}

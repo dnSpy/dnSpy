@@ -4,7 +4,7 @@
     <ProjectGuid>{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.Decompiler.Tests</RootNamespace>
     <AssemblyName>ICSharpCode.Decompiler.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>

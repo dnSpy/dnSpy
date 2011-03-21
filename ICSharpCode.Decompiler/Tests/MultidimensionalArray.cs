@@ -1,8 +1,6 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
-using System;
-
 public static class MultidimensionalArray
 {
 	internal class Generic<T, S> where T : new()
@@ -12,16 +10,22 @@ public static class MultidimensionalArray
 
 		public T this[int i, int j]
 		{
-			get { return a[i, j]; }
-			set { a[i, j] = value; }
+			get
+			{
+				return this.a[i, j];
+			}
+			set
+			{
+				this.a[i, j] = value;
+			}
 		}
 		
 		public void TestB(S x, ref S y)
 		{
-			b[5, 3] = new S[10];
-			b[5, 3][0] = default(S);
-			b[5, 3][1] = x;
-			b[5, 3][2] = y;
+			this.b[5, 3] = new S[10];
+			this.b[5, 3][0] = default(S);
+			this.b[5, 3][1] = x;
+			this.b[5, 3][2] = y;
 		}
 	}
 	

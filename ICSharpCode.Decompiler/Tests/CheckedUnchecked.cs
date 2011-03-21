@@ -1,39 +1,36 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
-using System;
-
 public class CheckedUnchecked
 {
-	public void Operators(int a, int b)
+	public int Operators(int a, int b)
 	{
-		int c1 = checked(a + b);
-		int u1 = unchecked(a + b);
-		int c2 = checked(a - b);
-		int u2 = unchecked(a - b);
-		int c3 = checked(a * b);
-		int u3 = unchecked(a * b);
-		int c4 = checked(a / b);
-		int u4 = unchecked(a / b);
-		int c5 = checked(a % b);
-		int u5 = unchecked(a % b);
+		int num = checked(a + b);
+		int num2 = a + b;
+		int num3 = checked(a - b);
+		int num4 = a - b;
+		int num5 = checked(a * b);
+		int num6 = a * b;
+		int num7 = a / b;
+		int num8 = a % b;
+		// The division operators / and % only exist in one form (checked vs. unchecked doesn't matter for them)
+		return num * num2 * num3 * num4 * num5 * num6 * num7 * num8;
 	}
 	
-	public void Cast(int a)
+	public int Cast(int a)
 	{
-		short c1 = checked((short)a);
-		short u1 = unchecked((short)a);
-		byte c2 = checked((byte)a);
-		byte u2 = unchecked((byte)a);
+		short num = checked((short)a);
+		short num2 = (short)a;
+		byte b = checked((byte)a);
+		byte b2 = (byte)a;
+		return num * num2 * b * b2;
 	}
 	
 	public void ForWithCheckedIteratorAndUncheckedBody(int n)
 	{
 		checked {
 			for (int i = n + 1; i < n + 1; i++) {
-				unchecked {
-					n = i * i;
-				}
+				n = unchecked(i * i);
 			}
 		}
 	}
