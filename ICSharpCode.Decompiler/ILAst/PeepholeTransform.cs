@@ -240,25 +240,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		bool StoreCanBeConvertedToAssignment(ILExpression store, ILVariable exprVar)
 		{
-			if (store != null && (store.Code == ILCode.Stloc || store.Code == ILCode.Stfld || store.Code == ILCode.Stsfld || IsArrayStore(store.Code))) {
+			if (store != null && (store.Code == ILCode.Stloc || store.Code == ILCode.Stfld || store.Code == ILCode.Stsfld || store.Code.IsStoreToArray())) {
 				return store.Arguments.Last().Code == ILCode.Ldloc && store.Arguments.Last().Operand == exprVar;
-			}
-			return false;
-		}
-		
-		static bool IsArrayStore(ILCode code)
-		{
-			switch (code) {
-				case ILCode.Stelem_Any:
-				case ILCode.Stelem_Ref:
-				case ILCode.Stelem_I:
-				case ILCode.Stelem_I1:
-				case ILCode.Stelem_I2:
-				case ILCode.Stelem_I4:
-				case ILCode.Stelem_I8:
-				case ILCode.Stelem_R4:
-				case ILCode.Stelem_R8:
-					return true;
 			}
 			return false;
 		}
@@ -284,7 +267,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		bool MakeCompoundAssignmentForArray(ILExpression expr)
 		{
 			// stelem.any(..., ldloc(array), ldloc(pos), <OP>(ldelem.any(int32, ldloc(array), ldloc(pos)), <RIGHT>))
-			if (!IsArrayStore(expr.Code))
+			if (!expr.Code.IsStoreToArray())
 				return false;
 			ILVariable arrayVar, posVar;
 			if (!(expr.Arguments[0].Match(ILCode.Ldloc, out arrayVar) && expr.Arguments[1].Match(ILCode.Ldloc, out posVar)))
@@ -351,6 +334,146 @@ namespace ICSharpCode.Decompiler.ILAst
 				default:
 					return false;
 			}
+		}
+		#endregion
+		
+		#region IntroducePostIncrement
+		bool IntroducePostIncrement(List<ILNode> body, ILExpression expr, int pos)
+		{
+			bool modified = IntroducePostIncrementForVariables(body, expr, pos);
+			Debug.Assert(body[pos] == expr); // IntroducePostIncrementForVariables shouldn't change the expression reference
+			ILExpression newExpr = IntroducePostIncrementForInstanceFields(expr);
+			if (newExpr != null) {
+				modified = true;
+				body[pos] = newExpr;
+				new ILInlining(method).InlineIfPossible(body, ref pos);
+			}
+			return modified;
+		}
+		
+		bool IntroducePostIncrementForVariables(List<ILNode> body, ILExpression expr, int pos)
+		{
+			// Works for variables and static fields
+			
+			// expr = ldloc(i)
+			// stloc(i, add(expr, ldc.i4(1)))
+			// ->
+			// expr = postincrement(1, ldloca(i))
+			ILVariable exprVar;
+			ILExpression exprInit;
+			if (!(expr.Match(ILCode.Stloc, out exprVar, out exprInit) && exprVar.IsGenerated))
+				return false;
+			if (!(exprInit.Code == ILCode.Ldloc || exprInit.Code == ILCode.Ldsfld))
+				return false;
+			
+			ILExpression nextExpr = body.ElementAtOrDefault(pos + 1) as ILExpression;
+			if (nextExpr == null || !(nextExpr.Code == (exprInit.Code == ILCode.Ldloc ? ILCode.Stloc : ILCode.Stsfld) && nextExpr.Operand == exprInit.Operand))
+				return false;
+			ILExpression addExpr = nextExpr.Arguments[0];
+			
+			int incrementAmount;
+			ILCode incrementCode = GetIncrementCode(addExpr, out incrementAmount);
+			if (!(incrementAmount != 0 && addExpr.Arguments[0].MatchLdloc(exprVar)))
+				return false;
+			
+			if (exprInit.Code == ILCode.Ldloc)
+				exprInit.Code = ILCode.Ldloca;
+			else
+				exprInit.Code = ILCode.Ldsflda;
+			expr.Arguments[0] = new ILExpression(incrementCode, incrementAmount, exprInit);
+			body.RemoveAt(pos + 1); // TODO ILRanges
+			return true;
+		}
+		
+		ILExpression IntroducePostIncrementForInstanceFields(ILExpression expr)
+		{
+			// stfld(field, ldloc(instance), add(stloc(helperVar, ldfld(field, ldloc(instance))), ldc.i4:int32(1)))
+			// ->
+			// stloc(helperVar, postincrement(1, ldflda(field, ldloc(instance))))
+			
+			// Also works for array elements:
+			
+			// stelem.any(T, ldloc(instance), ldloc(pos), add(stloc(helperVar, ldelem.any(T, ldloc(instance), ldloc(pos))), ldc.i4:int32(1)))
+			// ->
+			// stloc(helperVar, postincrement(1, ldelema(ldloc(instance), ldloc(pos))))
+			
+			if (!(expr.Code == ILCode.Stfld || expr.Code.IsStoreToArray()))
+				return null;
+			
+			// Test that all arguments except the last are ldloc (1 arg for fields, 2 args for arrays)
+			for (int i = 0; i < expr.Arguments.Count - 1; i++) {
+				if (expr.Arguments[i].Code != ILCode.Ldloc)
+					return null;
+			}
+			
+			ILExpression addExpr = expr.Arguments[expr.Arguments.Count - 1];
+			int incrementAmount;
+			ILCode incrementCode = GetIncrementCode(addExpr, out incrementAmount);
+			ILVariable helperVar;
+			ILExpression initialValue;
+			if (!(incrementAmount != 0 && addExpr.Arguments[0].Match(ILCode.Stloc, out helperVar, out initialValue)))
+				return null;
+			
+			if (expr.Code == ILCode.Stfld) {
+				if (!(initialValue.Code == ILCode.Ldfld && initialValue.Operand == expr.Operand))
+					return null;
+			} else {
+				if (!initialValue.Code.IsLoadFromArray())
+					return null;
+			}
+			Debug.Assert(expr.Arguments.Count - 1 == initialValue.Arguments.Count);
+			for (int i = 0; i < initialValue.Arguments.Count; i++) {
+				if (!initialValue.Arguments[i].MatchLdloc((ILVariable)expr.Arguments[i].Operand))
+					return null;
+			}
+			
+			ILExpression stloc = addExpr.Arguments[0];
+			stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue);
+			initialValue.Code = (expr.Code == ILCode.Stfld ? ILCode.Ldflda : ILCode.Ldelema);
+			// TODO: ILRanges?
+			
+			return stloc;
+		}
+		
+		ILCode GetIncrementCode(ILExpression addExpr, out int incrementAmount)
+		{
+			ILCode incrementCode;
+			bool decrement = false;
+			switch (addExpr.Code) {
+				case ILCode.Add:
+					incrementCode = ILCode.PostIncrement;
+					break;
+				case ILCode.Add_Ovf:
+					incrementCode = ILCode.PostIncrement_Ovf;
+					break;
+				case ILCode.Add_Ovf_Un:
+					incrementCode = ILCode.PostIncrement_Ovf_Un;
+					break;
+				case ILCode.Sub:
+					incrementCode = ILCode.PostIncrement;
+					decrement = true;
+					break;
+				case ILCode.Sub_Ovf:
+					incrementCode = ILCode.PostIncrement_Ovf;
+					decrement = true;
+					break;
+				case ILCode.Sub_Ovf_Un:
+					incrementCode = ILCode.PostIncrement_Ovf_Un;
+					decrement = true;
+					break;
+				default:
+					incrementAmount = 0;
+					return ILCode.Nop;
+			}
+			if (addExpr.Arguments[1].Match(ILCode.Ldc_I4, out incrementAmount)) {
+				if (incrementAmount == -1 || incrementAmount == 1) { // TODO pointer increment?
+					if (decrement)
+						incrementAmount = -incrementAmount;
+					return incrementCode;
+				}
+			}
+			incrementAmount = 0;
+			return ILCode.Nop;
 		}
 		#endregion
 		

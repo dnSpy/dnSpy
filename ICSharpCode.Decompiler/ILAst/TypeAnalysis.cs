@@ -431,6 +431,13 @@ namespace ICSharpCode.Decompiler.ILAst
 						return typeSystem.IntPtr;
 				case ILCode.Sizeof:
 					return typeSystem.Int32;
+				case ILCode.PostIncrement:
+				case ILCode.PostIncrement_Ovf:
+				case ILCode.PostIncrement_Ovf_Un:
+					{
+						ByReferenceType byReferenceType = InferTypeForExpression(expr.Arguments[0], null) as ByReferenceType;
+						return byReferenceType != null ? byReferenceType.ElementType : null;
+					}
 					#endregion
 					#region Arithmetic instructions
 				case ILCode.Not: // bitwise complement

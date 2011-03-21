@@ -284,6 +284,17 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Shr_Un:     return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.ShiftRight, arg2);
 					case ILCode.Neg:        return new Ast.UnaryOperatorExpression(UnaryOperatorType.Minus, arg1).WithAnnotation(AddCheckedBlocks.UncheckedAnnotation);
 					case ILCode.Not:        return new Ast.UnaryOperatorExpression(UnaryOperatorType.BitNot, arg1);
+				case ILCode.PostIncrement:
+				case ILCode.PostIncrement_Ovf:
+				case ILCode.PostIncrement_Ovf_Un:
+					{
+						if (arg1 is DirectionExpression)
+							arg1 = ((DirectionExpression)arg1).Expression.Detach();
+						var uoe = new Ast.UnaryOperatorExpression(
+							(int)byteCode.Operand > 0 ? UnaryOperatorType.PostIncrement : UnaryOperatorType.PostDecrement, arg1);
+						uoe.AddAnnotation((byteCode.Code == ILCode.PostIncrement) ? AddCheckedBlocks.UncheckedAnnotation : AddCheckedBlocks.CheckedAnnotation);
+						return uoe;
+					}
 					#endregion
 					#region Arrays
 				case ILCode.Newarr:

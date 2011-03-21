@@ -62,13 +62,28 @@ public class IncrementDecrement
 		return array[Environment.TickCount] *= 10;
 	}
 	
-//	public int PostIncrementInAddition(int i, int j)
-//	{
-//		return i++ + j;
-//	}
-//	
-//	public int PostDecrementArrayElement(int[] array, int pos)
-//	{
-//		return array[pos]--;
-//	}
+	public int PostIncrementInAddition(int i, int j)
+	{
+		return i++ + j;
+	}
+	
+	public int PostDecrementArrayElement(int[] array, int pos)
+	{
+		return array[pos]--;
+	}
+	
+	public int PostIncrementStaticField()
+	{
+		return IncrementDecrement.StaticField++;
+	}
+	
+	public int PostIncrementInstanceField(IncrementDecrement.MutableClass m)
+	{
+		return m.Field++;
+	}
+	
+	public int PostDecrementInstanceField()
+	{
+		return this.M().Field--;
+	}
 }

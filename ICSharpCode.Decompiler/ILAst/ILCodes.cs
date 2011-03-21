@@ -268,10 +268,27 @@ namespace ICSharpCode.Decompiler.ILAst
 		Ldc_Decimal,
 		YieldBreak,
 		YieldReturn,
-		DefaultValue, // default(T)
-		CompoundAssignment, // assignment combined with binary operator
-		
-		Pattern // used for ILAst pattern nodes
+		/// <summary>
+		/// Represents the 'default(T)' instruction.
+		/// </summary>
+		/// <remarks>Introduced by SimplifyLdObjAndStObj step</remarks>
+		DefaultValue,
+		/// <summary>
+		/// ILExpression with a single child: binary operator.
+		/// This expression means that the binary operator will also assign the new value to its left-hand side.
+		/// 'CompoundAssignment' must not be used for local variables, as inlining (and other) optimizations don't know that it modifies the variable.
+		/// </summary>
+		/// <remarks>Introduced by MakeCompoundAssignments step</remarks>
+		CompoundAssignment,
+		/// <summary>
+		/// Represents the post-increment operator.
+		/// The first argument is the address of the variable to increment (ldloca instruction).
+		/// The second arugment is the amount the variable is incremented by (ldc.i4 instruction)
+		/// </summary>
+		/// <remarks>Introduced by IntroducePostIncrement step</remarks>
+		PostIncrement,
+		PostIncrement_Ovf, // checked variant of PostIncrement
+		PostIncrement_Ovf_Un, // checked variant of PostIncrement, for unsigned integers
 	}
 	
 	public static class ILCodeUtil
