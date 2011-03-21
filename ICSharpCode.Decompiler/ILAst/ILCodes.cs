@@ -269,6 +269,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		YieldBreak,
 		YieldReturn,
 		DefaultValue, // default(T)
+		CompoundAssignment, // assignment combined with binary operator
 		
 		Pattern // used for ILAst pattern nodes
 	}

@@ -120,6 +120,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.MakeAssignmentExpression) return;
 					modified |= block.RunOptimization(MakeAssignmentExpression);
+					modified |= block.RunOptimization(MakeCompoundAssignments);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
 					modified |= new ILInlining(method).InlineAllInBlock(block);

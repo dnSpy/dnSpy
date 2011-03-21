@@ -470,6 +470,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
 					return InferTypeForExpression(expr.Arguments[0], typeSystem.UInt32);
+				case ILCode.CompoundAssignment:
+					{
+						TypeReference varType = InferTypeForExpression(expr.Arguments[0].Arguments[0], null);
+						if (forceInferChildren) {
+							InferTypeForExpression(expr.Arguments[0], varType);
+						}
+						return varType;
+					}
 					#endregion
 					#region Constant loading instructions
 				case ILCode.Ldnull:
@@ -553,14 +561,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Stelem_R8:
 				case ILCode.Stelem_Ref:
 				case ILCode.Stelem_Any:
-					if (forceInferChildren) {
+					{
 						ArrayType arrayType = InferTypeForExpression(expr.Arguments[0], null) as ArrayType;
-						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
-						if (arrayType != null) {
-							InferTypeForExpression(expr.Arguments[2], arrayType.ElementType);
+						if (forceInferChildren) {
+							InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
+							if (arrayType != null) {
+								InferTypeForExpression(expr.Arguments[2], arrayType.ElementType);
+							}
 						}
+						return arrayType != null ? arrayType.ElementType : null;
 					}
-					return null;
 					#endregion
 					#region Conversion instructions
 				case ILCode.Conv_I1:

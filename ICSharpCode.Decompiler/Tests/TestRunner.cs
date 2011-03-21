@@ -40,6 +40,12 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\Generics.cs");
 		}
 		
+		[Test]
+		public void IncrementDecrement()
+		{
+			TestFile(@"..\..\Tests\IncrementDecrement.cs");
+		}
+		
 		[Test, Ignore("Formatting issues (array initializers not on single line)")]
 		public void InitializerTests()
 		{

@@ -177,38 +177,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			BinaryOperatorExpression binary = assignment.Right as BinaryOperatorExpression;
 			if (binary != null && assignment.Operator == AssignmentOperatorType.Assign) {
 				if (IsWithoutSideEffects(assignment.Left) && assignment.Left.Match(binary.Left) != null) {
-					switch (binary.Operator) {
-						case BinaryOperatorType.Add:
-							assignment.Operator = AssignmentOperatorType.Add;
-							break;
-						case BinaryOperatorType.Subtract:
-							assignment.Operator = AssignmentOperatorType.Subtract;
-							break;
-						case BinaryOperatorType.Multiply:
-							assignment.Operator = AssignmentOperatorType.Multiply;
-							break;
-						case BinaryOperatorType.Divide:
-							assignment.Operator = AssignmentOperatorType.Divide;
-							break;
-						case BinaryOperatorType.Modulus:
-							assignment.Operator = AssignmentOperatorType.Modulus;
-							break;
-						case BinaryOperatorType.ShiftLeft:
-							assignment.Operator = AssignmentOperatorType.ShiftLeft;
-							break;
-						case BinaryOperatorType.ShiftRight:
-							assignment.Operator = AssignmentOperatorType.ShiftRight;
-							break;
-						case BinaryOperatorType.BitwiseAnd:
-							assignment.Operator = AssignmentOperatorType.BitwiseAnd;
-							break;
-						case BinaryOperatorType.BitwiseOr:
-							assignment.Operator = AssignmentOperatorType.BitwiseOr;
-							break;
-						case BinaryOperatorType.ExclusiveOr:
-							assignment.Operator = AssignmentOperatorType.ExclusiveOr;
-							break;
-					}
+					assignment.Operator = GetAssignmentOperatorForBinaryOperator(binary.Operator);
 					if (assignment.Operator != AssignmentOperatorType.Assign) {
 						// If we found a shorter operator, get rid of the BinaryOperatorExpression:
 						assignment.CopyAnnotationsFrom(binary);
@@ -227,13 +196,41 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						// so we can pick post-increment which is more commonly used (for (int i = 0; i < x; i++))
 						if (assignment.Parent is ExpressionStatement)
 							type = (assignment.Operator == AssignmentOperatorType.Add) ? UnaryOperatorType.PostIncrement : UnaryOperatorType.PostDecrement;
-						else 
+						else
 							type = (assignment.Operator == AssignmentOperatorType.Add) ? UnaryOperatorType.Increment : UnaryOperatorType.Decrement;
 						assignment.ReplaceWith(new UnaryOperatorExpression(type, assignment.Left.Detach()).CopyAnnotationsFrom(assignment));
 					}
 				}
 			}
 			return null;
+		}
+		
+		public static AssignmentOperatorType GetAssignmentOperatorForBinaryOperator(BinaryOperatorType bop)
+		{
+			switch (bop) {
+				case BinaryOperatorType.Add:
+					return AssignmentOperatorType.Add;
+				case BinaryOperatorType.Subtract:
+					return AssignmentOperatorType.Subtract;
+				case BinaryOperatorType.Multiply:
+					return AssignmentOperatorType.Multiply;
+				case BinaryOperatorType.Divide:
+					return AssignmentOperatorType.Divide;
+				case BinaryOperatorType.Modulus:
+					return AssignmentOperatorType.Modulus;
+				case BinaryOperatorType.ShiftLeft:
+					return AssignmentOperatorType.ShiftLeft;
+				case BinaryOperatorType.ShiftRight:
+					return AssignmentOperatorType.ShiftRight;
+				case BinaryOperatorType.BitwiseAnd:
+					return AssignmentOperatorType.BitwiseAnd;
+				case BinaryOperatorType.BitwiseOr:
+					return AssignmentOperatorType.BitwiseOr;
+				case BinaryOperatorType.ExclusiveOr:
+					return AssignmentOperatorType.ExclusiveOr;
+				default:
+					return AssignmentOperatorType.Assign;
+			}
 		}
 		
 		static bool IsWithoutSideEffects(Expression left)
@@ -245,6 +242,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			MemberReferenceExpression mre = left as MemberReferenceExpression;
 			if (mre != null)
 				return mre.Annotation<FieldReference>() != null && IsWithoutSideEffects(mre.Target);
+			IndexerExpression ie = left as IndexerExpression;
+			if (ie != null && ie.Annotation<ArrayAccessAnnotation>() != null)
+				return IsWithoutSideEffects(ie.Target) && ie.Arguments.All(IsWithoutSideEffects);
 			return false;
 		}
 		

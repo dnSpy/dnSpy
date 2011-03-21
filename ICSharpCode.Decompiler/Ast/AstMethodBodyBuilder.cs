@@ -16,12 +16,16 @@ namespace ICSharpCode.Decompiler.Ast
 	using Ast = ICSharpCode.NRefactory.CSharp;
 	using Cecil = Mono.Cecil;
 	
+	public class ArrayAccessAnnotation {}
+	
 	public class AstMethodBodyBuilder
 	{
 		MethodDefinition methodDef;
 		TypeSystem typeSystem;
 		DecompilerContext context;
 		HashSet<ILVariable> localVariablesToDefine = new HashSet<ILVariable>(); // local variables that are missing a definition
+		
+		static readonly ArrayAccessAnnotation arrayAccessAnnotation = new ArrayAccessAnnotation();
 		
 		/// <summary>
 		/// Creates the body for the method definition.
@@ -312,8 +316,9 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Ldelem_R8:
 				case ILCode.Ldelem_Ref:
 				case ILCode.Ldelem_Any:
-					return arg1.Indexer(arg2);
-					case ILCode.Ldelema: return MakeRef(arg1.Indexer(arg2));
+					return arg1.Indexer(arg2).WithAnnotation(arrayAccessAnnotation);
+				case ILCode.Ldelema:
+					return MakeRef(arg1.Indexer(arg2).WithAnnotation(arrayAccessAnnotation));
 				case ILCode.Stelem_I:
 				case ILCode.Stelem_I1:
 				case ILCode.Stelem_I2:
@@ -323,7 +328,19 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Stelem_R8:
 				case ILCode.Stelem_Ref:
 				case ILCode.Stelem_Any:
-					return new Ast.AssignmentExpression(arg1.Indexer(arg2), arg3);
+					return new Ast.AssignmentExpression(arg1.Indexer(arg2).WithAnnotation(arrayAccessAnnotation), arg3);
+				case ILCode.CompoundAssignment:
+					{
+						BinaryOperatorExpression boe = (BinaryOperatorExpression)arg1;
+						return new Ast.AssignmentExpression {
+							Left = boe.Left.Detach(),
+							Operator = ReplaceMethodCallsWithOperators.GetAssignmentOperatorForBinaryOperator(boe.Operator),
+							Right = boe.Right.Detach()
+						}.CopyAnnotationsFrom(boe);
+						// We do not mark the resulting assignment as RestoreOriginalAssignOperatorAnnotation, because
+						// the operator cannot be translated back to the expanded form (as the left-hand expression
+						// would be evaluated twice, and might have side-effects)
+					}
 					#endregion
 					#region Comparison
 					case ILCode.Ceq: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
