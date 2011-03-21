@@ -604,8 +604,14 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Conv_Ovf_U_Un:
 					return HandleConversion(NativeInt, false, expr.Arguments[0], expectedType, typeSystem.UIntPtr);
 				case ILCode.Conv_R4:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], typeSystem.Single);
+					}
 					return typeSystem.Single;
 				case ILCode.Conv_R8:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], typeSystem.Double);
+					}
 					return typeSystem.Double;
 				case ILCode.Conv_R_Un:
 					return (expectedType != null  && expectedType.MetadataType == MetadataType.Single) ? typeSystem.Single : typeSystem.Double;

@@ -377,9 +377,10 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						return arg1;
 					}
-					case ILCode.Conv_R4:   return arg1.CastTo(typeof(float));
-					case ILCode.Conv_R8:   return arg1.CastTo(typeof(double));
-					case ILCode.Conv_R_Un: return arg1.CastTo(typeof(double)); // TODO
+				case ILCode.Conv_R4:
+				case ILCode.Conv_R8:
+				case ILCode.Conv_R_Un: // TODO
+					return arg1;
 				case ILCode.Conv_Ovf_I1:
 				case ILCode.Conv_Ovf_I2:
 				case ILCode.Conv_Ovf_I4:
@@ -908,8 +909,10 @@ namespace ICSharpCode.Decompiler.Ast
 				{
 					return expr.CastTo(AstBuilder.ConvertType(actualType));
 				}
-
-				if (actualIsIntegerOrEnum && requiredIsIntegerOrEnum) {
+				
+				bool actualIsPrimitiveType = actualIsIntegerOrEnum || actualType.MetadataType == MetadataType.Single || actualType.MetadataType == MetadataType.Double;
+				bool requiredIsPrimitiveType = requiredIsIntegerOrEnum || reqType.MetadataType == MetadataType.Single || reqType.MetadataType == MetadataType.Double;
+				if (actualIsPrimitiveType && requiredIsPrimitiveType) {
 					if (actualType.FullName == reqType.FullName)
 						return expr;
 					return expr.CastTo(AstBuilder.ConvertType(reqType));
