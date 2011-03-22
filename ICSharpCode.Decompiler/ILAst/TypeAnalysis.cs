@@ -745,6 +745,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					TypeReference elementType = SubstituteTypeArgs(arrayType.ElementType, member);
 					if (elementType != arrayType.ElementType) {
 						ArrayType newArrayType = new ArrayType(elementType);
+						newArrayType.Dimensions.Clear(); // remove the single dimension that Cecil adds by default
 						foreach (ArrayDimension d in arrayType.Dimensions)
 							newArrayType.Dimensions.Add(d);
 						return newArrayType;
