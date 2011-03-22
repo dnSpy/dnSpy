@@ -16,16 +16,12 @@ namespace ICSharpCode.Decompiler.Ast
 	using Ast = ICSharpCode.NRefactory.CSharp;
 	using Cecil = Mono.Cecil;
 	
-	public class ArrayAccessAnnotation {}
-	
 	public class AstMethodBodyBuilder
 	{
 		MethodDefinition methodDef;
 		TypeSystem typeSystem;
 		DecompilerContext context;
 		HashSet<ILVariable> localVariablesToDefine = new HashSet<ILVariable>(); // local variables that are missing a definition
-		
-		static readonly ArrayAccessAnnotation arrayAccessAnnotation = new ArrayAccessAnnotation();
 		
 		/// <summary>
 		/// Creates the body for the method definition.
@@ -327,9 +323,9 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Ldelem_R8:
 				case ILCode.Ldelem_Ref:
 				case ILCode.Ldelem_Any:
-					return arg1.Indexer(arg2).WithAnnotation(arrayAccessAnnotation);
+					return arg1.Indexer(arg2);
 				case ILCode.Ldelema:
-					return MakeRef(arg1.Indexer(arg2).WithAnnotation(arrayAccessAnnotation));
+					return MakeRef(arg1.Indexer(arg2));
 				case ILCode.Stelem_I:
 				case ILCode.Stelem_I1:
 				case ILCode.Stelem_I2:
@@ -339,7 +335,7 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Stelem_R8:
 				case ILCode.Stelem_Ref:
 				case ILCode.Stelem_Any:
-					return new Ast.AssignmentExpression(arg1.Indexer(arg2).WithAnnotation(arrayAccessAnnotation), arg3);
+					return new Ast.AssignmentExpression(arg1.Indexer(arg2), arg3);
 				case ILCode.CompoundAssignment:
 					{
 						BinaryOperatorExpression boe = (BinaryOperatorExpression)arg1;
@@ -938,8 +934,10 @@ namespace ICSharpCode.Decompiler.Ast
 					return expr.CastTo(AstBuilder.ConvertType(actualType));
 				}
 				
-				bool actualIsPrimitiveType = actualIsIntegerOrEnum || actualType.MetadataType == MetadataType.Single || actualType.MetadataType == MetadataType.Double;
-				bool requiredIsPrimitiveType = requiredIsIntegerOrEnum || reqType.MetadataType == MetadataType.Single || reqType.MetadataType == MetadataType.Double;
+				bool actualIsPrimitiveType = actualIsIntegerOrEnum
+					|| (actualType != null && (actualType.MetadataType == MetadataType.Single || actualType.MetadataType == MetadataType.Double));
+				bool requiredIsPrimitiveType = requiredIsIntegerOrEnum 
+					|| (reqType != null && (reqType.MetadataType == MetadataType.Single || reqType.MetadataType == MetadataType.Double));
 				if (actualIsPrimitiveType && requiredIsPrimitiveType) {
 					if (actualType.FullName == reqType.FullName)
 						return expr;

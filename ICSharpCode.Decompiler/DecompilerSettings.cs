@@ -128,6 +128,18 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		bool usingDeclarations = true;
+		
+		public bool UsingDeclarations {
+			get { return usingDeclarations; }
+			set {
+				if (usingDeclarations != value) {
+					usingDeclarations = value;
+					OnPropertyChanged("UsingDeclarations");
+				}
+			}
+		}
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)

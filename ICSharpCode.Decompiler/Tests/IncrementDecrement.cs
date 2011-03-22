@@ -17,6 +17,11 @@ public class IncrementDecrement
 		return new IncrementDecrement.MutableClass();
 	}
 	
+	private unsafe int* GetPointer()
+	{
+		return null;
+	}
+	
 	public int PreIncrementInAddition(int i, int j)
 	{
 		return i + ++j;
@@ -42,6 +47,16 @@ public class IncrementDecrement
 		return ++IncrementDecrement.StaticField;
 	}
 	
+	public int PreIncrementByRef(ref int i)
+	{
+		return ++i;
+	}
+	
+	public unsafe int PreIncrementByPointer()
+	{
+		return ++(*this.GetPointer());
+	}
+	
 	public int CompoundMultiplyInstanceField()
 	{
 		return this.M().Field *= 10;
@@ -60,6 +75,16 @@ public class IncrementDecrement
 	public int CompoundMultiplyArrayElement2(int[] array)
 	{
 		return array[Environment.TickCount] *= 10;
+	}
+	
+	public int CompoundShiftByRef(ref int i)
+	{
+		return i <<= 2;
+	}
+	
+	public unsafe double CompoundDivideByPointer(double* ptr)
+	{
+		return *ptr /= 1.5;
 	}
 	
 	public int PostIncrementInAddition(int i, int j)
@@ -85,5 +110,15 @@ public class IncrementDecrement
 	public int PostDecrementInstanceField()
 	{
 		return this.M().Field--;
+	}
+	
+	public int PostIncrementByRef(ref int i)
+	{
+		return i++;
+	}
+	
+	public unsafe int PostIncrementByPointer()
+	{
+		return (*this.GetPointer())++;
 	}
 }

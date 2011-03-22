@@ -176,7 +176,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// Combine "x = x op y" into "x op= y"
 			BinaryOperatorExpression binary = assignment.Right as BinaryOperatorExpression;
 			if (binary != null && assignment.Operator == AssignmentOperatorType.Assign) {
-				if (IsWithoutSideEffects(assignment.Left) && assignment.Left.Match(binary.Left) != null) {
+				if (CanConvertToCompoundAssignment(assignment.Left) && assignment.Left.Match(binary.Left) != null) {
 					assignment.Operator = GetAssignmentOperatorForBinaryOperator(binary.Operator);
 					if (assignment.Operator != AssignmentOperatorType.Assign) {
 						// If we found a shorter operator, get rid of the BinaryOperatorExpression:
@@ -233,17 +233,23 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 		}
 		
-		static bool IsWithoutSideEffects(Expression left)
+		static bool CanConvertToCompoundAssignment(Expression left)
 		{
-			if (left is ThisReferenceExpression || left is IdentifierExpression || left is TypeReferenceExpression)
-				return true;
 			MemberReferenceExpression mre = left as MemberReferenceExpression;
 			if (mre != null)
-				return mre.Annotation<FieldReference>() != null && IsWithoutSideEffects(mre.Target);
+				return IsWithoutSideEffects(mre.Target);
 			IndexerExpression ie = left as IndexerExpression;
-			if (ie != null && ie.Annotation<ArrayAccessAnnotation>() != null)
+			if (ie != null)
 				return IsWithoutSideEffects(ie.Target) && ie.Arguments.All(IsWithoutSideEffects);
-			return false;
+			UnaryOperatorExpression uoe = left as UnaryOperatorExpression;
+			if (uoe != null && uoe.Operator == UnaryOperatorType.Dereference)
+				return IsWithoutSideEffects(uoe.Expression);
+			return IsWithoutSideEffects(left);
+		}
+		
+		static bool IsWithoutSideEffects(Expression left)
+		{
+			return left is ThisReferenceExpression || left is IdentifierExpression || left is TypeReferenceExpression;
 		}
 		
 		void IAstTransform.Run(AstNode node)

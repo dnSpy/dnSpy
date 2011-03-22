@@ -240,7 +240,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		bool StoreCanBeConvertedToAssignment(ILExpression store, ILVariable exprVar)
 		{
-			if (store != null && (store.Code == ILCode.Stloc || store.Code == ILCode.Stfld || store.Code == ILCode.Stsfld || store.Code.IsStoreToArray())) {
+			if (store != null && (store.Code == ILCode.Stloc || store.Code == ILCode.Stfld || store.Code == ILCode.Stsfld
+			                      || store.Code.IsStoreToArray() || store.Code == ILCode.Stobj))
+			{
 				return store.Arguments.Last().Code == ILCode.Ldloc && store.Arguments.Last().Operand == exprVar;
 			}
 			return false;
@@ -251,7 +253,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		bool MakeCompoundAssignments(List<ILNode> body, ILExpression expr, int pos)
 		{
 			bool modified = false;
-			modified |= MakeCompoundAssignmentForArray(expr);
+			modified |= MakeCompoundAssignmentForArrayOrPointerAccess(expr);
 			modified |= MakeCompoundAssignmentForInstanceField(expr);
 			// Static fields and local variables are not handled here - those are expressions without side effects
 			// and get handled by ReplaceMethodCallsWithOperators
@@ -264,26 +266,43 @@ namespace ICSharpCode.Decompiler.ILAst
 			return modified;
 		}
 		
-		bool MakeCompoundAssignmentForArray(ILExpression expr)
+		bool MakeCompoundAssignmentForArrayOrPointerAccess(ILExpression expr)
 		{
-			// stelem.any(..., ldloc(array), ldloc(pos), <OP>(ldelem.any(int32, ldloc(array), ldloc(pos)), <RIGHT>))
-			if (!expr.Code.IsStoreToArray())
+			// stelem.any(T, ldloc(array), ldloc(pos), <OP>(ldelem.any(T, ldloc(array), ldloc(pos)), <RIGHT>))
+			// or
+			// stobj(T, ldloc(ptr), <OP>(ldobj(T, ldloc(ptr)), <RIGHT>))
+			if (!(expr.Code.IsStoreToArray() || expr.Code == ILCode.Stobj))
 				return false;
-			ILVariable arrayVar, posVar;
-			if (!(expr.Arguments[0].Match(ILCode.Ldloc, out arrayVar) && expr.Arguments[1].Match(ILCode.Ldloc, out posVar)))
-				return false;
+			
+			// all arguments except the last (so either array+pos, or ptr):
+			bool hasGeneratedVar = false;
+			for (int i = 0; i < expr.Arguments.Count - 1; i++) {
+				ILVariable inputVar;
+				if (!expr.Arguments[i].Match(ILCode.Ldloc, out inputVar))
+					return false;
+				hasGeneratedVar |= inputVar.IsGenerated;
+			}
 			// At least one of the variables must be generated; otherwise we just keep the expanded form.
-			if (!(arrayVar.IsGenerated || posVar.IsGenerated))
+			// We do this because we want compound assignments to be represented in ILAst only when strictly necessary;
+			// other compound assignments will be introduced by ReplaceMethodCallsWithOperator
+			// (which uses a reversible transformation, see ReplaceMethodCallsWithOperator.RestoreOriginalAssignOperatorAnnotation)
+			if (!hasGeneratedVar)
 				return false;
-			ILExpression op = expr.Arguments[2];
+			
+			ILExpression op = expr.Arguments.Last();
 			if (!CanBeRepresentedAsCompoundAssignment(op.Code))
 				return false;
 			ILExpression ldelem = op.Arguments[0];
-			if (!(ldelem.Code == ILCode.Ldelem_Any && ldelem.Arguments[0].MatchLdloc(arrayVar) && ldelem.Arguments[1].MatchLdloc(posVar)))
+			if (ldelem.Code != (expr.Code == ILCode.Stobj ? ILCode.Ldobj : ILCode.Ldelem_Any))
 				return false;
+			Debug.Assert(ldelem.Arguments.Count == expr.Arguments.Count - 1);
+			for (int i = 0; i < ldelem.Arguments.Count; i++) {
+				if (!ldelem.Arguments[i].MatchLdloc((ILVariable)expr.Arguments[i].Operand))
+					return false;
+			}
 			expr.Code = ILCode.CompoundAssignment;
 			expr.Operand = null;
-			expr.Arguments.RemoveRange(0, 2);
+			expr.Arguments.RemoveRange(0, ldelem.Arguments.Count);
 			// result is "CompoundAssignment(<OP>(ldelem.any(...), <RIGHT>))"
 			return true;
 		}
@@ -391,16 +410,18 @@ namespace ICSharpCode.Decompiler.ILAst
 			// ->
 			// stloc(helperVar, postincrement(1, ldflda(field, ldloc(instance))))
 			
-			// Also works for array elements:
+			// Also works for array elements and pointers:
 			
 			// stelem.any(T, ldloc(instance), ldloc(pos), add(stloc(helperVar, ldelem.any(T, ldloc(instance), ldloc(pos))), ldc.i4:int32(1)))
 			// ->
 			// stloc(helperVar, postincrement(1, ldelema(ldloc(instance), ldloc(pos))))
 			
-			if (!(expr.Code == ILCode.Stfld || expr.Code.IsStoreToArray()))
+			// stobj(T, ldloc(ptr), add(stloc(helperVar, ldobj(T, ldloc(ptr)), ldc.i4:int32(1))))
+			
+			if (!(expr.Code == ILCode.Stfld || expr.Code.IsStoreToArray() || expr.Code == ILCode.Stobj))
 				return null;
 			
-			// Test that all arguments except the last are ldloc (1 arg for fields, 2 args for arrays)
+			// Test that all arguments except the last are ldloc (1 arg for fields and pointers, 2 args for arrays)
 			for (int i = 0; i < expr.Arguments.Count - 1; i++) {
 				if (expr.Arguments[i].Code != ILCode.Ldloc)
 					return null;
@@ -417,6 +438,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (expr.Code == ILCode.Stfld) {
 				if (!(initialValue.Code == ILCode.Ldfld && initialValue.Operand == expr.Operand))
 					return null;
+			} else if (expr.Code == ILCode.Stobj) {
+				if (!(initialValue.Code == ILCode.Ldobj && initialValue.Operand == expr.Operand))
+					return null;
 			} else {
 				if (!initialValue.Code.IsLoadFromArray())
 					return null;
@@ -428,8 +452,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			
 			ILExpression stloc = addExpr.Arguments[0];
-			stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue);
-			initialValue.Code = (expr.Code == ILCode.Stfld ? ILCode.Ldflda : ILCode.Ldelema);
+			if (expr.Code == ILCode.Stobj) {
+				stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue.Arguments[0]);
+			} else {
+				stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue);
+				initialValue.Code = (expr.Code == ILCode.Stfld ? ILCode.Ldflda : ILCode.Ldelema);
+			}
 			// TODO: ILRanges?
 			
 			return stloc;

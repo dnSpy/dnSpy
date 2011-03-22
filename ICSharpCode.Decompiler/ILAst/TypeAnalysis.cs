@@ -435,8 +435,12 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.PostIncrement_Ovf:
 				case ILCode.PostIncrement_Ovf_Un:
 					{
-						ByReferenceType byReferenceType = InferTypeForExpression(expr.Arguments[0], null) as ByReferenceType;
-						return byReferenceType != null ? byReferenceType.ElementType : null;
+						TypeReference type = UnpackPointer(InferTypeForExpression(expr.Arguments[0], null));
+						if (forceInferChildren) {
+							// Assign expected type to the child expression
+							InferTypeForExpression(expr.Arguments[0], new ByReferenceType(type));
+						}
+						return type;
 					}
 					#endregion
 					#region Arithmetic instructions
