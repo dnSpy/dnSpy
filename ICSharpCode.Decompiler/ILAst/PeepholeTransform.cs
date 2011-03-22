@@ -425,7 +425,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			MethodReference setter = setterOperand as MethodReference;
 			if (getter == null || setter == null)
 				return false;
-			if (getter.DeclaringType != setter.DeclaringType)
+			if (!TypeAnalysis.IsSameType(getter.DeclaringType, setter.DeclaringType))
 				return false;
 			MethodDefinition getterDef = getter.Resolve();
 			MethodDefinition setterDef = setter.Resolve();
@@ -472,8 +472,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				return null;
 			
 			if (expr.Code == ILCode.Stfld) {
-				if (!(initialValue.Code == ILCode.Ldfld && initialValue.Operand == expr.Operand))
+				if (initialValue.Code != ILCode.Ldfld)
 					return null;
+				// There might be two different FieldReference instances, so we compare the field's signatures:
+				FieldReference getField = (FieldReference)initialValue.Operand;
+				FieldReference setField = (FieldReference)expr.Operand;
+				if (!(TypeAnalysis.IsSameType(getField.DeclaringType, setField.DeclaringType)
+				      && getField.Name == setField.Name && TypeAnalysis.IsSameType(getField.FieldType, setField.FieldType)))
+				{
+					return null;
+				}
 			} else if (expr.Code == ILCode.Stobj) {
 				if (!(initialValue.Code == ILCode.Ldobj && initialValue.Operand == expr.Operand))
 					return null;

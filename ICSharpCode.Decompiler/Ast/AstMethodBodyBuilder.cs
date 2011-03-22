@@ -518,7 +518,10 @@ namespace ICSharpCode.Decompiler.Ast
 						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
 						.Member(((FieldReference)operand).Name).WithAnnotation(operand),
 						arg1);
-					case ILCode.Ldflda:  return MakeRef(arg1.Member(((FieldReference) operand).Name).WithAnnotation(operand));
+				case ILCode.Ldflda:
+					if (arg1 is DirectionExpression)
+						arg1 = ((DirectionExpression)arg1).Expression.Detach();
+					return MakeRef(arg1.Member(((FieldReference) operand).Name).WithAnnotation(operand));
 				case ILCode.Ldsflda:
 					return MakeRef(
 						AstBuilder.ConvertType(((FieldReference)operand).DeclaringType)
@@ -715,7 +718,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			if (target is ThisReferenceExpression && !isVirtual) {
 				// a non-virtual call on "this" might be a "base"-call.
-				if ((cecilMethod.DeclaringType.IsGenericInstance ? cecilMethod.DeclaringType.GetElementType() : cecilMethod.DeclaringType) != methodDef.DeclaringType) {
+				if (cecilMethod.DeclaringType.GetElementType() != methodDef.DeclaringType) {
 					// If we're not calling a method in the current class; we must be calling one in the base class.
 					target = new BaseReferenceExpression();
 				}
@@ -898,7 +901,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		Ast.Expression Convert(Ast.Expression expr, Cecil.TypeReference actualType, Cecil.TypeReference reqType)
 		{
-			if (reqType == null || actualType == reqType) {
+			if (actualType == null || reqType == null || TypeAnalysis.IsSameType(actualType, reqType)) {
 				return expr;
 			} else if (actualType is ByReferenceType && reqType is PointerType && expr is DirectionExpression) {
 				return Convert(
@@ -943,12 +946,10 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 				
 				bool actualIsPrimitiveType = actualIsIntegerOrEnum
-					|| (actualType != null && (actualType.MetadataType == MetadataType.Single || actualType.MetadataType == MetadataType.Double));
+					|| actualType.MetadataType == MetadataType.Single || actualType.MetadataType == MetadataType.Double;
 				bool requiredIsPrimitiveType = requiredIsIntegerOrEnum
-					|| (reqType != null && (reqType.MetadataType == MetadataType.Single || reqType.MetadataType == MetadataType.Double));
+					|| reqType.MetadataType == MetadataType.Single || reqType.MetadataType == MetadataType.Double;
 				if (actualIsPrimitiveType && requiredIsPrimitiveType) {
-					if (actualType.FullName == reqType.FullName)
-						return expr;
 					return expr.CastTo(AstBuilder.ConvertType(reqType));
 				}
 				return expr;
