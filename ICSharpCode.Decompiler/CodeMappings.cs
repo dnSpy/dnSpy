@@ -229,6 +229,11 @@ namespace ICSharpCode.Decompiler
 			
 			var methodMappings = codeMappings[typeName];
 			var maping = methodMappings.Find(m => m.MetadataToken == token);
+			
+			if (maping == null) {
+				return null;
+			}
+			
 			// try find an exact match
 			var map = maping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From <= ilOffset && ilOffset < m.ILInstructionOffset.To);
 			
