@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 
@@ -15,6 +16,7 @@ using Debugger.Interop.CorPublish;
 using Debugger.MetaData;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Visitors;
@@ -823,7 +825,7 @@ namespace ILSpy.Debugger.Services
 				int line;
 				TypeDefinition type;
 				
-				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(frame.MethodInfo.DeclaringType.FullName, token, ilOffset, out type, out line) 
+				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(frame.MethodInfo.DeclaringType.FullName, token, ilOffset, out type, out line)
 				    && type.DeclaringType == null) {
 					DebuggerService.RemoveCurrentLineMarker();
 					DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
@@ -868,9 +870,14 @@ namespace ILSpy.Debugger.Services
 				if (typeDef != null) {
 					// decompile on demand
 					if (!CodeMappingsStorage.ContainsKey(typeDef.FullName)) {
-						AstBuilder builder = new AstBuilder(new DecompilerContext());
-						builder.AddType(typeDef);
-						builder.GenerateCode(new PlainTextOutput());
+						if (DebugData.Language == DecompiledLanguages.IL) {
+							var dis = new ReflectionDisassembler(new PlainTextOutput(), true, CancellationToken.None);
+							dis.DisassembleType(typeDef);
+						} else {
+							AstBuilder builder = new AstBuilder(new DecompilerContext());
+							builder.AddType(typeDef);
+							builder.GenerateCode(new PlainTextOutput());
+						}
 					}
 					// try jump
 					int line;
