@@ -295,12 +295,16 @@ namespace ICSharpCode.Decompiler.ILAst
 					#region Call / NewObj
 				case ILCode.Call:
 				case ILCode.Callvirt:
+				case ILCode.CallGetter:
+				case ILCode.CallvirtGetter:
+				case ILCode.CallSetter:
+				case ILCode.CallvirtSetter:
 					{
 						MethodReference method = (MethodReference)expr.Operand;
 						if (forceInferChildren) {
 							for (int i = 0; i < expr.Arguments.Count; i++) {
 								if (i == 0 && method.HasThis) {
-									Instruction constraint = expr.GetPrefix(Code.Constrained);
+									ILExpressionPrefix constraint = expr.GetPrefix(ILCode.Constrained);
 									if (constraint != null)
 										InferTypeForExpression(expr.Arguments[i], new ByReferenceType((TypeReference)constraint.Operand));
 									else if (method.DeclaringType.IsValueType)
@@ -312,7 +316,14 @@ namespace ICSharpCode.Decompiler.ILAst
 								}
 							}
 						}
-						return SubstituteTypeArgs(method.ReturnType, method);
+						if (expr.Code == ILCode.CallSetter || expr.Code == ILCode.CallvirtSetter) {
+							return SubstituteTypeArgs(method.Parameters.Last().ParameterType, method);
+						} else {
+							TypeReference type = SubstituteTypeArgs(method.ReturnType, method);
+							if (expr.GetPrefix(ILCode.PropertyAddress) != null && !(type is ByReferenceType))
+								type = new ByReferenceType(type);
+							return type;
+						}
 					}
 				case ILCode.Newobj:
 					{
@@ -435,12 +446,12 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.PostIncrement_Ovf:
 				case ILCode.PostIncrement_Ovf_Un:
 					{
-						TypeReference type = UnpackPointer(InferTypeForExpression(expr.Arguments[0], null));
-						if (forceInferChildren) {
+						TypeReference elementType = UnpackPointer(InferTypeForExpression(expr.Arguments[0], null));
+						if (forceInferChildren && elementType != null) {
 							// Assign expected type to the child expression
-							InferTypeForExpression(expr.Arguments[0], new ByReferenceType(type));
+							InferTypeForExpression(expr.Arguments[0], new ByReferenceType(elementType));
 						}
-						return type;
+						return elementType;
 					}
 					#endregion
 					#region Arithmetic instructions

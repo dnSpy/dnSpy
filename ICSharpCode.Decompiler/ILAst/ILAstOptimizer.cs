@@ -16,6 +16,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		InlineVariables,
 		CopyPropagation,
 		YieldReturn,
+		PropertyAccessInstructions,
 		SplitToMovableBlocks,
 		TypeInference,
 		SimplifyShortCircuit,
@@ -79,6 +80,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (abortBeforeStep == ILAstOptimizationStep.YieldReturn) return;
 			YieldReturnDecompiler.Run(context, method);
+			
+			if (abortBeforeStep == ILAstOptimizationStep.PropertyAccessInstructions) return;
+			IntroducePropertyAccessInstructions(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.SplitToMovableBlocks) return;
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
@@ -282,6 +286,42 @@ namespace ICSharpCode.Decompiler.ILAst
 							continue;
 					}
 					((ILExpression)block.Body[i]).Arguments.Single().ILRanges.AddRange(expr.ILRanges);
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Converts call and callvirt instructions that read/write properties into CallGetter/CallSetter instructions.
+		/// 
+		/// CallGetter/CallSetter is used to allow the ILAst to represent "while ((SomeProperty = value) != null)".
+		/// </summary>
+		void IntroducePropertyAccessInstructions(ILBlock method)
+		{
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				if (expr.Code == ILCode.Call || expr.Code == ILCode.Callvirt) {
+					MethodReference cecilMethod = (MethodReference)expr.Operand;
+					if (cecilMethod.DeclaringType is ArrayType) {
+						switch (cecilMethod.Name) {
+							case "Get":
+								expr.Code = ILCode.CallGetter;
+								break;
+							case "Set":
+								expr.Code = ILCode.CallSetter;
+								break;
+							case "Address":
+								expr.Code = ILCode.CallGetter;
+								expr.AddPrefix(new ILExpressionPrefix(ILCode.PropertyAddress));
+								break;
+						}
+					} else {
+						MethodDefinition cecilMethodDef = cecilMethod.Resolve();
+						if (cecilMethodDef != null) {
+							if (cecilMethodDef.IsGetter)
+								expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallGetter : ILCode.CallvirtGetter;
+							else if (cecilMethodDef.IsSetter)
+								expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallSetter : ILCode.CallvirtSetter;
+						}
+					}
 				}
 			}
 		}

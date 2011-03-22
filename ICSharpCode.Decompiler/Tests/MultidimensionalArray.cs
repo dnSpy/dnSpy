@@ -3,7 +3,7 @@
 
 using System;
 
-public static class MultidimensionalArray
+public class MultidimensionalArray
 {
 	internal class Generic<T, S> where T : new()
 	{
@@ -29,9 +29,14 @@ public static class MultidimensionalArray
 			this.b[5, 3][1] = x;
 			this.b[5, 3][2] = y;
 		}
+		
+		public void PassByReference(ref T arr)
+		{
+			this.PassByReference(ref this.a[10, 10]);
+		}
 	}
 	
-	public static int[][,] MakeArray()
+	public int[][,] MakeArray()
 	{
 		return new int[10][,];
 	}

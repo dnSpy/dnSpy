@@ -694,7 +694,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				ILExpression expr = new ILExpression(byteCode.Code, byteCode.Operand);
 				expr.ILRanges.Add(ilRange);
-				expr.Prefixes = byteCode.Prefixes;
+				if (byteCode.Prefixes != null && byteCode.Prefixes.Length > 0) {
+					ILExpressionPrefix[] prefixes = new ILExpressionPrefix[byteCode.Prefixes.Length];
+					for (int i = 0; i < prefixes.Length; i++) {
+						prefixes[i] = new ILExpressionPrefix((ILCode)byteCode.Prefixes[i].OpCode.Code, byteCode.Prefixes[i].Operand);
+					}
+					expr.Prefixes = prefixes;
+				}
 				
 				// Label for this instruction
 				if (byteCode.Label != null) {

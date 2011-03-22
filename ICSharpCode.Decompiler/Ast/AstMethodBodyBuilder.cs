@@ -455,8 +455,14 @@ namespace ICSharpCode.Decompiler.Ast
 					#endregion
 					case ILCode.Arglist:  return InlineAssembly(byteCode, args);
 					case ILCode.Break:    return InlineAssembly(byteCode, args);
-					case ILCode.Call:     return TransformCall(false, operand, methodDef, args);
-					case ILCode.Callvirt: return TransformCall(true, operand, methodDef, args);
+				case ILCode.Call:
+				case ILCode.CallGetter:
+				case ILCode.CallSetter:
+					return TransformCall(false, operand, args);
+				case ILCode.Callvirt:
+				case ILCode.CallvirtGetter:
+				case ILCode.CallvirtSetter:
+					return TransformCall(true, operand,  args);
 					case ILCode.Ldftn: {
 						Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 						var expr = new Ast.IdentifierExpression(cecilMethod.Name);
@@ -689,7 +695,7 @@ namespace ICSharpCode.Decompiler.Ast
 			return new DefaultValueExpression { Type = AstBuilder.ConvertType(type) };
 		}
 		
-		static AstNode TransformCall(bool isVirtual, object operand, MethodDefinition methodDef, List<Ast.Expression> args)
+		AstNode TransformCall(bool isVirtual, object operand, List<Ast.Expression> args)
 		{
 			Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 			Ast.Expression target;
@@ -727,6 +733,8 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			if (cecilMethod.Name == "Get" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 1) {
 				return target.Indexer(methodArgs);
+			} else if (cecilMethod.Name == "Address" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 1) {
+				return MakeRef(target.Indexer(methodArgs));
 			} else if (cecilMethod.Name == "Set" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 2) {
 				return new AssignmentExpression(target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)), methodArgs.Last());
 			}
@@ -936,7 +944,7 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				bool actualIsPrimitiveType = actualIsIntegerOrEnum
 					|| (actualType != null && (actualType.MetadataType == MetadataType.Single || actualType.MetadataType == MetadataType.Double));
-				bool requiredIsPrimitiveType = requiredIsIntegerOrEnum 
+				bool requiredIsPrimitiveType = requiredIsIntegerOrEnum
 					|| (reqType != null && (reqType.MetadataType == MetadataType.Single || reqType.MetadataType == MetadataType.Double));
 				if (actualIsPrimitiveType && requiredIsPrimitiveType) {
 					if (actualType.FullName == reqType.FullName)

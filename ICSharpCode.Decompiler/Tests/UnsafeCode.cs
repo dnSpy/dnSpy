@@ -31,6 +31,13 @@ public class UnsafeCode
 		this.PassRefParameterAsPointer(ref *p);
 	}
 	
+	public unsafe void AddressInMultiDimensionalArray(double[,] matrix)
+	{
+		fixed (double* ptr = &matrix[1, 2]) {
+			this.PointerReferenceExpression(ptr);
+		}
+	}
+	
 	public unsafe void FixedStringAccess(string text)
 	{
 		fixed (char* ptr = text)

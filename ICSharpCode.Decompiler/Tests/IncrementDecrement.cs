@@ -8,13 +8,41 @@ public class IncrementDecrement
 	public class MutableClass
 	{
 		public int Field;
+		
+		public int Property 
+		{
+			get;
+			set;
+		}
+		
+		public uint this[string name]
+		{
+			get
+			{
+				return 0u;
+			}
+			set
+			{
+			}
+		}
 	}
 	
 	public static int StaticField;
 	
+	public static int StaticProperty
+	{ 
+		get; 
+		set;
+	}
+	
 	private IncrementDecrement.MutableClass M()
 	{
 		return new IncrementDecrement.MutableClass();
+	}
+	
+	private int[,] Array()
+	{
+		return null;
 	}
 	
 	private unsafe int* GetPointer()
@@ -27,7 +55,7 @@ public class IncrementDecrement
 		return i + ++j;
 	}
 	
-	public int PreDecrementArrayElement(int[] array, int pos)
+	public int PreIncrementArrayElement(int[] array, int pos)
 	{
 		return --array[pos];
 	}
@@ -42,10 +70,25 @@ public class IncrementDecrement
 		return ++m.Field;
 	}
 	
+	public int PreIncrementInstanceProperty()
+	{
+		return ++this.M().Property;
+	}
+	
 	public int PreIncrementStaticField()
 	{
 		return ++IncrementDecrement.StaticField;
 	}
+	
+	public int PreIncrementStaticProperty()
+	{
+		return ++IncrementDecrement.StaticProperty;
+	}
+	
+//	public uint PreIncrementIndexer(string name)
+//	{
+//		return ++this.M()[name];
+//	}
 	
 	public int PreIncrementByRef(ref int i)
 	{
@@ -57,32 +100,57 @@ public class IncrementDecrement
 		return ++(*this.GetPointer());
 	}
 	
-	public int CompoundMultiplyInstanceField()
+	public int PreIncrement2DArray()
+	{
+		return ++this.Array()[1, 2];
+	}
+	
+	public int CompoundAssignInstanceField()
 	{
 		return this.M().Field *= 10;
 	}
 	
-	public int CompoundXorStaticField()
+	public int CompoundAssignInstanceProperty()
+	{
+		return this.M().Property *= 10;
+	}
+	
+	public int CompoundAssignStaticField()
 	{
 		return IncrementDecrement.StaticField ^= 100;
 	}
 	
-	public int CompoundMultiplyArrayElement1(int[] array, int pos)
+	public int CompoundAssignStaticProperty()
+	{
+		return IncrementDecrement.StaticProperty &= 10;
+	}
+	
+	public int CompoundAssignArrayElement1(int[] array, int pos)
 	{
 		return array[pos] *= 10;
 	}
 	
-	public int CompoundMultiplyArrayElement2(int[] array)
+	public int CompoundAssignArrayElement2(int[] array)
 	{
 		return array[Environment.TickCount] *= 10;
 	}
 	
-	public int CompoundShiftByRef(ref int i)
+//	public uint CompoundAssignIndexer(string name)
+//	{
+//		return this.M()[name] -= 2;
+//	}
+	
+	public int CompoundAssignIncrement2DArray()
+	{
+		return this.Array()[1, 2] %= 10;
+	}
+	
+	public int CompoundAssignByRef(ref int i)
 	{
 		return i <<= 2;
 	}
 	
-	public unsafe double CompoundDivideByPointer(double* ptr)
+	public unsafe double CompoundAssignByPointer(double* ptr)
 	{
 		return *ptr /= 1.5;
 	}
@@ -92,7 +160,7 @@ public class IncrementDecrement
 		return i++ + j;
 	}
 	
-	public int PostDecrementArrayElement(int[] array, int pos)
+	public int PostIncrementArrayElement(int[] array, int pos)
 	{
 		return array[pos]--;
 	}
@@ -102,14 +170,34 @@ public class IncrementDecrement
 		return IncrementDecrement.StaticField++;
 	}
 	
+	public int PostIncrementStaticProperty()
+	{
+		return IncrementDecrement.StaticProperty++;
+	}
+	
 	public int PostIncrementInstanceField(IncrementDecrement.MutableClass m)
 	{
 		return m.Field++;
 	}
 	
-	public int PostDecrementInstanceField()
+//	public uint PostIncrementIndexer(string name)
+//	{
+//		return this.M()[name]++;
+//	}
+	
+	public int PostIncrementInstanceField()
 	{
 		return this.M().Field--;
+	}
+	
+	public int PostIncrementInstanceProperty()
+	{
+		return this.M().Property--;
+	}
+	
+	public int PostIncrement2DArray()
+	{
+		return this.Array()[IncrementDecrement.StaticField, IncrementDecrement.StaticProperty]++;
 	}
 	
 	public int PostIncrementByRef(ref int i)
@@ -121,4 +209,9 @@ public class IncrementDecrement
 	{
 		return (*this.GetPointer())++;
 	}
+	
+//	public unsafe int PostIncrementOfPointer(int* ptr)
+//	{
+//		return *(ptr++);
+//	}
 }
