@@ -63,6 +63,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				bool isStloc = trueLocVar != null;
 				ILCode opCode = isStloc ? ILCode.Stloc : ILCode.Ret;
 				TypeReference retType = isStloc ? trueLocVar.Type : this.context.CurrentMethod.ReturnType;
+				bool retTypeIsBoolean = TypeAnalysis.IsBoolean(retType);
 				int leftBoolVal;
 				int rightBoolVal;
 				ILExpression newExpr;
@@ -72,7 +73,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				// a ? b : true    is equivalent to  !a || b
 				// a ? b : false   is equivalent to  a && b
 				// a ? false : b   is equivalent to  !a && b
-				if (retType == typeSystem.Boolean &&
+				if (retTypeIsBoolean &&
 				    trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal) &&
 				    falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal) &&
 				    ((leftBoolVal != 0 && rightBoolVal == 0) || (leftBoolVal == 0 && rightBoolVal != 0))
@@ -84,14 +85,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					} else {
 						newExpr = new ILExpression(ILCode.LogicNot, null, condExpr);
 					}
-				} else if (retType == typeSystem.Boolean && trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal)) {
+				} else if (retTypeIsBoolean && trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal)) {
 					// It can be expressed as logical expression
 					if (leftBoolVal != 0) {
 						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, condExpr, falseExpr);
 					} else {
 						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicAnd, new ILExpression(ILCode.LogicNot, null, condExpr), falseExpr);
 					}
-				} else if (retType == typeSystem.Boolean && falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal)) {
+				} else if (retTypeIsBoolean && falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal)) {
 					// It can be expressed as logical expression
 					if (rightBoolVal != 0) {
 						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, new ILExpression(ILCode.LogicNot, null, condExpr), trueExpr);
@@ -152,7 +153,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				head.Body[head.Body.Count - 3].Match(ILCode.Stloc, out v, out leftExpr) &&
 			    leftExpr.Match(ILCode.Ldloc, out leftVar) &&
 			    head.MatchLastAndBr(ILCode.Brtrue, out endBBLabel, out leftExpr2, out rightBBLabel) &&
-			    leftExpr2.Match(ILCode.Ldloc, leftVar) &&
+			    leftExpr2.MatchLdloc(leftVar) &&
 			    labelToBasicBlock.TryGetValue(rightBBLabel, out rightBB) &&
 			    rightBB.MatchSingleAndBr(ILCode.Stloc, out v2, out rightExpr, out endBBLabel2) &&
 			    v == v2 &&

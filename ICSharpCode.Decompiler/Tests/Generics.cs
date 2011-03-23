@@ -23,7 +23,7 @@ public static class Generics
 		
 		public void Size(int capacity)
 		{
-			Array.Resize(ref this.arr, capacity);
+			Array.Resize<T>(ref this.arr, capacity);
 		}
 		
 		public void Grow(int capacity)
@@ -43,7 +43,7 @@ public static class Generics
 	{
 	}
 	
-	public static Dictionary<string, string>.KeyCollection.Enumerator GetEnumerator(Dictionary<string, string> d, MyArray<string>.NestedClass<int> nc)
+	public static Dictionary<string, string>.KeyCollection.Enumerator GetEnumerator(Dictionary<string, string> d, Generics.MyArray<string>.NestedClass<int> nc)
 	{
 		// Tests references to inner classes in generic classes
 		return d.Keys.GetEnumerator();

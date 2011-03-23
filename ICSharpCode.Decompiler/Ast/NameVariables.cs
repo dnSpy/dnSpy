@@ -159,6 +159,8 @@ namespace ICSharpCode.Decompiler.Ast
 					return CleanUpVariableName(((FieldReference)expr.Operand).Name);
 				case ILCode.Call:
 				case ILCode.Callvirt:
+				case ILCode.CallGetter:
+				case ILCode.CallvirtGetter:
 					MethodReference mr = (MethodReference)expr.Operand;
 					if (mr.Name.StartsWith("get_", StringComparison.OrdinalIgnoreCase) && mr.Parameters.Count == 0) {
 						// use name from properties, but not from indexers
@@ -184,6 +186,10 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Call:
 				case ILCode.Callvirt:
 				case ILCode.Newobj:
+				case ILCode.CallGetter:
+				case ILCode.CallvirtGetter:
+				case ILCode.CallSetter:
+				case ILCode.CallvirtSetter:
 					MethodReference methodRef = (MethodReference)parent.Operand;
 					if (methodRef.Parameters.Count == 1 && i == parent.Arguments.Count - 1) {
 						// argument might be value of a setter

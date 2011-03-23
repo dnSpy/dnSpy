@@ -46,7 +46,11 @@ public static class DelegateConstruction
 		for (int i = 0; i < 10; i++)
 		{
 			int counter;
-			list.Add(x => counter = x);
+			list.Add(delegate(int x)
+			         {
+			         	counter = x;
+			         }
+			        );
 		}
 		return list;
 	}
@@ -57,13 +61,20 @@ public static class DelegateConstruction
 		int counter;
 		for (int i = 0; i < 10; i++)
 		{
-			list.Add(x => counter = x);
+			list.Add(delegate(int x)
+			         {
+			         	counter = x;
+			         }
+			        );
 		}
 		return list;
 	}
 	
 	public static Action StaticAnonymousMethodNoClosure()
 	{
-		return delegate { Console.WriteLine(); };
+		return delegate
+		{
+			Console.WriteLine();
+		};
 	}
 }

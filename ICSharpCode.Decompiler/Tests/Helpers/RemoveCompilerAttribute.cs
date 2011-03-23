@@ -21,6 +21,12 @@ namespace ICSharpCode.Decompiler.Tests.Helpers
 				if (section.Attributes.Count == 0)
 					section.Remove();
 			}
+			if (section.AttributeTarget == AttributeTarget.Module && type.Identifier == "UnverifiableCode")
+			{
+				attribute.Remove();
+				if (section.Attributes.Count == 0)
+					section.Remove();
+			}
 			return null;
 		}
 

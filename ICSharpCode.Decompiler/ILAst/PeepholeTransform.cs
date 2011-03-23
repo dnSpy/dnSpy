@@ -59,6 +59,18 @@ namespace ICSharpCode.Decompiler.ILAst
 		static bool SimplifyLdObjAndStObj(List<ILNode> body, ILExpression expr, int pos)
 		{
 			bool modified = false;
+			expr = SimplifyLdObjAndStObj(expr, ref modified);
+			if (modified && body != null)
+				body[pos] = expr;
+			for (int i = 0; i < expr.Arguments.Count; i++) {
+				expr.Arguments[i] = SimplifyLdObjAndStObj(expr.Arguments[i], ref modified);
+				modified |= SimplifyLdObjAndStObj(null, expr.Arguments[i], -1);
+			}
+			return modified;
+		}
+		
+		static ILExpression SimplifyLdObjAndStObj(ILExpression expr, ref bool modified)
+		{
 			if (expr.Code == ILCode.Initobj) {
 				expr.Code = ILCode.Stobj;
 				expr.Arguments.Add(new ILExpression(ILCode.DefaultValue, expr.Operand));
@@ -84,13 +96,17 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			if (newCode != null) {
 				arg.Code = newCode.Value;
-				if (expr.Code == ILCode.Stobj)
+				if (expr.Code == ILCode.Stobj) {
+					arg.InferredType = expr.InferredType;
+					arg.ExpectedType = expr.ExpectedType;
 					arg.Arguments.Add(arg2);
+				}
 				arg.ILRanges.AddRange(expr.ILRanges);
-				body[pos] = arg;
 				modified = true;
+				return arg;
+			} else {
+				return expr;
 			}
-			return modified;
 		}
 		#endregion
 		
@@ -174,16 +190,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			// stloc(v, exprVar)
 			// ->
 			// exprVar = stloc(v, ...))
-			ILExpression nextExpr = body.ElementAtOrDefault(pos + 1) as ILExpression;
 			ILVariable exprVar;
 			ILExpression initializer;
+			if (!(expr.Match(ILCode.Stloc, out exprVar, out initializer) && exprVar.IsGenerated))
+				return false;
+			ILExpression nextExpr = body.ElementAtOrDefault(pos + 1) as ILExpression;
 			ILVariable v;
 			ILExpression stLocArg;
-			if (expr.Match(ILCode.Stloc, out exprVar, out initializer) &&
-			    exprVar.IsGenerated &&
-			    nextExpr.Match(ILCode.Stloc, out v, out stLocArg) &&
-			    stLocArg.Match(ILCode.Ldloc, exprVar))
-			{
+			if (nextExpr.Match(ILCode.Stloc, out v, out stLocArg) && stLocArg.MatchLdloc(exprVar)) {
 				ILExpression store2 = body.ElementAtOrDefault(pos + 2) as ILExpression;
 				if (StoreCanBeConvertedToAssignment(store2, exprVar)) {
 					// expr_44 = ...
@@ -208,16 +222,339 @@ namespace ICSharpCode.Decompiler.ILAst
 				nextExpr.Arguments[0] = initializer;
 				((ILExpression)body[pos]).Arguments[0] = nextExpr;
 				return true;
+			} else if ((nextExpr.Code == ILCode.Stsfld || nextExpr.Code == ILCode.CallSetter || nextExpr.Code == ILCode.CallvirtSetter) && nextExpr.Arguments.Count == 1) {
+				// exprVar = ...
+				// stsfld(fld, exprVar)
+				// ->
+				// exprVar = stsfld(fld, ...))
+				if (nextExpr.Arguments[0].MatchLdloc(exprVar)) {
+					body.RemoveAt(pos + 1); // remove stsfld
+					nextExpr.Arguments[0] = initializer;
+					((ILExpression)body[pos]).Arguments[0] = nextExpr;
+					return true;
+				}
 			}
 			return false;
 		}
 		
 		bool StoreCanBeConvertedToAssignment(ILExpression store, ILVariable exprVar)
 		{
-			if (store != null && (store.Code == ILCode.Stloc || store.Code == ILCode.Stfld || store.Code == ILCode.Stsfld)) {
-				return store.Arguments.Last().Code == ILCode.Ldloc && store.Arguments.Last().Operand == exprVar;
+			if (store == null)
+				return false;
+			switch (store.Code) {
+				case ILCode.Stloc:
+				case ILCode.Stfld:
+				case ILCode.Stsfld:
+				case ILCode.Stobj:
+				case ILCode.CallSetter:
+				case ILCode.CallvirtSetter:
+					break;
+				default:
+					if (!store.Code.IsStoreToArray())
+						return false;
+					break;
+			}
+			return store.Arguments.Last().Code == ILCode.Ldloc && store.Arguments.Last().Operand == exprVar;
+		}
+		#endregion
+		
+		#region MakeCompoundAssignments
+		bool MakeCompoundAssignments(List<ILNode> body, ILExpression expr, int pos)
+		{
+			bool modified = false;
+			modified |= MakeCompoundAssignment(expr);
+			// Static fields and local variables are not handled here - those are expressions without side effects
+			// and get handled by ReplaceMethodCallsWithOperators
+			// (which does a reversible transform to the short operator form, as the introduction of checked/unchecked might have to revert to the long form).
+			foreach (ILExpression arg in expr.Arguments) {
+				modified |= MakeCompoundAssignments(null, arg, -1);
+			}
+			if (modified && body != null)
+				new ILInlining(method).InlineInto(body, pos, aggressive: false);
+			return modified;
+		}
+		
+		bool MakeCompoundAssignment(ILExpression expr)
+		{
+			// stelem.any(T, ldloc(array), ldloc(pos), <OP>(ldelem.any(T, ldloc(array), ldloc(pos)), <RIGHT>))
+			// or
+			// stobj(T, ldloc(ptr), <OP>(ldobj(T, ldloc(ptr)), <RIGHT>))
+			ILCode expectedLdelemCode;
+			switch (expr.Code) {
+				case ILCode.Stelem_Any:
+					expectedLdelemCode = ILCode.Ldelem_Any;
+					break;
+				case ILCode.Stfld:
+					expectedLdelemCode = ILCode.Ldfld;
+					break;
+				case ILCode.Stobj:
+					expectedLdelemCode = ILCode.Ldobj;
+					break;
+				case ILCode.CallSetter:
+					expectedLdelemCode = ILCode.CallGetter;
+					break;
+				case ILCode.CallvirtSetter:
+					expectedLdelemCode = ILCode.CallvirtGetter;
+					break;
+				default:
+					return false;
+			}
+			
+			// all arguments except the last (so either array+pos, or ptr):
+			bool hasGeneratedVar = false;
+			for (int i = 0; i < expr.Arguments.Count - 1; i++) {
+				ILVariable inputVar;
+				if (!expr.Arguments[i].Match(ILCode.Ldloc, out inputVar))
+					return false;
+				hasGeneratedVar |= inputVar.IsGenerated;
+			}
+			// At least one of the variables must be generated; otherwise we just keep the expanded form.
+			// We do this because we want compound assignments to be represented in ILAst only when strictly necessary;
+			// other compound assignments will be introduced by ReplaceMethodCallsWithOperator
+			// (which uses a reversible transformation, see ReplaceMethodCallsWithOperator.RestoreOriginalAssignOperatorAnnotation)
+			if (!hasGeneratedVar)
+				return false;
+			
+			ILExpression op = expr.Arguments.Last();
+			if (!CanBeRepresentedAsCompoundAssignment(op.Code))
+				return false;
+			ILExpression ldelem = op.Arguments[0];
+			if (ldelem.Code != expectedLdelemCode)
+				return false;
+			Debug.Assert(ldelem.Arguments.Count == expr.Arguments.Count - 1);
+			for (int i = 0; i < ldelem.Arguments.Count; i++) {
+				if (!ldelem.Arguments[i].MatchLdloc((ILVariable)expr.Arguments[i].Operand))
+					return false;
+			}
+			expr.Code = ILCode.CompoundAssignment;
+			expr.Operand = null;
+			expr.Arguments.RemoveRange(0, ldelem.Arguments.Count);
+			// result is "CompoundAssignment(<OP>(ldelem.any(...), <RIGHT>))"
+			return true;
+		}
+		
+		static bool CanBeRepresentedAsCompoundAssignment(ILCode code)
+		{
+			switch (code) {
+				case ILCode.Add:
+				case ILCode.Add_Ovf:
+				case ILCode.Add_Ovf_Un:
+				case ILCode.Sub:
+				case ILCode.Sub_Ovf:
+				case ILCode.Sub_Ovf_Un:
+				case ILCode.Mul:
+				case ILCode.Mul_Ovf:
+				case ILCode.Mul_Ovf_Un:
+				case ILCode.Div:
+				case ILCode.Div_Un:
+				case ILCode.Rem:
+				case ILCode.Rem_Un:
+				case ILCode.And:
+				case ILCode.Or:
+				case ILCode.Xor:
+				case ILCode.Shl:
+				case ILCode.Shr:
+				case ILCode.Shr_Un:
+					return true;
+				default:
+					return false;
+			}
+		}
+		#endregion
+		
+		#region IntroducePostIncrement
+		bool IntroducePostIncrement(List<ILNode> body, ILExpression expr, int pos)
+		{
+			bool modified = IntroducePostIncrementForVariables(body, expr, pos);
+			Debug.Assert(body[pos] == expr); // IntroducePostIncrementForVariables shouldn't change the expression reference
+			ILExpression newExpr = IntroducePostIncrementForInstanceFields(expr);
+			if (newExpr != null) {
+				modified = true;
+				body[pos] = newExpr;
+				new ILInlining(method).InlineIfPossible(body, ref pos);
+			}
+			return modified;
+		}
+		
+		bool IntroducePostIncrementForVariables(List<ILNode> body, ILExpression expr, int pos)
+		{
+			// Works for variables and static fields/properties
+			
+			// expr = ldloc(i)
+			// stloc(i, add(expr, ldc.i4(1)))
+			// ->
+			// expr = postincrement(1, ldloca(i))
+			ILVariable exprVar;
+			ILExpression exprInit;
+			if (!(expr.Match(ILCode.Stloc, out exprVar, out exprInit) && exprVar.IsGenerated))
+				return false;
+			if (!(exprInit.Code == ILCode.Ldloc || exprInit.Code == ILCode.Ldsfld || (exprInit.Code == ILCode.CallGetter && exprInit.Arguments.Count == 0)))
+				return false;
+			
+			ILExpression nextExpr = body.ElementAtOrDefault(pos + 1) as ILExpression;
+			if (nextExpr == null)
+				return false;
+			if (exprInit.Code == ILCode.CallGetter) {
+				if (!(nextExpr.Code == ILCode.CallSetter && IsGetterSetterPair(exprInit.Operand, nextExpr.Operand)))
+					return false;
+			} else {
+				if (!(nextExpr.Code == (exprInit.Code == ILCode.Ldloc ? ILCode.Stloc : ILCode.Stsfld) && nextExpr.Operand == exprInit.Operand))
+					return false;
+			}
+			ILExpression addExpr = nextExpr.Arguments[0];
+			
+			int incrementAmount;
+			ILCode incrementCode = GetIncrementCode(addExpr, out incrementAmount);
+			if (!(incrementAmount != 0 && addExpr.Arguments[0].MatchLdloc(exprVar)))
+				return false;
+			
+			if (exprInit.Code == ILCode.Ldloc)
+				exprInit.Code = ILCode.Ldloca;
+			else if (exprInit.Code == ILCode.CallGetter)
+				exprInit.AddPrefix(new ILExpressionPrefix(ILCode.PropertyAddress));
+			else
+				exprInit.Code = ILCode.Ldsflda;
+			expr.Arguments[0] = new ILExpression(incrementCode, incrementAmount, exprInit);
+			body.RemoveAt(pos + 1); // TODO ILRanges
+			return true;
+		}
+		
+		static bool IsGetterSetterPair(object getterOperand, object setterOperand)
+		{
+			MethodReference getter = getterOperand as MethodReference;
+			MethodReference setter = setterOperand as MethodReference;
+			if (getter == null || setter == null)
+				return false;
+			if (!TypeAnalysis.IsSameType(getter.DeclaringType, setter.DeclaringType))
+				return false;
+			MethodDefinition getterDef = getter.Resolve();
+			MethodDefinition setterDef = setter.Resolve();
+			if (getterDef == null || setterDef == null)
+				return false;
+			foreach (PropertyDefinition prop in getterDef.DeclaringType.Properties) {
+				if (prop.GetMethod == getterDef)
+					return prop.SetMethod == setterDef;
 			}
 			return false;
+		}
+		
+		ILExpression IntroducePostIncrementForInstanceFields(ILExpression expr)
+		{
+			// stfld(field, ldloc(instance), add(stloc(helperVar, ldfld(field, ldloc(instance))), ldc.i4(1)))
+			// -> stloc(helperVar, postincrement(1, ldflda(field, ldloc(instance))))
+			
+			// Also works for array elements and pointers:
+			
+			// stelem.any(T, ldloc(instance), ldloc(pos), add(stloc(helperVar, ldelem.any(T, ldloc(instance), ldloc(pos))), ldc.i4(1)))
+			// -> stloc(helperVar, postincrement(1, ldelema(ldloc(instance), ldloc(pos))))
+			
+			// stobj(T, ldloc(ptr), add(stloc(helperVar, ldobj(T, ldloc(ptr)), ldc.i4(1))))
+			// -> stloc(helperVar, postIncrement(1, ldloc(ptr)))
+			
+			// callsetter(set_P, ldloc(instance), add(stloc(helperVar, callgetter(get_P, ldloc(instance))), ldc.i4(1)))
+			// -> stloc(helperVar, postIncrement(1, propertyaddress. callgetter(get_P, ldloc(instance))))
+			
+			if (!(expr.Code == ILCode.Stfld || expr.Code.IsStoreToArray() || expr.Code == ILCode.Stobj || expr.Code == ILCode.CallSetter || expr.Code == ILCode.CallvirtSetter))
+				return null;
+			
+			// Test that all arguments except the last are ldloc (1 arg for fields and pointers, 2 args for arrays)
+			for (int i = 0; i < expr.Arguments.Count - 1; i++) {
+				if (expr.Arguments[i].Code != ILCode.Ldloc)
+					return null;
+			}
+			
+			ILExpression addExpr = expr.Arguments[expr.Arguments.Count - 1];
+			int incrementAmount;
+			ILCode incrementCode = GetIncrementCode(addExpr, out incrementAmount);
+			ILVariable helperVar;
+			ILExpression initialValue;
+			if (!(incrementAmount != 0 && addExpr.Arguments[0].Match(ILCode.Stloc, out helperVar, out initialValue)))
+				return null;
+			
+			if (expr.Code == ILCode.Stfld) {
+				if (initialValue.Code != ILCode.Ldfld)
+					return null;
+				// There might be two different FieldReference instances, so we compare the field's signatures:
+				FieldReference getField = (FieldReference)initialValue.Operand;
+				FieldReference setField = (FieldReference)expr.Operand;
+				if (!(TypeAnalysis.IsSameType(getField.DeclaringType, setField.DeclaringType)
+				      && getField.Name == setField.Name && TypeAnalysis.IsSameType(getField.FieldType, setField.FieldType)))
+				{
+					return null;
+				}
+			} else if (expr.Code == ILCode.Stobj) {
+				if (!(initialValue.Code == ILCode.Ldobj && initialValue.Operand == expr.Operand))
+					return null;
+			} else if (expr.Code == ILCode.CallSetter) {
+				if (!(initialValue.Code == ILCode.CallGetter && IsGetterSetterPair(initialValue.Operand, expr.Operand)))
+					return null;
+			} else if (expr.Code == ILCode.CallvirtSetter) {
+				if (!(initialValue.Code == ILCode.CallvirtGetter && IsGetterSetterPair(initialValue.Operand, expr.Operand)))
+					return null;
+			} else {
+				if (!initialValue.Code.IsLoadFromArray())
+					return null;
+			}
+			Debug.Assert(expr.Arguments.Count - 1 == initialValue.Arguments.Count);
+			for (int i = 0; i < initialValue.Arguments.Count; i++) {
+				if (!initialValue.Arguments[i].MatchLdloc((ILVariable)expr.Arguments[i].Operand))
+					return null;
+			}
+			
+			ILExpression stloc = addExpr.Arguments[0];
+			if (expr.Code == ILCode.Stobj) {
+				stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue.Arguments[0]);
+			} else if (expr.Code == ILCode.CallSetter || expr.Code == ILCode.CallvirtSetter) {
+				stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue);
+				initialValue.AddPrefix(new ILExpressionPrefix(ILCode.PropertyAddress));
+			} else {
+				stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue);
+				initialValue.Code = (expr.Code == ILCode.Stfld ? ILCode.Ldflda : ILCode.Ldelema);
+			}
+			// TODO: ILRanges?
+			
+			return stloc;
+		}
+		
+		ILCode GetIncrementCode(ILExpression addExpr, out int incrementAmount)
+		{
+			ILCode incrementCode;
+			bool decrement = false;
+			switch (addExpr.Code) {
+				case ILCode.Add:
+					incrementCode = ILCode.PostIncrement;
+					break;
+				case ILCode.Add_Ovf:
+					incrementCode = ILCode.PostIncrement_Ovf;
+					break;
+				case ILCode.Add_Ovf_Un:
+					incrementCode = ILCode.PostIncrement_Ovf_Un;
+					break;
+				case ILCode.Sub:
+					incrementCode = ILCode.PostIncrement;
+					decrement = true;
+					break;
+				case ILCode.Sub_Ovf:
+					incrementCode = ILCode.PostIncrement_Ovf;
+					decrement = true;
+					break;
+				case ILCode.Sub_Ovf_Un:
+					incrementCode = ILCode.PostIncrement_Ovf_Un;
+					decrement = true;
+					break;
+				default:
+					incrementAmount = 0;
+					return ILCode.Nop;
+			}
+			if (addExpr.Arguments[1].Match(ILCode.Ldc_I4, out incrementAmount)) {
+				if (incrementAmount == -1 || incrementAmount == 1) { // TODO pointer increment?
+					if (decrement)
+						incrementAmount = -incrementAmount;
+					return incrementCode;
+				}
+			}
+			incrementAmount = 0;
+			return ILCode.Nop;
 		}
 		#endregion
 		

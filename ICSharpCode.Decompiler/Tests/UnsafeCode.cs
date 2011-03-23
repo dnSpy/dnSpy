@@ -5,50 +5,65 @@ using System;
 
 public class UnsafeCode
 {
-	public unsafe long ConvertDoubleToLong(double d)
+	public unsafe int* NullPointer
 	{
-		return *(long*)&d;
-	}
-	
-	public unsafe int* NullPointer {
-		get {
+		get
+		{
 			return null;
 		}
+	}
+	
+	public unsafe long ConvertDoubleToLong(double d)
+	{
+		return *(long*)(&d);
 	}
 	
 	public unsafe void PassRefParameterAsPointer(ref int p)
 	{
 		fixed (int* ptr = &p)
-			PassPointerAsRefParameter(ptr);
+		{
+			this.PassPointerAsRefParameter(ptr);
+		}
 	}
 	
 	public unsafe void PassPointerAsRefParameter(int* p)
 	{
-		PassRefParameterAsPointer(ref *p);
+		this.PassRefParameterAsPointer(ref *p);
+	}
+	
+	public unsafe void AddressInMultiDimensionalArray(double[,] matrix)
+	{
+		fixed (double* ptr = &matrix[1, 2]) {
+			this.PointerReferenceExpression(ptr);
+		}
 	}
 	
 	public unsafe void FixedStringAccess(string text)
 	{
-		fixed (char* c = text) {
-			char* tmp = c;
-			while (*tmp != 0) {
-				*tmp = 'A';
-				tmp++;
+		fixed (char* ptr = text)
+		{
+			char* ptr2 = ptr;
+			while (*ptr2 != 0)
+			{
+				*ptr2 = 'A';
+				ptr2++;
 			}
 		}
 	}
 	
 	public unsafe void PutDoubleIntoLongArray1(long[] array, int index, double val)
 	{
-		fixed (long* l = array) {
-			((double*)l)[index] = val;
+		fixed (long* ptr = array) 
+		{
+			((double*)ptr)[index] = val;
 		}
 	}
 	
 	public unsafe void PutDoubleIntoLongArray2(long[] array, int index, double val)
 	{
-		fixed (long* l = &array[index]) {
-			*(double*)l = val;
+		fixed (long* ptr = &array[index]) 
+		{
+			*(double*)ptr = val;
 		}
 	}
 	
@@ -59,24 +74,26 @@ public class UnsafeCode
 	
 	public unsafe void FixMultipleStrings(string text)
 	{
-		fixed (char* c = text, d = Environment.UserName, e = text) {
-			*c = 'c';
-			*d = 'd';
-			*e = 'e';
+		fixed (char* ptr = text, userName = Environment.UserName, ptr2 = text) 
+		{
+			*ptr = 'c';
+			*userName = 'd';
+			*ptr2 = 'e';
 		}
 	}
 	
 	public unsafe string StackAlloc(int count)
 	{
-		char* a = stackalloc char[count];
-		for (int i = 0; i < count; i++) {
-			a[i] = (char)i;
+		char* ptr = stackalloc char[count];
+		for (int i = 0; i < count; i++) 
+		{
+			ptr[i] = (char)i;
 		}
-		return PointerReferenceExpression((double*)a);
+		return this.PointerReferenceExpression((double*)ptr);
 	}
 	
 	unsafe ~UnsafeCode()
 	{
-		PassPointerAsRefParameter(NullPointer);
+		this.PassPointerAsRefParameter(this.NullPointer);
 	}
 }

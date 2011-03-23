@@ -256,12 +256,24 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 	}
 	
+	public class ILExpressionPrefix
+	{
+		public readonly ILCode Code;
+		public readonly object Operand;
+		
+		public ILExpressionPrefix(ILCode code, object operand = null)
+		{
+			this.Code = code;
+			this.Operand = operand;
+		}
+	}
+	
 	public class ILExpression : ILNode
 	{
 		public ILCode Code { get; set; }
 		public object Operand { get; set; }
 		public List<ILExpression> Arguments { get; set; }
-		public Instruction[] Prefixes { get; set; }
+		public ILExpressionPrefix[] Prefixes { get; set; }
 		// Mapping to the original instructions (useful for debugging)
 		public List<ILRange> ILRanges { get; set; }
 		
@@ -292,13 +304,24 @@ namespace ICSharpCode.Decompiler.ILAst
 			this.ILRanges  = new List<ILRange>(1);
 		}
 		
-		public Instruction GetPrefix(Code code)
+		public void AddPrefix(ILExpressionPrefix prefix)
+		{
+			ILExpressionPrefix[] arr = this.Prefixes;
+			if (arr == null)
+				arr = new ILExpressionPrefix[1];
+			else
+				Array.Resize(ref arr, arr.Length + 1);
+			arr[arr.Length - 1] = prefix;
+			this.Prefixes = arr;
+		}
+		
+		public ILExpressionPrefix GetPrefix(ILCode code)
 		{
 			var prefixes = this.Prefixes;
 			if (prefixes != null) {
-				foreach (Instruction i in prefixes) {
-					if (i.OpCode.Code == code)
-						return i;
+				foreach (ILExpressionPrefix p in prefixes) {
+					if (p.Code == code)
+						return p;
 				}
 			}
 			return null;
@@ -349,9 +372,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			
 			if (this.Prefixes != null) {
-				foreach (Instruction prefix in this.Prefixes) {
-					output.Write(prefix.OpCode.Name);
-					output.Write(' ');
+				foreach (var prefix in this.Prefixes) {
+					output.Write(prefix.Code.GetName());
+					output.Write(". ");
 				}
 			}
 			

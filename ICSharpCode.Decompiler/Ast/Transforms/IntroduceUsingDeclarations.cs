@@ -24,6 +24,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public void Run(AstNode compilationUnit)
 		{
+			if (!context.Settings.UsingDeclarations)
+				return;
+			
 			// First determine all the namespaces that need to be imported:
 			compilationUnit.AcceptVisitor(this, null);
 			

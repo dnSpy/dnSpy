@@ -231,7 +231,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <returns>The inferred type</returns>
 		TypeReference InferTypeForExpression(ILExpression expr, TypeReference expectedType, bool forceInferChildren = false)
 		{
-			if (expectedType != null && expr.ExpectedType != expectedType) {
+			if (expectedType != null && !IsSameType(expr.ExpectedType, expectedType)) {
 				expr.ExpectedType = expectedType;
 				if (expr.Code != ILCode.Stloc) // stloc is special case and never gets re-evaluated
 					forceInferChildren = true;
@@ -295,12 +295,16 @@ namespace ICSharpCode.Decompiler.ILAst
 					#region Call / NewObj
 				case ILCode.Call:
 				case ILCode.Callvirt:
+				case ILCode.CallGetter:
+				case ILCode.CallvirtGetter:
+				case ILCode.CallSetter:
+				case ILCode.CallvirtSetter:
 					{
 						MethodReference method = (MethodReference)expr.Operand;
 						if (forceInferChildren) {
 							for (int i = 0; i < expr.Arguments.Count; i++) {
 								if (i == 0 && method.HasThis) {
-									Instruction constraint = expr.GetPrefix(Code.Constrained);
+									ILExpressionPrefix constraint = expr.GetPrefix(ILCode.Constrained);
 									if (constraint != null)
 										InferTypeForExpression(expr.Arguments[i], new ByReferenceType((TypeReference)constraint.Operand));
 									else if (method.DeclaringType.IsValueType)
@@ -312,7 +316,14 @@ namespace ICSharpCode.Decompiler.ILAst
 								}
 							}
 						}
-						return SubstituteTypeArgs(method.ReturnType, method);
+						if (expr.Code == ILCode.CallSetter || expr.Code == ILCode.CallvirtSetter) {
+							return SubstituteTypeArgs(method.Parameters.Last().ParameterType, method);
+						} else {
+							TypeReference type = SubstituteTypeArgs(method.ReturnType, method);
+							if (expr.GetPrefix(ILCode.PropertyAddress) != null && !(type is ByReferenceType))
+								type = new ByReferenceType(type);
+							return type;
+						}
 					}
 				case ILCode.Newobj:
 					{
@@ -411,7 +422,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (forceInferChildren) {
 							if (pointerType is PointerType)
 								InferTypeForExpression(expr.Arguments[0], new PointerType(operandType));
-							else if (operandType != expr.Operand)
+							else if (!IsSameType(operandType, expr.Operand as TypeReference))
 								InferTypeForExpression(expr.Arguments[0], new ByReferenceType(operandType));
 							InferTypeForExpression(expr.Arguments[1], operandType);
 						}
@@ -431,6 +442,17 @@ namespace ICSharpCode.Decompiler.ILAst
 						return typeSystem.IntPtr;
 				case ILCode.Sizeof:
 					return typeSystem.Int32;
+				case ILCode.PostIncrement:
+				case ILCode.PostIncrement_Ovf:
+				case ILCode.PostIncrement_Ovf_Un:
+					{
+						TypeReference elementType = UnpackPointer(InferTypeForExpression(expr.Arguments[0], null));
+						if (forceInferChildren && elementType != null) {
+							// Assign expected type to the child expression
+							InferTypeForExpression(expr.Arguments[0], new ByReferenceType(elementType));
+						}
+						return elementType;
+					}
 					#endregion
 					#region Arithmetic instructions
 				case ILCode.Not: // bitwise complement
@@ -470,6 +492,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
 					return InferTypeForExpression(expr.Arguments[0], typeSystem.UInt32);
+				case ILCode.CompoundAssignment:
+					{
+						TypeReference varType = InferTypeForExpression(expr.Arguments[0].Arguments[0], null);
+						if (forceInferChildren) {
+							InferTypeForExpression(expr.Arguments[0], varType);
+						}
+						return varType;
+					}
 					#endregion
 					#region Constant loading instructions
 				case ILCode.Ldnull:
@@ -553,14 +583,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Stelem_R8:
 				case ILCode.Stelem_Ref:
 				case ILCode.Stelem_Any:
-					if (forceInferChildren) {
+					{
 						ArrayType arrayType = InferTypeForExpression(expr.Arguments[0], null) as ArrayType;
-						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
-						if (arrayType != null) {
-							InferTypeForExpression(expr.Arguments[2], arrayType.ElementType);
+						if (forceInferChildren) {
+							InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
+							if (arrayType != null) {
+								InferTypeForExpression(expr.Arguments[2], arrayType.ElementType);
+							}
 						}
+						return arrayType != null ? arrayType.ElementType : null;
 					}
-					return null;
 					#endregion
 					#region Conversion instructions
 				case ILCode.Conv_I1:
@@ -604,8 +636,14 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Conv_Ovf_U_Un:
 					return HandleConversion(NativeInt, false, expr.Arguments[0], expectedType, typeSystem.UIntPtr);
 				case ILCode.Conv_R4:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], typeSystem.Single);
+					}
 					return typeSystem.Single;
 				case ILCode.Conv_R8:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], typeSystem.Double);
+					}
 					return typeSystem.Double;
 				case ILCode.Conv_R_Un:
 					return (expectedType != null  && expectedType.MetadataType == MetadataType.Single) ? typeSystem.Single : typeSystem.Double;
@@ -707,6 +745,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					TypeReference elementType = SubstituteTypeArgs(arrayType.ElementType, member);
 					if (elementType != arrayType.ElementType) {
 						ArrayType newArrayType = new ArrayType(elementType);
+						newArrayType.Dimensions.Clear(); // remove the single dimension that Cecil adds by default
 						foreach (ArrayDimension d in arrayType.Dimensions)
 							newArrayType.Dimensions.Add(d);
 						return newArrayType;
@@ -784,11 +823,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression right = expr.Arguments[1];
 			TypeReference leftPreferred = DoInferTypeForExpression(left, expectedType);
 			TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
-			if (leftPreferred == rightPreferred) {
+			if (IsSameType(leftPreferred, rightPreferred)) {
 				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
-			} else if (rightPreferred == DoInferTypeForExpression(left, rightPreferred)) {
+			} else if (IsSameType(rightPreferred, DoInferTypeForExpression(left, rightPreferred))) {
 				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
-			} else if (leftPreferred == DoInferTypeForExpression(right, leftPreferred)) {
+			} else if (IsSameType(leftPreferred, DoInferTypeForExpression(right, leftPreferred))) {
 				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
 			} else {
 				left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
@@ -813,11 +852,11 @@ namespace ICSharpCode.Decompiler.ILAst
 					InferTypeForExpression(left, typeSystem.IntPtr);
 					right.InferredType = right.ExpectedType = rightPreferred;
 					return rightPreferred;
-				} else if (leftPreferred == rightPreferred) {
+				} else if (IsSameType(leftPreferred, rightPreferred)) {
 					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
-				} else if (rightPreferred == DoInferTypeForExpression(left, rightPreferred)) {
+				} else if (IsSameType(rightPreferred, DoInferTypeForExpression(left, rightPreferred))) {
 					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
-				} else if (leftPreferred == DoInferTypeForExpression(right, leftPreferred)) {
+				} else if (IsSameType(leftPreferred, DoInferTypeForExpression(right, leftPreferred))) {
 					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
 				} else {
 					left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
@@ -839,11 +878,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				return leftPreferred;
 			} else {
 				TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
-				if (leftPreferred == rightPreferred) {
+				if (IsSameType(leftPreferred, rightPreferred)) {
 					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
-				} else if (rightPreferred == DoInferTypeForExpression(left, rightPreferred)) {
+				} else if (IsSameType(rightPreferred, DoInferTypeForExpression(left, rightPreferred))) {
 					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
-				} else if (leftPreferred == DoInferTypeForExpression(right, leftPreferred)) {
+				} else if (IsSameType(leftPreferred, DoInferTypeForExpression(right, leftPreferred))) {
 					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
 				} else {
 					left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
@@ -1009,6 +1048,15 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (v != null && v.IsGenerated)
 					v.Type = null;
 			}
+		}
+		
+		public static bool IsSameType(TypeReference type1, TypeReference type2)
+		{
+			if (type1 == type2)
+				return true;
+			if (type1 == null || type2 == null)
+				return false;
+			return type1.FullName == type2.FullName; // TODO: implement this more efficiently?
 		}
 	}
 }

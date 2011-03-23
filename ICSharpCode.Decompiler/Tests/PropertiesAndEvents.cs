@@ -6,6 +6,44 @@ using System.Text;
 
 public class PropertiesAndEvents
 {
+	public event EventHandler AutomaticEvent;
+	
+	[field: NonSerialized]
+	public event EventHandler AutomaticEventWithInitializer = delegate
+	{
+	}
+	;
+	
+	public event EventHandler CustomEvent
+	{
+		add
+		{
+			this.AutomaticEvent += value;
+		}
+		remove
+		{
+			this.AutomaticEvent -= value;
+		}
+	}
+	
+	public int AutomaticProperty
+	{
+		get;
+		set;
+	}
+	
+	public int CustomProperty
+	{
+		get
+		{
+			return this.AutomaticProperty;
+		}
+		set
+		{
+			this.AutomaticProperty = value;
+		}
+	}
+	
 	public int Getter(StringBuilder b)
 	{
 		return b.Length;
@@ -24,30 +62,5 @@ public class PropertiesAndEvents
 	public void IndexerSetter(StringBuilder b)
 	{
 		b[42] = 'b';
-	}
-	
-	public int AutomaticProperty { get; set; }
-	
-	public int CustomProperty {
-		get {
-			return this.AutomaticProperty;
-		}
-		set {
-			this.AutomaticProperty = value;
-		}
-	}
-	
-	public event EventHandler AutomaticEvent;
-	
-	[field: NonSerialized]
-	public event EventHandler AutomaticEventWithInitializer = delegate {};
-	
-	public event EventHandler CustomEvent {
-		add {
-			this.AutomaticEvent += value;
-		}
-		remove {
-			this.AutomaticEvent -= value;
-		}
 	}
 }

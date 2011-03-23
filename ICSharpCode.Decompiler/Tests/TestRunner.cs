@@ -6,25 +6,94 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
 using ICSharpCode.Decompiler.Ast;
 using Microsoft.CSharp;
 using Mono.Cecil;
+using NUnit.Framework;
 
 namespace ICSharpCode.Decompiler.Tests
 {
+	[TestFixture]
 	public class TestRunner
 	{
-		public static void Main(string[] args)
+		[Test, Ignore("unncessary primitive casts")]
+		public void CheckedUnchecked()
 		{
-			if (args.Length == 1)
-				TestFile(args[0]);
-			else
-				TestFile(@"..\..\Tests\DelegateConstruction.cs");
-
-			Console.ReadKey();
+			TestFile(@"..\..\Tests\CheckedUnchecked.cs");
 		}
-
+		
+		[Test, Ignore("Missing cast on null")]
+		public void DelegateConstruction()
+		{
+			TestFile(@"..\..\Tests\DelegateConstruction.cs");
+		}
+		
+		[Test, Ignore("bug with variable-less catch")]
+		public void ExceptionHandling()
+		{
+			TestFile(@"..\..\Tests\ExceptionHandling.cs");
+		}
+		
+		[Test]
+		public void Generics()
+		{
+			TestFile(@"..\..\Tests\Generics.cs");
+		}
+		
+		[Test]
+		public void IncrementDecrement()
+		{
+			TestFile(@"..\..\Tests\IncrementDecrement.cs");
+		}
+		
+		[Test, Ignore("Formatting issues (array initializers not on single line)")]
+		public void InitializerTests()
+		{
+			TestFile(@"..\..\Tests\InitializerTests.cs");
+		}
+		
+		[Test, Ignore("ForEachOverArray not supported")]
+		public void Loops()
+		{
+			TestFile(@"..\..\Tests\Loops.cs");
+		}
+		
+		[Test]
+		public void MultidimensionalArray()
+		{
+			TestFile(@"..\..\Tests\MultidimensionalArray.cs");
+		}
+		
+		[Test]
+		public void PropertiesAndEvents()
+		{
+			TestFile(@"..\..\Tests\PropertiesAndEvents.cs");
+		}
+		
+		[Test, Ignore]
+		public void Switch()
+		{
+			TestFile(@"..\..\Tests\Switch.cs");
+		}
+		
+		[Test, Ignore("has incorrect casts to IntPtr")]
+		public void UnsafeCode()
+		{
+			TestFile(@"..\..\Tests\UnsafeCode.cs");
+		}
+		
+		[Test, Ignore("IncrementArrayLocation not yet supported")]
+		public void ValueTypes()
+		{
+			TestFile(@"..\..\Tests\ValueTypes.cs");
+		}
+		
+		[Test, Ignore("Redundant yield break; not removed")]
+		public void YieldReturn()
+		{
+			TestFile(@"..\..\Tests\YieldReturn.cs");
+		}
+		
 		static void TestFile(string fileName)
 		{
 			string code = File.ReadAllText(fileName);
@@ -49,19 +118,19 @@ namespace ICSharpCode.Decompiler.Tests
 			string line1, line2;
 			while ((line1 = r1.ReadLine()) != null) {
 				string trimmed = line1.Trim();
-				if (trimmed.Length == 0 || trimmed.StartsWith("//", StringComparison.Ordinal) || line1.StartsWith("using ", StringComparison.Ordinal)) {
+				if (trimmed.Length == 0 || trimmed.StartsWith("//", StringComparison.Ordinal) | trimmed.StartsWith("#", StringComparison.Ordinal)) {
 					diff.WriteLine(" " + line1);
 					continue;
 				}
 				line2 = r2.ReadLine();
-				while (line2 != null && (line2.StartsWith("using ", StringComparison.Ordinal) || line2.Trim().Length == 0))
+				while (line2 != null && string.IsNullOrWhiteSpace(line2))
 					line2 = r2.ReadLine();
 				if (line2 == null) {
 					ok = false;
 					diff.WriteLine("-" + line1);
 					continue;
 				}
-				if (line1 != line2) {
+				if (line1.Trim() != line2.Trim()) {
 					ok = false;
 					if (numberOfContinuousMistakes++ > 5)
 						return false;
@@ -84,6 +153,7 @@ namespace ICSharpCode.Decompiler.Tests
 		{
 			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
 			CompilerParameters options = new CompilerParameters();
+			options.CompilerOptions = "/unsafe";
 			options.ReferencedAssemblies.Add("System.Core.dll");
 			CompilerResults results = provider.CompileAssemblyFromSource(options, code);
 			try {

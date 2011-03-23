@@ -584,7 +584,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				Modifiers = Modifiers.Any,
 				Body = new BlockStatement {
 					new ReturnStatement {
-						Expression = new NamedNode("fieldReference", new MemberReferenceExpression { Target = new ThisReferenceExpression() })
+						Expression = new AnyNode("fieldReference")
 					}
 				}
 			},
@@ -608,7 +608,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m = automaticPropertyPattern.Match(property);
 			if (m != null) {
 				FieldDefinition field = m.Get("fieldReference").Single().Annotation<FieldReference>().ResolveWithinSameModule();
-				if (field.IsCompilerGenerated()) {
+				if (field.IsCompilerGenerated() && field.DeclaringType == cecilProperty.DeclaringType) {
 					RemoveCompilerGeneratedAttribute(property.Getter.Attributes);
 					RemoveCompilerGeneratedAttribute(property.Setter.Attributes);
 					property.Getter.Body = null;
@@ -643,7 +643,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				new AssignmentExpression {
 					Left = new NamedNode("var1", new IdentifierExpression()),
 					Operator = AssignmentOperatorType.Assign,
-					Right = new NamedNode("field", new MemberReferenceExpression { Target = new ThisReferenceExpression() })
+					Right = new NamedNode(
+						"field",
+						new MemberReferenceExpression {
+							Target = new Choice { new ThisReferenceExpression(), new TypeReferenceExpression { Type = new AnyNode() } }
+						})
 				},
 				new DoWhileStatement {
 					EmbeddedStatement = new BlockStatement {

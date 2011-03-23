@@ -140,6 +140,28 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 		}
 		
+		class ConvertCompoundAssignment : InsertedNode
+		{
+			readonly Expression expression;
+			readonly bool isChecked;
+			
+			public ConvertCompoundAssignment(Expression expression, bool isChecked)
+			{
+				this.expression = expression;
+				this.isChecked = isChecked;
+			}
+			
+			public override void Insert()
+			{
+				AssignmentExpression assign = expression.Annotation<ReplaceMethodCallsWithOperators.RestoreOriginalAssignOperatorAnnotation>().Restore(expression);
+				expression.ReplaceWith(assign);
+				if (isChecked)
+					assign.Right = new CheckedExpression { Expression = assign.Right.Detach() };
+				else
+					assign.Right = new UncheckedExpression { Expression = assign.Right.Detach() };
+			}
+		}
+		
 		class InsertedBlock : InsertedNode
 		{
 			readonly Statement firstStatement; // inclusive
@@ -279,20 +301,38 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (expr != null) {
 				CheckedUncheckedAnnotation annotation = expr.Annotation<CheckedUncheckedAnnotation>();
 				if (annotation != null) {
-					// If the annotation requires this node to be in a specific context, set the cost of the other context to infinite.
+					// If the annotation requires this node to be in a specific context, add a huge cost to the other context
+					// That huge cost gives us the option to ignore a required checked/unchecked expression when there wouldn't be any
+					// solution otherwise. (e.g. "for (checked(M().x += 1); true; unchecked(M().x += 2)) {}")
 					if (annotation.IsChecked)
-						result.CostInUncheckedContext = Cost.Infinite;
+						result.CostInUncheckedContext += new Cost(10000, 0);
 					else
-						result.CostInCheckedContext = Cost.Infinite;
+						result.CostInCheckedContext += new Cost(10000, 0);
 				}
 				// Embed this node in an checked/unchecked expression:
-				// We use '<' so that expressions are introduced on the deepest level possible (goal 3)
-				if (result.CostInCheckedContext + new Cost(0, 1) < result.CostInUncheckedContext) {
-					result.CostInUncheckedContext = result.CostInCheckedContext + new Cost(0, 1);
-					result.NodesToInsertInUncheckedContext = result.NodesToInsertInCheckedContext + new InsertedExpression(expr, true);
-				} else if (result.CostInUncheckedContext + new Cost(0, 1) < result.CostInCheckedContext) {
-					result.CostInCheckedContext = result.CostInUncheckedContext + new Cost(0, 1);
-					result.NodesToInsertInCheckedContext = result.NodesToInsertInUncheckedContext + new InsertedExpression(expr, false);
+				if (expr.Parent is ExpressionStatement) {
+					// We cannot use checked/unchecked for top-level-expressions.
+					// However, we could try converting a compound assignment (checked(a+=b);) or unary operator (checked(a++);)
+					// back to its old form.
+					if (expr.Annotation<ReplaceMethodCallsWithOperators.RestoreOriginalAssignOperatorAnnotation>() != null) {
+						// We use '<' so that expressions are introduced on the deepest level possible (goal 3)
+						if (result.CostInCheckedContext + new Cost(1, 1) < result.CostInUncheckedContext) {
+							result.CostInUncheckedContext = result.CostInCheckedContext + new Cost(1, 1);
+							result.NodesToInsertInUncheckedContext = result.NodesToInsertInCheckedContext + new ConvertCompoundAssignment(expr, true);
+						} else if (result.CostInUncheckedContext + new Cost(1, 1) < result.CostInCheckedContext) {
+							result.CostInCheckedContext = result.CostInUncheckedContext + new Cost(1, 1);
+							result.NodesToInsertInCheckedContext = result.NodesToInsertInUncheckedContext + new ConvertCompoundAssignment(expr, false);
+						}
+					}
+				} else {
+					// We use '<' so that expressions are introduced on the deepest level possible (goal 3)
+					if (result.CostInCheckedContext + new Cost(0, 1) < result.CostInUncheckedContext) {
+						result.CostInUncheckedContext = result.CostInCheckedContext + new Cost(0, 1);
+						result.NodesToInsertInUncheckedContext = result.NodesToInsertInCheckedContext + new InsertedExpression(expr, true);
+					} else if (result.CostInUncheckedContext + new Cost(0, 1) < result.CostInCheckedContext) {
+						result.CostInCheckedContext = result.CostInUncheckedContext + new Cost(0, 1);
+						result.NodesToInsertInCheckedContext = result.NodesToInsertInUncheckedContext + new InsertedExpression(expr, false);
+					}
 				}
 			}
 			return result;
