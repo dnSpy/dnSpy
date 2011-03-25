@@ -94,21 +94,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
-		public override ContextMenu GetContextMenu()
-		{
-			// specific to AssemblyTreeNode
-			var menu = new ContextMenu();
-			
-			MenuItem item = new MenuItem() {
-				Header = "Remove assembly",
-				Icon = new Image() { Source = Images.Delete }
-			};
-			item.Click += delegate { Delete(); };
-			menu.Items.Add(item);
-			
-			return menu;
-		}
-		
 		Dictionary<TypeDefinition, TypeTreeNode> typeDict = new Dictionary<TypeDefinition, TypeTreeNode>();
 		
 		protected override void LoadChildren()
@@ -233,6 +218,27 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				textView.SaveToDisk(language, new[]{this}, options, dlg.FileName);
 			}
 			return true;
+		}
+	}
+	
+	[ExportContextMenuEntry(Header = "_Remove", Icon = "images/Delete.png")]
+	sealed class RemoveAssembly : IContextMenuEntry
+	{
+		public bool IsVisible(SharpTreeNode[] selectedNodes)
+		{
+			return selectedNodes.All(n => n is AssemblyTreeNode);
+		}
+		
+		public bool IsEnabled(SharpTreeNode[] selectedNodes)
+		{
+			return true;
+		}
+		
+		public void Execute(SharpTreeNode[] selectedNodes)
+		{
+			foreach (var node in selectedNodes) {
+				node.Delete();
+			}
 		}
 	}
 }

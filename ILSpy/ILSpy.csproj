@@ -103,6 +103,7 @@
     <Compile Include="Fusion.cs" />
     <Compile Include="GacInterop.cs" />
     <Compile Include="GuessFileType.cs" />
+    <Compile Include="ContextMenuEntry.cs" />
     <Compile Include="ILAstLanguage.cs" />
     <Compile Include="ILLanguage.cs" />
     <Compile Include="ILSpySettings.cs" />
@@ -120,6 +121,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\IMemberTreeNode.cs" />
     <Compile Include="XamlResourceNode.cs" />
     <EmbeddedResource Include="..\README.txt">
       <Link>README.txt</Link>

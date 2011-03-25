@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
@@ -30,8 +29,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
@@ -96,6 +93,8 @@ namespace ICSharpCode.ILSpy
 			
 			InitMainMenu();
 			InitToolbar();
+			ContextMenuProvider.Add(treeView);
+			ContextMenuProvider.Add(analyzerTree);
 			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
 		}

@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Represents an event in the TreeView.
 	/// </summary>
-	public sealed class EventTreeNode : ILSpyTreeNode
+	public sealed class EventTreeNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		readonly EventDefinition ev;
 		
@@ -72,6 +72,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.DecompileEvent(ev, output, options);
+		}
+		
+		MemberReference IMemberTreeNode.Member {
+			get { return ev; }
 		}
 	}
 }

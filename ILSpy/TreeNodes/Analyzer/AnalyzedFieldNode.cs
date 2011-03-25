@@ -6,7 +6,7 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedFieldNode : AnalyzerTreeNode
+	class AnalyzedFieldNode : AnalyzerTreeNode, IMemberTreeNode
 	{
 		FieldDefinition analyzedField;
 		
@@ -40,6 +40,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.Children.Add(new AnalyzedFieldAccessNode(analyzedField, false));
 			if (!analyzedField.IsLiteral)
 				this.Children.Add(new AnalyzedFieldAccessNode(analyzedField, true));
+		}
+		
+		MemberReference IMemberTreeNode.Member {
+			get { return analyzedField; }
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Represents a property in the TreeView.
 	/// </summary>
-	public sealed class PropertyTreeNode : ILSpyTreeNode
+	public sealed class PropertyTreeNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		readonly PropertyDefinition property;
 		readonly bool isIndexer;
@@ -72,6 +72,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.DecompileProperty(property, output, options);
+		}
+		
+		MemberReference IMemberTreeNode.Member {
+			get { return property; }
 		}
 	}
 }

@@ -3,9 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
@@ -88,7 +88,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 	
-	class DerivedTypesEntryNode : ILSpyTreeNode
+	class DerivedTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		TypeDefinition def;
 		AssemblyDefinition[] assemblies;
@@ -137,6 +137,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.WriteCommentLine(output, language.TypeToString(def, true));
+		}
+		
+		MemberReference IMemberTreeNode.Member {
+			get { return def; }
 		}
 	}
 }

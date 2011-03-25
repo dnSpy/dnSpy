@@ -17,47 +17,41 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
+using ICSharpCode.TreeView;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedMethodTreeNode : AnalyzerTreeNode, IMemberTreeNode
+	[ExportContextMenuEntry(Header = "Analyze", Icon = "images/Search.png")]
+	sealed class AnalyzeContextMenuEntry : IContextMenuEntry
 	{
-		MethodDefinition analyzedMethod;
-		
-		public AnalyzedMethodTreeNode(MethodDefinition analyzedMethod)
+		public bool IsVisible(SharpTreeNode[] selectedNodes)
 		{
-			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
-			this.analyzedMethod = analyzedMethod;
-			this.LazyLoading = true;
+			return selectedNodes.All(n => n is IMemberTreeNode);
 		}
 		
-		public override object Icon {
-			get { return MethodTreeNode.GetIcon(analyzedMethod); }
-		}
-		
-		public override object Text {
-			get { return Language.TypeToString(analyzedMethod.DeclaringType, true) + "." + MethodTreeNode.GetText(analyzedMethod, Language); }
-		}
-		
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
+		public bool IsEnabled(SharpTreeNode[] selectedNodes)
 		{
-			e.Handled = true;
-			MainWindow.Instance.JumpToReference(analyzedMethod);
+			foreach (IMemberTreeNode node in selectedNodes) {
+				if (!(node.Member is FieldDefinition || node.Member is MethodDefinition))
+					return false;
+			}
+			return true;
 		}
 		
-		protected override void LoadChildren()
+		public void Execute(SharpTreeNode[] selectedNodes)
 		{
-			if (analyzedMethod.HasBody)
-				this.Children.Add(new AnalyzedMethodUsesNode(analyzedMethod));
-			this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));
-			if (analyzedMethod.IsVirtual && !analyzedMethod.IsFinal && !analyzedMethod.DeclaringType.IsInterface) // interfaces are temporarly disabled
-				this.Children.Add(new AnalyzerMethodOverridesTreeNode(analyzedMethod));
-		}
-		
-		MemberReference IMemberTreeNode.Member {
-			get { return analyzedMethod; }
+			// TODO: figure out when equivalent nodes are already present
+			// and focus those instead.
+			foreach (IMemberTreeNode node in selectedNodes) {
+				FieldDefinition field = node.Member as FieldDefinition;
+				if (field != null)
+					MainWindow.Instance.AddToAnalyzer(new AnalyzedFieldNode(field));
+				MethodDefinition method = node.Member as MethodDefinition;
+				if (method != null)
+					MainWindow.Instance.AddToAnalyzer(new AnalyzedMethodTreeNode(method));
+			}
 		}
 	}
 }

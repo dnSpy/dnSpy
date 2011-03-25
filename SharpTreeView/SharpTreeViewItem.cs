@@ -44,16 +44,6 @@ namespace ICSharpCode.TreeView
 			}
 		}
 
-		protected override void OnContextMenuOpening(ContextMenuEventArgs e)
-		{
-			ContextMenu = Node.GetContextMenu();
-		}
-
-		protected override void OnContextMenuClosing(ContextMenuEventArgs e)
-		{
-			ClearValue(ContextMenuProperty);
-		}
-
 		#region Mouse
 
 		Point startPoint;
