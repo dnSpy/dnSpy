@@ -838,12 +838,13 @@ namespace ILSpy.Debugger.Services
 
 		void DecompileOnDemand(StackFrame frame)
 		{
+			string debuggeeVersion = frame.MethodInfo.DebugModule.Process.DebuggeeVersion.Substring(1, 3); // should retrieve 2.0, 3.0, 4.0
 			var debugType = (DebugType)frame.MethodInfo.DeclaringType;
 			uint token = (uint)frame.MethodInfo.MetadataToken;
 			int ilOffset = frame.IP;
-			
 			string fullName = debugType.FullNameWithoutGenericArguments;
 			fullName = fullName.Replace("+", "/");
+			
 			if (DebugData.LoadedAssemblies == null)
 				throw new NullReferenceException("No DebugData assemblies!");
 			else {
@@ -851,7 +852,7 @@ namespace ILSpy.Debugger.Services
 				TypeDefinition typeDef = null;
 				TypeDefinition nestedTypeDef = null;
 				
-				foreach (var assembly in DebugData.LoadedAssemblies) {
+				foreach (var assembly in DebugData.LoadedAssemblies.Where(a => a.Name.Version.ToString().StartsWith(debuggeeVersion))) {
 					foreach (var module in assembly.Modules) {
 						var localType = module.GetType(fullName);
 						if (localType != null) {
