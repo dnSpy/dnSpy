@@ -69,6 +69,7 @@
     <Compile Include="Bookmarks\IBookmark.cs" />
     <Compile Include="Bookmarks\MarkerBookmark.cs" />
     <Compile Include="DebuggedData.cs" />
+    <Compile Include="DebuggerSettings.cs" />
     <Compile Include="Models\TreeModel\ArrayRangeNode.cs" />
     <Compile Include="Models\TreeModel\ChildNodesOfObject.cs" />
     <Compile Include="Models\TreeModel\ExpressionNode.cs" />
@@ -200,7 +201,6 @@
     <Resource Include="Images\DeleteAllBreakpoints.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\bug.png" />
     <Resource Include="Images\ContinueDebugging.png" />
   </ItemGroup>
   <ItemGroup>

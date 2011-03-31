@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,7 +29,7 @@ namespace ICSharpCode.ILSpy
 			InitializeComponent();
 			App.CompositionContainer.ComposeParts(this);
 			ILSpySettings settings = ILSpySettings.Load();
-			foreach (var optionPage in optionPages) {
+			foreach (var optionPage in optionPages.OrderBy(p => p.Metadata.Order)) {
 				TabItem tabItem = new TabItem();
 				tabItem.Header = optionPage.Metadata.Title;
 				tabItem.Content = optionPage.Value;
@@ -58,6 +59,7 @@ namespace ICSharpCode.ILSpy
 	public interface IOptionsMetadata
 	{
 		string Title { get; }
+		int Order { get; }
 	}
 	
 	public interface IOptionPage
@@ -70,13 +72,12 @@ namespace ICSharpCode.ILSpy
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
 	public class ExportOptionPageAttribute : ExportAttribute
 	{
-		public ExportOptionPageAttribute(string title)
-			: base("OptionPages", typeof(UIElement))
-		{
-			this.Title = title;
-		}
+		public ExportOptionPageAttribute() : base("OptionPages", typeof(UIElement))
+		{ }
 		
-		public string Title { get; private set; }
+		public string Title { get; set; }
+		
+		public int Order { get; set; }
 	}
 	
 	[ExportMainMenuCommand(Menu = "_View", Header = "_Options", MenuCategory = "Options", MenuOrder = 999)]

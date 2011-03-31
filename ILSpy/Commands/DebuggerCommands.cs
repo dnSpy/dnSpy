@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 using ILSpy.Debugger;
 using ILSpy.Debugger.Bookmarks;
@@ -172,136 +173,6 @@ namespace ICSharpCode.ILSpy.Commands
 		}
 	}
 	
-	[ExportToolbarCommand(ToolTip = "Attach to running application",
-	                      ToolbarIcon = "ILSpy.Debugger;component/Images/bug.png",
-	                      ToolbarCategory = "Debugger",
-	                      Tag = "Debugger",
-	                      ToolbarOrder = 0)]
-	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/bug.png",
-	                       MenuCategory = "Debugger1",
-	                       Header = "Attach to _running application",
-	                       MenuOrder = 0)]
-	internal sealed class AttachCommand : DebuggerCommand
-	{
-		public override void Execute(object parameter)
-		{
-			if (!CurrentDebugger.IsDebugging) {
-				var window = new AttachToProcessWindow { Owner = MainWindow.Instance };
-				if (window.ShowDialog() == true) {
-					StartAttaching(window.SelectedProcess);
-				}
-			}
-		}
-	}
-	
-	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/ContinueDebugging.png",
-	                       MenuCategory = "Debugger1",
-	                       Header = "Continue debugging",
-	                       InputGestureText = "F5",
-	                       IsEnabled = false,
-	                       MenuOrder = 1)]
-	internal sealed class ContinueDebuggingCommand : DebuggerCommand
-	{
-		public override void Execute(object parameter)
-		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
-				CurrentDebugger.Continue();
-				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
-			}
-		}
-	}
-	
-	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/StepInto.png",
-	                       MenuCategory = "Debugger1",
-	                       Header = "Step into",
-	                       InputGestureText = "F11",
-	                       IsEnabled = false,
-	                       MenuOrder = 2)]
-	internal sealed class StepIntoCommand : DebuggerCommand
-	{
-		public override void Execute(object parameter)
-		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
-				base.Execute(null);
-				CurrentDebugger.StepInto();
-			}
-		}
-	}
-	
-	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/StepOver.png",
-	                       MenuCategory = "Debugger1",
-	                       Header = "Step over",
-	                       InputGestureText = "F10",
-	                       IsEnabled = false,
-	                       MenuOrder = 3)]
-	internal sealed class StepOverCommand : DebuggerCommand
-	{
-		public override void Execute(object parameter)
-		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
-				base.Execute(null);
-				CurrentDebugger.StepOver();
-			}
-		}
-	}
-	
-	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/StepOut.png",
-	                       MenuCategory = "Debugger1",
-	                       Header = "Step out",
-	                       IsEnabled = false,
-	                       MenuOrder = 4)]
-	internal sealed class StepOutCommand : DebuggerCommand
-	{
-		public override void Execute(object parameter)
-		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
-				base.Execute(null);
-				CurrentDebugger.StepOut();
-			}
-		}
-	}
-	
-	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuCategory = "Debugger1",
-	                       Header = "_Detach from running application",
-	                       IsEnabled = false,
-	                       MenuOrder = 5)]
-	internal sealed class DetachCommand : DebuggerCommand
-	{
-		public override void Execute(object parameter)
-		{
-			if (CurrentDebugger.IsDebugging){
-				CurrentDebugger.Detach();
-				
-				EnableDebuggerUI(true);
-				CurrentDebugger.DebugStopped -= OnDebugStopped;
-			}
-		}
-	}
-	
-	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/DeleteAllBreakpoints.png",
-	                       MenuCategory = "Debugger2",
-	                       Header = "Remove all _breakpoints",
-	                       MenuOrder = 6)]
-	internal sealed class RemoveBreakpointsCommand : DebuggerCommand
-	{
-		public override void Execute(object parameter)
-		{
-			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
-				var bookmark = BookmarkManager.Bookmarks[i];
-				if (bookmark is BreakpointBookmark) {
-					BookmarkManager.RemoveMark(bookmark);
-				}
-			}
-		}
-	}
-	
 	[ExportToolbarCommand(ToolTip = "Debug an executable",
 	                      ToolbarIcon = "ILSpy.Debugger;component/Images/application-x-executable.png",
 	                      ToolbarCategory = "Debugger",
@@ -309,9 +180,9 @@ namespace ICSharpCode.ILSpy.Commands
 	                      ToolbarOrder = 0)]
 	[ExportMainMenuCommand(Menu = "_Debugger",
 	                       MenuIcon = "ILSpy.Debugger;component/Images/application-x-executable.png",
-	                       MenuCategory = "Debugger3",
+	                       MenuCategory = "Start",
 	                       Header = "Debug an _executable",
-	                       MenuOrder = 7)]
+	                       MenuOrder = 0)]
 	internal sealed class DebugExecutableCommand : DebuggerCommand
 	{
 		public override void Execute(object parameter)
@@ -331,6 +202,138 @@ namespace ICSharpCode.ILSpy.Commands
 				if (!CurrentDebugger.IsDebugging) {
 					// execute the process
 					this.StartExecutable(fileName);
+				}
+			}
+		}
+	}
+	
+	[ExportMainMenuCommand(Menu = "_Debugger",
+	                       MenuCategory = "Start",
+	                       Header = "Attach to _running application",
+	                       MenuOrder = 1)]
+	internal sealed class AttachCommand : DebuggerCommand
+	{
+		public override void Execute(object parameter)
+		{
+			if (!CurrentDebugger.IsDebugging) {
+				
+				var settings = ILSpySettings.Load();
+				XElement e = settings["DebuggerSettings"];
+				var showWarnings = (bool?)e.Attribute("showWarnings");
+				if (showWarnings.HasValue && showWarnings.Value)				
+					MessageBox.Show("Warning: When attaching to an application, some local variables might not be available. If possible, use the \"Start Executable\" command.",
+				                "Attach to a process", MessageBoxButton.OK, MessageBoxImage.Warning);
+				
+				var window = new AttachToProcessWindow { Owner = MainWindow.Instance };
+				if (window.ShowDialog() == true) {
+					StartAttaching(window.SelectedProcess);
+				}
+			}
+		}
+	}
+	
+	[ExportMainMenuCommand(Menu = "_Debugger",
+	                       MenuIcon = "ILSpy.Debugger;component/Images/ContinueDebugging.png",
+	                       MenuCategory = "SteppingArea",
+	                       Header = "Continue debugging",
+	                       InputGestureText = "F5",
+	                       IsEnabled = false,
+	                       MenuOrder = 2)]
+	internal sealed class ContinueDebuggingCommand : DebuggerCommand
+	{
+		public override void Execute(object parameter)
+		{
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
+				CurrentDebugger.Continue();
+				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
+			}
+		}
+	}
+	
+	[ExportMainMenuCommand(Menu = "_Debugger",
+	                       MenuIcon = "ILSpy.Debugger;component/Images/StepInto.png",
+	                       MenuCategory = "SteppingArea",
+	                       Header = "Step into",
+	                       InputGestureText = "F11",
+	                       IsEnabled = false,
+	                       MenuOrder = 3)]
+	internal sealed class StepIntoCommand : DebuggerCommand
+	{
+		public override void Execute(object parameter)
+		{
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
+				base.Execute(null);
+				CurrentDebugger.StepInto();
+			}
+		}
+	}
+	
+	[ExportMainMenuCommand(Menu = "_Debugger",
+	                       MenuIcon = "ILSpy.Debugger;component/Images/StepOver.png",
+	                       MenuCategory = "SteppingArea",
+	                       Header = "Step over",
+	                       InputGestureText = "F10",
+	                       IsEnabled = false,
+	                       MenuOrder = 4)]
+	internal sealed class StepOverCommand : DebuggerCommand
+	{
+		public override void Execute(object parameter)
+		{
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
+				base.Execute(null);
+				CurrentDebugger.StepOver();
+			}
+		}
+	}
+	
+	[ExportMainMenuCommand(Menu = "_Debugger",
+	                       MenuIcon = "ILSpy.Debugger;component/Images/StepOut.png",
+	                       MenuCategory = "SteppingArea",
+	                       Header = "Step out",
+	                       IsEnabled = false,
+	                       MenuOrder = 5)]
+	internal sealed class StepOutCommand : DebuggerCommand
+	{
+		public override void Execute(object parameter)
+		{
+			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
+				base.Execute(null);
+				CurrentDebugger.StepOut();
+			}
+		}
+	}
+	
+	[ExportMainMenuCommand(Menu = "_Debugger",
+	                       MenuCategory = "SteppingArea",
+	                       Header = "_Detach from running application",
+	                       IsEnabled = false,
+	                       MenuOrder = 6)]
+	internal sealed class DetachCommand : DebuggerCommand
+	{
+		public override void Execute(object parameter)
+		{
+			if (CurrentDebugger.IsDebugging){
+				CurrentDebugger.Detach();
+				
+				EnableDebuggerUI(true);
+				CurrentDebugger.DebugStopped -= OnDebugStopped;
+			}
+		}
+	}
+	
+	[ExportMainMenuCommand(Menu = "_Debugger",
+	                       MenuIcon = "ILSpy.Debugger;component/Images/DeleteAllBreakpoints.png",
+	                       MenuCategory = "Others",
+	                       Header = "Remove all _breakpoints",
+	                       MenuOrder = 7)]
+	internal sealed class RemoveBreakpointsCommand : DebuggerCommand
+	{
+		public override void Execute(object parameter)
+		{
+			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
+				var bookmark = BookmarkManager.Bookmarks[i];
+				if (bookmark is BreakpointBookmark) {
+					BookmarkManager.RemoveMark(bookmark);
 				}
 			}
 		}

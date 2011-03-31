@@ -18,7 +18,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Interaction logic for DecompilerSettingsPanel.xaml
 	/// </summary>
-	[ExportOptionPage("Decompiler")]
+	[ExportOptionPage(Title = "Decompiler", Order = 0)]
 	partial class DecompilerSettingsPanel : UserControl, IOptionPage
 	{
 		public DecompilerSettingsPanel()

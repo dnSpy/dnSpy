@@ -91,10 +91,6 @@
     <Compile Include="BamlDecompiler.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Commands\DebuggerCommands.cs" />
-    <Compile Include="DecompilerSettingsPanel.xaml.cs">
-      <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
     <Compile Include="CSharpLanguage.cs" />
@@ -117,7 +113,15 @@
       <DependentUpon>OpenFromGacDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="OptionsDialog.xaml.cs">
+    <Compile Include="Options\DebuggerSettingsPanel.xaml.cs">
+      <DependentUpon>DebuggerSettingsPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Options\DecompilerSettingsPanel.xaml.cs">
+      <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Options\OptionsDialog.xaml.cs">
       <DependentUpon>OptionsDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -181,10 +185,11 @@
     <Page Include="Controls\SearchBoxStyle.xaml">
       <DependentUpon>SearchBox.cs</DependentUpon>
     </Page>
-    <Page Include="DecompilerSettingsPanel.xaml" />
     <Page Include="MainWindow.xaml" />
     <Page Include="OpenFromGacDialog.xaml" />
-    <Page Include="OptionsDialog.xaml" />
+    <Page Include="Options\DebuggerSettingsPanel.xaml" />
+    <Page Include="Options\DecompilerSettingsPanel.xaml" />
+    <Page Include="Options\OptionsDialog.xaml" />
     <Page Include="TextView\DecompilerTextView.xaml">
       <DependentUpon>DecompilerTextView.cs</DependentUpon>
     </Page>
@@ -260,6 +265,8 @@
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Options" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

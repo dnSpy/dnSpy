@@ -1,0 +1,10 @@
+﻿<UserControl x:Class="ICSharpCode.ILSpy.Options.DebuggerSettingsPanel"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Grid>
+		<StackPanel Margin="10">
+			<CheckBox IsChecked="{Binding ShowWarnings}">Show warning messages</CheckBox>
+		</StackPanel>
+	</Grid>
+</UserControl>
