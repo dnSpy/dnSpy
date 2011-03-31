@@ -27,17 +27,17 @@ namespace ICSharpCode.Decompiler
 		/// <summary>
 		/// Gets or sets the source code line number in the output.
 		/// </summary>
-		public int SourceCodeLine { get; set; }
+		public int SourceCodeLine { get; internal set; }
 		
 		/// <summary>
 		/// Gets or sets IL Range offset for the source code line. E.g.: 13-19 &lt;-&gt; 135.
 		/// </summary>
-		public ILRange ILInstructionOffset { get; set; }
+		public ILRange ILInstructionOffset { get; internal set; }
 		
 		/// <summary>
 		/// Gets or sets the member mapping this source code mapping belongs to.
 		/// </summary>
-		public MemberMapping MemberMapping { get; set; }
+		public MemberMapping MemberMapping { get; internal set; }
 		
 		/// <summary>
 		/// Retrieves the array that contains the IL range and the missing gaps between ranges.
@@ -83,22 +83,22 @@ namespace ICSharpCode.Decompiler
 		/// <summary>
 		/// Gets or sets the type of the mapping.
 		/// </summary>
-		public TypeDefinition Type { get; set; }
+		public TypeDefinition Type { get; internal set; }
 		
 		/// <summary>
 		/// Metadata token of the method.
 		/// </summary>
-		public uint MetadataToken { get; set; }
+		public uint MetadataToken { get; internal set; }
 		
 		/// <summary>
 		/// Gets or sets the code size for the member mapping.
 		/// </summary>
-		public int CodeSize { get; set; }
+		public int CodeSize { get; internal set; }
 		
 		/// <summary>
 		/// Gets or sets the source code mappings.
 		/// </summary>
-		public List<SourceCodeMapping> MemberCodeMappings { get; set; }
+		public List<SourceCodeMapping> MemberCodeMappings { get; internal set; }
 		
 		/// <summary>
 		/// Gets the inverted IL Ranges.<br/>
@@ -118,8 +118,16 @@ namespace ICSharpCode.Decompiler
 		}
 	}
 	
+	/// <summary>
+	/// Code mappings helper class.
+	/// </summary>
 	public static class CodeMappings
 	{
+		/// <summary>
+		/// Gets the storage of code mappings for a language.
+		/// </summary>
+		/// <param name="language">A language.</param>
+		/// <returns>The storage of code mappings.</returns>
 		public static ConcurrentDictionary<string, List<MemberMapping>> GetStorage(DecompiledLanguages language)
 		{
 			ConcurrentDictionary<string, List<MemberMapping>> storage = null;
@@ -143,7 +151,7 @@ namespace ICSharpCode.Decompiler
 		/// </summary>
 		/// <param name="method">Method to create the mapping for.</param>
 		/// <param name="sourceCodeMappings">Source code mapping storage.</param>
-		public static MemberMapping CreateCodeMapping(
+		internal static MemberMapping CreateCodeMapping(
 			this MethodDefinition member,
 			ConcurrentDictionary<string, List<MemberMapping>> codeMappings)
 		{
@@ -211,6 +219,15 @@ namespace ICSharpCode.Decompiler
 			return null;
 		}
 		
+		/// <summary>
+		/// Gets a mapping given a type, a token and an IL offset.
+		/// </summary>
+		/// <param name="codeMappings">Code mappings storage.</param>
+		/// <param name="typeName">Type name.</param>
+		/// <param name="token">Token.</param>
+		/// <param name="ilOffset">IL offset.</param>
+		/// <param name="isMatch">True, if perfect match.</param>
+		/// <returns>A code mapping.</returns>
 		public static SourceCodeMapping GetInstructionByTypeTokenAndOffset(
 			this ConcurrentDictionary<string, List<MemberMapping>> codeMappings,
 			string typeName,
