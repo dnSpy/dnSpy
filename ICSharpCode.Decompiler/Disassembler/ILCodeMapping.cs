@@ -10,7 +10,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 	/// <summary>
 	/// Stores the IL code mappings.
 	/// </summary>
-	public static class ILCodeMapping
+	static class ILCodeMapping
 	{
 		static ConcurrentDictionary<string, List<MemberMapping>> codeMappings = new ConcurrentDictionary<string, List<MemberMapping>>();
 		

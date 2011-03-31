@@ -12,7 +12,7 @@ namespace ICSharpCode.Decompiler.Ast
 	/// <summary>
 	/// Stores the C# code mappings.
 	/// </summary>
-	public static class CSharpCodeMapping
+	static class CSharpCodeMapping
 	{
 		static ConcurrentDictionary<string, List<MemberMapping>> codeMappings = new ConcurrentDictionary<string, List<MemberMapping>>();
 		
