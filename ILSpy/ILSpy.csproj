@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -88,6 +88,7 @@
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="BamlDecompiler.cs" />
+    <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="DecompilerSettingsPanel.xaml.cs">
       <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
@@ -111,6 +112,7 @@
     <Compile Include="Language.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="LoadedAssembly.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="NavigationHistory.cs" />
     <Compile Include="OpenFromGacDialog.xaml.cs">
       <DependentUpon>OpenFromGacDialog.xaml</DependentUpon>

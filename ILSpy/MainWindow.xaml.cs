@@ -22,13 +22,14 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
@@ -176,6 +177,43 @@ namespace ICSharpCode.ILSpy
 		}
 		#endregion
 		
+		#region Message Hook
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
+			HwndSource source = PresentationSource.FromVisual(this) as HwndSource;;
+			if (source != null) {
+				source.AddHook(WndProc);
+			}
+		}
+		
+		unsafe IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+		{
+			if (msg == NativeMethods.WM_COPYDATA) {
+				CopyDataStruct* copyData = (CopyDataStruct*)lParam;
+				string data = new string((char*)copyData->Buffer, 0, copyData->Size / sizeof(char));
+				if (data.StartsWith("ILSpy:\r\n", StringComparison.Ordinal)) {
+					data = data.Substring(8);
+					List<string> lines = new List<string>();
+					using (StringReader r = new StringReader(data)) {
+						string line;
+						while ((line = r.ReadLine()) != null)
+							lines.Add(line);
+					}
+					HandleCommandLineArguments(new CommandLineArguments(lines));
+					handled = true;
+					return (IntPtr)1;
+				}
+			}
+			return IntPtr.Zero;
+		}
+		#endregion
+		
+		void HandleCommandLineArguments(CommandLineArguments args)
+		{
+			OpenFiles(args.AssembliesToLoad.ToArray());
+		}
+		
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			ILSpySettings spySettings = this.spySettings;
@@ -185,12 +223,9 @@ namespace ICSharpCode.ILSpy
 			// This makes the UI come up a bit faster.
 			this.assemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
 			
+			HandleCommandLineArguments(App.CommandLineArguments);
 			ShowAssemblyList(this.assemblyList);
 			
-			string[] args = Environment.GetCommandLineArgs();
-			for (int i = 1; i < args.Length; i++) {
-				assemblyList.OpenAssembly(args[i]);
-			}
 			if (assemblyList.GetAssemblies().Length == 0)
 				LoadInitialAssemblies();
 			

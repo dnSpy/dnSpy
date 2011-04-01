@@ -71,7 +71,7 @@ namespace ICSharpCode.ILSpy
 		readonly SharpTreeView treeView;
 		
 		[ImportMany(typeof(IContextMenuEntry))]
-		Lazy<IContextMenuEntry, IContextMenuEntryMetadata>[] entries;
+		Lazy<IContextMenuEntry, IContextMenuEntryMetadata>[] entries = null;
 		
 		private ContextMenuProvider(SharpTreeView treeView)
 		{

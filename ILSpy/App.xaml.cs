@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Documents;
@@ -39,8 +40,17 @@ namespace ICSharpCode.ILSpy
 			get { return compositionContainer; }
 		}
 		
+		internal static CommandLineArguments CommandLineArguments;
+		
 		public App()
 		{
+			App.CommandLineArguments = new CommandLineArguments(Environment.GetCommandLineArgs().Skip(1));
+			if (App.CommandLineArguments.SharedInstance) {
+				string message = string.Join(Environment.NewLine, Environment.GetCommandLineArgs().Skip(1));
+				if (SendToPreviousInstance("ILSpy:\r\n" + message)) {
+					Environment.Exit(0);
+				}
+			}
 			InitializeComponent();
 			
 			var catalog = new AggregateCatalog();
@@ -61,7 +71,7 @@ namespace ICSharpCode.ILSpy
 			                                  new RequestNavigateEventHandler(Window_RequestNavigate));
 		}
 		
-		
+		#region Exception Handling
 		static void Dispatcher_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
 			Debug.WriteLine(e.Exception.ToString());
@@ -77,6 +87,52 @@ namespace ICSharpCode.ILSpy
 				MessageBox.Show(ex.ToString(), "Sorry, we crashed");
 			}
 		}
+		#endregion
+		
+		#region Pass Command Line Arguments to previous instance
+		bool SendToPreviousInstance(string message)
+		{
+			bool success = false;
+			NativeMethods.EnumWindows(
+				(hWnd, lParam) => {
+					string windowTitle = NativeMethods.GetWindowText(hWnd, 100);
+					if (windowTitle.StartsWith("ILSpy", StringComparison.Ordinal)) {
+						Debug.WriteLine("Found {0:x4}: {1}", hWnd, windowTitle);
+						IntPtr result = Send(hWnd, message);
+						Debug.WriteLine("WM_COPYDATA result: {0:x8}", result);
+						if (result == (IntPtr)1) {
+							NativeMethods.SetForegroundWindow(hWnd);
+							success = true;
+							return false; // stop enumeration
+						}
+					}
+					return true; // continue enumeration
+				}, IntPtr.Zero);
+			return success;
+		}
+		
+		unsafe static IntPtr Send(IntPtr hWnd, string message)
+		{
+			const uint SMTO_NORMAL = 0;
+			
+			CopyDataStruct lParam;
+			lParam.Padding = IntPtr.Zero;
+			lParam.Size = message.Length * 2;
+			fixed (char *buffer = message) {
+				lParam.Buffer = (IntPtr)buffer;
+				IntPtr result;
+				// SendMessage with 3s timeout (e.g. when the target process is stopped in the debugger)
+				if (NativeMethods.SendMessageTimeout(
+					hWnd, NativeMethods.WM_COPYDATA, IntPtr.Zero, ref lParam,
+					SMTO_NORMAL, 3000, out result) != IntPtr.Zero)
+				{
+					return result;
+				} else {
+					return IntPtr.Zero;
+				}
+			}
+		}
+		#endregion
 		
 		void Window_RequestNavigate(object sender, RequestNavigateEventArgs e)
 		{
