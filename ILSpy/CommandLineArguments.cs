@@ -8,9 +8,12 @@ namespace ICSharpCode.ILSpy
 {
 	sealed class CommandLineArguments
 	{
+		// see /doc/Command Line.txt for details
 		public List<string> AssembliesToLoad = new List<string>();
+		public bool? SingleInstance;
 		public string NavigateTo;
-		public bool SharedInstance = true;
+		public string Language;
+		public bool NoActivate;
 		
 		public CommandLineArguments(IEnumerable<string> arguments)
 		{
@@ -18,12 +21,16 @@ namespace ICSharpCode.ILSpy
 				if (arg.Length == 0)
 					continue;
 				if (arg[0] == '/') {
-					if (arg.Equals("/sharedInstance", StringComparison.OrdinalIgnoreCase))
-						this.SharedInstance = true;
+					if (arg.Equals("/singleInstance", StringComparison.OrdinalIgnoreCase))
+						this.SingleInstance = true;
 					else if (arg.Equals("/separate", StringComparison.OrdinalIgnoreCase))
-						this.SharedInstance = false;
+						this.SingleInstance = false;
 					else if (arg.StartsWith("/navigateTo:", StringComparison.OrdinalIgnoreCase))
 						this.NavigateTo = arg.Substring("/navigateTo:".Length);
+					else if (arg.StartsWith("/language:", StringComparison.OrdinalIgnoreCase))
+						this.Language = arg.Substring("/language:".Length);
+					else if (arg.Equals("/noActivate", StringComparison.OrdinalIgnoreCase))
+						this.NoActivate = true;
 				} else {
 					this.AssembliesToLoad.Add(arg);
 				}

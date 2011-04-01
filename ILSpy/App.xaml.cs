@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -44,10 +45,12 @@ namespace ICSharpCode.ILSpy
 		
 		public App()
 		{
-			App.CommandLineArguments = new CommandLineArguments(Environment.GetCommandLineArgs().Skip(1));
-			if (App.CommandLineArguments.SharedInstance) {
-				string message = string.Join(Environment.NewLine, Environment.GetCommandLineArgs().Skip(1));
-				if (SendToPreviousInstance("ILSpy:\r\n" + message)) {
+			var cmdArgs = Environment.GetCommandLineArgs().Skip(1);
+			App.CommandLineArguments = new CommandLineArguments(cmdArgs);
+			if (App.CommandLineArguments.SingleInstance ?? true) {
+				cmdArgs = cmdArgs.Select(FullyQualifyPath);
+				string message = string.Join(Environment.NewLine, cmdArgs);
+				if (SendToPreviousInstance("ILSpy:\r\n" + message, !App.CommandLineArguments.NoActivate)) {
 					Environment.Exit(0);
 				}
 			}
@@ -71,6 +74,19 @@ namespace ICSharpCode.ILSpy
 			                                  new RequestNavigateEventHandler(Window_RequestNavigate));
 		}
 		
+		string FullyQualifyPath(string argument)
+		{
+			// Fully qualify the paths before passing them to another process,
+			// because that process might use a different current directory.
+			if (string.IsNullOrEmpty(argument) || argument[0] == '/')
+				return argument;
+			try {
+				return Path.Combine(Environment.CurrentDirectory, argument);
+			} catch (ArgumentException) {
+				return argument;
+			}
+		}
+		
 		#region Exception Handling
 		static void Dispatcher_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
@@ -90,7 +106,7 @@ namespace ICSharpCode.ILSpy
 		#endregion
 		
 		#region Pass Command Line Arguments to previous instance
-		bool SendToPreviousInstance(string message)
+		bool SendToPreviousInstance(string message, bool activate)
 		{
 			bool success = false;
 			NativeMethods.EnumWindows(
@@ -101,7 +117,8 @@ namespace ICSharpCode.ILSpy
 						IntPtr result = Send(hWnd, message);
 						Debug.WriteLine("WM_COPYDATA result: {0:x8}", result);
 						if (result == (IntPtr)1) {
-							NativeMethods.SetForegroundWindow(hWnd);
+							if (activate)
+								NativeMethods.SetForegroundWindow(hWnd);
 							success = true;
 							return false; // stop enumeration
 						}

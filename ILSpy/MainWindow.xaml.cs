@@ -200,18 +200,52 @@ namespace ICSharpCode.ILSpy
 						while ((line = r.ReadLine()) != null)
 							lines.Add(line);
 					}
-					HandleCommandLineArguments(new CommandLineArguments(lines));
-					handled = true;
-					return (IntPtr)1;
+					var args = new CommandLineArguments(lines);
+					if (HandleCommandLineArguments(args)) {
+						HandleCommandLineArgumentsAfterShowList(args);
+						handled = true;
+						return (IntPtr)1;
+					}
 				}
 			}
 			return IntPtr.Zero;
 		}
 		#endregion
 		
-		void HandleCommandLineArguments(CommandLineArguments args)
+		List<LoadedAssembly> commandLineLoadedAssemblies = new List<LoadedAssembly>();
+		
+		bool HandleCommandLineArguments(CommandLineArguments args)
 		{
-			OpenFiles(args.AssembliesToLoad.ToArray());
+			foreach (string file in args.AssembliesToLoad) {
+				commandLineLoadedAssemblies.Add(assemblyList.OpenAssembly(file));
+			}
+			if (args.Language != null)
+				sessionSettings.FilterSettings.Language = Languages.GetLanguage(args.Language);
+			return true;
+		}
+		
+		void HandleCommandLineArgumentsAfterShowList(CommandLineArguments args)
+		{
+			if (args.NavigateTo != null) {
+				bool found = false;
+				foreach (LoadedAssembly asm in commandLineLoadedAssemblies) {
+					AssemblyDefinition def = asm.AssemblyDefinition;
+					if (def != null) {
+						MemberReference mr = XmlDocKeyProvider.FindMemberByKey(def.MainModule, args.NavigateTo);
+						if (mr != null) {
+							found = true;
+							JumpToReference(mr);
+							break;
+						}
+					}
+				}
+				if (!found) {
+					AvalonEditTextOutput output = new AvalonEditTextOutput();
+					output.Write("Cannot find " + args.NavigateTo);
+					decompilerTextView.Show(output);
+				}
+			}
+			commandLineLoadedAssemblies.Clear(); // clear references once we don't need them anymore
 		}
 		
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -224,19 +258,27 @@ namespace ICSharpCode.ILSpy
 			this.assemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
 			
 			HandleCommandLineArguments(App.CommandLineArguments);
+			
+			if (assemblyList.GetAssemblies().Length == 0
+			    && assemblyList.ListName == AssemblyListManager.DefaultListName)
+			{
+				LoadInitialAssemblies();
+			}
+			
 			ShowAssemblyList(this.assemblyList);
 			
-			if (assemblyList.GetAssemblies().Length == 0)
-				LoadInitialAssemblies();
+			HandleCommandLineArgumentsAfterShowList(App.CommandLineArguments);
 			
-			SharpTreeNode node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
-			if (node != null) {
-				SelectNode(node);
-				
-				// only if not showing the about page, perform the update check:
-				ShowMessageIfUpdatesAvailableAsync(spySettings);
-			} else {
-				AboutPage.Display(decompilerTextView);
+			if (App.CommandLineArguments.NavigateTo == null) {
+				SharpTreeNode node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
+				if (node != null) {
+					SelectNode(node);
+					
+					// only if not showing the about page, perform the update check:
+					ShowMessageIfUpdatesAvailableAsync(spySettings);
+				} else {
+					AboutPage.Display(decompilerTextView);
+				}
 			}
 		}
 		
