@@ -17,60 +17,17 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
 	/// <summary>
-	/// Represents a field in the TreeView.
+	/// Interface implemented by all tree nodes
+	/// (both in main tree view and in analyzer)
+	/// that represent Cecil members.
 	/// </summary>
-	public sealed class FieldTreeNode : ILSpyTreeNode, IMemberTreeNode
+	public interface IMemberTreeNode
 	{
-		readonly FieldDefinition field;
-		
-		public FieldDefinition FieldDefinition {
-			get { return field; }
-		}
-		
-		public FieldTreeNode(FieldDefinition field)
-		{
-			if (field == null)
-				throw new ArgumentNullException("field");
-			this.field = field;
-		}
-		
-		public override object Text {
-			get { return HighlightSearchMatch(field.Name, " : " + this.Language.TypeToString(field.FieldType, false, field)); }
-		}
-		
-		public override object Icon {
-			get { return GetIcon(field); }
-		}
-		
-		public static object GetIcon(FieldDefinition field)
-		{
-			if (field.IsLiteral)
-				return Images.Literal;
-			else
-				return Images.Field;
-		}
-		
-		public override FilterResult Filter(FilterSettings settings)
-		{
-			if (settings.SearchTermMatches(field.Name) && settings.Language.ShowMember(field))
-				return FilterResult.Match;
-			else
-				return FilterResult.Hidden;
-		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.DecompileField(field, output, options);
-		}
-		
-		MemberReference IMemberTreeNode.Member {
-			get { return field; }
-		}
+		MemberReference Member { get; }
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler.FlowAnalysis;
+using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.CSharp;
@@ -176,14 +177,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			
 			if (abortBeforeStep == ILAstOptimizationStep.IntroduceFixedStatements) return;
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
-				for (int i = block.Body.Count - 1; i >= 0; i--) {
-					// TODO: Move before loops
-					if (i < block.Body.Count)
-						IntroduceFixedStatements(block.Body, i);
-				}
-			}
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+			// we need post-order traversal, not pre-order, for "fixed" to work correctly
+			foreach (ILBlock block in TreeTraversal.PostOrder<ILNode>(method, n => n.GetChildren()).OfType<ILBlock>()) {
 				for (int i = block.Body.Count - 1; i >= 0; i--) {
 					// TODO: Move before loops
 					if (i < block.Body.Count)

@@ -18,10 +18,9 @@
 
 using System;
 using System.Text;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -29,7 +28,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Tree Node representing a field, method, property, or event.
 	/// </summary>
-	public sealed class MethodTreeNode : ILSpyTreeNode
+	public sealed class MethodTreeNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		MethodDefinition method;
 		
@@ -96,15 +95,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FilterResult.Hidden;
 		}
 		
-		public override System.Windows.Controls.ContextMenu GetContextMenu()
-		{
-			ContextMenu menu = new ContextMenu();
-			MenuItem item = new MenuItem() { Header = "Analyze", Icon = new Image() { Source = Images.Search } };
-			item.Click += delegate { MainWindow.Instance.AddToAnalyzer(new AnalyzedMethodTreeNode(method)); };
-			
-			menu.Items.Add(item);
-			
-			return menu;
+		MemberReference IMemberTreeNode.Member {
+			get { return method; }
 		}
 	}
 }

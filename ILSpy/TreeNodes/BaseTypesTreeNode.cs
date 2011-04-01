@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Threading;
 
@@ -71,7 +70,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 	
-	sealed class BaseTypesEntryNode : ILSpyTreeNode
+	sealed class BaseTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		TypeReference tr;
 		TypeDefinition def;
@@ -138,6 +137,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.WriteCommentLine(output, language.TypeToString(tr, true));
+		}
+		
+		MemberReference IMemberTreeNode.Member {
+			get { return tr; }
 		}
 	}
 }

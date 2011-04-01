@@ -12,11 +12,12 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <ApplicationIcon>Images\ILSpy.ico</ApplicationIcon>
+    <RunCodeAnalysis>False</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -39,6 +40,7 @@
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -89,6 +91,7 @@
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="BamlDecompiler.cs" />
+    <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Commands\DebuggerCommands.cs" />
     <Compile Include="Controls\SearchBox.cs" />
@@ -101,6 +104,7 @@
     <Compile Include="Fusion.cs" />
     <Compile Include="GacInterop.cs" />
     <Compile Include="GuessFileType.cs" />
+    <Compile Include="ContextMenuEntry.cs" />
     <Compile Include="ILAstLanguage.cs" />
     <Compile Include="ILLanguage.cs" />
     <Compile Include="ILSpySettings.cs" />
@@ -108,6 +112,7 @@
     <Compile Include="Language.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="LoadedAssembly.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="NavigationHistory.cs" />
     <Compile Include="OpenFromGacDialog.xaml.cs">
       <DependentUpon>OpenFromGacDialog.xaml</DependentUpon>
@@ -126,7 +131,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XamlResourceNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\IMemberTreeNode.cs" />
+    <Compile Include="TreeNodes\XamlResourceNode.cs" />
+    <Compile Include="XmlDocKeyProvider.cs" />
     <EmbeddedResource Include="..\README.txt">
       <Link>README.txt</Link>
     </EmbeddedResource>

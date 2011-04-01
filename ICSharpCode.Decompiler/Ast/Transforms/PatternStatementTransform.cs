@@ -176,7 +176,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (varDecl != null && varDecl.Parent is BlockStatement) {
 					Statement declarationPoint;
 					if (CanMoveVariableDeclarationIntoStatement(varDecl, usingStatement, out declarationPoint)) {
-						Debug.Assert(declarationPoint == usingStatement);
 						// Moving the variable into the UsingStatement is allowed:
 						usingStatement.ResourceAcquisition = new VariableDeclarationStatement {
 							Type = (AstType)varDecl.Type.Clone(),
@@ -302,7 +301,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			};
 			node.ReplaceWith(foreachStatement);
 			foreach (Statement stmt in m.Get<Statement>("variablesOutsideLoop")) {
-				((BlockStatement)foreachStatement.Parent).Statements.InsertAfter(null, stmt);
+				((BlockStatement)foreachStatement.Parent).Statements.InsertAfter(null, stmt.Detach());
 			}
 			return foreachStatement;
 		}

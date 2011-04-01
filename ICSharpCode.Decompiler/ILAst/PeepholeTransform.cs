@@ -641,6 +641,17 @@ namespace ICSharpCode.Decompiler.ILAst
 							    && falseValue.Arguments[0].Match(ILCode.Ldloc, out loadedVariable) && loadedVariable == arrayVariable
 							    && IsNullOrZero(falseValue.Arguments[1]))
 							{
+								// OK, we detected the pattern for fixing an array.
+								// Now check whether the loading expression was a store ot a temp. var
+								// that can be eliminated.
+								if (arrayLoadingExpr.Code == ILCode.Stloc) {
+									ILInlining inlining = new ILInlining(method);
+									if (inlining.numLdloc.GetOrDefault(arrayVariable) == 2 && 
+									    inlining.numStloc.GetOrDefault(arrayVariable) == 1 && inlining.numLdloca.GetOrDefault(arrayVariable) == 0)
+									{
+										arrayLoadingExpr = arrayLoadingExpr.Arguments[0];
+									}
+								}
 								initValue = new ILExpression(ILCode.Stloc, pinnedVar, arrayLoadingExpr);
 								nextPos = i + 1;
 								return true;
@@ -657,16 +668,17 @@ namespace ICSharpCode.Decompiler.ILAst
 		bool MatchFixedArrayInitializerCondition(ILExpression condition, out ILExpression initValue)
 		{
 			ILExpression logicAnd;
-			ILVariable arrayVar1, arrayVar2;
+			ILVariable arrayVar;
 			if (condition.Match(ILCode.LogicNot, out logicAnd) && logicAnd.Code == ILCode.LogicAnd) {
 				initValue = UnpackDoubleNegation(logicAnd.Arguments[0]);
-				if (initValue.Match(ILCode.Ldloc, out arrayVar1)) {
+				ILExpression arrayVarInitializer;
+				if (initValue.Match(ILCode.Ldloc, out arrayVar)
+				    || initValue.Match(ILCode.Stloc, out arrayVar, out arrayVarInitializer))
+				{
 					ILExpression arrayLength = logicAnd.Arguments[1];
 					if (arrayLength.Code == ILCode.Conv_I4)
 						arrayLength = arrayLength.Arguments[0];
-					if (arrayLength.Code == ILCode.Ldlen && arrayLength.Arguments[0].Match(ILCode.Ldloc, out arrayVar2)) {
-						return arrayVar1 == arrayVar2;
-					}
+					return arrayLength.Code == ILCode.Ldlen && arrayLength.Arguments[0].MatchLdloc(arrayVar);
 				}
 			}
 			initValue = null;
@@ -716,7 +728,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!(ifStmt.TrueBlock.Body[0].Match(ILCode.Stloc, out assignedVar, out assignedExpr) && assignedVar == var2 && assignedExpr.Code == ILCode.Add))
 				return false;
 			MethodReference calledMethod;
-			if (!(assignedExpr.Arguments[0].MatchLdloc(var1) && assignedExpr.Arguments[1].Match(ILCode.Call, out calledMethod)))
+			if (!(assignedExpr.Arguments[0].MatchLdloc(var1)))
+				return false;
+			if (!(assignedExpr.Arguments[1].Match(ILCode.Call, out calledMethod) || assignedExpr.Arguments[1].Match(ILCode.CallGetter, out calledMethod)))
 				return false;
 			if (!(calledMethod.Name == "get_OffsetToStringData" && calledMethod.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers"))
 				return false;
