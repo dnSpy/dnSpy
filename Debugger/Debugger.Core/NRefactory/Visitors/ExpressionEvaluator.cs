@@ -72,7 +72,7 @@ namespace ICSharpCode.NRefactory.Visitors
 
 						return astRoot;
 					}
-					break;
+					
 				default:
 					throw new ArgumentException("Unsuported language");
 			}

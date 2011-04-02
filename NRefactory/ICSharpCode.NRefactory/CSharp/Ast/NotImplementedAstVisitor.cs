@@ -526,5 +526,25 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			throw new NotImplementedException();
 		}
+		
+		public virtual S VisitEmptyExpression(EmptyExpression emptyExpression, T data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public virtual S VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, T data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public virtual S VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration, T data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public virtual S VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer, T data)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
