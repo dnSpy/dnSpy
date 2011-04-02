@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.NRefactory</RootNamespace>
     <AssemblyName>ICSharpCode.NRefactory</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -15,7 +15,6 @@
     <NoStdLib>False</NoStdLib>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1591,0618</NoWarn>
-    <TargetFrameworkProfile />
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA1026;-Microsoft.Security#CA2104</CodeAnalysisRules>
   </PropertyGroup>
@@ -30,27 +29,22 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
-    <DefineConstants>DEBUG;TRACE;FULL_AST;DOTNET35</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;FULL_AST</DefineConstants>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Release\</OutputPath>
     <DebugType>None</DebugType>
     <Optimize>True</Optimize>
-    <DefineConstants>TRACE;FULL_AST;DOTNET35</DefineConstants>
+    <DefineConstants>TRACE;FULL_AST</DefineConstants>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>Full</DebugType>
-    <Optimize>false</Optimize>
     <WarningLevel>4</WarningLevel>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>None</DebugType>
-    <Optimize>true</Optimize>
     <WarningLevel>4</WarningLevel>
-    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -61,6 +55,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSharp\Analysis\ControlFlow.cs" />
+    <Compile Include="CSharp\Analysis\DefiniteAssignmentAnalysis.cs" />
+    <Compile Include="CSharp\Analysis\MinimalResolveContext.cs" />
     <Compile Include="CSharp\Ast\AstNodeCollection.cs" />
     <Compile Include="CSharp\Ast\Expressions\TypeReferenceExpression.cs" />
     <Compile Include="CSharp\Ast\IAstVisitor.cs" />
@@ -107,6 +104,7 @@
     <Compile Include="CSharp\Ast\PatternMatching\IPatternAstVisitor.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\Match.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\NamedNode.cs" />
+    <Compile Include="CSharp\Ast\PatternMatching\OptionalNode.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\Repeat.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\Pattern.cs" />
     <Compile Include="CSharp\Ast\PatternMatching\Placeholder.cs" />
@@ -160,8 +158,6 @@
     <Compile Include="CSharp\Ast\TypeMembers\PropertyDeclaration.cs" />
     <Compile Include="CSharp\Ast\TypeMembers\VariableInitializer.cs" />
     <Compile Include="CSharp\Formatter\CSharpFormattingPolicy.cs" />
-    <Compile Include="CSharp\Formatter\DomIndentationVisitor.cs" />
-    <Compile Include="CSharp\Formatter\DomSpacingVisitor.cs" />
     <Compile Include="CSharp\Formatter\Indent.cs" />
     <Compile Include="CSharp\OutputVisitor\InsertParenthesesVisitor.cs" />
     <Compile Include="CSharp\OutputVisitor\IOutputFormatter.cs" />
@@ -331,6 +327,7 @@
     <Compile Include="Utils\DotNet35Compat.cs" />
     <Compile Include="Utils\EmptyList.cs" />
     <Compile Include="Utils\ExtensionMethods.cs" />
+    <Compile Include="Utils\GraphVizGraph.cs" />
     <Compile Include="Utils\TreeTraversal.cs" />
     <Compile Include="CSharp\Ast\ComposedType.cs" />
     <Compile Include="CSharp\Ast\Expressions\DirectionExpression.cs" />
@@ -346,16 +343,16 @@
     <Compile Include="CSharp\Parser\mcs\reflection.cs" />
     <Compile Include="CSharp\Ast\Statements\DoWhileStatement.cs" />
     <Compile Include="CSharp\Ast\Statements\YieldBreakStatement.cs" />
+    <Compile Include="CSharp\Ast\Expressions\EmptyExpression.cs" />
+    <Compile Include="CSharp\Formatter\AstFormattingVisitor.cs" />
+    <Compile Include="CSharp\Formatter\ITextEditorAdapter.cs" />
+    <Compile Include="CSharp\Formatter\Change.cs" />
+    <Compile Include="CSharp\Ast\TypeMembers\FixedFieldDeclaration.cs" />
+    <Compile Include="CSharp\Ast\TypeMembers\FixedVariableInitializer.cs" />
+    <Compile Include="CSharp\Ast\GeneralScope\ExternAliasDeclaration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CSharp\" />
-    <Folder Include="CSharp\Ast\PatternMatching" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">
-      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
-      <Name>Mono.Cecil</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">

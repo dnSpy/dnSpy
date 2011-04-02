@@ -90,7 +90,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		string cmd;
 		string arg;
-		VB.Dom.Expression expression = Dom.Expression.Null;
+		Ast.Expression expression = Ast.Expression.Null;
 		
 		/// <summary>
 		/// Gets the directive name, including '#'.
@@ -119,9 +119,9 @@ namespace ICSharpCode.NRefactory.VB
 		/// <summary>
 		/// Gets/sets the expression (for directives that take an expression, e.g. #if and #elif).
 		/// </summary>
-		public Dom.Expression Expression {
+		public Ast.Expression Expression {
 			get { return expression; }
-			set { expression = value ?? Dom.Expression.Null; }
+			set { expression = value ?? Ast.Expression.Null; }
 		}
 		
 		/// <value>

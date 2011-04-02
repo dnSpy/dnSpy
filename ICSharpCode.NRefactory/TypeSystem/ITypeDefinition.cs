@@ -44,6 +44,12 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets all members declared in this class. This is the union of Fields,Properties,Methods and Events.
 		/// </summary>
 		IEnumerable<IMember> Members { get; }
+		
+		/// <summary>
+		/// Gets whether this type contains extension methods.
+		/// </summary>
+		/// <remarks>This property is used to speed up the search for extension methods.</remarks>
+		bool HasExtensionMethods { get; }
 	}
 	
 	#if WITH_CONTRACTS

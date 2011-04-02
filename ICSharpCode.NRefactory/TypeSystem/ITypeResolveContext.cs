@@ -44,7 +44,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <param name="nameComparer">Language-specific rules for how namespace names are compared</param>
 		/// <returns>List of classes within that namespace.</returns>
 		/// <remarks>
-		/// If this method is called within <c>using (pc.Synchronize())</c>, then the returned enumerable is valid
+		/// If this method is called within <c>using (var spc = pc.Synchronize())</c>, then the returned enumerable is valid
 		/// only until the end of the synchronize block.
 		/// </remarks>
 		IEnumerable<ITypeDefinition> GetClasses(string nameSpace, StringComparer nameComparer);
@@ -53,7 +53,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Retrieves all namespaces.
 		/// </summary>
 		/// <remarks>
-		/// If this method is called within <c>using (pc.Synchronize())</c>, then the returned enumerable is valid
+		/// If this method is called within <c>using (var spc = pc.Synchronize())</c>, then the returned enumerable is valid
 		/// only until the end of the synchronize block.
 		/// </remarks>
 		IEnumerable<string> GetNamespaces();

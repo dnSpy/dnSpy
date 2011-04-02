@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Parser;
-using ASTAttribute = ICSharpCode.NRefactory.VB.Dom.Attribute;
+using ASTAttribute = ICSharpCode.NRefactory.VB.Ast.Attribute;
 
 COMPILER VB
 
@@ -2232,6 +2232,7 @@ SubLambdaExpression<out LambdaExpression lambda>
 		(.
 			lambda.StatementBody = statement;
 			lambda.EndLocation = t.EndLocation;
+			lambda.ExtendedEndLocation = la.Location;
 		.)
 	|
 		EOL
@@ -2240,6 +2241,7 @@ SubLambdaExpression<out LambdaExpression lambda>
 		(.
 			lambda.StatementBody = statement;
 			lambda.EndLocation = t.EndLocation;
+			lambda.ExtendedEndLocation = la.Location;
 		.)
 	)
 .
@@ -2259,7 +2261,8 @@ FunctionLambdaExpression<out LambdaExpression lambda>
 		GREEDY Expr<out inner>
 		(.
 			lambda.ExpressionBody = inner;
-			lambda.EndLocation = t.EndLocation; // la.Location?
+			lambda.EndLocation = t.EndLocation;
+			lambda.ExtendedEndLocation = la.Location;
 		.)
 	|
 		EOL
@@ -2268,6 +2271,7 @@ FunctionLambdaExpression<out LambdaExpression lambda>
 		(.
 			lambda.StatementBody = statement;
 			lambda.EndLocation = t.EndLocation;
+			lambda.ExtendedEndLocation = la.Location;
 		.)
 	)
 .

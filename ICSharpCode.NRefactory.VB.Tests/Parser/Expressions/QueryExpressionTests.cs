@@ -5,11 +5,11 @@ using System;
 using System.IO;
 using System.Linq;
 
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Parser;
 using NUnit.Framework;
 
-namespace ICSharpCode.NRefactory.VB.Tests.Dom
+namespace ICSharpCode.NRefactory.VB.Tests.Ast
 {
 	[TestFixture]
 	public class QueryExpressionTests

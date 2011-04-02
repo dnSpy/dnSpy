@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 using NUnit.Framework;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Parser;
 using ICSharpCode.NRefactory.VB.Visitors;
 
@@ -58,10 +58,10 @@ namespace ICSharpCode.NRefactory.VB.Tests
 //		}
 		
 		[Test]
-		public void TestIDomVisitor()
+		public void TestIAstVisitor()
 		{
 			Type[] allTypes = typeof(AbstractNode).Assembly.GetTypes();
-			Type visitor = typeof(IDomVisitor);
+			Type visitor = typeof(IAstVisitor);
 			
 			foreach (Type type in allTypes) {
 				if (type.IsClass && !type.IsAbstract && !type.IsNested && type.GetInterface(typeof(INode).FullName) != null && !type.Name.StartsWith("Null")) {
@@ -79,10 +79,10 @@ namespace ICSharpCode.NRefactory.VB.Tests
 		}
 		
 		[Test]
-		public void TestAbstractDomVisitorVisitor()
+		public void TestAbstractAstVisitorVisitor()
 		{
 			Type[] allTypes = typeof(AbstractNode).Assembly.GetTypes();
-			Type visitor = typeof(AbstractDomVisitor);
+			Type visitor = typeof(AbstractAstVisitor);
 			
 			foreach (Type type in allTypes) {
 				if (type.IsClass && !type.IsAbstract && !type.IsNested && type.GetInterface(typeof(INode).FullName) != null && !type.Name.StartsWith("Null")) {

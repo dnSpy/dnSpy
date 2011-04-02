@@ -23,27 +23,16 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-/* 
-using System;
-using NUnit.Framework;
-using MonoDevelop.Ide.Gui;
-using MonoDevelop.Projects;
-using MonoDevelop.Core;
-using MonoDevelop.Ide.CodeCompletion;
-using MonoDevelop.Ide.Gui.Content;
-using MonoDevelop.Projects.Dom.Parser;
-using MonoDevelop.CSharp.Parser;
-using MonoDevelop.CSharp.Resolver;
-using MonoDevelop.CSharp.Completion;
-using Mono.TextEditor;
-using MonoDevelop.CSharp.Formatting;
-using System.Collections.Generic;
-using MonoDevelop.Refactoring;
 
-namespace MonoDevelop.CSharpBinding.FormattingTests
+using System;
+using System.IO;
+using NUnit.Framework;
+using ICSharpCode.NRefactory.CSharp;
+
+namespace ICSharpCode.NRefactory.FormattingTests
 {
 	[TestFixture()]
-	public class TestFormattingBugs : UnitTests.TestBase
+	public class TestFormattingBugs : TestBase
 	{
 		/// <summary>
 		/// Bug 325187 - Bug in smart indent
@@ -71,8 +60,7 @@ Console.WriteLine (""Bad indent"");",
 		/// Bug 415469 - return ternary in a switch is not tabbed properly
 		/// </summary>
 		[Test()]
-		[Ignore("currently failing because of 'string' has the wrong offset - mcs bug")]
-		public void TestBug415469 () 
+		public void TestBug415469 ()
 		{
 			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
 			
@@ -111,52 +99,99 @@ using (IDisposable b = null) {
 }");
 		}
 		
-		
-
-
-		
-		static void TestStatementFormatting (CSharpFormattingPolicy policy, string input, string expectedOutput)
+		/// <summary>
+		/// Bug 655635 - Auto format document doesn't indent comments as well
+		/// </summary>
+		[Test()]
+		public void TestBug655635 ()
 		{
-			TextEditorData data = new TextEditorData ();
-			data.Document.FileName = "a.cs";
-			data.Document.Text =
-@"class Test
+			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			
+			TestStatementFormatting (policy,
+@"try {
+ // Comment 1
+	myObject.x = Run ();
+} catch (InvalidOperationException e) {
+	Console.WriteLine (e.Message);
+}", @"try {
+	// Comment 1
+	myObject.x = Run ();
+} catch (InvalidOperationException e) {
+	Console.WriteLine (e.Message);
+}");
+		}
+
+		void TestStatementFormatting (CSharpFormattingPolicy policy, string input, string expectedOutput)
+		{
+			var result = GetResult (policy, @"class Test
 {
 	MyType TestMethod ()
 	{
 		" + input + @"
 	}
-}";
-			
-			Console.WriteLine (data.Document.Text);
-			
-			CSharp.Dom.CompilationUnit compilationUnit = new CSharpParser ().Parse (data);
-			DomSpacingVisitor domSpacingVisitor = new DomSpacingVisitor (policy, data);
-			domSpacingVisitor.AutoAcceptChanges = false;
-			compilationUnit.AcceptVisitor (domSpacingVisitor, null);
-			
-			DomIndentationVisitor domIndentationVisitor = new DomIndentationVisitor (policy, data);
-			domIndentationVisitor.AutoAcceptChanges = false;
-			compilationUnit.AcceptVisitor (domIndentationVisitor, null);
-			
-			List<Change> changes = new List<Change> ();
-			changes.AddRange (domSpacingVisitor.Changes);
-			changes.AddRange (domIndentationVisitor.Changes);
-			RefactoringService.AcceptChanges (null, null, changes);
-			
-			for (int i = 0; i < data.Document.LineCount; i++) {
-				LineSegment line = data.Document.GetLine (i);
-				if (line.EditableLength < 2)
-					continue;
-				data.Remove (line.Offset, 2);
-			}
-			string text = data.Document.GetTextBetween (data.Document.GetLine (4).Offset,
-			                                            data.Document.GetLine (data.Document.LineCount - 2).Offset).Trim ();
-			Console.WriteLine (text);
+}");
+			int start = result.GetLineOffset (5);
+			int end = result.GetLineOffset (result.LineCount - 1);
+			string text = result.GetTextAt (start, end - start).Trim ();
+			expectedOutput = expectedOutput.Replace ("\n", "\n\t\t");
 			Assert.AreEqual (expectedOutput, text);
 		}
 
+		/// <summary>
+		///  Bug 659675 - on-the-fly code formatting breaks @-prefixed identifiers
+		/// </summary>
+		[Test()]
+		public void TestBug659675 ()
+		{
+			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			TestStatementFormatting (policy, "@string=@int;", "@string = @int;");
+		}
+		
+		/// <summary>
+		/// Bug 670213 - Document formatter deletes valid text!
+		/// </summary>
+		[Test()]
+		public void TestBug670213 ()
+		{
+			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			policy.MethodBraceStyle = BraceStyle.EndOfLine;
+			
+			Test (policy, @"class Test
+{
+	Test MyMethod() // Comment
+	{
+	}
+}",
+@"class Test
+{
+	Test MyMethod () { // Comment
+	}
+}");
+		}
+		
+		
+		/// <summary>
+		/// Bug 677261 - Format Document with constructor with over-indented opening curly brace
+		/// </summary>
+		[Test()]
+		public void TestBug677261 ()
+		{
+			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			policy.ConstructorBraceStyle = BraceStyle.EndOfLine;
+			
+			Test (policy, @"class Test
+{
+	Test ()
+	   {
+	}
+}",
+@"class Test
+{
+	Test () {
+	}
+}");
+		}
 		
 	}
 }
-*/
+

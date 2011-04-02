@@ -94,7 +94,7 @@ namespace Mono.CSharp
 		///
 		/// The current file.
 		///
-		CompilationUnit file;
+		readonly CompilationSourceFile file;
 
 		///
 		/// Temporary Xml documentation cache.
@@ -106,16 +106,13 @@ namespace Mono.CSharp
 		/// Current attribute target
 		string current_attr_target;
 		
-		/// assembly and module attribute definitions are enabled
-		bool global_attrs_enabled = true;
-		
 		ParameterModifierType valid_param_mod;
 		
 		bool default_parameter_used;
 
 		/// When using the interactive parser, this holds the
 		/// resulting expression
-		public object InteractiveResult;
+		public Class InteractiveResult;
 
 		//
 		// Keeps track of global data changes to undo on parser error
@@ -124,12 +121,12 @@ namespace Mono.CSharp
 		
 		Stack<Linq.QueryBlock> linq_clause_blocks;
 
-		// A counter to create new class names in interactive mode
-		static int class_count;
-		
 		ModuleContainer module;
 		
-		CompilerContext compiler;
+		readonly CompilerContext compiler;
+		readonly LanguageVersion lang_version;
+		readonly bool doc_support;
+		readonly CompilerSettings settings;
 		
 		//
 		// Instead of allocating carrier array everytime we
@@ -144,7 +141,7 @@ namespace Mono.CSharp
 		LocationsBag lbag;
 		UsingsBag ubag;
 		List<Tuple<Modifiers, Location>> mod_locations;
-		Location parameterModifierLocation;
+		Location parameterModifierLocation, savedLocation;
 %}
 
 %token EOF
@@ -255,6 +252,9 @@ namespace Mono.CSharp
 %token INTERR_NULLABLE
 %token EXTERN_ALIAS
 %token ASYNC
+%token REFVALUE
+%token REFTYPE
+%token MAKEREF
 
 /* C# keywords which are not really keywords */
 %token GET
@@ -370,33 +370,39 @@ namespace Mono.CSharp
 %%
 
 compilation_unit
-        : outer_declarations opt_EOF
-        | outer_declarations global_attributes opt_EOF
-        | global_attributes opt_EOF
-	| opt_EOF /* allow empty files */
+	: outer_declaration opt_EOF
+	  {
+		Lexer.check_incorrect_doc_comment ();
+	  }
 	| interactive_parsing  { Lexer.CompleteOnEOF = false; } opt_EOF
 	;
-
+	
+outer_declaration
+	: opt_extern_alias_directives opt_using_directives
+	| opt_extern_alias_directives opt_using_directives namespace_or_type_declarations opt_attributes
+	  {
+		if ($4 != null) {
+			Attributes attrs = (Attributes) $4;
+			Report.Error (1730, attrs.Attrs [0].Location,
+				"Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
+		}
+	  }
+	| opt_extern_alias_directives opt_using_directives attribute_sections
+	  {
+		module.AddAttributes ((Attributes) $3, current_namespace);
+	  }
+	| error
+	  {
+		if (yyToken == Token.EXTERN_ALIAS)
+			Report.Error (439, lexer.Location, "An extern alias declaration must precede all other elements");
+		else
+			Error_SyntaxError (yyToken);
+	  }
+	;
+	
 opt_EOF
 	: /* empty */
-	  {
-		Lexer.check_incorrect_doc_comment ();
-	  }
 	| EOF
-	  {
-		Lexer.check_incorrect_doc_comment ();
-	  }
-	;
-
-outer_declarations
-	: outer_declaration
-	| outer_declarations outer_declaration
-	;
- 
-outer_declaration
-	: extern_alias_directive
-	| using_directive 
-	| namespace_member_declaration
 	;
 
 extern_alias_directives
@@ -411,11 +417,12 @@ extern_alias_directive
 		string s = lt.Value;
 		if (s != "alias"){
 			syntax_error (lt.Location, "`alias' expected");
-		} else if (RootContext.Version == LanguageVersion.ISO_1) {
-			Report.FeatureIsNotAvailable (lt.Location, "external alias");
+		} else if (lang_version == LanguageVersion.ISO_1) {
+			FeatureIsNotAvailable (lt.Location, "external alias");
 		} else {
 			lt = (Tokenizer.LocatedToken) $3; 
 			current_namespace.AddUsingExternalAlias (lt.Value, lt.Location, Report);
+			ubag.AddExternAlias  (GetLocation ($1), GetLocation ($2), lt, GetLocation ($4));
 		}
 	  }
 	| EXTERN_ALIAS error
@@ -432,12 +439,12 @@ using_directives
 using_directive
 	: using_alias_directive
 	  {
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	| using_namespace_directive
 	  {
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	;
@@ -446,9 +453,14 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN namespace_or_type_name SEMICOLON
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
+		if (lang_version != LanguageVersion.ISO_1 && lt.Value == "global") {
+			Report.Warning (440, 2, lt.Location,
+			 "An alias named `global' will not be used when resolving `global::'. The global namespace will be used instead");
+		}
+
 		current_namespace.AddUsingAlias (lt.Value, (MemberName) $4, GetLocation ($1));
 		ubag.AddUsingAlias (GetLocation ($1), lt, GetLocation ($3), (MemberName) $4, GetLocation ($5));
-	  }
+		  }
 	| USING error
 	 {
 		Error_SyntaxError (yyToken);
@@ -472,24 +484,52 @@ using_namespace_directive
 namespace_declaration
 	: opt_attributes NAMESPACE qualified_identifier
 	  {
+		Attributes attrs = (Attributes) $1;
 		MemberName name = (MemberName) $3;
-
-		if ($1 != null) {
-			Report.Error(1671, name.Location, "A namespace declaration cannot have modifiers or attributes");
+		if (attrs != null) {
+			bool valid_global_attrs = true;
+			if ((current_namespace.DeclarationFound || current_namespace != file.NamespaceContainer)) {
+				valid_global_attrs = false;
+			} else {
+				foreach (var a in attrs.Attrs) {
+					if (a.ExplicitTarget == "assembly" || a.ExplicitTarget == "module")
+						continue;
+						
+					valid_global_attrs = false;
+					break;
+				}
+			}
+			
+			if (!valid_global_attrs)
+				Report.Error (1671, name.Location, "A namespace declaration cannot have modifiers or attributes");
 		}
-
-		current_namespace = new NamespaceEntry (module,
-			current_namespace, file, name.GetName ());
+		
+		current_namespace = new NamespaceEntry (module, current_namespace, file, name.GetName ());
 		current_class = current_namespace.SlaveDeclSpace;
 		current_container = current_class.PartialContainer;
+		
+		module.AddAttributes (attrs, current_namespace);
+		
 		ubag.DeclareNamespace (GetLocation ($2), name);
-	  } 
-	  namespace_body opt_semicolon
-	  { 
+	  }
+	  OPEN_BRACE
+	  {
+		if (doc_support)
+			Lexer.doc_state = XmlCommentState.Allowed;
+		ubag.OpenNamespace (GetLocation ($5));
+	  }
+	  opt_extern_alias_directives opt_using_directives opt_namespace_or_type_declarations CLOSE_BRACE opt_semicolon
+	  {
+		if ($11 != null)
+			lbag.AddLocation (current_namespace, GetLocation ($2), GetLocation ($5), GetLocation ($10), GetLocation ($11));
+		else
+			lbag.AddLocation (current_namespace, GetLocation ($2), GetLocation ($5), GetLocation ($10));
+		
 		current_namespace = current_namespace.Parent;
 		current_class = current_namespace.SlaveDeclSpace;
 		current_container = current_class.PartialContainer;
-		ubag.EndNamespace (GetLocation ($6));
+		ubag.CloseNamespace (GetLocation ($10));
+		ubag.EndNamespace (GetLocation ($10));
 	  }
 	;
 
@@ -533,22 +573,6 @@ namespace_name
 	  }
 	;
 
-namespace_body
-	: OPEN_BRACE
-	  {
-		if (RootContext.Documentation != null)
-			Lexer.doc_state = XmlCommentState.Allowed;
-		ubag.OpenNamespace (GetLocation ($1));
-			
-	  }
-	  opt_extern_alias_directives
-	  opt_using_directives
-	  opt_namespace_member_declarations
-	  CLOSE_BRACE {
-		ubag.CloseNamespace (GetLocation ($6));
-	  }
-	;
-
 opt_using_directives
 	: /* empty */
 	| using_directives
@@ -559,24 +583,32 @@ opt_extern_alias_directives
 	| extern_alias_directives
 	;
 
-opt_namespace_member_declarations
+opt_namespace_or_type_declarations
 	: /* empty */
-	| namespace_member_declarations
+	| namespace_or_type_declarations
 	;
 
-namespace_member_declarations
-	: namespace_member_declaration
-	| namespace_member_declarations namespace_member_declaration
+namespace_or_type_declarations
+	: namespace_or_type_declaration
+	| namespace_or_type_declarations namespace_or_type_declaration
 	;
 
-namespace_member_declaration
+namespace_or_type_declaration
 	: type_declaration
 	  {
 		if ($1 != null) {
-			DeclSpace ds = (DeclSpace)$1;
-			if ((ds.ModFlags & (Modifiers.PRIVATE|Modifiers.PROTECTED)) != 0){
+			TypeContainer ds = (TypeContainer)$1;
+
+			if ((ds.ModFlags & (Modifiers.PRIVATE | Modifiers.PROTECTED)) != 0){
 				Report.Error (1527, ds.Location, 
 				"Namespace elements cannot be explicitly declared as private, protected or protected internal");
+			}
+
+			// Here is a trick, for explicit attributes we don't know where they belong to until
+			// we parse succeeding declaration hence we parse them as normal and re-attach them
+			// when we know whether they are global (assembly:, module:) or local (type:).
+			if (ds.OptAttributes != null) {
+				ds.OptAttributes.ConvertGlobalAttributes (ds, current_namespace, !current_namespace.DeclarationFound && current_namespace == file.NamespaceContainer);
 			}
 		}
 		current_namespace.DeclarationFound = true;
@@ -585,10 +617,6 @@ namespace_member_declaration
 	  {
 		current_namespace.DeclarationFound = true;
 	  }
-	| error
-	 {
-		Error_SyntaxError (yyToken);
-	 }
 	;
 
 type_declaration
@@ -607,116 +635,68 @@ type_declaration
 	;
 
 //
-// Attributes 17.2
+// Attributes
 //
-
-global_attributes
-	: attribute_sections
-	  {
-		if ($1 != null) {
-			Attributes attrs = (Attributes)$1;
-			if (global_attrs_enabled) {
-				module.AddAttributes (attrs.Attrs, current_namespace);
-			} else {
-				foreach (Attribute a in attrs.Attrs) {
-					Report.Error (1730, a.Location, "Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
-				}
-			}
-		}
-		$$ = $1;
-	  }
-	;
 
 opt_attributes
 	: /* empty */ 
-	  {
-		global_attrs_enabled = false;
-		$$ = null;
-      }
 	| attribute_sections
-	  { 
-		global_attrs_enabled = false;
-		$$ = $1;
-	  }
     ;
  
-
 attribute_sections
 	: attribute_section
 	  {
-		if (current_attr_target != String.Empty) {
-			var sect = (List<Attribute>) $1;
-
-			if (global_attrs_enabled) {
-				if (!string.IsNullOrEmpty (current_attr_target)) {
-					module.AddAttributes (sect, current_namespace);
-					$$ = null;
-				} else {
-					$$ = new Attributes (sect);
-				}
-				if ($$ == null) {
-					if (RootContext.Documentation != null) {
-						Lexer.check_incorrect_doc_comment ();
-						Lexer.doc_state =
-							XmlCommentState.Allowed;
-					}
-				}
-			} else {
-				$$ = new Attributes (sect);
-			}		
-		}
-		else
-			$$ = null;
-		current_attr_target = null;
+		var sect = (List<Attribute>) $1;
+		$$ = new Attributes (sect);
 	  }
 	| attribute_sections attribute_section
 	  {
-		if (current_attr_target != String.Empty) {
-			Attributes attrs = $1 as Attributes;
-			var sect = (List<Attribute>) $2;
-
-			if (global_attrs_enabled) {
-				if (!string.IsNullOrEmpty (current_attr_target)) {
-					module.AddAttributes (sect);
-					$$ = null;
-				} else {
-					if (attrs == null)
-						attrs = new Attributes (sect);
-					else
-						attrs.AddAttributes (sect);			
-				}
-			} else {
-				if (attrs == null)
-					attrs = new Attributes (sect);
-				else
-					attrs.AddAttributes (sect);
-			}		
-			$$ = attrs;
-		}
+		Attributes attrs = $1 as Attributes;
+		var sect = (List<Attribute>) $2;
+		if (attrs == null)
+			attrs = new Attributes (sect);
 		else
-			$$ = null;
-		current_attr_target = null;
+			attrs.AddAttributes (sect);
+		$$ = attrs;
 	  }
 	;
-
+	
 attribute_section
-	: OPEN_BRACKET attribute_target_specifier attribute_list opt_comma CLOSE_BRACKET
+	: OPEN_BRACKET
 	  {
-		$$ = $3;
- 	  }
-	| OPEN_BRACKET attribute_list opt_comma CLOSE_BRACKET
-	  {
-		$$ = $2;
+		lexer.parsing_attribute_section = true;
 	  }
-	;
- 
-attribute_target_specifier
+	  attribute_section_cont
+	  {
+		lexer.parsing_attribute_section = false;
+		$$ = $3;
+	  }
+	;	
+	
+attribute_section_cont
 	: attribute_target COLON
 	  {
-		current_attr_target = (string)$1;
+		current_attr_target = (string) $1;
+		if (current_attr_target == "assembly" || current_attr_target == "module") {
+			Lexer.check_incorrect_doc_comment ();
+		}
+	  }
+	  attribute_list opt_comma CLOSE_BRACKET
+	  {
+		// when attribute target is invalid
+		if (current_attr_target == string.Empty)
+			$$ = new List<Attribute> (0);
+		else
+			$$ = $4;
+	  
+		current_attr_target = null;
+		lexer.parsing_attribute_section = false;
+ 	  }
+	| attribute_list opt_comma CLOSE_BRACKET
+	  {
 		$$ = $1;
 	  }
-	;
+	;	
 
 attribute_target
 	: IDENTIFIER
@@ -728,8 +708,13 @@ attribute_target
 	| RETURN { $$ = "return"; }
 	| error
 	  {
-		string name = GetTokenName (yyToken);
-		$$ = CheckAttributeTarget (name, GetLocation ($1));
+		if (yyToken == Token.IDENTIFIER) {
+			Error_SyntaxError (yyToken);
+			$$ = null;
+		} else {
+			string name = GetTokenName (yyToken);
+			$$ = CheckAttributeTarget (name, GetLocation ($1));
+		}
 	  }
 	;
 
@@ -763,20 +748,12 @@ attribute
 
 		Arguments [] arguments = (Arguments []) $3;
 		ATypeNameExpression expr = mname.GetTypeExpression ();
-
-		if (current_attr_target == String.Empty)
-			$$ = null;
-		else if (global_attrs_enabled && (current_attr_target == "assembly" || current_attr_target == "module"))
-			// FIXME: supply "nameEscaped" parameter here.
-			$$ = new GlobalAttribute (current_namespace, current_attr_target,
-						  expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
-		else
-			$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
+		$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
 	  }
 	;
 
 attribute_name
-	: namespace_or_type_name  { /* reserved attribute name or identifier: 17.4 */ }
+	: namespace_or_type_name
 	;
 
 opt_attribute_arguments
@@ -853,8 +830,8 @@ named_attribute_argument
 named_argument
 	: IDENTIFIER COLON opt_named_modifier expression
 	  {
-		if (RootContext.Version <= LanguageVersion.V_3)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "named argument");
+		if (lang_version <= LanguageVersion.V_3)
+			FeatureIsNotAvailable (GetLocation ($1), "named argument");
 			
 		// Avoid boxing in common case (no modifier)
 		var arg_mod = $3 == null ? Argument.AType.None : (Argument.AType) $3;
@@ -886,17 +863,17 @@ class_member_declarations
 	| class_member_declarations 
 	  class_member_declaration
 	;
-
+	
 class_member_declaration
-	: constant_declaration			// done
-	| field_declaration			// done
-	| method_declaration			// done
-	| property_declaration			// done
-	| event_declaration			// done
-	| indexer_declaration			// done
-	| operator_declaration			// done
-	| constructor_declaration		// done
-	| destructor_declaration		// done
+	: constant_declaration
+	| field_declaration
+	| method_declaration
+	| property_declaration
+	| event_declaration
+	| indexer_declaration
+	| operator_declaration
+	| constructor_declaration
+	| destructor_declaration
 	| type_declaration
 	| error
 	  {
@@ -927,7 +904,7 @@ struct_declaration
 
 		current_class.SetParameterInfo ((List<Constraints>) $9);
 
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			current_container.DocComment = Lexer.consume_doc_comment ();
 
 		lbag.AddMember (current_class, GetModifierLocations (), GetLocation ($4));
@@ -935,7 +912,7 @@ struct_declaration
 	  struct_body
 	  {
 		--lexer.parsing_declaration;	  
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	  opt_semicolon
@@ -952,7 +929,7 @@ struct_declaration
 struct_body
 	: OPEN_BRACE
 	  {
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	  opt_struct_member_declarations CLOSE_BRACE
@@ -1007,7 +984,7 @@ constant_declaration
 	  }
 	  constant_initializer opt_constant_declarators SEMICOLON
 	  {
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			current_field.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
@@ -1052,6 +1029,7 @@ constant_initializer
 	  {
 		--lexer.parsing_block;
 		$$ = new ConstInitializer (current_field, (Expression) $3, GetLocation ($1));
+	  	lbag.AddLocation ($$, GetLocation ($1));
 	  }
 	| error
 	  {
@@ -1073,7 +1051,7 @@ field_declaration
 	  	lexer.parsing_generic_declaration = false;
 
 		FullNamedExpression type = (FullNamedExpression) $3;
-		if (type.Type == TypeManager.void_type)
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			Report.Error (670, GetLocation ($3), "Fields cannot have void type");
 			
 		var lt = (Tokenizer.LocatedToken) $4;
@@ -1085,7 +1063,7 @@ field_declaration
 	  opt_field_declarators
 	  SEMICOLON
 	  { 
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			current_field.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
@@ -1098,8 +1076,8 @@ field_declaration
 	  opt_modifiers
 	  FIXED simple_type IDENTIFIER
 	  { 
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($3), "fixed size buffers");
+		if (lang_version < LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (GetLocation ($3), "fixed size buffers");
 
 		var lt = (Tokenizer.LocatedToken) $5;
 		current_field = new FixedField (current_class, (FullNamedExpression) $4, (Modifiers) $2,
@@ -1109,13 +1087,13 @@ field_declaration
 	  }
 	  fixed_field_size opt_fixed_field_declarators SEMICOLON
 	  {
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			current_field.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 	    }
 
 		current_field.Initializer = (ConstInitializer) $7;	    
-		lbag.AddMember (current_field, GetModifierLocations (), GetLocation ($9), GetLocation ($3));
+		lbag.AddMember (current_field, GetModifierLocations (), GetLocation ($3), GetLocation ($9));
 		$$ = current_field;
 	    current_field = null;
 	  }
@@ -1239,7 +1217,7 @@ variable_initializer
 method_declaration
 	: method_header
 	  {
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 
 		// Add it early in the case of body being eof for full aot
@@ -1256,7 +1234,7 @@ method_declaration
 
 		current_local_parameters = null;
 
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	;
@@ -1300,7 +1278,7 @@ method_header
 				method.GetSignatureForError ());
 		}
 
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
 
 		lbag.AddMember (method, GetModifierLocations (), GetLocation ($5), GetLocation ($8));
@@ -1334,7 +1312,7 @@ method_header
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_class, name,
-				new TypeExpression (TypeManager.void_type, GetLocation ($4)),
+				new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
 				current_local_parameters);
 
 			generic.SetParameterInfo ((List<Constraints>) $11);
@@ -1359,10 +1337,10 @@ method_header
 		
 		modifiers |= Modifiers.PARTIAL | Modifiers.PRIVATE;
 		
-		method = new Method (current_class, generic, new TypeExpression (TypeManager.void_type, GetLocation ($4)),
+		method = new Method (current_class, generic, new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
 				     modifiers, name, current_local_parameters, (Attributes) $1);
 
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
 
 		// TODO: lbag, push void
@@ -1384,7 +1362,7 @@ method_header
 
 		current_local_parameters = (ParametersCompiled) $7;
 
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
 
 		$$ = method;
@@ -1539,8 +1517,8 @@ fixed_parameter
 	  constant_expression
 	  {
 	  	--lexer.parsing_block;
-		if (RootContext.Version <= LanguageVersion.V_3) {
-			Report.FeatureIsNotAvailable (GetLocation ($5), "optional parameter");
+		if (lang_version <= LanguageVersion.V_3) {
+			FeatureIsNotAvailable (GetLocation ($5), "optional parameter");
 		}
 		
 		Parameter.Modifier mod = (Parameter.Modifier) $2;
@@ -1629,8 +1607,8 @@ parameter_modifier
 		if ((valid_param_mod & ParameterModifierType.This) == 0)
 	  		Error_ParameterModifierNotValid ("this", GetLocation ($1));
 
-	  	if (RootContext.Version <= LanguageVersion.ISO_2)
-	  		Report.FeatureIsNotAvailable (GetLocation ($1), "extension methods");
+	  	if (lang_version <= LanguageVersion.ISO_2)
+	  		FeatureIsNotAvailable (GetLocation ($1), "extension methods");
 	  			
 		$$ = Parameter.Modifier.This;
 	  }
@@ -1691,15 +1669,16 @@ property_declaration
 	  member_type
 	  member_declaration_name
 	  {
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			tmpComment = Lexer.consume_doc_comment ();
 	  }
 	  OPEN_BRACE
 	  {
-		current_property = new Property (current_class, (FullNamedExpression) $3, (Modifiers) $2,
+		var type = (FullNamedExpression) $3;
+		current_property = new Property (current_class, type, (Modifiers) $2,
 			(MemberName) $4, (Attributes) $1);
 			
-		if (current_property.TypeExpression.Type == TypeManager.void_type)
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			Report.Error (547, GetLocation ($3), "`{0}': property or indexer cannot have void type", current_property.GetSignatureForError ());					
 			
 		current_container.AddProperty ((Property)current_property);
@@ -1711,7 +1690,7 @@ property_declaration
 	  {
 		lexer.PropertyParsing = false;
 		
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			current_property.DocComment = ConsumeStoredComment ();				
 	  }
 	  CLOSE_BRACE
@@ -1731,8 +1710,8 @@ indexer_declaration
 	  opt_formal_parameter_list CLOSE_BRACKET OPEN_BRACE
 	  {
 		valid_param_mod = 0;
-	  
-		Indexer indexer = new Indexer (current_class, (FullNamedExpression) $3,
+		var type = (FullNamedExpression) $3;
+		Indexer indexer = new Indexer (current_class, type,
 			(MemberName)$4, (Modifiers) $2, (ParametersCompiled) $7, (Attributes) $1);
 			
 		current_property = indexer;
@@ -1740,14 +1719,14 @@ indexer_declaration
   		current_container.AddIndexer (indexer);
 		lbag.AddMember (current_property, GetModifierLocations (), GetLocation ($5), GetLocation ($8), GetLocation ($9));
   		
-		if (indexer.TypeExpression.Type == TypeManager.void_type)
+		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			Report.Error (620, GetLocation ($3), "`{0}': indexer return type cannot be `void'", indexer.GetSignatureForError ());  		
 
 		if (indexer.Parameters.IsEmpty) {
 			Report.Error (1551, GetLocation ($5), "Indexers must have at least one parameter");
 		}
 
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
@@ -1760,7 +1739,7 @@ indexer_declaration
 	  }
 	  CLOSE_BRACE
 	  { 
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			current_property.DocComment = ConsumeStoredComment ();
 			
 		lbag.AppendToMember (current_property, GetLocation ($12));
@@ -1790,8 +1769,8 @@ accessor_declarations
 get_accessor_declaration
 	: opt_attributes opt_modifiers GET
 	  {
-		if ($2 != ModifierNone && RootContext.Version == LanguageVersion.ISO_1) {
-			Report.FeatureIsNotAvailable (GetLocation ($2), "access modifiers on properties");
+		if ($2 != ModifierNone && lang_version == LanguageVersion.ISO_1) {
+			FeatureIsNotAvailable (GetLocation ($2), "access modifiers on properties");
 		}
 	  
 		if (current_property.Get != null) {
@@ -1824,7 +1803,7 @@ get_accessor_declaration
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			if (Lexer.doc_state == XmlCommentState.Error)
 				Lexer.doc_state = XmlCommentState.NotAllowed;
 	  }
@@ -1833,8 +1812,8 @@ get_accessor_declaration
 set_accessor_declaration
 	: opt_attributes opt_modifiers SET 
 	  {
-		if ($2 != ModifierNone && RootContext.Version == LanguageVersion.ISO_1) {
-			Report.FeatureIsNotAvailable (GetLocation ($2), "access modifiers on properties");
+		if ($2 != ModifierNone && lang_version == LanguageVersion.ISO_1) {
+			FeatureIsNotAvailable (GetLocation ($2), "access modifiers on properties");
 		}
 		
 		if (current_property.Set != null) {
@@ -1872,7 +1851,7 @@ set_accessor_declaration
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 
-		if (RootContext.Documentation != null
+		if (doc_support
 			&& Lexer.doc_state == XmlCommentState.Error)
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 	  }
@@ -1913,7 +1892,7 @@ interface_declaration
 
 		current_class.SetParameterInfo ((List<Constraints>) $9);
 
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			current_container.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
@@ -1921,7 +1900,7 @@ interface_declaration
 	  OPEN_BRACE opt_interface_member_declarations CLOSE_BRACE
 	  {
 		--lexer.parsing_declaration;	  
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	  opt_semicolon 
@@ -1985,7 +1964,7 @@ operator_declaration
 				current_local_parameters,
 				(ToplevelBlock) $5, (Attributes) $1, decl.location);
 
-			if (RootContext.Documentation != null) {
+			if (doc_support) {
 				op.DocComment = tmpComment;
 				Lexer.doc_state = XmlCommentState.Allowed;
 			}
@@ -2010,7 +1989,7 @@ operator_type
 	| VOID
 	  {
 		Report.Error (590, GetLocation ($1), "User-defined operators cannot return void");
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }
 	;
 
@@ -2051,7 +2030,7 @@ operator_declarator
 			}
 		}
 		
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
@@ -2102,7 +2081,7 @@ conversion_operator_declarator
 		Location loc = GetLocation ($2);
 		current_local_parameters = (ParametersCompiled)$6;  
 		  
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
@@ -2121,7 +2100,7 @@ conversion_operator_declarator
 		Location loc = GetLocation ($2);
 		current_local_parameters = (ParametersCompiled)$6;  
 		  
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
@@ -2150,13 +2129,13 @@ constructor_declaration
 		Constructor c = (Constructor) $1;
 		c.Block = (ToplevelBlock) $2;
 		
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			c.DocComment = ConsumeStoredComment ();
 
 		current_container.AddConstructor (c);
 
 		current_local_parameters = null;
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	;
@@ -2166,7 +2145,7 @@ constructor_declarator
 	  opt_modifiers
 	  IDENTIFIER
 	  {
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
@@ -2255,7 +2234,7 @@ constructor_initializer
 destructor_declaration
 	: opt_attributes opt_modifiers TILDE 
 	  {
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
@@ -2273,7 +2252,7 @@ destructor_declaration
 		
 		Destructor d = new Destructor (current_class, (Modifiers) $2,
 			ParametersCompiled.EmptyReadOnlyParameters, (Attributes) $1, lt.Location);
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			d.DocComment = ConsumeStoredComment ();
 		  
 		d.Block = (ToplevelBlock) $8;
@@ -2303,7 +2282,7 @@ event_declaration
 	  opt_event_declarators
 	  SEMICOLON
 	  {
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			current_event_field.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
@@ -2331,7 +2310,7 @@ event_declaration
 	  }
 	  CLOSE_BRACE
 	  {
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			current_event.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
@@ -2500,12 +2479,12 @@ enum_declaration
 	  ENUM type_declaration_name
 	  opt_enum_base
 	  {
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			enumTypeComment = Lexer.consume_doc_comment ();
 	  }
 	  OPEN_BRACE
 	  {
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 
 		MemberName name = (MemberName) $4;
@@ -2518,17 +2497,17 @@ enum_declaration
 	  opt_enum_member_declarations
 	  {
 	  	// here will be evaluated after CLOSE_BLACE is consumed.
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	  CLOSE_BRACE opt_semicolon
 	  {
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			current_class.DocComment = enumTypeComment;
 			
 		--lexer.parsing_declaration;
 
-//			if (RootContext.Documentation != null)
+//			if (doc_support)
 //				em.DocComment = ev.DocComment;
 
 		lbag.AddMember (current_class, GetModifierLocations (), GetLocation ($3), GetLocation ($7), GetLocation ($11));
@@ -2541,11 +2520,7 @@ opt_enum_base
 	| COLON type
 	 {
 	 	var te = $2 as TypeExpression;
-		if (te == null ||
-			(te.Type != TypeManager.int32_type && te.Type != TypeManager.uint32_type &&
-			te.Type != TypeManager.int64_type && te.Type != TypeManager.uint64_type &&
-			te.Type != TypeManager.short_type && te.Type != TypeManager.ushort_type &&
-			te.Type != TypeManager.byte_type && te.Type != TypeManager.sbyte_type)) {
+		if (te == null || !EnumSpec.IsValidUnderlyingType (te.Type)) {
 			Enum.Error_1008 (GetLocation ($2), Report);
 			$$ = null;
 		} else {
@@ -2584,7 +2559,7 @@ enum_member_declaration
 	  	var em = new EnumMember ((Enum) current_class, new MemberName (lt.Value, lt.Location), (Attributes) $1);
 	  	((Enum) current_class).AddEnumMember (em);
 
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			em.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
@@ -2594,7 +2569,7 @@ enum_member_declaration
 	| opt_attributes IDENTIFIER
 	  {
 	  	++lexer.parsing_block;
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
@@ -2608,7 +2583,7 @@ enum_member_declaration
 	  	em.Initializer = new ConstInitializer (em, (Expression) $5, GetLocation ($4));
 	  	((Enum) current_class).AddEnumMember (em);
 		
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			em.DocComment = ConsumeStoredComment ();
 
 		$$ = em;
@@ -2634,14 +2609,8 @@ delegate_declaration
 		Delegate del = new Delegate (current_namespace, current_class, (FullNamedExpression) $4,
 					     (Modifiers) $2, name, p, (Attributes) $1);
 
-		if (RootContext.Documentation != null) {
-			del.DocComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.Allowed;
-		}
-
 		ubag.PushTypeDeclaration (del);
 		ubag.PopTypeDeclaration ();
-
 		current_container.AddDelegate (del);
 		current_delegate = del;
 		lexer.ConstraintsParsing = true;
@@ -2652,6 +2621,11 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
+		if (doc_support) {
+			current_delegate.DocComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
+	  
 		current_delegate.SetParameterInfo ((List<Constraints>) $11);
 		lbag.AddMember (current_delegate, GetModifierLocations (), GetLocation ($3), GetLocation ($6), GetLocation ($9), GetLocation ($13));
 
@@ -2665,8 +2639,8 @@ opt_nullable
 	: /* empty */
 	| INTERR_NULLABLE
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "nullable types");
+		if (lang_version < LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (GetLocation ($1), "nullable types");
 	  
 	  	$$ = ComposedTypeSpecifier.CreateNullable (GetLocation ($1));
 	  }
@@ -2708,8 +2682,8 @@ opt_type_argument_list
 	: /* empty */
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");	  
+		if (lang_version < LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (GetLocation ($1), "generics");	  
 	  
 		$$ = $2;
 	  }
@@ -2811,8 +2785,8 @@ opt_type_parameter_list
 	: /* empty */
 	| OP_GENERICS_LT_DECL type_parameters OP_GENERICS_GT
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");
+		if (lang_version < LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (GetLocation ($1), "generics");
 	  
 		$$ = $2;
 		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
@@ -2859,7 +2833,7 @@ type_and_void
 	: type_expression_or_array
 	| VOID
 	  {
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }
 	;
 	
@@ -2878,7 +2852,7 @@ type
 	| VOID
 	  {
 	  	Expression.Error_VoidInvalidInTheContext (GetLocation ($1), Report);
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }	
 	;
 	
@@ -2887,7 +2861,7 @@ simple_type
 	| VOID
 	  {
 	  	Expression.Error_VoidInvalidInTheContext (GetLocation ($1), Report);
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }	
 	;
 	
@@ -2896,7 +2870,7 @@ parameter_type
 	| VOID
 	  {
 	  	Report.Error (1536, GetLocation ($1), "Invalid parameter type `void'");
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }	
 	;
 
@@ -2937,7 +2911,7 @@ type_expression
 	  }
 	| VOID pointer_stars
 	  {
-		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), (ComposedTypeSpecifier) $2);
+		$$ = new ComposedCast (new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1)), (ComposedTypeSpecifier) $2);
 	  }
 	;
 
@@ -2976,25 +2950,25 @@ base_type_name
  * simple types, but we need this to reuse it easily in variable_type
  */
 builtin_types
-	: OBJECT	{ $$ = new TypeExpression (TypeManager.object_type, GetLocation ($1)); }
-	| STRING	{ $$ = new TypeExpression (TypeManager.string_type, GetLocation ($1)); }
-	| BOOL		{ $$ = new TypeExpression (TypeManager.bool_type, GetLocation ($1)); }
-	| DECIMAL	{ $$ = new TypeExpression (TypeManager.decimal_type, GetLocation ($1)); }
-	| FLOAT		{ $$ = new TypeExpression (TypeManager.float_type, GetLocation ($1)); }
-	| DOUBLE	{ $$ = new TypeExpression (TypeManager.double_type, GetLocation ($1)); }
+	: OBJECT	{ $$ = new TypeExpression (compiler.BuiltinTypes.Object, GetLocation ($1)); }
+	| STRING	{ $$ = new TypeExpression (compiler.BuiltinTypes.String, GetLocation ($1)); }
+	| BOOL		{ $$ = new TypeExpression (compiler.BuiltinTypes.Bool, GetLocation ($1)); }
+	| DECIMAL	{ $$ = new TypeExpression (compiler.BuiltinTypes.Decimal, GetLocation ($1)); }
+	| FLOAT		{ $$ = new TypeExpression (compiler.BuiltinTypes.Float, GetLocation ($1)); }
+	| DOUBLE	{ $$ = new TypeExpression (compiler.BuiltinTypes.Double, GetLocation ($1)); }
 	| integral_type
 	;
 
 integral_type
-	: SBYTE		{ $$ = new TypeExpression (TypeManager.sbyte_type, GetLocation ($1)); }
-	| BYTE		{ $$ = new TypeExpression (TypeManager.byte_type, GetLocation ($1)); }
-	| SHORT		{ $$ = new TypeExpression (TypeManager.short_type, GetLocation ($1)); }
-	| USHORT	{ $$ = new TypeExpression (TypeManager.ushort_type, GetLocation ($1)); }
-	| INT		{ $$ = new TypeExpression (TypeManager.int32_type, GetLocation ($1)); }
-	| UINT		{ $$ = new TypeExpression (TypeManager.uint32_type, GetLocation ($1)); }
-	| LONG		{ $$ = new TypeExpression (TypeManager.int64_type, GetLocation ($1)); }
-	| ULONG		{ $$ = new TypeExpression (TypeManager.uint64_type, GetLocation ($1)); }
-	| CHAR		{ $$ = new TypeExpression (TypeManager.char_type, GetLocation ($1)); }
+	: SBYTE		{ $$ = new TypeExpression (compiler.BuiltinTypes.SByte, GetLocation ($1)); }
+	| BYTE		{ $$ = new TypeExpression (compiler.BuiltinTypes.Byte, GetLocation ($1)); }
+	| SHORT		{ $$ = new TypeExpression (compiler.BuiltinTypes.Short, GetLocation ($1)); }
+	| USHORT	{ $$ = new TypeExpression (compiler.BuiltinTypes.UShort, GetLocation ($1)); }
+	| INT		{ $$ = new TypeExpression (compiler.BuiltinTypes.Int, GetLocation ($1)); }
+	| UINT		{ $$ = new TypeExpression (compiler.BuiltinTypes.UInt, GetLocation ($1)); }
+	| LONG		{ $$ = new TypeExpression (compiler.BuiltinTypes.Long, GetLocation ($1)); }
+	| ULONG		{ $$ = new TypeExpression (compiler.BuiltinTypes.ULong, GetLocation ($1)); }
+	| CHAR		{ $$ = new TypeExpression (compiler.BuiltinTypes.Char, GetLocation ($1)); }
 	;
 
 //
@@ -3022,6 +2996,7 @@ primary_expression
 	| unchecked_expression
 	| pointer_member_access
 	| anonymous_method_expression
+	| undocumented_expressions
 	;
 
 primary_expression_or_type
@@ -3044,8 +3019,8 @@ literal
 	;
 
 boolean_literal
-	: TRUE			{ $$ = new BoolLiteral (true, GetLocation ($1)); }
-	| FALSE			{ $$ = new BoolLiteral (false, GetLocation ($1)); }
+	: TRUE			{ $$ = new BoolLiteral (compiler.BuiltinTypes, true, GetLocation ($1)); }
+	| FALSE			{ $$ = new BoolLiteral (compiler.BuiltinTypes, false, GetLocation ($1)); }
 	;
 
 
@@ -3401,8 +3376,8 @@ object_or_delegate_creation_expression
 	: NEW new_expr_type open_parens_any opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
 	  {
 		if ($6 != null) {
-			if (RootContext.Version <= LanguageVersion.ISO_2)
-				Report.FeatureIsNotAvailable (GetLocation ($1), "object initializers");
+			if (lang_version <= LanguageVersion.ISO_2)
+				FeatureIsNotAvailable (GetLocation ($1), "object initializers");
 				
 			$$ = new NewInitialize ((FullNamedExpression) $2, (Arguments) $4, (CollectionOrObjectInitializers) $6, GetLocation ($1));
 		} else {
@@ -3413,8 +3388,8 @@ object_or_delegate_creation_expression
 	  }
 	| NEW new_expr_type object_or_collection_initializer
 	  {
-		if (RootContext.Version <= LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "collection initializers");
+		if (lang_version <= LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (GetLocation ($1), "collection initializers");
 	  
 		$$ = new NewInitialize ((FullNamedExpression) $2, null, (CollectionOrObjectInitializers) $3, GetLocation ($1));
 	  }
@@ -3440,8 +3415,8 @@ array_creation_expression
 	  }
 	| NEW rank_specifier array_initializer
 	  {
-		if (RootContext.Version <= LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "implicitly typed arrays");
+		if (lang_version <= LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (GetLocation ($1), "implicitly typed arrays");
 	  
 		$$ = new ImplicitlyTypedArrayCreation ((ComposedTypeSpecifier) $2, (ArrayInitializer) $3, GetLocation ($1));
 	  }
@@ -3471,8 +3446,8 @@ new_expr_type
 anonymous_type_expression
 	: NEW OPEN_BRACE anonymous_type_parameters_opt_comma CLOSE_BRACE
 	  {
-		if (RootContext.Version <= LanguageVersion.ISO_2)
-	  		Report.FeatureIsNotAvailable (GetLocation ($1), "anonymous types");
+		if (lang_version <= LanguageVersion.ISO_2)
+	  		FeatureIsNotAvailable (GetLocation ($1), "anonymous types");
 
 		$$ = new NewAnonymousType ((List<AnonymousTypeParameter>) $3, current_container, GetLocation ($1));
 		
@@ -3681,8 +3656,8 @@ unbound_type_name
 generic_dimension
 	: GENERIC_DIMENSION
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");
+		if (lang_version < LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (GetLocation ($1), "generics");
 
 		$$ = $1;
 	  }
@@ -3692,8 +3667,8 @@ qualified_alias_member
 	: IDENTIFIER DOUBLE_COLON
 	  {
 		var lt = (Tokenizer.LocatedToken) $1;
-		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotAvailable (lt.Location, "namespace alias qualifier");
+		if (lang_version == LanguageVersion.ISO_1)
+			FeatureIsNotAvailable (lt.Location, "namespace alias qualifier");
 
 		$$ = lt;		
 	  }
@@ -3765,8 +3740,8 @@ anonymous_method_signature
 default_value_expression
 	: DEFAULT open_parens_any type CLOSE_PARENS
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "default value expression");
+		if (lang_version < LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (GetLocation ($1), "default value expression");
 
 		$$ = new DefaultValueExpression ((Expression) $3, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
@@ -3972,8 +3947,8 @@ null_coalescing_expression
 	: conditional_or_expression
 	| conditional_or_expression OP_COALESCING null_coalescing_expression
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($2), "null coalescing operator");
+		if (lang_version < LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (GetLocation ($2), "null coalescing operator");
 			
 		$$ = new Nullable.NullCoalescingOperator ((Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
@@ -4106,6 +4081,7 @@ lambda_expression_body_simple
 	  expression_or_error	// Have to close block when error occurs
 	  {
 		Block b = end_block (lexer.Location);
+		b.IsCompilerGenerated = true;
 		b.AddStatement (new ContextualReturn ((Expression) $2));
 		$$ = b;
 	  } 
@@ -4134,8 +4110,8 @@ lambda_expression
 	  }
 	| OPEN_PARENS_LAMBDA
 	  {
-		if (RootContext.Version <= LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "lambda expressions");
+		if (lang_version <= LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (GetLocation ($1), "lambda expressions");
 	  
 	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
 	  }
@@ -4163,7 +4139,25 @@ non_assignment_expression
 	| ARGLIST
 	  {
 		$$ = new ArglistAccess (GetLocation ($1));
-	  }	
+	  }
+	;
+	
+undocumented_expressions
+	: REFVALUE OPEN_PARENS non_assignment_expression COMMA type CLOSE_PARENS
+	  {
+		$$ = new RefValueExpr ((Expression) $3, (FullNamedExpression) $5, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4), GetLocation ($6));
+	  }
+	| REFTYPE open_parens_any expression CLOSE_PARENS
+	  {
+		$$ = new RefTypeExpr ((Expression) $3, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+	  }
+	| MAKEREF open_parens_any expression CLOSE_PARENS
+	  {
+		$$ = new MakeRefExpr ((Expression) $3, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));	  
+	  }
 	;
 
 constant_expression
@@ -4191,7 +4185,12 @@ class_declaration
 	  type_declaration_name
 	  {
 		MemberName name = MakeName ((MemberName) $6);
-		push_current_class (new Class (current_namespace, current_class, name, (Modifiers) $2, (Attributes) $1), $3);
+		Class c = new Class (current_namespace, current_class, name, (Modifiers) $2, (Attributes) $1);
+		if (((c.ModFlags & Modifiers.STATIC) != 0) && lang_version == LanguageVersion.ISO_1) {
+			FeatureIsNotAvailable (c.Location, "static classes");
+		}
+			
+		push_current_class (c, $3);
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
@@ -4201,7 +4200,7 @@ class_declaration
 		current_class.SetParameterInfo ((List<Constraints>) $9);
 		lbag.AddMember (current_class, GetModifierLocations (), GetLocation ($4));
 
-		if (RootContext.Documentation != null) {
+		if (doc_support) {
 			current_container.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
@@ -4209,7 +4208,7 @@ class_declaration
 	  OPEN_BRACE opt_class_member_declarations CLOSE_BRACE
 	  {
 		--lexer.parsing_declaration;
-		if (RootContext.Documentation != null)
+		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	  opt_semicolon 
@@ -4261,7 +4260,7 @@ modifier
 		$$ = Modifiers.NEW;
 		StoreModifierLocation ($$, GetLocation ($1));
 		
-		if (current_container == RootContext.ToplevelTypes)
+		if (current_container == module)
 			Report.Error (1530, GetLocation ($1), "Keyword `new' is not allowed on namespace elements");
 	  }
 	| PUBLIC
@@ -4328,7 +4327,7 @@ modifier
 	  {
 		$$ = Modifiers.UNSAFE;
 		StoreModifierLocation ($$, GetLocation ($1));
-		if (!RootContext.Unsafe)
+		if (!settings.Unsafe)
 			Error_UnsafeCodeNotAllowed (GetLocation ($1));
 	  }
 	| ASYNC
@@ -4454,8 +4453,8 @@ opt_type_parameter_variance
 	  }
 	| type_parameter_variance
 	  {
-		if (RootContext.Version <= LanguageVersion.V_3)
-			Report.FeatureIsNotAvailable (lexer.Location, "generic type variance");
+		if (lang_version <= LanguageVersion.V_3)
+			FeatureIsNotAvailable (lexer.Location, "generic type variance");
 
 		$$ = $1;
 	  }
@@ -4717,12 +4716,12 @@ variable_type_simple
 	  }
 	| VOID pointer_stars
 	  {
-		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), (ComposedTypeSpecifier) $2);
+		$$ = new ComposedCast (new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1)), (ComposedTypeSpecifier) $2);
 	  }	  
 	| VOID
 	  {
 		Expression.Error_VoidInvalidInTheContext (GetLocation ($1), Report);
-		$$ = new TypeExpression (TypeManager.void_type, GetLocation ($1));
+		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
 	  }
 	;
 	
@@ -4765,9 +4764,13 @@ block_variable_declaration
 	  }
 	  const_variable_initializer opt_const_declarators SEMICOLON
 	  {
-		$$ = current_variable;
+		if (current_variable.Initializer != null) {
+			lbag.AddLocation (current_variable, GetLocation ($1), savedLocation, GetLocation ($7));
+		} else {
+			lbag.AddLocation (current_variable, GetLocation ($1), GetLocation ($7));
+		}
+		$$ = current_variable;;
 		current_variable = null;
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($7));
 	  }
 	;
 
@@ -4827,6 +4830,7 @@ const_variable_initializer
 	  }
 	| ASSIGN constant_initializer_expr 
 	  {
+		savedLocation = GetLocation ($1);
 		current_variable.Initializer = (Expression) $2;
 	  }
 	;
@@ -5000,7 +5004,7 @@ switch_section
 switch_labels
 	: switch_label 
 	  {
-		var labels = new List<SwitchLabel> (4);
+		var labels = new List<SwitchLabel> (2);
 
 		labels.Add ((SwitchLabel) $1);
 		$$ = labels;
@@ -5238,8 +5242,8 @@ yield_statement
 			Report.Error (1003, lt.Location, "; expected");
 		} else if ($3 == null) {
 			Report.Error (1627, GetLocation ($4), "Expression expected after yield return");
-		} else if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotAvailable (lt.Location, "iterators");
+		} else if (lang_version == LanguageVersion.ISO_1){
+			FeatureIsNotAvailable (lt.Location, "iterators");
 		}
 		
 		current_block.ParametersBlock.TopBlock.IsIterator = true;
@@ -5252,8 +5256,8 @@ yield_statement
 		string s = lt.Value;
 		if (s != "yield"){
 			Report.Error (1003, lt.Location, "; expected");
-		} else if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotAvailable (lt.Location, "iterators");
+		} else if (lang_version == LanguageVersion.ISO_1){
+			FeatureIsNotAvailable (lt.Location, "iterators");
 		}
 		
 		current_block.ParametersBlock.TopBlock.IsIterator = true;
@@ -5374,7 +5378,7 @@ unchecked_statement
 unsafe_statement
 	: UNSAFE
 	  {
-		if (!RootContext.Unsafe)
+		if (!settings.Unsafe)
 			Error_UnsafeCodeNotAllowed (GetLocation ($1));
 	  } block {
 		$$ = new Unsafe ((Block) $3, GetLocation ($1));
@@ -5514,7 +5518,7 @@ query_expression
 first_from_clause
 	: FROM_FIRST IDENTIFIER IN expression
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  
 		var lt = (Tokenizer.LocatedToken) $2;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5522,7 +5526,7 @@ first_from_clause
 	  }
 	| FROM_FIRST type IDENTIFIER IN expression
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  
 		var lt = (Tokenizer.LocatedToken) $3;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5537,7 +5541,7 @@ first_from_clause
 nested_from_clause
 	: FROM IDENTIFIER IN expression
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  
 		var lt = (Tokenizer.LocatedToken) $2;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5545,7 +5549,7 @@ nested_from_clause
 	  }
 	| FROM type IDENTIFIER IN expression
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  
 		var lt = (Tokenizer.LocatedToken) $3;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
@@ -5560,7 +5564,7 @@ nested_from_clause
 from_clause
 	: FROM IDENTIFIER IN
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5575,7 +5579,7 @@ from_clause
 	  }	  
 	| FROM type IDENTIFIER IN
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5620,7 +5624,7 @@ query_body
 select_or_group_clause
 	: SELECT
 	  {
-	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5634,7 +5638,7 @@ select_or_group_clause
 	  	if (linq_clause_blocks == null)
 	  		linq_clause_blocks = new Stack<Linq.QueryBlock> ();
 	  		
-	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  	linq_clause_blocks.Push ((Linq.QueryBlock)current_block);
 	  }
 	  expression
@@ -5642,7 +5646,7 @@ select_or_group_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  BY expression
 	  {
@@ -5678,7 +5682,7 @@ query_body_clause
 let_clause
 	: LET IDENTIFIER ASSIGN 
 	  {
-	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5696,11 +5700,11 @@ let_clause
 where_clause
 	: WHERE
 	  {
-	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+	  	current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  boolean_expression
+	  expression
 	  {
-		$$ = new Linq.Where ((Linq.QueryBlock)current_block, (BooleanExpression)$3, GetLocation ($1));
+		$$ = new Linq.Where ((Linq.QueryBlock)current_block, (Expression)$3, GetLocation ($1));
 
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5713,7 +5717,7 @@ join_clause
 		if (linq_clause_blocks == null)
 			linq_clause_blocks = new Stack<Linq.QueryBlock> ();
 	  		
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression ON
@@ -5721,7 +5725,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression EQUALS
@@ -5730,7 +5734,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression opt_join_into
 	  {
@@ -5773,7 +5777,7 @@ join_clause
 		if (linq_clause_blocks == null)
 			linq_clause_blocks = new Stack<Linq.QueryBlock> ();
 	  		
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression ON
@@ -5781,7 +5785,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression EQUALS
@@ -5790,7 +5794,7 @@ join_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  expression opt_join_into
 	  {
@@ -5845,7 +5849,7 @@ opt_join_into
 orderby_clause
 	: ORDERBY
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  orderings
 	  {
@@ -5863,7 +5867,7 @@ orderings
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
 	  orderings_then_by
 	  {
@@ -5879,7 +5883,7 @@ orderings_then_by
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  
-		current_block = new Linq.QueryBlock (compiler, (Linq.QueryBlock) current_block, lexer.Location);	 
+		current_block = new Linq.QueryBlock ((Linq.QueryBlock) current_block, lexer.Location);	 
 	 }
 	 then_by
 	 {
@@ -5930,7 +5934,7 @@ opt_query_continuation
 		current_block.SetEndLocation (GetLocation ($1));
 		current_block = current_block.Parent;
 	
-		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
+		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 		
 		if (linq_clause_blocks == null)
 			linq_clause_blocks = new Stack<Linq.QueryBlock> ();
@@ -5964,33 +5968,34 @@ opt_query_continuation
 interactive_parsing
 	: EVAL_STATEMENT_PARSER EOF 
 	| EVAL_USING_DECLARATIONS_UNIT_PARSER using_directives opt_COMPLETE_COMPLETION
-	| EVAL_STATEMENT_PARSER { 
-	        Evaluator.LoadAliases (current_namespace);
-
-		push_current_class (new Class (current_namespace, current_class, new MemberName ("Class" + class_count++),
-			Modifiers.PUBLIC, null), null);
-
-		var baseclass_list = new List<FullNamedExpression> ();
-		baseclass_list.Add (new TypeExpression (Evaluator.InteractiveBaseClass, lexer.Location));
-		current_container.AddBasesForPart (current_class, baseclass_list);
+	| EVAL_STATEMENT_PARSER
+	 { 
+		current_container = new Class (current_namespace, current_class, new MemberName ("<InteractiveExpressionClass>"), Modifiers.PUBLIC, null);
+		current_class = current_container;
 
 		// (ref object retval)
 		Parameter [] mpar = new Parameter [1];
-		mpar [0] = new Parameter (new TypeExpression (TypeManager.object_type, Location.Null), "$retval", Parameter.Modifier.REF, null, Location.Null);
+		mpar [0] = new Parameter (new TypeExpression (compiler.BuiltinTypes.Object, Location.Null), "$retval", Parameter.Modifier.REF, null, Location.Null);
 
 		ParametersCompiled pars = new ParametersCompiled (mpar);
+		var mods = Modifiers.PUBLIC | Modifiers.STATIC;
+		if (settings.Unsafe)
+			mods |= Modifiers.UNSAFE;
+
 		current_local_parameters = pars;
 		Method method = new Method (
 			current_class,
 			null, // generic
-			new TypeExpression (TypeManager.void_type, Location.Null),
-			Modifiers.PUBLIC | Modifiers.STATIC,
+			new TypeExpression (compiler.BuiltinTypes.Void, Location.Null),
+			mods,
 			new MemberName ("Host"),
 			pars,
 			null /* attributes */);
+			
+		current_container.AddMethod (method);			
 
 		oob_stack.Push (method);
-	        ++lexer.parsing_block;
+		++lexer.parsing_block;
 		start_block (lexer.Location);
 	  }		
 	  interactive_statement_list opt_COMPLETE_COMPLETION
@@ -5999,23 +6004,16 @@ interactive_parsing
 		Method method = (Method) oob_stack.Pop ();
 
 		method.Block = (ToplevelBlock) end_block(lexer.Location);
-		current_container.AddMethod (method);
 
-		--lexer.parsing_declaration;
-		InteractiveResult = pop_current_class ();
+		InteractiveResult = (Class) pop_current_class ();
 		current_local_parameters = null;
 	  } 
-	| EVAL_COMPILATION_UNIT_PARSER {
-	        Evaluator.LoadAliases (current_namespace);
-	  }
-	  interactive_compilation_unit
+	| EVAL_COMPILATION_UNIT_PARSER interactive_compilation_unit
 	;
 
 interactive_compilation_unit
-	: outer_declarations 
-	| outer_declarations global_attributes 
-	| global_attributes 
-	| /* nothing */
+	: opt_extern_alias_directives opt_using_directives
+	| opt_extern_alias_directives opt_using_directives namespace_or_type_declarations
 	;
 
 opt_COMPLETE_COMPLETION
@@ -6088,8 +6086,10 @@ void Error_NamedArgumentExpected (NamedArgument a)
 
 void push_current_class (TypeContainer tc, object partial_token)
 {
-	if (RootContext.EvalMode){
-		tc.ModFlags = (tc.ModFlags & ~(Modifiers.PRIVATE|Modifiers.INTERNAL)) | Modifiers.PUBLIC;
+	if (module.Evaluator != null){
+		tc.Definition.Modifiers = tc.ModFlags = (tc.ModFlags & ~Modifiers.AccessibilityMask) | Modifiers.PUBLIC;
+		if (undo == null)
+			undo = new Undo ();
 		undo.AddTypeContainer (current_container, tc);
 	}
 
@@ -6123,7 +6123,7 @@ MakeName (MemberName class_name)
 {
 	Namespace ns = current_namespace.NS;
 
-	if (current_container == RootContext.ToplevelTypes) {
+	if (current_container == module) {
 		if (ns.Name.Length != 0)
 			return new MemberName (ns.MemberName, class_name);
 		else
@@ -6199,15 +6199,16 @@ static CSharpParser ()
 	oob_stack = new Stack<object> ();
 }
 
-public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ModuleContainer module)
+public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file)
 {
-	if (RootContext.EvalMode)
-		undo = new Undo ();
-
 	this.file = file;
-	this.module = module;
+	current_namespace = file.NamespaceContainer;
+	
+	this.module = current_namespace.Module;
 	this.compiler = module.Compiler;
-	current_namespace = new NamespaceEntry (module, null, file, null);
+	this.settings = compiler.Settings;
+	lang_version = settings.Version;
+	doc_support = settings.DocumentationFile != null;
 	current_class = current_namespace.SlaveDeclSpace;
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 	oob_stack.Clear ();
@@ -6246,9 +6247,6 @@ public void parse ()
 			Report.Error (589, lexer.Location, "Internal compiler error during parsing");
 		}
 	}
-
-	if (RootContext.ToplevelTypes.NamespaceEntry != null)
-		throw new InternalErrorException ("who set it?");
 }
 
 void CheckToken (int error, int yyToken, string msg, Location loc)
@@ -6265,6 +6263,11 @@ string ConsumeStoredComment ()
 	tmpComment = null;
 	Lexer.doc_state = XmlCommentState.Allowed;
 	return s;
+}
+
+void FeatureIsNotAvailable (Location loc, string feature)
+{
+	compiler.Report.FeatureIsNotAvailable (compiler, loc, feature);
 }
 
 Location GetLocation (object obj)
@@ -6330,8 +6333,8 @@ end_block (Location loc)
 
 void start_anonymous (bool lambda, ParametersCompiled parameters, Location loc)
 {
-	if (RootContext.Version == LanguageVersion.ISO_1){
-		Report.FeatureIsNotAvailable (loc, "anonymous methods");
+	if (lang_version == LanguageVersion.ISO_1){
+		FeatureIsNotAvailable (loc, "anonymous methods");
 	}
 
 	oob_stack.Push (current_anonymous_method);
@@ -6612,6 +6615,7 @@ static string GetTokenName (int token)
 	case Token.EXPLICIT:
 		return "explicit";
 	case Token.EXTERN:
+	case Token.EXTERN_ALIAS:
 		return "extern";
 	case Token.FALSE:
 		return "false";
@@ -6705,6 +6709,12 @@ static string GetTokenName (int token)
 		return "while";
 	case Token.ARGLIST:
 		return "__arglist";
+	case Token.REFVALUE:
+		return "__refvalue";
+	case Token.REFTYPE:
+		return "__reftype";
+	case Token.MAKEREF:
+		return "__makeref";
 	case Token.PARTIAL:
 		return "partial";
 	case Token.ARROW:

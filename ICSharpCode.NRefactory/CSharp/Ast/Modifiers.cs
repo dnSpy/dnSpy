@@ -66,4 +66,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		//Final                = 0x400000,
 		//Literal              = 0x800000,
 		VisibilityMask = Private | Internal | Protected | Public,
+		
+		/// <summary>
+		/// Special value used to match any modifiers during pattern matching.
+		/// </summary>
+		Any = unchecked((int)0x80000000)
 	}}

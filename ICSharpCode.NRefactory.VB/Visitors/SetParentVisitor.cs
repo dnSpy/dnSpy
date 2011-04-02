@@ -2,7 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.VB.Visitors
@@ -10,7 +10,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 	/// <summary>
 	/// Sets the parent property on all nodes in the tree.
 	/// </summary>
-	public class SetParentVisitor : NodeTrackingDomVisitor
+	public class SetParentVisitor : NodeTrackingAstVisitor
 	{
 		Stack<INode> nodeStack = new Stack<INode>();
 		

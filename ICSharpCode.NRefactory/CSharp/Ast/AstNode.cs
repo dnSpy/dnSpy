@@ -129,6 +129,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get {
 				AstNode next;
 				for (AstNode cur = firstChild; cur != null; cur = next) {
+					Debug.Assert(cur.parent == this);
 					// Remember next before yielding cur.
 					// This allows removing/replacing nodes while iterating through the list.
 					next = cur.nextSibling;
@@ -154,6 +155,15 @@ namespace ICSharpCode.NRefactory.CSharp
 		public IEnumerable<AstNode> Descendants {
 			get {
 				return Utils.TreeTraversal.PreOrder(this.Children, n => n.Children);
+			}
+		}
+		
+		/// <summary>
+		/// Gets all descendants of this node (including this node itself).
+		/// </summary>
+		public IEnumerable<AstNode> DescendantsAndSelf {
+			get {
+				return Utils.TreeTraversal.PreOrder(this, n => n.Children);
 			}
 		}
 		
@@ -528,49 +538,23 @@ namespace ICSharpCode.NRefactory.CSharp
 			return null;
 		}
 		
-		public IEnumerable<T> Annotations<T>() where T: class
-		{
-			object annotations = this.annotations;
-			AnnotationList list = annotations as AnnotationList;
-			if (list != null) {
-				List<T> result = new List<T>();
-				lock (list) {
-					foreach (object obj in list) {
-						T t = obj as T;
-						if (t != null)
-							result.Add(t);
+		/// <summary>
+		/// Gets all annotations stored on this AstNode.
+		/// </summary>
+		public IEnumerable<object> Annotations {
+			get {
+				object annotations = this.annotations;
+				AnnotationList list = annotations as AnnotationList;
+				if (list != null) {
+					lock (list) {
+						return list.ToArray();
 					}
+				} else {
+					if (annotations != null)
+						return new object[] { annotations };
+					else
+						return Enumerable.Empty<object>();
 				}
-				return result;
-			} else {
-				T t = annotations as T;
-				if (t != null)
-					return new T[] { t };
-				else
-					return Enumerable.Empty<T>();
-			}
-		}
-		
-		public IEnumerable<object> Annotations(Type type)
-		{
-			if (type == null)
-				throw new ArgumentNullException("type");
-			object annotations = this.annotations;
-			AnnotationList list = annotations as AnnotationList;
-			if (list != null) {
-				List<object> result = new List<object>();
-				lock (list) {
-					foreach (object obj in list) {
-						if (type.IsInstanceOfType(obj))
-							result.Add(obj);
-					}
-				}
-				return result;
-			} else {
-				if (type.IsInstanceOfType(annotations))
-					return new object[] { annotations };
-				else
-					return Enumerable.Empty<object>();
 			}
 		}
 		#endregion
@@ -607,11 +591,41 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		protected internal abstract bool DoMatch(AstNode other, Match match);
 		
-		internal virtual bool DoMatchCollection(Role role, AstNode pos, Match match, Stack<Pattern.PossibleMatch> backtrackingStack)
+		internal virtual bool DoMatchCollection (Role role, AstNode pos, Match match, Stack<Pattern.PossibleMatch> backtrackingStack)
 		{
-			return DoMatch(pos, match);
+			return DoMatch (pos, match);
 		}
 		#endregion
+		
+		public AstNode GetNextNode ()
+		{
+			if (NextSibling != null)
+				return NextSibling;
+			if (Parent != null)
+				return Parent.GetNextNode ();
+			return null;
+		}
+
+		public AstNode GetPrevNode ()
+		{
+			if (PrevSibling != null)
+				return PrevSibling;
+			if (Parent != null)
+				return Parent.GetPrevNode ();
+			return null;
+		}
+		
+		// filters all non c# nodes (comments, white spaces or pre processor directives)
+		public AstNode GetCSharpNodeBefore (AstNode node)
+		{
+			var n = node.PrevSibling;
+			while (n != null) {
+				if (n.Role != Roles.Comment)
+					return n;
+				n = n.GetPrevNode ();
+			}
+			return null;
+		}
 		
 		// the Root role must be available when creating the null nodes, so we can't put it in the Roles class
 		static readonly Role<AstNode> RootRole = new Role<AstNode>("Root");

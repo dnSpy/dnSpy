@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 [assembly: ICSharpCode.NRefactory.TypeSystem.TestCase.TypeTestAttribute(
 	42, typeof(System.Action<>), typeof(IDictionary<string, IList<NUnit.Framework.TestAttribute>>))]
@@ -64,5 +65,32 @@ namespace ICSharpCode.NRefactory.TypeSystem.TestCase
 	public struct MyStructWithCtor
 	{
 		public MyStructWithCtor(int a) {}
+	}
+	
+	[Serializable]
+	public class NonCustomAttributes
+	{
+		[NonSerialized]
+		public readonly int NonSerializedField;
+		
+		[DllImport("unmanaged.dll", CharSet = CharSet.Unicode)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool DllMethod([In, Out] ref int p);
+	}
+	
+	[StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode, Pack = 8)]
+	public struct ExplicitFieldLayoutStruct
+	{
+		[FieldOffset(0)]
+		public int Field0;
+		
+		[FieldOffset(100)]
+		public int Field100;
+	}
+	
+	public class ParameterTests
+	{
+		public void MethodWithOutParameter(out int x) { x = 0; }
+		public void MethodWithParamsArray(params object[] x) {}
 	}
 }

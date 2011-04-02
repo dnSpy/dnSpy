@@ -104,7 +104,7 @@ namespace Mono.CSharp {
 		public static bool CheckConflictingInheritedConstraint (TypeParameterSpec spec, TypeSpec bb, IMemberContext context, Location loc)
 		{
 			if (spec.HasSpecialClass && bb.IsStruct) {
-				context.Compiler.Report.Error (455, loc,
+				context.Module.Compiler.Report.Error (455, loc,
 					"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
 					spec.Name, "class", bb.GetSignatureForError ());
 
@@ -122,7 +122,7 @@ namespace Mono.CSharp {
 			if (TypeSpec.IsBaseClass (ba, bb, false) || TypeSpec.IsBaseClass (bb, ba, false))
 				return true;
 
-			context.Compiler.Report.Error (455, loc,
+			context.Module.Compiler.Report.Error (455, loc,
 				"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
 				spec.Name, ba.GetSignatureForError (), bb.GetSignatureForError ());
 			return false;
@@ -154,7 +154,7 @@ namespace Mono.CSharp {
 			List<TypeParameterSpec> tparam_types = null;
 			bool iface_found = false;
 
-			spec.BaseType = TypeManager.object_type;
+			spec.BaseType = context.Module.Compiler.BuiltinTypes.Object;
 
 			for (int i = 0; i < constraints.Count; ++i) {
 				var constraint = constraints[i];
@@ -162,7 +162,7 @@ namespace Mono.CSharp {
 				if (constraint is SpecialContraintExpr) {
 					spec.SpecialConstraint |= ((SpecialContraintExpr) constraint).Constraint;
 					if (spec.HasSpecialStruct)
-						spec.BaseType = TypeManager.value_type;
+						spec.BaseType = context.Module.Compiler.BuiltinTypes.ValueType;
 
 					// Set to null as it does not have a type
 					constraints[i] = null;
@@ -175,7 +175,7 @@ namespace Mono.CSharp {
 
 				var gexpr = type_expr as GenericTypeExpr;
 				if (gexpr != null && gexpr.HasDynamicArguments ()) {
-					context.Compiler.Report.Error (1968, constraint.Location,
+					context.Module.Compiler.Report.Error (1968, constraint.Location,
 						"A constraint cannot be the dynamic type `{0}'", gexpr.GetSignatureForError ());
 					continue;
 				}
@@ -183,15 +183,15 @@ namespace Mono.CSharp {
 				var type = type_expr.Type;
 
 				if (!context.CurrentMemberDefinition.IsAccessibleAs (type)) {
-					context.Compiler.Report.SymbolRelatedToPreviousError (type);
-					context.Compiler.Report.Error (703, loc,
+					context.Module.Compiler.Report.SymbolRelatedToPreviousError (type);
+					context.Module.Compiler.Report.Error (703, loc,
 						"Inconsistent accessibility: constraint type `{0}' is less accessible than `{1}'",
 						type.GetSignatureForError (), context.GetSignatureForError ());
 				}
 
 				if (type.IsInterface) {
 					if (!spec.AddInterface (type)) {
-						context.Compiler.Report.Error (405, constraint.Location,
+						context.Module.Compiler.Report.Error (405, constraint.Location,
 							"Duplicate constraint `{0}' for type parameter `{1}'", type.GetSignatureForError (), tparam.Value);
 					}
 
@@ -205,7 +205,7 @@ namespace Mono.CSharp {
 					if (tparam_types == null) {
 						tparam_types = new List<TypeParameterSpec> (2);
 					} else if (tparam_types.Contains (constraint_tp)) {
-						context.Compiler.Report.Error (405, constraint.Location,
+						context.Module.Compiler.Report.Error (405, constraint.Location,
 							"Duplicate constraint `{0}' for type parameter `{1}'", type.GetSignatureForError (), tparam.Value);
 						continue;
 					}
@@ -220,7 +220,7 @@ namespace Mono.CSharp {
 
 					var tp_def = constraint_tp.MemberDefinition as TypeParameter;
 					if (tp_def != null && !tp_def.ResolveConstraints (context)) {
-						context.Compiler.Report.Error (454, constraint.Location,
+						context.Module.Compiler.Report.Error (454, constraint.Location,
 							"Circular constraint dependency involving `{0}' and `{1}'",
 							constraint_tp.GetSignatureForError (), tp.GetSignatureForError ());
 						continue;
@@ -251,7 +251,7 @@ namespace Mono.CSharp {
 					}
 
 					if (constraint_tp.HasSpecialStruct) {
-						context.Compiler.Report.Error (456, constraint.Location,
+						context.Module.Compiler.Report.Error (456, constraint.Location,
 							"Type parameter `{0}' has the `struct' constraint, so it cannot be used as a constraint for `{1}'",
 							constraint_tp.GetSignatureForError (), tp.GetSignatureForError ());
 						continue;
@@ -262,39 +262,44 @@ namespace Mono.CSharp {
 				}
 
 				if (iface_found || spec.HasTypeConstraint) {
-					context.Compiler.Report.Error (406, constraint.Location,
+					context.Module.Compiler.Report.Error (406, constraint.Location,
 						"The class type constraint `{0}' must be listed before any other constraints. Consider moving type constraint to the beginning of the constraint list",
 						type.GetSignatureForError ());
 				}
 
 				if (spec.HasSpecialStruct || spec.HasSpecialClass) {
-					context.Compiler.Report.Error (450, type_expr.Location,
+					context.Module.Compiler.Report.Error (450, type_expr.Location,
 						"`{0}': cannot specify both a constraint class and the `class' or `struct' constraint",
 						type.GetSignatureForError ());
 				}
 
-				if (type == InternalType.Dynamic) {
-					context.Compiler.Report.Error (1967, constraint.Location, "A constraint cannot be the dynamic type");
+				switch (type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Array:
+				case BuiltinTypeSpec.Type.Delegate:
+				case BuiltinTypeSpec.Type.MulticastDelegate:
+				case BuiltinTypeSpec.Type.Enum:
+				case BuiltinTypeSpec.Type.ValueType:
+				case BuiltinTypeSpec.Type.Object:
+					context.Module.Compiler.Report.Error (702, constraint.Location,
+						"A constraint cannot be special class `{0}'", type.GetSignatureForError ());
+					continue;
+				case BuiltinTypeSpec.Type.Dynamic:
+					context.Module.Compiler.Report.Error (1967, constraint.Location,
+						"A constraint cannot be the dynamic type");
 					continue;
 				}
 
 				if (type.IsSealed || !type.IsClass) {
-					context.Compiler.Report.Error (701, loc,
+					context.Module.Compiler.Report.Error (701, loc,
 						"`{0}' is not a valid constraint. A constraint must be an interface, a non-sealed class or a type parameter",
 						TypeManager.CSharpName (type));
 					continue;
 				}
 
 				if (type.IsStatic) {
-					context.Compiler.Report.Error (717, constraint.Location,
+					context.Module.Compiler.Report.Error (717, constraint.Location,
 						"`{0}' is not a valid constraint. Static classes cannot be used as constraints",
 						type.GetSignatureForError ());
-				} else if (type == TypeManager.array_type || type == TypeManager.delegate_type ||
-							type == TypeManager.enum_type || type == TypeManager.value_type ||
-							type == TypeManager.object_type || type == TypeManager.multicast_delegate_type) {
-					context.Compiler.Report.Error (702, constraint.Location,
-						"A constraint cannot be special class `{0}'", type.GetSignatureForError ());
-					continue;
 				}
 
 				spec.BaseType = type;
@@ -510,7 +515,7 @@ namespace Mono.CSharp {
 			if (spec.HasSpecialConstructor)
 				attr |= GenericParameterAttributes.DefaultConstructorConstraint;
 
-			if (spec.BaseType != TypeManager.object_type)
+			if (spec.BaseType.BuiltinType != BuiltinTypeSpec.Type.Object)
 				builder.SetBaseTypeConstraint (spec.BaseType.GetMetaInfo ());
 
 			if (spec.InterfacesDefined != null)
@@ -573,7 +578,7 @@ namespace Mono.CSharp {
 
 		bool ITypeDefinition.IsInternalAsPublic (IAssemblyDefinition assembly)
 		{
-			throw new NotImplementedException ();
+			return spec.GetEffectiveBase ().MemberDefinition.DeclaringAssembly == assembly;
 		}
 
 		public void LoadMembers (TypeSpec declaringType, bool onlyTypes, ref MemberCache cache)
@@ -590,7 +595,7 @@ namespace Mono.CSharp {
 				return constraints.Resolve (context, this);
 
 			if (spec.BaseType == null)
-				spec.BaseType = TypeManager.object_type;
+				spec.BaseType = context.Module.Compiler.BuiltinTypes.Object;
 
 			return true;
 		}
@@ -676,7 +681,8 @@ namespace Mono.CSharp {
 
 		public bool HasTypeConstraint {
 			get {
-				return BaseType != TypeManager.object_type && BaseType != TypeManager.value_type;
+				var bt = BaseType.BuiltinType;
+				return bt != BuiltinTypeSpec.Type.Object && bt != BuiltinTypeSpec.Type.ValueType;
 			}
 		}
 
@@ -720,7 +726,7 @@ namespace Mono.CSharp {
 				return ifaces_defined;
 			}
 			set {
-				ifaces_defined = value;
+				ifaces = ifaces_defined = value;
 			}
 		}
 
@@ -823,9 +829,8 @@ namespace Mono.CSharp {
 		//
 		public TypeSpec GetEffectiveBase ()
 		{
-			if (HasSpecialStruct) {
-				return TypeManager.value_type;
-			}
+			if (HasSpecialStruct)
+				return BaseType;
 
 			if (BaseType != null && targs == null)
 				return BaseType;
@@ -839,7 +844,7 @@ namespace Mono.CSharp {
 			if (types != null)
 				return Convert.FindMostEncompassedType (types.Select (l => l.BaseType));
 
-			return TypeManager.object_type;
+			return BaseType;
 		}
 
 		public override string GetSignatureForError ()
@@ -1006,7 +1011,7 @@ namespace Mono.CSharp {
 
 			for (int i = 0; i < tparams.Length; ++i) {
 				var tp = tparams[i];
-				if (tp.HasTypeConstraint || tp.Interfaces != null || tp.TypeArguments != null) {
+				if (tp.HasTypeConstraint || tp.InterfacesDefined != null || tp.TypeArguments != null) {
 					if (constraints == null) {
 						constraints = new TypeParameterSpec[tparams.Length];
 						Array.Copy (tparams, constraints, constraints.Length);
@@ -1064,7 +1069,7 @@ namespace Mono.CSharp {
 			// For a type parameter the membercache is the union of the sets of members of the types
 			// specified as a primary constraint or secondary constraint
 			//
-			if (BaseType != TypeManager.object_type && BaseType != TypeManager.value_type)
+			if (BaseType.BuiltinType != BuiltinTypeSpec.Type.Object && BaseType.BuiltinType != BuiltinTypeSpec.Type.ValueType)
 				cache.AddBaseType (BaseType);
 
 			if (ifaces != null) {
@@ -1075,8 +1080,9 @@ namespace Mono.CSharp {
 
 			if (targs != null) {
 				foreach (var ta in targs) {
-					if (ta.BaseType != TypeManager.object_type && ta.BaseType != TypeManager.value_type)
-						cache.AddBaseType (ta.BaseType);
+					var b_type = ta.BaseType;
+					if (b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType)
+						cache.AddBaseType (b_type);
 
 					if (ta.Interfaces != null) {
 						foreach (var iface_type in ta.Interfaces) {
@@ -1117,17 +1123,19 @@ namespace Mono.CSharp {
 		readonly TypeSpec type;
 		readonly TypeParameterSpec[] tparams;
 		readonly TypeSpec[] targs;
+		readonly IModuleContext context;
 
 		public TypeParameterInflator (TypeParameterInflator nested, TypeSpec type)
-			: this (type, nested.tparams, nested.targs)
+			: this (nested.context, type, nested.tparams, nested.targs)
 		{
 		}
 
-		public TypeParameterInflator (TypeSpec type, TypeParameterSpec[] tparams, TypeSpec[] targs)
+		public TypeParameterInflator (IModuleContext context, TypeSpec type, TypeParameterSpec[] tparams, TypeSpec[] targs)
 		{
 			if (tparams.Length != targs.Length)
 				throw new ArgumentException ("Invalid arguments");
 
+			this.context = context;
 			this.tparams = tparams;
 			this.targs = targs;
 			this.type = type;
@@ -1135,8 +1143,16 @@ namespace Mono.CSharp {
 
 		#region Properties
 
+		public IModuleContext Context {
+			get {
+				return context;
+			}
+		}
+
 		public TypeSpec TypeInstance {
-			get { return type; }
+			get {
+				return type;
+			}
 		}
 
 		//
@@ -1160,7 +1176,7 @@ namespace Mono.CSharp {
 			if (ac != null) {
 				var et = Inflate (ac.Element);
 				if (et != ac.Element)
-					return ArrayContainer.MakeType (et, ac.Rank);
+					return ArrayContainer.MakeType (context.Module, et, ac.Rank);
 
 				return ac;
 			}
@@ -1202,7 +1218,7 @@ namespace Mono.CSharp {
 					for (; i < targs.Length; ++i)
 						inflated_targs[i] = Inflate (targs[i]);
 
-					type = type.MakeGenericType (inflated_targs);
+					type = type.MakeGenericType (context, inflated_targs);
 				}
 
 				return type;
@@ -1231,7 +1247,7 @@ namespace Mono.CSharp {
 					targs[i++] = Inflate (ds_tp);
 			}
 
-			return type.MakeGenericType (targs);
+			return type.MakeGenericType (context, targs);
 		}
 
 		public TypeSpec Inflate (TypeParameterSpec tp)
@@ -1252,9 +1268,9 @@ namespace Mono.CSharp {
 	//
 	public class TypeParameterMutator
 	{
-		TypeParameter[] mvar;
-		TypeParameter[] var;
-		Dictionary<TypeSpec, TypeSpec> mutated_typespec = new Dictionary<TypeSpec, TypeSpec> ();
+		readonly TypeParameter[] mvar;
+		readonly TypeParameter[] var;
+		Dictionary<TypeSpec, TypeSpec> mutated_typespec;
 
 		public TypeParameterMutator (TypeParameter[] mvar, TypeParameter[] var)
 		{
@@ -1291,10 +1307,13 @@ namespace Mono.CSharp {
 		public TypeSpec Mutate (TypeSpec ts)
 		{
 			TypeSpec value;
-			if (mutated_typespec.TryGetValue (ts, out value))
+			if (mutated_typespec != null && mutated_typespec.TryGetValue (ts, out value))
 				return value;
 
 			value = ts.Mutate (this);
+			if (mutated_typespec == null)
+				mutated_typespec = new Dictionary<TypeSpec, TypeSpec> ();
+
 			mutated_typespec.Add (ts, value);
 			return value;
 		}
@@ -1350,19 +1369,21 @@ namespace Mono.CSharp {
 		TypeSpec[] targs;
 		TypeParameterSpec[] constraints;
 		readonly TypeSpec open_type;
+		readonly IModuleContext context;
 
-		public InflatedTypeSpec (TypeSpec openType, TypeSpec declaringType, TypeSpec[] targs)
+		public InflatedTypeSpec (IModuleContext context, TypeSpec openType, TypeSpec declaringType, TypeSpec[] targs)
 			: base (openType.Kind, declaringType, openType.MemberDefinition, null, openType.Modifiers)
 		{
 			if (targs == null)
 				throw new ArgumentNullException ("targs");
 
 //			this.state = openType.state;
+			this.context = context;
 			this.open_type = openType;
 			this.targs = targs;
 
 			foreach (var arg in targs) {
-				if (arg.HasDynamicElement || arg == InternalType.Dynamic) {
+				if (arg.HasDynamicElement || arg.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					state |= StateFlags.HasDynamicElement;
 					break;
 				}
@@ -1389,7 +1410,7 @@ namespace Mono.CSharp {
 		public TypeParameterSpec[] Constraints {
 			get {
 				if (constraints == null) {
-					constraints = TypeParameterSpec.InflateConstraints (MemberDefinition.TypeParameters, l => l.CreateLocalInflator (), this);
+					constraints = TypeParameterSpec.InflateConstraints (MemberDefinition.TypeParameters, l => l.CreateLocalInflator (context), this);
 				}
 
 				return constraints;
@@ -1402,6 +1423,24 @@ namespace Mono.CSharp {
 					InitializeMemberCache (true);
 
 				return base.Interfaces;
+			}
+		}
+
+		public override bool IsExpressionTreeType {
+			get {
+				return (open_type.state & StateFlags.InflatedExpressionType) != 0;
+			}
+		}
+
+		public override bool IsGenericIterateInterface {
+			get {
+				return (open_type.state & StateFlags.GenericIterateInterface) != 0;
+			}
+		}
+
+		public override bool IsNullableType {
+			get {
+				return (open_type.state & StateFlags.InflatedNullableType) != 0;
 			}
 		}
 
@@ -1434,7 +1473,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		TypeParameterInflator CreateLocalInflator ()
+		TypeParameterInflator CreateLocalInflator (IModuleContext context)
 		{
 			TypeParameterSpec[] tparams_full;
 			TypeSpec[] targs_full = targs;
@@ -1483,7 +1522,7 @@ namespace Mono.CSharp {
 				tparams_full = open_type.MemberDefinition.TypeParameters;
 			}
 
-			return new TypeParameterInflator (this, tparams_full, targs_full);
+			return new TypeParameterInflator (context, this, tparams_full, targs_full);
 		}
 
 		MetaType CreateMetaInfo (TypeParameterMutator mutator)
@@ -1543,7 +1582,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			if (TypeManager.IsNullableType (open_type))
+			if (IsNullableType)
 				return targs[0].GetSignatureForError () + "?";
 
 			return base.GetSignatureForError ();
@@ -1559,10 +1598,16 @@ namespace Mono.CSharp {
 
 		protected override void InitializeMemberCache (bool onlyTypes)
 		{
-			if (cache == null)
-				cache = new MemberCache (onlyTypes ? open_type.MemberCacheTypes : open_type.MemberCache);
+			if (cache == null) {
+				var open_cache = onlyTypes ? open_type.MemberCacheTypes : open_type.MemberCache;
 
-			var inflator = CreateLocalInflator ();
+				// Surprisingly, calling MemberCache on open type could meantime create cache on this type
+				// for imported type parameter constraints referencing nested type of this declaration
+				if (cache == null)
+					cache = new MemberCache (open_cache);
+			}
+
+			var inflator = CreateLocalInflator (context);
 
 			//
 			// Two stage inflate due to possible nested types recursive
@@ -1588,6 +1633,9 @@ namespace Mono.CSharp {
 					ifaces = new List<TypeSpec> (open_type.Interfaces.Count);
 					foreach (var iface in open_type.Interfaces) {
 						var iface_inflated = inflator.Inflate (iface);
+						if (iface_inflated == null)
+							continue;
+
 						AddInterface (iface_inflated);
 					}
 				}
@@ -1754,13 +1802,13 @@ namespace Mono.CSharp {
 				atypes[i] = te.Type;
 
 				if (te.Type.IsStatic) {
-					ec.Compiler.Report.Error (718, te.Location, "`{0}': static classes cannot be used as generic arguments",
+					ec.Module.Compiler.Report.Error (718, te.Location, "`{0}': static classes cannot be used as generic arguments",
 						te.GetSignatureForError ());
 					ok = false;
 				}
 
-				if (te.Type.IsPointer || TypeManager.IsSpecialType (te.Type)) {
-					ec.Compiler.Report.Error (306, te.Location,
+				if (te.Type.IsPointer || te.Type.IsSpecialRuntimeType) {
+					ec.Module.Compiler.Report.Error (306, te.Location,
 						"The type `{0}' may not be used as a type argument",
 						te.GetSignatureForError ());
 					ok = false;
@@ -1873,7 +1921,7 @@ namespace Mono.CSharp {
 			//
 			// Now bind the parameters
 			//
-			type = open_type.MakeGenericType (atypes);
+			type = open_type.MakeGenericType (ec, atypes);
 
 			//
 			// Check constraints when context is not method/base type
@@ -1913,7 +1961,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < args.Length; ++i) {
 				var item = args[i];
 
-				if (item == InternalType.Dynamic)
+				if (item.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 					return true;
 
 				if (TypeManager.IsGenericType (item))
@@ -1924,7 +1972,7 @@ namespace Mono.CSharp {
 						item = ((ArrayContainer) item).Element;
 					}
 
-					if (item == InternalType.Dynamic)
+					if (item.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 						return true;
 				}
 			}
@@ -1998,7 +2046,7 @@ namespace Mono.CSharp {
 		public bool CheckAll (MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
 			for (int i = 0; i < tparams.Length; i++) {
-				if (ignore_inferred_dynamic && targs[i] == InternalType.Dynamic)
+				if (ignore_inferred_dynamic && targs[i].BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 					continue;
 
 				if (!CheckConstraint (context, targs [i], tparams [i], loc))
@@ -2015,7 +2063,7 @@ namespace Mono.CSharp {
 			//
 			if (tparam.HasSpecialClass && !TypeManager.IsReferenceType (atype)) {
 				if (mc != null) {
-					mc.Compiler.Report.Error (452, loc,
+					mc.Module.Compiler.Report.Error (452, loc,
 						"The type `{0}' must be a reference type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
 						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				}
@@ -2023,9 +2071,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (tparam.HasSpecialStruct && (!TypeManager.IsValueType (atype) || TypeManager.IsNullableType (atype))) {
+			if (tparam.HasSpecialStruct && (!TypeManager.IsValueType (atype) || atype.IsNullableType)) {
 				if (mc != null) {
-					mc.Compiler.Report.Error (453, loc,
+					mc.Module.Compiler.Report.Error (453, loc,
 						"The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
 						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				}
@@ -2060,11 +2108,11 @@ namespace Mono.CSharp {
 			// Check the interfaces constraints
 			//
 			if (tparam.Interfaces != null) {
-				if (TypeManager.IsNullableType (atype)) {
+				if (atype.IsNullableType) {
 					if (mc == null)
 						return false;
 
-					mc.Compiler.Report.Error (313, loc,
+					mc.Module.Compiler.Report.Error (313, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' never satisfies interface constraint",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError ());
 					ok = false;
@@ -2115,8 +2163,8 @@ namespace Mono.CSharp {
 
 			if (!HasDefaultConstructor (atype)) {
 				if (mc != null) {
-					mc.Compiler.Report.SymbolRelatedToPreviousError (atype);
-					mc.Compiler.Report.Error (310, loc,
+					mc.Module.Compiler.Report.SymbolRelatedToPreviousError (atype);
+					mc.Module.Compiler.Report.Error (310, loc,
 						"The type `{0}' must have a public parameterless constructor in order to use it as parameter `{1}' in the generic type or method `{2}'",
 						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				}
@@ -2130,7 +2178,7 @@ namespace Mono.CSharp {
 		{
 			for (int i = 0; i < targs.Length; ++i) {
 				var targ = targs [i];
-				if (targ == InternalType.Dynamic)
+				if (targ.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 					return true;
 
 				if (HasDynamicTypeArgument (targ.TypeArguments))
@@ -2146,13 +2194,12 @@ namespace Mono.CSharp {
 				if (atype == ttype || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
 					return true;
 			} else {
-				var expr = new EmptyExpression (atype);
-
 				if (atype.IsGenericParameter) {
-					if (Convert.ImplicitTypeParameterConversion (expr, ttype) != null)
+					if (Convert.ImplicitTypeParameterConversion (null, (TypeParameterSpec) atype, ttype) != null)
 						return true;
 				}
 
+				var expr = new EmptyExpression (atype);
 				if (Convert.ImplicitStandardConversionExists (expr, ttype))
 					return true;
 			}
@@ -2166,17 +2213,17 @@ namespace Mono.CSharp {
 				return true;
 
 			if (mc != null) {
-				mc.Compiler.Report.SymbolRelatedToPreviousError (tparam);
+				mc.Module.Compiler.Report.SymbolRelatedToPreviousError (tparam);
 				if (TypeManager.IsValueType (atype)) {
-					mc.Compiler.Report.Error (315, loc,
+					mc.Module.Compiler.Report.Error (315, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else if (atype.IsGenericParameter) {
-					mc.Compiler.Report.Error (314, loc,
+					mc.Module.Compiler.Report.Error (314, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing or type parameter conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else {
-					mc.Compiler.Report.Error (311, loc,
+					mc.Module.Compiler.Report.Error (311, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no implicit reference conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				}
@@ -2471,7 +2518,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (a.Expr.Type == InternalType.Null)
+				if (a.Expr.Type == InternalType.NullLiteral)
 					continue;
 
 				if (TypeManager.IsValueType (method_parameter)) {
@@ -2518,13 +2565,13 @@ namespace Mono.CSharp {
 				TypeSpec t_i = methodParameters [i >= methodParameters.Length ? methodParameters.Length - 1: i];
 				
 				if (!TypeManager.IsDelegateType (t_i)) {
-					if (t_i.GetDefinition () != TypeManager.expression_type)
+					if (!t_i.IsExpressionTreeType)
 						continue;
 
 					t_i = TypeManager.GetTypeArguments (t_i) [0];
 				}
 
-				var mi = Delegate.GetInvokeMethod (ec.Compiler, t_i);
+				var mi = Delegate.GetInvokeMethod (t_i);
 				TypeSpec rtype = mi.ReturnType;
 
 				if (tic.IsReturnTypeNonDependent (ec, mi, rtype))
@@ -2629,7 +2676,7 @@ namespace Mono.CSharp {
 			//
 			// Some types cannot be used as type arguments
 			//
-			if (bound.Type == TypeManager.void_type || bound.Type.IsPointer)
+			if (bound.Type.Kind == MemberKind.Void || bound.Type.IsPointer)
 				return;
 
 			var a = bounds [index];
@@ -2747,7 +2794,7 @@ namespace Mono.CSharp {
 				TypeSpec t = methodParameters[i];
 
 				if (!TypeManager.IsDelegateType (t)) {
-					if (TypeManager.expression_type == null || t.MemberDefinition != TypeManager.expression_type.MemberDefinition)
+					if (!t.IsExpressionTreeType)
 						continue;
 
 					t =  TypeManager.GetTypeArguments (t) [0];
@@ -2756,7 +2803,7 @@ namespace Mono.CSharp {
 				if (t.IsGenericParameter)
 					continue;
 
-				var invoke = Delegate.GetInvokeMethod (ec.Compiler, t);
+				var invoke = Delegate.GetInvokeMethod (t);
 				TypeSpec rtype = invoke.ReturnType;
 				if (!rtype.IsGenericParameter && !TypeManager.IsGenericType (rtype))
 					continue;
@@ -2797,7 +2844,7 @@ namespace Mono.CSharp {
 
 			if (candidates.Count == 1) {
 				TypeSpec t = candidates[0].Type;
-				if (t == InternalType.Null)
+				if (t == InternalType.NullLiteral)
 					return false;
 
 				fixed_types [i] = t;
@@ -2891,10 +2938,10 @@ namespace Mono.CSharp {
 				//
 				if (best_candidate != null) {
 
-					if (best_candidate == InternalType.Dynamic)
+					if (best_candidate.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 						continue;
 
-					if (bound.Type != InternalType.Dynamic && best_candidate != bound.Type)
+					if (bound.Type.BuiltinType != BuiltinTypeSpec.Type.Dynamic && best_candidate != bound.Type)
 						return false;
 				}
 
@@ -2912,7 +2959,7 @@ namespace Mono.CSharp {
 		// Uses inferred or partially infered types to inflate delegate type argument. Returns
 		// null when type parameter has not been fixed
 		//
-		public TypeSpec InflateGenericArgument (TypeSpec parameter)
+		public TypeSpec InflateGenericArgument (IModuleContext context, TypeSpec parameter)
 		{
 			var tp = parameter as TypeParameterSpec;
 			if (tp != null) {
@@ -2935,14 +2982,14 @@ namespace Mono.CSharp {
 			if (gt != null) {
 				var inflated_targs = new TypeSpec [gt.TypeArguments.Length];
 				for (int ii = 0; ii < inflated_targs.Length; ++ii) {
-					var inflated = InflateGenericArgument (gt.TypeArguments [ii]);
+					var inflated = InflateGenericArgument (context, gt.TypeArguments [ii]);
 					if (inflated == null)
 						return null;
 
 					inflated_targs[ii] = inflated;
 				}
 
-				return gt.GetDefinition ().MakeGenericType (inflated_targs);
+				return gt.GetDefinition ().MakeGenericType (context, inflated_targs);
 			}
 
 			return parameter;
@@ -2959,7 +3006,7 @@ namespace Mono.CSharp {
 				    return false;
 			} else if (TypeManager.IsGenericType (returnType)) {
 				if (TypeManager.IsDelegateType (returnType)) {
-					invoke = Delegate.GetInvokeMethod (ec.Compiler, returnType);
+					invoke = Delegate.GetInvokeMethod (returnType);
 					return IsReturnTypeNonDependent (ec, invoke, invoke.ReturnType);
 				}
 					
@@ -3033,23 +3080,17 @@ namespace Mono.CSharp {
 					return LowerBoundInference (u_ac.Element, v_ac.Element, inversed);
 				}
 
-				if (u_ac.Rank != 1)
+				if (u_ac.Rank != 1 || !v.IsGenericIterateInterface)
 					return 0;
 
-				if (TypeManager.IsGenericType (v)) {
-					TypeSpec g_v = v.GetDefinition ();
-					if (g_v != TypeManager.generic_ilist_type &&
-						g_v != TypeManager.generic_icollection_type &&
-						g_v != TypeManager.generic_ienumerable_type)
-						return 0;
+				var v_i = TypeManager.GetTypeArguments (v) [0];
+				if (TypeManager.IsValueType (u_ac.Element))
+					return ExactInference (u_ac.Element, v_i);
 
-					var v_i = TypeManager.GetTypeArguments (v) [0];
-					if (TypeManager.IsValueType (u_ac.Element))
-						return ExactInference (u_ac.Element, v_i);
-
-					return LowerBoundInference (u_ac.Element, v_i);
-				}
-			} else if (TypeManager.IsGenericType (v)) {
+				return LowerBoundInference (u_ac.Element, v_i);
+			}
+			
+			if (TypeManager.IsGenericType (v)) {
 				//
 				// if V is a constructed type C<V1..Vk> and there is a unique type C<U1..Uk>
 				// such that U is identical to, inherits from (directly or indirectly),
@@ -3066,7 +3107,7 @@ namespace Mono.CSharp {
 					// Using this trick for dynamic type inference, the spec says the type arguments are "unknown" but
 					// that would complicate the process a lot, instead I treat them as dynamic
 					//
-					if (t == InternalType.Dynamic)
+					if (t.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 						u_candidates.Add (t);
 
 					if (t.Interfaces != null) {
@@ -3107,7 +3148,7 @@ namespace Mono.CSharp {
 					//
 					// dynamic becomes both T and U when the arguments are of dynamic type
 					//
-					if (u_candidate == InternalType.Dynamic) {
+					if (u_candidate.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 						unique_candidate_targs = new TypeSpec[ga_v.Length];
 						for (int i = 0; i < unique_candidate_targs.Length; ++i)
 							unique_candidate_targs[i] = u_candidate;
@@ -3150,7 +3191,7 @@ namespace Mono.CSharp {
 			AnonymousMethodExpression ame = e as AnonymousMethodExpression;
 			if (ame != null) {
 				TypeSpec rt = ame.InferReturnType (ec, this, t);
-				var invoke = Delegate.GetInvokeMethod (ec.Compiler, t);
+				var invoke = Delegate.GetInvokeMethod (t);
 
 				if (rt == null) {
 					AParametersCollection pd = invoke.Parameters;
@@ -3169,13 +3210,13 @@ namespace Mono.CSharp {
 			//
 			if (e is MethodGroupExpr) {
 				if (!TypeManager.IsDelegateType (t)) {
-					if (TypeManager.expression_type == null || t.MemberDefinition != TypeManager.expression_type.MemberDefinition)
+					if (!t.IsExpressionTreeType)
 						return 0;
 
 					t = TypeManager.GetTypeArguments (t)[0];
 				}
 
-				var invoke = Delegate.GetInvokeMethod (ec.Compiler, t);
+				var invoke = Delegate.GetInvokeMethod (t);
 				TypeSpec rtype = invoke.ReturnType;
 
 				if (!rtype.IsGenericParameter && !TypeManager.IsGenericType (rtype))
@@ -3187,7 +3228,7 @@ namespace Mono.CSharp {
 				// if all delegate generic arguments are fixed.
 				TypeSpec[] param_types = new TypeSpec [invoke.Parameters.Count];
 				for (int i = 0; i < param_types.Length; ++i) {
-					var inflated = InflateGenericArgument (invoke.Parameters.Types[i]);
+					var inflated = InflateGenericArgument (ec, invoke.Parameters.Types[i]);
 					if (inflated == null)
 						return 0;
 

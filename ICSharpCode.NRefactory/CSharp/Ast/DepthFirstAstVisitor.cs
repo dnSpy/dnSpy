@@ -1,4 +1,4 @@
-// 
+﻿// 
 // IAstVisitor.cs
 //
 // Author:
@@ -52,17 +52,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public virtual S VisitComment (Comment comment, T data)
 		{
-			return default (S);
+			return VisitChildren (comment, data);
 		}
 		
 		public virtual S VisitIdentifier (Identifier identifier, T data)
 		{
-			return default (S);
+			return VisitChildren (identifier, data);
 		}
 		
 		public virtual S VisitCSharpTokenNode (CSharpTokenNode token, T data)
 		{
-			return default (S);
+			return VisitChildren (token, data);
 		}
 		
 		public virtual S VisitPrimitiveType (PrimitiveType primitiveType, T data)
@@ -130,6 +130,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			return VisitChildren (usingDeclaration, data);
 		}
 		
+		public virtual S VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, T data)
+		{
+			return VisitChildren (externAliasDeclaration, data);
+		}
+		
 		public virtual S VisitConstructorDeclaration (ConstructorDeclaration constructorDeclaration, T data)
 		{
 			return VisitChildren (constructorDeclaration, data);
@@ -158,6 +163,16 @@ namespace ICSharpCode.NRefactory.CSharp
 		public virtual S VisitFieldDeclaration (FieldDeclaration fieldDeclaration, T data)
 		{
 			return VisitChildren (fieldDeclaration, data);
+		}
+		
+		public virtual S VisitFixedFieldDeclaration (FixedFieldDeclaration fixedFieldDeclaration, T data)
+		{
+			return VisitChildren (fixedFieldDeclaration, data);
+		}
+		
+		public virtual S VisitFixedVariableInitializer (FixedVariableInitializer fixedVariableInitializer, T data)
+		{
+			return VisitChildren (fixedVariableInitializer, data);
 		}
 		
 		public virtual S VisitIndexerDeclaration (IndexerDeclaration indexerDeclaration, T data)
@@ -560,9 +575,14 @@ namespace ICSharpCode.NRefactory.CSharp
 			return VisitChildren (arraySpecifier, data);
 		}
 		
-		public virtual S VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, T data)
+		public virtual S VisitNamedArgumentExpression (NamedArgumentExpression namedArgumentExpression, T data)
 		{
 			return VisitChildren (namedArgumentExpression, data);
+		}
+		
+		public virtual S VisitEmptyExpression (EmptyExpression emptyExpression, T data)
+		{
+			return VisitChildren (emptyExpression, data);
 		}
 	}
 }

@@ -30,10 +30,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public int Count {
 			get {
-				var e = GetEnumerator();
 				int count = 0;
-				while (e.MoveNext())
-					count++;
+				for (AstNode cur = node.FirstChild; cur != null; cur = cur.NextSibling) {
+					if (cur.Role == role)
+						count++;
+				}
 				return count;
 			}
 		}
@@ -116,6 +117,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			AstNode next;
 			for (AstNode cur = node.FirstChild; cur != null; cur = next) {
+				Debug.Assert(cur.Parent == node);
 				// Remember next before yielding cur.
 				// This allows removing/replacing nodes while iterating through the list.
 				next = cur.NextSibling;
@@ -190,6 +192,16 @@ namespace ICSharpCode.NRefactory.CSharp
 					return true;
 			}
 			return false;
+		}
+		
+		public void InsertAfter(T existingItem, T newItem)
+		{
+			node.InsertChildAfter(existingItem, newItem, role);
+		}
+		
+		public void InsertBefore(T existingItem, T newItem)
+		{
+			node.InsertChildBefore(existingItem, newItem, role);
 		}
 	}
 }

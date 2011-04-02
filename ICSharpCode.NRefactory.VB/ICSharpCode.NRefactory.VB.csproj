@@ -41,22 +41,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DomBuilder\ExpressionBuilder.cs" />
-    <Compile Include="DomBuilder\StatementBuilder.cs" />
-    <Compile Include="Dom\AbstractNode.cs" />
-    <Compile Include="Dom\Enums.cs" />
-    <Compile Include="Dom\General\BlockStatement.cs" />
-    <Compile Include="Dom\General\CompilationUnit.cs" />
-    <Compile Include="Dom\General\Expression.cs" />
-    <Compile Include="Dom\General\LocalVariableDeclaration.cs" />
-    <Compile Include="Dom\General\PrimitiveExpression.cs" />
-    <Compile Include="Dom\General\Statement.cs" />
-    <Compile Include="Dom\Generated.cs" />
-    <Compile Include="Dom\INode.cs" />
-    <Compile Include="Dom\INullable.cs" />
-    <Compile Include="Dom\TypeReference.cs" />
+    <Compile Include="AstBuilder\ExpressionBuilder.cs" />
+    <Compile Include="AstBuilder\StatementBuilder.cs" />
+    <Compile Include="Ast\AbstractNode.cs" />
+    <Compile Include="Ast\Enums.cs" />
+    <Compile Include="Ast\General\BlockStatement.cs" />
+    <Compile Include="Ast\General\CompilationUnit.cs" />
+    <Compile Include="Ast\General\Expression.cs" />
+    <Compile Include="Ast\General\LocalVariableDeclaration.cs" />
+    <Compile Include="Ast\General\PrimitiveExpression.cs" />
+    <Compile Include="Ast\General\Statement.cs" />
+    <Compile Include="Ast\Generated.cs" />
+    <Compile Include="Ast\INode.cs" />
+    <Compile Include="Ast\INullable.cs" />
+    <Compile Include="Ast\TypeReference.cs" />
     <Compile Include="EnvironmentInformationProvider.cs" />
-    <Compile Include="IDomVisitor.cs" />
+    <Compile Include="IAstVisitor.cs" />
     <Compile Include="Lexer\Block.cs" />
     <Compile Include="Lexer\ExpressionFinder.cs" />
     <Compile Include="Lexer\ExpressionFinderState.cs" />
@@ -99,22 +99,22 @@
     <Compile Include="PrettyPrinter\VBNet\VBNetPrettyPrintOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SnippetParser.cs" />
-    <Compile Include="Visitors\AbstractDomTransformer.cs" />
-    <Compile Include="Visitors\AbstractDomVisitor.cs" />
+    <Compile Include="Visitors\AbstractAstTransformer.cs" />
+    <Compile Include="Visitors\AbstractAstVisitor.cs" />
     <Compile Include="Visitors\CodeDOMOutputVisitor.cs" />
     <Compile Include="Visitors\CodeDOMVerboseOutputGenerator.cs" />
     <Compile Include="Visitors\LookupTableVisitor.cs" />
-    <Compile Include="Visitors\NodeTrackingDomVisitor.cs" />
-    <Compile Include="Visitors\NotImplementedDomVisitor.cs" />
+    <Compile Include="Visitors\NodeTrackingAstVisitor.cs" />
+    <Compile Include="Visitors\NotImplementedAstVisitor.cs" />
     <Compile Include="Visitors\PrefixFieldsVisitor.cs" />
     <Compile Include="Visitors\RenameIdentifierVisitor.cs" />
     <Compile Include="Visitors\SetParentVisitor.cs" />
     <Compile Include="Visitors\SetRegionInclusionVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Dom" />
-    <Folder Include="DomBuilder" />
-    <Folder Include="Dom\General" />
+    <Folder Include="Ast" />
+    <Folder Include="AstBuilder" />
+    <Folder Include="Ast\General" />
     <Folder Include="Lexer" />
     <Folder Include="Lexer\Special" />
     <Folder Include="Parser" />
@@ -126,6 +126,7 @@
     <None Include="Lexer\ExpressionFinder.atg">
       <Generator>CocoParserGenerator</Generator>
       <CustomToolNamespace>ICSharpCode.NRefactory.VB.Parser</CustomToolNamespace>
+      <LastGenOutput>Parser.cs</LastGenOutput>
     </None>
     <None Include="Lexer\KeywordList.txt" />
     <None Include="Lexer\PushParser.frame">
@@ -137,6 +138,7 @@
     <None Include="Parser\vb.atg">
       <CustomToolNamespace>ICSharpCode.NRefactory.VB.Parser</CustomToolNamespace>
       <Generator>CocoParserGenerator</Generator>
+      <LastGenOutput>Parser.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

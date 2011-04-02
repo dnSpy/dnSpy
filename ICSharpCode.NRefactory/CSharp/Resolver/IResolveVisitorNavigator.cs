@@ -37,4 +37,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// </summary>
 		ResolveAll
 	}
+	
+	sealed class ConstantModeResolveVisitorNavigator : IResolveVisitorNavigator
+	{
+		ResolveVisitorNavigationMode mode;
+		
+		public static readonly IResolveVisitorNavigator Skip = new ConstantModeResolveVisitorNavigator { mode = ResolveVisitorNavigationMode.Skip };
+		
+		ResolveVisitorNavigationMode IResolveVisitorNavigator.Scan(AstNode node)
+		{
+			return mode;
+		}
+	}
 }

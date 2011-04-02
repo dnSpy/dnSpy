@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 
 namespace ICSharpCode.NRefactory.VB.Visitors
 {
@@ -13,7 +13,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 	/// Parsers don't do this by default:
 	/// e.g. "a.Foo()" is InvocationExpression, its region includes only the "()" and it has a child MemberReferenceExpression, with region ".Foo".
 	/// </summary>
-	public class SetRegionInclusionVisitor : NodeTrackingDomVisitor
+	public class SetRegionInclusionVisitor : NodeTrackingAstVisitor
 	{
 		Stack<INode> parentNodes = new Stack<INode>();
 		

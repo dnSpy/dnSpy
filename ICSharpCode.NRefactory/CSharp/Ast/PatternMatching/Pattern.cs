@@ -34,14 +34,29 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			return p != null ? new TypePlaceholder(p) : null;
 		}
 		
+		public AstType ToType()
+		{
+			return new TypePlaceholder(this);
+		}
+		
 		public static implicit operator Expression(Pattern p)
 		{
 			return p != null ? new ExpressionPlaceholder(p) : null;
 		}
 		
+		public Expression ToExpression()
+		{
+			return new ExpressionPlaceholder(this);
+		}
+		
 		public static implicit operator Statement(Pattern p)
 		{
 			return p != null ? new StatementPlaceholder(p) : null;
+		}
+		
+		public Statement ToStatement()
+		{
+			return new StatementPlaceholder(this);
 		}
 		
 		public static implicit operator BlockStatement(Pattern p)
@@ -52,6 +67,21 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		public static implicit operator VariableInitializer(Pattern p)
 		{
 			return p != null ? new VariablePlaceholder(p) : null;
+		}
+		
+		public static implicit operator AttributeSection(Pattern p)
+		{
+			return p != null ? new AttributeSectionPlaceholder(p) : null;
+		}
+		
+		public static implicit operator SwitchSection(Pattern p)
+		{
+			return p != null ? new SwitchSectionPlaceholder(p) : null;
+		}
+		
+		public static implicit operator CatchClause(Pattern p)
+		{
+			return p != null ? new CatchClausePlaceholder(p) : null;
 		}
 		
 		// Make debugging easier by giving Patterns a ToString() implementation

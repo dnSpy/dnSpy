@@ -24,7 +24,7 @@ namespace Mono.CSharp {
 
 	public abstract class CompilerGeneratedClass : Class
 	{
-		protected CompilerGeneratedClass (DeclSpace parent, MemberName name, Modifiers mod)
+		protected CompilerGeneratedClass (TypeContainer parent, MemberName name, Modifiers mod)
 			: base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED, null)
 		{
 		}
@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 
 		protected TypeParameterMutator mutator;
 
-		public HoistedStoreyClass (DeclSpace parent, MemberName name, TypeParameter[] tparams, Modifiers mod)
+		public HoistedStoreyClass (TypeContainer parent, MemberName name, TypeParameter[] tparams, Modifiers mod)
 			: base (parent, name, mod | Modifiers.PRIVATE)
 		{
 			if (tparams != null) {
@@ -97,10 +97,12 @@ namespace Mono.CSharp {
 
 				// A copy is not enough, inflate any type parameter constraints
 				// using a new type parameters
-				var inflator = new TypeParameterInflator (null, src, dst);
+				var inflator = new TypeParameterInflator (this, null, src, dst);
 				for (int i = 0; i < type_params.Length; ++i) {
 					src[i].InflateConstraints (inflator, dst[i]);
 				}
+
+				mutator = new TypeParameterMutator (tparams, type_params);
 			}
 		}
 
@@ -197,7 +199,6 @@ namespace Mono.CSharp {
 			: base (parent, MakeMemberName (host, name, unique_id, tparams, block.StartLocation),
 				tparams, Modifiers.SEALED)
 		{
-			Parent = parent;
 			OriginalSourceBlock = block;
 			ID = unique_id++;
 		}
@@ -211,10 +212,10 @@ namespace Mono.CSharp {
 
 			// Inflated type instance has to be updated manually
 			if (Instance.Type is InflatedTypeSpec) {
-				var inflator = new TypeParameterInflator (Instance.Type, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				var inflator = new TypeParameterInflator (this, Instance.Type, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
 				Instance.Type.MemberCache.AddMember (f.Spec.InflateMember (inflator));
 
-				inflator = new TypeParameterInflator (f.Parent.CurrentType, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				inflator = new TypeParameterInflator (this, f.Parent.CurrentType, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
 				f.Parent.CurrentType.MemberCache.AddMember (f.Spec.InflateMember (inflator));
 			}
 		}
@@ -872,7 +873,7 @@ namespace Mono.CSharp {
 			if (delegate_type.IsDelegate)
 				return delegate_type;
 
-			if (delegate_type.IsGeneric && delegate_type.GetDefinition () == TypeManager.expression_type) {
+			if (delegate_type.IsExpressionTreeType) {
 				delegate_type = delegate_type.TypeArguments [0];
 				if (delegate_type.IsDelegate)
 					return delegate_type;
@@ -965,7 +966,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (!delegate_type.IsDelegate) {
-				if (delegate_type.GetDefinition () != TypeManager.expression_type)
+				if (!delegate_type.IsExpressionTreeType)
 					return false;
 
 				delegate_type = TypeManager.GetTypeArguments (delegate_type) [0];
@@ -973,7 +974,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 			
-			AParametersCollection d_params = Delegate.GetParameters (ec.Compiler, delegate_type);
+			AParametersCollection d_params = Delegate.GetParameters (delegate_type);
 			if (d_params.Count != Parameters.Count)
 				return false;
 
@@ -1033,7 +1034,7 @@ namespace Mono.CSharp {
 			// needed for the anonymous method.  We create the method here.
 			//
 
-			var invoke_mb = Delegate.GetInvokeMethod (ec.Compiler, delegate_type);
+			var invoke_mb = Delegate.GetInvokeMethod (delegate_type);
 			TypeSpec return_type = invoke_mb.ReturnType;
 
 			//
@@ -1106,7 +1107,7 @@ namespace Mono.CSharp {
 
 		protected virtual ParametersCompiled ResolveParameters (ResolveContext ec, TypeInferenceContext tic, TypeSpec delegate_type)
 		{
-			var delegate_parameters = Delegate.GetParameters (ec.Compiler, delegate_type);
+			var delegate_parameters = Delegate.GetParameters (delegate_type);
 
 			if (Parameters == ParametersCompiled.Undefined) {
 				//
@@ -1495,7 +1496,7 @@ namespace Mono.CSharp {
 				var hoisted_tparams = ec.CurrentTypeParameters;
 				var type_params = new TypeParameter[hoisted_tparams.Length];
 				for (int i = 0; i < type_params.Length; ++i) {
-					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (null, null);
+					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (parent, null);
 				}
 
 				generic_method = new GenericMethod (parent.NamespaceEntry, parent, member_name, type_params,
@@ -1613,12 +1614,12 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Ldftn, TypeBuilder.GetMethod (t.GetMetaInfo (), (MethodInfo) delegate_method.GetMetaInfo ()));
 			} else {
 				if (delegate_method.IsGeneric)
-					delegate_method = delegate_method.MakeGenericMethod (method.TypeParameters);
+					delegate_method = delegate_method.MakeGenericMethod (ec.MemberContext, method.TypeParameters);
 
 				ec.Emit (OpCodes.Ldftn, delegate_method);
 			}
 
-			var constructor_method = Delegate.GetConstructor (ec.MemberContext.Compiler, ec.CurrentType, type);
+			var constructor_method = Delegate.GetConstructor (type);
 			ec.Emit (OpCodes.Newobj, constructor_method);
 
 			if (am_cache != null) {
@@ -1676,13 +1677,13 @@ namespace Mono.CSharp {
 		
 		readonly IList<AnonymousTypeParameter> parameters;
 
-		private AnonymousTypeClass (DeclSpace parent, MemberName name, IList<AnonymousTypeParameter> parameters, Location loc)
-			: base (parent, name, (RootContext.EvalMode ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
+		private AnonymousTypeClass (TypeContainer parent, MemberName name, IList<AnonymousTypeParameter> parameters, Location loc)
+			: base (parent, name, (parent.Module.Evaluator != null ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
 		{
 			this.parameters = parameters;
 		}
 
-		public static AnonymousTypeClass Create (CompilerContext ctx, TypeContainer parent, IList<AnonymousTypeParameter> parameters, Location loc)
+		public static AnonymousTypeClass Create (TypeContainer parent, IList<AnonymousTypeParameter> parameters, Location loc)
 		{
 			string name = ClassNamePrefix + types_counter++;
 
@@ -1721,7 +1722,7 @@ namespace Mono.CSharp {
 
 			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				null, all_parameters, null, loc);
-			c.Block = new ToplevelBlock (ctx, c.ParameterInfo, loc);
+			c.Block = new ToplevelBlock (parent.Module.Compiler, c.ParameterInfo, loc);
 
 			// 
 			// Create fields and contructor body with field initialization
@@ -1742,7 +1743,7 @@ namespace Mono.CSharp {
 					new SimpleAssign (new MemberAccess (new This (p.Location), f.Name),
 						c.Block.GetParameterReference (i, p.Location))));
 
-				ToplevelBlock get_block = new ToplevelBlock (ctx, p.Location);
+				ToplevelBlock get_block = new ToplevelBlock (parent.Module.Compiler, p.Location);
 				get_block.AddStatement (new Return (
 					new MemberAccess (new This (p.Location), f.Name), p.Location));
 
@@ -1792,15 +1793,15 @@ namespace Mono.CSharp {
 			Location loc = Location;
 
 			var equals_parameters = ParametersCompiled.CreateFullyResolved (
-				new Parameter (new TypeExpression (TypeManager.object_type, loc), "obj", 0, null, loc),	TypeManager.object_type);
+				new Parameter (new TypeExpression (Compiler.BuiltinTypes.Object, loc), "obj", 0, null, loc), Compiler.BuiltinTypes.Object);
 
-			Method equals = new Method (this, null, new TypeExpression (TypeManager.bool_type, loc),
+			Method equals = new Method (this, null, new TypeExpression (Compiler.BuiltinTypes.Bool, loc),
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("Equals", loc),
 				equals_parameters, null);
 
 			equals_parameters[0].Resolve (equals, 0);
 
-			Method tostring = new Method (this, null, new TypeExpression (TypeManager.string_type, loc),
+			Method tostring = new Method (this, null, new TypeExpression (Compiler.BuiltinTypes.String, loc),
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("ToString", loc),
 				Mono.CSharp.ParametersCompiled.EmptyReadOnlyParameters, null);
 
@@ -1825,8 +1826,8 @@ namespace Mono.CSharp {
 				new QualifiedAliasMember ("global", "System", loc), "Collections", loc), "Generic", loc);
 
 			Expression rs_equals = null;
-			Expression string_concat = new StringConstant ("{", loc);
-			Expression rs_hashcode = new IntConstant (-2128831035, loc);
+			Expression string_concat = new StringConstant (Compiler.BuiltinTypes, "{", loc);
+			Expression rs_hashcode = new IntConstant (Compiler.BuiltinTypes, -2128831035, loc);
 			for (int i = 0; i < parameters.Count; ++i) {
 				var p = parameters [i];
 				var f = Fields [i];
@@ -1848,7 +1849,7 @@ namespace Mono.CSharp {
 				Expression field_hashcode = new Invocation (new MemberAccess (equality_comparer,
 					"GetHashCode", loc), arguments_hashcode);
 
-				IntConstant FNV_prime = new IntConstant (16777619, loc);				
+				IntConstant FNV_prime = new IntConstant (Compiler.BuiltinTypes, 16777619, loc);				
 				rs_hashcode = new Binary (Binary.Operator.Multiply,
 					new Binary (Binary.Operator.ExclusiveOr, rs_hashcode, field_hashcode, loc),
 					FNV_prime, loc);
@@ -1857,14 +1858,14 @@ namespace Mono.CSharp {
 					new MemberAccess (new This (f.Location), f.Name), new NullLiteral (loc), loc)),
 					new Invocation (new MemberAccess (
 						new MemberAccess (new This (f.Location), f.Name), "ToString"), null),
-					new StringConstant (string.Empty, loc), loc);
+					new StringConstant (Compiler.BuiltinTypes, string.Empty, loc), loc);
 
 				if (rs_equals == null) {
 					rs_equals = field_equal;
 					string_concat = new Binary (Binary.Operator.Addition,
 						string_concat,
 						new Binary (Binary.Operator.Addition,
-							new StringConstant (" " + p.Name + " = ", loc),
+							new StringConstant (Compiler.BuiltinTypes, " " + p.Name + " = ", loc),
 							field_to_string,
 							loc),
 						loc);
@@ -1877,7 +1878,7 @@ namespace Mono.CSharp {
 				string_concat = new Binary (Binary.Operator.Addition,
 					new Binary (Binary.Operator.Addition,
 						string_concat,
-						new StringConstant (", " + p.Name + " = ", loc),
+						new StringConstant (Compiler.BuiltinTypes, ", " + p.Name + " = ", loc),
 						loc),
 					field_to_string,
 					loc);
@@ -1887,7 +1888,7 @@ namespace Mono.CSharp {
 
 			string_concat = new Binary (Binary.Operator.Addition,
 				string_concat,
-				new StringConstant (" }", loc),
+				new StringConstant (Compiler.BuiltinTypes, " }", loc),
 				loc);
 
 			//
@@ -1911,7 +1912,7 @@ namespace Mono.CSharp {
 			//
 			// GetHashCode () override
 			//
-			Method hashcode = new Method (this, null, new TypeExpression (TypeManager.int32_type, loc),
+			Method hashcode = new Method (this, null, new TypeExpression (Compiler.BuiltinTypes.Int, loc),
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("GetHashCode", loc),
 				Mono.CSharp.ParametersCompiled.EmptyReadOnlyParameters, null);
@@ -1934,7 +1935,7 @@ namespace Mono.CSharp {
 			Block hashcode_block = new Block (hashcode_top, loc, loc);
 			hashcode_top.AddStatement (new Unchecked (hashcode_block, loc));
 
-			var li_hash = LocalVariable.CreateCompilerGenerated (TypeManager.int32_type, hashcode_top, loc);
+			var li_hash = LocalVariable.CreateCompilerGenerated (Compiler.BuiltinTypes.Int, hashcode_top, loc);
 			hashcode_block.AddStatement (new BlockVariableDeclaration (new TypeExpression (li_hash.Type, loc), li_hash));
 			LocalVariableReference hash_variable_assign = new LocalVariableReference (li_hash, loc);
 			hashcode_block.AddStatement (new StatementExpression (
@@ -1943,19 +1944,19 @@ namespace Mono.CSharp {
 			var hash_variable = new LocalVariableReference (li_hash, loc);
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.Addition, hash_variable,
-					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (13, loc), loc), loc)));
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 13, loc), loc), loc)));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.ExclusiveOr, hash_variable,
-					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (7, loc), loc), loc)));
+					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 7, loc), loc), loc)));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.Addition, hash_variable,
-					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (3, loc), loc), loc)));
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 3, loc), loc), loc)));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.ExclusiveOr, hash_variable,
-					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (17, loc), loc), loc)));
+					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 17, loc), loc), loc)));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.Addition, hash_variable,
-					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (5, loc), loc), loc)));
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 5, loc), loc), loc)));
 
 			hashcode_block.AddStatement (new Return (hash_variable, loc));
 			hashcode.Block = hashcode_top;

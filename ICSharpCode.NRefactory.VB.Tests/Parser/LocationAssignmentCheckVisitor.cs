@@ -2,13 +2,13 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Visitors;
 using NUnit.Framework;
 
-namespace ICSharpCode.NRefactory.VB.Tests.Dom
+namespace ICSharpCode.NRefactory.VB.Tests.Ast
 {
-	public class LocationAssignmentCheckVisitor : NodeTrackingDomVisitor
+	public class LocationAssignmentCheckVisitor : NodeTrackingAstVisitor
 	{
 		protected override void BeginVisit(INode node)
 		{

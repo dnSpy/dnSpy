@@ -107,7 +107,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static MissingInterfacesInfo [] EmptyMissingInterfacesInfo = new MissingInterfacesInfo [0];
+		static readonly MissingInterfacesInfo [] EmptyMissingInterfacesInfo = new MissingInterfacesInfo [0];
 		
 		static MissingInterfacesInfo [] GetMissingInterfaces (TypeContainer container)
 		{

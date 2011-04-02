@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.IO;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -37,6 +38,38 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		#endregion
 		
+		/// <summary>
+		/// Gets the previous statement within the current block.
+		/// This is usually equivalent to <see cref="PrevSibling"/>, but will skip any non-statements (e.g. comments)
+		/// </summary>
+		public Statement PreviousStatement {
+			get {
+				AstNode node = this;
+				while ((node = node.PrevSibling) != null) {
+					Statement stmt = node as Statement;
+					if (stmt != null)
+						return stmt;
+				}
+				return null;
+			}
+		}
+		
+		/// <summary>
+		/// Gets the next statement within the current block.
+		/// This is usually equivalent to <see cref="NextSibling"/>, but will skip any non-statements (e.g. comments)
+		/// </summary>
+		public Statement NextStatement {
+			get {
+				AstNode node = this;
+				while ((node = node.NextSibling) != null) {
+					Statement stmt = node as Statement;
+					if (stmt != null)
+						return stmt;
+				}
+				return null;
+			}
+		}
+		
 		public new Statement Clone()
 		{
 			return (Statement)base.Clone();
@@ -51,6 +84,20 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public override NodeType NodeType {
 			get { return NodeType.Statement; }
+		}
+		
+		// Make debugging easier by giving Statements a ToString() implementation
+		public override string ToString()
+		{
+			if (IsNull)
+				return "Null";
+			StringWriter w = new StringWriter();
+			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
+			string text = w.ToString().TrimEnd().Replace("\t", "").Replace(w.NewLine, " ");
+			if (text.Length > 100)
+				return text.Substring(0, 97) + "...";
+			else
+				return text;
 		}
 	}
 }

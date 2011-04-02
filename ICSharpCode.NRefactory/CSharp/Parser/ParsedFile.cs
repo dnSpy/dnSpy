@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
-using Mono.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp
 {

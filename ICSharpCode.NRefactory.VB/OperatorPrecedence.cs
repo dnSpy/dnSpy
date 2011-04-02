@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 
 namespace ICSharpCode.NRefactory.VB
 {

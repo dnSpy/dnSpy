@@ -9,13 +9,13 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Parser;
 using ICSharpCode.NRefactory.VB.Visitors;
 
 namespace ICSharpCode.NRefactory.VB.PrettyPrinter
 {
-	public sealed class VBNetOutputVisitor : NodeTrackingDomVisitor, IOutputDomVisitor
+	public sealed class VBNetOutputVisitor : NodeTrackingAstVisitor, IOutputDomVisitor
 	{
 		Errors                  errors             = new Errors();
 		VBNetOutputFormatter    outputFormatter;
@@ -89,7 +89,7 @@ namespace ICSharpCode.NRefactory.VB.PrettyPrinter
 			Error(node.GetType().Name + " is unsupported", node.StartLocation);
 		}
 		
-		#region ICSharpCode.NRefactory.Parser.IDomVisitor interface implementation
+		#region ICSharpCode.NRefactory.Parser.IAstVisitor interface implementation
 		public override object TrackedVisitCompilationUnit(CompilationUnit compilationUnit, object data)
 		{
 			compilationUnit.AcceptChildren(this, data);
@@ -200,7 +200,7 @@ namespace ICSharpCode.NRefactory.VB.PrettyPrinter
 			return null;
 		}
 		
-		public override object TrackedVisitAttribute(ICSharpCode.NRefactory.VB.Dom.Attribute attribute, object data)
+		public override object TrackedVisitAttribute(ICSharpCode.NRefactory.VB.Ast.Attribute attribute, object data)
 		{
 			outputFormatter.PrintIdentifier(attribute.Name);
 			if (attribute.PositionalArguments.Count > 0 || attribute.NamedArguments.Count > 0) {

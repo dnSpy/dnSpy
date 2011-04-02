@@ -33,7 +33,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			this.context = context;
 		}
 		
-		#if !DOTNET35
 		public CSharpResolver(ITypeResolveContext context, CancellationToken cancellationToken)
 		{
 			if (context == null)
@@ -41,7 +40,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			this.context = context;
 			this.cancellationToken = cancellationToken;
 		}
-		#endif
 		#endregion
 		
 		#region Properties

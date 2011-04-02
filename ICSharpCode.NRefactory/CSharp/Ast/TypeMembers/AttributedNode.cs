@@ -60,7 +60,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		protected bool MatchAttributesAndModifiers(AttributedNode o, PatternMatching.Match match)
 		{
-			return this.Modifiers == o.Modifiers && this.Attributes.DoMatch(o.Attributes, match);
+			return (this.Modifiers == Modifiers.Any || this.Modifiers == o.Modifiers) && this.Attributes.DoMatch(o.Attributes, match);
 		}
 	}
 }

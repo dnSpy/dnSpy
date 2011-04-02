@@ -272,5 +272,14 @@ public abstract class MyClass : MyBase, Interface1, My.Test.Interface2
 			Assert.AreEqual("N", ns.Name);
 			Assert.AreEqual("MyClass", ((TypeDeclaration)ns.Members.Single()).Name);
 		}
+		
+		[Test]
+		public void EnumWithInitializer()
+		{
+			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("enum MyEnum { Val1 = 10 }");
+			EnumMemberDeclaration member = (EnumMemberDeclaration)td.Members.Single();
+			Assert.AreEqual("Val1", member.Name);
+			Assert.AreEqual(10, ((PrimitiveExpression)member.Initializer).Value);
+		}
 	}
 }

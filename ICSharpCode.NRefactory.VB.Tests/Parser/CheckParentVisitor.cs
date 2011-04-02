@@ -4,15 +4,15 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Visitors;
 
-namespace ICSharpCode.NRefactory.VB.Tests.Dom
+namespace ICSharpCode.NRefactory.VB.Tests.Ast
 {
 	/// <summary>
 	/// Ensures that all nodes have the Parent property correctly set.
 	/// </summary>
-	public class CheckParentVisitor : NodeTrackingDomVisitor
+	public class CheckParentVisitor : NodeTrackingAstVisitor
 	{
 		Stack<INode> nodeStack = new Stack<INode>();
 		

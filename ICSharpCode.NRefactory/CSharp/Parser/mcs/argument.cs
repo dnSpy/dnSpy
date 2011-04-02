@@ -138,7 +138,7 @@ namespace Mono.CSharp
 
 				// Verify that the argument is writeable
 				if (Expr != null && IsByRef)
-					Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess.Instance);
+					Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess);
 
 				if (Expr == null)
 					Expr = EmptyExpression.Null;
@@ -201,7 +201,7 @@ namespace Mono.CSharp
 			if (IsByRef) {
 				var ml = (IMemoryLocation) Expr;
 				ml.AddressOf (ec, AddressOp.Load);
-				type = ReferenceContainer.MakeType (type);
+				type = ReferenceContainer.MakeType (ec.Module, type);
 			} else {
 				Expr.Emit (ec);
 			}
@@ -274,7 +274,7 @@ namespace Mono.CSharp
 
 				// CSharpArgumentInfoFlags.None = 0
 				const string info_flags_enum = "CSharpArgumentInfoFlags";
-				Expression info_flags = new IntLiteral (0, loc);
+				Expression info_flags = new IntLiteral (rc.BuiltinTypes, 0, loc);
 
 				if (a.Expr is Constant) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
@@ -296,7 +296,7 @@ namespace Mono.CSharp
 
 				var arg_type = a.Expr.Type;
 
-				if (arg_type != InternalType.Dynamic && arg_type != InternalType.Null) {
+				if (arg_type.BuiltinType != BuiltinTypeSpec.Type.Dynamic && arg_type != InternalType.NullLiteral) {
 					MethodGroupExpr mg = a.Expr as MethodGroupExpr;
 					if (mg != null) {
 						rc.Report.Error (1976, a.Expr.Location,
@@ -305,7 +305,7 @@ namespace Mono.CSharp
 					} else if (arg_type == InternalType.AnonymousMethod) {
 						rc.Report.Error (1977, a.Expr.Location,
 							"An anonymous method or lambda expression cannot be used as an argument of dynamic operation. Consider using a cast");
-					} else if (arg_type == TypeManager.void_type || arg_type == InternalType.Arglist || arg_type.IsPointer) {
+					} else if (arg_type.Kind == MemberKind.Void || arg_type == InternalType.Arglist || arg_type.IsPointer) {
 						rc.Report.Error (1978, a.Expr.Location,
 							"An expression of type `{0}' cannot be used as an argument of dynamic operation",
 							TypeManager.CSharpName (arg_type));
@@ -327,7 +327,7 @@ namespace Mono.CSharp
 				}
 
 				dargs.Add (new Argument (info_flags));
-				dargs.Add (new Argument (new StringLiteral (named_value, loc)));
+				dargs.Add (new Argument (new StringLiteral (rc.BuiltinTypes, named_value, loc)));
 				all.Add (new Invocation (new MemberAccess (new MemberAccess (binder, "CSharpArgumentInfo", loc), "Create", loc), dargs));
 			}
 
@@ -436,7 +436,7 @@ namespace Mono.CSharp
 		public bool HasDynamic {
 			get {
 				foreach (Argument a in args) {
-					if (a.Type == InternalType.Dynamic && !a.IsByRef)
+					if (a.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && !a.IsByRef)
 						return true;
 				}
 				
@@ -506,7 +506,7 @@ namespace Mono.CSharp
 			dynamic = false;
 			foreach (Argument a in args) {
 				a.Resolve (ec);
-				if (a.Type == InternalType.Dynamic && !a.IsByRef)
+				if (a.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic && !a.IsByRef)
 					dynamic = true;
 			}
 		}

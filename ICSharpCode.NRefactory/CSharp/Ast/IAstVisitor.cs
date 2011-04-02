@@ -42,6 +42,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, T data);
 		S VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, T data);
 		S VisitUncheckedExpression(UncheckedExpression uncheckedExpression, T data);
+		S VisitEmptyExpression (EmptyExpression emptyExpression, T data);
 		
 		S VisitQueryExpression(QueryExpression queryExpression, T data);
 		S VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause, T data);
@@ -61,6 +62,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitTypeDeclaration(TypeDeclaration typeDeclaration, T data);
 		S VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration, T data);
 		S VisitUsingDeclaration(UsingDeclaration usingDeclaration, T data);
+		S VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, T data);
 		
 		S VisitBlockStatement(BlockStatement blockStatement, T data);
 		S VisitBreakStatement(BreakStatement breakStatement, T data);
@@ -107,6 +109,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, T data);
 		S VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, T data);
 		S VisitVariableInitializer(VariableInitializer variableInitializer, T data);
+		S VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration, T data);
+		S VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer, T data);
 		
 		S VisitCompilationUnit(CompilationUnit compilationUnit, T data);
 		S VisitSimpleType(SimpleType simpleType, T data);

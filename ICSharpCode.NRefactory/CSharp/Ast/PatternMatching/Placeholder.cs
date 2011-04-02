@@ -152,4 +152,91 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			return child.DoMatchCollection(role, pos, match, backtrackingStack);
 		}
 	}
+	
+	sealed class AttributeSectionPlaceholder : AttributeSection
+	{
+		readonly AstNode child;
+		
+		public AttributeSectionPlaceholder(AstNode child)
+		{
+			this.child = child;
+		}
+		
+		public override NodeType NodeType {
+			get { return NodeType.Placeholder; }
+		}
+		
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		{
+			return ((IPatternAstVisitor<T, S>)visitor).VisitPlaceholder(this, child, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, Match match)
+		{
+			return child.DoMatch(other, match);
+		}
+		
+		internal override bool DoMatchCollection(Role role, AstNode pos, Match match, Stack<Pattern.PossibleMatch> backtrackingStack)
+		{
+			return child.DoMatchCollection(role, pos, match, backtrackingStack);
+		}
+	}
+	
+	sealed class SwitchSectionPlaceholder : SwitchSection
+	{
+		readonly AstNode child;
+		
+		public SwitchSectionPlaceholder(AstNode child)
+		{
+			this.child = child;
+		}
+		
+		public override NodeType NodeType {
+			get { return NodeType.Placeholder; }
+		}
+		
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		{
+			return ((IPatternAstVisitor<T, S>)visitor).VisitPlaceholder(this, child, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, Match match)
+		{
+			return child.DoMatch(other, match);
+		}
+		
+		internal override bool DoMatchCollection(Role role, AstNode pos, Match match, Stack<Pattern.PossibleMatch> backtrackingStack)
+		{
+			return child.DoMatchCollection(role, pos, match, backtrackingStack);
+		}
+	}
+	
+	sealed class CatchClausePlaceholder : CatchClause
+	{
+		readonly AstNode child;
+		
+		public CatchClausePlaceholder(AstNode child)
+		{
+			this.child = child;
+		}
+		
+		public override NodeType NodeType {
+			get { return NodeType.Placeholder; }
+		}
+		
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		{
+			return ((IPatternAstVisitor<T, S>)visitor).VisitPlaceholder(this, child, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, Match match)
+		{
+			return child.DoMatch(other, match);
+		}
+		
+		internal override bool DoMatchCollection(Role role, AstNode pos, Match match, Stack<Pattern.PossibleMatch> backtrackingStack)
+		{
+			return child.DoMatchCollection(role, pos, match, backtrackingStack);
+		}
+	}
 }
