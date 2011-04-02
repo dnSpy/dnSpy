@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Mono.Cecil;
@@ -37,7 +38,12 @@ namespace ICSharpCode.ILSpy
 				if (member is PropertyDefinition) {
 					parameters = ((PropertyDefinition)member).Parameters;
 				} else if (member is MethodReference) {
-					parameters = ((MethodReference)member).Parameters;
+					MethodReference mr = (MethodReference)member;
+					if (mr.HasGenericParameters) {
+						b.Append("``");
+						b.Append(mr.GenericParameters.Count);
+					}
+					parameters = mr.Parameters;
 				} else {
 					parameters = null;
 				}
@@ -55,7 +61,23 @@ namespace ICSharpCode.ILSpy
 		
 		static void AppendTypeName(StringBuilder b, TypeReference type)
 		{
-			if (type is TypeSpecification) {
+			if (type is GenericInstanceType) {
+				GenericInstanceType giType = (GenericInstanceType)type;
+				if (type.DeclaringType != null) {
+					AppendTypeName(b, type.DeclaringType);
+					b.Append('.');
+				} else if (!string.IsNullOrEmpty(type.Namespace)) {
+					b.Append(type.Namespace);
+					b.Append('.');
+				}
+				b.Append(NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name));
+				b.Append('{');
+				for (int i = 0; i < giType.GenericArguments.Count; i++) {
+					if (i > 0) b.Append(',');
+					AppendTypeName(b, giType.GenericArguments[i]);
+				}
+				b.Append('}');
+			} else if (type is TypeSpecification) {
 				AppendTypeName(b, ((TypeSpecification)type).ElementType);
 				ArrayType arrayType = type as ArrayType;
 				if (arrayType != null) {
@@ -68,15 +90,6 @@ namespace ICSharpCode.ILSpy
 				ByReferenceType refType = type as ByReferenceType;
 				if (refType != null) {
 					b.Append('@');
-				}
-				GenericInstanceType giType = type as GenericInstanceType;
-				if (giType != null) {
-					b.Append('{');
-					for (int i = 0; i < giType.GenericArguments.Count; i++) {
-						if (i > 0) b.Append(',');
-						AppendTypeName(b, giType.GenericArguments[i]);
-					}
-					b.Append('}');
 				}
 				PointerType ptrType = type as PointerType;
 				if (ptrType != null) {
@@ -126,18 +139,22 @@ namespace ICSharpCode.ILSpy
 		
 		static MemberReference FindMember(ModuleDefinition module, string key, Func<TypeDefinition, IEnumerable<MemberReference>> memberSelector)
 		{
+			Debug.WriteLine("Looking for member " + key);
 			int pos = key.IndexOf('(');
 			int dotPos;
 			if (pos > 0) {
-				dotPos = key.LastIndexOf('.', 0, pos);
+				dotPos = key.LastIndexOf('.', pos - 1, pos);
 			} else {
 				dotPos = key.LastIndexOf('.');
 			}
 			TypeDefinition type = FindType(module, key.Substring(2, dotPos - 2));
 			if (type == null)
 				return null;
+			Debug.WriteLine("Searching in type " + type.FullName);
 			foreach (MemberReference member in memberSelector(type)) {
-				if (GetKey(member) == key)
+				string memberKey = GetKey(member);
+				Debug.WriteLine(memberKey);
+				if (memberKey == key)
 					return member;
 			}
 			return null;
