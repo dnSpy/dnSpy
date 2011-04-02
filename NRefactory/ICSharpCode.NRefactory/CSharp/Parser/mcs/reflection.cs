@@ -22,7 +22,7 @@ namespace Mono.CSharp
 #if STATIC
 	public class ReflectionImporter
 	{
-		public ReflectionImporter (BuildinTypes buildin)
+		public ReflectionImporter (ModuleContainer module, BuiltinTypes builtin)
 		{
 			throw new NotSupportedException ();
 		}
@@ -45,9 +45,10 @@ namespace Mono.CSharp
 #else
 	public sealed class ReflectionImporter : MetadataImporter
 	{
-		public ReflectionImporter (BuildinTypes buildin)
+		public ReflectionImporter (ModuleContainer module, BuiltinTypes builtin)
+			: base (module)
 		{
-			Initialize (buildin);
+			Initialize (builtin);
 		}
 
 		public override void AddCompiledType (TypeBuilder builder, TypeSpec spec)
@@ -124,46 +125,46 @@ namespace Mono.CSharp
 			return module_definition;
 		}
 
-		void Initialize (BuildinTypes buildin)
+		void Initialize (BuiltinTypes builtin)
 		{
 			//
 			// Setup mapping for build-in types to avoid duplication of their definition
 			//
-			compiled_types.Add (typeof (object), buildin.Object);
-			compiled_types.Add (typeof (System.ValueType), buildin.ValueType);
-			compiled_types.Add (typeof (System.Attribute), buildin.Attribute);
+			compiled_types.Add (typeof (object), builtin.Object);
+			compiled_types.Add (typeof (System.ValueType), builtin.ValueType);
+			compiled_types.Add (typeof (System.Attribute), builtin.Attribute);
 
-			compiled_types.Add (typeof (int), buildin.Int);
-			compiled_types.Add (typeof (long), buildin.Long);
-			compiled_types.Add (typeof (uint), buildin.UInt);
-			compiled_types.Add (typeof (ulong), buildin.ULong);
-			compiled_types.Add (typeof (byte), buildin.Byte);
-			compiled_types.Add (typeof (sbyte), buildin.SByte);
-			compiled_types.Add (typeof (short), buildin.Short);
-			compiled_types.Add (typeof (ushort), buildin.UShort);
+			compiled_types.Add (typeof (int), builtin.Int);
+			compiled_types.Add (typeof (long), builtin.Long);
+			compiled_types.Add (typeof (uint), builtin.UInt);
+			compiled_types.Add (typeof (ulong), builtin.ULong);
+			compiled_types.Add (typeof (byte), builtin.Byte);
+			compiled_types.Add (typeof (sbyte), builtin.SByte);
+			compiled_types.Add (typeof (short), builtin.Short);
+			compiled_types.Add (typeof (ushort), builtin.UShort);
 
-			compiled_types.Add (typeof (System.Collections.IEnumerator), buildin.IEnumerator);
-			compiled_types.Add (typeof (System.Collections.IEnumerable), buildin.IEnumerable);
-			compiled_types.Add (typeof (System.IDisposable), buildin.IDisposable);
+			compiled_types.Add (typeof (System.Collections.IEnumerator), builtin.IEnumerator);
+			compiled_types.Add (typeof (System.Collections.IEnumerable), builtin.IEnumerable);
+			compiled_types.Add (typeof (System.IDisposable), builtin.IDisposable);
 
-			compiled_types.Add (typeof (char), buildin.Char);
-			compiled_types.Add (typeof (string), buildin.String);
-			compiled_types.Add (typeof (float), buildin.Float);
-			compiled_types.Add (typeof (double), buildin.Double);
-			compiled_types.Add (typeof (decimal), buildin.Decimal);
-			compiled_types.Add (typeof (bool), buildin.Bool);
-			compiled_types.Add (typeof (System.IntPtr), buildin.IntPtr);
-			compiled_types.Add (typeof (System.UIntPtr), buildin.UIntPtr);
+			compiled_types.Add (typeof (char), builtin.Char);
+			compiled_types.Add (typeof (string), builtin.String);
+			compiled_types.Add (typeof (float), builtin.Float);
+			compiled_types.Add (typeof (double), builtin.Double);
+			compiled_types.Add (typeof (decimal), builtin.Decimal);
+			compiled_types.Add (typeof (bool), builtin.Bool);
+			compiled_types.Add (typeof (System.IntPtr), builtin.IntPtr);
+			compiled_types.Add (typeof (System.UIntPtr), builtin.UIntPtr);
 
-			compiled_types.Add (typeof (System.MulticastDelegate), buildin.MulticastDelegate);
-			compiled_types.Add (typeof (System.Delegate), buildin.Delegate);
-			compiled_types.Add (typeof (System.Enum), buildin.Enum);
-			compiled_types.Add (typeof (System.Array), buildin.Array);
-			compiled_types.Add (typeof (void), buildin.Void);
-			compiled_types.Add (typeof (System.Type), buildin.Type);
-			compiled_types.Add (typeof (System.Exception), buildin.Exception);
-			compiled_types.Add (typeof (System.RuntimeFieldHandle), buildin.RuntimeFieldHandle);
-			compiled_types.Add (typeof (System.RuntimeTypeHandle), buildin.RuntimeTypeHandle);
+			compiled_types.Add (typeof (System.MulticastDelegate), builtin.MulticastDelegate);
+			compiled_types.Add (typeof (System.Delegate), builtin.Delegate);
+			compiled_types.Add (typeof (System.Enum), builtin.Enum);
+			compiled_types.Add (typeof (System.Array), builtin.Array);
+			compiled_types.Add (typeof (void), builtin.Void);
+			compiled_types.Add (typeof (System.Type), builtin.Type);
+			compiled_types.Add (typeof (System.Exception), builtin.Exception);
+			compiled_types.Add (typeof (System.RuntimeFieldHandle), builtin.RuntimeFieldHandle);
+			compiled_types.Add (typeof (System.RuntimeTypeHandle), builtin.RuntimeTypeHandle);
 		}
 	}
 
@@ -228,18 +229,9 @@ namespace Mono.CSharp
 			ResolveAssemblySecurityAttributes ();
 			var an = CreateAssemblyName ();
 
-			try {
-				Builder = file_name == null ?
-					domain.DefineDynamicAssembly (an, access) :
-					domain.DefineDynamicAssembly (an, access, Dirname (file_name));
-			} catch (ArgumentException) {
-				// specified key may not be exportable outside it's container
-				if (RootContext.StrongNameKeyContainer != null) {
-					Report.Error (1548, "Could not access the key inside the container `" +
-						RootContext.StrongNameKeyContainer + "'.");
-				}
-				throw;
-			}
+			Builder = file_name == null ?
+				domain.DefineDynamicAssembly (an, access) :
+				domain.DefineDynamicAssembly (an, access, Dirname (file_name));
 
 			module.Create (this, CreateModuleBuilder ());
 			builder_extra = new AssemblyBuilderMonoSpecific (Builder, Compiler);
@@ -436,9 +428,9 @@ namespace Mono.CSharp
 			default_references.Add ("System.Windows.Browser");
 #endif
 
-			if (RootContext.Version > LanguageVersion.ISO_2)
+			if (compiler.Settings.Version > LanguageVersion.ISO_2)
 				default_references.Add ("System.Core");
-			if (RootContext.Version > LanguageVersion.V_3)
+			if (compiler.Settings.Version > LanguageVersion.V_3)
 				default_references.Add ("Microsoft.CSharp");
 
 			return default_references.ToArray ();
@@ -454,7 +446,7 @@ namespace Mono.CSharp
 
 		public override bool HasObjectType (Assembly assembly)
 		{
-			return assembly.GetType (compiler.BuildinTypes.Object.FullName) != null;
+			return assembly.GetType (compiler.BuiltinTypes.Object.FullName) != null;
 		}
 
 		public override Assembly LoadAssemblyFile (string fileName)
@@ -544,10 +536,7 @@ namespace Mono.CSharp
 
 		public void LoadModules (AssemblyDefinitionDynamic assembly, RootNamespace targetNamespace)
 		{
-			if (RootContext.Modules.Count == 0)
-				return;
-
-			foreach (var moduleName in RootContext.Modules) {
+			foreach (var moduleName in compiler.Settings.Modules) {
 				var m = LoadModuleFile (assembly, moduleName);
 				if (m == null)
 					continue;

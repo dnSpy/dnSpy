@@ -2,11 +2,11 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 
 namespace ICSharpCode.NRefactory.VB.Visitors
 {
-	class RenameIdentifierVisitor : AbstractDomVisitor
+	class RenameIdentifierVisitor : AbstractAstVisitor
 	{
 		protected StringComparer nameComparer;
 		protected string from, to;

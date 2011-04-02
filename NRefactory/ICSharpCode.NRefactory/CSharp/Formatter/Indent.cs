@@ -33,44 +33,54 @@ namespace ICSharpCode.NRefactory.CSharp
 			get;
 			set;
 		}
-		
+
 		public int ExtraSpaces {
 			get;
 			set;
 		}
-		
+
+		public bool TabsToSpaces {
+			get;
+			set;
+		}
+
+		public int TabSize {
+			get;
+			set;
+		}
+
 		public Indent ()
 		{
 		}
-		
+
 		public Indent (int level, int extraSpaces)
 		{
 			this.Level = level;
 			this.ExtraSpaces = extraSpaces;
 		}
-		
-		public static Indent operator+(Indent left, Indent right)
+
+		public static Indent operator+ (Indent left, Indent right)
 		{
 			return new Indent (left.Level + right.Level, left.ExtraSpaces + right.ExtraSpaces);
 		}
-		
-		public static Indent operator-(Indent left, Indent right)
+
+		public static Indent operator- (Indent left, Indent right)
 		{
 			return new Indent (left.Level - right.Level, left.ExtraSpaces - right.ExtraSpaces);
 		}
-		
+
 		public string IndentString {
 			get {
-				return new string ('\t', Level) + new string (' ', ExtraSpaces);
+				return (TabsToSpaces ? new string (' ', Level * TabSize) : new string ('\t', Level)) + new string (' ', ExtraSpaces);
 			}
 		}
-		
+
 		public string SingleIndent {
 			get {
-				return "\t";
+				return TabsToSpaces ? new string (' ', TabSize) : "\t";
 			}
 		}
-		
+
 		public override string ToString ()
 		{
 			return string.Format ("[Indent: Level={0}, ExtraSpaces={1}]", Level, ExtraSpaces);

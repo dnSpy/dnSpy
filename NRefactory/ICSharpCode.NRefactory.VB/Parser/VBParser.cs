@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Visitors;
 
 namespace ICSharpCode.NRefactory.VB.Parser

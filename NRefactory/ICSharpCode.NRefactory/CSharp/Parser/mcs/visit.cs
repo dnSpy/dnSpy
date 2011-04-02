@@ -76,7 +76,11 @@ namespace Mono.CSharp
 		public virtual void Visit (UsingsBag.AliasUsing aliasUsing)
 		{
 		}
-		
+
+		public virtual void Visit (UsingsBag.ExternAlias externAlias)
+		{
+		}
+
 		public virtual void Visit (Class c)
 		{
 			VisitTypeContainer (c);
@@ -405,7 +409,12 @@ namespace Mono.CSharp
 		{
 			return null;
 		}
-
+		
+		public virtual object Visit (DefaultParameterValueExpression defaultParameterValueExpression)
+		{
+			return null;
+		}
+		
 		public virtual object Visit (Binary binaryExpression)
 		{
 			return null;

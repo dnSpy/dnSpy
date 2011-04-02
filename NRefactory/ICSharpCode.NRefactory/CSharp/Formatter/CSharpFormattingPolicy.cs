@@ -26,10 +26,12 @@
 
 using System;
 using System.Reflection;
+using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public enum BraceStyle {
+	public enum BraceStyle
+	{
 		DoNotChange,
 		EndOfLine,
 		EndOfLineWithoutSpace,
@@ -37,303 +39,289 @@ namespace ICSharpCode.NRefactory.CSharp
 		NextLineShifted,
 		NextLineShifted2
 	}
-	
-	public enum BraceForcement {
+
+	public enum BraceForcement
+	{
 		DoNotChange,
 		RemoveBraces,
 		AddBraces
 	}
-	
-	public enum ArrayInitializerPlacement {
+
+	public enum ArrayInitializerPlacement
+	{
 		AlwaysNewLine,
 		AlwaysSameLine
 	}
 
-	// HACK: Monodevelop internal attribute
-	public class ItemPropertyAttribute : System.Attribute
+	public enum PropertyFormatting
 	{
+		AllowOneLine,
+		ForceOneLine,
+		ForceNewLine
 	}
 
-	public class CSharpFormattingPolicy : IEquatable<CSharpFormattingPolicy>
+	public class CSharpFormattingPolicy
 	{
+		public string Name {
+			get;
+			set;
+		}
+
+		public bool IsBuiltIn {
+			get;
+			set;
+		}
+
 		public CSharpFormattingPolicy Clone ()
 		{
-			return (CSharpFormattingPolicy) MemberwiseClone ();
+			return (CSharpFormattingPolicy)MemberwiseClone ();
 		}
-		
+
 		#region Indentation
-		[ItemProperty]
 		public bool IndentNamespaceBody { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentClassBody { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentInterfaceBody { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentStructBody { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentEnumBody { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentMethodBody { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentPropertyBody { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentEventBody { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentBlocks { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentSwitchBody { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentCaseBody { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool IndentBreakStatements { // tested
 			get;
 			set;
 		}
+
+		public bool AlignEmbeddedUsingStatements { // tested
+			get;
+			set;
+		}
+
+		public bool AlignEmbeddedIfStatements { // tested
+			get;
+			set;
+		}
+
+		public PropertyFormatting PropertyFormatting { // tested
+			get;
+			set;
+		}
+
 		#endregion
 		
 		#region Braces
-		[ItemProperty]
 		public BraceStyle NamespaceBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle ClassBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle InterfaceBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle StructBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle EnumBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle MethodBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle AnonymousMethodBraceStyle {
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle ConstructorBraceStyle {  // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle DestructorBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle PropertyBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle PropertyGetBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle PropertySetBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool AllowPropertyGetBlockInline { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool AllowPropertySetBlockInline { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle EventBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle EventAddBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle EventRemoveBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool AllowEventAddBlockInline { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool AllowEventRemoveBlockInline { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceStyle StatementBraceStyle { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool AllowIfBlockInline {
 			get;
 			set;
 		}
-		
+
 		#endregion
 		
 		#region Force Braces
-		[ItemProperty]
 		public BraceForcement IfElseBraceForcement { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceForcement ForBraceForcement { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceForcement ForEachBraceForcement { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceForcement WhileBraceForcement { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceForcement UsingBraceForcement { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public BraceForcement FixedBraceForcement { // tested
 			get;
 			set;
 		}
+
 		#endregion
 		
 		#region NewLines
-		[ItemProperty]
 		public bool PlaceElseOnNewLine { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool PlaceElseIfOnNewLine { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool PlaceCatchOnNewLine { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool PlaceFinallyOnNewLine { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public bool PlaceWhileOnNewLine { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
+
 		public ArrayInitializerPlacement PlaceArrayInitializersOnNewLine {
 			get;
 			set;
@@ -341,275 +329,441 @@ namespace ICSharpCode.NRefactory.CSharp
 		#endregion
 		
 		#region Spaces
-		[ItemProperty]
-		public bool BeforeMethodCallParentheses { // tested
+		// Methods
+		public bool SpaceBeforeMethodDeclarationParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBetweenEmptyMethodDeclarationParentheses {
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeMethodDeclarationParameterComma { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAfterMethodDeclarationParameterComma { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceWithinMethodDeclarationParentheses { // tested
 			get;
 			set;
 		}
 		
-		[ItemProperty]
-		public bool BeforeMethodDeclarationParentheses { // tested
+		// Method calls
+		public bool SpaceBeforeMethodCallParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBetweenEmptyMethodCallParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeMethodCallParameterComma { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAfterMethodCallParameterComma { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceWithinMethodCallParentheses { // tested
 			get;
 			set;
 		}
 		
-		[ItemProperty]
-		public bool BeforeConstructorDeclarationParentheses { // tested
+		// fields
+		
+		public bool SpaceBeforeFieldDeclarationComma { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAfterFieldDeclarationComma { // tested
 			get;
 			set;
 		}
 		
-		[ItemProperty]
-		public bool BeforeDelegateDeclarationParentheses { // tested
+		// local variables
+		
+		public bool SpaceBeforeLocalVariableDeclarationComma { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAfterLocalVariableDeclarationComma { // tested
 			get;
 			set;
 		}
 		
-		[ItemProperty]
-		public bool NewParentheses { // tested
+		// constructors
+		
+		public bool SpaceBeforeConstructorDeclarationParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBetweenEmptyConstructorDeclarationParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeConstructorDeclarationParameterComma { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAfterConstructorDeclarationParameterComma { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceWithinConstructorDeclarationParentheses { // tested
 			get;
 			set;
 		}
 		
-		[ItemProperty]
-		public bool IfParentheses { // tested
+		// indexer
+		public bool SpaceBeforeIndexerDeclarationBracket { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceWithinIndexerDeclarationBracket { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeIndexerDeclarationParameterComma {
+			get;
+			set;
+		}
+
+		public bool SpaceAfterIndexerDeclarationParameterComma {
 			get;
 			set;
 		}
 		
-		[ItemProperty]
-		public bool WhileParentheses { // tested
+		// delegates
+		
+		public bool SpaceBeforeDelegateDeclarationParentheses {
+			get;
+			set;
+		}
+
+		public bool SpaceBetweenEmptyDelegateDeclarationParentheses {
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeDelegateDeclarationParameterComma {
+			get;
+			set;
+		}
+
+		public bool SpaceAfterDelegateDeclarationParameterComma {
+			get;
+			set;
+		}
+
+		public bool SpaceWithinDelegateDeclarationParentheses {
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeNewParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeIfParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeWhileParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeForParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeForeachParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeCatchParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeSwitchParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeLockParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeUsingParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAroundAssignment { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAroundLogicalOperator { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAroundEqualityOperator { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAroundRelationalOperator { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAroundBitwiseOperator { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAroundAdditiveOperator { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAroundMultiplicativeOperator { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAroundShiftOperator { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAroundNullCoalescingOperator {
+			get;
+			set;
+		}
+
+		public bool SpacesWithinParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinIfParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinWhileParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinForParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinForeachParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinCatchParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinSwitchParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinLockParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinUsingParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinCastParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinSizeOfParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeSizeOfParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinTypeOfParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinNewParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesBetweenEmptyNewParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeNewParameterComma { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAfterNewParameterComma { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeTypeOfParentheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpacesWithinCheckedExpressionParantheses { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeConditionalOperatorCondition { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAfterConditionalOperatorCondition { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeConditionalOperatorSeparator { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAfterConditionalOperatorSeparator { // tested
 			get;
 			set;
 		}
 		
-		[ItemProperty]
-		public bool ForParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool ForeachParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool CatchParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool SwitchParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool LockParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool UsingParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool AroundAssignmentParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool AroundLogicalOperatorParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool AroundEqualityOperatorParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool AroundRelationalOperatorParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool AroundBitwiseOperatorParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool AroundAdditiveOperatorParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool AroundMultiplicativeOperatorParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool AroundShiftOperatorParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinMethodCallParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinMethodDeclarationParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinIfParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinWhileParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinForParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinForEachParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinCatchParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinSwitchParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinLockParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinUsingParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinCastParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinSizeOfParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinTypeOfParentheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool WithinCheckedExpressionParantheses { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool ConditionalOperatorBeforeConditionSpace { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool ConditionalOperatorAfterConditionSpace { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool ConditionalOperatorBeforeSeparatorSpace { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
-		public bool ConditionalOperatorAfterSeparatorSpace { // tested
-			get;
-			set;
-		}
-		
-		[ItemProperty]
+		// brackets
 		public bool SpacesWithinBrackets { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
-		public bool SpacesAfterComma { // tested
+
+		public bool SpacesBeforeBrackets { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
-		public bool SpacesBeforeComma { // tested
+
+		public bool SpaceBeforeBracketComma { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
-		public bool SpacesAfterSemicolon { // tested
+
+		public bool SpaceAfterBracketComma { // tested
 			get;
 			set;
 		}
-		
-		[ItemProperty]
-		public bool SpacesAfterTypecast { // tested
+
+		public bool SpaceBeforeForSemicolon { // tested
 			get;
 			set;
 		}
+
+		public bool SpaceAfterForSemicolon { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceAfterTypecast { // tested
+			get;
+			set;
+		}
+
+		public bool SpaceBeforeArrayDeclarationBrackets { // tested
+			get;
+			set;
+		}
+
+		#endregion
+		
+		#region Blank Lines
+		public int BlankLinesBeforeUsings {
+			get;
+			set;
+		}
+
+		public int BlankLinesAfterUsings {
+			get;
+			set;
+		}
+
+		public int BlankLinesBeforeFirstDeclaration {
+			get;
+			set;
+		}
+
+		public int BlankLinesBetweenTypes {
+			get;
+			set;
+		}
+
+		public int BlankLinesBetweenFields {
+			get;
+			set;
+		}
+
+		public int BlankLinesBetweenEventFields {
+			get;
+			set;
+		}
+
+		public int BlankLinesBetweenMembers {
+			get;
+			set;
+		}
+
 		#endregion
 		
 		public CSharpFormattingPolicy ()
@@ -639,67 +793,170 @@ namespace ICSharpCode.NRefactory.CSharp
 			PlaceWhileOnNewLine = false;
 			PlaceArrayInitializersOnNewLine = ArrayInitializerPlacement.AlwaysSameLine;
 
-			BeforeMethodCallParentheses = true;
-			BeforeMethodDeclarationParentheses = true;
-			BeforeConstructorDeclarationParentheses = true;
-			BeforeDelegateDeclarationParentheses = true;
-
-			NewParentheses = true;
-			IfParentheses = true;
-			WhileParentheses = true;
-			ForParentheses = true;
-			ForeachParentheses = true;
-			CatchParentheses = true;
-			SwitchParentheses = true;
-			LockParentheses = true;
-			UsingParentheses = true;
-			AroundAssignmentParentheses = true;
-			AroundLogicalOperatorParentheses = true;
-			AroundEqualityOperatorParentheses = true;
-			AroundRelationalOperatorParentheses = true;
-			AroundBitwiseOperatorParentheses = true;
-			AroundAdditiveOperatorParentheses = true;
-			AroundMultiplicativeOperatorParentheses = true;
-			AroundShiftOperatorParentheses = true;
-			WithinParentheses = false;
-			WithinMethodCallParentheses = false;
-			WithinMethodDeclarationParentheses = false;
-			WithinIfParentheses = false;
-			WithinWhileParentheses = false;
-			WithinForParentheses = false;
-			WithinForEachParentheses = false;
-			WithinCatchParentheses = false;
-			WithinSwitchParentheses = false;
-			WithinLockParentheses = false;
-			WithinUsingParentheses = false;
-			WithinCastParentheses = false;
-			WithinSizeOfParentheses = false;
-			WithinTypeOfParentheses = false;
-			WithinCheckedExpressionParantheses = false;
-			ConditionalOperatorBeforeConditionSpace = true;
-			ConditionalOperatorAfterConditionSpace = true;
-			ConditionalOperatorBeforeSeparatorSpace = true;
-			ConditionalOperatorAfterSeparatorSpace = true;
+			SpaceBeforeMethodCallParentheses = true;
+			SpaceBeforeMethodDeclarationParentheses = true;
+			SpaceBeforeConstructorDeclarationParentheses = true;
+			SpaceBeforeDelegateDeclarationParentheses = true;
+			SpaceAfterMethodCallParameterComma = true;
+			SpaceAfterConstructorDeclarationParameterComma = true;
+			
+			SpaceBeforeNewParentheses = true;
+			SpacesWithinNewParentheses = false;
+			SpacesBetweenEmptyNewParentheses = false;
+			SpaceBeforeNewParameterComma = false;
+			SpaceAfterNewParameterComma = true;
+			
+			SpaceBeforeIfParentheses = true;
+			SpaceBeforeWhileParentheses = true;
+			SpaceBeforeForParentheses = true;
+			SpaceBeforeForeachParentheses = true;
+			SpaceBeforeCatchParentheses = true;
+			SpaceBeforeSwitchParentheses = true;
+			SpaceBeforeLockParentheses = true;
+			SpaceBeforeUsingParentheses = true;
+			SpaceAroundAssignment = true;
+			SpaceAroundLogicalOperator = true;
+			SpaceAroundEqualityOperator = true;
+			SpaceAroundRelationalOperator = true;
+			SpaceAroundBitwiseOperator = true;
+			SpaceAroundAdditiveOperator = true;
+			SpaceAroundMultiplicativeOperator = true;
+			SpaceAroundShiftOperator = true;
+			SpaceAroundNullCoalescingOperator = true;
+			SpacesWithinParentheses = false;
+			SpaceWithinMethodCallParentheses = false;
+			SpaceWithinMethodDeclarationParentheses = false;
+			SpacesWithinIfParentheses = false;
+			SpacesWithinWhileParentheses = false;
+			SpacesWithinForParentheses = false;
+			SpacesWithinForeachParentheses = false;
+			SpacesWithinCatchParentheses = false;
+			SpacesWithinSwitchParentheses = false;
+			SpacesWithinLockParentheses = false;
+			SpacesWithinUsingParentheses = false;
+			SpacesWithinCastParentheses = false;
+			SpacesWithinSizeOfParentheses = false;
+			SpacesWithinTypeOfParentheses = false;
+			SpacesWithinCheckedExpressionParantheses = false;
+			SpaceBeforeConditionalOperatorCondition = true;
+			SpaceAfterConditionalOperatorCondition = true;
+			SpaceBeforeConditionalOperatorSeparator = true;
+			SpaceAfterConditionalOperatorSeparator = true;
 
 			SpacesWithinBrackets = false;
-			SpacesAfterComma = true;
-			SpacesBeforeComma = false;
-			SpacesAfterSemicolon = true;
-			SpacesAfterTypecast = false;
-		}
+			SpacesBeforeBrackets = true;
+			SpaceBeforeBracketComma = false;
+			SpaceAfterBracketComma = true;
+					
+			SpaceBeforeForSemicolon = false;
+			SpaceAfterForSemicolon = true;
+			SpaceAfterTypecast = false;
+			
+			AlignEmbeddedIfStatements = true;
+			AlignEmbeddedUsingStatements = true;
+			PropertyFormatting = PropertyFormatting.AllowOneLine;
+			SpaceBeforeMethodDeclarationParameterComma = false;
+			SpaceAfterMethodDeclarationParameterComma = true;
+			SpaceBeforeFieldDeclarationComma = false;
+			SpaceAfterFieldDeclarationComma = true;
+			SpaceBeforeLocalVariableDeclarationComma = false;
+			SpaceAfterLocalVariableDeclarationComma = true;
+			
+			SpaceBeforeIndexerDeclarationBracket = true;
+			SpaceWithinIndexerDeclarationBracket = false;
+			SpaceBeforeIndexerDeclarationParameterComma = false;
 		
+		
+			SpaceAfterIndexerDeclarationParameterComma = true;
+			
+			BlankLinesBeforeUsings = 0;
+			BlankLinesAfterUsings = 1;
+			
+			
+			BlankLinesBeforeFirstDeclaration = 0;
+			BlankLinesBetweenTypes = 1;
+			BlankLinesBetweenFields = 0;
+			BlankLinesBetweenEventFields = 0;
+			BlankLinesBetweenMembers = 1;
+		}
+
+		/*public static CSharpFormattingPolicy Load (FilePath selectedFile)
+		{
+			using (var stream = System.IO.File.OpenRead (selectedFile)) {
+				return Load (stream);
+			}
+		}
+
+		public static CSharpFormattingPolicy Load (System.IO.Stream input)
+		{
+			CSharpFormattingPolicy result = new CSharpFormattingPolicy ();
+			result.Name = "noname";
+			using (XmlTextReader reader = new XmlTextReader (input)) {
+				while (reader.Read ()) {
+					if (reader.NodeType == XmlNodeType.Element) {
+						if (reader.LocalName == "Property") {
+							var info = typeof(CSharpFormattingPolicy).GetProperty (reader.GetAttribute ("name"));
+							string valString = reader.GetAttribute ("value");
+							object value;
+							if (info.PropertyType == typeof(bool)) {
+								value = Boolean.Parse (valString);
+							} else if (info.PropertyType == typeof(int)) {
+								value = Int32.Parse (valString);
+							} else {
+								value = Enum.Parse (info.PropertyType, valString);
+							}
+							info.SetValue (result, value, null);
+						} else if (reader.LocalName == "FormattingProfile") {
+							result.Name = reader.GetAttribute ("name");
+						}
+					} else if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "FormattingProfile") {
+						//Console.WriteLine ("result:" + result.Name);
+						return result;
+					}
+				}
+			}
+			return result;
+		}
+
+		public void Save (string fileName)
+		{
+			using (var writer = new XmlTextWriter (fileName, Encoding.Default)) {
+				writer.Formatting = System.Xml.Formatting.Indented;
+				writer.Indentation = 1;
+				writer.IndentChar = '\t';
+				writer.WriteStartElement ("FormattingProfile");
+				writer.WriteAttributeString ("name", Name);
+				foreach (PropertyInfo info in typeof (CSharpFormattingPolicy).GetProperties ()) {
+					if (info.GetCustomAttributes (false).Any (o => o.GetType () == typeof(ItemPropertyAttribute))) {
+						writer.WriteStartElement ("Property");
+						writer.WriteAttributeString ("name", info.Name);
+						writer.WriteAttributeString ("value", info.GetValue (this, null).ToString ());
+						writer.WriteEndElement ();
+					}
+				}
+				writer.WriteEndElement ();
+			}
+		}
+
 		public bool Equals (CSharpFormattingPolicy other)
 		{
 			foreach (PropertyInfo info in typeof (CSharpFormattingPolicy).GetProperties ()) {
-				object val      = info.GetValue (this, null);
-				object otherVal = info.GetValue (other, null);
-				if (!val.Equals (otherVal)) {
-					//Console.WriteLine ("!equal");
-					return false;
+				if (info.GetCustomAttributes (false).Any (o => o.GetType () == typeof(ItemPropertyAttribute))) {
+					object val = info.GetValue (this, null);
+					object otherVal = info.GetValue (other, null);
+					if (val == null) {
+						if (otherVal == null)
+							continue;
+						return false;
+					}
+					if (!val.Equals (otherVal)) {
+						//Console.WriteLine ("!equal");
+						return false;
+					}
 				}
 			}
 			//Console.WriteLine ("== equal");
 			return true;
-		}
+		}*/
 	}
 }

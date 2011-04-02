@@ -72,9 +72,9 @@ namespace Mono.CSharp {
 		{
 			var results = new List<string> ();
 
-			AppendResults (results, Prefix, Evaluator.GetVarNames ());
+			AppendResults (results, Prefix, ec.Module.Evaluator.GetVarNames ());
 			AppendResults (results, Prefix, ec.CurrentMemberDefinition.Parent.NamespaceEntry.CompletionGetTypesStartingWith (Prefix));
-			AppendResults (results, Prefix, Evaluator.GetUsingList ());
+			AppendResults (results, Prefix, ec.Module.Evaluator.GetUsingList ());
 			
 			throw new CompletionResult (Prefix, results.ToArray ());
 		}
@@ -114,7 +114,7 @@ namespace Mono.CSharp {
 				return null;
 
 			TypeSpec expr_type = expr_resolved.Type;
-			if (expr_type.IsPointer || expr_type == TypeManager.void_type || expr_type == InternalType.Null || expr_type == InternalType.AnonymousMethod) {
+			if (expr_type.IsPointer || expr_type.Kind == MemberKind.Void || expr_type == InternalType.NullLiteral || expr_type == InternalType.AnonymousMethod) {
 				Unary.Error_OperatorCannotBeApplied (ec, loc, ".", expr_type);
 				return null;
 			}
@@ -146,7 +146,7 @@ namespace Mono.CSharp {
 					partial_name, 
 					ec.CurrentMemberDefinition.Parent.NamespaceEntry.CompletionGetTypesStartingWith (namespaced_partial));
 			} else {
-				var r = MemberCache.GetCompletitionMembers (expr_type, partial_name).Select (l => l.Name);
+				var r = MemberCache.GetCompletitionMembers (ec, expr_type, partial_name).Select (l => l.Name);
 				AppendResults (results, partial_name, r);
 			}
 
@@ -175,7 +175,7 @@ namespace Mono.CSharp {
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			var members = MemberCache.GetCompletitionMembers (ec.CurrentInitializerVariable.Type, partial_name);
+			var members = MemberCache.GetCompletitionMembers (ec, ec.CurrentInitializerVariable.Type, partial_name);
 
 // TODO: Does this mean exact match only ?
 //			if (partial_name != null && results.Count > 0 && result [0] == "")

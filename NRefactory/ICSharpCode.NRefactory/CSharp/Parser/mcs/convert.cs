@@ -24,20 +24,8 @@ namespace Mono.CSharp {
 	//
 	// A container class for all the conversion operations
 	//
-	static class Convert {
-		
-		static EmptyExpression MyEmptyExpr;
-		
-		static Convert ()
-		{
-			Reset ();
-		}
-		
-		public static void Reset ()
-		{
-			MyEmptyExpr = null;
-		}
-		
+	static class Convert
+	{
 		//
 		// From a one-dimensional array-type S[] to System.Collections.IList<T> and base
 		// interfaces of this interface, provided there is an implicit reference conversion
@@ -45,13 +33,7 @@ namespace Mono.CSharp {
 		//
 		static bool ArrayToIList (ArrayContainer array, TypeSpec list, bool isExplicit)
 		{
-			if (array.Rank != 1 || !list.IsGeneric)
-				return false;
-
-			var open_version = list.GetDefinition ();
-			if ((open_version != TypeManager.generic_ilist_type) &&
-				(open_version != TypeManager.generic_icollection_type) &&
-				(open_version != TypeManager.generic_ienumerable_type))
+			if (array.Rank != 1 || !list.IsGenericIterateInterface)
 				return false;
 
 			var arg_type = list.TypeArguments[0];
@@ -61,52 +43,36 @@ namespace Mono.CSharp {
 			if (isExplicit)
 				return ExplicitReferenceConversionExists (array.Element, arg_type);
 
-			if (MyEmptyExpr == null)
-				MyEmptyExpr = new EmptyExpression (array.Element);
-			else
-				MyEmptyExpr.SetType (array.Element);
-
-			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type);
+			return ImplicitReferenceConversionExists (array.Element, arg_type);
 		}
 		
 		static bool IList_To_Array(TypeSpec list, ArrayContainer array)
 		{
-			if (array.Rank != 1 || !list.IsGeneric)
-				return false;
-
-			var open_version = list.GetDefinition ();
-			if ((open_version != TypeManager.generic_ilist_type) &&
-				(open_version != TypeManager.generic_icollection_type) &&
-				(open_version != TypeManager.generic_ienumerable_type))
+			if (array.Rank != 1 || !list.IsGenericIterateInterface)
 				return false;
 
 			var arg_type = list.TypeArguments[0];
 			if (array.Element == arg_type)
 				return true;
 			
-			if (MyEmptyExpr == null)
-				MyEmptyExpr = new EmptyExpression (array.Element);
-			else
-				MyEmptyExpr.SetType (array.Element);
-
-			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type) || ExplicitReferenceConversionExists (array.Element, arg_type);
+			return ImplicitReferenceConversionExists (array.Element, arg_type) || ExplicitReferenceConversionExists (array.Element, arg_type);
 		}
 
-		public static Expression ImplicitTypeParameterConversion (Expression expr, TypeSpec target_type)
+		public static Expression ImplicitTypeParameterConversion (Expression expr, TypeParameterSpec expr_type, TypeSpec target_type)
 		{
-			var expr_type = (TypeParameterSpec) expr.Type;
-
 			//
 			// From T to a type parameter U, provided T depends on U
 			//
-			var ttype = target_type as TypeParameterSpec;
-			if (ttype != null) {
+			if (target_type.IsGenericParameter) {
 				if (expr_type.TypeArguments != null) {
 					foreach (var targ in expr_type.TypeArguments) {
-						if (!TypeSpecComparer.Override.IsEqual (ttype, targ))
+						if (!TypeSpecComparer.Override.IsEqual (target_type, targ))
 							continue;
 
-						if (expr_type.IsReferenceType && !ttype.IsReferenceType)
+						if (expr == null)
+							return EmptyExpression.Null;
+
+						if (expr_type.IsReferenceType && !((TypeParameterSpec)target_type).IsReferenceType)
 							return new BoxedCast (expr, target_type);
 
 						return new ClassCast (expr, target_type);
@@ -119,7 +85,10 @@ namespace Mono.CSharp {
 			//
 			// LAMESPEC: From T to dynamic type because it's like T to object
 			//
-			if (target_type == InternalType.Dynamic) {
+			if (target_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+				if (expr == null)
+					return EmptyExpression.Null;
+
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
@@ -128,11 +97,14 @@ namespace Mono.CSharp {
 
 			//
 			// From T to its effective base class C
-			// From T to any base class of C (it cannot contain dynamic of be of dynamic type)
+			// From T to any base class of C (it cannot contain dynamic or be of dynamic type)
 			// From T to any interface implemented by C
 			//
 			var base_type = expr_type.GetEffectiveBase ();
 			if (base_type == target_type || TypeSpec.IsBaseClass (base_type, target_type, false) || base_type.ImplementsInterface (target_type, true)) {
+				if (expr == null)
+					return EmptyExpression.Null;
+
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
@@ -140,6 +112,9 @@ namespace Mono.CSharp {
 			}
 
 			if (target_type.IsInterface && expr_type.IsConvertibleToInterface (target_type)) {
+				if (expr == null)
+					return EmptyExpression.Null;
+
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
@@ -191,21 +166,18 @@ namespace Mono.CSharp {
 				expr.Emit (null);
 			}
 
-			if (expr_type == TypeManager.void_type)
-				return null;
-
 			if (expr_type.Kind == MemberKind.TypeParameter)
-				return ImplicitTypeParameterConversion (expr, target_type);
+				return ImplicitTypeParameterConversion (expr, (TypeParameterSpec) expr.Type, target_type);
 
 			//
 			// from the null type to any reference-type.
 			//
 			NullLiteral nl = expr as NullLiteral;
 			if (nl != null) {
-				return nl.ConvertImplicitly (null, target_type);
+				return nl.ConvertImplicitly (target_type);
 			}
 
-			if (ImplicitReferenceConversionExists (expr, target_type)) {
+			if (ImplicitReferenceConversionExists (expr_type, target_type)) {
 				// 
 				// Avoid wrapping implicitly convertible reference type
 				//
@@ -221,19 +193,17 @@ namespace Mono.CSharp {
 		//
 		// 6.1.6 Implicit reference conversions
 		//
-		public static bool ImplicitReferenceConversionExists (Expression expr, TypeSpec target_type)
+		public static bool ImplicitReferenceConversionExists (TypeSpec expr_type, TypeSpec target_type)
 		{
-			if (TypeManager.IsStruct (target_type))
+			if (target_type.IsStruct)
 				return false;
 
-			TypeSpec expr_type = expr.Type;
-
 			// from the null type to any reference-type.
-			if (expr_type == InternalType.Null)
-				return target_type != InternalType.AnonymousMethod;
+			if (expr_type == InternalType.NullLiteral)
+				return true;
 
-			if (TypeManager.IsGenericParameter (expr_type))
-				return ImplicitTypeParameterConversion (expr, target_type) != null;
+			if (expr_type.IsGenericParameter)
+				return ImplicitTypeParameterConversion (null, (TypeParameterSpec) expr_type, target_type) != null;
 
 			// This code is kind of mirrored inside ImplicitStandardConversionExists
 			// with the small distinction that we only probe there
@@ -250,7 +220,7 @@ namespace Mono.CSharp {
 			//
 			// Implicit reference conversions (no-boxing) to object or dynamic
 			//
-			if (target_type == TypeManager.object_type || target_type == InternalType.Dynamic) {
+			if (target_type.BuiltinType == BuiltinTypeSpec.Type.Object || target_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				switch (expr_type.Kind) {
 				case MemberKind.Class:
 				case MemberKind.Interface:
@@ -259,18 +229,11 @@ namespace Mono.CSharp {
 					return true;
 				}
 
-				return expr_type == InternalType.Dynamic;
+				return expr_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
 			}
 
-			if (target_type == TypeManager.value_type) {
-				return expr_type == TypeManager.enum_type;
-			} else if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
-				//
-				// Special case: enumeration to System.Enum.
-				// System.Enum is not a value type, it is a class, so we need
-				// a boxing conversion
-				//
-				if (target_type == TypeManager.enum_type || TypeManager.IsGenericParameter (expr_type))
+			if (expr_type == target_type || TypeSpec.IsBaseClass (expr_type, target_type, true)) {
+				if (TypeManager.IsGenericParameter (expr_type))
 					return false;
 
 				if (TypeManager.IsValueType (expr_type))
@@ -300,16 +263,14 @@ namespace Mono.CSharp {
 					if (!TypeManager.IsReferenceType (target_element_type))
 						return false;
 
-					if (MyEmptyExpr == null)
-						MyEmptyExpr = new EmptyExpression (expr_element_type);
-					else
-						MyEmptyExpr.SetType (expr_element_type);
-
-					return ImplicitStandardConversionExists (MyEmptyExpr, target_element_type);
+					//
+					// An implicit reference conversion exists from SE to TE
+					//
+					return ImplicitReferenceConversionExists (expr_element_type, target_element_type);
 				}
 
 				// from an array-type to System.Array
-				if (target_type == TypeManager.array_type)
+				if (target_type.BuiltinType == BuiltinTypeSpec.Type.Array)
 					return true;
 
 				// from an array-type of type T to IList<T>
@@ -331,8 +292,8 @@ namespace Mono.CSharp {
 			}
 
 			// from any delegate type to System.Delegate
-			if (target_type == TypeManager.delegate_type &&
-				(expr_type == TypeManager.delegate_type || expr_type.IsDelegate))
+			if (target_type.BuiltinType == BuiltinTypeSpec.Type.Delegate &&
+				(expr_type.BuiltinType == BuiltinTypeSpec.Type.Delegate || expr_type.IsDelegate))
 				return true;
 
 			return false;
@@ -340,10 +301,12 @@ namespace Mono.CSharp {
 
 		public static Expression ImplicitBoxingConversion (Expression expr, TypeSpec expr_type, TypeSpec target_type)
 		{
+			switch (target_type.BuiltinType) {
 			//
 			// From any value-type to the type object.
 			//
-			if (target_type == TypeManager.object_type || target_type == InternalType.Dynamic) {
+			case BuiltinTypeSpec.Type.Object:
+			case BuiltinTypeSpec.Type.Dynamic:
 				//
 				// A pointer type cannot be converted to object
 				//
@@ -354,31 +317,31 @@ namespace Mono.CSharp {
 					return null;
 
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
-			}
-			
+
 			//
 			// From any value-type to the type System.ValueType.
 			//
-			if (target_type == TypeManager.value_type) {
+			case BuiltinTypeSpec.Type.ValueType:
 				if (!TypeManager.IsValueType (expr_type))
 					return null;
 
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
-			}
 
-			if (target_type == TypeManager.enum_type) {
+			case BuiltinTypeSpec.Type.Enum:
 				//
 				// From any enum-type to the type System.Enum.
 				//
-				if (TypeManager.IsEnumType (expr_type))
+				if (expr_type.IsEnum)
 					return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
+
+				break;
 			}
 
 			//
 			// From a nullable-type to a reference type, if a boxing conversion exists from
 			// the underlying type to the reference type
 			//
-			if (TypeManager.IsNullableType (expr_type)) {
+			if (expr_type.IsNullableType) {
 				if (!TypeManager.IsReferenceType (target_type))
 					return null;
 
@@ -425,14 +388,14 @@ namespace Mono.CSharp {
 			//
 			// From null to any nullable type
 			//
-			if (expr_type == InternalType.Null)
+			if (expr_type == InternalType.NullLiteral)
 				return ec == null ? EmptyExpression.Null : Nullable.LiftedNull.Create (target_type, expr.Location);
 
 			// S -> T?
 			TypeSpec t_el = Nullable.NullableInfo.GetUnderlyingType (target_type);
 
 			// S? -> T?
-			if (TypeManager.IsNullableType (expr_type))
+			if (expr_type.IsNullableType)
 				expr_type = Nullable.NullableInfo.GetUnderlyingType (expr_type);
 
 			//
@@ -446,7 +409,7 @@ namespace Mono.CSharp {
 					return EmptyExpression.Null;
 
 				if (expr is Constant)
-					return ((Constant) expr).ConvertImplicitly (ec, t_el);
+					return ((Constant) expr).ConvertImplicitly (t_el);
 
 				return ImplicitNumericConversion (null, expr_type, t_el);
 			}
@@ -460,7 +423,7 @@ namespace Mono.CSharp {
 			Expression conv = unwrap;
 			if (!TypeSpecComparer.IsEqual (expr_type, t_el)) {
 				if (conv is Constant)
-					conv = ((Constant)conv).ConvertImplicitly (ec, t_el);
+					conv = ((Constant)conv).ConvertImplicitly (t_el);
 				else
 					conv = ImplicitNumericConversion (conv, expr_type, t_el);
 
@@ -487,143 +450,173 @@ namespace Mono.CSharp {
 
 		static Expression ImplicitNumericConversion (Expression expr, TypeSpec expr_type, TypeSpec target_type)
 		{
-			if (expr_type == TypeManager.sbyte_type){
+			switch (expr_type.BuiltinType) {
+			case BuiltinTypeSpec.Type.SByte:
 				//
 				// From sbyte to short, int, long, float, double, decimal
 				//
-				if (target_type == TypeManager.int32_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Int:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
-				if (target_type == TypeManager.int64_type)
+				case BuiltinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.double_type)
+				case BuiltinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuiltinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.short_type)
+				case BuiltinTypeSpec.Type.Short:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
-				if (target_type == TypeManager.decimal_type)
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.byte_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+
+				}
+
+				break;
+			case BuiltinTypeSpec.Type.Byte:
 				//
 				// From byte to short, ushort, int, uint, long, ulong, float, double, decimal
 				//
-				if (target_type == TypeManager.int32_type || target_type == TypeManager.uint32_type ||
-				    target_type == TypeManager.short_type || target_type == TypeManager.ushort_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Int:
+				case BuiltinTypeSpec.Type.UInt:
+				case BuiltinTypeSpec.Type.Short:
+				case BuiltinTypeSpec.Type.UShort:
 					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
-
-				if (target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (target_type == TypeManager.int64_type)
+				case BuiltinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.float_type)
+				case BuiltinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.double_type)
+				case BuiltinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.decimal_type)
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-
-			} else if (expr_type == TypeManager.short_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+				}
+				break;
+			case BuiltinTypeSpec.Type.Short:
 				//
 				// From short to int, long, float, double, decimal
 				//
-				if (target_type == TypeManager.int32_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Int:
 					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
-				if (target_type == TypeManager.int64_type)
+				case BuiltinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.double_type)
+				case BuiltinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuiltinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-
-			} else if (expr_type == TypeManager.ushort_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+				}
+				break;
+			case BuiltinTypeSpec.Type.UShort:
 				//
 				// From ushort to int, uint, long, ulong, float, double, decimal
 				//
-				if (target_type == TypeManager.int32_type || target_type == TypeManager.uint32_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Int:
+				case BuiltinTypeSpec.Type.UInt:
 					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
-				
-				if (target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (target_type == TypeManager.int64_type)
+				case BuiltinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.double_type)
+				case BuiltinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuiltinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.int32_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+				}
+				break;
+			case BuiltinTypeSpec.Type.Int:
 				//
 				// From int to long, float, double, decimal
 				//
-				if (target_type == TypeManager.int64_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.double_type)
+				case BuiltinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuiltinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.uint32_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+				}
+				break;
+			case BuiltinTypeSpec.Type.UInt:
 				//
 				// From uint to long, ulong, float, double, decimal
 				//
-				if (target_type == TypeManager.int64_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (target_type == TypeManager.double_type)
+				case BuiltinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuiltinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.int64_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+				}
+				break;
+			case BuiltinTypeSpec.Type.Long:
 				//
-				// From long/ulong to float, double
+				// From long to float, double, decimal
 				//
-				if (target_type == TypeManager.double_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuiltinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.uint64_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+				}
+				break;
+			case BuiltinTypeSpec.Type.ULong:
 				//
-				// From ulong to float, double
+				// From ulong to float, double, decimal
 				//
-				if (target_type == TypeManager.double_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R8);
-				if (target_type == TypeManager.float_type)
+				case BuiltinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCastDuplex (expr, target_type, OpCodes.Conv_R_Un, OpCodes.Conv_R4);
-				if (target_type == TypeManager.decimal_type)
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.char_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+				}
+				break;
+			case BuiltinTypeSpec.Type.Char:
 				//
 				// From char to ushort, int, uint, long, ulong, float, double, decimal
 				//
-				if ((target_type == TypeManager.ushort_type) ||
-				    (target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.uint32_type))
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.UShort:
+				case BuiltinTypeSpec.Type.Int:
+				case BuiltinTypeSpec.Type.UInt:
 					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
-				if (target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (target_type == TypeManager.int64_type)
+				case BuiltinTypeSpec.Type.Long:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (target_type == TypeManager.float_type)
+				case BuiltinTypeSpec.Type.Float:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (target_type == TypeManager.double_type)
+				case BuiltinTypeSpec.Type.Double:
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (target_type == TypeManager.decimal_type)
-					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
-			} else if (expr_type == TypeManager.float_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return expr == null ? EmptyExpression.Null : new OperatorCast (expr, target_type);
+				}
+				break;
+			case BuiltinTypeSpec.Type.Float:
 				//
 				// float to double
 				//
-				if (target_type == TypeManager.double_type)
+				if (target_type.BuiltinType == BuiltinTypeSpec.Type.Double)
 					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				break;
 			}
 
 			return null;
@@ -639,7 +632,7 @@ namespace Mono.CSharp {
 				return true;
 
 			if (expr.Type == InternalType.AnonymousMethod) {
-				if (!TypeManager.IsDelegateType (target_type) && target_type.GetDefinition () != TypeManager.expression_type)
+				if (!target_type.IsDelegate && !target_type.IsExpressionTreeType)
 					return false;
 
 				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
@@ -647,7 +640,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (expr.eclass == ExprClass.MethodGroup) {
-				if (target_type.IsDelegate && RootContext.Version != LanguageVersion.ISO_1) {
+				if (target_type.IsDelegate && ec.Module.Compiler.Settings.Version != LanguageVersion.ISO_1) {
 					MethodGroupExpr mg = expr as MethodGroupExpr;
 					if (mg != null)
 						return DelegateCreation.ImplicitStandardConversionExists (ec, mg, target_type);
@@ -655,6 +648,10 @@ namespace Mono.CSharp {
 
 				return false;
 			}
+
+			// Conversion from __arglist to System.ArgIterator
+			if (expr.Type == InternalType.Arglist)
+				return target_type == ec.Module.PredefinedTypes.ArgIterator.TypeSpec;
 
 			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
 		}
@@ -670,16 +667,13 @@ namespace Mono.CSharp {
 
 			NullLiteral nl = expr as NullLiteral;
 			if (nl != null)
-				return nl.ConvertImplicitly (null, target_type) != null;
-
-			if (expr_type == TypeManager.void_type)
-				return false;
+				return nl.ConvertImplicitly (target_type) != null;
 
 			if (expr_type == target_type)
 				return true;
 
 			// Implicit dynamic conversion
-			if (expr_type == InternalType.Dynamic) {
+			if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				switch (target_type.Kind) {
 				case MemberKind.ArrayType:
 				case MemberKind.Class:
@@ -698,7 +692,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (TypeManager.IsNullableType (target_type)) {
+			if (target_type.IsNullableType) {
 				return ImplicitNulableConversion (null, expr, target_type) != null;
 			}
 
@@ -706,7 +700,7 @@ namespace Mono.CSharp {
 			if (ImplicitNumericConversion (null, expr_type, target_type) != null)
 				return true;
 
-			if (ImplicitReferenceConversionExists (expr, target_type))
+			if (ImplicitReferenceConversionExists (expr_type, target_type))
 				return true;
 
 			if (ImplicitBoxingConversion (null, expr_type, target_type) != null)
@@ -717,23 +711,28 @@ namespace Mono.CSharp {
 			//
 			if (expr is IntConstant){
 				int value = ((IntConstant) expr).Value;
-
-				if (target_type == TypeManager.sbyte_type){
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					if (value >= SByte.MinValue && value <= SByte.MaxValue)
 						return true;
-				} else if (target_type == TypeManager.byte_type){
+					break;
+				case BuiltinTypeSpec.Type.Byte:
 					if (value >= 0 && value <= Byte.MaxValue)
 						return true;
-				} else if (target_type == TypeManager.short_type){
+					break;
+				case BuiltinTypeSpec.Type.Short:
 					if (value >= Int16.MinValue && value <= Int16.MaxValue)
 						return true;
-				} else if (target_type == TypeManager.ushort_type){
+					break;
+				case BuiltinTypeSpec.Type.UShort:
 					if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
 						return true;
-				} else if (target_type == TypeManager.uint32_type){
+					break;
+				case BuiltinTypeSpec.Type.UInt:
 					if (value >= 0)
 						return true;
-				} else if (target_type == TypeManager.uint64_type){
+					break;
+				case BuiltinTypeSpec.Type.ULong:
 					 //
 					 // we can optimize this case: a positive int32
 					 // always fits on a uint64.  But we need an opcode
@@ -741,10 +740,12 @@ namespace Mono.CSharp {
 					 //
 					if (value >= 0)
 						return true;
+
+					break;
 				}
 			}
 
-			if (expr is LongConstant && target_type == TypeManager.uint64_type){
+			if (expr is LongConstant && target_type.BuiltinType == BuiltinTypeSpec.Type.ULong){
 				//
 				// Try the implicit constant expression conversion
 				// from long to ulong, instead of a nice routine,
@@ -755,7 +756,7 @@ namespace Mono.CSharp {
 					return true;
 			}
 
-			if (expr is IntegralConstant && TypeManager.IsEnumType (target_type)) {
+			if (expr is IntegralConstant && target_type.IsEnum) {
 				var i = (IntegralConstant) expr;
 				//
 				// LAMESPEC: csc allows any constant like 0 values to be converted, including const float f = 0.0
@@ -774,12 +775,8 @@ namespace Mono.CSharp {
 			if (target_type.IsInterface && expr_type.ImplementsInterface (target_type, true))
 				return true;
 
-			if (target_type.IsPointer && expr_type.IsPointer && ((PointerContainer) target_type).Element.BuildinType == BuildinTypeSpec.Type.Void)
+			if (target_type.IsPointer && expr_type.IsPointer && ((PointerContainer) target_type).Element.Kind == MemberKind.Void)
 				return true;
-
-			// Conversion from __arglist to System.ArgIterator
-			if (expr_type == InternalType.Arglist)
-				return target_type == TypeManager.arg_iterator_type;
 
 			if (TypeSpecComparer.IsEqual (expr_type, target_type))
 				return true;
@@ -794,7 +791,7 @@ namespace Mono.CSharp {
 		public static TypeSpec FindMostEncompassedType (IEnumerable<TypeSpec> types)
 		{
 			TypeSpec best = null;
-			EmptyExpression expr = EmptyExpression.Grab ();
+			EmptyExpression expr;
 
 			foreach (TypeSpec t in types) {
 				if (best == null) {
@@ -802,12 +799,12 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				expr.SetType (t);
+				expr = new EmptyExpression (t);
 				if (ImplicitStandardConversionExists (expr, best))
 					best = t;
 			}
 
-			expr.SetType (best);
+			expr = new EmptyExpression (best);
 			foreach (TypeSpec t in types) {
 				if (best == t)
 					continue;
@@ -816,8 +813,6 @@ namespace Mono.CSharp {
 					break;
 				}
 			}
-
-			EmptyExpression.Release (expr);
 
 			return best;
 		}
@@ -836,15 +831,13 @@ namespace Mono.CSharp {
 			if (types.Count == 1)
 				return types [0];
 
-			EmptyExpression expr = EmptyExpression.Grab ();
-
 			foreach (TypeSpec t in types) {
 				if (best == null) {
 					best = t;
 					continue;
 				}
 
-				expr.SetType (best);
+				var expr = new EmptyExpression (best);
 				if (ImplicitStandardConversionExists (expr, t))
 					best = t;
 			}
@@ -852,14 +845,13 @@ namespace Mono.CSharp {
 			foreach (TypeSpec t in types) {
 				if (best == t)
 					continue;
-				expr.SetType (t);
+
+				var expr = new EmptyExpression (best);
 				if (!ImplicitStandardConversionExists (expr, best)) {
 					best = null;
 					break;
 				}
 			}
-
-			EmptyExpression.Release (expr);
 
 			return best;
 		}
@@ -934,16 +926,12 @@ namespace Mono.CSharp {
 			if (apply_explicit_conv_rules) {
 				var candidate_set = new List<TypeSpec> ();
 
-				EmptyExpression expr = EmptyExpression.Grab ();
-
-				foreach (TypeSpec ret_type in tgt_types_set){
-					expr.SetType (ret_type);
+				foreach (TypeSpec ret_type in tgt_types_set) {
+					var expr = new EmptyExpression (ret_type);
 
 					if (ImplicitStandardConversionExists (expr, target))
 						candidate_set.Add (ret_type);
 				}
-
-				EmptyExpression.Release (expr);
 
 				if (candidate_set.Count != 0)
 					return FindMostEncompassingType (candidate_set);
@@ -976,22 +964,10 @@ namespace Mono.CSharp {
 
 		static void FindApplicableUserDefinedConversionOperators (IList<MemberSpec> operators, Expression source, TypeSpec target, bool implicitOnly, ref List<MethodSpec> candidates)
 		{
-			//
-			// LAMESPEC: Undocumented IntPtr/UIntPtr conversions
-			// IntPtr -> uint uses int
-			// UIntPtr -> long uses ulong
-			//
-			if (source.Type == TypeManager.intptr_type) {
-				if (target == TypeManager.uint32_type)
-					target = TypeManager.int32_type;
-			} else if (source.Type == TypeManager.uintptr_type) {
-				if (target == TypeManager.int64_type)
-					target = TypeManager.uint64_type;
-			}
-
-			// Neither A nor B are interface-types
-			if (source.Type.IsInterface)
+			if (source.Type.IsInterface) {
+				// Neither A nor B are interface-types
 				return;
+			}
 
 			// For a conversion operator to be applicable, it must be possible
 			// to perform a standard conversion from the source type to
@@ -1018,15 +994,11 @@ namespace Mono.CSharp {
 
 				t = op.ReturnType;
 
-				// LAMESPEC: Exclude UIntPtr -> int conversion
-				if (t == TypeManager.uint32_type && source.Type == TypeManager.uintptr_type)
-					continue;
-
 				if (t.IsInterface)
 					continue;
 
 				if (target != t) {
-					if (TypeManager.IsNullableType (t))
+					if (t.IsNullableType)
 						t = Nullable.NullableInfo.GetUnderlyingType (t);
 
 					if (!ImplicitStandardConversionExists (new EmptyExpression (t), target)) {
@@ -1063,9 +1035,9 @@ namespace Mono.CSharp {
 			TypeSpec target_type = target;
 			Expression source_type_expr;
 
-			if (TypeManager.IsNullableType (source_type)) {
+			if (source_type.IsNullableType) {
 				// No implicit conversion S? -> T for non-reference types
-				if (implicitOnly && !TypeManager.IsReferenceType (target_type) && !TypeManager.IsNullableType (target_type))
+				if (implicitOnly && !TypeManager.IsReferenceType (target_type) && !target_type.IsNullableType)
 					return null;
 
 				source_type_expr = Nullable.Unwrap.Create (source);
@@ -1074,13 +1046,13 @@ namespace Mono.CSharp {
 				source_type_expr = source;
 			}
 
-			if (TypeManager.IsNullableType (target_type))
+			if (target_type.IsNullableType)
 				target_type = Nullable.NullableInfo.GetUnderlyingType (target_type);
 
 			// Only these containers can contain a user defined implicit or explicit operators
 			const MemberKind user_conversion_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.TypeParameter;
 
-			if ((source_type.Kind & user_conversion_kinds) != 0 && source_type != TypeManager.decimal_type) {
+			if ((source_type.Kind & user_conversion_kinds) != 0 && source_type.BuiltinType != BuiltinTypeSpec.Type.Decimal) {
 				bool declared_only = source_type.IsStruct;
 
 				var operators = MemberCache.GetUserOperator (source_type, Operator.OpType.Implicit, declared_only);
@@ -1096,7 +1068,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if ((target.Kind & user_conversion_kinds) != 0 && target_type != TypeManager.decimal_type) {
+			if ((target.Kind & user_conversion_kinds) != 0 && target_type.BuiltinType != BuiltinTypeSpec.Type.Decimal) {
 				bool declared_only = target.IsStruct || implicitOnly;
 
 				var operators = MemberCache.GetUserOperator (target_type, Operator.OpType.Implicit, declared_only);
@@ -1186,7 +1158,7 @@ namespace Mono.CSharp {
 				//
 				// User operator is of T?, no need to lift it
 				//
-				if (TypeManager.IsNullableType (t_x) && t_x == target)
+				if (t_x == target && t_x.IsNullableType)
 					return source;
 
 				source = implicitOnly ?
@@ -1201,7 +1173,7 @@ namespace Mono.CSharp {
 			// Source expression is of nullable type, lift the result in the case it's null and
 			// not nullable/lifted user operator is used
 			//
-			if (source_type_expr is Nullable.Unwrap && !TypeManager.IsNullableType (s_x) && (TypeManager.IsReferenceType (target) || target_type != target))
+			if (source_type_expr is Nullable.Unwrap && !s_x.IsNullableType && (TypeManager.IsReferenceType (target) || target_type != target))
 				source = new Nullable.Lifted (source, source_type_expr, target).Resolve (ec);
 			else if (target_type != target)
 				source = Nullable.Wrap.Create (source, target);
@@ -1260,7 +1232,7 @@ namespace Mono.CSharp {
 				//
 				// Only allow anonymous method conversions on post ISO_1
 				//
-				if (RootContext.Version != LanguageVersion.ISO_1){
+				if (ec.Module.Compiler.Settings.Version != LanguageVersion.ISO_1){
 					MethodGroupExpr mg = expr as MethodGroupExpr;
 					if (mg != null)
 						return ImplicitDelegateCreation.Create (
@@ -1272,25 +1244,20 @@ namespace Mono.CSharp {
 			Expression e;
 
 			if (expr_type == target_type) {
-				if (expr_type != InternalType.Null && expr_type != InternalType.AnonymousMethod)
+				if (expr_type != InternalType.NullLiteral && expr_type != InternalType.AnonymousMethod)
 					return expr;
 				return null;
 			}
 
-			if (expr_type == InternalType.Dynamic) {
+			if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				switch (target_type.Kind) {
 				case MemberKind.ArrayType:
 				case MemberKind.Class:
-					if (target_type == TypeManager.object_type)
+					if (target_type.BuiltinType == BuiltinTypeSpec.Type.Object)
 						return EmptyCast.Create (expr, target_type);
 
 					goto case MemberKind.Struct;
 				case MemberKind.Struct:
-					// TODO: Should really introduce MemberKind.Void
-					if (target_type == TypeManager.void_type)
-						return null;
-
-					goto case MemberKind.Enum;
 				case MemberKind.Delegate:
 				case MemberKind.Enum:
 				case MemberKind.Interface:
@@ -1303,7 +1270,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (TypeManager.IsNullableType (target_type))
+			if (target_type.IsNullableType)
 				return ImplicitNulableConversion (ec, expr, target_type);
 
 			//
@@ -1312,7 +1279,7 @@ namespace Mono.CSharp {
 			Constant c = expr as Constant;
 			if (c != null) {
 				try {
-					c = c.ConvertImplicitly (ec, target_type);
+					c = c.ConvertImplicitly (target_type);
 				} catch {
 					Console.WriteLine ("Conversion error happened in line {0}", loc);
 					throw;
@@ -1340,7 +1307,7 @@ namespace Mono.CSharp {
 				//
 				if (i.IsZeroInteger) {
 					// Recreate 0 literal to remove any collected conversions
-					return new EnumConstant (new IntLiteral (0, i.Location), target_type).Resolve (ec);
+					return new EnumConstant (new IntLiteral (ec.BuiltinTypes, 0, i.Location), target_type);
 				}
 			}
 
@@ -1354,14 +1321,14 @@ namespace Mono.CSharp {
 						if (expr_type == target_pc)
 							return expr;
 
-						if (target_pc.Element.BuildinType == BuildinTypeSpec.Type.Void)
+						if (target_pc.Element.Kind == MemberKind.Void)
 							return EmptyCast.Create (expr, target_type);
 
 						//return null;
 					}
 
-					if (expr_type == InternalType.Null)
-						return EmptyCast.Create (new NullPointer (loc), target_type);
+					if (expr_type == InternalType.NullLiteral)
+						return new NullPointer (target_type, loc);
 				}
 			}
 
@@ -1372,7 +1339,7 @@ namespace Mono.CSharp {
 					return am.Resolve (ec);
 			}
 
-			if (expr_type == InternalType.Arglist && target_type == TypeManager.arg_iterator_type)
+			if (expr_type == InternalType.Arglist && target_type == ec.Module.PredefinedTypes.ArgIterator.TypeSpec)
 				return expr;
 
 			if (TypeSpecComparer.IsEqual (expr_type, target_type)) {
@@ -1422,252 +1389,304 @@ namespace Mono.CSharp {
 		///   Int16->UIntPtr
 		///
 		/// </summary>
-		public static Expression ExplicitNumericConversion (Expression expr, TypeSpec target_type)
+		public static Expression ExplicitNumericConversion (ResolveContext rc, Expression expr, TypeSpec target_type)
 		{
-			TypeSpec expr_type = expr.Type;
-			TypeSpec real_target_type = target_type;
+			// Not all predefined explicit numeric conversion are
+			// defined here, for some of them (mostly IntPtr/UIntPtr) we
+			// defer to user-operator handling which is now perfect but
+			// works for now
+			//
+			// LAMESPEC: Undocumented IntPtr/UIntPtr conversions
+			// IntPtr -> uint uses int
+			// UIntPtr -> long uses ulong
+			//
 
-			if (expr_type == TypeManager.sbyte_type){
+			switch (expr.Type.BuiltinType) {
+			case BuiltinTypeSpec.Type.SByte:
 				//
 				// From sbyte to byte, ushort, uint, ulong, char, uintptr
 				//
-				if (real_target_type == TypeManager.byte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U1);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuiltinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U2);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuiltinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U4);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuiltinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_CH);
 
 				// One of the built-in conversions that belonged in the class library
-				if (real_target_type == TypeManager.uintptr_type){
-					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I1_U8);
-
-					return new OperatorCast (u8e, TypeManager.uintptr_type, true);
+				case BuiltinTypeSpec.Type.UIntPtr:
+					return new OperatorCast (new ConvCast (expr, rc.BuiltinTypes.ULong, ConvCast.Mode.I1_U8), target_type, target_type, true);
 				}
-			} else if (expr_type == TypeManager.byte_type){
+				break;
+			case BuiltinTypeSpec.Type.Byte:
 				//
 				// From byte to sbyte and char
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U1_I1);
-				if (real_target_type == TypeManager.char_type)
+				case BuiltinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U1_CH);
-			} else if (expr_type == TypeManager.short_type){
+				}
+				break;
+			case BuiltinTypeSpec.Type.Short:
 				//
 				// From short to sbyte, byte, ushort, uint, ulong, char, uintptr
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U1);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuiltinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U2);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuiltinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U4);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuiltinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_CH);
 
 				// One of the built-in conversions that belonged in the class library
-				if (real_target_type == TypeManager.uintptr_type){
-					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I2_U8);
-
-					return new OperatorCast (u8e, TypeManager.uintptr_type, true);
+				case BuiltinTypeSpec.Type.UIntPtr:
+					return new OperatorCast (new ConvCast (expr, rc.BuiltinTypes.ULong, ConvCast.Mode.I2_U8), target_type, target_type, true);
 				}
-			} else if (expr_type == TypeManager.ushort_type){
+				break;
+			case BuiltinTypeSpec.Type.UShort:
 				//
 				// From ushort to sbyte, byte, short, char
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U2_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U2_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuiltinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U2_I2);
-				if (real_target_type == TypeManager.char_type)
+				case BuiltinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U2_CH);
-			} else if (expr_type == TypeManager.int32_type){
+				}
+				break;
+			case BuiltinTypeSpec.Type.Int:
 				//
 				// From int to sbyte, byte, short, ushort, uint, ulong, char, uintptr
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuiltinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuiltinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U2);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuiltinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U4);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuiltinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_CH);
 
 				// One of the built-in conversions that belonged in the class library
-				if (real_target_type == TypeManager.uintptr_type){
-					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I2_U8);
-
-					return new OperatorCast (u8e, TypeManager.uintptr_type, true);
+				case BuiltinTypeSpec.Type.UIntPtr:
+					return new OperatorCast (new ConvCast (expr, rc.BuiltinTypes.ULong, ConvCast.Mode.I2_U8), target_type, target_type, true);
 				}
-			} else if (expr_type == TypeManager.uint32_type){
+				break;
+			case BuiltinTypeSpec.Type.UInt:
 				//
 				// From uint to sbyte, byte, short, ushort, int, char
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuiltinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuiltinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_U2);
-				if (real_target_type == TypeManager.int32_type)
+				case BuiltinTypeSpec.Type.Int:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_I4);
-				if (real_target_type == TypeManager.char_type)
+				case BuiltinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_CH);
-			} else if (expr_type == TypeManager.int64_type){
+				}
+				break;
+			case BuiltinTypeSpec.Type.Long:
 				//
 				// From long to sbyte, byte, short, ushort, int, uint, ulong, char
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuiltinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuiltinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U2);
-				if (real_target_type == TypeManager.int32_type)
+				case BuiltinTypeSpec.Type.Int:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I4);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuiltinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U4);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuiltinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_CH);
-			} else if (expr_type == TypeManager.uint64_type){
+				}
+				break;
+			case BuiltinTypeSpec.Type.ULong:
 				//
 				// From ulong to sbyte, byte, short, ushort, int, uint, long, char
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuiltinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuiltinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_U2);
-				if (real_target_type == TypeManager.int32_type)
+				case BuiltinTypeSpec.Type.Int:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I4);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuiltinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_U4);
-				if (real_target_type == TypeManager.int64_type)
+				case BuiltinTypeSpec.Type.Long:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I8);
-				if (real_target_type == TypeManager.char_type)
+				case BuiltinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_CH);
 
 				// One of the built-in conversions that belonged in the class library
-				if (real_target_type == TypeManager.intptr_type){
-					return new OperatorCast (EmptyCast.Create (expr, TypeManager.int64_type),
-								 TypeManager.intptr_type, true);
+				case BuiltinTypeSpec.Type.IntPtr:
+					return new OperatorCast (EmptyCast.Create (expr, rc.BuiltinTypes.Long), target_type, true);
 				}
-			} else if (expr_type == TypeManager.char_type){
+				break;
+			case BuiltinTypeSpec.Type.Char:
 				//
 				// From char to sbyte, byte, short
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.CH_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.CH_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuiltinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.CH_I2);
-			} else if (expr_type == TypeManager.float_type){
+				}
+				break;
+			case BuiltinTypeSpec.Type.Float:
 				//
 				// From float to sbyte, byte, short,
 				// ushort, int, uint, long, ulong, char
 				// or decimal
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuiltinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuiltinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U2);
-				if (real_target_type == TypeManager.int32_type)
+				case BuiltinTypeSpec.Type.Int:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I4);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuiltinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U4);
-				if (real_target_type == TypeManager.int64_type)
+				case BuiltinTypeSpec.Type.Long:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_I8);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuiltinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R4_CH);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr, true);
-			} else if (expr_type == TypeManager.double_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return new OperatorCast (expr, target_type, true);
+				}
+				break;
+			case BuiltinTypeSpec.Type.Double:
 				//
 				// From double to sbyte, byte, short,
 				// ushort, int, uint, long, ulong,
 				// char, float or decimal
 				//
-				if (real_target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I1);
-				if (real_target_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.Byte:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U1);
-				if (real_target_type == TypeManager.short_type)
+				case BuiltinTypeSpec.Type.Short:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I2);
-				if (real_target_type == TypeManager.ushort_type)
+				case BuiltinTypeSpec.Type.UShort:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U2);
-				if (real_target_type == TypeManager.int32_type)
+				case BuiltinTypeSpec.Type.Int:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I4);
-				if (real_target_type == TypeManager.uint32_type)
+				case BuiltinTypeSpec.Type.UInt:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U4);
-				if (real_target_type == TypeManager.int64_type)
+				case BuiltinTypeSpec.Type.Long:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_I8);
-				if (real_target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U8);
-				if (real_target_type == TypeManager.char_type)
+				case BuiltinTypeSpec.Type.Char:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_CH);
-				if (real_target_type == TypeManager.float_type)
+				case BuiltinTypeSpec.Type.Float:
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr, true);
-			} else if (expr_type == TypeManager.uintptr_type){
+				case BuiltinTypeSpec.Type.Decimal:
+					return new OperatorCast (expr, target_type, true);
+				}
+				break;
+			case BuiltinTypeSpec.Type.UIntPtr:
 				//
 				// Various built-in conversions that belonged in the class library
 				//
 				// from uintptr to sbyte, short, int32
 				//
-				if (real_target_type == TypeManager.sbyte_type){
-					Expression uint32e = new OperatorCast (expr, TypeManager.uint32_type, true);
-					return new ConvCast (uint32e, TypeManager.sbyte_type, ConvCast.Mode.U4_I1);
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
+					return new ConvCast (new OperatorCast (expr, expr.Type, rc.BuiltinTypes.UInt, true), target_type, ConvCast.Mode.U4_I1);
+				case BuiltinTypeSpec.Type.Short:
+					return new ConvCast (new OperatorCast (expr, expr.Type, rc.BuiltinTypes.UInt, true), target_type, ConvCast.Mode.U4_I2);
+				case BuiltinTypeSpec.Type.Int:
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuiltinTypes.UInt, true), target_type);
+				case BuiltinTypeSpec.Type.UInt:
+					return new OperatorCast (expr, expr.Type, target_type, true);
+				case BuiltinTypeSpec.Type.Long:
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuiltinTypes.ULong, true), target_type);
 				}
-				if (real_target_type == TypeManager.short_type){
-					Expression uint32e = new OperatorCast (expr, TypeManager.uint32_type, true);
-					return new ConvCast (uint32e, TypeManager.sbyte_type, ConvCast.Mode.U4_I2);
+				break;
+			case BuiltinTypeSpec.Type.IntPtr:
+				if (target_type.BuiltinType == BuiltinTypeSpec.Type.UInt)
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuiltinTypes.Int, true), target_type);
+				if (target_type.BuiltinType == BuiltinTypeSpec.Type.ULong)
+					return EmptyCast.Create (new OperatorCast (expr, expr.Type, rc.BuiltinTypes.Long, true), target_type);
+				
+				break;
+			case BuiltinTypeSpec.Type.Decimal:
+				// From decimal to sbyte, byte, short,
+				// ushort, int, uint, long, ulong, char,
+				// float, or double
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
+				case BuiltinTypeSpec.Type.Byte:
+				case BuiltinTypeSpec.Type.Short:
+				case BuiltinTypeSpec.Type.UShort:
+				case BuiltinTypeSpec.Type.Int:
+				case BuiltinTypeSpec.Type.UInt:
+				case BuiltinTypeSpec.Type.Long:
+				case BuiltinTypeSpec.Type.ULong:
+				case BuiltinTypeSpec.Type.Char:
+				case BuiltinTypeSpec.Type.Float:
+				case BuiltinTypeSpec.Type.Double:
+					return new OperatorCast (expr, expr.Type, target_type, true);
 				}
-				if (real_target_type == TypeManager.int32_type){
-					return EmptyCast.Create (new OperatorCast (expr, TypeManager.uint32_type, true),
-							      TypeManager.int32_type);
-				}
-			} else if (expr_type == TypeManager.intptr_type){
-				if (real_target_type == TypeManager.uint64_type){
-					return EmptyCast.Create (new OperatorCast (expr, TypeManager.int64_type, true),
-							      TypeManager.uint64_type);
-				}
-			} else if (expr_type == TypeManager.decimal_type) {
-				return new CastFromDecimal (expr, target_type).Resolve ();
+
+				break;
 			}
+
 			return null;
 		}
 
@@ -1695,7 +1714,7 @@ namespace Mono.CSharp {
 			//
 			// From object to a generic parameter
 			//
-			if (source_type == TypeManager.object_type && TypeManager.IsGenericParameter (target_type))
+			if (source_type.BuiltinType == BuiltinTypeSpec.Type.Object && TypeManager.IsGenericParameter (target_type))
 				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
@@ -1704,18 +1723,18 @@ namespace Mono.CSharp {
 			if (source_type.Kind == MemberKind.TypeParameter)
 				return ExplicitTypeParameterConversion (source, source_type, target_type);
 
-			bool target_is_value_type = TypeManager.IsStruct (target_type) || TypeManager.IsEnumType (target_type);
+			bool target_is_value_type = target_type.Kind == MemberKind.Struct || target_type.Kind == MemberKind.Enum;
 
 			//
 			// Unboxing conversion from System.ValueType to any non-nullable-value-type
 			//
-			if (source_type == TypeManager.value_type && target_is_value_type)
+			if (source_type.BuiltinType == BuiltinTypeSpec.Type.ValueType && target_is_value_type)
 				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
 			// From object or dynamic to any reference type or value type (unboxing)
 			//
-			if (source_type == TypeManager.object_type || source_type == InternalType.Dynamic) {
+			if (source_type.BuiltinType == BuiltinTypeSpec.Type.Object || source_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				if (target_type.IsPointer)
 					return null;
 
@@ -1736,7 +1755,7 @@ namespace Mono.CSharp {
 			// From any interface-type S to to any class type T, provided T is not
 			// sealed, or provided T implements S.
 			//
-			if (source_type.IsInterface) {
+			if (source_type.Kind == MemberKind.Interface) {
 				if (!target_type.IsSealed || target_type.ImplementsInterface (source_type, true)) {
 					if (source == null)
 						return EmptyExpression.Null;
@@ -1766,7 +1785,7 @@ namespace Mono.CSharp {
 					//
 					// From System.Array to any array-type
 					//
-					if (source_type == TypeManager.array_type)
+					if (source_type.BuiltinType == BuiltinTypeSpec.Type.Array)
 						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 					//
@@ -1815,7 +1834,7 @@ namespace Mono.CSharp {
 			//
 			// From System delegate to any delegate-type
 			//
-			if (source_type == TypeManager.delegate_type && TypeManager.IsDelegateType (target_type))
+			if (source_type.BuiltinType == BuiltinTypeSpec.Type.Delegate && TypeManager.IsDelegateType (target_type))
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 			//
@@ -1837,7 +1856,7 @@ namespace Mono.CSharp {
 						//
 						//If TP is covariant, an implicit or explicit identity or reference conversion is required
 						//
-						if (ImplicitReferenceConversionExists (new EmptyExpression (targs_src[i]), targs_dst[i]))
+						if (ImplicitReferenceConversionExists (targs_src[i], targs_dst[i]))
 							continue;
 
 						if (ExplicitReferenceConversionExists (targs_src[i], targs_dst[i]))
@@ -1885,12 +1904,12 @@ namespace Mono.CSharp {
 					ne = ImplicitNumericConversion (underlying, real_target);
 
 				if (ne == null)
-					ne = ExplicitNumericConversion (underlying, real_target);
+					ne = ExplicitNumericConversion (ec, underlying, real_target);
 
 				//
 				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
 				//
-				if (ne == null && (real_target == TypeManager.intptr_type || real_target == TypeManager.uintptr_type))
+				if (ne == null && (real_target.BuiltinType == BuiltinTypeSpec.Type.IntPtr || real_target.BuiltinType == BuiltinTypeSpec.Type.UIntPtr))
 					ne = ExplicitUserConversion (ec, underlying, real_target, loc);
 
 				return ne != null ? EmptyCast.Create (ne, target_type) : null;
@@ -1900,7 +1919,7 @@ namespace Mono.CSharp {
 				//
 				// System.Enum can be unboxed to any enum-type
 				//
-				if (expr_type == TypeManager.enum_type)
+				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Enum)
 					return new UnboxCast (expr, target_type);
 
 				TypeSpec real_target = TypeManager.IsEnumType (target_type) ? EnumSpec.GetUnderlyingType (target_type) : target_type;
@@ -1912,20 +1931,20 @@ namespace Mono.CSharp {
 				if (ne != null)
 					return EmptyCast.Create (ne, target_type);
 
-				ne = ExplicitNumericConversion (expr, real_target);
+				ne = ExplicitNumericConversion (ec, expr, real_target);
 				if (ne != null)
 					return EmptyCast.Create (ne, target_type);
 
 				//
 				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
 				//
-				if (expr_type == TypeManager.intptr_type || expr_type == TypeManager.uintptr_type) {
+				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.IntPtr || expr_type.BuiltinType == BuiltinTypeSpec.Type.UIntPtr) {
 					ne = ExplicitUserConversion (ec, expr, real_target, loc);
 					if (ne != null)
 						return ExplicitConversionCore (ec, ne, target_type, loc);
 				}
 			} else {
-				ne = ExplicitNumericConversion (expr, target_type);
+				ne = ExplicitNumericConversion (ec, expr, target_type);
 				if (ne != null)
 					return ne;
 			}
@@ -1935,7 +1954,7 @@ namespace Mono.CSharp {
 			// from Null to a ValueType, and ExplicitReference wont check against
 			// null literal explicitly
 			//
-			if (expr_type != InternalType.Null) {
+			if (expr_type != InternalType.NullLiteral) {
 				ne = ExplicitReferenceConversion (expr, expr_type, target_type);
 				if (ne != null)
 					return ne;
@@ -1958,40 +1977,44 @@ namespace Mono.CSharp {
 				if (expr_type.IsPointer)
 					return EmptyCast.Create (expr, target_type);
 
-				if (expr_type == TypeManager.sbyte_type ||
-					expr_type == TypeManager.short_type ||
-					expr_type == TypeManager.int32_type)
+				switch (expr_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
+				case BuiltinTypeSpec.Type.Short:
+				case BuiltinTypeSpec.Type.Int:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I);
 
-				if (expr_type == TypeManager.ushort_type ||
-					expr_type == TypeManager.uint32_type ||
-					expr_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.UShort:
+				case BuiltinTypeSpec.Type.UInt:
+				case BuiltinTypeSpec.Type.Byte:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U);
 
-				if (expr_type == TypeManager.int64_type)
+				case BuiltinTypeSpec.Type.Long:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I8_I);
 
-				if (expr_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I);
+				}
 			}
 
 			if (expr_type.IsPointer){
-				if (target_type == TypeManager.sbyte_type)
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.SByte:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
-				if (target_type == TypeManager.byte_type)
+				case BuiltinTypeSpec.Type.Byte:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
-				if (target_type == TypeManager.short_type)
+				case BuiltinTypeSpec.Type.Short:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
-				if (target_type == TypeManager.ushort_type)
+				case BuiltinTypeSpec.Type.UShort:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
-				if (target_type == TypeManager.int32_type)
+				case BuiltinTypeSpec.Type.Int:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
-				if (target_type == TypeManager.uint32_type)
+				case BuiltinTypeSpec.Type.UInt:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
-				if (target_type == TypeManager.int64_type)
+				case BuiltinTypeSpec.Type.Long:
 					return new ConvCast (expr, target_type, ConvCast.Mode.I_I8);
-				if (target_type == TypeManager.uint64_type)
+				case BuiltinTypeSpec.Type.ULong:
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				}
 			}
 			return null;
 		}
@@ -2010,7 +2033,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			ne = ExplicitNumericConversion (expr, target_type);
+			ne = ExplicitNumericConversion (ec, expr, target_type);
 			if (ne != null)
 				return ne;
 
@@ -2018,7 +2041,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			if (ec.IsUnsafe && expr.Type.IsPointer && target_type.IsPointer && ((PointerContainer)expr.Type).Element.BuildinType == BuildinTypeSpec.Type.Void)
+			if (ec.IsUnsafe && expr.Type.IsPointer && target_type.IsPointer && ((PointerContainer)expr.Type).Element.Kind == MemberKind.Void)
 				return EmptyCast.Create (expr, target_type);
 
 			expr.Error_ValueCannotBeConverted (ec, l, target_type, true);
@@ -2038,10 +2061,10 @@ namespace Mono.CSharp {
 				// Don't eliminate explicit precission casts
 				//
 				if (e == expr) {
-					if (target_type == TypeManager.float_type)
+					if (target_type.BuiltinType == BuiltinTypeSpec.Type.Float)
 						return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 					
-					if (target_type == TypeManager.double_type)
+					if (target_type.BuiltinType == BuiltinTypeSpec.Type.Double)
 						return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				}
 					
@@ -2049,25 +2072,27 @@ namespace Mono.CSharp {
 			}
 
 			TypeSpec expr_type = expr.Type;
-			if (TypeManager.IsNullableType (target_type)) {
-				if (TypeManager.IsNullableType (expr_type)) {
-					TypeSpec target = Nullable.NullableInfo.GetUnderlyingType (target_type);
+			if (target_type.IsNullableType) {
+				TypeSpec target;
+
+				if (expr_type.IsNullableType) {
+					target = Nullable.NullableInfo.GetUnderlyingType (target_type);
 					Expression unwrap = Nullable.Unwrap.Create (expr);
 					e = ExplicitConversion (ec, unwrap, target, expr.Location);
 					if (e == null)
 						return null;
 
 					return new Nullable.Lifted (e, unwrap, target_type).Resolve (ec);
-				} else if (expr_type == TypeManager.object_type) {
-					return new UnboxCast (expr, target_type);
-				} else {
-					TypeSpec target = TypeManager.GetTypeArguments (target_type) [0];
-
-					e = ExplicitConversionCore (ec, expr, target, loc);
-					if (e != null)
-						return Nullable.Wrap.Create (e, target_type);
 				}
-			} else if (TypeManager.IsNullableType (expr_type)) {
+				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
+					return new UnboxCast (expr, target_type);
+				}
+
+				target = TypeManager.GetTypeArguments (target_type) [0];
+				e = ExplicitConversionCore (ec, expr, target, loc);
+				if (e != null)
+					return Nullable.Wrap.Create (e, target_type);
+			} else if (expr_type.IsNullableType) {
 				e = ImplicitBoxingConversion (expr, Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type);
 				if (e != null)
 					return e;

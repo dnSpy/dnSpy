@@ -8,11 +8,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 
 namespace ICSharpCode.NRefactory.VB.Visitors
 {
-	public class CodeDomVisitor : AbstractDomVisitor
+	public class CodeDomVisitor : AbstractAstVisitor
 	{
 		Stack<CodeNamespace>  namespaceDeclarations = new Stack<CodeNamespace>();
 		Stack<CodeTypeDeclaration> typeDeclarations = new Stack<CodeTypeDeclaration>();
@@ -174,7 +174,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			return attr;
 		}
 		
-		#region ICSharpCode.SharpRefactory.Parser.IDomVisitor interface implementation
+		#region ICSharpCode.SharpRefactory.Parser.IAstVisitor interface implementation
 		public override object VisitCompilationUnit(CompilationUnit compilationUnit, object data)
 		{
 			if (compilationUnit == null) {

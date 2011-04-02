@@ -3,11 +3,11 @@
 
 using System;
 using ICSharpCode.NRefactory.VB.Parser;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 
 namespace ICSharpCode.NRefactory.VB.PrettyPrinter
 {
-	public interface IOutputDomVisitor : IDomVisitor
+	public interface IOutputDomVisitor : IAstVisitor
 	{
 		event Action<INode> BeforeNodeVisit;
 		event Action<INode> AfterNodeVisit;

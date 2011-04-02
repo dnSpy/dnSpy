@@ -2,10 +2,10 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using NUnit.Framework;
 
-namespace ICSharpCode.NRefactory.VB.Tests.Dom
+namespace ICSharpCode.NRefactory.VB.Tests.Ast
 {
 	[TestFixture]
 	public class TypeDeclarationTests

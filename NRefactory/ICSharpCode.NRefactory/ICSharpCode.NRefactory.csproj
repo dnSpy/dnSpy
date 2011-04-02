@@ -15,7 +15,6 @@
     <NoStdLib>False</NoStdLib>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1591,0618</NoWarn>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA1026;-Microsoft.Security#CA2104</CodeAnalysisRules>
   </PropertyGroup>
@@ -41,16 +40,11 @@
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>Full</DebugType>
-    <Optimize>false</Optimize>
     <WarningLevel>4</WarningLevel>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>None</DebugType>
-    <Optimize>true</Optimize>
     <WarningLevel>4</WarningLevel>
-    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -164,8 +158,6 @@
     <Compile Include="CSharp\Ast\TypeMembers\PropertyDeclaration.cs" />
     <Compile Include="CSharp\Ast\TypeMembers\VariableInitializer.cs" />
     <Compile Include="CSharp\Formatter\CSharpFormattingPolicy.cs" />
-    <Compile Include="CSharp\Formatter\DomIndentationVisitor.cs" />
-    <Compile Include="CSharp\Formatter\DomSpacingVisitor.cs" />
     <Compile Include="CSharp\Formatter\Indent.cs" />
     <Compile Include="CSharp\OutputVisitor\InsertParenthesesVisitor.cs" />
     <Compile Include="CSharp\OutputVisitor\IOutputFormatter.cs" />
@@ -351,15 +343,22 @@
     <Compile Include="CSharp\Parser\mcs\reflection.cs" />
     <Compile Include="CSharp\Ast\Statements\DoWhileStatement.cs" />
     <Compile Include="CSharp\Ast\Statements\YieldBreakStatement.cs" />
+    <Compile Include="CSharp\Ast\Expressions\EmptyExpression.cs" />
+    <Compile Include="CSharp\Formatter\AstFormattingVisitor.cs" />
+    <Compile Include="CSharp\Formatter\ITextEditorAdapter.cs" />
+    <Compile Include="CSharp\Formatter\Change.cs" />
+    <Compile Include="CSharp\Ast\TypeMembers\FixedFieldDeclaration.cs" />
+    <Compile Include="CSharp\Ast\TypeMembers\FixedVariableInitializer.cs" />
+    <Compile Include="CSharp\Ast\GeneralScope\ExternAliasDeclaration.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CSharp\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CSharp\Analysis" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

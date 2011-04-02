@@ -3,14 +3,14 @@
 
 using System;
 using System.Collections.Generic;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 
 namespace ICSharpCode.NRefactory.VB.Visitors
 {
 	/// <summary>
 	/// Prefixes the names of the specified fields with the prefix and replaces the use.
 	/// </summary>
-	public class PrefixFieldsVisitor : AbstractDomVisitor
+	public class PrefixFieldsVisitor : AbstractAstVisitor
 	{
 		List<VariableDeclaration> fields;
 		List<string> curBlock = new List<string>();

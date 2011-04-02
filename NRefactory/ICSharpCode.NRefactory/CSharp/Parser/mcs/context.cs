@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 #if STATIC
 using IKVM.Reflection.Emit;
@@ -24,7 +25,7 @@ namespace Mono.CSharp
 	// Implemented by elements which can act as independent contexts
 	// during resolve phase. Used mostly for lookups.
 	//
-	public interface IMemberContext
+	public interface IMemberContext : IModuleContext
 	{
 		//
 		// A scope type context, it can be inflated for generic types
@@ -48,16 +49,17 @@ namespace Mono.CSharp
 		bool IsUnsafe { get; }
 		bool IsStatic { get; }
 		bool HasUnresolvedConstraints { get; }
-		ModuleContainer Module { get; }
 
 		string GetSignatureForError ();
 
 		IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope);
 		FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104);
 		FullNamedExpression LookupNamespaceAlias (string name);
+	}
 
-		// TODO: It has been replaced by module
-		CompilerContext Compiler { get; }
+	public interface IModuleContext
+	{
+		ModuleContainer Module { get; }
 	}
 
 	//
@@ -352,7 +354,7 @@ namespace Mono.CSharp
 			//
 			// The default setting comes from the command line option
 			//
-			if (RootContext.Checked)
+			if (mc.Module.Compiler.Settings.Checked)
 				flags |= Options.CheckedScope;
 
 			//
@@ -367,8 +369,12 @@ namespace Mono.CSharp
 			flags |= options;
 		}
 
-		public CompilerContext Compiler {
-			get { return MemberContext.Compiler; }
+		#region Properties
+
+		public BuiltinTypes BuiltinTypes {
+			get {
+				return MemberContext.Module.Compiler.BuiltinTypes;
+			}
 		}
 
 		public virtual ExplicitBlock ConstructorBlock {
@@ -413,7 +419,34 @@ namespace Mono.CSharp
 		}
 
 		public bool IsInProbingMode {
-			get { return (flags & Options.ProbingMode) != 0; }
+			get {
+				return (flags & Options.ProbingMode) != 0;
+			}
+		}
+
+		public bool IsObsolete {
+			get {
+				// Disables obsolete checks when probing is on
+				return MemberContext.IsObsolete;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				return MemberContext.IsStatic;
+			}
+		}
+
+		public bool IsUnsafe {
+			get {
+				return HasSet (Options.UnsafeScope) || MemberContext.IsUnsafe;
+			}
+		}
+
+		public bool IsRuntimeBinder {
+			get {
+				return Module.Compiler.IsRuntimeBinder;
+			}
 		}
 
 		public bool IsVariableCapturingRequired {
@@ -431,6 +464,14 @@ namespace Mono.CSharp
 		public bool OmitStructFlowAnalysis {
 			get { return (flags & Options.OmitStructFlowAnalysis) != 0; }
 		}
+
+		public Report Report {
+			get {
+				return Module.Compiler.Report;
+			}
+		}
+
+		#endregion
 
 		public bool MustCaptureVariable (INamedBlockVariable local)
 		{
@@ -455,11 +496,6 @@ namespace Mono.CSharp
 			return (this.flags & options) != 0;
 		}
 
-		public Report Report {
-			get {
-				return Compiler.Report;
-			}
-		}
 
 		// Temporarily set all the given flags to the given value.  Should be used in an 'using' statement
 		public FlagsHandle Set (Options options)
@@ -477,21 +513,6 @@ namespace Mono.CSharp
 		public string GetSignatureForError ()
 		{
 			return MemberContext.GetSignatureForError ();
-		}
-
-		public bool IsObsolete {
-			get {
-				// Disables obsolete checks when probing is on
-				return MemberContext.IsObsolete;
-			}
-		}
-
-		public bool IsStatic {
-			get { return MemberContext.IsStatic; }
-		}
-
-		public bool IsUnsafe {
-			get { return HasSet (Options.UnsafeScope) || MemberContext.IsUnsafe; }
 		}
 
 		public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
@@ -557,24 +578,35 @@ namespace Mono.CSharp
 	//
 	public class CompilerContext
 	{
-		readonly Report report;
-		readonly BuildinTypes buildin_types;
+		static readonly TimeReporter DisabledTimeReporter = new TimeReporter (false);
 
-		public CompilerContext (Report report)
+		readonly Report report;
+		readonly BuiltinTypes builtin_types;
+		readonly CompilerSettings settings;
+
+		Dictionary<string, SourceFile> all_source_files;
+
+		public CompilerContext (CompilerSettings settings, Report report)
 		{
+			this.settings = settings;
 			this.report = report;
-			this.buildin_types = new BuildinTypes ();
+			this.builtin_types = new BuiltinTypes ();
+			this.TimeReporter = DisabledTimeReporter;
 		}
 
 		#region Properties
 
-		public BuildinTypes BuildinTypes {
+		public BuiltinTypes BuiltinTypes {
 			get {
-				return buildin_types;
+				return builtin_types;
 			}
 		}
 
-		public bool IsRuntimeBinder { get; set; }
+		// Used for special handling of runtime dynamic context mostly
+		// by error reporting but also by member accessibility checks
+		public bool IsRuntimeBinder {
+			get; set;
+		}
 
 		public Report Report {
 			get {
@@ -582,9 +614,51 @@ namespace Mono.CSharp
 			}
 		}
 
-		internal TimeReporter TimeReporter { get; set; }
+		public CompilerSettings Settings {
+			get {
+				return settings;
+			}
+		}
+
+		public List<CompilationSourceFile> SourceFiles {
+			get {
+				return settings.SourceFiles;
+			}
+		}
+
+		internal TimeReporter TimeReporter {
+			get; set;
+		}
 
 		#endregion
+
+		//
+		// This is used when we encounter a #line preprocessing directive during parsing
+		// to register additional source file names
+		//
+		public SourceFile LookupFile (CompilationSourceFile comp_unit, string name)
+		{
+			if (all_source_files == null) {
+				all_source_files = new Dictionary<string, SourceFile> ();
+				foreach (var source in SourceFiles)
+					all_source_files[source.FullPathName] = source;
+			}
+
+			string path;
+			if (!Path.IsPathRooted (name)) {
+				string root = Path.GetDirectoryName (comp_unit.FullPathName);
+				path = Path.Combine (root, name);
+			} else
+				path = name;
+
+			SourceFile retval;
+			if (all_source_files.TryGetValue (path, out retval))
+				return retval;
+
+			retval = Location.AddFile (name, path);
+			all_source_files.Add (path, retval);
+			return retval;
+		}
 	}
 
 	//

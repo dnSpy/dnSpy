@@ -591,11 +591,41 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		protected internal abstract bool DoMatch(AstNode other, Match match);
 		
-		internal virtual bool DoMatchCollection(Role role, AstNode pos, Match match, Stack<Pattern.PossibleMatch> backtrackingStack)
+		internal virtual bool DoMatchCollection (Role role, AstNode pos, Match match, Stack<Pattern.PossibleMatch> backtrackingStack)
 		{
-			return DoMatch(pos, match);
+			return DoMatch (pos, match);
 		}
 		#endregion
+		
+		public AstNode GetNextNode ()
+		{
+			if (NextSibling != null)
+				return NextSibling;
+			if (Parent != null)
+				return Parent.GetNextNode ();
+			return null;
+		}
+
+		public AstNode GetPrevNode ()
+		{
+			if (PrevSibling != null)
+				return PrevSibling;
+			if (Parent != null)
+				return Parent.GetPrevNode ();
+			return null;
+		}
+		
+		// filters all non c# nodes (comments, white spaces or pre processor directives)
+		public AstNode GetCSharpNodeBefore (AstNode node)
+		{
+			var n = node.PrevSibling;
+			while (n != null) {
+				if (n.Role != Roles.Comment)
+					return n;
+				n = n.GetPrevNode ();
+			}
+			return null;
+		}
 		
 		// the Root role must be available when creating the null nodes, so we can't put it in the Roles class
 		static readonly Role<AstNode> RootRole = new Role<AstNode>("Root");
