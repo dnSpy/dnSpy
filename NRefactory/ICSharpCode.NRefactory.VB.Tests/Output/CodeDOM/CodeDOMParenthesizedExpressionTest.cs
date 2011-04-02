@@ -3,7 +3,7 @@
 
 using System;
 using System.CodeDom;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Visitors;
 using NUnit.Framework;
 

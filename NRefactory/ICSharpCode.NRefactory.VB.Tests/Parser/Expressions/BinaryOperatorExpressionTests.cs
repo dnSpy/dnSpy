@@ -5,10 +5,10 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using ICSharpCode.NRefactory.VB.Parser;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.PrettyPrinter;
 
-namespace ICSharpCode.NRefactory.VB.Tests.Dom
+namespace ICSharpCode.NRefactory.VB.Tests.Ast
 {
 	[TestFixture]
 	public class BinaryOperatorExpressionTests

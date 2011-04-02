@@ -46,11 +46,11 @@
     <Compile Include="VBEditDialog.Designer.cs">
       <DependentUpon>VBEditDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="VBDomView.cs">
+    <Compile Include="VBAstView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="VBDomView.Designer.cs">
-      <DependentUpon>VBDomView.cs</DependentUpon>
+    <Compile Include="VBAstView.Designer.cs">
+      <DependentUpon>VBAstView.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -81,8 +81,8 @@
     <EmbeddedResource Include="VBEditDialog.resx">
       <DependentUpon>VBEditDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VBDomView.resx">
-      <DependentUpon>VBDomView.cs</DependentUpon>
+    <EmbeddedResource Include="VBAstView.resx">
+      <DependentUpon>VBAstView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

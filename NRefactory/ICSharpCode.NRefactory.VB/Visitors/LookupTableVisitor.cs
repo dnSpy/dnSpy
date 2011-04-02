@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 
 namespace ICSharpCode.NRefactory.VB.Visitors
 {
@@ -35,7 +35,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 	}
 	
-	public sealed class LookupTableVisitor : AbstractDomVisitor
+	public sealed class LookupTableVisitor : AbstractAstVisitor
 	{
 		Dictionary<string, List<LocalLookupVariable>> variables;
 		
@@ -91,7 +91,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			}
 		}
 		
-		public override object VisitCompilationUnit (ICSharpCode.NRefactory.VB.Dom.CompilationUnit compilationUnit, object data)
+		public override object VisitCompilationUnit (ICSharpCode.NRefactory.VB.Ast.CompilationUnit compilationUnit, object data)
 		{
 			variables.Clear ();
 			return base.VisitCompilationUnit (compilationUnit, data);

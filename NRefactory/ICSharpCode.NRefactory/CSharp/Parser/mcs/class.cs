@@ -243,11 +243,6 @@ namespace Mono.CSharp {
 			this.PartialContainer = this;
 		}
 
-		public override void Accept (StructuralVisitor visitor)
-		{
-			base.Accept (visitor);
-		}
-
 		List<MemberCore> orderedAllMembers = new List<MemberCore> ();
 		public List<MemberCore> OrderedAllMembers {
 			get {
@@ -265,7 +260,7 @@ namespace Mono.CSharp {
 						// Switch to inflated version as it's used by all expressions
 						//
 						var targs = CurrentTypeParameters == null ? TypeSpec.EmptyTypes : CurrentTypeParameters.Select (l => l.Type).ToArray ();
-						current_type = spec.MakeGenericType (targs);
+						current_type = spec.MakeGenericType (this, targs);
 					} else {
 						current_type = spec;
 					}
@@ -323,6 +318,11 @@ namespace Mono.CSharp {
 
 		#endregion
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+		
 		public bool AddMember (MemberCore symbol)
 		{
 			return AddToContainer (symbol, symbol.MemberName.Basename);
@@ -338,7 +338,7 @@ namespace Mono.CSharp {
 			return AddToContainer (ds, ds.Basename);
 		}
 
-		protected virtual void RemoveMemberType (DeclSpace ds)
+		protected virtual void RemoveMemberType (TypeContainer ds)
 		{
 			RemoveFromContainer (ds.Basename);
 		}
@@ -430,13 +430,14 @@ namespace Mono.CSharp {
 		{
 			if (types != null)
 				types.Remove (next_part);
+
+			Cache.Remove (next_part.Basename);
 			RemoveMemberType (next_part);
 		}
 		
-		public virtual TypeSpec AddDelegate (Delegate d)
+		public void AddDelegate (Delegate d)
 		{
 			AddTypeContainer (d);
-			return null;
 		}
 
 		private void AddMemberToList (MemberCore mc, List<MemberCore> alist, bool isexplicit)
@@ -583,8 +584,6 @@ namespace Mono.CSharp {
 
 		public void AddCompilerGeneratedClass (CompilerGeneratedClass c)
 		{
-			Report.Debug (64, "ADD COMPILER GENERATED CLASS", this, c);
-
 			if (compiler_generated == null)
 				compiler_generated = new List<CompilerGeneratedClass> ();
 
@@ -746,7 +745,7 @@ namespace Mono.CSharp {
 				if (initialized_static_fields == null)
 					return;
 
-				bool has_complex_initializer = !RootContext.Optimize;
+				bool has_complex_initializer = !ec.Module.Compiler.Settings.Optimize;
 				int i;
 				ExpressionStatement [] init = new ExpressionStatement [initialized_static_fields.Count];
 				for (i = 0; i < initialized_static_fields.Count; ++i) {
@@ -789,7 +788,7 @@ namespace Mono.CSharp {
 				//
 				// Field is re-initialized to its default value => removed
 				//
-				if (fi.IsDefaultInitializer && RootContext.Optimize)
+				if (fi.IsDefaultInitializer && ec.Module.Compiler.Settings.Optimize)
 					continue;
 
 				ec.CurrentBlock.AddScopeStatement (new StatementExpression (s));
@@ -810,6 +809,50 @@ namespace Mono.CSharp {
 
 		public PendingImplementation PendingImplementations {
 			get { return pending; }
+		}
+
+		internal override void GenerateDocComment (DocumentationBuilder builder)
+		{
+			base.GenerateDocComment (builder);
+
+			if (DefaultStaticConstructor != null)
+				DefaultStaticConstructor.GenerateDocComment (builder);
+
+			if (InstanceConstructors != null)
+				foreach (Constructor c in InstanceConstructors)
+					c.GenerateDocComment (builder);
+
+			if (Types != null)
+				foreach (TypeContainer tc in Types)
+					tc.GenerateDocComment (builder);
+
+			if (Constants != null)
+				foreach (Const c in Constants)
+					c.GenerateDocComment (builder);
+
+			if (Fields != null)
+				foreach (FieldBase f in Fields)
+					f.GenerateDocComment (builder);
+
+			if (Events != null)
+				foreach (Event e in Events)
+					e.GenerateDocComment (builder);
+
+			if (Indexers != null)
+				foreach (Indexer ix in Indexers)
+					ix.GenerateDocComment (builder);
+
+			if (Properties != null)
+				foreach (Property p in Properties)
+					p.GenerateDocComment (builder);
+
+			if (Methods != null)
+				foreach (MethodOrOperator m in Methods)
+					m.GenerateDocComment (builder);
+
+			if (Operators != null)
+				foreach (Operator o in Operators)
+					o.GenerateDocComment (builder);
 		}
 
 		public TypeSpec GetAttributeCoClass ()
@@ -871,7 +914,7 @@ namespace Mono.CSharp {
 					continue;
 
 				if (i == 0 && Kind == MemberKind.Class && !fne_resolved.Type.IsInterface) {
-					if (fne_resolved.Type == InternalType.Dynamic) {
+					if (fne_resolved.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 						Report.Error (1965, Location, "Class `{0}' cannot derive from the dynamic type",
 							GetSignatureForError ());
 
@@ -1117,7 +1160,7 @@ namespace Mono.CSharp {
 					for (int i = 0; i < type_params.Length; ++i) {
 						var tp = hoisted_tparams[i];
 						targs.Add (new TypeParameterName (tp.Name, null, Location));
-						type_params[i] = new TypeParameter (tp, null, null, new MemberName (tp.Name), null);
+						type_params[i] = new TypeParameter (tp, this, null, new MemberName (tp.Name), null);
 					}
 
 					member_name = new MemberName (name, targs, Location);
@@ -1141,7 +1184,7 @@ namespace Mono.CSharp {
 				// Get all the method parameters and pass them as arguments
 				var real_base_call = new Invocation (mg, block.GetAllParametersArguments ());
 				Statement statement;
-				if (method.ReturnType == TypeManager.void_type)
+				if (method.ReturnType.Kind == MemberKind.Void)
 					statement = new StatementExpression (real_base_call);
 				else
 					statement = new Return (real_base_call, Location);
@@ -1233,7 +1276,7 @@ namespace Mono.CSharp {
 			}
 
 			if (Kind == MemberKind.Interface) {
-				spec.BaseType = TypeManager.object_type;
+				spec.BaseType = Compiler.BuiltinTypes.Object;
 				return true;
 			}
 
@@ -1329,6 +1372,11 @@ namespace Mono.CSharp {
 
 			type_defined = true;
 
+			// TODO: Driver resolves only first level of namespace, do the rest here for now
+			if (IsTopLevel && (ModFlags & Modifiers.COMPILER_GENERATED) == 0) {
+				NamespaceEntry.Resolve ();
+			}
+
 			if (!DefineBaseTypes ()) {
 				error = true;
 				return;
@@ -1369,15 +1417,15 @@ namespace Mono.CSharp {
 		// Replaces normal spec with predefined one when compiling corlib
 		// and this type container defines predefined type
 		//
-		public void SetPredefinedSpec (BuildinTypeSpec spec)
+		public void SetPredefinedSpec (BuiltinTypeSpec spec)
 		{
 			// When compiling build-in types we start with two
-			// version of same type. One is of BuildinTypeSpec and
+			// version of same type. One is of BuiltinTypeSpec and
 			// second one is ordinary TypeSpec. The unification
 			// happens at later stage when we know which type
-			// really matches the buildin type signature. However
+			// really matches the builtin type signature. However
 			// that means TypeSpec create during CreateType of this
-			// type has to be replaced with buildin one
+			// type has to be replaced with builtin one
 			// 
 			spec.SetMetaInfo (TypeBuilder);
 			spec.MemberCache = this.spec.MemberCache;
@@ -1585,7 +1633,7 @@ namespace Mono.CSharp {
 					requires_delayed_unmanagedtype_check = false;
 					foreach (FieldBase f in fields) {
 						if (f.MemberType != null && f.MemberType.IsPointer)
-							TypeManager.VerifyUnmanaged (Compiler, f.MemberType, f.Location);
+							TypeManager.VerifyUnmanaged (Module, f.MemberType, f.Location);
 					}
 				}
 			}
@@ -1669,16 +1717,15 @@ namespace Mono.CSharp {
 			if (!seen_normal_indexers)
 				return;
 
-			PredefinedAttribute pa = Module.PredefinedAttributes.DefaultMember;
-			if (pa.Constructor == null &&
-				!pa.ResolveConstructor (Location, TypeManager.string_type))
+			var ctor = Module.PredefinedMembers.DefaultMemberAttributeCtor.Get ();
+			if (ctor == null)
 				return;
 
 			var encoder = new AttributeEncoder ();
 			encoder.Encode (GetAttributeDefaultMember ());
 			encoder.EncodeEmptyNamedArguments ();
 
-			pa.EmitAttribute (TypeBuilder, encoder);
+			TypeBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
 		}
 
 		protected virtual void CheckEqualsAndGetHashCode ()
@@ -1729,7 +1776,7 @@ namespace Mono.CSharp {
 			// Check for internal or private fields that were never assigned
 			//
 			if (Report.WarningLevel >= 3) {
-				if (RootContext.EnhancedWarnings) {
+				if (Compiler.Settings.EnhancedWarnings) {
 					CheckMemberUsage (properties, "property");
 					CheckMemberUsage (methods, "method");
 					CheckMemberUsage (constants, "constant");
@@ -1827,7 +1874,7 @@ namespace Mono.CSharp {
 			if (instance_constructors == null)
 				return;
 
-			if (spec.IsAttribute && IsExposedFromAssembly () && RootContext.VerifyClsCompliance && IsClsComplianceRequired ()) {
+			if (spec.IsAttribute && IsExposedFromAssembly () && Compiler.Settings.VerifyClsCompliance && IsClsComplianceRequired ()) {
 				bool has_compliant_args = false;
 
 				foreach (Constructor c in instance_constructors) {
@@ -1863,6 +1910,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual void EmitType ()
 		{
+			if ((caching_flags & Flags.CloseTypeCreated) != 0)
+				return;
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
@@ -1961,7 +2011,6 @@ namespace Mono.CSharp {
 					c.CloseType ();
 			
 			types = null;
-			fields = null;
 			initialized_fields = null;
 			initialized_static_fields = null;
 			constants = null;
@@ -2194,7 +2243,7 @@ namespace Mono.CSharp {
 				return null;
 
 			// FIXME: Breaks error reporting
-			if (!t.IsAccessible (CurrentType))
+			if (!t.IsAccessible (this))
 				return null;
 
 			return t;
@@ -2238,15 +2287,6 @@ namespace Mono.CSharp {
 				else
 					cached_method &= ~CachedMethods.HasStaticFieldInitializer;
 			}
-		}
-
-		//
-		// Generates xml doc comments (if any), and if required,
-		// handle warning report.
-		//
-		internal override void GenerateDocComment (DeclSpace ds)
-		{
-			DocUtil.GenerateTypeDocComment (this, ds, Report);
 		}
 
 		public override string DocCommentHeader {
@@ -2387,10 +2427,7 @@ namespace Mono.CSharp {
 		{
 			DeclSpace top_level = Parent;
 			if (top_level != null) {
-				while (top_level.Parent != null)
-					top_level = top_level.Parent;
-
-				var candidates = NamespaceEntry.NS.LookupExtensionMethod (extensionType, this, name, arity);
+				var candidates = NamespaceEntry.NS.LookupExtensionMethod (this, extensionType, name, arity);
 				if (candidates != null) {
 					scope = NamespaceEntry;
 					return candidates;
@@ -2433,10 +2470,11 @@ namespace Mono.CSharp {
 			var accmods = (Parent == null || Parent.Parent == null) ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod, accmods, Location, Report);
 			spec = new TypeSpec (Kind, null, this, null, ModFlags);
+		}
 
-			if (IsStatic && RootContext.Version == LanguageVersion.ISO_1) {
-				Report.FeatureIsNotAvailable (Location, "static classes");
-			}
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
 		}
 
 		public override void AddBasesForPart (DeclSpace part, List<FullNamedExpression> bases)
@@ -2450,7 +2488,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.AttributeUsage) {
-				if (!BaseType.IsAttribute && spec != TypeManager.attribute_type) {
+				if (!BaseType.IsAttribute && spec.BuiltinType != BuiltinTypeSpec.Type.Attribute) {
 					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.GetSignatureForError ());
 				}
 			}
@@ -2470,7 +2508,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type.IsConditionallyExcluded (Location))
+			if (a.Type.IsConditionallyExcluded (Compiler, Location))
 				return;
 
 			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
@@ -2481,12 +2519,7 @@ namespace Mono.CSharp {
 				return AttributeTargets.Class;
 			}
 		}
-		
-		public override void Accept (StructuralVisitor visitor)
-		{
-			visitor.Visit (this);
-		}
-		
+
 		protected override void DefineContainerMembers (System.Collections.IList list)
 		{
 			if (list == null)
@@ -2566,8 +2599,8 @@ namespace Mono.CSharp {
 			TypeExpr[] ifaces = base.ResolveBaseTypes (out base_class);
 
 			if (base_class == null) {
-				if (spec != TypeManager.object_type)
-					base_type = TypeManager.object_type;
+				if (spec.BuiltinType != BuiltinTypeSpec.Type.Object)
+					base_type = Compiler.BuiltinTypes.Object;
 			} else {
 				if (base_type.IsGenericParameter){
 					Report.Error (689, base_class.Location, "`{0}': Cannot derive from type parameter `{1}'",
@@ -2584,18 +2617,24 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (base_class.Type);
 					Report.Error (509, Location, "`{0}': cannot derive from sealed type `{1}'",
 						GetSignatureForError (), base_type.GetSignatureForError ());
-				} else if (PartialContainer.IsStatic && base_class.Type != TypeManager.object_type) {
+				} else if (PartialContainer.IsStatic && base_class.Type.BuiltinType != BuiltinTypeSpec.Type.Object) {
 					Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
 						GetSignatureForError (), base_class.GetSignatureForError ());
 				}
 
-				if (base_type is BuildinTypeSpec && !(spec is BuildinTypeSpec) &&
-					(base_type == TypeManager.enum_type || base_type == TypeManager.value_type || base_type == TypeManager.multicast_delegate_type ||
-					base_type == TypeManager.delegate_type || base_type == TypeManager.array_type)) {
-					Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
-						GetSignatureForError (), base_type.GetSignatureForError ());
+				switch (base_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Enum:
+				case BuiltinTypeSpec.Type.ValueType:
+				case BuiltinTypeSpec.Type.MulticastDelegate:
+				case BuiltinTypeSpec.Type.Delegate:
+				case BuiltinTypeSpec.Type.Array:
+					if (!(spec is BuiltinTypeSpec)) {
+						Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
+							GetSignatureForError (), base_type.GetSignatureForError ());
 
-					base_type = TypeManager.object_type;
+						base_type = Compiler.BuiltinTypes.Object;
+					}
+					break;
 				}
 
 				if (!IsAccessibleAs (base_type)) {
@@ -2683,6 +2722,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
@@ -2721,7 +2765,7 @@ namespace Mono.CSharp {
 				if (!ftype.IsStruct)
 					continue;
 
-				if (ftype is BuildinTypeSpec)
+				if (ftype is BuiltinTypeSpec)
 					continue;
 
 				foreach (var targ in ftype.TypeArguments) {
@@ -2811,24 +2855,21 @@ namespace Mono.CSharp {
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
 			TypeExpr[] ifaces = base.ResolveBaseTypes (out base_class);
-			base_type = TypeManager.value_type;
+			base_type = Compiler.BuiltinTypes.ValueType;
 			return ifaces;
 		}
 
 		protected override TypeAttributes TypeAttr {
 			get {
-				const TypeAttributes DefaultTypeAttributes =
-					TypeAttributes.SequentialLayout |
-					TypeAttributes.Sealed;
+				const
+				TypeAttributes DefaultTypeAttributes =
+					TypeAttributes.SequentialLayout | 
+					TypeAttributes.Sealed ; 
 
 				return base.TypeAttr | DefaultTypeAttributes;
 			}
 		}
-		public override void Accept (StructuralVisitor visitor)
-		{
-			visitor.Visit (this);
-		}
-		
+
 		public override void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression)
 		{
 			if ((field.ModFlags & Modifiers.STATIC) == 0) {
@@ -2867,16 +2908,7 @@ namespace Mono.CSharp {
 			spec = new TypeSpec (Kind, null, this, null, ModFlags);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
-		{
-			if (a.Type == pa.ComImport && !attributes.Contains (pa.Guid)) {
-				a.Error_MissingGuidAttribute ();
-				return;
-			}
-
-			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
-		}
-
+		#region Properties
 
 		public override AttributeTargets AttributeTargets {
 			get {
@@ -2894,12 +2926,24 @@ namespace Mono.CSharp {
 				return base.TypeAttr | DefaultTypeAttributes;
 			}
 		}
-		
+
+		#endregion
+
 		public override void Accept (StructuralVisitor visitor)
 		{
 			visitor.Visit (this);
 		}
-		
+
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
+		{
+			if (a.Type == pa.ComImport && !attributes.Contains (pa.Guid)) {
+				a.Error_MissingGuidAttribute ();
+				return;
+			}
+
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+		}
+
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
@@ -2995,6 +3039,8 @@ namespace Mono.CSharp {
 			IsExplicitImpl = (MemberName.Left != null);
 			explicit_mod_flags = mod;
 		}
+
+		public abstract Variance ExpectedMemberTypeVariance { get; }
 		
 		protected override bool CheckBase ()
 		{
@@ -3255,6 +3301,13 @@ namespace Mono.CSharp {
 			return !error;
 		}
 
+		protected override void DoMemberTypeDependentChecks ()
+		{
+			base.DoMemberTypeDependentChecks ();
+
+			TypeManager.CheckTypeVariance (MemberType, ExpectedMemberTypeVariance, this);
+		}
+
 		public override void Emit()
 		{
 			// for extern static method must be specified either DllImport attribute or MethodImplAttribute.
@@ -3482,14 +3535,11 @@ namespace Mono.CSharp {
 						      "accessible than field `" + GetSignatureForError () + "'");
 				}
 			}
-
-			Variance variance = this is Event ? Variance.Contravariant : Variance.Covariant;
-			TypeManager.CheckTypeVariance (MemberType, variance, this);
 		}
 
 		protected bool IsTypePermitted ()
 		{
-			if (TypeManager.IsSpecialType (MemberType)) {
+			if (MemberType.IsSpecialRuntimeType) {
 				Report.Error (610, Location, "Field or property cannot be of type `{0}'", TypeManager.CSharpName (MemberType));
 				return false;
 			}

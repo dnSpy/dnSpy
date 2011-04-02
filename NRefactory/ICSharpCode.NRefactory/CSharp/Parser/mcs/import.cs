@@ -120,11 +120,14 @@ namespace Mono.CSharp
 		protected readonly Dictionary<MetaType, TypeSpec> import_cache;
 		protected readonly Dictionary<MetaType, TypeSpec> compiled_types;
 		protected readonly Dictionary<Assembly, IAssemblyDefinition> assembly_2_definition;
+		readonly ModuleContainer module;
 
 		public static readonly string CompilerServicesNamespace = "System.Runtime.CompilerServices";
 
-		protected MetadataImporter ()
+		protected MetadataImporter (ModuleContainer module)
 		{
+			this.module = module;
+
 			import_cache = new Dictionary<MetaType, TypeSpec> (1024, ReferenceEquality<MetaType>.Default);
 			compiled_types = new Dictionary<MetaType, TypeSpec> (40, ReferenceEquality<MetaType>.Default);
 			assembly_2_definition = new Dictionary<Assembly, IAssemblyDefinition> (ReferenceEquality<Assembly>.Default);
@@ -193,7 +196,7 @@ namespace Mono.CSharp
 			}
 
 			if ((fa & FieldAttributes.InitOnly) != 0) {
-				if (field_type == TypeManager.decimal_type) {
+				if (field_type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 					var dc = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (fi));
 					if (dc != null)
 						return new ConstSpec (declaringType, definition, field_type, fi, mod, dc);
@@ -213,7 +216,7 @@ namespace Mono.CSharp
 				if (declaringType.IsStruct && field_type.IsStruct && field_type.IsNested &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "FixedBufferAttribute", CompilerServicesNamespace)) {
 
-					// TODO: Sanity check on field_type (only few type are allowed)
+					// TODO: Sanity check on field_type (only few types are allowed)
 					var element_field = CreateField (fi.FieldType.GetField (FixedField.FixedElementName), declaringType);
 					return new FixedFieldSpec (declaringType, definition, fi, element_field, mod);
 				}
@@ -282,7 +285,7 @@ namespace Mono.CSharp
 				var type = tparams[pos];
 				int index = pos - first;
 
-				tspec [index] = (TypeParameterSpec) CreateType (type, new DynamicTypeReader (), false);
+				tspec[index] = (TypeParameterSpec) CreateType (type, new DynamicTypeReader (), false);
 			}
 
 			return tspec;
@@ -307,7 +310,7 @@ namespace Mono.CSharp
 						throw new NotImplementedException ("Unknown element type " + type.ToString ());
 					}
 
-					spec = ArrayContainer.MakeType (spec, type.GetArrayRank ());
+					spec = ArrayContainer.MakeType (module, spec, type.GetArrayRank ());
 				} else {
 					spec = CreateType (type, dtype, true);
 
@@ -323,7 +326,7 @@ namespace Mono.CSharp
 					//
 					if (!IsMissingType (type) && type.IsGenericTypeDefinition) {
 						var targs = CreateGenericArguments (0, type.GetGenericArguments (), dtype);
-						spec = spec.MakeGenericType (targs);
+						spec = spec.MakeGenericType (module, targs);
 					}
 				}
 
@@ -354,7 +357,7 @@ namespace Mono.CSharp
 			TypeSpec returnType;
 			if (mb.MemberType == MemberTypes.Constructor) {
 				kind = MemberKind.Constructor;
-				returnType = TypeManager.void_type;
+				returnType = module.Compiler.BuiltinTypes.Void;
 			} else {
 				//
 				// Detect operators and destructors
@@ -371,7 +374,7 @@ namespace Mono.CSharp
 						}
 					} else if (parameters.IsEmpty && name == Destructor.MetadataName) {
 						kind = MemberKind.Destructor;
-						if (declaringType == TypeManager.object_type) {
+						if (declaringType.BuiltinType == BuiltinTypeSpec.Type.Object) {
 							mod &= ~Modifiers.OVERRIDE;
 							mod |= Modifiers.VIRTUAL;
 						}
@@ -404,7 +407,12 @@ namespace Mono.CSharp
 
 			IMemberDefinition definition;
 			if (tparams != null) {
-				definition = new ImportedGenericMethodDefinition ((MethodInfo) mb, returnType, parameters, tparams, this);
+				var gmd = new ImportedGenericMethodDefinition ((MethodInfo) mb, returnType, parameters, tparams, this);
+				foreach (var tp in gmd.TypeParameters) {
+					ImportTypeParameterTypeConstraints (tp, tp.GetMetaInfo ());
+				}
+
+				definition = gmd;
 			} else {
 				definition = new ImportedParameterMemberDefinition (mb, returnType, parameters, this);
 			}
@@ -463,20 +471,20 @@ namespace Mono.CSharp
 						var ptype = types[i];
 						if ((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter && (value != null || TypeManager.IsReferenceType (ptype))) {
 							if (value == null) {
-								default_value = Constant.CreateConstant (null, ptype, null, Location.Null);
+								default_value = Constant.CreateConstant (ptype, null, Location.Null);
 							} else {
-								default_value = ImportParameterConstant (value).Resolve (null);
+								default_value = ImportParameterConstant (value);
 
 								if (ptype.IsEnum) {
-									default_value = new EnumConstant ((Constant) default_value, ptype).Resolve (null);
+									default_value = new EnumConstant ((Constant) default_value, ptype);
 								}
 							}
 						} else if (value == Missing.Value) {
 							default_value = EmptyExpression.MissingValue;
 						} else if (value == null) {
 							default_value = new DefaultValueExpression (new TypeExpression (ptype, Location.Null), Location.Null);
-						} else if (ptype == TypeManager.decimal_type) {
-							default_value = ImportParameterConstant (value).Resolve (null);
+						} else if (ptype.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
+							default_value = ImportParameterConstant (value);
 						}
 					}
 				}
@@ -510,7 +518,7 @@ namespace Mono.CSharp
 
 			bool is_valid_property = true;
 			if (set != null) {
-				if (set.ReturnType != TypeManager.void_type)
+				if (set.ReturnType.Kind != MemberKind.Void)
 					is_valid_property = false;
 
 				var set_param_count = set.Parameters.Count - 1;
@@ -636,9 +644,9 @@ namespace Mono.CSharp
 		{
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
-				if (spec == TypeManager.object_type) {
+				if (spec.BuiltinType == BuiltinTypeSpec.Type.Object) {
 					if (dtype.IsDynamicObject (this))
-						return InternalType.Dynamic;
+						return module.Compiler.BuiltinTypes.Dynamic;
 
 					return spec;
 				}
@@ -669,7 +677,7 @@ namespace Mono.CSharp
 				if (declaringType == null) {
 					// Simple case, no nesting
 					spec = CreateType (type_def, null, new DynamicTypeReader (), canImportBaseType);
-					spec = spec.MakeGenericType (targs);
+					spec = spec.MakeGenericType (module, targs);
 				} else {
 					//
 					// Nested type case, converting .NET types like
@@ -684,7 +692,7 @@ namespace Mono.CSharp
 
 					int targs_pos = 0;
 					if (declaringType.Arity > 0) {
-						spec = declaringType.MakeGenericType (targs.Skip (targs_pos).Take (declaringType.Arity).ToArray ());
+						spec = declaringType.MakeGenericType (module, targs.Skip (targs_pos).Take (declaringType.Arity).ToArray ());
 						targs_pos = spec.Arity;
 					} else {
 						spec = declaringType;
@@ -694,7 +702,7 @@ namespace Mono.CSharp
 						var t = nested_hierarchy [i - 1];
 						spec = MemberCache.FindNestedType (spec, t.Name, t.Arity);
 						if (t.Arity > 0) {
-							spec = spec.MakeGenericType (targs.Skip (targs_pos).Take (spec.Arity).ToArray ());
+							spec = spec.MakeGenericType (module, targs.Skip (targs_pos).Take (spec.Arity).ToArray ());
 							targs_pos += t.Arity;
 						}
 					}
@@ -705,8 +713,11 @@ namespace Mono.CSharp
 						name = name.Substring (0, index);
 
 					spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos);
+					if (spec == null)
+						return null;
+
 					if (spec.Arity > 0) {
-						spec = spec.MakeGenericType (targs.Skip (targs_pos).ToArray ());
+						spec = spec.MakeGenericType (module, targs.Skip (targs_pos).ToArray ());
 					}
 				}
 
@@ -789,15 +800,9 @@ namespace Mono.CSharp
 					kind = MemberKind.Class;
 
 			} else if (kind == MemberKind.TypeParameter) {
-				// Return as type_cache was updated
-				return CreateTypeParameter (type, declaringType);
+				spec = CreateTypeParameter (type, declaringType);
 			} else if (type.IsGenericTypeDefinition) {
 				definition.TypeParameters = CreateGenericParameters (type, declaringType);
-
-				// Constraints are not loaded on demand and can reference this type
-				if (import_cache.TryGetValue (type, out spec))
-					return spec;
-
 			} else if (compiled_types.TryGetValue (type, out pt)) {
 				//
 				// Same type was found in inside compiled types. It's
@@ -805,7 +810,7 @@ namespace Mono.CSharp
 				// which point into just compiled assembly.
 				//
 				spec = pt;
-				BuildinTypeSpec bts = pt as BuildinTypeSpec;
+				BuiltinTypeSpec bts = pt as BuiltinTypeSpec;
 				if (bts != null)
 					bts.SetDefinition (definition, type, mod);
 			}
@@ -879,38 +884,11 @@ namespace Mono.CSharp
 
 			TypeParameterSpec spec;
 			var def = new ImportedTypeParameterDefinition (type, this);
-			if (type.DeclaringMethod != null)
+			if (type.DeclaringMethod != null) {
 				spec = new TypeParameterSpec (type.GenericParameterPosition, def, special, variance, type);
-			else
+			} else {
 				spec = new TypeParameterSpec (declaringType, type.GenericParameterPosition, def, special, variance, type);
-
-			// Add it now, so any constraint can reference it and get same instance
-			import_cache.Add (type, spec);
-
-			var constraints = type.GetGenericParameterConstraints ();
-			List<TypeSpec> tparams = null;
-			foreach (var ct in constraints) {
-				if (ct.IsGenericParameter) {
-					if (tparams == null)
-						tparams = new List<TypeSpec> ();
-
-					tparams.Add (CreateType (ct));
-					continue;
-				}
-
-				if (!IsMissingType (ct) && ct.IsClass) {
-					spec.BaseType = CreateType (ct);
-					continue;
-				}
-
-				spec.AddInterface (CreateType (ct));
 			}
-
-			if (spec.BaseType == null)
-				spec.BaseType = TypeManager.object_type;
-
-			if (tparams != null)
-				spec.TypeArguments = tparams.ToArray ();
 
 			return spec;
 		}
@@ -937,7 +915,7 @@ namespace Mono.CSharp
 		void ImportTypeBase (TypeSpec spec, MetaType type)
 		{
 			if (spec.Kind == MemberKind.Interface)
-				spec.BaseType = TypeManager.object_type;
+				spec.BaseType = module.Compiler.BuiltinTypes.Object;
 			else if (type.BaseType != null) {
 				TypeSpec base_type;
 				if (!IsMissingType (type.BaseType) && type.BaseType.IsGenericType)
@@ -952,8 +930,21 @@ namespace Mono.CSharp
 #if STATIC
 			ifaces = type.__GetDeclaredInterfaces ();
 			if (ifaces.Length != 0) {
-				foreach (var iface in ifaces)
-					spec.AddInterface (CreateType (iface));
+				foreach (var iface in ifaces) {
+					var it = CreateType (iface);
+					if (it == null)
+						continue;
+
+					spec.AddInterface (it);
+
+					// Unfortunately not all languages expand inherited interfaces
+					var bifaces = it.Interfaces;
+					if (bifaces != null) {
+						foreach (var biface in bifaces) {
+							spec.AddInterface (biface);
+						}
+					}
+				}
 			}
 
 			if (spec.BaseType != null) {
@@ -972,6 +963,13 @@ namespace Mono.CSharp
 				}
 			}
 #endif
+
+			if (spec.MemberDefinition.TypeParametersCount > 0) {
+				foreach (var tp in spec.MemberDefinition.TypeParameters) {
+					ImportTypeParameterTypeConstraints (tp, tp.GetMetaInfo ());
+				}
+			}
+
 		}
 
 		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool hasExtensionTypes)
@@ -998,7 +996,7 @@ namespace Mono.CSharp
 					prev_namespace = t.Namespace;
 				}
 
-				ns.AddType (it);
+				ns.AddType (module, it);
 
 				if (it.IsStatic && hasExtensionTypes &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (t), "ExtensionAttribute", CompilerServicesNamespace)) {
@@ -1007,41 +1005,70 @@ namespace Mono.CSharp
 			}
 		}
 
-		static Constant ImportParameterConstant (object value)
+		void ImportTypeParameterTypeConstraints (TypeParameterSpec spec, MetaType type)
+		{
+			var constraints = type.GetGenericParameterConstraints ();
+			List<TypeSpec> tparams = null;
+			foreach (var ct in constraints) {
+				if (ct.IsGenericParameter) {
+					if (tparams == null)
+						tparams = new List<TypeSpec> ();
+
+					tparams.Add (CreateType (ct));
+					continue;
+				}
+
+				if (!IsMissingType (ct) && ct.IsClass) {
+					spec.BaseType = CreateType (ct);
+					continue;
+				}
+
+				spec.AddInterface (CreateType (ct));
+			}
+
+			if (spec.BaseType == null)
+				spec.BaseType = module.Compiler.BuiltinTypes.Object;
+
+			if (tparams != null)
+				spec.TypeArguments = tparams.ToArray ();
+		}
+
+		Constant ImportParameterConstant (object value)
 		{
 			//
 			// Get type of underlying value as int constant can be used for object
 			// parameter type. This is not allowed in C# but other languages can do that
 			//
+			var types = module.Compiler.BuiltinTypes;
 			switch (System.Type.GetTypeCode (value.GetType ())) {
 			case TypeCode.Boolean:
-				return new BoolConstant ((bool) value, Location.Null);
+				return new BoolConstant (types, (bool) value, Location.Null);
 			case TypeCode.Byte:
-				return new ByteConstant ((byte) value, Location.Null);
+				return new ByteConstant (types, (byte) value, Location.Null);
 			case TypeCode.Char:
-				return new CharConstant ((char) value, Location.Null);
+				return new CharConstant (types, (char) value, Location.Null);
 			case TypeCode.Decimal:
-				return new DecimalConstant ((decimal) value, Location.Null);
+				return new DecimalConstant (types, (decimal) value, Location.Null);
 			case TypeCode.Double:
-				return new DoubleConstant ((double) value, Location.Null);
+				return new DoubleConstant (types, (double) value, Location.Null);
 			case TypeCode.Int16:
-				return new ShortConstant ((short) value, Location.Null);
+				return new ShortConstant (types, (short) value, Location.Null);
 			case TypeCode.Int32:
-				return new IntConstant ((int) value, Location.Null);
+				return new IntConstant (types, (int) value, Location.Null);
 			case TypeCode.Int64:
-				return new LongConstant ((long) value, Location.Null);
+				return new LongConstant (types, (long) value, Location.Null);
 			case TypeCode.SByte:
-				return new SByteConstant ((sbyte) value, Location.Null);
+				return new SByteConstant (types, (sbyte) value, Location.Null);
 			case TypeCode.Single:
-				return new FloatConstant ((float) value, Location.Null);
+				return new FloatConstant (types, (float) value, Location.Null);
 			case TypeCode.String:
-				return new StringConstant ((string) value, Location.Null);
+				return new StringConstant (types, (string) value, Location.Null);
 			case TypeCode.UInt16:
-				return new UShortConstant ((ushort) value, Location.Null);
+				return new UShortConstant (types, (ushort) value, Location.Null);
 			case TypeCode.UInt32:
-				return new UIntConstant ((uint) value, Location.Null);
+				return new UIntConstant (types, (uint) value, Location.Null);
 			case TypeCode.UInt64:
-				return new ULongConstant ((ulong) value, Location.Null);
+				return new ULongConstant (types, (ulong) value, Location.Null);
 			}
 
 			throw new NotImplementedException (value.GetType ().ToString ());
@@ -1060,11 +1087,11 @@ namespace Mono.CSharp
 				var spec = ImportType (element, dtype);
 
 				if (type.IsArray)
-					return ArrayContainer.MakeType (spec, type.GetArrayRank ());
+					return ArrayContainer.MakeType (module, spec, type.GetArrayRank ());
 				if (type.IsByRef)
-					return ReferenceContainer.MakeType (spec);
+					return ReferenceContainer.MakeType (module, spec);
 				if (type.IsPointer)
-					return PointerContainer.MakeType (spec);
+					return PointerContainer.MakeType (module, spec);
 
 				throw new NotImplementedException ("Unknown element type " + type.ToString ());
 			}
@@ -1104,7 +1131,7 @@ namespace Mono.CSharp
 					(byte) ca.ConstructorArguments[1].Value != 0,
 					(byte) ca.ConstructorArguments[0].Value);
 
-				return new DecimalConstant (value, Location.Null).Resolve (null);
+				return new DecimalConstant (module.Compiler.BuiltinTypes, value, Location.Null);
 			}
 
 			return null;
@@ -1754,15 +1781,15 @@ namespace Mono.CSharp
 				string name = t.GetSignatureForError ();
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
-					ctx.Compiler.Report.Error (1683, loc,
+					ctx.Module.Compiler.Report.Error (1683, loc,
 						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
 						name);
 				} else if (t.MemberDefinition.DeclaringAssembly.IsMissing) {
-					ctx.Compiler.Report.Error (12, loc,
+					ctx.Module.Compiler.Report.Error (12, loc,
 						"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
 						name, t.MemberDefinition.DeclaringAssembly.FullName);
 				} else {
-					ctx.Compiler.Report.Error (1684, loc,
+					ctx.Module.Compiler.Report.Error (1684, loc,
 						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
 						name, t.MemberDefinition.DeclaringAssembly.FullName);
 				}
@@ -1845,7 +1872,7 @@ namespace Mono.CSharp
 					var t = (MetaType) member;
 
 					// Ignore compiler generated types, mostly lambda containers
-					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate)
+					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate && importer.IgnorePrivateMembers)
 						continue;
 
 					imported = importer.CreateNestedType (t, declaringType);
@@ -1858,7 +1885,7 @@ namespace Mono.CSharp
 
 					var t = (MetaType) member;
 
-					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate)
+					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate && importer.IgnorePrivateMembers)
 						continue;
 
 					importer.ImportTypeBase (t);

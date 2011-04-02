@@ -11,7 +11,6 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -33,23 +32,17 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
     <WarningLevel>4</WarningLevel>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="nunit.framework">
-      <HintPath>..\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\Mono.Cecil\Test\libs\nunit-2.4.8\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -155,6 +148,8 @@
     <Compile Include="Untested.cs" />
     <Compile Include="Utils\CSharpPrimitiveCastTests.cs" />
     <Compile Include="Utils\TreeTraversalTests.cs" />
+    <Compile Include="FormattingTests\TextEditorTestAdapter.cs" />
+    <Compile Include="FormattingTests\TestBlankLineFormatting.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
@@ -163,11 +158,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="CSharp\Analysis" />
-    <Folder Include="CSharp\Parser\Expression" />
-    <Folder Include="CSharp\Parser\GeneralScope" />
-    <Folder Include="CSharp\Parser\TypeMembers" />
-    <Folder Include="CSharp\Parser\Statements" />
+    <Folder Include="CSharp\" />
+    <Folder Include="CSharp\Parser\" />
+    <Folder Include="CSharp\Parser\" />
+    <Folder Include="CSharp\Parser\" />
+    <Folder Include="CSharp\Parser\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

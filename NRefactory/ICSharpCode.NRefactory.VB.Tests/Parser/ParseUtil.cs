@@ -4,10 +4,10 @@
 using System;
 using System.IO;
 using ICSharpCode.NRefactory.VB.Parser;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using NUnit.Framework;
 
-namespace ICSharpCode.NRefactory.VB.Tests.Dom
+namespace ICSharpCode.NRefactory.VB.Tests.Ast
 {
 	public class ParseUtil
 	{

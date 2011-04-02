@@ -15,7 +15,7 @@ ICSharpCode.NRefactory.CSharp.Resolver:
 ICSharpCode.NRefactory.Util:
 	Various helper classes.
 
-ICSharpCode.NRefactory.VB.Dom: (in the separate ICSharpCode.NRefactory.VB assembly)
+ICSharpCode.NRefactory.VB.Ast: (in the separate ICSharpCode.NRefactory.VB assembly)
 	Abstract Syntax Tree for VB
 
 Dependencies:

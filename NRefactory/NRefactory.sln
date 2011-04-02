@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-# SharpDevelop 4.0.1.7096
+# SharpDevelop 4.1.0.7372-alpha
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC98210E-1646-483B-819A-2BB8272461E4}"
 	ProjectSection(SolutionItems) = postProject
 		README = README
@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.Demo", "ICSharpCode.NRefactory.Demo\ICSharpCode.NRefactory.Demo.csproj", "{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VBDomGenerator", "VBDomGenerator\VBDomGenerator.csproj", "{B22522AA-B5BF-4A58-AC6D-D4B45805521F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VBAstGenerator", "VBAstGenerator\VBAstGenerator.csproj", "{B22522AA-B5BF-4A58-AC6D-D4B45805521F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB", "ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj", "{7B82B671-419F-45F4-B778-D9286F996EFA}"
 EndProject

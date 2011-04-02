@@ -35,7 +35,7 @@ namespace ICSharpCode.NRefactory.Demo
 			this.codeView = new System.Windows.Forms.TextBox();
 			this.editNodeButton = new System.Windows.Forms.Button();
 			this.clearSpecialsButton = new System.Windows.Forms.Button();
-			this.syntaxTree = new ICSharpCode.NRefactory.Demo.VBDomView();
+			this.syntaxTree = new ICSharpCode.NRefactory.Demo.VBAstView();
 			this.generateCodeButton = new System.Windows.Forms.Button();
 			this.parseButton = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -154,7 +154,7 @@ namespace ICSharpCode.NRefactory.Demo
 		}
 		private System.Windows.Forms.Button clearSpecialsButton;
 		private System.Windows.Forms.Button editNodeButton;
-		private ICSharpCode.NRefactory.Demo.VBDomView syntaxTree;
+		private ICSharpCode.NRefactory.Demo.VBAstView syntaxTree;
 		private System.Windows.Forms.TextBox codeView;
 		private System.Windows.Forms.Button generateCodeButton;
 		private System.Windows.Forms.Button parseButton;

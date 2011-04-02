@@ -46,10 +46,20 @@ namespace Mono.CSharp {
 
 		static bool IsValidEnumType (TypeSpec t)
 		{
-			return (t == TypeManager.int32_type || t == TypeManager.uint32_type || t == TypeManager.int64_type ||
-				t == TypeManager.byte_type || t == TypeManager.sbyte_type || t == TypeManager.short_type ||
-				t == TypeManager.ushort_type || t == TypeManager.uint64_type || t == TypeManager.char_type ||
-				TypeManager.IsEnumType (t));
+			switch (t.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.Char:
+				return true;
+			default:
+				return t.IsEnum;
+			}
 		}
 
 		public override Constant ConvertInitializer (ResolveContext rc, Constant expr)
@@ -69,7 +79,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				expr = New.Constantify (underlying, Location);
 
-			return new EnumConstant (expr, MemberType).Resolve (rc);
+			return new EnumConstant (expr, MemberType);
 		}
 
 		public override bool Define ()
@@ -100,7 +110,7 @@ namespace Mono.CSharp {
 		//
 		// Implicit enum member initializer, used when no constant value is provided
 		//
-		class ImplicitInitializer : Expression
+		sealed class ImplicitInitializer : Expression
 		{
 			readonly EnumMember prev;
 			readonly EnumMember current;
@@ -120,18 +130,18 @@ namespace Mono.CSharp {
 			{
 				// We are the first member
 				if (prev == null) {
-					return New.Constantify (current.Parent.Definition, Location).Resolve (rc);
+					return New.Constantify (current.Parent.Definition, Location);
 				}
 
 				var c = ((ConstSpec) prev.Spec).GetConstant (rc) as EnumConstant;
 				try {
-					return c.Increment ().Resolve (rc);
+					return c.Increment ();
 				} catch (OverflowException) {
 					rc.Report.Error (543, current.Location,
 						"The enumerator value `{0}' is outside the range of enumerator underlying type `{1}'",
 						current.GetSignatureForError (), ((Enum) current.Parent).UnderlyingType.GetSignatureForError ());
 
-					return New.Constantify (current.Parent.Definition, current.Location).Resolve (rc);
+					return New.Constantify (current.Parent.Definition, current.Location);
 				}
 			}
 
@@ -189,6 +199,11 @@ namespace Mono.CSharp {
 
 		#endregion
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+
 		public void AddEnumMember (EnumMember em)
 		{
 			if (em.Name == UnderlyingValueField) {
@@ -208,7 +223,7 @@ namespace Mono.CSharp {
 
 		protected override bool DefineNestedTypes ()
 		{
-			((EnumSpec) spec).UnderlyingType = base_type_expr == null ? TypeManager.int32_type : base_type_expr.Type;
+			((EnumSpec) spec).UnderlyingType = base_type_expr == null ? Compiler.BuiltinTypes.Int : base_type_expr.Type;
 
 			TypeBuilder.DefineField (UnderlyingValueField, UnderlyingType.GetMetaInfo (),
 				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
@@ -239,7 +254,7 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
-			base_type = TypeManager.enum_type;
+			base_type = Compiler.BuiltinTypes.Enum;
 			base_class = base_type_expr;
 			return null;
 		}
@@ -249,18 +264,16 @@ namespace Mono.CSharp {
 			if (!base.VerifyClsCompliance ())
 				return false;
 
-			if (UnderlyingType == TypeManager.uint32_type ||
-				UnderlyingType == TypeManager.uint64_type ||
-				UnderlyingType == TypeManager.ushort_type) {
-				Report.Warning (3009, 1, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+			switch (UnderlyingType.BuiltinType) {
+			case BuiltinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.ULong:
+			case BuiltinTypeSpec.Type.UShort:
+				Report.Warning (3009, 1, Location, "`{0}': base type `{1}' is not CLS-compliant",
+					GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+				break;
 			}
 
 			return true;
-		}
-
-		public override void Accept (StructuralVisitor visitor)
-		{
-			visitor.Visit (this);
 		}
 	}
 
@@ -289,6 +302,23 @@ namespace Mono.CSharp {
 		public static TypeSpec GetUnderlyingType (TypeSpec t)
 		{
 			return ((EnumSpec) t.GetDefinition ()).UnderlyingType;
+		}
+
+		public static bool IsValidUnderlyingType (TypeSpec type)
+		{
+			switch (type.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
+			case BuiltinTypeSpec.Type.UInt:
+			case BuiltinTypeSpec.Type.Long:
+			case BuiltinTypeSpec.Type.Byte:
+			case BuiltinTypeSpec.Type.SByte:
+			case BuiltinTypeSpec.Type.Short:
+			case BuiltinTypeSpec.Type.UShort:
+			case BuiltinTypeSpec.Type.ULong:
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

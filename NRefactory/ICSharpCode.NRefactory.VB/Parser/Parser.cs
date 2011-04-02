@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Parser;
-using ASTAttribute = ICSharpCode.NRefactory.VB.Dom.Attribute;
+using ASTAttribute = ICSharpCode.NRefactory.VB.Ast.Attribute;
 
 
 
@@ -3677,6 +3677,7 @@ partial class VBParser
 			EmbeddedStatement(out statement);
 			lambda.StatementBody = statement;
 				lambda.EndLocation = t.EndLocation;
+				lambda.ExtendedEndLocation = la.Location;
 
 		} else if (la.kind == 1) {
 			Get();
@@ -3685,6 +3686,7 @@ partial class VBParser
 			Expect(210);
 			lambda.StatementBody = statement;
 				lambda.EndLocation = t.EndLocation;
+				lambda.ExtendedEndLocation = la.Location;
 
 		} else SynErr(293);
 	}
@@ -3710,7 +3712,8 @@ partial class VBParser
 		if (StartOf(24)) {
 			Expr(out inner);
 			lambda.ExpressionBody = inner;
-				lambda.EndLocation = t.EndLocation; // la.Location?
+				lambda.EndLocation = t.EndLocation;
+				lambda.ExtendedEndLocation = la.Location;
 
 		} else if (la.kind == 1) {
 			Get();
@@ -3719,6 +3722,7 @@ partial class VBParser
 			Expect(127);
 			lambda.StatementBody = statement;
 				lambda.EndLocation = t.EndLocation;
+				lambda.ExtendedEndLocation = la.Location;
 
 		} else SynErr(294);
 	}

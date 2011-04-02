@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Parser;
 
 namespace ICSharpCode.NRefactory.VB
@@ -113,7 +113,7 @@ namespace ICSharpCode.NRefactory.VB
 			
 			public object UserData { get; set; }
 			
-			public object AcceptChildren(IDomVisitor visitor, object data)
+			public object AcceptChildren(IAstVisitor visitor, object data)
 			{
 				foreach (INode n in nodes) {
 					n.AcceptVisitor(visitor, data);
@@ -121,7 +121,7 @@ namespace ICSharpCode.NRefactory.VB
 				return null;
 			}
 			
-			public object AcceptVisitor(IDomVisitor visitor, object data)
+			public object AcceptVisitor(IAstVisitor visitor, object data)
 			{
 				return AcceptChildren(visitor, data);
 			}

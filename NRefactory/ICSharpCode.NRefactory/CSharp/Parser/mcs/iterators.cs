@@ -59,9 +59,6 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			Report.Debug (64, "RESOLVE YIELD #1", this, ec, expr, expr.GetType (),
-				      ec.CurrentAnonymousMethod, ec.CurrentIterator);
-
 			if (!CheckContext (ec, loc))
 				return false;
 
@@ -164,7 +161,7 @@ namespace Mono.CSharp {
 						init = new List<Expression> (host.hoisted_params == null ? 1 : host.HoistedParameters.Count + 1);
 						HoistedThis ht = host.hoisted_this;
 						FieldExpr from = new FieldExpr (ht.Field, loc);
-						from.InstanceExpression = CompilerGeneratedThis.Instance;
+						from.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
 						init.Add (new ElementInitializer (ht.Field.Name, from, loc));
 					}
 
@@ -177,7 +174,7 @@ namespace Mono.CSharp {
 							HoistedParameter hp_cp = (HoistedParameter) host.hoisted_params_copy [i];
 
 							FieldExpr from = new FieldExpr (hp_cp.Field, loc);
-							from.InstanceExpression = CompilerGeneratedThis.Instance;
+							from.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
 
 							init.Add (new ElementInitializer (hp.Field.Name, from, loc));
 						}
@@ -194,22 +191,6 @@ namespace Mono.CSharp {
 					if (new_storey != null)
 						new_storey = Convert.ImplicitConversionRequired (ec, new_storey, host_method.MemberType, loc);
 
-					var t = ec.Module.PredefinedTypes.Interlocked.Resolve (loc);
-					if (t != null) {
-						var p = new ParametersImported (
-							new[] {
-									new ParameterData (null, Parameter.Modifier.REF),
-									new ParameterData (null, Parameter.Modifier.NONE),
-									new ParameterData (null, Parameter.Modifier.NONE)
-								},
-							new[] {
-									TypeManager.int32_type, TypeManager.int32_type, TypeManager.int32_type
-								},
-							false);
-						var f = new MemberFilter ("CompareExchange", 0, MemberKind.Method, p, TypeManager.int32_type);
-						TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, f, loc);
-					}
-
 					ec.CurrentBranching.CurrentUsageVector.Goto ();
 					return true;
 				}
@@ -222,7 +203,10 @@ namespace Mono.CSharp {
 					ec.Emit (OpCodes.Ldflda, host.PC.Spec);
 					ec.EmitInt ((int) Iterator.State.Start);
 					ec.EmitInt ((int) Iterator.State.Uninitialized);
-					ec.Emit (OpCodes.Call, TypeManager.int_interlocked_compare_exchange);
+
+					var m = ec.Module.PredefinedMembers.InterlockedCompareExchange.Resolve (loc);
+					if (m != null)
+						ec.Emit (OpCodes.Call, m);
 
 					ec.EmitInt ((int) Iterator.State.Uninitialized);
 					ec.Emit (OpCodes.Bne_Un_S, label_init);
@@ -273,7 +257,7 @@ namespace Mono.CSharp {
 			}
 
 			public DisposeMethod (IteratorStorey host)
-				: base (host, new TypeExpression (TypeManager.void_type, host.Location), Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
+				: base (host, new TypeExpression (host.Compiler.BuiltinTypes.Void, host.Location), Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 					new MemberName ("Dispose", host.Location))
 			{
 				host.AddMethod (this);
@@ -369,23 +353,19 @@ namespace Mono.CSharp {
 
 			var list = new List<FullNamedExpression> ();
 			if (Iterator.IsEnumerable) {
-				enumerable_type = new TypeExpression (
-					TypeManager.ienumerable_type, Location);
+				enumerable_type = new TypeExpression (Compiler.BuiltinTypes.IEnumerable, Location);
 				list.Add (enumerable_type);
 
-				if (TypeManager.generic_ienumerable_type != null) {
-					generic_enumerable_type = new GenericTypeExpr (
-						TypeManager.generic_ienumerable_type,
-						generic_args, Location);
+				if (Module.PredefinedTypes.IEnumerableGeneric.Define ()) {
+					generic_enumerable_type = new GenericTypeExpr (Module.PredefinedTypes.IEnumerableGeneric.TypeSpec, generic_args, Location);
 					list.Add (generic_enumerable_type);
 				}
 			}
 
-			enumerator_type = new TypeExpression (
-				TypeManager.ienumerator_type, Location);
+			enumerator_type = new TypeExpression (Compiler.BuiltinTypes.IEnumerator, Location);
 			list.Add (enumerator_type);
 
-			list.Add (new TypeExpression (TypeManager.idisposable_type, Location));
+			list.Add (new TypeExpression (Compiler.BuiltinTypes.IDisposable, Location));
 
 			var ienumerator_generic = Module.PredefinedTypes.IEnumeratorGeneric;
 			if (ienumerator_generic.Define ()) {
@@ -411,7 +391,7 @@ namespace Mono.CSharp {
 
 		void DefineIteratorMembers ()
 		{
-			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (TypeManager.int32_type, Location));
+			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (Compiler.BuiltinTypes.Int, Location));
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
 
 			if (hoisted_params != null) {
@@ -482,7 +462,7 @@ namespace Mono.CSharp {
 				type = iterator_type_expr;
 			} else {
 				name = new MemberName (name, "IEnumerator");
-				type = new TypeExpression (TypeManager.object_type, Location);
+				type = new TypeExpression (Compiler.BuiltinTypes.Object, Location);
 			}
 
 			name = new MemberName (name, "Current", Location);
@@ -500,7 +480,7 @@ namespace Mono.CSharp {
 		void Define_Reset ()
 		{
 			Method reset = new Method (
-				this, null, new TypeExpression (TypeManager.void_type, Location),
+				this, null, new TypeExpression (Compiler.BuiltinTypes.Void, Location),
 				Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("Reset", Location),
 				ParametersCompiled.EmptyReadOnlyParameters, null);
@@ -643,7 +623,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			current_pc = ec.GetTemporaryLocal (TypeManager.uint32_type);
+			current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
 			ec.Emit (OpCodes.Ldarg_0);
 			ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
 			ec.Emit (OpCodes.Stloc, current_pc);
@@ -664,7 +644,7 @@ namespace Mono.CSharp {
 			}
 
 			if (need_skip_finally) {
-				skip_finally = ec.GetTemporaryLocal (TypeManager.bool_type);
+				skip_finally = ec.GetTemporaryLocal (ec.BuiltinTypes.Bool);
 				ec.Emit (OpCodes.Ldc_I4_0);
 				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
@@ -719,7 +699,7 @@ namespace Mono.CSharp {
 			}
 
 			if (labels != null) {
-				current_pc = ec.GetTemporaryLocal (TypeManager.uint32_type);
+				current_pc = ec.GetTemporaryLocal (ec.BuiltinTypes.UInt);
 				ec.Emit (OpCodes.Ldarg_0);
 				ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
 				ec.Emit (OpCodes.Stloc, current_pc);
@@ -782,7 +762,7 @@ namespace Mono.CSharp {
 		// Our constructor
 		//
 		public Iterator (ParametersBlock block, IMethodData method, TypeContainer host, TypeSpec iterator_type, bool is_enumerable)
-			: base (block, TypeManager.bool_type, block.StartLocation)
+			: base (block, host.Compiler.BuiltinTypes.Bool, block.StartLocation)
 		{
 			this.OriginalMethod = method;
 			this.OriginalIteratorType = iterator_type;
@@ -819,7 +799,7 @@ namespace Mono.CSharp {
 			Block.Resolve (ctx);
 			ctx.EndFlowBranching ();
 
-			var move_next = new IteratorMethod (IteratorHost, new TypeExpression (TypeManager.bool_type, loc),
+			var move_next = new IteratorMethod (IteratorHost, new TypeExpression (ec.BuiltinTypes.Bool, loc),
 				Modifiers.PUBLIC, new MemberName ("MoveNext", Location));
 			move_next.Block.AddStatement (new MoveNextMethodStatement (this));
 			IteratorHost.AddMethod (move_next);
@@ -856,7 +836,7 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public static void CreateIterator (IMethodData method, TypeContainer parent, Modifiers modifiers, CompilerContext ctx)
+		public static void CreateIterator (IMethodData method, TypeContainer parent, Modifiers modifiers)
 		{
 			bool is_enumerable;
 			TypeSpec iterator_type;
@@ -865,8 +845,8 @@ namespace Mono.CSharp {
 			if (ret == null)
 				return;
 
-			if (!CheckType (ret, out iterator_type, out is_enumerable)) {
-				ctx.Report.Error (1624, method.Location,
+			if (!CheckType (ret, parent, out iterator_type, out is_enumerable)) {
+				parent.Compiler.Report.Error (1624, method.Location,
 					      "The body of `{0}' cannot be an iterator block " +
 					      "because `{1}' is not an iterator interface type",
 					      method.GetSignatureForError (),
@@ -879,19 +859,19 @@ namespace Mono.CSharp {
 				Parameter p = parameters [i];
 				Parameter.Modifier mod = p.ModFlags;
 				if ((mod & Parameter.Modifier.ISBYREF) != 0) {
-					ctx.Report.Error (1623, p.Location,
+					parent.Compiler.Report.Error (1623, p.Location,
 						"Iterators cannot have ref or out parameters");
 					return;
 				}
 
 				if (p is ArglistParameter) {
-					ctx.Report.Error (1636, method.Location,
+					parent.Compiler.Report.Error (1636, method.Location,
 						"__arglist is not allowed in parameter list of iterators");
 					return;
 				}
 
 				if (parameters.Types [i].IsPointer) {
-					ctx.Report.Error (1637, p.Location,
+					parent.Compiler.Report.Error (1637, p.Location,
 							  "Iterators cannot have unsafe parameters or " +
 							  "yield types");
 					return;
@@ -899,24 +879,24 @@ namespace Mono.CSharp {
 			}
 
 			if ((modifiers & Modifiers.UNSAFE) != 0) {
-				ctx.Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
+				parent.Compiler.Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
 			}
 
 			method.Block.WrapIntoIterator (method, parent, iterator_type, is_enumerable);
 		}
 
-		static bool CheckType (TypeSpec ret, out TypeSpec original_iterator_type, out bool is_enumerable)
+		static bool CheckType (TypeSpec ret, TypeContainer parent, out TypeSpec original_iterator_type, out bool is_enumerable)
 		{
 			original_iterator_type = null;
 			is_enumerable = false;
 
-			if (ret == TypeManager.ienumerable_type) {
-				original_iterator_type = TypeManager.object_type;
+			if (ret.BuiltinType == BuiltinTypeSpec.Type.IEnumerable) {
+				original_iterator_type = parent.Compiler.BuiltinTypes.Object;
 				is_enumerable = true;
 				return true;
 			}
-			if (ret == TypeManager.ienumerator_type) {
-				original_iterator_type = TypeManager.object_type;
+			if (ret.BuiltinType == BuiltinTypeSpec.Type.IEnumerator) {
+				original_iterator_type = parent.Compiler.BuiltinTypes.Object;
 				is_enumerable = false;
 				return true;
 			}
@@ -925,14 +905,17 @@ namespace Mono.CSharp {
 			if (inflated == null)
 				return false;
 
-			ret = inflated.GetDefinition ();
-			if (ret == TypeManager.generic_ienumerable_type) {
+			var member_definition = inflated.MemberDefinition;
+			PredefinedType ptype = parent.Module.PredefinedTypes.IEnumerableGeneric;
+
+			if (ptype.Define () && ptype.TypeSpec.MemberDefinition == member_definition) {
 				original_iterator_type = inflated.TypeArguments[0];
 				is_enumerable = true;
 				return true;
 			}
-			
-			if (ret == TypeManager.generic_ienumerator_type) {
+
+			ptype = parent.Module.PredefinedTypes.IEnumeratorGeneric;
+			if (ptype.Define () && ptype.TypeSpec.MemberDefinition == member_definition) {
 				original_iterator_type = inflated.TypeArguments[0];
 				is_enumerable = false;
 				return true;

@@ -27,8 +27,6 @@ namespace Mono.CSharp {
 		List<int> warnings_as_error;
 		List<int> warnings_only;
 
-		public static int DebugFlags = 0;
-
 		public const int RuntimeErrorId = 10000;
 
 		//
@@ -57,7 +55,7 @@ namespace Mono.CSharp {
 			105, 108, 109, 114, 162, 164, 168, 169, 183, 184, 197,
 			219, 251, 252, 253, 278, 282,
 			402, 414, 419, 420, 429, 436, 440, 458, 464, 465, 467, 469, 472,
-			612, 618, 626, 628, 642, 649, 652, 658, 659, 660, 661, 665, 672, 675, 693,
+			612, 618, 626, 628, 642, 649, 652, 657, 658, 659, 660, 661, 665, 672, 675, 693,
 			728,
 			809, 824,
 			1030, 1058, 1066,
@@ -92,10 +90,10 @@ namespace Mono.CSharp {
 			--reporting_disabled;
 		}
 
-		public void FeatureIsNotAvailable (Location loc, string feature)
+		public void FeatureIsNotAvailable (CompilerContext compiler, Location loc, string feature)
 		{
 			string version;
-			switch (RootContext.Version) {
+			switch (compiler.Settings.Version) {
 			case LanguageVersion.ISO_1:
 				version = "1.0";
 				break;
@@ -106,7 +104,7 @@ namespace Mono.CSharp {
 				version = "3.0";
 				break;
 			default:
-				throw new InternalErrorException ("Invalid feature version", RootContext.Version);
+				throw new InternalErrorException ("Invalid feature version", compiler.Settings.Version);
 			}
 
 			Error (1644, loc,
@@ -299,10 +297,12 @@ namespace Mono.CSharp {
 				return;
 
 			AbstractMessage msg;
-			if (IsWarningAsError (code))
+			if (IsWarningAsError (code)) {
+				message = "Warning as Error: " + message;
 				msg = new ErrorMessage (code, loc, message, extra_information);
-			else
+			} else {
 				msg = new WarningMessage (code, loc, message, extra_information);
+			}
 
 			extra_information.Clear ();
 			printer.Print (msg);
@@ -446,8 +446,8 @@ namespace Mono.CSharp {
 		[Conditional ("MCS_DEBUG")]
 		static public void Debug (int category, string message, params object[] args)
 		{
-			if ((category & DebugFlags) == 0)
-				return;
+//			if ((category & DebugFlags) == 0)
+//				return;
 
 			StringBuilder sb = new StringBuilder (message);
 
@@ -601,27 +601,23 @@ namespace Mono.CSharp {
 	//
 	// Generic base for any message writer
 	//
-	public abstract class ReportPrinter {
-		/// <summary>  
-		///   Whether to dump a stack trace on errors. 
-		/// </summary>
-		public bool Stacktrace;
-		
-		int warnings, errors;
+	public abstract class ReportPrinter
+	{
+		#region Properties
 
-		public int WarningsCount {
-			get { return warnings; }
-		}
-		
-		public int ErrorsCount {
-			get { return errors; }
-		}
+		public int FatalCounter { get; set; }
 
-		protected virtual string FormatText (string txt)
-		{
-			return txt;
-		}
+		public int ErrorsCount { get; protected set; }
+	
+		public bool ShowFullPaths { get; set; }
 
+		//
+		// Whether to dump a stack trace on errors. 
+		//
+		public bool Stacktrace { get; set; }
+
+		public int WarningsCount { get; private set; }
+	
 		//
 		// When (symbols related to previous ...) can be used
 		//
@@ -629,19 +625,31 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
+		#endregion
+
+
+		protected virtual string FormatText (string txt)
+		{
+			return txt;
+		}
+
 		public virtual void Print (AbstractMessage msg)
 		{
-			if (msg.IsWarning)
-				++warnings;
-			else
-				++errors;
+			if (msg.IsWarning) {
+				++WarningsCount;
+			} else {
+				++ErrorsCount;
+
+				if (ErrorsCount == FatalCounter)
+					throw new Exception (msg.Text);
+			}
 		}
 
 		protected void Print (AbstractMessage msg, TextWriter output)
 		{
 			StringBuilder txt = new StringBuilder ();
 			if (!msg.Location.IsNull) {
-				if (RootContext.ShowFullPaths)
+				if (ShowFullPaths)
 					txt.Append (msg.Location.ToStringFullName ());
 				else
 					txt.Append (msg.Location.ToString ());
@@ -664,8 +672,8 @@ namespace Mono.CSharp {
 
 		public void Reset ()
 		{
-			// Temporary hack for broken repl flow
-			errors = warnings = 0;
+			// HACK: Temporary hack for broken repl flow
+			ErrorsCount = WarningsCount = 0;
 		}
 	}
 
@@ -784,7 +792,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class StreamReportPrinter : ReportPrinter
+	public class StreamReportPrinter : ReportPrinter
 	{
 		readonly TextWriter writer;
 
@@ -800,7 +808,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class ConsoleReportPrinter : StreamReportPrinter
+	public class ConsoleReportPrinter : StreamReportPrinter
 	{
 		static readonly string prefix, postfix;
 
@@ -859,8 +867,6 @@ namespace Mono.CSharp {
 			: base (writer)
 		{
 		}
-
-		public int Fatal { get; set; }
 
 		static int NameToCode (string s)
 		{
@@ -951,16 +957,12 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
-		int print_count;
 		public override void Print (AbstractMessage msg)
 		{
 			base.Print (msg);
 
 			if (Stacktrace)
 				Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
-
-			if (++print_count == Fatal)
-				throw new Exception (msg.Text);
 		}
 
 		public static string FriendlyStackTrace (Exception e)
@@ -985,7 +987,7 @@ namespace Mono.CSharp {
 			ReferencesImporting,
 			PredefinedTypesInit,
 			ModuleDefinitionTotal,
-			UsingVerification,
+			UsingResolve,
 			EmitTotal,
 			CloseTypes,
 			Resouces,
@@ -1044,7 +1046,7 @@ namespace Mono.CSharp {
 				{ TimerType.ReferencesImporting, "Referenced assemblies importing" },
 				{ TimerType.PredefinedTypesInit, "Predefined types initialization" },
 				{ TimerType.ModuleDefinitionTotal, "Module definition" },
-				{ TimerType.UsingVerification, "Usings verification" },
+				{ TimerType.UsingResolve, "Top-level usings resolve" },
 				{ TimerType.EmitTotal, "Resolving and emitting members blocks" },
 				{ TimerType.CloseTypes, "Module types closed" },
 				{ TimerType.Resouces, "Embedding resources" },
@@ -1053,7 +1055,7 @@ namespace Mono.CSharp {
 			};
 
 			int counter = 0;
-			double percentage = total.ElapsedMilliseconds / 100;
+			double percentage = (double) total.ElapsedMilliseconds / 100;
 			long subtotal = total.ElapsedMilliseconds;
 			foreach (var timer in timers) {
 				string msg = timer_names[(TimerType) counter++];

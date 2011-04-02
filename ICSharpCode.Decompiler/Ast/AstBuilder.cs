@@ -88,10 +88,10 @@ namespace ICSharpCode.Decompiler.Ast
 			var outputFormatter = new TextOutputFormatter(output);
 			var formattingPolicy = new CSharpFormattingPolicy();
 			// disable whitespace in front of parentheses:
-			formattingPolicy.BeforeMethodCallParentheses = false;
-			formattingPolicy.BeforeMethodDeclarationParentheses = false;
-			formattingPolicy.BeforeConstructorDeclarationParentheses = false;
-			formattingPolicy.BeforeDelegateDeclarationParentheses = false;
+			formattingPolicy.SpaceBeforeMethodCallParentheses = false;
+			formattingPolicy.SpaceBeforeMethodDeclarationParentheses = false;
+			formattingPolicy.SpaceBeforeConstructorDeclarationParentheses = false;
+			formattingPolicy.SpaceBeforeDelegateDeclarationParentheses = false;
 			astCompileUnit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
 		}
 		

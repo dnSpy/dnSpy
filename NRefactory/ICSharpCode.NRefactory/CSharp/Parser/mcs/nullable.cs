@@ -53,7 +53,8 @@ namespace Mono.CSharp.Nullable
 	{
 		public static MethodSpec GetConstructor (TypeSpec nullableType)
 		{
-			return TypeManager.GetPredefinedConstructor (nullableType, Location.Null, GetUnderlyingType (nullableType));
+			return (MethodSpec) MemberCache.FindMember (nullableType,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (GetUnderlyingType (nullableType))), BindingRestriction.DeclaredOnly);
 		}
 
 		public static MethodSpec GetHasValue (TypeSpec nullableType)
@@ -77,11 +78,6 @@ namespace Mono.CSharp.Nullable
 		public static TypeSpec GetUnderlyingType (TypeSpec nullableType)
 		{
 			return ((InflatedTypeSpec) nullableType).TypeArguments[0];
-		}
-
-		public static bool IsNullableType (TypeSpec type)
-		{
-			throw new NotImplementedException ("net");
 		}
 	}
 
@@ -405,7 +401,7 @@ namespace Mono.CSharp.Nullable
 			//
 			if (unwrap == null) {
 				// S -> T? is wrap only
-				if (TypeManager.IsNullableType (type))
+				if (type.IsNullableType)
 					return Wrap.Create (expr, type);
 
 				// S -> T can be simplified
@@ -413,7 +409,7 @@ namespace Mono.CSharp.Nullable
 			}
 
 			// Wrap target for T?
-			if (TypeManager.IsNullableType (type)) {
+			if (type.IsNullableType) {
 				expr = Wrap.Create (expr, type);
 				if (expr == null)
 					return null;
@@ -534,9 +530,9 @@ namespace Mono.CSharp.Nullable
 			return expr;
 		}
 
-		protected override Expression ResolveEnumOperator (ResolveContext ec, Expression expr)
+		protected override Expression ResolveEnumOperator (ResolveContext ec, Expression expr, TypeSpec[] predefined)
 		{
-			expr = base.ResolveEnumOperator (ec, expr);
+			expr = base.ResolveEnumOperator (ec, expr, predefined);
 			if (expr == null)
 				return null;
 
@@ -577,8 +573,8 @@ namespace Mono.CSharp.Nullable
 		bool IsBitwiseBoolean {
 			get {
 				return (Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) &&
-				((left_unwrap != null && left_unwrap.Type == TypeManager.bool_type) ||
-				 (right_unwrap != null && right_unwrap.Type == TypeManager.bool_type));
+				((left_unwrap != null && left_unwrap.Type.BuiltinType == BuiltinTypeSpec.Type.Bool) ||
+				 (right_unwrap != null && right_unwrap.Type.BuiltinType == BuiltinTypeSpec.Type.Bool));
 			}
 		}
 
@@ -610,7 +606,7 @@ namespace Mono.CSharp.Nullable
 		Constant CreateNullConstant (ResolveContext ec, Expression expr)
 		{
 			// FIXME: Handle side effect constants
-			Constant c = new BoolConstant (Oper == Operator.Inequality, loc).Resolve (ec);
+			Constant c = new BoolConstant (ec.BuiltinTypes, Oper == Operator.Inequality, loc);
 
 			if ((Oper & Operator.EqualityMask) != 0) {
 				ec.Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is `{1}'",
@@ -632,14 +628,14 @@ namespace Mono.CSharp.Nullable
 
 			bool use_default_call = (Oper & (Operator.BitwiseMask | Operator.EqualityMask)) != 0;
 			left_orig = left;
-			if (TypeManager.IsNullableType (left.Type)) {
+			if (left.Type.IsNullableType) {
 				left = left_unwrap = Unwrap.Create (left, use_default_call);
 				if (left == null)
 					return null;
 			}
 
 			right_orig = right;
-			if (TypeManager.IsNullableType (right.Type)) {
+			if (right.Type.IsNullableType) {
 				right = right_unwrap = Unwrap.Create (right, use_default_call);
 				if (right == null)
 					return null;
@@ -653,17 +649,17 @@ namespace Mono.CSharp.Nullable
 			if (left_orig is NullLiteral) {
 				left = right;
 				state |= State.LeftNullLifted;
-				type = TypeManager.bool_type;
+				type = ec.BuiltinTypes.Bool;
 			}
 
 			if (right_orig.IsNull) {
 				if ((Oper & Operator.ShiftMask) != 0)
-					right = new EmptyExpression (TypeManager.int32_type);
+					right = new EmptyExpression (ec.BuiltinTypes.Int);
 				else
 					right = left;
 
 				state |= State.RightNullLifted;
-				type = TypeManager.bool_type;
+				type = ec.BuiltinTypes.Bool;
 			}
 
 			eclass = ExprClass.Value;
@@ -861,7 +857,7 @@ namespace Mono.CSharp.Nullable
 				return;
 			}
 
-			if (TypeManager.IsNullableType (l))
+			if (l.IsNullableType)
 				l = TypeManager.GetTypeArguments (l) [0];
 
 			base.EmitOperator (ec, l);
@@ -918,7 +914,7 @@ namespace Mono.CSharp.Nullable
 				//
 				// Special case for bool?, the result depends on both null right side and left side value
 				//
-				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type) == TypeManager.bool_type) {
+				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type).BuiltinType == BuiltinTypeSpec.Type.Bool) {
 					return res_expr;
 				}
 
@@ -929,7 +925,7 @@ namespace Mono.CSharp.Nullable
 				// Value types and null comparison
 				//
 				if (right_unwrap == null || (Oper & Operator.RelationalMask) != 0)
-					return CreateNullConstant (ec, right_orig).Resolve (ec);
+					return CreateNullConstant (ec, right_orig);
 			}
 
 			if (IsRightNullLifted) {
@@ -938,7 +934,7 @@ namespace Mono.CSharp.Nullable
 				//
 				// Special case for bool?, the result depends on both null right side and left side value
 				//
-				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type) == TypeManager.bool_type) {
+				if ((Oper == Operator.BitwiseAnd || Oper == Operator.BitwiseOr) && NullableInfo.GetUnderlyingType (type).BuiltinType == BuiltinTypeSpec.Type.Bool) {
 					return res_expr;
 				}
 
@@ -1075,7 +1071,7 @@ namespace Mono.CSharp.Nullable
 			// If left is a nullable type and an implicit conversion exists from right to underlying type of left,
 			// the result is underlying type of left
 			//
-			if (TypeManager.IsNullableType (ltype)) {
+			if (ltype.IsNullableType) {
 				unwrap = Unwrap.Create (left, false);
 				if (unwrap == null)
 					return null;
@@ -1093,7 +1089,7 @@ namespace Mono.CSharp.Nullable
 					//
 					// If right is a dynamic expression, the result type is dynamic
 					//
-					if (right.Type == InternalType.Dynamic) {
+					if (right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 						type = right.Type;
 
 						// Need to box underlying value type
@@ -1110,7 +1106,7 @@ namespace Mono.CSharp.Nullable
 					//
 					// If right is a dynamic expression, the result type is dynamic
 					//
-					if (right.Type == InternalType.Dynamic) {
+					if (right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 						type = right.Type;
 						return this;
 					}
@@ -1120,15 +1116,23 @@ namespace Mono.CSharp.Nullable
 					//
 					Constant lc = left as Constant;
 					if (lc != null && !lc.IsDefaultValue)
-						return ReducedExpression.Create (lc, this).Resolve (ec);
+						return ReducedExpression.Create (lc, this);
 
 					//
 					// Reduce (left ?? null) to left OR (null-constant ?? right) to right
 					//
 					if (right.IsNull || lc != null)
-						return ReducedExpression.Create (lc != null ? right : left, this).Resolve (ec);
+						return ReducedExpression.Create (lc != null ? right : left, this);
 
 					right = Convert.ImplicitConversion (ec, right, ltype, loc);
+					type = ltype;
+					return this;
+				}
+
+				//
+				// Special case null ?? null
+				//
+				if (ltype == right.Type) {
 					type = ltype;
 					return this;
 				}

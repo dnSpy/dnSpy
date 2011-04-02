@@ -3,7 +3,7 @@
 
 using System;
 using System.IO;
-using ICSharpCode.NRefactory.VB.Dom;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Parser;
 using ICSharpCode.NRefactory.VB.PrettyPrinter;
 using ICSharpCode.NRefactory.VB.Visitors;

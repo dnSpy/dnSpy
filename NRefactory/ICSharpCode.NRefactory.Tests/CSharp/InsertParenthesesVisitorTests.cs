@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
@@ -146,10 +146,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			Assert.AreEqual("a is int? ? b : c", InsertRequired(expr));
 			Assert.AreEqual("(a is int?) ? b : c", InsertReadable(expr));
 			
-			policy.ConditionalOperatorBeforeConditionSpace = false;
-			policy.ConditionalOperatorAfterConditionSpace = false;
-			policy.ConditionalOperatorBeforeSeparatorSpace = false;
-			policy.ConditionalOperatorAfterSeparatorSpace = false;
+			policy.SpaceBeforeConditionalOperatorCondition = false;
+			policy.SpaceAfterConditionalOperatorCondition = false;
+			policy.SpaceBeforeConditionalOperatorSeparator = false;
+			policy.SpaceAfterConditionalOperatorSeparator = false;
 			
 			Assert.AreEqual("a is int? ?b:c", InsertRequired(expr));
 			Assert.AreEqual("(a is int?)?b:c", InsertReadable(expr));
