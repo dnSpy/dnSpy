@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Windows.Media;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
@@ -28,34 +29,60 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	public sealed class FieldTreeNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		readonly FieldDefinition field;
-		
-		public FieldDefinition FieldDefinition {
+
+		public FieldDefinition FieldDefinition
+		{
 			get { return field; }
 		}
-		
+
 		public FieldTreeNode(FieldDefinition field)
 		{
 			if (field == null)
 				throw new ArgumentNullException("field");
 			this.field = field;
 		}
-		
-		public override object Text {
+
+		public override object Text
+		{
 			get { return HighlightSearchMatch(field.Name, " : " + this.Language.TypeToString(field.FieldType, false, field)); }
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return GetIcon(field); }
 		}
-		
-		public static object GetIcon(FieldDefinition field)
+
+		public static ImageSource GetIcon(FieldDefinition field)
 		{
+			if (field.DeclaringType.IsEnum && !field.Attributes.HasFlag(FieldAttributes.SpecialName))
+				return Images.GetIcon(MemberIcon.EnumValue, GetOverlayIcon(field.Attributes), false);
+
 			if (field.IsLiteral)
-				return Images.Literal;
+				return Images.GetIcon(MemberIcon.Literal, GetOverlayIcon(field.Attributes), false);
+			else if (field.IsInitOnly)
+				return Images.GetIcon(MemberIcon.FieldReadOnly, GetOverlayIcon(field.Attributes), field.IsStatic);
 			else
-				return Images.Field;
+				return Images.GetIcon(MemberIcon.Field, GetOverlayIcon(field.Attributes), field.IsStatic);
 		}
-		
+
+		private static OverlayIcon GetOverlayIcon(FieldAttributes fieldAttributes)
+		{
+			switch (fieldAttributes & FieldAttributes.FieldAccessMask) {
+				case FieldAttributes.Public:
+					return OverlayIcon.Public;
+				case FieldAttributes.Assembly:
+				case FieldAttributes.FamANDAssem:
+					return OverlayIcon.Internal;
+				case FieldAttributes.Family:
+				case FieldAttributes.FamORAssem:
+					return OverlayIcon.Protected;
+				case FieldAttributes.Private:
+					return OverlayIcon.Private;
+				default:
+					throw new NotSupportedException();
+			}
+		}
+
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			if (settings.SearchTermMatches(field.Name) && settings.Language.ShowMember(field))
@@ -63,13 +90,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			else
 				return FilterResult.Hidden;
 		}
-		
+
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.DecompileField(field, output, options);
 		}
-		
-		MemberReference IMemberTreeNode.Member {
+
+		MemberReference IMemberTreeNode.Member
+		{
 			get { return field; }
 		}
 	}

@@ -18,8 +18,7 @@
 
 using System;
 using System.Text;
-using System.Windows.Media.Imaging;
-
+using System.Windows.Media;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
@@ -31,20 +30,23 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	public sealed class MethodTreeNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		MethodDefinition method;
-		
-		public MethodDefinition MethodDefinition {
+
+		public MethodDefinition MethodDefinition
+		{
 			get { return method; }
 		}
-		
+
 		public MethodTreeNode(MethodDefinition method)
 		{
 			if (method == null)
 				throw new ArgumentNullException("method");
 			this.method = method;
 		}
-		
-		public override object Text {
-			get {
+
+		public override object Text
+		{
+			get
+			{
 				return GetText(method, Language);
 			}
 		}
@@ -62,31 +64,57 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			b.Append(language.TypeToString(method.ReturnType, false, method.MethodReturnType));
 			return HighlightSearchMatch(method.Name, b.ToString());
 		}
-		
-		public override object Icon {
-			get {
-				return GetIcon(method);
+
+		public override object Icon
+		{
+			get { return GetIcon(method); }
+		}
+
+		public static ImageSource GetIcon(MethodDefinition method)
+		{
+			if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal)) {
+				return Images.GetIcon(MemberIcon.Operator, GetOverlayIcon(method.Attributes), false);
+			}
+
+			if (method.IsStatic && method.HasCustomAttributes) {
+				foreach (var ca in method.CustomAttributes) {
+					if (ca.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute") {
+						return Images.GetIcon(MemberIcon.ExtensionMethod, GetOverlayIcon(method.Attributes), false);
+					}
+				}
+			}
+
+			if (method.IsSpecialName &&
+				(method.Name == ".ctor" || method.Name == ".cctor")) {
+				return Images.GetIcon(MemberIcon.Constructor, GetOverlayIcon(method.Attributes), false);
+			}
+
+			return Images.GetIcon(MemberIcon.Method, GetOverlayIcon(method.Attributes), method.IsStatic);
+		}
+
+		private static OverlayIcon GetOverlayIcon(MethodAttributes methodAttributes)
+		{
+			switch (methodAttributes & MethodAttributes.MemberAccessMask) {
+				case MethodAttributes.Public:
+					return OverlayIcon.Public;
+				case MethodAttributes.Assembly:
+				case MethodAttributes.FamANDAssem:
+					return OverlayIcon.Internal;
+				case MethodAttributes.Family:
+				case MethodAttributes.FamORAssem:
+					return OverlayIcon.Protected;
+				case MethodAttributes.Private:
+					return OverlayIcon.Private;
+				default:
+					throw new NotSupportedException();
 			}
 		}
 
-		public static BitmapImage GetIcon(MethodDefinition method)
-		{
-			if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal))
-				return Images.Operator;
-			if (method.IsStatic && method.HasCustomAttributes) {
-				foreach (var ca in method.CustomAttributes) {
-					if (ca.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
-						return Images.ExtensionMethod;
-				}
-			}
-			return Images.Method;
-		}
-		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.DecompileMethod(method, output, options);
 		}
-		
+
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			if (settings.SearchTermMatches(method.Name) && settings.Language.ShowMember(method))
@@ -94,8 +122,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			else
 				return FilterResult.Hidden;
 		}
-		
-		MemberReference IMemberTreeNode.Member {
+
+		MemberReference IMemberTreeNode.Member
+		{
 			get { return method; }
 		}
 	}

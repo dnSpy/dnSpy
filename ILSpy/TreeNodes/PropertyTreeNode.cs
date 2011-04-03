@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Windows.Media;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
@@ -29,14 +30,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		readonly PropertyDefinition property;
 		readonly bool isIndexer;
-		
+		readonly MethodAttributes attributesOfMostAccessibleMethod;
+
 		public PropertyTreeNode(PropertyDefinition property, bool isIndexer)
 		{
 			if (property == null)
 				throw new ArgumentNullException("property");
 			this.property = property;
 			this.isIndexer = isIndexer;
-			
+			this.attributesOfMostAccessibleMethod = GetAttributesOfMostAccessibleMethod(this.property);
+
 			if (property.GetMethod != null)
 				this.Children.Add(new MethodTreeNode(property.GetMethod));
 			if (property.SetMethod != null)
@@ -46,21 +49,90 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					this.Children.Add(new MethodTreeNode(m));
 			}
 		}
-		
+
 		public PropertyDefinition PropertyDefinition {
 			get { return property; }
 		}
-		
-		public override object Text {
+
+		public override object Text
+		{
 			get { return HighlightSearchMatch(property.Name, " : " + this.Language.TypeToString(property.PropertyType, false, property)); }
 		}
-		
-		public override object Icon {
-			get {
-				return isIndexer ? Images.Indexer : Images.Property;
+
+		public override object Icon
+		{
+			get { return GetIcon(property); }
+		}
+
+		private ImageSource GetIcon(PropertyDefinition property)
+		{
+			MemberIcon icon = this.isIndexer ? MemberIcon.Indexer : MemberIcon.Property;
+			return Images.GetIcon(icon, GetOverlayIcon(attributesOfMostAccessibleMethod), IsStatic);
+		}
+
+		private static OverlayIcon GetOverlayIcon(MethodAttributes methodAttributes)
+		{
+			switch (methodAttributes & MethodAttributes.MemberAccessMask) {
+				case MethodAttributes.Public:
+					return OverlayIcon.Public;
+				case MethodAttributes.Assembly:
+				case MethodAttributes.FamANDAssem:
+					return OverlayIcon.Internal;
+				case MethodAttributes.Family:
+				case MethodAttributes.FamORAssem:
+					return OverlayIcon.Protected;
+				case MethodAttributes.Private:
+					return OverlayIcon.Private;
+				default:
+					throw new NotSupportedException();
 			}
 		}
-		
+
+		public bool IsStatic
+		{
+			get { return (attributesOfMostAccessibleMethod & MethodAttributes.Static) != 0; }
+		}
+
+		private static MethodAttributes GetAttributesOfMostAccessibleMethod(PropertyDefinition property)
+		{
+			// There should always be at least one method from which to
+			// obtain the result, but the compiler doesn't know this so
+			// initialize the result with a default value
+			MethodAttributes result = (MethodAttributes)0;
+
+			// Method access is defined from inaccessible (lowest) to public (highest) 
+			// in numeric order, so we can do an integer comparison of the masked attribute
+			int accessLevel = 0;
+
+			if (property.GetMethod != null) {
+				int methodAccessLevel = (int)(property.GetMethod.Attributes & MethodAttributes.MemberAccessMask);
+				if (accessLevel < methodAccessLevel) {
+					accessLevel = methodAccessLevel;
+					result = property.GetMethod.Attributes;
+				}
+			}
+
+			if (property.SetMethod != null) {
+				int methodAccessLevel = (int)(property.SetMethod.Attributes & MethodAttributes.MemberAccessMask);
+				if (accessLevel < methodAccessLevel) {
+					accessLevel = methodAccessLevel;
+					result = property.SetMethod.Attributes;
+				}
+			}
+
+			if (property.HasOtherMethods) {
+				foreach (var m in property.OtherMethods) {
+					int methodAccessLevel = (int)(m.Attributes & MethodAttributes.MemberAccessMask);
+					if (accessLevel < methodAccessLevel) {
+						accessLevel = methodAccessLevel;
+						result = m.Attributes;
+					}
+				}
+			}
+
+			return result;
+		}
+
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			if (settings.SearchTermMatches(property.Name) && settings.Language.ShowMember(property))
@@ -68,13 +140,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			else
 				return FilterResult.Hidden;
 		}
-		
+
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.DecompileProperty(property, output, options);
 		}
-		
-		MemberReference IMemberTreeNode.Member {
+
+		MemberReference IMemberTreeNode.Member
+		{
 			get { return property; }
 		}
 	}
