@@ -139,7 +139,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public static ImageSource GetIcon(TypeDefinition type)
 		{
 			TypeIcon typeIcon = GetTypeIcon(type);
-			OverlayIcon overlayIcon = GetOverlayIcon(type);
+			AccessOverlayIcon overlayIcon = GetOverlayIcon(type);
 
 			return Images.GetIcon(typeIcon, overlayIcon);
 		}
@@ -161,25 +161,25 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		private static OverlayIcon GetOverlayIcon(TypeDefinition type)
+		private static AccessOverlayIcon GetOverlayIcon(TypeDefinition type)
 		{
-			OverlayIcon overlay;
+			AccessOverlayIcon overlay;
 			switch (type.Attributes & TypeAttributes.VisibilityMask) {
 				case TypeAttributes.Public:
 				case TypeAttributes.NestedPublic:
-					overlay = OverlayIcon.Public;
+					overlay = AccessOverlayIcon.Public;
 					break;
 				case TypeAttributes.NotPublic:
 				case TypeAttributes.NestedAssembly:
 				case TypeAttributes.NestedFamANDAssem:
-					overlay = OverlayIcon.Internal;
+					overlay = AccessOverlayIcon.Internal;
 					break;
 				case TypeAttributes.NestedFamily:
 				case TypeAttributes.NestedFamORAssem:
-					overlay = OverlayIcon.Protected;
+					overlay = AccessOverlayIcon.Protected;
 					break;
 				case TypeAttributes.NestedPrivate:
-					overlay = OverlayIcon.Private;
+					overlay = AccessOverlayIcon.Private;
 					break;
 				default:
 					throw new NotSupportedException();

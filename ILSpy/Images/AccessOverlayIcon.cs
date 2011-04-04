@@ -23,7 +23,7 @@ using System;
 
 namespace ICSharpCode.ILSpy
 {
-	internal enum OverlayIcon
+	internal enum AccessOverlayIcon
 	{
 		Public,
 		Protected,

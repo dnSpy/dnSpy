@@ -85,12 +85,12 @@ namespace ICSharpCode.ILSpy
 		private static TypeIconCache typeIconCache = new TypeIconCache();
 		private static MemberIconCache memberIconCache = new MemberIconCache();
 
-		public static ImageSource GetIcon(TypeIcon icon, OverlayIcon overlay)
+		public static ImageSource GetIcon(TypeIcon icon, AccessOverlayIcon overlay)
 		{
 			return typeIconCache.GetIcon(icon, overlay, false);
 		}
 
-		public static ImageSource GetIcon(MemberIcon icon, OverlayIcon overlay, bool isStatic)
+		public static ImageSource GetIcon(MemberIcon icon, AccessOverlayIcon overlay, bool isStatic)
 		{
 			return memberIconCache.GetIcon(icon, overlay, isStatic);
 		}
@@ -199,17 +199,17 @@ namespace ICSharpCode.ILSpy
 
 		private abstract class IconCache<T>
 		{
-			private Dictionary<Tuple<T, OverlayIcon, bool>, ImageSource> cache = new Dictionary<Tuple<T, OverlayIcon, bool>, ImageSource>();
+			private Dictionary<Tuple<T, AccessOverlayIcon, bool>, ImageSource> cache = new Dictionary<Tuple<T, AccessOverlayIcon, bool>, ImageSource>();
 
 			protected void PreloadPublicIconToCache(T icon, ImageSource image)
 			{
-				var iconKey = new Tuple<T, OverlayIcon, bool>(icon, OverlayIcon.Public, false);
+				var iconKey = new Tuple<T, AccessOverlayIcon, bool>(icon, AccessOverlayIcon.Public, false);
 				cache.Add(iconKey, image);
 			}
 
-			public ImageSource GetIcon(T icon, OverlayIcon overlay, bool isStatic)
+			public ImageSource GetIcon(T icon, AccessOverlayIcon overlay, bool isStatic)
 			{
-				var iconKey = new Tuple<T, OverlayIcon, bool>(icon, overlay, isStatic);
+				var iconKey = new Tuple<T, AccessOverlayIcon, bool>(icon, overlay, isStatic);
 				if (cache.ContainsKey(iconKey)) {
 					return cache[iconKey];
 				} else {
@@ -219,7 +219,7 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 
-			private ImageSource BuildMemberIcon(T icon, OverlayIcon overlay, bool isStatic)
+			private ImageSource BuildMemberIcon(T icon, AccessOverlayIcon overlay, bool isStatic)
 			{
 				ImageSource baseImage = GetBaseImage(icon);
 				ImageSource overlayImage = GetOverlayImage(overlay);
@@ -229,23 +229,23 @@ namespace ICSharpCode.ILSpy
 
 			protected abstract ImageSource GetBaseImage(T icon);
 
-			private static ImageSource GetOverlayImage(OverlayIcon overlay)
+			private static ImageSource GetOverlayImage(AccessOverlayIcon overlay)
 			{
 				ImageSource overlayImage;
 				switch (overlay) {
-					case OverlayIcon.Public:
+					case AccessOverlayIcon.Public:
 						overlayImage = null;
 						break;
-					case OverlayIcon.Protected:
+					case AccessOverlayIcon.Protected:
 						overlayImage = Images.OverlayProtected;
 						break;
-					case OverlayIcon.Internal:
+					case AccessOverlayIcon.Internal:
 						overlayImage = Images.OverlayInternal;
 						break;
-					case OverlayIcon.ProtectedInternal:
+					case AccessOverlayIcon.ProtectedInternal:
 						overlayImage = Images.OverlayProtectedInternal;
 						break;
-					case OverlayIcon.Private:
+					case AccessOverlayIcon.Private:
 						overlayImage = Images.OverlayPrivate;
 						break;
 					default:

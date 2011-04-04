@@ -65,19 +65,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return Images.GetIcon(MemberIcon.Field, GetOverlayIcon(field.Attributes), field.IsStatic);
 		}
 
-		private static OverlayIcon GetOverlayIcon(FieldAttributes fieldAttributes)
+		private static AccessOverlayIcon GetOverlayIcon(FieldAttributes fieldAttributes)
 		{
 			switch (fieldAttributes & FieldAttributes.FieldAccessMask) {
 				case FieldAttributes.Public:
-					return OverlayIcon.Public;
+					return AccessOverlayIcon.Public;
 				case FieldAttributes.Assembly:
 				case FieldAttributes.FamANDAssem:
-					return OverlayIcon.Internal;
+					return AccessOverlayIcon.Internal;
 				case FieldAttributes.Family:
 				case FieldAttributes.FamORAssem:
-					return OverlayIcon.Protected;
+					return AccessOverlayIcon.Protected;
 				case FieldAttributes.Private:
-					return OverlayIcon.Private;
+					return AccessOverlayIcon.Private;
 				default:
 					throw new NotSupportedException();
 			}

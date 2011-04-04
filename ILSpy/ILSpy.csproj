@@ -110,8 +110,8 @@
     <Compile Include="ILAstLanguage.cs" />
     <Compile Include="ILLanguage.cs" />
     <Compile Include="ILSpySettings.cs" />
+    <Compile Include="Images\AccessOverlayIcon.cs" />
     <Compile Include="Images\MemberIcon.cs" />
-    <Compile Include="Images\OverlayIcon.cs" />
     <Compile Include="Images\TypeIcon.cs" />
     <Compile Include="ISmartTextOutput.cs" />
     <Compile Include="Language.cs" />
