@@ -29,41 +29,45 @@ using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public enum OperatorType {
+	public enum OperatorType 
+	{
+		// Values must correspond to Mono.CSharp.Operator.OpType
+		// due to the casts used in OperatorDeclaration.
+		
 		// Unary operators
-		LogicalNot,
-		OnesComplement,
-		Increment,
-		Decrement,
-		True,
-		False,
+		LogicalNot = Mono.CSharp.Operator.OpType.LogicalNot,
+		OnesComplement = Mono.CSharp.Operator.OpType.OnesComplement,
+		Increment = Mono.CSharp.Operator.OpType.Increment,
+		Decrement = Mono.CSharp.Operator.OpType.Decrement,
+		True = Mono.CSharp.Operator.OpType.True,
+		False = Mono.CSharp.Operator.OpType.False,
 
 		// Unary and Binary operators
-		Addition,
-		Subtraction,
+		Addition = Mono.CSharp.Operator.OpType.Addition,
+		Subtraction = Mono.CSharp.Operator.OpType.Subtraction,
 
-		UnaryPlus,
-		UnaryNegation,
+		UnaryPlus = Mono.CSharp.Operator.OpType.UnaryPlus,
+		UnaryNegation = Mono.CSharp.Operator.OpType.UnaryNegation,
 		
 		// Binary operators
-		Multiply,
-		Division,
-		Modulus,
-		BitwiseAnd,
-		BitwiseOr,
-		ExclusiveOr,
-		LeftShift,
-		RightShift,
-		Equality,
-		Inequality,
-		GreaterThan,
-		LessThan,
-		GreaterThanOrEqual,
-		LessThanOrEqual,
+		Multiply = Mono.CSharp.Operator.OpType.Multiply,
+		Division = Mono.CSharp.Operator.OpType.Division,
+		Modulus = Mono.CSharp.Operator.OpType.Modulus,
+		BitwiseAnd = Mono.CSharp.Operator.OpType.BitwiseAnd,
+		BitwiseOr = Mono.CSharp.Operator.OpType.BitwiseOr,
+		ExclusiveOr = Mono.CSharp.Operator.OpType.ExclusiveOr,
+		LeftShift = Mono.CSharp.Operator.OpType.LeftShift,
+		RightShift = Mono.CSharp.Operator.OpType.RightShift,
+		Equality = Mono.CSharp.Operator.OpType.Equality,
+		Inequality = Mono.CSharp.Operator.OpType.Inequality,
+		GreaterThan = Mono.CSharp.Operator.OpType.GreaterThan,
+		LessThan = Mono.CSharp.Operator.OpType.LessThan,
+		GreaterThanOrEqual = Mono.CSharp.Operator.OpType.GreaterThanOrEqual,
+		LessThanOrEqual = Mono.CSharp.Operator.OpType.LessThanOrEqual,
 
 		// Implicit and Explicit
-		Implicit,
-		Explicit
+		Implicit = Mono.CSharp.Operator.OpType.Implicit,
+		Explicit = Mono.CSharp.Operator.OpType.Explicit
 	}
 	
 	public class OperatorDeclaration : AttributedNode
@@ -98,11 +102,25 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Body, value); }
 		}
 		
+		/// <summary>
+		/// Gets the operator type from the method name, or null, if the method does not represent one of the known operator types.
+		/// </summary>
+		public static OperatorType? GetOperatorType(string methodName)
+		{
+			return (OperatorType?)Mono.CSharp.Operator.GetType(methodName);
+		}
+		
+		/// <summary>
+		/// Gets the method name for the operator type. ("op_Addition", "op_Implicit", etc.)
+		/// </summary>
 		public static string GetName(OperatorType type)
 		{
 			return Mono.CSharp.Operator.GetMetadataName((Mono.CSharp.Operator.OpType)type);
 		}
 		
+		/// <summary>
+		/// Gets the token for the operator type ("+", "implicit", etc.)
+		/// </summary>
 		public static string GetToken(OperatorType type)
 		{
 			return Mono.CSharp.Operator.GetName((Mono.CSharp.Operator.OpType)type);

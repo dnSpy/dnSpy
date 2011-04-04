@@ -551,25 +551,7 @@ namespace ICSharpCode.NRefactory.CSharp
 					if (location != null)
 						newOperator.AddChild (new CSharpTokenNode (Convert (location[0]), "operator".Length), OperatorDeclaration.OperatorKeywordRole);
 					
-					int opLength = 1;
-					switch (newOperator.OperatorType) {
-						case OperatorType.LeftShift:
-						case OperatorType.RightShift:
-						case OperatorType.LessThanOrEqual:
-						case OperatorType.GreaterThanOrEqual:
-						case OperatorType.Equality:
-						case OperatorType.Inequality:
-//					case OperatorType.LogicalAnd:
-//					case OperatorType.LogicalOr:
-							opLength = 2;
-							break;
-						case OperatorType.True:
-							opLength = "true".Length;
-							break;
-						case OperatorType.False:
-							opLength = "false".Length;
-							break;
-					}
+					int opLength = OperatorDeclaration.GetToken(newOperator.OperatorType).Length;
 					if (location != null)
 						newOperator.AddChild (new CSharpTokenNode (Convert (location[1]), opLength), OperatorDeclaration.OperatorTypeRole);
 				}
