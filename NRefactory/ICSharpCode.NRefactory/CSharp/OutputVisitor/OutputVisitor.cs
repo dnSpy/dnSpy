@@ -1626,8 +1626,10 @@ namespace ICSharpCode.NRefactory.CSharp
 				LPar();
 				Space(policy.SpacesWithinCatchParentheses);
 				catchClause.Type.AcceptVisitor(this, data);
-				Space();
-				WriteIdentifier(catchClause.VariableName);
+				if (!string.IsNullOrEmpty(catchClause.VariableName)) {
+					Space();
+					WriteIdentifier(catchClause.VariableName);
+				}
 				Space(policy.SpacesWithinCatchParentheses);
 				RPar();
 			}
