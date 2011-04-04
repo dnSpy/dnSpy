@@ -222,6 +222,10 @@
     <Resource Include="Images\SubTypes.png" />
     <Resource Include="Images\SuperTypes.png" />
     <Resource Include="Images\Resource.png" />
+    <Resource Include="Images\Folder.Closed.png" />
+    <Resource Include="Images\Folder.Open.png" />
+    <Resource Include="Images\ResourceImage.png" />
+    <Resource Include="Images\ResourceResourcesFile.png" />
     <Resource Include="Images\Back.png" />
     <Resource Include="Images\Forward.png" />
     <Resource Include="Images\PrivateInternal.png" />

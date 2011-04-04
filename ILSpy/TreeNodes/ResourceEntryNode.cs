@@ -102,7 +102,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public ImageResourceEntryNode(string key, Stream data) : base(key, data)
 		{
 		}
-		
+
+		public override object Icon
+		{
+			get { return Images.ResourceImage; }
+		}
+
 		internal override bool View(DecompilerTextView textView)
 		{
 			try {

@@ -38,7 +38,12 @@ namespace ICSharpCode.ILSpy
 		public static readonly BitmapImage SubTypes = LoadBitmap("SubTypes");
 		public static readonly BitmapImage SuperTypes = LoadBitmap("SuperTypes");
 
+		public static readonly BitmapImage FolderOpen = LoadBitmap("Folder.Open");
+		public static readonly BitmapImage FolderClosed = LoadBitmap("Folder.Closed");
+
 		public static readonly BitmapImage Resource = LoadBitmap("Resource");
+		public static readonly BitmapImage ResourceImage = LoadBitmap("ResourceImage");
+		public static readonly BitmapImage ResourceResourcesFile = LoadBitmap("ResourceResourcesFile");
 
 		public static readonly BitmapImage Class = LoadBitmap("Class");
 		public static readonly BitmapImage Struct = LoadBitmap("Struct");
