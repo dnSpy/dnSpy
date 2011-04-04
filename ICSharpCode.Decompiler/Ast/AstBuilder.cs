@@ -248,6 +248,20 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				
 				AddTypeMembers(astType, typeDef);
+				
+				if (astType.Members.Any(m => m is IndexerDeclaration)) {
+					// Remove the [DefaultMember] attribute if the class contains indexers
+					foreach (AttributeSection section in astType.Attributes) {
+						foreach (Ast.Attribute attr in section.Attributes) {
+							TypeReference tr = attr.Type.Annotation<TypeReference>();
+							if (tr != null && tr.Name == "DefaultMemberAttribute" && tr.Namespace == "System.Reflection") {
+								attr.Remove();
+							}
+						}
+						if (section.Attributes.Count == 0)
+							section.Remove();
+					}
+				}
 			}
 
 			context.CurrentType = oldCurrentType;
@@ -565,49 +579,18 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 
 			// Add properties
-			CreateProperties(astType, typeDef);
-			
-			// Add constructors
-			foreach(MethodDefinition methodDef in typeDef.Methods) {
-				if (!methodDef.IsConstructor) continue;
-				
-				astType.AddChild(CreateConstructor(methodDef), TypeDeclaration.MemberRole);
+			foreach(PropertyDefinition propDef in typeDef.Properties) {
+				astType.Members.Add(CreateProperty(propDef));
 			}
 			
 			// Add methods
 			foreach(MethodDefinition methodDef in typeDef.Methods) {
-				if (methodDef.IsConstructor || MemberIsHidden(methodDef, context.Settings)) continue;
+				if (MemberIsHidden(methodDef, context.Settings)) continue;
 				
-				astType.AddChild(CreateMethod(methodDef), TypeDeclaration.MemberRole);
-			}
-		}
-
-		private void CreateProperties(TypeDeclaration astType, TypeDefinition typeDef)
-		{
-			CustomAttribute attributeToRemove = null;
-			foreach (PropertyDefinition propDef in typeDef.Properties) {
-				MemberDeclaration astProp = CreateProperty(propDef);
-
-				if (astProp.Name == "Item" && propDef.HasParameters) {
-					var defaultMember = GetDefaultMember(astType.Annotation<TypeDefinition>());
-					if (defaultMember.Item1 == "Item") {
-						astProp = ConvertPropertyToIndexer((PropertyDeclaration)astProp, propDef);
-						attributeToRemove = defaultMember.Item2;
-					} else if ((propDef.GetMethod ?? propDef.SetMethod).HasOverrides) {
-						astProp = ConvertPropertyToIndexer((PropertyDeclaration)astProp, propDef);
-					}
-				}
-
-				astType.AddChild(astProp, TypeDeclaration.MemberRole);
-			}
-
-			if (attributeToRemove != null) {
-				var astAttr = astType.Attributes.SelectMany(sec => sec.Attributes).First(attr => attr.Annotation<CustomAttribute>() == attributeToRemove);
-				var attrSection = (AttributeSection)astAttr.Parent;
-				if (attrSection.Attributes.Count == 1)
-					attrSection.Remove();
+				if (methodDef.IsConstructor)
+					astType.Members.Add(CreateConstructor(methodDef));
 				else
-					astAttr.Remove();
+					astType.Members.Add(CreateMethod(methodDef));
 			}
 		}
 
@@ -692,21 +675,6 @@ namespace ICSharpCode.Decompiler.Ast
 			return astMethod;
 		}
 
-		IndexerDeclaration ConvertPropertyToIndexer(PropertyDeclaration astProp, PropertyDefinition propDef)
-		{
-			var astIndexer = new IndexerDeclaration();
-			astIndexer.Name = astProp.Name;
-			astIndexer.CopyAnnotationsFrom(astProp);
-			astProp.Attributes.MoveTo(astIndexer.Attributes);
-			astIndexer.Modifiers = astProp.Modifiers;
-			astIndexer.PrivateImplementationType = astProp.PrivateImplementationType.Detach();
-			astIndexer.ReturnType = astProp.ReturnType.Detach();
-			astIndexer.Getter = astProp.Getter.Detach();
-			astIndexer.Setter = astProp.Setter.Detach();
-			astIndexer.Parameters.AddRange(MakeParameters(propDef.Parameters));
-			return astIndexer;
-		}
-
 		Modifiers FixUpVisibility(Modifiers m)
 		{
 			Modifiers v = m & Modifiers.VisibilityMask;
@@ -720,19 +688,19 @@ namespace ICSharpCode.Decompiler.Ast
 			return m & ~Modifiers.Private;
 		}
 
-		PropertyDeclaration CreateProperty(PropertyDefinition propDef)
+		MemberDeclaration CreateProperty(PropertyDefinition propDef)
 		{
 			PropertyDeclaration astProp = new PropertyDeclaration();
 			astProp.AddAnnotation(propDef);
 			var accessor = propDef.GetMethod ?? propDef.SetMethod;
 			Modifiers getterModifiers = Modifiers.None;
 			Modifiers setterModifiers = Modifiers.None;
-			if (!propDef.DeclaringType.IsInterface && !accessor.HasOverrides) {
+			if (accessor.HasOverrides) {
+				astProp.PrivateImplementationType = ConvertType(accessor.Overrides.First().DeclaringType);
+			} else if (!propDef.DeclaringType.IsInterface) {
 				getterModifiers = ConvertModifiers(propDef.GetMethod);
 				setterModifiers = ConvertModifiers(propDef.SetMethod);
 				astProp.Modifiers = FixUpVisibility(getterModifiers | setterModifiers);
-			} else if (accessor.HasOverrides) {
-				astProp.PrivateImplementationType = ConvertType(accessor.Overrides.First().DeclaringType);
 			}
 			astProp.Name = CleanName(propDef.Name);
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
@@ -756,7 +724,53 @@ namespace ICSharpCode.Decompiler.Ast
 					astProp.Setter.Modifiers = setterModifiers & Modifiers.VisibilityMask;
 			}
 			ConvertCustomAttributes(astProp, propDef);
+			
+			// Check whether the property is an indexer:
+			if (propDef.HasParameters) {
+				PropertyDefinition basePropDef = propDef;
+				if (accessor.HasOverrides) {
+					// if the property is explicitly implementing an interface, look up the property in the interface:
+					MethodDefinition baseAccessor = accessor.Overrides.First().Resolve();
+					if (baseAccessor != null) {
+						foreach (PropertyDefinition baseProp in baseAccessor.DeclaringType.Properties) {
+							if (baseProp.GetMethod == baseAccessor || baseProp.SetMethod == baseAccessor) {
+								basePropDef = baseProp;
+								break;
+							}
+						}
+					}
+				}
+				// figure out the name of the indexer:
+				string defaultMemberName = null;
+				var defaultMemberAttribute = basePropDef.DeclaringType.CustomAttributes.FirstOrDefault(IsDefaultMemberAttribute);
+				if (defaultMemberAttribute != null && defaultMemberAttribute.ConstructorArguments.Count == 1) {
+					defaultMemberName = defaultMemberAttribute.ConstructorArguments[0].Value as string;
+				}
+				if (basePropDef.Name == defaultMemberName) {
+					return ConvertPropertyToIndexer(astProp, propDef);
+				}
+			}
 			return astProp;
+		}
+		
+		bool IsDefaultMemberAttribute(CustomAttribute ca)
+		{
+			return ca.AttributeType.Name == "DefaultMemberAttribute" && ca.AttributeType.Namespace == "System.Reflection";
+		}
+		
+		IndexerDeclaration ConvertPropertyToIndexer(PropertyDeclaration astProp, PropertyDefinition propDef)
+		{
+			var astIndexer = new IndexerDeclaration();
+			astIndexer.Name = astProp.Name;
+			astIndexer.CopyAnnotationsFrom(astProp);
+			astProp.Attributes.MoveTo(astIndexer.Attributes);
+			astIndexer.Modifiers = astProp.Modifiers;
+			astIndexer.PrivateImplementationType = astProp.PrivateImplementationType.Detach();
+			astIndexer.ReturnType = astProp.ReturnType.Detach();
+			astIndexer.Getter = astProp.Getter.Detach();
+			astIndexer.Setter = astProp.Setter.Detach();
+			astIndexer.Parameters.AddRange(MakeParameters(propDef.Parameters));
+			return astIndexer;
 		}
 		
 		AttributedNode CreateEvent(EventDefinition eventDef)
