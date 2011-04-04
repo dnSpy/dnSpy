@@ -594,7 +594,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 
-		MethodDeclaration CreateMethod(MethodDefinition methodDef)
+		AttributedNode CreateMethod(MethodDefinition methodDef)
 		{
 			MethodDeclaration astMethod = new MethodDeclaration();
 			astMethod.AddAnnotation(methodDef);
@@ -616,6 +616,22 @@ namespace ICSharpCode.Decompiler.Ast
 					if (ca.AttributeType.Name == "ExtensionAttribute" && ca.AttributeType.Namespace == "System.Runtime.CompilerServices") {
 						astMethod.Parameters.First().ParameterModifier = ParameterModifier.This;
 					}
+				}
+			}
+			
+			// Convert MethodDeclaration to OperatorDeclaration if possible
+			if (methodDef.IsSpecialName && !methodDef.HasGenericParameters) {
+				OperatorType? opType = OperatorDeclaration.GetOperatorType(methodDef.Name);
+				if (opType.HasValue) {
+					OperatorDeclaration op = new OperatorDeclaration();
+					op.CopyAnnotationsFrom(astMethod);
+					op.ReturnType = astMethod.ReturnType.Detach();
+					op.OperatorType = opType.Value;
+					op.Modifiers = astMethod.Modifiers;
+					astMethod.Parameters.MoveTo(op.Parameters);
+					astMethod.Attributes.MoveTo(op.Attributes);
+					op.Body = astMethod.Body.Detach();
+					return op;
 				}
 			}
 			return astMethod;
