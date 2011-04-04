@@ -89,7 +89,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return Images.GetIcon(MemberIcon.Constructor, GetOverlayIcon(method.Attributes), false);
 			}
 
-			return Images.GetIcon(MemberIcon.Method, GetOverlayIcon(method.Attributes), method.IsStatic);
+			return Images.GetIcon(
+				method.IsVirtual ? MemberIcon.VirtualMethod : MemberIcon.Method,
+				GetOverlayIcon(method.Attributes),
+				method.IsStatic);
 		}
 
 		private static AccessOverlayIcon GetOverlayIcon(MethodAttributes methodAttributes)
