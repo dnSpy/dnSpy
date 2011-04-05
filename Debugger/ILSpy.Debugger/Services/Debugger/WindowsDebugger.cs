@@ -852,7 +852,10 @@ namespace ILSpy.Debugger.Services
 				TypeDefinition typeDef = null;
 				TypeDefinition nestedTypeDef = null;
 				
-				foreach (var assembly in DebugData.LoadedAssemblies.Where(a => a.Name.Version.ToString().StartsWith(debuggeeVersion))) {
+				foreach (var assembly in DebugData.LoadedAssemblies
+				         .Where(a => 
+				                ((a.FullName.StartsWith("System") || a.FullName.StartsWith("Microsoft")) && a.Name.Version.ToString().StartsWith(debuggeeVersion)) ||
+				                !a.FullName.StartsWith("System") || !a.FullName.StartsWith("Microsoft"))) {
 					foreach (var module in assembly.Modules) {
 						var localType = module.GetType(fullName);
 						if (localType != null) {
