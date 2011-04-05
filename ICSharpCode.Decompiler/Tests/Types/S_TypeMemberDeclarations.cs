@@ -303,3 +303,128 @@ namespace PropertyPublicGetProtectedSet
 		}
 	}
 }
+//$$ PropertyOverrideDefaultAccessorOnly
+namespace PropertyOverrideDefaultAccessorOnly
+{
+	public class MyClass
+	{
+		public virtual int MyProperty
+		{
+			get
+			{
+				return 3;
+			}
+			protected set
+			{
+			}
+		}
+	}
+	public class Derived : MyClass
+	{
+		public override int MyProperty
+		{
+			get
+			{
+				return 4;
+			}
+		}
+	}
+}
+//$$ PropertyOverrideRestrictedAccessorOnly
+namespace PropertyOverrideRestrictedAccessorOnly
+{
+	public class MyClass
+	{
+		public virtual int MyProperty
+		{
+			get
+			{
+				return 3;
+			}
+			protected set
+			{
+			}
+		}
+	}
+	public class Derived : MyClass
+	{
+		public override int MyProperty
+		{
+			protected set
+			{
+			}
+		}
+	}
+}
+//$$ PropertyOverrideOneAccessor
+namespace PropertyOverrideOneAccessor
+{
+	public class MyClass
+	{
+		protected internal virtual int MyProperty
+		{
+			get
+			{
+				return 3;
+			}
+			protected set
+			{
+			}
+		}
+	}
+	public class DerivedNew : MyClass
+	{
+		public virtual int MyProperty
+		{
+			set
+			{
+			}
+		}
+	}
+	public class DerivedOverride : DerivedNew
+	{
+		public override int MyProperty
+		{
+			set
+			{
+			}
+		}
+	}
+}
+//$$ IndexerOverrideRestrictedAccessorOnly
+namespace IndexerOverrideRestrictedAccessorOnly
+{
+	public class MyClass
+	{
+		public virtual int this[string s]
+		{
+			get
+			{
+				return 3;
+			}
+			protected set
+			{
+			}
+		}
+		protected internal virtual int this[int i]
+		{
+			protected get
+			{
+				return 2;
+			}
+			set
+			{
+			}
+		}
+	}
+	public class Derived : MyClass
+	{
+		protected internal override int this[int i]
+		{
+			protected get
+			{
+				return 4;
+			}
+		}
+	}
+}

@@ -739,6 +739,20 @@ namespace ICSharpCode.Decompiler.Ast
 				getterModifiers = ConvertModifiers(propDef.GetMethod);
 				setterModifiers = ConvertModifiers(propDef.SetMethod);
 				astProp.Modifiers = FixUpVisibility(getterModifiers | setterModifiers);
+				if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null)) {
+					var baseType = propDef.DeclaringType.BaseType.Resolve();
+					while (baseType != null && baseType.BaseType != null) {
+						var basePropDef = baseType.Properties.FirstOrDefault(pd => CouldOverride(pd, propDef));
+						if (basePropDef != null)
+							if (basePropDef.GetMethod != null && basePropDef.SetMethod != null) {
+								var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
+								astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
+								break;
+							} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot)
+								break;
+						baseType = baseType.BaseType.Resolve();
+					}
+				}
 			}
 			astProp.Name = CleanName(propDef.Name);
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
@@ -790,7 +804,31 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			return astProp;
 		}
-		
+
+		bool CouldOverride(PropertyDefinition baseProperty, PropertyDefinition property)
+		{
+			if (baseProperty.Name != property.Name || baseProperty.PropertyType.Resolve() != property.PropertyType.Resolve())
+				return false;
+
+			if (baseProperty.HasParameters) {
+				if (!property.HasParameters) {
+					return false;
+				}
+
+				var parameters1 = baseProperty.Parameters;
+				var parameters2 = property.Parameters;
+				if (parameters1.Count != parameters2.Count)
+					return false;
+
+				for (int index = 0; index < parameters1.Count; index++) {
+					if (parameters1[index].ParameterType.Resolve() != parameters2[index].ParameterType.Resolve())
+						return false;
+				}
+			}
+
+			return true;
+		}
+
 		bool IsDefaultMemberAttribute(CustomAttribute ca)
 		{
 			return ca.AttributeType.Name == "DefaultMemberAttribute" && ca.AttributeType.Namespace == "System.Reflection";
