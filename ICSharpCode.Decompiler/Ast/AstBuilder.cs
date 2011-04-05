@@ -33,6 +33,7 @@ namespace ICSharpCode.Decompiler.Ast
 		DecompilerContext context = new DecompilerContext();
 		CompilationUnit astCompileUnit = new CompilationUnit();
 		Dictionary<string, NamespaceDeclaration> astNamespaces = new Dictionary<string, NamespaceDeclaration>();
+		bool transformationsHaveRun;
 		
 		public AstBuilder(DecompilerContext context)
 		{
@@ -75,16 +76,37 @@ namespace ICSharpCode.Decompiler.Ast
 			return false;
 		}
 		
-		public void GenerateCode(ITextOutput output)
+		/// <summary>
+		/// Runs the C# transformations on the compilation unit.
+		/// </summary>
+		public void RunTransformations()
 		{
-			GenerateCode(output, null);
+			RunTransformations(null);
 		}
 		
-		public void GenerateCode(ITextOutput output, Predicate<IAstTransform> transformAbortCondition)
+		public void RunTransformations(Predicate<IAstTransform> transformAbortCondition)
 		{
 			TransformationPipeline.RunTransformationsUntil(astCompileUnit, transformAbortCondition, context);
-			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
+			transformationsHaveRun = true;
+		}
+		
+		/// <summary>
+		/// Gets the abstract source tree.
+		/// </summary>
+		public CompilationUnit CompilationUnit {
+			get { return astCompileUnit; }
+		}
+		
+		/// <summary>
+		/// Generates C# code from the abstract source tree.
+		/// </summary>
+		/// <remarks>This method adds ParenthesizedExpressions into the AST, and will run transformations if <see cref="RunTransformations"/> was not called explicitly</remarks>
+		public void GenerateCode(ITextOutput output)
+		{
+			if (!transformationsHaveRun)
+				RunTransformations();
 			
+			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			var outputFormatter = new TextOutputFormatter(output);
 			var formattingPolicy = new CSharpFormattingPolicy();
 			// disable whitespace in front of parentheses:

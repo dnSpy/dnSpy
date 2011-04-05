@@ -85,7 +85,8 @@ namespace ICSharpCode.ILSpy
 			WriteCommentLine(output, TypeToString(method.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, method.DeclaringType);
 			codeDomBuilder.AddMethod(method);
-			codeDomBuilder.GenerateCode(output, transformAbortCondition);
+			codeDomBuilder.RunTransformations(transformAbortCondition);
+			codeDomBuilder.GenerateCode(output);
 		}
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
@@ -93,7 +94,8 @@ namespace ICSharpCode.ILSpy
 			WriteCommentLine(output, TypeToString(property.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, property.DeclaringType);
 			codeDomBuilder.AddProperty(property);
-			codeDomBuilder.GenerateCode(output, transformAbortCondition);
+			codeDomBuilder.RunTransformations(transformAbortCondition);
+			codeDomBuilder.GenerateCode(output);
 		}
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
@@ -101,7 +103,8 @@ namespace ICSharpCode.ILSpy
 			WriteCommentLine(output, TypeToString(field.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, field.DeclaringType);
 			codeDomBuilder.AddField(field);
-			codeDomBuilder.GenerateCode(output, transformAbortCondition);
+			codeDomBuilder.RunTransformations(transformAbortCondition);
+			codeDomBuilder.GenerateCode(output);
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
@@ -109,14 +112,16 @@ namespace ICSharpCode.ILSpy
 			WriteCommentLine(output, TypeToString(ev.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, ev.DeclaringType);
 			codeDomBuilder.AddEvent(ev);
-			codeDomBuilder.GenerateCode(output, transformAbortCondition);
+			codeDomBuilder.RunTransformations(transformAbortCondition);
+			codeDomBuilder.GenerateCode(output);
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, type);
 			codeDomBuilder.AddType(type);
-			codeDomBuilder.GenerateCode(output, transformAbortCondition);
+			codeDomBuilder.RunTransformations(transformAbortCondition);
+			codeDomBuilder.GenerateCode(output);
 		}
 		
 		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
@@ -130,7 +135,8 @@ namespace ICSharpCode.ILSpy
 				base.DecompileAssembly(assembly, fileName, output, options);
 				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: null);
 				codeDomBuilder.AddAssembly(assembly, onlyAssemblyLevel: !options.FullDecompilation);
-				codeDomBuilder.GenerateCode(output, transformAbortCondition);
+				codeDomBuilder.RunTransformations(transformAbortCondition);
+				codeDomBuilder.GenerateCode(output);
 			}
 		}
 		
@@ -291,9 +297,11 @@ namespace ICSharpCode.ILSpy
 				delegate (IGrouping<string, TypeDefinition> file) {
 					using (StreamWriter w = new StreamWriter(Path.Combine(options.SaveAsProjectDirectory, file.Key))) {
 						AstBuilder codeDomBuilder = CreateAstBuilder(options, null);
-						foreach (TypeDefinition type in file)
+						foreach (TypeDefinition type in file) {
 							codeDomBuilder.AddType(type);
-						codeDomBuilder.GenerateCode(new PlainTextOutput(w), transformAbortCondition);
+						}
+						codeDomBuilder.RunTransformations(transformAbortCondition);
+						codeDomBuilder.GenerateCode(new PlainTextOutput(w));
 					}
 				});
 			AstMethodBodyBuilder.PrintNumberOfUnhandledOpcodes();
