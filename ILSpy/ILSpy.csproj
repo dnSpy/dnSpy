@@ -129,6 +129,7 @@
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />
     <Compile Include="TreeNodes\XamlResourceNode.cs" />
     <Compile Include="XmlDocKeyProvider.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyAccessorsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
     <EmbeddedResource Include="..\README.txt">
