@@ -109,7 +109,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (mCandidate.HasOverrides)
 				return false;
 
-			if (candidate.Resolve(mCandidate.ReturnType) != method.Resolve(mMethod.ReturnType))
+			if (!IsSameType(candidate.Resolve(mCandidate.ReturnType), method.Resolve(mMethod.ReturnType)))
 				return false;
 
 			if (mCandidate.HasGenericParameters || mMethod.HasGenericParameters) {
@@ -140,7 +140,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if ((mCandidate.GetMethod ?? mCandidate.SetMethod).HasOverrides)
 				return false;
 
-			if (candidate.Resolve(mCandidate.PropertyType) != property.Resolve(mProperty.PropertyType))
+			if (!IsSameType(candidate.Resolve(mCandidate.PropertyType), property.Resolve(mProperty.PropertyType)))
 				return false;
 
 			if (mCandidate.HasParameters || mProperty.HasParameters) {
@@ -160,7 +160,17 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			var baseParam = baseParameterType.Resolve(baseParameterType.Item.ParameterType);
 			var param = parameterType.Resolve(parameterType.Item.ParameterType);
-			return baseParam == param;
+			return IsSameType(baseParam, param);
+		}
+
+		private static bool IsSameType(TypeReference tr1, TypeReference tr2)
+		{
+			if (tr1 == tr2)
+				return true;
+
+			if (tr1.Name == tr2.Name && tr1.FullName == tr2.FullName)
+				return true;
+			return false;
 		}
 
 		private static IEnumerable<GenericContext<TypeDefinition>> BaseTypes(TypeDefinition type)
@@ -230,6 +240,8 @@ namespace ICSharpCode.Decompiler.Ast
 					var resolvedElementType = Resolve(arrayType.ElementType);
 					if (resolvedElementType == null)
 						return null;
+					if (resolvedElementType == arrayType.ElementType)
+						return arrayType;
 					var newArrayType = new ArrayType(resolvedElementType, arrayType.Rank);
 					for (int dimension = 0; dimension < arrayType.Rank; dimension++)
 						newArrayType.Dimensions[dimension] = arrayType.Dimensions[dimension];

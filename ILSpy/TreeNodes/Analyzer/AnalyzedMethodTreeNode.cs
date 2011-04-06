@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (analyzedMethod.HasBody)
 				this.Children.Add(new AnalyzedMethodUsesNode(analyzedMethod));
 			this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));
-			if (analyzedMethod.IsVirtual && !analyzedMethod.IsFinal && !analyzedMethod.DeclaringType.IsInterface) // interfaces are temporarly disabled
+			if (AnalyzerMethodOverridesTreeNode.CanShowAnalyzer(analyzedMethod))
 				this.Children.Add(new AnalyzerMethodOverridesTreeNode(analyzedMethod));
 		}
 		

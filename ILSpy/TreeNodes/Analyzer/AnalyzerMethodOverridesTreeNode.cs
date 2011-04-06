@@ -88,5 +88,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				}
 			}
 		}
+
+		public static bool CanShowAnalyzer(MethodDefinition method)
+		{
+			return method.IsVirtual && !method.IsFinal && !method.DeclaringType.IsSealed && !method.DeclaringType.IsInterface;	// interfaces are temporarly disabled
+		}
 	}
 }
