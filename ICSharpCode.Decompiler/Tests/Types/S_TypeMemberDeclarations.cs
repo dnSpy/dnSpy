@@ -374,7 +374,7 @@ namespace PropertyOverrideOneAccessor
 	}
 	public class DerivedNew : MyClass
 	{
-		public virtual int MyProperty
+		public new virtual int MyProperty
 		{
 			set
 			{
@@ -425,6 +425,247 @@ namespace IndexerOverrideRestrictedAccessorOnly
 			{
 				return 4;
 			}
+		}
+	}
+}
+//$$ PropertyHiding
+namespace PropertyHiding
+{
+	public class A
+	{
+		public virtual int P
+		{
+			get
+			{
+				return 0;
+			}
+			set
+			{
+			}
+		}
+	}
+	public class B : A
+	{
+		private new int P
+		{
+			get
+			{
+				return 0;
+			}
+			set
+			{
+			}
+		}
+	}
+	public class C : B
+	{
+		public override int P
+		{
+			set
+			{
+			}
+		}
+	}
+}
+//$$ IndexerHidingGeneric
+namespace IndexerHidingGeneric
+{
+	public class A<T>
+	{
+		public virtual int this[T r]
+		{
+			get
+			{
+				return 0;
+			}
+			set
+			{
+			}
+		}
+	}
+	public class B : A<int>
+	{
+		private new int this[int k]
+		{
+			get
+			{
+				return 0;
+			}
+			set
+			{
+			}
+		}
+	}
+	public class C<T> : A<T>
+	{
+		public override int this[T s]
+		{
+			set
+			{
+			}
+		}
+	}
+	public class D<T> : C<T>
+	{
+		public new virtual int this[T s]
+		{
+			set
+			{
+			}
+		}
+	}
+}
+//$$ MethodHiding
+namespace MethodHiding
+{
+	public class A
+	{
+		public virtual void F()
+		{
+		}
+	}
+	public class B : A
+	{
+		private new void F()
+		{
+			base.F();
+		}
+	}
+	public class C : B
+	{
+		public override void F()
+		{
+			base.F();
+		}
+	}
+}
+//$$ MethodHideGeneric
+namespace MethodHideGeneric
+{
+	public class A<T>
+	{
+		public virtual void F(T s)
+		{
+		}
+		public new static bool Equals(object o1, object o2)
+		{
+			return true;
+		}
+	}
+	public class B : A<string>
+	{
+		private new void F(string k)
+		{
+		}
+		public void F(int i)
+		{
+		}
+	}
+	public class C<T> : A<T>
+	{
+		public override void F(T r)
+		{
+		}
+		public void G(T t)
+		{
+		}
+	}
+	public class D<T1> : C<T1>
+	{
+		public new virtual void F(T1 k)
+		{
+		}
+		public virtual void F<T2>(T2 k)
+		{
+		}
+		public virtual void G<T2>(T2 t)
+		{
+		}
+	}
+}
+//$$ MethodHideGenericSkipPrivate
+namespace MethodHideGenericSkipPrivate
+{
+	public class A<T>
+	{
+		public virtual void F(T t)
+		{
+		}
+	}
+	public class B<T> : A<T>
+	{
+		private new void F(T t)
+		{
+		}
+		private void K()
+		{
+		}
+	}
+	public class C<T> : B<T>
+	{
+		public override void F(T tt)
+		{
+		}
+		public void K()
+		{
+		}
+	}
+	public class D : B<int>
+	{
+		public override void F(int t)
+		{
+		}
+	}
+}
+//$$ MethodHideGeneric2
+namespace MethodHideGeneric2
+{
+	public class A
+	{
+		public virtual void F(int i)
+		{
+		}
+		public void K()
+		{
+		}
+	}
+	public class B<T> : A
+	{
+		protected virtual void F(T t)
+		{
+		}
+		public void K<T2>()
+		{
+		}
+	}
+	public class C : B<int>
+	{
+		protected override void F(int k)
+		{
+		}
+		public new void K<T3>()
+		{
+		}
+	}
+	public class D : B<string>
+	{
+		public override void F(int k)
+		{
+		}
+		public void L<T4>()
+		{
+		}
+	}
+	public class E<T>
+	{
+		public void M<T2>(T t, T2 t2)
+		{
+		}
+	}
+	public class F<T> : E<T>
+	{
+		public void M(T t1, T t2)
+		{
 		}
 	}
 }

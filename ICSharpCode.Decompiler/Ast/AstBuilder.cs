@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -626,9 +627,13 @@ namespace ICSharpCode.Decompiler.Ast
 			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 			astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
-				if (!methodDef.HasOverrides)
+				if (!methodDef.HasOverrides) {
 					astMethod.Modifiers = ConvertModifiers(methodDef);
-				else
+					if (methodDef.IsVirtual ^ !methodDef.IsNewSlot) {
+						if (TypeMap.FindBaseMethods(methodDef).Any())
+							astMethod.Modifiers |= Modifiers.New;
+					}
+				} else
 					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
 			}
@@ -658,7 +663,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			return astMethod;
 		}
-		
+
 		IEnumerable<TypeParameterDeclaration> MakeTypeParameters(IEnumerable<GenericParameter> genericParameters)
 		{
 			foreach (var gp in genericParameters) {
@@ -739,19 +744,17 @@ namespace ICSharpCode.Decompiler.Ast
 				getterModifiers = ConvertModifiers(propDef.GetMethod);
 				setterModifiers = ConvertModifiers(propDef.SetMethod);
 				astProp.Modifiers = FixUpVisibility(getterModifiers | setterModifiers);
-				if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null)) {
-					var baseType = propDef.DeclaringType.BaseType.Resolve();
-					while (baseType != null && baseType.BaseType != null) {
-						var basePropDef = baseType.Properties.FirstOrDefault(pd => CouldOverride(pd, propDef));
-						if (basePropDef != null)
-							if (basePropDef.GetMethod != null && basePropDef.SetMethod != null) {
-								var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
-								astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
-								break;
-							} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot)
-								break;
-						baseType = baseType.BaseType.Resolve();
-					}
+				if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null))
+					foreach (var basePropDef in TypeMap.FindBaseProperties(propDef))
+						if (basePropDef.GetMethod != null && basePropDef.SetMethod != null) {
+							var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
+							astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
+							break;
+						} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot)
+							break;
+				if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
+					if (TypeMap.FindBaseProperties(propDef).Any())
+						astProp.Modifiers |= Modifiers.New;
 				}
 			}
 			astProp.Name = CleanName(propDef.Name);
@@ -803,30 +806,6 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			return astProp;
-		}
-
-		bool CouldOverride(PropertyDefinition baseProperty, PropertyDefinition property)
-		{
-			if (baseProperty.Name != property.Name || baseProperty.PropertyType.Resolve() != property.PropertyType.Resolve())
-				return false;
-
-			if (baseProperty.HasParameters) {
-				if (!property.HasParameters) {
-					return false;
-				}
-
-				var parameters1 = baseProperty.Parameters;
-				var parameters2 = property.Parameters;
-				if (parameters1.Count != parameters2.Count)
-					return false;
-
-				for (int index = 0; index < parameters1.Count; index++) {
-					if (parameters1[index].ParameterType.Resolve() != parameters2[index].ParameterType.Resolve())
-						return false;
-				}
-			}
-
-			return true;
 		}
 
 		bool IsDefaultMemberAttribute(CustomAttribute ca)
@@ -1322,5 +1301,193 @@ namespace ICSharpCode.Decompiler.Ast
 			return new Tuple<string,CustomAttribute>(null, null);
 		}
 
+
+		class TypeMap
+		{
+			public static IEnumerable<MethodDefinition> FindBaseMethods(MethodDefinition method)
+			{
+				var typeContext = CreateGenericContext(method.DeclaringType);
+				var gMethod = typeContext.ApplyTo(method);
+
+				foreach (var baseType in BaseTypes(method.DeclaringType))
+					foreach (var baseMethod in baseType.Item.Methods)
+						if (MatchMethod(baseType.ApplyTo(baseMethod), gMethod) && IsVisbleFrom(baseMethod, method)) {
+							yield return baseMethod;
+							if (!(baseMethod.IsNewSlot ^ baseMethod.IsVirtual))
+								yield break;
+						}
+			}
+
+			public static IEnumerable<PropertyDefinition> FindBaseProperties(PropertyDefinition property)
+			{
+				var typeContext = CreateGenericContext(property.DeclaringType);
+				var gProperty = typeContext.ApplyTo(property);
+
+				foreach (var baseType in BaseTypes(property.DeclaringType))
+					foreach (var baseProperty in baseType.Item.Properties)
+						if (MatchProperty(baseType.ApplyTo(baseProperty), gProperty) && IsVisbleFrom(baseProperty, property)) {
+							yield return baseProperty;
+							var anyPropertyAccessor = baseProperty.GetMethod ?? baseProperty.SetMethod;
+							if (!(anyPropertyAccessor.IsNewSlot ^ anyPropertyAccessor.IsVirtual))
+								yield break;
+						}
+
+			}
+
+			private static bool IsVisbleFrom(MethodDefinition baseCandidate, MethodDefinition method)
+			{
+				if (baseCandidate.IsPrivate)
+					return false;
+				if ((baseCandidate.IsAssembly || baseCandidate.IsFamilyAndAssembly) && baseCandidate.Module != method.Module)
+					return false;
+				return true;
+			}
+
+			private static bool IsVisbleFrom(PropertyDefinition baseCandidate, PropertyDefinition property)
+			{
+				if (baseCandidate.GetMethod != null && property.GetMethod != null && IsVisbleFrom(baseCandidate.GetMethod, property.GetMethod))
+					return true;
+				if (baseCandidate.SetMethod != null && property.SetMethod != null && IsVisbleFrom(baseCandidate.SetMethod, property.SetMethod))
+					return true;
+				return false;
+			}
+
+			private static bool MatchMethod(GenericContext<MethodDefinition> candidate, GenericContext<MethodDefinition> method)
+			{
+				var mCandidate = candidate.Item;
+				var mMethod = method.Item;
+				if (mCandidate.Name != mMethod.Name)
+					return false;
+
+				if (mCandidate.HasOverrides)
+					return false;
+
+				if (candidate.Resolve(mCandidate.ReturnType) != method.Resolve(mMethod.ReturnType))
+					return false;
+
+				if (mCandidate.HasGenericParameters || mMethod.HasGenericParameters) {
+					if (!mCandidate.HasGenericParameters || !mMethod.HasGenericParameters || mCandidate.GenericParameters.Count != mMethod.GenericParameters.Count)
+						return false;
+				}
+
+				if (mCandidate.HasParameters || mMethod.HasParameters) {
+					if (!mCandidate.HasParameters || !mMethod.HasParameters || mCandidate.Parameters.Count != mMethod.Parameters.Count)
+						return false;
+
+					for (int index = 0; index < mCandidate.Parameters.Count; index++) {
+						if (!MatchParameters(candidate.ApplyTo(mCandidate.Parameters[index]), method.ApplyTo(mMethod.Parameters[index])))
+							return false;
+					}
+				}
+
+				return true;
+			}
+
+			private static bool MatchProperty(GenericContext<PropertyDefinition> candidate, GenericContext<PropertyDefinition> property)
+			{
+				var mCandidate = candidate.Item;
+				var mProperty = property.Item;
+				if (mCandidate.Name != mProperty.Name)
+					return false;
+
+				if ((mCandidate.GetMethod ?? mCandidate.SetMethod).HasOverrides)
+					return false;
+
+				if (candidate.Resolve(mCandidate.PropertyType) != property.Resolve(mProperty.PropertyType))
+					return false;
+
+				if (mCandidate.HasParameters || mProperty.HasParameters) {
+					if (!mCandidate.HasParameters || !mProperty.HasParameters || mCandidate.Parameters.Count != mProperty.Parameters.Count)
+						return false;
+
+					for (int index = 0; index < mCandidate.Parameters.Count; index++) {
+						if (!MatchParameters(candidate.ApplyTo(mCandidate.Parameters[index]), property.ApplyTo(mProperty.Parameters[index])))
+							return false;
+					}
+				}
+
+				return true;
+			}
+
+			private static bool MatchParameters(GenericContext<ParameterDefinition> baseParameterType, GenericContext<ParameterDefinition> parameterType)
+			{
+				var baseParam = baseParameterType.Resolve(baseParameterType.Item.ParameterType);
+				var param = parameterType.Resolve(parameterType.Item.ParameterType);
+				return baseParam == param;
+			}
+
+			private static IEnumerable<GenericContext<TypeDefinition>> BaseTypes(TypeDefinition type)
+			{
+				return BaseTypes(CreateGenericContext(type));
+			}
+
+			private static IEnumerable<GenericContext<TypeDefinition>> BaseTypes(GenericContext<TypeDefinition> type)
+			{
+				while (type.Item.BaseType != null) {
+					var baseType = type.Item.BaseType;
+					var genericBaseType = baseType as GenericInstanceType;
+					if (genericBaseType != null) {
+						type = new GenericContext<TypeDefinition>(genericBaseType.Resolve(),
+							genericBaseType.GenericArguments.Select(t => type.Resolve(t)));
+					} else
+						type = new GenericContext<TypeDefinition>(baseType.Resolve());
+					yield return type;
+				}
+			}
+
+			private static GenericContext<TypeDefinition> CreateGenericContext(TypeDefinition type)
+			{
+				return new GenericContext<TypeDefinition>(type, type.GenericParameters);
+			}
+
+			struct GenericContext<T>
+			{
+				private static readonly ReadOnlyCollection<TypeReference> Empty = new ReadOnlyCollection<TypeReference>(new List<TypeReference>());
+
+				public readonly T Item;
+				public readonly ReadOnlyCollection<TypeReference> TypeArguments;
+
+				public GenericContext(T item)
+				{
+					Item = item;
+					TypeArguments = Empty;
+				}
+
+				public GenericContext(T item, IEnumerable<TypeReference> typeArguments)
+				{
+					Item = item;
+					var list = new List<TypeReference>();
+					foreach (var arg in typeArguments) {
+						if (arg == null)
+							throw new ArgumentNullException("typeArguments");
+						if (!arg.IsGenericParameter)
+							list.Add(arg.Resolve());
+						else
+							list.Add(arg);
+					}
+					TypeArguments = new ReadOnlyCollection<TypeReference>(list);
+				}
+
+				private GenericContext(T item, ReadOnlyCollection<TypeReference> typeArguments)
+				{
+					Item = item;
+					TypeArguments = typeArguments;
+				}
+
+				public TypeReference Resolve(TypeReference type)
+				{
+					var genericParameter = type as GenericParameter;
+					if (genericParameter != null && genericParameter.Owner.GenericParameterType == GenericParameterType.Type) {
+						return this.TypeArguments[genericParameter.Position];
+					}
+					return type.Resolve();
+				}
+
+				public GenericContext<T2> ApplyTo<T2>(T2 item)
+				{
+					return new GenericContext<T2>(item, this.TypeArguments);
+				}
+			}
+		}
 	}
 }
