@@ -56,6 +56,7 @@
     <Compile Include="IncrementDecrement.cs" />
     <Compile Include="Switch.cs" />
     <Compile Include="UnsafeCode.cs" />
+    <Compile Include="Types\S_TypeDeclarations.cs" />
     <Compile Include="YieldReturn.cs" />
     <None Include="Types\S_EnumSamples.cs" />
     <None Include="CustomAttributes\S_AssemblyCustomAttribute.cs" />
