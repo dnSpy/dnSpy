@@ -10,20 +10,17 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	/// <summary>
-	/// Searches for overrides of the analyzed method.
-	/// </summary>
-	class AnalyzerMethodOverridesTreeNode : AnalyzerTreeNode
+	class AnalyzedPropertyOverridesTreeNode : AnalyzerTreeNode
 	{
-		readonly MethodDefinition analyzedMethod;
+		readonly PropertyDefinition analyzedProperty;
 		readonly ThreadingSupport threading;
 
-		public AnalyzerMethodOverridesTreeNode(MethodDefinition analyzedMethod)
+		public AnalyzedPropertyOverridesTreeNode(PropertyDefinition analyzedProperty)
 		{
-			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+			if (analyzedProperty == null)
+				throw new ArgumentNullException("analyzedProperty");
 
-			this.analyzedMethod = analyzedMethod;
+			this.analyzedProperty = analyzedProperty;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
 		}
@@ -45,8 +42,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		protected override void OnCollapsing()
 		{
-			if (threading.IsRunning)
-			{
+			if (threading.IsRunning) {
 				this.LazyLoading = true;
 				threading.Cancel();
 				this.Children.Clear();
@@ -67,31 +63,30 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
 		{
 			string asmName = asm.AssemblyDefinition.Name.Name;
-			string name = analyzedMethod.Name;
-			string declTypeName = analyzedMethod.DeclaringType.FullName;
-			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes))
-			{
+			string name = analyzedProperty.Name;
+			string declTypeName = analyzedProperty.DeclaringType.FullName;
+			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 
-				if (!TypesHierarchyHelpers.IsBaseType(analyzedMethod.DeclaringType, type, resolveTypeArguments: false))
+				if (!TypesHierarchyHelpers.IsBaseType(analyzedProperty.DeclaringType, type, resolveTypeArguments: false))
 					continue;
 
-				foreach (MethodDefinition method in type.Methods)
-				{
+				foreach (PropertyDefinition property in type.Properties) {
 					ct.ThrowIfCancellationRequested();
 
-					if (TypesHierarchyHelpers.IsBaseMethod(analyzedMethod, method))
-					{
-						bool hidesParent = !method.IsVirtual ^ method.IsNewSlot;
-						yield return new AnalyzedMethodTreeNode(method, hidesParent ? "(hides) " : "");
+					if (TypesHierarchyHelpers.IsBaseProperty(analyzedProperty, property)) {
+						MethodDefinition anyAccessor = property.GetMethod ?? property.SetMethod;
+						bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
+						yield return new AnalyzedPropertyTreeNode(property, hidesParent ? "(hides) " : "");
 					}
 				}
 			}
 		}
 
-		public static bool CanShowAnalyzer(MethodDefinition method)
+		public static bool CanShowAnalyzer(PropertyDefinition property)
 		{
-			return method.IsVirtual && !method.IsFinal && !method.DeclaringType.IsSealed && !method.DeclaringType.IsInterface;	// interfaces are temporarly disabled
+			var accessor = property.GetMethod ?? property.SetMethod;
+			return accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
 		}
 	}
 }

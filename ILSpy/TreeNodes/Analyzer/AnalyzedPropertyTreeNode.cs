@@ -21,46 +21,63 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedMethodTreeNode : AnalyzerTreeNode, IMemberTreeNode
+	class AnalyzedPropertyTreeNode : AnalyzerTreeNode
 	{
-		MethodDefinition analyzedMethod;
+		PropertyDefinition analyzedProperty;
 		string prefix;
 		
-		public AnalyzedMethodTreeNode(MethodDefinition analyzedMethod, string prefix = "")
+		public AnalyzedPropertyTreeNode(PropertyDefinition analyzedProperty, string prefix = "")
 		{
-			if (analyzedMethod == null)
+			if (analyzedProperty == null)
 				throw new ArgumentNullException("analyzedMethod");
-			this.analyzedMethod = analyzedMethod;
+
+			this.analyzedProperty = analyzedProperty;
 			this.prefix = prefix;
 			this.LazyLoading = true;
 		}
 		
 		public override object Icon {
-			get { return MethodTreeNode.GetIcon(analyzedMethod); }
+			get { return PropertyTreeNode.GetIcon(analyzedProperty); }
 		}
 		
 		public override object Text {
 			get {
-				return prefix + Language.TypeToString(analyzedMethod.DeclaringType, true) + "." + MethodTreeNode.GetText(analyzedMethod, Language); }
+				return prefix + Language.TypeToString(analyzedProperty.DeclaringType, true) + "." + PropertyTreeNode.GetText(analyzedProperty, Language); }
 		}
 		
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
 			e.Handled = true;
-			MainWindow.Instance.JumpToReference(analyzedMethod);
+			MainWindow.Instance.JumpToReference(analyzedProperty);
 		}
 		
 		protected override void LoadChildren()
 		{
-			if (analyzedMethod.HasBody)
-				this.Children.Add(new AnalyzedMethodUsesNode(analyzedMethod));
-			this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));
-			if (AnalyzerMethodOverridesTreeNode.CanShowAnalyzer(analyzedMethod))
-				this.Children.Add(new AnalyzerMethodOverridesTreeNode(analyzedMethod));
+			if(AnalyzedPropertyAccessorsTreeNode.CanShow(analyzedProperty))
+				this.Children.Add(new AnalyzedPropertyAccessorsTreeNode(analyzedProperty));
+			if (AnalyzedPropertyOverridesTreeNode.CanShowAnalyzer(analyzedProperty))
+				this.Children.Add(new AnalyzedPropertyOverridesTreeNode(analyzedProperty));
+			//if (analyzedProperty.HasBody)
+			//    this.Children.Add(new AnalyzedMethodUsesNode(analyzedProperty));
+			//this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedProperty));
 		}
-		
-		MemberReference IMemberTreeNode.Member {
-			get { return analyzedMethod; }
+
+		public static AnalyzerTreeNode TryCreateAnalyzer(MemberReference member)
+		{
+			if (CanShow(member))
+				return new AnalyzedPropertyTreeNode(member as PropertyDefinition);
+			else
+				return null;
+		}
+
+		public static bool CanShow(MemberReference member)
+		{
+			var property = member as PropertyDefinition;
+			if (property == null)
+				return false;
+
+			return AnalyzedPropertyAccessorsTreeNode.CanShow(property)
+				|| AnalyzedPropertyOverridesTreeNode.CanShowAnalyzer(property);
 		}
 	}
 }

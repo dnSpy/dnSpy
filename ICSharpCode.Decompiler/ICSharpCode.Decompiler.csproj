@@ -69,6 +69,7 @@
     <Compile Include="Ast\Transforms\PushNegation.cs" />
     <Compile Include="Ast\Transforms\TransformationPipeline.cs" />
     <Compile Include="Ast\Transforms\PatternStatementTransform.cs" />
+    <Compile Include="Ast\TypesHierarchyHelpers.cs" />
     <Compile Include="CecilExtensions.cs" />
     <Compile Include="CodeMappings.cs" />
     <Compile Include="DecompilerException.cs" />

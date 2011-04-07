@@ -14,4 +14,5 @@ ILSpy Contributors:
 	Daniel Grunwald
 	David Srbecky
 	Siegfried Pammer
+	Artur Zgodzinski
 	Eusebiu Marcu

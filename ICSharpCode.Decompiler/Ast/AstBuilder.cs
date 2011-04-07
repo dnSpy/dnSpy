@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -637,9 +638,13 @@ namespace ICSharpCode.Decompiler.Ast
 			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
 			astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
-				if (!methodDef.HasOverrides)
+				if (!methodDef.HasOverrides) {
 					astMethod.Modifiers = ConvertModifiers(methodDef);
-				else
+					if (methodDef.IsVirtual ^ !methodDef.IsNewSlot) {
+						if (TypesHierarchyHelpers.FindBaseMethods(methodDef).Any())
+							astMethod.Modifiers |= Modifiers.New;
+					}
+				} else
 					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
 				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
 			}
@@ -670,7 +675,7 @@ namespace ICSharpCode.Decompiler.Ast
 			astMethod.WithAnnotation(methodMapping);
 			return astMethod;
 		}
-		
+
 		IEnumerable<TypeParameterDeclaration> MakeTypeParameters(IEnumerable<GenericParameter> genericParameters)
 		{
 			foreach (var gp in genericParameters) {
@@ -755,6 +760,18 @@ namespace ICSharpCode.Decompiler.Ast
 				getterModifiers = ConvertModifiers(propDef.GetMethod);
 				setterModifiers = ConvertModifiers(propDef.SetMethod);
 				astProp.Modifiers = FixUpVisibility(getterModifiers | setterModifiers);
+				if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null))
+					foreach (var basePropDef in TypesHierarchyHelpers.FindBaseProperties(propDef))
+						if (basePropDef.GetMethod != null && basePropDef.SetMethod != null) {
+							var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
+							astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
+							break;
+						} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot)
+							break;
+				if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
+					if (TypesHierarchyHelpers.FindBaseProperties(propDef).Any())
+						astProp.Modifiers |= Modifiers.New;
+				}
 			}
 			astProp.Name = CleanName(propDef.Name);
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
@@ -818,7 +835,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			return astProp;
 		}
-		
+
 		bool IsDefaultMemberAttribute(CustomAttribute ca)
 		{
 			return ca.AttributeType.Name == "DefaultMemberAttribute" && ca.AttributeType.Namespace == "System.Reflection";
@@ -1321,6 +1338,5 @@ namespace ICSharpCode.Decompiler.Ast
 					return Tuple.Create(ca.ConstructorArguments.Single().Value as string, ca);
 			return new Tuple<string,CustomAttribute>(null, null);
 		}
-
 	}
 }

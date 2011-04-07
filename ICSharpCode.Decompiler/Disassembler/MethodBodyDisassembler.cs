@@ -55,6 +55,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			// start writing IL code
 			MethodDefinition method = body.Method;
 			output.WriteLine("// Method begins at RVA 0x{0:x4}", method.RVA);
+			if (method.HasOverrides)
+				foreach (var methodOverride in method.Overrides)
+					output.WriteLine(".override {0}::{1}", methodOverride.DeclaringType.FullName, methodOverride.Name);
 			output.WriteLine("// Code size {0} (0x{0:x})", body.CodeSize);
 			output.WriteLine(".maxstack {0}", body.MaxStackSize);
 			if (method.DeclaringType.Module.Assembly.EntryPoint == method)

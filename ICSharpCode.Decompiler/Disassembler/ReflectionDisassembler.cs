@@ -341,6 +341,22 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.WriteLine();
 				output.Unindent();
 			}
+			if (type.HasInterfaces) {
+				output.Indent();
+				for (int index = 0; index < type.Interfaces.Count; index++) {
+					if (index > 0)
+						output.WriteLine(",");
+					if (index == 0)
+						output.Write("implements ");
+					else
+						output.Write("           ");
+					if (type.Interfaces[index].Namespace != null)
+						output.Write("{0}.", type.Interfaces[index].Namespace);
+					output.Write(type.Interfaces[index].Name);
+				}
+				output.WriteLine();
+				output.Unindent();
+			}
 			
 			output.WriteLine("{");
 			output.Indent();
