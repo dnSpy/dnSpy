@@ -18,31 +18,34 @@
 
 using System;
 using Mono.Cecil;
+using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
 	class AnalyzedPropertyTreeNode : AnalyzerTreeNode
 	{
 		PropertyDefinition analyzedProperty;
+		bool isIndexer;
 		string prefix;
 		
 		public AnalyzedPropertyTreeNode(PropertyDefinition analyzedProperty, string prefix = "")
 		{
 			if (analyzedProperty == null)
 				throw new ArgumentNullException("analyzedMethod");
-
+			this.isIndexer = analyzedProperty.IsIndexer();
 			this.analyzedProperty = analyzedProperty;
 			this.prefix = prefix;
 			this.LazyLoading = true;
 		}
 		
 		public override object Icon {
-			get { return PropertyTreeNode.GetIcon(analyzedProperty); }
+			get { return PropertyTreeNode.GetIcon(analyzedProperty, isIndexer); }
 		}
 		
 		public override object Text {
 			get {
-				return prefix + Language.TypeToString(analyzedProperty.DeclaringType, true) + "." + PropertyTreeNode.GetText(analyzedProperty, Language); }
+				// TODO: This way of formatting is not suitable for properties which explicitly implement interfaces.
+				return prefix + Language.TypeToString(analyzedProperty.DeclaringType, true) + "." + PropertyTreeNode.GetText(analyzedProperty, Language, isIndexer); }
 		}
 		
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)

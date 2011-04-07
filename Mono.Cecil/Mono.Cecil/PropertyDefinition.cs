@@ -127,10 +127,10 @@ namespace Mono.Cecil {
 
 		public bool HasParameters {
 			get {
-				if (get_method != null)
+				if (GetMethod != null)
 					return get_method.HasParameters;
 
-				if (set_method != null)
+				if (SetMethod != null)
 					return set_method.HasParameters && set_method.Parameters.Count > 1;
 
 				return false;

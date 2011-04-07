@@ -168,7 +168,7 @@ namespace ICSharpCode.Decompiler.Ast
 			AstNode node = method.IsConstructor ? (AstNode)CreateConstructor(method) : CreateMethod(method);
 			astCompileUnit.AddChild(node, CompilationUnit.MemberRole);
 		}
-		
+
 		public void AddProperty(PropertyDefinition property)
 		{
 			astCompileUnit.AddChild(CreateProperty(property), CompilationUnit.MemberRole);
@@ -269,10 +269,9 @@ namespace ICSharpCode.Decompiler.Ast
 				foreach (var i in typeDef.Interfaces)
 					astType.AddChild(ConvertType(i), TypeDeclaration.BaseTypeRole);
 				
-				
 				AddTypeMembers(astType, typeDef);
-				
-				if (astType.Members.Any(m => m is IndexerDeclaration)) {
+
+				if (astType.Members.OfType<IndexerDeclaration>().Any(idx => idx.PrivateImplementationType.IsNull)) {
 					// Remove the [DefaultMember] attribute if the class contains indexers
 					foreach (AttributeSection section in astType.Attributes) {
 						foreach (Ast.Attribute attr in section.Attributes) {
@@ -780,39 +779,12 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			ConvertCustomAttributes(astProp, propDef);
 			
-			// Check whether the property is an indexer:
-			if (propDef.HasParameters) {
-				PropertyDefinition basePropDef = propDef;
-				if (accessor.HasOverrides) {
-					// if the property is explicitly implementing an interface, look up the property in the interface:
-					MethodDefinition baseAccessor = accessor.Overrides.First().Resolve();
-					if (baseAccessor != null) {
-						foreach (PropertyDefinition baseProp in baseAccessor.DeclaringType.Properties) {
-							if (baseProp.GetMethod == baseAccessor || baseProp.SetMethod == baseAccessor) {
-								basePropDef = baseProp;
-								break;
-							}
-						}
-					}
-				}
-				// figure out the name of the indexer:
-				string defaultMemberName = null;
-				var defaultMemberAttribute = basePropDef.DeclaringType.CustomAttributes.FirstOrDefault(IsDefaultMemberAttribute);
-				if (defaultMemberAttribute != null && defaultMemberAttribute.ConstructorArguments.Count == 1) {
-					defaultMemberName = defaultMemberAttribute.ConstructorArguments[0].Value as string;
-				}
-				if (basePropDef.Name == defaultMemberName) {
-					return ConvertPropertyToIndexer(astProp, propDef);
-				}
-			}
-			return astProp;
+			if(propDef.IsIndexer())
+				return ConvertPropertyToIndexer(astProp, propDef);
+			else
+				return astProp;
 		}
 
-		bool IsDefaultMemberAttribute(CustomAttribute ca)
-		{
-			return ca.AttributeType.Name == "DefaultMemberAttribute" && ca.AttributeType.Namespace == "System.Reflection";
-		}
-		
 		IndexerDeclaration ConvertPropertyToIndexer(PropertyDeclaration astProp, PropertyDefinition propDef)
 		{
 			var astIndexer = new IndexerDeclaration();
@@ -1286,19 +1258,6 @@ namespace ICSharpCode.Decompiler.Ast
 				return false;
 
 			return type.CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.FlagsAttribute");
-		}
-
-		/// <summary>
-		/// Gets the name of the default member of the type pointed by the <see cref="System.Reflection.DefaultMemberAttribute"/> attribute.
-		/// </summary>
-		/// <param name="type">The type definition.</param>
-		/// <returns>The name of the default member or null if no <see cref="System.Reflection.DefaultMemberAttribute"/> attribute has been found.</returns>
-		private static Tuple<string, CustomAttribute> GetDefaultMember(TypeDefinition type)
-		{
-			foreach (CustomAttribute ca in type.CustomAttributes)
-				if (ca.Constructor.FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)")
-					return Tuple.Create(ca.ConstructorArguments.Single().Value as string, ca);
-			return new Tuple<string,CustomAttribute>(null, null);
 		}
 	}
 }

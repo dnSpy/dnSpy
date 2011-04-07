@@ -32,12 +32,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		readonly PropertyDefinition property;
 		readonly bool isIndexer;
 		
-		public PropertyTreeNode(PropertyDefinition property, bool isIndexer)
+		public PropertyTreeNode(PropertyDefinition property)
 		{
 			if (property == null)
 				throw new ArgumentNullException("property");
 			this.property = property;
-			this.isIndexer = isIndexer;
+			this.isIndexer = property.IsIndexer();
 			if (property.GetMethod != null)
 				this.Children.Add(new MethodTreeNode(property.GetMethod));
 			if (property.SetMethod != null)
@@ -54,12 +54,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get { return GetText(property, Language); }
+			get { return GetText(property, Language, isIndexer); }
 		}
 		
-		public static object GetText(PropertyDefinition property, Language language)
+		public static object GetText(PropertyDefinition property, Language language, bool? isIndexer = null)
 		{
-			return HighlightSearchMatch(property.Name, " : " + language.TypeToString(property.PropertyType, false, property));
+			return HighlightSearchMatch(language.FormatPropertyName(property, isIndexer), " : " + language.TypeToString(property.PropertyType, false, property));
 		}
 
 		public override object Icon {
@@ -70,7 +70,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static BitmapImage GetIcon(PropertyDefinition property, bool? isIndexer = null)
 		{
-			return (isIndexer ?? false) ? Images.Indexer : Images.Property;
+			return (isIndexer ?? property.IsIndexer()) ? Images.Indexer : Images.Property;
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)

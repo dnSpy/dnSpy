@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -201,6 +202,60 @@ namespace ICSharpCode.Decompiler
 			if (member.IsCompilerGenerated())
 				return true;
 			return IsCompilerGeneratedOrIsInCompilerGeneratedClass(member.DeclaringType);
+		}
+
+		public static string GetDefaultMemberName(this TypeDefinition type)
+		{
+			CustomAttribute attr;
+			return type.GetDefaultMemberName(out attr);
+		}
+
+		public static string GetDefaultMemberName(this TypeDefinition type, out CustomAttribute defaultMemberAttribute)
+		{
+			if (type.HasCustomAttributes)
+				foreach (CustomAttribute ca in type.CustomAttributes)
+					if (ca.Constructor.DeclaringType.Name == "DefaultMemberAttribute" && ca.Constructor.DeclaringType.Namespace == "System.Reflection"
+						&& ca.Constructor.FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
+						defaultMemberAttribute = ca;
+						return ca.ConstructorArguments[0].Value as string;
+					}
+			defaultMemberAttribute = null;
+			return null;
+		}
+
+		public static bool IsIndexer(this PropertyDefinition property)
+		{
+			CustomAttribute attr;
+			return property.IsIndexer(out attr);
+		}
+
+		public static bool IsIndexer(this PropertyDefinition property, out CustomAttribute defaultMemberAttribute)
+		{
+			defaultMemberAttribute = null;
+			if (property.HasParameters) {
+				var accessor = property.GetMethod ?? property.SetMethod;
+				PropertyDefinition basePropDef = property;
+				if (accessor.HasOverrides) {
+					// if the property is explicitly implementing an interface, look up the property in the interface:
+					MethodDefinition baseAccessor = accessor.Overrides.First().Resolve();
+					if (baseAccessor != null) {
+						foreach (PropertyDefinition baseProp in baseAccessor.DeclaringType.Properties) {
+							if (baseProp.GetMethod == baseAccessor || baseProp.SetMethod == baseAccessor) {
+								basePropDef = baseProp;
+								break;
+							}
+						}
+					} else
+						return false;
+				}
+				CustomAttribute attr;
+				var defaultMemberName = basePropDef.DeclaringType.GetDefaultMemberName(out attr);
+				if (defaultMemberName == basePropDef.Name) {
+					defaultMemberAttribute = attr;
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 }

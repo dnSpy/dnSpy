@@ -103,16 +103,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				this.Children.Add(new FieldTreeNode(field));
 			}
 			
-			// figure out the name of the indexer:
-			string defaultMemberName = null;
-			var defaultMemberAttribute = type.CustomAttributes.FirstOrDefault(
-				a => a.AttributeType.FullName == typeof(System.Reflection.DefaultMemberAttribute).FullName);
-			if (defaultMemberAttribute != null && defaultMemberAttribute.ConstructorArguments.Count == 1) {
-				defaultMemberName = defaultMemberAttribute.ConstructorArguments[0].Value as string;
-			}
-			
 			foreach (PropertyDefinition property in type.Properties.OrderBy(m => m.Name)) {
-				this.Children.Add(new PropertyTreeNode(property, property.Name == defaultMemberName));
+				this.Children.Add(new PropertyTreeNode(property));
 			}
 			foreach (EventDefinition ev in type.Events.OrderBy(m => m.Name)) {
 				this.Children.Add(new EventTreeNode(ev));
