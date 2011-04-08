@@ -341,8 +341,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					{
 						MethodReference addMethod = (MethodReference)expr.Operand;
 						if (forceInferChildren) {
-							for (int i = 1; i < addMethod.Parameters.Count; i++) {
-								InferTypeForExpression(expr.Arguments[i-1], SubstituteTypeArgs(addMethod.Parameters[i].ParameterType, addMethod));
+							for (int i = 0; i < addMethod.Parameters.Count; i++) {
+								InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(addMethod.Parameters[i].ParameterType, addMethod));
 							}
 						}
 						return addMethod.DeclaringType;

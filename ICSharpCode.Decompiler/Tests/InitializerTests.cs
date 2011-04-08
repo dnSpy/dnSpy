@@ -6,6 +6,18 @@ using System.Collections.Generic;
 
 public class InitializerTests
 {
+	enum MyEnum
+	{
+		a,
+		b
+	}
+	
+	enum MyEnum2
+	{
+		c,
+		d
+	}
+
 	// Helper methods used to ensure initializers used within expressions work correctly
 	static void X(object a, object b)
 	{
@@ -100,6 +112,11 @@ public class InitializerTests
 	{
 		X(Y(), new string[] { "", null, "Hello", "World" });
 	}
+	
+	public static void ArrayEnum()
+	{
+		X(Y(), new InitializerTests.MyEnum[] { InitializerTests.MyEnum.a, InitializerTests.MyEnum.b, InitializerTests.MyEnum.a, InitializerTests.MyEnum.b });
+	}
 	#endregion
 	
 	public static void CollectionInitializerList()
@@ -113,6 +130,14 @@ public class InitializerTests
 		  	{ "First", 1 },
 		  	{ "Second", 2 },
 		  	{ "Third" , 3 }
+		  });
+	}
+	
+	public static void CollectionInitializerDictionaryWithEnumTypes()
+	{
+		X(Y(), new Dictionary<InitializerTests.MyEnum, InitializerTests.MyEnum2> {
+		  	{ InitializerTests.MyEnum.a, InitializerTests.MyEnum2.c },
+		  	{ InitializerTests.MyEnum.b, InitializerTests.MyEnum2.d }
 		  });
 	}
 }
