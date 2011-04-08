@@ -291,11 +291,6 @@ namespace ICSharpCode.Decompiler.Ast
 			return result;
 		}
 
-		public void Transform(IAstTransform transform)
-		{
-			transform.Run(astCompileUnit);
-		}
-		
 		internal static string CleanName(string name)
 		{
 			int pos = name.LastIndexOf('`');

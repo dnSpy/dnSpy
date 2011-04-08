@@ -100,7 +100,7 @@ namespace ICSharpCode.Decompiler.Tests
 			AssemblyDefinition assembly = Compile(code);
 			AstBuilder decompiler = new AstBuilder(new DecompilerContext());
 			decompiler.AddAssembly(assembly);
-			decompiler.Transform(new Helpers.RemoveCompilerAttribute());
+			new Helpers.RemoveCompilerAttribute().Run(decompiler.CompilationUnit);
 			StringWriter output = new StringWriter();
 			decompiler.GenerateCode(new PlainTextOutput(output));
 			StringWriter diff = new StringWriter();

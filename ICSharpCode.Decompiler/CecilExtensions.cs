@@ -58,7 +58,7 @@ namespace ICSharpCode.Decompiler
 			throw new NotSupportedException ();
 		}
 		
-		public static int GetPopDelta(this Instruction instruction, MethodDefinition current, int currentStackSize)
+		public static int? GetPopDelta(this Instruction instruction)
 		{
 			OpCode code = instruction.OpCode;
 			switch (code.StackBehaviourPop) {
@@ -88,18 +88,18 @@ namespace ICSharpCode.Decompiler
 					return 3;
 
 				case StackBehaviour.PopAll:
-					return currentStackSize;
+					return null;
 
 				case StackBehaviour.Varpop:
 					if (code == OpCodes.Ret)
-						return IsVoid (current.ReturnType) ? 0 : 1;
+						return null;
 
 					if (code.FlowControl != FlowControl.Call)
 						break;
 
 					IMethodSignature method = (IMethodSignature) instruction.Operand;
 					int count = method.HasParameters ? method.Parameters.Count : 0;
-					if (method.HasThis && code != OpCodes.Newobj)
+					if (code == OpCodes.Calli || (method.HasThis && code != OpCodes.Newobj))
 						++count;
 
 					return count;
@@ -110,7 +110,9 @@ namespace ICSharpCode.Decompiler
 		
 		public static bool IsVoid(this TypeReference type)
 		{
-			return type.FullName == "System.Void" && !(type is TypeSpecification);
+			while (type is OptionalModifierType || type is RequiredModifierType)
+				type = ((TypeSpecification)type).ElementType;
+			return type.MetadataType == MetadataType.Void;
 		}
 		
 		public static bool IsValueTypeOrVoid(this TypeReference type)

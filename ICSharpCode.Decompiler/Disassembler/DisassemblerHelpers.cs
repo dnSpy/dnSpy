@@ -88,8 +88,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 				writer.Write("instance ");
 			method.ReturnType.WriteTo(writer);
 			writer.Write(' ');
-			method.DeclaringType.WriteTo(writer, true);
-			writer.Write("::");
+			if (method.DeclaringType != null) {
+				method.DeclaringType.WriteTo(writer, true);
+				writer.Write("::");
+			}
 			writer.WriteReference(method.Name, method);
 			writer.Write("(");
 			var parameters = method.Parameters;
