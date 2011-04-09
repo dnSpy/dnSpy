@@ -742,11 +742,11 @@ namespace ICSharpCode.Decompiler.Ast
 				if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null))
 					foreach (var basePropDef in TypesHierarchyHelpers.FindBaseProperties(propDef))
 						if (basePropDef.GetMethod != null && basePropDef.SetMethod != null) {
-							var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
-							astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
-							break;
-						} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot)
-							break;
+					var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
+					astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
+					break;
+				} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot)
+					break;
 				if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
 					if (TypesHierarchyHelpers.FindBaseProperties(propDef).Any())
 						astProp.Modifiers |= Modifiers.New;
@@ -1229,27 +1229,40 @@ namespace ICSharpCode.Decompiler.Ast
 			if (type != null)
 			{ // cannot rely on type.IsValueType, it's not set for typerefs (but is set for typespecs)
 				TypeDefinition enumDefinition = type.Resolve();
-				if (enumDefinition != null && enumDefinition.IsEnum)
-				{
-					foreach (FieldDefinition field in enumDefinition.Fields)
-					{
+				if (enumDefinition != null && enumDefinition.IsEnum) {
+					foreach (FieldDefinition field in enumDefinition.Fields) {
 						if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false), val))
 							return ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
 						else if (!field.IsStatic && field.IsRuntimeSpecialName)
 							type = field.FieldType; // use primitive type of the enum
 					}
-					if (IsFlagsEnum(enumDefinition))
-					{
+					TypeCode enumBaseTypeCode = TypeAnalysis.GetTypeCode(type);
+					if (IsFlagsEnum(enumDefinition)) {
 						long enumValue = val;
 						Expression expr = null;
-						foreach (FieldDefinition field in enumDefinition.Fields.Where(fld => fld.IsStatic))
-						{
+						long negatedEnumValue = ~val;
+						// limit negatedEnumValue to the appropriate range
+						switch (enumBaseTypeCode) {
+							case TypeCode.Byte:
+							case TypeCode.SByte:
+								negatedEnumValue &= byte.MaxValue;
+								break;
+							case TypeCode.Int16:
+							case TypeCode.UInt16:
+								negatedEnumValue &= ushort.MaxValue;
+								break;
+							case TypeCode.Int32:
+							case TypeCode.UInt32:
+								negatedEnumValue &= uint.MaxValue;
+								break;
+						}
+						Expression negatedExpr = null;
+						foreach (FieldDefinition field in enumDefinition.Fields.Where(fld => fld.IsStatic)) {
 							long fieldValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false);
 							if (fieldValue == 0)
 								continue;	// skip None enum value
 
-							if ((fieldValue & enumValue) == fieldValue)
-							{
+							if ((fieldValue & enumValue) == fieldValue) {
 								var fieldExpression = ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
 								if (expr == null)
 									expr = fieldExpression;
@@ -1257,22 +1270,33 @@ namespace ICSharpCode.Decompiler.Ast
 									expr = new BinaryOperatorExpression(expr, BinaryOperatorType.BitwiseOr, fieldExpression);
 
 								enumValue &= ~fieldValue;
-								if (enumValue == 0)
-									break;
+							}
+							if ((fieldValue & negatedEnumValue) == fieldValue) {
+								var fieldExpression = ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
+								if (negatedExpr == null)
+									negatedExpr = fieldExpression;
+								else
+									negatedExpr = new BinaryOperatorExpression(negatedExpr, BinaryOperatorType.BitwiseOr, fieldExpression);
+
+								negatedEnumValue &= ~fieldValue;
 							}
 						}
-						if(enumValue == 0 && expr != null)
-							return expr;
+						if (enumValue == 0 && expr != null) {
+							if (!(negatedEnumValue == 0 && negatedExpr != null && negatedExpr.Descendants.Count() < expr.Descendants.Count())) {
+								return expr;
+							}
+						}
+						if (negatedEnumValue == 0 && negatedExpr != null) {
+							return new UnaryOperatorExpression(UnaryOperatorType.BitNot, negatedExpr);
+						}
 					}
-					TypeCode enumBaseTypeCode = TypeAnalysis.GetTypeCode(type);
 					return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(enumBaseTypeCode, val, false)).CastTo(ConvertType(enumDefinition));
 				}
 			}
 			TypeCode code = TypeAnalysis.GetTypeCode(type);
 			if (code == TypeCode.Object || code == TypeCode.Empty)
-				return new Ast.PrimitiveExpression((int)val);
-			else
-				return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
+				code = TypeCode.Int32;
+			return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
 		}
 
 		static bool IsFlagsEnum(TypeDefinition type)

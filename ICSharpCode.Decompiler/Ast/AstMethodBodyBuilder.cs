@@ -160,7 +160,7 @@ namespace ICSharpCode.Decompiler.Ast
 				var tryCatchStmt = new Ast.TryCatchStatement();
 				tryCatchStmt.TryBlock = TransformBlock(tryCatchNode.TryBlock);
 				foreach (var catchClause in tryCatchNode.CatchBlocks) {
-					if (catchClause.ExceptionVariable == null 
+					if (catchClause.ExceptionVariable == null
 					    && (catchClause.ExceptionType == null || catchClause.ExceptionType.MetadataType == MetadataType.Object))
 					{
 						tryCatchStmt.CatchClauses.Add(new Ast.CatchClause { Body = TransformBlock(catchClause) });
@@ -509,8 +509,10 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.DefaultValue:
 					return MakeDefaultValue((TypeReference)operand);
 					case ILCode.Jmp: return InlineAssembly(byteCode, args);
-					case ILCode.Ldc_I4: return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType);
-					case ILCode.Ldc_I8: return AstBuilder.MakePrimitive((long)operand, byteCode.InferredType);
+				case ILCode.Ldc_I4:
+					return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType);
+				case ILCode.Ldc_I8:
+					return AstBuilder.MakePrimitive((long)operand, byteCode.InferredType);
 				case ILCode.Ldc_R4:
 				case ILCode.Ldc_R8:
 				case ILCode.Ldc_Decimal:
