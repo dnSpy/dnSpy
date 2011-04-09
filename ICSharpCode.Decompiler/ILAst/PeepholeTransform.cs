@@ -174,7 +174,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (parent.Arguments[j].Code == ILCode.Ldsfld && ((FieldReference)parent.Arguments[j].Operand).ResolveWithinSameModule() == field) {
 							parent.Arguments[j] = newObj;
 							block.Body.RemoveAt(i);
-							i -= new ILInlining(method).InlineInto(block.Body, i, aggressive: true);
+							i -= new ILInlining(method).InlineInto(block.Body, i, aggressive: false);
 							return;
 						}
 					}
@@ -229,6 +229,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						ILVariable storedVar;
 						ILExpression storedExpr;
 						if (storeBlock.Body[j].Match(ILCode.Stloc, out storedVar, out storedExpr) && storedVar == v && storedExpr.Match(ILCode.Ldnull)) {
+							// Remove the instruction
 							storeBlock.Body.RemoveAt(j);
 							if (storeBlock == block && j < i)
 								i--;
@@ -237,16 +238,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 				
-				foreach (ILExpression parent in followingNode.GetSelfAndChildrenRecursive<ILExpression>()) {
-					for (int j = 0; j < parent.Arguments.Count; j++) {
-						if (parent.Arguments[j].Code == ILCode.Ldloc && (ILVariable)parent.Arguments[j].Operand == v) {
-							parent.Arguments[j] = newObj;
-							block.Body.RemoveAt(i);
-							i -= new ILInlining(method).InlineInto(block.Body, i, aggressive: true);
-							return;
-						}
-					}
-				}
+				block.Body[i] = stloc; // remove the 'if (v==null)'
+				inlining = new ILInlining(method);
+				inlining.InlineIfPossible(block.Body, ref i);
 			}
 		}
 		#endregion
