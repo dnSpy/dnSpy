@@ -344,8 +344,9 @@ namespace ICSharpCode.Decompiler.Ast
 					return new Ast.AssignmentExpression(arg1.Indexer(arg2), arg3);
 				case ILCode.CompoundAssignment:
 					{
-						BinaryOperatorExpression boe = (BinaryOperatorExpression)arg1;
-						return new Ast.AssignmentExpression {
+						CastExpression cast = arg1 as CastExpression;
+						BinaryOperatorExpression boe = (BinaryOperatorExpression)(cast != null ? cast.Expression : arg1);
+						var assignment = new Ast.AssignmentExpression {
 							Left = boe.Left.Detach(),
 							Operator = ReplaceMethodCallsWithOperators.GetAssignmentOperatorForBinaryOperator(boe.Operator),
 							Right = boe.Right.Detach()
@@ -353,6 +354,12 @@ namespace ICSharpCode.Decompiler.Ast
 						// We do not mark the resulting assignment as RestoreOriginalAssignOperatorAnnotation, because
 						// the operator cannot be translated back to the expanded form (as the left-hand expression
 						// would be evaluated twice, and might have side-effects)
+						if (cast != null) {
+							cast.Expression = assignment;
+							return cast;
+						} else {
+							return assignment;
+						}
 					}
 					#endregion
 					#region Comparison
