@@ -747,7 +747,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(namedArgumentExpression);
 			WriteIdentifier(namedArgumentExpression.Identifier);
-			WriteToken(":", NamedArgumentExpression.Roles.Colon);
+			if (namedArgumentExpression.Parent is ArrayInitializerExpression) {
+				Space();
+				WriteToken("=", NamedArgumentExpression.Roles.Assign);
+			} else {
+				WriteToken(":", NamedArgumentExpression.Roles.Colon);
+			}
 			Space();
 			namedArgumentExpression.Expression.AcceptVisitor(this, data);
 			return EndNode(namedArgumentExpression);
@@ -765,8 +770,14 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(objectCreateExpression);
 			WriteKeyword("new");
 			objectCreateExpression.Type.AcceptVisitor(this, data);
-			Space(policy.SpaceBeforeMethodCallParentheses);
-			WriteCommaSeparatedListInParenthesis(objectCreateExpression.Arguments, policy.SpaceWithinMethodCallParentheses);
+			bool useParenthesis = objectCreateExpression.Arguments.Any() || objectCreateExpression.Initializer.IsNull;
+			// also use parenthesis if there is an '(' token and this isn't an anonymous type
+			if (!objectCreateExpression.LParToken.IsNull && !objectCreateExpression.Type.IsNull)
+				useParenthesis = true;
+			if (useParenthesis) {
+				Space(policy.SpaceBeforeMethodCallParentheses);
+				WriteCommaSeparatedListInParenthesis(objectCreateExpression.Arguments, policy.SpaceWithinMethodCallParentheses);
+			}
 			objectCreateExpression.Initializer.AcceptVisitor(this, data);
 			return EndNode(objectCreateExpression);
 		}
