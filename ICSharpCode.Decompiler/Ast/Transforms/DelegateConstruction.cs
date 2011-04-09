@@ -296,50 +296,54 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				// Delete the variable declaration statement:
 				AstNode cur = stmt.NextSibling;
 				stmt.Remove();
-				if (blockStatement.Parent.NodeType == NodeType.Member || blockStatement.Parent is Accessor) {
-					// Delete any following statements as long as they assign parameters to the display class
-					// Do parameter handling only for closures created in the top scope (direct child of method/accessor)
-					List<ILVariable> parameterOccurrances = blockStatement.Descendants.OfType<IdentifierExpression>()
-						.Select(n => n.Annotation<ILVariable>()).Where(p => p != null && p.IsParameter).ToList();
-					AstNode next;
-					for (; cur != null; cur = next) {
-						next = cur.NextSibling;
-						
-						// Test for the pattern:
-						// "variableName.MemberName = right;"
-						ExpressionStatement closureFieldAssignmentPattern = new ExpressionStatement(
-							new AssignmentExpression(
-								new NamedNode("left", new MemberReferenceExpression { Target = new IdentifierExpression(variable.Name) }),
-								new AnyNode("right")
-							)
-						);
-						Match m = closureFieldAssignmentPattern.Match(cur);
-						if (m != null) {
-							AstNode right = m.Get("right").Single();
-							bool isParameter = false;
-							if (right is ThisReferenceExpression) {
-								isParameter = true;
-							} else if (right is IdentifierExpression) {
-								// handle parameters only if the whole method contains no other occurrance except for 'right'
-								ILVariable param = right.Annotation<ILVariable>();
-								isParameter = param.IsParameter && parameterOccurrances.Count(c => c == param) == 1;
+				
+				// Delete any following statements as long as they assign parameters to the display class
+				BlockStatement rootBlock = blockStatement.Ancestors.OfType<BlockStatement>().LastOrDefault() ?? blockStatement;
+				List<ILVariable> parameterOccurrances = rootBlock.Descendants.OfType<IdentifierExpression>()
+					.Select(n => n.Annotation<ILVariable>()).Where(p => p != null && p.IsParameter).ToList();
+				AstNode next;
+				for (; cur != null; cur = next) {
+					next = cur.NextSibling;
+					
+					// Test for the pattern:
+					// "variableName.MemberName = right;"
+					ExpressionStatement closureFieldAssignmentPattern = new ExpressionStatement(
+						new AssignmentExpression(
+							new NamedNode("left", new MemberReferenceExpression { Target = new IdentifierExpression(variable.Name) }),
+							new AnyNode("right")
+						)
+					);
+					Match m = closureFieldAssignmentPattern.Match(cur);
+					if (m != null) {
+						FieldDefinition fieldDef = m.Get<MemberReferenceExpression>("left").Single().Annotation<FieldReference>().ResolveWithinSameModule();
+						AstNode right = m.Get("right").Single();
+						bool isParameter = false;
+						bool isDisplayClassParentPointerAssignment = false;
+						if (right is ThisReferenceExpression) {
+							isParameter = true;
+						} else if (right is IdentifierExpression) {
+							// handle parameters only if the whole method contains no other occurrance except for 'right'
+							ILVariable v = right.Annotation<ILVariable>();
+							isParameter = v.IsParameter && parameterOccurrances.Count(c => c == v) == 1;
+							if (!isParameter && TypeAnalysis.IsSameType(v.Type, fieldDef.FieldType) && IsPotentialClosure(context, v.Type.ResolveWithinSameModule())) {
+								isDisplayClassParentPointerAssignment = true;
 							}
-							if (isParameter) {
-								dict[m.Get<MemberReferenceExpression>("left").Single().Annotation<FieldReference>().ResolveWithinSameModule()] = right;
-								cur.Remove();
-							} else {
-								break;
-							}
+						}
+						if (isParameter || isDisplayClassParentPointerAssignment) {
+							dict[fieldDef] = right;
+							cur.Remove();
 						} else {
 							break;
 						}
+					} else {
+						break;
 					}
 				}
 				
 				// Now create variables for all fields of the display class (except for those that we already handled as parameters)
 				List<Tuple<AstType, string>> variablesToDeclare = new List<Tuple<AstType, string>>();
 				foreach (FieldDefinition field in type.Fields) {
-					if (dict.ContainsKey(field))
+					if (dict.ContainsKey(field)) // skip field if it already was handled as parameter
 						continue;
 					EnsureVariableNameIsAvailable(blockStatement, field.Name);
 					currentlyUsedVariableNames.Add(field.Name);

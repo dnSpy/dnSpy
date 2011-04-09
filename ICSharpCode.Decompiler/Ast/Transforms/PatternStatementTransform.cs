@@ -299,6 +299,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				InExpression = m.Get<Expression>("collection").Single().Detach(),
 				EmbeddedStatement = newBody
 			};
+			if (foreachStatement.InExpression is BaseReferenceExpression)
+				foreachStatement.InExpression = new ThisReferenceExpression();
 			node.ReplaceWith(foreachStatement);
 			foreach (Statement stmt in m.Get<Statement>("variablesOutsideLoop")) {
 				((BlockStatement)foreachStatement.Parent).Statements.InsertAfter(null, stmt.Detach());
