@@ -160,12 +160,18 @@ namespace ICSharpCode.Decompiler.Ast
 				var tryCatchStmt = new Ast.TryCatchStatement();
 				tryCatchStmt.TryBlock = TransformBlock(tryCatchNode.TryBlock);
 				foreach (var catchClause in tryCatchNode.CatchBlocks) {
-					tryCatchStmt.CatchClauses.Add(
-						new Ast.CatchClause {
-							Type = AstBuilder.ConvertType(catchClause.ExceptionType),
-							VariableName = catchClause.ExceptionVariable == null ? null : catchClause.ExceptionVariable.Name,
-							Body = TransformBlock(catchClause)
-						});
+					if (catchClause.ExceptionVariable == null 
+					    && (catchClause.ExceptionType == null || catchClause.ExceptionType.MetadataType == MetadataType.Object))
+					{
+						tryCatchStmt.CatchClauses.Add(new Ast.CatchClause { Body = TransformBlock(catchClause) });
+					} else {
+						tryCatchStmt.CatchClauses.Add(
+							new Ast.CatchClause {
+								Type = AstBuilder.ConvertType(catchClause.ExceptionType),
+								VariableName = catchClause.ExceptionVariable == null ? null : catchClause.ExceptionVariable.Name,
+								Body = TransformBlock(catchClause)
+							});
+					}
 				}
 				if (tryCatchNode.FinallyBlock != null)
 					tryCatchStmt.FinallyBlock = TransformBlock(tryCatchNode.FinallyBlock);
