@@ -580,6 +580,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Attributes = { new Repeat(new AnyNode()) },
 			Modifiers = Modifiers.Any,
 			ReturnType = new AnyNode(),
+			PrivateImplementationType = new OptionalNode(new AnyNode()),
 			Getter = new Accessor {
 				Attributes = { new Repeat(new AnyNode()) },
 				Modifiers = Modifiers.Any,
