@@ -870,10 +870,16 @@ namespace ICSharpCode.Decompiler.Ast
 			astField.ReturnType = ConvertType(fieldDef.FieldType, fieldDef);
 			astField.Modifiers = ConvertModifiers(fieldDef);
 			if (fieldDef.HasConstant) {
-				if (fieldDef.Constant == null)
+				if (fieldDef.Constant == null) {
 					initializer.Initializer = new NullReferenceExpression();
-				else
-					initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
+				} else {
+					TypeCode c = Type.GetTypeCode(fieldDef.Constant.GetType());
+					if (c >= TypeCode.SByte && c <= TypeCode.UInt64) {
+						initializer.Initializer = MakePrimitive((long)CSharpPrimitiveCast.Cast(TypeCode.Int64, fieldDef.Constant, false), fieldDef.FieldType);
+					} else {
+						initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
+					}
+				}
 			}
 			ConvertAttributes(astField, fieldDef);
 			return astField;
