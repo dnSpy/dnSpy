@@ -447,7 +447,12 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Conv_Ovf_I_Un:  return arg1.CastTo(typeof(IntPtr));
 					case ILCode.Conv_Ovf_U_Un:  return arg1.CastTo(typeof(UIntPtr));
 					case ILCode.Castclass:      return arg1.CastTo(operandAsTypeRef);
-					case ILCode.Unbox_Any:      return arg1.CastTo(operandAsTypeRef);
+				case ILCode.Unbox_Any:
+					// unboxing does not require a cast if the argument was an isinst instruction
+					if (arg1 is AsExpression && byteCode.Arguments[0].Code == ILCode.Isinst && TypeAnalysis.IsSameType(operand as TypeReference, byteCode.Arguments[0].Operand as TypeReference))
+						return arg1;
+					else
+						return arg1.CastTo(operandAsTypeRef);
 					case ILCode.Isinst:         return arg1.CastAs(operandAsTypeRef);
 					case ILCode.Box:            return arg1;
 					case ILCode.Unbox:          return InlineAssembly(byteCode, args);

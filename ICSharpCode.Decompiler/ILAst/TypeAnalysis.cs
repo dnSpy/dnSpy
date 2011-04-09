@@ -648,9 +648,15 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Conv_R_Un:
 					return (expectedType != null  && expectedType.MetadataType == MetadataType.Single) ? typeSystem.Single : typeSystem.Double;
 				case ILCode.Castclass:
-				case ILCode.Isinst:
 				case ILCode.Unbox_Any:
 					return (TypeReference)expr.Operand;
+				case ILCode.Isinst:
+					{
+						// isinst performs the equivalent of a cast only for reference types;
+						// value types still need to be unboxed after an isinst instruction
+						TypeReference tr = (TypeReference)expr.Operand;
+						return tr.IsValueType ? typeSystem.Object : tr;
+					}
 				case ILCode.Box:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments.Single(), (TypeReference)expr.Operand);

@@ -111,4 +111,19 @@ public static class ValueTypes
 	{
 		ValueTypes.MakeArray()[Environment.TickCount]++;
 	}
+	
+	public static bool Is(object obj)
+	{
+		return obj is ValueTypes.S;
+	}
+	
+	public static bool IsNullable(object obj)
+	{
+		return obj is ValueTypes.S?;
+	}
+	
+	public static ValueTypes.S? As(object obj)
+	{
+		return obj as ValueTypes.S?;
+	}
 }
