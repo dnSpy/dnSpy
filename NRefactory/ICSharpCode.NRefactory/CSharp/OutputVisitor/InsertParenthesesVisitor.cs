@@ -156,6 +156,41 @@ namespace ICSharpCode.NRefactory.CSharp
 					Parenthesize(castExpression.Expression);
 				}
 			}
+			// The above issue can also happen with PrimitiveExpressions representing negative values:
+			PrimitiveExpression pe = castExpression.Expression as PrimitiveExpression;
+			if (pe != null && pe.Value != null && TypeCanBeMisinterpretedAsExpression(castExpression.Type)) {
+				TypeCode typeCode = Type.GetTypeCode(pe.Value.GetType());
+				switch (typeCode) {
+					case TypeCode.SByte:
+						if ((sbyte)pe.Value < 0)
+							Parenthesize(castExpression.Expression);
+						break;
+					case TypeCode.Int16:
+						if ((short)pe.Value < 0)
+							Parenthesize(castExpression.Expression);
+						break;
+					case TypeCode.Int32:
+						if ((int)pe.Value < 0)
+							Parenthesize(castExpression.Expression);
+						break;
+					case TypeCode.Int64:
+						if ((long)pe.Value < 0)
+							Parenthesize(castExpression.Expression);
+						break;
+					case TypeCode.Single:
+						if ((float)pe.Value < 0)
+							Parenthesize(castExpression.Expression);
+						break;
+					case TypeCode.Double:
+						if ((double)pe.Value < 0)
+							Parenthesize(castExpression.Expression);
+						break;
+					case TypeCode.Decimal:
+						if ((decimal)pe.Value < 0)
+							Parenthesize(castExpression.Expression);
+						break;
+				}
+			}
 			return base.VisitCastExpression(castExpression, data);
 		}
 		
