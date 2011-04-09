@@ -36,8 +36,16 @@ namespace ICSharpCode.Decompiler.Ast
 			NameVariables nv = new NameVariables();
 			nv.context = context;
 			nv.fieldNamesInCurrentType = context.CurrentType.Fields.Select(f => f.Name).ToList();
-			nv.AddExistingNames(parameters.Select(p => p.Name));
-			nv.AddExistingNames(variables.Where(v => v.IsGenerated).Select(v => v.Name));
+			// First mark existing variable names as reserved.
+			foreach (string name in context.ReservedVariableNames)
+				nv.AddExistingName(name);
+			foreach (var p in parameters)
+				nv.AddExistingName(p.Name);
+			foreach (var v in variables) {
+				if (v.IsGenerated)
+					nv.AddExistingName(v.Name);
+			}
+			// Now generate names:
 			foreach (ILVariable p in parameters) {
 				if (string.IsNullOrEmpty(p.Name))
 					p.Name = nv.GenerateNameForVariable(p, methodBody);
@@ -53,30 +61,59 @@ namespace ICSharpCode.Decompiler.Ast
 		List<string> fieldNamesInCurrentType;
 		Dictionary<string, int> typeNames = new Dictionary<string, int>();
 		
-		void AddExistingNames(IEnumerable<string> existingNames)
+		public void AddExistingName(string name)
 		{
-			foreach (string name in existingNames) {
-				if (string.IsNullOrEmpty(name))
-					continue;
-				// First, identify whether the name already ends with a number:
-				int pos = name.Length;
-				while (pos > 0 && name[pos-1] >= '0' && name[pos-1] <= '9')
-					pos--;
-				if (pos < name.Length) {
-					int number;
-					if (int.TryParse(name.Substring(pos), out number)) {
-						string nameWithoutDigits = name.Substring(0, pos);
-						int existingNumber;
-						if (typeNames.TryGetValue(nameWithoutDigits, out existingNumber)) {
-							typeNames[nameWithoutDigits] = Math.Max(number, existingNumber);
-						} else {
-							typeNames.Add(nameWithoutDigits, number);
-						}
-						continue;
+			if (string.IsNullOrEmpty(name))
+				return;
+			int number;
+			string nameWithoutDigits = SplitName(name, out number);
+			int existingNumber;
+			if (typeNames.TryGetValue(nameWithoutDigits, out existingNumber)) {
+				typeNames[nameWithoutDigits] = Math.Max(number, existingNumber);
+			} else {
+				typeNames.Add(nameWithoutDigits, number);
+			}
+		}
+		
+		string SplitName(string name, out int number)
+		{
+			// First, identify whether the name already ends with a number:
+			int pos = name.Length;
+			while (pos > 0 && name[pos-1] >= '0' && name[pos-1] <= '9')
+				pos--;
+			if (pos < name.Length) {
+				if (int.TryParse(name.Substring(pos), out number)) {
+					return name.Substring(0, pos);
+				}
+			}
+			number = 1;
+			return name;
+		}
+		
+		const char maxLoopVariableName = 'n';
+		
+		public string GetAlternativeName(string oldVariableName)
+		{
+			if (oldVariableName.Length == 1 && oldVariableName[0] >= 'i' && oldVariableName[0] <= maxLoopVariableName) {
+				for (char c = 'i'; c <= maxLoopVariableName; c++) {
+					if (!typeNames.ContainsKey(c.ToString())) {
+						typeNames.Add(c.ToString(), 1);
+						return c.ToString();
 					}
 				}
-				if (!typeNames.ContainsKey(name))
-					typeNames.Add(name, 1);
+			}
+			
+			int number;
+			string nameWithoutDigits = SplitName(oldVariableName, out number);
+			
+			if (!typeNames.ContainsKey(nameWithoutDigits)) {
+				typeNames.Add(nameWithoutDigits, 0);
+			}
+			int count = ++typeNames[nameWithoutDigits];
+			if (count > 1) {
+				return nameWithoutDigits + count.ToString();
+			} else {
+				return nameWithoutDigits;
 			}
 		}
 		
@@ -106,7 +143,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 				if (isLoopCounter) {
 					// For loop variables, use i,j,k,l,m,n
-					for (char c = 'i'; c <= 'n'; c++) {
+					for (char c = 'i'; c <= maxLoopVariableName; c++) {
 						if (!typeNames.ContainsKey(c.ToString())) {
 							proposedName = c.ToString();
 							break;

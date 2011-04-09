@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
@@ -36,6 +37,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		internal sealed class CapturedVariableAnnotation
 		{
 		}
+		
+		List<string> currentlyUsedVariableNames = new List<string>();
 		
 		public DelegateConstruction(DecompilerContext context) : base(context)
 		{
@@ -119,10 +122,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			ame.Parameters.AddRange(AstBuilder.MakeParameters(method.Parameters));
 			ame.HasParameterList = true;
 			
+			// rename variables so that they don't conflict with the parameters:
+			foreach (ParameterDeclaration pd in ame.Parameters) {
+				EnsureVariableNameIsAvailable(objectCreateExpression, pd.Name);
+			}
+			
 			// Decompile the anonymous method:
 			
 			DecompilerContext subContext = context.Clone();
 			subContext.CurrentMethod = method;
+			subContext.ReservedVariableNames.AddRange(currentlyUsedVariableNames);
 			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, subContext, ame.Parameters);
 			TransformationPipeline.RunTransformationsUntil(body, v => v is DelegateConstruction, subContext);
 			body.AcceptVisitor(this, null);
@@ -179,6 +188,76 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return true;
 		}
 		
+		#region Track current variables
+		public override object VisitMethodDeclaration(MethodDeclaration methodDeclaration, object data)
+		{
+			Debug.Assert(currentlyUsedVariableNames.Count == 0);
+			try {
+				currentlyUsedVariableNames.AddRange(methodDeclaration.Parameters.Select(p => p.Name));
+				return base.VisitMethodDeclaration(methodDeclaration, data);
+			} finally {
+				currentlyUsedVariableNames.Clear();
+			}
+		}
+		
+		public override object VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, object data)
+		{
+			Debug.Assert(currentlyUsedVariableNames.Count == 0);
+			try {
+				currentlyUsedVariableNames.AddRange(operatorDeclaration.Parameters.Select(p => p.Name));
+				return base.VisitOperatorDeclaration(operatorDeclaration, data);
+			} finally {
+				currentlyUsedVariableNames.Clear();
+			}
+		}
+		
+		public override object VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, object data)
+		{
+			Debug.Assert(currentlyUsedVariableNames.Count == 0);
+			try {
+				currentlyUsedVariableNames.AddRange(constructorDeclaration.Parameters.Select(p => p.Name));
+				return base.VisitConstructorDeclaration(constructorDeclaration, data);
+			} finally {
+				currentlyUsedVariableNames.Clear();
+			}
+		}
+		
+		public override object VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, object data)
+		{
+			Debug.Assert(currentlyUsedVariableNames.Count == 0);
+			try {
+				currentlyUsedVariableNames.AddRange(indexerDeclaration.Parameters.Select(p => p.Name));
+				return base.VisitIndexerDeclaration(indexerDeclaration, data);
+			} finally {
+				currentlyUsedVariableNames.Clear();
+			}
+		}
+		
+		public override object VisitAccessor(Accessor accessor, object data)
+		{
+			try {
+				currentlyUsedVariableNames.Add("value");
+				return base.VisitAccessor(accessor, data);
+			} finally {
+				currentlyUsedVariableNames.RemoveAt(currentlyUsedVariableNames.Count - 1);
+			}
+		}
+		
+		public override object VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, object data)
+		{
+			foreach (VariableInitializer v in variableDeclarationStatement.Variables)
+				currentlyUsedVariableNames.Add(v.Name);
+			return base.VisitVariableDeclarationStatement(variableDeclarationStatement, data);
+		}
+		
+		public override object VisitFixedStatement(FixedStatement fixedStatement, object data)
+		{
+			foreach (VariableInitializer v in fixedStatement.Variables)
+				currentlyUsedVariableNames.Add(v.Name);
+			return base.VisitFixedStatement(fixedStatement, data);
+		}
+		#endregion
+		
 		static readonly ExpressionStatement displayClassAssignmentPattern =
 			new ExpressionStatement(new AssignmentExpression(
 				new NamedNode("variable", new IdentifierExpression()),
@@ -187,6 +266,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public override object VisitBlockStatement(BlockStatement blockStatement, object data)
 		{
+			int numberOfVariablesOutsideBlock = currentlyUsedVariableNames.Count;
 			base.VisitBlockStatement(blockStatement, data);
 			foreach (ExpressionStatement stmt in blockStatement.Statements.OfType<ExpressionStatement>().ToArray()) {
 				Match displayClassAssignmentMatch = displayClassAssignmentPattern.Match(stmt);
@@ -261,6 +341,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				foreach (FieldDefinition field in type.Fields) {
 					if (dict.ContainsKey(field))
 						continue;
+					EnsureVariableNameIsAvailable(blockStatement, field.Name);
+					currentlyUsedVariableNames.Add(field.Name);
 					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(field.FieldType, field), field.Name));
 					dict[field] = new IdentifierExpression(field.Name);
 				}
@@ -283,7 +365,53 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					blockStatement.Statements.InsertBefore(insertionPoint, newVarDecl);
 				}
 			}
+			currentlyUsedVariableNames.RemoveRange(numberOfVariablesOutsideBlock, currentlyUsedVariableNames.Count - numberOfVariablesOutsideBlock);
 			return null;
+		}
+		
+		void EnsureVariableNameIsAvailable(AstNode currentNode, string name)
+		{
+			int pos = currentlyUsedVariableNames.IndexOf(name);
+			if (pos < 0) {
+				// name is still available
+				return;
+			}
+			// Naming conflict. Let's rename the existing variable so that the field keeps the name from metadata.
+			NameVariables nv = new NameVariables();
+			// Add currently used variable and parameter names
+			foreach (string nameInUse in currentlyUsedVariableNames)
+				nv.AddExistingName(nameInUse);
+			// variables declared in child nodes of this block
+			foreach (VariableInitializer vi in currentNode.Descendants.OfType<VariableInitializer>())
+				nv.AddExistingName(vi.Name);
+			// parameters in child lambdas
+			foreach (ParameterDeclaration pd in currentNode.Descendants.OfType<ParameterDeclaration>())
+				nv.AddExistingName(pd.Name);
+			
+			string newName = nv.GetAlternativeName(name);
+			currentlyUsedVariableNames[pos] = newName;
+			
+			// find top-most block
+			AstNode topMostBlock = currentNode.Ancestors.OfType<BlockStatement>().LastOrDefault() ?? currentNode;
+			
+			// rename identifiers
+			foreach (IdentifierExpression ident in topMostBlock.Descendants.OfType<IdentifierExpression>()) {
+				if (ident.Identifier == name) {
+					ident.Identifier = newName;
+					ILVariable v = ident.Annotation<ILVariable>();
+					if (v != null)
+						v.Name = newName;
+				}
+			}
+			// rename variable declarations
+			foreach (VariableInitializer vi in topMostBlock.Descendants.OfType<VariableInitializer>()) {
+				if (vi.Name == name) {
+					vi.Name = newName;
+					ILVariable v = vi.Annotation<ILVariable>();
+					if (v != null)
+						v.Name = newName;
+				}
+			}
 		}
 	}
 }
