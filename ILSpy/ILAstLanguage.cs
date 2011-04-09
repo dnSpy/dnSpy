@@ -56,7 +56,7 @@ namespace ICSharpCode.ILSpy
 			ilMethod.Body = astBuilder.Build(method, inlineVariables);
 			
 			if (abortBeforeStep != null) {
-				DecompilerContext context = new DecompilerContext { CurrentType = method.DeclaringType, CurrentMethod = method };
+				DecompilerContext context = new DecompilerContext(method.Module) { CurrentType = method.DeclaringType, CurrentMethod = method };
 				new ILAstOptimizer().Optimize(context, ilMethod, abortBeforeStep.Value);
 			}
 			

@@ -31,7 +31,7 @@ namespace ICSharpCode.Decompiler.Ast
 	
 	public class AstBuilder
 	{
-		DecompilerContext context = new DecompilerContext();
+		DecompilerContext context;
 		CompilationUnit astCompileUnit = new CompilationUnit();
 		Dictionary<string, NamespaceDeclaration> astNamespaces = new Dictionary<string, NamespaceDeclaration>();
 		bool transformationsHaveRun;

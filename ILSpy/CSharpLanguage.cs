@@ -51,8 +51,9 @@ namespace ICSharpCode.ILSpy
 		#if DEBUG
 		internal static IEnumerable<CSharpLanguage> GetDebugLanguages()
 		{
+			DecompilerContext context = new DecompilerContext(ModuleDefinition.CreateModule("dummy", ModuleKind.Dll));
 			string lastTransformName = "no transforms";
-			foreach (Type _transformType in TransformationPipeline.CreatePipeline(new DecompilerContext()).Select(v => v.GetType()).Distinct()) {
+			foreach (Type _transformType in TransformationPipeline.CreatePipeline(context).Select(v => v.GetType()).Distinct()) {
 				Type transformType = _transformType; // copy for lambda
 				yield return new CSharpLanguage {
 					transformAbortCondition = v => transformType.IsInstanceOfType(v),
@@ -83,7 +84,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
 			WriteCommentLine(output, TypeToString(method.DeclaringType, includeNamespace: true));
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, method.DeclaringType);
+			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: method.DeclaringType);
 			codeDomBuilder.AddMethod(method);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
@@ -92,7 +93,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
 			WriteCommentLine(output, TypeToString(property.DeclaringType, includeNamespace: true));
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, property.DeclaringType);
+			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: property.DeclaringType);
 			codeDomBuilder.AddProperty(property);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
@@ -101,7 +102,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
 			WriteCommentLine(output, TypeToString(field.DeclaringType, includeNamespace: true));
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, field.DeclaringType);
+			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: field.DeclaringType);
 			codeDomBuilder.AddField(field);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
@@ -110,7 +111,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
 			WriteCommentLine(output, TypeToString(ev.DeclaringType, includeNamespace: true));
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, ev.DeclaringType);
+			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: ev.DeclaringType);
 			codeDomBuilder.AddEvent(ev);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
@@ -118,7 +119,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, type);
+			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
 			codeDomBuilder.AddType(type);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
@@ -133,7 +134,7 @@ namespace ICSharpCode.ILSpy
 				WriteProjectFile(new TextOutputWriter(output), files, assembly.MainModule);
 			} else {
 				base.DecompileAssembly(assembly, fileName, output, options);
-				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: null);
+				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.MainModule);
 				codeDomBuilder.AddAssembly(assembly, onlyAssemblyLevel: !options.FullDecompilation);
 				codeDomBuilder.RunTransformations(transformAbortCondition);
 				codeDomBuilder.GenerateCode(output);
@@ -296,7 +297,7 @@ namespace ICSharpCode.ILSpy
 				new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
 				delegate (IGrouping<string, TypeDefinition> file) {
 					using (StreamWriter w = new StreamWriter(Path.Combine(options.SaveAsProjectDirectory, file.Key))) {
-						AstBuilder codeDomBuilder = CreateAstBuilder(options, null);
+						AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.MainModule);
 						foreach (TypeDefinition type in file) {
 							codeDomBuilder.AddType(type);
 						}
@@ -383,10 +384,12 @@ namespace ICSharpCode.ILSpy
 		}
 		#endregion
 		
-		AstBuilder CreateAstBuilder(DecompilationOptions options, TypeDefinition currentType)
+		AstBuilder CreateAstBuilder(DecompilationOptions options, ModuleDefinition currentModule = null, TypeDefinition currentType = null)
 		{
+			if (currentModule == null)
+				currentModule = currentType.Module;
 			return new AstBuilder(
-				new DecompilerContext {
+				new DecompilerContext(currentModule) {
 					CancellationToken = options.CancellationToken,
 					CurrentType = currentType,
 					Settings = options.DecompilerSettings

@@ -10,10 +10,18 @@ namespace ICSharpCode.Decompiler
 {
 	public class DecompilerContext
 	{
+		public ModuleDefinition CurrentModule;
 		public CancellationToken CancellationToken;
 		public TypeDefinition CurrentType;
 		public MethodDefinition CurrentMethod;
 		public DecompilerSettings Settings = new DecompilerSettings();
+		
+		public DecompilerContext(ModuleDefinition currentModule)
+		{
+			if (currentModule == null)
+				throw new ArgumentNullException("currentModule");
+			this.CurrentModule = currentModule;
+		}
 		
 		/// <summary>
 		/// Used to pass variable names from a method to its anonymous methods.
