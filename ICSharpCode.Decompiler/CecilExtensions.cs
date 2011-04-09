@@ -204,5 +204,35 @@ namespace ICSharpCode.Decompiler
 				return true;
 			return IsCompilerGeneratedOrIsInCompilerGeneratedClass(member.DeclaringType);
 		}
+		
+		public static bool IsAnonymousType(this TypeReference type)
+		{
+			if (type == null)
+				return false;
+			if (string.IsNullOrEmpty(type.Namespace) && type.Name.StartsWith("<>", StringComparison.Ordinal) && type.Name.Contains("AnonymousType")) {
+				TypeDefinition td = type.Resolve();
+				return td != null && td.IsCompilerGenerated();
+			}
+			return false;
+		}
+		
+		public static bool ContainsAnonymousType(this TypeReference type)
+		{
+			GenericInstanceType git = type as GenericInstanceType;
+			if (git != null) {
+				if (IsAnonymousType(git))
+					return true;
+				for (int i = 0; i < git.GenericArguments.Count; i++) {
+					if (git.GenericArguments[i].ContainsAnonymousType())
+						return true;
+				}
+				return false;
+			}
+			TypeSpecification typeSpec = type as TypeSpecification;
+			if (typeSpec != null)
+				return typeSpec.ElementType.ContainsAnonymousType();
+			else
+				return false;
+		}
 	}
 }

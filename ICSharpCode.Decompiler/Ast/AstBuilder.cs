@@ -61,7 +61,7 @@ namespace ICSharpCode.Decompiler.Ast
 			} else if (type != null && type.IsCompilerGenerated()) {
 				if (type.Name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
 					return true;
-				if (type.Name.StartsWith("<>", StringComparison.Ordinal) && type.Name.Contains("AnonymousType"))
+				if (type.IsAnonymousType())
 					return true;
 			}
 			FieldDefinition field = member as FieldDefinition;
@@ -885,12 +885,13 @@ namespace ICSharpCode.Decompiler.Ast
 			return astField;
 		}
 		
-		public static IEnumerable<ParameterDeclaration> MakeParameters(IEnumerable<ParameterDefinition> paramCol)
+		public static IEnumerable<ParameterDeclaration> MakeParameters(IEnumerable<ParameterDefinition> paramCol, bool isLambda = false)
 		{
 			foreach(ParameterDefinition paramDef in paramCol) {
 				ParameterDeclaration astParam = new ParameterDeclaration();
 				astParam.AddAnnotation(paramDef);
-				astParam.Type = ConvertType(paramDef.ParameterType, paramDef);
+				if (!(isLambda && paramDef.ParameterType.ContainsAnonymousType()))
+					astParam.Type = ConvertType(paramDef.ParameterType, paramDef);
 				astParam.Name = paramDef.Name;
 				
 				if (paramDef.ParameterType is ByReferenceType) {

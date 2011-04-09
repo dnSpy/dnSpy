@@ -91,7 +91,12 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			Statement insertionPoint = astBlock.Statements.FirstOrDefault();
 			foreach (ILVariable v in localVariablesToDefine) {
-				var newVarDecl = new VariableDeclarationStatement(AstBuilder.ConvertType(v.Type), v.Name);
+				AstType type;
+				if (v.Type.ContainsAnonymousType())
+					type = new SimpleType("var");
+				else
+					type = AstBuilder.ConvertType(v.Type);
+				var newVarDecl = new VariableDeclarationStatement(type, v.Name);
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
 			
@@ -603,6 +608,20 @@ namespace ICSharpCode.Decompiler.Ast
 							}
 						}
 						var oce = new Ast.ObjectCreateExpression();
+						if (declaringType.IsAnonymousType()) {
+							MethodDefinition ctor = ((MethodReference)operand).Resolve();
+							if (methodDef != null) {
+								oce.Initializer = new ArrayInitializerExpression();
+								for (int i = 0; i < args.Count; i++) {
+									oce.Initializer.Elements.Add(
+										new NamedArgumentExpression {
+											Identifier = ctor.Parameters[i].Name,
+											Expression = args[i]
+										});
+								}
+							}
+							return oce;
+						}
 						oce.Type = AstBuilder.ConvertType(declaringType);
 						oce.Arguments.AddRange(args);
 						return oce.WithAnnotation(operand);
@@ -910,6 +929,8 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			GenericInstanceMethod g = cecilMethod as GenericInstanceMethod;
 			if (g == null)
+				return null;
+			if (g.GenericArguments.Any(ta => ta.ContainsAnonymousType()))
 				return null;
 			return g.GenericArguments.Select(t => AstBuilder.ConvertType(t));
 		}
