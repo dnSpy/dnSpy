@@ -126,12 +126,20 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			));
 		
 		#region using
+		static Expression InvokeDispose(Expression identifier)
+		{
+			return new Choice {
+				identifier.Invoke("Dispose"),
+				identifier.Clone().CastTo(new TypePattern(typeof(IDisposable))).Invoke("Dispose")
+			};
+		}
+		
 		static readonly AstNode usingTryCatchPattern = new TryCatchStatement {
 			TryBlock = new AnyNode("body"),
 			FinallyBlock = new BlockStatement {
 				new Choice {
 					{ "valueType",
-						new ExpressionStatement(new NamedNode("ident", new IdentifierExpression()).ToExpression().Invoke("Dispose"))
+						new ExpressionStatement(InvokeDispose(new NamedNode("ident", new IdentifierExpression())))
 					},
 					{ "referenceType",
 						new IfElseStatement {
@@ -141,7 +149,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								new NullReferenceExpression()
 							),
 							TrueStatement = new BlockStatement {
-								new ExpressionStatement(new Backreference("ident").ToExpression().Invoke("Dispose"))
+								new ExpressionStatement(InvokeDispose(new Backreference("ident")))
 							}
 						}
 					}

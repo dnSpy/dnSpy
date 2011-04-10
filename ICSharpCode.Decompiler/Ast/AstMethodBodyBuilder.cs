@@ -482,11 +482,11 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Call:
 				case ILCode.CallGetter:
 				case ILCode.CallSetter:
-					return TransformCall(false, operand, args);
+					return TransformCall(false, byteCode, args);
 				case ILCode.Callvirt:
 				case ILCode.CallvirtGetter:
 				case ILCode.CallvirtSetter:
-					return TransformCall(true, operand,  args);
+					return TransformCall(true, byteCode,  args);
 					case ILCode.Ldftn: {
 						Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 						var expr = new Ast.IdentifierExpression(cecilMethod.Name);
@@ -745,9 +745,10 @@ namespace ICSharpCode.Decompiler.Ast
 			return new DefaultValueExpression { Type = AstBuilder.ConvertType(type) };
 		}
 		
-		AstNode TransformCall(bool isVirtual, object operand, List<Ast.Expression> args)
+		AstNode TransformCall(bool isVirtual, ILExpression byteCode, List<Ast.Expression> args)
 		{
-			Cecil.MethodReference cecilMethod = ((MethodReference)operand);
+			Cecil.MethodReference cecilMethod = (MethodReference)byteCode.Operand;
+			Cecil.MethodDefinition cecilMethodDef = cecilMethod.Resolve();
 			Ast.Expression target;
 			List<Ast.Expression> methodArgs = new List<Ast.Expression>(args);
 			if (cecilMethod.HasThis) {
@@ -759,6 +760,17 @@ namespace ICSharpCode.Decompiler.Ast
 				if (target is DirectionExpression) {
 					target = ((DirectionExpression)target).Expression;
 					target.Remove(); // detach from DirectionExpression
+				}
+				if (cecilMethodDef != null && cecilMethodDef.DeclaringType.IsInterface) {
+					TypeReference tr = byteCode.Arguments[0].InferredType;
+					if (tr != null) {
+						TypeDefinition td = tr.Resolve();
+						if (td != null && !td.IsInterface) {
+							// Calling an interface method on a non-interface object:
+							// we need to introduce an explicit cast
+							target = target.CastTo(AstBuilder.ConvertType(cecilMethod.DeclaringType));
+						}
+					}
 				}
 			} else {
 				target = new TypeReferenceExpression { Type = AstBuilder.ConvertType(cecilMethod.DeclaringType) };
@@ -789,8 +801,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return new AssignmentExpression(target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)), methodArgs.Last());
 			}
 			
-			// Resolve the method to figure out whether it is an accessor:
-			Cecil.MethodDefinition cecilMethodDef = cecilMethod.Resolve();
+			// Test whether the method is an accessor:
 			if (cecilMethodDef != null) {
 				if (cecilMethodDef.IsGetter && methodArgs.Count == 0) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
