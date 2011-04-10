@@ -31,7 +31,7 @@ namespace ICSharpCode.Decompiler.Ast
 	
 	public class AstBuilder
 	{
-		DecompilerContext context = new DecompilerContext();
+		DecompilerContext context;
 		CompilationUnit astCompileUnit = new CompilationUnit();
 		Dictionary<string, NamespaceDeclaration> astNamespaces = new Dictionary<string, NamespaceDeclaration>();
 		bool transformationsHaveRun;
@@ -61,7 +61,7 @@ namespace ICSharpCode.Decompiler.Ast
 			} else if (type != null && type.IsCompilerGenerated()) {
 				if (type.Name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
 					return true;
-				if (type.Name.StartsWith("<>", StringComparison.Ordinal) && type.Name.Contains("AnonymousType"))
+				if (type.IsAnonymousType())
 					return true;
 			}
 			FieldDefinition field = member as FieldDefinition;
@@ -168,7 +168,7 @@ namespace ICSharpCode.Decompiler.Ast
 			AstNode node = method.IsConstructor ? (AstNode)CreateConstructor(method) : CreateMethod(method);
 			astCompileUnit.AddChild(node, CompilationUnit.MemberRole);
 		}
-		
+
 		public void AddProperty(PropertyDefinition property)
 		{
 			astCompileUnit.AddChild(CreateProperty(property), CompilationUnit.MemberRole);
@@ -265,7 +265,7 @@ namespace ICSharpCode.Decompiler.Ast
 				foreach (var m in typeDef.Methods) {
 					if (m.Name == "Invoke") {
 						dd.ReturnType = ConvertType(m.ReturnType, m.MethodReturnType);
-						dd.Parameters.AddRange(MakeParameters(m.Parameters));
+						dd.Parameters.AddRange(MakeParameters(m));
 					}
 				}
 				result = dd;
@@ -277,10 +277,9 @@ namespace ICSharpCode.Decompiler.Ast
 				foreach (var i in typeDef.Interfaces)
 					astType.AddChild(ConvertType(i), TypeDeclaration.BaseTypeRole);
 				
-				
 				AddTypeMembers(astType, typeDef);
-				
-				if (astType.Members.Any(m => m is IndexerDeclaration)) {
+
+				if (astType.Members.OfType<IndexerDeclaration>().Any(idx => idx.PrivateImplementationType.IsNull)) {
 					// Remove the [DefaultMember] attribute if the class contains indexers
 					foreach (AttributeSection section in astType.Attributes) {
 						foreach (Ast.Attribute attr in section.Attributes) {
@@ -299,11 +298,6 @@ namespace ICSharpCode.Decompiler.Ast
 			return result;
 		}
 
-		public void Transform(IAstTransform transform)
-		{
-			transform.Run(astCompileUnit);
-		}
-		
 		internal static string CleanName(string name)
 		{
 			int pos = name.LastIndexOf('`');
@@ -635,7 +629,7 @@ namespace ICSharpCode.Decompiler.Ast
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
 			astMethod.Name = CleanName(methodDef.Name);
 			astMethod.TypeParameters.AddRange(MakeTypeParameters(methodDef.GenericParameters));
-			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
+			astMethod.Parameters.AddRange(MakeParameters(methodDef));
 			astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
 				if (!methodDef.HasOverrides) {
@@ -727,7 +721,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astMethod.Modifiers &= ~Modifiers.VisibilityMask;
 			}
 			astMethod.Name = CleanName(methodDef.DeclaringType.Name);
-			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
+			astMethod.Parameters.AddRange(MakeParameters(methodDef));
 			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
 			ConvertAttributes(astMethod, methodDef);
 			astMethod.WithAnnotation(methodMapping);			
@@ -763,11 +757,11 @@ namespace ICSharpCode.Decompiler.Ast
 				if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null))
 					foreach (var basePropDef in TypesHierarchyHelpers.FindBaseProperties(propDef))
 						if (basePropDef.GetMethod != null && basePropDef.SetMethod != null) {
-							var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
-							astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
-							break;
-						} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot)
-							break;
+					var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
+					astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
+					break;
+				} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot)
+					break;
 				if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
 					if (TypesHierarchyHelpers.FindBaseProperties(propDef).Any())
 						astProp.Modifiers |= Modifiers.New;
@@ -808,39 +802,12 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			ConvertCustomAttributes(astProp, propDef);
 			
-			// Check whether the property is an indexer:
-			if (propDef.HasParameters) {
-				PropertyDefinition basePropDef = propDef;
-				if (accessor.HasOverrides) {
-					// if the property is explicitly implementing an interface, look up the property in the interface:
-					MethodDefinition baseAccessor = accessor.Overrides.First().Resolve();
-					if (baseAccessor != null) {
-						foreach (PropertyDefinition baseProp in baseAccessor.DeclaringType.Properties) {
-							if (baseProp.GetMethod == baseAccessor || baseProp.SetMethod == baseAccessor) {
-								basePropDef = baseProp;
-								break;
-							}
-						}
-					}
-				}
-				// figure out the name of the indexer:
-				string defaultMemberName = null;
-				var defaultMemberAttribute = basePropDef.DeclaringType.CustomAttributes.FirstOrDefault(IsDefaultMemberAttribute);
-				if (defaultMemberAttribute != null && defaultMemberAttribute.ConstructorArguments.Count == 1) {
-					defaultMemberName = defaultMemberAttribute.ConstructorArguments[0].Value as string;
-				}
-				if (basePropDef.Name == defaultMemberName) {
-					return ConvertPropertyToIndexer(astProp, propDef);
-				}
-			}
-			return astProp;
+			if(propDef.IsIndexer())
+				return ConvertPropertyToIndexer(astProp, propDef);
+			else
+				return astProp;
 		}
 
-		bool IsDefaultMemberAttribute(CustomAttribute ca)
-		{
-			return ca.AttributeType.Name == "DefaultMemberAttribute" && ca.AttributeType.Namespace == "System.Reflection";
-		}
-		
 		IndexerDeclaration ConvertPropertyToIndexer(PropertyDeclaration astProp, PropertyDefinition propDef)
 		{
 			var astIndexer = new IndexerDeclaration();
@@ -913,21 +880,38 @@ namespace ICSharpCode.Decompiler.Ast
 			astField.ReturnType = ConvertType(fieldDef.FieldType, fieldDef);
 			astField.Modifiers = ConvertModifiers(fieldDef);
 			if (fieldDef.HasConstant) {
-				if (fieldDef.Constant == null)
+				if (fieldDef.Constant == null) {
 					initializer.Initializer = new NullReferenceExpression();
-				else
-					initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
+				} else {
+					TypeCode c = Type.GetTypeCode(fieldDef.Constant.GetType());
+					if (c >= TypeCode.SByte && c <= TypeCode.UInt64) {
+						initializer.Initializer = MakePrimitive((long)CSharpPrimitiveCast.Cast(TypeCode.Int64, fieldDef.Constant, false), fieldDef.FieldType);
+					} else {
+						initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
+					}
+				}
 			}
 			ConvertAttributes(astField, fieldDef);
 			return astField;
 		}
 		
-		public static IEnumerable<ParameterDeclaration> MakeParameters(IEnumerable<ParameterDefinition> paramCol)
+		public static IEnumerable<ParameterDeclaration> MakeParameters(MethodDefinition method, bool isLambda = false)
+		{
+			var parameters = MakeParameters(method.Parameters, isLambda);
+			if (method.CallingConvention == MethodCallingConvention.VarArg) {
+				return parameters.Concat(new[] { new ParameterDeclaration { Name = "__arglist" } });
+			} else {
+				return parameters;
+			}
+		}
+		
+		public static IEnumerable<ParameterDeclaration> MakeParameters(IEnumerable<ParameterDefinition> paramCol, bool isLambda = false)
 		{
 			foreach(ParameterDefinition paramDef in paramCol) {
 				ParameterDeclaration astParam = new ParameterDeclaration();
 				astParam.AddAnnotation(paramDef);
-				astParam.Type = ConvertType(paramDef.ParameterType, paramDef);
+				if (!(isLambda && paramDef.ParameterType.ContainsAnonymousType()))
+					astParam.Type = ConvertType(paramDef.ParameterType, paramDef);
 				astParam.Name = paramDef.Name;
 				
 				if (paramDef.ParameterType is ByReferenceType) {
@@ -1272,27 +1256,40 @@ namespace ICSharpCode.Decompiler.Ast
 			if (type != null)
 			{ // cannot rely on type.IsValueType, it's not set for typerefs (but is set for typespecs)
 				TypeDefinition enumDefinition = type.Resolve();
-				if (enumDefinition != null && enumDefinition.IsEnum)
-				{
-					foreach (FieldDefinition field in enumDefinition.Fields)
-					{
+				if (enumDefinition != null && enumDefinition.IsEnum) {
+					foreach (FieldDefinition field in enumDefinition.Fields) {
 						if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false), val))
 							return ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
 						else if (!field.IsStatic && field.IsRuntimeSpecialName)
 							type = field.FieldType; // use primitive type of the enum
 					}
-					if (IsFlagsEnum(enumDefinition))
-					{
+					TypeCode enumBaseTypeCode = TypeAnalysis.GetTypeCode(type);
+					if (IsFlagsEnum(enumDefinition)) {
 						long enumValue = val;
 						Expression expr = null;
-						foreach (FieldDefinition field in enumDefinition.Fields.Where(fld => fld.IsStatic))
-						{
+						long negatedEnumValue = ~val;
+						// limit negatedEnumValue to the appropriate range
+						switch (enumBaseTypeCode) {
+							case TypeCode.Byte:
+							case TypeCode.SByte:
+								negatedEnumValue &= byte.MaxValue;
+								break;
+							case TypeCode.Int16:
+							case TypeCode.UInt16:
+								negatedEnumValue &= ushort.MaxValue;
+								break;
+							case TypeCode.Int32:
+							case TypeCode.UInt32:
+								negatedEnumValue &= uint.MaxValue;
+								break;
+						}
+						Expression negatedExpr = null;
+						foreach (FieldDefinition field in enumDefinition.Fields.Where(fld => fld.IsStatic)) {
 							long fieldValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false);
 							if (fieldValue == 0)
 								continue;	// skip None enum value
 
-							if ((fieldValue & enumValue) == fieldValue)
-							{
+							if ((fieldValue & enumValue) == fieldValue) {
 								var fieldExpression = ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
 								if (expr == null)
 									expr = fieldExpression;
@@ -1300,22 +1297,33 @@ namespace ICSharpCode.Decompiler.Ast
 									expr = new BinaryOperatorExpression(expr, BinaryOperatorType.BitwiseOr, fieldExpression);
 
 								enumValue &= ~fieldValue;
-								if (enumValue == 0)
-									break;
+							}
+							if ((fieldValue & negatedEnumValue) == fieldValue) {
+								var fieldExpression = ConvertType(enumDefinition).Member(field.Name).WithAnnotation(field);
+								if (negatedExpr == null)
+									negatedExpr = fieldExpression;
+								else
+									negatedExpr = new BinaryOperatorExpression(negatedExpr, BinaryOperatorType.BitwiseOr, fieldExpression);
+
+								negatedEnumValue &= ~fieldValue;
 							}
 						}
-						if(enumValue == 0 && expr != null)
-							return expr;
+						if (enumValue == 0 && expr != null) {
+							if (!(negatedEnumValue == 0 && negatedExpr != null && negatedExpr.Descendants.Count() < expr.Descendants.Count())) {
+								return expr;
+							}
+						}
+						if (negatedEnumValue == 0 && negatedExpr != null) {
+							return new UnaryOperatorExpression(UnaryOperatorType.BitNot, negatedExpr);
+						}
 					}
-					TypeCode enumBaseTypeCode = TypeAnalysis.GetTypeCode(type);
 					return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(enumBaseTypeCode, val, false)).CastTo(ConvertType(enumDefinition));
 				}
 			}
 			TypeCode code = TypeAnalysis.GetTypeCode(type);
 			if (code == TypeCode.Object || code == TypeCode.Empty)
-				return new Ast.PrimitiveExpression((int)val);
-			else
-				return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
+				code = TypeCode.Int32;
+			return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
 		}
 
 		static bool IsFlagsEnum(TypeDefinition type)
@@ -1324,19 +1332,6 @@ namespace ICSharpCode.Decompiler.Ast
 				return false;
 
 			return type.CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.FlagsAttribute");
-		}
-
-		/// <summary>
-		/// Gets the name of the default member of the type pointed by the <see cref="System.Reflection.DefaultMemberAttribute"/> attribute.
-		/// </summary>
-		/// <param name="type">The type definition.</param>
-		/// <returns>The name of the default member or null if no <see cref="System.Reflection.DefaultMemberAttribute"/> attribute has been found.</returns>
-		private static Tuple<string, CustomAttribute> GetDefaultMember(TypeDefinition type)
-		{
-			foreach (CustomAttribute ca in type.CustomAttributes)
-				if (ca.Constructor.FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)")
-					return Tuple.Create(ca.ConstructorArguments.Single().Value as string, ca);
-			return new Tuple<string,CustomAttribute>(null, null);
 		}
 	}
 }

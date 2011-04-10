@@ -44,10 +44,25 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				compilationUnit.InsertChildAfter(null, new UsingDeclaration { Import = nsType }, CompilationUnit.MemberRole);
 			}
 			
-			// TODO: verify that the SimpleTypes refer to the correct type (no ambiguities)
+			if (!context.Settings.FullyQualifyAmbiguousTypeNames)
+				return;
+			
+			FindAmbiguousTypeNames(context.CurrentModule, internalsVisible: true);
+			foreach (AssemblyNameReference r in context.CurrentModule.AssemblyReferences) {
+				AssemblyDefinition d = context.CurrentModule.AssemblyResolver.Resolve(r);
+				if (d != null)
+					FindAmbiguousTypeNames(d.MainModule, internalsVisible: false);
+			}
+			
+			// verify that the SimpleTypes refer to the correct type (no ambiguities)
+			FullyQualifyAmbiguousTypeNames(compilationUnit);
 		}
 		
+		readonly HashSet<string> declaredNamespaces = new HashSet<string>() { string.Empty };
 		readonly HashSet<string> importedNamespaces = new HashSet<string>();
+		
+		readonly HashSet<string> availableTypeNames = new HashSet<string>();
+		readonly HashSet<string> ambiguousTypeNames = new HashSet<string>();
 		string currentNamespace;
 		
 		bool IsParentOfCurrentNamespace(string ns)
@@ -77,10 +92,49 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			string oldNamespace = currentNamespace;
 			foreach (Identifier ident in namespaceDeclaration.Identifiers) {
 				currentNamespace = NamespaceDeclaration.BuildQualifiedName(currentNamespace, ident.Name);
+				declaredNamespaces.Add(currentNamespace);
 			}
 			base.VisitNamespaceDeclaration(namespaceDeclaration, data);
 			currentNamespace = oldNamespace;
 			return null;
+		}
+		
+		void FindAmbiguousTypeNames(ModuleDefinition module, bool internalsVisible)
+		{
+			foreach (TypeDefinition type in module.Types) {
+				if (internalsVisible || type.IsPublic) {
+					if (importedNamespaces.Contains(type.Namespace) || declaredNamespaces.Contains(type.Namespace)) {
+						if (!availableTypeNames.Add(type.Name))
+							ambiguousTypeNames.Add(type.Name);
+					}
+				}
+			}
+		}
+		
+		void FullyQualifyAmbiguousTypeNames(AstNode compilationUnit)
+		{
+			foreach (SimpleType simpleType in compilationUnit.Descendants.OfType<SimpleType>()) {
+				TypeReference tr = simpleType.Annotation<TypeReference>();
+				if (tr != null && ambiguousTypeNames.Contains(tr.Name)) {
+					AstType ns;
+					if (string.IsNullOrEmpty(tr.Namespace)) {
+						ns = new SimpleType("global");
+					} else {
+						string[] parts = tr.Namespace.Split('.');
+						ns = new SimpleType(parts[0]);
+						for (int i = 1; i < parts.Length; i++) {
+							ns = new MemberType { Target = ns, MemberName = parts[i] };
+						}
+					}
+					MemberType mt = new MemberType();
+					mt.Target = ns;
+					mt.IsDoubleColon = string.IsNullOrEmpty(tr.Namespace);
+					mt.MemberName = simpleType.Identifier;
+					mt.CopyAnnotationsFrom(simpleType);
+					simpleType.TypeArguments.MoveTo(mt.TypeArguments);
+					simpleType.ReplaceWith(mt);
+				}
+			}
 		}
 	}
 }

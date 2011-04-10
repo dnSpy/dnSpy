@@ -5,11 +5,20 @@ using System;
 
 public class IncrementDecrement
 {
+	[Flags]
+	private enum MyEnum
+	{
+		None = 0,
+		One = 1,
+		Two = 2,
+		Four = 4
+	}
+	
 	public class MutableClass
 	{
 		public int Field;
 		
-		public int Property 
+		public int Property
 		{
 			get;
 			set;
@@ -27,11 +36,12 @@ public class IncrementDecrement
 		}
 	}
 	
+	private IncrementDecrement.MyEnum enumField;
 	public static int StaticField;
 	
 	public static int StaticProperty
-	{ 
-		get; 
+	{
+		get;
 		set;
 	}
 	
@@ -153,6 +163,12 @@ public class IncrementDecrement
 	public unsafe double CompoundAssignByPointer(double* ptr)
 	{
 		return *ptr /= 1.5;
+	}
+	
+	public void CompoundAssignEnum()
+	{
+		this.enumField |= IncrementDecrement.MyEnum.Two;
+		this.enumField &= ~IncrementDecrement.MyEnum.Four;
 	}
 	
 	public int PostIncrementInAddition(int i, int j)

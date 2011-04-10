@@ -130,7 +130,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		#endregion
 		
 		#region CachedDelegateInitialization
-		void CachedDelegateInitialization(ILBlock block, ref int i)
+		void CachedDelegateInitializationWithField(ILBlock block, ref int i)
 		{
 			// if (logicnot(ldsfld(field))) {
 			//     stsfld(field, newobj(Action::.ctor, ldnull(), ldftn(method)))
@@ -174,11 +174,73 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (parent.Arguments[j].Code == ILCode.Ldsfld && ((FieldReference)parent.Arguments[j].Operand).ResolveWithinSameModule() == field) {
 							parent.Arguments[j] = newObj;
 							block.Body.RemoveAt(i);
-							i -= new ILInlining(method).InlineInto(block.Body, i, aggressive: true);
+							i -= new ILInlining(method).InlineInto(block.Body, i, aggressive: false);
 							return;
 						}
 					}
 				}
+			}
+		}
+		
+		void CachedDelegateInitializationWithLocal(ILBlock block, ref int i)
+		{
+			// if (logicnot(ldloc(v))) {
+			//     stloc(v, newobj(Action::.ctor, ldloc(displayClass), ldftn(method)))
+			// } else {
+			// }
+			// ...(..., ldloc(v), ...)
+			
+			ILCondition c = block.Body[i] as ILCondition;
+			if (c == null || c.Condition == null && c.TrueBlock == null || c.FalseBlock == null)
+				return;
+			if (!(c.TrueBlock.Body.Count == 1 && c.FalseBlock.Body.Count == 0))
+				return;
+			if (!c.Condition.Match(ILCode.LogicNot))
+				return;
+			ILExpression condition = c.Condition.Arguments.Single() as ILExpression;
+			if (condition == null || condition.Code != ILCode.Ldloc)
+				return;
+			ILVariable v = (ILVariable)condition.Operand;
+			ILExpression stloc = c.TrueBlock.Body[0] as ILExpression;
+			if (!(stloc != null && stloc.Code == ILCode.Stloc && (ILVariable)stloc.Operand == v))
+				return;
+			ILExpression newObj = stloc.Arguments[0];
+			if (!(newObj.Code == ILCode.Newobj && newObj.Arguments.Count == 2))
+				return;
+			if (newObj.Arguments[0].Code != ILCode.Ldloc)
+				return;
+			if (newObj.Arguments[1].Code != ILCode.Ldftn)
+				return;
+			MethodDefinition anonymousMethod = ((MethodReference)newObj.Arguments[1].Operand).ResolveWithinSameModule(); // method is defined in current assembly
+			if (!Ast.Transforms.DelegateConstruction.IsAnonymousMethod(context, anonymousMethod))
+				return;
+			
+			ILNode followingNode = block.Body.ElementAtOrDefault(i + 1);
+			if (followingNode != null && followingNode.GetSelfAndChildrenRecursive<ILExpression>().Count(
+				e => e.Code == ILCode.Ldloc && (ILVariable)e.Operand == v) == 1)
+			{
+				ILInlining inlining = new ILInlining(method);
+				if (!(inlining.numLdloc.GetOrDefault(v) == 2 && inlining.numStloc.GetOrDefault(v) == 2 && inlining.numLdloca.GetOrDefault(v) == 0))
+					return;
+				
+				// Find the store instruction that initializes the local to null:
+				foreach (ILBlock storeBlock in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+					for (int j = 0; j < storeBlock.Body.Count; j++) {
+						ILVariable storedVar;
+						ILExpression storedExpr;
+						if (storeBlock.Body[j].Match(ILCode.Stloc, out storedVar, out storedExpr) && storedVar == v && storedExpr.Match(ILCode.Ldnull)) {
+							// Remove the instruction
+							storeBlock.Body.RemoveAt(j);
+							if (storeBlock == block && j < i)
+								i--;
+							break;
+						}
+					}
+				}
+				
+				block.Body[i] = stloc; // remove the 'if (v==null)'
+				inlining = new ILInlining(method);
+				inlining.InlineIfPossible(block.Body, ref i);
 			}
 		}
 		#endregion
@@ -646,7 +708,7 @@ namespace ICSharpCode.Decompiler.ILAst
 								// that can be eliminated.
 								if (arrayLoadingExpr.Code == ILCode.Stloc) {
 									ILInlining inlining = new ILInlining(method);
-									if (inlining.numLdloc.GetOrDefault(arrayVariable) == 2 && 
+									if (inlining.numLdloc.GetOrDefault(arrayVariable) == 2 &&
 									    inlining.numStloc.GetOrDefault(arrayVariable) == 1 && inlining.numLdloca.GetOrDefault(arrayVariable) == 0)
 									{
 										arrayLoadingExpr = arrayLoadingExpr.Arguments[0];

@@ -5,5 +5,6 @@
 	<StackPanel Margin="10">
 		<CheckBox IsChecked="{Binding AnonymousMethods}">Decompile anonymous methods/lambdas</CheckBox>
 		<CheckBox IsChecked="{Binding YieldReturn}">Decompile enumerators (yield return)</CheckBox>
+		<CheckBox IsChecked="{Binding QueryExpressions}" IsEnabled="{Binding AnonymousMethods}">Decompile query expressions</CheckBox>
 	</StackPanel>
 </UserControl>

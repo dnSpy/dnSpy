@@ -39,8 +39,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (exceptionHandler.FilterStart != null) {
 				writer.Write(' ');
 				WriteOffsetReference(writer, exceptionHandler.FilterStart);
-				writer.Write('-');
-				WriteOffsetReference(writer, exceptionHandler.FilterEnd);
 				writer.Write(" handler ");
 			}
 			if (exceptionHandler.CatchType != null) {
@@ -88,8 +86,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 				writer.Write("instance ");
 			method.ReturnType.WriteTo(writer);
 			writer.Write(' ');
-			method.DeclaringType.WriteTo(writer, true);
-			writer.Write("::");
+			if (method.DeclaringType != null) {
+				method.DeclaringType.WriteTo(writer, true);
+				writer.Write("::");
+			}
 			writer.WriteReference(method.Name, method);
 			writer.Write("(");
 			var parameters = method.Parameters;

@@ -105,16 +105,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				this.Children.Add(new FieldTreeNode(field));
 			}
 			
-			// figure out the name of the indexer:
-			string defaultMemberName = null;
-			var defaultMemberAttribute = type.CustomAttributes.FirstOrDefault(
-				a => a.AttributeType.FullName == typeof(System.Reflection.DefaultMemberAttribute).FullName);
-			if (defaultMemberAttribute != null && defaultMemberAttribute.ConstructorArguments.Count == 1) {
-				defaultMemberName = defaultMemberAttribute.ConstructorArguments[0].Value as string;
-			}
-			
 			foreach (PropertyDefinition property in type.Properties.OrderBy(m => m.Name)) {
-				this.Children.Add(new PropertyTreeNode(property, property.Name == defaultMemberName));
+				this.Children.Add(new PropertyTreeNode(property));
 			}
 			foreach (EventDefinition ev in type.Events.OrderBy(m => m.Name)) {
 				this.Children.Add(new EventTreeNode(ev));
@@ -132,82 +124,62 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			DebugData.CurrentType = type;
 			language.DecompileType(type, output, options);
 		}
-		
+
 		#region Icon
-		enum ClassType
+		public override object Icon
 		{
-			Class,
-			Enum,
-			Struct,
-			Interface,
-			Delegate
+			get { return GetIcon(type); }
 		}
-		
-		static ClassType GetClassType(TypeDefinition type)
+
+		public static ImageSource GetIcon(TypeDefinition type)
+		{
+			TypeIcon typeIcon = GetTypeIcon(type);
+			AccessOverlayIcon overlayIcon = GetOverlayIcon(type);
+
+			return Images.GetIcon(typeIcon, overlayIcon);
+		}
+
+		static TypeIcon GetTypeIcon(TypeDefinition type)
 		{
 			if (type.IsValueType) {
 				if (type.IsEnum)
-					return ClassType.Enum;
+					return TypeIcon.Enum;
 				else
-					return ClassType.Struct;
+					return TypeIcon.Struct;
 			} else {
 				if (type.IsInterface)
-					return ClassType.Interface;
+					return TypeIcon.Interface;
 				else if (type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName)
-					return ClassType.Delegate;
+					return TypeIcon.Delegate;
 				else
-					return ClassType.Class;
+					return TypeIcon.Class;
 			}
 		}
-		
-		public override object Icon {
-			get {
-				return GetIcon(type);
-			}
-		}
-		
-		public static ImageSource GetIcon(TypeDefinition type)
+
+		private static AccessOverlayIcon GetOverlayIcon(TypeDefinition type)
 		{
+			AccessOverlayIcon overlay;
 			switch (type.Attributes & TypeAttributes.VisibilityMask) {
 				case TypeAttributes.Public:
 				case TypeAttributes.NestedPublic:
-					switch (GetClassType(type)) {
-							case ClassType.Delegate:  return Images.Delegate;
-							case ClassType.Enum:      return Images.Enum;
-							case ClassType.Interface: return Images.Interface;
-							case ClassType.Struct:    return Images.Struct;
-							default:                  return Images.Class;
-					}
+					overlay = AccessOverlayIcon.Public;
+					break;
 				case TypeAttributes.NotPublic:
 				case TypeAttributes.NestedAssembly:
 				case TypeAttributes.NestedFamANDAssem:
-					switch (GetClassType(type)) {
-							case ClassType.Delegate:  return Images.InternalDelegate;
-							case ClassType.Enum:      return Images.InternalEnum;
-							case ClassType.Interface: return Images.InternalInterface;
-							case ClassType.Struct:    return Images.InternalStruct;
-							default:                  return Images.InternalClass;
-					}
+					overlay = AccessOverlayIcon.Internal;
+					break;
 				case TypeAttributes.NestedFamily:
 				case TypeAttributes.NestedFamORAssem:
-					switch (GetClassType(type)) {
-							case ClassType.Delegate:  return Images.ProtectedDelegate;
-							case ClassType.Enum:      return Images.ProtectedEnum;
-							case ClassType.Interface: return Images.ProtectedInterface;
-							case ClassType.Struct:    return Images.ProtectedStruct;
-							default:                  return Images.ProtectedClass;
-					}
+					overlay = AccessOverlayIcon.Protected;
+					break;
 				case TypeAttributes.NestedPrivate:
-					switch (GetClassType(type)) {
-							case ClassType.Delegate:  return Images.PrivateDelegate;
-							case ClassType.Enum:      return Images.PrivateEnum;
-							case ClassType.Interface: return Images.PrivateInterface;
-							case ClassType.Struct:    return Images.PrivateStruct;
-							default:                  return Images.PrivateClass;
-					}
+					overlay = AccessOverlayIcon.Private;
+					break;
 				default:
 					throw new NotSupportedException();
 			}
+			return overlay;
 		}
 		#endregion
 		

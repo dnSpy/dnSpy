@@ -140,6 +140,30 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		bool queryExpressions = true;
+		
+		public bool QueryExpressions {
+			get { return queryExpressions; }
+			set {
+				if (queryExpressions != value) {
+					queryExpressions = value;
+					OnPropertyChanged("QueryExpressions");
+				}
+			}
+		}
+		
+		bool fullyQualifyAmbiguousTypeNames = true;
+		
+		public bool FullyQualifyAmbiguousTypeNames {
+			get { return fullyQualifyAmbiguousTypeNames; }
+			set {
+				if (fullyQualifyAmbiguousTypeNames != value) {
+					fullyQualifyAmbiguousTypeNames = value;
+					OnPropertyChanged("FullyQualifyAmbiguousTypeNames");
+				}
+			}
+		}
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)
@@ -147,6 +171,13 @@ namespace ICSharpCode.Decompiler
 			if (PropertyChanged != null) {
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		public DecompilerSettings Clone()
+		{
+			DecompilerSettings settings = (DecompilerSettings)MemberwiseClone();
+			settings.PropertyChanged = null;
+			return settings;
 		}
 	}
 }

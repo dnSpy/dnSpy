@@ -86,6 +86,33 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		[Test]
+		public void TrickyCast4()
+		{
+			Expression expr = new PrimitiveExpression(int.MinValue).CastTo(new SimpleType("MyType"));
+			
+			Assert.AreEqual("(MyType)(-2147483648)", InsertRequired(expr));
+			Assert.AreEqual("(MyType)(-2147483648)", InsertReadable(expr));
+		}
+		
+		[Test]
+		public void TrickyCast5()
+		{
+			Expression expr = new PrimitiveExpression(-1.0).CastTo(new SimpleType("MyType"));
+			
+			Assert.AreEqual("(MyType)(-1.0)", InsertRequired(expr));
+			Assert.AreEqual("(MyType)(-1.0)", InsertReadable(expr));
+		}
+		
+		[Test]
+		public void TrickyCast6()
+		{
+			Expression expr = new PrimitiveExpression(int.MinValue).CastTo(new PrimitiveType("double"));
+			
+			Assert.AreEqual("(double)-2147483648", InsertRequired(expr));
+			Assert.AreEqual("(double)-2147483648", InsertReadable(expr));
+		}
+		
+		[Test]
 		public void CastAndInvoke()
 		{
 			Expression expr = new IdentifierExpression("a")

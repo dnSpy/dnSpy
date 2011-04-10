@@ -247,8 +247,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					EndOffset   = inst.Next != null ? inst.Next.Offset : methodDef.Body.CodeSize,
 					Code        = code,
 					Operand     = operand,
-					PopCount    = inst.GetPopCount(),
-					PushCount   = inst.GetPushCount()
+					PopCount    = inst.GetPopDelta(),
+					PushCount   = inst.GetPushDelta()
 				};
 				if (prefixes != null) {
 					instrToByteCode[prefixes[0]] = byteCode;

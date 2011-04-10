@@ -9,7 +9,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	public interface IAstTransform
 	{
-		void Run(AstNode node);
+		void Run(AstNode compilationUnit);
 	}
 	
 	public static class TransformationPipeline
@@ -25,7 +25,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				new AddCheckedBlocks(),
 				new DeclareVariables(context), // should run after most transforms that modify statements
 				new ConvertConstructorCallIntoInitializer(), // must run after DeclareVariables
-				new IntroduceUsingDeclarations(context)
+				new IntroduceUsingDeclarations(context),
+				new IntroduceExtensionMethods(context), // must run after IntroduceUsingDeclarations
+				new IntroduceQueryExpressions(context), // must run after IntroduceExtensionMethods
+				new CombineQueryExpressions(context),
 			};
 		}
 		

@@ -94,13 +94,19 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\YieldReturn.cs");
 		}
 		
+		[Test, Ignore("Formatting differences")]
+		public void QueryExpressions()
+		{
+			TestFile(@"..\..\Tests\QueryExpressions.cs");
+		}
+		
 		static void TestFile(string fileName)
 		{
 			string code = File.ReadAllText(fileName);
 			AssemblyDefinition assembly = Compile(code);
-			AstBuilder decompiler = new AstBuilder(new DecompilerContext());
+			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.MainModule));
 			decompiler.AddAssembly(assembly);
-			decompiler.Transform(new Helpers.RemoveCompilerAttribute());
+			new Helpers.RemoveCompilerAttribute().Run(decompiler.CompilationUnit);
 			StringWriter output = new StringWriter();
 			decompiler.GenerateCode(new PlainTextOutput(output));
 			StringWriter diff = new StringWriter();

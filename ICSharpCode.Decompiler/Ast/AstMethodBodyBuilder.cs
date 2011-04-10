@@ -91,7 +91,12 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			Statement insertionPoint = astBlock.Statements.FirstOrDefault();
 			foreach (ILVariable v in localVariablesToDefine) {
-				var newVarDecl = new VariableDeclarationStatement(AstBuilder.ConvertType(v.Type), v.Name);
+				AstType type;
+				if (v.Type.ContainsAnonymousType())
+					type = new SimpleType("var");
+				else
+					type = AstBuilder.ConvertType(v.Type);
+				var newVarDecl = new VariableDeclarationStatement(type, v.Name);
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
 			
@@ -165,12 +170,18 @@ namespace ICSharpCode.Decompiler.Ast
 				var tryCatchStmt = new Ast.TryCatchStatement();
 				tryCatchStmt.TryBlock = TransformBlock(tryCatchNode.TryBlock);
 				foreach (var catchClause in tryCatchNode.CatchBlocks) {
-					tryCatchStmt.CatchClauses.Add(
-						new Ast.CatchClause {
-							Type = AstBuilder.ConvertType(catchClause.ExceptionType),
-							VariableName = catchClause.ExceptionVariable == null ? null : catchClause.ExceptionVariable.Name,
-							Body = TransformBlock(catchClause)
-						});
+					if (catchClause.ExceptionVariable == null
+					    && (catchClause.ExceptionType == null || catchClause.ExceptionType.MetadataType == MetadataType.Object))
+					{
+						tryCatchStmt.CatchClauses.Add(new Ast.CatchClause { Body = TransformBlock(catchClause) });
+					} else {
+						tryCatchStmt.CatchClauses.Add(
+							new Ast.CatchClause {
+								Type = AstBuilder.ConvertType(catchClause.ExceptionType),
+								VariableName = catchClause.ExceptionVariable == null ? null : catchClause.ExceptionVariable.Name,
+								Body = TransformBlock(catchClause)
+							});
+					}
 				}
 				if (tryCatchNode.FinallyBlock != null)
 					tryCatchStmt.FinallyBlock = TransformBlock(tryCatchNode.FinallyBlock);
@@ -353,8 +364,9 @@ namespace ICSharpCode.Decompiler.Ast
 					return new Ast.AssignmentExpression(arg1.Indexer(arg2), arg3);
 				case ILCode.CompoundAssignment:
 					{
-						BinaryOperatorExpression boe = (BinaryOperatorExpression)arg1;
-						return new Ast.AssignmentExpression {
+						CastExpression cast = arg1 as CastExpression;
+						BinaryOperatorExpression boe = (BinaryOperatorExpression)(cast != null ? cast.Expression : arg1);
+						var assignment = new Ast.AssignmentExpression {
 							Left = boe.Left.Detach(),
 							Operator = ReplaceMethodCallsWithOperators.GetAssignmentOperatorForBinaryOperator(boe.Operator),
 							Right = boe.Right.Detach()
@@ -362,6 +374,12 @@ namespace ICSharpCode.Decompiler.Ast
 						// We do not mark the resulting assignment as RestoreOriginalAssignOperatorAnnotation, because
 						// the operator cannot be translated back to the expanded form (as the left-hand expression
 						// would be evaluated twice, and might have side-effects)
+						if (cast != null) {
+							cast.Expression = assignment;
+							return cast;
+						} else {
+							return assignment;
+						}
 					}
 					#endregion
 					#region Comparison
@@ -449,7 +467,12 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Conv_Ovf_I_Un:  return arg1.CastTo(typeof(IntPtr));
 					case ILCode.Conv_Ovf_U_Un:  return arg1.CastTo(typeof(UIntPtr));
 					case ILCode.Castclass:      return arg1.CastTo(operandAsTypeRef);
-					case ILCode.Unbox_Any:      return arg1.CastTo(operandAsTypeRef);
+				case ILCode.Unbox_Any:
+					// unboxing does not require a cast if the argument was an isinst instruction
+					if (arg1 is AsExpression && byteCode.Arguments[0].Code == ILCode.Isinst && TypeAnalysis.IsSameType(operand as TypeReference, byteCode.Arguments[0].Operand as TypeReference))
+						return arg1;
+					else
+						return arg1.CastTo(operandAsTypeRef);
 					case ILCode.Isinst:         return arg1.CastAs(operandAsTypeRef);
 					case ILCode.Box:            return arg1;
 					case ILCode.Unbox:          return InlineAssembly(byteCode, args);
@@ -468,16 +491,17 @@ namespace ICSharpCode.Decompiler.Ast
 					else
 						return new AssignmentExpression(new UnaryOperatorExpression(UnaryOperatorType.Dereference, arg1), arg2);
 					#endregion
-					case ILCode.Arglist:  return InlineAssembly(byteCode, args);
+				case ILCode.Arglist:
+					return new ArgListExpression { IsAccess = true };
 					case ILCode.Break:    return InlineAssembly(byteCode, args);
 				case ILCode.Call:
 				case ILCode.CallGetter:
 				case ILCode.CallSetter:
-					return TransformCall(false, operand, args);
+					return TransformCall(false, byteCode, args);
 				case ILCode.Callvirt:
 				case ILCode.CallvirtGetter:
 				case ILCode.CallvirtSetter:
-					return TransformCall(true, operand,  args);
+					return TransformCall(true, byteCode,  args);
 					case ILCode.Ldftn: {
 						Cecil.MethodReference cecilMethod = ((MethodReference)operand);
 						var expr = new Ast.IdentifierExpression(cecilMethod.Name);
@@ -511,8 +535,10 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.DefaultValue:
 					return MakeDefaultValue((TypeReference)operand);
 					case ILCode.Jmp: return InlineAssembly(byteCode, args);
-					case ILCode.Ldc_I4: return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType);
-					case ILCode.Ldc_I8: return AstBuilder.MakePrimitive((long)operand, byteCode.InferredType);
+				case ILCode.Ldc_I4:
+					return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType);
+				case ILCode.Ldc_I8:
+					return AstBuilder.MakePrimitive((long)operand, byteCode.InferredType);
 				case ILCode.Ldc_R4:
 				case ILCode.Ldc_R8:
 				case ILCode.Ldc_Decimal:
@@ -583,7 +609,14 @@ namespace ICSharpCode.Decompiler.Ast
 							CountExpression = DivideBySize(arg1, type)
 						};
 					}
-					case ILCode.Mkrefany: return InlineAssembly(byteCode, args);
+				case ILCode.Mkrefany:
+					{
+						DirectionExpression dir = arg1 as DirectionExpression;
+						if (dir != null)
+							return new IdentifierExpression("__makeref").Invoke(dir.Expression.Detach());
+						else
+							return InlineAssembly(byteCode, args);
+					}
 					case ILCode.Newobj: {
 						Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
 						if (declaringType is ArrayType) {
@@ -598,6 +631,20 @@ namespace ICSharpCode.Decompiler.Ast
 							}
 						}
 						var oce = new Ast.ObjectCreateExpression();
+						if (declaringType.IsAnonymousType()) {
+							MethodDefinition ctor = ((MethodReference)operand).Resolve();
+							if (methodDef != null) {
+								oce.Initializer = new ArrayInitializerExpression();
+								for (int i = 0; i < args.Count; i++) {
+									oce.Initializer.Elements.Add(
+										new NamedArgumentExpression {
+											Identifier = ctor.Parameters[i].Name,
+											Expression = args[i]
+										});
+								}
+							}
+							return oce;
+						}
 						oce.Type = AstBuilder.ConvertType(declaringType);
 						oce.Arguments.AddRange(args);
 						return oce.WithAnnotation(operand);
@@ -713,9 +760,10 @@ namespace ICSharpCode.Decompiler.Ast
 			return new DefaultValueExpression { Type = AstBuilder.ConvertType(type) };
 		}
 		
-		AstNode TransformCall(bool isVirtual, object operand, List<Ast.Expression> args)
+		AstNode TransformCall(bool isVirtual, ILExpression byteCode, List<Ast.Expression> args)
 		{
-			Cecil.MethodReference cecilMethod = ((MethodReference)operand);
+			Cecil.MethodReference cecilMethod = (MethodReference)byteCode.Operand;
+			Cecil.MethodDefinition cecilMethodDef = cecilMethod.Resolve();
 			Ast.Expression target;
 			List<Ast.Expression> methodArgs = new List<Ast.Expression>(args);
 			if (cecilMethod.HasThis) {
@@ -727,6 +775,17 @@ namespace ICSharpCode.Decompiler.Ast
 				if (target is DirectionExpression) {
 					target = ((DirectionExpression)target).Expression;
 					target.Remove(); // detach from DirectionExpression
+				}
+				if (cecilMethodDef != null && cecilMethodDef.DeclaringType.IsInterface) {
+					TypeReference tr = byteCode.Arguments[0].InferredType;
+					if (tr != null) {
+						TypeDefinition td = tr.Resolve();
+						if (td != null && !td.IsInterface) {
+							// Calling an interface method on a non-interface object:
+							// we need to introduce an explicit cast
+							target = target.CastTo(AstBuilder.ConvertType(cecilMethod.DeclaringType));
+						}
+					}
 				}
 			} else {
 				target = new TypeReferenceExpression { Type = AstBuilder.ConvertType(cecilMethod.DeclaringType) };
@@ -757,8 +816,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return new AssignmentExpression(target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)), methodArgs.Last());
 			}
 			
-			// Resolve the method to figure out whether it is an accessor:
-			Cecil.MethodDefinition cecilMethodDef = cecilMethod.Resolve();
+			// Test whether the method is an accessor:
 			if (cecilMethodDef != null) {
 				if (cecilMethodDef.IsGetter && methodArgs.Count == 0) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
@@ -905,6 +963,8 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			GenericInstanceMethod g = cecilMethod as GenericInstanceMethod;
 			if (g == null)
+				return null;
+			if (g.GenericArguments.Any(ta => ta.ContainsAnonymousType()))
 				return null;
 			return g.GenericArguments.Select(t => AstBuilder.ConvertType(t));
 		}
