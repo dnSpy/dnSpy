@@ -1761,9 +1761,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			return
 				from c in context.GetClasses(namespaceName, StringComparer.Ordinal)
-				where c.IsStatic
+				where c.IsStatic && c.HasExtensionMethods
 				from m in c.Methods
-				where (m.IsExtensionMethod)
+				where m.IsExtensionMethod
 				select m;
 		}
 		#endregion

@@ -1032,15 +1032,21 @@ namespace ICSharpCode.NRefactory.CSharp
 		public object VisitQueryExpression(QueryExpression queryExpression, object data)
 		{
 			StartNode(queryExpression);
+			bool indent = !(queryExpression.Parent is QueryContinuationClause);
+			if (indent) {
+				formatter.Indent();
+				NewLine();
+			}
 			bool first = true;
 			foreach (var clause in queryExpression.Clauses) {
-				if (first) {
+				if (first)
 					first = false;
-				} else {
+				else
 					NewLine();
-				}
 				clause.AcceptVisitor(this, data);
 			}
+			if (indent)
+				formatter.Unindent();
 			return EndNode(queryExpression);
 		}
 		
