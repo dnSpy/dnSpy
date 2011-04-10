@@ -45,6 +45,7 @@ namespace ICSharpCode.ILSpy
 			DecompilerSettings s = new DecompilerSettings();
 			s.AnonymousMethods = (bool?)e.Attribute("anonymousMethods") ?? s.AnonymousMethods;
 			s.YieldReturn = (bool?)e.Attribute("yieldReturn") ?? s.YieldReturn;
+			s.QueryExpressions = (bool?)e.Attribute("queryExpressions") ?? s.QueryExpressions;
 			return s;
 		}
 		
@@ -54,6 +55,7 @@ namespace ICSharpCode.ILSpy
 			XElement section = new XElement("DecompilerSettings");
 			section.SetAttributeValue("anonymousMethods", s.AnonymousMethods);
 			section.SetAttributeValue("yieldReturn", s.YieldReturn);
+			section.SetAttributeValue("queryExpressions", s.QueryExpressions);
 			
 			XElement existingElement = root.Element("DecompilerSettings");
 			if (existingElement != null)

@@ -55,6 +55,7 @@
     <Compile Include="CallOverloadedMethod.cs" />
     <Compile Include="CheckedUnchecked.cs" />
     <Compile Include="IncrementDecrement.cs" />
+    <Compile Include="QueryExpressions.cs" />
     <Compile Include="Switch.cs" />
     <Compile Include="UnsafeCode.cs" />
     <Compile Include="Types\S_TypeDeclarations.cs" />

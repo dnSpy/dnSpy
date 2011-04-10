@@ -140,6 +140,18 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		bool queryExpressions = true;
+		
+		public bool QueryExpressions {
+			get { return queryExpressions; }
+			set {
+				if (queryExpressions != value) {
+					queryExpressions = value;
+					OnPropertyChanged("QueryExpressions");
+				}
+			}
+		}
+		
 		bool fullyQualifyAmbiguousTypeNames = true;
 		
 		public bool FullyQualifyAmbiguousTypeNames {
