@@ -36,7 +36,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (property == null)
 				throw new ArgumentNullException("property");
 			this.property = property;
-			this.isIndexer = property.IsIndexer();
+			using (LoadedAssembly.DisableAssemblyLoad()) {
+				this.isIndexer = property.IsIndexer();
+			}
 
 			if (property.GetMethod != null)
 				this.Children.Add(new MethodTreeNode(property.GetMethod));

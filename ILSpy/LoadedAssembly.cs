@@ -72,6 +72,28 @@ namespace ICSharpCode.ILSpy
 			return AssemblyDefinition.ReadAssembly(fileName, p);
 		}
 		
+		[ThreadStatic]
+		static int assemblyLoadDisableCount;
+		
+		public static IDisposable DisableAssemblyLoad()
+		{
+			assemblyLoadDisableCount++;
+			return new DecrementAssemblyLoadDisableCount();
+		}
+		
+		sealed class DecrementAssemblyLoadDisableCount : IDisposable
+		{
+			bool disposed;
+			
+			public void Dispose()
+			{
+				if (!disposed) {
+					disposed = true;
+					assemblyLoadDisableCount--;
+				}
+			}
+		}
+		
 		sealed class MyAssemblyResolver : IAssemblyResolver
 		{
 			readonly LoadedAssembly parent;
@@ -112,6 +134,8 @@ namespace ICSharpCode.ILSpy
 				if (asm.AssemblyDefinition != null && fullName.Equals(asm.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
 					return asm;
 			}
+			if (assemblyLoadDisableCount > 0)
+				return null;
 			
 			if (!App.Current.Dispatcher.CheckAccess()) {
 				// Call this method on the GUI thread.
