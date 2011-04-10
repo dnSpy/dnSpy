@@ -246,6 +246,7 @@
     <Resource Include="Images\OverlayProtectedInternal.png" />
     <Resource Include="Images\OverlayStatic.png" />
     <Resource Include="Images\VirtualMethod.png" />
+    <Resource Include="Images\PInvokeMethod.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">

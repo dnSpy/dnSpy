@@ -62,6 +62,7 @@ namespace ICSharpCode.ILSpy
 		private static readonly BitmapImage VirtualMethod = LoadBitmap("VirtualMethod");
 		private static readonly BitmapImage Operator = LoadBitmap("Operator");
 		private static readonly BitmapImage ExtensionMethod = LoadBitmap("ExtensionMethod");
+		private static readonly BitmapImage PInvokeMethod = LoadBitmap("PInvokeMethod");
 
 		private static readonly BitmapImage Property = LoadBitmap("Property");
 		private static readonly BitmapImage Indexer = LoadBitmap("Indexer");
@@ -159,6 +160,7 @@ namespace ICSharpCode.ILSpy
 				PreloadPublicIconToCache(MemberIcon.VirtualMethod, Images.VirtualMethod);
 				PreloadPublicIconToCache(MemberIcon.Operator, Images.Operator);
 				PreloadPublicIconToCache(MemberIcon.ExtensionMethod, Images.ExtensionMethod);
+				PreloadPublicIconToCache(MemberIcon.PInvokeMethod, Images.PInvokeMethod);
 				PreloadPublicIconToCache(MemberIcon.Event, Images.Event);
 			}
 
@@ -198,6 +200,9 @@ namespace ICSharpCode.ILSpy
 						break;
 					case MemberIcon.ExtensionMethod:
 						baseImage = Images.ExtensionMethod;
+						break;
+					case MemberIcon.PInvokeMethod:
+						baseImage = Images.PInvokeMethod;
 						break;
 					case MemberIcon.Event:
 						baseImage = Images.Event;
