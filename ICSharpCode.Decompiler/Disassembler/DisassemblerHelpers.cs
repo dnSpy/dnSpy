@@ -39,8 +39,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (exceptionHandler.FilterStart != null) {
 				writer.Write(' ');
 				WriteOffsetReference(writer, exceptionHandler.FilterStart);
-				writer.Write('-');
-				WriteOffsetReference(writer, exceptionHandler.FilterEnd);
 				writer.Write(" handler ");
 			}
 			if (exceptionHandler.CatchType != null) {
