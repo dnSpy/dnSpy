@@ -593,7 +593,14 @@ namespace ICSharpCode.Decompiler.Ast
 							CountExpression = DivideBySize(arg1, type)
 						};
 					}
-					case ILCode.Mkrefany: return InlineAssembly(byteCode, args);
+				case ILCode.Mkrefany:
+					{
+						DirectionExpression dir = arg1 as DirectionExpression;
+						if (dir != null)
+							return new IdentifierExpression("__makeref").Invoke(dir.Expression.Detach());
+						else
+							return InlineAssembly(byteCode, args);
+					}
 					case ILCode.Newobj: {
 						Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
 						if (declaringType is ArrayType) {

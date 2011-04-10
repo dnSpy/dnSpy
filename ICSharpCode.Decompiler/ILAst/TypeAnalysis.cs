@@ -453,6 +453,11 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 						return elementType;
 					}
+				case ILCode.Mkrefany:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], (TypeReference)expr.Operand);
+					}
+					return typeSystem.TypedReference;
 					#endregion
 					#region Arithmetic instructions
 				case ILCode.Not: // bitwise complement
