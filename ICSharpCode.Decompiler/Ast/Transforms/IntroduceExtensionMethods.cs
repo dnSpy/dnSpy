@@ -31,8 +31,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						foreach (var ca in d.CustomAttributes) {
 							if (ca.AttributeType.Name == "ExtensionAttribute" && ca.AttributeType.Namespace == "System.Runtime.CompilerServices") {
 								mre.Target = invocation.Arguments.First().Detach();
-								if (invocation.Arguments.Any())
+								if (invocation.Arguments.Any()) {
+									// HACK: removing type arguments should be done indepently from whether a method is an extension method,
+									// just by testing whether the arguments can be inferred
 									mre.TypeArguments.Clear();
+								}
 								break;
 							}
 						}

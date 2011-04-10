@@ -172,5 +172,12 @@ namespace ICSharpCode.Decompiler
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+		
+		public DecompilerSettings Clone()
+		{
+			DecompilerSettings settings = (DecompilerSettings)MemberwiseClone();
+			settings.PropertyChanged = null;
+			return settings;
+		}
 	}
 }
