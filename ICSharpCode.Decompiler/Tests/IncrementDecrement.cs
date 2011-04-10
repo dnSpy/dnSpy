@@ -36,7 +36,7 @@ public class IncrementDecrement
 		}
 	}
 	
-	MyEnum enumField;
+	private IncrementDecrement.MyEnum enumField;
 	public static int StaticField;
 	
 	public static int StaticProperty
@@ -167,8 +167,8 @@ public class IncrementDecrement
 	
 	public void CompoundAssignEnum()
 	{
-		enumField |= IncrementDecrement.MyEnum.Two;
-		enumField &= ~IncrementDecrement.MyEnum.Four;
+		this.enumField |= IncrementDecrement.MyEnum.Two;
+		this.enumField &= ~IncrementDecrement.MyEnum.Four;
 	}
 	
 	public int PostIncrementInAddition(int i, int j)

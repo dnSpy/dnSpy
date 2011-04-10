@@ -44,6 +44,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				compilationUnit.InsertChildAfter(null, new UsingDeclaration { Import = nsType }, CompilationUnit.MemberRole);
 			}
 			
+			if (!context.Settings.FullyQualifyAmbiguousTypeNames)
+				return;
+			
 			FindAmbiguousTypeNames(context.CurrentModule, internalsVisible: true);
 			foreach (AssemblyNameReference r in context.CurrentModule.AssemblyReferences) {
 				AssemblyDefinition d = context.CurrentModule.AssemblyResolver.Resolve(r);
