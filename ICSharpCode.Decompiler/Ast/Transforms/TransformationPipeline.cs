@@ -28,6 +28,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				new IntroduceUsingDeclarations(context),
 				new IntroduceExtensionMethods(context), // must run after IntroduceUsingDeclarations
 				new IntroduceQueryExpressions(context), // must run after IntroduceExtensionMethods
+				new CombineQueryExpressions(context),
 			};
 		}
 		

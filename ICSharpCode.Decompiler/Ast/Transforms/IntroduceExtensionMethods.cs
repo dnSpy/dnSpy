@@ -31,7 +31,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						foreach (var ca in d.CustomAttributes) {
 							if (ca.AttributeType.Name == "ExtensionAttribute" && ca.AttributeType.Namespace == "System.Runtime.CompilerServices") {
 								mre.Target = invocation.Arguments.First().Detach();
-								mre.TypeArguments.Clear();
+								if (invocation.Arguments.Any())
+									mre.TypeArguments.Clear();
 								break;
 							}
 						}

@@ -43,7 +43,7 @@ public class QueryExpressions
 			select c;
 	}
 	
-	public object MultipleFromFollowedBySelect()
+	public object SelectManyFollowedBySelect()
 	{
 		return
 			from c in this.customers
@@ -51,13 +51,32 @@ public class QueryExpressions
 			select new { c.Name, o.OrderID, o.Total };
 	}
 	
-	public object MultipleFromFollowedByOrderBy()
+	public object SelectManyFollowedByOrderBy()
 	{
 		return
 			from c in this.customers
 			from o in c.Orders
 			orderby o.Total descending
 			select new { c.Name, o.OrderID, o.Total };
+	}
+	
+	public object MultipleSelectManyFollowedBySelect()
+	{
+		return
+			from c in this.customers
+			from o in c.Orders
+			from d in o.Details
+			select new { c.Name, o.OrderID, d.Quantity };
+	}
+	
+	public object MultipleSelectManyFollowedByLet()
+	{
+		return
+			from c in this.customers
+			from o in c.Orders
+			from d in o.Details
+			let x = d.Quantity * d.UnitPrice
+			select new { c.Name, o.OrderID, x };
 	}
 	
 	public object FromLetWhereSelect()
