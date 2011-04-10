@@ -110,6 +110,9 @@
     <Compile Include="ILAstLanguage.cs" />
     <Compile Include="ILLanguage.cs" />
     <Compile Include="ILSpySettings.cs" />
+    <Compile Include="Images\AccessOverlayIcon.cs" />
+    <Compile Include="Images\MemberIcon.cs" />
+    <Compile Include="Images\TypeIcon.cs" />
     <Compile Include="ISmartTextOutput.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Images\Images.cs" />
@@ -204,25 +207,10 @@
     <Resource Include="Images\Enum.png" />
     <Resource Include="Images\Field.png" />
     <Resource Include="Images\Interface.png" />
-    <Resource Include="Images\InternalClass.png" />
-    <Resource Include="Images\InternalDelegate.png" />
-    <Resource Include="Images\InternalEnum.png" />
-    <Resource Include="Images\InternalInterface.png" />
-    <Resource Include="Images\InternalStruct.png" />
     <Resource Include="Images\Literal.png" />
     <Resource Include="Images\Method.png" />
     <Resource Include="Images\NameSpace.png" />
     <Resource Include="Images\Open.png" />
-    <Resource Include="Images\PrivateClass.png" />
-    <Resource Include="Images\PrivateDelegate.png" />
-    <Resource Include="Images\PrivateEnum.png" />
-    <Resource Include="Images\PrivateInterface.png" />
-    <Resource Include="Images\PrivateStruct.png" />
-    <Resource Include="Images\ProtectedClass.png" />
-    <Resource Include="Images\ProtectedDelegate.png" />
-    <Resource Include="Images\ProtectedEnum.png" />
-    <Resource Include="Images\ProtectedInterface.png" />
-    <Resource Include="Images\ProtectedStruct.png" />
     <Resource Include="Images\Assembly.png" />
     <Resource Include="Images\Struct.png" />
     <Resource Include="Images\ReferenceFolder.Closed.png" />
@@ -237,10 +225,23 @@
     <Resource Include="Images\SubTypes.png" />
     <Resource Include="Images\SuperTypes.png" />
     <Resource Include="Images\Resource.png" />
+    <Resource Include="Images\Folder.Closed.png" />
+    <Resource Include="Images\Folder.Open.png" />
+    <Resource Include="Images\ResourceImage.png" />
+    <Resource Include="Images\ResourceResourcesFile.png" />
     <Resource Include="Images\Back.png" />
     <Resource Include="Images\Forward.png" />
     <Resource Include="Images\PrivateInternal.png" />
     <Resource Include="Images\Refresh.png" />
+    <Resource Include="Images\Constructor.png" />
+    <Resource Include="Images\EnumValue.png" />
+    <Resource Include="Images\FieldReadOnly.png" />
+    <Resource Include="Images\OverlayInternal.png" />
+    <Resource Include="Images\OverlayPrivate.png" />
+    <Resource Include="Images\OverlayProtected.png" />
+    <Resource Include="Images\OverlayProtectedInternal.png" />
+    <Resource Include="Images\OverlayStatic.png" />
+    <Resource Include="Images\VirtualMethod.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
@@ -264,6 +265,5 @@
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

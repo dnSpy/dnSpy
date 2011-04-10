@@ -55,12 +55,29 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return HighlightSearchMatch(ev.Name, " : " + this.Language.TypeToString(ev.EventType, false, ev)); }
 		}
 		
-		public override object Icon {
-			get {
-				return Images.Event;
+		public override object Icon
+		{
+			get { return Images.GetIcon(MemberIcon.Event, GetOverlayIcon(ev.AddMethod.Attributes), ev.AddMethod.IsStatic); }
+		}
+
+		private static AccessOverlayIcon GetOverlayIcon(MethodAttributes methodAttributes)
+		{
+			switch (methodAttributes & MethodAttributes.MemberAccessMask) {
+				case MethodAttributes.Public:
+					return AccessOverlayIcon.Public;
+				case MethodAttributes.Assembly:
+				case MethodAttributes.FamANDAssem:
+					return AccessOverlayIcon.Internal;
+				case MethodAttributes.Family:
+				case MethodAttributes.FamORAssem:
+					return AccessOverlayIcon.Protected;
+				case MethodAttributes.Private:
+					return AccessOverlayIcon.Private;
+				default:
+					throw new NotSupportedException();
 			}
 		}
-		
+
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			if (settings.SearchTermMatches(ev.Name) && settings.Language.ShowMember(ev))

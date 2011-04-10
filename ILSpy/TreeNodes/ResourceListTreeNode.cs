@@ -37,12 +37,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get { return Images.Resource; }
+			get { return Images.FolderClosed; }
+		}
+
+		public override object ExpandedIcon {
+			get { return Images.FolderOpen; }
 		}
 		
 		protected override void LoadChildren()
 		{
-			foreach (Resource r in module.Resources)
+			foreach (Resource r in module.Resources.OrderBy(m => m.Name))
 				this.Children.Add(ResourceTreeNode.Create(r));
 		}
 		

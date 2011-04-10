@@ -151,7 +151,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.LazyLoading = true;
 		}
-		
+
+		public override object Icon
+		{
+			get { return Images.ResourceResourcesFile; }
+		}
+
 		protected override void LoadChildren()
 		{
 			EmbeddedResource er = this.Resource as EmbeddedResource;
