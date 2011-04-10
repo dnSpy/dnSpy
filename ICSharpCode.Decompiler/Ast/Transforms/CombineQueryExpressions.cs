@@ -27,6 +27,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			CombineQueries(compilationUnit);
 		}
 		
+		static readonly InvocationExpression castPattern = new InvocationExpression {
+			Target = new MemberReferenceExpression {
+				Target = new AnyNode("inExpr"),
+				MemberName = "Cast",
+				TypeArguments = { new AnyNode("targetType") }
+			}};
+		
 		void CombineQueries(AstNode node)
 		{
 			for (AstNode child = node.FirstChild; child != null; child = child.NextSibling) {
@@ -39,6 +46,17 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (innerQuery != null) {
 					if (TryRemoveTransparentIdentifier(query, fromClause, innerQuery)) {
 						RemoveTransparentIdentifierReferences(query);
+					} else {
+						QueryContinuationClause continuation = new QueryContinuationClause();
+						continuation.PrecedingQuery = innerQuery.Detach();
+						continuation.Identifier = fromClause.Identifier;
+						fromClause.ReplaceWith(continuation);
+					}
+				} else {
+					Match m = castPattern.Match(fromClause.Expression);
+					if (m != null) {
+						fromClause.Type = m.Get<AstType>("targetType").Single().Detach();
+						fromClause.Expression = m.Get<Expression>("inExpr").Single().Detach();
 					}
 				}
 			}

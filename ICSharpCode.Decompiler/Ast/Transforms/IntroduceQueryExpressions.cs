@@ -64,6 +64,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		void DecompileQueries(AstNode node)
 		{
 			QueryExpression query = DecompileQuery(node as InvocationExpression);
+			if (query != null)
+				node.ReplaceWith(query);
 			for (AstNode child = (query ?? node).FirstChild; child != null; child = child.NextSibling) {
 				DecompileQueries(child);
 			}
@@ -87,26 +89,33 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							QueryExpression query = new QueryExpression();
 							query.Clauses.Add(new QueryFromClause { Identifier = parameterName, Expression = mre.Target.Detach() });
 							query.Clauses.Add(new QuerySelectClause { Expression = body.Detach() });
-							invocation.ReplaceWith(query);
 							return query;
 						}
 						return null;
 					}
 				case "GroupBy":
 					{
-						if (invocation.Arguments.Count != 2)
-							return null;
-						string parameterName1, parameterName2;
-						Expression keySelector, elementSelector;
-						if (MatchSimpleLambda(invocation.Arguments.ElementAt(0), out parameterName1, out keySelector)
-						    && MatchSimpleLambda(invocation.Arguments.ElementAt(1), out parameterName2, out elementSelector)
-						    && parameterName1 == parameterName2)
-						{
-							QueryExpression query = new QueryExpression();
-							query.Clauses.Add(new QueryFromClause { Identifier = parameterName1, Expression = mre.Target.Detach() });
-							query.Clauses.Add(new QueryGroupClause { Projection = elementSelector.Detach(), Key = keySelector.Detach() });
-							invocation.ReplaceWith(query);
-							return query;
+						if (invocation.Arguments.Count == 2) {
+							string parameterName1, parameterName2;
+							Expression keySelector, elementSelector;
+							if (MatchSimpleLambda(invocation.Arguments.ElementAt(0), out parameterName1, out keySelector)
+							    && MatchSimpleLambda(invocation.Arguments.ElementAt(1), out parameterName2, out elementSelector)
+							    && parameterName1 == parameterName2)
+							{
+								QueryExpression query = new QueryExpression();
+								query.Clauses.Add(new QueryFromClause { Identifier = parameterName1, Expression = mre.Target.Detach() });
+								query.Clauses.Add(new QueryGroupClause { Projection = elementSelector.Detach(), Key = keySelector.Detach() });
+								return query;
+							}
+						} else if (invocation.Arguments.Count == 1) {
+							string parameterName;
+							Expression keySelector;
+							if (MatchSimpleLambda(invocation.Arguments.Single(), out parameterName, out keySelector)) {
+								QueryExpression query = new QueryExpression();
+								query.Clauses.Add(new QueryFromClause { Identifier = parameterName, Expression = mre.Target.Detach() });
+								query.Clauses.Add(new QueryGroupClause { Projection = new IdentifierExpression(parameterName), Key = keySelector.Detach() });
+								return query;
+							}
 						}
 						return null;
 					}
@@ -127,7 +136,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								query.Clauses.Add(new QueryFromClause { Identifier = p1.Name, Expression = mre.Target.Detach() });
 								query.Clauses.Add(new QueryFromClause { Identifier = p2.Name, Expression = collectionSelector.Detach() });
 								query.Clauses.Add(new QuerySelectClause { Expression = ((Expression)lambda.Body).Detach() });
-								invocation.ReplaceWith(query);
 								return query;
 							}
 						}
@@ -143,7 +151,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							QueryExpression query = new QueryExpression();
 							query.Clauses.Add(new QueryFromClause { Identifier = parameterName, Expression = mre.Target.Detach() });
 							query.Clauses.Add(new QueryWhereClause { Condition = body.Detach() });
-							invocation.ReplaceWith(query);
 							return query;
 						}
 						return null;
@@ -183,7 +190,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								QueryExpression query = new QueryExpression();
 								query.Clauses.Add(new QueryFromClause { Identifier = parameterName, Expression = mre.Target.Detach() });
 								query.Clauses.Add(orderClause);
-								invocation.ReplaceWith(query);
 								return query;
 							}
 						}
@@ -219,7 +225,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								}
 								query.Clauses.Add(joinClause);
 								query.Clauses.Add(new QuerySelectClause { Expression = ((Expression)lambda.Body).Detach() });
-								invocation.ReplaceWith(query);
 								return query;
 							}
 						}

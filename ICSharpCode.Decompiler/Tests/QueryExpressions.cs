@@ -10,9 +10,10 @@ public class QueryExpressions
 	public class Customer
 	{
 		public int CustomerID;
-		public IEnumerable<Order> Orders;
+		public IEnumerable<QueryExpressions.Order> Orders;
 		public string Name;
 		public string Country;
+		public string City;
 	}
 	
 	public class Order
@@ -22,7 +23,7 @@ public class QueryExpressions
 		public Customer Customer;
 		public int CustomerID;
 		public decimal Total;
-		public IEnumerable<OrderDetail> Details;
+		public IEnumerable<QueryExpressions.OrderDetail> Details;
 	}
 	
 	public class OrderDetail
@@ -31,8 +32,8 @@ public class QueryExpressions
 		public int Quantity;
 	}
 	
-	public IEnumerable<Customer> customers;
-	public IEnumerable<Order> orders;
+	public IEnumerable<QueryExpressions.Customer> customers;
+	public IEnumerable<QueryExpressions.Order> orders;
 	
 	public object MultipleWhere()
 	{
@@ -128,5 +129,21 @@ public class QueryExpressions
 		return
 			from c in customers
 			group c.Name by c.Country;
+	}
+	
+	public object ExplicitType()
+	{
+		return
+			from Customer c in customers
+			where c.City == "London"
+			select c;
+	}
+	
+	public object QueryContinuation()
+	{
+		return
+			from c in customers
+			group c by c.Country into g
+			select new { Country = g.Key, CustCount = g.Count() };
 	}
 }
