@@ -134,10 +134,13 @@ namespace ICSharpCode.ILSpy
 				WriteProjectFile(new TextOutputWriter(output), files, assembly.MainModule);
 			} else {
 				base.DecompileAssembly(assembly, fileName, output, options);
-				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.MainModule);
-				codeDomBuilder.AddAssembly(assembly, onlyAssemblyLevel: !options.FullDecompilation);
-				codeDomBuilder.RunTransformations(transformAbortCondition);
-				codeDomBuilder.GenerateCode(output);
+				// don't automatically load additional assemblies when an assembly node is selected in the tree view
+				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {
+					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.MainModule);
+					codeDomBuilder.AddAssembly(assembly, onlyAssemblyLevel: !options.FullDecompilation);
+					codeDomBuilder.RunTransformations(transformAbortCondition);
+					codeDomBuilder.GenerateCode(output);
+				}
 			}
 		}
 		
@@ -449,7 +452,7 @@ namespace ICSharpCode.ILSpy
 			} else
 				return property.Name;
 		}
-	
+		
 		public override bool ShowMember(MemberReference member)
 		{
 			return showAllMembers || !AstBuilder.MemberIsHidden(member, new DecompilationOptions().DecompilerSettings);
