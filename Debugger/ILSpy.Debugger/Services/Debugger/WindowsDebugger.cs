@@ -878,7 +878,7 @@ namespace ILSpy.Debugger.Services
 							var dis = new ReflectionDisassembler(new PlainTextOutput(), true, CancellationToken.None);
 							dis.DisassembleType(typeDef);
 						} else {
-							AstBuilder builder = new AstBuilder(new DecompilerContext());
+							AstBuilder builder = new AstBuilder(new DecompilerContext(typeDef.Module));
 							builder.AddType(typeDef);
 							builder.GenerateCode(new PlainTextOutput());
 						}
