@@ -201,7 +201,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return null;
 		}
 		
-		VariableDeclarationStatement FindVariableDeclaration(AstNode node, string identifier)
+		internal static VariableDeclarationStatement FindVariableDeclaration(AstNode node, string identifier)
 		{
 			while (node != null) {
 				while (node.PrevSibling != null) {
