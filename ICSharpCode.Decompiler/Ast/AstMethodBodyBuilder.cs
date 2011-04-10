@@ -476,7 +476,8 @@ namespace ICSharpCode.Decompiler.Ast
 					else
 						return new AssignmentExpression(new UnaryOperatorExpression(UnaryOperatorType.Dereference, arg1), arg2);
 					#endregion
-					case ILCode.Arglist:  return InlineAssembly(byteCode, args);
+				case ILCode.Arglist:
+					return new ArgListExpression { IsAccess = true };
 					case ILCode.Break:    return InlineAssembly(byteCode, args);
 				case ILCode.Call:
 				case ILCode.CallGetter:

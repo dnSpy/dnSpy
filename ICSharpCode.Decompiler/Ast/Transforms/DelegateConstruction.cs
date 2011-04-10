@@ -119,7 +119,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			
 			// Create AnonymousMethodExpression and prepare parameters
 			AnonymousMethodExpression ame = new AnonymousMethodExpression();
-			ame.Parameters.AddRange(AstBuilder.MakeParameters(method.Parameters, isLambda: true));
+			ame.Parameters.AddRange(AstBuilder.MakeParameters(method, isLambda: true));
 			ame.HasParameterList = true;
 			
 			// rename variables so that they don't conflict with the parameters:

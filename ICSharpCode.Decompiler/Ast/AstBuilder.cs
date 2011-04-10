@@ -257,7 +257,7 @@ namespace ICSharpCode.Decompiler.Ast
 				foreach (var m in typeDef.Methods) {
 					if (m.Name == "Invoke") {
 						dd.ReturnType = ConvertType(m.ReturnType, m.MethodReturnType);
-						dd.Parameters.AddRange(MakeParameters(m.Parameters));
+						dd.Parameters.AddRange(MakeParameters(m));
 					}
 				}
 				result = dd;
@@ -618,7 +618,7 @@ namespace ICSharpCode.Decompiler.Ast
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
 			astMethod.Name = CleanName(methodDef.Name);
 			astMethod.TypeParameters.AddRange(MakeTypeParameters(methodDef.GenericParameters));
-			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
+			astMethod.Parameters.AddRange(MakeParameters(methodDef));
 			astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
 				if (!methodDef.HasOverrides) {
@@ -706,7 +706,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astMethod.Modifiers &= ~Modifiers.VisibilityMask;
 			}
 			astMethod.Name = CleanName(methodDef.DeclaringType.Name);
-			astMethod.Parameters.AddRange(MakeParameters(methodDef.Parameters));
+			astMethod.Parameters.AddRange(MakeParameters(methodDef));
 			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
 			ConvertAttributes(astMethod, methodDef);
 			return astMethod;
@@ -855,6 +855,16 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			ConvertAttributes(astField, fieldDef);
 			return astField;
+		}
+		
+		public static IEnumerable<ParameterDeclaration> MakeParameters(MethodDefinition method, bool isLambda = false)
+		{
+			var parameters = MakeParameters(method.Parameters, isLambda);
+			if (method.CallingConvention == MethodCallingConvention.VarArg) {
+				return parameters.Concat(new[] { new ParameterDeclaration { Name = "__arglist" } });
+			} else {
+				return parameters;
+			}
 		}
 		
 		public static IEnumerable<ParameterDeclaration> MakeParameters(IEnumerable<ParameterDefinition> paramCol, bool isLambda = false)

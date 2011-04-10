@@ -60,6 +60,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					b.Append(", ");
 				b.Append(language.TypeToString(method.Parameters[i].ParameterType, false, method.Parameters[i]));
 			}
+			if (method.CallingConvention == MethodCallingConvention.VarArg) {
+				if (method.HasParameters)
+					b.Append(", ");
+				b.Append("...");
+			}
 			b.Append(") : ");
 			b.Append(language.TypeToString(method.ReturnType, false, method.MethodReturnType));
 			return HighlightSearchMatch(method.Name, b.ToString());
@@ -85,7 +90,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 
 			if (method.IsSpecialName &&
-				(method.Name == ".ctor" || method.Name == ".cctor")) {
+			    (method.Name == ".ctor" || method.Name == ".cctor")) {
 				return Images.GetIcon(MemberIcon.Constructor, GetOverlayIcon(method.Attributes), false);
 			}
 
