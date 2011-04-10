@@ -31,12 +31,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		readonly PropertyDefinition property;
 		readonly bool isIndexer;
 
-		public PropertyTreeNode(PropertyDefinition property, bool isIndexer)
+		public PropertyTreeNode(PropertyDefinition property)
 		{
 			if (property == null)
 				throw new ArgumentNullException("property");
 			this.property = property;
-			this.isIndexer = isIndexer;
+			this.isIndexer = property.IsIndexer();
 
 			if (property.GetMethod != null)
 				this.Children.Add(new MethodTreeNode(property.GetMethod));
@@ -55,12 +55,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return GetText(property, Language); }
+			get { return GetText(property, Language, isIndexer); }
 		}
 
-		public static object GetText(PropertyDefinition property, Language language)
+		public static object GetText(PropertyDefinition property, Language language, bool? isIndexer = null)
 		{
-			return HighlightSearchMatch(property.Name, " : " + language.TypeToString(property.PropertyType, false, property));
+			return HighlightSearchMatch(language.FormatPropertyName(property, isIndexer), " : " + language.TypeToString(property.PropertyType, false, property));
 		}
 		
 		public override object Icon
