@@ -389,11 +389,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 			
+			// Occasionally the compiler generates unreachable code - it can be usually just ignored
+			var reachableBody   = body.Where(b => b.StackBefore != null);
+			var unreachableBody = body.Where(b => b.StackBefore == null);
+			
 			// Genertate temporary variables to replace stack
-			foreach(ByteCode byteCode in body) {
-				if (byteCode.StackBefore == null)
-					continue;
-				
+			// Unrachable code does not need temporary variables - the values are never pushed on the stack for consuption
+			foreach(ByteCode byteCode in reachableBody) {
 				int argIdx = 0;
 				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Count;
 				for (int i = byteCode.StackBefore.Count - popCount; i < byteCode.StackBefore.Count; i++) {
@@ -410,18 +412,20 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			
 			// Try to use single temporary variable insted of several if possilbe (especially useful for dup)
-			foreach(ByteCode byteCode in body) {
+			// This has to be done after all temporary variables are assigned so we know about all loads
+			// Unrachable code will not have any StoreTo
+			foreach(ByteCode byteCode in reachableBody) {
 				if (byteCode.StoreTo != null && byteCode.StoreTo.Count > 1) {
 					var locVars = byteCode.StoreTo;
 					// For each of the variables, find the location where it is loaded - there should be preciesly one
-					var loadedBy = locVars.Select(argVar => body.SelectMany(bc => bc.StackBefore).Where(s => s.LoadFrom == argVar).Single()).ToList();
+					var loadedBy = locVars.Select(locVar => reachableBody.SelectMany(bc => bc.StackBefore).Where(s => s.LoadFrom == locVar).Single()).ToList();
 					// We now know that all the variables have a single load,
 					// Let's make sure that they have also a single store - us
 					if (loadedBy.All(slot => slot.PushedBy.Length == 1 && slot.PushedBy[0] == byteCode)) {
 						// Great - we can reduce everything into single variable
 						ILVariable tmpVar = new ILVariable() { Name = string.Format("expr_{0:X2}", byteCode.Offset), IsGenerated = true };
 						byteCode.StoreTo = new List<ILVariable>() { tmpVar };
-						foreach(ByteCode bc in body) {
+						foreach(ByteCode bc in reachableBody) {
 							for (int i = 0; i < bc.StackBefore.Count; i++) {
 								// Is it one of the variable to be merged?
 								if (locVars.Contains(bc.StackBefore[i].LoadFrom)) {
