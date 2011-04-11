@@ -587,12 +587,14 @@ namespace ICSharpCode.ILSpy
 			var combinedState = Tuple.Create(currentSelection, state);
 			var newState = forward ? history.GoForward(combinedState) : history.GoBack(combinedState);
 
-			this.ignoreDecompilationRequests = true;
+			ignoreDecompilationRequests = true;
 			treeView.SelectedItems.Clear();
 			foreach (var node in newState.Item1)
 			{
 				treeView.SelectedItems.Add(node);
 			}
+			if (newState.Item1.Count > 0)
+				treeView.FocusNode(newState.Item1[0]);
 			ignoreDecompilationRequests = false;
 			DecompileSelectedNodes(newState.Item2);
 		}
