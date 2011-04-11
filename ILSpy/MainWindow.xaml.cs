@@ -73,10 +73,7 @@ namespace ICSharpCode.ILSpy
 			this.sessionSettings = new SessionSettings(spySettings);
 			this.assemblyListManager = new AssemblyListManager(spySettings);
 			
-			if (Environment.OSVersion.Version.Major >= 6)
-				this.Icon = new BitmapImage(new Uri("pack://application:,,,/ILSpy;component/images/ILSpy.ico"));
-			else
-				this.Icon = Images.AssemblyLoading;
+			this.Icon = new BitmapImage(new Uri("pack://application:,,,/ILSpy;component/images/ILSpy.ico"));
 			
 			this.DataContext = sessionSettings;
 			this.Left = sessionSettings.WindowBounds.Left;

@@ -157,4 +157,9 @@ public static class DelegateConstruction
 			}
 		};
 	}
+	
+	public static Func<int, Func<int, int>> CurriedAddition(int a)
+	{
+		return b => c => a + b + c;
+	}
 }

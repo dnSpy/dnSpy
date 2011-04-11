@@ -177,7 +177,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		static bool IsPotentialClosure(DecompilerContext context, TypeDefinition potentialDisplayClass)
 		{
-			if (potentialDisplayClass == null || !potentialDisplayClass.IsCompilerGenerated())
+			if (potentialDisplayClass == null || !potentialDisplayClass.IsCompilerGeneratedOrIsInCompilerGeneratedClass())
 				return false;
 			// check that methodContainingType is within containingType
 			while (potentialDisplayClass != context.CurrentType) {
@@ -293,7 +293,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (!ok)
 					continue;
 				Dictionary<FieldReference, AstNode> dict = new Dictionary<FieldReference, AstNode>();
+				
 				// Delete the variable declaration statement:
+				VariableDeclarationStatement displayClassVarDecl = PatternStatementTransform.FindVariableDeclaration(stmt, variable.Name);
+				if (displayClassVarDecl != null)
+					displayClassVarDecl.Remove();
+				
+				// Delete the assignment statement:
 				AstNode cur = stmt.NextSibling;
 				stmt.Remove();
 				
