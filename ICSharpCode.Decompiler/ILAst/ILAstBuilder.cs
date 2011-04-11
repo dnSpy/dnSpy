@@ -264,9 +264,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Add known states
 			if(methodDef.Body.HasExceptionHandlers) {
 				foreach(ExceptionHandler ex in methodDef.Body.ExceptionHandlers) {
-					ByteCode handlerStart = instrToByteCode[ex.HandlerType == ExceptionHandlerType.Filter ? ex.FilterStart : ex.HandlerStart];
+					ByteCode handlerStart = instrToByteCode[ex.HandlerStart];
 					handlerStart.StackBefore = new List<StackSlot>();
+					handlerStart.VariablesBefore = VariableSlot.MakeFullState(varCount);
 					if (ex.HandlerType == ExceptionHandlerType.Catch || ex.HandlerType == ExceptionHandlerType.Filter) {
+						// Catch and Filter handlers start with the exeption on the stack
 						ByteCode ldexception = new ByteCode() {
 							Code = ILCode.Ldexception,
 							Operand = ex.CatchType,
@@ -276,8 +278,23 @@ namespace ICSharpCode.Decompiler.ILAst
 						ldexceptions[ex] = ldexception;
 						handlerStart.StackBefore.Add(new StackSlot(ldexception));
 					}
-					handlerStart.VariablesBefore = VariableSlot.MakeFullState(varCount);
 					agenda.Push(handlerStart);
+					
+					if (ex.HandlerType == ExceptionHandlerType.Filter)
+					{
+						ByteCode filterStart = instrToByteCode[ex.FilterStart];
+						filterStart.StackBefore = new List<StackSlot>();
+						filterStart.VariablesBefore = VariableSlot.MakeFullState(varCount);
+						ByteCode ldexception = new ByteCode() {
+							Code = ILCode.Ldexception,
+							Operand = ex.CatchType,
+							PopCount = 0,
+							PushCount = 1
+						};
+						// TODO: ldexceptions[ex] = ldexception;
+						filterStart.StackBefore.Add(new StackSlot(ldexception));
+						agenda.Push(filterStart);
+					}
 				}
 			}
 			
@@ -493,7 +510,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							Variable = new ILVariable() {
 								Name = "var_" + variableIndex,
 								Type = isPinned ? ((PinnedType)varType).ElementType : varType,
-						    	OriginalVariable = methodDef.Body.Variables[variableIndex]
+								OriginalVariable = methodDef.Body.Variables[variableIndex]
 							},
 							Stores = stores,
 							Loads  = loads
