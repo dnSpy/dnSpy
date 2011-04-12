@@ -527,11 +527,30 @@ namespace ICSharpCode.Decompiler.ILAst
 						    Loads  = new List<ByteCode>()
 						}).ToList();
 						
+						// VB.NET uses the 'init' to allow use of uninitialized variables.
+						// We do not really care about them too much - if the original variable
+						// was uninitialized at that point it means that no store was called and
+						// thus all our new variables must be uninitialized as well.
+						// So it does not matter which one we load.
+						
+						// TODO: We should add explicit initialization so that C# code compiles.
+						// Remember to handle cases where one path inits the variable, but other does not.
+						
 						// Add loads to the data structure; merge variables if necessary
 						foreach(ByteCode load in loads) {
 							ByteCode[] storedBy = load.VariablesBefore[variableIndex].StoredBy;
 							if (storedBy.Length == 0) {
-								throw new Exception("Load of uninitialized variable");
+								// Load which always loads the default ('uninitialized') value
+								// Create a dummy variable just for this load
+								newVars.Add(new VariableInfo() {
+									Variable = new ILVariable() {
+								    		Name = "var_" + variableIndex + "_" + load.Offset.ToString("X2") + "_default",
+								    		Type = varType,
+								    		OriginalVariable = methodDef.Body.Variables[variableIndex]
+								    },
+								    Stores = new List<ByteCode>(),
+								    Loads  = new List<ByteCode>() { load }
+								});
 							} else if (storedBy.Length == 1) {
 								VariableInfo newVar = newVars.Where(v => v.Stores.Contains(storedBy[0])).Single();
 								newVar.Loads.Add(load);
