@@ -177,6 +177,10 @@ namespace ICSharpCode.Decompiler.Ast
 				proposedName = GetNameByType(variable.Type);
 			}
 			
+			// remove any numbers from the proposed name
+			int number;
+			proposedName = SplitName(proposedName, out number);
+			
 			if (!typeNames.ContainsKey(proposedName)) {
 				typeNames.Add(proposedName, 0);
 			}

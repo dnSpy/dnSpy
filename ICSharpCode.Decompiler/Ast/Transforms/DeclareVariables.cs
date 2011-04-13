@@ -57,10 +57,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						Variables = { new VariableInitializer(v.Name, v.ReplacedAssignment.Right.Detach()).CopyAnnotationsFrom(v.ReplacedAssignment) }
 					};
 					ExpressionStatement es = v.ReplacedAssignment.Parent as ExpressionStatement;
-					if (es != null)
+					if (es != null) {
+						// Note: if this crashes with 'Cannot replace the root node', check whether two variables were assigned the same name
 						es.ReplaceWith(varDecl.CopyAnnotationsFrom(es));
-					else
+					} else {
 						v.ReplacedAssignment.ReplaceWith(varDecl);
+					}
 				}
 			}
 			variablesToDeclare = null;
