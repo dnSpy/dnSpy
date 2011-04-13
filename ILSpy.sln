@@ -1,7 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-# SharpDevelop 4.0.1.7100
 # SharpDevelop 4.1.0.7371-alpha
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Debugger", "Debugger", "{1DEB3B4E-03AC-437C-821D-B09FBFCC3E5B}"
 	ProjectSection(SolutionItems) = postProject
@@ -25,10 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory", "N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler.Tests", "ICSharpCode.Decompiler\Tests\ICSharpCode.Decompiler.Tests.csproj", "{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{F45DB999-7E72-4000-B5AD-3A7B485A0896}"
-	ProjectSection(SolutionItems) = postProject
-		doc\Command Line.txt = doc\Command Line.txt
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\TestPlugin.csproj", "{F32EBCC8-0E53-4421-867E-05B3D6E10C70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,6 +90,14 @@ Global
 		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Release|Any CPU.Build.0 = Release|x86
 		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Release|x86.ActiveCfg = Release|x86
 		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Release|x86.Build.0 = Release|x86
+		{F32EBCC8-0E53-4421-867E-05B3D6E10C70}.Debug|Any CPU.Build.0 = Debug|x86
+		{F32EBCC8-0E53-4421-867E-05B3D6E10C70}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{F32EBCC8-0E53-4421-867E-05B3D6E10C70}.Debug|x86.Build.0 = Debug|x86
+		{F32EBCC8-0E53-4421-867E-05B3D6E10C70}.Debug|x86.ActiveCfg = Debug|x86
+		{F32EBCC8-0E53-4421-867E-05B3D6E10C70}.Release|Any CPU.Build.0 = Release|x86
+		{F32EBCC8-0E53-4421-867E-05B3D6E10C70}.Release|Any CPU.ActiveCfg = Release|x86
+		{F32EBCC8-0E53-4421-867E-05B3D6E10C70}.Release|x86.Build.0 = Release|x86
+		{F32EBCC8-0E53-4421-867E-05B3D6E10C70}.Release|x86.ActiveCfg = Release|x86
 		{1D18D788-F7EE-4585-A23B-34DC8EC63CB8}.Debug|x86.Build.0 = Debug|Any CPU
 		{1D18D788-F7EE-4585-A23B-34DC8EC63CB8}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{1D18D788-F7EE-4585-A23B-34DC8EC63CB8}.Debug|Any CPU.Build.0 = Debug|Any CPU

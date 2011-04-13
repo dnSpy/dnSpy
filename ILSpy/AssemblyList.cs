@@ -130,8 +130,18 @@ namespace ICSharpCode.ILSpy
 			}
 			
 			var newAsm = new LoadedAssembly(this, file);
-			this.assemblies.Add(newAsm);
+			lock (assemblies) {
+				this.assemblies.Add(newAsm);
+			}
 			return newAsm;
+		}
+		
+		public void Unload(LoadedAssembly assembly)
+		{
+			App.Current.Dispatcher.VerifyAccess();
+			lock (assemblies) {
+				assemblies.Remove(assembly);
+			}
 		}
 	}
 }

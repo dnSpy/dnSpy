@@ -79,7 +79,7 @@ namespace ICSharpCode.ILSpy.Commands
 		
 		public override void Execute(object parameter)
 		{
-			DebugData.LoadedAssemblies = MainWindow.Instance.AssemblyList.assemblies.Select(a => a.AssemblyDefinition);
+			DebugData.LoadedAssemblies = MainWindow.Instance.CurrentAssemblyList.assemblies.Select(a => a.AssemblyDefinition);
 		}
 		
 		protected static IDebugger CurrentDebugger {

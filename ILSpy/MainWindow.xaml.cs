@@ -218,6 +218,10 @@ namespace ICSharpCode.ILSpy
 		}
 		#endregion
 		
+		public AssemblyList CurrentAssemblyList {
+			get { return assemblyList; }
+		}
+		
 		List<LoadedAssembly> commandLineLoadedAssemblies = new List<LoadedAssembly>();
 		
 		bool HandleCommandLineArguments(CommandLineArguments args)
@@ -378,10 +382,6 @@ namespace ICSharpCode.ILSpy
 			// mutable instance changes.
 			if (assemblyListTreeNode != null)
 				assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
-		}
-		
-		internal AssemblyList AssemblyList {
-			get { return assemblyList; }
 		}
 		
 		internal AssemblyListTreeNode AssemblyListTreeNode {
@@ -602,12 +602,14 @@ namespace ICSharpCode.ILSpy
 			var combinedState = Tuple.Create(currentSelection, state);
 			var newState = forward ? history.GoForward(combinedState) : history.GoBack(combinedState);
 
-			this.ignoreDecompilationRequests = true;
+			ignoreDecompilationRequests = true;
 			treeView.SelectedItems.Clear();
 			foreach (var node in newState.Item1)
 			{
 				treeView.SelectedItems.Add(node);
 			}
+			if (newState.Item1.Count > 0)
+				treeView.FocusNode(newState.Item1[0]);
 			ignoreDecompilationRequests = false;
 			DecompileSelectedNodes(newState.Item2);
 		}

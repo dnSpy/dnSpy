@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy
 			this.root = root;
 		}
 		
-		public XElement this[string section] {
+		public XElement this[XName section] {
 			get {
 				return root.Element(section) ?? new XElement(section);
 			}

@@ -89,6 +89,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			RaisePropertyChanged("ExpandedIcon");
 			if (assemblyTask.IsFaulted) {
 				RaisePropertyChanged("ShowExpander"); // cannot expand assemblies with load error
+				// observe the exception so that the Task's finalizer doesn't re-throw it
+				try { assemblyTask.Wait(); } catch (AggregateException) {}
 			} else {
 				RaisePropertyChanged("Text"); // shortname might have changed
 			}
@@ -161,9 +163,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void DeleteCore()
 		{
-			lock (assembly.AssemblyList.assemblies) {
-				assembly.AssemblyList.assemblies.Remove(assembly);
-			}
+			assembly.AssemblyList.Unload(assembly);
 		}
 		
 		internal const string DataFormat = "ILSpyAssemblies";

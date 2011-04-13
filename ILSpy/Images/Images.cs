@@ -78,10 +78,13 @@ namespace ICSharpCode.ILSpy
 		public static BitmapImage LoadImage(object part, string icon)
 		{
 			Uri uri;
-			if (part.GetType().Assembly == typeof(Images).Assembly)
+			var assembly = part.GetType().Assembly;
+			if (assembly == typeof(Images).Assembly) {
 				uri = new Uri("pack://application:,,,/" + icon);
-			else
-				throw new NotImplementedException();
+			} else {
+				var name = assembly.GetName();
+				uri = new Uri("pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/" + icon);
+			}
 			BitmapImage image = new BitmapImage(uri);
 			image.Freeze();
 			return image;

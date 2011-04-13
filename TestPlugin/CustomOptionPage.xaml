@@ -1,0 +1,8 @@
+﻿<UserControl x:Class="TestPlugin.CustomOptionPage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<StackPanel>
+		<CheckBox IsChecked="{Binding UselessOption1}">Useless option 1</CheckBox>
+		<Slider Minimum="0" Maximum="100" Value="{Binding UselessOption2}"/>
+	</StackPanel>
+</UserControl>

@@ -54,7 +54,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		
 		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			return FindReferences(MainWindow.Instance.AssemblyList.GetAssemblies(), ct);
+			return FindReferences(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), ct);
 		}
 		
 		IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)

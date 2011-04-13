@@ -10,7 +10,7 @@ Available options:
     
     /separate          Start up a separate ILSpy instance even if it is already running.
     
-    /noActivate        Do not activate the existing ILSpy instance. This option has no effec
+    /noActivate        Do not activate the existing ILSpy instance. This option has no effect
                        if a new ILSpy instance is being started.
     
     /list:listname     Specifies the name of the assembly list that is loaded initially.

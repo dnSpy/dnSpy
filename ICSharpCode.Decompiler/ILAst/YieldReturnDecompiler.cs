@@ -466,7 +466,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (!forDispose || tryFinally.CatchBlocks.Count != 0 || tryFinally.FaultBlock != null || tryFinally.FinallyBlock == null)
 						throw new YieldAnalysisFailedException();
 					ranges[tryFinally.TryBlock].UnionWith(nodeRange);
-					AssignStateRanges(tryFinally.TryBlock.Body, tryFinally.TryBlock.Body.Count, forDispose);
+					if (tryFinally.TryBlock.Body.Count != 0) {
+						ranges[tryFinally.TryBlock.Body[0]].UnionWith(nodeRange);
+						AssignStateRanges(tryFinally.TryBlock.Body, tryFinally.TryBlock.Body.Count, forDispose);
+					}
 					continue;
 				}
 				

@@ -3,9 +3,10 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
-
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -60,6 +61,56 @@ namespace ICSharpCode.ILSpy
 	{
 		public SaveCommand() : base(ApplicationCommands.Save) {}
 	}
+	
+	#if DEBUG
+	[ExportMainMenuCommand(Menu = "_File", Header = "DEBUG -- Decompile All", MenuCategory = "Open", MenuOrder = 2.5)]
+	sealed class DecompileAllCommand : SimpleCommand
+	{
+		public override bool CanExecute(object parameter)
+		{
+			return System.IO.Directory.Exists("c:\\temp\\decompiled");
+		}
+		
+		public override void Execute(object parameter)
+		{
+			MainWindow.Instance.TextView.RunWithCancellation(
+				ct => Task<AvalonEditTextOutput>.Factory.StartNew(
+					() => {
+						AvalonEditTextOutput output = new AvalonEditTextOutput();
+						Parallel.ForEach(
+							MainWindow.Instance.CurrentAssemblyList.GetAssemblies(),
+							new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = ct },
+							delegate (LoadedAssembly asm) {
+								if (!asm.HasLoadError) {
+									Stopwatch w = Stopwatch.StartNew();
+									Exception exception = null;
+									using (var writer = new System.IO.StreamWriter("c:\\temp\\decompiled\\" + asm.ShortName + ".cs")) {
+										try {
+											new CSharpLanguage().DecompileAssembly(
+												asm.AssemblyDefinition, asm.FileName, new Decompiler.PlainTextOutput(writer),
+												new DecompilationOptions { FullDecompilation = true, CancellationToken = ct });
+										} catch (Exception ex) {
+											writer.WriteLine(ex.ToString());
+											exception = ex;
+										}
+									}
+									lock (output) {
+										output.Write(asm.ShortName + " - " + w.Elapsed);
+										if (exception != null) {
+											output.Write(" - ");
+											output.Write(exception.GetType().Name);
+										}
+										output.WriteLine();
+									}
+								}
+							});
+						return output;
+					}
+				),
+				task => MainWindow.Instance.TextView.Show(task.Result));
+		}
+	}
+	#endif
 	
 	class CommandWrapper : ICommand
 	{
