@@ -209,6 +209,10 @@ namespace ICSharpCode.ILSpy
 		}
 		#endregion
 		
+		public AssemblyList CurrentAssemblyList {
+			get { return assemblyList; }
+		}
+		
 		List<LoadedAssembly> commandLineLoadedAssemblies = new List<LoadedAssembly>();
 		
 		bool HandleCommandLineArguments(CommandLineArguments args)
@@ -369,10 +373,6 @@ namespace ICSharpCode.ILSpy
 			// mutable instance changes.
 			if (assemblyListTreeNode != null)
 				assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
-		}
-		
-		internal AssemblyList AssemblyList {
-			get { return assemblyList; }
 		}
 		
 		internal AssemblyListTreeNode AssemblyListTreeNode {

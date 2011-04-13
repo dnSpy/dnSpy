@@ -383,7 +383,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Clones the whole subtree starting at this AST node.
 		/// </summary>
-		/// <remarks>Annotations are copied over to the new nodes; and any annotations implementating ICloneable will be cloned.</remarks>
+		/// <remarks>Annotations are copied over to the new nodes; and any annotations implementing ICloneable will be cloned.</remarks>
 		public AstNode Clone()
 		{
 			AstNode copy = (AstNode)MemberwiseClone();
@@ -401,9 +401,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 			
 			// Finally, clone the annotation, if necessary
-			ICloneable annotations = copy.annotations as ICloneable; // read from copy (for thread-safety)
-			if (annotations != null)
-				copy.annotations = annotations.Clone();
+			ICloneable copiedAnnotations = copy.annotations as ICloneable; // read from copy (for thread-safety)
+			if (copiedAnnotations != null)
+				copy.annotations = copiedAnnotations.Clone();
 			
 			return copy;
 		}
