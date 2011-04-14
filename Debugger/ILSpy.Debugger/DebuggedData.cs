@@ -40,6 +40,15 @@ namespace ICSharpCode.ILSpy.Debugger
 		public static IEnumerable<AssemblyDefinition> LoadedAssemblies { get; set; }
 		
 		/// <summary>
+		/// Returns true if the CurrentMember is a type (TypeDefinition). Otherwise, returns false (is MethodDefinition or PropertyDefinition).
+		/// </summary>
+		public static bool IsCurrentMemberType {
+			get {
+				return CurrentMember is TypeDefinition;
+			}
+		}
+		
+		/// <summary>
 		/// Occures when the language is changed.
 		/// </summary>
 		public static event EventHandler<LanguageEventArgs> LanguageChanged;
