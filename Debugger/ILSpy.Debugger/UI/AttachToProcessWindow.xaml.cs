@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 						bool managed = false;
 						try {
 							var modules = process.Modules.Cast<ProcessModule>().Where(
-								m => m.ModuleName.StartsWith("mscor", StringComparison.InvariantCultureIgnoreCase));
+								m => m.ModuleName.StartsWith("mscor", StringComparison.OrdinalIgnoreCase));
 							
 							managed = modules.Count() > 0;
 						} catch { }
