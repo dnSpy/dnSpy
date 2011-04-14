@@ -1531,6 +1531,16 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(labelStatement);
 			WriteIdentifier(labelStatement.Label);
 			WriteToken(":", LabelStatement.Roles.Colon);
+			bool foundLabelledStatement = false;
+			for (AstNode tmp = labelStatement.NextSibling; tmp != null; tmp = tmp.NextSibling) {
+				if (tmp.Role == labelStatement.Role) {
+					foundLabelledStatement = true;
+				}
+			}
+			if (!foundLabelledStatement) {
+				// introduce an EmptyStatement so that the output becomes syntactically valid
+				WriteToken(";", LabelStatement.Roles.Semicolon);
+			}
 			NewLine();
 			return EndNode(labelStatement);
 		}
