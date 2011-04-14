@@ -197,7 +197,6 @@
     <Compile Include="CSharp\Resolver\UnknownMemberResolveResult.cs" />
     <Compile Include="CSharp\Resolver\UsingScope.cs" />
     <Compile Include="CSharp\Resolver\LocalResolveResult.cs" />
-    <Compile Include="Documentation\BinaryDocumentationProvider.cs" />
     <Compile Include="Documentation\XmlDocumentationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeSystem\Accessibility.cs" />
