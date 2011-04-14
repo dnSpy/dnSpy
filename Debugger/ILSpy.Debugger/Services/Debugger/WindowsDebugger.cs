@@ -568,12 +568,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			uint token;
 			SourceCodeMapping map = CodeMappings
 				.GetStorage(bookmark.Language)
-				.GetInstructionByTypeAndLine(bookmark.Type.FullName, bookmark.LineNumber, out token);
+				.GetInstructionByTypeAndLine(bookmark.Member.FullName, bookmark.LineNumber, out token);
 			
 			if (map != null) {
 				breakpoint = new ILBreakpoint(
 					debugger,
-					bookmark.Type.FullName,
+					bookmark.Member.FullName,
 					bookmark.LineNumber,
 					token,
 					map.ILInstructionOffset.From,
@@ -752,7 +752,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			foreach (var bookmark in DebuggerService.Breakpoints) {
 				var breakpoint =
 					debugger.Breakpoints.FirstOrDefault(
-						b => b.Line == bookmark.LineNumber && b.TypeName == bookmark.Type.FullName);
+						b => b.Line == bookmark.LineNumber && b.TypeName == bookmark.Member.FullName);
 				if (breakpoint == null)
 					continue;
 				// set the breakpoint only if the module contains the type

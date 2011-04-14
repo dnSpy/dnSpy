@@ -31,7 +31,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			List<BookmarkBase> marks = new List<BookmarkBase>();
 			
 			foreach (BookmarkBase mark in bookmarks) {
-				if (typeName == mark.Type.FullName) {
+				if (typeName == mark.Member.FullName) {
 					marks.Add(mark);
 				}
 			}
@@ -56,7 +56,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 				return false;
 			if (a.GetType() != b.GetType())
 				return false;
-			if (a.Type.FullName != b.Type.FullName)
+			if (a.Member.FullName != b.Member.FullName)
 				return false;
 			return a.LineNumber == b.LineNumber;
 		}
@@ -150,7 +150,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			
 			// 1. Save it's data
 			int line = CurrentLineBookmark.Instance.LineNumber;
-			var markerType = CurrentLineBookmark.Instance.Type;
+			var markerType = CurrentLineBookmark.Instance.Member;
 			
 			// 2. Remove it
 			CurrentLineBookmark.Remove();
@@ -191,13 +191,13 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 
 			foreach (var bp in oldbps) {
 				uint token;
-				var instruction = oldMappings.GetInstructionByTypeAndLine(bp.Type.FullName, bp.LineNumber, out token);
+				var instruction = oldMappings.GetInstructionByTypeAndLine(bp.Member.FullName, bp.LineNumber, out token);
 				if (instruction == null)
 					continue;
 
 				TypeDefinition type;
 				int line;
-				if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(bp.Type.FullName, token, instruction.ILInstructionOffset.From, out type, out line)) {
+				if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(bp.Member.FullName, token, instruction.ILInstructionOffset.From, out type, out line)) {
 					// 2. create breakpoint for new languages
 					var bookmark = new BreakpointBookmark(type, new AstLocation(line, 0), BreakpointAction.Break, newLanguage);
 					AddMark(bookmark);

@@ -300,7 +300,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		void ShowOutput(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null, DecompilerTextViewState state = null)
 		{
-			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength); 
+			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
 			Stopwatch w = Stopwatch.StartNew();
 			
 			textEditor.ScrollToHome();
@@ -345,7 +345,6 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
 		{
-			DebugData.CurrentType = null;
 			// Some actions like loading an assembly list cause several selection changes in the tree view,
 			// and each of those will start a decompilation action.
 			bool isDecompilationScheduled = this.nextDecompilationRun != null;
@@ -378,6 +377,8 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		void DoDecompile(DecompilationContext context, int outputLengthLimit)
 		{
+			// reset type
+			DebugData.CurrentMember = null;
 			TextEditorListener.Instance.ClosePopup();
 			
 			RunWithCancellation(
@@ -404,29 +405,37 @@ namespace ICSharpCode.ILSpy.TextView
 							output.WriteLine(ex.ToString());
 						}
 						ShowOutput(output);
+						
+						// reset type
+						DebugData.CurrentMember = null;
 					}
 					finally {
 						
 						// set the language
 						DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 						
-						if (DebugData.CurrentType != null && context.TreeNodes.Count() == 1) {
-							iconMargin.Visibility = Visibility.Visible;
-							// repaint bookmarks
-							iconMargin.InvalidateVisual();
-							
-							// show the currentline marker
-							var bm = CurrentLineBookmark.Instance;
-							if (bm != null && DebugData.CurrentType != null) {
-								if (DebugData.CurrentType == bm.Type) {
-									DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
-									bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
+						if (DebugData.CurrentMember != null) {
+							if (context.TreeNodes.Count() == 1) {
+								iconMargin.Visibility = Visibility.Visible;
+								// repaint bookmarks
+								iconMargin.InvalidateVisual();
+								
+								// show the currentline marker
+								var bm = CurrentLineBookmark.Instance;
+								if (bm != null && DebugData.CurrentMember != null) {
+									if (DebugData.CurrentMember == bm.Member) {
+										DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
+										bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
+									}
+									UnfoldAndScroll(bm.LineNumber);
 								}
-								UnfoldAndScroll(bm.LineNumber);
+							} else {
+								// hide the margin
+								iconMargin.Visibility = Visibility.Collapsed;
 							}
 						} else {
-							// hide the margin
-							iconMargin.Visibility = Visibility.Collapsed;
+							// remove currentline marker
+							CurrentLineBookmark.Remove();
 						}
 					}
 				});

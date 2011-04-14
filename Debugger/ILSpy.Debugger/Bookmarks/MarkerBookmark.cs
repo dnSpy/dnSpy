@@ -10,7 +10,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
 	public abstract class MarkerBookmark : BookmarkBase
 	{
-		public MarkerBookmark(TypeDefinition type, AstLocation location) : base(type, location)
+		public MarkerBookmark(MemberReference member, AstLocation location) : base(member, location)
 		{
 		}
 		

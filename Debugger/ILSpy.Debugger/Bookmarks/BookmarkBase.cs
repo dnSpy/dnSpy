@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			
 		}
 		
-		public TypeDefinition Type { get; set; }
+		public MemberReference Member { get; set; }
 		
 		public int LineNumber {
 			get { return location.Line; }
@@ -64,9 +64,9 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			}
 		}
 		
-		public BookmarkBase(TypeDefinition type, AstLocation location)
+		public BookmarkBase(MemberReference member, AstLocation location)
 		{
-			this.Type = type;
+			this.Member = member;
 			this.Location = location;
 		}
 		

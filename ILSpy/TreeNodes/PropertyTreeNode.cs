@@ -19,6 +19,7 @@
 using System;
 using System.Windows.Media;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.Debugger;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -146,6 +147,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
+			DebugData.CurrentMember = property;
 			language.DecompileProperty(property, output, options);
 		}
 

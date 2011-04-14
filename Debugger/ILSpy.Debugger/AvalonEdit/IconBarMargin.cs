@@ -59,7 +59,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 				// create a dictionary line number => first bookmark
 				Dictionary<int, BookmarkBase> bookmarkDict = new Dictionary<int, BookmarkBase>();
 				foreach (var bm in BookmarkManager.Bookmarks) {
-					if (DebugData.CurrentType == null || bm.Type.FullName != DebugData.CurrentType.FullName)
+					if (DebugData.CurrentMember == null || bm.Member.FullName != DebugData.CurrentMember.FullName)
 						continue;
 					if (bm is BreakpointBookmark &&
 					    ((BreakpointBookmark)bm).Language != DebugData.Language)
@@ -121,8 +121,8 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 			BookmarkBase result = null;
 			foreach (BookmarkBase bm in BookmarkManager.Bookmarks) {
 				if (bm.LineNumber == line &&
-				    DebugData.CurrentType != null &&
-				    bm.Type.FullName == DebugData.CurrentType.FullName) {
+				    DebugData.CurrentMember != null &&
+				    bm.Member.FullName == DebugData.CurrentMember.FullName) {
 					if (result == null || bm.ZOrder > result.ZOrder)
 						result = bm;
 				}
@@ -191,11 +191,11 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 				InvalidateVisual();
 			}
 			
-			if (DebugData.CurrentType == null)
+			if (DebugData.CurrentMember == null)
 				return;
 			
 			BreakpointBookmark bm = BookmarkManager.Bookmarks.Find(
-				b => b.Type.FullName == DebugData.CurrentType.FullName &&
+				b => b.Member.FullName == DebugData.CurrentMember.FullName &&
 				b.LineNumber == GetLineFromMousePosition(e)
 				&& b is BreakpointBookmark) as BreakpointBookmark;
 			
@@ -228,22 +228,22 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 						return;
 				}
 				if (e.ChangedButton == MouseButton.Left) {
-					if (DebugData.CurrentType != null) {
+					if (DebugData.CurrentMember != null) {
 						
 						// check if the codemappings exists for this line
 						var storage = CodeMappings.GetStorage(DebugData.Language);
 						uint token;
-						var instruction = storage.GetInstructionByTypeAndLine(DebugData.CurrentType.FullName, line, out token);
+						var instruction = storage.GetInstructionByTypeAndLine(DebugData.CurrentMember.FullName, line, out token);
 						
 						if (instruction == null) {
-							MessageBox.Show(string.Format("Missing code mappings for {0} at line {1}", DebugData.CurrentType.FullName, line),
+							MessageBox.Show(string.Format("Missing code mappings for {0} at line {1}", DebugData.CurrentMember.FullName, line),
 							                "Code mappings", MessageBoxButton.OK, MessageBoxImage.Information);
 							return;
 						}
 						
 						// no bookmark on the line: create a new breakpoint
 						DebuggerService.ToggleBreakpointAt(
-							DebugData.CurrentType,
+							DebugData.CurrentMember,
 							line,
 							DebugData.Language);
 					}

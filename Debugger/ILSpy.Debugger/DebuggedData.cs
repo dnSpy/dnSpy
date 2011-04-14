@@ -16,9 +16,9 @@ namespace ICSharpCode.ILSpy.Debugger
 		static DecompiledLanguages language;
 		
 		/// <summary>
-		/// Gets or sets the current debugged type
+		/// Gets or sets the current debugged member reference. Can be a type or a member of a type (method, property).
 		/// </summary>
-		public static TypeDefinition CurrentType { get; set; }
+		public static MemberReference CurrentMember { get; set; }
 
 		/// <summary>
 		/// Gets or sets the decompiled language.

@@ -73,7 +73,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			set { tooltip = value; }
 		}
 		
-		public BreakpointBookmark(TypeDefinition type, AstLocation location, BreakpointAction action, DecompiledLanguages language) : base(type, location)
+		public BreakpointBookmark(MemberReference member, AstLocation location, BreakpointAction action, DecompiledLanguages language) : base(member, location)
 		{
 			this.action = action;
 			this.tooltip = language.ToString();
@@ -91,7 +91,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			ITextMarker marker = markerService.Create(offset, length);
 			marker.BackgroundColor = Color.FromRgb(180, 38, 38);
 			marker.ForegroundColor = Colors.White;
-			marker.IsVisible = b => b is MarkerBookmark && ((MarkerBookmark)b).Type == DebugData.CurrentType;
+			marker.IsVisible = b => b is MarkerBookmark && ((MarkerBookmark)b).Member == DebugData.CurrentMember;
 			marker.Bookmark = this;
 			this.Marker = marker;
 			
