@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace ILSpy.Debugger.Services
+namespace ICSharpCode.ILSpy.Debugger.Services
 {
 	/// <summary>
 	/// Extension methods used in SharpDevelop.

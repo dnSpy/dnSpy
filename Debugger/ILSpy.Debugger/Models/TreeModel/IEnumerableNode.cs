@@ -3,9 +3,9 @@
 using System;
 using Debugger.MetaData;
 using ICSharpCode.NRefactory.CSharp;
-using ILSpy.Debugger.Services.Debugger;
+using ICSharpCode.ILSpy.Debugger.Services.Debugger;
 
-namespace ILSpy.Debugger.Models.TreeModel
+namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 {
 	/// <summary>
 	/// IEnumerable node in the variable tree.

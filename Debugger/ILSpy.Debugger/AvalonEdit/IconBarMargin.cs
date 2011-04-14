@@ -12,11 +12,11 @@ using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
-using ILSpy.Debugger.Bookmarks;
-using ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Services;
 using Mono.Cecil;
 
-namespace ILSpy.Debugger.AvalonEdit
+namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 {
 	[Export("IconMargin"), PartCreationPolicy(CreationPolicy.Shared)]
 	public class IconBarMargin : AbstractMargin, IDisposable

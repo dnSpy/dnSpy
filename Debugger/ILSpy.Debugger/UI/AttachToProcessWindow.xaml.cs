@@ -9,9 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 
-using ILSpy.Debugger.Models;
+using ICSharpCode.ILSpy.Debugger.Models;
 
-namespace ILSpy.Debugger.UI
+namespace ICSharpCode.ILSpy.Debugger.UI
 {
 	/// <summary>
 	/// Interaction logic for AttachToProcessWindow.xaml

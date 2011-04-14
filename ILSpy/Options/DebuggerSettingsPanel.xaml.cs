@@ -12,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
 
-using ILSpy.Debugger;
+using ICSharpCode.ILSpy.Debugger;
 
 namespace ICSharpCode.ILSpy.Options
 {

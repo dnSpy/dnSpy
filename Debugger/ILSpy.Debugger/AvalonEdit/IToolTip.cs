@@ -4,7 +4,7 @@
 using System;
 using System.Windows;
 
-namespace ILSpy.Debugger.AvalonEdit
+namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 {
 	/// <summary>
 	/// Content of text editor tooltip (used as <see cref="ToolTipRequestEventArgs.ContentToShow"/>), 

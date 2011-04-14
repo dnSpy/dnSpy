@@ -6,7 +6,7 @@ using System.Windows;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Utils;
 
-namespace ILSpy.Debugger.AvalonEdit
+namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 {
 	public static class TextEditorWeakEventManager
 	{

@@ -8,7 +8,7 @@ using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 using Mono.CSharp;
 
-namespace ILSpy.Debugger.Bookmarks
+namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
 	/// <summary>
 	/// Static class that maintains the list of bookmarks and breakpoints.

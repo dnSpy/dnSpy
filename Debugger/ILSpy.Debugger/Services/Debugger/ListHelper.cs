@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ILSpy.Debugger.Services.Debugger
+namespace ICSharpCode.ILSpy.Debugger.Services.Debugger
 {
 	/// <summary>
 	/// ListHelper wraps System.Collection.Generic.List methods to return the original list,

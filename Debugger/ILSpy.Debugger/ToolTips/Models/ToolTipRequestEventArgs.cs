@@ -5,7 +5,7 @@ using System;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace ILSpy.Debugger.Tooltips
+namespace ICSharpCode.ILSpy.Debugger.Tooltips
 {
 	internal class ToolTipRequestEventArgs : EventArgs
 	{

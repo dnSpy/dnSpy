@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <UserControl
-	x:Class="ILSpy.Debugger.Tooltips.DebuggerTooltipControl"
+	x:Class="ICSharpCode.ILSpy.Debugger.Tooltips.DebuggerTooltipControl"
 	x:ClassModifier="internal"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:aero="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
-	xmlns:debugging="clr-namespace:ILSpy.Debugger.Tooltips"
-	xmlns:localControls="clr-namespace:ILSpy.Debugger.Tooltips"
+	xmlns:debugging="clr-namespace:ICSharpCode.ILSpy.Debugger.Tooltips"
+	xmlns:localControls="clr-namespace:ICSharpCode.ILSpy.Debugger.Tooltips"
 	Background="Transparent">
 	<UserControl.Resources>
 		<ResourceDictionary>

@@ -8,11 +8,11 @@ using Debugger;
 using Debugger.MetaData;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.CSharp;
-using ILSpy.Debugger.Services;
-using ILSpy.Debugger.Services.Debugger;
+using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.Debugger.Services.Debugger;
 using Module = Debugger.Module;
 
-namespace ILSpy.Debugger.Models.TreeModel
+namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 {
 	internal partial class Utils
 	{

@@ -10,10 +10,10 @@ using System.Windows.Input;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.NRefactory.CSharp;
-using ILSpy.Debugger.AvalonEdit;
-using ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.Debugger.AvalonEdit;
+using ICSharpCode.ILSpy.Debugger.Services;
 
-namespace ILSpy.Debugger.Tooltips
+namespace ICSharpCode.ILSpy.Debugger.Tooltips
 {
 	public sealed class TextEditorListener : IWeakEventListener
 	{

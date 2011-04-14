@@ -37,8 +37,8 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
-using ILSpy.Debugger;
-using ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.Debugger;
+using ICSharpCode.ILSpy.Debugger.Services;
 using Microsoft.Win32;
 using Mono.Cecil;
 

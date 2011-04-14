@@ -6,11 +6,11 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
-using ILSpy.Debugger.AvalonEdit;
-using ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.Debugger.AvalonEdit;
+using ICSharpCode.ILSpy.Debugger.Services;
 using Mono.Cecil;
 
-namespace ILSpy.Debugger.Bookmarks
+namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
 	public enum BreakpointAction
 	{

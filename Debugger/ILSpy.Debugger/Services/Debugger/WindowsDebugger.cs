@@ -20,16 +20,16 @@ using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Visitors;
-using ILSpy.Debugger.Bookmarks;
-using ILSpy.Debugger.Models.TreeModel;
-using ILSpy.Debugger.Services.Debugger;
-using ILSpy.Debugger.Tooltips;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
+using ICSharpCode.ILSpy.Debugger.Services.Debugger;
+using ICSharpCode.ILSpy.Debugger.Tooltips;
 using Mono.Cecil;
 using CorDbg = Debugger;
 using Process = Debugger.Process;
 using StackFrame = Debugger.StackFrame;
 
-namespace ILSpy.Debugger.Services
+namespace ICSharpCode.ILSpy.Debugger.Services
 {
 	public class WindowsDebugger : IDebugger
 	{

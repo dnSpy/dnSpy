@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.Remoting;
 using System.Security.Policy;
 
-namespace ILSpy.Debugger.Services.Debugger
+namespace ICSharpCode.ILSpy.Debugger.Services.Debugger
 {
 	[Serializable]
 	class RemotingConfigurationHelpper

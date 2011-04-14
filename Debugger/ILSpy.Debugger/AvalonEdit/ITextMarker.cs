@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 
-using ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
 
-namespace ILSpy.Debugger.AvalonEdit
+namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 {
 	/// <summary>
 	/// Represents a text marker.

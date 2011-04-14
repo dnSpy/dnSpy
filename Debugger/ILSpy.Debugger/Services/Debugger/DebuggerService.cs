@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp.Resolver;
-using ILSpy.Debugger.Bookmarks;
-using ILSpy.Debugger.Tooltips;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Tooltips;
 using Mono.Cecil;
 
-namespace ILSpy.Debugger.Services
+namespace ICSharpCode.ILSpy.Debugger.Services
 {
 	public static class DebuggerService
 	{

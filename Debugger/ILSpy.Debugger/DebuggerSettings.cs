@@ -4,7 +4,7 @@
 using System;
 using System.ComponentModel;
 
-namespace ILSpy.Debugger
+namespace ICSharpCode.ILSpy.Debugger
 {
 	public class DebuggerSettings : INotifyPropertyChanged
 	{

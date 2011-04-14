@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 
-using ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.Debugger.Services;
 
-namespace ILSpy.Debugger.Tooltips
+namespace ICSharpCode.ILSpy.Debugger.Tooltips
 {
 	/// <summary>
 	/// ItemsControl wrapper that takes VirtualizingIEnumerable as source,

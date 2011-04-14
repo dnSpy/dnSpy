@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
-namespace ILSpy.Debugger
+namespace ICSharpCode.ILSpy.Debugger
 {
 	/// <summary>
 	/// Contains the data important for debugger from the main application.

@@ -6,7 +6,7 @@ using System.Diagnostics;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace ILSpy.Debugger.Services
+namespace ICSharpCode.ILSpy.Debugger.Services
 {
 	public interface IDebugger : IDisposable
 	{

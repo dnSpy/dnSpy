@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media;
 
-namespace ILSpy.Debugger.Models.TreeModel
+namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 {
 	/// <summary>
 	/// A node in the variable tree.

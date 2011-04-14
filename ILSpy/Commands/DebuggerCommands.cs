@@ -11,10 +11,10 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Xml.Linq;
 
-using ILSpy.Debugger;
-using ILSpy.Debugger.Bookmarks;
-using ILSpy.Debugger.Services;
-using ILSpy.Debugger.UI;
+using ICSharpCode.ILSpy.Debugger;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.Debugger.UI;
 using Microsoft.Win32;
 
 namespace ICSharpCode.ILSpy.Commands

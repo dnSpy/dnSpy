@@ -12,9 +12,9 @@ using System.Windows.Threading;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
-using ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
 
-namespace ILSpy.Debugger.AvalonEdit
+namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 {
 	/// <summary>
 	/// Handles the text markers for a code editor.

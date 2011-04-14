@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Windows.Controls.Primitives;
 
 using ICSharpCode.NRefactory.CSharp;
-using ILSpy.Debugger.Models.TreeModel;
+using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
 
-namespace ILSpy.Debugger.Tooltips
+namespace ICSharpCode.ILSpy.Debugger.Tooltips
 {
 	/// <summary>
 	/// Popup containing <see cref="DebuggerTooltipControl"></see>.

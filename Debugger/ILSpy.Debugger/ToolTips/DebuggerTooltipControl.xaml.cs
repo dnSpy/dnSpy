@@ -14,11 +14,11 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
 using ICSharpCode.NRefactory.CSharp;
-using ILSpy.Debugger.AvalonEdit;
-using ILSpy.Debugger.Models.TreeModel;
-using ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.Debugger.AvalonEdit;
+using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
+using ICSharpCode.ILSpy.Debugger.Services;
 
-namespace ILSpy.Debugger.Tooltips
+namespace ICSharpCode.ILSpy.Debugger.Tooltips
 {
 	/// <summary>
 	/// Default Control used as content of SharpDevelop debugger tooltips.

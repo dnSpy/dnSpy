@@ -5,7 +5,7 @@ using System.Windows.Threading;
 
 using Debugger;
 
-namespace ILSpy.Debugger.Models.TreeModel
+namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 {
 	internal static partial class Utils
 	{

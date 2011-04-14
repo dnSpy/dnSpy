@@ -8,7 +8,7 @@ using Debugger;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace ILSpy.Debugger.Models.TreeModel
+namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 {
 	internal static partial class Utils
 	{

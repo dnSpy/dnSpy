@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ILSpy.Debugger.Services
+namespace ICSharpCode.ILSpy.Debugger.Services
 {
 	/// <summary>
 	/// Very naive parser.

@@ -8,7 +8,7 @@ using System.Windows.Media;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
-namespace ILSpy.Debugger.Bookmarks
+namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
 	/// <summary>
 	/// A bookmark that can be attached to an AvalonEdit TextDocument.

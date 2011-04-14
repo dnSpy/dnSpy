@@ -6,7 +6,7 @@ using Debugger.MetaData;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ILSpy.Debugger.Services.Debugger
+namespace ICSharpCode.ILSpy.Debugger.Services.Debugger
 {
 	/// <summary>
 	/// Helper for obtaining information about DebugType.

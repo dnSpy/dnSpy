@@ -65,7 +65,7 @@ namespace ICSharpCode.ILSpy
 			
 			Languages.Initialize(compositionContainer);
 			
-			if (!Debugger.IsAttached) {
+			if (!System.Diagnostics.Debugger.IsAttached) {
 				AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;
 				Dispatcher.CurrentDispatcher.UnhandledException += Dispatcher_UnhandledException;
 			}

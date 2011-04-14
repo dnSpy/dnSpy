@@ -14,10 +14,10 @@ using Debugger.MetaData;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.CSharp;
-using ILSpy.Debugger.Services;
-using ILSpy.Debugger.Services.Debugger;
+using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.Debugger.Services.Debugger;
 
-namespace ILSpy.Debugger.Models.TreeModel
+namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 {
 	internal class ExpressionNode: TreeNode, ISetText, INotifyPropertyChanged
 	{

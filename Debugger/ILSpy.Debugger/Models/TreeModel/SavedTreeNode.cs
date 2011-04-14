@@ -3,7 +3,7 @@
 using System;
 using System.Windows.Media;
 
-namespace ILSpy.Debugger.Models.TreeModel
+namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 {
 	internal class SavedTreeNode : TreeNode
 	{			

@@ -40,14 +40,14 @@ using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.Debugger;
+using ICSharpCode.ILSpy.Debugger.AvalonEdit;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Tooltips;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.NRefactory.Documentation;
-using ILSpy.Debugger;
-using ILSpy.Debugger.AvalonEdit;
-using ILSpy.Debugger.Bookmarks;
-using ILSpy.Debugger.Tooltips;
 using Microsoft.Win32;
-using TextEditorWeakEventManager = ILSpy.Debugger.AvalonEdit.TextEditorWeakEventManager;
+using TextEditorWeakEventManager = ICSharpCode.ILSpy.Debugger.AvalonEdit.TextEditorWeakEventManager;
 
 namespace ICSharpCode.ILSpy.TextView
 {
@@ -447,7 +447,7 @@ namespace ICSharpCode.ILSpy.TextView
 			Thread thread = new Thread(new ThreadStart(
 				delegate {
 					#if DEBUG
-					if (Debugger.IsAttached) {
+					if (System.Diagnostics.Debugger.IsAttached) {
 						try {
 							AvalonEditTextOutput textOutput = new AvalonEditTextOutput();
 							textOutput.LengthLimit = outputLengthLimit;

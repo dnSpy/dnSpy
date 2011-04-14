@@ -8,7 +8,7 @@ using System.Collections.Specialized;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace ILSpy.Debugger.Bookmarks
+namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
 	/// <summary>
 	/// The bookmark margin.

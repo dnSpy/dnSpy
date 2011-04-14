@@ -5,7 +5,7 @@ using Debugger.Interop.CorDebug;
 using Debugger.MetaData;
 using Debugger;
 
-namespace ILSpy.Debugger.Models.TreeModel
+namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 {
 	internal class ICorDebug
 	{

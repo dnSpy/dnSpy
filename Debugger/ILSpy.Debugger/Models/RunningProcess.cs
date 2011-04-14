@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 
-namespace ILSpy.Debugger.Models
+namespace ICSharpCode.ILSpy.Debugger.Models
 {
 	sealed class RunningProcess
 	{

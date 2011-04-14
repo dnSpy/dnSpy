@@ -10,7 +10,7 @@ using Debugger.MetaData;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace ILSpy.Debugger.Services.Debugger
+namespace ICSharpCode.ILSpy.Debugger.Services.Debugger
 {
 	public static class DebuggerHelpers
 	{

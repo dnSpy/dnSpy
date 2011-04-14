@@ -3,10 +3,10 @@
 
 using System;
 using ICSharpCode.NRefactory.CSharp;
-using ILSpy.Debugger.AvalonEdit;
+using ICSharpCode.ILSpy.Debugger.AvalonEdit;
 using Mono.Cecil;
 
-namespace ILSpy.Debugger.Bookmarks
+namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
 	public abstract class MarkerBookmark : BookmarkBase
 	{

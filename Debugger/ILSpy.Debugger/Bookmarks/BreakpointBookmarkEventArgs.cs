@@ -3,7 +3,7 @@
 
 using System;
 
-namespace ILSpy.Debugger.Bookmarks
+namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
 	public class BreakpointBookmarkEventArgs : EventArgs
 	{
