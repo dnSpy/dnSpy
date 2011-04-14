@@ -23,7 +23,7 @@ namespace ILSpy.Debugger.Tooltips
 	/// <summary>
 	/// Default Control used as content of SharpDevelop debugger tooltips.
 	/// </summary>
-	public partial class DebuggerTooltipControl : UserControl, ITooltip
+	internal partial class DebuggerTooltipControl : UserControl, ITooltip
 	{
 		private const double ChildPopupOpenXOffet = 16;
 		private const double ChildPopupOpenYOffet = 15;

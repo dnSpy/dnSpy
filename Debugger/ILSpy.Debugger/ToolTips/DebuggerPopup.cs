@@ -13,7 +13,7 @@ namespace ILSpy.Debugger.Tooltips
 	/// <summary>
 	/// Popup containing <see cref="DebuggerTooltipControl"></see>.
 	/// </summary>
-	public class DebuggerPopup : Popup
+	internal class DebuggerPopup : Popup
 	{
 		internal DebuggerTooltipControl contentControl;
 

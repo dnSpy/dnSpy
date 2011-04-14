@@ -4,7 +4,7 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
-	public class IListNode : TreeNode
+	internal class IListNode : TreeNode
 	{
 		Expression targetObject;
 		int count;

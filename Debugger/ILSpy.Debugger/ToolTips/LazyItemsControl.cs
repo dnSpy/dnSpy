@@ -13,7 +13,7 @@ namespace ILSpy.Debugger.Tooltips
 	/// ItemsControl wrapper that takes VirtualizingIEnumerable as source,
 	/// and adds additional items from the source to underlying ItemsControl when scrolled to bottom.
 	/// </summary>
-	public class LazyItemsControl<T>
+	internal class LazyItemsControl<T>
 	{
 		private ItemsControl itemsControl;
 		private int initialItemsCount;

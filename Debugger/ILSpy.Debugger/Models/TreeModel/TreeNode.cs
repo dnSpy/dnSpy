@@ -13,7 +13,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 	/// A node in the variable tree.
 	/// The node is imutable.
 	/// </summary>
-	public class TreeNode : ITreeNode
+	internal class TreeNode : ITreeNode
 	{
 		string text  = string.Empty;
 		

@@ -45,7 +45,7 @@ using ICSharpCode.NRefactory.Documentation;
 using ILSpy.Debugger;
 using ILSpy.Debugger.AvalonEdit;
 using ILSpy.Debugger.Bookmarks;
-using ILSpy.Debugger.ToolTips;
+using ILSpy.Debugger.Tooltips;
 using Microsoft.Win32;
 using TextEditorWeakEventManager = ILSpy.Debugger.AvalonEdit.TextEditorWeakEventManager;
 

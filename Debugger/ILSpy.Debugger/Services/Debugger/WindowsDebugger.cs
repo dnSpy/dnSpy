@@ -472,7 +472,7 @@ namespace ILSpy.Debugger.Services
 			}
 		}
 		
-		public ITreeNode GetNode(string variable, string currentImageName = null)
+		internal ITreeNode GetNode(string variable, string currentImageName = null)
 		{
 			try {
 				var expression = GetExpression(variable);

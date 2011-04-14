@@ -10,7 +10,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 	/// <summary>
 	/// Node that can be bound to <see cref="DebuggerTooltipControl" />.
 	/// </summary>
-	public interface ITreeNode : IComparable<ITreeNode>
+	internal interface ITreeNode : IComparable<ITreeNode>
 	{
 		string Name { get; }
 		

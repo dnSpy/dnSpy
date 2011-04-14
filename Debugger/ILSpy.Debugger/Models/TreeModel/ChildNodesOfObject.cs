@@ -14,7 +14,7 @@ using Module = Debugger.Module;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
-	public partial class Utils
+	internal partial class Utils
 	{
 		public static IEnumerable<TreeNode> LazyGetChildNodesOfObject(Expression targetObject, DebugType shownType)
 		{
@@ -94,7 +94,6 @@ namespace ILSpy.Debugger.Models.TreeModel
 			return nodes;
 		}
 
-		
 		public static IEnumerable<TreeNode> LazyGetItemsOfIList(Expression targetObject)
 		{
 			// This is needed for expanding IEnumerable<T>

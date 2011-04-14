@@ -12,7 +12,7 @@ namespace ILSpy.Debugger.Tooltips
 	/// from underlying IEnumerable&lt;T&gt;.
 	/// Can be used as source for <see cref="LazyItemsControl" />.
 	/// </summary>
-	public class VirtualizingIEnumerable<T> : ObservableCollection<T>
+	internal class VirtualizingIEnumerable<T> : ObservableCollection<T>
 	{
 		private IEnumerator<T> originalSourceEnumerator;
 

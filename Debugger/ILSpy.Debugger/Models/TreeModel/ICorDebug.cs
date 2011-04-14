@@ -7,7 +7,7 @@ using Debugger;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
-	public class ICorDebug
+	internal class ICorDebug
 	{
 		public class InfoNode: TreeNode
 		{

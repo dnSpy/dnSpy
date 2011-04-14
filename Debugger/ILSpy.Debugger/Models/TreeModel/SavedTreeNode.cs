@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
-	public class SavedTreeNode : TreeNode
+	internal class SavedTreeNode : TreeNode
 	{			
 		public override bool CanSetText { 
 			get { return true; }

@@ -4,7 +4,7 @@ using System;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
-	public interface ISetText
+	internal interface ISetText
 	{
 		bool CanSetText { get; }
 		

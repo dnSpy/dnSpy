@@ -10,7 +10,7 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
-	public partial class Utils
+	internal static partial class Utils
 	{
 		public static IEnumerable<TreeNode> LazyGetChildNodesOfArray(Expression expression, ArrayDimensions dimensions)
 		{
@@ -22,7 +22,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 	}
 	
 	/// <summary> This is a partent node for all elements within a given bounds </summary>
-	public class ArrayRangeNode: TreeNode
+	internal class ArrayRangeNode: TreeNode
 	{
 		const int MaxElementCount = 100;
 		

@@ -220,7 +220,7 @@ namespace ICSharpCode.ILSpy.Commands
 				var settings = ILSpySettings.Load();
 				XElement e = settings["DebuggerSettings"];
 				var showWarnings = (bool?)e.Attribute("showWarnings");
-				if (showWarnings.HasValue && showWarnings.Value)				
+				if ((showWarnings.HasValue && showWarnings.Value) || !showWarnings.HasValue)
 					MessageBox.Show("Warning: When attaching to an application, some local variables might not be available. If possible, use the \"Start Executable\" command.",
 				                "Attach to a process", MessageBoxButton.OK, MessageBoxImage.Warning);
 				

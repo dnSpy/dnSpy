@@ -10,7 +10,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 	/// <summary>
 	/// Command called from <see cref="VisualizerPicker"/>.
 	/// </summary>
-	public interface IVisualizerCommand
+	internal interface IVisualizerCommand
 	{
 		/// <summary>
 		/// Can this command execute?

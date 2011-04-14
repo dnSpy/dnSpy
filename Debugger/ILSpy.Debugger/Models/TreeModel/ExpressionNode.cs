@@ -19,7 +19,7 @@ using ILSpy.Debugger.Services.Debugger;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
-	public class ExpressionNode: TreeNode, ISetText, INotifyPropertyChanged
+	internal class ExpressionNode: TreeNode, ISetText, INotifyPropertyChanged
 	{
 		bool evaluated;
 		

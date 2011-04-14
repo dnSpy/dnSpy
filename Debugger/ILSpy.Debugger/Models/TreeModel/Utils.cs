@@ -7,7 +7,7 @@ using Debugger;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
-	public static partial class Utils
+	internal static partial class Utils
 	{
 		/// <param name="process">Process on which to track debuggee state</param>
 		public static void DoEvents(Process process)
@@ -35,14 +35,6 @@ namespace ILSpy.Debugger.Models.TreeModel
 		public AbortedBecauseDebuggeeResumedException(): base()
 		{
 			
-		}
-	}
-	
-	public class PrintTimes: PrintTime
-	{
-		public PrintTimes(string text): base(text + " - end")
-		{
-			//LoggingService.InfoFormatted("{0} - start", text);
 		}
 	}
 	

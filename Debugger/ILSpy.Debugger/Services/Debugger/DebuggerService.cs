@@ -7,7 +7,7 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ILSpy.Debugger.Bookmarks;
-using ILSpy.Debugger.ToolTips;
+using ILSpy.Debugger.Tooltips;
 using Mono.Cecil;
 
 namespace ILSpy.Debugger.Services

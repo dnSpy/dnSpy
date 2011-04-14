@@ -5,9 +5,9 @@ using System;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace ILSpy.Debugger.ToolTips
+namespace ILSpy.Debugger.Tooltips
 {
-	public class ToolTipRequestEventArgs : EventArgs
+	internal class ToolTipRequestEventArgs : EventArgs
 	{
 		/// <summary>
 		/// Gets whether the tool tip request was handled.

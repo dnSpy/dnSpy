@@ -10,7 +10,7 @@ namespace ILSpy.Debugger.Models.TreeModel
 	/// <summary>
 	/// IEnumerable node in the variable tree.
 	/// </summary>
-	public class IEnumerableNode : TreeNode
+	internal class IEnumerableNode : TreeNode
 	{
 		Expression targetObject;
 		Expression debugListExpression;

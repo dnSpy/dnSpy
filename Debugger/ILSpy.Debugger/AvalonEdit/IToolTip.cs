@@ -10,7 +10,7 @@ namespace ILSpy.Debugger.AvalonEdit
 	/// Content of text editor tooltip (used as <see cref="ToolTipRequestEventArgs.ContentToShow"/>), 
 	/// specifying whether it should be displayed in a WPF Popup.
 	/// </summary>
-	public interface ITooltip
+	internal interface ITooltip
 	{
 		/// <summary>
 		/// If true, this ITooltip will be displayed in a WPF Popup.

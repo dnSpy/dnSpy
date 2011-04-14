@@ -13,12 +13,9 @@ using ICSharpCode.NRefactory.CSharp;
 using ILSpy.Debugger.AvalonEdit;
 using ILSpy.Debugger.Services;
 
-namespace ILSpy.Debugger.ToolTips
+namespace ILSpy.Debugger.Tooltips
 {
-	/// <summary>
-	/// Description of TextEditorListener.
-	/// </summary>
-	public class TextEditorListener : IWeakEventListener
+	public sealed class TextEditorListener : IWeakEventListener
 	{
 		private static readonly TextEditorListener instance;
 		

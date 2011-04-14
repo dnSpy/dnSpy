@@ -8,7 +8,7 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace ILSpy.Debugger.Models.TreeModel
 {
-	public class StackFrameNode: TreeNode
+	internal class StackFrameNode: TreeNode
 	{
 		StackFrame stackFrame;
 		
