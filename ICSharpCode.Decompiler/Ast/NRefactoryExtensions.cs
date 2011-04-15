@@ -3,7 +3,7 @@
 
 using System;
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.CSharp.PatternMatching;
+using ICSharpCode.NRefactory.PatternMatching;
 
 namespace ICSharpCode.Decompiler.Ast
 {
@@ -43,6 +43,29 @@ namespace ICSharpCode.Decompiler.Ast
 		public static void AddNamedArgument(this NRefactory.CSharp.Attribute attribute, string name, Expression argument)
 		{
 			attribute.Arguments.Add(new AssignmentExpression(new IdentifierExpression(name), argument));
+		}
+		
+		public static AstType ToType(this Pattern pattern)
+		{
+			return pattern;
+		}
+		
+		public static Expression ToExpression(this Pattern pattern)
+		{
+			return pattern;
+		}
+		
+		public static Statement ToStatement(this Pattern pattern)
+		{
+			return pattern;
+		}
+		
+		public static Statement GetNextStatement(this Statement statement)
+		{
+			AstNode next = statement.NextSibling;
+			while (next != null && !(next is Statement))
+				next = next.NextSibling;
+			return (Statement)next;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.CSharp.PatternMatching;
+using ICSharpCode.NRefactory.PatternMatching;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
@@ -109,11 +109,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			} else {
 				bool negate = false;
 				Match m = asCastIsNotNullPattern.Match(binaryOperatorExpression);
-				if (m == null) {
+				if (!m.Success) {
 					m = asCastIsNullPattern.Match(binaryOperatorExpression);
 					negate = true;
 				}
-				if (m != null) {
+				if (m.Success) {
 					Expression expr = m.Get<Expression>("expr").Single().Detach().IsType(m.Get<AstType>("type").Single().Detach());
 					if (negate)
 						expr = new UnaryOperatorExpression(UnaryOperatorType.Not, expr);

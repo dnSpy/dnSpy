@@ -200,7 +200,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					}
 					// If we can move the variable into the sub-block, we need to ensure that the remaining code
 					// does not use the value that was assigned by the first sub-block
-					Statement nextStatement = stmt.NextStatement;
+					Statement nextStatement = stmt.GetNextStatement();
 					if (nextStatement != null) {
 						// Analyze the range from the next statement to the end of the block
 						daa.SetAnalyzedRange(nextStatement, block);

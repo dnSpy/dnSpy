@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICSharpCode.NRefactory.CSharp.PatternMatching;
+using ICSharpCode.NRefactory.PatternMatching;
 using Mono.Cecil;
 using Ast = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp;
@@ -176,7 +176,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// Combine "x = x op y" into "x op= y"
 			BinaryOperatorExpression binary = assignment.Right as BinaryOperatorExpression;
 			if (binary != null && assignment.Operator == AssignmentOperatorType.Assign) {
-				if (CanConvertToCompoundAssignment(assignment.Left) && assignment.Left.Match(binary.Left) != null) {
+				if (CanConvertToCompoundAssignment(assignment.Left) && assignment.Left.IsMatch(binary.Left)) {
 					assignment.Operator = GetAssignmentOperatorForBinaryOperator(binary.Operator);
 					if (assignment.Operator != AssignmentOperatorType.Assign) {
 						// If we found a shorter operator, get rid of the BinaryOperatorExpression:
@@ -188,7 +188,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 			if (assignment.Operator == AssignmentOperatorType.Add || assignment.Operator == AssignmentOperatorType.Subtract) {
 				// detect increment/decrement
-				if (assignment.Right.Match(new PrimitiveExpression(1)) != null) {
+				if (assignment.Right.IsMatch(new PrimitiveExpression(1))) {
 					// only if it's not a custom operator
 					if (assignment.Annotation<MethodReference>() == null) {
 						UnaryOperatorType type;

@@ -9,7 +9,7 @@ using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.CSharp.PatternMatching;
+using ICSharpCode.NRefactory.PatternMatching;
 using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
@@ -270,16 +270,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			base.VisitBlockStatement(blockStatement, data);
 			foreach (ExpressionStatement stmt in blockStatement.Statements.OfType<ExpressionStatement>().ToArray()) {
 				Match displayClassAssignmentMatch = displayClassAssignmentPattern.Match(stmt);
-				if (displayClassAssignmentMatch == null)
+				if (!displayClassAssignmentMatch.Success)
 					continue;
 				
-				ILVariable variable = displayClassAssignmentMatch.Get("variable").Single().Annotation<ILVariable>();
+				ILVariable variable = displayClassAssignmentMatch.Get<AstNode>("variable").Single().Annotation<ILVariable>();
 				if (variable == null)
 					continue;
 				TypeDefinition type = variable.Type.ResolveWithinSameModule();
 				if (!IsPotentialClosure(context, type))
 					continue;
-				if (displayClassAssignmentMatch.Get("type").Single().Annotation<TypeReference>().ResolveWithinSameModule() != type)
+				if (displayClassAssignmentMatch.Get<AstType>("type").Single().Annotation<TypeReference>().ResolveWithinSameModule() != type)
 					continue;
 				
 				// Looks like we found a display class creation. Now let's verify that the variable is used only for field accesses:
@@ -320,9 +320,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						)
 					);
 					Match m = closureFieldAssignmentPattern.Match(cur);
-					if (m != null) {
+					if (m.Success) {
 						FieldDefinition fieldDef = m.Get<MemberReferenceExpression>("left").Single().Annotation<FieldReference>().ResolveWithinSameModule();
-						AstNode right = m.Get("right").Single();
+						AstNode right = m.Get<AstNode>("right").Single();
 						bool isParameter = false;
 						bool isDisplayClassParentPointerAssignment = false;
 						if (right is ThisReferenceExpression) {
