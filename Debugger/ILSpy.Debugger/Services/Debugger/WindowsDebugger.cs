@@ -823,12 +823,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				uint token = (uint)frame.MethodInfo.MetadataToken;
 				int ilOffset = frame.IP;
 				int line;
-				TypeDefinition type;
+				MemberReference memberReference;
 				
-				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(frame.MethodInfo.DeclaringType.FullName, token, ilOffset, out type, out line)
-				    && type.DeclaringType == null) {
+				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(frame.MethodInfo.DeclaringType.FullName, token, ilOffset, out memberReference, out line)
+				    && memberReference.DeclaringType == null) {
 					DebuggerService.RemoveCurrentLineMarker();
-					DebuggerService.JumpToCurrentLine(type, line, 0, line, 0);
+					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
 				} else {
 					// is possible that the type is not decompiled yet, so we must do a decompilation on demand
 					DecompileOnDemand(frame);
@@ -885,8 +885,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					}
 					// try jump
 					int line;
-					TypeDefinition type;
-					if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset((nestedTypeDef ?? typeDef).FullName, token, ilOffset, out type, out line)) {
+					MemberReference memberReference;
+					if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset((nestedTypeDef ?? typeDef).FullName, token, ilOffset, out memberReference, out line)) {
 						DebuggerService.RemoveCurrentLineMarker();
 						DebuggerService.JumpToCurrentLine(typeDef, line, 0, line, 0);
 					} else {

@@ -24,7 +24,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		static int endLine;
 		static int endColumn;
 		
-		public static void SetPosition(TypeDefinition type, int makerStartLine, int makerStartColumn, int makerEndLine, int makerEndColumn)
+		public static void SetPosition(MemberReference memberReference, int makerStartLine, int makerStartColumn, int makerEndLine, int makerEndColumn)
 		{
 			Remove();
 			
@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			endLine     = makerEndLine;
 			endColumn   = makerEndColumn;
 			
-			instance = new CurrentLineBookmark(type, new AstLocation(startLine, startColumn));
+			instance = new CurrentLineBookmark(memberReference, new AstLocation(startLine, startColumn));
 			BookmarkManager.AddMark(instance);
 		}
 		
@@ -53,7 +53,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			get { return 100; }
 		}
 		
-		public CurrentLineBookmark(TypeDefinition type, AstLocation location) : base(type, location)
+		public CurrentLineBookmark(MemberReference member, AstLocation location) : base(member, location)
 		{
 			
 		}

@@ -415,7 +415,8 @@ namespace ICSharpCode.ILSpy.TextView
 						DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 						
 						if (DebugData.CurrentMember != null) {
-							if (context.TreeNodes.Count() == 1) {
+							// TODO: show margin for single methods and properties
+							if (context.TreeNodes.Count() == 1 && DebugData.IsCurrentMemberType) {
 								iconMargin.Visibility = Visibility.Visible;
 								// repaint bookmarks
 								iconMargin.InvalidateVisual();
@@ -436,6 +437,7 @@ namespace ICSharpCode.ILSpy.TextView
 						} else {
 							// remove currentline marker
 							CurrentLineBookmark.Remove();
+							iconMargin.Visibility = Visibility.Collapsed;
 						}
 					}
 				});

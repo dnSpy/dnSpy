@@ -184,9 +184,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			CurrentLineBookmark.Remove();
 		}
 		
-		public static void JumpToCurrentLine(TypeDefinition type, int startLine, int startColumn, int endLine, int endColumn)
+		public static void JumpToCurrentLine(MemberReference memberReference, int startLine, int startColumn, int endLine, int endColumn)
 		{
-			CurrentLineBookmark.SetPosition(type, startLine, startColumn, endLine, endColumn);
+			CurrentLineBookmark.SetPosition(memberReference, startLine, startColumn, endLine, endColumn);
 		}
 		
 		#region Tool tips

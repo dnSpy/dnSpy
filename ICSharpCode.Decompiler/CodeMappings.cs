@@ -22,7 +22,7 @@ namespace ICSharpCode.Decompiler
 	/// <summary>
 	/// Maps the source code to IL.
 	/// </summary>
-	public class SourceCodeMapping
+	public sealed class SourceCodeMapping
 	{
 		/// <summary>
 		/// Gets or sets the source code line number in the output.
@@ -83,7 +83,7 @@ namespace ICSharpCode.Decompiler
 		/// <summary>
 		/// Gets or sets the type of the mapping.
 		/// </summary>
-		public TypeDefinition Type { get; internal set; }
+		public MemberReference Type { get; internal set; }
 		
 		/// <summary>
 		/// Metadata token of the method.
@@ -283,7 +283,7 @@ namespace ICSharpCode.Decompiler
 			string typeName,
 			uint token,
 			int ilOffset,
-			out TypeDefinition type,
+			out MemberReference type,
 			out int line)
 		{
 			type = null;

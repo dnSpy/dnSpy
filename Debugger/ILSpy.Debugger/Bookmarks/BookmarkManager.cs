@@ -161,11 +161,11 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			if (instruction == null)
 				return;
 
-			TypeDefinition type;
+			MemberReference memberReference;
 			int newline;
-			if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(markerType.FullName, token, instruction.ILInstructionOffset.From, out type, out newline)) {
+			if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(markerType.FullName, token, instruction.ILInstructionOffset.From, out memberReference, out newline)) {
 				// 4. create breakpoint for new languages
-				CurrentLineBookmark.SetPosition(type, newline, 0, newline, 0);
+				CurrentLineBookmark.SetPosition(memberReference, newline, 0, newline, 0);
 			}
 		}
 
@@ -195,11 +195,11 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 				if (instruction == null)
 					continue;
 
-				TypeDefinition type;
+				MemberReference memberReference;
 				int line;
-				if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(bp.Member.FullName, token, instruction.ILInstructionOffset.From, out type, out line)) {
+				if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(bp.Member.FullName, token, instruction.ILInstructionOffset.From, out memberReference, out line)) {
 					// 2. create breakpoint for new languages
-					var bookmark = new BreakpointBookmark(type, new AstLocation(line, 0), BreakpointAction.Break, newLanguage);
+					var bookmark = new BreakpointBookmark(memberReference, new AstLocation(line, 0), BreakpointAction.Break, newLanguage);
 					AddMark(bookmark);
 				}
 			}
