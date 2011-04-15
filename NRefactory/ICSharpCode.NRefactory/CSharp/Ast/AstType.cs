@@ -31,18 +31,76 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		#endregion
 		
+		#region PatternPlaceholder
+		public static implicit operator AstType(PatternMatching.Pattern pattern)
+		{
+			return pattern != null ? new PatternPlaceholder(pattern) : null;
+		}
+		
+		sealed class PatternPlaceholder : AstType, PatternMatching.INode
+		{
+			readonly PatternMatching.Pattern child;
+			
+			public PatternPlaceholder(PatternMatching.Pattern child)
+			{
+				this.child = child;
+			}
+			
+			public override NodeType NodeType {
+				get { return NodeType.Pattern; }
+			}
+			
+			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+			{
+				return visitor.VisitPatternPlaceholder(this, child, data);
+			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return child.DoMatch(other, match);
+			}
+			
+			bool PatternMatching.INode.DoMatchCollection(Role role, PatternMatching.INode pos, PatternMatching.Match match, PatternMatching.BacktrackingInfo backtrackingInfo)
+			{
+				return child.DoMatchCollection(role, pos, match, backtrackingInfo);
+			}
+		}
+		#endregion
+		
 		public override NodeType NodeType {
 			get { return NodeType.TypeReference; }
 		}
 		
+		public new AstType Clone()
+		{
+			return (AstType)base.Clone();
+		}
+		
+		/// <summary>
+		/// Creates a pointer type from this type by nesting it in a <see cref="ComposedType"/>.
+		/// If this type already is a pointer type, this method just increases the PointerRank of the existing pointer type.
+		/// </summary>
 		public virtual AstType MakePointerType()
 		{
 			return new ComposedType { BaseType = this }.MakePointerType();
 		}
 		
+		/// <summary>
+		/// Creates an array type from this type by nesting it in a <see cref="ComposedType"/>.
+		/// If this type already is an array type, the additional rank is prepended to the existing array specifier list.
+		/// Thus, <c>new SimpleType("T").MakeArrayType(1).MakeArrayType(2)</c> will result in "T[,][]".
+		/// </summary>
 		public virtual AstType MakeArrayType(int rank = 1)
 		{
 			return new ComposedType { BaseType = this }.MakeArrayType(rank);
+		}
+		
+		/// <summary>
+		/// Creates a nullable type from this type by nesting it in a <see cref="ComposedType"/>.
+		/// </summary>
+		public AstType MakeNullableType()
+		{
+			return new ComposedType { BaseType = this, HasNullableSpecifier = true };
 		}
 		
 		/// <summary>

@@ -712,16 +712,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				get { return EmptyList<IAttribute>.Instance; }
 			}
 			
-			IEntity ITypeParameter.Parent {
-				get { throw new NotSupportedException(); }
-			}
-			
-			IMethod ITypeParameter.ParentMethod {
-				get { throw new NotSupportedException(); }
-			}
-			
-			ITypeDefinition ITypeParameter.ParentClass {
-				get { throw new NotSupportedException(); }
+			EntityType ITypeParameter.OwnerType {
+				get { return EntityType.Method; }
 			}
 			
 			IList<ITypeReference> ITypeParameter.Constraints {
@@ -758,6 +750,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			void IFreezable.Freeze()
 			{
+			}
+			
+			DomRegion ITypeParameter.Region {
+				get { return DomRegion.Empty; }
 			}
 		}
 		#endregion

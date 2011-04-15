@@ -37,7 +37,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestNamespaceBraceStyle ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.NamespaceBraceStyle = BraceStyle.EndOfLine;
 			policy.ClassBraceStyle = BraceStyle.DoNotChange;
 			
@@ -67,7 +67,7 @@ namespace B {
 		[Test()]
 		public void TestClassBraceStlye ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy,
@@ -79,7 +79,7 @@ namespace B {
 		[Test()]
 		public void TestStructBraceStyle ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.StructBraceStyle = BraceStyle.NextLine;
 			
 			Test (policy,
@@ -92,7 +92,7 @@ namespace B {
 		[Test()]
 		public void TestInterfaceBraceStyle ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.InterfaceBraceStyle = BraceStyle.NextLine;
 			
 			Test (policy,
@@ -105,7 +105,7 @@ namespace B {
 		[Test()]
 		public void TestEnumBraceStyle ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.EnumBraceStyle = BraceStyle.NextLineShifted;
 			
 			Test (policy, @"enum Test {
@@ -120,7 +120,7 @@ namespace B {
 		[Test()]
 		public void TestMethodBraceStlye ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.MethodBraceStyle = BraceStyle.NextLine;
 			
 			Test (policy, @"class Test
@@ -138,7 +138,7 @@ namespace B {
 		[Test()]
 		public void TestConstructorBraceStyle ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ConstructorBraceStyle = BraceStyle.NextLine;
 			
 			Test (policy, @"class Test
@@ -156,7 +156,7 @@ namespace B {
 		[Test()]
 		public void TestDestructorBraceStyle ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.DestructorBraceStyle = BraceStyle.NextLine;
 			
 			Test (policy, @"class Test
@@ -174,7 +174,7 @@ namespace B {
 		[Test()]
 		public void TestPropertyBraceStyle ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.PropertyBraceStyle = BraceStyle.NextLine;
 			
 			Test (policy, @"class Test
@@ -197,7 +197,7 @@ namespace B {
 		[Test()]
 		public void TestPropertyGetBraceStyle ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.PropertyGetBraceStyle = BraceStyle.NextLine;
 			
 			Test (policy, @"class Test
@@ -225,7 +225,7 @@ namespace B {
 		public void TestAllowPropertyGetBlockInline ()
 		{
 			
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.PropertyBraceStyle = BraceStyle.DoNotChange;
 			policy.AllowPropertyGetBlockInline = true;
 			policy.AllowPropertySetBlockInline = false;
@@ -265,7 +265,7 @@ namespace B {
 		[Test()]
 		public void TestAllowPropertySetBlockInline ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.PropertyBraceStyle = BraceStyle.DoNotChange;
 			policy.AllowPropertyGetBlockInline = false;
 			policy.AllowPropertySetBlockInline = true;
@@ -305,7 +305,7 @@ namespace B {
 		[Test()]
 		public void TestPropertySetBraceStyle ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.PropertySetBraceStyle = BraceStyle.NextLine;
 			
 			Test (policy, @"class Test
@@ -332,7 +332,7 @@ namespace B {
 		[Test()]
 		public void TestEventBraceStyle ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.EventBraceStyle = BraceStyle.NextLine;
 			policy.EventAddBraceStyle = BraceStyle.NextLine;
 			policy.EventRemoveBraceStyle = BraceStyle.NextLine;
@@ -363,7 +363,7 @@ namespace B {
 		[Test()]
 		public void TestAllowEventAddBlockInline ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.AllowEventAddBlockInline = true;
 			policy.AllowEventRemoveBlockInline = false;
 			
@@ -388,7 +388,7 @@ namespace B {
 		[Test()]
 		public void TestAllowEventRemoveBlockInline ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.AllowEventAddBlockInline = false;
 			policy.AllowEventRemoveBlockInline = true;
 			

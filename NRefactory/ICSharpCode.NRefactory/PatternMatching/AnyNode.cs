@@ -3,11 +3,12 @@
 
 using System;
 
-namespace ICSharpCode.NRefactory.CSharp.PatternMatching
+namespace ICSharpCode.NRefactory.PatternMatching
 {
 	/// <summary>
 	/// Matches any node.
 	/// </summary>
+	/// <remarks>Does not match null nodes.</remarks>
 	public class AnyNode : Pattern
 	{
 		readonly string groupName;
@@ -21,15 +22,15 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			this.groupName = groupName;
 		}
 		
-		protected internal override bool DoMatch(AstNode other, Match match)
+		public override bool DoMatch(INode other, Match match)
 		{
 			match.Add(this.groupName, other);
 			return other != null && !other.IsNull;
 		}
 		
-		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S>(IPatternAstVisitor<T, S> visitor, T data)
 		{
-			return ((IPatternAstVisitor<T, S>)visitor).VisitAnyNode(this, data);
+			return visitor.VisitAnyNode(this, data);
 		}
 	}
 }

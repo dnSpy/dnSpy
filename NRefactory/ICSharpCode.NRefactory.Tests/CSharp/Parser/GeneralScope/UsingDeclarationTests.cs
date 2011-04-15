@@ -12,7 +12,6 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 	public class UsingDeclarationTests
 	{
 		[Test]
-		[Ignore("error reporting not yet implemented")]
 		public void WrongUsingTest()
 		{
 			string program = "using\n";
@@ -43,7 +42,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 			Assert.AreEqual("My.Name.Space", ud.Namespace);
 		}
 		
-		[Test, Ignore("Aliases to generic types not yet supported")]
+		[Test]
 		public void UsingAliasDeclarationTest()
 		{
 			string program = "using TESTME=System;\n" +

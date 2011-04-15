@@ -488,7 +488,7 @@ namespace Mono.CSharp {
 
 			reset.Block = new ToplevelBlock (Compiler, Location);
 
-			TypeSpec ex_type = Module.PredefinedTypes.NotSupportedException.Resolve (Location);
+			TypeSpec ex_type = Module.PredefinedTypes.NotSupportedException.Resolve ();
 			if (ex_type == null)
 				return;
 

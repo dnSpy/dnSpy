@@ -21,6 +21,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			return visitor.VisitTypeReferenceExpression(this, data);
 		}
 		
+		public TypeReferenceExpression ()
+		{
+		}
+		
+		public TypeReferenceExpression (AstType type)
+		{
+			AddChild (type, Roles.Type);
+		}
+		
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			TypeReferenceExpression o = other as TypeReferenceExpression;

@@ -9,7 +9,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 	[TestFixture]
 	public class PointerReferenceExpressionTests
 	{
-		[Test, Ignore("Parser bug!")]
+		[Test]
 		public void PointerReferenceExpressionTest()
 		{
 			PointerReferenceExpression pre = ParseUtilCSharp.ParseExpression<PointerReferenceExpression>("myObj.field->b");
@@ -17,7 +17,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			Assert.AreEqual("b", pre.MemberName);
 		}
 		
-		[Test, Ignore("Parser bug!")]
+		[Test]
 		public void PointerReferenceGenericMethodTest()
 		{
 			ParseUtilCSharp.AssertExpression(

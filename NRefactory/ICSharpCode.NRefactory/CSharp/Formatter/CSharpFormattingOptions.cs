@@ -1,5 +1,5 @@
 // 
-// CSharpFormattingPolicy.cs
+// CSharpFormattingOptions.cs
 //  
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
@@ -60,7 +60,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		ForceNewLine
 	}
 
-	public class CSharpFormattingPolicy
+	public class CSharpFormattingOptions
 	{
 		public string Name {
 			get;
@@ -72,9 +72,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			set;
 		}
 
-		public CSharpFormattingPolicy Clone ()
+		public CSharpFormattingOptions Clone ()
 		{
-			return (CSharpFormattingPolicy)MemberwiseClone ();
+			return (CSharpFormattingOptions)MemberwiseClone ();
 		}
 
 		#region Indentation
@@ -766,7 +766,7 @@ namespace ICSharpCode.NRefactory.CSharp
 
 		#endregion
 		
-		public CSharpFormattingPolicy ()
+		public CSharpFormattingOptions ()
 		{
 			IndentNamespaceBody = true;
 			IndentClassBody = IndentInterfaceBody = IndentStructBody = IndentEnumBody = true;
@@ -880,22 +880,22 @@ namespace ICSharpCode.NRefactory.CSharp
 			BlankLinesBetweenMembers = 1;
 		}
 
-		/*public static CSharpFormattingPolicy Load (FilePath selectedFile)
+		/*public static CSharpFormattingOptions Load (FilePath selectedFile)
 		{
 			using (var stream = System.IO.File.OpenRead (selectedFile)) {
 				return Load (stream);
 			}
 		}
 
-		public static CSharpFormattingPolicy Load (System.IO.Stream input)
+		public static CSharpFormattingOptions Load (System.IO.Stream input)
 		{
-			CSharpFormattingPolicy result = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions result = new CSharpFormattingOptions ();
 			result.Name = "noname";
 			using (XmlTextReader reader = new XmlTextReader (input)) {
 				while (reader.Read ()) {
 					if (reader.NodeType == XmlNodeType.Element) {
 						if (reader.LocalName == "Property") {
-							var info = typeof(CSharpFormattingPolicy).GetProperty (reader.GetAttribute ("name"));
+							var info = typeof(CSharpFormattingOptions).GetProperty (reader.GetAttribute ("name"));
 							string valString = reader.GetAttribute ("value");
 							object value;
 							if (info.PropertyType == typeof(bool)) {
@@ -926,7 +926,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				writer.IndentChar = '\t';
 				writer.WriteStartElement ("FormattingProfile");
 				writer.WriteAttributeString ("name", Name);
-				foreach (PropertyInfo info in typeof (CSharpFormattingPolicy).GetProperties ()) {
+				foreach (PropertyInfo info in typeof (CSharpFormattingOptions).GetProperties ()) {
 					if (info.GetCustomAttributes (false).Any (o => o.GetType () == typeof(ItemPropertyAttribute))) {
 						writer.WriteStartElement ("Property");
 						writer.WriteAttributeString ("name", info.Name);
@@ -938,9 +938,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 
-		public bool Equals (CSharpFormattingPolicy other)
+		public bool Equals (CSharpFormattingOptions other)
 		{
-			foreach (PropertyInfo info in typeof (CSharpFormattingPolicy).GetProperties ()) {
+			foreach (PropertyInfo info in typeof (CSharpFormattingOptions).GetProperties ()) {
 				if (info.GetCustomAttributes (false).Any (o => o.GetType () == typeof(ItemPropertyAttribute))) {
 					object val = info.GetValue (this, null);
 					object otherVal = info.GetValue (other, null);

@@ -47,8 +47,9 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
+		public override TypeExpr ResolveAsType (IMemberContext ec)
 		{
+			eclass = ExprClass.Type;
 			type = ec.Module.Compiler.BuiltinTypes.Dynamic;
 			return this;
 		}
@@ -232,7 +233,7 @@ namespace Mono.CSharp
 			{
 				Child = new IntConstant (ec.BuiltinTypes, (int) (flags | statement.flags), statement.loc);
 
-				type = ec.Module.PredefinedTypes.BinderFlags.Resolve (loc);
+				type = ec.Module.PredefinedTypes.BinderFlags.Resolve ();
 				eclass = Child.eclass;
 				return this;
 			}
@@ -283,9 +284,9 @@ namespace Mono.CSharp
 			int errors = rc.Report.Errors;
 			var pt = rc.Module.PredefinedTypes;
 
-			binder_type = pt.Binder.Resolve (loc);
-			pt.CallSite.Resolve (loc);
-			pt.CallSiteGeneric.Resolve (loc);
+			binder_type = pt.Binder.Resolve ();
+			pt.CallSite.Resolve ();
+			pt.CallSiteGeneric.Resolve ();
 
 			eclass = ExprClass.Value;
 
@@ -382,7 +383,7 @@ namespace Mono.CSharp
 				TypeExpr te = null;
 				Namespace type_ns = module.GlobalRootNamespace.GetNamespace ("System", true);
 				if (type_ns != null) {
-					te = type_ns.LookupType (module, d_name, dyn_args_count + default_args, true, Location.Null);
+					te = type_ns.LookupType (module, d_name, dyn_args_count + default_args, Location.Null);
 				}
 
 				if (te != null) {
@@ -463,7 +464,7 @@ namespace Mono.CSharp
 
 			BlockContext bc = new BlockContext (ec.MemberContext, null, ec.BuiltinTypes.Void);
 
-			instanceAccessExprType = instanceAccessExprType.ResolveAsTypeStep (bc, false);
+			instanceAccessExprType = instanceAccessExprType.ResolveAsType (bc);
 			if (instanceAccessExprType == null)
 				return;
 

@@ -18,8 +18,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 			
 			Assert.AreEqual(ClassType.Class, td.ClassType);
 			Assert.AreEqual("MyClass", td.Name);
-			//Assert.AreEqual("My.Base.Class", td.BaseTypes[0].Type);
-			Assert.Ignore("need to check base type"); // TODO
+			Assert.AreEqual("My.Base.Class", td.BaseTypes.First ().ToString ());
 			Assert.AreEqual(Modifiers.None, td.Modifiers);
 		}
 		
@@ -37,7 +36,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 			Assert.AreEqual(2, td.EndLocation.Column, "EndLocation.Y");
 		}
 		
-		[Test, Ignore("partial modifier is broken")]
+		[Test]
 		public void SimplePartialClassTypeDeclarationTest()
 		{
 			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("partial class MyClass { }");
@@ -47,7 +46,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 			Assert.AreEqual(Modifiers.Partial, td.Modifiers);
 		}
 		
-		[Test, Ignore("nested classes are broken")]
+		[Test]
 		public void NestedClassesTest()
 		{
 			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("class MyClass { partial class P1 {} public partial class P2 {} static class P3 {} internal static class P4 {} }");
@@ -70,7 +69,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 			Assert.AreEqual(Modifiers.Static, td.Modifiers);
 		}
 		
-		[Test, Ignore("Generics not yet supported")]
+		[Test]
 		public void GenericClassTypeDeclarationTest()
 		{
 			ParseUtilCSharp.AssertGlobal(
@@ -83,7 +82,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 				});
 		}
 		
-		[Test, Ignore("Constraints not yet supported")]
+		[Test]
 		public void GenericClassWithWhere()
 		{
 			ParseUtilCSharp.AssertGlobal(
@@ -101,7 +100,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 					}});
 		}
 		
-		[Test, Ignore("Generic classes not yet supported")]
+		[Test, Ignore ("Mono parser bug.")]
 		public void ComplexGenericClassTypeDeclarationTest()
 		{
 			ParseUtilCSharp.AssertGlobal(
@@ -144,7 +143,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 				});
 		}
 		
-		[Test, Ignore("Base types not yet implemented")]
+		[Test]
 		public void ComplexClassTypeDeclarationTest()
 		{
 			ParseUtilCSharp.AssertGlobal(
@@ -217,7 +216,7 @@ public abstract class MyClass : MyBase, Interface1, My.Test.Interface2
 						new TypeParameterDeclaration {
 							Attributes = {
 								new AttributeSection {
-									AttributeTarget = AttributeTarget.Unknown,
+									AttributeTarget = "partial",
 									Attributes = { new Attribute { Type = new SimpleType("where") } }
 								}
 							},

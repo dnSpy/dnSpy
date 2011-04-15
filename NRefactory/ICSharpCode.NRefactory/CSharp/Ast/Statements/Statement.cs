@@ -38,37 +38,41 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		#endregion
 		
-		/// <summary>
-		/// Gets the previous statement within the current block.
-		/// This is usually equivalent to <see cref="PrevSibling"/>, but will skip any non-statements (e.g. comments)
-		/// </summary>
-		public Statement PreviousStatement {
-			get {
-				AstNode node = this;
-				while ((node = node.PrevSibling) != null) {
-					Statement stmt = node as Statement;
-					if (stmt != null)
-						return stmt;
-				}
-				return null;
-			}
+		#region PatternPlaceholder
+		public static implicit operator Statement(PatternMatching.Pattern pattern)
+		{
+			return pattern != null ? new PatternPlaceholder(pattern) : null;
 		}
 		
-		/// <summary>
-		/// Gets the next statement within the current block.
-		/// This is usually equivalent to <see cref="NextSibling"/>, but will skip any non-statements (e.g. comments)
-		/// </summary>
-		public Statement NextStatement {
-			get {
-				AstNode node = this;
-				while ((node = node.NextSibling) != null) {
-					Statement stmt = node as Statement;
-					if (stmt != null)
-						return stmt;
-				}
-				return null;
+		sealed class PatternPlaceholder : Statement, PatternMatching.INode
+		{
+			readonly PatternMatching.Pattern child;
+			
+			public PatternPlaceholder(PatternMatching.Pattern child)
+			{
+				this.child = child;
+			}
+			
+			public override NodeType NodeType {
+				get { return NodeType.Pattern; }
+			}
+			
+			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+			{
+				return visitor.VisitPatternPlaceholder(this, child, data);
+			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return child.DoMatch(other, match);
+			}
+			
+			bool PatternMatching.INode.DoMatchCollection(Role role, PatternMatching.INode pos, PatternMatching.Match match, PatternMatching.BacktrackingInfo backtrackingInfo)
+			{
+				return child.DoMatchCollection(role, pos, match, backtrackingInfo);
 			}
 		}
+		#endregion
 		
 		public new Statement Clone()
 		{
@@ -92,7 +96,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (IsNull)
 				return "Null";
 			StringWriter w = new StringWriter();
-			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
+			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingOptions()), null);
 			string text = w.ToString().TrimEnd().Replace("\t", "").Replace(w.NewLine, " ");
 			if (text.Length > 100)
 				return text.Substring(0, 97) + "...";

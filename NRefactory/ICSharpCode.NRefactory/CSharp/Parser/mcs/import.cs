@@ -387,20 +387,30 @@ namespace Mono.CSharp
 				// Cannot set to OVERRIDE without full hierarchy checks
 				// this flag indicates that the method could be override
 				// but further validation is needed
-				if ((mod & Modifiers.OVERRIDE) != 0 && kind == MemberKind.Method && declaringType.BaseType != null) {
-					var filter = MemberFilter.Method (name, tparams != null ? tparams.Length : 0, parameters, null);
-					var candidate = MemberCache.FindMember (declaringType.BaseType, filter, BindingRestriction.None);
+				if ((mod & Modifiers.OVERRIDE) != 0) {
+					bool is_real_override = false;
+					if (kind == MemberKind.Method && declaringType.BaseType != null) {
+						var filter = MemberFilter.Method (name, tparams != null ? tparams.Length : 0, parameters, null);
+						var candidate = MemberCache.FindMember (declaringType.BaseType, filter, BindingRestriction.None);
 
-					//
-					// For imported class method do additional validation to be sure that metadata
-					// override flag was correct
-					// 
-					// Difference between protected internal and protected is ok
-					//
-					const Modifiers conflict_mask = Modifiers.AccessibilityMask & ~Modifiers.INTERNAL;
-					if (candidate == null || (candidate.Modifiers & conflict_mask) != (mod & conflict_mask) || candidate.IsStatic) {
+						//
+						// For imported class method do additional validation to be sure that metadata
+						// override flag was correct
+						// 
+						// Difference between protected internal and protected is ok
+						//
+						const Modifiers conflict_mask = Modifiers.AccessibilityMask & ~Modifiers.INTERNAL;
+						if (candidate != null && (candidate.Modifiers & conflict_mask) == (mod & conflict_mask) && !candidate.IsStatic) {
+							is_real_override = true;
+						}
+					}
+
+					if (!is_real_override) {
 						mod &= ~Modifiers.OVERRIDE;
-						mod |= Modifiers.VIRTUAL;
+						if ((mod & Modifiers.SEALED) != 0)
+							mod &= ~Modifiers.SEALED;
+						else
+							mod |= Modifiers.VIRTUAL;
 					}
 				}
 			}
@@ -1168,15 +1178,21 @@ namespace Mono.CSharp
 				return mod;
 			}
 
+			// It can be sealed and override
 			if ((ma & MethodAttributes.Final) != 0)
 				mod |= Modifiers.SEALED;
 
-			// It can be sealed and override
 			if ((ma & MethodAttributes.Virtual) != 0) {
-				if ((ma & MethodAttributes.NewSlot) != 0 || !declaringType.IsClass) {
-					// No private virtual or sealed virtual
-					if ((mod & (Modifiers.PRIVATE | Modifiers.SEALED)) == 0)
+				// Not every member can be detected based on MethodAttribute, we
+				// set virtual or non-virtual only when we are certain. Further checks
+				// to really find out what `virtual' means for this member are done
+				// later
+				if ((ma & MethodAttributes.NewSlot) != 0) {
+					if ((mod & Modifiers.SEALED) != 0) {
+						mod &= ~Modifiers.SEALED;
+					} else {
 						mod |= Modifiers.VIRTUAL;
+					}
 				} else {
 					mod |= Modifiers.OVERRIDE;
 				}

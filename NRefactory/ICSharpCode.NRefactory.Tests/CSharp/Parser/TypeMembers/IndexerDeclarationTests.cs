@@ -22,7 +22,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.AreEqual(Modifiers.Protected, id.Setter.Modifiers);
 		}
 		
-		[Test, Ignore("explicit interface implementation not yet supported")]
+		[Test]
 		public void IndexerImplementingInterfaceTest()
 		{
 			IndexerDeclaration id = ParseUtilCSharp.ParseTypeMember<IndexerDeclaration>("int MyInterface.this[int a, string b] { get { } set { } }");
@@ -33,7 +33,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.AreEqual("MyInterface", ((SimpleType)id.PrivateImplementationType).Identifier);
 		}
 		
-		[Test, Ignore("explicit interface implementation not yet supported")]
+		[Test]
 		public void IndexerImplementingGenericInterfaceTest()
 		{
 			ParseUtilCSharp.AssertTypeMember(

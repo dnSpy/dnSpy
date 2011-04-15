@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 {
-	[TestFixture, Ignore("Query expressions not yet implemented")]
+	[TestFixture]
 	public class QueryExpressionTests
 	{
 		[Test]
@@ -125,19 +125,17 @@ select new { c.Name, o.OrderID, o.Total }",
 						},
 						new QueryWhereClause {
 							Condition = new BinaryOperatorExpression {
-								Left = new IdentifierExpression("c").Member("OrderDate").Member("Year"),
+								Left = new IdentifierExpression("o").Member("OrderDate").Member("Year"),
 								Operator = BinaryOperatorType.Equality,
 								Right = new PrimitiveExpression(2005)
 							}
 						},
 						new QuerySelectClause {
-							Expression = new ObjectCreateExpression {
-								Initializer = new ArrayInitializerExpression {
-									Elements = {
-										new IdentifierExpression("c").Member("Name"),
-										new IdentifierExpression("o").Member("OrderID"),
-										new IdentifierExpression("o").Member("Total")
-									}
+							Expression = new AnonymousTypeCreateExpression {
+								Initializer = {
+									new IdentifierExpression("c").Member("Name"),
+									new IdentifierExpression("o").Member("OrderID"),
+									new IdentifierExpression("o").Member("Total")
 								}
 							}
 						}
@@ -220,6 +218,67 @@ select new { c.Name, o.OrderID, o.Total }",
 					}
 				}
 			);
+		}
+		
+		
+		[Test]
+		public void QueryContinuationWithMultipleFrom()
+		{
+			ParseUtilCSharp.AssertExpression(
+				"from a in b from c in d select e into f select g",
+				new QueryExpression {
+					Clauses = {
+						new QueryContinuationClause {
+							PrecedingQuery = new QueryExpression {
+								Clauses = {
+									new QueryFromClause {
+										Identifier = "a",
+										Expression = new IdentifierExpression("b")
+									},
+									new QueryFromClause {
+										Identifier = "c",
+										Expression = new IdentifierExpression("d")
+									},
+									new QuerySelectClause { Expression = new IdentifierExpression("e") }
+								}
+							},
+							Identifier = "f"
+						},
+						new QuerySelectClause { Expression = new IdentifierExpression("g") }
+					}
+				}
+			);
+		}
+		
+		[Test]
+		public void MultipleQueryContinuation()
+		{
+			ParseUtilCSharp.AssertExpression(
+				"from a in b select c into d select e into f select g",
+				new QueryExpression {
+					Clauses = {
+						new QueryContinuationClause {
+							PrecedingQuery = new QueryExpression {
+								Clauses = {
+									new QueryContinuationClause {
+										PrecedingQuery = new QueryExpression {
+											Clauses = {
+												new QueryFromClause {
+													Identifier = "a",
+													Expression = new IdentifierExpression("b")
+												},
+												new QuerySelectClause { Expression = new IdentifierExpression("c") }
+											}
+										},
+										Identifier = "d"
+									},
+									new QuerySelectClause { Expression = new IdentifierExpression("e") }
+								}
+							},
+							Identifier = "f"
+						},
+						new QuerySelectClause { Expression = new IdentifierExpression("g") }
+					}});
 		}
 	}
 }

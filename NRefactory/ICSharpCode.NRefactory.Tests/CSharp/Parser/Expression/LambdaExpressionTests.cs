@@ -9,7 +9,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 	[TestFixture]
 	public class LambdaExpressionTests
 	{
-		[Test, Ignore("Lambdas with expression body not yet supported")]
+		[Test]
 		public void ImplicitlyTypedExpressionBody()
 		{
 			ParseUtilCSharp.AssertExpression(
@@ -20,7 +20,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 				});
 		}
 		
-		[Test, Ignore("Lambdas with expression body not yet supported")]
+		[Test]
 		public void ImplicitlyTypedExpressionBodyWithoutParenthesis()
 		{
 			ParseUtilCSharp.AssertExpression(
@@ -73,7 +73,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 						}}});
 		}
 		
-		[Test, Ignore("Lambdas with expression body not yet supported")]
+		[Test]
 		public void ExplicitlyTypedWithRefParameter()
 		{
 			ParseUtilCSharp.AssertExpression(
@@ -83,14 +83,14 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 						new ParameterDeclaration {
 							ParameterModifier = ParameterModifier.Ref,
 							Type = new PrimitiveType("int"),
-							Name = "x"
+							Name = "i"
 						}
 					},
 					Body = new AssignmentExpression(new IdentifierExpression("i"), new PrimitiveExpression(1))
 				});
 		}
 		
-		[Test, Ignore("Lambdas with expression body not yet supported")]
+		[Test]
 		public void LambdaExpressionContainingConditionalExpression()
 		{
 			ParseUtilCSharp.AssertExpression(

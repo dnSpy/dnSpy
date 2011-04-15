@@ -109,11 +109,11 @@ namespace Mono.CSharp
 
 				var type = this;
 				do {
-					if (type.IsGeneric)
-						return false;
-
 					if (type.BuiltinType == BuiltinTypeSpec.Type.Attribute)
 						return true;
+
+					if (type.IsGeneric)
+						return false;
 					
 					type = type.base_type;
 				} while (type != null);
@@ -356,6 +356,65 @@ namespace Mono.CSharp
 		public virtual TypeSpec GetDefinition ()
 		{
 			return this;
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			if (IsNested) {
+				sb.Append (DeclaringType.GetSignatureForDocumentation ());
+			} else {
+				sb.Append (MemberDefinition.Namespace);
+			}
+
+			if (sb.Length != 0)
+				sb.Append (".");
+
+			sb.Append (Name);
+			if (Arity > 0) {
+				if (this is InflatedTypeSpec) {
+				    sb.Append ("{");
+				    for (int i = 0; i < Arity; ++i) {
+				        if (i > 0)
+				            sb.Append (",");
+
+				        sb.Append (TypeArguments[i].GetSignatureForDocumentation ());
+				    }
+				    sb.Append ("}");
+				} else {
+					sb.Append ("`");
+					sb.Append (Arity.ToString ());
+				}
+			}
+
+			return sb.ToString ();
+		}
+
+		public string GetExplicitNameSignatureForDocumentation ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			if (IsNested) {
+				sb.Append (DeclaringType.GetExplicitNameSignatureForDocumentation ());
+			} else if (MemberDefinition.Namespace != null) {
+				sb.Append (MemberDefinition.Namespace.Replace ('.', '#'));
+			}
+
+			if (sb.Length != 0)
+				sb.Append ("#");
+
+			sb.Append (Name);
+			if (Arity > 0) {
+				sb.Append ("{");
+				for (int i = 0; i < Arity; ++i) {
+					if (i > 0)
+						sb.Append (",");
+
+					sb.Append (TypeArguments[i].GetExplicitNameSignatureForDocumentation ());
+				}
+				sb.Append ("}");
+			}
+
+			return sb.ToString ();
 		}
 
 		public override string GetSignatureForError ()
@@ -1133,6 +1192,7 @@ namespace Mono.CSharp
 		public static readonly InternalType MethodGroup = new InternalType ("method group");
 		public static readonly InternalType NullLiteral = new InternalType ("null");
 		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
+		public static readonly InternalType Namespace = new InternalType ("<namespace>");
 
 		readonly string name;
 
@@ -1301,6 +1361,11 @@ namespace Mono.CSharp
 		protected virtual string GetPostfixSignature ()
 		{
 			return null;
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			return Element.GetSignatureForDocumentation () + GetPostfixSignature ();
 		}
 
 		public override string GetSignatureForError ()
@@ -1529,6 +1594,33 @@ namespace Mono.CSharp
 				sb.Append (",");
 			}
 			sb.Append ("]");
+
+			return sb.ToString ();
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			var e = Element;
+			List<int> ranks = new List<int> (2);
+			ranks.Add (rank);
+
+			while (e is ArrayContainer) {
+				var ac = (ArrayContainer) e;
+				ranks.Add (ac.rank);
+				e = ac.Element;
+			}
+
+			StringBuilder sb = new StringBuilder (e.GetSignatureForDocumentation ());
+			for (int r = 0; r < ranks.Count; ++r) {
+				sb.Append ("[");
+				for (int i = 1; i < ranks[r]; i++) {
+					if (i == 1)
+						sb.Append ("0:");
+
+					sb.Append (",0:");
+				}
+				sb.Append ("]");
+			}
 
 			return sb.ToString ();
 		}

@@ -61,6 +61,24 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (InitializerRole, value); }
 		}
 		
+		public ObjectCreateExpression ()
+		{
+		}
+		
+		public ObjectCreateExpression (AstType type, IEnumerable<Expression> arguments = null)
+		{
+			AddChild (type, Roles.Type);
+			if (arguments != null) {
+				foreach (var arg in arguments) {
+					AddChild (arg, Roles.Argument);
+				}
+			}
+		}
+		
+		public ObjectCreateExpression (AstType type, params Expression[] arguments) : this (type, (IEnumerable<Expression>)arguments)
+		{
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitObjectCreateExpression (this, data);

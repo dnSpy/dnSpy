@@ -31,11 +31,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-using ICSharpCode.NRefactory.CSharp.PatternMatching;
-
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public abstract class AstNode
+	public abstract class AstNode : PatternMatching.INode
 	{
 		#region Null
 		public static readonly AstNode Null = new NullAstNode ();
@@ -62,6 +60,42 @@ namespace ICSharpCode.NRefactory.CSharp
 			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 			{
 				return other == null || other.IsNull;
+			}
+		}
+		#endregion
+		
+		#region PatternPlaceholder
+		public static implicit operator AstNode(PatternMatching.Pattern pattern)
+		{
+			return pattern != null ? new PatternPlaceholder(pattern) : null;
+		}
+		
+		sealed class PatternPlaceholder : AstNode, PatternMatching.INode
+		{
+			readonly PatternMatching.Pattern child;
+			
+			public PatternPlaceholder(PatternMatching.Pattern child)
+			{
+				this.child = child;
+			}
+			
+			public override NodeType NodeType {
+				get { return NodeType.Pattern; }
+			}
+			
+			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+			{
+				return visitor.VisitPatternPlaceholder(this, child, data);
+			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return child.DoMatch(other, match);
+			}
+			
+			bool PatternMatching.INode.DoMatchCollection(Role role, PatternMatching.INode pos, PatternMatching.Match match, PatternMatching.BacktrackingInfo backtrackingInfo)
+			{
+				return child.DoMatchCollection(role, pos, match, backtrackingInfo);
 			}
 		}
 		#endregion
@@ -562,38 +596,32 @@ namespace ICSharpCode.NRefactory.CSharp
 		public abstract S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data);
 		
 		#region Pattern Matching
-		/// <summary>
-		/// Performs a pattern matching operation.
-		/// <c>this</c> is the pattern, <paramref name="other"/> is the AST that is being matched.
-		/// </summary>
-		/// <returns>
-		/// If successful, a match object containing the matched groups.
-		/// If the match failed, returns <c>null</c>.
-		/// </returns>
-		/// <remarks>
-		/// Patterns are ASTs that contain special pattern nodes (from the PatternMatching namespace).
-		/// However, it is also possible to match two ASTs without any pattern nodes - doing so will produce an empty match object
-		/// if the two ASTs are structurally identical; or will return <c>null</c> if the ASTs are not identical.
-		/// </remarks>
-		public Match Match(AstNode other)
-		{
-			Match match = new Match();
-			if (DoMatch(other, match))
-				return match;
-			else
-				return null;
-		}
-		
 		protected static bool MatchString(string name1, string name2)
 		{
 			return string.IsNullOrEmpty(name1) || name1 == name2;
 		}
 		
-		protected internal abstract bool DoMatch(AstNode other, Match match);
+		protected internal abstract bool DoMatch(AstNode other, PatternMatching.Match match);
 		
-		internal virtual bool DoMatchCollection (Role role, AstNode pos, Match match, Stack<Pattern.PossibleMatch> backtrackingStack)
+		bool PatternMatching.INode.DoMatch(PatternMatching.INode other, PatternMatching.Match match)
 		{
-			return DoMatch (pos, match);
+			AstNode o = other as AstNode;
+			// try matching if other is null, or if other is an AstNode
+			return (other == null || o != null) && DoMatch(o, match);
+		}
+		
+		bool PatternMatching.INode.DoMatchCollection(Role role, PatternMatching.INode pos, PatternMatching.Match match, PatternMatching.BacktrackingInfo backtrackingInfo)
+		{
+			AstNode o = pos as AstNode;
+			return (pos == null || o != null) && DoMatch (o, match);
+		}
+		
+		PatternMatching.INode PatternMatching.INode.NextSibling {
+			get { return nextSibling; }
+		}
+		
+		PatternMatching.INode PatternMatching.INode.FirstChild {
+			get { return firstChild; }
 		}
 		#endregion
 		

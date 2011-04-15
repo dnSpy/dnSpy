@@ -57,19 +57,23 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			);
 		}
 		
-		[Test, Ignore("Aliases not yet implemented")]
+		[Test]
 		public void GlobalFullNamespaceGenericFieldReferenceExpressionTest()
 		{
-			ParseUtilCSharp.AssertExpression(
-				"global::Namespace.Subnamespace.SomeClass<string>.myField",
-				new MemberReferenceExpression {
-					Target = new MemberType {
+			var target = new MemberType {
 						Target = new SimpleType("global"),
 						IsDoubleColon = true,
 						MemberName = "Namespace"
-					}.Member("Subnamespace"),
-					TypeArguments = { new PrimitiveType("string") }
-				}.Member("myField")
+					}.Member("Subnamespace").Member ("SomeClass");
+			
+			target.AddChild (new PrimitiveType("string"), MemberReferenceExpression.Roles.TypeArgument);
+			
+			ParseUtilCSharp.AssertExpression(
+				"global::Namespace.Subnamespace.SomeClass<string>.myField",
+				new MemberReferenceExpression {
+					Target = target,
+					MemberName = "myField"
+				}
 			);
 		}
 		

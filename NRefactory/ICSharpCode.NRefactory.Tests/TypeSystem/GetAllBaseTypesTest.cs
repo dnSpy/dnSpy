@@ -84,7 +84,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			// class C<X> : C<C<X>> {}
 			DefaultTypeDefinition c = new DefaultTypeDefinition(mscorlib, string.Empty, "C");
-			c.TypeParameters.Add(new DefaultTypeParameter(c, 0, "X"));
+			c.TypeParameters.Add(new DefaultTypeParameter(EntityType.TypeDefinition, 0, "X"));
 			c.BaseTypes.Add(new ParameterizedType(c, new [] { new ParameterizedType(c, new [] { c.TypeParameters[0] }) }));
 			Assert.AreEqual(new [] { c }, c.GetAllBaseTypes(context).ToArray());
 		}

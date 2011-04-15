@@ -48,6 +48,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			this.Right = right;
 		}
 		
+		public AssignmentExpression(Expression left, AssignmentOperatorType op, Expression right)
+		{
+			this.Left = left;
+			this.Operator = op;
+			this.Right = right;
+		}
+		
 		public AssignmentOperatorType Operator {
 			get;
 			set;

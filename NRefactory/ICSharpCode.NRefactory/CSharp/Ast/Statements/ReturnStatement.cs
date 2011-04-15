@@ -44,6 +44,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 		
+		public ReturnStatement ()
+		{
+		}
+		
+		public ReturnStatement (Expression returnExpression)
+		{
+			AddChild (returnExpression, Roles.Expression);
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitReturnStatement (this, data);

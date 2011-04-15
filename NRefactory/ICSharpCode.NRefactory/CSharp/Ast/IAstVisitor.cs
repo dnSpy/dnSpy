@@ -11,7 +11,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	public interface IAstVisitor<in T, out S>
 	{
 		S VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, T data);
-		S VisitArgListExpression(ArgListExpression argListExpression, T data);
+		S VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression, T data);
 		S VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, T data);
 		S VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, T data);
 		S VisitAsExpression(AsExpression asExpression, T data);
@@ -32,6 +32,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, T data);
 		S VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, T data);
 		S VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, T data);
+		S VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression, T data);
 		S VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, T data);
 		S VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, T data);
 		S VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, T data);
@@ -124,5 +125,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitConstraint(Constraint constraint, T data);
 		S VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode, T data);
 		S VisitIdentifier(Identifier identifier, T data);
+		
+		S VisitPatternPlaceholder(AstNode placeholder, PatternMatching.Pattern pattern, T data);
 	}
 }

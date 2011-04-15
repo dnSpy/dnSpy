@@ -110,7 +110,7 @@ namespace Mono.CSharp
 		
 		public void Parse (SeekableStreamReader reader, CompilationSourceFile file, ModuleContainer module)
 		{
-			file.NamespaceContainer = new NamespaceEntry (module, null, file, null);
+			file.NamespaceContainer = new NamespaceContainer (null, module, null, file);
 
 			CSharpParser parser = new CSharpParser (reader, file);
 			parser.parse ();
@@ -439,7 +439,7 @@ namespace Mono.CSharp
 					var files = new List<CompilationSourceFile> ();
 					var unit = new CompilationSourceFile (inputFile, inputFile, 0);
 					var module = new ModuleContainer (ctx);
-					unit.NamespaceContainer = new NamespaceEntry (module, null, unit, null);
+					unit.NamespaceContainer = new NamespaceContainer (null, module, null, unit);
 					files.Add (unit);
 					Location.Initialize (files);
 

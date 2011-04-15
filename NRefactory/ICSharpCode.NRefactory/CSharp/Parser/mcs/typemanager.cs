@@ -15,6 +15,7 @@ using System;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace Mono.CSharp
 {
@@ -142,14 +143,14 @@ namespace Mono.CSharp
 		{
 			var ctx = module.Compiler;
 			foreach (var p in types) {
-				var found = PredefinedType.Resolve (module, p.Kind, p.Namespace, p.Name, p.Arity, Location.Null);
+				var found = PredefinedType.Resolve (module, p.Kind, p.Namespace, p.Name, p.Arity);
 				if (found == null || found == p)
 					continue;
 
 				var tc = found.MemberDefinition as TypeContainer;
 				if (tc != null) {
 					var ns = module.GlobalRootNamespace.GetNamespace (p.Namespace, false);
-					ns.ReplaceTypeWithPredefined (found, p);
+					ns.SetBuiltinType (p);
 
 					tc.SetPredefinedSpec (p);
 					p.SetDefinition (found);
@@ -529,14 +530,8 @@ namespace Mono.CSharp
 			if (type != null)
 				return true;
 
-			Namespace type_ns = module.GlobalRootNamespace.GetNamespace (ns, true);
-			var te = type_ns.LookupType (module, name, arity, true, Location.Null);
-			if (te == null || te.Type.Kind != kind) {
-				return false;
-			}
-
-			type = te.Type;
-			return true;
+			type = Resolve (module, kind, ns, name, arity, false);
+			return type != null;
 		}
 
 		public string GetSignatureForError ()
@@ -544,33 +539,87 @@ namespace Mono.CSharp
 			return ns + "." + name;
 		}
 
-		public static TypeSpec Resolve (ModuleContainer module, MemberKind kind, string ns, string name, int arity, Location loc)
+		public static TypeSpec Resolve (ModuleContainer module, MemberKind kind, string ns, string name, int arity)
+		{
+			return Resolve (module, kind, ns, name, arity, true);
+		}
+
+		public static TypeSpec Resolve (ModuleContainer module, MemberKind kind, string ns, string name, int arity, bool reportErrors)
 		{
 			Namespace type_ns = module.GlobalRootNamespace.GetNamespace (ns, true);
-			var te = type_ns.LookupType (module, name, arity, false, Location.Null);
-			if (te == null) {
-				module.Compiler.Report.Error (518, loc, "The predefined type `{0}.{1}' is not defined or imported", ns, name);
+			var found = type_ns.GetAllTypes (name);
+			if (found == null) {
+				if (reportErrors)
+					module.Compiler.Report.Error (518, "The predefined type `{0}.{1}' is not defined or imported", ns, name);
+
 				return null;
 			}
 
-			var type = te.Type;
-			if (type.Kind != kind) {
-				if (type.Kind == MemberKind.Struct && kind == MemberKind.Void && type.MemberDefinition is TypeContainer) {
-					// Void is declared as struct but we keep it internally as
-					// special kind, the swap will be done by caller
-				} else {
-					module.Compiler.Report.Error (520, loc, "The predefined type `{0}.{1}' is not declared correctly", ns, name);
-					return null;
+			TypeSpec best_match = null;
+			foreach (var candidate in found) {
+				if (candidate.Kind != kind) {
+					if (candidate.Kind == MemberKind.Struct && kind == MemberKind.Void && candidate.MemberDefinition is TypeContainer) {
+						// Void is declared as struct but we keep it internally as
+						// special kind, the swap will be done by caller
+					} else {
+						continue;
+					}
 				}
+
+				if (candidate.Arity != arity)
+					continue;
+
+				if ((candidate.Modifiers & Modifiers.INTERNAL) != 0 && !candidate.MemberDefinition.IsInternalAsPublic (module.DeclaringAssembly))
+					continue;
+
+				if (best_match == null) {
+					best_match = candidate;
+					continue;
+				}
+
+				var other_match = best_match;
+				if (!best_match.MemberDefinition.IsImported &&
+					module.Compiler.BuiltinTypes.Object.MemberDefinition.DeclaringAssembly == candidate.MemberDefinition.DeclaringAssembly) {
+					best_match = candidate;
+				}
+
+				string location;
+				if (best_match.MemberDefinition is MemberCore) {
+					location = ((MemberCore) best_match.MemberDefinition).Location.Name;
+				} else {
+					var assembly = (ImportedAssemblyDefinition) best_match.MemberDefinition.DeclaringAssembly;
+					location = Path.GetFileName (assembly.Location);
+				}
+
+				module.Compiler.Report.SymbolRelatedToPreviousError (other_match);
+				module.Compiler.Report.SymbolRelatedToPreviousError (candidate);
+
+				module.Compiler.Report.Warning (1685, 1,
+					"The predefined type `{0}.{1}' is defined multiple times. Using definition from `{2}'",
+					ns, name, location);
+
+				break;
 			}
 
-			return type;
+			if (best_match == null && reportErrors) {
+				Location loc;
+				if (found[0].MemberDefinition is MemberCore) {
+					loc = ((MemberCore) found[0].MemberDefinition).Location;
+				} else {
+					loc = Location.Null;
+					module.Compiler.Report.SymbolRelatedToPreviousError (found[0]);
+				}
+
+				module.Compiler.Report.Error (520, loc, "The predefined type `{0}.{1}' is not declared correctly", ns, name);
+			}
+
+			return best_match;
 		}
 
-		public TypeSpec Resolve (Location loc)
+		public TypeSpec Resolve ()
 		{
 			if (type == null)
-				type = Resolve (module, kind, ns, name, arity, loc);
+				type = Resolve (module, kind, ns, name, arity);
 
 			return type;
 		}
@@ -662,7 +711,7 @@ namespace Mono.CSharp
 				return member;
 
 			if (declaring_type == null) {
-				if (declaring_type_predefined.Resolve (loc) == null)
+				if (declaring_type_predefined.Resolve () == null)
 					return null;
 			}
 
@@ -670,7 +719,7 @@ namespace Mono.CSharp
 				TypeSpec[] types = new TypeSpec[parameters_predefined.Length];
 				for (int i = 0; i < types.Length; ++i) {
 					var p = parameters_predefined[i];
-					types[i] = p.Resolve (loc);
+					types[i] = p.Resolve ();
 					if (types[i] == null)
 						return null;
 				}

@@ -44,8 +44,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		Expression,
 		Token,
 		QueryClause,
-		Pattern,
-		Placeholder
+		/// <summary>
+		/// Placeholder for a pattern
+		/// </summary>
+		Pattern
 	}
-
 }

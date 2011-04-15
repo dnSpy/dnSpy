@@ -55,6 +55,24 @@ namespace ICSharpCode.NRefactory.CSharp
 			return visitor.VisitInvocationExpression (this, data);
 		}
 		
+		public InvocationExpression ()
+		{
+		}
+		
+		public InvocationExpression (Expression target, IEnumerable<Expression> arguments)
+		{
+			AddChild (target, Roles.TargetExpression);
+			if (arguments != null) {
+				foreach (var arg in arguments) {
+					AddChild (arg, Roles.Argument);
+				}
+			}
+		}
+		
+		public InvocationExpression (Expression target, params Expression[] arguments) : this (target, (IEnumerable<Expression>)arguments)
+		{
+		}	
+		
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			InvocationExpression o = other as InvocationExpression;

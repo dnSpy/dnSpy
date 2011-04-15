@@ -1,10 +1,10 @@
-﻿// 
-// IndexerExpression.cs
+// 
+// AnonymousTypeCreateExpression.cs
 //  
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
-// Copyright (c) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,60 +23,57 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
-	/// Target[Arguments]
+	/// new { [ExpressionList] }
 	/// </summary>
-	public class IndexerExpression : Expression
+	public class AnonymousTypeCreateExpression : Expression
 	{
-		public Expression Target {
-			get { return GetChildByRole (Roles.TargetExpression); }
-			set { SetChildByRole(Roles.TargetExpression, value); }
+		public CSharpTokenNode NewToken {
+			get { return GetChildByRole (Roles.Keyword); }
 		}
 		
-		public CSharpTokenNode LBracketToken {
-			get { return GetChildByRole (Roles.LBracket); }
+		public CSharpTokenNode LParToken {
+			get { return GetChildByRole (Roles.LPar); }
 		}
 		
-		public AstNodeCollection<Expression> Arguments {
-			get { return GetChildrenByRole<Expression>(Roles.Argument); }
+		public AstNodeCollection<Expression> Initializer {
+			get { return GetChildrenByRole (Roles.Expression); }
 		}
 		
-		public CSharpTokenNode RBracketToken {
-			get { return GetChildByRole (Roles.RBracket); }
+		public CSharpTokenNode RParToken {
+			get { return GetChildByRole (Roles.RPar); }
 		}
 		
-		public IndexerExpression ()
+		public AnonymousTypeCreateExpression ()
 		{
 		}
 		
-		public IndexerExpression (Expression target, IEnumerable<Expression> arguments)
+		public AnonymousTypeCreateExpression (IEnumerable<Expression> initializer)
 		{
-			AddChild (target, Roles.TargetExpression);
-			if (arguments != null) {
-				foreach (var arg in arguments) {
-					AddChild (arg, Roles.Argument);
-				}
+			foreach (var ini in initializer) {
+				AddChild (ini, Roles.Expression);
 			}
 		}
 		
-		public IndexerExpression (Expression target, params Expression[] arguments) : this (target, (IEnumerable<Expression>)arguments)
+		public AnonymousTypeCreateExpression (params Expression[] initializer) : this ((IEnumerable<Expression>)initializer)
 		{
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitIndexerExpression (this, data);
+			return visitor.VisitAnonymousTypeCreateExpression (this, data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
-			IndexerExpression o = other as IndexerExpression;
-			return o != null && this.Target.DoMatch(o.Target, match) && this.Arguments.DoMatch(o.Arguments, match);
+			var o = other as AnonymousTypeCreateExpression;
+			return o != null && this.Initializer.DoMatch(o.Initializer, match);
 		}
 	}
 }
+

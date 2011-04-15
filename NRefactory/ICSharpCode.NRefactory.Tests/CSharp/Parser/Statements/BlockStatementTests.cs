@@ -17,7 +17,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 			Assert.AreEqual(0, blockStmt.Statements.Count());
 		}
 		
-		[Test, Ignore("position isn't correct when only parsing a block")]
+		[Test]
 		public void ComplexBlockStatementPositionTest()
 		{
 			string code = @"{
@@ -30,7 +30,8 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 	};
 }";
 			BlockStatement blockStmt = ParseUtilCSharp.ParseStatement<BlockStatement>(code);
-			Assert.AreEqual(1, blockStmt.StartLocation.Column);
+// start column gets moved by ParseStatement
+//			Assert.AreEqual(1, blockStmt.StartLocation.Column);
 			Assert.AreEqual(1, blockStmt.StartLocation.Line);
 			Assert.AreEqual(2, blockStmt.EndLocation.Column);
 			Assert.AreEqual(9, blockStmt.EndLocation.Line);

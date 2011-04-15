@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 {
-	[TestFixture, Ignore("Port unit tests to new DOM")]
+	[TestFixture]
 	public class CastExpressionTests
 	{
 		[Test]
@@ -151,7 +151,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 				});
 		}
 		
-		[Test]
+		[Test, Ignore ("TODO")]
 		public void IntMaxValueToBigInt()
 		{
 			ParseUtilCSharp.AssertExpression(

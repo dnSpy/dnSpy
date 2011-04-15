@@ -127,27 +127,6 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Returns a string that represents the signature for this 
-		// member which should be used in XML documentation.
-		//
-		public override string GetDocCommentName ()
-		{
-			return DocumentationBuilder.GetMethodDocCommentName (this, parameters);
-		}
-
-		//
-		// Raised (and passed an XmlElement that contains the comment)
-		// when GenerateDocComment is writing documentation expectedly.
-		//
-		// FIXME: with a few effort, it could be done with XmlReader,
-		// that means removal of DOM use.
-		//
-		internal override void OnGenerateDocComment (XmlElement el)
-		{
-			DocumentationBuilder.OnMethodGenerateDocComment (this, el, Report);
-		}
-
-		//
 		//   Represents header string for documentation comment.
 		//
 		public override string DocCommentHeader 
@@ -166,6 +145,15 @@ namespace Mono.CSharp {
 				return true;
 
 			return base.EnableOverloadChecks (overload);
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			string s = base.GetSignatureForDocumentation ();
+			if (MemberName.Arity > 0)
+				s += "``" + MemberName.Arity.ToString ();
+
+			return s + parameters.GetSignatureForDocumentation ();
 		}
 
 		public MethodSpec Spec {
@@ -347,6 +335,36 @@ namespace Mono.CSharp {
 			}
 
 			return inflatedMetaInfo;
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			string name;
+			switch (Kind) {
+			case MemberKind.Constructor:
+				name = "#ctor";
+				break;
+			case MemberKind.Method:
+				if (Arity > 0)
+					name = Name + "``" + Arity.ToString ();
+				else
+					name = Name;
+
+				break;
+			default:
+				name = Name;
+				break;
+			}
+
+			name = DeclaringType.GetSignatureForDocumentation () + "." + name + parameters.GetSignatureForDocumentation ();
+			if (Kind == MemberKind.Operator) {
+				var op = Operator.GetType (Name).Value;
+				if (op == Operator.OpType.Explicit || op == Operator.OpType.Implicit) {
+					name += "~" + ReturnType.GetSignatureForDocumentation ();
+				}
+			}
+
+			return name;
 		}
 
 		public override string GetSignatureForError ()
@@ -1636,6 +1654,11 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public override string GetSignatureForDocumentation ()
+		{
+			return Parent.GetSignatureForDocumentation () + ".#ctor" + parameters.GetSignatureForDocumentation ();
+		}
+
 		public override string GetSignatureForError()
 		{
 			return base.GetSignatureForError () + parameters.GetSignatureForError ();
@@ -2259,6 +2282,12 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		public override string GetSignatureForDocumentation ()
+		{
+			// should not be called
+			throw new NotSupportedException ();
+		}
+
 		public override bool IsClsComplianceRequired()
 		{
 			return false;
@@ -2601,6 +2630,16 @@ namespace Mono.CSharp {
 			default:
 				return OpType.TOP;
 			}
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			string s = base.GetSignatureForDocumentation ();
+			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
+				s = s + "~" + ReturnType.GetSignatureForDocumentation ();
+			}
+
+			return s;
 		}
 
 		public override string GetSignatureForError ()

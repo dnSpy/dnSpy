@@ -59,6 +59,25 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RChevron); }
 		}
 		
+		public MemberReferenceExpression ()
+		{
+		}
+		
+		public MemberReferenceExpression (Expression target, string memberName, IEnumerable<AstType> arguments = null)
+		{
+			AddChild (target, Roles.TargetExpression);
+			MemberName = memberName;
+			if (arguments != null) {
+				foreach (var arg in arguments) {
+					AddChild (arg, Roles.TypeArgument);
+				}
+			}
+		}
+		
+		public MemberReferenceExpression (Expression target, string memberName, params AstType[] arguments) : this (target, memberName, (IEnumerable<AstType>)arguments)
+		{
+		}	
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitMemberReferenceExpression (this, data);
