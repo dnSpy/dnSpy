@@ -26,7 +26,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 					}});
 		}
 		
-		[Test, Ignore("Generics not yet supported")]
+		[Test]
 		public void GenericDelegateDeclarationTest()
 		{
 			ParseUtilCSharp.AssertGlobal(

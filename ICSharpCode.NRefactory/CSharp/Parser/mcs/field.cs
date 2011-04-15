@@ -613,7 +613,7 @@ namespace Mono.CSharp
 
 			MetaType[] required_modifier = null;
 			if ((ModFlags & Modifiers.VOLATILE) != 0) {
-				var mod = Module.PredefinedTypes.IsVolatile.Resolve (Location);
+				var mod = Module.PredefinedTypes.IsVolatile.Resolve ();
 				if (mod != null)
 					required_modifier = new MetaType[] { mod.GetMetaInfo () };
 			}

@@ -37,7 +37,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBlankLinesAfterUsings ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.BlankLinesAfterUsings = 2;
 			
 			var adapter = Test (policy, @"using System;
@@ -65,7 +65,7 @@ namespace Test
 		[Test()]
 		public void TestBlankLinesBeforeUsings ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.BlankLinesAfterUsings = 0;
 			policy.BlankLinesBeforeUsings = 2;
 			
@@ -94,7 +94,7 @@ namespace Test
 		[Test()]
 		public void TestBlankLinesBeforeFirstDeclaration ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.BlankLinesBeforeFirstDeclaration = 2;
 			
 			var adapter = Test (policy, @"namespace Test
@@ -125,7 +125,7 @@ namespace Test
 		[Test()]
 		public void TestBlankLinesBetweenTypes ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.BlankLinesBetweenTypes = 1;
 			
 			var adapter = Test (policy, @"namespace Test
@@ -173,7 +173,7 @@ namespace Test
 		[Test()]
 		public void TestBlankLinesBetweenFields ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.BlankLinesBetweenFields = 1;
 			
 			var adapter = Test (policy, @"class Test
@@ -203,7 +203,7 @@ namespace Test
 		[Test()]
 		public void TestBlankLinesBetweenEventFields ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.BlankLinesBetweenEventFields = 1;
 			
 			var adapter = Test (policy, @"class Test
@@ -234,7 +234,7 @@ namespace Test
 		[Test()]
 		public void TestBlankLinesBetweenMembers ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.BlankLinesBetweenMembers = 1;
 			
 			var adapter = Test (policy,@"class Test

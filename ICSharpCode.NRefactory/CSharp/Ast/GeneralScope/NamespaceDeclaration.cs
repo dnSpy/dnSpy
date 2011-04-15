@@ -86,6 +86,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RBrace); }
 		}
 		
+		public NamespaceDeclaration ()
+		{
+		}
+		
+		public NamespaceDeclaration (string name)
+		{
+			this.Name = name;
+		}
+		
 		public static string BuildQualifiedName (string name1, string name2)
 		{
 			if (string.IsNullOrEmpty (name1))
@@ -95,6 +104,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			return name1 + "." + name2;
 		}
 		
+		public void AddMember (AstNode child)
+		{
+			AddChild (child, MemberRole);
+		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{

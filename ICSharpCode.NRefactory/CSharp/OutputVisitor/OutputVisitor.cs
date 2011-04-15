@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-using ICSharpCode.NRefactory.CSharp.PatternMatching;
+using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
@@ -17,10 +17,10 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// Outputs the AST.
 	/// </summary>
-	public class OutputVisitor : IPatternAstVisitor<object, object>
+	public class OutputVisitor : IAstVisitor<object, object>, IPatternAstVisitor<object, object>
 	{
 		readonly IOutputFormatter formatter;
-		readonly CSharpFormattingPolicy policy;
+		readonly CSharpFormattingOptions policy;
 		
 		readonly Stack<AstNode> containerStack = new Stack<AstNode>();
 		readonly Stack<AstNode> positionStack = new Stack<AstNode>();
@@ -42,7 +42,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			Division
 		}
 		
-		public OutputVisitor(TextWriter textWriter, CSharpFormattingPolicy formattingPolicy)
+		public OutputVisitor(TextWriter textWriter, CSharpFormattingOptions formattingPolicy)
 		{
 			if (textWriter == null)
 				throw new ArgumentNullException("textWriter");
@@ -52,7 +52,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			this.policy = formattingPolicy;
 		}
 		
-		public OutputVisitor(IOutputFormatter formatter, CSharpFormattingPolicy formattingPolicy)
+		public OutputVisitor(IOutputFormatter formatter, CSharpFormattingOptions formattingPolicy)
 		{
 			if (formatter == null)
 				throw new ArgumentNullException("formatter");
@@ -67,7 +67,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			// Ensure that nodes are visited in the proper nested order.
 			// Jumps to different subtrees are allowed only for the child of a placeholder node.
-			Debug.Assert(containerStack.Count == 0 || node.Parent == containerStack.Peek() || containerStack.Peek().NodeType == NodeType.Placeholder);
+			Debug.Assert(containerStack.Count == 0 || node.Parent == containerStack.Peek() || containerStack.Peek().NodeType == NodeType.Pattern);
 			if (positionStack.Count > 0)
 				WriteSpecialsUpToNode(node);
 			containerStack.Push(node);
@@ -468,15 +468,29 @@ namespace ICSharpCode.NRefactory.CSharp
 			return EndNode(anonymousMethodExpression);
 		}
 		
-		public object VisitArgListExpression(ArgListExpression argListExpression, object data)
+		public object VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression, object data)
 		{
-			StartNode(argListExpression);
-			WriteKeyword("__arglist");
-			if (!argListExpression.IsAccess) {
-				Space(policy.SpaceBeforeMethodCallParentheses);
-				WriteCommaSeparatedListInParenthesis(argListExpression.Arguments, policy.SpaceWithinMethodCallParentheses);
+			StartNode(undocumentedExpression);
+			switch (undocumentedExpression.UndocumentedExpressionType) {
+			case UndocumentedExpressionType.ArgList:
+			case UndocumentedExpressionType.ArgListAccess:
+				WriteKeyword("__arglist");
+				break;
+			case UndocumentedExpressionType.MakeRef:
+				WriteKeyword("__makeref");
+				break;
+			case UndocumentedExpressionType.RefType:
+				WriteKeyword("__reftype");
+				break;
+			case UndocumentedExpressionType.RefValue:
+				WriteKeyword("__refvalue");
+				break;
 			}
-			return EndNode(argListExpression);
+			if (undocumentedExpression.Arguments.Count > 0) {
+				Space(policy.SpaceBeforeMethodCallParentheses);
+				WriteCommaSeparatedListInParenthesis(undocumentedExpression.Arguments, policy.SpaceWithinMethodCallParentheses);
+			}
+			return EndNode(undocumentedExpression);
 		}
 		
 		public object VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
@@ -501,7 +515,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				style = BraceStyle.EndOfLine;
 			OpenBrace(style);
 			bool isFirst = true;
-			foreach (AstNode node in arrayInitializerExpression.Children) {
+			foreach (AstNode node in arrayInitializerExpression.Elements) {
 				if (isFirst) {
 					isFirst = false;
 				} else {
@@ -771,6 +785,25 @@ namespace ICSharpCode.NRefactory.CSharp
 			return EndNode(objectCreateExpression);
 		}
 		
+		public object VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression, object data)
+		{
+			StartNode(anonymousTypeCreateExpression);
+			WriteKeyword("new");
+			Space();
+			LPar();
+			RPar();
+			Space();
+			OpenBrace(policy.AnonymousMethodBraceStyle);
+			foreach (AstNode node in anonymousTypeCreateExpression.Initializer) {
+				node.AcceptVisitor(this, null);
+				if (node.NextSibling != null)
+					Comma(node);
+				NewLine ();
+			}
+			CloseBrace(policy.AnonymousMethodBraceStyle);
+			return EndNode(anonymousTypeCreateExpression);
+		}
+
 		public object VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
 		{
 			StartNode(parenthesizedExpression);
@@ -1026,7 +1059,8 @@ namespace ICSharpCode.NRefactory.CSharp
 				if (first) {
 					first = false;
 				} else {
-					NewLine();
+					if (!(clause is QueryContinuationClause))
+						NewLine();
 				}
 				clause.AcceptVisitor(this, data);
 			}
@@ -1169,8 +1203,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(attributeSection);
 			WriteToken("[", AstNode.Roles.LBracket);
-			if (attributeSection.AttributeTarget != AttributeTarget.None) {
-				WriteToken(AttributeSection.GetAttributeTargetName(attributeSection.AttributeTarget), AttributeSection.TargetRole);
+			if (!string.IsNullOrEmpty (attributeSection.AttributeTarget)) {
+				WriteToken(attributeSection.AttributeTarget, AttributeSection.TargetRole);
 				WriteToken(":", AttributeSection.Roles.Colon);
 				Space();
 			}
@@ -1847,7 +1881,6 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(fixedFieldDeclaration);
 			WriteAttributes(fixedFieldDeclaration.Attributes);
 			WriteModifiers(fixedFieldDeclaration.ModifierTokens);
-			Space();
 			WriteKeyword("fixed");
 			Space();
 			fixedFieldDeclaration.ReturnType.AcceptVisitor (this, data);
@@ -1861,10 +1894,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(fixedVariableInitializer);
 			WriteIdentifier(fixedVariableInitializer.Name);
-			if (!fixedVariableInitializer.Initializer.IsNull) {
+			if (!fixedVariableInitializer.CountExpression.IsNull) {
 				WriteToken("[", AstNode.Roles.LBracket);
 				Space(policy.SpacesWithinBrackets);
-				fixedVariableInitializer.Initializer.AcceptVisitor(this, data);
+				fixedVariableInitializer.CountExpression.AcceptVisitor(this, data);
 				Space(policy.SpacesWithinBrackets);
 				WriteToken("]", AstNode.Roles.RBracket);
 			}
@@ -2140,77 +2173,71 @@ namespace ICSharpCode.NRefactory.CSharp
 		#endregion
 		
 		#region Pattern Nodes
-		object IPatternAstVisitor<object, object>.VisitPlaceholder(AstNode placeholder, AstNode child, object data)
+		public object VisitPatternPlaceholder(AstNode placeholder, PatternMatching.Pattern pattern, object data)
 		{
 			StartNode(placeholder);
-			child.AcceptVisitor(this, data);
+			pattern.AcceptVisitor(this, data);
 			return EndNode(placeholder);
 		}
 		
 		object IPatternAstVisitor<object, object>.VisitAnyNode(AnyNode anyNode, object data)
 		{
-			StartNode(anyNode);
 			if (!string.IsNullOrEmpty(anyNode.GroupName)) {
 				WriteIdentifier(anyNode.GroupName);
 				WriteToken(":", AstNode.Roles.Colon);
 			}
 			WriteKeyword("anyNode");
-			return EndNode(anyNode);
+			return null;
 		}
 		
 		object IPatternAstVisitor<object, object>.VisitBackreference(Backreference backreference, object data)
 		{
-			StartNode(backreference);
 			WriteKeyword("backreference");
 			LPar();
 			WriteIdentifier(backreference.ReferencedGroupName);
 			RPar();
-			return EndNode(backreference);
+			return null;
 		}
 		
 		object IPatternAstVisitor<object, object>.VisitIdentifierExpressionBackreference(IdentifierExpressionBackreference identifierExpressionBackreference, object data)
 		{
-			StartNode(identifierExpressionBackreference);
 			WriteKeyword("identifierBackreference");
 			LPar();
 			WriteIdentifier(identifierExpressionBackreference.ReferencedGroupName);
 			RPar();
-			return EndNode(identifierExpressionBackreference);
+			return null;
 		}
 		
 		object IPatternAstVisitor<object, object>.VisitChoice(Choice choice, object data)
 		{
-			StartNode(choice);
 			WriteKeyword("choice");
 			Space();
 			LPar();
 			NewLine();
 			formatter.Indent();
-			foreach (AstNode alternative in choice) {
-				alternative.AcceptVisitor(this, data);
-				if (alternative != choice.LastChild)
+			foreach (INode alternative in choice) {
+				VisitNodeInPattern(alternative, data);
+				if (alternative != choice.Last())
 					WriteToken(",", AstNode.Roles.Comma);
 				NewLine();
 			}
 			formatter.Unindent();
 			RPar();
-			return EndNode(choice);
+			return null;
 		}
 		
 		object IPatternAstVisitor<object, object>.VisitNamedNode(NamedNode namedNode, object data)
 		{
-			StartNode(namedNode);
 			if (!string.IsNullOrEmpty(namedNode.GroupName)) {
 				WriteIdentifier(namedNode.GroupName);
 				WriteToken(":", AstNode.Roles.Colon);
 			}
-			namedNode.GetChildByRole(NamedNode.ElementRole).AcceptVisitor(this, data);
-			return EndNode(namedNode);
+			VisitNodeInPattern(namedNode.ChildNode, data);
+			return null;
 		}
 		
 		object IPatternAstVisitor<object, object>.VisitRepeat(Repeat repeat, object data)
 		{
-			StartNode(repeat);
 			WriteKeyword("repeat");
 			LPar();
 			if (repeat.MinCount != 0 || repeat.MaxCount != int.MaxValue) {
@@ -2219,19 +2246,33 @@ namespace ICSharpCode.NRefactory.CSharp
 				WriteIdentifier(repeat.MaxCount.ToString());
 				WriteToken(",", AstNode.Roles.Comma);
 			}
-			repeat.GetChildByRole(Repeat.ElementRole).AcceptVisitor(this, data);
+			VisitNodeInPattern(repeat.ChildNode, data);
 			RPar();
-			return EndNode(repeat);
+			return null;
 		}
 		
 		object IPatternAstVisitor<object, object>.VisitOptionalNode(OptionalNode optionalNode, object data)
 		{
-			StartNode(optionalNode);
 			WriteKeyword("optional");
 			LPar();
-			optionalNode.GetChildByRole(OptionalNode.ElementRole).AcceptVisitor(this, data);
+			VisitNodeInPattern(optionalNode.ChildNode, data);
 			RPar();
-			return EndNode(optionalNode);
+			return null;
+		}
+		
+		void VisitNodeInPattern(INode childNode, object data)
+		{
+			AstNode astNode = childNode as AstNode;
+			if (astNode != null) {
+				astNode.AcceptVisitor(this, data);
+			} else {
+				Pattern pattern = childNode as Pattern;
+				if (pattern != null) {
+					pattern.AcceptVisitor(this, data);
+				} else {
+					throw new InvalidOperationException("Unknown node type in pattern");
+				}
+			}
 		}
 		#endregion
 	}

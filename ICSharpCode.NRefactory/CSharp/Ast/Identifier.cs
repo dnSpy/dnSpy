@@ -66,6 +66,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
+		public bool IsQuoted {
+			get;
+			set;
+		}
+		
 		AstLocation startLocation;
 		public override AstLocation StartLocation {
 			get {
@@ -75,7 +80,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public override AstLocation EndLocation {
 			get {
-				return new AstLocation (StartLocation.Line, StartLocation.Column + (Name ?? "").Length);
+				return new AstLocation (StartLocation.Line, StartLocation.Column + (Name ?? "").Length + (IsQuoted ? 1 : 0));
 			}
 		}
 		
@@ -88,7 +93,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
-			this.Name = name;
+			IsQuoted = name.StartsWith ("@");
+			this.Name = IsQuoted ? name.Substring (1) : name;
 			this.startLocation = location;
 		}
 		

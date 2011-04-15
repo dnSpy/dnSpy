@@ -2026,19 +2026,26 @@ namespace Mono.CSharp {
 
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
-			// Type it as string cast
-			if (targetType.BuiltinType == BuiltinTypeSpec.Type.Object)
+			switch (targetType.BuiltinType) {
+			case BuiltinTypeSpec.Type.Object:
+				// Type it as string cast
 				enc.Encode (rc.Module.Compiler.BuiltinTypes.String);
-
-			var ac = targetType as ArrayContainer;
-			if (ac != null) {
-				if (ac.Rank != 1 || ac.Element.IsArray)
-					base.EncodeAttributeValue (rc, enc, targetType);
-				else
-					enc.Encode (uint.MaxValue);
-			} else {
+				goto case BuiltinTypeSpec.Type.String;
+			case BuiltinTypeSpec.Type.String:
+			case BuiltinTypeSpec.Type.Type:
 				enc.Encode (byte.MaxValue);
+				return;
+			default:
+				var ac = targetType as ArrayContainer;
+				if (ac != null && ac.Rank == 1 && !ac.Element.IsArray) {
+					enc.Encode (uint.MaxValue);
+					return;
+				}
+
+				break;
 			}
+
+			base.EncodeAttributeValue (rc, enc, targetType);
 		}
 
 		public override void Emit (EmitContext ec)

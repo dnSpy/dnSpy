@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 {
-	[TestFixture, Ignore("Generics not yet implemented")]
+	[TestFixture]
 	public class MethodDeclarationTests
 	{
 		[Test]
@@ -89,7 +89,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 		public void MethodWithUnnamedParameterDeclarationTest()
 		{
 			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("void MyMethod(int) {} ", true);
-			Assert.AreEqual("System.Void", md.ReturnType);
+			Assert.AreEqual("void", md.ReturnType.ToString ());
 			Assert.AreEqual(1, md.Parameters.Count());
 			Assert.AreEqual("int", ((PrimitiveType)md.Parameters.Single().Type).Keyword);
 		}
@@ -202,6 +202,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 ",
 				new TypeDeclaration {
 					ClassType = ClassType.Interface,
+					Name = "MyInterface",
 					BaseTypes = { new SimpleType("IDisposable") },
 					Members = {
 						new MethodDeclaration {
@@ -214,7 +215,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 		[Test]
 		public void MethodImplementingInterfaceTest()
 		{
-			ParseUtilCSharp.AssertGlobal(
+			ParseUtilCSharp.AssertTypeMember(
 				"int MyInterface.MyMethod() {} ",
 				new MethodDeclaration {
 					ReturnType = new PrimitiveType("int"),
@@ -227,7 +228,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 		[Test]
 		public void MethodImplementingGenericInterfaceTest()
 		{
-			ParseUtilCSharp.AssertGlobal(
+			ParseUtilCSharp.AssertTypeMember(
 				"int MyInterface<string>.MyMethod() {} ",
 				new MethodDeclaration {
 					ReturnType = new PrimitiveType("int"),
@@ -240,7 +241,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 		[Test]
 		public void VoidMethodImplementingInterfaceTest()
 		{
-			ParseUtilCSharp.AssertGlobal(
+			ParseUtilCSharp.AssertTypeMember (
 				"void MyInterface.MyMethod() {} ",
 				new MethodDeclaration {
 					ReturnType = new PrimitiveType("void"),
@@ -253,11 +254,11 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 		[Test]
 		public void VoidMethodImplementingGenericInterfaceTest()
 		{
-			ParseUtilCSharp.AssertGlobal(
+			ParseUtilCSharp.AssertTypeMember (
 				"void MyInterface<string>.MyMethod() {} ",
 				new MethodDeclaration {
 					ReturnType = new PrimitiveType("void"),
-					PrivateImplementationType = new SimpleType("MyInterface"),
+					PrivateImplementationType = new SimpleType("MyInterface") { TypeArguments = { new PrimitiveType("string") } },
 					Name = "MyMethod",
 					Body = new BlockStatement()
 				});
@@ -305,15 +306,15 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 		public void MethodWithEmptyAssignmentErrorInBody()
 		{
 			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>(
-				"void A\n" +
+				"void A ()\n" +
 				"{\n" +
 				"int a = 3;\n" +
 				" = 4;\n" +
 				"}", true // expect errors
 			);
 			Assert.AreEqual("A", md.Name);
-			Assert.AreEqual(new AstLocation(1, 2), md.Body.StartLocation);
-			Assert.AreEqual(new AstLocation(2, 5), md.Body.EndLocation);
+			Assert.AreEqual(new AstLocation(2, 1), md.Body.StartLocation);
+			Assert.AreEqual(new AstLocation(5, 2), md.Body.EndLocation);
 		}
 		
 		[Test]

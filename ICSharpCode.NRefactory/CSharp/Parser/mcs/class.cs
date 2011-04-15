@@ -32,12 +32,19 @@ using System.Reflection;
 using System.Reflection.Emit;
 #endif
 
-namespace Mono.CSharp {
+namespace Mono.CSharp
+{
+
+	public interface ITypesContainer
+	{
+		Location Location { get; }
+		MemberName MemberName { get; }
+	}
 
 	/// <summary>
 	///   This is the base class for structs and classes.  
 	/// </summary>
-	public abstract class TypeContainer : DeclSpace, ITypeDefinition
+	public abstract class TypeContainer : DeclSpace, ITypeDefinition, ITypesContainer
 	{
 		//
 		// Different context is needed when resolving type container base
@@ -96,7 +103,7 @@ namespace Mono.CSharp {
 				return tc.GetSignatureForError ();
 			}
 
-			public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
+			public IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope)
 			{
 				return null;
 			}
@@ -232,7 +239,7 @@ namespace Mono.CSharp {
 		/// </remarks>
 		PendingImplementation pending;
 
-		public TypeContainer (NamespaceEntry ns, DeclSpace parent, MemberName name,
+		public TypeContainer (NamespaceContainer ns, DeclSpace parent, MemberName name,
 				      Attributes attrs, MemberKind kind)
 			: base (ns, parent, name, attrs)
 		{
@@ -909,7 +916,7 @@ namespace Mono.CSharp {
 			for (int i = 0, j = 0; i < count; i++){
 				FullNamedExpression fne = type_bases [i];
 
-				TypeExpr fne_resolved = fne.ResolveAsTypeTerminal (base_context, false);
+				TypeExpr fne_resolved = fne.ResolveAsType (base_context);
 				if (fne_resolved == null)
 					continue;
 
@@ -1079,11 +1086,6 @@ namespace Mono.CSharp {
 			int type_size = Kind == MemberKind.Struct && first_nonstatic_field == null ? 1 : 0;
 
 			if (IsTopLevel) {
-				// TODO: Completely wrong
-				if (Module.GlobalRootNamespace.IsNamespace (Name)) {
-					Report.Error (519, Location, "`{0}' clashes with a predefined namespace", Name);
-				}
-
 				TypeBuilder = Module.CreateBuilder (Name, TypeAttr, type_size);
 			} else {
 				TypeBuilder = Parent.TypeBuilder.DefineNestedType (Basename, TypeAttr, null, type_size);
@@ -1145,7 +1147,7 @@ namespace Mono.CSharp {
 				var cloned_params = ParametersCompiled.CreateFullyResolved (base_parameters, method.Parameters.Types);
 				if (method.Parameters.HasArglist) {
 					cloned_params.FixedParameters[0] = new Parameter (null, "__arglist", Parameter.Modifier.NONE, null, Location);
-					cloned_params.Types[0] = Module.PredefinedTypes.RuntimeArgumentHandle.Resolve (Location);
+					cloned_params.Types[0] = Module.PredefinedTypes.RuntimeArgumentHandle.Resolve ();
 				}
 
 				GenericMethod generic_method;
@@ -2031,7 +2033,7 @@ namespace Mono.CSharp {
 		// Performs the validation on a Method's modifiers (properties have
 		// the same properties).
 		//
-		// TODO: Why is it not done at parse stage ?
+		// TODO: Why is it not done at parse stage, move to Modifiers::Check
 		//
 		public bool MethodModifiersValid (MemberCore mc)
 		{
@@ -2192,7 +2194,6 @@ namespace Mono.CSharp {
 				return e;
 
 			e = null;
-			int errors = Report.Errors;
 
 			if (arity == 0) {
 				TypeParameter[] tp = CurrentTypeParameters;
@@ -2210,12 +2211,18 @@ namespace Mono.CSharp {
 					e = new TypeExpression (t, Location.Null);
 				else if (Parent != null) {
 					e = Parent.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
-				} else
+				} else {
+					int errors = Report.Errors;
+
 					e = NamespaceEntry.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+
+					if (errors != Report.Errors)
+						return e;
+				}
 			}
 
 			// TODO MemberCache: How to cache arity stuff ?
-			if (errors == Report.Errors && arity == 0)
+			if (arity == 0)
 				Cache[name] = e;
 
 			return e;
@@ -2298,7 +2305,7 @@ namespace Mono.CSharp {
 	{
 		SecurityType declarative_security;
 
-		public ClassOrStruct (NamespaceEntry ns, DeclSpace parent,
+		public ClassOrStruct (NamespaceContainer ns, DeclSpace parent,
 				      MemberName name, Attributes attrs, MemberKind kind)
 			: base (ns, parent, name, attrs, kind)
 		{
@@ -2423,7 +2430,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
+		public override IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope)
 		{
 			DeclSpace top_level = Parent;
 			if (top_level != null) {
@@ -2463,7 +2470,7 @@ namespace Mono.CSharp {
 
 		public const TypeAttributes StaticClassAttribute = TypeAttributes.Abstract | TypeAttributes.Sealed;
 
-		public Class (NamespaceEntry ns, DeclSpace parent, MemberName name, Modifiers mod,
+		public Class (NamespaceContainer ns, DeclSpace parent, MemberName name, Modifiers mod,
 			      Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Class)
 		{
@@ -2707,7 +2714,7 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Struct (NamespaceEntry ns, DeclSpace parent, MemberName name,
+		public Struct (NamespaceContainer ns, DeclSpace parent, MemberName name,
 			       Modifiers mod, Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Struct)
 		{
@@ -2898,7 +2905,7 @@ namespace Mono.CSharp {
 		 	Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Interface (NamespaceEntry ns, DeclSpace parent, MemberName name, Modifiers mod,
+		public Interface (NamespaceContainer ns, DeclSpace parent, MemberName name, Modifiers mod,
 				  Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Interface)
 		{
@@ -3242,7 +3249,7 @@ namespace Mono.CSharp {
 			}
 
 			if (IsExplicitImpl) {
-				TypeExpr iface_texpr = MemberName.Left.GetTypeExpression ().ResolveAsTypeTerminal (Parent, false);
+				TypeExpr iface_texpr = MemberName.Left.GetTypeExpression ().ResolveAsType (Parent);
 				if (iface_texpr == null)
 					return false;
 
@@ -3408,6 +3415,14 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpName (InterfaceType) + "." + name;
 		}
 
+		public override string GetSignatureForDocumentation ()
+		{
+			if (IsExplicitImpl)
+				return Parent.GetSignatureForDocumentation () + "." + InterfaceType.GetExplicitNameSignatureForDocumentation () + "#" + ShortName;
+
+			return Parent.GetSignatureForDocumentation () + "." + ShortName;
+		}
+
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ()) {
@@ -3553,12 +3568,17 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override string GetSignatureForDocumentation ()
+		{
+			return Parent.Name + "." + Name;
+		}
+
 		protected virtual bool ResolveMemberType ()
 		{
 			if (member_type != null)
 				throw new InternalErrorException ("Multi-resolve");
 
-			TypeExpr te = type_expr.ResolveAsTypeTerminal (this, false);
+			TypeExpr te = type_expr.ResolveAsType (this);
 			if (te == null)
 				return false;
 			

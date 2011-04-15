@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
@@ -126,7 +126,7 @@ namespace ICSharpCode.NRefactory.Demo
 		void CSharpGenerateCodeButtonClick(object sender, EventArgs e)
 		{
 			StringWriter w = new StringWriter();
-			OutputVisitor output = new OutputVisitor(w, new CSharpFormattingPolicy());
+			OutputVisitor output = new OutputVisitor(w, new CSharpFormattingOptions());
 			compilationUnit.AcceptVisitor(output, null);
 			csharpCodeTextBox.Text = w.ToString();
 		}

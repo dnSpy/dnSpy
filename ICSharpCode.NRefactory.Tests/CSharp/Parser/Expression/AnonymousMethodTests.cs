@@ -34,7 +34,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			Assert.AreEqual(0, ame.Body.Statements.Count());
 		}
 		
-		[Test, Ignore("Parameter list is broken")]
+		[Test]
 		public void EmptyAnonymousMethod()
 		{
 			AnonymousMethodExpression ame = Parse("delegate() {}");
@@ -43,14 +43,14 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			Assert.IsTrue(ame.HasParameterList);
 		}
 		
-		[Test, Ignore("Parameter list is broken")]
+		[Test]
 		public void SimpleAnonymousMethod()
 		{
 			AnonymousMethodExpression ame = Parse("delegate(int a, int b) { return a + b; }");
 			Assert.IsTrue(ame.HasParameterList);
 			Assert.AreEqual(2, ame.Parameters.Count());
 			Assert.AreEqual(1, ame.Body.Statements.Count());
-			Assert.IsTrue(ame.Body.Children.First() is ReturnStatement);
+			Assert.IsTrue(ame.Body.Statements.First() is ReturnStatement);
 		}
 	}
 }

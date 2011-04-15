@@ -221,7 +221,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 	
 	public abstract class TestBase
 	{
-		protected static ITextEditorAdapter GetResult (CSharpFormattingPolicy policy, string input)
+		protected static ITextEditorAdapter GetResult (CSharpFormattingOptions policy, string input)
 		{
 			var adapter = new TextEditorTestAdapter (input);
 			var visitior = new AstFormattingVisitor (policy, adapter);
@@ -233,7 +233,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 			return adapter;
 		}
 		
-		protected static ITextEditorAdapter Test (CSharpFormattingPolicy policy, string input, string expectedOutput)
+		protected static ITextEditorAdapter Test (CSharpFormattingOptions policy, string input, string expectedOutput)
 		{
 			var adapter = new TextEditorTestAdapter (input);
 			var visitior = new AstFormattingVisitor (policy, adapter);
@@ -245,7 +245,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 			return adapter;
 		}
 
-		protected static void Continue (CSharpFormattingPolicy policy, ITextEditorAdapter adapter, string expectedOutput)
+		protected static void Continue (CSharpFormattingOptions policy, ITextEditorAdapter adapter, string expectedOutput)
 		{
 			var visitior = new AstFormattingVisitor (policy, adapter);
 			

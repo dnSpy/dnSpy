@@ -54,7 +54,7 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
- 		public Delegate (NamespaceEntry ns, DeclSpace parent, FullNamedExpression type,
+ 		public Delegate (NamespaceContainer ns, DeclSpace parent, FullNamedExpression type,
 				 Modifiers mod_flags, MemberName name, ParametersCompiled param_list,
 				 Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Delegate)
@@ -150,7 +150,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ReturnType = ReturnType.ResolveAsTypeTerminal (this, false);
+			ReturnType = ReturnType.ResolveAsType (this);
 			if (ReturnType == null)
 				return false;
 

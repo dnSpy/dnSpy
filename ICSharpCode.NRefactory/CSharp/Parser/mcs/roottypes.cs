@@ -124,6 +124,9 @@ namespace Mono.CSharp
 		readonly Dictionary<TypeSpec, ReferenceContainer> reference_types;
 		readonly Dictionary<TypeSpec, MethodSpec> attrs_cache;
 
+		// Used for unique namespaces/types during parsing
+		Dictionary<MemberName, ITypesContainer> defined_type_containers;
+
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
 		readonly RootNamespace global_ns;
@@ -154,6 +157,8 @@ namespace Mono.CSharp
 			pointer_types = new Dictionary<TypeSpec, PointerContainer> ();
 			reference_types = new Dictionary<TypeSpec, ReferenceContainer> ();
 			attrs_cache = new Dictionary<TypeSpec, MethodSpec> ();
+
+			defined_type_containers = new Dictionary<MemberName, ITypesContainer> ();
 		}
 
 		#region Properties
@@ -195,6 +200,10 @@ namespace Mono.CSharp
 			get {
 				return assembly;
 			}
+		}
+
+		internal DocumentationBuilder DocumentationBuilder {
+			get; set;
 		}
 
 		public Evaluator Evaluator {
@@ -366,7 +375,7 @@ namespace Mono.CSharp
 		public RootNamespace CreateRootNamespace (string alias)
 		{
 			if (alias == global_ns.Alias) {
-				NamespaceEntry.Error_GlobalNamespaceRedefined (Location.Null, Report);
+				NamespaceContainer.Error_GlobalNamespaceRedefined (Location.Null, Report);
 				return global_ns;
 			}
 
@@ -387,6 +396,9 @@ namespace Mono.CSharp
 
 		public new void CreateType ()
 		{
+			// Release cache used by parser only
+			defined_type_containers = null;
+
 			foreach (TypeContainer tc in types)
 				tc.CreateType ();
 		}
@@ -486,12 +498,53 @@ namespace Mono.CSharp
 			return DeclaringAssembly.IsCLSCompliant;
 		}
 
-		protected override bool AddMemberType (TypeContainer ds)
+		protected override bool AddMemberType (TypeContainer tc)
 		{
-			if (!AddToContainer (ds, ds.Name))
-				return false;
-			ds.NamespaceEntry.NS.AddType (this, ds.Definition);
-			return true;
+			if (AddTypesContainer (tc)) {
+				if ((tc.ModFlags & Modifiers.PARTIAL) != 0)
+					defined_names.Add (tc.Name, tc);
+
+				tc.NamespaceEntry.NS.AddType (this, tc.Definition);
+				return true;
+			}
+
+			return false;
+		}
+
+		public bool AddTypesContainer (ITypesContainer container)
+		{
+			var mn = container.MemberName;
+			ITypesContainer found;
+			if (!defined_type_containers.TryGetValue (mn, out found)) {
+				defined_type_containers.Add (mn, container);
+				return true;
+			}
+
+			if (container is NamespaceContainer && found is NamespaceContainer)
+				return true;
+
+			var container_tc = container as TypeContainer;
+			var found_tc = found as TypeContainer;
+			if (container_tc != null && found_tc != null && container_tc.Kind == found_tc.Kind) {
+				if ((found_tc.ModFlags & container_tc.ModFlags & Modifiers.PARTIAL) != 0) {
+					return false;
+				}
+
+				if (((found_tc.ModFlags | container_tc.ModFlags) & Modifiers.PARTIAL) != 0) {
+					Report.SymbolRelatedToPreviousError (found_tc);
+					Error_MissingPartialModifier (container_tc);
+					return false;
+				}
+			}
+
+			string ns = mn.Left != null ? mn.Left.GetSignatureForError () : Module.GlobalRootNamespace.GetSignatureForError ();
+			mn = new MemberName (mn.Name, mn.TypeArguments, mn.Location);
+
+			Report.SymbolRelatedToPreviousError (found.Location, "");
+			Report.Error (101, container.Location,
+				"The namespace `{0}' already contains a definition for `{1}'",
+				ns, mn.GetSignatureForError ());
+			return false;
 		}
 
 		protected override void RemoveMemberType (TypeContainer ds)
@@ -517,7 +570,7 @@ namespace Mono.CSharp
 	}
 
 	sealed class RootDeclSpace : TypeContainer {
-		public RootDeclSpace (ModuleContainer module, NamespaceEntry ns)
+		public RootDeclSpace (ModuleContainer module, NamespaceContainer ns)
 			: base (ns, null, MemberName.Null, null, 0)
 		{
 			PartialContainer = module;
@@ -558,7 +611,7 @@ namespace Mono.CSharp
 			return PartialContainer.IsClsComplianceRequired ();
 		}
 
-		public override IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
+		public override IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope)
 		{
 			return null;
 		}

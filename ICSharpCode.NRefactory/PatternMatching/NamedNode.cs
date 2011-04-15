@@ -3,36 +3,41 @@
 
 using System;
 
-namespace ICSharpCode.NRefactory.CSharp.PatternMatching
+namespace ICSharpCode.NRefactory.PatternMatching
 {
 	/// <summary>
 	/// Represents a named node within a pattern.
 	/// </summary>
 	public class NamedNode : Pattern
 	{
-		public static readonly Role<AstNode> ElementRole = new Role<AstNode>("Element", AstNode.Null);
-		
 		readonly string groupName;
+		readonly INode childNode;
 		
 		public string GroupName {
 			get { return groupName; }
 		}
 		
-		public NamedNode(string groupName, AstNode childNode)
-		{
-			this.groupName = groupName;
-			AddChild(childNode, ElementRole);
+		public INode ChildNode {
+			get { return childNode; }
 		}
 		
-		protected internal override bool DoMatch(AstNode other, Match match)
+		public NamedNode(string groupName, INode childNode)
+		{
+			if (childNode == null)
+				throw new ArgumentNullException("childNode");
+			this.groupName = groupName;
+			this.childNode = childNode;
+		}
+		
+		public override bool DoMatch(INode other, Match match)
 		{
 			match.Add(this.groupName, other);
-			return GetChildByRole(ElementRole).DoMatch(other, match);
+			return childNode.DoMatch(other, match);
 		}
 		
-		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S>(IPatternAstVisitor<T, S> visitor, T data)
 		{
-			return ((IPatternAstVisitor<T, S>)visitor).VisitNamedNode(this, data);
+			return visitor.VisitNamedNode(this, data);
 		}
 	}
 }

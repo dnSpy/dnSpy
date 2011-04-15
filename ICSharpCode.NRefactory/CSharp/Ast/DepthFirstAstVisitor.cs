@@ -440,6 +440,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			return VisitChildren (objectCreateExpression, data);
 		}
 		
+		public virtual S VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression, T data)
+		{
+			return VisitChildren (anonymousTypeCreateExpression, data);
+		}
+		
 		public virtual S VisitArrayCreateExpression (ArrayCreateExpression arrayObjectCreateExpression, T data)
 		{
 			return VisitChildren (arrayObjectCreateExpression, data);
@@ -560,9 +565,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			return VisitChildren (defaultValueExpression, data);
 		}
 		
-		public virtual S VisitArgListExpression (ArgListExpression argListExpression, T data)
+		public virtual S VisitUndocumentedExpression (UndocumentedExpression undocumentedExpression, T data)
 		{
-			return VisitChildren (argListExpression, data);
+			return VisitChildren (undocumentedExpression, data);
 		}
 		
 		public virtual S VisitArrayInitializerExpression (ArrayInitializerExpression arrayInitializerExpression, T data)
@@ -583,6 +588,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		public virtual S VisitEmptyExpression (EmptyExpression emptyExpression, T data)
 		{
 			return VisitChildren (emptyExpression, data);
+		}
+		
+		public virtual S VisitPatternPlaceholder(AstNode placeholder, PatternMatching.Pattern pattern, T data)
+		{
+			return VisitChildren (placeholder, data);
 		}
 	}
 }

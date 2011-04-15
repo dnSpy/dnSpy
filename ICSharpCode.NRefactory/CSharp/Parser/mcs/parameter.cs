@@ -215,6 +215,7 @@ namespace Mono.CSharp {
 			ISBYREF = 8,
 			REFMASK	= 32,
 			OUTMASK = 64,
+			SignatureMask = REFMASK | OUTMASK,
 			This	= 128
 		}
 
@@ -280,6 +281,9 @@ namespace Mono.CSharp {
 		public TypeSpec Type {
 			get {
 				return parameter_type;
+			}
+			set {
+				parameter_type = value;
 			}
 		}
 
@@ -353,7 +357,7 @@ namespace Mono.CSharp {
 			if (attributes != null)
 				attributes.AttachTo (this, rc);
 
-			var expr = texpr.ResolveAsTypeTerminal (rc, false);
+			var expr = texpr.ResolveAsType (rc);
 			if (expr == null)
 				return null;
 
@@ -559,7 +563,7 @@ namespace Mono.CSharp {
 				var def_value = DefaultValue;
 				Constant c = def_value != null ? def_value.Child as Constant : default_expr as Constant;
 				if (c != null) {
-					if (default_expr.Type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
+					if (c.Type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 						pa.DecimalConstant.EmitAttribute (builder, (decimal) c.GetValue (), c.Location);
 					} else {
 						builder.SetConstant (c.GetValue ());
@@ -657,7 +661,7 @@ namespace Mono.CSharp {
 		//
 		public static TypeExpr ResolveParameterExpressionType (IMemberContext ec, Location location)
 		{
-			TypeSpec p_type = ec.Module.PredefinedTypes.ParameterExpression.Resolve (location);
+			TypeSpec p_type = ec.Module.PredefinedTypes.ParameterExpression.Resolve ();
 			return new TypeExpression (p_type, location);
 		}
 
@@ -798,6 +802,26 @@ namespace Mono.CSharp {
 			}
 
 			return -1;
+		}
+
+		public string GetSignatureForDocumentation ()
+		{
+			if (IsEmpty)
+				return string.Empty;
+
+			StringBuilder sb = new StringBuilder ("(");
+			for (int i = 0; i < Count; ++i) {
+				if (i != 0)
+					sb.Append (",");
+
+				sb.Append (types [i].GetSignatureForDocumentation ());
+
+				if ((parameters[i].ModFlags & Parameter.Modifier.ISBYREF) != 0)
+					sb.Append ("@");
+			}
+			sb.Append (")");
+
+			return sb.ToString ();
 		}
 
 		public string GetSignatureForError ()

@@ -60,6 +60,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole(FalseRole, value); }
 		}
 		
+		public ConditionalExpression ()
+		{
+		}
+		
+		public ConditionalExpression (Expression condition, Expression trueExpression, Expression falseExpression)
+		{
+			AddChild (condition, ConditionRole);
+			AddChild (trueExpression, TrueRole);
+			AddChild (falseExpression, FalseRole);
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitConditionalExpression (this, data);

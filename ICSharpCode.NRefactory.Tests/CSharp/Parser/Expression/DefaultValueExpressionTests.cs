@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 {
-	[TestFixture, Ignore("Aliases not yet implemented")]
+	[TestFixture]
 	public class DefaultValueExpressionTests
 	{
 		[Test]

@@ -273,7 +273,13 @@ namespace Mono.CSharp.Linq
 		}
 
 		protected RangeVariable identifier;
-
+		
+		public RangeVariable  IntoVariable {
+			get {
+				return identifier;
+			}
+		}
+		
 		protected ARangeVariableQueryClause (QueryBlock block, RangeVariable identifier, Expression expr, Location loc)
 			: base (block, expr, loc)
 		{
@@ -434,6 +440,11 @@ namespace Mono.CSharp.Linq
 		protected override string MethodName {
 			get { throw new NotSupportedException (); }
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 
@@ -500,7 +511,19 @@ namespace Mono.CSharp.Linq
 		public RangeVariable JoinVariable {
 			get { return this.GetIntoVariable (); }
 		}
-
+		
+		public QueryBlock InnerSelector {
+			get {
+				return inner_selector;
+			}
+		}
+		
+		public QueryBlock OuterSelector {
+			get {
+				return outer_selector;
+			}
+		}
+		
 		public Join (QueryBlock block, RangeVariable lt, Expression inner, QueryBlock outerSelector, QueryBlock innerSelector, Location loc)
 			: base (block, lt, inner, loc)
 		{

@@ -3,15 +3,13 @@
 
 using System;
 
-namespace ICSharpCode.NRefactory.CSharp.PatternMatching
+namespace ICSharpCode.NRefactory.PatternMatching
 {
 	/// <summary>
-	/// Extended AST visitor that works for patterns.
+	/// AST visitor that works for patterns.
 	/// </summary>
-	public interface IPatternAstVisitor<in T, out S> : IAstVisitor<T, S>
+	public interface IPatternAstVisitor<in T, out S>
 	{
-		S VisitPlaceholder(AstNode placeholder, AstNode child, T data);
-		
 		S VisitAnyNode(AnyNode anyNode, T data);
 		S VisitBackreference(Backreference backreference, T data);
 		S VisitChoice(Choice choice, T data);

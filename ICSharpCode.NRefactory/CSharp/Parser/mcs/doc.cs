@@ -1,8 +1,9 @@
 //
 // doc.cs: Support for XML documentation comment.
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//  Marek Safar (marek.safar@gmail.com>
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
@@ -16,7 +17,6 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Linq;
-
 
 namespace Mono.CSharp
 {
@@ -35,10 +35,9 @@ namespace Mono.CSharp
 		//
 		// The output for XML documentation.
 		//
-		public XmlWriter XmlCommentOutput;
+		XmlWriter XmlCommentOutput;
 
 		static readonly string line_head = Environment.NewLine + "            ";
-		static readonly char[] wsChars = new char[] { ' ', '\t', '\n', '\r' };
 
 		//
 		// Stores XmlDocuments that are included in XML documentation.
@@ -57,6 +56,22 @@ namespace Mono.CSharp
 			get {
 				return module.Compiler.Report;
 			}
+		}
+
+		public MemberName ParsedName {
+			get; set;
+		}
+
+		public List<DocumentationParameter> ParsedParameters {
+			get; set;
+		}
+
+		public TypeExpression ParsedBuiltinType {
+			get; set;
+		}
+
+		public Operator.OpType? ParsedOperator {
+			get; set;
 		}
 
 		XmlNode GetDocCommentNode (MemberCore mc, string name)
@@ -101,13 +116,16 @@ namespace Mono.CSharp
 		//
 		internal void GenerateDocumentationForMember (MemberCore mc)
 		{
-			string name = mc.GetDocCommentName ();
+			string name = mc.DocCommentHeader + mc.GetSignatureForDocumentation ();
 
 			XmlNode n = GetDocCommentNode (mc, name);
 
 			XmlElement el = n as XmlElement;
 			if (el != null) {
-				mc.OnGenerateDocComment (el);
+				var pm = mc as IParametersMember;
+				if (pm != null) {
+					CheckParametersComments (mc, pm, el);
+				}
 
 				// FIXME: it could be done with XmlReader
 				XmlNodeList nl = n.SelectNodes (".//include");
@@ -211,435 +229,235 @@ namespace Mono.CSharp
 			HandleXrefCommon (mc, ds, seealso);
 		}
 
-		//
-		// returns a full runtime type name from a name which might
-		// be C# specific type name.
-		//
-		TypeSpec FindDocumentedType (MemberCore mc, string name, DeclSpace ds, string cref)
+		FullNamedExpression ResolveMemberName (IMemberContext context, MemberName mn)
 		{
-			bool is_array = false;
-			string identifier = name;
-			if (name [name.Length - 1] == ']') {
-				string tmp = name.Substring (0, name.Length - 1).Trim (wsChars);
-				if (tmp [tmp.Length - 1] == '[') {
-					identifier = tmp.Substring (0, tmp.Length - 1).Trim (wsChars);
-					is_array = true;
-				}
-			}
-			TypeSpec t = FindDocumentedTypeNonArray (mc, identifier, ds, cref);
-			if (t != null && is_array)
-				t = ArrayContainer.MakeType (mc.Module, t);
-			return t;
-		}
+			if (mn.Left == null)
+				return context.LookupNamespaceOrType (mn.Name, mn.Arity, Location.Null, /*ignore_cs0104=*/ false);
 
-		TypeSpec FindDocumentedTypeNonArray (MemberCore mc, string identifier, DeclSpace ds, string cref)
-		{
-			var types = module.Compiler.BuiltinTypes;
-			switch (identifier) {
-			case "int":
-				return types.Int;
-			case "uint":
-				return types.UInt;
-			case "short":
-				return types.Short;
-			case "ushort":
-				return types.UShort;
-			case "long":
-				return types.Long;
-			case "ulong":
-				return types.ULong;
-			case "float":
-				return types.Float;
-			case "double":
-				return types.Double;
-			case "char":
-				return types.Char;
-			case "decimal":
-				return types.Decimal;
-			case "byte":
-				return types.Byte;
-			case "sbyte":
-				return types.SByte;
-			case "object":
-				return types.Object;
-			case "bool":
-				return types.Bool;
-			case "string":
-				return types.String;
-			case "void":
-				return types.Void;
-			}
-			FullNamedExpression e = ds.LookupNamespaceOrType (identifier, 0, mc.Location, false);
-			if (e != null) {
-				if (!(e is TypeExpr))
-					return null;
-				return e.Type;
-			}
-			int index = identifier.LastIndexOf ('.');
-			if (index < 0)
+			var left = ResolveMemberName (context, mn.Left);
+			var ns = left as Namespace;
+			if (ns != null)
+				return ns.LookupTypeOrNamespace (context, mn.Name, mn.Arity, Location.Null);
+
+			TypeExpr texpr = left as TypeExpr;
+			if (texpr != null) {
+				var found = MemberCache.FindNestedType (texpr.Type, ParsedName.Name, ParsedName.Arity);
+				if (found != null)
+					return new TypeExpression (found, Location.Null);
+
 				return null;
-
-			var nsName = identifier.Substring (0, index);
-			var typeName = identifier.Substring (index + 1);
-			Namespace ns = ds.NamespaceEntry.NS.GetNamespace (nsName, false);
-			ns = ns ?? mc.Module.GlobalRootNamespace.GetNamespace(nsName, false);
-			if (ns != null) {
-				var te = ns.LookupType(mc, typeName, 0, true, mc.Location);
-				if(te != null)
-					return te.Type;
 			}
 
-			int warn;
-			TypeSpec parent = FindDocumentedType (mc, identifier.Substring (0, index), ds, cref);
-			if (parent == null)
-				return null;
-			// no need to detect warning 419 here
-			var ts = FindDocumentedMember (mc, parent,
-				identifier.Substring (index + 1),
-				null, ds, out warn, cref, false, null) as TypeSpec;
-			if (ts != null)
-				return ts;
-			return null;
+			return left;
 		}
 
 		//
-		// Returns a MemberInfo that is referenced in XML documentation
-		// (by "see" or "seealso" elements).
-		//
-		MemberSpec FindDocumentedMember (MemberCore mc,
-			TypeSpec type, string member_name, AParametersCollection param_list, 
-			DeclSpace ds, out int warning_type, string cref,
-			bool warn419, string name_for_error)
-		{
-//			for (; type != null; type = type.DeclaringType) {
-				var mi = FindDocumentedMemberNoNest (
-					mc, type, member_name, param_list, ds,
-					out warning_type, cref, warn419,
-					name_for_error);
-				if (mi != null)
-					return mi; // new FoundMember (type, mi);
-//			}
-			warning_type = 0;
-			return null;
-		}
-
-		MemberSpec FindDocumentedMemberNoNest (
-			MemberCore mc, TypeSpec type, string member_name,
-			AParametersCollection param_list, DeclSpace ds, out int warning_type, 
-			string cref, bool warn419, string name_for_error)
-		{
-			warning_type = 0;
-//			var filter = new MemberFilter (member_name, 0, MemberKind.All, param_list, null);
-			IList<MemberSpec> found = null;
-			while (type != null && found == null) {
-				found = MemberCache.FindMembers (type, member_name, false);
-				type = type.DeclaringType;
-			}
-
-			if (found == null)
-				return null;
-
-			if (warn419 && found.Count > 1) {
-				Report419 (mc, name_for_error, found.ToArray ());
-			}
-
-			return found [0];
-
-/*
-			if (param_list == null) {
-				// search for fields/events etc.
-				mis = TypeManager.MemberLookup (type, null,
-					type, MemberKind.All,
-					BindingRestriction.None,
-					member_name, null);
-				mis = FilterOverridenMembersOut (mis);
-				if (mis == null || mis.Length == 0)
-					return null;
-				if (warn419 && IsAmbiguous (mis))
-					Report419 (mc, name_for_error, mis, Report);
-				return mis [0];
-			}
-
-			MethodSignature msig = new MethodSignature (member_name, null, param_list);
-			mis = FindMethodBase (type, 
-				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
-				msig);
-
-			if (warn419 && mis.Length > 0) {
-				if (IsAmbiguous (mis))
-					Report419 (mc, name_for_error, mis, Report);
-				return mis [0];
-			}
-
-			// search for operators (whose parameters exactly
-			// matches with the list) and possibly report CS1581.
-			string oper = null;
-			string return_type_name = null;
-			if (member_name.StartsWith ("implicit operator ")) {
-				Operator.GetMetadataName (Operator.OpType.Implicit);
-				return_type_name = member_name.Substring (18).Trim (wsChars);
-			}
-			else if (member_name.StartsWith ("explicit operator ")) {
-				oper = Operator.GetMetadataName (Operator.OpType.Explicit);
-				return_type_name = member_name.Substring (18).Trim (wsChars);
-			}
-			else if (member_name.StartsWith ("operator ")) {
-				oper = member_name.Substring (9).Trim (wsChars);
-				switch (oper) {
-				// either unary or binary
-				case "+":
-					oper = param_list.Length == 2 ?
-						Operator.GetMetadataName (Operator.OpType.Addition) :
-						Operator.GetMetadataName (Operator.OpType.UnaryPlus);
-					break;
-				case "-":
-					oper = param_list.Length == 2 ?
-						Operator.GetMetadataName (Operator.OpType.Subtraction) :
-						Operator.GetMetadataName (Operator.OpType.UnaryNegation);
-					break;
-				default:
-					oper = Operator.GetMetadataName (oper);
-					if (oper != null)
-						break;
-
-					warning_type = 1584;
-					Report.Warning (1020, 1, mc.Location, "Overloadable {0} operator is expected", param_list.Length == 2 ? "binary" : "unary");
-					Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
-						mc.GetSignatureForError (), cref);
-					return null;
-				}
-			}
-			// here we still don't consider return type (to
-			// detect CS1581 or CS1002+CS1584).
-			msig = new MethodSignature (oper, null, param_list);
-
-			mis = FindMethodBase (type, 
-				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
-				msig);
-			if (mis.Length == 0)
-				return null; // CS1574
-			var mi = mis [0];
-			TypeSpec expected = mi is MethodSpec ?
-				((MethodSpec) mi).ReturnType :
-				mi is PropertySpec ?
-				((PropertySpec) mi).PropertyType :
-				null;
-			if (return_type_name != null) {
-				TypeSpec returnType = FindDocumentedType (mc, return_type_name, ds, cref, Report);
-				if (returnType == null || returnType != expected) {
-					warning_type = 1581;
-					Report.Warning (1581, 1, mc.Location, "Invalid return type in XML comment cref attribute `{0}'", cref);
-					return null;
-				}
-			}
-			return mis [0];
-*/ 
-		}
-
-		//
-		// Processes "see" or "seealso" elements.
-		// Checks cref attribute.
+		// Processes "see" or "seealso" elements from cref attribute.
 		//
 		void HandleXrefCommon (MemberCore mc, DeclSpace ds, XmlElement xref)
 		{
-			string cref = xref.GetAttribute ("cref").Trim (wsChars);
+			string cref = xref.GetAttribute ("cref");
 			// when, XmlReader, "if (cref == null)"
 			if (!xref.HasAttribute ("cref"))
 				return;
-			if (cref.Length == 0)
-				Report.Warning (1001, 1, mc.Location, "Identifier expected");
-				// ... and continue until CS1584.
 
-			string signature; // "x:" are stripped
-			string name; // method invokation "(...)" are removed
-			string parameters; // method parameter list
-
-			// When it found '?:' ('T:' 'M:' 'F:' 'P:' 'E:' etc.),
-			// MS ignores not only its member kind, but also
-			// the entire syntax correctness. Nor it also does
-			// type fullname resolution i.e. "T:List(int)" is kept
-			// as T:List(int), not
-			// T:System.Collections.Generic.List&lt;System.Int32&gt;
+			// Nothing to be resolved the reference is marked explicitly
 			if (cref.Length > 2 && cref [1] == ':')
 				return;
-			else
-				signature = cref;
 
-			// Also note that without "T:" any generic type 
-			// indication fails.
+			// Additional symbols for < and > are allowed for easier XML typing
+			cref = cref.Replace ('{', '<').Replace ('}', '>');
 
-			int parens_pos = signature.IndexOf ('(');
-			int brace_pos = parens_pos >= 0 ? -1 :
-				signature.IndexOf ('[');
-			if (parens_pos > 0 && signature [signature.Length - 1] == ')') {
-				name = signature.Substring (0, parens_pos).Trim (wsChars);
-				parameters = signature.Substring (parens_pos + 1, signature.Length - parens_pos - 2).Trim (wsChars);
-			}
-			else if (brace_pos > 0 && signature [signature.Length - 1] == ']') {
-				name = signature.Substring (0, brace_pos).Trim (wsChars);
-				parameters = signature.Substring (brace_pos + 1, signature.Length - brace_pos - 2).Trim (wsChars);
-			}
-			else {
-				name = signature;
-				parameters = null;
-			}
-			Normalize (mc, ref name);
+			var encoding = module.Compiler.Settings.Encoding;
+			var s = new MemoryStream (encoding.GetBytes (cref));
+			SeekableStreamReader seekable = new SeekableStreamReader (s, encoding);
 
-			string identifier = GetBodyIdentifierFromName (name);
+			var source_file = new CompilationSourceFile ("{documentation}", "", 1);
+			var doc_module = new ModuleContainer (module.Compiler);
+			doc_module.DocumentationBuilder = this;
+			source_file.NamespaceContainer = new NamespaceContainer (null, doc_module, null, source_file);
 
-			// Check if identifier is valid.
-			// This check is not necessary to mark as error, but
-			// csc specially reports CS1584 for wrong identifiers.
-			string [] name_elems = identifier.Split ('.');
-			for (int i = 0; i < name_elems.Length; i++) {
-				string nameElem = GetBodyIdentifierFromName (name_elems [i]);
-				if (i > 0)
-					Normalize (mc, ref nameElem);
-				if (!Tokenizer.IsValidIdentifier (nameElem)
-					&& nameElem.IndexOf ("operator") < 0) {
-					Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
-						mc.GetSignatureForError (), cref);
-					xref.SetAttribute ("cref", "!:" + signature);
-					return;
-				}
+			Report parse_report = new Report (new NullReportPrinter ());
+			var parser = new CSharpParser (seekable, source_file, parse_report);
+			ParsedParameters = null;
+			ParsedName = null;
+			ParsedBuiltinType = null;
+			ParsedOperator = null;
+			parser.Lexer.putback_char = Tokenizer.DocumentationXref;
+			parser.Lexer.parsing_generic_declaration_doc = true;
+			parser.parse ();
+			if (parse_report.Errors > 0) {
+				Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
+					mc.GetSignatureForError (), cref);
+
+				xref.SetAttribute ("cref", "!:" + cref);
+				return;
 			}
 
-			// check if parameters are valid
-			AParametersCollection parameter_types;
-			if (parameters == null)
-				parameter_types = null;
-			else if (parameters.Length == 0)
-				parameter_types = ParametersCompiled.EmptyReadOnlyParameters;
-			else {
-				string [] param_list = parameters.Split (',');
-				var plist = new List<TypeSpec> ();
-				for (int i = 0; i < param_list.Length; i++) {
-					string param_type_name = param_list [i].Trim (wsChars);
-					Normalize (mc, ref param_type_name);
-					TypeSpec param_type = FindDocumentedType (mc, param_type_name, ds, cref);
-					if (param_type == null) {
-						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter `{0}' in XML comment cref attribute `{1}'",
-							(i + 1).ToString (), cref);
-						return;
-					}
-					plist.Add (param_type);
-				}
+			MemberSpec member;
+			string prefix = null;
+			FullNamedExpression fne = null;
 
-				parameter_types = ParametersCompiled.CreateFullyResolved (plist.ToArray ());
-			}
-
-			TypeSpec type = FindDocumentedType (mc, name, ds, cref);
-			if (type != null
-				// delegate must not be referenced with args
-				&& (!type.IsDelegate
-				|| parameter_types == null)) {
-				string result = GetSignatureForDoc (type)
-					+ (brace_pos < 0 ? String.Empty : signature.Substring (brace_pos));
-				xref.SetAttribute ("cref", "T:" + result);
-				return; // a type
-			}
-
-			int period = name.LastIndexOf ('.');
-			if (period > 0) {
-				string typeName = name.Substring (0, period);
-				string member_name = name.Substring (period + 1);
-				string lookup_name = member_name == "this" ? MemberCache.IndexerNameAlias : member_name;
-				Normalize (mc, ref lookup_name);
-				Normalize (mc, ref member_name);
-				type = FindDocumentedType (mc, typeName, ds, cref);
-				int warn_result;
-				if (type != null) {
-					var mi = FindDocumentedMember (mc, type, lookup_name, parameter_types, ds, out warn_result, cref, true, name);
-					if (warn_result > 0)
-						return;
-					if (mi != null) {
-						// we cannot use 'type' directly
-						// to get its name, since mi
-						// could be from DeclaringType
-						// for nested types.
-						xref.SetAttribute ("cref", GetMemberDocHead (mi) + GetSignatureForDoc (mi.DeclaringType) + "." + member_name + GetParametersFormatted (mi));
-						return; // a member of a type
-					}
-				}
+			//
+			// Try built-in type first because we are using ParsedName as identifier of
+			// member names on built-in types
+			//
+			if (ParsedBuiltinType != null && (ParsedParameters == null || ParsedName != null)) {
+				member = ParsedBuiltinType.Type;
 			} else {
-				int warn_result;
-				var mi = FindDocumentedMember (mc, ds.PartialContainer.Definition, name, parameter_types, ds, out warn_result, cref, true, name);
+				member = null;
+			}
 
-				if (warn_result > 0)
-					return;
-				if (mi != null) {
-					// we cannot use 'type' directly
-					// to get its name, since mi
-					// could be from DeclaringType
-					// for nested types.
-					xref.SetAttribute ("cref", GetMemberDocHead (mi) + GetSignatureForDoc (mi.DeclaringType) + "." + name + GetParametersFormatted (mi));
-					return; // local member name
+			if (ParsedName != null || ParsedOperator.HasValue) {
+				TypeSpec type = null;
+				string member_name = null;
+
+				if (member == null) {
+					if (ParsedOperator.HasValue) {
+						type = mc.CurrentType;
+					} else if (ParsedName.Left != null) {
+						fne = ResolveMemberName (mc, ParsedName.Left);
+						if (fne != null) {
+							var ns = fne as Namespace;
+							if (ns != null) {
+								fne = ns.LookupTypeOrNamespace (mc, ParsedName.Name, ParsedName.Arity, Location.Null);
+								if (fne != null) {
+									member = fne.Type;
+								}
+							} else {
+								type = fne.Type;
+							}
+						}
+					} else {
+						fne = ResolveMemberName (mc, ParsedName);
+						if (fne == null) {
+							type = mc.CurrentType;
+						} else if (ParsedParameters == null) {
+							member = fne.Type;
+						} else if (fne.Type.MemberDefinition == mc.CurrentType.MemberDefinition) {
+							member_name = Constructor.ConstructorName;
+							type = fne.Type;
+						}
+					}
+				} else {
+					type = (TypeSpec) member;
+					member = null;
+				}
+
+				if (ParsedParameters != null) {
+					var old_printer = mc.Module.Compiler.Report.SetPrinter (new NullReportPrinter ());
+					foreach (var pp in ParsedParameters) {
+						pp.Resolve (mc);
+					}
+					mc.Module.Compiler.Report.SetPrinter (old_printer);
+				}
+
+				if (type != null) {
+					if (member_name == null)
+						member_name = ParsedOperator.HasValue ?
+							Operator.GetMetadataName (ParsedOperator.Value) : ParsedName.Name;
+
+					int parsed_param_count;
+					if (ParsedOperator == Operator.OpType.Explicit || ParsedOperator == Operator.OpType.Implicit) {
+						parsed_param_count = ParsedParameters.Count - 1;
+					} else if (ParsedParameters != null) {
+						parsed_param_count = ParsedParameters.Count;
+					} else {
+						parsed_param_count = 0;
+					}
+
+					int parameters_match = -1;
+					do {
+						var members = MemberCache.FindMembers (type, member_name, true);
+						if (members != null) {
+							foreach (var m in members) {
+								if (ParsedName != null && m.Arity != ParsedName.Arity)
+									continue;
+
+								if (ParsedParameters != null) {
+									IParametersMember pm = m as IParametersMember;
+									if (pm == null)
+										continue;
+
+									if (m.Kind == MemberKind.Operator && !ParsedOperator.HasValue)
+										continue;
+
+									int i;
+									for (i = 0; i < parsed_param_count; ++i) {
+										var pparam = ParsedParameters[i];
+
+										if (i >= pm.Parameters.Count || pparam == null ||
+											pparam.TypeSpec != pm.Parameters.Types[i] ||
+											(pparam.Modifier & Parameter.Modifier.SignatureMask) != (pm.Parameters.FixedParameters[i].ModFlags & Parameter.Modifier.SignatureMask)) {
+
+											if (i > parameters_match) {
+												parameters_match = i;
+											}
+
+											i = -1;
+											break;
+										}
+									}
+
+									if (i < 0)
+										continue;
+
+									if (ParsedOperator == Operator.OpType.Explicit || ParsedOperator == Operator.OpType.Implicit) {
+										if (pm.MemberType != ParsedParameters[parsed_param_count].TypeSpec) {
+											parameters_match = parsed_param_count + 1;
+											continue;
+										}
+									} else {
+										if (parsed_param_count != pm.Parameters.Count)
+											continue;
+									}
+								}
+
+								if (member != null) {
+									Report.Warning (419, 3, mc.Location,
+										"Ambiguous reference in cref attribute `{0}'. Assuming `{1}' but other overloads including `{2}' have also matched",
+										cref, member.GetSignatureForError (), m.GetSignatureForError ());
+
+									break;
+								}
+
+								member = m;
+							}
+						}
+
+						// Continue with parent type for nested types
+						if (member == null) {
+							type = type.DeclaringType;
+						} else {
+							type = null;
+						}
+					} while (type != null);
+
+					if (member == null && parameters_match >= 0) {
+						for (int i = parameters_match; i < parsed_param_count; ++i) {
+							Report.Warning (1580, 1, mc.Location, "Invalid type for parameter `{0}' in XML comment cref attribute `{1}'",
+									(i + 1).ToString (), cref);
+						}
+
+						if (parameters_match == parsed_param_count + 1) {
+							Report.Warning (1581, 1, mc.Location, "Invalid return type in XML comment cref attribute `{0}'", cref);
+						}
+					}
 				}
 			}
 
-			// It still might be part of namespace name.
-			Namespace ns = ds.NamespaceEntry.NS.GetNamespace (name, false);
-			if (ns != null) {
-				xref.SetAttribute ("cref", "N:" + ns.GetSignatureForError ());
-				return; // a namespace
-			}
-			if (mc.Module.GlobalRootNamespace.IsNamespace (name)) {
-				xref.SetAttribute ("cref", "N:" + name);
-				return; // a namespace
-			}
-
-			Report.Warning (1574, 1, mc.Location, "XML comment on `{0}' has cref attribute `{1}' that could not be resolved",
-				mc.GetSignatureForError (), cref);
-
-			xref.SetAttribute ("cref", "!:" + name);
-		}
-
-		static string GetParametersFormatted (MemberSpec mi)
-		{
-			var pm = mi as IParametersMember;
-			if (pm == null || pm.Parameters.IsEmpty)
-				return string.Empty;
-
-			AParametersCollection parameters = pm.Parameters;
-/*
-			if (parameters == null || parameters.Count == 0)
-				return String.Empty;
-*/
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ('(');
-			for (int i = 0; i < parameters.Count; i++) {
-//				if (is_setter && i + 1 == parameters.Count)
-//					break; // skip "value".
-				if (i > 0)
-					sb.Append (',');
-				TypeSpec t = parameters.Types [i];
-				sb.Append (GetSignatureForDoc (t));
-			}
-			sb.Append (')');
-			return sb.ToString ();
-		}
-
-		static string GetBodyIdentifierFromName (string name)
-		{
-			string identifier = name;
-
-			if (name.Length > 0 && name [name.Length - 1] == ']') {
-				string tmp = name.Substring (0, name.Length - 1).Trim (wsChars);
-				int last = tmp.LastIndexOf ('[');
-				if (last > 0)
-					identifier = tmp.Substring (0, last).Trim (wsChars);
+			if (member == null) {
+				Report.Warning (1574, 1, mc.Location, "XML comment on `{0}' has cref attribute `{1}' that could not be resolved",
+					mc.GetSignatureForError (), cref);
+				cref = "!:" + cref;
+			} else if (member == InternalType.Namespace) {
+				cref = "N:" + fne.GetSignatureForError ();
+			} else {
+				prefix = GetMemberDocHead (member);
+				cref = prefix + member.GetSignatureForDocumentation ();
 			}
 
-			return identifier;
-		}
-
-		void Report419 (MemberCore mc, string member_name, MemberSpec [] mis)
-		{
-			Report.Warning (419, 3, mc.Location, 
-				"Ambiguous reference in cref attribute `{0}'. Assuming `{1}' but other overloads including `{2}' have also matched",
-				member_name,
-				TypeManager.GetFullNameSignature (mis [0]),
-				TypeManager.GetFullNameSignature (mis [1]));
+			xref.SetAttribute ("cref", cref);
 		}
 
 		//
@@ -659,97 +477,7 @@ namespace Mono.CSharp
 			if (type is TypeSpec)
 				return "T:";
 
-			return "!:";
-		}
-
-		// MethodCore
-
-		//
-		// Returns a string that represents the signature for this 
-		// member which should be used in XML documentation.
-		//
-		public static string GetMethodDocCommentName (MemberCore mc, ParametersCompiled parameters)
-		{
-			IParameterData [] plist = parameters.FixedParameters;
-			string paramSpec = String.Empty;
-			if (plist != null) {
-				StringBuilder psb = new StringBuilder ();
-				int i = 0;
-				foreach (Parameter p in plist) {
-					psb.Append (psb.Length != 0 ? "," : "(");
-					psb.Append (GetSignatureForDoc (parameters.Types [i++]));
-					if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
-						psb.Append ('@');
-				}
-				paramSpec = psb.ToString ();
-			}
-
-			if (paramSpec.Length > 0)
-				paramSpec += ")";
-
-			string name = mc.Name;
-			if (mc is Constructor)
-				name = "#ctor";
-			else if (mc is InterfaceMemberBase) {
-				var imb = (InterfaceMemberBase) mc;
-				name = imb.GetFullName (imb.ShortName);
-			}
-			name = name.Replace ('.', '#');
-
-			if (mc.MemberName.TypeArguments != null && mc.MemberName.TypeArguments.Count > 0)
-				name += "``" + mc.MemberName.CountTypeArguments;
-
-			string suffix = String.Empty;
-			Operator op = mc as Operator;
-			if (op != null) {
-				switch (op.OperatorType) {
-				case Operator.OpType.Implicit:
-				case Operator.OpType.Explicit:
-					suffix = "~" + GetSignatureForDoc (op.ReturnType);
-					break;
-				}
-			}
-			return String.Concat (mc.DocCommentHeader, mc.Parent.Name, ".", name, paramSpec, suffix);
-		}
-
-		static string GetSignatureForDoc (TypeSpec type)
-		{
-			var tp = type as TypeParameterSpec;
-			if (tp != null) {
-				int c = 0;
-				type = type.DeclaringType;
-				while (type != null && type.DeclaringType != null) {
-					type = type.DeclaringType;
-					c += type.MemberDefinition.TypeParametersCount;
-				}
-				var prefix = tp.IsMethodOwned ? "``" : "`";
-				return prefix + (c + tp.DeclaredPosition);
-			}
-
-			var pp = type as PointerContainer;
-			if (pp != null)
-				return GetSignatureForDoc (pp.Element) + "*";
-
-			ArrayContainer ap = type as ArrayContainer;
-			if (ap != null)
-				return GetSignatureForDoc (ap.Element) +
-					ArrayContainer.GetPostfixSignature (ap.Rank);
-
-			if (TypeManager.IsGenericType (type)) {
-				string g = type.MemberDefinition.Namespace;
-				if (g != null && g.Length > 0)
-					g += '.';
-				int idx = type.Name.LastIndexOf ('`');
-				g += (idx < 0 ? type.Name : type.Name.Substring (0, idx)) + '{';
-				int argpos = 0;
-				foreach (TypeSpec t in TypeManager.GetTypeArguments (type))
-					g += (argpos++ > 0 ? "," : String.Empty) + GetSignatureForDoc (t);
-				g += '}';
-				return g;
-			}
-
-			string name = type.GetMetaInfo ().FullName != null ? type.GetMetaInfo ().FullName : type.Name;
-			return name.Replace ("+", ".").Replace ('&', '@');
+			throw new NotImplementedException (type.GetType ().ToString ());
 		}
 
 		//
@@ -759,62 +487,43 @@ namespace Mono.CSharp
 		// FIXME: with a few effort, it could be done with XmlReader,
 		// that means removal of DOM use.
 		//
-		internal static void OnMethodGenerateDocComment (
-			MethodCore mc, XmlElement el, Report Report)
+		void CheckParametersComments (MemberCore member, IParametersMember paramMember, XmlElement el)
 		{
-			var paramTags = new Dictionary<string, string> ();
+			HashSet<string> found_tags = null;
 			foreach (XmlElement pelem in el.SelectNodes ("param")) {
 				string xname = pelem.GetAttribute ("name");
 				if (xname.Length == 0)
 					continue; // really? but MS looks doing so
-				if (xname != "" && mc.ParameterInfo.GetParameterIndexByName (xname) < 0)
-					Report.Warning (1572, 2, mc.Location, "XML comment on `{0}' has a param tag for `{1}', but there is no parameter by that name",
-						mc.GetSignatureForError (), xname);
-				else if (paramTags.ContainsKey (xname))
-					Report.Warning (1571, 2, mc.Location, "XML comment on `{0}' has a duplicate param tag for `{1}'",
-						mc.GetSignatureForError (), xname);
-				paramTags [xname] = xname;
-			}
-			IParameterData [] plist = mc.ParameterInfo.FixedParameters;
-			foreach (Parameter p in plist) {
-				if (paramTags.Count > 0 && !paramTags.ContainsKey (p.Name))
-					Report.Warning (1573, 4, mc.Location, "Parameter `{0}' has no matching param tag in the XML comment for `{1}'",
-						p.Name, mc.GetSignatureForError ());
-			}
-		}
 
-		void Normalize (MemberCore mc, ref string name)
-		{
-			if (name.Length > 0 && name [0] == '@')
-				name = name.Substring (1);
-			else if (name == "this")
-				name = "Item";
-			else if (Tokenizer.IsKeyword (name) && !IsTypeName (name))
-				Report.Warning (1041, 1, mc.Location, "Identifier expected. `{0}' is a keyword", name);
-		}
+				if (found_tags == null) {
+					found_tags = new HashSet<string> ();
+				}
 
-		private static bool IsTypeName (string name)
-		{
-			switch (name) {
-			case "bool":
-			case "byte":
-			case "char":
-			case "decimal":
-			case "double":
-			case "float":
-			case "int":
-			case "long":
-			case "object":
-			case "sbyte":
-			case "short":
-			case "string":
-			case "uint":
-			case "ulong":
-			case "ushort":
-			case "void":
-				return true;
+				if (xname != "" && paramMember.Parameters.GetParameterIndexByName (xname) < 0) {
+					Report.Warning (1572, 2, member.Location,
+						"XML comment on `{0}' has a param tag for `{1}', but there is no parameter by that name",
+						member.GetSignatureForError (), xname);
+					continue;
+				}
+
+				if (found_tags.Contains (xname)) {
+					Report.Warning (1571, 2, member.Location,
+						"XML comment on `{0}' has a duplicate param tag for `{1}'",
+						member.GetSignatureForError (), xname);
+					continue;
+				}
+
+				found_tags.Add (xname);
 			}
-			return false;
+
+			if (found_tags != null) {
+				foreach (Parameter p in paramMember.Parameters.FixedParameters) {
+					if (!found_tags.Contains (p.Name) && !(p is ArglistParameter))
+						Report.Warning (1573, 4, member.Location,
+							"Parameter `{0}' has no matching param tag in the XML comment for `{1}'",
+							p.Name, member.GetSignatureForError ());
+				}
+			}
 		}
 
 		//
@@ -843,12 +552,40 @@ namespace Mono.CSharp
 				w.WriteEndDocument ();
 				return true;
 			} catch (Exception ex) {
-				module.Compiler.Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", xmlFileName, ex.Message);
+				Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", xmlFileName, ex.Message);
 				return false;
 			} finally {
 				if (w != null)
 					w.Close ();
 			}
+		}
+	}
+
+	class DocumentationParameter
+	{
+		public readonly Parameter.Modifier Modifier;
+		public FullNamedExpression Type;
+
+		public DocumentationParameter (Parameter.Modifier modifier, FullNamedExpression type)
+			: this (type)
+		{
+			this.Modifier = modifier;
+		}
+
+		public DocumentationParameter (FullNamedExpression type)
+		{
+			this.Type = type;
+		}
+
+		public TypeSpec TypeSpec {
+			get {
+				return Type == null ? null : Type.Type;
+			}
+		}
+
+		public void Resolve (IMemberContext context)
+		{
+			Type = Type.ResolveAsType (context);
 		}
 	}
 }

@@ -28,6 +28,42 @@ namespace ICSharpCode.NRefactory.CSharp
 {
 	public class VariableInitializer : AstNode
 	{
+		#region PatternPlaceholder
+		public static implicit operator VariableInitializer(PatternMatching.Pattern pattern)
+		{
+			return pattern != null ? new PatternPlaceholder(pattern) : null;
+		}
+		
+		sealed class PatternPlaceholder : VariableInitializer, PatternMatching.INode
+		{
+			readonly PatternMatching.Pattern child;
+			
+			public PatternPlaceholder(PatternMatching.Pattern child)
+			{
+				this.child = child;
+			}
+			
+			public override NodeType NodeType {
+				get { return NodeType.Pattern; }
+			}
+			
+			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+			{
+				return visitor.VisitPatternPlaceholder(this, child, data);
+			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return child.DoMatch(other, match);
+			}
+			
+			bool PatternMatching.INode.DoMatchCollection(Role role, PatternMatching.INode pos, PatternMatching.Match match, PatternMatching.BacktrackingInfo backtrackingInfo)
+			{
+				return child.DoMatchCollection(role, pos, match, backtrackingInfo);
+			}
+		}
+		#endregion
+		
 		public override NodeType NodeType {
 			get {
 				return NodeType.Unknown;
@@ -67,7 +103,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			return visitor.VisitVariableInitializer (this, data);
 		}
 		
-		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.CSharp.PatternMatching.Match match)
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			VariableInitializer o = other as VariableInitializer;
 			return o != null && MatchString(this.Name, o.Name) && this.Initializer.DoMatch(o.Initializer, match);

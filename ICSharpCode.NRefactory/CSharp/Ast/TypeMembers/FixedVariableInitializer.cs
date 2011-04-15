@@ -1,4 +1,4 @@
-// 
+﻿// 
 // FixedFieldDeclaration.cs
 //
 // Author:
@@ -29,7 +29,7 @@ using System;
 namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
-	/// name [ <expression> ]
+	/// Name [ CountExpression ]
 	/// </summary>
 	public class FixedVariableInitializer : AstNode
 	{
@@ -46,7 +46,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public FixedVariableInitializer (string name, Expression initializer = null)
 		{
 			this.Name = name;
-			this.Initializer = initializer;
+			this.CountExpression = initializer;
 		}
 
 		public string Name {
@@ -62,7 +62,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.LBracket); }
 		}
 
-		public Expression Initializer {
+		public Expression CountExpression {
 			get { return GetChildByRole (Roles.Expression); }
 			set { SetChildByRole (Roles.Expression, value); }
 		}
@@ -76,10 +76,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			return visitor.VisitFixedVariableInitializer (this, data);
 		}
 		
-		protected internal override bool DoMatch (AstNode other, ICSharpCode.NRefactory.CSharp.PatternMatching.Match match)
+		protected internal override bool DoMatch (AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)
 		{
 			var o = other as FixedVariableInitializer;
-			return o != null && MatchString (this.Name, o.Name) && this.Initializer.DoMatch (o.Initializer, match);
+			return o != null && MatchString (this.Name, o.Name) && this.CountExpression.DoMatch (o.CountExpression, match);
 		}
 	}
 }

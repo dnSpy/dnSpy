@@ -14,13 +14,16 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	/// </summary>
 	public class DefaultTypeParameter : AbstractFreezable, ITypeParameter, ISupportsInterning
 	{
-		IEntity parent;
-		
 		string name;
 		int index;
 		IList<ITypeReference> constraints;
 		IList<IAttribute> attributes;
+		
+		DomRegion region;
+		
+		// Small fields: byte+byte+short
 		VarianceModifier variance;
+		EntityType ownerType;
 		BitVector16 flags;
 		
 		const ushort FlagReferenceTypeConstraint      = 0x0001;
@@ -34,28 +37,15 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			base.FreezeInternal();
 		}
 		
-		public DefaultTypeParameter(IMethod parentMethod, int index, string name)
+		public DefaultTypeParameter(EntityType ownerType, int index, string name)
 		{
-			if (parentMethod == null)
-				throw new ArgumentNullException("parentMethod");
+			if (!(ownerType == EntityType.TypeDefinition || ownerType == EntityType.Method))
+				throw new ArgumentException("owner must be a type or a method", "ownerType");
 			if (index < 0)
 				throw new ArgumentOutOfRangeException("index", index, "Value must not be negative");
 			if (name == null)
 				throw new ArgumentNullException("name");
-			this.parent = parentMethod;
-			this.index = index;
-			this.name = name;
-		}
-		
-		public DefaultTypeParameter(ITypeDefinition parentClass, int index, string name)
-		{
-			if (parentClass == null)
-				throw new ArgumentNullException("parentClass");
-			if (index < 0)
-				throw new ArgumentOutOfRangeException("index", index, "Value must not be negative");
-			if (name == null)
-				throw new ArgumentNullException("name");
-			this.parent = parentClass;
+			this.ownerType = ownerType;
 			this.index = index;
 			this.name = name;
 		}
@@ -74,7 +64,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public string ReflectionName {
 			get {
-				if (parent is IMethod)
+				if (ownerType == EntityType.Method)
 					return "``" + index.ToString();
 				else
 					return "`" + index.ToString();
@@ -114,11 +104,9 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public override int GetHashCode()
 		{
-			int hashCode = parent.GetHashCode();
 			unchecked {
-				hashCode += 1000000033 * index.GetHashCode();
+				return (int)ownerType * 178256151 + index;
 			}
-			return hashCode;
 		}
 		
 		public override bool Equals(object obj)
@@ -131,8 +119,13 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			DefaultTypeParameter p = other as DefaultTypeParameter;
 			if (p == null)
 				return false;
-			return parent.Equals(p.parent)
-				&& index == p.index;
+			return ownerType == p.ownerType && index == p.index;
+		}
+		
+		public EntityType OwnerType {
+			get {
+				return ownerType;
+			}
 		}
 		
 		public int Index {
@@ -145,18 +138,6 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 					attributes = new List<IAttribute>();
 				return attributes;
 			}
-		}
-		
-		public IEntity Parent {
-			get { return parent; }
-		}
-		
-		public IMethod ParentMethod {
-			get { return parent as IMethod; }
-		}
-		
-		public ITypeDefinition ParentClass {
-			get { return parent as ITypeDefinition; }
 		}
 		
 		public IList<ITypeReference> Constraints {
@@ -199,6 +180,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
+		public DomRegion Region {
+			get { return region; }
+			set {
+				CheckBeforeMutation();
+				region = value;
+			}
+		}
+		
 		public virtual IType BoundTo {
 			get { return null; }
 		}
@@ -217,10 +206,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			return this;
 		}
 		
+		static readonly SimpleProjectContent dummyProjectContent = new SimpleProjectContent();
+		
 		DefaultTypeDefinition GetDummyClassForTypeParameter()
 		{
-			DefaultTypeDefinition c = new DefaultTypeDefinition(ParentClass ?? ParentMethod.DeclaringTypeDefinition, this.Name);
-			c.Region = new DomRegion(parent.Region.FileName, parent.Region.BeginLine, parent.Region.BeginColumn);
+			DefaultTypeDefinition c = new DefaultTypeDefinition(dummyProjectContent, string.Empty, this.Name);
+			c.Region = this.Region;
 			if (HasValueTypeConstraint) {
 				c.ClassType = ClassType.Struct;
 			} else if (HasDefaultConstructorConstraint) {
@@ -294,12 +285,29 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		int ISupportsInterning.GetHashCodeForInterning()
 		{
-			return GetHashCode();
+			unchecked {
+				int hashCode = GetHashCode();
+				if (name != null)
+					hashCode += name.GetHashCode();
+				if (attributes != null)
+					hashCode += attributes.GetHashCode();
+				if (constraints != null)
+					hashCode += constraints.GetHashCode();
+				hashCode += 771 * flags.Data + 900103 * (int)variance;
+				return hashCode;
+			}
 		}
 		
 		bool ISupportsInterning.EqualsForInterning(ISupportsInterning other)
 		{
-			return this == other;
+			DefaultTypeParameter o = other as DefaultTypeParameter;
+			return o != null 
+				&& this.attributes == o.attributes
+				&& this.constraints == o.constraints
+				&& this.flags == o.flags
+				&& this.ownerType == o.ownerType
+				&& this.index == o.index
+				&& this.variance == o.variance;
 		}
 		
 		public override string ToString()

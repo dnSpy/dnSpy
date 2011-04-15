@@ -327,10 +327,11 @@ namespace Mono.CSharp {
 
 			MethodBuilder proxy = container.TypeBuilder.DefineMethod (
 				proxy_name,
+				MethodAttributes.Private |
 				MethodAttributes.HideBySig |
 				MethodAttributes.NewSlot |
 				MethodAttributes.CheckAccessOnOverride |
-				MethodAttributes.Virtual,
+				MethodAttributes.Virtual | MethodAttributes.Final,
 				CallingConventions.Standard | CallingConventions.HasThis,
 				base_method.ReturnType.GetMetaInfo (), param.GetMetaInfo ());
 
@@ -383,10 +384,20 @@ namespace Mono.CSharp {
 			if (!TypeSpecComparer.Override.IsEqual (mi.ReturnType, base_method.ReturnType))
 				return false;
 
-			if (!base_method.IsAbstract && !base_method.IsVirtual)
-				// FIXME: We can avoid creating a proxy if base_method can be marked 'final virtual' instead.
-				//        However, it's too late now, the MethodBuilder has already been created (see bug 377519)
+			if (!base_method.IsVirtual) {
+#if STATIC
+				var base_builder = base_method.GetMetaInfo () as MethodBuilder;
+				if (base_builder != null) {
+					//
+					// We can avoid creating a proxy if base_method can be marked 'final virtual'. This can
+					// be done for all methods from compiled assembly
+					//
+					base_builder.__SetAttributes (base_builder.Attributes | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.NewSlot);
+					return true;
+				}
+#endif
 				DefineProxy (iface_type, base_method, mi);
+			}
 
 			return true;
 		}

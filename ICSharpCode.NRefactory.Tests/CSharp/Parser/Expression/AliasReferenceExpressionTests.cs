@@ -5,10 +5,11 @@
 using System;
 using System.IO;
 using NUnit.Framework;
+using ICSharpCode.NRefactory.PatternMatching;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 {
-	[TestFixture, Ignore("Aliases not yet implemented")]
+	[TestFixture]
 	public class AliasReferenceExpressionTests
 	{
 		[Test]
@@ -16,12 +17,12 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 		{
 			CSharpParser parser = new CSharpParser();
 			AstType type = parser.ParseTypeReference(new StringReader("global::System"));
-			Assert.IsNotNull(
+			Assert.IsTrue(
 				new MemberType {
 					Target = new SimpleType("global"),
 					IsDoubleColon = true,
 					MemberName = "System"
-				}.Match(type)
+				}.IsMatch(type)
 			);
 		}
 		
@@ -29,7 +30,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 		public void GlobalTypeDeclaration()
 		{
 			VariableDeclarationStatement lvd = ParseUtilCSharp.ParseStatement<VariableDeclarationStatement>("global::System.String a;");
-			Assert.IsNotNull(
+			Assert.IsTrue(
 				new VariableDeclarationStatement {
 					Type = new MemberType {
 						Target = new MemberType {
@@ -43,7 +44,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 					Variables = {
 						new VariableInitializer("a")
 					}
-				}.Match(lvd)
+				}.IsMatch(lvd)
 			);
 		}
 		

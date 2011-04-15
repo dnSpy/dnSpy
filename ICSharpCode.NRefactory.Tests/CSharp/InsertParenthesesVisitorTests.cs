@@ -10,12 +10,12 @@ namespace ICSharpCode.NRefactory.CSharp
 	[TestFixture]
 	public class InsertParenthesesVisitorTests
 	{
-		CSharpFormattingPolicy policy;
+		CSharpFormattingOptions policy;
 		
 		[SetUp]
 		public void SetUp()
 		{
-			policy = new CSharpFormattingPolicy();
+			policy = new CSharpFormattingOptions();
 		}
 		
 		string InsertReadable(Expression expr)

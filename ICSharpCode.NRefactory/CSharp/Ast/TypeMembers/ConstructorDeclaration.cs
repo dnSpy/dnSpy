@@ -123,8 +123,16 @@ namespace ICSharpCode.NRefactory.CSharp
 			set;
 		}
 		
+		public CSharpTokenNode LParToken {
+			get { return GetChildByRole (Roles.LPar); }
+		}
+		
 		public AstNodeCollection<Expression> Arguments {
 			get { return GetChildrenByRole (Roles.Argument); }
+		}
+		
+		public CSharpTokenNode RParToken {
+			get { return GetChildByRole (Roles.RPar); }
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)

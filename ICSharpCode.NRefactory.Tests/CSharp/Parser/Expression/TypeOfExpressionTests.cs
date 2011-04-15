@@ -24,7 +24,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 					}});
 		}
 		
-		[Test, Ignore("Aliases not yet implemented")]
+		[Test]
 		public void GlobalTypeOfExpressionTest()
 		{
 			ParseUtilCSharp.AssertExpression(
@@ -108,11 +108,17 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 					}});
 		}
 		
-		[Test, Ignore("How do we represent unbound types in the AST?")]
+		[Test]
 		public void UnboundTypeOfExpressionTest()
 		{
-			TypeOfExpression toe = ParseUtilCSharp.ParseExpression<TypeOfExpression>("typeof(MyType<,>)");
-			throw new NotImplementedException("How do we represent unbound types in the AST?");
+			var type = new SimpleType("MyType");
+			type.AddChild (new SimpleType (), SimpleType.Roles.TypeArgument);
+			type.AddChild (new SimpleType (), SimpleType.Roles.TypeArgument);
+			ParseUtilCSharp.AssertExpression(
+				"typeof(MyType<,>)",
+				new TypeOfExpression {
+					Type = type
+			});
 		}
 	}
 }

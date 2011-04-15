@@ -37,7 +37,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestInvocationIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy,
@@ -58,7 +58,7 @@ this.TestMethod ();
 		[Test()]
 		public void TestIndentBlocks ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.IndentBlocks = true;
 			
 			var adapter = Test (policy,
@@ -94,7 +94,7 @@ this.TestMethod ();
 		[Test()]
 		public void TestBreakIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, 
@@ -115,7 +115,7 @@ this.TestMethod ();
 		[Test()]
 		public void TestCheckedIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			
@@ -137,7 +137,7 @@ checked {
 		[Test()]
 		public void TestBaseIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test {
@@ -156,7 +156,7 @@ checked {
 		[Test()]
 		public void TestUncheckedIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test {
@@ -178,7 +178,7 @@ unchecked {
 		[Test()]
 		public void TestContinueIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test {
@@ -198,7 +198,7 @@ continue;
 		[Test()]
 		public void TestEmptyStatementIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test {
@@ -217,7 +217,7 @@ continue;
 		[Test()]
 		public void TestFixedStatementIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test {
@@ -239,7 +239,7 @@ fixed (object* obj = &obj)
 		[Test()]
 		public void TestFixedForcementAdd ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			policy.FixedBraceForcement = BraceForcement.AddBraces;
@@ -269,7 +269,7 @@ fixed (object* obj = &obj)
 		[Test()]
 		public void TestForeachIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test
@@ -292,7 +292,7 @@ foreach (var obj in col) {
 		[Test()]
 		public void TestForIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
@@ -314,7 +314,7 @@ for (;;) {
 		[Test()]
 		public void TestGotoIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test {
@@ -334,7 +334,7 @@ goto label;
 		[Test()]
 		public void TestReturnIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test {
@@ -354,7 +354,7 @@ return;
 		[Test()]
 		public void TestLockIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test {
@@ -376,7 +376,7 @@ lock (this) {
 		[Test()]
 		public void TestThrowIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
@@ -397,7 +397,7 @@ throw new NotSupportedException ();
 		[Test()]
 		public void TestUnsafeIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
@@ -420,7 +420,7 @@ unsafe {
 		[Test()]
 		public void TestUsingIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
@@ -442,7 +442,7 @@ using (var o = new MyObj()) {
 		[Test()]
 		public void TestUsingForcementAdd ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			policy.UsingBraceForcement = BraceForcement.AddBraces;
@@ -472,7 +472,7 @@ using (var o = new MyObj()) {
 		[Test()]
 		public void TestUsingForcementDoNotChange ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			policy.UsingBraceForcement = BraceForcement.DoNotChange;
@@ -501,7 +501,7 @@ using (var o = new MyObj()) {
 		[Test()]
 		public void TestUsingAlignment ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.AlignEmbeddedUsingStatements = true;
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
@@ -535,7 +535,7 @@ using (var o = new MyObj()) {
 		[Test()]
 		public void TestVariableDeclarationIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test {
@@ -555,7 +555,7 @@ Test a;
 		[Test()]
 		public void TestConstantVariableDeclarationIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test {
@@ -575,7 +575,7 @@ const int a = 5;
 		[Test()]
 		public void TestYieldIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			Test (policy, @"class Test {
@@ -595,7 +595,7 @@ yield return null;
 		[Test()]
 		public void TestWhileIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
@@ -618,7 +618,7 @@ while (true)
 		[Test()]
 		public void TestDoWhileIndentation ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			Test (policy, @"class Test {
@@ -640,7 +640,7 @@ do {
 		[Test()]
 		public void TestForeachBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			Test (policy, @"class Test
@@ -663,7 +663,7 @@ do {
 		[Test()]
 		public void TestForeachBracketPlacement2 ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.NextLineShifted2;
 			Test (policy, @"class Test
@@ -688,7 +688,7 @@ do {
 		[Test()]
 		public void TestForEachBraceForcementAdd ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.NextLine;
 			policy.ForEachBraceForcement = BraceForcement.AddBraces;
@@ -720,7 +720,7 @@ do {
 		[Test()]
 		public void TestForBraceForcementAdd ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.NextLine;
 			policy.ForBraceForcement = BraceForcement.AddBraces;
@@ -753,7 +753,7 @@ do {
 		[Test()]
 		public void TestForEachBraceForcementRemove ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.NextLine;
 			policy.ForEachBraceForcement = BraceForcement.RemoveBraces;
@@ -790,7 +790,7 @@ do {
 		[Test()]
 		public void TestIfBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			
@@ -814,7 +814,7 @@ do {
 		[Test()]
 		public void TestAllowIfBlockInline ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			policy.AllowIfBlockInline = true;
 			
@@ -884,7 +884,7 @@ do {
 		[Test()]
 		public void TestIfElseBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			
@@ -909,7 +909,7 @@ do {
 		[Test()]
 		public void TestIfForcementRemove ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.NextLine;
 			policy.IfElseBraceForcement = BraceForcement.RemoveBraces;
@@ -947,7 +947,7 @@ do {
 		[Test()]
 		public void TestIfAlignment ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.AlignEmbeddedIfStatements = true;
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			
@@ -981,7 +981,7 @@ if (b) {
 		[Test()]
 		public void TestIfForcementAdd ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			policy.IfElseBraceForcement = BraceForcement.AddBraces;
@@ -1008,7 +1008,7 @@ if (b) {
 		[Test()]
 		public void TestIfForcementWithComment ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			policy.IfElseBraceForcement = BraceForcement.AddBraces;
@@ -1036,7 +1036,7 @@ if (b) {
 		[Test()]
 		public void TestIfElseForcementAdd ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			policy.IfElseBraceForcement = BraceForcement.AddBraces;
@@ -1067,7 +1067,7 @@ if (b) {
 		[Test()]
 		public void TestIfElseIFForcementAdd ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			policy.IfElseBraceForcement = BraceForcement.AddBraces;
@@ -1098,7 +1098,7 @@ if (b) {
 		[Test()]
 		public void TestElseOnNewLine ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.PlaceElseOnNewLine = true;
 			
 			Test (policy, @"class Test
@@ -1129,7 +1129,7 @@ if (b) {
 		[Test()]
 		public void TestElseIfOnNewLine ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.PlaceElseIfOnNewLine = true;
 			
 			Test (policy, @"class Test
@@ -1160,7 +1160,7 @@ if (b) {
 		[Test()]
 		public void TestElseOnNewLineOff ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.PlaceElseOnNewLine = false;
 			
 			Test (policy, @"class Test
@@ -1191,7 +1191,7 @@ if (b) {
 		[Test()]
 		public void TestSimpleIfElseComment ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			policy.PlaceElseIfOnNewLine = false; // for simple statements it must be new line.
@@ -1218,7 +1218,7 @@ if (b) {
 		[Test()]
 		public void TestWhileForcementRemove ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.NextLine;
 			policy.WhileBraceForcement = BraceForcement.RemoveBraces;
@@ -1256,7 +1256,7 @@ if (b) {
 		[Test()]
 		public void TestFixedBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.NextLineShifted;
 			policy.FixedBraceForcement = BraceForcement.AddBraces;
@@ -1285,7 +1285,7 @@ if (b) {
 		[Test()]
 		public void TestForBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLineWithoutSpace;
 			Test (policy, @"class Test
@@ -1309,7 +1309,7 @@ if (b) {
 		[Test()]
 		public void TestCheckedBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLineWithoutSpace;
 			
@@ -1334,7 +1334,7 @@ if (b) {
 		[Test()]
 		public void TestUncheckedBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLineWithoutSpace;
 			
@@ -1359,7 +1359,7 @@ if (b) {
 		[Test()]
 		public void TestLockBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			
@@ -1387,7 +1387,7 @@ if (b) {
 		[Test()]
 		public void TestUnsafeBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			
@@ -1415,7 +1415,7 @@ if (b) {
 		[Test()]
 		public void TestUsingBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			
@@ -1443,7 +1443,7 @@ if (b) {
 		[Test()]
 		public void TestWhileBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			
@@ -1471,7 +1471,7 @@ if (b) {
 		[Test()]
 		public void TestDoWhileBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			
@@ -1499,7 +1499,7 @@ if (b) {
 		[Test()]
 		public void TestSwitchFormatting1 ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.IndentSwitchBody = true;
 			policy.IndentCaseBody = true;
@@ -1532,7 +1532,7 @@ if (b) {
 		[Test()]
 		public void TestSwitchFormatting2 ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.IndentSwitchBody = false;
 			policy.IndentCaseBody = false;
@@ -1565,7 +1565,7 @@ if (b) {
 		[Test()]
 		public void TestTryCatchBracketPlacement ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
 			
@@ -1592,7 +1592,7 @@ if (b) {
 		[Test()]
 		public void TestPlaceCatchOnNewLine ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.PlaceCatchOnNewLine = true;
 			
@@ -1624,7 +1624,7 @@ if (b) {
 		[Test()]
 		public void TestPlaceFinallyOnNewLine ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.PlaceFinallyOnNewLine = true;
 			
 			Test (policy, @"class Test
@@ -1655,7 +1655,7 @@ if (b) {
 		[Test()]
 		public void TestPlaceWhileOnNewLine ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			policy.PlaceWhileOnNewLine = true;
 			

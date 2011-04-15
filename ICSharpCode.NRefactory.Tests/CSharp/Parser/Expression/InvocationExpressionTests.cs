@@ -153,7 +153,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 				}.Invoke("Foo"));
 		}
 		
-		[Test, Ignore("named arguments not yet supported")]
+		[Test]
 		public void InvocationWithNamedArgument()
 		{
 			ParseUtilCSharp.AssertExpression(

@@ -31,6 +31,28 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class NullReferenceExpression : Expression
 	{
+		AstLocation location;
+		public override AstLocation StartLocation {
+			get {
+				return location;
+			}
+		}
+		
+		public override AstLocation EndLocation {
+			get {
+				return new AstLocation (location.Line, location.Column + "null".Length);
+			}
+		}
+		
+		public NullReferenceExpression ()
+		{
+		}
+		
+		public NullReferenceExpression (AstLocation location)
+		{
+			this.location = location;
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitNullReferenceExpression (this, data);

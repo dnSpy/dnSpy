@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectGuid>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</ProjectGuid>
@@ -67,7 +67,6 @@
     <Compile Include="CSharp\Ast\AstLocation.cs" />
     <Compile Include="CSharp\Ast\AstType.cs" />
     <Compile Include="CSharp\Ast\Expressions\AnonymousMethodExpression.cs" />
-    <Compile Include="CSharp\Ast\Expressions\ArgListExpression.cs" />
     <Compile Include="CSharp\Ast\Expressions\AsExpression.cs" />
     <Compile Include="CSharp\Ast\Expressions\AssignmentExpression.cs" />
     <Compile Include="CSharp\Ast\Expressions\BaseReferenceExpression.cs" />
@@ -98,16 +97,17 @@
     <Compile Include="CSharp\Ast\Expressions\UncheckedExpression.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\TypeParameterDeclaration.cs" />
     <Compile Include="CSharp\Ast\MemberType.cs" />
-    <Compile Include="CSharp\Ast\PatternMatching\Choice.cs" />
-    <Compile Include="CSharp\Ast\PatternMatching\AnyNode.cs" />
-    <Compile Include="CSharp\Ast\PatternMatching\Backreference.cs" />
-    <Compile Include="CSharp\Ast\PatternMatching\IPatternAstVisitor.cs" />
-    <Compile Include="CSharp\Ast\PatternMatching\Match.cs" />
-    <Compile Include="CSharp\Ast\PatternMatching\NamedNode.cs" />
-    <Compile Include="CSharp\Ast\PatternMatching\OptionalNode.cs" />
-    <Compile Include="CSharp\Ast\PatternMatching\Repeat.cs" />
-    <Compile Include="CSharp\Ast\PatternMatching\Pattern.cs" />
-    <Compile Include="CSharp\Ast\PatternMatching\Placeholder.cs" />
+    <Compile Include="PatternMatching\BacktrackingInfo.cs" />
+    <Compile Include="PatternMatching\Choice.cs" />
+    <Compile Include="PatternMatching\AnyNode.cs" />
+    <Compile Include="PatternMatching\Backreference.cs" />
+    <Compile Include="PatternMatching\INode.cs" />
+    <Compile Include="PatternMatching\IPatternAstVisitor.cs" />
+    <Compile Include="PatternMatching\Match.cs" />
+    <Compile Include="PatternMatching\NamedNode.cs" />
+    <Compile Include="PatternMatching\OptionalNode.cs" />
+    <Compile Include="PatternMatching\Repeat.cs" />
+    <Compile Include="PatternMatching\Pattern.cs" />
     <Compile Include="CSharp\Ast\PrimitiveType.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\Attribute.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\AttributeSection.cs" />
@@ -157,7 +157,6 @@
     <Compile Include="CSharp\Ast\TypeMembers\ParameterDeclaration.cs" />
     <Compile Include="CSharp\Ast\TypeMembers\PropertyDeclaration.cs" />
     <Compile Include="CSharp\Ast\TypeMembers\VariableInitializer.cs" />
-    <Compile Include="CSharp\Formatter\CSharpFormattingPolicy.cs" />
     <Compile Include="CSharp\Formatter\Indent.cs" />
     <Compile Include="CSharp\OutputVisitor\InsertParenthesesVisitor.cs" />
     <Compile Include="CSharp\OutputVisitor\IOutputFormatter.cs" />
@@ -350,6 +349,9 @@
     <Compile Include="CSharp\Ast\TypeMembers\FixedFieldDeclaration.cs" />
     <Compile Include="CSharp\Ast\TypeMembers\FixedVariableInitializer.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\ExternAliasDeclaration.cs" />
+    <Compile Include="CSharp\Formatter\CSharpFormattingOptions.cs" />
+    <Compile Include="CSharp\Ast\Expressions\AnonymousTypeCreateExpression.cs" />
+    <Compile Include="CSharp\Ast\Expressions\UndocumentedExpression.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CSharp\" />

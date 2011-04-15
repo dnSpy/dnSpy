@@ -676,7 +676,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				for (int i = 0; i < typeDefinition.GenericParameters.Count; i++) {
 					if (typeDefinition.GenericParameters[i].Position != i)
 						throw new InvalidOperationException("g.Position != i");
-					this.TypeParameters.Add(new DefaultTypeParameter(this, i, typeDefinition.GenericParameters[i].Name));
+					this.TypeParameters.Add(new DefaultTypeParameter(
+						EntityType.TypeDefinition, i, typeDefinition.GenericParameters[i].Name));
 				}
 			}
 			
@@ -686,7 +687,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				
 				if (typeDefinition.HasGenericParameters) {
 					for (int i = 0; i < typeDefinition.GenericParameters.Count; i++) {
-						loader.AddConstraints((DefaultTypeParameter)this.TypeParameters[i], typeDefinition.GenericParameters[i]);
+						loader.AddConstraints(this, (DefaultTypeParameter)this.TypeParameters[i], typeDefinition.GenericParameters[i]);
 					}
 				}
 				
@@ -879,10 +880,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				for (int i = 0; i < method.GenericParameters.Count; i++) {
 					if (method.GenericParameters[i].Position != i)
 						throw new InvalidOperationException("g.Position != i");
-					m.TypeParameters.Add(new DefaultTypeParameter(m, i, method.GenericParameters[i].Name));
+					m.TypeParameters.Add(new DefaultTypeParameter(
+						EntityType.Method, i, method.GenericParameters[i].Name));
 				}
 				for (int i = 0; i < method.GenericParameters.Count; i++) {
-					AddConstraints((DefaultTypeParameter)m.TypeParameters[i], method.GenericParameters[i]);
+					AddConstraints(m, (DefaultTypeParameter)m.TypeParameters[i], method.GenericParameters[i]);
 				}
 			}
 			
@@ -1064,7 +1066,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		#endregion
 		
 		#region Type Parameter Constraints
-		void AddConstraints(DefaultTypeParameter tp, GenericParameter g)
+		void AddConstraints(IEntity parentEntity, DefaultTypeParameter tp, GenericParameter g)
 		{
 			switch (g.Attributes & GenericParameterAttributes.VarianceMask) {
 				case GenericParameterAttributes.Contravariant:
@@ -1081,7 +1083,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			if (g.HasConstraints) {
 				foreach (TypeReference constraint in g.Constraints) {
-					tp.Constraints.Add(ReadTypeReference(constraint, entity: tp.Parent));
+					tp.Constraints.Add(ReadTypeReference(constraint, entity: parentEntity));
 				}
 			}
 		}

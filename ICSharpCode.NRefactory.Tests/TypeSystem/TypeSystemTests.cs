@@ -134,8 +134,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public void TestClassTypeParameters()
 		{
 			var testClass = testCasePC.GetClass(typeof(GenericClass<,>));
-			Assert.AreSame(testClass, testClass.TypeParameters[0].ParentClass);
-			Assert.AreSame(testClass, testClass.TypeParameters[1].ParentClass);
+			Assert.AreEqual(EntityType.TypeDefinition, testClass.TypeParameters[0].OwnerType);
+			Assert.AreEqual(EntityType.TypeDefinition, testClass.TypeParameters[1].OwnerType);
 			Assert.AreSame(testClass.TypeParameters[1], testClass.TypeParameters[0].Constraints[0].Resolve(ctx));
 		}
 		
@@ -147,8 +147,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			IMethod m = testClass.Methods.Single(me => me.Name == "TestMethod");
 			Assert.AreEqual("K", m.TypeParameters[0].Name);
 			Assert.AreEqual("V", m.TypeParameters[1].Name);
-			Assert.AreSame(m, m.TypeParameters[0].ParentMethod);
-			Assert.AreSame(m, m.TypeParameters[1].ParentMethod);
+			Assert.AreEqual(EntityType.Method, m.TypeParameters[0].OwnerType);
+			Assert.AreEqual(EntityType.Method, m.TypeParameters[1].OwnerType);
 			
 			Assert.AreEqual("System.IComparable`1[[``1]]", m.TypeParameters[0].Constraints[0].Resolve(ctx).ReflectionName);
 			Assert.AreSame(m.TypeParameters[0], m.TypeParameters[1].Constraints[0].Resolve(ctx));
@@ -161,7 +161,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			IMethod m = testClass.Methods.Single(me => me.Name == "GetIndex");
 			Assert.AreEqual("T", m.TypeParameters[0].Name);
-			Assert.AreSame(m, m.TypeParameters[0].ParentMethod);
+			Assert.AreEqual(EntityType.Method, m.TypeParameters[0].OwnerType);
 			
 			ParameterizedType constraint = (ParameterizedType)m.TypeParameters[0].Constraints[0].Resolve(ctx);
 			Assert.AreEqual("IEquatable", constraint.Name);

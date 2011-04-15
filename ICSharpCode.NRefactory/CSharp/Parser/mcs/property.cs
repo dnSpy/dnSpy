@@ -805,11 +805,6 @@ namespace Mono.CSharp
 
 			base.Emit ();
 		}
-
-		public override string GetDocCommentName ()
-		{
-			return String.Concat (DocCommentHeader, Parent.Name, ".", GetFullName (ShortName).Replace ('.', '#'));
-		}
 	}
 
 	/// <summary>
@@ -1118,7 +1113,7 @@ namespace Mono.CSharp
 		public abstract class AEventAccessor : AbstractPropertyEventMethod
 		{
 			protected readonly Event method;
-			ParametersCompiled parameters;
+			readonly ParametersCompiled parameters;
 
 			static readonly string[] attribute_targets = new string [] { "method", "param", "return" };
 
@@ -1169,7 +1164,10 @@ namespace Mono.CSharp
 
 			public virtual MethodBuilder Define (DeclSpace parent)
 			{
-				parameters.Resolve (this);
+				// Fill in already resolved event type to speed things up and
+				// avoid confusing duplicate errors
+				((Parameter) parameters.FixedParameters[0]).Type = method.member_type;
+				parameters.Types = new TypeSpec[] { method.member_type };
 
 				method_data = new MethodData (method, method.ModFlags,
 					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);
@@ -1576,22 +1574,22 @@ namespace Mono.CSharp
 			return base.EnableOverloadChecks (overload);
 		}
 
-		public override string GetDocCommentName ()
-		{
-			return DocumentationBuilder.GetMethodDocCommentName (this, parameters);
-		}
-
 		public override string GetSignatureForError ()
 		{
 			StringBuilder sb = new StringBuilder (Parent.GetSignatureForError ());
 			if (MemberName.Left != null) {
-				sb.Append ('.');
+				sb.Append (".");
 				sb.Append (MemberName.Left.GetSignatureForError ());
 			}
 
 			sb.Append (".this");
-			sb.Append (parameters.GetSignatureForError ().Replace ('(', '[').Replace (')', ']'));
+			sb.Append (parameters.GetSignatureForError ("[", "]", parameters.Count));
 			return sb.ToString ();
+		}
+
+		public override string GetSignatureForDocumentation ()
+		{
+			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
 		}
 
 		public AParametersCollection Parameters {
@@ -1633,6 +1631,11 @@ namespace Mono.CSharp
 			}
 		}
 		#endregion
+
+		public override string GetSignatureForDocumentation ()
+		{
+			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
+		}
 
 		public override string GetSignatureForError ()
 		{

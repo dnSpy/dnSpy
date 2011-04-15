@@ -10,7 +10,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 	[TestFixture]
 	public class ForStatementTests
 	{
-		[Test, Ignore("variable type in foreach is broken")]
+		[Test]
 		public void ForeachStatementTest()
 		{
 			ParseUtilCSharp.AssertStatement(
@@ -23,7 +23,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 				});
 		}
 		
-		[Test, Ignore("for statement is broken when Initializers.Count()!=1")]
+		[Test]
 		public void EmptyForStatementTest()
 		{
 			ForStatement forStmt = ParseUtilCSharp.ParseStatement<ForStatement>("for (;;) ;");
