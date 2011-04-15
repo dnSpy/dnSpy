@@ -18,7 +18,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// Gets or sets the current debugged member reference. Can be a type or a member of a type (method, property).
 		/// </summary>
-		public static MemberReference CurrentMember { get; set; }
+		public static MemberReference CurrentMemberReference { get; set; }
 
 		/// <summary>
 		/// Gets or sets the decompiled language.
@@ -42,9 +42,9 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// Returns true if the CurrentMember is a type (TypeDefinition). Otherwise, returns false (is MethodDefinition or PropertyDefinition).
 		/// </summary>
-		public static bool IsCurrentMemberType {
+		public static bool IsCurrentMemberReferenceType {
 			get {
-				return CurrentMember is TypeDefinition;
+				return CurrentMemberReference is TypeDefinition;
 			}
 		}
 		

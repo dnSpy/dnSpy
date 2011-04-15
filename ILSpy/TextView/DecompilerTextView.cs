@@ -378,7 +378,7 @@ namespace ICSharpCode.ILSpy.TextView
 		void DoDecompile(DecompilationContext context, int outputLengthLimit)
 		{
 			// reset type
-			DebugData.CurrentMember = null;
+			DebugData.CurrentMemberReference = null;
 			TextEditorListener.Instance.ClosePopup();
 			
 			RunWithCancellation(
@@ -407,24 +407,24 @@ namespace ICSharpCode.ILSpy.TextView
 						ShowOutput(output);
 						
 						// reset type
-						DebugData.CurrentMember = null;
+						DebugData.CurrentMemberReference = null;
 					}
 					finally {
 						
 						// set the language
 						DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 						
-						if (DebugData.CurrentMember != null) {
+						if (DebugData.CurrentMemberReference != null) {
 							// TODO: show margin for single methods and properties
-							if (context.TreeNodes.Count() == 1 && DebugData.IsCurrentMemberType) {
+							if (context.TreeNodes.Count() == 1 && DebugData.IsCurrentMemberReferenceType) {
 								iconMargin.Visibility = Visibility.Visible;
 								// repaint bookmarks
 								iconMargin.InvalidateVisual();
 								
 								// show the currentline marker
 								var bm = CurrentLineBookmark.Instance;
-								if (bm != null && DebugData.CurrentMember != null) {
-									if (DebugData.CurrentMember == bm.Member) {
+								if (bm != null && DebugData.CurrentMemberReference != null) {
+									if (DebugData.CurrentMemberReference == bm.Member) {
 										DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
 										bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
 									}
