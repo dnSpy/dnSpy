@@ -30,9 +30,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
+using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 using Mono.Cecil;

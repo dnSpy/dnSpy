@@ -41,6 +41,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (context == null)
 				throw new ArgumentNullException("context");
 			this.context = context;
+			this.DecompileMethodBodies = true;
 		}
 		
 		public static bool MemberIsHidden(MemberReference member, DecompilerSettings settings)
@@ -629,7 +630,7 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 				} else
 					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
-				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
+				astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
 			}
 			ConvertAttributes(astMethod, methodDef);
 			if (methodDef.HasCustomAttributes && astMethod.Parameters.Count > 0) {
@@ -707,7 +708,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			astMethod.Name = CleanName(methodDef.DeclaringType.Name);
 			astMethod.Parameters.AddRange(MakeParameters(methodDef));
-			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
+			astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
 			ConvertAttributes(astMethod, methodDef);
 			return astMethod;
 		}
@@ -755,7 +756,7 @@ namespace ICSharpCode.Decompiler.Ast
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			if (propDef.GetMethod != null) {
 				astProp.Getter = new Accessor();
-				astProp.Getter.Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context);
+				astProp.Getter.Body = CreateMethodBody(propDef.GetMethod);
 				astProp.AddAnnotation(propDef.GetMethod);
 				ConvertAttributes(astProp.Getter, propDef.GetMethod);
 				
@@ -764,7 +765,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor();
-				astProp.Setter.Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context);
+				astProp.Setter.Body = CreateMethodBody(propDef.SetMethod);
 				astProp.Setter.AddAnnotation(propDef.SetMethod);
 				ConvertAttributes(astProp.Setter, propDef.SetMethod);
 				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), AttributeTarget.Param);
@@ -819,18 +820,28 @@ namespace ICSharpCode.Decompiler.Ast
 					astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().DeclaringType);
 				if (eventDef.AddMethod != null) {
 					astEvent.AddAccessor = new Accessor {
-						Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
+						Body = CreateMethodBody(eventDef.AddMethod)
 					}.WithAnnotation(eventDef.AddMethod);
 					ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
 				}
 				if (eventDef.RemoveMethod != null) {
 					astEvent.RemoveAccessor = new Accessor {
-						Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, context)
+						Body = CreateMethodBody(eventDef.RemoveMethod)
 					}.WithAnnotation(eventDef.RemoveMethod);
 					ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
 				}
 				return astEvent;
 			}
+		}
+		
+		public bool DecompileMethodBodies { get; set; }
+		
+		BlockStatement CreateMethodBody(MethodDefinition method, IEnumerable<ParameterDeclaration> parameters = null)
+		{
+			if (DecompileMethodBodies)
+				return AstMethodBodyBuilder.CreateMethodBody(method, context, parameters);
+			else
+				return null;
 		}
 
 		FieldDeclaration CreateField(FieldDefinition fieldDef)

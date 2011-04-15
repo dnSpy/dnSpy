@@ -8,12 +8,12 @@ using System.Linq;
 using System.Text;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.XmlDoc
 {
 	/// <summary>
 	/// Provides XML documentation tags.
 	/// </summary>
-	sealed class XmlDocKeyProvider
+	public sealed class XmlDocKeyProvider
 	{
 		#region GetKey
 		public static string GetKey(MemberReference member)
@@ -33,7 +33,10 @@ namespace ICSharpCode.ILSpy
 					b.Append("M:");
 				AppendTypeName(b, member.DeclaringType);
 				b.Append('.');
-				b.Append(member.Name);
+				if (member.Name == ".ctor")
+					b.Append("#ctor");
+				else
+					b.Append(member.Name);
 				IList<ParameterDefinition> parameters;
 				if (member is PropertyDefinition) {
 					parameters = ((PropertyDefinition)member).Parameters;

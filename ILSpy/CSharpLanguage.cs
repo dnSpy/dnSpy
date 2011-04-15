@@ -23,6 +23,8 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Resources;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xaml;
 using System.Xml;
@@ -461,6 +463,35 @@ namespace ICSharpCode.ILSpy
 		public override bool ShowMember(MemberReference member)
 		{
 			return showAllMembers || !AstBuilder.MemberIsHidden(member, new DecompilationOptions().DecompilerSettings);
+		}
+		
+		public override string GetTooltip(MemberReference member)
+		{
+			MethodDefinition md = member as MethodDefinition;
+			PropertyDefinition pd = member as PropertyDefinition;
+			EventDefinition ed = member as EventDefinition;
+			FieldDefinition fd = member as FieldDefinition;
+			if (md != null || pd != null || ed != null || fd != null) {
+				AstBuilder b = new AstBuilder(new DecompilerContext(member.Module) { Settings = new DecompilerSettings { UsingDeclarations = false } });
+				b.DecompileMethodBodies = false;
+				if (md != null)
+					b.AddMethod(md);
+				else if (pd != null)
+					b.AddProperty(pd);
+				else if (ed != null)
+					b.AddEvent(ed);
+				else
+					b.AddField(fd);
+				b.RunTransformations();
+				foreach (var attribute in b.CompilationUnit.Descendants.OfType<AttributeSection>())
+					attribute.Remove();
+				
+				StringWriter w = new StringWriter();
+				b.GenerateCode(new PlainTextOutput(w));
+				return Regex.Replace(w.ToString(), @"\s+", " ").TrimEnd();
+			}
+			
+			return base.GetTooltip(member);
 		}
 	}
 }

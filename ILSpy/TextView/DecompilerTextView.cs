@@ -40,7 +40,9 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory.Documentation;
+using ICSharpCode.NRefactory.TypeSystem;
 using Microsoft.Win32;
 using Mono.Cecil;
 
@@ -115,84 +117,38 @@ namespace ICSharpCode.ILSpy.TextView
 				Mono.Cecil.Cil.OpCode code = (Mono.Cecil.Cil.OpCode)segment.Reference;
 				string encodedName = code.Code.ToString();
 				string opCodeHex = code.Size > 1 ? string.Format("0x{0:x2}{1:x2}", code.Op1, code.Op2) : string.Format("0x{0:x2}", code.Op2);
-				string documentationFile = FindDocumentation("mscorlib.xml");
-				string text = "";
-				if (documentationFile != null){
-					XmlDocumentationProvider provider = new XmlDocumentationProvider(documentationFile);
-					string documentation = provider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + encodedName);
-					if (documentation != null)
-						text = StripXml(documentation);
-				}
-				return string.Format("{0} ({1}): {2}", code.Name, opCodeHex, text);
-			}
-			
-			return null;
-		}
-		
-		string StripXml(string xmlText)
-		{
-			try {
-				using (XmlTextReader xml = new XmlTextReader(new StringReader(xmlText))) {
-					StringBuilder ret = new StringBuilder();
-					while (xml.Read()) {
-						if (xml.NodeType == XmlNodeType.Element) {
-							string elname = xml.Name.ToLowerInvariant();
-							switch (elname) {
-								case "summary":
-									break;
-								case "br":
-								case "para":
-									ret.AppendLine();
-									break;
-								default:
-									xml.Skip();
-									break;
-							}
-						} else if (xml.NodeType == XmlNodeType.Text) {
-							ret.Append(Regex.Replace(xml.Value, @"\s+", " "));
-						}
+				XmlDocumentationProvider docProvider = XmlDocLoader.MscorlibDocumentation;
+				if (docProvider != null){
+					string documentation = docProvider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + encodedName);
+					if (documentation != null) {
+						XmlDocRenderer renderer = new XmlDocRenderer();
+						renderer.AppendText(string.Format("{0} ({1}) - ", code.Name, opCodeHex));
+						renderer.AddXmlDocumentation(documentation);
+						return renderer.CreateTextBlock();
 					}
-					return ret.ToString();
 				}
-			} catch (XmlException) {
-				return null; // invalid XML docu
+				return string.Format("{0} ({1})", code.Name, opCodeHex);
+			} else if (segment.Reference is MemberReference) {
+				MemberReference mr = (MemberReference)segment.Reference;
+				// if possible, resolve the reference
+				if (mr is TypeReference) {
+					mr = ((TypeReference)mr).Resolve() ?? mr;
+				} else if (mr is MethodReference) {
+					mr = ((MethodReference)mr).Resolve() ?? mr;
+				}
+				XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(mr.Module);
+				if (docProvider != null) {
+					XmlDocRenderer renderer = new XmlDocRenderer();
+					renderer.AppendText(MainWindow.Instance.CurrentLanguage.GetTooltip(mr));
+					string documentation = docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+					if (documentation != null) {
+						renderer.AppendText(Environment.NewLine);
+						renderer.AddXmlDocumentation(documentation);
+					}
+					return renderer.CreateTextBlock();
+				}
 			}
-		}
-		
-		string FindDocumentation(string fileName)
-		{
-			string path = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
-			List<string> names = new List<string>();
-			EnumerateCultures(CultureInfo.CurrentCulture, names);
-			names.Add("en");
-			names.Add("en-US");
-			names.Add("en-GB");
-			
-			foreach (string name in names) {
-				string location = Path.Combine(path, name, fileName);
-				if (File.Exists(location))
-					return location;
-			}
-			
-			path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0");
-			
-			string loc = Path.Combine(path, fileName);
-			
-			if (File.Exists(loc)) {
-				return loc;
-			}
-			
 			return null;
-		}
-
-		void EnumerateCultures(CultureInfo info, List<string> names)
-		{
-			while (info != null) {
-				names.Add(info.Name);
-				info = info.Parent;
-				if (info == info.Parent)
-					return;
-			}
 		}
 		#endregion
 		
@@ -269,7 +225,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		void ShowOutput(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null, DecompilerTextViewState state = null)
 		{
-			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength); 
+			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
 			Stopwatch w = Stopwatch.StartNew();
 			
 			textEditor.ScrollToHome();
