@@ -857,7 +857,7 @@ namespace ICSharpCode.Decompiler.Ast
 					initializer.Initializer = new NullReferenceExpression();
 				} else {
 					TypeCode c = Type.GetTypeCode(fieldDef.Constant.GetType());
-					if (c >= TypeCode.SByte && c <= TypeCode.UInt64) {
+					if (c >= TypeCode.SByte && c <= TypeCode.UInt64 && !fieldDef.DeclaringType.IsEnum) {
 						initializer.Initializer = MakePrimitive((long)CSharpPrimitiveCast.Cast(TypeCode.Int64, fieldDef.Constant, false), fieldDef.FieldType);
 					} else {
 						initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
