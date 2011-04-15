@@ -1,5 +1,5 @@
 ﻿// 
-// ArgListExpression.cs
+// UndocumentedExpression.cs
 //  
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
@@ -28,16 +28,25 @@ using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	/// <summary>
-	/// Represents the undocumented __arglist keyword.
-	/// </summary>
-	public class ArgListExpression : Expression
+	public enum UndocumentedExpressionType
 	{
-		public bool IsAccess { // access is __arglist, otherwise it's __arglist (a1, a2, ..., an)
+		ArgListAccess, // __arglist
+		ArgList, // __arglist (a1, a2, ..., an)
+		RefValue, // __refvalue (expr , type)
+		RefType, // __reftype (expr)
+		MakeRef // __makeref (expr)
+	}
+	
+	/// <summary>
+	/// Represents undocumented expressions.
+	/// </summary>
+	public class UndocumentedExpression : Expression
+	{
+		public UndocumentedExpressionType UndocumentedExpressionType {
 			get; set;
 		}
 		
-		public CSharpTokenNode ArgListToken {
+		public CSharpTokenNode UndocumentedToken {
 			get { return GetChildByRole (Roles.Keyword); }
 		}
 		
@@ -55,13 +64,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitArgListExpression (this, data);
+			return visitor.VisitUndocumentedExpression (this, data);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
-			ArgListExpression o = other as ArgListExpression;
-			return o != null && this.IsAccess == o.IsAccess && this.Arguments.DoMatch(o.Arguments, match);
+			UndocumentedExpression o = other as UndocumentedExpression;
+			return o != null && this.UndocumentedExpressionType == o.UndocumentedExpressionType && this.Arguments.DoMatch(o.Arguments, match);
 		}
 	}
 }

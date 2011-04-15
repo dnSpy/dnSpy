@@ -54,7 +54,7 @@ namespace Mono.CSharp {
 			28, 67, 78,
 			105, 108, 109, 114, 162, 164, 168, 169, 183, 184, 197,
 			219, 251, 252, 253, 278, 282,
-			402, 414, 419, 420, 429, 436, 440, 458, 464, 465, 467, 469, 472,
+			402, 414, 419, 420, 429, 436, 437, 440, 458, 464, 465, 467, 469, 472,
 			612, 618, 626, 628, 642, 649, 652, 657, 658, 659, 660, 661, 665, 672, 675, 693,
 			728,
 			809, 824,
@@ -675,6 +675,10 @@ namespace Mono.CSharp {
 			// HACK: Temporary hack for broken repl flow
 			ErrorsCount = WarningsCount = 0;
 		}
+	}
+
+	sealed class NullReportPrinter : ReportPrinter
+	{
 	}
 
 	//

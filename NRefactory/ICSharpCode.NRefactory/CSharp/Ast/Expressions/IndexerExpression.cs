@@ -50,6 +50,24 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RBracket); }
 		}
 		
+		public IndexerExpression ()
+		{
+		}
+		
+		public IndexerExpression (Expression target, IEnumerable<Expression> arguments)
+		{
+			AddChild (target, Roles.TargetExpression);
+			if (arguments != null) {
+				foreach (var arg in arguments) {
+					AddChild (arg, Roles.Argument);
+				}
+			}
+		}
+		
+		public IndexerExpression (Expression target, params Expression[] arguments) : this (target, (IEnumerable<Expression>)arguments)
+		{
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIndexerExpression (this, data);

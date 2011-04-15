@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 {
-	[TestFixture, Ignore("events are broken")]
+	[TestFixture]
 	public class EventDeclarationTests
 	{
 		[Test]
@@ -38,7 +38,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 						},
 						new VariableInitializer {
 							Name = "B",
-							Initializer = new AnonymousMethodExpression()
+							Initializer = new AnonymousMethodExpression() { Body = new BlockStatement ()}
 						}
 					}});
 		}

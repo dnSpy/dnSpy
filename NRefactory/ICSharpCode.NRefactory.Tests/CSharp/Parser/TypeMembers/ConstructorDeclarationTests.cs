@@ -17,7 +17,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.IsTrue(cd.Initializer.IsNull);
 		}
 		
-		[Test, Ignore("Constructor initializer is broken")]
+		[Test]
 		public void ConstructorDeclarationTest2()
 		{
 			ConstructorDeclaration cd = ParseUtilCSharp.ParseTypeMember<ConstructorDeclaration>("MyClass() : this(5) {}");
@@ -25,7 +25,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.AreEqual(1, cd.Initializer.Arguments.Count());
 		}
 		
-		[Test, Ignore("Constructor initializer is broken")]
+		[Test]
 		public void ConstructorDeclarationTest3()
 		{
 			ConstructorDeclaration cd = ParseUtilCSharp.ParseTypeMember<ConstructorDeclaration>("MyClass() : base(1, 2, 3) {}");

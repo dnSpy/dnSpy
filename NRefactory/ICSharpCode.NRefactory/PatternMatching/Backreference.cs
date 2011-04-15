@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 
-namespace ICSharpCode.NRefactory.CSharp.PatternMatching
+namespace ICSharpCode.NRefactory.PatternMatching
 {
 	/// <summary>
 	/// Matches the last entry in the specified named group.
@@ -24,14 +24,14 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			this.referencedGroupName = referencedGroupName;
 		}
 		
-		protected internal override bool DoMatch(AstNode other, Match match)
+		public override bool DoMatch(INode other, Match match)
 		{
-			return match.Get(referencedGroupName).Last().Match(other) != null;
+			return match.Get(referencedGroupName).Last().IsMatch(other);
 		}
 		
-		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S>(IPatternAstVisitor<T, S> visitor, T data)
 		{
-			return ((IPatternAstVisitor<T, S>)visitor).VisitBackreference(this, data);
+			return visitor.VisitBackreference(this, data);
 		}
 	}
 	
@@ -53,18 +53,20 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			this.referencedGroupName = referencedGroupName;
 		}
 		
-		protected internal override bool DoMatch(AstNode other, Match match)
+		public override bool DoMatch(INode other, Match match)
 		{
-			IdentifierExpression ident = other as IdentifierExpression;
+			CSharp.IdentifierExpression ident = other as CSharp.IdentifierExpression;
 			if (ident == null || ident.TypeArguments.Any())
 				return false;
-			AstNode referenced = match.Get(referencedGroupName).Last();
-			return ident.Identifier == referenced.GetChildByRole(AstNode.Roles.Identifier).Name;
+			CSharp.AstNode referenced = (CSharp.AstNode)match.Get(referencedGroupName).Last();
+			if (referenced == null)
+				return false;
+			return ident.Identifier == referenced.GetChildByRole(CSharp.AstNode.Roles.Identifier).Name;
 		}
 		
-		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		public override S AcceptVisitor<T, S>(IPatternAstVisitor<T, S> visitor, T data)
 		{
-			return ((IPatternAstVisitor<T, S>)visitor).VisitIdentifierExpressionBackreference(this, data);
+			return visitor.VisitIdentifierExpressionBackreference(this, data);
 		}
 	}
 }

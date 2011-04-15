@@ -497,9 +497,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			throw new NotImplementedException();
 		}
 		
-		public override ResolveResult VisitArgListExpression(ArgListExpression argListExpression, object data)
+		public override ResolveResult VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression, object data)
 		{
-			ScanChildren(argListExpression);
+			// TODO: ? 
+			ScanChildren(undocumentedExpression);
 			return new ResolveResult(resolver.Context.GetClass(typeof(RuntimeArgumentHandle)) ?? SharedTypes.UnknownType);
 		}
 		

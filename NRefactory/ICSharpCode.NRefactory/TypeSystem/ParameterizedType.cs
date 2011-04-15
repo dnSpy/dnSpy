@@ -35,7 +35,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			public override IType VisitTypeParameter(ITypeParameter type)
 			{
 				int index = type.Index;
-				if (type.ParentClass != null) {
+				if (type.OwnerType == EntityType.TypeDefinition) {
 					if (index >= 0 && index < typeArguments.Length)
 						return typeArguments[index];
 					else

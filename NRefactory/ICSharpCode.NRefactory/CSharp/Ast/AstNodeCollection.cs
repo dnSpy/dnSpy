@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using ICSharpCode.NRefactory.CSharp.PatternMatching;
+using ICSharpCode.NRefactory.PatternMatching;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -159,39 +159,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		internal bool DoMatch(AstNodeCollection<T> other, Match match)
 		{
-			Stack<AstNode> patternStack = new Stack<AstNode>();
-			Stack<Pattern.PossibleMatch> stack = new Stack<Pattern.PossibleMatch>();
-			patternStack.Push(this.node.FirstChild);
-			stack.Push(new Pattern.PossibleMatch(other.node.FirstChild, match.CheckPoint()));
-			while (stack.Count > 0) {
-				AstNode cur1 = patternStack.Pop();
-				AstNode cur2 = stack.Peek().NextOther;
-				match.RestoreCheckPoint(stack.Pop().Checkpoint);
-				bool success = true;
-				while (cur1 != null && success) {
-					while (cur1 != null && cur1.Role != role)
-						cur1 = cur1.NextSibling;
-					while (cur2 != null && cur2.Role != role)
-						cur2 = cur2.NextSibling;
-					if (cur1 == null)
-						break;
-					
-					Debug.Assert(stack.Count == patternStack.Count);
-					success = cur1.DoMatchCollection(role, cur2, match, stack);
-					Debug.Assert(stack.Count >= patternStack.Count);
-					while (stack.Count > patternStack.Count)
-						patternStack.Push(cur1.NextSibling);
-					
-					cur1 = cur1.NextSibling;
-					if (cur2 != null)
-						cur2 = cur2.NextSibling;
-				}
-				while (cur2 != null && cur2.Role != role)
-					cur2 = cur2.NextSibling;
-				if (success && cur2 == null)
-					return true;
-			}
-			return false;
+			return Pattern.DoMatchCollection(role, node.FirstChild, other.node.FirstChild, match);
 		}
 		
 		public void InsertAfter(T existingItem, T newItem)

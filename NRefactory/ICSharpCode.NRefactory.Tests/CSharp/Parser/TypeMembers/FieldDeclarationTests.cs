@@ -9,7 +9,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 	[TestFixture]
 	public class FieldDeclarationTests
 	{
-		[Test, Ignore("multidimensional array rank incorrect?")]
+		[Test]
 		public void SimpleFieldDeclarationTest()
 		{
 			ParseUtilCSharp.AssertTypeMember(
@@ -56,12 +56,21 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 					}});
 		}
 		
-		[Test, Ignore("How do we represent fixed-size fields in the AST?")]
+		[Test]
 		public void FieldWithFixedSize()
 		{
 			ParseUtilCSharp.AssertTypeMember(
 				"public unsafe fixed int Field[100];",
-				new FieldDeclaration());
+				new FixedFieldDeclaration() {
+					Modifiers =  Modifiers.Public | Modifiers.Unsafe,
+					ReturnType = new PrimitiveType("int"),
+					Variables = {
+						new FixedVariableInitializer {
+							Name = "Field",
+							CountExpression = new PrimitiveExpression(100)
+						}
+					}
+				});
 		}
 	}
 }

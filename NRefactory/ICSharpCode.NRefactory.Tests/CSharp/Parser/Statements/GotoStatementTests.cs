@@ -10,7 +10,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 	[TestFixture]
 	public class GotoStatementTests
 	{
-		[Test, Ignore("regular goto statement is broken")]
+		[Test]
 		public void GotoStatementTest()
 		{
 			var gotoStmt = ParseUtilCSharp.ParseStatement<GotoStatement>("goto myLabel;");

@@ -84,7 +84,7 @@ namespace Mono.CSharp {
 		CompileUnitEntry comp_unit;
 		Dictionary<string, SourceFile> include_files;
 		Dictionary<string, bool> conditionals;
-		NamespaceEntry ns_container;
+		NamespaceContainer ns_container;
 
 		public CompilationSourceFile (string name, string fullPathName, int index)
 			: base (name, fullPathName, index)
@@ -99,7 +99,7 @@ namespace Mono.CSharp {
 			get { return comp_unit; }
 		}
 
-		public NamespaceEntry NamespaceContainer {
+		public NamespaceContainer NamespaceContainer {
 			get {
 				return ns_container;
 			}

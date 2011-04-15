@@ -41,6 +41,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (context == null)
 				throw new ArgumentNullException("context");
 			this.context = context;
+			this.DecompileMethodBodies = true;
 		}
 		
 		public static bool MemberIsHidden(MemberReference member, DecompilerSettings settings)
@@ -109,7 +110,7 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			var outputFormatter = new TextOutputFormatter(output);
-			var formattingPolicy = new CSharpFormattingPolicy();
+			var formattingPolicy = new CSharpFormattingOptions();
 			// disable whitespace in front of parentheses:
 			formattingPolicy.SpaceBeforeMethodCallParentheses = false;
 			formattingPolicy.SpaceBeforeMethodDeclarationParentheses = false;
@@ -120,8 +121,8 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void AddAssembly(AssemblyDefinition assemblyDefinition, bool onlyAssemblyLevel = false)
 		{
-			ConvertCustomAttributes(astCompileUnit, assemblyDefinition, AttributeTarget.Assembly);
-			ConvertCustomAttributes(astCompileUnit, assemblyDefinition.MainModule, AttributeTarget.Module);
+			ConvertCustomAttributes(astCompileUnit, assemblyDefinition, "assembly");
+			ConvertCustomAttributes(astCompileUnit, assemblyDefinition.MainModule, "module");
 			
 			if (!onlyAssemblyLevel) {
 				foreach (TypeDefinition typeDef in assemblyDefinition.MainModule.Types) {
@@ -640,7 +641,7 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 				} else
 					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
-				astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
+				astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
 			}
 			ConvertAttributes(astMethod, methodDef);
 			if (methodDef.HasCustomAttributes && astMethod.Parameters.Count > 0) {
@@ -722,7 +723,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			astMethod.Name = CleanName(methodDef.DeclaringType.Name);
 			astMethod.Parameters.AddRange(MakeParameters(methodDef));
-			astMethod.Body = AstMethodBodyBuilder.CreateMethodBody(methodDef, context, astMethod.Parameters);
+			astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
 			ConvertAttributes(astMethod, methodDef);
 			astMethod.WithAnnotation(methodMapping);			
 			return astMethod;
@@ -773,10 +774,9 @@ namespace ICSharpCode.Decompiler.Ast
 				// Create mapping - used in debugger
 				MemberMapping methodMapping = propDef.GetMethod.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
 				
-				astProp.Getter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.GetMethod, context)
-				}.WithAnnotation(propDef.GetMethod);
-				
+				astProp.Getter = new Accessor();
+				astProp.Getter.Body = CreateMethodBody(propDef.GetMethod);
+				astProp.AddAnnotation(propDef.GetMethod);
 				ConvertAttributes(astProp.Getter, propDef.GetMethod);
 				
 				if ((getterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
@@ -788,12 +788,11 @@ namespace ICSharpCode.Decompiler.Ast
 				// Create mapping - used in debugger
 				MemberMapping methodMapping = propDef.SetMethod.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
 				
-				astProp.Setter = new Accessor {
-					Body = AstMethodBodyBuilder.CreateMethodBody(propDef.SetMethod, context)
-				}.WithAnnotation(propDef.SetMethod);
-				
+				astProp.Setter = new Accessor();
+				astProp.Setter.Body = CreateMethodBody(propDef.SetMethod);
+				astProp.Setter.AddAnnotation(propDef.SetMethod);
 				ConvertAttributes(astProp.Setter, propDef.SetMethod);
-				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), AttributeTarget.Param);
+				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), "param");
 				
 				if ((setterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
 					astProp.Setter.Modifiers = setterModifiers & Modifiers.VisibilityMask;
@@ -850,7 +849,7 @@ namespace ICSharpCode.Decompiler.Ast
 					MemberMapping methodMapping = eventDef.AddMethod.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
 					
 					astEvent.AddAccessor = new Accessor {
-						Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.AddMethod, context)
+						Body = CreateMethodBody(eventDef.AddMethod)
 					}.WithAnnotation(eventDef.AddMethod);
 					ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
 					
@@ -861,7 +860,7 @@ namespace ICSharpCode.Decompiler.Ast
 					MemberMapping methodMapping = eventDef.RemoveMethod.CreateCodeMapping(CSharpCodeMapping.SourceCodeMappings);
 					
 					astEvent.RemoveAccessor = new Accessor {
-						Body = AstMethodBodyBuilder.CreateMethodBody(eventDef.RemoveMethod, context)
+						Body = CreateMethodBody(eventDef.RemoveMethod)
 					}.WithAnnotation(eventDef.RemoveMethod);
 					ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
 					
@@ -869,6 +868,16 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 				return astEvent;
 			}
+		}
+		
+		public bool DecompileMethodBodies { get; set; }
+		
+		BlockStatement CreateMethodBody(MethodDefinition method, IEnumerable<ParameterDeclaration> parameters = null)
+		{
+			if (DecompileMethodBodies)
+				return AstMethodBodyBuilder.CreateMethodBody(method, context, parameters);
+			else
+				return null;
 		}
 
 		FieldDeclaration CreateField(FieldDefinition fieldDef)
@@ -884,7 +893,7 @@ namespace ICSharpCode.Decompiler.Ast
 					initializer.Initializer = new NullReferenceExpression();
 				} else {
 					TypeCode c = Type.GetTypeCode(fieldDef.Constant.GetType());
-					if (c >= TypeCode.SByte && c <= TypeCode.UInt64) {
+					if (c >= TypeCode.SByte && c <= TypeCode.UInt64 && !fieldDef.DeclaringType.IsEnum) {
 						initializer.Initializer = MakePrimitive((long)CSharpPrimitiveCast.Cast(TypeCode.Int64, fieldDef.Constant, false), fieldDef.FieldType);
 					} else {
 						initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
@@ -899,7 +908,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			var parameters = MakeParameters(method.Parameters, isLambda);
 			if (method.CallingConvention == MethodCallingConvention.VarArg) {
-				return parameters.Concat(new[] { new ParameterDeclaration { Name = "__arglist" } });
+				return parameters.Concat(new[] { new ParameterDeclaration { Type = new PrimitiveType("__arglist") } });
 			} else {
 				return parameters;
 			}
@@ -1089,14 +1098,14 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			#endregion
 			
-			ConvertCustomAttributes(attributedNode, methodDefinition.MethodReturnType, AttributeTarget.Return);
+			ConvertCustomAttributes(attributedNode, methodDefinition.MethodReturnType, "return");
 			if (methodDefinition.MethodReturnType.HasMarshalInfo) {
 				var marshalInfo = ConvertMarshalInfo(methodDefinition.MethodReturnType, methodDefinition.Module);
-				attributedNode.Attributes.Add(new AttributeSection(marshalInfo) { AttributeTarget = AttributeTarget.Return });
+				attributedNode.Attributes.Add(new AttributeSection(marshalInfo) { AttributeTarget = "return" });
 			}
 		}
 		
-		internal static void ConvertAttributes(AttributedNode attributedNode, FieldDefinition fieldDefinition, AttributeTarget target = AttributeTarget.None)
+		internal static void ConvertAttributes(AttributedNode attributedNode, FieldDefinition fieldDefinition, string attributeTarget = null)
 		{
 			ConvertCustomAttributes(attributedNode, fieldDefinition);
 			
@@ -1104,19 +1113,19 @@ namespace ICSharpCode.Decompiler.Ast
 			if (fieldDefinition.HasLayoutInfo) {
 				Ast.Attribute fieldOffset = CreateNonCustomAttribute(typeof(FieldOffsetAttribute), fieldDefinition.Module);
 				fieldOffset.Arguments.Add(new PrimitiveExpression(fieldDefinition.Offset));
-				attributedNode.Attributes.Add(new AttributeSection(fieldOffset) { AttributeTarget = target });
+				attributedNode.Attributes.Add(new AttributeSection(fieldOffset) { AttributeTarget = attributeTarget });
 			}
 			#endregion
 			
 			#region NonSerializedAttribute
 			if (fieldDefinition.IsNotSerialized) {
 				Ast.Attribute nonSerialized = CreateNonCustomAttribute(typeof(NonSerializedAttribute), fieldDefinition.Module);
-				attributedNode.Attributes.Add(new AttributeSection(nonSerialized) { AttributeTarget = target });
+				attributedNode.Attributes.Add(new AttributeSection(nonSerialized) { AttributeTarget = attributeTarget });
 			}
 			#endregion
 			
 			if (fieldDefinition.HasMarshalInfo) {
-				attributedNode.Attributes.Add(new AttributeSection(ConvertMarshalInfo(fieldDefinition, fieldDefinition.Module))  { AttributeTarget = target });
+				attributedNode.Attributes.Add(new AttributeSection(ConvertMarshalInfo(fieldDefinition, fieldDefinition.Module))  { AttributeTarget = attributeTarget });
 			}
 		}
 		
@@ -1147,7 +1156,7 @@ namespace ICSharpCode.Decompiler.Ast
 			return attr;
 		}
 		
-		static void ConvertCustomAttributes(AstNode attributedNode, ICustomAttributeProvider customAttributeProvider, AttributeTarget target = AttributeTarget.None)
+		static void ConvertCustomAttributes(AstNode attributedNode, ICustomAttributeProvider customAttributeProvider, string attributeTarget = null)
 		{
 			if (customAttributeProvider.HasCustomAttributes) {
 				var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
@@ -1198,18 +1207,18 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 				}
 
-				if (target == AttributeTarget.Module || target == AttributeTarget.Assembly) {
+				if (attributeTarget == "module" || attributeTarget == "assembly") {
 					// use separate section for each attribute
 					foreach (var attribute in attributes) {
 						var section = new AttributeSection();
-						section.AttributeTarget = target;
+						section.AttributeTarget = attributeTarget;
 						section.Attributes.Add(attribute);
 						attributedNode.AddChild(section, AttributedNode.AttributeRole);
 					}
 				} else if (attributes.Count > 0) {
 					// use single section for all attributes
 					var section = new AttributeSection();
-					section.AttributeTarget = target;
+					section.AttributeTarget = attributeTarget;
 					section.Attributes.AddRange(attributes);
 					attributedNode.AddChild(section, AttributedNode.AttributeRole);
 				}

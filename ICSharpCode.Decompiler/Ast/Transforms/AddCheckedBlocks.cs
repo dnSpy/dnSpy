@@ -180,8 +180,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				BlockStatement newBlock = new BlockStatement();
 				// Move all statements except for the first
 				Statement next;
-				for (Statement stmt = firstStatement.NextStatement; stmt != lastStatement; stmt = next) {
-					next = stmt.NextStatement;
+				for (Statement stmt = firstStatement.GetNextStatement(); stmt != lastStatement; stmt = next) {
+					next = stmt.GetNextStatement();
 					newBlock.Add(stmt.Detach());
 				}
 				// Replace the first statement with the new (un)checked block
@@ -276,7 +276,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				costUncheckedContextCheckedBlockOpen += stmtResult.CostInCheckedContext;
 				nodesUncheckedContextCheckedBlockOpen += stmtResult.NodesToInsertInCheckedContext;
 				
-				statement = statement.NextStatement;
+				statement = statement.GetNextStatement();
 			}
 			
 			return new Result {

@@ -40,6 +40,42 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		#endregion
 		
+		#region PatternPlaceholder
+		public static implicit operator Expression(PatternMatching.Pattern pattern)
+		{
+			return pattern != null ? new PatternPlaceholder(pattern) : null;
+		}
+		
+		sealed class PatternPlaceholder : Expression, PatternMatching.INode
+		{
+			readonly PatternMatching.Pattern child;
+			
+			public PatternPlaceholder(PatternMatching.Pattern child)
+			{
+				this.child = child;
+			}
+			
+			public override NodeType NodeType {
+				get { return NodeType.Pattern; }
+			}
+			
+			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+			{
+				return visitor.VisitPatternPlaceholder(this, child, data);
+			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return child.DoMatch(other, match);
+			}
+			
+			bool PatternMatching.INode.DoMatchCollection(Role role, PatternMatching.INode pos, PatternMatching.Match match, PatternMatching.BacktrackingInfo backtrackingInfo)
+			{
+				return child.DoMatchCollection(role, pos, match, backtrackingInfo);
+			}
+		}
+		#endregion
+		
 		public override NodeType NodeType {
 			get {
 				return NodeType.Expression;
@@ -57,7 +93,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (IsNull)
 				return "Null";
 			StringWriter w = new StringWriter();
-			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingPolicy()), null);
+			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingOptions()), null);
 			return w.ToString();
 		}
 		

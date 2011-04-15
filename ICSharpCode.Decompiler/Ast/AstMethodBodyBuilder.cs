@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -492,7 +494,7 @@ namespace ICSharpCode.Decompiler.Ast
 						return new AssignmentExpression(new UnaryOperatorExpression(UnaryOperatorType.Dereference, arg1), arg2);
 					#endregion
 				case ILCode.Arglist:
-					return new ArgListExpression { IsAccess = true };
+					return new UndocumentedExpression { UndocumentedExpressionType = UndocumentedExpressionType.ArgListAccess };
 					case ILCode.Break:    return InlineAssembly(byteCode, args);
 				case ILCode.Call:
 				case ILCode.CallGetter:
@@ -612,10 +614,14 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Mkrefany:
 					{
 						DirectionExpression dir = arg1 as DirectionExpression;
-						if (dir != null)
-							return new IdentifierExpression("__makeref").Invoke(dir.Expression.Detach());
-						else
+						if (dir != null) {
+							return new UndocumentedExpression {
+								UndocumentedExpressionType = UndocumentedExpressionType.MakeRef,
+								Arguments = { dir.Expression.Detach() }
+							};
+						} else {
 							return InlineAssembly(byteCode, args);
+						}
 					}
 					case ILCode.Newobj: {
 						Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
@@ -729,10 +735,10 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			
 			BinaryOperatorExpression boe = expr as BinaryOperatorExpression;
-			if (boe != null && boe.Operator == BinaryOperatorType.Multiply && sizeOfExpression.Match(boe.Right) != null)
+			if (boe != null && boe.Operator == BinaryOperatorType.Multiply && sizeOfExpression.IsMatch(boe.Right))
 				return boe.Left.Detach();
 			
-			if (sizeOfExpression.Match(expr) != null)
+			if (sizeOfExpression.IsMatch(expr))
 				return new PrimitiveExpression(1);
 			
 			return new BinaryOperatorExpression(expr, BinaryOperatorType.Divide, sizeOfExpression);

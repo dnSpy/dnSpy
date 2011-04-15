@@ -76,7 +76,7 @@ namespace Mono.CSharp
 			module.Evaluator = this;
 
 			source_file = new CompilationSourceFile ("{interactive}", "", 1);
- 			source_file.NamespaceContainer = new NamespaceEntry (module, null, source_file, null);
+ 			source_file.NamespaceContainer = new NamespaceContainer (null, module, null, source_file);
 
 			ctx.SourceFiles.Add (source_file);
 
@@ -528,8 +528,9 @@ namespace Mono.CSharp
 			Reset ();
 			Tokenizer.LocatedToken.Initialize ();
 
-			Stream s = new MemoryStream (Encoding.Default.GetBytes (input));
-			SeekableStreamReader seekable = new SeekableStreamReader (s, Encoding.Default);
+			var enc = ctx.Settings.Encoding;
+			var s = new MemoryStream (enc.GetBytes (input));
+			SeekableStreamReader seekable = new SeekableStreamReader (s, enc);
 
 			InputKind kind = ToplevelOrStatement (seekable);
 			if (kind == InputKind.Error){

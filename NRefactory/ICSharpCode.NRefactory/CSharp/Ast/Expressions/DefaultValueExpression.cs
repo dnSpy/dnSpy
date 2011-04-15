@@ -48,6 +48,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RPar); }
 		}
 		
+		public DefaultValueExpression ()
+		{
+		}
+		
+		public DefaultValueExpression (AstType type)
+		{
+			AddChild (type, Roles.Type);
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitDefaultValueExpression (this, data);

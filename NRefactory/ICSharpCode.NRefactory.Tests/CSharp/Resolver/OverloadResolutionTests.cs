@@ -138,7 +138,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			// static void Foo<T>(T? ignored = default(T?)) where T : struct
 			var m1 = MakeMethod();
-			m1.TypeParameters.Add(new DefaultTypeParameter(m1, 0, "T") { HasValueTypeConstraint = true });
+			m1.TypeParameters.Add(new DefaultTypeParameter(EntityType.Method, 0, "T") { HasValueTypeConstraint = true });
 			m1.Parameters.Add(MakeOptionalParameter(
 				NullableType.Create(m1.TypeParameters[0], context),
 				"ignored"
@@ -146,12 +146,12 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			// class ClassConstraint<T> where T : class {}
 			DefaultTypeDefinition classConstraint = new DefaultTypeDefinition(dummyClass, "ClassConstraint");
-			classConstraint.TypeParameters.Add(new DefaultTypeParameter(classConstraint, 0, "T") { HasReferenceTypeConstraint = true });
+			classConstraint.TypeParameters.Add(new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T") { HasReferenceTypeConstraint = true });
 			
 			// static void Foo<T>(ClassConstraint<T> ignored = default(ClassConstraint<T>))
 			// where T : class
 			var m2 = MakeMethod();
-			m2.TypeParameters.Add(new DefaultTypeParameter(m2, 0, "T") { HasReferenceTypeConstraint = true });
+			m2.TypeParameters.Add(new DefaultTypeParameter(EntityType.Method, 0, "T") { HasReferenceTypeConstraint = true });
 			m2.Parameters.Add(MakeOptionalParameter(
 				new ParameterizedType(classConstraint, new[] { m2.TypeParameters[0] }),
 				"ignored"
@@ -159,7 +159,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			// static void Foo<T>()
 			var m3 = MakeMethod();
-			m3.TypeParameters.Add(new DefaultTypeParameter(m3, 0, "T"));
+			m3.TypeParameters.Add(new DefaultTypeParameter(EntityType.Method, 0, "T"));
 			
 			// Call: Foo<int>();
 			OverloadResolution o;

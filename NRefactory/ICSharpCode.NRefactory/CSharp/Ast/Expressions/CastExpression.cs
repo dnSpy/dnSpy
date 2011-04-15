@@ -49,6 +49,16 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Expression, value); }
 		}
 		
+		public CastExpression ()
+		{
+		}
+		
+		public CastExpression (AstType castToType, Expression expression)
+		{
+			AddChild (castToType, Roles.Type);
+			AddChild (expression, Roles.Expression);
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCastExpression (this, data);

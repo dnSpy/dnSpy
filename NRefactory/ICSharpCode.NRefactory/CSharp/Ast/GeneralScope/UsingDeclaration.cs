@@ -60,6 +60,20 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 		
+		public UsingDeclaration ()
+		{
+		}
+		
+		public UsingDeclaration (string nameSpace)
+		{
+			AddChild (new SimpleType (nameSpace), ImportRole);
+		}
+		
+		public UsingDeclaration (AstType import)
+		{
+			AddChild (import, ImportRole);
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUsingDeclaration (this, data);

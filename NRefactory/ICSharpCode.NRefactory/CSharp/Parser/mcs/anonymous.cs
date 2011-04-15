@@ -591,7 +591,7 @@ namespace Mono.CSharp {
 			protected override Expression DoResolve (ResolveContext ec)
 			{
 				eclass = ExprClass.Value;
-				type = ec.Module.PredefinedTypes.Expression.Resolve (Location);
+				type = ec.Module.PredefinedTypes.Expression.Resolve ();
 				return this;
 			}
 
@@ -1662,15 +1662,6 @@ namespace Mono.CSharp {
 	//
 	public class AnonymousTypeClass : CompilerGeneratedClass
 	{
-		// TODO: Merge with AnonymousTypeParameter
-		public class GeneratedParameter : Parameter
-		{
-			public GeneratedParameter (FullNamedExpression type, AnonymousTypeParameter p)
-				: base (type, p.Name, Modifier.NONE, null, p.Location)
-			{
-			}
-		}
-
 		static int types_counter;
 		public const string ClassNamePrefix = "<>__AnonType";
 		public const string SignatureForError = "anonymous type";
@@ -1701,10 +1692,21 @@ namespace Mono.CSharp {
 				Parameter[] ctor_params = new Parameter[parameters.Count];
 				for (int i = 0; i < parameters.Count; ++i) {
 					AnonymousTypeParameter p = parameters[i];
+					for (int ii = 0; ii < i; ++ii) {
+						if (parameters[ii].Name == p.Name) {
+							parent.Compiler.Report.Error (833, parameters[ii].Location,
+								"`{0}': An anonymous type cannot have multiple properties with the same name",
+									p.Name);
+
+							p = new AnonymousTypeParameter (null, "$" + i.ToString (), p.Location);
+							parameters[i] = p;
+							break;
+						}
+					}
 
 					t_args[i] = new SimpleName ("<" + p.Name + ">__T", p.Location);
 					t_params[i] = new TypeParameterName (t_args[i].Name, null, p.Location);
-					ctor_params[i] = new GeneratedParameter (t_args[i], p);
+					ctor_params[i] = new Parameter (t_args[i], p.Name, Parameter.Modifier.NONE, null, p.Location);
 				}
 
 				all_parameters = new ParametersCompiled (ctor_params);

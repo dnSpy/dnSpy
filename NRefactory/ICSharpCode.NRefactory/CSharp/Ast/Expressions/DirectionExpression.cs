@@ -52,6 +52,16 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Expression, value); }
 		}
 		
+		public DirectionExpression ()
+		{
+		}
+		
+		public DirectionExpression (FieldDirection direction, Expression expression)
+		{
+			this.FieldDirection = direction;
+			AddChild (expression, Roles.Expression);
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitDirectionExpression (this, data);

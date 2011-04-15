@@ -44,6 +44,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RPar); }
 		}
 		
+		public ParenthesizedExpression()
+		{
+		}
+		
+		public ParenthesizedExpression(Expression expr)
+		{
+			Expression = expr;
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitParenthesizedExpression (this, data);

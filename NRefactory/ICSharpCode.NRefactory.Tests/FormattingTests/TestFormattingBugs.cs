@@ -40,7 +40,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBug325187 ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.PlaceElseOnNewLine = true;
 			
 			TestStatementFormatting (policy,
@@ -62,7 +62,7 @@ Console.WriteLine (""Bad indent"");",
 		[Test()]
 		public void TestBug415469 ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			TestStatementFormatting (policy,
 @"switch (condition) {
@@ -86,7 +86,7 @@ case CONDITION2:
 		[Test()]
 		public void TestBug540043 ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			TestStatementFormatting (policy,
 @"using (IDisposable a = null)
@@ -105,7 +105,7 @@ using (IDisposable b = null) {
 		[Test()]
 		public void TestBug655635 ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			
 			TestStatementFormatting (policy,
 @"try {
@@ -121,7 +121,7 @@ using (IDisposable b = null) {
 }");
 		}
 
-		void TestStatementFormatting (CSharpFormattingPolicy policy, string input, string expectedOutput)
+		void TestStatementFormatting (CSharpFormattingOptions policy, string input, string expectedOutput)
 		{
 			var result = GetResult (policy, @"class Test
 {
@@ -143,7 +143,7 @@ using (IDisposable b = null) {
 		[Test()]
 		public void TestBug659675 ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			TestStatementFormatting (policy, "@string=@int;", "@string = @int;");
 		}
 		
@@ -153,7 +153,7 @@ using (IDisposable b = null) {
 		[Test()]
 		public void TestBug670213 ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.MethodBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test
@@ -176,7 +176,7 @@ using (IDisposable b = null) {
 		[Test()]
 		public void TestBug677261 ()
 		{
-			CSharpFormattingPolicy policy = new CSharpFormattingPolicy ();
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
 			policy.ConstructorBraceStyle = BraceStyle.EndOfLine;
 			
 			Test (policy, @"class Test

@@ -105,7 +105,19 @@ namespace ICSharpCode.ILSpy
 			else
 				return type.Name;
 		}
-
+		
+		/// <summary>
+		/// Converts a member signature to a string.
+		/// This is used for displaying the tooltip on a member reference.
+		/// </summary>
+		public virtual string GetTooltip(MemberReference member)
+		{
+			if (member is TypeReference)
+				return TypeToString((TypeReference)member, true);
+			else
+				return member.ToString();
+		}
+		
 		public virtual string FormatPropertyName(PropertyDefinition property, bool? isIndexer = null)
 		{
 			if (property == null)

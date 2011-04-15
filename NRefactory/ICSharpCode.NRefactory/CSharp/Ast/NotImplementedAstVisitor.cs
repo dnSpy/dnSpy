@@ -12,11 +12,6 @@ namespace ICSharpCode.NRefactory.CSharp
 			throw new NotImplementedException();
 		}
 		
-		public virtual S VisitArgListExpression(ArgListExpression argListExpression, T data)
-		{
-			throw new NotImplementedException();
-		}
-		
 		public virtual S VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, T data)
 		{
 			throw new NotImplementedException();
@@ -543,6 +538,21 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public virtual S VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer, T data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public S VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression, T data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public S VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression, T data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public S VisitPatternPlaceholder(AstNode placeholder, ICSharpCode.NRefactory.PatternMatching.Pattern pattern, T data)
 		{
 			throw new NotImplementedException();
 		}

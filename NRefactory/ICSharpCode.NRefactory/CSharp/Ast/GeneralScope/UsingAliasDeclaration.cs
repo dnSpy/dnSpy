@@ -66,6 +66,22 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 		
+		public UsingAliasDeclaration ()
+		{
+		}
+		
+		public UsingAliasDeclaration (string alias, string nameSpace)
+		{
+			AddChild (new Identifier (alias, AstLocation.Empty), AliasRole);
+			AddChild (new SimpleType (nameSpace), ImportRole);
+		}
+		
+		public UsingAliasDeclaration (string alias, AstType import)
+		{
+			AddChild (new Identifier (alias, AstLocation.Empty), AliasRole);
+			AddChild (import, ImportRole);
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUsingAliasDeclaration (this, data);

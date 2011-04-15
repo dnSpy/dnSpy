@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.CSharp.PatternMatching;
+using ICSharpCode.NRefactory.PatternMatching;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
@@ -54,7 +54,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					}
 				} else {
 					Match m = castPattern.Match(fromClause.Expression);
-					if (m != null) {
+					if (m.Success) {
 						fromClause.Type = m.Get<AstType>("targetType").Single().Detach();
 						fromClause.Expression = m.Get<Expression>("inExpr").Single().Detach();
 					}
@@ -82,7 +82,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (!IsTransparentIdentifier(fromClause.Identifier))
 				return false;
 			Match match = selectTransparentIdentifierPattern.Match(innerQuery.Clauses.Last());
-			if (match == null)
+			if (!match.Success)
 				return false;
 			QuerySelectClause selectClause = (QuerySelectClause)innerQuery.Clauses.Last();
 			NamedArgumentExpression nae1 = match.Get<NamedArgumentExpression>("nae1").Single();

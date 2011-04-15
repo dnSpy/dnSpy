@@ -37,15 +37,15 @@ namespace Mono.CSharp.Nullable
 			: this (new TypeExpression (type, loc), loc)
 		{ }
 
-		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
+		public override TypeExpr ResolveAsType (IMemberContext ec)
 		{
-			var type = ec.Module.PredefinedTypes.Nullable.Resolve (loc);
+			var type = ec.Module.PredefinedTypes.Nullable.Resolve ();
 			if (type == null)
 				return null;
 
 			TypeArguments args = new TypeArguments (underlying);
 			GenericTypeExpr ctype = new GenericTypeExpr (type, args, loc);
-			return ctype.ResolveAsTypeTerminal (ec, false);
+			return ctype.ResolveAsType (ec);
 		}
 	}
 
@@ -522,7 +522,7 @@ namespace Mono.CSharp.Nullable
 		Expression LiftExpression (ResolveContext ec, Expression expr)
 		{
 			TypeExpr lifted_type = new NullableType (expr.Type, expr.Location);
-			lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+			lifted_type = lifted_type.ResolveAsType (ec);
 			if (lifted_type == null)
 				return null;
 
@@ -872,7 +872,7 @@ namespace Mono.CSharp.Nullable
 			//
 			if (left_unwrap == null || IsLeftNullLifted || left_unwrap.Type != left.Type || (left_unwrap != null && IsRightNullLifted)) {
 				lifted_type = new NullableType (left.Type, loc);
-				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+				lifted_type = lifted_type.ResolveAsType (ec);
 				if (lifted_type == null)
 					return null;
 
@@ -884,7 +884,7 @@ namespace Mono.CSharp.Nullable
 
 			if (left != right && (right_unwrap == null || IsRightNullLifted || right_unwrap.Type != right.Type || (right_unwrap != null && IsLeftNullLifted))) {
 				lifted_type = new NullableType (right.Type, loc);
-				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+				lifted_type = lifted_type.ResolveAsType (ec);
 				if (lifted_type == null)
 					return null;
 
@@ -900,7 +900,7 @@ namespace Mono.CSharp.Nullable
 
 			if ((Oper & Operator.ComparisonMask) == 0) {
 				lifted_type = new NullableType (res_expr.Type, loc);
-				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+				lifted_type = lifted_type.ResolveAsType (ec);
 				if (lifted_type == null)
 					return null;
 

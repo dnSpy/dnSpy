@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 #if NET_2_1
 using XmlElement = System.Object;
@@ -26,6 +27,7 @@ using IKVM.Reflection.Emit;
 #else
 using System.Reflection;
 using System.Reflection.Emit;
+using Mono.Collections.Generic;
 #endif
 
 namespace Mono.CSharp {
@@ -33,6 +35,7 @@ namespace Mono.CSharp {
 	//
 	// Better name would be DottenName
 	//
+	[DebuggerDisplay ("{GetSignatureForError()}")]
 	public class MemberName {
 		public readonly string Name;
 		public TypeArguments TypeArguments;
@@ -691,7 +694,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public virtual IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceEntry scope)
+		public virtual IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope)
 		{
 			return Parent.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
@@ -815,21 +818,10 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Raised (and passed an XmlElement that contains the comment)
-		// when GenerateDocComment is writing documentation expectedly.
-		//
-		internal virtual void OnGenerateDocComment (XmlElement intermediateNode)
-		{
-		}
-
-		//
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
 		//
-		public virtual string GetDocCommentName ()
-		{
-			return DocCommentHeader + Parent.Name + "." + Name;
-		}
+		public abstract string GetSignatureForDocumentation ();
 
 		//
 		// Generates xml doc comments (if any), and if required,
@@ -1089,6 +1081,11 @@ namespace Mono.CSharp {
 			return cls == false;
 		}
 
+		public virtual string GetSignatureForDocumentation ()
+		{
+			return DeclaringType.GetSignatureForDocumentation () + "." + Name;
+		}
+
 		public virtual string GetSignatureForError ()
 		{
 			var bf = MemberDefinition as Property.BackingField;
@@ -1252,7 +1249,7 @@ namespace Mono.CSharp {
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
 		//
-		public NamespaceEntry NamespaceEntry;
+		public NamespaceContainer NamespaceEntry;
 
 		public readonly string Basename;
 		
@@ -1281,7 +1278,7 @@ namespace Mono.CSharp {
 
 		static readonly string[] attribute_targets = new string [] { "type" };
 
-		public DeclSpace (NamespaceEntry ns, DeclSpace parent, MemberName name,
+		public DeclSpace (NamespaceContainer ns, DeclSpace parent, MemberName name,
 				  Attributes attrs)
 			: base (parent, name, attrs)
 		{
@@ -1324,17 +1321,13 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (this is ModuleContainer) {
-				Report.Error (101, symbol.Location, 
-					"The namespace `{0}' already contains a definition for `{1}'",
-					((DeclSpace)symbol).NamespaceEntry.GetSignatureForError (), symbol.MemberName.Name);
-			} else if (symbol is TypeParameter) {
+			if (symbol is TypeParameter) {
 				Report.Error (692, symbol.Location,
 					"Duplicate type parameter `{0}'", symbol.GetSignatureForError ());
 			} else {
 				Report.Error (102, symbol.Location,
-					      "The type `{0}' already contains a definition for `{1}'",
-					      GetSignatureForError (), symbol.MemberName.Name);
+					"The type `{0}' already contains a definition for `{1}'",
+					GetSignatureForError (), symbol.MemberName.Name);
 			}
 
 			return false;
@@ -1385,9 +1378,9 @@ namespace Mono.CSharp {
 				type.GetSignatureForError ());
 		}
 
-		public override string GetDocCommentName ()
+		public override string GetSignatureForDocumentation ()
 		{
-			return DocCommentHeader + Name;
+			return Name;
 		}
 
 		public override string GetSignatureForError ()
@@ -1433,6 +1426,13 @@ namespace Mono.CSharp {
 			return type_param_list;
 		}
 		
+#if FULL_AST
+		public List<Constraints> PlainConstraints {
+			get;
+			private set;
+		}
+#endif
+
 		public List<Constraints> Constraints {
 			get;
 			private set;
@@ -1440,7 +1440,14 @@ namespace Mono.CSharp {
 		
 		public virtual void SetParameterInfo (List<Constraints> constraints_list)
 		{
+#if FULL_AST
+			if (constraints_list != null) {
+				this.PlainConstraints = constraints_list;
+				constraints_list = this.Constraints = new List<Constraints> (constraints_list);
+			}
+#else
 			this.Constraints = constraints_list;
+#endif
 			if (!is_generic) {
 				if (constraints_list != null) {
 					Report.Error (

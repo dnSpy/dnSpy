@@ -159,7 +159,7 @@ namespace ICSharpCode.NRefactory.Ast
 
 			using (var sw = new StringWriter())
 			{
-				OutputVisitor csOutVisitor = new OutputVisitor(sw, new CSharpFormattingPolicy());
+				OutputVisitor csOutVisitor = new OutputVisitor(sw, new CSharpFormattingOptions());
 				code.AcceptVisitor(csOutVisitor, null);
 				return sw.ToString();
 			}

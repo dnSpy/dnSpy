@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.CSharp.PatternMatching;
+using ICSharpCode.NRefactory.PatternMatching;
 using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
@@ -55,17 +55,17 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public override object VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
 		{
 			var instanceCtors = typeDeclaration.Members.OfType<ConstructorDeclaration>().Where(c => (c.Modifiers & Modifiers.Static) == 0).ToArray();
-			var instanceCtorsNotChainingWithThis = instanceCtors.Where(ctor => thisCallPattern.Match(ctor.Body.Statements.FirstOrDefault()) == null).ToArray();
+			var instanceCtorsNotChainingWithThis = instanceCtors.Where(ctor => !thisCallPattern.IsMatch(ctor.Body.Statements.FirstOrDefault())).ToArray();
 			if (instanceCtorsNotChainingWithThis.Length > 0 && typeDeclaration.ClassType == NRefactory.TypeSystem.ClassType.Class) {
 				// Recognize field initializers:
 				// Convert first statement in all ctors (if all ctors have the same statement) into a field initializer.
 				bool allSame;
 				do {
 					Match m = fieldInitializerPattern.Match(instanceCtorsNotChainingWithThis[0].Body.FirstOrDefault());
-					if (m == null)
+					if (!m.Success)
 						break;
 					
-					FieldDefinition fieldDef = m.Get("fieldAccess").Single().Annotation<FieldReference>().ResolveWithinSameModule();
+					FieldDefinition fieldDef = m.Get<AstNode>("fieldAccess").Single().Annotation<FieldReference>().ResolveWithinSameModule();
 					if (fieldDef == null)
 						break;
 					AttributedNode fieldOrEventDecl = typeDeclaration.Members.FirstOrDefault(f => f.Annotation<FieldDefinition>() == fieldDef);
@@ -74,7 +74,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					
 					allSame = true;
 					for (int i = 1; i < instanceCtorsNotChainingWithThis.Length; i++) {
-						if (instanceCtors[0].Body.First().Match(instanceCtorsNotChainingWithThis[i].Body.FirstOrDefault()) == null)
+						if (!instanceCtors[0].Body.First().IsMatch(instanceCtorsNotChainingWithThis[i].Body.FirstOrDefault()))
 							allSame = false;
 					}
 					if (allSame) {
@@ -93,7 +93,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				ConstructorDeclaration emptyCtor = new ConstructorDeclaration();
 				emptyCtor.Modifiers = ((typeDeclaration.Modifiers & Modifiers.Abstract) == Modifiers.Abstract ? Modifiers.Protected : Modifiers.Public);
 				emptyCtor.Body = new BlockStatement();
-				if (emptyCtor.Match(instanceCtors[0]) != null)
+				if (emptyCtor.IsMatch(instanceCtors[0]))
 					instanceCtors[0].Remove();
 			}
 			

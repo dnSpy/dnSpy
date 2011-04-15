@@ -60,6 +60,24 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Body, value); }
 		}
 		
+		public AnonymousMethodExpression ()
+		{
+		}
+		
+		public AnonymousMethodExpression (BlockStatement body, IEnumerable<ParameterDeclaration> parameters = null)
+		{
+			if (parameters != null) {
+				foreach (var parameter in parameters) {
+					AddChild (parameter, Roles.Parameter);
+				}
+			}
+			AddChild (body, Roles.Body);
+		}
+		
+		public AnonymousMethodExpression (BlockStatement body, params ParameterDeclaration[] parameters) : this (body, (IEnumerable<ParameterDeclaration>)parameters)
+		{
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitAnonymousMethodExpression (this, data);

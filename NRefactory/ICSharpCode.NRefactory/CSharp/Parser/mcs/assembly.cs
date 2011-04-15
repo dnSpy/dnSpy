@@ -376,6 +376,12 @@ namespace Mono.CSharp
 						a.FullName);
 				}
 
+				var ci = a.Assembly.GetName ().CultureInfo;
+				if (!ci.Equals (System.Globalization.CultureInfo.InvariantCulture)) {
+					Report.Warning (1607, 1, "Referenced assembly `{0}' has different culture setting of `{1}'",
+						a.Name, ci.Name);
+				}
+
 				if (!a.IsFriendAssemblyTo (this))
 					continue;
 
@@ -866,26 +872,24 @@ namespace Mono.CSharp
 			}
 
 			if (entry_point == null) {
-				if (Compiler.Settings.MainClass != null) {
-					// TODO: Should use MemberCache
-					DeclSpace main_cont = module.GetDefinition (Compiler.Settings.MainClass) as DeclSpace;
-					if (main_cont == null) {
-						Report.Error (1555, "Could not find `{0}' specified for Main method", Compiler.Settings.MainClass);
+				string main_class = Compiler.Settings.MainClass;
+				if (main_class != null) {
+					// TODO: Handle dotted names
+					var texpr = module.GlobalRootNamespace.LookupType (module, main_class, 0, Location.Null);
+					if (texpr == null) {
+						Report.Error (1555, "Could not find `{0}' specified for Main method", main_class);
 						return;
 					}
 
-					if (!(main_cont is ClassOrStruct)) {
-						Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", Compiler.Settings.MainClass);
+					var mtype = texpr.Type.MemberDefinition as ClassOrStruct;
+					if (mtype == null) {
+						Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", main_class);
 						return;
 					}
 
-					Report.Error (1558, main_cont.Location, "`{0}' does not have a suitable static Main method", main_cont.GetSignatureForError ());
-					return;
-				}
-
-				if (Report.Errors == 0) {
+					Report.Error (1558, mtype.Location, "`{0}' does not have a suitable static Main method", mtype.GetSignatureForError ());
+				} else {
 					string pname = file_name == null ? name : Path.GetFileName (file_name);
-
 					Report.Error (5001, "Program `{0}' does not contain a static `Main' method suitable for an entry point",
 						pname);
 				}

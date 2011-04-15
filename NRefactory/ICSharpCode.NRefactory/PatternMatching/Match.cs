@@ -5,16 +5,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ICSharpCode.NRefactory.CSharp.PatternMatching
+namespace ICSharpCode.NRefactory.PatternMatching
 {
 	/// <summary>
 	/// Represents the result of a pattern matching operation.
 	/// </summary>
-	public sealed class Match
+	public struct Match
 	{
-		// TODO: maybe we should add an implicit Match->bool conversion? (operator implicit bool(Match m) { return m != null; })
+		// TODO: maybe we should add an implicit Match->bool conversion? (implicit operator bool(Match m) { return m != null; })
 		
-		List<KeyValuePair<string, AstNode>> results = new List<KeyValuePair<string, AstNode>>();
+		List<KeyValuePair<string, INode>> results;
+		
+		public bool Success {
+			get { return results != null; }
+		}
+		
+		internal static Match CreateNew()
+		{
+			Match m;
+			m.results = new List<KeyValuePair<string, INode>>();
+			return m;
+		}
 		
 		internal int CheckPoint()
 		{
@@ -26,16 +37,20 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			results.RemoveRange(checkPoint, results.Count - checkPoint);
 		}
 		
-		public IEnumerable<AstNode> Get(string groupName)
+		public IEnumerable<INode> Get(string groupName)
 		{
+			if (results == null)
+				yield break;
 			foreach (var pair in results) {
 				if (pair.Key == groupName)
 					yield return pair.Value;
 			}
 		}
 		
-		public IEnumerable<T> Get<T>(string groupName) where T : AstNode
+		public IEnumerable<T> Get<T>(string groupName) where T : INode
 		{
+			if (results == null)
+				yield break;
 			foreach (var pair in results) {
 				if (pair.Key == groupName)
 					yield return (T)pair.Value;
@@ -44,6 +59,8 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 		
 		public bool Has(string groupName)
 		{
+			if (results == null)
+				return false;
 			foreach (var pair in results) {
 				if (pair.Key == groupName)
 					return true;
@@ -51,10 +68,10 @@ namespace ICSharpCode.NRefactory.CSharp.PatternMatching
 			return false;
 		}
 		
-		public void Add(string groupName, AstNode node)
+		internal void Add(string groupName, INode node)
 		{
 			if (groupName != null && node != null) {
-				results.Add(new KeyValuePair<string, AstNode>(groupName, node));
+				results.Add(new KeyValuePair<string, INode>(groupName, node));
 			}
 		}
 	}

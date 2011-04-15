@@ -140,15 +140,36 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
+		IProjectContent[] LoadProjects(CecilLoader loader)
+		{
+			const string dir = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\";
+			return new IProjectContent[] {
+				loader.LoadAssemblyFile(dir + "mscorlib.dll"),
+				loader.LoadAssemblyFile(dir + "System.dll"),
+				loader.LoadAssemblyFile(dir + "System.Core.dll"),
+				loader.LoadAssemblyFile(dir + "System.Xml.dll"),
+				loader.LoadAssemblyFile(dir + "System.Xml.Linq.dll"),
+				loader.LoadAssemblyFile(dir + "System.Data.dll"),
+				loader.LoadAssemblyFile(dir + "System.Drawing.dll"),
+				loader.LoadAssemblyFile(dir + "System.Windows.Forms.dll"),
+				loader.LoadAssemblyFile(dir + "WindowsBase.dll"),
+				loader.LoadAssemblyFile(dir + "PresentationCore.dll"),
+				loader.LoadAssemblyFile(dir + "PresentationFramework.dll")
+			};
+		}
+		
 		[Test]
 		public void PrintStatistics()
 		{
 			long startMemory = GC.GetTotalMemory(true);
-			IProjectContent pc = new CecilLoader().LoadAssemblyFile(typeof(object).Assembly.Location);
+			IProjectContent[] pc = LoadProjects(new CecilLoader());
 			long memoryWithFullPC = GC.GetTotalMemory(true) - startMemory;
 			InterningProvider p = new InterningProvider();
-			p.InternProject(pc);
+			CecilLoader loader = new CecilLoader();
+			loader.InterningProvider = p;
+			pc = LoadProjects(loader);
 			PrintStatistics(p);
+			loader = null;
 			p = null;
 			long memoryWithInternedPC = GC.GetTotalMemory(true) - startMemory;
 			GC.KeepAlive(pc);

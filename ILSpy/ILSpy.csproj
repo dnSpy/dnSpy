@@ -138,10 +138,12 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />
     <Compile Include="TreeNodes\XamlResourceNode.cs" />
-    <Compile Include="XmlDocKeyProvider.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyAccessorsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
+    <Compile Include="XmlDoc\XmlDocKeyProvider.cs" />
+    <Compile Include="XmlDoc\XmlDocLoader.cs" />
+    <Compile Include="XmlDoc\XmlDocRenderer.cs" />
     <EmbeddedResource Include="..\README.txt">
       <Link>README.txt</Link>
     </EmbeddedResource>
@@ -277,6 +279,9 @@
       <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="XmlDoc" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Options" />

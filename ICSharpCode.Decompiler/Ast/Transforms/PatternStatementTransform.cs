@@ -5,10 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Analysis;
-using ICSharpCode.NRefactory.CSharp.PatternMatching;
+using ICSharpCode.NRefactory.PatternMatching;
 using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
@@ -160,15 +161,15 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public UsingStatement TransformUsings(ExpressionStatement node)
 		{
 			Match m1 = variableAssignPattern.Match(node);
-			if (m1 == null) return null;
+			if (!m1.Success) return null;
 			AstNode tryCatch = node.NextSibling;
 			Match m2 = usingTryCatchPattern.Match(tryCatch);
-			if (m2 == null) return null;
+			if (!m2.Success) return null;
 			string variableName = m1.Get<IdentifierExpression>("variable").Single().Identifier;
 			if (variableName == m2.Get<IdentifierExpression>("ident").Single().Identifier) {
 				if (m2.Has("valueType")) {
 					// if there's no if(x!=null), then it must be a value type
-					ILVariable v = m1.Get("variable").Single().Annotation<ILVariable>();
+					ILVariable v = m1.Get<AstNode>("variable").Single().Annotation<ILVariable>();
 					if (v == null || v.Type == null || !v.Type.IsValueType)
 						return null;
 				}
@@ -270,7 +271,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public ForeachStatement TransformForeach(UsingStatement node)
 		{
 			Match m = foreachPattern.Match(node);
-			if (m == null)
+			if (!m.Success)
 				return null;
 			if (!(node.Parent is BlockStatement) && m.Has("variablesOutsideLoop")) {
 				// if there are variables outside the loop, we need to put those into the parent block, and that won't work if the direct parent isn't a block
@@ -341,10 +342,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public ForStatement TransformFor(ExpressionStatement node)
 		{
 			Match m1 = variableAssignPattern.Match(node);
-			if (m1 == null) return null;
+			if (!m1.Success) return null;
 			AstNode next = node.NextSibling;
 			Match m2 = forPattern.Match(next);
-			if (m2 == null) return null;
+			if (!m2.Success) return null;
 			// ensure the variable in the for pattern is the same as in the declaration
 			if (m1.Get<IdentifierExpression>("variable").Single().Identifier != m2.Get<IdentifierExpression>("ident").Single().Identifier)
 				return null;
@@ -379,7 +380,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public DoWhileStatement TransformDoWhile(WhileStatement whileLoop)
 		{
 			Match m = doWhilePattern.Match(whileLoop);
-			if (m != null) {
+			if (m.Success) {
 				DoWhileStatement doLoop = new DoWhileStatement();
 				doLoop.Condition = new UnaryOperatorExpression(UnaryOperatorType.Not, m.Get<Expression>("condition").Single().Detach());
 				doLoop.Condition.AcceptVisitor(new PushNegation(), null);
@@ -439,19 +440,19 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public LockStatement TransformLock(ExpressionStatement node)
 		{
 			Match m1 = lockFlagInitPattern.Match(node);
-			if (m1 == null) return null;
+			if (!m1.Success) return null;
 			AstNode tryCatch = node.NextSibling;
 			Match m2 = lockTryCatchPattern.Match(tryCatch);
-			if (m2 == null) return null;
+			if (!m2.Success) return null;
 			if (m1.Get<IdentifierExpression>("variable").Single().Identifier == m2.Get<IdentifierExpression>("flag").Single().Identifier) {
 				Expression enter = m2.Get<Expression>("enter").Single();
 				IdentifierExpression exit = m2.Get<IdentifierExpression>("exit").Single();
-				if (exit.Match(enter) == null) {
+				if (!exit.IsMatch(enter)) {
 					// If exit and enter are not the same, then enter must be "exit = ..."
 					AssignmentExpression assign = enter as AssignmentExpression;
 					if (assign == null)
 						return null;
-					if (exit.Match(assign.Left) == null)
+					if (!exit.IsMatch(assign.Left))
 						return null;
 					enter = assign.Right;
 					// TODO: verify that 'obj' variable can be removed
@@ -512,17 +513,17 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public SwitchStatement TransformSwitchOnString(IfElseStatement node)
 		{
 			Match m = switchOnStringPattern.Match(node);
-			if (m == null)
+			if (!m.Success)
 				return null;
 			if (m.Has("nonNullDefaultStmt") && !m.Has("nullStmt"))
 				return null;
 			// switchVar must be the same as switchExpr; or switchExpr must be an assignment and switchVar the left side of that assignment
-			if (m.Get("switchVar").Single().Match(m.Get("switchExpr").Single()) == null) {
+			if (!m.Get("switchVar").Single().IsMatch(m.Get("switchExpr").Single())) {
 				AssignmentExpression assign = m.Get("switchExpr").Single() as AssignmentExpression;
-				if (m.Get("switchVar").Single().Match(assign.Left) == null)
+				if (!m.Get("switchVar").Single().IsMatch(assign.Left))
 					return null;
 			}
-			FieldReference cachedDictField = m.Get("cachedDict").Single().Annotation<FieldReference>();
+			FieldReference cachedDictField = m.Get<AstNode>("cachedDict").Single().Annotation<FieldReference>();
 			if (cachedDictField == null || !cachedDictField.DeclaringType.Name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
 				return null;
 			List<Statement> dictCreation = m.Get<BlockStatement>("dictCreation").Single().Statements.ToList();
@@ -616,8 +617,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (!(cecilProperty.GetMethod.IsCompilerGenerated() && cecilProperty.SetMethod.IsCompilerGenerated()))
 				return null;
 			Match m = automaticPropertyPattern.Match(property);
-			if (m != null) {
-				FieldDefinition field = m.Get("fieldReference").Single().Annotation<FieldReference>().ResolveWithinSameModule();
+			if (m.Success) {
+				FieldDefinition field = m.Get<AstNode>("fieldReference").Single().Annotation<FieldReference>().ResolveWithinSameModule();
 				if (field.IsCompilerGenerated() && field.DeclaringType == cecilProperty.DeclaringType) {
 					RemoveCompilerGeneratedAttribute(property.Getter.Attributes);
 					RemoveCompilerGeneratedAttribute(property.Setter.Attributes);
@@ -691,13 +692,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		bool CheckAutomaticEventV4Match(Match m, CustomEventDeclaration ev, bool isAddAccessor)
 		{
-			if (m == null)
+			if (!m.Success)
 				return false;
 			if (m.Get<MemberReferenceExpression>("field").Single().MemberName != ev.Name)
 				return false; // field name must match event name
-			if (ev.ReturnType.Match(m.Get("type").Single()) == null)
+			if (!ev.ReturnType.IsMatch(m.Get("type").Single()))
 				return false; // variable types must match event type
-			var combineMethod = m.Get("delegateCombine").Single().Parent.Annotation<MethodReference>();
+			var combineMethod = m.Get<AstNode>("delegateCombine").Single().Parent.Annotation<MethodReference>();
 			if (combineMethod == null || combineMethod.Name != (isAddAccessor ? "Combine" : "Remove"))
 				return false;
 			return combineMethod.DeclaringType.FullName == "System.Delegate";
@@ -723,7 +724,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				FieldDefinition field = eventDef.DeclaringType.Fields.FirstOrDefault(f => f.Name == ev.Name);
 				if (field != null) {
 					ed.AddAnnotation(field);
-					AstBuilder.ConvertAttributes(ed, field, AttributeTarget.Field);
+					AstBuilder.ConvertAttributes(ed, field, "field");
 				}
 			}
 			
@@ -751,7 +752,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		DestructorDeclaration TransformDestructor(MethodDeclaration methodDef)
 		{
 			Match m = destructorPattern.Match(methodDef);
-			if (m != null) {
+			if (m.Success) {
 				DestructorDeclaration dd = new DestructorDeclaration();
 				methodDef.Attributes.MoveTo(dd.Attributes);
 				dd.Modifiers = methodDef.Modifiers & ~(Modifiers.Protected | Modifiers.Override);
@@ -781,7 +782,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		/// </summary>
 		TryCatchStatement TransformTryCatchFinally(TryCatchStatement tryFinally)
 		{
-			if (tryCatchFinallyPattern.Match(tryFinally) != null) {
+			if (tryCatchFinallyPattern.IsMatch(tryFinally)) {
 				TryCatchStatement tryCatch = (TryCatchStatement)tryFinally.TryBlock.Statements.Single();
 				tryFinally.TryBlock = tryCatch.TryBlock.Detach();
 				tryCatch.CatchClauses.MoveTo(tryFinally.CatchClauses);
@@ -803,15 +804,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				this.name = type.Name;
 			}
 			
-			protected override bool DoMatch(AstNode other, Match match)
+			public override bool DoMatch(INode other, Match match)
 			{
-				if (other == null)
+				AstNode o = other as AstNode;
+				if (o == null)
 					return false;
-				TypeReference tr = other.Annotation<TypeReference>();
+				TypeReference tr = o.Annotation<TypeReference>();
 				return tr != null && tr.Namespace == ns && tr.Name == name;
 			}
 			
-			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+			public override S AcceptVisitor<T, S>(IPatternAstVisitor<T, S> visitor, T data)
 			{
 				throw new NotImplementedException();
 			}

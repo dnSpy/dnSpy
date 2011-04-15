@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
+using ICSharpCode.NRefactory.PatternMatching;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 {
@@ -66,8 +67,8 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 				CatchClauses = { new CatchClause { Body = new BlockStatement() } },
 				FinallyBlock = new BlockStatement()
 			};
-			Assert.IsNull(c1.Match(c2));
-			Assert.IsNull(c2.Match(c1)); // and vice versa
+			Assert.IsFalse(c1.IsMatch(c2));
+			Assert.IsFalse(c2.IsMatch(c1)); // and vice versa
 		}
 	}
 }

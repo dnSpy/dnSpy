@@ -17,6 +17,12 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	public interface ITypeParameter : IType, IFreezable
 	{
 		/// <summary>
+		/// Get the type of this type parameter's owner.
+		/// </summary>
+		/// <returns>EntityType.TypeDefinition or EntityType.Method</returns>
+		EntityType OwnerType { get; }
+		
+		/// <summary>
 		/// Gets the index of the type parameter in the type parameter list of the owning method/class.
 		/// </summary>
 		int Index { get; }
@@ -25,24 +31,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets the list of attributes declared on this type parameter.
 		/// </summary>
 		IList<IAttribute> Attributes { get; }
-		
-		/// <summary>
-		/// Gets the class or method for which this type parameter is defined.
-		/// This property never returns null.
-		/// </summary>
-		IEntity Parent { get; }
-		
-		/// <summary>
-		/// The method this type parameter is defined for.
-		/// This property returns null if the type parameter belongs to a class.
-		/// </summary>
-		IMethod ParentMethod { get; }
-		
-		/// <summary>
-		/// The class this type parameter is defined for.
-		/// This property returns null if the type parameter belongs to a method.
-		/// </summary>
-		ITypeDefinition ParentClass { get; }
 		
 		/// <summary>
 		/// Gets the contraints of this type parameter.
@@ -80,6 +68,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// If this type parameter was bound, returns the unbound version of it.
 		/// </summary>
 		ITypeParameter UnboundTypeParameter { get; }
+		
+		/// <summary>
+		/// Gets the region where the type parameter is defined.
+		/// </summary>
+		DomRegion Region { get; }
 	}
 	
 	/// <summary>
@@ -115,25 +108,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IList<IAttribute> ITypeParameter.Attributes {
 			get {
 				Contract.Ensures(Contract.Result<IList<IAttribute>>() != null);
-				return null;
-			}
-		}
-		
-		IEntity ITypeParameter.Parent {
-			get {
-				Contract.Ensures(Contract.Result<IEntity>() != null);
-				return null;
-			}
-		}
-		
-		IMethod ITypeParameter.ParentMethod {
-			get {
-				return null;
-			}
-		}
-		
-		ITypeDefinition ITypeParameter.ParentClass {
-			get {
 				return null;
 			}
 		}

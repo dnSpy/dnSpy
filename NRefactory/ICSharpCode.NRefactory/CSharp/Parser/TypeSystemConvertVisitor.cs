@@ -308,8 +308,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			
 			ConvertTypeParameters(m.TypeParameters, methodDeclaration.TypeParameters, methodDeclaration.Constraints);
 			m.ReturnType = ConvertType(methodDeclaration.ReturnType);
-			ConvertAttributes(m.Attributes, methodDeclaration.Attributes.Where(s => s.AttributeTarget != AttributeTarget.Return));
-			ConvertAttributes(m.ReturnTypeAttributes, methodDeclaration.Attributes.Where(s => s.AttributeTarget == AttributeTarget.Return));
+			ConvertAttributes(m.Attributes, methodDeclaration.Attributes.Where(s => s.AttributeTarget != "return"));
+			ConvertAttributes(m.ReturnTypeAttributes, methodDeclaration.Attributes.Where(s => s.AttributeTarget == "return"));
 			
 			ApplyModifiers(m, methodDeclaration.Modifiers);
 			m.IsExtensionMethod = methodDeclaration.IsExtensionMethod;
@@ -346,8 +346,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			m.BodyRegion = MakeRegion(operatorDeclaration.Body);
 			
 			m.ReturnType = ConvertType(operatorDeclaration.ReturnType);
-			ConvertAttributes(m.Attributes, operatorDeclaration.Attributes.Where(s => s.AttributeTarget != AttributeTarget.Return));
-			ConvertAttributes(m.ReturnTypeAttributes, operatorDeclaration.Attributes.Where(s => s.AttributeTarget == AttributeTarget.Return));
+			ConvertAttributes(m.Attributes, operatorDeclaration.Attributes.Where(s => s.AttributeTarget != "return"));
+			ConvertAttributes(m.ReturnTypeAttributes, operatorDeclaration.Attributes.Where(s => s.AttributeTarget == "return"));
 			
 			ApplyModifiers(m, operatorDeclaration.Modifiers);
 			

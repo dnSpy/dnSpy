@@ -1297,7 +1297,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			probe_type_expr = ProbeType.ResolveAsTypeTerminal (ec, false);
+			probe_type_expr = ProbeType.ResolveAsType (ec);
 			if (probe_type_expr == null)
 				return null;
 
@@ -1632,7 +1632,7 @@ namespace Mono.CSharp
 			if (expr == null)
 				return null;
 
-			TypeExpr target = target_type.ResolveAsTypeTerminal (ec, false);
+			TypeExpr target = target_type.ResolveAsType (ec);
 			if (target == null)
 				return null;
 
@@ -1734,7 +1734,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = expr.ResolveAsType (ec);
 			if (texpr == null)
 				return null;
 
@@ -2606,7 +2606,7 @@ namespace Mono.CSharp
 					break;
 				return left;
 			}
-			Error_OperatorCannotBeApplied (ec, this.left, this.right);
+
 			return null;
 		}
 
@@ -3616,11 +3616,6 @@ namespace Mono.CSharp
 			return combined;
 		}
 
-		public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
-		{
-			return null;
-		}
-
 		void CheckOutOfRangeComparison (ResolveContext ec, Constant c, TypeSpec type)
 		{
 			if (c is IntegralConstant || c is CharConstant) {
@@ -3878,7 +3873,7 @@ namespace Mono.CSharp
 			if ((oper & Operator.LogicalMask) != 0)
 				flags |= CSharpBinderFlags.BinaryOperationLogical;
 
-			binder_args.Add (new Argument (new EnumConstant (new IntLiteral (ec.BuiltinTypes, (int) flags, loc), ec.Module.PredefinedTypes.BinderFlags.Resolve (loc))));
+			binder_args.Add (new Argument (new EnumConstant (new IntLiteral (ec.BuiltinTypes, (int) flags, loc), ec.Module.PredefinedTypes.BinderFlags.Resolve ())));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));									
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
@@ -4494,11 +4489,6 @@ namespace Mono.CSharp
 			return this;
 		}
 
-		public override TypeExpr ResolveAsTypeTerminal (IMemberContext ec, bool silent)
-		{
-			return null;
-		}
-
 		public override void Emit (EmitContext ec)
 		{
 			Label false_target = ec.DefineLabel ();
@@ -4954,6 +4944,9 @@ namespace Mono.CSharp
 
 		bool DoResolveBase (ResolveContext ec)
 		{
+			if (eclass != ExprClass.Unresolved)
+				return true;
+
 			type = pi.ParameterType;
 			eclass = ExprClass.Variable;
 
@@ -5644,7 +5637,7 @@ namespace Mono.CSharp
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			TypeExpr texpr = RequestedType.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = RequestedType.ResolveAsType (ec);
 			if (texpr == null)
 				return null;
 
@@ -6302,7 +6295,7 @@ namespace Mono.CSharp
 				array_type_expr = requested_base_type;
 			}
 
-			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec, false);
+			array_type_expr = array_type_expr.ResolveAsType (ec);
 			if (array_type_expr == null)
 				return false;
 
@@ -7027,7 +7020,7 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = ExprClass.Variable;
-			type = ec.Module.PredefinedTypes.RuntimeArgumentHandle.Resolve (loc);
+			type = ec.Module.PredefinedTypes.RuntimeArgumentHandle.Resolve ();
 
 			if (ec.HasSet (ResolveContext.Options.FieldInitializerScope) || !ec.CurrentBlock.ParametersBlock.Parameters.HasArglist) {
 				ec.Report.Error (190, loc,
@@ -7120,10 +7113,12 @@ namespace Mono.CSharp
 		}
 	}
 
-	class RefValueExpr : ShimExpression
+	public class RefValueExpr : ShimExpression
 	{
 		FullNamedExpression texpr;
-
+		
+		public FullNamedExpression FullNamedExpression { get { return texpr; }}
+		
 		public RefValueExpr (Expression expr, FullNamedExpression texpr, Location loc)
 			: base (expr)
 		{
@@ -7134,12 +7129,12 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			expr = expr.Resolve (rc);
-			texpr = texpr.ResolveAsTypeTerminal (rc, false);
+			texpr = texpr.ResolveAsType (rc);
 			if (expr == null || texpr == null)
 				return null;
 
 			type = texpr.Type;
-			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (loc), loc);
+			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (), loc);
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -7150,9 +7145,14 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Refanyval, type);
 			ec.EmitLoadFromPtr (type);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
-	class RefTypeExpr : ShimExpression
+	public class RefTypeExpr : ShimExpression
 	{
 		public RefTypeExpr (Expression expr, Location loc)
 			: base (expr)
@@ -7166,7 +7166,7 @@ namespace Mono.CSharp
 			if (expr == null)
 				return null;
 
-			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (loc), loc);
+			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (), loc);
 			if (expr == null)
 				return null;
 
@@ -7183,9 +7183,14 @@ namespace Mono.CSharp
 			if (m != null)
 				ec.Emit (OpCodes.Call, m);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
-	class MakeRefExpr : ShimExpression
+	public class MakeRefExpr : ShimExpression
 	{
 		public MakeRefExpr (Expression expr, Location loc)
 			: base (expr)
@@ -7196,7 +7201,7 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			expr = expr.ResolveLValue (rc, EmptyExpression.LValueMemberAccess);
-			type = rc.Module.PredefinedTypes.TypedReference.Resolve (loc);
+			type = rc.Module.PredefinedTypes.TypedReference.Resolve ();
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -7205,6 +7210,11 @@ namespace Mono.CSharp
 		{
 			((IMemoryLocation) expr).AddressOf (ec, AddressOp.Load);
 			ec.Emit (OpCodes.Mkrefany, expr.Type);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -7252,7 +7262,7 @@ namespace Mono.CSharp
 			// Pointer types are allowed without explicit unsafe, they are just tokens
 			//
 			using (ec.Set (ResolveContext.Options.UnsafeScope)) {
-				texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
+				texpr = QueriedType.ResolveAsType (ec);
 			}
 
 			if (texpr == null)
@@ -7353,9 +7363,9 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (member.IsConstructor) {
-				type = ec.Module.PredefinedTypes.ConstructorInfo.Resolve (loc);
+				type = ec.Module.PredefinedTypes.ConstructorInfo.Resolve ();
 			} else {
-				type = ec.Module.PredefinedTypes.MethodInfo.Resolve (loc);
+				type = ec.Module.PredefinedTypes.MethodInfo.Resolve ();
 			}
 
 			if (type == null)
@@ -7436,7 +7446,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			type = ec.Module.PredefinedTypes.FieldInfo.Resolve (loc);
+			type = ec.Module.PredefinedTypes.FieldInfo.Resolve ();
 			if (type == null)
 				return null;
 
@@ -7481,7 +7491,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = QueriedType.ResolveAsType (ec);
 			if (texpr == null)
 				return null;
 
@@ -7529,7 +7539,7 @@ namespace Mono.CSharp
 	/// </summary>
 	public class QualifiedAliasMember : MemberAccess
 	{
-		readonly string alias;
+		public readonly string alias;
 		public static readonly string GlobalAlias = "global";
 
 		public QualifiedAliasMember (string alias, string identifier, Location l)
@@ -7550,11 +7560,11 @@ namespace Mono.CSharp
 			this.alias = alias;
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
 		{
 			if (alias == GlobalAlias) {
 				expr = ec.Module.GlobalRootNamespace;
-				return base.ResolveAsTypeStep (ec, silent);
+				return base.ResolveAsTypeOrNamespace (ec);
 			}
 
 			int errors = ec.Module.Compiler.Report.Errors;
@@ -7565,15 +7575,14 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			FullNamedExpression fne = base.ResolveAsTypeStep (ec, silent);
+			FullNamedExpression fne = base.ResolveAsTypeOrNamespace (ec);
 			if (fne == null)
 				return null;
 
 			if (expr.eclass == ExprClass.Type) {
-				if (!silent) {
-					ec.Module.Compiler.Report.Error (431, loc,
-						"Alias `{0}' cannot be used with '::' since it denotes a type. Consider replacing '::' with '.'", alias);
-				}
+				ec.Module.Compiler.Report.Error (431, loc,
+					"Alias `{0}' cannot be used with '::' since it denotes a type. Consider replacing '::' with '.'", alias);
+
 				return null;
 			}
 
@@ -7582,7 +7591,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			return ResolveAsTypeStep (ec, false);
+			return ResolveAsTypeOrNamespace (ec);
 		}
 
 		protected override void Error_IdentifierNotFound (IMemberContext rc, TypeSpec expr_type, string identifier)
@@ -7610,6 +7619,11 @@ namespace Mono.CSharp
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			// Nothing 
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -7715,7 +7729,7 @@ namespace Mono.CSharp
 
 			Namespace ns = expr as Namespace;
 			if (ns != null) {
-				FullNamedExpression retval = ns.Lookup (rc, Name, Arity, loc);
+				var retval = ns.LookupTypeOrNamespace (rc, Name, Arity, loc);
 
 				if (retval == null) {
 					ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
@@ -7761,7 +7775,7 @@ namespace Mono.CSharp
 					// Try to look for extension method when member lookup failed
 					//
 					if (MethodGroupExpr.IsExtensionMethodArgument (expr)) {
-						NamespaceEntry scope = null;
+						NamespaceContainer scope = null;
 						var methods = rc.LookupExtensionMethod (expr_type, Name, lookup_arity, ref scope);
 						if (methods != null) {
 							var emg = new ExtensionMethodGroupExpr (methods, scope, expr, loc);
@@ -7854,33 +7868,31 @@ namespace Mono.CSharp
 			return me;
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext rc)
 		{
-			return ResolveNamespaceOrType (ec, silent);
-		}
+			FullNamedExpression fexpr = expr as FullNamedExpression;
+			if (fexpr == null)
+				return expr.ResolveAsType (rc);
 
-		public FullNamedExpression ResolveNamespaceOrType (IMemberContext rc, bool silent)
-		{
-			FullNamedExpression expr_resolved = expr.ResolveAsTypeStep (rc, silent);
+			FullNamedExpression expr_resolved = fexpr.ResolveAsTypeOrNamespace (rc);
 
 			if (expr_resolved == null)
 				return null;
 
 			Namespace ns = expr_resolved as Namespace;
 			if (ns != null) {
-				FullNamedExpression retval = ns.Lookup (rc, Name, Arity, loc);
+				FullNamedExpression retval = ns.LookupTypeOrNamespace (rc, Name, Arity, loc);
 
 				if (retval == null) {
-					if (!silent)
-						ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
+					ns.Error_NamespaceDoesNotExist (loc, Name, Arity, rc);
 				} else if (HasTypeArguments) {
-					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsTypeStep (rc, silent);
+					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsType (rc);
 				}
 
 				return retval;
 			}
 
-			TypeExpr tnew_expr = expr_resolved.ResolveAsTypeTerminal (rc, false);
+			TypeExpr tnew_expr = expr_resolved.ResolveAsType (rc);
 			if (tnew_expr == null)
 				return null;
 
@@ -7895,9 +7907,6 @@ namespace Mono.CSharp
 			while (expr_type != null) {
 				nested = MemberCache.FindNestedType (expr_type, Name, Arity);
 				if (nested == null) {
-					if (silent)
-						return null;
-
 					if (expr_type == tnew_expr.Type) {
 						Error_IdentifierNotFound (rc, expr_type, Name);
 						return null;
@@ -7927,7 +7936,7 @@ namespace Mono.CSharp
 				texpr = new TypeExpression (nested, loc);
 			}
 
-			return texpr.ResolveAsTypeStep (rc, false);
+			return texpr.ResolveAsTypeOrNamespace (rc);
 		}
 
 		protected virtual void Error_IdentifierNotFound (IMemberContext rc, TypeSpec expr_type, string identifier)
@@ -7935,7 +7944,7 @@ namespace Mono.CSharp
 			var nested = MemberCache.FindNestedType (expr_type, Name, -System.Math.Max (1, Arity));
 
 			if (nested != null) {
-				Error_TypeArgumentsCannotBeUsed (rc.Module.Compiler.Report, expr.Location, nested, Arity);
+				Error_TypeArgumentsCannotBeUsed (rc, nested, Arity, expr.Location);
 				return;
 			}
 
@@ -8634,7 +8643,7 @@ namespace Mono.CSharp
 
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
-			Error_TypeArgumentsCannotBeUsed (ec.Report, "indexer", GetSignatureForError (), loc);
+			Error_TypeArgumentsCannotBeUsed (ec, "indexer", GetSignatureForError (), loc);
 		}
 
 		#region IBaseMembersProvider Members
@@ -8977,9 +8986,9 @@ namespace Mono.CSharp
 			this.loc = spec.Location;
 		}
 
-		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
+		public override TypeExpr ResolveAsType (IMemberContext ec)
 		{
-			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec, false);
+			TypeExpr lexpr = left.ResolveAsType (ec);
 			if (lexpr == null)
 				return null;
 
@@ -8990,7 +8999,7 @@ namespace Mono.CSharp
 
 			if (single_spec.IsNullable) {
 				lexpr = new Nullable.NullableType (lexpr, loc);
-				lexpr = lexpr.ResolveAsTypeTerminal (ec, false);
+				lexpr = lexpr.ResolveAsType (ec);
 				if (lexpr != null)
 					type = lexpr.Type;
 
@@ -9183,7 +9192,7 @@ namespace Mono.CSharp
 				ec.Report.Error (255, loc, "Cannot use stackalloc in finally or catch");
 			}
 
-			TypeExpr texpr = t.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = t.ResolveAsType (ec);
 			if (texpr == null)
 				return null;
 
@@ -9678,7 +9687,7 @@ namespace Mono.CSharp
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
-		}			
+		}
 	}
 
 	public class NewAnonymousType : New
@@ -9790,6 +9799,11 @@ namespace Mono.CSharp
 
 			RequestedType = new GenericTypeExpr (anonymous_type.Definition, new TypeArguments (t_args), loc);
 			return base.DoResolve (ec);
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 

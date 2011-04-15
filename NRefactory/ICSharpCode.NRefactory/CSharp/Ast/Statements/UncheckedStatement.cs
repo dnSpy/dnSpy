@@ -27,7 +27,7 @@
 namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
-	/// unchecked { Body }
+	/// unchecked BodyBlock
 	/// </summary>
 	public class UncheckedStatement : Statement
 	{
@@ -38,6 +38,15 @@ namespace ICSharpCode.NRefactory.CSharp
 		public BlockStatement Body {
 			get { return GetChildByRole (Roles.Body); }
 			set { SetChildByRole (Roles.Body, value); }
+		}
+		
+		public UncheckedStatement ()
+		{
+		}
+		
+		public UncheckedStatement (BlockStatement body)
+		{
+			AddChild (body, Roles.Body);
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
