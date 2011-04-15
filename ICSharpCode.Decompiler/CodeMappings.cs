@@ -83,7 +83,7 @@ namespace ICSharpCode.Decompiler
 		/// <summary>
 		/// Gets or sets the type of the mapping.
 		/// </summary>
-		public MemberReference Type { get; internal set; }
+		public MemberReference MemberReference { get; internal set; }
 		
 		/// <summary>
 		/// Metadata token of the method.
@@ -168,7 +168,7 @@ namespace ICSharpCode.Decompiler
 				if (mapping.Find(map => (int)map.MetadataToken == member.MetadataToken.ToInt32()) == null) {
 					currentMemberMapping = new MemberMapping() {
 						MetadataToken = (uint)member.MetadataToken.ToInt32(),
-						Type = member.DeclaringType.Resolve(),
+						MemberReference = member.DeclaringType.Resolve(),
 						MemberCodeMappings = new List<SourceCodeMapping>(),
 						CodeSize = member.Body.CodeSize
 					};
@@ -311,7 +311,7 @@ namespace ICSharpCode.Decompiler
 				}
 			}
 			
-			type = mapping.Type;
+			type = mapping.MemberReference;
 			line = codeMapping.SourceCodeLine;
 			return true;
 		}
