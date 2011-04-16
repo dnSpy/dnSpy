@@ -739,14 +739,17 @@ namespace ICSharpCode.Decompiler.Ast
 				getterModifiers = ConvertModifiers(propDef.GetMethod);
 				setterModifiers = ConvertModifiers(propDef.SetMethod);
 				astProp.Modifiers = FixUpVisibility(getterModifiers | setterModifiers);
-				if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null))
-					foreach (var basePropDef in TypesHierarchyHelpers.FindBaseProperties(propDef))
+				if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null)) {
+					foreach (var basePropDef in TypesHierarchyHelpers.FindBaseProperties(propDef)) {
 						if (basePropDef.GetMethod != null && basePropDef.SetMethod != null) {
-					var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
-					astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
-					break;
-				} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot)
-					break;
+							var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
+							astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
+							break;
+						} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot) {
+							break;
+						}
+					}
+				}
 				if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
 					if (TypesHierarchyHelpers.FindBaseProperties(propDef).Any())
 						astProp.Modifiers |= Modifiers.New;

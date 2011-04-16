@@ -608,6 +608,17 @@ namespace ICSharpCode.Decompiler.Ast
 							return InlineAssembly(byteCode, args);
 						}
 					}
+				case ILCode.Refanytype:
+					return new UndocumentedExpression {
+						UndocumentedExpressionType = UndocumentedExpressionType.RefType,
+						Arguments = { arg1 }
+					}.Member("TypeHandle");
+				case ILCode.Refanyval:
+					return MakeRef(
+						new UndocumentedExpression {
+							UndocumentedExpressionType = UndocumentedExpressionType.RefValue,
+							Arguments = { arg1, new TypeReferenceExpression(operandAsTypeRef) }
+						});
 					case ILCode.Newobj: {
 						Cecil.TypeReference declaringType = ((MethodReference)operand).DeclaringType;
 						if (declaringType is ArrayType) {
@@ -644,8 +655,6 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Nop: return null;
 					case ILCode.Pop: return arg1;
 					case ILCode.Readonly: return InlineAssembly(byteCode, args);
-					case ILCode.Refanytype: return InlineAssembly(byteCode, args);
-					case ILCode.Refanyval: return InlineAssembly(byteCode, args);
 				case ILCode.Ret:
 					if (methodDef.ReturnType.FullName != "System.Void") {
 						return new Ast.ReturnStatement { Expression = arg1 };
