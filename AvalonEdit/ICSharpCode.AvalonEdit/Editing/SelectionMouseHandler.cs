@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -56,9 +57,6 @@ namespace ICSharpCode.AvalonEdit.Editing
 		}
 		#endregion
 		
-		// TODO: allow disabling text drag'n'drop
-		const bool AllowTextDragDrop = true;
-		
 		readonly TextArea textArea;
 		
 		SelectionMode mode;
@@ -83,14 +81,11 @@ namespace ICSharpCode.AvalonEdit.Editing
 			textArea.MouseMove += textArea_MouseMove;
 			textArea.MouseLeftButtonUp += textArea_MouseLeftButtonUp;
 			textArea.QueryCursor += textArea_QueryCursor;
-			if (AllowTextDragDrop) {
-				textArea.AllowDrop = true;
-				textArea.GiveFeedback += textArea_GiveFeedback;
-				textArea.QueryContinueDrag += textArea_QueryContinueDrag;
-				textArea.DragEnter += textArea_DragEnter;
-				textArea.DragOver +=  textArea_DragOver;
-				textArea.DragLeave += textArea_DragLeave;
-				textArea.Drop += textArea_Drop;
+			textArea.OptionChanged += textArea_OptionChanged;
+			
+			enableTextDragDrop = textArea.Options.EnableTextDragDrop;
+			if (enableTextDragDrop) {
+				AttachDragDrop();
 			}
 		}
 		
@@ -101,14 +96,45 @@ namespace ICSharpCode.AvalonEdit.Editing
 			textArea.MouseMove -= textArea_MouseMove;
 			textArea.MouseLeftButtonUp -= textArea_MouseLeftButtonUp;
 			textArea.QueryCursor -= textArea_QueryCursor;
-			if (AllowTextDragDrop) {
-				textArea.AllowDrop = false;
-				textArea.GiveFeedback -= textArea_GiveFeedback;
-				textArea.QueryContinueDrag -= textArea_QueryContinueDrag;
-				textArea.DragEnter -= textArea_DragEnter;
-				textArea.DragOver -=  textArea_DragOver;
-				textArea.DragLeave -= textArea_DragLeave;
-				textArea.Drop -= textArea_Drop;
+			textArea.OptionChanged -= textArea_OptionChanged;
+			if (enableTextDragDrop) {
+				DetachDragDrop();
+			}
+		}
+		
+		void AttachDragDrop()
+		{
+			textArea.AllowDrop = true;
+			textArea.GiveFeedback += textArea_GiveFeedback;
+			textArea.QueryContinueDrag += textArea_QueryContinueDrag;
+			textArea.DragEnter += textArea_DragEnter;
+			textArea.DragOver += textArea_DragOver;
+			textArea.DragLeave += textArea_DragLeave;
+			textArea.Drop += textArea_Drop;
+		}
+		
+		void DetachDragDrop()
+		{
+			textArea.AllowDrop = false;
+			textArea.GiveFeedback -= textArea_GiveFeedback;
+			textArea.QueryContinueDrag -= textArea_QueryContinueDrag;
+			textArea.DragEnter -= textArea_DragEnter;
+			textArea.DragOver -= textArea_DragOver;
+			textArea.DragLeave -= textArea_DragLeave;
+			textArea.Drop -= textArea_Drop;
+		}
+		
+		bool enableTextDragDrop;
+		
+		void textArea_OptionChanged(object sender, PropertyChangedEventArgs e)
+		{
+			bool newEnableTextDragDrop = textArea.Options.EnableTextDragDrop;
+			if (newEnableTextDragDrop != enableTextDragDrop) {
+				enableTextDragDrop = newEnableTextDragDrop;
+				if (newEnableTextDragDrop)
+					AttachDragDrop();
+				else
+					DetachDragDrop();
 			}
 		}
 		#endregion
@@ -323,7 +349,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 		void textArea_QueryCursor(object sender, QueryCursorEventArgs e)
 		{
 			if (!e.Handled) {
-				if (mode != SelectionMode.None || !AllowTextDragDrop) {
+				if (mode != SelectionMode.None || !enableTextDragDrop) {
 					e.Cursor = Cursors.IBeam;
 					e.Handled = true;
 				} else if (textArea.TextView.VisualLinesValid) {
@@ -352,7 +378,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 			if (!e.Handled && e.ChangedButton == MouseButton.Left) {
 				ModifierKeys modifiers = Keyboard.Modifiers;
 				bool shift = (modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
-				if (AllowTextDragDrop && e.ClickCount == 1 && !shift) {
+				if (enableTextDragDrop && e.ClickCount == 1 && !shift) {
 					int visualColumn;
 					int offset = GetOffsetFromMousePosition(e, out visualColumn);
 					if (textArea.Selection.Contains(offset)) {
@@ -373,7 +399,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 					textArea.Selection = Selection.Empty;
 				}
 				if (textArea.CaptureMouse()) {
-					if ((modifiers & ModifierKeys.Alt) == ModifierKeys.Alt) {
+					if ((modifiers & ModifierKeys.Alt) == ModifierKeys.Alt && textArea.Options.EnableRectangularSelection) {
 						mode = SelectionMode.Rectangular;
 						if (shift && textArea.Selection is RectangleSelection) {
 							textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(oldOffset, textArea.Caret.Offset);

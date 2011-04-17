@@ -2,16 +2,8 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.TextFormatting;
-
-using ICSharpCode.AvalonEdit.Document;
-using System.Windows.Navigation;
+using ICSharpCode.AvalonEdit.Utils;
 
 namespace ICSharpCode.AvalonEdit.Rendering
 {
@@ -65,25 +57,29 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			this.RequireControlModifierForClick = options.RequireControlModifierForHyperlinkClick;
 		}
 		
-		Match GetMatch(int startOffset)
+		Match GetMatch(int startOffset, out int matchOffset)
 		{
 			int endOffset = CurrentContext.VisualLine.LastDocumentLine.EndOffset;
-			string relevantText = CurrentContext.Document.GetText(startOffset, endOffset - startOffset);
-			return linkRegex.Match(relevantText);
+			StringSegment relevantText = CurrentContext.GetText(startOffset, endOffset - startOffset);
+			Match m = linkRegex.Match(relevantText.Text, relevantText.Offset, relevantText.Count);
+			matchOffset = m.Success ? m.Index - relevantText.Offset + startOffset : -1;
+			return m;
 		}
 		
 		/// <inheritdoc/>
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
-			Match m = GetMatch(startOffset);
-			return m.Success ? startOffset + m.Index : -1;
+			int matchOffset;
+			GetMatch(startOffset, out matchOffset);
+			return matchOffset;
 		}
 		
 		/// <inheritdoc/>
 		public override VisualLineElement ConstructElement(int offset)
 		{
-			Match m = GetMatch(offset);
-			if (m.Success && m.Index == 0) {
+			int matchOffset;
+			Match m = GetMatch(offset, out matchOffset);
+			if (m.Success && matchOffset == offset) {
 				Uri uri = GetUriFromMatch(m);
 				if (uri == null)
 					return null;

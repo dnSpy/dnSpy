@@ -91,6 +91,7 @@ namespace ICSharpCode.AvalonEdit.Document
 		/// Weak event manager for the <see cref="TextDocument.LineCountChanged"/> event.
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
+		[Obsolete("The TextDocument.LineCountChanged event will be removed in a future version. Use PropertyChangedEventManager instead.")]
 		public sealed class LineCountChanged : WeakEventManagerBase<LineCountChanged, TextDocument>
 		{
 			/// <inheritdoc/>
@@ -110,6 +111,7 @@ namespace ICSharpCode.AvalonEdit.Document
 		/// Weak event manager for the <see cref="TextDocument.TextLengthChanged"/> event.
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
+		[Obsolete("The TextDocument.TextLengthChanged event will be removed in a future version. Use PropertyChangedEventManager instead.")]
 		public sealed class TextLengthChanged : WeakEventManagerBase<TextLengthChanged, TextDocument>
 		{
 			/// <inheritdoc/>

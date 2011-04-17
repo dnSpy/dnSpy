@@ -8,6 +8,9 @@ using System.Windows.Threading;
 
 namespace ICSharpCode.AvalonEdit.Rendering
 {
+	/// <summary>
+	/// Encapsulates and adds MouseHover support to UIElements.
+	/// </summary>
 	public class MouseHoverLogic : IDisposable
 	{
 		UIElement target;
@@ -17,6 +20,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		MouseEventArgs mouseHoverLastEventArgs;
 		bool mouseHovering;
 		
+		/// <summary>
+		/// Creates a new instance and attaches itself to the <paramref name="target" /> UIElement.
+		/// </summary>
 		public MouseHoverLogic(UIElement target)
 		{
 			if (target == null)
@@ -70,8 +76,14 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			OnMouseHover(mouseHoverLastEventArgs);
 		}
 		
+		/// <summary>
+		/// Occurs when the mouse starts hovering over a certain location.
+		/// </summary>
 		public event EventHandler<MouseEventArgs> MouseHover;
 		
+		/// <summary>
+		/// Raises the <see cref="MouseHover"/> event.
+		/// </summary>
 		protected virtual void OnMouseHover(MouseEventArgs e)
 		{
 			if (MouseHover != null) {
@@ -79,8 +91,14 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			}
 		}
 		
+		/// <summary>
+		/// Occurs when the mouse stops hovering over a certain location.
+		/// </summary>
 		public event EventHandler<MouseEventArgs> MouseHoverStopped;
 		
+		/// <summary>
+		/// Raises the <see cref="MouseHoverStopped"/> event.
+		/// </summary>
 		protected virtual void OnMouseHoverStopped(MouseEventArgs e)
 		{
 			if (MouseHoverStopped != null) {
@@ -90,6 +108,9 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		bool disposed;
 		
+		/// <summary>
+		/// Removes the MouseHover support from the target UIElement.
+		/// </summary>
 		public void Dispose()
 		{
 			if (!disposed) {

@@ -11,9 +11,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 	/// You can use background renderers to draw non-interactive elements on the TextView
 	/// without introducing new UIElements.
 	/// </summary>
-	/// <remarks>Background renderer will draw only if their associated known
-	/// layer chooses to draw them. For example, background renderers in the caret
-	/// layer will be invisible when the caret is hidden.</remarks>
 	public interface IBackgroundRenderer
 	{
 		/// <summary>

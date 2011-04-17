@@ -18,7 +18,7 @@ using System.Reflection;
 [assembly: AssemblyProduct("SharpDevelop")]
 [assembly: AssemblyCopyright("2000-2011 AlphaSierraPapa for the SharpDevelop Team")]
 [assembly: AssemblyVersion(RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision)]
-[assembly: AssemblyInformationalVersion(RevisionClass.FullVersion + "-d9a90d79")]
+[assembly: AssemblyInformationalVersion(RevisionClass.FullVersion + "-3301c6c4")]
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2243:AttributeStringLiteralsShouldParseCorrectly",
@@ -29,8 +29,8 @@ internal static class RevisionClass
 	public const string Major = "4";
 	public const string Minor = "1";
 	public const string Build = "0";
-	public const string Revision = "7275";
+	public const string Revision = "7411";
 	public const string VersionName = "alpha";
 	
-	public const string FullVersion = Major + "." + Minor + "." + Build + ".7275-alpha";
+	public const string FullVersion = Major + "." + Minor + "." + Build + ".7411-alpha";
 }

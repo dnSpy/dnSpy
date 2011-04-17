@@ -167,10 +167,16 @@ namespace ICSharpCode.AvalonEdit.Folding
 			}
 		}
 		
+		/// <summary>
+		/// Default brush for folding element text. Value: Brushes.Gray
+		/// </summary>
 		public static readonly Brush DefaultTextBrush = Brushes.Gray;
 		
 		static Brush textBrush = DefaultTextBrush;
 		
+		/// <summary>
+		/// Gets/sets the brush used for folding element text.
+		/// </summary>
 		public static Brush TextBrush {
 			get { return textBrush; }
 			set { textBrush = value; }

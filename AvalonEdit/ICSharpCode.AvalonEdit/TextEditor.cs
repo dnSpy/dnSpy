@@ -669,6 +669,7 @@ namespace ICSharpCode.AvalonEdit
 		/// </summary>
 		public void ScrollToEnd()
 		{
+			ApplyTemplate(); // ensure scrollViewer is created
 			if (scrollViewer != null)
 				scrollViewer.ScrollToEnd();
 		}
@@ -678,6 +679,7 @@ namespace ICSharpCode.AvalonEdit
 		/// </summary>
 		public void ScrollToHome()
 		{
+			ApplyTemplate(); // ensure scrollViewer is created
 			if (scrollViewer != null)
 				scrollViewer.ScrollToHome();
 		}
@@ -687,6 +689,7 @@ namespace ICSharpCode.AvalonEdit
 		/// </summary>
 		public void ScrollToHorizontalOffset(double offset)
 		{
+			ApplyTemplate(); // ensure scrollViewer is created
 			if (scrollViewer != null)
 				scrollViewer.ScrollToHorizontalOffset(offset);
 		}
@@ -696,6 +699,7 @@ namespace ICSharpCode.AvalonEdit
 		/// </summary>
 		public void ScrollToVerticalOffset(double offset)
 		{
+			ApplyTemplate(); // ensure scrollViewer is created
 			if (scrollViewer != null)
 				scrollViewer.ScrollToVerticalOffset(offset);
 		}

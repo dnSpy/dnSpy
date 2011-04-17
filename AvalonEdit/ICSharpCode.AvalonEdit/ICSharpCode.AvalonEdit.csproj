@@ -215,7 +215,6 @@
     <Compile Include="Indentation\CSharp\DocumentAccessor.cs" />
     <Compile Include="Indentation\DefaultIndentationStrategy.cs" />
     <Compile Include="Indentation\IIndentationStrategy.cs" />
-    <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="Rendering\BackgroundGeometryBuilder.cs">
       <DependentUpon>IBackgroundRenderer.cs</DependentUpon>
     </Compile>
@@ -341,6 +340,7 @@
     <Compile Include="Utils\Rope.cs" />
     <Compile Include="Utils\RopeNode.cs" />
     <Compile Include="Utils\RopeTextReader.cs" />
+    <Compile Include="Utils\StringSegment.cs" />
     <Compile Include="Utils\TextFormatterFactory.cs" />
     <Compile Include="Utils\WeakEventManagerBase.cs" />
     <Compile Include="Utils\PixelSnapHelpers.cs" />

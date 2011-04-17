@@ -300,7 +300,10 @@ namespace ICSharpCode.AvalonEdit.Editing
 				if (textArea.Selection.IsEmpty && textArea.Options.CutCopyWholeLine) {
 					DocumentLine currentLine = textArea.Document.GetLineByNumber(textArea.Caret.Line);
 					CopyWholeLine(textArea, currentLine);
-					textArea.Document.Remove(currentLine.Offset, currentLine.TotalLength);
+					ISegment[] segmentsToDelete = textArea.GetDeletableSegments(new SimpleSegment(currentLine.Offset, currentLine.TotalLength));
+					for (int i = segmentsToDelete.Length - 1; i >= 0; i--) {
+						textArea.Document.Remove(segmentsToDelete[i]);
+					}
 				} else {
 					CopySelectedText(textArea);
 					textArea.RemoveSelectedText();
