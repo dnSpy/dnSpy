@@ -259,6 +259,7 @@ namespace ICSharpCode.Decompiler.Ast
 					if (m.Name == "Invoke") {
 						dd.ReturnType = ConvertType(m.ReturnType, m.MethodReturnType);
 						dd.Parameters.AddRange(MakeParameters(m));
+						ConvertAttributes(dd, m.MethodReturnType, m.Module);
 					}
 				}
 				result = dd;
@@ -1065,9 +1066,14 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			#endregion
 			
-			ConvertCustomAttributes(attributedNode, methodDefinition.MethodReturnType, "return");
-			if (methodDefinition.MethodReturnType.HasMarshalInfo) {
-				var marshalInfo = ConvertMarshalInfo(methodDefinition.MethodReturnType, methodDefinition.Module);
+			ConvertAttributes(attributedNode, methodDefinition.MethodReturnType, methodDefinition.Module);
+		}
+		
+		void ConvertAttributes(AttributedNode attributedNode, MethodReturnType methodReturnType, ModuleDefinition module)
+		{
+			ConvertCustomAttributes(attributedNode, methodReturnType, "return");
+			if (methodReturnType.HasMarshalInfo) {
+				var marshalInfo = ConvertMarshalInfo(methodReturnType, module);
 				attributedNode.Attributes.Add(new AttributeSection(marshalInfo) { AttributeTarget = "return" });
 			}
 		}
