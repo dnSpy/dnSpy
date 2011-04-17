@@ -382,12 +382,9 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		#region Node Selection
-		internal void SelectNode(SharpTreeNode obj, bool recordNavigationInHistory = true)
+		internal void SelectNode(SharpTreeNode obj)
 		{
 			if (obj != null) {
-				SharpTreeNode oldNode = treeView.SelectedItem as SharpTreeNode;
-				if (oldNode != null && recordNavigationInHistory)
-					history.Record(Tuple.Create(treeView.SelectedItems.OfType<SharpTreeNode>().ToList(), decompilerTextView.GetState()));
 				// Set both the selection and focus to ensure that keyboard navigation works as expected.
 				treeView.FocusNode(obj);
 				treeView.SelectedItem = obj;
@@ -507,10 +504,13 @@ namespace ICSharpCode.ILSpy
 
 		private bool ignoreDecompilationRequests;
 
-		private void DecompileSelectedNodes(DecompilerTextViewState state = null)
+		private void DecompileSelectedNodes(DecompilerTextViewState state = null, bool recordHistory = true)
 		{
 			if (ignoreDecompilationRequests)
 				return;
+
+			if (recordHistory)
+				history.Record(Tuple.Create(treeView.SelectedItems.OfType<SharpTreeNode>().ToList(), decompilerTextView.GetState()));
 
 			if (treeView.SelectedItems.Count == 1) {
 				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
@@ -587,7 +587,8 @@ namespace ICSharpCode.ILSpy
 			var currentSelection = treeView.SelectedItems.OfType<SharpTreeNode>().ToList();
 			var state = decompilerTextView.GetState();
 			var combinedState = Tuple.Create(currentSelection, state);
-			var newState = forward ? history.GoForward(combinedState) : history.GoBack(combinedState);
+			history.Replace(combinedState);
+			var newState = forward ? history.GoForward() : history.GoBack();
 
 			ignoreDecompilationRequests = true;
 			treeView.SelectedItems.Clear();
@@ -598,7 +599,7 @@ namespace ICSharpCode.ILSpy
 			if (newState.Item1.Count > 0)
 				treeView.FocusNode(newState.Item1[0]);
 			ignoreDecompilationRequests = false;
-			DecompileSelectedNodes(newState.Item2);
+			DecompileSelectedNodes(newState.Item2, false);
 		}
 
 		#endregion
