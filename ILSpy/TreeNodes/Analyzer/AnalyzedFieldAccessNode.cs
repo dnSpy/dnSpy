@@ -67,7 +67,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
 		{
 			string name = analyzedField.Name;
-			string declTypeName = analyzedField.DeclaringType.FullName;
 			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 				foreach (MethodDefinition method in type.Methods) {
@@ -78,7 +77,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					foreach (Instruction instr in method.Body.Instructions) {
 						if (CanBeReference(instr.OpCode.Code)) {
 							FieldReference fr = instr.Operand as FieldReference;
-							if (fr != null && fr.Name == name && fr.DeclaringType.FullName == declTypeName && fr.Resolve() == analyzedField) {
+							if (fr != null && fr.Name == name && Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType) && fr.Resolve() == analyzedField) {
 								found = true;
 								break;
 							}
