@@ -316,7 +316,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 		public void DisassembleType(TypeDefinition type)
 		{
 			// create IL code mappings - used for debugger
-			this.CodeMappings = new Tuple<string, List<MemberMapping>>(type.FullName, new List<MemberMapping>());
+			if (this.CodeMappings == null)
+				this.CodeMappings = new Tuple<string, List<MemberMapping>>(type.FullName, new List<MemberMapping>());
 			
 			// start writing IL
 			output.WriteDefinition(".class ", type);
