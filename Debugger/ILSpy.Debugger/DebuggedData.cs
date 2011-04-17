@@ -49,6 +49,16 @@ namespace ICSharpCode.ILSpy.Debugger
 		}
 		
 		/// <summary>
+		/// Gets or sets the current code mappings.
+		/// </summary>
+		public static Tuple<string, List<MemberMapping>> CodeMappings { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the old code mappings.
+		/// </summary>
+		public static Tuple<string, List<MemberMapping>> OldCodeMappings { get; set; }
+		
+		/// <summary>
 		/// Occures when the language is changed.
 		/// </summary>
 		public static event EventHandler<LanguageEventArgs> LanguageChanged;

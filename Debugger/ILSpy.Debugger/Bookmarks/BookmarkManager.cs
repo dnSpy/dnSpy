@@ -142,10 +142,10 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			if (CurrentLineBookmark.Instance == null)
 				return;
 			
-			var oldMappings = CodeMappings.GetStorage(oldLanguage);
-			var newMappings = CodeMappings.GetStorage(newLanguage);
+			var oldMappings = DebugData.OldCodeMappings;
+			var newMappings = DebugData.CodeMappings;
 
-			if (oldMappings == null || oldMappings.Count == 0 || newMappings == null || newMappings.Count == 0)
+			if (oldMappings == null || newMappings == null)
 				return;
 			
 			// 1. Save it's data
@@ -177,10 +177,10 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		static void SyncBreakpointBookmarks(DecompiledLanguages oldLanguage, DecompiledLanguages newLanguage)
 		{
 			// checks
-			var oldMappings = CodeMappings.GetStorage(oldLanguage);
-			var newMappings = CodeMappings.GetStorage(newLanguage);
+			var oldMappings = DebugData.OldCodeMappings;
+			var newMappings = DebugData.CodeMappings;
 
-			if (oldMappings == null || oldMappings.Count == 0 || newMappings == null || newMappings.Count == 0)
+			if (oldMappings == null || newMappings == null)
 				return;
 			
 			// 1. map the breakpoint lines

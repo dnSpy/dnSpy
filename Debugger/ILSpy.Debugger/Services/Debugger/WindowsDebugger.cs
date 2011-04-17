@@ -51,12 +51,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		//DynamicTreeDebuggerRow currentTooltipRow;
 		//Expression             currentTooltipExpression;
 		
-		private ConcurrentDictionary<string, List<MemberMapping>> CodeMappingsStorage {
-			get {
-				return CodeMappings.GetStorage(DebugData.Language);
-			}
-		}
-		
 		public event EventHandler<ProcessEventArgs> ProcessSelected;
 		
 		public NDebugger DebuggerCore {
@@ -296,7 +290,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 			
 			// get the mapped instruction from the current line marker or the next one
-			return CodeMappingsStorage.GetInstructionByTypeTokenAndOffset(
+			return DebugData.CodeMappings.GetInstructionByTypeTokenAndOffset(
 				((DebugType)frame.MethodInfo.DeclaringType).FullNameWithoutGenericArguments,
 				(uint)frame.MethodInfo.MetadataToken,
 				frame.IP, out isMatch);
@@ -566,8 +560,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			Breakpoint breakpoint = null;
 			
 			uint token;
-			SourceCodeMapping map = CodeMappings
-				.GetStorage(bookmark.Language)
+			SourceCodeMapping map = DebugData.CodeMappings
 				.GetInstructionByTypeAndLine(bookmark.Member.FullName, bookmark.LineNumber, out token);
 			
 			if (map != null) {
@@ -821,11 +814,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					return;
 				
 				uint token = (uint)frame.MethodInfo.MetadataToken;
+				var debugType = (DebugType)frame.MethodInfo.DeclaringType;
 				int ilOffset = frame.IP;
 				int line;
 				MemberReference memberReference;
 				
-				if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset(frame.MethodInfo.DeclaringType.FullName, token, ilOffset, out memberReference, out line)
+				if (DebugData.CodeMappings.GetSourceCodeFromMetadataTokenAndOffset(debugType.FullNameWithoutGenericArguments, token, ilOffset, out memberReference, out line)
 				    && memberReference.DeclaringType == null) {
 					DebuggerService.RemoveCurrentLineMarker();
 					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
@@ -873,22 +867,26 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				}
 				if (typeDef != null) {
 					// decompile on demand
-					if (!CodeMappingsStorage.ContainsKey(typeDef.FullName)) {
+					Tuple<string, List<MemberMapping>> codeMappings = null;
+					if (DebugData.CodeMappings.Item1 != (nestedTypeDef ?? typeDef).FullName) {
 						if (DebugData.Language == DecompiledLanguages.IL) {
 							var dis = new ReflectionDisassembler(new PlainTextOutput(), true, CancellationToken.None);
-							dis.DisassembleType(typeDef);
+							dis.DisassembleType(nestedTypeDef ?? typeDef);
+							codeMappings = dis.CodeMappings;
 						} else {
 							AstBuilder builder = new AstBuilder(new DecompilerContext(typeDef.Module));
-							builder.AddType(typeDef);
+							builder.AddType(nestedTypeDef ?? typeDef);
 							builder.GenerateCode(new PlainTextOutput());
+							codeMappings = builder.CodeMappings;
 						}
 					}
 					// try jump
 					int line;
 					MemberReference memberReference;
-					if (CodeMappingsStorage.GetSourceCodeFromMetadataTokenAndOffset((nestedTypeDef ?? typeDef).FullName, token, ilOffset, out memberReference, out line)) {
+					codeMappings = codeMappings ?? DebugData.CodeMappings;
+					if (codeMappings.GetSourceCodeFromMetadataTokenAndOffset((nestedTypeDef ?? typeDef).FullName, token, ilOffset, out memberReference, out line)) {
 						DebuggerService.RemoveCurrentLineMarker();
-						DebuggerService.JumpToCurrentLine(typeDef, line, 0, line, 0);
+						DebuggerService.JumpToCurrentLine(nestedTypeDef ?? typeDef, line, 0, line, 0);
 					} else {
 						StepOut();
 					}

@@ -22,6 +22,7 @@ using System.IO;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.ILSpy.Debugger;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
@@ -72,7 +73,10 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleType(type);
+			DebugData.OldCodeMappings = DebugData.CodeMappings;
+			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			dis.DisassembleType(type);
+			DebugData.CodeMappings = dis.CodeMappings;
 		}
 		
 		public override void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)

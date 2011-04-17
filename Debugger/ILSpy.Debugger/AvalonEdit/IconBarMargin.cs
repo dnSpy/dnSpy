@@ -231,7 +231,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 					if (DebugData.CurrentMemberReference != null) {
 						
 						// check if the codemappings exists for this line
-						var storage = CodeMappings.GetStorage(DebugData.Language);
+						var storage = DebugData.CodeMappings;
 						uint token;
 						var instruction = storage.GetInstructionByTypeAndLine(DebugData.CurrentMemberReference.FullName, line, out token);
 						

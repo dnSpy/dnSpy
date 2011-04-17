@@ -28,9 +28,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xaml;
 using System.Xml;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
+using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -121,10 +123,12 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
+			DebugData.OldCodeMappings = DebugData.CodeMappings;
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
 			codeDomBuilder.AddType(type);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
+			DebugData.CodeMappings = codeDomBuilder.CodeMappings;
 		}
 		
 		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)

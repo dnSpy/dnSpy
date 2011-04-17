@@ -47,11 +47,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 			this.cancellationToken = cancellationToken;
 		}
 		
-		public void Disassemble(MethodBody body)
+		public void Disassemble(MethodBody body, MemberMapping methodMapping)
 		{
-			// create IL code mappings - used in debugger
-			MemberMapping methodMapping = body.Method.CreateCodeMapping(ILCodeMapping.SourceCodeMappings);
-			
 			// start writing IL code
 			MethodDefinition method = body.Method;
 			output.WriteLine("// Method begins at RVA 0x{0:x4}", method.RVA);

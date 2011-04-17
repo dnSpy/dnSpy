@@ -20,6 +20,17 @@ namespace ICSharpCode.Decompiler
 	}
 	
 	/// <summary>
+	/// Interface for decompliler classes : AstBuilder & ReflectionDisassembler.
+	/// </summary>
+	public interface ICodeMappings
+	{
+		/// <summary>
+		/// Gets the code mappings.
+		/// </summary>
+		Tuple<string, List<MemberMapping>> CodeMappings { get; }
+	}
+	
+	/// <summary>
 	/// Maps the source code to IL.
 	/// </summary>
 	public sealed class SourceCodeMapping
@@ -122,30 +133,7 @@ namespace ICSharpCode.Decompiler
 	/// Code mappings helper class.
 	/// </summary>
 	public static class CodeMappings
-	{
-		/// <summary>
-		/// Gets the storage of code mappings for a language.
-		/// </summary>
-		/// <param name="language">A language.</param>
-		/// <returns>The storage of code mappings.</returns>
-		public static ConcurrentDictionary<string, List<MemberMapping>> GetStorage(DecompiledLanguages language)
-		{
-			ConcurrentDictionary<string, List<MemberMapping>> storage = null;
-			
-			switch (language) {
-				case DecompiledLanguages.IL:
-					storage = ILCodeMapping.SourceCodeMappings;
-					break;
-				case DecompiledLanguages.CSharp:
-					storage = CSharpCodeMapping.SourceCodeMappings;
-					break;
-				default:
-					throw new System.Exception("Invalid value for DecompiledLanguages");
-			}
-			
-			return storage;
-		}
-		
+	{	
 		/// <summary>
 		/// Create code mapping for a method.
 		/// </summary>
@@ -153,18 +141,18 @@ namespace ICSharpCode.Decompiler
 		/// <param name="sourceCodeMappings">Source code mapping storage.</param>
 		internal static MemberMapping CreateCodeMapping(
 			this MethodDefinition member,
-			ConcurrentDictionary<string, List<MemberMapping>> codeMappings)
+			Tuple<string, List<MemberMapping>> codeMappings)
 		{
 			if (member == null || !member.HasBody)
 				return null;
 			
 			if (codeMappings == null)
-				throw new ArgumentNullException("CodeMappings storage must be valid!");
+				return null;
 			
 			// create IL/CSharp code mappings - used in debugger
 			MemberMapping currentMemberMapping = null;
-			if (codeMappings.ContainsKey(member.DeclaringType.FullName)) {
-				var mapping = codeMappings[member.DeclaringType.FullName];
+			if (codeMappings.Item1 == member.DeclaringType.FullName) {
+				var mapping = codeMappings.Item2;
 				if (mapping.Find(map => (int)map.MetadataToken == member.MetadataToken.ToInt32()) == null) {
 					currentMemberMapping = new MemberMapping() {
 						MetadataToken = (uint)member.MetadataToken.ToInt32(),
@@ -188,15 +176,15 @@ namespace ICSharpCode.Decompiler
 		/// <param name="metadataToken">Metadata token.</param>
 		/// <returns></returns>
 		public static SourceCodeMapping GetInstructionByTypeAndLine(
-			this ConcurrentDictionary<string, List<MemberMapping>> codeMappings,
-			string typeName,
+			this Tuple<string, List<MemberMapping>> codeMappings,
+			string memberReferenceName,
 			int lineNumber,
 			out uint metadataToken)
 		{
 			if (codeMappings == null)
 				throw new ArgumentNullException("CodeMappings storage must be valid!");
 			
-			if (!codeMappings.ContainsKey(typeName)) {
+			if (codeMappings.Item1 != memberReferenceName) {
 				metadataToken = 0;
 				return null;
 			}
@@ -206,7 +194,7 @@ namespace ICSharpCode.Decompiler
 				return null;
 			}
 			
-			var methodMappings = codeMappings[typeName];
+			var methodMappings = codeMappings.Item2;
 			foreach (var maping in methodMappings) {
 				var map = maping.MemberCodeMappings.Find(m => m.SourceCodeLine == lineNumber);
 				if (map != null) {
@@ -229,22 +217,22 @@ namespace ICSharpCode.Decompiler
 		/// <param name="isMatch">True, if perfect match.</param>
 		/// <returns>A code mapping.</returns>
 		public static SourceCodeMapping GetInstructionByTypeTokenAndOffset(
-			this ConcurrentDictionary<string, List<MemberMapping>> codeMappings,
-			string typeName,
+			this Tuple<string, List<MemberMapping>> codeMappings,
+			string memberReferenceName,
 			uint token,
 			int ilOffset, out bool isMatch)
 		{
 			isMatch = false;
-			typeName = typeName.Replace("+", "/");
+			memberReferenceName = memberReferenceName.Replace("+", "/");
 			
 			if (codeMappings == null)
 				throw new ArgumentNullException("CodeMappings storage must be valid!");
 			
-			if (!codeMappings.ContainsKey(typeName)) {
+			if (codeMappings.Item1 != memberReferenceName) {
 				return null;
 			}
 			
-			var methodMappings = codeMappings[typeName];
+			var methodMappings = codeMappings.Item2;
 			var maping = methodMappings.Find(m => m.MetadataToken == token);
 			
 			if (maping == null) {
@@ -279,8 +267,8 @@ namespace ICSharpCode.Decompiler
 		/// <param name="line">Line number.</param>
 		/// <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
 		public static bool GetSourceCodeFromMetadataTokenAndOffset(
-			this ConcurrentDictionary<string, List<MemberMapping>> codeMappings,
-			string typeName,
+			this Tuple<string, List<MemberMapping>> codeMappings,
+			string memberReferenceName,
 			uint token,
 			int ilOffset,
 			out MemberReference type,
@@ -292,11 +280,11 @@ namespace ICSharpCode.Decompiler
 			if (codeMappings == null)
 				throw new ArgumentNullException("CodeMappings storage must be valid!");
 			
-			typeName = typeName.Replace("+", "/");
-			if (!codeMappings.ContainsKey(typeName))
+			memberReferenceName = memberReferenceName.Replace("+", "/");
+			if (codeMappings.Item1 != memberReferenceName)
 				return false;
 			
-			var mapping = codeMappings[typeName].Find(m => m.MetadataToken == token);
+			var mapping = codeMappings.Item2.Find(m => m.MetadataToken == token);
 			if (mapping == null)
 				return false;
 			

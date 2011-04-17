@@ -53,7 +53,6 @@
     <Compile Include="Ast\AstMethodBodyBuilder.cs" />
     <Compile Include="Ast\CecilTypeResolveContext.cs" />
     <Compile Include="Ast\CommentStatement.cs" />
-    <Compile Include="Ast\CSharpCodeMapping.cs" />
     <Compile Include="Ast\DecompilerContext.cs" />
     <Compile Include="Ast\NameVariables.cs" />
     <Compile Include="Ast\NRefactoryExtensions.cs" />
@@ -78,7 +77,6 @@
     <Compile Include="DecompilerException.cs" />
     <Compile Include="DecompilerSettings.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
-    <Compile Include="Disassembler\ILCodeMapping.cs" />
     <Compile Include="Disassembler\ILStructure.cs" />
     <Compile Include="Disassembler\MethodBodyDisassembler.cs" />
     <Compile Include="Disassembler\ReflectionDisassembler.cs" />
