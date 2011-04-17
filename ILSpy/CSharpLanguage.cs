@@ -129,6 +129,7 @@ namespace ICSharpCode.ILSpy
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
 			DebugData.CodeMappings = codeDomBuilder.CodeMappings;
+			DebugData.LocalVariables = codeDomBuilder.LocalVariables;
 		}
 		
 		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)

@@ -32,9 +32,16 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <param name="context">Decompilation context.</param>
 		/// <param name="parameters">Parameter declarations of the method being decompiled.
 		/// These are used to update the parameter names when the decompiler generates names for the parameters.</param>
+		/// <param name="localVariables">Local variables storage that will be filled/updated with the local variables.</param>
 		/// <returns>Block for the method body</returns>
-		public static BlockStatement CreateMethodBody(MethodDefinition methodDef, DecompilerContext context, IEnumerable<ParameterDeclaration> parameters = null)
+		public static BlockStatement CreateMethodBody(MethodDefinition methodDef,
+		                                              DecompilerContext context,
+		                                              IEnumerable<ParameterDeclaration> parameters = null,
+		                                              ConcurrentDictionary<int, IEnumerable<ILVariable>> localVariables = null)
 		{
+			if (localVariables == null)
+				localVariables = new ConcurrentDictionary<int, IEnumerable<ILVariable>>();
+			
 			MethodDefinition oldCurrentMethod = context.CurrentMethod;
 			Debug.Assert(oldCurrentMethod == null || oldCurrentMethod == methodDef);
 			context.CurrentMethod = methodDef;
@@ -44,10 +51,10 @@ namespace ICSharpCode.Decompiler.Ast
 				builder.context = context;
 				builder.typeSystem = methodDef.Module.TypeSystem;
 				if (Debugger.IsAttached) {
-					return builder.CreateMethodBody(parameters);
+					return builder.CreateMethodBody(parameters, localVariables);
 				} else {
 					try {
-						return builder.CreateMethodBody(parameters);
+						return builder.CreateMethodBody(parameters, localVariables);
 					} catch (OperationCanceledException) {
 						throw;
 					} catch (Exception ex) {
@@ -59,9 +66,13 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		public BlockStatement CreateMethodBody(IEnumerable<ParameterDeclaration> parameters)
+		public BlockStatement CreateMethodBody(IEnumerable<ParameterDeclaration> parameters,
+		                                       ConcurrentDictionary<int, IEnumerable<ILVariable>> localVariables)
 		{
 			if (methodDef.Body == null) return null;
+			
+			if (localVariables == null)
+				throw new ArgumentException("localVariables must be instantiated");
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
 			ILBlock ilMethod = new ILBlock();
@@ -104,8 +115,7 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			// store the variables - used for debugger
 			int token = methodDef.MetadataToken.ToInt32();
-			ILAstBuilder.MemberLocalVariables.AddOrUpdate(
-								token, allVariables, (key, oldValue) => allVariables);
+			localVariables.AddOrUpdate(token, allVariables, (key, oldValue) => allVariables);
 			
 			return astBlock;
 		}

@@ -11,11 +11,12 @@ using System.Windows.Media;
 
 using Debugger;
 using Debugger.MetaData;
+using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory.Ast;
-using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Debugger.Services.Debugger;
+using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 {
@@ -161,7 +162,7 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 				
 				// get local variable index
 				IEnumerable<ILVariable> list;
-				if (ILAstBuilder.MemberLocalVariables.TryGetValue(token, out list)) {
+				if (DebugData.LocalVariables.TryGetValue(token, out list)) {
 					var variable = list.FirstOrDefault(v => v.Name == targetName);
 					if (variable != null && variable.OriginalVariable != null) {
 						if (expression is MemberReferenceExpression) {

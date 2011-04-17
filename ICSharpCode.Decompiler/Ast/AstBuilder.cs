@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
@@ -42,6 +44,8 @@ namespace ICSharpCode.Decompiler.Ast
 				throw new ArgumentNullException("context");
 			this.context = context;
 			this.DecompileMethodBodies = true;
+			
+			this.LocalVariables = new ConcurrentDictionary<int, IEnumerable<ILVariable>>();
 		}
 		
 		public static bool MemberIsHidden(MemberReference member, DecompilerSettings settings)
@@ -872,7 +876,7 @@ namespace ICSharpCode.Decompiler.Ast
 		BlockStatement CreateMethodBody(MethodDefinition method, IEnumerable<ParameterDeclaration> parameters = null)
 		{
 			if (DecompileMethodBodies)
-				return AstMethodBodyBuilder.CreateMethodBody(method, context, parameters);
+				return AstMethodBodyBuilder.CreateMethodBody(method, context, parameters, LocalVariables);
 			else
 				return null;
 		}
@@ -1340,9 +1344,15 @@ namespace ICSharpCode.Decompiler.Ast
 			return type.CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.FlagsAttribute");
 		}
 		
-		public Tuple<string, List<MemberMapping>> CodeMappings {
-			get;
-			private set;
-		}
+		/// <summary>
+		/// <inheritdoc/>
+		/// </summary>
+		public Tuple<string, List<MemberMapping>> CodeMappings { get; private set; }
+		
+		/// <summary>
+		/// Gets the local variables for the current decompiled type, method, etc.
+		/// <remarks>The key is the metadata token.</remarks>
+		/// </summary>
+		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; private set; }
 	}
 }

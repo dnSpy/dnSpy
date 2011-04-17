@@ -12,11 +12,6 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public class ILAstBuilder
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		public static ConcurrentDictionary<int, IEnumerable<ILVariable>> MemberLocalVariables = new ConcurrentDictionary<int, IEnumerable<ILVariable>>();
-		
 		static ByteCode[] EmptyByteCodeArray = new ByteCode[] {};
 		
 		/// <summary> Immutable </summary>

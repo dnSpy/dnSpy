@@ -2,8 +2,11 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.ILAst;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.Debugger
@@ -52,6 +55,11 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// Gets or sets the current code mappings.
 		/// </summary>
 		public static Tuple<string, List<MemberMapping>> CodeMappings { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the local variables of the current decompiled type, method, etc.
+		/// </summary>
+		public static ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the old code mappings.
