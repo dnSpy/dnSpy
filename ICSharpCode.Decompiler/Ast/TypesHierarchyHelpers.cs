@@ -14,9 +14,9 @@ namespace ICSharpCode.Decompiler.Ast
 			if (resolveTypeArguments)
 				return BaseTypes(derivedType).Any(t => t.Item == baseType);
 			else {
-				var comparableBaseType = baseType.Resolve();
+				var comparableBaseType = baseType.ResolveOrThrow();
 				while (derivedType.BaseType != null) {
-					var resolvedBaseType = derivedType.BaseType.Resolve();
+					var resolvedBaseType = derivedType.BaseType.ResolveOrThrow();
 					if (resolvedBaseType == null)
 						return false;
 					if (comparableBaseType == resolvedBaseType)
@@ -29,11 +29,16 @@ namespace ICSharpCode.Decompiler.Ast
 
 		public static bool IsBaseMethod(MethodDefinition parentMethod, MethodDefinition childMethod)
 		{
+			if (parentMethod == null)
+				throw new ArgumentNullException("parentMethod");
+			if (childMethod == null)
+				throw new ArgumentNullException("childMethod");
+
 			if (parentMethod.Name != childMethod.Name)
 				return false;
 
 			if (parentMethod.HasParameters || childMethod.HasParameters)
-				if(!parentMethod.HasParameters || ! childMethod.HasParameters || parentMethod.Parameters.Count != childMethod.Parameters.Count)
+				if (!parentMethod.HasParameters || !childMethod.HasParameters || parentMethod.Parameters.Count != childMethod.Parameters.Count)
 					return false;
 
 			return FindBaseMethods(childMethod).Any(m => m == parentMethod);// || (parentMethod.HasGenericParameters && m.);
@@ -41,6 +46,11 @@ namespace ICSharpCode.Decompiler.Ast
 
 		public static bool IsBaseProperty(PropertyDefinition parentProperty, PropertyDefinition childProperty)
 		{
+			if (parentProperty == null)
+				throw new ArgumentNullException("parentProperty");
+			if (childProperty == null)
+				throw new ArgumentNullException("childProperty");
+
 			if (parentProperty.Name != childProperty.Name)
 				return false;
 
@@ -53,6 +63,9 @@ namespace ICSharpCode.Decompiler.Ast
 
 		public static IEnumerable<MethodDefinition> FindBaseMethods(MethodDefinition method)
 		{
+			if (method == null)
+				throw new ArgumentNullException("method");
+
 			var typeContext = CreateGenericContext(method.DeclaringType);
 			var gMethod = typeContext.ApplyTo(method);
 
@@ -65,8 +78,11 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 		}
 
-		public static IEnumerable<PropertyDefinition> FindBaseProperties(PropertyDefinition property)
+		public static IEnumerable<PropertyDefinition> FindBaseProperties(PropertyDefinition property, bool ignoreResolveExceptions = false)
 		{
+			if (property == null)
+				throw new ArgumentNullException("property");
+
 			var typeContext = CreateGenericContext(property.DeclaringType);
 			var gProperty = typeContext.ApplyTo(property);
 
@@ -109,7 +125,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (mCandidate.HasOverrides)
 				return false;
 
-			if (!IsSameType(candidate.Resolve(mCandidate.ReturnType), method.Resolve(mMethod.ReturnType)))
+			if (!IsSameType(candidate.ResolveWithContext(mCandidate.ReturnType), method.ResolveWithContext(mMethod.ReturnType)))
 				return false;
 
 			if (mCandidate.HasGenericParameters || mMethod.HasGenericParameters) {
@@ -140,7 +156,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if ((mCandidate.GetMethod ?? mCandidate.SetMethod).HasOverrides)
 				return false;
 
-			if (!IsSameType(candidate.Resolve(mCandidate.PropertyType), property.Resolve(mProperty.PropertyType)))
+			if (!IsSameType(candidate.ResolveWithContext(mCandidate.PropertyType), property.ResolveWithContext(mProperty.PropertyType)))
 				return false;
 
 			if (mCandidate.HasParameters || mProperty.HasParameters) {
@@ -158,8 +174,8 @@ namespace ICSharpCode.Decompiler.Ast
 
 		private static bool MatchParameters(GenericContext<ParameterDefinition> baseParameterType, GenericContext<ParameterDefinition> parameterType)
 		{
-			var baseParam = baseParameterType.Resolve(baseParameterType.Item.ParameterType);
-			var param = parameterType.Resolve(parameterType.Item.ParameterType);
+			var baseParam = baseParameterType.ResolveWithContext(baseParameterType.Item.ParameterType);
+			var param = parameterType.ResolveWithContext(parameterType.Item.ParameterType);
 			return IsSameType(baseParam, param);
 		}
 
@@ -186,10 +202,10 @@ namespace ICSharpCode.Decompiler.Ast
 				var baseType = type.Item.BaseType;
 				var genericBaseType = baseType as GenericInstanceType;
 				if (genericBaseType != null) {
-					type = new GenericContext<TypeDefinition>(genericBaseType.Resolve(),
-						genericBaseType.GenericArguments.Select(t => type.Resolve(t)));
+					type = new GenericContext<TypeDefinition>(genericBaseType.ResolveOrThrow(),
+						genericBaseType.GenericArguments.Select(t => type.ResolveWithContext(t)));
 				} else
-					type = new GenericContext<TypeDefinition>(baseType.Resolve());
+					type = new GenericContext<TypeDefinition>(baseType.ResolveOrThrow());
 				yield return type;
 			}
 		}
@@ -201,7 +217,7 @@ namespace ICSharpCode.Decompiler.Ast
 				: new GenericContext<TypeDefinition>(type);
 		}
 
-		struct GenericContext<T>
+		struct GenericContext<T> where T : class
 		{
 			private static readonly ReadOnlyCollection<TypeReference> Empty = new ReadOnlyCollection<TypeReference>(new List<TypeReference>());
 
@@ -210,12 +226,18 @@ namespace ICSharpCode.Decompiler.Ast
 
 			public GenericContext(T item)
 			{
+				if (item == null)
+					throw new ArgumentNullException("item");
+
 				Item = item;
 				TypeArguments = Empty;
 			}
 
 			public GenericContext(T item, IEnumerable<TypeReference> typeArguments)
 			{
+				if (item == null)
+					throw new ArgumentNullException("item");
+
 				Item = item;
 				var list = new List<TypeReference>();
 				foreach (var arg in typeArguments) {
@@ -231,7 +253,7 @@ namespace ICSharpCode.Decompiler.Ast
 				TypeArguments = typeArguments;
 			}
 
-			public TypeReference Resolve(TypeReference type)
+			public TypeReference ResolveWithContext(TypeReference type)
 			{
 				var genericParameter = type as GenericParameter;
 				if (genericParameter != null && genericParameter.Owner.GenericParameterType == GenericParameterType.Type) {
@@ -239,7 +261,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 				var arrayType = type as ArrayType;
 				if (arrayType != null) {
-					var resolvedElementType = Resolve(arrayType.ElementType);
+					var resolvedElementType = ResolveWithContext(arrayType.ElementType);
 					if (resolvedElementType == null)
 						return null;
 					if (resolvedElementType == arrayType.ElementType)
@@ -249,10 +271,10 @@ namespace ICSharpCode.Decompiler.Ast
 						newArrayType.Dimensions[dimension] = arrayType.Dimensions[dimension];
 					return newArrayType;
 				}
-				return type.Resolve();
+				return type.ResolveOrThrow();
 			}
 
-			public GenericContext<T2> ApplyTo<T2>(T2 item)
+			public GenericContext<T2> ApplyTo<T2>(T2 item) where T2 : class
 			{
 				return new GenericContext<T2>(item, this.TypeArguments);
 			}

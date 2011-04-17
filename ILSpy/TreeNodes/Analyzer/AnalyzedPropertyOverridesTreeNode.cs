@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.Utils;
 using ICSharpCode.TreeView;
@@ -69,18 +70,26 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 
-				if (!TypesHierarchyHelpers.IsBaseType(analyzedProperty.DeclaringType, type, resolveTypeArguments: false))
-					continue;
+				SharpTreeNode newNode = null;
+				try {
+					if (!TypesHierarchyHelpers.IsBaseType(analyzedProperty.DeclaringType, type, resolveTypeArguments: false))
+						continue;
 
-				foreach (PropertyDefinition property in type.Properties) {
-					ct.ThrowIfCancellationRequested();
+					foreach (PropertyDefinition property in type.Properties) {
+						ct.ThrowIfCancellationRequested();
 
-					if (TypesHierarchyHelpers.IsBaseProperty(analyzedProperty, property)) {
-						MethodDefinition anyAccessor = property.GetMethod ?? property.SetMethod;
-						bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-						yield return new AnalyzedPropertyTreeNode(property, hidesParent ? "(hides) " : "");
+						if (TypesHierarchyHelpers.IsBaseProperty(analyzedProperty, property)) {
+							MethodDefinition anyAccessor = property.GetMethod ?? property.SetMethod;
+							bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
+							newNode = new AnalyzedPropertyTreeNode(property, hidesParent ? "(hides) " : "");
+						}
 					}
 				}
+				catch (ReferenceResolvingException) {
+					// ignore this type definition.
+				}
+				if (newNode != null)
+					yield return newNode;
 			}
 		}
 
