@@ -23,6 +23,8 @@ namespace ICSharpCode.Decompiler
 {
 	public interface ITextOutput
 	{
+		int CurrentLine { get; }
+		
 		void Indent();
 		void Unindent();
 		void Write(char ch);

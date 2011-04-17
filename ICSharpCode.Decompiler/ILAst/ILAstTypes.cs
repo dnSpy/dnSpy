@@ -210,7 +210,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public static List<ILRange> OrderAndJoint(IEnumerable<ILRange> input)
 		{
-			List<ILRange> ranges = input.OrderBy(r => r.From).ToList();
+			if (input == null)
+				throw new ArgumentNullException("Input is null!");
+						
+			List<ILRange> ranges = input.Where(r => r != null).OrderBy(r => r.From).ToList();
 			for (int i = 0; i < ranges.Count - 1;) {
 				ILRange curr = ranges[i];
 				ILRange next = ranges[i + 1];
@@ -227,6 +230,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public static IEnumerable<ILRange> Invert(IEnumerable<ILRange> input, int codeSize)
 		{
+			if (input == null)
+				throw new ArgumentNullException("Input is null!");
+			
+			if (codeSize <= 0)
+				throw new ArgumentException("Code size must be grater than 0");
+			
 			var ordered = OrderAndJoint(input);
 			if (ordered.Count == 0) {
 				yield return new ILRange() { From = 0, To = codeSize };

@@ -32,12 +32,16 @@ namespace ICSharpCode.Decompiler
 			if (writer == null)
 				throw new ArgumentNullException("writer");
 			this.writer = writer;
+			CurrentLine = 1;
 		}
 		
 		public PlainTextOutput()
 		{
 			this.writer = new StringWriter();
+			CurrentLine = 1;
 		}
+		
+		public int CurrentLine { get; set; }
 		
 		public override string ToString()
 		{
@@ -80,6 +84,7 @@ namespace ICSharpCode.Decompiler
 		{
 			writer.WriteLine();
 			needsIndent = true;
+			++CurrentLine;
 		}
 		
 		public void WriteDefinition(string text, object definition)

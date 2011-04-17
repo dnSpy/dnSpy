@@ -28,7 +28,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 	/// <summary>
 	/// Disassembles type and member definitions.
 	/// </summary>
-	public sealed class ReflectionDisassembler
+	public sealed class ReflectionDisassembler : ICodeMappings
 	{
 		ITextOutput output;
 		CancellationToken cancellationToken;
@@ -146,8 +146,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 				OpenBlock(defaultCollapsed: isInType);
 				WriteAttributes(method.CustomAttributes);
 				
-				if (method.HasBody)
-					methodBodyDisassembler.Disassemble(method.Body);
+				if (method.HasBody) {
+					// create IL code mappings - used in debugger
+					MemberMapping methodMapping = method.CreateCodeMapping(this.CodeMappings);
+					methodBodyDisassembler.Disassemble(method.Body, methodMapping);
+				}
 				
 				CloseBlock("End of method " + method.DeclaringType.Name + "." + method.Name);
 			} else {
@@ -312,6 +315,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public void DisassembleType(TypeDefinition type)
 		{
+			// create IL code mappings - used for debugger
+			if (this.CodeMappings == null)
+				this.CodeMappings = new Tuple<string, List<MemberMapping>>(type.FullName, new List<MemberMapping>());
+			
+			// start writing IL
 			output.WriteDefinition(".class ", type);
 			
 			if ((type.Attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Interface)
@@ -557,6 +565,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			WriteAttributes(asm.CustomAttributes);
 			CloseBlock();
+		}
+		
+		/// <inheritdoc/>
+		public Tuple<string, List<MemberMapping>> CodeMappings {
+			get;
+			private set;
 		}
 	}
 }

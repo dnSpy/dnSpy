@@ -64,6 +64,8 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	public sealed class AvalonEditTextOutput : ISmartTextOutput
 	{
+		int lineNumber = 1;
+		int lastLineStart = 0;
 		readonly StringBuilder b = new StringBuilder();
 		
 		/// <summary>Current indentation level</summary>
@@ -173,6 +175,8 @@ namespace ICSharpCode.ILSpy.TextView
 			Debug.Assert(textDocument == null);
 			b.AppendLine();
 			needsIndent = true;
+			lastLineStart = b.Length;
+			lineNumber++;
 			if (this.TextLength > LengthLimit) {
 				throw new OutputLengthExceededException();
 			}
@@ -218,6 +222,18 @@ namespace ICSharpCode.ILSpy.TextView
 				if (this.UIElements.Count > 0 && this.UIElements.Last().Key == this.TextLength)
 					throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
 				this.UIElements.Add(new KeyValuePair<int, Lazy<UIElement>>(this.TextLength, new Lazy<UIElement>(element)));
+			}
+		}
+		
+		public int CurrentLine {
+			get {
+				return lineNumber;
+			}
+		}
+		
+		public int CurrentColumn {
+			get {
+				return b.Length - lastLineStart + 1;
 			}
 		}
 	}
