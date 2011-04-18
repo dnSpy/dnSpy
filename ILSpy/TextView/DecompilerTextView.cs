@@ -336,6 +336,7 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			// reset type
 			DebugData.CurrentMemberReference = null;
+			DebugData.OldCodeMappings = DebugData.CodeMappings;
 			TextEditorListener.Instance.ClosePopup();
 			
 			RunWithCancellation(
@@ -452,6 +453,10 @@ namespace ICSharpCode.ILSpy.TextView
 				if (i > 0)
 					textOutput.WriteLine();
 				
+				context.Language.DecompileFinished += (s, e) => { DebugData.CodeMappings = e.CodeMappings; DebugData.LocalVariables = e.LocalVariables; };
+				if (nodes[i] is IMemberTreeNode) {
+					DebugData.CurrentMemberReference = (nodes[i] as IMemberTreeNode).Member;
+				}
 				context.Options.CancellationToken.ThrowIfCancellationRequested();
 				nodes[i].Decompile(context.Language, textOutput, context.Options);
 			}

@@ -17,20 +17,44 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.ILAst;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
+	/// Decompilation event arguments.
+	/// </summary>
+	public sealed class DecompileEventArgs : EventArgs
+	{
+		/// <summary>
+		/// Gets ot sets the code mappings
+		/// </summary>
+		public Tuple<string, List<MemberMapping>> CodeMappings { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the local variables.
+		/// </summary>
+		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
+	}
+	
+	/// <summary>
 	/// Base class for language-specific decompiler implementations.
 	/// </summary>
 	public abstract class Language
 	{
+		/// <summary>
+		/// Decompile finished event.
+		/// </summary>
+		public event EventHandler<DecompileEventArgs> DecompileFinished;
+		
 		/// <summary>
 		/// Gets the name of the language (as shown in the UI)
 		/// </summary>
@@ -136,6 +160,13 @@ namespace ICSharpCode.ILSpy
 		public virtual bool ShowMember(MemberReference member)
 		{
 			return true;
+		}
+		
+		protected virtual void OnDecompilationFinished(DecompileEventArgs e)
+		{
+			if (DecompileFinished != null) {
+				DecompileFinished(this, e);
+			}
 		}
 	}
 	

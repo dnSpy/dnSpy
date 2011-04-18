@@ -121,7 +121,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			DebugData.CurrentMemberReference = type;
 			language.DecompileType(type, output, options);
 		}
 

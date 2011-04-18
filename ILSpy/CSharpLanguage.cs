@@ -123,13 +123,12 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
-			DebugData.OldCodeMappings = DebugData.CodeMappings;
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
 			codeDomBuilder.AddType(type);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
-			DebugData.CodeMappings = codeDomBuilder.CodeMappings;
-			DebugData.LocalVariables = codeDomBuilder.LocalVariables;
+			
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = codeDomBuilder.CodeMappings, LocalVariables = codeDomBuilder.LocalVariables });
 		}
 		
 		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)

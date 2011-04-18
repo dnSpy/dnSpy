@@ -73,10 +73,10 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
-			DebugData.OldCodeMappings = DebugData.CodeMappings;
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
 			dis.DisassembleType(type);
-			DebugData.CodeMappings = dis.CodeMappings;
+			
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings });
 		}
 		
 		public override void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)
