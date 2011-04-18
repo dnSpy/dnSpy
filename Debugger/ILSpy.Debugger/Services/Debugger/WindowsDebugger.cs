@@ -846,10 +846,11 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				TypeDefinition typeDef = null;
 				TypeDefinition nestedTypeDef = null;
 				
-				foreach (var assembly in DebugData.LoadedAssemblies
-				         .Where(a => 
-				                ((a.FullName.StartsWith("System") || a.FullName.StartsWith("Microsoft")) && a.Name.Version.ToString().StartsWith(debuggeeVersion)) ||
-				                !a.FullName.StartsWith("System") || !a.FullName.StartsWith("Microsoft"))) {
+				foreach (var assembly in DebugData.LoadedAssemblies) {
+					if ((assembly.FullName.StartsWith("System") || assembly.FullName.StartsWith("Microsoft") || assembly.FullName.StartsWith("mscorlib")) &&
+					    !assembly.Name.Version.ToString().StartsWith(debuggeeVersion))
+						continue;
+					
 					foreach (var module in assembly.Modules) {
 						var localType = module.GetType(fullName);
 						if (localType != null) {
@@ -865,6 +866,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					if (typeDef != null)
 						break;
 				}
+				
 				if (typeDef != null) {
 					// decompile on demand
 					Tuple<string, List<MemberMapping>> codeMappings = null;
