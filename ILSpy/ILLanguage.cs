@@ -53,22 +53,29 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleMethod(method);
+			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			dis.DisassembleMethod(method);
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings });
 		}
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
 			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleField(field);
+			OnDecompilationFinished(null);
 		}
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleProperty(property);
+			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken); 
+			dis.DisassembleProperty(property);
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings });
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleEvent(ev);
+			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken); 
+			dis.DisassembleEvent(ev);
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings });
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
@@ -82,6 +89,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)
 		{
 			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleNamespace(nameSpace, types);
+			OnDecompilationFinished(null);
 		}
 		
 		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
@@ -90,6 +98,7 @@ namespace ICSharpCode.ILSpy
 			output.WriteLine();
 			
 			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).WriteAssemblyHeader(assembly);
+			OnDecompilationFinished(null);
 		}
 		
 		public override string TypeToString(TypeReference t, bool includeNamespace, ICustomAttributeProvider attributeProvider)

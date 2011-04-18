@@ -449,16 +449,25 @@ namespace ICSharpCode.ILSpy.TextView
 		static void DecompileNodes(DecompilationContext context, ITextOutput textOutput)
 		{
 			var nodes = context.TreeNodes;
+			context.Language.DecompileFinished += Language_DecompileFinished;
 			for (int i = 0; i < nodes.Length; i++) {
 				if (i > 0)
 					textOutput.WriteLine();
 				
-				context.Language.DecompileFinished += (s, e) => { DebugData.CodeMappings = e.CodeMappings; DebugData.LocalVariables = e.LocalVariables; };
 				if (nodes[i] is IMemberTreeNode) {
 					DebugData.CurrentMemberReference = (nodes[i] as IMemberTreeNode).Member;
 				}
 				context.Options.CancellationToken.ThrowIfCancellationRequested();
 				nodes[i].Decompile(context.Language, textOutput, context.Options);
+			}
+			context.Language.DecompileFinished -= Language_DecompileFinished;
+		}
+
+		static void Language_DecompileFinished(object sender, DecompileEventArgs e)
+		{
+			if (e != null) {
+				DebugData.CodeMappings = e.CodeMappings; 
+				DebugData.LocalVariables = e.LocalVariables;
 			}
 		}
 		#endregion
