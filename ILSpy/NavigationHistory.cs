@@ -14,6 +14,9 @@ namespace ICSharpCode.ILSpy
 	internal sealed class NavigationHistory<T>
 		where T : class
 	{
+		private const double NavigationSecondsBeforeNewEntry = 0.5;
+
+		private DateTime lastNavigationTime = DateTime.MinValue;
 		T current;
 		List<T> back = new List<T>();
 		List<T> forward = new List<T>();
@@ -54,18 +57,24 @@ namespace ICSharpCode.ILSpy
 			forward.Clear();
 		}
 		
-		public void Replace(T node)
+		public void Record(T node, bool replace = false, bool clearForward = true)
 		{
-			current = node;
-		}
+			var navigationTime = DateTime.Now;
+			var period = navigationTime - lastNavigationTime;
 
-		public void Record(T node)
-		{
-			if (current != null)
-				back.Add(current);
+			if (period.TotalSeconds < NavigationSecondsBeforeNewEntry || replace) {
+				current = node;
+			} else {
+				if (current != null)
+					back.Add(current);
 
-			forward.Clear();
-			current = node;
+				current = node;
+			}
+
+			if (clearForward)
+				forward.Clear();
+
+			lastNavigationTime = navigationTime;
 		}
 	}
 }

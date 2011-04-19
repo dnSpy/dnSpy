@@ -587,7 +587,7 @@ namespace ICSharpCode.ILSpy
 			var currentSelection = treeView.SelectedItems.OfType<SharpTreeNode>().ToList();
 			var state = decompilerTextView.GetState();
 			var combinedState = Tuple.Create(currentSelection, state);
-			history.Replace(combinedState);
+			history.Record(combinedState, replace: true, clearForward: false);
 			var newState = forward ? history.GoForward() : history.GoBack();
 
 			ignoreDecompilationRequests = true;
