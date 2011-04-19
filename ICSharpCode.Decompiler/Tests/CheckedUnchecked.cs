@@ -28,8 +28,10 @@ public class CheckedUnchecked
 	
 	public void ForWithCheckedIteratorAndUncheckedBody(int n)
 	{
-		checked {
-			for (int i = n + 1; i < n + 1; i++) {
+		checked
+		{
+			for (int i = n + 1; i < n + 1; i++)
+			{
 				n = unchecked(i * i);
 			}
 		}
@@ -37,9 +39,11 @@ public class CheckedUnchecked
 	
 	public void ForWithCheckedInitializerAndUncheckedIterator(int n)
 	{
-		checked {
+		checked
+		{
 			int i = n;
-			for (i -= 10; i < n; i = unchecked(i + 1)) {
+			for (i -= 10; i < n; i = unchecked(i + 1))
+			{
 				n--;
 			}
 		}

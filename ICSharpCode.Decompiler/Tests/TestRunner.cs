@@ -19,6 +19,12 @@ namespace ICSharpCode.Decompiler.Tests
 	[TestFixture]
 	public class TestRunner
 	{
+		[Test, Ignore("disambiguating overloads is not yet implemented")]
+		public void CallOverloadedMethod()
+		{
+			TestFile(@"..\..\Tests\CallOverloadedMethod.cs");
+		}
+		
 		[Test, Ignore("unncessary primitive casts")]
 		public void CheckedUnchecked()
 		{
@@ -31,7 +37,7 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\DelegateConstruction.cs");
 		}
 		
-		[Test, Ignore("bug with variable-less catch")]
+		[Test, Ignore("arg-Variables in catch clauses")]
 		public void ExceptionHandling()
 		{
 			TestFile(@"..\..\Tests\ExceptionHandling.cs");
@@ -73,10 +79,22 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\PropertiesAndEvents.cs");
 		}
 		
-		[Test, Ignore]
+		[Test, Ignore("Formatting differences in anonymous method create expressions")]
+		public void QueryExpressions()
+		{
+			TestFile(@"..\..\Tests\QueryExpressions.cs");
+		}
+		
+		[Test, Ignore("switch transform is currently broken")]
 		public void Switch()
 		{
 			TestFile(@"..\..\Tests\Switch.cs");
+		}
+		
+		[Test]
+		public void UndocumentedExpressions()
+		{
+			TestFile(@"..\..\Tests\UndocumentedExpressions.cs");
 		}
 		
 		[Test, Ignore("has incorrect casts to IntPtr")]
@@ -95,12 +113,6 @@ namespace ICSharpCode.Decompiler.Tests
 		public void YieldReturn()
 		{
 			TestFile(@"..\..\Tests\YieldReturn.cs");
-		}
-		
-		[Test, Ignore("Formatting differences")]
-		public void QueryExpressions()
-		{
-			TestFile(@"..\..\Tests\QueryExpressions.cs");
 		}
 		
 		static void TestFile(string fileName)

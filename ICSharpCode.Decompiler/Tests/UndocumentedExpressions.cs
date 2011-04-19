@@ -17,7 +17,7 @@ public class UndocumentedExpressions
 		UndocumentedExpressions.AcceptTypedRef(tr);
 	}
 	
-	static void AcceptTypedRef(TypedReference tr)
+	private static void AcceptTypedRef(TypedReference tr)
 	{
 		Console.WriteLine("Value is: " + __refvalue(tr, object).ToString());
 		Console.WriteLine("Type is: " + __reftype(tr).Name);
