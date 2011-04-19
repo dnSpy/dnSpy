@@ -61,7 +61,7 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\InitializerTests.cs");
 		}
 		
-		[Test, Ignore("ForEachOverArray not supported")]
+		[Test]
 		public void Loops()
 		{
 			TestFile(@"..\..\Tests\Loops.cs");
