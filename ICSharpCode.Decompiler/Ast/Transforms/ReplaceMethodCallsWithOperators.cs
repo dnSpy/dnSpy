@@ -14,6 +14,14 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 	/// </summary>
 	public class ReplaceMethodCallsWithOperators : DepthFirstAstVisitor<object, object>, IAstTransform
 	{
+		static readonly MemberReferenceExpression typeHandleOnTypeOfPattern = new MemberReferenceExpression {
+			Target = new Choice {
+				new TypeOfExpression(new AnyNode()),
+				new UndocumentedExpression { UndocumentedExpressionType = UndocumentedExpressionType.RefType, Arguments = { new AnyNode() } }
+			},
+			MemberName = "TypeHandle"
+		};
+		
 		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
 		{
 			base.VisitInvocationExpression(invocationExpression, data);
@@ -38,9 +46,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			switch (methodRef.FullName) {
 				case "System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)":
 					if (arguments.Length == 1) {
-						MemberReferenceExpression mre = arguments[0] as MemberReferenceExpression;
-						if (mre != null && mre.Target is TypeOfExpression && mre.MemberName == "TypeHandle") {
-							invocationExpression.ReplaceWith(mre.Target);
+						if (typeHandleOnTypeOfPattern.IsMatch(arguments[0])) {
+							invocationExpression.ReplaceWith(((MemberReferenceExpression)arguments[0]).Target);
 							return null;
 						}
 					}

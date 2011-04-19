@@ -53,8 +53,8 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				throw new ArgumentNullException("context");
 			
 			int relativeOffset = startVisualColumn - VisualColumn;
-			string text = context.Document.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset, DocumentLength - relativeOffset);
-			return new TextCharacters(text, 0, text.Length, this.TextRunProperties);
+			StringSegment text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset + relativeOffset, DocumentLength - relativeOffset);
+			return new TextCharacters(text.Text, text.Offset, text.Count, this.TextRunProperties);
 		}
 		
 		/// <inheritdoc/>
@@ -71,8 +71,8 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				throw new ArgumentNullException("context");
 			
 			int relativeOffset = visualColumnLimit - VisualColumn;
-			string text = context.Document.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset, relativeOffset);
-			CharacterBufferRange range = new CharacterBufferRange(text, 0, text.Length);
+			StringSegment text = context.GetText(context.VisualLine.FirstDocumentLine.Offset + RelativeTextOffset, relativeOffset);
+			CharacterBufferRange range = new CharacterBufferRange(text.Text, text.Offset, text.Count);
 			return new TextSpan<CultureSpecificCharacterBufferRange>(range.Length, new CultureSpecificCharacterBufferRange(this.TextRunProperties.CultureInfo, range));
 		}
 		

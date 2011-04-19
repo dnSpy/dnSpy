@@ -185,7 +185,15 @@ namespace ICSharpCode.Decompiler
 			else
 				return null;
 		}
-		
+
+		public static TypeDefinition ResolveOrThrow(this TypeReference typeReference)
+		{
+			var resolved = typeReference.Resolve();
+			if (resolved == null)
+				throw new ReferenceResolvingException();
+			return resolved;
+		}
+
 		public static bool IsCompilerGenerated(this ICustomAttributeProvider provider)
 		{
 			if (provider != null && provider.HasCustomAttributes) {

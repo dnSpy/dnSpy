@@ -60,10 +60,10 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
 			DocumentLine endLine = CurrentContext.VisualLine.LastDocumentLine;
-			string relevantText = CurrentContext.Document.GetText(startOffset, endLine.EndOffset - startOffset);
+			StringSegment relevantText = CurrentContext.GetText(startOffset, endLine.EndOffset - startOffset);
 			
-			for (int i = 0; i < relevantText.Length; i++) {
-				char c = relevantText[i];
+			for (int i = 0; i < relevantText.Count; i++) {
+				char c = relevantText.Text[relevantText.Offset + i];
 				switch (c) {
 					case ' ':
 						if (ShowSpaces)

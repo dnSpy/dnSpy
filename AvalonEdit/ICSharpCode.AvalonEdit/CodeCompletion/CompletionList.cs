@@ -314,6 +314,9 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 
 		int GetMatchQuality(string itemText, string query)
 		{
+			if (itemText == null)
+				throw new ArgumentNullException("itemText", "ICompletionData.Text returned null");
+			
 			// Qualities:
 			//  	8 = full match case sensitive
 			// 		7 = full match

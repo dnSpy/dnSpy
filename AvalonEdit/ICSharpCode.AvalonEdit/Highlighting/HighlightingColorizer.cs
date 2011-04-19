@@ -154,6 +154,11 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 				if (b != null)
 					element.TextRunProperties.SetForegroundBrush(b);
 			}
+			if (color.Background != null) {
+				Brush b = color.Background.GetBrush(CurrentContext);
+				if (b != null)
+					element.TextRunProperties.SetBackgroundBrush(b);
+			}
 			if (color.FontStyle != null || color.FontWeight != null) {
 				Typeface tf = element.TextRunProperties.Typeface;
 				element.TextRunProperties.SetTypeface(new Typeface(

@@ -468,3 +468,13 @@ namespace ClassAttributeOnTypeParameter
 	{
 	}
 }
+//$$ AttributeOnReturnTypeOfDelegate
+namespace AttributeOnReturnTypeOfDelegate
+{
+	[AttributeUsage(AttributeTargets.All)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	[return: MyAttribute]
+	public delegate void Test();
+}

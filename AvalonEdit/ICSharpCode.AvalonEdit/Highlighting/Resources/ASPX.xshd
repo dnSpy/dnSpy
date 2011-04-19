@@ -4,7 +4,7 @@
 	<Color name="ASPSectionStartEndTags" foreground="Black" background="Yellow" exampleText="&lt;% System.Console.WriteLine(&quot;Hello World!&quot;); %&gt;" /> 
 	<Color name="ASPSection" foreground="Black" background="#FFF7F2E3" exampleText="&lt;% System.Console.WriteLine(&quot;Hello World!&quot;); %&gt;" />
 	<RuleSet ignoreCase="true">
-		<Span color="ASPSection" ruleSet="ASP" multiline="true">
+		<Span ruleSet="ASP" multiline="true">
 			<Begin color="ASPSectionStartEndTags">&lt;%</Begin>
 			<End color="ASPSectionStartEndTags">%&gt;</End>
 		</Span>

@@ -1739,12 +1739,21 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		#endregion
 		
 		/// <summary>
-		/// Collapses lines for the purpose of scrolling. This method is meant for
-		/// <see cref="VisualLineElementGenerator"/>s that cause <see cref="VisualLine"/>s to span
+		/// Collapses lines for the purpose of scrolling. <see cref="DocumentLine"/>s marked as collapsed will be hidden
+		/// and not used to start the generation of a <see cref="VisualLine"/>.
+		/// </summary>
+		/// <remarks>
+		/// This method is meant for <see cref="VisualLineElementGenerator"/>s that cause <see cref="VisualLine"/>s to span
 		/// multiple <see cref="DocumentLine"/>s. Do not call it without providing a corresponding
 		/// <see cref="VisualLineElementGenerator"/>.
 		/// If you want to create collapsible text sections, see <see cref="Folding.FoldingManager"/>.
-		/// </summary>
+		/// 
+		/// Note that if you want a VisualLineElement to span from line N to line M, then you need to collapse only the lines
+		/// N+1 to M. Do not collapse line N itself.
+		/// 
+		/// When you no longer need the section to be collapsed, call <see cref="CollapsedLineSection.Uncollapse()"/> on the
+		/// <see cref="CollapsedLineSection"/> returned from this method.
+		/// </remarks>
 		public CollapsedLineSection CollapseLines(DocumentLine start, DocumentLine end)
 		{
 			VerifyAccess();

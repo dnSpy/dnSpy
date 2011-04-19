@@ -38,6 +38,9 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DiffLib">
+      <HintPath>..\..\packages\DiffLib.1.0.0.55\lib\net35-Client\DiffLib.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\nunit.framework.dll</HintPath>
@@ -54,12 +57,15 @@
   <ItemGroup>
     <Compile Include="CallOverloadedMethod.cs" />
     <Compile Include="CheckedUnchecked.cs" />
+    <Compile Include="Helpers\CodeAssert.cs" />
     <Compile Include="IncrementDecrement.cs" />
     <Compile Include="QueryExpressions.cs" />
     <Compile Include="Switch.cs" />
+    <Compile Include="UndocumentedExpressions.cs" />
     <Compile Include="UnsafeCode.cs" />
     <Compile Include="Types\S_TypeDeclarations.cs" />
     <Compile Include="YieldReturn.cs" />
+    <None Include="packages.config" />
     <None Include="Types\S_EnumSamples.cs" />
     <None Include="CustomAttributes\S_AssemblyCustomAttribute.cs" />
     <Compile Include="Helpers\RemoveCompilerAttribute.cs" />

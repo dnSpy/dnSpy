@@ -28,39 +28,63 @@ namespace ICSharpCode.AvalonEdit.Folding
 		internal const double SizeFactor = Constants.PixelPerPoint;
 		
 		#region Brushes
+		/// <summary>
+		/// FoldingMarkerBrush dependency property.
+		/// </summary>
 		public static readonly DependencyProperty FoldingMarkerBrushProperty =
 			DependencyProperty.RegisterAttached("FoldingMarkerBrush", typeof(Brush), typeof(FoldingMargin),
 			                                    new FrameworkPropertyMetadata(Brushes.Gray, FrameworkPropertyMetadataOptions.Inherits, OnUpdateBrushes));
 		
+		/// <summary>
+		/// Gets/sets the Brush used for displaying the lines of folding markers.
+		/// </summary>
 		public Brush FoldingMarkerBrush {
 			get { return (Brush)GetValue(FoldingMarkerBrushProperty); }
 			set { SetValue(FoldingMarkerBrushProperty, value); }
 		}
 		
+		/// <summary>
+		/// FoldingMarkerBackgroundBrush dependency property.
+		/// </summary>
 		public static readonly DependencyProperty FoldingMarkerBackgroundBrushProperty =
 			DependencyProperty.RegisterAttached("FoldingMarkerBackgroundBrush", typeof(Brush), typeof(FoldingMargin),
 			                                    new FrameworkPropertyMetadata(Brushes.White, FrameworkPropertyMetadataOptions.Inherits, OnUpdateBrushes));
 		
+		/// <summary>
+		/// Gets/sets the Brush used for displaying the background of folding markers.
+		/// </summary>
 		public Brush FoldingMarkerBackgroundBrush {
 			get { return (Brush)GetValue(FoldingMarkerBackgroundBrushProperty); }
 			set { SetValue(FoldingMarkerBackgroundBrushProperty, value); }
 		}
 		
+		/// <summary>
+		/// SelectedFoldingMarkerBrush dependency property.
+		/// </summary>
 		public static readonly DependencyProperty SelectedFoldingMarkerBrushProperty =
 			DependencyProperty.RegisterAttached("SelectedFoldingMarkerBrush",
 			                                    typeof(Brush), typeof(FoldingMargin),
 			                                    new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.Inherits, OnUpdateBrushes));
 		
+		/// <summary>
+		/// Gets/sets the Brush used for displaying the lines of selected folding markers.
+		/// </summary>
 		public Brush SelectedFoldingMarkerBrush {
 			get { return (Brush)GetValue(SelectedFoldingMarkerBrushProperty); }
 			set { SetValue(SelectedFoldingMarkerBrushProperty, value); }
 		}
 		
+		/// <summary>
+		/// SelectedFoldingMarkerBackgroundBrush dependency property.
+		/// </summary>
 		public static readonly DependencyProperty SelectedFoldingMarkerBackgroundBrushProperty =
 			DependencyProperty.RegisterAttached("SelectedFoldingMarkerBackgroundBrush",
 			                                    typeof(Brush), typeof(FoldingMargin),
 			                                    new FrameworkPropertyMetadata(Brushes.White, FrameworkPropertyMetadataOptions.Inherits, OnUpdateBrushes));
 		
+		/// <summary>
+		/// Gets/sets the Brush used for displaying the background of selected folding markers.
+		/// </summary>
 		public Brush SelectedFoldingMarkerBackgroundBrush {
 			get { return (Brush)GetValue(SelectedFoldingMarkerBackgroundBrushProperty); }
 			set { SetValue(SelectedFoldingMarkerBackgroundBrushProperty, value); }
