@@ -630,8 +630,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m = switchOnStringPattern.Match(node);
 			if (!m.Success)
 				return null;
-			if (m.Has("nonNullDefaultStmt") && !m.Has("nullStmt"))
-				return null;
 			// switchVar must be the same as switchExpr; or switchExpr must be an assignment and switchVar the left side of that assignment
 			if (!m.Get("switchVar").Single().IsMatch(m.Get("switchExpr").Single())) {
 				AssignmentExpression assign = m.Get("switchExpr").Single() as AssignmentExpression;
@@ -666,15 +664,21 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				block.Statements.Add(new BreakStatement());
 				section.Statements.Add(block.Detach());
 				sw.SwitchSections.Add(section);
-				if (m.Has("nonNullDefaultStmt")) {
-					section = new SwitchSection();
-					section.CaseLabels.Add(new CaseLabel());
-					block = new BlockStatement();
-					block.Statements.AddRange(m.Get<Statement>("nonNullDefaultStmt").Select(s => s.Detach()));
-					block.Add(new BreakStatement());
-					section.Statements.Add(block);
-					sw.SwitchSections.Add(section);
-				}
+			} else if (m.Has("nonNullDefaultStmt")) {
+				sw.SwitchSections.Add(
+					new SwitchSection {
+						CaseLabels = { new CaseLabel { Expression = new NullReferenceExpression() } },
+						Statements = { new BlockStatement { new BreakStatement() } }
+					});
+			}
+			if (m.Has("nonNullDefaultStmt")) {
+				SwitchSection section = new SwitchSection();
+				section.CaseLabels.Add(new CaseLabel());
+				BlockStatement block = new BlockStatement();
+				block.Statements.AddRange(m.Get<Statement>("nonNullDefaultStmt").Select(s => s.Detach()));
+				block.Add(new BreakStatement());
+				section.Statements.Add(block);
+				sw.SwitchSections.Add(section);
 			}
 			node.ReplaceWith(sw);
 			return sw;

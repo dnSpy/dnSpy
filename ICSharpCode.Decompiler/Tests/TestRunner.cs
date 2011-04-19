@@ -85,7 +85,7 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\QueryExpressions.cs");
 		}
 		
-		[Test, Ignore("switch transform is currently broken")]
+		[Test, Ignore("switch transform doesn't recreate the exact original switch")]
 		public void Switch()
 		{
 			TestFile(@"..\..\Tests\Switch.cs");
