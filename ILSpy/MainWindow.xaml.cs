@@ -46,8 +46,7 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	partial class MainWindow : Window
 	{
-		NavigationHistory<Tuple<List<SharpTreeNode>, DecompilerTextViewState>> history =
-			new NavigationHistory<Tuple<List<SharpTreeNode>, DecompilerTextViewState>>();
+		NavigationHistory<NavigationState> history = new NavigationHistory<NavigationState>();
 		ILSpySettings spySettings;
 		SessionSettings sessionSettings;
 		AssemblyListManager assemblyListManager;
@@ -334,7 +333,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (e.OldItems != null)
 				foreach (LoadedAssembly asm in e.OldItems)
-					history.RemoveAll(n => n.Item1.Any(nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(a => a.LoadedAssembly == asm)));
+					history.RemoveAll(n => n.TreeNodes.Any(nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(a => a.LoadedAssembly == asm)));
 		}
 		
 		void LoadInitialAssemblies()
@@ -510,7 +509,7 @@ namespace ICSharpCode.ILSpy
 				return;
 
 			if (recordHistory)
-				history.Record(Tuple.Create(treeView.SelectedItems.OfType<SharpTreeNode>().ToList(), decompilerTextView.GetState()));
+				history.Record(new NavigationState(treeView.SelectedItems.OfType<SharpTreeNode>(), decompilerTextView.GetState()));
 
 			if (treeView.SelectedItems.Count == 1) {
 				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
@@ -584,22 +583,20 @@ namespace ICSharpCode.ILSpy
 
 		void NavigateHistory(bool forward)
 		{
-			var currentSelection = treeView.SelectedItems.OfType<SharpTreeNode>().ToList();
-			var state = decompilerTextView.GetState();
-			var combinedState = Tuple.Create(currentSelection, state);
+			var combinedState = new NavigationState(treeView.SelectedItems.OfType<SharpTreeNode>(), decompilerTextView.GetState());
 			history.Record(combinedState, replace: true, clearForward: false);
 			var newState = forward ? history.GoForward() : history.GoBack();
 
 			ignoreDecompilationRequests = true;
 			treeView.SelectedItems.Clear();
-			foreach (var node in newState.Item1)
+			foreach (var node in newState.TreeNodes)
 			{
 				treeView.SelectedItems.Add(node);
 			}
-			if (newState.Item1.Count > 0)
-				treeView.FocusNode(newState.Item1[0]);
+			if (newState.TreeNodes.Any())
+				treeView.FocusNode(newState.TreeNodes.First());
 			ignoreDecompilationRequests = false;
-			DecompileSelectedNodes(newState.Item2, false);
+			DecompileSelectedNodes(newState.ViewState, false);
 		}
 
 		#endregion

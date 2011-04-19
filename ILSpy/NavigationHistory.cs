@@ -12,7 +12,7 @@ namespace ICSharpCode.ILSpy
 	/// Stores the navigation history.
 	/// </summary>
 	internal sealed class NavigationHistory<T>
-		where T : class
+		where T : class, IEquatable<T>
 	{
 		private const double NavigationSecondsBeforeNewEntry = 0.5;
 
@@ -68,6 +68,8 @@ namespace ICSharpCode.ILSpy
 				if (current != null)
 					back.Add(current);
 
+				// We only store a record once, and ensure it is on the top of the stack, so we just remove the old record
+				back.Remove(node);
 				current = node;
 			}
 
