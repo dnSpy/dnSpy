@@ -111,6 +111,7 @@
     <Compile Include="ITextOutput.cs" />
     <Compile Include="PlainTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReferenceResolvingException.cs" />
     <Compile Include="TextOutputWriter.cs" />
     <None Include="Properties\AssemblyInfo.template.cs" />
   </ItemGroup>

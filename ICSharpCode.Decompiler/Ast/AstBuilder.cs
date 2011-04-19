@@ -638,11 +638,16 @@ namespace ICSharpCode.Decompiler.Ast
 				if (!methodDef.HasOverrides) {
 					astMethod.Modifiers = ConvertModifiers(methodDef);
 					if (methodDef.IsVirtual ^ !methodDef.IsNewSlot) {
-						if (TypesHierarchyHelpers.FindBaseMethods(methodDef).Any())
-							astMethod.Modifiers |= Modifiers.New;
+						try {
+							if (TypesHierarchyHelpers.FindBaseMethods(methodDef).Any())
+								astMethod.Modifiers |= Modifiers.New;
+						} catch (ReferenceResolvingException) {
+							// TODO: add some kind of notification (a comment?) about possible problems with decompiled code due to unresolved references.
+						}
 					}
-				} else
+				} else {
 					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
+				}
 				astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
 			}
 			ConvertAttributes(astMethod, methodDef);
@@ -757,20 +762,24 @@ namespace ICSharpCode.Decompiler.Ast
 				getterModifiers = ConvertModifiers(propDef.GetMethod);
 				setterModifiers = ConvertModifiers(propDef.SetMethod);
 				astProp.Modifiers = FixUpVisibility(getterModifiers | setterModifiers);
-				if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null)) {
-					foreach (var basePropDef in TypesHierarchyHelpers.FindBaseProperties(propDef)) {
-						if (basePropDef.GetMethod != null && basePropDef.SetMethod != null) {
-							var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
-							astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
-							break;
-						} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot) {
-							break;
+				try {
+					if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null)) {
+						foreach (var basePropDef in TypesHierarchyHelpers.FindBaseProperties(propDef)) {
+							if (basePropDef.GetMethod != null && basePropDef.SetMethod != null) {
+								var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
+								astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
+								break;
+							} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot) {
+								break;
+							}
 						}
 					}
-				}
-				if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
-					if (TypesHierarchyHelpers.FindBaseProperties(propDef).Any())
-						astProp.Modifiers |= Modifiers.New;
+					if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
+						if (TypesHierarchyHelpers.FindBaseProperties(propDef).Any())
+							astProp.Modifiers |= Modifiers.New;
+					}
+				} catch (ReferenceResolvingException) {
+					// TODO: add some kind of notification (a comment?) about possible problems with decompiled code due to unresolved references.
 				}
 			}
 			astProp.Name = CleanName(propDef.Name);

@@ -130,6 +130,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\Analyzer\Helpers.cs" />
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />
     <Compile Include="TreeNodes\XamlResourceNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyAccessorsTreeNode.cs" />
@@ -268,8 +269,6 @@
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="XmlDoc" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

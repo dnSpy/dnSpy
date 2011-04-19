@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.Utils;
 using ICSharpCode.TreeView;
@@ -73,20 +74,25 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes))
 			{
 				ct.ThrowIfCancellationRequested();
+				SharpTreeNode newNode = null;
+				try {
+					if (!TypesHierarchyHelpers.IsBaseType(analyzedMethod.DeclaringType, type, resolveTypeArguments: false))
+						continue;
 
-				if (!TypesHierarchyHelpers.IsBaseType(analyzedMethod.DeclaringType, type, resolveTypeArguments: false))
-					continue;
+					foreach (MethodDefinition method in type.Methods) {
+						ct.ThrowIfCancellationRequested();
 
-				foreach (MethodDefinition method in type.Methods)
-				{
-					ct.ThrowIfCancellationRequested();
-
-					if (TypesHierarchyHelpers.IsBaseMethod(analyzedMethod, method))
-					{
-						bool hidesParent = !method.IsVirtual ^ method.IsNewSlot;
-						yield return new AnalyzedMethodTreeNode(method, hidesParent ? "(hides) " : "");
+						if (TypesHierarchyHelpers.IsBaseMethod(analyzedMethod, method)) {
+							bool hidesParent = !method.IsVirtual ^ method.IsNewSlot;
+							newNode = new AnalyzedMethodTreeNode(method, hidesParent ? "(hides) " : "");
+						}
 					}
 				}
+				catch (ReferenceResolvingException) {
+					// ignore this type definition. maybe add a notification about such cases.
+				}
+				if (newNode != null)
+					yield return newNode;
 			}
 		}
 
