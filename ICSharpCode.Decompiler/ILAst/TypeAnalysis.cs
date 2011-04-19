@@ -458,6 +458,16 @@ namespace ICSharpCode.Decompiler.ILAst
 						InferTypeForExpression(expr.Arguments[0], (TypeReference)expr.Operand);
 					}
 					return typeSystem.TypedReference;
+				case ILCode.Refanytype:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], typeSystem.TypedReference);
+					}
+					return new TypeReference("System", "RuntimeTypeHandle", module, module, true);
+				case ILCode.Refanyval:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], typeSystem.TypedReference);
+					}
+					return new ByReferenceType((TypeReference)expr.Operand);
 					#endregion
 					#region Arithmetic instructions
 				case ILCode.Not: // bitwise complement

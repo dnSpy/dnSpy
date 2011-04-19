@@ -416,7 +416,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (declarationPoint != foreachStatement) {
 				// oops, the enumerator variable can't be moved into the foreach loop
 				// Undo our AST changes:
-				((BlockStatement)foreachStatement.Parent).Statements.InsertBefore(foreachStatement, node);
+				((BlockStatement)foreachStatement.Parent).Statements.InsertBefore(foreachStatement, node.Detach());
 				foreachStatement.ReplaceWith(tryCatch);
 				return null;
 			}
