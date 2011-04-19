@@ -200,7 +200,12 @@ public class IncrementDecrement
 //	{
 //		return this.M()[name]++;
 //	}
-	
+
+//	public unsafe int PostIncrementOfPointer(int* ptr)
+//	{
+//		return *(ptr++);
+//	}
+
 	public int PostIncrementInstanceField()
 	{
 		return this.M().Field--;
@@ -225,9 +230,4 @@ public class IncrementDecrement
 	{
 		return (*this.GetPointer())++;
 	}
-	
-//	public unsafe int PostIncrementOfPointer(int* ptr)
-//	{
-//		return *(ptr++);
-//	}
 }
