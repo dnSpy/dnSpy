@@ -164,6 +164,21 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		bool useDebugSymbols = true;
+		
+		/// <summary>
+		/// Gets/Sets whether to use variable names from debug symbols, if available.
+		/// </summary>
+		public bool UseDebugSymbols {
+			get { return useDebugSymbols; }
+			set {
+				if (useDebugSymbols != value) {
+					useDebugSymbols = value;
+					OnPropertyChanged("UseDebugSymbols");
+				}
+			}
+		}
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)

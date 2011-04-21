@@ -69,7 +69,27 @@ namespace ICSharpCode.ILSpy
 			// runs on background thread
 			ReaderParameters p = new ReaderParameters();
 			p.AssemblyResolver = new MyAssemblyResolver(this);
-			return AssemblyDefinition.ReadAssembly(fileName, p);
+			try {
+				if (DecompilerSettingsPanel.CurrentDecompilerSettings.UseDebugSymbols) {
+					SetSymbolSettings(p);
+				}
+				return AssemblyDefinition.ReadAssembly(fileName, p);
+			} finally {
+				if (p.SymbolStream != null)
+					p.SymbolStream.Dispose();
+			}
+		}
+		
+		private void SetSymbolSettings(ReaderParameters p)
+		{
+			// search for pdb in same directory as dll
+			string pdbName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName) + ".pdb");
+			if (File.Exists(pdbName)) {
+				p.ReadSymbols = true;
+				p.SymbolStream = File.OpenRead(pdbName);
+			}
+			
+			// TODO: use symbol cache, get symbols from microsoft
 		}
 		
 		[ThreadStatic]

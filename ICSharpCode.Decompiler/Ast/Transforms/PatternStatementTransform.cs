@@ -47,6 +47,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				result = TransformUsings(expressionStatement);
 				if (result != null)
 					return result;
+				result = TransformNonGenericForEach(expressionStatement);
+				if (result != null)
+					return result;
 			}
 			result = TransformFor(expressionStatement);
 			if (result != null)
@@ -118,7 +121,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		#endregion
 		
 		/// <summary>
-		/// $type $variable = $initializer;
+		/// $variable = $initializer;
 		/// </summary>
 		static readonly AstNode variableAssignPattern = new ExpressionStatement(
 			new AssignmentExpression(
@@ -235,8 +238,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		}
 		#endregion
 		
-		#region foreach
-		static readonly UsingStatement foreachPattern = new UsingStatement {
+		#region foreach (generic)
+		static readonly UsingStatement genericForeachPattern = new UsingStatement {
 			ResourceAcquisition = new VariableDeclarationStatement {
 				Type = new AnyNode("enumeratorType"),
 				Variables = {
@@ -270,7 +273,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public ForeachStatement TransformForeach(UsingStatement node)
 		{
-			Match m = foreachPattern.Match(node);
+			Match m = genericForeachPattern.Match(node);
 			if (!m.Success)
 				return null;
 			if (!(node.Parent is BlockStatement) && m.Has("variablesOutsideLoop")) {
@@ -308,12 +311,124 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				InExpression = m.Get<Expression>("collection").Single().Detach(),
 				EmbeddedStatement = newBody
 			};
-			if (foreachStatement.InExpression is BaseReferenceExpression)
-				foreachStatement.InExpression = new ThisReferenceExpression();
+			if (foreachStatement.InExpression is BaseReferenceExpression) {
+				foreachStatement.InExpression = new ThisReferenceExpression().CopyAnnotationsFrom(foreachStatement.InExpression);
+			}
 			node.ReplaceWith(foreachStatement);
 			foreach (Statement stmt in m.Get<Statement>("variablesOutsideLoop")) {
 				((BlockStatement)foreachStatement.Parent).Statements.InsertAfter(null, stmt.Detach());
 			}
+			return foreachStatement;
+		}
+		#endregion
+		
+		#region foreach (non-generic)
+		ExpressionStatement getEnumeratorPattern = new ExpressionStatement(
+			new AssignmentExpression(
+				new NamedNode("left", new IdentifierExpression()),
+				new AnyNode("collection").ToExpression().Invoke("GetEnumerator")
+			));
+		
+		TryCatchStatement nonGenericForeachPattern = new TryCatchStatement {
+			TryBlock = new BlockStatement {
+				new WhileStatement {
+					Condition = new IdentifierExpression().WithName("enumerator").Invoke("MoveNext"),
+					EmbeddedStatement = new BlockStatement {
+						new AssignmentExpression(
+							new IdentifierExpression().WithName("itemVar"),
+							new Choice {
+								new Backreference("enumerator").ToExpression().Member("Current"),
+								new CastExpression {
+									Type = new AnyNode("castType"),
+									Expression = new Backreference("enumerator").ToExpression().Member("Current")
+								}
+							}
+						),
+						new Repeat(new AnyNode("stmt")).ToStatement()
+					}
+				}.WithName("loop")
+			},
+			FinallyBlock = new BlockStatement {
+				new AssignmentExpression(
+					new IdentifierExpression().WithName("disposable"),
+					new Backreference("enumerator").ToExpression().CastAs(new TypePattern(typeof(IDisposable)))
+				),
+				new IfElseStatement {
+					Condition = new BinaryOperatorExpression {
+						Left = new Backreference("disposable"),
+						Operator = BinaryOperatorType.InEquality,
+						Right = new NullReferenceExpression()
+					},
+					TrueStatement = new BlockStatement {
+						new Backreference("disposable").ToExpression().Invoke("Dispose")
+					}
+				}
+			}};
+		
+		public ForeachStatement TransformNonGenericForEach(ExpressionStatement node)
+		{
+			Match m1 = getEnumeratorPattern.Match(node);
+			if (!m1.Success) return null;
+			AstNode tryCatch = node.NextSibling;
+			Match m2 = nonGenericForeachPattern.Match(tryCatch);
+			if (!m2.Success) return null;
+			
+			IdentifierExpression enumeratorVar = m2.Get<IdentifierExpression>("enumerator").Single();
+			IdentifierExpression itemVar = m2.Get<IdentifierExpression>("itemVar").Single();
+			WhileStatement loop = m2.Get<WhileStatement>("loop").Single();
+			
+			// verify that the getEnumeratorPattern assigns to the same variable as the nonGenericForeachPattern is reading from
+			if (!enumeratorVar.IsMatch(m1.Get("left").Single()))
+				return null;
+			
+			VariableDeclarationStatement enumeratorVarDecl = FindVariableDeclaration(loop, enumeratorVar.Identifier);
+			if (enumeratorVarDecl == null || !(enumeratorVarDecl.Parent is BlockStatement))
+				return null;
+			
+			// Find the declaration of the item variable:
+			// Because we look only outside the loop, we won't make the mistake of moving a captured variable across the loop boundary
+			VariableDeclarationStatement itemVarDecl = FindVariableDeclaration(loop, itemVar.Identifier);
+			if (itemVarDecl == null || !(itemVarDecl.Parent is BlockStatement))
+				return null;
+			
+			// Now verify that we can move the variable declaration in front of the loop:
+			Statement declarationPoint;
+			CanMoveVariableDeclarationIntoStatement(itemVarDecl, loop, out declarationPoint);
+			// We ignore the return value because we don't care whether we can move the variable into the loop
+			// (that is possible only with non-captured variables).
+			// We just care that we can move it in front of the loop:
+			if (declarationPoint != loop)
+				return null;
+			
+			ForeachStatement foreachStatement = new ForeachStatement();
+			foreachStatement.VariableType = itemVarDecl.Type.Clone();
+			foreachStatement.VariableName = itemVar.Identifier;
+			BlockStatement body = new BlockStatement();
+			foreachStatement.EmbeddedStatement = body;
+			((BlockStatement)node.Parent).Statements.InsertBefore(node, foreachStatement);
+			
+			body.Add(node.Detach());
+			body.Add((Statement)tryCatch.Detach());
+			
+			// Now that we moved the whole try-catch into the foreach loop; verify that we can
+			// move the enumerator into the foreach loop:
+			CanMoveVariableDeclarationIntoStatement(enumeratorVarDecl, foreachStatement, out declarationPoint);
+			if (declarationPoint != foreachStatement) {
+				// oops, the enumerator variable can't be moved into the foreach loop
+				// Undo our AST changes:
+				((BlockStatement)foreachStatement.Parent).Statements.InsertBefore(foreachStatement, node.Detach());
+				foreachStatement.ReplaceWith(tryCatch);
+				return null;
+			}
+			
+			// Now create the correct body for the foreach statement:
+			foreachStatement.InExpression = m1.Get<Expression>("collection").Single().Detach();
+			if (foreachStatement.InExpression is BaseReferenceExpression) {
+				foreachStatement.InExpression = new ThisReferenceExpression().CopyAnnotationsFrom(foreachStatement.InExpression);
+			}
+			body.Statements.Clear();
+			body.Statements.AddRange(m2.Get<Statement>("stmt").Select(stmt => stmt.Detach()));
+			
 			return foreachStatement;
 		}
 		#endregion
@@ -515,8 +630,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m = switchOnStringPattern.Match(node);
 			if (!m.Success)
 				return null;
-			if (m.Has("nonNullDefaultStmt") && !m.Has("nullStmt"))
-				return null;
 			// switchVar must be the same as switchExpr; or switchExpr must be an assignment and switchVar the left side of that assignment
 			if (!m.Get("switchVar").Single().IsMatch(m.Get("switchExpr").Single())) {
 				AssignmentExpression assign = m.Get("switchExpr").Single() as AssignmentExpression;
@@ -551,15 +664,21 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				block.Statements.Add(new BreakStatement());
 				section.Statements.Add(block.Detach());
 				sw.SwitchSections.Add(section);
-				if (m.Has("nonNullDefaultStmt")) {
-					section = new SwitchSection();
-					section.CaseLabels.Add(new CaseLabel());
-					block = new BlockStatement();
-					block.Statements.AddRange(m.Get<Statement>("nonNullDefaultStmt").Select(s => s.Detach()));
-					block.Add(new BreakStatement());
-					section.Statements.Add(block);
-					sw.SwitchSections.Add(section);
-				}
+			} else if (m.Has("nonNullDefaultStmt")) {
+				sw.SwitchSections.Add(
+					new SwitchSection {
+						CaseLabels = { new CaseLabel { Expression = new NullReferenceExpression() } },
+						Statements = { new BlockStatement { new BreakStatement() } }
+					});
+			}
+			if (m.Has("nonNullDefaultStmt")) {
+				SwitchSection section = new SwitchSection();
+				section.CaseLabels.Add(new CaseLabel());
+				BlockStatement block = new BlockStatement();
+				block.Statements.AddRange(m.Get<Statement>("nonNullDefaultStmt").Select(s => s.Detach()));
+				block.Add(new BreakStatement());
+				section.Statements.Add(block);
+				sw.SwitchSections.Add(section);
 			}
 			node.ReplaceWith(sw);
 			return sw;

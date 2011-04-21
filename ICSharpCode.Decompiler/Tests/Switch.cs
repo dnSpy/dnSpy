@@ -17,7 +17,8 @@ public static class Switch
 	
 	public static string SwitchOverString1(string text)
 	{
-		switch (text) {
+		switch (text)
+		{
 			case "First case":
 				return "Text1";
 			case "Second case":
@@ -40,7 +41,8 @@ public static class Switch
 	
 	public static string SwitchOverString2()
 	{
-		switch (Environment.UserName) {
+		switch (Environment.UserName)
+		{
 			case "First case":
 				return "Text1";
 			case "Second case":

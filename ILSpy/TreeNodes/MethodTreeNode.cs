@@ -92,9 +92,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 
 			if (method.IsSpecialName &&
-			    (method.Name == ".ctor" || method.Name == ".cctor")) {
+				(method.Name == ".ctor" || method.Name == ".cctor")) {
 				return Images.GetIcon(MemberIcon.Constructor, GetOverlayIcon(method.Attributes), false);
 			}
+
+			if (method.HasPInvokeInfo)
+				return Images.GetIcon(MemberIcon.PInvokeMethod, GetOverlayIcon(method.Attributes), true);
 
 			bool showAsVirtual = method.IsVirtual && !(method.IsNewSlot && method.IsFinal) && !method.DeclaringType.IsInterface;
 

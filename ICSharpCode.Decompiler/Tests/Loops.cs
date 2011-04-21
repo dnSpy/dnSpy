@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 public class Loops
@@ -23,13 +24,29 @@ public class Loops
 		}
 	}
 	
-	public void ForEachOverArray(string[] array)
+	public void ForEachOverNonGenericEnumerable(IEnumerable enumerable)
 	{
-		foreach (string text in array)
+		foreach (object current in enumerable)
 		{
-			text.ToLower();
+			current.ToString();
 		}
 	}
+	
+	public void ForEachOverNonGenericEnumerableWithAutomaticCast(IEnumerable enumerable)
+	{
+		foreach (int num in enumerable)
+		{
+			num.ToString();
+		}
+	}
+	
+//	public void ForEachOverArray(string[] array)
+//	{
+//		foreach (string text in array)
+//		{
+//			text.ToLower();
+//		}
+//	}
 	
 	public void ForOverArray(string[] array)
 	{
