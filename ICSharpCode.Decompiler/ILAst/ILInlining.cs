@@ -197,6 +197,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			switch (inlinedExpression.Code) {
 				case ILCode.InitArray:
+				case ILCode.InitObject:
 				case ILCode.InitCollection:
 				case ILCode.DefaultValue:
 					return true;

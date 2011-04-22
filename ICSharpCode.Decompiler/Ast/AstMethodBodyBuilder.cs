@@ -703,24 +703,72 @@ namespace ICSharpCode.Decompiler.Ast
 					return new Ast.YieldBreakStatement();
 				case ILCode.YieldReturn:
 					return new Ast.YieldStatement { Expression = arg1 };
-					case ILCode.InitCollection: {
-						ObjectCreateExpression oce = (ObjectCreateExpression)arg1;
-						oce.Initializer = new ArrayInitializerExpression();
+				case ILCode.InitObject:
+				case ILCode.InitCollection:
+					{
+						ArrayInitializerExpression initializer = new ArrayInitializerExpression();
 						for (int i = 1; i < args.Count; i++) {
-							ArrayInitializerExpression aie = args[i] as ArrayInitializerExpression;
-							if (aie != null && aie.Elements.Count == 1)
-								oce.Initializer.Elements.Add(aie.Elements.Single().Detach());
-							else
-								oce.Initializer.Elements.Add(args[i]);
+							Match m = objectInitializerPattern.Match(args[i]);
+							if (m.Success) {
+								initializer.Elements.Add(
+									new NamedArgumentExpression {
+										Identifier = m.Get<MemberReferenceExpression>("left").Single().MemberName,
+										Expression = m.Get<Expression>("right").Single().Detach()
+									});
+							} else {
+								m = collectionInitializerPattern.Match(args[i]);
+								if (m.Success) {
+									if (m.Get("arg").Count() == 1) {
+										initializer.Elements.Add(m.Get<Expression>("arg").Single().Detach());
+									} else {
+										ArrayInitializerExpression argList = new ArrayInitializerExpression();
+										foreach (var expr in m.Get<Expression>("arg")) {
+											argList.Elements.Add(expr.Detach());
+										}
+										initializer.Elements.Add(argList);
+									}
+								} else {
+									initializer.Elements.Add(args[i]);
+								}
+							}
 						}
-						return oce;
+						ObjectCreateExpression oce = arg1 as ObjectCreateExpression;
+						if (oce != null) {
+							oce.Initializer = initializer;
+							return oce;
+						} else {
+							return new AssignmentExpression(arg1, initializer);
+						}
 					}
-					case ILCode.InitCollectionAddMethod: {
-						var collectionInit = new ArrayInitializerExpression();
-						collectionInit.Elements.AddRange(args);
-						return collectionInit;
-					}
-					default: throw new Exception("Unknown OpCode: " + byteCode.Code);
+				case ILCode.InitializedObject:
+					return new InitializedObjectExpression();
+				default:
+					throw new Exception("Unknown OpCode: " + byteCode.Code);
+			}
+		}
+		
+		static readonly AstNode objectInitializerPattern = new AssignmentExpression(
+			new MemberReferenceExpression {
+				Target = new InitializedObjectExpression()
+			}.WithName("left"),
+			new AnyNode("right")
+		);
+		
+		static readonly AstNode collectionInitializerPattern = new InvocationExpression {
+			Target = new MemberReferenceExpression {
+				Target = new InitializedObjectExpression(),
+				MemberName = "Add"
+			},
+			Arguments = { new Repeat(new AnyNode("arg")) }
+		};
+		
+		sealed class InitializedObjectExpression : IdentifierExpression
+		{
+			public InitializedObjectExpression() : base("__initialized_object__") {}
+			
+			protected override bool DoMatch(AstNode other, Match match)
+			{
+				return other is InitializedObjectExpression;
 			}
 		}
 		

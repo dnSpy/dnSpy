@@ -238,8 +238,18 @@ namespace ICSharpCode.Decompiler.ILAst
 		LogicOr,
 		NullCoalescing,
 		InitArray, // Array Initializer
-		InitCollection, // Collection Initializer: first arg is newobj, remaining args are InitCollectionAddMethod method calls
-		InitCollectionAddMethod,
+		
+		// new Class { Prop = 1, Collection = { { 2, 3 }, {4, 5} }}
+		// is represented as:
+		// InitObject(newobj Class,
+		//            CallSetter(Prop, InitializedObject, 1),
+		//            InitCollection(CallGetter(Collection, InitializedObject))),
+		//                           Call(Add, InitializedObject, 2, 3),
+		//                           Call(Add, InitializedObject, 4, 5)))
+		InitObject, // Object initializer: first arg is newobj, remaining args are the initializing statements
+		InitCollection, // Collection initializer: first arg is newobj, remaining args are the initializing statements
+		InitializedObject, // Refers the the object being initialized (refers to first arg in parent InitObject or InitCollection instruction)
+		
 		TernaryOp, // ?:
 		LoopOrSwitchBreak,
 		LoopContinue,
