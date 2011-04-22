@@ -31,6 +31,8 @@ public class InitializerTests
 			set;
 		}
 		public List<InitializerTests.MyEnum2> FieldList = new List<InitializerTests.MyEnum2>();
+		
+		public InitializerTests.Data MoreData { get; set; }
 	}
 
 	// Helper methods used to ensure initializers used within expressions work correctly
@@ -228,6 +230,17 @@ public class InitializerTests
 		  	{
 		  		InitializerTests.MyEnum2.c,
 		  		InitializerTests.MyEnum2.d
+		  	}
+		  });
+	}
+	
+	public static void ObjectInitializerWithInitializationOfNestedObjects()
+	{
+		X(Y(), new InitializerTests.Data
+		  {
+		  	MoreData =
+		  	{
+		  		a = InitializerTests.MyEnum.a
 		  	}
 		  });
 	}

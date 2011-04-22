@@ -155,13 +155,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!(expr.Match(ILCode.Stloc, out v, out newObjExpr) && newObjExpr.Match(ILCode.Newobj, out ctor, out ctorArgs)))
 				return false;
 			int originalPos = pos;
-			ILInlining inlining = null;
 			ILExpression initializer;
 			if (IsCollectionType(ctor.DeclaringType)) {
 				// Collection Initializer
 				initializer = ParseCollectionInitializer(body, ref pos, v, newObjExpr);
-				if (initializer.Arguments.Count == 1) // only newobj argument, no initializer elements
-					return false;
 			} else {
 				// Object Initializer
 				
@@ -169,46 +166,27 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (Ast.Transforms.DelegateConstruction.IsPotentialClosure(context, ctor.DeclaringType.ResolveWithinSameModule()))
 					return false;
 				
-				initializer = new ILExpression(ILCode.InitObject, null, newObjExpr);
-				pos++;
-				while (pos < body.Count) {
-					ILExpression nextExpr = body[pos] as ILExpression;
-					if (IsSetterInObjectInitializer(nextExpr, v)) {
-						initializer.Arguments.Add(nextExpr);
-						pos++;
-					} else {
-						ILVariable collectionVar;
-						ILExpression getCollection;
-						if (IsCollectionGetterInObjectInitializer(nextExpr, v, out collectionVar, out getCollection)) {
-							int posBeforeCollectionInitializer = pos;
-							ILExpression collectionInitializer = ParseCollectionInitializer(body, ref pos, collectionVar, getCollection);
-							// Validate that the 'collectionVar' is not read (except in the initializers)
-							if (inlining == null) {
-								// instantiate ILInlining only once - we don't change the method while analysing the object initializer
-								inlining = new ILInlining(method);
-							}
-							if (inlining.numLdloc.GetOrDefault(collectionVar) == collectionInitializer.Arguments.Count
-							    && inlining.numStloc.GetOrDefault(collectionVar) == 1
-							    && inlining.numLdloca.GetOrDefault(collectionVar) == 0)
-							{
-								initializer.Arguments.Add(collectionInitializer);
-								// no need to increment 'pos' here: ParseCollectionInitializer already did that
-							} else {
-								// Consider the object initializer to have ended in front of the 'collection getter' instruction.
-								pos = posBeforeCollectionInitializer;
-								break;
-							}
-						} else {
-							// can't match any more initializers: end of object initializer
-							break;
-						}
-					}
-				}
-				if (initializer.Arguments.Count == 1)
-					return false; // no initializers were matched (the single argument is the newobjExpr)
+				initializer = ParseObjectInitializer(body, ref pos, v, newObjExpr);
 			}
+			
+			if (initializer.Arguments.Count == 1) // only newobj argument, no initializer elements
+				return false;
+			int totalElementCount = pos - originalPos - 1; // totalElementCount: includes elements from nested collections
+			Debug.Assert(totalElementCount >= initializer.Arguments.Count - 1);
+			
 			// Verify that we can inline 'v' into the next instruction:
-			if (!CanInlineInitializer(body, pos, v, initializer, inlining ?? new ILInlining(method)))
+			
+			if (pos >= body.Count)
+				return false; // reached end of block, but there should be another instruction which consumes the initialized object
+			
+			ILInlining inlining = new ILInlining(method);
+			// one ldloc for each initializer argument, and another ldloc for the use of the initialized object
+			if (inlining.numLdloc.GetOrDefault(v) != totalElementCount + 1)
+				return false;
+			if (!(inlining.numStloc.GetOrDefault(v) == 1 && inlining.numLdloca.GetOrDefault(v) == 0))
+				return false;
+			ILExpression nextExpr = body[pos] as ILExpression;
+			if (!inlining.CanInlineInto(nextExpr, v, initializer))
 				return false;
 			
 			expr.Arguments[0] = initializer;
@@ -236,34 +214,26 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Gets whether 'expr' represents a setter in an object initializer.
 		/// ('CallvirtSetter(Property, v, value)')
 		/// </summary>
-		/// <param name="expr">The expression to test</param>
-		/// <param name="v">The variable that contains the object being initialized</param>
-		static bool IsSetterInObjectInitializer(ILExpression expr, ILVariable v)
+		static bool IsSetterInObjectInitializer(ILExpression expr)
 		{
 			if (expr == null)
 				return false;
 			if (expr.Code == ILCode.CallvirtSetter || expr.Code == ILCode.Stfld) {
-				if (expr.Arguments.Count == 2) {
-					return expr.Arguments[0].MatchLdloc(v);
-				}
+				return expr.Arguments.Count == 2;
 			}
 			return false;
 		}
 		
 		/// <summary>
-		/// Gets whether 'expr' represents getting a collection in an object initializer.
-		/// ('collectionVar = callvirtGetter(Property, v)')
+		/// Gets whether 'expr' represents the invocation of an 'Add' method in a collection initializer.
 		/// </summary>
-		/// <param name="expr">The expression to test</param>
-		/// <param name="v">The variable that contains the object being initialized</param>
-		static bool IsCollectionGetterInObjectInitializer(ILExpression expr, ILVariable v, out ILVariable collectionVar, out ILExpression init)
+		static bool IsAddMethodCall(ILExpression expr)
 		{
-			if (expr.Match(ILCode.Stloc, out collectionVar, out init)) {
-				if (init.Code == ILCode.Ldfld || init.Code == ILCode.CallvirtGetter) {
-					if (init.Arguments.Count == 1 && init.Arguments[0].MatchLdloc(v)) {
-						MemberReference mr = (MemberReference)init.Operand;
-						return IsCollectionType(mr.DeclaringType);
-					}
+			MethodReference addMethod;
+			List<ILExpression> args;
+			if (expr.Match(ILCode.Callvirt, out addMethod, out args)) {
+				if (addMethod.Name == "Add" && addMethod.HasThis) {
+					return args.Count >= 2;
 				}
 			}
 			return false;
@@ -278,29 +248,19 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Output: first position after the collection initializer
 		/// </param>
 		/// <param name="v">The variable that holds the collection</param>
-		/// <param name="getCollection">The initial value of the collection (newobj instruction)</param>
-		/// <returns>InitCollection instruction; or null if parsing failed</returns>
-		ILExpression ParseCollectionInitializer(List<ILNode> body, ref int pos, ILVariable v, ILExpression getCollection)
+		/// <param name="newObjExpr">The initial value of the collection (newobj instruction)</param>
+		/// <returns>InitCollection instruction</returns>
+		ILExpression ParseCollectionInitializer(List<ILNode> body, ref int pos, ILVariable v, ILExpression newObjExpr)
 		{
 			Debug.Assert(((ILExpression)body[pos]).Code == ILCode.Stloc);
-			ILExpression collectionInitializer = new ILExpression(ILCode.InitCollection, null, getCollection);
+			ILExpression collectionInitializer = new ILExpression(ILCode.InitCollection, null, newObjExpr);
 			// Take care not to modify any existing ILExpressions in here.
 			// We just construct new ones around the old ones, any modifications must wait until the whole
 			// object/collection initializer was analyzed.
 			while (++pos < body.Count) {
 				ILExpression nextExpr = body[pos] as ILExpression;
-				MethodReference addMethod;
-				List<ILExpression> args;
-				if (nextExpr.Match(ILCode.Callvirt, out addMethod, out args)) {
-					if (addMethod.Name == "Add" && addMethod.HasThis) {
-						if (args.Count >= 2 && args[0].MatchLdloc(v)) {
-							collectionInitializer.Arguments.Add(nextExpr);
-						} else {
-							break;
-						}
-					} else {
-						break;
-					}
+				if (IsAddMethodCall(nextExpr) && nextExpr.Arguments[0].MatchLdloc(v)) {
+					collectionInitializer.Arguments.Add(nextExpr);
 				} else {
 					break;
 				}
@@ -308,17 +268,89 @@ namespace ICSharpCode.Decompiler.ILAst
 			return collectionInitializer;
 		}
 		
-		static bool CanInlineInitializer(List<ILNode> body, int pos, ILVariable v, ILExpression initializer, ILInlining inlining)
+		/// <summary>
+		/// Parses an object initializer.
+		/// </summary>
+		/// <param name="body">ILAst block</param>
+		/// <param name="pos">
+		/// Input: position of the instruction assigning to 'v'.
+		/// Output: first position after the object initializer
+		/// </param>
+		/// <param name="v">The variable that holds the object being initialized</param>
+		/// <param name="newObjExpr">The newobj instruction</param>
+		/// <returns>InitObject instruction</returns>
+		ILExpression ParseObjectInitializer(List<ILNode> body, ref int pos, ILVariable v, ILExpression newObjExpr)
 		{
-			if (pos >= body.Count)
-				return false; // reached end of block, but there should be another instruction which consumes the initialized object
-			// one ldloc for each initializer argument except for the newobj, and another ldloc for the use of the initialized object
-			if (inlining.numLdloc.GetOrDefault(v) != initializer.Arguments.Count)
+			Debug.Assert(((ILExpression)body[pos]).Code == ILCode.Stloc);
+			// Take care not to modify any existing ILExpressions in here.
+			// We just construct new ones around the old ones, any modifications must wait until the whole
+			// object/collection initializer was analyzed.
+			ILExpression objectInitializer = new ILExpression(ILCode.InitObject, null, newObjExpr);
+			List<ILExpression> initializerStack = new List<ILExpression>();
+			initializerStack.Add(objectInitializer);
+			while (++pos < body.Count) {
+				ILExpression nextExpr = body[pos] as ILExpression;
+				if (IsSetterInObjectInitializer(nextExpr)) {
+					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, false))
+						break;
+					initializerStack[initializerStack.Count - 1].Arguments.Add(nextExpr);
+				} else if (IsAddMethodCall(nextExpr)) {
+					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, true))
+						break;
+					initializerStack[initializerStack.Count - 1].Arguments.Add(nextExpr);
+				} else {
+					// can't match any more initializers: end of object initializer
+					break;
+				}
+			}
+			return objectInitializer;
+		}
+		
+		static bool AdjustInitializerStack(List<ILExpression> initializerStack, ILExpression argument, ILVariable v, bool isCollection)
+		{
+			// Argument is of the form 'getter(getter(...(v)))'
+			// Unpack it into a list of getters:
+			List<ILExpression> getters = new List<ILExpression>();
+			while (argument.Code == ILCode.CallvirtGetter || argument.Code == ILCode.Ldfld) {
+				getters.Add(argument);
+				if (argument.Arguments.Count != 1)
+					return false;
+				argument = argument.Arguments[0];
+			}
+			// Ensure that the final argument is 'v'
+			if (!argument.MatchLdloc(v))
 				return false;
-			if (!(inlining.numStloc.GetOrDefault(v) == 1 && inlining.numLdloca.GetOrDefault(v) == 0))
-				return false;
-			ILExpression nextExpr = body[pos] as ILExpression;
-			return inlining.CanInlineInto(nextExpr, v, initializer);
+			// Now compare the getters with those that are currently active on the initializer stack:
+			int i;
+			for (i = 1; i <= Math.Min(getters.Count, initializerStack.Count - 1); i++) {
+				ILExpression g1 = initializerStack[i].Arguments[0]; // getter stored in initializer
+				ILExpression g2 = getters[getters.Count - i]; // matching getter from argument
+				if (g1.Operand != g2.Operand) {
+					// operands differ, so we abort the comparison
+					break;
+				}
+			}
+			// Remove all initializers from the stack that were not matched with one from the argument:
+			initializerStack.RemoveRange(i, initializerStack.Count - i);
+			// Now create new initializers for the remaining arguments:
+			for (; i <= getters.Count; i++) {
+				ILExpression g = getters[getters.Count - i];
+				MemberReference mr = (MemberReference)g.Operand;
+				TypeReference returnType;
+				if (mr is FieldReference)
+					returnType = TypeAnalysis.GetFieldType((FieldReference)mr);
+				else
+					returnType = TypeAnalysis.SubstituteTypeArgs(((MethodReference)mr).ReturnType, mr);
+				
+				ILExpression nestedInitializer = new ILExpression(
+					IsCollectionType(returnType) ? ILCode.InitCollection : ILCode.InitObject,
+					null, g);
+				// add new initializer to its parent, and push it on the stack:
+				initializerStack[initializerStack.Count - 1].Arguments.Add(nestedInitializer);
+				initializerStack.Add(nestedInitializer);
+			}
+			ILExpression lastInitializer = initializerStack[initializerStack.Count - 1];
+			return (lastInitializer.Code == ILCode.InitCollection) == isCollection;
 		}
 		
 		static void ChangeFirstArgumentToInitializedObject(ILExpression initializer)
@@ -326,18 +358,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Go through all elements in the initializer (so skip the newobj-instr. at the start)
 			for (int i = 1; i < initializer.Arguments.Count; i++) {
 				ILExpression element = initializer.Arguments[i];
-				ILExpression arg;
-				if (element.Code == ILCode.InitCollection) {
-					// nested collection initializer
+				if (element.Code == ILCode.InitCollection || element.Code == ILCode.InitObject) {
+					// nested collection/object initializer
 					ILExpression getCollection = element.Arguments[0];
-					arg = getCollection.Arguments[0];
+					getCollection.Arguments[0] = new ILExpression(ILCode.InitializedObject, null);
 					ChangeFirstArgumentToInitializedObject(element); // handle the collection elements
 				} else {
-					arg = element.Arguments[0];
+					element.Arguments[0] = new ILExpression(ILCode.InitializedObject, null);
 				}
-				Debug.Assert(arg.Code == ILCode.Ldloc);
-				arg.Code = ILCode.InitializedObject;
-				arg.Operand = null;
 			}
 		}
 	}

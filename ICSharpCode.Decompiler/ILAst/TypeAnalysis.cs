@@ -748,12 +748,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			return resultType;
 		}
 		
-		static TypeReference GetFieldType(FieldReference fieldReference)
+		public static TypeReference GetFieldType(FieldReference fieldReference)
 		{
 			return SubstituteTypeArgs(UnpackModifiers(fieldReference.FieldType), fieldReference);
 		}
 		
-		static TypeReference SubstituteTypeArgs(TypeReference type, MemberReference member)
+		public static TypeReference SubstituteTypeArgs(TypeReference type, MemberReference member)
 		{
 			if (type is TypeSpecification) {
 				ArrayType arrayType = type as ArrayType;
