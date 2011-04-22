@@ -179,7 +179,7 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
-		bool objectCollectionInitializers;
+		bool objectCollectionInitializers = true;
 		
 		/// <summary>
 		/// Gets/Sets whether to use C# 3.0 object/collection initializers

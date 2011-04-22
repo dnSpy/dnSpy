@@ -369,6 +369,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				// Now create variables for all fields of the display class (except for those that we already handled as parameters)
 				List<Tuple<AstType, string>> variablesToDeclare = new List<Tuple<AstType, string>>();
 				foreach (FieldDefinition field in type.Fields) {
+					if (field.IsStatic)
+						continue; // skip static fields
 					if (dict.ContainsKey(field)) // skip field if it already was handled as parameter
 						continue;
 					EnsureVariableNameIsAvailable(blockStatement, field.Name);
