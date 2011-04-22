@@ -25,21 +25,25 @@ public static class DelegateConstruction
 		
 		public Action CaptureOfThisAndParameterInForEach(int a)
 		{
-			foreach (var item in Enumerable.Empty<int>()) {
-				return delegate {
-					CaptureOfThisAndParameter(item + a);
-				};
+			foreach (int item in Enumerable.Empty<int>()) {
+				if (item > 0) {
+					return delegate {
+						CaptureOfThisAndParameter(item + a);
+					};
+				}
 			}
 			return null;
 		}
 		
 		public Action CaptureOfThisAndParameterInForEachWithItemCopy(int a)
 		{
-			foreach (var item in Enumerable.Empty<int>()) {
+			foreach (int item in Enumerable.Empty<int>()) {
 				int copyOfItem = item;
-				return delegate {
-					CaptureOfThisAndParameter(item + a + copyOfItem);
-				};
+				if (item > 0) {
+					return delegate {
+						CaptureOfThisAndParameter(item + a + copyOfItem);
+					};
+				}
 			}
 			return null;
 		}
@@ -161,5 +165,10 @@ public static class DelegateConstruction
 	public static Func<int, Func<int, int>> CurriedAddition(int a)
 	{
 		return b => c => a + b + c;
+	}
+	
+	public static Func<int, Func<int, Func<int, int>>> CurriedAddition2(int a)
+	{
+		return b => c => d => a + b + c + d;
 	}
 }

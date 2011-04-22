@@ -330,12 +330,30 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						if (right is ThisReferenceExpression) {
 							isParameter = true;
 						} else if (right is IdentifierExpression) {
-							// handle parameters only if the whole method contains no other occurrance except for 'right'
+							// handle parameters only if the whole method contains no other occurrence except for 'right'
 							ILVariable v = right.Annotation<ILVariable>();
 							isParameter = v.IsParameter && parameterOccurrances.Count(c => c == v) == 1;
-							if (!isParameter && TypeAnalysis.IsSameType(v.Type, fieldDef.FieldType) && IsPotentialClosure(context, v.Type.ResolveWithinSameModule())) {
+							if (!isParameter && IsPotentialClosure(context, v.Type.ResolveWithinSameModule())) {
+								// parent display class within the same method
+								// (closure2.localsX = closure1;)
 								isDisplayClassParentPointerAssignment = true;
 							}
+						} else if (right is MemberReferenceExpression) {
+							// copy of parent display class reference from an outer lambda
+							// closure2.localsX = this.localsY
+							MemberReferenceExpression mre = m.Get<MemberReferenceExpression>("right").Single();
+							do {
+								// descend into the targets of the mre as long as the field types are closures
+								FieldDefinition fieldDef2 = mre.Annotation<FieldReference>().ResolveWithinSameModule();
+								if (fieldDef2 == null || !IsPotentialClosure(context, fieldDef2.FieldType.ResolveWithinSameModule())) {
+									break;
+								}
+								// if we finally get to a this reference, it's copying a display class parent pointer
+								if (mre.Target is ThisReferenceExpression) {
+									isDisplayClassParentPointerAssignment = true;
+								}
+								mre = mre.Target as MemberReferenceExpression;
+							} while (mre != null);
 						}
 						if (isParameter || isDisplayClassParentPointerAssignment) {
 							dict[fieldDef] = right;
