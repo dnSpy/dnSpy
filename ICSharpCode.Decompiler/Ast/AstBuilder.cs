@@ -884,8 +884,9 @@ namespace ICSharpCode.Decompiler.Ast
 				if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
 					if (TypesHierarchyHelpers.FindBaseMethods(accessor).Any())
 						astEvent.Modifiers |= Modifiers.New;
-			}
+				}
 				return astEvent;
+			}
 		}
 		
 		public bool DecompileMethodBodies { get; set; }
