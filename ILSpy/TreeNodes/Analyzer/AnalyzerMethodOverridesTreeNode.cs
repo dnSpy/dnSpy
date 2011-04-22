@@ -31,7 +31,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		public override object Text
 		{
-			get { return "Overrided By"; }
+			get { return "Overriden By"; }
 		}
 
 		public override object Icon
