@@ -880,8 +880,12 @@ namespace ICSharpCode.Decompiler.Ast
 					
 					astEvent.RemoveAccessor.WithAnnotation(methodMapping);
 				}
-				return astEvent;
+				MethodDefinition accessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
+				if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
+					if (TypesHierarchyHelpers.FindBaseMethods(accessor).Any())
+						astEvent.Modifiers |= Modifiers.New;
 			}
+				return astEvent;
 		}
 		
 		public bool DecompileMethodBodies { get; set; }
