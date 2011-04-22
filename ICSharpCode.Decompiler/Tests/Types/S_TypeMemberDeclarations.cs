@@ -668,22 +668,22 @@ namespace MethodHideGeneric2
 		{
 		}
 	}
-	//$$ EventHiding
-	namespace EventHiding
+}
+//$$ EventHiding
+namespace EventHiding
+{
+	public class A
 	{
-		public class A
-		{
-			public virtual event EventHandler E;
-			public event EventHandler F;
-		}
-		public class B : A
-		{
-			public new event EventHandler E;
-			public new event EventHandler F;
-		}
-		public class C : B
-		{
-			public override event EventHandler E;
-		}
+		public virtual event EventHandler E;
+		public event EventHandler F;
+	}
+	public class B : A
+	{
+		public new virtual event EventHandler E;
+		public new event EventHandler F;
+	}
+	public class C : B
+	{
+		public override event EventHandler E;
 	}
 }
