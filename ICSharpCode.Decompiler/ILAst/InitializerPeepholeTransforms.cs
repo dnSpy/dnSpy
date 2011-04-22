@@ -164,6 +164,11 @@ namespace ICSharpCode.Decompiler.ILAst
 					return false;
 			} else {
 				// Object Initializer
+				
+				// don't use object initializer syntax for closures
+				if (Ast.Transforms.DelegateConstruction.IsPotentialClosure(context, ctor.DeclaringType.ResolveWithinSameModule()))
+					return false;
+				
 				initializer = new ILExpression(ILCode.InitObject, null, newObjExpr);
 				pos++;
 				while (pos < body.Count) {
