@@ -146,6 +146,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		bool TransformObjectInitializers(List<ILNode> body, ILExpression expr, int pos)
 		{
+			if (!context.Settings.ObjectOrCollectionInitializers)
+				return false;
+			
 			Debug.Assert(body[pos] == expr); // should be called for top-level expressions only
 			ILVariable v;
 			ILExpression newObjExpr;

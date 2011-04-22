@@ -710,11 +710,12 @@ namespace ICSharpCode.Decompiler.Ast
 						for (int i = 1; i < args.Count; i++) {
 							Match m = objectInitializerPattern.Match(args[i]);
 							if (m.Success) {
+								MemberReferenceExpression mre = m.Get<MemberReferenceExpression>("left").Single();
 								initializer.Elements.Add(
 									new NamedArgumentExpression {
-										Identifier = m.Get<MemberReferenceExpression>("left").Single().MemberName,
+										Identifier = mre.MemberName,
 										Expression = m.Get<Expression>("right").Single().Detach()
-									});
+									}.CopyAnnotationsFrom(mre));
 							} else {
 								m = collectionInitializerPattern.Match(args[i]);
 								if (m.Success) {
