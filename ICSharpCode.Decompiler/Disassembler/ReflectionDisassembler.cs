@@ -123,6 +123,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			method.ReturnType.WriteTo(output);
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(method.Name));
+			WriteTypeParameters(output, method);
 			
 			//( params )
 			output.Write(" (");
@@ -331,6 +332,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteFlags(type.Attributes & ~masks, typeAttributes);
 			
 			output.Write(DisassemblerHelpers.Escape(type.Name));
+			WriteTypeParameters(output, type);
 			output.MarkFoldStart(defaultCollapsed: isInType);
 			output.WriteLine();
 			
@@ -415,6 +417,42 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			CloseBlock("End of class " + type.FullName);
 			isInType = oldIsInType;
+		}
+		
+		void WriteTypeParameters(ITextOutput output, IGenericParameterProvider p)
+		{
+			if (p.HasGenericParameters) {
+				output.Write('<');
+				for (int i = 0; i < p.GenericParameters.Count; i++) {
+					if (i > 0)
+						output.Write(", ");
+					GenericParameter gp = p.GenericParameters[i];
+					if (gp.HasReferenceTypeConstraint) {
+						output.Write("class ");
+					} else if (gp.HasNotNullableValueTypeConstraint) {
+						output.Write("valuetype ");
+					}
+					if (gp.HasConstraints) {
+						output.Write('(');
+						for (int j = 0; j < gp.Constraints.Count; j++) {
+							if (j > 0)
+								output.Write(", ");
+							gp.Constraints[j].WriteTo(output, true);
+						}
+						output.Write(") ");
+					}
+					if (gp.HasDefaultConstructorConstraint) {
+						output.Write(".ctor ");
+					}
+					if (gp.IsContravariant) {
+						output.Write('-');
+					} else if (gp.IsCovariant) {
+						output.Write('+');
+					}
+					output.Write(DisassemblerHelpers.Escape(gp.Name));
+				}
+				output.Write('>');
+			}
 		}
 		#endregion
 

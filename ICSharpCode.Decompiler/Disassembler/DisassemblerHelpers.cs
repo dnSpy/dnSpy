@@ -126,7 +126,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 				writer.Write(string.Join(", ", at.Dimensions));
 				writer.Write(']');
 			} else if (type is GenericParameter) {
-				writer.WriteReference(type.Name, type);
+				writer.Write('!');
+				if (((GenericParameter)type).Owner.GenericParameterType == GenericParameterType.Method)
+					writer.Write('!');
+				writer.Write(type.Name);
 			} else if (type is ByReferenceType) {
 				((ByReferenceType)type).ElementType.WriteTo(writer, onlyName, shortName);
 				writer.Write('&');
