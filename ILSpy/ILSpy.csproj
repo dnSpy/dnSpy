@@ -131,6 +131,9 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedEventAccessorsTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedEventOverridesTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedEventTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\Helpers.cs" />
     <Compile Include="TreeNodes\Analyzer\ScopedWhereUsedAnalyzer.cs" />
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />

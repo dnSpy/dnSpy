@@ -61,6 +61,14 @@ namespace ICSharpCode.Decompiler.Ast
 			return FindBaseProperties(childProperty).Any(m => m == parentProperty);
 		}
 
+		public static bool IsBaseEvent(EventDefinition parentEvent, EventDefinition childEvent)
+		{
+			if (parentEvent.Name != childEvent.Name)
+				return false;
+
+			return FindBaseEvents(childEvent).Any(m => m == parentEvent);
+		}
+
 		public static IEnumerable<MethodDefinition> FindBaseMethods(MethodDefinition method)
 		{
 			if (method == null)
@@ -97,6 +105,25 @@ namespace ICSharpCode.Decompiler.Ast
 
 		}
 
+		public static IEnumerable<EventDefinition> FindBaseEvents(EventDefinition eventDef)
+		{
+			if (eventDef == null)
+				throw new ArgumentNullException("eventDef");
+
+			var typeContext = CreateGenericContext(eventDef.DeclaringType);
+			var gEvent = typeContext.ApplyTo(eventDef);
+
+			foreach (var baseType in BaseTypes(eventDef.DeclaringType))
+				foreach (var baseEvent in baseType.Item.Events)
+					if (MatchEvent(baseType.ApplyTo(baseEvent), gEvent) && IsVisbleFrom(baseEvent, eventDef)) {
+						yield return baseEvent;
+						var anyEventAccessor = baseEvent.AddMethod ?? baseEvent.RemoveMethod;
+						if (!(anyEventAccessor.IsNewSlot ^ anyEventAccessor.IsVirtual))
+							yield break;
+					}
+
+		}
+
 		private static bool IsVisbleFrom(MethodDefinition baseCandidate, MethodDefinition method)
 		{
 			if (baseCandidate.IsPrivate)
@@ -111,6 +138,15 @@ namespace ICSharpCode.Decompiler.Ast
 			if (baseCandidate.GetMethod != null && property.GetMethod != null && IsVisbleFrom(baseCandidate.GetMethod, property.GetMethod))
 				return true;
 			if (baseCandidate.SetMethod != null && property.SetMethod != null && IsVisbleFrom(baseCandidate.SetMethod, property.SetMethod))
+				return true;
+			return false;
+		}
+
+		private static bool IsVisbleFrom(EventDefinition baseCandidate, EventDefinition eventDef)
+		{
+			if (baseCandidate.AddMethod != null && eventDef.AddMethod != null && IsVisbleFrom(baseCandidate.AddMethod, eventDef.AddMethod))
+				return true;
+			if (baseCandidate.RemoveMethod != null && eventDef.RemoveMethod != null && IsVisbleFrom(baseCandidate.RemoveMethod, eventDef.RemoveMethod))
 				return true;
 			return false;
 		}
@@ -168,6 +204,22 @@ namespace ICSharpCode.Decompiler.Ast
 						return false;
 				}
 			}
+
+			return true;
+		}
+
+		private static bool MatchEvent(GenericContext<EventDefinition> candidate, GenericContext<EventDefinition> ev)
+		{
+			var mCandidate = candidate.Item;
+			var mEvent = ev.Item;
+			if (mCandidate.Name != mEvent.Name)
+				return false;
+
+			if ((mCandidate.AddMethod ?? mCandidate.RemoveMethod).HasOverrides)
+				return false;
+
+			if (!IsSameType(candidate.ResolveWithContext(mCandidate.EventType), ev.ResolveWithContext(mEvent.EventType)))
+				return false;
 
 			return true;
 		}
