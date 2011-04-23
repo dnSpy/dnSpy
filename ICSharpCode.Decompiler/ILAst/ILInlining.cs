@@ -231,6 +231,16 @@ namespace ICSharpCode.Decompiler.ILAst
 					return false;
 			}
 		}
+
+		/// <summary>
+		/// Gets whether 'expressionBeingMoved' can be inlined into 'expr'.
+		/// </summary>
+		public bool CanInlineInto(ILExpression expr, ILVariable v, ILExpression expressionBeingMoved)
+		{
+			ILExpression parent;
+			int pos;
+			return FindLoadInNext(expr, v, expressionBeingMoved, out parent, out pos) == true;
+		}
 		
 		/// <summary>
 		/// Finds the position to inline to.
