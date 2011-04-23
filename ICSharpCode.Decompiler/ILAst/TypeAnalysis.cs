@@ -335,18 +335,13 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 						return ctor.DeclaringType;
 					}
+				case ILCode.InitObject:
 				case ILCode.InitCollection:
 					return InferTypeForExpression(expr.Arguments[0], expectedType);
-				case ILCode.InitCollectionAddMethod:
-					{
-						MethodReference addMethod = (MethodReference)expr.Operand;
-						if (forceInferChildren) {
-							for (int i = 0; i < addMethod.Parameters.Count; i++) {
-								InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(addMethod.Parameters[i].ParameterType, addMethod));
-							}
-						}
-						return addMethod.DeclaringType;
-					}
+				case ILCode.InitializedObject:
+					// expectedType should always be known due to the parent method call / property setter
+					Debug.Assert(expectedType != null);
+					return expectedType;
 					#endregion
 					#region Load/Store Fields
 				case ILCode.Ldfld:
@@ -753,12 +748,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			return resultType;
 		}
 		
-		static TypeReference GetFieldType(FieldReference fieldReference)
+		public static TypeReference GetFieldType(FieldReference fieldReference)
 		{
 			return SubstituteTypeArgs(UnpackModifiers(fieldReference.FieldType), fieldReference);
 		}
 		
-		static TypeReference SubstituteTypeArgs(TypeReference type, MemberReference member)
+		public static TypeReference SubstituteTypeArgs(TypeReference type, MemberReference member)
 		{
 			if (type is TypeSpecification) {
 				ArrayType arrayType = type as ArrayType;

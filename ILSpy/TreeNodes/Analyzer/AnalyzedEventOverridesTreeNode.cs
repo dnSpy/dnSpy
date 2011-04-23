@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.Utils;
 using ICSharpCode.TreeView;
@@ -11,17 +10,17 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedPropertyOverridesTreeNode : AnalyzerTreeNode
+	class AnalyzedEventOverridesTreeNode : AnalyzerTreeNode
 	{
-		readonly PropertyDefinition analyzedProperty;
+		readonly EventDefinition analyzedEvent;
 		readonly ThreadingSupport threading;
 
-		public AnalyzedPropertyOverridesTreeNode(PropertyDefinition analyzedProperty)
+		public AnalyzedEventOverridesTreeNode(EventDefinition analyzedEvent)
 		{
-			if (analyzedProperty == null)
-				throw new ArgumentNullException("analyzedProperty");
+			if (analyzedEvent == null)
+				throw new ArgumentNullException("analyzedEvent");
 
-			this.analyzedProperty = analyzedProperty;
+			this.analyzedEvent = analyzedEvent;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
 		}
@@ -65,37 +64,29 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
 		{
 			string asmName = asm.AssemblyDefinition.Name.Name;
-			string name = analyzedProperty.Name;
-			string declTypeName = analyzedProperty.DeclaringType.FullName;
+			string name = analyzedEvent.Name;
+			string declTypeName = analyzedEvent.DeclaringType.FullName;
 			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 
-				SharpTreeNode newNode = null;
-				try {
-					if (!TypesHierarchyHelpers.IsBaseType(analyzedProperty.DeclaringType, type, resolveTypeArguments: false))
-						continue;
+				if (!TypesHierarchyHelpers.IsBaseType(analyzedEvent.DeclaringType, type, resolveTypeArguments: false))
+					continue;
 
-					foreach (PropertyDefinition property in type.Properties) {
-						ct.ThrowIfCancellationRequested();
+				foreach (EventDefinition eventDef in type.Events) {
+					ct.ThrowIfCancellationRequested();
 
-						if (TypesHierarchyHelpers.IsBaseProperty(analyzedProperty, property)) {
-							MethodDefinition anyAccessor = property.GetMethod ?? property.SetMethod;
-							bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-							newNode = new AnalyzedPropertyTreeNode(property, hidesParent ? "(hides) " : "");
-						}
+					if (TypesHierarchyHelpers.IsBaseEvent(analyzedEvent, eventDef)) {
+						MethodDefinition anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
+						bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
+						yield return new AnalyzedEventTreeNode(eventDef, hidesParent ? "(hides) " : "");
 					}
 				}
-				catch (ReferenceResolvingException) {
-					// ignore this type definition.
-				}
-				if (newNode != null)
-					yield return newNode;
 			}
 		}
 
-		public static bool CanShowAnalyzer(PropertyDefinition property)
+		public static bool CanShowAnalyzer(EventDefinition property)
 		{
-			var accessor = property.GetMethod ?? property.SetMethod;
+			var accessor = property.AddMethod ?? property.RemoveMethod;
 			return accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
 		}
 	}

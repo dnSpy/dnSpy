@@ -34,11 +34,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	sealed class AssemblyListTreeNode : ILSpyTreeNode
 	{
 		readonly AssemblyList assemblyList;
-		
-		public AssemblyList AssemblyList {
+
+		public AssemblyList AssemblyList
+		{
 			get { return assemblyList; }
 		}
-		
+
 		public AssemblyListTreeNode(AssemblyList assemblyList)
 		{
 			if (assemblyList == null)
@@ -46,11 +47,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.assemblyList = assemblyList;
 			BindToObservableCollection(assemblyList.assemblies);
 		}
-		
-		public override object Text {
+
+		public override object Text
+		{
 			get { return assemblyList.ListName; }
 		}
-		
+
 		void BindToObservableCollection(ObservableCollection<LoadedAssembly> collection)
 		{
 			this.Children.Clear();
@@ -75,7 +77,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				}
 			};
 		}
-		
+
 		public override bool CanDrop(DragEventArgs e, int index)
 		{
 			e.Effects = DragDropEffects.Move;
@@ -88,7 +90,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return false;
 			}
 		}
-		
+
 		public override void Drop(DragEventArgs e, int index)
 		{
 			string[] files = e.Data.GetData(AssemblyTreeNode.DataFormat) as string[];
@@ -97,10 +99,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (files != null) {
 				lock (assemblyList.assemblies) {
 					var assemblies = (from file in files
-					                  where file != null
-					                  select assemblyList.OpenAssembly(file) into node
-					                  where node != null
-					                  select node).Distinct().ToList();
+									  where file != null
+									  select assemblyList.OpenAssembly(file) into node
+									  where node != null
+									  select node).Distinct().ToList();
 					foreach (LoadedAssembly asm in assemblies) {
 						int nodeIndex = assemblyList.assemblies.IndexOf(asm);
 						if (nodeIndex < index)
@@ -114,9 +116,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				}
 			}
 		}
-		
-		public Action<SharpTreeNode> Select = delegate {};
-		
+
+		public Action<SharpTreeNode> Select = delegate { };
+
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.WriteCommentLine(output, "List: " + assemblyList.ListName);
@@ -127,9 +129,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				asm.Decompile(language, output, options);
 			}
 		}
-		
+
 		#region Find*Node
-		
+
 		public AssemblyTreeNode FindAssemblyNode(AssemblyDefinition asm)
 		{
 			if (asm == null)
@@ -141,7 +143,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return null;
 		}
-		
+
 		public AssemblyTreeNode FindAssemblyNode(LoadedAssembly asm)
 		{
 			if (asm == null)
@@ -153,7 +155,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return null;
 		}
-		
+
 		/// <summary>
 		/// Looks up the type node corresponding to the type definition.
 		/// Returns null if no matching node is found.
@@ -176,12 +178,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return null;
 		}
-		
+
 		/// <summary>
 		/// Looks up the method node corresponding to the method definition.
 		/// Returns null if no matching node is found.
 		/// </summary>
-		public MethodTreeNode FindMethodNode(MethodDefinition def)
+		public SharpTreeNode FindMethodNode(MethodDefinition def)
 		{
 			if (def == null)
 				return null;
@@ -195,16 +197,25 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (var p in typeNode.Children.OfType<ILSpyTreeNode>()) {
 				if (p.IsHidden)
 					continue;
-				// method might be a child or a property or events
-				p.EnsureLazyChildren();
-				methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def && !m.IsHidden);
-				if (methodNode != null)
-					return methodNode;
+
+				// method might be a child of a property or event
+				if (p is PropertyTreeNode || p is EventTreeNode) {
+					p.EnsureLazyChildren();
+					methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
+					if (methodNode != null) {
+						/// If the requested method is a property or event accessor, and accessors are
+						/// hidden in the UI, then return the owning property or event.
+						if (methodNode.IsHidden)
+							return p;
+						else
+							return methodNode;
+					}
+				}
 			}
-			
+
 			return null;
 		}
-		
+
 		/// <summary>
 		/// Looks up the field node corresponding to the field definition.
 		/// Returns null if no matching node is found.
@@ -219,7 +230,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			typeNode.EnsureLazyChildren();
 			return typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def && !m.IsHidden);
 		}
-		
+
 		/// <summary>
 		/// Looks up the property node corresponding to the property definition.
 		/// Returns null if no matching node is found.
@@ -234,7 +245,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			typeNode.EnsureLazyChildren();
 			return typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def && !m.IsHidden);
 		}
-		
+
 		/// <summary>
 		/// Looks up the event node corresponding to the event definition.
 		/// Returns null if no matching node is found.

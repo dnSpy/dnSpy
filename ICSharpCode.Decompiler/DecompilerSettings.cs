@@ -179,6 +179,21 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		bool objectCollectionInitializers = true;
+		
+		/// <summary>
+		/// Gets/Sets whether to use C# 3.0 object/collection initializers
+		/// </summary>
+		public bool ObjectOrCollectionInitializers {
+			get { return objectCollectionInitializers; }
+			set {
+				if (objectCollectionInitializers != value) {
+					objectCollectionInitializers = value;
+					OnPropertyChanged("ObjectCollectionInitializers");
+				}
+			}
+		}
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)

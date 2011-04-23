@@ -32,30 +32,32 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	{
 		MethodDefinition analyzedMethod;
 		ThreadingSupport threading;
-		
+
 		public AnalyzedMethodUsedByTreeNode(MethodDefinition analyzedMethod)
 		{
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
-			
+
 			this.analyzedMethod = analyzedMethod;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
 		}
-		
-		public override object Text {
+
+		public override object Text
+		{
 			get { return "Used By"; }
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return Images.Search; }
 		}
-		
+
 		protected override void LoadChildren()
 		{
 			threading.LoadChildren(this, FetchChildren);
 		}
-		
+
 		protected override void OnCollapsing()
 		{
 			if (threading.IsRunning) {
@@ -64,39 +66,31 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				this.Children.Clear();
 			}
 		}
-		
+
 		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			return FindReferences(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), ct);
+			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
+
+			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
+			return analyzer.PerformAnalysis(ct);
 		}
-		
-		IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
-		{
-			assemblies = assemblies.Where(asm => asm.AssemblyDefinition != null);
-			// use parallelism only on the assembly level (avoid locks within Cecil)
-			return assemblies.AsParallel().WithCancellation(ct).SelectMany((LoadedAssembly asm) => FindReferences(asm, ct));
-		}
-		
-		IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
+
+		IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			string name = analyzedMethod.Name;
-			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
-				ct.ThrowIfCancellationRequested();
-				foreach (MethodDefinition method in type.Methods) {
-					ct.ThrowIfCancellationRequested();
-					bool found = false;
-					if (!method.HasBody)
-						continue;
-					foreach (Instruction instr in method.Body.Instructions) {
-						MethodReference mr = instr.Operand as MethodReference;
-						if (mr != null && mr.Name == name && Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) && mr.Resolve() == analyzedMethod) {
-							found = true;
-							break;
-						}
+			foreach (MethodDefinition method in type.Methods) {
+				bool found = false;
+				if (!method.HasBody)
+					continue;
+				foreach (Instruction instr in method.Body.Instructions) {
+					MethodReference mr = instr.Operand as MethodReference;
+					if (mr != null && mr.Name == name && Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) && mr.Resolve() == analyzedMethod) {
+						found = true;
+						break;
 					}
-					if (found)
-						yield return new AnalyzedMethodTreeNode(method);
 				}
+				if (found)
+					yield return new AnalyzedMethodTreeNode(method);
 			}
 		}
 	}
