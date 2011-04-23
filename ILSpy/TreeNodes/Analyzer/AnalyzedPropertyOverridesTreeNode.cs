@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		public override object Text
 		{
-			get { return "Overriden By"; }
+			get { return "Overridden By"; }
 		}
 
 		public override object Icon
