@@ -27,7 +27,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
 		TransformArrayInitializers,
-		TransformCollectionInitializers,
+		TransformObjectInitializers,
 		MakeAssignmentExpression,
 		IntroducePostIncrement,
 		InlineVariables2,
@@ -119,10 +119,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					modified |= block.RunOptimization(SimplifyLdObjAndStObj);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
-					modified |= block.RunOptimization(Initializers.TransformArrayInitializers);
+					modified |= block.RunOptimization(TransformArrayInitializers);
 					
-					if (abortBeforeStep == ILAstOptimizationStep.TransformCollectionInitializers) return;
-					modified |= block.RunOptimization(Initializers.TransformCollectionInitializers);
+					if (abortBeforeStep == ILAstOptimizationStep.TransformObjectInitializers) return;
+					modified |= block.RunOptimization(TransformObjectInitializers);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.MakeAssignmentExpression) return;
 					modified |= block.RunOptimization(MakeAssignmentExpression);

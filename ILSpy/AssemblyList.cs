@@ -17,7 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
@@ -141,6 +143,22 @@ namespace ICSharpCode.ILSpy
 			App.Current.Dispatcher.VerifyAccess();
 			lock (assemblies) {
 				assemblies.Remove(assembly);
+			}
+		}
+		
+		public void Sort(IComparer<LoadedAssembly> comparer)
+		{
+			Sort(0, int.MaxValue, comparer);
+		}
+		
+		public void Sort(int index, int count, IComparer<LoadedAssembly> comparer)
+		{
+			App.Current.Dispatcher.VerifyAccess();
+			lock (assemblies) {
+				List<LoadedAssembly> list = new List<LoadedAssembly>(assemblies);
+				list.Sort(index, Math.Min(count, list.Count - index), comparer);
+				assemblies.Clear();
+				assemblies.AddRange(list);
 			}
 		}
 	}

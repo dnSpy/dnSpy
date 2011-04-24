@@ -17,6 +17,23 @@ public class InitializerTests
 		c,
 		d
 	}
+	
+	class Data
+	{
+		public InitializerTests.MyEnum a
+		{
+			get;
+			set;
+		}
+		public List<InitializerTests.MyEnum2> PropertyList
+		{
+			get;
+			set;
+		}
+		public List<InitializerTests.MyEnum2> FieldList = new List<InitializerTests.MyEnum2>();
+		
+		public InitializerTests.Data MoreData { get; set; }
+	}
 
 	// Helper methods used to ensure initializers used within expressions work correctly
 	static void X(object a, object b)
@@ -138,6 +155,93 @@ public class InitializerTests
 		X(Y(), new Dictionary<InitializerTests.MyEnum, InitializerTests.MyEnum2> {
 		  	{ InitializerTests.MyEnum.a, InitializerTests.MyEnum2.c },
 		  	{ InitializerTests.MyEnum.b, InitializerTests.MyEnum2.d }
+		  });
+	}
+	
+	public static void NotACollectionInitializer()
+	{
+		List<int> list = new List<int>();
+		list.Add(1);
+		list.Add(2);
+		list.Add(3);
+		X(Y(), list);
+	}
+	
+	public static void ObjectInitializer()
+	{
+		X(Y(), new Data
+		  {
+		  	a = InitializerTests.MyEnum.a
+		  });
+	}
+	
+	public static void NotAObjectInitializer()
+	{
+		Data data = new InitializerTests.Data();
+		data.a = InitializerTests.MyEnum.a;
+		X(Y(), data);
+	}
+	
+	public static void ObjectInitializerAssignCollectionToField()
+	{
+		X(Y(), new InitializerTests.Data
+		  {
+		  	a = InitializerTests.MyEnum.a,
+		  	FieldList = new List<InitializerTests.MyEnum2>
+		  	{
+		  		InitializerTests.MyEnum2.c,
+		  		InitializerTests.MyEnum2.d
+		  	}
+		  });
+	}
+	
+	public static void ObjectInitializerAddToCollectionInField()
+	{
+		X(Y(), new InitializerTests.Data
+		  {
+		  	a = InitializerTests.MyEnum.a,
+		  	FieldList =
+		  	{
+		  		InitializerTests.MyEnum2.c,
+		  		InitializerTests.MyEnum2.d
+		  	}
+		  });
+	}
+	
+	public static void ObjectInitializerAssignCollectionToProperty()
+	{
+		X(Y(), new InitializerTests.Data
+		  {
+		  	a = InitializerTests.MyEnum.a,
+		  	PropertyList = new List<InitializerTests.MyEnum2>
+		  	{
+		  		InitializerTests.MyEnum2.c,
+		  		InitializerTests.MyEnum2.d
+		  	}
+		  });
+	}
+	
+	public static void ObjectInitializerAddToCollectionInProperty()
+	{
+		X(Y(), new InitializerTests.Data
+		  {
+		  	a = InitializerTests.MyEnum.a,
+		  	PropertyList =
+		  	{
+		  		InitializerTests.MyEnum2.c,
+		  		InitializerTests.MyEnum2.d
+		  	}
+		  });
+	}
+	
+	public static void ObjectInitializerWithInitializationOfNestedObjects()
+	{
+		X(Y(), new InitializerTests.Data
+		  {
+		  	MoreData =
+		  	{
+		  		a = InitializerTests.MyEnum.a
+		  	}
 		  });
 	}
 }

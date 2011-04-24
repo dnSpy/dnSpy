@@ -36,7 +36,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (IMemberTreeNode node in selectedNodes) {
 				if (!(node.Member is FieldDefinition
 					|| node.Member is MethodDefinition
-					|| Analyzer.AnalyzedPropertyTreeNode.CanShow(node.Member)))
+					|| Analyzer.AnalyzedPropertyTreeNode.CanShow(node.Member)
+					|| Analyzer.AnalyzedEventTreeNode.CanShow(node.Member)))
 					return false;
 			}
 			return true;
@@ -56,6 +57,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				var propertyAnalyzer = Analyzer.AnalyzedPropertyTreeNode.TryCreateAnalyzer(node.Member);
 				if(propertyAnalyzer != null)
 					MainWindow.Instance.AddToAnalyzer(propertyAnalyzer);
+				var eventAnalyzer = Analyzer.AnalyzedEventTreeNode.TryCreateAnalyzer(node.Member);
+				if (eventAnalyzer != null)
+					MainWindow.Instance.AddToAnalyzer(eventAnalyzer);
 			}
 		}
 	}
