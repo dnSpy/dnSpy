@@ -43,11 +43,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (DecodeArrayInitializer(TypeAnalysis.GetTypeCode(arrayType), field.InitialValue, newArr)) {
 						body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType, newArr));
 						body.RemoveAt(pos + 1);
+						new ILInlining(method).InlineIfPossible(body, ref pos);
 						return true;
 					}
 				}
 				
-				const int maxConsecutiveDefaultValueExpressions = 10;
+				// Put in a limit so that we don't consume too much memory if the code allocates a huge array
+				// and populates it extremely sparsly. However, 255 "null" elements in a row actually occur in the Mono C# compiler!
+				const int maxConsecutiveDefaultValueExpressions = 300;
 				List<ILExpression> operands = new List<ILExpression>();
 				int numberOfInstructionsToRemove = 0;
 				for (int j = pos + 1; j < body.Count; j++) {
@@ -72,6 +75,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (operands.Count == arrayLength) {
 					expr.Arguments[0] = new ILExpression(ILCode.InitArray, arrayType, operands);
 					body.RemoveRange(pos + 1, numberOfInstructionsToRemove);
+					
+					new ILInlining(method).InlineIfPossible(body, ref pos);
 					return true;
 				}
 			}

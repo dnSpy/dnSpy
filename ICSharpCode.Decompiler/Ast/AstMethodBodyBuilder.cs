@@ -743,6 +743,8 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 				case ILCode.InitializedObject:
 					return new InitializedObjectExpression();
+				case ILCode.AddressOf:
+					return MakeRef(arg1);
 				default:
 					throw new Exception("Unknown OpCode: " + byteCode.Code);
 			}

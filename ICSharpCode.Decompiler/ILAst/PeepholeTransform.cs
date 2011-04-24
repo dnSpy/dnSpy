@@ -473,7 +473,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (exprInit.Code == ILCode.Ldloc)
 				exprInit.Code = ILCode.Ldloca;
 			else if (exprInit.Code == ILCode.CallGetter)
-				exprInit.AddPrefix(new ILExpressionPrefix(ILCode.PropertyAddress));
+				exprInit = new ILExpression(ILCode.AddressOf, null, exprInit);
 			else
 				exprInit.Code = ILCode.Ldsflda;
 			expr.Arguments[0] = new ILExpression(incrementCode, incrementAmount, exprInit);
@@ -567,8 +567,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (expr.Code == ILCode.Stobj) {
 				stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue.Arguments[0]);
 			} else if (expr.Code == ILCode.CallSetter || expr.Code == ILCode.CallvirtSetter) {
+				initialValue = new ILExpression(ILCode.AddressOf, null, initialValue);
 				stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue);
-				initialValue.AddPrefix(new ILExpressionPrefix(ILCode.PropertyAddress));
 			} else {
 				stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue);
 				initialValue.Code = (expr.Code == ILCode.Stfld ? ILCode.Ldflda : ILCode.Ldelema);

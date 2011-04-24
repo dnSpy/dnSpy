@@ -256,7 +256,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		static bool IsWithoutSideEffects(Expression left)
 		{
-			return left is ThisReferenceExpression || left is IdentifierExpression || left is TypeReferenceExpression;
+			return left is ThisReferenceExpression || left is IdentifierExpression || left is TypeReferenceExpression || left is BaseReferenceExpression;
 		}
 		
 		void IAstTransform.Run(AstNode node)
