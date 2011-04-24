@@ -211,7 +211,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (tr == null)
 				return false;
 			TypeDefinition td = tr.Resolve();
-			return td != null && td.Interfaces.Any(intf => intf.Name == "IEnumerable" && intf.Namespace == "System.Collections");
+			while (td != null) {
+				if (td.Interfaces.Any(intf => intf.Name == "IEnumerable" && intf.Namespace == "System.Collections"))
+					return true;
+				td = td.BaseType != null ? td.BaseType.Resolve() : null;
+			}
+			return false;
 		}
 		
 		/// <summary>
@@ -266,12 +271,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			while (++pos < body.Count) {
 				ILExpression nextExpr = body[pos] as ILExpression;
 				if (IsSetterInObjectInitializer(nextExpr)) {
-					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, false))
+					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, false)) {
+						CleanupInitializerStackAfterFailedAdjustment(initializerStack);
 						break;
+					}
 					initializerStack[initializerStack.Count - 1].Arguments.Add(nextExpr);
 				} else if (IsAddMethodCall(nextExpr)) {
-					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, true))
+					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, true)) {
+						CleanupInitializerStackAfterFailedAdjustment(initializerStack);
 						break;
+					}
 					initializerStack[initializerStack.Count - 1].Arguments.Add(nextExpr);
 				} else {
 					// can't match any more initializers: end of object initializer
@@ -349,6 +358,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				} else {
 					return true;
 				}
+			}
+		}
+		
+		static void CleanupInitializerStackAfterFailedAdjustment(List<ILExpression> initializerStack)
+		{
+			// There might be empty nested initializers left over; so we'll remove those:
+			while (initializerStack.Count > 1 && initializerStack[initializerStack.Count - 1].Arguments.Count == 1) {
+				ILExpression parent = initializerStack[initializerStack.Count - 2];
+				Debug.Assert(parent.Arguments.Last() == initializerStack[initializerStack.Count - 1]);
+				parent.Arguments.RemoveAt(parent.Arguments.Count - 1);
+				initializerStack.RemoveAt(initializerStack.Count - 1);
 			}
 		}
 		
