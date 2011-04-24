@@ -184,7 +184,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			int pos;
 			if (FindLoadInNext(next as ILExpression, v, inlinedExpression, out parent, out pos) == true) {
 				if (ldloc == 0) {
-					if (!IsGeneratedValueTypeTemporary((ILExpression)next, parent, pos, v))
+					if (!IsGeneratedValueTypeTemporary((ILExpression)next, parent, pos, v, inlinedExpression))
 						return false;
 				} else {
 					if (!aggressive && !v.IsGenerated && !NonAggressiveInlineInto((ILExpression)next, parent, inlinedExpression))
@@ -213,9 +213,69 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <param name="parent">The direct parent of the load within 'next'</param>
 		/// <param name="pos">Index of the load within 'parent'</param>
 		/// <param name="v">The variable being inlined.</param>
-		bool IsGeneratedValueTypeTemporary(ILExpression next, ILExpression parent, int pos, ILVariable v)
+		/// <param name="inlinedExpression">The expression being inlined</param>
+		bool IsGeneratedValueTypeTemporary(ILExpression next, ILExpression parent, int pos, ILVariable v, ILExpression inlinedExpression)
 		{
 			if (pos == 0 && v.Type != null && v.Type.IsValueType) {
+				// Inlining a value type variable is allowed only if the resulting code will maintain the semantics
+				// that the method is operating on a copy.
+				// Thus, we have to disallow inlining of other locals, fields, array elements, dereferenced pointers
+				switch (inlinedExpression.Code) {
+					case ILCode.Ldloc:
+					case ILCode.Stloc:
+					case ILCode.CompoundAssignment:
+					case ILCode.Ldelem_Any:
+					case ILCode.Ldelem_I:
+					case ILCode.Ldelem_I1:
+					case ILCode.Ldelem_I2:
+					case ILCode.Ldelem_I4:
+					case ILCode.Ldelem_I8:
+					case ILCode.Ldelem_R4:
+					case ILCode.Ldelem_R8:
+					case ILCode.Ldelem_Ref:
+					case ILCode.Ldelem_U1:
+					case ILCode.Ldelem_U2:
+					case ILCode.Ldelem_U4:
+					case ILCode.Ldobj:
+					case ILCode.Ldind_Ref:
+						return false;
+					case ILCode.Ldfld:
+					case ILCode.Stfld:
+					case ILCode.Ldsfld:
+					case ILCode.Stsfld:
+						// allow inlining field access only if it's a readonly field
+						FieldDefinition f = ((FieldReference)inlinedExpression.Operand).Resolve();
+						if (!(f != null && f.IsInitOnly))
+							return false;
+						break;
+					case ILCode.Call:
+					case ILCode.CallGetter:
+						// inlining runs both before and after IntroducePropertyAccessInstructions,
+						// so we have to handle both 'call' and 'callgetter'
+						MethodReference mr = (MethodReference)inlinedExpression.Operand;
+						// ensure that it's not an multi-dimensional array getter
+						if (mr.DeclaringType is ArrayType)
+							return false;
+						goto case ILCode.Callvirt;
+					case ILCode.Callvirt:
+					case ILCode.CallvirtGetter:
+						// don't inline foreach loop variables:
+						mr = (MethodReference)inlinedExpression.Operand;
+						if (mr.Name == "get_Current" && mr.HasThis)
+							return false;
+						break;
+					case ILCode.Castclass:
+					case ILCode.Unbox_Any:
+						// These are valid, but might occur as part of a foreach loop variable.
+						ILExpression arg = inlinedExpression.Arguments[0];
+						if (arg.Code == ILCode.CallGetter || arg.Code == ILCode.CallvirtGetter || arg.Code == ILCode.Call || arg.Code == ILCode.Callvirt) {
+							mr = (MethodReference)arg.Operand;
+							if (mr.Name == "get_Current" && mr.HasThis)
+								return false; // looks like a foreach loop variable, so don't inline it
+						}
+						break;
+				}
+				
 				// inline the compiler-generated variable that are used when accessing a member on a value type:
 				switch (parent.Code) {
 					case ILCode.Call:
@@ -240,8 +300,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		/// <param name="next">The next top-level expression</param>
 		/// <param name="parent">The direct parent of the load within 'next'</param>
-		bool NonAggressiveInlineInto(ILExpression next, ILExpression parent)
+		/// <param name="inlinedExpression">The expression being inlined</param>
+		bool NonAggressiveInlineInto(ILExpression next, ILExpression parent, ILExpression inlinedExpression)
 		{
+			if (inlinedExpression.Code == ILCode.DefaultValue)
+				return true;
+			
 			switch (next.Code) {
 				case ILCode.Ret:
 				case ILCode.Brtrue:
@@ -253,28 +317,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		bool NonAggressiveInlineInto(ILExpression next, ILExpression parent, ILExpression inlinedExpression)
-		{
-			switch (inlinedExpression.Code) {
-				case ILCode.InitArray:
-				case ILCode.InitObject:
-				case ILCode.InitCollection:
-				case ILCode.DefaultValue:
-					return true;
-			}
-			
-			switch (next.Code) {
-				case ILCode.Ret:
-					return parent.Code == ILCode.Ret;
-				case ILCode.Brtrue:
-					return parent.Code == ILCode.Brtrue;
-				case ILCode.Switch:
-					return parent.Code == ILCode.Switch || parent.Code == ILCode.Sub;
-				default:
-					return false;
-			}
-		}
-
 		/// <summary>
 		/// Gets whether 'expressionBeingMoved' can be inlined into 'expr'.
 		/// </summary>

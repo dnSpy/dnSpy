@@ -886,8 +886,6 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			if (cecilMethod.Name == "Get" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 1) {
 				return target.Indexer(methodArgs);
-			} else if (cecilMethod.Name == "Address" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 1) {
-				return MakeRef(target.Indexer(methodArgs));
 			} else if (cecilMethod.Name == "Set" && cecilMethod.DeclaringType is ArrayType && methodArgs.Count > 2) {
 				return new AssignmentExpression(target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)), methodArgs.Last());
 			}

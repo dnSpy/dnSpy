@@ -324,6 +324,14 @@ namespace ICSharpCode.Decompiler.ILAst
 							expr.Code = ILCode.CallSetter;
 							break;
 						case "Address":
+							ByReferenceType brt = cecilMethod.ReturnType as ByReferenceType;
+							if (brt != null) {
+								MethodReference getMethod = new MethodReference("Get", brt.ElementType, cecilMethod.DeclaringType);
+								foreach (var p in cecilMethod.Parameters)
+									getMethod.Parameters.Add(p);
+								getMethod.HasThis = cecilMethod.HasThis;
+								expr.Operand = getMethod;
+							}
 							expr.Code = ILCode.CallGetter;
 							if (parentExpr != null) {
 								parentExpr.Arguments[posInParent] = new ILExpression(ILCode.AddressOf, null, expr);
