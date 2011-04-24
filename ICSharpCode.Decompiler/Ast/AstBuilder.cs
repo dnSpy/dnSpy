@@ -633,7 +633,8 @@ namespace ICSharpCode.Decompiler.Ast
 			astMethod.Name = CleanName(methodDef.Name);
 			astMethod.TypeParameters.AddRange(MakeTypeParameters(methodDef.GenericParameters));
 			astMethod.Parameters.AddRange(MakeParameters(methodDef));
-			astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
+			// constraints for override and explicit interface implementation methods are inherited from the base method, so they cannot be specified directly
+			if (!methodDef.IsVirtual || (methodDef.IsNewSlot && !methodDef.IsPrivate)) astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
 				if (!methodDef.HasOverrides) {
 					astMethod.Modifiers = ConvertModifiers(methodDef);
