@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Baml2006;
 using System.Xaml;
+using System.Xaml.Schema;
 using System.Xml;
 using System.Xml.Linq;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -271,7 +272,7 @@ namespace ICSharpCode.ILSpy.Baml
 			var eventMappings = connectMethodDecompiler.DecompileEventMappings(bamlTypeName);
 
 			foreach (var xamlNode in xamlDocument) {
-				RemoveConnectionIds(xamlNode, eventMappings);
+				RemoveConnectionIds(xamlNode, eventMappings, reader.SchemaContext);
 				AvoidContentProperties(xamlNode);
 				MoveXKeyToFront(xamlNode);
 			}
@@ -297,10 +298,10 @@ namespace ICSharpCode.ILSpy.Baml
 			return doc.ToString();
 		}
 		
-		void RemoveConnectionIds(XamlNode node, Dictionary<int, EventRegistration[]> eventMappings)
+		void RemoveConnectionIds(XamlNode node, Dictionary<int, EventRegistration[]> eventMappings, XamlSchemaContext context)
 		{
 			foreach (XamlNode child in node.Children)
-				RemoveConnectionIds(child, eventMappings);
+				RemoveConnectionIds(child, eventMappings, context);
 			
 			XamlObjectNode obj = node as XamlObjectNode;
 			if (obj != null && obj.Children.Count > 0) {
@@ -313,9 +314,16 @@ namespace ICSharpCode.ILSpy.Baml
 						if (value.Value is string && int.TryParse(value.Value as string, out id) && eventMappings.ContainsKey(id)) {
 							var map = eventMappings[id];
 							foreach (var entry in map) {
-								var member = new XamlMemberNode(obj.Type.GetMember(entry.EventName));
-								member.Children.Add(new XamlValueNode(entry.MethodName));
-								addableNodes.Add(member);
+								if (entry.IsAttached) {
+									var type = context.GetXamlType(Type.GetType(entry.AttachSourceType));
+									var member = new XamlMemberNode(new XamlMember(entry.EventName, type, true));
+									member.Children.Add(new XamlValueNode(entry.MethodName));
+									addableNodes.Add(member);
+								} else {
+									var member = new XamlMemberNode(obj.Type.GetMember(entry.EventName));
+									member.Children.Add(new XamlValueNode(entry.MethodName));
+									addableNodes.Add(member);
+								}
 							}
 							removableNodes.Add(memberNode);
 						}

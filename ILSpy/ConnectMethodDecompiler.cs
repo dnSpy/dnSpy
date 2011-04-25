@@ -15,7 +15,8 @@ namespace ICSharpCode.ILSpy.Baml
 	[Serializable]
 	sealed class EventRegistration
 	{
-		public string EventName, MethodName;
+		public string EventName, MethodName, AttachSourceType;
+		public bool IsAttached;
 	}
 	
 	/// <summary>
@@ -82,16 +83,71 @@ namespace ICSharpCode.ILSpy.Baml
 			
 			foreach (var node in block.Body) {
 				var expr = node as ILExpression;
-				string eventName, handlerName;
+				string eventName, handlerName, attachSource;
 				if (IsAddEvent(expr, out eventName, out handlerName))
 					events.Add(new EventRegistration {
 					           	EventName = eventName,
 					           	MethodName = handlerName
 					           });
-				// TODO : handle attached events
+				else if (IsAddAttachedEvent(expr, out eventName, out handlerName, out attachSource))
+					events.Add(new EventRegistration {
+					           	EventName = eventName,
+					           	MethodName = handlerName,
+					           	AttachSourceType = attachSource,
+					           	IsAttached = true
+					           });
 			}
 			
 			return events.ToArray();
+		}
+		
+		bool IsAddAttachedEvent(ILExpression expr, out string eventName, out string handlerName, out string attachSource)
+		{
+			eventName = "";
+			handlerName = "";
+			attachSource = "";
+			
+			if (expr == null || !(expr.Code == ILCode.Callvirt || expr.Code == ILCode.Call))
+				return false;
+			
+			if (expr.Operand is MethodReference && expr.Arguments.Count == 3) {
+				var addMethod = expr.Operand as MethodReference;
+				if (addMethod.Name != "AddHandler" || addMethod.Parameters.Count != 2)
+					return false;
+				var arg = expr.Arguments[1];
+				if (arg.Code != ILCode.Ldsfld || arg.Arguments.Any() || !(arg.Operand is FieldReference))
+					return false;
+				FieldReference fldRef = (FieldReference)arg.Operand;
+				attachSource = GetAssemblyQualifiedName(fldRef.DeclaringType);
+				eventName = fldRef.Name;
+				if (eventName.EndsWith("Event") && eventName.Length > "Event".Length)
+					eventName = eventName.Remove(eventName.Length - "Event".Length);
+				var arg1 = expr.Arguments[2];
+				if (arg1.Code != ILCode.Newobj)
+					return false;
+				var arg2 = arg1.Arguments[1];
+				if (arg2.Code != ILCode.Ldftn && arg2.Code != ILCode.Ldvirtftn)
+					return false;
+				if (arg2.Operand is MethodReference) {
+					var m = arg2.Operand as MethodReference;
+					handlerName = m.Name;
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		string GetAssemblyQualifiedName(TypeReference declaringType)
+		{
+			string fullName = declaringType.FullName;
+			
+			if (declaringType.Scope is AssemblyNameReference)
+				fullName += ", " + ((AssemblyNameReference)declaringType.Scope).FullName;
+			else if (declaringType.Scope is ModuleDefinition)
+				fullName += ", " + ((ModuleDefinition)declaringType.Scope).Assembly.FullName;
+			
+			return fullName;
 		}
 		
 		bool IsAddEvent(ILExpression expr, out string eventName, out string handlerName)
@@ -107,7 +163,7 @@ namespace ICSharpCode.ILSpy.Baml
 				if (addMethod.Name.StartsWith("add_") && addMethod.Parameters.Count == 1)
 					eventName = addMethod.Name.Substring("add_".Length);
 				var arg = expr.Arguments[1];
-				if (arg.Code != ILCode.Newobj && arg.Arguments.Count != 2)
+				if (arg.Code != ILCode.Newobj || arg.Arguments.Count != 2)
 					return false;
 				var arg1 = arg.Arguments[1];
 				if (arg1.Code != ILCode.Ldftn && arg1.Code != ILCode.Ldvirtftn)
