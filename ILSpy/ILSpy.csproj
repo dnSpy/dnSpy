@@ -93,6 +93,7 @@
     <Compile Include="BamlDecompiler.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands.cs" />
+    <Compile Include="ConnectMethodDecompiler.cs" />
     <Compile Include="DecompilerSettingsPanel.xaml.cs">
       <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
       <SubType>Code</SubType>

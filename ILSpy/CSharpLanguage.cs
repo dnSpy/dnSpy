@@ -31,6 +31,7 @@ using System.Xml;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
+using ICSharpCode.ILSpy.Baml;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -127,19 +128,19 @@ namespace ICSharpCode.ILSpy
 			codeDomBuilder.GenerateCode(output);
 		}
 		
-		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
+		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
 		{
 			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
 				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var files = WriteCodeFilesInProject(assembly, options, directories).ToList();
-				files.AddRange(WriteResourceFilesInProject(assembly, fileName, options, directories));
-				WriteProjectFile(new TextOutputWriter(output), files, assembly.MainModule);
+				var files = WriteCodeFilesInProject(assembly.AssemblyDefinition, options, directories).ToList();
+				files.AddRange(WriteResourceFilesInProject(assembly, options, directories));
+				WriteProjectFile(new TextOutputWriter(output), files, assembly.AssemblyDefinition.MainModule);
 			} else {
-				base.DecompileAssembly(assembly, fileName, output, options);
+				base.DecompileAssembly(assembly, output, options);
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
 				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {
-					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.MainModule);
-					codeDomBuilder.AddAssembly(assembly, onlyAssemblyLevel: !options.FullDecompilation);
+					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.AssemblyDefinition.MainModule);
+					codeDomBuilder.AddAssembly(assembly.AssemblyDefinition, onlyAssemblyLevel: !options.FullDecompilation);
 					codeDomBuilder.RunTransformations(transformAbortCondition);
 					codeDomBuilder.GenerateCode(output);
 				}
@@ -316,11 +317,11 @@ namespace ICSharpCode.ILSpy
 		#endregion
 		
 		#region WriteResourceFilesInProject
-		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(AssemblyDefinition assembly, string assemblyFileName, DecompilationOptions options, HashSet<string> directories)
+		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(LoadedAssembly assembly, DecompilationOptions options, HashSet<string> directories)
 		{
 			AppDomain bamlDecompilerAppDomain = null;
 			try {
-				foreach (EmbeddedResource r in assembly.MainModule.Resources.OfType<EmbeddedResource>()) {
+				foreach (EmbeddedResource r in assembly.AssemblyDefinition.MainModule.Resources.OfType<EmbeddedResource>()) {
 					string fileName;
 					Stream s = r.GetResourceStream();
 					s.Position = 0;
@@ -342,10 +343,10 @@ namespace ICSharpCode.ILSpy
 								if (fileName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
 									MemoryStream ms = new MemoryStream();
 									entryStream.CopyTo(ms);
-									var decompiler = Baml.BamlResourceEntryNode.CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, assemblyFileName);
+									var decompiler = Baml.BamlResourceEntryNode.CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, assembly.FileName);
 									string xaml = null;
 									try {
-										xaml = decompiler.DecompileBaml(ms, assemblyFileName);
+										xaml = decompiler.DecompileBaml(ms, assembly.FileName, new ConnectMethodDecompiler(assembly), new AssemblyResolver(assembly));
 									} catch (XamlXmlWriterException) {} // ignore XAML writer exceptions
 									if (xaml != null) {
 										File.WriteAllText(Path.Combine(options.SaveAsProjectDirectory, Path.ChangeExtension(fileName, ".xaml")), xaml);
