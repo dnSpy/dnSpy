@@ -35,6 +35,17 @@ public static class ValueTypes
 		}
 	}
 	
+	private static readonly ValueTypes.S ReadOnlyS = default(ValueTypes.S);
+	private static ValueTypes.S MutableS = default(ValueTypes.S);
+	
+	public static void CallMethodViaField()
+	{
+		ValueTypes.ReadOnlyS.SetField();
+		ValueTypes.MutableS.SetField();
+		ValueTypes.S mutableS = ValueTypes.MutableS;
+		mutableS.SetField();
+	}
+	
 	public static ValueTypes.S InitObj1()
 	{
 		ValueTypes.S result = default(ValueTypes.S);
@@ -125,5 +136,12 @@ public static class ValueTypes
 	public static ValueTypes.S? As(object obj)
 	{
 		return obj as ValueTypes.S?;
+	}
+	
+	public static ValueTypes.S OnlyChangeTheCopy(ValueTypes.S p)
+	{
+		ValueTypes.S s = p;
+		s.SetField();
+		return p;
 	}
 }

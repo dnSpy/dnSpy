@@ -286,9 +286,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		CallSetter,
 		/// <summary>Calls the setter of a instance property (or indexer)</summary>
 		CallvirtSetter,
-		/// <summary>Simulates getting the address of a property. Used as prefix on CallGetter or CallvirtGetter.</summary>
-		/// <remarks>Used for postincrement for properties, and to represent the Address() method on multi-dimensional arrays</remarks>
-		PropertyAddress
+		/// <summary>Simulates getting the address of the argument instruction.</summary>
+		/// <remarks>
+		/// Used for postincrement for properties, and to represent the Address() method on multi-dimensional arrays.
+		/// Also used when inlining a method call on a value type: "stloc(v, ...); call(M, ldloca(v));" becomes "call(M, AddressOf(...))"
+		/// </remarks>
+		AddressOf
 	}
 	
 	public static class ILCodeUtil

@@ -319,10 +319,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (expr.Code == ILCode.CallSetter || expr.Code == ILCode.CallvirtSetter) {
 							return SubstituteTypeArgs(method.Parameters.Last().ParameterType, method);
 						} else {
-							TypeReference type = SubstituteTypeArgs(method.ReturnType, method);
-							if (expr.GetPrefix(ILCode.PropertyAddress) != null && !(type is ByReferenceType))
-								type = new ByReferenceType(type);
-							return type;
+							return SubstituteTypeArgs(method.ReturnType, method);
 						}
 					}
 				case ILCode.Newobj:
@@ -463,6 +460,11 @@ namespace ICSharpCode.Decompiler.ILAst
 						InferTypeForExpression(expr.Arguments[0], typeSystem.TypedReference);
 					}
 					return new ByReferenceType((TypeReference)expr.Operand);
+				case ILCode.AddressOf:
+					{
+						TypeReference t = InferTypeForExpression(expr.Arguments[0], UnpackPointer(expectedType));
+						return t != null ? new ByReferenceType(t) : null;
+					}
 					#endregion
 					#region Arithmetic instructions
 				case ILCode.Not: // bitwise complement

@@ -43,11 +43,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (DecodeArrayInitializer(TypeAnalysis.GetTypeCode(arrayType), field.InitialValue, newArr)) {
 						body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType, newArr));
 						body.RemoveAt(pos + 1);
+						new ILInlining(method).InlineIfPossible(body, ref pos);
 						return true;
 					}
 				}
 				
-				const int maxConsecutiveDefaultValueExpressions = 10;
+				// Put in a limit so that we don't consume too much memory if the code allocates a huge array
+				// and populates it extremely sparsly. However, 255 "null" elements in a row actually occur in the Mono C# compiler!
+				const int maxConsecutiveDefaultValueExpressions = 300;
 				List<ILExpression> operands = new List<ILExpression>();
 				int numberOfInstructionsToRemove = 0;
 				for (int j = pos + 1; j < body.Count; j++) {
@@ -72,6 +75,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (operands.Count == arrayLength) {
 					expr.Arguments[0] = new ILExpression(ILCode.InitArray, arrayType, operands);
 					body.RemoveRange(pos + 1, numberOfInstructionsToRemove);
+					
+					new ILInlining(method).InlineIfPossible(body, ref pos);
 					return true;
 				}
 			}
@@ -206,7 +211,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (tr == null)
 				return false;
 			TypeDefinition td = tr.Resolve();
-			return td != null && td.Interfaces.Any(intf => intf.Name == "IEnumerable" && intf.Namespace == "System.Collections");
+			while (td != null) {
+				if (td.Interfaces.Any(intf => intf.Name == "IEnumerable" && intf.Namespace == "System.Collections"))
+					return true;
+				td = td.BaseType != null ? td.BaseType.Resolve() : null;
+			}
+			return false;
 		}
 		
 		/// <summary>
@@ -261,12 +271,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			while (++pos < body.Count) {
 				ILExpression nextExpr = body[pos] as ILExpression;
 				if (IsSetterInObjectInitializer(nextExpr)) {
-					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, false))
+					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, false)) {
+						CleanupInitializerStackAfterFailedAdjustment(initializerStack);
 						break;
+					}
 					initializerStack[initializerStack.Count - 1].Arguments.Add(nextExpr);
 				} else if (IsAddMethodCall(nextExpr)) {
-					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, true))
+					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, true)) {
+						CleanupInitializerStackAfterFailedAdjustment(initializerStack);
 						break;
+					}
 					initializerStack[initializerStack.Count - 1].Arguments.Add(nextExpr);
 				} else {
 					// can't match any more initializers: end of object initializer
@@ -344,6 +358,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				} else {
 					return true;
 				}
+			}
+		}
+		
+		static void CleanupInitializerStackAfterFailedAdjustment(List<ILExpression> initializerStack)
+		{
+			// There might be empty nested initializers left over; so we'll remove those:
+			while (initializerStack.Count > 1 && initializerStack[initializerStack.Count - 1].Arguments.Count == 1) {
+				ILExpression parent = initializerStack[initializerStack.Count - 2];
+				Debug.Assert(parent.Arguments.Last() == initializerStack[initializerStack.Count - 1]);
+				parent.Arguments.RemoveAt(parent.Arguments.Count - 1);
+				initializerStack.RemoveAt(initializerStack.Count - 1);
 			}
 		}
 		
