@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,7 +47,7 @@ namespace Mono.Cecil {
 				if (metadata.Types == null)
 					Initialize (module.Types);
 
-				return module.Read (this, (_, reader) => {
+				return module.Read (new Row<string, string> (@namespace, name), (row, reader) => {
 					var types = reader.metadata.Types;
 
 					for (int i = 0; i < types.Length; i++) {
@@ -56,7 +56,7 @@ namespace Mono.Cecil {
 
 						var type = types [i];
 
-						if (type.Name == name && type.Namespace == @namespace)
+						if (type.Name == row.Col2 && type.Namespace == row.Col1)
 							return type;
 					}
 

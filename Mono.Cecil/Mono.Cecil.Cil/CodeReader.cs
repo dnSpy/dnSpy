@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -49,16 +49,11 @@ namespace Mono.Cecil.Cil {
 			get { return base.position - start; }
 		}
 
-		CodeReader (Section section, MetadataReader reader)
+		public CodeReader (Section section, MetadataReader reader)
 			: base (section.Data)
 		{
 			this.code_section = section;
 			this.reader = reader;
-		}
-
-		public static CodeReader CreateCodeReader (MetadataReader metadata)
-		{
-			return new CodeReader (metadata.image.MetadataSection, metadata);
 		}
 
 		public MethodBody ReadMethodBody (MethodDefinition method)
@@ -364,7 +359,6 @@ namespace Mono.Cecil.Cil {
 				break;
 			case ExceptionHandlerType.Filter:
 				handler.FilterStart = GetInstruction (ReadInt32 ());
-				handler.FilterEnd = handler.HandlerStart.Previous;
 				break;
 			default:
 				Advance (4);

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -62,6 +62,8 @@ namespace Mono.Cecil.Metadata {
 		TypeSpec = 0x1b,
 		ImplMap = 0x1c,
 		FieldRVA = 0x1d,
+		EncLog = 0x1e,
+		EncMap = 0x1f,
 		Assembly = 0x20,
 		AssemblyProcessor = 0x21,
 		AssemblyOS = 0x22,
@@ -88,53 +90,9 @@ namespace Mono.Cecil.Metadata {
 		public long Valid;
 		public long Sorted;
 
-		public static readonly Table [] TableIdentifiers = new [] {
-			Table.Module,
-			Table.TypeRef,
-			Table.TypeDef,
-			Table.FieldPtr,
-			Table.Field,
-			Table.MethodPtr,
-			Table.Method,
-			Table.ParamPtr,
-			Table.Param,
-			Table.InterfaceImpl,
-			Table.MemberRef,
-			Table.Constant,
-			Table.CustomAttribute,
-			Table.FieldMarshal,
-			Table.DeclSecurity,
-			Table.ClassLayout,
-			Table.FieldLayout,
-			Table.StandAloneSig,
-			Table.EventMap,
-			Table.EventPtr,
-			Table.Event,
-			Table.PropertyMap,
-			Table.PropertyPtr,
-			Table.Property,
-			Table.MethodSemantics,
-			Table.MethodImpl,
-			Table.ModuleRef,
-			Table.TypeSpec,
-			Table.ImplMap,
-			Table.FieldRVA,
-			Table.Assembly,
-			Table.AssemblyProcessor,
-			Table.AssemblyOS,
-			Table.AssemblyRef,
-			Table.AssemblyRefProcessor,
-			Table.AssemblyRefOS,
-			Table.File,
-			Table.ExportedType,
-			Table.ManifestResource,
-			Table.NestedClass,
-			Table.GenericParam,
-			Table.MethodSpec,
-			Table.GenericParamConstraint,
-		};
+		public const int TableCount = 45;
 
-		public readonly TableInformation [] Tables = new TableInformation [45];
+		public readonly TableInformation [] Tables = new TableInformation [TableCount];
 
 		public TableInformation this [Table table] {
 			get { return Tables [(int) table]; }

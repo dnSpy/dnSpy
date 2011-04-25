@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -206,6 +206,12 @@ namespace Mono.Cecil {
 				if (method.Name != reference.Name)
 					continue;
 
+				if (method.HasGenericParameters != reference.HasGenericParameters)
+					continue;
+
+				if (method.HasGenericParameters && method.GenericParameters.Count != reference.GenericParameters.Count)
+					continue;
+
 				if (!AreSame (method.ReturnType, reference.ReturnType))
 					continue;
 
@@ -275,12 +281,6 @@ namespace Mono.Cecil {
 
 		static bool AreSame (GenericInstanceType a, GenericInstanceType b)
 		{
-			if (!a.HasGenericArguments)
-				return !b.HasGenericArguments;
-
-			if (!b.HasGenericArguments)
-				return false;
-
 			if (a.GenericArguments.Count != b.GenericArguments.Count)
 				return false;
 
@@ -298,6 +298,12 @@ namespace Mono.Cecil {
 
 		static bool AreSame (TypeReference a, TypeReference b)
 		{
+			if (ReferenceEquals (a, b))
+				return true;
+
+			if (a == null || b == null)
+				return false;
+
 			if (a.etype != b.etype)
 				return false;
 
@@ -307,7 +313,12 @@ namespace Mono.Cecil {
 			if (a.IsTypeSpecification ())
 				return AreSame ((TypeSpecification) a, (TypeSpecification) b);
 
-			return a.FullName == b.FullName;
+			if (a.Name != b.Name || a.Namespace != b.Namespace)
+				return false;
+
+			//TODO: check scope
+
+			return AreSame (a.DeclaringType, b.DeclaringType);
 		}
 	}
 }

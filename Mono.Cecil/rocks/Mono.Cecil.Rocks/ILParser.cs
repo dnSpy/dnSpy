@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -99,7 +99,7 @@ namespace Mono.Cecil.Rocks {
 
 		static ParseContext CreateContext (MethodDefinition method, IILVisitor visitor)
 		{
-			var code = method.Module.Read (method, (_, reader) => CodeReader.CreateCodeReader (reader));
+			var code = method.Module.Read (method, (_, reader) => new CodeReader (reader.image.MetadataSection, reader));
 
 			return new ParseContext {
 				Code = code,

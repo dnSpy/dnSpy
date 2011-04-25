@@ -51,6 +51,43 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (permission_set, argument.Value);
 		}
 
+		[TestModule ("decsec1-xml.dll")]
+		public void XmlNet_1_1SecurityDeclaration (ModuleDefinition module)
+		{
+			var type = module.GetType ("SubLibrary");
+
+			Assert.IsTrue (type.HasSecurityDeclarations);
+
+			Assert.AreEqual (1, type.SecurityDeclarations.Count);
+
+			var declaration = type.SecurityDeclarations [0];
+			Assert.AreEqual (SecurityAction.Deny, declaration.Action);
+
+			Assert.AreEqual (1, declaration.SecurityAttributes.Count);
+
+			var attribute = declaration.SecurityAttributes [0];
+
+			Assert.AreEqual ("System.Security.Permissions.PermissionSetAttribute", attribute.AttributeType.FullName);
+
+			Assert.AreEqual (1, attribute.Properties.Count);
+
+			var named_argument = attribute.Properties [0];
+
+			Assert.AreEqual ("XML", named_argument.Name);
+
+			var argument = named_argument.Argument;
+
+			Assert.AreEqual ("System.String", argument.Type.FullName);
+
+			const string permission_set = "<PermissionSet class=\"System.Security.PermissionSe"
+				+ "t\"\r\nversion=\"1\">\r\n<IPermission class=\"System.Security.Permis"
+				+ "sions.SecurityPermission, mscorlib, Version=1.0.0.0, Culture"
+				+ "=neutral, PublicKeyToken=b77a5c561934e089\"\r\nversion=\"1\"\r\nFla"
+				+ "gs=\"UnmanagedCode\"/>\r\n</PermissionSet>\r\n";
+
+			Assert.AreEqual (permission_set, argument.Value);
+		}
+
 		[TestModule ("decsec-att.dll")]
 		public void AttributeSecurityDeclaration (ModuleDefinition module)
 		{

@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -127,6 +127,8 @@ namespace Mono.Cecil {
 
 		public bool HasParameters {
 			get {
+				InitializeMethods ();
+
 				if (get_method != null)
 					return get_method.HasParameters;
 

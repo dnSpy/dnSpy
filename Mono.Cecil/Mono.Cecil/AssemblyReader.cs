@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -374,7 +374,7 @@ namespace Mono.Cecil {
 			this.image = module.Image;
 			this.module = module;
 			this.metadata = module.MetadataSystem;
-			this.code = CodeReader.CreateCodeReader (this);
+			this.code = new CodeReader (image.MetadataSection, this);
 		}
 
 		int GetCodedIndexSize (CodedIndex index)
@@ -501,7 +501,12 @@ namespace Mono.Cecil {
 
 				PopulateVersionAndFlags (reference);
 
-				reference.PublicKeyToken = ReadBlob ();
+				var key_or_token = ReadBlob ();
+
+				if (reference.HasPublicKey)
+					reference.PublicKey = key_or_token;
+				else
+					reference.PublicKeyToken = key_or_token;
 
 				PopulateNameAndCulture (reference);
 
@@ -1123,14 +1128,19 @@ namespace Mono.Cecil {
 			var fields = new MemberDefinitionCollection<FieldDefinition> (type, (int) fields_range.Length);
 			this.context = type;
 
-			MoveTo (Table.Field, fields_range.Start);
-			for (uint i = 0; i < fields_range.Length; i++)
-				fields.Add (ReadField (fields_range.Start + i));
+			if (!MoveTo (Table.FieldPtr, fields_range.Start)) {
+				if (!MoveTo (Table.Field, fields_range.Start))
+					return fields;
+
+				for (uint i = 0; i < fields_range.Length; i++)
+					ReadField (fields_range.Start + i, fields);
+			} else
+				ReadPointers (Table.FieldPtr, Table.Field, fields_range, fields, ReadField);
 
 			return fields;
 		}
 
-		FieldDefinition ReadField (uint field_rid)
+		void ReadField (uint field_rid, Collection<FieldDefinition> fields)
 		{
 			var attributes = (FieldAttributes) ReadUInt16 ();
 			var name = ReadString ();
@@ -1140,7 +1150,10 @@ namespace Mono.Cecil {
 			field.token = new MetadataToken (TokenType.Field, field_rid);
 			metadata.AddFieldDefinition (field);
 
-			return field;
+			if (IsDeleted (field))
+				return;
+
+			fields.Add (field);
 		}
 
 		void InitializeFields ()
@@ -1308,18 +1321,24 @@ namespace Mono.Cecil {
 
 			metadata.RemoveEventsRange (type);
 
-			if (range.Length == 0 || !MoveTo (Table.Event, range.Start))
+			if (range.Length == 0)
 				return events;
 
 			this.context = type;
 
-			for (uint i = 0; i < range.Length; i++)
-				events.Add (ReadEvent (range.Start + i));
+			if (!MoveTo (Table.EventPtr, range.Start)) {
+				if (!MoveTo (Table.Event, range.Start))
+					return events;
+
+				for (uint i = 0; i < range.Length; i++)
+					ReadEvent (range.Start + i, events);
+			} else
+				ReadPointers (Table.EventPtr, Table.Event, range, events, ReadEvent);
 
 			return events;
 		}
 
-		EventDefinition ReadEvent (uint event_rid)
+		void ReadEvent (uint event_rid, Collection<EventDefinition> events)
 		{
 			var attributes = (EventAttributes) ReadUInt16 ();
 			var name = ReadString ();
@@ -1327,7 +1346,11 @@ namespace Mono.Cecil {
 
 			var @event = new EventDefinition (name, attributes, event_type);
 			@event.token = new MetadataToken (TokenType.Event, event_rid);
-			return @event;
+
+			if (IsDeleted (@event))
+				return;
+
+			events.Add (@event);
 		}
 
 		void InitializeEvents ()
@@ -1375,18 +1398,23 @@ namespace Mono.Cecil {
 
 			var properties = new MemberDefinitionCollection<PropertyDefinition> (type, (int) range.Length);
 
-			if (range.Length == 0 || !MoveTo (Table.Property, range.Start))
+			if (range.Length == 0)
 				return properties;
 
 			this.context = type;
 
-			for (uint i = 0; i < range.Length; i++)
-				properties.Add (ReadProperty (range.Start + i));
+			if (!MoveTo (Table.PropertyPtr, range.Start)) {
+				if (!MoveTo (Table.Property, range.Start))
+					return properties;
+				for (uint i = 0; i < range.Length; i++)
+					ReadProperty (range.Start + i, properties);
+			} else
+				ReadPointers (Table.PropertyPtr, Table.Property, range, properties, ReadProperty);
 
 			return properties;
 		}
 
-		PropertyDefinition ReadProperty (uint property_rid)
+		void ReadProperty (uint property_rid, Collection<PropertyDefinition> properties)
 		{
 			var attributes = (PropertyAttributes) ReadUInt16 ();
 			var name = ReadString ();
@@ -1408,7 +1436,10 @@ namespace Mono.Cecil {
 			property.HasThis = has_this;
 			property.token = new MetadataToken (TokenType.Property, property_rid);
 
-			return property;
+			if (IsDeleted (property))
+				return;
+
+			properties.Add (property);
 		}
 
 		void InitializeProperties ()
@@ -1578,12 +1609,34 @@ namespace Mono.Cecil {
 				return new MemberDefinitionCollection<MethodDefinition> (type);
 
 			var methods = new MemberDefinitionCollection<MethodDefinition> (type, (int) methods_range.Length);
+			if (!MoveTo (Table.MethodPtr, methods_range.Start)) {
+				if (!MoveTo (Table.Method, methods_range.Start))
+					return methods;
 
-			MoveTo (Table.Method, methods_range.Start);
-			for (uint i = 0; i < methods_range.Length; i++)
-				ReadMethod (methods_range.Start + i, methods);
+				for (uint i = 0; i < methods_range.Length; i++)
+					ReadMethod (methods_range.Start + i, methods);
+			} else
+				ReadPointers (Table.MethodPtr, Table.Method, methods_range, methods, ReadMethod);
 
 			return methods;
+		}
+
+		void ReadPointers<TMember> (Table ptr, Table table, Range range, Collection<TMember> members, Action<uint, Collection<TMember>> reader)
+			where TMember : IMemberDefinition
+		{
+			for (uint i = 0; i < range.Length; i++) {
+				MoveTo (ptr, range.Start + i);
+
+				var rid = ReadTableIndex (table);
+				MoveTo (table, rid);
+
+				reader (rid, members);
+			}
+		}
+
+		static bool IsDeleted (IMemberDefinition member)
+		{
+			return member.IsSpecialName && member.Name == "_Deleted";
 		}
 
 		void InitializeMethods ()
@@ -1602,6 +1655,9 @@ namespace Mono.Cecil {
 			method.Attributes = (MethodAttributes) ReadUInt16 ();
 			method.Name = ReadString ();
 			method.token = new MetadataToken (TokenType.Method, method_rid);
+
+			if (IsDeleted (method))
+				return;
 
 			methods.Add (method); // attach method
 
@@ -1623,20 +1679,42 @@ namespace Mono.Cecil {
 
 		void ReadParameters (MethodDefinition method, Range param_range)
 		{
-			MoveTo (Table.Param, param_range.Start);
-			for (uint i = 0; i < param_range.Length; i++) {
-				var attributes = (ParameterAttributes) ReadUInt16 ();
-				var sequence = ReadUInt16 ();
-				var name = ReadString ();
+			if (!MoveTo (Table.ParamPtr, param_range.Start)) {
+				if (!MoveTo (Table.Param, param_range.Start))
+					return;
 
-				var parameter = sequence == 0
-					? method.MethodReturnType.Parameter
-					: method.Parameters [sequence - 1];
+				for (uint i = 0; i < param_range.Length; i++)
+					ReadParameter (param_range.Start + i, method);
+			} else
+				ReadParameterPointers (method, param_range);
+		}
 
-				parameter.token = new MetadataToken (TokenType.Param, param_range.Start + i);
-				parameter.Name = name;
-				parameter.Attributes = attributes;
+		void ReadParameterPointers (MethodDefinition method, Range range)
+		{
+			for (uint i = 0; i < range.Length; i++) {
+				MoveTo (Table.ParamPtr, range.Start + i);
+
+				var rid = ReadTableIndex (Table.Param);
+
+				MoveTo (Table.Param, rid);
+
+				ReadParameter (rid, method);
 			}
+		}
+
+		void ReadParameter (uint param_rid, MethodDefinition method)
+		{
+			var attributes = (ParameterAttributes) ReadUInt16 ();
+			var sequence = ReadUInt16 ();
+			var name = ReadString ();
+
+			var parameter = sequence == 0
+				? method.MethodReturnType.Parameter
+				: method.Parameters [sequence - 1];
+
+			parameter.token = new MetadataToken (TokenType.Param, param_rid);
+			parameter.Name = name;
+			parameter.Attributes = attributes;
 		}
 
 		void ReadMethodSignature (uint signature, IMethodSignature method)
@@ -1765,7 +1843,7 @@ namespace Mono.Cecil {
 					range.Length++;
 			}
 
-			if (owner != MetadataToken.Zero)
+			if (owner != MetadataToken.Zero && !ranges.ContainsKey (owner))
 				ranges.Add (owner, range);
 
 			return ranges;
@@ -2398,7 +2476,7 @@ namespace Mono.Cecil {
 				return;
 			}
 
-			reader.ReadByte ();
+			reader.position++;
 			var count = reader.ReadCompressedUInt32 ();
 			var attributes = new Collection<SecurityAttribute> ((int) count);
 
@@ -2705,9 +2783,21 @@ namespace Mono.Cecil {
 		public void ReadMethodSignature (IMethodSignature method)
 		{
 			var calling_convention = ReadByte ();
+
+			const byte has_this = 0x20;
+			const byte explicit_this = 0x40;
+
+			if ((calling_convention & has_this) != 0) {
+				method.HasThis = true;
+				calling_convention = (byte) (calling_convention & ~has_this);
+			}
+
+			if ((calling_convention & explicit_this) != 0) {
+				method.ExplicitThis = true;
+				calling_convention = (byte) (calling_convention & ~explicit_this);
+			}
+
 			method.CallingConvention = (MethodCallingConvention) calling_convention;
-			method.HasThis = (calling_convention & 0x20) != 0;
-			method.ExplicitThis = (calling_convention & 0x40) != 0;
 
 			var generic_context = method as MethodReference;
 			if (generic_context != null)
@@ -2719,8 +2809,6 @@ namespace Mono.Cecil {
 				if (generic_context != null && !generic_context.IsDefinition)
 					CheckGenericContext (generic_context, (int) arity -1 );
 			}
-
-			// TODO: more call_conv
 
 			var param_count = ReadCompressedUInt32 ();
 

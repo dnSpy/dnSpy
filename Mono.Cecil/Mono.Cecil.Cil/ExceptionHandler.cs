@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,7 +40,6 @@ namespace Mono.Cecil.Cil {
 		Instruction try_start;
 		Instruction try_end;
 		Instruction filter_start;
-		Instruction filter_end;
 		Instruction handler_start;
 		Instruction handler_end;
 
@@ -60,11 +59,6 @@ namespace Mono.Cecil.Cil {
 		public Instruction FilterStart {
 			get { return filter_start; }
 			set { filter_start = value; }
-		}
-
-		public Instruction FilterEnd {
-			get { return filter_end; }
-			set { filter_end = value; }
 		}
 
 		public Instruction HandlerStart {
