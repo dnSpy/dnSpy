@@ -58,23 +58,40 @@ namespace ICSharpCode.ILSpy.Baml
 			var context = new DecompilerContext(type.Module) { CurrentMethod = def, CurrentType = type };
 			optimizer.Optimize(context, ilMethod, ILAstOptimizationStep.RemoveRedundantCode3);
 			
-			var cases = ilMethod.Body.OfType<ILSwitch>().First().CaseBlocks;
+			ILSwitch ilSwitch = ilMethod.Body.OfType<ILSwitch>().FirstOrDefault();
+			ILCondition condition = ilMethod.Body.OfType<ILCondition>().FirstOrDefault();
 			
-			foreach (var caseBlock in cases) {
-				if (caseBlock.Values == null)
-					continue;
-				var events = new List<EventRegistration>();
-				foreach (var node in caseBlock.Body) {
-					var expr = node as ILExpression;
-					string eventName, handlerName;
-					if (IsAddEvent(expr, out eventName, out handlerName))
-						events.Add(new EventRegistration() { EventName = eventName, MethodName = handlerName });
+			if (ilSwitch != null) {
+				foreach (var caseBlock in ilSwitch.CaseBlocks) {
+					if (caseBlock.Values == null)
+						continue;
+					var events = FindEvents(caseBlock);
+					foreach (int id in caseBlock.Values)
+						result.Add(id, events);
 				}
-				foreach (int id in caseBlock.Values)
-					result.Add(id, events.ToArray());
+			} else if (condition != null) {
+				result.Add(1, FindEvents(condition.FalseBlock));
 			}
 			
 			return result;
+		}
+
+		EventRegistration[] FindEvents(ILBlock block)
+		{
+			var events = new List<EventRegistration>();
+			
+			foreach (var node in block.Body) {
+				var expr = node as ILExpression;
+				string eventName, handlerName;
+				if (IsAddEvent(expr, out eventName, out handlerName))
+					events.Add(new EventRegistration {
+					           	EventName = eventName,
+					           	MethodName = handlerName
+					           });
+				// TODO : handle attached events
+			}
+			
+			return events.ToArray();
 		}
 		
 		bool IsAddEvent(ILExpression expr, out string eventName, out string handlerName)
