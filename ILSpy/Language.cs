@@ -37,12 +37,17 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Gets ot sets the code mappings
 		/// </summary>
-		public Tuple<string, List<MemberMapping>> CodeMappings { get; set; }
+		public Dictionary<string, List<MemberMapping>> CodeMappings { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the local variables.
 		/// </summary>
 		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
+		
+		/// <summary>
+		/// Gets the list of MembeReferences that are decompiled (TypeDefinitions, MethodDefinitions, etc)
+		/// </summary>
+		public Dictionary<string, MemberReference> DecompiledMemberReferences { get; set; }
 	}
 	
 	/// <summary>

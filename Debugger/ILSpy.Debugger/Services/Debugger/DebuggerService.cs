@@ -166,7 +166,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public static void ToggleBreakpointAt(MemberReference member, int lineNumber, DecompiledLanguages language)
 		{
 			BookmarkManager.ToggleBookmark(
-				member.FullName, lineNumber,
+				member.FullName.Replace("::", "."), lineNumber,
 				b => b.CanToggle && b is BreakpointBookmark,
 				location => new BreakpointBookmark(member, location, BreakpointAction.Break, language));
 		}

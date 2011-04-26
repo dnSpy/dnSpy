@@ -4,10 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
@@ -59,7 +59,8 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 				// create a dictionary line number => first bookmark
 				Dictionary<int, BookmarkBase> bookmarkDict = new Dictionary<int, BookmarkBase>();
 				foreach (var bm in BookmarkManager.Bookmarks) {
-					if (DebugData.CurrentMemberReference == null || bm.Member.FullName != DebugData.CurrentMemberReference.FullName)
+					if (DebugData.DecompiledMemberReferences == null || DebugData.DecompiledMemberReferences.Count == 0 ||
+					    !DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.FullName))
 						continue;
 					if (bm is BreakpointBookmark &&
 					    ((BreakpointBookmark)bm).Language != DebugData.Language)
@@ -121,8 +122,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 			BookmarkBase result = null;
 			foreach (BookmarkBase bm in BookmarkManager.Bookmarks) {
 				if (bm.LineNumber == line &&
-				    DebugData.CurrentMemberReference != null &&
-				    bm.Member.FullName == DebugData.CurrentMemberReference.FullName) {
+				    DebugData.DecompiledMemberReferences != null && DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.FullName)) {
 					if (result == null || bm.ZOrder > result.ZOrder)
 						result = bm;
 				}
@@ -190,16 +190,6 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 					dragStarted = true;
 				InvalidateVisual();
 			}
-			
-			if (DebugData.CurrentMemberReference == null)
-				return;
-			
-			BreakpointBookmark bm = BookmarkManager.Bookmarks.Find(
-				b => b.Member.FullName == DebugData.CurrentMemberReference.FullName &&
-				b.LineNumber == GetLineFromMousePosition(e)
-				&& b is BreakpointBookmark) as BreakpointBookmark;
-			
-			this.ToolTip = (bm != null) ? bm.Tooltip : null;
 		}
 		
 		protected override void OnMouseUp(MouseButtonEventArgs e)
@@ -228,24 +218,32 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 						return;
 				}
 				if (e.ChangedButton == MouseButton.Left) {
-					if (DebugData.CurrentMemberReference != null) {
+					if (DebugData.DecompiledMemberReferences != null && DebugData.DecompiledMemberReferences.Count > 0) {
 						
 						// check if the codemappings exists for this line
 						var storage = DebugData.CodeMappings;
-						uint token;
-						var instruction = storage.GetInstructionByTypeAndLine(DebugData.CurrentMemberReference.FullName, line, out token);
+						uint token = 0;
+						foreach (var member in DebugData.DecompiledMemberReferences.Values) {
+							string memberName = member.FullName;
+							var instruction = storage[memberName].GetInstructionByTypeAndLine(memberName, line, out token);
+							
+							if (instruction == null) {
+								continue;
+							}
+							
+							// no bookmark on the line: create a new breakpoint
+							DebuggerService.ToggleBreakpointAt(
+								member,
+								line,
+								DebugData.Language);
+							break;
+						}
 						
-						if (instruction == null) {
-							MessageBox.Show(string.Format("Missing code mappings for {0} at line {1}", DebugData.CurrentMemberReference.FullName, line),
+						if (token == 0) {
+							MessageBox.Show(string.Format("Missing code mappings at line {0}.", line),
 							                "Code mappings", MessageBoxButton.OK, MessageBoxImage.Information);
 							return;
 						}
-						
-						// no bookmark on the line: create a new breakpoint
-						DebuggerService.ToggleBreakpointAt(
-							DebugData.CurrentMemberReference,
-							line,
-							DebugData.Language);
 					}
 				}
 				InvalidateVisual();

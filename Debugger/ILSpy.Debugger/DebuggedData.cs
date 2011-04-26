@@ -19,11 +19,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		static DecompiledLanguages language;
 		
 		/// <summary>
-		/// Gets or sets the current debugged member reference. Can be a type or a member of a type (method, property).
-		/// </summary>
-		public static MemberReference CurrentMemberReference { get; set; }
-
-		/// <summary>
 		/// Gets or sets the decompiled language.
 		/// </summary>
 		public static DecompiledLanguages Language {
@@ -43,18 +38,9 @@ namespace ICSharpCode.ILSpy.Debugger
 		public static IEnumerable<AssemblyDefinition> LoadedAssemblies { get; set; }
 		
 		/// <summary>
-		/// Returns true if the CurrentMember is a type (TypeDefinition). Otherwise, returns false (is MethodDefinition or PropertyDefinition).
-		/// </summary>
-		public static bool IsCurrentMemberReferenceType {
-			get {
-				return CurrentMemberReference is TypeDefinition;
-			}
-		}
-		
-		/// <summary>
 		/// Gets or sets the current code mappings.
 		/// </summary>
-		public static Tuple<string, List<MemberMapping>> CodeMappings { get; set; }
+		public static Dictionary<string, List<MemberMapping>> CodeMappings { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the local variables of the current decompiled type, method, etc.
@@ -64,7 +50,17 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// Gets or sets the old code mappings.
 		/// </summary>
-		public static Tuple<string, List<MemberMapping>> OldCodeMappings { get; set; }
+		public static Dictionary<string, List<MemberMapping>> OldCodeMappings { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the MembeReference that was decompiled (a TypeDefinition, MethodDefinition, etc)
+		/// </summary>
+		public static Dictionary<string, MemberReference> DecompiledMemberReferences { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the debug type.
+		/// </summary>
+		public static bool DebugWholeTypesOnly { get; set; }
 		
 		/// <summary>
 		/// Occures when the language is changed.

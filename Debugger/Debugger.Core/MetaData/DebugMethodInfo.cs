@@ -68,7 +68,7 @@ namespace Debugger.MetaData
 					sb.Append(this.ReturnType.Name);
 					sb.Append(" ");
 				} else {
-					sb.Append("void ");
+					sb.Append("System.Void ");
 				}
 				
 				sb.Append(this.DeclaringType.FullName);
@@ -80,9 +80,40 @@ namespace Debugger.MetaData
 					if (!first)
 						sb.Append(", ");
 					first = false;
-					sb.Append(p.ParameterType.Name);
+					sb.Append(p.ParameterType.FullName);
 					sb.Append(" ");
 					sb.Append(p.Name);
+				}
+				sb.Append(")");
+				return sb.ToString();
+			}
+		}
+		
+		/// <summary> Name including the declaring type, return type without parameters names</summary>
+		public string FullNameWithoutParameterNames {
+			get {
+				StringBuilder sb = new StringBuilder();
+				
+				if (this.IsStatic) {
+					sb.Append("static ");
+				}
+				if (this.ReturnType != null) {
+					sb.Append(this.ReturnType.Name);
+					sb.Append(" ");
+				} else {
+					sb.Append("System.Void ");
+				}
+				
+				sb.Append(this.DeclaringType.FullName);
+				sb.Append(".");
+				sb.Append(this.Name);
+				sb.Append("(");
+				bool first = true;
+				foreach(DebugParameterInfo p in GetParameters()) {
+					if (!first)
+						sb.Append(", ");
+					first = false;
+					sb.Append(p.ParameterType.FullName);
 				}
 				sb.Append(")");
 				return sb.ToString();

@@ -55,35 +55,35 @@ namespace ICSharpCode.ILSpy
 		{
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
 			dis.DisassembleMethod(method);
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings });
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings, DecompiledMemberReferences = dis.DecompiledMemberReferences });
 		}
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleField(field);
-			OnDecompilationFinished(null);
+			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			dis.DisassembleField(field);
+			OnDecompilationFinished(new DecompileEventArgs { DecompiledMemberReferences = dis.DecompiledMemberReferences });
 		}
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken); 
 			dis.DisassembleProperty(property);
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings });
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings, DecompiledMemberReferences = dis.DecompiledMemberReferences });
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken); 
 			dis.DisassembleEvent(ev);
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings });
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings, DecompiledMemberReferences = dis.DecompiledMemberReferences });
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
 			dis.DisassembleType(type);
-			
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings });
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings , DecompiledMemberReferences = dis.DecompiledMemberReferences});
 		}
 		
 		public override void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)

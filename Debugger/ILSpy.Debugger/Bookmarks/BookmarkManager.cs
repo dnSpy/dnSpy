@@ -31,7 +31,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			List<BookmarkBase> marks = new List<BookmarkBase>();
 			
 			foreach (BookmarkBase mark in bookmarks) {
-				if (typeName == mark.Member.FullName) {
+				if (typeName == mark.MemberReference.FullName) {
 					marks.Add(mark);
 				}
 			}
@@ -56,7 +56,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 				return false;
 			if (a.GetType() != b.GetType())
 				return false;
-			if (a.Member.FullName != b.Member.FullName)
+			if (a.MemberReference.FullName != b.MemberReference.FullName)
 				return false;
 			return a.LineNumber == b.LineNumber;
 		}
@@ -150,20 +150,23 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			
 			// 1. Save it's data
 			int line = CurrentLineBookmark.Instance.LineNumber;
-			var markerType = CurrentLineBookmark.Instance.Member;
+			var markerType = CurrentLineBookmark.Instance.MemberReference;
+			
+			if (!oldMappings.ContainsKey(markerType.FullName) || !oldMappings.ContainsKey(markerType.FullName))
+				return;
 			
 			// 2. Remove it
 			CurrentLineBookmark.Remove();
 			
 			// 3. map the marker line
 			uint token;
-			var instruction = oldMappings.GetInstructionByTypeAndLine(markerType.FullName, line, out token);
+			var instruction = oldMappings[markerType.FullName].GetInstructionByTypeAndLine(markerType.FullName, line, out token);
 			if (instruction == null)
 				return;
 
 			MemberReference memberReference;
 			int newline;
-			if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(markerType.FullName, token, instruction.ILInstructionOffset.From, out memberReference, out newline)) {
+			if (newMappings[markerType.FullName].GetSourceCodeFromMetadataTokenAndOffset(token, instruction.ILInstructionOffset.From, out memberReference, out newline)) {
 				// 4. create breakpoint for new languages
 				CurrentLineBookmark.SetPosition(memberReference, newline, 0, newline, 0);
 			}
@@ -191,13 +194,17 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 
 			foreach (var bp in oldbps) {
 				uint token;
-				var instruction = oldMappings.GetInstructionByTypeAndLine(bp.Member.FullName, bp.LineNumber, out token);
+				string name = bp.MemberReference.FullName;
+				if (!oldMappings.ContainsKey(name) || !oldMappings.ContainsKey(name))
+					continue;
+				
+				var instruction = oldMappings[name].GetInstructionByTypeAndLine(bp.MemberReference.FullName, bp.LineNumber, out token);
 				if (instruction == null)
 					continue;
 
 				MemberReference memberReference;
 				int line;
-				if (newMappings.GetSourceCodeFromMetadataTokenAndOffset(bp.Member.FullName, token, instruction.ILInstructionOffset.From, out memberReference, out line)) {
+				if (newMappings[name].GetSourceCodeFromMetadataTokenAndOffset(token, instruction.ILInstructionOffset.From, out memberReference, out line)) {
 					// 2. create breakpoint for new languages
 					var bookmark = new BreakpointBookmark(memberReference, new AstLocation(line, 0), BreakpointAction.Break, newLanguage);
 					AddMark(bookmark);

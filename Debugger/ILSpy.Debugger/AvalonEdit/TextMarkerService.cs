@@ -27,7 +27,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 		TextSegmentCollection<TextMarker> markers = new TextSegmentCollection<TextMarker>();
 		
 		public TextMarkerService()
-		{			
+		{
 			BookmarkManager.Added += new BookmarkEventHandler(BookmarkManager_Added);
 			BookmarkManager.Removed += new BookmarkEventHandler(BookmarkManager_Removed);
 		}
@@ -53,11 +53,9 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 		{
 			if (e.Bookmark is MarkerBookmark) {
 				var bm = (MarkerBookmark)e.Bookmark;
-				if (DebugData.CurrentMemberReference != null && DebugData.CurrentMemberReference == bm.Member) {
-					// add bookmark for the current type
-					DocumentLine line = codeEditor.Document.GetLineByNumber(bm.LineNumber);
-					bm.CreateMarker(this, line.Offset, line.Length);
-				}
+				// add bookmark for the current type
+				DocumentLine line = codeEditor.Document.GetLineByNumber(bm.LineNumber);
+				bm.CreateMarker(this, line.Offset, line.Length);
 			}
 		}
 		
@@ -305,7 +303,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 					Redraw();
 				}
 			}
-		
+			
 		}
 		/// <inheritdoc/>
 		public object ToolTip { get; set; }

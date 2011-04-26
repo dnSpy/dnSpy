@@ -44,6 +44,7 @@ using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Tooltips;
+using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory.Documentation;
@@ -335,9 +336,9 @@ namespace ICSharpCode.ILSpy.TextView
 		void DoDecompile(DecompilationContext context, int outputLengthLimit)
 		{
 			// reset type
-			DebugData.CurrentMemberReference = null;
 			DebugData.OldCodeMappings = DebugData.CodeMappings;
 			TextEditorListener.Instance.ClosePopup();
+			bool isDecompilationOk = true;
 			
 			RunWithCancellation(
 				delegate (CancellationToken ct) { // creation of the background task
@@ -363,39 +364,34 @@ namespace ICSharpCode.ILSpy.TextView
 							output.WriteLine(ex.ToString());
 						}
 						ShowOutput(output);
-						
-						// reset type
-						DebugData.CurrentMemberReference = null;
+						isDecompilationOk = false;
 					}
 					finally {
 						
 						// set the language
 						DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
+						bool debugOnlyTypes = DebuggerSettingsPanel.CurrentDebuggerSettings.DebugWholeTypesOnly;
+						DebugData.DebugWholeTypesOnly = debugOnlyTypes;
 						
-						if (DebugData.CurrentMemberReference != null) {
-							// TODO: show margin for single methods and properties
-							if (context.TreeNodes.Count() == 1 && DebugData.IsCurrentMemberReferenceType) {
-								iconMargin.Visibility = Visibility.Visible;
+						if (isDecompilationOk) {
+							if (DebugData.DecompiledMemberReferences != null && DebugData.DecompiledMemberReferences.Count > 0) {
+								
 								// repaint bookmarks
 								iconMargin.InvalidateVisual();
 								
 								// show the currentline marker
 								var bm = CurrentLineBookmark.Instance;
-								if (bm != null && DebugData.CurrentMemberReference != null) {
-									if (DebugData.CurrentMemberReference == bm.Member) {
+								if (bm != null) {
+									if (DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.FullName)) {
 										DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
 										bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
 									}
 									UnfoldAndScroll(bm.LineNumber);
 								}
-							} else {
-								// hide the margin
-								iconMargin.Visibility = Visibility.Collapsed;
 							}
 						} else {
 							// remove currentline marker
 							CurrentLineBookmark.Remove();
-							iconMargin.Visibility = Visibility.Collapsed;
 						}
 					}
 				});
@@ -454,9 +450,6 @@ namespace ICSharpCode.ILSpy.TextView
 				if (i > 0)
 					textOutput.WriteLine();
 				
-				if (nodes[i] is IMemberTreeNode) {
-					DebugData.CurrentMemberReference = (nodes[i] as IMemberTreeNode).Member;
-				}
 				context.Options.CancellationToken.ThrowIfCancellationRequested();
 				nodes[i].Decompile(context.Language, textOutput, context.Options);
 			}
@@ -466,8 +459,13 @@ namespace ICSharpCode.ILSpy.TextView
 		static void Language_DecompileFinished(object sender, DecompileEventArgs e)
 		{
 			if (e != null) {
-				DebugData.CodeMappings = e.CodeMappings; 
+				DebugData.CodeMappings = e.CodeMappings;
 				DebugData.LocalVariables = e.LocalVariables;
+				DebugData.DecompiledMemberReferences = e.DecompiledMemberReferences;
+			} else {
+				DebugData.CodeMappings = null;
+				DebugData.LocalVariables = null;
+				DebugData.DecompiledMemberReferences = null;
 			}
 		}
 		#endregion

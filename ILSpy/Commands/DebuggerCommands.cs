@@ -163,8 +163,8 @@ namespace ICSharpCode.ILSpy.Commands
 			
 			// jump to type & expand folding
 			if (CurrentLineBookmark.Instance != null) {
-				if (CurrentLineBookmark.Instance.Member != DebugData.CurrentMemberReference)
-					MainWindow.Instance.JumpToReference(CurrentLineBookmark.Instance.Member);
+				if (!DebugData.DecompiledMemberReferences.ContainsKey(CurrentLineBookmark.Instance.MemberReference.FullName))
+					MainWindow.Instance.JumpToReference(CurrentLineBookmark.Instance.MemberReference);
 				
 				MainWindow.Instance.TextView.UnfoldAndScroll(CurrentLineBookmark.Instance.LineNumber);
 			}

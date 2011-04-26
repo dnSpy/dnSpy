@@ -288,10 +288,11 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			isMatch = false;
 			frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
+			var debugType = (DebugType)frame.MethodInfo.DeclaringType;
+			string nameKey = DebugData.DebugWholeTypesOnly ? debugType.FullNameWithoutGenericArguments : frame.MethodInfo.FullNameWithoutParameterNames;
 			
 			// get the mapped instruction from the current line marker or the next one
-			return DebugData.CodeMappings.GetInstructionByTypeTokenAndOffset(
-				((DebugType)frame.MethodInfo.DeclaringType).FullNameWithoutGenericArguments,
+			return DebugData.CodeMappings[nameKey].GetInstructionByTypeTokenAndOffset(
 				(uint)frame.MethodInfo.MetadataToken,
 				frame.IP, out isMatch);
 		}
@@ -560,13 +561,16 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			Breakpoint breakpoint = null;
 			
 			uint token;
-			SourceCodeMapping map = DebugData.CodeMappings
-				.GetInstructionByTypeAndLine(bookmark.Member.FullName, bookmark.LineNumber, out token);
+			SourceCodeMapping map = DebugData.CodeMappings[bookmark.MemberReference.FullName]
+				.GetInstructionByTypeAndLine(bookmark.MemberReference.FullName, bookmark.LineNumber, out token);
 			
 			if (map != null) {
+				var declaringType = bookmark.MemberReference.DeclaringType;
+				
 				breakpoint = new ILBreakpoint(
 					debugger,
-					bookmark.Member.FullName,
+					(declaringType ?? bookmark.MemberReference).FullName,
+					bookmark.MemberReference.FullName,
 					bookmark.LineNumber,
 					token,
 					map.ILInstructionOffset.From,
@@ -745,7 +749,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			foreach (var bookmark in DebuggerService.Breakpoints) {
 				var breakpoint =
 					debugger.Breakpoints.FirstOrDefault(
-						b => b.Line == bookmark.LineNumber && b.TypeName == bookmark.Member.FullName);
+						b => b.Line == bookmark.LineNumber && (b as ILBreakpoint).MemberReferenceName.CreateKey() == bookmark.MemberReference.FullName.CreateKey());
 				if (breakpoint == null)
 					continue;
 				// set the breakpoint only if the module contains the type
@@ -818,14 +822,18 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				int ilOffset = frame.IP;
 				int line;
 				MemberReference memberReference;
+				string nameKey = DebugData.DebugWholeTypesOnly ? debugType.FullNameWithoutGenericArguments : frame.MethodInfo.FullNameWithoutParameterNames;
 				
-				if (DebugData.CodeMappings.GetSourceCodeFromMetadataTokenAndOffset(debugType.FullNameWithoutGenericArguments, token, ilOffset, out memberReference, out line)
-				    && memberReference.DeclaringType == null) {
-					DebuggerService.RemoveCurrentLineMarker();
-					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
-				} else {
-					// is possible that the type is not decompiled yet, so we must do a decompilation on demand
-					DecompileOnDemand(frame);
+				foreach (var key in DebugData.CodeMappings.Keys) {
+					if (key.CreateKey() == nameKey.CreateKey()) {
+						if (DebugData.CodeMappings[key].GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out memberReference, out line)) {
+							DebuggerService.RemoveCurrentLineMarker();
+							DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
+						} else {
+							// is possible that the type is not decompiled yet, so we must do a decompilation on demand
+							DecompileOnDemand(frame);
+						}
+					}
 				}
 			}
 		}
@@ -837,7 +845,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			uint token = (uint)frame.MethodInfo.MetadataToken;
 			int ilOffset = frame.IP;
 			string fullName = debugType.FullNameWithoutGenericArguments;
-			fullName = fullName.Replace("+", "/");
 			
 			if (DebugData.LoadedAssemblies == null)
 				throw new NullReferenceException("No DebugData assemblies!");
@@ -845,6 +852,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				// search for type in the current assembly list
 				TypeDefinition typeDef = null;
 				TypeDefinition nestedTypeDef = null;
+				MemberReference member = null;
 				
 				foreach (var assembly in DebugData.LoadedAssemblies) {
 					if ((assembly.FullName.StartsWith("System") || assembly.FullName.StartsWith("Microsoft") || assembly.FullName.StartsWith("mscorlib")) &&
@@ -854,9 +862,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					foreach (var module in assembly.Modules) {
 						var localType = module.GetType(fullName);
 						if (localType != null) {
-							if (localType.DeclaringType == null)
+							if (localType.DeclaringType == null) {
 								typeDef = localType;
-							else {
+							} else {
 								nestedTypeDef = localType;
 								typeDef = localType.DeclaringType;
 							}
@@ -868,12 +876,22 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				}
 				
 				if (typeDef != null) {
-					// decompile on demand
-					Tuple<string, List<MemberMapping>> codeMappings = null;
-					if (DebugData.CodeMappings.Item1 != (nestedTypeDef ?? typeDef).FullName) {
+					member = nestedTypeDef ?? typeDef;
+					
+					// decompile on demand if the type was not decompiled
+					Dictionary<string, List<MemberMapping>> codeMappings = null;
+					if (!DebugData.CodeMappings.ContainsKey(member.FullName)) {
 						if (DebugData.Language == DecompiledLanguages.IL) {
 							var dis = new ReflectionDisassembler(new PlainTextOutput(), true, CancellationToken.None);
+
 							dis.DisassembleType(nestedTypeDef ?? typeDef);
+//							else if (ICSharpCode.Decompiler.CodeMappings.DecompiledMember is MethodDefinition)
+//								dis.DisassembleMethod(ICSharpCode.Decompiler.CodeMappings.DecompiledMember as MethodDefinition);
+//							else if (ICSharpCode.Decompiler.CodeMappings.DecompiledMember is PropertyDefinition)
+//								dis.DisassembleProperty(ICSharpCode.Decompiler.CodeMappings.DecompiledMember as PropertyDefinition);
+//							else if (ICSharpCode.Decompiler.CodeMappings.DecompiledMember is EventDefinition)
+//								dis.DisassembleEvent(ICSharpCode.Decompiler.CodeMappings.DecompiledMember as EventDefinition);
+							
 							codeMappings = dis.CodeMappings;
 						} else {
 							AstBuilder builder = new AstBuilder(new DecompilerContext(typeDef.Module));
@@ -886,7 +904,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					int line;
 					MemberReference memberReference;
 					codeMappings = codeMappings ?? DebugData.CodeMappings;
-					if (codeMappings.GetSourceCodeFromMetadataTokenAndOffset((nestedTypeDef ?? typeDef).FullName, token, ilOffset, out memberReference, out line)) {
+					string name = (nestedTypeDef ?? typeDef).FullName;
+					if (codeMappings[name].GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out memberReference, out line)) {
 						DebuggerService.RemoveCurrentLineMarker();
 						DebuggerService.JumpToCurrentLine(nestedTypeDef ?? typeDef, line, 0, line, 0);
 					} else {

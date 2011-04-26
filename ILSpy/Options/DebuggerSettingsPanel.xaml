@@ -5,6 +5,9 @@
 	<Grid>
 		<StackPanel Margin="10">
 			<CheckBox IsChecked="{Binding ShowWarnings}">Show warning messages</CheckBox>
+			<CheckBox 
+				ToolTip="If checked, debug only whole types; otherwise debug only methods or properties."
+				IsChecked="{Binding DebugWholeTypesOnly}">Debug whole types only</CheckBox>
 		</StackPanel>
 	</Grid>
 </UserControl>

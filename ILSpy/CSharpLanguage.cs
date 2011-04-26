@@ -92,7 +92,7 @@ namespace ICSharpCode.ILSpy
 			codeDomBuilder.AddMethod(method);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = codeDomBuilder.CodeMappings, LocalVariables = codeDomBuilder.LocalVariables });
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = codeDomBuilder.CodeMappings, LocalVariables = codeDomBuilder.LocalVariables, DecompiledMemberReferences = codeDomBuilder.DecompiledMemberReferences });
 		}
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
@@ -102,7 +102,7 @@ namespace ICSharpCode.ILSpy
 			codeDomBuilder.AddProperty(property);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = codeDomBuilder.CodeMappings, LocalVariables = codeDomBuilder.LocalVariables });
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = codeDomBuilder.CodeMappings, LocalVariables = codeDomBuilder.LocalVariables, DecompiledMemberReferences = codeDomBuilder.DecompiledMemberReferences });
 		}
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
@@ -112,7 +112,7 @@ namespace ICSharpCode.ILSpy
 			codeDomBuilder.AddField(field);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
-			OnDecompilationFinished(null);
+			OnDecompilationFinished(new DecompileEventArgs { DecompiledMemberReferences = codeDomBuilder.DecompiledMemberReferences });
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
@@ -122,7 +122,7 @@ namespace ICSharpCode.ILSpy
 			codeDomBuilder.AddEvent(ev);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = codeDomBuilder.CodeMappings, LocalVariables = codeDomBuilder.LocalVariables });
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = codeDomBuilder.CodeMappings, LocalVariables = codeDomBuilder.LocalVariables, DecompiledMemberReferences = codeDomBuilder.DecompiledMemberReferences });
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
@@ -131,7 +131,7 @@ namespace ICSharpCode.ILSpy
 			codeDomBuilder.AddType(type);
 			codeDomBuilder.RunTransformations(transformAbortCondition);
 			codeDomBuilder.GenerateCode(output);
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = codeDomBuilder.CodeMappings, LocalVariables = codeDomBuilder.LocalVariables });
+			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = codeDomBuilder.CodeMappings, LocalVariables = codeDomBuilder.LocalVariables, DecompiledMemberReferences = codeDomBuilder.DecompiledMemberReferences });
 		}
 		
 		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)

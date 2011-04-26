@@ -27,7 +27,12 @@ namespace ICSharpCode.Decompiler
 		/// <summary>
 		/// Gets the code mappings.
 		/// </summary>
-		Tuple<string, List<MemberMapping>> CodeMappings { get; }
+		Dictionary<string, List<MemberMapping>> CodeMappings { get; }
+		
+		/// <summary>
+		/// Gets the MembeReference that is decompiled (a TypeDefinition, MethodDefinition, etc)
+		/// </summary>
+		Dictionary<string, MemberReference> DecompiledMemberReferences { get; }
 	}
 	
 	/// <summary>
@@ -133,15 +138,17 @@ namespace ICSharpCode.Decompiler
 	/// Code mappings helper class.
 	/// </summary>
 	public static class CodeMappings
-	{	
+	{
 		/// <summary>
 		/// Create code mapping for a method.
 		/// </summary>
 		/// <param name="method">Method to create the mapping for.</param>
-		/// <param name="sourceCodeMappings">Source code mapping storage.</param>
+		/// <param name="codeMappings">Source code mapping storage.</param>
+		/// <param name="isTypeDecompiled">True, if a full type was decompiled; false otherwise.</param>
 		internal static MemberMapping CreateCodeMapping(
 			this MethodDefinition member,
-			Tuple<string, List<MemberMapping>> codeMappings)
+			List<MemberMapping> codeMappings,
+			bool isTypeDecompiled)
 		{
 			if (member == null || !member.HasBody)
 				return null;
@@ -151,17 +158,21 @@ namespace ICSharpCode.Decompiler
 			
 			// create IL/CSharp code mappings - used in debugger
 			MemberMapping currentMemberMapping = null;
-			if (codeMappings.Item1 == member.DeclaringType.FullName) {
-				var mapping = codeMappings.Item2;
-				if (mapping.Find(map => (int)map.MetadataToken == member.MetadataToken.ToInt32()) == null) {
-					currentMemberMapping = new MemberMapping() {
-						MetadataToken = (uint)member.MetadataToken.ToInt32(),
-						MemberReference = member.DeclaringType.Resolve(),
-						MemberCodeMappings = new List<SourceCodeMapping>(),
-						CodeSize = member.Body.CodeSize
-					};
-					mapping.Add(currentMemberMapping);
-				}
+			string key = isTypeDecompiled ? member.DeclaringType.FullName : member.FullName;
+
+			if (codeMappings.Find(map => (int)map.MetadataToken == member.MetadataToken.ToInt32()) == null) {
+				currentMemberMapping = new MemberMapping() {
+					MetadataToken = (uint)member.MetadataToken.ToInt32(),
+					MemberCodeMappings = new List<SourceCodeMapping>(),
+					CodeSize = member.Body.CodeSize
+				};
+				
+				if (isTypeDecompiled)
+					currentMemberMapping.MemberReference = member.DeclaringType.Resolve();
+				else
+					currentMemberMapping.MemberReference = member.Resolve();
+				
+				codeMappings.Add(currentMemberMapping);
 			}
 			
 			return currentMemberMapping;
@@ -171,31 +182,20 @@ namespace ICSharpCode.Decompiler
 		/// Gets source code mapping and metadata token based on type name and line number.
 		/// </summary>
 		/// <param name="codeMappings">Code mappings storage.</param>
-		/// <param name="typeName">Type name.</param>
+		/// <param name="typeName">Member reference name.</param>
 		/// <param name="lineNumber">Line number.</param>
 		/// <param name="metadataToken">Metadata token.</param>
 		/// <returns></returns>
 		public static SourceCodeMapping GetInstructionByTypeAndLine(
-			this Tuple<string, List<MemberMapping>> codeMappings,
+			this List<MemberMapping> codeMappings,
 			string memberReferenceName,
 			int lineNumber,
 			out uint metadataToken)
 		{
 			if (codeMappings == null)
-				throw new ArgumentNullException("CodeMappings storage must be valid!");
+				throw new ArgumentException("CodeMappings storage must be valid!");
 			
-			if (codeMappings.Item1 != memberReferenceName) {
-				metadataToken = 0;
-				return null;
-			}
-			
-			if (lineNumber <= 0) {
-				metadataToken = 0;
-				return null;
-			}
-			
-			var methodMappings = codeMappings.Item2;
-			foreach (var maping in methodMappings) {
+			foreach (var maping in codeMappings) {
 				var map = maping.MemberCodeMappings.Find(m => m.SourceCodeLine == lineNumber);
 				if (map != null) {
 					metadataToken = maping.MetadataToken;
@@ -211,33 +211,26 @@ namespace ICSharpCode.Decompiler
 		/// Gets a mapping given a type, a token and an IL offset.
 		/// </summary>
 		/// <param name="codeMappings">Code mappings storage.</param>
-		/// <param name="typeName">Type name.</param>
+		/// <param name="memberReferenceName">Member reference name.</param>
 		/// <param name="token">Token.</param>
 		/// <param name="ilOffset">IL offset.</param>
 		/// <param name="isMatch">True, if perfect match.</param>
 		/// <returns>A code mapping.</returns>
 		public static SourceCodeMapping GetInstructionByTypeTokenAndOffset(
-			this Tuple<string, List<MemberMapping>> codeMappings,
-			string memberReferenceName,
+			this List<MemberMapping> codeMappings,
 			uint token,
-			int ilOffset, out bool isMatch)
+			int ilOffset, 
+			out bool isMatch)
 		{
 			isMatch = false;
-			memberReferenceName = memberReferenceName.Replace("+", "/");
 			
 			if (codeMappings == null)
 				throw new ArgumentNullException("CodeMappings storage must be valid!");
 			
-			if (codeMappings.Item1 != memberReferenceName) {
-				return null;
-			}
+			var maping = codeMappings.Find(m => m.MetadataToken == token);
 			
-			var methodMappings = codeMappings.Item2;
-			var maping = methodMappings.Find(m => m.MetadataToken == token);
-			
-			if (maping == null) {
+			if (maping == null)
 				return null;
-			}
 			
 			// try find an exact match
 			var map = maping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From <= ilOffset && ilOffset < m.ILInstructionOffset.To);
@@ -260,31 +253,25 @@ namespace ICSharpCode.Decompiler
 		/// Gets the source code and type name from metadata token and offset.
 		/// </summary>
 		/// <param name="codeMappings">Code mappings storage.</param>
-		/// <param name="typeName">Current type name.</param>
 		/// <param name="token">Metadata token.</param>
 		/// <param name="ilOffset">IL offset.</param>
 		/// <param name="typeName">Type definition.</param>
 		/// <param name="line">Line number.</param>
 		/// <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
 		public static bool GetSourceCodeFromMetadataTokenAndOffset(
-			this Tuple<string, List<MemberMapping>> codeMappings,
-			string memberReferenceName,
+			this List<MemberMapping> codeMappings,
 			uint token,
 			int ilOffset,
-			out MemberReference type,
+			out MemberReference member,
 			out int line)
 		{
-			type = null;
+			member = null;
 			line = 0;
 			
 			if (codeMappings == null)
-				throw new ArgumentNullException("CodeMappings storage must be valid!");
+				throw new ArgumentException("CodeMappings storage must be valid!");
 			
-			memberReferenceName = memberReferenceName.Replace("+", "/");
-			if (codeMappings.Item1 != memberReferenceName)
-				return false;
-			
-			var mapping = codeMappings.Item2.Find(m => m.MetadataToken == token);
+			var mapping = codeMappings.Find(m => m.MetadataToken == token);
 			if (mapping == null)
 				return false;
 			
@@ -299,9 +286,19 @@ namespace ICSharpCode.Decompiler
 				}
 			}
 			
-			type = mapping.MemberReference;
+			member = mapping.MemberReference;
 			line = codeMapping.SourceCodeLine;
 			return true;
+		}
+		
+		/// <summary>
+		/// Create a key by replacing "::" with ".", "+" with "/", " " with "";
+		/// </summary>
+		/// <param name="item">Item to convert.</param>
+		/// <returns></returns>
+		public static string CreateKey(this string item)
+		{
+			return item.Replace("+", "/").Replace("::", ".").Replace(" ", string.Empty);
 		}
 	}
 }

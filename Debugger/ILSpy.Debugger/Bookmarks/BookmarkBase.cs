@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			
 		}
 		
-		public MemberReference Member { get; set; }
+		public MemberReference MemberReference { get; set; }
 		
 		public int LineNumber {
 			get { return location.Line; }
@@ -66,7 +66,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public BookmarkBase(MemberReference member, AstLocation location)
 		{
-			this.Member = member;
+			this.MemberReference = member;
 			this.Location = location;
 		}
 		

@@ -176,11 +176,12 @@ namespace Debugger
 	
 	public class ILBreakpoint : Breakpoint
 	{
-		public ILBreakpoint(NDebugger debugger, string typeName, int line, uint metadataToken, int offset, bool enabled)
+		public ILBreakpoint(NDebugger debugger, string typeName, string memberReferenceName, int line, uint metadataToken, int offset, bool enabled)
 		{
 			this.Debugger = debugger;
 			this.Line = line;
 			this.TypeName = typeName;
+			this.MemberReferenceName = memberReferenceName;
 			this.MetadataToken = metadataToken;
 			this.ILOffset = offset;
 			this.Enabled = enabled;
@@ -189,6 +190,8 @@ namespace Debugger
 		public uint MetadataToken { get; private set; }
 		
 		public int ILOffset { get; private set; }
+		
+		public string MemberReferenceName { get; private set; }
 		
 		public override bool SetBreakpoint(Module module)
 		{

@@ -44,6 +44,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			this.cancellationToken = cancellationToken;
 			this.detectControlStructure = detectControlStructure;
 			this.methodBodyDisassembler = new MethodBodyDisassembler(output, detectControlStructure, cancellationToken);
+			
+			this.CodeMappings = new Dictionary<string, List<MemberMapping>>();
+			this.DecompiledMemberReferences = new Dictionary<string, MemberReference>();
 		}
 		
 		#region Disassemble Method
@@ -92,14 +95,21 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ MethodImplAttributes.NoOptimization, "nooptimization" },
 		};
 		
-		public void DisassembleMethod(MethodDefinition method)
+		public void DisassembleMethod(MethodDefinition method, bool isTypeDecompiled = false)
 		{
+			// create mappings for decompiled methods only
+			string name = isTypeDecompiled ? method.DeclaringType.FullName : method.FullName;
+			if (!isTypeDecompiled) {
+				this.CodeMappings.Add(name, new List<MemberMapping>());
+				this.DecompiledMemberReferences.Add(method.FullName, method);
+			}
+			
 			// write method header
 			output.WriteDefinition(".method ", method);
-			DisassembleMethodInternal(method);
+			DisassembleMethodInternal(method, isTypeDecompiled);
 		}
 		
-		void DisassembleMethodInternal(MethodDefinition method)
+		void DisassembleMethodInternal(MethodDefinition method, bool isTypeDecompiled)
 		{
 			//    .method public hidebysig  specialname
 			//               instance default class [mscorlib]System.IO.TextWriter get_BaseWriter ()  cil managed
@@ -117,7 +127,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			//call convention
 			WriteEnum(method.CallingConvention & (MethodCallingConvention)0x1f, callingConvention);
-			
 			
 			//return type
 			method.ReturnType.WriteTo(output);
@@ -149,7 +158,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 				
 				if (method.HasBody) {
 					// create IL code mappings - used in debugger
-					MemberMapping methodMapping = method.CreateCodeMapping(this.CodeMappings);
+					string name = isTypeDecompiled ? method.DeclaringType.FullName : method.FullName;
+					MemberMapping methodMapping = method.CreateCodeMapping(this.CodeMappings[name], isTypeDecompiled);
+					
 					methodBodyDisassembler.Disassemble(method.Body, methodMapping);
 				}
 				
@@ -192,8 +203,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ FieldAttributes.NotSerialized, "notserialized" },
 		};
 		
-		public void DisassembleField(FieldDefinition field)
+		public void DisassembleField(FieldDefinition field, bool isTypeDecompiled = false)
 		{
+			// create mappings for decompiled fields only
+			if (!isTypeDecompiled) {
+				this.DecompiledMemberReferences.Add(field.FullName, field);
+			}
+			
 			output.WriteDefinition(".field ", field);
 			WriteEnum(field.Attributes & FieldAttributes.FieldAccessMask, fieldVisibility);
 			WriteFlags(field.Attributes & ~(FieldAttributes.FieldAccessMask | FieldAttributes.HasDefault), fieldAttributes);
@@ -221,8 +237,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ PropertyAttributes.HasDefault, "hasdefault" },
 		};
 		
-		public void DisassembleProperty(PropertyDefinition property)
+		public void DisassembleProperty(PropertyDefinition property, bool isTypeDecompiled = false)
 		{
+			// create mappings for decompiled properties only
+			string name = isTypeDecompiled ? property.DeclaringType.FullName : property.FullName;
+			if (!isTypeDecompiled) {
+				this.CodeMappings.Add(name, new List<MemberMapping>());
+				this.DecompiledMemberReferences.Add(property.FullName, property);
+			}
+			
 			output.WriteDefinition(".property ", property);
 			WriteFlags(property.Attributes, propertyAttributes);
 			property.PropertyType.WriteTo(output);
@@ -230,22 +253,22 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(DisassemblerHelpers.Escape(property.Name));
 			OpenBlock(false);
 			WriteAttributes(property.CustomAttributes);
-			WriteNestedMethod(".get", property.GetMethod);
-			WriteNestedMethod(".set", property.SetMethod);
+			WriteNestedMethod(".get", property.GetMethod, isTypeDecompiled);
+			WriteNestedMethod(".set", property.SetMethod, isTypeDecompiled);
 			foreach (var method in property.OtherMethods) {
-				WriteNestedMethod(".method", method);
+				WriteNestedMethod(".method", method, isTypeDecompiled);
 			}
 			CloseBlock();
 		}
 		
-		void WriteNestedMethod(string keyword, MethodDefinition method)
+		void WriteNestedMethod(string keyword, MethodDefinition method, bool isTypeDecompiled)
 		{
 			if (method == null)
 				return;
 			if (detectControlStructure) {
 				output.WriteDefinition(keyword, method);
 				output.Write(' ');
-				DisassembleMethodInternal(method);
+				DisassembleMethodInternal(method, isTypeDecompiled);
 			} else {
 				output.Write(keyword);
 				output.Write(' ');
@@ -261,8 +284,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ EventAttributes.RTSpecialName, "rtspecialname" },
 		};
 		
-		public void DisassembleEvent(EventDefinition ev)
+		public void DisassembleEvent(EventDefinition ev, bool isTypeDecompiled = false)
 		{
+			// create mappings for decompiled events only
+			string name = isTypeDecompiled ? ev.DeclaringType.FullName : ev.FullName;
+			if (!isTypeDecompiled) {
+				this.CodeMappings.Add(name, new List<MemberMapping>());
+				this.DecompiledMemberReferences.Add(ev.FullName, ev);
+			}
+			
 			output.WriteDefinition(".event ", ev);
 			WriteFlags(ev.Attributes, eventAttributes);
 			ev.EventType.WriteTo(output);
@@ -270,11 +300,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(DisassemblerHelpers.Escape(ev.Name));
 			OpenBlock(false);
 			WriteAttributes(ev.CustomAttributes);
-			WriteNestedMethod(".add", ev.AddMethod);
-			WriteNestedMethod(".remove", ev.RemoveMethod);
-			WriteNestedMethod(".invoke", ev.InvokeMethod);
+			WriteNestedMethod(".add", ev.AddMethod, isTypeDecompiled);
+			WriteNestedMethod(".remove", ev.RemoveMethod, isTypeDecompiled);
+			WriteNestedMethod(".invoke", ev.InvokeMethod, isTypeDecompiled);
 			foreach (var method in ev.OtherMethods) {
-				WriteNestedMethod(".method", method);
+				WriteNestedMethod(".method", method, isTypeDecompiled);
 			}
 			CloseBlock();
 		}
@@ -317,8 +347,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 		public void DisassembleType(TypeDefinition type)
 		{
 			// create IL code mappings - used for debugger
-			if (this.CodeMappings == null)
-				this.CodeMappings = new Tuple<string, List<MemberMapping>>(type.FullName, new List<MemberMapping>());
+			if (this.CodeMappings == null) {
+				this.CodeMappings.Add(type.FullName, new List<MemberMapping>());
+				this.DecompiledMemberReferences.Add(type.FullName, type);
+			}
 			
 			// start writing IL
 			output.WriteDefinition(".class ", type);
@@ -383,7 +415,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.WriteLine("// Fields");
 				foreach (var field in type.Fields) {
 					cancellationToken.ThrowIfCancellationRequested();
-					DisassembleField(field);
+					DisassembleField(field, true);
 				}
 				output.WriteLine();
 			}
@@ -391,7 +423,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.WriteLine("// Properties");
 				foreach (var prop in type.Properties) {
 					cancellationToken.ThrowIfCancellationRequested();
-					DisassembleProperty(prop);
+					DisassembleProperty(prop, true);
 				}
 				output.WriteLine();
 			}
@@ -399,7 +431,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.WriteLine("// Events");
 				foreach (var ev in type.Events) {
 					cancellationToken.ThrowIfCancellationRequested();
-					DisassembleEvent(ev);
+					DisassembleEvent(ev, true);
 					output.WriteLine();
 				}
 				output.WriteLine();
@@ -410,7 +442,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				foreach (var m in type.Methods) {
 					cancellationToken.ThrowIfCancellationRequested();
 					if (!(detectControlStructure && accessorMethods.Contains(m))) {
-						DisassembleMethod(m);
+						DisassembleMethod(m, true);
 						output.WriteLine();
 					}
 				}
@@ -605,10 +637,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 			CloseBlock();
 		}
 		
+		/// <summary>
 		/// <inheritdoc/>
-		public Tuple<string, List<MemberMapping>> CodeMappings {
-			get;
-			private set;
-		}
+		/// </summary>
+		public Dictionary<string, List<MemberMapping>> CodeMappings { get; private set; }
+		
+		/// <summary>
+		/// <inheritdoc/>
+		/// </summary>
+		public Dictionary<string, MemberReference> DecompiledMemberReferences { get; private set; }
 	}
 }
