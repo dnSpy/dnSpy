@@ -186,7 +186,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			assembly.WaitUntilLoaded(); // necessary so that load errors are passed on to the caller
-			language.DecompileAssembly(assembly.AssemblyDefinition, assembly.FileName, output, options);
+			language.DecompileAssembly(assembly, output, options);
 		}
 		
 		public override bool Save(DecompilerTextView textView)

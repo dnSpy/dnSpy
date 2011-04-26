@@ -94,12 +94,13 @@
     <Compile Include="BamlDecompiler.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands.cs" />
+    <Compile Include="ConnectMethodDecompiler.cs" />
+    <Compile Include="ExportCommandAttribute.cs" />
     <Compile Include="Commands\DebuggerCommands.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
     <Compile Include="CSharpLanguage.cs" />
     <Compile Include="DecompilationOptions.cs" />
-    <Compile Include="ExportCommandAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FilterSettings.cs" />
     <Compile Include="Fusion.cs" />

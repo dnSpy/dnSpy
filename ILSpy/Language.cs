@@ -113,10 +113,10 @@ namespace ICSharpCode.ILSpy
 			WriteCommentLine(output, nameSpace);
 		}
 		
-		public virtual void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
+		public virtual void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, fileName);
-			WriteCommentLine(output, assembly.Name.FullName);
+			WriteCommentLine(output, assembly.FileName);
+			WriteCommentLine(output, assembly.AssemblyDefinition.FullName);
 		}
 		
 		public virtual void WriteCommentLine(ITextOutput output, string comment)

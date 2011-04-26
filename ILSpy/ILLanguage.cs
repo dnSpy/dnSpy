@@ -92,12 +92,12 @@ namespace ICSharpCode.ILSpy
 			OnDecompilationFinished(null);
 		}
 		
-		public override void DecompileAssembly(AssemblyDefinition assembly, string fileName, ITextOutput output, DecompilationOptions options)
+		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
 		{
-			output.WriteLine("// " + fileName);
+			output.WriteLine("// " + assembly.FileName);
 			output.WriteLine();
 			
-			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).WriteAssemblyHeader(assembly);
+			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).WriteAssemblyHeader(assembly.AssemblyDefinition);
 			OnDecompilationFinished(null);
 		}
 		

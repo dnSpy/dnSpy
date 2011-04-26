@@ -87,7 +87,7 @@ namespace ICSharpCode.ILSpy
 									using (var writer = new System.IO.StreamWriter("c:\\temp\\decompiled\\" + asm.ShortName + ".cs")) {
 										try {
 											new CSharpLanguage().DecompileAssembly(
-												asm.AssemblyDefinition, asm.FileName, new Decompiler.PlainTextOutput(writer),
+												asm, new Decompiler.PlainTextOutput(writer),
 												new DecompilationOptions { FullDecompilation = true, CancellationToken = ct });
 										} catch (Exception ex) {
 											writer.WriteLine(ex.ToString());
