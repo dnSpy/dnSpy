@@ -147,7 +147,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return true;
 				} else if (numLdloc.GetOrDefault(v) == 0 && numLdloca.GetOrDefault(v) == 0) {
 					// The variable is never loaded
-					if (inlinedExpression.HasNoSideEffects()) {
+					if (inlinedExpression.HasNoSideEffects() && v.IsGenerated) {
 						// Remove completely
 						body.RemoveAt(pos);
 						return true;
