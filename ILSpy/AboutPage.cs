@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +16,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Linq;
-
+using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 
@@ -69,11 +70,31 @@ namespace ICSharpCode.ILSpy
 			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(AboutPage), "README.txt")) {
 				using (StreamReader r = new StreamReader(s)) {
 					string line;
-					while ((line = r.ReadLine()) != null)
+					while ((line = r.ReadLine()) != null) {
 						output.WriteLine(line);
+					}
 				}
 			}
+			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("SharpDevelop", "http://www.icsharpcode.net/opensource/sd/"));
+			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("MIT License", "resource:license.txt"));
+			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("LGPL", "resource:LGPL.txt"));
 			textView.Show(output);
+		}
+		
+		sealed class MyLinkElementGenerator : LinkElementGenerator
+		{
+			readonly Uri uri;
+			
+			public MyLinkElementGenerator(string matchText, string url) : base(new Regex(Regex.Escape(matchText)))
+			{
+				this.uri = new Uri(url);
+				this.RequireControlModifierForClick = false;
+			}
+			
+			protected override Uri GetUriFromMatch(Match match)
+			{
+				return uri;
+			}
 		}
 		
 		static void AddUpdateCheckButton(StackPanel stackPanel, DecompilerTextView textView)

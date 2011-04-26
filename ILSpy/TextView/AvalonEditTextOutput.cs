@@ -24,6 +24,7 @@ using System.Text;
 using System.Windows;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
 
@@ -73,6 +74,8 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>Whether indentation should be inserted on the next write</summary>
 		bool needsIndent;
 		
+		internal readonly List<VisualLineElementGenerator> elementGenerators = new List<VisualLineElementGenerator>();
+		
 		/// <summary>List of all references that were written to the output</summary>
 		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
 		
@@ -92,6 +95,11 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		internal TextSegmentCollection<ReferenceSegment> References {
 			get { return references; }
+		}
+		
+		public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator)
+		{
+			elementGenerators.Add(elementGenerator);
 		}
 		
 		/// <summary>

@@ -148,6 +148,12 @@
     <EmbeddedResource Include="..\README.txt">
       <Link>README.txt</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\doc\LGPL.txt">
+      <Link>LGPL.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\doc\license.txt">
+      <Link>license.txt</Link>
+    </EmbeddedResource>
     <Resource Include="Images\AssemblyList.png" />
     <Resource Include="Images\AssemblyWarning.png" />
     <Resource Include="Images\ViewCode.png" />
