@@ -61,6 +61,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				this.Children.Add(new AnalyzedEventAccessorsTreeNode(analyzedEvent));
 			if (AnalyzedEventOverridesTreeNode.CanShow(analyzedEvent))
 				this.Children.Add(new AnalyzedEventOverridesTreeNode(analyzedEvent));
+			if (AnalyzedInterfaceEventImplementedByTreeNode.CanShow(analyzedEvent))
+				this.Children.Add(new AnalyzedInterfaceEventImplementedByTreeNode(analyzedEvent));
 		}
 
 		public static AnalyzerTreeNode TryCreateAnalyzer(MemberReference member)
