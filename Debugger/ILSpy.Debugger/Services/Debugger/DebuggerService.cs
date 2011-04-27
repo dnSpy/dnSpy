@@ -5,9 +5,10 @@ using System;
 using System.Collections.Generic;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Tooltips;
+using ICSharpCode.NRefactory.CSharp.Resolver;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.Debugger.Services
@@ -163,12 +164,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 		}
 		
-		public static void ToggleBreakpointAt(MemberReference member, int lineNumber, DecompiledLanguages language)
+		public static void ToggleBreakpointAt(MemberReference member, int lineNumber, ILRange range, DecompiledLanguages language)
 		{
 			BookmarkManager.ToggleBookmark(
-				member.FullName.Replace("::", "."), lineNumber,
+				member.FullName, lineNumber,
 				b => b.CanToggle && b is BreakpointBookmark,
-				location => new BreakpointBookmark(member, location, BreakpointAction.Break, language));
+				location => new BreakpointBookmark(member, location, range, BreakpointAction.Break, language));
 		}
 		
 		/* TODO: reimplement this stuff

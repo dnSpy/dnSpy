@@ -206,7 +206,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 				int line;
 				if (newMappings[name].GetSourceCodeFromMetadataTokenAndOffset(token, instruction.ILInstructionOffset.From, out memberReference, out line)) {
 					// 2. create breakpoint for new languages
-					var bookmark = new BreakpointBookmark(memberReference, new AstLocation(line, 0), BreakpointAction.Break, newLanguage);
+					var bookmark = new BreakpointBookmark(memberReference, new AstLocation(line, 0), instruction.ILInstructionOffset, BreakpointAction.Break, newLanguage);
 					AddMark(bookmark);
 				}
 			}

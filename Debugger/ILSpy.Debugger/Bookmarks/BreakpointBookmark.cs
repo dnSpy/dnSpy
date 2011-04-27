@@ -5,9 +5,10 @@ using System;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.Debugger.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.Debugger.Bookmarks
@@ -23,7 +24,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 	{
 		bool isHealthy = true;
 		bool isEnabled = true;
-		string tooltip;
 		BreakpointAction action = BreakpointAction.Break;
 		
 		public DecompiledLanguages Language { get; private set; }
@@ -39,6 +39,8 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 				}
 			}
 		}
+		
+		public ILRange ILRange { get; private set; }
 		
 		public virtual bool IsHealthy {
 			get {
@@ -68,16 +70,14 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public event EventHandler IsEnabledChanged;
 		
-		public string Tooltip {
-			get { return tooltip; }
-			set { tooltip = value; }
-		}
+		public string Tooltip { get; private set; }
 		
-		public BreakpointBookmark(MemberReference member, AstLocation location, BreakpointAction action, DecompiledLanguages language) : base(member, location)
+		public BreakpointBookmark(MemberReference member, AstLocation location, ILRange range, BreakpointAction action, DecompiledLanguages language) : base(member, location)
 		{
 			this.action = action;
-			this.tooltip = language.ToString();
-			this.Language = language;
+			this.ILRange = range;
+			this.Tooltip = string.Format("Language:{0}, Line:{1}, IL range:{2}-{3}", language.ToString(), location.Line, range.From, range.To);
+			this.Language = language;			
 		}
 		
 		public override ImageSource Image {

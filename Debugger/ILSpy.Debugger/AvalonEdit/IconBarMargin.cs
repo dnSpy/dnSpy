@@ -190,6 +190,13 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 					dragStarted = true;
 				InvalidateVisual();
 			}
+			
+			BreakpointBookmark bm = BookmarkManager.Bookmarks.Find(
+				b => DebugData.CodeMappings.ContainsKey(b.MemberReference.FullName) &&
+				b.LineNumber == GetLineFromMousePosition(e)
+				&& b is BreakpointBookmark) as BreakpointBookmark;
+			
+			this.ToolTip = (bm != null) ? bm.Tooltip : null;
 		}
 		
 		protected override void OnMouseUp(MouseButtonEventArgs e)
@@ -235,6 +242,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 							DebuggerService.ToggleBreakpointAt(
 								member,
 								line,
+								instruction.ILInstructionOffset,
 								DebugData.Language);
 							break;
 						}
