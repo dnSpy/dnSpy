@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,12 +42,7 @@ namespace Mono.Cecil {
 		}
 
 		public Collection<TypeReference> GenericArguments {
-			get {
-				if (arguments == null)
-					arguments = new Collection<TypeReference> ();
-
-				return arguments;
-			}
+			get { return arguments ?? (arguments = new Collection<TypeReference> ()); }
 		}
 
 		public override bool IsGenericInstance {

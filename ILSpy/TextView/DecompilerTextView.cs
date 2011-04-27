@@ -39,6 +39,7 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.AvalonEdit;
@@ -64,6 +65,7 @@ namespace ICSharpCode.ILSpy.TextView
 	{
 		readonly ReferenceElementGenerator referenceElementGenerator;
 		readonly UIElementGenerator uiElementGenerator;
+		List<VisualLineElementGenerator> activeCustomElementGenerators = new List<VisualLineElementGenerator>();
 		FoldingManager foldingManager;
 		
 		DefinitionLookup definitionLookup;
@@ -271,6 +273,17 @@ namespace ICSharpCode.ILSpy.TextView
 			referenceElementGenerator.References = textOutput.References;
 			definitionLookup = textOutput.DefinitionLookup;
 			textEditor.SyntaxHighlighting = highlighting;
+			
+			// Change the set of active element generators:
+			foreach (var elementGenerator in activeCustomElementGenerators) {
+				textEditor.TextArea.TextView.ElementGenerators.Remove(elementGenerator);
+			}
+			activeCustomElementGenerators.Clear();
+			
+			foreach (var elementGenerator in textOutput.elementGenerators) {
+				textEditor.TextArea.TextView.ElementGenerators.Add(elementGenerator);
+				activeCustomElementGenerators.Add(elementGenerator);
+			}
 			
 			Debug.WriteLine("  Set-up: {0}", w.Elapsed); w.Restart();
 			textEditor.Document = textOutput.GetDocument();

@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.ComponentModel;
@@ -8,6 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +31,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Linq;
-
+using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 
@@ -70,11 +86,31 @@ namespace ICSharpCode.ILSpy
 			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(AboutPage), "README.txt")) {
 				using (StreamReader r = new StreamReader(s)) {
 					string line;
-					while ((line = r.ReadLine()) != null)
+					while ((line = r.ReadLine()) != null) {
 						output.WriteLine(line);
+					}
 				}
 			}
+			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("SharpDevelop", "http://www.icsharpcode.net/opensource/sd/"));
+			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("MIT License", "resource:license.txt"));
+			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("LGPL", "resource:LGPL.txt"));
 			textView.Show(output);
+		}
+		
+		sealed class MyLinkElementGenerator : LinkElementGenerator
+		{
+			readonly Uri uri;
+			
+			public MyLinkElementGenerator(string matchText, string url) : base(new Regex(Regex.Escape(matchText)))
+			{
+				this.uri = new Uri(url);
+				this.RequireControlModifierForClick = false;
+			}
+			
+			protected override Uri GetUriFromMatch(Match match)
+			{
+				return uri;
+			}
 		}
 		
 		static void AddUpdateCheckButton(StackPanel stackPanel, DecompilerTextView textView)

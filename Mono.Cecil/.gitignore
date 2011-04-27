@@ -5,3 +5,4 @@ obj
 *.pidb
 *.userprefs
 *.xml
+*.nupkg

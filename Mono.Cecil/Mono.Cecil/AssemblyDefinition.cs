@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -64,7 +64,7 @@ namespace Mono.Cecil {
 				if (main_module.HasImage)
 					return main_module.Read (ref modules, this, (_, reader) => reader.ReadModules ());
 
-				return modules = new Collection<ModuleDefinition> { main_module };
+				return modules = new Collection<ModuleDefinition> (1) { main_module };
 			}
 		}
 

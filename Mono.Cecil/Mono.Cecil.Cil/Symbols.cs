@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -151,9 +151,14 @@ namespace Mono.Cecil.Cil {
 			get { return local_var_token; }
 		}
 
-		public MethodSymbols (string methodName)
+		internal MethodSymbols (string methodName)
 		{
 			this.method_name = methodName;
+		}
+
+		public MethodSymbols (MetadataToken methodToken)
+		{
+			this.method_token = methodToken;
 		}
 	}
 

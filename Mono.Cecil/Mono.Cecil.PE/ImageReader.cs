@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -416,12 +416,11 @@ namespace Mono.Cecil.PE {
 			// Sorted			8
 			heap.Sorted = ReadInt64 ();
 
-			for (int i = 0; i < TableHeap.TableIdentifiers.Length; i++) {
-				var table = TableHeap.TableIdentifiers [i];
-				if (!heap.HasTable (table))
+			for (int i = 0; i < TableHeap.TableCount; i++) {
+				if (!heap.HasTable ((Table) i))
 					continue;
 
-				heap.Tables [(int) table].Length = ReadUInt32 ();
+				heap.Tables [i].Length = ReadUInt32 ();
 			}
 
 			SetIndexSize (image.StringHeap, sizes, 0x1);
@@ -459,8 +458,8 @@ namespace Mono.Cecil.PE {
 			var heap = image.TableHeap;
 			var tables = heap.Tables;
 
-			for (int i = 0; i < TableHeap.TableIdentifiers.Length; i++) {
-				var table = TableHeap.TableIdentifiers [i];
+			for (int i = 0; i < TableHeap.TableCount; i++) {
+				var table = (Table) i;
 				if (!heap.HasTable (table))
 					continue;
 
@@ -595,6 +594,10 @@ namespace Mono.Cecil.PE {
 					size = 4	// RVA
 						+ GetTableIndexSize (Table.Field);	// Field
 					break;
+				case Table.EncLog:
+				case Table.EncMap:
+					size = 4;
+					break;
 				case Table.Assembly:
 					size = 16 // HashAlgId 4, Version 4 * 2, Flags 4
 						+ blobidx_size	// PublicKey
@@ -655,12 +658,10 @@ namespace Mono.Cecil.PE {
 					throw new NotSupportedException ();
 				}
 
-				int index = (int) table;
+				tables [i].RowSize = (uint) size;
+				tables [i].Offset = offset;
 
-				tables [index].RowSize = (uint) size;
-				tables [index].Offset = offset;
-
-				offset += (uint) size * tables [index].Length;
+				offset += (uint) size * tables [i].Length;
 			}
 		}
 

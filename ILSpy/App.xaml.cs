@@ -27,6 +27,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy
 {
@@ -154,7 +155,21 @@ namespace ICSharpCode.ILSpy
 		
 		void Window_RequestNavigate(object sender, RequestNavigateEventArgs e)
 		{
-			Process.Start(e.Uri.ToString());
+			if (e.Uri.Scheme == "resource") {
+				AvalonEditTextOutput output = new AvalonEditTextOutput();
+				using (Stream s = typeof(App).Assembly.GetManifestResourceStream(typeof(App), e.Uri.AbsolutePath)) {
+					using (StreamReader r = new StreamReader(s)) {
+						string line;
+						while ((line = r.ReadLine()) != null) {
+							output.Write(line);
+							output.WriteLine();
+						}
+					}
+				}
+				ILSpy.MainWindow.Instance.TextView.Show(output);
+			} else {
+				Process.Start(e.Uri.ToString());
+			}
 		}
 	}
 }

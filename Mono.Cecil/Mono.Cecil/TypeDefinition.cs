@@ -4,7 +4,7 @@
 // Author:
 //   Jb Evain (jbevain@gmail.com)
 //
-// Copyright (c) 2008 - 2010 Jb Evain
+// Copyright (c) 2008 - 2011 Jb Evain
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -159,10 +159,6 @@ namespace Mono.Cecil {
 
 				return nested_types = new MemberDefinitionCollection<TypeDefinition> (this);
 			}
-		}
-
-		internal new bool HasImage {
-			get { return Module != null && Module.HasImage; }
 		}
 
 		public bool HasMethods {
