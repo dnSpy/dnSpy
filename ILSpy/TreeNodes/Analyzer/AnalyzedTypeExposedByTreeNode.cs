@@ -179,7 +179,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return !(isAdderPublic || isRemoverPublic);
 		}
 
-		public static bool CanShowAnalyzer(TypeDefinition type)
+		public static bool CanShow(TypeDefinition type)
 		{
 			return true;
 		}

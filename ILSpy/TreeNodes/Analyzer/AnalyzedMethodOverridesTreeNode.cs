@@ -14,12 +14,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	/// <summary>
 	/// Searches for overrides of the analyzed method.
 	/// </summary>
-	class AnalyzerMethodOverridesTreeNode : AnalyzerTreeNode
+	class AnalyzedMethodOverridesTreeNode : AnalyzerTreeNode
 	{
 		readonly MethodDefinition analyzedMethod;
 		readonly ThreadingSupport threading;
 
-		public AnalyzerMethodOverridesTreeNode(MethodDefinition analyzedMethod)
+		public AnalyzedMethodOverridesTreeNode(MethodDefinition analyzedMethod)
 		{
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
@@ -96,7 +96,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		public static bool CanShowAnalyzer(MethodDefinition method)
+		public static bool CanShow(MethodDefinition method)
 		{
 			return method.IsVirtual && !method.IsFinal && !method.DeclaringType.IsSealed && !method.DeclaringType.IsInterface;	// interfaces are temporarly disabled
 		}

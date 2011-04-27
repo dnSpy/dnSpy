@@ -17,8 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Mono.Cecil;
 using ICSharpCode.Decompiler;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -27,7 +27,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		PropertyDefinition analyzedProperty;
 		bool isIndexer;
 		string prefix;
-		
+
 		public AnalyzedPropertyTreeNode(PropertyDefinition analyzedProperty, string prefix = "")
 		{
 			if (analyzedProperty == null)
@@ -37,28 +37,32 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.prefix = prefix;
 			this.LazyLoading = true;
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return PropertyTreeNode.GetIcon(analyzedProperty, isIndexer); }
 		}
-		
-		public override object Text {
-			get {
+
+		public override object Text
+		{
+			get
+			{
 				// TODO: This way of formatting is not suitable for properties which explicitly implement interfaces.
-				return prefix + Language.TypeToString(analyzedProperty.DeclaringType, true) + "." + PropertyTreeNode.GetText(analyzedProperty, Language, isIndexer); }
+				return prefix + Language.TypeToString(analyzedProperty.DeclaringType, true) + "." + PropertyTreeNode.GetText(analyzedProperty, Language, isIndexer);
+			}
 		}
-		
+
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
 			e.Handled = true;
 			MainWindow.Instance.JumpToReference(analyzedProperty);
 		}
-		
+
 		protected override void LoadChildren()
 		{
-			if(AnalyzedPropertyAccessorsTreeNode.CanShow(analyzedProperty))
+			if (AnalyzedPropertyAccessorsTreeNode.CanShow(analyzedProperty))
 				this.Children.Add(new AnalyzedPropertyAccessorsTreeNode(analyzedProperty));
-			if (AnalyzedPropertyOverridesTreeNode.CanShowAnalyzer(analyzedProperty))
+			if (AnalyzedPropertyOverridesTreeNode.CanShow(analyzedProperty))
 				this.Children.Add(new AnalyzedPropertyOverridesTreeNode(analyzedProperty));
 			//if (analyzedProperty.HasBody)
 			//    this.Children.Add(new AnalyzedMethodUsesNode(analyzedProperty));
@@ -80,7 +84,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				return false;
 
 			return AnalyzedPropertyAccessorsTreeNode.CanShow(property)
-				|| AnalyzedPropertyOverridesTreeNode.CanShowAnalyzer(property);
+				|| AnalyzedPropertyOverridesTreeNode.CanShow(property);
 		}
 	}
 }

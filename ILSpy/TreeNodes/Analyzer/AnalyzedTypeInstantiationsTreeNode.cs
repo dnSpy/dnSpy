@@ -104,7 +104,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		public static bool CanShowAnalyzer(TypeDefinition type)
+		public static bool CanShow(TypeDefinition type)
 		{
 			if (type.IsClass && !type.IsEnum) {
 				return type.Methods.Where(m => m.Name == ".ctor").Any(m => !m.IsPrivate);

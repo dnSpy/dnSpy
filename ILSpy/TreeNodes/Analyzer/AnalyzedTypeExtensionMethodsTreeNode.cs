@@ -110,7 +110,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return false;
 		}
 
-		public static bool CanShowAnalyzer(TypeDefinition type)
+		public static bool CanShow(TypeDefinition type)
 		{
 			return !(type.IsEnum);
 		}

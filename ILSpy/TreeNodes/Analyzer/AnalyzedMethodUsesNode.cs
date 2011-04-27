@@ -30,24 +30,26 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	sealed class AnalyzedMethodUsesNode : AnalyzerTreeNode
 	{
 		MethodDefinition analyzedMethod;
-		
+
 		public AnalyzedMethodUsesNode(MethodDefinition analyzedMethod)
 		{
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
-			
+
 			this.analyzedMethod = analyzedMethod;
 			this.LazyLoading = true;
 		}
-		
-		public override object Text {
+
+		public override object Text
+		{
 			get { return "Uses"; }
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return Images.Search; }
 		}
-		
+
 		protected override void LoadChildren()
 		{
 			foreach (var f in GetUsedFields().Distinct()) {
@@ -57,7 +59,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				this.Children.Add(new AnalyzedMethodTreeNode(m));
 			}
 		}
-		
+
 		IEnumerable<MethodDefinition> GetUsedMethods()
 		{
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
@@ -69,7 +71,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				}
 			}
 		}
-		
+
 		IEnumerable<FieldDefinition> GetUsedFields()
 		{
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {

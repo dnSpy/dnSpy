@@ -18,7 +18,6 @@
 
 using System;
 using Mono.Cecil;
-using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -26,7 +25,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	{
 		EventDefinition analyzedEvent;
 		string prefix;
-		
+
 		public AnalyzedEventTreeNode(EventDefinition analyzedEvent, string prefix = "")
 		{
 			if (analyzedEvent == null)
@@ -35,28 +34,32 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.prefix = prefix;
 			this.LazyLoading = true;
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return EventTreeNode.GetIcon(analyzedEvent); }
 		}
-		
-		public override object Text {
-			get {
+
+		public override object Text
+		{
+			get
+			{
 				// TODO: This way of formatting is not suitable for events which explicitly implement interfaces.
-				return prefix + Language.TypeToString(analyzedEvent.DeclaringType, true) + "." + EventTreeNode.GetText(analyzedEvent, Language); }
+				return prefix + Language.TypeToString(analyzedEvent.DeclaringType, true) + "." + EventTreeNode.GetText(analyzedEvent, Language);
+			}
 		}
-		
+
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
 			e.Handled = true;
 			MainWindow.Instance.JumpToReference(analyzedEvent);
 		}
-		
+
 		protected override void LoadChildren()
 		{
-			if(AnalyzedEventAccessorsTreeNode.CanShow(analyzedEvent))
+			if (AnalyzedEventAccessorsTreeNode.CanShow(analyzedEvent))
 				this.Children.Add(new AnalyzedEventAccessorsTreeNode(analyzedEvent));
-			if (AnalyzedEventOverridesTreeNode.CanShowAnalyzer(analyzedEvent))
+			if (AnalyzedEventOverridesTreeNode.CanShow(analyzedEvent))
 				this.Children.Add(new AnalyzedEventOverridesTreeNode(analyzedEvent));
 		}
 
@@ -75,7 +78,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				return false;
 
 			return AnalyzedEventAccessorsTreeNode.CanShow(property)
-				|| AnalyzedEventOverridesTreeNode.CanShowAnalyzer(property);
+				|| AnalyzedEventOverridesTreeNode.CanShow(property);
 		}
 	}
 }

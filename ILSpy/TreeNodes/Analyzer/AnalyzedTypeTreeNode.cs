@@ -54,13 +54,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		protected override void LoadChildren()
 		{
-			if (AnalyzedTypeInstantiationsTreeNode.CanShowAnalyzer(analyzedType))
+			if (AnalyzedTypeInstantiationsTreeNode.CanShow(analyzedType))
 				this.Children.Add(new AnalyzedTypeInstantiationsTreeNode(analyzedType));
 
-			if (AnalyzedTypeExposedByTreeNode.CanShowAnalyzer(analyzedType))
+			if (AnalyzedTypeExposedByTreeNode.CanShow(analyzedType))
 				this.Children.Add(new AnalyzedTypeExposedByTreeNode(analyzedType));
 
-			if (AnalyzedTypeExtensionMethodsTreeNode.CanShowAnalyzer(analyzedType))
+			if (AnalyzedTypeExtensionMethodsTreeNode.CanShow(analyzedType))
 				this.Children.Add(new AnalyzedTypeExtensionMethodsTreeNode(analyzedType));
 		}
 
