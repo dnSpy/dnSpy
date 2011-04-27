@@ -21,7 +21,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private Accessibility typeAccessibility = Accessibility.Public;
 		private Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction;
 
-		private ScopedWhereUsedScopeAnalyzer(TypeDefinition type, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+		public ScopedWhereUsedScopeAnalyzer(TypeDefinition type, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
 		{
 			this.typeScope = type;
 			this.assemblyScope = type.Module.Assembly;

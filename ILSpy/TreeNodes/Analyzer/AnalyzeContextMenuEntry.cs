@@ -30,11 +30,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			return selectedNodes.All(n => n is IMemberTreeNode);
 		}
-		
+
 		public bool IsEnabled(SharpTreeNode[] selectedNodes)
 		{
 			foreach (IMemberTreeNode node in selectedNodes) {
-				if (!(node.Member is FieldDefinition
+				if (!(node.Member is TypeDefinition
+					|| node.Member is FieldDefinition
 					|| node.Member is MethodDefinition
 					|| Analyzer.AnalyzedPropertyTreeNode.CanShow(node.Member)
 					|| Analyzer.AnalyzedEventTreeNode.CanShow(node.Member)))
@@ -42,12 +43,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 			return true;
 		}
-		
+
 		public void Execute(SharpTreeNode[] selectedNodes)
 		{
 			// TODO: figure out when equivalent nodes are already present
 			// and focus those instead.
 			foreach (IMemberTreeNode node in selectedNodes) {
+				TypeDefinition type = node.Member as TypeDefinition;
+				if (type != null)
+					MainWindow.Instance.AddToAnalyzer(new AnalyzedTypeTreeNode(type));
 				FieldDefinition field = node.Member as FieldDefinition;
 				if (field != null)
 					MainWindow.Instance.AddToAnalyzer(new AnalyzedFieldNode(field));
@@ -55,7 +59,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				if (method != null)
 					MainWindow.Instance.AddToAnalyzer(new AnalyzedMethodTreeNode(method));
 				var propertyAnalyzer = Analyzer.AnalyzedPropertyTreeNode.TryCreateAnalyzer(node.Member);
-				if(propertyAnalyzer != null)
+				if (propertyAnalyzer != null)
 					MainWindow.Instance.AddToAnalyzer(propertyAnalyzer);
 				var eventAnalyzer = Analyzer.AnalyzedEventTreeNode.TryCreateAnalyzer(node.Member);
 				if (eventAnalyzer != null)
