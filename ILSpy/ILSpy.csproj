@@ -135,6 +135,7 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventAccessorsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedInterfaceMethodImplementedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeExposedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeExtensionMethodsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeInstantiationsTreeNode.cs" />

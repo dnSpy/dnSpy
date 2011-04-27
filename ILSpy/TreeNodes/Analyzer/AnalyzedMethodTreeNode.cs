@@ -61,6 +61,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));
 			if (AnalyzedMethodOverridesTreeNode.CanShow(analyzedMethod))
 				this.Children.Add(new AnalyzedMethodOverridesTreeNode(analyzedMethod));
+			if (AnalyzedInterfaceMethodImplementedByTreeNode.CanShow(analyzedMethod))
+				this.Children.Add(new AnalyzedInterfaceMethodImplementedByTreeNode(analyzedMethod));
 		}
 
 		MemberReference IMemberTreeNode.Member
