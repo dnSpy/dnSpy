@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+// This code is distributed under MIT license (for details please see \doc\license.txt)
 
 using System;
 using System.Windows.Media;
