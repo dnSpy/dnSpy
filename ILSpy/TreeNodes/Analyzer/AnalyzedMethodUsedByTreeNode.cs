@@ -86,6 +86,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 						break;
 					}
 				}
+
+
+				method.Body = null;
+
 				if (found)
 					yield return new AnalyzedMethodTreeNode(method);
 			}

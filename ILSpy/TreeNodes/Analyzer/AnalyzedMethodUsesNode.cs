@@ -58,6 +58,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (var m in GetUsedMethods().Distinct()) {
 				this.Children.Add(new AnalyzedMethodTreeNode(m));
 			}
+			analyzedMethod.Body = null;
 		}
 
 		IEnumerable<MethodDefinition> GetUsedMethods()
