@@ -179,7 +179,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public static bool IsCompilerGeneratorEnumerator(TypeDefinition type)
 		{
-			if (!(type.Name.StartsWith("<", StringComparison.Ordinal) && type.IsCompilerGenerated()))
+			if (!(type.DeclaringType != null && type.IsCompilerGenerated()))
 				return false;
 			foreach (TypeReference i in type.Interfaces) {
 				if (i.Namespace == "System.Collections" && i.Name == "IEnumerator")
