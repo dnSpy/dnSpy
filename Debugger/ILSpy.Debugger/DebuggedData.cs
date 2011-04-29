@@ -58,11 +58,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		public static Dictionary<string, MemberReference> DecompiledMemberReferences { get; set; }
 		
 		/// <summary>
-		/// Gets or sets the debug type.
-		/// </summary>
-		public static bool DebugWholeTypesOnly { get; set; }
-		
-		/// <summary>
 		/// Occures when the language is changed.
 		/// </summary>
 		public static event EventHandler<LanguageEventArgs> LanguageChanged;

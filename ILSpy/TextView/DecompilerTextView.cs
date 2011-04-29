@@ -380,11 +380,10 @@ namespace ICSharpCode.ILSpy.TextView
 						isDecompilationOk = false;
 					}
 					finally {
-						
+						// sync bookmarks
+						iconMargin.SyncBookmarks();
 						// set the language
 						DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
-						bool debugOnlyTypes = DebuggerSettingsPanel.CurrentDebuggerSettings.DebugWholeTypesOnly;
-						DebugData.DebugWholeTypesOnly = debugOnlyTypes;
 						
 						if (isDecompilationOk) {
 							if (DebugData.DecompiledMemberReferences != null && DebugData.DecompiledMemberReferences.Count > 0) {

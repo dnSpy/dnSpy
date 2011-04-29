@@ -201,9 +201,8 @@ namespace ICSharpCode.Decompiler
 		/// <param name="lineNumber">Line number.</param>
 		/// <param name="metadataToken">Metadata token.</param>
 		/// <returns></returns>
-		public static SourceCodeMapping GetInstructionByTypeAndLine(
+		public static SourceCodeMapping GetInstructionByLineNumber(
 			this List<MemberMapping> codeMappings,
-			string memberReferenceName,
 			int lineNumber,
 			out uint metadataToken)
 		{
@@ -226,12 +225,11 @@ namespace ICSharpCode.Decompiler
 		/// Gets a mapping given a type, a token and an IL offset.
 		/// </summary>
 		/// <param name="codeMappings">Code mappings storage.</param>
-		/// <param name="memberReferenceName">Member reference name.</param>
 		/// <param name="token">Token.</param>
 		/// <param name="ilOffset">IL offset.</param>
 		/// <param name="isMatch">True, if perfect match.</param>
 		/// <returns>A code mapping.</returns>
-		public static SourceCodeMapping GetInstructionByTypeTokenAndOffset(
+		public static SourceCodeMapping GetInstructionByTokenAndOffset(
 			this List<MemberMapping> codeMappings,
 			uint token,
 			int ilOffset, 

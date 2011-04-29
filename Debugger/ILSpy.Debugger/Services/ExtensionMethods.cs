@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Xml;
 using System.Xml.Linq;
 
+using Mono.Cecil;
+
 namespace ICSharpCode.ILSpy.Debugger.Services
 {
 	/// <summary>
@@ -344,7 +346,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			int bytes;
 			while ((bytes = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
 				targetStream.Write(buffer, 0, bytes);
-		}	
+		}
 	}
 	
 	/// <summary>
@@ -358,8 +360,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public static ScrollViewer GetScrollViewer(this DependencyObject o)
 		{
 			var scrollViewer = o as ScrollViewer;
-			if (scrollViewer != null)	{ 
-				return scrollViewer; 
+			if (scrollViewer != null)	{
+				return scrollViewer;
 			}
 
 			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(o); i++)
@@ -397,6 +399,49 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public static void ScrollByVerticalOffset(this ScrollViewer scrollViewer, double offset)
 		{
 			scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + offset);
+		}
+		
+		/// <summary>
+		/// Verifies if the type contains the member.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="member"></param>
+		/// <returns></returns>
+		public static bool ContainsMember(this TypeDefinition type, MemberReference member)
+		{
+			// check fields
+			if (member is FieldDefinition) {
+				foreach (var field in type.Fields) {
+					if (field == member)
+						return true;
+				}
+			}
+			
+			// check properties
+			if (member is PropertyDefinition) {
+				foreach (var field in type.Properties) {
+					if (field.Resolve() == member)
+						return true;
+				}
+			}
+			
+			// check methods
+			if (member is MethodDefinition) {
+				foreach (var field in type.Methods) {
+					if (field == member)
+						return true;
+				}
+			}
+			
+			// check events
+			if (member is EventDefinition) {
+				foreach (var field in type.Events) {
+					if (field == member)
+						return true;
+				}
+			}
+			
+			return false;
 		}
 	}
 }

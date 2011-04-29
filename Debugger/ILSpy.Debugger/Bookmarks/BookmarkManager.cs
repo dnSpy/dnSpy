@@ -128,7 +128,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			var newLanguage = e.NewLanguage;
 			
 			SyncCurrentLineBookmark(oldLanguage, newLanguage);
-			SyncBreakpointBookmarks(oldLanguage, newLanguage);
+			//SyncBreakpointBookmarks(oldLanguage, newLanguage);
 		}
 		
 		/// <summary>
@@ -152,7 +152,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			int line = CurrentLineBookmark.Instance.LineNumber;
 			var markerType = CurrentLineBookmark.Instance.MemberReference;
 			
-			if (!oldMappings.ContainsKey(markerType.FullName) || !oldMappings.ContainsKey(markerType.FullName))
+			if (!oldMappings.ContainsKey(markerType.FullName) || !newMappings.ContainsKey(markerType.FullName))
 				return;
 			
 			// 2. Remove it
@@ -160,7 +160,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			
 			// 3. map the marker line
 			uint token;
-			var instruction = oldMappings[markerType.FullName].GetInstructionByTypeAndLine(markerType.FullName, line, out token);
+			var instruction = oldMappings[markerType.FullName].GetInstructionByLineNumber(line, out token);
 			if (instruction == null)
 				return;
 
@@ -195,10 +195,10 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			foreach (var bp in oldbps) {
 				uint token;
 				string name = bp.MemberReference.FullName;
-				if (!oldMappings.ContainsKey(name) || !oldMappings.ContainsKey(name))
+				if (!oldMappings.ContainsKey(name) || !newMappings.ContainsKey(name))
 					continue;
 				
-				var instruction = oldMappings[name].GetInstructionByTypeAndLine(bp.MemberReference.FullName, bp.LineNumber, out token);
+				var instruction = oldMappings[name].GetInstructionByLineNumber(bp.LineNumber, out token);
 				if (instruction == null)
 					continue;
 

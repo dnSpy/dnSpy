@@ -21,8 +21,7 @@ namespace ICSharpCode.ILSpy.Options
 	{
 		private const string DEBUGGER_SETTINGS = "DebuggerSettings";
 		private const string SHOW_WARNINGS = "showWarnings";
-	 	private const string DEBUG_WHOLE_TYPES_ONLY = "debugWholeTypesOnly";
-		
+	 	
 		public DebuggerSettingsPanel()
 		{
 			InitializeComponent();
@@ -46,7 +45,7 @@ namespace ICSharpCode.ILSpy.Options
 			XElement e = settings[DEBUGGER_SETTINGS];
 			DebuggerSettings s = new DebuggerSettings();
 			s.ShowWarnings = (bool?)e.Attribute(SHOW_WARNINGS) ?? s.ShowWarnings;
-			s.DebugWholeTypesOnly = (bool?)e.Attribute(DEBUG_WHOLE_TYPES_ONLY) ?? s.DebugWholeTypesOnly;
+			
 			return s;
 		}
 		
@@ -55,7 +54,6 @@ namespace ICSharpCode.ILSpy.Options
 			var s = (DebuggerSettings)this.DataContext;
 			XElement section = new XElement(DEBUGGER_SETTINGS);
 			section.SetAttributeValue(SHOW_WARNINGS, s.ShowWarnings);
-			section.SetAttributeValue(DEBUG_WHOLE_TYPES_ONLY, s.DebugWholeTypesOnly);
 			
 			XElement existingElement = root.Element(DEBUGGER_SETTINGS);
 			if (existingElement != null)

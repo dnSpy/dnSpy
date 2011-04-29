@@ -289,10 +289,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			isMatch = false;
 			frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 			var debugType = (DebugType)frame.MethodInfo.DeclaringType;
-			string nameKey = DebugData.DebugWholeTypesOnly ? debugType.FullNameWithoutGenericArguments : frame.MethodInfo.FullNameWithoutParameterNames;
+			string nameKey = debugType.FullNameWithoutGenericArguments;
 			
 			// get the mapped instruction from the current line marker or the next one
-			return DebugData.CodeMappings[nameKey].GetInstructionByTypeTokenAndOffset(
+			return DebugData.CodeMappings[nameKey].GetInstructionByTokenAndOffset(
 				(uint)frame.MethodInfo.MetadataToken,
 				frame.IP, out isMatch);
 		}
@@ -562,7 +562,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			
 			uint token;
 			SourceCodeMapping map = DebugData.CodeMappings[bookmark.MemberReference.FullName]
-				.GetInstructionByTypeAndLine(bookmark.MemberReference.FullName, bookmark.LineNumber, out token);
+				.GetInstructionByLineNumber(bookmark.LineNumber, out token);
 			
 			if (map != null) {
 				var declaringType = bookmark.MemberReference.DeclaringType;
@@ -822,7 +822,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				int ilOffset = frame.IP;
 				int line;
 				MemberReference memberReference;
-				string nameKey = DebugData.DebugWholeTypesOnly ? debugType.FullNameWithoutGenericArguments : frame.MethodInfo.FullNameWithoutParameterNames;
+				string nameKey = debugType.FullNameWithoutGenericArguments;
 				
 				foreach (var key in DebugData.CodeMappings.Keys) {
 					if (key.CreateKey() == nameKey.CreateKey()) {
@@ -883,15 +883,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					if (!DebugData.CodeMappings.ContainsKey(member.FullName)) {
 						if (DebugData.Language == DecompiledLanguages.IL) {
 							var dis = new ReflectionDisassembler(new PlainTextOutput(), true, CancellationToken.None);
-
-							dis.DisassembleType(nestedTypeDef ?? typeDef);
-//							else if (ICSharpCode.Decompiler.CodeMappings.DecompiledMember is MethodDefinition)
-//								dis.DisassembleMethod(ICSharpCode.Decompiler.CodeMappings.DecompiledMember as MethodDefinition);
-//							else if (ICSharpCode.Decompiler.CodeMappings.DecompiledMember is PropertyDefinition)
-//								dis.DisassembleProperty(ICSharpCode.Decompiler.CodeMappings.DecompiledMember as PropertyDefinition);
-//							else if (ICSharpCode.Decompiler.CodeMappings.DecompiledMember is EventDefinition)
-//								dis.DisassembleEvent(ICSharpCode.Decompiler.CodeMappings.DecompiledMember as EventDefinition);
-							
+							dis.DisassembleType(nestedTypeDef ?? typeDef);							
 							codeMappings = dis.CodeMappings;
 						} else {
 							AstBuilder builder = new AstBuilder(new DecompilerContext(typeDef.Module));

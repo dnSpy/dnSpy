@@ -8,12 +8,14 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
@@ -61,9 +63,6 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 				foreach (var bm in BookmarkManager.Bookmarks) {
 					if (DebugData.DecompiledMemberReferences == null || DebugData.DecompiledMemberReferences.Count == 0 ||
 					    !DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.FullName))
-						continue;
-					if (bm is BreakpointBookmark &&
-					    ((BreakpointBookmark)bm).Language != DebugData.Language)
 						continue;
 					
 					int line = bm.LineNumber;
@@ -232,7 +231,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 						uint token = 0;
 						foreach (var member in DebugData.DecompiledMemberReferences.Values) {
 							string memberName = member.FullName;
-							var instruction = storage[memberName].GetInstructionByTypeAndLine(memberName, line, out token);
+							var instruction = storage[memberName].GetInstructionByLineNumber(line, out token);
 							
 							if (instruction == null) {
 								continue;
@@ -256,6 +255,64 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 				}
 				InvalidateVisual();
 			}
+		}
+		
+		public void SyncBookmarks()
+		{
+			if (DebugData.CodeMappings == null || DebugData.CodeMappings.Count == 0)
+				return;
+			
+			//remove existing bookmarks and create new ones
+			List<BreakpointBookmark> newBookmarks = new List<BreakpointBookmark>();
+			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
+				var breakpoint = BookmarkManager.Bookmarks[i] as BreakpointBookmark;
+				if (breakpoint == null)
+					continue;
+				
+				foreach (var key in DebugData.CodeMappings.Keys) {
+					var member = DebugData.DecompiledMemberReferences[key];
+					
+					uint token;
+					if (member is TypeDefinition) {
+						var m = member as TypeDefinition;
+						if (breakpoint.MemberReference is TypeDefinition) {
+							if (member != breakpoint.MemberReference)
+								continue;
+							token = (uint)member.MetadataToken.ToInt32();
+						} else {
+							if (!m.ContainsMember(breakpoint.MemberReference))
+								continue;
+							token = (uint)breakpoint.MemberReference.MetadataToken.ToInt32();
+						}
+					} else {
+						if (breakpoint.MemberReference is TypeDefinition) {
+							if (!(breakpoint.MemberReference as TypeDefinition).ContainsMember(member))
+								continue;
+							token = (uint)member.MetadataToken.ToInt32();
+						} else {
+							if (breakpoint.MemberReference != member)
+								continue;
+							token = (uint)breakpoint.MemberReference.MetadataToken.ToInt32();
+						}
+					}
+					
+					bool isMatch;
+					SourceCodeMapping map = DebugData.CodeMappings[key]
+						.GetInstructionByTokenAndOffset(token, breakpoint.ILRange.From, out isMatch);
+					
+					if (map != null) {
+						newBookmarks.Add(new BreakpointBookmark(
+							DebugData.DecompiledMemberReferences[key],
+							new AstLocation(map.SourceCodeLine, 0),
+							map.ILInstructionOffset, BreakpointAction.Break, DebugData.Language));
+						
+						BookmarkManager.RemoveMark(breakpoint);
+						break;
+					}
+				}
+			}
+			
+			newBookmarks.ForEach(m => BookmarkManager.AddMark(m));
 		}
 	}
 }
