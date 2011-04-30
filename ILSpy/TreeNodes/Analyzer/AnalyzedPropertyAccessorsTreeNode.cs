@@ -21,7 +21,7 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	public sealed class AnalyzedPropertyAccessorsTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedPropertyAccessorsTreeNode : AnalyzerTreeNode
 	{
 		public AnalyzedPropertyAccessorsTreeNode(PropertyDefinition analyzedProperty)
 		{

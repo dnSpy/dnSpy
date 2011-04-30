@@ -74,20 +74,34 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
+			if (!HasExtensionAttribute(type))
+				yield break;
 			foreach (MethodDefinition method in type.Methods) {
-				if (method.IsStatic && method.HasCustomAttributes) {
-					if (method.CustomAttributes.Any(ca => ca.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")) {
-						if (method.HasParameters && method.Parameters[0].ParameterType.Resolve() == analyzedType) {
-							yield return new AnalyzedMethodTreeNode(method);
-						}
+				if (method.IsStatic && HasExtensionAttribute(method)) {
+					if (method.HasParameters && method.Parameters[0].ParameterType.Resolve() == analyzedType) {
+						yield return new AnalyzedMethodTreeNode(method);
 					}
 				}
 			}
 		}
+		
+		bool HasExtensionAttribute(ICustomAttributeProvider p)
+		{
+			if (p.HasCustomAttributes) {
+				foreach (CustomAttribute ca in p.CustomAttributes) {
+					TypeReference t = ca.AttributeType;
+					if (t.Name == "ExtensionAttribute" && t.Namespace == "System.Runtime.CompilerServices")
+						return true;
+				}
+			}
+			return false;
+		}
+		
 
 		public static bool CanShow(TypeDefinition type)
 		{
-			return !(type.IsEnum);
+			// show on all types except static classes
+			return !(type.IsAbstract && type.IsSealed);
 		}
 	}
 }
