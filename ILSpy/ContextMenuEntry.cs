@@ -84,8 +84,10 @@ namespace ICSharpCode.ILSpy
 		void treeView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
 			SharpTreeNode[] selectedNodes = treeView.GetTopLevelSelection().ToArray();
-			if (selectedNodes.Length == 0)
+			if (selectedNodes.Length == 0) {
+				e.Handled = true; // don't show the menu
 				return;
+			}
 			ContextMenu menu = new ContextMenu();
 			foreach (var category in entries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
 				if (menu.Items.Count > 0) {

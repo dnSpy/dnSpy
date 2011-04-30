@@ -52,19 +52,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (IMemberTreeNode node in selectedNodes) {
 				TypeDefinition type = node.Member as TypeDefinition;
 				if (type != null)
-					MainWindow.Instance.AddToAnalyzer(new AnalyzedTypeTreeNode(type));
+					AnalyzerTreeView.Instance.Show(new AnalyzedTypeTreeNode(type));
 				FieldDefinition field = node.Member as FieldDefinition;
 				if (field != null)
-					MainWindow.Instance.AddToAnalyzer(new AnalyzedFieldTreeNode(field));
+					AnalyzerTreeView.Instance.Show(new AnalyzedFieldTreeNode(field));
 				MethodDefinition method = node.Member as MethodDefinition;
 				if (method != null)
-					MainWindow.Instance.AddToAnalyzer(new AnalyzedMethodTreeNode(method));
+					AnalyzerTreeView.Instance.Show(new AnalyzedMethodTreeNode(method));
 				var propertyAnalyzer = Analyzer.AnalyzedPropertyTreeNode.TryCreateAnalyzer(node.Member);
 				if (propertyAnalyzer != null)
-					MainWindow.Instance.AddToAnalyzer(propertyAnalyzer);
+					AnalyzerTreeView.Instance.Show(propertyAnalyzer);
 				var eventAnalyzer = Analyzer.AnalyzedEventTreeNode.TryCreateAnalyzer(node.Member);
 				if (eventAnalyzer != null)
-					MainWindow.Instance.AddToAnalyzer(eventAnalyzer);
+					AnalyzerTreeView.Instance.Show(eventAnalyzer);
 			}
 		}
 	}
