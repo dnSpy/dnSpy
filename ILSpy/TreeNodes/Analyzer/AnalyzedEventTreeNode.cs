@@ -21,15 +21,15 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedEventTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedEventTreeNode : AnalyzerTreeNode
 	{
-		EventDefinition analyzedEvent;
-		string prefix;
+		private readonly EventDefinition analyzedEvent;
+		private readonly string prefix;
 
 		public AnalyzedEventTreeNode(EventDefinition analyzedEvent, string prefix = "")
 		{
 			if (analyzedEvent == null)
-				throw new ArgumentNullException("analyzedMethod");
+				throw new ArgumentNullException("analyzedEvent");
 			this.analyzedEvent = analyzedEvent;
 			this.prefix = prefix;
 			this.LazyLoading = true;

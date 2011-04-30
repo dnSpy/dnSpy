@@ -25,13 +25,13 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedFieldAccessNode : AnalyzerTreeNode
+	internal sealed class AnalyzedFieldAccessTreeNode : AnalyzerTreeNode
 	{
-		readonly bool showWrites; // true: show writes; false: show read access
-		readonly FieldDefinition analyzedField;
-		readonly ThreadingSupport threading;
+		private readonly bool showWrites; // true: show writes; false: show read access
+		private readonly FieldDefinition analyzedField;
+		private readonly ThreadingSupport threading;
 
-		public AnalyzedFieldAccessNode(FieldDefinition analyzedField, bool showWrites)
+		public AnalyzedFieldAccessTreeNode(FieldDefinition analyzedField, bool showWrites)
 		{
 			if (analyzedField == null)
 				throw new ArgumentNullException("analyzedField");
@@ -66,13 +66,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
 			var analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedField, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct);
 		}
 
-		IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			string name = analyzedField.Name;
 			string declTypeName = analyzedField.DeclaringType.FullName;
@@ -84,7 +84,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (CanBeReference(instr.OpCode.Code)) {
 						FieldReference fr = instr.Operand as FieldReference;
-						if (fr != null && fr.Name == name && Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType) && fr.Resolve() == analyzedField) {
+						if (fr != null && fr.Name == name && 
+							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType) && 
+							fr.Resolve() == analyzedField) {
 							found = true;
 							break;
 						}
@@ -98,7 +100,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		bool CanBeReference(Code code)
+		private bool CanBeReference(Code code)
 		{
 			switch (code) {
 				case Code.Ldfld:

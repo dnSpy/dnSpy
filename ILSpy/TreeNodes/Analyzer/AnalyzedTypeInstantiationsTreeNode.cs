@@ -27,11 +27,11 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedTypeInstantiationsTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedTypeInstantiationsTreeNode : AnalyzerTreeNode
 	{
-		TypeDefinition analyzedType;
-		ThreadingSupport threading;
-		bool IsSystemObject;
+		private readonly TypeDefinition analyzedType;
+		private readonly ThreadingSupport threading;
+		private readonly bool isSystemObject;
 
 		public AnalyzedTypeInstantiationsTreeNode(TypeDefinition analyzedType)
 		{
@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
 
-			this.IsSystemObject = (analyzedType.FullName == "System.Object");
+			this.isSystemObject = (analyzedType.FullName == "System.Object");
 		}
 
 		public override object Text
@@ -69,7 +69,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
 			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
 
@@ -77,7 +77,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return analyzer.PerformAnalysis(ct);
 		}
 
-		IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			foreach (MethodDefinition method in type.Methods) {
 				bool found = false;
@@ -87,7 +87,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				// ignore chained constructors
 				// (since object is the root of everything, we can short circuit the test in this case)
 				if (method.Name == ".ctor" &&
-					(IsSystemObject || analyzedType == type || TypesHierarchyHelpers.IsBaseType(analyzedType, type, false)))
+					(isSystemObject || analyzedType == type || TypesHierarchyHelpers.IsBaseType(analyzedType, type, false)))
 					continue;
 
 				foreach (Instruction instr in method.Body.Instructions) {
@@ -114,6 +114,5 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 			return false;
 		}
-
 	}
 }

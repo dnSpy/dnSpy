@@ -400,8 +400,8 @@ namespace ICSharpCode.ILSpy.Baml
 				BamlDecompiler decompiler = CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, asm.FileName);
 				
 				MemoryStream bamlStream = new MemoryStream();
-				data.Position = 0;
-				data.CopyTo(bamlStream);
+				Data.Position = 0;
+				Data.CopyTo(bamlStream);
 				
 				output.Write(decompiler.DecompileBaml(bamlStream, asm.FileName, new ConnectMethodDecompiler(asm), new AssemblyResolver(asm)));
 				return true;

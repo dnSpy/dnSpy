@@ -24,7 +24,7 @@ using Mono.Cecil;
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
 	[ExportContextMenuEntry(Header = "Analyze", Icon = "images/Search.png")]
-	sealed class AnalyzeContextMenuEntry : IContextMenuEntry
+	internal sealed class AnalyzeContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(SharpTreeNode[] selectedNodes)
 		{
@@ -41,6 +41,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					|| Analyzer.AnalyzedEventTreeNode.CanShow(node.Member)))
 					return false;
 			}
+
 			return true;
 		}
 
@@ -54,7 +55,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					MainWindow.Instance.AddToAnalyzer(new AnalyzedTypeTreeNode(type));
 				FieldDefinition field = node.Member as FieldDefinition;
 				if (field != null)
-					MainWindow.Instance.AddToAnalyzer(new AnalyzedFieldNode(field));
+					MainWindow.Instance.AddToAnalyzer(new AnalyzedFieldTreeNode(field));
 				MethodDefinition method = node.Member as MethodDefinition;
 				if (method != null)
 					MainWindow.Instance.AddToAnalyzer(new AnalyzedMethodTreeNode(method));

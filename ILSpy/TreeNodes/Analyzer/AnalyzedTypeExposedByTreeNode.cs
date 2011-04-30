@@ -24,11 +24,10 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedTypeExposedByTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedTypeExposedByTreeNode : AnalyzerTreeNode
 	{
-		TypeDefinition analyzedType;
-		ThreadingSupport threading;
-		bool IsSystemObject;
+		private readonly TypeDefinition analyzedType;
+		private readonly ThreadingSupport threading;
 
 		public AnalyzedTypeExposedByTreeNode(TypeDefinition analyzedType)
 		{
@@ -38,8 +37,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.analyzedType = analyzedType;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
-
-			this.IsSystemObject = (analyzedType.FullName == "System.Object");
 		}
 
 		public override object Text
@@ -66,7 +63,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
 			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
 
@@ -74,7 +71,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return analyzer.PerformAnalysis(ct);
 		}
 
-		IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			if (analyzedType.IsEnum && type == analyzedType)
 				yield break;
@@ -84,7 +81,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			foreach (FieldDefinition field in type.Fields) {
 				if (TypeIsExposedBy(field))
-					yield return new AnalyzedFieldNode(field);
+					yield return new AnalyzedFieldTreeNode(field);
 			}
 
 			foreach (PropertyDefinition property in type.Properties) {
@@ -165,14 +162,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return false;
 		}
 
-		private bool IsPrivate(PropertyDefinition property)
+		private static bool IsPrivate(PropertyDefinition property)
 		{
 			bool isGetterPublic = (property.GetMethod != null && !property.GetMethod.IsPrivate);
 			bool isSetterPublic = (property.SetMethod != null && !property.SetMethod.IsPrivate);
 			return !(isGetterPublic || isSetterPublic);
 		}
 
-		private bool IsPrivate(EventDefinition eventDef)
+		private static bool IsPrivate(EventDefinition eventDef)
 		{
 			bool isAdderPublic = (eventDef.AddMethod != null && !eventDef.AddMethod.IsPrivate);
 			bool isRemoverPublic = (eventDef.RemoveMethod != null && !eventDef.RemoveMethod.IsPrivate);
@@ -183,6 +180,5 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			return true;
 		}
-
 	}
 }

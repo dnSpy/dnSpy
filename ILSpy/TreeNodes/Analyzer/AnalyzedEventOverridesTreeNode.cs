@@ -27,10 +27,10 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedEventOverridesTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedEventOverridesTreeNode : AnalyzerTreeNode
 	{
-		readonly EventDefinition analyzedEvent;
-		readonly ThreadingSupport threading;
+		private readonly EventDefinition analyzedEvent;
+		private readonly ThreadingSupport threading;
 
 		public AnalyzedEventOverridesTreeNode(EventDefinition analyzedEvent)
 		{
@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		public override object Text
 		{
-			get { return "Overriden By"; }
+			get { return "Overridden By"; }
 		}
 
 		public override object Icon
@@ -66,19 +66,20 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
 			return FindReferences(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), ct);
 		}
 
-		IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
 		{
 			assemblies = assemblies.Where(asm => asm.AssemblyDefinition != null);
+
 			// use parallelism only on the assembly level (avoid locks within Cecil)
 			return assemblies.AsParallel().WithCancellation(ct).SelectMany((LoadedAssembly asm) => FindReferences(asm, ct));
 		}
 
-		IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
 		{
 			string asmName = asm.AssemblyDefinition.Name.Name;
 			string name = analyzedEvent.Name;

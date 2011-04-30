@@ -21,15 +21,12 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	public class AnalyzedPropertyAccessorsTreeNode : AnalyzerTreeNode
+	public sealed class AnalyzedPropertyAccessorsTreeNode : AnalyzerTreeNode
 	{
-		PropertyDefinition analyzedProperty;
-
 		public AnalyzedPropertyAccessorsTreeNode(PropertyDefinition analyzedProperty)
 		{
 			if (analyzedProperty == null)
 				throw new ArgumentNullException("analyzedProperty");
-			this.analyzedProperty = analyzedProperty;
 
 			if (analyzedProperty.GetMethod != null)
 				this.Children.Add(new AnalyzedPropertyAccessorTreeNode(analyzedProperty.GetMethod, "get"));
@@ -54,9 +51,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return !MainWindow.Instance.CurrentLanguage.ShowMember(property.GetMethod ?? property.SetMethod);
 		}
 
-		class AnalyzedPropertyAccessorTreeNode : AnalyzedMethodTreeNode
+		private class AnalyzedPropertyAccessorTreeNode : AnalyzedMethodTreeNode
 		{
-			string name;
+			private readonly string name;
 
 			public AnalyzedPropertyAccessorTreeNode(MethodDefinition analyzedMethod, string name)
 				: base(analyzedMethod)

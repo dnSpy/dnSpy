@@ -21,11 +21,11 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedFieldNode : AnalyzerTreeNode, IMemberTreeNode
+	internal class AnalyzedFieldTreeNode : AnalyzerTreeNode, IMemberTreeNode
 	{
-		FieldDefinition analyzedField;
+		private readonly FieldDefinition analyzedField;
 
-		public AnalyzedFieldNode(FieldDefinition analyzedField)
+		public AnalyzedFieldTreeNode(FieldDefinition analyzedField)
 		{
 			if (analyzedField == null)
 				throw new ArgumentNullException("analyzedField");
@@ -55,9 +55,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		protected override void LoadChildren()
 		{
-			this.Children.Add(new AnalyzedFieldAccessNode(analyzedField, false));
+			this.Children.Add(new AnalyzedFieldAccessTreeNode(analyzedField, false));
 			if (!analyzedField.IsLiteral)
-				this.Children.Add(new AnalyzedFieldAccessNode(analyzedField, true));
+				this.Children.Add(new AnalyzedFieldAccessTreeNode(analyzedField, true));
 		}
 
 		MemberReference IMemberTreeNode.Member

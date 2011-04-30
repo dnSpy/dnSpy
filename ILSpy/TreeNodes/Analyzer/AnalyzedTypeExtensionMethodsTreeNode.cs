@@ -25,11 +25,10 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedTypeExtensionMethodsTreeNode : AnalyzerTreeNode
+	internal class AnalyzedTypeExtensionMethodsTreeNode : AnalyzerTreeNode
 	{
-		TypeDefinition analyzedType;
-		ThreadingSupport threading;
-		bool IsSystemObject;
+		private readonly TypeDefinition analyzedType;
+		private readonly ThreadingSupport threading;
 
 		public AnalyzedTypeExtensionMethodsTreeNode(TypeDefinition analyzedType)
 		{
@@ -39,8 +38,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.analyzedType = analyzedType;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
-
-			this.IsSystemObject = (analyzedType.FullName == "System.Object");
 		}
 
 		public override object Text
@@ -67,7 +64,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
 			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
 
@@ -75,7 +72,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return analyzer.PerformAnalysis(ct);
 		}
 
-		IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			foreach (MethodDefinition method in type.Methods) {
 				if (method.IsStatic && method.HasCustomAttributes) {
@@ -88,32 +85,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		private bool TypeIsExposedBy(MethodDefinition method)
-		{
-			if (method.IsPrivate)
-				return false;
-
-			// exclude methods with 'semantics'. for example, property getters & setters.
-			if (method.SemanticsAttributes != MethodSemanticsAttributes.None)
-				return false;
-
-			if (method.ReturnType.Resolve() == analyzedType)
-				return true;
-
-			if (method.HasParameters) {
-				foreach (var parameter in method.Parameters) {
-					if (parameter.ParameterType.Resolve() == analyzedType)
-						return true;
-				}
-			}
-
-			return false;
-		}
-
 		public static bool CanShow(TypeDefinition type)
 		{
 			return !(type.IsEnum);
 		}
-
 	}
 }

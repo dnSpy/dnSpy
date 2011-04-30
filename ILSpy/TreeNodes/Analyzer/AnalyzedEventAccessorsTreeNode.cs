@@ -21,15 +21,12 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	public class AnalyzedEventAccessorsTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedEventAccessorsTreeNode : AnalyzerTreeNode
 	{
-		EventDefinition analyzedEvent;
-
 		public AnalyzedEventAccessorsTreeNode(EventDefinition analyzedEvent)
 		{
 			if (analyzedEvent == null)
 				throw new ArgumentNullException("analyzedEvent");
-			this.analyzedEvent = analyzedEvent;
 
 			if (analyzedEvent.AddMethod != null)
 				this.Children.Add(new AnalyzedEventAccessorTreeNode(analyzedEvent.AddMethod, "add"));
@@ -54,9 +51,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return !MainWindow.Instance.CurrentLanguage.ShowMember(property.AddMethod ?? property.RemoveMethod);
 		}
 
-		class AnalyzedEventAccessorTreeNode : AnalyzedMethodTreeNode
+		internal class AnalyzedEventAccessorTreeNode : AnalyzedMethodTreeNode
 		{
-			string name;
+			private string name;
 
 			public AnalyzedEventAccessorTreeNode(MethodDefinition analyzedMethod, string name)
 				: base(analyzedMethod)

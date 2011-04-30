@@ -21,10 +21,10 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedMethodTreeNode : AnalyzerTreeNode, IMemberTreeNode
+	internal class AnalyzedMethodTreeNode : AnalyzerTreeNode, IMemberTreeNode
 	{
-		MethodDefinition analyzedMethod;
-		string prefix;
+		private readonly MethodDefinition analyzedMethod;
+		private readonly string prefix;
 
 		public AnalyzedMethodTreeNode(MethodDefinition analyzedMethod, string prefix = "")
 		{
@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		protected override void LoadChildren()
 		{
 			if (analyzedMethod.HasBody)
-				this.Children.Add(new AnalyzedMethodUsesNode(analyzedMethod));
+				this.Children.Add(new AnalyzedMethodUsesTreeNode(analyzedMethod));
 			this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));
 			if (AnalyzedMethodOverridesTreeNode.CanShow(analyzedMethod))
 				this.Children.Add(new AnalyzedMethodOverridesTreeNode(analyzedMethod));

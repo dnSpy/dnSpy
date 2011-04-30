@@ -21,9 +21,9 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedTypeTreeNode : AnalyzerTreeNode, IMemberTreeNode
+	internal class AnalyzedTypeTreeNode : AnalyzerTreeNode, IMemberTreeNode
 	{
-		TypeDefinition analyzedType;
+		private readonly TypeDefinition analyzedType;
 
 		public AnalyzedTypeTreeNode(TypeDefinition analyzedType)
 		{

@@ -108,7 +108,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				return FindReferencesInTypeScope(ct);
 			}
 
-
 			if (memberAccessibility == Accessibility.Internal ||
 				memberAccessibility == Accessibility.FamilyAndInternal ||
 				typeAccessibility == Accessibility.Internal ||
@@ -136,7 +135,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		private Accessibility GetNestedTypeAccessibility(TypeDefinition type)
+		private static Accessibility GetNestedTypeAccessibility(TypeDefinition type)
 		{
 			Accessibility result;
 			switch (type.Attributes & TypeAttributes.VisibilityMask) {
@@ -177,22 +176,23 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			Public
 		}
 
-
-		IEnumerable<T> FindReferencesInAssemblyAndFriends(CancellationToken ct)
+		private IEnumerable<T> FindReferencesInAssemblyAndFriends(CancellationToken ct)
 		{
 			var assemblies = GetAssemblyAndAnyFriends(assemblyScope, ct);
+
 			// use parallelism only on the assembly level (avoid locks within Cecil)
 			return assemblies.AsParallel().WithCancellation(ct).SelectMany((AssemblyDefinition a) => FindReferencesInAssembly(a, ct));
 		}
 
-		IEnumerable<T> FindReferencesGlobal(CancellationToken ct)
+		private IEnumerable<T> FindReferencesGlobal(CancellationToken ct)
 		{
 			var assemblies = GetReferencingAssemblies(assemblyScope, ct);
+
 			// use parallelism only on the assembly level (avoid locks within Cecil)
 			return assemblies.AsParallel().WithCancellation(ct).SelectMany((AssemblyDefinition asm) => FindReferencesInAssembly(asm, ct));
 		}
 
-		IEnumerable<T> FindReferencesInAssembly(AssemblyDefinition asm, CancellationToken ct)
+		private IEnumerable<T> FindReferencesInAssembly(AssemblyDefinition asm, CancellationToken ct)
 		{
 			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.MainModule.Types, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
@@ -203,7 +203,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<T> FindReferencesInTypeScope(CancellationToken ct)
+		private IEnumerable<T> FindReferencesInTypeScope(CancellationToken ct)
 		{
 			foreach (TypeDefinition type in TreeTraversal.PreOrder(typeScope, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
@@ -214,7 +214,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<AssemblyDefinition> GetReferencingAssemblies(AssemblyDefinition asm, CancellationToken ct)
+		private IEnumerable<AssemblyDefinition> GetReferencingAssemblies(AssemblyDefinition asm, CancellationToken ct)
 		{
 			yield return asm;
 
@@ -236,7 +236,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<AssemblyDefinition> GetAssemblyAndAnyFriends(AssemblyDefinition asm, CancellationToken ct)
+		private IEnumerable<AssemblyDefinition> GetAssemblyAndAnyFriends(AssemblyDefinition asm, CancellationToken ct)
 		{
 			yield return asm;
 

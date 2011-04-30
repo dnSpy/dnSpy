@@ -24,7 +24,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
 	public class AnalyzerTreeNode : SharpTreeNode
 	{
-		Language language;
+		private Language language;
 
 		public Language Language
 		{

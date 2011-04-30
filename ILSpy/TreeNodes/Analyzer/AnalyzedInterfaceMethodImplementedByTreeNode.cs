@@ -26,10 +26,10 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedInterfaceMethodImplementedByTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedInterfaceMethodImplementedByTreeNode : AnalyzerTreeNode
 	{
-		MethodDefinition analyzedMethod;
-		ThreadingSupport threading;
+		private readonly MethodDefinition analyzedMethod;
+		private readonly ThreadingSupport threading;
 
 		public AnalyzedInterfaceMethodImplementedByTreeNode(MethodDefinition analyzedMethod)
 		{
@@ -65,14 +65,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
 			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
 			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct);
 		}
 
-		IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			if (!type.HasInterfaces)
 				yield break;

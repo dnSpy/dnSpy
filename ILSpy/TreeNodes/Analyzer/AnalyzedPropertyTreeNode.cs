@@ -22,16 +22,16 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedPropertyTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedPropertyTreeNode : AnalyzerTreeNode
 	{
-		PropertyDefinition analyzedProperty;
-		bool isIndexer;
-		string prefix;
+		private readonly PropertyDefinition analyzedProperty;
+		private readonly bool isIndexer;
+		private readonly string prefix;
 
 		public AnalyzedPropertyTreeNode(PropertyDefinition analyzedProperty, string prefix = "")
 		{
 			if (analyzedProperty == null)
-				throw new ArgumentNullException("analyzedMethod");
+				throw new ArgumentNullException("analyzedProperty");
 			this.isIndexer = analyzedProperty.IsIndexer();
 			this.analyzedProperty = analyzedProperty;
 			this.prefix = prefix;
