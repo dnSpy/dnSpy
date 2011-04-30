@@ -32,12 +32,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	/// <summary>
 	/// Searches for overrides of the analyzed method.
 	/// </summary>
-	class AnalyzerMethodOverridesTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedMethodOverridesTreeNode : AnalyzerTreeNode
 	{
-		readonly MethodDefinition analyzedMethod;
-		readonly ThreadingSupport threading;
+		private readonly MethodDefinition analyzedMethod;
+		private readonly ThreadingSupport threading;
 
-		public AnalyzerMethodOverridesTreeNode(MethodDefinition analyzedMethod)
+		public AnalyzedMethodOverridesTreeNode(MethodDefinition analyzedMethod)
 		{
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
@@ -64,33 +64,32 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		protected override void OnCollapsing()
 		{
-			if (threading.IsRunning)
-			{
+			if (threading.IsRunning) {
 				this.LazyLoading = true;
 				threading.Cancel();
 				this.Children.Clear();
 			}
 		}
 
-		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
 			return FindReferences(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), ct);
 		}
 
-		IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
 		{
 			assemblies = assemblies.Where(asm => asm.AssemblyDefinition != null);
+
 			// use parallelism only on the assembly level (avoid locks within Cecil)
 			return assemblies.AsParallel().WithCancellation(ct).SelectMany((LoadedAssembly asm) => FindReferences(asm, ct));
 		}
 
-		IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
 		{
 			string asmName = asm.AssemblyDefinition.Name.Name;
 			string name = analyzedMethod.Name;
 			string declTypeName = analyzedMethod.DeclaringType.FullName;
-			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes))
-			{
+			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 				SharpTreeNode newNode = null;
 				try {
@@ -109,14 +108,18 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				catch (ReferenceResolvingException) {
 					// ignore this type definition. maybe add a notification about such cases.
 				}
+
 				if (newNode != null)
 					yield return newNode;
 			}
 		}
 
-		public static bool CanShowAnalyzer(MethodDefinition method)
+		public static bool CanShow(MethodDefinition method)
 		{
-			return method.IsVirtual && !method.IsFinal && !method.DeclaringType.IsSealed && !method.DeclaringType.IsInterface;	// interfaces are temporarly disabled
+			return method.IsVirtual &&
+				!method.IsFinal &&
+				!method.DeclaringType.IsSealed &&
+				!method.DeclaringType.IsInterface;	// interface methods are definitions not implementations - cannot be overridden
 		}
 	}
 }

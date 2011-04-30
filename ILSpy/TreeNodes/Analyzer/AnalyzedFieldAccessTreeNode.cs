@@ -25,24 +25,26 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedMethodUsedByTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedFieldAccessTreeNode : AnalyzerTreeNode
 	{
-		private readonly MethodDefinition analyzedMethod;
+		private readonly bool showWrites; // true: show writes; false: show read access
+		private readonly FieldDefinition analyzedField;
 		private readonly ThreadingSupport threading;
 
-		public AnalyzedMethodUsedByTreeNode(MethodDefinition analyzedMethod)
+		public AnalyzedFieldAccessTreeNode(FieldDefinition analyzedField, bool showWrites)
 		{
-			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+			if (analyzedField == null)
+				throw new ArgumentNullException("analyzedField");
 
-			this.analyzedMethod = analyzedMethod;
+			this.analyzedField = analyzedField;
+			this.showWrites = showWrites;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
 		}
 
 		public override object Text
 		{
-			get { return "Used By"; }
+			get { return showWrites ? "Assigned By" : "Read By"; }
 		}
 
 		public override object Icon
@@ -66,27 +68,28 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
-
-			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
+			var analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedField, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct);
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			string name = analyzedMethod.Name;
+			string name = analyzedField.Name;
+			string declTypeName = analyzedField.DeclaringType.FullName;
+
 			foreach (MethodDefinition method in type.Methods) {
 				bool found = false;
 				if (!method.HasBody)
 					continue;
 				foreach (Instruction instr in method.Body.Instructions) {
-					MethodReference mr = instr.Operand as MethodReference;
-					if (mr != null &&
-						mr.Name == name &&
-						Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
-						mr.Resolve() == analyzedMethod) {
-						found = true;
-						break;
+					if (CanBeReference(instr.OpCode.Code)) {
+						FieldReference fr = instr.Operand as FieldReference;
+						if (fr != null && fr.Name == name && 
+							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType) && 
+							fr.Resolve() == analyzedField) {
+							found = true;
+							break;
+						}
 					}
 				}
 
@@ -94,6 +97,23 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 				if (found)
 					yield return new AnalyzedMethodTreeNode(method);
+			}
+		}
+
+		private bool CanBeReference(Code code)
+		{
+			switch (code) {
+				case Code.Ldfld:
+				case Code.Ldsfld:
+					return !showWrites;
+				case Code.Stfld:
+				case Code.Stsfld:
+					return showWrites;
+				case Code.Ldflda:
+				case Code.Ldsflda:
+					return true; // always show address-loading
+				default:
+					return false;
 			}
 		}
 	}

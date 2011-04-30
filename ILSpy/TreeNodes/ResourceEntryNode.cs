@@ -37,17 +37,25 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// </summary>
 	public class ResourceEntryNode : ILSpyTreeNode
 	{
-		protected readonly string key;
-		protected readonly Stream data;
-		
-		public override object Text {
+		private readonly string key;
+		private readonly Stream data;
+
+		public override object Text
+		{
 			get { return key.ToString(); }
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return Images.Resource; }
 		}
-		
+
+		protected Stream Data
+		{
+			get { return data; }
+		}
+
+
 		public ResourceEntryNode(string key, Stream data)
 		{
 			if (key == null)
@@ -57,7 +65,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.key = key;
 			this.data = data;
 		}
-		
+
 		public static ILSpyTreeNode Create(string key, Stream data)
 		{
 			ILSpyTreeNode result = null;
@@ -68,12 +76,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return result ?? new ResourceEntryNode(key, data);
 		}
-		
+
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.WriteCommentLine(output, string.Format("{0} = {1}", key, data));
 		}
-		
+
 		public override bool Save(DecompilerTextView textView)
 		{
 			SaveFileDialog dlg = new SaveFileDialog();
@@ -87,12 +95,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return true;
 		}
 	}
-	
+
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class ImageResourceNodeFactory : IResourceNodeFactory
 	{
 		static readonly string[] imageFileExtensions = { ".png", ".gif", ".bmp", ".jpg", ".ico" };
-		
+
 		public ILSpyTreeNode CreateNode(Mono.Cecil.Resource resource)
 		{
 			EmbeddedResource er = resource as EmbeddedResource;
@@ -101,7 +109,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return null;
 		}
-		
+
 		public ILSpyTreeNode CreateNode(string key, Stream data)
 		{
 			foreach (string fileExt in imageFileExtensions) {
@@ -111,10 +119,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return null;
 		}
 	}
-	
+
 	sealed class ImageResourceEntryNode : ResourceEntryNode
 	{
-		public ImageResourceEntryNode(string key, Stream data) : base(key, data)
+		public ImageResourceEntryNode(string key, Stream data)
+			: base(key, data)
 		{
 		}
 
@@ -127,17 +136,18 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			try {
 				AvalonEditTextOutput output = new AvalonEditTextOutput();
-				data.Position = 0;
+				Data.Position = 0;
 				BitmapImage image = new BitmapImage();
 				image.BeginInit();
-				image.StreamSource = data;
+				image.StreamSource = Data;
 				image.EndInit();
 				output.AddUIElement(() => new Image { Source = image });
 				output.WriteLine();
 				output.AddButton(Images.Save, "Save", delegate { Save(null); });
 				textView.Show(output, null);
 				return true;
-			} catch (Exception) {
+			}
+			catch (Exception) {
 				return false;
 			}
 		}

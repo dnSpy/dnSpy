@@ -182,6 +182,22 @@ namespace ICSharpCode.Decompiler.Ast
 			return true;
 		}
 
+		public static bool MatchInterfaceMethod(MethodDefinition candidate, MethodDefinition method, TypeReference interfaceContextType)
+		{
+			var candidateContext = CreateGenericContext(candidate.DeclaringType);
+			var gCandidate = candidateContext.ApplyTo(candidate);
+
+			if (interfaceContextType is GenericInstanceType) {
+				var methodContext = new GenericContext<TypeDefinition>(interfaceContextType.Resolve(), ((GenericInstanceType)interfaceContextType).GenericArguments);
+				var gMethod = methodContext.ApplyTo(method);
+				return MatchMethod(gCandidate, gMethod);
+			} else {
+				var methodContext = CreateGenericContext(interfaceContextType.Resolve());
+				var gMethod = candidateContext.ApplyTo(method);
+				return MatchMethod(gCandidate, gMethod);
+			}
+		}
+
 		private static bool MatchProperty(GenericContext<PropertyDefinition> candidate, GenericContext<PropertyDefinition> property)
 		{
 			var mCandidate = candidate.Item;

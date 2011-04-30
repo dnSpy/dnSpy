@@ -20,34 +20,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-
-using ICSharpCode.NRefactory.Utils;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedFieldAccessNode : AnalyzerTreeNode
+	internal class AnalyzedTypeExtensionMethodsTreeNode : AnalyzerTreeNode
 	{
-		readonly bool showWrites; // true: show writes; false: show read access
-		readonly FieldDefinition analyzedField;
-		readonly ThreadingSupport threading;
+		private readonly TypeDefinition analyzedType;
+		private readonly ThreadingSupport threading;
 
-		public AnalyzedFieldAccessNode(FieldDefinition analyzedField, bool showWrites)
+		public AnalyzedTypeExtensionMethodsTreeNode(TypeDefinition analyzedType)
 		{
-			if (analyzedField == null)
-				throw new ArgumentNullException("analyzedField");
+			if (analyzedType == null)
+				throw new ArgumentNullException("analyzedType");
 
-			this.analyzedField = analyzedField;
-			this.showWrites = showWrites;
+			this.analyzedType = analyzedType;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
 		}
 
 		public override object Text
 		{
-			get { return showWrites ? "Assigned By" : "Read By"; }
+			get { return "Extension Methods"; }
 		}
 
 		public override object Icon
@@ -69,50 +64,30 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			var analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedField, FindReferencesInType);
+			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
+
+			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedType, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct);
 		}
 
-		IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			string name = analyzedField.Name;
-			string declTypeName = analyzedField.DeclaringType.FullName;
-
 			foreach (MethodDefinition method in type.Methods) {
-				bool found = false;
-				if (!method.HasBody)
-					continue;
-				foreach (Instruction instr in method.Body.Instructions) {
-					if (CanBeReference(instr.OpCode.Code)) {
-						FieldReference fr = instr.Operand as FieldReference;
-						if (fr != null && fr.Name == name && Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType) && fr.Resolve() == analyzedField) {
-							found = true;
-							break;
+				if (method.IsStatic && method.HasCustomAttributes) {
+					if (method.CustomAttributes.Any(ca => ca.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")) {
+						if (method.HasParameters && method.Parameters[0].ParameterType.Resolve() == analyzedType) {
+							yield return new AnalyzedMethodTreeNode(method);
 						}
 					}
 				}
-				if (found)
-					yield return new AnalyzedMethodTreeNode(method);
 			}
 		}
 
-		bool CanBeReference(Code code)
+		public static bool CanShow(TypeDefinition type)
 		{
-			switch (code) {
-				case Code.Ldfld:
-				case Code.Ldsfld:
-					return !showWrites;
-				case Code.Stfld:
-				case Code.Stsfld:
-					return showWrites;
-				case Code.Ldflda:
-				case Code.Ldsflda:
-					return true; // always show address-loading
-				default:
-					return false;
-			}
+			return !(type.IsEnum);
 		}
 	}
 }

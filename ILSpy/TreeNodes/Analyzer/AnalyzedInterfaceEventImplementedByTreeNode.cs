@@ -21,30 +21,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.NRefactory.Utils;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedEventOverridesTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedInterfaceEventImplementedByTreeNode : AnalyzerTreeNode
 	{
 		private readonly EventDefinition analyzedEvent;
+		private readonly MethodDefinition analyzedMethod;
 		private readonly ThreadingSupport threading;
 
-		public AnalyzedEventOverridesTreeNode(EventDefinition analyzedEvent)
+		public AnalyzedInterfaceEventImplementedByTreeNode(EventDefinition analyzedEvent)
 		{
 			if (analyzedEvent == null)
 				throw new ArgumentNullException("analyzedEvent");
 
 			this.analyzedEvent = analyzedEvent;
+			this.analyzedMethod = this.analyzedEvent.AddMethod ?? this.analyzedEvent.RemoveMethod;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
 		}
 
 		public override object Text
 		{
-			get { return "Overridden By"; }
+			get { return "Implemented By"; }
 		}
 
 		public override object Icon
@@ -68,44 +69,37 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			return FindReferences(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), ct);
+			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
+			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
+			return analyzer.PerformAnalysis(ct);
 		}
 
-		private IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			assemblies = assemblies.Where(asm => asm.AssemblyDefinition != null);
+			if (!type.HasInterfaces)
+				yield break;
+			TypeReference implementedInterfaceRef = type.Interfaces.FirstOrDefault(i => i.Resolve() == analyzedMethod.DeclaringType);
+			if (implementedInterfaceRef == null)
+				yield break;
 
-			// use parallelism only on the assembly level (avoid locks within Cecil)
-			return assemblies.AsParallel().WithCancellation(ct).SelectMany((LoadedAssembly asm) => FindReferences(asm, ct));
-		}
+			foreach (EventDefinition ev in type.Events.Where(e => e.Name == analyzedEvent.Name)) {
+				MethodDefinition accessor = ev.AddMethod ?? ev.RemoveMethod;
+				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef))
+					yield return new AnalyzedEventTreeNode(ev);
+				yield break;
+			}
 
-		private IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
-		{
-			string asmName = asm.AssemblyDefinition.Name.Name;
-			string name = analyzedEvent.Name;
-			string declTypeName = analyzedEvent.DeclaringType.FullName;
-			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
-				ct.ThrowIfCancellationRequested();
-
-				if (!TypesHierarchyHelpers.IsBaseType(analyzedEvent.DeclaringType, type, resolveTypeArguments: false))
-					continue;
-
-				foreach (EventDefinition eventDef in type.Events) {
-					ct.ThrowIfCancellationRequested();
-
-					if (TypesHierarchyHelpers.IsBaseEvent(analyzedEvent, eventDef)) {
-						MethodDefinition anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-						bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-						yield return new AnalyzedEventTreeNode(eventDef, hidesParent ? "(hides) " : "");
-					}
+			foreach (EventDefinition ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
+				MethodDefinition accessor = ev.AddMethod ?? ev.RemoveMethod;
+				if (accessor.HasOverrides && accessor.Overrides.Any(m => m.Resolve() == analyzedMethod)) {
+					yield return new AnalyzedEventTreeNode(ev);
 				}
 			}
 		}
 
-		public static bool CanShow(EventDefinition property)
+		public static bool CanShow(EventDefinition ev)
 		{
-			var accessor = property.AddMethod ?? property.RemoveMethod;
-			return accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
+			return ev.DeclaringType.IsInterface;
 		}
 	}
 }

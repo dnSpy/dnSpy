@@ -21,11 +21,11 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedMethodTreeNode : AnalyzerTreeNode, IMemberTreeNode
+	internal class AnalyzedMethodTreeNode : AnalyzerTreeNode, IMemberTreeNode
 	{
-		MethodDefinition analyzedMethod;
-		string prefix;
-		
+		private readonly MethodDefinition analyzedMethod;
+		private readonly string prefix;
+
 		public AnalyzedMethodTreeNode(MethodDefinition analyzedMethod, string prefix = "")
 		{
 			if (analyzedMethod == null)
@@ -34,32 +34,39 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.prefix = prefix;
 			this.LazyLoading = true;
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return MethodTreeNode.GetIcon(analyzedMethod); }
 		}
-		
-		public override object Text {
-			get {
-				return prefix + Language.TypeToString(analyzedMethod.DeclaringType, true) + "." + MethodTreeNode.GetText(analyzedMethod, Language); }
+
+		public override object Text
+		{
+			get
+			{
+				return prefix + Language.TypeToString(analyzedMethod.DeclaringType, true) + "." + MethodTreeNode.GetText(analyzedMethod, Language);
+			}
 		}
-		
+
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
 			e.Handled = true;
 			MainWindow.Instance.JumpToReference(analyzedMethod);
 		}
-		
+
 		protected override void LoadChildren()
 		{
 			if (analyzedMethod.HasBody)
-				this.Children.Add(new AnalyzedMethodUsesNode(analyzedMethod));
+				this.Children.Add(new AnalyzedMethodUsesTreeNode(analyzedMethod));
 			this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));
-			if (AnalyzerMethodOverridesTreeNode.CanShowAnalyzer(analyzedMethod))
-				this.Children.Add(new AnalyzerMethodOverridesTreeNode(analyzedMethod));
+			if (AnalyzedMethodOverridesTreeNode.CanShow(analyzedMethod))
+				this.Children.Add(new AnalyzedMethodOverridesTreeNode(analyzedMethod));
+			if (AnalyzedInterfaceMethodImplementedByTreeNode.CanShow(analyzedMethod))
+				this.Children.Add(new AnalyzedInterfaceMethodImplementedByTreeNode(analyzedMethod));
 		}
-		
-		MemberReference IMemberTreeNode.Member {
+
+		MemberReference IMemberTreeNode.Member
+		{
 			get { return analyzedMethod; }
 		}
 	}

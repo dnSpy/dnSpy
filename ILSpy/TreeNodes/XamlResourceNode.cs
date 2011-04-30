@@ -63,7 +63,7 @@ namespace ICSharpCode.ILSpy.Xaml
 						try {
 							// cache read XAML because stream will be closed after first read
 							if (xaml == null) {
-								using (var reader = new StreamReader(data)) {
+								using (var reader = new StreamReader(Data)) {
 									xaml = reader.ReadToEnd();
 								}
 							}
