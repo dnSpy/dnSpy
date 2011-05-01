@@ -400,48 +400,5 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + offset);
 		}
-		
-		/// <summary>
-		/// Verifies if the type contains the member.
-		/// </summary>
-		/// <param name="type"></param>
-		/// <param name="member"></param>
-		/// <returns></returns>
-		public static bool ContainsMember(this TypeDefinition type, MemberReference member)
-		{
-			// check fields
-			if (member is FieldDefinition) {
-				foreach (var field in type.Fields) {
-					if (field == member)
-						return true;
-				}
-			}
-			
-			// check properties
-			if (member is PropertyDefinition) {
-				foreach (var field in type.Properties) {
-					if (field.Resolve() == member)
-						return true;
-				}
-			}
-			
-			// check methods
-			if (member is MethodDefinition) {
-				foreach (var field in type.Methods) {
-					if (field == member)
-						return true;
-				}
-			}
-			
-			// check events
-			if (member is EventDefinition) {
-				foreach (var field in type.Events) {
-					if (field == member)
-						return true;
-				}
-			}
-			
-			return false;
-		}
 	}
 }

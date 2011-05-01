@@ -288,13 +288,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			isMatch = false;
 			frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-			var debugType = (DebugType)frame.MethodInfo.DeclaringType;
-			string nameKey = debugType.FullNameWithoutGenericArguments;
+			int key = frame.MethodInfo.MetadataToken;
 			
 			// get the mapped instruction from the current line marker or the next one
-			return DebugData.CodeMappings[nameKey].GetInstructionByTokenAndOffset(
-				(uint)frame.MethodInfo.MetadataToken,
-				frame.IP, out isMatch);
+			return DebugData.CodeMappings[key].GetInstructionByTokenAndOffset(key, frame.IP, out isMatch);
 		}
 		
 		StackFrame GetStackFrame()
@@ -560,25 +557,14 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			Breakpoint breakpoint = null;
 			
-			uint token;
-			SourceCodeMapping map = DebugData.CodeMappings[bookmark.MemberReference.FullName]
-				.GetInstructionByLineNumber(bookmark.LineNumber, out token);
-			
-			if (map != null) {
-				var declaringType = bookmark.MemberReference.DeclaringType;
-				
-				breakpoint = new ILBreakpoint(
-					debugger,
-					(declaringType ?? bookmark.MemberReference).FullName,
-					bookmark.MemberReference.FullName,
-					bookmark.LineNumber,
-					token,
-					map.ILInstructionOffset.From,
-					bookmark.IsEnabled);
-			}
-			
-			if (breakpoint == null)
-				return;
+			breakpoint = new ILBreakpoint(
+				debugger,
+				bookmark.MemberReference.DeclaringType.FullName,
+				bookmark.MemberReference.FullName,
+				bookmark.LineNumber,
+				bookmark.MemberReference.MetadataToken.ToInt32(),
+				bookmark.ILRange.From,
+				bookmark.IsEnabled);
 			
 			debugger.Breakpoints.Add(breakpoint);
 //			Action setBookmarkColor = delegate {
@@ -749,7 +735,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			foreach (var bookmark in DebuggerService.Breakpoints) {
 				var breakpoint =
 					debugger.Breakpoints.FirstOrDefault(
-						b => b.Line == bookmark.LineNumber && (b as ILBreakpoint).MemberReferenceName.CreateKey() == bookmark.MemberReference.FullName.CreateKey());
+						b => b.Line == bookmark.LineNumber && (b as ILBreakpoint).MetadataToken == bookmark.MemberReference.MetadataToken.ToInt32());
 				if (breakpoint == null)
 					continue;
 				// set the breakpoint only if the module contains the type
@@ -817,32 +803,33 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				if (frame == null)
 					return;
 				
-				uint token = (uint)frame.MethodInfo.MetadataToken;
-				var debugType = (DebugType)frame.MethodInfo.DeclaringType;
+				int token = frame.MethodInfo.MetadataToken;
 				int ilOffset = frame.IP;
 				int line;
 				MemberReference memberReference;
-				string nameKey = debugType.FullNameWithoutGenericArguments;
 				
-				foreach (var key in DebugData.CodeMappings.Keys) {
-					if (key.CreateKey() == nameKey.CreateKey()) {
-						if (DebugData.CodeMappings[key].GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out memberReference, out line)) {
-							DebuggerService.RemoveCurrentLineMarker();
-							DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
-						} else {
-							// is possible that the type is not decompiled yet, so we must do a decompilation on demand
-							DecompileOnDemand(frame);
-						}
+				if (DebugData.CodeMappings.ContainsKey(token)) {
+					if (DebugData.CodeMappings[token].GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out memberReference, out line)) {
+						DebuggerService.RemoveCurrentLineMarker();
+						DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
+					} else {
+						// is possible that the type is not decompiled yet, so we must do a decompilation on demand
+						DecompileOnDemand(frame);
 					}
 				}
+				else {
+					// is possible that the type is not decompiled yet, so we must do a decompilation on demand
+					DecompileOnDemand(frame);
+				}
 			}
+
 		}
 
 		void DecompileOnDemand(StackFrame frame)
 		{
 			string debuggeeVersion = frame.MethodInfo.DebugModule.Process.DebuggeeVersion.Substring(1, 3); // should retrieve 2.0, 3.0, 4.0
 			var debugType = (DebugType)frame.MethodInfo.DeclaringType;
-			uint token = (uint)frame.MethodInfo.MetadataToken;
+			int token = frame.MethodInfo.MetadataToken;
 			int ilOffset = frame.IP;
 			string fullName = debugType.FullNameWithoutGenericArguments;
 			
@@ -852,7 +839,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				// search for type in the current assembly list
 				TypeDefinition typeDef = null;
 				TypeDefinition nestedTypeDef = null;
-				MemberReference member = null;
 				
 				foreach (var assembly in DebugData.LoadedAssemblies) {
 					if ((assembly.FullName.StartsWith("System") || assembly.FullName.StartsWith("Microsoft") || assembly.FullName.StartsWith("mscorlib")) &&
@@ -876,39 +862,54 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				}
 				
 				if (typeDef != null) {
-					member = nestedTypeDef ?? typeDef;
+					TypeDefinition type = nestedTypeDef ?? typeDef;
+					MemberReference memberReference = null;
 					
-					// decompile on demand if the type was not decompiled
-					Dictionary<string, List<MemberMapping>> codeMappings = null;
-					if (!DebugData.CodeMappings.ContainsKey(member.FullName)) {
+					// decompile on demand if the type was no decompiled
+					Dictionary<int, List<MemberMapping>> codeMappings = null;
+					Dictionary<int, MemberReference> members = null;
+					if (!DebugData.CodeMappings.ContainsKey(token)) {
 						if (DebugData.Language == DecompiledLanguages.IL) {
 							var dis = new ReflectionDisassembler(new PlainTextOutput(), true, CancellationToken.None);
-							dis.DisassembleType(nestedTypeDef ?? typeDef);							
+							dis.DisassembleType(type);
 							codeMappings = dis.CodeMappings;
 						} else {
+							// decompile type
 							AstBuilder builder = new AstBuilder(new DecompilerContext(typeDef.Module));
-							builder.AddType(nestedTypeDef ?? typeDef);
+							builder.AddType(type);
 							builder.GenerateCode(new PlainTextOutput());
-							codeMappings = builder.CodeMappings;
+							memberReference = builder.DecompiledMemberReferences[token];
+							
+							// decompile member
+							var context = new DecompilerContext(typeDef.Module);
+							context.CurrentType = type;
+							builder = new AstBuilder(context);
+							if (memberReference is PropertyDefinition)
+								builder.AddProperty(memberReference as PropertyDefinition);
+							else if (memberReference is MethodDefinition)
+								builder.AddMethod(memberReference as MethodDefinition);
+							else if (memberReference is EventDefinition)
+								builder.AddEvent(memberReference as EventDefinition);
+							
+							builder.GenerateCode(new PlainTextOutput());							
+							DebugData.CodeMappings = codeMappings = builder.CodeMappings;
+							DebugData.DecompiledMemberReferences = members = builder.DecompiledMemberReferences;
 						}
 					}
+					
 					// try jump
 					int line;
-					MemberReference memberReference;
 					codeMappings = codeMappings ?? DebugData.CodeMappings;
-					string name = (nestedTypeDef ?? typeDef).FullName;
-					if (codeMappings[name].GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out memberReference, out line)) {
+					if (codeMappings[token].GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out memberReference, out line)) {
 						DebuggerService.RemoveCurrentLineMarker();
-						DebuggerService.JumpToCurrentLine(nestedTypeDef ?? typeDef, line, 0, line, 0);
+						DebuggerService.JumpToCurrentLine(members[token], line, 0, line, 0);
 					} else {
 						StepOut();
 					}
-				} else {
-					// continue since we cannot find the debugged type
-					Debug.Assert(typeDef != null, string.Format("The type {0} was not found!", fullName));
 				}
 			}
 		}
+		
 		
 		public void ShowAttachDialog()
 		{

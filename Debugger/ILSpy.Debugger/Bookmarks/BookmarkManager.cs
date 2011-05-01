@@ -152,70 +152,23 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			int line = CurrentLineBookmark.Instance.LineNumber;
 			var markerType = CurrentLineBookmark.Instance.MemberReference;
 			
-			if (!oldMappings.ContainsKey(markerType.FullName) || !newMappings.ContainsKey(markerType.FullName))
+			if (!oldMappings.ContainsKey(markerType.MetadataToken.ToInt32()) || !newMappings.ContainsKey(markerType.MetadataToken.ToInt32()))
 				return;
 			
 			// 2. Remove it
 			CurrentLineBookmark.Remove();
 			
 			// 3. map the marker line
-			uint token;
-			var instruction = oldMappings[markerType.FullName].GetInstructionByLineNumber(line, out token);
+			int token;
+			var instruction = oldMappings[markerType.MetadataToken.ToInt32()].GetInstructionByLineNumber(line, out token);
 			if (instruction == null)
 				return;
 
 			MemberReference memberReference;
 			int newline;
-			if (newMappings[markerType.FullName].GetSourceCodeFromMetadataTokenAndOffset(token, instruction.ILInstructionOffset.From, out memberReference, out newline)) {
+			if (newMappings[markerType.MetadataToken.ToInt32()].GetSourceCodeFromMetadataTokenAndOffset(token, instruction.ILInstructionOffset.From, out memberReference, out newline)) {
 				// 4. create breakpoint for new languages
 				CurrentLineBookmark.SetPosition(memberReference, newline, 0, newline, 0);
-			}
-		}
-
-		/// <summary>
-		/// Synchronize the IL<->C# breakpoints bookmarks.
-		/// </summary>
-		/// <param name="oldLanguage">Old language.</param>
-		/// <param name="newLanguage">New language.</param>
-		static void SyncBreakpointBookmarks(DecompiledLanguages oldLanguage, DecompiledLanguages newLanguage)
-		{
-			// checks
-			var oldMappings = DebugData.OldCodeMappings;
-			var newMappings = DebugData.CodeMappings;
-
-			if (oldMappings == null || newMappings == null)
-				return;
-			
-			// 1. map the breakpoint lines
-			var oldbps = bookmarks.FindAll(b => b is BreakpointBookmark &&
-			                               ((BreakpointBookmark)b).Language == oldLanguage);
-			if (oldbps == null || oldbps.Count == 0)
-				return;
-
-			foreach (var bp in oldbps) {
-				uint token;
-				string name = bp.MemberReference.FullName;
-				if (!oldMappings.ContainsKey(name) || !newMappings.ContainsKey(name))
-					continue;
-				
-				var instruction = oldMappings[name].GetInstructionByLineNumber(bp.LineNumber, out token);
-				if (instruction == null)
-					continue;
-
-				MemberReference memberReference;
-				int line;
-				if (newMappings[name].GetSourceCodeFromMetadataTokenAndOffset(token, instruction.ILInstructionOffset.From, out memberReference, out line)) {
-					// 2. create breakpoint for new languages
-					var bookmark = new BreakpointBookmark(memberReference, new AstLocation(line, 0), instruction.ILInstructionOffset, BreakpointAction.Break, newLanguage);
-					AddMark(bookmark);
-				}
-			}
-
-			// 3. remove all breakpoints for the old language
-			for (int i = bookmarks.Count - 1; i >= 0; --i) {
-				var bm = bookmarks[i];
-				if (bm is BreakpointBookmark && ((BreakpointBookmark)bm).Language == oldLanguage)
-					RemoveMark(bm);
 			}
 		}
 	}

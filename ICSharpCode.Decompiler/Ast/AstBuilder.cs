@@ -46,8 +46,8 @@ namespace ICSharpCode.Decompiler.Ast
 			this.DecompileMethodBodies = true;
 			
 			this.LocalVariables = new ConcurrentDictionary<int, IEnumerable<ILVariable>>();
-			this.CodeMappings = new Dictionary<string, List<MemberMapping>>();
-			this.DecompiledMemberReferences = new Dictionary<string, MemberReference>();
+			this.CodeMappings = new Dictionary<int, List<MemberMapping>>();
+			this.DecompiledMemberReferences = new Dictionary<int, MemberReference>();
 		}
 		
 		public static bool MemberIsHidden(MemberReference member, DecompilerSettings settings)
@@ -161,10 +161,6 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void AddType(TypeDefinition typeDef)
 		{
-			// add to mappings information
-			this.DecompiledMemberReferences.Add(typeDef.FullName, typeDef);
-			this.CodeMappings.Add(typeDef.FullName, new List<MemberMapping>());
-			
 			var astType = CreateType(typeDef);
 			NamespaceDeclaration astNS = GetCodeNamespace(typeDef.Namespace);
 			if (astNS != null) {
@@ -176,36 +172,22 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void AddMethod(MethodDefinition method)
 		{
-			// add to mappings information
-			this.CodeMappings.Add(method.FullName, new List<MemberMapping>());
-			this.DecompiledMemberReferences.Add(method.FullName, method);
-			
 			AstNode node = method.IsConstructor ? (AstNode)CreateConstructor(method) : CreateMethod(method);
 			astCompileUnit.AddChild(node, CompilationUnit.MemberRole);
 		}
 
 		public void AddProperty(PropertyDefinition property)
 		{
-			// add to mappings information
-			this.CodeMappings.Add(property.FullName, new List<MemberMapping>());
-			this.DecompiledMemberReferences.Add(property.FullName, property);
-			
 			astCompileUnit.AddChild(CreateProperty(property), CompilationUnit.MemberRole);
 		}
 		
 		public void AddField(FieldDefinition field)
 		{
-			this.DecompiledMemberReferences.Add(field.FullName, field);
-			
 			astCompileUnit.AddChild(CreateField(field), CompilationUnit.MemberRole);
 		}
 		
 		public void AddEvent(EventDefinition ev)
 		{
-			// add to mappings information
-			this.DecompiledMemberReferences.Add(ev.FullName, ev);
-			this.CodeMappings.Add(ev.FullName, new List<MemberMapping>());
-			
 			astCompileUnit.AddChild(CreateEvent(ev), CompilationUnit.MemberRole);
 		}
 		
@@ -215,7 +197,7 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <param name="typeDef"></param>
 		/// <returns>TypeDeclaration or DelegateDeclaration.</returns>
 		public AttributedNode CreateType(TypeDefinition typeDef)
-		{	
+		{
 			// create type
 			TypeDefinition oldCurrentType = context.CurrentType;
 			context.CurrentType = typeDef;
@@ -619,12 +601,12 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			// Add events
 			foreach(EventDefinition eventDef in typeDef.Events) {
-				astType.AddChild(CreateEvent(eventDef, true), TypeDeclaration.MemberRole);
+				astType.AddChild(CreateEvent(eventDef), TypeDeclaration.MemberRole);
 			}
 
 			// Add properties
 			foreach(PropertyDefinition propDef in typeDef.Properties) {
-				astType.Members.Add(CreateProperty(propDef, true));
+				astType.Members.Add(CreateProperty(propDef));
 			}
 			
 			// Add methods
@@ -632,17 +614,17 @@ namespace ICSharpCode.Decompiler.Ast
 				if (MemberIsHidden(methodDef, context.Settings)) continue;
 				
 				if (methodDef.IsConstructor)
-					astType.Members.Add(CreateConstructor(methodDef, true));
+					astType.Members.Add(CreateConstructor(methodDef));
 				else
-					astType.Members.Add(CreateMethod(methodDef, true));
+					astType.Members.Add(CreateMethod(methodDef));
 			}
 		}
 
-		AttributedNode CreateMethod(MethodDefinition methodDef, bool isTypeDecompiled = false)
+		AttributedNode CreateMethod(MethodDefinition methodDef)
 		{
 			// Create mapping - used in debugger
-			string name = isTypeDecompiled ? methodDef.DeclaringType.FullName : methodDef.FullName;
-			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings[name], isTypeDecompiled);
+			int currentMemberToken = CreateCodeMappings(methodDef.MetadataToken.ToInt32(), methodDef);
+			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
 			
 			MethodDeclaration astMethod = new MethodDeclaration();
 			astMethod.AddAnnotation(methodDef);
@@ -734,11 +716,11 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		ConstructorDeclaration CreateConstructor(MethodDefinition methodDef, bool isTypeDecompiled = false)
+		ConstructorDeclaration CreateConstructor(MethodDefinition methodDef)
 		{
 			// Create mapping - used in debugger
-			string name = isTypeDecompiled ? methodDef.DeclaringType.FullName : methodDef.FullName;
-			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings[name], isTypeDecompiled);
+			int currentMemberToken = CreateCodeMappings(methodDef.MetadataToken.ToInt32(), methodDef);
+			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
 			
 			ConstructorDeclaration astMethod = new ConstructorDeclaration();
 			astMethod.AddAnnotation(methodDef);
@@ -768,7 +750,7 @@ namespace ICSharpCode.Decompiler.Ast
 			return m & ~Modifiers.Private;
 		}
 
-		MemberDeclaration CreateProperty(PropertyDefinition propDef, bool isTypeDecompiled = false)
+		MemberDeclaration CreateProperty(PropertyDefinition propDef)
 		{
 			PropertyDeclaration astProp = new PropertyDeclaration();
 			astProp.AddAnnotation(propDef);
@@ -804,11 +786,10 @@ namespace ICSharpCode.Decompiler.Ast
 			astProp.Name = CleanName(propDef.Name);
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			
-			string name = isTypeDecompiled ? propDef.DeclaringType.FullName : propDef.FullName;
-			
 			if (propDef.GetMethod != null) {
 				// Create mapping - used in debugger
-				MemberMapping methodMapping = propDef.GetMethod.CreateCodeMapping(this.CodeMappings[name], isTypeDecompiled);
+				int currentMemberToken = CreateCodeMappings(propDef.GetMethod.MetadataToken.ToInt32(), propDef);
+				MemberMapping methodMapping = propDef.GetMethod.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
 				
 				astProp.Getter = new Accessor();
 				astProp.Getter.Body = CreateMethodBody(propDef.GetMethod);
@@ -822,7 +803,8 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			if (propDef.SetMethod != null) {
 				// Create mapping - used in debugger
-				MemberMapping methodMapping = propDef.SetMethod.CreateCodeMapping(this.CodeMappings[name], isTypeDecompiled);
+				int currentMemberToken = CreateCodeMappings(propDef.SetMethod.MetadataToken.ToInt32(), propDef);
+				MemberMapping methodMapping = propDef.SetMethod.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
 				
 				astProp.Setter = new Accessor();
 				astProp.Setter.Body = CreateMethodBody(propDef.SetMethod);
@@ -858,7 +840,7 @@ namespace ICSharpCode.Decompiler.Ast
 			return astIndexer;
 		}
 		
-		AttributedNode CreateEvent(EventDefinition eventDef, bool isTypeDecompiled = false)
+		AttributedNode CreateEvent(EventDefinition eventDef)
 		{
 			if (eventDef.AddMethod != null && eventDef.AddMethod.IsAbstract) {
 				// An abstract event cannot be custom
@@ -881,11 +863,10 @@ namespace ICSharpCode.Decompiler.Ast
 				else
 					astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().DeclaringType);
 				
-				string name = isTypeDecompiled ? eventDef.DeclaringType.FullName : eventDef.FullName;
-				
 				if (eventDef.AddMethod != null) {
 					// Create mapping - used in debugger
-					MemberMapping methodMapping = eventDef.AddMethod.CreateCodeMapping(this.CodeMappings[name], isTypeDecompiled);
+					int currentMemberToken = CreateCodeMappings(eventDef.AddMethod.MetadataToken.ToInt32(), eventDef);
+					MemberMapping methodMapping = eventDef.AddMethod.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
 					
 					astEvent.AddAccessor = new Accessor {
 						Body = CreateMethodBody(eventDef.AddMethod)
@@ -896,7 +877,8 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 				if (eventDef.RemoveMethod != null) {
 					// Create mapping - used in debugger
-					MemberMapping methodMapping = eventDef.AddMethod.CreateCodeMapping(this.CodeMappings[name], isTypeDecompiled);
+					int currentMemberToken = CreateCodeMappings(eventDef.RemoveMethod.MetadataToken.ToInt32(), eventDef);
+					MemberMapping methodMapping = eventDef.RemoveMethod.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
 					
 					astEvent.RemoveAccessor = new Accessor {
 						Body = CreateMethodBody(eventDef.RemoveMethod)
@@ -926,6 +908,8 @@ namespace ICSharpCode.Decompiler.Ast
 
 		FieldDeclaration CreateField(FieldDefinition fieldDef)
 		{
+			this.DecompiledMemberReferences.Add(fieldDef.MetadataToken.ToInt32(), fieldDef);
+			
 			FieldDeclaration astField = new FieldDeclaration();
 			astField.AddAnnotation(fieldDef);
 			VariableInitializer initializer = new VariableInitializer(CleanName(fieldDef.Name));
@@ -1395,7 +1379,7 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <summary>
 		/// <inheritdoc/>
 		/// </summary>
-		public Dictionary<string, List<MemberMapping>> CodeMappings { get; private set; }
+		public Dictionary<int, List<MemberMapping>> CodeMappings { get; private set; }
 		
 		/// <summary>
 		/// Gets the local variables for the current decompiled type, method, etc.
@@ -1406,6 +1390,13 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <summary>
 		/// <inheritdoc/>
 		/// </summary>
-		public Dictionary<string, MemberReference> DecompiledMemberReferences { get; private set; }
+		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; private set; }
+		
+		private int CreateCodeMappings(int token, MemberReference member)
+		{
+			this.CodeMappings.Add(token, new List<MemberMapping>());
+			this.DecompiledMemberReferences.Add(token, member);
+			return token;
+		}
 	}
 }

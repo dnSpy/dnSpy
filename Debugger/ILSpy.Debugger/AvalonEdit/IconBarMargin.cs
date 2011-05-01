@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -62,7 +63,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 				Dictionary<int, BookmarkBase> bookmarkDict = new Dictionary<int, BookmarkBase>();
 				foreach (var bm in BookmarkManager.Bookmarks) {
 					if (DebugData.DecompiledMemberReferences == null || DebugData.DecompiledMemberReferences.Count == 0 ||
-					    !DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.FullName))
+					    !DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32()))
 						continue;
 					
 					int line = bm.LineNumber;
@@ -121,7 +122,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 			BookmarkBase result = null;
 			foreach (BookmarkBase bm in BookmarkManager.Bookmarks) {
 				if (bm.LineNumber == line &&
-				    DebugData.DecompiledMemberReferences != null && DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.FullName)) {
+				    DebugData.DecompiledMemberReferences != null && DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32())) {
 					if (result == null || bm.ZOrder > result.ZOrder)
 						result = bm;
 				}
@@ -191,7 +192,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 			}
 			
 			BreakpointBookmark bm = BookmarkManager.Bookmarks.Find(
-				b => DebugData.CodeMappings.ContainsKey(b.MemberReference.FullName) &&
+				b => DebugData.CodeMappings != null && DebugData.CodeMappings.ContainsKey(b.MemberReference.MetadataToken.ToInt32()) &&
 				b.LineNumber == GetLineFromMousePosition(e)
 				&& b is BreakpointBookmark) as BreakpointBookmark;
 			
@@ -224,14 +225,13 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 						return;
 				}
 				if (e.ChangedButton == MouseButton.Left) {
-					if (DebugData.DecompiledMemberReferences != null && DebugData.DecompiledMemberReferences.Count > 0) {
+					if (DebugData.CodeMappings != null && DebugData.CodeMappings.Count > 0) {
 						
 						// check if the codemappings exists for this line
 						var storage = DebugData.CodeMappings;
-						uint token = 0;
-						foreach (var member in DebugData.DecompiledMemberReferences.Values) {
-							string memberName = member.FullName;
-							var instruction = storage[memberName].GetInstructionByLineNumber(line, out token);
+						int token = 0;
+						foreach (var key in storage.Keys) {
+							var instruction = storage[key].GetInstructionByLineNumber(line, out token);
 							
 							if (instruction == null) {
 								continue;
@@ -239,7 +239,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 							
 							// no bookmark on the line: create a new breakpoint
 							DebuggerService.ToggleBreakpointAt(
-								member,
+								DebugData.DecompiledMemberReferences[key],
 								line,
 								instruction.ILInstructionOffset,
 								DebugData.Language);
@@ -259,7 +259,8 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 		
 		public void SyncBookmarks()
 		{
-			if (DebugData.CodeMappings == null || DebugData.CodeMappings.Count == 0)
+			var storage = DebugData.CodeMappings;
+			if (storage == null || storage.Count == 0)
 				return;
 			
 			//remove existing bookmarks and create new ones
@@ -269,46 +270,22 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 				if (breakpoint == null)
 					continue;
 				
-				foreach (var key in DebugData.CodeMappings.Keys) {
-					var member = DebugData.DecompiledMemberReferences[key];
+				var key = breakpoint.MemberReference.MetadataToken.ToInt32();
+				if (!storage.ContainsKey(key))
+					continue;
+				
+				var member = DebugData.DecompiledMemberReferences[key];
+				
+				bool isMatch;
+				SourceCodeMapping map = storage[key].GetInstructionByTokenAndOffset(
+					member.MetadataToken.ToInt32(), breakpoint.ILRange.From, out isMatch);
+				
+				if (map != null) {
+					newBookmarks.Add(new BreakpointBookmark(
+						member, new AstLocation(map.SourceCodeLine, 0),
+						map.ILInstructionOffset, BreakpointAction.Break, DebugData.Language));
 					
-					uint token;
-					if (member is TypeDefinition) {
-						var m = member as TypeDefinition;
-						if (breakpoint.MemberReference is TypeDefinition) {
-							if (member != breakpoint.MemberReference)
-								continue;
-							token = (uint)member.MetadataToken.ToInt32();
-						} else {
-							if (!m.ContainsMember(breakpoint.MemberReference))
-								continue;
-							token = (uint)breakpoint.MemberReference.MetadataToken.ToInt32();
-						}
-					} else {
-						if (breakpoint.MemberReference is TypeDefinition) {
-							if (!(breakpoint.MemberReference as TypeDefinition).ContainsMember(member))
-								continue;
-							token = (uint)member.MetadataToken.ToInt32();
-						} else {
-							if (breakpoint.MemberReference != member)
-								continue;
-							token = (uint)breakpoint.MemberReference.MetadataToken.ToInt32();
-						}
-					}
-					
-					bool isMatch;
-					SourceCodeMapping map = DebugData.CodeMappings[key]
-						.GetInstructionByTokenAndOffset(token, breakpoint.ILRange.From, out isMatch);
-					
-					if (map != null) {
-						newBookmarks.Add(new BreakpointBookmark(
-							DebugData.DecompiledMemberReferences[key],
-							new AstLocation(map.SourceCodeLine, 0),
-							map.ILInstructionOffset, BreakpointAction.Break, DebugData.Language));
-						
-						BookmarkManager.RemoveMark(breakpoint);
-						break;
-					}
+					BookmarkManager.RemoveMark(breakpoint);
 				}
 			}
 			

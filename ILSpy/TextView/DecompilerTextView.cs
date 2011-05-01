@@ -394,7 +394,7 @@ namespace ICSharpCode.ILSpy.TextView
 								// show the currentline marker
 								var bm = CurrentLineBookmark.Instance;
 								if (bm != null) {
-									if (DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.FullName)) {
+									if (DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32())) {
 										DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
 										bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
 									}
@@ -456,6 +456,11 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		static void DecompileNodes(DecompilationContext context, ITextOutput textOutput)
 		{
+			// reset data
+			DebugData.CodeMappings = null;
+			DebugData.LocalVariables = null;
+			DebugData.DecompiledMemberReferences = null;
+			
 			var nodes = context.TreeNodes;
 			context.Language.DecompileFinished += Language_DecompileFinished;
 			for (int i = 0; i < nodes.Length; i++) {
@@ -471,13 +476,16 @@ namespace ICSharpCode.ILSpy.TextView
 		static void Language_DecompileFinished(object sender, DecompileEventArgs e)
 		{
 			if (e != null) {
-				DebugData.CodeMappings = e.CodeMappings;
-				DebugData.LocalVariables = e.LocalVariables;
-				DebugData.DecompiledMemberReferences = e.DecompiledMemberReferences;
-			} else {
-				DebugData.CodeMappings = null;
-				DebugData.LocalVariables = null;
-				DebugData.DecompiledMemberReferences = null;
+				if (DebugData.CodeMappings == null) {
+					DebugData.CodeMappings = e.CodeMappings;
+					DebugData.LocalVariables = e.LocalVariables;
+					DebugData.DecompiledMemberReferences = e.DecompiledMemberReferences;
+				} else {
+					DebugData.CodeMappings.AddRange(e.CodeMappings);
+					DebugData.DecompiledMemberReferences.AddRange(e.DecompiledMemberReferences);
+					if (e.LocalVariables != null)
+						DebugData.LocalVariables.AddRange(e.LocalVariables);
+				}
 			}
 		}
 		#endregion

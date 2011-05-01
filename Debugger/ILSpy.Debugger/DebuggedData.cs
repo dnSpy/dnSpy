@@ -40,7 +40,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// Gets or sets the current code mappings.
 		/// </summary>
-		public static Dictionary<string, List<MemberMapping>> CodeMappings { get; set; }
+		public static Dictionary<int, List<MemberMapping>> CodeMappings { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the local variables of the current decompiled type, method, etc.
@@ -50,12 +50,12 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// Gets or sets the old code mappings.
 		/// </summary>
-		public static Dictionary<string, List<MemberMapping>> OldCodeMappings { get; set; }
+		public static Dictionary<int, List<MemberMapping>> OldCodeMappings { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the MembeReference that was decompiled (a TypeDefinition, MethodDefinition, etc)
 		/// </summary>
-		public static Dictionary<string, MemberReference> DecompiledMemberReferences { get; set; }
+		public static Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
 		
 		/// <summary>
 		/// Occures when the language is changed.

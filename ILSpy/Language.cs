@@ -32,12 +32,12 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Decompilation event arguments.
 	/// </summary>
-	public sealed class DecompileEventArgs : EventArgs
+	public sealed class DecompileEventArgs : EventArgs, ICodeMappings
 	{
 		/// <summary>
 		/// Gets ot sets the code mappings
 		/// </summary>
-		public Dictionary<string, List<MemberMapping>> CodeMappings { get; set; }
+		public Dictionary<int, List<MemberMapping>> CodeMappings { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the local variables.
@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Gets the list of MembeReferences that are decompiled (TypeDefinitions, MethodDefinitions, etc)
 		/// </summary>
-		public Dictionary<string, MemberReference> DecompiledMemberReferences { get; set; }
+		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
 	}
 	
 	/// <summary>
@@ -111,6 +111,7 @@ namespace ICSharpCode.ILSpy
 		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)
 		{
 			WriteCommentLine(output, nameSpace);
+			OnDecompilationFinished(null);
 		}
 		
 		public virtual void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)

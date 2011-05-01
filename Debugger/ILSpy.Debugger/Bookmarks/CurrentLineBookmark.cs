@@ -3,9 +3,10 @@
 
 using System;
 using System.Windows.Media;
-using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Debugger.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 using Mono.CSharp;
 
@@ -82,7 +83,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			marker.BackgroundColor = Colors.Yellow;
 			marker.ForegroundColor = Colors.Blue;
 			marker.IsVisible = b => b is MarkerBookmark && DebugData.DecompiledMemberReferences != null &&
-						DebugData.DecompiledMemberReferences.ContainsKey(((MarkerBookmark)b).MemberReference.FullName);
+				DebugData.DecompiledMemberReferences.ContainsKey(((MarkerBookmark)b).MemberReference.MetadataToken.ToInt32());
 			marker.Bookmark = this;
 			this.Marker = marker;
 			return marker;

@@ -11,6 +11,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Xml.Linq;
 
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
@@ -157,19 +158,21 @@ namespace ICSharpCode.ILSpy.Commands
 				return;
 			}
 			
+			var inst = MainWindow.Instance;
+			
 			// breakpoint was hit => bring to front the main window
-			SendWpfWindowPos(MainWindow.Instance, HWND_TOP);
-			MainWindow.Instance.Activate();
+			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
 			
 			// jump to type & expand folding
-			if (CurrentLineBookmark.Instance != null) {
-				if (!DebugData.DecompiledMemberReferences.ContainsKey(CurrentLineBookmark.Instance.MemberReference.FullName))
-					MainWindow.Instance.JumpToReference(CurrentLineBookmark.Instance.MemberReference);
-				
-				MainWindow.Instance.TextView.UnfoldAndScroll(CurrentLineBookmark.Instance.LineNumber);
+			var bm = CurrentLineBookmark.Instance;
+			if (bm != null) {
+				if (!DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32()))
+					inst.JumpToReference(bm.MemberReference);
+
+				inst.TextView.UnfoldAndScroll(bm.LineNumber);
 			}
 			
-			MainWindow.Instance.SetStatus("Debugging...", Brushes.Red);
+			inst.SetStatus("Debugging...", Brushes.Red);
 		}
 	}
 	

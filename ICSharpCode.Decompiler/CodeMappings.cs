@@ -41,13 +41,15 @@ namespace ICSharpCode.Decompiler
 	{
 		/// <summary>
 		/// Gets the code mappings.
+		/// <remarks>Key is the metadata token.</remarks>
 		/// </summary>
-		Dictionary<string, List<MemberMapping>> CodeMappings { get; }
+		Dictionary<int, List<MemberMapping>> CodeMappings { get; }
 		
 		/// <summary>
 		/// Gets the MembeReference that is decompiled (a TypeDefinition, MethodDefinition, etc)
+		/// <remarks>Key is the metadata token.</remarks>
 		/// </summary>
-		Dictionary<string, MemberReference> DecompiledMemberReferences { get; }
+		Dictionary<int, MemberReference> DecompiledMemberReferences { get; }
 	}
 	
 	/// <summary>
@@ -117,9 +119,9 @@ namespace ICSharpCode.Decompiler
 		public MemberReference MemberReference { get; internal set; }
 		
 		/// <summary>
-		/// Metadata token of the method.
+		/// Metadata token of the member.
 		/// </summary>
-		public uint MetadataToken { get; internal set; }
+		public int MetadataToken { get; internal set; }
 		
 		/// <summary>
 		/// Gets or sets the code size for the member mapping.
@@ -162,8 +164,7 @@ namespace ICSharpCode.Decompiler
 		/// <param name="isTypeDecompiled">True, if a full type was decompiled; false otherwise.</param>
 		internal static MemberMapping CreateCodeMapping(
 			this MethodDefinition member,
-			List<MemberMapping> codeMappings,
-			bool isTypeDecompiled)
+			List<MemberMapping> codeMappings)
 		{
 			if (member == null || !member.HasBody)
 				return null;
@@ -173,19 +174,14 @@ namespace ICSharpCode.Decompiler
 			
 			// create IL/CSharp code mappings - used in debugger
 			MemberMapping currentMemberMapping = null;
-			string key = isTypeDecompiled ? member.DeclaringType.FullName : member.FullName;
 
-			if (codeMappings.Find(map => (int)map.MetadataToken == member.MetadataToken.ToInt32()) == null) {
+			if (codeMappings.Find(map => map.MetadataToken == member.MetadataToken.ToInt32()) == null) {
 				currentMemberMapping = new MemberMapping() {
-					MetadataToken = (uint)member.MetadataToken.ToInt32(),
+					MetadataToken = member.MetadataToken.ToInt32(),
 					MemberCodeMappings = new List<SourceCodeMapping>(),
+					MemberReference = member,
 					CodeSize = member.Body.CodeSize
 				};
-				
-				if (isTypeDecompiled)
-					currentMemberMapping.MemberReference = member.DeclaringType.Resolve();
-				else
-					currentMemberMapping.MemberReference = member.Resolve();
 				
 				codeMappings.Add(currentMemberMapping);
 			}
@@ -204,7 +200,7 @@ namespace ICSharpCode.Decompiler
 		public static SourceCodeMapping GetInstructionByLineNumber(
 			this List<MemberMapping> codeMappings,
 			int lineNumber,
-			out uint metadataToken)
+			out int metadataToken)
 		{
 			if (codeMappings == null)
 				throw new ArgumentException("CodeMappings storage must be valid!");
@@ -231,7 +227,7 @@ namespace ICSharpCode.Decompiler
 		/// <returns>A code mapping.</returns>
 		public static SourceCodeMapping GetInstructionByTokenAndOffset(
 			this List<MemberMapping> codeMappings,
-			uint token,
+			int token,
 			int ilOffset, 
 			out bool isMatch)
 		{
@@ -273,7 +269,7 @@ namespace ICSharpCode.Decompiler
 		/// <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
 		public static bool GetSourceCodeFromMetadataTokenAndOffset(
 			this List<MemberMapping> codeMappings,
-			uint token,
+			int token,
 			int ilOffset,
 			out MemberReference member,
 			out int line)
@@ -302,16 +298,6 @@ namespace ICSharpCode.Decompiler
 			member = mapping.MemberReference;
 			line = codeMapping.SourceCodeLine;
 			return true;
-		}
-		
-		/// <summary>
-		/// Create a key by replacing "::" with ".", "+" with "/", " " with "";
-		/// </summary>
-		/// <param name="item">Item to convert.</param>
-		/// <returns></returns>
-		public static string CreateKey(this string item)
-		{
-			return item.Replace("+", "/").Replace("::", ".").Replace(" ", string.Empty);
 		}
 	}
 }
