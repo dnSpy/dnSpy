@@ -46,6 +46,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		SimplifyLdObjAndStObj,
 		TransformArrayInitializers,
 		TransformObjectInitializers,
+		SimplifyNullableOperators,
 		MakeAssignmentExpression,
 		IntroducePostIncrement,
 		InlineVariables2,
@@ -141,6 +142,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformObjectInitializers) return;
 					modified |= block.RunOptimization(TransformObjectInitializers);
+
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyNullableOperators) return;
+					modified |= block.RunOptimization(SimplifyNullableOperators);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.MakeAssignmentExpression) return;
 					modified |= block.RunOptimization(MakeAssignmentExpression);
