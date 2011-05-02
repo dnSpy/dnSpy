@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Analyzer tree view.
 	/// </summary>
-	public partial class AnalyzerTreeView : SharpTreeView
+	public partial class AnalyzerTreeView : SharpTreeView, IPane
 	{
 		static AnalyzerTreeView instance;
 		
@@ -69,6 +69,11 @@ namespace ICSharpCode.ILSpy
 			this.Root.Children.Add(node);
 			this.SelectedItem = node;
 			this.FocusNode(node);
+		}
+		
+		void IPane.Closed()
+		{
+			this.Root.Children.Clear();
 		}
 	}
 	

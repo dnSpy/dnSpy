@@ -28,10 +28,10 @@ namespace ICSharpCode.ILSpy.Controls
 	public class SearchBox : TextBox
 	{
 		static SearchBox() {
-            DefaultStyleKeyProperty.OverrideMetadata(
-                typeof(SearchBox),
-                new FrameworkPropertyMetadata(typeof(SearchBox)));
-        }
+			DefaultStyleKeyProperty.OverrideMetadata(
+				typeof(SearchBox),
+				new FrameworkPropertyMetadata(typeof(SearchBox)));
+		}
 		
 		#region Dependency properties
 		
@@ -46,20 +46,20 @@ namespace ICSharpCode.ILSpy.Controls
 			                            new FrameworkPropertyMetadata(TimeSpan.FromMilliseconds(200)));
 		
 		#endregion
-        
-        #region Public Properties
-        
-        public string WatermarkText {
-            get { return (string)GetValue(WatermarkTextProperty); }
-            set { SetValue(WatermarkTextProperty, value); }
-        }
+		
+		#region Public Properties
+		
+		public string WatermarkText {
+			get { return (string)GetValue(WatermarkTextProperty); }
+			set { SetValue(WatermarkTextProperty, value); }
+		}
 
-        public Brush WatermarkColor {
-            get { return (Brush)GetValue(WatermarkColorProperty); }
-            set { SetValue(WatermarkColorProperty, value); }
-        }
-        
-        public bool HasText {
+		public Brush WatermarkColor {
+			get { return (Brush)GetValue(WatermarkColorProperty); }
+			set { SetValue(WatermarkColorProperty, value); }
+		}
+		
+		public bool HasText {
 			get { return (bool)GetValue(HasTextProperty); }
 			private set { SetValue(HasTextProperty, value); }
 		}
@@ -68,83 +68,85 @@ namespace ICSharpCode.ILSpy.Controls
 			get { return (TimeSpan)GetValue(UpdateDelayProperty); }
 			set { SetValue(UpdateDelayProperty, value); }
 		}
-        
-        #endregion
-        
-        #region Handlers
+		
+		#endregion
+		
+		#region Handlers
 
-        private void IconBorder_MouseLeftButtonUp(object obj, MouseButtonEventArgs e) {
-            if (this.HasText)
-                this.Text = string.Empty;
-        }
+		private void IconBorder_MouseLeftButtonUp(object obj, MouseButtonEventArgs e) {
+			if (this.HasText)
+				this.Text = string.Empty;
+		}
 
-        #endregion
-        
-        #region Overrides
-        
-        DispatcherTimer timer;
-        
-        protected override void OnTextChanged(TextChangedEventArgs e) {
-            base.OnTextChanged(e);
-            
-            HasText = this.Text.Length > 0;
-            if (timer == null) {
-            	timer = new DispatcherTimer();
-            	timer.Tick += timer_Tick;
-            }
-            timer.Stop();
-            timer.Interval = this.UpdateDelay;
-            timer.Start();
-        }
+		#endregion
+		
+		#region Overrides
+		
+		DispatcherTimer timer;
+		
+		protected override void OnTextChanged(TextChangedEventArgs e) {
+			base.OnTextChanged(e);
+			
+			HasText = this.Text.Length > 0;
+			if (timer == null) {
+				timer = new DispatcherTimer();
+				timer.Tick += timer_Tick;
+			}
+			timer.Stop();
+			timer.Interval = this.UpdateDelay;
+			timer.Start();
+		}
 
-        void timer_Tick(object sender, EventArgs e)
-        {
-        	timer.Stop();
-        	timer = null;
-        	var textBinding = GetBindingExpression(TextProperty);
-        	if (textBinding != null) {
-        		textBinding.UpdateSource();
-        	}
-        }
-        
+		void timer_Tick(object sender, EventArgs e)
+		{
+			timer.Stop();
+			timer = null;
+			var textBinding = GetBindingExpression(TextProperty);
+			if (textBinding != null) {
+				textBinding.UpdateSource();
+			}
+		}
+		
 		protected override void OnLostFocus(RoutedEventArgs e)
 		{
 			if (!HasText) {
 				Label wl = (Label)GetTemplateChild("WatermarkLabel");
-				wl.Visibility = Visibility.Visible;
+				if (wl != null)
+					wl.Visibility = Visibility.Visible;
 			}
 			
 			base.OnLostFocus(e);
 		}
-        
+		
 		protected override void OnGotFocus(RoutedEventArgs e)
 		{
 			if (!HasText) {
 				Label wl = (Label)GetTemplateChild("WatermarkLabel");
-				wl.Visibility = Visibility.Hidden;
+				if (wl != null)
+					wl.Visibility = Visibility.Hidden;
 			}
 			
 			base.OnGotFocus(e);
 		}
 
-        public override void OnApplyTemplate() {
-            base.OnApplyTemplate();
+		public override void OnApplyTemplate() {
+			base.OnApplyTemplate();
 
-            Border iconBorder = GetTemplateChild("PART_IconBorder") as Border;
-            if (iconBorder != null) {
-                iconBorder.MouseLeftButtonUp += IconBorder_MouseLeftButtonUp;
-            }
-        }
-        
+			Border iconBorder = GetTemplateChild("PART_IconBorder") as Border;
+			if (iconBorder != null) {
+				iconBorder.MouseLeftButtonUp += IconBorder_MouseLeftButtonUp;
+			}
+		}
+		
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (e.Key == Key.Escape) {
+			if (e.Key == Key.Escape && this.Text.Length > 0) {
 				this.Text = string.Empty;
+				e.Handled = true;
 			} else {
 				base.OnKeyDown(e);
 			}
 		}
-        
-        #endregion
+		#endregion
 	}
 }

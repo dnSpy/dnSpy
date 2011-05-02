@@ -92,19 +92,13 @@
 				<RowDefinition
 					Height="*" />
 			</Grid.RowDefinitions>
-			<!-- Left pane: Search bar + Tree View -->
-			<DockPanel>
-				<!-- Search bar -->
-				<controls:SearchBox DockPanel.Dock="Top" WatermarkText="Search" WatermarkColor="Gray" ToolTip="Search"
-					Text="{Binding FilterSettings.SearchTerm}" />
-				<!-- Tree View of assemblies and classes -->
-				<tv:SharpTreeView
-					Name="treeView"
-					SelectionChanged="TreeView_SelectionChanged"
-					ShowRoot="False"
-					AllowDropOrder="True"
-					AllowDrop="True" />
-			</DockPanel>
+			<!-- Left pane: Tree View of assemblies and classes -->
+			<tv:SharpTreeView
+				Name="treeView"
+				SelectionChanged="TreeView_SelectionChanged"
+				ShowRoot="False"
+				AllowDropOrder="True"
+				AllowDrop="True" />
 			<GridSplitter
 				Grid.ZIndex="1"
 				Grid.Column="1"
@@ -147,7 +141,7 @@
 					BorderBrush="Transparent"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Center"
-					Visibility="{Binding Visibility, ElementName=bottomPane}" />
+					Visibility="{Binding Visibility, ElementName=topPane}" />
 				
 				<!-- decompilerTextView is into the mainPane by code -->
 				<ContentPresenter Name="mainPane" Grid.Row="3"/>

@@ -76,10 +76,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				case FieldAttributes.Family:
 				case FieldAttributes.FamORAssem:
 					return AccessOverlayIcon.Protected;
-				case FieldAttributes.Private:
-					return AccessOverlayIcon.Private;
 				default:
-					throw new NotSupportedException();
+					return AccessOverlayIcon.Private;
 			}
 		}
 

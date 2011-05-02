@@ -632,10 +632,6 @@ namespace ICSharpCode.ILSpy
 			topPane.Title = title;
 			topPane.Content = content;
 			topPane.Visibility = Visibility.Visible;
-			
-			FrameworkElement fe = content as FrameworkElement;
-			if (fe != null)
-				fe.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
 		}
 		
 		void TopPane_CloseButtonClicked(object sender, EventArgs e)
@@ -644,6 +640,11 @@ namespace ICSharpCode.ILSpy
 			topPaneRow.MinHeight = 0;
 			topPaneRow.Height = new GridLength(0);
 			topPane.Visibility = Visibility.Collapsed;
+			
+			IPane pane = topPane.Content as IPane;
+			topPane.Content = null;
+			if (pane != null)
+				pane.Closed();
 		}
 		
 		public void ShowInBottomPane(string title, object content)
@@ -656,10 +657,6 @@ namespace ICSharpCode.ILSpy
 			bottomPane.Title = title;
 			bottomPane.Content = content;
 			bottomPane.Visibility = Visibility.Visible;
-			
-			FrameworkElement fe = content as FrameworkElement;
-			if (fe != null)
-				fe.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
 		}
 		
 		void BottomPane_CloseButtonClicked(object sender, EventArgs e)
@@ -668,6 +665,11 @@ namespace ICSharpCode.ILSpy
 			bottomPaneRow.MinHeight = 0;
 			bottomPaneRow.Height = new GridLength(0);
 			bottomPane.Visibility = Visibility.Collapsed;
+			
+			IPane pane = bottomPane.Content as IPane;
+			bottomPane.Content = null;
+			if (pane != null)
+				pane.Closed();
 		}
 		#endregion
 	}
