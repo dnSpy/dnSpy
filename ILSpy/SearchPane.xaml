@@ -1,19 +1,35 @@
-﻿<UserControl x:Class="ICSharpCode.ILSpy.SearchPane"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
-             x:Name="self">
-	<DockPanel>
-		<controls:SearchBox DockPanel.Dock="Top" WatermarkText="Search" WatermarkColor="Gray" ToolTip="Search"
-			Text="{Binding SearchTerm, ElementName=self}" x:Name="searchBox" />
-		<ListBox Name="listBox" HorizontalContentAlignment="Stretch" SelectionMode="Single" MouseDoubleClick="ListBox_MouseDoubleClick" KeyDown="ListBox_KeyDown">
+﻿<UserControl x:Class="ICSharpCode.ILSpy.SearchPane" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls" x:Name="self">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="21" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<controls:SearchBox DockPanel.Dock="Top" WatermarkText="Search" WatermarkColor="Gray" ToolTip="Search" Text="{Binding SearchTerm, ElementName=self}" x:Name="searchBox" Grid.Column="0" Grid.Row="0" />
+		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
+			<Label Margin="0,-1">Search _for:</Label>
+			<ComboBox Name="searchModeComboBox" Width="100" SelectionChanged="SearchModeComboBox_SelectionChanged">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<Image Width="16" Height="16" Source="{Binding Image}" Margin="0,0,4,0" />
+							<TextBlock Text="{Binding Name}" />
+						</StackPanel>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+		</StackPanel>
+		<ListBox Name="listBox" HorizontalContentAlignment="Stretch" SelectionMode="Single" MouseDoubleClick="ListBox_MouseDoubleClick" KeyDown="ListBox_KeyDown" Grid.Row="1" Grid.ColumnSpan="2">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid>
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="20"/>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="20" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 						<Image Width="16" Height="16" Source="{Binding Image}" HorizontalAlignment="Left" />
 						<TextBlock Text="{Binding Name}" Grid.Column="1" />
@@ -25,5 +41,5 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-	</DockPanel>
+	</Grid>
 </UserControl>
