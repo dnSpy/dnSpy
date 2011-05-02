@@ -69,7 +69,7 @@
     <None Include="Types\S_EnumSamples.cs" />
     <None Include="CustomAttributes\S_AssemblyCustomAttribute.cs" />
     <Compile Include="Helpers\RemoveCompilerAttribute.cs" />
-    <None Include="Types\S_TypeMemberDeclarations.cs" />
+    <Compile Include="Types\S_TypeMemberDeclarations.cs" />
     <Compile Include="Types\EnumTests.cs" />
     <Compile Include="Types\TypeTests.cs" />
     <Compile Include="DelegateConstruction.cs" />

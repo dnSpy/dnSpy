@@ -428,8 +428,8 @@ namespace IndexerOverrideRestrictedAccessorOnly
 		}
 	}
 }
-//$$ PropertyHiding
-namespace PropertyHiding
+//$$ HideProperty
+namespace HideProperty
 {
 	public class A
 	{
@@ -467,8 +467,397 @@ namespace PropertyHiding
 		}
 	}
 }
-//$$ IndexerHidingGeneric
-namespace IndexerHidingGeneric
+//$$ HideMembers
+namespace HideMembers
+{
+	public class A
+	{
+		public int F;
+		public int Prop
+		{
+			get
+			{
+				return 3;
+			}
+		}
+		public int G
+		{
+			get
+			{
+				return 3;
+			}
+		}
+	}
+	public class B : A
+	{
+		public new int F
+		{
+			get
+			{
+				return 3;
+			}
+		}
+		public new string Prop
+		{
+			get
+			{
+				return "a";
+			}
+		}
+	}
+	public class C : A
+	{
+		public new int G;
+	}
+	public class D : A
+	{
+		public new void F()
+		{
+		}
+	}
+	public class D1 : D
+	{
+		public new int F;
+	}
+	public class E : A
+	{
+		private new class F
+		{
+		}
+	}
+}
+//$$ HideMembers2
+namespace HideMembers2
+{
+	public class G
+	{
+		public int Item
+		{
+			get
+			{
+				return 1;
+			}
+		}
+	}
+	public class G2 : G
+	{
+		public int this[int i]
+		{
+			get
+			{
+				return 2;
+			}
+		}
+	}
+	public class G3 : G2
+	{
+		public new int Item
+		{
+			get
+			{
+				return 4;
+			}
+		}
+	}
+	public class H
+	{
+		public int this[int j]
+		{
+			get
+			{
+				return 0;
+			}
+		}
+	}
+	public class H2 : H
+	{
+		public int Item
+		{
+			get
+			{
+				return 2;
+			}
+		}
+	}
+	public class H3 : H2
+	{
+		public new string this[int j]
+		{
+			get
+			{
+				return null;
+			}
+		}
+	}
+}
+//$$ HideMembers2a
+namespace HideMembers2a
+{
+	public interface IA
+	{
+		int this[int i]
+		{
+			get;
+		}
+	}
+	public class A : IA
+	{
+		int IA.this[int i]
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+	}
+	public class A1 : A
+	{
+		public int this[int i]
+		{
+			get
+			{
+				return 3;
+			}
+		}
+	}
+}
+//$$ HideMembers3
+namespace HideMembers3
+{
+	public class G<T>
+	{
+		public void M1(T p)
+		{
+		}
+		public int M2(int t)
+		{
+			return 3;
+		}
+	}
+	public class G1<T> : G<int>
+	{
+		public new int M1(int i)
+		{
+			return 0;
+		}
+		public int M2(T i)
+		{
+			return 2;
+		}
+	}
+	public class G2<T> : G<int>
+	{
+		public int M1(T p)
+		{
+			return 4;
+		}
+	}
+	public class J
+	{
+		public int P
+		{
+			get
+			{
+				return 2;
+			}
+		}
+	}
+	public class J2 : J
+	{
+		public int get_P;
+	}
+}
+//$$ HideMembers4
+namespace HideMembers4
+{
+	public class A
+	{
+		public void M<T>(T t)
+		{
+		}
+	}
+	public class A1 : A
+	{
+		public new void M<K>(K t)
+		{
+		}
+		public void M(int t)
+		{
+		}
+	}
+	public class B
+	{
+		public void M<T>()
+		{
+		}
+		public void M1<T>()
+		{
+		}
+		public void M2<T>(T t)
+		{
+		}
+	}
+	public class B1 : B
+	{
+		public void M<T1, T2>()
+		{
+		}
+		public new void M1<R>()
+		{
+		}
+		public new void M2<R>(R r)
+		{
+		}
+	}
+	public class C<T>
+	{
+		public void M<TT>(T t)
+		{
+		}
+	}
+	public class C1<K> : C<K>
+	{
+		public void M<TT>(TT t)
+		{
+		}
+	}
+}
+//$$ HideMembers5
+namespace HideMembers5
+{
+	public class A
+	{
+		public void M(int t)
+		{
+		}
+	}
+	public class A1 : A
+	{
+		public void M(ref int t)
+		{
+		}
+	}
+	public class B
+	{
+		public void M(ref int l)
+		{
+		}
+	}
+	public class B1 : B
+	{
+		public void M(out int l)
+		{
+			l = 2;
+		}
+		public void M(ref long l)
+		{
+		}
+	}
+}
+//$$ HideMemberSkipNotVisible
+namespace HideMemberSkipNotVisible
+{
+	public class A
+	{
+		protected int F;
+		protected string P
+		{
+			get
+			{
+				return null;
+			}
+		}
+	}
+	public class B : A
+	{
+		private new string F;
+		private new int P
+		{
+			set
+			{
+			}
+		}
+	}
+}
+//$$ HideNestedClass
+namespace HideNestedClass
+{
+	public class A
+	{
+		public class N1
+		{
+		}
+		protected class N2
+		{
+		}
+		private class N3
+		{
+		}
+		internal class N4
+		{
+		}
+		protected internal class N5
+		{
+		}
+	}
+	public class B : A
+	{
+		public new int N1;
+		public new int N2;
+		public int N3;
+		public new int N4;
+		public new int N5;
+	}
+}
+//$$ HidePropertyReservedMethod
+namespace HidePropertyReservedMethod
+{
+	public class A
+	{
+		public int P
+		{
+			get
+			{
+				return 1;
+			}
+		}
+	}
+	public class B : A
+	{
+		public int get_P()
+		{
+			return 2;
+		}
+		public void set_P(int value)
+		{
+		}
+	}
+}
+//$$ HideIndexerDiffAccessor
+namespace HideIndexerDiffAccessor
+{
+	public class A
+	{
+		public int this[int i]
+		{
+			get
+			{
+				return 2;
+			}
+		}
+	}
+	public class B : A
+	{
+		public new int this[int j]
+		{
+			set
+			{
+			}
+		}
+	}
+}
+//$$ HideIndexerGeneric
+namespace HideIndexerGeneric
 {
 	public class A<T>
 	{
@@ -515,8 +904,8 @@ namespace IndexerHidingGeneric
 		}
 	}
 }
-//$$ MethodHiding
-namespace MethodHiding
+//$$ HideMethod
+namespace HideMethod
 {
 	public class A
 	{
@@ -539,8 +928,8 @@ namespace MethodHiding
 		}
 	}
 }
-//$$ MethodHideGeneric
-namespace MethodHideGeneric
+//$$ HideMethodGeneric
+namespace HideMethodGeneric
 {
 	public class A<T>
 	{
@@ -583,8 +972,8 @@ namespace MethodHideGeneric
 		}
 	}
 }
-//$$ MethodHideGenericSkipPrivate
-namespace MethodHideGenericSkipPrivate
+//$$ HideMethodGenericSkipPrivate
+namespace HideMethodGenericSkipPrivate
 {
 	public class A<T>
 	{
@@ -617,8 +1006,8 @@ namespace MethodHideGenericSkipPrivate
 		}
 	}
 }
-//$$ MethodHideGeneric2
-namespace MethodHideGeneric2
+//$$ HideMethodGeneric2
+namespace HideMethodGeneric2
 {
 	public class A
 	{
@@ -669,8 +1058,51 @@ namespace MethodHideGeneric2
 		}
 	}
 }
-//$$ EventHiding
-namespace EventHiding
+//$$ HideMethodDiffSignatures
+namespace HideMethodDiffSignatures
+{
+	public class C1<T>
+	{
+		public virtual void M(T arg)
+		{
+		}
+	}
+	public class C2<T1, T2> : C1<T2>
+	{
+		public new virtual void M(T2 arg)
+		{
+		}
+	}
+	public class C3 : C2<int, bool>
+	{
+		public new virtual void M(bool arg)
+		{
+		}
+	}
+}
+//$$ HideMethodStatic
+namespace HideMethodStatic
+{
+	public class A
+	{
+		public int N
+		{
+			get
+			{
+				return 0;
+			}
+		}
+	}
+	public class B
+	{
+		public int N()
+		{
+			return 0;
+		}
+	}
+}
+//$$ HideEvent
+namespace HideEvent
 {
 	public class A
 	{

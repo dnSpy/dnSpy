@@ -232,7 +232,9 @@ namespace ICSharpCode.Decompiler.Ast
 			foreach (TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
 				if (MemberIsHidden(nestedTypeDef, context.Settings))
 					continue;
-				astType.AddChild(CreateType(nestedTypeDef), TypeDeclaration.MemberRole);
+				var nestedType = CreateType(nestedTypeDef);
+				SetNewModifier(nestedType);
+				astType.AddChild(nestedType, TypeDeclaration.MemberRole);
 			}
 			
 			AttributedNode result = astType;
@@ -627,7 +629,7 @@ namespace ICSharpCode.Decompiler.Ast
 			// Create mapping - used in debugger
 			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings);
 			
-			MethodDeclaration astMethod = new MethodDeclaration();
+			MethodDeclaration astMethod = new MethodDeclaration().WithAnnotation(methodMapping);
 			astMethod.AddAnnotation(methodDef);
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
 			astMethod.Name = CleanName(methodDef.Name);
@@ -638,14 +640,8 @@ namespace ICSharpCode.Decompiler.Ast
 			if (!methodDef.DeclaringType.IsInterface) {
 				if (!methodDef.HasOverrides) {
 					astMethod.Modifiers = ConvertModifiers(methodDef);
-					if (methodDef.IsVirtual ^ !methodDef.IsNewSlot) {
-						try {
-							if (TypesHierarchyHelpers.FindBaseMethods(methodDef).Any())
-								astMethod.Modifiers |= Modifiers.New;
-						} catch (ReferenceResolvingException) {
-							// TODO: add some kind of notification (a comment?) about possible problems with decompiled code due to unresolved references.
-						}
-					}
+					if (methodDef.IsVirtual == methodDef.IsNewSlot)
+						SetNewModifier(astMethod);
 				} else {
 					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
 				}
@@ -675,7 +671,6 @@ namespace ICSharpCode.Decompiler.Ast
 					return op;
 				}
 			}
-			astMethod.WithAnnotation(methodMapping);
 			return astMethod;
 		}
 
@@ -775,10 +770,6 @@ namespace ICSharpCode.Decompiler.Ast
 							}
 						}
 					}
-					if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
-						if (TypesHierarchyHelpers.FindBaseProperties(propDef).Any())
-							astProp.Modifiers |= Modifiers.New;
-					}
 				} catch (ReferenceResolvingException) {
 					// TODO: add some kind of notification (a comment?) about possible problems with decompiled code due to unresolved references.
 				}
@@ -791,7 +782,7 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				astProp.Getter = new Accessor();
 				astProp.Getter.Body = CreateMethodBody(propDef.GetMethod);
-				astProp.AddAnnotation(propDef.GetMethod);
+				astProp.Getter.AddAnnotation(propDef.GetMethod);
 				ConvertAttributes(astProp.Getter, propDef.GetMethod);
 				
 				if ((getterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
@@ -815,11 +806,14 @@ namespace ICSharpCode.Decompiler.Ast
 				astProp.Setter.WithAnnotation(methodMapping);
 			}
 			ConvertCustomAttributes(astProp, propDef);
-			
+
+			MemberDeclaration member = astProp;
 			if(propDef.IsIndexer())
-				return ConvertPropertyToIndexer(astProp, propDef);
-			else
-				return astProp;
+				member = ConvertPropertyToIndexer(astProp, propDef);
+			if(!accessor.HasOverrides && !accessor.DeclaringType.IsInterface)
+				if (accessor.IsVirtual == accessor.IsNewSlot)
+					SetNewModifier(member);
+			return member;
 		}
 
 		IndexerDeclaration ConvertPropertyToIndexer(PropertyDeclaration astProp, PropertyDefinition propDef)
@@ -882,9 +876,8 @@ namespace ICSharpCode.Decompiler.Ast
 					astEvent.RemoveAccessor.WithAnnotation(methodMapping);
 				}
 				MethodDefinition accessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-				if (accessor.IsVirtual ^ !accessor.IsNewSlot) {
-					if (TypesHierarchyHelpers.FindBaseMethods(accessor).Any())
-						astEvent.Modifiers |= Modifiers.New;
+				if (accessor.IsVirtual == accessor.IsNewSlot) {
+					SetNewModifier(astEvent);
 				}
 				return astEvent;
 			}
@@ -921,6 +914,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			ConvertAttributes(astField, fieldDef);
+			SetNewModifier(astField);
 			return astField;
 		}
 		
@@ -1366,6 +1360,83 @@ namespace ICSharpCode.Decompiler.Ast
 				return false;
 
 			return type.CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.FlagsAttribute");
+		}
+
+		/// <summary>
+		/// Sets new modifier if the member hides some other member from a base type.
+		/// </summary>
+		/// <param name="member">The node of the member which new modifier state should be determined.</param>
+		static void SetNewModifier(AttributedNode member)
+		{
+			try {
+				bool addNewModifier = false;
+				if (member is IndexerDeclaration) {
+					var propertyDef = member.Annotation<PropertyDefinition>();
+					var baseProperties =
+						TypesHierarchyHelpers.FindBaseProperties(propertyDef);
+					addNewModifier = baseProperties.Any();
+				} else
+					addNewModifier = HidesBaseMember(member);
+
+				if (addNewModifier)
+					member.Modifiers |= Modifiers.New;
+			}
+			catch (ReferenceResolvingException) {
+				// TODO: add some kind of notification (a comment?) about possible problems with decompiled code due to unresolved references.
+			}
+		}
+
+		private static bool HidesBaseMember(AttributedNode member)
+		{
+			var memberDefinition = member.Annotation<IMemberDefinition>();
+			bool addNewModifier = false;
+			var methodDefinition = memberDefinition as MethodDefinition;
+			if (methodDefinition != null) {
+				addNewModifier = HidesByName(memberDefinition, includeBaseMethods: false);
+				if (!addNewModifier)
+					addNewModifier = TypesHierarchyHelpers.FindBaseMethods(methodDefinition).Any();
+			} else
+				addNewModifier = HidesByName(memberDefinition, includeBaseMethods: true);
+			return addNewModifier;
+		}
+
+		/// <summary>
+		/// Determines whether any base class member has the same name as the given member.
+		/// </summary>
+		/// <param name="member">The derived type's member.</param>
+		/// <param name="includeBaseMethods">true if names of methods declared in base types should also be checked.</param>
+		/// <returns>true if any base member has the same name as given member, otherwise false.</returns>
+		static bool HidesByName(IMemberDefinition member, bool includeBaseMethods)
+		{
+			Debug.Assert(!(member is PropertyDefinition) || !((PropertyDefinition)member).IsIndexer());
+
+			if (member.DeclaringType.BaseType != null) {
+				var baseTypeRef = member.DeclaringType.BaseType;
+				while (baseTypeRef != null) {
+					var baseType = baseTypeRef.ResolveOrThrow();
+					if (baseType.HasProperties && AnyIsHiddenBy(baseType.Properties, member, m => !m.IsIndexer()))
+						return true;
+					if (baseType.HasEvents && AnyIsHiddenBy(baseType.Events, member))
+						return true;
+					if (baseType.HasFields && AnyIsHiddenBy(baseType.Fields, member))
+						return true;
+					if (includeBaseMethods && baseType.HasMethods
+							&& AnyIsHiddenBy(baseType.Methods, member, m => !m.IsSpecialName))
+						return true;
+					if (baseType.HasNestedTypes && AnyIsHiddenBy(baseType.NestedTypes, member))
+						return true;
+					baseTypeRef = baseType.BaseType;
+				}
+			}
+			return false;
+		}
+
+		static bool AnyIsHiddenBy<T>(IEnumerable<T> members, IMemberDefinition derived, Predicate<T> condition = null)
+			where T : IMemberDefinition
+		{
+			return members.Any(m => m.Name == derived.Name
+				&& (condition == null || condition(m))
+				&& TypesHierarchyHelpers.IsVisibleFromDerived(m, derived.DeclaringType));
 		}
 		
 		/// <summary>
