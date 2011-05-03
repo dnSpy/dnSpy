@@ -230,7 +230,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (input == null)
 				throw new ArgumentNullException("Input is null!");
-						
+			
 			List<ILRange> ranges = input.Where(r => r != null).OrderBy(r => r.From).ToList();
 			for (int i = 0; i < ranges.Count - 1;) {
 				ILRange curr = ranges[i];
@@ -424,8 +424,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				} else if (Operand is MethodReference) {
 					MethodReference method = (MethodReference)Operand;
-					method.DeclaringType.WriteTo(output, true, true);
-					output.Write("::");
+					if (method.DeclaringType != null) {
+						method.DeclaringType.WriteTo(output, true, true);
+						output.Write("::");
+					}
 					output.WriteReference(method.Name, method);
 				} else if (Operand is FieldReference) {
 					FieldReference field = (FieldReference)Operand;
