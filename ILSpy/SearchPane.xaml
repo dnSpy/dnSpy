@@ -8,7 +8,7 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-		<controls:SearchBox DockPanel.Dock="Top" WatermarkText="Search" WatermarkColor="Gray" ToolTip="Search" Text="{Binding SearchTerm, ElementName=self}" x:Name="searchBox" Grid.Column="0" Grid.Row="0" />
+		<controls:SearchBox DockPanel.Dock="Top" WatermarkText="Search" WatermarkColor="Gray" ToolTip="Search" Text="{Binding SearchTerm, ElementName=self}" x:Name="searchBox" Grid.Column="0" Grid.Row="0" UpdateDelay="0:0:0.1" PreviewKeyDown="SearchBox_PreviewKeyDown" />
 		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
 			<Label Margin="0,-1">Search _for:</Label>
 			<ComboBox Name="searchModeComboBox" Width="100" SelectionChanged="SearchModeComboBox_SelectionChanged">

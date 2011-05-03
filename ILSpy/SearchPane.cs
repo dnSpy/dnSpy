@@ -129,7 +129,7 @@ namespace ICSharpCode.ILSpy
 		
 		void ListBox_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.Key == Key.Space || e.Key == Key.Return) {
+			if (e.Key == Key.Return) {
 				e.Handled = true;
 				JumpToSelectedItem();
 			}
@@ -155,6 +155,15 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Down && listBox.HasItems) {
+				e.Handled = true;
+				listBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+				listBox.SelectedIndex = 0;
+			}
+		}
+		
 		sealed class RunningSearch
 		{
 			readonly Dispatcher dispatcher;
@@ -173,6 +182,8 @@ namespace ICSharpCode.ILSpy
 				this.searchTerm = searchTerm;
 				this.language = language;
 				this.searchMode = searchMode;
+				
+				this.Results.Add(new SearchResult { Name = "Searching..." });
 			}
 			
 			public void Cancel()
@@ -196,6 +207,10 @@ namespace ICSharpCode.ILSpy
 				} catch (OperationCanceledException) {
 					// ignore cancellation
 				}
+				// remove the 'Searching...' entry
+				dispatcher.BeginInvoke(
+					DispatcherPriority.Normal,
+					new Action(delegate { this.Results.RemoveAt(this.Results.Count - 1); }));
 			}
 			
 			void AddResult(SearchResult result)
@@ -206,7 +221,7 @@ namespace ICSharpCode.ILSpy
 				}
 				dispatcher.BeginInvoke(
 					DispatcherPriority.Normal,
-					new Action(delegate { this.Results.Add(result); }));
+					new Action(delegate { this.Results.Insert(this.Results.Count - 1, result); }));
 				cts.Token.ThrowIfCancellationRequested();
 			}
 			
@@ -284,7 +299,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		class SearchResult : INotifyPropertyChanged
+		sealed class SearchResult : INotifyPropertyChanged, IMemberTreeNode
 		{
 			event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged {
 				add { }
