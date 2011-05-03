@@ -67,22 +67,22 @@ namespace ICSharpCode.ILSpy
 		public static readonly BitmapImage Enum = LoadBitmap("Enum");
 
 
-		private static readonly BitmapImage Field = LoadBitmap("Field");
-		private static readonly BitmapImage FieldReadOnly = LoadBitmap("FieldReadOnly");
-		private static readonly BitmapImage Literal = LoadBitmap("Literal");
-		private static readonly BitmapImage EnumValue = LoadBitmap("EnumValue");
+		public static readonly BitmapImage Field = LoadBitmap("Field");
+		public static readonly BitmapImage FieldReadOnly = LoadBitmap("FieldReadOnly");
+		public static readonly BitmapImage Literal = LoadBitmap("Literal");
+		public static readonly BitmapImage EnumValue = LoadBitmap("EnumValue");
 
-		private static readonly BitmapImage Method = LoadBitmap("Method");
-		private static readonly BitmapImage Constructor = LoadBitmap("Constructor");
-		private static readonly BitmapImage VirtualMethod = LoadBitmap("VirtualMethod");
-		private static readonly BitmapImage Operator = LoadBitmap("Operator");
-		private static readonly BitmapImage ExtensionMethod = LoadBitmap("ExtensionMethod");
-		private static readonly BitmapImage PInvokeMethod = LoadBitmap("PInvokeMethod");
+		public static readonly BitmapImage Method = LoadBitmap("Method");
+		public static readonly BitmapImage Constructor = LoadBitmap("Constructor");
+		public static readonly BitmapImage VirtualMethod = LoadBitmap("VirtualMethod");
+		public static readonly BitmapImage Operator = LoadBitmap("Operator");
+		public static readonly BitmapImage ExtensionMethod = LoadBitmap("ExtensionMethod");
+		public static readonly BitmapImage PInvokeMethod = LoadBitmap("PInvokeMethod");
 
-		private static readonly BitmapImage Property = LoadBitmap("Property");
-		private static readonly BitmapImage Indexer = LoadBitmap("Indexer");
+		public static readonly BitmapImage Property = LoadBitmap("Property");
+		public static readonly BitmapImage Indexer = LoadBitmap("Indexer");
 
-		private static readonly BitmapImage Event = LoadBitmap("Event");
+		public static readonly BitmapImage Event = LoadBitmap("Event");
 
 		private static readonly BitmapImage OverlayProtected = LoadBitmap("OverlayProtected");
 		private static readonly BitmapImage OverlayInternal = LoadBitmap("OverlayInternal");

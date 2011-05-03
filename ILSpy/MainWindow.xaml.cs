@@ -491,6 +491,11 @@ namespace ICSharpCode.ILSpy
 			ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
 			SelectNode(FindNodeByPath(path, true));
 		}
+		
+		void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			SearchPane.Instance.Show();
+		}
 		#endregion
 		
 		#region Decompile (TreeView_SelectionChanged)
