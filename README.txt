@@ -13,6 +13,7 @@ Included open-source libraries:
 ILSpy Contributors:
 	Daniel Grunwald
 	David Srbecky
+	Ed Harvey
 	Siegfried Pammer
 	Artur Zgodzinski
 	Eusebiu Marcu

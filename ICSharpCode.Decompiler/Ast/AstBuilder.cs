@@ -917,19 +917,27 @@ namespace ICSharpCode.Decompiler.Ast
 			astField.ReturnType = ConvertType(fieldDef.FieldType, fieldDef);
 			astField.Modifiers = ConvertModifiers(fieldDef);
 			if (fieldDef.HasConstant) {
-				if (fieldDef.Constant == null) {
-					initializer.Initializer = new NullReferenceExpression();
-				} else {
-					TypeCode c = Type.GetTypeCode(fieldDef.Constant.GetType());
-					if (c >= TypeCode.SByte && c <= TypeCode.UInt64 && !fieldDef.DeclaringType.IsEnum) {
-						initializer.Initializer = MakePrimitive((long)CSharpPrimitiveCast.Cast(TypeCode.Int64, fieldDef.Constant, false), fieldDef.FieldType);
-					} else {
-						initializer.Initializer = new PrimitiveExpression(fieldDef.Constant);
-					}
-				}
+				initializer.Initializer = CreateExpressionForConstant(fieldDef.Constant, fieldDef.FieldType, fieldDef.DeclaringType.IsEnum);
 			}
 			ConvertAttributes(astField, fieldDef);
 			return astField;
+		}
+		
+		static Expression CreateExpressionForConstant(object constant, TypeReference type, bool isEnumMemberDeclaration = false)
+		{
+			if (constant == null) {
+				if (type.IsValueType && !(type.Namespace == "System" && type.Name == "Nullable`1"))
+					return new DefaultValueExpression(ConvertType(type));
+				else
+					return new NullReferenceExpression();
+			} else {
+				TypeCode c = Type.GetTypeCode(constant.GetType());
+				if (c >= TypeCode.SByte && c <= TypeCode.UInt64 && !isEnumMemberDeclaration) {
+					return MakePrimitive((long)CSharpPrimitiveCast.Cast(TypeCode.Int64, constant, false), type);
+				} else {
+					return new PrimitiveExpression(constant);
+				}
+			}
 		}
 		
 		public static IEnumerable<ParameterDeclaration> MakeParameters(MethodDefinition method, bool isLambda = false)
@@ -957,11 +965,15 @@ namespace ICSharpCode.Decompiler.Ast
 					if (ct != null && ct.PointerRank > 0)
 						ct.PointerRank--;
 				}
+				
 				if (paramDef.HasCustomAttributes) {
 					foreach (CustomAttribute ca in paramDef.CustomAttributes) {
 						if (ca.AttributeType.Name == "ParamArrayAttribute" && ca.AttributeType.Namespace == "System")
 							astParam.ParameterModifier = ParameterModifier.Params;
 					}
+				}
+				if (paramDef.IsOptional) {
+					astParam.DefaultExpression = CreateExpressionForConstant(paramDef.Constant, paramDef.ParameterType);
 				}
 				
 				ConvertCustomAttributes(astParam, paramDef);

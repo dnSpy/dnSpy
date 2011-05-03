@@ -85,6 +85,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutPage.cs" />
+    <Compile Include="AnalyzerTreeView.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
@@ -95,6 +98,11 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="ConnectMethodDecompiler.cs" />
+    <Compile Include="Controls\DockedPane.cs" />
+    <Compile Include="DecompilerSettingsPanel.xaml.cs">
+      <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ExportCommandAttribute.cs" />
     <Compile Include="Commands\DebuggerCommands.cs" />
     <Compile Include="Controls\SearchBox.cs" />
@@ -137,10 +145,20 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchPane.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventAccessorsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedInterfacePropertyImplementedByTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedInterfaceMethodImplementedByTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedInterfaceEventImplementedByTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedTypeExposedByTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedTypeExtensionMethodsTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedTypeInstantiationsTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedTypeTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\Helpers.cs" />
     <Compile Include="TreeNodes\Analyzer\ScopedWhereUsedAnalyzer.cs" />
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />
@@ -184,13 +202,13 @@
     <Compile Include="TextView\ReferenceElementGenerator.cs" />
     <Compile Include="TextView\AvalonEditTextOutput.cs" />
     <Compile Include="TextView\UIElementGenerator.cs" />
-    <Compile Include="TreeNodes\Analyzer\AnalyzedFieldAccessNode.cs" />
-    <Compile Include="TreeNodes\Analyzer\AnalyzedFieldNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedFieldAccessTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedFieldTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedMethodTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedMethodUsedByTreeNode.cs" />
-    <Compile Include="TreeNodes\Analyzer\AnalyzedMethodUsesNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedMethodUsesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzerTreeNode.cs" />
-    <Compile Include="TreeNodes\Analyzer\AnalyzerMethodOverridesTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedMethodOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyListTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyReferenceTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyTreeNode.cs" />
@@ -220,6 +238,9 @@
     <Page Include="Options\DebuggerSettingsPanel.xaml" />
     <Page Include="Options\DecompilerSettingsPanel.xaml" />
     <Page Include="Options\OptionsDialog.xaml" />
+    <Page Include="SearchPane.xaml">
+      <DependentUpon>SearchPane.cs</DependentUpon>
+    </Page>
     <Page Include="TextView\DecompilerTextView.xaml">
       <DependentUpon>DecompilerTextView.cs</DependentUpon>
     </Page>

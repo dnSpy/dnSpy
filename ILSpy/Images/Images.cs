@@ -112,12 +112,14 @@ namespace ICSharpCode.ILSpy
 
 		public static ImageSource GetIcon(TypeIcon icon, AccessOverlayIcon overlay)
 		{
-			return typeIconCache.GetIcon(icon, overlay, false);
+			lock (typeIconCache)
+				return typeIconCache.GetIcon(icon, overlay, false);
 		}
 
 		public static ImageSource GetIcon(MemberIcon icon, AccessOverlayIcon overlay, bool isStatic)
 		{
-			return memberIconCache.GetIcon(icon, overlay, isStatic);
+			lock (memberIconCache)
+				return memberIconCache.GetIcon(icon, overlay, isStatic);
 		}
 
 		#region icon caches & overlay management

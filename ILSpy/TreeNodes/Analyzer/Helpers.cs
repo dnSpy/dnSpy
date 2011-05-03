@@ -24,7 +24,7 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	static class Helpers
+	internal static class Helpers
 	{
 		public static bool IsReferencedBy(TypeDefinition type, TypeReference typeRef)
 		{

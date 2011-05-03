@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
@@ -29,10 +28,10 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	class AnalyzedPropertyOverridesTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedPropertyOverridesTreeNode : AnalyzerTreeNode
 	{
-		readonly PropertyDefinition analyzedProperty;
-		readonly ThreadingSupport threading;
+		private readonly PropertyDefinition analyzedProperty;
+		private readonly ThreadingSupport threading;
 
 		public AnalyzedPropertyOverridesTreeNode(PropertyDefinition analyzedProperty)
 		{
@@ -68,19 +67,20 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
 			return FindReferences(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), ct);
 		}
 
-		IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
 		{
 			assemblies = assemblies.Where(asm => asm.AssemblyDefinition != null);
+
 			// use parallelism only on the assembly level (avoid locks within Cecil)
 			return assemblies.AsParallel().WithCancellation(ct).SelectMany((LoadedAssembly asm) => FindReferences(asm, ct));
 		}
 
-		IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
 		{
 			string asmName = asm.AssemblyDefinition.Name.Name;
 			string name = analyzedProperty.Name;
@@ -111,7 +111,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		public static bool CanShowAnalyzer(PropertyDefinition property)
+		public static bool CanShow(PropertyDefinition property)
 		{
 			var accessor = property.GetMethod ?? property.SetMethod;
 			return accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;

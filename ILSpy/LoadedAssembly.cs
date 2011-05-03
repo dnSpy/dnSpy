@@ -49,6 +49,10 @@ namespace ICSharpCode.ILSpy
 			this.shortName = Path.GetFileNameWithoutExtension(fileName);
 		}
 		
+		/// <summary>
+		/// Gets the Cecil AssemblyDefinition.
+		/// Can be null when there was a load error.
+		/// </summary>
 		public AssemblyDefinition AssemblyDefinition {
 			get {
 				try {

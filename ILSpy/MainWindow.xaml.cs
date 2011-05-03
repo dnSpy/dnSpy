@@ -86,8 +86,7 @@ namespace ICSharpCode.ILSpy
 			
 			InitializeComponent();
 			App.CompositionContainer.ComposeParts(this);
-			Grid.SetRow(decompilerTextView, 1);
-			rightPane.Children.Add(decompilerTextView);
+			mainPane.Content = decompilerTextView;
 			
 			if (sessionSettings.SplitterPosition > 0 && sessionSettings.SplitterPosition < 1) {
 				leftColumn.Width = new GridLength(sessionSettings.SplitterPosition, GridUnitType.Star);
@@ -98,7 +97,6 @@ namespace ICSharpCode.ILSpy
 			InitMainMenu();
 			InitToolbar();
 			ContextMenuProvider.Add(treeView);
-			ContextMenuProvider.Add(analyzerTree);
 			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
 		}
@@ -616,22 +614,6 @@ namespace ICSharpCode.ILSpy
 
 		#endregion
 		
-		#region Analyzer
-		public void AddToAnalyzer(AnalyzerTreeNode node)
-		{
-			if (analyzerTree.Root == null)
-				analyzerTree.Root = new AnalyzerTreeNode { Language = sessionSettings.FilterSettings.Language };
-			
-			if (!showAnalyzer.IsChecked)
-				showAnalyzer.IsChecked = true;
-			
-			node.IsExpanded = true;
-			analyzerTree.Root.Children.Add(node);
-			analyzerTree.SelectedItem = node;
-			analyzerTree.FocusNode(node);
-		}
-		#endregion
-		
 		protected override void OnStateChanged(EventArgs e)
 		{
 			base.OnStateChanged(e);
@@ -647,26 +629,64 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 			sessionSettings.WindowBounds = this.RestoreBounds;
 			sessionSettings.SplitterPosition = leftColumn.Width.Value / (leftColumn.Width.Value + rightColumn.Width.Value);
-			if (showAnalyzer.IsChecked)
-				sessionSettings.AnalyzerSplitterPosition = analyzerRow.Height.Value / (analyzerRow.Height.Value + textViewRow.Height.Value);
+			if (topPane.Visibility == Visibility.Visible)
+				sessionSettings.BottomPaneSplitterPosition = topPaneRow.Height.Value / (topPaneRow.Height.Value + textViewRow.Height.Value);
+			if (bottomPane.Visibility == Visibility.Visible)
+				sessionSettings.BottomPaneSplitterPosition = bottomPaneRow.Height.Value / (bottomPaneRow.Height.Value + textViewRow.Height.Value);
 			sessionSettings.Save();
 		}
 		
-		void ShowAnalyzer_Checked(object sender, RoutedEventArgs e)
+		#region Top/Bottom Pane management
+		public void ShowInTopPane(string title, object content)
 		{
-			analyzerRow.MinHeight = 100;
-			if (sessionSettings.AnalyzerSplitterPosition > 0 && sessionSettings.AnalyzerSplitterPosition < 1) {
-				textViewRow.Height = new GridLength(1 - sessionSettings.AnalyzerSplitterPosition, GridUnitType.Star);
-				analyzerRow.Height = new GridLength(sessionSettings.AnalyzerSplitterPosition, GridUnitType.Star);
+			topPaneRow.MinHeight = 100;
+			if (sessionSettings.TopPaneSplitterPosition > 0 && sessionSettings.TopPaneSplitterPosition < 1) {
+				textViewRow.Height = new GridLength(1 - sessionSettings.TopPaneSplitterPosition, GridUnitType.Star);
+				topPaneRow.Height = new GridLength(sessionSettings.TopPaneSplitterPosition, GridUnitType.Star);
 			}
+			topPane.Title = title;
+			topPane.Content = content;
+			topPane.Visibility = Visibility.Visible;
 		}
 		
-		void ShowAnalyzer_Unchecked(object sender, RoutedEventArgs e)
+		void TopPane_CloseButtonClicked(object sender, EventArgs e)
 		{
-			sessionSettings.AnalyzerSplitterPosition = analyzerRow.Height.Value / (analyzerRow.Height.Value + textViewRow.Height.Value);
-			analyzerRow.MinHeight = 0;
-			analyzerRow.Height = new GridLength(0);
+			sessionSettings.TopPaneSplitterPosition = topPaneRow.Height.Value / (topPaneRow.Height.Value + textViewRow.Height.Value);
+			topPaneRow.MinHeight = 0;
+			topPaneRow.Height = new GridLength(0);
+			topPane.Visibility = Visibility.Collapsed;
+			
+			IPane pane = topPane.Content as IPane;
+			topPane.Content = null;
+			if (pane != null)
+				pane.Closed();
 		}
+		
+		public void ShowInBottomPane(string title, object content)
+		{
+			bottomPaneRow.MinHeight = 100;
+			if (sessionSettings.BottomPaneSplitterPosition > 0 && sessionSettings.BottomPaneSplitterPosition < 1) {
+				textViewRow.Height = new GridLength(1 - sessionSettings.BottomPaneSplitterPosition, GridUnitType.Star);
+				bottomPaneRow.Height = new GridLength(sessionSettings.BottomPaneSplitterPosition, GridUnitType.Star);
+			}
+			bottomPane.Title = title;
+			bottomPane.Content = content;
+			bottomPane.Visibility = Visibility.Visible;
+		}
+		
+		void BottomPane_CloseButtonClicked(object sender, EventArgs e)
+		{
+			sessionSettings.BottomPaneSplitterPosition = bottomPaneRow.Height.Value / (bottomPaneRow.Height.Value + textViewRow.Height.Value);
+			bottomPaneRow.MinHeight = 0;
+			bottomPaneRow.Height = new GridLength(0);
+			bottomPane.Visibility = Visibility.Collapsed;
+			
+			IPane pane = bottomPane.Content as IPane;
+			bottomPane.Content = null;
+			if (pane != null)
+				pane.Closed();
+		}
+		#endregion
 
 		public void UnselectAll()
 		{

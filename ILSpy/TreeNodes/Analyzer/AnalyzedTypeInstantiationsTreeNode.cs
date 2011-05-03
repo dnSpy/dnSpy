@@ -21,30 +21,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.NRefactory.Utils;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedEventOverridesTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedTypeInstantiationsTreeNode : AnalyzerTreeNode
 	{
-		private readonly EventDefinition analyzedEvent;
+		private readonly TypeDefinition analyzedType;
 		private readonly ThreadingSupport threading;
+		private readonly bool isSystemObject;
 
-		public AnalyzedEventOverridesTreeNode(EventDefinition analyzedEvent)
+		public AnalyzedTypeInstantiationsTreeNode(TypeDefinition analyzedType)
 		{
-			if (analyzedEvent == null)
-				throw new ArgumentNullException("analyzedEvent");
+			if (analyzedType == null)
+				throw new ArgumentNullException("analyzedType");
 
-			this.analyzedEvent = analyzedEvent;
+			this.analyzedType = analyzedType;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
+
+			this.isSystemObject = (analyzedType.FullName == "System.Object");
 		}
 
 		public override object Text
 		{
-			get { return "Overridden By"; }
+			get { return "Instantiated By"; }
 		}
 
 		public override object Icon
@@ -68,44 +71,48 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			return FindReferences(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), ct);
+			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
+
+			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedType, FindReferencesInType);
+			return analyzer.PerformAnalysis(ct);
 		}
 
-		private IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			assemblies = assemblies.Where(asm => asm.AssemblyDefinition != null);
-
-			// use parallelism only on the assembly level (avoid locks within Cecil)
-			return assemblies.AsParallel().WithCancellation(ct).SelectMany((LoadedAssembly asm) => FindReferences(asm, ct));
-		}
-
-		private IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
-		{
-			string asmName = asm.AssemblyDefinition.Name.Name;
-			string name = analyzedEvent.Name;
-			string declTypeName = analyzedEvent.DeclaringType.FullName;
-			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
-				ct.ThrowIfCancellationRequested();
-
-				if (!TypesHierarchyHelpers.IsBaseType(analyzedEvent.DeclaringType, type, resolveTypeArguments: false))
+			foreach (MethodDefinition method in type.Methods) {
+				bool found = false;
+				if (!method.HasBody)
 					continue;
 
-				foreach (EventDefinition eventDef in type.Events) {
-					ct.ThrowIfCancellationRequested();
+				// ignore chained constructors
+				// (since object is the root of everything, we can short circuit the test in this case)
+				if (method.Name == ".ctor" &&
+					(isSystemObject || analyzedType == type || TypesHierarchyHelpers.IsBaseType(analyzedType, type, false)))
+					continue;
 
-					if (TypesHierarchyHelpers.IsBaseEvent(analyzedEvent, eventDef)) {
-						MethodDefinition anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-						bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-						yield return new AnalyzedEventTreeNode(eventDef, hidesParent ? "(hides) " : "");
+				foreach (Instruction instr in method.Body.Instructions) {
+					MethodReference mr = instr.Operand as MethodReference;
+					if (mr != null && mr.Name == ".ctor") {
+						if (Helpers.IsReferencedBy(analyzedType, mr.DeclaringType)) {
+							found = true;
+							break;
+						}
 					}
 				}
+
+				method.Body = null;
+
+				if (found)
+					yield return new AnalyzedMethodTreeNode(method);
 			}
 		}
 
-		public static bool CanShow(EventDefinition property)
+		public static bool CanShow(TypeDefinition type)
 		{
-			var accessor = property.AddMethod ?? property.RemoveMethod;
-			return accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
+			if (type.IsClass && !type.IsEnum) {
+				return type.Methods.Where(m => m.Name == ".ctor").Any(m => !m.IsPrivate);
+			}
+			return false;
 		}
 	}
 }

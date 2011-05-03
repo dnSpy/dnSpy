@@ -18,31 +18,31 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedMethodUsedByTreeNode : AnalyzerTreeNode
+	internal class AnalyzedTypeExtensionMethodsTreeNode : AnalyzerTreeNode
 	{
-		private readonly MethodDefinition analyzedMethod;
+		private readonly TypeDefinition analyzedType;
 		private readonly ThreadingSupport threading;
 
-		public AnalyzedMethodUsedByTreeNode(MethodDefinition analyzedMethod)
+		public AnalyzedTypeExtensionMethodsTreeNode(TypeDefinition analyzedType)
 		{
-			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+			if (analyzedType == null)
+				throw new ArgumentNullException("analyzedType");
 
-			this.analyzedMethod = analyzedMethod;
+			this.analyzedType = analyzedType;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
 		}
 
 		public override object Text
 		{
-			get { return "Used By"; }
+			get { return "Extension Methods"; }
 		}
 
 		public override object Icon
@@ -68,33 +68,40 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
 
-			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
+			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedType, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct);
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			string name = analyzedMethod.Name;
+			if (!HasExtensionAttribute(type))
+				yield break;
 			foreach (MethodDefinition method in type.Methods) {
-				bool found = false;
-				if (!method.HasBody)
-					continue;
-				foreach (Instruction instr in method.Body.Instructions) {
-					MethodReference mr = instr.Operand as MethodReference;
-					if (mr != null &&
-						mr.Name == name &&
-						Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
-						mr.Resolve() == analyzedMethod) {
-						found = true;
-						break;
+				if (method.IsStatic && HasExtensionAttribute(method)) {
+					if (method.HasParameters && method.Parameters[0].ParameterType.Resolve() == analyzedType) {
+						yield return new AnalyzedMethodTreeNode(method);
 					}
 				}
-
-				method.Body = null;
-
-				if (found)
-					yield return new AnalyzedMethodTreeNode(method);
 			}
+		}
+		
+		bool HasExtensionAttribute(ICustomAttributeProvider p)
+		{
+			if (p.HasCustomAttributes) {
+				foreach (CustomAttribute ca in p.CustomAttributes) {
+					TypeReference t = ca.AttributeType;
+					if (t.Name == "ExtensionAttribute" && t.Namespace == "System.Runtime.CompilerServices")
+						return true;
+				}
+			}
+			return false;
+		}
+		
+
+		public static bool CanShow(TypeDefinition type)
+		{
+			// show on all types except static classes
+			return !(type.IsAbstract && type.IsSealed);
 		}
 	}
 }

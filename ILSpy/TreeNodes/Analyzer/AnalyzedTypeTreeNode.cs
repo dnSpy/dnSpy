@@ -17,50 +17,56 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Linq;
-using ICSharpCode.TreeView;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	public class AnalyzerTreeNode : SharpTreeNode
+	internal class AnalyzedTypeTreeNode : AnalyzerTreeNode, IMemberTreeNode
 	{
-		private Language language;
+		private readonly TypeDefinition analyzedType;
 
-		public Language Language
+		public AnalyzedTypeTreeNode(TypeDefinition analyzedType)
 		{
-			get { return language; }
-			set
+			if (analyzedType == null)
+				throw new ArgumentNullException("analyzedType");
+			this.analyzedType = analyzedType;
+			this.LazyLoading = true;
+		}
+
+		public override object Icon
+		{
+			get { return TypeTreeNode.GetIcon(analyzedType); }
+		}
+
+		public override object Text
+		{
+			get
 			{
-				if (language != value) {
-					language = value;
-					foreach (var child in this.Children.OfType<AnalyzerTreeNode>())
-						child.Language = value;
-				}
+				return Language.TypeToString(analyzedType, true);
 			}
 		}
 
-		public override bool CanDelete()
+		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
-			return Parent != null && Parent.IsRoot;
+			e.Handled = true;
+			MainWindow.Instance.JumpToReference(analyzedType);
 		}
 
-		public override void DeleteCore()
+		protected override void LoadChildren()
 		{
-			Parent.Children.Remove(this);
+			if (AnalyzedTypeInstantiationsTreeNode.CanShow(analyzedType))
+				this.Children.Add(new AnalyzedTypeInstantiationsTreeNode(analyzedType));
+
+			if (AnalyzedTypeExposedByTreeNode.CanShow(analyzedType))
+				this.Children.Add(new AnalyzedTypeExposedByTreeNode(analyzedType));
+
+			if (AnalyzedTypeExtensionMethodsTreeNode.CanShow(analyzedType))
+				this.Children.Add(new AnalyzedTypeExtensionMethodsTreeNode(analyzedType));
 		}
 
-		public override void Delete()
+		MemberReference IMemberTreeNode.Member
 		{
-			DeleteCore();
-		}
-
-		protected override void OnChildrenChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-		{
-			if (e.NewItems != null) {
-				foreach (AnalyzerTreeNode a in e.NewItems.OfType<AnalyzerTreeNode>())
-					a.Language = this.Language;
-			}
-			base.OnChildrenChanged(e);
+			get { return analyzedType; }
 		}
 	}
 }

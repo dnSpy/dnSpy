@@ -27,38 +27,41 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	/// <summary>
 	/// Shows the methods that are used by this method.
 	/// </summary>
-	sealed class AnalyzedMethodUsesNode : AnalyzerTreeNode
+	internal sealed class AnalyzedMethodUsesTreeNode : AnalyzerTreeNode
 	{
-		MethodDefinition analyzedMethod;
-		
-		public AnalyzedMethodUsesNode(MethodDefinition analyzedMethod)
+		private readonly MethodDefinition analyzedMethod;
+
+		public AnalyzedMethodUsesTreeNode(MethodDefinition analyzedMethod)
 		{
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
-			
+
 			this.analyzedMethod = analyzedMethod;
 			this.LazyLoading = true;
 		}
-		
-		public override object Text {
+
+		public override object Text
+		{
 			get { return "Uses"; }
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return Images.Search; }
 		}
-		
+
 		protected override void LoadChildren()
 		{
 			foreach (var f in GetUsedFields().Distinct()) {
-				this.Children.Add(new AnalyzedFieldNode(f));
+				this.Children.Add(new AnalyzedFieldTreeNode(f));
 			}
 			foreach (var m in GetUsedMethods().Distinct()) {
 				this.Children.Add(new AnalyzedMethodTreeNode(m));
 			}
+			analyzedMethod.Body = null;
 		}
-		
-		IEnumerable<MethodDefinition> GetUsedMethods()
+
+		private IEnumerable<MethodDefinition> GetUsedMethods()
 		{
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				MethodReference mr = instr.Operand as MethodReference;
@@ -69,8 +72,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				}
 			}
 		}
-		
-		IEnumerable<FieldDefinition> GetUsedFields()
+
+		private IEnumerable<FieldDefinition> GetUsedFields()
 		{
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				FieldReference fr = instr.Operand as FieldReference;

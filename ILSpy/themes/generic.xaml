@@ -2,6 +2,10 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
 >
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="../Controls/SearchBoxStyle.xaml" />
+	</ResourceDictionary.MergedDictionaries>
+	
 	<!-- SortableGridViewColumn.
 		Displays an up arrow or down arrow in the column header when the grid is sorted using that column.
 	-->
@@ -23,7 +27,87 @@
 		</StackPanel>
 	</DataTemplate>
 	
-	<ResourceDictionary.MergedDictionaries>
-		<ResourceDictionary Source="../Controls/SearchBoxStyle.xaml" />
-	</ResourceDictionary.MergedDictionaries>
+	<!-- DockedPane -->
+	<Style TargetType="{x:Type controls:DockedPane}">
+		<Style.Resources>
+			<Style x:Key="CloseButtonStyle" TargetType="{x:Type Button}">
+				<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+				<Setter Property="Background">
+					<Setter.Value>
+						<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+							<GradientStop Color="{controls:ControlColor 243}" Offset="0"/>
+							<GradientStop Color="{controls:ControlColor 235}" Offset="0.5"/>
+							<GradientStop Color="{controls:ControlColor 221}" Offset="0.5"/>
+							<GradientStop Color="{controls:ControlColor 205}" Offset="1"/>
+						</LinearGradientBrush>
+					</Setter.Value>
+				</Setter>
+				<Setter Property="BorderBrush">
+					<Setter.Value>
+						<SolidColorBrush Color="{controls:ControlColor 150}"/>
+					</Setter.Value>
+				</Setter>
+				<Setter Property="BorderThickness" Value="1"/>
+				<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+				<Setter Property="HorizontalContentAlignment" Value="Center"/>
+				<Setter Property="VerticalContentAlignment" Value="Center"/>
+				<Setter Property="Padding" Value="4"/>
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="{x:Type Button}">
+							<Grid>
+								<Border SnapsToDevicePixels="true" x:Name="buttonBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2" />
+								<ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+							</Grid>
+							<ControlTemplate.Triggers>
+								<Trigger Property="IsMouseOver" Value="True">
+									<Setter Property="Background" TargetName="buttonBorder">
+										<Setter.Value>
+											<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+												<GradientStop Color="{controls:ControlColor 250, Highlight=0.3}" Offset="0"/>
+												<GradientStop Color="{controls:ControlColor 224, Highlight=0.4}" Offset="1"/>
+											</LinearGradientBrush>
+										</Setter.Value>
+									</Setter>
+								</Trigger>
+								<Trigger Property="IsPressed" Value="True">
+									<Setter Property="Background" TargetName="buttonBorder">
+										<Setter.Value>
+											<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+												<GradientStop Color="{controls:ControlColor 224}" Offset="0"/>
+												<GradientStop Color="{controls:ControlColor 248}" Offset="1"/>
+											</LinearGradientBrush>
+										</Setter.Value>
+									</Setter>
+								</Trigger>
+							</ControlTemplate.Triggers>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Style>
+		</Style.Resources>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type controls:DockedPane}">
+					<Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" CornerRadius="0,2,0,0">
+						<DockPanel>
+							<Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" DockPanel.Dock="Top">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="1*"/>
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<TextBlock Text="{TemplateBinding Title}" Margin="3,0" Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+									<Button x:Name="PART_Close" Grid.Column="2" VerticalAlignment="Center" Width="16" Height="16" DockPanel.Dock="Right" Style="{DynamicResource CloseButtonStyle}" ToolTip="Close">
+										<Path x:Name="Path" Stretch="Fill" StrokeThickness="0.5" Stroke="#FF333333" Fill="#FF969696" Data="F1 M 0,1.3333L 1.33333,0L 4,2.6666L 6.6666,0 8,1.3333L 5.3333,4L 8,6.6666L 6.6666,8L 4,5.3333L 1.3333,8L 0,6.6666L 2.6666,4L 0,1.3333 Z " HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+									</Button>
+								</Grid>
+							</Border>
+							<ContentPresenter Content="{TemplateBinding Content}" />
+						</DockPanel>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 </ResourceDictionary>

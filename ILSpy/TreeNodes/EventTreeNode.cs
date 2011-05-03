@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Windows.Media;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
@@ -67,7 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return GetIcon(ev); }
 		}
 
-		public static object GetIcon(EventDefinition eventDef)
+		public static ImageSource GetIcon(EventDefinition eventDef)
 		{
 			MethodDefinition accessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
 			if (accessor != null)

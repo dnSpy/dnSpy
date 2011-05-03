@@ -18,31 +18,34 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedMethodUsedByTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedInterfacePropertyImplementedByTreeNode : AnalyzerTreeNode
 	{
+		private readonly PropertyDefinition analyzedProperty;
 		private readonly MethodDefinition analyzedMethod;
 		private readonly ThreadingSupport threading;
 
-		public AnalyzedMethodUsedByTreeNode(MethodDefinition analyzedMethod)
+		public AnalyzedInterfacePropertyImplementedByTreeNode(PropertyDefinition analyzedProperty)
 		{
-			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+			if (analyzedProperty == null)
+				throw new ArgumentNullException("analyzedProperty");
 
-			this.analyzedMethod = analyzedMethod;
+			this.analyzedProperty = analyzedProperty;
+			this.analyzedMethod = this.analyzedProperty.GetMethod ?? this.analyzedProperty.SetMethod;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
 		}
 
 		public override object Text
 		{
-			get { return "Used By"; }
+			get { return "Implemented By"; }
 		}
 
 		public override object Icon
@@ -67,34 +70,36 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
 			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
-
 			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct);
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			string name = analyzedMethod.Name;
-			foreach (MethodDefinition method in type.Methods) {
-				bool found = false;
-				if (!method.HasBody)
-					continue;
-				foreach (Instruction instr in method.Body.Instructions) {
-					MethodReference mr = instr.Operand as MethodReference;
-					if (mr != null &&
-						mr.Name == name &&
-						Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
-						mr.Resolve() == analyzedMethod) {
-						found = true;
-						break;
-					}
-				}
+			if (!type.HasInterfaces)
+				yield break;
+			TypeReference implementedInterfaceRef = type.Interfaces.FirstOrDefault(i => i.Resolve() == analyzedMethod.DeclaringType);
+			if (implementedInterfaceRef == null)
+				yield break;
 
-				method.Body = null;
-
-				if (found)
-					yield return new AnalyzedMethodTreeNode(method);
+			foreach (PropertyDefinition property in type.Properties.Where(e => e.Name == analyzedProperty.Name)) {
+				MethodDefinition accessor = property.GetMethod ?? property.SetMethod;
+				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef))
+					yield return new AnalyzedPropertyTreeNode(property);
+				yield break;
 			}
+
+			foreach (PropertyDefinition property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
+				MethodDefinition accessor = property.GetMethod ?? property.SetMethod;
+				if (accessor.HasOverrides && accessor.Overrides.Any(m => m.Resolve() == analyzedMethod)) {
+					yield return new AnalyzedPropertyTreeNode(property);
+				}
+			}
+		}
+
+		public static bool CanShow(PropertyDefinition property)
+		{
+			return property.DeclaringType.IsInterface;
 		}
 	}
 }

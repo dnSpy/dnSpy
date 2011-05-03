@@ -133,8 +133,9 @@ namespace Mono.Cecil {
 
 		public MethodBody Body {
 			get {
-				if (body != null)
-					return body;
+				MethodBody localBody = this.body;
+				if (localBody != null)
+					return localBody;
 
 				if (!HasBody)
 					return null;
@@ -144,7 +145,12 @@ namespace Mono.Cecil {
 
 				return body = new MethodBody (this);
 			}
-			set { body = value; }
+			set { 
+				// we reset Body to null in ILSpy to save memory; so we need that operation to be thread-safe
+				lock (Module.SyncRoot) {
+					body = value;
+				}
+			}
 		}
 
 		public bool HasPInvokeInfo {
