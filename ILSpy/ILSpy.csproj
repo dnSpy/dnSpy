@@ -99,10 +99,6 @@
     <Compile Include="Commands.cs" />
     <Compile Include="ConnectMethodDecompiler.cs" />
     <Compile Include="Controls\DockedPane.cs" />
-    <Compile Include="DecompilerSettingsPanel.xaml.cs">
-      <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ExportCommandAttribute.cs" />
     <Compile Include="Commands\DebuggerCommands.cs" />
     <Compile Include="Controls\SearchBox.cs" />
