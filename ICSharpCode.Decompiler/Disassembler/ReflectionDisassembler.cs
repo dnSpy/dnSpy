@@ -28,14 +28,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 	/// <summary>
 	/// Disassembles type and member definitions.
 	/// </summary>
-	public sealed class ReflectionDisassembler : ICodeMappings
+	public sealed class ReflectionDisassembler : BaseCodeMappings
 	{
 		ITextOutput output;
 		CancellationToken cancellationToken;
 		bool detectControlStructure;
 		bool isInType; // whether we are currently disassembling a whole type (-> defaultCollapsed for foldings)
 		MethodBodyDisassembler methodBodyDisassembler;
-		int currentMemberToken;
+		MemberReference currentMember;
 		
 		public ReflectionDisassembler(ITextOutput output, bool detectControlStructure, CancellationToken cancellationToken)
 		{
@@ -98,8 +98,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public void DisassembleMethod(MethodDefinition method)
 		{
-			// create mappings for decompiled methods only
-			currentMemberToken = CreateCodeMappings(method.MetadataToken.ToInt32(), method);
+			// set current member
+			currentMember = method;
 			
 			// write method header
 			output.WriteDefinition(".method ", method);
@@ -155,7 +155,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 				
 				if (method.HasBody) {
 					// create IL code mappings - used in debugger
-					MemberMapping methodMapping = method.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
+					CreateCodeMappings(method.MetadataToken.ToInt32(), currentMember);
+					MemberMapping methodMapping = method.CreateCodeMapping(this.CodeMappings[method.MetadataToken.ToInt32()], currentMember);
 					
 					methodBodyDisassembler.Disassemble(method.Body, methodMapping);
 				}
@@ -233,8 +234,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public void DisassembleProperty(PropertyDefinition property)
 		{
-			// create mappings for decompiled properties only
-			currentMemberToken = CreateCodeMappings(property.MetadataToken.ToInt32(), property);
+			// set current member
+			currentMember = property;
 			
 			output.WriteDefinition(".property ", property);
 			WriteFlags(property.Attributes, propertyAttributes);
@@ -245,6 +246,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteAttributes(property.CustomAttributes);
 			WriteNestedMethod(".get", property.GetMethod);
 			WriteNestedMethod(".set", property.SetMethod);
+			
 			foreach (var method in property.OtherMethods) {
 				WriteNestedMethod(".method", method);
 			}
@@ -276,8 +278,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public void DisassembleEvent(EventDefinition ev)
 		{
-			// create mappings for decompiled events only
-			currentMemberToken = CreateCodeMappings(ev.MetadataToken.ToInt32(), ev);
+			// set current member
+			currentMember = ev;
 			
 			output.WriteDefinition(".event ", ev);
 			WriteFlags(ev.Attributes, eventAttributes);
@@ -615,23 +617,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			WriteAttributes(asm.CustomAttributes);
 			CloseBlock();
-		}
-		
-		/// <summary>
-		/// <inheritdoc/>
-		/// </summary>
-		public Dictionary<int, List<MemberMapping>> CodeMappings { get; private set; }
-		
-		/// <summary>
-		/// <inheritdoc/>
-		/// </summary>
-		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; private set; }
-		
-		private int CreateCodeMappings(int token, MemberReference member)
-		{
-			this.CodeMappings.Add(token, new List<MemberMapping>());
-			this.DecompiledMemberReferences.Add(token, member);
-			return token;
 		}
 	}
 }

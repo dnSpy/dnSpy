@@ -380,33 +380,38 @@ namespace ICSharpCode.ILSpy.TextView
 						isDecompilationOk = false;
 					}
 					finally {
-						// sync bookmarks
-						iconMargin.SyncBookmarks();
-						// set the language
-						DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
-						
-						if (isDecompilationOk) {
-							if (DebugData.DecompiledMemberReferences != null && DebugData.DecompiledMemberReferences.Count > 0) {
-								
-								// repaint bookmarks
-								iconMargin.InvalidateVisual();
-								
-								// show the currentline marker
-								var bm = CurrentLineBookmark.Instance;
-								if (bm != null) {
-									if (DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32())) {
-										DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
-										bm.Marker = bm.CreateMarker(textMarkerService, line.Offset, line.Length);
-									}
-									UnfoldAndScroll(bm.LineNumber);
-								}
-							}
-						} else {
-							// remove currentline marker
-							CurrentLineBookmark.Remove();
-						}
+						this.Test(isDecompilationOk);
 					}
 				});
+		}
+		
+		void Test(bool isDecompilationOk)
+		{
+			// sync bookmarks
+			iconMargin.SyncBookmarks();
+			// set the language
+			DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
+			
+			if (isDecompilationOk) {
+				if (DebugData.DecompiledMemberReferences != null && DebugData.DecompiledMemberReferences.Count > 0) {
+					
+					// repaint bookmarks
+					iconMargin.InvalidateVisual();
+					
+					// show the currentline marker
+					var bm = CurrentLineBookmark.Instance;
+					if (bm != null) {
+						if (DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32())) {
+							DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
+							bm.Marker = bm.CreateMarker(textMarkerService, line.Offset + 1, line.Length);
+						}
+						UnfoldAndScroll(bm.LineNumber);
+					}
+				}
+			} else {
+				// remove currentline marker
+				CurrentLineBookmark.Remove();
+			}
 		}
 		
 		static Task<AvalonEditTextOutput> DecompileAsync(DecompilationContext context, int outputLengthLimit)

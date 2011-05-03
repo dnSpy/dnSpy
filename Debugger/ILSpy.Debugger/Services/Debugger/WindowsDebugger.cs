@@ -822,7 +822,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					DecompileOnDemand(frame);
 				}
 			}
-
 		}
 
 		void DecompileOnDemand(StackFrame frame)
@@ -878,12 +877,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 							AstBuilder builder = new AstBuilder(new DecompilerContext(typeDef.Module));
 							builder.AddType(type);
 							builder.GenerateCode(new PlainTextOutput());
-							memberReference = builder.DecompiledMemberReferences[token];
+							memberReference = builder.CodeMappings[token][0].MemberReference;
 							
 							// decompile member
-							var context = new DecompilerContext(typeDef.Module);
-							context.CurrentType = type;
-							builder = new AstBuilder(context);
+							builder = new AstBuilder(new DecompilerContext(typeDef.Module) { CurrentType = type });
 							if (memberReference is PropertyDefinition)
 								builder.AddProperty(memberReference as PropertyDefinition);
 							else if (memberReference is MethodDefinition)
@@ -902,7 +899,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					codeMappings = codeMappings ?? DebugData.CodeMappings;
 					if (codeMappings[token].GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out memberReference, out line)) {
 						DebuggerService.RemoveCurrentLineMarker();
-						DebuggerService.JumpToCurrentLine(members[token], line, 0, line, 0);
+						DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
 					} else {
 						StepOut();
 					}

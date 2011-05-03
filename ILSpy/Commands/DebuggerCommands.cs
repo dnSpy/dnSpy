@@ -166,9 +166,7 @@ namespace ICSharpCode.ILSpy.Commands
 			// jump to type & expand folding
 			var bm = CurrentLineBookmark.Instance;
 			if (bm != null) {
-				if (!DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32()))
-					inst.JumpToReference(bm.MemberReference);
-
+				inst.JumpToReference(bm.MemberReference);
 				inst.TextView.UnfoldAndScroll(bm.LineNumber);
 			}
 			

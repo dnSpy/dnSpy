@@ -35,21 +35,36 @@ namespace ICSharpCode.Decompiler
 	}
 	
 	/// <summary>
-	/// Interface for decompliler classes : AstBuilder & ReflectionDisassembler.
+	/// Base class for decompliler classes : AstBuilder & ReflectionDisassembler.
 	/// </summary>
-	public interface ICodeMappings
+	public abstract class BaseCodeMappings
 	{
 		/// <summary>
 		/// Gets the code mappings.
 		/// <remarks>Key is the metadata token.</remarks>
 		/// </summary>
-		Dictionary<int, List<MemberMapping>> CodeMappings { get; }
+		public Dictionary<int, List<MemberMapping>> CodeMappings { get; protected set; }
 		
 		/// <summary>
-		/// Gets the MembeReference that is decompiled (a TypeDefinition, MethodDefinition, etc)
+		/// Gets the MembeReference that is decompiled (a MethodDefinition, PropertyDefinition etc.)
 		/// <remarks>Key is the metadata token.</remarks>
 		/// </summary>
-		Dictionary<int, MemberReference> DecompiledMemberReferences { get; }
+		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; protected set; }
+		
+		/// <summary>
+		/// Create data in the CodeMappings and DecompiledMemberReferences.
+		/// </summary>
+		/// <param name="token">Token of the current method.</param>
+		/// <param name="member">Current member (MethodDefinition, PropertyDefinition, EventDefinition).</param>
+		/// <remarks>The token is used in CodeMappings; member (and its token) is used in DecompiledMemberReferences.</remarks>
+		protected virtual void CreateCodeMappings(int token, MemberReference member)
+		{
+			this.CodeMappings.Add(token, new List<MemberMapping>());
+			
+			int t = member.MetadataToken.ToInt32();
+			if (!this.DecompiledMemberReferences.ContainsKey(t))
+				this.DecompiledMemberReferences.Add(t, member);
+		}
 	}
 	
 	/// <summary>
@@ -90,9 +105,9 @@ namespace ICSharpCode.Decompiler
 				currentList.AddRange(MemberMapping.InvertedList);
 			} else {
 				// if the current list contains the last mapping, add also the last gap
-				var lastInverted = MemberMapping.InvertedList.LastOrDefault();
-				if (lastInverted != null && lastInverted.From == currentList[currentList.Count - 1].To)
-					currentList.Add(lastInverted);
+//				var lastInverted = MemberMapping.InvertedList.LastOrDefault();
+//				if (lastInverted != null && lastInverted.From == currentList[currentList.Count - 1].To)
+//					currentList.Add(lastInverted);
 			}
 			
 			// set the output
@@ -161,10 +176,11 @@ namespace ICSharpCode.Decompiler
 		/// </summary>
 		/// <param name="method">Method to create the mapping for.</param>
 		/// <param name="codeMappings">Source code mapping storage.</param>
-		/// <param name="isTypeDecompiled">True, if a full type was decompiled; false otherwise.</param>
+		/// <param name="actualMemberReference">The actual member reference.</param>
 		internal static MemberMapping CreateCodeMapping(
 			this MethodDefinition member,
-			List<MemberMapping> codeMappings)
+			List<MemberMapping> codeMappings,
+			MemberReference actualMemberReference = null)
 		{
 			if (member == null || !member.HasBody)
 				return null;
@@ -179,7 +195,7 @@ namespace ICSharpCode.Decompiler
 				currentMemberMapping = new MemberMapping() {
 					MetadataToken = member.MetadataToken.ToInt32(),
 					MemberCodeMappings = new List<SourceCodeMapping>(),
-					MemberReference = member,
+					MemberReference = actualMemberReference ?? member,
 					CodeSize = member.Body.CodeSize
 				};
 				

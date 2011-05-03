@@ -54,8 +54,10 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 			if (e.Bookmark is MarkerBookmark) {
 				var bm = (MarkerBookmark)e.Bookmark;
 				// add bookmark for the current type
-				DocumentLine line = codeEditor.Document.GetLineByNumber(bm.LineNumber);
-				bm.CreateMarker(this, line.Offset, line.Length);
+				if (bm.LineNumber < codeEditor.Document.LineCount) {
+					DocumentLine line = codeEditor.Document.GetLineByNumber(bm.LineNumber);
+					bm.CreateMarker(this, line.Offset, line.Length);
+				}
 			}
 		}
 		

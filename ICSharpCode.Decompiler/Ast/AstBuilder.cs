@@ -31,7 +31,7 @@ namespace ICSharpCode.Decompiler.Ast
 		IncludeTypeParameterDefinitions = 2
 	}
 	
-	public class AstBuilder : ICodeMappings
+	public class AstBuilder : BaseCodeMappings
 	{
 		DecompilerContext context;
 		CompilationUnit astCompileUnit = new CompilationUnit();
@@ -623,8 +623,8 @@ namespace ICSharpCode.Decompiler.Ast
 		AttributedNode CreateMethod(MethodDefinition methodDef)
 		{
 			// Create mapping - used in debugger
-			int currentMemberToken = CreateCodeMappings(methodDef.MetadataToken.ToInt32(), methodDef);
-			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
+			CreateCodeMappings(methodDef.MetadataToken.ToInt32(), methodDef);
+			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings[methodDef.MetadataToken.ToInt32()]);
 			
 			MethodDeclaration astMethod = new MethodDeclaration();
 			astMethod.AddAnnotation(methodDef);
@@ -719,8 +719,8 @@ namespace ICSharpCode.Decompiler.Ast
 		ConstructorDeclaration CreateConstructor(MethodDefinition methodDef)
 		{
 			// Create mapping - used in debugger
-			int currentMemberToken = CreateCodeMappings(methodDef.MetadataToken.ToInt32(), methodDef);
-			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
+			CreateCodeMappings(methodDef.MetadataToken.ToInt32(), methodDef);
+			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings[methodDef.MetadataToken.ToInt32()]);
 			
 			ConstructorDeclaration astMethod = new ConstructorDeclaration();
 			astMethod.AddAnnotation(methodDef);
@@ -788,8 +788,8 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			if (propDef.GetMethod != null) {
 				// Create mapping - used in debugger
-				int currentMemberToken = CreateCodeMappings(propDef.GetMethod.MetadataToken.ToInt32(), propDef);
-				MemberMapping methodMapping = propDef.GetMethod.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
+				CreateCodeMappings(propDef.GetMethod.MetadataToken.ToInt32(), propDef);
+				MemberMapping methodMapping = propDef.GetMethod.CreateCodeMapping(this.CodeMappings[propDef.GetMethod.MetadataToken.ToInt32()], propDef);
 				
 				astProp.Getter = new Accessor();
 				astProp.Getter.Body = CreateMethodBody(propDef.GetMethod);
@@ -803,8 +803,8 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			if (propDef.SetMethod != null) {
 				// Create mapping - used in debugger
-				int currentMemberToken = CreateCodeMappings(propDef.SetMethod.MetadataToken.ToInt32(), propDef);
-				MemberMapping methodMapping = propDef.SetMethod.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
+				CreateCodeMappings(propDef.SetMethod.MetadataToken.ToInt32(), propDef);
+				MemberMapping methodMapping = propDef.SetMethod.CreateCodeMapping(this.CodeMappings[propDef.SetMethod.MetadataToken.ToInt32()], propDef);
 				
 				astProp.Setter = new Accessor();
 				astProp.Setter.Body = CreateMethodBody(propDef.SetMethod);
@@ -865,8 +865,8 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				if (eventDef.AddMethod != null) {
 					// Create mapping - used in debugger
-					int currentMemberToken = CreateCodeMappings(eventDef.AddMethod.MetadataToken.ToInt32(), eventDef);
-					MemberMapping methodMapping = eventDef.AddMethod.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
+					CreateCodeMappings(eventDef.AddMethod.MetadataToken.ToInt32(), eventDef);
+					MemberMapping methodMapping = eventDef.AddMethod.CreateCodeMapping(this.CodeMappings[eventDef.AddMethod.MetadataToken.ToInt32()], eventDef);
 					
 					astEvent.AddAccessor = new Accessor {
 						Body = CreateMethodBody(eventDef.AddMethod)
@@ -877,8 +877,8 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 				if (eventDef.RemoveMethod != null) {
 					// Create mapping - used in debugger
-					int currentMemberToken = CreateCodeMappings(eventDef.RemoveMethod.MetadataToken.ToInt32(), eventDef);
-					MemberMapping methodMapping = eventDef.RemoveMethod.CreateCodeMapping(this.CodeMappings[currentMemberToken]);
+					CreateCodeMappings(eventDef.RemoveMethod.MetadataToken.ToInt32(), eventDef);
+					MemberMapping methodMapping = eventDef.RemoveMethod.CreateCodeMapping(this.CodeMappings[eventDef.RemoveMethod.MetadataToken.ToInt32()], eventDef);
 					
 					astEvent.RemoveAccessor = new Accessor {
 						Body = CreateMethodBody(eventDef.RemoveMethod)
@@ -1377,26 +1377,9 @@ namespace ICSharpCode.Decompiler.Ast
 		}
 		
 		/// <summary>
-		/// <inheritdoc/>
-		/// </summary>
-		public Dictionary<int, List<MemberMapping>> CodeMappings { get; private set; }
-		
-		/// <summary>
 		/// Gets the local variables for the current decompiled type, method, etc.
 		/// <remarks>The key is the metadata token.</remarks>
 		/// </summary>
 		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; private set; }
-		
-		/// <summary>
-		/// <inheritdoc/>
-		/// </summary>
-		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; private set; }
-		
-		private int CreateCodeMappings(int token, MemberReference member)
-		{
-			this.CodeMappings.Add(token, new List<MemberMapping>());
-			this.DecompiledMemberReferences.Add(token, member);
-			return token;
-		}
 	}
 }

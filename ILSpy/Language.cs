@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Decompilation event arguments.
 	/// </summary>
-	public sealed class DecompileEventArgs : EventArgs, ICodeMappings
+	public sealed class DecompileEventArgs : EventArgs
 	{
 		/// <summary>
 		/// Gets ot sets the code mappings
