@@ -31,8 +31,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!SimplifyNullableOperators(expr)) return false;
 
 			var inlining = new ILInlining(method);
-			do pos--;
-			while (inlining.InlineIfPossible(body, ref pos));
+			while (--pos >= 0 && inlining.InlineIfPossible(body, ref pos)) ;
 
 			return true;
 		}
@@ -49,7 +48,9 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		static bool IsNullableOperation(ILExpression expr)
 		{
-			var ps = PatternMatcher.PrimitiveComparisons;
+			if (expr.Code != ILCode.LogicAnd && expr.Code != ILCode.LogicOr) return false;
+
+			var ps = PatternMatcher.Comparisons;
 			for (int i = 0; i < ps.Length; i += 2) {
 				var pm = new PatternMatcher();
 				if (!pm.Match(ps[i], expr)) continue;
@@ -65,55 +66,147 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		struct PatternMatcher
 		{
-			public class Pattern
+			public abstract class Pattern
 			{
-				public readonly ILCode Code;
 				public readonly Pattern[] Arguments;
 
-				public Pattern(ILCode code, params Pattern[] arguments)
+				protected static readonly Pattern[] EmptyArguments = new Pattern[0];
+
+				protected Pattern(Pattern[] arguments)
 				{
-					this.Code = code;
 					this.Arguments = arguments;
 				}
 
-				public virtual bool Match(ref PatternMatcher pm, ILExpression e) { return true; }
+				public abstract bool Match(ref PatternMatcher pm, ILExpression e);
 
-				public virtual object GetOperand(ref PatternMatcher pm) { return null; }
+				public virtual ILExpression BuildNew(ref PatternMatcher pm, ILExpression[] args)
+				{
+					throw new NotSupportedException();
+				}
 			}
 
-			sealed class MethodPattern : Pattern
+			sealed class ILPattern : Pattern
 			{
-				public readonly Tuple<string, string, string> Method;
+				readonly ILCode code;
 
-				public MethodPattern(ILCode code, Tuple<string, string, string> method, params Pattern[] arguments)
-					: base(code, arguments)
+				public ILPattern(ILCode code, params Pattern[] arguments)
+					: base(arguments)
 				{
-					this.Method = method;
+					this.code = code;
 				}
 
 				public override bool Match(ref PatternMatcher pm, ILExpression e)
 				{
+					return e.Code == this.code;
+				}
+
+				public override ILExpression BuildNew(ref PatternMatcher pm, ILExpression[] args)
+				{
+					return new ILExpression(this.code, null, args);
+				}
+			}
+
+			sealed class MethodPattern : Pattern
+			{
+				readonly ILCode code;
+				readonly Tuple<string, string, string> method;
+
+				public MethodPattern(ILCode code, Tuple<string, string, string> method, params Pattern[] arguments)
+					: base(arguments)
+				{
+					this.code = code;
+					this.method = method;
+				}
+
+				public override bool Match(ref PatternMatcher pm, ILExpression e)
+				{
+					if (e.Code != this.code) return false;
 					var m = e.Operand as MethodReference;
-					if (m == null || m.Name != this.Method.Item1) return false;
+					if (m == null || m.Name != this.method.Item1) return false;
 					var t = m.DeclaringType;
-					return t.Name == this.Method.Item2 && t.Namespace == this.Method.Item3;
+					return t.Name == this.method.Item2 && t.Namespace == this.method.Item3;
+				}
+			}
+
+			sealed class OperatorPattern : Pattern
+			{
+				bool? equals, custom;
+
+				public OperatorPattern(params Pattern[] arguments) : base(arguments) { }
+
+				public OperatorPattern(bool? equals, bool? custom, params Pattern[] arguments)
+					: base(arguments)
+				{
+					this.equals = equals;
+					this.custom = custom;
+				}
+
+				public override bool Match(ref PatternMatcher pm, ILExpression e)
+				{
+					switch (e.Code) {
+						case ILCode.Ceq:
+							if (!equals.GetValueOrDefault() || custom.GetValueOrDefault()) return false;
+							break;
+						case ILCode.Cgt:
+						case ILCode.Cgt_Un:
+						case ILCode.Clt:
+						case ILCode.Clt_Un:
+							if (equals != null || custom.GetValueOrDefault()) return false;
+							break;
+						case ILCode.Call:
+							if (custom != null && !custom.GetValueOrDefault()) return false;
+							var m = e.Operand as MethodReference;
+							if (m == null || m.HasThis || !m.HasParameters || m.Parameters.Count != base.Arguments.Length || !IsCustomOperator(m)) return false;
+							break;
+						default: return false;
+					}
+					if (pm.Operator != null) throw new InvalidOperationException();
+					pm.Operator = e;
+					return true;
+				}
+
+				bool IsCustomOperator(MethodReference m)
+				{
+					switch (m.Name) {
+						case "op_Equality":
+							return equals.GetValueOrDefault();
+						case "op_Inequality":
+							return equals != null && !equals.GetValueOrDefault();
+						case "op_GreaterThan":
+						case "op_GreaterThanOrEqual":
+						case "op_LessThan":
+						case "op_LessThanOrEqual":
+							return equals == null;
+						default: return false;
+					}
+				}
+
+				public override ILExpression BuildNew(ref PatternMatcher pm, ILExpression[] args)
+				{
+					var res = pm.Operator;
+					res.Arguments.Clear();
+					res.Arguments.AddRange(args);
+					return res;
 				}
 			}
 
 			sealed class VariablePattern : Pattern
 			{
-				public readonly bool B;
+				readonly ILCode code;
+				readonly bool b;
 
 				public VariablePattern(ILCode code, bool b)
-					: base(code)
+					: base(EmptyArguments)
 				{
-					this.B = b;
+					this.code = code;
+					this.b = b;
 				}
 
 				public override bool Match(ref PatternMatcher pm, ILExpression e)
 				{
+					if (e.Code != this.code) return false;
 					var v = e.Operand as ILVariable;
-					return v != null && (this.B ? Capture(ref pm.B, v) : Capture(ref pm.A, v));
+					return v != null && (this.b ? Capture(ref pm.B, v) : Capture(ref pm.A, v));
 				}
 
 				static bool Capture(ref ILVariable pmvar, ILVariable v)
@@ -123,68 +216,84 @@ namespace ICSharpCode.Decompiler.ILAst
 					return true;
 				}
 
-				public override object GetOperand(ref PatternMatcher pm)
+				public override ILExpression BuildNew(ref PatternMatcher pm, ILExpression[] args)
 				{
-					return this.B ? pm.B : pm.A;
+					return new ILExpression(this.code, this.b ? pm.B : pm.A, args);
 				}
 			}
 
 			sealed class PrimitivePattern : Pattern
 			{
-				public readonly object Operand;
+				readonly ILCode code;
+				readonly object operand;
 
 				public PrimitivePattern(ILCode code, object operand, params Pattern[] arguments)
-					: base(code, arguments)
+					: base(arguments)
 				{
-					this.Operand = operand;
+					this.code = code;
+					this.operand = operand;
 				}
 
 				public override bool Match(ref PatternMatcher pm, ILExpression e)
 				{
-					return object.Equals(e.Operand, this.Operand);
+					return e.Code == code && object.Equals(e.Operand, this.operand);
 				}
 			}
 
 			static readonly Tuple<string, string, string> GetValueOrDefault = new Tuple<string, string, string>("GetValueOrDefault", "Nullable`1", "System");
 			static readonly Tuple<string, string, string> get_HasValue = new Tuple<string, string, string>("get_HasValue", "Nullable`1", "System");
 			static readonly VariablePattern VariableRefA = new VariablePattern(ILCode.Ldloca, false), VariableRefB = new VariablePattern(ILCode.Ldloca, true);
-			static readonly VariablePattern[] VariableAB = new[] { new VariablePattern(ILCode.Ldloc, false), new VariablePattern(ILCode.Ldloc, true) };
+			static readonly OperatorPattern OperatorVariableAB = new OperatorPattern(new VariablePattern(ILCode.Ldloc, false), new VariablePattern(ILCode.Ldloc, true));
 			static readonly MethodPattern[] Call2GetValueOrDefault = new[] {
 				new MethodPattern(ILCode.Call, GetValueOrDefault, VariableRefA),
 				new MethodPattern(ILCode.Call, GetValueOrDefault, VariableRefB)};
-			static readonly MethodPattern[] Call2get_HasValue = new[] {
-				new MethodPattern(ILCode.CallGetter, get_HasValue, VariableRefA),
-				new MethodPattern(ILCode.CallGetter, get_HasValue, VariableRefB) };
-			static readonly Pattern CeqHasValue = new Pattern(ILCode.Ceq, Call2get_HasValue);
-			static readonly Pattern AndHasValue = new Pattern(ILCode.And, Call2get_HasValue);
+			static readonly MethodPattern CallVariableAget_HasValue = new MethodPattern(ILCode.CallGetter, get_HasValue, VariableRefA);
+			static readonly MethodPattern[] Call2get_HasValue = new[] { CallVariableAget_HasValue, new MethodPattern(ILCode.CallGetter, get_HasValue, VariableRefB) };
+			static readonly Pattern CeqHasValue = new ILPattern(ILCode.Ceq, Call2get_HasValue);
+			static readonly Pattern AndHasValue = new ILPattern(ILCode.And, Call2get_HasValue);
 
-			public static readonly Pattern[] PrimitiveComparisons = new[] {
-				// ==
-				new Pattern(ILCode.LogicAnd, new Pattern(ILCode.LogicNot, new Pattern(ILCode.LogicNot, new Pattern(ILCode.Ceq, Call2GetValueOrDefault))), CeqHasValue),
-				new Pattern(ILCode.Ceq, VariableAB),
-				// !=
-				new Pattern(ILCode.LogicOr,
-					new Pattern(ILCode.LogicNot, new Pattern(ILCode.Ceq, Call2GetValueOrDefault)),
-					new Pattern(ILCode.Ceq, CeqHasValue, new PrimitivePattern(ILCode.Ldc_I4, 0))),
-				new Pattern(ILCode.LogicNot, new Pattern(ILCode.Ceq, VariableAB)),
-				// >
-				new Pattern(ILCode.LogicAnd, new Pattern(ILCode.LogicNot, new Pattern(ILCode.LogicNot, new Pattern(ILCode.Cgt, Call2GetValueOrDefault))), AndHasValue),
-				new Pattern(ILCode.Cgt, VariableAB),
-				// <
-				new Pattern(ILCode.LogicAnd, new Pattern(ILCode.LogicNot, new Pattern(ILCode.LogicNot, new Pattern(ILCode.Clt, Call2GetValueOrDefault))), AndHasValue),
-				new Pattern(ILCode.Clt, VariableAB),
-				// >=
-				new Pattern(ILCode.LogicAnd, new Pattern(ILCode.LogicNot, new Pattern(ILCode.Clt, Call2GetValueOrDefault)), AndHasValue),
-				new Pattern(ILCode.LogicNot, new Pattern(ILCode.Clt, VariableAB)),
-				// <=
-				new Pattern(ILCode.LogicAnd, new Pattern(ILCode.LogicNot, new Pattern(ILCode.Cgt, Call2GetValueOrDefault)), AndHasValue),
-				new Pattern(ILCode.LogicNot, new Pattern(ILCode.Cgt, VariableAB)),
+			public static readonly Pattern[] Comparisons = new Pattern[] {
+				// == (Primitive, Decimal)
+				new ILPattern(ILCode.LogicAnd, new ILPattern(ILCode.LogicNot, new ILPattern(ILCode.LogicNot, new OperatorPattern(true, null, Call2GetValueOrDefault))), CeqHasValue),
+				OperatorVariableAB,
+				// == (Struct)
+				new ILPattern(ILCode.LogicAnd,
+					new ILPattern(ILCode.LogicNot, new ILPattern(ILCode.LogicNot, CeqHasValue)),
+					new ILPattern(ILCode.LogicOr, new ILPattern(ILCode.LogicNot, CallVariableAget_HasValue), new OperatorPattern(true, true, Call2GetValueOrDefault))),
+				OperatorVariableAB,
+				// != (P)
+				new ILPattern(ILCode.LogicOr,
+					new ILPattern(ILCode.LogicNot, new OperatorPattern(true, false, Call2GetValueOrDefault)),
+					new ILPattern(ILCode.Ceq, CeqHasValue, new PrimitivePattern(ILCode.Ldc_I4, 0))),
+				new ILPattern(ILCode.LogicNot, OperatorVariableAB),
+				// != (D)
+				new ILPattern(ILCode.LogicOr,
+					new OperatorPattern(false, true, Call2GetValueOrDefault),
+					new ILPattern(ILCode.Ceq, CeqHasValue, new PrimitivePattern(ILCode.Ldc_I4, 0))),
+				OperatorVariableAB,
+				// != (S)
+				new ILPattern(ILCode.LogicOr,
+					new ILPattern(ILCode.LogicNot, CeqHasValue),
+					new ILPattern(ILCode.LogicAnd,
+						new ILPattern(ILCode.LogicNot, new ILPattern(ILCode.LogicNot, CallVariableAget_HasValue)),
+						new OperatorPattern(false, true, Call2GetValueOrDefault))),
+				OperatorVariableAB,
+				// > (P, D), < (P, D), >= (D), <= (D)
+				new ILPattern(ILCode.LogicAnd, new ILPattern(ILCode.LogicNot, new ILPattern(ILCode.LogicNot, new OperatorPattern(null, null, Call2GetValueOrDefault))), AndHasValue),
+				OperatorVariableAB,
+				// >= (P), <= (P)
+				new ILPattern(ILCode.LogicAnd, new ILPattern(ILCode.LogicNot, new OperatorPattern(null, false, Call2GetValueOrDefault)), AndHasValue),
+				new ILPattern(ILCode.LogicNot, OperatorVariableAB),
+				// > (S), < (S), >= (S), <= (S)
+				new ILPattern(ILCode.LogicAnd, AndHasValue, new OperatorPattern(null, true, Call2GetValueOrDefault)),
+				OperatorVariableAB,
 			};
 
 			public ILVariable A, B;
+			public ILExpression Operator;
 			public bool Match(Pattern p, ILExpression e)
 			{
-				if (e.Code != p.Code || e.Arguments.Count != p.Arguments.Length || e.Prefixes != null || !p.Match(ref this, e)) return false;
+				if (!p.Match(ref this, e) || e.Arguments.Count != p.Arguments.Length || e.Prefixes != null) return false;
 				for (int i = 0; i < p.Arguments.Length; i++)
 					if (!Match(p.Arguments[i], e.Arguments[i])) return false;
 				return true;
@@ -194,7 +303,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			{
 				var args = new ILExpression[p.Arguments.Length];
 				for (int i = 0; i < args.Length; i++) args[i] = BuildNew(p.Arguments[i], old);
-				var res = new ILExpression(p.Code, p.GetOperand(ref this), args);
+				var res = p.BuildNew(ref this, args);
 				if (args.Length == 2) res.ILRanges = ILRange.OrderAndJoint(old.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
 				return res;
 			}
