@@ -38,7 +38,7 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		static bool SimplifyNullableOperators(ILExpression expr)
 		{
-			if (IsNullableOperation(expr)) return true;
+			if (PatternMatcher.Simplify(expr)) return true;
 
 			bool modified = false;
 			foreach (var a in expr.Arguments)
@@ -46,27 +46,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			return modified;
 		}
 
-		static bool IsNullableOperation(ILExpression expr)
-		{
-			if (expr.Code != ILCode.LogicAnd && expr.Code != ILCode.LogicOr) return false;
-
-			var ps = PatternMatcher.Comparisons;
-			for (int i = 0; i < ps.Length; i += 2) {
-				var pm = new PatternMatcher();
-				if (!pm.Match(ps[i], expr)) continue;
-				var n = pm.BuildNew(ps[i + 1], expr);
-				expr.Code = n.Code;
-				expr.Operand = n.Operand;
-				expr.Arguments = n.Arguments;
-				expr.ILRanges = n.ILRanges;
-				return true;
-			}
-			return false;
-		}
-
 		struct PatternMatcher
 		{
-			public abstract class Pattern
+			abstract class Pattern
 			{
 				public readonly Pattern[] Arguments;
 
@@ -82,6 +64,21 @@ namespace ICSharpCode.Decompiler.ILAst
 				public virtual ILExpression BuildNew(ref PatternMatcher pm, ILExpression[] args)
 				{
 					throw new NotSupportedException();
+				}
+
+				public static Pattern operator &(Pattern a, Pattern b)
+				{
+					return new ILPattern(ILCode.LogicAnd, a, b);
+				}
+
+				public static Pattern operator |(Pattern a, Pattern b)
+				{
+					return new ILPattern(ILCode.LogicOr, a, b);
+				}
+
+				public static Pattern operator !(Pattern a)
+				{
+					return new ILPattern(ILCode.LogicNot, a);
 				}
 			}
 
@@ -134,7 +131,7 @@ namespace ICSharpCode.Decompiler.ILAst
 
 				public OperatorPattern(params Pattern[] arguments) : base(arguments) { }
 
-				public OperatorPattern(bool? equals, bool? custom, params Pattern[] arguments)
+				public OperatorPattern(bool? equals, bool? custom, Pattern[] arguments)
 					: base(arguments)
 				{
 					this.equals = equals;
@@ -242,56 +239,95 @@ namespace ICSharpCode.Decompiler.ILAst
 
 			static readonly Tuple<string, string, string> GetValueOrDefault = new Tuple<string, string, string>("GetValueOrDefault", "Nullable`1", "System");
 			static readonly Tuple<string, string, string> get_HasValue = new Tuple<string, string, string>("get_HasValue", "Nullable`1", "System");
-			static readonly VariablePattern VariableRefA = new VariablePattern(ILCode.Ldloca, false), VariableRefB = new VariablePattern(ILCode.Ldloca, true);
-			static readonly OperatorPattern OperatorVariableAB = new OperatorPattern(new VariablePattern(ILCode.Ldloc, false), new VariablePattern(ILCode.Ldloc, true));
-			static readonly MethodPattern[] Call2GetValueOrDefault = new[] {
-				new MethodPattern(ILCode.Call, GetValueOrDefault, VariableRefA),
-				new MethodPattern(ILCode.Call, GetValueOrDefault, VariableRefB)};
-			static readonly MethodPattern CallVariableAget_HasValue = new MethodPattern(ILCode.CallGetter, get_HasValue, VariableRefA);
-			static readonly MethodPattern[] Call2get_HasValue = new[] { CallVariableAget_HasValue, new MethodPattern(ILCode.CallGetter, get_HasValue, VariableRefB) };
-			static readonly Pattern CeqHasValue = new ILPattern(ILCode.Ceq, Call2get_HasValue);
-			static readonly Pattern AndHasValue = new ILPattern(ILCode.And, Call2get_HasValue);
+			static readonly Pattern VariableRefA = new VariablePattern(ILCode.Ldloca, false), VariableRefB = new VariablePattern(ILCode.Ldloca, true);
+			static readonly Pattern VariableA = new VariablePattern(ILCode.Ldloc, false), VariableB = new VariablePattern(ILCode.Ldloc, true);
+			static readonly Pattern VariableAHasValue = new MethodPattern(ILCode.CallGetter, get_HasValue, VariableRefA);
+			static readonly Pattern VariableAGetValueOrDefault = new MethodPattern(ILCode.Call, GetValueOrDefault, VariableRefA);
+			static readonly Pattern NotVariableAHasValue = new ILPattern(ILCode.Ceq, VariableAHasValue, new PrimitivePattern(ILCode.Ldc_I4, 0));
+			static readonly Pattern VariableBHasValue = new MethodPattern(ILCode.CallGetter, get_HasValue, VariableRefB);
+			static readonly Pattern VariableBGetValueOrDefault = new MethodPattern(ILCode.Call, GetValueOrDefault, VariableRefB);
+			static readonly Pattern NotVariableBHasValue = new ILPattern(ILCode.Ceq, VariableBHasValue, new PrimitivePattern(ILCode.Ldc_I4, 0));
+			static readonly Pattern CeqHasValue = new ILPattern(ILCode.Ceq, VariableAHasValue, VariableBHasValue);
+			static readonly Pattern AndHasValue = new ILPattern(ILCode.And, VariableAHasValue, VariableBHasValue);
+			static readonly Pattern NotCeqHasValue = new ILPattern(ILCode.Ceq, CeqHasValue, new PrimitivePattern(ILCode.Ldc_I4, 0));
 
-			public static readonly Pattern[] Comparisons = new Pattern[] {
+			static readonly Pattern[] LoadValuesNN = new[] { VariableAGetValueOrDefault, VariableBGetValueOrDefault };
+			static OperatorPattern OperatorNN(bool? equals = null, bool? custom = null)
+			{
+				return new OperatorPattern(equals, custom, LoadValuesNN);
+			}
+
+			static readonly Pattern[] LoadValuesNV = new[] { VariableAGetValueOrDefault, VariableB };
+			static OperatorPattern OperatorNV(bool? equals = null, bool? custom = null)
+			{
+				return new OperatorPattern(equals, custom, LoadValuesNV);
+			}
+
+			static readonly Pattern[] LoadValuesVN = new[] { VariableA, VariableBGetValueOrDefault };
+			static OperatorPattern OperatorVN(bool? equals = null, bool? custom = null)
+			{
+				return new OperatorPattern(equals, custom, LoadValuesVN);
+			}
+
+			static readonly Pattern[] Comparisons = new Pattern[] {
+				/* both operands nullable */
 				// == (Primitive, Decimal)
-				new ILPattern(ILCode.LogicAnd, new ILPattern(ILCode.LogicNot, new ILPattern(ILCode.LogicNot, new OperatorPattern(true, null, Call2GetValueOrDefault))), CeqHasValue),
-				OperatorVariableAB,
+				!!OperatorNN(equals: true) & CeqHasValue,
 				// == (Struct)
-				new ILPattern(ILCode.LogicAnd,
-					new ILPattern(ILCode.LogicNot, new ILPattern(ILCode.LogicNot, CeqHasValue)),
-					new ILPattern(ILCode.LogicOr, new ILPattern(ILCode.LogicNot, CallVariableAget_HasValue), new OperatorPattern(true, true, Call2GetValueOrDefault))),
-				OperatorVariableAB,
-				// != (P)
-				new ILPattern(ILCode.LogicOr,
-					new ILPattern(ILCode.LogicNot, new OperatorPattern(true, false, Call2GetValueOrDefault)),
-					new ILPattern(ILCode.Ceq, CeqHasValue, new PrimitivePattern(ILCode.Ldc_I4, 0))),
-				new ILPattern(ILCode.LogicNot, OperatorVariableAB),
-				// != (D)
-				new ILPattern(ILCode.LogicOr,
-					new OperatorPattern(false, true, Call2GetValueOrDefault),
-					new ILPattern(ILCode.Ceq, CeqHasValue, new PrimitivePattern(ILCode.Ldc_I4, 0))),
-				OperatorVariableAB,
-				// != (S)
-				new ILPattern(ILCode.LogicOr,
-					new ILPattern(ILCode.LogicNot, CeqHasValue),
-					new ILPattern(ILCode.LogicAnd,
-						new ILPattern(ILCode.LogicNot, new ILPattern(ILCode.LogicNot, CallVariableAget_HasValue)),
-						new OperatorPattern(false, true, Call2GetValueOrDefault))),
-				OperatorVariableAB,
-				// > (P, D), < (P, D), >= (D), <= (D)
-				new ILPattern(ILCode.LogicAnd, new ILPattern(ILCode.LogicNot, new ILPattern(ILCode.LogicNot, new OperatorPattern(null, null, Call2GetValueOrDefault))), AndHasValue),
-				OperatorVariableAB,
-				// >= (P), <= (P)
-				new ILPattern(ILCode.LogicAnd, new ILPattern(ILCode.LogicNot, new OperatorPattern(null, false, Call2GetValueOrDefault)), AndHasValue),
-				new ILPattern(ILCode.LogicNot, OperatorVariableAB),
-				// > (S), < (S), >= (S), <= (S)
-				new ILPattern(ILCode.LogicAnd, AndHasValue, new OperatorPattern(null, true, Call2GetValueOrDefault)),
-				OperatorVariableAB,
+				!!CeqHasValue & (!VariableAHasValue | OperatorNN(equals: true, custom: true)),
+				// != (Primitive)
+				!OperatorNN(equals: true, custom: false) | NotCeqHasValue,
+				// != (Decimal)
+				OperatorNN(equals: false, custom: true) | NotCeqHasValue,
+				// != (Struct)
+				!CeqHasValue | (!!VariableAHasValue & OperatorNN(equals: false, custom: true)),
+				// > , < (Primitive, Decimal), >= , <= (Decimal)
+				!!OperatorNN() & AndHasValue,
+				// >= , <= (Primitive)
+				!OperatorNN(custom: false) & AndHasValue,
+				// > , < , >= , <= (Struct)
+				AndHasValue & OperatorNN(custom: true),
+
+				/* only first operand nullable */
+				// == (Primitive, Decimal)
+				!!OperatorNV(equals: true) & VariableAHasValue,
+				// == (Struct)
+				!!VariableAHasValue & OperatorNV(equals: true, custom: true),
+				// != (Primitive)
+				!OperatorNV(equals: true, custom: false) | NotVariableAHasValue,
+				// != (Decimal)
+				OperatorNV(equals: false, custom: true) | NotVariableAHasValue,
+				// != (Struct)
+				!VariableAHasValue | OperatorNV(equals: false, custom: true),
+				// > , < (Primitive, Decimal), >= , <= (Decimal)
+				!!OperatorNV() & VariableAHasValue,
+				// >= , <= (Primitive)
+				!OperatorNV(custom: false) & VariableAHasValue,
+				// > , < , >= , <= (Struct)
+				VariableAHasValue & OperatorNV(custom: true),
+
+				/* only second operand nullable */
+				// == (Primitive, Decimal)
+				!!OperatorVN(equals: true) & VariableBHasValue,
+				// == (Struct)
+				!!VariableBHasValue & OperatorVN(equals: true, custom: true),
+				// != (Primitive)
+				!OperatorVN(equals: true, custom: false) | NotVariableBHasValue,
+				// != (Decimal)
+				OperatorVN(equals: false, custom: true) | NotVariableBHasValue,
+				// != (Struct)
+				!VariableBHasValue | OperatorVN(equals: false, custom: true),
+				// > , < (Primitive, Decimal), >= , <= (Decimal)
+				!!OperatorVN() & VariableBHasValue,
+				// >= , <= (Primitive)
+				!OperatorVN(custom: false) & VariableBHasValue,
+				// > , < , >= , <= (Struct)
+				VariableBHasValue & OperatorVN(custom: true),
 			};
 
-			public ILVariable A, B;
-			public ILExpression Operator;
-			public bool Match(Pattern p, ILExpression e)
+			ILVariable A, B;
+			ILExpression Operator;
+			bool Match(Pattern p, ILExpression e)
 			{
 				if (!p.Match(ref this, e) || e.Arguments.Count != p.Arguments.Length || e.Prefixes != null) return false;
 				for (int i = 0; i < p.Arguments.Length; i++)
@@ -299,13 +335,35 @@ namespace ICSharpCode.Decompiler.ILAst
 				return true;
 			}
 
-			public ILExpression BuildNew(Pattern p, ILExpression old)
+			ILExpression BuildNew(Pattern p, ILExpression old)
 			{
 				var args = new ILExpression[p.Arguments.Length];
 				for (int i = 0; i < args.Length; i++) args[i] = BuildNew(p.Arguments[i], old);
 				var res = p.BuildNew(ref this, args);
-				if (args.Length == 2) res.ILRanges = ILRange.OrderAndJoint(old.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
+				if (p is OperatorPattern) res.ILRanges = ILRange.OrderAndJoint(old.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
 				return res;
+			}
+
+			static readonly Pattern OperatorVariableAB = new OperatorPattern(VariableA, VariableB);
+			static readonly Pattern NotOperatorVariableAB = !OperatorVariableAB;
+
+			public static bool Simplify(ILExpression expr)
+			{
+				if (expr.Code != ILCode.LogicAnd && expr.Code != ILCode.LogicOr) return false;
+
+				var ps = Comparisons;
+				for (int i = 0; i < ps.Length; i++) {
+					var pm = new PatternMatcher();
+					if (!pm.Match(ps[i], expr)) continue;
+					var pi = i % 8;
+					var n = pm.BuildNew(pi != 2 && pi != 6 ? OperatorVariableAB : NotOperatorVariableAB, expr);
+					expr.Code = n.Code;
+					expr.Operand = n.Operand;
+					expr.Arguments = n.Arguments;
+					expr.ILRanges = n.ILRanges;
+					return true;
+				}
+				return false;
 			}
 		}
 	}
