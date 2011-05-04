@@ -33,6 +33,9 @@
 			Command="BrowseForward"
 			CanExecute="ForwardCommandCanExecute"
 			Executed="ForwardCommandExecuted" />
+		<CommandBinding
+			Command="Search"
+			Executed="SearchCommandExecuted" />
 	</Window.CommandBindings>
 	<DockPanel>
 		<!-- Main menu -->

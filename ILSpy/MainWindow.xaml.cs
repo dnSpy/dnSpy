@@ -506,6 +506,10 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			SearchPane.Instance.Show();
+		}
 		#endregion
 		
 		#region Decompile (TreeView_SelectionChanged)
