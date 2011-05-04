@@ -209,6 +209,21 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		bool showXmlDocumentation = true;
+		
+		/// <summary>
+		/// Gets/Sets whether to include XML documentation comments in the decompiled code
+		/// </summary>
+		public bool ShowXmlDocumentation {
+			get { return showXmlDocumentation; }
+			set {
+				if (showXmlDocumentation != value) {
+					showXmlDocumentation = value;
+					OnPropertyChanged("ShowXmlDocumentation");
+				}
+			}
+		}
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)

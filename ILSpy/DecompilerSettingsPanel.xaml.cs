@@ -62,6 +62,7 @@ namespace ICSharpCode.ILSpy
 			s.YieldReturn = (bool?)e.Attribute("yieldReturn") ?? s.YieldReturn;
 			s.QueryExpressions = (bool?)e.Attribute("queryExpressions") ?? s.QueryExpressions;
 			s.UseDebugSymbols = (bool?)e.Attribute("useDebugSymbols") ?? s.UseDebugSymbols;
+			s.ShowXmlDocumentation = (bool?)e.Attribute("xmlDoc") ?? s.ShowXmlDocumentation;
 			return s;
 		}
 		
@@ -73,6 +74,7 @@ namespace ICSharpCode.ILSpy
 			section.SetAttributeValue("yieldReturn", s.YieldReturn);
 			section.SetAttributeValue("queryExpressions", s.QueryExpressions);
 			section.SetAttributeValue("useDebugSymbols", s.UseDebugSymbols);
+			section.SetAttributeValue("xmlDoc", s.ShowXmlDocumentation);
 			
 			XElement existingElement = root.Element("DecompilerSettings");
 			if (existingElement != null)

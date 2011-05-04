@@ -138,17 +138,17 @@ namespace ICSharpCode.ILSpy.TextView
 				} else if (mr is MethodReference) {
 					mr = ((MethodReference)mr).Resolve() ?? mr;
 				}
+				XmlDocRenderer renderer = new XmlDocRenderer();
+				renderer.AppendText(MainWindow.Instance.CurrentLanguage.GetTooltip(mr));
 				XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(mr.Module);
 				if (docProvider != null) {
-					XmlDocRenderer renderer = new XmlDocRenderer();
-					renderer.AppendText(MainWindow.Instance.CurrentLanguage.GetTooltip(mr));
 					string documentation = docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
 					if (documentation != null) {
 						renderer.AppendText(Environment.NewLine);
 						renderer.AddXmlDocumentation(documentation);
 					}
-					return renderer.CreateTextBlock();
 				}
+				return renderer.CreateTextBlock();
 			}
 			return null;
 		}

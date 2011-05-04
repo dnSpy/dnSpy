@@ -156,6 +156,7 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyAccessorsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
+    <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
     <Compile Include="XmlDoc\XmlDocKeyProvider.cs" />
     <Compile Include="XmlDoc\XmlDocLoader.cs" />
     <Compile Include="XmlDoc\XmlDocRenderer.cs" />
