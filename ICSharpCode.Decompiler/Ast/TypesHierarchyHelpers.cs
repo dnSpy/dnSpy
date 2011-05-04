@@ -27,6 +27,13 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 
+		/// <summary>
+		/// Determines whether one method overrides or hides another method.
+		/// </summary>
+		/// <param name="parentMethod">The method declared in a base type.</param>
+		/// <param name="childMethod">The method declared in a derived type.</param>
+		/// <returns>true if <paramref name="childMethod"/> hides or overrides <paramref name="parentMethod"/>,
+		/// otherwise false.</returns>
 		public static bool IsBaseMethod(MethodDefinition parentMethod, MethodDefinition childMethod)
 		{
 			if (parentMethod == null)
@@ -44,6 +51,13 @@ namespace ICSharpCode.Decompiler.Ast
 			return FindBaseMethods(childMethod).Any(m => m == parentMethod);// || (parentMethod.HasGenericParameters && m.);
 		}
 
+		/// <summary>
+		/// Determines whether a property overrides or hides another property.
+		/// </summary>
+		/// <param name="parentProperty">The property declared in a base type.</param>
+		/// <param name="childProperty">The property declared in a derived type.</param>
+		/// <returns>true if the <paramref name="childProperty"/> hides or overrides <paramref name="parentProperty"/>,
+		/// otherwise false.</returns>
 		public static bool IsBaseProperty(PropertyDefinition parentProperty, PropertyDefinition childProperty)
 		{
 			if (parentProperty == null)
@@ -69,6 +83,11 @@ namespace ICSharpCode.Decompiler.Ast
 			return FindBaseEvents(childEvent).Any(m => m == parentEvent);
 		}
 
+		/// <summary>
+		/// Finds all methods from base types overridden or hidden by the specified method.
+		/// </summary>
+		/// <param name="method">The method which overrides or hides methods from base types.</param>
+		/// <returns>Methods overriden or hidden by the specified method.</returns>
 		public static IEnumerable<MethodDefinition> FindBaseMethods(MethodDefinition method)
 		{
 			if (method == null)
@@ -79,30 +98,41 @@ namespace ICSharpCode.Decompiler.Ast
 
 			foreach (var baseType in BaseTypes(method.DeclaringType))
 				foreach (var baseMethod in baseType.Item.Methods)
-					if (MatchMethod(baseType.ApplyTo(baseMethod), gMethod) && IsVisbleFrom(baseMethod, method)) {
+					if (MatchMethod(baseType.ApplyTo(baseMethod), gMethod) && IsVisibleFromDerived(baseMethod, method.DeclaringType)) {
 						yield return baseMethod;
-						if (!(baseMethod.IsNewSlot ^ baseMethod.IsVirtual))
+						if (baseMethod.IsNewSlot == baseMethod.IsVirtual)
 							yield break;
 					}
 		}
 
-		public static IEnumerable<PropertyDefinition> FindBaseProperties(PropertyDefinition property, bool ignoreResolveExceptions = false)
+		/// <summary>
+		/// Finds all properties from base types overridden or hidden by the specified property.
+		/// </summary>
+		/// <param name="property">The property which overrides or hides properties from base types.</param>
+		/// <returns>Properties overriden or hidden by the specified property.</returns>
+		public static IEnumerable<PropertyDefinition> FindBaseProperties(PropertyDefinition property)
 		{
 			if (property == null)
 				throw new ArgumentNullException("property");
 
+			if ((property.GetMethod ?? property.SetMethod).HasOverrides)
+				yield break;
+
 			var typeContext = CreateGenericContext(property.DeclaringType);
 			var gProperty = typeContext.ApplyTo(property);
+			bool isIndexer = property.IsIndexer();
 
 			foreach (var baseType in BaseTypes(property.DeclaringType))
 				foreach (var baseProperty in baseType.Item.Properties)
-					if (MatchProperty(baseType.ApplyTo(baseProperty), gProperty) && IsVisbleFrom(baseProperty, property)) {
+					if (MatchProperty(baseType.ApplyTo(baseProperty), gProperty)
+							&& IsVisibleFromDerived(baseProperty, property.DeclaringType)) {
+						if (isIndexer != baseProperty.IsIndexer())
+							continue;
 						yield return baseProperty;
 						var anyPropertyAccessor = baseProperty.GetMethod ?? baseProperty.SetMethod;
-						if (!(anyPropertyAccessor.IsNewSlot ^ anyPropertyAccessor.IsVirtual))
+						if (anyPropertyAccessor.IsNewSlot == anyPropertyAccessor.IsVirtual)
 							yield break;
 					}
-
 		}
 
 		public static IEnumerable<EventDefinition> FindBaseEvents(EventDefinition eventDef)
@@ -115,40 +145,78 @@ namespace ICSharpCode.Decompiler.Ast
 
 			foreach (var baseType in BaseTypes(eventDef.DeclaringType))
 				foreach (var baseEvent in baseType.Item.Events)
-					if (MatchEvent(baseType.ApplyTo(baseEvent), gEvent) && IsVisbleFrom(baseEvent, eventDef)) {
+					if (MatchEvent(baseType.ApplyTo(baseEvent), gEvent) && IsVisibleFromDerived(baseEvent, eventDef.DeclaringType)) {
 						yield return baseEvent;
 						var anyEventAccessor = baseEvent.AddMethod ?? baseEvent.RemoveMethod;
-						if (!(anyEventAccessor.IsNewSlot ^ anyEventAccessor.IsVirtual))
+						if (anyEventAccessor.IsNewSlot == anyEventAccessor.IsVirtual)
 							yield break;
 					}
 
 		}
 
-		private static bool IsVisbleFrom(MethodDefinition baseCandidate, MethodDefinition method)
+		/// <summary>
+		/// Determinates whether member of the base type is visible from a derived type.
+		/// </summary>
+		/// <param name="baseMember">The member which visibility is checked.</param>
+		/// <param name="derivedType">The derived type.</param>
+		/// <returns>true if the member is visible from derived type, othewise false.</returns>
+		public static bool IsVisibleFromDerived(IMemberDefinition baseMember, TypeDefinition derivedType)
 		{
-			if (baseCandidate.IsPrivate)
+			if (baseMember == null)
+				throw new ArgumentNullException("baseMember");
+			if (derivedType == null)
+				throw new ArgumentNullException("derivedType");
+
+			var visibility = IsVisibleFromDerived(baseMember);
+			if (visibility.HasValue)
+				return visibility.Value;
+
+			if (baseMember.DeclaringType.Module == derivedType.Module)
+				return true;
+			// TODO: Check also InternalsVisibleToAttribute.
 				return false;
-			if ((baseCandidate.IsAssembly || baseCandidate.IsFamilyAndAssembly) && baseCandidate.Module != method.Module)
-				return false;
-			return true;
 		}
 
-		private static bool IsVisbleFrom(PropertyDefinition baseCandidate, PropertyDefinition property)
+		private static bool? IsVisibleFromDerived(IMemberDefinition member)
 		{
-			if (baseCandidate.GetMethod != null && property.GetMethod != null && IsVisbleFrom(baseCandidate.GetMethod, property.GetMethod))
+			MethodAttributes attrs = GetAccessAttributes(member) & MethodAttributes.MemberAccessMask;
+			if (attrs == MethodAttributes.Private)
+				return false;
+			if (attrs == MethodAttributes.Assembly || attrs == MethodAttributes.FamANDAssem)
+				return null;
 				return true;
-			if (baseCandidate.SetMethod != null && property.SetMethod != null && IsVisbleFrom(baseCandidate.SetMethod, property.SetMethod))
-				return true;
-			return false;
 		}
 
-		private static bool IsVisbleFrom(EventDefinition baseCandidate, EventDefinition eventDef)
+		private static MethodAttributes GetAccessAttributes(IMemberDefinition member)
 		{
-			if (baseCandidate.AddMethod != null && eventDef.AddMethod != null && IsVisbleFrom(baseCandidate.AddMethod, eventDef.AddMethod))
-				return true;
-			if (baseCandidate.RemoveMethod != null && eventDef.RemoveMethod != null && IsVisbleFrom(baseCandidate.RemoveMethod, eventDef.RemoveMethod))
-				return true;
-			return false;
+			var fld = member as FieldDefinition;
+			if (fld != null)
+				return (MethodAttributes)fld.Attributes;
+
+			var method = member as MethodDefinition;
+			if (method != null)
+				return method.Attributes;
+
+			var prop = member as PropertyDefinition;
+			if (prop != null) {
+				return (prop.GetMethod ?? prop.SetMethod).Attributes;
+		}
+
+			var evnt = member as EventDefinition;
+			if (evnt != null) {
+				return (evnt.AddMethod ?? evnt.RemoveMethod).Attributes;
+			}
+
+			var nestedType = member as TypeDefinition;
+			if (nestedType != null) {
+				if (nestedType.IsNestedPrivate)
+					return MethodAttributes.Private;
+				if (nestedType.IsNestedAssembly || nestedType.IsNestedFamilyAndAssembly)
+					return MethodAttributes.Assembly;
+				return MethodAttributes.Public;
+			}
+
+			throw new NotSupportedException();
 		}
 
 		private static bool MatchMethod(GenericContext<MethodDefinition> candidate, GenericContext<MethodDefinition> method)
@@ -161,7 +229,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (mCandidate.HasOverrides)
 				return false;
 
-			if (!IsSameType(candidate.ResolveWithContext(mCandidate.ReturnType), method.ResolveWithContext(mMethod.ReturnType)))
+			if (mCandidate.IsSpecialName != method.Item.IsSpecialName)
 				return false;
 
 			if (mCandidate.HasGenericParameters || mMethod.HasGenericParameters) {
@@ -208,9 +276,6 @@ namespace ICSharpCode.Decompiler.Ast
 			if ((mCandidate.GetMethod ?? mCandidate.SetMethod).HasOverrides)
 				return false;
 
-			if (!IsSameType(candidate.ResolveWithContext(mCandidate.PropertyType), property.ResolveWithContext(mProperty.PropertyType)))
-				return false;
-
 			if (mCandidate.HasParameters || mProperty.HasParameters) {
 				if (!mCandidate.HasParameters || !mProperty.HasParameters || mCandidate.Parameters.Count != mProperty.Parameters.Count)
 					return false;
@@ -242,6 +307,9 @@ namespace ICSharpCode.Decompiler.Ast
 
 		private static bool MatchParameters(GenericContext<ParameterDefinition> baseParameterType, GenericContext<ParameterDefinition> parameterType)
 		{
+			if (baseParameterType.Item.IsIn != parameterType.Item.IsIn ||
+					baseParameterType.Item.IsOut != parameterType.Item.IsOut)
+				return false;
 			var baseParam = baseParameterType.ResolveWithContext(baseParameterType.Item.ParameterType);
 			var param = parameterType.ResolveWithContext(parameterType.Item.ParameterType);
 			return IsSameType(baseParam, param);
@@ -254,8 +322,12 @@ namespace ICSharpCode.Decompiler.Ast
 			if (tr1 == null || tr2 == null)
 				return false;
 
+			if (tr1.GetType() != tr2.GetType())
+				return false;
+
 			if (tr1.Name == tr2.Name && tr1.FullName == tr2.FullName)
 				return true;
+
 			return false;
 		}
 
@@ -288,6 +360,10 @@ namespace ICSharpCode.Decompiler.Ast
 		struct GenericContext<T> where T : class
 		{
 			private static readonly ReadOnlyCollection<TypeReference> Empty = new ReadOnlyCollection<TypeReference>(new List<TypeReference>());
+			private static readonly GenericParameter UnresolvedGenericTypeParameter =
+				new DummyGenericParameterProvider(false).DummyParameter;
+			private static readonly GenericParameter UnresolvedGenericMethodParameter =
+				new DummyGenericParameterProvider(true).DummyParameter;
 
 			public readonly T Item;
 			public readonly ReadOnlyCollection<TypeReference> TypeArguments;
@@ -324,27 +400,98 @@ namespace ICSharpCode.Decompiler.Ast
 			public TypeReference ResolveWithContext(TypeReference type)
 			{
 				var genericParameter = type as GenericParameter;
-				if (genericParameter != null && genericParameter.Owner.GenericParameterType == GenericParameterType.Type) {
+				if (genericParameter != null)
+					if (genericParameter.Owner.GenericParameterType == GenericParameterType.Type)
 					return this.TypeArguments[genericParameter.Position];
+					else
+						return genericParameter.Owner.GenericParameterType == GenericParameterType.Type
+							? UnresolvedGenericTypeParameter : UnresolvedGenericMethodParameter;
+				var typeSpecification = type as TypeSpecification;
+				if (typeSpecification != null) {
+					var resolvedElementType = ResolveWithContext(typeSpecification.ElementType);
+					return ReplaceElementType(typeSpecification, resolvedElementType);
 				}
-				var arrayType = type as ArrayType;
+				return type.ResolveOrThrow();
+			}
+
+			private TypeReference ReplaceElementType(TypeSpecification ts, TypeReference newElementType)
+			{
+				var arrayType = ts as ArrayType;
 				if (arrayType != null) {
-					var resolvedElementType = ResolveWithContext(arrayType.ElementType);
-					if (resolvedElementType == null)
-						return null;
-					if (resolvedElementType == arrayType.ElementType)
+					if (newElementType == arrayType.ElementType)
 						return arrayType;
-					var newArrayType = new ArrayType(resolvedElementType, arrayType.Rank);
+					var newArrayType = new ArrayType(newElementType, arrayType.Rank);
 					for (int dimension = 0; dimension < arrayType.Rank; dimension++)
 						newArrayType.Dimensions[dimension] = arrayType.Dimensions[dimension];
 					return newArrayType;
 				}
-				return type.ResolveOrThrow();
+				var byReferenceType = ts as ByReferenceType;
+				if (byReferenceType != null) {
+					return new ByReferenceType(newElementType);
+			}
+				// TODO: should we throw an exception instead calling Resolve method?
+				return ts.ResolveOrThrow();
 			}
 
 			public GenericContext<T2> ApplyTo<T2>(T2 item) where T2 : class
 			{
 				return new GenericContext<T2>(item, this.TypeArguments);
+			}
+
+			private class DummyGenericParameterProvider : IGenericParameterProvider
+			{
+				readonly Mono.Cecil.GenericParameterType type;
+				readonly Mono.Collections.Generic.Collection<GenericParameter> parameters;
+
+				public DummyGenericParameterProvider(bool methodTypeParameter)
+				{
+					type = methodTypeParameter ? Mono.Cecil.GenericParameterType.Method :
+						Mono.Cecil.GenericParameterType.Type;
+					parameters = new Mono.Collections.Generic.Collection<GenericParameter>(1);
+					parameters.Add(new GenericParameter(this));
+		}
+
+				public GenericParameter DummyParameter
+				{
+					get { return parameters[0]; }
+	}
+
+				bool IGenericParameterProvider.HasGenericParameters
+				{
+					get { throw new NotImplementedException(); }
+				}
+
+				bool IGenericParameterProvider.IsDefinition
+				{
+					get { throw new NotImplementedException(); }
+				}
+
+				ModuleDefinition IGenericParameterProvider.Module
+				{
+					get { throw new NotImplementedException(); }
+				}
+
+				Mono.Collections.Generic.Collection<GenericParameter> IGenericParameterProvider.GenericParameters
+				{
+					get { return parameters; }
+				}
+
+				GenericParameterType IGenericParameterProvider.GenericParameterType
+				{
+					get { return type; }
+				}
+
+				MetadataToken IMetadataTokenProvider.MetadataToken
+				{
+					get
+					{
+						throw new NotImplementedException();
+					}
+					set
+					{
+						throw new NotImplementedException();
+					}
+				}
 			}
 		}
 	}
