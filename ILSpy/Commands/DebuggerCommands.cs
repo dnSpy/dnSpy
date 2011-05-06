@@ -164,11 +164,8 @@ namespace ICSharpCode.ILSpy.Commands
 			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
 			
 			// jump to type & expand folding
-			var bm = CurrentLineBookmark.Instance;
-			if (bm != null) {
-				inst.JumpToReference(bm.MemberReference);
-				inst.TextView.UnfoldAndScroll(bm.LineNumber);
-			}
+			if (DebugData.DebugStepInformation != null)
+				inst.JumpToReference(DebugData.DebugStepInformation.Item3);
 			
 			inst.SetStatus("Debugging...", Brushes.Red);
 		}

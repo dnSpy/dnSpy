@@ -400,5 +400,44 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + offset);
 		}
+		
+		/// <summary>
+		/// Gets the member by token.
+		/// </summary>
+		/// <param name="type">Type.</param>
+		/// <param name="memberToken">Member metadata token.</param>
+		/// <returns></returns>
+		public static MemberReference GetMemberByToken(this TypeDefinition type, int memberToken)
+		{
+			if (type.HasMethods) {
+				foreach (var member in type.Methods) {
+					if (member.MetadataToken.ToInt32() == memberToken)
+						return member;
+				}
+			}
+			
+			if (type.HasProperties) {
+				foreach (var member in type.Properties) {
+					if (member.MetadataToken.ToInt32() == memberToken)
+						return member;
+				}
+			}
+			
+			if (type.HasEvents) {
+				foreach (var member in type.Events) {
+					if (member.MetadataToken.ToInt32() == memberToken)
+						return member;
+				}
+			}
+			
+			if (type.HasFields) {
+				foreach (var member in type.Fields) {
+					if (member.MetadataToken.ToInt32() == memberToken)
+						return member;
+				}
+			}
+			
+			return null;
+		}
 	}
 }

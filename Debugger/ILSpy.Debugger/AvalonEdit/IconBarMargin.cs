@@ -290,6 +290,44 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 			}
 			
 			newBookmarks.ForEach(m => BookmarkManager.AddMark(m));
+			
+			SyncCurrentLineBookmark();
+		}
+		
+		void SyncCurrentLineBookmark()
+		{
+			// checks
+			if (CurrentLineBookmark.Instance == null)
+				return;
+			
+			var oldMappings = DebugData.OldCodeMappings;
+			var newMappings = DebugData.CodeMappings;
+
+			if (oldMappings == null || newMappings == null)
+				return;
+			
+			// 1. Save it's data
+			int line = CurrentLineBookmark.Instance.LineNumber;
+			var markerType = CurrentLineBookmark.Instance.MemberReference;
+			
+			if (!oldMappings.ContainsKey(markerType.MetadataToken.ToInt32()) || !newMappings.ContainsKey(markerType.MetadataToken.ToInt32()))
+				return;
+			
+			// 2. Remove it
+			CurrentLineBookmark.Remove();
+			
+			// 3. map the marker line
+			int token;
+			var instruction = oldMappings[markerType.MetadataToken.ToInt32()].GetInstructionByLineNumber(line, out token);
+			if (instruction == null)
+				return;
+
+			MemberReference memberReference;
+			int newline;
+			if (newMappings[markerType.MetadataToken.ToInt32()].GetInstructionByTokenAndOffset(token, instruction.ILInstructionOffset.From, out memberReference, out newline)) {
+				// 4. create breakpoint for new languages
+				CurrentLineBookmark.SetPosition(memberReference, newline, 0, newline, 0);
+			}
 		}
 	}
 }

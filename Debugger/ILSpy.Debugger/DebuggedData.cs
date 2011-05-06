@@ -63,14 +63,19 @@ namespace ICSharpCode.ILSpy.Debugger
 		public static ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
 		
 		/// <summary>
-		/// Gets or sets the old code mappings.
+		/// (internal) Gets or sets the old code mappings.
 		/// </summary>
 		public static Dictionary<int, List<MemberMapping>> OldCodeMappings { get; set; }
 		
 		/// <summary>
-		/// Gets or sets the MembeReference that was decompiled (a TypeDefinition, MethodDefinition, etc)
+		/// (internal) Gets or sets the MembeReference that was decompiled (a TypeDefinition, MethodDefinition, etc)
 		/// </summary>
 		public static Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
+		
+		/// <summary>
+		/// Gets or (internal) sets the current token, IL offset and member reference. Used for step in/out.
+		/// </summary>
+		public static Tuple<int, int, MemberReference> DebugStepInformation { get; set; }
 		
 		/// <summary>
 		/// Occures when the language is changed.

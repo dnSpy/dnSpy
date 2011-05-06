@@ -20,11 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -44,12 +41,11 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Debugger.Tooltips;
-using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory.Documentation;
-using ICSharpCode.NRefactory.TypeSystem;
 using Microsoft.Win32;
 using Mono.Cecil;
 using TextEditorWeakEventManager = ICSharpCode.ILSpy.Debugger.AvalonEdit.TextEditorWeakEventManager;
@@ -348,8 +344,7 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		void DoDecompile(DecompilationContext context, int outputLengthLimit)
 		{
-			// reset type
-			DebugData.OldCodeMappings = DebugData.CodeMappings;
+			// close popup
 			TextEditorListener.Instance.ClosePopup();
 			bool isDecompilationOk = true;
 			
@@ -378,35 +373,37 @@ namespace ICSharpCode.ILSpy.TextView
 						}
 						ShowOutput(output);
 						isDecompilationOk = false;
-					}
-					finally {
-						this.Test(isDecompilationOk);
+					} finally {
+						this.UpdateDebugUI(isDecompilationOk);
 					}
 				});
 		}
 		
-		void Test(bool isDecompilationOk)
+		void UpdateDebugUI(bool isDecompilationOk)
 		{
 			// sync bookmarks
 			iconMargin.SyncBookmarks();
-			// set the language
-			DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 			
 			if (isDecompilationOk) {
-				if (DebugData.DecompiledMemberReferences != null && DebugData.DecompiledMemberReferences.Count > 0) {
-					
+				if (DebugData.DebugStepInformation != null) {
 					// repaint bookmarks
 					iconMargin.InvalidateVisual();
 					
 					// show the currentline marker
+					int token = DebugData.DebugStepInformation.Item1;
+					int ilOffset = DebugData.DebugStepInformation.Item2;
+					bool isMatch;
+					var map = DebugData.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out isMatch);
+					int line = map.SourceCodeLine;
+					DebuggerService.RemoveCurrentLineMarker();
+					DebuggerService.JumpToCurrentLine(DebugData.DebugStepInformation.Item3, line, 0, line, 0);
+
+					// create marker
 					var bm = CurrentLineBookmark.Instance;
-					if (bm != null) {
-						if (DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32())) {
-							DocumentLine line = textEditor.Document.GetLineByNumber(bm.LineNumber);
-							bm.Marker = bm.CreateMarker(textMarkerService, line.Offset + 1, line.Length);
-						}
-						UnfoldAndScroll(bm.LineNumber);
-					}
+					DocumentLine docline = textEditor.Document.GetLineByNumber(line);
+					bm.Marker = bm.CreateMarker(textMarkerService, docline.Offset + 1, docline.Length);
+					
+					UnfoldAndScroll(line);
 				}
 			} else {
 				// remove currentline marker
@@ -462,9 +459,12 @@ namespace ICSharpCode.ILSpy.TextView
 		static void DecompileNodes(DecompilationContext context, ITextOutput textOutput)
 		{
 			// reset data
+			DebugData.OldCodeMappings = DebugData.CodeMappings;
 			DebugData.CodeMappings = null;
 			DebugData.LocalVariables = null;
 			DebugData.DecompiledMemberReferences = null;
+			// set the language
+			DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 			
 			var nodes = context.TreeNodes;
 			context.Language.DecompileFinished += Language_DecompileFinished;

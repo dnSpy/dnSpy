@@ -1,13 +1,10 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 
@@ -15,15 +12,13 @@ using Debugger;
 using Debugger.Interop.CorPublish;
 using Debugger.MetaData;
 using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.Decompiler.Disassembler;
-using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.Visitors;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
 using ICSharpCode.ILSpy.Debugger.Services.Debugger;
 using ICSharpCode.ILSpy.Debugger.Tooltips;
+using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.Visitors;
 using Mono.Cecil;
 using CorDbg = Debugger;
 using Process = Debugger.Process;
@@ -808,19 +803,19 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				int line;
 				MemberReference memberReference;
 				
-				if (DebugData.CodeMappings.ContainsKey(token) && 
+				if (DebugData.CodeMappings.ContainsKey(token) &&
 				    DebugData.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out memberReference, out line)) {
+					DebugData.DebugStepInformation = null; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
 					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
 				}
 				else {
-					// is possible that the type is not decompiled yet, so we must do a decompilation on demand
-					DecompileOnDemand(frame);
+					StepIntoFrame(frame);
 				}
 			}
 		}
 
-		void DecompileOnDemand(StackFrame frame)
+		void StepIntoFrame(StackFrame frame)
 		{
 			string debuggeeVersion = frame.MethodInfo.DebugModule.Process.DebuggeeVersion.Substring(1, 3); // should retrieve 2.0, 3.0, 4.0
 			var debugType = (DebugType)frame.MethodInfo.DeclaringType;
@@ -858,52 +853,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				
 				if (typeDef != null) {
 					TypeDefinition type = nestedTypeDef ?? typeDef;
-					MemberReference memberReference = null;
-					
-					// decompile on demand if the type was no decompiled
-					Dictionary<int, List<MemberMapping>> codeMappings = null;
-					Dictionary<int, MemberReference> members = null;
-					if (!DebugData.CodeMappings.ContainsKey(token)) {
-						if (DebugData.Language == DecompiledLanguages.IL) {
-							var dis = new ReflectionDisassembler(new PlainTextOutput(), true, CancellationToken.None);
-							dis.DisassembleType(type);
-							codeMappings = dis.CodeMappings;
-						} else {
-							// decompile type
-							AstBuilder builder = new AstBuilder(new DecompilerContext(typeDef.Module));
-							builder.AddType(type);
-							builder.GenerateCode(new PlainTextOutput());
-							memberReference = builder.CodeMappings[token][0].MemberReference;
-							
-							// decompile member
-							builder = new AstBuilder(new DecompilerContext(typeDef.Module) { CurrentType = type });
-							if (memberReference is PropertyDefinition)
-								builder.AddProperty(memberReference as PropertyDefinition);
-							else if (memberReference is MethodDefinition)
-								builder.AddMethod(memberReference as MethodDefinition);
-							else if (memberReference is EventDefinition)
-								builder.AddEvent(memberReference as EventDefinition);
-							
-							var output = new PlainTextOutput();
-							builder.GenerateCode(output);
-							DebugData.CodeMappings = codeMappings = builder.CodeMappings;
-							DebugData.DecompiledMemberReferences = members = builder.DecompiledMemberReferences;
-						}
-					}
-					
-					// try jump
-					int line;
-					codeMappings = codeMappings ?? DebugData.CodeMappings;
-					if (codeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out memberReference, out line)) {
-						DebuggerService.RemoveCurrentLineMarker();
-						DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
-					} else {
-						StepOut();
-					}
+					DebugData.DebugStepInformation = Tuple.Create(token, ilOffset, type.GetMemberByToken(token));
+				} else {
+					Debug.Assert(typeDef != null, "No type was found!");
 				}
 			}
 		}
-		
 		
 		public void ShowAttachDialog()
 		{
