@@ -810,12 +810,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
 				}
 				else {
-					StepIntoFrame(frame);
+					StepIntoUnknownFrame(frame);
 				}
 			}
 		}
 
-		void StepIntoFrame(StackFrame frame)
+		void StepIntoUnknownFrame(StackFrame frame)
 		{
 			string debuggeeVersion = frame.MethodInfo.DebugModule.Process.DebuggeeVersion.Substring(1, 3); // should retrieve 2.0, 3.0, 4.0
 			var debugType = (DebugType)frame.MethodInfo.DeclaringType;

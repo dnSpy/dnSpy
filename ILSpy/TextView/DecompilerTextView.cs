@@ -392,11 +392,12 @@ namespace ICSharpCode.ILSpy.TextView
 					// show the currentline marker
 					int token = DebugData.DebugStepInformation.Item1;
 					int ilOffset = DebugData.DebugStepInformation.Item2;
-					bool isMatch;
-					var map = DebugData.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out isMatch);
-					int line = map.SourceCodeLine;
+					int line;
+					MemberReference member;
+					DebugData.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out member, out line);
+					
 					DebuggerService.RemoveCurrentLineMarker();
-					DebuggerService.JumpToCurrentLine(DebugData.DebugStepInformation.Item3, line, 0, line, 0);
+					DebuggerService.JumpToCurrentLine(member, line, 0, line, 0);
 
 					// create marker
 					var bm = CurrentLineBookmark.Instance;
