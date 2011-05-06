@@ -808,14 +808,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				int line;
 				MemberReference memberReference;
 				
-				if (DebugData.CodeMappings.ContainsKey(token)) {
-					if (DebugData.CodeMappings[token].GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out memberReference, out line)) {
-						DebuggerService.RemoveCurrentLineMarker();
-						DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
-					} else {
-						// is possible that the type is not decompiled yet, so we must do a decompilation on demand
-						DecompileOnDemand(frame);
-					}
+				if (DebugData.CodeMappings.ContainsKey(token) && 
+				    DebugData.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out memberReference, out line)) {
+					DebuggerService.RemoveCurrentLineMarker();
+					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
 				}
 				else {
 					// is possible that the type is not decompiled yet, so we must do a decompilation on demand
@@ -888,7 +884,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 							else if (memberReference is EventDefinition)
 								builder.AddEvent(memberReference as EventDefinition);
 							
-							builder.GenerateCode(new PlainTextOutput());							
+							var output = new PlainTextOutput();
+							builder.GenerateCode(output);
 							DebugData.CodeMappings = codeMappings = builder.CodeMappings;
 							DebugData.DecompiledMemberReferences = members = builder.DecompiledMemberReferences;
 						}
@@ -897,7 +894,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					// try jump
 					int line;
 					codeMappings = codeMappings ?? DebugData.CodeMappings;
-					if (codeMappings[token].GetSourceCodeFromMetadataTokenAndOffset(token, ilOffset, out memberReference, out line)) {
+					if (codeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out memberReference, out line)) {
 						DebuggerService.RemoveCurrentLineMarker();
 						DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
 					} else {

@@ -26,22 +26,23 @@ namespace ICSharpCode.Decompiler
 		readonly TextWriter writer;
 		int indent;
 		bool needsIndent;
+		int lineNumber = 1;
 		
 		public PlainTextOutput(TextWriter writer)
 		{
 			if (writer == null)
 				throw new ArgumentNullException("writer");
 			this.writer = writer;
-			CurrentLine = 1;
 		}
 		
 		public PlainTextOutput()
 		{
 			this.writer = new StringWriter();
-			CurrentLine = 1;
 		}
 		
-		public int CurrentLine { get; set; }
+		public int CurrentLine { 
+			get { return lineNumber; }
+		}
 		
 		public override string ToString()
 		{
@@ -82,9 +83,9 @@ namespace ICSharpCode.Decompiler
 		
 		public void WriteLine()
 		{
+			lineNumber++;
 			writer.WriteLine();
 			needsIndent = true;
-			++CurrentLine;
 		}
 		
 		public void WriteDefinition(string text, object definition)

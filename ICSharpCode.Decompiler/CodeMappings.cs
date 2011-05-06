@@ -105,9 +105,9 @@ namespace ICSharpCode.Decompiler
 				currentList.AddRange(MemberMapping.InvertedList);
 			} else {
 				// if the current list contains the last mapping, add also the last gap
-//				var lastInverted = MemberMapping.InvertedList.LastOrDefault();
-//				if (lastInverted != null && lastInverted.From == currentList[currentList.Count - 1].To)
-//					currentList.Add(lastInverted);
+				var lastInverted = MemberMapping.InvertedList.LastOrDefault();
+				if (lastInverted != null && lastInverted.From == currentList[currentList.Count - 1].To)
+					currentList.Add(lastInverted);
 			}
 			
 			// set the output
@@ -262,7 +262,7 @@ namespace ICSharpCode.Decompiler
 			
 			if (map == null) {
 				// get the immediate next one
-				map = maping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From >= ilOffset);
+				map = maping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From > ilOffset);
 				isMatch = false;
 				if (map == null)
 					map = maping.MemberCodeMappings.LastOrDefault(); // get the last
@@ -283,7 +283,7 @@ namespace ICSharpCode.Decompiler
 		/// <param name="typeName">Type definition.</param>
 		/// <param name="line">Line number.</param>
 		/// <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
-		public static bool GetSourceCodeFromMetadataTokenAndOffset(
+		public static bool GetInstructionByTokenAndOffset(
 			this List<MemberMapping> codeMappings,
 			int token,
 			int ilOffset,
@@ -303,7 +303,7 @@ namespace ICSharpCode.Decompiler
 			var codeMapping = mapping.MemberCodeMappings.Find(
 				cm => cm.ILInstructionOffset.From <= ilOffset && ilOffset <= cm.ILInstructionOffset.To - 1);
 			if (codeMapping == null) {
-				codeMapping = mapping.MemberCodeMappings.Find(cm => (cm.ILInstructionOffset.From >= ilOffset));
+				codeMapping = mapping.MemberCodeMappings.Find(cm => cm.ILInstructionOffset.From > ilOffset);
 				if (codeMapping == null) {
 					codeMapping = mapping.MemberCodeMappings.LastOrDefault();
 					if (codeMapping == null)
