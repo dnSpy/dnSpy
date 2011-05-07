@@ -23,29 +23,27 @@ namespace Mono.CSharp.Nullable
 {
 	public class NullableType : TypeExpr
 	{
-		TypeExpr underlying;
-
-		public NullableType (TypeExpr underlying, Location l)
-		{
-			this.underlying = underlying;
-			loc = l;
-
-			eclass = ExprClass.Type;
-		}
+		readonly TypeSpec underlying;
 
 		public NullableType (TypeSpec type, Location loc)
-			: this (new TypeExpression (type, loc), loc)
-		{ }
-
-		public override TypeExpr ResolveAsType (IMemberContext ec)
 		{
-			var type = ec.Module.PredefinedTypes.Nullable.Resolve ();
-			if (type == null)
+			this.underlying = type;
+			this.loc = loc;
+		}
+
+		public override TypeSpec ResolveAsType (IMemberContext ec)
+		{
+			eclass = ExprClass.Type;
+
+			var otype = ec.Module.PredefinedTypes.Nullable.Resolve ();
+			if (otype == null)
 				return null;
 
-			TypeArguments args = new TypeArguments (underlying);
-			GenericTypeExpr ctype = new GenericTypeExpr (type, args, loc);
-			return ctype.ResolveAsType (ec);
+			TypeArguments args = new TypeArguments (new TypeExpression (underlying, loc));
+			GenericTypeExpr ctype = new GenericTypeExpr (otype, args, loc);
+			
+			type = ctype.ResolveAsType (ec);
+			return type;
 		}
 	}
 
@@ -415,7 +413,7 @@ namespace Mono.CSharp.Nullable
 					return null;
 
 				null_value = LiftedNull.Create (type, loc);
-			} else if (TypeManager.IsValueType (type)) {
+			} else if (TypeSpec.IsValueType (type)) {
 				null_value = LiftedNull.Create (type, loc);
 			} else {
 				null_value = new NullConstant (type, loc);
@@ -521,9 +519,8 @@ namespace Mono.CSharp.Nullable
 
 		Expression LiftExpression (ResolveContext ec, Expression expr)
 		{
-			TypeExpr lifted_type = new NullableType (expr.Type, expr.Location);
-			lifted_type = lifted_type.ResolveAsType (ec);
-			if (lifted_type == null)
+			var lifted_type = new NullableType (expr.Type, expr.Location);
+			if (lifted_type.ResolveAsType (ec) == null)
 				return null;
 
 			expr.Type = lifted_type.Type;
@@ -865,26 +862,24 @@ namespace Mono.CSharp.Nullable
 
 		Expression LiftResult (ResolveContext ec, Expression res_expr)
 		{
-			TypeExpr lifted_type;
+			TypeSpec lifted_type;
 
 			//
 			// Avoid double conversion
 			//
 			if (left_unwrap == null || IsLeftNullLifted || left_unwrap.Type != left.Type || (left_unwrap != null && IsRightNullLifted)) {
-				lifted_type = new NullableType (left.Type, loc);
-				lifted_type = lifted_type.ResolveAsType (ec);
+				lifted_type = new NullableType (left.Type, loc).ResolveAsType (ec);
 				if (lifted_type == null)
 					return null;
 
 				if (left is UserCast || left is TypeCast)
-					left.Type = lifted_type.Type;
+					left.Type = lifted_type;
 				else
-					left = EmptyCast.Create (left, lifted_type.Type);
+					left = EmptyCast.Create (left, lifted_type);
 			}
 
 			if (left != right && (right_unwrap == null || IsRightNullLifted || right_unwrap.Type != right.Type || (right_unwrap != null && IsLeftNullLifted))) {
-				lifted_type = new NullableType (right.Type, loc);
-				lifted_type = lifted_type.ResolveAsType (ec);
+				lifted_type = new NullableType (right.Type, loc).ResolveAsType (ec);
 				if (lifted_type == null)
 					return null;
 
@@ -893,19 +888,18 @@ namespace Mono.CSharp.Nullable
 					r = ((ReducedExpression) r).OriginalExpression;
 
 				if (r is UserCast || r is TypeCast)
-					r.Type = lifted_type.Type;
+					r.Type = lifted_type;
 				else
-					right = EmptyCast.Create (right, lifted_type.Type);
+					right = EmptyCast.Create (right, lifted_type);
 			}
 
 			if ((Oper & Operator.ComparisonMask) == 0) {
-				lifted_type = new NullableType (res_expr.Type, loc);
-				lifted_type = lifted_type.ResolveAsType (ec);
+				lifted_type = new NullableType (res_expr.Type, loc).ResolveAsType (ec);
 				if (lifted_type == null)
 					return null;
 
-				wrap_ctor = NullableInfo.GetConstructor (lifted_type.Type);
-				type = res_expr.Type = lifted_type.Type;
+				wrap_ctor = NullableInfo.GetConstructor (lifted_type);
+				type = res_expr.Type = lifted_type;
 			}
 
 			if (IsLeftNullLifted) {
@@ -998,7 +992,7 @@ namespace Mono.CSharp.Nullable
 			// Lift the result in the case it can be null and predefined or user operator
 			// result type is of a value type
 			//
-			if (!TypeManager.IsValueType (expr.Type))
+			if (!TypeSpec.IsValueType (expr.Type))
 				return null;
 
 			if (state != orig_state)
@@ -1101,7 +1095,7 @@ namespace Mono.CSharp.Nullable
 					type = ltype;
 					return this;
 				}
-			} else if (TypeManager.IsReferenceType (ltype)) {
+			} else if (TypeSpec.IsReferenceType (ltype)) {
 				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
 					//
 					// If right is a dynamic expression, the result type is dynamic

@@ -12,7 +12,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	/// <summary>
 	/// Default implementation of <see cref="ITypeParameter"/>.
 	/// </summary>
-	public class DefaultTypeParameter : AbstractFreezable, ITypeParameter, ISupportsInterning
+	public sealed class DefaultTypeParameter : AbstractFreezable, ITypeParameter, ISupportsInterning
 	{
 		string name;
 		int index;
@@ -188,11 +188,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		public virtual IType BoundTo {
+		IType ITypeParameter.BoundTo {
 			get { return null; }
 		}
 		
-		public virtual ITypeParameter UnboundTypeParameter {
+		ITypeParameter ITypeParameter.UnboundTypeParameter {
 			get { return null; }
 		}
 		

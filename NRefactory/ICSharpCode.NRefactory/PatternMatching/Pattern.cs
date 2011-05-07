@@ -29,7 +29,7 @@ namespace ICSharpCode.NRefactory.PatternMatching
 			get { return false; }
 		}
 		
-		CSharp.Role INode.Role {
+		Role INode.Role {
 			get { return null; }
 		}
 		
@@ -43,7 +43,7 @@ namespace ICSharpCode.NRefactory.PatternMatching
 		
 		public abstract bool DoMatch(INode other, Match match);
 		
-		public virtual bool DoMatchCollection(CSharp.Role role, INode pos, Match match, BacktrackingInfo backtrackingInfo)
+		public virtual bool DoMatchCollection(Role role, INode pos, Match match, BacktrackingInfo backtrackingInfo)
 		{
 			return DoMatch (pos, match);
 		}
@@ -60,7 +60,7 @@ namespace ICSharpCode.NRefactory.PatternMatching
 			return w.ToString();
 		}
 		
-		public static bool DoMatchCollection(CSharp.Role role, INode firstPatternChild, INode firstOtherChild, Match match)
+		public static bool DoMatchCollection(Role role, INode firstPatternChild, INode firstOtherChild, Match match)
 		{
 			BacktrackingInfo backtrackingInfo = new BacktrackingInfo();
 			Stack<INode> patternStack = new Stack<INode>();

@@ -15,15 +15,15 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		void CheckSimpleInvoke(InvocationExpression ie)
 		{
 			Assert.AreEqual(0, ie.Arguments.Count);
-			Assert.IsTrue(ie.TargetObject is IdentifierExpression);
-			Assert.AreEqual("myMethod", ((IdentifierExpression)ie.TargetObject).Identifier);
+			Assert.IsTrue(ie.TargetObject is SimpleNameExpression);
+			Assert.AreEqual("myMethod", ((SimpleNameExpression)ie.TargetObject).Identifier);
 		}
 		
 		void CheckGenericInvoke(InvocationExpression expr)
 		{
 			Assert.AreEqual(1, expr.Arguments.Count);
-			Assert.IsTrue(expr.TargetObject is IdentifierExpression);
-			IdentifierExpression ident = (IdentifierExpression)expr.TargetObject;
+			Assert.IsTrue(expr.TargetObject is SimpleNameExpression);
+			SimpleNameExpression ident = (SimpleNameExpression)expr.TargetObject;
 			Assert.AreEqual("myMethod", ident.Identifier);
 			Assert.AreEqual(1, ident.TypeArguments.Count);
 			Assert.AreEqual("System.Char", ident.TypeArguments[0].Type);
@@ -32,8 +32,8 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		void CheckGenericInvoke2(InvocationExpression expr)
 		{
 			Assert.AreEqual(0, expr.Arguments.Count);
-			Assert.IsTrue(expr.TargetObject is IdentifierExpression);
-			IdentifierExpression ident = (IdentifierExpression)expr.TargetObject;
+			Assert.IsTrue(expr.TargetObject is SimpleNameExpression);
+			SimpleNameExpression ident = (SimpleNameExpression)expr.TargetObject;
 			Assert.AreEqual("myMethod", ident.Identifier);
 			Assert.AreEqual(2, ident.TypeArguments.Count);
 			Assert.AreEqual("T", ident.TypeArguments[0].Type);
@@ -74,7 +74,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			InvocationExpression expr = ParseUtil.ParseExpression<InvocationExpression>("A(Of T).Foo()");
 			MemberReferenceExpression mre = (MemberReferenceExpression)expr.TargetObject;
 			Assert.AreEqual("Foo", mre.MemberName);
-			IdentifierExpression tre = (IdentifierExpression)mre.TargetObject;
+			SimpleNameExpression tre = (SimpleNameExpression)mre.TargetObject;
 			Assert.AreEqual("A", tre.Identifier);
 			Assert.AreEqual("T", tre.TypeArguments[0].Type);
 		}
@@ -87,7 +87,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			Assert.AreEqual("Foo", mre.MemberName);
 			MemberReferenceExpression mre2 = (MemberReferenceExpression)mre.TargetObject;
 			Assert.AreEqual("B", mre2.MemberName);
-			IdentifierExpression tre = (IdentifierExpression)mre2.TargetObject;
+			SimpleNameExpression tre = (SimpleNameExpression)mre2.TargetObject;
 			Assert.AreEqual("A", tre.Identifier);
 			Assert.AreEqual("T", tre.TypeArguments[0].Type);
 		}
@@ -106,7 +106,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			MemberReferenceExpression mre3 = (MemberReferenceExpression)mre2.TargetObject;
 			Assert.AreEqual("B", mre3.MemberName);
 			
-			IdentifierExpression tre = (IdentifierExpression)mre3.TargetObject;
+			SimpleNameExpression tre = (SimpleNameExpression)mre3.TargetObject;
 			Assert.AreEqual("A", tre.Identifier);
 			Assert.AreEqual("T", tre.TypeArguments[0].Type);
 		}

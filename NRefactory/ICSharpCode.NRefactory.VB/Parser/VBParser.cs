@@ -12,13 +12,12 @@ using ICSharpCode.NRefactory.VB.Visitors;
 
 namespace ICSharpCode.NRefactory.VB.Parser
 {
-	public partial class VBParser : IDisposable
+	internal partial class VBParser : IDisposable
 	{
 		VBLexer lexer;
-		Stack<INode> blockStack;
+		Stack<AstNode> stack;
 		CompilationUnit compilationUnit;
 		int errDist = MinErrDist;
-		bool parseMethodContents = true;
 		
 		const int    MinErrDist   = 2;
 		const string ErrMsgFormat = "-- line {0} col {1}: {2}";  // 0=line, 1=column, 2=text
@@ -28,25 +27,31 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			this.errors = lexer.Errors;
 			errors.SynErr = new ErrorCodeProc(SynErr);
 			this.lexer = (VBLexer)lexer;
-			this.blockStack = new Stack<INode>();
+			this.stack = new Stack<AstNode>();
 		}
 		
-		void BlockStart(INode block)
+		#region Infrastructure
+		void NodeStart(AstNode node)
 		{
-			blockStack.Push(block);
+			stack.Push(node);
 		}
 		
-		void BlockEnd()
+		void NodeEnd(AstNode currentNode, Role role)
 		{
-			blockStack.Pop();
+			AstNode node = stack.Pop();
+			Debug.Assert(currentNode == node);
+			stack.Peek().AddChildUntyped(node, role);
 		}
 		
-		void AddChild(INode childNode)
+		void AddTerminal(Role<VBTokenNode> role)
+		{
+			stack.Peek().AddChild(new VBTokenNode(t.Location, t.EndLocation), role);
+		}
+		
+		void AddChild<T>(T childNode, Role<T> role) where T : AstNode
 		{
 			if (childNode != null) {
-				INode parent = (INode)blockStack.Peek();
-				parent.Children.Add(childNode);
-				childNode.Parent = parent;
+				stack.Peek().AddChild(childNode, role);
 			}
 		}
 		
@@ -59,6 +64,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 				return lexer.Token;
 			}
 		}
+		
 		Token la
 		{
 			[System.Diagnostics.DebuggerStepThrough]
@@ -67,7 +73,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			}
 		}
 
-		Token Peek (int n)
+		Token Peek(int n)
 		{
 			lexer.StartPeek();
 			Token x = la;
@@ -85,77 +91,86 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			}
 			errDist = 0;
 		}
-
+		#endregion
+		
+		#region Parse
 		public void Parse()
 		{
 			ParseRoot();
-			compilationUnit.AcceptVisitor(new SetParentVisitor(), null);
 		}
 		
-		public TypeReference ParseTypeReference ()
+		public AstType ParseAstType()
 		{
 			// TODO
 			return null;
 		}
 		
-		public Expression ParseExpression()
+//		public Expression ParseExpression()
+//		{
+//			lexer.SetInitialContext(SnippetType.Expression);
+//			lexer.NextToken();
+//			Location startLocation = la.Location;
+//			Expression expr;
+//			Expr(out expr);
+//			while (la.kind == Tokens.EOL) lexer.NextToken();
+//			if (expr != null) {
+//				expr.StartLocation = startLocation;
+//				expr.EndLocation = t.EndLocation;
+//				expr.AcceptVisitor(new SetParentVisitor(), null);
+//			}
+//			Expect(Tokens.EOF);
+//			return expr;
+//		}
+		
+//		public BlockStatement ParseBlock()
+//		{
+//			lexer.NextToken();
+//			compilationUnit = new CompilationUnit();
+//
+//			Location startLocation = la.Location;
+//			Statement st;
+//			Block(out st);
+//			if (st != null) {
+//				st.StartLocation = startLocation;
+//				if (t != null)
+//					st.EndLocation = t.EndLocation;
+//				else
+//					st.EndLocation = la.Location;
+//				st.AcceptVisitor(new SetParentVisitor(), null);
+//			}
+//			Expect(Tokens.EOF);
+//			return st as BlockStatement;
+//		}
+		
+//		public List<AstNode> ParseTypeMembers()
+//		{
+//			lexer.NextToken();
+//			TypeDeclaration newType = new TypeDeclaration(Modifiers.None, null);
+//			BlockStart(newType);
+//			ClassBody(newType);
+//			BlockEnd();
+//			Expect(Tokens.EOF);
+//			newType.AcceptVisitor(new SetParentVisitor(), null);
+//			return newType.Children;
+//		}
+		#endregion
+		
+		#region Conflict Resolvers
+		bool IsAliasImportsClause()
 		{
-			lexer.SetInitialContext(SnippetType.Expression);
-			lexer.NextToken();
-			Location startLocation = la.Location;
-			Expression expr;
-			Expr(out expr);
-			while (la.kind == Tokens.EOL) lexer.NextToken();
-			if (expr != null) {
-				expr.StartLocation = startLocation;
-				expr.EndLocation = t.EndLocation;
-				expr.AcceptVisitor(new SetParentVisitor(), null);
-			}
-			Expect(Tokens.EOF);
-			return expr;
+			return IsIdentifierToken(la) && Peek(1).Kind == Tokens.Assign;
 		}
 		
-		public BlockStatement ParseBlock()
+		static bool IsIdentifierToken(Token tk)
 		{
-			lexer.NextToken();
-			compilationUnit = new CompilationUnit();
-			
-			Location startLocation = la.Location;
-			Statement st;
-			Block(out st);
-			if (st != null) {
-				st.StartLocation = startLocation;
-				if (t != null)
-					st.EndLocation = t.EndLocation;
-				else
-					st.EndLocation = la.Location;
-				st.AcceptVisitor(new SetParentVisitor(), null);
-			}
-			Expect(Tokens.EOF);
-			return st as BlockStatement;
+			return Tokens.IdentifierTokens[tk.kind] || tk.kind == Tokens.Identifier;
 		}
+		#endregion
 		
-		public List<INode> ParseTypeMembers()
-		{
-			lexer.NextToken();
-			TypeDeclaration newType = new TypeDeclaration(Modifiers.None, null);
-			BlockStart(newType);
-			ClassBody(newType);
-			BlockEnd();
-			Expect(Tokens.EOF);
-			newType.AcceptVisitor(new SetParentVisitor(), null);
-			return newType.Children;
-		}
-
 		/* True, if "." is followed by an ident */
 		bool DotAndIdentOrKw () {
 			int peek = Peek(1).kind;
 			return la.kind == Tokens.Dot && (peek == Tokens.Identifier || peek >= Tokens.AddHandler);
-		}
-
-		static bool IsIdentifierToken(Token tk)
-		{
-			return Tokens.IdentifierTokens[tk.kind] || tk.kind == Tokens.Identifier;
 		}
 		
 		bool IsIdentifiedExpressionRange()
@@ -331,39 +346,29 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			return la.kind == Tokens.Colon && Peek(1).kind == Tokens.EOL;
 		}
 
-		static bool IsMustOverride(ModifierList m)
+		static bool IsMustOverride(AttributedNode node)
 		{
-			return m.Contains(Modifiers.Abstract);
+			return node.Modifiers.HasFlag(Modifiers.MustOverride);
 		}
 
 		/* Writes the type name represented through the expression into the string builder. */
 		/* Returns true when the expression was converted successfully, returns false when */
 		/* There was an unknown expression (e.g. TypeReferenceExpression) in it */
-		bool WriteFullTypeName(StringBuilder b, Expression expr)
-		{
-			MemberReferenceExpression fre = expr as MemberReferenceExpression;
-			if (fre != null) {
-				bool result = WriteFullTypeName(b, fre.TargetObject);
-				if (b.Length > 0) b.Append('.');
-				b.Append(fre.MemberName);
-				return result;
-			} else if (expr is IdentifierExpression) {
-				b.Append(((IdentifierExpression)expr).Identifier);
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		/*
-		True, if lookahead is a local attribute target specifier,
-		i.e. one of "event", "return", "field", "method",
-		"module", "param", "property", or "type"
-		 */
-		bool IsLocalAttrTarget() {
-			// TODO
-			return false;
-		}
+//		bool WriteFullTypeName(StringBuilder b, Expression expr)
+//		{
+//			MemberReferenceExpression fre = expr as MemberReferenceExpression;
+//			if (fre != null) {
+//				bool result = WriteFullTypeName(b, fre.TargetObject);
+//				if (b.Length > 0) b.Append('.');
+//				b.Append(fre.MemberName);
+//				return result;
+//			} else if (expr is SimpleNameExpression) {
+//				b.Append(((SimpleNameExpression)expr).Identifier);
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		}
 		
 		void EnsureIsZero(Expression expr)
 		{
@@ -371,31 +376,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 				Error("lower bound of array must be zero");
 		}
 		
-		/// <summary>
-		/// Adds a child item to a collection stored in the parent node.
-		/// Also set's the item's parent to <paramref name="parent"/>.
-		/// Does nothing if item is null.
-		/// </summary>
-		static void SafeAdd<T>(INode parent, List<T> list, T item) where T : class, INode
-		{
-			Debug.Assert(parent != null);
-			Debug.Assert((parent is INullable) ? !(parent as INullable).IsNull : true);
-			if (item != null) {
-				list.Add(item);
-				item.Parent = parent;
-			}
-		}
-		
-
-		
-		public bool ParseMethodBodies {
-			get {
-				return parseMethodContents;
-			}
-			set {
-				parseMethodContents = value;
-			}
-		}
+		public bool ParseMethodBodies { get; set; }
 		
 		public VBLexer Lexer {
 			get {

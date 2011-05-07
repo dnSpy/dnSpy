@@ -26,7 +26,7 @@ namespace ICSharpCode.NRefactory.PatternMatching
 		{
 		}
 		
-		public override bool DoMatchCollection(CSharp.Role role, INode pos, Match match, BacktrackingInfo backtrackingInfo)
+		public override bool DoMatchCollection(Role role, INode pos, Match match, BacktrackingInfo backtrackingInfo)
 		{
 			backtrackingInfo.backtrackingStack.Push(new PossibleMatch(pos, match.CheckPoint()));
 			return childNode.DoMatch(pos, match);

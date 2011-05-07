@@ -19,7 +19,7 @@ namespace Mono.CSharp {
 
 	public class Const : FieldBase
 	{
-		public const Modifiers AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -200,7 +200,7 @@ namespace Mono.CSharp {
 					c = field.ConvertInitializer (rc, c);
 
 				if (c == null) {
-					if (TypeManager.IsReferenceType (field.MemberType))
+					if (TypeSpec.IsReferenceType (field.MemberType))
 						Error_ConstantCanBeInitializedWithNullOnly (rc, field.MemberType, expr.Location, GetSignatureForError ());
 					else if (!(expr is Constant))
 						Error_ExpressionMustBeConstant (rc, expr.Location, GetSignatureForError ());

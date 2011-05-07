@@ -33,7 +33,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IList<IAttribute> Attributes { get; }
 		
 		/// <summary>
-		/// Gets the contraints of this type parameter.
+		/// Gets the constraints of this type parameter.
 		/// </summary>
 		IList<ITypeReference> Constraints { get; }
 		
@@ -153,6 +153,14 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		
 		void IFreezable.Freeze()
 		{
+		}
+		
+		EntityType ITypeParameter.OwnerType {
+			get { return EntityType.None; }
+		}
+		
+		DomRegion ITypeParameter.Region {
+			get { return DomRegion.Empty; }
 		}
 	}
 	#endif

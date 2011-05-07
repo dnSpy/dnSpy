@@ -306,7 +306,7 @@ namespace Mono.CSharp
 
 		public abstract class PropertyMethod : AbstractPropertyEventMethod
 		{
-			public const Modifiers AllowedModifiers =
+			const Modifiers AllowedModifiers =
 				Modifiers.PUBLIC |
 				Modifiers.PROTECTED |
 				Modifiers.INTERNAL |
@@ -319,7 +319,8 @@ namespace Mono.CSharp
 				: base (method, prefix, attrs, loc)
 			{
 				this.method = method;
-				this.ModFlags = modifiers | (method.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE));
+				this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, modifiers, 0, loc, Report);
+				this.ModFlags |= (method.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE));
 			}
 
 			public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -356,8 +357,7 @@ namespace Mono.CSharp
 					if (container.Kind == MemberKind.Interface)
 						Report.Error (275, Location, "`{0}': accessibility modifiers may not be used on accessors in an interface",
 							GetSignatureForError ());
-
-					if ((method.ModFlags & Modifiers.ABSTRACT) != 0 && (ModFlags & Modifiers.PRIVATE) != 0) {
+					else if ((method.ModFlags & Modifiers.ABSTRACT) != 0 && (ModFlags & Modifiers.PRIVATE) != 0) {
 						Report.Error (442, Location, "`{0}': abstract properties cannot have private accessors", GetSignatureForError ());
 					}
 
@@ -667,6 +667,8 @@ namespace Mono.CSharp
 			} else if (member_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (PropertyBuilder, member_type, Location);
 			}
+
+			ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			first.Emit (Parent);
 			if (AccessorSecond != null)
@@ -1322,6 +1324,8 @@ namespace Mono.CSharp
 				OptAttributes.Emit ();
 			}
 
+			ConstraintChecker.Check (this, member_type, type_expr.Location);
+
 			Add.Emit (Parent);
 			Remove.Emit (Parent);
 
@@ -1491,6 +1495,22 @@ namespace Mono.CSharp
 			this.parameters = parameters;
 		}
 
+		#region Properties
+
+		AParametersCollection IParametersMember.Parameters {
+			get {
+				return parameters;
+			}
+		}
+
+		public ParametersCompiled ParameterInfo {
+			get {
+				return parameters;
+			}
+		}
+
+		#endregion
+
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.IndexerName) {
@@ -1574,6 +1594,13 @@ namespace Mono.CSharp
 			return base.EnableOverloadChecks (overload);
 		}
 
+		public override void Emit ()
+		{
+			parameters.CheckConstraints (this);
+
+			base.Emit ();
+		}
+
 		public override string GetSignatureForError ()
 		{
 			StringBuilder sb = new StringBuilder (Parent.GetSignatureForError ());
@@ -1590,18 +1617,6 @@ namespace Mono.CSharp
 		public override string GetSignatureForDocumentation ()
 		{
 			return base.GetSignatureForDocumentation () + parameters.GetSignatureForDocumentation ();
-		}
-
-		public AParametersCollection Parameters {
-			get {
-				return parameters;
-			}
-		}
-
-		public ParametersCompiled ParameterInfo {
-			get {
-				return parameters;
-			}
 		}
 
 		protected override bool VerifyClsCompliance ()

@@ -21,6 +21,13 @@ using System.Reflection.Emit;
 
 namespace Mono.CSharp
 {
+	public enum LookupMode
+	{
+		Normal = 0,
+		Probing = 1,
+		IgnoreAccessibility = 2
+	}
+
 	//
 	// Implemented by elements which can act as independent contexts
 	// during resolve phase. Used mostly for lookups.
@@ -48,12 +55,11 @@ namespace Mono.CSharp
 		bool IsObsolete { get; }
 		bool IsUnsafe { get; }
 		bool IsStatic { get; }
-		bool HasUnresolvedConstraints { get; }
 
 		string GetSignatureForError ();
 
 		IList<MethodSpec> LookupExtensionMethod (TypeSpec extensionType, string name, int arity, ref NamespaceContainer scope);
-		FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104);
+		FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc);
 		FullNamedExpression LookupNamespaceAlias (string name);
 	}
 
@@ -414,10 +420,6 @@ namespace Mono.CSharp
 			get { return (flags & Options.DoFlowAnalysis) != 0; }
 		}
 
-		public bool HasUnresolvedConstraints {
-			get { return false; }
-		}
-
 		public bool IsInProbingMode {
 			get {
 				return (flags & Options.ProbingMode) != 0;
@@ -520,9 +522,9 @@ namespace Mono.CSharp
 			return MemberContext.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
 
-		public FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		public FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
-			return MemberContext.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+			return MemberContext.LookupNamespaceOrType (name, arity, mode, loc);
 		}
 
 		public FullNamedExpression LookupNamespaceAlias (string name)

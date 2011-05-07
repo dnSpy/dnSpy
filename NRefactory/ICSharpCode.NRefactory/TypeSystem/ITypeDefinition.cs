@@ -128,6 +128,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return null;
 		}
 		
+		bool ITypeDefinition.HasExtensionMethods {
+			get { return default(bool); }
+		}
+		
 		#region IEntity
 		EntityType IEntity.EntityType {
 			get { return EntityType.None; }

@@ -34,7 +34,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		
 		public VBLexer(TextReader reader, VBLexerMemento state) : this(reader)
 		{
-			SetInitialLocation(new Location(state.Column, state.Line));
+			SetInitialLocation(new AstLocation(state.Line, state.Column));
 			lastToken = new Token(state.PrevTokenKind, 0, 0);
 			ef = new ExpressionFinder(state.ExpressionFinder);
 			lineEnd = state.LineEnd;
@@ -54,7 +54,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			
 			unchecked {
 				while (true) {
-					Location startLocation = new Location(Col, Line);
+					AstLocation startLocation = new AstLocation(Line, Col);
 					int nextChar = ReaderRead();
 					if (nextChar == -1)
 						return new Token(Tokens.EOF, Col, Line, string.Empty);
@@ -96,12 +96,12 @@ namespace ICSharpCode.NRefactory.VB.Parser
 								if (ReaderPeek() == '/') {
 									ReaderRead();
 									info.inXmlCloseTag = true;
-									return new Token(Tokens.XmlOpenEndTag, new Location(x, y), new Location(Col, Line));
+									return new Token(Tokens.XmlOpenEndTag, new AstLocation(y, x), new AstLocation(Line, Col));
 								}
 								if (ReaderPeek() == '%' && ReaderPeek(1) == '=') {
 									inXmlMode = false;
 									ReaderRead(); ReaderRead();
-									return new Token(Tokens.XmlStartInlineVB, new Location(x, y), new Location(Col, Line));
+									return new Token(Tokens.XmlStartInlineVB, new AstLocation(y, x), new AstLocation(Line, Col));
 								}
 								if (ReaderPeek() == '?') {
 									ReaderRead();
@@ -122,7 +122,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 									ReaderRead();
 									info.inXmlTag = false;
 									info.level--;
-									return new Token(Tokens.XmlCloseTagEmptyElement, new Location(x, y), new Location(Col, Line));
+									return new Token(Tokens.XmlCloseTagEmptyElement, new AstLocation(y, x), new AstLocation(Line, Col));
 								}
 								break;
 							case '>':
@@ -135,7 +135,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 							case '\'':
 							case '"':
 								string s = ReadXmlString(ch);
-								return new Token(Tokens.LiteralString, x, y, ch + s + ch, s, LiteralFormat.StringLiteral);
+								return new Token(Tokens.LiteralString, x, y, ch + s + ch, s);
 							default:
 								if (info.inXmlCloseTag || info.inXmlTag) {
 									if (XmlConvert.IsWhitespaceChar(ch))
@@ -143,7 +143,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 									return new Token(Tokens.Identifier, x, y, ReadXmlIdent(ch));
 								} else {
 									string content = ReadXmlContent(ch);
-									return new Token(Tokens.XmlContent, startLocation, new Location(Col, Line), content, null, LiteralFormat.None);
+									return new Token(Tokens.XmlContent, startLocation, new AstLocation(Line, Col), content, null);
 								}
 						}
 						#endregion
@@ -154,10 +154,10 @@ namespace ICSharpCode.NRefactory.VB.Parser
 								if (lineEnd) {
 									// second line end before getting to a token
 									// -> here was a blank line
-									specialTracker.AddEndOfLine(startLocation);
+//									specialTracker.AddEndOfLine(startLocation);
 								} else {
 									lineEnd = true;
-									return new Token(Tokens.EOL, startLocation, new Location(Col, Line), null, null, LiteralFormat.None);
+									return new Token(Tokens.EOL, startLocation, new AstLocation(Line, Col), null, null);
 								}
 							}
 							continue;
@@ -212,7 +212,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 								} catch (Exception e) {
 									errors.Error(Line, Col, String.Format("Invalid date time {0}", e));
 								}
-								return new Token(Tokens.LiteralDate, x, y, s, time, LiteralFormat.DateTimeLiteral);
+								return new Token(Tokens.LiteralDate, x, y, s, time);
 							} else {
 								ReadPreprocessorDirective();
 								continue;
@@ -305,16 +305,16 @@ namespace ICSharpCode.NRefactory.VB.Parser
 								if (s.Length == 0) {
 									s = "\0";
 								}
-								return new Token(Tokens.LiteralCharacter, x, y, '"' + s  + "\"C", s[0], LiteralFormat.CharLiteral);
+								return new Token(Tokens.LiteralCharacter, x, y, '"' + s  + "\"C", s[0]);
 							}
-							return new Token(Tokens.LiteralString, x, y, '"' + s + '"', s, LiteralFormat.StringLiteral);
+							return new Token(Tokens.LiteralString, x, y, '"' + s + '"', s);
 						}
 						if (ch == '%' && ReaderPeek() == '>') {
 							int x = Col - 1;
 							int y = Line;
 							inXmlMode = true;
 							ReaderRead();
-							return new Token(Tokens.XmlEndInlineVB, new Location(x, y), new Location(Col, Line));
+							return new Token(Tokens.XmlEndInlineVB, new AstLocation(y, x), new AstLocation(Line, Col));
 						}
 						#endregion
 						if (ch == '<' && (ef.NextTokenIsPotentialStartOfExpression || ef.NextTokenIsStartOfImportsOrAccessExpression)) {
@@ -326,13 +326,13 @@ namespace ICSharpCode.NRefactory.VB.Parser
 							if (ReaderPeek() == '/') {
 								ReaderRead();
 								info.inXmlCloseTag = true;
-								return new Token(Tokens.XmlOpenEndTag, new Location(x, y), new Location(Col, Line));
+								return new Token(Tokens.XmlOpenEndTag, new AstLocation(y, x), new AstLocation(Line, Col));
 							}
 							// should we allow <%= at start of an expression? not valid with vbc ...
 							if (ReaderPeek() == '%' && ReaderPeek(1) == '=') {
 								inXmlMode = false;
 								ReaderRead(); ReaderRead();
-								return new Token(Tokens.XmlStartInlineVB, new Location(x, y), new Location(Col, Line));
+								return new Token(Tokens.XmlStartInlineVB, new AstLocation(y, x), new AstLocation(Line, Col));
 							}
 							if (ReaderPeek() == '!') {
 								ReaderRead();
@@ -361,7 +361,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			}
 		}
 
-		void CheckXMLState(Location startLocation)
+		void CheckXMLState(AstLocation startLocation)
 		{
 			if (inXmlMode && !xmlModeStack.Any())
 				throw new InvalidOperationException("invalid XML stack state at " + startLocation);
@@ -563,7 +563,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 				if (ch == '&') {
 					errors.Error(Line, Col, String.Format("digit expected"));
 				}
-				return new Token(Tokens.LiteralInteger, x, y, sb.ToString() ,ch - '0', LiteralFormat.DecimalNumber);
+				return new Token(Tokens.LiteralInteger, x, y, sb.ToString() ,ch - '0');
 			}
 			if (ch == '.') {
 				if (Char.IsDigit((char)ReaderPeek())) {
@@ -603,7 +603,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			
 			if (digit.Length == 0) {
 				errors.Error(Line, Col, String.Format("digit expected"));
-				return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0, LiteralFormat.DecimalNumber);
+				return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0);
 			}
 			
 			if (ReaderPeek() != -1 && "%&SILU".IndexOf(PeekUpperChar()) != -1 || isHex || isOct) {
@@ -632,60 +632,59 @@ namespace ICSharpCode.NRefactory.VB.Parser
 						}
 						if (ch == 'S') {
 							if (unsigned)
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (ushort)number, LiteralFormat.OctalNumber);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (ushort)number);
 							else
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (short)number, LiteralFormat.OctalNumber);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (short)number);
 						} else if (ch == '%' || ch == 'I') {
 							if (unsigned)
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (uint)number, LiteralFormat.OctalNumber);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (uint)number);
 							else
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (int)number, LiteralFormat.OctalNumber);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (int)number);
 						} else if (ch == '&' || ch == 'L') {
 							if (unsigned)
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (ulong)number, LiteralFormat.OctalNumber);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (ulong)number);
 							else
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (long)number, LiteralFormat.OctalNumber);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (long)number);
 						} else {
 							if (number > uint.MaxValue) {
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((long)number), LiteralFormat.OctalNumber);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((long)number));
 							} else {
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((int)number), LiteralFormat.OctalNumber);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((int)number));
 							}
 						}
 					}
-					LiteralFormat literalFormat = isHex ? LiteralFormat.HexadecimalNumber : LiteralFormat.DecimalNumber;
 					if (ch == 'S') {
 						ReaderRead();
 						if (unsigned)
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt16.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt16.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number));
 						else
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int16.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int16.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number));
 					} else if (ch == '%' || ch == 'I') {
 						ReaderRead();
 						if (unsigned)
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt32.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt32.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number));
 						else
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int32.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int32.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number));
 					} else if (ch == '&' || ch == 'L') {
 						ReaderRead();
 						if (unsigned)
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt64.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt64.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number));
 						else
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int64.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int64.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number));
 					} else if (isHex) {
 						ulong number = UInt64.Parse(digit, NumberStyles.HexNumber);
 						if (number > uint.MaxValue) {
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((long)number), literalFormat);
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((long)number));
 						} else {
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((int)number), literalFormat);
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((int)number));
 						}
 					}
 				} catch (OverflowException ex) {
 					errors.Error(Line, Col, ex.Message);
-					return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0, LiteralFormat.None);
+					return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0);
 				} catch (FormatException) {
 					errors.Error(Line, Col, String.Format("{0} is not a parseable number", digit));
-					return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0, LiteralFormat.None);
+					return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0);
 				}
 			}
 			Token nextToken = null; // if we accidently read a 'dot'
@@ -738,37 +737,37 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			
 			try {
 				if (isSingle) {
-					return new Token(Tokens.LiteralSingle, x, y, sb.ToString(), Single.Parse(digit, CultureInfo.InvariantCulture), LiteralFormat.DecimalNumber);
+					return new Token(Tokens.LiteralSingle, x, y, sb.ToString(), Single.Parse(digit, CultureInfo.InvariantCulture));
 				}
 				if (isDecimal) {
-					return new Token(Tokens.LiteralDecimal, x, y, sb.ToString(), Decimal.Parse(digit, NumberStyles.Currency | NumberStyles.AllowExponent, CultureInfo.InvariantCulture), LiteralFormat.DecimalNumber);
+					return new Token(Tokens.LiteralDecimal, x, y, sb.ToString(), Decimal.Parse(digit, NumberStyles.Currency | NumberStyles.AllowExponent, CultureInfo.InvariantCulture));
 				}
 				if (isDouble) {
-					return new Token(Tokens.LiteralDouble, x, y, sb.ToString(), Double.Parse(digit, CultureInfo.InvariantCulture), LiteralFormat.DecimalNumber);
+					return new Token(Tokens.LiteralDouble, x, y, sb.ToString(), Double.Parse(digit, CultureInfo.InvariantCulture));
 				}
 			} catch (FormatException) {
 				errors.Error(Line, Col, String.Format("{0} is not a parseable number", digit));
 				if (isSingle)
-					return new Token(Tokens.LiteralSingle, x, y, sb.ToString(), 0f, LiteralFormat.DecimalNumber);
+					return new Token(Tokens.LiteralSingle, x, y, sb.ToString(), 0f);
 				if (isDecimal)
-					return new Token(Tokens.LiteralDecimal, x, y, sb.ToString(), 0m, LiteralFormat.DecimalNumber);
+					return new Token(Tokens.LiteralDecimal, x, y, sb.ToString(), 0m);
 				if (isDouble)
-					return new Token(Tokens.LiteralDouble, x, y, sb.ToString(), 0.0, LiteralFormat.DecimalNumber);
+					return new Token(Tokens.LiteralDouble, x, y, sb.ToString(), 0.0);
 			}
 			Token token;
 			try {
-				token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int32.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number), isHex ? LiteralFormat.HexadecimalNumber : LiteralFormat.DecimalNumber);
+				token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int32.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number));
 			} catch (Exception) {
 				try {
-					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int64.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number), isHex ? LiteralFormat.HexadecimalNumber : LiteralFormat.DecimalNumber);
+					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int64.Parse(digit, isHex ? NumberStyles.HexNumber : NumberStyles.Number));
 				} catch (FormatException) {
 					errors.Error(Line, Col, String.Format("{0} is not a parseable number", digit));
 					// fallback, when nothing helps :)
-					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0, LiteralFormat.DecimalNumber);
+					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0);
 				} catch (OverflowException) {
 					errors.Error(Line, Col, String.Format("{0} is too long for a integer literal", digit));
 					// fallback, when nothing helps :)
-					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0, LiteralFormat.DecimalNumber);
+					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0);
 				}
 			}
 			token.next = nextToken;
@@ -777,12 +776,12 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		
 		void ReadPreprocessorDirective()
 		{
-			Location start = new Location(Col - 1, Line);
+			AstLocation start = new AstLocation(Line, Col - 1);
 			string directive = ReadIdent('#');
 			// TODO : expression parser for PP directives
 			// needed for proper conversion to e. g. C#
 			string argument  = ReadToEndOfLine();
-			this.specialTracker.AddPreprocessingDirective(new PreprocessingDirective(directive, argument.Trim(), start, new Location(start.Column + directive.Length + argument.Length, start.Line)));
+//			this.specialTracker.AddPreprocessingDirective(new PreprocessingDirective(directive, argument.Trim(), start, new AstLocation(start.Line, start.Column + directive.Length + argument.Length)));
 		}
 		
 		string ReadDate()
@@ -834,7 +833,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		
 		void ReadComment()
 		{
-			Location startPos = new Location(Col, Line);
+			AstLocation startPos = new AstLocation(Line, Col);
 			sb.Length = 0;
 			StringBuilder curWord = specialCommentHash != null ? new StringBuilder() : null;
 			int missingApostrophes = 2; // no. of ' missing until it is a documentation comment
@@ -851,11 +850,11 @@ namespace ICSharpCode.NRefactory.VB.Parser
 				if (missingApostrophes > 0) {
 					if (ch == '\'' || ch == '\u2018' || ch == '\u2019') {
 						if (--missingApostrophes == 0) {
-							specialTracker.StartComment(CommentType.Documentation, isAtLineBegin, startPos);
+//							specialTracker.StartComment(CommentType.Documentation, isAtLineBegin, startPos);
 							sb.Length = 0;
 						}
 					} else {
-						specialTracker.StartComment(CommentType.SingleLine, isAtLineBegin, startPos);
+//						specialTracker.StartComment(CommentType.SingleLine, isAtLineBegin, startPos);
 						missingApostrophes = 0;
 					}
 				}
@@ -867,20 +866,20 @@ namespace ICSharpCode.NRefactory.VB.Parser
 						string tag = curWord.ToString();
 						curWord.Length = 0;
 						if (specialCommentHash.ContainsKey(tag)) {
-							Location p = new Location(Col, Line);
+							AstLocation p = new AstLocation(Line, Col);
 							string comment = ch + ReadToEndOfLine();
-							this.TagComments.Add(new TagComment(tag, comment, isAtLineBegin, p, new Location(Col, Line)));
+//							this.TagComments.Add(new TagComment(tag, comment, isAtLineBegin, p, new Location(Col, Line)));
 							sb.Append(comment);
 							break;
 						}
 					}
 				}
 			}
-			if (missingApostrophes > 0) {
-				specialTracker.StartComment(CommentType.SingleLine, isAtLineBegin, startPos);
-			}
-			specialTracker.AddString(sb.ToString());
-			specialTracker.FinishComment(new Location(Col, Line));
+//			if (missingApostrophes > 0) {
+//				specialTracker.StartComment(CommentType.SingleLine, isAtLineBegin, startPos);
+//			}
+//			specialTracker.AddString(sb.ToString());
+//			specialTracker.FinishComment(new Location(Col, Line));
 		}
 		
 		Token ReadOperator(char ch)
@@ -1047,7 +1046,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			
 			ReaderSkip("?>".Length);
 			
-			return new Token(Tokens.XmlProcessingInstruction, new Location(x, y), new Location(Col, Line), sb.ToString(), null, LiteralFormat.None);
+			return new Token(Tokens.XmlProcessingInstruction, new AstLocation(y, x), new AstLocation(Line, Col), sb.ToString(), null);
 		}
 		
 		Token ReadXmlCommentOrCData(int x, int y)
@@ -1061,7 +1060,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 					sb.Append((char)nextChar);
 					if (string.CompareOrdinal(ReaderPeekString("-->".Length), "-->") == 0) {
 						ReaderSkip("-->".Length);
-						return new Token(Tokens.XmlComment, new Location(x, y), new Location(Col, Line), sb.ToString(), null, LiteralFormat.None);
+						return new Token(Tokens.XmlComment, new AstLocation(y, x), new AstLocation(Line, Col), sb.ToString(), null);
 					}
 				}
 			}
@@ -1072,12 +1071,12 @@ namespace ICSharpCode.NRefactory.VB.Parser
 					sb.Append((char)nextChar);
 					if (string.CompareOrdinal(ReaderPeekString("]]>".Length), "]]>") == 0) {
 						ReaderSkip("]]>".Length);
-						return new Token(Tokens.XmlCData, new Location(x, y), new Location(Col, Line), sb.ToString(), null, LiteralFormat.None);
+						return new Token(Tokens.XmlCData, new AstLocation(y, x), new AstLocation(Line, Col), sb.ToString(), null);
 					}
 				}
 			}
 			
-			return new Token(Tokens.XmlComment, new Location(x, y), new Location(Col, Line), sb.ToString(), null, LiteralFormat.None);
+			return new Token(Tokens.XmlComment, new AstLocation(y, x), new AstLocation(Line, Col), sb.ToString(), null);
 		}
 		
 		string ReadXmlContent(char ch)
@@ -1188,9 +1187,9 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		
 		string[]  specialCommentTags = null;
 		protected Hashtable specialCommentHash  = null;
-		List<TagComment> tagComments  = new List<TagComment>();
+//		List<TagComment> tagComments  = new List<TagComment>();
 		protected StringBuilder sb              = new StringBuilder();
-		protected SpecialTracker specialTracker = new SpecialTracker();
+//		protected SpecialTracker specialTracker = new SpecialTracker();
 		
 		// used for the original value of strings (with escape sequences).
 		protected StringBuilder originalValue = new StringBuilder();
@@ -1277,7 +1276,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			return builder.ToString();
 		}
 		
-		public void SetInitialLocation(Location location)
+		public void SetInitialLocation(AstLocation location)
 		{
 			if (lastToken != null || curToken != null || peekToken != null)
 				throw new InvalidOperationException();
@@ -1294,17 +1293,17 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		/// <summary>
 		/// Returns the comments that had been read and containing tag key words.
 		/// </summary>
-		public List<TagComment> TagComments {
-			get {
-				return tagComments;
-			}
-		}
+//		public List<TagComment> TagComments {
+//			get {
+//				return tagComments;
+//			}
+//		}
 		
-		public SpecialTracker SpecialTracker {
-			get {
-				return specialTracker;
-			}
-		}
+//		public SpecialTracker SpecialTracker {
+//			get {
+//				return specialTracker;
+//			}
+//		}
 		
 		/// <summary>
 		/// Special comment tags are tags like TODO, HACK or UNDONE which are read by the lexer and stored in <see cref="TagComments"/>.
@@ -1353,7 +1352,6 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			errors = null;
 			lastToken = curToken = peekToken = null;
 			specialCommentHash = null;
-			tagComments = null;
 			sb = originalValue = null;
 		}
 		#endregion
@@ -1406,12 +1404,12 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			errors.Error(line, col, String.Format("Invalid hex number '" + digit + "'"));
 			return 0;
 		}
-		protected Location lastLineEnd = new Location (1, 1);
-		protected Location curLineEnd = new Location (1, 1);
+		protected AstLocation lastLineEnd = new AstLocation(1, 1);
+		protected AstLocation curLineEnd = new AstLocation(1, 1);
 		protected void LineBreak ()
 		{
 			lastLineEnd = curLineEnd;
-			curLineEnd = new Location (col - 1, line);
+			curLineEnd = new AstLocation (line, col - 1);
 		}
 		protected bool HandleLineEnd(char ch)
 		{

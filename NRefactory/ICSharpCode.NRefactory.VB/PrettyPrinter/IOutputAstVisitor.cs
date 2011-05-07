@@ -7,26 +7,26 @@ using ICSharpCode.NRefactory.VB.Ast;
 
 namespace ICSharpCode.NRefactory.VB.PrettyPrinter
 {
-	public interface IOutputDomVisitor : IAstVisitor
-	{
-		event Action<INode> BeforeNodeVisit;
-		event Action<INode> AfterNodeVisit;
-		
-		string Text {
-			get;
-		}
-		
-		Errors Errors {
-			get;
-		}
-		
-		AbstractPrettyPrintOptions Options {
-			get;
-		}
-		IOutputFormatter OutputFormatter {
-			get;
-		}
-	}
+//	public interface IOutputDomVisitor : IAstVisitor
+//	{
+//		event Action<INode> BeforeNodeVisit;
+//		event Action<INode> AfterNodeVisit;
+//		
+//		string Text {
+//			get;
+//		}
+//		
+//		Errors Errors {
+//			get;
+//		}
+//		
+//		AbstractPrettyPrintOptions Options {
+//			get;
+//		}
+//		IOutputFormatter OutputFormatter {
+//			get;
+//		}
+//	}
 	
 	public interface IOutputFormatter
 	{
@@ -43,8 +43,8 @@ namespace ICSharpCode.NRefactory.VB.PrettyPrinter
 		}
 		void NewLine();
 		void Indent();
-		void PrintComment(Comment comment, bool forceWriteInPreviousBlock);
-		void PrintPreprocessingDirective(PreprocessingDirective directive, bool forceWriteInPreviousBlock);
+//		void PrintComment(Comment comment, bool forceWriteInPreviousBlock);
+//		void PrintPreprocessingDirective(PreprocessingDirective directive, bool forceWriteInPreviousBlock);
 		void PrintBlankLine(bool forceWriteInPreviousBlock);
 	}
 }

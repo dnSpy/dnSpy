@@ -53,8 +53,8 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			Assert.AreEqual(0, oce.Parameters.Count);
 			Assert.AreEqual(1, oce.ObjectInitializer.CreateExpressions.Count);
 			
-			Assert.IsInstanceOf(typeof(IdentifierExpression), oce.ObjectInitializer.CreateExpressions[0]);
-			Assert.AreEqual("c", (oce.ObjectInitializer.CreateExpressions[0] as IdentifierExpression).Identifier);
+			Assert.IsInstanceOf(typeof(SimpleNameExpression), oce.ObjectInitializer.CreateExpressions[0]);
+			Assert.AreEqual("c", (oce.ObjectInitializer.CreateExpressions[0] as SimpleNameExpression).Identifier);
 		}
 		
 		[Test]
@@ -69,8 +69,8 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			// this test was written because this bug caused the AbstractDomVisitor to crash
 			
 			InvocationExpression expr = ParseUtil.ParseExpression<InvocationExpression>("WriteLine(New SomeGenericType(Of Integer, )())", true);
-			Assert.IsTrue(expr.TargetObject is IdentifierExpression);
-			Assert.AreEqual("WriteLine", ((IdentifierExpression)expr.TargetObject).Identifier);
+			Assert.IsTrue(expr.TargetObject is SimpleNameExpression);
+			Assert.AreEqual("WriteLine", ((SimpleNameExpression)expr.TargetObject).Identifier);
 			Assert.AreEqual(1, expr.Arguments.Count); // here a second null parameter was added incorrectly
 			
 			Assert.IsTrue(expr.Arguments[0] is ObjectCreateExpression);

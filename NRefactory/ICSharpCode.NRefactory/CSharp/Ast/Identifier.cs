@@ -66,7 +66,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public bool IsQuoted {
+		/// <summary>
+		/// True if this is a verbatim identifier (starting with '@')
+		/// </summary>
+		public bool IsVerbatim {
 			get;
 			set;
 		}
@@ -80,7 +83,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public override AstLocation EndLocation {
 			get {
-				return new AstLocation (StartLocation.Line, StartLocation.Column + (Name ?? "").Length + (IsQuoted ? 1 : 0));
+				return new AstLocation (StartLocation.Line, StartLocation.Column + (Name ?? "").Length + (IsVerbatim ? 1 : 0));
 			}
 		}
 		
@@ -93,8 +96,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
-			IsQuoted = name.StartsWith ("@");
-			this.Name = IsQuoted ? name.Substring (1) : name;
+			IsVerbatim = name.StartsWith ("@");
+			this.Name = IsVerbatim ? name.Substring (1) : name;
 			this.startLocation = location;
 		}
 		
