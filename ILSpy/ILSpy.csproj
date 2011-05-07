@@ -156,6 +156,7 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyAccessorsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
+    <Compile Include="VB\VBLanguage.cs" />
     <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
     <Compile Include="XmlDoc\XmlDocKeyProvider.cs" />
     <Compile Include="XmlDoc\XmlDocLoader.cs" />
@@ -304,6 +305,8 @@
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="VB" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
