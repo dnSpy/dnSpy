@@ -17,7 +17,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		{
 			CastExpression ce = ParseUtil.ParseExpression<CastExpression>(castExpression);
 			Assert.AreEqual(castType.FullName, ce.CastTo.Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
+			Assert.IsTrue(ce.Expression is SimpleNameExpression);
 			Assert.AreEqual(CastType.PrimitiveConversion, ce.CastType);
 		}
 		
@@ -27,7 +27,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		{
 			CastExpression ce = ParseUtil.ParseExpression<CastExpression>("CType(o, MyObject)");
 			Assert.AreEqual("MyObject", ce.CastTo.Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
+			Assert.IsTrue(ce.Expression is SimpleNameExpression);
 			Assert.AreEqual(CastType.Conversion, ce.CastType);
 		}
 		
@@ -37,7 +37,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			CastExpression ce = ParseUtil.ParseExpression<CastExpression>("CType(o, List(of T))");
 			Assert.AreEqual("List", ce.CastTo.Type);
 			Assert.AreEqual("T", ce.CastTo.GenericTypes[0].Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
+			Assert.IsTrue(ce.Expression is SimpleNameExpression);
 			Assert.AreEqual(CastType.Conversion, ce.CastType);
 		}
 		
@@ -46,7 +46,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		{
 			CastExpression ce = ParseUtil.ParseExpression<CastExpression>("DirectCast(o, MyObject)");
 			Assert.AreEqual("MyObject", ce.CastTo.Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
+			Assert.IsTrue(ce.Expression is SimpleNameExpression);
 			Assert.AreEqual(CastType.Cast, ce.CastType);
 		}
 		
@@ -56,7 +56,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			CastExpression ce = ParseUtil.ParseExpression<CastExpression>("DirectCast(o, List(of T))");
 			Assert.AreEqual("List", ce.CastTo.Type);
 			Assert.AreEqual("T", ce.CastTo.GenericTypes[0].Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
+			Assert.IsTrue(ce.Expression is SimpleNameExpression);
 			Assert.AreEqual(CastType.Cast, ce.CastType);
 		}
 		
@@ -65,7 +65,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		{
 			CastExpression ce = ParseUtil.ParseExpression<CastExpression>("TryCast(o, MyObject)");
 			Assert.AreEqual("MyObject", ce.CastTo.Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
+			Assert.IsTrue(ce.Expression is SimpleNameExpression);
 			Assert.AreEqual(CastType.TryCast, ce.CastType);
 		}
 		
@@ -75,7 +75,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			CastExpression ce = ParseUtil.ParseExpression<CastExpression>("TryCast(o, List(of T))");
 			Assert.AreEqual("List", ce.CastTo.Type);
 			Assert.AreEqual("T", ce.CastTo.GenericTypes[0].Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
+			Assert.IsTrue(ce.Expression is SimpleNameExpression);
 			Assert.AreEqual(CastType.TryCast, ce.CastType);
 		}
 		

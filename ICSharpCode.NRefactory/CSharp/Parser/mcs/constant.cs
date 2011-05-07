@@ -150,7 +150,7 @@ namespace Mono.CSharp {
 				if (t.IsNullableType)
 					return Nullable.LiftedNull.Create (t, loc);
 
-				if (TypeManager.IsReferenceType (t))
+				if (TypeSpec.IsReferenceType (t))
 					return new NullConstant (t, loc);
 			}
 
@@ -162,7 +162,7 @@ namespace Mono.CSharp {
 		{
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (this));
-			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			args.Add (new Argument (new TypeOf (type, loc)));
 
 			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}
@@ -2079,7 +2079,7 @@ namespace Mono.CSharp {
 			if (!IsLiteral && !Convert.ImplicitStandardConversionExists (this, targetType))
 				return null;
 
-			if (TypeManager.IsReferenceType (targetType))
+			if (TypeSpec.IsReferenceType (targetType))
 				return new NullConstant (targetType, loc);
 
 			if (targetType.IsNullableType)

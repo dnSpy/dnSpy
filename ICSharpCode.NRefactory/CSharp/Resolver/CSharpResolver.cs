@@ -2043,7 +2043,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		#endregion
 		
 		#region ResolveConditional
-		public ResolveResult ResolveConditional(ResolveResult trueExpression, ResolveResult falseExpression)
+		public ResolveResult ResolveConditional(ResolveResult condition, ResolveResult trueExpression, ResolveResult falseExpression)
 		{
 			// C# 4.0 spec §7.14: Conditional operator
 			
@@ -2052,11 +2052,17 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			Conversions c = new Conversions(context);
 			bool isValid;
 			IType resultType;
-			if (HasType(trueExpression) && HasType(falseExpression)) {
+			if (trueExpression.Type == SharedTypes.Dynamic || falseExpression.Type == SharedTypes.Dynamic) {
+				resultType = SharedTypes.Dynamic;
+				isValid = true;
+			} else if (HasType(trueExpression) && HasType(falseExpression)) {
 				bool t2f = c.ImplicitConversion(trueExpression.Type, falseExpression.Type);
 				bool f2t = c.ImplicitConversion(falseExpression.Type, trueExpression.Type);
-				resultType = (f2t && !t2f) ? falseExpression.Type : trueExpression.Type;
-				isValid = (t2f != f2t) || (t2f && f2t && c.IdentityConversion(trueExpression.Type, falseExpression.Type));
+				resultType = (f2t && !t2f) ? trueExpression.Type : falseExpression.Type;
+				// The operator is valid:
+				// a) if there's a conversion in one direction but not the other
+				// b) if there are conversions in both directions, and the types are equivalent
+				isValid = (t2f != f2t) || (t2f && f2t && trueExpression.Type.Equals(falseExpression.Type));
 			} else if (HasType(trueExpression)) {
 				resultType = trueExpression.Type;
 				isValid = c.ImplicitConversion(falseExpression, resultType);
@@ -2066,7 +2072,18 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			} else {
 				return ErrorResult;
 			}
-			return isValid ? new ResolveResult(resultType) : new ErrorResolveResult(resultType);
+			if (isValid) {
+				if (condition.IsCompileTimeConstant && trueExpression.IsCompileTimeConstant && falseExpression.IsCompileTimeConstant) {
+					bool? val = condition.ConstantValue as bool?;
+					if (val == true)
+						return ResolveCast(resultType, trueExpression);
+					else if (val == false)
+						return ResolveCast(resultType, falseExpression);
+				}
+				return new ResolveResult(resultType);
+			} else {
+				return new ErrorResolveResult(resultType);
+			}
 		}
 		
 		bool HasType(ResolveResult r)
@@ -2084,6 +2101,47 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				TypeCode typeCode = Type.GetTypeCode(value.GetType());
 				IType type = typeCode.ToTypeReference().Resolve(context);
 				return new ConstantResolveResult(type, value);
+			}
+		}
+		#endregion
+		
+		#region ResolveDefaultValue
+		public ResolveResult ResolveDefaultValue(IType type)
+		{
+			return new ConstantResolveResult(type, GetDefaultValue(type));
+		}
+		
+		public static object GetDefaultValue(IType type)
+		{
+			switch (ReflectionHelper.GetTypeCode(type)) {
+				case TypeCode.Boolean:
+					return false;
+				case TypeCode.Char:
+					return '\0';
+				case TypeCode.SByte:
+					return (sbyte)0;
+				case TypeCode.Byte:
+					return (byte)0;
+				case TypeCode.Int16:
+					return (short)0;
+				case TypeCode.UInt16:
+					return (ushort)0;
+				case TypeCode.Int32:
+					return 0;
+				case TypeCode.UInt32:
+					return 0U;
+				case TypeCode.Int64:
+					return 0L;
+				case TypeCode.UInt64:
+					return 0UL;
+				case TypeCode.Single:
+					return 0f;
+				case TypeCode.Double:
+					return 0.0;
+				case TypeCode.Decimal:
+					return 0m;
+				default:
+					return null;
 			}
 		}
 		#endregion

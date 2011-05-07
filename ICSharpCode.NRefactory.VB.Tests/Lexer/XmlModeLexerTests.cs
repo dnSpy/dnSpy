@@ -948,12 +948,12 @@ End Using";
 		#region Helpers
 		VBLexer GenerateLexer(StringReader sr)
 		{
-			return ParserFactory.CreateLexer(sr);
+			return new VBLexer(sr);
 		}
 		
 		VBLexer GenerateLexerForSnippet(StringReader sr, SnippetType type)
 		{
-			var lexer = ParserFactory.CreateLexer(sr);
+			var lexer = new VBLexer(sr);
 			lexer.SetInitialContext(type);
 			return lexer;
 		}

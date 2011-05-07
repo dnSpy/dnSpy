@@ -113,7 +113,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 	}
 	
-	public class ArrayTypeReference : ITypeReference, ISupportsInterning
+	public sealed class ArrayTypeReference : ITypeReference, ISupportsInterning
 	{
 		ITypeReference elementType;
 		int dimensions;

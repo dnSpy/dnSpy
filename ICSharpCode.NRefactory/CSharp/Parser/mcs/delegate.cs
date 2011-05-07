@@ -150,11 +150,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ReturnType = ReturnType.ResolveAsType (this);
-			if (ReturnType == null)
+			var ret_type = ReturnType.ResolveAsType (this);
+			if (ret_type == null)
 				return false;
-
-			var ret_type = ReturnType.Type;
 
 			//
 			// We don't have to check any others because they are all
@@ -303,11 +301,14 @@ namespace Mono.CSharp {
 					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
 					Module.PredefinedAttributes.Dynamic.EmitAttribute (return_attributes.Builder, ReturnType.Type, Location);
 				}
+
+				ConstraintChecker.Check (this, ReturnType.Type, ReturnType.Location);
 			}
 
 			Constructor.ParameterInfo.ApplyAttributes (this, Constructor.ConstructorBuilder);
 			Constructor.ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
+			parameters.CheckConstraints (this);
 			parameters.ApplyAttributes (this, InvokeBuilder.MethodBuilder);
 			InvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
@@ -326,7 +327,7 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 
-		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
+		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
 		{
 			base_type = Compiler.BuiltinTypes.MulticastDelegate;
 			base_class = null;
@@ -356,7 +357,7 @@ namespace Mono.CSharp {
 
 			parameters.VerifyClsCompliance (this);
 
-			if (!ReturnType.Type.IsCLSCompliant ()) {
+			if (!InvokeBuilder.MemberType.IsCLSCompliant ()) {
 				Report.Warning (3002, 1, Location, "Return type of `{0}' is not CLS-compliant",
 					GetSignatureForError ());
 			}
@@ -403,6 +404,9 @@ namespace Mono.CSharp {
 
 			if (rc.Module.Compiler.Settings.Version == LanguageVersion.ISO_1)
 				return false;
+
+			if (a.IsGenericParameter && b.IsGenericParameter)
+				return a == b;
 
 			return Convert.ImplicitReferenceConversionExists (a, b);
 		}
@@ -458,7 +462,7 @@ namespace Mono.CSharp {
 			MemberAccess ma = new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "Delegate", loc), "CreateDelegate", loc);
 
 			Arguments args = new Arguments (3);
-			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			args.Add (new Argument (new TypeOf (type, loc)));
 
 			if (method_group.InstanceExpression == null)
 				args.Add (new Argument (new NullLiteral (loc)));
@@ -502,7 +506,7 @@ namespace Mono.CSharp {
 			if (emg != null) {
 				method_group.InstanceExpression = emg.ExtensionExpression;
 				TypeSpec e_type = emg.ExtensionExpression.Type;
-				if (TypeManager.IsValueType (e_type)) {
+				if (TypeSpec.IsValueType (e_type)) {
 					ec.Report.Error (1113, loc, "Extension method `{0}' of value type `{1}' cannot be used to create delegates",
 						delegate_method.GetSignatureForError (), TypeManager.CSharpName (e_type));
 				}
@@ -527,7 +531,7 @@ namespace Mono.CSharp {
 			}
 
 			var expr = method_group.InstanceExpression;
-			if (expr != null && (expr.Type.IsGenericParameter || !TypeManager.IsReferenceType (expr.Type)))
+			if (expr != null && (expr.Type.IsGenericParameter || !TypeSpec.IsReferenceType (expr.Type)))
 				method_group.InstanceExpression = new BoxedCast (expr, ec.BuiltinTypes.Object);
 
 			eclass = ExprClass.Value;

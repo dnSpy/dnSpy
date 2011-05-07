@@ -232,12 +232,12 @@ namespace Mono.CSharp
 		FullNamedExpression ResolveMemberName (IMemberContext context, MemberName mn)
 		{
 			if (mn.Left == null)
-				return context.LookupNamespaceOrType (mn.Name, mn.Arity, Location.Null, /*ignore_cs0104=*/ false);
+				return context.LookupNamespaceOrType (mn.Name, mn.Arity, LookupMode.Probing, Location.Null);
 
 			var left = ResolveMemberName (context, mn.Left);
 			var ns = left as Namespace;
 			if (ns != null)
-				return ns.LookupTypeOrNamespace (context, mn.Name, mn.Arity, Location.Null);
+				return ns.LookupTypeOrNamespace (context, mn.Name, mn.Arity, LookupMode.Probing, Location.Null);
 
 			TypeExpr texpr = left as TypeExpr;
 			if (texpr != null) {
@@ -320,7 +320,7 @@ namespace Mono.CSharp
 						if (fne != null) {
 							var ns = fne as Namespace;
 							if (ns != null) {
-								fne = ns.LookupTypeOrNamespace (mc, ParsedName.Name, ParsedName.Arity, Location.Null);
+								fne = ns.LookupTypeOrNamespace (mc, ParsedName.Name, ParsedName.Arity, LookupMode.Probing, Location.Null);
 								if (fne != null) {
 									member = fne.Type;
 								}
@@ -565,6 +565,7 @@ namespace Mono.CSharp
 	{
 		public readonly Parameter.Modifier Modifier;
 		public FullNamedExpression Type;
+		TypeSpec type;
 
 		public DocumentationParameter (Parameter.Modifier modifier, FullNamedExpression type)
 			: this (type)
@@ -579,13 +580,13 @@ namespace Mono.CSharp
 
 		public TypeSpec TypeSpec {
 			get {
-				return Type == null ? null : Type.Type;
+				return type;
 			}
 		}
 
 		public void Resolve (IMemberContext context)
 		{
-			Type = Type.ResolveAsType (context);
+			type = Type.ResolveAsType (context);
 		}
 	}
 }

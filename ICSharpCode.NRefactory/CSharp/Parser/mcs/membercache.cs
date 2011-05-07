@@ -534,7 +534,7 @@ namespace Mono.CSharp {
 		// Returns base members of @member member if no exact match is found @bestCandidate returns
 		// the best match
 		//
-		public static MemberSpec FindBaseMember (MemberCore member, out MemberSpec bestCandidate)
+		public static MemberSpec FindBaseMember (MemberCore member, out MemberSpec bestCandidate, ref bool overrides)
 		{
 			bestCandidate = null;
 			var container = member.Parent.PartialContainer.Definition;
@@ -547,11 +547,13 @@ namespace Mono.CSharp {
 			}
 
 			string name = GetLookupName (member);
-			IList<MemberSpec> applicable;
 			var member_param = member is IParametersMember ? ((IParametersMember) member).Parameters : null;
 
 			var mkind = GetMemberCoreKind (member);
 			bool member_with_accessors = mkind == MemberKind.Indexer || mkind == MemberKind.Property;
+
+			IList<MemberSpec> applicable;
+			MemberSpec ambig_candidate = null;
 
 			do {
 				if (container.MemberCache.member_hash.TryGetValue (name, out applicable)) {
@@ -598,31 +600,39 @@ namespace Mono.CSharp {
 						}
 
 						//
-						// Skip override members with accessors they may not fully implement the base member
+						// Skip override for member with accessors. It may not fully implement the base member
+						// but keep flag we found an implementation in case the base member is abstract
 						//
-						if (member_with_accessors) {
-							if ((entry.Modifiers & (Modifiers.OVERRIDE | Modifiers.SEALED)) == Modifiers.OVERRIDE) {
-								//
-								// Set candidate to member override to flag we found an implementation
-								//
-								bestCandidate = entry;
-								continue;
-							}
-						} else {
-							bestCandidate = null;
+						if (member_with_accessors && ((entry.Modifiers & (Modifiers.OVERRIDE | Modifiers.SEALED)) == Modifiers.OVERRIDE)) {
+							//
+							// Set candidate to override implementation to flag we found an implementation
+							//
+							overrides = true;
+							continue;
 						}
 
+						//
+						// For members with parameters we can encounter an ambiguous candidates (they match exactly)
+						// because generic type parameters could be inflated into same types
+						//
+						if (ambig_candidate == null && (entry.Kind & mkind & (MemberKind.Method | MemberKind.Indexer)) != 0) {
+							bestCandidate = null;
+							ambig_candidate = entry;
+							continue;
+						}
+
+						bestCandidate = ambig_candidate;
 						return entry;
 					}
 				}
 
-				if (container.IsInterface)
+				if (container.IsInterface || ambig_candidate != null)
 					break;
 
 				container = container.BaseType;
 			} while (container != null);
 
-			return null;
+			return ambig_candidate;
 		}
 
 		//
@@ -700,7 +710,7 @@ namespace Mono.CSharp {
 		//
 		// Returns members of @iface only, base members are ignored
 		//
-		public static IList<MethodSpec> GetInterfaceMethods (TypeSpec iface)
+		public static List<MethodSpec> GetInterfaceMethods (TypeSpec iface)
 		{
 			//
 			// MemberCache flatten interfaces, therefore in cases like this one

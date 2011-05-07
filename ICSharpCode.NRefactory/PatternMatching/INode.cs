@@ -10,13 +10,13 @@ namespace ICSharpCode.NRefactory.PatternMatching
 	/// </summary>
 	public interface INode
 	{
-		CSharp.Role Role { get; }
+		Role Role { get; }
 		INode FirstChild { get; }
 		INode NextSibling { get; }
 		bool IsNull { get; }
 		
 		bool DoMatch(INode other, Match match);
-		bool DoMatchCollection(CSharp.Role role, INode pos, Match match, BacktrackingInfo backtrackingInfo);
+		bool DoMatchCollection(Role role, INode pos, Match match, BacktrackingInfo backtrackingInfo);
 	}
 	
 	public static class PatternExtensions

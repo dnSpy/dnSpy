@@ -66,89 +66,22 @@
     <Compile Include="Lexer\LiteralsTests.cs" />
     <Compile Include="Lexer\TokenTests.cs" />
     <Compile Include="Lexer\XmlModeLexerTests.cs" />
-    <Compile Include="Output\CodeDOM\CodeDOMTypeReferenceTest.cs" />
-    <Compile Include="Parser\CheckParentVisitor.cs" />
-    <Compile Include="Parser\Expressions\AddressOfExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\LambdaExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\QueryExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\XmlExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\XmlMemberAccessExpressionTests.cs" />
     <Compile Include="Parser\GlobalScope\AttributeSectionTests.cs" />
-    <Compile Include="Parser\Expressions\PrimitiveExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\ParenthesizedExpressionTest.cs" />
-    <Compile Include="Parser\Expressions\ThisReferenceExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\BaseReferenceExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\IdentifierExpressionTests.cs" />
     <Compile Include="Parser\GlobalScope\NamespaceDeclarationTests.cs" />
-    <Compile Include="Parser\Expressions\AssignmentExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\BinaryOperatorExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\UnaryOperatorExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\CastExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\MemberReferenceExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\InvocationExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\TypeOfExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\ArrayCreateExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\ObjectCreateExpressionTests.cs" />
-    <Compile Include="Parser\GlobalScope\DelegateDeclarationTests.cs" />
-    <Compile Include="Parser\Expressions\ConditionalExpressionTests.cs" />
-    <Compile Include="Parser\GlobalScope\UsingDeclarationTests.cs" />
+    <Compile Include="Parser\GlobalScope\ImportsStatementTests.cs" />
     <Compile Include="Parser\GlobalScope\TypeDeclarationTests.cs" />
-    <Compile Include="Parser\LocationAssignmentCheckVisitor.cs" />
     <Compile Include="Parser\SnippetParserTests.cs" />
-    <Compile Include="Parser\TypeLevel\ConstructorDeclarationTests.cs" />
-    <Compile Include="Parser\TypeLevel\EventDeclarationTests.cs" />
-    <Compile Include="Parser\TypeLevel\FieldDeclarationTests.cs" />
-    <Compile Include="Parser\TypeLevel\MethodDeclarationTests.cs" />
-    <Compile Include="Parser\TypeLevel\PropertyDeclarationTests.cs" />
-    <Compile Include="Parser\TypeLevel\OperatorDeclarationTests.cs" />
-    <Compile Include="Parser\Statements\BlockStatementTests.cs" />
-    <Compile Include="Parser\Statements\ContinueStatementTests.cs" />
-    <Compile Include="Parser\Statements\DoLoopStatementTests.cs" />
-    <Compile Include="Parser\Statements\ForeachStatementTests.cs" />
-    <Compile Include="Parser\Statements\GotoStatementTests.cs" />
-    <Compile Include="Parser\Statements\IfElseStatementTests.cs" />
-    <Compile Include="Parser\Statements\LabelStatementTests.cs" />
-    <Compile Include="Parser\Statements\LocalVariableDeclarationTests.cs" />
-    <Compile Include="Parser\Statements\LockStatementTests.cs" />
-    <Compile Include="Parser\Statements\ReturnStatementTests.cs" />
-    <Compile Include="Parser\Statements\ExpressionStatementTests.cs" />
-    <Compile Include="Parser\Statements\SwitchStatementTests.cs" />
-    <Compile Include="Parser\Statements\ThrowStatementTests.cs" />
-    <Compile Include="Parser\Statements\TryCatchStatementTests.cs" />
-    <Compile Include="Parser\Statements\UsingStatementTests.cs" />
-    <Compile Include="Parser\Expressions\ClassReferenceExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\TypeOfIsExpressionTests.cs" />
     <Compile Include="Parser\ParseUtil.cs" />
-    <Compile Include="Parser\GlobalScope\OptionDeclarationTests.cs" />
-    <Compile Include="Parser\TypeLevel\DeclareDeclarationTests.cs" />
-    <Compile Include="Parser\Statements\AddHandlerStatementTests.cs" />
-    <Compile Include="Parser\Statements\EndStatementTests.cs" />
-    <Compile Include="Parser\Statements\EraseStatementTests.cs" />
-    <Compile Include="Parser\Statements\ErrorStatementTests.cs" />
-    <Compile Include="Parser\Statements\ForNextStatementTests.cs" />
-    <Compile Include="Parser\Statements\OnErrorStatementTest.cs" />
-    <Compile Include="Parser\Statements\RaiseEventStatementTest.cs" />
-    <Compile Include="Parser\Statements\ReDimStatementTests.cs" />
-    <Compile Include="Parser\Statements\RemoveHandlerStatement.cs" />
-    <Compile Include="Parser\Statements\ResumeStatement.cs" />
-    <Compile Include="Parser\Statements\StopStatementTests.cs" />
-    <Compile Include="Parser\Statements\WithStatementTests.cs" />
-    <Compile Include="Output\CodeDOM\CodeDOMPrimitiveExpressionTest.cs" />
-    <Compile Include="Output\CodeDOM\CodeDOMParenthesizedExpressionTest.cs" />
-    <Compile Include="Output\CodeDOM\InvocationExpressionTest.cs" />
-    <Compile Include="Parser\Expressions\TypeReferenceExpressionTests.cs" />
-    <Compile Include="Parser\Expressions\GlobalReferenceExpressionTests.cs" />
-    <Compile Include="Parser\TypeLevel\CustomEventTests.cs" />
-    <Compile Include="Output\VBNet\VBNetOutputTest.cs" />
-    <Compile Include="Output\SpecialOutputVisitorTest.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Output\VBNet" />
+    <Compile Include="Parser\GlobalScope\OptionStatementTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj">
       <Project>{7B82B671-419F-45F4-B778-D9286F996EFA}</Project>
       <Name>ICSharpCode.NRefactory.VB</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />

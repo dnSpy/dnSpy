@@ -377,7 +377,7 @@ namespace Mono.CSharp {
 #endif
 		protected virtual Expression ResolveConversions (ResolveContext ec)
 		{
-			source = Convert.ImplicitConversionRequired (ec, source, target.Type, loc);
+			source = Convert.ImplicitConversionRequired (ec, source, target.Type, source.Location);
 			if (source == null)
 				return null;
 

@@ -281,6 +281,13 @@ ImportsStatement =
 		( "Global" | Identifier | PrimitiveTypeName ) { TypeSuffix } [ ( "." | "=" ) TypeName ]
 		| XmlOpenTag Identifier "=" LiteralString XmlCloseTag
 	)
+	{ ","
+		(. nextTokenIsStartOfImportsOrAccessExpression = true;	.)
+		(
+			( "Global" | Identifier | PrimitiveTypeName ) { TypeSuffix } [ ( "." | "=" ) TypeName ]
+			| XmlOpenTag Identifier "=" LiteralString XmlCloseTag
+		)
+	}
 	(. PopContext(); .)
 	StatementTerminator
 
@@ -512,6 +519,7 @@ Parameter =
 	(. PushContext(Context.Parameter, la, t); .)
 	{ AttributeBlock } { ParameterModifier }
 	(. PushContext(Context.Identifier, la, t); .) (.OnEachPossiblePath: SetIdentifierExpected(la); .) Identifier (. PopContext(); .)
+	[ "?" ] { "(" { "," } ")" }
 	[ "As" (. PushContext(Context.Type, la, t); .) TypeName (. PopContext(); .) ]
 	[ "=" Expression ]
 	(. PopContext(); .)

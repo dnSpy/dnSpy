@@ -213,7 +213,7 @@ End Class";
 		#region Helpers
 		VBLexer GenerateLexer(StringReader sr)
 		{
-			return ParserFactory.CreateLexer(sr);
+			return new VBLexer(sr);
 		}
 		
 		void CheckTokens(VBLexer lexer, params int[] tokens)

@@ -82,7 +82,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		void Parse (CompilationSourceFile file, ModuleContainer module)
+		public void Parse (CompilationSourceFile file, ModuleContainer module)
 		{
 			Stream input;
 

@@ -29,6 +29,15 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			this.isInUsingDeclaration = isInUsingDeclaration;
 		}
 		
+		/// <summary>
+		/// Adds a suffix to the identifier.
+		/// Does not modify the existing type reference, but returns a new one.
+		/// </summary>
+		public SimpleTypeOrNamespaceReference AddSuffix(string suffix)
+		{
+			return new SimpleTypeOrNamespaceReference(identifier + suffix, typeArguments, parentTypeDefinition, parentUsingScope, isInUsingDeclaration);
+		}
+		
 		public ResolveResult DoResolve(ITypeResolveContext context)
 		{
 			CSharpResolver r = new CSharpResolver(context);
@@ -43,11 +52,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public NamespaceResolveResult ResolveNamespace(ITypeResolveContext context)
 		{
+			// TODO: use resolve context for original project, if possible
 			return DoResolve(context) as NamespaceResolveResult;
 		}
 		
 		public IType Resolve(ITypeResolveContext context)
 		{
+			// TODO: use resolve context for original project, if possible; then map the result type into the new context
 			TypeResolveResult rr = DoResolve(context) as TypeResolveResult;
 			return rr != null ? rr.Type : SharedTypes.UnknownType;
 		}

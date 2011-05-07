@@ -18,7 +18,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			UnaryOperatorExpression uoe = ParseUtil.ParseExpression<UnaryOperatorExpression>(program);
 			Assert.AreEqual(op, uoe.Op);
 			
-			Assert.IsTrue(uoe.Expression is IdentifierExpression);
+			Assert.IsTrue(uoe.Expression is SimpleNameExpression);
 		}
 		
 		[Test]
