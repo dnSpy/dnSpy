@@ -63,8 +63,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		public static MethodDefinition GetOriginalCodeLocation(MethodDefinition method)
 		{
-			if (method.Name.StartsWith("<", StringComparison.Ordinal) && method.IsCompilerGenerated()) {
-				return FindMethodUsageInType(method.DeclaringType, method);
+			if (method.IsCompilerGenerated()) {
+				return FindMethodUsageInType(method.DeclaringType, method) ?? method;
 			}
 
 			var typeUsage = GetOriginalCodeLocation(method.DeclaringType, method);
@@ -73,10 +73,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		}
 		public static MethodDefinition GetOriginalCodeLocation(TypeDefinition type, MethodDefinition method)
 		{
-			if (type != null && type.DeclaringType != null &&
-				type.Name.StartsWith("<", StringComparison.Ordinal) && type.IsCompilerGenerated()) {
-					MethodDefinition constructor = GetTypeConstructor(type);
-					return FindMethodUsageInType(type.DeclaringType, constructor);
+			if (type != null && type.DeclaringType != null && type.IsCompilerGenerated()) {
+				MethodDefinition constructor = GetTypeConstructor(type);
+				return FindMethodUsageInType(type.DeclaringType, constructor);
 			}
 			return null;
 		}
