@@ -146,8 +146,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			} else {
 				if (type.IsInterface)
 					return TypeIcon.Interface;
-				else if (type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName)
+				else if (IsDelegate(type))
 					return TypeIcon.Delegate;
+				else if (IsStaticClass(type))
+					return TypeIcon.StaticClass;
 				else
 					return TypeIcon.Class;
 			}
@@ -178,6 +180,20 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return overlay;
 		}
+
+		private static bool IsDelegate(TypeDefinition type)
+		{
+			return type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName;
+		}
+
+		private static bool IsStaticClass(TypeDefinition type)
+		{
+			if(type.IsSealed)
+				return !type.Methods.Where(m => m.Name == ".ctor").Any(m => !m.IsPrivate);
+
+			return false;
+		}
+
 		#endregion
 		
 		MemberReference IMemberTreeNode.Member {

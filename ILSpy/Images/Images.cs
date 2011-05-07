@@ -65,6 +65,7 @@ namespace ICSharpCode.ILSpy
 		public static readonly BitmapImage Interface = LoadBitmap("Interface");
 		public static readonly BitmapImage Delegate = LoadBitmap("Delegate");
 		public static readonly BitmapImage Enum = LoadBitmap("Enum");
+		public static readonly BitmapImage StaticClass = LoadBitmap("StaticClass");
 
 
 		public static readonly BitmapImage Field = LoadBitmap("Field");
@@ -133,6 +134,7 @@ namespace ICSharpCode.ILSpy
 				PreloadPublicIconToCache(TypeIcon.Struct, Images.Struct);
 				PreloadPublicIconToCache(TypeIcon.Interface, Images.Interface);
 				PreloadPublicIconToCache(TypeIcon.Delegate, Images.Delegate);
+				PreloadPublicIconToCache(TypeIcon.StaticClass, Images.StaticClass);
 			}
 
 			protected override ImageSource GetBaseImage(TypeIcon icon)
@@ -153,6 +155,9 @@ namespace ICSharpCode.ILSpy
 						break;
 					case TypeIcon.Delegate:
 						baseImage = Images.Delegate;
+						break;
+					case TypeIcon.StaticClass:
+						baseImage = Images.StaticClass;
 						break;
 					default:
 						throw new NotSupportedException();
