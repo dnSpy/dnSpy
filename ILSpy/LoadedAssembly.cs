@@ -88,24 +88,28 @@ namespace ICSharpCode.ILSpy
 			// runs on background thread
 			ReaderParameters p = new ReaderParameters();
 			p.AssemblyResolver = new MyAssemblyResolver(this);
-			try {
-				if (DecompilerSettingsPanel.CurrentDecompilerSettings.UseDebugSymbols) {
-					SetSymbolSettings(p);
+			AssemblyDefinition asm = AssemblyDefinition.ReadAssembly(fileName, p);
+			if (DecompilerSettingsPanel.CurrentDecompilerSettings.UseDebugSymbols) {
+				try {
+					LoadSymbols(asm.MainModule);
+				} catch (IOException) {
+				} catch (UnauthorizedAccessException) {
+				} catch (InvalidOperationException) {
+					// ignore any errors during symbol loading
 				}
-				return AssemblyDefinition.ReadAssembly(fileName, p);
-			} finally {
-				if (p.SymbolStream != null)
-					p.SymbolStream.Dispose();
 			}
+			return asm;
 		}
 		
-		private void SetSymbolSettings(ReaderParameters p)
+		private void LoadSymbols(ModuleDefinition module)
 		{
 			// search for pdb in same directory as dll
 			string pdbName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName) + ".pdb");
 			if (File.Exists(pdbName)) {
-				p.ReadSymbols = true;
-				p.SymbolStream = File.OpenRead(pdbName);
+				using (Stream s = File.OpenRead(pdbName)) {
+					module.ReadSymbols(new Mono.Cecil.Pdb.PdbReaderProvider().GetSymbolReader(module, s));
+				}
+				return;
 			}
 			
 			// TODO: use symbol cache, get symbols from microsoft

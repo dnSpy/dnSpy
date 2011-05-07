@@ -15,7 +15,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
-	//* Not a real unit test
+	/* Not a real unit test
 	[TestFixture]
 	public class TestInterningProvider
 	{

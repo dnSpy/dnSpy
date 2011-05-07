@@ -18,7 +18,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Output.CodeDom.Tests
 		public void IdentifierOnlyInvocation()
 		{
 			// InitializeComponents();
-			IdentifierExpression identifier = new IdentifierExpression("InitializeComponents");
+			SimpleNameExpression identifier = new SimpleNameExpression("InitializeComponents");
 			InvocationExpression invocation = new InvocationExpression(identifier, new List<Expression>());
 			object output = invocation.AcceptVisitor(new CodeDomVisitor(), null);
 			Assert.IsTrue(output is CodeMethodInvokeExpression);
@@ -44,7 +44,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Output.CodeDom.Tests
 		public void InvocationOfStaticMethod()
 		{
 			// System.Drawing.Color.FromArgb();
-			MemberReferenceExpression field = new MemberReferenceExpression(new IdentifierExpression("System"), "Drawing");
+			MemberReferenceExpression field = new MemberReferenceExpression(new SimpleNameExpression("System"), "Drawing");
 			field = new MemberReferenceExpression(field, "Color");
 			field = new MemberReferenceExpression(field, "FromArgb");
 			InvocationExpression invocation = new InvocationExpression(field, new List<Expression>());

@@ -13,7 +13,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Lexer
 	{
 		VBLexer GenerateLexer(StringReader sr)
 		{
-			return ParserFactory.CreateLexer(sr);
+			return new VBLexer(sr);
 		}
 
 		[Test]

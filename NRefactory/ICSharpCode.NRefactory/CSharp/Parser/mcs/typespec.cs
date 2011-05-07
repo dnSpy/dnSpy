@@ -516,6 +516,37 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		public static bool IsReferenceType (TypeSpec t)
+		{
+			switch (t.Kind) {
+			case MemberKind.TypeParameter:
+				return ((TypeParameterSpec) t).IsReferenceType;
+			case MemberKind.Struct:
+			case MemberKind.Enum:
+				return false;
+			case MemberKind.InternalCompilerType:
+				//
+				// Null is considered to be a reference type
+				//			
+				return t == InternalType.NullLiteral || t.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
+			default:
+				return true;
+			}
+		}
+
+		public static bool IsValueType (TypeSpec t)
+		{
+			switch (t.Kind) {
+			case MemberKind.TypeParameter:
+				return ((TypeParameterSpec) t).IsValueType;
+			case MemberKind.Struct:
+			case MemberKind.Enum:
+				return true;
+			default:
+				return false;
+			}
+		}
+
 		public override MemberSpec InflateMember (TypeParameterInflator inflator)
 		{
 			var targs = IsGeneric ? MemberDefinition.TypeParameters : TypeSpec.EmptyTypes;
@@ -664,8 +695,6 @@ namespace Mono.CSharp
 			Exception,
 			Attribute,
 			Other,
-
-			Null,
 		}
 
 		readonly Type type;
@@ -1005,8 +1034,17 @@ namespace Mono.CSharp
 			//
 			public static bool IsEqual (TypeSpec a, TypeSpec b)
 			{
-				if (a.MemberDefinition != b.MemberDefinition)
+				if (a.MemberDefinition != b.MemberDefinition) {
+					var base_ifaces = a.Interfaces;
+					if (base_ifaces != null) {
+						foreach (var base_iface in base_ifaces) {
+							if (base_iface.Arity > 0 && IsEqual (base_iface, b))
+								return true;
+						}
+					}
+
 					return false;
+				}
 
 				var ta = a.TypeArguments;
 				var tb = b.TypeArguments;
@@ -1054,7 +1092,7 @@ namespace Mono.CSharp
 					//    class X<T> : I<T>, I<float>
 					// 
 					if (b.IsGenericParameter)
-						return a.DeclaringType == b.DeclaringType;
+						return a != b && a.DeclaringType == b.DeclaringType;
 
 					//
 					// We're now comparing a type parameter with a
@@ -1141,7 +1179,7 @@ namespace Mono.CSharp
 				if (b_a == null)
 					return false;
 
-				return IsEqual (a_a.Element, b_a.Element) && a_a.Rank == b_a.Rank;
+				return a_a.Rank == b_a.Rank && IsEqual (a_a.Element, b_a.Element);
 			}
 
 			if (!a.IsGeneric || !b.IsGeneric) {

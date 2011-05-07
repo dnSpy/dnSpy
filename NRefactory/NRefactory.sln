@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-# SharpDevelop 4.0.1.7129
+# SharpDevelop 4.1.0.7372-alpha
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC98210E-1646-483B-819A-2BB8272461E4}"
 	ProjectSection(SolutionItems) = postProject
 		README = README
@@ -12,15 +12,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.Tests", "ICSharpCode.NRefactory.Tests\ICSharpCode.NRefactory.Tests.csproj", "{63D3B27A-D966-4902-90B3-30290E1692F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.Demo", "ICSharpCode.NRefactory.Demo\ICSharpCode.NRefactory.Demo.csproj", "{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VBAstGenerator", "VBAstGenerator\VBAstGenerator.csproj", "{B22522AA-B5BF-4A58-AC6D-D4B45805521F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB", "ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj", "{7B82B671-419F-45F4-B778-D9286F996EFA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB.Tests", "ICSharpCode.NRefactory.VB.Tests\ICSharpCode.NRefactory.VB.Tests.csproj", "{870115DD-960A-4406-A6B9-600BCDC36A03}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "..\Mono.Cecil\Mono.Cecil.csproj", "{D68133BD-1E63-496E-9EDE-4FBDBF77B486}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.Demo", "ICSharpCode.NRefactory.Demo\ICSharpCode.NRefactory.Demo.csproj", "{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,22 +36,6 @@ Global
 		{63D3B27A-D966-4902-90B3-30290E1692F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63D3B27A-D966-4902-90B3-30290E1692F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63D3B27A-D966-4902-90B3-30290E1692F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|Any CPU.Build.0 = Debug|x86
-		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Release|Any CPU.Build.0 = Release|x86
-		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Release|Any CPU.ActiveCfg = Release|x86
-		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|x86.Build.0 = Debug|x86
-		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|x86.ActiveCfg = Debug|x86
-		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Release|x86.Build.0 = Release|x86
-		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Release|x86.ActiveCfg = Release|x86
-		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Debug|x86.Build.0 = Debug|Any CPU
-		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Release|x86.Build.0 = Release|Any CPU
-		{B22522AA-B5BF-4A58-AC6D-D4B45805521F}.Release|x86.ActiveCfg = Release|Any CPU
 		{7B82B671-419F-45F4-B778-D9286F996EFA}.Debug|Any CPU.Build.0 = Debug|x86
 		{7B82B671-419F-45F4-B778-D9286F996EFA}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{7B82B671-419F-45F4-B778-D9286F996EFA}.Debug|x86.Build.0 = Debug|x86
@@ -78,6 +60,14 @@ Global
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|Any CPU.ActiveCfg = net_3_5_Release|Any CPU
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|x86.Build.0 = net_4_0_Debug|Any CPU
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|x86.ActiveCfg = net_3_5_Release|Any CPU
+		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|Any CPU.Build.0 = Debug|x86
+		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|x86.Build.0 = Debug|x86
+		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|x86.ActiveCfg = Debug|x86
+		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Release|Any CPU.Build.0 = Release|x86
+		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Release|Any CPU.ActiveCfg = Release|x86
+		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Release|x86.Build.0 = Release|x86
+		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj

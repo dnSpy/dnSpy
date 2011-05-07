@@ -875,7 +875,7 @@ namespace Mono.CSharp
 				string main_class = Compiler.Settings.MainClass;
 				if (main_class != null) {
 					// TODO: Handle dotted names
-					var texpr = module.GlobalRootNamespace.LookupType (module, main_class, 0, Location.Null);
+					var texpr = module.GlobalRootNamespace.LookupType (module, main_class, 0, LookupMode.Probing, Location.Null);
 					if (texpr == null) {
 						Report.Error (1555, "Could not find `{0}' specified for Main method", main_class);
 						return;

@@ -17,6 +17,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		readonly string fileName;
 		readonly UsingScope rootUsingScope;
 		IList<ITypeDefinition> topLevelTypeDefinitions = new List<ITypeDefinition>();
+		IList<IAttribute> assemblyAttributes = new List<IAttribute>();
 		IList<UsingScope> usingScopes = new List<UsingScope>();
 		
 		protected override void FreezeInternal()
@@ -24,6 +25,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			base.FreezeInternal();
 			rootUsingScope.Freeze();
 			topLevelTypeDefinitions = FreezeList(topLevelTypeDefinitions);
+			assemblyAttributes = FreezeList(assemblyAttributes);
 			usingScopes = FreezeList(usingScopes);
 		}
 		
@@ -51,6 +53,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public IList<ITypeDefinition> TopLevelTypeDefinitions {
 			get { return topLevelTypeDefinitions; }
+		}
+		
+		public IList<IAttribute> AssemblyAttributes {
+			get { return assemblyAttributes; }
 		}
 		
 		public UsingScope GetUsingScope(AstLocation location)

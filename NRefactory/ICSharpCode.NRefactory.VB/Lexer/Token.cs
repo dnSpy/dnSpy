@@ -5,18 +5,6 @@ using System;
 
 namespace ICSharpCode.NRefactory.VB.Parser
 {
-	public enum LiteralFormat : byte
-	{
-		None,
-		DecimalNumber,
-		HexadecimalNumber,
-		OctalNumber,
-		StringLiteral,
-		VerbatimStringLiteral,
-		CharLiteral,
-		DateTimeLiteral
-	}
-	
 	public class Token
 	{
 		internal readonly int kind;
@@ -24,18 +12,13 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		internal readonly int col;
 		internal readonly int line;
 		
-		internal readonly LiteralFormat literalFormat;
 		internal readonly object literalValue;
 		internal readonly string val;
 		internal Token next;
-		readonly Location endLocation;
+		readonly AstLocation endLocation;
 		
 		public int Kind {
 			get { return kind; }
-		}
-		
-		public LiteralFormat LiteralFormat {
-			get { return literalFormat; }
 		}
 		
 		public object LiteralValue {
@@ -46,13 +29,13 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			get { return val; }
 		}
 		
-		public Location EndLocation {
+		public AstLocation EndLocation {
 			get { return endLocation; }
 		}
 		
-		public Location Location {
+		public AstLocation Location {
 			get {
-				return new Location(col, line);
+				return new AstLocation(line, col);
 			}
 		}
 		
@@ -65,7 +48,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		{
 		}
 		
-		public Token(int kind, Location startLocation, Location endLocation) : this(kind, startLocation, endLocation, "", null, LiteralFormat.None)
+		public Token(int kind, AstLocation startLocation, AstLocation endLocation) : this(kind, startLocation, endLocation, "", null)
 		{
 		}
 		
@@ -75,15 +58,15 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			this.col          = col;
 			this.line         = line;
 			this.val          = val;
-			this.endLocation  = new Location(col + (val == null ? 1 : val.Length), line);
+			this.endLocation  = new AstLocation(line, col + (val == null ? 1 : val.Length));
 		}
 		
-		internal Token(int kind, int x, int y, string val, object literalValue, LiteralFormat literalFormat)
-			: this(kind, new Location(x, y), new Location(x + val.Length, y), val, literalValue, literalFormat)
+		internal Token(int kind, int x, int y, string val, object literalValue)
+			: this(kind, new AstLocation(y, x), new AstLocation(y, x + val.Length), val, literalValue)
 		{
 		}
 		
-		public Token(int kind, Location startLocation, Location endLocation, string val, object literalValue, LiteralFormat literalFormat)
+		public Token(int kind, AstLocation startLocation, AstLocation endLocation, string val, object literalValue)
 		{
 			this.kind         = kind;
 			this.col          = startLocation.Column;
@@ -91,7 +74,6 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			this.endLocation = endLocation;
 			this.val          = val;
 			this.literalValue = literalValue;
-			this.literalFormat = literalFormat;
 		}
 		
 		public override string ToString()

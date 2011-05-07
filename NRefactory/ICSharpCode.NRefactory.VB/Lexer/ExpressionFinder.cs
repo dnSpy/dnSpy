@@ -28,7 +28,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		void PushContext(Context context, Token la, Token t)
 		{
 			string indent = new string('\t', stack.Count);
-			Location l = la == null ? (t == null ? Location.Empty : t.EndLocation) : la.Location;
+			AstLocation l = la == null ? (t == null ? AstLocation.Empty : t.EndLocation) : la.Location;
 			
 			stack.Push(new Block() { context = context, lastExpressionStart = l });
 			Print(indent + "enter " + context);

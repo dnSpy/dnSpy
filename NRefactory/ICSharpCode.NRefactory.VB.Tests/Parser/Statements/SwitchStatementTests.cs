@@ -17,7 +17,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		public void VBSwitchStatementTest()
 		{
 			SwitchStatement switchStmt = ParseUtil.ParseStatement<SwitchStatement>("Select Case a\n Case 4, 5\n Case 6\n Case Else\n End Select");
-			Assert.AreEqual("a", ((IdentifierExpression)switchStmt.SwitchExpression).Identifier);
+			Assert.AreEqual("a", ((SimpleNameExpression)switchStmt.SwitchExpression).Identifier);
 			// TODO: Extend test
 		}
 		
@@ -25,7 +25,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		public void InvalidVBSwitchStatementTest()
 		{
 			SwitchStatement switchStmt = ParseUtil.ParseStatement<SwitchStatement>("Select Case a\n Case \n End Select", true);
-			Assert.AreEqual("a", ((IdentifierExpression)switchStmt.SwitchExpression).Identifier);
+			Assert.AreEqual("a", ((SimpleNameExpression)switchStmt.SwitchExpression).Identifier);
 			SwitchSection sec = switchStmt.SwitchSections[0];
 			Assert.AreEqual(0, sec.SwitchLabels.Count);
 		}

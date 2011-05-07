@@ -40,17 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="VBEditDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="VBEditDialog.Designer.cs">
-      <DependentUpon>VBEditDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="VBAstView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="VBAstView.Designer.cs">
-      <DependentUpon>VBAstView.cs</DependentUpon>
+    <Compile Include="CSDemo.cs" />
+    <Compile Include="CSDemo.Designer.cs">
+      <DependentUpon>CSDemo.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -60,9 +52,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VBDemo.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="VBDemo.cs" />
     <Compile Include="VBDemo.Designer.cs">
       <DependentUpon>VBDemo.cs</DependentUpon>
     </Compile>
@@ -78,11 +68,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="VBEditDialog.resx">
-      <DependentUpon>VBEditDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VBAstView.resx">
-      <DependentUpon>VBAstView.cs</DependentUpon>
+    <EmbeddedResource Include="CSDemo.resx">
+      <DependentUpon>CSDemo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

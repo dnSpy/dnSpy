@@ -5,15 +5,15 @@ using System;
 
 namespace ICSharpCode.NRefactory.VB
 {
-	public class BlankLine : AbstractSpecial
-	{
-		public BlankLine(Location point) : base(point)
-		{
-		}
-		
-		public override object AcceptVisitor(ISpecialVisitor visitor, object data)
-		{
-			return visitor.Visit(this, data);
-		}
-	}
+//	public class BlankLine : AbstractSpecial
+//	{
+//		public BlankLine(Location point) : base(point)
+//		{
+//		}
+//		
+//		public override object AcceptVisitor(ISpecialVisitor visitor, object data)
+//		{
+//			return visitor.Visit(this, data);
+//		}
+//	}
 }

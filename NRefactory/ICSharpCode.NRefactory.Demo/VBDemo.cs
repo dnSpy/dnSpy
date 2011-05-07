@@ -7,10 +7,13 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
+
 using ICSharpCode.NRefactory.VB;
+using ICSharpCode.NRefactory.VB.Ast;
 using ICSharpCode.NRefactory.VB.Parser;
-using ICSharpCode.NRefactory.VB.PrettyPrinter;
 
 namespace ICSharpCode.NRefactory.Demo
 {
@@ -25,54 +28,113 @@ namespace ICSharpCode.NRefactory.Demo
 			// The InitializeComponent() call is required for Windows Forms designer support.
 			//
 			InitializeComponent();
-			ParseButtonClick(null, null);
 		}
 		
-		IList<ISpecial> savedSpecials;
+		CompilationUnit compilationUnit;
 		
-		void ParseButtonClick(object sender, EventArgs e)
+		void CSharpParseButtonClick(object sender, EventArgs e)
 		{
-			using (VBParser parser = new VBParser(new VBLexer(new StringReader(codeView.Text)))) {
-				parser.Parse();
-				// this allows retrieving comments, preprocessor directives, etc. (stuff that isn't part of the syntax)
-				SetSpecials(parser.Lexer.SpecialTracker.RetrieveSpecials());
-				// this retrieves the root node of the result DOM
-				if (parser.Errors.Count > 0) {
-					MessageBox.Show(parser.Errors.ErrorOutput);
-				}
-				syntaxTree.Unit = parser.CompilationUnit;
+			var parser = new VBParser();
+			compilationUnit = parser.Parse(new StringReader(codeView.Text));
+			if (parser.HasErrors)
+				MessageBox.Show(parser.Errors.ErrorOutput);
+			treeView.Nodes.Clear();
+			foreach (var element in compilationUnit.Children) {
+				treeView.Nodes.Add(MakeTreeNode(element));
 			}
+			SelectCurrentNode(treeView.Nodes);
 		}
 		
-		void GenerateCodeButtonClick(object sender, EventArgs e)
+		TreeNode MakeTreeNode(AstNode node)
 		{
-			if (syntaxTree.Unit != null) {
-				VBNetOutputVisitor visitor = new VBNetOutputVisitor();
-				// re-insert the comments we saved from the parser into the output
-				using (SpecialNodesInserter.Install(savedSpecials, visitor)) {
-					syntaxTree.Unit.AcceptVisitor(visitor, null);
-				}
-				codeView.Text = visitor.Text.Replace("\t", "  ");
+			TreeNode t = new TreeNode(GetNodeTitle(node));
+			t.Tag = node;
+			foreach (AstNode child in node.Children) {
+				t.Nodes.Add(MakeTreeNode(child));
 			}
+			return t;
 		}
 		
-		void ClearSpecialsButtonClick(object sender, EventArgs e)
+		string GetNodeTitle(AstNode node)
 		{
-			SetSpecials(new ISpecial[0]);
+			StringBuilder b = new StringBuilder();
+			b.Append(node.Role.ToString());
+			b.Append(": ");
+			b.Append(node.GetType().Name);
+			bool hasProperties = false;
+			foreach (PropertyInfo p in node.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
+				if (p.Name == "NodeType" || p.Name == "IsNull")
+					continue;
+				if (p.PropertyType == typeof(string) || p.PropertyType.IsEnum || p.PropertyType == typeof(bool)) {
+					if (!hasProperties) {
+						hasProperties = true;
+						b.Append(" (");
+					} else {
+						b.Append(", ");
+					}
+					b.Append(p.Name);
+					b.Append(" = ");
+					try {
+						object val = p.GetValue(node, null);
+						b.Append(val != null ? val.ToString() : "**null**");
+					} catch (TargetInvocationException ex) {
+						b.Append("**" + ex.InnerException.GetType().Name + "**");
+					}
+				}
+			}
+			if (hasProperties)
+				b.Append(")");
+			return b.ToString();
 		}
 		
-		void EditNodeButtonClick(object sender, EventArgs e)
+		bool SelectCurrentNode(TreeNodeCollection c)
 		{
-			syntaxTree.EditSelectedNode();
+			int selectionStart = codeView.SelectionStart;
+			int selectionEnd = selectionStart + codeView.SelectionLength;
+			foreach (TreeNode t in c) {
+				AstNode node = t.Tag as AstNode;
+				if (node != null
+				    && selectionStart >= GetOffset(codeView, node.StartLocation)
+				    && selectionEnd <= GetOffset(codeView, node.EndLocation))
+				{
+					if (selectionStart == selectionEnd
+					    && (selectionStart == GetOffset(codeView, node.StartLocation)
+					        || selectionStart == GetOffset(codeView, node.EndLocation)))
+					{
+						// caret is on border of this node; don't expand
+						treeView.SelectedNode = t;
+					} else {
+						t.Expand();
+						if (!SelectCurrentNode(t.Nodes))
+							treeView.SelectedNode = t;
+					}
+					return true;
+				}
+			}
+			return false;
 		}
 		
-		void SetSpecials(IList<ISpecial> specials)
+		void CSharpGenerateCodeButtonClick(object sender, EventArgs e)
 		{
-			savedSpecials = specials;
-			if (specials.Count == 1)
-				clearSpecialsButton.Text = "Clear 1 special";
-			else
-				clearSpecialsButton.Text = "Clear " + specials.Count + " specials";
+			StringWriter w = new StringWriter();
+			OutputVisitor output = new OutputVisitor(w, new VBFormattingOptions());
+			compilationUnit.AcceptVisitor(output, null);
+			codeView.Text = w.ToString();
+		}
+		
+		int GetOffset(TextBox textBox, AstLocation location)
+		{
+			return textBox.GetFirstCharIndexFromLine(location.Line - 1) + location.Column - 1;
+		}
+		
+		void CSharpTreeViewAfterSelect(object sender, TreeViewEventArgs e)
+		{
+			AstNode node = e.Node.Tag as AstNode;
+			if (node != null) {
+				int startOffset = GetOffset(codeView, node.StartLocation);
+				int endOffset = GetOffset(codeView, node.EndLocation);
+				codeView.Select(startOffset, endOffset - startOffset);
+			}
 		}
 	}
 }

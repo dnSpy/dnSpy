@@ -313,6 +313,7 @@ namespace Mono.CSharp {
 		TypeExpr iterator_type_expr;
 		Field pc_field;
 		Field current_field;
+		Field disposing_field;
 
 		TypeExpr enumerator_type;
 		TypeExpr enumerable_type;
@@ -331,7 +332,15 @@ namespace Mono.CSharp {
 		}
 
 		public Field PC {
-			get { return pc_field; }
+			get {
+				return pc_field;
+			}
+		}
+
+		public Field DisposingField {
+			get {
+				return disposing_field;
+			}
 		}
 
 		public Field CurrentField {
@@ -342,7 +351,7 @@ namespace Mono.CSharp {
 			get { return hoisted_params; }
 		}
 
-		protected override TypeExpr [] ResolveBaseTypes (out TypeExpr base_class)
+		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
 		{
 			var mtype = Iterator.OriginalIteratorType;
 			if (Mutator != null)
@@ -393,6 +402,7 @@ namespace Mono.CSharp {
 		{
 			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (Compiler.BuiltinTypes.Int, Location));
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
+			disposing_field = AddCompilerGeneratedField ("$disposing", new TypeExpression (Compiler.BuiltinTypes.Bool, Location));
 
 			if (hoisted_params != null) {
 				//
@@ -686,7 +696,7 @@ namespace Mono.CSharp {
 			Label [] labels = null;
 			int n_resume_points = resume_points == null ? 0 : resume_points.Count;
 			for (int i = 0; i < n_resume_points; ++i) {
-				ResumableStatement s = (ResumableStatement) resume_points [i];
+				ResumableStatement s = resume_points [i];
 				Label ret = s.PrepareForDispose (ec, end);
 				if (ret.Equals (end) && labels == null)
 					continue;
@@ -695,6 +705,7 @@ namespace Mono.CSharp {
 					for (int j = 0; j <= i; ++j)
 						labels [j] = end;
 				}
+
 				labels [i+1] = ret;
 			}
 
@@ -704,6 +715,10 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
 				ec.Emit (OpCodes.Stloc, current_pc);
 			}
+
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitInt (1);
+			ec.Emit (OpCodes.Stfld, IteratorHost.DisposingField.Spec);
 
 			ec.Emit (OpCodes.Ldarg_0);
 			ec.EmitInt ((int) State.After);
@@ -741,10 +756,21 @@ namespace Mono.CSharp {
 			expr.Emit (ec);
 			ec.Emit (OpCodes.Stfld, IteratorHost.CurrentField.Spec);
 
+			//
+			// Guard against being disposed meantime
+			//
+			Label disposed = ec.DefineLabel ();
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.Emit (OpCodes.Ldfld, IteratorHost.DisposingField.Spec);
+			ec.Emit (OpCodes.Brtrue_S, disposed);
+
+			//
 			// store resume program-counter
+			//
 			ec.Emit (OpCodes.Ldarg_0);
 			ec.EmitInt (resume_pc);
 			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
+			ec.MarkLabel (disposed);
 
 			// mark finally blocks as disabled
 			if (unwind_protect && skip_finally != null) {

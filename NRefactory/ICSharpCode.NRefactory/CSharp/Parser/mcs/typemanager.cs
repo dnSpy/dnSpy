@@ -801,34 +801,15 @@ namespace Mono.CSharp
 		if (t.IsPointer)
 			return IsUnmanagedType (GetElementType (t));
 
-		if (!IsValueType (t))
+		if (!TypeSpec.IsValueType (t))
 			return false;
 
 		if (t.IsNested && t.DeclaringType.IsGenericOrParentIsGeneric)
 			return false;
 
 		return true;
-	}
-
-	//
-	// Null is considered to be a reference type
-	//			
-	public static bool IsReferenceType (TypeSpec t)
-	{
-		if (t.IsGenericParameter)
-			return ((TypeParameterSpec) t).IsReferenceType;
-
-		return !t.IsStruct && !IsEnumType (t);
-	}			
+	}	
 		
-	public static bool IsValueType (TypeSpec t)
-	{
-		if (t.IsGenericParameter)
-			return ((TypeParameterSpec) t).IsValueType;
-
-		return t.IsStruct || IsEnumType (t);
-	}
-
 	public static bool IsFamilyAccessible (TypeSpec type, TypeSpec parent)
 	{
 //		TypeParameter tparam = LookupTypeParameter (type);

@@ -134,6 +134,15 @@ namespace Mono.CSharp {
 			get { return "M:"; }
 		}
 
+		public override void Emit ()
+		{
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) == 0) {
+				parameters.CheckConstraints (this);
+			}
+
+			base.Emit ();
+		}
+
 		public override bool EnableOverloadChecks (MemberCore overload)
 		{
 			if (overload is MethodCore) {
@@ -668,10 +677,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (MethodData != null)
-				MethodData.Emit (Parent);
+			if (type_expr != null)
+				ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			base.Emit ();
+
+			if (MethodData != null)
+				MethodData.Emit (Parent);
 
 			Block = null;
 			MethodData = null;
@@ -703,6 +715,12 @@ namespace Mono.CSharp {
 		}
 
 		#region IMethodData Members
+
+		bool IMethodData.IsAccessor {
+			get {
+				return false;
+			}
+		}
 
 		public TypeSpec ReturnType {
 			get {
@@ -858,23 +876,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool HasUnresolvedConstraints {
-			get {
-				if (CurrentTypeParameters == null)
-					return false;
-
-				// When overriding base method constraints are fetched from
-				// base method but to find it we have to resolve parameters
-				// to find exact base method match
-				if (IsExplicitImpl || (ModFlags & Modifiers.OVERRIDE) != 0)
-					return base_method == null;
-
-				// Even for non-override generic method constraints check has to be
-				// delayed after all constraints are resolved
-				return true;
-			}
-		}
-
 		public TypeParameterSpec[] TypeParameters {
 			get {
 				// TODO: Cache this
@@ -918,7 +919,7 @@ namespace Mono.CSharp {
 					(parameters[0].ModFlags & ~Parameter.Modifier.PARAMS) == Parameter.Modifier.NONE;
 		}
 
-		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
 			if (arity == 0) {
 				TypeParameter[] tp = CurrentTypeParameters;
@@ -929,7 +930,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return base.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
+			return base.LookupNamespaceOrType (name, arity, mode, loc);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -1107,7 +1108,7 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (type_expr.Type.Kind == MemberKind.Void && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
+			if (member_type.Kind == MemberKind.Void && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
 				Report.Warning (465, 1, Location,
 					"Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
 			}
@@ -1217,19 +1218,9 @@ namespace Mono.CSharp {
 				}
 
 				if (CurrentTypeParameters != null) {
-					var ge = type_expr as GenericTypeExpr;
-					if (ge != null)
-						ge.CheckConstraints (this);
-
-					foreach (Parameter p in parameters.FixedParameters) {
-						ge = p.TypeExpression as GenericTypeExpr;
-						if (ge != null)
-							ge.CheckConstraints (this);
-					}
-
 					for (int i = 0; i < CurrentTypeParameters.Length; ++i) {
 						var tp = CurrentTypeParameters [i];
-						tp.CheckGenericConstraints ();
+						tp.CheckGenericConstraints (false);
 						tp.Emit ();
 					}
 				}
@@ -1452,7 +1443,15 @@ namespace Mono.CSharp {
 		}
 
 		public override AttributeTargets AttributeTargets {
-			get { return AttributeTargets.Constructor; }
+			get {
+				return AttributeTargets.Constructor;
+			}
+		}
+
+		bool IMethodData.IsAccessor {
+			get {
+				return false;
+			}
 		}
 
 		//
@@ -1582,6 +1581,7 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 
 			base.Emit ();
+			parameters.ApplyAttributes (this, ConstructorBuilder);
 
 			//
 			// If we use a "this (...)" constructor initializer, then
@@ -1612,8 +1612,6 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-
-			parameters.ApplyAttributes (this, ConstructorBuilder);
 
 			SourceMethod source = SourceMethod.Create (Parent, ConstructorBuilder, block);
 
@@ -1647,7 +1645,7 @@ namespace Mono.CSharp {
 			block = null;
 		}
 
-		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate)
+		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate, ref bool overrides)
 		{
 			// Is never override
 			bestCandidate = null;
@@ -1736,6 +1734,7 @@ namespace Mono.CSharp {
 		GenericMethod GenericMethod { get; }
 		ParametersCompiled ParameterInfo { get; }
 		MethodSpec Spec { get; }
+		bool IsAccessor { get; }
 
 		Attributes OptAttributes { get; }
 		ToplevelBlock Block { get; set; }
@@ -1810,24 +1809,25 @@ namespace Mono.CSharp {
 			TypeContainer container = parent.PartialContainer;
 
 			PendingImplementation pending = container.PendingImplementations;
-			if (pending != null){
-				implementing = pending.IsInterfaceMethod (method.MethodName, member.InterfaceType, this);
+			MethodSpec ambig_iface_method;
+			if (pending != null) {
+				implementing = pending.IsInterfaceMethod (method.MethodName, member.InterfaceType, this, out ambig_iface_method);
 
-				if (member.InterfaceType != null){
-					if (implementing == null){
+				if (member.InterfaceType != null) {
+					if (implementing == null) {
 						if (member is PropertyBase) {
 							Report.Error (550, method.Location, "`{0}' is an accessor not found in interface member `{1}{2}'",
-								      method.GetSignatureForError (), TypeManager.CSharpName (member.InterfaceType),
-								      member.GetSignatureForError ().Substring (member.GetSignatureForError ().LastIndexOf ('.')));
+									  method.GetSignatureForError (), TypeManager.CSharpName (member.InterfaceType),
+									  member.GetSignatureForError ().Substring (member.GetSignatureForError ().LastIndexOf ('.')));
 
 						} else {
 							Report.Error (539, method.Location,
-								      "`{0}.{1}' in explicit interface declaration is not a member of interface",
-								      TypeManager.CSharpName (member.InterfaceType), member.ShortName);
+									  "`{0}.{1}' in explicit interface declaration is not a member of interface",
+									  TypeManager.CSharpName (member.InterfaceType), member.ShortName);
 						}
 						return false;
 					}
-					if (implementing.IsAccessor && !(method is AbstractPropertyEventMethod)) {
+					if (implementing.IsAccessor && !method.IsAccessor) {
 						Report.SymbolRelatedToPreviousError (implementing);
 						Report.Error (683, method.Location, "`{0}' explicit method implementation cannot implement `{1}' because it is an accessor",
 							member.GetSignatureForError (), TypeManager.CSharpSignature (implementing));
@@ -1835,8 +1835,7 @@ namespace Mono.CSharp {
 					}
 				} else {
 					if (implementing != null) {
-						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;
-						if (prop_method == null) {
+						if (!method.IsAccessor) {
 							if (implementing.IsAccessor) {
 								Report.SymbolRelatedToPreviousError (implementing);
 								Report.Error (470, method.Location, "Method `{0}' cannot implement interface accessor `{1}'",
@@ -1848,7 +1847,7 @@ namespace Mono.CSharp {
 								Report.Error (686, method.Location, "Accessor `{0}' cannot implement interface member `{1}' for type `{2}'. Use an explicit interface implementation",
 									method.GetSignatureForError (), TypeManager.CSharpSignature (implementing), container.GetSignatureForError ());
 							} else {
-								PropertyBase.PropertyMethod pm = prop_method as PropertyBase.PropertyMethod;
+								PropertyBase.PropertyMethod pm = method as PropertyBase.PropertyMethod;
 								if (pm != null && pm.HasCustomAccessModifier && (pm.ModFlags & Modifiers.PUBLIC) == 0) {
 									Report.SymbolRelatedToPreviousError (implementing);
 									Report.Error (277, method.Location, "Accessor `{0}' must be declared public to implement interface member `{1}'",
@@ -1858,6 +1857,8 @@ namespace Mono.CSharp {
 						}
 					}
 				}
+			} else {
+				ambig_iface_method = null;
 			}
 
 			//
@@ -1878,6 +1879,15 @@ namespace Mono.CSharp {
 						Report.Error (466, method.Location, "`{0}': the explicit interface implementation cannot introduce the params modifier",
 							method.GetSignatureForError ());
 					}
+
+					if (ambig_iface_method != null) {
+						Report.SymbolRelatedToPreviousError (ambig_iface_method);
+						Report.SymbolRelatedToPreviousError (implementing);
+						Report.Warning (473, 2, method.Location,
+							"Explicit interface implementation `{0}' matches more than one interface member. Consider using a non-explicit implementation instead",
+							method.GetSignatureForError ());
+					}
+
 				} else {
 					if (implementing.DeclaringType.IsInterface) {
 						//
@@ -1931,7 +1941,7 @@ namespace Mono.CSharp {
 				// clear the pending implementation flag (requires explicit methods to be defined first)
 				//
 				parent.PartialContainer.PendingImplementations.ImplementMethod (method.MethodName,
-					member.InterfaceType, this, member.IsExplicitImpl);
+					member.InterfaceType, this, member.IsExplicitImpl, out ambig_iface_method);
 
 				//
 				// Update indexer accessor name to match implementing abstract accessor
@@ -2163,6 +2173,12 @@ namespace Mono.CSharp {
 		public EmitContext CreateEmitContext (ILGenerator ig)
 		{
 			return new EmitContext (this, ig, ReturnType);
+		}
+
+		public bool IsAccessor {
+			get {
+				return true;
+			}
 		}
 
 		public bool IsExcluded ()
@@ -2563,7 +2579,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate)
+		protected override MemberSpec FindBaseMember (out MemberSpec bestCandidate, ref bool overrides)
 		{
 			// Operator cannot be override
 			bestCandidate = null;
@@ -2647,7 +2663,8 @@ namespace Mono.CSharp {
 			StringBuilder sb = new StringBuilder ();
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
 				sb.AppendFormat ("{0}.{1} operator {2}",
-					Parent.GetSignatureForError (), GetName (OperatorType), type_expr.GetSignatureForError ());
+					Parent.GetSignatureForError (), GetName (OperatorType),
+					member_type == null ? type_expr.GetSignatureForError () : member_type.GetSignatureForError ());
 			}
 			else {
 				sb.AppendFormat ("{0}.operator {1}", Parent.GetSignatureForError (), GetName (OperatorType));

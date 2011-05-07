@@ -5,10 +5,10 @@ using System;
 
 namespace ICSharpCode.NRefactory.VB
 {
-	public enum CommentType
-	{
-		Block,
-		SingleLine,
-		Documentation
-	}
+//	public enum CommentType
+//	{
+//		Block,
+//		SingleLine,
+//		Documentation
+//	}
 }

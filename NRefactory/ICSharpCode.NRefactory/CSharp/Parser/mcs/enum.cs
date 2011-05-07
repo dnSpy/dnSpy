@@ -27,11 +27,11 @@ namespace Mono.CSharp {
 	{
 		class EnumTypeExpr : TypeExpr
 		{
-			public override TypeExpr ResolveAsType (IMemberContext ec)
+			public override TypeSpec ResolveAsType (IMemberContext ec)
 			{
 				type = ec.CurrentType;
 				eclass = ExprClass.Type;
-				return this;
+				return type;
 			}
 		}
 
@@ -156,11 +156,13 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
+		readonly TypeExpr underlying_type_expr;
+
 		public Enum (NamespaceContainer ns, DeclSpace parent, TypeExpression type,
 			     Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Enum)
 		{
-			base_type_expr = type;
+			underlying_type_expr = type;
 			var accmods = IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod_flags, accmods, Location, Report);
 			spec = new EnumSpec (null, this, null, null, ModFlags);
@@ -176,7 +178,7 @@ namespace Mono.CSharp {
 
 		public TypeExpr BaseTypeExpression {
 			get {
-				return base_type_expr;
+				return underlying_type_expr;
 			}
 		}
 
@@ -219,7 +221,7 @@ namespace Mono.CSharp {
 
 		protected override bool DefineNestedTypes ()
 		{
-			((EnumSpec) spec).UnderlyingType = base_type_expr == null ? Compiler.BuiltinTypes.Int : base_type_expr.Type;
+			((EnumSpec) spec).UnderlyingType = underlying_type_expr == null ? Compiler.BuiltinTypes.Int : underlying_type_expr.Type;
 
 			TypeBuilder.DefineField (UnderlyingValueField, UnderlyingType.GetMetaInfo (),
 				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
@@ -248,10 +250,10 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
+		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
 		{
 			base_type = Compiler.BuiltinTypes.Enum;
-			base_class = base_type_expr;
+			base_class = null;
 			return null;
 		}
 		

@@ -69,13 +69,6 @@ namespace Mono.CSharp
 			return MemberKind.Class;
 		}
 
-		public override void GetCustomAttributeTypeName (CustomAttributeData cad, out string typeNamespace, out string typeName)
-		{
-			var dt = cad.Constructor.DeclaringType;
-			typeNamespace = dt.Namespace;
-			typeName = dt.Name;
-		}
-
 		protected override bool HasVolatileModifier (Type[] modifiers)
 		{
 			foreach (var t in modifiers) {
@@ -110,7 +103,7 @@ namespace Mono.CSharp
 
 		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)
 		{
-			var module_definition = new ImportedModuleDefinition (module, this);
+			var module_definition = new ImportedModuleDefinition (module);
 			module_definition.ReadAttributes ();
 
 			Type[] all_types;

@@ -128,9 +128,6 @@ namespace Mono.CSharp
 
 		public void Resolve (ResolveContext ec)
 		{
-			if (Expr == EmptyExpression.Null)
-				return;
-
 //			using (ec.With (ResolveContext.Options.DoFlowAnalysis, true)) {
 				// Verify that the argument is readable
 				if (ArgType != AType.Out)
@@ -141,7 +138,7 @@ namespace Mono.CSharp
 					Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess);
 
 				if (Expr == null)
-					Expr = EmptyExpression.Null;
+					Expr = ErrorExpression.Instance;
 //			}
 		}
 
