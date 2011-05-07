@@ -254,7 +254,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 						break;
 					}
 				}
-				if (found)
+				if (found && AssemblyReferencesScopeType(assembly.AssemblyDefinition))
 					yield return assembly.AssemblyDefinition;
 			}
 		}
@@ -278,12 +278,24 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.ShortName)) {
+						if (friendAssemblies.Contains(assembly.ShortName) && AssemblyReferencesScopeType(assembly.AssemblyDefinition)) {
 							yield return assembly.AssemblyDefinition;
 						}
 					}
 				}
 			}
+		}
+
+		private bool AssemblyReferencesScopeType(AssemblyDefinition asm)
+		{
+			bool hasRef = false;
+			foreach (var typeref in asm.MainModule.GetTypeReferences()) {
+				if (typeref.Name == typeScope.Name && typeref.Namespace == typeScope.Namespace) {
+					hasRef = true;
+					break;
+				}
+			}
+			return hasRef;
 		}
 	}
 }
