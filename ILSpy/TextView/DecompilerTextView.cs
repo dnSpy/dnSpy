@@ -60,6 +60,7 @@ namespace ICSharpCode.ILSpy.TextView
 		readonly UIElementGenerator uiElementGenerator;
 		List<VisualLineElementGenerator> activeCustomElementGenerators = new List<VisualLineElementGenerator>();
 		FoldingManager foldingManager;
+		ILSpyTreeNode[] decompiledNodes;
 		
 		DefinitionLookup definitionLookup;
 		CancellationTokenSource currentCancellationTokenSource;
@@ -207,11 +208,21 @@ namespace ICSharpCode.ILSpy.TextView
 		#endregion
 		
 		#region ShowOutput
+		public void ShowText(AvalonEditTextOutput textOutput)
+		{
+			ShowNodes(textOutput, null);
+		}
+
+		public void ShowNode(AvalonEditTextOutput textOutput, ILSpyTreeNode node, IHighlightingDefinition highlighting = null)
+		{
+			ShowNodes(textOutput, new[] { node }, highlighting);
+		}
+
 		/// <summary>
 		/// Shows the given output in the text view.
 		/// Cancels any currently running decompilation tasks.
 		/// </summary>
-		public void Show(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null)
+		public void ShowNodes(AvalonEditTextOutput textOutput, ILSpyTreeNode[] nodes, IHighlightingDefinition highlighting = null)
 		{
 			// Cancel the decompilation task:
 			if (currentCancellationTokenSource != null) {
@@ -220,6 +231,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			this.nextDecompilationRun = null; // remove scheduled decompilation run
 			ShowOutput(textOutput, highlighting);
+			decompiledNodes = nodes;
 		}
 		
 		/// <summary>
@@ -340,6 +352,7 @@ namespace ICSharpCode.ILSpy.TextView
 						}
 						ShowOutput(output);
 					}
+					decompiledNodes = context.TreeNodes;
 				});
 		}
 		
@@ -513,6 +526,7 @@ namespace ICSharpCode.ILSpy.TextView
 						output.WriteLine(ex.ToString());
 						ShowOutput(output);
 					}
+					decompiledNodes = context.TreeNodes;
 				});
 		}
 
@@ -575,11 +589,15 @@ namespace ICSharpCode.ILSpy.TextView
 
 		public DecompilerTextViewState GetState()
 		{
+			if (decompiledNodes == null)
+				return null;
+
 			var state = new DecompilerTextViewState();
 			if (foldingManager != null)
 				state.SaveFoldingsState(foldingManager.AllFoldings);
 			state.VerticalOffset = textEditor.VerticalOffset;
 			state.HorizontalOffset = textEditor.HorizontalOffset;
+			state.DecompiledNodes = decompiledNodes;
 			return state;
 		}
 	}
@@ -590,6 +608,7 @@ namespace ICSharpCode.ILSpy.TextView
 		private int FoldingsChecksum;
 		public double VerticalOffset;
 		public double HorizontalOffset;
+		public ILSpyTreeNode[] DecompiledNodes;
 
 		public void SaveFoldingsState(IEnumerable<FoldingSection> foldings)
 		{
