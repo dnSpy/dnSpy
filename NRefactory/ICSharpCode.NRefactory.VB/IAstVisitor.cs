@@ -20,7 +20,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitAttribute(Attribute attribute, T data);
 		S VisitAttributeBlock(AttributeBlock attributeBlock, T data);
 		S VisitImportsStatement(ImportsStatement importsStatement, T data);
-		S VisitMembersImportsClause(MemberImportsClause membersImportsClause, T data);
+		S VisitMemberImportsClause(MemberImportsClause memberImportsClause, T data);
 		S VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, T data);
 		S VisitOptionStatement(OptionStatement optionStatement, T data);
 		S VisitTypeDeclaration(TypeDeclaration typeDeclaration, T data);

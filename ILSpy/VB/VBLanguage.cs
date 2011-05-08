@@ -19,6 +19,12 @@
 using System;
 using System.ComponentModel.Composition;
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.Decompiler.Ast.Transforms;
+using ICSharpCode.ILSpy.XmlDoc;
+using ICSharpCode.NRefactory.VB;
+using ICSharpCode.NRefactory.VB.Visitors;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.VB
 {
@@ -28,6 +34,8 @@ namespace ICSharpCode.ILSpy.VB
 	[Export(typeof(Language))]
 	public class VBLanguage : Language
 	{
+		Predicate<IAstTransform> transformAbortCondition = null;
+		
 		public VBLanguage()
 		{
 		}
@@ -47,6 +55,73 @@ namespace ICSharpCode.ILSpy.VB
 		public override void WriteCommentLine(ITextOutput output, string comment)
 		{
 			output.WriteLine("' " + comment);
+		}
+		
+		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
+		{
+			WriteCommentLine(output, TypeToString(method.DeclaringType, includeNamespace: true));
+			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: method.DeclaringType, isSingleMember: true);
+			codeDomBuilder.AddMethod(method);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+		}
+		
+		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
+		{
+			WriteCommentLine(output, TypeToString(property.DeclaringType, includeNamespace: true));
+			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: property.DeclaringType, isSingleMember: true);
+			codeDomBuilder.AddProperty(property);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+		}
+		
+		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
+		{
+			WriteCommentLine(output, TypeToString(field.DeclaringType, includeNamespace: true));
+			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: field.DeclaringType, isSingleMember: true);
+			codeDomBuilder.AddField(field);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+		}
+		
+		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
+		{
+			WriteCommentLine(output, TypeToString(ev.DeclaringType, includeNamespace: true));
+			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: ev.DeclaringType, isSingleMember: true);
+			codeDomBuilder.AddEvent(ev);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+		}
+		
+		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
+		{
+			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
+			codeDomBuilder.AddType(type);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+		}
+		
+		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options)
+		{
+			astBuilder.RunTransformations(transformAbortCondition);
+			if (options.DecompilerSettings.ShowXmlDocumentation)
+				AddXmlDocTransform.Run(astBuilder.CompilationUnit);
+			var unit = astBuilder.CompilationUnit.AcceptVisitor(new CSharpToVBConverterVisitor(), null);
+			var outputFormatter = new VBTextOutputFormatter(output);
+			var formattingPolicy = new VBFormattingOptions();
+			unit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
+		}
+		
+		AstBuilder CreateAstBuilder(DecompilationOptions options, ModuleDefinition currentModule = null, TypeDefinition currentType = null, bool isSingleMember = false)
+		{
+			if (currentModule == null)
+				currentModule = currentType.Module;
+			DecompilerSettings settings = options.DecompilerSettings;
+			if (isSingleMember) {
+				settings = settings.Clone();
+				settings.UsingDeclarations = false;
+			}
+			return new AstBuilder(
+				new DecompilerContext(currentModule) {
+					CancellationToken = options.CancellationToken,
+					CurrentType = currentType,
+					Settings = settings
+				});
 		}
 	}
 }

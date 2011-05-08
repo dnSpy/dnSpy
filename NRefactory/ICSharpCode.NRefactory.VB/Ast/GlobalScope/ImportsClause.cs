@@ -73,7 +73,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitMembersImportsClause(this, data);
+			return visitor.VisitMemberImportsClause(this, data);
 		}
 		
 		public override string ToString()

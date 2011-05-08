@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.VB.Ast;
@@ -20,6 +22,18 @@ namespace ICSharpCode.NRefactory.VB
 		
 		readonly Stack<AstNode> containerStack = new Stack<AstNode>();
 		readonly Stack<AstNode> positionStack = new Stack<AstNode>();
+		
+		/// <summary>
+		/// Used to insert the minimal amount of spaces so that the lexer recognizes the tokens that were written.
+		/// </summary>
+		LastWritten lastWritten;
+		
+		enum LastWritten
+		{
+			Whitespace,
+			Other,
+			KeywordOrIdentifier
+		}
 		
 		public OutputVisitor(TextWriter textWriter, VBFormattingOptions formattingPolicy)
 		{
@@ -41,7 +55,7 @@ namespace ICSharpCode.NRefactory.VB
 			this.policy = formattingPolicy;
 		}
 		
-		public object VisitCompilationUnit(ICSharpCode.NRefactory.VB.Ast.CompilationUnit compilationUnit, object data)
+		public object VisitCompilationUnit(CompilationUnit compilationUnit, object data)
 		{
 			// don't do node tracking as we visit all children directly
 			foreach (AstNode node in compilationUnit.Children)
@@ -91,17 +105,41 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitImportsStatement(ImportsStatement importsStatement, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(importsStatement);
+			
+			WriteKeyword("Imports", AstNode.Roles.Keyword);
+			Space();
+			WriteCommaSeparatedList(importsStatement.ImportsClauses);
+			NewLine();
+			
+			return EndNode(importsStatement);
 		}
 		
-		public object VisitMembersImportsClause(MemberImportsClause membersImportsClause, object data)
+		public object VisitMemberImportsClause(MemberImportsClause memberImportsClause, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(memberImportsClause);
+			memberImportsClause.Member.AcceptVisitor(this, data);
+			return EndNode(memberImportsClause);
 		}
 		
 		public object VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(namespaceDeclaration);
+			WriteKeyword("Namespace");
+			bool isFirst = true;
+			foreach (Identifier node in namespaceDeclaration.Identifiers) {
+				if (isFirst) {
+					isFirst = false;
+				} else {
+					WriteToken(".", NamespaceDeclaration.Roles.Dot);
+				}
+				node.AcceptVisitor(this, null);
+			}
+			NewLine();
+			WriteKeyword("End");
+			WriteKeyword("Namespace");
+			NewLine();
+			return EndNode(namespaceDeclaration);
 		}
 		
 		public object VisitOptionStatement(OptionStatement optionStatement, object data)
@@ -136,7 +174,10 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitIdentifier(Identifier identifier, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(identifier);
+			WriteIdentifier(identifier.Name);
+			WriteTypeCharacter(identifier.TypeCharacter);
+			return EndNode(identifier);
 		}
 		
 		public object VisitXmlIdentifier(XmlIdentifier xmlIdentifier, object data)
@@ -166,7 +207,14 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitQualifiedType(QualifiedType qualifiedType, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(qualifiedType);
+			
+			qualifiedType.Target.AcceptVisitor(this, data);
+			WriteToken(".", AstNode.Roles.Dot);
+			WriteIdentifier(qualifiedType.Name);
+			WriteTypeArguments(qualifiedType.TypeArguments);
+			
+			return EndNode(qualifiedType);
 		}
 		
 		public object VisitComposedType(ComposedType composedType, object data)
@@ -181,7 +229,12 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitSimpleType(SimpleType simpleType, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(simpleType);
+			
+			WriteIdentifier(simpleType.Identifier);
+			WriteTypeArguments(simpleType.TypeArguments);
+			
+			return EndNode(simpleType);
 		}
 		
 		public object VisitAnyNode(AnyNode anyNode, object data)
@@ -218,5 +271,434 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			throw new NotImplementedException();
 		}
+		
+		#region StartNode/EndNode
+		void StartNode(AstNode node)
+		{
+			// Ensure that nodes are visited in the proper nested order.
+			// Jumps to different subtrees are allowed only for the child of a placeholder node.
+			Debug.Assert(containerStack.Count == 0 || node.Parent == containerStack.Peek());
+			if (positionStack.Count > 0)
+				WriteSpecialsUpToNode(node);
+			containerStack.Push(node);
+			positionStack.Push(node.FirstChild);
+			formatter.StartNode(node);
+		}
+		
+		object EndNode(AstNode node)
+		{
+			Debug.Assert(node == containerStack.Peek());
+			AstNode pos = positionStack.Pop();
+			Debug.Assert(pos == null || pos.Parent == node);
+			WriteSpecials(pos, null);
+			containerStack.Pop();
+			formatter.EndNode(node);
+			return null;
+		}
+		#endregion
+		
+		#region WriteSpecials
+		/// <summary>
+		/// Writes all specials from start to end (exclusive). Does not touch the positionStack.
+		/// </summary>
+		void WriteSpecials(AstNode start, AstNode end)
+		{
+			for (AstNode pos = start; pos != end; pos = pos.NextSibling) {
+				if (pos.Role == AstNode.Roles.Comment) {
+					pos.AcceptVisitor(this, null);
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Writes all specials between the current position (in the positionStack) and the next
+		/// node with the specified role. Advances the current position.
+		/// </summary>
+		void WriteSpecialsUpToRole(Role role)
+		{
+			for (AstNode pos = positionStack.Peek(); pos != null; pos = pos.NextSibling) {
+				if (pos.Role == role) {
+					WriteSpecials(positionStack.Pop(), pos);
+					positionStack.Push(pos);
+					break;
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Writes all specials between the current position (in the positionStack) and the specified node.
+		/// Advances the current position.
+		/// </summary>
+		void WriteSpecialsUpToNode(AstNode node)
+		{
+			for (AstNode pos = positionStack.Peek(); pos != null; pos = pos.NextSibling) {
+				if (pos == node) {
+					WriteSpecials(positionStack.Pop(), pos);
+					positionStack.Push(pos);
+					break;
+				}
+			}
+		}
+		
+		void WriteSpecialsUpToRole(Role role, AstNode nextNode)
+		{
+			// Look for the role between the current position and the nextNode.
+			for (AstNode pos = positionStack.Peek(); pos != null && pos != nextNode; pos = pos.NextSibling) {
+				if (pos.Role == AstNode.Roles.Comma) {
+					WriteSpecials(positionStack.Pop(), pos);
+					positionStack.Push(pos);
+					break;
+				}
+			}
+		}
+		#endregion
+		
+		#region Comma
+		/// <summary>
+		/// Writes a comma.
+		/// </summary>
+		/// <param name="nextNode">The next node after the comma.</param>
+		/// <param name="noSpacesAfterComma">When set prevents printing a space after comma.</param>
+		void Comma(AstNode nextNode, bool noSpaceAfterComma = false)
+		{
+			WriteSpecialsUpToRole(AstNode.Roles.Comma, nextNode);
+			Space(); // TODO: Comma policy has changed.
+			formatter.WriteToken(",");
+			lastWritten = LastWritten.Other;
+			Space(!noSpaceAfterComma); // TODO: Comma policy has changed.
+		}
+		
+		void WriteCommaSeparatedList(IEnumerable<AstNode> list)
+		{
+			bool isFirst = true;
+			foreach (AstNode node in list) {
+				if (isFirst) {
+					isFirst = false;
+				} else {
+					Comma(node);
+				}
+				node.AcceptVisitor(this, null);
+			}
+		}
+		
+		void WriteCommaSeparatedListInParenthesis(IEnumerable<AstNode> list, bool spaceWithin)
+		{
+			LPar();
+			if (list.Any()) {
+				Space(spaceWithin);
+				WriteCommaSeparatedList(list);
+				Space(spaceWithin);
+			}
+			RPar();
+		}
+		
+		#if DOTNET35
+		void WriteCommaSeparatedList(IEnumerable<VariableInitializer> list)
+		{
+			WriteCommaSeparatedList(list);
+		}
+		
+		void WriteCommaSeparatedList(IEnumerable<AstType> list)
+		{
+			WriteCommaSeparatedList(list);
+		}
+		
+		void WriteCommaSeparatedListInParenthesis(IEnumerable<Expression> list, bool spaceWithin)
+		{
+			WriteCommaSeparatedListInParenthesis(list.SafeCast<Expression, AstNode>(), spaceWithin);
+		}
+		
+		void WriteCommaSeparatedListInParenthesis(IEnumerable<ParameterDeclaration> list, bool spaceWithin)
+		{
+			WriteCommaSeparatedListInParenthesis(list.SafeCast<ParameterDeclaration, AstNode>(), spaceWithin);
+		}
+
+		#endif
+
+		void WriteCommaSeparatedListInBrackets(IEnumerable<ParameterDeclaration> list, bool spaceWithin)
+		{
+			WriteToken("[", AstNode.Roles.LBracket);
+			if (list.Any()) {
+				Space(spaceWithin);
+				WriteCommaSeparatedList(list);
+				Space(spaceWithin);
+			}
+			WriteToken("]", AstNode.Roles.RBracket);
+		}
+
+		void WriteCommaSeparatedListInBrackets(IEnumerable<Expression> list)
+		{
+			WriteToken ("[", AstNode.Roles.LBracket);
+			if (list.Any ()) {
+				Space();
+				WriteCommaSeparatedList(list);
+				Space();
+			}
+			WriteToken ("]", AstNode.Roles.RBracket);
+		}
+		#endregion
+		
+		#region Write tokens
+		/// <summary>
+		/// Writes a keyword, and all specials up to
+		/// </summary>
+		void WriteKeyword(string keyword, Role<VBTokenNode> tokenRole = null)
+		{
+			WriteSpecialsUpToRole(tokenRole ?? AstNode.Roles.Keyword);
+			if (lastWritten == LastWritten.KeywordOrIdentifier)
+				formatter.Space();
+			formatter.WriteKeyword(keyword);
+			lastWritten = LastWritten.KeywordOrIdentifier;
+		}
+		
+		void WriteIdentifier(string identifier, Role<Identifier> identifierRole = null)
+		{
+			WriteSpecialsUpToRole(identifierRole ?? AstNode.Roles.Identifier);
+			if (IsKeyword(identifier, containerStack.Peek())) {
+				if (lastWritten == LastWritten.KeywordOrIdentifier)
+					Space(); // this space is not strictly required, so we call Space()
+				formatter.WriteToken("@");
+			} else if (lastWritten == LastWritten.KeywordOrIdentifier) {
+				formatter.Space(); // this space is strictly required, so we directly call the formatter
+			}
+			formatter.WriteIdentifier(identifier);
+			lastWritten = LastWritten.KeywordOrIdentifier;
+		}
+		
+		void WriteToken(string token, Role<VBTokenNode> tokenRole)
+		{
+			WriteSpecialsUpToRole(tokenRole);
+			// Avoid that two +, - or ? tokens are combined into a ++, -- or ?? token.
+			// Note that we don't need to handle tokens like = because there's no valid
+			// C# program that contains the single token twice in a row.
+			// (for +, - and &, this can happen with unary operators;
+			// for ?, this can happen in "a is int? ? b : c" or "a as int? ?? 0";
+			// and for /, this can happen with "1/ *ptr" or "1/ //comment".)
+//			if (lastWritten == LastWritten.Plus && token[0] == '+'
+//			    || lastWritten == LastWritten.Minus && token[0] == '-'
+//			    || lastWritten == LastWritten.Ampersand && token[0] == '&'
+//			    || lastWritten == LastWritten.QuestionMark && token[0] == '?'
+//			    || lastWritten == LastWritten.Division && token[0] == '*')
+//			{
+//				formatter.Space();
+//			}
+			formatter.WriteToken(token);
+//			if (token == "+")
+//				lastWritten = LastWritten.Plus;
+//			else if (token == "-")
+//				lastWritten = LastWritten.Minus;
+//			else if (token == "&")
+//				lastWritten = LastWritten.Ampersand;
+//			else if (token == "?")
+//				lastWritten = LastWritten.QuestionMark;
+//			else if (token == "/")
+//				lastWritten = LastWritten.Division;
+//			else
+			lastWritten = LastWritten.Other;
+		}
+		
+		void WriteTypeCharacter(TypeCode typeCharacter)
+		{
+			switch (typeCharacter) {
+				case TypeCode.Empty:
+				case TypeCode.Object:
+				case TypeCode.DBNull:
+				case TypeCode.Boolean:
+				case TypeCode.Char:
+					
+					break;
+				case TypeCode.SByte:
+					
+					break;
+				case TypeCode.Byte:
+					
+					break;
+				case TypeCode.Int16:
+					
+					break;
+				case TypeCode.UInt16:
+					
+					break;
+				case TypeCode.Int32:
+					WriteToken("%", null);
+					break;
+				case TypeCode.UInt32:
+					
+					break;
+				case TypeCode.Int64:
+					WriteToken("&", null);
+					break;
+				case TypeCode.UInt64:
+					
+					break;
+				case TypeCode.Single:
+					WriteToken("!", null);
+					break;
+				case TypeCode.Double:
+					WriteToken("#", null);
+					break;
+				case TypeCode.Decimal:
+					WriteToken("@", null);
+					break;
+				case TypeCode.DateTime:
+					
+					break;
+				case TypeCode.String:
+					WriteToken("$", null);
+					break;
+				default:
+					throw new Exception("Invalid value for TypeCode");
+			}
+		}
+		
+		void LPar()
+		{
+			WriteToken("(", AstNode.Roles.LPar);
+		}
+		
+		void RPar()
+		{
+			WriteToken(")", AstNode.Roles.LPar);
+		}
+		
+		/// <summary>
+		/// Writes a space depending on policy.
+		/// </summary>
+		void Space(bool addSpace = true)
+		{
+			if (addSpace) {
+				formatter.Space();
+				lastWritten = LastWritten.Whitespace;
+			}
+		}
+		
+		void NewLine()
+		{
+			formatter.NewLine();
+			lastWritten = LastWritten.Whitespace;
+		}
+		#endregion
+		
+		#region IsKeyword Test
+		static readonly HashSet<string> unconditionalKeywords = new HashSet<string> {
+			"AddHandler", "AddressOf", "Alias", "And", "AndAlso", "As", "Boolean", "ByRef", "Byte",
+			"ByVal", "Call", "Case", "Catch", "CBool", "CByte", "CChar", "CInt", "Class", "CLng",
+			"CObj", "Const", "Continue", "CSByte", "CShort", "CSng", "CStr", "CType", "CUInt",
+			"CULng", "CUShort", "Date", "Decimal", "Declare", "Default", "Delegate", "Dim",
+			"DirectCast", "Do", "Double", "Each", "Else", "ElseIf", "End", "EndIf", "Enum", "Erase",
+			"Error", "Event", "Exit", "False", "Finally", "For", "Friend", "Function", "Get",
+			"GetType", "GetXmlNamespace", "Global", "GoSub", "GoTo", "Handles", "If", "Implements",
+			"Imports", "In", "Inherits", "Integer", "Interface", "Is", "IsNot", "Let", "Lib", "Like",
+			"Long", "Loop", "Me", "Mod", "Module", "MustInherit", "MustOverride", "MyBase", "MyClass",
+			"Namespace", "Narrowing", "New", "Next", "Not", "Nothing", "NotInheritable", "NotOverridable",
+			"Object", "Of", "On", "Operator", "Option", "Optional", "Or", "OrElse", "Overloads",
+			"Overridable", "Overrides", "ParamArray", "Partial", "Private", "Property", "Protected",
+			"Public", "RaiseEvent", "ReadOnly", "ReDim", "REM", "RemoveHandler", "Resume", "Return",
+			"SByte", "Select", "Set", "Shadows", "Shared", "Short", "Single", "Static", "Step", "Stop",
+			"String", "Structure", "Sub", "SyncLock", "Then", "Throw", "To", "True", "Try", "TryCast",
+			"TypeOf", "UInteger", "ULong", "UShort", "Using", "Variant", "Wend", "When", "While",
+			"Widening", "With", "WithEvents", "WriteOnly", "Xor"
+		};
+		
+		static readonly HashSet<string> queryKeywords = new HashSet<string> {
+			
+		};
+		
+		/// <summary>
+		/// Determines whether the specified identifier is a keyword in the given context.
+		/// </summary>
+		public static bool IsKeyword(string identifier, AstNode context)
+		{
+			if (unconditionalKeywords.Contains(identifier))
+				return true;
+//			if (context.Ancestors.Any(a => a is QueryExpression)) {
+//				if (queryKeywords.Contains(identifier))
+//					return true;
+//			}
+			return false;
+		}
+		#endregion
+		
+		#region Write constructs
+		void WriteTypeArguments(IEnumerable<AstType> typeArguments)
+		{
+			if (typeArguments.Any()) {
+				LPar();
+				WriteKeyword("Of");
+				WriteCommaSeparatedList(typeArguments);
+				RPar();
+			}
+		}
+		
+		void WriteTypeParameters(IEnumerable<TypeParameterDeclaration> typeParameters)
+		{
+			if (typeParameters.Any()) {
+				LPar();
+				WriteKeyword("Of");
+				WriteCommaSeparatedList(typeParameters);
+				RPar();
+			}
+		}
+		
+		void WriteModifiers(IEnumerable<VBModifierToken> modifierTokens)
+		{
+			foreach (VBModifierToken modifier in modifierTokens) {
+				modifier.AcceptVisitor(this, null);
+			}
+		}
+		
+		void WriteQualifiedIdentifier(IEnumerable<Identifier> identifiers)
+		{
+			bool first = true;
+			foreach (Identifier ident in identifiers) {
+				if (first) {
+					first = false;
+					if (lastWritten == LastWritten.KeywordOrIdentifier)
+						formatter.Space();
+				} else {
+					WriteSpecialsUpToRole(AstNode.Roles.Dot, ident);
+					formatter.WriteToken(".");
+					lastWritten = LastWritten.Other;
+				}
+				WriteSpecialsUpToNode(ident);
+				formatter.WriteIdentifier(ident.Name);
+				lastWritten = LastWritten.KeywordOrIdentifier;
+			}
+		}
+		
+		void WriteEmbeddedStatement(Statement embeddedStatement)
+		{
+			if (embeddedStatement.IsNull)
+				return;
+			BlockStatement block = embeddedStatement as BlockStatement;
+			if (block != null)
+				VisitBlockStatement(block, null);
+			else
+				embeddedStatement.AcceptVisitor(this, null);
+		}
+		
+		void WriteMethodBody(BlockStatement body)
+		{
+			if (body.IsNull)
+				NewLine();
+			else
+				VisitBlockStatement(body, null);
+		}
+		
+		void WriteAttributes(IEnumerable<AttributeBlock> attributes)
+		{
+			foreach (AttributeBlock attr in attributes) {
+				attr.AcceptVisitor(this, null);
+			}
+		}
+		
+		void WritePrivateImplementationType(AstType privateImplementationType)
+		{
+			if (!privateImplementationType.IsNull) {
+				privateImplementationType.AcceptVisitor(this, null);
+				WriteToken(".", AstNode.Roles.Dot);
+			}
+		}
+		#endregion
 	}
 }

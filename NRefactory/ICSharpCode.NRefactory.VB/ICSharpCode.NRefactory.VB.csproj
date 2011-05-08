@@ -122,6 +122,7 @@
     <Compile Include="VBParser.cs" />
     <Compile Include="Visitors\AbstractAstTransformer.cs" />
     <Compile Include="Visitors\AbstractAstVisitor.cs" />
+    <Compile Include="Visitors\CSharpToVBConverterVisitor.cs" />
     <Compile Include="Visitors\NodeTrackingAstVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
