@@ -3,15 +3,31 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Ast;
 
 namespace ICSharpCode.NRefactory.VB.Visitors
 {
+	public interface IEnvironmentProvider
+	{
+		string RootNamespace { get; }
+		string GetTypeNameForAttribute(CSharp.Attribute attribute);
+	}
+	
 	/// <summary>
 	/// Description of CSharpToVBConverterVisitor.
 	/// </summary>
 	public class CSharpToVBConverterVisitor : CSharp.IAstVisitor<object, VB.AstNode>
 	{
+		IEnvironmentProvider provider;
+		
+		public CSharpToVBConverterVisitor(IEnvironmentProvider provider)
+		{
+			this.provider = provider;
+		}
+		
 		public AstNode VisitAnonymousMethodExpression(CSharp.AnonymousMethodExpression anonymousMethodExpression, object data)
 		{
 			throw new NotImplementedException();
@@ -234,12 +250,21 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitAttribute(CSharp.Attribute attribute, object data)
 		{
-			throw new NotImplementedException();
+			var attr = new VB.Ast.Attribute();
+			
+			// TODO : attribute targets
+			
+			attr.Type = (AstType)attribute.Type.AcceptVisitor(this, data);
+//			ConvertNodes(attribute.Arguments, attr.Arguments);
+			
+			return EndNode(attribute, attr);
 		}
 		
 		public AstNode VisitAttributeSection(CSharp.AttributeSection attributeSection, object data)
 		{
-			throw new NotImplementedException();
+			AttributeBlock block = new AttributeBlock();
+			ConvertNodes(attributeSection.Attributes, block.Attributes);
+			return EndNode(attributeSection, block);
 		}
 		
 		public AstNode VisitDelegateDeclaration(CSharp.DelegateDeclaration delegateDeclaration, object data)
@@ -260,6 +285,23 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		public AstNode VisitTypeDeclaration(CSharp.TypeDeclaration typeDeclaration, object data)
 		{
 			var type = new TypeDeclaration();
+			
+			CSharp.Attribute stdModAttr;
+			
+			if (typeDeclaration.ClassType == ClassType.Class && HasAttribute(typeDeclaration.Attributes, "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute", out stdModAttr)) {
+				type.ClassType = ClassType.Module;
+				// remove AttributeSection if only one attribute is present
+				var attrSec = (CSharp.AttributeSection)stdModAttr.Parent;
+				if (attrSec.Attributes.Count == 1)
+					attrSec.Remove();
+				else
+					stdModAttr.Remove();
+			} else
+				type.ClassType = typeDeclaration.ClassType;
+			
+			ConvertNodes(typeDeclaration.Attributes, type.Attributes);
+			
+			type.Name = new Identifier(typeDeclaration.Name, AstLocation.Empty);
 			
 			return EndNode(typeDeclaration, type);
 		}
@@ -619,6 +661,18 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		T EndNode<T>(CSharp.AstNode node, T result) where T : VB.AstNode
 		{
 			return result;
+		}
+		
+		bool HasAttribute(CSharp.AstNodeCollection<CSharp.AttributeSection> attributes, string name, out CSharp.Attribute foundAttribute)
+		{
+			foreach (var attr in attributes.SelectMany(a => a.Attributes)) {
+				if (provider.GetTypeNameForAttribute(attr) == name) {
+					foundAttribute = attr;
+					return true;
+				}
+			}
+			foundAttribute = null;
+			return false;
 		}
 	}
 }

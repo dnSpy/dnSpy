@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-
 using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.VB.Ast;
 
@@ -95,12 +94,28 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitAttribute(ICSharpCode.NRefactory.VB.Ast.Attribute attribute, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(attribute);
+			
+			if (!attribute.Target.IsNull) {
+				attribute.Target.AcceptVisitor(this, data);
+				WriteToken(":", VB.Ast.Attribute.TargetRole);
+			}
+			attribute.Type.AcceptVisitor(this, data);
+			WriteCommaSeparatedListInParenthesis(attribute.Arguments, false);
+			
+			return EndNode(attribute);
 		}
 		
 		public object VisitAttributeBlock(AttributeBlock attributeBlock, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(attributeBlock);
+			
+			WriteToken("<", AttributeBlock.Roles.LChevron);
+			WriteCommaSeparatedList(attributeBlock.Attributes);
+			WriteToken(">", AttributeBlock.Roles.RChevron);
+			NewLine();
+			
+			return EndNode(attributeBlock);
 		}
 		
 		public object VisitImportsStatement(ImportsStatement importsStatement, object data)
@@ -136,6 +151,17 @@ namespace ICSharpCode.NRefactory.VB
 				node.AcceptVisitor(this, null);
 			}
 			NewLine();
+			Indent();
+			isFirst = true;
+			foreach (var member in namespaceDeclaration.Members) {
+				if (isFirst) {
+					isFirst = false;
+				} else {
+					NewLine();
+				}
+				member.AcceptVisitor(this, data);
+			}
+			Unindent();
 			WriteKeyword("End");
 			WriteKeyword("Namespace");
 			NewLine();
@@ -149,7 +175,40 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(typeDeclaration);
+			WriteAttributes(typeDeclaration.Attributes);
+			WriteModifiers(typeDeclaration.ModifierTokens);
+			WriteClassTypeKeyword(typeDeclaration);
+			WriteIdentifier(typeDeclaration.Name.Name);
+			NewLine();
+			
+			WriteKeyword("End");
+			WriteClassTypeKeyword(typeDeclaration);
+			NewLine();
+			return EndNode(typeDeclaration);
+		}
+
+		void WriteClassTypeKeyword(TypeDeclaration typeDeclaration)
+		{
+			switch (typeDeclaration.ClassType) {
+				case ICSharpCode.NRefactory.TypeSystem.ClassType.Class:
+					WriteKeyword("Class");
+					break;
+				case ICSharpCode.NRefactory.TypeSystem.ClassType.Enum:
+					break;
+				case ICSharpCode.NRefactory.TypeSystem.ClassType.Interface:
+					break;
+				case ICSharpCode.NRefactory.TypeSystem.ClassType.Struct:
+					WriteKeyword("Structure");
+					break;
+				case ICSharpCode.NRefactory.TypeSystem.ClassType.Delegate:
+					break;
+				case ICSharpCode.NRefactory.TypeSystem.ClassType.Module:
+					WriteKeyword("Module");
+					break;
+				default:
+					throw new Exception("Invalid value for ClassType");
+			}
 		}
 		
 		public object VisitXmlNamespaceImportsClause(XmlNamespaceImportsClause xmlNamespaceImportsClause, object data)
@@ -362,7 +421,6 @@ namespace ICSharpCode.NRefactory.VB
 		void Comma(AstNode nextNode, bool noSpaceAfterComma = false)
 		{
 			WriteSpecialsUpToRole(AstNode.Roles.Comma, nextNode);
-			Space(); // TODO: Comma policy has changed.
 			formatter.WriteToken(",");
 			lastWritten = LastWritten.Other;
 			Space(!noSpaceAfterComma); // TODO: Comma policy has changed.
@@ -576,6 +634,16 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			formatter.NewLine();
 			lastWritten = LastWritten.Whitespace;
+		}
+		
+		void Indent()
+		{
+			formatter.Indent();
+		}
+		
+		void Unindent()
+		{
+			formatter.Unindent();
 		}
 		#endregion
 		

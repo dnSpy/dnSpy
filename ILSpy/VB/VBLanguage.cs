@@ -18,6 +18,8 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Linq;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
@@ -101,7 +103,7 @@ namespace ICSharpCode.ILSpy.VB
 			astBuilder.RunTransformations(transformAbortCondition);
 			if (options.DecompilerSettings.ShowXmlDocumentation)
 				AddXmlDocTransform.Run(astBuilder.CompilationUnit);
-			var unit = astBuilder.CompilationUnit.AcceptVisitor(new CSharpToVBConverterVisitor(), null);
+			var unit = astBuilder.CompilationUnit.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider()), null);
 			var outputFormatter = new VBTextOutputFormatter(output);
 			var formattingPolicy = new VBFormattingOptions();
 			unit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
@@ -122,6 +124,23 @@ namespace ICSharpCode.ILSpy.VB
 					CurrentType = currentType,
 					Settings = settings
 				});
+		}
+	}
+	
+	public class ILSpyEnvironmentProvider : IEnvironmentProvider
+	{
+		public string RootNamespace {
+			get {
+				return "";
+			}
+		}
+		
+		public string GetTypeNameForAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute)
+		{
+			return attribute.Type.Annotations
+				.OfType<Mono.Cecil.MemberReference>()
+				.First()
+				.FullName;
 		}
 	}
 }
