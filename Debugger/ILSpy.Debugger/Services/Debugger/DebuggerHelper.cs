@@ -12,7 +12,7 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.ILSpy.Debugger.Services.Debugger
 {
-	public static class DebuggerHelpers
+	static class DebuggerHelpers
 	{
 		/// <summary>
 		/// Creates an expression which, when evaluated, creates a List&lt;T&gt; in the debugee

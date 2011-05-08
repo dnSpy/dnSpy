@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Resources;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xaml;
@@ -33,7 +32,6 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.ILSpy.Baml;
-using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 

@@ -22,8 +22,6 @@ using System.Linq;
 using System.Windows.Media;
 
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.Debugger;
-using ICSharpCode.ILSpy.Debugger.AvalonEdit;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes

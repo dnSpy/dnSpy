@@ -18,11 +18,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
-using ICSharpCode.ILSpy.Debugger;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy

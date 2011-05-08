@@ -19,9 +19,9 @@ using Mono.Cecil;
 namespace ICSharpCode.ILSpy.Debugger.Services
 {
 	/// <summary>
-	/// Extension methods used in SharpDevelop.
+	/// Extension methods used in ILSpy debugger.
 	/// </summary>
-	public static class ExtensionMethods
+	static class ExtensionMethods
 	{
 		/// <summary>
 		/// Raises the event.

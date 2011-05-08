@@ -9,7 +9,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services.Debugger
 	/// ListHelper wraps System.Collection.Generic.List methods to return the original list,
 	/// instead of returning 'void', so we can write eg. list.Sorted().First()
 	/// </summary>
-	public static class ListHelper
+	static class ListHelper
 	{
 		public static List<T> Sorted<T>(this List<T> list, IComparer<T> comparer)
 		{

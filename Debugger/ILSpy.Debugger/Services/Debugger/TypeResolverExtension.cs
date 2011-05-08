@@ -11,7 +11,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services.Debugger
 	/// <summary>
 	/// Helper for obtaining information about DebugType.
 	/// </summary>
-	public static class TypeResolverExtension
+	static class TypeResolverExtension
 	{
 		/// <summary>
 		/// Gets generic interface this type implements.

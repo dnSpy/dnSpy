@@ -34,13 +34,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			Cancel = 2
 		}
 		
-		bool useRemotingForThreadInterop = false;
 		bool attached;
-		
 		NDebugger debugger;
-		
 		ICorPublish corPublish;
-		
 		Process debuggedProcess;
 		
 		//DynamicTreeDebuggerRow currentTooltipRow;
@@ -512,12 +508,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public void InitializeService()
 		{
-			if (useRemotingForThreadInterop) {
-				// This needs to be called before instance of NDebugger is created
-				string path = RemotingConfigurationHelpper.GetLoadedAssemblyPath("Debugger.Core.dll");
-				new RemotingConfigurationHelpper(path).Configure();
-			}
-			
 			debugger = new NDebugger();
 			
 			//debugger.Options = DebuggingOptions.Instance;
