@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	{
 		private readonly MethodDefinition analyzedMethod;
 		private readonly ThreadingSupport threading;
-		private Lazy<Hashtable> foundMethods;
+		private Hashtable foundMethods;
 		private object hashLock = new object();
 
 		public AnalyzedMethodUsedByTreeNode(MethodDefinition analyzedMethod)
@@ -69,7 +69,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);
+			foundMethods = new Hashtable();
 
 			var analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
@@ -109,12 +109,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool HasAlreadyBeenFound(MethodDefinition method)
 		{
-			Hashtable hashtable = foundMethods.Value;
 			lock (hashLock) {
-				if (hashtable.Contains(method)) {
+				if (foundMethods.Contains(method)) {
 					return true;
 				} else {
-					hashtable.Add(method, null);
+					foundMethods.Add(method, null);
 					return false;
 				}
 			}
