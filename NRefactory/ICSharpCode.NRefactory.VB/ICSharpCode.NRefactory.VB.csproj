@@ -47,7 +47,10 @@
     <Compile Include="Ast\AstNode.cs" />
     <Compile Include="Ast\AstNodeCollection.cs" />
     <Compile Include="Ast\Enums.cs" />
+    <Compile Include="Ast\Expressions\AddressOfExpression.cs" />
     <Compile Include="Ast\Expressions\Expression.cs" />
+    <Compile Include="Ast\Expressions\InstanceExpression.cs" />
+    <Compile Include="Ast\Expressions\ParenthesizedExpression.cs" />
     <Compile Include="Ast\Expressions\SimpleNameExpression.cs" />
     <Compile Include="Ast\Expressions\PrimitiveExpression.cs" />
     <Compile Include="Ast\Expressions\XmlIdentifier.cs" />

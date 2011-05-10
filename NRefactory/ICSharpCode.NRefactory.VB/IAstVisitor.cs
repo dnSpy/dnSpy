@@ -35,6 +35,9 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitXmlLiteralString(XmlLiteralString xmlLiteralString, T data);
 		S VisitSimpleNameExpression(SimpleNameExpression identifierExpression, T data);
 		S VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, T data);
+		S VisitInstanceExpression(InstanceExpression instanceExpression, T data);
+		S VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, T data);
+		S VisitAddressOfExpression(AddressOfExpression addressOfExpression, T data);
 		
 		// TypeName
 		S VisitPrimitiveType(PrimitiveType primitiveType, T data);

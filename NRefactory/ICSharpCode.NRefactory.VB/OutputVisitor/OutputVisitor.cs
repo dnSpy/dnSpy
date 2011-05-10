@@ -249,9 +249,14 @@ namespace ICSharpCode.NRefactory.VB
 			throw new NotImplementedException();
 		}
 		
-		public object VisitSimpleNameExpression(SimpleNameExpression identifierExpression, object data)
+		public object VisitSimpleNameExpression(SimpleNameExpression simpleNameExpression, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(simpleNameExpression);
+			
+			simpleNameExpression.Identifier.AcceptVisitor(this, data);
+			WriteTypeArguments(simpleNameExpression.TypeArguments);
+			
+			return EndNode(simpleNameExpression);
 		}
 		
 		public object VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, object data)
@@ -259,6 +264,49 @@ namespace ICSharpCode.NRefactory.VB
 			throw new NotImplementedException();
 		}
 		
+		public object VisitInstanceExpression(InstanceExpression instanceExpression, object data)
+		{
+			StartNode(instanceExpression);
+			
+			switch (instanceExpression.Type) {
+				case InstanceExpressionType.Me:
+					WriteKeyword("Me");
+					break;
+				case InstanceExpressionType.MyBase:
+					WriteKeyword("MyBase");
+					break;
+				case InstanceExpressionType.MyClass:
+					WriteKeyword("MyClass");
+					break;
+				default:
+					throw new Exception("Invalid value for InstanceExpressionType");
+			}
+			
+			return EndNode(instanceExpression);
+		}
+		
+		public object VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
+		{
+			StartNode(parenthesizedExpression);
+			
+			LPar();
+			parenthesizedExpression.Expression.AcceptVisitor(this, data);
+			RPar();
+			
+			return EndNode(parenthesizedExpression);
+		}
+		
+		public object VisitAddressOfExpression(AddressOfExpression addressOfExpression, object data)
+		{
+			StartNode(addressOfExpression);
+			
+			WriteKeyword("AddressOf");
+			addressOfExpression.Expression.AcceptVisitor(this, data);
+			
+			return EndNode(addressOfExpression);
+		}
+		
+		#region TypeName
 		public object VisitPrimitiveType(PrimitiveType primitiveType, object data)
 		{
 			throw new NotImplementedException();
@@ -295,7 +343,9 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(simpleType);
 		}
+		#endregion
 		
+		#region Pattern Matching
 		public object VisitAnyNode(AnyNode anyNode, object data)
 		{
 			throw new NotImplementedException();
@@ -330,6 +380,7 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			throw new NotImplementedException();
 		}
+		#endregion
 		
 		#region StartNode/EndNode
 		void StartNode(AstNode node)

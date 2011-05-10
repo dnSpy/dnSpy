@@ -6,27 +6,29 @@ using System;
 namespace ICSharpCode.NRefactory.VB.Ast
 {
 	/// <summary>
-	/// Description of SimpleNameExpression.
+	/// Description of ParenthesizedExpression.
 	/// </summary>
-	public class SimpleNameExpression : Expression
+	public class ParenthesizedExpression : Expression
 	{
-		public Identifier Identifier { get; set; }
+		public ParenthesizedExpression()
+		{
+		}
 		
-		public AstNodeCollection<AstType> TypeArguments {
-			get { return GetChildrenByRole (Roles.TypeArgument); }
+		public Expression Expression {
+			get { return GetChildByRole(Roles.Expression); }
+			set { SetChildByRole(Roles.Expression, value); }
 		}
 		
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)
 		{
-			var node = other as SimpleNameExpression;
-			return node != null
-				&& Identifier.DoMatch(node.Identifier, match)
-				&& TypeArguments.DoMatch(node.TypeArguments, match);
+			var expr = other as ParenthesizedExpression;
+			return expr != null &&
+				Expression.DoMatch(expr.Expression, match);
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitSimpleNameExpression(this, data);
+			return visitor.VisitParenthesizedExpression(this, data);
 		}
 	}
 }

@@ -60,7 +60,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitBaseReferenceExpression(CSharp.BaseReferenceExpression baseReferenceExpression, object data)
 		{
-			throw new NotImplementedException();
+			InstanceExpression result = new InstanceExpression(InstanceExpressionType.MyBase, ConvertLocation(baseReferenceExpression.StartLocation));
+			
+			return EndNode(baseReferenceExpression, result);
 		}
 		
 		public AstNode VisitBinaryOperatorExpression(CSharp.BinaryOperatorExpression binaryOperatorExpression, object data)
@@ -145,7 +147,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitParenthesizedExpression(CSharp.ParenthesizedExpression parenthesizedExpression, object data)
 		{
-			throw new NotImplementedException();
+			var result = new ParenthesizedExpression();
+			
+			result.Expression = (Expression)parenthesizedExpression.Expression.AcceptVisitor(this, data);
+			
+			return EndNode(parenthesizedExpression, result);
 		}
 		
 		public AstNode VisitPointerReferenceExpression(CSharp.PointerReferenceExpression pointerReferenceExpression, object data)
@@ -170,7 +176,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitThisReferenceExpression(CSharp.ThisReferenceExpression thisReferenceExpression, object data)
 		{
-			throw new NotImplementedException();
+			InstanceExpression result = new InstanceExpression(InstanceExpressionType.Me, ConvertLocation(thisReferenceExpression.StartLocation));
+			
+			return EndNode(thisReferenceExpression, result);
 		}
 		
 		public AstNode VisitTypeOfExpression(CSharp.TypeOfExpression typeOfExpression, object data)
