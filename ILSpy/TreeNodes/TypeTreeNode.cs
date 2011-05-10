@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		readonly TypeDefinition type;
 		readonly AssemblyTreeNode parentAssemblyNode;
-		
+
 		public TypeTreeNode(TypeDefinition type, AssemblyTreeNode parentAssemblyNode)
 		{
 			if (parentAssemblyNode == null)
@@ -41,29 +41,36 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.parentAssemblyNode = parentAssemblyNode;
 			this.LazyLoading = true;
 		}
-		
-		public TypeDefinition TypeDefinition {
+
+		public TypeDefinition TypeDefinition
+		{
 			get { return type; }
 		}
-		
-		public AssemblyTreeNode ParentAssemblyNode {
+
+		public AssemblyTreeNode ParentAssemblyNode
+		{
 			get { return parentAssemblyNode; }
 		}
-		
-		public string Name {
+
+		public string Name
+		{
 			get { return type.Name; }
 		}
-		
-		public string Namespace {
+
+		public string Namespace
+		{
 			get { return type.Namespace; }
 		}
-		
-		public override object Text {
+
+		public override object Text
+		{
 			get { return HighlightSearchMatch(this.Language.TypeToString(type, includeNamespace: false)); }
 		}
-		
-		public bool IsPublicAPI {
-			get {
+
+		public bool IsPublicAPI
+		{
+			get
+			{
 				switch (type.Attributes & TypeAttributes.VisibilityMask) {
 					case TypeAttributes.Public:
 					case TypeAttributes.NestedPublic:
@@ -75,7 +82,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				}
 			}
 		}
-		
+
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			if (!settings.ShowInternalApi && !IsPublicAPI)
@@ -89,7 +96,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FilterResult.Recurse;
 			}
 		}
-		
+
 		protected override void LoadChildren()
 		{
 			if (type.BaseType != null || type.HasInterfaces)
@@ -102,7 +109,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (FieldDefinition field in type.Fields.OrderBy(m => m.Name)) {
 				this.Children.Add(new FieldTreeNode(field));
 			}
-			
+
 			foreach (PropertyDefinition property in type.Properties.OrderBy(m => m.Name)) {
 				this.Children.Add(new PropertyTreeNode(property));
 			}
@@ -116,7 +123,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				}
 			}
 		}
-		
+
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.DecompileType(type, output, options);
@@ -188,15 +195,20 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		private static bool IsStaticClass(TypeDefinition type)
 		{
-			if(type.IsSealed)
-				return !type.Methods.Where(m => m.Name == ".ctor").Any(m => !m.IsPrivate);
+			if (type.IsSealed) {
+				if (type.IsAbstract)
+					return true;
+				else
+					return !type.Methods.Where(m => m.Name == ".ctor").Any(m => !m.IsPrivate);
+			}
 
 			return false;
 		}
 
 		#endregion
-		
-		MemberReference IMemberTreeNode.Member {
+
+		MemberReference IMemberTreeNode.Member
+		{
 			get { return type; }
 		}
 	}
