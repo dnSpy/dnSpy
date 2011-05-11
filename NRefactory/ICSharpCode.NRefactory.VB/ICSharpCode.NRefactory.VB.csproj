@@ -49,10 +49,15 @@
     <Compile Include="Ast\Enums.cs" />
     <Compile Include="Ast\Expressions\AddressOfExpression.cs" />
     <Compile Include="Ast\Expressions\Expression.cs" />
+    <Compile Include="Ast\Expressions\GetTypeExpression.cs" />
+    <Compile Include="Ast\Expressions\GetXmlNamespaceExpression.cs" />
     <Compile Include="Ast\Expressions\InstanceExpression.cs" />
+    <Compile Include="Ast\Expressions\MemberAccessExpression.cs" />
     <Compile Include="Ast\Expressions\ParenthesizedExpression.cs" />
     <Compile Include="Ast\Expressions\SimpleNameExpression.cs" />
     <Compile Include="Ast\Expressions\PrimitiveExpression.cs" />
+    <Compile Include="Ast\Expressions\TypeOfIsExpression.cs" />
+    <Compile Include="Ast\Expressions\TypeReferenceExpression.cs" />
     <Compile Include="Ast\Expressions\XmlIdentifier.cs" />
     <Compile Include="Ast\Expressions\XmlLiteralString.cs" />
     <Compile Include="Ast\General\Attribute.cs" />

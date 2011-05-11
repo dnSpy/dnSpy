@@ -38,6 +38,11 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitInstanceExpression(InstanceExpression instanceExpression, T data);
 		S VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, T data);
 		S VisitAddressOfExpression(AddressOfExpression addressOfExpression, T data);
+		S VisitGetTypeExpression(GetTypeExpression getTypeExpression, T data);
+		S VisitTypeOfIsExpression(TypeOfIsExpression typeOfIsExpression, T data);
+		S VisitGetXmlNamespaceExpression(GetXmlNamespaceExpression getXmlNamespaceExpression, T data);
+		S VisitMemberAccessExpression(MemberAccessExpression memberAccessExpression, T data);
+		S VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, T data);
 		
 		// TypeName
 		S VisitPrimitiveType(PrimitiveType primitiveType, T data);

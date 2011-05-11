@@ -122,7 +122,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitMemberReferenceExpression(CSharp.MemberReferenceExpression memberReferenceExpression, object data)
 		{
-			throw new NotImplementedException();
+			var memberAccessExpression = new MemberAccessExpression();
+			
+			memberAccessExpression.Target = (Expression)memberReferenceExpression.Target.AcceptVisitor(this, data);
+			memberAccessExpression.Member = new Identifier(memberReferenceExpression.MemberName, AstLocation.Empty);
+			ConvertNodes(memberReferenceExpression.TypeArguments, memberAccessExpression.TypeArguments);
+			
+			return EndNode(memberReferenceExpression, memberAccessExpression);
 		}
 		
 		public AstNode VisitNamedArgumentExpression(CSharp.NamedArgumentExpression namedArgumentExpression, object data)
@@ -161,7 +167,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitPrimitiveExpression(CSharp.PrimitiveExpression primitiveExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new PrimitiveExpression(primitiveExpression.Value);
+			
+			return EndNode(primitiveExpression, expr);
 		}
 		
 		public AstNode VisitSizeOfExpression(CSharp.SizeOfExpression sizeOfExpression, object data)
@@ -188,7 +196,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitTypeReferenceExpression(CSharp.TypeReferenceExpression typeReferenceExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new TypeReferenceExpression((AstType)typeReferenceExpression.Type.AcceptVisitor(this, data));
+			return EndNode(typeReferenceExpression, expr);
 		}
 		
 		public AstNode VisitUnaryOperatorExpression(CSharp.UnaryOperatorExpression unaryOperatorExpression, object data)
@@ -263,7 +272,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			// TODO : attribute targets
 			
 			attr.Type = (AstType)attribute.Type.AcceptVisitor(this, data);
-//			ConvertNodes(attribute.Arguments, attr.Arguments);
+			ConvertNodes(attribute.Arguments, attr.Arguments);
 			
 			return EndNode(attribute, attr);
 		}

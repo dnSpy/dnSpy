@@ -13,7 +13,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		public Identifier Identifier { get; set; }
 		
 		public AstNodeCollection<AstType> TypeArguments {
-			get { return GetChildrenByRole (Roles.TypeArgument); }
+			get { return GetChildrenByRole(Roles.TypeArgument); }
 		}
 		
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)
