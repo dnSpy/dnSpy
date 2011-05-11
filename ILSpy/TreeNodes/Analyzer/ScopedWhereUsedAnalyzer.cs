@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	/// <summary>
 	/// Determines the accessibility domain of a member for where-used analysis.
 	/// </summary>
-	internal class ScopedWhereUsedScopeAnalyzer<T>
+	internal class ScopedWhereUsedAnalyzer<T>
 	{
 		private AssemblyDefinition assemblyScope;
 		private TypeDefinition typeScope;
@@ -37,20 +37,20 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private Accessibility typeAccessibility = Accessibility.Public;
 		private Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction;
 
-		public ScopedWhereUsedScopeAnalyzer(TypeDefinition type, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+		public ScopedWhereUsedAnalyzer(TypeDefinition type, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
 		{
 			this.typeScope = type;
 			this.assemblyScope = type.Module.Assembly;
 			this.typeAnalysisFunction = typeAnalysisFunction;
 		}
 
-		public ScopedWhereUsedScopeAnalyzer(MethodDefinition method, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+		public ScopedWhereUsedAnalyzer(MethodDefinition method, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
 			: this(method.DeclaringType, typeAnalysisFunction)
 		{
 			this.memberAccessibility = GetMethodAccessibility(method);
 		}
 
-		public ScopedWhereUsedScopeAnalyzer(PropertyDefinition property, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+		public ScopedWhereUsedAnalyzer(PropertyDefinition property, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
 			: this(property.DeclaringType, typeAnalysisFunction)
 		{
 			Accessibility getterAccessibility = (property.GetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.memberAccessibility = (Accessibility)Math.Max((int)getterAccessibility, (int)setterAccessibility);
 		}
 
-		public ScopedWhereUsedScopeAnalyzer(EventDefinition eventDef, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+		public ScopedWhereUsedAnalyzer(EventDefinition eventDef, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
 			: this(eventDef.DeclaringType, typeAnalysisFunction)
 		{
 			// we only have to check the accessibility of the the get method
@@ -66,7 +66,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.memberAccessibility = GetMethodAccessibility(eventDef.AddMethod);
 		}
 
-		public ScopedWhereUsedScopeAnalyzer(FieldDefinition field, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+		public ScopedWhereUsedAnalyzer(FieldDefinition field, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
 			: this(field.DeclaringType, typeAnalysisFunction)
 		{
 			switch (field.Attributes & FieldAttributes.FieldAccessMask) {

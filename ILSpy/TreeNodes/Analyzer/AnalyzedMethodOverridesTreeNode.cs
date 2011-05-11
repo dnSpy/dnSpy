@@ -73,9 +73,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
+			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
 
-			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
+			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct);
 		}
 

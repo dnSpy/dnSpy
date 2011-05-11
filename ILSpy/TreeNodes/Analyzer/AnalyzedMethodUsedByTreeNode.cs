@@ -71,7 +71,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			foundMethods = new Hashtable();
 
-			var analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
+			var analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
 			}
