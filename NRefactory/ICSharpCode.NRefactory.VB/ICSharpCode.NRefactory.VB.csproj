@@ -64,6 +64,8 @@
     <Compile Include="Ast\General\AttributeBlock.cs" />
     <Compile Include="Ast\General\AttributedNode.cs" />
     <Compile Include="Ast\General\CompilationUnit.cs" />
+    <Compile Include="Ast\General\EventMemberSpecifier.cs" />
+    <Compile Include="Ast\General\InterfaceMemberSpecifier.cs" />
     <Compile Include="Ast\General\ParameterDeclaration.cs" />
     <Compile Include="Ast\General\TypeParameterDeclaration.cs" />
     <Compile Include="Ast\Generated.cs" />
@@ -79,6 +81,8 @@
     <Compile Include="Ast\INullable.cs" />
     <Compile Include="Ast\Statements\BlockStatement.cs" />
     <Compile Include="Ast\Statements\Statement.cs" />
+    <Compile Include="Ast\TypeMembers\ConstructorDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\MethodDeclaration.cs" />
     <Compile Include="Ast\TypeName\AstType.cs" />
     <Compile Include="Ast\TypeName\ComposedType.cs" />
     <Compile Include="Ast\TypeName\PrimitiveType.cs" />
@@ -139,6 +143,7 @@
     <Folder Include="Ast\General" />
     <Folder Include="Ast\GlobalScope" />
     <Folder Include="Ast\Expressions" />
+    <Folder Include="Ast\TypeMembers" />
     <Folder Include="Ast\Statements" />
     <Folder Include="Ast\TypeName" />
     <Folder Include="Lexer" />

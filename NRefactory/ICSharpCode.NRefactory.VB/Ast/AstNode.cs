@@ -676,7 +676,7 @@ namespace ICSharpCode.NRefactory.VB
 			public static readonly Role<XmlIdentifier> XmlIdentifier = new Role<XmlIdentifier>("XmlIdentifier", Ast.XmlIdentifier.Null);
 			public static readonly Role<XmlLiteralString> XmlLiteralString = new Role<XmlLiteralString>("XmlLiteralString", Ast.XmlLiteralString.Null);
 			
-//			public static readonly Role<BlockStatement> Body = new Role<BlockStatement>("Body", CSharp.BlockStatement.Null);
+			public static readonly Role<BlockStatement> Body = new Role<BlockStatement>("Body", Ast.BlockStatement.Null);
 			public static readonly Role<ParameterDeclaration> Parameter = new Role<ParameterDeclaration>("Parameter");
 			public static readonly Role<Expression> Argument = new Role<Expression>("Argument", Ast.Expression.Null);
 			public static readonly Role<AstType> Type = new Role<AstType>("Type", AstType.Null);

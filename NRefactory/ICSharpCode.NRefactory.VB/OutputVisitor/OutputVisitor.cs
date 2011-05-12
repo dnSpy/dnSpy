@@ -87,7 +87,14 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitVBTokenNode(VBTokenNode vBTokenNode, object data)
 		{
-			throw new NotImplementedException();
+			var mod = vBTokenNode as VBModifierToken;
+			if (mod != null) {
+				StartNode(vBTokenNode);
+				WriteKeyword(VBModifierToken.GetModifierName(mod.Modifier));
+				return EndNode(vBTokenNode);
+			} else {
+				throw new NotSupportedException("Should never visit individual tokens");
+			}
 		}
 		
 		public object VisitAliasImportsClause(AliasImportsClause aliasImportsClause, object data)
@@ -154,17 +161,7 @@ namespace ICSharpCode.NRefactory.VB
 				node.AcceptVisitor(this, null);
 			}
 			NewLine();
-			Indent();
-			isFirst = true;
-			foreach (var member in namespaceDeclaration.Members) {
-				if (isFirst) {
-					isFirst = false;
-				} else {
-					NewLine();
-				}
-				member.AcceptVisitor(this, data);
-			}
-			Unindent();
+			WriteMembers(namespaceDeclaration.Members);
 			WriteKeyword("End");
 			WriteKeyword("Namespace");
 			NewLine();
@@ -184,6 +181,8 @@ namespace ICSharpCode.NRefactory.VB
 			WriteClassTypeKeyword(typeDeclaration);
 			WriteIdentifier(typeDeclaration.Name.Name);
 			NewLine();
+			
+			WriteMembers(typeDeclaration.Members);
 			
 			WriteKeyword("End");
 			WriteClassTypeKeyword(typeDeclaration);
@@ -349,6 +348,84 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(typeReferenceExpression);
 		}
+		
+		public object VisitEventMemberSpecifier(EventMemberSpecifier eventMemberSpecifier, object data)
+		{
+			StartNode(eventMemberSpecifier);
+			
+			eventMemberSpecifier.Target.AcceptVisitor(this, data);
+			WriteToken(".", EventMemberSpecifier.Roles.Dot);
+			eventMemberSpecifier.Member.AcceptVisitor(this, data);
+			
+			return EndNode(eventMemberSpecifier);
+		}
+		
+		public object VisitInterfaceMemberSpecifier(InterfaceMemberSpecifier interfaceMemberSpecifier, object data)
+		{
+			StartNode(interfaceMemberSpecifier);
+			
+			interfaceMemberSpecifier.Target.AcceptVisitor(this, data);
+			WriteToken(".", EventMemberSpecifier.Roles.Dot);
+			interfaceMemberSpecifier.Member.AcceptVisitor(this, data);
+			
+			return EndNode(interfaceMemberSpecifier);
+		}
+		
+		#region TypeMembers
+		public object VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, object data)
+		{
+			StartNode(constructorDeclaration);
+			
+			WriteAttributes(constructorDeclaration.Attributes);
+			WriteModifiers(constructorDeclaration.ModifierTokens);
+			WriteKeyword("Sub");
+			WriteKeyword("New");
+			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, false);
+			NewLine();
+			
+			// TODO Body
+			
+			WriteKeyword("End");
+			WriteKeyword("Sub");
+			NewLine();
+			
+			return EndNode(constructorDeclaration);
+		}
+		
+		public object VisitMethodDeclaration(MethodDeclaration methodDeclaration, object data)
+		{
+			StartNode(methodDeclaration);
+			
+			WriteAttributes(methodDeclaration.Attributes);
+			WriteModifiers(methodDeclaration.ModifierTokens);
+			if (methodDeclaration.IsSub)
+				WriteKeyword("Sub");
+			else
+				WriteKeyword("Function");
+			methodDeclaration.Name.AcceptVisitor(this, data);
+			WriteTypeParameters(methodDeclaration.TypeParameters);
+			WriteCommaSeparatedListInParenthesis(methodDeclaration.Parameters, false);
+			if (!methodDeclaration.IsSub) {
+				WriteKeyword("As");
+				WriteAttributes(methodDeclaration.ReturnTypeAttributes);
+				methodDeclaration.ReturnType.AcceptVisitor(this, data);
+			}
+			WriteHandlesClause(methodDeclaration.HandlesClause);
+			WriteImplementsClause(methodDeclaration.ImplementsClause);
+			NewLine();
+			
+			// TODO Body
+			
+			WriteKeyword("End");
+			if (methodDeclaration.IsSub)
+				WriteKeyword("Sub");
+			else
+				WriteKeyword("Function");
+			NewLine();
+			
+			return EndNode(methodDeclaration);
+		}
+		#endregion
 		
 		#region TypeName
 		public object VisitPrimitiveType(PrimitiveType primitiveType, object data)
@@ -840,12 +917,27 @@ namespace ICSharpCode.NRefactory.VB
 				embeddedStatement.AcceptVisitor(this, null);
 		}
 		
-		void WriteMethodBody(BlockStatement body)
+		void WriteBlock(BlockStatement body)
 		{
 			if (body.IsNull)
 				NewLine();
 			else
 				VisitBlockStatement(body, null);
+		}
+		
+		void WriteMembers(IEnumerable<AstNode> members)
+		{
+			Indent();
+			bool isFirst = true;
+			foreach (var member in members) {
+				if (isFirst) {
+					isFirst = false;
+				} else {
+					NewLine();
+				}
+				member.AcceptVisitor(this, null);
+			}
+			Unindent();
 		}
 		
 		void WriteAttributes(IEnumerable<AttributeBlock> attributes)
@@ -860,6 +952,22 @@ namespace ICSharpCode.NRefactory.VB
 			if (!privateImplementationType.IsNull) {
 				privateImplementationType.AcceptVisitor(this, null);
 				WriteToken(".", AstNode.Roles.Dot);
+			}
+		}
+		
+		void WriteImplementsClause(AstNodeCollection<InterfaceMemberSpecifier> implementsClause)
+		{
+			if (implementsClause.Any()) {
+				WriteKeyword("Implements");
+				WriteCommaSeparatedList(implementsClause);
+			}
+		}
+		
+		void WriteHandlesClause(AstNodeCollection<EventMemberSpecifier> handlesClause)
+		{
+			if (handlesClause.Any()) {
+				WriteKeyword("Handles");
+				WriteCommaSeparatedList(handlesClause);
 			}
 		}
 		

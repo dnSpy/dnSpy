@@ -14,6 +14,8 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, T data);
 		S VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, T data);
 		S VisitVBTokenNode(VBTokenNode vBTokenNode, T data);
+		S VisitEventMemberSpecifier(EventMemberSpecifier eventMemberSpecifier, T data);
+		S VisitInterfaceMemberSpecifier(InterfaceMemberSpecifier interfaceMemberSpecifier, T data);
 		
 		// Global scope
 		S VisitAliasImportsClause(AliasImportsClause aliasImportsClause, T data);
@@ -28,6 +30,10 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitEnumDeclaration(EnumDeclaration enumDeclaration, T data);
 		S VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, T data);
 		S VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, T data);
+		
+		// TypeMember scope
+		S VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, T data);
+		S VisitMethodDeclaration(MethodDeclaration methodDeclaration, T data);
 		
 		// Expression scope
 		S VisitIdentifier(Identifier identifier, T data);

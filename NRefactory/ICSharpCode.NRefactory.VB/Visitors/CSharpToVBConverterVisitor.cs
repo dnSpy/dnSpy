@@ -301,6 +301,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitTypeDeclaration(CSharp.TypeDeclaration typeDeclaration, object data)
 		{
+			// TODO add missing features!
 			var type = new TypeDeclaration();
 			
 			CSharp.Attribute stdModAttr;
@@ -317,8 +318,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				type.ClassType = typeDeclaration.ClassType;
 			
 			ConvertNodes(typeDeclaration.Attributes, type.Attributes);
+			ConvertNodes(typeDeclaration.ModifierTokens, type.ModifierTokens);
 			
 			type.Name = new Identifier(typeDeclaration.Name, AstLocation.Empty);
+			
+			ConvertNodes(typeDeclaration.Members, type.Members);
 			
 			return EndNode(typeDeclaration, type);
 		}
@@ -512,7 +516,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitConstructorDeclaration(CSharp.ConstructorDeclaration constructorDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			var result = new ConstructorDeclaration();
+			
+			ConvertNodes(constructorDeclaration.Attributes, result.Attributes);
+			ConvertNodes(constructorDeclaration.ModifierTokens, result.ModifierTokens);
+			ConvertNodes(constructorDeclaration.Parameters, result.Parameters);
+			
+			return EndNode(constructorDeclaration, result);
 		}
 		
 		public AstNode VisitConstructorInitializer(CSharp.ConstructorInitializer constructorInitializer, object data)
@@ -552,7 +562,28 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitMethodDeclaration(CSharp.MethodDeclaration methodDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			var result = new MethodDeclaration();
+			
+			ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
+			ConvertNodes(methodDeclaration.ModifierTokens, result.ModifierTokens);
+			result.Name = new Identifier(methodDeclaration.Name, AstLocation.Empty);
+			result.IsSub = IsSub(methodDeclaration.ReturnType);
+			ConvertNodes(methodDeclaration.Parameters, result.Parameters);
+			ConvertNodes(methodDeclaration.TypeParameters, result.TypeParameters);
+			ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), result.ReturnTypeAttributes);
+			result.ImplementsClause.Add(
+				new InterfaceMemberSpecifier((AstType)methodDeclaration.PrivateImplementationType.AcceptVisitor(this, data),
+				                             methodDeclaration.Name));
+			if (!result.IsSub)
+				result.ReturnType = (AstType)methodDeclaration.ReturnType.AcceptVisitor(this, data);
+			
+			return EndNode(methodDeclaration, result);
+		}
+		
+		bool IsSub(CSharp.AstType returnType)
+		{
+			var t = returnType as CSharp.PrimitiveType;
+			return t != null && t.Keyword == "void";
 		}
 		
 		public AstNode VisitOperatorDeclaration(CSharp.OperatorDeclaration operatorDeclaration, object data)
@@ -649,7 +680,39 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitCSharpTokenNode(CSharp.CSharpTokenNode cSharpTokenNode, object data)
 		{
-			throw new NotImplementedException();
+			var mod = cSharpTokenNode as CSharp.CSharpModifierToken;
+			if (mod != null) {
+				var convertedModifiers = ConvertModifiers(mod.Modifier, mod.Parent);
+				VBModifierToken token = null;
+				if (convertedModifiers != Modifiers.None) {
+					token = new VBModifierToken(AstLocation.Empty, convertedModifiers);
+					return EndNode(cSharpTokenNode, token);
+				}
+				return EndNode(cSharpTokenNode, token);
+			} else {
+				throw new NotSupportedException("Should never visit individual tokens");
+			}
+		}
+		
+		Modifiers ConvertModifiers(CSharp.Modifiers modifier, CSharp.AstNode container)
+		{
+			if ((modifier & CSharp.Modifiers.Any) == CSharp.Modifiers.Any)
+				return Modifiers.Any;
+			
+			var mod = Modifiers.None;
+			
+			if ((modifier & CSharp.Modifiers.Const) == CSharp.Modifiers.Const)
+				mod |= Modifiers.Const;
+			if ((modifier & CSharp.Modifiers.Abstract) == CSharp.Modifiers.Abstract) {
+				if (container is CSharp.TypeDeclaration)
+					mod |= Modifiers.MustInherit;
+				else
+					mod |= Modifiers.MustOverride;
+			}
+			if ((modifier & CSharp.Modifiers.Static) == CSharp.Modifiers.Static)
+				mod |= Modifiers.Shared;
+			
+			return mod;
 		}
 		
 		public AstNode VisitIdentifier(CSharp.Identifier identifier, object data)
@@ -666,8 +729,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		void ConvertNodes<T>(IEnumerable<CSharp.AstNode> nodes, VB.AstNodeCollection<T> result) where T : VB.AstNode
 		{
-			foreach (var node in nodes)
-				result.Add((T)node.AcceptVisitor(this, null));
+			foreach (var node in nodes) {
+				T n = (T)node.AcceptVisitor(this, null);
+				if (n != null)
+					result.Add(n);
+			}
 		}
 		
 		AstLocation ConvertLocation(CSharp.AstLocation location)

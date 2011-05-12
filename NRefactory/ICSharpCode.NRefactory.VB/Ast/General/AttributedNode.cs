@@ -20,7 +20,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			set { SetModifiers(this, value); }
 		}
 		
-		public IEnumerable<VBModifierToken> ModifierTokens {
+		public AstNodeCollection<VBModifierToken> ModifierTokens {
 			get { return GetChildrenByRole (ModifierRole); }
 		}
 		
