@@ -31,7 +31,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private readonly MethodDefinition analyzedMethod;
 		private readonly ThreadingSupport threading;
 		private ConcurrentDictionary<MethodDefinition, int> foundMethods;
-		private object hashLock = new object();
 
 		public AnalyzedMethodUsedByTreeNode(MethodDefinition analyzedMethod)
 		{
