@@ -17,7 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using ICSharpCode.TreeView;
@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	{
 		private readonly MethodDefinition analyzedMethod;
 		private readonly ThreadingSupport threading;
-		private Hashtable foundMethods;
+		private ConcurrentDictionary<MethodDefinition, int> foundMethods;
 		private object hashLock = new object();
 
 		public AnalyzedMethodUsedByTreeNode(MethodDefinition analyzedMethod)
@@ -69,7 +69,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			foundMethods = new Hashtable();
+			foundMethods = new ConcurrentDictionary<MethodDefinition, int>();
 
 			var analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
@@ -109,14 +109,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool HasAlreadyBeenFound(MethodDefinition method)
 		{
-			lock (hashLock) {
-				if (foundMethods.Contains(method)) {
-					return true;
-				} else {
-					foundMethods.Add(method, null);
-					return false;
-				}
-			}
+			return !foundMethods.TryAdd(method, 0);
 		}
 	}
 }
