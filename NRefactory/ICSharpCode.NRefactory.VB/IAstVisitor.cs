@@ -34,6 +34,9 @@ namespace ICSharpCode.NRefactory.VB {
 		// TypeMember scope
 		S VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, T data);
 		S VisitMethodDeclaration(MethodDeclaration methodDeclaration, T data);
+		S VisitFieldDeclaration(FieldDeclaration fieldDeclaration, T data);
+		S VisitVariableDeclarator(VariableDeclarator variableDeclarator, T data);
+		S VisitVariableIdentifier(VariableIdentifier variableIdentifier, T data);
 		
 		// Expression scope
 		S VisitIdentifier(Identifier identifier, T data);

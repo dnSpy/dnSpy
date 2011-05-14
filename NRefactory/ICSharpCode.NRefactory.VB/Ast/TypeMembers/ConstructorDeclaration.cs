@@ -5,10 +5,15 @@ using System;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
+	public abstract class MemberDeclaration : AttributedNode
+	{
+		
+	}
+	
 	/// <summary>
 	/// Description of ConstructorDeclaration.
 	/// </summary>
-	public class ConstructorDeclaration : AttributedNode
+	public class ConstructorDeclaration : MemberDeclaration
 	{
 		public ConstructorDeclaration()
 		{

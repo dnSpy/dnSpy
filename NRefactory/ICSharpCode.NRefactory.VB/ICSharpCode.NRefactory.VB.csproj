@@ -53,6 +53,7 @@
     <Compile Include="Ast\Expressions\GetXmlNamespaceExpression.cs" />
     <Compile Include="Ast\Expressions\InstanceExpression.cs" />
     <Compile Include="Ast\Expressions\MemberAccessExpression.cs" />
+    <Compile Include="Ast\Expressions\ObjectCreationExpression.cs" />
     <Compile Include="Ast\Expressions\ParenthesizedExpression.cs" />
     <Compile Include="Ast\Expressions\SimpleNameExpression.cs" />
     <Compile Include="Ast\Expressions\PrimitiveExpression.cs" />

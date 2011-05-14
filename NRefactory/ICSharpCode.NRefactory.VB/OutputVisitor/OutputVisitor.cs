@@ -82,7 +82,18 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(parameterDeclaration);
+			WriteModifiers(parameterDeclaration.ModifierTokens);
+			WriteIdentifier(parameterDeclaration.Name.Name);
+			if (!parameterDeclaration.Type.IsNull) {
+				WriteKeyword("As");
+				parameterDeclaration.Type.AcceptVisitor(this, data);
+			}
+			if (!parameterDeclaration.OptionalValue.IsNull) {
+				WriteToken("=", ParameterDeclaration.Roles.Assign);
+				parameterDeclaration.OptionalValue.AcceptVisitor(this, data);
+			}
+			return EndNode(parameterDeclaration);
 		}
 		
 		public object VisitVBTokenNode(VBTokenNode vBTokenNode, object data)
@@ -430,7 +441,11 @@ namespace ICSharpCode.NRefactory.VB
 		#region TypeName
 		public object VisitPrimitiveType(PrimitiveType primitiveType, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(primitiveType);
+			
+			WriteKeyword(primitiveType.Keyword);
+			
+			return EndNode(primitiveType);
 		}
 		
 		public object VisitQualifiedType(QualifiedType qualifiedType, object data)
@@ -452,7 +467,15 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitArraySpecifier(ArraySpecifier arraySpecifier, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(arraySpecifier);
+			
+			LPar();
+			for (int i = 0; i < arraySpecifier.Dimensions; i++) {
+				WriteToken(",", ArraySpecifier.Roles.Comma);
+			}
+			RPar();
+			
+			return EndNode(arraySpecifier);
 		}
 		
 		public object VisitSimpleType(SimpleType simpleType, object data)
@@ -687,11 +710,14 @@ namespace ICSharpCode.NRefactory.VB
 			if (IsKeyword(identifier, containerStack.Peek())) {
 				if (lastWritten == LastWritten.KeywordOrIdentifier)
 					Space(); // this space is not strictly required, so we call Space()
-				formatter.WriteToken("@");
+				formatter.WriteToken("[");
 			} else if (lastWritten == LastWritten.KeywordOrIdentifier) {
 				formatter.Space(); // this space is strictly required, so we directly call the formatter
 			}
 			formatter.WriteIdentifier(identifier);
+			if (IsKeyword(identifier, containerStack.Peek())) {
+				formatter.WriteToken("]");
+			}
 			lastWritten = LastWritten.KeywordOrIdentifier;
 		}
 		
@@ -887,6 +913,13 @@ namespace ICSharpCode.NRefactory.VB
 			}
 		}
 		
+		void WriteArraySpecifiers(IEnumerable<ArraySpecifier> arraySpecifiers)
+		{
+			foreach (ArraySpecifier specifier in arraySpecifiers) {
+				specifier.AcceptVisitor(this, null);
+			}
+		}
+		
 		void WriteQualifiedIdentifier(IEnumerable<Identifier> identifiers)
 		{
 			bool first = true;
@@ -1074,5 +1107,48 @@ namespace ICSharpCode.NRefactory.VB
 			return sb.ToString();
 		}
 		#endregion
+		
+		public object VisitFieldDeclaration(FieldDeclaration fieldDeclaration, object data)
+		{
+			StartNode(fieldDeclaration);
+			
+			WriteAttributes(fieldDeclaration.Attributes);
+			WriteModifiers(fieldDeclaration.ModifierTokens);
+			WriteCommaSeparatedList(fieldDeclaration.Variables);
+			NewLine();
+			
+			return EndNode(fieldDeclaration);
+		}
+		
+		public object VisitVariableDeclarator(VariableDeclarator variableDeclarator, object data)
+		{
+			StartNode(variableDeclarator);
+			
+			WriteCommaSeparatedList(variableDeclarator.Identifiers);
+			WriteKeyword("As");
+			if (variableDeclarator.Initializer is ObjectCreationExpression)
+				variableDeclarator.Initializer.AcceptVisitor(this, data);
+			else {
+				variableDeclarator.Type.AcceptVisitor(this, data);
+				if (!variableDeclarator.Initializer.IsNull) {
+					WriteToken("=", VariableDeclarator.Roles.Assign);
+					variableDeclarator.Initializer.AcceptVisitor(this, data);
+				}
+			}
+			
+			return EndNode(variableDeclarator);
+		}
+		
+		public object VisitVariableIdentifier(VariableIdentifier variableIdentifier, object data)
+		{
+			StartNode(variableIdentifier);
+			
+			WriteIdentifier(variableIdentifier.Name.Name);
+			if (variableIdentifier.HasNullableSpecifier)
+				WriteToken("?", VariableIdentifier.Roles.QuestionMark);
+			WriteArraySpecifiers(variableIdentifier.ArraySpecifiers);
+			
+			return EndNode(variableIdentifier);
+		}
 	}
 }

@@ -702,6 +702,7 @@ namespace ICSharpCode.NRefactory.VB
 			public static readonly Role<VBTokenNode> LChevron = new Role<VBTokenNode>("LChevron", VBTokenNode.Null);
 			public static readonly Role<VBTokenNode> RChevron = new Role<VBTokenNode>("RChevron", VBTokenNode.Null);
 			public static readonly Role<VBTokenNode> Comma = new Role<VBTokenNode>("Comma", VBTokenNode.Null);
+			public static readonly Role<VBTokenNode> QuestionMark = new Role<VBTokenNode>("QuestionMark", VBTokenNode.Null);
 			public static readonly Role<VBTokenNode> Dot = new Role<VBTokenNode>("Dot", VBTokenNode.Null);
 			public static readonly Role<VBTokenNode> Semicolon = new Role<VBTokenNode>("Semicolon", VBTokenNode.Null);
 			public static readonly Role<VBTokenNode> Assign = new Role<VBTokenNode>("Assign", VBTokenNode.Null);

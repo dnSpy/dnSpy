@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using ICSharpCode.NRefactory.TypeSystem;
+
 namespace ICSharpCode.NRefactory.VB.Ast
 {
 	/// <summary>

@@ -17,7 +17,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			set { SetChildByRole(Roles.Expression, value); }
 		}
 		
-		public AstType ReturnType {
+		public AstType Type {
 			get { return GetChildByRole(Roles.Type); }
 			set { SetChildByRole(Roles.Type, value); }
 		}
@@ -29,7 +29,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				MatchAttributesAndModifiers(param, match) &&
 				Name.DoMatch(param.Name, match) &&
 				OptionalValue.DoMatch(param.OptionalValue, match) &&
-				ReturnType.DoMatch(param.ReturnType, match);
+				Type.DoMatch(param.Type, match);
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)

@@ -67,13 +67,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Ref
 	}
 	
-	public enum VarianceModifier
-	{
-		Invariant,
-		Covariant,
-		Contravariant
-	};
-	
 	public enum AssignmentOperatorType
 	{
 		None,

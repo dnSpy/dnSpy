@@ -552,7 +552,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitFieldDeclaration(CSharp.FieldDeclaration fieldDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			var decl = new FieldDeclaration();
+			
+			ConvertNodes(fieldDeclaration.Attributes, decl.Attributes);
+			decl.Modifiers = ConvertModifiers(fieldDeclaration.Modifiers, fieldDeclaration);
+			ConvertNodes(fieldDeclaration.Variables, decl.Variables);
+			
+			return EndNode(fieldDeclaration, decl);
 		}
 		
 		public AstNode VisitIndexerDeclaration(CSharp.IndexerDeclaration indexerDeclaration, object data)
@@ -593,17 +599,53 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitParameterDeclaration(CSharp.ParameterDeclaration parameterDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			var param = new ParameterDeclaration();
+			
+			ConvertNodes(parameterDeclaration.Attributes, param.Attributes);
+			param.Modifiers = ConvertParamModifiers(parameterDeclaration.ParameterModifier);
+			param.Name = new Identifier(parameterDeclaration.Name, AstLocation.Empty);
+			param.Type = (AstType)parameterDeclaration.Type.AcceptVisitor(this, data);
+			param.OptionalValue = (Expression)parameterDeclaration.DefaultExpression.AcceptVisitor(this, data);
+			if (!param.OptionalValue.IsNull)
+				param.Modifiers |= Modifiers.Optional;
+			
+			return EndNode(parameterDeclaration, param);
+		}
+		
+		Modifiers ConvertParamModifiers(CSharp.ParameterModifier mods)
+		{
+			switch (mods) {
+				case ICSharpCode.NRefactory.CSharp.ParameterModifier.None:
+				case ICSharpCode.NRefactory.CSharp.ParameterModifier.This:
+					return Modifiers.None;
+				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Ref:
+					return Modifiers.ByRef;
+				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Out:
+					return Modifiers.ByRef; // TODO verify this!
+				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Params:
+					return Modifiers.ParamArray;
+				default:
+					throw new Exception("Invalid value for ParameterModifier");
+			}
 		}
 		
 		public AstNode VisitPropertyDeclaration(CSharp.PropertyDeclaration propertyDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 		
 		public AstNode VisitVariableInitializer(CSharp.VariableInitializer variableInitializer, object data)
 		{
-			throw new NotImplementedException();
+			var decl = new VariableDeclarator();
+			
+			// look for type in parent
+			decl.Type = (AstType)variableInitializer.Parent
+				.GetChildByRole(CSharp.VariableInitializer.Roles.Type)
+				.AcceptVisitor(this, data);
+			decl.Identifiers.Add(new VariableIdentifier() { Name = new Identifier(variableInitializer.Name, AstLocation.Empty) });
+			decl.Initializer = (Expression)variableInitializer.Initializer.AcceptVisitor(this, data);
+			
+			return EndNode(variableInitializer, decl);
 		}
 		
 		public AstNode VisitFixedFieldDeclaration(CSharp.FixedFieldDeclaration fixedFieldDeclaration, object data)
@@ -644,23 +686,83 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				target = (AstType)memberType.Target.AcceptVisitor(this, data);
 			
 			var type = new QualifiedType(target, new Identifier(memberType.MemberName, AstLocation.Empty));
+			ConvertNodes(memberType.TypeArguments, type.TypeArguments);
 			
 			return EndNode(memberType, type);
 		}
 		
 		public AstNode VisitComposedType(CSharp.ComposedType composedType, object data)
 		{
-			throw new NotImplementedException();
+			var type = new ComposedType();
+			
+			ConvertNodes(composedType.ArraySpecifiers, type.ArraySpecifiers);
+			type.BaseType = (AstType)composedType.BaseType.AcceptVisitor(this, data);
+			type.HasNullableSpecifier = composedType.HasNullableSpecifier;
+			
+			return EndNode(composedType, type);
 		}
 		
 		public AstNode VisitArraySpecifier(CSharp.ArraySpecifier arraySpecifier, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(arraySpecifier, new ArraySpecifier(arraySpecifier.Dimensions));
 		}
 		
 		public AstNode VisitPrimitiveType(CSharp.PrimitiveType primitiveType, object data)
 		{
-			throw new NotImplementedException();
+			string typeName;
+			
+			switch (primitiveType.Keyword) {
+				case "object":
+					typeName = "Object";
+					break;
+				case "bool":
+					typeName = "Boolean";
+					break;
+				case "char":
+					typeName = "Char";
+					break;
+				case "sbyte":
+					typeName = "SByte";
+					break;
+				case "byte":
+					typeName = "Byte";
+					break;
+				case "short":
+					typeName = "Short";
+					break;
+				case "ushort":
+					typeName = "UShort";
+					break;
+				case "int":
+					typeName = "Integer";
+					break;
+				case "uint":
+					typeName = "UInteger";
+					break;
+				case "long":
+					typeName = "Long";
+					break;
+				case "ulong":
+					typeName = "ULong";
+					break;
+				case "float":
+					typeName = "Single";
+					break;
+				case "double":
+					typeName = "Double";
+					break;
+				case "decimal":
+					typeName = "Decimal";
+					break;
+				case "string":
+					typeName = "String";
+					break;
+				default:
+					typeName = "unknown";
+					break;
+			}
+			
+			return EndNode(primitiveType, new PrimitiveType(typeName));
 		}
 		
 		public AstNode VisitComment(CSharp.Comment comment, object data)
@@ -670,7 +772,17 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitTypeParameterDeclaration(CSharp.TypeParameterDeclaration typeParameterDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			var param = new TypeParameterDeclaration() {
+				Variance = typeParameterDeclaration.Variance,
+				Name = typeParameterDeclaration.Name
+			};
+			
+			// TODO : fetch constraints from parent node
+			
+			// TODO : typeParameterDeclaration.Attributes get lost?
+			//ConvertNodes(typeParameterDeclaration.Attributes
+			
+			return EndNode(typeParameterDeclaration, param);
 		}
 		
 		public AstNode VisitConstraint(CSharp.Constraint constraint, object data)
@@ -711,6 +823,15 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			}
 			if ((modifier & CSharp.Modifiers.Static) == CSharp.Modifiers.Static)
 				mod |= Modifiers.Shared;
+			
+			if ((modifier & CSharp.Modifiers.Public) == CSharp.Modifiers.Public)
+				mod |= Modifiers.Public;
+			if ((modifier & CSharp.Modifiers.Protected) == CSharp.Modifiers.Protected)
+				mod |= Modifiers.Protected;
+			if ((modifier & CSharp.Modifiers.Internal) == CSharp.Modifiers.Internal)
+				mod |= Modifiers.Friend;
+			if ((modifier & CSharp.Modifiers.Private) == CSharp.Modifiers.Private)
+				mod |= Modifiers.Private;
 			
 			return mod;
 		}
