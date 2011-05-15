@@ -31,6 +31,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public AstType InheritsType {
 			get { return GetChildByRole(InheritsTypeRole); }
+			set { SetChildByRole(InheritsTypeRole, value); }
 		}
 		
 		public AstNodeCollection<AstType> ImplementsTypes {

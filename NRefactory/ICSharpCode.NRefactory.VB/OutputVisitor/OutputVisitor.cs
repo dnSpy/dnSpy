@@ -77,7 +77,32 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(typeParameterDeclaration);
+			
+			switch (typeParameterDeclaration.Variance) {
+				case ICSharpCode.NRefactory.TypeSystem.VarianceModifier.Invariant:
+					break;
+				case ICSharpCode.NRefactory.TypeSystem.VarianceModifier.Covariant:
+					WriteKeyword("Out");
+					break;
+				case ICSharpCode.NRefactory.TypeSystem.VarianceModifier.Contravariant:
+					WriteKeyword("In");
+					break;
+				default:
+					throw new Exception("Invalid value for VarianceModifier");
+			}
+			
+			WriteIdentifier(typeParameterDeclaration.Name);
+			if (typeParameterDeclaration.Constraints.Any()) {
+				WriteKeyword("As");
+				if (typeParameterDeclaration.Constraints.Count > 1)
+					WriteToken("{", TypeParameterDeclaration.Roles.LBrace);
+				WriteCommaSeparatedList(typeParameterDeclaration.Constraints);
+				if (typeParameterDeclaration.Constraints.Count > 1)
+					WriteToken("}", TypeParameterDeclaration.Roles.RBrace);
+			}
+			
+			return EndNode(typeParameterDeclaration);
 		}
 		
 		public object VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, object data)
@@ -191,6 +216,12 @@ namespace ICSharpCode.NRefactory.VB
 			WriteModifiers(typeDeclaration.ModifierTokens);
 			WriteClassTypeKeyword(typeDeclaration);
 			WriteIdentifier(typeDeclaration.Name.Name);
+			if (!typeDeclaration.InheritsType.IsNull) {
+				Space();
+				WriteKeyword("Inherits");
+				typeDeclaration.InheritsType.AcceptVisitor(this, data);
+			}
+			WriteImplementsClause(typeDeclaration.ImplementsTypes);
 			NewLine();
 			
 			WriteMembers(typeDeclaration.Members);
@@ -241,7 +272,27 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(delegateDeclaration);
+			
+			WriteAttributes(delegateDeclaration.Attributes);
+			WriteModifiers(delegateDeclaration.ModifierTokens);
+			WriteKeyword("Delegate");
+			if (delegateDeclaration.IsSub)
+				WriteKeyword("Sub");
+			else
+				WriteKeyword("Function");
+			WriteIdentifier(delegateDeclaration.Name.Name);
+			WriteTypeParameters(delegateDeclaration.TypeParameters);
+			WriteCommaSeparatedListInParenthesis(delegateDeclaration.Parameters, false);
+			if (!delegateDeclaration.IsSub) {
+				Space();
+				WriteKeyword("As");
+				WriteAttributes(delegateDeclaration.ReturnTypeAttributes);
+				delegateDeclaration.ReturnType.AcceptVisitor(this, data);
+			}
+			NewLine();
+			
+			return EndNode(delegateDeclaration);
 		}
 		
 		public object VisitIdentifier(Identifier identifier, object data)
@@ -416,7 +467,8 @@ namespace ICSharpCode.NRefactory.VB
 			methodDeclaration.Name.AcceptVisitor(this, data);
 			WriteTypeParameters(methodDeclaration.TypeParameters);
 			WriteCommaSeparatedListInParenthesis(methodDeclaration.Parameters, false);
-			if (!methodDeclaration.IsSub) {
+			if (!methodDeclaration.IsSub && !methodDeclaration.ReturnType.IsNull) {
+				Space();
 				WriteKeyword("As");
 				WriteAttributes(methodDeclaration.ReturnTypeAttributes);
 				methodDeclaration.ReturnType.AcceptVisitor(this, data);
@@ -462,7 +514,14 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitComposedType(ComposedType composedType, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(composedType);
+			
+			composedType.BaseType.AcceptVisitor(this, data);
+			if (composedType.HasNullableSpecifier)
+				WriteToken("?", ComposedType.Roles.QuestionMark);
+			WriteArraySpecifiers(composedType.ArraySpecifiers);
+			
+			return EndNode(composedType);
 		}
 		
 		public object VisitArraySpecifier(ArraySpecifier arraySpecifier, object data)
@@ -991,6 +1050,16 @@ namespace ICSharpCode.NRefactory.VB
 		void WriteImplementsClause(AstNodeCollection<InterfaceMemberSpecifier> implementsClause)
 		{
 			if (implementsClause.Any()) {
+				Space();
+				WriteKeyword("Implements");
+				WriteCommaSeparatedList(implementsClause);
+			}
+		}
+		
+		void WriteImplementsClause(AstNodeCollection<AstType> implementsClause)
+		{
+			if (implementsClause.Any()) {
+				Space();
 				WriteKeyword("Implements");
 				WriteCommaSeparatedList(implementsClause);
 			}
@@ -999,6 +1068,7 @@ namespace ICSharpCode.NRefactory.VB
 		void WriteHandlesClause(AstNodeCollection<EventMemberSpecifier> handlesClause)
 		{
 			if (handlesClause.Any()) {
+				Space();
 				WriteKeyword("Handles");
 				WriteCommaSeparatedList(handlesClause);
 			}
@@ -1149,6 +1219,68 @@ namespace ICSharpCode.NRefactory.VB
 			WriteArraySpecifiers(variableIdentifier.ArraySpecifiers);
 			
 			return EndNode(variableIdentifier);
+		}
+		
+		public object VisitAccessor(Accessor accessor, object data)
+		{
+			StartNode(accessor);
+			WriteAttributes(accessor.Attributes);
+			WriteModifiers(accessor.ModifierTokens);
+			if (accessor.Role == PropertyDeclaration.GetterRole) {
+				WriteKeyword("Get");
+			} else if (accessor.Role == PropertyDeclaration.SetterRole) {
+				WriteKeyword("Set");
+			}
+			if (accessor.Parameters.Any())
+				WriteCommaSeparatedListInParenthesis(accessor.Parameters, false);
+			NewLine();
+			
+			WriteBlock(accessor.Body);
+			
+			WriteKeyword("End");
+
+			if (accessor.Role == PropertyDeclaration.GetterRole) {
+				WriteKeyword("Get");
+			} else if (accessor.Role == PropertyDeclaration.SetterRole) {
+				WriteKeyword("Set");
+			}
+			NewLine();
+			
+			return EndNode(accessor);
+		}
+		
+		public object VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, object data)
+		{
+			StartNode(propertyDeclaration);
+			
+			WriteAttributes(propertyDeclaration.Attributes);
+			WriteModifiers(propertyDeclaration.ModifierTokens);
+			WriteKeyword("Property");
+			WriteIdentifier(propertyDeclaration.Name.Name);
+			WriteCommaSeparatedListInParenthesis(propertyDeclaration.Parameters, false);
+			if (!propertyDeclaration.ReturnType.IsNull) {
+				Space();
+				WriteKeyword("As");
+				WriteAttributes(propertyDeclaration.ReturnTypeAttributes);
+				propertyDeclaration.ReturnType.AcceptVisitor(this, data);
+			}
+			NewLine();
+			Indent();
+			
+			if (!propertyDeclaration.Getter.IsNull) {
+				propertyDeclaration.Getter.AcceptVisitor(this, data);
+			}
+			
+			if (!propertyDeclaration.Setter.IsNull) {
+				propertyDeclaration.Setter.AcceptVisitor(this, data);
+			}
+			Unindent();
+			
+			WriteKeyword("End");
+			WriteKeyword("Property");
+			NewLine();
+			
+			return EndNode(propertyDeclaration);
 		}
 	}
 }

@@ -57,7 +57,11 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			new KeyValuePair<Modifiers, int>(Modifiers.Overloads, "Overloads".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.WithEvents, "WithEvents".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Default, "Default".Length),
-			new KeyValuePair<Modifiers, int>(Modifiers.Dim, "Dim".Length),
+			// parameter modifiers
+			new KeyValuePair<Modifiers, int>(Modifiers.Optional, "Optional".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.ByVal, "ByVal".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.ByRef, "ByRef".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.ParamArray, "ParamArray".Length),
 			
 			// even though it's used for patterns only, it needs to be in this table to be usable in the AST
 			new KeyValuePair<Modifiers, int>(Modifiers.Any, "Any".Length)
@@ -117,8 +121,16 @@ namespace ICSharpCode.NRefactory.VB.Ast
 					return "Dim";
 				case Modifiers.WriteOnly:
 					return "WriteOnly";
+				case Modifiers.Optional:
+					return "Optional";
+				case Modifiers.ByVal:
+					return "ByVal";
+				case Modifiers.ByRef:
+					return "ByRef";
+				case Modifiers.ParamArray:
+					return "ParamArray";
 				default:
-					throw new NotSupportedException("Invalid value for Modifiers");
+					throw new NotSupportedException("Invalid value for Modifiers: " + modifier);
 			}
 		}
 	}

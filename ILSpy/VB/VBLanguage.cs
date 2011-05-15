@@ -18,12 +18,14 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
-
+using System.Text;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.ILSpy.XmlDoc;
+using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Visitors;
 using Mono.Cecil;
@@ -125,6 +127,32 @@ namespace ICSharpCode.ILSpy.VB
 					Settings = settings
 				});
 		}
+		
+		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes = null)
+		{
+			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
+			if (includeNamespace)
+				options |= ConvertTypeOptions.IncludeNamespace;
+			var astType = AstBuilder
+				.ConvertType(type, typeAttributes, options)
+				.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider()), null);
+
+			StringWriter w = new StringWriter();
+			// TODO
+//			if (type.IsByReference) {
+//				ParameterDefinition pd = typeAttributes as ParameterDefinition;
+//				if (pd != null && (!pd.IsIn && pd.IsOut))
+//					w.Write("out ");
+//				else
+//					w.Write("ref ");
+//
+//				if (astType is ComposedType && ((ComposedType)astType).PointerRank > 0)
+//					((ComposedType)astType).PointerRank--;
+//			}
+			
+			astType.AcceptVisitor(new OutputVisitor(w, new VBFormattingOptions()), null);
+			return w.ToString();
+		}
 	}
 	
 	public class ILSpyEnvironmentProvider : IEnvironmentProvider
@@ -141,6 +169,24 @@ namespace ICSharpCode.ILSpy.VB
 				.OfType<Mono.Cecil.MemberReference>()
 				.First()
 				.FullName;
+		}
+		
+		public ClassType GetClassTypeForAstType(ICSharpCode.NRefactory.CSharp.AstType type)
+		{
+			var definition = type.Annotations.OfType<TypeDefinition>().First();
+			
+			if (definition.IsClass)
+				return ClassType.Class;
+			if (definition.IsInterface)
+				return ClassType.Interface;
+			if (definition.IsEnum)
+				return ClassType.Enum;
+			if (definition.IsFunctionPointer)
+				return ClassType.Delegate;
+			if (definition.IsValueType)
+				return ClassType.Struct;
+			
+			return ClassType.Module;
 		}
 	}
 }

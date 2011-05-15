@@ -37,6 +37,8 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitFieldDeclaration(FieldDeclaration fieldDeclaration, T data);
 		S VisitVariableDeclarator(VariableDeclarator variableDeclarator, T data);
 		S VisitVariableIdentifier(VariableIdentifier variableIdentifier, T data);
+		S VisitAccessor(Accessor accessor, T data);
+		S VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, T data);
 		
 		// Expression scope
 		S VisitIdentifier(Identifier identifier, T data);
