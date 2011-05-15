@@ -314,39 +314,59 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		public AstNode VisitTypeDeclaration(CSharp.TypeDeclaration typeDeclaration, object data)
 		{
 			// TODO add missing features!
-			var type = new TypeDeclaration();
 			
-			CSharp.Attribute stdModAttr;
-			
-			if (typeDeclaration.ClassType == ClassType.Class && HasAttribute(typeDeclaration.Attributes, "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute", out stdModAttr)) {
-				type.ClassType = ClassType.Module;
-				// remove AttributeSection if only one attribute is present
-				var attrSec = (CSharp.AttributeSection)stdModAttr.Parent;
-				if (attrSec.Attributes.Count == 1)
-					attrSec.Remove();
-				else
-					stdModAttr.Remove();
-			} else
-				type.ClassType = typeDeclaration.ClassType;
-			
-			ConvertNodes(typeDeclaration.Attributes, type.Attributes);
-			ConvertNodes(typeDeclaration.ModifierTokens, type.ModifierTokens);
-			
-			if (typeDeclaration.BaseTypes.Any()) {
-				var first = typeDeclaration.BaseTypes.First();
+			if (typeDeclaration.ClassType == ClassType.Enum) {
+				var type = new EnumDeclaration();
 				
-				if (provider.GetClassTypeForAstType(first) != ClassType.Interface) {
-					ConvertNodes(typeDeclaration.BaseTypes.Skip(1), type.ImplementsTypes);
-					type.InheritsType = (AstType)first.AcceptVisitor(this, data);
+				ConvertNodes(typeDeclaration.Attributes, type.Attributes);
+				ConvertNodes(typeDeclaration.ModifierTokens, type.ModifierTokens);
+				
+				if (typeDeclaration.BaseTypes.Any()) {
+					var first = typeDeclaration.BaseTypes.First();
+					
+					type.UnderlyingType = (AstType)first.AcceptVisitor(this, data);
+				}
+				
+				type.Name = new Identifier(typeDeclaration.Name, AstLocation.Empty);
+				
+				ConvertNodes(typeDeclaration.Members, type.Members);
+				
+				return EndNode(typeDeclaration, type);
+			} else {
+				var type = new TypeDeclaration();
+				
+				CSharp.Attribute stdModAttr;
+				
+				if (typeDeclaration.ClassType == ClassType.Class && HasAttribute(typeDeclaration.Attributes, "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute", out stdModAttr)) {
+					type.ClassType = ClassType.Module;
+					// remove AttributeSection if only one attribute is present
+					var attrSec = (CSharp.AttributeSection)stdModAttr.Parent;
+					if (attrSec.Attributes.Count == 1)
+						attrSec.Remove();
+					else
+						stdModAttr.Remove();
 				} else
-					ConvertNodes(typeDeclaration.BaseTypes, type.ImplementsTypes);
+					type.ClassType = typeDeclaration.ClassType;
+				
+				ConvertNodes(typeDeclaration.Attributes, type.Attributes);
+				ConvertNodes(typeDeclaration.ModifierTokens, type.ModifierTokens);
+				
+				if (typeDeclaration.BaseTypes.Any()) {
+					var first = typeDeclaration.BaseTypes.First();
+					
+					if (provider.GetClassTypeForAstType(first) != ClassType.Interface) {
+						ConvertNodes(typeDeclaration.BaseTypes.Skip(1), type.ImplementsTypes);
+						type.InheritsType = (AstType)first.AcceptVisitor(this, data);
+					} else
+						ConvertNodes(typeDeclaration.BaseTypes, type.ImplementsTypes);
+				}
+				
+				type.Name = new Identifier(typeDeclaration.Name, AstLocation.Empty);
+				
+				ConvertNodes(typeDeclaration.Members, type.Members);
+				
+				return EndNode(typeDeclaration, type);
 			}
-			
-			type.Name = new Identifier(typeDeclaration.Name, AstLocation.Empty);
-			
-			ConvertNodes(typeDeclaration.Members, type.Members);
-			
-			return EndNode(typeDeclaration, type);
 		}
 		
 		public AstNode VisitUsingAliasDeclaration(CSharp.UsingAliasDeclaration usingAliasDeclaration, object data)
@@ -565,7 +585,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitEnumMemberDeclaration(CSharp.EnumMemberDeclaration enumMemberDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			var result = new EnumMemberDeclaration();
+			
+			ConvertNodes(enumMemberDeclaration.Attributes, result.Attributes);
+			result.Name = new Identifier(enumMemberDeclaration.Name, AstLocation.Empty);
+			result.Value = (Expression)enumMemberDeclaration.Initializer.AcceptVisitor(this, data);
+			
+			return EndNode(enumMemberDeclaration, result);
 		}
 		
 		public AstNode VisitEventDeclaration(CSharp.EventDeclaration eventDeclaration, object data)

@@ -22,7 +22,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			set { SetChildByRole(UnderlyingTypeRole, value); }
 		}
 		
-		public AstNodeCollection<EnumMemberDeclaration> Member {
+		public AstNodeCollection<EnumMemberDeclaration> Members {
 			get { return GetChildrenByRole(MemberRole); }
 		}
 		
@@ -33,7 +33,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				MatchAttributesAndModifiers(decl, match) &&
 				Name.DoMatch(decl.Name, match) &&
 				UnderlyingType.DoMatch(decl.UnderlyingType, match) &&
-				Member.DoMatch(decl.Member, match);
+				Members.DoMatch(decl.Members, match);
 		}
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)

@@ -241,6 +241,7 @@ namespace ICSharpCode.NRefactory.VB
 				case ICSharpCode.NRefactory.TypeSystem.ClassType.Enum:
 					break;
 				case ICSharpCode.NRefactory.TypeSystem.ClassType.Interface:
+					WriteKeyword("Interface");
 					break;
 				case ICSharpCode.NRefactory.TypeSystem.ClassType.Struct:
 					WriteKeyword("Structure");
@@ -262,12 +263,48 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitEnumDeclaration(EnumDeclaration enumDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(enumDeclaration);
+			
+			WriteAttributes(enumDeclaration.Attributes);
+			WriteModifiers(enumDeclaration.ModifierTokens);
+			WriteKeyword("Enum");
+			WriteIdentifier(enumDeclaration.Name.Name);
+			if (!enumDeclaration.UnderlyingType.IsNull) {
+				Space();
+				WriteKeyword("As");
+				enumDeclaration.UnderlyingType.AcceptVisitor(this, data);
+			}
+			NewLine();
+			
+			Indent();
+			foreach (var member in enumDeclaration.Members) {
+				member.AcceptVisitor(this, null);
+			}
+			Unindent();
+			
+			WriteKeyword("End");
+			WriteKeyword("Enum");
+			NewLine();
+			
+			return EndNode(enumDeclaration);
 		}
 		
 		public object VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(enumMemberDeclaration);
+			
+			WriteAttributes(enumMemberDeclaration.Attributes);
+			WriteIdentifier(enumMemberDeclaration.Name.Name);
+			
+			if (!enumMemberDeclaration.Value.IsNull) {
+				Space();
+				WriteToken("=", EnumMemberDeclaration.Roles.Assign);
+				Space();
+				enumMemberDeclaration.Value.AcceptVisitor(this, data);
+			}
+			NewLine();
+			
+			return EndNode(enumMemberDeclaration);
 		}
 		
 		public object VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, object data)
