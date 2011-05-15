@@ -11,10 +11,10 @@ namespace ICSharpCode.NRefactory.VB.AstBuilder
 	/// Extension methods for NRefactory.Dom.Expression.
 	/// </summary>
 	public static class ExpressionBuilder
-	{
-		public static IdentifierExpression Identifier(string identifier)
+	{/*
+		public static SimpleNameExpression Identifier(string identifier)
 		{
-			return new IdentifierExpression(identifier);
+			return new SimpleNameExpression(identifier);
 		}
 		
 		public static MemberReferenceExpression Member(this Expression targetObject, string memberName)
@@ -87,6 +87,6 @@ namespace ICSharpCode.NRefactory.VB.AstBuilder
 		public static BinaryOperatorExpression Operator(this Expression left, BinaryOperatorType op, Expression right)
 		{
 			return new BinaryOperatorExpression(left, op, right);
-		}
+		}*/
 	}
 }

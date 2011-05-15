@@ -29,12 +29,12 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets the positional arguments passed to the attribute.
 		/// </summary>
-		IList<IConstantValue> PositionalArguments { get; }
+		IList<IConstantValue> GetPositionalArguments(ITypeResolveContext context);
 		
 		/// <summary>
 		/// Gets the named arguments passed to the attribute.
 		/// </summary>
-		IList<KeyValuePair<string, IConstantValue>> NamedArguments { get; }
+		IList<KeyValuePair<string, IConstantValue>> GetNamedArguments(ITypeResolveContext context);
 		
 		/// <summary>
 		/// Resolves the constructor method used for this attribute invocation.
@@ -58,18 +58,24 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
-		IList<IConstantValue> IAttribute.PositionalArguments {
-			get {
-				Contract.Ensures(Contract.Result<IList<IConstantValue>>() != null);
-				return null;
-			}
+		IList<IConstantValue> IAttribute.GetPositionalArguments(ITypeResolveContext context)
+		{
+			Contract.Requires(context != null);
+			Contract.Ensures(Contract.Result<IList<IConstantValue>>() != null);
+			return null;
 		}
 		
-		IList<KeyValuePair<string, IConstantValue>> IAttribute.NamedArguments {
-			get {
-				Contract.Ensures(Contract.Result<IList<KeyValuePair<string, IConstantValue>>>() != null);
-				return null;
-			}
+		IList<KeyValuePair<string, IConstantValue>> IAttribute.GetNamedArguments(ITypeResolveContext context)
+		{
+			Contract.Requires(context != null);
+			Contract.Ensures(Contract.Result<IList<KeyValuePair<string, IConstantValue>>>() != null);
+			return null;
+		}
+		
+		IMethod IAttribute.ResolveConstructor(ITypeResolveContext context)
+		{
+			Contract.Requires(context != null);
+			return null;
 		}
 	}
 	#endif

@@ -51,7 +51,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (TypeManager.IsValueType (t)) {
+			if (TypeSpec.IsValueType (t)) {
 				ec.Report.Error(37, loc, "Cannot convert null to `{0}' because it is a value type",
 					TypeManager.CSharpName(t));
 				return;

@@ -344,9 +344,6 @@ namespace Mono.CSharp
 
 		public void EmitArrayAddress (ArrayContainer ac)
 		{
-			if (ac.Element.IsGenericParameter)
-				ig.Emit (OpCodes.Readonly);
-
 			if (ac.Rank > 1) {
 				if (IsAnonymousStoreyMutateRequired)
 					ac = (ArrayContainer) ac.Mutate (CurrentAnonymousMethod.Storey.Mutator);

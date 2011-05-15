@@ -567,9 +567,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		public override ResolveResult VisitConditionalExpression(ConditionalExpression conditionalExpression, object data)
 		{
 			if (resolverEnabled) {
-				Scan(conditionalExpression.Condition);
-				return resolver.ResolveConditional(Resolve(conditionalExpression.TrueExpression),
-				                                   Resolve(conditionalExpression.FalseExpression));
+				return resolver.ResolveConditional(
+					Resolve(conditionalExpression.Condition),
+					Resolve(conditionalExpression.TrueExpression),
+					Resolve(conditionalExpression.FalseExpression));
 			} else {
 				ScanChildren(conditionalExpression);
 				return null;
@@ -579,7 +580,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		public override ResolveResult VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, object data)
 		{
 			if (resolverEnabled) {
-				return new ConstantResolveResult(ResolveType(defaultValueExpression.Type), null);
+				return resolver.ResolveDefaultValue(ResolveType(defaultValueExpression.Type));
 			} else {
 				ScanChildren(defaultValueExpression);
 				return null;

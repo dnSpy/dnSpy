@@ -230,7 +230,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		}
 		#endregion
 		
-		void CheckElement(INode node, string name, Location start, Location end)
+		void CheckElement(AstNode node, string name, AstLocation start, AstLocation end)
 		{
 			Assert.IsTrue(node is XmlElementExpression);
 			XmlElementExpression expr = node as XmlElementExpression;
@@ -242,7 +242,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			Assert.AreEqual(end, expr.EndLocation);
 		}
 		
-		void CheckContent(INode node, string content, XmlContentType type, Location start, Location end)
+		void CheckContent(AstNode node, string content, XmlContentType type, AstLocation start, AstLocation end)
 		{
 			Assert.IsTrue(node is XmlContentExpression);
 			XmlContentExpression expr = node as XmlContentExpression;

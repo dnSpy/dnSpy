@@ -3,7 +3,7 @@
 
 using System;
 
-namespace ICSharpCode.NRefactory.CSharp
+namespace ICSharpCode.NRefactory
 {
 	/// <summary>
 	/// Represents the role a node plays within its parent.
@@ -15,14 +15,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Gets whether the specified node is valid in this role.
 		/// </summary>
-		public abstract bool IsValid(AstNode node);
+		public abstract bool IsValid(object node);
 	}
 	
 	/// <summary>
 	/// Represents the role a node plays within its parent.
 	/// All nodes with this role have type T.
 	/// </summary>
-	public sealed class Role<T> : Role where T : AstNode
+	public sealed class Role<T> : Role where T : class
 	{
 		readonly string name; // helps with debugging the AST
 		readonly T nullObject;
@@ -39,7 +39,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return nullObject; }
 		}
 		
-		public override bool IsValid(AstNode node)
+		public override bool IsValid(object node)
 		{
 			return node is T;
 		}

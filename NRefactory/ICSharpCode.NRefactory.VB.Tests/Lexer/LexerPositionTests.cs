@@ -13,7 +13,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Lexer
 	{
 		VBLexer GenerateLexer(string s)
 		{
-			return ParserFactory.CreateLexer(new StringReader(s));
+			return new VBLexer(new StringReader(s));
 		}
 		
 		[Test]
@@ -22,16 +22,16 @@ namespace ICSharpCode.NRefactory.VB.Tests.Lexer
 			VBLexer l = GenerateLexer("public\nstatic");
 			Token t = l.NextToken();
 			Assert.AreEqual(Tokens.Public, t.Kind);
-			Assert.AreEqual(new Location(1, 1), t.Location);
-			Assert.AreEqual(new Location(7, 1), t.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 1), t.Location);
+			Assert.AreEqual(new AstLocation(7, 1), t.EndLocation);
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.EOL, t.Kind);
-			Assert.AreEqual(new Location(7, 1), t.Location);
-			Assert.AreEqual(new Location(1, 2), t.EndLocation);
+			Assert.AreEqual(new AstLocation(7, 1), t.Location);
+			Assert.AreEqual(new AstLocation(1, 2), t.EndLocation);
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.Static, t.Kind);
-			Assert.AreEqual(new Location(1, 2), t.Location);
-			Assert.AreEqual(new Location(7, 2), t.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 2), t.Location);
+			Assert.AreEqual(new AstLocation(7, 2), t.EndLocation);
 		}
 		
 		[Test]
@@ -40,16 +40,16 @@ namespace ICSharpCode.NRefactory.VB.Tests.Lexer
 			VBLexer l = GenerateLexer("public\r\nstatic");
 			Token t = l.NextToken();
 			Assert.AreEqual(Tokens.Public, t.Kind);
-			Assert.AreEqual(new Location(1, 1), t.Location);
-			Assert.AreEqual(new Location(7, 1), t.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 1), t.Location);
+			Assert.AreEqual(new AstLocation(7, 1), t.EndLocation);
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.EOL, t.Kind);
-			Assert.AreEqual(new Location(7, 1), t.Location);
-			Assert.AreEqual(new Location(1, 2), t.EndLocation);
+			Assert.AreEqual(new AstLocation(7, 1), t.Location);
+			Assert.AreEqual(new AstLocation(1, 2), t.EndLocation);
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.Static, t.Kind);
-			Assert.AreEqual(new Location(1, 2), t.Location);
-			Assert.AreEqual(new Location(7, 2), t.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 2), t.Location);
+			Assert.AreEqual(new AstLocation(7, 2), t.EndLocation);
 		}
 		
 		[Test]
@@ -59,13 +59,13 @@ namespace ICSharpCode.NRefactory.VB.Tests.Lexer
 			l.NextToken(); // public
 			Token t = l.NextToken();
 			Assert.AreEqual(Tokens.EOL, t.Kind);
-			Assert.AreEqual(new Location(7, 1), t.Location);
-			Assert.AreEqual(new Location(7, 1), t.EndLocation);
+			Assert.AreEqual(new AstLocation(7, 1), t.Location);
+			Assert.AreEqual(new AstLocation(7, 1), t.EndLocation);
 			
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.EOF, t.Kind);
-			Assert.AreEqual(new Location(7, 1), t.Location);
-			Assert.AreEqual(new Location(7, 1), t.EndLocation);
+			Assert.AreEqual(new AstLocation(7, 1), t.Location);
+			Assert.AreEqual(new AstLocation(7, 1), t.EndLocation);
 		}
 		
 		[Test]
@@ -75,13 +75,13 @@ namespace ICSharpCode.NRefactory.VB.Tests.Lexer
 			l.NextToken(); // public
 			Token t = l.NextToken();
 			Assert.AreEqual(Tokens.EOL, t.Kind);
-			Assert.AreEqual(new Location(2, 2), t.Location);
-			Assert.AreEqual(new Location(2, 2), t.EndLocation);
+			Assert.AreEqual(new AstLocation(2, 2), t.Location);
+			Assert.AreEqual(new AstLocation(2, 2), t.EndLocation);
 			
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.EOF, t.Kind);
-			Assert.AreEqual(new Location(2, 2), t.Location);
-			Assert.AreEqual(new Location(2, 2), t.EndLocation);
+			Assert.AreEqual(new AstLocation(2, 2), t.Location);
+			Assert.AreEqual(new AstLocation(2, 2), t.EndLocation);
 		}
 	}
 }

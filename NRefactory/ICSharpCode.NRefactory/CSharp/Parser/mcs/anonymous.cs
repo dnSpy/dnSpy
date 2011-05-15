@@ -1186,7 +1186,7 @@ namespace Mono.CSharp {
 		public static void Error_AddressOfCapturedVar (ResolveContext ec, IVariableReference var, Location loc)
 		{
 			ec.Report.Error (1686, loc,
-				"Local variable or parameter `{0}' cannot have their address taken and be used inside an anonymous method or lambda expression",
+				"Local variable or parameter `{0}' cannot have their address taken and be used inside an anonymous method, lambda expression or query expression",
 				var.Name);
 		}
 

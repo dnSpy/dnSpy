@@ -357,13 +357,11 @@ namespace Mono.CSharp {
 			if (attributes != null)
 				attributes.AttachTo (this, rc);
 
-			var expr = texpr.ResolveAsType (rc);
-			if (expr == null)
+			parameter_type = texpr.ResolveAsType (rc);
+			if (parameter_type == null)
 				return null;
 
 			this.idx = index;
-			texpr = expr;
-			parameter_type = texpr.Type;
 	
 			if ((modFlags & Parameter.Modifier.ISBYREF) != 0 && parameter_type.IsSpecialRuntimeType) {
 				rc.Module.Compiler.Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
@@ -435,7 +433,7 @@ namespace Mono.CSharp {
 				}
 
 				if (TypeSpecComparer.IsEqual (default_expr.Type, parameter_type) ||
-					(default_expr is NullConstant && TypeManager.IsReferenceType (parameter_type) && !parameter_type.IsGenericParameter) ||
+					(default_expr is NullConstant && TypeSpec.IsReferenceType (parameter_type) && !parameter_type.IsGenericParameter) ||
 					parameter_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
 					return;
 				}
@@ -605,8 +603,7 @@ namespace Mono.CSharp {
 			expr_tree_variable = (TemporaryVariableReference) expr_tree_variable.Resolve (ec);
 
 			Arguments arguments = new Arguments (2);
-			arguments.Add (new Argument (new TypeOf (
-				new TypeExpression (parameter_type, Location), Location)));
+			arguments.Add (new Argument (new TypeOf (parameter_type, Location)));
 			arguments.Add (new Argument (new StringConstant (ec.BuiltinTypes, Name, Location)));
 			return new SimpleAssign (ExpressionTreeVariableReference (),
 				Expression.CreateExpressionFactoryCall (ec, "Parameter", null, arguments, Location));
@@ -1013,6 +1010,17 @@ namespace Mono.CSharp {
 				null);
 		}
 
+		public void CheckConstraints (IMemberContext mc)
+		{
+			foreach (Parameter p in parameters) {
+				//
+				// It's null for compiler generated types or special types like __arglist
+				//
+				if (p.TypeExpression != null)
+					ConstraintChecker.Check (mc, p.Type, p.TypeExpression.Location);
+			}
+		}
+
 		//
 		// Returns non-zero value for equal CLS parameter signatures
 		//
@@ -1254,7 +1262,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!expr.IsNull && TypeManager.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
+				if (!expr.IsNull && TypeSpec.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
 					rc.Report.Error (1763, Location,
 						"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
 						p.Name, parameter_type.GetSignatureForError ());

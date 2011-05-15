@@ -30,7 +30,7 @@ namespace ICSharpCode.NRefactory.PatternMatching
 			this.MaxCount = int.MaxValue;
 		}
 		
-		public override bool DoMatchCollection(CSharp.Role role, INode pos, Match match, BacktrackingInfo backtrackingInfo)
+		public override bool DoMatchCollection(Role role, INode pos, Match match, BacktrackingInfo backtrackingInfo)
 		{
 			var backtrackingStack = backtrackingInfo.backtrackingStack;
 			Debug.Assert(pos == null || pos.Role == role);

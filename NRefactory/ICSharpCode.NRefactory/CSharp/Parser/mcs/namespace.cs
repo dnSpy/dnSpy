@@ -63,13 +63,6 @@ namespace Mono.CSharp {
 			: base ("global")
 		{
 		}
-
-		public override void Error_NamespaceDoesNotExist (Location loc, string name, int arity, IMemberContext ctx)
-		{
-			ctx.Module.Compiler.Report.Error (400, loc,
-				"The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)",
-				name);
-		}
 	}
 
 	//
@@ -159,9 +152,16 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public virtual void Error_NamespaceDoesNotExist (Location loc, string name, int arity, IMemberContext ctx)
+		public void Error_NamespaceDoesNotExist (IMemberContext ctx, string name, int arity, Location loc)
 		{
-			var retval = LookupType (ctx, name, -System.Math.Max (1, arity), loc);
+			var retval = LookupType (ctx, name, arity, LookupMode.IgnoreAccessibility, loc);
+			if (retval != null) {
+				ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (retval.Type);
+				ErrorIsInaccesible (ctx, retval.GetSignatureForError (), loc);
+				return;
+			}
+
+			retval = LookupType (ctx, name, -System.Math.Max (1, arity), LookupMode.Probing, loc);
 			if (retval != null) {
 				Error_TypeArgumentsCannotBeUsed (ctx, retval.Type, arity, loc);
 				return;
@@ -173,9 +173,15 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			ctx.Module.Compiler.Report.Error (234, loc,
-				"The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
-				name, GetSignatureForError ());
+			if (this is GlobalRootNamespace) {
+				ctx.Module.Compiler.Report.Error (400, loc,
+					"The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)",
+					name);
+			} else {
+				ctx.Module.Compiler.Report.Error (234, loc,
+					"The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
+					name, GetSignatureForError ());
+			}
 		}
 
 		public override string GetSignatureForError ()
@@ -217,7 +223,7 @@ namespace Mono.CSharp {
 			return found;
 		}
 
-		public TypeExpr LookupType (IMemberContext ctx, string name, int arity, Location loc)
+		public TypeExpr LookupType (IMemberContext ctx, string name, int arity, LookupMode mode, Location loc)
 		{
 			if (types == null)
 				return null;
@@ -234,14 +240,19 @@ namespace Mono.CSharp {
 			foreach (var ts in found) {
 				if (ts.Arity == arity) {
 					if (best == null) {
+						if ((ts.Modifiers & Modifiers.INTERNAL) != 0 && !ts.MemberDefinition.IsInternalAsPublic (ctx.Module.DeclaringAssembly) && mode != LookupMode.IgnoreAccessibility)
+							continue;
+
 						best = ts;
 						continue;
 					}
 
 					if (best.MemberDefinition.IsImported && ts.MemberDefinition.IsImported) {
-						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (best);
-						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ts);
-						ctx.Module.Compiler.Report.Error (433, loc, "The imported type `{0}' is defined multiple times", ts.GetSignatureForError ());
+						if (mode == LookupMode.Normal) {
+							ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (best);
+							ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ts);
+							ctx.Module.Compiler.Report.Error (433, loc, "The imported type `{0}' is defined multiple times", ts.GetSignatureForError ());
+						}
 						break;
 					}
 
@@ -249,6 +260,9 @@ namespace Mono.CSharp {
 						best = ts;
 
 					if ((best.Modifiers & Modifiers.INTERNAL) != 0 && !best.MemberDefinition.IsInternalAsPublic (ctx.Module.DeclaringAssembly))
+						continue;
+
+					if (mode != LookupMode.Normal)
 						continue;
 
 					if (ts.MemberDefinition.IsImported)
@@ -260,7 +274,7 @@ namespace Mono.CSharp {
 				}
 
 				//
-				// Lookup for the best candidate with closest arity match
+				// Lookup for the best candidate with the closest arity match
 				//
 				if (arity < 0) {
 					if (best == null) {
@@ -274,13 +288,10 @@ namespace Mono.CSharp {
 			if (best == null)
 				return null;
 
-			if ((best.Modifiers & Modifiers.INTERNAL) != 0 && !best.MemberDefinition.IsInternalAsPublic (ctx.Module.DeclaringAssembly))
-				return null;
-
 			te = new TypeExpression (best, Location.Null);
 
 			// TODO MemberCache: Cache more
-			if (arity == 0)
+			if (arity == 0 && mode == LookupMode.Normal)
 				cached_types.Add (name, te);
 
 			return te;
@@ -317,20 +328,22 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public FullNamedExpression LookupTypeOrNamespace (IMemberContext ctx, string name, int arity, Location loc)
+		public FullNamedExpression LookupTypeOrNamespace (IMemberContext ctx, string name, int arity, LookupMode mode, Location loc)
 		{
-			var texpr = LookupType (ctx, name, arity, loc);
+			var texpr = LookupType (ctx, name, arity, mode, loc);
 
 			Namespace ns;
 			if (arity == 0 && namespaces.TryGetValue (name, out ns)) {
 				if (texpr == null)
 					return ns;
 
-				ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (texpr.Type);
-				// ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ns.loc, "");
-				ctx.Module.Compiler.Report.Warning (437, 2, loc,
-					"The type `{0}' conflicts with the imported namespace `{1}'. Using the definition found in the source file",
-					texpr.GetSignatureForError (), ns.GetSignatureForError ());
+				if (mode != LookupMode.Probing) {
+					ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (texpr.Type);
+					// ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ns.loc, "");
+					ctx.Module.Compiler.Report.Warning (437, 2, loc,
+						"The type `{0}' conflicts with the imported namespace `{1}'. Using the definition found in the source file",
+						texpr.GetSignatureForError (), ns.GetSignatureForError ());
+				}
 
 				if (texpr.Type.MemberDefinition.IsImported)
 					return ns;
@@ -823,12 +836,12 @@ namespace Mono.CSharp {
 			return parent.LookupExtensionMethod (extensionType, name, arity, ref scope);
 		}
 
-		public FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
+		public FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)
 		{
 			// Precondition: Only simple names (no dots) will be looked up with this function.
 			FullNamedExpression resolved = null;
 			for (NamespaceContainer curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent) {
-				if ((resolved = curr_ns.Lookup (name, arity, loc, ignore_cs0104)) != null)
+				if ((resolved = curr_ns.Lookup (name, arity, mode, loc)) != null)
 					break;
 			}
 
@@ -872,12 +885,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		private FullNamedExpression Lookup (string name, int arity, Location loc, bool ignore_cs0104)
+		FullNamedExpression Lookup (string name, int arity, LookupMode mode, Location loc)
 		{
 			//
 			// Check whether it's in the namespace.
 			//
-			FullNamedExpression fne = ns.LookupTypeOrNamespace (this, name, arity, loc);
+			FullNamedExpression fne = ns.LookupTypeOrNamespace (this, name, arity, mode, loc);
 
 			//
 			// Check aliases. 
@@ -887,12 +900,14 @@ namespace Mono.CSharp {
 					if (ue.Alias == name) {
 						if (fne != null) {
 							if (Doppelganger != null) {
-								// TODO: Namespace has broken location
-								//Report.SymbolRelatedToPreviousError (fne.Location, null);
-								Compiler.Report.SymbolRelatedToPreviousError (ue.Location, null);
-								Compiler.Report.Error (576, loc,
-									"Namespace `{0}' contains a definition with same name as alias `{1}'",
-									GetSignatureForError (), name);
+								if (mode == LookupMode.Normal) {
+									// TODO: Namespace has broken location
+									//Report.SymbolRelatedToPreviousError (fne.Location, null);
+									Compiler.Report.SymbolRelatedToPreviousError (ue.Location, null);
+									Compiler.Report.Error (576, loc,
+										"Namespace `{0}' contains a definition with same name as alias `{1}'",
+										GetSignatureForError (), name);
+								}
 							} else {
 								return fne;
 							}
@@ -903,10 +918,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (fne != null) {
-				if (!((fne.Type.Modifiers & Modifiers.INTERNAL) != 0 && !fne.Type.MemberDefinition.IsInternalAsPublic (module.DeclaringAssembly)))
-					return fne;
-			}
+			if (fne != null)
+				return fne;
 
 			if (IsImplicit)
 				return null;
@@ -918,7 +931,7 @@ namespace Mono.CSharp {
 			foreach (Namespace using_ns in GetUsingTable ()) {
 				// A using directive imports only types contained in the namespace, it
 				// does not import any nested namespaces
-				fne = using_ns.LookupType (this, name, arity, loc);
+				fne = using_ns.LookupType (this, name, arity, mode, loc);
 				if (fne == null)
 					continue;
 
@@ -937,16 +950,16 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (ignore_cs0104)
-					return match;
-
 				// It can be top level accessibility only
 				var better = Namespace.IsImportedTypeOverride (module, texpr_match.Type, texpr_fne.Type);
 				if (better == null) {
-					Compiler.Report.SymbolRelatedToPreviousError (texpr_match.Type);
-					Compiler.Report.SymbolRelatedToPreviousError (texpr_fne.Type);
-					Compiler.Report.Error (104, loc, "`{0}' is an ambiguous reference between `{1}' and `{2}'",
-						name, texpr_match.GetSignatureForError (), texpr_fne.GetSignatureForError ());
+					if (mode == LookupMode.Normal) {
+						Compiler.Report.SymbolRelatedToPreviousError (texpr_match.Type);
+						Compiler.Report.SymbolRelatedToPreviousError (texpr_fne.Type);
+						Compiler.Report.Error (104, loc, "`{0}' is an ambiguous reference between `{1}' and `{2}'",
+							name, texpr_match.GetSignatureForError (), texpr_fne.GetSignatureForError ());
+					}
+
 					return match;
 				}
 
@@ -1090,11 +1103,6 @@ namespace Mono.CSharp {
 			get { return SlaveDeclSpace.CurrentTypeParameters; }
 		}
 
-		// FIXME: It's false for expression types
-		public bool HasUnresolvedConstraints {
-			get { return true; }
-		}
-
 		public bool IsObsolete {
 			get { return SlaveDeclSpace.IsObsolete; }
 		}
@@ -1212,9 +1220,6 @@ namespace Mono.CSharp {
 				value = null;
 				return null;
 			}
-
-			if (resolved is TypeExpr)
-				resolved = resolved.ResolveAsType (rc);
 
 			return resolved;
 		}

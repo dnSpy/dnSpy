@@ -225,7 +225,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			Action<QueryExpression> constraint = expr => {
 				var fromClause = expr.Clauses[0] as QueryExpressionFromClause;
 				var groupClause = expr.Clauses[1] as QueryExpressionGroupVBClause;
-				var letClause = expr.Clauses[2] as QueryExpressionLetVBClause;
+				var letClause = expr.Clauses[2] as QueryExpressionLetClause;
 				var selectClause = expr.Clauses[3] as QueryExpressionSelectVBClause;
 				
 				// From
@@ -276,7 +276,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
             Group p By p.Category Into Group _
             Let minPrice = Group.Min(Function(p) p.UnitPrice) _
             Select Category, CheapestProducts = Group.Where(Function(p) p.UnitPrice = minPrice)", 4, constraint,
-			        typeof(QueryExpressionFromClause), typeof(QueryExpressionGroupVBClause), typeof(QueryExpressionLetVBClause), typeof(QueryExpressionSelectVBClause));
+			        typeof(QueryExpressionFromClause), typeof(QueryExpressionGroupVBClause), typeof(QueryExpressionLetClause), typeof(QueryExpressionSelectVBClause));
 		}
 		
 		[Test]

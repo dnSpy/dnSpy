@@ -39,89 +39,89 @@ namespace ICSharpCode.NRefactory.Demo
 			InitializeComponent();
 		}
 		
-		public void DeleteSelectedNode()
-		{
-			if (tree.SelectedNode is ElementNode) {
-				INode element = (tree.SelectedNode as ElementNode).element;
-				if (tree.SelectedNode.Parent is CollectionNode) {
-					if (MessageBox.Show("Remove selected node from parent collection?", "Remove node", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-					    == DialogResult.Yes)
-					{
-						IList col = (tree.SelectedNode.Parent as CollectionNode).collection;
-						col.Remove(element);
-						(tree.SelectedNode.Parent as CollectionNode).Update();
-					}
-				} else if (tree.SelectedNode.Parent is ElementNode) {
-					if (MessageBox.Show("Set selected property to null?", "Remove node", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-					    == DialogResult.Yes)
-					{
-						// get parent element
-						element = (tree.SelectedNode.Parent as ElementNode).element;
-						string propertyName = (string)tree.SelectedNode.Tag;
-						element.GetType().GetProperty(propertyName).SetValue(element, null, null);
-						(tree.SelectedNode.Parent as ElementNode).Update();
-					}
-				}
-			} else if (tree.SelectedNode is CollectionNode) {
-				if (MessageBox.Show("Remove all elements from selected collection?", "Clear collection", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-				    == DialogResult.Yes)
-				{
-					IList col = (tree.SelectedNode as CollectionNode).collection;
-					col.Clear();
-					(tree.SelectedNode as CollectionNode).Update();
-				}
-			}
-		}
-		
-		public void EditSelectedNode()
-		{
-			TreeNode node = tree.SelectedNode;
-			while (!(node is ElementNode)) {
-				if (node == null) {
-					return;
-				}
-				node = node.Parent;
-			}
-			INode element = ((ElementNode)node).element;
-			using (VBEditDialog dlg = new VBEditDialog(element)) {
-				dlg.ShowDialog();
-			}
-			((ElementNode)node).Update();
-		}
-		
-		public void ApplyTransformation(IAstVisitor visitor)
-		{
-			if (tree.SelectedNode == tree.Nodes[0]) {
-				unit.AcceptVisitor(visitor, null);
-				UpdateTree();
-			} else {
-				string name = visitor.GetType().Name;
-				ElementNode elementNode = tree.SelectedNode as ElementNode;
-				CollectionNode collectionNode = tree.SelectedNode as CollectionNode;
-				if (elementNode != null) {
-					if (MessageBox.Show(("Apply " + name + " to selected element '" + elementNode.Text + "'?"),
-					                    "Apply transformation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-					    == DialogResult.Yes)
-					{
-						elementNode.element.AcceptVisitor(visitor, null);
-						elementNode.Update();
-					}
-				} else if (collectionNode != null) {
-					if (MessageBox.Show(("Apply " + name + " to all elements in selected collection '" + collectionNode.Text + "'?"),
-					                    "Apply transformation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-					    == DialogResult.Yes)
-					{
-						foreach (TreeNode subNode in collectionNode.Nodes) {
-							if (subNode is ElementNode) {
-								(subNode as ElementNode).element.AcceptVisitor(visitor, null);
-							}
-						}
-						collectionNode.Update();
-					}
-				}
-			}
-		}
-		
+//		public void DeleteSelectedNode()
+//		{
+//			if (tree.SelectedNode is ElementNode) {
+//				INode element = (tree.SelectedNode as ElementNode).element;
+//				if (tree.SelectedNode.Parent is CollectionNode) {
+//					if (MessageBox.Show("Remove selected node from parent collection?", "Remove node", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+//					    == DialogResult.Yes)
+//					{
+//						IList col = (tree.SelectedNode.Parent as CollectionNode).collection;
+//						col.Remove(element);
+//						(tree.SelectedNode.Parent as CollectionNode).Update();
+//					}
+//				} else if (tree.SelectedNode.Parent is ElementNode) {
+//					if (MessageBox.Show("Set selected property to null?", "Remove node", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+//					    == DialogResult.Yes)
+//					{
+//						// get parent element
+//						element = (tree.SelectedNode.Parent as ElementNode).element;
+//						string propertyName = (string)tree.SelectedNode.Tag;
+//						element.GetType().GetProperty(propertyName).SetValue(element, null, null);
+//						(tree.SelectedNode.Parent as ElementNode).Update();
+//					}
+//				}
+//			} else if (tree.SelectedNode is CollectionNode) {
+//				if (MessageBox.Show("Remove all elements from selected collection?", "Clear collection", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+//				    == DialogResult.Yes)
+//				{
+//					IList col = (tree.SelectedNode as CollectionNode).collection;
+//					col.Clear();
+//					(tree.SelectedNode as CollectionNode).Update();
+//				}
+//			}
+//		}
+//		
+//		public void EditSelectedNode()
+//		{
+//			TreeNode node = tree.SelectedNode;
+//			while (!(node is ElementNode)) {
+//				if (node == null) {
+//					return;
+//				}
+//				node = node.Parent;
+//			}
+//			INode element = ((ElementNode)node).element;
+//			using (VBEditDialog dlg = new VBEditDialog(element)) {
+//				dlg.ShowDialog();
+//			}
+//			((ElementNode)node).Update();
+//		}
+//		
+//		public void ApplyTransformation(IAstVisitor visitor)
+//		{
+//			if (tree.SelectedNode == tree.Nodes[0]) {
+//				unit.AcceptVisitor(visitor, null);
+//				UpdateTree();
+//			} else {
+//				string name = visitor.GetType().Name;
+//				ElementNode elementNode = tree.SelectedNode as ElementNode;
+//				CollectionNode collectionNode = tree.SelectedNode as CollectionNode;
+//				if (elementNode != null) {
+//					if (MessageBox.Show(("Apply " + name + " to selected element '" + elementNode.Text + "'?"),
+//					                    "Apply transformation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+//					    == DialogResult.Yes)
+//					{
+//						elementNode.element.AcceptVisitor(visitor, null);
+//						elementNode.Update();
+//					}
+//				} else if (collectionNode != null) {
+//					if (MessageBox.Show(("Apply " + name + " to all elements in selected collection '" + collectionNode.Text + "'?"),
+//					                    "Apply transformation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+//					    == DialogResult.Yes)
+//					{
+//						foreach (TreeNode subNode in collectionNode.Nodes) {
+//							if (subNode is ElementNode) {
+//								(subNode as ElementNode).element.AcceptVisitor(visitor, null);
+//							}
+//						}
+//						collectionNode.Update();
+//					}
+//				}
+//			}
+//		}
+//		
 		static TreeNode CreateNode(object child)
 		{
 			if (child == null) {
@@ -164,9 +164,9 @@ namespace ICSharpCode.NRefactory.Demo
 		
 		class ElementNode : TreeNode
 		{
-			internal INode element;
+			internal AstNode element;
 			
-			public ElementNode(INode node)
+			public ElementNode(AstNode node)
 			{
 				this.element = node;
 				Update();
@@ -188,7 +188,7 @@ namespace ICSharpCode.NRefactory.Demo
 				}
 			}
 			
-			void AddProperties(Type type, INode node)
+			void AddProperties(Type type, AstNode node)
 			{
 				if (type == typeof(AbstractNode))
 					return;

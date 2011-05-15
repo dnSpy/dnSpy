@@ -120,6 +120,7 @@
     <Compile Include="CSharp\Resolver\AttributeTests.cs" />
     <Compile Include="CSharp\Resolver\BinaryOperatorTests.cs" />
     <Compile Include="CSharp\Resolver\CastTests.cs" />
+    <Compile Include="CSharp\Resolver\ConditionalOperatorTests.cs" />
     <Compile Include="CSharp\Resolver\ExtensionMethodTests.cs" />
     <Compile Include="CSharp\Resolver\InvocationTests.cs" />
     <Compile Include="CSharp\Resolver\LambdaTests.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="TypeSystem\GetAllBaseTypesTest.cs" />
     <Compile Include="TypeSystem\GetMembersTests.cs" />
     <Compile Include="TypeSystem\ReflectionHelperTests.cs" />
+    <Compile Include="TypeSystem\StructureTests.cs" />
     <Compile Include="TypeSystem\TestInterningProvider.cs" />
     <Compile Include="TypeSystem\TypeSystemTests.cs" />
     <Compile Include="TypeSystem\TypeSystemTests.TestCase.cs" />

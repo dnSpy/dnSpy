@@ -252,10 +252,11 @@ namespace Mono.CSharp
 %token INTO
 %token INTERR_NULLABLE
 %token EXTERN_ALIAS
-%token ASYNC
 %token REFVALUE
 %token REFTYPE
 %token MAKEREF
+%token ASYNC
+%token AWAIT
 
 /* C# keywords which are not really keywords */
 %token GET
@@ -664,7 +665,6 @@ attribute_sections
 		else
 			attrs.AddAttributes (sect);
 		$$ = attrs;
-		lbag.AddLocation ($$, savedOpenLocation, savedCloseLocation);
 	  }
 	;
 	
@@ -1733,7 +1733,7 @@ indexer_declaration
 		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			report.Error (620, GetLocation ($3), "`{0}': indexer return type cannot be `void'", indexer.GetSignatureForError ());  		
 
-		if (indexer.Parameters.IsEmpty) {
+		if (indexer.ParameterInfo.IsEmpty) {
 			report.Error (1551, GetLocation ($5), "Indexers must have at least one parameter");
 		}
 
@@ -3092,6 +3092,7 @@ member_access
 		var lt2 = (Tokenizer.LocatedToken) $2;
 
 		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| primary_expression DOT GENERATE_COMPLETION {
 		$$ = new CompletionMemberAccess ((Expression) $1, null,GetLocation ($3));
@@ -3640,6 +3641,7 @@ unbound_type_name
 		var lt2 = (Tokenizer.LocatedToken) $2;
 
 		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (int) $3, lt1.Location);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| unbound_type_name DOT IDENTIFIER
 	  {
@@ -3777,6 +3779,7 @@ unary_expression
 		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2, GetLocation ($1));
 	  }
 	| cast_expression
+	| await_expression
 	;
 
 cast_expression
@@ -3785,6 +3788,13 @@ cast_expression
 		$$ = new Cast ((FullNamedExpression) $2, (Expression) $4, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($3));
 	  }
+	;
+	
+await_expression
+	: AWAIT unary_expression
+	 {
+		$$ = new Await ((Expression) $2, GetLocation ($1));
+	 }
 	;
 
 	//
@@ -6232,7 +6242,7 @@ void Error_NamedArgumentExpected (NamedArgument a)
 
 void push_current_class (TypeContainer tc, object partial_token)
 {
-	if (module.Evaluator != null){
+	if (module.Evaluator != null && current_container is ModuleContainer){
 		tc.Definition.Modifiers = tc.ModFlags = (tc.ModFlags & ~Modifiers.AccessibilityMask) | Modifiers.PUBLIC;
 		if (undo == null)
 			undo = new Undo ();

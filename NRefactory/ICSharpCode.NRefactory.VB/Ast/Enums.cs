@@ -10,82 +10,45 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	{
 		None      = 0x0000,
 		
-		// Access
+		// Accessibility
 		Private   = 0x0001,
-		/// <summary>C# 'internal', VB 'Friend'</summary>
-		Internal  = 0x0002,
+		Friend    = 0x0002,
 		Protected = 0x0004,
 		Public    = 0x0008,
 		
 		// Scope
-		Abstract  = 0x0010,  // == 	MustOverride/MustInherit
-		Virtual   = 0x0020,
-		Sealed    = 0x0040,
-		/// <summary>C# 'static', VB 'Shared'</summary>
-		Static    = 0x0080,
-		Override  = 0x0100,
-		/// <summary>For fields: readonly (c# and vb), for properties: get-only (vb)</summary>
-		ReadOnly  = 0x0200,
-		Const	  = 0x0400,
-		/// <summary>C# 'new', VB 'Shadows'</summary>
-		New       = 0x0800,
-		Partial   = 0x1000,
+		MustInherit     = 0x0010,  // Types
+		MustOverride    = 0x0020,  // Members
+		Overridable     = 0x0040,
+		NotInheritable  = 0x0080,  // Types
+		NotOverridable  = 0x0100,  // Members
+		Const           = 0x0200,
+		Shared          = 0x0400,
+		Static          = 0x0800,
+		Override        = 0x1000,
+		ReadOnly        = 0x2000,
+		Shadows         = 0x4000,
+		Partial         = 0x8000,
 		
 		// Special
-		Extern     = 0x2000,
-		Volatile   = 0x4000,
-		Unsafe     = 0x8000,
 		Overloads  = 0x10000, // VB specific
 		WithEvents = 0x20000, // VB specific
 		Default    = 0x40000, // VB specific
-		Fixed      = 0x80000, // C# specific (fixed size arrays in unsafe structs)
 		
-		Dim	       = 0x100000,	// VB.NET SPECIFIC, for fields/local variables only
+		Dim	   = 0x80000,	// VB.NET SPECIFIC, for fields/local variables only
 		
-		/// <summary>Generated code, not part of parsed code</summary>
-		Synthetic  = 0x200000,
 		/// <summary>Only for VB properties.</summary>
-		WriteOnly  = 0x400000, // VB specific
+		WriteOnly  = 0x100000, // VB specific
 		
-		Visibility						= Private | Public | Protected | Internal,
-		Classes							= New | Visibility | Abstract | Sealed | Partial | Static,
-		VBModules						= Visibility,
-		VBStructures					= Visibility | New,
-		VBEnums						    = Visibility | New,
-		VBInterfacs					    = Visibility | New,
-		VBDelegates					    = Visibility | New,
-		VBMethods						= Visibility | New | Static | Virtual | Sealed | Abstract | Override | Overloads,
-		VBExternalMethods				= Visibility | New | Overloads,
-		VBEvents						= Visibility | New | Overloads,
-		VBProperties					= VBMethods | Default | ReadOnly | WriteOnly,
-		VBCustomEvents					= Visibility | New | Overloads,
-		VBOperators						= Public | Static | Overloads | New,
+		ByVal      = 0x200000,
+		ByRef      = 0x400000,
+		ParamArray = 0x800000,
+		Optional   = 0x1000000,
 		
-		
-		// this is not documented in the spec
-		VBInterfaceEvents				= New,
-		VBInterfaceMethods				= New | Overloads,
-		VBInterfaceProperties			= New | Overloads | ReadOnly | WriteOnly | Default,
-		VBInterfaceEnums				= New,
-		
-		Fields                          = New | Visibility | Static   | ReadOnly | Volatile | Fixed,
-		PropertysEventsMethods          = New | Visibility | Static   | Virtual  | Sealed   | Override | Abstract | Extern,
-		Indexers                        = New | Visibility | Virtual  | Sealed   | Override | Abstract | Extern,
-		Operators                       = Public | Static | Extern,
-		Constants                       = New | Visibility,
-		StructsInterfacesEnumsDelegates = New | Visibility | Partial,
-		StaticConstructors              = Extern | Static | Unsafe,
-		Destructors                     = Extern | Unsafe,
-		Constructors                    = Visibility | Extern,
-	}
-	
-	public enum ClassType
-	{
-		Class,
-		Module,
-		Interface,
-		Struct,
-		Enum
+		/// <summary>
+		/// Special value used to match any modifiers during pattern matching.
+		/// </summary>
+		Any = unchecked((int)0x80000000)
 	}
 	
 	public enum ParentType
@@ -102,18 +65,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		In,
 		Out,
 		Ref
-	}
-	
-	[Flags]
-	public enum ParameterModifiers
-	{
-		// Values must be the same as in SharpDevelop's ParameterModifiers
-		None = 0,
-		In  = 1,
-		Out = 2,
-		Ref = 4,
-		Params = 8,
-		Optional = 16
 	}
 	
 	public enum VarianceModifier
@@ -357,20 +308,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Auto,
 		Unicode,
 		Ansi
-	}
-	
-	///<summary>
-	/// Compare type, used in the <c>Option Compare</c>
-	/// pragma (VB only).
-	///</summary>
-	public enum OptionType
-	{
-		None,
-		Explicit,
-		Strict,
-		CompareBinary,
-		CompareText,
-		Infer
 	}
 	
 	/// <summary>

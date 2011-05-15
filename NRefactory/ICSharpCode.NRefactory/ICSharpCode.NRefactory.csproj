@@ -31,6 +31,7 @@
     <Optimize>False</Optimize>
     <DefineConstants>DEBUG;TRACE;FULL_AST</DefineConstants>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -41,7 +42,6 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <WarningLevel>4</WarningLevel>
-    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <WarningLevel>4</WarningLevel>
@@ -97,6 +97,9 @@
     <Compile Include="CSharp\Ast\Expressions\UncheckedExpression.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\TypeParameterDeclaration.cs" />
     <Compile Include="CSharp\Ast\MemberType.cs" />
+    <Compile Include="CSharp\Resolver\CSharpAttribute.cs" />
+    <Compile Include="CSharp\Resolver\ConstantValues.cs" />
+    <Compile Include="CSharp\Resolver\MapTypeIntoNewContext.cs" />
     <Compile Include="PatternMatching\BacktrackingInfo.cs" />
     <Compile Include="PatternMatching\Choice.cs" />
     <Compile Include="PatternMatching\AnyNode.cs" />

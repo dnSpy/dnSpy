@@ -68,12 +68,22 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
+		IList<IConstantValue> IAttribute.GetPositionalArguments(ITypeResolveContext context)
+		{
+			return this.PositionalArguments;
+		}
+		
 		public IList<KeyValuePair<string, IConstantValue>> NamedArguments {
 			get {
 				if (namedArguments == null)
 					namedArguments = new List<KeyValuePair<string, IConstantValue>>();
 				return namedArguments;
 			}
+		}
+		
+		IList<KeyValuePair<string, IConstantValue>> IAttribute.GetNamedArguments(ITypeResolveContext context)
+		{
+			return this.NamedArguments;
 		}
 		
 		public IMethod ResolveConstructor(ITypeResolveContext context)

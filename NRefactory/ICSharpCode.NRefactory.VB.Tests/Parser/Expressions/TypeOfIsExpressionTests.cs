@@ -18,7 +18,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		{
 			TypeOfIsExpression ce = ParseUtil.ParseExpression<TypeOfIsExpression>("TypeOf o Is MyObject");
 			Assert.AreEqual("MyObject", ce.TypeReference.Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
+			Assert.IsTrue(ce.Expression is SimpleNameExpression);
 		}
 		
 		[Test]
@@ -27,7 +27,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			TypeOfIsExpression ce = ParseUtil.ParseExpression<TypeOfIsExpression>("TypeOf o Is List(of T)");
 			Assert.AreEqual("List", ce.TypeReference.Type);
 			Assert.AreEqual("T", ce.TypeReference.GenericTypes[0].Type);
-			Assert.IsTrue(ce.Expression is IdentifierExpression);
+			Assert.IsTrue(ce.Expression is SimpleNameExpression);
 		}
 		#endregion
 	}

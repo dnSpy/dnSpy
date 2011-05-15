@@ -171,7 +171,8 @@ namespace Mono.CSharp
  				return false;
 
 			MemberSpec candidate;
-			var conflict_symbol = MemberCache.FindBaseMember (this, out candidate);
+			bool overrides = false;
+			var conflict_symbol = MemberCache.FindBaseMember (this, out candidate, ref overrides);
 			if (conflict_symbol == null)
 				conflict_symbol = candidate;
 
@@ -241,6 +242,8 @@ namespace Mono.CSharp
 			if (((status & Status.HAS_OFFSET) == 0) && (ModFlags & (Modifiers.STATIC | Modifiers.BACKING_FIELD)) == 0 && Parent.PartialContainer.HasExplicitLayout) {
 				Report.Error (625, Location, "`{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute", GetSignatureForError ());
 			}
+
+			ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			base.Emit ();
 		}
@@ -577,9 +580,6 @@ namespace Mono.CSharp
 
 		bool CanBeVolatile ()
 		{
-			if (TypeManager.IsReferenceType (MemberType))
-				return true;
-
 			switch (MemberType.BuiltinType) {
 			case BuiltinTypeSpec.Type.Bool:
 			case BuiltinTypeSpec.Type.Char:
@@ -594,6 +594,9 @@ namespace Mono.CSharp
 			case BuiltinTypeSpec.Type.IntPtr:
 				return true;
 			}
+
+			if (TypeSpec.IsReferenceType (MemberType))
+				return true;
 
 			if (MemberType.IsEnum)
 				return true;

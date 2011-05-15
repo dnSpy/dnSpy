@@ -18,8 +18,8 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		{
 			MemberReferenceExpression fre = ParseUtil.ParseExpression<MemberReferenceExpression>("myTargetObject.myField");
 			Assert.AreEqual("myField", fre.MemberName);
-			Assert.IsTrue(fre.TargetObject is IdentifierExpression);
-			Assert.AreEqual("myTargetObject", ((IdentifierExpression)fre.TargetObject).Identifier);
+			Assert.IsTrue(fre.TargetObject is SimpleNameExpression);
+			Assert.AreEqual("myTargetObject", ((SimpleNameExpression)fre.TargetObject).Identifier);
 		}
 		
 		[Test]
@@ -35,8 +35,8 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		{
 			MemberReferenceExpression fre = ParseUtil.ParseExpression<MemberReferenceExpression>("SomeClass(of string).myField");
 			Assert.AreEqual("myField", fre.MemberName);
-			Assert.IsInstanceOf(typeof(IdentifierExpression), fre.TargetObject);
-			TypeReference tr = ((IdentifierExpression)fre.TargetObject).TypeArguments[0];
+			Assert.IsInstanceOf(typeof(SimpleNameExpression), fre.TargetObject);
+			TypeReference tr = ((SimpleNameExpression)fre.TargetObject).TypeArguments[0];
 			Assert.AreEqual("System.String", tr.Type);
 		}
 		

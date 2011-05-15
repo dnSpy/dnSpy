@@ -3,90 +3,106 @@
 
 using System;
 using System.IO;
-using ICSharpCode.NRefactory.VB.Parser;
+using System.Linq;
+
+using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.VB.Ast;
+using ICSharpCode.NRefactory.VB.Parser;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.VB.Tests.Ast
 {
 	public class ParseUtil
 	{
-		public static T ParseGlobal<T>(string program) where T : INode
+		public static T ParseGlobal<T>(string code, bool expectErrors = false) where T : AstNode
 		{
-			return ParseGlobal<T>(program, false);
-		}
-		
-		public static T ParseGlobal<T>(string program, bool expectErrors) where T : INode
-		{
-			VBParser parser = ParserFactory.CreateParser(new StringReader(program));
-			parser.Parse();
+			VBParser parser = new VBParser();
+			CompilationUnit cu = parser.Parse(new StringReader(code));
 			
-			if (expectErrors)
-				Assert.IsFalse(parser.Errors.ErrorOutput.Length == 0, "Expected errors, but operation completed successfully");
-			else
-				Assert.AreEqual("", parser.Errors.ErrorOutput);
+			Assert.AreEqual(expectErrors, parser.HasErrors, "HasErrors");
 			
-			Assert.IsNotNull(parser.CompilationUnit);
-			Assert.IsNotNull(parser.CompilationUnit.Children);
-			Assert.IsNotNull(parser.CompilationUnit.Children[0]);
-			Assert.AreEqual(1, parser.CompilationUnit.Children.Count);
-			
+			AstNode node = cu.Children.Single();
 			Type type = typeof(T);
-			Assert.IsTrue(type.IsAssignableFrom(parser.CompilationUnit.Children[0].GetType()), String.Format("Parsed expression was {0} instead of {1} ({2})", parser.CompilationUnit.Children[0].GetType(), type, parser.CompilationUnit.Children[0]));
-			
-			parser.CompilationUnit.AcceptVisitor(new CheckParentVisitor(), null);
-			// TODO fix Locations
-//			parser.CompilationUnit.AcceptChildren(new LocationAssignmentCheckVisitor(), null);
-			
-			return (T)parser.CompilationUnit.Children[0];
+			Assert.IsTrue(type.IsAssignableFrom(node.GetType()), String.Format("Parsed node was {0} instead of {1} ({2})", node.GetType(), type, node));
+			return (T)node;
 		}
 		
-		public static T ParseTypeMember<T>(string typeMember, bool expectErrors) where T : INode
+		public static void AssertGlobal(string code, AstNode expectedNode)
 		{
-			TypeDeclaration td = ParseGlobal<TypeDeclaration>("Class TestClass\n " + typeMember + "\n End Class\n", expectErrors);
-			Assert.AreEqual(1, td.Children.Count);
-			Type type = typeof(T);
-			Assert.IsTrue(type.IsAssignableFrom(td.Children[0].GetType()), String.Format("Parsed expression was {0} instead of {1} ({2})", td.GetType(), type, td));
-			return (T)td.Children[0];
+			var node = ParseGlobal<AstNode>(code);
+			if (!expectedNode.IsMatch(node)) {
+				Assert.Fail("Expected '{0}' but was '{1}'", ToVB(expectedNode), ToVB(node));
+			}
 		}
 		
-		public static T ParseTypeMember<T>(string typeMember) where T : INode
-		{
-			return ParseTypeMember<T>(typeMember, false);
-		}
+//		public static T ParseStatement<T>(string stmt, bool expectErrors = false) where T : AstNode
+//		{
+//			VBParser parser = new VBParser();
+//			var statements = parser.ParseStatements(new StringReader(stmt));
+//			
+//			Assert.AreEqual(expectErrors, parser.HasErrors, "HasErrors");
+//			
+//			AstNode statement = statements.Single();
+//			Type type = typeof(T);
+//			Assert.IsTrue(type.IsAssignableFrom(statement.GetType()), String.Format("Parsed statement was {0} instead of {1} ({2})", statement.GetType(), type, statement));
+//			return (T)statement;
+//		}
+//		
+//		public static void AssertStatement(string code, VB.Ast.Statement expectedStmt)
+//		{
+//			var stmt = ParseStatement<VB.Ast.Statement>(code);
+//			if (!expectedStmt.IsMatch(stmt)) {
+//				Assert.Fail("Expected '{0}' but was '{1}'", ToCSharp(expectedStmt), ToCSharp(stmt));
+//			}
+//		}
+//		
+//		public static T ParseExpression<T>(string expr, bool expectErrors = false) where T : AstNode
+//		{
+//			VBParser parser = new VBParser();
+//			AstNode parsedExpression = parser.ParseExpression(new StringReader(expr));
+//			
+//			Assert.AreEqual(expectErrors, parser.HasErrors, "HasErrors");
+//			if (expectErrors && parsedExpression == null)
+//				return default (T);
+//			Type type = typeof(T);
+//			Assert.IsTrue(type.IsAssignableFrom(parsedExpression.GetType()), String.Format("Parsed expression was {0} instead of {1} ({2})", parsedExpression.GetType(), type, parsedExpression));
+//			return (T)parsedExpression;
+//		}
+//		
+//		public static void AssertExpression(string code, VB.Ast.Expression expectedExpr)
+//		{
+//			var expr = ParseExpression<CSharp.Expression>(code);
+//			if (!expectedExpr.IsMatch(expr)) {
+//				Assert.Fail("Expected '{0}' but was '{1}'", ToCSharp(expectedExpr), ToCSharp(expr));
+//			}
+//		}
+//		
+//		public static T ParseTypeMember<T>(string expr, bool expectErrors = false) where T : AttributedNode
+//		{
+//			VBParser parser = new VBParser();
+//			var members = parser.ParseTypeMembers(new StringReader(expr));
+//			
+//			Assert.AreEqual(expectErrors, parser.HasErrors, "HasErrors");
+//			
+//			AttributedNode m = members.Single();
+//			Type type = typeof(T);
+//			Assert.IsTrue(type.IsAssignableFrom(m.GetType()), String.Format("Parsed member was {0} instead of {1} ({2})", m.GetType(), type, m));
+//			return (T)m;
+//		}
+//		
+//		public static void AssertTypeMember(string code, VB.Ast.AttributedNode expectedMember)
+//		{
+//			var member = ParseTypeMember<VB.Ast.AttributedNode>(code);
+//			if (!expectedMember.IsMatch(member)) {
+//				Assert.Fail("Expected '{0}' but was '{1}'", ToVB(expectedMember), ToVB(member));
+//			}
+//		}
 		
-		public static T ParseStatement<T>(string statement, bool expectErrors) where T : INode
+		static string ToVB(AstNode node)
 		{
-			MethodDeclaration md = ParseTypeMember<MethodDeclaration>("Sub A()\n " + statement + "\nEnd Sub\n", expectErrors);
-			Assert.AreEqual(1, md.Body.Children.Count);
-			Type type = typeof(T);
-			Assert.IsTrue(type.IsAssignableFrom(md.Body.Children[0].GetType()), String.Format("Parsed expression was {0} instead of {1} ({2})", md.GetType(), type, md));
-			return (T)md.Body.Children[0];
-		}
-		
-		public static T ParseStatement<T>(string statement) where T : INode
-		{
-			return ParseStatement<T>(statement, false);
-		}
-		
-		public static T ParseExpression<T>(string expr) where T : INode
-		{
-			return ParseExpression<T>(expr, false);
-		}
-		
-		public static T ParseExpression<T>(string expr, bool expectErrors) where T : INode
-		{
-			VBParser parser = ParserFactory.CreateParser(new StringReader(expr));
-			INode parsedExpression = parser.ParseExpression();
-			if (expectErrors)
-				Assert.IsFalse(parser.Errors.ErrorOutput.Length == 0, "Expected errors, but operation completed successfully");
-			else
-				Assert.AreEqual("", parser.Errors.ErrorOutput);
-			// TODO fix Locations
-//			parsedExpression.AcceptVisitor(new LocationAssignmentCheckVisitor(), null);
-			Type type = typeof(T);
-			Assert.IsTrue(type.IsAssignableFrom(parsedExpression.GetType()), String.Format("Parsed expression was {0} instead of {1} ({2})", parsedExpression.GetType(), type, parsedExpression));
-			return (T)parsedExpression;
+			StringWriter w = new StringWriter();
+			node.AcceptVisitor(new OutputVisitor(w, new VBFormattingOptions()), null);
+			return w.ToString();
 		}
 	}
 }

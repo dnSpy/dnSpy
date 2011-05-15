@@ -21,10 +21,12 @@ using System.IO;
 
 #if STATIC
 using SecurityType = System.Collections.Generic.List<IKVM.Reflection.Emit.CustomAttributeBuilder>;
+using BadImageFormat = IKVM.Reflection.BadImageFormatException;
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
 using SecurityType = System.Collections.Generic.Dictionary<System.Security.Permissions.SecurityAction, System.Security.PermissionSet>;
+using BadImageFormat = System.BadImageFormatException;
 using System.Reflection;
 using System.Reflection.Emit;
 #endif
@@ -245,15 +247,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		TypeSpec ResolvePossibleAttributeType (ATypeNameExpression expr)
-		{
-			TypeExpr te = expr.ResolveAsType (context);
-			if (te == null)
-				return null;
-
-			return te.Type;
-		}
-
 		/// <summary>
 		///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
 		/// </summary>
@@ -271,7 +264,7 @@ namespace Mono.CSharp {
 			// print on success
 
 			try {
-				t1 = ResolvePossibleAttributeType (expression);
+				t1 = expression.ResolveAsType (context);
 				if (t1 != null)
 					t1_is_attr = t1.IsAttribute;
 
@@ -283,7 +276,7 @@ namespace Mono.CSharp {
 					expanded = (ATypeNameExpression) expression.Clone (null);
 					expanded.Name += "Attribute";
 
-					t2 = ResolvePossibleAttributeType (expanded);
+					t2 = expanded.ResolveAsType (context);
 					if (t2 != null)
 						t2_is_attr = t2.IsAttribute;
 				}
@@ -659,7 +652,7 @@ namespace Mono.CSharp {
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve ();
 
-			if (resolve_error)
+			if (resolve_error || PosArguments.Count != 1 || !(PosArguments [0].Expr is Constant))
 				return null;
 
 			return ((Constant) PosArguments [0].Expr).GetValue () as string;
@@ -961,11 +954,12 @@ namespace Mono.CSharp {
 						var pt = param_types[j];
 						var arg_expr = PosArguments[j].Expr;
 						if (j == 0) {
-							if (Type == predefined.IndexerName || Type == predefined.Conditional) {
-								string v = ((StringConstant) arg_expr).Value;
+							if ((Type == predefined.IndexerName || Type == predefined.Conditional) && arg_expr is Constant) {
+								string v = ((Constant) arg_expr).GetValue () as string;
 								if (!Tokenizer.IsValidIdentifier (v) || Tokenizer.IsKeyword (v)) {
 									context.Module.Compiler.Report.Error (633, arg_expr.Location,
 										"The argument to the `{0}' attribute must be a valid identifier", GetSignatureForError ());
+									return;
 								}
 							} else if (Type == predefined.Guid) {
 								try {
@@ -989,7 +983,7 @@ namespace Mono.CSharp {
 									}
 								}
 							} else if (Type == predefined.DllImport) {
-								if (PosArguments.Count == 1) {
+								if (PosArguments.Count == 1 && PosArguments[0].Expr is Constant) {
 									var value = ((Constant) PosArguments[0].Expr).GetValue () as string;
 									if (string.IsNullOrEmpty (value))
 										Error_AttributeEmitError ("DllName cannot be empty");
@@ -1028,6 +1022,9 @@ namespace Mono.CSharp {
 				foreach (Attributable target in targets)
 					target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
 			} catch (Exception e) {
+				if (e is BadImageFormat && Report.Errors > 0)
+					return;
+
 				Error_AttributeEmitError (e.Message);
 				return;
 			}

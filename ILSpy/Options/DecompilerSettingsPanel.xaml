@@ -7,5 +7,6 @@
 		<CheckBox IsChecked="{Binding YieldReturn}">Decompile enumerators (yield return)</CheckBox>
 		<CheckBox IsChecked="{Binding QueryExpressions}" IsEnabled="{Binding AnonymousMethods}">Decompile query expressions</CheckBox>
 		<CheckBox IsChecked="{Binding UseDebugSymbols}">Use variable names from debug symbols, if available</CheckBox>
+		<CheckBox IsChecked="{Binding ShowXmlDocumentation}">Show XML documentation in decompiled code</CheckBox>
 	</StackPanel>
 </UserControl>
