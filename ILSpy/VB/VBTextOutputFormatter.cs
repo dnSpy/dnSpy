@@ -130,5 +130,14 @@ namespace ICSharpCode.ILSpy.VB
 		{
 			output.WriteLine();
 		}
+		
+		public void WriteComment(bool isDocumentation, string content)
+		{
+			if (isDocumentation)
+				output.Write("'''");
+			else
+				output.Write("'");
+			output.WriteLine(content);
+		}
 	}
 }

@@ -1027,7 +1027,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitComment(CSharp.Comment comment, object data)
 		{
-			throw new NotImplementedException();
+			var c = new Comment(comment.Content, comment.CommentType == CSharp.CommentType.Documentation);
+			
+			if (comment.CommentType == CSharp.CommentType.MultiLine)
+				throw new NotImplementedException();
+			
+			return EndNode(comment, c);
 		}
 		
 		public AstNode VisitTypeParameterDeclaration(CSharp.TypeParameterDeclaration typeParameterDeclaration, object data)

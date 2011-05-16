@@ -9,6 +9,7 @@ namespace ICSharpCode.NRefactory.VB {
 	public interface IAstVisitor<in T, out S>
 	{
 		S VisitBlockStatement(BlockStatement blockStatement, T data);
+		S VisitComment(Comment comment, T data);
 		S VisitCompilationUnit(CompilationUnit compilationUnit, T data);
 		S VisitPatternPlaceholder(AstNode placeholder, PatternMatching.Pattern pattern, T data);
 		S VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, T data);

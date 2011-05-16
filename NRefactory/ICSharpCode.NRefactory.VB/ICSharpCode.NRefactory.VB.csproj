@@ -46,6 +46,7 @@
     <Compile Include="Ast\AstLocation.cs" />
     <Compile Include="Ast\AstNode.cs" />
     <Compile Include="Ast\AstNodeCollection.cs" />
+    <Compile Include="Ast\Comment.cs" />
     <Compile Include="Ast\Enums.cs" />
     <Compile Include="Ast\Expressions\AddressOfExpression.cs" />
     <Compile Include="Ast\Expressions\ArrayInitializerExpression.cs" />

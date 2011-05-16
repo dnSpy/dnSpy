@@ -1610,5 +1610,11 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(objectCreationExpression);
 		}
+		
+		public object VisitComment(Comment comment, object data)
+		{
+			formatter.WriteComment(comment.IsDocumentationComment, comment.Content);
+			return null;
+		}
 	}
 }
