@@ -526,15 +526,17 @@ namespace ICSharpCode.NRefactory.VB
 			}
 			WriteHandlesClause(methodDeclaration.HandlesClause);
 			WriteImplementsClause(methodDeclaration.ImplementsClause);
-			NewLine();
-			Indent();
-			WriteBlock(methodDeclaration.Body);
-			Unindent();
-			WriteKeyword("End");
-			if (methodDeclaration.IsSub)
-				WriteKeyword("Sub");
-			else
-				WriteKeyword("Function");
+			if (!methodDeclaration.Body.IsNull) {
+				NewLine();
+				Indent();
+				WriteBlock(methodDeclaration.Body);
+				Unindent();
+				WriteKeyword("End");
+				if (methodDeclaration.IsSub)
+					WriteKeyword("Sub");
+				else
+					WriteKeyword("Function");
+			}
 			NewLine();
 			
 			return EndNode(methodDeclaration);
@@ -1317,20 +1319,25 @@ namespace ICSharpCode.NRefactory.VB
 				WriteAttributes(propertyDeclaration.ReturnTypeAttributes);
 				propertyDeclaration.ReturnType.AcceptVisitor(this, data);
 			}
-			NewLine();
-			Indent();
 			
-			if (!propertyDeclaration.Getter.IsNull) {
-				propertyDeclaration.Getter.AcceptVisitor(this, data);
+			bool needsBody = !propertyDeclaration.Getter.Body.IsNull || !propertyDeclaration.Setter.Body.IsNull;
+			
+			if (needsBody) {
+				NewLine();
+				Indent();
+				
+				if (!propertyDeclaration.Getter.Body.IsNull) {
+					propertyDeclaration.Getter.AcceptVisitor(this, data);
+				}
+				
+				if (!propertyDeclaration.Setter.Body.IsNull) {
+					propertyDeclaration.Setter.AcceptVisitor(this, data);
+				}
+				Unindent();
+				
+				WriteKeyword("End");
+				WriteKeyword("Property");
 			}
-			
-			if (!propertyDeclaration.Setter.IsNull) {
-				propertyDeclaration.Setter.AcceptVisitor(this, data);
-			}
-			Unindent();
-			
-			WriteKeyword("End");
-			WriteKeyword("Property");
 			NewLine();
 			
 			return EndNode(propertyDeclaration);

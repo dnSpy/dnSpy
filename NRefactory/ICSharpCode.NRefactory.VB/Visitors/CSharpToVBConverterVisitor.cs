@@ -272,7 +272,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var expr = new ObjectCreationExpression((AstType)objectCreateExpression.Type.AcceptVisitor(this, data));
 			ConvertNodes(objectCreateExpression.Arguments, expr.Arguments);
 			if (!objectCreateExpression.Initializer.IsNull)
-			expr.Initializer = (ArrayInitializerExpression)objectCreateExpression.Initializer.AcceptVisitor(this, data);
+				expr.Initializer = (ArrayInitializerExpression)objectCreateExpression.Initializer.AcceptVisitor(this, data);
 			
 			return EndNode(objectCreateExpression, expr);
 		}
@@ -1101,8 +1101,47 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				mod |= Modifiers.Friend;
 			if ((modifier & CSharp.Modifiers.Private) == CSharp.Modifiers.Private)
 				mod |= Modifiers.Private;
+			if (container is CSharp.IndexerDeclaration)
+				mod |= Modifiers.Default;
+			bool writeable = IsWriteableProperty(container);
+			bool readable = IsReadableProperty(container);
+			if (writeable && !readable)
+				mod |= Modifiers.WriteOnly;
+			if (readable && !writeable)
+				mod |= Modifiers.ReadOnly;
+			
 			
 			return mod;
+		}
+		
+		bool IsReadableProperty(ICSharpCode.NRefactory.CSharp.AstNode container)
+		{
+			if (container is CSharp.IndexerDeclaration) {
+				var i = container as CSharp.IndexerDeclaration;
+				return !i.Getter.IsNull;
+			}
+			
+			if (container is CSharp.PropertyDeclaration) {
+				var p = container as CSharp.PropertyDeclaration;
+				return !p.Getter.IsNull;
+			}
+			
+			return false;
+		}
+		
+		bool IsWriteableProperty(ICSharpCode.NRefactory.CSharp.AstNode container)
+		{
+			if (container is CSharp.IndexerDeclaration) {
+				var i = container as CSharp.IndexerDeclaration;
+				return !i.Setter.IsNull;
+			}
+			
+			if (container is CSharp.PropertyDeclaration) {
+				var p = container as CSharp.PropertyDeclaration;
+				return !p.Setter.IsNull;
+			}
+			
+			return false;
 		}
 		
 		public AstNode VisitIdentifier(CSharp.Identifier identifier, object data)
