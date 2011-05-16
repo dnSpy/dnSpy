@@ -269,7 +269,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitObjectCreateExpression(CSharp.ObjectCreateExpression objectCreateExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new ObjectCreationExpression((AstType)objectCreateExpression.Type.AcceptVisitor(this, data));
+			ConvertNodes(objectCreateExpression.Arguments, expr.Arguments);
+			if (!objectCreateExpression.Initializer.IsNull)
+			expr.Initializer = (ArrayInitializerExpression)objectCreateExpression.Initializer.AcceptVisitor(this, data);
+			
+			return EndNode(objectCreateExpression, expr);
 		}
 		
 		public AstNode VisitAnonymousTypeCreateExpression(CSharp.AnonymousTypeCreateExpression anonymousTypeCreateExpression, object data)

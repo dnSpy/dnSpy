@@ -494,7 +494,9 @@ namespace ICSharpCode.NRefactory.VB
 			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, false);
 			NewLine();
 			
-			// TODO Body
+			Indent();
+			WriteBlock(constructorDeclaration.Body);
+			Unindent();
 			
 			WriteKeyword("End");
 			WriteKeyword("Sub");
@@ -1577,6 +1579,29 @@ namespace ICSharpCode.NRefactory.VB
 			invocationExpression.Target.AcceptVisitor(this, data);
 			WriteCommaSeparatedListInParenthesis(invocationExpression.Arguments, false);
 			return EndNode(invocationExpression);
+		}
+		
+		public object VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, object data)
+		{
+			StartNode(arrayInitializerExpression);
+			WriteToken("{", ArrayInitializerExpression.Roles.LBrace);
+			Space();
+			WriteCommaSeparatedList(arrayInitializerExpression.Elements);
+			Space();
+			WriteToken("}", ArrayInitializerExpression.Roles.RBrace);
+			return EndNode(arrayInitializerExpression);
+		}
+		
+		public object VisitObjectCreationExpression(ObjectCreationExpression objectCreationExpression, object data)
+		{
+			StartNode(objectCreationExpression);
+			
+			WriteKeyword("New");
+			objectCreationExpression.Type.AcceptVisitor(this, data);
+			WriteCommaSeparatedListInParenthesis(objectCreationExpression.Arguments, false);
+			objectCreationExpression.Initializer.AcceptVisitor(this, data);
+			
+			return EndNode(objectCreationExpression);
 		}
 	}
 }

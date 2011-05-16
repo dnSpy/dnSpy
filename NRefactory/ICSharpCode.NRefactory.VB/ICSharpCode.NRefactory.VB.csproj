@@ -48,6 +48,7 @@
     <Compile Include="Ast\AstNodeCollection.cs" />
     <Compile Include="Ast\Enums.cs" />
     <Compile Include="Ast\Expressions\AddressOfExpression.cs" />
+    <Compile Include="Ast\Expressions\ArrayInitializerExpression.cs" />
     <Compile Include="Ast\Expressions\Expression.cs" />
     <Compile Include="Ast\Expressions\GetTypeExpression.cs" />
     <Compile Include="Ast\Expressions\GetXmlNamespaceExpression.cs" />

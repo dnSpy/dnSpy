@@ -58,6 +58,8 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitAssignmentExpression(AssignmentExpression assignmentExpression, T data);
 		S VisitIdentifierExpression(IdentifierExpression identifierExpression, T data);
 		S VisitInvocationExpression(InvocationExpression invocationExpression, T data);
+		S VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, T data);
+		S VisitObjectCreationExpression(ObjectCreationExpression objectCreationExpression, T data);
 		
 		// Statement scope
 		S VisitLabelDeclarationStatement(LabelDeclarationStatement labelDeclarationStatement, T data);
