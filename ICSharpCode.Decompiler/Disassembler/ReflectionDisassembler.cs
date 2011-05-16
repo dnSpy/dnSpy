@@ -18,8 +18,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
-
 using Mono.Cecil;
 using Mono.Collections.Generic;
 
@@ -143,9 +143,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteFlags(method.ImplAttributes & ~(MethodImplAttributes.CodeTypeMask | MethodImplAttributes.ManagedMask), methodImpl);
 			
 			output.Unindent();
-			if (method.HasBody || method.HasCustomAttributes) {
+			if (method.HasBody || method.HasCustomAttributes || method.Parameters.Any(HasParameterAttributes)) {
 				OpenBlock(defaultCollapsed: isInType);
 				WriteAttributes(method.CustomAttributes);
+				foreach (var p in method.Parameters) {
+					WriteParameterAttributes(p);
+				}
 				
 				if (method.HasBody) {
 					// create IL code mappings - used in debugger
@@ -163,6 +166,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			for (int i = 0; i < parameters.Count; i++) {
 				var p = parameters[i];
+				if (p.IsIn)
+					output.Write("[in] ");
+				if (p.IsOut)
+					output.Write("[out] ");
+				if (p.IsOptional)
+					output.Write("[opt] ");
 				p.ParameterType.WriteTo(output);
 				output.Write(' ');
 				output.WriteDefinition(DisassemblerHelpers.Escape(p.Name), p);
@@ -170,6 +179,27 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.Write(',');
 				output.WriteLine();
 			}
+		}
+		
+		bool HasParameterAttributes(ParameterDefinition p)
+		{
+			return p.HasConstant || p.HasCustomAttributes;
+		}
+		
+		void WriteParameterAttributes(ParameterDefinition p)
+		{
+			if (!HasParameterAttributes(p))
+				return;
+			output.Write(".param [{0}]", p.Index);
+			if (p.HasConstant) {
+				output.Write(" = ");
+				if (p.Constant != null)
+					DisassemblerHelpers.WriteOperand(output, p.Constant);
+				else
+					output.Write("nullref");
+			}
+			output.WriteLine();
+			WriteAttributes(p.CustomAttributes);
 		}
 		#endregion
 		
