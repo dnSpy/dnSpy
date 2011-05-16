@@ -204,7 +204,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitDefaultValueExpression(CSharp.DefaultValueExpression defaultValueExpression, object data)
 		{
-			throw new NotImplementedException();
+			// Nothing is equivalent to default(T) for reference and value types.
+			return EndNode(defaultValueExpression, new PrimitiveExpression(null));
 		}
 		
 		public AstNode VisitDirectionExpression(CSharp.DirectionExpression directionExpression, object data)
@@ -316,7 +317,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitTypeOfExpression(CSharp.TypeOfExpression typeOfExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new GetTypeExpression();
+			expr.Type = (AstType)typeOfExpression.Type.AcceptVisitor(this, data);
+			return EndNode(typeOfExpression, expr);
 		}
 		
 		public AstNode VisitTypeReferenceExpression(CSharp.TypeReferenceExpression typeReferenceExpression, object data)

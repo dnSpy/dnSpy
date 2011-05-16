@@ -419,7 +419,14 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitGetTypeExpression(GetTypeExpression getTypeExpression, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(getTypeExpression);
+			
+			WriteKeyword("GetType");
+			LPar();
+			getTypeExpression.Type.AcceptVisitor(this, data);
+			RPar();
+			
+			return EndNode(getTypeExpression);
 		}
 		
 		public object VisitTypeOfIsExpression(TypeOfIsExpression typeOfIsExpression, object data)
