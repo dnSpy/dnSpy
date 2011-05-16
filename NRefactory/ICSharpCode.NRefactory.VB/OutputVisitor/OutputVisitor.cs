@@ -1283,9 +1283,9 @@ namespace ICSharpCode.NRefactory.VB
 			if (accessor.Parameters.Any())
 				WriteCommaSeparatedListInParenthesis(accessor.Parameters, false);
 			NewLine();
-			
+			Indent();
 			WriteBlock(accessor.Body);
-			
+			Unindent();
 			WriteKeyword("End");
 
 			if (accessor.Role == PropertyDeclaration.GetterRole) {
