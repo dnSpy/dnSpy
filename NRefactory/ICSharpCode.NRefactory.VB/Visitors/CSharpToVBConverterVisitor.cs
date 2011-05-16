@@ -647,7 +647,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitThrowStatement(CSharp.ThrowStatement throwStatement, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(throwStatement, new ThrowStatement((Expression)throwStatement.Expression.AcceptVisitor(this, data)));
 		}
 		
 		public AstNode VisitTryCatchStatement(CSharp.TryCatchStatement tryCatchStatement, object data)

@@ -1252,7 +1252,9 @@ namespace ICSharpCode.NRefactory.VB
 			else {
 				variableDeclarator.Type.AcceptVisitor(this, data);
 				if (!variableDeclarator.Initializer.IsNull) {
+					Space();
 					WriteToken("=", VariableDeclarator.Roles.Assign);
+					Space();
 					variableDeclarator.Initializer.AcceptVisitor(this, data);
 				}
 			}
@@ -1378,7 +1380,12 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitThrowStatement(ThrowStatement throwStatement, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(throwStatement);
+			
+			WriteKeyword("Throw");
+			throwStatement.Expression.AcceptVisitor(this, data);
+			
+			return EndNode(throwStatement);
 		}
 		
 		public object VisitIfElseStatement(IfElseStatement ifElseStatement, object data)
