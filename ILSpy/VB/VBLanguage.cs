@@ -173,7 +173,7 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public ClassType GetClassTypeForAstType(ICSharpCode.NRefactory.CSharp.AstType type)
 		{
-			var definition = type.Annotations.OfType<TypeDefinition>().First();
+			var definition = type.Annotations.OfType<TypeReference>().First().ResolveOrThrow();
 			
 			if (definition.IsClass)
 				return ClassType.Class;

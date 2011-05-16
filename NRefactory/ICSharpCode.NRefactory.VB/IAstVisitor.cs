@@ -54,6 +54,22 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitGetXmlNamespaceExpression(GetXmlNamespaceExpression getXmlNamespaceExpression, T data);
 		S VisitMemberAccessExpression(MemberAccessExpression memberAccessExpression, T data);
 		S VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, T data);
+		S VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, T data);
+		S VisitAssignmentExpression(AssignmentExpression assignmentExpression, T data);
+		S VisitIdentifierExpression(IdentifierExpression identifierExpression, T data);
+		S VisitInvocationExpression(InvocationExpression invocationExpression, T data);
+		
+		// Statement scope
+		S VisitLabelDeclarationStatement(LabelDeclarationStatement labelDeclarationStatement, T data);
+		S VisitLocalDeclarationStatement(LocalDeclarationStatement localDeclarationStatement, T data);
+		S VisitExpressionStatement(ExpressionStatement expressionStatement, T data);
+		S VisitWithStatement(WithStatement withStatement, T data);
+		S VisitSyncLockStatement(SyncLockStatement syncLockStatement, T data);
+		S VisitIfElseStatement(IfElseStatement ifElseStatement, T data);
+		S VisitTryStatement(TryStatement tryStatement, T data);
+		S VisitThrowStatement(ThrowStatement throwStatement, T data);
+		S VisitCatchBlock(CatchBlock catchBlock, T data);
+		S VisitReturnStatement(ReturnStatement returnStatement, T data);
 		
 		// TypeName
 		S VisitPrimitiveType(PrimitiveType primitiveType, T data);

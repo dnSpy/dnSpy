@@ -67,7 +67,12 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitBlockStatement(BlockStatement blockStatement, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(blockStatement);
+			foreach (var stmt in blockStatement) {
+				stmt.AcceptVisitor(this, data);
+				NewLine();
+			}
+			return EndNode(blockStatement);
 		}
 		
 		public object VisitPatternPlaceholder(AstNode placeholder, Pattern pattern, object data)
@@ -513,9 +518,9 @@ namespace ICSharpCode.NRefactory.VB
 			WriteHandlesClause(methodDeclaration.HandlesClause);
 			WriteImplementsClause(methodDeclaration.ImplementsClause);
 			NewLine();
-			
-			// TODO Body
-			
+			Indent();
+			WriteBlock(methodDeclaration.Body);
+			Unindent();
 			WriteKeyword("End");
 			if (methodDeclaration.IsSub)
 				WriteKeyword("Sub");
@@ -1318,6 +1323,253 @@ namespace ICSharpCode.NRefactory.VB
 			NewLine();
 			
 			return EndNode(propertyDeclaration);
+		}
+		
+		public object VisitLabelDeclarationStatement(LabelDeclarationStatement labelDeclarationStatement, object data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public object VisitLocalDeclarationStatement(LocalDeclarationStatement localDeclarationStatement, object data)
+		{
+			StartNode(localDeclarationStatement);
+			
+			WriteModifiers(new [] { localDeclarationStatement.ModifierToken });
+			WriteCommaSeparatedList(localDeclarationStatement.Variables);
+			
+			return EndNode(localDeclarationStatement);
+		}
+		
+		public object VisitWithStatement(WithStatement withStatement, object data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public object VisitSyncLockStatement(SyncLockStatement syncLockStatement, object data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public object VisitTryStatement(TryStatement tryStatement, object data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public object VisitCatchBlock(CatchBlock catchBlock, object data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public object VisitExpressionStatement(ExpressionStatement expressionStatement, object data)
+		{
+			StartNode(expressionStatement);
+			expressionStatement.Expression.AcceptVisitor(this, data);
+			return EndNode(expressionStatement);
+		}
+		
+		public object VisitThrowStatement(ThrowStatement throwStatement, object data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public object VisitIfElseStatement(IfElseStatement ifElseStatement, object data)
+		{
+			StartNode(ifElseStatement);
+			WriteKeyword("If");
+			ifElseStatement.Condition.AcceptVisitor(this, data);
+			WriteKeyword("Then");
+			NewLine();
+			Indent();
+			ifElseStatement.Body.AcceptVisitor(this, data);
+			Unindent();
+			if (!ifElseStatement.ElseBlock.IsNull) {
+				WriteKeyword("Else");
+				NewLine();
+				Indent();
+				ifElseStatement.ElseBlock.AcceptVisitor(this, data);
+				Unindent();
+			}
+			WriteKeyword("End");
+			WriteKeyword("If");
+			return EndNode(ifElseStatement);
+		}
+		
+		public object VisitReturnStatement(ReturnStatement returnStatement, object data)
+		{
+			StartNode(returnStatement);
+			WriteKeyword("Return");
+			returnStatement.Expression.AcceptVisitor(this, data);
+			return EndNode(returnStatement);
+		}
+		
+		public object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
+		{
+			StartNode(binaryOperatorExpression);
+			binaryOperatorExpression.Left.AcceptVisitor(this, data);
+			Space();
+			switch (binaryOperatorExpression.Operator) {
+				case BinaryOperatorType.None:
+					
+					break;
+				case BinaryOperatorType.BitwiseAnd:
+					
+					break;
+				case BinaryOperatorType.BitwiseOr:
+					
+					break;
+				case BinaryOperatorType.LogicalAnd:
+					
+					break;
+				case BinaryOperatorType.LogicalOr:
+					
+					break;
+				case BinaryOperatorType.ExclusiveOr:
+					
+					break;
+				case BinaryOperatorType.GreaterThan:
+					
+					break;
+				case BinaryOperatorType.GreaterThanOrEqual:
+					
+					break;
+				case BinaryOperatorType.Equality:
+					WriteToken("=", BinaryOperatorExpression.Roles.Assign);
+					break;
+				case BinaryOperatorType.InEquality:
+					
+					break;
+				case BinaryOperatorType.LessThan:
+					
+					break;
+				case BinaryOperatorType.LessThanOrEqual:
+					
+					break;
+				case BinaryOperatorType.Add:
+					
+					break;
+				case BinaryOperatorType.Subtract:
+					
+					break;
+				case BinaryOperatorType.Multiply:
+					
+					break;
+				case BinaryOperatorType.Divide:
+					
+					break;
+				case BinaryOperatorType.Modulus:
+					
+					break;
+				case BinaryOperatorType.DivideInteger:
+					
+					break;
+				case BinaryOperatorType.Power:
+					
+					break;
+				case BinaryOperatorType.Concat:
+					
+					break;
+				case BinaryOperatorType.ShiftLeft:
+					
+					break;
+				case BinaryOperatorType.ShiftRight:
+					
+					break;
+				case BinaryOperatorType.ReferenceEquality:
+					
+					break;
+				case BinaryOperatorType.ReferenceInequality:
+					
+					break;
+				case BinaryOperatorType.Like:
+					
+					break;
+				case BinaryOperatorType.NullCoalescing:
+					
+					break;
+				case BinaryOperatorType.DictionaryAccess:
+					
+					break;
+				default:
+					throw new Exception("Invalid value for BinaryOperatorType");
+			}
+			Space();
+			binaryOperatorExpression.Right.AcceptVisitor(this, data);
+			return EndNode(binaryOperatorExpression);
+		}
+		
+		public object VisitIdentifierExpression(IdentifierExpression identifierExpression, object data)
+		{
+			StartNode(identifierExpression);
+			identifierExpression.Identifier.AcceptVisitor(this, data);
+			WriteTypeArguments(identifierExpression.TypeArguments);
+			return EndNode(identifierExpression);
+		}
+		
+		public object VisitAssignmentExpression(AssignmentExpression assignmentExpression, object data)
+		{
+			StartNode(assignmentExpression);
+			assignmentExpression.Left.AcceptVisitor(this, data);
+			Space();
+			switch (assignmentExpression.Operator) {
+				case AssignmentOperatorType.None:
+					
+					break;
+				case AssignmentOperatorType.Assign:
+					WriteToken("=", AssignmentExpression.Roles.Assign);
+					break;
+				case AssignmentOperatorType.Add:
+					
+					break;
+				case AssignmentOperatorType.Subtract:
+					
+					break;
+				case AssignmentOperatorType.Multiply:
+					
+					break;
+				case AssignmentOperatorType.Divide:
+					
+					break;
+				case AssignmentOperatorType.Modulus:
+					
+					break;
+				case AssignmentOperatorType.Power:
+					
+					break;
+				case AssignmentOperatorType.DivideInteger:
+					
+					break;
+				case AssignmentOperatorType.ConcatString:
+					
+					break;
+				case AssignmentOperatorType.ShiftLeft:
+					
+					break;
+				case AssignmentOperatorType.ShiftRight:
+					
+					break;
+				case AssignmentOperatorType.BitwiseAnd:
+					
+					break;
+				case AssignmentOperatorType.BitwiseOr:
+					
+					break;
+				case AssignmentOperatorType.ExclusiveOr:
+					
+					break;
+				default:
+					throw new Exception("Invalid value for AssignmentOperatorType");
+			}
+			Space();
+			assignmentExpression.Right.AcceptVisitor(this, data);
+			return EndNode(assignmentExpression);
+		}
+		
+		public object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
+		{
+			StartNode(invocationExpression);
+			invocationExpression.Target.AcceptVisitor(this, data);
+			WriteCommaSeparatedListInParenthesis(invocationExpression.Arguments, false);
+			return EndNode(invocationExpression);
 		}
 	}
 }

@@ -79,7 +79,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			BlockStatement o = other as BlockStatement;
-			return o != null && !o.IsNull && this.Statements.DoMatch(o.Statements, match);
+			return o != null && !(o is CatchBlock) && !o.IsNull && this.Statements.DoMatch(o.Statements, match);
 		}
 		
 		#region Builder methods
@@ -122,4 +122,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			return this.Statements.GetEnumerator();
 		}
 	}
+	
+	
 }

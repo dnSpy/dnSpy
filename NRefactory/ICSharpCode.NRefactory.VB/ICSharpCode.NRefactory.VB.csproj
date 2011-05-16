@@ -51,6 +51,7 @@
     <Compile Include="Ast\Expressions\Expression.cs" />
     <Compile Include="Ast\Expressions\GetTypeExpression.cs" />
     <Compile Include="Ast\Expressions\GetXmlNamespaceExpression.cs" />
+    <Compile Include="Ast\Expressions\IdentifierExpression.cs" />
     <Compile Include="Ast\Expressions\InstanceExpression.cs" />
     <Compile Include="Ast\Expressions\MemberAccessExpression.cs" />
     <Compile Include="Ast\Expressions\ObjectCreationExpression.cs" />

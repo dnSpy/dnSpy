@@ -681,8 +681,8 @@ namespace ICSharpCode.NRefactory.VB
 			public static readonly Role<Expression> Argument = new Role<Expression>("Argument", Ast.Expression.Null);
 			public static readonly Role<AstType> Type = new Role<AstType>("Type", AstType.Null);
 			public static readonly Role<Expression> Expression = new Role<Expression>("Expression", Ast.Expression.Null);
-//			public static readonly Role<Expression> TargetExpression = new Role<Expression>("Target", CSharp.Expression.Null);
-//			public readonly static Role<Expression> Condition = new Role<Expression>("Condition", CSharp.Expression.Null);
+			public static readonly Role<Expression> TargetExpression = new Role<Expression>("Target", Ast.Expression.Null);
+			public readonly static Role<Expression> Condition = new Role<Expression>("Condition", Ast.Expression.Null);
 //
 			public static readonly Role<TypeParameterDeclaration> TypeParameter = new Role<TypeParameterDeclaration>("TypeParameter");
 			public static readonly Role<AstType> TypeArgument = new Role<AstType>("TypeArgument", AstType.Null);

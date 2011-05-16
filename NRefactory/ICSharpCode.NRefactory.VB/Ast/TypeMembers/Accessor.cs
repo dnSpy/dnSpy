@@ -26,8 +26,8 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		}
 		
 		public BlockStatement Body {
-			get { return GetChildByRole (Roles.Body); }
-			set { SetChildByRole (Roles.Body, value); }
+			get { return GetChildByRole(Roles.Body); }
+			set { SetChildByRole(Roles.Body, value); }
 		}
 		
 		public AstNodeCollection<ParameterDeclaration> Parameters {

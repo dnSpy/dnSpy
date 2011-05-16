@@ -46,6 +46,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			new KeyValuePair<Modifiers, int>(Modifiers.Overridable, "Overridable".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.NotInheritable, "NotInheritable".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.NotOverridable, "NotOverridable".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Dim, "Dim".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Const, "Const".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Shared, "Shared".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Static, "Static".Length),
@@ -62,7 +63,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			new KeyValuePair<Modifiers, int>(Modifiers.ByVal, "ByVal".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.ByRef, "ByRef".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.ParamArray, "ParamArray".Length),
-			
 			// even though it's used for patterns only, it needs to be in this table to be usable in the AST
 			new KeyValuePair<Modifiers, int>(Modifiers.Any, "Any".Length)
 		};

@@ -56,7 +56,54 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitAssignmentExpression(CSharp.AssignmentExpression assignmentExpression, object data)
 		{
-			throw new NotImplementedException();
+			var left = (Expression)assignmentExpression.Left.AcceptVisitor(this, data);
+			var op = AssignmentOperatorType.None;
+			
+			switch (assignmentExpression.Operator) {
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Assign:
+					op = AssignmentOperatorType.Assign;
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Add:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Subtract:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Multiply:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Divide:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Modulus:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ShiftLeft:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ShiftRight:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.BitwiseAnd:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.BitwiseOr:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ExclusiveOr:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Any:
+					
+					break;
+				default:
+					throw new Exception("Invalid value for AssignmentOperatorType");
+			}
+			
+			var right = (Expression)assignmentExpression.Right.AcceptVisitor(this, data);
+			
+			var expr = new AssignmentExpression(left, op, right);
+			return EndNode(assignmentExpression, expr);
 		}
 		
 		public AstNode VisitBaseReferenceExpression(CSharp.BaseReferenceExpression baseReferenceExpression, object data)
@@ -68,7 +115,76 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitBinaryOperatorExpression(CSharp.BinaryOperatorExpression binaryOperatorExpression, object data)
 		{
-			throw new NotImplementedException();
+			var left = (Expression)binaryOperatorExpression.Left.AcceptVisitor(this, data);
+			var op = BinaryOperatorType.None;
+			var right = (Expression)binaryOperatorExpression.Right.AcceptVisitor(this, data);
+			
+			switch (binaryOperatorExpression.Operator) {
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.BitwiseAnd:
+					op = BinaryOperatorType.BitwiseAnd;
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.BitwiseOr:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ConditionalAnd:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ConditionalOr:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ExclusiveOr:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.GreaterThan:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.GreaterThanOrEqual:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Equality:
+					op = BinaryOperatorType.Equality;
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.InEquality:
+					op = BinaryOperatorType.InEquality;
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.LessThan:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.LessThanOrEqual:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Add:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Subtract:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Multiply:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Divide:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Modulus:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ShiftLeft:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ShiftRight:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.NullCoalescing:
+					
+					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Any:
+					
+					break;
+				default:
+					throw new Exception("Invalid value for BinaryOperatorType");
+			}
+			
+			return EndNode(binaryOperatorExpression, new BinaryOperatorExpression(left, op, right));
 		}
 		
 		public AstNode VisitCastExpression(CSharp.CastExpression castExpression, object data)
@@ -98,7 +214,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitIdentifierExpression(CSharp.IdentifierExpression identifierExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new IdentifierExpression();
+			expr.Identifier = new Identifier(identifierExpression.Identifier, AstLocation.Empty);
+			ConvertNodes(identifierExpression.TypeArguments, expr.TypeArguments);
+			
+			return EndNode(identifierExpression, expr);
 		}
 		
 		public AstNode VisitIndexerExpression(CSharp.IndexerExpression indexerExpression, object data)
@@ -108,7 +228,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitInvocationExpression(CSharp.InvocationExpression invocationExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new InvocationExpression(
+				(Expression)invocationExpression.Target.AcceptVisitor(this, data));
+			ConvertNodes(invocationExpression.Arguments, expr.Arguments);
+			
+			return EndNode(invocationExpression, expr);
 		}
 		
 		public AstNode VisitIsExpression(CSharp.IsExpression isExpression, object data)
@@ -139,7 +263,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitNullReferenceExpression(CSharp.NullReferenceExpression nullReferenceExpression, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(nullReferenceExpression, new PrimitiveExpression(null));
 		}
 		
 		public AstNode VisitObjectCreateExpression(CSharp.ObjectCreateExpression objectCreateExpression, object data)
@@ -403,7 +527,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitBlockStatement(CSharp.BlockStatement blockStatement, object data)
 		{
-			return null;
+			var block = new BlockStatement();
+			ConvertNodes(blockStatement, block.Statements);
+			
+			return EndNode(blockStatement, block);
 		}
 		
 		public AstNode VisitBreakStatement(CSharp.BreakStatement breakStatement, object data)
@@ -433,7 +560,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitExpressionStatement(CSharp.ExpressionStatement expressionStatement, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new ExpressionStatement((Expression)expressionStatement.Expression.AcceptVisitor(this, data));
+			return EndNode(expressionStatement, expr);
 		}
 		
 		public AstNode VisitFixedStatement(CSharp.FixedStatement fixedStatement, object data)
@@ -468,7 +596,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitIfElseStatement(CSharp.IfElseStatement ifElseStatement, object data)
 		{
-			throw new NotImplementedException();
+			var stmt = new IfElseStatement();
+			
+			stmt.Condition = (Expression)ifElseStatement.Condition.AcceptVisitor(this, data);
+			stmt.Body = (Statement)ifElseStatement.TrueStatement.AcceptVisitor(this, data);
+			stmt.ElseBlock = (Statement)ifElseStatement.FalseStatement.AcceptVisitor(this, data);
+			
+			return EndNode(ifElseStatement, stmt);
 		}
 		
 		public AstNode VisitLabelStatement(CSharp.LabelStatement labelStatement, object data)
@@ -483,7 +617,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitReturnStatement(CSharp.ReturnStatement returnStatement, object data)
 		{
-			throw new NotImplementedException();
+			var stmt = new ReturnStatement((Expression)returnStatement.Expression.AcceptVisitor(this, data));
+			
+			return EndNode(returnStatement, stmt);
 		}
 		
 		public AstNode VisitSwitchStatement(CSharp.SwitchStatement switchStatement, object data)
@@ -533,7 +669,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitVariableDeclarationStatement(CSharp.VariableDeclarationStatement variableDeclarationStatement, object data)
 		{
-			throw new NotImplementedException();
+			var decl = new LocalDeclarationStatement();
+			decl.Modifiers = Modifiers.Dim;
+			ConvertNodes(variableDeclarationStatement.Variables, decl.Variables);
+			
+			return EndNode(variableDeclarationStatement, decl);
 		}
 		
 		public AstNode VisitWhileStatement(CSharp.WhileStatement whileStatement, object data)
@@ -569,6 +709,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			ConvertNodes(constructorDeclaration.Attributes, result.Attributes);
 			ConvertNodes(constructorDeclaration.ModifierTokens, result.ModifierTokens);
 			ConvertNodes(constructorDeclaration.Parameters, result.Parameters);
+			result.Body = (BlockStatement)constructorDeclaration.Body.AcceptVisitor(this, data);
 			
 			return EndNode(constructorDeclaration, result);
 		}
@@ -633,10 +774,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			decl.Setter = (Accessor)indexerDeclaration.Setter.AcceptVisitor(this, data);
 			
 			if (!decl.Setter.IsNull) {
-//				decl.Setter.Parameters.Add(new ParameterDeclaration() {
-//				                           	Name = new Identifier("value", AstLocation.Empty),
-//				                           	Type = (AstType)indexerDeclaration.ReturnType.AcceptVisitor(this, data),
-//				                           });
+				decl.Setter.Parameters.Add(new ParameterDeclaration() {
+				                           	Name = new Identifier("value", AstLocation.Empty),
+				                           	Type = (AstType)indexerDeclaration.ReturnType.AcceptVisitor(this, data),
+				                           });
 			}
 			
 			return EndNode(indexerDeclaration, decl);
@@ -659,6 +800,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					                             methodDeclaration.Name));
 			if (!result.IsSub)
 				result.ReturnType = (AstType)methodDeclaration.ReturnType.AcceptVisitor(this, data);
+			result.Body = (BlockStatement)methodDeclaration.Body.AcceptVisitor(this, data);
 			
 			return EndNode(methodDeclaration, result);
 		}
