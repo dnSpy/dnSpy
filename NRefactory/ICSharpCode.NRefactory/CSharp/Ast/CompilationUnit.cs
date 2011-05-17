@@ -104,21 +104,6 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		/// <summary>
-		/// Gets all nodes in that are satisfing a predicate.
-		/// </summary>
-		/// <param name="predicate">Predicate to filter the nodes.</param>
-		/// <returns></returns>
-		public IEnumerable<AstNode> GetNodesWithLineNumbers(Predicate<AstNode> predicate)
-		{
-			if (predicate == null)
-				throw new ArgumentNullException("predicate");
-			
-			return TreeTraversal
-				.PreOrder((AstNode)this, n => n.Children)
-				.Where(n => predicate(n) && n.Annotation<Tuple<int, int>>() != null);
-		}
-		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCompilationUnit (this, data);

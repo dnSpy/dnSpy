@@ -28,6 +28,7 @@ using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
@@ -40,17 +41,17 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Gets ot sets the code mappings
 		/// </summary>
-		public Dictionary<int, List<MemberMapping>> CodeMappings { get; set; }
+		public Dictionary<int, List<MemberMapping>> CodeMappings { get; internal set; }
 		
 		/// <summary>
 		/// Gets or sets the local variables.
 		/// </summary>
-		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
+		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; internal set; }
 		
 		/// <summary>
 		/// Gets the list of MembeReferences that are decompiled (TypeDefinitions, MethodDefinitions, etc)
 		/// </summary>
-		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
+		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; internal set; }
 		
 		/// <summary>
 		/// Gets (or internal sets) the AST nodes.
@@ -187,11 +188,16 @@ namespace ICSharpCode.ILSpy
 		{
 			if (b is AstBuilder) {
 				var builder = b as AstBuilder;
+				
+				var nodes = TreeTraversal
+					.PreOrder((AstNode)builder.CompilationUnit, n => n.Children)
+					.Where(n => n is AttributedNode && n.Annotation<Tuple<int, int>>() != null);
+				
 				OnDecompilationFinished(new DecompileEventArgs {
 				                        	CodeMappings = builder.CodeMappings,
 				                        	LocalVariables = builder.LocalVariables,
 				                        	DecompiledMemberReferences = builder.DecompiledMemberReferences,
-				                        	AstNodes = builder.CompilationUnit.GetNodesWithLineNumbers(n => n is AttributedNode)
+				                        	AstNodes = nodes
 				                        });
 			}
 			
