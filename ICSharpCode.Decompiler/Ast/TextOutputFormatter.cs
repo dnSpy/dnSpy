@@ -123,12 +123,11 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void StartNode(AstNode node)
 		{
+			// code mappings
 			var ranges = node.Annotation<List<ILRange>>();
-			if (ranges != null && ranges.Count > 0)
-			{
+			if (ranges != null && ranges.Count > 0) {
 				// find the ancestor that has method mapping as annotation
-				if (node.Ancestors != null && node.Ancestors.Count() > 0)
-				{
+				if (node.Ancestors != null && node.Ancestors.Count() > 0) {
 					var n = node.Ancestors.FirstOrDefault(a => a.Annotation<MemberMapping>() != null);
 					if (n != null) {
 						MemberMapping mapping = n.Annotation<MemberMapping>();
@@ -143,6 +142,19 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 					}
 				}
+			}
+			
+			// definitions of types and their members
+			Predicate<AstNode> predicate = n => n is TypeDeclaration || n is DelegateDeclaration ||
+				n is FieldDeclaration || n is PropertyDeclaration || n is EventDeclaration ||n is MethodDeclaration || n is ConstructorDeclaration ||
+				n is IndexerDeclaration || n is OperatorDeclaration;
+			
+			if (predicate(node)) {
+				var n = node as AttributedNode;
+				int c = 0;
+				if (n != null)
+					c = n.Attributes.Count;
+				node.AddAnnotation(Tuple.Create(output.CurrentLine + c, 0));
 			}
 			
 			nodeStack.Push(node);

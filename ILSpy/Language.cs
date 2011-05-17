@@ -17,20 +17,57 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
+	/// Decompilation event arguments.
+	/// </summary>
+	public sealed class DecompileEventArgs : EventArgs
+	{
+		/// <summary>
+		/// Gets ot sets the code mappings
+		/// </summary>
+		public Dictionary<int, List<MemberMapping>> CodeMappings { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the local variables.
+		/// </summary>
+		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
+		
+		/// <summary>
+		/// Gets the list of MembeReferences that are decompiled (TypeDefinitions, MethodDefinitions, etc)
+		/// </summary>
+		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
+		
+		/// <summary>
+		/// Gets (or internal sets) the AST nodes.
+		/// </summary>
+		public IEnumerable<AstNode> AstNodes { get; internal set; }
+	}
+	
+	/// <summary>
 	/// Base class for language-specific decompiler implementations.
 	/// </summary>
 	public abstract class Language
 	{
+		/// <summary>
+		/// Decompile finished event.
+		/// </summary>
+		public event EventHandler<DecompileEventArgs> DecompileFinished;
+		
 		/// <summary>
 		/// Gets the name of the language (as shown in the UI)
 		/// </summary>
@@ -82,6 +119,7 @@ namespace ICSharpCode.ILSpy
 		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)
 		{
 			WriteCommentLine(output, nameSpace);
+			OnDecompilationFinished(null);
 		}
 		
 		public virtual void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
@@ -136,6 +174,40 @@ namespace ICSharpCode.ILSpy
 		public virtual bool ShowMember(MemberReference member)
 		{
 			return true;
+		}
+		
+		protected virtual void OnDecompilationFinished(DecompileEventArgs e)
+		{
+			if (DecompileFinished != null) {
+				DecompileFinished(this, e);
+			}
+		}
+		
+		protected void NotifyDecompilationFinished(BaseCodeMappings b)
+		{
+			if (b is AstBuilder) {
+				var builder = b as AstBuilder;
+				OnDecompilationFinished(new DecompileEventArgs {
+				                        	CodeMappings = builder.CodeMappings,
+				                        	LocalVariables = builder.LocalVariables,
+				                        	DecompiledMemberReferences = builder.DecompiledMemberReferences,
+				                        	AstNodes = builder.CompilationUnit.GetNodesWithLineNumbers(n =>
+				                        	                                                           n is TypeDeclaration || n is DelegateDeclaration ||
+				                        	                                                           n is FieldDeclaration || n is PropertyDeclaration ||
+				                        	                                                           n is EventDeclaration || n is MethodDeclaration ||
+				                        	                                                           n is ConstructorDeclaration ||
+				                        	                                                           n is IndexerDeclaration ||  n is OperatorDeclaration)
+				                        });
+			}
+			
+			if (b is ReflectionDisassembler) {
+				var dis = b as ReflectionDisassembler;
+				OnDecompilationFinished(new DecompileEventArgs {
+				                        	CodeMappings = dis.CodeMappings,
+				                        	DecompiledMemberReferences = dis.DecompiledMemberReferences,
+				                        	AstNodes = null // TODO: how can I find the AST nodes?
+				                        });
+			}
 		}
 	}
 	

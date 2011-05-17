@@ -23,11 +23,11 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Resources;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xaml;
 using System.Xml;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
@@ -91,6 +91,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: method.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddMethod(method);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
@@ -99,6 +100,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: property.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddProperty(property);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
@@ -107,6 +109,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: field.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddField(field);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
@@ -115,6 +118,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: ev.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddEvent(ev);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
@@ -122,6 +126,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
 			codeDomBuilder.AddType(type);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options)
@@ -149,6 +154,7 @@ namespace ICSharpCode.ILSpy
 					codeDomBuilder.GenerateCode(output);
 				}
 			}
+			OnDecompilationFinished(null);
 		}
 		
 		#region WriteProjectFile
