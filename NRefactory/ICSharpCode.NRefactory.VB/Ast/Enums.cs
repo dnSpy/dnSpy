@@ -76,7 +76,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Subtract,
 		Multiply,
 		Divide,
-		Modulus,
 		
 		Power,         // (VB only)
 		DivideInteger, // (VB only)
@@ -84,10 +83,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		ShiftLeft,
 		ShiftRight,
-		
-		BitwiseAnd,
-		BitwiseOr,
-		ExclusiveOr,
 	}
 	
 	public enum CastType

@@ -35,6 +35,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	public class BinaryOperatorExpression : Expression
 	{
 		public readonly static Role<Expression> LeftExpressionRole = new Role<Expression>("Left");
+		public readonly static Role<VBTokenNode> OperatorRole = new Role<VBTokenNode>("Operator");
 		public readonly static Role<Expression> RightExpressionRole = new Role<Expression>("Right");
 		
 		public BinaryOperatorExpression(Expression left, BinaryOperatorType type, Expression right)
@@ -136,6 +137,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	public class AssignmentExpression : Expression
 	{
 		public readonly static Role<Expression> LeftExpressionRole = BinaryOperatorExpression.LeftExpressionRole;
+		public readonly static Role<VBTokenNode> OperatorRole = BinaryOperatorExpression.OperatorRole;
 		public readonly static Role<Expression> RightExpressionRole = BinaryOperatorExpression.RightExpressionRole;
 		
 		public AssignmentExpression(Expression left, AssignmentOperatorType type, Expression right)

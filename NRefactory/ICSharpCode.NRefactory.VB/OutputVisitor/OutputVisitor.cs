@@ -1285,6 +1285,12 @@ namespace ICSharpCode.NRefactory.VB
 				WriteKeyword("Get");
 			} else if (accessor.Role == PropertyDeclaration.SetterRole) {
 				WriteKeyword("Set");
+			} else if (accessor.Role == EventDeclaration.AddHandlerRole) {
+				WriteKeyword("AddHandler");
+			} else if (accessor.Role == EventDeclaration.RemoveHandlerRole) {
+				WriteKeyword("RemoveHandler");
+			} else if (accessor.Role == EventDeclaration.RaiseEventRole) {
+				WriteKeyword("RaiseEvent");
 			}
 			if (accessor.Parameters.Any())
 				WriteCommaSeparatedListInParenthesis(accessor.Parameters, false);
@@ -1298,6 +1304,12 @@ namespace ICSharpCode.NRefactory.VB
 				WriteKeyword("Get");
 			} else if (accessor.Role == PropertyDeclaration.SetterRole) {
 				WriteKeyword("Set");
+			} else if (accessor.Role == EventDeclaration.AddHandlerRole) {
+				WriteKeyword("AddHandler");
+			} else if (accessor.Role == EventDeclaration.RemoveHandlerRole) {
+				WriteKeyword("RemoveHandler");
+			} else if (accessor.Role == EventDeclaration.RaiseEventRole) {
+				WriteKeyword("RaiseEvent");
 			}
 			NewLine();
 			
@@ -1431,89 +1443,83 @@ namespace ICSharpCode.NRefactory.VB
 			binaryOperatorExpression.Left.AcceptVisitor(this, data);
 			Space();
 			switch (binaryOperatorExpression.Operator) {
-				case BinaryOperatorType.None:
-					
-					break;
 				case BinaryOperatorType.BitwiseAnd:
-					
+					WriteKeyword("And");
 					break;
 				case BinaryOperatorType.BitwiseOr:
-					
+					WriteKeyword("Or");
 					break;
 				case BinaryOperatorType.LogicalAnd:
-					
+					WriteKeyword("AndAlso");
 					break;
 				case BinaryOperatorType.LogicalOr:
-					
+					WriteKeyword("OrElse");
 					break;
 				case BinaryOperatorType.ExclusiveOr:
-					
+					WriteKeyword("Xor");
 					break;
 				case BinaryOperatorType.GreaterThan:
-					
+					WriteToken(">", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.GreaterThanOrEqual:
-					
+					WriteToken(">=", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.Equality:
-					WriteToken("=", BinaryOperatorExpression.Roles.Assign);
+					WriteToken("=", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.InEquality:
-					
+					WriteToken("<>", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.LessThan:
-					
+					WriteToken("<", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.LessThanOrEqual:
-					
+					WriteToken("<=", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.Add:
-					
+					WriteToken("+", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.Subtract:
-					
+					WriteToken("-", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.Multiply:
-					
+					WriteToken("*", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.Divide:
-					
+					WriteToken("/", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.Modulus:
-					
+					WriteKeyword("Mod");
 					break;
 				case BinaryOperatorType.DivideInteger:
-					
+					WriteToken("\\", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.Power:
-					
+					WriteToken("*", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.Concat:
-					
+					WriteToken("&", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.ShiftLeft:
-					
+					WriteToken("<<", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.ShiftRight:
-					
+					WriteToken(">>", BinaryOperatorExpression.OperatorRole);
 					break;
 				case BinaryOperatorType.ReferenceEquality:
-					
+					WriteKeyword("Is");
 					break;
 				case BinaryOperatorType.ReferenceInequality:
-					
+					WriteKeyword("IsNot");
 					break;
 				case BinaryOperatorType.Like:
-					
-					break;
-				case BinaryOperatorType.NullCoalescing:
-					
+					WriteKeyword("Like");
 					break;
 				case BinaryOperatorType.DictionaryAccess:
-					
+					WriteToken("!", BinaryOperatorExpression.OperatorRole);
 					break;
 				default:
-					throw new Exception("Invalid value for BinaryOperatorType");
+					throw new Exception("Invalid value for BinaryOperatorType: " + binaryOperatorExpression.Operator);
 			}
 			Space();
 			binaryOperatorExpression.Right.AcceptVisitor(this, data);
@@ -1534,53 +1540,39 @@ namespace ICSharpCode.NRefactory.VB
 			assignmentExpression.Left.AcceptVisitor(this, data);
 			Space();
 			switch (assignmentExpression.Operator) {
-				case AssignmentOperatorType.None:
-					
-					break;
 				case AssignmentOperatorType.Assign:
-					WriteToken("=", AssignmentExpression.Roles.Assign);
+					WriteToken("=", AssignmentExpression.OperatorRole);
 					break;
 				case AssignmentOperatorType.Add:
-					
+					WriteToken("+=", AssignmentExpression.OperatorRole);
 					break;
 				case AssignmentOperatorType.Subtract:
-					
+					WriteToken("-=", AssignmentExpression.OperatorRole);
 					break;
 				case AssignmentOperatorType.Multiply:
-					
+					WriteToken("*=", AssignmentExpression.OperatorRole);
 					break;
 				case AssignmentOperatorType.Divide:
-					
-					break;
-				case AssignmentOperatorType.Modulus:
-					
+					WriteToken("/=", AssignmentExpression.OperatorRole);
 					break;
 				case AssignmentOperatorType.Power:
-					
+					WriteToken("^=", AssignmentExpression.OperatorRole);
 					break;
 				case AssignmentOperatorType.DivideInteger:
-					
+					WriteToken("\\=", AssignmentExpression.OperatorRole);
+					break;
 					break;
 				case AssignmentOperatorType.ConcatString:
-					
+					WriteToken("&=", AssignmentExpression.OperatorRole);
 					break;
 				case AssignmentOperatorType.ShiftLeft:
-					
+					WriteToken("<<=", AssignmentExpression.OperatorRole);
 					break;
 				case AssignmentOperatorType.ShiftRight:
-					
-					break;
-				case AssignmentOperatorType.BitwiseAnd:
-					
-					break;
-				case AssignmentOperatorType.BitwiseOr:
-					
-					break;
-				case AssignmentOperatorType.ExclusiveOr:
-					
+					WriteToken(">>=", AssignmentExpression.OperatorRole);
 					break;
 				default:
-					throw new Exception("Invalid value for AssignmentOperatorType");
+					throw new Exception("Invalid value for AssignmentOperatorType: " + assignmentExpression.Operator);
 			}
 			Space();
 			assignmentExpression.Right.AcceptVisitor(this, data);
@@ -1622,6 +1614,42 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			formatter.WriteComment(comment.IsDocumentationComment, comment.Content);
 			return null;
+		}
+		
+		public object VisitEventDeclaration(EventDeclaration eventDeclaration, object data)
+		{
+			StartNode(eventDeclaration);
+			
+			WriteAttributes(eventDeclaration.Attributes);
+			WriteModifiers(eventDeclaration.ModifierTokens);
+			if (eventDeclaration.IsCustom)
+				WriteKeyword("Custom");
+			WriteKeyword("Event");
+			WriteIdentifier(eventDeclaration.Name.Name);
+			if (!eventDeclaration.IsCustom && eventDeclaration.ReturnType.IsNull)
+				WriteCommaSeparatedListInParenthesis(eventDeclaration.Parameters, false);
+			if (!eventDeclaration.ReturnType.IsNull) {
+				Space();
+				WriteKeyword("As");
+				eventDeclaration.ReturnType.AcceptVisitor(this, data);
+			}
+			WriteImplementsClause(eventDeclaration.ImplementsClause);
+			
+			if (eventDeclaration.IsCustom) {
+				NewLine();
+				Indent();
+				
+				eventDeclaration.AddHandlerBlock.AcceptVisitor(this, data);
+				eventDeclaration.RemoveHandlerBlock.AcceptVisitor(this, data);
+				eventDeclaration.RaiseEventBlock.AcceptVisitor(this, data);
+				
+				Unindent();
+				WriteKeyword("End");
+				WriteKeyword("Event");
+			}
+			NewLine();
+			
+			return EndNode(eventDeclaration);
 		}
 	}
 }

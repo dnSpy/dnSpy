@@ -69,8 +69,4 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			return visitor.VisitMethodDeclaration(this, data);
 		}
 	}
-	
-
-	
-
 }

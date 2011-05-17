@@ -64,10 +64,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					op = AssignmentOperatorType.Assign;
 					break;
 				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Add:
-					
+					op = AssignmentOperatorType.Add;
 					break;
 				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Subtract:
-					
+					op = AssignmentOperatorType.Subtract;
 					break;
 				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Multiply:
 					
@@ -97,7 +97,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					
 					break;
 				default:
-					throw new Exception("Invalid value for AssignmentOperatorType");
+					throw new Exception("Invalid value for AssignmentOperatorType: " + assignmentExpression.Operator);
 			}
 			
 			var right = (Expression)assignmentExpression.Right.AcceptVisitor(this, data);
@@ -124,22 +124,22 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					op = BinaryOperatorType.BitwiseAnd;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.BitwiseOr:
-					
+					op = BinaryOperatorType.BitwiseOr;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ConditionalAnd:
-					
+					op = BinaryOperatorType.LogicalAnd;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ConditionalOr:
-					
+					op = BinaryOperatorType.LogicalOr;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ExclusiveOr:
-					
+					op = BinaryOperatorType.ExclusiveOr;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.GreaterThan:
-					
+					op = BinaryOperatorType.GreaterThan;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.GreaterThanOrEqual:
-					
+					op = BinaryOperatorType.GreaterThanOrEqual;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Equality:
 					op = BinaryOperatorType.Equality;
@@ -148,40 +148,34 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					op = BinaryOperatorType.InEquality;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.LessThan:
-					
+					op = BinaryOperatorType.LessThan;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.LessThanOrEqual:
-					
+					op = BinaryOperatorType.LessThanOrEqual;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Add:
-					
+					op = BinaryOperatorType.Add;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Subtract:
-					
+					op = BinaryOperatorType.Subtract;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Multiply:
-					
+					op = BinaryOperatorType.Multiply;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Divide:
-					
+					op = BinaryOperatorType.Divide;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Modulus:
-					
+					op = BinaryOperatorType.Modulus;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ShiftLeft:
-					
+					op = BinaryOperatorType.ShiftLeft;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ShiftRight:
-					
-					break;
-				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.NullCoalescing:
-					
-					break;
-				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Any:
-					
+					op = BinaryOperatorType.ShiftRight;
 					break;
 				default:
-					throw new Exception("Invalid value for BinaryOperatorType");
+					throw new Exception("Invalid value for BinaryOperatorType: " + binaryOperatorExpression.Operator);
 			}
 			
 			return EndNode(binaryOperatorExpression, new BinaryOperatorExpression(left, op, right));
@@ -745,12 +739,32 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitEventDeclaration(CSharp.EventDeclaration eventDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			var result = new EventDeclaration();
+			// TODO event declaration
+			
+//			ConvertNodes(eventDeclaration.Attributes, result.Attributes);
+//			result.Modifiers = ConvertModifiers(eventDeclaration.Modifiers, eventDeclaration);
+//			result.Name = new Identifier(eventDeclaration., AstLocation.Empty);
+			
+			return EndNode(eventDeclaration, result);
 		}
 		
 		public AstNode VisitCustomEventDeclaration(CSharp.CustomEventDeclaration customEventDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			var result = new EventDeclaration();
+			ConvertNodes(customEventDeclaration.Attributes, result.Attributes);
+			result.Modifiers = ConvertModifiers(customEventDeclaration.Modifiers, customEventDeclaration);
+			result.IsCustom = true;
+			result.Name = new Identifier(customEventDeclaration.Name, AstLocation.Empty);
+			result.ReturnType = (AstType)customEventDeclaration.ReturnType.AcceptVisitor(this, data);
+			if (!customEventDeclaration.PrivateImplementationType.IsNull)
+				result.ImplementsClause.Add(
+					new InterfaceMemberSpecifier((AstType)customEventDeclaration.PrivateImplementationType.AcceptVisitor(this, data), customEventDeclaration.Name));
+			
+			result.AddHandlerBlock = (Accessor)customEventDeclaration.AddAccessor.AcceptVisitor(this, data);
+			result.RemoveHandlerBlock = (Accessor)customEventDeclaration.RemoveAccessor.AcceptVisitor(this, data);
+			
+			return EndNode(customEventDeclaration, result);
 		}
 		
 		public AstNode VisitFieldDeclaration(CSharp.FieldDeclaration fieldDeclaration, object data)

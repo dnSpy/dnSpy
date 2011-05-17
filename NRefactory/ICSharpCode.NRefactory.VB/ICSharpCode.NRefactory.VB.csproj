@@ -87,6 +87,7 @@
     <Compile Include="Ast\Statements\Statement.cs" />
     <Compile Include="Ast\TypeMembers\Accessor.cs" />
     <Compile Include="Ast\TypeMembers\ConstructorDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\EventDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\FieldDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\MethodDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\PropertyDeclaration.cs" />
