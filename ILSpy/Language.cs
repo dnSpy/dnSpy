@@ -191,12 +191,7 @@ namespace ICSharpCode.ILSpy
 				                        	CodeMappings = builder.CodeMappings,
 				                        	LocalVariables = builder.LocalVariables,
 				                        	DecompiledMemberReferences = builder.DecompiledMemberReferences,
-				                        	AstNodes = builder.CompilationUnit.GetNodesWithLineNumbers(n =>
-				                        	                                                           n is TypeDeclaration || n is DelegateDeclaration ||
-				                        	                                                           n is FieldDeclaration || n is PropertyDeclaration ||
-				                        	                                                           n is EventDeclaration || n is MethodDeclaration ||
-				                        	                                                           n is ConstructorDeclaration ||
-				                        	                                                           n is IndexerDeclaration ||  n is OperatorDeclaration)
+				                        	AstNodes = builder.CompilationUnit.GetNodesWithLineNumbers(n => n is AttributedNode)
 				                        });
 			}
 			
@@ -205,7 +200,7 @@ namespace ICSharpCode.ILSpy
 				OnDecompilationFinished(new DecompileEventArgs {
 				                        	CodeMappings = dis.CodeMappings,
 				                        	DecompiledMemberReferences = dis.DecompiledMemberReferences,
-				                        	AstNodes = null // TODO: how can I find the AST nodes?
+				                        	AstNodes = null // TODO: how can I find the nodes with line numbers from dis?
 				                        });
 			}
 		}

@@ -145,9 +145,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			
 			// definitions of types and their members
-			Predicate<AstNode> predicate = n => n is TypeDeclaration || n is DelegateDeclaration ||
-				n is FieldDeclaration || n is PropertyDeclaration || n is EventDeclaration ||n is MethodDeclaration || n is ConstructorDeclaration ||
-				n is IndexerDeclaration || n is OperatorDeclaration;
+			Predicate<AstNode> predicate = n => n is AttributedNode;
 			
 			if (predicate(node)) {
 				var n = node as AttributedNode;

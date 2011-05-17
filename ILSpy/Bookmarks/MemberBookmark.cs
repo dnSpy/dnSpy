@@ -35,6 +35,9 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		public virtual ImageSource Image {
 			get {
 				var attrNode = (AttributedNode)node;
+				if (node is EnumMemberDeclaration)
+					return GetMemberOverlayedImage(attrNode, MemberIcon.EnumValue);
+				
 				if (node is FieldDeclaration)
 					return GetMemberOverlayedImage(attrNode, MemberIcon.Field);
 				
