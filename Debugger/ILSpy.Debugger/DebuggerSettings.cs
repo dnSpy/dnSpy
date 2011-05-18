@@ -24,6 +24,7 @@ namespace ICSharpCode.ILSpy.Debugger
 	public class DebuggerSettings : INotifyPropertyChanged
 	{
 		bool showWarnings = true;
+		bool askArguments = true;
 		bool debugWholeTypesOnly = false;
 		
 		/// <summary>
@@ -40,6 +41,20 @@ namespace ICSharpCode.ILSpy.Debugger
 				}
 			}
 		}
+		
+		/// <summary>
+		/// Ask for arguments and working directory before executing a process.
+		/// </summary>
+		[DefaultValue(true)]
+		public bool AskForArguments {
+			get { return askArguments; }
+			set {
+				if (askArguments != value) {
+					askArguments = value;
+					OnPropertyChanged("AskForArguments");
+				}
+			}
+		}			
 		
 		/// <summary>
 		/// True, if debug only whole types; otherwise false (debug only methods and properties).

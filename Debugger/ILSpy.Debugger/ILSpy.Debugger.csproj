@@ -45,6 +45,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -106,6 +107,10 @@
       <DependentUpon>AttachToProcessWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\ExecuteProcessWindow.xaml.cs">
+      <DependentUpon>ExecuteProcessWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images" />
@@ -118,6 +123,7 @@
     <Page Include="ToolTips\PinControlsDictionary.xaml" />
     <Page Include="ToolTips\VisualizerPicker.xaml" />
     <Page Include="UI\AttachToProcessWindow.xaml" />
+    <Page Include="UI\ExecuteProcessWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
