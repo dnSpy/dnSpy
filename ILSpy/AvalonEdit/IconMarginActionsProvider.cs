@@ -95,7 +95,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	internal class IconMarginActionsProvider
 	{
 		/// <summary>
-		/// Enables extensible context menu support for the specified tree view.
+		/// Enables extensible context menu support for the specified icon margin.
 		/// </summary>
 		public static void Add(IconBarMargin margin)
 		{
@@ -186,4 +186,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			}
 		}
 	}
+	
+	
 }
