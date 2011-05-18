@@ -102,6 +102,7 @@
       <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DisplaySettings.cs" />
     <Compile Include="ExportCommandAttribute.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
@@ -136,6 +137,10 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchPane.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DisplaySettingsPanel.xaml.cs">
+      <DependentUpon>DisplaySettingsPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
@@ -230,6 +235,7 @@
     <Page Include="SearchPane.xaml">
       <DependentUpon>SearchPane.cs</DependentUpon>
     </Page>
+    <Page Include="DisplaySettingsPanel.xaml" />
     <Page Include="TextView\DecompilerTextView.xaml">
       <DependentUpon>DecompilerTextView.cs</DependentUpon>
     </Page>

@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="ICSharpCode.ILSpy.DisplaySettingsPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ICSharpCode.ILSpy">
+	<UserControl.Resources>
+		<local:FontSizeConverter x:Key="fontSizeConv" />
+	</UserControl.Resources>
+	<Grid>
+		<GroupBox Header="Font">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Label Margin="3">Font:</Label>
+				<ComboBox x:Name="fontSelector" SelectedItem="{Binding SelectedFont}" Grid.Column="1">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock VerticalAlignment="Center" Text="{Binding Source}" />
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				<Label Grid.Column="2" Margin="3">Size:</Label>
+				<ComboBox Grid.Column="3" Text="{Binding SelectedFontSize, Converter={StaticResource fontSizeConv}}" IsEditable="True" Margin="3">
+					<ComboBoxItem>6</ComboBoxItem>
+					<ComboBoxItem>7</ComboBoxItem>
+					<ComboBoxItem>8</ComboBoxItem>
+					<ComboBoxItem>9</ComboBoxItem>
+					<ComboBoxItem>10</ComboBoxItem>
+					<ComboBoxItem>11</ComboBoxItem>
+					<ComboBoxItem>12</ComboBoxItem>
+					<ComboBoxItem>13</ComboBoxItem>
+					<ComboBoxItem>14</ComboBoxItem>
+					<ComboBoxItem>15</ComboBoxItem>
+					<ComboBoxItem>16</ComboBoxItem>
+					<ComboBoxItem>17</ComboBoxItem>
+					<ComboBoxItem>18</ComboBoxItem>
+					<ComboBoxItem>19</ComboBoxItem>
+					<ComboBoxItem>20</ComboBoxItem>
+					<ComboBoxItem>21</ComboBoxItem>
+					<ComboBoxItem>22</ComboBoxItem>
+					<ComboBoxItem>23</ComboBoxItem>
+					<ComboBoxItem>24</ComboBoxItem>
+				</ComboBox>
+				<Border Grid.Row="1" Grid.ColumnSpan="4" BorderBrush="Black" BorderThickness="1" Background="White" Margin="3">
+					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="AaBbCcXxYyZz" FontFamily="{Binding SelectedFont}" FontSize="{Binding SelectedFontSize}" />
+				</Border>
+			</Grid>
+		</GroupBox>
+	</Grid>
+</UserControl>
