@@ -23,9 +23,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.Bookmarks;
 
-namespace ICSharpCode.ILSpy.Bookmarks
+namespace ICSharpCode.ILSpy.AvalonEdit
 {
 	#region Context menu extensibility
 	public interface IBookmarkContextMenuEntry
@@ -92,14 +92,14 @@ namespace ICSharpCode.ILSpy.Bookmarks
 	
 	#endregion
 	
-	internal class BookmarkContextMenuProvider
+	internal class IconMarginActionsProvider
 	{
 		/// <summary>
 		/// Enables extensible context menu support for the specified tree view.
 		/// </summary>
 		public static void Add(IconBarMargin margin)
 		{
-			var provider = new BookmarkContextMenuProvider(margin);
+			var provider = new IconMarginActionsProvider(margin);
 			margin.MouseDown += provider.MouseDown;
 			margin.ContextMenu = new ContextMenu();
 		}
@@ -112,7 +112,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		[ImportMany(typeof(IBookmarkActionEntry))]
 		Lazy<IBookmarkActionEntry, IBookmarkActionMetadata>[] actionEntries = null;
 		
-		private BookmarkContextMenuProvider(IconBarMargin margin)
+		private IconMarginActionsProvider(IconBarMargin margin)
 		{
 			this.margin = margin;
 			App.CompositionContainer.ComposeParts(this);

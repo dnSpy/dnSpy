@@ -95,12 +95,12 @@
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\IconBarManager.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
+    <Compile Include="AvalonEdit\IconMarginActionsProvider.cs" />
     <Compile Include="AvalonEdit\TextMarkerService.cs" />
     <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
     <Compile Include="AvalonEdit\ITextMarker.cs" />
     <Compile Include="BamlDecompiler.cs" />
     <Compile Include="Bookmarks\BookmarkBase.cs" />
-    <Compile Include="Bookmarks\BookmarkContextMenuEntry.cs" />
     <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
     <Compile Include="Bookmarks\BookmarkManager.cs" />
     <Compile Include="Bookmarks\Commands.cs" />

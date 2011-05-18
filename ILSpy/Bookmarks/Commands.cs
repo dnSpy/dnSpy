@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using Mono.Cecil;
 

@@ -104,7 +104,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.VisualLinesChanged += delegate { iconMargin.InvalidateVisual(); };
 			
 			// Bookmarks context menu
-			BookmarkContextMenuProvider.Add(iconMargin);
+			IconMarginActionsProvider.Add(iconMargin);
 		}
 		#endregion
 		
