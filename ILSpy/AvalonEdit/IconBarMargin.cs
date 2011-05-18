@@ -32,6 +32,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			this.manager = manager;
 		}
 		
+		public IconBarManager Manager {
+			get { return manager; }
+		}
+		
 		public IList<MemberReference> DecompiledMembers { get; set; }
 		
 		public virtual void Dispose()
@@ -181,7 +185,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				e.Handled = true;
 		}
 		
-		int GetLineFromMousePosition(MouseEventArgs e)
+		internal int GetLineFromMousePosition(MouseEventArgs e)
 		{
 			ICSharpCode.AvalonEdit.Rendering.TextView textView = this.TextView;
 			if (textView == null)

@@ -42,6 +42,7 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory.Documentation;
@@ -101,6 +102,9 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			textEditor.TextArea.LeftMargins.Add(iconMargin);
 			textEditor.TextArea.TextView.VisualLinesChanged += delegate { iconMargin.InvalidateVisual(); };
+			
+			// Bookmarks context menu
+			BookmarkContextMenuProvider.Add(iconMargin);
 		}
 		#endregion
 		

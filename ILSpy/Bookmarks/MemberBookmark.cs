@@ -82,9 +82,6 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		
 		public virtual void MouseDown(MouseButtonEventArgs e)
 		{
-			if (e.ChangedButton == MouseButton.Left) {
-				// TODO: menu items
-			}
 		}
 		
 		public virtual void MouseUp(MouseButtonEventArgs e)
@@ -135,17 +132,6 @@ namespace ICSharpCode.ILSpy.Bookmarks
 				
 				return GetTypeOverlayedImage(attrNode, TypeIcon.Class);
 			}
-		}
-		
-		public override void MouseDown(MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton == MouseButton.Left) {
-				// TODO: menu items
-			}
-		}
-		
-		public override void MouseUp(MouseButtonEventArgs e)
-		{
 		}
 		
 		ImageSource GetTypeOverlayedImage(AttributedNode attrNode, TypeIcon icon)

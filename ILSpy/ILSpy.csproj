@@ -100,8 +100,10 @@
     <Compile Include="AvalonEdit\ITextMarker.cs" />
     <Compile Include="BamlDecompiler.cs" />
     <Compile Include="Bookmarks\BookmarkBase.cs" />
+    <Compile Include="Bookmarks\BookmarkContextMenuEntry.cs" />
     <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
     <Compile Include="Bookmarks\BookmarkManager.cs" />
+    <Compile Include="Bookmarks\Commands.cs" />
     <Compile Include="Bookmarks\MemberBookmark.cs" />
     <Compile Include="Bookmarks\IBookmark.cs" />
     <Compile Include="Bookmarks\MarkerBookmark.cs" />
