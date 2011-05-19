@@ -23,6 +23,8 @@ namespace ICSharpCode.Decompiler
 {
 	public sealed class PlainTextOutput : ITextOutput
 	{
+		const int TAB_SIZE = 4;
+		
 		readonly TextWriter writer;
 		int indent;
 		bool needsIndent;
@@ -70,7 +72,7 @@ namespace ICSharpCode.Decompiler
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
 					writer.Write('\t');
-					columnNumber += 4;
+					columnNumber += TAB_SIZE - 1;
 				}
 			}
 		}
@@ -94,6 +96,7 @@ namespace ICSharpCode.Decompiler
 			lineNumber++;
 			writer.WriteLine();
 			needsIndent = true;
+			columnNumber = TAB_SIZE * indent;
 		}
 		
 		public void WriteDefinition(string text, object definition)
