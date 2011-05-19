@@ -16,6 +16,8 @@ using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Debugger.UI;
+using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.TreeView;
 using Microsoft.Win32;
 
 namespace ICSharpCode.ILSpy.Commands
@@ -89,11 +91,12 @@ namespace ICSharpCode.ILSpy.Commands
 			}
 		}
 		
-		protected void StartExecutable(string fileName)
+		protected void StartExecutable(string fileName, string workingDirectory, string arguments)
 		{
 			CurrentDebugger.Start(new ProcessStartInfo {
 			                      	FileName = fileName,
-			                      	WorkingDirectory = Path.GetDirectoryName(fileName)
+			                      	WorkingDirectory = workingDirectory ?? Path.GetDirectoryName(fileName),
+			                      	Arguments = arguments
 			                      });
 			Finish();
 		}
@@ -164,10 +167,50 @@ namespace ICSharpCode.ILSpy.Commands
 			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
 			
 			// jump to type & expand folding
-			if (DebugData.DebugStepInformation != null)
-				inst.JumpToReference(DebugData.DebugStepInformation.Item3);
+			var bm = CurrentLineBookmark.Instance;
+			if (bm != null) {
+				inst.JumpToReference(bm.MemberReference);
+				inst.TextView.UnfoldAndScroll(bm.LineNumber);
+			}
 			
 			inst.SetStatus("Debugging...", Brushes.Red);
+		}
+	}
+	
+	[ExportContextMenuEntry(Header = "_Debug Assembly", Icon = "ILSpy.Debugger;component/Images/application-x-executable.png")]
+	internal sealed class DebugExecutableNodeCommand : DebuggerCommand, IContextMenuEntry
+	{
+		public bool IsVisible(SharpTreeNode[] selectedNodes)
+		{
+			return selectedNodes.All(n => n is AssemblyTreeNode && null != (n as AssemblyTreeNode).LoadedAssembly.AssemblyDefinition.EntryPoint);
+		}
+		
+		public bool IsEnabled(SharpTreeNode[] selectedNodes)
+		{
+			return selectedNodes.Length == 1;
+		}
+		
+		public void Execute(SharpTreeNode[] selectedNodes)
+		{
+			if (!CurrentDebugger.IsDebugging) {
+				AssemblyTreeNode n = selectedNodes[0] as AssemblyTreeNode;
+				
+				var settings = ILSpySettings.Load();
+				XElement e = settings["DebuggerSettings"];
+				var askForArguments = (bool?)e.Attribute("askForArguments");
+				if (askForArguments.HasValue && askForArguments.Value) {
+					var window = new ExecuteProcessWindow { Owner = MainWindow.Instance, 
+						SelectedExecutable = n.LoadedAssembly.FileName };
+					if (window.ShowDialog() == true) {
+						string fileName = window.SelectedExecutable;
+						
+						// execute the process
+						this.StartExecutable(fileName, window.WorkingDirectory, window.Arguments);
+					}
+				} else {
+					this.StartExecutable(n.LoadedAssembly.FileName, null, null);
+				}
+			}
 		}
 	}
 	
@@ -185,21 +228,36 @@ namespace ICSharpCode.ILSpy.Commands
 	{
 		public override void Execute(object parameter)
 		{
-			OpenFileDialog dialog = new OpenFileDialog() {
-				Filter = ".NET Executable (*.exe) | *.exe",
-				RestoreDirectory = true,
-				DefaultExt = "exe"
-			};
-			
-			if (dialog.ShowDialog() == true) {
-				string fileName = dialog.FileName;
-				
-				// add it to references
-				MainWindow.Instance.OpenFiles(new [] { fileName }, false);
-				
-				if (!CurrentDebugger.IsDebugging) {
-					// execute the process
-					this.StartExecutable(fileName);
+			if (!CurrentDebugger.IsDebugging) {
+				var settings = ILSpySettings.Load();
+				XElement e = settings["DebuggerSettings"];
+				var askForArguments = (bool?)e.Attribute("askForArguments");
+				if (askForArguments.HasValue && askForArguments.Value) {
+					var window = new ExecuteProcessWindow { Owner = MainWindow.Instance };
+					if (window.ShowDialog() == true) {
+						string fileName = window.SelectedExecutable;
+						
+						// add it to references
+						MainWindow.Instance.OpenFiles(new [] { fileName }, false);
+						
+						// execute the process
+						this.StartExecutable(fileName, window.WorkingDirectory, window.Arguments);
+					}
+				} else {
+					OpenFileDialog dialog = new OpenFileDialog() {
+						Filter = ".NET Executable (*.exe) | *.exe",
+						RestoreDirectory = true,
+						DefaultExt = "exe"
+					};
+					if (dialog.ShowDialog() == true) {
+						string fileName = dialog.FileName;
+						
+						// add it to references
+						MainWindow.Instance.OpenFiles(new [] { fileName }, false);
+						
+						// execute the process
+						this.StartExecutable(fileName, null, null);
+					}
 				}
 			}
 		}

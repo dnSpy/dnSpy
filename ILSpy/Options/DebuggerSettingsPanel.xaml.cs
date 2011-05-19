@@ -21,6 +21,7 @@ namespace ICSharpCode.ILSpy.Options
 	{
 		private const string DEBUGGER_SETTINGS = "DebuggerSettings";
 		private const string SHOW_WARNINGS = "showWarnings";
+		private const string ASK_ARGUMENTS = "askForArguments";
 	 	
 		public DebuggerSettingsPanel()
 		{
@@ -45,6 +46,7 @@ namespace ICSharpCode.ILSpy.Options
 			XElement e = settings[DEBUGGER_SETTINGS];
 			DebuggerSettings s = new DebuggerSettings();
 			s.ShowWarnings = (bool?)e.Attribute(SHOW_WARNINGS) ?? s.ShowWarnings;
+			s.AskForArguments = (bool?)e.Attribute(ASK_ARGUMENTS) ?? s.AskForArguments;
 			
 			return s;
 		}
@@ -54,7 +56,8 @@ namespace ICSharpCode.ILSpy.Options
 			var s = (DebuggerSettings)this.DataContext;
 			XElement section = new XElement(DEBUGGER_SETTINGS);
 			section.SetAttributeValue(SHOW_WARNINGS, s.ShowWarnings);
-			
+			section.SetAttributeValue(ASK_ARGUMENTS, s.AskForArguments);
+
 			XElement existingElement = root.Element(DEBUGGER_SETTINGS);
 			if (existingElement != null)
 				existingElement.ReplaceWith(section);
