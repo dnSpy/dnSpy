@@ -152,7 +152,7 @@ namespace ICSharpCode.Decompiler.Ast
 				int c = 0;
 				if (n != null)
 					c = n.Attributes.Count;
-				node.AddAnnotation(Tuple.Create(output.CurrentLine + c, 0));
+				node.AddAnnotation(Tuple.Create(output.CurrentLine + c, output.CurrentColumn));
 			}
 			
 			nodeStack.Push(node);

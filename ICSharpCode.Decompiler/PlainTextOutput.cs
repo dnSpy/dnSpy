@@ -27,6 +27,7 @@ namespace ICSharpCode.Decompiler
 		int indent;
 		bool needsIndent;
 		int lineNumber = 1;
+		int columnNumber = 1;
 		
 		public PlainTextOutput(TextWriter writer)
 		{
@@ -40,8 +41,12 @@ namespace ICSharpCode.Decompiler
 			this.writer = new StringWriter();
 		}
 		
-		public int CurrentLine { 
+		public int CurrentLine {
 			get { return lineNumber; }
+		}
+		
+		public int CurrentColumn { 
+			get { return columnNumber; }
 		}
 		
 		public override string ToString()
@@ -65,6 +70,7 @@ namespace ICSharpCode.Decompiler
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
 					writer.Write('\t');
+					columnNumber += 4;
 				}
 			}
 		}
@@ -73,12 +79,14 @@ namespace ICSharpCode.Decompiler
 		{
 			WriteIndent();
 			writer.Write(ch);
+			columnNumber++;
 		}
 		
 		public void Write(string text)
 		{
 			WriteIndent();
 			writer.Write(text);
+			columnNumber += text.Length;
 		}
 		
 		public void WriteLine()
