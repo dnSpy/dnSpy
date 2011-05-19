@@ -32,6 +32,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public static IAstTransform[] CreatePipeline(DecompilerContext context)
 		{
 			return new IAstTransform[] {
+				new DecimalConstantTransform(),
 				new PushNegation(),
 				new DelegateConstruction(context),
 				new PatternStatementTransform(context),
