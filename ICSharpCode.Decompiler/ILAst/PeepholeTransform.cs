@@ -440,6 +440,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		#endregion
 		
 		#region IntroducePostIncrement
+
 		bool IntroducePostIncrement(List<ILNode> body, ILExpression expr, int pos)
 		{
 			bool modified = IntroducePostIncrementForVariables(body, expr, pos);
@@ -452,6 +453,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			return modified;
 		}
+
+		private static IDictionary<ILCode, ILCode> _postIncrementPairs = new Dictionary<ILCode, ILCode>
+			{
+				{ILCode.Ldloc, ILCode.Stloc},
+				{ILCode.Ldsfld, ILCode.Stsfld},
+				{ILCode.CallGetter, ILCode.CallSetter}
+			};
 		
 		bool IntroducePostIncrementForVariables(List<ILNode> body, ILExpression expr, int pos)
 		{
@@ -465,19 +473,40 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression exprInit;
 			if (!(expr.Match(ILCode.Stloc, out exprVar, out exprInit) && exprVar.IsGenerated))
 				return false;
-			if (!(exprInit.Code == ILCode.Ldloc || exprInit.Code == ILCode.Ldsfld || (exprInit.Code == ILCode.CallGetter && exprInit.Arguments.Count == 0)))
+			
+			ILCode loadInstruction = exprInit.Code;
+			//We only recognise local variables, fields & getters with no arguments
+			if (!_postIncrementPairs.ContainsKey(loadInstruction)) 
+				return false;
+			if (loadInstruction == ILCode.CallGetter && exprInit.Arguments.Count != 0)
 				return false;
 			
+			//The next expression
 			ILExpression nextExpr = body.ElementAtOrDefault(pos + 1) as ILExpression;
 			if (nextExpr == null)
 				return false;
-			if (exprInit.Code == ILCode.CallGetter) {
-				if (!(nextExpr.Code == ILCode.CallSetter && IsGetterSetterPair(exprInit.Operand, nextExpr.Operand)))
+			ILCode storeInstruction = nextExpr.Code;
+			//Must be a matching store type
+			if (_postIncrementPairs[loadInstruction] != storeInstruction)
+				return false;
+			
+			object nextExprOperand = nextExpr.Operand;
+			object exprInitOperand = exprInit.Operand;
+			if (loadInstruction == ILCode.CallGetter)
+				if (!IsGetterSetterPair(exprInitOperand, nextExprOperand))
 					return false;
-			} else {
-				if (!(nextExpr.Code == (exprInit.Code == ILCode.Ldloc ? ILCode.Stloc : ILCode.Stsfld) && nextExpr.Operand == exprInit.Operand))
-					return false;
-			}
+
+			if (loadInstruction == ILCode.Ldloc)
+				if ((nextExprOperand != exprInitOperand))
+					if (((ILVariable) nextExprOperand).OriginalVariable == ((ILVariable) exprInitOperand).OriginalVariable)
+						//Spit local variable, unsplit these two instances
+						foreach (var ilExpression in body.SelectMany(
+							node => node.GetSelfAndChildrenRecursive<ILExpression>(
+								expression => expression.Operand == nextExprOperand)))
+							ilExpression.Operand = exprInitOperand;
+					else
+						return false;
+			
 			ILExpression addExpr = nextExpr.Arguments[0];
 			
 			int incrementAmount;
@@ -485,12 +514,18 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!(incrementAmount != 0 && addExpr.Arguments[0].MatchLdloc(exprVar)))
 				return false;
 			
-			if (exprInit.Code == ILCode.Ldloc)
-				exprInit.Code = ILCode.Ldloca;
-			else if (exprInit.Code == ILCode.CallGetter)
-				exprInit = new ILExpression(ILCode.AddressOf, null, exprInit);
-			else
-				exprInit.Code = ILCode.Ldsflda;
+			switch (loadInstruction)
+			{
+				case ILCode.Ldloc:
+					exprInit.Code = ILCode.Ldloca;
+					break;
+				case ILCode.Ldsfld:
+					exprInit.Code = ILCode.Ldsflda;
+					break;
+				case ILCode.CallGetter:
+					exprInit = new ILExpression(ILCode.AddressOf, null, exprInit);
+					break;
+			}
 			expr.Arguments[0] = new ILExpression(incrementCode, incrementAmount, exprInit);
 			body.RemoveAt(pos + 1); // TODO ILRanges
 			return true;
