@@ -88,7 +88,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			indentation--;
 		}
 		
-		public void WriteComment(CommentType commentType, string content, bool isLastLine = false)
+		public void WriteComment(CommentType commentType, string content)
 		{
 			WriteIndentation();
 			switch (commentType) {

@@ -103,7 +103,7 @@ namespace ICSharpCode.Decompiler.Ast
 			output.WriteLine();
 		}
 		
-		public void WriteComment(CommentType commentType, string content, bool isLastLine = false)
+		public void WriteComment(CommentType commentType, string content)
 		{
 			switch (commentType) {
 				case CommentType.SingleLine:
@@ -121,6 +121,7 @@ namespace ICSharpCode.Decompiler.Ast
 					output.Write("///");
 					output.Write(content);
 					inDocumentationComment = true;
+					bool isLastLine = !(nodeStack.Peek().NextSibling is Comment);
 					if (isLastLine) {
 						inDocumentationComment = false;
 						output.MarkFoldEnd();
