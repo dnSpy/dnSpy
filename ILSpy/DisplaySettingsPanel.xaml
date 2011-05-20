@@ -6,6 +6,10 @@
 		<local:FontSizeConverter x:Key="fontSizeConv" />
 	</UserControl.Resources>
 	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
 		<GroupBox Header="Font">
 			<Grid>
 				<Grid.ColumnDefinitions>
@@ -52,6 +56,9 @@
 					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="AaBbCcXxYyZz" FontFamily="{Binding SelectedFont}" FontSize="{Binding SelectedFontSize}" />
 				</Border>
 			</Grid>
+		</GroupBox>
+		<GroupBox Header="Other options" Grid.Row="1">
+			<CheckBox Margin="3,3" IsChecked="{Binding ShowLineNumbers}">Show line numbers</CheckBox>
 		</GroupBox>
 	</Grid>
 </UserControl>

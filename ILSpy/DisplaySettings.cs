@@ -71,10 +71,23 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		bool showLineNumbers;
+		
+		public bool ShowLineNumbers {
+			get { return showLineNumbers; }
+			set {
+				if (showLineNumbers != value) {
+					showLineNumbers = value;
+					OnPropertyChanged("ShowLineNumbers");
+				}
+			}
+		}
+		
 		public void CopyValues(DisplaySettings s)
 		{
 			this.SelectedFont = s.selectedFont;
 			this.SelectedFontSize = s.selectedFontSize;
+			this.ShowLineNumbers = s.showLineNumbers;
 		}
 	}
 }

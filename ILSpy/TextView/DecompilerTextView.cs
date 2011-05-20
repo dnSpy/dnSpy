@@ -88,6 +88,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.MouseHoverStopped += TextViewMouseHoverStopped;
 			textEditor.SetBinding(TextEditor.FontFamilyProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFont") });
 			textEditor.SetBinding(TextEditor.FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFontSize") });
+			textEditor.SetBinding(TextEditor.ShowLineNumbersProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("ShowLineNumbers") });
 		}
 		#endregion
 		

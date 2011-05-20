@@ -104,6 +104,7 @@ namespace ICSharpCode.ILSpy
 			DisplaySettings s = new DisplaySettings();
 			s.SelectedFont = new FontFamily((string)e.Attribute("Font") ?? "Consolas");
 			s.SelectedFontSize = (double?)e.Attribute("FontSize") ?? 10.0 * 4 / 3;
+			s.ShowLineNumbers = (bool?)e.Attribute("ShowLineNumbers") ?? false;
 			
 			return s;
 		}
@@ -117,6 +118,7 @@ namespace ICSharpCode.ILSpy
 			XElement section = new XElement("DisplaySettings");
 			section.SetAttributeValue("Font", s.SelectedFont.Source);
 			section.SetAttributeValue("FontSize", s.SelectedFontSize);
+			section.SetAttributeValue("ShowLineNumbers", s.ShowLineNumbers);
 			
 			XElement existingElement = root.Element("DisplaySettings");
 			if (existingElement != null)
