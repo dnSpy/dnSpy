@@ -601,7 +601,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Ldstr:  return new Ast.PrimitiveExpression(operand);
 				case ILCode.Ldtoken:
 					if (operand is Cecil.TypeReference) {
-						return new Ast.TypeOfExpression { Type = operandAsTypeRef }.Member("TypeHandle");
+						return new Ast.TypeOfExpression { Type = AddEmptyTypeArgumentsForUnboundGenerics(operandAsTypeRef) }.Member("TypeHandle");
 					} else {
 						return InlineAssembly(byteCode, args);
 					}
@@ -747,6 +747,32 @@ namespace ICSharpCode.Decompiler.Ast
 				default:
 					throw new Exception("Unknown OpCode: " + byteCode.Code);
 			}
+		}
+		
+		AstType AddEmptyTypeArgumentsForUnboundGenerics(AstType type)
+		{
+			TypeDefinition typeDef = type.Annotation<TypeReference>().Resolve();
+			if (typeDef == null || !typeDef.HasGenericParameters)
+				return type;
+			SimpleType sType = type as SimpleType;
+			MemberType mType = type as MemberType;
+			if (sType != null) {
+				while (typeDef.GenericParameters.Count > sType.TypeArguments.Count) {
+					sType.TypeArguments.Add(new SimpleType(""));
+				}
+			}
+			
+			if (mType != null) {
+				AddEmptyTypeArgumentsForUnboundGenerics(mType.Target);
+				
+				int outerTypeParamCount = typeDef.DeclaringType == null ? 0 : typeDef.DeclaringType.GenericParameters.Count;
+				
+				while (typeDef.GenericParameters.Count - outerTypeParamCount > mType.TypeArguments.Count) {
+					mType.TypeArguments.Add(new SimpleType(""));
+				}
+			}
+			
+			return type;
 		}
 		
 		static readonly AstNode objectInitializerPattern = new AssignmentExpression(

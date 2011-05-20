@@ -427,17 +427,6 @@ namespace ICSharpCode.Decompiler.Ast
 						astType = new MemberType { Target = nsType, MemberName = name };
 					} else {
 						astType = new SimpleType(name);
-
-						// Look for generic type parameters defined in TypeDefinition
-						// allows us to display angle brackets in unbound type names
-						// e.g. typeof(List<>)
-						TypeDefinition resolvedType = type.Resolve();
-						
-						if (!type.HasGenericParameters && resolvedType != null) {
-							for (int i = 0; i < resolvedType.GenericParameters.Count; i++) {
-								((SimpleType)astType).TypeArguments.Add(new SimpleType(""));
-							}
-						}
 					}
 					astType.AddAnnotation(type);
 					
