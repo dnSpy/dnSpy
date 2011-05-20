@@ -136,7 +136,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (ranges != null && ranges.Count > 0)
 			{
 				// find the ancestor that has method mapping as annotation
-				if (node.Ancestors != null && node.Ancestors.Count() > 0)
+				if (node.Parent != null)
 				{
 					var n = node.Ancestors.FirstOrDefault(a => a.Annotation<MemberMapping>() != null);
 					if (n != null) {

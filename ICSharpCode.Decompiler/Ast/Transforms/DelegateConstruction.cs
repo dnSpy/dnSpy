@@ -61,7 +61,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public override object VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, object data)
 		{
-			if (objectCreateExpression.Arguments.Count() == 2) {
+			if (objectCreateExpression.Arguments.Count == 2) {
 				Expression obj = objectCreateExpression.Arguments.First();
 				Expression func = objectCreateExpression.Arguments.Last();
 				Annotation annotation = func.Annotation<Annotation>();

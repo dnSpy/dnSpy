@@ -398,7 +398,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					    lastNode.IsUnconditionalControlFlow())
 					{
 						// Try to reuse the label
-						ILLabel label = currNode is ILLabel ? ((ILLabel)currNode) : new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
+						ILLabel label = currNode as ILLabel ?? new ILLabel() { Name = "Block_" + (nextLabelIndex++).ToString() };
 						
 						// Terminate the last block
 						if (!lastNode.IsUnconditionalControlFlow()) {
