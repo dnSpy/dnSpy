@@ -228,15 +228,6 @@ namespace ICSharpCode.Decompiler.Ast
 			astType.TypeParameters.AddRange(MakeTypeParameters(genericParameters));
 			astType.Constraints.AddRange(MakeConstraints(genericParameters));
 			
-			// Nested types
-			foreach (TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
-				if (MemberIsHidden(nestedTypeDef, context.Settings))
-					continue;
-				var nestedType = CreateType(nestedTypeDef);
-				SetNewModifier(nestedType);
-				astType.AddChild(nestedType, TypeDeclaration.MemberRole);
-			}
-			
 			AttributedNode result = astType;
 			if (typeDef.IsEnum) {
 				long expectedEnumMemberValue = 0;
@@ -608,6 +599,15 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		void AddTypeMembers(TypeDeclaration astType, TypeDefinition typeDef)
 		{
+			// Nested types
+			foreach (TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
+				if (MemberIsHidden(nestedTypeDef, context.Settings))
+					continue;
+				var nestedType = CreateType(nestedTypeDef);
+				SetNewModifier(nestedType);
+				astType.AddChild(nestedType, TypeDeclaration.MemberRole);
+			}
+			
 			// Add fields
 			foreach(FieldDefinition fieldDef in typeDef.Fields) {
 				if (MemberIsHidden(fieldDef, context.Settings)) continue;
