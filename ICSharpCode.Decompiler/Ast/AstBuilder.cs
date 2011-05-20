@@ -436,6 +436,15 @@ namespace ICSharpCode.Decompiler.Ast
 						astType = new MemberType { Target = nsType, MemberName = name };
 					} else {
 						astType = new SimpleType(name);
+						
+						// Look for generic type parameters defined in TypeDefinition
+						// allows us to display angle brackets in unbound type names
+						// e.g. typeof(List<>)
+						TypeDefinition resolvedType = type.Resolve();
+
+						for (int i = 0; i < resolvedType.GenericParameters.Count; i++) {
+							((SimpleType)astType).TypeArguments.Add(new SimpleType(""));
+						}
 					}
 					astType.AddAnnotation(type);
 					
@@ -1433,7 +1442,7 @@ namespace ICSharpCode.Decompiler.Ast
 					if (baseType.HasFields && AnyIsHiddenBy(baseType.Fields, member))
 						return true;
 					if (includeBaseMethods && baseType.HasMethods
-							&& AnyIsHiddenBy(baseType.Methods, member, m => !m.IsSpecialName))
+					    && AnyIsHiddenBy(baseType.Methods, member, m => !m.IsSpecialName))
 						return true;
 					if (baseType.HasNestedTypes && AnyIsHiddenBy(baseType.NestedTypes, member))
 						return true;
@@ -1447,8 +1456,8 @@ namespace ICSharpCode.Decompiler.Ast
 			where T : IMemberDefinition
 		{
 			return members.Any(m => m.Name == derived.Name
-				&& (condition == null || condition(m))
-				&& TypesHierarchyHelpers.IsVisibleFromDerived(m, derived.DeclaringType));
+			                   && (condition == null || condition(m))
+			                   && TypesHierarchyHelpers.IsVisibleFromDerived(m, derived.DeclaringType));
 		}
 		
 		/// <summary>
