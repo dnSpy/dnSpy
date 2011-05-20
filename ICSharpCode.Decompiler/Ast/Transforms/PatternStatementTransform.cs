@@ -184,40 +184,67 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m2 = usingTryCatchPattern.Match(tryCatch);
 			if (!m2.Success) return null;
 			string variableName = m1.Get<IdentifierExpression>("variable").Single().Identifier;
-			if (variableName == m2.Get<IdentifierExpression>("ident").Single().Identifier) {
-				if (m2.Has("valueType")) {
-					// if there's no if(x!=null), then it must be a value type
-					ILVariable v = m1.Get<AstNode>("variable").Single().Annotation<ILVariable>();
-					if (v == null || v.Type == null || !v.Type.IsValueType)
-						return null;
-				}
-				node.Remove();
-				BlockStatement body = m2.Get<BlockStatement>("body").Single();
-				UsingStatement usingStatement = new UsingStatement();
-				usingStatement.ResourceAcquisition = node.Expression.Detach();
-				usingStatement.EmbeddedStatement = body.Detach();
-				tryCatch.ReplaceWith(usingStatement);
-				// Move the variable declaration into the resource acquisition, if possible
-				// This is necessary for the foreach-pattern to work on the result of the using-pattern
-				VariableDeclarationStatement varDecl = FindVariableDeclaration(usingStatement, variableName);
-				if (varDecl != null && varDecl.Parent is BlockStatement) {
-					Statement declarationPoint;
-					if (CanMoveVariableDeclarationIntoStatement(varDecl, usingStatement, out declarationPoint)) {
-						// Moving the variable into the UsingStatement is allowed:
-						usingStatement.ResourceAcquisition = new VariableDeclarationStatement {
-							Type = (AstType)varDecl.Type.Clone(),
-							Variables = {
-								new VariableInitializer {
-									Name = variableName,
-									Initializer = m1.Get<Expression>("initializer").Single().Detach()
-								}.CopyAnnotationsFrom(usingStatement.ResourceAcquisition)
-							}
-						}.CopyAnnotationsFrom(node);
-					}
+			if (variableName != m2.Get<IdentifierExpression>("ident").Single().Identifier)
+				return null;
+			if (m2.Has("valueType")) {
+				// if there's no if(x!=null), then it must be a value type
+				ILVariable v = m1.Get<AstNode>("variable").Single().Annotation<ILVariable>();
+				if (v == null || v.Type == null || !v.Type.IsValueType)
+					return null;
+			}
+			
+			// There are two variants of the using statement:
+			// "using (var a = init)" and "using (expr)".
+			// The former declares a read-only variable 'a', and the latter declares an unnamed read-only variable
+			// to store the original value of 'expr'.
+			// This means that in order to introduce a using statement, in both cases we need to detect a read-only
+			// variable that is used only within that block.
+			
+			if (HasAssignment(tryCatch, variableName))
+				return null;
+			
+			VariableDeclarationStatement varDecl = FindVariableDeclaration(node, variableName);
+			if (varDecl == null || !(varDecl.Parent is BlockStatement))
+				return null;
+			
+			// Create the using statement so that we can use definite assignment analysis to check
+			// whether the variable is declared correctly there.
+			node.Remove();
+			BlockStatement body = m2.Get<BlockStatement>("body").Single();
+			UsingStatement usingStatement = new UsingStatement();
+			usingStatement.ResourceAcquisition = node.Expression.Detach();
+			usingStatement.EmbeddedStatement = body.Detach();
+			tryCatch.ReplaceWith(usingStatement);
+			
+			// Check whether moving the variable declaration into the resource acquisition is possible
+			Statement declarationPoint;
+			if (CanMoveVariableDeclarationIntoStatement(varDecl, usingStatement, out declarationPoint)) {
+				// Moving the variable into the UsingStatement is allowed.
+				// But if possible, we'll eliminate the variable completely:
+				if (body.Descendants.OfType<IdentifierExpression>().Any(ident => ident.Identifier == variableName)) {
+					usingStatement.ResourceAcquisition = new VariableDeclarationStatement {
+						Type = (AstType)varDecl.Type.Clone(),
+						Variables = {
+							new VariableInitializer {
+								Name = variableName,
+								Initializer = m1.Get<Expression>("initializer").Single().Detach()
+							}.CopyAnnotationsFrom(usingStatement.ResourceAcquisition)
+						}
+					}.CopyAnnotationsFrom(node);
+				} else {
+					// the variable is never used; eliminate it:
+					usingStatement.ResourceAcquisition = m1.Get<Expression>("initializer").Single().Detach();
 				}
 				return usingStatement;
+			} else {
+				// oops, we can't use a using statement after all; so revert back to try-finally
+				usingStatement.ReplaceWith(tryCatch);
+				((TryCatchStatement)tryCatch).TryBlock = body.Detach();
+				node.Expression = (Expression)usingStatement.ResourceAcquisition.Detach();
+				
+				tryCatch.Parent.InsertChildBefore(tryCatch, node, BlockStatement.StatementRole);
+				return null;
 			}
-			return null;
 		}
 		
 		internal static VariableDeclarationStatement FindVariableDeclaration(AstNode node, string identifier)
@@ -250,6 +277,24 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 			}
 			return true;
+		}
+		
+		/// <summary>
+		/// Gets whether there is an assignment to 'variableName' anywhere within the given node.
+		/// </summary>
+		bool HasAssignment(AstNode root, string variableName)
+		{
+			foreach (AstNode node in root.DescendantsAndSelf) {
+				IdentifierExpression ident = node as IdentifierExpression;
+				if (ident != null && ident.Identifier == variableName) {
+					if (ident.Parent is AssignmentExpression && ident.Role == AssignmentExpression.LeftRole
+					    || ident.Parent is DirectionExpression)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 		#endregion
 		

@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Threading;
 
 public class ExceptionHandling
 {
@@ -62,6 +63,31 @@ public class ExceptionHandling
 		catch
 		{
 			Console.WriteLine("other");
+		}
+	}
+	
+	public void NoUsingStatementBecauseTheVariableIsAssignedTo()
+	{
+		CancellationTokenSource cancellationTokenSource = null;
+		try
+		{
+			cancellationTokenSource = new CancellationTokenSource();
+		}
+		finally
+		{
+			if (cancellationTokenSource != null)
+			{
+				cancellationTokenSource.Dispose();
+			}
+		}
+	}
+	
+	public void UsingStatementThatChangesTheVariable()
+	{
+		CancellationTokenSource cancellationTokenSource = null;
+		using (cancellationTokenSource)
+		{
+			cancellationTokenSource = new CancellationTokenSource();
 		}
 	}
 }
