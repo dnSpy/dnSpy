@@ -100,7 +100,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 			
-			textEditor.TextArea.LeftMargins.Add(iconMargin);
+			textEditor.TextArea.LeftMargins.Insert(0, iconMargin);
 			textEditor.TextArea.TextView.VisualLinesChanged += delegate { iconMargin.InvalidateVisual(); };
 			
 			// Bookmarks context menu
