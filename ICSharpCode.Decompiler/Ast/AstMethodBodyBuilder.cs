@@ -751,7 +751,10 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		AstType AddEmptyTypeArgumentsForUnboundGenerics(AstType type)
 		{
-			TypeDefinition typeDef = type.Annotation<TypeReference>().Resolve();
+			TypeReference typeRef = type.Annotation<TypeReference>();
+			if (typeRef == null)
+				return type;
+			TypeDefinition typeDef = typeRef.Resolve(); // need to resolve to figure out the number of type parameters
 			if (typeDef == null || !typeDef.HasGenericParameters)
 				return type;
 			SimpleType sType = type as SimpleType;
