@@ -39,6 +39,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		void NewLine();
 		
-		void WriteComment(CommentType commentType, string content);
+		void WriteComment(CommentType commentType, string content, bool isLastLine = false);
 	}
 }
