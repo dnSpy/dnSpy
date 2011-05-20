@@ -648,7 +648,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// switchVar must be the same as switchExpr; or switchExpr must be an assignment and switchVar the left side of that assignment
 			if (!m.Get("switchVar").Single().IsMatch(m.Get("switchExpr").Single())) {
 				AssignmentExpression assign = m.Get("switchExpr").Single() as AssignmentExpression;
-				if (!m.Get("switchVar").Single().IsMatch(assign.Left))
+				if (!(assign != null && m.Get("switchVar").Single().IsMatch(assign.Left)))
 					return null;
 			}
 			FieldReference cachedDictField = m.Get<AstNode>("cachedDict").Single().Annotation<FieldReference>();
