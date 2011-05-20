@@ -454,13 +454,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			return modified;
 		}
 
-		private static IDictionary<ILCode, ILCode> _postIncrementPairs = new Dictionary<ILCode, ILCode>
-			{
-				{ILCode.Ldloc, ILCode.Stloc},
-				{ILCode.Ldsfld, ILCode.Stsfld},
-				{ILCode.CallGetter, ILCode.CallSetter}
-			};
-		
 		bool IntroducePostIncrementForVariables(List<ILNode> body, ILExpression expr, int pos)
 		{
 			// Works for variables and static fields/properties
@@ -474,38 +467,48 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!(expr.Match(ILCode.Stloc, out exprVar, out exprInit) && exprVar.IsGenerated))
 				return false;
 			
-			ILCode loadInstruction = exprInit.Code;
-			//We only recognise local variables, fields & getters with no arguments
-			if (!_postIncrementPairs.ContainsKey(loadInstruction)) 
-				return false;
-			if (loadInstruction == ILCode.CallGetter && exprInit.Arguments.Count != 0)
-				return false;
-			
 			//The next expression
 			ILExpression nextExpr = body.ElementAtOrDefault(pos + 1) as ILExpression;
 			if (nextExpr == null)
 				return false;
-			ILCode storeInstruction = nextExpr.Code;
-			//Must be a matching store type
-			if (_postIncrementPairs[loadInstruction] != storeInstruction)
-				return false;
 			
-			object nextExprOperand = nextExpr.Operand;
-			object exprInitOperand = exprInit.Operand;
-			if (loadInstruction == ILCode.CallGetter)
-				if (!IsGetterSetterPair(exprInitOperand, nextExprOperand))
-					return false;
-
-			if (loadInstruction == ILCode.Ldloc)
-				if ((nextExprOperand != exprInitOperand))
-					if (((ILVariable) nextExprOperand).OriginalVariable == ((ILVariable) exprInitOperand).OriginalVariable)
-						//Spit local variable, unsplit these two instances
-						foreach (var ilExpression in body.SelectMany(
-							node => node.GetSelfAndChildrenRecursive<ILExpression>(
-								expression => expression.Operand == nextExprOperand)))
-							ilExpression.Operand = exprInitOperand;
-					else
+			ILCode loadInstruction = exprInit.Code;
+			ILCode storeInstruction = nextExpr.Code;
+			bool recombineVariable = false;
+			
+			// We only recognise local variables, static fields, and static getters with no arguments
+			switch (loadInstruction) {
+				case ILCode.Ldloc:
+					//Must be a matching store type
+					if (storeInstruction != ILCode.Stloc)
 						return false;
+					ILVariable loadVar = (ILVariable)exprInit.Operand;
+					ILVariable storeVar = (ILVariable)nextExpr.Operand;
+					if (loadVar != storeVar) {
+						if (loadVar.OriginalVariable != null && loadVar.OriginalVariable == storeVar.OriginalVariable)
+							recombineVariable = true;
+						else
+							return false;
+					}
+					break;
+				case ILCode.Ldsfld:
+					if (storeInstruction != ILCode.Stsfld)
+						return false;
+					if (exprInit.Operand != nextExpr.Operand)
+						return false;
+					break;
+				case ILCode.CallGetter:
+					// non-static getters would have the 'this' argument
+					if (exprInit.Arguments.Count != 0)
+						return false;
+					if (storeInstruction != ILCode.CallSetter)
+						return false;
+					if (!IsGetterSetterPair(exprInit.Operand, nextExpr.Operand))
+						return false;
+					break;
+				default:
+					return false;
+			}
 			
 			ILExpression addExpr = nextExpr.Arguments[0];
 			
@@ -514,8 +517,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!(incrementAmount != 0 && addExpr.Arguments[0].MatchLdloc(exprVar)))
 				return false;
 			
-			switch (loadInstruction)
-			{
+			if (recombineVariable) {
+				// Split local variable, unsplit these two instances
+				foreach (var ilExpression in method.GetSelfAndChildrenRecursive<ILExpression>(expression => expression.Operand == nextExpr.Operand))
+					ilExpression.Operand = exprInit.Operand;
+			}
+			
+			switch (loadInstruction) {
 				case ILCode.Ldloc:
 					exprInit.Code = ILCode.Ldloca;
 					break;
