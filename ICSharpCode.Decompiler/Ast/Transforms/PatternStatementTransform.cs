@@ -154,7 +154,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		}
 		
 		static readonly AstNode usingTryCatchPattern = new TryCatchStatement {
-			TryBlock = new AnyNode("body"),
+			TryBlock = new AnyNode(),
 			FinallyBlock = new BlockStatement {
 				new Choice {
 					{ "valueType",
@@ -180,7 +180,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			Match m1 = variableAssignPattern.Match(node);
 			if (!m1.Success) return null;
-			AstNode tryCatch = node.NextSibling;
+			TryCatchStatement tryCatch = node.NextSibling as TryCatchStatement;
 			Match m2 = usingTryCatchPattern.Match(tryCatch);
 			if (!m2.Success) return null;
 			string variableName = m1.Get<IdentifierExpression>("variable").Single().Identifier;
@@ -207,44 +207,33 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (varDecl == null || !(varDecl.Parent is BlockStatement))
 				return null;
 			
-			// Create the using statement so that we can use definite assignment analysis to check
-			// whether the variable is declared correctly there.
+			// Validate that the variable is not used after the using statement:
+			if (!IsVariableValueUnused(varDecl, tryCatch))
+				return null;
+			
 			node.Remove();
-			BlockStatement body = m2.Get<BlockStatement>("body").Single();
+			
 			UsingStatement usingStatement = new UsingStatement();
-			usingStatement.ResourceAcquisition = node.Expression.Detach();
-			usingStatement.EmbeddedStatement = body.Detach();
+			usingStatement.EmbeddedStatement = tryCatch.TryBlock.Detach();
 			tryCatch.ReplaceWith(usingStatement);
 			
-			// Check whether moving the variable declaration into the resource acquisition is possible
-			Statement declarationPoint;
-			if (CanMoveVariableDeclarationIntoStatement(varDecl, usingStatement, out declarationPoint)) {
-				// Moving the variable into the UsingStatement is allowed.
-				// But if possible, we'll eliminate the variable completely:
-				if (body.Descendants.OfType<IdentifierExpression>().Any(ident => ident.Identifier == variableName)) {
-					usingStatement.ResourceAcquisition = new VariableDeclarationStatement {
-						Type = (AstType)varDecl.Type.Clone(),
-						Variables = {
-							new VariableInitializer {
-								Name = variableName,
-								Initializer = m1.Get<Expression>("initializer").Single().Detach()
-							}.CopyAnnotationsFrom(usingStatement.ResourceAcquisition)
-						}
-					}.CopyAnnotationsFrom(node);
-				} else {
-					// the variable is never used; eliminate it:
-					usingStatement.ResourceAcquisition = m1.Get<Expression>("initializer").Single().Detach();
-				}
-				return usingStatement;
+			// If possible, we'll eliminate the variable completely:
+			if (usingStatement.EmbeddedStatement.Descendants.OfType<IdentifierExpression>().Any(ident => ident.Identifier == variableName)) {
+				// variable is used, so we'll create a variable declaration
+				usingStatement.ResourceAcquisition = new VariableDeclarationStatement {
+					Type = (AstType)varDecl.Type.Clone(),
+					Variables = {
+						new VariableInitializer {
+							Name = variableName,
+							Initializer = m1.Get<Expression>("initializer").Single().Detach()
+						}.CopyAnnotationsFrom(node.Expression)
+					}
+				}.CopyAnnotationsFrom(node);
 			} else {
-				// oops, we can't use a using statement after all; so revert back to try-finally
-				usingStatement.ReplaceWith(tryCatch);
-				((TryCatchStatement)tryCatch).TryBlock = body.Detach();
-				node.Expression = (Expression)usingStatement.ResourceAcquisition.Detach();
-				
-				tryCatch.Parent.InsertChildBefore(tryCatch, node, BlockStatement.StatementRole);
-				return null;
+				// the variable is never used; eliminate it:
+				usingStatement.ResourceAcquisition = m1.Get<Expression>("initializer").Single().Detach();
 			}
+			return usingStatement;
 		}
 		
 		internal static VariableDeclarationStatement FindVariableDeclaration(AstNode node, string identifier)
@@ -262,6 +251,29 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return null;
 		}
 		
+		/// <summary>
+		/// Gets whether the old variable value (assigned inside 'targetStatement' or earlier)
+		/// is read anywhere in the remaining scope of the variable declaration.
+		/// </summary>
+		bool IsVariableValueUnused(VariableDeclarationStatement varDecl, Statement targetStatement)
+		{
+			Debug.Assert(targetStatement.Ancestors.Contains(varDecl.Parent));
+			BlockStatement block = (BlockStatement)varDecl.Parent;
+			DefiniteAssignmentAnalysis daa = new DefiniteAssignmentAnalysis(block, context.CancellationToken);
+			daa.SetAnalyzedRange(targetStatement, block, startInclusive: false);
+			daa.Analyze(varDecl.Variables.Single().Name);
+			return daa.UnassignedVariableUses.Count == 0;
+		}
+		
+		// I used this in the first implementation of the using-statement transform, but now no longer
+		// because there were problems when multiple using statements were using the same variable
+		// - no single using statement could be transformed without making the C# code invalid,
+		// but transforming both would work.
+		// We now use 'IsVariableValueUnused' which will perform the transform
+		// even if it results in two variables with the same name and overlapping scopes.
+		// (this issue could be fixed later by renaming one of the variables)
+		
+		// I'm not sure whether the other consumers of 'CanMoveVariableDeclarationIntoStatement' should be changed the same way.
 		bool CanMoveVariableDeclarationIntoStatement(VariableDeclarationStatement varDecl, Statement targetStatement, out Statement declarationPoint)
 		{
 			Debug.Assert(targetStatement.Ancestors.Contains(varDecl.Parent));
