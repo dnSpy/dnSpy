@@ -90,6 +90,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				expr.Code = ILCode.Stobj;
 				expr.Arguments.Add(new ILExpression(ILCode.DefaultValue, expr.Operand));
 				modified = true;
+			} else if (expr.Code == ILCode.Cpobj) {
+				expr.Code = ILCode.Stobj;
+				expr.Arguments[1] = new ILExpression(ILCode.Ldobj, expr.Operand, expr.Arguments[1]);
+				modified = true;
 			}
 			ILExpression arg, arg2;
 			TypeReference type;
