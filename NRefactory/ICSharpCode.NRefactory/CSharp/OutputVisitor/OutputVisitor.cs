@@ -2147,7 +2147,9 @@ namespace ICSharpCode.NRefactory.CSharp
 				// "1.0 / /*comment*/a", then we need to insert a space in front of the comment.
 				formatter.Space();
 			}
+			formatter.StartNode(comment);
 			formatter.WriteComment(comment.CommentType, comment.Content);
+			formatter.EndNode(comment);
 			lastWritten = LastWritten.Whitespace;
 			return null;
 		}
