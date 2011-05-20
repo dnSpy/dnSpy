@@ -122,7 +122,7 @@ namespace ICSharpCode.ILSpy
 						return output;
 					}
 				),
-				task => MainWindow.Instance.TextView.Show(task.Result));
+				task => MainWindow.Instance.TextView.ShowText(task.Result));
 		}
 	}
 	#endif

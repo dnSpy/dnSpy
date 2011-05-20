@@ -144,7 +144,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				output.AddUIElement(() => new Image { Source = image });
 				output.WriteLine();
 				output.AddButton(Images.Save, "Save", delegate { Save(null); });
-				textView.Show(output, null);
+				textView.ShowNode(output, this, null);
 				return true;
 			}
 			catch (Exception) {
