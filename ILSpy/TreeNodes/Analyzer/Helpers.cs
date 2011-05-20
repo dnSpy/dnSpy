@@ -20,7 +20,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ICSharpCode.Decompiler;
 using Mono.Cecil;
+using ICSharpCode.Decompiler.ILAst;
+using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -49,6 +52,66 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 
 			return true;
+		}
+
+		public static MemberReference GetOriginalCodeLocation(MemberReference member)
+		{
+			if (member is MethodDefinition)
+				return GetOriginalCodeLocation((MethodDefinition)member);
+			return member;
+		}
+
+		public static MethodDefinition GetOriginalCodeLocation(MethodDefinition method)
+		{
+			if (method.IsCompilerGenerated()) {
+				return FindMethodUsageInType(method.DeclaringType, method) ?? method;
+			}
+
+			var typeUsage = GetOriginalCodeLocation(method.DeclaringType, method);
+
+			return typeUsage ?? method;
+		}
+		public static MethodDefinition GetOriginalCodeLocation(TypeDefinition type, MethodDefinition method)
+		{
+			if (type != null && type.DeclaringType != null && type.IsCompilerGenerated()) {
+				MethodDefinition constructor = GetTypeConstructor(type);
+				return FindMethodUsageInType(type.DeclaringType, constructor);
+			}
+			return null;
+		}
+
+		private static MethodDefinition GetTypeConstructor(TypeDefinition type)
+		{
+			foreach (MethodDefinition method in type.Methods) {
+				if (method.Name == ".ctor")
+					return method;
+			}
+			return null;
+		}
+
+		private static MethodDefinition FindMethodUsageInType(TypeDefinition type, MethodDefinition analyzedMethod)
+		{
+			string name = analyzedMethod.Name;
+			foreach (MethodDefinition method in type.Methods) {
+				bool found = false;
+				if (!method.HasBody)
+					continue;
+				foreach (Instruction instr in method.Body.Instructions) {
+					MethodReference mr = instr.Operand as MethodReference;
+					if (mr != null && mr.Name == name &&
+						Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
+						mr.Resolve() == analyzedMethod) {
+						found = true;
+						break;
+					}
+				}
+
+				method.Body = null;
+
+				if (found)
+					return method;
+			}
+			return null;
 		}
 	}
 }

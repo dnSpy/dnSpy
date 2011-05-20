@@ -60,8 +60,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		protected override void LoadChildren()
 		{
-			if (AnalyzedPropertyAccessorsTreeNode.CanShow(analyzedProperty))
-				this.Children.Add(new AnalyzedPropertyAccessorsTreeNode(analyzedProperty));
+			if (analyzedProperty.GetMethod != null)
+				this.Children.Add(new AnalyzedPropertyAccessorTreeNode(analyzedProperty.GetMethod, "get"));
+			if (analyzedProperty.SetMethod != null)
+				this.Children.Add(new AnalyzedPropertyAccessorTreeNode(analyzedProperty.SetMethod, "set"));
+			foreach (var accessor in analyzedProperty.OtherMethods)
+				this.Children.Add(new AnalyzedPropertyAccessorTreeNode(accessor, null));
+
 			if (AnalyzedPropertyOverridesTreeNode.CanShow(analyzedProperty))
 				this.Children.Add(new AnalyzedPropertyOverridesTreeNode(analyzedProperty));
 			if (AnalyzedInterfacePropertyImplementedByTreeNode.CanShow(analyzedProperty))
@@ -82,8 +87,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (property == null)
 				return false;
 
-			return AnalyzedPropertyAccessorsTreeNode.CanShow(property)
-				|| AnalyzedPropertyOverridesTreeNode.CanShow(property);
+			return !MainWindow.Instance.CurrentLanguage.ShowMember(property.GetMethod ?? property.SetMethod)
+			    || AnalyzedPropertyOverridesTreeNode.CanShow(property);
 		}
 	}
 }
