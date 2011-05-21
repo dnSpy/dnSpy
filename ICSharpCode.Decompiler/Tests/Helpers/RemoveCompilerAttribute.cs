@@ -15,7 +15,7 @@ namespace ICSharpCode.Decompiler.Tests.Helpers
 			var section = (AttributeSection)attribute.Parent;
 			SimpleType type = attribute.Type as SimpleType;
 			if (section.AttributeTarget == "assembly" &&
-				(type.Identifier == "CompilationRelaxations" || type.Identifier == "RuntimeCompatibility"))
+				(type.Identifier == "CompilationRelaxations" || type.Identifier == "RuntimeCompatibility" || type.Identifier == "SecurityPermission" || type.Identifier == "AssemblyVersion"))
 			{
 				attribute.Remove();
 				if (section.Attributes.Count == 0)

@@ -125,6 +125,24 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void AddAssembly(AssemblyDefinition assemblyDefinition, bool onlyAssemblyLevel = false)
 		{
+			if (assemblyDefinition.Name.Version != null) {
+				astCompileUnit.AddChild(
+					new AttributeSection {
+						AttributeTarget = "assembly",
+						Attributes = {
+							new NRefactory.CSharp.Attribute {
+								Type = new SimpleType("AssemblyVersion")
+									.WithAnnotation(new TypeReference(
+										"System.Reflection", "AssemblyVersionAttribute",
+										assemblyDefinition.MainModule, assemblyDefinition.MainModule.TypeSystem.Corlib)),
+								Arguments = {
+									new PrimitiveExpression(assemblyDefinition.Name.Version.ToString())
+								}
+							}
+						}
+					}, AttributedNode.AttributeRole);
+			}
+			
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition, "assembly");
 			ConvertSecurityAttributes(astCompileUnit, assemblyDefinition, "assembly");
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition.MainModule, "module");
