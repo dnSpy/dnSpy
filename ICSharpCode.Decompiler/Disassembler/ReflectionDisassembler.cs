@@ -94,6 +94,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ MethodImplAttributes.NoOptimization, "nooptimization" },
 			{ MethodImplAttributes.PreserveSig, "preservesig" },
 			{ MethodImplAttributes.InternalCall, "internalcall" },
+			{ MethodImplAttributes.ForwardRef, "forwardref" },
 		};
 		
 		public void DisassembleMethod(MethodDefinition method)
