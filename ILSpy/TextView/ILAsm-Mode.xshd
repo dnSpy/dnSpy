@@ -348,6 +348,7 @@
 			<Word>tls</Word>
 			<Word>true</Word>
 			<Word>false</Word>
+			<Word>strict</Word>
 		</Keywords>
 		<Keywords color="Directives">
 			<Word>.class</Word>

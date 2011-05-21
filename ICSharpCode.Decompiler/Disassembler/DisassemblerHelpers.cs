@@ -110,8 +110,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public static void WriteTo(this MethodReference method, ITextOutput writer)
 		{
-			if (method.HasThis)
+			if (method.ExplicitThis) {
+				writer.Write("instance explicit ");
+			}
+			else if (method.HasThis) {
 				writer.Write("instance ");
+			}
 			method.ReturnType.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			writer.Write(' ');
 			if (method.DeclaringType != null) {

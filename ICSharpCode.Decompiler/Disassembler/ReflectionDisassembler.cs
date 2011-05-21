@@ -94,6 +94,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ MethodImplAttributes.NoOptimization, "nooptimization" },
 			{ MethodImplAttributes.PreserveSig, "preservesig" },
 			{ MethodImplAttributes.InternalCall, "internalcall" },
+			{ MethodImplAttributes.ForwardRef, "forwardref" },
 		};
 		
 		public void DisassembleMethod(MethodDefinition method)
@@ -153,9 +154,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			output.WriteLine();
 			output.Indent();
-			
-			if (method.HasThis)
+			if (method.ExplicitThis) {
+				output.Write("instance explicit ");			
+			} else if (method.HasThis) {
 				output.Write("instance ");
+			}
 			
 			//call convention
 			WriteEnum(method.CallingConvention & (MethodCallingConvention)0x1f, callingConvention);
