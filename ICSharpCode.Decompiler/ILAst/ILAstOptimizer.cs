@@ -308,6 +308,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Converts call and callvirt instructions that read/write properties into CallGetter/CallSetter instructions.
 		/// 
 		/// CallGetter/CallSetter is used to allow the ILAst to represent "while ((SomeProperty = value) != null)".
+		/// 
+		/// Also simplifies 'newobj(SomeDelegate, target, ldvirtftn(F, target))' to 'newobj(SomeDelegate, target, ldvirtftn(F))'
 		/// </summary>
 		void IntroducePropertyAccessInstructions(ILNode node)
 		{
@@ -364,6 +366,20 @@ namespace ICSharpCode.Decompiler.ILAst
 						else if (cecilMethodDef.IsSetter)
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallSetter : ILCode.CallvirtSetter;
 					}
+				}
+			} else if (expr.Code == ILCode.Newobj && expr.Arguments.Count == 2) {
+				// Might be 'newobj(SomeDelegate, target, ldvirtftn(F, target))'.
+				ILVariable target;
+				ILExpression ldvirtftnArg;
+				if (expr.Arguments[0].Match(ILCode.Ldloc, out target)
+				    && expr.Arguments[1].Code == ILCode.Ldvirtftn
+				    && expr.Arguments[1].Arguments.Count == 1
+				    && expr.Arguments[1].Arguments[0].MatchLdloc(target))
+				{
+					// Remove the 'target' argument from the ldvirtftn instruction.
+					// It's not needed in the translation to C#, and needs to be eliminated so that the target expression
+					// can be inlined.
+					expr.Arguments[1].Arguments.Clear();
 				}
 			}
 		}
