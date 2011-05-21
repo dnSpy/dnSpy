@@ -18,7 +18,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Mono.Cecil;
 using Mono.Collections.Generic;
@@ -198,6 +200,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			foreach (var p in method.Parameters) {
 				WriteParameterAttributes(p);
 			}
+			WriteSecurityDeclarations(method);
 			
 			if (method.HasBody) {
 				// create IL code mappings - used in debugger
@@ -207,6 +210,140 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			CloseBlock("end of method " + DisassemblerHelpers.Escape(method.DeclaringType.Name) + "::" + DisassemblerHelpers.Escape(method.Name));
 		}
+		
+		#region Write Security Declarations
+		void WriteSecurityDeclarations(ISecurityDeclarationProvider secDeclProvider)
+		{
+			if (!secDeclProvider.HasSecurityDeclarations)
+				return;
+			foreach (var secdecl in secDeclProvider.SecurityDeclarations) {
+				output.Write(".permissionset ");
+				switch (secdecl.Action) {
+					case SecurityAction.Request:
+						output.Write("request");
+						break;
+					case SecurityAction.Demand:
+						output.Write("demand");
+						break;
+					case SecurityAction.Assert:
+						output.Write("assert");
+						break;
+					case SecurityAction.Deny:
+						output.Write("deny");
+						break;
+					case SecurityAction.PermitOnly:
+						output.Write("permitonly");
+						break;
+					case SecurityAction.LinkDemand:
+						output.Write("linkcheck");
+						break;
+					case SecurityAction.InheritDemand:
+						output.Write("inheritcheck");
+						break;
+					case SecurityAction.RequestMinimum:
+						output.Write("reqmin");
+						break;
+					case SecurityAction.RequestOptional:
+						output.Write("reqopt");
+						break;
+					case SecurityAction.RequestRefuse:
+						output.Write("reqrefuse");
+						break;
+					case SecurityAction.PreJitGrant:
+						output.Write("prejitgrant");
+						break;
+					case SecurityAction.PreJitDeny:
+						output.Write("prejitdeny");
+						break;
+					case SecurityAction.NonCasDemand:
+						output.Write("noncasdemand");
+						break;
+					case SecurityAction.NonCasLinkDemand:
+						output.Write("noncaslinkdemand");
+						break;
+					case SecurityAction.NonCasInheritance:
+						output.Write("noncasinheritance");
+						break;
+					default:
+						output.Write(secdecl.Action.ToString());
+						break;
+				}
+				output.WriteLine(" = {");
+				output.Indent();
+				for (int i = 0; i < secdecl.SecurityAttributes.Count; i++) {
+					SecurityAttribute sa = secdecl.SecurityAttributes[i];
+					if (sa.AttributeType.Scope == sa.AttributeType.Module) {
+						output.Write("class ");
+						output.Write(DisassemblerHelpers.Escape(GetAssemblyQualifiedName(sa.AttributeType)));
+					} else {
+						sa.AttributeType.WriteTo(output, ILNameSyntax.TypeName);
+					}
+					output.Write(" = {");
+					if (sa.HasFields || sa.HasProperties) {
+						output.WriteLine();
+						output.Indent();
+						
+						foreach (CustomAttributeNamedArgument na in sa.Fields) {
+							output.Write("field ");
+							WriteSecurityDeclarationArgument(na);
+							output.WriteLine();
+						}
+						
+						foreach (CustomAttributeNamedArgument na in sa.Properties) {
+							output.Write("property ");
+							WriteSecurityDeclarationArgument(na);
+							output.WriteLine();
+						}
+						
+						output.Unindent();
+					}
+					output.Write('}');
+					
+					if (i + 1< secdecl.SecurityAttributes.Count)
+						output.Write(',');
+					output.WriteLine();
+				}
+				output.Unindent();
+				output.WriteLine("}");
+			}
+		}
+		
+		void WriteSecurityDeclarationArgument(CustomAttributeNamedArgument na)
+		{
+			TypeReference type = na.Argument.Type;
+			if (type.MetadataType == MetadataType.Class || type.MetadataType == MetadataType.ValueType) {
+				output.Write("enum ");
+				if (type.Scope != type.Module) {
+					output.Write("class ");
+					output.Write(DisassemblerHelpers.Escape(GetAssemblyQualifiedName(type)));
+				} else {
+					type.WriteTo(output, ILNameSyntax.TypeName);
+				}
+			} else {
+				type.WriteTo(output);
+			}
+			output.Write(' ');
+			output.Write(DisassemblerHelpers.Escape(na.Name));
+			output.Write(" = ");
+			WriteConstant(na.Argument.Value);
+		}
+		
+		string GetAssemblyQualifiedName(TypeReference type)
+		{
+			AssemblyNameReference anr = type.Scope as AssemblyNameReference;
+			if (anr == null) {
+				ModuleDefinition md = type.Scope as ModuleDefinition;
+				if (md != null) {
+					anr = md.Assembly.Name;
+				}
+			}
+			if (anr != null) {
+				return type.FullName + ", " + anr.FullName;
+			} else {
+				return type.FullName;
+			}
+		}
+		#endregion
 		
 		#region WriteMarshalInfo
 		void WriteMarshalInfo(MarshalInfo marshalInfo)
@@ -698,6 +835,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			bool oldIsInType = isInType;
 			isInType = true;
 			WriteAttributes(type.CustomAttributes);
+			WriteSecurityDeclarations(type);
 			if (type.HasLayoutInfo) {
 				output.WriteLine(".pack {0}", type.PackingSize);
 				output.WriteLine(".size {0}", type.ClassSize);
@@ -917,6 +1055,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(".assembly " + DisassemblerHelpers.Escape(asm.Name.Name));
 			OpenBlock(false);
 			WriteAttributes(asm.CustomAttributes);
+			WriteSecurityDeclarations(asm);
 			if (asm.Name.PublicKey != null && asm.Name.PublicKey.Length > 0) {
 				output.Write(".publickey = ");
 				WriteBlob(asm.Name.PublicKey);

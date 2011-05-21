@@ -126,6 +126,7 @@ namespace ICSharpCode.Decompiler.Ast
 		public void AddAssembly(AssemblyDefinition assemblyDefinition, bool onlyAssemblyLevel = false)
 		{
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition, "assembly");
+			ConvertSecurityAttributes(astCompileUnit, assemblyDefinition, "assembly");
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition.MainModule, "module");
 			
 			if (!onlyAssemblyLevel) {
@@ -990,6 +991,7 @@ namespace ICSharpCode.Decompiler.Ast
 		void ConvertAttributes(AttributedNode attributedNode, TypeDefinition typeDefinition)
 		{
 			ConvertCustomAttributes(attributedNode, typeDefinition);
+			ConvertSecurityAttributes(attributedNode, typeDefinition);
 			
 			// Handle the non-custom attributes:
 			#region SerializableAttribute
@@ -1040,6 +1042,7 @@ namespace ICSharpCode.Decompiler.Ast
 		void ConvertAttributes(AttributedNode attributedNode, MethodDefinition methodDefinition)
 		{
 			ConvertCustomAttributes(attributedNode, methodDefinition);
+			ConvertSecurityAttributes(attributedNode, methodDefinition);
 			
 			MethodImplAttributes implAttributes = methodDefinition.ImplAttributes & ~MethodImplAttributes.CodeTypeMask;
 			
@@ -1194,7 +1197,7 @@ namespace ICSharpCode.Decompiler.Ast
 					attr.AddNamedArgument("ArraySubType", MakePrimitive((int)ami.ElementType, unmanagedType));
 				if (ami.Size >= 0)
 					attr.AddNamedArgument("SizeConst", new PrimitiveExpression(ami.Size));
-				if (ami.SizeParameterMultiplier != 0)
+				if (ami.SizeParameterMultiplier != 0 && ami.SizeParameterIndex >= 0)
 					attr.AddNamedArgument("SizeParamIndex", new PrimitiveExpression(ami.SizeParameterIndex));
 			}
 			CustomMarshalInfo cmi = marshalInfo as CustomMarshalInfo;
@@ -1293,6 +1296,65 @@ namespace ICSharpCode.Decompiler.Ast
 					section.Attributes.AddRange(attributes);
 					attributedNode.AddChild(section, AttributedNode.AttributeRole);
 				}
+			}
+		}
+		
+		static void ConvertSecurityAttributes(AstNode attributedNode, ISecurityDeclarationProvider secDeclProvider, string attributeTarget = null)
+		{
+			if (!secDeclProvider.HasSecurityDeclarations)
+				return;
+			var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
+			foreach (var secDecl in secDeclProvider.SecurityDeclarations) {
+				foreach (var secAttribute in secDecl.SecurityAttributes) {
+					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
+					attribute.AddAnnotation(secAttribute);
+					attribute.Type = ConvertType(secAttribute.AttributeType);
+					attributes.Add(attribute);
+					
+					SimpleType st = attribute.Type as SimpleType;
+					if (st != null && st.Identifier.EndsWith("Attribute", StringComparison.Ordinal)) {
+						st.Identifier = st.Identifier.Substring(0, st.Identifier.Length - "Attribute".Length);
+					}
+					
+					var module = secAttribute.AttributeType.Module;
+					var securityActionType = new TypeReference("System.Security.Permissions", "SecurityAction", module, module.TypeSystem.Corlib);
+					attribute.Arguments.Add(MakePrimitive((int)secDecl.Action, securityActionType));
+					
+					if (secAttribute.HasProperties) {
+						TypeDefinition resolvedAttributeType = secAttribute.AttributeType.Resolve();
+						foreach (var propertyNamedArg in secAttribute.Properties) {
+							var propertyReference = resolvedAttributeType != null ? resolvedAttributeType.Properties.FirstOrDefault(pr => pr.Name == propertyNamedArg.Name) : null;
+							var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
+							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
+							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
+						}
+					}
+
+					if (secAttribute.HasFields) {
+						TypeDefinition resolvedAttributeType = secAttribute.AttributeType.Resolve();
+						foreach (var fieldNamedArg in secAttribute.Fields) {
+							var fieldReference = resolvedAttributeType != null ? resolvedAttributeType.Fields.FirstOrDefault(f => f.Name == fieldNamedArg.Name) : null;
+							var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
+							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
+							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
+						}
+					}
+				}
+			}
+			if (attributeTarget == "module" || attributeTarget == "assembly") {
+				// use separate section for each attribute
+				foreach (var attribute in attributes) {
+					var section = new AttributeSection();
+					section.AttributeTarget = attributeTarget;
+					section.Attributes.Add(attribute);
+					attributedNode.AddChild(section, AttributedNode.AttributeRole);
+				}
+			} else if (attributes.Count > 0) {
+				// use single section for all attributes
+				var section = new AttributeSection();
+				section.AttributeTarget = attributeTarget;
+				section.Attributes.AddRange(attributes);
+				attributedNode.AddChild(section, AttributedNode.AttributeRole);
 			}
 		}
 		
