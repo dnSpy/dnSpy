@@ -941,7 +941,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			return ConvertChar(ch);
 		}
 		
-		static string ConvertChar(char ch)
+		/// <summary>
+		/// Gets the escape sequence for the specified character.
+		/// </summary>
+		/// <remarks>This method does not convert ' or ".</remarks>
+		public static string ConvertChar(char ch)
 		{
 			switch (ch) {
 				case '\\':
@@ -973,7 +977,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		static string ConvertString(string str)
+		/// <summary>
+		/// Converts special characters to escape sequences within the given string.
+		/// </summary>
+		public static string ConvertString(string str)
 		{
 			StringBuilder sb = new StringBuilder();
 			foreach (char ch in str) {
