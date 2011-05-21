@@ -153,9 +153,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			output.WriteLine();
 			output.Indent();
-			
-			if (method.HasThis)
+			if (method.ExplicitThis) {
+				output.Write("instance explicit ");			
+			} else if (method.HasThis) {
 				output.Write("instance ");
+			}
 			
 			//call convention
 			WriteEnum(method.CallingConvention & (MethodCallingConvention)0x1f, callingConvention);
