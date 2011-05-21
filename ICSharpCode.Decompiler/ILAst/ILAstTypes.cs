@@ -378,10 +378,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					output.Write(((ILVariable)Operand).Name);
 					if (this.InferredType != null) {
 						output.Write(':');
-						this.InferredType.WriteTo(output, true, true);
+						this.InferredType.WriteTo(output, ILNameSyntax.ShortTypeName);
 						if (this.ExpectedType != null && this.ExpectedType.FullName != this.InferredType.FullName) {
 							output.Write("[exp:");
-							this.ExpectedType.WriteTo(output, true, true);
+							this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
 							output.Write(']');
 						}
 					}
@@ -399,15 +399,15 @@ namespace ICSharpCode.Decompiler.ILAst
 			output.Write(Code.GetName());
 			if (this.InferredType != null) {
 				output.Write(':');
-				this.InferredType.WriteTo(output, true, true);
+				this.InferredType.WriteTo(output, ILNameSyntax.ShortTypeName);
 				if (this.ExpectedType != null && this.ExpectedType.FullName != this.InferredType.FullName) {
 					output.Write("[exp:");
-					this.ExpectedType.WriteTo(output, true, true);
+					this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
 					output.Write(']');
 				}
 			} else if (this.ExpectedType != null) {
 				output.Write("[exp:");
-				this.ExpectedType.WriteTo(output, true, true);
+				this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
 				output.Write(']');
 			}
 			output.Write('(');
@@ -425,13 +425,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				} else if (Operand is MethodReference) {
 					MethodReference method = (MethodReference)Operand;
 					if (method.DeclaringType != null) {
-						method.DeclaringType.WriteTo(output, true, true);
+						method.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);
 						output.Write("::");
 					}
 					output.WriteReference(method.Name, method);
 				} else if (Operand is FieldReference) {
 					FieldReference field = (FieldReference)Operand;
-					field.DeclaringType.WriteTo(output, true, true);
+					field.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);
 					output.Write("::");
 					output.WriteReference(field.Name, field);
 				} else {

@@ -68,7 +68,7 @@ namespace ICSharpCode.ILSpy
 					output.Write(" : ");
 					if (v.IsPinned)
 						output.Write("pinned ");
-					v.Type.WriteTo(output, true, true);
+					v.Type.WriteTo(output, ILNameSyntax.ShortTypeName);
 				}
 				output.WriteLine();
 			}
@@ -100,7 +100,7 @@ namespace ICSharpCode.ILSpy
 		public override string TypeToString(TypeReference t, bool includeNamespace, ICustomAttributeProvider attributeProvider)
 		{
 			PlainTextOutput output = new PlainTextOutput();
-			t.WriteTo(output, true, shortName: !includeNamespace);
+			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 			return output.ToString();
 		}
 	}

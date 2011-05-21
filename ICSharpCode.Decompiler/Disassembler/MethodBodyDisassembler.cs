@@ -69,8 +69,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 				foreach (var v in method.Body.Variables) {
 					output.WriteDefinition("[" + v.Index + "] ", v);
 					v.VariableType.WriteTo(output);
-					output.Write(' ');
-					output.Write(DisassemblerHelpers.Escape(v.Name));
+					if (!string.IsNullOrEmpty(v.Name)) {
+						output.Write(' ');
+						output.Write(DisassemblerHelpers.Escape(v.Name));
+					}
+					if (v.Index + 1 < method.Body.Variables.Count)
+						output.Write(',');
 					output.WriteLine();
 				}
 				output.Unindent();
@@ -85,20 +89,24 @@ namespace ICSharpCode.Decompiler.Disassembler
 				foreach (var inst in method.Body.Instructions) {
 					inst.WriteTo(output);
 					
-					// add IL code mappings - used in debugger
-					methodMapping.MemberCodeMappings.Add(
-						new SourceCodeMapping() {
-							SourceCodeLine = output.CurrentLine,
-							ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? method.Body.CodeSize : inst.Next.Offset },
-							MemberMapping = methodMapping
-						});
+					if (methodMapping != null) {
+						// add IL code mappings - used in debugger
+						methodMapping.MemberCodeMappings.Add(
+							new SourceCodeMapping() {
+								SourceCodeLine = output.CurrentLine,
+								ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? method.Body.CodeSize : inst.Next.Offset },
+								MemberMapping = methodMapping
+							});
+					}
 					
 					output.WriteLine();
 				}
-				output.WriteLine();
-				foreach (var eh in method.Body.ExceptionHandlers) {
-					eh.WriteTo(output);
+				if (method.Body.HasExceptionHandlers) {
 					output.WriteLine();
+					foreach (var eh in method.Body.ExceptionHandlers) {
+						eh.WriteTo(output);
+						output.WriteLine();
+					}
 				}
 			}
 		}
@@ -116,7 +124,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.WriteLine();
 					break;
 				case ILStructureType.Try:
-					output.WriteLine(".try {");
+					output.WriteLine(".try");
+					output.WriteLine("{");
 					break;
 				case ILStructureType.Handler:
 					switch (s.ExceptionHandler.HandlerType) {
@@ -125,22 +134,24 @@ namespace ICSharpCode.Decompiler.Disassembler
 							output.Write("catch");
 							if (s.ExceptionHandler.CatchType != null) {
 								output.Write(' ');
-								s.ExceptionHandler.CatchType.WriteTo(output);
+								s.ExceptionHandler.CatchType.WriteTo(output, ILNameSyntax.TypeName);
 							}
-							output.WriteLine(" {");
+							output.WriteLine();
 							break;
 						case Mono.Cecil.Cil.ExceptionHandlerType.Finally:
-							output.WriteLine("finally {");
+							output.WriteLine("finally");
 							break;
 						case Mono.Cecil.Cil.ExceptionHandlerType.Fault:
-							output.WriteLine("fault {");
+							output.WriteLine("fault");
 							break;
 						default:
 							throw new NotSupportedException();
 					}
+					output.WriteLine("{");
 					break;
 				case ILStructureType.Filter:
-					output.WriteLine("filter {");
+					output.WriteLine("filter");
+					output.WriteLine("{");
 					break;
 				default:
 					throw new NotSupportedException();
@@ -150,6 +161,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		void WriteStructureBody(ILStructure s, ref Instruction inst, MemberMapping currentMethodMapping, int codeSize)
 		{
+			bool prevInstructionWasBranch = false;
 			int childIndex = 0;
 			while (inst != null && inst.Offset < s.EndOffset) {
 				int offset = inst.Offset;
@@ -158,7 +170,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 					WriteStructureHeader(child);
 					WriteStructureBody(child, ref inst, currentMethodMapping, codeSize);
 					WriteStructureFooter(child);
+					prevInstructionWasBranch = false;
 				} else {
+					if (prevInstructionWasBranch) {
+						output.WriteLine(); // put empty line after branch instructions
+					}
+					
 					inst.WriteTo(output);
 					
 					// add IL code mappings - used in debugger
@@ -172,6 +189,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 					}
 					
 					output.WriteLine();
+					
+					prevInstructionWasBranch = inst.OpCode.FlowControl == FlowControl.Branch
+						|| inst.OpCode.FlowControl == FlowControl.Cond_Branch
+						|| inst.OpCode.FlowControl == FlowControl.Return
+						|| inst.OpCode.FlowControl == FlowControl.Throw;
+					
 					inst = inst.Next;
 				}
 			}
