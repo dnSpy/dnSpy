@@ -59,6 +59,7 @@
     <Compile Include="CheckedUnchecked.cs" />
     <Compile Include="Helpers\CodeAssert.cs" />
     <Compile Include="IncrementDecrement.cs" />
+    <Compile Include="PInvoke.cs" />
     <Compile Include="QueryExpressions.cs" />
     <Compile Include="Switch.cs" />
     <Compile Include="UndocumentedExpressions.cs" />

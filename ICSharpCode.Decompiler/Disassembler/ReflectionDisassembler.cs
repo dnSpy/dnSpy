@@ -269,8 +269,18 @@ namespace ICSharpCode.Decompiler.Disassembler
 					ArrayMarshalInfo ami = (ArrayMarshalInfo)marshalInfo;
 					if (ami == null)
 						goto default;
-					WriteNativeType(ami.ElementType);
-					output.Write("[size={0}, sizeParameterIndex={1}, sizeParameterMultiplier={2}]", ami.Size, ami.SizeParameterIndex, ami.SizeParameterMultiplier);
+					if (ami.ElementType != NativeType.Max)
+						WriteNativeType(ami.ElementType);
+					output.Write('[');
+					if (ami.SizeParameterMultiplier == 0) {
+						output.Write(ami.Size.ToString());
+					} else {
+						if (ami.Size >= 0)
+							output.Write(ami.Size.ToString());
+						output.Write(" + ");
+						output.Write(ami.SizeParameterIndex.ToString());
+					}
+					output.Write(']');
 					break;
 				case NativeType.Currency:
 					output.Write("currency");
@@ -370,10 +380,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 					}
 					break;
 				case NativeType.FixedArray:
-					output.Write("fixed sysstring");
+					output.Write("fixed array");
 					FixedArrayMarshalInfo fami = marshalInfo as FixedArrayMarshalInfo;
-					if (fami != null)
-						output.Write("[{0}]", ((FixedArrayMarshalInfo)marshalInfo).Size);
+					if (fami != null) {
+						output.Write("[{0}]", fami.Size);
+						if (fami.ElementType != NativeType.None) {
+							output.Write(' ');
+							WriteNativeType(fami.ElementType);
+						}
+					}
 					break;
 				case NativeType.ByValStr:
 					output.Write("byvalstr");
@@ -395,12 +410,19 @@ namespace ICSharpCode.Decompiler.Disassembler
 					break;
 				case NativeType.CustomMarshaler:
 					CustomMarshalInfo cmi = marshalInfo as CustomMarshalInfo;
-					goto default; // ???
+					if (cmi == null)
+						goto default;
+					output.Write("custom(\"{0}\", \"{1}\"",
+					             NRefactory.CSharp.OutputVisitor.ConvertString(cmi.ManagedType.FullName),
+					             NRefactory.CSharp.OutputVisitor.ConvertString(cmi.Cookie));
+					if (cmi.Guid != Guid.Empty || !string.IsNullOrEmpty(cmi.UnmanagedType)) {
+						output.Write(", \"{0}\", \"{1}\"", cmi.Guid.ToString(), NRefactory.CSharp.OutputVisitor.ConvertString(cmi.UnmanagedType));
+					}
+					output.Write(')');
+					break;
 				case NativeType.Error:
 					output.Write("error");
 					break;
-				case NativeType.Max:
-					// ???
 				default:
 					output.Write(nativeType.ToString());
 					break;
@@ -420,6 +442,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.Write("[opt] ");
 				p.ParameterType.WriteTo(output);
 				output.Write(' ');
+				if (p.HasMarshalInfo) {
+					WriteMarshalInfo(p.MarshalInfo);
+				}
 				output.WriteDefinition(DisassemblerHelpers.Escape(p.Name), p);
 				if (i < parameters.Count - 1)
 					output.Write(',');

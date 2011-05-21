@@ -74,6 +74,12 @@ namespace ICSharpCode.Decompiler.Tests
 		}
 		
 		[Test]
+		public void PInvoke()
+		{
+			TestFile(@"..\..\Tests\PInvoke.cs");
+		}
+		
+		[Test]
 		public void PropertiesAndEvents()
 		{
 			TestFile(@"..\..\Tests\PropertiesAndEvents.cs");

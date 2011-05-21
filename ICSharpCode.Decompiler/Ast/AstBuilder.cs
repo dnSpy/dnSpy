@@ -801,7 +801,13 @@ namespace ICSharpCode.Decompiler.Ast
 				astProp.Setter.Body = CreateMethodBody(propDef.SetMethod);
 				astProp.Setter.AddAnnotation(propDef.SetMethod);
 				ConvertAttributes(astProp.Setter, propDef.SetMethod);
-				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), "param");
+				ParameterDefinition lastParam = propDef.SetMethod.Parameters.LastOrDefault();
+				if (lastParam != null) {
+					ConvertCustomAttributes(astProp.Setter, lastParam, "param");
+					if (lastParam.HasMarshalInfo) {
+						astProp.Setter.Attributes.Add(new AttributeSection(ConvertMarshalInfo(lastParam, propDef.Module)) { AttributeTarget = "param" });
+					}
+				}
 				
 				if ((setterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
 					astProp.Setter.Modifiers = setterModifiers & Modifiers.VisibilityMask;
@@ -1170,6 +1176,37 @@ namespace ICSharpCode.Decompiler.Ast
 			Ast.Attribute attr = CreateNonCustomAttribute(typeof(MarshalAsAttribute), module);
 			var unmanagedType = new TypeReference("System.Runtime.InteropServices", "UnmanagedType", module, module.TypeSystem.Corlib);
 			attr.Arguments.Add(MakePrimitive((int)marshalInfo.NativeType, unmanagedType));
+			
+			FixedArrayMarshalInfo fami = marshalInfo as FixedArrayMarshalInfo;
+			if (fami != null) {
+				attr.AddNamedArgument("SizeConst", new PrimitiveExpression(fami.Size));
+				if (fami.ElementType != NativeType.None)
+					attr.AddNamedArgument("ArraySubType", MakePrimitive((int)fami.ElementType, unmanagedType));
+			}
+			SafeArrayMarshalInfo sami = marshalInfo as SafeArrayMarshalInfo;
+			if (sami != null && sami.ElementType != VariantType.None) {
+				var varEnum = new TypeReference("System.Runtime.InteropServices", "VarEnum", module, module.TypeSystem.Corlib);
+				attr.AddNamedArgument("SafeArraySubType", MakePrimitive((int)sami.ElementType, varEnum));
+			}
+			ArrayMarshalInfo ami = marshalInfo as ArrayMarshalInfo;
+			if (ami != null) {
+				if (ami.ElementType != NativeType.Max)
+					attr.AddNamedArgument("ArraySubType", MakePrimitive((int)ami.ElementType, unmanagedType));
+				if (ami.Size >= 0)
+					attr.AddNamedArgument("SizeConst", new PrimitiveExpression(ami.Size));
+				if (ami.SizeParameterMultiplier != 0)
+					attr.AddNamedArgument("SizeParamIndex", new PrimitiveExpression(ami.SizeParameterIndex));
+			}
+			CustomMarshalInfo cmi = marshalInfo as CustomMarshalInfo;
+			if (cmi != null) {
+				attr.AddNamedArgument("MarshalType", new PrimitiveExpression(cmi.ManagedType.FullName));
+				if (!string.IsNullOrEmpty(cmi.Cookie))
+					attr.AddNamedArgument("MarshalCookie", new PrimitiveExpression(cmi.Cookie));
+			}
+			FixedSysStringMarshalInfo fssmi = marshalInfo as FixedSysStringMarshalInfo;
+			if (fssmi != null) {
+				attr.AddNamedArgument("SizeConst", new PrimitiveExpression(fssmi.Size));
+			}
 			return attr;
 		}
 		#endregion

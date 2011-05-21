@@ -370,7 +370,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			} else if (expr.Code == ILCode.Newobj && expr.Arguments.Count == 2) {
 				// Might be 'newobj(SomeDelegate, target, ldvirtftn(F, target))'.
 				ILVariable target;
-				ILExpression ldvirtftnArg;
 				if (expr.Arguments[0].Match(ILCode.Ldloc, out target)
 				    && expr.Arguments[1].Code == ILCode.Ldvirtftn
 				    && expr.Arguments[1].Arguments.Count == 1
