@@ -1096,6 +1096,21 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public void WriteModuleHeader(ModuleDefinition module)
 		{
+			if (module.HasExportedTypes) {
+				foreach (ExportedType exportedType in module.ExportedTypes) {
+					output.Write(".class extern ");
+					if (exportedType.IsForwarder)
+						output.Write("forwarder ");
+					output.Write(exportedType.DeclaringType != null ? exportedType.Name : exportedType.FullName);
+					OpenBlock(false);
+					if (exportedType.DeclaringType != null)
+						output.WriteLine(".class extern {0}", DisassemblerHelpers.Escape(exportedType.DeclaringType.FullName));
+					else
+						output.WriteLine(".assembly extern {0}", DisassemblerHelpers.Escape(exportedType.Scope.Name));
+					CloseBlock();
+				}
+			}
+			
 			output.WriteLine(".module {0}", module.Name);
 			output.WriteLine("// MVID: {0}", module.Mvid.ToString("B").ToUpperInvariant());
 			// TODO: imagebase, file alignment, stackreserve, subsystem
