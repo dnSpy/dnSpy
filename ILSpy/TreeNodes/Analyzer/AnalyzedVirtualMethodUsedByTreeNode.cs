@@ -89,7 +89,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			var BaseMethods = TypesHierarchyHelpers.FindBaseMethods(analyzedMethod).ToArray();
 			if (BaseMethods.Length > 0) {
 				baseMethod = BaseMethods[BaseMethods.Length - 1];
-			}
+			} else
+				baseMethod = analyzedMethod;
 
 			possibleTypes = new List<TypeReference>();
 
@@ -119,15 +120,24 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					MethodReference mr = instr.Operand as MethodReference;
 					if (mr != null && mr.Name == name) {
 						// explicit call to the requested method 
-						if (Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) && mr.Resolve() == analyzedMethod) {
+						if (instr.OpCode.Code == Code.Call 
+							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) 
+							&& mr.Resolve() == analyzedMethod) {
 							found = true;
 							prefix = "(as base) ";
 							break;
 						}
 						// virtual call to base method
-						if (instr.OpCode.Code == Code.Callvirt && Helpers.IsReferencedBy(baseMethod.DeclaringType, mr.DeclaringType) && mr.Resolve() == baseMethod) {
-							found = true;
-							break;
+						if (instr.OpCode.Code == Code.Callvirt) {
+							MethodDefinition md = mr.Resolve();
+							if (md == null) {
+								// cannot resolve the operand, so ignore this method
+								break;
+							}
+							if (md == baseMethod) {
+								found = true;
+								break;
+							}
 						}
 					}
 				}
