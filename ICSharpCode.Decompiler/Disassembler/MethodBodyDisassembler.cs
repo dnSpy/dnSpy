@@ -52,9 +52,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 			// start writing IL code
 			MethodDefinition method = body.Method;
 			output.WriteLine("// Method begins at RVA 0x{0:x4}", method.RVA);
-			if (method.HasOverrides)
-				foreach (var methodOverride in method.Overrides)
-					output.WriteLine(".override {0}::{1}", methodOverride.DeclaringType.FullName, methodOverride.Name);
 			output.WriteLine("// Code size {0} (0x{0:x})", body.CodeSize);
 			output.WriteLine(".maxstack {0}", body.MaxStackSize);
 			if (method.DeclaringType.Module.Assembly.EntryPoint == method)
@@ -84,7 +81,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			if (detectControlStructure && body.Instructions.Count > 0) {
 				Instruction inst = body.Instructions[0];
-				WriteStructureBody(new ILStructure(body), ref inst, methodMapping, method.Body.CodeSize);
+				HashSet<int> branchTargets = GetBranchTargets(body.Instructions);
+				WriteStructureBody(new ILStructure(body), branchTargets, ref inst, methodMapping, method.Body.CodeSize);
 			} else {
 				foreach (var inst in method.Body.Instructions) {
 					inst.WriteTo(output);
@@ -109,6 +107,21 @@ namespace ICSharpCode.Decompiler.Disassembler
 					}
 				}
 			}
+		}
+		
+		HashSet<int> GetBranchTargets(IEnumerable<Instruction> instructions)
+		{
+			HashSet<int> branchTargets = new HashSet<int>();
+			foreach (var inst in instructions) {
+				Instruction target = inst.Operand as Instruction;
+				if (target != null)
+					branchTargets.Add(target.Offset);
+				Instruction[] targets = inst.Operand as Instruction[];
+				if (targets != null)
+					foreach (Instruction t in targets)
+						branchTargets.Add(t.Offset);
+			}
+			return branchTargets;
 		}
 		
 		void WriteStructureHeader(ILStructure s)
@@ -159,8 +172,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Indent();
 		}
 		
-		void WriteStructureBody(ILStructure s, ref Instruction inst, MemberMapping currentMethodMapping, int codeSize)
+		void WriteStructureBody(ILStructure s, HashSet<int> branchTargets, ref Instruction inst, MemberMapping currentMethodMapping, int codeSize)
 		{
+			bool isFirstInstructionInStructure = true;
 			bool prevInstructionWasBranch = false;
 			int childIndex = 0;
 			while (inst != null && inst.Offset < s.EndOffset) {
@@ -168,14 +182,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (childIndex < s.Children.Count && s.Children[childIndex].StartOffset <= offset && offset < s.Children[childIndex].EndOffset) {
 					ILStructure child = s.Children[childIndex++];
 					WriteStructureHeader(child);
-					WriteStructureBody(child, ref inst, currentMethodMapping, codeSize);
+					WriteStructureBody(child, branchTargets, ref inst, currentMethodMapping, codeSize);
 					WriteStructureFooter(child);
-					prevInstructionWasBranch = false;
 				} else {
-					if (prevInstructionWasBranch) {
-						output.WriteLine(); // put empty line after branch instructions
+					if (!isFirstInstructionInStructure && (prevInstructionWasBranch || branchTargets.Contains(offset))) {
+						output.WriteLine(); // put an empty line after branches, and in front of branch targets
 					}
-					
 					inst.WriteTo(output);
 					
 					// add IL code mappings - used in debugger
@@ -197,6 +209,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					
 					inst = inst.Next;
 				}
+				isFirstInstructionInStructure = false;
 			}
 		}
 		

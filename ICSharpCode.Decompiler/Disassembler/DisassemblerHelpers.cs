@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -77,8 +78,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 			writer.WriteDefinition(CecilExtensions.OffsetToString(instruction.Offset), instruction);
 			writer.Write(": ");
 			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode);
-			if(null != instruction.Operand) {
+			if (instruction.Operand != null) {
 				writer.Write(' ');
+				if (instruction.OpCode == OpCodes.Ldtoken) {
+					if (instruction.Operand is MethodReference)
+						writer.Write("method ");
+					else if (instruction.Operand is FieldReference)
+						writer.Write("field ");
+				}
 				WriteOperand(writer, instruction.Operand);
 			}
 		}
@@ -153,22 +160,62 @@ namespace ICSharpCode.Decompiler.Disassembler
 			return true;
 		}
 		
+		static readonly HashSet<string> ilKeywords = BuildKeywordList(
+			"abstract", "algorithm", "alignment", "ansi", "any", "arglist",
+			"array", "as", "assembly", "assert", "at", "auto", "autochar", "beforefieldinit",
+			"blob", "blob_object", "bool", "brnull", "brnull.s", "brzero", "brzero.s", "bstr",
+			"bytearray", "byvalstr", "callmostderived", "carray", "catch", "cdecl", "cf",
+			"char", "cil", "class", "clsid", "const", "currency", "custom", "date", "decimal",
+			"default", "demand", "deny", "endmac", "enum", "error", "explicit", "extends", "extern",
+			"false", "famandassem", "family", "famorassem", "fastcall", "fault", "field", "filetime",
+			"filter", "final", "finally", "fixed", "float", "float32", "float64", "forwardref",
+			"fromunmanaged", "handler", "hidebysig", "hresult", "idispatch", "il", "illegal",
+			"implements", "implicitcom", "implicitres", "import", "in", "inheritcheck", "init",
+			"initonly", "instance", "int", "int16", "int32", "int64", "int8", "interface", "internalcall",
+			"iunknown", "lasterr", "lcid", "linkcheck", "literal", "localloc", "lpstr", "lpstruct", "lptstr",
+			"lpvoid", "lpwstr", "managed", "marshal", "method", "modopt", "modreq", "native", "nested",
+			"newslot", "noappdomain", "noinlining", "nomachine", "nomangle", "nometadata", "noncasdemand",
+			"noncasinheritance", "noncaslinkdemand", "noprocess", "not", "not_in_gc_heap", "notremotable",
+			"notserialized", "null", "nullref", "object", "objectref", "opt", "optil", "out",
+			"permitonly", "pinned", "pinvokeimpl", "prefix1", "prefix2", "prefix3", "prefix4", "prefix5", "prefix6",
+			"prefix7", "prefixref", "prejitdeny", "prejitgrant", "preservesig", "private", "privatescope", "protected",
+			"public", "record", "refany", "reqmin", "reqopt", "reqrefuse", "reqsecobj", "request", "retval",
+			"rtspecialname", "runtime", "safearray", "sealed", "sequential", "serializable", "special", "specialname",
+			"static", "stdcall", "storage", "stored_object", "stream", "streamed_object", "string", "struct",
+			"synchronized", "syschar", "sysstring", "tbstr", "thiscall", "tls", "to", "true", "typedref",
+			"unicode", "unmanaged", "unmanagedexp", "unsigned", "unused", "userdefined", "value", "valuetype",
+			"vararg", "variant", "vector", "virtual", "void", "wchar", "winapi", "with", "wrapper",
+			
+			// These are not listed as keywords in spec, but ILAsm treats them as such
+			"property", "type", "flags", "callconv"
+		);
+		
+		static HashSet<string> BuildKeywordList(params string[] keywords)
+		{
+			HashSet<string> s = new HashSet<string>(keywords);
+			foreach (var field in typeof(OpCodes).GetFields()) {
+				s.Add(((OpCode)field.GetValue(null)).Name);
+			}
+			return s;
+		}
+		
 		public static string Escape(string identifier)
 		{
-			if (IsValidIdentifier(identifier) && identifier != "value")
+			if (IsValidIdentifier(identifier) && !ilKeywords.Contains(identifier))
 				return identifier;
 			else
-				return "'" + identifier + "'";
+				return "'" + NRefactory.CSharp.OutputVisitor.ConvertString(identifier).Replace("'", "\\'") + "'";
 		}
 		
 		public static void WriteTo(this TypeReference type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
 		{
+			ILNameSyntax syntaxForElementTypes = syntax == ILNameSyntax.SignatureNoNamedTypeParameters ? syntax : ILNameSyntax.Signature;
 			if (type is PinnedType) {
-				writer.Write("pinned ");
-				((PinnedType)type).ElementType.WriteTo(writer, syntax);
+				((PinnedType)type).ElementType.WriteTo(writer, syntaxForElementTypes);
+				writer.Write(" pinned");
 			} else if (type is ArrayType) {
 				ArrayType at = (ArrayType)type;
-				at.ElementType.WriteTo(writer, syntax);
+				at.ElementType.WriteTo(writer, syntaxForElementTypes);
 				writer.Write('[');
 				writer.Write(string.Join(", ", at.Dimensions));
 				writer.Write(']');
@@ -181,33 +228,33 @@ namespace ICSharpCode.Decompiler.Disassembler
 				else
 					writer.Write(Escape(type.Name));
 			} else if (type is ByReferenceType) {
-				((ByReferenceType)type).ElementType.WriteTo(writer, syntax);
+				((ByReferenceType)type).ElementType.WriteTo(writer, syntaxForElementTypes);
 				writer.Write('&');
 			} else if (type is PointerType) {
-				((PointerType)type).ElementType.WriteTo(writer, syntax);
+				((PointerType)type).ElementType.WriteTo(writer, syntaxForElementTypes);
 				writer.Write('*');
 			} else if (type is GenericInstanceType) {
-				type.GetElementType().WriteTo(writer, syntax == ILNameSyntax.SignatureNoNamedTypeParameters ? syntax : ILNameSyntax.Signature);
+				type.GetElementType().WriteTo(writer, syntaxForElementTypes);
 				writer.Write('<');
 				var arguments = ((GenericInstanceType)type).GenericArguments;
 				for (int i = 0; i < arguments.Count; i++) {
 					if (i > 0)
 						writer.Write(", ");
-					arguments[i].WriteTo(writer, syntax == ILNameSyntax.SignatureNoNamedTypeParameters ? syntax : ILNameSyntax.Signature);
+					arguments[i].WriteTo(writer, syntaxForElementTypes);
 				}
 				writer.Write('>');
 			} else if (type is OptionalModifierType) {
-				writer.Write("modopt(");
+				((OptionalModifierType)type).ElementType.WriteTo(writer, syntax);
+				writer.Write(" modopt(");
 				((OptionalModifierType)type).ModifierType.WriteTo(writer, ILNameSyntax.TypeName);
 				writer.Write(") ");
-				((OptionalModifierType)type).ElementType.WriteTo(writer, syntax);
 			} else if (type is RequiredModifierType) {
-				writer.Write("modreq(");
+				((RequiredModifierType)type).ElementType.WriteTo(writer, syntax);
+				writer.Write(" modreq(");
 				((RequiredModifierType)type).ModifierType.WriteTo(writer, ILNameSyntax.TypeName);
 				writer.Write(") ");
-				((RequiredModifierType)type).ElementType.WriteTo(writer, syntax);
 			} else {
-				string name = PrimitiveTypeName(type);
+				string name = PrimitiveTypeName(type.FullName);
 				if (syntax == ILNameSyntax.ShortTypeName) {
 					writer.WriteReference(Escape(type.Name), type);
 				} else if ((syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters) && name != null) {
@@ -284,11 +331,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			string s = operand as string;
 			if (s != null) {
-				writer.Write("\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"");
-				return;
-			}
-			
-			if (operand is float) {
+				writer.Write("\"" + NRefactory.CSharp.OutputVisitor.ConvertString(s) + "\"");
+			} else if (operand is char) {
+				writer.Write(((int)(char)operand).ToString());
+			} else if (operand is float) {
 				float val = (float)operand;
 				if (val == 0) {
 					writer.Write("0.0");
@@ -304,7 +350,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 				} else {
 					writer.Write(val.ToString("R", System.Globalization.CultureInfo.InvariantCulture));
 				}
-				return;
 			} else if (operand is double) {
 				double val = (double)operand;
 				if (val == 0) {
@@ -321,15 +366,17 @@ namespace ICSharpCode.Decompiler.Disassembler
 				} else {
 					writer.Write(val.ToString("R", System.Globalization.CultureInfo.InvariantCulture));
 				}
-				return;
+			} else if (operand is bool) {
+				writer.Write((bool)operand ? "true" : "false");
+			} else {
+				s = ToInvariantCultureString(operand);
+				writer.Write(s);
 			}
-			s = ToInvariantCultureString(operand);
-			writer.Write(s);
 		}
 		
-		public static string PrimitiveTypeName(this TypeReference type)
+		public static string PrimitiveTypeName(string fullName)
 		{
-			switch (type.FullName) {
+			switch (fullName) {
 				case "System.SByte":
 					return "int8";
 				case "System.Int16":

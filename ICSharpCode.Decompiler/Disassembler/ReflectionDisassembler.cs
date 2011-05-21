@@ -49,14 +49,16 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ MethodAttributes.Final, "final" },
 			{ MethodAttributes.HideBySig, "hidebysig" },
 			{ MethodAttributes.SpecialName, "specialname" },
-			{ MethodAttributes.PInvokeImpl, "pinvokeimpl" },
+			{ MethodAttributes.PInvokeImpl, null }, // handled separately
 			{ MethodAttributes.UnmanagedExport, "export" },
 			{ MethodAttributes.RTSpecialName, "rtspecialname" },
-			{ MethodAttributes.RequireSecObject, "requiresecobj" },
+			{ MethodAttributes.RequireSecObject, "reqsecobj" },
 			{ MethodAttributes.NewSlot, "newslot" },
-			{ MethodAttributes.Virtual, "virtual" },
+			{ MethodAttributes.CheckAccessOnOverride, "strict" },
 			{ MethodAttributes.Abstract, "abstract" },
-			{ MethodAttributes.Static, "static" }
+			{ MethodAttributes.Virtual, "virtual" },
+			{ MethodAttributes.Static, "static" },
+			{ MethodAttributes.HasSecurity, null }, // ?? also invisible in ILDasm
 		};
 		
 		EnumNameCollection<MethodAttributes> methodVisibility = new EnumNameCollection<MethodAttributes>() {
@@ -74,7 +76,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ MethodCallingConvention.ThisCall, "unmanaged thiscall" },
 			{ MethodCallingConvention.FastCall, "unmanaged fastcall" },
 			{ MethodCallingConvention.VarArg, "vararg" },
-			{ MethodCallingConvention.Generic, "generic" },
+			{ MethodCallingConvention.Generic, null },
 		};
 		
 		EnumNameCollection<MethodImplAttributes> methodCodeType = new EnumNameCollection<MethodImplAttributes>() {
@@ -88,6 +90,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ MethodImplAttributes.Synchronized, "synchronized" },
 			{ MethodImplAttributes.NoInlining, "noinlining" },
 			{ MethodImplAttributes.NoOptimization, "nooptimization" },
+			{ MethodImplAttributes.PreserveSig, "preservesig" },
+			{ MethodImplAttributes.InternalCall, "internalcall" },
 		};
 		
 		public void DisassembleMethod(MethodDefinition method)
@@ -107,6 +111,44 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteEnum(method.Attributes & MethodAttributes.MemberAccessMask, methodVisibility);
 			WriteFlags(method.Attributes & ~MethodAttributes.MemberAccessMask, methodAttributeFlags);
 			
+			if ((method.Attributes & MethodAttributes.PInvokeImpl) == MethodAttributes.PInvokeImpl) {
+				output.Write("pinvokeimpl");
+				if (method.HasPInvokeInfo) {
+					PInvokeInfo info = method.PInvokeInfo;
+					output.Write("(\"" + NRefactory.CSharp.OutputVisitor.ConvertString(info.Module.Name) + "\"");
+					
+					if (!string.IsNullOrEmpty(info.EntryPoint) && info.EntryPoint != method.Name)
+						output.Write(" as \"" + NRefactory.CSharp.OutputVisitor.ConvertString(info.EntryPoint) + "\"");
+					
+					if (info.IsNoMangle)
+						output.Write(" nomangle");
+					
+					if (info.IsCharSetAnsi)
+						output.Write(" ansi");
+					else if (info.IsCharSetAuto)
+						output.Write(" autochar");
+					else if (info.IsCharSetUnicode)
+						output.Write(" unicode");
+					
+					if (info.SupportsLastError)
+						output.Write(" lasterr");
+					
+					if (info.IsCallConvCdecl)
+						output.Write(" cdecl");
+					else if (info.IsCallConvFastcall)
+						output.Write(" fastcall");
+					else if (info.IsCallConvStdCall)
+						output.Write(" stdcall");
+					else if (info.IsCallConvThiscall)
+						output.Write(" thiscall");
+					else if (info.IsCallConvWinapi)
+						output.Write(" winapi");
+					
+					output.Write(')');
+				}
+				output.Write(' ');
+			}
+			
 			output.WriteLine();
 			output.Indent();
 			
@@ -120,6 +162,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			//return type
 			method.ReturnType.WriteTo(output);
 			output.Write(' ');
+			if (method.MethodReturnType.HasMarshalInfo) {
+				WriteMarshalInfo(method.MethodReturnType.MarshalInfo);
+			}
 			output.Write(DisassemblerHelpers.Escape(method.Name));
 			WriteTypeParameters(output, method);
 			
@@ -141,24 +186,227 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteFlags(method.ImplAttributes & ~(MethodImplAttributes.CodeTypeMask | MethodImplAttributes.ManagedMask), methodImpl);
 			
 			output.Unindent();
-			if (method.HasBody || method.HasCustomAttributes || method.Parameters.Any(HasParameterAttributes)) {
-				OpenBlock(defaultCollapsed: isInType);
-				WriteAttributes(method.CustomAttributes);
-				foreach (var p in method.Parameters) {
-					WriteParameterAttributes(p);
+			OpenBlock(defaultCollapsed: isInType);
+			WriteAttributes(method.CustomAttributes);
+			if (method.HasOverrides) {
+				foreach (var methodOverride in method.Overrides) {
+					output.Write(".override method ");
+					methodOverride.WriteTo(output);
+					output.WriteLine();
 				}
-				
-				if (method.HasBody) {
-					// create IL code mappings - used in debugger
-					MemberMapping methodMapping = method.CreateCodeMapping(this.CodeMappings);
-					methodBodyDisassembler.Disassemble(method.Body, methodMapping);
-				}
-				
-				CloseBlock("end of method " + method.DeclaringType.Name + "::" + method.Name);
-			} else {
-				output.WriteLine();
+			}
+			foreach (var p in method.Parameters) {
+				WriteParameterAttributes(p);
+			}
+			
+			if (method.HasBody) {
+				// create IL code mappings - used in debugger
+				MemberMapping methodMapping = method.CreateCodeMapping(this.CodeMappings);
+				methodBodyDisassembler.Disassemble(method.Body, methodMapping);
+			}
+			
+			CloseBlock("end of method " + DisassemblerHelpers.Escape(method.DeclaringType.Name) + "::" + DisassemblerHelpers.Escape(method.Name));
+		}
+		
+		#region WriteMarshalInfo
+		void WriteMarshalInfo(MarshalInfo marshalInfo)
+		{
+			output.Write("marshal(");
+			WriteNativeType(marshalInfo.NativeType, marshalInfo);
+			output.Write(") ");
+		}
+		
+		void WriteNativeType(NativeType nativeType, MarshalInfo marshalInfo = null)
+		{
+			switch (nativeType) {
+				case NativeType.None:
+					break;
+				case NativeType.Boolean:
+					output.Write("bool");
+					break;
+				case NativeType.I1:
+					output.Write("int8");
+					break;
+				case NativeType.U1:
+					output.Write("unsigned int8");
+					break;
+				case NativeType.I2:
+					output.Write("int16");
+					break;
+				case NativeType.U2:
+					output.Write("unsigned int16");
+					break;
+				case NativeType.I4:
+					output.Write("int32");
+					break;
+				case NativeType.U4:
+					output.Write("unsigned int32");
+					break;
+				case NativeType.I8:
+					output.Write("int64");
+					break;
+				case NativeType.U8:
+					output.Write("unsigned int64");
+					break;
+				case NativeType.R4:
+					output.Write("float32");
+					break;
+				case NativeType.R8:
+					output.Write("float64");
+					break;
+				case NativeType.LPStr:
+					output.Write("lpstr");
+					break;
+				case NativeType.Int:
+					output.Write("int");
+					break;
+				case NativeType.UInt:
+					output.Write("unsigned int");
+					break;
+				case NativeType.Func:
+					goto default; // ??
+				case NativeType.Array:
+					ArrayMarshalInfo ami = (ArrayMarshalInfo)marshalInfo;
+					if (ami == null)
+						goto default;
+					WriteNativeType(ami.ElementType);
+					output.Write("[size={0}, sizeParameterIndex={1}, sizeParameterMultiplier={2}]", ami.Size, ami.SizeParameterIndex, ami.SizeParameterMultiplier);
+					break;
+				case NativeType.Currency:
+					output.Write("currency");
+					break;
+				case NativeType.BStr:
+					output.Write("bstr");
+					break;
+				case NativeType.LPWStr:
+					output.Write("lpwstr");
+					break;
+				case NativeType.LPTStr:
+					output.Write("lptstr");
+					break;
+				case NativeType.FixedSysString:
+					output.Write("fixed sysstring[{0}]", ((FixedSysStringMarshalInfo)marshalInfo).Size);
+					break;
+				case NativeType.IUnknown:
+					output.Write("iunknown");
+					break;
+				case NativeType.IDispatch:
+					output.Write("idispatch");
+					break;
+				case NativeType.Struct:
+					output.Write("struct");
+					break;
+				case NativeType.IntF:
+					output.Write("interface");
+					break;
+				case NativeType.SafeArray:
+					output.Write("safearray ");
+					SafeArrayMarshalInfo sami = marshalInfo as SafeArrayMarshalInfo;
+					if (sami != null) {
+						switch (sami.ElementType) {
+							case VariantType.None:
+								break;
+							case VariantType.I2:
+								output.Write("int16");
+								break;
+							case VariantType.I4:
+								output.Write("int32");
+								break;
+							case VariantType.R4:
+								output.Write("float32");
+								break;
+							case VariantType.R8:
+								output.Write("float64");
+								break;
+							case VariantType.CY:
+								output.Write("currency");
+								break;
+							case VariantType.Date:
+								output.Write("date");
+								break;
+							case VariantType.BStr:
+								output.Write("bstr");
+								break;
+							case VariantType.Dispatch:
+								output.Write("idispatch");
+								break;
+							case VariantType.Error:
+								output.Write("error");
+								break;
+							case VariantType.Bool:
+								output.Write("bool");
+								break;
+							case VariantType.Variant:
+								output.Write("variant");
+								break;
+							case VariantType.Unknown:
+								output.Write("iunknown");
+								break;
+							case VariantType.Decimal:
+								output.Write("decimal");
+								break;
+							case VariantType.I1:
+								output.Write("int8");
+								break;
+							case VariantType.UI1:
+								output.Write("unsigned int8");
+								break;
+							case VariantType.UI2:
+								output.Write("unsigned int16");
+								break;
+							case VariantType.UI4:
+								output.Write("unsigned int32");
+								break;
+							case VariantType.Int:
+								output.Write("int");
+								break;
+							case VariantType.UInt:
+								output.Write("unsigned int");
+								break;
+							default:
+								output.Write(sami.ElementType.ToString());
+								break;
+						}
+					}
+					break;
+				case NativeType.FixedArray:
+					output.Write("fixed sysstring");
+					FixedArrayMarshalInfo fami = marshalInfo as FixedArrayMarshalInfo;
+					if (fami != null)
+						output.Write("[{0}]", ((FixedArrayMarshalInfo)marshalInfo).Size);
+					break;
+				case NativeType.ByValStr:
+					output.Write("byvalstr");
+					break;
+				case NativeType.ANSIBStr:
+					output.Write("ansi bstr");
+					break;
+				case NativeType.TBStr:
+					output.Write("tbstr");
+					break;
+				case NativeType.VariantBool:
+					output.Write("variant bool");
+					break;
+				case NativeType.ASAny:
+					output.Write("as any");
+					break;
+				case NativeType.LPStruct:
+					output.Write("lpstruct");
+					break;
+				case NativeType.CustomMarshaler:
+					CustomMarshalInfo cmi = marshalInfo as CustomMarshalInfo;
+					goto default; // ???
+				case NativeType.Error:
+					output.Write("error");
+					break;
+				case NativeType.Max:
+					// ???
+				default:
+					output.Write(nativeType.ToString());
+					break;
 			}
 		}
+		#endregion
 		
 		void WriteParameters(Collection<ParameterDefinition> parameters)
 		{
@@ -188,16 +436,38 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			if (!HasParameterAttributes(p))
 				return;
-			output.Write(".param [{0}]", p.Index);
+			output.Write(".param [{0}]", p.Index + 1);
 			if (p.HasConstant) {
 				output.Write(" = ");
-				if (p.Constant != null)
-					DisassemblerHelpers.WriteOperand(output, p.Constant);
-				else
-					output.Write("nullref");
+				WriteConstant(p.Constant);
 			}
 			output.WriteLine();
 			WriteAttributes(p.CustomAttributes);
+		}
+		
+		void WriteConstant(object constant)
+		{
+			if (constant == null) {
+				output.Write("nullref");
+			} else {
+				string typeName = DisassemblerHelpers.PrimitiveTypeName(constant.GetType().FullName);
+				if (typeName != null && typeName != "string") {
+					output.Write(typeName);
+					output.Write('(');
+					float? cf = constant as float?;
+					double? cd = constant as double?;
+					if (cf.HasValue && (float.IsNaN(cf.Value) || float.IsInfinity(cf.Value))) {
+						output.Write("0x{0:x8}", BitConverter.ToInt32(BitConverter.GetBytes(cf.Value), 0));
+					} else if (cd.HasValue && (double.IsNaN(cd.Value) || double.IsInfinity(cd.Value))) {
+						output.Write("0x{0:x16}", BitConverter.DoubleToInt64Bits(cd.Value));
+					} else {
+						DisassemblerHelpers.WriteOperand(output, constant);
+					}
+					output.Write(')');
+				} else {
+					DisassemblerHelpers.WriteOperand(output, constant);
+				}
+			}
 		}
 		#endregion
 		
@@ -224,13 +494,20 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			output.WriteDefinition(".field ", field);
 			WriteEnum(field.Attributes & FieldAttributes.FieldAccessMask, fieldVisibility);
-			WriteFlags(field.Attributes & ~(FieldAttributes.FieldAccessMask | FieldAttributes.HasDefault), fieldAttributes);
+			const FieldAttributes hasXAttributes = FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal | FieldAttributes.HasFieldRVA;
+			WriteFlags(field.Attributes & ~(FieldAttributes.FieldAccessMask | hasXAttributes), fieldAttributes);
+			if (field.HasMarshalInfo) {
+				WriteMarshalInfo(field.MarshalInfo);
+			}
 			field.FieldType.WriteTo(output);
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(field.Name));
+			if ((field.Attributes & FieldAttributes.HasFieldRVA) == FieldAttributes.HasFieldRVA) {
+				output.Write(" at I_{0:x8}", field.RVA);
+			}
 			if (field.HasConstant) {
 				output.Write(" = ");
-				DisassemblerHelpers.WriteOperand(output, field.Constant);
+				WriteConstant(field.Constant);
 			}
 			output.WriteLine();
 			if (field.HasCustomAttributes) {
@@ -272,7 +549,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteNestedMethod(".get", property.GetMethod);
 			WriteNestedMethod(".set", property.SetMethod);
 			foreach (var method in property.OtherMethods) {
-				WriteNestedMethod(".method", method);
+				WriteNestedMethod(".other", method);
 			}
 			CloseBlock();
 		}
@@ -298,16 +575,16 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			output.WriteDefinition(".event ", ev);
 			WriteFlags(ev.Attributes, eventAttributes);
-			ev.EventType.WriteTo(output);
+			ev.EventType.WriteTo(output, ILNameSyntax.TypeName);
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(ev.Name));
 			OpenBlock(false);
 			WriteAttributes(ev.CustomAttributes);
-			WriteNestedMethod(".add", ev.AddMethod);
-			WriteNestedMethod(".remove", ev.RemoveMethod);
-			WriteNestedMethod(".invoke", ev.InvokeMethod);
+			WriteNestedMethod(".addon", ev.AddMethod);
+			WriteNestedMethod(".removeon", ev.RemoveMethod);
+			WriteNestedMethod(".fire", ev.InvokeMethod);
 			foreach (var method in ev.OtherMethods) {
-				WriteNestedMethod(".method", method);
+				WriteNestedMethod(".other", method);
 			}
 			CloseBlock();
 		}
@@ -426,20 +703,20 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.WriteLine();
 				}
 			}
-			if (type.HasProperties) {
-				output.WriteLine("// Properties");
-				foreach (var prop in type.Properties) {
-					cancellationToken.ThrowIfCancellationRequested();
-					DisassembleProperty(prop);
-				}
-				output.WriteLine();
-			}
 			if (type.HasEvents) {
 				output.WriteLine("// Events");
 				foreach (var ev in type.Events) {
 					cancellationToken.ThrowIfCancellationRequested();
 					DisassembleEvent(ev);
 					output.WriteLine();
+				}
+				output.WriteLine();
+			}
+			if (type.HasProperties) {
+				output.WriteLine("// Properties");
+				foreach (var prop in type.Properties) {
+					cancellationToken.ThrowIfCancellationRequested();
+					DisassembleProperty(prop);
 				}
 				output.WriteLine();
 			}
@@ -460,6 +737,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 					} else if (gp.HasNotNullableValueTypeConstraint) {
 						output.Write("valuetype ");
 					}
+					if (gp.HasDefaultConstructorConstraint) {
+						output.Write(".ctor ");
+					}
 					if (gp.HasConstraints) {
 						output.Write('(');
 						for (int j = 0; j < gp.Constraints.Count; j++) {
@@ -468,9 +748,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 							gp.Constraints[j].WriteTo(output, ILNameSyntax.TypeName);
 						}
 						output.Write(") ");
-					}
-					if (gp.HasDefaultConstructorConstraint) {
-						output.Write(".ctor ");
 					}
 					if (gp.IsContravariant) {
 						output.Write('-');

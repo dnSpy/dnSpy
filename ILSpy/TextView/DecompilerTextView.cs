@@ -617,12 +617,12 @@ namespace ICSharpCode.ILSpy.TextView
 		public void SaveFoldingsState(IEnumerable<FoldingSection> foldings)
 		{
 			ExpandedFoldings = foldings.Where(f => !f.IsFolded).Select(f => Tuple.Create(f.StartOffset, f.EndOffset)).ToList();
-			FoldingsChecksum = foldings.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b);
+			FoldingsChecksum = unchecked(foldings.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b));
 		}
 
 		internal void RestoreFoldings(List<NewFolding> list)
 		{
-			var checksum = list.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b);
+			var checksum = unchecked(list.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b));
 			if (FoldingsChecksum == checksum)
 				foreach (var folding in list)
 					folding.DefaultClosed = !ExpandedFoldings.Any(f => f.Item1 == folding.StartOffset && f.Item2 == folding.EndOffset);
