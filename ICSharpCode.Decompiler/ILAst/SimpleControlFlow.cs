@@ -258,6 +258,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!head.Body[head.Body.Count - 3].Match(ILCode.Stloc, out targetVar, out targetVarInitExpr))
 				return false;
 			
+			ILVariable leftVar;
+			if (!targetVarInitExpr.Match(ILCode.Ldloc, out leftVar))
+				return false;
+			
 			// looking for:
 			// brtrue(exitLabel, call(op_False, leftVar)
 			// br(followingBlock)
@@ -267,12 +271,19 @@ namespace ICSharpCode.Decompiler.ILAst
 			if(!head.MatchLastAndBr(ILCode.Brtrue, out exitLabel, out callExpr, out followingBlock))
 				return false;
 			
-			MethodDefinition opFalse;
-			ILExpression leftVar;
-			if (!callExpr.Match(ILCode.Call, out opFalse, out leftVar))
+			if (labelGlobalRefCount[followingBlock] > 1)
 				return false;
 			
-			if (!leftVar.MatchLdloc(targetVarInitExpr.Operand as ILVariable))
+			MethodReference opFalse;
+			ILExpression opFalseArg;
+			if (!callExpr.Match(ILCode.Call, out opFalse, out opFalseArg))
+				return false;
+			
+			// ignore operators other than op_False and op_True
+			if (opFalse.Name != "op_False" && opFalse.Name != "op_True")
+				return false;
+			
+			if (!opFalseArg.MatchLdloc(leftVar))
 				return false;
 			
 			ILBasicBlock followingBasicBlock = labelToBasicBlock[followingBlock];
@@ -286,22 +297,34 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!followingBasicBlock.MatchSingleAndBr(ILCode.Stloc, out _targetVar, out opBitwiseCallExpr, out _exitLabel))
 				return false;
 			
-			if (_targetVar != targetVar)
+			if (_targetVar != targetVar || exitLabel != _exitLabel)
 				return false;
 			
-			MethodDefinition opBitwise;
+			MethodReference opBitwise;
 			ILExpression leftVarExpression;
 			ILExpression rightExpression;
 			if (!opBitwiseCallExpr.Match(ILCode.Call, out opBitwise, out leftVarExpression, out rightExpression))
 				return false;
 			
-			if (!leftVar.MatchLdloc(leftVarExpression.Operand as ILVariable))
+			if (!opFalseArg.MatchLdloc(leftVarExpression.Operand as ILVariable))
+				return false;
+			
+			// ignore operators other than op_BitwiseAnd and op_BitwiseOr
+			if (opBitwise.Name != "op_BitwiseAnd" && opBitwise.Name != "op_BitwiseOr")
 				return false;
 			
 			// insert:
 			// stloc(targetVar, LogicAnd(C::op_BitwiseAnd, leftVar, rightExpression)
 			// br(exitLabel)
-			ILExpression shortCircuitExpr = MakeLeftAssociativeShortCircuit(opBitwise.Name == "op_BitwiseAnd" ? ILCode.LogicAnd : ILCode.LogicOr, leftVar, rightExpression);
+			ILCode op = opBitwise.Name == "op_BitwiseAnd" ? ILCode.LogicAnd : ILCode.LogicOr;
+			
+			if (op == ILCode.LogicAnd && opFalse.Name != "op_False")
+				return false;
+			
+			if (op == ILCode.LogicOr && opFalse.Name != "op_True")
+				return false;
+			
+			ILExpression shortCircuitExpr = MakeLeftAssociativeShortCircuit(op, opFalseArg, rightExpression);
 			shortCircuitExpr.Operand = opBitwise;
 			
 			head.Body.RemoveTail(ILCode.Stloc, ILCode.Brtrue, ILCode.Br);
