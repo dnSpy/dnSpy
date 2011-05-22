@@ -113,6 +113,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			//emit flags
 			WriteEnum(method.Attributes & MethodAttributes.MemberAccessMask, methodVisibility);
 			WriteFlags(method.Attributes & ~MethodAttributes.MemberAccessMask, methodAttributeFlags);
+			if(method.IsCompilerControlled) output.Write("privatescope ");
 			
 			if ((method.Attributes & MethodAttributes.PInvokeImpl) == MethodAttributes.PInvokeImpl) {
 				output.Write("pinvokeimpl");
@@ -170,7 +171,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (method.MethodReturnType.HasMarshalInfo) {
 				WriteMarshalInfo(method.MethodReturnType.MarshalInfo);
 			}
-			output.Write(DisassemblerHelpers.Escape(method.Name));
+			
+			if (method.IsCompilerControlled) {
+				output.Write(DisassemblerHelpers.Escape(method.Name + "$PST" + method.MetadataToken.ToInt32().ToString("X8")));
+			} else {
+				output.Write(DisassemblerHelpers.Escape(method.Name));
+			}
+			
 			WriteTypeParameters(output, method);
 			
 			//( params )

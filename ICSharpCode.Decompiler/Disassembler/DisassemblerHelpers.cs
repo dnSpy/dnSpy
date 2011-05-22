@@ -122,7 +122,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 				method.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
 				writer.Write("::");
 			}
-			writer.WriteReference(Escape(method.Name), method);
+			MethodDefinition md = method as MethodDefinition;
+			if (md != null && md.IsCompilerControlled) {
+				writer.WriteReference(Escape(method.Name + "$PST" + method.MetadataToken.ToInt32().ToString("X8")), method);
+			} else {
+				writer.WriteReference(Escape(method.Name), method);
+			}
 			GenericInstanceMethod gim = method as GenericInstanceMethod;
 			if (gim != null) {
 				writer.Write('<');
