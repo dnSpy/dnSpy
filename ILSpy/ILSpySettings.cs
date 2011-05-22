@@ -19,6 +19,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
@@ -58,13 +59,22 @@ namespace ICSharpCode.ILSpy
 		{
 			using (new MutexProtector(ConfigFileMutex)) {
 				try {
-					XDocument doc = XDocument.Load(GetConfigFile());
+					XDocument doc = LoadWithoutCheckingCharacters(GetConfigFile());
 					return new ILSpySettings(doc.Root);
 				} catch (IOException) {
 					return new ILSpySettings();
 				} catch (XmlException) {
 					return new ILSpySettings();
 				}
+			}
+		}
+		
+		static XDocument LoadWithoutCheckingCharacters(string fileName)
+		{
+			// XDocument.Load(fileName) validates that no invalid characters appear (not even in escaped form),
+			// but we need those characters for some obfuscated assemblies.
+			using (XmlTextReader r = new XmlTextReader(fileName)) {
+				return XDocument.Load(r);
 			}
 		}
 		
@@ -94,7 +104,7 @@ namespace ICSharpCode.ILSpy
 				string config = GetConfigFile();
 				XDocument doc;
 				try {
-					doc = XDocument.Load(config);
+					doc = LoadWithoutCheckingCharacters(config);
 				} catch (IOException) {
 					// ensure the directory exists
 					Directory.CreateDirectory(Path.GetDirectoryName(config));
@@ -104,7 +114,12 @@ namespace ICSharpCode.ILSpy
 				}
 				doc.Root.SetAttributeValue("version", RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
 				action(doc.Root);
-				doc.Save(config);
+				// We can't use XDocument.Save(filename) because that checks for invalid characters, but those can appear
+				// in obfuscated assemblies.
+				using (XmlTextWriter writer = new XmlTextWriter(config, Encoding.UTF8)) {
+					writer.Formatting = Formatting.Indented;
+					doc.Save(writer);
+				}
 			}
 		}
 		
