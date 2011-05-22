@@ -508,6 +508,12 @@ namespace ICSharpCode.ILSpy
 			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
 			if (includeNamespace)
 				options |= ConvertTypeOptions.IncludeNamespace;
+
+			return TypeToString(options, type, typeAttributes);
+		}
+
+		string TypeToString(ConvertTypeOptions options, TypeReference type, ICustomAttributeProvider typeAttributes = null)
+		{
 			AstType astType = AstBuilder.ConvertType(type, typeAttributes, options);
 
 			StringWriter w = new StringWriter();
@@ -555,6 +561,14 @@ namespace ICSharpCode.ILSpy
 				return buffer.ToString();
 			} else
 				return property.Name;
+		}
+		
+		public override string FormatTypeName(TypeDefinition type)
+		{
+			if (type == null)
+				throw new ArgumentNullException("type");
+			
+			return TypeToString(ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
 		}
 
 		public override bool ShowMember(MemberReference member)
