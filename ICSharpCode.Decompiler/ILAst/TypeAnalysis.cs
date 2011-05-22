@@ -292,7 +292,10 @@ namespace ICSharpCode.Decompiler.ILAst
 						ILVariable v = (ILVariable)expr.Operand;
 						if (forceInferChildren) {
 							// do not use 'expectedType' in here!
-							InferTypeForExpression(expr.Arguments.Single(), v.Type);
+							var arg = expr.Arguments.Single();
+							InferTypeForExpression(arg, v.Type);
+							// there is no conversion from int to bool in C# and ldc.i4.0/ldc.i4.1 is used for variable initialization and logic negations (this needs a better solution - a new pass with the fixed variable type)
+							if (IsBoolean(arg.InferredType) && v.Type.MetadataType == MetadataType.Int32) v.Type = arg.ExpectedType = arg.InferredType;
 						}
 						return v.Type;
 					}
@@ -691,16 +694,21 @@ namespace ICSharpCode.Decompiler.ILAst
 					#endregion
 					#region Comparison instructions
 				case ILCode.Ceq:
+				case ILCode.Cne:
 					if (forceInferChildren)
 						InferArgumentsInBinaryOperator(expr, null, null);
 					return typeSystem.Boolean;
 				case ILCode.Clt:
 				case ILCode.Cgt:
+				case ILCode.Cle:
+				case ILCode.Cge:
 					if (forceInferChildren)
 						InferArgumentsInBinaryOperator(expr, true, null);
 					return typeSystem.Boolean;
 				case ILCode.Clt_Un:
 				case ILCode.Cgt_Un:
+				case ILCode.Cle_Un:
+				case ILCode.Cge_Un:
 					if (forceInferChildren)
 						InferArgumentsInBinaryOperator(expr, false, null);
 					return typeSystem.Boolean;

@@ -42,6 +42,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		SimplifyTernaryOperator,
 		SimplifyNullCoalescing,
 		JoinBasicBlocks,
+		SimplifyLogicNot,
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
 		TransformArrayInitializers,
@@ -129,6 +130,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.JoinBasicBlocks) return;
 					modified |= block.RunOptimization(new SimpleControlFlow(context, method).JoinBasicBlocks);
+
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyLogicNot) return;
+					modified |= block.RunOptimization(SimplifyLogicNot);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformDecimalCtorToConstant) return;
 					modified |= block.RunOptimization(TransformDecimalCtorToConstant);
@@ -283,27 +287,30 @@ namespace ICSharpCode.Decompiler.ILAst
 			for (int i = 0; i < block.Body.Count; i++) {
 				ILExpression expr = block.Body[i] as ILExpression;
 				if (expr != null && expr.Prefixes == null) {
+					ILCode op;
 					switch(expr.Code) {
 						case ILCode.Switch:
 						case ILCode.Brtrue:
 							expr.Arguments.Single().ILRanges.AddRange(expr.ILRanges);
 							expr.ILRanges.Clear();
 							continue;
-							case ILCode.__Brfalse:  block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, expr.Arguments.Single())); break;
-							case ILCode.__Beq:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Ceq, null, expr.Arguments)); break;
-							case ILCode.__Bne_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Ceq, null, expr.Arguments))); break;
-							case ILCode.__Bgt:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Cgt, null, expr.Arguments)); break;
-							case ILCode.__Bgt_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Cgt_Un, null, expr.Arguments)); break;
-							case ILCode.__Ble:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Cgt, null, expr.Arguments))); break;
-							case ILCode.__Ble_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Cgt_Un, null, expr.Arguments))); break;
-							case ILCode.__Blt:      block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Clt, null, expr.Arguments)); break;
-							case ILCode.__Blt_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.Clt_Un, null, expr.Arguments)); break;
-							case ILCode.__Bge:	    block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Clt, null, expr.Arguments))); break;
-							case ILCode.__Bge_Un:   block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, new ILExpression(ILCode.LogicNot, null, new ILExpression(ILCode.Clt_Un, null, expr.Arguments))); break;
+							case ILCode.__Brfalse:  op = ILCode.LogicNot; break;
+							case ILCode.__Beq:      op = ILCode.Ceq; break;
+							case ILCode.__Bne_Un:   op = ILCode.Cne; break;
+							case ILCode.__Bgt:      op = ILCode.Cgt; break;
+							case ILCode.__Bgt_Un:   op = ILCode.Cgt_Un; break;
+							case ILCode.__Ble:      op = ILCode.Cle; break;
+							case ILCode.__Ble_Un:   op = ILCode.Cle_Un; break;
+							case ILCode.__Blt:      op = ILCode.Clt; break;
+							case ILCode.__Blt_Un:   op = ILCode.Clt_Un; break;
+							case ILCode.__Bge:	    op = ILCode.Cge; break;
+							case ILCode.__Bge_Un:   op = ILCode.Cge_Un; break;
 						default:
 							continue;
 					}
-					((ILExpression)block.Body[i]).Arguments.Single().ILRanges.AddRange(expr.ILRanges);
+					var newExpr = new ILExpression(op, null, expr.Arguments);
+					block.Body[i] = new ILExpression(ILCode.Brtrue, expr.Operand, newExpr);
+					newExpr.ILRanges = expr.ILRanges;
 				}
 			}
 		}

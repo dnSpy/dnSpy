@@ -821,5 +821,65 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		#endregion
+
+		#region SimplifyLogicNot
+		static bool SimplifyLogicNot(List<ILNode> body, ILExpression expr, int pos)
+		{
+			bool modified = false;
+			expr = SimplifyLogicNot(expr, ref modified);
+			Debug.Assert(expr == null);
+			return modified;
+		}
+
+		static ILExpression SimplifyLogicNot(ILExpression expr, ref bool modified)
+		{
+			if (expr.Code == ILCode.Ceq) {
+				var a = expr.Arguments[1];
+				if (a.Code == ILCode.Ldc_I4 && TypeAnalysis.IsBoolean(a.InferredType) && TypeAnalysis.IsBoolean(expr.Arguments[0].InferredType)) {
+					expr.Code = ILCode.LogicNot;
+					expr.ILRanges.AddRange(a.ILRanges);
+					expr.Arguments.RemoveAt(1);
+					modified = true;
+				}
+			}
+			ILExpression res = null;
+			while (expr.Code == ILCode.LogicNot) {
+				var a = expr.Arguments[0];
+				ILCode c = 0;
+				switch (a.Code) {
+					case ILCode.LogicNot:
+						res = a.Arguments[0];
+						res.ILRanges.AddRange(expr.ILRanges);
+						res.ILRanges.AddRange(a.ILRanges);
+						expr = res;
+						continue;
+					case ILCode.Ceq: c = ILCode.Cne; break;
+					case ILCode.Cne: c = ILCode.Ceq; break;
+					case ILCode.Cgt: c = ILCode.Cle; break;
+					case ILCode.Cgt_Un: c = ILCode.Cle_Un; break;
+					case ILCode.Cge: c = ILCode.Clt; break;
+					case ILCode.Cge_Un: c = ILCode.Clt_Un; break;
+					case ILCode.Clt: c = ILCode.Cge; break;
+					case ILCode.Clt_Un: c = ILCode.Cge_Un; break;
+					case ILCode.Cle: c = ILCode.Cgt; break;
+					case ILCode.Cle_Un: c = ILCode.Cgt_Un; break;
+				}
+				if (c == 0) break;
+				res = a;
+				res.Code = c;
+				res.ILRanges.AddRange(expr.ILRanges);
+				expr = res;
+				break;
+			}
+			for (int i = 0; i < expr.Arguments.Count; i++) {
+				var a = SimplifyLogicNot(expr.Arguments[i], ref modified);
+				if (a != null) {
+					expr.Arguments[i] = a;
+					modified = true;
+				}
+			}
+			return res;
+		}
+		#endregion
 	}
 }

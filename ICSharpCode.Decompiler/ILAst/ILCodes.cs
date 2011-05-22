@@ -247,6 +247,11 @@ namespace ICSharpCode.Decompiler.ILAst
 		Readonly,
 		
 		// Virtual codes - defined for convenience
+		Cne,
+		Cge,
+		Cge_Un,
+		Cle,
+		Cle_Un,
 		Ldexception,  // Operand holds the CatchType for catch handler, null for filter
 		LogicNot,
 		LogicAnd,
