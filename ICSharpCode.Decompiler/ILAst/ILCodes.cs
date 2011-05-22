@@ -258,6 +258,11 @@ namespace ICSharpCode.Decompiler.ILAst
 		LogicOr,
 		NullCoalescing,
 		InitArray, // Array Initializer
+
+		/// <summary>
+		/// Defines a barrier between the parent opcode and argument opcode that prevents combining them
+		/// </summary>
+		Wrap,
 		
 		// new Class { Prop = 1, Collection = { { 2, 3 }, {4, 5} }}
 		// is represented as:

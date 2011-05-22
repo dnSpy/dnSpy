@@ -325,10 +325,11 @@ namespace ICSharpCode.Decompiler.ILAst
 					var pm = new PatternMatcher();
 					if (!pm.Match(ps[i], expr)) continue;
 					var n = pm.BuildNew(OperatorVariableAB, expr);
-					expr.Code = n.Code;
-					expr.Operand = n.Operand;
-					expr.Arguments = n.Arguments;
-					expr.ILRanges = n.ILRanges;
+					expr.Code = ILCode.Wrap;
+					expr.Operand = null;
+					expr.Arguments.Clear();
+					expr.Arguments.Add(n);
+					expr.ILRanges.Clear();
 					expr.InferredType = n.InferredType;
 					return true;
 				}

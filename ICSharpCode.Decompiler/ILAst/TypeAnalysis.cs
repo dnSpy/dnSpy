@@ -749,6 +749,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					#endregion
 				case ILCode.Pop:
 					return null;
+				case ILCode.Wrap:
 				case ILCode.Dup:
 					return InferTypeForExpression(expr.Arguments.Single(), expectedType);
 				default:
