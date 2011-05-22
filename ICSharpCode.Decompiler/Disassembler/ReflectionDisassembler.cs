@@ -335,7 +335,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(na.Name));
 			output.Write(" = ");
-			WriteConstant(na.Argument.Value);
+			if (na.Argument.Value is string) {
+				// secdecls use special syntax for strings
+				output.Write("string('{0}')", NRefactory.CSharp.OutputVisitor.ConvertString((string)na.Argument.Value).Replace("'", "\'"));
+			} else {
+				WriteConstant(na.Argument.Value);
+			}
 		}
 		
 		string GetAssemblyQualifiedName(TypeReference type)

@@ -156,14 +156,21 @@ namespace ICSharpCode.Decompiler.Disassembler
 			writer.WriteReference(Escape(field.Name), field);
 		}
 		
+		static bool IsValidIdentifierCharacter(char c)
+		{
+			return c == '_' || c == '$' || c == '@' || c == '?' || c == '`';
+		}
+		
 		static bool IsValidIdentifier(string identifier)
 		{
 			if (string.IsNullOrEmpty(identifier))
 				return false;
-			if (!(char.IsLetter(identifier[0]) || identifier[0] == '_' || identifier[0] == '.'))
-				return false;
+			if (!(char.IsLetter(identifier[0]) || IsValidIdentifierCharacter(identifier[0]))) {
+				// As a special case, .ctor and .cctor are valid despite starting with a dot
+				return identifier == ".ctor" || identifier == ".cctor";
+			}
 			for (int i = 1; i < identifier.Length; i++) {
-				if (!(char.IsLetterOrDigit(identifier[i]) || identifier[i] == '_' || identifier[i] == '.' || identifier[i] == '`'))
+				if (!(char.IsLetterOrDigit(identifier[i]) || IsValidIdentifierCharacter(identifier[i]) || identifier[i] == '.'))
 					return false;
 			}
 			return true;
@@ -196,7 +203,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			"vararg", "variant", "vector", "virtual", "void", "wchar", "winapi", "with", "wrapper",
 			
 			// These are not listed as keywords in spec, but ILAsm treats them as such
-			"property", "type", "flags", "callconv"
+			"property", "type", "flags", "callconv", "strict"
 		);
 		
 		static HashSet<string> BuildKeywordList(params string[] keywords)
@@ -210,10 +217,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public static string Escape(string identifier)
 		{
-			if (IsValidIdentifier(identifier) && !ilKeywords.Contains(identifier))
+			if (IsValidIdentifier(identifier) && !ilKeywords.Contains(identifier)) {
 				return identifier;
-			else
+			} else {
+				// The ECMA specification says that ' inside SQString should be ecaped using an octal escape sequence,
+				// but we follow Microsoft's ILDasm and use \'.
 				return "'" + NRefactory.CSharp.OutputVisitor.ConvertString(identifier).Replace("'", "\\'") + "'";
+			}
 		}
 		
 		public static void WriteTo(this TypeReference type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
