@@ -29,6 +29,11 @@ public static class CustomShortCircuitOperators
 		{
 			return null;
 		}
+		
+		public static bool operator !(CustomShortCircuitOperators.C x)
+		{
+			return false;
+		}
 
 		private static void Main()
 		{
@@ -38,6 +43,33 @@ public static class CustomShortCircuitOperators
 			CustomShortCircuitOperators.C c4 = c || c2;
 			Console.WriteLine(c3.ToString());
 			Console.WriteLine(c4.ToString());
+		}
+		
+		private static void Test2()
+		{
+			CustomShortCircuitOperators.C c = new CustomShortCircuitOperators.C();
+			if (c && c)
+			{
+				Console.WriteLine(c.ToString());
+			}
+			
+			if (!(c && c))
+			{
+				Console.WriteLine(c.ToString());
+			}
+		}
+		
+		private static void Test3()
+		{
+			CustomShortCircuitOperators.C c = new CustomShortCircuitOperators.C();
+			if (c)
+			{
+				Console.WriteLine(c.ToString());
+			}
+			if (!c)
+			{
+				Console.WriteLine(c.ToString());
+			}
 		}
 	}
 }
