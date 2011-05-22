@@ -38,7 +38,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		/// </summary>
 		TypeName,
 		/// <summary>
-		/// Name (even for built-in types)
+		/// Name (but built-in types use keyword syntax)
 		/// </summary>
 		ShortTypeName
 	}
@@ -275,7 +275,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			} else {
 				string name = PrimitiveTypeName(type.FullName);
 				if (syntax == ILNameSyntax.ShortTypeName) {
-					writer.WriteReference(Escape(type.Name), type);
+					if (name != null)
+						writer.Write(name);
+					else
+						writer.WriteReference(Escape(type.Name), type);
 				} else if ((syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters) && name != null) {
 					writer.Write(name);
 				} else {

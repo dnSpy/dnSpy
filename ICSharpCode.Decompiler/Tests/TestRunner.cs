@@ -37,7 +37,7 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\DelegateConstruction.cs");
 		}
 		
-		[Test, Ignore("arg-Variables in catch clauses")]
+		[Test]
 		public void ExceptionHandling()
 		{
 			TestFile(@"..\..\Tests\ExceptionHandling.cs");

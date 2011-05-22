@@ -56,9 +56,9 @@ public class ExceptionHandling
 		{
 			Console.WriteLine(ex.Message);
 		}
-		catch (Exception ex)
+		catch (Exception ex2)
 		{
-			Console.WriteLine(ex.Message);
+			Console.WriteLine(ex2.Message);
 		}
 		catch
 		{

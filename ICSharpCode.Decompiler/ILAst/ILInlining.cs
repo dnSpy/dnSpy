@@ -47,7 +47,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			numLdloca.Clear();
 			
 			// Analyse the whole method
-			foreach(ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+			AnalyzeNode(method);
+		}
+		
+		void AnalyzeNode(ILNode node)
+		{
+			ILExpression expr = node as ILExpression;
+			if (expr != null) {
 				ILVariable locVar = expr.Operand as ILVariable;
 				if (locVar != null) {
 					if (expr.Code == ILCode.Stloc) {
@@ -60,6 +66,16 @@ namespace ICSharpCode.Decompiler.ILAst
 						throw new NotSupportedException(expr.Code.ToString());
 					}
 				}
+				foreach (ILExpression child in expr.Arguments)
+					AnalyzeNode(child);
+			} else {
+				var catchBlock = node as ILTryCatchBlock.CatchBlock;
+				if (catchBlock != null && catchBlock.ExceptionVariable != null) {
+					numStloc[catchBlock.ExceptionVariable] = numStloc.GetOrDefault(catchBlock.ExceptionVariable) + 1;
+				}
+				
+				foreach (ILNode child in node.GetChildren())
+					AnalyzeNode(child);
 			}
 		}
 		
@@ -76,6 +92,20 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			bool modified = false;
 			List<ILNode> body = block.Body;
+			if (block is ILTryCatchBlock.CatchBlock && body.Count > 1) {
+				ILVariable v = ((ILTryCatchBlock.CatchBlock)block).ExceptionVariable;
+				if (v != null && v.IsGenerated) {
+					if (numLdloca.GetOrDefault(v) == 0 && numStloc.GetOrDefault(v) == 1 && numLdloc.GetOrDefault(v) == 1) {
+						ILVariable v2;
+						ILExpression ldException;
+						if (body[0].Match(ILCode.Stloc, out v2, out ldException) && ldException.MatchLdloc(v)) {
+							body.RemoveAt(0);
+							((ILTryCatchBlock.CatchBlock)block).ExceptionVariable = v2;
+							modified = true;
+						}
+					}
+				}
+			}
 			for(int i = 0; i < body.Count - 1;) {
 				ILVariable locVar;
 				ILExpression expr;
