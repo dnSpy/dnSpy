@@ -50,6 +50,12 @@ namespace ICSharpCode.Decompiler.Tests
 		}
 		
 		[Test]
+		public void CustomShortCircuitOperators()
+		{
+			TestFile(@"..\..\Tests\CustomShortCircuitOperators.cs");
+		}
+		
+		[Test]
 		public void IncrementDecrement()
 		{
 			TestFile(@"..\..\Tests\IncrementDecrement.cs");

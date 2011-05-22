@@ -267,6 +267,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					return typeSystem.Boolean;
 				case ILCode.LogicAnd:
 				case ILCode.LogicOr:
+					// if Operand is set the logic and/or expression is a custom operator
+					// we can deal with it the same as a normal invocation.
+					if (expr.Operand != null)
+						goto case ILCode.Call;
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Boolean);

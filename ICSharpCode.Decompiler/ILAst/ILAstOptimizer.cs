@@ -44,6 +44,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		JoinBasicBlocks,
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
+		SimplifyCustomShortCircuit,
 		TransformArrayInitializers,
 		TransformObjectInitializers,
 		MakeAssignmentExpression,
@@ -135,6 +136,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyLdObjAndStObj) return;
 					modified |= block.RunOptimization(SimplifyLdObjAndStObj);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyCustomShortCircuit) return;
+					modified |= block.RunOptimization(new SimpleControlFlow(context, method).SimplifyCustomShortCircuit);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
 					modified |= block.RunOptimization(TransformArrayInitializers);

@@ -115,7 +115,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicAnd, condExpr, trueExpr);
 					}
 				} else {
-					// Ternary operator tends to create long complicated return statements					
+					// Ternary operator tends to create long complicated return statements
 					if (opCode == ILCode.Ret)
 						return false;
 					
@@ -156,7 +156,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			// ...
 			// v = NullCoalescing(ldloc(leftVar), rightExpr)
 			// br(endBBLabel)
-				
+			
 			ILVariable v, v2;
 			ILExpression leftExpr, leftExpr2;
 			ILVariable leftVar;
@@ -165,7 +165,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILBasicBlock rightBB;
 			ILExpression rightExpr;
 			if (head.Body.Count >= 3 &&
-				head.Body[head.Body.Count - 3].Match(ILCode.Stloc, out v, out leftExpr) &&
+			    head.Body[head.Body.Count - 3].Match(ILCode.Stloc, out v, out leftExpr) &&
 			    leftExpr.Match(ILCode.Ldloc, out leftVar) &&
 			    head.MatchLastAndBr(ILCode.Brtrue, out endBBLabel, out leftExpr2, out rightBBLabel) &&
 			    leftExpr2.MatchLdloc(leftVar) &&
@@ -232,6 +232,84 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 			return false;
+		}
+		
+		public bool SimplifyCustomShortCircuit(List<ILNode> body, ILBasicBlock head, int pos)
+		{
+			Debug.Assert(body.Contains(head));
+			
+			// --- looking for the following pattern ---
+			// stloc(targetVar, leftVar)
+			// brtrue(exitLabel, call(op_False, leftVar)
+			// br(followingBlock)
+			//
+			// FollowingBlock:
+			// stloc(targetVar, call(op_BitwiseAnd, leftVar, rightExpression))
+			// br(exitLabel)
+			// ---
+			
+			if (head.Body.Count < 3)
+				return false;
+			
+			// looking for:
+			// stloc(targetVar, leftVar)
+			ILVariable targetVar;
+			ILExpression targetVarInitExpr;
+			if (!head.Body[head.Body.Count - 3].Match(ILCode.Stloc, out targetVar, out targetVarInitExpr))
+				return false;
+			
+			// looking for:
+			// brtrue(exitLabel, call(op_False, leftVar)
+			// br(followingBlock)
+			ILExpression callExpr;
+			ILLabel exitLabel;
+			ILLabel followingBlock;
+			if(!head.MatchLastAndBr(ILCode.Brtrue, out exitLabel, out callExpr, out followingBlock))
+				return false;
+			
+			MethodDefinition opFalse;
+			ILExpression leftVar;
+			if (!callExpr.Match(ILCode.Call, out opFalse, out leftVar))
+				return false;
+			
+			if (!leftVar.MatchLdloc(targetVarInitExpr.Operand as ILVariable))
+				return false;
+			
+			ILBasicBlock followingBasicBlock = labelToBasicBlock[followingBlock];
+			
+			// FollowingBlock:
+			// stloc(targetVar, call(op_BitwiseAnd, leftVar, rightExpression))
+			// br(exitLabel)
+			ILVariable _targetVar;
+			ILExpression opBitwiseCallExpr;
+			ILLabel _exitLabel;
+			if (!followingBasicBlock.MatchSingleAndBr(ILCode.Stloc, out _targetVar, out opBitwiseCallExpr, out _exitLabel))
+				return false;
+			
+			if (_targetVar != targetVar)
+				return false;
+			
+			MethodDefinition opBitwise;
+			ILExpression leftVarExpression;
+			ILExpression rightExpression;
+			if (!opBitwiseCallExpr.Match(ILCode.Call, out opBitwise, out leftVarExpression, out rightExpression))
+				return false;
+			
+			if (!leftVar.MatchLdloc(leftVarExpression.Operand as ILVariable))
+				return false;
+			
+			// insert:
+			// stloc(targetVar, LogicAnd(C::op_BitwiseAnd, leftVar, rightExpression)
+			// br(exitLabel)
+			ILExpression shortCircuitExpr = MakeLeftAssociativeShortCircuit(opBitwise.Name == "op_BitwiseAnd" ? ILCode.LogicAnd : ILCode.LogicOr, leftVar, rightExpression);
+			shortCircuitExpr.Operand = opBitwise;
+			
+			head.Body.RemoveTail(ILCode.Stloc, ILCode.Brtrue, ILCode.Br);
+			head.Body.Add(new ILExpression(ILCode.Stloc, targetVar, shortCircuitExpr));
+			head.Body.Add(new ILExpression(ILCode.Br, exitLabel));
+			body.Remove(followingBasicBlock);
+			
+			return true;
 		}
 		
 		ILExpression MakeLeftAssociativeShortCircuit(ILCode code, ILExpression left, ILExpression right)
