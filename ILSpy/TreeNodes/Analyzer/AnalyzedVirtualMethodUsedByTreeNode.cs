@@ -17,37 +17,38 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using ICSharpCode.Decompiler.Ast;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedTypeInstantiationsTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedVirtualMethodUsedByTreeNode : AnalyzerTreeNode
 	{
-		private readonly TypeDefinition analyzedType;
+		private readonly MethodDefinition analyzedMethod;
 		private readonly ThreadingSupport threading;
-		private readonly bool isSystemObject;
+		private ConcurrentDictionary<MethodDefinition, int> foundMethods;
+		private MethodDefinition baseMethod;
+		private List<TypeReference> possibleTypes;
 
-		public AnalyzedTypeInstantiationsTreeNode(TypeDefinition analyzedType)
+		public AnalyzedVirtualMethodUsedByTreeNode(MethodDefinition analyzedMethod)
 		{
-			if (analyzedType == null)
-				throw new ArgumentNullException("analyzedType");
+			if (analyzedMethod == null)
+				throw new ArgumentNullException("analyzedMethod");
 
-			this.analyzedType = analyzedType;
+			this.analyzedMethod = analyzedMethod;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
-
-			this.isSystemObject = (analyzedType.FullName == "System.Object");
 		}
 
 		public override object Text
 		{
-			get { return "Instantiated By"; }
+			get { return "Used By"; }
 		}
 
 		public override object Icon
@@ -71,29 +72,60 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
+			InitializeAnalyzer();
 
-			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedType, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct);
+			var analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
+			foreach (var child in analyzer.PerformAnalysis(ct)) {
+				yield return child;
+			}
+
+			ReleaseAnalyzer();
+		}
+
+		private void InitializeAnalyzer()
+		{
+			foundMethods = new ConcurrentDictionary<MethodDefinition, int>();
+
+			var BaseMethods = TypesHierarchyHelpers.FindBaseMethods(analyzedMethod).ToArray();
+			if (BaseMethods.Length > 0) {
+				baseMethod = BaseMethods[BaseMethods.Length - 1];
+			}
+
+			possibleTypes = new List<TypeReference>();
+
+			TypeReference type = analyzedMethod.DeclaringType.BaseType;
+			while (type !=null)
+			{
+				possibleTypes.Add(type);
+				type = type.Resolve().BaseType;
+			}
+		}
+
+		private void ReleaseAnalyzer()
+		{
+			foundMethods = null;
+			baseMethod = null;
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
+			string name = analyzedMethod.Name;
 			foreach (MethodDefinition method in type.Methods) {
 				bool found = false;
+				string prefix = string.Empty;
 				if (!method.HasBody)
 					continue;
-
-				// ignore chained constructors
-				// (since object is the root of everything, we can short circuit the test in this case)
-				if (method.Name == ".ctor" &&
-					(isSystemObject || analyzedType == type || TypesHierarchyHelpers.IsBaseType(analyzedType, type, false)))
-					continue;
-
 				foreach (Instruction instr in method.Body.Instructions) {
 					MethodReference mr = instr.Operand as MethodReference;
-					if (mr != null && mr.Name == ".ctor") {
-						if (Helpers.IsReferencedBy(analyzedType, mr.DeclaringType)) {
+					if (mr != null && mr.Name == name) {
+						// explicit call to the requested method 
+						if (Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) && mr.Resolve() == analyzedMethod) {
+							found = true;
+							prefix = "(as base) ";
+							break;
+						}
+						// virtual call to base method
+						if (instr.OpCode.Code == Code.Callvirt && Helpers.IsReferencedBy(baseMethod.DeclaringType, mr.DeclaringType) && mr.Resolve() == baseMethod) {
 							found = true;
 							break;
 						}
@@ -102,17 +134,18 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 				method.Body = null;
 
-				if (found)
-					yield return new AnalyzedMethodTreeNode(method);
+				if (found) {
+					MethodDefinition codeLocation = this.Language.GetOriginalCodeLocation(method) as MethodDefinition;
+					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
+						yield return new AnalyzedMethodTreeNode(codeLocation, prefix);
+					}
+				}
 			}
 		}
 
-		public static bool CanShow(TypeDefinition type)
+		private bool HasAlreadyBeenFound(MethodDefinition method)
 		{
-			if (type.IsClass && !type.IsEnum) {
-				return type.Methods.Where(m => m.Name == ".ctor").Any(m => !m.IsPrivate);
-			}
-			return false;
+			return !foundMethods.TryAdd(method, 0);
 		}
 	}
 }

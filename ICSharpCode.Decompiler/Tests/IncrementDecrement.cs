@@ -176,6 +176,12 @@ public class IncrementDecrement
 		return i++ + j;
 	}
 	
+	public void PostIncrementInlineLocalVariable(Func<int, int> f)
+	{
+		int num = 0;
+		f(num++);
+	}
+	
 	public int PostIncrementArrayElement(int[] array, int pos)
 	{
 		return array[pos]--;

@@ -60,6 +60,12 @@ public static class Generics
 		}
 	}
 	
+	private static Type type1 = typeof(List<>);
+	private static Type type2 = typeof(Generics.MyArray<>);
+	private static Type type3 = typeof(List<>.Enumerator);
+	private static Type type4 = typeof(Generics.MyArray<>.NestedClass<>);
+	private static Type type5 = typeof(List<int>[]);
+	
 	public static void MethodWithConstraint<T, S>() where T : class, S where S : ICloneable, new()
 	{
 	}

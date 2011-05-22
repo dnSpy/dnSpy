@@ -68,36 +68,25 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			return FindReferences(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), ct);
+			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
+
+			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedEvent, FindReferencesInType);
+			return analyzer.PerformAnalysis(ct);
 		}
 
-		private IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			assemblies = assemblies.Where(asm => asm.AssemblyDefinition != null);
-
-			// use parallelism only on the assembly level (avoid locks within Cecil)
-			return assemblies.AsParallel().WithCancellation(ct).SelectMany((LoadedAssembly asm) => FindReferences(asm, ct));
-		}
-
-		private IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
-		{
-			string asmName = asm.AssemblyDefinition.Name.Name;
 			string name = analyzedEvent.Name;
 			string declTypeName = analyzedEvent.DeclaringType.FullName;
-			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
-				ct.ThrowIfCancellationRequested();
 
-				if (!TypesHierarchyHelpers.IsBaseType(analyzedEvent.DeclaringType, type, resolveTypeArguments: false))
-					continue;
+			if (!TypesHierarchyHelpers.IsBaseType(analyzedEvent.DeclaringType, type, resolveTypeArguments: false))
+				yield break;
 
-				foreach (EventDefinition eventDef in type.Events) {
-					ct.ThrowIfCancellationRequested();
-
-					if (TypesHierarchyHelpers.IsBaseEvent(analyzedEvent, eventDef)) {
-						MethodDefinition anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-						bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-						yield return new AnalyzedEventTreeNode(eventDef, hidesParent ? "(hides) " : "");
-					}
+			foreach (EventDefinition eventDef in type.Events) {
+				if (TypesHierarchyHelpers.IsBaseEvent(analyzedEvent, eventDef)) {
+					MethodDefinition anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
+					bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
+					yield return new AnalyzedEventTreeNode(eventDef, hidesParent ? "(hides) " : "");
 				}
 			}
 		}

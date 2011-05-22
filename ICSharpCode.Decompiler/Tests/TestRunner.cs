@@ -37,7 +37,7 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\DelegateConstruction.cs");
 		}
 		
-		[Test, Ignore("arg-Variables in catch clauses")]
+		[Test]
 		public void ExceptionHandling()
 		{
 			TestFile(@"..\..\Tests\ExceptionHandling.cs");
@@ -47,6 +47,12 @@ namespace ICSharpCode.Decompiler.Tests
 		public void Generics()
 		{
 			TestFile(@"..\..\Tests\Generics.cs");
+		}
+		
+		[Test]
+		public void CustomShortCircuitOperators()
+		{
+			TestFile(@"..\..\Tests\CustomShortCircuitOperators.cs");
 		}
 		
 		[Test]
@@ -71,6 +77,12 @@ namespace ICSharpCode.Decompiler.Tests
 		public void MultidimensionalArray()
 		{
 			TestFile(@"..\..\Tests\MultidimensionalArray.cs");
+		}
+		
+		[Test]
+		public void PInvoke()
+		{
+			TestFile(@"..\..\Tests\PInvoke.cs");
 		}
 		
 		[Test]

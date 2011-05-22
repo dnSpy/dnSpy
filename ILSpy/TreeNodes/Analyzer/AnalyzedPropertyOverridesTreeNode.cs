@@ -69,45 +69,27 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			return FindReferences(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), ct);
+			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
+
+			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedProperty, FindReferencesInType);
+			return analyzer.PerformAnalysis(ct);
 		}
 
-		private IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			assemblies = assemblies.Where(asm => asm.AssemblyDefinition != null);
-
-			// use parallelism only on the assembly level (avoid locks within Cecil)
-			return assemblies.AsParallel().WithCancellation(ct).SelectMany((LoadedAssembly asm) => FindReferences(asm, ct));
-		}
-
-		private IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
-		{
-			string asmName = asm.AssemblyDefinition.Name.Name;
 			string name = analyzedProperty.Name;
 			string declTypeName = analyzedProperty.DeclaringType.FullName;
-			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
-				ct.ThrowIfCancellationRequested();
 
-				SharpTreeNode newNode = null;
-				try {
-					if (!TypesHierarchyHelpers.IsBaseType(analyzedProperty.DeclaringType, type, resolveTypeArguments: false))
-						continue;
+			if (!TypesHierarchyHelpers.IsBaseType(analyzedProperty.DeclaringType, type, resolveTypeArguments: false))
+				yield break;
 
-					foreach (PropertyDefinition property in type.Properties) {
-						ct.ThrowIfCancellationRequested();
+			foreach (PropertyDefinition property in type.Properties) {
 
-						if (TypesHierarchyHelpers.IsBaseProperty(analyzedProperty, property)) {
-							MethodDefinition anyAccessor = property.GetMethod ?? property.SetMethod;
-							bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-							newNode = new AnalyzedPropertyTreeNode(property, hidesParent ? "(hides) " : "");
-						}
-					}
+				if (TypesHierarchyHelpers.IsBaseProperty(analyzedProperty, property)) {
+					MethodDefinition anyAccessor = property.GetMethod ?? property.SetMethod;
+					bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
+					yield return new AnalyzedPropertyTreeNode(property, hidesParent ? "(hides) " : "");
 				}
-				catch (ReferenceResolvingException) {
-					// ignore this type definition.
-				}
-				if (newNode != null)
-					yield return newNode;
 			}
 		}
 

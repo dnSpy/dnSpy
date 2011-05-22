@@ -117,6 +117,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
+		public override bool CanExpandRecursively {
+			get { return true; }
+		}
+		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.DecompileType(type, output, options);
@@ -146,8 +150,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			} else {
 				if (type.IsInterface)
 					return TypeIcon.Interface;
-				else if (type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName)
+				else if (IsDelegate(type))
 					return TypeIcon.Delegate;
+				else if (IsStaticClass(type))
+					return TypeIcon.StaticClass;
 				else
 					return TypeIcon.Class;
 			}
@@ -178,6 +184,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return overlay;
 		}
+
+		private static bool IsDelegate(TypeDefinition type)
+		{
+			return type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName;
+		}
+
+		private static bool IsStaticClass(TypeDefinition type)
+		{
+			return type.IsSealed && type.IsAbstract;
+		}
+
 		#endregion
 		
 		MemberReference IMemberTreeNode.Member {

@@ -95,7 +95,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 							ext = ".xml";
 						else
 							ext = Path.GetExtension(DecompilerTextView.CleanUpName(er.Name));
-						textView.Show(output, HighlightingManager.Instance.GetDefinitionByExtension(ext));
+						textView.ShowNode(output, this, HighlightingManager.Instance.GetDefinitionByExtension(ext));
 						return true;
 					}
 				}

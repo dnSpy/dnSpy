@@ -73,45 +73,32 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			return FindReferences(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), ct);
+			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
+
+			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
+			return analyzer.PerformAnalysis(ct);
 		}
 
-		private IEnumerable<SharpTreeNode> FindReferences(IEnumerable<LoadedAssembly> assemblies, CancellationToken ct)
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			assemblies = assemblies.Where(asm => asm.AssemblyDefinition != null);
+			SharpTreeNode newNode = null;
+			try {
+				if (!TypesHierarchyHelpers.IsBaseType(analyzedMethod.DeclaringType, type, resolveTypeArguments: false))
+					yield break;
 
-			// use parallelism only on the assembly level (avoid locks within Cecil)
-			return assemblies.AsParallel().WithCancellation(ct).SelectMany((LoadedAssembly asm) => FindReferences(asm, ct));
-		}
-
-		private IEnumerable<SharpTreeNode> FindReferences(LoadedAssembly asm, CancellationToken ct)
-		{
-			string asmName = asm.AssemblyDefinition.Name.Name;
-			string name = analyzedMethod.Name;
-			string declTypeName = analyzedMethod.DeclaringType.FullName;
-			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.AssemblyDefinition.MainModule.Types, t => t.NestedTypes)) {
-				ct.ThrowIfCancellationRequested();
-				SharpTreeNode newNode = null;
-				try {
-					if (!TypesHierarchyHelpers.IsBaseType(analyzedMethod.DeclaringType, type, resolveTypeArguments: false))
-						continue;
-
-					foreach (MethodDefinition method in type.Methods) {
-						ct.ThrowIfCancellationRequested();
-
-						if (TypesHierarchyHelpers.IsBaseMethod(analyzedMethod, method)) {
-							bool hidesParent = !method.IsVirtual ^ method.IsNewSlot;
-							newNode = new AnalyzedMethodTreeNode(method, hidesParent ? "(hides) " : "");
-						}
+				foreach (MethodDefinition method in type.Methods) {
+					if (TypesHierarchyHelpers.IsBaseMethod(analyzedMethod, method)) {
+						bool hidesParent = !method.IsVirtual ^ method.IsNewSlot;
+						newNode = new AnalyzedMethodTreeNode(method, hidesParent ? "(hides) " : "");
 					}
 				}
-				catch (ReferenceResolvingException) {
-					// ignore this type definition. maybe add a notification about such cases.
-				}
-
-				if (newNode != null)
-					yield return newNode;
 			}
+			catch (ReferenceResolvingException) {
+				// ignore this type definition. maybe add a notification about such cases.
+			}
+
+			if (newNode != null)
+				yield return newNode;
 		}
 
 		public static bool CanShow(MethodDefinition method)

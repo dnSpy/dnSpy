@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	/// <summary>
 	/// Determines the accessibility domain of a member for where-used analysis.
 	/// </summary>
-	internal class ScopedWhereUsedScopeAnalyzer<T>
+	internal class ScopedWhereUsedAnalyzer<T>
 	{
 		private AssemblyDefinition assemblyScope;
 		private TypeDefinition typeScope;
@@ -37,40 +37,36 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private Accessibility typeAccessibility = Accessibility.Public;
 		private Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction;
 
-		public ScopedWhereUsedScopeAnalyzer(TypeDefinition type, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+		public ScopedWhereUsedAnalyzer(TypeDefinition type, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
 		{
 			this.typeScope = type;
 			this.assemblyScope = type.Module.Assembly;
 			this.typeAnalysisFunction = typeAnalysisFunction;
 		}
 
-		public ScopedWhereUsedScopeAnalyzer(MethodDefinition method, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+		public ScopedWhereUsedAnalyzer(MethodDefinition method, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
 			: this(method.DeclaringType, typeAnalysisFunction)
 		{
-			switch (method.Attributes & MethodAttributes.MemberAccessMask) {
-				case MethodAttributes.Private:
-				default:
-					memberAccessibility = Accessibility.Private;
-					break;
-				case MethodAttributes.FamANDAssem:
-					memberAccessibility = Accessibility.FamilyAndInternal;
-					break;
-				case MethodAttributes.Family:
-					memberAccessibility = Accessibility.Family;
-					break;
-				case MethodAttributes.Assembly:
-					memberAccessibility = Accessibility.Internal;
-					break;
-				case MethodAttributes.FamORAssem:
-					memberAccessibility = Accessibility.FamilyOrInternal;
-					break;
-				case MethodAttributes.Public:
-					memberAccessibility = Accessibility.Public;
-					break;
-			}
+			this.memberAccessibility = GetMethodAccessibility(method);
 		}
 
-		public ScopedWhereUsedScopeAnalyzer(FieldDefinition field, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+		public ScopedWhereUsedAnalyzer(PropertyDefinition property, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+			: this(property.DeclaringType, typeAnalysisFunction)
+		{
+			Accessibility getterAccessibility = (property.GetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
+			Accessibility setterAccessibility = (property.SetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.SetMethod);
+			this.memberAccessibility = (Accessibility)Math.Max((int)getterAccessibility, (int)setterAccessibility);
+		}
+
+		public ScopedWhereUsedAnalyzer(EventDefinition eventDef, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
+			: this(eventDef.DeclaringType, typeAnalysisFunction)
+		{
+			// we only have to check the accessibility of the the get method
+			// [CLS Rule 30: The accessibility of an event and of its accessors shall be identical.]
+			this.memberAccessibility = GetMethodAccessibility(eventDef.AddMethod);
+		}
+
+		public ScopedWhereUsedAnalyzer(FieldDefinition field, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
 			: this(field.DeclaringType, typeAnalysisFunction)
 		{
 			switch (field.Attributes & FieldAttributes.FieldAccessMask) {
@@ -94,6 +90,33 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					memberAccessibility = Accessibility.Public;
 					break;
 			}
+		}
+
+		private Accessibility GetMethodAccessibility(MethodDefinition method)
+		{
+			Accessibility accessibility;
+			switch (method.Attributes & MethodAttributes.MemberAccessMask) {
+				case MethodAttributes.Private:
+				default:
+					accessibility = Accessibility.Private;
+					break;
+				case MethodAttributes.FamANDAssem:
+					accessibility = Accessibility.FamilyAndInternal;
+					break;
+				case MethodAttributes.Family:
+					accessibility = Accessibility.Family;
+					break;
+				case MethodAttributes.Assembly:
+					accessibility = Accessibility.Internal;
+					break;
+				case MethodAttributes.FamORAssem:
+					accessibility = Accessibility.FamilyOrInternal;
+					break;
+				case MethodAttributes.Public:
+					accessibility = Accessibility.Public;
+					break;
+			}
+			return accessibility;
 		}
 
 		public IEnumerable<T> PerformAnalysis(CancellationToken ct)
@@ -231,7 +254,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 						break;
 					}
 				}
-				if (found)
+				if (found && AssemblyReferencesScopeType(assembly.AssemblyDefinition))
 					yield return assembly.AssemblyDefinition;
 			}
 		}
@@ -255,12 +278,24 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.ShortName)) {
+						if (friendAssemblies.Contains(assembly.ShortName) && AssemblyReferencesScopeType(assembly.AssemblyDefinition)) {
 							yield return assembly.AssemblyDefinition;
 						}
 					}
 				}
 			}
+		}
+
+		private bool AssemblyReferencesScopeType(AssemblyDefinition asm)
+		{
+			bool hasRef = false;
+			foreach (var typeref in asm.MainModule.GetTypeReferences()) {
+				if (typeref.Name == typeScope.Name && typeref.Namespace == typeScope.Namespace) {
+					hasRef = true;
+					break;
+				}
+			}
+			return hasRef;
 		}
 	}
 }

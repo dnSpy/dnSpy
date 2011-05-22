@@ -227,9 +227,26 @@ namespace ICSharpCode.TreeView
 						e.Handled = true;
 					}
 					break;
+				case Key.Multiply:
+					if (container != null && ItemsControl.ItemsControlFromItemContainer(container) == this) {
+						container.Node.IsExpanded = true;
+						ExpandRecursively(container.Node);
+						e.Handled = true;
+					}
+					break;
 			}
 			if (!e.Handled)
 				base.OnKeyDown(e);
+		}
+		
+		void ExpandRecursively(SharpTreeNode node)
+		{
+			if (node.CanExpandRecursively) {
+				node.IsExpanded = true;
+				foreach (SharpTreeNode child in node.Children) {
+					ExpandRecursively(child);
+				}
+			}
 		}
 		
 		/// <summary>

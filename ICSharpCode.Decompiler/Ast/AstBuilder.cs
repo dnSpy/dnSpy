@@ -125,8 +125,28 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void AddAssembly(AssemblyDefinition assemblyDefinition, bool onlyAssemblyLevel = false)
 		{
+			if (assemblyDefinition.Name.Version != null) {
+				astCompileUnit.AddChild(
+					new AttributeSection {
+						AttributeTarget = "assembly",
+						Attributes = {
+							new NRefactory.CSharp.Attribute {
+								Type = new SimpleType("AssemblyVersion")
+									.WithAnnotation(new TypeReference(
+										"System.Reflection", "AssemblyVersionAttribute",
+										assemblyDefinition.MainModule, assemblyDefinition.MainModule.TypeSystem.Corlib)),
+								Arguments = {
+									new PrimitiveExpression(assemblyDefinition.Name.Version.ToString())
+								}
+							}
+						}
+					}, AttributedNode.AttributeRole);
+			}
+			
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition, "assembly");
+			ConvertSecurityAttributes(astCompileUnit, assemblyDefinition, "assembly");
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition.MainModule, "module");
+			AddTypeForwarderAttributes(astCompileUnit, assemblyDefinition.MainModule, "assembly");
 			
 			if (!onlyAssemblyLevel) {
 				foreach (TypeDefinition typeDef in assemblyDefinition.MainModule.Types) {
@@ -137,6 +157,30 @@ namespace ICSharpCode.Decompiler.Ast
 						continue;
 
 					AddType(typeDef);
+				}
+			}
+		}
+		
+		void AddTypeForwarderAttributes(CompilationUnit astCompileUnit, ModuleDefinition module, string target)
+		{
+			if (!module.HasExportedTypes)
+				return;
+			foreach (ExportedType type in module.ExportedTypes) {
+				if (type.IsForwarder) {
+					var forwardedType = CreateTypeOfExpression(new TypeReference(type.Namespace, type.Name, module, type.Scope));
+					astCompileUnit.AddChild(
+						new AttributeSection {
+							AttributeTarget = target,
+							Attributes = {
+								new NRefactory.CSharp.Attribute {
+									Type = new SimpleType("TypeForwardedTo")
+										.WithAnnotation(new TypeReference(
+											"System.Runtime.CompilerServices", "TypeForwardedToAttribute",
+											module, module.TypeSystem.Corlib)),
+									Arguments = { forwardedType }
+								}
+							}
+						}, AttributedNode.AttributeRole);
 				}
 			}
 		}
@@ -228,15 +272,6 @@ namespace ICSharpCode.Decompiler.Ast
 			astType.TypeParameters.AddRange(MakeTypeParameters(genericParameters));
 			astType.Constraints.AddRange(MakeConstraints(genericParameters));
 			
-			// Nested types
-			foreach (TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
-				if (MemberIsHidden(nestedTypeDef, context.Settings))
-					continue;
-				var nestedType = CreateType(nestedTypeDef);
-				SetNewModifier(nestedType);
-				astType.AddChild(nestedType, TypeDeclaration.MemberRole);
-			}
-			
 			AttributedNode result = astType;
 			if (typeDef.IsEnum) {
 				long expectedEnumMemberValue = 0;
@@ -314,6 +349,45 @@ namespace ICSharpCode.Decompiler.Ast
 			return name;
 		}
 
+		#region Create TypeOf Expression
+		/// <summary>
+		/// Creates a typeof-expression for the specified type.
+		/// </summary>
+		public static TypeOfExpression CreateTypeOfExpression(TypeReference type)
+		{
+			return new TypeOfExpression(AddEmptyTypeArgumentsForUnboundGenerics(ConvertType(type)));
+		}
+		
+		static AstType AddEmptyTypeArgumentsForUnboundGenerics(AstType type)
+		{
+			TypeReference typeRef = type.Annotation<TypeReference>();
+			if (typeRef == null)
+				return type;
+			TypeDefinition typeDef = typeRef.Resolve(); // need to resolve to figure out the number of type parameters
+			if (typeDef == null || !typeDef.HasGenericParameters)
+				return type;
+			SimpleType sType = type as SimpleType;
+			MemberType mType = type as MemberType;
+			if (sType != null) {
+				while (typeDef.GenericParameters.Count > sType.TypeArguments.Count) {
+					sType.TypeArguments.Add(new SimpleType(""));
+				}
+			}
+			
+			if (mType != null) {
+				AddEmptyTypeArgumentsForUnboundGenerics(mType.Target);
+				
+				int outerTypeParamCount = typeDef.DeclaringType == null ? 0 : typeDef.DeclaringType.GenericParameters.Count;
+				
+				while (typeDef.GenericParameters.Count - outerTypeParamCount > mType.TypeArguments.Count) {
+					mType.TypeArguments.Add(new SimpleType(""));
+				}
+			}
+			
+			return type;
+		}
+		#endregion
+		
 		#region Convert Type Reference
 		/// <summary>
 		/// Converts a type reference.
@@ -597,6 +671,15 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		void AddTypeMembers(TypeDeclaration astType, TypeDefinition typeDef)
 		{
+			// Nested types
+			foreach (TypeDefinition nestedTypeDef in typeDef.NestedTypes) {
+				if (MemberIsHidden(nestedTypeDef, context.Settings))
+					continue;
+				var nestedType = CreateType(nestedTypeDef);
+				SetNewModifier(nestedType);
+				astType.AddChild(nestedType, TypeDeclaration.MemberRole);
+			}
+			
 			// Add fields
 			foreach(FieldDefinition fieldDef in typeDef.Fields) {
 				if (MemberIsHidden(fieldDef, context.Settings)) continue;
@@ -729,6 +812,9 @@ namespace ICSharpCode.Decompiler.Ast
 			astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
 			ConvertAttributes(astMethod, methodDef);
 			astMethod.WithAnnotation(methodMapping);
+			if (methodDef.IsStatic && methodDef.DeclaringType.IsBeforeFieldInit && !astMethod.Body.IsNull) {
+				astMethod.Body.InsertChildAfter(null, new Comment(" Note: this type is marked as 'beforefieldinit'."), AstNode.Roles.Comment);
+			}
 			return astMethod;
 		}
 
@@ -798,7 +884,13 @@ namespace ICSharpCode.Decompiler.Ast
 				astProp.Setter.Body = CreateMethodBody(propDef.SetMethod);
 				astProp.Setter.AddAnnotation(propDef.SetMethod);
 				ConvertAttributes(astProp.Setter, propDef.SetMethod);
-				ConvertCustomAttributes(astProp.Setter, propDef.SetMethod.Parameters.Last(), "param");
+				ParameterDefinition lastParam = propDef.SetMethod.Parameters.LastOrDefault();
+				if (lastParam != null) {
+					ConvertCustomAttributes(astProp.Setter, lastParam, "param");
+					if (lastParam.HasMarshalInfo) {
+						astProp.Setter.Attributes.Add(new AttributeSection(ConvertMarshalInfo(lastParam, propDef.Module)) { AttributeTarget = "param" });
+					}
+				}
 				
 				if ((setterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
 					astProp.Setter.Modifiers = setterModifiers & Modifiers.VisibilityMask;
@@ -981,6 +1073,7 @@ namespace ICSharpCode.Decompiler.Ast
 		void ConvertAttributes(AttributedNode attributedNode, TypeDefinition typeDefinition)
 		{
 			ConvertCustomAttributes(attributedNode, typeDefinition);
+			ConvertSecurityAttributes(attributedNode, typeDefinition);
 			
 			// Handle the non-custom attributes:
 			#region SerializableAttribute
@@ -1031,6 +1124,7 @@ namespace ICSharpCode.Decompiler.Ast
 		void ConvertAttributes(AttributedNode attributedNode, MethodDefinition methodDefinition)
 		{
 			ConvertCustomAttributes(attributedNode, methodDefinition);
+			ConvertSecurityAttributes(attributedNode, methodDefinition);
 			
 			MethodImplAttributes implAttributes = methodDefinition.ImplAttributes & ~MethodImplAttributes.CodeTypeMask;
 			
@@ -1167,6 +1261,37 @@ namespace ICSharpCode.Decompiler.Ast
 			Ast.Attribute attr = CreateNonCustomAttribute(typeof(MarshalAsAttribute), module);
 			var unmanagedType = new TypeReference("System.Runtime.InteropServices", "UnmanagedType", module, module.TypeSystem.Corlib);
 			attr.Arguments.Add(MakePrimitive((int)marshalInfo.NativeType, unmanagedType));
+			
+			FixedArrayMarshalInfo fami = marshalInfo as FixedArrayMarshalInfo;
+			if (fami != null) {
+				attr.AddNamedArgument("SizeConst", new PrimitiveExpression(fami.Size));
+				if (fami.ElementType != NativeType.None)
+					attr.AddNamedArgument("ArraySubType", MakePrimitive((int)fami.ElementType, unmanagedType));
+			}
+			SafeArrayMarshalInfo sami = marshalInfo as SafeArrayMarshalInfo;
+			if (sami != null && sami.ElementType != VariantType.None) {
+				var varEnum = new TypeReference("System.Runtime.InteropServices", "VarEnum", module, module.TypeSystem.Corlib);
+				attr.AddNamedArgument("SafeArraySubType", MakePrimitive((int)sami.ElementType, varEnum));
+			}
+			ArrayMarshalInfo ami = marshalInfo as ArrayMarshalInfo;
+			if (ami != null) {
+				if (ami.ElementType != NativeType.Max)
+					attr.AddNamedArgument("ArraySubType", MakePrimitive((int)ami.ElementType, unmanagedType));
+				if (ami.Size >= 0)
+					attr.AddNamedArgument("SizeConst", new PrimitiveExpression(ami.Size));
+				if (ami.SizeParameterMultiplier != 0 && ami.SizeParameterIndex >= 0)
+					attr.AddNamedArgument("SizeParamIndex", new PrimitiveExpression(ami.SizeParameterIndex));
+			}
+			CustomMarshalInfo cmi = marshalInfo as CustomMarshalInfo;
+			if (cmi != null) {
+				attr.AddNamedArgument("MarshalType", new PrimitiveExpression(cmi.ManagedType.FullName));
+				if (!string.IsNullOrEmpty(cmi.Cookie))
+					attr.AddNamedArgument("MarshalCookie", new PrimitiveExpression(cmi.Cookie));
+			}
+			FixedSysStringMarshalInfo fssmi = marshalInfo as FixedSysStringMarshalInfo;
+			if (fssmi != null) {
+				attr.AddNamedArgument("SizeConst", new PrimitiveExpression(fssmi.Size));
+			}
 			return attr;
 		}
 		#endregion
@@ -1256,6 +1381,65 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
+		static void ConvertSecurityAttributes(AstNode attributedNode, ISecurityDeclarationProvider secDeclProvider, string attributeTarget = null)
+		{
+			if (!secDeclProvider.HasSecurityDeclarations)
+				return;
+			var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
+			foreach (var secDecl in secDeclProvider.SecurityDeclarations) {
+				foreach (var secAttribute in secDecl.SecurityAttributes) {
+					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
+					attribute.AddAnnotation(secAttribute);
+					attribute.Type = ConvertType(secAttribute.AttributeType);
+					attributes.Add(attribute);
+					
+					SimpleType st = attribute.Type as SimpleType;
+					if (st != null && st.Identifier.EndsWith("Attribute", StringComparison.Ordinal)) {
+						st.Identifier = st.Identifier.Substring(0, st.Identifier.Length - "Attribute".Length);
+					}
+					
+					var module = secAttribute.AttributeType.Module;
+					var securityActionType = new TypeReference("System.Security.Permissions", "SecurityAction", module, module.TypeSystem.Corlib);
+					attribute.Arguments.Add(MakePrimitive((int)secDecl.Action, securityActionType));
+					
+					if (secAttribute.HasProperties) {
+						TypeDefinition resolvedAttributeType = secAttribute.AttributeType.Resolve();
+						foreach (var propertyNamedArg in secAttribute.Properties) {
+							var propertyReference = resolvedAttributeType != null ? resolvedAttributeType.Properties.FirstOrDefault(pr => pr.Name == propertyNamedArg.Name) : null;
+							var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
+							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
+							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
+						}
+					}
+
+					if (secAttribute.HasFields) {
+						TypeDefinition resolvedAttributeType = secAttribute.AttributeType.Resolve();
+						foreach (var fieldNamedArg in secAttribute.Fields) {
+							var fieldReference = resolvedAttributeType != null ? resolvedAttributeType.Fields.FirstOrDefault(f => f.Name == fieldNamedArg.Name) : null;
+							var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
+							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
+							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
+						}
+					}
+				}
+			}
+			if (attributeTarget == "module" || attributeTarget == "assembly") {
+				// use separate section for each attribute
+				foreach (var attribute in attributes) {
+					var section = new AttributeSection();
+					section.AttributeTarget = attributeTarget;
+					section.Attributes.Add(attribute);
+					attributedNode.AddChild(section, AttributedNode.AttributeRole);
+				}
+			} else if (attributes.Count > 0) {
+				// use single section for all attributes
+				var section = new AttributeSection();
+				section.AttributeTarget = attributeTarget;
+				section.Attributes.AddRange(attributes);
+				attributedNode.AddChild(section, AttributedNode.AttributeRole);
+			}
+		}
+		
 		private static Expression ConvertArgumentValue(CustomAttributeArgument argument)
 		{
 			if (argument.Value is CustomAttributeArgument[]) {
@@ -1276,9 +1460,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (type != null && type.IsEnum) {
 				return MakePrimitive(Convert.ToInt64(argument.Value), type);
 			} else if (argument.Value is TypeReference) {
-				return new TypeOfExpression() {
-					Type = ConvertType((TypeReference)argument.Value),
-				};
+				return CreateTypeOfExpression((TypeReference)argument.Value);
 			} else {
 				return new PrimitiveExpression(argument.Value);
 			}
@@ -1433,7 +1615,7 @@ namespace ICSharpCode.Decompiler.Ast
 					if (baseType.HasFields && AnyIsHiddenBy(baseType.Fields, member))
 						return true;
 					if (includeBaseMethods && baseType.HasMethods
-							&& AnyIsHiddenBy(baseType.Methods, member, m => !m.IsSpecialName))
+					    && AnyIsHiddenBy(baseType.Methods, member, m => !m.IsSpecialName))
 						return true;
 					if (baseType.HasNestedTypes && AnyIsHiddenBy(baseType.NestedTypes, member))
 						return true;
@@ -1447,8 +1629,8 @@ namespace ICSharpCode.Decompiler.Ast
 			where T : IMemberDefinition
 		{
 			return members.Any(m => m.Name == derived.Name
-				&& (condition == null || condition(m))
-				&& TypesHierarchyHelpers.IsVisibleFromDerived(m, derived.DeclaringType));
+			                   && (condition == null || condition(m))
+			                   && TypesHierarchyHelpers.IsVisibleFromDerived(m, derived.DeclaringType));
 		}
 		
 		/// <summary>

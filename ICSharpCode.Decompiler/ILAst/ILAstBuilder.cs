@@ -455,7 +455,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (byteCode.StoreTo != null && byteCode.StoreTo.Count > 1) {
 					var locVars = byteCode.StoreTo;
 					// For each of the variables, find the location where it is loaded - there should be preciesly one
-					var loadedBy = locVars.Select(locVar => reachableBody.SelectMany(bc => bc.StackBefore).Where(s => s.LoadFrom == locVar).Single()).ToList();
+					var loadedBy = locVars.Select(locVar => reachableBody.SelectMany(bc => bc.StackBefore).Single(s => s.LoadFrom == locVar)).ToList();
 					// We now know that all the variables have a single load,
 					// Let's make sure that they have also a single store - us
 					if (loadedBy.All(slot => slot.PushedBy.Length == 1 && slot.PushedBy[0] == byteCode)) {
@@ -572,7 +572,7 @@ namespace ICSharpCode.Decompiler.ILAst
 								    Loads  = new List<ByteCode>() { load }
 								});
 							} else if (storedBy.Length == 1) {
-								VariableInfo newVar = newVars.Where(v => v.Stores.Contains(storedBy[0])).Single();
+								VariableInfo newVar = newVars.Single(v => v.Stores.Contains(storedBy[0]));
 								newVar.Loads.Add(load);
 							} else {
 								List<VariableInfo> mergeVars = newVars.Where(v => v.Stores.Union(storedBy).Any()).ToList();

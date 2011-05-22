@@ -263,7 +263,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		#region Fields
 		public override IEntity VisitFieldDeclaration(FieldDeclaration fieldDeclaration, object data)
 		{
-			bool isSingleField = fieldDeclaration.Variables.Count() == 1;
+			bool isSingleField = fieldDeclaration.Variables.Count == 1;
 			Modifiers modifiers = fieldDeclaration.Modifiers;
 			DefaultField field = null;
 			foreach (VariableInitializer vi in fieldDeclaration.Variables) {
@@ -476,7 +476,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		#region Events
 		public override IEntity VisitEventDeclaration(EventDeclaration eventDeclaration, object data)
 		{
-			bool isSingleEvent = eventDeclaration.Variables.Count() == 1;
+			bool isSingleEvent = eventDeclaration.Variables.Count == 1;
 			Modifiers modifiers = eventDeclaration.Modifiers;
 			DefaultEvent ev = null;
 			foreach (VariableInitializer vi in eventDeclaration.Variables) {
