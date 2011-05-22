@@ -125,9 +125,28 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void AddAssembly(AssemblyDefinition assemblyDefinition, bool onlyAssemblyLevel = false)
 		{
+			if (assemblyDefinition.Name.Version != null) {
+				astCompileUnit.AddChild(
+					new AttributeSection {
+						AttributeTarget = "assembly",
+						Attributes = {
+							new NRefactory.CSharp.Attribute {
+								Type = new SimpleType("AssemblyVersion")
+									.WithAnnotation(new TypeReference(
+										"System.Reflection", "AssemblyVersionAttribute",
+										assemblyDefinition.MainModule, assemblyDefinition.MainModule.TypeSystem.Corlib)),
+								Arguments = {
+									new PrimitiveExpression(assemblyDefinition.Name.Version.ToString())
+								}
+							}
+						}
+					}, AttributedNode.AttributeRole);
+			}
+			
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition, "assembly");
 			ConvertSecurityAttributes(astCompileUnit, assemblyDefinition, "assembly");
 			ConvertCustomAttributes(astCompileUnit, assemblyDefinition.MainModule, "module");
+			AddTypeForwarderAttributes(astCompileUnit, assemblyDefinition.MainModule, "assembly");
 			
 			if (!onlyAssemblyLevel) {
 				foreach (TypeDefinition typeDef in assemblyDefinition.MainModule.Types) {
@@ -138,6 +157,30 @@ namespace ICSharpCode.Decompiler.Ast
 						continue;
 
 					AddType(typeDef);
+				}
+			}
+		}
+		
+		void AddTypeForwarderAttributes(CompilationUnit astCompileUnit, ModuleDefinition module, string target)
+		{
+			if (!module.HasExportedTypes)
+				return;
+			foreach (ExportedType type in module.ExportedTypes) {
+				if (type.IsForwarder) {
+					var forwardedType = CreateTypeOfExpression(new TypeReference(type.Namespace, type.Name, module, type.Scope));
+					astCompileUnit.AddChild(
+						new AttributeSection {
+							AttributeTarget = target,
+							Attributes = {
+								new NRefactory.CSharp.Attribute {
+									Type = new SimpleType("TypeForwardedTo")
+										.WithAnnotation(new TypeReference(
+											"System.Runtime.CompilerServices", "TypeForwardedToAttribute",
+											module, module.TypeSystem.Corlib)),
+									Arguments = { forwardedType }
+								}
+							}
+						}, AttributedNode.AttributeRole);
 				}
 			}
 		}
@@ -306,6 +349,45 @@ namespace ICSharpCode.Decompiler.Ast
 			return name;
 		}
 
+		#region Create TypeOf Expression
+		/// <summary>
+		/// Creates a typeof-expression for the specified type.
+		/// </summary>
+		public static TypeOfExpression CreateTypeOfExpression(TypeReference type)
+		{
+			return new TypeOfExpression(AddEmptyTypeArgumentsForUnboundGenerics(ConvertType(type)));
+		}
+		
+		static AstType AddEmptyTypeArgumentsForUnboundGenerics(AstType type)
+		{
+			TypeReference typeRef = type.Annotation<TypeReference>();
+			if (typeRef == null)
+				return type;
+			TypeDefinition typeDef = typeRef.Resolve(); // need to resolve to figure out the number of type parameters
+			if (typeDef == null || !typeDef.HasGenericParameters)
+				return type;
+			SimpleType sType = type as SimpleType;
+			MemberType mType = type as MemberType;
+			if (sType != null) {
+				while (typeDef.GenericParameters.Count > sType.TypeArguments.Count) {
+					sType.TypeArguments.Add(new SimpleType(""));
+				}
+			}
+			
+			if (mType != null) {
+				AddEmptyTypeArgumentsForUnboundGenerics(mType.Target);
+				
+				int outerTypeParamCount = typeDef.DeclaringType == null ? 0 : typeDef.DeclaringType.GenericParameters.Count;
+				
+				while (typeDef.GenericParameters.Count - outerTypeParamCount > mType.TypeArguments.Count) {
+					mType.TypeArguments.Add(new SimpleType(""));
+				}
+			}
+			
+			return type;
+		}
+		#endregion
+		
 		#region Convert Type Reference
 		/// <summary>
 		/// Converts a type reference.
@@ -1378,9 +1460,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (type != null && type.IsEnum) {
 				return MakePrimitive(Convert.ToInt64(argument.Value), type);
 			} else if (argument.Value is TypeReference) {
-				return new TypeOfExpression() {
-					Type = ConvertType((TypeReference)argument.Value),
-				};
+				return CreateTypeOfExpression((TypeReference)argument.Value);
 			} else {
 				return new PrimitiveExpression(argument.Value);
 			}
