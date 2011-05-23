@@ -279,6 +279,8 @@ namespace ICSharpCode.Decompiler.Ast
 				name = "array";
 			} else if (type.IsPointer || type.IsByReference) {
 				name = "ptr";
+			} else if (type.Name.EndsWith("Exception", StringComparison.Ordinal)) {
+				name = "ex";
 			} else if (!typeNameToVariableNameDict.TryGetValue(type.FullName, out name)) {
 				name = type.Name;
 				// remove the 'I' for interfaces

@@ -132,7 +132,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return Images.ResourceImage; }
 		}
 
-		internal override bool View(DecompilerTextView textView)
+		public override bool View(DecompilerTextView textView)
 		{
 			try {
 				AvalonEditTextOutput output = new AvalonEditTextOutput();
@@ -144,7 +144,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				output.AddUIElement(() => new Image { Source = image });
 				output.WriteLine();
 				output.AddButton(Images.Save, "Save", delegate { Save(null); });
-				textView.Show(output, null);
+				textView.ShowNode(output, this, null);
 				return true;
 			}
 			catch (Exception) {

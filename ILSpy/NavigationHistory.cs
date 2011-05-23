@@ -71,13 +71,18 @@ namespace ICSharpCode.ILSpy
 			back.Clear();
 			forward.Clear();
 		}
+
+		public void UpdateCurrent(T node)
+		{
+			current = node;
+		}
 		
-		public void Record(T node, bool replace = false, bool clearForward = true)
+		public void Record(T node)
 		{
 			var navigationTime = DateTime.Now;
 			var period = navigationTime - lastNavigationTime;
 
-			if (period.TotalSeconds < NavigationSecondsBeforeNewEntry || replace) {
+			if (period.TotalSeconds < NavigationSecondsBeforeNewEntry) {
 				current = node;
 			} else {
 				if (current != null)
@@ -88,8 +93,7 @@ namespace ICSharpCode.ILSpy
 				current = node;
 			}
 
-			if (clearForward)
-				forward.Clear();
+			forward.Clear();
 
 			lastNavigationTime = navigationTime;
 		}

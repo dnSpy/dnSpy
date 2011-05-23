@@ -79,6 +79,10 @@ namespace ICSharpCode.ILSpy.XmlDoc
 		
 		static void AppendTypeName(StringBuilder b, TypeReference type)
 		{
+			if (type == null) {
+				// could happen when a TypeSpecification has no ElementType; e.g. function pointers in C++/CLI assemblies
+				return;
+			}
 			if (type is GenericInstanceType) {
 				GenericInstanceType giType = (GenericInstanceType)type;
 				if (type.DeclaringType != null) {

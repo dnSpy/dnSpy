@@ -64,16 +64,40 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
 		{
-			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken); 
-			dis.DisassembleProperty(property);
-			NotifyDecompilationFinished(dis);
+			ReflectionDisassembler rd = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			rd.DisassembleProperty(property);
+			if (property.GetMethod != null) {
+				output.WriteLine();
+				rd.DisassembleMethod(property.GetMethod);
+			}
+			if (property.SetMethod != null) {
+				output.WriteLine();
+				rd.DisassembleMethod(property.SetMethod);
+			}
+			foreach (var m in property.OtherMethods) {
+				output.WriteLine();
+				rd.DisassembleMethod(m);
+			}
+			NotifyDecompilationFinished(rd);
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
 		{
-			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken); 
-			dis.DisassembleEvent(ev);
-			NotifyDecompilationFinished(dis);
+			ReflectionDisassembler rd = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			rd.DisassembleEvent(ev);
+			if (ev.AddMethod != null) {
+				output.WriteLine();
+				rd.DisassembleMethod(ev.AddMethod);
+			}
+			if (ev.RemoveMethod != null) {
+				output.WriteLine();
+				rd.DisassembleMethod(ev.RemoveMethod);
+			}
+			foreach (var m in ev.OtherMethods) {
+				output.WriteLine();
+				rd.DisassembleMethod(m);
+			}
+			NotifyDecompilationFinished(rd);
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
@@ -94,14 +118,24 @@ namespace ICSharpCode.ILSpy
 			output.WriteLine("// " + assembly.FileName);
 			output.WriteLine();
 			
-			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).WriteAssemblyHeader(assembly.AssemblyDefinition);
+			ReflectionDisassembler rd = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			if (options.FullDecompilation)
+				rd.WriteAssemblyReferences(assembly.AssemblyDefinition.MainModule);
+			rd.WriteAssemblyHeader(assembly.AssemblyDefinition);
+			output.WriteLine();
+			rd.WriteModuleHeader(assembly.AssemblyDefinition.MainModule);
+			if (options.FullDecompilation) {
+				output.WriteLine();
+				output.WriteLine();
+				rd.WriteModuleContents(assembly.AssemblyDefinition.MainModule);
+			}
 			OnDecompilationFinished(null);
 		}
 		
 		public override string TypeToString(TypeReference t, bool includeNamespace, ICustomAttributeProvider attributeProvider)
 		{
 			PlainTextOutput output = new PlainTextOutput();
-			t.WriteTo(output, true, shortName: !includeNamespace);
+			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 			return output.ToString();
 		}
 	}

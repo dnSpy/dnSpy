@@ -31,7 +31,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	{
 		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 		
-		DecompilerContext context;
+		readonly DecompilerContext context;
 		
 		uint nextLabelIndex = 0;
 		
@@ -286,7 +286,7 @@ namespace ICSharpCode.Decompiler.ILAst
 								ILLabel condLabel = caseLabels[i];
 								
 								// Find or create new case block
-								ILSwitch.CaseBlock caseBlock = ilSwitch.CaseBlocks.Where(b => b.EntryGoto.Operand == condLabel).FirstOrDefault();
+								ILSwitch.CaseBlock caseBlock = ilSwitch.CaseBlocks.FirstOrDefault(b => b.EntryGoto.Operand == condLabel);
 								if (caseBlock == null) {
 									caseBlock = new ILSwitch.CaseBlock() {
 										Values = new List<int>(),

@@ -44,6 +44,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		JoinBasicBlocks,
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
+		SimplifyCustomShortCircuit,
 		TransformArrayInitializers,
 		TransformObjectInitializers,
 		MakeAssignmentExpression,
@@ -135,6 +136,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyLdObjAndStObj) return;
 					modified |= block.RunOptimization(SimplifyLdObjAndStObj);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyCustomShortCircuit) return;
+					modified |= block.RunOptimization(new SimpleControlFlow(context, method).SimplifyCustomShortCircuit);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
 					modified |= block.RunOptimization(TransformArrayInitializers);
@@ -308,6 +312,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Converts call and callvirt instructions that read/write properties into CallGetter/CallSetter instructions.
 		/// 
 		/// CallGetter/CallSetter is used to allow the ILAst to represent "while ((SomeProperty = value) != null)".
+		/// 
+		/// Also simplifies 'newobj(SomeDelegate, target, ldvirtftn(F, target))' to 'newobj(SomeDelegate, target, ldvirtftn(F))'
 		/// </summary>
 		void IntroducePropertyAccessInstructions(ILNode node)
 		{
@@ -365,6 +371,19 @@ namespace ICSharpCode.Decompiler.ILAst
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallSetter : ILCode.CallvirtSetter;
 					}
 				}
+			} else if (expr.Code == ILCode.Newobj && expr.Arguments.Count == 2) {
+				// Might be 'newobj(SomeDelegate, target, ldvirtftn(F, target))'.
+				ILVariable target;
+				if (expr.Arguments[0].Match(ILCode.Ldloc, out target)
+				    && expr.Arguments[1].Code == ILCode.Ldvirtftn
+				    && expr.Arguments[1].Arguments.Count == 1
+				    && expr.Arguments[1].Arguments[0].MatchLdloc(target))
+				{
+					// Remove the 'target' argument from the ldvirtftn instruction.
+					// It's not needed in the translation to C#, and needs to be eliminated so that the target expression
+					// can be inlined.
+					expr.Arguments[1].Arguments.Clear();
+				}
 			}
 		}
 		
@@ -398,7 +417,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					    lastNode.IsUnconditionalControlFlow())
 					{
 						// Try to reuse the label
-						ILLabel label = currNode is ILLabel ? ((ILLabel)currNode) : new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
+						ILLabel label = currNode as ILLabel ?? new ILLabel() { Name = "Block_" + (nextLabelIndex++).ToString() };
 						
 						// Terminate the last block
 						if (!lastNode.IsUnconditionalControlFlow()) {

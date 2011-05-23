@@ -167,12 +167,14 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// This method can be used to restrict the analysis to only a part of the method.
 		/// Only the control flow paths that are fully contained within the selected part will be analyzed.
 		/// </summary>
-		/// <remarks>Both 'start' and 'end' are inclusive.</remarks>
-		public void SetAnalyzedRange(Statement start, Statement end)
+		/// <remarks>By default, both 'start' and 'end' are inclusive.</remarks>
+		public void SetAnalyzedRange(Statement start, Statement end, bool startInclusive = true, bool endInclusive = true)
 		{
-			Debug.Assert(beginNodeDict.ContainsKey(start) && endNodeDict.ContainsKey(end));
-			int startIndex = beginNodeDict[start].Index;
-			int endIndex = endNodeDict[end].Index;
+			var dictForStart = startInclusive ? beginNodeDict : endNodeDict;
+			var dictForEnd = endInclusive ? endNodeDict : beginNodeDict;
+			Debug.Assert(dictForStart.ContainsKey(start) && dictForEnd.ContainsKey(end));
+			int startIndex = dictForStart[start].Index;
+			int endIndex = dictForEnd[end].Index;
 			if (startIndex > endIndex)
 				throw new ArgumentException("The start statement must be lexically preceding the end statement");
 			this.analyzedRangeStart = startIndex;

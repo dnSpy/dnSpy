@@ -96,7 +96,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
-			IsVerbatim = name.StartsWith ("@");
+			IsVerbatim = name.Length > 0 && name[0] == '@';
 			this.Name = IsVerbatim ? name.Substring (1) : name;
 			this.startLocation = location;
 		}
