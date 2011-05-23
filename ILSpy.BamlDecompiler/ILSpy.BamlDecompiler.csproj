@@ -43,6 +43,31 @@
   <ItemGroup>
     <Compile Include="MyClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\AppDomainTypeResolver.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlAssembly.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlBinaryReader.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlFile.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlRecordType.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\DotNetType.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\IDependencyPropertyDescriptor.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\IType.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\ITypeResolver.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\KnownInfo.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\PropertyDeclaration.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\ResourceName.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\TypeDeclaration.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\WpfDependencyPropertyDescriptor.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlElement.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlNode.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlProperty.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlPropertyElement.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlReader.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlText.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlNamespace.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlPIMapping.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Ricciolo.StylesExplorer.MarkupReflection" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
