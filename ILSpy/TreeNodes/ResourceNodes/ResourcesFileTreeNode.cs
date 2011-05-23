@@ -70,9 +70,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				catch (ArgumentException) {
 					return;
 				}
-				foreach (DictionaryEntry entry in reader.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString()))
+				foreach (DictionaryEntry entry in reader.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
 					if (entry.Value is Stream)
 						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), (Stream)entry.Value));
+					else if (entry.Value is byte[])
+						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), new MemoryStream((byte[])entry.Value)));
+				}
 			}
 		}
 	}
