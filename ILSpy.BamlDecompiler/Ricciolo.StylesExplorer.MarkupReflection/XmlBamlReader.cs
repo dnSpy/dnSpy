@@ -264,7 +264,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				//while (currentType != BamlRecordType.DocumentEnd);
 				while (nodes.Count == 0 || (currentType != BamlRecordType.ElementEnd) || complexPropertyOpened > 0);
 
-				return SetNextNode();
+				if (!SetNextNode()) {
+					_eof = true;
+					return false;
+				}
+				return true;
 			}
 			catch (EndOfStreamException)
 			{
