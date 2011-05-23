@@ -69,7 +69,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// This method is called on the main thread when only a single item is selected.
 		/// If it returns false, normal decompilation is used to view the item.
 		/// </summary>
-		internal virtual bool View(TextView.DecompilerTextView textView)
+		public virtual bool View(TextView.DecompilerTextView textView)
 		{
 			return false;
 		}

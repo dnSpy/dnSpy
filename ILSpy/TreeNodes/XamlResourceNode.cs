@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy.Xaml
 		{
 		}
 		
-		internal override bool View(DecompilerTextView textView)
+		public override bool View(DecompilerTextView textView)
 		{
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			IHighlightingDefinition highlighting = null;

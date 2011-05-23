@@ -93,7 +93,6 @@
     </Compile>
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
-    <Compile Include="BamlDecompiler.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="ConnectMethodDecompiler.cs" />
