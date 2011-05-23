@@ -49,33 +49,51 @@ namespace ICSharpCode.ILSpy.Xaml
 			return null;
 		}
 	}
-	
+
 	sealed class XmlResourceEntryNode : ResourceEntryNode
 	{
-		string xaml;
-		
-		public XmlResourceEntryNode(string key, Stream data) : base(key, data)
+		string xml;
+
+		public XmlResourceEntryNode(string key, Stream data)
+			: base(key, data)
 		{
 		}
-		
+
+		public override object Icon
+		{
+			get
+			{
+				string text = (string)Text;
+				if (text.EndsWith(".xml"))
+					return Images.ResourceXml;
+				else if (text.EndsWith(".xsd"))
+					return Images.ResourceXsd;
+				else if (text.EndsWith(".xslt"))
+					return Images.ResourceXslt;
+				else
+					return Images.Resource;
+			}
+		}
+
 		internal override bool View(DecompilerTextView textView)
 		{
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			IHighlightingDefinition highlighting = null;
-			
+
 			textView.RunWithCancellation(
 				token => Task.Factory.StartNew(
 					() => {
 						try {
 							// cache read XAML because stream will be closed after first read
-							if (xaml == null) {
+							if (xml == null) {
 								using (var reader = new StreamReader(Data)) {
-									xaml = reader.ReadToEnd();
+									xml = reader.ReadToEnd();
 								}
 							}
-							output.Write(xaml);
+							output.Write(xml);
 							highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
-						} catch (Exception ex) {
+						}
+						catch (Exception ex) {
 							output.Write(ex.ToString());
 						}
 						return output;
