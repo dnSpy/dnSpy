@@ -94,6 +94,7 @@
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="BamlDecompiler.cs" />
+    <Compile Include="BamlResourceEntryNode.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="ConnectMethodDecompiler.cs" />
@@ -159,6 +160,8 @@
     <Compile Include="TreeNodes\Analyzer\Helpers.cs" />
     <Compile Include="TreeNodes\Analyzer\ScopedWhereUsedAnalyzer.cs" />
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\IResourceNodeFactory.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourcesFileTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\XamlResourceNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
