@@ -51,7 +51,7 @@ namespace ILSpy.BamlDecompiler
 			bamlStream.Position = 0;
 			
 			XDocument xamlDocument;
-			using (XmlBamlReader reader = new XmlBamlReader(bamlStream))
+			using (XmlBamlReader reader = new XmlBamlReader(bamlStream, new CecilTypeResolver(asm)))
 				xamlDocument = XDocument.Load(reader);
 			
 			output.Write(xamlDocument.ToString());

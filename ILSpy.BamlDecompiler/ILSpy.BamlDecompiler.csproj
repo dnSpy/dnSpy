@@ -66,6 +66,9 @@
   <ItemGroup>
     <Compile Include="BamlResourceNodeFactory.cs" />
     <Compile Include="BamlResourceEntryNode.cs" />
+    <Compile Include="CecilDependencyPropertyDescriptor.cs" />
+    <Compile Include="CecilType.cs" />
+    <Compile Include="CecilTypeResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\AppDomainTypeResolver.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlAssembly.cs" />
