@@ -17,14 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 using Microsoft.Win32;
