@@ -217,7 +217,10 @@ namespace ICSharpCode.Decompiler.ILAst
 
 				public override ILExpression BuildNew(ref PatternMatcher pm, ILExpression[] args)
 				{
-					return new ILExpression(this.code, this.b ? pm.B : pm.A, args);
+					var v = this.b ? pm.B : pm.A;
+					var e = new ILExpression(ILCode.Ldloc, v, args);
+					if (v.Type.Name == "Nullable`1" && v.Type.Namespace == "System") e = new ILExpression(ILCode.ValueOf, null, e);
+					return e;
 				}
 			}
 

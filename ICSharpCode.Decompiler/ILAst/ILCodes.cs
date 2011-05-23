@@ -260,7 +260,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		InitArray, // Array Initializer
 
 		/// <summary>
-		/// Defines a barrier between the parent opcode and argument opcode that prevents combining them
+		/// Defines a barrier between the parent expression and the argument expression that prevents combining them
 		/// </summary>
 		Wrap,
 		
@@ -316,7 +316,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Used for postincrement for properties, and to represent the Address() method on multi-dimensional arrays.
 		/// Also used when inlining a method call on a value type: "stloc(v, ...); call(M, ldloca(v));" becomes "call(M, AddressOf(...))"
 		/// </remarks>
-		AddressOf
+		AddressOf,
+		/// <summary>Simulates getting the value of the nullable argument in comparisons involving nullable values</summary>
+		/// <remarks>
+		/// For example "stloc(v1, ...); stloc(v2, ...); logicand(ceq(call(Nullable`1::GetValueOrDefault, ldloca(v1)), ldloc(v2)), callgetter(Nullable`1::get_HasValue, ldloca(v1)))" becomes "ceq(ValueOf(...), ...)"
+		/// </remarks>
+		ValueOf,
 	}
 	
 	public static class ILCodeUtil

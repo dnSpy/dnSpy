@@ -487,6 +487,15 @@ namespace ICSharpCode.Decompiler.ILAst
 						TypeReference t = InferTypeForExpression(expr.Arguments[0], UnpackPointer(expectedType));
 						return t != null ? new ByReferenceType(t) : null;
 					}
+				case ILCode.ValueOf: {
+						GenericInstanceType t = null;
+						if (expectedType != null) {
+							t = new GenericInstanceType(new TypeReference("System", "Nullable`1", module, module.TypeSystem.Corlib));
+							t.GenericArguments.Add(expectedType);
+						}
+						t = InferTypeForExpression(expr.Arguments[0], t) as GenericInstanceType;
+						return t == null || t.Name != "Nullable`1" || t.Namespace != "System" ? null : t.GenericArguments[0];
+					}
 					#endregion
 					#region Arithmetic instructions
 				case ILCode.Not: // bitwise complement
