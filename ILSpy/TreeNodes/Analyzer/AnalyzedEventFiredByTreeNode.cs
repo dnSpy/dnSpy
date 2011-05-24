@@ -45,9 +45,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
 
-			this.eventBackingField = analyzedEvent.DeclaringType.Fields.First(
-				fd => (fd.Name == analyzedEvent.Name || fd.Name == (analyzedEvent.Name + "Event")) &&
-					  fd.FieldType.FullName == analyzedEvent.EventType.FullName);
+			this.eventBackingField = GetBackingField(analyzedEvent);
 			this.eventFiringMethod = analyzedEvent.EventType.Resolve().Methods.First(md => md.Name == "Invoke");
 		}
 
@@ -79,16 +77,20 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			foundMethods = new ConcurrentDictionary<MethodDefinition, int>();
 
-			foreach (var child in FindReferencesInType()) {
+			foreach (var child in FindReferencesInType(analyzedEvent.DeclaringType)) {
 				yield return child;
 			}
 
 			foundMethods = null;
 		}
 
-		private IEnumerable<SharpTreeNode> FindReferencesInType()
+		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			foreach (MethodDefinition method in analyzedEvent.DeclaringType.Methods) {
+			// HACK: in lieu of proper flow analysis, I'm going to use a simple heuristic
+			// If the method accesses the event's backing field, and calls invoke on a delegate 
+			// with the same signature, then it is (most likely) raise the given event.
+
+			foreach (MethodDefinition method in type.Methods) {
 				bool readBackingField = false;
 				bool found = false;
 				if (!method.HasBody)
@@ -126,8 +128,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return !foundMethods.TryAdd(method, 0);
 		}
 
-
-		public static bool CanShow(EventDefinition ev)
+		// HACK: we should probably examine add/remove methods to determine this
+		private static FieldDefinition GetBackingField(EventDefinition ev)
 		{
 			var fieldName = ev.Name;
 			var vbStyleFieldName = fieldName + "Event";
@@ -136,9 +138,16 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (var fd in ev.DeclaringType.Fields) {
 				if (fd.Name == fieldName || fd.Name == vbStyleFieldName)
 					if (fd.FieldType.FullName == fieldType.FullName)
-						return true;
+						return fd;
 			}
-			return false;
+
+			return null;
+		}
+
+
+		public static bool CanShow(EventDefinition ev)
+		{
+			return GetBackingField(ev) != null;
 		}
 	}
 }
