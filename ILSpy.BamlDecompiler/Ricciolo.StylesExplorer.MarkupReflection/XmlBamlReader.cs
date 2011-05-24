@@ -21,10 +21,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		#region Variables
 
 		private BamlBinaryReader reader;
-		private Hashtable assemblyTable = new Hashtable();
-		private Hashtable stringTable = new Hashtable();
-		private Hashtable typeTable = new Hashtable();
-		private Hashtable propertyTable = new Hashtable();
+		private Dictionary<short, string> assemblyTable = new Dictionary<short, string>();
+		private Dictionary<short, string> stringTable = new Dictionary<short, string>();
+		private Dictionary<short, TypeDeclaration> typeTable = new Dictionary<short, TypeDeclaration>();
+		private Dictionary<short, PropertyDeclaration> propertyTable = new Dictionary<short, PropertyDeclaration>();
 
 		private readonly ITypeResolver _resolver;
 
@@ -247,9 +247,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			{
 				do
 				{
-					currentType = (BamlRecordType)reader.ReadByte();
-					//Debug.WriteLine(currentType);
-					if (currentType == BamlRecordType.DocumentEnd) break;
+					ReadRecordType();
+					if (currentType == BamlRecordType.DocumentEnd)
+						break;
 
 					long position = reader.BaseStream.Position;
 
@@ -257,9 +257,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					ProcessNext();
 
 					if (bytesToSkip > 0)
-					{
+						// jump to the end of the record
 						reader.BaseStream.Position = position + bytesToSkip;
-					}
 				}
 				//while (currentType != BamlRecordType.DocumentEnd);
 				while (nodes.Count == 0 || (currentType != BamlRecordType.ElementEnd) || complexPropertyOpened > 0);
@@ -275,6 +274,23 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				_eof = true;
 				return false;
 			}
+		}
+
+		void ReadRecordType()
+		{
+			byte type = reader.ReadByte();
+			if (type < 0)
+				currentType = BamlRecordType.DocumentEnd;
+			else
+				currentType = (BamlRecordType)type;
+			
+			if (currentType.ToString().EndsWith("End"))
+				Debug.Unindent();
+			
+			Debug.WriteLine(currentType);
+			
+			if (currentType.ToString().StartsWith("Start"))
+				Debug.Indent();
 		}
 
 		private bool SetNextNode()
@@ -305,12 +321,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			switch (currentType)
 			{
 				case BamlRecordType.DocumentStart:
-					{
-						reader.ReadBoolean();
-						reader.ReadInt32();
-						reader.ReadBoolean();
-						break;
-					}
+					reader.ReadBytes(6);
+					break;
 				case BamlRecordType.DocumentEnd:
 					break;
 				case BamlRecordType.ElementStart:
@@ -586,7 +598,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			PropertyDeclaration declaration;
 			if (identifier >= 0)
 			{
-				declaration = (PropertyDeclaration)this.propertyTable[identifier];
+				declaration = this.propertyTable[identifier];
 			}
 			else
 			{
@@ -603,7 +615,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		{
 			if (identifier >= 0)
 			{
-				PropertyDeclaration declaration = (PropertyDeclaration)this.propertyTable[identifier];
+				PropertyDeclaration declaration = this.propertyTable[identifier];
 				return declaration;
 			}
 			else
@@ -906,7 +918,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					pd = new PropertyDeclaration("Name", XamlTypeDeclaration);
 					break;
 				default:
-					string recordName = (string)this.stringTable[identifier];
+					string recordName = this.stringTable[identifier];
 					if (recordName != "Key") throw new NotSupportedException(recordName);
 					pd = new PropertyDeclaration(recordName, XamlTypeDeclaration);
 
@@ -926,7 +938,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			int position = reader.ReadInt32();
 			//bool shared = reader.ReadBoolean();
 			//bool sharedSet = reader.ReadBoolean();
-			string text = (string)this.stringTable[num];
+			string text = this.stringTable[num];
 			if (text == null)
 				throw new NotSupportedException();
 
@@ -963,7 +975,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			string[] textArray = new string[(uint)reader.ReadInt16()];
 			for (int i = 0; i < textArray.Length; i++)
 			{
-				textArray[i] = (string)this.assemblyTable[reader.ReadInt16()];
+				textArray[i] = this.assemblyTable[reader.ReadInt16()];
 			}
 
 			XmlNamespaceCollection namespaces = elements.Peek().Namespaces;
@@ -1045,6 +1057,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		private void ReadPropertyComplexEnd()
 		{
+			if (!(elements.Peek() is XmlBamlPropertyElement))
+				throw new InvalidCastException();
+			
 			XmlBamlPropertyElement propertyElement = (XmlBamlPropertyElement) elements.Peek();
 
 			CloseElement();
@@ -1546,7 +1561,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		{
 			TypeDeclaration declaration;
 			if (identifier >= 0)
-				declaration = (TypeDeclaration)this.typeTable[identifier];
+				declaration = this.typeTable[identifier];
 			else
 				declaration = KnownInfo.KnownTypeTable[-identifier];
 
@@ -1558,7 +1573,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		internal string GetAssembly(short identifier)
 		{
-			return this.assemblyTable[identifier].ToString();
+			return this.assemblyTable[identifier];
 		}
 
 		private XmlBamlNode CurrentNode
