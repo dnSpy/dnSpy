@@ -880,52 +880,71 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		static ILExpression SimplifyLogicNot(ILExpression expr, ref bool modified)
 		{
-			if (expr.Code == ILCode.Ceq) {
-				var a = expr.Arguments[1];
-				if (a.Code == ILCode.Ldc_I4 && TypeAnalysis.IsBoolean(a.InferredType) && TypeAnalysis.IsBoolean(expr.Arguments[0].InferredType)) {
-					expr.Code = ILCode.LogicNot;
-					expr.ILRanges.AddRange(a.ILRanges);
-					expr.Arguments.RemoveAt(1);
-					modified = true;
-				}
+			ILExpression a;
+			// "ceq(a, ldc.i4.0)" becomes "logicnot(a)" if the inferred type for expression "a" is boolean
+			if (expr.Code == ILCode.Ceq && TypeAnalysis.IsBoolean(expr.Arguments[0].InferredType) && (a = expr.Arguments[1]).Code == ILCode.Ldc_I4 && (int)a.Operand == 0) {
+				expr.Code = ILCode.LogicNot;
+				expr.ILRanges.AddRange(a.ILRanges);
+				expr.Arguments.RemoveAt(1);
+				modified = true;
 			}
+
 			ILExpression res = null;
 			while (expr.Code == ILCode.LogicNot) {
-				var a = expr.Arguments[0];
-				ILCode c = 0;
-				switch (a.Code) {
-					case ILCode.LogicNot:
-						res = a.Arguments[0];
-						res.ILRanges.AddRange(expr.ILRanges);
-						res.ILRanges.AddRange(a.ILRanges);
-						expr = res;
-						continue;
-					case ILCode.Ceq: c = ILCode.Cne; break;
-					case ILCode.Cne: c = ILCode.Ceq; break;
-					case ILCode.Cgt: c = ILCode.Cle; break;
-					case ILCode.Cgt_Un: c = ILCode.Cle_Un; break;
-					case ILCode.Cge: c = ILCode.Clt; break;
-					case ILCode.Cge_Un: c = ILCode.Clt_Un; break;
-					case ILCode.Clt: c = ILCode.Cge; break;
-					case ILCode.Clt_Un: c = ILCode.Cge_Un; break;
-					case ILCode.Cle: c = ILCode.Cgt; break;
-					case ILCode.Cle_Un: c = ILCode.Cgt_Un; break;
+				a = expr.Arguments[0];
+				if (a.Code == ILCode.LogicNot) {
+					res = a.Arguments[0];
+					res.ILRanges.AddRange(expr.ILRanges);
+					res.ILRanges.AddRange(a.ILRanges);
+					expr = res;
+				} else {
+					if (SimplifyLogicNotArgument(expr)) res = expr = a;
+					break;
 				}
-				if (c == 0) break;
-				res = a;
-				res.Code = c;
-				res.ILRanges.AddRange(expr.ILRanges);
-				expr = res;
-				break;
 			}
+
 			for (int i = 0; i < expr.Arguments.Count; i++) {
-				var a = SimplifyLogicNot(expr.Arguments[i], ref modified);
+				a = SimplifyLogicNot(expr.Arguments[i], ref modified);
 				if (a != null) {
 					expr.Arguments[i] = a;
 					modified = true;
 				}
 			}
+
+			// "ternaryop(a, ldc.i4.0, b)" becomes "logicand(logicnot(a), b)" if the inferred type for expression "b" is boolean
+			if (expr.Code == ILCode.TernaryOp && TypeAnalysis.IsBoolean(expr.Arguments[2].InferredType) && (a = expr.Arguments[1]).Code == ILCode.Ldc_I4 && (int)a.Operand == 0) {
+				expr.Code = ILCode.LogicAnd;
+				expr.InferredType = expr.Arguments[2].InferredType;
+				a = new ILExpression(ILCode.LogicNot, null, expr.Arguments[0]) { ILRanges = a.ILRanges };
+				if (!SimplifyLogicNotArgument(a)) expr.Arguments[0] = a;
+				expr.Arguments.RemoveAt(1);
+				res = expr;
+				modified = true;
+			}
+
 			return res;
+		}
+
+		static bool SimplifyLogicNotArgument(ILExpression expr)
+		{
+			var a = expr.Arguments[0];
+			ILCode c;
+			switch (a.Code) {
+				case ILCode.Ceq: c = ILCode.Cne; break;
+				case ILCode.Cne: c = ILCode.Ceq; break;
+				case ILCode.Cgt: c = ILCode.Cle; break;
+				case ILCode.Cgt_Un: c = ILCode.Cle_Un; break;
+				case ILCode.Cge: c = ILCode.Clt; break;
+				case ILCode.Cge_Un: c = ILCode.Clt_Un; break;
+				case ILCode.Clt: c = ILCode.Cge; break;
+				case ILCode.Clt_Un: c = ILCode.Cge_Un; break;
+				case ILCode.Cle: c = ILCode.Cgt; break;
+				case ILCode.Cle_Un: c = ILCode.Cgt_Un; break;
+				default: return false;
+			}
+			a.Code = c;
+			a.ILRanges.AddRange(expr.ILRanges);
+			return true;
 		}
 		#endregion
 	}
