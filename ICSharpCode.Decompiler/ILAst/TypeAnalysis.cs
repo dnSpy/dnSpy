@@ -681,6 +681,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Castclass:
 				case ILCode.Unbox_Any:
 					return (TypeReference)expr.Operand;
+				case ILCode.Unbox:
+					return new ByReferenceType((TypeReference)expr.Operand);
 				case ILCode.Isinst:
 					{
 						// isinst performs the equivalent of a cast only for reference types;
