@@ -306,7 +306,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!opBitwiseCallExpr.Match(ILCode.Call, out opBitwise, out leftVarExpression, out rightExpression))
 				return false;
 			
-			if (!opFalseArg.MatchLdloc(leftVarExpression.Operand as ILVariable))
+			if (!leftVarExpression.MatchLdloc(leftVar))
 				return false;
 			
 			// ignore operators other than op_BitwiseAnd and op_BitwiseOr

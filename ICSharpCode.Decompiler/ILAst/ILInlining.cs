@@ -385,7 +385,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			for (int i = 0; i < expr.Arguments.Count; i++) {
 				// Stop when seeing an opcode that does not guarantee that its operands will be evaluated.
 				// Inlining in that case might result in the inlined expresion not being evaluted.
-				if (i == 1 && (expr.Code == ILCode.LogicAnd || expr.Code == ILCode.LogicOr || expr.Code == ILCode.TernaryOp))
+				if (i == 1 && (expr.Code == ILCode.LogicAnd || expr.Code == ILCode.LogicOr || expr.Code == ILCode.TernaryOp || expr.Code == ILCode.NullCoalescing))
 					return false;
 				
 				ILExpression arg = expr.Arguments[i];

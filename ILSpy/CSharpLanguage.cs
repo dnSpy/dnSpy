@@ -437,17 +437,18 @@ namespace ICSharpCode.ILSpy
 								if (fileName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
 									MemoryStream ms = new MemoryStream();
 									entryStream.CopyTo(ms);
-									var decompiler = Baml.BamlResourceEntryNode.CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, assembly.FileName);
-									string xaml = null;
-									try {
-										xaml = decompiler.DecompileBaml(ms, assembly.FileName, new ConnectMethodDecompiler(assembly), new AssemblyResolver(assembly));
-									}
-									catch (XamlXmlWriterException) { } // ignore XAML writer exceptions
-									if (xaml != null) {
-										File.WriteAllText(Path.Combine(options.SaveAsProjectDirectory, Path.ChangeExtension(fileName, ".xaml")), xaml);
-										yield return Tuple.Create("Page", Path.ChangeExtension(fileName, ".xaml"));
-										continue;
-									}
+									// TODO implement extension point
+//									var decompiler = Baml.BamlResourceEntryNode.CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, assembly.FileName);
+//									string xaml = null;
+//									try {
+//										xaml = decompiler.DecompileBaml(ms, assembly.FileName, new ConnectMethodDecompiler(assembly), new AssemblyResolver(assembly));
+//									}
+//									catch (XamlXmlWriterException) { } // ignore XAML writer exceptions
+//									if (xaml != null) {
+//										File.WriteAllText(Path.Combine(options.SaveAsProjectDirectory, Path.ChangeExtension(fileName, ".xaml")), xaml);
+//										yield return Tuple.Create("Page", Path.ChangeExtension(fileName, ".xaml"));
+//										continue;
+//									}
 								}
 								using (FileStream fs = new FileStream(Path.Combine(options.SaveAsProjectDirectory, fileName), FileMode.Create, FileAccess.Write)) {
 									entryStream.CopyTo(fs);
@@ -508,6 +509,12 @@ namespace ICSharpCode.ILSpy
 			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
 			if (includeNamespace)
 				options |= ConvertTypeOptions.IncludeNamespace;
+
+			return TypeToString(options, type, typeAttributes);
+		}
+
+		string TypeToString(ConvertTypeOptions options, TypeReference type, ICustomAttributeProvider typeAttributes = null)
+		{
 			AstType astType = AstBuilder.ConvertType(type, typeAttributes, options);
 
 			StringWriter w = new StringWriter();
@@ -555,6 +562,14 @@ namespace ICSharpCode.ILSpy
 				return buffer.ToString();
 			} else
 				return property.Name;
+		}
+		
+		public override string FormatTypeName(TypeDefinition type)
+		{
+			if (type == null)
+				throw new ArgumentNullException("type");
+			
+			return TypeToString(ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
 		}
 
 		public override bool ShowMember(MemberReference member)
