@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ProjectGuid>{A6BAD2BA-76BA-461C-8B6D-418607591247}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
     <RootNamespace>ILSpy.BamlDecompiler</RootNamespace>
     <AssemblyName>ILSpy.BamlDecompiler.Plugin</AssemblyName>
@@ -17,6 +17,13 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <BaseAddress>4194304</BaseAddress>
@@ -66,6 +73,9 @@
   <ItemGroup>
     <Compile Include="BamlResourceNodeFactory.cs" />
     <Compile Include="BamlResourceEntryNode.cs" />
+    <Compile Include="CecilDependencyPropertyDescriptor.cs" />
+    <Compile Include="CecilType.cs" />
+    <Compile Include="CecilTypeResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\AppDomainTypeResolver.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlAssembly.cs" />
