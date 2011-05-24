@@ -34,6 +34,8 @@ namespace ILSpy.BamlDecompiler
 			var type = assembly.AssemblyDefinition.MainModule.GetType(fullName);
 			if (type == null) {
 				var otherAssembly = assembly.LookupReferencedAssembly(assemblyName);
+				if (otherAssembly == null)
+					throw new Exception("could not resolve '" + assemblyName + "'!");
 				type = otherAssembly.AssemblyDefinition.MainModule.GetType(fullName);
 			}
 			
