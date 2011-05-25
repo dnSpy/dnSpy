@@ -53,6 +53,9 @@ namespace ICSharpCode.ILSpy.Bookmarks
 				if (node is OperatorDeclaration)
 					return GetMemberOverlayedImage(attrNode, MemberIcon.Operator);
 				
+				if (node is ConstructorDeclaration || node is DestructorDeclaration)
+					return GetMemberOverlayedImage(attrNode, MemberIcon.Constructor);
+				
 				return GetMemberOverlayedImage(attrNode, MemberIcon.Method);
 			}
 		}

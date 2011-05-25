@@ -69,7 +69,7 @@ namespace ICSharpCode.ILSpy.TextView
 		DefinitionLookup definitionLookup;
 		CancellationTokenSource currentCancellationTokenSource;
 		
-		readonly IconBarManager manager;
+		internal readonly IconBarManager manager;
 		readonly IconBarMargin iconMargin;		
 		readonly TextMarkerService textMarkerService;
 		
