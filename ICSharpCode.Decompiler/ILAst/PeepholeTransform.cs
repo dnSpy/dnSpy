@@ -911,16 +911,25 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 
-			// "ternaryop(a, ldc.i4.0, b)" becomes "logicand(logicnot(a), b)" if the inferred type for expression "b" is boolean
-			if (expr.Code == ILCode.TernaryOp && TypeAnalysis.IsBoolean(expr.Arguments[2].InferredType) && (a = expr.Arguments[1]).Code == ILCode.Ldc_I4 && (int)a.Operand == 0) {
-				expr.Code = ILCode.LogicAnd;
-				expr.InferredType = expr.Arguments[2].InferredType;
-				a = new ILExpression(ILCode.LogicNot, null, expr.Arguments[0]) { ILRanges = a.ILRanges };
-				if (!SimplifyLogicNotArgument(a)) expr.Arguments[0] = a;
-				expr.Arguments.RemoveAt(1);
-				res = expr;
-				modified = true;
-			}
+			if (expr.Code == ILCode.TernaryOp && TypeAnalysis.IsBoolean(expr.Arguments[2].InferredType) && (a = expr.Arguments[1]).Code == ILCode.Ldc_I4)
+				switch ((int)a.Operand) {
+					// "ternaryop(a, ldc.i4.0, b)" becomes "logicand(logicnot(a), b)" if the inferred type for expression "b" is boolean
+					case 0:
+						expr.Code = ILCode.LogicAnd;
+						a = new ILExpression(ILCode.LogicNot, null, expr.Arguments[0]) { ILRanges = a.ILRanges };
+						if (!SimplifyLogicNotArgument(a)) expr.Arguments[0] = a;
+						goto common;
+					// "ternaryop(a, ldc.i4.1, b)" becomes "logicor(a, b)" if the inferred type for expression "b" is boolean
+					case 1:
+						expr.Code = ILCode.LogicOr;
+						expr.ILRanges.AddRange(a.ILRanges);
+						common:
+						expr.Arguments.RemoveAt(1);
+						expr.InferredType = expr.Arguments[1].InferredType;
+						res = expr;
+						modified = true;
+						break;
+				}
 
 			return res;
 		}
