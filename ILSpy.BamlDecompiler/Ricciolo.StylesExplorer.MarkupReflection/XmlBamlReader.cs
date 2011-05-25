@@ -1057,9 +1057,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		private void ReadPropertyComplexEnd()
 		{
-			if (!(elements.Peek() is XmlBamlPropertyElement))
-				throw new InvalidCastException();
-			
 			XmlBamlPropertyElement propertyElement = (XmlBamlPropertyElement) elements.Peek();
 
 			CloseElement();

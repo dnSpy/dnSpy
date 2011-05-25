@@ -3,11 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
-
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -54,8 +55,21 @@ namespace ILSpy.BamlDecompiler
 			using (XmlBamlReader reader = new XmlBamlReader(bamlStream, new CecilTypeResolver(asm)))
 				xamlDocument = XDocument.Load(reader);
 			
+			ConvertToEmptyElements(xamlDocument.Root);
+			
 			output.Write(xamlDocument.ToString());
 			return true;
+		}
+		
+		void ConvertToEmptyElements(XElement element)
+		{
+			foreach (var el in element.Elements()) {
+				if (!el.IsEmpty && !el.HasElements && el.Value == "") {
+					el.RemoveNodes();
+					continue;
+				}
+				ConvertToEmptyElements(el);
+			}
 		}
 	}
 }
