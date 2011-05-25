@@ -419,6 +419,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				case BamlRecordType.TextWithConverter:
 					this.ReadTextWithConverter();
 					break;
+				case BamlRecordType.TextWithId:
+					this.ReadTextWithId();
+					break;
 				case BamlRecordType.PropertyWithStaticResourceId:
 					this.ReadPropertyWithStaticResourceIdentifier();
 					break;
@@ -447,8 +450,16 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					this.ReadPresentationOptionsAttribute();
 					break;
 				default:
+					throw new NotImplementedException("UnsupportedNode: " + currentType);
 					break;
 			}
+		}
+		
+		void ReadTextWithId()
+		{
+			short textId = reader.ReadInt16();
+			string text = stringTable[textId];
+			nodes.Enqueue(new XmlBamlText(text));
 		}
 
 		private void ComputeBytesToSkip()
@@ -462,6 +473,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				case BamlRecordType.Property:
 				case BamlRecordType.PropertyCustom:
 				case BamlRecordType.Text:
+				case BamlRecordType.TextWithId:
 				case BamlRecordType.TextWithConverter:
 				case BamlRecordType.XmlnsProperty:
 				case BamlRecordType.DefAttribute:
@@ -783,8 +795,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				case IntegerCollectionType.Integer:
 					for (int k = 0; k < capacity; k++)
 					{
-						int num7 = reader.ReadInt32();
-						ints.Add(num7);
+						ints.Add(reader.ReadInt32());
 					}
 					return ints;
 
@@ -1172,7 +1183,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		private void ReadElementStart()
 		{
 			short identifier = reader.ReadInt16();
-			reader.ReadByte();
+			sbyte flags = reader.ReadSByte();
+			if (flags < 0 || flags > 3)
+				throw new NotImplementedException();
 			TypeDeclaration declaration = GetTypeDeclaration(identifier);
 
 			XmlBamlElement element;
