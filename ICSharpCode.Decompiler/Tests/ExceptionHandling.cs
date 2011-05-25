@@ -105,4 +105,24 @@ public class ExceptionHandling
 			cancellationTokenSource = new CancellationTokenSource();
 		}
 	}
+	
+	public void TwoCatchBlocksWithSameVariable()
+	{
+		try
+		{
+			Console.WriteLine("Try1");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+		}
+		try
+		{
+			Console.WriteLine("Try2");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+		}
+	}
 }
