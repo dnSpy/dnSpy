@@ -776,34 +776,23 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				throw new ArgumentException();
 
 			Int32Collection ints = new Int32Collection(capacity);
-			switch (type)
-			{
+			switch (type) {
 				case IntegerCollectionType.Byte:
 					for (int i = 0; i < capacity; i++)
-					{
 						ints.Add(reader.ReadByte());
-					}
 					return ints;
-
 				case IntegerCollectionType.UShort:
 					for (int j = 0; j < capacity; j++)
-					{
 						ints.Add(reader.ReadUInt16());
-					}
 					return ints;
-
 				case IntegerCollectionType.Integer:
 					for (int k = 0; k < capacity; k++)
-					{
 						ints.Add(reader.ReadInt32());
-					}
 					return ints;
-
 				case IntegerCollectionType.Consecutive:
-					for (int m = reader.ReadInt32(); m < capacity; m++)
-					{
+					int start = reader.ReadInt32();
+					for (int m = start; m < capacity + start; m++)
 						ints.Add(m);
-					}
 					return ints;
 			}
 			throw new ArgumentException();
