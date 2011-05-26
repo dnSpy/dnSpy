@@ -93,6 +93,12 @@ namespace ICSharpCode.Decompiler.Tests
 		{
 			TestFile(@"..\..\Tests\MultidimensionalArray.cs");
 		}
+
+		[Test]
+		public void NullableOperators()
+		{
+			TestFile(@"..\..\Tests\NullableOperators.cs");
+		}
 		
 		[Test]
 		public void PInvoke()
