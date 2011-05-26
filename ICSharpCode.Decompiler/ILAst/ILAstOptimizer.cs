@@ -578,6 +578,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			ReplaceVariables(
 				method,
 				delegate(ILVariable v) {
+					if (v.OriginalVariable == null)
+						return v;
 					ILVariable combinedVariable;
 					if (!dict.TryGetValue(v.OriginalVariable, out combinedVariable)) {
 						dict.Add(v.OriginalVariable, v);
