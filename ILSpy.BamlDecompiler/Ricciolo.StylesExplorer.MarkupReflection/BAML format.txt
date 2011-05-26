@@ -1,0 +1,22 @@
+﻿BAML format description
+
+A BAML stream consists of a header and sequential records that contain the data.
+
+The Header
+
+The header is 28 bytes long. The first four bytes are a little endian integer containing the length of the preamble in bytes. The preamble is the UTF-16 string "MSBAML", followed by three integers with the value 0x60000.
+
+Record format:
+
+In general a record consists of a type byte and its content. Some records also have a field, following the type byte, containing the remaining length of the record, encoded as 7-bit encoded integer.
+
+Record Types:
+
+DocumentStart (= 0x01):
+
+The document start (after the type byte) is 6 Bytes long. Usually 00 FF FF FF FF 00. These bytes can be safely ignored.
+
+AssemblyInfo (= 0xC1):
+
+The length field is followed by a 2 byte long ID. The ID is followed by a string containing the assembly name.
+

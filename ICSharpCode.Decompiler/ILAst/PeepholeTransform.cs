@@ -523,8 +523,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (recombineVariable) {
 				// Split local variable, unsplit these two instances
-				foreach (var ilExpression in method.GetSelfAndChildrenRecursive<ILExpression>(expression => expression.Operand == nextExpr.Operand))
-					ilExpression.Operand = exprInit.Operand;
+				// replace nextExpr.Operand with exprInit.Operand
+				ReplaceVariables(method, oldVar => oldVar == nextExpr.Operand ? (ILVariable)exprInit.Operand : oldVar);
 			}
 			
 			switch (loadInstruction) {
