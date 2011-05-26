@@ -186,6 +186,4 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			}
 		}
 	}
-	
-	
 }

@@ -133,6 +133,9 @@ namespace ICSharpCode.ILSpy.Bookmarks
 					}
 				}
 				
+				if ((attrNode.Modifiers & Modifiers.Static) == Modifiers.Static)
+					return GetTypeOverlayedImage(attrNode, TypeIcon.StaticClass);
+				
 				return GetTypeOverlayedImage(attrNode, TypeIcon.Class);
 			}
 		}
