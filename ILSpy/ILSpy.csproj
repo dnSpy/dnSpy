@@ -148,6 +148,7 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedInterfacePropertyImplementedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedInterfaceMethodImplementedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedInterfaceEventImplementedByTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedEventFiredByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyAccessorTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeExposedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeExtensionMethodsTreeNode.cs" />

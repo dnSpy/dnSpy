@@ -24,31 +24,34 @@ using System.Threading;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using ICSharpCode.Decompiler.Ast;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedVirtualMethodUsedByTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedEventFiredByTreeNode : AnalyzerTreeNode
 	{
-		private readonly MethodDefinition analyzedMethod;
+		private readonly EventDefinition analyzedEvent;
+		private readonly FieldDefinition eventBackingField;
+		private readonly MethodDefinition eventFiringMethod;
+
 		private readonly ThreadingSupport threading;
 		private ConcurrentDictionary<MethodDefinition, int> foundMethods;
-		private MethodDefinition baseMethod;
-		private List<TypeReference> possibleTypes;
 
-		public AnalyzedVirtualMethodUsedByTreeNode(MethodDefinition analyzedMethod)
+		public AnalyzedEventFiredByTreeNode(EventDefinition analyzedEvent)
 		{
-			if (analyzedMethod == null)
-				throw new ArgumentNullException("analyzedMethod");
+			if (analyzedEvent == null)
+				throw new ArgumentNullException("analyzedEvent");
 
-			this.analyzedMethod = analyzedMethod;
+			this.analyzedEvent = analyzedEvent;
 			this.threading = new ThreadingSupport();
 			this.LazyLoading = true;
+
+			this.eventBackingField = GetBackingField(analyzedEvent);
+			this.eventFiringMethod = analyzedEvent.EventType.Resolve().Methods.First(md => md.Name == "Invoke");
 		}
 
 		public override object Text
 		{
-			get { return "Used By"; }
+			get { return "Raised By"; }
 		}
 
 		public override object Icon
@@ -72,72 +75,39 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			InitializeAnalyzer();
+			foundMethods = new ConcurrentDictionary<MethodDefinition, int>();
 
-			var analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
-			foreach (var child in analyzer.PerformAnalysis(ct)) {
+			foreach (var child in FindReferencesInType(analyzedEvent.DeclaringType)) {
 				yield return child;
 			}
 
-			ReleaseAnalyzer();
-		}
-
-		private void InitializeAnalyzer()
-		{
-			foundMethods = new ConcurrentDictionary<MethodDefinition, int>();
-
-			var BaseMethods = TypesHierarchyHelpers.FindBaseMethods(analyzedMethod).ToArray();
-			if (BaseMethods.Length > 0) {
-				baseMethod = BaseMethods[BaseMethods.Length - 1];
-			} else
-				baseMethod = analyzedMethod;
-
-			possibleTypes = new List<TypeReference>();
-
-			TypeReference type = analyzedMethod.DeclaringType.BaseType;
-			while (type !=null)
-			{
-				possibleTypes.Add(type);
-				type = type.Resolve().BaseType;
-			}
-		}
-
-		private void ReleaseAnalyzer()
-		{
 			foundMethods = null;
-			baseMethod = null;
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			string name = analyzedMethod.Name;
+			// HACK: in lieu of proper flow analysis, I'm going to use a simple heuristic
+			// If the method accesses the event's backing field, and calls invoke on a delegate 
+			// with the same signature, then it is (most likely) raise the given event.
+
 			foreach (MethodDefinition method in type.Methods) {
+				bool readBackingField = false;
 				bool found = false;
-				string prefix = string.Empty;
 				if (!method.HasBody)
 					continue;
 				foreach (Instruction instr in method.Body.Instructions) {
-					MethodReference mr = instr.Operand as MethodReference;
-					if (mr != null && mr.Name == name) {
-						// explicit call to the requested method 
-						if (instr.OpCode.Code == Code.Call 
-							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) 
-							&& mr.Resolve() == analyzedMethod) {
-							found = true;
-							prefix = "(as base) ";
-							break;
+					Code code = instr.OpCode.Code;
+					if (code == Code.Ldfld || code == Code.Ldflda) {
+						FieldReference fr = instr.Operand as FieldReference;
+						if (fr != null && fr.Name == eventBackingField.Name && fr == eventBackingField) {
+							readBackingField = true;
 						}
-						// virtual call to base method
-						if (instr.OpCode.Code == Code.Callvirt) {
-							MethodDefinition md = mr.Resolve();
-							if (md == null) {
-								// cannot resolve the operand, so ignore this method
-								break;
-							}
-							if (md == baseMethod) {
-								found = true;
-								break;
-							}
+					}
+					if (readBackingField && (code == Code.Callvirt || code == Code.Call)) {
+						MethodReference mr = instr.Operand as MethodReference;
+						if (mr != null && mr.Name == eventFiringMethod.Name && mr.Resolve() == eventFiringMethod) {
+							found = true;
+							break;
 						}
 					}
 				}
@@ -147,7 +117,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				if (found) {
 					MethodDefinition codeLocation = this.Language.GetOriginalCodeLocation(method) as MethodDefinition;
 					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
-						yield return new AnalyzedMethodTreeNode(codeLocation, prefix);
+						yield return new AnalyzedMethodTreeNode(codeLocation);
 					}
 				}
 			}
@@ -156,6 +126,28 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private bool HasAlreadyBeenFound(MethodDefinition method)
 		{
 			return !foundMethods.TryAdd(method, 0);
+		}
+
+		// HACK: we should probably examine add/remove methods to determine this
+		private static FieldDefinition GetBackingField(EventDefinition ev)
+		{
+			var fieldName = ev.Name;
+			var vbStyleFieldName = fieldName + "Event";
+			var fieldType = ev.EventType;
+
+			foreach (var fd in ev.DeclaringType.Fields) {
+				if (fd.Name == fieldName || fd.Name == vbStyleFieldName)
+					if (fd.FieldType.FullName == fieldType.FullName)
+						return fd;
+			}
+
+			return null;
+		}
+
+
+		public static bool CanShow(EventDefinition ev)
+		{
+			return GetBackingField(ev) != null;
 		}
 	}
 }

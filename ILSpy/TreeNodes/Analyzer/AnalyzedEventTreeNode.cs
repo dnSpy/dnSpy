@@ -59,13 +59,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			if (analyzedEvent.AddMethod != null)
 				this.Children.Add(new AnalyzedEventAccessorTreeNode(analyzedEvent.AddMethod, "add"));
+			
 			if (analyzedEvent.RemoveMethod != null)
 				this.Children.Add(new AnalyzedEventAccessorTreeNode(analyzedEvent.RemoveMethod, "remove"));
+			
 			foreach (var accessor in analyzedEvent.OtherMethods)
 				this.Children.Add(new AnalyzedEventAccessorTreeNode(accessor, null));
 
+			if (AnalyzedEventFiredByTreeNode.CanShow(analyzedEvent))
+				this.Children.Add(new AnalyzedEventFiredByTreeNode(analyzedEvent));
+
 			if (AnalyzedEventOverridesTreeNode.CanShow(analyzedEvent))
 				this.Children.Add(new AnalyzedEventOverridesTreeNode(analyzedEvent));
+			
 			if (AnalyzedInterfaceEventImplementedByTreeNode.CanShow(analyzedEvent))
 				this.Children.Add(new AnalyzedInterfaceEventImplementedByTreeNode(analyzedEvent));
 		}

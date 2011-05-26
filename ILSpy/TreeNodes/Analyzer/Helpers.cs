@@ -67,11 +67,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				return FindMethodUsageInType(method.DeclaringType, method) ?? method;
 			}
 
-			var typeUsage = GetOriginalCodeLocation(method.DeclaringType, method);
+			var typeUsage = GetOriginalCodeLocation(method.DeclaringType);
 
 			return typeUsage ?? method;
 		}
-		public static MethodDefinition GetOriginalCodeLocation(TypeDefinition type, MethodDefinition method)
+		public static MethodDefinition GetOriginalCodeLocation(TypeDefinition type)
 		{
 			if (type != null && type.DeclaringType != null && type.IsCompilerGenerated()) {
 				MethodDefinition constructor = GetTypeConstructor(type);
