@@ -64,11 +64,11 @@ namespace ICSharpCode.ILSpy.Xaml
 			get
 			{
 				string text = (string)Text;
-				if (text.EndsWith(".xml"))
+				if (text.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
 					return Images.ResourceXml;
-				else if (text.EndsWith(".xsd"))
+				else if (text.EndsWith(".xsd", StringComparison.OrdinalIgnoreCase))
 					return Images.ResourceXsd;
-				else if (text.EndsWith(".xslt"))
+				else if (text.EndsWith(".xslt", StringComparison.OrdinalIgnoreCase))
 					return Images.ResourceXslt;
 				else
 					return Images.Resource;
