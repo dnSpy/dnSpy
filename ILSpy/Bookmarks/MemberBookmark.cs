@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 				if (node is PropertyDeclaration)
 					return GetMemberOverlayedImage(attrNode, MemberIcon.Property);
 				
-				if (node is EventDeclaration)
+				if (node is EventDeclaration || node is CustomEventDeclaration)
 					return GetMemberOverlayedImage(attrNode, MemberIcon.Event);
 				
 				if (node is IndexerDeclaration) 

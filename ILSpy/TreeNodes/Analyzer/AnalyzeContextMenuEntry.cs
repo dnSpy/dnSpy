@@ -35,10 +35,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			foreach (IMemberTreeNode node in selectedNodes) {
 				if (!(node.Member is TypeDefinition
-					|| node.Member is FieldDefinition
-					|| node.Member is MethodDefinition
-					|| Analyzer.AnalyzedPropertyTreeNode.CanShow(node.Member)
-					|| Analyzer.AnalyzedEventTreeNode.CanShow(node.Member)))
+				      || node.Member is FieldDefinition
+				      || node.Member is MethodDefinition
+				      || Analyzer.AnalyzedPropertyTreeNode.CanShow(node.Member)
+				      || Analyzer.AnalyzedEventTreeNode.CanShow(node.Member)))
 					return false;
 			}
 
@@ -50,22 +50,27 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			// TODO: figure out when equivalent nodes are already present
 			// and focus those instead.
 			foreach (IMemberTreeNode node in selectedNodes) {
-				TypeDefinition type = node.Member as TypeDefinition;
-				if (type != null)
-					AnalyzerTreeView.Instance.Show(new AnalyzedTypeTreeNode(type));
-				FieldDefinition field = node.Member as FieldDefinition;
-				if (field != null)
-					AnalyzerTreeView.Instance.Show(new AnalyzedFieldTreeNode(field));
-				MethodDefinition method = node.Member as MethodDefinition;
-				if (method != null)
-					AnalyzerTreeView.Instance.Show(new AnalyzedMethodTreeNode(method));
-				var propertyAnalyzer = Analyzer.AnalyzedPropertyTreeNode.TryCreateAnalyzer(node.Member);
-				if (propertyAnalyzer != null)
-					AnalyzerTreeView.Instance.Show(propertyAnalyzer);
-				var eventAnalyzer = Analyzer.AnalyzedEventTreeNode.TryCreateAnalyzer(node.Member);
-				if (eventAnalyzer != null)
-					AnalyzerTreeView.Instance.Show(eventAnalyzer);
+				Analyze(node.Member);
 			}
+		}
+
+		public static void Analyze(MemberReference member)
+		{
+			TypeDefinition type = member as TypeDefinition;
+			if (type != null)
+				AnalyzerTreeView.Instance.Show(new AnalyzedTypeTreeNode(type));
+			FieldDefinition field = member as FieldDefinition;
+			if (field != null)
+				AnalyzerTreeView.Instance.Show(new AnalyzedFieldTreeNode(field));
+			MethodDefinition method = member as MethodDefinition;
+			if (method != null)
+				AnalyzerTreeView.Instance.Show(new AnalyzedMethodTreeNode(method));
+			var propertyAnalyzer = Analyzer.AnalyzedPropertyTreeNode.TryCreateAnalyzer(member);
+			if (propertyAnalyzer != null)
+				AnalyzerTreeView.Instance.Show(propertyAnalyzer);
+			var eventAnalyzer = Analyzer.AnalyzedEventTreeNode.TryCreateAnalyzer(member);
+			if (eventAnalyzer != null)
+				AnalyzerTreeView.Instance.Show(eventAnalyzer);
 		}
 	}
 }
