@@ -20,6 +20,11 @@ using System;
 
 public static class NullableOperators
 {
+	// C# uses 4 different patterns of IL for operators involving nullable values: bool, other primitive types, decimal, other structs.
+	// Different patterns are used depending on whether both of the operands are nullable or only the left/right operand is nullable.
+	// Negation must not be pushed through such comparisons because it would change the semantics.
+	// A comparison used in a condition differs somewhat from a comparison used as a simple value.
+
 	public static void BoolBasic(bool? a, bool? b)
 	{
 		if (a == b)

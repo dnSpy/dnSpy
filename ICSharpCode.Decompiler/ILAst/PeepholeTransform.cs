@@ -892,6 +892,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression res = null;
 			while (expr.Code == ILCode.LogicNot) {
 				a = expr.Arguments[0];
+				// remove double negation
 				if (a.Code == ILCode.LogicNot) {
 					res = a.Arguments[0];
 					res.ILRanges.AddRange(expr.ILRanges);
@@ -914,6 +915,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			return res;
 		}
 
+		/// <summary>
+		/// If the argument is a binary comparison operation then the negation is pushed through it
+		/// </summary>
 		static bool SimplifyLogicNotArgument(ILExpression expr)
 		{
 			var a = expr.Arguments[0];
