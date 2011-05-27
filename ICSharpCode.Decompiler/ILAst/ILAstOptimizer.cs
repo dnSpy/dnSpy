@@ -575,16 +575,37 @@ namespace ICSharpCode.Decompiler.ILAst
 			// This ensures that a single IL variable is a single C# variable (gets assigned only one name)
 			// The DeclareVariables transformation might then split up the C# variable again if it is used indendently in two separate scopes.
 			Dictionary<VariableDefinition, ILVariable> dict = new Dictionary<VariableDefinition, ILVariable>();
-			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
-				ILVariable v = expr.Operand as ILVariable;
-				if (v != null && v.OriginalVariable != null) {
+			ReplaceVariables(
+				method,
+				delegate(ILVariable v) {
+					if (v.OriginalVariable == null)
+						return v;
 					ILVariable combinedVariable;
 					if (!dict.TryGetValue(v.OriginalVariable, out combinedVariable)) {
 						dict.Add(v.OriginalVariable, v);
 						combinedVariable = v;
 					}
-					expr.Operand = combinedVariable;
+					return combinedVariable;
+				});
+		}
+		
+		public static void ReplaceVariables(ILNode node, Func<ILVariable, ILVariable> variableMapping)
+		{
+			ILExpression expr = node as ILExpression;
+			if (expr != null) {
+				ILVariable v = expr.Operand as ILVariable;
+				if (v != null)
+					expr.Operand = variableMapping(v);
+				foreach (ILExpression child in expr.Arguments)
+					ReplaceVariables(child, variableMapping);
+			} else {
+				var catchBlock = node as ILTryCatchBlock.CatchBlock;
+				if (catchBlock != null && catchBlock.ExceptionVariable != null) {
+					catchBlock.ExceptionVariable = variableMapping(catchBlock.ExceptionVariable);
 				}
+				
+				foreach (ILNode child in node.GetChildren())
+					ReplaceVariables(child, variableMapping);
 			}
 		}
 		
