@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
@@ -37,6 +38,7 @@ using System.Windows.Threading;
 using System.Xml;
 
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
@@ -70,7 +72,7 @@ namespace ICSharpCode.ILSpy.TextView
 		CancellationTokenSource currentCancellationTokenSource;
 		
 		internal readonly IconBarManager manager;
-		readonly IconBarMargin iconMargin;		
+		readonly IconBarMargin iconMargin;
 		readonly TextMarkerService textMarkerService;
 		
 		#region Constructor
@@ -86,6 +88,7 @@ namespace ICSharpCode.ILSpy.TextView
 					}
 				});
 			
+			this.Loaded+= new RoutedEventHandler(DecompilerTextView_Loaded);
 			InitializeComponent();
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
@@ -96,7 +99,6 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.MouseHoverStopped += TextViewMouseHoverStopped;
 			textEditor.SetBinding(TextEditor.FontFamilyProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFont") });
 			textEditor.SetBinding(TextEditor.FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFontSize") });
-			textEditor.SetBinding(TextEditor.ShowLineNumbersProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("ShowLineNumbers") });
 			
 			// add marker service & margin
 			iconMargin = new IconBarMargin((manager = new IconBarManager()));
@@ -104,13 +106,42 @@ namespace ICSharpCode.ILSpy.TextView
 			textMarkerService.CodeEditor = textEditor;
 			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
+			textEditor.ShowLineNumbers = true;
+			DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 			
 			textEditor.TextArea.LeftMargins.Insert(0, iconMargin);
 			textEditor.TextArea.TextView.VisualLinesChanged += delegate { iconMargin.InvalidateVisual(); };
+			ShowLineMargin();
 			
 			// Bookmarks context menu
 			IconMarginActionsProvider.Add(iconMargin);
 		}
+
+		void DecompilerTextView_Loaded(object sender, RoutedEventArgs e)
+		{
+			ShowLineMargin();
+		}
+		
+		#endregion
+		
+		#region Line margin
+
+		void CurrentDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "ShowLineNumbers") {
+				ShowLineMargin();
+			}
+		}
+		
+		void ShowLineMargin()
+		{
+			foreach (var margin in this.textEditor.TextArea.LeftMargins) {
+				if (margin is LineNumberMargin || margin is System.Windows.Shapes.Line) {
+					margin.Visibility = DisplaySettingsPanel.CurrentDisplaySettings.ShowLineNumbers ? Visibility.Visible : Visibility.Collapsed;
+				}
+			}
+		}
+		
 		#endregion
 		
 		#region Tooltip support
