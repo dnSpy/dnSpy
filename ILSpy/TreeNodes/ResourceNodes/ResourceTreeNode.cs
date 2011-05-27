@@ -34,6 +34,10 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
+	/// <summary>
+	/// This is the default resource entry tree node, which is used if no specific
+	/// <see cref="IResourceNodeFactory"/> exists for the given resource type. 
+	/// </summary>
 	public class ResourceTreeNode : ILSpyTreeNode
 	{
 		Resource r;
@@ -130,65 +134,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					break;
 			}
 			return result ?? new ResourceTreeNode(resource);
-		}
-	}
-	
-	/// <summary>
-	/// This interface allows plugins to create custom nodes for resources.
-	/// </summary>
-	public interface IResourceNodeFactory
-	{
-		ILSpyTreeNode CreateNode(Resource resource);
-		ILSpyTreeNode CreateNode(string key, Stream data);
-	}
-	
-	[Export(typeof(IResourceNodeFactory))]
-	sealed class ResourcesFileTreeNodeFactory : IResourceNodeFactory
-	{
-		public ILSpyTreeNode CreateNode(Resource resource)
-		{
-			EmbeddedResource er = resource as EmbeddedResource;
-			if (er != null && er.Name.EndsWith(".resources", StringComparison.OrdinalIgnoreCase)) {
-				return new ResourcesFileTreeNode(er);
-			}
-			return null;
-		}
-		
-		public ILSpyTreeNode CreateNode(string key, Stream data)
-		{
-			return null;
-		}
-	}
-	
-	sealed class ResourcesFileTreeNode : ResourceTreeNode
-	{
-		public ResourcesFileTreeNode(EmbeddedResource er) : base(er)
-		{
-			this.LazyLoading = true;
-		}
-
-		public override object Icon
-		{
-			get { return Images.ResourceResourcesFile; }
-		}
-
-		protected override void LoadChildren()
-		{
-			EmbeddedResource er = this.Resource as EmbeddedResource;
-			if (er != null) {
-				Stream s = er.GetResourceStream();
-				s.Position = 0;
-				ResourceReader reader;
-				try {
-					reader = new ResourceReader(s);
-				} catch (ArgumentException) {
-					return;
-				}
-				foreach (DictionaryEntry entry in reader.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
-					if (entry.Value is Stream)
-						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), (Stream)entry.Value));
-				}
-			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -17,89 +17,19 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
-using Microsoft.Win32;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
-	/// <summary>
-	/// Entry in a .resources file
-	/// </summary>
-	public class ResourceEntryNode : ILSpyTreeNode
-	{
-		private readonly string key;
-		private readonly Stream data;
-
-		public override object Text
-		{
-			get { return key.ToString(); }
-		}
-
-		public override object Icon
-		{
-			get { return Images.Resource; }
-		}
-
-		protected Stream Data
-		{
-			get { return data; }
-		}
-
-
-		public ResourceEntryNode(string key, Stream data)
-		{
-			if (key == null)
-				throw new ArgumentNullException("key");
-			if (data == null)
-				throw new ArgumentNullException("data");
-			this.key = key;
-			this.data = data;
-		}
-
-		public static ILSpyTreeNode Create(string key, Stream data)
-		{
-			ILSpyTreeNode result = null;
-			foreach (var factory in App.CompositionContainer.GetExportedValues<IResourceNodeFactory>()) {
-				result = factory.CreateNode(key, data);
-				if (result != null)
-					break;
-			}
-			return result ?? new ResourceEntryNode(key, data);
-		}
-
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.WriteCommentLine(output, string.Format("{0} = {1}", key, data));
-		}
-
-		public override bool Save(DecompilerTextView textView)
-		{
-			SaveFileDialog dlg = new SaveFileDialog();
-			dlg.FileName = Path.GetFileName(DecompilerTextView.CleanUpName(key));
-			if (dlg.ShowDialog() == true) {
-				data.Position = 0;
-				using (var fs = dlg.OpenFile()) {
-					data.CopyTo(fs);
-				}
-			}
-			return true;
-		}
-	}
-
 	[Export(typeof(IResourceNodeFactory))]
-	sealed class ImageResourceNodeFactory : IResourceNodeFactory
+	sealed class CursorResourceNodeFactory : IResourceNodeFactory
 	{
-		static readonly string[] imageFileExtensions = { ".png", ".gif", ".bmp", ".jpg", ".ico" };
+		static readonly string[] imageFileExtensions = { ".cur" };
 
 		public ILSpyTreeNode CreateNode(Mono.Cecil.Resource resource)
 		{
@@ -114,15 +44,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			foreach (string fileExt in imageFileExtensions) {
 				if (key.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
-					return new ImageResourceEntryNode(key, data);
+					return new CursorResourceEntryNode(key, data);
 			}
 			return null;
 		}
 	}
 
-	sealed class ImageResourceEntryNode : ResourceEntryNode
+	sealed class CursorResourceEntryNode : ResourceEntryNode
 	{
-		public ImageResourceEntryNode(string key, Stream data)
+		public CursorResourceEntryNode(string key, Stream data)
 			: base(key, data)
 		{
 		}
@@ -138,12 +68,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				AvalonEditTextOutput output = new AvalonEditTextOutput();
 				Data.Position = 0;
 				BitmapImage image = new BitmapImage();
-				image.BeginInit();
-				image.StreamSource = Data;
-				image.EndInit();
+
+				//HACK: windows imaging does not understand that .cur files have the same layout as .ico
+				// so load to data, and modify the ResourceType in the header to make look like an icon...
+				byte[] curData = ((MemoryStream)Data).ToArray();
+				curData[2] = 1;
+				using (Stream stream = new MemoryStream(curData)) {
+					image.BeginInit();
+					image.StreamSource = stream;
+					image.EndInit();
+				}
+
 				output.AddUIElement(() => new Image { Source = image });
 				output.WriteLine();
-				output.AddButton(Images.Save, "Save", delegate { Save(null); });
+				output.AddButton(Images.Save, "Save", delegate {
+					Save(null);
+				});
 				textView.ShowNode(output, this, null);
 				return true;
 			}

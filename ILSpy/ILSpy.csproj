@@ -159,7 +159,12 @@
     <Compile Include="TreeNodes\Analyzer\Helpers.cs" />
     <Compile Include="TreeNodes\Analyzer\ScopedWhereUsedAnalyzer.cs" />
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />
-    <Compile Include="TreeNodes\XamlResourceNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\CursorResourceEntryNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ImageResourceEntryNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\XmlResourceNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\IResourceNodeFactory.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourcesFileTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\XamlResourceNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
     <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
@@ -218,9 +223,9 @@
     <Compile Include="TreeNodes\NamespaceTreeNode.cs" />
     <Compile Include="TreeNodes\PropertyTreeNode.cs" />
     <Compile Include="TreeNodes\ReferenceFolderTreeNode.cs" />
-    <Compile Include="TreeNodes\ResourceEntryNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceListTreeNode.cs" />
-    <Compile Include="TreeNodes\ResourceTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourceTreeNode.cs" />
     <Compile Include="TreeNodes\ThreadingSupport.cs" />
     <Compile Include="TreeNodes\TypeTreeNode.cs" />
     <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />
@@ -311,6 +316,11 @@
       <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ResourceXml.png" />
+    <Resource Include="Images\ResourceXsd.png" />
+    <Resource Include="Images\ResourceXslt.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
