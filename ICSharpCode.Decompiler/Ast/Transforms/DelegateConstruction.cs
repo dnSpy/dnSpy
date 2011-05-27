@@ -136,6 +136,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			
 			// Create AnonymousMethodExpression and prepare parameters
 			AnonymousMethodExpression ame = new AnonymousMethodExpression();
+			ame.CopyAnnotationsFrom(objectCreateExpression); // copy ILRanges etc.
+			ame.RemoveAnnotations<MethodReference>(); // remove reference to delegate ctor
+			ame.AddAnnotation(method); // add reference to anonymous method
 			ame.Parameters.AddRange(AstBuilder.MakeParameters(method, isLambda: true));
 			ame.HasParameterList = true;
 			
@@ -180,6 +183,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 			if (isLambda) {
 				LambdaExpression lambda = new LambdaExpression();
+				lambda.CopyAnnotationsFrom(ame);
 				ame.Parameters.MoveTo(lambda.Parameters);
 				Expression returnExpr = ((ReturnStatement)body.Statements.Single()).Expression;
 				returnExpr.Remove();
