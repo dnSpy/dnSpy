@@ -146,5 +146,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			node.AcceptVisitor(this, null);
 		}
+
+		public override object VisitParenthesizedExpression(ParenthesizedExpression expr, object data)
+		{
+			// extra parentheses are redundant after this transformation
+			var res = expr.Expression;
+			expr.ReplaceWith(res);
+			return res.AcceptVisitor(this, data);
+		}
 	}
 }
