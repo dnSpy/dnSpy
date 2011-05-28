@@ -284,13 +284,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			else
 				currentType = (BamlRecordType)type;
 			
-			if (currentType.ToString().EndsWith("End"))
-				Debug.Unindent();
-			
-			Debug.WriteLine(currentType);
-			
-			if (currentType.ToString().StartsWith("Start"))
-				Debug.Indent();
+//			Debug.WriteLine(currentType);
 		}
 
 		private bool SetNextNode()
