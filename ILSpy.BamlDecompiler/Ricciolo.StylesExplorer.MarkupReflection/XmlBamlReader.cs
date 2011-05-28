@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -445,7 +446,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					break;
 				default:
 					throw new NotImplementedException("UnsupportedNode: " + currentType);
-					break;
 			}
 		}
 		
@@ -1182,6 +1182,12 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			}
 			else
 				element = new XmlBamlElement();
+			
+			// the type is defined in the local assembly, i.e., the main assembly
+			// and this is the root element
+			if (_resolver.IsLocalAssembly(declaration.Assembly) && parentElement == null) {
+				declaration = GetKnownTypeDeclarationByName(declaration.Type.BaseType.AssemblyQualifiedName);
+			}
 
 			element.TypeDeclaration = declaration;
 			elements.Push(element);
@@ -1562,6 +1568,16 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				throw new NotSupportedException();
 
 			return declaration;
+		}
+		
+		TypeDeclaration GetKnownTypeDeclarationByName(string name)
+		{
+			foreach (var type in KnownInfo.KnownTypeTable) {
+				if (name == string.Format("{0}.{1}, {2}", type.Namespace, type.Name, type.Assembly))
+					return type;
+			}
+			
+			throw new NotSupportedException();
 		}
 
 		internal string GetAssembly(short identifier)

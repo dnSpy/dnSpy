@@ -23,6 +23,11 @@ namespace ILSpy.BamlDecompiler
 			this.thisAssembly = asm;
 		}
 		
+		public bool IsLocalAssembly(string name)
+		{
+			return name == this.thisAssembly.Name.Name;
+		}
+		
 		public IType GetTypeByAssemblyQualifiedName(string name)
 		{
 			int comma = name.IndexOf(',');
@@ -50,6 +55,12 @@ namespace ILSpy.BamlDecompiler
 				throw new ArgumentException();
 			
 			return new CecilDependencyPropertyDescriptor(name, ((CecilType)ownerType).type);
+		}
+		
+		public string RuntimeVersion {
+			get {
+				return thisAssembly.MainModule.Runtime.ToString();
+			}
 		}
 	}
 }
