@@ -3,18 +3,17 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 
 #endregion
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ILSpy.BamlDecompiler.Plugin")]
+[assembly: AssemblyTitle("ILSpy.BamlDecompiler.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ILSpy.BamlDecompiler.Plugin")]
+[assembly: AssemblyProduct("ILSpy.BamlDecompiler.Tests")]
 [assembly: AssemblyCopyright("Copyright 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -22,8 +21,6 @@ using System.Runtime.CompilerServices;
 // This sets the default COM visibility of types in the assembly to invisible.
 // If you need to expose a type to COM, use [ComVisible(true)] on that type.
 [assembly: ComVisible(false)]
-
-[assembly: InternalsVisibleTo("ILSpy.BamlDecompiler.Tests")]
 
 // The assembly version has following format :
 //

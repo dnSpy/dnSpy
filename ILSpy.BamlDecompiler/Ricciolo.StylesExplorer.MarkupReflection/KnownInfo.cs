@@ -34,12 +34,16 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		public KnownInfo(ITypeResolver resolver)
 		{
-			KnownAssemblyTable = new string[5];
-			KnownAssemblyTable[0] = "PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-			KnownAssemblyTable[1] = "PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-			KnownAssemblyTable[2] = "mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-			KnownAssemblyTable[3] = "System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-			KnownAssemblyTable[4] = "WindowBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+			switch (resolver.RuntimeVersion) {
+				case "Net_2_0":
+					LoadKnownAssemblies30();
+					break;
+				case "Net_4_0":
+					LoadKnownAssemblies40();
+					break;
+				default:
+					throw new NotSupportedException();
+			}
 
 			KnownTypeTable = new TypeDeclaration[760];
 			KnownTypeTable[0] = new TypeDeclaration(resolver, string.Empty, string.Empty, 0);
@@ -1303,6 +1307,26 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			KnownResourceTable.Add(30, new ResourceName("SystemColors.WindowTextBrush"));
 			KnownResourceTable.Add(60, new ResourceName("SystemColors.WindowTextColor"));
 			KnownResourceTable.Add(0xa9, new ResourceName("SystemParameters.WorkArea"));
+		}
+
+		void LoadKnownAssemblies30()
+		{
+			KnownAssemblyTable = new string[5];
+			KnownAssemblyTable[0] = "PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+			KnownAssemblyTable[1] = "PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+			KnownAssemblyTable[2] = "mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+			KnownAssemblyTable[3] = "System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+			KnownAssemblyTable[4] = "WindowBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+		}
+		
+		void LoadKnownAssemblies40()
+		{
+			KnownAssemblyTable = new string[5];
+			KnownAssemblyTable[0] = "PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+			KnownAssemblyTable[1] = "PresentationCore, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+			KnownAssemblyTable[2] = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+			KnownAssemblyTable[3] = "System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+			KnownAssemblyTable[4] = "WindowBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 		}
 
 		#endregion
