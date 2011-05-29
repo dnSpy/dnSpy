@@ -109,7 +109,7 @@
     <Compile Include="Commands\ExportCommandAttribute.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
-    <Compile Include="CSharpLanguage.cs" />
+    <Compile Include="Languages\CSharpLanguage.cs" />
     <Compile Include="DecompilationOptions.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FilterSettings.cs" />
@@ -117,15 +117,15 @@
     <Compile Include="GacInterop.cs" />
     <Compile Include="GuessFileType.cs" />
     <Compile Include="ContextMenuEntry.cs" />
-    <Compile Include="ILAstLanguage.cs" />
-    <Compile Include="ILLanguage.cs" />
+    <Compile Include="Languages\ILAstLanguage.cs" />
+    <Compile Include="Languages\ILLanguage.cs" />
     <Compile Include="ILSpySettings.cs" />
     <Compile Include="Images\AccessOverlayIcon.cs" />
     <Compile Include="Images\MemberIcon.cs" />
     <Compile Include="Images\TypeIcon.cs" />
     <Compile Include="IPane.cs" />
     <Compile Include="ISmartTextOutput.cs" />
-    <Compile Include="Language.cs" />
+    <Compile Include="Languages\Language.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="LoadedAssembly.cs" />
     <Compile Include="NativeMethods.cs" />
