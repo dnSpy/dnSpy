@@ -251,6 +251,20 @@ namespace ICSharpCode.ILSpy
 						output.WriteLine("// Architecture: Itanium-64");
 						break;
 				}
+				switch (mainModule.Runtime) {
+					case TargetRuntime.Net_1_0:
+						output.WriteLine("// Runtime: .NET 1.0");
+						break;
+					case TargetRuntime.Net_1_1:
+						output.WriteLine("// Runtime: .NET 1.1");
+						break;
+					case TargetRuntime.Net_2_0:
+						output.WriteLine("// Runtime: .NET 2.0");
+						break;
+					case TargetRuntime.Net_4_0:
+						output.WriteLine("// Runtime: .NET 4.0");
+						break;
+				}
 				output.WriteLine();
 				
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
