@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -17,56 +17,15 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using ICSharpCode.ILSpy.TreeNodes.Analyzer;
-using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
 {
-	/// <summary>
-	/// Analyzer tree view.
-	/// </summary>
-	public partial class AnalyzerTreeView : SharpTreeView, IPane
+	[ExportMainMenuCommand(Menu = "_View", Header = "_Analyzer", MenuCategory = "ShowPane", MenuOrder = 100)]
+	sealed class ShowAnalyzerCommand : SimpleCommand
 	{
-		static AnalyzerTreeView instance;
-
-		public static AnalyzerTreeView Instance
+		public override void Execute(object parameter)
 		{
-			get
-			{
-				if (instance == null) {
-					App.Current.VerifyAccess();
-					instance = new AnalyzerTreeView();
-				}
-				return instance;
-			}
-		}
-
-		private AnalyzerTreeView()
-		{
-			this.ShowRoot = false;
-			this.Root = new AnalyzerTreeNode { Language = MainWindow.Instance.CurrentLanguage };
-			ContextMenuProvider.Add(this);
-		}
-
-		public void Show()
-		{
-			if (!IsVisible)
-				MainWindow.Instance.ShowInBottomPane("Analyzer", this);
-		}
-
-		public void Show(AnalyzerTreeNode node)
-		{
-			Show();
-
-			node.IsExpanded = true;
-			this.Root.Children.Add(node);
-			this.SelectedItem = node;
-			this.FocusNode(node);
-		}
-
-		void IPane.Closed()
-		{
-			this.Root.Children.Clear();
+			AnalyzerTreeView.Instance.Show();
 		}
 	}
 }
