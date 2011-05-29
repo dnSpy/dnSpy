@@ -251,6 +251,9 @@ namespace ICSharpCode.ILSpy
 						output.WriteLine("// Architecture: Itanium-64");
 						break;
 				}
+				if ((mainModule.Attributes & ModuleAttributes.ILOnly) == 0) {
+					output.WriteLine("// This assembly contains unmanaged code.");
+				}
 				switch (mainModule.Runtime) {
 					case TargetRuntime.Net_1_0:
 						output.WriteLine("// Runtime: .NET 1.0");

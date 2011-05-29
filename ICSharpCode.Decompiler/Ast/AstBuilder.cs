@@ -1151,7 +1151,7 @@ namespace ICSharpCode.Decompiler.Ast
 			MethodImplAttributes implAttributes = methodDefinition.ImplAttributes & ~MethodImplAttributes.CodeTypeMask;
 			
 			#region DllImportAttribute
-			if (methodDefinition.HasPInvokeInfo) {
+			if (methodDefinition.HasPInvokeInfo && methodDefinition.PInvokeInfo != null) {
 				PInvokeInfo info = methodDefinition.PInvokeInfo;
 				Ast.Attribute dllImport = CreateNonCustomAttribute(typeof(DllImportAttribute));
 				dllImport.Arguments.Add(new PrimitiveExpression(info.Module.Name));

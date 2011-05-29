@@ -117,7 +117,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			if ((method.Attributes & MethodAttributes.PInvokeImpl) == MethodAttributes.PInvokeImpl) {
 				output.Write("pinvokeimpl");
-				if (method.HasPInvokeInfo) {
+				if (method.HasPInvokeInfo && method.PInvokeInfo != null) {
 					PInvokeInfo info = method.PInvokeInfo;
 					output.Write("(\"" + NRefactory.CSharp.OutputVisitor.ConvertString(info.Module.Name) + "\"");
 					
