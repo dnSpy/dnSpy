@@ -230,6 +230,29 @@ namespace ICSharpCode.ILSpy
 				WriteProjectFile(new TextOutputWriter(output), files, assembly.AssemblyDefinition.MainModule);
 			} else {
 				base.DecompileAssembly(assembly, output, options);
+				output.WriteLine();
+				ModuleDefinition mainModule = assembly.AssemblyDefinition.MainModule;
+				if (mainModule.EntryPoint != null) {
+					output.Write("// Entry point: ");
+					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint);
+					output.WriteLine();
+				}
+				switch (mainModule.Architecture) {
+					case TargetArchitecture.I386:
+						if ((mainModule.Attributes & ModuleAttributes.Required32Bit) == ModuleAttributes.Required32Bit)
+							output.WriteLine("// Architecture: x86");
+						else
+							output.WriteLine("// Architecture: AnyCPU");
+						break;
+					case TargetArchitecture.AMD64:
+						output.WriteLine("// Architecture: x64");
+						break;
+					case TargetArchitecture.IA64:
+						output.WriteLine("// Architecture: Itanium-64");
+						break;
+				}
+				output.WriteLine();
+				
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
 				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {
 					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.AssemblyDefinition.MainModule);
