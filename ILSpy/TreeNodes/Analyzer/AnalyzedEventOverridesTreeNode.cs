@@ -71,7 +71,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
 
 			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedEvent, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct);
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+				yield return child;
+			}
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
@@ -86,7 +88,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				if (TypesHierarchyHelpers.IsBaseEvent(analyzedEvent, eventDef)) {
 					MethodDefinition anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
 					bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-					yield return new AnalyzedEventTreeNode(eventDef, hidesParent ? "(hides) " : "");
+					var node = new AnalyzedEventTreeNode(eventDef, hidesParent ? "(hides) " : "");
+					node.Language = this.Language;
+					yield return node;
 				}
 			}
 		}

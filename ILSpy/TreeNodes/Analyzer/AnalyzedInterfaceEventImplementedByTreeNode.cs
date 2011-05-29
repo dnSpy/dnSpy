@@ -71,7 +71,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
 			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct);
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+				yield return child;
+			}
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
@@ -84,15 +86,20 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			foreach (EventDefinition ev in type.Events.Where(e => e.Name == analyzedEvent.Name)) {
 				MethodDefinition accessor = ev.AddMethod ?? ev.RemoveMethod;
-				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef))
-					yield return new AnalyzedEventTreeNode(ev);
+				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
+					var node = new AnalyzedEventTreeNode(ev);
+					node.Language = this.Language;
+					yield return node;
+				}
 				yield break;
 			}
 
 			foreach (EventDefinition ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
 				MethodDefinition accessor = ev.AddMethod ?? ev.RemoveMethod;
 				if (accessor.HasOverrides && accessor.Overrides.Any(m => m.Resolve() == analyzedMethod)) {
-					yield return new AnalyzedEventTreeNode(ev);
+					var node = new AnalyzedEventTreeNode(ev);
+					node.Language = this.Language;
+					yield return node;
 				}
 			}
 		}

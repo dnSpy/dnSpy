@@ -76,12 +76,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
 
 			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct);
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+				yield return child;
+			}
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			SharpTreeNode newNode = null;
+			AnalyzerTreeNode newNode = null;
 			try {
 				if (!TypesHierarchyHelpers.IsBaseType(analyzedMethod.DeclaringType, type, resolveTypeArguments: false))
 					yield break;
@@ -97,8 +99,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				// ignore this type definition. maybe add a notification about such cases.
 			}
 
-			if (newNode != null)
+			if (newNode != null) {
+				newNode.Language = this.Language;
 				yield return newNode;
+			}
 		}
 
 		public static bool CanShow(MethodDefinition method)

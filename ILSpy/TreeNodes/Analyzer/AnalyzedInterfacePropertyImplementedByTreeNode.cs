@@ -71,7 +71,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
 			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct);
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+				yield return child;
+			}
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
@@ -84,15 +86,20 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			foreach (PropertyDefinition property in type.Properties.Where(e => e.Name == analyzedProperty.Name)) {
 				MethodDefinition accessor = property.GetMethod ?? property.SetMethod;
-				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef))
-					yield return new AnalyzedPropertyTreeNode(property);
+				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
+					var node = new AnalyzedPropertyTreeNode(property);
+					node.Language = this.Language;
+					yield return node;
+				}
 				yield break;
 			}
 
 			foreach (PropertyDefinition property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
 				MethodDefinition accessor = property.GetMethod ?? property.SetMethod;
 				if (accessor.HasOverrides && accessor.Overrides.Any(m => m.Resolve() == analyzedMethod)) {
-					yield return new AnalyzedPropertyTreeNode(property);
+					var node = new AnalyzedPropertyTreeNode(property);
+					node.Language = this.Language;
+					yield return node;
 				}
 			}
 		}

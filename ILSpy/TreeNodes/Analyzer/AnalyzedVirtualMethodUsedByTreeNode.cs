@@ -75,7 +75,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			InitializeAnalyzer();
 
 			var analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
-			foreach (var child in analyzer.PerformAnalysis(ct)) {
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
 				yield return child;
 			}
 
@@ -95,8 +95,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			possibleTypes = new List<TypeReference>();
 
 			TypeReference type = analyzedMethod.DeclaringType.BaseType;
-			while (type !=null)
-			{
+			while (type != null) {
 				possibleTypes.Add(type);
 				type = type.Resolve().BaseType;
 			}
@@ -120,8 +119,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					MethodReference mr = instr.Operand as MethodReference;
 					if (mr != null && mr.Name == name) {
 						// explicit call to the requested method 
-						if (instr.OpCode.Code == Code.Call 
-							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) 
+						if (instr.OpCode.Code == Code.Call
+							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType)
 							&& mr.Resolve() == analyzedMethod) {
 							found = true;
 							prefix = "(as base) ";
@@ -147,7 +146,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				if (found) {
 					MethodDefinition codeLocation = this.Language.GetOriginalCodeLocation(method) as MethodDefinition;
 					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
-						yield return new AnalyzedMethodTreeNode(codeLocation, prefix);
+						var node = new AnalyzedMethodTreeNode(codeLocation);
+						node.Language = this.Language;
+						yield return node;
 					}
 				}
 			}
