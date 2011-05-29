@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -33,21 +32,24 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		FilterSettings filterSettings;
 		bool childrenNeedFiltering;
-		
-		public FilterSettings FilterSettings {
+
+		public FilterSettings FilterSettings
+		{
 			get { return filterSettings; }
-			set {
+			set
+			{
 				if (filterSettings != value) {
 					filterSettings = value;
 					OnFilterSettingsChanged();
 				}
 			}
 		}
-		
-		public Language Language {
+
+		public Language Language
+		{
 			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
 		}
-		
+
 		public virtual FilterResult Filter(FilterSettings settings)
 		{
 			if (string.IsNullOrEmpty(settings.SearchTerm))
@@ -55,15 +57,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			else
 				return FilterResult.Hidden;
 		}
-		
+
 		protected static object HighlightSearchMatch(string text, string suffix = null)
 		{
 			// TODO: implement highlighting the search match
 			return text + suffix;
 		}
-		
+
 		public abstract void Decompile(Language language, ITextOutput output, DecompilationOptions options);
-		
+
 		/// <summary>
 		/// Used to implement special view logic for some items.
 		/// This method is called on the main thread when only a single item is selected.
@@ -73,7 +75,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			return false;
 		}
-		
+
 		/// <summary>
 		/// Used to implement special save logic for some items.
 		/// This method is called on the main thread when only a single item is selected.
@@ -83,7 +85,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			return false;
 		}
-		
+
 		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
 		{
 			if (e.NewItems != null) {
@@ -96,7 +98,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			base.OnChildrenChanged(e);
 		}
-		
+
 		void ApplyFilterToChild(ILSpyTreeNode child)
 		{
 			FilterResult r;
@@ -126,7 +128,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					throw new InvalidEnumArgumentException();
 			}
 		}
-		
+
 		FilterSettings StripSearchTerm(FilterSettings filterSettings)
 		{
 			if (filterSettings == null)
@@ -137,7 +139,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return filterSettings;
 		}
-		
+
 		protected virtual void OnFilterSettingsChanged()
 		{
 			RaisePropertyChanged("Text");
@@ -148,13 +150,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				childrenNeedFiltering = true;
 			}
 		}
-		
+
 		protected override void OnIsVisibleChanged()
 		{
 			base.OnIsVisibleChanged();
 			EnsureChildrenFiltered();
 		}
-		
+
 		void EnsureChildrenFiltered()
 		{
 			EnsureLazyChildren();
@@ -164,25 +166,5 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					ApplyFilterToChild(node);
 			}
 		}
-	}
-	
-	public enum FilterResult
-	{
-		/// <summary>
-		/// Hides the node.
-		/// </summary>
-		Hidden,
-		/// <summary>
-		/// Shows the node (and resets the search term for child nodes).
-		/// </summary>
-		Match,
-		/// <summary>
-		/// Hides the node only if all children are hidden (and resets the search term for child nodes).
-		/// </summary>
-		MatchAndRecurse,
-		/// <summary>
-		/// Hides the node only if all children are hidden (doesn't reset the search term for child nodes).
-		/// </summary>
-		Recurse
 	}
 }

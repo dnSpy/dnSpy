@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
@@ -35,7 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		readonly AssemblyList list;
 		readonly TypeDefinition type;
 		ThreadingSupport threading;
-		
+
 		public DerivedTypesTreeNode(AssemblyList list, TypeDefinition type)
 		{
 			this.list = list;
@@ -43,27 +42,29 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.LazyLoading = true;
 			this.threading = new ThreadingSupport();
 		}
-		
-		public override object Text {
+
+		public override object Text
+		{
 			get { return "Derived Types"; }
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return Images.SubTypes; }
 		}
-		
+
 		protected override void LoadChildren()
 		{
 			threading.LoadChildren(this, FetchChildren);
 		}
-		
+
 		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
 			var assemblies = list.GetAssemblies().Select(node => node.AssemblyDefinition).Where(asm => asm != null).ToArray();
 			return FindDerivedTypes(type, assemblies, cancellationToken);
 		}
-		
+
 		internal static IEnumerable<DerivedTypesEntryNode> FindDerivedTypes(TypeDefinition type, AssemblyDefinition[] assemblies, CancellationToken cancellationToken)
 		{
 			foreach (AssemblyDefinition asm in assemblies) {
@@ -80,7 +81,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				}
 			}
 		}
-		
+
 		static bool IsSameType(TypeReference typeRef, TypeDefinition type)
 		{
 			if (typeRef.FullName == type.FullName)
@@ -96,96 +97,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return false;
 			return true;
 		}
-		
+
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			threading.Decompile(language, output, options, EnsureLazyChildren);
-		}
-	}
-	
-	class DerivedTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
-	{
-		TypeDefinition type;
-		AssemblyDefinition[] assemblies;
-		ThreadingSupport threading;
-		
-		public DerivedTypesEntryNode(TypeDefinition type, AssemblyDefinition[] assemblies)
-		{
-			this.type = type;
-			this.assemblies = assemblies;
-			this.LazyLoading = true;
-			threading = new ThreadingSupport();
-		}
-		
-		public override bool ShowExpander {
-			get {
-				return !type.IsSealed && base.ShowExpander;
-			}
-		}
-		
-		public override object Text {
-			get { return this.Language.TypeToString(type, true); }
-		}
-		
-		public override object Icon {
-			get {
-				return TypeTreeNode.GetIcon(type);
-			}
-		}
-
-		public override FilterResult Filter(FilterSettings settings)
-		{
-			if (!settings.ShowInternalApi && !IsPublicAPI)
-				return FilterResult.Hidden;
-			if (settings.SearchTermMatches(type.Name)) {
-				if (type.IsNested && !settings.Language.ShowMember(type))
-					return FilterResult.Hidden;
-				else
-					return FilterResult.Match;
-			} else {
-				return FilterResult.Recurse;
-			}
-		}
-
-		public bool IsPublicAPI
-		{
-			get
-			{
-				switch (type.Attributes & TypeAttributes.VisibilityMask) {
-					case TypeAttributes.Public:
-					case TypeAttributes.NestedPublic:
-					case TypeAttributes.NestedFamily:
-					case TypeAttributes.NestedFamORAssem:
-						return true;
-					default:
-						return false;
-				}
-			}
-		}
-
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
-		
-		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct)
-		{
-			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
-			return DerivedTypesTreeNode.FindDerivedTypes(type, assemblies, ct);
-		}
-		
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
-		{
-			e.Handled = BaseTypesEntryNode.ActivateItem(this, type);
-		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.WriteCommentLine(output, language.TypeToString(type, true));
-		}
-		
-		MemberReference IMemberTreeNode.Member {
-			get { return type; }
 		}
 	}
 }

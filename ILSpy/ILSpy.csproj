@@ -158,6 +158,9 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedVirtualMethodUsedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\Helpers.cs" />
     <Compile Include="TreeNodes\Analyzer\ScopedWhereUsedAnalyzer.cs" />
+    <Compile Include="TreeNodes\BaseTypesEntryNode.cs" />
+    <Compile Include="TreeNodes\DerivedTypesEntryNode.cs" />
+    <Compile Include="TreeNodes\FilterResult.cs" />
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\CursorResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\ImageResourceEntryNode.cs" />
