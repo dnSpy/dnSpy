@@ -106,6 +106,7 @@
     <Page Include="Cases\Simple.xaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Page>
+    <Page Include="Cases\SimpleDictionary.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

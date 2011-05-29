@@ -25,6 +25,12 @@ namespace ILSpy.BamlDecompiler.Tests
 			RunTest("cases/simple");
 		}
 		
+		[Test]
+		public void SimpleDictionary()
+		{
+			RunTest("cases/simpledictionary");
+		}
+		
 		void RunTest(string name)
 		{
 			string asmPath = typeof(TestRunner).Assembly.Location;
