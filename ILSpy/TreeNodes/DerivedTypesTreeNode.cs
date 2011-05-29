@@ -105,13 +105,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	
 	class DerivedTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
 	{
-		TypeDefinition def;
+		TypeDefinition type;
 		AssemblyDefinition[] assemblies;
 		ThreadingSupport threading;
 		
-		public DerivedTypesEntryNode(TypeDefinition def, AssemblyDefinition[] assemblies)
+		public DerivedTypesEntryNode(TypeDefinition type, AssemblyDefinition[] assemblies)
 		{
-			this.def = def;
+			this.type = type;
 			this.assemblies = assemblies;
 			this.LazyLoading = true;
 			threading = new ThreadingSupport();
@@ -119,20 +119,50 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override bool ShowExpander {
 			get {
-				return !def.IsSealed && base.ShowExpander;
+				return !type.IsSealed && base.ShowExpander;
 			}
 		}
 		
 		public override object Text {
-			get { return this.Language.TypeToString(def, true); }
+			get { return this.Language.TypeToString(type, true); }
 		}
 		
 		public override object Icon {
 			get {
-				return TypeTreeNode.GetIcon(def);
+				return TypeTreeNode.GetIcon(type);
 			}
 		}
-		
+
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			if (!settings.ShowInternalApi && !IsPublicAPI)
+				return FilterResult.Hidden;
+			if (settings.SearchTermMatches(type.Name)) {
+				if (type.IsNested && !settings.Language.ShowMember(type))
+					return FilterResult.Hidden;
+				else
+					return FilterResult.Match;
+			} else {
+				return FilterResult.Recurse;
+			}
+		}
+
+		public bool IsPublicAPI
+		{
+			get
+			{
+				switch (type.Attributes & TypeAttributes.VisibilityMask) {
+					case TypeAttributes.Public:
+					case TypeAttributes.NestedPublic:
+					case TypeAttributes.NestedFamily:
+					case TypeAttributes.NestedFamORAssem:
+						return true;
+					default:
+						return false;
+				}
+			}
+		}
+
 		protected override void LoadChildren()
 		{
 			threading.LoadChildren(this, FetchChildren);
@@ -141,21 +171,21 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
-			return DerivedTypesTreeNode.FindDerivedTypes(def, assemblies, ct);
+			return DerivedTypesTreeNode.FindDerivedTypes(type, assemblies, ct);
 		}
 		
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
-			e.Handled = BaseTypesEntryNode.ActivateItem(this, def);
+			e.Handled = BaseTypesEntryNode.ActivateItem(this, type);
 		}
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.WriteCommentLine(output, language.TypeToString(def, true));
+			language.WriteCommentLine(output, language.TypeToString(type, true));
 		}
 		
 		MemberReference IMemberTreeNode.Member {
-			get { return def; }
+			get { return type; }
 		}
 	}
 }
