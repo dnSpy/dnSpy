@@ -98,6 +98,7 @@
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlProperty.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlPropertyElement.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlReader.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlSimpleProperty.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlBamlText.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlNamespace.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlPIMapping.cs" />

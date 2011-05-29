@@ -45,17 +45,11 @@ namespace ILSpy.BamlDecompiler
 			return true;
 		}
 		
-		const string XWPFNamespace = "http://schemas.microsoft.com/winfx/2006/xaml";
-		const string DefaultWPFNamespace = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
-		
 		bool LoadBaml(AvalonEditTextOutput output)
 		{
 			var asm = this.Ancestors().OfType<AssemblyTreeNode>().FirstOrDefault().LoadedAssembly;
 			Data.Position = 0;
-			
-
 			XDocument xamlDocument = LoadIntoDocument(asm.GetAssemblyResolver(), asm.AssemblyDefinition, Data);
-			
 			output.Write(xamlDocument.ToString());
 			return true;
 		}
@@ -73,18 +67,18 @@ namespace ILSpy.BamlDecompiler
 		static void MoveNamespacesToRoot(XDocument xamlDocument)
 		{
 			var additionalXmlns = new List<XAttribute> {
-				new XAttribute("xmlns", DefaultWPFNamespace),
-				new XAttribute(XName.Get("x", XNamespace.Xmlns.NamespaceName), XWPFNamespace)
+				new XAttribute("xmlns", XmlBamlReader.DefaultWPFNamespace),
+				new XAttribute(XName.Get("x", XNamespace.Xmlns.NamespaceName), XmlBamlReader.XWPFNamespace)
 			};
 			
 			foreach (var element in xamlDocument.Root.DescendantsAndSelf()) {
-				if (element.Name.NamespaceName != DefaultWPFNamespace && !additionalXmlns.Any(ka => ka.Value == element.Name.NamespaceName)) {
+				if (element.Name.NamespaceName != XmlBamlReader.DefaultWPFNamespace && !additionalXmlns.Any(ka => ka.Value == element.Name.NamespaceName)) {
 					string newPrefix = new string(element.Name.LocalName.Where(c => char.IsUpper(c)).ToArray()).ToLowerInvariant();
 					int current = additionalXmlns.Count(ka => ka.Name.Namespace == XNamespace.Xmlns && ka.Name.LocalName.TrimEnd(ch => char.IsNumber(ch)) == newPrefix);
 					if (current > 0)
 						newPrefix += (current + 1).ToString();
 					XName defaultXmlns = XName.Get(newPrefix, XNamespace.Xmlns.NamespaceName);
-					if (element.Name.NamespaceName != DefaultWPFNamespace)
+					if (element.Name.NamespaceName != XmlBamlReader.DefaultWPFNamespace)
 						additionalXmlns.Add(new XAttribute(defaultXmlns, element.Name.NamespaceName));
 				}
 			}

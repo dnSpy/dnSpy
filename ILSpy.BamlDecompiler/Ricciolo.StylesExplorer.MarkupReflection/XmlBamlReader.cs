@@ -55,6 +55,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		private readonly TypeDeclaration XamlTypeDeclaration;
 		private readonly XmlNameTable _nameTable = new NameTable();
 		private IDictionary<string, string> _rootNamespaces;
+		
+		public const string XWPFNamespace = "http://schemas.microsoft.com/winfx/2006/xaml";
+		public const string DefaultWPFNamespace = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
 
 		#endregion
 
@@ -160,7 +163,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		public override bool MoveToFirstAttribute()
 		{
 			intoAttribute = false;
-			if (nodes.Count > 0 && nodes.Peek() is XmlBamlProperty)
+			if (nodes.Count > 0 && (nodes.Peek() is XmlBamlProperty || nodes.Peek() is XmlBamlSimpleProperty))
 			{
 				_currentNode = nodes.Dequeue();
 				return true;
@@ -179,7 +182,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		public override bool MoveToNextAttribute()
 		{
 			intoAttribute = false;
-			if (nodes.Count > 0 && nodes.Peek() is XmlBamlProperty)
+			if (nodes.Count > 0 &&  (nodes.Peek() is XmlBamlProperty || nodes.Peek() is XmlBamlSimpleProperty))
 			{
 				_currentNode = nodes.Dequeue();
 				return true;
@@ -197,7 +200,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///
 		public override bool MoveToElement()
 		{
-			while (nodes.Peek() is XmlBamlProperty)
+			while (nodes.Peek() is XmlBamlProperty || nodes.Peek() is XmlBamlSimpleProperty)
 			{
 				nodes.Dequeue();
 			}
@@ -295,6 +298,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				_currentNode = nodes.Dequeue();
 
 				if ((_currentNode is XmlBamlProperty)) continue;
+				if ((_currentNode is XmlBamlSimpleProperty)) continue;
 
 				if (this.NodeType == XmlNodeType.EndElement)
 				{
@@ -580,7 +584,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				String localName = String.Empty;
 
 				XmlBamlNode node = this.CurrentNode;
-				if (node is XmlBamlProperty)
+				if (node is XmlBamlSimpleProperty) {
+					var simpleNode = (XmlBamlSimpleProperty)node;
+					localName = simpleNode.LocalName;
+				} else if (node is XmlBamlProperty)
 				{
 					PropertyDeclaration pd = ((XmlBamlProperty)node).PropertyDeclaration;
 					localName = FormatPropertyDeclaration(pd, false, true, true);
@@ -1185,13 +1192,19 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			
 			// the type is defined in the local assembly, i.e., the main assembly
 			// and this is the root element
+			TypeDeclaration oldDeclaration = null;
 			if (_resolver.IsLocalAssembly(declaration.Assembly) && parentElement == null) {
+				oldDeclaration = declaration;
 				declaration = GetKnownTypeDeclarationByName(declaration.Type.BaseType.AssemblyQualifiedName);
 			}
 
 			element.TypeDeclaration = declaration;
 			elements.Push(element);
 			nodes.Enqueue(element);
+			
+			if (oldDeclaration != null) {
+				nodes.Enqueue(new XmlBamlSimpleProperty(XWPFNamespace, "Class", string.Format("{0}.{1}", oldDeclaration.Namespace, oldDeclaration.Name)));
+			}
 
 			if (parentElement != null && complexPropertyOpened == 0)
 			{
@@ -1609,7 +1622,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 				TypeDeclaration declaration;
 				XmlBamlNode node = this.CurrentNode;
-				if (node is XmlBamlProperty)
+				if (node is XmlBamlSimpleProperty)
+					return ((XmlBamlSimpleProperty)node).NamespaceName;
+				else if (node is XmlBamlProperty)
 				{
 					declaration = ((XmlBamlProperty)node).PropertyDeclaration.DeclaringType;
 					TypeDeclaration elementDeclaration = this.readingElements.Peek().TypeDeclaration;
@@ -1685,7 +1700,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			get
 			{
 				XmlBamlNode node = this.CurrentNode;
-				if (node is XmlBamlProperty)
+				if (node is XmlBamlSimpleProperty)
+					return ((XmlBamlSimpleProperty)node).Value;
+				else if (node is XmlBamlProperty)
 					return ((XmlBamlProperty)node).Value.ToString();
 				else if (node is XmlBamlText)
 					return ((XmlBamlText)node).Text;
