@@ -60,7 +60,7 @@ namespace ICSharpCode.ILSpy.TextView
 	/// Contains all the threading logic that makes the decompiler work in the background.
 	/// </summary>
 	[Export, PartCreationPolicy(CreationPolicy.Shared)]
-	public sealed partial class DecompilerTextView : UserControl
+	public sealed partial class DecompilerTextView : UserControl, IDisposable
 	{
 		readonly ReferenceElementGenerator referenceElementGenerator;
 		readonly UIElementGenerator uiElementGenerator;
@@ -671,6 +671,11 @@ namespace ICSharpCode.ILSpy.TextView
 			state.HorizontalOffset = textEditor.HorizontalOffset;
 			state.DecompiledNodes = decompiledNodes;
 			return state;
+		}
+		
+		public void Dispose()
+		{
+			DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged -= CurrentDisplaySettings_PropertyChanged;
 		}
 	}
 
