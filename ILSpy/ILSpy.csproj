@@ -123,6 +123,7 @@
     <Compile Include="Images\AccessOverlayIcon.cs" />
     <Compile Include="Images\MemberIcon.cs" />
     <Compile Include="Images\TypeIcon.cs" />
+    <Compile Include="IPane.cs" />
     <Compile Include="ISmartTextOutput.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Images\Images.cs" />
