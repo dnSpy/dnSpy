@@ -19,8 +19,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 
 using ICSharpCode.Decompiler;
@@ -227,44 +225,6 @@ namespace ICSharpCode.ILSpy
 				                        	AstNodes = null // TODO: how can I find the nodes with line numbers from dis?
 				                        });
 			}
-		}
-	}
-
-	public static class Languages
-	{
-		static ReadOnlyCollection<Language> allLanguages;
-
-		/// <summary>
-		/// A list of all languages.
-		/// </summary>
-		public static ReadOnlyCollection<Language> AllLanguages
-		{
-			get
-			{
-				return allLanguages;
-			}
-		}
-
-
-		internal static void Initialize(CompositionContainer composition)
-		{
-			List<Language> languages = new List<Language>();
-			languages.AddRange(composition.GetExportedValues<Language>());
-			languages.Add(new ILLanguage(true));
-#if DEBUG
-			languages.AddRange(ILAstLanguage.GetDebugLanguages());
-			languages.AddRange(CSharpLanguage.GetDebugLanguages());
-#endif
-			allLanguages = languages.AsReadOnly();
-		}
-
-		/// <summary>
-		/// Gets a language using its name.
-		/// If the language is not found, C# is returned instead.
-		/// </summary>
-		public static Language GetLanguage(string name)
-		{
-			return AllLanguages.FirstOrDefault(l => l.Name == name) ?? AllLanguages.First();
 		}
 	}
 }

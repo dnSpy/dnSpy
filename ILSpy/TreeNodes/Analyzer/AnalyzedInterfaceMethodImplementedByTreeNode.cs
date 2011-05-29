@@ -69,7 +69,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
 			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct);
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+				yield return child;
+			}
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
@@ -81,14 +83,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				yield break;
 
 			foreach (MethodDefinition method in type.Methods.Where(m => m.Name == analyzedMethod.Name)) {
-				if (TypesHierarchyHelpers.MatchInterfaceMethod(method, analyzedMethod, implementedInterfaceRef))
-					yield return new AnalyzedMethodTreeNode(method);
+				if (TypesHierarchyHelpers.MatchInterfaceMethod(method, analyzedMethod, implementedInterfaceRef)) {
+					var node = new AnalyzedMethodTreeNode(method);
+					node.Language = this.Language;
+					yield return node;
+				}
 				yield break;
 			}
 
 			foreach (MethodDefinition method in type.Methods) {
 				if (method.HasOverrides && method.Overrides.Any(m => m.Resolve() == analyzedMethod)) {
-					yield return new AnalyzedMethodTreeNode(method);
+					var node =  new AnalyzedMethodTreeNode(method);
+					node.Language = this.Language;
+					yield return node;
 				}
 			}
 		}

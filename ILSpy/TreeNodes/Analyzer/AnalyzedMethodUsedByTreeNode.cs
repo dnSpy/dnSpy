@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
@@ -71,7 +72,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foundMethods = new ConcurrentDictionary<MethodDefinition, int>();
 
 			var analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
-			foreach (var child in analyzer.PerformAnalysis(ct)) {
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
 				yield return child;
 			}
 
@@ -100,7 +101,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				if (found) {
 					MethodDefinition codeLocation = this.Language.GetOriginalCodeLocation(method) as MethodDefinition;
 					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
-						yield return new AnalyzedMethodTreeNode(codeLocation);
+						var node= new AnalyzedMethodTreeNode(codeLocation);
+						node.Language = this.Language;
+						yield return node;
 					}
 				}
 			}

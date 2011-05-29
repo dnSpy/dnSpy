@@ -52,13 +52,24 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		protected override void LoadChildren()
 		{
+			analyzedMethod.Body = null;
+			foreach (var child in GetChildren().OrderBy(n => n.Text)) {
+				this.Children.Add(child);
+			}
+		}
+
+		private IEnumerable<AnalyzerTreeNode> GetChildren()
+		{
 			foreach (var f in GetUsedFields().Distinct()) {
-				this.Children.Add(new AnalyzedFieldTreeNode(f));
+				var node = new AnalyzedFieldTreeNode(f);
+				node.Language = this.Language;
+				yield return node;
 			}
 			foreach (var m in GetUsedMethods().Distinct()) {
-				this.Children.Add(new AnalyzedMethodTreeNode(m));
+				var node = new AnalyzedMethodTreeNode(m);
+				node.Language = this.Language;
+				yield return node;
 			}
-			analyzedMethod.Body = null;
 		}
 
 		private IEnumerable<MethodDefinition> GetUsedMethods()

@@ -17,15 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
 
@@ -37,9 +28,11 @@ namespace ICSharpCode.ILSpy
 	public partial class AnalyzerTreeView : SharpTreeView, IPane
 	{
 		static AnalyzerTreeView instance;
-		
-		public static AnalyzerTreeView Instance {
-			get {
+
+		public static AnalyzerTreeView Instance
+		{
+			get
+			{
 				if (instance == null) {
 					App.Current.VerifyAccess();
 					instance = new AnalyzerTreeView();
@@ -47,42 +40,33 @@ namespace ICSharpCode.ILSpy
 				return instance;
 			}
 		}
-		
+
 		private AnalyzerTreeView()
 		{
 			this.ShowRoot = false;
 			this.Root = new AnalyzerTreeNode { Language = MainWindow.Instance.CurrentLanguage };
 			ContextMenuProvider.Add(this);
 		}
-		
+
 		public void Show()
 		{
 			if (!IsVisible)
 				MainWindow.Instance.ShowInBottomPane("Analyzer", this);
 		}
-		
+
 		public void Show(AnalyzerTreeNode node)
 		{
 			Show();
-			
+
 			node.IsExpanded = true;
 			this.Root.Children.Add(node);
 			this.SelectedItem = node;
 			this.FocusNode(node);
 		}
-		
+
 		void IPane.Closed()
 		{
 			this.Root.Children.Clear();
-		}
-	}
-	
-	[ExportMainMenuCommand(Menu = "_View", Header = "_Analyzer", MenuCategory = "ShowPane", MenuOrder = 100)]
-	sealed class ShowAnalyzerCommand : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			AnalyzerTreeView.Instance.Show();
 		}
 	}
 }

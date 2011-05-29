@@ -9,6 +9,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 {
 	public interface ITypeResolver
 	{
+		string RuntimeVersion { get; }
+		bool IsLocalAssembly(string name);
 		IType GetTypeByAssemblyQualifiedName(string name);
 		IDependencyPropertyDescriptor GetDependencyPropertyDescriptor(string name, IType ownerType, IType targetType);
 	}

@@ -131,6 +131,17 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				return null;
 			}
 		}
+		
+		public bool IsLocalAssembly(string name)
+		{
+			return false;
+		}
+		
+		public string RuntimeVersion {
+			get {
+				throw new NotImplementedException();
+			}
+		}
 
 		#endregion
 

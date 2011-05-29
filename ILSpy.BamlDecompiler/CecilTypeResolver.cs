@@ -14,11 +14,18 @@ namespace ILSpy.BamlDecompiler
 	/// </summary>
 	public class CecilTypeResolver : ITypeResolver
 	{
-		LoadedAssembly assembly;
+		IAssemblyResolver resolver;
+		AssemblyDefinition thisAssembly;
 		
-		public CecilTypeResolver(LoadedAssembly assembly)
+		public CecilTypeResolver(IAssemblyResolver resolver, AssemblyDefinition asm)
 		{
-			this.assembly = assembly;
+			this.resolver = resolver;
+			this.thisAssembly = asm;
+		}
+		
+		public bool IsLocalAssembly(string name)
+		{
+			return name == this.thisAssembly.Name.Name;
 		}
 		
 		public IType GetTypeByAssemblyQualifiedName(string name)
@@ -31,12 +38,12 @@ namespace ILSpy.BamlDecompiler
 			string fullName = name.Substring(0, comma);
 			string assemblyName = name.Substring(comma + 1).Trim();
 			
-			var type = assembly.AssemblyDefinition.MainModule.GetType(fullName);
+			var type = thisAssembly.MainModule.GetType(fullName);
 			if (type == null) {
-				var otherAssembly = assembly.LookupReferencedAssembly(assemblyName);
+				var otherAssembly = resolver.Resolve(assemblyName);
 				if (otherAssembly == null)
 					throw new Exception("could not resolve '" + assemblyName + "'!");
-				type = otherAssembly.AssemblyDefinition.MainModule.GetType(fullName);
+				type = otherAssembly.MainModule.GetType(fullName);
 			}
 			
 			return new CecilType(type);
@@ -48,6 +55,12 @@ namespace ILSpy.BamlDecompiler
 				throw new ArgumentException();
 			
 			return new CecilDependencyPropertyDescriptor(name, ((CecilType)ownerType).type);
+		}
+		
+		public string RuntimeVersion {
+			get {
+				return thisAssembly.MainModule.Runtime.ToString();
+			}
 		}
 	}
 }
