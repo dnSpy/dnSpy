@@ -127,6 +127,7 @@
     <Compile Include="ISmartTextOutput.cs" />
     <Compile Include="Languages\Language.cs" />
     <Compile Include="Images\Images.cs" />
+    <Compile Include="Languages\Languages.cs" />
     <Compile Include="LoadedAssembly.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="NavigationHistory.cs" />
