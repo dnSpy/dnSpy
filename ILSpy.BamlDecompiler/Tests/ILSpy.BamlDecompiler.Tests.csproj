@@ -66,6 +66,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cases\Resources.xaml.cs">
+      <DependentUpon>Resources.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Cases\Simple.xaml.cs">
       <DependentUpon>Simple.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -100,6 +104,7 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Cases\Resources.xaml" />
     <Page Include="Cases\Simple.xaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Page>

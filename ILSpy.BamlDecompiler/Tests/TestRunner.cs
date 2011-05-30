@@ -31,6 +31,13 @@ namespace ILSpy.BamlDecompiler.Tests
 			RunTest("cases/simpledictionary");
 		}
 		
+		[Test, Ignore]
+		public void Resources()
+		{
+			RunTest("cases/resources");
+		}
+		
+		#region RunTest
 		void RunTest(string name)
 		{
 			string asmPath = typeof(TestRunner).Assembly.Location;
@@ -69,5 +76,6 @@ namespace ILSpy.BamlDecompiler.Tests
 			
 			return null;
 		}
+		#endregion
 	}
 }
