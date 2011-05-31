@@ -16,7 +16,7 @@ using ICSharpCode.ILSpy.Debugger;
 
 namespace ICSharpCode.ILSpy.Options
 {
-	[ExportOptionPage(Title = "Debugger", Order = 1)]
+	[ExportOptionPage(Title = "Debugger", Order = 2)]
 	partial class DebuggerSettingsPanel : UserControl, IOptionPage
 	{
 		private const string DEBUGGER_SETTINGS = "DebuggerSettings";

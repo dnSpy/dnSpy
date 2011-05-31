@@ -44,6 +44,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		JoinBasicBlocks,
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
+		SimplifyCustomShortCircuit,
 		TransformArrayInitializers,
 		TransformObjectInitializers,
 		MakeAssignmentExpression,
@@ -135,6 +136,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyLdObjAndStObj) return;
 					modified |= block.RunOptimization(SimplifyLdObjAndStObj);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyCustomShortCircuit) return;
+					modified |= block.RunOptimization(new SimpleControlFlow(context, method).SimplifyCustomShortCircuit);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
 					modified |= block.RunOptimization(TransformArrayInitializers);
@@ -308,6 +312,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Converts call and callvirt instructions that read/write properties into CallGetter/CallSetter instructions.
 		/// 
 		/// CallGetter/CallSetter is used to allow the ILAst to represent "while ((SomeProperty = value) != null)".
+		/// 
+		/// Also simplifies 'newobj(SomeDelegate, target, ldvirtftn(F, target))' to 'newobj(SomeDelegate, target, ldvirtftn(F))'
 		/// </summary>
 		void IntroducePropertyAccessInstructions(ILNode node)
 		{
@@ -365,6 +371,19 @@ namespace ICSharpCode.Decompiler.ILAst
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallSetter : ILCode.CallvirtSetter;
 					}
 				}
+			} else if (expr.Code == ILCode.Newobj && expr.Arguments.Count == 2) {
+				// Might be 'newobj(SomeDelegate, target, ldvirtftn(F, target))'.
+				ILVariable target;
+				if (expr.Arguments[0].Match(ILCode.Ldloc, out target)
+				    && expr.Arguments[1].Code == ILCode.Ldvirtftn
+				    && expr.Arguments[1].Arguments.Count == 1
+				    && expr.Arguments[1].Arguments[0].MatchLdloc(target))
+				{
+					// Remove the 'target' argument from the ldvirtftn instruction.
+					// It's not needed in the translation to C#, and needs to be eliminated so that the target expression
+					// can be inlined.
+					expr.Arguments[1].Arguments.Clear();
+				}
 			}
 		}
 		
@@ -398,7 +417,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					    lastNode.IsUnconditionalControlFlow())
 					{
 						// Try to reuse the label
-						ILLabel label = currNode is ILLabel ? ((ILLabel)currNode) : new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
+						ILLabel label = currNode as ILLabel ?? new ILLabel() { Name = "Block_" + (nextLabelIndex++).ToString() };
 						
 						// Terminate the last block
 						if (!lastNode.IsUnconditionalControlFlow()) {
@@ -556,16 +575,37 @@ namespace ICSharpCode.Decompiler.ILAst
 			// This ensures that a single IL variable is a single C# variable (gets assigned only one name)
 			// The DeclareVariables transformation might then split up the C# variable again if it is used indendently in two separate scopes.
 			Dictionary<VariableDefinition, ILVariable> dict = new Dictionary<VariableDefinition, ILVariable>();
-			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
-				ILVariable v = expr.Operand as ILVariable;
-				if (v != null && v.OriginalVariable != null) {
+			ReplaceVariables(
+				method,
+				delegate(ILVariable v) {
+					if (v.OriginalVariable == null)
+						return v;
 					ILVariable combinedVariable;
 					if (!dict.TryGetValue(v.OriginalVariable, out combinedVariable)) {
 						dict.Add(v.OriginalVariable, v);
 						combinedVariable = v;
 					}
-					expr.Operand = combinedVariable;
+					return combinedVariable;
+				});
+		}
+		
+		public static void ReplaceVariables(ILNode node, Func<ILVariable, ILVariable> variableMapping)
+		{
+			ILExpression expr = node as ILExpression;
+			if (expr != null) {
+				ILVariable v = expr.Operand as ILVariable;
+				if (v != null)
+					expr.Operand = variableMapping(v);
+				foreach (ILExpression child in expr.Arguments)
+					ReplaceVariables(child, variableMapping);
+			} else {
+				var catchBlock = node as ILTryCatchBlock.CatchBlock;
+				if (catchBlock != null && catchBlock.ExceptionVariable != null) {
+					catchBlock.ExceptionVariable = variableMapping(catchBlock.ExceptionVariable);
 				}
+				
+				foreach (ILNode child in node.GetChildren())
+					ReplaceVariables(child, variableMapping);
 			}
 		}
 		

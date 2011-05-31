@@ -267,6 +267,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					return typeSystem.Boolean;
 				case ILCode.LogicAnd:
 				case ILCode.LogicOr:
+					// if Operand is set the logic and/or expression is a custom operator
+					// we can deal with it the same as a normal invocation.
+					if (expr.Operand != null)
+						goto case ILCode.Call;
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Boolean);
@@ -677,6 +681,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Castclass:
 				case ILCode.Unbox_Any:
 					return (TypeReference)expr.Operand;
+				case ILCode.Unbox:
+					return new ByReferenceType((TypeReference)expr.Operand);
 				case ILCode.Isinst:
 					{
 						// isinst performs the equivalent of a cast only for reference types;
@@ -843,7 +849,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			return null;
 		}
 		
-		static TypeReference UnpackModifiers(TypeReference type)
+		internal static TypeReference UnpackModifiers(TypeReference type)
 		{
 			while (type is OptionalModifierType || type is RequiredModifierType)
 				type = ((TypeSpecification)type).ElementType;

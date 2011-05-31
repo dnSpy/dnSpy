@@ -26,6 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
@@ -63,6 +64,7 @@ namespace ICSharpCode.ILSpy.TextView
 		readonly UIElementGenerator uiElementGenerator;
 		List<VisualLineElementGenerator> activeCustomElementGenerators = new List<VisualLineElementGenerator>();
 		FoldingManager foldingManager;
+		ILSpyTreeNode[] decompiledNodes;
 		
 		DefinitionLookup definitionLookup;
 		CancellationTokenSource currentCancellationTokenSource;
@@ -95,6 +97,9 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
 			textEditor.TextArea.TextView.MouseHover += TextViewMouseHover;
 			textEditor.TextArea.TextView.MouseHoverStopped += TextViewMouseHoverStopped;
+			textEditor.SetBinding(TextEditor.FontFamilyProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFont") });
+			textEditor.SetBinding(TextEditor.FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFontSize") });
+			textEditor.SetBinding(TextEditor.ShowLineNumbersProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("ShowLineNumbers") });
 			
 			// wire the events
 			TextEditorWeakEventManager.MouseHover.AddListener(textEditor, TextEditorListener.Instance);
@@ -236,11 +241,21 @@ namespace ICSharpCode.ILSpy.TextView
 		#endregion
 		
 		#region ShowOutput
+		public void ShowText(AvalonEditTextOutput textOutput)
+		{
+			ShowNodes(textOutput, null);
+		}
+
+		public void ShowNode(AvalonEditTextOutput textOutput, ILSpyTreeNode node, IHighlightingDefinition highlighting = null)
+		{
+			ShowNodes(textOutput, new[] { node }, highlighting);
+		}
+
 		/// <summary>
 		/// Shows the given output in the text view.
 		/// Cancels any currently running decompilation tasks.
 		/// </summary>
-		public void Show(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null)
+		public void ShowNodes(AvalonEditTextOutput textOutput, ILSpyTreeNode[] nodes, IHighlightingDefinition highlighting = null)
 		{
 			// Cancel the decompilation task:
 			if (currentCancellationTokenSource != null) {
@@ -249,6 +264,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			this.nextDecompilationRun = null; // remove scheduled decompilation run
 			ShowOutput(textOutput, highlighting);
+			decompiledNodes = nodes;
 		}
 		
 		/// <summary>
@@ -376,6 +392,7 @@ namespace ICSharpCode.ILSpy.TextView
 					} finally {
 						this.UpdateDebugUI(isDecompilationOk);
 					}
+					decompiledNodes = context.TreeNodes;
 				});
 		}
 		
@@ -394,6 +411,9 @@ namespace ICSharpCode.ILSpy.TextView
 					int ilOffset = DebugData.DebugStepInformation.Item2;
 					int line;
 					MemberReference member;
+					if (!DebugData.CodeMappings.ContainsKey(token))
+						return;
+					
 					DebugData.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out member, out line);
 					
 					DebuggerService.RemoveCurrentLineMarker();
@@ -608,6 +628,7 @@ namespace ICSharpCode.ILSpy.TextView
 						output.WriteLine(ex.ToString());
 						ShowOutput(output);
 					}
+					decompiledNodes = context.TreeNodes;
 				});
 		}
 
@@ -670,11 +691,15 @@ namespace ICSharpCode.ILSpy.TextView
 
 		public DecompilerTextViewState GetState()
 		{
+			if (decompiledNodes == null)
+				return null;
+
 			var state = new DecompilerTextViewState();
 			if (foldingManager != null)
 				state.SaveFoldingsState(foldingManager.AllFoldings);
 			state.VerticalOffset = textEditor.VerticalOffset;
 			state.HorizontalOffset = textEditor.HorizontalOffset;
+			state.DecompiledNodes = decompiledNodes;
 			return state;
 		}
 		
@@ -707,16 +732,17 @@ namespace ICSharpCode.ILSpy.TextView
 		private int FoldingsChecksum;
 		public double VerticalOffset;
 		public double HorizontalOffset;
+		public ILSpyTreeNode[] DecompiledNodes;
 
 		public void SaveFoldingsState(IEnumerable<FoldingSection> foldings)
 		{
 			ExpandedFoldings = foldings.Where(f => !f.IsFolded).Select(f => Tuple.Create(f.StartOffset, f.EndOffset)).ToList();
-			FoldingsChecksum = foldings.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b);
+			FoldingsChecksum = unchecked(foldings.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b));
 		}
 
 		internal void RestoreFoldings(List<NewFolding> list)
 		{
-			var checksum = list.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b);
+			var checksum = unchecked(list.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b));
 			if (FoldingsChecksum == checksum)
 				foreach (var folding in list)
 					folding.DefaultClosed = !ExpandedFoldings.Any(f => f.Item1 == folding.StartOffset && f.Item2 == folding.EndOffset);

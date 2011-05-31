@@ -247,7 +247,7 @@ namespace ICSharpCode.ILSpy
 				if (!found) {
 					AvalonEditTextOutput output = new AvalonEditTextOutput();
 					output.Write("Cannot find " + args.NavigateTo);
-					decompilerTextView.Show(output);
+					decompilerTextView.ShowText(output);
 				}
 			}
 			commandLineLoadedAssemblies.Clear(); // clear references once we don't need them anymore
@@ -521,8 +521,12 @@ namespace ICSharpCode.ILSpy
 			if (ignoreDecompilationRequests)
 				return;
 
-			if (recordHistory)
-				history.Record(new NavigationState(treeView.SelectedItems.OfType<SharpTreeNode>(), decompilerTextView.GetState()));
+			if (recordHistory) {
+				var dtState = decompilerTextView.GetState();
+				if(dtState != null)
+					history.UpdateCurrent(new NavigationState(dtState));
+				history.Record(new NavigationState(treeView.SelectedItems.OfType<SharpTreeNode>()));
+			}
 
 			if (treeView.SelectedItems.Count == 1) {
 				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
@@ -596,8 +600,9 @@ namespace ICSharpCode.ILSpy
 
 		void NavigateHistory(bool forward)
 		{
-			var combinedState = new NavigationState(treeView.SelectedItems.OfType<SharpTreeNode>(), decompilerTextView.GetState());
-			history.Record(combinedState, replace: true, clearForward: false);
+			var dtState = decompilerTextView.GetState();
+			if(dtState != null)
+				history.UpdateCurrent(new NavigationState(dtState));
 			var newState = forward ? history.GoForward() : history.GoBack();
 
 			ignoreDecompilationRequests = true;

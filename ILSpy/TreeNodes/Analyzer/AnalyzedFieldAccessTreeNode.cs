@@ -18,10 +18,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using System.Collections;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -30,6 +32,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private readonly bool showWrites; // true: show writes; false: show read access
 		private readonly FieldDefinition analyzedField;
 		private readonly ThreadingSupport threading;
+		private Lazy<Hashtable> foundMethods;
+		private object hashLock = new object();
 
 		public AnalyzedFieldAccessTreeNode(FieldDefinition analyzedField, bool showWrites)
 		{
@@ -68,8 +72,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			var analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedField, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct);
+			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);
+
+			var analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedField, FindReferencesInType);
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+				yield return child;
+			}
+
+			foundMethods = null;
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
@@ -84,8 +94,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (CanBeReference(instr.OpCode.Code)) {
 						FieldReference fr = instr.Operand as FieldReference;
-						if (fr != null && fr.Name == name && 
-							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType) && 
+						if (fr != null && fr.Name == name &&
+							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType) &&
 							fr.Resolve() == analyzedField) {
 							found = true;
 							break;
@@ -95,8 +105,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 				method.Body = null;
 
-				if (found)
-					yield return new AnalyzedMethodTreeNode(method);
+				if (found) {
+					MethodDefinition codeLocation = this.Language.GetOriginalCodeLocation(method) as MethodDefinition;
+					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
+						var node = new AnalyzedMethodTreeNode(codeLocation);
+						node.Language = this.Language;
+						yield return node;
+					}
+				}
 			}
 		}
 
@@ -114,6 +130,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					return true; // always show address-loading
 				default:
 					return false;
+			}
+		}
+
+		private bool HasAlreadyBeenFound(MethodDefinition method)
+		{
+			Hashtable hashtable = foundMethods.Value;
+			lock (hashLock) {
+				if (hashtable.Contains(method)) {
+					return true;
+				} else {
+					hashtable.Add(method, null);
+					return false;
+				}
 			}
 		}
 	}

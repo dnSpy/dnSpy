@@ -59,12 +59,16 @@ namespace ICSharpCode.ILSpy
 		public static readonly BitmapImage Resource = LoadBitmap("Resource");
 		public static readonly BitmapImage ResourceImage = LoadBitmap("ResourceImage");
 		public static readonly BitmapImage ResourceResourcesFile = LoadBitmap("ResourceResourcesFile");
+		public static readonly BitmapImage ResourceXml = LoadBitmap("ResourceXml");
+		public static readonly BitmapImage ResourceXsd = LoadBitmap("ResourceXsd");
+		public static readonly BitmapImage ResourceXslt = LoadBitmap("ResourceXslt");
 
 		public static readonly BitmapImage Class = LoadBitmap("Class");
 		public static readonly BitmapImage Struct = LoadBitmap("Struct");
 		public static readonly BitmapImage Interface = LoadBitmap("Interface");
 		public static readonly BitmapImage Delegate = LoadBitmap("Delegate");
 		public static readonly BitmapImage Enum = LoadBitmap("Enum");
+		public static readonly BitmapImage StaticClass = LoadBitmap("StaticClass");
 
 
 		public static readonly BitmapImage Field = LoadBitmap("Field");
@@ -133,6 +137,7 @@ namespace ICSharpCode.ILSpy
 				PreloadPublicIconToCache(TypeIcon.Struct, Images.Struct);
 				PreloadPublicIconToCache(TypeIcon.Interface, Images.Interface);
 				PreloadPublicIconToCache(TypeIcon.Delegate, Images.Delegate);
+				PreloadPublicIconToCache(TypeIcon.StaticClass, Images.StaticClass);
 			}
 
 			protected override ImageSource GetBaseImage(TypeIcon icon)
@@ -153,6 +158,9 @@ namespace ICSharpCode.ILSpy
 						break;
 					case TypeIcon.Delegate:
 						baseImage = Images.Delegate;
+						break;
+					case TypeIcon.StaticClass:
+						baseImage = Images.StaticClass;
 						break;
 					default:
 						throw new NotSupportedException();

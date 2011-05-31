@@ -21,50 +21,19 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedEventAccessorsTreeNode : AnalyzerTreeNode
+	internal class AnalyzedPropertyAccessorTreeNode : AnalyzedMethodTreeNode
 	{
-		public AnalyzedEventAccessorsTreeNode(EventDefinition analyzedEvent)
-		{
-			if (analyzedEvent == null)
-				throw new ArgumentNullException("analyzedEvent");
+		private readonly string name;
 
-			if (analyzedEvent.AddMethod != null)
-				this.Children.Add(new AnalyzedEventAccessorTreeNode(analyzedEvent.AddMethod, "add"));
-			if (analyzedEvent.RemoveMethod != null)
-				this.Children.Add(new AnalyzedEventAccessorTreeNode(analyzedEvent.RemoveMethod, "remove"));
-			foreach (var accessor in analyzedEvent.OtherMethods)
-				this.Children.Add(new AnalyzedEventAccessorTreeNode(accessor, null));
-		}
-
-		public override object Icon
+		public AnalyzedPropertyAccessorTreeNode(MethodDefinition analyzedMethod, string name)
+			: base(analyzedMethod)
 		{
-			get { return Images.Search; }
+			this.name = name;
 		}
 
 		public override object Text
 		{
-			get { return "Accessors"; }
-		}
-
-		public static bool CanShow(EventDefinition property)
-		{
-			return !MainWindow.Instance.CurrentLanguage.ShowMember(property.AddMethod ?? property.RemoveMethod);
-		}
-
-		internal class AnalyzedEventAccessorTreeNode : AnalyzedMethodTreeNode
-		{
-			private string name;
-
-			public AnalyzedEventAccessorTreeNode(MethodDefinition analyzedMethod, string name)
-				: base(analyzedMethod)
-			{
-				this.name = name;
-			}
-
-			public override object Text
-			{
-				get { return name ?? base.Text; }
-			}
+			get { return name ?? base.Text; }
 		}
 	}
 }

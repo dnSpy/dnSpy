@@ -166,7 +166,7 @@ namespace ICSharpCode.ILSpy
 						}
 					}
 				}
-				ILSpy.MainWindow.Instance.TextView.Show(output);
+				ILSpy.MainWindow.Instance.TextView.ShowText(output);
 			} else {
 				Process.Start(e.Uri.ToString());
 			}

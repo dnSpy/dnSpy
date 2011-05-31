@@ -94,7 +94,7 @@ namespace ICSharpCode.ILSpy
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("SharpDevelop", "http://www.icsharpcode.net/opensource/sd/"));
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("MIT License", "resource:license.txt"));
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("LGPL", "resource:LGPL.txt"));
-			textView.Show(output);
+			textView.ShowText(output);
 		}
 		
 		sealed class MyLinkElementGenerator : LinkElementGenerator
@@ -131,7 +131,7 @@ namespace ICSharpCode.ILSpy
 						} catch (Exception ex) {
 							AvalonEditTextOutput exceptionOutput = new AvalonEditTextOutput();
 							exceptionOutput.WriteLine(ex.ToString());
-							textView.Show(exceptionOutput);
+							textView.ShowText(exceptionOutput);
 						}
 					}, TaskScheduler.FromCurrentSynchronizationContext());
 			};

@@ -94,16 +94,20 @@
     </Compile>
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
-    <Compile Include="BamlDecompiler.cs" />
+    <Compile Include="Commands\BrowseBackCommand.cs" />
+    <Compile Include="Commands\BrowseForwardCommand.cs" />
     <Compile Include="CommandLineArguments.cs" />
-    <Compile Include="Commands.cs" />
+    <Compile Include="Commands\ExitCommand.cs" />
+    <Compile Include="Commands\CommandWrapper.cs" />
     <Compile Include="ConnectMethodDecompiler.cs" />
     <Compile Include="Controls\DockedPane.cs" />
-    <Compile Include="ExportCommandAttribute.cs" />
+    <Compile Include="Commands\DecompileAllCommand.cs" />
+    <Compile Include="DisplaySettings.cs" />
+    <Compile Include="Commands\ExportCommandAttribute.cs" />
     <Compile Include="Commands\DebuggerCommands.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
-    <Compile Include="CSharpLanguage.cs" />
+    <Compile Include="Languages\CSharpLanguage.cs" />
     <Compile Include="DecompilationOptions.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FilterSettings.cs" />
@@ -111,19 +115,23 @@
     <Compile Include="GacInterop.cs" />
     <Compile Include="GuessFileType.cs" />
     <Compile Include="ContextMenuEntry.cs" />
-    <Compile Include="ILAstLanguage.cs" />
-    <Compile Include="ILLanguage.cs" />
+    <Compile Include="Languages\ILAstLanguage.cs" />
+    <Compile Include="Languages\ILLanguage.cs" />
     <Compile Include="ILSpySettings.cs" />
     <Compile Include="Images\AccessOverlayIcon.cs" />
     <Compile Include="Images\MemberIcon.cs" />
     <Compile Include="Images\TypeIcon.cs" />
+    <Compile Include="IPane.cs" />
     <Compile Include="ISmartTextOutput.cs" />
-    <Compile Include="Language.cs" />
+    <Compile Include="Languages\Language.cs" />
     <Compile Include="Images\Images.cs" />
+    <Compile Include="Languages\Languages.cs" />
     <Compile Include="LoadedAssembly.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="NavigationHistory.cs" />
     <Compile Include="NavigationState.cs" />
+    <Compile Include="Commands\OpenCommand.cs" />
+    <Compile Include="Commands\OpenFromGacCommand.cs" />
     <Compile Include="OpenFromGacDialog.xaml.cs">
       <DependentUpon>OpenFromGacDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -141,25 +149,43 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Commands\RefreshCommand.cs" />
+    <Compile Include="Commands\SaveCommand.cs" />
     <Compile Include="SearchPane.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DisplaySettingsPanel.xaml.cs">
+      <DependentUpon>DisplaySettingsPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Commands\SimpleCommand.cs" />
+    <Compile Include="Commands\ShowAnalyzerCommand.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
-    <Compile Include="TreeNodes\Analyzer\AnalyzedEventAccessorsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedInterfacePropertyImplementedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedInterfaceMethodImplementedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedInterfaceEventImplementedByTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedEventFiredByTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyAccessorTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeExposedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeExtensionMethodsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeInstantiationsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedEventAccessorTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedVirtualMethodUsedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\Helpers.cs" />
     <Compile Include="TreeNodes\Analyzer\ScopedWhereUsedAnalyzer.cs" />
+    <Compile Include="TreeNodes\BaseTypesEntryNode.cs" />
+    <Compile Include="TreeNodes\DerivedTypesEntryNode.cs" />
+    <Compile Include="TreeNodes\FilterResult.cs" />
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />
-    <Compile Include="TreeNodes\XamlResourceNode.cs" />
-    <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyAccessorsTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\CursorResourceEntryNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ImageResourceEntryNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\XmlResourceNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\IResourceNodeFactory.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourcesFileTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\XamlResourceNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
     <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
@@ -219,9 +245,9 @@
     <Compile Include="TreeNodes\NamespaceTreeNode.cs" />
     <Compile Include="TreeNodes\PropertyTreeNode.cs" />
     <Compile Include="TreeNodes\ReferenceFolderTreeNode.cs" />
-    <Compile Include="TreeNodes\ResourceEntryNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceListTreeNode.cs" />
-    <Compile Include="TreeNodes\ResourceTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourceTreeNode.cs" />
     <Compile Include="TreeNodes\ThreadingSupport.cs" />
     <Compile Include="TreeNodes\TypeTreeNode.cs" />
     <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />
@@ -238,6 +264,7 @@
     <Page Include="SearchPane.xaml">
       <DependentUpon>SearchPane.cs</DependentUpon>
     </Page>
+    <Page Include="DisplaySettingsPanel.xaml" />
     <Page Include="TextView\DecompilerTextView.xaml">
       <DependentUpon>DecompilerTextView.cs</DependentUpon>
     </Page>
@@ -245,6 +272,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Class.png" />
+    <Resource Include="Images\StaticClass.png" />
     <Resource Include="Images\Delegate.png" />
     <Resource Include="Images\Enum.png" />
     <Resource Include="Images\Field.png" />
@@ -315,6 +343,11 @@
       <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ResourceXml.png" />
+    <Resource Include="Images\ResourceXsd.png" />
+    <Resource Include="Images\ResourceXslt.png" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

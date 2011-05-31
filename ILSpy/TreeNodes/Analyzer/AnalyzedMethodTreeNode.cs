@@ -58,9 +58,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			if (analyzedMethod.HasBody)
 				this.Children.Add(new AnalyzedMethodUsesTreeNode(analyzedMethod));
-			this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));
+
+			if (analyzedMethod.IsVirtual && !(analyzedMethod.IsNewSlot && analyzedMethod.IsFinal))
+				this.Children.Add(new AnalyzedVirtualMethodUsedByTreeNode(analyzedMethod));
+			else
+				this.Children.Add(new AnalyzedMethodUsedByTreeNode(analyzedMethod));
+
 			if (AnalyzedMethodOverridesTreeNode.CanShow(analyzedMethod))
 				this.Children.Add(new AnalyzedMethodOverridesTreeNode(analyzedMethod));
+
 			if (AnalyzedInterfaceMethodImplementedByTreeNode.CanShow(analyzedMethod))
 				this.Children.Add(new AnalyzedInterfaceMethodImplementedByTreeNode(analyzedMethod));
 		}

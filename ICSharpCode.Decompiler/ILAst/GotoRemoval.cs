@@ -91,7 +91,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 				
-				var defaultCase = ilSwitch.CaseBlocks.Where(cb => cb.Values == null).SingleOrDefault();
+				var defaultCase = ilSwitch.CaseBlocks.SingleOrDefault(cb => cb.Values == null);
 				// If there is no default block, remove empty case blocks
 				if (defaultCase == null || (defaultCase.Body.Count == 1 && defaultCase.Body.Single().Match(ILCode.LoopOrSwitchBreak))) {
 					ilSwitch.CaseBlocks.RemoveAll(b => b.Body.Count == 1 && b.Body.Single().Match(ILCode.LoopOrSwitchBreak));
@@ -140,14 +140,14 @@ namespace ICSharpCode.Decompiler.ILAst
 				return true;
 			}
 			
-			ILNode breakBlock = GetParents(gotoExpr).Where(n => n is ILWhileLoop || n is ILSwitch).FirstOrDefault();
+			ILNode breakBlock = GetParents(gotoExpr).FirstOrDefault(n => n is ILWhileLoop || n is ILSwitch);
 			if (breakBlock != null && target == Exit(breakBlock, new HashSet<ILNode>() { gotoExpr })) {
 				gotoExpr.Code = ILCode.LoopOrSwitchBreak;
 				gotoExpr.Operand = null;
 				return true;
 			}
 			
-			ILNode continueBlock = GetParents(gotoExpr).Where(n => n is ILWhileLoop).FirstOrDefault();
+			ILNode continueBlock = GetParents(gotoExpr).FirstOrDefault(n => n is ILWhileLoop);
 			if (continueBlock != null && target == Enter(continueBlock, new HashSet<ILNode>() { gotoExpr })) {
 				gotoExpr.Code = ILCode.LoopContinue;
 				gotoExpr.Operand = null;
@@ -209,10 +209,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				} else if (expr.Code == ILCode.Nop) {
 					return Exit(expr, visitedNodes);
 				} else if (expr.Code == ILCode.LoopOrSwitchBreak) {
-					ILNode breakBlock = GetParents(expr).Where(n => n is ILWhileLoop || n is ILSwitch).First();
+					ILNode breakBlock = GetParents(expr).First(n => n is ILWhileLoop || n is ILSwitch);
 					return Exit(breakBlock, new HashSet<ILNode>() { expr });
 				} else if (expr.Code == ILCode.LoopContinue) {
-					ILNode continueBlock = GetParents(expr).Where(n => n is ILWhileLoop).First();
+					ILNode continueBlock = GetParents(expr).First(n => n is ILWhileLoop);
 					return Enter(continueBlock, new HashSet<ILNode>() { expr });
 				} else {
 					return expr;
