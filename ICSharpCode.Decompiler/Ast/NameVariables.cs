@@ -284,6 +284,8 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		string GetNameByType(TypeReference type)
 		{
+			type = TypeAnalysis.UnpackModifiers(type);
+			
 			GenericInstanceType git = type as GenericInstanceType;
 			if (git != null && git.ElementType.FullName == "System.Nullable`1" && git.GenericArguments.Count == 1) {
 				type = ((GenericInstanceType)type).GenericArguments[0];
