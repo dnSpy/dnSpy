@@ -26,6 +26,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		Dictionary<short, string> stringTable = new Dictionary<short, string>();
 		Dictionary<short, TypeDeclaration> typeTable = new Dictionary<short, TypeDeclaration>();
 		Dictionary<short, PropertyDeclaration> propertyTable = new Dictionary<short, PropertyDeclaration>();
+		List<TypeDeclaration> staticResources = new List<TypeDeclaration>();
 
 		readonly ITypeResolver _resolver;
 
@@ -48,6 +49,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		bool isPartialDefKeysClosed = true;
 		bool isDefKeysClosed = true;
+		
+		int currentKey;
 
 		int bytesToSkip;
 
@@ -950,8 +953,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		{
 			// Guardo se la dichiarazione delle chiavi risulta chiusa
 			// Se è aperta c'è un sotto ResourceDictionary oppure è il root ResourceDictionary
-			if (isDefKeysClosed)
+			if (isDefKeysClosed) {
+				currentKey = 0;
 				keysResources.Push(new KeysResourcesCollection());
+			}
 
 			// Guardo se è stata chiusa la dichiarazione parziale (mediante dichiarazione OptimizedStaticResource)
 			// Si chiude il ciclo di chiavi
@@ -1061,30 +1066,30 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			CloseElement();
 
 			complexPropertyOpened--;
-			// Valuto se contiene tutte extension
-			int start = nodes.IndexOf(propertyElement) + 1;
-			IEnumerator enumerator = nodes.GetEnumerator();
-
-			int c = 0;
-			while (c < start && enumerator.MoveNext())
-				c++;
-
-			if (IsExtension(enumerator))
-			{
-				start--;
-				nodes.RemoveAt(start);
-				nodes.RemoveLast();
-
-				StringBuilder sb = new StringBuilder();
-				FormatElementExtension((XmlBamlElement) nodes[start], sb);
-
-				XmlBamlProperty property =
-					new XmlBamlProperty(PropertyType.Complex, propertyElement.PropertyDeclaration);
-				property.Value = sb.ToString();
-				nodes.Add(property);
-
-				return;
-			}
+//			// Valuto se contiene tutte extension
+//			int start = nodes.IndexOf(propertyElement) + 1;
+//			IEnumerator enumerator = nodes.GetEnumerator();
+//
+//			int c = 0;
+//			while (c < start && enumerator.MoveNext())
+//				c++;
+//
+//			if (IsExtension(enumerator))
+//			{
+//				start--;
+//				nodes.RemoveAt(start);
+//				nodes.RemoveLast();
+//
+//				StringBuilder sb = new StringBuilder();
+//				FormatElementExtension((XmlBamlElement) nodes[start], sb);
+//
+//				XmlBamlProperty property =
+//					new XmlBamlProperty(PropertyType.Complex, propertyElement.PropertyDeclaration);
+//				property.Value = sb.ToString();
+//				nodes.Add(property);
+//
+//				return;
+//			}
 		}
 
 		void FormatElementExtension(XmlBamlElement element, StringBuilder sb)
@@ -1145,24 +1150,22 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			}
 		}
 
-		static bool IsExtension(IEnumerator enumerator)
+		bool IsExtension(IEnumerator enumerator)
 		{
-			bool r = true;
-			while (enumerator.MoveNext() && r)
-			{
+			while (enumerator.MoveNext()) {
 				object node = enumerator.Current;
 				if (node is XmlBamlElement && !(node is XmlBamlEndElement) && !((XmlBamlElement)node).TypeDeclaration.IsExtension)
-				{
-					r = false;
-				}
+					return false;
 			}
 
-			return r;
+			return true;
 		}
 
 		void CloseElement()
 		{
-			nodes.Enqueue(new XmlBamlEndElement(elements.Pop()));
+			var e = elements.Pop();
+			if (!e.IsImplicit)
+				nodes.Enqueue(new XmlBamlEndElement(e));
 		}
 
 		void ReadElementStart()
@@ -1171,6 +1174,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			sbyte flags = reader.ReadSByte();
 			if (flags < 0 || flags > 3)
 				throw new NotImplementedException();
+			Debug.Print("ElementFlags: " + flags);
+			
 			TypeDeclaration declaration = GetTypeDeclaration(identifier);
 
 			XmlBamlElement element;
@@ -1195,10 +1200,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				oldDeclaration = declaration;
 				declaration = GetKnownTypeDeclarationByName(declaration.Type.BaseType.AssemblyQualifiedName);
 			}
-
 			element.TypeDeclaration = declaration;
+			 element.IsImplicit = (flags & 2) == 2;
 			elements.Push(element);
-			nodes.Enqueue(element);
+			if (!element.IsImplicit)
+				nodes.Enqueue(element);
 			
 			if (oldDeclaration != null) {
 				nodes.Enqueue(new XmlBamlSimpleProperty(XWPFNamespace, "Class", string.Format("{0}.{1}", oldDeclaration.Namespace, oldDeclaration.Name)));
@@ -1207,15 +1213,15 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			if (parentElement != null && complexPropertyOpened == 0)
 			{
 				// Calcolo la posizione dell'elemento rispetto al padre
-				long position = element.Position - parentElement.Position;
 				KeysResource keysResource = (keysResources.Count > 0) ? keysResources.Peek().First : null;
-				if (keysResource != null && keysResource.Keys.HasKey(position))
+				if (keysResource != null && keysResource.Keys.HasKey(currentKey))
 				{
-					string key = keysResource.Keys[position];
+					string key = keysResource.Keys[currentKey];
 					// Rimuovo la chiave perché è stata usata
-					keysResource.Keys.Remove(position);
+//					keysResource.Keys.Remove(currentKey);
 
 					AddKeyToElement(key);
+					currentKey++;
 				}
 			}
 		}
@@ -1330,28 +1336,32 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			}
 		}
 
-		static void ReadStaticResourceStart()
+		void ReadStaticResourceStart()
 		{
-			//short identifier = reader.ReadInt16();
-			//byte n = reader.ReadByte();
-			//TypeDeclaration declaration = this.GetTypeDeclaration(identifier);
-			//this.staticResourceTable.Add(declaration);
-
-			throw new NotImplementedException("StaticResourceStart");
+			short identifier = reader.ReadInt16();
+			byte flags = reader.ReadByte();
+			TypeDeclaration declaration = GetTypeDeclaration(identifier);
+			staticResources.Add(declaration);
+			
+			XmlBamlElement element;
+			if (elements.Any())
+				element = new XmlBamlElement(elements.Peek());
+			else
+				element = new XmlBamlElement();
+			element.TypeDeclaration = declaration;
+			elements.Push(element);
+			nodes.Enqueue(element);
 		}
 
-		static void ReadStaticResourceEnd()
+		void ReadStaticResourceEnd()
 		{
-			throw new NotImplementedException("ReadStaticResourceEnd");
+			CloseElement();
 		}
 
-		static void ReadStaticResourceId()
+		void ReadStaticResourceId()
 		{
-			//short identifier = reader.ReadInt16();
-			//object staticResource = this.GetStaticResource(identifier);
-			//TypeDeclaration declaration = this.GetTypeDeclaration(-603);
-
-			throw new NotImplementedException("StaticResourceId");
+			short identifier = reader.ReadInt16();
+			object staticResource = GetStaticResource(identifier);
 		}
 
 		void ReadPresentationOptionsAttribute()
@@ -1490,7 +1500,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			short staticIdentifier = reader.ReadInt16();
 
 			PropertyDeclaration pd = this.GetPropertyDeclaration(identifier);
-			object staticResource = this.GetStaticResource(staticIdentifier);
+			object staticResource = GetStaticResource(staticIdentifier);
 
 			string prefix = this.LookupPrefix(XmlPIMapping.PresentationNamespace, false);
 			string value = String.Format("{{{0}{1}StaticResource {2}}}", prefix, (String.IsNullOrEmpty(prefix)) ? String.Empty : ":", staticResource);
@@ -1518,9 +1528,12 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 							return resourceGroup.StaticResources[identifier];
 				}
 			}
+			
+			if (identifier < staticResources.Count)
+				return staticResources[identifier];
 
-			//return "???";
-			throw new ArgumentException("Cannot find StaticResource", "identifier");
+			return "???" + identifier  +"???";
+//			throw new ArgumentException("Cannot find StaticResource", "identifier");
 		}
 
 		void ReadTextWithConverter()

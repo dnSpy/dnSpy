@@ -30,5 +30,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		public override XmlNodeType NodeType {
 			get { return XmlNodeType.Attribute; }
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("{{{0}}}{1}=\"{2}\"", NamespaceName, LocalName, Value);
+		}
+
 	}
 }

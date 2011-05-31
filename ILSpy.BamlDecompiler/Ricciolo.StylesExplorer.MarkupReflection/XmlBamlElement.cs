@@ -9,18 +9,15 @@ using System.Xml;
 
 namespace Ricciolo.StylesExplorer.MarkupReflection
 {
-	internal class XmlBamlElement : XmlBamlNode
+	class XmlBamlElement : XmlBamlNode
 	{
-		private ArrayList _arguments = new ArrayList();
-		private XmlNamespaceCollection _namespaces = new XmlNamespaceCollection();
-		private TypeDeclaration _typeDeclaration;
-		private KeysResourcesCollection _keysResources = new KeysResourcesCollection();
-		private long _position;
+		ArrayList _arguments = new ArrayList();
+		XmlNamespaceCollection _namespaces = new XmlNamespaceCollection();
+		KeysResourcesCollection _keysResources = new KeysResourcesCollection();
 
 		public XmlBamlElement()
 		{
 		}
-
 
 		public XmlBamlElement(XmlBamlElement parent)
 		{
@@ -32,31 +29,15 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			get { return _namespaces; }
 		}
 
-		public TypeDeclaration TypeDeclaration
-		{
-			get
-			{
-				return this._typeDeclaration;
-			}
-			set
-			{
-				this._typeDeclaration = value;
-			}
+		public TypeDeclaration TypeDeclaration { get; set; }
+
+		public override XmlNodeType NodeType {
+			get { return XmlNodeType.Element; }
 		}
 
-		public override XmlNodeType NodeType
-		{
-			get
-			{
-				return XmlNodeType.Element;
-			}
-		}
-
-		public long Position
-		{
-			get { return _position; }
-			set { _position = value; }
-		}
+		public long Position { get; set; }
+		
+		public bool IsImplicit { get; set; }
 
 		public override string ToString()
 		{

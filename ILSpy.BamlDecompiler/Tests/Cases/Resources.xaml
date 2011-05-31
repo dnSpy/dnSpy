@@ -3,13 +3,13 @@
 		<Canvas>
 			<FrameworkElement.Resources>
 				<ResourceDictionary>
-					<BooleanToVisibilityConverter x:Key="b"/>
+					<BooleanToVisibilityConverter x:Key="b" />
 				</ResourceDictionary>
 			</FrameworkElement.Resources>
 		</Canvas>
 		<Canvas>
 			<FrameworkElement.Resources>
-				<BooleanToVisibilityConverter x:Key="b"/>
+				<BooleanToVisibilityConverter x:Key="b" />
 			</FrameworkElement.Resources>
 		</Canvas>
 	</Grid>

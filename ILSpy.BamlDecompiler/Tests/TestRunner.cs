@@ -31,7 +31,7 @@ namespace ILSpy.BamlDecompiler.Tests
 			RunTest("cases/simpledictionary");
 		}
 		
-		[Test, Ignore]
+		[Test]
 		public void Resources()
 		{
 			RunTest("cases/resources");
