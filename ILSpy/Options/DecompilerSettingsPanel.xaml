@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ICSharpCode.ILSpy.DecompilerSettingsPanel"
+﻿<UserControl x:Class="ICSharpCode.ILSpy.Options.DecompilerSettingsPanel"
              x:ClassModifier="internal"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">

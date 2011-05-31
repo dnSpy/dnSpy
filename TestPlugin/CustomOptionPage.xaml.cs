@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.Options;
 
 namespace TestPlugin
 {

@@ -20,7 +20,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Media;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.Options
 {
 	/// <summary>
 	/// Description of DisplaySettings.

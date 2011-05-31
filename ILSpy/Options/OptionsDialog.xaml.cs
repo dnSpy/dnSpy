@@ -29,7 +29,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.Options
 {
 	/// <summary>
 	/// Interaction logic for OptionsDialog.xaml

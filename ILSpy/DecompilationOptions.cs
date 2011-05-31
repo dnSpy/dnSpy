@@ -19,6 +19,7 @@
 using System;
 using System.Threading;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.Options;
 
 namespace ICSharpCode.ILSpy
 {

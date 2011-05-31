@@ -28,7 +28,7 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.Options
 {
 	/// <summary>
 	/// Interaction logic for DecompilerSettingsPanel.xaml

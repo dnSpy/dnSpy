@@ -282,6 +282,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			int key = frame.MethodInfo.MetadataToken;
 			
 			// get the mapped instruction from the current line marker or the next one
+			if (!DebugData.CodeMappings.ContainsKey(key))
+				return null;
+			
 			return DebugData.CodeMappings[key].GetInstructionByTokenAndOffset(key, frame.IP, out isMatch);
 		}
 		
