@@ -19,6 +19,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		public XmlBamlElement(XmlBamlElement parent)
 		{
+			this.Parent = parent;
 			this.Namespaces.AddRange(parent.Namespaces);
 		}
 
@@ -26,7 +27,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		{
 			get { return _namespaces; }
 		}
-
+		
+		public XmlBamlElement Parent { get; private set; }
+		
 		public TypeDeclaration TypeDeclaration { get; set; }
 
 		public override XmlNodeType NodeType {

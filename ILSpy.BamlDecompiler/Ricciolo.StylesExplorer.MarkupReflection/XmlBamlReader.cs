@@ -604,7 +604,12 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				else if (node is XmlBamlPropertyElement)
 				{
 					XmlBamlPropertyElement property = (XmlBamlPropertyElement)node;
-					localName = String.Format("{0}.{1}", property.TypeDeclaration.Name, property.PropertyDeclaration.Name);
+					string typeName = property.TypeDeclaration.Name;
+					
+					if (property.Parent.TypeDeclaration.Type.IsSubclassOf(property.PropertyDeclaration.DeclaringType.Type))
+						typeName = property.Parent.TypeDeclaration.Name;
+					
+					localName = String.Format("{0}.{1}", typeName, property.PropertyDeclaration.Name);
 				}
 				else if (node is XmlBamlElement)
 					localName = ((XmlBamlElement)node).TypeDeclaration.Name;
@@ -1117,7 +1122,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					sb.Append(sep);
 					sb.Append(((XmlBamlText)node).Text);
 				}
-				sep = ",";
+				sep = ", ";
 			}
 		}
 

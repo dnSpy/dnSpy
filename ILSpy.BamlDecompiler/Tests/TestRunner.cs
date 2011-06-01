@@ -37,6 +37,12 @@ namespace ILSpy.BamlDecompiler.Tests
 			RunTest("cases/resources");
 		}
 		
+		[Test]
+		public void AvalonDockBrushes()
+		{
+			RunTest("cases/avalondockbrushes");
+		}
+		
 		#region RunTest
 		void RunTest(string name)
 		{
@@ -48,7 +54,7 @@ namespace ILSpy.BamlDecompiler.Tests
 			XDocument document = BamlResourceEntryNode.LoadIntoDocument(new DefaultAssemblyResolver(), assembly, bamlStream);
 			string path = Path.Combine("..\\..\\Tests", name + ".xaml");
 			
-			CodeAssert.AreEqual(document.ToString(), File.ReadAllText(path));
+			CodeAssert.AreEqual(File.ReadAllText(path), document.ToString());
 		}
 		
 		Stream LoadBaml(Resource res, string name)

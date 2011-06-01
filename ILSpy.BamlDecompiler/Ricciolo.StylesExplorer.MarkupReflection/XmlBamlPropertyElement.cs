@@ -11,8 +11,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 	{
 		private readonly PropertyType _propertyType;
 		private PropertyDeclaration propertyDeclaration;
-
-
+		
 		public XmlBamlPropertyElement(PropertyType propertyType, PropertyDeclaration propertyDeclaration)
 		{
 			_propertyType = propertyType;

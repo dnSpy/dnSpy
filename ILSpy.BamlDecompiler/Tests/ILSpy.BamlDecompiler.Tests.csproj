@@ -74,6 +74,7 @@
       <DependentUpon>Simple.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mocks\AvalonDock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestRunner.cs" />
   </ItemGroup>
@@ -101,9 +102,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Cases" />
+    <Folder Include="Mocks" />
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Cases\AvalonDockBrushes.xaml" />
     <Page Include="Cases\Resources.xaml" />
     <Page Include="Cases\Simple.xaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
