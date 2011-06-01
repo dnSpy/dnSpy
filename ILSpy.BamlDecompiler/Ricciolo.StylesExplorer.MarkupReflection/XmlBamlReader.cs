@@ -18,15 +18,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 {
 	public class XmlBamlReader : XmlReader, IXmlNamespaceResolver
 	{
-
-		#region Variables
-
 		BamlBinaryReader reader;
 		Dictionary<short, string> assemblyTable = new Dictionary<short, string>();
 		Dictionary<short, string> stringTable = new Dictionary<short, string>();
 		Dictionary<short, TypeDeclaration> typeTable = new Dictionary<short, TypeDeclaration>();
 		Dictionary<short, PropertyDeclaration> propertyTable = new Dictionary<short, PropertyDeclaration>();
-		List<TypeDeclaration> staticResources = new List<TypeDeclaration>();
 
 		readonly ITypeResolver _resolver;
 
@@ -34,7 +30,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		Stack<XmlBamlElement> elements = new Stack<XmlBamlElement>();
 		Stack<XmlBamlElement> readingElements = new Stack<XmlBamlElement>();
-		Stack<KeysResourcesCollection> keysResources = new Stack<KeysResourcesCollection>();
 		NodesCollection nodes = new NodesCollection();
 		List<XmlPIMapping> _mappings = new List<XmlPIMapping>();
 		XmlBamlNode _currentNode;
@@ -50,7 +45,20 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		bool isPartialDefKeysClosed = true;
 		bool isDefKeysClosed = true;
 		
+		#region Context
 		int currentKey;
+		List<KeyMapping> keys = new List<KeyMapping>();
+		
+		KeyMapping LastKey {
+			get {
+				KeyMapping last = keys.LastOrDefault();
+				if (last == null)
+					keys.Add(last = new KeyMapping());
+				
+				return last;
+			}
+		}
+		#endregion
 
 		int bytesToSkip;
 
@@ -61,8 +69,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		
 		public const string XWPFNamespace = "http://schemas.microsoft.com/winfx/2006/xaml";
 		public const string DefaultWPFNamespace = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
-
-		#endregion
 
 		public XmlBamlReader(Stream stream) : this (stream, AppDomainTypeResolver.GetIntoNewAppDomain(Environment.CurrentDirectory))
 		{
@@ -656,15 +662,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			XmlBamlPropertyElement property = new XmlBamlPropertyElement(element, PropertyType.Dictionary, pd);
 			elements.Push(property);
 			nodes.Enqueue(property);
-
-			isDefKeysClosed = true;
-			isPartialDefKeysClosed = true;
 		}
 
 		void ReadPropertyDictionaryEnd()
 		{
-			keysResources.Pop();
-			
 			CloseElement();
 		}
 
@@ -899,12 +900,12 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			short typeIdentifier = reader.ReadInt16();
 			reader.ReadByte();
 			int position = reader.ReadInt32();
-			// TODO: shared
 			bool shared = reader.ReadBoolean();
 			bool sharedSet = reader.ReadBoolean();
-
-			// TODO: handle shared
-			AddDefKey(position, this.GetTypeExtension(typeIdentifier));
+			
+			string extension = GetTypeExtension(typeIdentifier);
+			
+			keys.Add(new KeyMapping(extension) { Shared = shared, SharedSet = sharedSet });
 		}
 
 		void ReadDefAttribute()
@@ -926,7 +927,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					if (recordName != "Key") throw new NotSupportedException(recordName);
 					pd = new PropertyDeclaration(recordName, XamlTypeDeclaration);
 
-					AddDefKey(-1, text);
+					keys.Add(new KeyMapping(text));
 					break;
 			}
 
@@ -946,30 +947,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			if (text == null)
 				throw new NotSupportedException();
 
-			AddDefKey(position, text);
-		}
-
-		void AddDefKey(long position, string text)
-		{
-			// Guardo se la dichiarazione delle chiavi risulta chiusa
-			// Se è aperta c'è un sotto ResourceDictionary oppure è il root ResourceDictionary
-			if (isDefKeysClosed) {
-				currentKey = 0;
-				keysResources.Push(new KeysResourcesCollection());
-			}
-
-			// Guardo se è stata chiusa la dichiarazione parziale (mediante dichiarazione OptimizedStaticResource)
-			// Si chiude il ciclo di chiavi
-			if (isPartialDefKeysClosed)
-			{
-				keysResources.Peek().Add(new KeysResource());
-			}
-			isDefKeysClosed = false;
-			isPartialDefKeysClosed = false;
-
-			// TODO: handle shared
-			if (position >= 0)
-				keysResources.Peek().Last.Keys[position] = text;
+			keys.Add(new KeyMapping(text));
 		}
 
 		void ReadXmlnsProperty()
@@ -1007,13 +985,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		void ReadElementEnd()
 		{
 			CloseElement();
-
-			// Provvedo all'eliminazione del gruppo di chiavi se sono sul root ResourceDictionary
-			// e si è chiuso uno degli elementi di primo livello e tutte le chiavi sono state usate
-			// Passo alla prossima lista
-			KeysResource keysResource = (elements.Count == 1 && keysResources.Count > 0) ? keysResources.Peek().First : null;
-			if (keysResource != null && keysResource.Keys.Count == 0)
-				keysResources.Peek().RemoveAt(0);
 		}
 
 		void ReadPropertyComplexStart()
@@ -1201,7 +1172,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				declaration = GetKnownTypeDeclarationByName(declaration.Type.BaseType.AssemblyQualifiedName);
 			}
 			element.TypeDeclaration = declaration;
-			 element.IsImplicit = (flags & 2) == 2;
+			element.IsImplicit = (flags & 2) == 2;
 			elements.Push(element);
 			if (!element.IsImplicit)
 				nodes.Enqueue(element);
@@ -1210,16 +1181,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				nodes.Enqueue(new XmlBamlSimpleProperty(XWPFNamespace, "Class", string.Format("{0}.{1}", oldDeclaration.Namespace, oldDeclaration.Name)));
 			}
 
-			if (parentElement != null && complexPropertyOpened == 0)
-			{
-				// Calcolo la posizione dell'elemento rispetto al padre
-				KeysResource keysResource = (keysResources.Count > 0) ? keysResources.Peek().First : null;
-				if (keysResource != null && keysResource.Keys.HasKey(currentKey))
-				{
-					string key = keysResource.Keys[currentKey];
-					// Rimuovo la chiave perché è stata usata
-//					keysResource.Keys.Remove(currentKey);
-
+			if (parentElement != null && complexPropertyOpened == 0) {
+				if (keys != null && keys.Count > currentKey) {
+					string key = keys[currentKey].KeyString;
 					AddKeyToElement(key);
 					currentKey++;
 				}
@@ -1332,7 +1296,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 				StringBuilder sb = new StringBuilder();
 				FormatElementExtension((XmlBamlElement)nodes[start], sb);
-				AddDefKey(propertyElement.Position, sb.ToString());
+				keys.Add(new KeyMapping(sb.ToString()));
 			}
 		}
 
@@ -1341,8 +1305,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			short identifier = reader.ReadInt16();
 			byte flags = reader.ReadByte();
 			TypeDeclaration declaration = GetTypeDeclaration(identifier);
-			staticResources.Add(declaration);
-			
+			LastKey.StaticResources.Add(declaration);
 			XmlBamlElement element;
 			if (elements.Any())
 				element = new XmlBamlElement(elements.Peek());
@@ -1412,7 +1375,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			//this.staticResourceTable.Add(resource);
 			isPartialDefKeysClosed = true;
 			// Aggiungo la risorsa nell'ultimo gruppo
-			keysResources.Peek().Last.StaticResources.Add(resource);
+			LastKey.StaticResources.Add(resource);
 		}
 
 		string GetTemplateBindingExtension(PropertyDeclaration propertyDeclaration)
@@ -1513,24 +1476,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		object GetStaticResource(short identifier)
 		{
-			// Recupero la risorsa nel gruppo corrente
-			foreach (KeysResourcesCollection resource in keysResources)
-			{
-				// TODO: controllare. Se non lo trova nel gruppo corrente, va in quello successivo
-				for (int x = 0; x < resource.Count; x++)
-				{
-					KeysResource resourceGroup = resource[x];
-					if (resourceGroup.StaticResources.Count > identifier)
-						if (x > 0)
-							break;
-					//return "%" + resourceGroup.StaticResources[identifier] + "%";
-						else
-							return resourceGroup.StaticResources[identifier];
-				}
-			}
-			
-			if (identifier < staticResources.Count)
-				return staticResources[identifier];
+			if (identifier < LastKey.StaticResources.Count)
+				return LastKey.StaticResources[(int)identifier];
 
 			return "???" + identifier  +"???";
 //			throw new ArgumentException("Cannot find StaticResource", "identifier");

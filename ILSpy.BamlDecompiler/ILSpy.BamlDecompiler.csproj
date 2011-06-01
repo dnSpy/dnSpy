@@ -88,6 +88,7 @@
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\IDependencyPropertyDescriptor.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\IType.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\ITypeResolver.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\KeyMapping.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\KnownInfo.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\PropertyDeclaration.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\ResourceName.cs" />

@@ -11,9 +11,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 {
 	class XmlBamlElement : XmlBamlNode
 	{
-		ArrayList _arguments = new ArrayList();
 		XmlNamespaceCollection _namespaces = new XmlNamespaceCollection();
-		KeysResourcesCollection _keysResources = new KeysResourcesCollection();
 
 		public XmlBamlElement()
 		{
@@ -67,108 +65,5 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		}
 	}
 
-	internal class KeyMapping
-	{
-		private string _key;
-		private TypeDeclaration _declaration;
-		private string _trueKey;
 
-		public KeyMapping(string key, TypeDeclaration declaration, string trueKey)
-		{
-			_key = key;
-			_declaration = declaration;
-			_trueKey = trueKey;
-		}
-
-		public string Key
-		{
-			get { return _key; }
-		}
-
-		public TypeDeclaration Declaration
-		{
-			get { return _declaration; }
-		}
-
-		public string TrueKey
-		{
-			get { return _trueKey; }
-		}
-
-		public override string ToString()
-		{
-			return String.Format("{0} - {1} - {2}", Key, Declaration, TrueKey);
-		}
-	}
-
-	internal class KeysResourcesCollection : List<KeysResource>
-	{
-		public KeysResource Last
-		{
-			get
-			{
-				if (this.Count == 0)
-					return null;
-				return this[this.Count - 1];
-			}
-		}
-
-		public KeysResource First
-		{
-			get
-			{
-				if (this.Count == 0)
-					return null;
-				return this[0];
-			}
-		}
-	}
-
-	internal class KeysResource
-	{
-		private KeysTable _keys = new KeysTable();
-		private ArrayList _staticResources = new ArrayList();
-
-		public KeysTable Keys
-		{
-			get { return _keys; }
-		}
-
-		public ArrayList StaticResources
-		{
-			get { return _staticResources; }
-		}
-	}
-
-	internal class KeysTable
-	{
-		private Hashtable table = new Hashtable();
-
-		public String this[long position]
-		{
-			get
-			{
-				return (string)this.table[position];
-			}
-			set
-			{
-				this.table[position] = value;
-			}
-		}
-
-		public int Count
-		{
-			get { return this.table.Count; }
-		}
-
-		public void Remove(long position)
-		{
-			this.table.Remove(position);
-		}
-
-		public bool HasKey(long position)
-		{
-			return this.table.ContainsKey(position);
-		}
-	}
 }
