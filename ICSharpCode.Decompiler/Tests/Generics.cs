@@ -29,6 +29,12 @@ public static class Generics
 			public Y Item2;
 		}
 		
+		public enum NestedEnum
+		{
+			A,
+			B
+		}
+		
 		private T[] arr;
 		
 		public MyArray(int capacity)
@@ -75,11 +81,13 @@ public static class Generics
 		}
 	}
 	
+	private const Generics.MyArray<string>.NestedEnum enumVal = Generics.MyArray<string>.NestedEnum.A;
 	private static Type type1 = typeof(List<>);
 	private static Type type2 = typeof(Generics.MyArray<>);
 	private static Type type3 = typeof(List<>.Enumerator);
 	private static Type type4 = typeof(Generics.MyArray<>.NestedClass<>);
 	private static Type type5 = typeof(List<int>[]);
+	private static Type type6 = typeof(Generics.MyArray<>.NestedEnum);
 	
 	public static void MethodWithConstraint<T, S>() where T : class, S where S : ICloneable, new()
 	{

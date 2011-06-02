@@ -158,7 +158,7 @@ namespace ICSharpCode.Decompiler.Tests
 		{
 			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
 			CompilerParameters options = new CompilerParameters();
-			options.CompilerOptions = "/unsafe";
+			options.CompilerOptions = "/unsafe /o-";
 			options.ReferencedAssemblies.Add("System.Core.dll");
 			CompilerResults results = provider.CompileAssemblyFromSource(options, code);
 			try {
