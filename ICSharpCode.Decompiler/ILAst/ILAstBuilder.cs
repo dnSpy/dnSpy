@@ -281,6 +281,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			int varCount = methodDef.Body.Variables.Count;
 			
+			var exceptionHandlerStarts = new HashSet<ByteCode>(methodDef.Body.ExceptionHandlers.Select(eh => instrToByteCode[eh.HandlerStart]));
+			
 			// Add known states
 			if(methodDef.Body.HasExceptionHandlers) {
 				foreach(ExceptionHandler ex in methodDef.Body.ExceptionHandlers) {
@@ -347,7 +349,12 @@ namespace ICSharpCode.Decompiler.ILAst
 				// Find all successors
 				List<ByteCode> branchTargets = new List<ByteCode>();
 				if (!byteCode.Code.IsUnconditionalControlFlow()) {
-					branchTargets.Add(byteCode.Next);
+					if (exceptionHandlerStarts.Contains(byteCode.Next)) {
+						// Do not fall though down to exception handler
+						// It is invalid IL as per ECMA-335 §12.4.2.8.1, but some obfuscators produce it						
+					} else {
+						branchTargets.Add(byteCode.Next);
+					}
 				}
 				if (byteCode.Operand is Instruction[]) {
 					foreach(Instruction inst in (Instruction[])byteCode.Operand) {
