@@ -132,6 +132,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			else
 				return false;
 		}
+		
+		public override int GetHashCode()
+		{
+			return this.AssemblyId ^ this.Name.GetHashCode() ^ this.Namespace.GetHashCode();
+		}
 	}
 
 }

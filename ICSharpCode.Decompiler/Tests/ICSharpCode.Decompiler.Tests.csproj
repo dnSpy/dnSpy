@@ -13,8 +13,8 @@
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <NoWarn>67,169</NoWarn>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <NoWarn>67,169,1058,728</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
