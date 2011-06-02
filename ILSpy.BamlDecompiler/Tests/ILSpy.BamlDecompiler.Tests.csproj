@@ -74,6 +74,10 @@
       <DependentUpon>Simple.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Cases\SimpleNames.xaml.cs">
+      <DependentUpon>SimpleNames.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Mocks\AvalonDock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestRunner.cs" />
@@ -107,11 +111,13 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Cases\AvalonDockBrushes.xaml" />
+    <Page Include="Cases\AvalonDockCommon.xaml" />
     <Page Include="Cases\Resources.xaml" />
     <Page Include="Cases\Simple.xaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Page>
     <Page Include="Cases\SimpleDictionary.xaml" />
+    <Page Include="Cases\SimpleNames.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

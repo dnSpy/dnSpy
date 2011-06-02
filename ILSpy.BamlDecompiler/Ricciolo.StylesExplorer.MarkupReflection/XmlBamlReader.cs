@@ -46,6 +46,35 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		bool isDefKeysClosed = true;
 		
 		#region Context
+		Stack<ReaderContext> layer = new Stack<ReaderContext>();
+		
+		class ReaderContext
+		{
+			public bool IsDeferred { get; set; }
+			public bool IsInStaticResource { get; set; }
+
+			public ReaderContext Previous { get; private set; }
+			
+			public ReaderContext()
+			{
+				this.Previous = this;
+			}
+			
+			public ReaderContext(ReaderContext previous)
+			{
+				this.Previous = previous;
+			}
+		}
+		
+		ReaderContext Current {
+			get {
+				if (!layer.Any())
+					layer.Push(new ReaderContext());
+				
+				return layer.Peek();
+			}
+		}
+		
 		int currentKey;
 		List<KeyMapping> keys = new List<KeyMapping>();
 		
@@ -57,6 +86,19 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				
 				return last;
 			}
+		}
+		
+		void LayerPop()
+		{
+			layer.Pop();
+		}
+		
+		void LayerPush()
+		{
+			if (layer.Any())
+				layer.Push(new ReaderContext(layer.Peek()));
+			else
+				layer.Push(new ReaderContext());
 		}
 		#endregion
 
@@ -359,6 +401,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					reader.ReadInt32();
 					break;
 				case BamlRecordType.DeferableContentStart:
+					Current.IsDeferred = true;
 					reader.ReadInt32();
 					break;
 				case BamlRecordType.DefAttribute:
@@ -910,7 +953,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			
 			string extension = GetTypeExtension(typeIdentifier);
 			
-			keys.Add(new KeyMapping(extension) { Shared = shared, SharedSet = sharedSet });
+			keys.Add(new KeyMapping(extension) { Shared = shared, SharedSet = sharedSet, Position = position });
 		}
 
 		void ReadDefAttribute()
@@ -932,7 +975,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					if (recordName != "Key") throw new NotSupportedException(recordName);
 					pd = new PropertyDeclaration(recordName, XamlTypeDeclaration);
 
-					keys.Add(new KeyMapping(text));
+					keys.Add(new KeyMapping(text) { Position = -1 });
 					break;
 			}
 
@@ -944,15 +987,16 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		void ReadDefAttributeKeyString()
 		{
-			short num = reader.ReadInt16();
+			short stringId = reader.ReadInt16();
 			int position = reader.ReadInt32();
-			//bool shared = reader.ReadBoolean();
-			//bool sharedSet = reader.ReadBoolean();
-			string text = this.stringTable[num];
+			bool shared = reader.ReadBoolean();
+			bool sharedSet = reader.ReadBoolean();
+			
+			string text = this.stringTable[stringId];
 			if (text == null)
 				throw new NotSupportedException();
 
-			keys.Add(new KeyMapping(text));
+			keys.Add(new KeyMapping(text) { Position = position });
 		}
 
 		void ReadXmlnsProperty()
@@ -990,6 +1034,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		void ReadElementEnd()
 		{
 			CloseElement();
+			LayerPop();
 		}
 
 		void ReadPropertyComplexStart()
@@ -1146,6 +1191,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		void ReadElementStart()
 		{
+			LayerPush();
 			short identifier = reader.ReadInt16();
 			sbyte flags = reader.ReadSByte();
 			if (flags < 0 || flags > 3)
@@ -1186,7 +1232,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				nodes.Enqueue(new XmlBamlSimpleProperty(XWPFNamespace, "Class", string.Format("{0}.{1}", oldDeclaration.Namespace, oldDeclaration.Name)));
 			}
 
-			if (parentElement != null && complexPropertyOpened == 0) {
+			if (parentElement != null && complexPropertyOpened == 0 && !Current.IsInStaticResource && Current.Previous.IsDeferred) {
 				if (keys != null && keys.Count > currentKey) {
 					string key = keys[currentKey].KeyString;
 					AddKeyToElement(key);
@@ -1301,12 +1347,13 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 				StringBuilder sb = new StringBuilder();
 				FormatElementExtension((XmlBamlElement)nodes[start], sb);
-				keys.Add(new KeyMapping(sb.ToString()));
+				keys.Add(new KeyMapping(sb.ToString()) { Position = -1 });
 			}
 		}
 
 		void ReadStaticResourceStart()
 		{
+			Current.IsInStaticResource = true;
 			short identifier = reader.ReadInt16();
 			byte flags = reader.ReadByte();
 			TypeDeclaration declaration = GetTypeDeclaration(identifier);
@@ -1324,6 +1371,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		void ReadStaticResourceEnd()
 		{
 			CloseElement();
+			Current.IsInStaticResource = false;
 		}
 
 		void ReadStaticResourceId()

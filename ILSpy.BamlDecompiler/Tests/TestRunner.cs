@@ -38,9 +38,21 @@ namespace ILSpy.BamlDecompiler.Tests
 		}
 		
 		[Test]
+		public void SimpleNames()
+		{
+			RunTest("cases/simplenames");
+		}
+		
+		[Test]
 		public void AvalonDockBrushes()
 		{
 			RunTest("cases/avalondockbrushes");
+		}
+		
+		[Test]
+		public void AvalonDockCommon()
+		{
+			RunTest("cases/avalondockcommon");
 		}
 		
 		#region RunTest
