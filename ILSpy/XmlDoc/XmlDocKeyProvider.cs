@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			StringBuilder b = new StringBuilder();
 			if (member is TypeReference) {
 				b.Append("T:");
-				AppendTypeName(b, (TypeDefinition)member);
+				AppendTypeName(b, (TypeReference)member);
 			} else {
 				if (member is FieldReference)
 					b.Append("F:");
