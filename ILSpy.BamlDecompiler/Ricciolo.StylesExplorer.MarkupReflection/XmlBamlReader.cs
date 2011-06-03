@@ -398,7 +398,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					this.ReadXmlnsProperty();
 					break;
 				case BamlRecordType.ConnectionId:
-					reader.ReadInt32();
+					this.ReadConnectionId();
 					break;
 				case BamlRecordType.DeferableContentStart:
 					Current.IsDeferred = true;
@@ -503,6 +503,12 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				default:
 					throw new NotImplementedException("UnsupportedNode: " + currentType);
 			}
+		}
+		
+		void ReadConnectionId()
+		{
+			int id = reader.ReadInt32();
+			nodes.Enqueue(new XmlBamlSimpleProperty(XWPFNamespace, "ConnectionId", id.ToString()));
 		}
 		
 		void ReadTextWithId()
@@ -1489,19 +1495,16 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			bool isAttached = (descriptor != null && descriptor.IsAttached);
 			bool differentType = ((propertyDeclaration.DeclaringType != propertyDeclaration.DeclaringType || !isDescendant));
 
-			if (withPrefix)
-			{
+			if (withPrefix) {
 				XmlPIMapping mapping = FindByClrNamespaceAndAssemblyId(propertyDeclaration.DeclaringType.Namespace, propertyDeclaration.DeclaringType.AssemblyId);
 				string prefix = (mapping != null) ? this.LookupPrefix(mapping.XmlNamespace, false) : null;
 
-				if (!String.IsNullOrEmpty(prefix))
-				{
+				if (!String.IsNullOrEmpty(prefix)) {
 					sb.Append(prefix);
 					sb.Append(":");
 				}
 			}
-			if ((differentType || isAttached || !checkType) && propertyDeclaration.DeclaringType.Name.Length > 0)
-			{
+			if ((differentType || isAttached || !checkType) && propertyDeclaration.DeclaringType.Name.Length > 0) {
 				sb.Append(propertyDeclaration.DeclaringType.Name);
 				sb.Append(".");
 			}
