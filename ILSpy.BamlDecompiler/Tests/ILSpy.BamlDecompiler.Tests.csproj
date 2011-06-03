@@ -66,6 +66,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cases\AttachedEvent.xaml.cs">
+      <DependentUpon>AttachedEvent.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Cases\Resources.xaml.cs">
       <DependentUpon>Resources.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -110,6 +114,7 @@
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Cases\AttachedEvent.xaml" />
     <Page Include="Cases\AvalonDockBrushes.xaml" />
     <Page Include="Cases\AvalonDockCommon.xaml" />
     <Page Include="Cases\Resources.xaml" />

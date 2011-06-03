@@ -55,6 +55,12 @@ namespace ILSpy.BamlDecompiler.Tests
 			RunTest("cases/avalondockcommon");
 		}
 		
+		[Test]
+		public void AttachedEvent()
+		{
+			RunTest("cases/attachedevent");
+		}
+		
 		#region RunTest
 		void RunTest(string name)
 		{
