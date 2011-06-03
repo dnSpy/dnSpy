@@ -870,8 +870,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			short extensionIdentifier = (short)-(x & 0xfff);
 			string value = String.Empty;
 
-			switch (x)
-			{
+			switch (x) {
 				case 0x25a:
 					// StaticExtension
 					object resource = this.GetResourceName(valueIdentifier);
@@ -1093,30 +1092,27 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			CloseElement();
 
 			complexPropertyOpened--;
-//			// Valuto se contiene tutte extension
-//			int start = nodes.IndexOf(propertyElement) + 1;
-//			IEnumerator enumerator = nodes.GetEnumerator();
-//
-//			int c = 0;
-//			while (c < start && enumerator.MoveNext())
-//				c++;
-//
-//			if (IsExtension(enumerator))
-//			{
-//				start--;
-//				nodes.RemoveAt(start);
-//				nodes.RemoveLast();
-//
-//				StringBuilder sb = new StringBuilder();
-//				FormatElementExtension((XmlBamlElement) nodes[start], sb);
-//
-//				XmlBamlProperty property =
-//					new XmlBamlProperty(PropertyType.Complex, propertyElement.PropertyDeclaration);
-//				property.Value = sb.ToString();
-//				nodes.Add(property);
-//
-//				return;
-//			}
+			// this property could be a markup extension
+			// try to convert it
+			int start = nodes.IndexOf(propertyElement) + 1;
+			IEnumerator enumerator = nodes.GetEnumerator();
+			
+			// move enumerator to the start of this property value
+			for (int i = 0; i < start && enumerator.MoveNext(); i++) ;
+
+			if (IsExtension(enumerator)) {
+				start--;
+				nodes.RemoveAt(start);
+				nodes.RemoveLast();
+
+				StringBuilder sb = new StringBuilder();
+				FormatElementExtension((XmlBamlElement) nodes[start], sb);
+
+				XmlBamlProperty property =
+					new XmlBamlProperty(elements.Peek(), PropertyType.Complex, propertyElement.PropertyDeclaration);
+				property.Value = sb.ToString();
+				nodes.Add(property);
+			}
 		}
 
 		void FormatElementExtension(XmlBamlElement element, StringBuilder sb)
@@ -1535,8 +1531,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			if (identifier < LastKey.StaticResources.Count)
 				return LastKey.StaticResources[(int)identifier];
 
-			return "???" + identifier  +"???";
-//			throw new ArgumentException("Cannot find StaticResource", "identifier");
+//			return "???" + identifier  +"???";
+			throw new ArgumentException("Cannot find StaticResource", "identifier");
 		}
 
 		void ReadTextWithConverter()

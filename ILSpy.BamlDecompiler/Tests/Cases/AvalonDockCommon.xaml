@@ -17,11 +17,11 @@
 		<MenuItem Command="ad:DocumentContentCommands.TabbedDocument" />
 	</ContextMenu>
 	<Style x:Key="{x:Type ad:Resizer}" TargetType="{x:Type ad:Resizer}">
-		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="Background" Value="#00FFFFFF" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ad:Resizer}">
-					<Border Background="{TemplateBinding Background}" />
+					<Border Background="{TemplateBinding Control.Background}" />
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
@@ -30,14 +30,14 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Button}">
-					<Border x:Name="PaneHeaderCommandIntBorder" Background="Transparent" BorderThickness="1" Margin="0" Opacity="0.8">
+					<Border Name="PaneHeaderCommandIntBorder" Background="#00FFFFFF" BorderThickness="1" Margin="0" Opacity="0.8">
 						<ContentPresenter />
 					</Border>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsMouseOver" Value="True">
-							<Setter Property="BorderBrush" TargetName="PaneHeaderCommandIntBorder" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBorderBrush}}}" />
-							<Setter Property="Background" TargetName="PaneHeaderCommandIntBorder" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBackground}}}" />
-							<Setter Property="Opacity" TargetName="PaneHeaderCommandIntBorder" Value="1" />
+							<Setter TargetName="PaneHeaderCommandIntBorder" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBorderBrush}}}" Property="BorderBrush" />
+							<Setter TargetName="PaneHeaderCommandIntBorder" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBackground}}}" Property="Background" />
+							<Setter TargetName="PaneHeaderCommandIntBorder" Property="Opacity" Value="1" />
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
@@ -45,7 +45,7 @@
 		</Setter>
 	</Style>
 	<Style x:Key="PaneHeaderContextMenuCommandStyle" TargetType="{x:Type Border}">
-		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="Background" Value="#00FFFFFF" />
 		<Setter Property="BorderThickness" Value="1" />
 		<Style.Triggers>
 			<Trigger Property="IsMouseOver" Value="True">
