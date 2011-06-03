@@ -70,6 +70,10 @@
       <DependentUpon>AttachedEvent.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Cases\MyControl.xaml.cs">
+      <DependentUpon>MyControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Cases\Resources.xaml.cs">
       <DependentUpon>Resources.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -117,6 +121,7 @@
     <Page Include="Cases\AttachedEvent.xaml" />
     <Page Include="Cases\AvalonDockBrushes.xaml" />
     <Page Include="Cases\AvalonDockCommon.xaml" />
+    <Page Include="Cases\MyControl.xaml" />
     <Page Include="Cases\Resources.xaml" />
     <Page Include="Cases\Simple.xaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

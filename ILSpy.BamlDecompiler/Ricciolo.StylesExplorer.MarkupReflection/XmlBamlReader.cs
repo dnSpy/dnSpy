@@ -777,7 +777,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					return;
 			}
 
-			XmlBamlProperty property = new XmlBamlProperty(PropertyType.Value, pd);
+			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Value, pd);
 			property.Value = value;
 
 			nodes.Enqueue(property);
@@ -907,7 +907,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					throw new NotSupportedException("Unknown property with extension");
 			}
 
-			XmlBamlProperty property = new XmlBamlProperty(PropertyType.Value, pd);
+			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Value, pd);
 			property.Value = value;
 
 			nodes.Enqueue(property);
@@ -919,7 +919,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			string text = reader.ReadString();
 
 			PropertyDeclaration pd = this.GetPropertyDeclaration(identifier);
-			XmlBamlProperty property = new XmlBamlProperty(PropertyType.Value, pd);
+			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Value, pd);
 			property.Value = text;
 
 			nodes.Enqueue(property);
@@ -932,7 +932,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			reader.ReadInt16();
 
 			PropertyDeclaration pd = this.GetPropertyDeclaration(identifier);
-			XmlBamlProperty property = new XmlBamlProperty(PropertyType.Value, pd);
+			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Value, pd);
 			property.Value = text;
 
 			nodes.Enqueue(property);
@@ -945,8 +945,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			reader.ReadByte();
 			string name = reader.ReadString();
 			TypeDeclaration declaringType = this.GetTypeDeclaration(identifier);
-			PropertyDeclaration declaration2 = new PropertyDeclaration(name, declaringType);
-			this.propertyTable.Add(key, declaration2);
+			PropertyDeclaration property = new PropertyDeclaration(name, declaringType);
+			this.propertyTable.Add(key, property);
 		}
 
 		void ReadDefAttributeKeyType()
@@ -985,7 +985,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					break;
 			}
 
-			XmlBamlProperty property = new XmlBamlProperty(PropertyType.Key, pd);
+			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Key, pd);
 			property.Value = text;
 
 			nodes.Enqueue(property);
@@ -1250,7 +1250,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		void AddKeyToElement(string key)
 		{
 			PropertyDeclaration pd = new PropertyDeclaration("Key", XamlTypeDeclaration);
-			XmlBamlProperty property = new XmlBamlProperty(PropertyType.Key, pd);
+			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Key, pd);
 
 			property.Value = key;
 
@@ -1393,7 +1393,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 			PropertyDeclaration pd = new PropertyDeclaration(this.stringTable[valueIdentifier].ToString());
 
-			XmlBamlProperty property = new XmlBamlProperty(PropertyType.Value, pd);
+			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Value, pd);
 			property.Value = text;
 		}
 
@@ -1405,7 +1405,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			PropertyDeclaration pd = this.GetPropertyDeclaration(identifier);
 			string value = this.GetTypeExtension(typeIdentifier);
 
-			XmlBamlProperty property = new XmlBamlProperty(PropertyType.Value, pd);
+			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Value, pd);
 			property.Value = value;
 
 			nodes.Enqueue(property);
@@ -1524,7 +1524,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			string prefix = this.LookupPrefix(XmlPIMapping.PresentationNamespace, false);
 			string value = String.Format("{{{0}{1}StaticResource {2}}}", prefix, (String.IsNullOrEmpty(prefix)) ? String.Empty : ":", staticResource);
 
-			XmlBamlProperty property = new XmlBamlProperty(PropertyType.Value, pd);
+			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Value, pd);
 			property.Value = value;
 
 			nodes.Enqueue(property);
@@ -1637,13 +1637,17 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				XmlBamlNode node = this.CurrentNode;
 				if (node is XmlBamlSimpleProperty)
 					return ((XmlBamlSimpleProperty)node).NamespaceName;
-				else if (node is XmlBamlProperty)
-				{
+				else if (node is XmlBamlProperty) {
 					declaration = ((XmlBamlProperty)node).PropertyDeclaration.DeclaringType;
 					TypeDeclaration elementDeclaration = this.readingElements.Peek().TypeDeclaration;
 
 					XmlPIMapping propertyMapping = FindByClrNamespaceAndAssemblyId(declaration) ?? XmlPIMapping.Presentation;
 					XmlPIMapping elementMapping = FindByClrNamespaceAndAssemblyId(elementDeclaration) ?? XmlPIMapping.Presentation;
+					
+					if (((XmlBamlProperty)node).PropertyDeclaration.Name == "Name" &&
+					    _resolver.IsLocalAssembly(((XmlBamlProperty)node).Parent.TypeDeclaration.Assembly))
+						return XWPFNamespace;
+					
 					if (String.CompareOrdinal(propertyMapping.XmlNamespace, elementMapping.XmlNamespace) == 0
 					    || (elementDeclaration.Type != null && declaration.Type != null && elementDeclaration.Type.IsSubclassOf(declaration.Type)))
 						return String.Empty;

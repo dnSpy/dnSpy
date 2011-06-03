@@ -25,7 +25,16 @@ namespace ILSpy.BamlDecompiler
 		
 		public bool IsLocalAssembly(string name)
 		{
-			return name == this.thisAssembly.Name.Name;
+			return MakeShort(name) == this.thisAssembly.Name.Name;
+		}
+		
+		string MakeShort(string name)
+		{
+			int endOffset = name.IndexOf(',');
+			if (endOffset == -1)
+				return name;
+			
+			return name.Substring(0, endOffset);
 		}
 		
 		public IType GetTypeByAssemblyQualifiedName(string name)
