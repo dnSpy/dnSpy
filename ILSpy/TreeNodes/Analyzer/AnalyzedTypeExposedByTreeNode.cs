@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
@@ -68,7 +69,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
 
 			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedType, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct);
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+				yield return child;
+			}
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
@@ -80,23 +83,35 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				yield break;
 
 			foreach (FieldDefinition field in type.Fields) {
-				if (TypeIsExposedBy(field))
-					yield return new AnalyzedFieldTreeNode(field);
+				if (TypeIsExposedBy(field)) {
+					var node = new AnalyzedFieldTreeNode(field);
+					node.Language = this.Language;
+					yield return node;
+				}
 			}
 
 			foreach (PropertyDefinition property in type.Properties) {
-				if (TypeIsExposedBy(property))
-					yield return new AnalyzedPropertyTreeNode(property);
+				if (TypeIsExposedBy(property)) {
+					var node = new AnalyzedPropertyTreeNode(property);
+					node.Language = this.Language;
+					yield return node;
+				}
 			}
 
 			foreach (EventDefinition eventDef in type.Events) {
-				if (TypeIsExposedBy(eventDef))
-					yield return new AnalyzedEventTreeNode(eventDef);
+				if (TypeIsExposedBy(eventDef)) {
+					var node = new AnalyzedEventTreeNode(eventDef);
+					node.Language = this.Language;
+					yield return node;
+				}
 			}
 
 			foreach (MethodDefinition method in type.Methods) {
-				if (TypeIsExposedBy(method))
-					yield return new AnalyzedMethodTreeNode(method);
+				if (TypeIsExposedBy(method)) {
+					var node = new AnalyzedMethodTreeNode(method);
+					node.Language = this.Language;
+					yield return node;
+				}
 			}
 		}
 

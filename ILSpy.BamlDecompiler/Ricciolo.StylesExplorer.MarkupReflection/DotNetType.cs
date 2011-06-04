@@ -42,6 +42,12 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			if (_type == null) return false;
 			return this._type.Equals(((DotNetType)type).Type);
 		}
+		
+		public IType BaseType {
+			get {
+				return new DotNetType(this._type.BaseType.AssemblyQualifiedName);
+			}
+		}
 
 		#endregion
 

@@ -8,10 +8,11 @@ using System.Text;
 namespace Ricciolo.StylesExplorer.MarkupReflection
 {
 	/// <summary>
-	/// Interface rappresenting a DotNet type
+	/// Interface representing a DotNet type
 	/// </summary>
 	public interface IType
 	{
+		IType BaseType { get; }
 		string AssemblyQualifiedName { get; }
 		bool IsSubclassOf(IType type);
 		bool Equals(IType type);

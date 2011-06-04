@@ -67,5 +67,15 @@ namespace ILSpy.BamlDecompiler
 		{
 			return string.Format("[CecilType Type={0}]", type);
 		}
+		
+		public IType BaseType {
+			get {
+				TypeDefinition td = type.BaseType.Resolve();
+				if (td == null)
+					throw new Exception("could not resolve '" + type.BaseType.FullName + "'!");
+				
+				return new CecilType(td);
+			}
+		}
 	}
 }

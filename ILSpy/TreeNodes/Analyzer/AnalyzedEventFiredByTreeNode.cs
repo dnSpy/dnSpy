@@ -77,7 +77,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			foundMethods = new ConcurrentDictionary<MethodDefinition, int>();
 
-			foreach (var child in FindReferencesInType(analyzedEvent.DeclaringType)) {
+			foreach (var child in FindReferencesInType(analyzedEvent.DeclaringType).OrderBy(n => n.Text)) {
 				yield return child;
 			}
 
@@ -117,7 +117,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				if (found) {
 					MethodDefinition codeLocation = this.Language.GetOriginalCodeLocation(method) as MethodDefinition;
 					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
-						yield return new AnalyzedMethodTreeNode(codeLocation);
+						var node = new AnalyzedMethodTreeNode(codeLocation);
+						node.Language = this.Language;
+						yield return node;
 					}
 				}
 			}

@@ -17,9 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Linq;
 using System.Windows.Threading;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
@@ -32,26 +30,28 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	sealed class BaseTypesTreeNode : ILSpyTreeNode
 	{
 		readonly TypeDefinition type;
-		
+
 		public BaseTypesTreeNode(TypeDefinition type)
 		{
 			this.type = type;
 			this.LazyLoading = true;
 		}
-		
-		public override object Text {
+
+		public override object Text
+		{
 			get { return "Base Types"; }
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return Images.SuperTypes; }
 		}
-		
+
 		protected override void LoadChildren()
 		{
 			AddBaseTypes(this.Children, type);
 		}
-		
+
 		internal static void AddBaseTypes(SharpTreeNodeCollection children, TypeDefinition type)
 		{
 			if (type.BaseType != null)
@@ -60,87 +60,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				children.Add(new BaseTypesEntryNode(i, true));
 			}
 		}
-		
+
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
 			foreach (ILSpyTreeNode child in this.Children) {
 				child.Decompile(language, output, options);
 			}
-		}
-	}
-	
-	sealed class BaseTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
-	{
-		TypeReference tr;
-		TypeDefinition def;
-		bool isInterface;
-		
-		public BaseTypesEntryNode(TypeReference tr, bool isInterface)
-		{
-			if (tr == null)
-				throw new ArgumentNullException("tr");
-			this.tr = tr;
-			this.def = tr.Resolve();
-			this.isInterface = isInterface;
-			this.LazyLoading = true;
-		}
-		
-		public override bool ShowExpander {
-			get {
-				return def != null && (def.BaseType != null || def.HasInterfaces);
-			}
-		}
-		
-		public override object Text {
-			get { return this.Language.TypeToString(tr, true); }
-		}
-		
-		public override object Icon {
-			get {
-				if (def != null)
-					return TypeTreeNode.GetIcon(def);
-				else
-					return isInterface ? Images.Interface : Images.Class;
-			}
-		}
-		
-		protected override void LoadChildren()
-		{
-			if (def != null)
-				BaseTypesTreeNode.AddBaseTypes(this.Children, def);
-		}
-		
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
-		{
-			// on item activation, try to resolve once again (maybe the user loaded the assembly in the meantime)
-			if (def == null) {
-				def = tr.Resolve();
-				if (def != null)
-					this.LazyLoading = true; // re-load children
-			}
-			e.Handled = ActivateItem(this, def);
-		}
-		
-		internal static bool ActivateItem(SharpTreeNode node, TypeDefinition def)
-		{
-			if (def != null) {
-				var assemblyListNode = node.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();
-				if (assemblyListNode != null) {
-					assemblyListNode.Select(assemblyListNode.FindTypeNode(def));
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.WriteCommentLine(output, language.TypeToString(tr, true));
-		}
-		
-		MemberReference IMemberTreeNode.Member {
-			get { return tr; }
 		}
 	}
 }

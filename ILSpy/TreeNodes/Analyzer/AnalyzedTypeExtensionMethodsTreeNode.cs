@@ -69,7 +69,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
 
 			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedType, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct);
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+				yield return child;
+			}
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
@@ -79,7 +81,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (MethodDefinition method in type.Methods) {
 				if (method.IsStatic && HasExtensionAttribute(method)) {
 					if (method.HasParameters && method.Parameters[0].ParameterType.Resolve() == analyzedType) {
-						yield return new AnalyzedMethodTreeNode(method);
+						var node = new AnalyzedMethodTreeNode(method);
+						node.Language = this.Language;
+						yield return node;
 					}
 				}
 			}

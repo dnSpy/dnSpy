@@ -171,6 +171,11 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		public IAssemblyResolver GetAssemblyResolver()
+		{
+			return new MyAssemblyResolver(this);
+		}
+		
 		public LoadedAssembly LookupReferencedAssembly(string fullName)
 		{
 			foreach (LoadedAssembly asm in assemblyList.GetAssemblies()) {

@@ -23,11 +23,11 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Resources;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xaml;
 using System.Xml;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
@@ -100,6 +100,7 @@ namespace ICSharpCode.ILSpy
 				codeDomBuilder.AddMethod(method);
 				RunTransformsAndGenerateCode(codeDomBuilder, output, options);
 			}
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		class SelectCtorTransform : IAstTransform
@@ -144,6 +145,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: property.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddProperty(property);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
@@ -157,6 +159,7 @@ namespace ICSharpCode.ILSpy
 				AddFieldsAndCtors(codeDomBuilder, field.DeclaringType, field.IsStatic);
 			}
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, new SelectFieldTransform(field));
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		/// <summary>
@@ -200,6 +203,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: ev.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddEvent(ev);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
@@ -207,6 +211,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
 			codeDomBuilder.AddType(type);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options, IAstTransform additionalTransform = null)
@@ -230,6 +235,46 @@ namespace ICSharpCode.ILSpy
 				WriteProjectFile(new TextOutputWriter(output), files, assembly.AssemblyDefinition.MainModule);
 			} else {
 				base.DecompileAssembly(assembly, output, options);
+				output.WriteLine();
+				ModuleDefinition mainModule = assembly.AssemblyDefinition.MainModule;
+				if (mainModule.EntryPoint != null) {
+					output.Write("// Entry point: ");
+					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint);
+					output.WriteLine();
+				}
+				switch (mainModule.Architecture) {
+					case TargetArchitecture.I386:
+						if ((mainModule.Attributes & ModuleAttributes.Required32Bit) == ModuleAttributes.Required32Bit)
+							output.WriteLine("// Architecture: x86");
+						else
+							output.WriteLine("// Architecture: AnyCPU");
+						break;
+					case TargetArchitecture.AMD64:
+						output.WriteLine("// Architecture: x64");
+						break;
+					case TargetArchitecture.IA64:
+						output.WriteLine("// Architecture: Itanium-64");
+						break;
+				}
+				if ((mainModule.Attributes & ModuleAttributes.ILOnly) == 0) {
+					output.WriteLine("// This assembly contains unmanaged code.");
+				}
+				switch (mainModule.Runtime) {
+					case TargetRuntime.Net_1_0:
+						output.WriteLine("// Runtime: .NET 1.0");
+						break;
+					case TargetRuntime.Net_1_1:
+						output.WriteLine("// Runtime: .NET 1.1");
+						break;
+					case TargetRuntime.Net_2_0:
+						output.WriteLine("// Runtime: .NET 2.0");
+						break;
+					case TargetRuntime.Net_4_0:
+						output.WriteLine("// Runtime: .NET 4.0");
+						break;
+				}
+				output.WriteLine();
+				
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
 				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {
 					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.AssemblyDefinition.MainModule);
@@ -238,6 +283,7 @@ namespace ICSharpCode.ILSpy
 					codeDomBuilder.GenerateCode(output);
 				}
 			}
+			OnDecompilationFinished(null);
 		}
 
 		#region WriteProjectFile

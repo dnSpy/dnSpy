@@ -17,20 +17,56 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
+	/// Decompilation event arguments.
+	/// </summary>
+	public sealed class DecompileEventArgs : EventArgs
+	{
+		/// <summary>
+		/// Gets ot sets the code mappings
+		/// </summary>
+		public Dictionary<int, List<MemberMapping>> CodeMappings { get; internal set; }
+		
+		/// <summary>
+		/// Gets or sets the local variables.
+		/// </summary>
+		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; internal set; }
+		
+		/// <summary>
+		/// Gets the list of MembeReferences that are decompiled (TypeDefinitions, MethodDefinitions, etc)
+		/// </summary>
+		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; internal set; }
+		
+		/// <summary>
+		/// Gets (or internal sets) the AST nodes.
+		/// </summary>
+		public IEnumerable<AstNode> AstNodes { get; internal set; }
+	}
+	
+	/// <summary>
 	/// Base class for language-specific decompiler implementations.
 	/// </summary>
 	public abstract class Language
 	{
+		/// <summary>
+		/// Decompile finished event.
+		/// </summary>
+		public event EventHandler<DecompileEventArgs> DecompileFinished;
+		
 		/// <summary>
 		/// Gets the name of the language (as shown in the UI)
 		/// </summary>
@@ -85,6 +121,7 @@ namespace ICSharpCode.ILSpy
 		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)
 		{
 			WriteCommentLine(output, nameSpace);
+			OnDecompilationFinished(null);
 		}
 
 		public virtual void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
@@ -155,43 +192,39 @@ namespace ICSharpCode.ILSpy
 		{
 			return member;
 		}
-	}
-
-	public static class Languages
-	{
-		static ReadOnlyCollection<Language> allLanguages;
-
-		/// <summary>
-		/// A list of all languages.
-		/// </summary>
-		public static ReadOnlyCollection<Language> AllLanguages
+		
+		protected virtual void OnDecompilationFinished(DecompileEventArgs e)
 		{
-			get
-			{
-				return allLanguages;
+			if (DecompileFinished != null) {
+				DecompileFinished(this, e);
 			}
 		}
-
-
-		internal static void Initialize(CompositionContainer composition)
+		
+		protected void NotifyDecompilationFinished(BaseCodeMappings b)
 		{
-			List<Language> languages = new List<Language>();
-			languages.AddRange(composition.GetExportedValues<Language>());
-			languages.Add(new ILLanguage(true));
-#if DEBUG
-			languages.AddRange(ILAstLanguage.GetDebugLanguages());
-			languages.AddRange(CSharpLanguage.GetDebugLanguages());
-#endif
-			allLanguages = languages.AsReadOnly();
-		}
-
-		/// <summary>
-		/// Gets a language using its name.
-		/// If the language is not found, C# is returned instead.
-		/// </summary>
-		public static Language GetLanguage(string name)
-		{
-			return AllLanguages.FirstOrDefault(l => l.Name == name) ?? AllLanguages.First();
+			if (b is AstBuilder) {
+				var builder = b as AstBuilder;
+				
+				var nodes = TreeTraversal
+					.PreOrder((AstNode)builder.CompilationUnit, n => n.Children)
+					.Where(n => n is AttributedNode && n.Annotation<Tuple<int, int>>() != null);
+				
+				OnDecompilationFinished(new DecompileEventArgs {
+				                        	CodeMappings = builder.CodeMappings,
+				                        	LocalVariables = builder.LocalVariables,
+				                        	DecompiledMemberReferences = builder.DecompiledMemberReferences,
+				                        	AstNodes = nodes
+				                        });
+			}
+			
+			if (b is ReflectionDisassembler) {
+				var dis = b as ReflectionDisassembler;
+				OnDecompilationFinished(new DecompileEventArgs {
+				                        	CodeMappings = dis.CodeMappings,
+				                        	DecompiledMemberReferences = dis.DecompiledMemberReferences,
+				                        	AstNodes = null // TODO: how can I find the nodes with line numbers from dis?
+				                        });
+			}
 		}
 	}
 }

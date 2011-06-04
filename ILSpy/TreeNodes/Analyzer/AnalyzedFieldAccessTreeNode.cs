@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
@@ -74,7 +75,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);
 
 			var analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedField, FindReferencesInType);
-			foreach (var child in analyzer.PerformAnalysis(ct)) {
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
 				yield return child;
 			}
 
@@ -93,8 +94,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (CanBeReference(instr.OpCode.Code)) {
 						FieldReference fr = instr.Operand as FieldReference;
-						if (fr != null && fr.Name == name && 
-							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType) && 
+						if (fr != null && fr.Name == name &&
+							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType) &&
 							fr.Resolve() == analyzedField) {
 							found = true;
 							break;
@@ -107,7 +108,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				if (found) {
 					MethodDefinition codeLocation = this.Language.GetOriginalCodeLocation(method) as MethodDefinition;
 					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
-						yield return new AnalyzedMethodTreeNode(codeLocation);
+						var node = new AnalyzedMethodTreeNode(codeLocation);
+						node.Language = this.Language;
+						yield return node;
 					}
 				}
 			}
