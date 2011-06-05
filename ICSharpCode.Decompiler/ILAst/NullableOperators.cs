@@ -52,16 +52,20 @@ namespace ICSharpCode.Decompiler.ILAst
 			{
 				public readonly Pattern[] Arguments;
 
-				protected static readonly Pattern[] EmptyArguments = new Pattern[0];
-
 				protected Pattern(Pattern[] arguments)
 				{
 					this.Arguments = arguments;
 				}
 
-				public abstract bool Match(ref PatternMatcher pm, ILExpression e);
+				public virtual bool Match(ref PatternMatcher pm, ILExpression e)
+				{
+					if (e.Arguments.Count != this.Arguments.Length || e.Prefixes != null) return false;
+					for (int i = 0; i < this.Arguments.Length; i++)
+						if (!this.Arguments[i].Match(ref pm, e.Arguments[i])) return false;
+					return true;
+				}
 
-				public virtual ILExpression BuildNew(ref PatternMatcher pm, ILExpression[] args)
+				public virtual ILExpression BuildNew(ref PatternMatcher pm)
 				{
 					throw new NotSupportedException();
 				}
@@ -94,11 +98,13 @@ namespace ICSharpCode.Decompiler.ILAst
 
 				public override bool Match(ref PatternMatcher pm, ILExpression e)
 				{
-					return e.Code == this.code;
+					return e.Code == this.code && base.Match(ref pm, e);
 				}
 
-				public override ILExpression BuildNew(ref PatternMatcher pm, ILExpression[] args)
+				public override ILExpression BuildNew(ref PatternMatcher pm)
 				{
+					var args = new ILExpression[this.Arguments.Length];
+					for (int i = 0; i < args.Length; i++) args[i] = this.Arguments[i].BuildNew(ref pm);
 					return new ILExpression(code, null, args);
 				}
 			}
@@ -121,25 +127,27 @@ namespace ICSharpCode.Decompiler.ILAst
 					var m = e.Operand as MethodReference;
 					if (m == null || m.Name != this.method) return false;
 					var t = m.DeclaringType;
-					return t.Name == "Nullable`1" && t.Namespace == "System";
+					return t.Name == "Nullable`1" && t.Namespace == "System" && base.Match(ref pm, e);
 				}
 			}
 
 			enum OperatorType
 			{
-				Equality, InEquality, Comparison, Unary, Other
+				Equality, InEquality, Comparison, Other
 			}
 
 			sealed class OperatorPattern : Pattern
 			{
 				OperatorType type;
+				bool simple;
 
-				public OperatorPattern(params Pattern[] arguments) : base(arguments) { }
+				public OperatorPattern() : base(null) { }
 
-				public OperatorPattern(OperatorType type, params Pattern[] arguments)
-					: base(arguments)
+				public OperatorPattern(OperatorType type, bool simple)
+					: this()
 				{
 					this.type = type;
+					this.simple = simple;
 				}
 
 				public override bool Match(ref PatternMatcher pm, ILExpression e)
@@ -180,27 +188,40 @@ namespace ICSharpCode.Decompiler.ILAst
 						case ILCode.Shl:
 						case ILCode.Shr:
 						case ILCode.Shr_Un:
-							if (type != OperatorType.Other) return false;
-							break;
 						case ILCode.Not:
 						case ILCode.Neg:
 						case ILCode.LogicNot:
-							if (type != OperatorType.Unary) return false;
+							if (type != OperatorType.Other) return false;
 							break;
 						case ILCode.Call:
 							var m = e.Operand as MethodReference;
-							if (m == null || m.HasThis || !m.HasParameters || m.Parameters.Count != base.Arguments.Length || !IsCustomOperator(m)) return false;
+							if (m == null || m.HasThis || !m.HasParameters || e.Arguments.Count > 2 || !IsCustomOperator(m.Name)) return false;
 							break;
 						default: return false;
 					}
 					if (pm.Operator != null) throw new InvalidOperationException();
 					pm.Operator = e;
-					return true;
+
+					var a0 = e.Arguments[0];
+					if (!simple) return VariableAGetValueOrDefault.Match(ref pm, a0) && VariableBGetValueOrDefault.Match(ref pm, e.Arguments[1]);
+					if (e.Arguments.Count == 1) return VariableAGetValueOrDefault.Match(ref pm, a0);
+					if (VariableAGetValueOrDefault.Match(ref pm, a0)) {
+						pm.SimpleOperand = e.Arguments[1];
+						pm.SimpleLeftOperand = false;
+						return true;
+					}
+					if (VariableAGetValueOrDefault.Match(ref pm, e.Arguments[1])) {
+						pm.SimpleOperand = a0;
+						pm.SimpleLeftOperand = true;
+						return true;
+					}
+					return false;
 				}
 
-				bool IsCustomOperator(MethodReference m)
+				bool IsCustomOperator(string s)
 				{
-					switch (m.Name) {
+					if (s.Length < 11 || !s.StartsWith("op_", StringComparison.Ordinal)) return false;
+					switch (s) {
 						case "op_Equality":
 							return type == OperatorType.Equality;
 						case "op_Inequality":
@@ -210,15 +231,32 @@ namespace ICSharpCode.Decompiler.ILAst
 						case "op_LessThan":
 						case "op_LessThanOrEqual":
 							return type == OperatorType.Comparison;
+						case "op_Addition":
+						case "op_Subtraction":
+						case "op_Multiply":
+						case "op_Division":
+						case "op_Modulus":
+						case "op_BitwiseAnd":
+						case "op_BitwiseOr":
+						case "op_ExclusiveOr":
+						case "op_LeftShift":
+						case "op_RightShift":
+						case "op_Negation":
+						case "op_UnaryNegation":
+						case "op_UnaryPlus":
+							return type == OperatorType.Other;
 						default: return false;
 					}
 				}
 
-				public override ILExpression BuildNew(ref PatternMatcher pm, ILExpression[] args)
+				public override ILExpression BuildNew(ref PatternMatcher pm)
 				{
 					var res = pm.Operator;
 					res.Arguments.Clear();
-					res.Arguments.AddRange(args);
+					if (pm.SimpleLeftOperand) res.Arguments.Add(pm.SimpleOperand);
+					res.Arguments.Add(VariableA.BuildNew(ref pm));
+					if (pm.B != null) res.Arguments.Add(VariableB.BuildNew(ref pm));
+					else if (pm.SimpleOperand != null && !pm.SimpleLeftOperand) res.Arguments.Add(pm.SimpleOperand);
 					return res;
 				}
 			}
@@ -229,7 +267,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				readonly bool b;
 
 				public VariablePattern(ILCode code, bool b)
-					: base(EmptyArguments)
+					: base(null)
 				{
 					this.code = code;
 					this.b = b;
@@ -249,10 +287,11 @@ namespace ICSharpCode.Decompiler.ILAst
 					return true;
 				}
 
-				public override ILExpression BuildNew(ref PatternMatcher pm, ILExpression[] args)
+				static readonly ILExpression[] EmptyArguments = new ILExpression[0];
+				public override ILExpression BuildNew(ref PatternMatcher pm)
 				{
 					var v = this.b ? pm.B : pm.A;
-					var e = new ILExpression(ILCode.Ldloc, v, args);
+					var e = new ILExpression(ILCode.Ldloc, v, EmptyArguments);
 					if (v.Type.Name == "Nullable`1" && v.Type.Namespace == "System") e = new ILExpression(ILCode.ValueOf, null, e);
 					return e;
 				}
@@ -267,24 +306,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			static readonly Pattern CeqHasValue = new ILPattern(ILCode.Ceq, VariableAHasValue, VariableBHasValue);
 			static readonly Pattern CneHasValue = new ILPattern(ILCode.Cne, VariableAHasValue, VariableBHasValue);
 			static readonly Pattern AndHasValue = new ILPattern(ILCode.And, VariableAHasValue, VariableBHasValue);
-			static readonly Pattern OperatorVariableAB = new OperatorPattern(VariableA, VariableB);
+			static readonly Pattern OperatorVariableAB = new OperatorPattern();
 
-			static readonly Pattern[] LoadValuesNN = new[] { VariableAGetValueOrDefault, VariableBGetValueOrDefault };
 			static OperatorPattern OperatorNN(OperatorType type)
 			{
-				return new OperatorPattern(type, LoadValuesNN);
+				return new OperatorPattern(type, false);
 			}
 
-			static readonly Pattern[] LoadValuesNV = new[] { VariableAGetValueOrDefault, VariableB };
 			static OperatorPattern OperatorNV(OperatorType type)
 			{
-				return new OperatorPattern(type, LoadValuesNV);
-			}
-
-			static readonly Pattern[] LoadValuesVN = new[] { VariableA, VariableBGetValueOrDefault };
-			static OperatorPattern OperatorVN(OperatorType type)
-			{
-				return new OperatorPattern(type, LoadValuesVN);
+				return new OperatorPattern(type, true);
 			}
 
 			static readonly Pattern[] Comparisons = new Pattern[] {
@@ -302,7 +333,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				// > , < , >= , <= (struct)
 				AndHasValue & OperatorNN(OperatorType.Comparison),
 
-				/* only first operand nullable */
+				/* only one operand nullable */
 				// == (primitive, decimal)
 				OperatorNV(OperatorType.Equality) & VariableAHasValue,
 				// == (struct)
@@ -315,27 +346,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				OperatorNV(OperatorType.Comparison) & VariableAHasValue,
 				// > , < , >= , <= (struct)
 				VariableAHasValue & OperatorNV(OperatorType.Comparison),
-
-				/* only second operand nullable */
-				// == (primitive, decimal)
-				OperatorVN(OperatorType.Equality) & VariableBHasValue,
-				// == (struct)
-				VariableBHasValue & OperatorVN(OperatorType.Equality),
-				// != (primitive, decimal)
-				OperatorVN(OperatorType.InEquality) | !VariableBHasValue,
-				// != (struct)
-				!VariableBHasValue | OperatorVN(OperatorType.InEquality),
-				// > , <, >= , <= (primitive, decimal)
-				OperatorVN(OperatorType.Comparison) & VariableBHasValue,
-				// > , < , >= , <= (struct)
-				VariableBHasValue & OperatorVN(OperatorType.Comparison),
 			};
 
 			static readonly Pattern[] Other = new Pattern[] {
-				/* single nullable operand */
-				new ILPattern(ILCode.TernaryOp, VariableAHasValue, new MethodPattern(ILCode.Newobj, ".ctor", new OperatorPattern(OperatorType.Unary, VariableAGetValueOrDefault)), new ILPattern(ILCode.DefaultValue)),
-				new OperatorPattern(VariableA),
-
 				/* both operands nullable */
 				// & (bool)
 				new ILPattern(ILCode.TernaryOp, VariableAGetValueOrDefault | (!VariableBGetValueOrDefault & !VariableAHasValue), VariableB, VariableA),
@@ -345,25 +358,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				new ILPattern(ILCode.Or, VariableA, VariableB),
 				// all other
 				new ILPattern(ILCode.TernaryOp, AndHasValue, new MethodPattern(ILCode.Newobj, ".ctor", OperatorNN(OperatorType.Other)), new ILPattern(ILCode.DefaultValue)),
-				OperatorVariableAB,
+				null,
+
+				/* only one operand nullable */
+				new ILPattern(ILCode.TernaryOp, VariableAHasValue, new MethodPattern(ILCode.Newobj, ".ctor", OperatorNV(OperatorType.Other)), new ILPattern(ILCode.DefaultValue)),
+				null,
 			};
 
 			ILVariable A, B;
-			ILExpression Operator;
-			bool Match(Pattern p, ILExpression e)
-			{
-				if (!p.Match(ref this, e) || e.Arguments.Count != p.Arguments.Length || e.Prefixes != null) return false;
-				for (int i = 0; i < p.Arguments.Length; i++)
-					if (!Match(p.Arguments[i], e.Arguments[i])) return false;
-				return true;
-			}
-
-			ILExpression BuildNew(Pattern p, ILExpression old)
-			{
-				var args = new ILExpression[p.Arguments.Length];
-				for (int i = 0; i < args.Length; i++) args[i] = BuildNew(p.Arguments[i], old);
-				return p.BuildNew(ref this, args);
-			}
+			ILExpression Operator, SimpleOperand;
+			bool SimpleLeftOperand;
 
 			public static bool Simplify(ILExpression expr)
 			{
@@ -371,8 +375,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					var ps = Comparisons;
 					for (int i = 0; i < ps.Length; i++) {
 						var pm = new PatternMatcher();
-						if (!pm.Match(ps[i], expr)) continue;
-						var n = pm.BuildNew(OperatorVariableAB, expr);
+						if (!ps[i].Match(ref pm, expr)) continue;
+						var n = OperatorVariableAB.BuildNew(ref pm);
 						n.ILRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
 						// the new expression is wrapped in a container so that negations aren't pushed through the comparison operation
 						expr.Code = ILCode.Wrap;
@@ -387,8 +391,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					var ps = Other;
 					for (int i = 0; i < ps.Length; i += 2) {
 						var pm = new PatternMatcher();
-						if (!pm.Match(ps[i], expr)) continue;
-						var n = pm.BuildNew(ps[i + 1], expr);
+						if (!ps[i].Match(ref pm, expr)) continue;
+						var n = (ps[i + 1] ?? OperatorVariableAB).BuildNew(ref pm);
 						n.ILRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
 						// the new expression is wrapped in a container so that negations aren't pushed through the comparison operation
 						expr.Code = ILCode.Wrap;
