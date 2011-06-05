@@ -162,7 +162,7 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 				
 				// get local variable index
 				IEnumerable<ILVariable> list;
-				if (DebugData.LocalVariables.TryGetValue(token, out list)) {
+				if (DebugInformation.LocalVariables.TryGetValue(token, out list)) {
 					var variable = list.FirstOrDefault(v => v.Name == targetName);
 					if (variable != null && variable.OriginalVariable != null) {
 						if (expression is MemberReferenceExpression) {

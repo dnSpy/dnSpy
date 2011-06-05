@@ -70,8 +70,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				// create a dictionary line number => first bookmark
 				Dictionary<int, IBookmark> bookmarkDict = new Dictionary<int, IBookmark>();
 				foreach (var bm in BookmarkManager.Bookmarks) {
-					if (DebugData.DecompiledMemberReferences == null || DebugData.DecompiledMemberReferences.Count == 0 ||
-					    !DebugData.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32()))
+					if (DebugInformation.DecompiledMemberReferences == null || DebugInformation.DecompiledMemberReferences.Count == 0 ||
+					    !DebugInformation.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32()))
 						continue;
 					
 					int line = bm.LineNumber;
@@ -244,7 +244,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		
 		public void SyncBookmarks()
 		{
-			var storage = DebugData.CodeMappings;
+			var storage = DebugInformation.CodeMappings;
 			if (storage == null || storage.Count == 0)
 				return;
 			
@@ -259,7 +259,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				if (!storage.ContainsKey(key))
 					continue;
 				
-				var member = DebugData.DecompiledMemberReferences[key];
+				var member = DebugInformation.DecompiledMemberReferences[key];
 				
 				bool isMatch;
 				SourceCodeMapping map = storage[key].GetInstructionByTokenAndOffset(
@@ -268,7 +268,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				if (map != null) {
 					newBookmarks.Add(new BreakpointBookmark(
 						member, new AstLocation(map.SourceCodeLine, 0),
-						map.ILInstructionOffset, BreakpointAction.Break, DebugData.Language));
+						map.ILInstructionOffset, BreakpointAction.Break, DebugInformation.Language));
 					
 					BookmarkManager.RemoveMark(breakpoint);
 				}
@@ -285,8 +285,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			if (CurrentLineBookmark.Instance == null)
 				return;
 			
-			var oldMappings = DebugData.OldCodeMappings;
-			var newMappings = DebugData.CodeMappings;
+			var oldMappings = DebugInformation.OldCodeMappings;
+			var newMappings = DebugInformation.CodeMappings;
 
 			if (oldMappings == null || newMappings == null)
 				return;

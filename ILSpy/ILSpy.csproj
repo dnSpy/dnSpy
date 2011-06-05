@@ -123,7 +123,7 @@
     <Compile Include="Commands\ExportCommandAttribute.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
-    <Compile Include="DebuggedData.cs" />
+    <Compile Include="DebugInformation.cs" />
     <Compile Include="Languages\CSharpLanguage.cs" />
     <Compile Include="DecompilationOptions.cs" />
     <Compile Include="ExtensionMethods.cs" />

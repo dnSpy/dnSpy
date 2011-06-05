@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy.Debugger
 	/// <summary>
 	/// Contains the data important for debugger from the main application.
 	/// </summary>
-	public static class DebugData
+	public static class DebugInformation
 	{
 		static DecompiledLanguages language;
 		

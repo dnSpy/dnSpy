@@ -83,7 +83,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		
 		public override void Execute(object parameter)
 		{
-			DebugData.LoadedAssemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Select(a => a.AssemblyDefinition);
+			DebugInformation.LoadedAssemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Select(a => a.AssemblyDefinition);
 		}
 		
 		protected static IDebugger CurrentDebugger {
@@ -113,6 +113,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			EnableDebuggerUI(false);
 			CurrentDebugger.DebugStopped += OnDebugStopped;
 			CurrentDebugger.IsProcessRunningChanged += CurrentDebugger_IsProcessRunningChanged;
+			DebugInformation.IsDebuggerLoaded = true;
 			
 			MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 		}
@@ -122,6 +123,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			EnableDebuggerUI(true);
 			CurrentDebugger.DebugStopped -= OnDebugStopped;
 			CurrentDebugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
+			DebugInformation.IsDebuggerLoaded = false;
 			
 			MainWindow.Instance.SetStatus("Stand by...", Brushes.Black);
 		}
@@ -168,8 +170,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
 			
 			// jump to type & expand folding
-			if (DebugData.DebugStepInformation != null)
-				inst.JumpToReference(DebugData.DebugStepInformation.Item3);
+			if (DebugInformation.DebugStepInformation != null)
+				inst.JumpToReference(DebugInformation.DebugStepInformation.Item3);
 			
 			inst.SetStatus("Debugging...", Brushes.Red);
 		}

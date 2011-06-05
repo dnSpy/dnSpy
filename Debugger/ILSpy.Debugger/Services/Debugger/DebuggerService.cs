@@ -26,7 +26,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		static IDebugger GetCompatibleDebugger()
 		{
-			DebugData.IsDebuggerLoaded = true;
 			return currentDebugger = new WindowsDebugger();
 		}
 		

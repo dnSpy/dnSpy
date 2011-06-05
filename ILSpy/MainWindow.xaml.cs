@@ -499,7 +499,7 @@ namespace ICSharpCode.ILSpy
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (!DebugData.IsDebuggerLoaded) {
+			if (!DebugInformation.IsDebuggerLoaded) {
 				var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 				ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
 				SelectNode(FindNodeByPath(path, true));

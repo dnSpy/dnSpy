@@ -283,10 +283,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			int key = frame.MethodInfo.MetadataToken;
 			
 			// get the mapped instruction from the current line marker or the next one
-			if (!DebugData.CodeMappings.ContainsKey(key))
+			if (!DebugInformation.CodeMappings.ContainsKey(key))
 				return null;
 			
-			return DebugData.CodeMappings[key].GetInstructionByTokenAndOffset(key, frame.IP, out isMatch);
+			return DebugInformation.CodeMappings[key].GetInstructionByTokenAndOffset(key, frame.IP, out isMatch);
 		}
 		
 		StackFrame GetStackFrame()
@@ -797,9 +797,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				int line;
 				MemberReference memberReference;
 				
-				if (DebugData.CodeMappings.ContainsKey(token) &&
-				    DebugData.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out memberReference, out line)) {
-					DebugData.DebugStepInformation = null; // we do not need to step into/out
+				if (DebugInformation.CodeMappings.ContainsKey(token) &&
+				    DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out memberReference, out line)) {
+					DebugInformation.DebugStepInformation = null; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
 					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
 				}
@@ -817,14 +817,14 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			int ilOffset = frame.IP;
 			string fullName = debugType.FullNameWithoutGenericArguments;
 			
-			if (DebugData.LoadedAssemblies == null)
+			if (DebugInformation.LoadedAssemblies == null)
 				throw new NullReferenceException("No DebugData assemblies!");
 			else {
 				// search for type in the current assembly list
 				TypeDefinition typeDef = null;
 				TypeDefinition nestedTypeDef = null;
 				
-				foreach (var assembly in DebugData.LoadedAssemblies) {
+				foreach (var assembly in DebugInformation.LoadedAssemblies) {
 					if ((assembly.FullName.StartsWith("System") || assembly.FullName.StartsWith("Microsoft") || assembly.FullName.StartsWith("mscorlib")) &&
 					    !assembly.Name.Version.ToString().StartsWith(debuggeeVersion))
 						continue;
@@ -847,7 +847,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				
 				if (typeDef != null) {
 					TypeDefinition type = nestedTypeDef ?? typeDef;
-					DebugData.DebugStepInformation = Tuple.Create(token, ilOffset, type.GetMemberByToken(token));
+					DebugInformation.DebugStepInformation = Tuple.Create(token, ilOffset, type.GetMemberByToken(token));
 				} else {
 					Debug.Assert(typeDef != null, "No type was found!");
 				}

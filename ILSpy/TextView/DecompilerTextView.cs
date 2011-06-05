@@ -447,19 +447,19 @@ namespace ICSharpCode.ILSpy.TextView
 			iconMargin.SyncBookmarks();
 			
 			if (isDecompilationOk) {
-				if (DebugData.DebugStepInformation != null) {
+				if (DebugInformation.DebugStepInformation != null) {
 					// repaint bookmarks
 					iconMargin.InvalidateVisual();
 					
 					// show the currentline marker
-					int token = DebugData.DebugStepInformation.Item1;
-					int ilOffset = DebugData.DebugStepInformation.Item2;
+					int token = DebugInformation.DebugStepInformation.Item1;
+					int ilOffset = DebugInformation.DebugStepInformation.Item2;
 					int line;
 					MemberReference member;
-					if (!DebugData.CodeMappings.ContainsKey(token))
+					if (!DebugInformation.CodeMappings.ContainsKey(token))
 						return;
 					
-					DebugData.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out member, out line);
+					DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out member, out line);
 					
 					// update marker
 					CurrentLineBookmark.Remove();
@@ -525,12 +525,12 @@ namespace ICSharpCode.ILSpy.TextView
 		void DecompileNodes(DecompilationContext context, ITextOutput textOutput)
 		{
 			// reset data
-			DebugData.OldCodeMappings = DebugData.CodeMappings;
-			DebugData.CodeMappings = null;
-			DebugData.LocalVariables = null;
-			DebugData.DecompiledMemberReferences = null;
+			DebugInformation.OldCodeMappings = DebugInformation.CodeMappings;
+			DebugInformation.CodeMappings = null;
+			DebugInformation.LocalVariables = null;
+			DebugInformation.DecompiledMemberReferences = null;
 			// set the language
-			DebugData.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
+			DebugInformation.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 			
 			var nodes = context.TreeNodes;
 			context.Language.DecompileFinished += Language_DecompileFinished;
@@ -554,15 +554,15 @@ namespace ICSharpCode.ILSpy.TextView
 				iconMargin.DecompiledMembers.AddRange(e.DecompiledMemberReferences.Values.AsEnumerable());
 				
 				// debugger info
-				if (DebugData.CodeMappings == null) {
-					DebugData.CodeMappings = e.CodeMappings;
-					DebugData.LocalVariables = e.LocalVariables;
-					DebugData.DecompiledMemberReferences = e.DecompiledMemberReferences;
+				if (DebugInformation.CodeMappings == null) {
+					DebugInformation.CodeMappings = e.CodeMappings;
+					DebugInformation.LocalVariables = e.LocalVariables;
+					DebugInformation.DecompiledMemberReferences = e.DecompiledMemberReferences;
 				} else {
-					DebugData.CodeMappings.AddRange(e.CodeMappings);
-					DebugData.DecompiledMemberReferences.AddRange(e.DecompiledMemberReferences);
+					DebugInformation.CodeMappings.AddRange(e.CodeMappings);
+					DebugInformation.DecompiledMemberReferences.AddRange(e.DecompiledMemberReferences);
 					if (e.LocalVariables != null)
-						DebugData.LocalVariables.AddRange(e.LocalVariables);
+						DebugInformation.LocalVariables.AddRange(e.LocalVariables);
 				}
 			} else {
 				manager.UpdateClassMemberBookmarks(null);
