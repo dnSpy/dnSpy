@@ -4,8 +4,8 @@
 using System;
 using System.Windows.Media;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.Debugger.AvalonEdit;
-using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 using Mono.CSharp;
@@ -60,7 +60,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		}
 		
 		public override ImageSource Image {
-			get { return ImageService.CurrentLine; }
+			get { return Images.CurrentLine; }
 		}
 		
 		public override bool CanDragDrop {

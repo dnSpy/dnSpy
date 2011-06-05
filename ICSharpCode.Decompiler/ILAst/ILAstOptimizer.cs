@@ -56,6 +56,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		RemoveRedundantCode2,
 		GotoRemoval,
 		DuplicateReturns,
+		GotoRemoval2,
 		ReduceIfNesting,
 		InlineVariables3,
 		CachedDelegateInitialization,
@@ -181,6 +182,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (abortBeforeStep == ILAstOptimizationStep.DuplicateReturns) return;
 			DuplicateReturnStatements(method);
+			
+			if (abortBeforeStep == ILAstOptimizationStep.GotoRemoval2) return;
+			new GotoRemoval().RemoveGotos(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.ReduceIfNesting) return;
 			ReduceIfNesting(method);

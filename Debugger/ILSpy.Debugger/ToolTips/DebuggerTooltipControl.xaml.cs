@@ -14,7 +14,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.ILSpy.Debugger.AvalonEdit;
+using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
 using ICSharpCode.ILSpy.Debugger.Services;
 

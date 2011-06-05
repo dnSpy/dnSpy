@@ -17,49 +17,34 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.TreeNodes.Analyzer;
+using Mono.Cecil;
 
-namespace ILSpy.Debugger.AvalonEdit.Editor
+namespace ICSharpCode.ILSpy.Bookmarks
 {
-	/// <summary>
-	/// A line inside a <see cref="IDocument"/>.
-	/// </summary>
-	public interface IDocumentLine
+	[ExportBookmarkContextMenuEntry(Header = "Analyze", Icon = "images/Search.png", Category="Default")]
+	internal sealed class AnalyzeBookmarkEntry : IBookmarkContextMenuEntry
 	{
-		/// <summary>
-		/// Gets the starting offset of the line in the document's text.
-		/// </summary>
-		int Offset { get; }
-		
-		/// <summary>
-		/// Gets the length of this line (=the number of characters on the line).
-		/// </summary>
-		int Length { get; }
-		
-		/// <summary>
-		/// Gets the ending offset of the line in the document's text (= Offset + Length).
-		/// </summary>
-		int EndOffset { get; }
-		
-		/// <summary>
-		/// Gets the length of this line, including the line delimiter.
-		/// </summary>
-		int TotalLength { get; }
-		
-		/// <summary>
-		/// Gets the length of the line terminator.
-		/// Returns 1 or 2; or 0 at the end of the document.
-		/// </summary>
-		int DelimiterLength { get; }
-		
-		/// <summary>
-		/// Gets the number of this line.
-		/// The first line has the number 1.
-		/// </summary>
-		int LineNumber { get; }
-		
-		/// <summary>
-		/// Gets the text on this line.
-		/// </summary>
-		string Text { get; }
+		public bool IsVisible(IBookmark[] marks)
+		{
+			return true;
+		}
+
+		public bool IsEnabled(IBookmark[] marks)
+		{
+			return true;
+		}
+
+		public void Execute(IBookmark[] marks)
+		{
+			foreach (var mark in marks) {
+				if (!(mark is MemberBookmark))
+					continue;
+				
+				var member = (mark as MemberBookmark).Node.Annotation<MemberReference>();
+				AnalyzeContextMenuEntry.Analyze(member);
+			}
+		}
 	}
 }

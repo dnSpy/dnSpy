@@ -32,7 +32,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -50,6 +50,7 @@ namespace ICSharpCode.ILSpy
 		NavigationHistory<NavigationState> history = new NavigationHistory<NavigationState>();
 		ILSpySettings spySettings;
 		internal SessionSettings sessionSettings;
+
 		AssemblyListManager assemblyListManager;
 		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
@@ -61,6 +62,10 @@ namespace ICSharpCode.ILSpy
 		
 		public static MainWindow Instance {
 			get { return instance; }
+		}
+		
+		public SessionSettings SessionSettings {
+			get { return sessionSettings; }
 		}
 		
 		public MainWindow()
@@ -494,11 +499,12 @@ namespace ICSharpCode.ILSpy
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (!DebuggerService.CurrentDebugger.IsDebugging) {
-				e.Handled = true;
+			if (!DebugData.IsDebuggerLoaded) {
 				var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 				ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
 				SelectNode(FindNodeByPath(path, true));
+			} else {
+				e.Handled = false;
 			}
 		}
 		
@@ -702,6 +708,16 @@ namespace ICSharpCode.ILSpy
 		{
 			this.StatusLabel.Foreground = foreground;
 			this.StatusLabel.Text = status;
+		}
+		
+		public ItemCollection GetMainMenuItems()
+		{
+			return mainMenu.Items;
+		}
+		
+		public ItemCollection GetToolBarItems()
+		{
+			return toolBar.Items;
 		}
 	}
 }

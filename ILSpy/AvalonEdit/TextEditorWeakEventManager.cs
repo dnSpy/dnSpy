@@ -17,52 +17,51 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Windows;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Utils;
 
-namespace ILSpy.Debugger.AvalonEdit.Editor
+namespace ICSharpCode.ILSpy.AvalonEdit
 {
-	/// <summary>
-	/// Describes a change of the document text.
-	/// This class is thread-safe.
-	/// </summary>
-	public class TextChangeEventArgs : EventArgs
+	public static class TextEditorWeakEventManager
 	{
-		/// <summary>
-		/// The offset at which the change occurs.
-		/// </summary>
-		public int Offset { get; private set; }
-		
-		/// <summary>
-		/// The text that was inserted.
-		/// </summary>
-		public string RemovedText { get; private set; }
-		
-		/// <summary>
-		/// The number of characters removed.
-		/// </summary>
-		public int RemovalLength {
-			get { return RemovedText.Length; }
-		}
-		
-		/// <summary>
-		/// The text that was inserted.
-		/// </summary>
-		public string InsertedText { get; private set; }
-		
-		/// <summary>
-		/// The number of characters inserted.
-		/// </summary>
-		public int InsertionLength {
-			get { return InsertedText.Length; }
-		}
-		
-		/// <summary>
-		/// Creates a new TextChangeEventArgs object.
-		/// </summary>
-		public TextChangeEventArgs(int offset, string removedText, string insertedText)
+		public sealed class MouseHover : WeakEventManagerBase<MouseHover, TextEditor>
 		{
-			this.Offset = offset;
-			this.RemovedText = removedText ?? string.Empty;
-			this.InsertedText = insertedText ?? string.Empty;
+			protected override void StopListening(TextEditor source)
+			{
+				source.MouseHover -= DeliverEvent;
+			}
+			
+			protected override void StartListening(TextEditor source)
+			{
+				source.MouseHover += DeliverEvent;
+			}
+		}
+		
+		public sealed class MouseHoverStopped : WeakEventManagerBase<MouseHoverStopped, TextEditor>
+		{
+			protected override void StopListening(TextEditor source)
+			{
+				source.MouseHoverStopped -= DeliverEvent;
+			}
+			
+			protected override void StartListening(TextEditor source)
+			{
+				source.MouseHoverStopped += DeliverEvent;
+			}
+		}
+		
+		public sealed class MouseDown : WeakEventManagerBase<MouseDown, TextEditor>
+		{
+			protected override void StopListening(TextEditor source)
+			{
+				source.MouseDown -= DeliverEvent;
+			}
+			
+			protected override void StartListening(TextEditor source)
+			{
+				source.MouseDown += DeliverEvent;
+			}
 		}
 	}
 }

@@ -52,14 +52,14 @@ namespace ICSharpCode.ILSpy
 		{
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
 			dis.DisassembleMethod(method);
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings, DecompiledMemberReferences = dis.DecompiledMemberReferences });
+			NotifyDecompilationFinished(dis);
 		}
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
 			dis.DisassembleField(field);
-			OnDecompilationFinished(new DecompileEventArgs { DecompiledMemberReferences = dis.DecompiledMemberReferences });
+			NotifyDecompilationFinished(dis);
 		}
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
@@ -78,8 +78,7 @@ namespace ICSharpCode.ILSpy
 				output.WriteLine();
 				rd.DisassembleMethod(m);
 			}
-
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = rd.CodeMappings, DecompiledMemberReferences = rd.DecompiledMemberReferences });
+			NotifyDecompilationFinished(rd);
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
@@ -98,15 +97,14 @@ namespace ICSharpCode.ILSpy
 				output.WriteLine();
 				rd.DisassembleMethod(m);
 			}
-
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = rd.CodeMappings, DecompiledMemberReferences = rd.DecompiledMemberReferences });
+			NotifyDecompilationFinished(rd);
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
 			dis.DisassembleType(type);
-			OnDecompilationFinished(new DecompileEventArgs { CodeMappings = dis.CodeMappings , DecompiledMemberReferences = dis.DecompiledMemberReferences});
+			NotifyDecompilationFinished(dis);
 		}
 		
 		public override void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)

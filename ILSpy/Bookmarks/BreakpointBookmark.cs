@@ -3,11 +3,10 @@
 
 using System;
 using System.Windows.Media;
-using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.ILSpy.Debugger.AvalonEdit;
-using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -82,7 +81,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public override ImageSource Image {
 			get {
-				return ImageService.Breakpoint;
+				return Images.Breakpoint;
 			}
 		}
 		

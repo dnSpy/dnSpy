@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Xml.Linq;
 
 using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
@@ -20,9 +21,9 @@ using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 
-namespace ICSharpCode.ILSpy.Commands
+namespace ICSharpCode.ILSpy.Debugger.Commands
 {
-	internal abstract class DebuggerCommand : SimpleCommand
+	public abstract class DebuggerCommand : SimpleCommand
 	{
 		public DebuggerCommand()
 		{
@@ -82,7 +83,7 @@ namespace ICSharpCode.ILSpy.Commands
 		
 		public override void Execute(object parameter)
 		{
-			DebugData.LoadedAssemblies = MainWindow.Instance.CurrentAssemblyList.assemblies.Select(a => a.AssemblyDefinition);
+			DebugData.LoadedAssemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Select(a => a.AssemblyDefinition);
 		}
 		
 		protected static IDebugger CurrentDebugger {
@@ -127,8 +128,8 @@ namespace ICSharpCode.ILSpy.Commands
 		
 		protected void EnableDebuggerUI(bool enable)
 		{
-			var menuItems = MainWindow.Instance.mainMenu.Items;
-			var toolbarItems = MainWindow.Instance.toolBar.Items;
+			var menuItems = MainWindow.Instance.GetMainMenuItems();
+			var toolbarItems = MainWindow.Instance.GetToolBarItems();
 			
 			// menu
 			var items = menuItems.OfType<MenuItem>().Where(m => (m.Header as string) == "_Debugger");
@@ -150,7 +151,7 @@ namespace ICSharpCode.ILSpy.Commands
 			}
 			
 			// internal types
-			MainWindow.Instance.sessionSettings.FilterSettings.ShowInternalApi = true;
+			MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
 		}
 		
 		void CurrentDebugger_IsProcessRunningChanged(object sender, EventArgs e)
@@ -174,7 +175,7 @@ namespace ICSharpCode.ILSpy.Commands
 		}
 	}
 	
-	[ExportContextMenuEntry(Header = "_Debug Assembly", Icon = "ILSpy.Debugger;component/Images/application-x-executable.png")]
+	[ExportContextMenuEntry(Header = "_Debug Assembly", Icon = "Images/application-x-executable.png")]
 	internal sealed class DebugExecutableNodeCommand : DebuggerCommand, IContextMenuEntry
 	{
 		public bool IsVisible(SharpTreeNode[] selectedNodes)
@@ -212,12 +213,12 @@ namespace ICSharpCode.ILSpy.Commands
 	}
 	
 	[ExportToolbarCommand(ToolTip = "Debug an executable",
-	                      ToolbarIcon = "ILSpy.Debugger;component/Images/application-x-executable.png",
+	                      ToolbarIcon = "Images/application-x-executable.png",
 	                      ToolbarCategory = "Debugger",
 	                      Tag = "Debugger",
 	                      ToolbarOrder = 0)]
 	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/application-x-executable.png",
+	                       MenuIcon = "Images/application-x-executable.png",
 	                       MenuCategory = "Start",
 	                       Header = "Debug an _executable",
 	                       MenuOrder = 0)]
@@ -286,7 +287,7 @@ namespace ICSharpCode.ILSpy.Commands
 	}
 	
 	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/ContinueDebugging.png",
+	                       MenuIcon = "Images/ContinueDebugging.png",
 	                       MenuCategory = "SteppingArea",
 	                       Header = "Continue debugging",
 	                       InputGestureText = "F5",
@@ -304,7 +305,7 @@ namespace ICSharpCode.ILSpy.Commands
 	}
 	
 	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/StepInto.png",
+	                       MenuIcon = "Images/StepInto.png",
 	                       MenuCategory = "SteppingArea",
 	                       Header = "Step into",
 	                       InputGestureText = "F11",
@@ -322,7 +323,7 @@ namespace ICSharpCode.ILSpy.Commands
 	}
 	
 	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/StepOver.png",
+	                       MenuIcon = "Images/StepOver.png",
 	                       MenuCategory = "SteppingArea",
 	                       Header = "Step over",
 	                       InputGestureText = "F10",
@@ -340,7 +341,7 @@ namespace ICSharpCode.ILSpy.Commands
 	}
 	
 	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/StepOut.png",
+	                       MenuIcon = "Images/StepOut.png",
 	                       MenuCategory = "SteppingArea",
 	                       Header = "Step out",
 	                       IsEnabled = false,
@@ -375,7 +376,7 @@ namespace ICSharpCode.ILSpy.Commands
 	}
 	
 	[ExportMainMenuCommand(Menu = "_Debugger",
-	                       MenuIcon = "ILSpy.Debugger;component/Images/DeleteAllBreakpoints.png",
+	                       MenuIcon = "Images/DeleteAllBreakpoints.png",
 	                       MenuCategory = "Others",
 	                       Header = "Remove all _breakpoints",
 	                       MenuOrder = 7)]

@@ -11,25 +11,37 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>bin\Debug\</OutputPath>
-    <DebugSymbols>True</DebugSymbols>
+    <OutputPath>..\..\ILSpy\bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>bin\Release\</OutputPath>
-    <DebugSymbols>False</DebugSymbols>
+    <OutputPath>..\..\ILSpy\bin\Release\</OutputPath>
+    <DebugSymbols>false</DebugSymbols>
     <DebugType>None</DebugType>
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -38,6 +50,9 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.ComponentModel.Composition">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -56,20 +71,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AvalonEdit\ITextMarker.cs" />
-    <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
-    <Compile Include="AvalonEdit\IconBarMargin.cs" />
-    <Compile Include="AvalonEdit\IToolTip.cs" />
-    <Compile Include="AvalonEdit\TextMarkerService.cs" />
-    <Compile Include="Bookmarks\BookmarkBase.cs" />
-    <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
-    <Compile Include="Bookmarks\BookmarkManager.cs" />
-    <Compile Include="Bookmarks\BreakpointBookmark.cs" />
-    <Compile Include="Bookmarks\BreakpointBookmarkEventArgs.cs" />
-    <Compile Include="Bookmarks\CurrentLineBookmark.cs" />
-    <Compile Include="Bookmarks\IBookmark.cs" />
-    <Compile Include="Bookmarks\MarkerBookmark.cs" />
-    <Compile Include="DebuggedData.cs" />
+    <Compile Include="Commands\BreakpointCommand.cs" />
+    <Compile Include="Commands\DebuggerCommands.cs" />
     <Compile Include="DebuggerSettings.cs" />
     <Compile Include="Models\TreeModel\ArrayRangeNode.cs" />
     <Compile Include="Models\TreeModel\ChildNodesOfObject.cs" />
@@ -107,6 +110,10 @@
       <DependentUpon>AttachToProcessWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\DebuggerSettingsPanel.xaml.cs">
+      <DependentUpon>DebuggerSettingsPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\ExecuteProcessWindow.xaml.cs">
       <DependentUpon>ExecuteProcessWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -115,6 +122,7 @@
   <ItemGroup>
     <Folder Include="Images" />
     <Folder Include="Models\TreeModel" />
+    <Folder Include="Commands" />
     <Folder Include="ToolTips" />
     <Folder Include="ToolTips\Models" />
   </ItemGroup>
@@ -123,6 +131,7 @@
     <Page Include="ToolTips\PinControlsDictionary.xaml" />
     <Page Include="ToolTips\VisualizerPicker.xaml" />
     <Page Include="UI\AttachToProcessWindow.xaml" />
+    <Page Include="UI\DebuggerSettingsPanel.xaml" />
     <Page Include="UI\ExecuteProcessWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +143,10 @@
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ILSpy\ILSpy.csproj">
+      <Project>{1E85EFF9-E370-4683-83E4-8A3D063FF791}</Project>
+      <Name>ILSpy</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
@@ -141,6 +154,10 @@
     <ProjectReference Include="..\..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SharpTreeView\ICSharpCode.TreeView.csproj">
+      <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
+      <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
     <ProjectReference Include="..\Debugger.Core\Debugger.Core.csproj">
       <Project>{1D18D788-F7EE-4585-A23B-34DC8EC63CB8}</Project>

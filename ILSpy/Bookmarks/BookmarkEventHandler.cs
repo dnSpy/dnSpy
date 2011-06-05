@@ -3,7 +3,7 @@
 
 using System;
 
-namespace ICSharpCode.ILSpy.Debugger.Bookmarks
+namespace ICSharpCode.ILSpy.Bookmarks
 {
 	public delegate void BookmarkEventHandler(object sender, BookmarkEventArgs e);
 	

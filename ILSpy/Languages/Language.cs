@@ -19,9 +19,14 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
@@ -34,17 +39,22 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Gets ot sets the code mappings
 		/// </summary>
-		public Dictionary<int, List<MemberMapping>> CodeMappings { get; set; }
+		public Dictionary<int, List<MemberMapping>> CodeMappings { get; internal set; }
 		
 		/// <summary>
 		/// Gets or sets the local variables.
 		/// </summary>
-		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
+		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; internal set; }
 		
 		/// <summary>
 		/// Gets the list of MembeReferences that are decompiled (TypeDefinitions, MethodDefinitions, etc)
 		/// </summary>
-		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
+		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; internal set; }
+		
+		/// <summary>
+		/// Gets (or internal sets) the AST nodes.
+		/// </summary>
+		public IEnumerable<AstNode> AstNodes { get; internal set; }
 	}
 	
 	/// <summary>
@@ -187,6 +197,33 @@ namespace ICSharpCode.ILSpy
 		{
 			if (DecompileFinished != null) {
 				DecompileFinished(this, e);
+			}
+		}
+		
+		protected void NotifyDecompilationFinished(BaseCodeMappings b)
+		{
+			if (b is AstBuilder) {
+				var builder = b as AstBuilder;
+				
+				var nodes = TreeTraversal
+					.PreOrder((AstNode)builder.CompilationUnit, n => n.Children)
+					.Where(n => n is AttributedNode && n.Annotation<Tuple<int, int>>() != null);
+				
+				OnDecompilationFinished(new DecompileEventArgs {
+				                        	CodeMappings = builder.CodeMappings,
+				                        	LocalVariables = builder.LocalVariables,
+				                        	DecompiledMemberReferences = builder.DecompiledMemberReferences,
+				                        	AstNodes = nodes
+				                        });
+			}
+			
+			if (b is ReflectionDisassembler) {
+				var dis = b as ReflectionDisassembler;
+				OnDecompilationFinished(new DecompileEventArgs {
+				                        	CodeMappings = dis.CodeMappings,
+				                        	DecompiledMemberReferences = dis.DecompiledMemberReferences,
+				                        	AstNodes = null // TODO: how can I find the nodes with line numbers from dis?
+				                        });
 			}
 		}
 	}

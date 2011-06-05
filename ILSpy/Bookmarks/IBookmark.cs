@@ -8,7 +8,7 @@ using System.Collections.Specialized;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace ICSharpCode.ILSpy.Debugger.Bookmarks
+namespace ICSharpCode.ILSpy.Bookmarks
 {
 	/// <summary>
 	/// The bookmark margin.
@@ -18,7 +18,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		/// <summary>
 		/// Gets the list of bookmarks.
 		/// </summary>
-		IList<BookmarkBase> Bookmarks { get; }
+		IList<IBookmark> Bookmarks { get; }
 		
 		/// <summary>
 		/// Redraws the bookmark margin. Bookmarks need to call this method when the Image changes.

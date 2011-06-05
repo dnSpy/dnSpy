@@ -220,7 +220,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			if (method.HasBody) {
 				// create IL code mappings - used in debugger
-				MemberMapping methodMapping = method.CreateCodeMapping(this.CodeMappings[method.MetadataToken.ToInt32()]);
+				CreateCodeMappings(method.MetadataToken.ToInt32(), currentMember);
+				MemberMapping methodMapping = method.CreateCodeMapping(this.CodeMappings[method.MetadataToken.ToInt32()], currentMember);
 				methodBodyDisassembler.Disassemble(method.Body, methodMapping);
 			}
 			
