@@ -152,7 +152,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\SimpleCommand.cs" />
-    <Compile Include="Commands\ShowAnalyzerCommand.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventTreeNode.cs" />
