@@ -29,6 +29,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.Xml;
@@ -68,11 +69,13 @@ namespace ICSharpCode.ILSpy.TextView
 		ILSpyTreeNode[] decompiledNodes;
 		
 		DefinitionLookup definitionLookup;
+		TextSegmentCollection<ReferenceSegment> references;
 		CancellationTokenSource currentCancellationTokenSource;
 		
 		internal readonly IconBarManager manager;
 		readonly IconBarMargin iconMargin;
 		readonly TextMarkerService textMarkerService;
+		readonly List<ITextMarker> localReferenceMarks = new List<ITextMarker>();
 		
 		[ImportMany(typeof(ITextEditorListener))]
 		IEnumerable<ITextEditorListener> textEditorListeners;
@@ -315,7 +318,8 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
 			Stopwatch w = Stopwatch.StartNew();
-			
+
+			ClearLocalReferenceMarks();
 			textEditor.ScrollToHome();
 			if (foldingManager != null) {
 				FoldingManager.Uninstall(foldingManager);
@@ -324,6 +328,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.Document = null; // clear old document while we're changing the highlighting
 			uiElementGenerator.UIElements = textOutput.UIElements;
 			referenceElementGenerator.References = textOutput.References;
+			references = textOutput.References;
 			definitionLookup = textOutput.DefinitionLookup;
 			textEditor.SyntaxHighlighting = highlighting;
 			
@@ -609,6 +614,19 @@ namespace ICSharpCode.ILSpy.TextView
 		internal void JumpToReference(ReferenceSegment referenceSegment)
 		{
 			object reference = referenceSegment.Reference;
+			if (referenceSegment.IsLocal) {
+				ClearLocalReferenceMarks();
+				if (references != null) {
+					foreach (var r in references) {
+						if (r.Reference == reference) {
+							var mark = textMarkerService.Create(r.StartOffset, r.Length);
+							mark.BackgroundColor = r.IsLocalTarget ? Colors.LightSeaGreen : Colors.GreenYellow;
+							localReferenceMarks.Add(mark);
+						}
+					}
+				}
+				return;
+			}
 			if (definitionLookup != null) {
 				int pos = definitionLookup.GetDefinitionPosition(reference);
 				if (pos >= 0) {
@@ -623,6 +641,14 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 			}
 			MainWindow.Instance.JumpToReference(reference);
+		}
+
+		void ClearLocalReferenceMarks()
+		{
+			foreach (var mark in localReferenceMarks) {
+				textMarkerService.Remove(mark);
+			}
+			localReferenceMarks.Clear();
 		}
 		
 		/// <summary>

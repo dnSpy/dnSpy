@@ -104,7 +104,7 @@ namespace ICSharpCode.Decompiler
 			Write(text);
 		}
 		
-		public void WriteReference(string text, object reference)
+		public void WriteReference(string text, object reference, bool isLocal)
 		{
 			Write(text);
 		}

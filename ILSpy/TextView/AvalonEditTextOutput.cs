@@ -36,6 +36,8 @@ namespace ICSharpCode.ILSpy.TextView
 	sealed class ReferenceSegment : TextSegment
 	{
 		public object Reference;
+		public bool IsLocal;
+		public bool IsLocalTarget;
 	}
 	
 	/// <summary>
@@ -197,17 +199,20 @@ namespace ICSharpCode.ILSpy.TextView
 		public void WriteDefinition(string text, object definition)
 		{
 			WriteIndent();
+			int start = this.TextLength;
 			b.Append(text);
+			int end = this.TextLength;
 			this.DefinitionLookup.AddDefinition(definition, this.TextLength);
+			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = definition, IsLocal = true, IsLocalTarget = true });
 		}
 		
-		public void WriteReference(string text, object reference)
+		public void WriteReference(string text, object reference, bool isLocal)
 		{
 			WriteIndent();
 			int start = this.TextLength;
 			b.Append(text);
 			int end = this.TextLength;
-			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference });
+			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
 		}
 		
 		public void MarkFoldStart(string collapsedText, bool defaultCollapsed)
