@@ -98,9 +98,26 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 			
-			// Remove redundant return
+			// Remove redundant return at the end of method
 			if (method.Body.Count > 0 && method.Body.Last().Match(ILCode.Ret) && ((ILExpression)method.Body.Last()).Arguments.Count == 0) {
 				method.Body.RemoveAt(method.Body.Count - 1);
+			}
+			
+			// Remove unreachable return statements
+			bool modified = false;
+			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				for (int i = 0; i < block.Body.Count - 1;) {
+					if (block.Body[i].IsUnconditionalControlFlow() && block.Body[i+1].Match(ILCode.Ret)) {
+						modified = true;
+						block.Body.RemoveAt(i+1);
+					} else {
+						i++;
+					}
+				}
+			}
+			if (modified) {
+				// More removals might be possible
+				new GotoRemoval().RemoveGotos(method);
 			}
 		}
 		

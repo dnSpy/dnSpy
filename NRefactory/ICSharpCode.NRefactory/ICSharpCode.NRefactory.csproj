@@ -111,6 +111,7 @@
     <Compile Include="PatternMatching\OptionalNode.cs" />
     <Compile Include="PatternMatching\Repeat.cs" />
     <Compile Include="PatternMatching\Pattern.cs" />
+    <Compile Include="CSharp\Ast\NotImplementedAstVisitor.cs" />
     <Compile Include="CSharp\Ast\PrimitiveType.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\Attribute.cs" />
     <Compile Include="CSharp\Ast\GeneralScope\AttributeSection.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="CSharp\Resolver\LocalResolveResult.cs" />
     <Compile Include="Documentation\XmlDocumentationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SupportedLanguage.cs" />
     <Compile Include="TypeSystem\Accessibility.cs" />
     <Compile Include="TypeSystem\ArrayType.cs" />
     <Compile Include="TypeSystem\ByReferenceType.cs" />

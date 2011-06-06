@@ -23,15 +23,16 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Resources;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xaml;
 using System.Xml;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.ILSpy.Baml;
+using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
@@ -100,6 +101,7 @@ namespace ICSharpCode.ILSpy
 				codeDomBuilder.AddMethod(method);
 				RunTransformsAndGenerateCode(codeDomBuilder, output, options);
 			}
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		class SelectCtorTransform : IAstTransform
@@ -144,6 +146,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: property.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddProperty(property);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
@@ -157,6 +160,7 @@ namespace ICSharpCode.ILSpy
 				AddFieldsAndCtors(codeDomBuilder, field.DeclaringType, field.IsStatic);
 			}
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, new SelectFieldTransform(field));
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		/// <summary>
@@ -200,6 +204,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: ev.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddEvent(ev);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
@@ -207,6 +212,7 @@ namespace ICSharpCode.ILSpy
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
 			codeDomBuilder.AddType(type);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			NotifyDecompilationFinished(codeDomBuilder);
 		}
 		
 		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options, IAstTransform additionalTransform = null)
@@ -278,6 +284,7 @@ namespace ICSharpCode.ILSpy
 					codeDomBuilder.GenerateCode(output);
 				}
 			}
+			OnDecompilationFinished(null);
 		}
 
 		#region WriteProjectFile

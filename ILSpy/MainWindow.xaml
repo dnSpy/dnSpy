@@ -75,8 +75,18 @@
 			<Separator />
 			<ComboBox Name="languageComboBox" DisplayMemberPath="Name" Width="100"
 			          ItemsSource="{x:Static local:Languages.AllLanguages}"
-			          SelectedItem="{Binding FilterSettings.Language}" />
+			          SelectedItem="{Binding FilterSettings.Language}"/>
 		</ToolBar>
+		<!-- Status bar -->
+		<StatusBar x:Name="statusBar" DockPanel.Dock="Bottom" Height="26">
+			<StatusBarItem DockPanel.Dock="Right">
+				<TextBlock VerticalAlignment="Center"
+				           HorizontalAlignment="Right"				           
+				           x:Name="StatusLabel"
+				           ToolTip="Debugger status"
+				           Text="Stand by..."/>
+			</StatusBarItem>
+		</StatusBar>
 		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->
 		<Grid>
 			<Grid.ColumnDefinitions>
