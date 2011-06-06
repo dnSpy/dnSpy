@@ -68,6 +68,7 @@
     <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -101,6 +102,10 @@
     <Compile Include="ConnectMethodDecompiler.cs" />
     <Compile Include="Controls\DockedPane.cs" />
     <Compile Include="Commands\DecompileAllCommand.cs" />
+    <Compile Include="Controls\ResourceStringTable.xaml.cs">
+      <DependentUpon>ResourceStringTable.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DecompilerSettingsPanel.xaml.cs">
       <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -246,6 +251,7 @@
     <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\ResourceStringTable.xaml" />
     <Page Include="Controls\SearchBoxStyle.xaml">
       <DependentUpon>SearchBox.cs</DependentUpon>
     </Page>
