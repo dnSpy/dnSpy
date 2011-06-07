@@ -564,12 +564,12 @@ namespace ICSharpCode.Decompiler.ILAst
 						// Add loads to the data structure; merge variables if necessary
 						foreach(ByteCode load in loads) {
 							ByteCode[] storedBy = load.VariablesBefore[variableIndex].StoredBy;
-							if (storedBy.Length == 0) {
+							if (storedBy.Length == 0 || storedBy[0] == load) {
 								// Load which always loads the default ('uninitialized') value
 								// Create a dummy variable just for this load
 								newVars.Add(new VariableInfo() {
 									Variable = new ILVariable() {
-								    		Name = "var_" + variableIndex + "_" + load.Offset.ToString("X2") + "_default",
+								    		Name = "var_" + variableIndex + "_" + load.Offset.ToString("X2") + (storedBy.Length == 0 ? "_default" : null),
 								    		Type = varType,
 								    		OriginalVariable = methodDef.Body.Variables[variableIndex]
 								    },
