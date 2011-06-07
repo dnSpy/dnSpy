@@ -314,21 +314,24 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 
-			sealed class PrimitivePattern : Pattern
+			sealed class BooleanPattern : Pattern
 			{
-				readonly ILCode code;
-				readonly object operand;
-
-				public PrimitivePattern(ILCode code, object operand)
+				readonly object value;
+				public BooleanPattern(bool value)
 					: base(null)
 				{
-					this.code = code;
-					this.operand = operand;
+					this.value = Convert.ToInt32(value);
 				}
 
 				public override bool Match(ref PatternMatcher pm, ILExpression e)
 				{
-					return e.Code == code && object.Equals(e.Operand, this.operand);
+					return e.Code == ILCode.Ldc_I4 && TypeAnalysis.IsBoolean(e.InferredType) && object.Equals(e.Operand, value);
+				}
+
+				public override ILExpression BuildNew(ref PatternMatcher pm)
+				{
+					// boolean constants are wrapped inside a container to disable simplyfication of equality comparisons
+					return new ILExpression(ILCode.Wrap, null, new ILExpression(ILCode.Ldc_I4, value) { InferredType = ((GenericInstanceType)pm.A.Type).GenericArguments[0] });
 				}
 			}
 
@@ -401,11 +404,23 @@ namespace ICSharpCode.Decompiler.ILAst
 
 				/* only one operand nullable */
 				// & (bool)
-				new ILPattern(ILCode.TernaryOp, Any, VariableA, new MethodPattern(ILCode.Newobj, ".ctor", new PrimitivePattern(ILCode.Ldc_I4, 0))),
+				new ILPattern(ILCode.TernaryOp, Any, VariableA, new MethodPattern(ILCode.Newobj, ".ctor", new BooleanPattern(false))),
 				new ILPattern(ILCode.And, VariableA, Any),
 				// | (bool)
-				new ILPattern(ILCode.TernaryOp, Any, new MethodPattern(ILCode.Newobj, ".ctor", new PrimitivePattern(ILCode.Ldc_I4, 1)), VariableA),
+				new ILPattern(ILCode.TernaryOp, Any, new MethodPattern(ILCode.Newobj, ".ctor", new BooleanPattern(true)), VariableA),
 				new ILPattern(ILCode.Or, VariableA, Any),
+				// == true
+				VariableAGetValueOrDefault & VariableAHasValue,
+				new ILPattern(ILCode.Ceq, VariableA, new BooleanPattern(true)),
+				// != true
+				!VariableAGetValueOrDefault | !VariableAHasValue,
+				new ILPattern(ILCode.Cne, VariableA, new BooleanPattern(true)),
+				// == false
+				!VariableAGetValueOrDefault & VariableAHasValue,
+				new ILPattern(ILCode.Ceq, VariableA, new BooleanPattern(false)),
+				// != false
+				VariableAGetValueOrDefault | !VariableAHasValue,
+				new ILPattern(ILCode.Cne, VariableA, new BooleanPattern(false)),
 				// null coalescing
 				new ILPattern(ILCode.TernaryOp, VariableAHasValue, VariableAGetValueOrDefault, Any),
 				new ILPattern(ILCode.NullCoalescing, VariableA, Any),
@@ -420,24 +435,26 @@ namespace ICSharpCode.Decompiler.ILAst
 
 			public static bool Simplify(ILExpression expr)
 			{
-				if (expr.Code == ILCode.LogicAnd || expr.Code == ILCode.LogicOr) {
-					var ps = Comparisons;
-					for (int i = 0; i < ps.Length; i++) {
-						var pm = new PatternMatcher();
-						if (!ps[i].Match(ref pm, expr)) continue;
-						var n = OperatorVariableAB.BuildNew(ref pm);
-						n.ILRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
-						// the new expression is wrapped in a container so that negations aren't pushed through the comparison operation
-						expr.Code = ILCode.Wrap;
-						expr.Operand = null;
-						expr.Arguments.Clear();
-						expr.Arguments.Add(n);
-						expr.ILRanges.Clear();
-						expr.InferredType = n.InferredType;
-						return true;
+				if (expr.Code == ILCode.TernaryOp || expr.Code == ILCode.LogicAnd || expr.Code == ILCode.LogicOr) {
+					Pattern[] ps;
+					if (expr.Code != ILCode.TernaryOp) {
+						ps = Comparisons;
+						for (int i = 0; i < ps.Length; i++) {
+							var pm = new PatternMatcher();
+							if (!ps[i].Match(ref pm, expr)) continue;
+							var n = OperatorVariableAB.BuildNew(ref pm);
+							n.ILRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
+							// the new expression is wrapped in a container so that negations aren't pushed through the comparison operation
+							expr.Code = ILCode.Wrap;
+							expr.Operand = null;
+							expr.Arguments.Clear();
+							expr.Arguments.Add(n);
+							expr.ILRanges.Clear();
+							expr.InferredType = n.InferredType;
+							return true;
+						}
 					}
-				} else if (expr.Code == ILCode.TernaryOp) {
-					var ps = Other;
+					ps = Other;
 					for (int i = 0; i < ps.Length; i += 2) {
 						var pm = new PatternMatcher();
 						if (!ps[i].Match(ref pm, expr)) continue;
