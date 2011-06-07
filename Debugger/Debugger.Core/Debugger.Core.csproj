@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1D18D788-F7EE-4585-A23B-34DC8EC63CB8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Debugger</RootNamespace>
+    <AssemblyName>Debugger.Core</AssemblyName>
+    <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <NoStdLib>False</NoStdLib>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>114294784</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <PublishUrl>http://localhost/Debugger.Core/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>PdbOnly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <StartAction>Project</StartAction>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Interop\MTA2STA.cs" />
+    <Compile Include="ManagedCallback.cs" />
+    <Compile Include="ManagedCallbackProxy.cs" />
+    <Compile Include="ManagedCallbackSwitch.cs" />
+    <Compile Include="MetaData\DebugConstructorInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AppDomain.cs" />
+    <Compile Include="AppDomainCollection.cs" />
+    <Compile Include="ArrayDimension.cs" />
+    <Compile Include="ArrayDimensions.cs" />
+    <Compile Include="Breakpoint.cs" />
+    <Compile Include="BreakpointCollection.cs" />
+    <Compile Include="CollectionWithEvents.cs" />
+    <Compile Include="DebuggeeState.cs" />
+    <Compile Include="DebuggerException.cs" />
+    <Compile Include="DebuggerObject.cs" />
+    <Compile Include="Eval.cs" />
+    <Compile Include="EvalCollection.cs" />
+    <Compile Include="Exception.cs" />
+    <Compile Include="ExceptionType.cs" />
+    <Compile Include="GetValueException.cs" />
+    <Compile Include="Interop\Common.cs" />
+    <Compile Include="Interop\CorDebug.cs" />
+    <Compile Include="Interop\CorDebugExtensionMethods.cs" />
+    <Compile Include="Interop\CorDebugExtensionMethods.generated.cs" />
+    <Compile Include="Interop\CorPublish.cs" />
+    <Compile Include="Interop\CorPublishExtensionMethods.cs" />
+    <Compile Include="Interop\CorPublishExtensionMethods.generated.cs" />
+    <Compile Include="Interop\CorSym.cs" />
+    <Compile Include="Interop\CorSymExtensionMethods.cs" />
+    <Compile Include="Interop\CorSymExtensionMethods.generated.cs" />
+    <Compile Include="Interop\MetaData.cs" />
+    <Compile Include="Interop\MetaDataWrapper.cs" />
+    <Compile Include="Interop\NativeMethods.cs" />
+    <Compile Include="Interop\TrackedComObjects.cs" />
+    <Compile Include="Interop\Util.cs" />
+    <Compile Include="MetaData\DebugFieldInfo.cs" />
+    <Compile Include="MetaData\DebugLocalVariableInfo.cs" />
+    <Compile Include="MetaData\DebugMethodInfo.cs" />
+    <Compile Include="MetaData\DebugParameterInfo.cs" />
+    <Compile Include="MetaData\DebugPropertyInfo.cs" />
+    <Compile Include="MetaData\DebugType.cs" />
+    <Compile Include="MetaData\IDebugMemberInfo.cs" />
+    <Compile Include="MetaData\IOverloadable.cs" />
+    <Compile Include="Module.cs" />
+    <Compile Include="ModuleCollection.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Binary\ImageFormatException.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\CodedIndex.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\ElementType.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\MetadataFormatException.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\MetadataToken.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\TokenType.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\Utilities.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Array.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\ArrayShape.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\BaseSignatureVisitor.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Class.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Constraint.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\CustomMod.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\FieldSig.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\FnPtr.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\GenericArg.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\GenericInst.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\GenericInstSignature.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\InputOutputItem.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\ISignatureVisitable.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\ISignatureVisitor.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\LocalVarSig.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\MethodDefSig.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\MethodRefSig.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\MethodSig.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\MethodSpec.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\MVar.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Param.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\PropertySig.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Ptr.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\RetType.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Signature.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\SignatureReader.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\SigType.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\SzArray.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\TypeSpec.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\ValueType.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Var.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil\MethodCallingConvention.cs" />
+    <Compile Include="Mono.Cecil\Mono.Cecil\ReflectionException.cs" />
+    <Compile Include="NDebugger.cs" />
+    <Compile Include="NRefactory\Ast\ExpressionExtensionMethods.cs" />
+    <Compile Include="NRefactory\Visitors\ExpressionEvaluator.cs" />
+    <Compile Include="Options.cs" />
+    <Compile Include="PausedReason.cs" />
+    <Compile Include="PauseSession.cs" />
+    <Compile Include="Process.cs" />
+    <Compile Include="ProcessCollection.cs" />
+    <Compile Include="ProcessEventArgs.cs" />
+    <Compile Include="SourcecodeSegment.cs" />
+    <Compile Include="StackFrame.cs" />
+    <Compile Include="Stepper.cs" />
+    <Compile Include="Tests\ExpandAttribute.cs" />
+    <Compile Include="Tests\IgnoreAttribute.cs" />
+    <Compile Include="Tests\IgnoreOnExceptionAttribute.cs" />
+    <Compile Include="Thread.cs" />
+    <Compile Include="ThreadCollection.cs" />
+    <Compile Include="Value.cs" />
+    <None Include="Stepping.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interop" />
+    <Folder Include="MetaData" />
+    <Folder Include="Mono.Cecil" />
+    <Folder Include="Mono.Cecil\Mono.Cecil" />
+    <Folder Include="Mono.Cecil\Mono.Cecil.Binary" />
+    <Folder Include="Mono.Cecil\Mono.Cecil.Metadata" />
+    <Folder Include="Mono.Cecil\Mono.Cecil.Signatures" />
+    <Folder Include="NRefactory" />
+    <Folder Include="NRefactory\Ast" />
+    <Folder Include="NRefactory\Visitors" />
+    <Folder Include="Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>

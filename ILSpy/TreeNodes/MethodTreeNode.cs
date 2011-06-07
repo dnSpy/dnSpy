@@ -19,6 +19,7 @@
 using System;
 using System.Text;
 using System.Windows.Media;
+
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
 

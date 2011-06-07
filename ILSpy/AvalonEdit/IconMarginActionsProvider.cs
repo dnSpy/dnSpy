@@ -65,7 +65,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	public interface IBookmarkActionEntry
 	{
 		bool IsEnabled();
-		void Execute();
+		void Execute(int line);
 	}
 	
 	public interface IBookmarkActionMetadata
@@ -100,7 +100,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		public static void Add(IconBarMargin margin)
 		{
 			var provider = new IconMarginActionsProvider(margin);
-			margin.MouseDown += provider.MouseDown;
+			margin.MouseUp += provider.HandleMouseEvent;
 			margin.ContextMenu = new ContextMenu();
 		}
 		
@@ -118,10 +118,23 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			App.CompositionContainer.ComposeParts(this);
 		}
 		
-		void MouseDown(object sender, MouseButtonEventArgs e)
+		void HandleMouseEvent(object sender, MouseButtonEventArgs e)
 		{
 			int line = margin.GetLineFromMousePosition(e);
 			
+			if (e.ChangedButton == MouseButton.Left) {
+				foreach (var category in actionEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
+					foreach (var entryPair in category) {
+						IBookmarkActionEntry entry = entryPair.Value;
+
+						if (entryPair.Value.IsEnabled()) {
+							entry.Execute(line);
+						} 
+					}
+				}
+			}
+			
+			// context menu entries
 			var bookmarks = margin.Manager.Bookmarks.ToArray();
 			if (bookmarks.Length == 0) {
 				// don't show the menu
@@ -130,19 +143,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				return;
 			}
 			
-			if (e.LeftButton == MouseButtonState.Pressed) {
-				foreach (var category in actionEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
-					foreach (var entryPair in category) {
-						IBookmarkActionEntry entry = entryPair.Value;
-
-						if (entryPair.Value.IsEnabled()) {
-							entry.Execute();
-						} 
-					}
-				}
-			}
-			
-			if (e.RightButton == MouseButtonState.Pressed) {
+			if (e.ChangedButton == MouseButton.Right) {
 				// check if we are on a Member				
 				var bookmark = bookmarks.FirstOrDefault(b => b.LineNumber == line);
 				if (bookmark == null) {

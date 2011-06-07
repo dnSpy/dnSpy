@@ -90,6 +90,10 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
 		internal readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
 		
+		public AvalonEditTextOutput()
+		{
+		}
+		
 		/// <summary>
 		/// Gets the list of references (hyperlinks).
 		/// </summary>

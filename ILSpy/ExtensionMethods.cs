@@ -32,7 +32,8 @@ namespace ICSharpCode.ILSpy
 		public static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items)
 		{
 			foreach (T item in items)
-				list.Add(item);
+				if (!list.Contains(item))
+					list.Add(item);
 		}
 		
 		/// <summary>

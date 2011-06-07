@@ -29,11 +29,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
@@ -48,7 +49,8 @@ namespace ICSharpCode.ILSpy
 	{
 		NavigationHistory<NavigationState> history = new NavigationHistory<NavigationState>();
 		ILSpySettings spySettings;
-		SessionSettings sessionSettings;
+		internal SessionSettings sessionSettings;
+
 		AssemblyListManager assemblyListManager;
 		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
@@ -60,6 +62,10 @@ namespace ICSharpCode.ILSpy
 		
 		public static MainWindow Instance {
 			get { return instance; }
+		}
+		
+		public SessionSettings SessionSettings {
+			get { return sessionSettings; }
 		}
 		
 		public MainWindow()
@@ -129,6 +135,7 @@ namespace ICSharpCode.ILSpy
 			return new Button {
 				Command = CommandWrapper.Unwrap(command.Value),
 				ToolTip = command.Metadata.ToolTip,
+				Tag = command.Metadata.Tag,
 				Content = new Image {
 					Width = 16,
 					Height = 16,
@@ -166,6 +173,9 @@ namespace ICSharpCode.ILSpy
 								Source = Images.LoadImage(entry.Value, entry.Metadata.MenuIcon)
 							};
 						}
+						
+						menuItem.IsEnabled = entry.Metadata.IsEnabled;
+						menuItem.InputGestureText = entry.Metadata.InputGestureText;
 						topLevelMenuItem.Items.Add(menuItem);
 					}
 				}
@@ -464,32 +474,38 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public void OpenFiles(string[] fileNames)
+		public void OpenFiles(string[] fileNames, bool focusNode = true)
 		{
 			if (fileNames == null)
 				throw new ArgumentNullException("fileNames");
-			treeView.UnselectAll();
+			
+			if (focusNode)
+				treeView.UnselectAll();
+			
 			SharpTreeNode lastNode = null;
 			foreach (string file in fileNames) {
 				var asm = assemblyList.OpenAssembly(file);
 				if (asm != null) {
 					var node = assemblyListTreeNode.FindAssemblyNode(asm);
-					if (node != null) {
+					if (node != null && focusNode) {
 						treeView.SelectedItems.Add(node);
 						lastNode = node;
 					}
 				}
+				if (lastNode != null && focusNode)
+					treeView.FocusNode(lastNode);
 			}
-			if (lastNode != null)
-				treeView.FocusNode(lastNode);
 		}
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			e.Handled = true;
-			var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
-			ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
-			SelectNode(FindNodeByPath(path, true));
+			if (!DebugInformation.IsDebuggerLoaded) {
+				var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
+				ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
+				SelectNode(FindNodeByPath(path, true));
+			} else {
+				e.Handled = false;
+			}
 		}
 		
 		void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -682,5 +698,26 @@ namespace ICSharpCode.ILSpy
 				pane.Closed();
 		}
 		#endregion
+
+		public void UnselectAll()
+		{
+			treeView.UnselectAll();
+		}
+		
+		public void SetStatus(string status, Brush foreground)
+		{
+			this.StatusLabel.Foreground = foreground;
+			this.StatusLabel.Text = status;
+		}
+		
+		public ItemCollection GetMainMenuItems()
+		{
+			return mainMenu.Items;
+		}
+		
+		public ItemCollection GetToolBarItems()
+		{
+			return toolBar.Items;
+		}
 	}
 }

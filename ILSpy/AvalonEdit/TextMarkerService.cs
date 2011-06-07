@@ -13,6 +13,7 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.ILSpy.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
 {
@@ -27,11 +28,37 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		
 		public TextMarkerService()
 		{
+			BookmarkManager.Added += new BookmarkEventHandler(BookmarkManager_Added);
+			BookmarkManager.Removed += new BookmarkEventHandler(BookmarkManager_Removed);
 		}
 		
 		public TextEditor CodeEditor {
 			get { return codeEditor; }
 			set { codeEditor = value; }
+		}
+		
+		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
+		{
+			if (e.Bookmark is BreakpointBookmark) {
+				var bm = (MarkerBookmark)e.Bookmark;
+				Remove(bm.Marker);
+			}
+			
+			if (e.Bookmark is CurrentLineBookmark) {
+				RemoveAll(m => m.Bookmark is CurrentLineBookmark);
+			}
+		}
+
+		void BookmarkManager_Added(object sender, BookmarkEventArgs e)
+		{
+			if (e.Bookmark is MarkerBookmark) {
+				var bm = (MarkerBookmark)e.Bookmark;
+				// add bookmark for the current type
+				if (bm.LineNumber < codeEditor.Document.LineCount) {
+					DocumentLine line = codeEditor.Document.GetLineByNumber(bm.LineNumber);
+					bm.CreateMarker(this, line.Offset, line.Length);
+				}
+			}
 		}
 		
 		#region ITextMarkerService

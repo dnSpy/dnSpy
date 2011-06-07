@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy
 		string ToolbarIcon { get; }
 		string ToolTip { get; }
 		string ToolbarCategory { get; }
-		
+		object Tag { get; }
 		double ToolbarOrder { get; }
 	}
 	
@@ -45,6 +45,7 @@ namespace ICSharpCode.ILSpy
 		public string ToolbarIcon { get; set; }
 		public string ToolbarCategory { get; set; }
 		public double ToolbarOrder { get; set; }
+		public object Tag { get; set; }
 	}
 	#endregion
 	
@@ -55,6 +56,8 @@ namespace ICSharpCode.ILSpy
 		string Header { get; }
 		string Menu { get; }
 		string MenuCategory { get; }
+		string InputGestureText { get; }
+		bool IsEnabled { get; }
 		
 		double MenuOrder { get; }
 	}
@@ -63,6 +66,8 @@ namespace ICSharpCode.ILSpy
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
 	public class ExportMainMenuCommandAttribute : ExportAttribute, IMainMenuCommandMetadata
 	{
+		bool isEnabled = true;
+		
 		public ExportMainMenuCommandAttribute()
 			: base("MainMenuCommand", typeof(ICommand))
 		{
@@ -72,6 +77,11 @@ namespace ICSharpCode.ILSpy
 		public string Header { get; set; }
 		public string Menu { get; set; }
 		public string MenuCategory { get; set; }
+		public string InputGestureText { get; set; }
+		public bool IsEnabled {
+			get { return isEnabled; }
+			set { isEnabled = value; }
+		}
 		public double MenuOrder { get; set; }
 	}
 	#endregion

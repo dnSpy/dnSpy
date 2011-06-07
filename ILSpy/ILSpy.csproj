@@ -9,7 +9,8 @@
     <AssemblyName>ILSpy</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
@@ -93,6 +94,11 @@
     </Compile>
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
+    <Compile Include="AvalonEdit\ITextEditorListener.cs" />
+    <Compile Include="AvalonEdit\IToolTip.cs" />
+    <Compile Include="Bookmarks\BreakpointBookmark.cs" />
+    <Compile Include="Bookmarks\BreakpointBookmarkEventArgs.cs" />
+    <Compile Include="Bookmarks\CurrentLineBookmark.cs" />
     <Compile Include="Commands\BrowseBackCommand.cs" />
     <Compile Include="Commands\BrowseForwardCommand.cs" />
     <Compile Include="AvalonEdit\IconBarManager.cs" />
@@ -114,14 +120,10 @@
     <Compile Include="ConnectMethodDecompiler.cs" />
     <Compile Include="Controls\DockedPane.cs" />
     <Compile Include="Commands\DecompileAllCommand.cs" />
-    <Compile Include="DecompilerSettingsPanel.xaml.cs">
-      <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DisplaySettings.cs" />
     <Compile Include="Commands\ExportCommandAttribute.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
+    <Compile Include="DebugInformation.cs" />
     <Compile Include="Languages\CSharpLanguage.cs" />
     <Compile Include="DecompilationOptions.cs" />
     <Compile Include="ExtensionMethods.cs" />
@@ -151,7 +153,16 @@
       <DependentUpon>OpenFromGacDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="OptionsDialog.xaml.cs">
+    <Compile Include="Options\DecompilerSettingsPanel.xaml.cs">
+      <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Options\DisplaySettings.cs" />
+    <Compile Include="Options\DisplaySettingsPanel.xaml.cs">
+      <DependentUpon>DisplaySettingsPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Options\OptionsDialog.xaml.cs">
       <DependentUpon>OptionsDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -159,10 +170,6 @@
     <Compile Include="Commands\RefreshCommand.cs" />
     <Compile Include="Commands\SaveCommand.cs" />
     <Compile Include="SearchPane.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DisplaySettingsPanel.xaml.cs">
-      <DependentUpon>DisplaySettingsPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\SimpleCommand.cs" />
@@ -218,6 +225,9 @@
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\ILSpy.ico" />
     <Resource Include="Images\FindAssembly.png" />
+    <None Include="app.config" />
+    <Resource Include="Images\Breakpoint.png" />
+    <Resource Include="Images\CurrentLine.png" />
     <None Include="Properties\AssemblyInfo.template.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -262,14 +272,14 @@
     <Page Include="Controls\SearchBoxStyle.xaml">
       <DependentUpon>SearchBox.cs</DependentUpon>
     </Page>
-    <Page Include="DecompilerSettingsPanel.xaml" />
     <Page Include="MainWindow.xaml" />
     <Page Include="OpenFromGacDialog.xaml" />
-    <Page Include="OptionsDialog.xaml" />
+    <Page Include="Options\DecompilerSettingsPanel.xaml" />
+    <Page Include="Options\DisplaySettingsPanel.xaml" />
+    <Page Include="Options\OptionsDialog.xaml" />
     <Page Include="SearchPane.xaml">
       <DependentUpon>SearchPane.cs</DependentUpon>
     </Page>
-    <Page Include="DisplaySettingsPanel.xaml" />
     <Page Include="TextView\DecompilerTextView.xaml">
       <DependentUpon>DecompilerTextView.cs</DependentUpon>
     </Page>
@@ -354,6 +364,9 @@
   <ItemGroup>
     <Folder Include="AvalonEdit" />
     <Folder Include="Bookmarks" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Options" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
