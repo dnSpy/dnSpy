@@ -336,9 +336,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				// Calculate new variable state
 				VariableSlot[] newVariableState = VariableSlot.CloneVariableState(byteCode.VariablesBefore);
-				if (byteCode.Code == ILCode.Stloc) {
+				if (byteCode.Code == ILCode.Stloc || byteCode.Code == ILCode.Ldloca) {
 					int varIndex = ((VariableReference)byteCode.Operand).Index;
-					newVariableState[varIndex] = new VariableSlot(byteCode);
+					newVariableState[varIndex] = byteCode.Code == ILCode.Stloc || byteCode.Next.Code == ILCode.Initobj ?
+						new VariableSlot(byteCode) : new VariableSlot(newVariableState[varIndex].StoredBy.Union(new[] { byteCode }), false);
 				}
 				
 				// After the leave, finally block might have touched the variables
@@ -520,8 +521,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				for(int variableIndex = 0; variableIndex < varCount; variableIndex++) {
 					// Find all stores and loads for this variable
-					List<ByteCode> stores = body.Where(b => b.Code == ILCode.Stloc && b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
-					List<ByteCode> loads  = body.Where(b => (b.Code == ILCode.Ldloc || b.Code == ILCode.Ldloca) && b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
+					var stores = body.Where(b => (b.Code == ILCode.Stloc || b.Code == ILCode.Ldloca) && b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
+					var loads = body.Where(b => (b.Code == ILCode.Ldloc || (b.Code == ILCode.Ldloca && b.Next.Code != ILCode.Initobj)) && b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
 					TypeReference varType = methodDef.Body.Variables[variableIndex].VariableType;
 					
 					List<VariableInfo> newVars;
@@ -529,8 +530,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					bool isPinned = methodDef.Body.Variables[variableIndex].IsPinned;
 					// If the variable is pinned, use single variable.
 					// If any of the loads is from "all", use single variable
-					// If any of the loads is ldloca, fallback to single variable as well
-					if (isPinned || loads.Any(b => b.VariablesBefore[variableIndex].StoredByAll || b.Code == ILCode.Ldloca)) {
+					if (isPinned || loads.Any(b => b.VariablesBefore[variableIndex].StoredByAll)) {
 						newVars = new List<VariableInfo>(1) { new VariableInfo() {
 							Variable = new ILVariable() {
 								Name = "var_" + variableIndex,
@@ -542,9 +542,9 @@ namespace ICSharpCode.Decompiler.ILAst
 						}};
 					} else {
 						// Create a new variable for each store
-						newVars = stores.Select(st => new VariableInfo() {
+						newVars = stores.Where(st => st.Code == ILCode.Stloc || st.Next.Code == ILCode.Initobj).Select(st => new VariableInfo() {
 							Variable = new ILVariable() {
-						    		Name = "var_" + variableIndex + "_" + st.Offset.ToString("X2"),
+						    		Name = "var_" + variableIndex + "_" + st.Offset.ToString("X2") + (st.Code == ILCode.Stloc ? null : "_default"),
 						    		Type = varType,
 						    		OriginalVariable = methodDef.Body.Variables[variableIndex]
 						    },
@@ -573,20 +573,22 @@ namespace ICSharpCode.Decompiler.ILAst
 								    		Type = varType,
 								    		OriginalVariable = methodDef.Body.Variables[variableIndex]
 								    },
-								    Stores = new List<ByteCode>(),
+								    Stores = load.Code == ILCode.Ldloc ? new List<ByteCode>() : new List<ByteCode>() { load },
 								    Loads  = new List<ByteCode>() { load }
 								});
 							} else if (storedBy.Length == 1) {
 								VariableInfo newVar = newVars.Single(v => v.Stores.Contains(storedBy[0]));
 								newVar.Loads.Add(load);
+								if (load.Code == ILCode.Ldloca) newVar.Stores.Add(load);
 							} else {
-								List<VariableInfo> mergeVars = newVars.Where(v => v.Stores.Union(storedBy).Any()).ToList();
+								List<VariableInfo> mergeVars = newVars.Where(v => v.Stores.Intersect(storedBy).Any()).ToList();
 								VariableInfo mergedVar = new VariableInfo() {
 									Variable = mergeVars[0].Variable,
 									Stores = mergeVars.SelectMany(v => v.Stores).ToList(),
 									Loads  = mergeVars.SelectMany(v => v.Loads).ToList()
 								};
 								mergedVar.Loads.Add(load);
+								if (load.Code == ILCode.Ldloca) mergedVar.Stores.Add(load);
 								newVars = newVars.Except(mergeVars).ToList();
 								newVars.Add(mergedVar);
 							}
