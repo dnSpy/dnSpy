@@ -261,6 +261,23 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 
+			sealed class AnyPattern : Pattern
+			{
+				public AnyPattern() : base(null) { }
+
+				public override bool Match(ref PatternMatcher pm, ILExpression e)
+				{
+					if (pm.SimpleOperand != null) throw new InvalidOperationException();
+					pm.SimpleOperand = e;
+					return true;
+				}
+
+				public override ILExpression BuildNew(ref PatternMatcher pm)
+				{
+					return pm.SimpleOperand;
+				}
+			}
+
 			sealed class VariablePattern : Pattern
 			{
 				readonly ILCode code;
@@ -297,6 +314,24 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 
+			sealed class PrimitivePattern : Pattern
+			{
+				readonly ILCode code;
+				readonly object operand;
+
+				public PrimitivePattern(ILCode code, object operand)
+					: base(null)
+				{
+					this.code = code;
+					this.operand = operand;
+				}
+
+				public override bool Match(ref PatternMatcher pm, ILExpression e)
+				{
+					return e.Code == code && object.Equals(e.Operand, this.operand);
+				}
+			}
+
 			static readonly Pattern VariableRefA = new VariablePattern(ILCode.Ldloca, false), VariableRefB = new VariablePattern(ILCode.Ldloca, true);
 			static readonly Pattern VariableA = new VariablePattern(ILCode.Ldloc, false), VariableB = new VariablePattern(ILCode.Ldloc, true);
 			static readonly Pattern VariableAHasValue = new MethodPattern(ILCode.CallGetter, "get_HasValue", VariableRefA);
@@ -306,6 +341,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			static readonly Pattern CeqHasValue = new ILPattern(ILCode.Ceq, VariableAHasValue, VariableBHasValue);
 			static readonly Pattern CneHasValue = new ILPattern(ILCode.Cne, VariableAHasValue, VariableBHasValue);
 			static readonly Pattern AndHasValue = new ILPattern(ILCode.And, VariableAHasValue, VariableBHasValue);
+			static readonly Pattern Any = new AnyPattern();
 			static readonly Pattern OperatorVariableAB = new OperatorPattern();
 
 			static OperatorPattern OperatorNN(OperatorType type)
@@ -356,11 +392,24 @@ namespace ICSharpCode.Decompiler.ILAst
 				// | (bool)
 				new ILPattern(ILCode.TernaryOp, VariableAGetValueOrDefault | (!VariableBGetValueOrDefault & !VariableAHasValue), VariableA, VariableB),
 				new ILPattern(ILCode.Or, VariableA, VariableB),
+				// null coalescing
+				new ILPattern(ILCode.TernaryOp, VariableAHasValue, new MethodPattern(ILCode.Newobj, ".ctor", VariableAGetValueOrDefault), VariableB),
+				new ILPattern(ILCode.NullCoalescing, VariableA, VariableB),
 				// all other
 				new ILPattern(ILCode.TernaryOp, AndHasValue, new MethodPattern(ILCode.Newobj, ".ctor", OperatorNN(OperatorType.Other)), new ILPattern(ILCode.DefaultValue)),
 				null,
 
 				/* only one operand nullable */
+				// & (bool)
+				new ILPattern(ILCode.TernaryOp, Any, VariableA, new MethodPattern(ILCode.Newobj, ".ctor", new PrimitivePattern(ILCode.Ldc_I4, 0))),
+				new ILPattern(ILCode.And, VariableA, Any),
+				// | (bool)
+				new ILPattern(ILCode.TernaryOp, Any, new MethodPattern(ILCode.Newobj, ".ctor", new PrimitivePattern(ILCode.Ldc_I4, 1)), VariableA),
+				new ILPattern(ILCode.Or, VariableA, Any),
+				// null coalescing
+				new ILPattern(ILCode.TernaryOp, VariableAHasValue, VariableAGetValueOrDefault, Any),
+				new ILPattern(ILCode.NullCoalescing, VariableA, Any),
+				// all other
 				new ILPattern(ILCode.TernaryOp, VariableAHasValue, new MethodPattern(ILCode.Newobj, ".ctor", OperatorNV(OperatorType.Other)), new ILPattern(ILCode.DefaultValue)),
 				null,
 			};
