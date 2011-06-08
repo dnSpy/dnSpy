@@ -28,7 +28,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	{
 		bool SimplifyNullableOperators(List<ILNode> body, ILExpression expr, int pos)
 		{
-			if (!SimplifyNullableOperators(expr)) return false;
+			if (!new PatternMatcher(typeSystem).SimplifyNullableOperators(expr)) return false;
 
 			var inlining = new ILInlining(method);
 			while (--pos >= 0 && inlining.InlineIfPossible(body, ref pos)) ;
@@ -36,18 +36,24 @@ namespace ICSharpCode.Decompiler.ILAst
 			return true;
 		}
 
-		static bool SimplifyNullableOperators(ILExpression expr)
+		sealed class PatternMatcher
 		{
-			if (PatternMatcher.Simplify(expr)) return true;
+			readonly TypeSystem typeSystem;
+			public PatternMatcher(TypeSystem typeSystem)
+			{
+				this.typeSystem = typeSystem;
+			}
 
-			bool modified = false;
-			foreach (var a in expr.Arguments)
-				modified |= SimplifyNullableOperators(a);
-			return modified;
-		}
+			public bool SimplifyNullableOperators(ILExpression expr)
+			{
+				if (Simplify(expr)) return true;
 
-		struct PatternMatcher
-		{
+				bool modified = false;
+				foreach (var a in expr.Arguments)
+					modified |= SimplifyNullableOperators(a);
+				return modified;
+			}
+
 			abstract class Pattern
 			{
 				public readonly Pattern[] Arguments;
@@ -57,15 +63,15 @@ namespace ICSharpCode.Decompiler.ILAst
 					this.Arguments = arguments;
 				}
 
-				public virtual bool Match(ref PatternMatcher pm, ILExpression e)
+				public virtual bool Match(PatternMatcher pm, ILExpression e)
 				{
 					if (e.Arguments.Count != this.Arguments.Length || e.Prefixes != null) return false;
 					for (int i = 0; i < this.Arguments.Length; i++)
-						if (!this.Arguments[i].Match(ref pm, e.Arguments[i])) return false;
+						if (!this.Arguments[i].Match(pm, e.Arguments[i])) return false;
 					return true;
 				}
 
-				public virtual ILExpression BuildNew(ref PatternMatcher pm)
+				public virtual ILExpression BuildNew(PatternMatcher pm)
 				{
 					throw new NotSupportedException();
 				}
@@ -96,16 +102,26 @@ namespace ICSharpCode.Decompiler.ILAst
 					this.code = code;
 				}
 
-				public override bool Match(ref PatternMatcher pm, ILExpression e)
+				public override bool Match(PatternMatcher pm, ILExpression e)
 				{
-					return e.Code == this.code && base.Match(ref pm, e);
+					return e.Code == this.code && base.Match(pm, e);
 				}
 
-				public override ILExpression BuildNew(ref PatternMatcher pm)
+				public override ILExpression BuildNew(PatternMatcher pm)
 				{
 					var args = new ILExpression[this.Arguments.Length];
-					for (int i = 0; i < args.Length; i++) args[i] = this.Arguments[i].BuildNew(ref pm);
-					return new ILExpression(code, null, args);
+					for (int i = 0; i < args.Length; i++) args[i] = this.Arguments[i].BuildNew(pm);
+					TypeReference t = null;
+					switch (code) {
+						case ILCode.Ceq:
+						case ILCode.Cne:
+							t = pm.typeSystem.Boolean;
+							break;
+						case ILCode.NullCoalescing:
+							t = args[1].InferredType;
+							break;
+					}
+					return new ILExpression(code, null, args) { InferredType = t };
 				}
 			}
 
@@ -121,13 +137,13 @@ namespace ICSharpCode.Decompiler.ILAst
 					this.method = method;
 				}
 
-				public override bool Match(ref PatternMatcher pm, ILExpression e)
+				public override bool Match(PatternMatcher pm, ILExpression e)
 				{
 					if (e.Code != this.code) return false;
 					var m = e.Operand as MethodReference;
 					if (m == null || m.Name != this.method) return false;
 					var t = m.DeclaringType;
-					return t.Name == "Nullable`1" && t.Namespace == "System" && base.Match(ref pm, e);
+					return t.Name == "Nullable`1" && t.Namespace == "System" && base.Match(pm, e);
 				}
 			}
 
@@ -150,7 +166,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					this.simple = simple;
 				}
 
-				public override bool Match(ref PatternMatcher pm, ILExpression e)
+				public override bool Match(PatternMatcher pm, ILExpression e)
 				{
 					switch (e.Code) {
 						case ILCode.Ceq:
@@ -203,14 +219,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					pm.Operator = e;
 
 					var a0 = e.Arguments[0];
-					if (!simple) return VariableAGetValueOrDefault.Match(ref pm, a0) && VariableBGetValueOrDefault.Match(ref pm, e.Arguments[1]);
-					if (e.Arguments.Count == 1) return VariableAGetValueOrDefault.Match(ref pm, a0);
-					if (VariableAGetValueOrDefault.Match(ref pm, a0)) {
+					if (!simple) return VariableAGetValueOrDefault.Match(pm, a0) && VariableBGetValueOrDefault.Match(pm, e.Arguments[1]);
+					if (e.Arguments.Count == 1) return VariableAGetValueOrDefault.Match(pm, a0);
+					if (VariableAGetValueOrDefault.Match(pm, a0)) {
 						pm.SimpleOperand = e.Arguments[1];
 						pm.SimpleLeftOperand = false;
 						return true;
 					}
-					if (VariableAGetValueOrDefault.Match(ref pm, e.Arguments[1])) {
+					if (VariableAGetValueOrDefault.Match(pm, e.Arguments[1])) {
 						pm.SimpleOperand = a0;
 						pm.SimpleLeftOperand = true;
 						return true;
@@ -249,13 +265,13 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 
-				public override ILExpression BuildNew(ref PatternMatcher pm)
+				public override ILExpression BuildNew(PatternMatcher pm)
 				{
 					var res = pm.Operator;
 					res.Arguments.Clear();
 					if (pm.SimpleLeftOperand) res.Arguments.Add(pm.SimpleOperand);
-					res.Arguments.Add(VariableA.BuildNew(ref pm));
-					if (pm.B != null) res.Arguments.Add(VariableB.BuildNew(ref pm));
+					res.Arguments.Add(VariableA.BuildNew(pm));
+					if (pm.B != null) res.Arguments.Add(VariableB.BuildNew(pm));
 					else if (pm.SimpleOperand != null && !pm.SimpleLeftOperand) res.Arguments.Add(pm.SimpleOperand);
 					return res;
 				}
@@ -265,14 +281,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			{
 				public AnyPattern() : base(null) { }
 
-				public override bool Match(ref PatternMatcher pm, ILExpression e)
+				public override bool Match(PatternMatcher pm, ILExpression e)
 				{
 					if (pm.SimpleOperand != null) throw new InvalidOperationException();
 					pm.SimpleOperand = e;
 					return true;
 				}
 
-				public override ILExpression BuildNew(ref PatternMatcher pm)
+				public override ILExpression BuildNew(PatternMatcher pm)
 				{
 					return pm.SimpleOperand;
 				}
@@ -290,7 +306,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					this.b = b;
 				}
 
-				public override bool Match(ref PatternMatcher pm, ILExpression e)
+				public override bool Match(PatternMatcher pm, ILExpression e)
 				{
 					if (e.Code != this.code) return false;
 					var v = e.Operand as ILVariable;
@@ -305,7 +321,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 
 				static readonly ILExpression[] EmptyArguments = new ILExpression[0];
-				public override ILExpression BuildNew(ref PatternMatcher pm)
+				public override ILExpression BuildNew(PatternMatcher pm)
 				{
 					var v = this.b ? pm.B : pm.A;
 					var e = new ILExpression(ILCode.Ldloc, v, EmptyArguments);
@@ -323,15 +339,15 @@ namespace ICSharpCode.Decompiler.ILAst
 					this.value = Convert.ToInt32(value);
 				}
 
-				public override bool Match(ref PatternMatcher pm, ILExpression e)
+				public override bool Match(PatternMatcher pm, ILExpression e)
 				{
 					return e.Code == ILCode.Ldc_I4 && TypeAnalysis.IsBoolean(e.InferredType) && object.Equals(e.Operand, value);
 				}
 
-				public override ILExpression BuildNew(ref PatternMatcher pm)
+				public override ILExpression BuildNew(PatternMatcher pm)
 				{
 					// boolean constants are wrapped inside a container to disable simplyfication of equality comparisons
-					return new ILExpression(ILCode.Wrap, null, new ILExpression(ILCode.Ldc_I4, value) { InferredType = ((GenericInstanceType)pm.A.Type).GenericArguments[0] });
+					return new ILExpression(ILCode.Wrap, null, new ILExpression(ILCode.Ldc_I4, value));
 				}
 			}
 
@@ -433,16 +449,25 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression Operator, SimpleOperand;
 			bool SimpleLeftOperand;
 
-			public static bool Simplify(ILExpression expr)
+			void Reset()
+			{
+				this.A = null;
+				this.B = null;
+				this.Operator = null;
+				this.SimpleOperand = null;
+				this.SimpleLeftOperand = false;
+			}
+
+			bool Simplify(ILExpression expr)
 			{
 				if (expr.Code == ILCode.TernaryOp || expr.Code == ILCode.LogicAnd || expr.Code == ILCode.LogicOr) {
 					Pattern[] ps;
 					if (expr.Code != ILCode.TernaryOp) {
 						ps = Comparisons;
 						for (int i = 0; i < ps.Length; i++) {
-							var pm = new PatternMatcher();
-							if (!ps[i].Match(ref pm, expr)) continue;
-							var n = OperatorVariableAB.BuildNew(ref pm);
+							this.Reset();
+							if (!ps[i].Match(this, expr)) continue;
+							var n = OperatorVariableAB.BuildNew(this);
 							n.ILRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
 							// the new expression is wrapped in a container so that negations aren't pushed through the comparison operation
 							expr.Code = ILCode.Wrap;
@@ -456,9 +481,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					ps = Other;
 					for (int i = 0; i < ps.Length; i += 2) {
-						var pm = new PatternMatcher();
-						if (!ps[i].Match(ref pm, expr)) continue;
-						var n = (ps[i + 1] ?? OperatorVariableAB).BuildNew(ref pm);
+						this.Reset();
+						if (!ps[i].Match(this, expr)) continue;
+						var n = (ps[i + 1] ?? OperatorVariableAB).BuildNew(this);
 						n.ILRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
 						// the new expression is wrapped in a container so that negations aren't pushed through the comparison operation
 						expr.Code = ILCode.Wrap;
