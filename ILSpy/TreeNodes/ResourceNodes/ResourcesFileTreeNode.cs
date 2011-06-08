@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return null;
 		}
 
-		public ILSpyTreeNode CreateNode(string key, Stream data)
+		public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			return null;
 		}
@@ -78,12 +78,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return;
 				}
 				foreach (DictionaryEntry entry in reader.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
-					if (entry.Value is Stream)
-						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), (Stream)entry.Value));
+					if (entry.Value is String)
+						filteredEntries.Add(new KeyValuePair<string, string>(entry.Key.ToString(), (string)entry.Value));
 					else if (entry.Value is byte[])
 						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), new MemoryStream((byte[])entry.Value)));
-					else if (entry.Value is String)
-						filteredEntries.Add(new KeyValuePair<string, string>(entry.Key.ToString(), (string)entry.Value));
+					else 
+						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), entry.Value));
 				}
 			}
 		}

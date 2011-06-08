@@ -41,12 +41,16 @@ namespace ICSharpCode.ILSpy.Xaml
 			return null;
 		}
 		
-		public ILSpyTreeNode CreateNode(string key, Stream data)
+		public ILSpyTreeNode CreateNode(string key, object data)
 		{
+			if (!(data is Stream))
+			    return null;
 			foreach (string fileExt in xmlFileExtensions)
+			{
 				if (key.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
-					return new XmlResourceEntryNode(key, data);
-				return null;
+					return new XmlResourceEntryNode(key, (Stream)data);
+			}
+			return null;
 		}
 	}
 	
