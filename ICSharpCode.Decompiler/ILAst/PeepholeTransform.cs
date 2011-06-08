@@ -940,5 +940,40 @@ namespace ICSharpCode.Decompiler.ILAst
 			return true;
 		}
 		#endregion
+
+		#region SimplifyShiftOperators
+		static bool SimplifyShiftOperators(List<ILNode> body, ILExpression expr, int pos)
+		{
+			bool modified = false;
+			SimplifyShiftOperators(expr, ref modified);
+			return modified;
+		}
+
+		static void SimplifyShiftOperators(ILExpression expr, ref bool modified)
+		{
+			for (int i = 0; i < expr.Arguments.Count; i++) SimplifyShiftOperators(expr.Arguments[i], ref modified);
+			if (expr.Code != ILCode.Shl && expr.Code != ILCode.Shr && expr.Code != ILCode.Shr_Un) return;
+			var a = expr.Arguments[1];
+			if (a.Code != ILCode.And || a.Arguments[1].Code != ILCode.Ldc_I4 || expr.InferredType == null) return;
+			int mask;
+			switch (expr.InferredType.MetadataType) {
+				case MetadataType.Byte:
+				case MetadataType.SByte:
+				case MetadataType.Int16:
+				case MetadataType.UInt16:
+				case MetadataType.Int32:
+				case MetadataType.UInt32: mask = 31; break;
+				case MetadataType.Int64:
+				case MetadataType.UInt64: mask = 63; break;
+				default: return;
+			}
+			if ((int)a.Arguments[1].Operand != mask) return;
+			var res = a.Arguments[0];
+			res.ILRanges.AddRange(a.ILRanges);
+			res.ILRanges.AddRange(a.Arguments[1].ILRanges);
+			expr.Arguments[1] = res;
+			modified = true;
+		}
+		#endregion
 	}
 }

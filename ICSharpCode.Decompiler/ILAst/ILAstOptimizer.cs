@@ -46,9 +46,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
 		SimplifyCustomShortCircuit,
+		SimplifyShiftOperators,
+		SimplifyNullableOperators,
 		TransformArrayInitializers,
 		TransformObjectInitializers,
-		SimplifyNullableOperators,
 		MakeAssignmentExpression,
 		IntroducePostIncrement,
 		InlineVariables2,
@@ -145,15 +146,18 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyCustomShortCircuit) return;
 					modified |= block.RunOptimization(new SimpleControlFlow(context, method).SimplifyCustomShortCircuit);
+
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyShiftOperators) return;
+					modified |= block.RunOptimization(SimplifyShiftOperators);
+
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyNullableOperators) return;
+					modified |= block.RunOptimization(SimplifyNullableOperators);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
 					modified |= block.RunOptimization(TransformArrayInitializers);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformObjectInitializers) return;
 					modified |= block.RunOptimization(TransformObjectInitializers);
-
-					if (abortBeforeStep == ILAstOptimizationStep.SimplifyNullableOperators) return;
-					modified |= block.RunOptimization(SimplifyNullableOperators);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.MakeAssignmentExpression) return;
 					modified |= block.RunOptimization(MakeAssignmentExpression);
