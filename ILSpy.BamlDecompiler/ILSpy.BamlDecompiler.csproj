@@ -82,7 +82,9 @@
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\AppDomainTypeResolver.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlAssembly.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlBinaryReader.cs" />
-    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlFile.cs" />
+    <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlFile.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\BamlRecordType.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\DotNetType.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\IDependencyPropertyDescriptor.cs" />
@@ -103,9 +105,7 @@
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlNamespace.cs" />
     <Compile Include="Ricciolo.StylesExplorer.MarkupReflection\XmlPIMapping.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Ricciolo.StylesExplorer.MarkupReflection" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
       <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>
