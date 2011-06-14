@@ -297,8 +297,8 @@ public class InitializerTests
 					-100m,
 					0m,
 					100m,
-					decimal.MinValue,
-					decimal.MaxValue,
+					-79228162514264337593543950335m, 
+					79228162514264337593543950335m, 
 					0.0000001m
 				});
 	}

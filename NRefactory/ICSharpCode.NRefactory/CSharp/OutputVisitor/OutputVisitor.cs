@@ -873,17 +873,6 @@ namespace ICSharpCode.NRefactory.CSharp
 				formatter.WriteToken("'" + ConvertCharLiteral((char)val) + "'");
 				lastWritten = LastWritten.Other;
 			} else if (val is decimal) {
-				decimal d = (decimal) val;
-				if (d == decimal.MinValue || d == decimal.MaxValue)
-				{
-					WriteKeyword("decimal");
-					WriteToken(".", AstNode.Roles.Dot);
-					if (d == decimal.MinValue)
-						WriteIdentifier("MinValue");
-					else
-						WriteIdentifier("MaxValue");
-					return;
-				}
 				formatter.WriteToken(((decimal)val).ToString(NumberFormatInfo.InvariantInfo) + "m");
 				lastWritten = LastWritten.Other;
 			} else if (val is float) {
