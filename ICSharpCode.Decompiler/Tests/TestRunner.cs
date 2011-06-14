@@ -76,7 +76,7 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\IncrementDecrement.cs");
 		}
 		
-		[Test, Ignore("Formatting issues (array initializers not on single line)")]
+		[Test]
 		public void InitializerTests()
 		{
 			TestFile(@"..\..\Tests\InitializerTests.cs");
