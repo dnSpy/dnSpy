@@ -34,35 +34,21 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILVariable v, v2, v3;
 			ILExpression newarrExpr;
-			TypeReference arrayType;
+			TypeReference elementType;
 			ILExpression lengthExpr;
 			int arrayLength;
 			if (expr.Match(ILCode.Stloc, out v, out newarrExpr) &&
-			    newarrExpr.Match(ILCode.Newarr, out arrayType, out lengthExpr) &&
+			    newarrExpr.Match(ILCode.Newarr, out elementType, out lengthExpr) &&
 			    lengthExpr.Match(ILCode.Ldc_I4, out arrayLength) &&
-			    arrayLength > 0)
-			{
-				MethodReference methodRef;
-				ILExpression methodArg1;
-				ILExpression methodArg2;
-				FieldDefinition field;
-				if (body.ElementAtOrDefault(pos + 1).Match(ILCode.Call, out methodRef, out methodArg1, out methodArg2) &&
-				    methodRef.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers" &&
-				    methodRef.Name == "InitializeArray" &&
-				    methodArg1.Match(ILCode.Ldloc, out v2) &&
-				    v == v2 &&
-				    methodArg2.Match(ILCode.Ldtoken, out field) &&
-				    field != null && field.InitialValue != null)
-				{
-					ILExpression[] newArr = new ILExpression[arrayLength];
-					if (DecodeArrayInitializer(TypeAnalysis.GetTypeCode(arrayType), field.InitialValue, newArr)) {
-						body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType, newArr));
-						body.RemoveAt(pos + 1);
-						new ILInlining(method).InlineIfPossible(body, ref pos);
-						return true;
-					}
+			    arrayLength > 0) {
+				ILExpression[] newArr;
+				int initArrayPos;
+				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, elementType, arrayLength, out newArr, out initArrayPos)) {
+					var arrayType = new ArrayType(elementType, 1);
+					arrayType.Dimensions[0] = new ArrayDimension(0, arrayLength);
+					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType, newArr));
+					body.RemoveAt(initArrayPos);
 				}
-				
 				// Put in a limit so that we don't consume too much memory if the code allocates a huge array
 				// and populates it extremely sparsly. However, 255 "null" elements in a row actually occur in the Mono C# compiler!
 				const int maxConsecutiveDefaultValueExpressions = 300;
@@ -77,10 +63,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					    v == v3 &&
 					    nextExpr.Arguments[1].Match(ILCode.Ldc_I4, out arrayPos) &&
 					    arrayPos >= operands.Count &&
-					    arrayPos <= operands.Count + maxConsecutiveDefaultValueExpressions)
-					{
+					    arrayPos <= operands.Count + maxConsecutiveDefaultValueExpressions) {
 						while (operands.Count < arrayPos)
-							operands.Add(new ILExpression(ILCode.DefaultValue, arrayType));
+							operands.Add(new ILExpression(ILCode.DefaultValue, elementType));
 						operands.Add(nextExpr.Arguments[2]);
 						numberOfInstructionsToRemove++;
 					} else {
@@ -88,16 +73,79 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 				if (operands.Count == arrayLength) {
+					var arrayType = new ArrayType(elementType, 1);
+					arrayType.Dimensions[0] = new ArrayDimension(0, arrayLength);
 					expr.Arguments[0] = new ILExpression(ILCode.InitArray, arrayType, operands);
 					body.RemoveRange(pos + 1, numberOfInstructionsToRemove);
-					
+
 					new ILInlining(method).InlineIfPossible(body, ref pos);
 					return true;
 				}
 			}
 			return false;
 		}
-		
+
+		bool TransformMultidimensionalArrayInitializers(List<ILNode> body, ILExpression expr, int pos)
+		{
+			ILVariable v, v2, v3;
+			ILExpression newarrExpr;
+			MethodReference ctor;
+			List<ILExpression> ctorArgs;
+			ArrayType arrayType;
+			if (expr.Match(ILCode.Stloc, out v, out newarrExpr) &&
+				newarrExpr.Match(ILCode.Newobj, out ctor, out ctorArgs) &&
+				(arrayType = (ctor.DeclaringType as ArrayType)) != null &&
+				arrayType.Rank == ctorArgs.Count) {
+				// Clone the type, so we can muck about with the Dimensions
+				arrayType = new ArrayType(arrayType.ElementType, arrayType.Rank);
+				var arrayLengths = new int[arrayType.Rank];
+				for (int i = 0; i < arrayType.Rank; i++) {
+					if (!ctorArgs[i].Match(ILCode.Ldc_I4, out arrayLengths[i])) return false;
+					if (arrayLengths[i] <= 0) return false;
+					arrayType.Dimensions[i] = new ArrayDimension(0, arrayLengths[i]);
+				}
+
+				var totalElements = arrayLengths.Aggregate(1, (t, l) => t * l);
+				ILExpression[] newArr;
+				int initArrayPos;
+				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, arrayType, totalElements, out newArr, out initArrayPos)) {
+					var mdArr = Array.CreateInstance(typeof(ILExpression), arrayLengths);
+					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType, newArr));
+					body.RemoveAt(initArrayPos);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		bool ForwardScanInitializeArrayRuntimeHelper(List<ILNode> body, int pos, ILVariable array, TypeReference arrayType, int arrayLength, out ILExpression[] values, out int foundPos)
+		{
+			for (; pos < body.Count; pos++) {
+				ILVariable v2;
+				MethodReference methodRef;
+				ILExpression methodArg1;
+				ILExpression methodArg2;
+				FieldDefinition field;
+				if (body.ElementAtOrDefault(pos).Match(ILCode.Call, out methodRef, out methodArg1, out methodArg2) &&
+					methodRef.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers" &&
+					methodRef.Name == "InitializeArray" &&
+					methodArg1.Match(ILCode.Ldloc, out v2) &&
+					array == v2 &&
+					methodArg2.Match(ILCode.Ldtoken, out field) &&
+					field != null && field.InitialValue != null) {
+					ILExpression[] newArr = new ILExpression[arrayLength];
+					if (DecodeArrayInitializer(TypeAnalysis.GetTypeCode(arrayType.GetElementType()), field.InitialValue, newArr)) {
+						values = newArr;
+						foundPos = pos;
+						return true;
+					}
+				}
+			}
+			values = null;
+			foundPos = -1;
+			return false;
+		}
+
 		static bool DecodeArrayInitializer(TypeCode elementType, byte[] initialValue, ILExpression[] output)
 		{
 			switch (elementType) {
@@ -160,7 +208,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		#endregion
-		
+
 		/// <summary>
 		/// Handles both object and collection initializers.
 		/// </summary>
@@ -168,7 +216,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (!context.Settings.ObjectOrCollectionInitializers)
 				return false;
-			
+
 			Debug.Assert(body[pos] == expr); // should be called for top-level expressions only
 			ILVariable v;
 			ILExpression newObjExpr;
@@ -182,19 +230,19 @@ namespace ICSharpCode.Decompiler.ILAst
 			// don't use object initializer syntax for closures
 			if (Ast.Transforms.DelegateConstruction.IsPotentialClosure(context, ctor.DeclaringType.ResolveWithinSameModule()))
 				return false;
-			
+
 			ILExpression initializer = ParseObjectInitializer(body, ref pos, v, newObjExpr, IsCollectionType(ctor.DeclaringType));
-			
+
 			if (initializer.Arguments.Count == 1) // only newobj argument, no initializer elements
 				return false;
 			int totalElementCount = pos - originalPos - 1; // totalElementCount: includes elements from nested collections
 			Debug.Assert(totalElementCount >= initializer.Arguments.Count - 1);
-			
+
 			// Verify that we can inline 'v' into the next instruction:
-			
+
 			if (pos >= body.Count)
 				return false; // reached end of block, but there should be another instruction which consumes the initialized object
-			
+
 			ILInlining inlining = new ILInlining(method);
 			// one ldloc for each initializer argument, and another ldloc for the use of the initialized object
 			if (inlining.numLdloc.GetOrDefault(v) != totalElementCount + 1)
@@ -204,20 +252,20 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression nextExpr = body[pos] as ILExpression;
 			if (!inlining.CanInlineInto(nextExpr, v, initializer))
 				return false;
-			
+
 			expr.Arguments[0] = initializer;
 			// remove all the instructions that were pulled into the initializer
 			body.RemoveRange(originalPos + 1, pos - originalPos - 1);
-			
+
 			// now that we know that it's an object initializer, change all the first arguments to 'InitializedObject'
 			ChangeFirstArgumentToInitializedObject(initializer);
-			
+
 			inlining = new ILInlining(method);
 			inlining.InlineIfPossible(body, ref originalPos);
-			
+
 			return true;
 		}
-		
+
 		/// <summary>
 		/// Gets whether the type supports collection initializers.
 		/// </summary>
@@ -233,7 +281,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			return false;
 		}
-		
+
 		/// <summary>
 		/// Gets whether 'expr' represents a setter in an object initializer.
 		/// ('CallvirtSetter(Property, v, value)')
@@ -247,7 +295,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			return false;
 		}
-		
+
 		/// <summary>
 		/// Gets whether 'expr' represents the invocation of an 'Add' method in a collection initializer.
 		/// </summary>
@@ -262,7 +310,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			return false;
 		}
-		
+
 		/// <summary>
 		/// Parses an object initializer.
 		/// </summary>
@@ -304,7 +352,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			return objectInitializer;
 		}
-		
+
 		static bool AdjustInitializerStack(List<ILExpression> initializerStack, ILExpression argument, ILVariable v, bool isCollection)
 		{
 			// Argument is of the form 'getter(getter(...(v)))'
@@ -340,7 +388,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					returnType = TypeAnalysis.GetFieldType((FieldReference)mr);
 				else
 					returnType = TypeAnalysis.SubstituteTypeArgs(((MethodReference)mr).ReturnType, mr);
-				
+
 				ILExpression nestedInitializer = new ILExpression(
 					IsCollectionType(returnType) ? ILCode.InitCollection : ILCode.InitObject,
 					null, g);
@@ -375,7 +423,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 		}
-		
+
 		static void CleanupInitializerStackAfterFailedAdjustment(List<ILExpression> initializerStack)
 		{
 			// There might be empty nested initializers left over; so we'll remove those:
@@ -386,7 +434,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				initializerStack.RemoveAt(initializerStack.Count - 1);
 			}
 		}
-		
+
 		static void ChangeFirstArgumentToInitializedObject(ILExpression initializer)
 		{
 			// Go through all elements in the initializer (so skip the newobj-instr. at the start)

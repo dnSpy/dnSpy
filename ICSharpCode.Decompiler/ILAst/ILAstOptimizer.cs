@@ -46,6 +46,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		SimplifyLdObjAndStObj,
 		SimplifyCustomShortCircuit,
 		TransformArrayInitializers,
+		TransformMultidimensionalArrayInitializers,
 		TransformObjectInitializers,
 		MakeAssignmentExpression,
 		IntroducePostIncrement,
@@ -143,6 +144,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
 					modified |= block.RunOptimization(TransformArrayInitializers);
+
+					if (abortBeforeStep == ILAstOptimizationStep.TransformMultidimensionalArrayInitializers) return;
+					modified |= block.RunOptimization(TransformMultidimensionalArrayInitializers);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformObjectInitializers) return;
 					modified |= block.RunOptimization(TransformObjectInitializers);

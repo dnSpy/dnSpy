@@ -568,11 +568,13 @@ namespace ICSharpCode.Decompiler.ILAst
 						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Int32);
 					return new ArrayType((TypeReference)expr.Operand);
 				case ILCode.InitArray:
-					if (forceInferChildren) {
+					var operandAsArrayType = (ArrayType)expr.Operand;
+					if (forceInferChildren)
+					{
 						foreach (ILExpression arg in expr.Arguments)
-							InferTypeForExpression(arg, (TypeReference)expr.Operand);
+							InferTypeForExpression(arg, operandAsArrayType.ElementType);
 					}
-					return new ArrayType((TypeReference)expr.Operand);
+					return operandAsArrayType;
 				case ILCode.Ldlen:
 					return typeSystem.Int32;
 				case ILCode.Ldelem_U1:
