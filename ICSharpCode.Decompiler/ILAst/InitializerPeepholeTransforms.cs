@@ -120,25 +120,23 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		bool ForwardScanInitializeArrayRuntimeHelper(List<ILNode> body, int pos, ILVariable array, TypeReference arrayType, int arrayLength, out ILExpression[] values, out int foundPos)
 		{
-			for (; pos < body.Count; pos++) {
-				ILVariable v2;
-				MethodReference methodRef;
-				ILExpression methodArg1;
-				ILExpression methodArg2;
-				FieldDefinition field;
-				if (body.ElementAtOrDefault(pos).Match(ILCode.Call, out methodRef, out methodArg1, out methodArg2) &&
-					methodRef.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers" &&
-					methodRef.Name == "InitializeArray" &&
-					methodArg1.Match(ILCode.Ldloc, out v2) &&
-					array == v2 &&
-					methodArg2.Match(ILCode.Ldtoken, out field) &&
-					field != null && field.InitialValue != null) {
-					ILExpression[] newArr = new ILExpression[arrayLength];
-					if (DecodeArrayInitializer(TypeAnalysis.GetTypeCode(arrayType.GetElementType()), field.InitialValue, newArr)) {
-						values = newArr;
-						foundPos = pos;
-						return true;
-					}
+			ILVariable v2;
+			MethodReference methodRef;
+			ILExpression methodArg1;
+			ILExpression methodArg2;
+			FieldDefinition field;
+			if (body.ElementAtOrDefault(pos).Match(ILCode.Call, out methodRef, out methodArg1, out methodArg2) &&
+				methodRef.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers" &&
+				methodRef.Name == "InitializeArray" &&
+				methodArg1.Match(ILCode.Ldloc, out v2) &&
+				array == v2 &&
+				methodArg2.Match(ILCode.Ldtoken, out field) &&
+				field != null && field.InitialValue != null) {
+				ILExpression[] newArr = new ILExpression[arrayLength];
+				if (DecodeArrayInitializer(TypeAnalysis.GetTypeCode(arrayType.GetElementType()), field.InitialValue, newArr)) {
+					values = newArr;
+					foundPos = pos;
+					return true;
 				}
 			}
 			values = null;
