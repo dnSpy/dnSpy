@@ -32,5 +32,18 @@ namespace ICSharpCode.ILSpy.Controls
 			MaxHeight = MainWindow.Instance.mainPane.ActualHeight-100;
 			resourceListView.ItemsSource = strings;
 		}
+		
+		void ExecuteCopy(object sender, ExecutedRoutedEventArgs args)
+		{
+			if (resourceListView.SelectionMode == SelectionMode.Single)
+				return;
+			else if (resourceListView.SelectionMode == SelectionMode.Multiple)
+				return;
+		}
+		
+		void CanExecuteCopy(object sender, CanExecuteRoutedEventArgs args)
+		{
+			args.CanExecute = true;
+		}
 	}
 }
