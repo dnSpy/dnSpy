@@ -10,18 +10,18 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 {
 	internal class XmlBamlProperty : XmlBamlNode
 	{
-		private PropertyDeclaration propertyDeclaration;
-		private PropertyType propertyType;
-		private object value;
+		PropertyType propertyType;
 
-		public XmlBamlProperty(PropertyType propertyType)
+		public XmlBamlProperty(XmlBamlElement parent, PropertyType propertyType)
 		{
+			this.Parent = parent;
 			this.propertyType = propertyType;
 		}
 
-		public XmlBamlProperty(PropertyType propertyType, PropertyDeclaration propertyDeclaration)
+		public XmlBamlProperty(XmlBamlElement parent, PropertyType propertyType, PropertyDeclaration propertyDeclaration)
 		{
-			this.propertyDeclaration = propertyDeclaration;
+			this.Parent = parent;
+			this.PropertyDeclaration = propertyDeclaration;
 			this.propertyType = propertyType;
 		}
 
@@ -29,45 +29,19 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		{
 			return this.PropertyDeclaration.Name;
 		}
+		
+		public XmlBamlElement Parent { get; set; }
+		
+		public PropertyDeclaration PropertyDeclaration { get; set; }
 
-		public PropertyDeclaration PropertyDeclaration
-		{
-			get
-			{
-				return this.propertyDeclaration;
-			}
-			set
-			{
-				this.propertyDeclaration = value;
-			}
+		public PropertyType PropertyType {
+			get { return this.propertyType; }
 		}
 
-		public PropertyType PropertyType
-		{
-			get
-			{
-				return this.propertyType;
-			}
-		}
+		public object Value { get; set; }
 
-		public object Value
-		{
-			get
-			{
-				return this.value;
-			}
-			set
-			{
-				this.value = value;
-			}
-		}
-
-		public override XmlNodeType NodeType
-		{
-			get
-			{
-				return XmlNodeType.Attribute;
-			}
+		public override XmlNodeType NodeType {
+			get { return XmlNodeType.Attribute; }
 		}
 	}
 

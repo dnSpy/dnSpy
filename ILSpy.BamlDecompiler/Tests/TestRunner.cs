@@ -31,6 +31,37 @@ namespace ILSpy.BamlDecompiler.Tests
 			RunTest("cases/simpledictionary");
 		}
 		
+		[Test]
+		public void Resources()
+		{
+			RunTest("cases/resources");
+		}
+		
+		[Test]
+		public void SimpleNames()
+		{
+			RunTest("cases/simplenames");
+		}
+		
+		[Test]
+		public void AvalonDockBrushes()
+		{
+			RunTest("cases/avalondockbrushes");
+		}
+		
+		[Test]
+		public void AvalonDockCommon()
+		{
+			RunTest("cases/avalondockcommon");
+		}
+		
+		[Test]
+		public void AttachedEvent()
+		{
+			RunTest("cases/attachedevent");
+		}
+		
+		#region RunTest
 		void RunTest(string name)
 		{
 			string asmPath = typeof(TestRunner).Assembly.Location;
@@ -41,7 +72,7 @@ namespace ILSpy.BamlDecompiler.Tests
 			XDocument document = BamlResourceEntryNode.LoadIntoDocument(new DefaultAssemblyResolver(), assembly, bamlStream);
 			string path = Path.Combine("..\\..\\Tests", name + ".xaml");
 			
-			CodeAssert.AreEqual(document.ToString(), File.ReadAllText(path));
+			CodeAssert.AreEqual(File.ReadAllText(path), document.ToString());
 		}
 		
 		Stream LoadBaml(Resource res, string name)
@@ -69,5 +100,6 @@ namespace ILSpy.BamlDecompiler.Tests
 			
 			return null;
 		}
+		#endregion
 	}
 }

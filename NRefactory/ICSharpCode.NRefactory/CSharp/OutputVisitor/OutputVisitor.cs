@@ -838,6 +838,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public object VisitEmptyExpression (EmptyExpression emptyExpression, object data)
 		{
+			StartNode(emptyExpression);
 			return EndNode (emptyExpression);
 		}
 		#region VisitPrimitiveExpression

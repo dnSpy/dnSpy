@@ -117,7 +117,6 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
-    <Compile Include="ConnectMethodDecompiler.cs" />
     <Compile Include="Controls\DockedPane.cs" />
     <Compile Include="Commands\DecompileAllCommand.cs" />
     <Compile Include="Commands\ExportCommandAttribute.cs" />
@@ -173,7 +172,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\SimpleCommand.cs" />
-    <Compile Include="Commands\ShowAnalyzerCommand.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventTreeNode.cs" />

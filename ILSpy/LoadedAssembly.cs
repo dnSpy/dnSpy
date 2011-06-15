@@ -212,6 +212,10 @@ namespace ICSharpCode.ILSpy
 			return this.assemblyTask.ContinueWith(onAssemblyLoaded, taskScheduler);
 		}
 		
+		/// <summary>
+		/// Wait until the assembly is loaded.
+		/// Throws an AggregateException when loading the assembly fails.
+		/// </summary>
 		public void WaitUntilLoaded()
 		{
 			assemblyTask.Wait();

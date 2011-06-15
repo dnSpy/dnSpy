@@ -59,10 +59,29 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 			if (field.IsLiteral)
 				return Images.GetIcon(MemberIcon.Literal, GetOverlayIcon(field.Attributes), false);
-			else if (field.IsInitOnly)
-				return Images.GetIcon(MemberIcon.FieldReadOnly, GetOverlayIcon(field.Attributes), field.IsStatic);
-			else
+			else if (field.IsInitOnly) {
+				if (IsDecimalConstant(field))
+					return Images.GetIcon(MemberIcon.Literal, GetOverlayIcon(field.Attributes), false);
+				else
+					return Images.GetIcon(MemberIcon.FieldReadOnly, GetOverlayIcon(field.Attributes), field.IsStatic);
+			} else
 				return Images.GetIcon(MemberIcon.Field, GetOverlayIcon(field.Attributes), field.IsStatic);
+		}
+
+		private static bool IsDecimalConstant(Mono.Cecil.FieldDefinition field)
+		{
+			var fieldType = field.FieldType;
+			if (fieldType.Name == "Decimal" && fieldType.Namespace == "System") {
+				if (field.HasCustomAttributes) {
+					var attrs = field.CustomAttributes;
+					for (int i = 0; i < attrs.Count; i++) {
+						var attrType = attrs[i].AttributeType;
+						if (attrType.Name == "DecimalConstantAttribute" && attrType.Namespace == "System.Runtime.CompilerServices")
+							return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		private static AccessOverlayIcon GetOverlayIcon(FieldAttributes fieldAttributes)

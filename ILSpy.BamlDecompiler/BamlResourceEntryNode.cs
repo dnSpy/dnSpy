@@ -59,9 +59,20 @@ namespace ILSpy.BamlDecompiler
 			XDocument xamlDocument;
 			using (XmlBamlReader reader = new XmlBamlReader(stream, new CecilTypeResolver(resolver, asm)))
 				xamlDocument = XDocument.Load(reader);
+			ConvertConnectionIds(xamlDocument, asm);
 			ConvertToEmptyElements(xamlDocument.Root);
 			MoveNamespacesToRoot(xamlDocument);
 			return xamlDocument;
+		}
+
+		static void ConvertConnectionIds(XDocument xamlDocument, AssemblyDefinition asm)
+		{
+			var attr = xamlDocument.Root.Attribute(XName.Get("Class", XmlBamlReader.XWPFNamespace));
+			if (attr != null) {
+				string fullTypeName = attr.Value;
+				var mappings = new ConnectMethodDecompiler(asm).DecompileEventMappings(fullTypeName);
+				RemoveConnectionIds(xamlDocument.Root, mappings);
+			}
 		}
 
 		static void MoveNamespacesToRoot(XDocument xamlDocument)
@@ -97,6 +108,33 @@ namespace ILSpy.BamlDecompiler
 				}
 				ConvertToEmptyElements(el);
 			}
+		}
+		
+		static void RemoveConnectionIds(XElement element, Dictionary<int, EventRegistration[]> eventMappings)
+		{
+			foreach (var child in element.Elements())
+				RemoveConnectionIds(child, eventMappings);
+			
+			var removableAttrs = new List<XAttribute>();
+			var addableAttrs = new List<XAttribute>();
+			foreach (var attr in element.Attributes(XName.Get("ConnectionId", XmlBamlReader.XWPFNamespace))) {
+				int id;
+				if (int.TryParse(attr.Value, out id) && eventMappings.ContainsKey(id)) {
+					var map = eventMappings[id];
+					foreach (var entry in map) {
+						string xmlns = ""; // TODO : implement xmlns resolver!
+						if (entry.IsAttached) {
+							addableAttrs.Add(new XAttribute(xmlns + entry.AttachSourceType.Name + "." + entry.EventName, entry.MethodName));
+						} else {
+							addableAttrs.Add(new XAttribute(xmlns + entry.EventName, entry.MethodName));
+						}
+					}
+					removableAttrs.Add(attr);
+				}
+			}
+			foreach (var attr in removableAttrs)
+				attr.Remove();
+			element.Add(addableAttrs);
 		}
 	}
 }

@@ -46,6 +46,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		SimplifyLdObjAndStObj,
 		SimplifyCustomShortCircuit,
 		TransformArrayInitializers,
+		TransformMultidimensionalArrayInitializers,
 		TransformObjectInitializers,
 		MakeAssignmentExpression,
 		IntroducePostIncrement,
@@ -143,6 +144,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
 					modified |= block.RunOptimization(TransformArrayInitializers);
+
+					if (abortBeforeStep == ILAstOptimizationStep.TransformMultidimensionalArrayInitializers) return;
+					modified |= block.RunOptimization(TransformMultidimensionalArrayInitializers);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformObjectInitializers) return;
 					modified |= block.RunOptimization(TransformObjectInitializers);
@@ -738,9 +742,24 @@ namespace ICSharpCode.Decompiler.ILAst
 					// property getters can't be expression statements, but all other method calls can be
 					MethodReference mr = (MethodReference)expr.Operand;
 					return !mr.Name.StartsWith("get_", StringComparison.Ordinal);
+				case ILCode.CallSetter:
+				case ILCode.CallvirtSetter:
 				case ILCode.Newobj:
 				case ILCode.Newarr:
 				case ILCode.Stloc:
+				case ILCode.Stobj:
+				case ILCode.Stsfld:
+				case ILCode.Stfld:
+				case ILCode.Stind_Ref:
+				case ILCode.Stelem_Any:
+				case ILCode.Stelem_I:
+				case ILCode.Stelem_I1:
+				case ILCode.Stelem_I2:
+				case ILCode.Stelem_I4:
+				case ILCode.Stelem_I8:
+				case ILCode.Stelem_R4:
+				case ILCode.Stelem_R8:
+				case ILCode.Stelem_Ref:
 					return true;
 				default:
 					return false;

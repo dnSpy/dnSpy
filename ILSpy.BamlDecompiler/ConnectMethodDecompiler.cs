@@ -1,47 +1,34 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-// software and associated documentation files (the "Software"), to deal in the Software
-// without restriction, including without limitation the rights to use, copy, modify, merge,
-// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
-// to whom the Software is furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all copies or
-// substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// This code is distributed under the MS-PL (for details please see \doc\MS-PL.txt)
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 
-namespace ICSharpCode.ILSpy.Baml
+namespace ILSpy.BamlDecompiler
 {
-	[Serializable]
+	/// <summary>
+	/// Represents an event registration of a XAML code-behind class.
+	/// </summary>
 	sealed class EventRegistration
 	{
-		public string EventName, MethodName, AttachSourceType;
+		public string EventName, MethodName;
+		public TypeDefinition AttachSourceType;
 		public bool IsAttached;
 	}
 	
 	/// <summary>
-	/// Description of ConnectMethodDecompiler.
+	/// Decompiles event and name mappings of XAML code-behind classes.
 	/// </summary>
-	sealed class ConnectMethodDecompiler : MarshalByRefObject
+	sealed class ConnectMethodDecompiler
 	{
-		LoadedAssembly assembly;
+		AssemblyDefinition assembly;
 		
-		public ConnectMethodDecompiler(LoadedAssembly assembly)
+		public ConnectMethodDecompiler(AssemblyDefinition assembly)
 		{
 			this.assembly = assembly;
 		}
@@ -49,7 +36,7 @@ namespace ICSharpCode.ILSpy.Baml
 		public Dictionary<int, EventRegistration[]> DecompileEventMappings(string fullTypeName)
 		{
 			var result = new Dictionary<int, EventRegistration[]>();
-			TypeDefinition type = this.assembly.AssemblyDefinition.MainModule.GetType(fullTypeName);
+			TypeDefinition type = this.assembly.MainModule.GetType(fullTypeName);
 			
 			if (type == null)
 				return result;
@@ -98,7 +85,8 @@ namespace ICSharpCode.ILSpy.Baml
 			
 			foreach (var node in block.Body) {
 				var expr = node as ILExpression;
-				string eventName, handlerName, attachSource;
+				string eventName, handlerName;
+				TypeDefinition attachSource;
 				if (IsAddEvent(expr, out eventName, out handlerName))
 					events.Add(new EventRegistration {
 					           	EventName = eventName,
@@ -116,11 +104,11 @@ namespace ICSharpCode.ILSpy.Baml
 			return events.ToArray();
 		}
 		
-		bool IsAddAttachedEvent(ILExpression expr, out string eventName, out string handlerName, out string attachSource)
+		bool IsAddAttachedEvent(ILExpression expr, out string eventName, out string handlerName, out TypeDefinition attachSource)
 		{
 			eventName = "";
 			handlerName = "";
-			attachSource = "";
+			attachSource = null;
 			
 			if (expr == null || !(expr.Code == ILCode.Callvirt || expr.Code == ILCode.Call))
 				return false;
@@ -133,7 +121,7 @@ namespace ICSharpCode.ILSpy.Baml
 				if (arg.Code != ILCode.Ldsfld || arg.Arguments.Any() || !(arg.Operand is FieldReference))
 					return false;
 				FieldReference fldRef = (FieldReference)arg.Operand;
-				attachSource = GetAssemblyQualifiedName(fldRef.DeclaringType);
+				attachSource = fldRef.DeclaringType.Resolve();
 				eventName = fldRef.Name;
 				if (eventName.EndsWith("Event") && eventName.Length > "Event".Length)
 					eventName = eventName.Remove(eventName.Length - "Event".Length);
@@ -151,18 +139,6 @@ namespace ICSharpCode.ILSpy.Baml
 			}
 			
 			return false;
-		}
-		
-		string GetAssemblyQualifiedName(TypeReference declaringType)
-		{
-			string fullName = declaringType.FullName;
-			
-			if (declaringType.Scope is AssemblyNameReference)
-				fullName += ", " + ((AssemblyNameReference)declaringType.Scope).FullName;
-			else if (declaringType.Scope is ModuleDefinition)
-				fullName += ", " + ((ModuleDefinition)declaringType.Scope).Assembly.FullName;
-			
-			return fullName;
 		}
 		
 		bool IsAddEvent(ILExpression expr, out string eventName, out string handlerName)
@@ -191,22 +167,6 @@ namespace ICSharpCode.ILSpy.Baml
 			}
 			
 			return false;
-		}
-	}
-	
-	sealed class AssemblyResolver : MarshalByRefObject
-	{
-		LoadedAssembly assembly;
-		
-		public AssemblyResolver(LoadedAssembly assembly)
-		{
-			this.assembly = assembly;
-		}
-		
-		public string FindAssembly(string name)
-		{
-			var asm = assembly.LookupReferencedAssembly(name);
-			return asm == null ? null : asm.FileName;
 		}
 	}
 }
