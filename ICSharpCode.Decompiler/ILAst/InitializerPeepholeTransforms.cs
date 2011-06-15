@@ -32,7 +32,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		#region Array Initializers
 		bool TransformArrayInitializers(List<ILNode> body, ILExpression expr, int pos)
 		{
-			ILVariable v, v2, v3;
+			ILVariable v, v3;
 			ILExpression newarrExpr;
 			TypeReference elementType;
 			ILExpression lengthExpr;
@@ -87,7 +87,7 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		bool TransformMultidimensionalArrayInitializers(List<ILNode> body, ILExpression expr, int pos)
 		{
-			ILVariable v, v2, v3;
+			ILVariable v;
 			ILExpression newarrExpr;
 			MethodReference ctor;
 			List<ILExpression> ctorArgs;
