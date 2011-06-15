@@ -1,0 +1,53 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ad="clr-namespace:AvalonDock">
+	<SolidColorBrush x:Key="ManagedContentTabControlNormalBorderBrush" Color="#919B9C" />
+	<SolidColorBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.DefaultBackgroundBrush}}" Color="#FFF4F2E8" />
+	<LinearGradientBrush x:Key="ManagedContentTabItemNormalBackground" StartPoint="0,0" EndPoint="0,1">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Color="#FFECEBE6" Offset="0" />
+			<GradientStop Color="#FFFFFFFF" Offset="1" />
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+	<LinearGradientBrush x:Key="ManagedContentTabItemInvNormalBackground" StartPoint="0,0" EndPoint="0,1">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Color="#FFFFFFFF" Offset="0" />
+			<GradientStop Color="#FFECEBE6" Offset="1" />
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+	<LinearGradientBrush x:Key="ManagedContentTabItemHotBackground" StartPoint="0,0" EndPoint="0,1">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Color="#FFFFFFFF" Offset="0" />
+			<GradientStop Color="#FFECEBE6" Offset="1" />
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+	<SolidColorBrush x:Key="ManagedContentTabItemSelectedBackground" Color="#FFFCFCFE" />
+	<SolidColorBrush x:Key="ManagedContentTabItemDisabledBackground" Color="#FFF5F4EA" />
+	<LinearGradientBrush x:Key="ManagedContentTabItemSelectedBorderBackround" StartPoint="0,0" EndPoint="0,1">
+		<GradientStop Color="#FFFFC73C" Offset="0" />
+		<GradientStop Color="#FFE68B2C" Offset="1" />
+	</LinearGradientBrush>
+	<SolidColorBrush x:Key="ManagedContentTabItemSelectedBorderBrush" Color="#FFE68B2C" />
+	<SolidColorBrush x:Key="ManagedContentTabItemHotBorderBackround" Color="#FFFFC73C" />
+	<SolidColorBrush x:Key="ManagedContentTabItemHotBorderBrush" Color="#FFE68B2C" />
+	<SolidColorBrush x:Key="ManagedContentTabItemDisabledBorderBrush" Color="#FFC9C7BA" />
+	<LinearGradientBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.DockablePaneTitleBackgroundSelected}}" StartPoint="0,0" EndPoint="0,1">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Color="#FF3B80ED" Offset="0" />
+			<GradientStop Color="#FF316AC5" Offset="1" />
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+	<SolidColorBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.DockablePaneTitleBackground}}" Color="#FFCCC5BA" />
+	<SolidColorBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.DockablePaneTitleForeground}}" Color="Black" />
+	<SolidColorBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.DockablePaneTitleForegroundSelected}}" Color="White" />
+	<SolidColorBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.PaneHeaderCommandBackground}}" Color="{x:Static SystemColors.ControlLightLightColor}" Opacity="0.5" />
+	<SolidColorBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.PaneHeaderCommandBorderBrush}}" Color="{x:Static SystemColors.ControlDarkColor}" />
+	<LinearGradientBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.DocumentHeaderBackground}}" StartPoint="0,0" EndPoint="0,1">
+		<GradientStop Color="#FFFFFFFF" Offset="0" />
+		<GradientStop Color="#FFE0E0E0" Offset="1" />
+	</LinearGradientBrush>
+	<SolidColorBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.DocumentHeaderForeground}}" Color="{x:Static SystemColors.WindowTextColor}" />
+	<LinearGradientBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.DocumentHeaderBackgroundSelected}}" StartPoint="0,0" EndPoint="0,1">
+		<GradientStop Color="#FFFFFFFF" Offset="0" />
+		<GradientStop Color="#FFC1D2EE" Offset="1" />
+	</LinearGradientBrush>
+	<SolidColorBrush x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:AvalonDockBrushes.DocumentHeaderBackgroundMouseOver}}" Color="White" />
+</ResourceDictionary>

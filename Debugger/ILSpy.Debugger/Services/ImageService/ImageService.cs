@@ -27,7 +27,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		static BitmapImage LoadBitmap(string name)
 		{
 			try {
-				BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/ILSpy.Debugger;component/Images/" + name + ".png"));
+				BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/ILSpy.Debugger.Plugin;component/Images/" + name + ".png"));
 				if (image == null)
 					return null;
 				image.Freeze();

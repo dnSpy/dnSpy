@@ -568,11 +568,13 @@ namespace ICSharpCode.Decompiler.ILAst
 						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Int32);
 					return new ArrayType((TypeReference)expr.Operand);
 				case ILCode.InitArray:
-					if (forceInferChildren) {
+					var operandAsArrayType = (ArrayType)expr.Operand;
+					if (forceInferChildren)
+					{
 						foreach (ILExpression arg in expr.Arguments)
-							InferTypeForExpression(arg, (TypeReference)expr.Operand);
+							InferTypeForExpression(arg, operandAsArrayType.ElementType);
 					}
-					return new ArrayType((TypeReference)expr.Operand);
+					return operandAsArrayType;
 				case ILCode.Ldlen:
 					return typeSystem.Int32;
 				case ILCode.Ldelem_U1:
@@ -955,7 +957,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (type == null)
 				return 0;
-			if (type.IsValueType) {
+			if (type.IsValueType && !IsArrayPointerOrReference(type)) {
 				// value type might be an enum
 				TypeDefinition typeDef = type.Resolve() as TypeDefinition;
 				if (typeDef != null && typeDef.IsEnum) {
@@ -1003,7 +1005,9 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		public static bool IsEnum(TypeReference type)
 		{
-			if (type == null)
+			// Arrays/Pointers/ByReference resolve to their element type, but we don't want to consider those to be enums
+			// However, GenericInstanceTypes, ModOpts etc. should be considered enums.
+			if (type == null || IsArrayPointerOrReference(type))
 				return false;
 			// unfortunately we cannot rely on type.IsValueType here - it's not set when the instruction operand is a typeref (as opposed to a typespec)
 			TypeDefinition typeDef = type.Resolve() as TypeDefinition;
@@ -1012,7 +1016,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		static bool? IsSigned(TypeReference type)
 		{
-			if (type == null)
+			if (type == null || IsArrayPointerOrReference(type))
 				return null;
 			// unfortunately we cannot rely on type.IsValueType here - it's not set when the instruction operand is a typeref (as opposed to a typespec)
 			TypeDefinition typeDef = type.Resolve() as TypeDefinition;
@@ -1037,6 +1041,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				default:
 					return null;
 			}
+		}
+		
+		static bool IsArrayPointerOrReference(TypeReference type)
+		{
+			TypeSpecification typeSpec = type as TypeSpecification;
+			while (typeSpec != null) {
+				if (typeSpec is ArrayType || typeSpec is PointerType || typeSpec is ByReferenceType)
+					return true;
+				typeSpec = typeSpec.ElementType as TypeSpecification;
+			}
+			return false;
 		}
 		
 		public static TypeCode GetTypeCode(TypeReference type)

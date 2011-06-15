@@ -1,0 +1,16 @@
+﻿<Window x:Class="ILSpy.BamlDecompiler.Tests.Cases.Resources" Title="ILSpy.BamlDecompiler.Tests.Cases" Height="300" Width="300" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Grid>
+		<Canvas>
+			<Canvas.Resources>
+				<ResourceDictionary>
+					<BooleanToVisibilityConverter x:Key="b" />
+				</ResourceDictionary>
+			</Canvas.Resources>
+		</Canvas>
+		<Canvas>
+			<Canvas.Resources>
+				<BooleanToVisibilityConverter x:Key="b" />
+			</Canvas.Resources>
+		</Canvas>
+	</Grid>
+</Window>

@@ -706,6 +706,8 @@ namespace ICSharpCode.ILSpy
 		
 		public void SetStatus(string status, Brush foreground)
 		{
+			if (this.statusBar.Visibility == Visibility.Collapsed)
+				this.statusBar.Visibility = Visibility.Visible;
 			this.StatusLabel.Foreground = foreground;
 			this.StatusLabel.Text = status;
 		}

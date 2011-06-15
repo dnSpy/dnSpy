@@ -78,12 +78,12 @@
 			          SelectedItem="{Binding FilterSettings.Language}"/>
 		</ToolBar>
 		<!-- Status bar -->
-		<StatusBar x:Name="statusBar" DockPanel.Dock="Bottom" Height="26">
+		<StatusBar x:Name="statusBar" DockPanel.Dock="Bottom" Height="26" Visibility="Collapsed">
 			<StatusBarItem DockPanel.Dock="Right">
 				<TextBlock VerticalAlignment="Center"
 				           HorizontalAlignment="Right"				           
 				           x:Name="StatusLabel"
-				           ToolTip="Debugger status"
+				           ToolTip="Status"
 				           Text="Stand by..."/>
 			</StatusBarItem>
 		</StatusBar>
