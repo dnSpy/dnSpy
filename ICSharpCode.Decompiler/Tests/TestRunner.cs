@@ -142,6 +142,12 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\YieldReturn.cs");
 		}
 		
+		[Test]
+		public void TypeAnalysis()
+		{
+			TestFile(@"..\..\Tests\TypeAnalysisTests.cs");
+		}
+		
 		static void TestFile(string fileName)
 		{
 			string code = File.ReadAllText(fileName);

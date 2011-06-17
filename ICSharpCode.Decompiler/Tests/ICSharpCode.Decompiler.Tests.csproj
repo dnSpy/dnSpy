@@ -63,6 +63,7 @@
     <Compile Include="PInvoke.cs" />
     <Compile Include="QueryExpressions.cs" />
     <Compile Include="Switch.cs" />
+    <Compile Include="TypeAnalysisTests.cs" />
     <Compile Include="UndocumentedExpressions.cs" />
     <Compile Include="UnsafeCode.cs" />
     <Compile Include="Types\S_TypeDeclarations.cs" />

@@ -93,9 +93,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			List<ILExpression> ctorArgs;
 			ArrayType arrayType;
 			if (expr.Match(ILCode.Stloc, out v, out newarrExpr) &&
-				newarrExpr.Match(ILCode.Newobj, out ctor, out ctorArgs) &&
-				(arrayType = (ctor.DeclaringType as ArrayType)) != null &&
-				arrayType.Rank == ctorArgs.Count) {
+			    newarrExpr.Match(ILCode.Newobj, out ctor, out ctorArgs) &&
+			    (arrayType = (ctor.DeclaringType as ArrayType)) != null &&
+			    arrayType.Rank == ctorArgs.Count) {
 				// Clone the type, so we can muck about with the Dimensions
 				arrayType = new ArrayType(arrayType.ElementType, arrayType.Rank);
 				var arrayLengths = new int[arrayType.Rank];
@@ -126,12 +126,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression methodArg2;
 			FieldDefinition field;
 			if (body.ElementAtOrDefault(pos).Match(ILCode.Call, out methodRef, out methodArg1, out methodArg2) &&
-				methodRef.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers" &&
-				methodRef.Name == "InitializeArray" &&
-				methodArg1.Match(ILCode.Ldloc, out v2) &&
-				array == v2 &&
-				methodArg2.Match(ILCode.Ldtoken, out field) &&
-				field != null && field.InitialValue != null) {
+			    methodRef.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers" &&
+			    methodRef.Name == "InitializeArray" &&
+			    methodArg1.Match(ILCode.Ldloc, out v2) &&
+			    array == v2 &&
+			    methodArg2.Match(ILCode.Ldtoken, out field) &&
+			    field != null && field.InitialValue != null) {
 				ILExpression[] newArr = new ILExpression[arrayLength];
 				if (DecodeArrayInitializer(TypeAnalysis.GetTypeCode(arrayType.GetElementType()), field.InitialValue, newArr)) {
 					values = newArr;
@@ -148,7 +148,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			switch (elementType) {
 				case TypeCode.Boolean:
-				case TypeCode.SByte:
 				case TypeCode.Byte:
 					if (initialValue.Length == output.Length) {
 						for (int j = 0; j < output.Length; j++) {
@@ -157,12 +156,27 @@ namespace ICSharpCode.Decompiler.ILAst
 						return true;
 					}
 					return false;
-				case TypeCode.Char:
+				case TypeCode.SByte:
+					if (initialValue.Length == output.Length) {
+						for (int j = 0; j < output.Length; j++) {
+							output[j] = new ILExpression(ILCode.Ldc_I4, (int)unchecked((sbyte)initialValue[j]));
+						}
+						return true;
+					}
+					return false;
 				case TypeCode.Int16:
-				case TypeCode.UInt16:
 					if (initialValue.Length == output.Length * 2) {
 						for (int j = 0; j < output.Length; j++) {
 							output[j] = new ILExpression(ILCode.Ldc_I4, (int)BitConverter.ToInt16(initialValue, j * 2));
+						}
+						return true;
+					}
+					return false;
+				case TypeCode.Char:
+				case TypeCode.UInt16:
+					if (initialValue.Length == output.Length * 2) {
+						for (int j = 0; j < output.Length; j++) {
+							output[j] = new ILExpression(ILCode.Ldc_I4, (int)BitConverter.ToUInt16(initialValue, j * 2));
 						}
 						return true;
 					}
