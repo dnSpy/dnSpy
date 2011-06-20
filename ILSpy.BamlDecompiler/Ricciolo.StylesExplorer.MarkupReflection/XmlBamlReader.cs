@@ -112,11 +112,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		public const string XWPFNamespace = "http://schemas.microsoft.com/winfx/2006/xaml";
 		public const string DefaultWPFNamespace = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
 
-		public XmlBamlReader(Stream stream) : this (stream, AppDomainTypeResolver.GetIntoNewAppDomain(Environment.CurrentDirectory))
-		{
-			
-		}
-
 		public XmlBamlReader(Stream stream, ITypeResolver resolver)
 		{
 			if (stream == null)
