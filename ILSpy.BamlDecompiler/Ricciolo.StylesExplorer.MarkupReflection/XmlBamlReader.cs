@@ -76,13 +76,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		List<KeyMapping> keys = new List<KeyMapping>();
 		
 		KeyMapping LastKey {
-			get {
-				KeyMapping last = keys.LastOrDefault();
-				if (last == null)
-					keys.Add(last = new KeyMapping());
-				
-				return last;
-			}
+			get { return keys.LastOrDefault(); }
 		}
 		
 		void LayerPop()
@@ -398,6 +392,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					break;
 				case BamlRecordType.DeferableContentStart:
 					Current.IsDeferred = true;
+					keys = new List<KeyMapping>();
+					currentKey = 0;
 					reader.ReadInt32();
 					break;
 				case BamlRecordType.DefAttribute:
@@ -1033,6 +1029,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		void ReadElementEnd()
 		{
 			CloseElement();
+			if (Current.IsDeferred)
+				keys = null;
 			LayerPop();
 		}
 
@@ -1600,26 +1598,18 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			return this.assemblyTable[identifier];
 		}
 
-		XmlBamlNode CurrentNode
-		{
-			get
-			{
-				return _currentNode;
-			}
+		XmlBamlNode CurrentNode {
+			get { return _currentNode; }
 		}
 
 		///<summary>
 		///When overridden in a derived class, gets the namespace URI (as defined in the W3C Namespace specification) of the node on which the reader is positioned.
 		///</summary>
-		///
 		///<returns>
 		///The namespace URI of the current node; otherwise an empty string.
 		///</returns>
-		///
-		public override string NamespaceURI
-		{
-			get
-			{
+		public override string NamespaceURI {
+			get {
 				if (intoAttribute) return String.Empty;
 
 				TypeDeclaration declaration;
@@ -1657,11 +1647,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets the namespace prefix associated with the current node.
 		///</summary>
-		///
 		///<returns>
 		///The namespace prefix associated with the current node.
 		///</returns>
-		///
 		public override string Prefix
 		{
 			get
@@ -1675,11 +1663,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets a value indicating whether the current node can have a <see cref="P:System.Xml.XmlReader.Value"></see>.
 		///</summary>
-		///
 		///<returns>
 		///true if the node on which the reader is currently positioned can have a Value; otherwise, false. If false, the node has a value of String.Empty.
 		///</returns>
-		///
 		public override bool HasValue
 		{
 			get { return this.Value != null; }
@@ -1696,11 +1682,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets the text value of the current node.
 		///</summary>
-		///
 		///<returns>
 		///The value returned depends on the <see cref="P:System.Xml.XmlReader.NodeType"></see> of the node. The following table lists node types that have a value to return. All other node types return String.Empty.Node type Value AttributeThe value of the attribute. CDATAThe content of the CDATA section. CommentThe content of the comment. DocumentTypeThe internal subset. ProcessingInstructionThe entire content, excluding the target. SignificantWhitespaceThe white space between markup in a mixed content model. TextThe content of the text node. WhitespaceThe white space between markup. XmlDeclarationThe content of the declaration.
 		///</returns>
-		///
 		public override string Value
 		{
 			get
@@ -1730,11 +1714,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets the depth of the current node in the XML document.
 		///</summary>
-		///
 		///<returns>
 		///The depth of the current node in the XML document.
 		///</returns>
-		///
 		public override int Depth
 		{
 			get { return this.readingElements.Count; }
@@ -1743,11 +1725,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets the base URI of the current node.
 		///</summary>
-		///
 		///<returns>
 		///The base URI of the current node.
 		///</returns>
-		///
 		public override string BaseURI
 		{
 			get { return String.Empty; }
@@ -1756,62 +1736,42 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets a value indicating whether the current node is an empty element (for example, &lt;MyElement/&gt;).
 		///</summary>
-		///
 		///<returns>
 		///true if the current node is an element (<see cref="P:System.Xml.XmlReader.NodeType"></see> equals XmlNodeType.Element) that ends with /&gt;; otherwise, false.
 		///</returns>
-		///
 		public override bool IsEmptyElement
 		{
 			get { return false; }
 		}
 
-		//public override bool IsDefault
-		//{
-		//    get
-		//    {
-		//        return this.NamespaceURI == null;
-		//    }
-		//}
-
 		///<summary>
 		///When overridden in a derived class, gets the number of attributes on the current node.
 		///</summary>
-		///
 		///<returns>
 		///The number of attributes on the current node.
 		///</returns>
-		///
-		public override int AttributeCount
-		{
+		public override int AttributeCount {
 			get { throw new NotImplementedException(); }
 		}
 
 		///<summary>
 		///When overridden in a derived class, gets a value indicating whether the reader is positioned at the end of the stream.
 		///</summary>
-		///
 		///<returns>
 		///true if the reader is positioned at the end of the stream; otherwise, false.
 		///</returns>
-		///
-		public override bool EOF
-		{
+		public override bool EOF {
 			get { return _eof; }
 		}
 
 		///<summary>
 		///When overridden in a derived class, gets the state of the reader.
 		///</summary>
-		///
 		///<returns>
 		///One of the <see cref="T:System.Xml.ReadState"></see> values.
 		///</returns>
-		///
-		public override ReadState ReadState
-		{
-			get
-			{
+		public override ReadState ReadState {
+			get {
 				if (!initialized)
 					return ReadState.Initial;
 				else if (reader == null)
@@ -1831,11 +1791,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets the <see cref="T:System.Xml.XmlNameTable"></see> associated with this implementation.
 		///</summary>
-		///
 		///<returns>
 		///The XmlNameTable enabling you to get the atomized version of a string within the node.
 		///</returns>
-		///
 		public override XmlNameTable NameTable
 		{
 			get { return _nameTable; }
