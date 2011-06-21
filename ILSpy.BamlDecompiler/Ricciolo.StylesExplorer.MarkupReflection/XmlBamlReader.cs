@@ -334,7 +334,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			else
 				currentType = (BamlRecordType)type;
 			
+			if (currentType.ToString().EndsWith("End"))
+				Debug.Unindent();
 			Debug.WriteLine(string.Format("{0} (0x{0:x})", currentType));
+			if (currentType.ToString().EndsWith("Start"))
+				Debug.Indent();
 		}
 
 		bool SetNextNode()
@@ -684,13 +688,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		object GetResourceName(short identifier)
 		{
-			if (identifier >= 0)
-			{
+			if (identifier >= 0) {
 				PropertyDeclaration declaration = this.propertyTable[identifier];
 				return declaration;
-			}
-			else
-			{
+			} else {
 				identifier = (short)-identifier;
 				bool isNotKey = (identifier > 0xe8);
 				if (isNotKey)
@@ -1404,27 +1405,28 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		void ReadOptimizedStaticResource()
 		{
-			byte num = reader.ReadByte();
+			byte flags = reader.ReadByte();
 			short typeIdentifier = reader.ReadInt16();
-			bool isValueType = (num & 1) == 1;
-			bool isStaticType = (num & 2) == 2;
+			bool isValueType = (flags & 1) == 1;
+			bool isStaticType = (flags & 2) == 2;
 			object resource;
 
 			if (isValueType)
-				resource = this.GetTypeExtension(typeIdentifier);
-			else if (isStaticType)
-			{
-				ResourceName resourceName = (ResourceName)this.GetResourceName(typeIdentifier);
-				resource = GetStaticExtension(resourceName.Name);
-			}
-			else
-			{
+				resource = GetTypeExtension(typeIdentifier);
+			else if (isStaticType) {
+				object name = GetResourceName(typeIdentifier);
+				if (name is ResourceName)
+					resource = GetStaticExtension(((ResourceName)name).Name);
+				else if (name is PropertyDeclaration)
+					resource = GetStaticExtension(FormatPropertyDeclaration(((PropertyDeclaration)name), true, false, false));
+				else
+					throw new InvalidOperationException("Invalid resource: " + name.GetType());
+			} else {
 				resource = this.stringTable[typeIdentifier];
 			}
 
 			//this.staticResourceTable.Add(resource);
 			isPartialDefKeysClosed = true;
-			// Aggiungo la risorsa nell'ultimo gruppo
 			LastKey.StaticResources.Add(resource);
 		}
 
