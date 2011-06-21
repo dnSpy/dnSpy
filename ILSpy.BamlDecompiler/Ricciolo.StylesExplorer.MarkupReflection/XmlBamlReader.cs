@@ -41,9 +41,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		bool intoAttribute = false;
 		bool initialized;
 		bool _eof;
-
-		bool isPartialDefKeysClosed = true;
-		bool isDefKeysClosed = true;
 		
 		#region Context
 		Stack<ReaderContext> layer = new Stack<ReaderContext>();
@@ -994,6 +991,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			bool sharedSet = reader.ReadBoolean();
 			
 			string text = this.stringTable[stringId];
+			Debug.Print("KeyString: " + text);
 			if (text == null)
 				throw new NotSupportedException();
 
@@ -1425,8 +1423,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				resource = this.stringTable[typeIdentifier];
 			}
 
-			//this.staticResourceTable.Add(resource);
-			isPartialDefKeysClosed = true;
 			LastKey.StaticResources.Add(resource);
 		}
 
@@ -1508,11 +1504,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		void ReadPropertyWithStaticResourceIdentifier()
 		{
-			short identifier = reader.ReadInt16();
-			short staticIdentifier = reader.ReadInt16();
+			short propertyId = reader.ReadInt16();
+			short index = reader.ReadInt16();
 
-			PropertyDeclaration pd = this.GetPropertyDeclaration(identifier);
-			object staticResource = GetStaticResource(staticIdentifier);
+			PropertyDeclaration pd = this.GetPropertyDeclaration(propertyId);
+			object staticResource = GetStaticResource(index);
 
 			string prefix = this.LookupPrefix(XmlPIMapping.PresentationNamespace, false);
 			string value = String.Format("{{{0}{1}StaticResource {2}}}", prefix, (String.IsNullOrEmpty(prefix)) ? String.Empty : ":", staticResource);
@@ -1525,8 +1521,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		object GetStaticResource(short identifier)
 		{
-			if (identifier < LastKey.StaticResources.Count)
-				return LastKey.StaticResources[(int)identifier];
+			if (identifier < keys[currentKey - 1].StaticResources.Count)
+				return keys[currentKey - 1].StaticResources[(int)identifier];
 
 //			return "???" + identifier  +"???";
 			throw new ArgumentException("Cannot find StaticResource", "identifier");
