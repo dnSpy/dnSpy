@@ -52,7 +52,7 @@ namespace ILSpy.BamlDecompiler
 				var otherAssembly = resolver.Resolve(assemblyName);
 				if (otherAssembly == null)
 					throw new Exception("could not resolve '" + assemblyName + "'!");
-				type = otherAssembly.MainModule.GetType(fullName);
+				type = otherAssembly.MainModule.GetType(fullName.Replace('+', '/'));
 			}
 			
 			return new CecilType(type);

@@ -127,7 +127,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			KnownTypeTable[0x4e] = new TypeDeclaration(resolver, "CollectionContainer", "System.Windows.Data", 0);
 			KnownTypeTable[0x4f] = new TypeDeclaration(resolver, "CollectionView", "System.Windows.Data", 0);
 			KnownTypeTable[80] = new TypeDeclaration(resolver, "CollectionViewSource", "System.Windows.Data", 0);
-			KnownTypeTable[0x51] = new TypeDeclaration(resolver, "Color", "Microsoft.Win32", 2);
+			KnownTypeTable[0x51] = new TypeDeclaration(resolver, "Color", "Win32Native", "Microsoft.Win32", 2);
 			KnownTypeTable[0x52] = new TypeDeclaration(resolver, "ColorAnimation", "System.Windows.Media.Animation", 1);
 			KnownTypeTable[0x53] = new TypeDeclaration(resolver, "ColorAnimationBase", "System.Windows.Media.Animation", 1);
 			KnownTypeTable[0x54] = new TypeDeclaration(resolver, "ColorAnimationUsingKeyFrames", "System.Windows.Media.Animation", 1);

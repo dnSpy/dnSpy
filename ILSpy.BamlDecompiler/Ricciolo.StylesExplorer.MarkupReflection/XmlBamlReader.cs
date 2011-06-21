@@ -632,9 +632,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		{
 			get
 			{
-				if (intoAttribute) return String.Empty;
+				if (intoAttribute) return string.Empty;
 
-				String localName = String.Empty;
+				String localName = string.Empty;
 
 				XmlBamlNode node = this.CurrentNode;
 				if (node is XmlBamlSimpleProperty) {
@@ -1226,7 +1226,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				nodes.Enqueue(element);
 			
 			if (oldDeclaration != null) {
-				nodes.Enqueue(new XmlBamlSimpleProperty(XWPFNamespace, "Class", string.Format("{0}.{1}", oldDeclaration.Namespace, oldDeclaration.Name)));
+				nodes.Enqueue(new XmlBamlSimpleProperty(XWPFNamespace, "Class", oldDeclaration.FullyQualifiedName.Replace('+', '.')));
 			}
 
 			if (parentElement != null && complexPropertyOpened == 0 && !Current.IsInStaticResource && Current.Previous.IsDeferred) {
@@ -1590,7 +1590,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		TypeDeclaration GetKnownTypeDeclarationByName(string name)
 		{
 			foreach (var type in KnownInfo.KnownTypeTable) {
-				if (name == string.Format("{0}.{1}, {2}", type.Namespace, type.Name, type.Assembly))
+				if (name == type.AssemblyQualifiedName)
 					return type;
 			}
 			

@@ -23,8 +23,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			this.Namespaces.AddRange(parent.Namespaces);
 		}
 
-		public XmlNamespaceCollection Namespaces
-		{
+		public XmlNamespaceCollection Namespaces {
 			get { return _namespaces; }
 		}
 		
@@ -42,11 +41,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		public override string ToString()
 		{
-			return String.Format("Element: {0}", TypeDeclaration.Name);
+			return string.Format("Element: {0}", TypeDeclaration.Name);
 		}
 	}
 
-	internal class XmlBamlEndElement : XmlBamlElement
+	class XmlBamlEndElement : XmlBamlElement
 	{
 		public XmlBamlEndElement(XmlBamlElement start)
 		{
@@ -54,19 +53,13 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			this.Namespaces.AddRange(start.Namespaces);
 		}
 
-		public override XmlNodeType NodeType
-		{
-			get
-			{
-				return XmlNodeType.EndElement;
-			}
+		public override XmlNodeType NodeType {
+			get { return XmlNodeType.EndElement; }
 		}
 
 		public override string ToString()
 		{
-			return String.Format("EndElement: {0}", TypeDeclaration.Name);
+			return string.Format("EndElement: {0}", TypeDeclaration.Name);
 		}
 	}
-
-
 }

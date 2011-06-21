@@ -41,7 +41,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		public override string ToString()
 		{
-			return String.Format("PropertyElement: {0}.{1}", TypeDeclaration.Name, PropertyDeclaration.Name);
+			return String.Format("PropertyElement: {0}.{1}", TypeDeclaration.Name.Replace('+', '.'), PropertyDeclaration.Name);
 		}
 	}
 }
