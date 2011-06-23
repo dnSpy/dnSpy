@@ -1590,7 +1590,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					return type;
 			}
 			
-			throw new NotSupportedException();
+			throw new NotSupportedException("Type '" + name + "' not found!");
 		}
 
 		internal string GetAssembly(short identifier)
