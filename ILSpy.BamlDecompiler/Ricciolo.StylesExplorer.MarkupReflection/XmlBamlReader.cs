@@ -1334,9 +1334,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 			CloseElement();
 			complexPropertyOpened--;
-			if (complexPropertyOpened == 0)
-			{
-
+			if (complexPropertyOpened == 0) {
 				int start = nodes.IndexOf(propertyElement);
 
 				StringBuilder sb = new StringBuilder();
@@ -1465,8 +1463,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				return String.Format("{0}:{1}", prefix, name);
 		}
 
-
-
 		string FormatPropertyDeclaration(PropertyDeclaration propertyDeclaration, bool withPrefix, bool useReading, bool checkType)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -1522,7 +1518,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			if (identifier < keys[currentKey - 1].StaticResources.Count)
 				return keys[currentKey - 1].StaticResources[(int)identifier];
 
-//			return "???" + identifier  +"???";
+//			return "???" + identifier + "???";
 			throw new ArgumentException("Cannot find StaticResource", "identifier");
 		}
 
@@ -1886,61 +1882,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			Integer = 4,
 			Unknown = 0,
 			UShort = 3
-		}
-
-		#endregion
-
-		#region NodesCollection
-
-		internal class NodesCollection : List<XmlBamlNode>
-		{
-			public XmlBamlNode Last
-			{
-				get
-				{
-					if (this.Count > 0)
-					{
-						int i = this.Count - 1;
-						return this[i];
-					}
-					return null;
-				}
-			}
-
-			public void RemoveLast()
-			{
-				if (this.Count > 0)
-					this.Remove(this.Last);
-			}
-
-			public XmlBamlNode Dequeue()
-			{
-				return DequeueInternal(true);
-			}
-
-			public XmlBamlNode Peek()
-			{
-				return DequeueInternal(false);
-			}
-
-			XmlBamlNode DequeueInternal(bool remove)
-			{
-				if (this.Count > 0)
-				{
-					XmlBamlNode node = this[0];
-					if (remove)
-						this.RemoveAt(0);
-					return node;
-				}
-				else
-					return null;
-			}
-
-
-			public void Enqueue(XmlBamlNode node)
-			{
-				this.Add(node);
-			}
 		}
 
 		#endregion
