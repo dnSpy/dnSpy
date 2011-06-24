@@ -1087,12 +1087,12 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			// this property could be a markup extension
 			// try to convert it
 			int start = nodes.IndexOf(propertyElement) + 1;
-			IEnumerator enumerator = nodes.GetEnumerator();
+			IEnumerator<XmlBamlNode> enumerator = nodes.GetEnumerator();
 			
 			// move enumerator to the start of this property value
 			for (int i = 0; i < start && enumerator.MoveNext(); i++) ;
 
-			if (IsExtension(enumerator)) {
+			if (IsExtension(enumerator) && start < nodes.Count - 1) {
 				start--;
 				nodes.RemoveAt(start);
 				nodes.RemoveLast();
@@ -1165,11 +1165,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			}
 		}
 
-		bool IsExtension(IEnumerator enumerator)
+		bool IsExtension(IEnumerator<XmlBamlNode> enumerator)
 		{
 			while (enumerator.MoveNext()) {
-				object node = enumerator.Current;
-				if (node is XmlBamlElement && !(node is XmlBamlEndElement) && !((XmlBamlElement)node).TypeDeclaration.IsExtension)
+				var node = enumerator.Current;
+				if (node.NodeType == XmlNodeType.Element && !((XmlBamlElement)node).TypeDeclaration.IsExtension)
 					return false;
 			}
 
