@@ -515,14 +515,20 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Rem_Un:
 					return InferArgumentsInBinaryOperator(expr, false, expectedType);
 				case ILCode.Shl:
-				case ILCode.Shr:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
-					return InferTypeForExpression(expr.Arguments[0], typeSystem.Int32);
+					if (expectedType != null && (
+						expectedType.MetadataType == MetadataType.Int32 || expectedType.MetadataType == MetadataType.UInt32 ||
+						expectedType.MetadataType == MetadataType.Int64 || expectedType.MetadataType == MetadataType.UInt64)
+					   )
+						return NumericPromotion(InferTypeForExpression(expr.Arguments[0], expectedType));
+					else
+						return NumericPromotion(InferTypeForExpression(expr.Arguments[0], null));
+				case ILCode.Shr:
 				case ILCode.Shr_Un:
 					if (forceInferChildren)
 						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
-					return InferTypeForExpression(expr.Arguments[0], typeSystem.UInt32);
+					return NumericPromotion(InferTypeForExpression(expr.Arguments[0], null));
 				case ILCode.CompoundAssignment:
 					{
 						TypeReference varType = InferTypeForExpression(expr.Arguments[0].Arguments[0], null);
@@ -760,6 +766,27 @@ namespace ICSharpCode.Decompiler.ILAst
 				default:
 					Debug.WriteLine("Type Inference: Can't handle " + expr.Code.GetName());
 					return null;
+			}
+		}
+		
+		/// <summary>
+		/// Promotes primitive types smaller than int32 to int32.
+		/// </summary>
+		/// <remarks>
+		/// Always promotes to signed int32.
+		/// </remarks>
+		TypeReference NumericPromotion(TypeReference type)
+		{
+			if (type == null)
+				return null;
+			switch (type.MetadataType) {
+				case MetadataType.SByte:
+				case MetadataType.Int16:
+				case MetadataType.Byte:
+				case MetadataType.UInt16:
+					return typeSystem.Int32;
+				default:
+					return type;
 			}
 		}
 		

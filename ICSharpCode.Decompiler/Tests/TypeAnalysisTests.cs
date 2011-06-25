@@ -24,4 +24,34 @@ public class TypeAnalysisTests
 	{
 		return (byte)(256 - (int)b);
 	}
+	
+	public int GetHashCode(long num)
+	{
+		return (int)num ^ (int)(num >> 32);
+	}
+	
+	public int ShiftByte(byte num)
+	{
+		return (int)num << 8;
+	}
+	
+	public int RShiftByte(byte num)
+	{
+		return num >> 8;
+	}
+	
+	public int RShiftByteWithSignExtension(byte num)
+	{
+		return (sbyte)num >> 8;
+	}
+	
+	public int RShiftSByte(sbyte num)
+	{
+		return num >> 8;
+	}
+	
+	public int RShiftSByteWithZeroExtension(sbyte num)
+	{
+		return (byte)num >> 8;
+	}
 }
