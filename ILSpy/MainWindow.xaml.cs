@@ -198,6 +198,8 @@ namespace ICSharpCode.ILSpy
 					}
 					var args = new CommandLineArguments(lines);
 					if (HandleCommandLineArguments(args)) {
+						if (!args.NoActivate && WindowState == WindowState.Minimized)
+							WindowState = WindowState.Normal;
 						HandleCommandLineArgumentsAfterShowList(args);
 						handled = true;
 						return (IntPtr)1;
