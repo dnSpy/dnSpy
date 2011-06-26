@@ -35,10 +35,12 @@ namespace ICSharpCode.ILSpy.Controls
 		
 		void ExecuteCopy(object sender, ExecutedRoutedEventArgs args)
 		{
-			if (resourceListView.SelectionMode == SelectionMode.Single)
-				return;
-			else if (resourceListView.SelectionMode == SelectionMode.Multiple)
-				return;
+		  StringBuilder sb = new StringBuilder();
+		  foreach (var item in resourceListView.SelectedItems)
+		  {
+		    sb.AppendLine(item.ToString());
+		  }
+		  Clipboard.SetText(sb.ToString());
 		}
 		
 		void CanExecuteCopy(object sender, CanExecuteRoutedEventArgs args)
