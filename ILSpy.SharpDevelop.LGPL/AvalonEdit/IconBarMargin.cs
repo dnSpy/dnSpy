@@ -187,7 +187,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				e.Handled = true;
 		}
 		
-		internal int GetLineFromMousePosition(MouseEventArgs e)
+		public int GetLineFromMousePosition(MouseEventArgs e)
 		{
 			ICSharpCode.AvalonEdit.Rendering.TextView textView = this.TextView;
 			if (textView == null)

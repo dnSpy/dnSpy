@@ -94,26 +94,11 @@
     </Compile>
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
-    <Compile Include="AvalonEdit\ITextEditorListener.cs" />
-    <Compile Include="AvalonEdit\IToolTip.cs" />
-    <Compile Include="Bookmarks\BreakpointBookmark.cs" />
-    <Compile Include="Bookmarks\BreakpointBookmarkEventArgs.cs" />
-    <Compile Include="Bookmarks\CurrentLineBookmark.cs" />
-    <Compile Include="Commands\BrowseBackCommand.cs" />
-    <Compile Include="Commands\BrowseForwardCommand.cs" />
-    <Compile Include="AvalonEdit\IconBarManager.cs" />
-    <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="AvalonEdit\IconMarginActionsProvider.cs" />
-    <Compile Include="AvalonEdit\TextMarkerService.cs" />
-    <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
-    <Compile Include="AvalonEdit\ITextMarker.cs" />
-    <Compile Include="Bookmarks\BookmarkBase.cs" />
-    <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
-    <Compile Include="Bookmarks\BookmarkManager.cs" />
     <Compile Include="Bookmarks\Commands.cs" />
     <Compile Include="Bookmarks\MemberBookmark.cs" />
-    <Compile Include="Bookmarks\IBookmark.cs" />
-    <Compile Include="Bookmarks\MarkerBookmark.cs" />
+    <Compile Include="Commands\BrowseBackCommand.cs" />
+    <Compile Include="Commands\BrowseForwardCommand.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
@@ -122,7 +107,6 @@
     <Compile Include="Commands\ExportCommandAttribute.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
-    <Compile Include="DebugInformation.cs" />
     <Compile Include="Languages\CSharpLanguage.cs" />
     <Compile Include="DecompilationOptions.cs" />
     <Compile Include="ExtensionMethods.cs" />
@@ -332,6 +316,10 @@
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ILSpy.SharpDevelop.LGPL\ILSpy.SharpDevelop.LGPL.csproj">
+      <Project>{704F66F1-5C7F-4326-A7AA-C604A3896D4E}</Project>
+      <Name>ILSpy.SharpDevelop.LGPL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
@@ -362,8 +350,6 @@
   <ItemGroup>
     <Folder Include="AvalonEdit" />
     <Folder Include="Bookmarks" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Options" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
