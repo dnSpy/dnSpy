@@ -188,5 +188,10 @@ namespace ICSharpCode.ILSpy.VB
 			
 			return ClassType.Module;
 		}
+		
+		public IType ResolveExpression(ICSharpCode.NRefactory.CSharp.Expression expression)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

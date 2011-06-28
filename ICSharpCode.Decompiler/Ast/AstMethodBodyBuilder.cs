@@ -241,6 +241,9 @@ namespace ICSharpCode.Decompiler.Ast
 				result = node;
 			
 			if (result != null)
+				result = result.WithAnnotation(new TypeInformation(expr.InferredType));
+			
+			if (result != null)
 				return result.WithAnnotation(ilRanges);
 			
 			return result;

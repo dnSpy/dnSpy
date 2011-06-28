@@ -15,6 +15,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		string RootNamespace { get; }
 		string GetTypeNameForAttribute(CSharp.Attribute attribute);
 		ClassType GetClassTypeForAstType(CSharp.AstType type);
+		IType ResolveExpression(CSharp.Expression expression);
 	}
 	
 	/// <summary>
@@ -41,12 +42,22 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitArrayCreateExpression(CSharp.ArrayCreateExpression arrayCreateExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new ArrayCreateExpression() {
+				Type = (AstType)arrayCreateExpression.Type.AcceptVisitor(this, data),
+				Initializer = (ArrayInitializerExpression)arrayCreateExpression.Initializer.AcceptVisitor(this, data)
+			};
+			ConvertNodes(arrayCreateExpression.Arguments, expr.Arguments);
+			ConvertNodes(arrayCreateExpression.AdditionalArraySpecifiers, expr.AdditionalArraySpecifiers);
+			
+			return EndNode(arrayCreateExpression, expr);
 		}
 		
 		public AstNode VisitArrayInitializerExpression(CSharp.ArrayInitializerExpression arrayInitializerExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new ArrayInitializerExpression();
+			ConvertNodes(arrayInitializerExpression.Elements, expr.Elements);
+			
+			return EndNode(arrayInitializerExpression, expr);
 		}
 		
 		public AstNode VisitAsExpression(CSharp.AsExpression asExpression, object data)
@@ -183,7 +194,34 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitCastExpression(CSharp.CastExpression castExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new CastExpression();
+			
+			expr.Type = (AstType)castExpression.Type.AcceptVisitor(this, data);
+			// TODO read additional type information from annotation
+			// (int)x is equivalent to CInt(Math.Truncate(x))
+			expr.CastType = GetCastType(expr.Type, null);
+			expr.Expression = (Expression)castExpression.Expression.AcceptVisitor(this, data);
+			
+			if (expr.CastType != CastType.CType)
+				expr.Type = null;
+			
+			return EndNode(castExpression, expr);
+		}
+		
+		CastType GetCastType(AstType type, object typeInformation)
+		{
+			var primType = type as PrimitiveType;
+			if (primType == null)
+				return CastType.CType;
+			
+			switch (primType.Keyword) {
+				case "Integer":
+					return CastType.CInt;
+				case "String":
+					return CastType.CStr;
+			}
+			
+			return CastType.CType;
 		}
 		
 		public AstNode VisitCheckedExpression(CSharp.CheckedExpression checkedExpression, object data)
@@ -712,13 +750,23 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			ConvertNodes(constructorDeclaration.ModifierTokens, result.ModifierTokens);
 			ConvertNodes(constructorDeclaration.Parameters, result.Parameters);
 			result.Body = (BlockStatement)constructorDeclaration.Body.AcceptVisitor(this, data);
+			if (!constructorDeclaration.Initializer.IsNull)
+				result.Body.Statements.InsertBefore(result.Body.FirstOrDefault(), (Statement)constructorDeclaration.Initializer.AcceptVisitor(this, data));
 			
 			return EndNode(constructorDeclaration, result);
 		}
 		
 		public AstNode VisitConstructorInitializer(CSharp.ConstructorInitializer constructorInitializer, object data)
 		{
-			throw new NotImplementedException();
+			var result = new InvocationExpression(
+				new MemberAccessExpression() {
+					Target = new InstanceExpression(constructorInitializer.ConstructorInitializerType == CSharp.ConstructorInitializerType.This ? InstanceExpressionType.Me : InstanceExpressionType.MyBase, AstLocation.Empty),
+					Member = new Identifier("New", AstLocation.Empty)
+				}
+			);
+			ConvertNodes(constructorInitializer.Arguments, result.Arguments);
+			
+			return EndNode(constructorInitializer, new ExpressionStatement(result));
 		}
 		
 		public AstNode VisitDestructorDeclaration(CSharp.DestructorDeclaration destructorDeclaration, object data)

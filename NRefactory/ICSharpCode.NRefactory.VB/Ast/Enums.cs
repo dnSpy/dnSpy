@@ -85,26 +85,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		ShiftRight,
 	}
 	
-	public enum CastType
-	{
-		/// <summary>
-		/// direct cast (C#, VB "DirectCast")
-		/// </summary>
-		Cast,
-		/// <summary>
-		/// try cast (C# "as", VB "TryCast")
-		/// </summary>
-		TryCast,
-		/// <summary>
-		/// converting cast (VB "CType")
-		/// </summary>
-		Conversion,
-		/// <summary>
-		/// primitive converting cast (VB "CString" etc.)
-		/// </summary>
-		PrimitiveConversion
-	}
-	
 	public enum UnaryOperatorType
 	{
 		None,

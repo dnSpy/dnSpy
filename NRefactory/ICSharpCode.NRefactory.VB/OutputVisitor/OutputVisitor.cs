@@ -1598,6 +1598,23 @@ namespace ICSharpCode.NRefactory.VB
 			return EndNode(arrayInitializerExpression);
 		}
 		
+		public object VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
+		{
+			StartNode(arrayCreateExpression);
+			WriteKeyword("New");
+			Space();
+			arrayCreateExpression.Type.AcceptVisitor(this, data);
+			WriteCommaSeparatedListInParenthesis(arrayCreateExpression.Arguments, false);
+			foreach (var specifier in arrayCreateExpression.AdditionalArraySpecifiers) {
+				specifier.AcceptVisitor(this, data);
+			}
+			Space();
+			WriteToken("=", ArrayCreateExpression.Roles.Assign);
+			Space();
+			arrayCreateExpression.Initializer.AcceptVisitor(this, data);
+			return EndNode(arrayCreateExpression);
+		}
+		
 		public object VisitObjectCreationExpression(ObjectCreationExpression objectCreationExpression, object data)
 		{
 			StartNode(objectCreationExpression);
@@ -1608,6 +1625,88 @@ namespace ICSharpCode.NRefactory.VB
 			objectCreationExpression.Initializer.AcceptVisitor(this, data);
 			
 			return EndNode(objectCreationExpression);
+		}
+		
+		public object VisitCastExpression(CastExpression castExpression, object data)
+		{
+			StartNode(castExpression);
+			
+			switch (castExpression.CastType) {
+				case CastType.DirectCast:
+					WriteKeyword("DirectCast");
+					break;
+				case CastType.TryCast:
+					WriteKeyword("TryCast");
+					break;
+				case CastType.CType:
+					WriteKeyword("CType");
+					break;
+				case CastType.CBool:
+					WriteKeyword("CBool");
+					break;
+				case CastType.CByte:
+					WriteKeyword("CByte");
+					break;
+				case CastType.CChar:
+					WriteKeyword("CChar");
+					break;
+				case CastType.CDate:
+					WriteKeyword("CDate");
+					break;
+				case CastType.CDec:
+					WriteKeyword("CType");
+					break;
+				case CastType.CDbl:
+					WriteKeyword("CDec");
+					break;
+				case CastType.CInt:
+					WriteKeyword("CInt");
+					break;
+				case CastType.CLng:
+					WriteKeyword("CLng");
+					break;
+				case CastType.CObj:
+					WriteKeyword("CObj");
+					break;
+				case CastType.CSByte:
+					WriteKeyword("CSByte");
+					break;
+				case CastType.CShort:
+					WriteKeyword("CShort");
+					break;
+				case CastType.CSng:
+					WriteKeyword("CSng");
+					break;
+				case CastType.CStr:
+					WriteKeyword("CStr");
+					break;
+				case CastType.CUInt:
+					WriteKeyword("CUInt");
+					break;
+				case CastType.CULng:
+					WriteKeyword("CULng");
+					break;
+				case CastType.CUShort:
+					WriteKeyword("CUShort");
+					break;
+				default:
+					throw new Exception("Invalid value for CastType");
+			}
+			
+			WriteToken("(", CastExpression.Roles.LPar);
+			castExpression.Expression.AcceptVisitor(this, data);
+			
+			if (castExpression.CastType == CastType.CType ||
+			    castExpression.CastType == CastType.DirectCast ||
+			    castExpression.CastType == CastType.TryCast) {
+				WriteToken(",", CastExpression.Roles.Comma);
+				Space();
+				castExpression.Type.AcceptVisitor(this, data);
+			}
+			
+			WriteToken(")", CastExpression.Roles.RPar);
+			
+			return EndNode(castExpression);
 		}
 		
 		public object VisitComment(Comment comment, object data)
