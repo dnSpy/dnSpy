@@ -436,8 +436,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					return true;
 				default:
-					// abort, inlining is not possible
-					return false;
+					// instructions with no side-effects are safe (except for Ldloc and Ldloca which are handled separately)
+					return expr.HasNoSideEffects();
 			}
 		}
 		

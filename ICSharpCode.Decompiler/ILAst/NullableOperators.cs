@@ -236,7 +236,7 @@ namespace ICSharpCode.Decompiler.ILAst
 
 				bool IsCustomOperator(string s)
 				{
-					if (s.Length < 11 || !s.StartsWith("op_", StringComparison.Ordinal)) return false;
+					if (s.Length < 10 || !s.StartsWith("op_", StringComparison.Ordinal)) return false;
 					switch (s) {
 						case "op_Equality":
 							return type == OperatorType.Equality;
@@ -257,9 +257,12 @@ namespace ICSharpCode.Decompiler.ILAst
 						case "op_ExclusiveOr":
 						case "op_LeftShift":
 						case "op_RightShift":
-						case "op_Negation":
 						case "op_UnaryNegation":
 						case "op_UnaryPlus":
+						case "op_LogicalNot":
+						case "op_OnesComplement":
+						case "op_Increment":
+						case "op_Decrement":
 							return type == OperatorType.Other;
 						default: return false;
 					}
@@ -332,8 +335,10 @@ namespace ICSharpCode.Decompiler.ILAst
 
 			sealed class BooleanPattern : Pattern
 			{
+				public static readonly Pattern False = new BooleanPattern(false), True = new BooleanPattern(true);
+
 				readonly object value;
-				public BooleanPattern(bool value)
+				BooleanPattern(bool value)
 					: base(null)
 				{
 					this.value = Convert.ToInt32(value);
@@ -420,23 +425,29 @@ namespace ICSharpCode.Decompiler.ILAst
 
 				/* only one operand nullable */
 				// & (bool)
-				new ILPattern(ILCode.TernaryOp, Any, VariableA, new MethodPattern(ILCode.Newobj, ".ctor", new BooleanPattern(false))),
+				new ILPattern(ILCode.TernaryOp, Any, VariableA, new MethodPattern(ILCode.Newobj, ".ctor", BooleanPattern.False)),
 				new ILPattern(ILCode.And, VariableA, Any),
 				// | (bool)
-				new ILPattern(ILCode.TernaryOp, Any, new MethodPattern(ILCode.Newobj, ".ctor", new BooleanPattern(true)), VariableA),
+				new ILPattern(ILCode.TernaryOp, Any, new MethodPattern(ILCode.Newobj, ".ctor", BooleanPattern.True), VariableA),
 				new ILPattern(ILCode.Or, VariableA, Any),
 				// == true
 				VariableAGetValueOrDefault & VariableAHasValue,
-				new ILPattern(ILCode.Ceq, VariableA, new BooleanPattern(true)),
+				new ILPattern(ILCode.Ceq, VariableA, BooleanPattern.True),
 				// != true
 				!VariableAGetValueOrDefault | !VariableAHasValue,
-				new ILPattern(ILCode.Cne, VariableA, new BooleanPattern(true)),
+				new ILPattern(ILCode.Cne, VariableA, BooleanPattern.True),
 				// == false
 				!VariableAGetValueOrDefault & VariableAHasValue,
-				new ILPattern(ILCode.Ceq, VariableA, new BooleanPattern(false)),
+				new ILPattern(ILCode.Ceq, VariableA, BooleanPattern.False),
 				// != false
 				VariableAGetValueOrDefault | !VariableAHasValue,
-				new ILPattern(ILCode.Cne, VariableA, new BooleanPattern(false)),
+				new ILPattern(ILCode.Cne, VariableA, BooleanPattern.False),
+				// ?? true
+				!VariableAHasValue | VariableAGetValueOrDefault,
+				new ILPattern(ILCode.NullCoalescing, VariableA, BooleanPattern.True),
+				// ?? false
+				VariableAHasValue & VariableAGetValueOrDefault,
+				new ILPattern(ILCode.NullCoalescing, VariableA, BooleanPattern.False),
 				// null coalescing
 				new ILPattern(ILCode.TernaryOp, VariableAHasValue, VariableAGetValueOrDefault, Any),
 				new ILPattern(ILCode.NullCoalescing, VariableA, Any),

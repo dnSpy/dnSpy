@@ -701,6 +701,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldc_I8:
 				case ILCode.Ldc_R4:
 				case ILCode.Ldc_R8:
+				case ILCode.Ldc_Decimal:
 					return true;
 				default:
 					return false;
