@@ -3,12 +3,11 @@
 
 using System;
 using System.Windows.Media;
-using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
+using ICSharpCode.ILSpy.SharpDevelop;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
-using Mono.CSharp;
 
 namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {

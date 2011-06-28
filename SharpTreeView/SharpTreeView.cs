@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -130,10 +131,30 @@ namespace ICSharpCode.TreeView
 					Root.IsExpanded = true;
 				}
 				flattener = new TreeFlattener(Root, ShowRoot);
+				flattener.CollectionChanged += flattener_CollectionChanged;
 				this.ItemsSource = flattener;
 			}
 		}
-
+		
+		void flattener_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			// Deselect nodes that are being hidden
+			if (e.Action == NotifyCollectionChangedAction.Remove) {
+				List<SharpTreeNode> selectedOldItems = null;
+				foreach (SharpTreeNode node in e.OldItems) {
+					if (node.IsSelected) {
+						if (selectedOldItems == null)
+							selectedOldItems = new List<SharpTreeNode>();
+						selectedOldItems.Add(node);
+					}
+				}
+				if (selectedOldItems != null) {
+					var list = SelectedItems.Cast<SharpTreeNode>().Except(selectedOldItems).ToList();
+					SetSelectedItems(list);
+				}
+			}
+		}
+		
 		protected override DependencyObject GetContainerForItemOverride()
 		{
 			return new SharpTreeViewItem();
@@ -151,8 +172,16 @@ namespace ICSharpCode.TreeView
 			container.ParentTreeView = this;
 		}
 		
+		bool doNotScrollOnExpanding;
+		
+		/// <summary>
+		/// Handles the node expanding event in the tree view.
+		/// This method gets called only if the node is in the visible region (a SharpTreeNodeView exists).
+		/// </summary>
 		internal void HandleExpanding(SharpTreeNode node)
 		{
+			if (doNotScrollOnExpanding)
+				return;
 			SharpTreeNode lastVisibleChild = node;
 			while (true) {
 				SharpTreeNode tmp = lastVisibleChild.Children.LastOrDefault(c => c.IsVisible);
@@ -171,16 +200,6 @@ namespace ICSharpCode.TreeView
 					delegate {
 						base.ScrollIntoView(node);
 					}));
-			}
-		}
-		
-		internal void HandleCollapsing(SharpTreeNode node)
-		{
-			var selectedChilds = node.VisibleDescendants().Where(n => n.IsSelected);
-			if (selectedChilds.Any()) {
-				var list = SelectedItems.Cast<SharpTreeNode>().Except(selectedChilds).ToList();
-				list.AddOnce(node);
-				SetSelectedItems(list);
 			}
 		}
 		
@@ -269,8 +288,10 @@ namespace ICSharpCode.TreeView
 		{
 			if (node == null)
 				throw new ArgumentNullException("node");
+			doNotScrollOnExpanding = true;
 			foreach (SharpTreeNode ancestor in node.Ancestors())
 				ancestor.IsExpanded = true;
+			doNotScrollOnExpanding = false;
 			base.ScrollIntoView(node);
 		}
 		

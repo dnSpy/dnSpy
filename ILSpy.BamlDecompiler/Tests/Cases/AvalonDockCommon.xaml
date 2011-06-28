@@ -1,0 +1,58 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ad="clr-namespace:AvalonDock">
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="/AvalonDock;component/Resources/Brushes.xaml" />
+	</ResourceDictionary.MergedDictionaries>
+	<ContextMenu x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:ContextMenuElement.DockableFloatingWindow}}">
+		<MenuItem Command="ad:ManagedContentCommands.Show" />
+		<MenuItem Command="ad:ManagedContentCommands.Hide" />
+		<MenuItem Command="ad:DockableContentCommands.ShowAsDocument" />
+		<Separator />
+		<MenuItem Command="ad:DockableFloatingWindowCommands.SetAsFloatingWindow" />
+		<MenuItem Command="ad:DockableFloatingWindowCommands.SetAsDockableWindow" />
+	</ContextMenu>
+	<ContextMenu x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type ad:DockingManager}, ResourceId={x:Static ad:ContextMenuElement.DocumentFloatingWindow}}">
+		<MenuItem Command="ad:ManagedContentCommands.Close" />
+		<Separator />
+		<MenuItem Command="ad:DocumentContentCommands.FloatingDocument" />
+		<MenuItem Command="ad:DocumentContentCommands.TabbedDocument" />
+	</ContextMenu>
+	<Style x:Key="{x:Type ad:Resizer}" TargetType="{x:Type ad:Resizer}">
+		<Setter Property="Background" Value="#00FFFFFF" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ad:Resizer}">
+					<Border Background="{TemplateBinding Control.Background}" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="PaneHeaderCommandStyle" TargetType="{x:Type Button}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<Border Name="PaneHeaderCommandIntBorder" Background="#00FFFFFF" BorderThickness="1" Margin="0" Opacity="0.8">
+						<ContentPresenter />
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="PaneHeaderCommandIntBorder" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBorderBrush}}}" Property="BorderBrush" />
+							<Setter TargetName="PaneHeaderCommandIntBorder" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBackground}}}" Property="Background" />
+							<Setter TargetName="PaneHeaderCommandIntBorder" Property="Opacity" Value="1" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="PaneHeaderContextMenuCommandStyle" TargetType="{x:Type Border}">
+		<Setter Property="Background" Value="#00FFFFFF" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Style.Triggers>
+			<Trigger Property="IsMouseOver" Value="True">
+				<Setter Property="BorderBrush" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBorderBrush}}}" />
+				<Setter Property="Background" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBackground}}}" />
+				<Setter Property="Opacity" Value="1" />
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+</ResourceDictionary>

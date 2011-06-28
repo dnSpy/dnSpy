@@ -5,14 +5,14 @@ using System;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace ICSharpCode.ILSpy.Debugger.Services
+namespace ICSharpCode.ILSpy.SharpDevelop
 {
-	static class ImageService
+	static class Images
 	{
 		static BitmapImage LoadBitmap(string name)
 		{
 			try {
-				BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/ILSpy.Debugger.Plugin;component/Images/" + name + ".png"));
+				BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/ILSpy;component/Images/" + name + ".png"));
 				if (image == null)
 					return null;
 				image.Freeze();

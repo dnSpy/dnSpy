@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -12,14 +11,14 @@ using System.Windows.Threading;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 
-namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
+namespace ICSharpCode.ILSpy.AvalonEdit
 {
 	/// <summary>
 	/// Handles the text markers for a code editor.
 	/// </summary>
-	[Export("TextMarkerService"), PartCreationPolicy(CreationPolicy.Shared)]
 	public sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService
 	{
 		TextEditor codeEditor;
@@ -36,7 +35,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 			get { return codeEditor; }
 			set { codeEditor = value; }
 		}
-
+		
 		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
 		{
 			if (e.Bookmark is BreakpointBookmark) {
@@ -153,7 +152,7 @@ namespace ICSharpCode.ILSpy.Debugger.AvalonEdit
 			}
 		}
 		
-		public void Draw(TextView textView, DrawingContext drawingContext)
+		public void Draw(ICSharpCode.AvalonEdit.Rendering.TextView textView, DrawingContext drawingContext)
 		{
 			if (textView == null)
 				throw new ArgumentNullException("textView");

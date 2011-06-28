@@ -547,7 +547,7 @@ namespace ICSharpCode.ILSpy.TextView
 		void Language_DecompileFinished(object sender, DecompileEventArgs e)
 		{
 			if (e != null) {
-				manager.UpdateClassMemberBookmarks(e.AstNodes);
+				manager.UpdateClassMemberBookmarks(e.AstNodes, typeof(TypeBookmark), typeof(MemberBookmark));
 				if (iconMargin.DecompiledMembers == null) {
 					iconMargin.DecompiledMembers = new List<MemberReference>();
 				}
@@ -565,7 +565,7 @@ namespace ICSharpCode.ILSpy.TextView
 						DebugInformation.LocalVariables.AddRange(e.LocalVariables);
 				}
 			} else {
-				manager.UpdateClassMemberBookmarks(null);
+				manager.UpdateClassMemberBookmarks(null, typeof(TypeBookmark), typeof(MemberBookmark));
 			}
 		}
 

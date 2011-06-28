@@ -17,22 +17,15 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		public virtual double ReadCompressedDouble()
 		{
-			switch (this.ReadByte())
-			{
+			switch (this.ReadByte()) {
 				case 1:
 					return 0;
-
 				case 2:
 					return 1;
-
 				case 3:
 					return -1;
-
 				case 4:
-					{
-						double num = this.ReadInt32();
-						return (num * 1E-06);
-					}
+					return ReadInt32() * 1E-06;
 				case 5:
 					return this.ReadDouble();
 			}

@@ -1,20 +1,5 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-// software and associated documentation files (the "Software"), to deal in the Software
-// without restriction, including without limitation the rights to use, copy, modify, merge,
-// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
-// to whom the Software is furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all copies or
-// substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Concurrent;
@@ -29,7 +14,7 @@ namespace ICSharpCode.ILSpy.Debugger
 	/// <summary>
 	/// Contains the data important for debugger from the main application.
 	/// </summary>
-	public static class DebugData
+	public static class DebugInformation
 	{
 		static DecompiledLanguages language;
 		
@@ -63,19 +48,24 @@ namespace ICSharpCode.ILSpy.Debugger
 		public static ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
 		
 		/// <summary>
-		/// (internal) Gets or sets the old code mappings.
+		/// Gets or sets the old code mappings.
 		/// </summary>
 		public static Dictionary<int, List<MemberMapping>> OldCodeMappings { get; set; }
 		
 		/// <summary>
-		/// (internal) Gets or sets the MembeReference that was decompiled (a TypeDefinition, MethodDefinition, etc)
+		/// Gets or sets the MembeReference that was decompiled (a TypeDefinition, MethodDefinition, etc)
 		/// </summary>
 		public static Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
 		
 		/// <summary>
-		/// Gets or (internal) sets the current token, IL offset and member reference. Used for step in/out.
+		/// Gets or sets the current token, IL offset and member reference. Used for step in/out.
 		/// </summary>
 		public static Tuple<int, int, MemberReference> DebugStepInformation { get; set; }
+		
+		/// <summary>
+		/// Gets or sets whether the debugger is loaded.
+		/// </summary>
+		public static bool IsDebuggerLoaded { get; set; }
 		
 		/// <summary>
 		/// Occures when the language is changed.
@@ -84,8 +74,9 @@ namespace ICSharpCode.ILSpy.Debugger
 		
 		private static void OnLanguageChanged(LanguageEventArgs e)
 		{
-			if (LanguageChanged != null) {
-				LanguageChanged(null, e);
+			var handler = LanguageChanged;
+			if (handler != null) {
+				handler(null, e);
 			}
 		}
 	}

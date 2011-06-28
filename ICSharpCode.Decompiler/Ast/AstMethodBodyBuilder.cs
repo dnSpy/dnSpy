@@ -349,8 +349,7 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 					#endregion
 					#region Arrays
-				case ILCode.Newarr:
-					case ILCode.InitArray: {
+					case ILCode.Newarr: {
 						var ace = new Ast.ArrayCreateExpression();
 						ace.Type = operandAsTypeRef;
 						ComposedType ct = operandAsTypeRef as ComposedType;
@@ -366,7 +365,39 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						return ace;
 					}
-					case ILCode.Ldlen: return arg1.Member("Length");
+					case ILCode.InitArray: {
+						var ace = new Ast.ArrayCreateExpression();
+						ace.Type = operandAsTypeRef;
+						ComposedType ct = operandAsTypeRef as ComposedType;
+						var arrayType = (ArrayType) operand;
+						if (ct != null)
+						{
+							// change "new (int[,])[10] to new int[10][,]"
+							ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
+							ace.Initializer = new ArrayInitializerExpression();
+							var first = ace.AdditionalArraySpecifiers.First();
+							first.Remove();
+							ace.Arguments.AddRange(Enumerable.Repeat(0, first.Dimensions).Select(i => new EmptyExpression()));
+						}
+						var newArgs = new List<Expression>();
+						foreach (var arrayDimension in arrayType.Dimensions.Skip(1).Reverse())
+						{
+							int length = (int)arrayDimension.UpperBound - (int)arrayDimension.LowerBound;
+							for (int j = 0; j < args.Count; j += length)
+							{
+								var child = new ArrayInitializerExpression();
+								child.Elements.AddRange(args.GetRange(j, length));
+								newArgs.Add(child);
+							}
+							var temp = args;
+							args = newArgs;
+							newArgs = temp;
+							newArgs.Clear();
+						}
+						ace.Initializer.Elements.AddRange(args);
+						return ace;
+					}
+				case ILCode.Ldlen: return arg1.Member("Length");
 				case ILCode.Ldelem_I:
 				case ILCode.Ldelem_I1:
 				case ILCode.Ldelem_I2:
