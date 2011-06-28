@@ -42,6 +42,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		SimplifyTernaryOperator,
 		SimplifyNullCoalescing,
 		JoinBasicBlocks,
+		SimplifyShiftOperators,
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
 		SimplifyCustomShortCircuit,
@@ -131,7 +132,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.JoinBasicBlocks) return;
 					modified |= block.RunOptimization(new SimpleControlFlow(context, method).JoinBasicBlocks);
-					
+
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyShiftOperators) return;
+					modified |= block.RunOptimization(SimplifyShiftOperators);
+
 					if (abortBeforeStep == ILAstOptimizationStep.TransformDecimalCtorToConstant) return;
 					modified |= block.RunOptimization(TransformDecimalCtorToConstant);
 					modified |= block.RunOptimization(SimplifyLdcI4ConvI8);
