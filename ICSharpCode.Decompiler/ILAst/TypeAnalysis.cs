@@ -526,9 +526,36 @@ namespace ICSharpCode.Decompiler.ILAst
 						return NumericPromotion(InferTypeForExpression(expr.Arguments[0], null));
 				case ILCode.Shr:
 				case ILCode.Shr_Un:
-					if (forceInferChildren)
-						InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
-					return NumericPromotion(InferTypeForExpression(expr.Arguments[0], null));
+					{
+						if (forceInferChildren)
+							InferTypeForExpression(expr.Arguments[1], typeSystem.Int32);
+						TypeReference type = NumericPromotion(InferTypeForExpression(expr.Arguments[0], null));
+						TypeReference expectedInputType = null;
+						switch (type.MetadataType) {
+							case MetadataType.Int32:
+								if (expr.Code == ILCode.Shr_Un)
+									expectedInputType = typeSystem.UInt32;
+								break;
+							case MetadataType.UInt32:
+								if (expr.Code == ILCode.Shr)
+									expectedInputType = typeSystem.Int32;
+								break;
+							case MetadataType.Int64:
+								if (expr.Code == ILCode.Shr_Un)
+									expectedInputType = typeSystem.UInt64;
+								break;
+							case MetadataType.UInt64:
+								if (expr.Code == ILCode.Shr)
+									expectedInputType = typeSystem.UInt64;
+								break;
+						}
+						if (expectedInputType != null) {
+							InferTypeForExpression(expr.Arguments[0], expectedInputType);
+							return expectedInputType;
+						} else {
+							return type;
+						}
+					}
 				case ILCode.CompoundAssignment:
 					{
 						TypeReference varType = InferTypeForExpression(expr.Arguments[0].Arguments[0], null);
@@ -1097,7 +1124,6 @@ namespace ICSharpCode.Decompiler.ILAst
 					return char.MinValue <= num && num <= char.MaxValue;
 				case MetadataType.UInt16:
 					return ushort.MinValue <= num && num <= ushort.MaxValue;
-					break;
 				default:
 					return true;
 			}

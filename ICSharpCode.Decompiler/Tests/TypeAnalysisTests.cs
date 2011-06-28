@@ -25,9 +25,45 @@ public class TypeAnalysisTests
 		return (byte)(256 - (int)b);
 	}
 	
-	public int GetHashCode(long num)
+	#region Shift
+	public int LShiftInteger(int num1, int num2)
 	{
-		return (int)num ^ (int)(num >> 32);
+		return num1 << num2;
+	}
+	
+	public uint LShiftUnsignedInteger(uint num1, uint num2)
+	{
+		return num1 << (int)num2;
+	}
+	
+	public long LShiftLong(long num1, long num2)
+	{
+		return num1 << (int)num2;
+	}
+	
+	public ulong LShiftUnsignedLong(ulong num1, ulong num2)
+	{
+		return num1 << (int)num2;
+	}
+	
+	public int RShiftInteger(int num1, int num2)
+	{
+		return num1 >> num2;
+	}
+	
+	public uint RShiftUnsignedInteger(uint num1, int num2)
+	{
+		return num1 >> num2;
+	}
+	
+	public long RShiftLong(long num1, long num2)
+	{
+		return num1 >> (int)num2;
+	}
+	
+	public ulong RShiftUnsignedLong(ulong num1, ulong num2)
+	{
+		return num1 >> (int)num2;
 	}
 	
 	public int ShiftByte(byte num)
@@ -40,7 +76,12 @@ public class TypeAnalysisTests
 		return num >> 8;
 	}
 	
-	public int RShiftByteWithSignExtension(byte num)
+	public uint RShiftByteWithZeroExtension(byte num)
+	{
+		return (uint)num >> 8;
+	}
+	
+	public int RShiftByteAsSByte(byte num)
 	{
 		return (sbyte)num >> 8;
 	}
@@ -50,8 +91,19 @@ public class TypeAnalysisTests
 		return num >> 8;
 	}
 	
-	public int RShiftSByteWithZeroExtension(sbyte num)
+	public uint RShiftSByteWithZeroExtension(sbyte num)
+	{
+		return (uint)num >> 8;
+	}
+	
+	public int RShiftSByteAsByte(sbyte num)
 	{
 		return (byte)num >> 8;
+	}
+	#endregion
+	
+	public int GetHashCode(long num)
+	{
+		return (int)num ^ (int)(num >> 32);
 	}
 }
