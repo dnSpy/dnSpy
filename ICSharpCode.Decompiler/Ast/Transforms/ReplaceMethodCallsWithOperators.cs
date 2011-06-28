@@ -125,7 +125,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					return BinaryOperatorType.BitwiseAnd;
 				case "op_BitwiseOr":
 					return BinaryOperatorType.BitwiseOr;
-				case "op_ExlusiveOr":
+				case "op_ExclusiveOr":
 					return BinaryOperatorType.ExclusiveOr;
 				case "op_LeftShift":
 					return BinaryOperatorType.ShiftLeft;
