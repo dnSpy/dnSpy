@@ -139,7 +139,7 @@ namespace ICSharpCode.Decompiler.Ast
 				typeNames.Add(nameWithoutDigits, number - 1);
 			}
 			int count = ++typeNames[nameWithoutDigits];
-			if (count > 1) {
+			if (count != 1) {
 				return nameWithoutDigits + count.ToString();
 			} else {
 				return nameWithoutDigits;
