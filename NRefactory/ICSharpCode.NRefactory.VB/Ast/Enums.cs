@@ -85,27 +85,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		ShiftRight,
 	}
 	
-	public enum UnaryOperatorType
-	{
-		None,
-		Not,
-		BitNot,
-		
-		Minus,
-		Plus,
-		
-		Increment,
-		Decrement,
-		
-		PostIncrement,
-		PostDecrement,
-		
-		/// <summary>Dereferencing pointer</summary>
-		Dereference,
-		/// <summary>Get address of</summary>
-		AddressOf
-	}
-	
 	public enum ContinueType
 	{
 		None,

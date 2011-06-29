@@ -56,6 +56,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitGetXmlNamespaceExpression(GetXmlNamespaceExpression getXmlNamespaceExpression, T data);
 		S VisitMemberAccessExpression(MemberAccessExpression memberAccessExpression, T data);
 		S VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, T data);
+		S VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, T data);
 		S VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, T data);
 		S VisitAssignmentExpression(AssignmentExpression assignmentExpression, T data);
 		S VisitIdentifierExpression(IdentifierExpression identifierExpression, T data);

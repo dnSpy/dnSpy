@@ -1750,5 +1750,28 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(eventDeclaration);
 		}
+		
+		public object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
+		{
+			StartNode(unaryOperatorExpression);
+			
+			switch (unaryOperatorExpression.Operator) {
+				case UnaryOperatorType.Not:
+					WriteKeyword("Not");
+					break;
+				case UnaryOperatorType.Minus:
+					WriteToken("-", UnaryOperatorExpression.OperatorRole);
+					break;
+				case UnaryOperatorType.Plus:
+					WriteToken("+", UnaryOperatorExpression.OperatorRole);
+					break;
+				default:
+					throw new Exception("Invalid value for UnaryOperatorType");
+			}
+			
+			unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+			
+			return EndNode(unaryOperatorExpression);
+		}
 	}
 }

@@ -37,6 +37,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitUndocumentedExpression(CSharp.UndocumentedExpression undocumentedExpression, object data)
 		{
+			// 29.06.2011 20:28:36 Siegfried Pammer: wie soll ich die behandeln?
+			// 29.06.2011 20:28:58 Siegfried Pammer: throw new NotSupportedException(); ?
+			// 29.06.2011 20:35:50 Daniel Grunwald: da würde ich wieder Pseudo-Funktionen einführen
 			throw new NotImplementedException();
 		}
 		
@@ -62,7 +65,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitAsExpression(CSharp.AsExpression asExpression, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(asExpression, new CastExpression(CastType.TryCast, (AstType)asExpression.Type.AcceptVisitor(this, data), (Expression)asExpression.Expression.AcceptVisitor(this, data)));
 		}
 		
 		public AstNode VisitAssignmentExpression(CSharp.AssignmentExpression assignmentExpression, object data)
@@ -80,33 +83,30 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Subtract:
 					op = AssignmentOperatorType.Subtract;
 					break;
-				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Multiply:
-					
-					break;
-				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Divide:
-					
-					break;
-				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Modulus:
-					
-					break;
-				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ShiftLeft:
-					
-					break;
-				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ShiftRight:
-					
-					break;
-				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.BitwiseAnd:
-					
-					break;
-				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.BitwiseOr:
-					
-					break;
-				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ExclusiveOr:
-					
-					break;
-				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Any:
-					
-					break;
+//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Multiply:
+//
+//					break;
+//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Divide:
+//
+//					break;
+//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Modulus:
+//
+//					break;
+//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ShiftLeft:
+//
+//					break;
+//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ShiftRight:
+//
+//					break;
+//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.BitwiseAnd:
+//
+//					break;
+//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.BitwiseOr:
+//
+//					break;
+//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ExclusiveOr:
+//
+//					break;
 				default:
 					throw new Exception("Invalid value for AssignmentOperatorType: " + assignmentExpression.Operator);
 			}
@@ -242,7 +242,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitDirectionExpression(CSharp.DirectionExpression directionExpression, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(directionExpression, (Expression)directionExpression.Expression.AcceptVisitor(this, data));
 		}
 		
 		public AstNode VisitIdentifierExpression(CSharp.IdentifierExpression identifierExpression, object data)
@@ -256,7 +256,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitIndexerExpression(CSharp.IndexerExpression indexerExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new InvocationExpression((Expression)indexerExpression.Target.AcceptVisitor(this, data));
+			ConvertNodes(indexerExpression.Arguments, expr.Arguments);
+			return EndNode(indexerExpression, expr);
 		}
 		
 		public AstNode VisitInvocationExpression(CSharp.InvocationExpression invocationExpression, object data)
@@ -330,9 +332,50 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitPrimitiveExpression(CSharp.PrimitiveExpression primitiveExpression, object data)
 		{
-			var expr = new PrimitiveExpression(primitiveExpression.Value);
+			Expression expr;
+			
+			if (primitiveExpression.Value is string && ((string)primitiveExpression.Value).IndexOfAny(new[] {'\r', '\n'}) > -1)
+				expr = ConvertToConcat((string)primitiveExpression.Value);
+			else
+				expr = new PrimitiveExpression(primitiveExpression.Value);
 			
 			return EndNode(primitiveExpression, expr);
+		}
+		
+		Expression ConvertToConcat(string literal)
+		{
+			Stack<Expression> parts = new Stack<Expression>();
+			int start = 0;
+			
+			for (int i = 0; i < literal.Length; i++) {
+				if (literal[i] == '\r') {
+					string part = literal.Substring(start, i - start);
+					parts.Push(new PrimitiveExpression(part));
+					if (i + 1 < literal.Length && literal[i + 1] == '\n') {
+						i++;
+						parts.Push(new IdentifierExpression() { Identifier = "vbCrLf" });
+					} else
+						parts.Push(new IdentifierExpression() { Identifier = "vbCr" });
+					start = i + 1;
+				} else if (literal[i] == '\n') {
+					string part = literal.Substring(start, i - start);
+					parts.Push(new PrimitiveExpression(part));
+					parts.Push(new IdentifierExpression() { Identifier = "vbLf" });
+					start = i + 1;
+				}
+			}
+			
+			if (start < literal.Length) {
+				string part = literal.Substring(start);
+				parts.Push(new PrimitiveExpression(part));
+			}
+			
+			Expression current = parts.Pop();
+			
+			while (parts.Any())
+				current = new BinaryOperatorExpression(parts.Pop(), BinaryOperatorType.Concat, current);
+			
+			return current;
 		}
 		
 		public AstNode VisitSizeOfExpression(CSharp.SizeOfExpression sizeOfExpression, object data)
@@ -367,7 +410,59 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitUnaryOperatorExpression(CSharp.UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
-			throw new NotImplementedException();
+			Expression expr;
+
+			switch (unaryOperatorExpression.Operator) {
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Not:
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.BitNot:
+					expr = new UnaryOperatorExpression() {
+						Expression = (Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data),
+						Operator = UnaryOperatorType.Not
+					};
+					break;
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Minus:
+					expr = new UnaryOperatorExpression() {
+						Expression = (Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data),
+						Operator = UnaryOperatorType.Minus
+					};
+					break;
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Plus:
+					expr = new UnaryOperatorExpression() {
+						Expression = (Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data),
+						Operator = UnaryOperatorType.Plus
+					};
+					break;
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Increment:
+					expr = new InvocationExpression();
+					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "Increment" };
+					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
+					break;
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.PostIncrement:
+					expr = new InvocationExpression();
+					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "PostIncrement" };
+					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
+					break;
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Decrement:
+					expr = new InvocationExpression();
+					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "Decrement" };
+					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
+					break;
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.PostDecrement:
+					expr = new InvocationExpression();
+					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "PostDecrement" };
+					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
+					break;
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.AddressOf:
+					expr = new AddressOfExpression() {
+						Expression = (Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data)
+					};
+					break;
+//				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Dereference:
+				default:
+					throw new Exception("Invalid value for UnaryOperatorType");
+			}
+			
+			return EndNode(unaryOperatorExpression, expr);
 		}
 		
 		public AstNode VisitUncheckedExpression(CSharp.UncheckedExpression uncheckedExpression, object data)
@@ -894,6 +989,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			param.Modifiers = ConvertParamModifiers(parameterDeclaration.ParameterModifier);
 			if ((param.Modifiers & Modifiers.None) == Modifiers.None)
 				param.Modifiers = Modifiers.ByVal;
+			if ((parameterDeclaration.ParameterModifier & ICSharpCode.NRefactory.CSharp.ParameterModifier.Out) == ICSharpCode.NRefactory.CSharp.ParameterModifier.Out) {
+				AttributeBlock block = new AttributeBlock();
+				block.Attributes.Add(new Ast.Attribute() { Type = new SimpleType("System.Runtime.InteropServices.OutAttribute") });
+				param.Attributes.Add(block);
+			}
 			param.Name = new Identifier(parameterDeclaration.Name, AstLocation.Empty);
 			param.Type = (AstType)parameterDeclaration.Type.AcceptVisitor(this, data);
 			param.OptionalValue = (Expression)parameterDeclaration.DefaultExpression.AcceptVisitor(this, data);
@@ -912,7 +1012,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Ref:
 					return Modifiers.ByRef;
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Out:
-					return Modifiers.ByRef; // TODO verify this!
+					return Modifiers.ByRef;
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Params:
 					return Modifiers.ParamArray;
 				default:

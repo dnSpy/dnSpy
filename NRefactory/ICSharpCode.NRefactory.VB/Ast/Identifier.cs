@@ -69,6 +69,11 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			this.startLocation = location;
 		}
 		
+		public static implicit operator Identifier(string name)
+		{
+			return new Identifier(name, AstLocation.Empty);
+		}
+		
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)
 		{
 			var node = other as Identifier;
