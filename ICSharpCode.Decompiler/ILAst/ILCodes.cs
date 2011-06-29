@@ -319,9 +319,15 @@ namespace ICSharpCode.Decompiler.ILAst
 		AddressOf,
 		/// <summary>Simulates getting the value of the nullable argument in comparisons involving nullable values</summary>
 		/// <remarks>
-		/// For example "stloc(v1, ...); stloc(v2, ...); logicand(ceq(call(Nullable`1::GetValueOrDefault, ldloca(v1)), ldloc(v2)), callgetter(Nullable`1::get_HasValue, ldloca(v1)))" becomes "ceq(ValueOf(...), ...)"
+		/// For example "stloc(v1, ...); stloc(v2, ...); logicand(ceq(call(Nullable`1::GetValueOrDefault, ldloca(v1)), ldloc(v2)), callgetter(Nullable`1::get_HasValue, ldloca(v1)))" becomes "wrap(ceq(ValueOf(...), ...))"
 		/// </remarks>
 		ValueOf,
+		/// <summary>Simulates creating a new nullable value from a valuetype argument</summary>
+		/// <remarks>
+		/// For example "stloc(v1, ...); stloc(v2, ...); ternaryop(callgetter(Nullable`1::get_HasValue, ldloca(v1)), newobj(Nullable`1::.ctor, add(call(Nullable`1::GetValueOrDefault, ldloca(v1)), ldloc(v2))), defaultvalue(Nullable`1))"
+		/// becomes "NullableOf(add(valueof(...), ...))"
+		/// </remarks>
+		NullableOf,
 	}
 	
 	public static class ILCodeUtil

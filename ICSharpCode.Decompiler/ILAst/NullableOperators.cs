@@ -143,7 +143,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					var m = e.Operand as MethodReference;
 					if (m == null || m.Name != this.method) return false;
 					var t = m.DeclaringType;
-					return t.Name == "Nullable`1" && t.Namespace == "System" && base.Match(pm, e);
+					return TypeAnalysis.IsNullableType(t) && base.Match(pm, e);
 				}
 			}
 
@@ -328,7 +328,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				{
 					var v = this.b ? pm.B : pm.A;
 					var e = new ILExpression(ILCode.Ldloc, v, EmptyArguments);
-					if (v.Type.Name == "Nullable`1" && v.Type.Namespace == "System") e = new ILExpression(ILCode.ValueOf, null, e);
+					if (TypeAnalysis.IsNullableType(v.Type)) e = new ILExpression(ILCode.ValueOf, null, e);
 					return e;
 				}
 			}
@@ -378,6 +378,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				return new OperatorPattern(type, true);
 			}
 
+			static Pattern NewObj(Pattern p)
+			{
+				return new MethodPattern(ILCode.Newobj, ".ctor", p);
+			}
+
 			static readonly Pattern[] Comparisons = new Pattern[] {
 				/* both operands nullable */
 				// == (primitive, decimal)
@@ -417,18 +422,18 @@ namespace ICSharpCode.Decompiler.ILAst
 				new ILPattern(ILCode.TernaryOp, VariableAGetValueOrDefault | (!VariableBGetValueOrDefault & !VariableAHasValue), VariableA, VariableB),
 				new ILPattern(ILCode.Or, VariableA, VariableB),
 				// null coalescing
-				new ILPattern(ILCode.TernaryOp, VariableAHasValue, new MethodPattern(ILCode.Newobj, ".ctor", VariableAGetValueOrDefault), VariableB),
+				new ILPattern(ILCode.TernaryOp, VariableAHasValue, NewObj(VariableAGetValueOrDefault), VariableB),
 				new ILPattern(ILCode.NullCoalescing, VariableA, VariableB),
 				// all other
-				new ILPattern(ILCode.TernaryOp, AndHasValue, new MethodPattern(ILCode.Newobj, ".ctor", OperatorNN(OperatorType.Other)), new ILPattern(ILCode.DefaultValue)),
-				null,
+				new ILPattern(ILCode.TernaryOp, AndHasValue, NewObj(OperatorNN(OperatorType.Other)), new ILPattern(ILCode.DefaultValue)),
+				OperatorVariableAB,
 
 				/* only one operand nullable */
 				// & (bool)
-				new ILPattern(ILCode.TernaryOp, Any, VariableA, new MethodPattern(ILCode.Newobj, ".ctor", BooleanPattern.False)),
+				new ILPattern(ILCode.TernaryOp, Any, VariableA, NewObj(BooleanPattern.False)),
 				new ILPattern(ILCode.And, VariableA, Any),
 				// | (bool)
-				new ILPattern(ILCode.TernaryOp, Any, new MethodPattern(ILCode.Newobj, ".ctor", BooleanPattern.True), VariableA),
+				new ILPattern(ILCode.TernaryOp, Any, NewObj(BooleanPattern.True), VariableA),
 				new ILPattern(ILCode.Or, VariableA, Any),
 				// == true
 				VariableAGetValueOrDefault & VariableAHasValue,
@@ -452,8 +457,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				new ILPattern(ILCode.TernaryOp, VariableAHasValue, VariableAGetValueOrDefault, Any),
 				new ILPattern(ILCode.NullCoalescing, VariableA, Any),
 				// all other
-				new ILPattern(ILCode.TernaryOp, VariableAHasValue, new MethodPattern(ILCode.Newobj, ".ctor", OperatorNV(OperatorType.Other)), new ILPattern(ILCode.DefaultValue)),
-				null,
+				new ILPattern(ILCode.TernaryOp, VariableAHasValue, NewObj(OperatorNV(OperatorType.Other)), new ILPattern(ILCode.DefaultValue)),
+				OperatorVariableAB,
 			};
 
 			ILVariable A, B;
@@ -478,15 +483,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						for (int i = 0; i < ps.Length; i++) {
 							this.Reset();
 							if (!ps[i].Match(this, expr)) continue;
-							var n = OperatorVariableAB.BuildNew(this);
-							n.ILRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
-							// the new expression is wrapped in a container so that negations aren't pushed through the comparison operation
-							expr.Code = ILCode.Wrap;
-							expr.Operand = null;
-							expr.Arguments.Clear();
-							expr.Arguments.Add(n);
-							expr.ILRanges.Clear();
-							expr.InferredType = n.InferredType;
+							SetResult(expr, OperatorVariableAB.BuildNew(this));
 							return true;
 						}
 					}
@@ -494,19 +491,32 @@ namespace ICSharpCode.Decompiler.ILAst
 					for (int i = 0; i < ps.Length; i += 2) {
 						this.Reset();
 						if (!ps[i].Match(this, expr)) continue;
-						var n = (ps[i + 1] ?? OperatorVariableAB).BuildNew(this);
-						n.ILRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(el => el.ILRanges));
-						// the new expression is wrapped in a container so that negations aren't pushed through the comparison operation
-						expr.Code = ILCode.Wrap;
-						expr.Operand = null;
-						expr.Arguments.Clear();
-						expr.Arguments.Add(n);
-						expr.ILRanges.Clear();
-						expr.InferredType = n.InferredType;
+						var n = ps[i + 1].BuildNew(this);
+						SetResult(expr, n);
+						if (n.Code == ILCode.NullCoalescing) {
+							// if both operands are nullable then the result is also nullable
+							if (n.Arguments[1].Code == ILCode.ValueOf) {
+								n.Arguments[0] = n.Arguments[0].Arguments[0];
+								n.Arguments[1] = n.Arguments[1].Arguments[0];
+							}
+						} else if (n.Code != ILCode.Ceq && n.Code != ILCode.Cne) expr.Code = ILCode.NullableOf;
 						return true;
 					}
 				}
 				return false;
+			}
+
+			static void SetResult(ILExpression expr, ILExpression n)
+			{
+				// IL ranges from removed nodes are assigned to the new operator expression
+				var removednodes = expr.GetSelfAndChildrenRecursive<ILExpression>().Except(n.GetSelfAndChildrenRecursive<ILExpression>());
+				n.ILRanges = ILRange.OrderAndJoint(n.ILRanges.Concat(removednodes.SelectMany(el => el.ILRanges)));
+				// the new expression is wrapped in a container so that negations aren't pushed through lifted comparison operations
+				expr.Code = ILCode.Wrap;
+				expr.Arguments.Clear();
+				expr.Arguments.Add(n);
+				expr.ILRanges.Clear();
+				expr.InferredType = n.InferredType;
 			}
 		}
 	}

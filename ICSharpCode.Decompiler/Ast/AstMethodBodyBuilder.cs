@@ -800,6 +800,7 @@ namespace ICSharpCode.Decompiler.Ast
 					return new ParenthesizedExpression(arg1);
 				case ILCode.AddressOf:
 					return MakeRef(arg1);
+				case ILCode.NullableOf:
 				case ILCode.ValueOf: return arg1;
 				default:
 					throw new Exception("Unknown OpCode: " + byteCode.Code);

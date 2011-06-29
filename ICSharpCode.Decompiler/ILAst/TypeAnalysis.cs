@@ -473,7 +473,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.TypedReference);
 					}
-					return new TypeReference("System", "RuntimeTypeHandle", module, module, true);
+					return new TypeReference("System", "RuntimeTypeHandle", module, module.TypeSystem.Corlib, true);
 				case ILCode.Refanyval:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.TypedReference);
@@ -484,15 +484,10 @@ namespace ICSharpCode.Decompiler.ILAst
 						TypeReference t = InferTypeForExpression(expr.Arguments[0], UnpackPointer(expectedType));
 						return t != null ? new ByReferenceType(t) : null;
 					}
-				case ILCode.ValueOf: {
-						GenericInstanceType t = null;
-						if (expectedType != null) {
-							t = new GenericInstanceType(new TypeReference("System", "Nullable`1", module, module.TypeSystem.Corlib));
-							t.GenericArguments.Add(expectedType);
-						}
-						t = InferTypeForExpression(expr.Arguments[0], t) as GenericInstanceType;
-						return t == null || t.Name != "Nullable`1" || t.Namespace != "System" ? null : t.GenericArguments[0];
-					}
+				case ILCode.ValueOf:
+					return GetNullableTypeArgument(InferTypeForExpression(expr.Arguments[0], CreateNullableType(expectedType)));
+				case ILCode.NullableOf:
+					return CreateNullableType(InferTypeForExpression(expr.Arguments[0], GetNullableTypeArgument(expectedType)));
 					#endregion
 					#region Arithmetic instructions
 				case ILCode.Not: // bitwise complement
@@ -560,16 +555,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldc_R8:
 					return typeSystem.Double;
 				case ILCode.Ldc_Decimal:
-					return new TypeReference("System", "Decimal", module, module, true);
+					return new TypeReference("System", "Decimal", module, module.TypeSystem.Corlib, true);
 				case ILCode.Ldtoken:
 					if (expr.Operand is TypeReference)
-						return new TypeReference("System", "RuntimeTypeHandle", module, module, true);
+						return new TypeReference("System", "RuntimeTypeHandle", module, module.TypeSystem.Corlib, true);
 					else if (expr.Operand is FieldReference)
-						return new TypeReference("System", "RuntimeFieldHandle", module, module, true);
+						return new TypeReference("System", "RuntimeFieldHandle", module, module.TypeSystem.Corlib, true);
 					else
-						return new TypeReference("System", "RuntimeMethodHandle", module, module, true);
+						return new TypeReference("System", "RuntimeMethodHandle", module, module.TypeSystem.Corlib, true);
 				case ILCode.Arglist:
-					return new TypeReference("System", "RuntimeArgumentHandle", module, module, true);
+					return new TypeReference("System", "RuntimeArgumentHandle", module, module.TypeSystem.Corlib, true);
 					#endregion
 					#region Array instructions
 				case ILCode.Newarr:
@@ -872,6 +867,20 @@ namespace ICSharpCode.Decompiler.ILAst
 				type = ((TypeSpecification)type).ElementType;
 			return type;
 		}
+
+		static TypeReference GetNullableTypeArgument(TypeReference type)
+		{
+			var t = type as GenericInstanceType;
+			return IsNullableType(t) ? t.GenericArguments[0] : type;
+		}
+
+		GenericInstanceType CreateNullableType(TypeReference type)
+		{
+			if (type == null) return null;
+			var t = new GenericInstanceType(new TypeReference("System", "Nullable`1", module, module.TypeSystem.Corlib, true));
+			t.GenericArguments.Add(type);
+			return t;
+		}
 		
 		TypeReference InferArgumentsInBinaryOperator(ILExpression expr, bool? isSigned, TypeReference expectedType)
 		{
@@ -884,6 +893,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			} else if (IsSameType(rightPreferred, DoInferTypeForExpression(left, rightPreferred))) {
 				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
 			} else if (IsSameType(leftPreferred, DoInferTypeForExpression(right, leftPreferred))) {
+				// re-infer the left expression with the preferred type to reset any conflicts caused by the rightPreferred type
+				DoInferTypeForExpression(left, leftPreferred);
 				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
 			} else {
 				left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
@@ -1067,6 +1078,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				typeSpec = typeSpec.ElementType as TypeSpecification;
 			}
 			return false;
+		}
+
+		internal static bool IsNullableType(TypeReference type)
+		{
+			return type != null && type.Name == "Nullable`1" && type.Namespace == "System";
 		}
 		
 		public static TypeCode GetTypeCode(TypeReference type)

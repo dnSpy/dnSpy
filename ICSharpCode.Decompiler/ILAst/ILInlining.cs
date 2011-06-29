@@ -429,6 +429,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldelema:
 				case ILCode.AddressOf:
 				case ILCode.ValueOf:
+				case ILCode.NullableOf:
 					// address-loading instructions are safe if their arguments are safe
 					foreach (ILExpression arg in expr.Arguments) {
 						if (!IsSafeForInlineOver(arg, expressionBeingMoved))
