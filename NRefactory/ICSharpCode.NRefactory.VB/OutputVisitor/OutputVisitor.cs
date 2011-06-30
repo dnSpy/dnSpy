@@ -191,6 +191,7 @@ namespace ICSharpCode.NRefactory.VB
 		public object VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, object data)
 		{
 			StartNode(namespaceDeclaration);
+			NewLine();
 			WriteKeyword("Namespace");
 			bool isFirst = true;
 			foreach (Identifier node in namespaceDeclaration.Identifiers) {
@@ -1839,6 +1840,47 @@ namespace ICSharpCode.NRefactory.VB
 		public object VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, object data)
 		{
 			throw new NotImplementedException();
+		}
+		
+		public object VisitConditionalExpression(ConditionalExpression conditionalExpression, object data)
+		{
+			StartNode(conditionalExpression);
+			
+			WriteKeyword("If");
+			WriteToken("(", ConditionalExpression.Roles.LPar);
+			
+			conditionalExpression.ConditionExpression.AcceptVisitor(this, data);
+			WriteToken(",", ConditionalExpression.Roles.Comma);
+			Space();
+			
+			if (!conditionalExpression.TrueExpression.IsNull) {
+				conditionalExpression.TrueExpression.AcceptVisitor(this, data);
+				WriteToken(",", ConditionalExpression.Roles.Comma);
+				Space();
+			}
+			
+			conditionalExpression.FalseExpression.AcceptVisitor(this, data);
+			
+			WriteToken(")", ConditionalExpression.Roles.RPar);
+			
+			return EndNode(conditionalExpression);
+		}
+		
+		public object VisitWhileStatement(WhileStatement whileStatement, object data)
+		{
+			StartNode(whileStatement);
+			
+			WriteKeyword("While");
+			Space();
+			whileStatement.Condition.AcceptVisitor(this, data);
+			NewLine();
+			Indent();
+			whileStatement.Body.AcceptVisitor(this, data);
+			Unindent();
+			WriteKeyword("End");
+			WriteKeyword("While");
+			
+			return EndNode(whileStatement);
 		}
 	}
 }

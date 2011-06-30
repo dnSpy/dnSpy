@@ -67,6 +67,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitCastExpression(CastExpression castExpression, T data);
 		S VisitFieldInitializerExpression(FieldInitializerExpression fieldInitializerExpression, T data);
 		S VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, T data);
+		S VisitConditionalExpression(ConditionalExpression conditionalExpression, T data);
 		
 		// Statement scope
 		S VisitLabelDeclarationStatement(LabelDeclarationStatement labelDeclarationStatement, T data);
@@ -79,6 +80,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitThrowStatement(ThrowStatement throwStatement, T data);
 		S VisitCatchBlock(CatchBlock catchBlock, T data);
 		S VisitReturnStatement(ReturnStatement returnStatement, T data);
+		S VisitWhileStatement(WhileStatement whileStatement, T data);
 		
 		// TypeName
 		S VisitPrimitiveType(PrimitiveType primitiveType, T data);

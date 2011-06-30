@@ -233,7 +233,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitConditionalExpression(CSharp.ConditionalExpression conditionalExpression, object data)
 		{
-			throw new NotImplementedException();
+			var cond = new ConditionalExpression() {
+				ConditionExpression = (Expression)conditionalExpression.Condition.AcceptVisitor(this, data),
+				TrueExpression = (Expression)conditionalExpression.TrueExpression.AcceptVisitor(this, data),
+				FalseExpression = (Expression)conditionalExpression.FalseExpression.AcceptVisitor(this, data)
+			};
+			
+			return EndNode(conditionalExpression, cond);
 		}
 		
 		public AstNode VisitDefaultValueExpression(CSharp.DefaultValueExpression defaultValueExpression, object data)
@@ -847,7 +853,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitWhileStatement(CSharp.WhileStatement whileStatement, object data)
 		{
-			throw new NotImplementedException();
+			var stmt = new WhileStatement() {
+				Condition = (Expression)whileStatement.Condition.AcceptVisitor(this, data),
+				Body = (BlockStatement)whileStatement.EmbeddedStatement.AcceptVisitor(this, data)
+			};
+			
+			return EndNode(whileStatement, stmt);
 		}
 		
 		public AstNode VisitYieldBreakStatement(CSharp.YieldBreakStatement yieldBreakStatement, object data)
