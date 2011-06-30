@@ -140,10 +140,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				public override bool Match(PatternMatcher pm, ILExpression e)
 				{
 					if (e.Code != this.code) return false;
-					var m = e.Operand as MethodReference;
-					if (m == null || m.Name != this.method) return false;
-					var t = m.DeclaringType;
-					return TypeAnalysis.IsNullableType(t) && base.Match(pm, e);
+					var m = (MethodReference)e.Operand;
+					return m.Name == this.method && TypeAnalysis.IsNullableType(m.DeclaringType) && base.Match(pm, e);
 				}
 			}
 
@@ -236,35 +234,39 @@ namespace ICSharpCode.Decompiler.ILAst
 
 				bool IsCustomOperator(string s)
 				{
-					if (s.Length < 10 || !s.StartsWith("op_", StringComparison.Ordinal)) return false;
-					switch (s) {
-						case "op_Equality":
-							return type == OperatorType.Equality;
-						case "op_Inequality":
-							return type == OperatorType.InEquality;
-						case "op_GreaterThan":
-						case "op_GreaterThanOrEqual":
-						case "op_LessThan":
-						case "op_LessThanOrEqual":
-							return type == OperatorType.Comparison;
-						case "op_Addition":
-						case "op_Subtraction":
-						case "op_Multiply":
-						case "op_Division":
-						case "op_Modulus":
-						case "op_BitwiseAnd":
-						case "op_BitwiseOr":
-						case "op_ExclusiveOr":
-						case "op_LeftShift":
-						case "op_RightShift":
-						case "op_UnaryNegation":
-						case "op_UnaryPlus":
-						case "op_LogicalNot":
-						case "op_OnesComplement":
-						case "op_Increment":
-						case "op_Decrement":
-							return type == OperatorType.Other;
-						default: return false;
+					switch (type) {
+						case OperatorType.Equality: return s == "op_Equality";
+						case OperatorType.InEquality: return s == "op_Inequality";
+						case OperatorType.Comparison:
+							if (s.Length < 11 || !s.StartsWith("op_", StringComparison.Ordinal)) return false;
+							switch (s) {
+								case "op_GreaterThan":
+								case "op_GreaterThanOrEqual":
+								case "op_LessThan":
+								case "op_LessThanOrEqual": return true;
+								default: return false;
+							}
+						default:
+							if (s.Length < 10 || !s.StartsWith("op_", StringComparison.Ordinal)) return false;
+							switch (s) {
+								case "op_Addition":
+								case "op_Subtraction":
+								case "op_Multiply":
+								case "op_Division":
+								case "op_Modulus":
+								case "op_BitwiseAnd":
+								case "op_BitwiseOr":
+								case "op_ExclusiveOr":
+								case "op_LeftShift":
+								case "op_RightShift":
+								case "op_UnaryNegation":
+								case "op_UnaryPlus":
+								case "op_LogicalNot":
+								case "op_OnesComplement":
+								case "op_Increment":
+								case "op_Decrement": return true;
+								default: return false;
+							}
 					}
 				}
 

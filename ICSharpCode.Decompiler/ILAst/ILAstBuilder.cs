@@ -339,7 +339,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (byteCode.Code == ILCode.Stloc || byteCode.Code == ILCode.Ldloca) {
 					int varIndex = ((VariableReference)byteCode.Operand).Index;
 					newVariableState[varIndex] = byteCode.Code == ILCode.Stloc || byteCode.Next.Code == ILCode.Initobj ?
-						new VariableSlot(byteCode) : new VariableSlot(newVariableState[varIndex].StoredBy.Union(new[] { byteCode }), false);
+						new VariableSlot(byteCode) : new VariableSlot(newVariableState[varIndex].StoredBy.Union(byteCode), false);
 				}
 				
 				// After the leave, finally block might have touched the variables
@@ -810,15 +810,34 @@ namespace ICSharpCode.Decompiler.ILAst
 			list.RemoveRange(start, count);
 			return ret;
 		}
+
+		public static T[] Union<T>(this T[] a, T b)
+		{
+			if (a.Length == 0)
+				return new[] { b };
+			if (Array.IndexOf(a, b) >= 0)
+				return a;
+			var res = new T[a.Length + 1];
+			Array.Copy(a, res, a.Length);
+			res[res.Length - 1] = b;
+			return res;
+		}
 		
 		public static T[] Union<T>(this T[] a, T[] b)
 		{
+			if (a == b)
+				return a;
 			if (a.Length == 0)
 				return b;
 			if (b.Length == 0)
 				return a;
-			if (a.Length == 1 && b.Length == 1 && a[0].Equals(b[0]))
-				return a;
+			if (a.Length == 1) {
+				if (b.Length == 1)
+					return a[0].Equals(b[0]) ? a : new[] { a[0], b[0] };
+				return b.Union(a[0]);
+			}
+			if (b.Length == 1)
+				return a.Union(b[0]);
 			return Enumerable.Union(a, b).ToArray();
 		}
 	}
