@@ -88,28 +88,26 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			AddChild(statement, StatementRole);
 		}
 		
-		// TODO : uncomment
+		public void Add(Expression expression)
+		{
+			AddChild(new ExpressionStatement { Expression = expression }, StatementRole);
+		}
 		
-//		public void Add(Expression expression)
-//		{
-//			AddChild(new ExpressionStatement { Expression = expression }, StatementRole);
-//		}
-//		
 		public void AddRange(IEnumerable<Statement> statements)
 		{
 			foreach (Statement st in statements)
 				AddChild(st, StatementRole);
 		}
 		
-//		public void AddAssignment(Expression left, Expression right)
-//		{
-//			Add(new AssignmentExpression { Left = left, Operator = AssignmentOperatorType.Assign, Right = right });
-//		}
-//		
-//		public void AddReturnStatement(Expression expression)
-//		{
-//			Add(new ReturnStatement { Expression = expression });
-//		}
+		public void AddAssignment(Expression left, Expression right)
+		{
+			Add(new AssignmentExpression(left, AssignmentOperatorType.Assign, right));
+		}
+		
+		public void AddReturnStatement(Expression expression)
+		{
+			Add(new ReturnStatement { Expression = expression });
+		}
 		#endregion
 		
 		IEnumerator<Statement> IEnumerable<Statement>.GetEnumerator()
@@ -122,6 +120,4 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			return this.Statements.GetEnumerator();
 		}
 	}
-	
-	
 }
