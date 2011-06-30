@@ -65,6 +65,8 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, T data);
 		S VisitObjectCreationExpression(ObjectCreationExpression objectCreationExpression, T data);
 		S VisitCastExpression(CastExpression castExpression, T data);
+		S VisitFieldInitializerExpression(FieldInitializerExpression fieldInitializerExpression, T data);
+		S VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, T data);
 		
 		// Statement scope
 		S VisitLabelDeclarationStatement(LabelDeclarationStatement labelDeclarationStatement, T data);

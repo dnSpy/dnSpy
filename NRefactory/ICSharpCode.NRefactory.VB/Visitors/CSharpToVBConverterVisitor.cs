@@ -130,6 +130,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var op = BinaryOperatorType.None;
 			var right = (Expression)binaryOperatorExpression.Right.AcceptVisitor(this, data);
 			
+			// TODO obj <> Nothing is wrong; correct would be obj IsNot Nothing
+			
 			switch (binaryOperatorExpression.Operator) {
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.BitwiseAnd:
 					op = BinaryOperatorType.BitwiseAnd;
@@ -272,7 +274,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitIsExpression(CSharp.IsExpression isExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new TypeOfIsExpression() {
+				Type = (AstType)isExpression.Type.AcceptVisitor(this, data),
+				TypeOfExpression = (Expression)isExpression.Expression.AcceptVisitor(this, data)
+			};
+			
+			return EndNode(isExpression, expr);
 		}
 		
 		public AstNode VisitLambdaExpression(CSharp.LambdaExpression lambdaExpression, object data)
@@ -293,7 +300,22 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitNamedArgumentExpression(CSharp.NamedArgumentExpression namedArgumentExpression, object data)
 		{
-			throw new NotImplementedException();
+			Expression expr;
+			
+			if (namedArgumentExpression.Parent is CSharp.ArrayInitializerExpression) {
+				expr = new FieldInitializerExpression {
+					IsKey = true,
+					Identifier = namedArgumentExpression.Identifier,
+					Expression = (Expression)namedArgumentExpression.Expression.AcceptVisitor(this, data)
+				};
+			} else {
+				expr = new NamedArgumentExpression {
+					Identifier = namedArgumentExpression.Identifier,
+					Expression = (Expression)namedArgumentExpression.Expression.AcceptVisitor(this, data)
+				};
+			}
+			
+			return EndNode(namedArgumentExpression, expr);
 		}
 		
 		public AstNode VisitNullReferenceExpression(CSharp.NullReferenceExpression nullReferenceExpression, object data)
@@ -779,12 +801,24 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitTryCatchStatement(CSharp.TryCatchStatement tryCatchStatement, object data)
 		{
-			throw new NotImplementedException();
+			var stmt = new TryStatement();
+			
+			stmt.Body = (BlockStatement)tryCatchStatement.TryBlock.AcceptVisitor(this, data);
+			stmt.FinallyBlock = (BlockStatement)tryCatchStatement.FinallyBlock.AcceptVisitor(this, data);
+			ConvertNodes(tryCatchStatement.CatchClauses, stmt.CatchBlocks);
+			
+			return EndNode(tryCatchStatement, stmt);
 		}
 		
 		public AstNode VisitCatchClause(CSharp.CatchClause catchClause, object data)
 		{
-			throw new NotImplementedException();
+			var clause = new CatchBlock();
+			
+			clause.ExceptionType = (AstType)catchClause.Type.AcceptVisitor(this, data);
+			clause.ExceptionVariable = catchClause.VariableName;
+			ConvertNodes(catchClause.Body.Statements, clause.Statements);
+			
+			return EndNode(catchClause, clause);
 		}
 		
 		public AstNode VisitUncheckedStatement(CSharp.UncheckedStatement uncheckedStatement, object data)

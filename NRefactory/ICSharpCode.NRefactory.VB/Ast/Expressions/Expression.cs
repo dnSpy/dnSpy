@@ -170,7 +170,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		}
 	}
 	
-		/// <summary>
+	/// <summary>
 	/// Target(Arguments)
 	/// </summary>
 	public class InvocationExpression : Expression
@@ -205,7 +205,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public InvocationExpression (Expression target, params Expression[] arguments) : this (target, (IEnumerable<Expression>)arguments)
 		{
-		}	
+		}
 		
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
@@ -214,7 +214,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		}
 	}
 	
-		/// <summary>
+	/// <summary>
 	/// Operator Expression
 	/// </summary>
 	public class UnaryOperatorExpression : Expression
@@ -279,5 +279,77 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Minus,
 		/// <summary>Unary plus (+a)</summary>
 		Plus
+	}
+	
+	/// <summary>
+	/// Represents a named argument passed to a method or attribute.
+	/// </summary>
+	public class NamedArgumentExpression : Expression
+	{
+		public Identifier Identifier {
+			get { return GetChildByRole(Roles.Identifier); }
+			set { SetChildByRole(Roles.Identifier, value); }
+		}
+		
+		public VBTokenNode AssignToken {
+			get { return GetChildByRole (Roles.Assign); }
+		}
+		
+		public Expression Expression {
+			get { return GetChildByRole (Roles.Expression); }
+			set { SetChildByRole (Roles.Expression, value); }
+		}
+		
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		{
+			return visitor.VisitNamedArgumentExpression(this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			NamedArgumentExpression o = other as NamedArgumentExpression;
+			return o != null && this.Identifier.DoMatch(o.Identifier, match) && this.Expression.DoMatch(o.Expression, match);
+		}
+	}
+	
+	/// <summary>
+	/// [ Key ] .Identifier = Expression
+	/// </summary>
+	public class FieldInitializerExpression : Expression
+	{
+		public bool IsKey { get; set; }
+		
+		public VBTokenNode KeyToken {
+			get { return GetChildByRole (Roles.Keyword); }
+		}
+		
+		public VBTokenNode DotToken {
+			get { return GetChildByRole (Roles.Dot); }
+		}
+		
+		public Identifier Identifier {
+			get { return GetChildByRole(Roles.Identifier); }
+			set { SetChildByRole(Roles.Identifier, value); }
+		}
+		
+		public VBTokenNode AssignToken {
+			get { return GetChildByRole (Roles.Assign); }
+		}
+		
+		public Expression Expression {
+			get { return GetChildByRole (Roles.Expression); }
+			set { SetChildByRole (Roles.Expression, value); }
+		}
+		
+		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+		{
+			return visitor.VisitFieldInitializerExpression(this, data);
+		}
+		
+		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+		{
+			FieldInitializerExpression o = other as FieldInitializerExpression;
+			return o != null && this.IsKey == o.IsKey && this.Identifier.DoMatch(o.Identifier, match) && this.Expression.DoMatch(o.Expression, match);
+		}
 	}
 }

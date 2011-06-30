@@ -431,7 +431,14 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitTypeOfIsExpression(TypeOfIsExpression typeOfIsExpression, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(typeOfIsExpression);
+			
+			WriteKeyword("TypeOf");
+			typeOfIsExpression.TypeOfExpression.AcceptVisitor(this, data);
+			WriteKeyword("Is");
+			typeOfIsExpression.Type.AcceptVisitor(this, data);
+			
+			return EndNode(typeOfIsExpression);
 		}
 		
 		public object VisitGetXmlNamespaceExpression(GetXmlNamespaceExpression getXmlNamespaceExpression, object data)
@@ -1382,12 +1389,44 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitTryStatement(TryStatement tryStatement, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(tryStatement);
+			WriteKeyword("Try");
+			NewLine();
+			Indent();
+			tryStatement.Body.AcceptVisitor(this, data);
+			Unindent();
+			foreach (var clause in tryStatement.CatchBlocks) {
+				clause.AcceptVisitor(this, data);
+			}
+			if (!tryStatement.FinallyBlock.IsNull) {
+				WriteKeyword("Finally");
+				NewLine();
+				Indent();
+				tryStatement.FinallyBlock.AcceptVisitor(this, data);
+				Unindent();
+			}
+			WriteKeyword("End");
+			WriteKeyword("Try");
+			return EndNode(tryStatement);
 		}
 		
 		public object VisitCatchBlock(CatchBlock catchBlock, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(catchBlock);
+			WriteKeyword("Catch");
+			catchBlock.ExceptionVariable.AcceptVisitor(this, data);
+			if (!catchBlock.ExceptionType.IsNull) {
+				WriteKeyword("As");
+				catchBlock.ExceptionType.AcceptVisitor(this, data);
+			}
+			NewLine();
+			Indent();
+			foreach (var stmt in catchBlock) {
+				stmt.AcceptVisitor(this, data);
+				NewLine();
+			}
+			Unindent();
+			return EndNode(catchBlock);
 		}
 		
 		public object VisitExpressionStatement(ExpressionStatement expressionStatement, object data)
@@ -1622,7 +1661,10 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("New");
 			objectCreationExpression.Type.AcceptVisitor(this, data);
 			WriteCommaSeparatedListInParenthesis(objectCreationExpression.Arguments, false);
-			objectCreationExpression.Initializer.AcceptVisitor(this, data);
+			if (!objectCreationExpression.Initializer.IsNull) {
+				Space();
+				objectCreationExpression.Initializer.AcceptVisitor(this, data);
+			}
 			
 			return EndNode(objectCreationExpression);
 		}
@@ -1772,6 +1814,31 @@ namespace ICSharpCode.NRefactory.VB
 			unaryOperatorExpression.Expression.AcceptVisitor(this, data);
 			
 			return EndNode(unaryOperatorExpression);
+		}
+		
+		public object VisitFieldInitializerExpression(FieldInitializerExpression fieldInitializerExpression, object data)
+		{
+			StartNode(fieldInitializerExpression);
+			
+			if (fieldInitializerExpression.IsKey) {
+				WriteKeyword("Key");
+				Space();
+			}
+			
+			WriteToken(".", FieldInitializerExpression.Roles.Dot);
+			fieldInitializerExpression.Identifier.AcceptVisitor(this, data);
+			
+			Space();
+			WriteToken("=", FieldInitializerExpression.Roles.Assign);
+			Space();
+			fieldInitializerExpression.Expression.AcceptVisitor(this, data);
+			
+			return EndNode(fieldInitializerExpression);
+		}
+		
+		public object VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, object data)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
