@@ -2075,5 +2075,13 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			throw new NotImplementedException();
 		}
+		
+		public object VisitYieldStatement(YieldStatement yieldStatement, object data)
+		{
+			StartNode(yieldStatement);
+			WriteKeyword("Yield");
+			yieldStatement.Expression.AcceptVisitor(this, data);
+			return EndNode(yieldStatement);
+		}
 	}
 }

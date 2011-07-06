@@ -26,6 +26,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 	{
 		IEnvironmentProvider provider;
 		Stack<BlockStatement> blocks;
+		// TODO this should belong to the current type member or lambda
+		bool inIterator;
 		
 		public CSharpToVBConverterVisitor(IEnvironmentProvider provider)
 		{
@@ -929,12 +931,14 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitYieldBreakStatement(CSharp.YieldBreakStatement yieldBreakStatement, object data)
 		{
-			throw new NotImplementedException();
+			inIterator = true;
+			return EndNode(yieldBreakStatement, new ReturnStatement());
 		}
 		
 		public AstNode VisitYieldStatement(CSharp.YieldStatement yieldStatement, object data)
 		{
-			throw new NotImplementedException();
+			inIterator = true;
+			return EndNode(yieldStatement, new YieldStatement((Expression)yieldStatement.Expression.AcceptVisitor(this, data)));
 		}
 		
 		public AstNode VisitAccessor(CSharp.Accessor accessor, object data)
@@ -1077,6 +1081,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			if (!result.IsSub)
 				result.ReturnType = (AstType)methodDeclaration.ReturnType.AcceptVisitor(this, data);
 			result.Body = (BlockStatement)methodDeclaration.Body.AcceptVisitor(this, data);
+			
+			if (inIterator) {
+				result.Modifiers |= Modifiers.Iterator;
+				inIterator = false;
+			}
 			
 			return EndNode(methodDeclaration, result);
 		}
@@ -1235,6 +1244,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				                           	Name = new Identifier("value", AstLocation.Empty),
 				                           	Type = (AstType)propertyDeclaration.ReturnType.AcceptVisitor(this, data),
 				                           });
+			}
+			
+			if (inIterator) {
+				decl.Modifiers |= Modifiers.Iterator;
+				inIterator = false;
 			}
 			
 			return EndNode(propertyDeclaration, decl);

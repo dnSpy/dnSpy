@@ -48,6 +48,9 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Narrowing  = 0x2000000,
 		Widening   = 0x4000000,
 		
+		Iterator   = 0x8000000,
+		Async      = 0x10000000,
+		
 		/// <summary>
 		/// Special value used to match any modifiers during pattern matching.
 		/// </summary>

@@ -102,6 +102,7 @@
     <Compile Include="Ast\Statements\TryStatement.cs" />
     <Compile Include="Ast\Statements\WhileStatement.cs" />
     <Compile Include="Ast\Statements\WithStatement.cs" />
+    <Compile Include="Ast\Statements\YieldStatement.cs" />
     <Compile Include="Ast\TypeMembers\Accessor.cs" />
     <Compile Include="Ast\TypeMembers\ConstructorDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\EventDeclaration.cs" />

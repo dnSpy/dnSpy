@@ -86,6 +86,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitForEachStatement(ForEachStatement forEachStatement, T data);
 		S VisitExitStatement(ExitStatement exitStatement, T data);
 		S VisitSelectStatement(SelectStatement selectStatement, T data);
+		S VisitYieldStatement(YieldStatement yieldStatement, T data);
 		
 		// TypeName
 		S VisitPrimitiveType(PrimitiveType primitiveType, T data);

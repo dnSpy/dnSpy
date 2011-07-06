@@ -66,6 +66,9 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			// operator modifiers
 			new KeyValuePair<Modifiers, int>(Modifiers.Narrowing, "Narrowing".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Widening, "Widening".Length),
+			// VB 11 modifiers
+			new KeyValuePair<Modifiers, int>(Modifiers.Async, "Async".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Iterator, "Iterator".Length),
 			// even though it's used for patterns only, it needs to be in this table to be usable in the AST
 			new KeyValuePair<Modifiers, int>(Modifiers.Any, "Any".Length)
 		};
@@ -136,6 +139,10 @@ namespace ICSharpCode.NRefactory.VB.Ast
 					return "Widening";
 				case Modifiers.Narrowing:
 					return "Narrowing";
+				case Modifiers.Async:
+					return "Async";
+				case Modifiers.Iterator:
+					return "Iterator";
 				default:
 					throw new NotSupportedException("Invalid value for Modifiers: " + modifier);
 			}
