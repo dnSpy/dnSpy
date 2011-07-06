@@ -103,15 +103,14 @@ public static class NullableOperators
 		{
 			Console.WriteLine();
 		}
-		// TODO:
-		//if (a ?? true) 
-		//{
-		//  Console.WriteLine();
-		//}
-		//if (a ?? false) 
-		//{
-		//  Console.WriteLine();
-		//}
+		if (a ?? true) 
+		{
+		  Console.WriteLine();
+		}
+		if (a ?? false) 
+		{
+		  Console.WriteLine();
+		}
 	}
 
 	public static void BoolValueBasic(bool? a, bool? b)

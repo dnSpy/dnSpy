@@ -280,15 +280,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], typeSystem.Boolean);
 					}
-					return TypeWithMoreInformation(
-						InferTypeForExpression(expr.Arguments[1], expectedType, forceInferChildren),
-						InferTypeForExpression(expr.Arguments[2], expectedType, forceInferChildren)
-					);
+					return InferBinaryArguments(expr.Arguments[1], expr.Arguments[2], expectedType, forceInferChildren);
 				case ILCode.NullCoalescing:
-					return TypeWithMoreInformation(
-						InferTypeForExpression(expr.Arguments[0], expectedType, forceInferChildren),
-						InferTypeForExpression(expr.Arguments[1], expectedType, forceInferChildren)
-					);
+					return InferBinaryArguments(expr.Arguments[0], expr.Arguments[1], expectedType, forceInferChildren);
 					#endregion
 					#region Variable load/store
 				case ILCode.Stloc:
@@ -961,24 +955,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		TypeReference InferArgumentsInBinaryOperator(ILExpression expr, bool? isSigned, TypeReference expectedType)
 		{
-			ILExpression left = expr.Arguments[0];
-			ILExpression right = expr.Arguments[1];
-			TypeReference leftPreferred = DoInferTypeForExpression(left, expectedType);
-			TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
-			if (IsSameType(leftPreferred, rightPreferred)) {
-				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
-			} else if (IsSameType(rightPreferred, DoInferTypeForExpression(left, rightPreferred))) {
-				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
-			} else if (IsSameType(leftPreferred, DoInferTypeForExpression(right, leftPreferred))) {
-				// re-infer the left expression with the preferred type to reset any conflicts caused by the rightPreferred type
-				DoInferTypeForExpression(left, leftPreferred);
-				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
-			} else {
-				left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
-				left.InferredType = DoInferTypeForExpression(left, left.ExpectedType);
-				right.InferredType = DoInferTypeForExpression(right, right.ExpectedType);
-				return left.ExpectedType;
-			}
+			return InferBinaryArguments(expr.Arguments[0], expr.Arguments[1], expectedType);
 		}
 		
 		TypeReference InferArgumentsInAddition(ILExpression expr, bool? isSigned, TypeReference expectedType)
@@ -990,25 +967,14 @@ namespace ICSharpCode.Decompiler.ILAst
 				left.InferredType = left.ExpectedType = leftPreferred;
 				InferTypeForExpression(right, typeSystem.IntPtr);
 				return leftPreferred;
-			} else {
-				TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
-				if (rightPreferred is PointerType) {
-					InferTypeForExpression(left, typeSystem.IntPtr);
-					right.InferredType = right.ExpectedType = rightPreferred;
-					return rightPreferred;
-				} else if (IsSameType(leftPreferred, rightPreferred)) {
-					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
-				} else if (IsSameType(rightPreferred, DoInferTypeForExpression(left, rightPreferred))) {
-					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
-				} else if (IsSameType(leftPreferred, DoInferTypeForExpression(right, leftPreferred))) {
-					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
-				} else {
-					left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
-					left.InferredType = DoInferTypeForExpression(left, left.ExpectedType);
-					right.InferredType = DoInferTypeForExpression(right, right.ExpectedType);
-					return left.ExpectedType;
-				}
 			}
+			TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
+			if (rightPreferred is PointerType) {
+				InferTypeForExpression(left, typeSystem.IntPtr);
+				right.InferredType = right.ExpectedType = rightPreferred;
+				return rightPreferred;
+			}
+			return InferBinaryArguments(left, right, expectedType, leftPreferred: leftPreferred, rightPreferred: rightPreferred);
 		}
 		
 		TypeReference InferArgumentsInSubtraction(ILExpression expr, bool? isSigned, TypeReference expectedType)
@@ -1020,20 +986,27 @@ namespace ICSharpCode.Decompiler.ILAst
 				left.InferredType = left.ExpectedType = leftPreferred;
 				InferTypeForExpression(right, typeSystem.IntPtr);
 				return leftPreferred;
+			}
+			return InferBinaryArguments(left, right, expectedType, leftPreferred: leftPreferred);
+		}
+
+		TypeReference InferBinaryArguments(ILExpression left, ILExpression right, TypeReference expectedType, bool forceInferChildren = false, TypeReference leftPreferred = null, TypeReference rightPreferred = null)
+		{
+			if (leftPreferred == null) leftPreferred = DoInferTypeForExpression(left, expectedType, forceInferChildren);
+			if (rightPreferred == null) rightPreferred = DoInferTypeForExpression(right, expectedType, forceInferChildren);
+			if (IsSameType(leftPreferred, rightPreferred)) {
+				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
+			} else if (IsSameType(rightPreferred, DoInferTypeForExpression(left, rightPreferred, forceInferChildren))) {
+				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
+			} else if (IsSameType(leftPreferred, DoInferTypeForExpression(right, leftPreferred, forceInferChildren))) {
+				// re-infer the left expression with the preferred type to reset any conflicts caused by the rightPreferred type
+				DoInferTypeForExpression(left, leftPreferred, forceInferChildren);
+				return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
 			} else {
-				TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
-				if (IsSameType(leftPreferred, rightPreferred)) {
-					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
-				} else if (IsSameType(rightPreferred, DoInferTypeForExpression(left, rightPreferred))) {
-					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = rightPreferred;
-				} else if (IsSameType(leftPreferred, DoInferTypeForExpression(right, leftPreferred))) {
-					return left.InferredType = right.InferredType = left.ExpectedType = right.ExpectedType = leftPreferred;
-				} else {
-					left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
-					left.InferredType = DoInferTypeForExpression(left, left.ExpectedType);
-					right.InferredType = DoInferTypeForExpression(right, right.ExpectedType);
-					return left.ExpectedType;
-				}
+				left.ExpectedType = right.ExpectedType = TypeWithMoreInformation(leftPreferred, rightPreferred);
+				left.InferredType = DoInferTypeForExpression(left, left.ExpectedType, forceInferChildren);
+				right.InferredType = DoInferTypeForExpression(right, right.ExpectedType, forceInferChildren);
+				return left.ExpectedType;
 			}
 		}
 		

@@ -106,4 +106,12 @@ public class TypeAnalysisTests
 	{
 		return (int)num ^ (int)(num >> 32);
 	}
+
+	public void TernaryOp(Random a, Random b, bool c)
+	{
+		if ((c ? a : b) == null)
+		{
+			Console.WriteLine();
+		}
+	}
 }
