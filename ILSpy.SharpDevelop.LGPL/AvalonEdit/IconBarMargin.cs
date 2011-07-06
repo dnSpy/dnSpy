@@ -266,11 +266,17 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					member.MetadataToken.ToInt32(), breakpoint.ILRange.From, out isMatch);
 				
 				if (map != null) {
-					newBookmarks.Add(new BreakpointBookmark(
-						member, new AstLocation(map.SourceCodeLine, 0),
-						map.ILInstructionOffset, BreakpointAction.Break, DebugInformation.Language));
-					
-					BookmarkManager.RemoveMark(breakpoint);
+				  // update bookmark
+				  breakpoint.MemberReference = member;
+				  breakpoint.Location = new AstLocation(map.SourceCodeLine, 0);
+				  breakpoint.ILRange = map.ILInstructionOffset;
+				  
+				  // Why were the breakpoints removed and recreated
+//					newBookmarks.Add(new BreakpointBookmark(
+//						member, new AstLocation(map.SourceCodeLine, 0),
+//						map.ILInstructionOffset, BreakpointAction.Break, DebugInformation.Language));
+//					
+//					BookmarkManager.RemoveMark(breakpoint);
 				}
 			}
 			

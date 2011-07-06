@@ -1,9 +1,13 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
+using System.Linq;
 using System.Windows;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
@@ -46,5 +50,24 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				}
 			}
 		}
+	}
+	
+	[ExportBookmarkContextMenuEntry(Header="Disable Breakpoint", Category="Debugger")]
+	public class DisableBreakpointCommand : IBookmarkContextMenuEntry
+	{
+    public bool IsVisible(IBookmark[] bookmarks)
+    {
+      return bookmarks.Any(b => b is BreakpointBookmark && (b as BreakpointBookmark).IsEnabled);
+    }
+  	  
+    public bool IsEnabled(IBookmark[] bookmarks)
+    {
+      return true;
+    }
+  	  
+    public void Execute(IBookmark[] bookmarks)
+    {
+      throw new NotImplementedException();
+    }
 	}
 }

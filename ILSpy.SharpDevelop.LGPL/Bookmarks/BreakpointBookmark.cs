@@ -40,7 +40,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			}
 		}
 		
-		public ILRange ILRange { get; private set; }
+		public ILRange ILRange { get; set; }
 		
 		public virtual bool IsHealthy {
 			get {
@@ -82,7 +82,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public override ImageSource Image {
 			get {
-				return Images.Breakpoint;
+		    return IsEnabled ? Images.Breakpoint : Images.DisabledBreakpoint;
 			}
 		}
 		
