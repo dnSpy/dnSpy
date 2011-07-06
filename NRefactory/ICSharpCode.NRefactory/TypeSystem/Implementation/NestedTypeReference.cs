@@ -40,7 +40,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			ITypeDefinition declaringType = declaringTypeRef.Resolve(context) as ITypeDefinition;
 			if (declaringType != null) {
 				int tpc = declaringType.TypeParameterCount;
-				foreach (IType type in declaringType.InnerClasses) {
+				foreach (IType type in declaringType.NestedTypes) {
 					if (type.Name == name && type.TypeParameterCount == tpc + additionalTypeParameterCount)
 						return type;
 				}

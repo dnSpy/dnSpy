@@ -21,7 +21,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public string Name {
 			get { return GetChildByRole (Roles.Identifier).Name; }
-			set { SetChildByRole(Roles.Identifier, new Identifier(value, AstLocation.Empty)); }
+			set { SetChildByRole(Roles.Identifier, new Identifier (value, AstLocation.Empty)); }
 		}
 		
 		public AstNodeCollection<AstType> Constraints {

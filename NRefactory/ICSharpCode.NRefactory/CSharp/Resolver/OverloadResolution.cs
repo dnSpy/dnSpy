@@ -259,11 +259,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 							ITypeParameter tp = typeParameters[i];
 							IType typeArg = newParameterizedType.TypeArguments[i];
 							if (tp.HasReferenceTypeConstraint) {
-								if (typeArg.IsReferenceType != true)
+								if (typeArg.IsReferenceType(overloadResolution.context) != true)
 									ConstraintsValid = false;
 							}
 							if (tp.HasValueTypeConstraint) {
-								if (typeArg.IsReferenceType != false)
+								if (typeArg.IsReferenceType(overloadResolution.context) != false)
 									ConstraintsValid = false;
 								if (NullableType.IsNullable(typeArg))
 									ConstraintsValid = false;

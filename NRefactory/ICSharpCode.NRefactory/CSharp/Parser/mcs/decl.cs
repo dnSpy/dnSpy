@@ -918,11 +918,12 @@ namespace Mono.CSharp {
 			PendingMemberCacheMembers = 1 << 14,
 			PendingBaseTypeInflate = 1 << 15,
 			InterfacesExpanded = 1 << 16,
-			IsNotRealProperty = 1 << 17,
+			IsNotCSharpCompatible = 1 << 17,
 			SpecialRuntimeType = 1 << 18,
 			InflatedExpressionType = 1 << 19,
 			InflatedNullableType = 1 << 20,
 			GenericIterateInterface = 1 << 21,
+			GenericTask = 1 << 22
 		}
 
 		protected Modifiers modifiers;
@@ -1007,6 +1008,18 @@ namespace Mono.CSharp {
 			}
 			set {
 				state = value ? state | StateFlags.IsGeneric : state & ~StateFlags.IsGeneric;
+			}
+		}
+
+		//
+		// Returns true for imported members which are not compatible with C# language
+		//
+		public bool IsNotCSharpCompatible {
+			get {
+				return (state & StateFlags.IsNotCSharpCompatible) != 0;
+			}
+			set {
+				state = value ? state | StateFlags.IsNotCSharpCompatible : state & ~StateFlags.IsNotCSharpCompatible;
 			}
 		}
 

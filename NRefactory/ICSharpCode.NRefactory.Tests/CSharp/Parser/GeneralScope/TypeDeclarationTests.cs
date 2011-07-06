@@ -280,5 +280,13 @@ public abstract class MyClass : MyBase, Interface1, My.Test.Interface2
 			Assert.AreEqual("Val1", member.Name);
 			Assert.AreEqual(10, ((PrimitiveExpression)member.Initializer).Value);
 		}
+		
+		[Test]
+		public void EnumWithBaseType()
+		{
+			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("enum MyEnum : short { }");
+			Assert.AreEqual("MyEnum", td.Name);
+			Assert.AreEqual("short", ((PrimitiveType)td.BaseTypes.Single()).Keyword);
+		}
 	}
 }

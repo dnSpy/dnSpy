@@ -118,7 +118,22 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 				"typeof(MyType<,>)",
 				new TypeOfExpression {
 					Type = type
-			});
+				});
+		}
+		
+		[Test]
+		public void NestedArraysTest()
+		{
+			ParseUtilCSharp.AssertExpression(
+				"typeof(int[,][])",
+				new TypeOfExpression {
+					Type = new ComposedType {
+						BaseType = new PrimitiveType("int"),
+						ArraySpecifiers = {
+							new ArraySpecifier(2),
+							new ArraySpecifier(1)
+						}
+					}});
 		}
 	}
 }

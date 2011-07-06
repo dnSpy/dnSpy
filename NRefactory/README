@@ -1,5 +1,9 @@
 ﻿Overview of the NRefactory library:
 
+ICSharpCode.Editor:
+	Interfaces that abstract from the text editor control used.
+	Maybe future AvalonEdit versions will directly implement these interfaces, but you could also write adapters for other editors.
+
 ICSharpCode.NRefactory.TypeSystem:
 	Contains a language-independent representation of the .NET type system.
 
@@ -10,8 +14,17 @@ ICSharpCode.NRefactory.CSharp.Ast:
 	Abstract Syntax Tree for C#
 
 ICSharpCode.NRefactory.CSharp.Resolver:
-	Semantic analysis for C#
-	
+	Semantic analysis for C# (resolving the meaning of expressions)
+
+ICSharpCode.NRefactory.CSharp.Analysis:
+	Semantic analysis for C# (additional analysis functionality)
+
+ICSharpCode.NRefactory.Documentation:
+	Classes for working with .xml documentation files.
+
+ICSharpCode.NRefactory.PatternMatching:
+	Provides classes for pattern matching over the C# and VB ASTs.
+
 ICSharpCode.NRefactory.Util:
 	Various helper classes.
 

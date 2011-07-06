@@ -61,6 +61,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 		
+		public VariableInitializer GetVariable (string name)
+		{
+			return Variables.FirstOrDefault (vi => vi.Name == name);
+		}
+		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitVariableDeclarationStatement (this, data);

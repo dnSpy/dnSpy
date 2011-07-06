@@ -25,7 +25,14 @@ using IKVM.Reflection.Emit;
 using System.Reflection.Emit;
 #endif
 
-namespace Mono.CSharp {
+namespace Mono.CSharp
+{
+	public interface ILiteralConstant
+	{
+#if FULL_AST
+		char[] ParsedValue { get; set; }
+#endif
+	}
 
 	//
 	// The null literal
@@ -75,7 +82,8 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class BoolLiteral : BoolConstant {
+	public class BoolLiteral : BoolConstant, ILiteralConstant
+	{
 		public BoolLiteral (BuiltinTypes types, bool val, Location loc)
 			: base (types, val, loc)
 		{
@@ -84,9 +92,14 @@ namespace Mono.CSharp {
 		public override bool IsLiteral {
 			get { return true; }
 		}
+
+#if FULL_AST
+		char[] ILiteralConstant.ParsedValue { get; set; }
+#endif
 	}
 
-	public class CharLiteral : CharConstant {
+	public class CharLiteral : CharConstant, ILiteralConstant
+	{
 		public CharLiteral (BuiltinTypes types, char c, Location loc)
 			: base (types, c, loc)
 		{
@@ -95,9 +108,14 @@ namespace Mono.CSharp {
 		public override bool IsLiteral {
 			get { return true; }
 		}
+
+#if FULL_AST
+		char[] ILiteralConstant.ParsedValue { get; set; }
+#endif
 	}
 
-	public class IntLiteral : IntConstant {
+	public class IntLiteral : IntConstant, ILiteralConstant
+	{
 		public IntLiteral (BuiltinTypes types, int l, Location loc)
 			: base (types, l, loc)
 		{
@@ -122,9 +140,14 @@ namespace Mono.CSharp {
 		public override bool IsLiteral {
 			get { return true; }
 		}
+
+#if FULL_AST
+		char[] ILiteralConstant.ParsedValue { get; set; }
+#endif
 	}
 
-	public class UIntLiteral : UIntConstant {
+	public class UIntLiteral : UIntConstant, ILiteralConstant
+	{
 		public UIntLiteral (BuiltinTypes types, uint l, Location loc)
 			: base (types, l, loc)
 		{
@@ -133,9 +156,14 @@ namespace Mono.CSharp {
 		public override bool IsLiteral {
 			get { return true; }
 		}
+
+#if FULL_AST
+		char[] ILiteralConstant.ParsedValue { get; set; }
+#endif
 	}
-	
-	public class LongLiteral : LongConstant {
+
+	public class LongLiteral : LongConstant, ILiteralConstant
+	{
 		public LongLiteral (BuiltinTypes types, long l, Location loc)
 			: base (types, l, loc)
 		{
@@ -144,9 +172,14 @@ namespace Mono.CSharp {
 		public override bool IsLiteral {
 			get { return true; }
 		}
+
+#if FULL_AST
+		char[] ILiteralConstant.ParsedValue { get; set; }
+#endif
 	}
 
-	public class ULongLiteral : ULongConstant {
+	public class ULongLiteral : ULongConstant, ILiteralConstant
+	{
 		public ULongLiteral (BuiltinTypes types, ulong l, Location loc)
 			: base (types, l, loc)
 		{
@@ -155,10 +188,14 @@ namespace Mono.CSharp {
 		public override bool IsLiteral {
 			get { return true; }
 		}
-	}
-	
-	public class FloatLiteral : FloatConstant {
 
+#if FULL_AST
+		char[] ILiteralConstant.ParsedValue { get; set; }
+#endif
+	}
+
+	public class FloatLiteral : FloatConstant, ILiteralConstant
+	{
 		public FloatLiteral (BuiltinTypes types, float f, Location loc)
 			: base (types, f, loc)
 		{
@@ -168,9 +205,13 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
+#if FULL_AST
+		char[] ILiteralConstant.ParsedValue { get; set; }
+#endif
 	}
 
-	public class DoubleLiteral : DoubleConstant {
+	public class DoubleLiteral : DoubleConstant, ILiteralConstant
+	{
 		public DoubleLiteral (BuiltinTypes types, double d, Location loc)
 			: base (types, d, loc)
 		{
@@ -202,9 +243,13 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
+#if FULL_AST
+		char[] ILiteralConstant.ParsedValue { get; set; }
+#endif
 	}
 
-	public class DecimalLiteral : DecimalConstant {
+	public class DecimalLiteral : DecimalConstant, ILiteralConstant
+	{
 		public DecimalLiteral (BuiltinTypes types, decimal d, Location loc)
 			: base (types, d, loc)
 		{
@@ -213,9 +258,14 @@ namespace Mono.CSharp {
 		public override bool IsLiteral {
 			get { return true; }
 		}
+
+#if FULL_AST
+		char[] ILiteralConstant.ParsedValue { get; set; }
+#endif
 	}
 
-	public class StringLiteral : StringConstant {
+	public class StringLiteral : StringConstant, ILiteralConstant
+	{
 		public StringLiteral (BuiltinTypes types, string s, Location loc)
 			: base (types, s, loc)
 		{
@@ -225,5 +275,8 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
+#if FULL_AST
+		char[] ILiteralConstant.ParsedValue { get; set; }
+#endif
 	}
 }

@@ -34,7 +34,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		IList<ITypeDefinition> GetParts();
 		
-		IList<ITypeDefinition> InnerClasses { get; }
+		IList<ITypeDefinition> NestedTypes { get; }
 		IList<IField> Fields { get; }
 		IList<IProperty> Properties { get; }
 		IList<IMethod> Methods { get; }

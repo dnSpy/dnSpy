@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
@@ -130,7 +130,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			public void InternProject(IProjectContent pc)
 			{
-				foreach (var c in TreeTraversal.PreOrder(pc.GetClasses(), c => c.InnerClasses)) {
+				foreach (var c in TreeTraversal.PreOrder(pc.GetClasses(), c => c.NestedTypes)) {
 					Intern(c.Namespace);
 					Intern(c.Name);
 					foreach (IMember m in c.Members) {

@@ -23,8 +23,13 @@ namespace Mono.CSharp {
 		//    A list of Parameters (explicitly typed parameters)
 		//    An ImplicitLambdaParameter
 		//
+		public LambdaExpression (bool isAsync, Location loc)
+			: base (isAsync, loc)
+		{
+		}
+
 		public LambdaExpression (Location loc)
-			: base (loc)
+			: this (false, loc)
 		{
 		}
 

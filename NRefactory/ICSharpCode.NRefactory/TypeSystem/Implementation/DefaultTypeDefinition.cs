@@ -21,7 +21,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		IList<ITypeReference> baseTypes;
 		IList<ITypeParameter> typeParameters;
-		IList<ITypeDefinition> innerClasses;
+		IList<ITypeDefinition> nestedTypes;
 		IList<IField> fields;
 		IList<IMethod> methods;
 		IList<IProperty> properties;
@@ -46,7 +46,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		{
 			baseTypes = FreezeList(baseTypes);
 			typeParameters = FreezeList(typeParameters);
-			innerClasses = FreezeList(innerClasses);
+			nestedTypes = FreezeList(nestedTypes);
 			fields = FreezeList(fields);
 			methods = FreezeList(methods);
 			properties = FreezeList(properties);
@@ -113,11 +113,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		public IList<ITypeDefinition> InnerClasses {
+		public IList<ITypeDefinition> NestedTypes {
 			get {
-				if (innerClasses == null)
-					innerClasses = new List<ITypeDefinition>();
-				return innerClasses;
+				if (nestedTypes == null)
+					nestedTypes = new List<ITypeDefinition>();
+				return nestedTypes;
 			}
 		}
 		
@@ -162,19 +162,18 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		public bool? IsReferenceType {
-			get {
-				switch (this.ClassType) {
-					case ClassType.Class:
-					case ClassType.Interface:
-					case ClassType.Delegate:
-						return true;
-					case ClassType.Enum:
-					case ClassType.Struct:
-						return false;
-					default:
-						return null;
-				}
+		public bool? IsReferenceType(ITypeResolveContext context)
+		{
+			switch (this.ClassType) {
+				case ClassType.Class:
+				case ClassType.Interface:
+				case ClassType.Delegate:
+					return true;
+				case ClassType.Enum:
+				case ClassType.Struct:
+					return false;
+				default:
+					return null;
 			}
 		}
 		
@@ -313,6 +312,30 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
+		public bool IsPrivate {
+			get { return Accessibility == Accessibility.Private; }
+		}
+		
+		public bool IsPublic {
+			get { return Accessibility == Accessibility.Public; }
+		}
+		
+		public bool IsProtected {
+			get { return Accessibility == Accessibility.Protected; }
+		}
+		
+		public bool IsInternal {
+			get { return Accessibility == Accessibility.Internal; }
+		}
+		
+		public bool IsProtectedOrInternal {
+			get { return Accessibility == Accessibility.ProtectedOrInternal; }
+		}
+		
+		public bool IsProtectedAndInternal {
+			get { return Accessibility == Accessibility.ProtectedAndInternal; }
+		}
+		
 		public bool HasExtensionMethods {
 			get { return flags[FlagHasExtensionMethods]; }
 			set {
@@ -353,7 +376,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 						primitiveBaseType = typeof(object);
 						break;
 				}
-				IType t = context.GetClass(primitiveBaseType);
+				IType t = context.GetTypeDefinition(primitiveBaseType);
 				if (t != null)
 					yield return t;
 			}
@@ -367,11 +390,6 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		public virtual IList<ITypeDefinition> GetParts()
 		{
 			return new ITypeDefinition[] { this };
-		}
-		
-		public IType GetElementType()
-		{
-			throw new InvalidOperationException();
 		}
 		
 		public ITypeDefinition GetDefinition()
@@ -404,9 +422,9 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 							break; // there is at most 1 non-interface base
 						}
 					}
-					foreach (ITypeDefinition innerClass in this.InnerClasses) {
-						if (filter == null || filter(innerClass)) {
-							nestedTypes.Add(innerClass);
+					foreach (ITypeDefinition nestedType in this.NestedTypes) {
+						if (filter == null || filter(nestedType)) {
+							nestedTypes.Add(nestedType);
 						}
 					}
 				}
@@ -533,6 +551,34 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				}
 			}
 			return events;
+		}
+		
+		public virtual IEnumerable<IMember> GetMembers(ITypeResolveContext context, Predicate<IMember> filter = null)
+		{
+			ITypeDefinition compound = GetCompoundClass();
+			if (compound != this)
+				return compound.GetMembers(context, filter);
+			
+			List<IMember> members = new List<IMember>();
+			using (var busyLock = BusyManager.Enter(this)) {
+				if (busyLock.Success) {
+					int baseCount = 0;
+					foreach (var baseType in GetBaseTypes(context)) {
+						ITypeDefinition baseTypeDef = baseType.GetDefinition();
+						if (baseTypeDef != null && (baseTypeDef.ClassType != ClassType.Interface || this.ClassType == ClassType.Interface)) {
+							members.AddRange(baseType.GetMembers(context, filter));
+							baseCount++;
+						}
+					}
+					if (baseCount > 1)
+						RemoveDuplicates(members);
+					AddFilteredRange(members, this.Methods.Where(m => !m.IsConstructor), filter);
+					AddFilteredRange(members, this.Properties, filter);
+					AddFilteredRange(members, this.Fields, filter);
+					AddFilteredRange(members, this.Events, filter);
+				}
+			}
+			return members;
 		}
 		
 		static void AddFilteredRange<T>(List<T> targetList, IEnumerable<T> sourceList, Predicate<T> filter) where T : class

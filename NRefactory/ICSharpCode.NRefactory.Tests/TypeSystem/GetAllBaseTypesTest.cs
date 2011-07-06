@@ -100,8 +100,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				c,
 				c.BaseTypes[0].Resolve(context),
 				c.BaseTypes[1].Resolve(context),
-				mscorlib.GetClass(typeof(IEnumerable)),
-				mscorlib.GetClass(typeof(object))
+				mscorlib.GetTypeDefinition(typeof(IEnumerable)),
+				mscorlib.GetTypeDefinition(typeof(object))
 			};
 			Assert.AreEqual(expected,
 			                c.GetAllBaseTypes(context).OrderBy(t => t.ReflectionName).ToArray());
@@ -114,15 +114,35 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			// don't use a Cecil-loaded struct for this test; we're testing the implicit addition of System.ValueType
 			DefaultTypeDefinition s = new DefaultTypeDefinition(mscorlib, string.Empty, "S");
 			s.ClassType = ClassType.Struct;
-			s.BaseTypes.Add(new ParameterizedType(mscorlib.GetClass(typeof(IEquatable<>)), new[] { s }));
+			s.BaseTypes.Add(new ParameterizedType(mscorlib.GetTypeDefinition(typeof(IEquatable<>)), new[] { s }));
 			IType[] expected = {
 				s,
 				s.BaseTypes[0].Resolve(context),
-				mscorlib.GetClass(typeof(object)),
-				mscorlib.GetClass(typeof(ValueType))
+				mscorlib.GetTypeDefinition(typeof(object)),
+				mscorlib.GetTypeDefinition(typeof(ValueType))
 			};
 			Assert.AreEqual(expected,
 			                s.GetAllBaseTypes(context).OrderBy(t => t.ReflectionName).ToArray());
+		}
+		
+		[Test]
+		public void BaseTypesOfListOfString()
+		{
+			Assert.AreEqual(
+				GetTypes(typeof(List<string>), typeof(object),
+				         typeof(IList), typeof(ICollection), typeof(IEnumerable),
+				         typeof(IEnumerable<string>), typeof(ICollection<string>), typeof(IList<string>)),
+				GetAllBaseTypes(typeof(List<string>)));
+		}
+		
+		[Test]
+		public void BaseTypeDefinitionsOfListOfString()
+		{
+			Assert.AreEqual(
+				GetTypes(typeof(List<>), typeof(object),
+				         typeof(IList), typeof(ICollection), typeof(IEnumerable),
+				         typeof(IEnumerable<>), typeof(ICollection<>), typeof(IList<>)),
+				typeof(List<string>).ToTypeReference().Resolve(context).GetAllBaseTypeDefinitions(context).OrderBy(t => t.ReflectionName).ToArray());
 		}
 	}
 }
