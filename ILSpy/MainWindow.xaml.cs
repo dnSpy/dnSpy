@@ -208,6 +208,8 @@ namespace ICSharpCode.ILSpy
 					}
 					var args = new CommandLineArguments(lines);
 					if (HandleCommandLineArguments(args)) {
+						if (!args.NoActivate && WindowState == WindowState.Minimized)
+							WindowState = WindowState.Normal;
 						HandleCommandLineArgumentsAfterShowList(args);
 						handled = true;
 						return (IntPtr)1;
@@ -392,9 +394,16 @@ namespace ICSharpCode.ILSpy
 		internal void SelectNode(SharpTreeNode obj)
 		{
 			if (obj != null) {
-				// Set both the selection and focus to ensure that keyboard navigation works as expected.
-				treeView.FocusNode(obj);
-				treeView.SelectedItem = obj;
+				if (!obj.AncestorsAndSelf().Any(node => node.IsHidden)) {
+					// Set both the selection and focus to ensure that keyboard navigation works as expected.
+					treeView.FocusNode(obj);
+					treeView.SelectedItem = obj;
+				} else {
+					MessageBox.Show("Navigation failed because the target is hidden or a compiler-generated class.\n" +
+					                "Please disable all filters that might hide the item (i.e. activate " +
+					                "\"View > Show internal types and members\") and try again.",
+					                "ILSpy", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				}
 			}
 		}
 		

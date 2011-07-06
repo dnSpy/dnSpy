@@ -15,6 +15,8 @@ namespace ILSpy.BamlDecompiler
 		
 		public CecilType(TypeDefinition type)
 		{
+			if (type == null)
+				throw new ArgumentNullException("type");
 			this.type = type;
 		}
 		

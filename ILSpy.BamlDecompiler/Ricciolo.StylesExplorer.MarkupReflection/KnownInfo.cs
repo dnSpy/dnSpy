@@ -58,7 +58,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			KnownTypeTable[9] = new TypeDeclaration(resolver, "Animatable", "System.Windows.Media.Animaton", 1);
 			KnownTypeTable[10] = new TypeDeclaration(resolver, "AnimationClock", "System.Windows.Media.Animation", 1);
 			KnownTypeTable[11] = new TypeDeclaration(resolver, "AnimationTimeline", "System.Windows.Media.Animation", 1);
-			KnownTypeTable[12] = new TypeDeclaration(resolver, "Application", "System.Net.Mime", 3);
+			KnownTypeTable[12] = new TypeDeclaration(resolver, "Application", "System.Windows", 0);
 			KnownTypeTable[13] = new TypeDeclaration(resolver, "ArcSegment", "System.Windows.Media", 1);
 			KnownTypeTable[14] = new TypeDeclaration(resolver, "ArrayExtension", "System.Windows.Markup", 0);
 			KnownTypeTable[15] = new TypeDeclaration(resolver, "AxisAngleRotation3D", "System.Windows.Media.Media3D", 1);
@@ -127,7 +127,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			KnownTypeTable[0x4e] = new TypeDeclaration(resolver, "CollectionContainer", "System.Windows.Data", 0);
 			KnownTypeTable[0x4f] = new TypeDeclaration(resolver, "CollectionView", "System.Windows.Data", 0);
 			KnownTypeTable[80] = new TypeDeclaration(resolver, "CollectionViewSource", "System.Windows.Data", 0);
-			KnownTypeTable[0x51] = new TypeDeclaration(resolver, "Color", "Microsoft.Win32", 2);
+			KnownTypeTable[0x51] = new TypeDeclaration(resolver, "Color", "Win32Native", "Microsoft.Win32", 2);
 			KnownTypeTable[0x52] = new TypeDeclaration(resolver, "ColorAnimation", "System.Windows.Media.Animation", 1);
 			KnownTypeTable[0x53] = new TypeDeclaration(resolver, "ColorAnimationBase", "System.Windows.Media.Animation", 1);
 			KnownTypeTable[0x54] = new TypeDeclaration(resolver, "ColorAnimationUsingKeyFrames", "System.Windows.Media.Animation", 1);

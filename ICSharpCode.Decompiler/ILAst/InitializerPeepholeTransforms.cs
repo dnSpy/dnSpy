@@ -93,9 +93,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			List<ILExpression> ctorArgs;
 			ArrayType arrayType;
 			if (expr.Match(ILCode.Stloc, out v, out newarrExpr) &&
-				newarrExpr.Match(ILCode.Newobj, out ctor, out ctorArgs) &&
-				(arrayType = (ctor.DeclaringType as ArrayType)) != null &&
-				arrayType.Rank == ctorArgs.Count) {
+			    newarrExpr.Match(ILCode.Newobj, out ctor, out ctorArgs) &&
+			    (arrayType = (ctor.DeclaringType as ArrayType)) != null &&
+			    arrayType.Rank == ctorArgs.Count) {
 				// Clone the type, so we can muck about with the Dimensions
 				arrayType = new ArrayType(arrayType.ElementType, arrayType.Rank);
 				var arrayLengths = new int[arrayType.Rank];
@@ -124,19 +124,24 @@ namespace ICSharpCode.Decompiler.ILAst
 			MethodReference methodRef;
 			ILExpression methodArg1;
 			ILExpression methodArg2;
-			FieldDefinition field;
+			FieldReference fieldRef;
 			if (body.ElementAtOrDefault(pos).Match(ILCode.Call, out methodRef, out methodArg1, out methodArg2) &&
-				methodRef.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers" &&
-				methodRef.Name == "InitializeArray" &&
-				methodArg1.Match(ILCode.Ldloc, out v2) &&
-				array == v2 &&
-				methodArg2.Match(ILCode.Ldtoken, out field) &&
-				field != null && field.InitialValue != null) {
-				ILExpression[] newArr = new ILExpression[arrayLength];
-				if (DecodeArrayInitializer(TypeAnalysis.GetTypeCode(arrayType.GetElementType()), field.InitialValue, newArr)) {
-					values = newArr;
-					foundPos = pos;
-					return true;
+			    methodRef.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers" &&
+			    methodRef.Name == "InitializeArray" &&
+			    methodArg1.Match(ILCode.Ldloc, out v2) &&
+			    array == v2 &&
+			    methodArg2.Match(ILCode.Ldtoken, out fieldRef))
+			{
+				FieldDefinition fieldDef = fieldRef.ResolveWithinSameModule();
+				if (fieldDef != null && fieldDef.InitialValue != null) {
+					ILExpression[] newArr = new ILExpression[arrayLength];
+					if (DecodeArrayInitializer(TypeAnalysis.GetTypeCode(arrayType.GetElementType()),
+					                           fieldDef.InitialValue, newArr))
+					{
+						values = newArr;
+						foundPos = pos;
+						return true;
+					}
 				}
 			}
 			values = null;
@@ -148,7 +153,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			switch (elementType) {
 				case TypeCode.Boolean:
-				case TypeCode.SByte:
 				case TypeCode.Byte:
 					if (initialValue.Length == output.Length) {
 						for (int j = 0; j < output.Length; j++) {
@@ -157,12 +161,27 @@ namespace ICSharpCode.Decompiler.ILAst
 						return true;
 					}
 					return false;
-				case TypeCode.Char:
+				case TypeCode.SByte:
+					if (initialValue.Length == output.Length) {
+						for (int j = 0; j < output.Length; j++) {
+							output[j] = new ILExpression(ILCode.Ldc_I4, (int)unchecked((sbyte)initialValue[j]));
+						}
+						return true;
+					}
+					return false;
 				case TypeCode.Int16:
-				case TypeCode.UInt16:
 					if (initialValue.Length == output.Length * 2) {
 						for (int j = 0; j < output.Length; j++) {
 							output[j] = new ILExpression(ILCode.Ldc_I4, (int)BitConverter.ToInt16(initialValue, j * 2));
+						}
+						return true;
+					}
+					return false;
+				case TypeCode.Char:
+				case TypeCode.UInt16:
+					if (initialValue.Length == output.Length * 2) {
+						for (int j = 0; j < output.Length; j++) {
+							output[j] = new ILExpression(ILCode.Ldc_I4, (int)BitConverter.ToUInt16(initialValue, j * 2));
 						}
 						return true;
 					}
@@ -218,18 +237,45 @@ namespace ICSharpCode.Decompiler.ILAst
 			Debug.Assert(body[pos] == expr); // should be called for top-level expressions only
 			ILVariable v;
 			ILExpression newObjExpr;
+			TypeReference newObjType;
+			bool isValueType;
 			MethodReference ctor;
 			List<ILExpression> ctorArgs;
-			// v = newObj(ctor, ctorArgs)
-			if (!(expr.Match(ILCode.Stloc, out v, out newObjExpr) && newObjExpr.Match(ILCode.Newobj, out ctor, out ctorArgs)))
+			if (expr.Match(ILCode.Stloc, out v, out newObjExpr)) {
+				if (newObjExpr.Match(ILCode.Newobj, out ctor, out ctorArgs)) {
+					// v = newObj(ctor, ctorArgs)
+					newObjType = ctor.DeclaringType;
+					isValueType = false;
+				} else if (newObjExpr.Match(ILCode.DefaultValue, out newObjType)) {
+					// v = defaultvalue(type)
+					isValueType = true;
+				} else {
+					return false;
+				}
+			} else if (expr.Match(ILCode.Call, out ctor, out ctorArgs)) {
+				// call(SomeStruct::.ctor, ldloca(v), remainingArgs)
+				if (ctorArgs.Count > 0 && ctorArgs[0].Match(ILCode.Ldloca, out v)) {
+					isValueType = true;
+					newObjType = ctor.DeclaringType;
+					ctorArgs = new List<ILExpression>(ctorArgs);
+					ctorArgs.RemoveAt(0);
+					newObjExpr = new ILExpression(ILCode.Newobj, ctor, ctorArgs);
+				} else {
+					return false;
+				}
+			} else {
 				return false;
+			}
+			if (newObjType.IsValueType != isValueType)
+				return false;
+			
 			int originalPos = pos;
 
 			// don't use object initializer syntax for closures
-			if (Ast.Transforms.DelegateConstruction.IsPotentialClosure(context, ctor.DeclaringType.ResolveWithinSameModule()))
+			if (Ast.Transforms.DelegateConstruction.IsPotentialClosure(context, newObjType.ResolveWithinSameModule()))
 				return false;
 
-			ILExpression initializer = ParseObjectInitializer(body, ref pos, v, newObjExpr, IsCollectionType(ctor.DeclaringType));
+			ILExpression initializer = ParseObjectInitializer(body, ref pos, v, newObjExpr, IsCollectionType(newObjType), isValueType);
 
 			if (initializer.Arguments.Count == 1) // only newobj argument, no initializer elements
 				return false;
@@ -242,16 +288,36 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false; // reached end of block, but there should be another instruction which consumes the initialized object
 
 			ILInlining inlining = new ILInlining(method);
-			// one ldloc for each initializer argument, and another ldloc for the use of the initialized object
-			if (inlining.numLdloc.GetOrDefault(v) != totalElementCount + 1)
-				return false;
-			if (!(inlining.numStloc.GetOrDefault(v) == 1 && inlining.numLdloca.GetOrDefault(v) == 0))
-				return false;
+			if (isValueType) {
+				// one ldloc for the use of the initialized object
+				if (inlining.numLdloc.GetOrDefault(v) != 1)
+					return false;
+				// one ldloca for each initializer argument, and also for the ctor call (if it exists)
+				if (inlining.numLdloca.GetOrDefault(v) != totalElementCount + (expr.Code == ILCode.Call ? 1 : 0))
+					return false;
+				// one stloc for the initial store (if no ctor call was used)
+				if (inlining.numStloc.GetOrDefault(v) != (expr.Code == ILCode.Call ? 0 : 1))
+					return false;
+			} else {
+				// one ldloc for each initializer argument, and another ldloc for the use of the initialized object
+				if (inlining.numLdloc.GetOrDefault(v) != totalElementCount + 1)
+					return false;
+				if (!(inlining.numStloc.GetOrDefault(v) == 1 && inlining.numLdloca.GetOrDefault(v) == 0))
+					return false;
+			}
 			ILExpression nextExpr = body[pos] as ILExpression;
 			if (!inlining.CanInlineInto(nextExpr, v, initializer))
 				return false;
 
-			expr.Arguments[0] = initializer;
+			if (expr.Code == ILCode.Stloc) {
+				expr.Arguments[0] = initializer;
+			} else {
+				Debug.Assert(expr.Code == ILCode.Call);
+				expr.Code = ILCode.Stloc;
+				expr.Operand = v;
+				expr.Arguments.Clear();
+				expr.Arguments.Add(initializer);
+			}
 			// remove all the instructions that were pulled into the initializer
 			body.RemoveRange(originalPos + 1, pos - originalPos - 1);
 
@@ -288,7 +354,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (expr == null)
 				return false;
-			if (expr.Code == ILCode.CallvirtSetter || expr.Code == ILCode.Stfld) {
+			if (expr.Code == ILCode.CallvirtSetter || expr.Code == ILCode.CallSetter || expr.Code == ILCode.Stfld) {
 				return expr.Arguments.Count == 2;
 			}
 			return false;
@@ -320,9 +386,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <param name="v">The variable that holds the object being initialized</param>
 		/// <param name="newObjExpr">The newobj instruction</param>
 		/// <returns>InitObject instruction</returns>
-		ILExpression ParseObjectInitializer(List<ILNode> body, ref int pos, ILVariable v, ILExpression newObjExpr, bool isCollection)
+		ILExpression ParseObjectInitializer(List<ILNode> body, ref int pos, ILVariable v, ILExpression newObjExpr, bool isCollection, bool isValueType)
 		{
-			Debug.Assert(((ILExpression)body[pos]).Code == ILCode.Stloc);
 			// Take care not to modify any existing ILExpressions in here.
 			// We just construct new ones around the old ones, any modifications must wait until the whole
 			// object/collection initializer was analyzed.
@@ -332,13 +397,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			while (++pos < body.Count) {
 				ILExpression nextExpr = body[pos] as ILExpression;
 				if (IsSetterInObjectInitializer(nextExpr)) {
-					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, false)) {
+					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, false, isValueType)) {
 						CleanupInitializerStackAfterFailedAdjustment(initializerStack);
 						break;
 					}
 					initializerStack[initializerStack.Count - 1].Arguments.Add(nextExpr);
 				} else if (IsAddMethodCall(nextExpr)) {
-					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, true)) {
+					if (!AdjustInitializerStack(initializerStack, nextExpr.Arguments[0], v, true, isValueType)) {
 						CleanupInitializerStackAfterFailedAdjustment(initializerStack);
 						break;
 					}
@@ -351,20 +416,26 @@ namespace ICSharpCode.Decompiler.ILAst
 			return objectInitializer;
 		}
 
-		static bool AdjustInitializerStack(List<ILExpression> initializerStack, ILExpression argument, ILVariable v, bool isCollection)
+		static bool AdjustInitializerStack(List<ILExpression> initializerStack, ILExpression argument, ILVariable v, bool isCollection, bool isValueType)
 		{
 			// Argument is of the form 'getter(getter(...(v)))'
 			// Unpack it into a list of getters:
 			List<ILExpression> getters = new List<ILExpression>();
-			while (argument.Code == ILCode.CallvirtGetter || argument.Code == ILCode.Ldfld) {
+			while (argument.Code == ILCode.CallvirtGetter || argument.Code == ILCode.CallGetter || argument.Code == ILCode.Ldfld) {
 				getters.Add(argument);
 				if (argument.Arguments.Count != 1)
 					return false;
 				argument = argument.Arguments[0];
 			}
 			// Ensure that the final argument is 'v'
-			if (!argument.MatchLdloc(v))
-				return false;
+			if (isValueType) {
+				ILVariable loadedVar;
+				if (!(argument.Match(ILCode.Ldloca, out loadedVar) && loadedVar == v))
+					return false;
+			} else {
+				if (!argument.MatchLdloc(v))
+					return false;
+			}
 			// Now compare the getters with those that are currently active on the initializer stack:
 			int i;
 			for (i = 1; i <= Math.Min(getters.Count, initializerStack.Count - 1); i++) {

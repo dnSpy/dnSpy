@@ -128,6 +128,7 @@
     </Page>
     <Page Include="Cases\SimpleDictionary.xaml" />
     <Page Include="Cases\SimpleNames.xaml" />
+    <Page Include="Cases\Dictionary1.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

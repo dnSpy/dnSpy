@@ -261,8 +261,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		//            InitCollection(CallGetter(Collection, InitializedObject))),
 		//                           Call(Add, InitializedObject, 2, 3),
 		//                           Call(Add, InitializedObject, 4, 5)))
-		InitObject, // Object initializer: first arg is newobj, remaining args are the initializing statements
-		InitCollection, // Collection initializer: first arg is newobj, remaining args are the initializing statements
+		InitObject, // Object initializer: first arg is newobj/defaultvalue, remaining args are the initializing statements
+		InitCollection, // Collection initializer: first arg is newobj/defaultvalue, remaining args are the initializing statements
 		InitializedObject, // Refers the the object being initialized (refers to first arg in parent InitObject or InitCollection instruction)
 		
 		TernaryOp, // ?:

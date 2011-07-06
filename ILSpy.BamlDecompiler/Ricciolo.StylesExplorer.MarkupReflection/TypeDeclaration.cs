@@ -8,11 +8,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 	internal class TypeDeclaration
 	{
 		private readonly XmlBamlReader reader;
-
-		private readonly short _assemblyId;
-		private readonly bool _isKnown;
-		private readonly string _name;
-		private readonly string _namespaceName;
 		private readonly bool _isExtension;
 		private IType _type;
 		private bool _typeLoaded;
@@ -21,7 +16,12 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		public TypeDeclaration(ITypeResolver resolver, string name, string namespaceName, short assemblyId)
 			: this(null, resolver, name, namespaceName, assemblyId, true)
 		{
+		}
 
+		public TypeDeclaration(ITypeResolver resolver, string name, string enclosingTypeName, string namespaceName, short assemblyId)
+			: this(null, resolver, name, namespaceName, assemblyId, true)
+		{
+			this.EnclosingTypeName = enclosingTypeName;
 		}
 
 		public TypeDeclaration(ITypeResolver resolver, string name, string namespaceName, short assemblyId, bool isExtension)
@@ -39,10 +39,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		{
 			this.reader = reader;
 			this.resolver = resolver;
-			this._name = name;
-			this._namespaceName = namespaceName;
-			this._assemblyId = assemblyId;
-			this._isKnown = isKnown;
+			this.Name = name;
+			this.Namespace = namespaceName;
+			this.AssemblyId = assemblyId;
+			this.IsKnown = isKnown;
 
 			if (!_isExtension)
 				_isExtension = name.EndsWith("Extension");
@@ -50,8 +50,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		public override string ToString()
 		{
-			return this._name;
+			return this.Name;
 		}
+		
+		public string EnclosingTypeName { get; private set; }
 
 		public bool IsExtension
 		{
@@ -60,8 +62,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		public string Assembly
 		{
-			get
-			{
+			get {
 				if (reader != null)
 					return this.reader.GetAssembly(this.AssemblyId);
 				else
@@ -69,46 +70,19 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			}
 		}
 
-		public short AssemblyId
-		{
-			get { return _assemblyId; }
-		}
+		public short AssemblyId { get; private set; }
 
-		public string Name
-		{
-			get
-			{
-				return this._name;
-			}
-		}
+		public string Name { get; private set; }
 
-		public bool IsKnown
-		{
-			get { return _isKnown; }
-		}
+		public bool IsKnown { get; private set; }
 
-		//public Type DotNetType
-		//{
-		//    get
-		//    {
-		//        if (!_typeLoaded)
-		//        {
-		//            _type = Type.GetType(String.Format("{0}.{1}, {2}", this.Namespace, this.Name, this.Assembly), false, true);
-		//            _typeLoaded = true;
-		//        }
-
-		//        return _type;
-		//    }
-		//}
-
-		public IType Type
-		{
+		public IType Type {
 			get
 			{
 				if (!_typeLoaded)
 				{
 					if (this.Name.Length > 0)
-						_type = resolver.GetTypeByAssemblyQualifiedName(String.Format("{0}.{1}, {2}", this.Namespace, this.Name, this.Assembly));
+						_type = resolver.GetTypeByAssemblyQualifiedName(AssemblyQualifiedName);
 					_typeLoaded = true;
 				}
 
@@ -116,26 +90,28 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			}
 		}
 
-		public string Namespace
-		{
-			get
-			{
-				return this._namespaceName;
-			}
+		public string Namespace { get; private set; }
+		
+		public string FullyQualifiedName {
+			get { return EnclosingTypeName == null ? string.Format("{0}.{1}", Namespace, Name) : string.Format("{0}.{1}+{2}", Namespace, EnclosingTypeName, Name); }
+		}
+		
+		public string AssemblyQualifiedName {
+			get { return string.Format("{0}, {1}", FullyQualifiedName, Assembly); }
 		}
 
 		public override bool Equals(object obj)
 		{
 			TypeDeclaration td = obj as TypeDeclaration;
 			if (td != null)
-				return (this.Name == td.Name && this.Namespace == td.Namespace && this.AssemblyId == td.AssemblyId);
+				return (this.Name == td.Name && this.EnclosingTypeName == td.EnclosingTypeName && this.Namespace == td.Namespace && this.AssemblyId == td.AssemblyId);
 			else
 				return false;
 		}
 		
 		public override int GetHashCode()
 		{
-			return this.AssemblyId ^ this.Name.GetHashCode() ^ this.Namespace.GetHashCode();
+			return this.AssemblyId ^ this.Name.GetHashCode() ^ this.EnclosingTypeName.GetHashCode() ^ this.Namespace.GetHashCode();
 		}
 	}
 

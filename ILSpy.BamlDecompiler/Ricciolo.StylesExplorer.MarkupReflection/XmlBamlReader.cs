@@ -41,9 +41,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		bool intoAttribute = false;
 		bool initialized;
 		bool _eof;
-
-		bool isPartialDefKeysClosed = true;
-		bool isDefKeysClosed = true;
 		
 		#region Context
 		Stack<ReaderContext> layer = new Stack<ReaderContext>();
@@ -79,13 +76,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		List<KeyMapping> keys = new List<KeyMapping>();
 		
 		KeyMapping LastKey {
-			get {
-				KeyMapping last = keys.LastOrDefault();
-				if (last == null)
-					keys.Add(last = new KeyMapping());
-				
-				return last;
-			}
+			get { return keys.LastOrDefault(); }
 		}
 		
 		void LayerPop()
@@ -111,11 +102,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		
 		public const string XWPFNamespace = "http://schemas.microsoft.com/winfx/2006/xaml";
 		public const string DefaultWPFNamespace = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
-
-		public XmlBamlReader(Stream stream) : this (stream, AppDomainTypeResolver.GetIntoNewAppDomain(Environment.CurrentDirectory))
-		{
-			
-		}
 
 		public XmlBamlReader(Stream stream, ITypeResolver resolver)
 		{
@@ -339,7 +325,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			else
 				currentType = (BamlRecordType)type;
 			
+			if (currentType.ToString().EndsWith("End"))
+				Debug.Unindent();
 			Debug.WriteLine(string.Format("{0} (0x{0:x})", currentType));
+			if (currentType.ToString().EndsWith("Start"))
+				Debug.Indent();
 		}
 
 		bool SetNextNode()
@@ -402,6 +392,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					break;
 				case BamlRecordType.DeferableContentStart:
 					Current.IsDeferred = true;
+					keys = new List<KeyMapping>();
+					currentKey = 0;
 					reader.ReadInt32();
 					break;
 				case BamlRecordType.DefAttribute:
@@ -637,9 +629,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		{
 			get
 			{
-				if (intoAttribute) return String.Empty;
+				if (intoAttribute) return string.Empty;
 
-				String localName = String.Empty;
+				String localName = string.Empty;
 
 				XmlBamlNode node = this.CurrentNode;
 				if (node is XmlBamlSimpleProperty) {
@@ -689,13 +681,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		object GetResourceName(short identifier)
 		{
-			if (identifier >= 0)
-			{
+			if (identifier >= 0) {
 				PropertyDeclaration declaration = this.propertyTable[identifier];
 				return declaration;
-			}
-			else
-			{
+			} else {
 				identifier = (short)-identifier;
 				bool isNotKey = (identifier > 0xe8);
 				if (isNotKey)
@@ -998,6 +987,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			bool sharedSet = reader.ReadBoolean();
 			
 			string text = this.stringTable[stringId];
+			Debug.Print("KeyString: " + text);
 			if (text == null)
 				throw new NotSupportedException();
 
@@ -1039,6 +1029,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		void ReadElementEnd()
 		{
 			CloseElement();
+			if (Current.IsDeferred)
+				keys = null;
 			LayerPop();
 		}
 
@@ -1095,12 +1087,12 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			// this property could be a markup extension
 			// try to convert it
 			int start = nodes.IndexOf(propertyElement) + 1;
-			IEnumerator enumerator = nodes.GetEnumerator();
+			IEnumerator<XmlBamlNode> enumerator = nodes.GetEnumerator();
 			
 			// move enumerator to the start of this property value
 			for (int i = 0; i < start && enumerator.MoveNext(); i++) ;
 
-			if (IsExtension(enumerator)) {
+			if (IsExtension(enumerator) && start < nodes.Count - 1) {
 				start--;
 				nodes.RemoveAt(start);
 				nodes.RemoveLast();
@@ -1173,11 +1165,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			}
 		}
 
-		bool IsExtension(IEnumerator enumerator)
+		bool IsExtension(IEnumerator<XmlBamlNode> enumerator)
 		{
 			while (enumerator.MoveNext()) {
-				object node = enumerator.Current;
-				if (node is XmlBamlElement && !(node is XmlBamlEndElement) && !((XmlBamlElement)node).TypeDeclaration.IsExtension)
+				var node = enumerator.Current;
+				if (node.NodeType == XmlNodeType.Element && !((XmlBamlElement)node).TypeDeclaration.IsExtension)
 					return false;
 			}
 
@@ -1231,7 +1223,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				nodes.Enqueue(element);
 			
 			if (oldDeclaration != null) {
-				nodes.Enqueue(new XmlBamlSimpleProperty(XWPFNamespace, "Class", string.Format("{0}.{1}", oldDeclaration.Namespace, oldDeclaration.Name)));
+				nodes.Enqueue(new XmlBamlSimpleProperty(XWPFNamespace, "Class", oldDeclaration.FullyQualifiedName.Replace('+', '.')));
 			}
 
 			if (parentElement != null && complexPropertyOpened == 0 && !Current.IsInStaticResource && Current.Previous.IsDeferred) {
@@ -1342,9 +1334,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 			CloseElement();
 			complexPropertyOpened--;
-			if (complexPropertyOpened == 0)
-			{
-
+			if (complexPropertyOpened == 0) {
 				int start = nodes.IndexOf(propertyElement);
 
 				StringBuilder sb = new StringBuilder();
@@ -1409,27 +1399,26 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		void ReadOptimizedStaticResource()
 		{
-			byte num = reader.ReadByte();
+			byte flags = reader.ReadByte();
 			short typeIdentifier = reader.ReadInt16();
-			bool isValueType = (num & 1) == 1;
-			bool isStaticType = (num & 2) == 2;
+			bool isValueType = (flags & 1) == 1;
+			bool isStaticType = (flags & 2) == 2;
 			object resource;
 
 			if (isValueType)
-				resource = this.GetTypeExtension(typeIdentifier);
-			else if (isStaticType)
-			{
-				ResourceName resourceName = (ResourceName)this.GetResourceName(typeIdentifier);
-				resource = GetStaticExtension(resourceName.Name);
-			}
-			else
-			{
+				resource = GetTypeExtension(typeIdentifier);
+			else if (isStaticType) {
+				object name = GetResourceName(typeIdentifier);
+				if (name is ResourceName)
+					resource = GetStaticExtension(((ResourceName)name).Name);
+				else if (name is PropertyDeclaration)
+					resource = GetStaticExtension(FormatPropertyDeclaration(((PropertyDeclaration)name), true, false, false));
+				else
+					throw new InvalidOperationException("Invalid resource: " + name.GetType());
+			} else {
 				resource = this.stringTable[typeIdentifier];
 			}
 
-			//this.staticResourceTable.Add(resource);
-			isPartialDefKeysClosed = true;
-			// Aggiungo la risorsa nell'ultimo gruppo
 			LastKey.StaticResources.Add(resource);
 		}
 
@@ -1474,8 +1463,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				return String.Format("{0}:{1}", prefix, name);
 		}
 
-
-
 		string FormatPropertyDeclaration(PropertyDeclaration propertyDeclaration, bool withPrefix, bool useReading, bool checkType)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -1511,11 +1498,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		void ReadPropertyWithStaticResourceIdentifier()
 		{
-			short identifier = reader.ReadInt16();
-			short staticIdentifier = reader.ReadInt16();
+			short propertyId = reader.ReadInt16();
+			short index = reader.ReadInt16();
 
-			PropertyDeclaration pd = this.GetPropertyDeclaration(identifier);
-			object staticResource = GetStaticResource(staticIdentifier);
+			PropertyDeclaration pd = this.GetPropertyDeclaration(propertyId);
+			object staticResource = GetStaticResource(index);
 
 			string prefix = this.LookupPrefix(XmlPIMapping.PresentationNamespace, false);
 			string value = String.Format("{{{0}{1}StaticResource {2}}}", prefix, (String.IsNullOrEmpty(prefix)) ? String.Empty : ":", staticResource);
@@ -1528,10 +1515,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		object GetStaticResource(short identifier)
 		{
-			if (identifier < LastKey.StaticResources.Count)
-				return LastKey.StaticResources[(int)identifier];
+			if (identifier < keys[currentKey - 1].StaticResources.Count)
+				return keys[currentKey - 1].StaticResources[(int)identifier];
 
-//			return "???" + identifier  +"???";
+//			return "???" + identifier + "???";
 			throw new ArgumentException("Cannot find StaticResource", "identifier");
 		}
 
@@ -1595,11 +1582,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		TypeDeclaration GetKnownTypeDeclarationByName(string name)
 		{
 			foreach (var type in KnownInfo.KnownTypeTable) {
-				if (name == string.Format("{0}.{1}, {2}", type.Namespace, type.Name, type.Assembly))
+				if (name == type.AssemblyQualifiedName)
 					return type;
 			}
 			
-			throw new NotSupportedException();
+			throw new NotSupportedException("Type '" + name + "' not found!");
 		}
 
 		internal string GetAssembly(short identifier)
@@ -1607,26 +1594,18 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			return this.assemblyTable[identifier];
 		}
 
-		XmlBamlNode CurrentNode
-		{
-			get
-			{
-				return _currentNode;
-			}
+		XmlBamlNode CurrentNode {
+			get { return _currentNode; }
 		}
 
 		///<summary>
 		///When overridden in a derived class, gets the namespace URI (as defined in the W3C Namespace specification) of the node on which the reader is positioned.
 		///</summary>
-		///
 		///<returns>
 		///The namespace URI of the current node; otherwise an empty string.
 		///</returns>
-		///
-		public override string NamespaceURI
-		{
-			get
-			{
+		public override string NamespaceURI {
+			get {
 				if (intoAttribute) return String.Empty;
 
 				TypeDeclaration declaration;
@@ -1664,11 +1643,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets the namespace prefix associated with the current node.
 		///</summary>
-		///
 		///<returns>
 		///The namespace prefix associated with the current node.
 		///</returns>
-		///
 		public override string Prefix
 		{
 			get
@@ -1682,11 +1659,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets a value indicating whether the current node can have a <see cref="P:System.Xml.XmlReader.Value"></see>.
 		///</summary>
-		///
 		///<returns>
 		///true if the node on which the reader is currently positioned can have a Value; otherwise, false. If false, the node has a value of String.Empty.
 		///</returns>
-		///
 		public override bool HasValue
 		{
 			get { return this.Value != null; }
@@ -1703,11 +1678,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets the text value of the current node.
 		///</summary>
-		///
 		///<returns>
 		///The value returned depends on the <see cref="P:System.Xml.XmlReader.NodeType"></see> of the node. The following table lists node types that have a value to return. All other node types return String.Empty.Node type Value AttributeThe value of the attribute. CDATAThe content of the CDATA section. CommentThe content of the comment. DocumentTypeThe internal subset. ProcessingInstructionThe entire content, excluding the target. SignificantWhitespaceThe white space between markup in a mixed content model. TextThe content of the text node. WhitespaceThe white space between markup. XmlDeclarationThe content of the declaration.
 		///</returns>
-		///
 		public override string Value
 		{
 			get
@@ -1737,11 +1710,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets the depth of the current node in the XML document.
 		///</summary>
-		///
 		///<returns>
 		///The depth of the current node in the XML document.
 		///</returns>
-		///
 		public override int Depth
 		{
 			get { return this.readingElements.Count; }
@@ -1750,11 +1721,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets the base URI of the current node.
 		///</summary>
-		///
 		///<returns>
 		///The base URI of the current node.
 		///</returns>
-		///
 		public override string BaseURI
 		{
 			get { return String.Empty; }
@@ -1763,62 +1732,42 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets a value indicating whether the current node is an empty element (for example, &lt;MyElement/&gt;).
 		///</summary>
-		///
 		///<returns>
 		///true if the current node is an element (<see cref="P:System.Xml.XmlReader.NodeType"></see> equals XmlNodeType.Element) that ends with /&gt;; otherwise, false.
 		///</returns>
-		///
 		public override bool IsEmptyElement
 		{
 			get { return false; }
 		}
 
-		//public override bool IsDefault
-		//{
-		//    get
-		//    {
-		//        return this.NamespaceURI == null;
-		//    }
-		//}
-
 		///<summary>
 		///When overridden in a derived class, gets the number of attributes on the current node.
 		///</summary>
-		///
 		///<returns>
 		///The number of attributes on the current node.
 		///</returns>
-		///
-		public override int AttributeCount
-		{
+		public override int AttributeCount {
 			get { throw new NotImplementedException(); }
 		}
 
 		///<summary>
 		///When overridden in a derived class, gets a value indicating whether the reader is positioned at the end of the stream.
 		///</summary>
-		///
 		///<returns>
 		///true if the reader is positioned at the end of the stream; otherwise, false.
 		///</returns>
-		///
-		public override bool EOF
-		{
+		public override bool EOF {
 			get { return _eof; }
 		}
 
 		///<summary>
 		///When overridden in a derived class, gets the state of the reader.
 		///</summary>
-		///
 		///<returns>
 		///One of the <see cref="T:System.Xml.ReadState"></see> values.
 		///</returns>
-		///
-		public override ReadState ReadState
-		{
-			get
-			{
+		public override ReadState ReadState {
+			get {
 				if (!initialized)
 					return ReadState.Initial;
 				else if (reader == null)
@@ -1838,11 +1787,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		///<summary>
 		///When overridden in a derived class, gets the <see cref="T:System.Xml.XmlNameTable"></see> associated with this implementation.
 		///</summary>
-		///
 		///<returns>
 		///The XmlNameTable enabling you to get the atomized version of a string within the node.
 		///</returns>
-		///
 		public override XmlNameTable NameTable
 		{
 			get { return _nameTable; }
@@ -1935,61 +1882,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			Integer = 4,
 			Unknown = 0,
 			UShort = 3
-		}
-
-		#endregion
-
-		#region NodesCollection
-
-		internal class NodesCollection : List<XmlBamlNode>
-		{
-			public XmlBamlNode Last
-			{
-				get
-				{
-					if (this.Count > 0)
-					{
-						int i = this.Count - 1;
-						return this[i];
-					}
-					return null;
-				}
-			}
-
-			public void RemoveLast()
-			{
-				if (this.Count > 0)
-					this.Remove(this.Last);
-			}
-
-			public XmlBamlNode Dequeue()
-			{
-				return DequeueInternal(true);
-			}
-
-			public XmlBamlNode Peek()
-			{
-				return DequeueInternal(false);
-			}
-
-			XmlBamlNode DequeueInternal(bool remove)
-			{
-				if (this.Count > 0)
-				{
-					XmlBamlNode node = this[0];
-					if (remove)
-						this.RemoveAt(0);
-					return node;
-				}
-				else
-					return null;
-			}
-
-
-			public void Enqueue(XmlBamlNode node)
-			{
-				this.Add(node);
-			}
 		}
 
 		#endregion

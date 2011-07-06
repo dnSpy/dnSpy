@@ -152,6 +152,10 @@ namespace ICSharpCode.TreeView
 					var list = SelectedItems.Cast<SharpTreeNode>().Except(selectedOldItems).ToList();
 					SetSelectedItems(list);
 				}
+				// reset the focus to the previous node
+				SelectedIndex = Math.Max(0, e.OldStartingIndex - 1);
+				if (SelectedItem != null)
+					FocusNode((SharpTreeNode)SelectedItem);
 			}
 		}
 		
