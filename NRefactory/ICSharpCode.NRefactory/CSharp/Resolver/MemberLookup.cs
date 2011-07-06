@@ -25,9 +25,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			// C# 4.0 spec, §7.4 member lookup
 			if (member is IEvent || member is IMethod)
 				return true;
-			if (member.ReturnType == SharedTypes.Dynamic)
+			IType returnType = member.ReturnType.Resolve(context);
+			if (returnType == SharedTypes.Dynamic)
 				return true;
-			return member.ReturnType.Resolve(context).IsDelegate();
+			return returnType.IsDelegate();
 		}
 		#endregion
 		
@@ -66,7 +67,14 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				case Accessibility.None:
 					return false;
 				case Accessibility.Private:
-					return entity.DeclaringTypeDefinition == currentTypeDefinition;
+					// check for members of outer classes (private members of outer classes can be accessed)
+					var lookupTypeDefinition = currentTypeDefinition;
+					while (lookupTypeDefinition != null) {
+						if (entity.DeclaringTypeDefinition.Equals (lookupTypeDefinition)) 
+							return true;
+						lookupTypeDefinition = lookupTypeDefinition.DeclaringTypeDefinition;
+					}
+					return false;
 				case Accessibility.Public:
 					return true;
 				case Accessibility.Protected:
@@ -91,7 +99,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		bool IsProtectedAccessible(ITypeDefinition declaringType)
 		{
-			if (declaringType == currentTypeDefinition)
+			if (declaringType.Equals (currentTypeDefinition))
 				return true;
 			// PERF: this might hurt performance as this method is called several times (once for each member)
 			// make sure resolving base types is cheap (caches?) or cache within the MemberLookup instance
@@ -159,7 +167,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (!isInvocation) {
 				// Consider nested types only if it's not an invocation. The type parameter count must match in this case.
 				Predicate<ITypeDefinition> typeFilter = delegate (ITypeDefinition d) {
-					return d.TypeParameterCount == typeArgumentCount && d.Name == name && IsAccessible(d, true);
+					// inner types contain the type parameters of outer types. therefore this count has to been adjusted.
+					int correctedCount = d.TypeParameterCount - (d.DeclaringType != null ? d.DeclaringType.TypeParameterCount : 0);
+					return correctedCount == typeArgumentCount && d.Name == name && IsAccessible(d, true);
 				};
 				types.AddRange(type.GetNestedTypes(context, typeFilter));
 			}
@@ -170,10 +180,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				Predicate<IMember> memberFilter = delegate(IMember member) {
 					return !member.IsOverride && member.Name == name && IsAccessible(member, allowProtectedAccess);
 				};
-				members.AddRange(type.GetMethods(context, memberFilter.SafeCast<IMember, IMethod>()).SafeCast<IMethod, IMember>());
-				members.AddRange(type.GetProperties(context, memberFilter.SafeCast<IMember, IProperty>()).SafeCast<IProperty, IMember>());
-				members.AddRange(type.GetFields(context, memberFilter.SafeCast<IMember, IField>()).SafeCast<IField, IMember>());
-				members.AddRange(type.GetEvents(context, memberFilter.SafeCast<IMember, IEvent>()).SafeCast<IEvent, IMember>());
+				members.AddRange(type.GetMembers(context, memberFilter));
 				if (isInvocation)
 					members.RemoveAll(m => !IsInvocable(m, context));
 			} else {

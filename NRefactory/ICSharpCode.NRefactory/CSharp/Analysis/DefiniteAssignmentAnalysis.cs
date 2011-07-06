@@ -79,12 +79,22 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		
 		Queue<DefiniteAssignmentNode> nodesWithModifiedInput = new Queue<DefiniteAssignmentNode>();
 		
-		public DefiniteAssignmentAnalysis(Statement rootStatement, CancellationToken cancellationToken = default(CancellationToken))
+		public DefiniteAssignmentAnalysis(Statement rootStatement)
+			: this(rootStatement, null, CancellationToken.None)
+		{
+		}
+		
+		public DefiniteAssignmentAnalysis(Statement rootStatement, CancellationToken cancellationToken)
 			: this(rootStatement, null, cancellationToken)
 		{
 		}
 		
-		public DefiniteAssignmentAnalysis(Statement rootStatement, ITypeResolveContext context, CancellationToken cancellationToken = default(CancellationToken))
+		public DefiniteAssignmentAnalysis(Statement rootStatement, ITypeResolveContext context)
+			: this(rootStatement, context, CancellationToken.None)
+		{
+		}
+		
+		public DefiniteAssignmentAnalysis(Statement rootStatement, ITypeResolveContext context, CancellationToken cancellationToken)
 			: this(rootStatement, new ResolveVisitor(new CSharpResolver(context ?? MinimalResolveContext.Instance, cancellationToken),
 			                                         null, ConstantModeResolveVisitorNavigator.Skip))
 		{

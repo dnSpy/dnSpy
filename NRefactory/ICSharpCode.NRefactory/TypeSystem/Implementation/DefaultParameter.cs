@@ -105,6 +105,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
+		DomRegion IVariable.DeclarationRegion {
+			get {
+				return Region;
+			}
+		}
+		
 		bool HasFlag(byte flag)
 		{
 			return (this.flags & flag) != 0;

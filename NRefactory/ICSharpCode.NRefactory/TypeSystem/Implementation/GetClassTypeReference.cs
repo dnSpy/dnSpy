@@ -83,7 +83,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		IType DoResolve(ITypeResolveContext context)
 		{
 			 */
-			return context.GetClass(nameSpace, name, typeParameterCount, StringComparer.Ordinal) ?? SharedTypes.UnknownType;
+			return context.GetTypeDefinition(nameSpace, name, typeParameterCount, StringComparer.Ordinal) ?? SharedTypes.UnknownType;
 		}
 		
 		public override string ToString()

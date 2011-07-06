@@ -131,15 +131,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public bool IsNotRealProperty {
-			get {
-				return (state & StateFlags.IsNotRealProperty) != 0;
-			}
-			set {
-				state |= StateFlags.IsNotRealProperty;
-			}
-		}
-
 		public bool HasDifferentAccessibility {
 			get {
 				return HasGet && HasSet && 

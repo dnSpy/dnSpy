@@ -868,7 +868,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		#endregion
-
+		
 		#region SimplifyLogicNot
 		static bool SimplifyLogicNot(List<ILNode> body, ILExpression expr, int pos)
 		{
@@ -944,6 +944,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		#region SimplifyShiftOperators
 		static bool SimplifyShiftOperators(List<ILNode> body, ILExpression expr, int pos)
 		{
+			// C# compiles "a << b" to "a << (b & 31)", so we will remove the "& 31" if possible.
 			bool modified = false;
 			SimplifyShiftOperators(expr, ref modified);
 			return modified;
@@ -951,16 +952,15 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		static void SimplifyShiftOperators(ILExpression expr, ref bool modified)
 		{
-			for (int i = 0; i < expr.Arguments.Count; i++) SimplifyShiftOperators(expr.Arguments[i], ref modified);
-			if (expr.Code != ILCode.Shl && expr.Code != ILCode.Shr && expr.Code != ILCode.Shr_Un) return;
+			for (int i = 0; i < expr.Arguments.Count; i++) 
+				SimplifyShiftOperators(expr.Arguments[i], ref modified);
+			if (expr.Code != ILCode.Shl && expr.Code != ILCode.Shr && expr.Code != ILCode.Shr_Un) 
+				return;
 			var a = expr.Arguments[1];
-			if (a.Code != ILCode.And || a.Arguments[1].Code != ILCode.Ldc_I4 || expr.InferredType == null) return;
+			if (a.Code != ILCode.And || a.Arguments[1].Code != ILCode.Ldc_I4 || expr.InferredType == null) 
+				return;
 			int mask;
 			switch (expr.InferredType.MetadataType) {
-				case MetadataType.Byte:
-				case MetadataType.SByte:
-				case MetadataType.Int16:
-				case MetadataType.UInt16:
 				case MetadataType.Int32:
 				case MetadataType.UInt32: mask = 31; break;
 				case MetadataType.Int64:

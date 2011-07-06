@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
@@ -14,7 +14,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 	/// <summary>
 	/// Resolve context represents the minimal mscorlib required for evaluating constants.
 	/// </summary>
-	sealed class MinimalResolveContext : IProjectContent, ISynchronizedTypeResolveContext
+	sealed class MinimalResolveContext : AbstractAnnotatable, IProjectContent, ISynchronizedTypeResolveContext
 	{
 		static readonly Lazy<MinimalResolveContext> instance = new Lazy<MinimalResolveContext>(() => new MinimalResolveContext());
 		
@@ -58,7 +58,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			};
 		}
 		
-		public ITypeDefinition GetClass(string nameSpace, string name, int typeParameterCount, StringComparer nameComparer)
+		public ITypeDefinition GetTypeDefinition(string nameSpace, string name, int typeParameterCount, StringComparer nameComparer)
 		{
 			foreach (ITypeDefinition type in types) {
 				if (nameComparer.Equals(type.Name, name) && nameComparer.Equals(type.Namespace, nameSpace) && type.TypeParameterCount == typeParameterCount)
@@ -67,12 +67,12 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			return null;
 		}
 		
-		public IEnumerable<ITypeDefinition> GetClasses()
+		public IEnumerable<ITypeDefinition> GetTypes()
 		{
 			return types;
 		}
 		
-		public IEnumerable<ITypeDefinition> GetClasses(string nameSpace, StringComparer nameComparer)
+		public IEnumerable<ITypeDefinition> GetTypes(string nameSpace, StringComparer nameComparer)
 		{
 			return types.Where(t => nameComparer.Equals(t.Namespace, nameSpace));
 		}
@@ -111,6 +111,17 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		void IDisposable.Dispose()
 		{
 			// exit from Synchronize() block
+		}
+		
+		IParsedFile IProjectContent.GetFile(string fileName)
+		{
+			return null;
+		}
+		
+		IEnumerable<IParsedFile> IProjectContent.Files {
+			get {
+				return EmptyList<IParsedFile>.Instance;
+			}
 		}
 	}
 }

@@ -57,7 +57,7 @@ namespace XN {
 			Assert.AreEqual("C.F", mrr.Member.FullName);
 		}
 		
-		[Test, Ignore("Test fails due to parser returning incorrect position")]
+		[Test, Ignore("Anonymous methods not yet implemented")]
 		public void ExtensionMethodsTest2()
 		{
 			string program = @"using System; using System.Collections.Generic;

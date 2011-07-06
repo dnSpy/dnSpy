@@ -588,9 +588,9 @@ namespace Mono.CSharp {
 							continue;
 					}
 
-					if (non_method == null || member is MethodSpec) {
+					if (non_method == null || member is MethodSpec || non_method.IsNotCSharpCompatible) {
 						non_method = member;
-					} else if (!errorMode) {
+					} else if (!errorMode && !member.IsNotCSharpCompatible) {
 						ambig_non_method = member;
 					}
 				}
@@ -1873,18 +1873,18 @@ namespace Mono.CSharp {
 			this.loc = expr.Location;
 		}
 
-		public override Expression CreateExpressionTree (ResolveContext ec)
+		public override Expression CreateExpressionTree (ResolveContext rc)
 		{
-			return expr.CreateExpressionTree (ec);
+			return expr.CreateExpressionTree (rc);
 		}
 
 		public Expression Child {
 			get { return expr; }
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext rc)
 		{
-			expr = expr.Resolve (ec);
+			expr = expr.Resolve (rc);
 			if (expr != null) {
 				type = expr.Type;
 				eclass = expr.eclass;
@@ -1915,6 +1915,12 @@ namespace Mono.CSharp {
 			this.expr = expr;
 		}
 
+		public Expression Expr {
+			get {
+				return expr;
+			}
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			if (expr == null)
@@ -1934,9 +1940,6 @@ namespace Mono.CSharp {
 			throw new InternalErrorException ("Missing Resolve call");
 		}
 
-		public Expression Expr {
-			get { return expr; }
-		}
 	}
 
 	//
@@ -2313,10 +2316,13 @@ namespace Mono.CSharp {
 
 						e = rc.LookupNamespaceOrType (Name, -System.Math.Max (1, Arity), LookupMode.Probing, loc);
 						if (e != null) {
-							Error_TypeArgumentsCannotBeUsed (rc, e.Type, Arity, loc);
-						} else {
-							rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
+							if (!(e is TypeExpr) || (restrictions & MemberLookupRestrictions.InvocableOnly) == 0 || !e.Type.IsDelegate) {
+								Error_TypeArgumentsCannotBeUsed (rc, e.Type, Arity, loc);
+								return e;
+							}
 						}
+
+						rc.Report.Error (103, loc, "The name `{0}' does not exist in the current context", Name);
 					}
 
 					return ErrorExpression.Instance;
@@ -2329,7 +2335,6 @@ namespace Mono.CSharp {
 				}
 
 				lookup_arity = 0;
-				restrictions &= ~MemberLookupRestrictions.InvocableOnly;
 				errorMode = true;
 			}
 		}
@@ -2525,7 +2530,6 @@ namespace Mono.CSharp {
 			get;
 		}
 
-		// TODO: Not needed
 		protected abstract TypeSpec DeclaringType {
 			get;
 		}
@@ -3418,6 +3422,28 @@ namespace Mono.CSharp {
 				if (q.Kind == MemberKind.Void) {
 					return p.Kind != MemberKind.Void ? 1: 0;
 				}
+
+				//
+				// When anonymous method is an asynchronous, and P has a return type Task<Y1>, and Q has a return type Task<Y2>
+				// better conversion is performed between underlying types Y1 and Y2
+				//
+				if (p.IsGenericTask || q.IsGenericTask) {
+					if (p.IsGenericTask != q.IsGenericTask) {
+						return 0;
+					}
+
+					var async_am = a.Expr as AnonymousMethodExpression;
+					if (async_am == null || !async_am.IsAsync)
+						return 0;
+
+					q = q.TypeArguments[0];
+					p = p.TypeArguments[0];
+				}
+
+				//
+				// The parameters are identicial and return type is not void, use better type conversion
+				// on return type to determine better one
+				//
 			} else {
 				if (argument_type == p)
 					return 1;
@@ -5084,11 +5110,21 @@ namespace Mono.CSharp {
 
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			prepared = prepare_for_load && !(source is DynamicExpressionStatement);
-			if (IsInstance)
-				EmitInstance (ec, prepared);
+			var await_expr = source as Await;
+			if (await_expr != null) {
+				//
+				// Await is not ordinary expression (it contains jump), hence the usual flow cannot be used
+				// to emit instance load before expression
+				//
+				await_expr.EmitAssign (ec, this);
+			} else {
+				prepared = prepare_for_load && !(source is DynamicExpressionStatement);
+				if (IsInstance)
+					EmitInstance (ec, prepared);
 
-			source.Emit (ec);
+				source.Emit (ec);
+			}
+
 			if (leave_copy) {
 				ec.Emit (OpCodes.Dup);
 				if (!IsStatic) {
@@ -5370,7 +5406,7 @@ namespace Mono.CSharp {
 		{
 			eclass = ExprClass.PropertyAccess;
 
-			if (best_candidate.IsNotRealProperty) {
+			if (best_candidate.IsNotCSharpCompatible) {
 				Error_PropertyNotValid (rc);
 			}
 

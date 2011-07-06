@@ -80,6 +80,14 @@ namespace ICSharpCode.NRefactory.CSharp
 				                  node.GetChildByRole(AstNode.Roles.RBrace).EndLocation);
 		}
 		
+		#region Compilation Unit
+		public override IEntity VisitCompilationUnit (CompilationUnit unit, object data)
+		{
+			parsedFile.Errors = unit.Errors;
+			return base.VisitCompilationUnit (unit, data);
+		}
+		#endregion
+		
 		#region Using Declarations
 		public override IEntity VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, object data)
 		{
@@ -126,7 +134,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			DefaultTypeDefinition newType;
 			if (currentTypeDefinition != null) {
 				newType = new DefaultTypeDefinition(currentTypeDefinition, name);
-				currentTypeDefinition.InnerClasses.Add(newType);
+				newType.TypeParameters.AddRange(currentTypeDefinition.TypeParameters);
+				currentTypeDefinition.NestedTypes.Add(newType);
 			} else {
 				newType = new DefaultTypeDefinition(usingScope.ProjectContent, usingScope.NamespaceName, name);
 				parsedFile.TopLevelTypeDefinitions.Add(newType);
@@ -149,7 +158,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			else if (td.ClassType == ClassType.Enum || td.ClassType == ClassType.Struct)
 				td.IsSealed = true; // enums/structs are implicitly sealed
 			
-			ConvertTypeParameters(td.TypeParameters, typeDeclaration.TypeParameters, typeDeclaration.Constraints);
+			ConvertTypeParameters(td.TypeParameters, typeDeclaration.TypeParameters, typeDeclaration.Constraints, EntityType.TypeDefinition);
 			
 			foreach (AstType baseType in typeDeclaration.BaseTypes) {
 				td.BaseTypes.Add(ConvertType(baseType));
@@ -175,7 +184,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			ApplyModifiers(td, delegateDeclaration.Modifiers);
 			td.IsSealed = true; // delegates are implicitly sealed
 			
-			ConvertTypeParameters(td.TypeParameters, delegateDeclaration.TypeParameters, delegateDeclaration.Constraints);
+			ConvertTypeParameters(td.TypeParameters, delegateDeclaration.TypeParameters, delegateDeclaration.Constraints, EntityType.TypeDefinition);
 			
 			ITypeReference returnType = ConvertType(delegateDeclaration.ReturnType);
 			List<IParameter> parameters = new List<IParameter>();
@@ -303,7 +312,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (!enumMemberDeclaration.Initializer.IsNull) {
 				field.ConstantValue = ConvertConstantValue(currentTypeDefinition, enumMemberDeclaration.Initializer);
 			} else {
-				throw new NotImplementedException();
+				IField prevField = currentTypeDefinition.Fields.LastOrDefault();
+				if (prevField == null || prevField.ConstantValue == null) {
+					field.ConstantValue = ConvertConstantValue(currentTypeDefinition, new PrimitiveExpression(0));
+				} else {
+					field.ConstantValue = new IncrementConstantValue(prevField.ConstantValue);
+				}
 			}
 			
 			currentTypeDefinition.Fields.Add(field);
@@ -320,7 +334,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			m.BodyRegion = MakeRegion(methodDeclaration.Body);
 			
 			
-			ConvertTypeParameters(m.TypeParameters, methodDeclaration.TypeParameters, methodDeclaration.Constraints);
+			ConvertTypeParameters(m.TypeParameters, methodDeclaration.TypeParameters, methodDeclaration.Constraints, EntityType.Method);
 			m.ReturnType = ConvertType(methodDeclaration.ReturnType);
 			ConvertAttributes(m.Attributes, methodDeclaration.Attributes.Where(s => s.AttributeTarget != "return"));
 			ConvertAttributes(m.ReturnTypeAttributes, methodDeclaration.Attributes.Where(s => s.AttributeTarget == "return"));
@@ -339,10 +353,41 @@ namespace ICSharpCode.NRefactory.CSharp
 			return m;
 		}
 		
-		void ConvertTypeParameters(IList<ITypeParameter> output, IEnumerable<TypeParameterDeclaration> typeParameters, IEnumerable<Constraint> constraints)
+		void ConvertTypeParameters(IList<ITypeParameter> output, AstNodeCollection<TypeParameterDeclaration> typeParameters, AstNodeCollection<Constraint> constraints, EntityType ownerType)
 		{
-			if (typeParameters.Any())
-				throw new NotImplementedException();
+			// output might be non-empty when type parameters were copied from an outer class
+			int index = output.Count;
+			List<DefaultTypeParameter> list = new List<DefaultTypeParameter>();
+			foreach (TypeParameterDeclaration tpDecl in typeParameters) {
+				DefaultTypeParameter tp = new DefaultTypeParameter(ownerType, index++, tpDecl.Name);
+				ConvertAttributes(tp.Attributes, tpDecl.Attributes);
+				tp.Variance = tpDecl.Variance;
+				list.Add(tp);
+				output.Add(tp); // tp must be added to list here so that it can be referenced by constraints
+			}
+			foreach (Constraint c in constraints) {
+				foreach (var tp in list) {
+					if (tp.Name == c.TypeParameter) {
+						foreach (AstType type in c.BaseTypes) {
+							PrimitiveType primType = type as PrimitiveType;
+							if (primType != null) {
+								if (primType.Keyword == "new") {
+									tp.HasDefaultConstructorConstraint = true;
+									continue;
+								} else if (primType.Keyword == "class") {
+									tp.HasReferenceTypeConstraint = true;
+									continue;
+								} else if (primType.Keyword == "struct") {
+									tp.HasValueTypeConstraint = true;
+									continue;
+								}
+							}
+							tp.Constraints.Add(ConvertType(type));
+						}
+						break;
+					}
+				}
+			}
 		}
 		
 		DefaultExplicitInterfaceImplementation ConvertInterfaceImplementation(AstType interfaceType, string memberName)
@@ -459,6 +504,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		IAccessor ConvertAccessor(Accessor accessor, Accessibility defaultAccessibility)
 		{
+			if (accessor.IsNull)
+				return null;
 			DefaultAccessor a = new DefaultAccessor();
 			a.Accessibility = GetAccessibility(accessor.Modifiers) ?? defaultAccessibility;
 			a.Region = MakeRegion(accessor);
@@ -542,6 +589,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		static void ApplyModifiers(TypeSystem.Implementation.AbstractMember m, Modifiers modifiers)
 		{
+			// members from interfaces are always Public.
+			if (m.DeclaringTypeDefinition.ClassType == ClassType.Interface) {
+				m.Accessibility = Accessibility.Public;
+				return;
+			}
 			m.Accessibility = GetAccessibility(modifiers) ?? Accessibility.Private;
 			m.IsAbstract = (modifiers & Modifiers.Abstract) != 0;
 			m.IsOverride = (modifiers & Modifiers.Override) != 0;
@@ -623,11 +675,11 @@ namespace ICSharpCode.NRefactory.CSharp
 						string name = ((IdentifierExpression)ae.Left).Identifier;
 						if (namedArguments == null)
 							namedArguments = new List<KeyValuePair<string, IConstantValue>>();
-						namedArguments.Add(new KeyValuePair<string, IConstantValue>(name, ConvertAttributeArgument(nae.Expression)));
+						namedArguments.Add(new KeyValuePair<string, IConstantValue>(name, ConvertAttributeArgument(ae.Right)));
 					} else {
 						if (positionalArguments == null)
 							positionalArguments = new List<IConstantValue>();
-						positionalArguments.Add(ConvertAttributeArgument(nae.Expression));
+						positionalArguments.Add(ConvertAttributeArgument(expr));
 					}
 				}
 			}

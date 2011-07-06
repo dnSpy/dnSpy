@@ -16,7 +16,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		
 		void TestGetClass(Type type)
 		{
-			ITypeDefinition t = CecilLoaderTests.Mscorlib.GetClass(type);
+			ITypeDefinition t = CecilLoaderTests.Mscorlib.GetTypeDefinition(type);
 			Assert.IsNotNull(t, type.FullName);
 			Assert.AreEqual(type.FullName, t.ReflectionName);
 		}
@@ -142,7 +142,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			Assert.AreEqual("System.Converter`2[[?],[?]]",
 			                parameterType.ToTypeReference().Resolve(context).ReflectionName);
 			// now try with parent entity:
-			IMethod convertAll = context.GetClass(typeof(List<>)).Methods.Single(m => m.Name == "ConvertAll");
+			IMethod convertAll = context.GetTypeDefinition(typeof(List<>)).Methods.Single(m => m.Name == "ConvertAll");
 			Assert.AreEqual("System.Converter`2[[`0],[``0]]",
 			                parameterType.ToTypeReference(entity: convertAll).Resolve(context).ReflectionName);
 		}
@@ -163,7 +163,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void ParseOpenGenericReflectionName()
 		{
-			IMethod convertAll = context.GetClass(typeof(List<>)).Methods.Single(m => m.Name == "ConvertAll");
+			IMethod convertAll = context.GetTypeDefinition(typeof(List<>)).Methods.Single(m => m.Name == "ConvertAll");
 			Assert.AreEqual("System.Converter`2[[?],[?]]", ReflectionHelper.ParseReflectionName("System.Converter`2[[`0],[``0]]").Resolve(context).ReflectionName);
 			Assert.AreEqual("System.Converter`2[[`0],[``0]]", ReflectionHelper.ParseReflectionName("System.Converter`2[[`0],[``0]]", convertAll).Resolve(context).ReflectionName);
 		}

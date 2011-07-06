@@ -20,6 +20,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		string Name { get; }
 		
 		/// <summary>
+		/// Gets the declaration region of the variable.
+		/// </summary>
+		DomRegion DeclarationRegion { get; }
+		
+		/// <summary>
 		/// Gets the type of the variable.
 		/// </summary>
 		ITypeReference Type { get; }

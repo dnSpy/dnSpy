@@ -1,0 +1,23 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Color x:Key="VeryDark" A="255" R="70" G="70" B="70" />
+	<Color x:Key="Dark" A="255" R="102" G="102" B="102" />
+	<Color x:Key="Medium" A="255" R="140" G="140" B="140" />
+	<Color x:Key="Light" A="255" R="204" G="204" B="204" />
+	<Color x:Key="VeryLight" A="255" R="241" G="241" B="241" />
+	<Color x:Key="OffWhite" A="255" R="255" G="255" B="255" />
+	<Color x:Key="Highlight" A="255" R="220" G="107" B="47" />
+	<SolidColorBrush x:Key="VeryDarkBrush" Color="{StaticResource VeryDark}" />
+	<SolidColorBrush x:Key="DarkBrush" Color="{StaticResource Dark}" />
+	<SolidColorBrush x:Key="MediumBrush" Color="{StaticResource Medium}" />
+	<SolidColorBrush x:Key="LightBrush" Color="{StaticResource Light}" />
+	<SolidColorBrush x:Key="VeryLightBrush" Color="{StaticResource VeryLight}" />
+	<SolidColorBrush x:Key="OffWhiteBrush" Color="{StaticResource OffWhite}" />
+	<SolidColorBrush x:Key="HighlightBrush" Color="{StaticResource Highlight}" />
+	<LinearGradientBrush x:Key="EdgeBorder" StartPoint="0,0" EndPoint="0,1">
+		<GradientStop Color="#0000" Offset="0" />
+		<GradientStop Color="#1000" Offset="0.65" />
+		<GradientStop Color="#3000" Offset="1" />
+	</LinearGradientBrush>
+	<SolidColorBrush x:Key="DisabledForegroundBrush" Color="#6FFF" />
+	<SolidColorBrush x:Key="SelectedBackgroundBrush" Color="{StaticResource Light}" />
+</ResourceDictionary>

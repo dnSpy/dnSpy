@@ -962,17 +962,17 @@ namespace Mono.CSharp
 		static public string help {
 			get {
 				return "Static methods:\n" +
-					"  Describe (object)       - Describes the object's type\n" +
-					"  LoadPackage (package);  - Loads the given Package (like -pkg:FILE)\n" +
-					"  LoadAssembly (assembly) - Loads the given assembly (like -r:ASSEMBLY)\n" +
-					"  ShowVars ();            - Shows defined local variables.\n" +
-					"  ShowUsing ();           - Show active using declarations.\n" +
-					"  Prompt                  - The prompt used by the C# shell\n" +
-					"  ContinuationPrompt      - The prompt for partial input\n" +
-					"  Time(() -> { })         - Times the specified code\n" +
-					"  print (obj)             - Shorthand for Console.WriteLine\n" +
-					"  quit;                   - You'll never believe it - this quits the repl!\n" +
-					"  help;                   - This help text\n";
+					"  Describe (object);       - Describes the object's type\n" +
+					"  LoadPackage (package);   - Loads the given Package (like -pkg:FILE)\n" +
+					"  LoadAssembly (assembly); - Loads the given assembly (like -r:ASSEMBLY)\n" +
+					"  ShowVars ();             - Shows defined local variables.\n" +
+					"  ShowUsing ();            - Show active using declarations.\n" +
+					"  Prompt                   - The prompt used by the C# shell\n" +
+					"  ContinuationPrompt       - The prompt for partial input\n" +
+					"  Time (() => { });        - Times the specified code\n" +
+					"  print (obj);             - Shorthand for Console.WriteLine\n" +
+					"  quit;                    - You'll never believe it - this quits the repl!\n" +
+					"  help;                    - This help text\n";
 			}
 		}
 

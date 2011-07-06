@@ -1,4 +1,4 @@
-﻿// 
+// 
 // TokenNode.cs
 //  
 // Author:
@@ -27,7 +27,7 @@ using System;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class CSharpTokenNode : AstNode
+	public class CSharpTokenNode : AstNode, IRelocatable
 	{
 		public static new readonly CSharpTokenNode Null = new NullCSharpTokenNode ();
 		class NullCSharpTokenNode : CSharpTokenNode
@@ -79,6 +79,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			this.startLocation = location;
 			this.tokenLength = tokenLength;
 		}
+		
+		#region IRelocationable implementation
+		void IRelocatable.SetStartLocation (AstLocation startLocation)
+		{
+			this.startLocation = startLocation;
+		}
+		#endregion
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{

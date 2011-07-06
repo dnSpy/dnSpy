@@ -25,9 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-
-using ICSharpCode.NRefactory.Utils;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -41,67 +39,48 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
+		List<Error> errors = new List<Error> ();
+		
+		public List<Error> Errors {
+			get { return errors; }
+		}
+		
+		/// <summary>
+		/// Gets the expression that was on top of the parse stack.
+		/// This is the only way to get an expression that isn't part of a statment.
+		/// (eg. when an error follows an expression).
+		/// 
+		/// This is used for code completion to 'get the expression before a token - like ., <, ('.
+		/// </summary>
+		public AstNode TopExpression {
+			get;
+			internal set;
+		}
+		
 		public CompilationUnit ()
 		{
+		}
+		
+		public IEnumerable<TypeDeclaration> GetTypes (bool includeInnerTypes = false)
+		{
+			Stack<AstNode> nodeStack = new Stack<AstNode> ();
+			nodeStack.Push (this);
+			while (nodeStack.Count > 0) {
+				var curNode = nodeStack.Pop ();
+				if (curNode is TypeDeclaration)
+					yield return (TypeDeclaration)curNode;
+				foreach (var child in curNode.Children) {
+					if (!(child is Statement || child is Expression) &&
+						 (child.Role != TypeDeclaration.MemberRole || (child is TypeDeclaration && includeInnerTypes)))
+						nodeStack.Push (child);
+				}
+			}
 		}
 		
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			CompilationUnit o = other as CompilationUnit;
 			return o != null && GetChildrenByRole(MemberRole).DoMatch(o.GetChildrenByRole(MemberRole), match);
-		}
-		
-		public AstNode GetNodeAt (int line, int column)
-		{
-			return GetNodeAt (new AstLocation (line, column));
-		}
-		
-		public AstNode GetNodeAt (AstLocation location)
-		{
-			AstNode node = this;
-			while (node.FirstChild != null) {
-				var child = node.FirstChild;
-				while (child != null) {
-					if (child.StartLocation <= location && location < child.EndLocation) {
-						node = child;
-						break;
-					}
-					child = child.NextSibling;
-				}
-				// found no better child node - therefore the parent is the right one.
-				if (child == null)
-					break;
-			}
-			return node;
-		}
-		
-		public IEnumerable<AstNode> GetNodesBetween (int startLine, int startColumn, int endLine, int endColumn)
-		{
-			return GetNodesBetween (new AstLocation (startLine, startColumn), new AstLocation (endLine, endColumn));
-		}
-		
-		public IEnumerable<AstNode> GetNodesBetween (AstLocation start, AstLocation end)
-		{
-			AstNode node = this;
-			while (node != null) {
-				AstNode next;
-				if (start <= node.StartLocation && node.EndLocation <= end) {
-					// Remember next before yielding node.
-					// This allows iteration to continue when the caller removes/replaces the node.
-					next = node.NextSibling;
-					yield return node;
-				} else {
-					if (node.EndLocation < start) {
-						next = node.NextSibling; 
-					} else {
-						next = node.FirstChild;
-					}
-				}
-				
-				if (next != null && next.StartLocation > end)
-					yield break;
-				node = next;
-			}
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)

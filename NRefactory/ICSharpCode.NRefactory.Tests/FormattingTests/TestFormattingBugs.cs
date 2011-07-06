@@ -31,6 +31,7 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.NRefactory.FormattingTests
 {
+	[Ignore()]
 	[TestFixture()]
 	public class TestFormattingBugs : TestBase
 	{

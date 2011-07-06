@@ -61,18 +61,27 @@ namespace ILSpy.BamlDecompiler.Tests
 			RunTest("cases/attachedevent");
 		}
 		
+		[Test]
+		public void Dictionary1()
+		{
+			RunTest("cases/dictionary1");
+		}
+		
 		#region RunTest
 		void RunTest(string name)
 		{
-			string asmPath = typeof(TestRunner).Assembly.Location;
+			RunTest(name, typeof(TestRunner).Assembly.Location, Path.Combine("..\\..\\Tests", name + ".xaml"));
+		}
+		
+		void RunTest(string name, string asmPath, string sourcePath)
+		{
 			var assembly = AssemblyDefinition.ReadAssembly(asmPath);
 			Resource res = assembly.MainModule.Resources.First();
 			Stream bamlStream = LoadBaml(res, name + ".baml");
 			Assert.IsNotNull(bamlStream);
 			XDocument document = BamlResourceEntryNode.LoadIntoDocument(new DefaultAssemblyResolver(), assembly, bamlStream);
-			string path = Path.Combine("..\\..\\Tests", name + ".xaml");
-			
-			CodeAssert.AreEqual(File.ReadAllText(path), document.ToString());
+
+			CodeAssert.AreEqual(File.ReadAllText(sourcePath), document.ToString());
 		}
 		
 		Stream LoadBaml(Resource res, string name)

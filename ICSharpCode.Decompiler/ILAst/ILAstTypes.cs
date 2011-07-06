@@ -43,6 +43,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		void AccumulateSelfAndChildrenRecursive<T>(List<T> list, Func<T, bool> predicate) where T:ILNode
 		{
+			// Note: RemoveEndFinally depends on self coming before children
 			T thisAsT = this as T;
 			if (thisAsT != null && (predicate == null || predicate(thisAsT)))
 				list.Add(thisAsT);

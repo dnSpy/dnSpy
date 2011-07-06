@@ -43,10 +43,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		SimplifyNullCoalescing,
 		JoinBasicBlocks,
 		SimplifyLogicNot,
+		SimplifyShiftOperators,
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
 		SimplifyCustomShortCircuit,
-		SimplifyShiftOperators,
 		SimplifyNullableOperators,
 		TransformArrayInitializers,
 		TransformMultidimensionalArrayInitializers,
@@ -57,6 +57,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		FindLoops,
 		FindConditions,
 		FlattenNestedMovableBlocks,
+		RemoveEndFinally,
 		RemoveRedundantCode2,
 		GotoRemoval,
 		DuplicateReturns,
@@ -137,7 +138,10 @@ namespace ICSharpCode.Decompiler.ILAst
 
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyLogicNot) return;
 					modified |= block.RunOptimization(SimplifyLogicNot);
-					
+
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyShiftOperators) return;
+					modified |= block.RunOptimization(SimplifyShiftOperators);
+
 					if (abortBeforeStep == ILAstOptimizationStep.TransformDecimalCtorToConstant) return;
 					modified |= block.RunOptimization(TransformDecimalCtorToConstant);
 					modified |= block.RunOptimization(SimplifyLdcI4ConvI8);
@@ -147,9 +151,6 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyCustomShortCircuit) return;
 					modified |= block.RunOptimization(new SimpleControlFlow(context, method).SimplifyCustomShortCircuit);
-
-					if (abortBeforeStep == ILAstOptimizationStep.SimplifyShiftOperators) return;
-					modified |= block.RunOptimization(SimplifyShiftOperators);
 
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyNullableOperators) return;
 					modified |= block.RunOptimization(SimplifyNullableOperators);
@@ -189,6 +190,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (abortBeforeStep == ILAstOptimizationStep.FlattenNestedMovableBlocks) return;
 			FlattenBasicBlocks(method);
+			
+			if (abortBeforeStep == ILAstOptimizationStep.RemoveEndFinally) return;
+			RemoveEndFinally(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.RemoveRedundantCode2) return;
 			RemoveRedundantCode(method);
@@ -550,6 +554,25 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		/// <summary>
+		/// Replace endfinally with jump to the end of the finally block
+		/// </summary>
+		void RemoveEndFinally(ILBlock method)
+		{
+			// Go thought the list in reverse so that we do the nested blocks first
+			foreach(var tryCatch in method.GetSelfAndChildrenRecursive<ILTryCatchBlock>(tc => tc.FinallyBlock != null).Reverse()) {
+				ILLabel label = new ILLabel() { Name = "EndFinally_" + nextLabelIndex++ };
+				tryCatch.FinallyBlock.Body.Add(label);
+				foreach(var block in tryCatch.FinallyBlock.GetSelfAndChildrenRecursive<ILBlock>()) {
+					for (int i = 0; i < block.Body.Count; i++) {
+						if (block.Body[i].Match(ILCode.Endfinally)) {
+							block.Body[i] = new ILExpression(ILCode.Br, label).WithILRanges(((ILExpression)block.Body[i]).ILRanges);
+						}
+					}
+				}
+			}
+		}
+		
+		/// <summary>
 		/// Reduce the nesting of conditions.
 		/// It should be done on flat data that already had most gotos removed
 		/// </summary>
@@ -780,6 +803,12 @@ namespace ICSharpCode.Decompiler.ILAst
 				default:
 					return false;
 			}
+		}
+		
+		public static ILExpression WithILRanges(this ILExpression expr, IEnumerable<ILRange> ilranges)
+		{
+			expr.ILRanges.AddRange(ilranges);
+			return expr;
 		}
 		
 		public static void RemoveTail(this List<ILNode> body, params ILCode[] codes)

@@ -47,7 +47,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			if (context == null)
 				throw new ArgumentNullException("context");
 			
-			ITypeDefinition nullable = context.GetClass("System", "Nullable", 1, StringComparer.Ordinal);
+			ITypeDefinition nullable = context.GetTypeDefinition("System", "Nullable", 1, StringComparer.Ordinal);
 			if (nullable != null)
 				return new ParameterizedType(nullable, new [] { elementType });
 			else

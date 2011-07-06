@@ -26,11 +26,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		internal readonly CancellationToken cancellationToken;
 		
 		#region Constructor
-		public CSharpResolver(ITypeResolveContext context)
+		public CSharpResolver(ITypeResolveContext context) : this (context, CancellationToken.None)
 		{
-			if (context == null)
-				throw new ArgumentNullException("context");
-			this.context = context;
 		}
 		
 		public CSharpResolver(ITypeResolveContext context, CancellationToken cancellationToken)
@@ -86,12 +83,14 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			internal readonly LocalVariable prev;
 			internal readonly ITypeReference type;
+			internal readonly DomRegion region;
 			internal readonly string name;
 			internal readonly IConstantValue constantValue;
 			
-			public LocalVariable(LocalVariable prev, ITypeReference type, string name, IConstantValue constantValue)
+			public LocalVariable(LocalVariable prev, ITypeReference type, DomRegion region, string name, IConstantValue constantValue)
 			{
 				this.prev = prev;
+				this.region = region;
 				this.type = type;
 				this.name = name;
 				this.constantValue = constantValue;
@@ -100,6 +99,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			public string Name {
 				get { return name; }
 			}
+			
+			public DomRegion DeclarationRegion {
+				get { return region; } 
+			}
+			
 			public ITypeReference Type {
 				get { return type; }
 			}
@@ -126,7 +130,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// </summary>
 		public void PushBlock()
 		{
-			localVariableStack = new LocalVariable(localVariableStack, null, null, null);
+			localVariableStack = new LocalVariable(localVariableStack, null, DomRegion.Empty, null, null);
 		}
 		
 		/// <summary>
@@ -146,13 +150,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// <summary>
 		/// Adds a new variable to the current block.
 		/// </summary>
-		public IVariable AddVariable(ITypeReference type, string name, IConstantValue constantValue = null)
+		public IVariable AddVariable(ITypeReference type, DomRegion declarationRegion, string name, IConstantValue constantValue = null)
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
 			if (name == null)
 				throw new ArgumentNullException("name");
-			return localVariableStack = new LocalVariable(localVariableStack, type, name, constantValue);
+			return localVariableStack = new LocalVariable(localVariableStack, type, declarationRegion, name, constantValue);
 		}
 		
 		/// <summary>
@@ -304,6 +308,30 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			bool IEntity.IsSynthetic {
 				get { return true; }
+			}
+			
+				bool IEntity.IsPrivate {
+				get { return false; }
+			}
+			
+			bool IEntity.IsPublic {
+				get { return true; }
+			}
+			
+			bool IEntity.IsProtected {
+				get { return false; }
+			}
+			
+			bool IEntity.IsInternal {
+				get { return false; }
+			}
+			
+			bool IEntity.IsProtectedOrInternal {
+				get { return false; }
+			}
+			
+			bool IEntity.IsProtectedAndInternal {
+				get { return false; }
 			}
 			
 			IProjectContent IEntity.ProjectContent {
@@ -628,8 +656,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			// TODO: find user-defined operators
 			
-			if (lhsType == SharedTypes.Null && rhsType.IsReferenceType == false
-			    || lhsType.IsReferenceType == false && rhsType == SharedTypes.Null)
+			if (lhsType == SharedTypes.Null && rhsType.IsReferenceType(context) == false
+			    || lhsType.IsReferenceType(context) == false && rhsType == SharedTypes.Null)
 			{
 				isNullable = true;
 			}
@@ -1559,9 +1587,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			for (ITypeDefinition t = this.CurrentTypeDefinition; t != null; t = t.DeclaringTypeDefinition) {
 				if (k == 0) {
 					// look for type parameter with that name
-					foreach (ITypeParameter tp in t.TypeParameters) {
-						if (tp.Name == identifier)
-							return new TypeResolveResult(tp);
+					var typeParameters = t.TypeParameters;
+					// only look at type parameters defined directly on this type, not at those copied from outer classes
+					for (int i = (t.DeclaringTypeDefinition != null ? t.DeclaringTypeDefinition.TypeParameterCount : 0); i < typeParameters.Count; i++) {
+						if (typeParameters[i].Name == identifier)
+							return new TypeResolveResult(typeParameters[i]);
 					}
 				}
 				
@@ -1587,7 +1617,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					}
 				}
 				// then look for a type
-				ITypeDefinition def = context.GetClass(n.NamespaceName, identifier, k, StringComparer.Ordinal);
+				ITypeDefinition def = context.GetTypeDefinition(n.NamespaceName, identifier, k, StringComparer.Ordinal);
 				if (def != null) {
 					IType result = def;
 					if (k != 0) {
@@ -1621,14 +1651,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					foreach (var u in n.Usings) {
 						NamespaceResolveResult ns = u.ResolveNamespace(context);
 						if (ns != null) {
-							def = context.GetClass(ns.NamespaceName, identifier, k, StringComparer.Ordinal);
-							if (firstResult == null) {
-								if (k == 0)
-									firstResult = def;
-								else
-									firstResult = new ParameterizedType(def, typeArguments);
-							} else {
-								return new AmbiguousTypeResolveResult(firstResult);
+							def = context.GetTypeDefinition(ns.NamespaceName, identifier, k, StringComparer.Ordinal);
+							if (def != null) {
+								if (firstResult == null) {
+									if (k == 0)
+										firstResult = def;
+									else
+										firstResult = new ParameterizedType(def, typeArguments);
+								} else {
+									return new AmbiguousTypeResolveResult(firstResult);
+								}
 							}
 						}
 					}
@@ -1637,10 +1669,14 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				}
 				// if we didn't find anything: repeat lookup with parent namespace
 			}
-			if (typeArguments.Count == 0)
-				return new UnknownIdentifierResolveResult(identifier);
-			else
+			if (typeArguments.Count == 0) {
+				if (identifier == "dynamic")
+					return new TypeResolveResult(SharedTypes.Dynamic);
+				else
+					return new UnknownIdentifierResolveResult(identifier);
+			} else {
 				return ErrorResult;
+			}
 		}
 		
 		/// <summary>
@@ -1685,7 +1721,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					if (context.GetNamespace(fullName, StringComparer.Ordinal) != null)
 						return new NamespaceResolveResult(fullName);
 				}
-				ITypeDefinition def = context.GetClass(nrr.NamespaceName, identifier, typeArguments.Count, StringComparer.Ordinal);
+				ITypeDefinition def = context.GetTypeDefinition(nrr.NamespaceName, identifier, typeArguments.Count, StringComparer.Ordinal);
 				if (def != null)
 					return new TypeResolveResult(def);
 				return ErrorResult;
@@ -1760,7 +1796,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		IEnumerable<IMethod> GetExtensionMethods(string namespaceName)
 		{
 			return
-				from c in context.GetClasses(namespaceName, StringComparer.Ordinal)
+				from c in context.GetTypes(namespaceName, StringComparer.Ordinal)
 				where c.IsStatic && c.HasExtensionMethods
 				from m in c.Methods
 				where m.IsExtensionMethod
@@ -1869,7 +1905,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 						do {
 							newName = newArgumentName + num.ToString();
 							num++;
-						} while(argumentNames.Contains(newArgumentName));
+						} while(argumentNames.Contains(newName));
 						newArgumentName = newName;
 					}
 					argumentNames[i] = newArgumentName;

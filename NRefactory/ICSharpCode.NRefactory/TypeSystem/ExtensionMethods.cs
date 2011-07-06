@@ -1,10 +1,13 @@
-﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using ICSharpCode.NRefactory.Utils;
+using ICSharpCode.NRefactory.CSharp.Refactoring;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
@@ -73,7 +76,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			Func<ITypeDefinition, IEnumerable<ITypeDefinition>> recursion =
 				t => t.GetBaseTypes(context).Select(b => b.GetDefinition()).Where(d => d != null && typeDefinitions.Add(d));
 			
-			ITypeDefinition typeDef = type as ITypeDefinition;
+			ITypeDefinition typeDef = type.GetDefinition();
 			if (typeDef != null) {
 				typeDefinitions.Add(typeDef);
 				return TreeTraversal.PreOrder(typeDef, recursion);
@@ -185,8 +188,17 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			ITypeDefinition def = type.GetDefinition();
 			if (def != null && def.ClassType == ClassType.Delegate) {
 				foreach (IMethod method in def.Methods) {
-					if (method.Name == "Invoke")
+					if (method.Name == "Invoke") {
+						ParameterizedType pt = type as ParameterizedType;
+						if (pt != null) {
+							SpecializedMethod m = new SpecializedMethod(method);
+							m.SetDeclaringType(pt);
+							var substitution = pt.GetSubstitution();
+							m.SubstituteTypes(t => new SubstitutionTypeReference(t, substitution));
+							return m;
+						}
 						return method;
+					}
 				}
 			}
 			return null;
@@ -208,13 +220,46 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		#endregion
 		
-		#region GetAllClasses
+		#region GetAllTypes
 		/// <summary>
-		/// Gets all classes, including nested classes.
+		/// Gets all type definitions, including nested types.
 		/// </summary>
-		public static IEnumerable<ITypeDefinition> GetAllClasses(this ITypeResolveContext context)
+		public static IEnumerable<ITypeDefinition> GetAllTypes(this ITypeResolveContext context)
 		{
-			return TreeTraversal.PreOrder(context.GetClasses(), t => t.InnerClasses);
+			return TreeTraversal.PreOrder(context.GetTypes(), t => t.NestedTypes);
+		}
+		#endregion
+		
+		#region GetType/Member
+		/// <summary>
+		/// Gets the type (potentially a nested type) defined at the specified location.
+		/// Returns null if no type is defined at that location.
+		/// </summary>
+		public static ITypeDefinition GetTypeDefinition (this IParsedFile file, int line, int column)
+		{
+			return file.GetTypeDefinition (new AstLocation (line, column));
+		}
+		
+		/// <summary>
+		/// Gets the member defined at the specified location.
+		/// Returns null if no member is defined at that location.
+		/// </summary>
+		public static IMember GetMember (this IParsedFile file, int line, int column)
+		{
+			return file.GetMember (new AstLocation (line, column));
+		}
+		#endregion
+		
+		#region GetSubTypeDefinitions
+		/// <summary>
+		/// Gets all sub type definitions defined in a context.
+		/// </summary>
+		public static IEnumerable<ITypeDefinition> GetSubTypeDefinitions (this ITypeDefinition baseType, ITypeResolveContext context)
+		{
+			foreach (var contextType in context.GetAllTypes ()) {
+				if (contextType.IsDerivedFrom (baseType, context))
+					yield return contextType;
+			}
 		}
 		#endregion
 	}

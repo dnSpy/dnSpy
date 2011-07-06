@@ -36,5 +36,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			this.staticResources = new List<object>();
 			this.Position = -1;
 		}
+		
+		public override string ToString()
+		{
+			return '"' + KeyString + '"';
+		}
+
 	}
 }

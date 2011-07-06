@@ -143,7 +143,12 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		Dictionary<string, ControlFlowNode> labels;
 		List<ControlFlowNode> gotoStatements;
 		
-		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, ITypeResolveContext context, CancellationToken cancellationToken = default(CancellationToken))
+		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, ITypeResolveContext context)
+		{
+			return BuildControlFlowGraph(statement, context, CancellationToken.None);
+		}
+		
+		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, ITypeResolveContext context, CancellationToken cancellationToken)
 		{
 			return BuildControlFlowGraph(statement, new ResolveVisitor(
 				new CSharpResolver(context, cancellationToken),

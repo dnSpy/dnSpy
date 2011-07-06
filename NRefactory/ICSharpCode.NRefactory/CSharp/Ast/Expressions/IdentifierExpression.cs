@@ -40,7 +40,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public IdentifierExpression(string identifier, AstLocation location)
 		{
-			SetChildByRole(Roles.Identifier, new Identifier(identifier, location));
+			SetChildByRole(Roles.Identifier, CSharp.Identifier.Create (identifier, location));
 		}
 		
 //		public Identifier IdentifierToken {
@@ -52,7 +52,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole(Roles.Identifier, new Identifier(value, AstLocation.Empty));
+				SetChildByRole(Roles.Identifier, CSharp.Identifier.Create (value, AstLocation.Empty));
 			}
 		}
 		
