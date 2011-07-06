@@ -114,4 +114,10 @@ public class TypeAnalysisTests
 			Console.WriteLine();
 		}
 	}
+
+	public void OperatorIs(object o)
+	{
+		Console.WriteLine(o is Random);
+		Console.WriteLine(!(o is Random));
+	}
 }

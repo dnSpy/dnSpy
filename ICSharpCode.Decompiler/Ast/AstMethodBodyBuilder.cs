@@ -463,7 +463,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Cge_Un:
 					case ILCode.Cge: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
 					case ILCode.Clt_Un:
-					case ILCode.Clt: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
+					case ILCode.Clt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					#endregion
 					#region Logical
 					case ILCode.LogicNot:   return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
