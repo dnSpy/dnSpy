@@ -55,7 +55,7 @@ namespace ICSharpCode.Decompiler.Tests
 		[Test]
 		public void ExceptionHandling()
 		{
-			TestFile(@"..\..\Tests\ExceptionHandling.cs");
+			TestFile(@"..\..\Tests\ExceptionHandling.cs", false);
 		}
 		
 		[Test]
@@ -156,8 +156,14 @@ namespace ICSharpCode.Decompiler.Tests
 		
 		static void TestFile(string fileName)
 		{
+			TestFile(fileName, false);
+			TestFile(fileName, true);
+		}
+
+		static void TestFile(string fileName, bool optimize)
+		{
 			string code = File.ReadAllText(fileName);
-			AssemblyDefinition assembly = Compile(code);
+			AssemblyDefinition assembly = Compile(code, optimize);
 			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.MainModule));
 			decompiler.AddAssembly(assembly);
 			new Helpers.RemoveCompilerAttribute().Run(decompiler.CompilationUnit);
@@ -166,11 +172,11 @@ namespace ICSharpCode.Decompiler.Tests
 			CodeAssert.AreEqual(code, output.ToString());
 		}
 
-		static AssemblyDefinition Compile(string code)
+		static AssemblyDefinition Compile(string code, bool optimize)
 		{
 			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
 			CompilerParameters options = new CompilerParameters();
-			options.CompilerOptions = "/unsafe /o-";
+			options.CompilerOptions = "/unsafe /o" + (optimize ? "+" : "-");
 			options.ReferencedAssemblies.Add("System.Core.dll");
 			CompilerResults results = provider.CompileAssemblyFromSource(options, code);
 			try {
