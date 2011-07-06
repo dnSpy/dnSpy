@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Ast;
 
@@ -24,10 +25,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 	public class CSharpToVBConverterVisitor : CSharp.IAstVisitor<object, VB.AstNode>
 	{
 		IEnvironmentProvider provider;
+		Stack<BlockStatement> blocks;
 		
 		public CSharpToVBConverterVisitor(IEnvironmentProvider provider)
 		{
 			this.provider = provider;
+			this.blocks = new Stack<BlockStatement>();
 		}
 		
 		public AstNode VisitAnonymousMethodExpression(CSharp.AnonymousMethodExpression anonymousMethodExpression, object data)
@@ -691,14 +694,48 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		public AstNode VisitBlockStatement(CSharp.BlockStatement blockStatement, object data)
 		{
 			var block = new BlockStatement();
+			blocks.Push(block);
 			ConvertNodes(blockStatement, block.Statements);
-			
+			blocks.Pop();
 			return EndNode(blockStatement, block);
 		}
 		
 		public AstNode VisitBreakStatement(CSharp.BreakStatement breakStatement, object data)
 		{
-			throw new NotImplementedException();
+			var exit = new ExitStatement(ExitKind.None);
+			
+			foreach (var stmt in breakStatement.Ancestors) {
+				if (stmt is CSharp.MethodDeclaration) {
+					exit.ExitKind = IsSub(((CSharp.MethodDeclaration)stmt).ReturnType) ? ExitKind.Sub : ExitKind.Function;
+					break;
+				}
+				if (stmt is CSharp.PropertyDeclaration) {
+					exit.ExitKind = ExitKind.Property;
+					break;
+				}
+				if (stmt is CSharp.DoWhileStatement) {
+					exit.ExitKind = ExitKind.Do;
+					break;
+				}
+				if (stmt is CSharp.ForStatement || stmt is CSharp.ForeachStatement) {
+					exit.ExitKind = ExitKind.For;
+					break;
+				}
+				if (stmt is CSharp.WhileStatement) {
+					exit.ExitKind = ExitKind.While;
+					break;
+				}
+				if (stmt is CSharp.SwitchStatement) {
+					exit.ExitKind = ExitKind.Select;
+					break;
+				}
+				if (stmt is CSharp.TryCatchStatement) {
+					exit.ExitKind = ExitKind.Try;
+					break;
+				}
+			}
+			
+			return EndNode(breakStatement, exit);
 		}
 		
 		public AstNode VisitCheckedStatement(CSharp.CheckedStatement checkedStatement, object data)
@@ -729,17 +766,41 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitFixedStatement(CSharp.FixedStatement fixedStatement, object data)
 		{
+			// see http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.gchandle%28v=VS.100%29.aspx
 			throw new NotImplementedException();
 		}
 		
 		public AstNode VisitForeachStatement(CSharp.ForeachStatement foreachStatement, object data)
 		{
-			throw new NotImplementedException();
+			var var = new LocalDeclarationStatement();
+			
+			var.Variables.Add(new VariableDeclarator() { Type = (AstType)foreachStatement.VariableType.AcceptVisitor(this, data) });
+			var.Variables.Last().Identifiers.Add(new VariableIdentifier() { Name = foreachStatement.VariableName });
+			
+			var stmt = new ForEachStatement() {
+				Body = (BlockStatement)foreachStatement.EmbeddedStatement.AcceptVisitor(this, data),
+				InExpression = (Expression)foreachStatement.InExpression.AcceptVisitor(this, data),
+				Initializer = var
+			};
+			
+			return EndNode(foreachStatement, stmt);
 		}
 		
 		public AstNode VisitForStatement(CSharp.ForStatement forStatement, object data)
 		{
-			throw new NotImplementedException();
+			// for (;;) ;
+			if (!forStatement.Initializers.Any() && forStatement.Condition.IsNull && !forStatement.Iterators.Any())
+				return EndNode(forStatement, new WhileStatement() { Condition = new PrimitiveExpression(true), Body = (BlockStatement)forStatement.EmbeddedStatement.AcceptVisitor(this, data) });
+			
+			var stmt = new WhileStatement() {
+				Condition = (Expression)forStatement.Condition.AcceptVisitor(this, data),
+				Body = (BlockStatement)forStatement.EmbeddedStatement.AcceptVisitor(this, data)
+			};
+			ConvertNodes(forStatement.Iterators, stmt.Body.Statements);
+			foreach (var initializer in forStatement.Initializers)
+				blocks.Peek().Statements.Add((Statement)initializer.AcceptVisitor(this, data));
+			
+			return EndNode(forStatement, stmt);
 		}
 		
 		public AstNode VisitGotoCaseStatement(CSharp.GotoCaseStatement gotoCaseStatement, object data)
@@ -775,7 +836,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitLockStatement(CSharp.LockStatement lockStatement, object data)
 		{
-			throw new NotImplementedException();
+			var stmt = new SyncLockStatement();
+			
+			stmt.Expression = (Expression)lockStatement.Expression.AcceptVisitor(this, data);
+			stmt.Body = (BlockStatement)lockStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			
+			return EndNode(lockStatement, stmt);
 		}
 		
 		public AstNode VisitReturnStatement(CSharp.ReturnStatement returnStatement, object data)
@@ -1023,7 +1089,90 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitOperatorDeclaration(CSharp.OperatorDeclaration operatorDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			var result = new OperatorDeclaration();
+			ConvertNodes(operatorDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
+			ConvertNodes(operatorDeclaration.ModifierTokens, result.ModifierTokens);
+			switch (operatorDeclaration.OperatorType) {
+				case ICSharpCode.NRefactory.CSharp.OperatorType.LogicalNot:
+				case ICSharpCode.NRefactory.CSharp.OperatorType.OnesComplement:
+					result.Operator = OverloadableOperatorType.Not;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Increment:
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Decrement:
+				case ICSharpCode.NRefactory.CSharp.OperatorType.True:
+				case ICSharpCode.NRefactory.CSharp.OperatorType.False:
+					throw new NotSupportedException();
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Implicit:
+					result.Modifiers |= Modifiers.Widening;
+					result.Operator = OverloadableOperatorType.CType;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Explicit:
+					result.Modifiers |= Modifiers.Narrowing;
+					result.Operator = OverloadableOperatorType.CType;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Addition:
+					result.Operator = OverloadableOperatorType.Add;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Subtraction:
+					result.Operator = OverloadableOperatorType.Subtract;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.UnaryPlus:
+					result.Operator = OverloadableOperatorType.UnaryPlus;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.UnaryNegation:
+					result.Operator = OverloadableOperatorType.UnaryMinus;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Multiply:
+					result.Operator = OverloadableOperatorType.Multiply;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Division:
+					result.Operator = OverloadableOperatorType.Divide;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Modulus:
+					result.Operator = OverloadableOperatorType.Modulus;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.BitwiseAnd:
+					result.Operator = OverloadableOperatorType.BitwiseAnd;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.BitwiseOr:
+					result.Operator = OverloadableOperatorType.BitwiseOr;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.ExclusiveOr:
+					result.Operator = OverloadableOperatorType.ExclusiveOr;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.LeftShift:
+					result.Operator = OverloadableOperatorType.ShiftLeft;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.RightShift:
+					result.Operator = OverloadableOperatorType.ShiftRight;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Equality:
+					result.Operator = OverloadableOperatorType.Equality;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.Inequality:
+					result.Operator = OverloadableOperatorType.InEquality;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.GreaterThan:
+					result.Operator = OverloadableOperatorType.GreaterThan;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.LessThan:
+					result.Operator = OverloadableOperatorType.LessThan;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.GreaterThanOrEqual:
+					result.Operator = OverloadableOperatorType.GreaterThanOrEqual;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.LessThanOrEqual:
+					result.Operator = OverloadableOperatorType.LessThanOrEqual;
+					break;
+				default:
+					throw new Exception("Invalid value for OperatorType");
+			}
+			ConvertNodes(operatorDeclaration.Parameters, result.Parameters);
+			ConvertNodes(operatorDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), result.ReturnTypeAttributes);
+			result.ReturnType = (AstType)operatorDeclaration.ReturnType.AcceptVisitor(this, data);
+			result.Body = (BlockStatement)operatorDeclaration.Body.AcceptVisitor(this, data);
+			
+			return EndNode(operatorDeclaration, result);
 		}
 		
 		public AstNode VisitParameterDeclaration(CSharp.ParameterDeclaration parameterDeclaration, object data)

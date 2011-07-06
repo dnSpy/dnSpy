@@ -29,7 +29,7 @@ using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public enum OperatorType 
+	public enum OperatorType
 	{
 		// Values must correspond to Mono.CSharp.Operator.OpType
 		// due to the casts used in OperatorDeclaration.

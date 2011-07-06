@@ -41,6 +41,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitAccessor(Accessor accessor, T data);
 		S VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, T data);
 		S VisitEventDeclaration(EventDeclaration eventDeclaration, T data);
+		S VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, T data);
 		
 		// Expression scope
 		S VisitIdentifier(Identifier identifier, T data);
@@ -81,6 +82,10 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitCatchBlock(CatchBlock catchBlock, T data);
 		S VisitReturnStatement(ReturnStatement returnStatement, T data);
 		S VisitWhileStatement(WhileStatement whileStatement, T data);
+		S VisitForStatement(ForStatement forStatement, T data);
+		S VisitForEachStatement(ForEachStatement forEachStatement, T data);
+		S VisitExitStatement(ExitStatement exitStatement, T data);
+		S VisitSelectStatement(SelectStatement selectStatement, T data);
 		
 		// TypeName
 		S VisitPrimitiveType(PrimitiveType primitiveType, T data);

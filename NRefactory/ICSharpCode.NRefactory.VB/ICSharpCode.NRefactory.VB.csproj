@@ -86,11 +86,16 @@
     <Compile Include="Ast\Identifier.cs" />
     <Compile Include="Ast\INullable.cs" />
     <Compile Include="Ast\Statements\BlockStatement.cs" />
+    <Compile Include="Ast\Statements\DoLoopStatement.cs" />
+    <Compile Include="Ast\Statements\ExitStatement.cs" />
     <Compile Include="Ast\Statements\ExpressionStatement.cs" />
+    <Compile Include="Ast\Statements\ForEachStatement.cs" />
+    <Compile Include="Ast\Statements\ForStatement.cs" />
     <Compile Include="Ast\Statements\IfElseStatement.cs" />
     <Compile Include="Ast\Statements\LabelDeclarationStatement.cs" />
     <Compile Include="Ast\Statements\LocalDeclarationStatement.cs" />
     <Compile Include="Ast\Statements\ReturnStatement.cs" />
+    <Compile Include="Ast\Statements\SelectStatement.cs" />
     <Compile Include="Ast\Statements\Statement.cs" />
     <Compile Include="Ast\Statements\SyncLockStatement.cs" />
     <Compile Include="Ast\Statements\ThrowStatement.cs" />
@@ -102,6 +107,7 @@
     <Compile Include="Ast\TypeMembers\EventDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\FieldDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\MethodDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\OperatorDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\PropertyDeclaration.cs" />
     <Compile Include="Ast\TypeName\AstType.cs" />
     <Compile Include="Ast\TypeName\ComposedType.cs" />

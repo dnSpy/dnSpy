@@ -1372,7 +1372,8 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(localDeclarationStatement);
 			
-			WriteModifiers(new [] { localDeclarationStatement.ModifierToken });
+			if (localDeclarationStatement.ModifierToken != null && !localDeclarationStatement.ModifierToken.IsNull)
+				WriteModifiers(new [] { localDeclarationStatement.ModifierToken });
 			WriteCommaSeparatedList(localDeclarationStatement.Variables);
 			
 			return EndNode(localDeclarationStatement);
@@ -1380,12 +1381,30 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitWithStatement(WithStatement withStatement, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(withStatement);
+			WriteKeyword("With");
+			withStatement.Expression.AcceptVisitor(this, data);
+			NewLine();
+			Indent();
+			withStatement.Body.AcceptVisitor(this, data);
+			Unindent();
+			WriteKeyword("End");
+			WriteKeyword("With");
+			return EndNode(withStatement);
 		}
 		
 		public object VisitSyncLockStatement(SyncLockStatement syncLockStatement, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(syncLockStatement);
+			WriteKeyword("SyncLock");
+			syncLockStatement.Expression.AcceptVisitor(this, data);
+			NewLine();
+			Indent();
+			syncLockStatement.Body.AcceptVisitor(this, data);
+			Unindent();
+			WriteKeyword("End");
+			WriteKeyword("SyncLock");
+			return EndNode(syncLockStatement);
 		}
 		
 		public object VisitTryStatement(TryStatement tryStatement, object data)
@@ -1600,7 +1619,6 @@ namespace ICSharpCode.NRefactory.VB
 					break;
 				case AssignmentOperatorType.DivideInteger:
 					WriteToken("\\=", AssignmentExpression.OperatorRole);
-					break;
 					break;
 				case AssignmentOperatorType.ConcatString:
 					WriteToken("&=", AssignmentExpression.OperatorRole);
@@ -1881,6 +1899,181 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("While");
 			
 			return EndNode(whileStatement);
+		}
+		
+		public object VisitExitStatement(ExitStatement exitStatement, object data)
+		{
+			StartNode(exitStatement);
+			
+			WriteKeyword("Exit");
+			
+			switch (exitStatement.ExitKind) {
+				case ExitKind.Sub:
+					WriteKeyword("Sub");
+					break;
+				case ExitKind.Function:
+					WriteKeyword("Function");
+					break;
+				case ExitKind.Property:
+					WriteKeyword("Property");
+					break;
+				case ExitKind.Do:
+					WriteKeyword("Do");
+					break;
+				case ExitKind.For:
+					WriteKeyword("For");
+					break;
+				case ExitKind.While:
+					WriteKeyword("While");
+					break;
+				case ExitKind.Select:
+					WriteKeyword("Select");
+					break;
+				case ExitKind.Try:
+					WriteKeyword("Try");
+					break;
+				default:
+					throw new Exception("Invalid value for ExitKind");
+			}
+			
+			return EndNode(exitStatement);
+		}
+		
+		public object VisitForStatement(ForStatement forStatement, object data)
+		{
+			StartNode(forStatement);
+			
+			throw new NotImplementedException();
+			
+			return EndNode(forStatement);
+		}
+		
+		public object VisitForEachStatement(ForEachStatement forEachStatement, object data)
+		{
+			StartNode(forEachStatement);
+			
+			WriteKeyword("For");
+			WriteKeyword("Each");
+			forEachStatement.Initializer.AcceptVisitor(this, data);
+			WriteKeyword("In");
+			forEachStatement.InExpression.AcceptVisitor(this, data);
+			NewLine();
+			Indent();
+			forEachStatement.Body.AcceptVisitor(this, data);
+			Unindent();
+			WriteKeyword("Next");
+			
+			return EndNode(forEachStatement);
+		}
+		
+		public object VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, object data)
+		{
+			StartNode(operatorDeclaration);
+			
+			WriteAttributes(operatorDeclaration.Attributes);
+			WriteModifiers(operatorDeclaration.ModifierTokens);
+			WriteKeyword("Operator");
+			switch (operatorDeclaration.Operator) {
+				case OverloadableOperatorType.Add:
+				case OverloadableOperatorType.UnaryPlus:
+					WriteToken("+", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.Subtract:
+				case OverloadableOperatorType.UnaryMinus:
+					WriteToken("-", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.Multiply:
+					WriteToken("*", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.Divide:
+					WriteToken("/", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.Modulus:
+					WriteKeyword("Mod");
+					break;
+				case OverloadableOperatorType.Concat:
+					WriteToken("&", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.Not:
+					WriteKeyword("Not");
+					break;
+				case OverloadableOperatorType.BitwiseAnd:
+					WriteKeyword("And");
+					break;
+				case OverloadableOperatorType.BitwiseOr:
+					WriteKeyword("Or");
+					break;
+				case OverloadableOperatorType.ExclusiveOr:
+					WriteKeyword("Xor");
+					break;
+				case OverloadableOperatorType.ShiftLeft:
+					WriteToken("<<", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.ShiftRight:
+					WriteToken(">>", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.GreaterThan:
+					WriteToken(">", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.GreaterThanOrEqual:
+					WriteToken(">=", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.Equality:
+					WriteToken("=", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.InEquality:
+					WriteToken("<>", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.LessThan:
+					WriteToken("<", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.LessThanOrEqual:
+					WriteToken("<=", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.IsTrue:
+					WriteKeyword("IsTrue");
+					break;
+				case OverloadableOperatorType.IsFalse:
+					WriteKeyword("IsFalse");
+					break;
+				case OverloadableOperatorType.Like:
+					WriteKeyword("Like");
+					break;
+				case OverloadableOperatorType.Power:
+					WriteToken("^", OperatorDeclaration.Roles.Keyword);
+					break;
+				case OverloadableOperatorType.CType:
+					WriteKeyword("CType");
+					break;
+				case OverloadableOperatorType.DivideInteger:
+					WriteToken("\\", OperatorDeclaration.Roles.Keyword);
+					break;
+				default:
+					throw new Exception("Invalid value for OverloadableOperatorType");
+			}
+			WriteCommaSeparatedListInParenthesis(operatorDeclaration.Parameters, false);
+			if (!operatorDeclaration.ReturnType.IsNull) {
+				Space();
+				WriteKeyword("As");
+				WriteAttributes(operatorDeclaration.ReturnTypeAttributes);
+				operatorDeclaration.ReturnType.AcceptVisitor(this, data);
+			}
+			if (!operatorDeclaration.Body.IsNull) {
+				NewLine();
+				Indent();
+				WriteBlock(operatorDeclaration.Body);
+				Unindent();
+				WriteKeyword("End");
+				WriteKeyword("Operator");
+			}
+			NewLine();
+			
+			return EndNode(operatorDeclaration);
+		}
+		
+		public object VisitSelectStatement(SelectStatement selectStatement, object data)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

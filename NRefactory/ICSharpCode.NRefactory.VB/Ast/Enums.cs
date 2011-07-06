@@ -45,6 +45,9 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		ParamArray = 0x800000,
 		Optional   = 0x1000000,
 		
+		Narrowing  = 0x2000000,
+		Widening   = 0x4000000,
+		
 		/// <summary>
 		/// Special value used to match any modifiers during pattern matching.
 		/// </summary>
@@ -108,19 +111,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		End
 	}
 	
-	public enum ExitType
-	{
-		None,
-		Sub,
-		Function,
-		Property,
-		Do,
-		For,
-		While,
-		Select,
-		Try
-	}
-	
 	public enum ConstructorInitializerType
 	{
 		None,
@@ -133,50 +123,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		None,
 		Implicit,
 		Explicit
-	}
-	
-	public enum OverloadableOperatorType
-	{
-		None,
-		
-		Add,
-		Subtract,
-		Multiply,
-		Divide,
-		Modulus,
-		Concat,
-		
-		UnaryPlus,
-		UnaryMinus,
-		
-		Not,
-		BitNot,
-		
-		BitwiseAnd,
-		BitwiseOr,
-		ExclusiveOr,
-		
-		ShiftLeft,
-		ShiftRight,
-		
-		GreaterThan,
-		GreaterThanOrEqual,
-		Equality,
-		InEquality,
-		LessThan,
-		LessThanOrEqual,
-		
-		Increment,
-		Decrement,
-		
-		IsTrue,
-		IsFalse,
-		
-		// VB specific
-		Like,
-		Power,
-		CType,
-		DivideInteger
 	}
 	
 	///<summary>
