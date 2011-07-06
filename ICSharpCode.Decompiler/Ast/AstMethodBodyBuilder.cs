@@ -450,17 +450,20 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Cgt_Un: {
 						// can also mean Inequality, when used with object references
 						TypeReference arg1Type = byteCode.Arguments[0].InferredType;
-						if (arg1Type != null && !arg1Type.IsValueType)
-							return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
-						else
-							return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+						if (arg1Type != null && !arg1Type.IsValueType) goto case ILCode.Cne;
+						goto case ILCode.Cgt;
 					}
-					case ILCode.Cge:
-					case ILCode.Cge_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-					case ILCode.Clt:
-					case ILCode.Clt_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-					case ILCode.Cle:
-					case ILCode.Cle_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+					case ILCode.Cle_Un: {
+						// can also mean Equality, when used with object references
+						TypeReference arg1Type = byteCode.Arguments[0].InferredType;
+						if (arg1Type != null && !arg1Type.IsValueType) goto case ILCode.Ceq;
+						goto case ILCode.Cle;
+					}
+					case ILCode.Cle: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+					case ILCode.Cge_Un:
+					case ILCode.Cge: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
+					case ILCode.Clt_Un:
+					case ILCode.Clt: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					#endregion
 					#region Logical
 					case ILCode.LogicNot:   return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
