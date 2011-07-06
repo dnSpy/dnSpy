@@ -1065,6 +1065,25 @@ return (Test)null;
 			i2 = result.Text.IndexOf (";") + ";".Length;
 			Assert.AreEqual (@"int a = 5,b = 6,c;", result.GetTextAt (i1, i2 - i1));
 		}
+		
+		[Test()]
+		public void TestLocalVariableWithGenerics ()
+		{
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			policy.SpaceBeforeLocalVariableDeclarationComma = true;
+			policy.SpaceAfterLocalVariableDeclarationComma = true;
+
+			var result = GetResult (policy, @"class Test {
+	void TestMe ()
+	{
+		List<Test> a;
+	}
+}");
+			int i1 = result.Text.IndexOf ("List");
+			int i2 = result.Text.IndexOf (";") + ";".Length;
+			Assert.AreEqual (@"List<Test> a;", result.GetTextAt (i1, i2 - i1));
+
+		}
 
 		#region Constructors
 		

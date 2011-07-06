@@ -151,7 +151,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			ParsedFile parsedFile = new ParsedFile("test.cs", rootUsingScope);
 			TypeSystemConvertVisitor convertVisitor = new TypeSystemConvertVisitor(parsedFile, resolver.UsingScope, null);
 			cu.AcceptVisitor(convertVisitor, null);
-			project.UpdateProjectContent(null, convertVisitor.ParsedFile.TopLevelTypeDefinitions, null, null);
+			project.UpdateProjectContent(null, convertVisitor.ParsedFile);
 			
 			FindNodeVisitor fnv = new FindNodeVisitor(dollars[0], dollars[1]);
 			cu.AcceptVisitor(fnv, null);

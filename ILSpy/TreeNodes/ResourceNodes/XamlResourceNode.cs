@@ -35,10 +35,10 @@ namespace ICSharpCode.ILSpy.Xaml
 			return null;
 		}
 		
-		public ILSpyTreeNode CreateNode(string key, Stream data)
+		public ILSpyTreeNode CreateNode(string key, object data)
 		{
-			if (key.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase))
-				return new XamlResourceEntryNode(key, data);
+			if (key.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase) && data is Stream)
+				return new XamlResourceEntryNode(key, (Stream)data);
 			else
 				return null;
 		}

@@ -62,7 +62,7 @@ namespace ICSharpCode.Decompiler.Ast
 					nv.AddExistingName(v.Name);
 				} else if (v.OriginalVariable != null && context.Settings.UseDebugSymbols) {
 					string varName = v.OriginalVariable.Name;
-					if (string.IsNullOrEmpty(varName) || varName.StartsWith("V_", StringComparison.Ordinal) || varName.StartsWith("CS$", StringComparison.Ordinal)) 
+					if (string.IsNullOrEmpty(varName) || varName.StartsWith("V_", StringComparison.Ordinal) || !IsValidName(varName))
 					{
 						// don't use the name from the debug symbols if it looks like a generated name
 						v.Name = null;
@@ -84,6 +84,19 @@ namespace ICSharpCode.Decompiler.Ast
 				if (string.IsNullOrEmpty(varDef.Name))
 					varDef.Name = nv.GenerateNameForVariable(varDef, methodBody);
 			}
+		}
+		
+		static bool IsValidName(string varName)
+		{
+			if (string.IsNullOrEmpty(varName))
+				return false;
+			if (!(char.IsLetter(varName[0]) || varName[0] == '_'))
+				return false;
+			for (int i = 1; i < varName.Length; i++) {
+				if (!(char.IsLetterOrDigit(varName[i]) || varName[i] == '_'))
+					return false;
+			}
+			return true;
 		}
 		
 		DecompilerContext context;
@@ -139,7 +152,7 @@ namespace ICSharpCode.Decompiler.Ast
 				typeNames.Add(nameWithoutDigits, number - 1);
 			}
 			int count = ++typeNames[nameWithoutDigits];
-			if (count > 1) {
+			if (count != 1) {
 				return nameWithoutDigits + count.ToString();
 			} else {
 				return nameWithoutDigits;

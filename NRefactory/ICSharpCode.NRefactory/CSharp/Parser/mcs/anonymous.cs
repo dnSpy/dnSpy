@@ -830,14 +830,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		Dictionary<TypeSpec, Expression> compatibles;
+		readonly Dictionary<TypeSpec, Expression> compatibles;
+		readonly bool is_async;
+
 		public ParametersBlock Block;
 
-		public AnonymousMethodExpression (Location loc)
+		public AnonymousMethodExpression (bool isAsync, Location loc)
 		{
+			this.is_async = isAsync;
 			this.loc = loc;
 			this.compatibles = new Dictionary<TypeSpec, Expression> ();
 		}
+
+		#region Properties
 
 		public override string ExprClassName {
 			get {
@@ -850,10 +855,20 @@ namespace Mono.CSharp {
 				return Parameters != ParametersCompiled.Undefined;
 			}
 		}
-		
-		public ParametersCompiled Parameters {
-			get { return Block.Parameters; }
+
+		public bool IsAsync {
+			get {
+				return is_async;
+			}
 		}
+
+		public ParametersCompiled Parameters {
+			get {
+				return Block.Parameters;
+			}
+		}
+
+		#endregion
 
 		//
 		// Returns true if the body of lambda expression can be implicitly
@@ -1003,9 +1018,16 @@ namespace Mono.CSharp {
 			}
 
 			using (ec.Set (ResolveContext.Options.ProbingMode | ResolveContext.Options.InferReturnType)) {
-				am = CompatibleMethodBody (ec, tic, InternalType.Arglist, delegate_type);
-				if (am != null)
-					am = am.Compatible (ec);
+				var body = CompatibleMethodBody (ec, tic, InternalType.Arglist, delegate_type);
+				if (body != null) {
+					if (is_async) {
+						AsyncInitializer.Create (body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, null, loc);
+					}
+
+					am = body.Compatible (ec, body, is_async);
+				} else {
+					am = null;
+				}
 			}
 
 			if (am == null)
@@ -1058,7 +1080,7 @@ namespace Mono.CSharp {
 						// lambda, this also means no variable capturing between this
 						// and parent scope
 						//
-						am = body.Compatible (ec, ec.CurrentAnonymousMethod);
+						am = body.Compatible (ec, ec.CurrentAnonymousMethod, is_async);
 
 						//
 						// Quote nested expression tree
@@ -1079,6 +1101,10 @@ namespace Mono.CSharp {
 							am = CreateExpressionTree (ec, delegate_type);
 					}
 				} else {
+					if (is_async) {
+						AsyncInitializer.Create (body.Block, body.Parameters, ec.CurrentMemberDefinition.Parent, body.ReturnType, loc);
+					}
+
 					am = body.Compatible (ec);
 				}
 			} catch (CompletionResult) {
@@ -1204,7 +1230,6 @@ namespace Mono.CSharp {
 			ParametersBlock b = ec.IsInProbingMode ? (ParametersBlock) Block.PerformClone () : Block;
 
 			return CompatibleMethodFactory (return_type, delegate_type, p, b);
-
 		}
 
 		protected virtual AnonymousMethodBody CompatibleMethodFactory (TypeSpec return_type, TypeSpec delegate_type, ParametersCompiled p, ParametersBlock b)
@@ -1228,7 +1253,7 @@ namespace Mono.CSharp {
 	//
 	// Abstract expression for any block which requires variables hoisting
 	//
-	public abstract class AnonymousExpression : Expression
+	public abstract class AnonymousExpression : ExpressionStatement
 	{
 		protected class AnonymousMethodMethod : Method
 		{
@@ -1320,10 +1345,10 @@ namespace Mono.CSharp {
 
 		public AnonymousExpression Compatible (ResolveContext ec)
 		{
-			return Compatible (ec, this);
+			return Compatible (ec, this, false);
 		}
 
-		public AnonymousExpression Compatible (ResolveContext ec, AnonymousExpression ae)
+		public AnonymousExpression Compatible (ResolveContext ec, AnonymousExpression ae, bool isAsync)
 		{
 			if (block.Resolved)
 				return this;
@@ -1362,6 +1387,14 @@ namespace Mono.CSharp {
 				am.ReturnTypeInference.FixAllTypes (ec);
 				ReturnType = am.ReturnTypeInference.InferredTypeArguments [0];
 				am.ReturnTypeInference = null;
+
+				//
+				// If e is synchronous the inferred return type is T
+				// If e is asynchronous the inferred return type is Task<T>
+				//
+				if (isAsync && ReturnType != null) {
+					ReturnType = ec.Module.PredefinedTypes.TaskGeneric.TypeSpec.MakeGenericType (ec, new [] { ReturnType });
+				}
 			}
 
 			if (res && errors != ec.Report.Errors)
@@ -1421,7 +1454,15 @@ namespace Mono.CSharp {
 		}
 
 		public override bool IsIterator {
-			get { return false; }
+			get {
+				return false;
+			}
+		}
+
+		public ParametersCompiled Parameters {
+			get {
+				return parameters;
+			}
 		}
 
 		public TypeInferenceContext ReturnTypeInference {
@@ -1627,6 +1668,11 @@ namespace Mono.CSharp {
 				ec.MarkLabel (l_initialized);
 				ec.Emit (OpCodes.Ldsfld, am_cache.Spec);
 			}
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			throw new NotImplementedException ();
 		}
 
 		//

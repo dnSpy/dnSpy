@@ -636,8 +636,9 @@ namespace Mono.CSharp
 
 	public class FlowBranchingIterator : FlowBranchingBlock
 	{
-		Iterator iterator;
-		public FlowBranchingIterator (FlowBranching parent, Iterator iterator)
+		readonly StateMachineInitializer iterator;
+
+		public FlowBranchingIterator (FlowBranching parent, StateMachineInitializer iterator)
 			: base (parent, BranchingType.Iterator, SiblingType.Block, iterator.Block, iterator.Location)
 		{
 			this.iterator = iterator;

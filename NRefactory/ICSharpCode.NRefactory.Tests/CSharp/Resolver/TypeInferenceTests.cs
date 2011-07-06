@@ -6,8 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-
 using ICSharpCode.NRefactory.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
@@ -15,14 +15,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	[TestFixture]
 	public class TypeInferenceTests
 	{
+		readonly ITypeResolveContext ctx = CecilLoaderTests.Mscorlib;
 		TypeInference ti;
 		
 		[SetUp]
 		public void Setup()
 		{
-			ti = new TypeInference(CecilLoaderTests.Mscorlib);
+			ti = new TypeInference(ctx);
 		}
 		
+		#region Type Inference
 		IType[] Resolve(params Type[] types)
 		{
 			IType[] r = new IType[types.Length];
@@ -34,6 +36,46 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return r;
 		}
 		
+		[Test]
+		public void ArrayToEnumerable()
+		{
+			ITypeParameter tp = new DefaultTypeParameter(EntityType.Method, 0, "T");
+			IType stringType = KnownTypeReference.String.Resolve(ctx);
+			ITypeDefinition enumerableType = ctx.GetTypeDefinition(typeof(IEnumerable<>));
+			
+			bool success;
+			Assert.AreEqual(
+				new [] { stringType },
+				ti.InferTypeArguments(new [] { tp },
+				                      new [] { new ResolveResult(new ArrayType(stringType)) },
+				                      new [] { new ParameterizedType(enumerableType, new [] { tp }) },
+				                      out success));
+			Assert.IsTrue(success);
+		}
+		
+		[Test]
+		public void EnumerableToArrayInContravariantType()
+		{
+			ITypeParameter tp = new DefaultTypeParameter(EntityType.Method, 0, "T");
+			IType stringType = KnownTypeReference.String.Resolve(ctx);
+			ITypeDefinition enumerableType = ctx.GetTypeDefinition(typeof(IEnumerable<>));
+			ITypeDefinition comparerType = ctx.GetTypeDefinition(typeof(IComparer<>));
+			
+			var comparerOfIEnumerableOfString = new ParameterizedType(comparerType, new [] { new ParameterizedType(enumerableType, new [] { stringType} ) });
+			var comparerOfTpArray = new ParameterizedType(comparerType, new [] { new ArrayType(tp) });
+			
+			bool success;
+			Assert.AreEqual(
+				new [] { stringType },
+				ti.InferTypeArguments(new [] { tp },
+				                      new [] { new ResolveResult(comparerOfIEnumerableOfString) },
+				                      new [] { comparerOfTpArray },
+				                      out success));
+			Assert.IsTrue(success);
+		}
+		#endregion
+		
+		#region FindTypeInBounds
 		IType[] FindAllTypesInBounds(IList<IType> lowerBounds, IList<IType> upperBounds = null)
 		{
 			ti.Algorithm = TypeInferenceAlgorithm.ImprovedReturnAllResults;
@@ -154,5 +196,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				Resolve(typeof(List<string>), typeof(List<Version>), typeof(Collection<string>), typeof(Collection<Version>), typeof(ReadOnlyCollection<string>), typeof(ReadOnlyCollection<Version>)),
 				FindAllTypesInBounds(Resolve(), Resolve(typeof(IEnumerable<ICloneable>), typeof(IEnumerable<IComparable>), typeof(IList))));
 		}
+		#endregion
 	}
 }

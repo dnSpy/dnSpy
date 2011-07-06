@@ -3,7 +3,7 @@
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
 //         Ravi Pratap     (ravi@ximian.com)
-//         Marek Safar     (marek.safar@seznam.cz)
+//         Marek Safar     (marek.safar@gmail.com)
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
@@ -217,6 +217,16 @@ namespace Mono.CSharp
 		public readonly PredefinedType CallSiteGeneric;
 		public readonly PredefinedType BinderFlags;
 
+		//
+		// C# 5.0
+		//
+		public readonly PredefinedType AsyncVoidMethodBuilder;
+		public readonly PredefinedType AsyncTaskMethodBuilder;
+		public readonly PredefinedType AsyncTaskMethodBuilderGeneric;
+		public readonly PredefinedType Action;
+		public readonly PredefinedType Task;
+		public readonly PredefinedType TaskGeneric;
+
 		public PredefinedTypes (ModuleContainer module)
 		{
 			TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
@@ -257,6 +267,13 @@ namespace Mono.CSharp
 			Binder = new PredefinedType (module, MemberKind.Class, "Microsoft.CSharp.RuntimeBinder", "Binder");
 			BinderFlags = new PredefinedType (module, MemberKind.Enum, "Microsoft.CSharp.RuntimeBinder", "CSharpBinderFlags");
 
+			Action = new PredefinedType (module, MemberKind.Delegate, "System", "Action");
+			AsyncVoidMethodBuilder = new PredefinedType (module, MemberKind.Struct, "System.Runtime.CompilerServices", "AsyncVoidMethodBuilder");
+			AsyncTaskMethodBuilder = new PredefinedType (module, MemberKind.Struct, "System.Runtime.CompilerServices", "AsyncTaskMethodBuilder");
+			AsyncTaskMethodBuilderGeneric = new PredefinedType (module, MemberKind.Struct, "System.Runtime.CompilerServices", "AsyncTaskMethodBuilder", 1);
+			Task = new PredefinedType (module, MemberKind.Class, "System.Threading.Tasks", "Task");
+			TaskGeneric = new PredefinedType (module, MemberKind.Class, "System.Threading.Tasks", "Task", 1);
+
 			//
 			// Define types which are used for comparison. It does not matter
 			// if they don't exist as no error report is needed
@@ -281,12 +298,25 @@ namespace Mono.CSharp
 
 			if (ExpressionGeneric.Define ())
 				ExpressionGeneric.TypeSpec.IsExpressionTreeType = true;
+
+			Task.Define ();
+			if (TaskGeneric.Define ())
+				TaskGeneric.TypeSpec.IsGenericTask = true;
 		}
 	}
 
 	class PredefinedMembers
 	{
 		public readonly PredefinedMember<MethodSpec> ActivatorCreateInstance;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderCreate;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetResult;
+		public readonly PredefinedMember<PropertySpec> AsyncTaskMethodBuilderTask;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericCreate;
+		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderGenericSetResult;
+		public readonly PredefinedMember<PropertySpec> AsyncTaskMethodBuilderGenericTask;
+		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderCreate;
+		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetException;
+		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetResult;
 		public readonly PredefinedMember<MethodSpec> DecimalCtor;
 		public readonly PredefinedMember<MethodSpec> DecimalCtorInt;
 		public readonly PredefinedMember<MethodSpec> DecimalCtorLong;
@@ -318,7 +348,6 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> StringInequal;
 		public readonly PredefinedMember<MethodSpec> StructLayoutAttributeCtor;
 		public readonly PredefinedMember<FieldSpec> StructLayoutCharSet;
-		public readonly PredefinedMember<FieldSpec> StructLayoutPack;
 		public readonly PredefinedMember<FieldSpec> StructLayoutSize;
 		public readonly PredefinedMember<MethodSpec> TypeGetTypeFromHandle;
 
@@ -330,6 +359,40 @@ namespace Mono.CSharp
 
 			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (module, types.Activator,
 				MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
+
+			AsyncTaskMethodBuilderCreate = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
+				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncTaskMethodBuilder.TypeSpec));
+
+			AsyncTaskMethodBuilderSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
+				MemberFilter.Method ("SetResult", 0, ParametersCompiled.EmptyReadOnlyParameters, btypes.Void));
+
+			AsyncTaskMethodBuilderTask = new PredefinedMember<PropertySpec> (module, types.AsyncTaskMethodBuilder,
+				MemberFilter.Property ("Task", null));
+
+			AsyncTaskMethodBuilderGenericCreate = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
+				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncVoidMethodBuilder.TypeSpec));
+
+			AsyncTaskMethodBuilderGenericSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
+				MemberFilter.Method ("SetResult", 0,
+					new ParametersImported (
+						new[] {
+								new ParameterData (null, Parameter.Modifier.NONE)
+							},
+						new[] {
+								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null)
+							}, false), btypes.Void));
+
+			AsyncTaskMethodBuilderGenericTask = new PredefinedMember<PropertySpec> (module, types.AsyncTaskMethodBuilderGeneric,
+				MemberFilter.Property ("Task", null));
+
+			AsyncVoidMethodBuilderCreate = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
+				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncVoidMethodBuilder.TypeSpec));
+
+			AsyncVoidMethodBuilderSetException = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
+				MemberFilter.Method ("SetException", 0, null, btypes.Void));
+
+			AsyncVoidMethodBuilderSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncVoidMethodBuilder,
+				MemberFilter.Method ("SetResult", 0, ParametersCompiled.EmptyReadOnlyParameters, btypes.Void));
 
 			DecimalCtor = new PredefinedMember<MethodSpec> (module, btypes.Decimal,
 				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
@@ -449,9 +512,6 @@ namespace Mono.CSharp
 
 			StructLayoutCharSet = new PredefinedMember<FieldSpec> (module, atypes.StructLayout, "CharSet",
 				MemberKind.Field, types.CharSet);
-
-			StructLayoutPack = new PredefinedMember<FieldSpec> (module, atypes.StructLayout,
-				MemberFilter.Field ("Pack", btypes.Int));
 
 			StructLayoutSize = new PredefinedMember<FieldSpec> (module, atypes.StructLayout,
 				MemberFilter.Field ("Size", btypes.Int));

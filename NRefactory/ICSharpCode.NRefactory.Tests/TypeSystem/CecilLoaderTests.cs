@@ -27,8 +27,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void InheritanceTest()
 		{
-			ITypeDefinition c = Mscorlib.GetClass(typeof(SystemException));
-			ITypeDefinition c2 = Mscorlib.GetClass(typeof(Exception));
+			ITypeDefinition c = Mscorlib.GetTypeDefinition(typeof(SystemException));
+			ITypeDefinition c2 = Mscorlib.GetTypeDefinition(typeof(Exception));
 			Assert.IsNotNull(c, "c is null");
 			Assert.IsNotNull(c2, "c2 is null");
 			//Assert.AreEqual(3, c.BaseTypes.Count); // Inherited interfaces are not reported by Cecil
@@ -46,7 +46,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void GenericPropertyTest()
 		{
-			ITypeDefinition c = Mscorlib.GetClass(typeof(Comparer<>));
+			ITypeDefinition c = Mscorlib.GetTypeDefinition(typeof(Comparer<>));
 			IProperty def = c.Properties.Single(p => p.Name == "Default");
 			ParameterizedType pt = (ParameterizedType)def.ReturnType.Resolve(ctx);
 			Assert.AreEqual("System.Collections.Generic.Comparer", pt.FullName);
@@ -56,7 +56,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void PointerTypeTest()
 		{
-			ITypeDefinition c = Mscorlib.GetClass(typeof(IntPtr));
+			ITypeDefinition c = Mscorlib.GetTypeDefinition(typeof(IntPtr));
 			IMethod toPointer = c.Methods.Single(p => p.Name == "ToPointer");
 			Assert.AreEqual("System.Void*", toPointer.ReturnType.Resolve(ctx).ReflectionName);
 			Assert.IsTrue (toPointer.ReturnType.Resolve(ctx) is PointerType);
@@ -66,7 +66,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void DateTimeDefaultConstructor()
 		{
-			ITypeDefinition c = Mscorlib.GetClass(typeof(DateTime));
+			ITypeDefinition c = Mscorlib.GetTypeDefinition(typeof(DateTime));
 			Assert.IsFalse(c.Methods.Any(m => m.IsConstructor && m.Parameters.Count == 0)); // struct ctor isn't declared
 			// but it is implicit:
 			Assert.IsTrue(c.GetConstructors(ctx).Any(m => m.Parameters.Count == 0));
@@ -75,7 +75,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void NoEncodingInfoDefaultConstructor()
 		{
-			ITypeDefinition c = Mscorlib.GetClass(typeof(EncodingInfo));
+			ITypeDefinition c = Mscorlib.GetTypeDefinition(typeof(EncodingInfo));
 			// EncodingInfo only has an internal constructor
 			Assert.IsFalse(c.Methods.Any(m => m.IsConstructor));
 			// and no implicit ctor should be added:
@@ -85,7 +85,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void StaticModifierTest()
 		{
-			ITypeDefinition c = Mscorlib.GetClass(typeof(Environment));
+			ITypeDefinition c = Mscorlib.GetTypeDefinition(typeof(Environment));
 			Assert.IsNotNull(c, "System.Environment not found");
 			Assert.IsTrue(c.IsAbstract, "class should be abstract");
 			Assert.IsTrue(c.IsSealed, "class should be sealed");
@@ -95,16 +95,16 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void InnerClassReferenceTest()
 		{
-			ITypeDefinition c = Mscorlib.GetClass(typeof(Environment));
+			ITypeDefinition c = Mscorlib.GetTypeDefinition(typeof(Environment));
 			Assert.IsNotNull(c, "System.Environment not found");
 			ITypeReference rt = c.Methods.First(m => m.Name == "GetFolderPath").Parameters[0].Type;
-			Assert.AreSame(c.InnerClasses.Single(ic => ic.Name == "SpecialFolder"), rt.Resolve(ctx));
+			Assert.AreSame(c.NestedTypes.Single(ic => ic.Name == "SpecialFolder"), rt.Resolve(ctx));
 		}
 		
 		[Test]
-		public void InnerClassesTest()
+		public void NestedTypesTest()
 		{
-			ITypeDefinition c = Mscorlib.GetClass(typeof(Environment.SpecialFolder));
+			ITypeDefinition c = Mscorlib.GetTypeDefinition(typeof(Environment.SpecialFolder));
 			Assert.IsNotNull(c, "c is null");
 			Assert.AreEqual("System.Environment.SpecialFolder", c.FullName);
 			Assert.AreEqual("System.Environment+SpecialFolder", c.ReflectionName);
@@ -113,7 +113,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void VoidTest()
 		{
-			ITypeDefinition c = Mscorlib.GetClass(typeof(void));
+			ITypeDefinition c = Mscorlib.GetTypeDefinition(typeof(void));
 			Assert.IsNotNull(c, "System.Void not found");
 			Assert.AreEqual(0, c.GetMethods(ctx).Count());
 			Assert.AreEqual(0, c.GetProperties(ctx).Count());
@@ -131,11 +131,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void NestedClassInGenericClassTest()
 		{
-			ITypeDefinition dictionary = Mscorlib.GetClass(typeof(Dictionary<,>));
+			ITypeDefinition dictionary = Mscorlib.GetTypeDefinition(typeof(Dictionary<,>));
 			Assert.IsNotNull(dictionary);
-			ITypeDefinition valueCollection = Mscorlib.GetClass(typeof(Dictionary<,>.ValueCollection));
+			ITypeDefinition valueCollection = Mscorlib.GetTypeDefinition(typeof(Dictionary<,>.ValueCollection));
 			Assert.IsNotNull(valueCollection);
-			var dictionaryRT = new ParameterizedType(dictionary, new[] { Mscorlib.GetClass(typeof(string)), Mscorlib.GetClass(typeof(int)) });
+			var dictionaryRT = new ParameterizedType(dictionary, new[] { Mscorlib.GetTypeDefinition(typeof(string)), Mscorlib.GetTypeDefinition(typeof(int)) });
 			IProperty valueProperty = dictionaryRT.GetProperties(ctx).Single(p => p.Name == "Values");
 			IType parameterizedValueCollection = valueProperty.ReturnType.Resolve(ctx);
 			Assert.AreEqual("System.Collections.Generic.Dictionary`2+ValueCollection[[System.String],[System.Int32]]", parameterizedValueCollection.ReflectionName);
@@ -145,7 +145,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void ValueCollectionCountModifiers()
 		{
-			ITypeDefinition valueCollection = Mscorlib.GetClass(typeof(Dictionary<,>.ValueCollection));
+			ITypeDefinition valueCollection = Mscorlib.GetTypeDefinition(typeof(Dictionary<,>.ValueCollection));
 			Assert.AreEqual(Accessibility.Public, valueCollection.Accessibility);
 			Assert.IsTrue(valueCollection.IsSealed);
 			Assert.IsFalse(valueCollection.IsAbstract);
@@ -162,7 +162,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void MathAcosModifiers()
 		{
-			ITypeDefinition math = Mscorlib.GetClass(typeof(Math));
+			ITypeDefinition math = Mscorlib.GetTypeDefinition(typeof(Math));
 			Assert.AreEqual(Accessibility.Public, math.Accessibility);
 			Assert.IsTrue(math.IsSealed);
 			Assert.IsTrue(math.IsAbstract);
@@ -180,7 +180,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void EncodingModifiers()
 		{
-			ITypeDefinition encoding = Mscorlib.GetClass(typeof(Encoding));
+			ITypeDefinition encoding = Mscorlib.GetTypeDefinition(typeof(Encoding));
 			Assert.AreEqual(Accessibility.Public, encoding.Accessibility);
 			Assert.IsFalse(encoding.IsSealed);
 			Assert.IsTrue(encoding.IsAbstract);
@@ -213,7 +213,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void UnicodeEncodingModifiers()
 		{
-			ITypeDefinition encoding = Mscorlib.GetClass(typeof(UnicodeEncoding));
+			ITypeDefinition encoding = Mscorlib.GetTypeDefinition(typeof(UnicodeEncoding));
 			Assert.AreEqual(Accessibility.Public, encoding.Accessibility);
 			Assert.IsFalse(encoding.IsSealed);
 			Assert.IsFalse(encoding.IsAbstract);
@@ -230,7 +230,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void UTF32EncodingModifiers()
 		{
-			ITypeDefinition encoding = Mscorlib.GetClass(typeof(UTF32Encoding));
+			ITypeDefinition encoding = Mscorlib.GetTypeDefinition(typeof(UTF32Encoding));
 			Assert.AreEqual(Accessibility.Public, encoding.Accessibility);
 			Assert.IsTrue(encoding.IsSealed);
 			Assert.IsFalse(encoding.IsAbstract);

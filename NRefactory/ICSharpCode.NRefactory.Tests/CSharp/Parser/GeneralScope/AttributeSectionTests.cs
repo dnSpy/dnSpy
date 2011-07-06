@@ -4,7 +4,9 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+
 using ICSharpCode.NRefactory.PatternMatching;
+using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
@@ -12,7 +14,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 	[TestFixture]
 	public class AttributeSectionTests
 	{
-		[Test, Ignore("Parser crash")]
+		[Test]
 		public void GlobalAttributeCSharp()
 		{
 			string program = @"[global::Microsoft.VisualBasic.CompilerServices.DesignerGenerated()]
@@ -27,7 +29,7 @@ public class Form1 {
 			Assert.AreEqual("someprefix::DesignerGenerated", decl.Attributes.Last().Attributes.Single().Type.ToString());
 		}
 		
-		[Test, Ignore("assembly/module attributes are broken")]
+		[Test]
 		public void AssemblyAttributeCSharp()
 		{
 			string program = @"[assembly: System.Attribute()]";
@@ -80,20 +82,59 @@ public class Form1 {
 		[Test, Ignore("Parser doesn't support attributes on type parameters")]
 		public void AttributesOnTypeParameter()
 		{
-			string program = @"class Test<[A,B]C> {}";
-			TypeDeclaration type = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(program);
-			Assert.IsTrue(
-				new TypeParameterDeclaration {
-					Attributes = {
-						new AttributeSection {
+			ParseUtilCSharp.AssertGlobal(
+				"class Test<[A,B]C> {}",
+				new TypeDeclaration {
+					ClassType = ClassType.Class,
+					Name = "Test",
+					TypeParameters = {
+						new TypeParameterDeclaration {
 							Attributes = {
-								new Attribute { Type = new SimpleType("A") },
-								new Attribute { Type = new SimpleType("B") }
-							}
+								new AttributeSection {
+									Attributes = {
+										new Attribute { Type = new SimpleType("A") },
+										new Attribute { Type = new SimpleType("B") }
+									}
+								}
+							},
+							Name = "C"
 						}
-					},
-					Name = "C"
-				}.IsMatch(type.TypeParameters.Single()));
+					}});
+		}
+		
+		[Test]
+		public void AttributeOnMethodParameter()
+		{
+			ParseUtilCSharp.AssertTypeMember(
+				"void M([In] int p);",
+				new MethodDeclaration {
+					ReturnType = new PrimitiveType("void"),
+					Name = "M",
+					Parameters = {
+						new ParameterDeclaration {
+							Attributes = { new AttributeSection(new Attribute { Type = new SimpleType("In") }) },
+							Type = new PrimitiveType("int"),
+							Name = "p"
+						}
+					}});
+		}
+		
+		[Test]
+		public void AttributeOnSetterValue()
+		{
+			ParseUtilCSharp.AssertTypeMember(
+				"int P { get; [param: In] set; }",
+				new PropertyDeclaration {
+					ReturnType = new PrimitiveType("int"),
+					Name = "P",
+					Getter = new Accessor(),
+					Setter = new Accessor {
+						Attributes = {
+							new AttributeSection {
+								AttributeTarget = "param",
+								Attributes = { new Attribute { Type = new SimpleType("In") } },
+							} },
+					}});
 		}
 		
 		// TODO: Tests for other contexts where attributes can appear

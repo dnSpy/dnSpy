@@ -47,7 +47,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			string program = "Imports My.Name.Space\n";
 			
 			var clause2 = new MemberImportsClause {
-				Member = new QualifiedType(new QualifiedType(new SimpleType("My"), new Identifier("Name", AstLocation.Empty)), new Identifier("Space", AstLocation.Empty))
+				Member = new QualifiedType(new QualifiedType(new SimpleType("My"), new Identifier ("Name", AstLocation.Empty)), new Identifier ("Space", AstLocation.Empty))
 			};
 			
 			var node = new ImportsStatement();

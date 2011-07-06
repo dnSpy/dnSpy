@@ -100,7 +100,7 @@ class A {
 			Assert.AreEqual(0, m.Parameters.Count);
 		}
 		
-		[Test, Ignore("parser doesn't produce any nodes for base constructor calls")]
+		[Test, Ignore("Not implemented")]
 		public void ChainedConstructorCall()
 		{
 			string program = @"using System;

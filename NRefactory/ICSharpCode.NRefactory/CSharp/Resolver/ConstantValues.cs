@@ -107,6 +107,62 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver.ConstantValues
 		}
 	}
 	
+	/// <summary>
+	/// Increments an integer <see cref="IConstantValue"/> by a fixed amount without changing the type.
+	/// </summary>
+	public sealed class IncrementConstantValue : Immutable, IConstantValue, ISupportsInterning
+	{
+		IConstantValue baseValue;
+		int incrementAmount;
+		
+		public IncrementConstantValue(IConstantValue baseValue, int incrementAmount = 1)
+		{
+			if (baseValue == null)
+				throw new ArgumentNullException("baseValue");
+			IncrementConstantValue icv = baseValue as IncrementConstantValue;
+			if (icv != null) {
+				this.baseValue = icv.baseValue;
+				this.incrementAmount = icv.incrementAmount + incrementAmount;
+			} else {
+				this.baseValue = baseValue;
+				this.incrementAmount = incrementAmount;
+			}
+		}
+		
+		public IType GetValueType(ITypeResolveContext context)
+		{
+			return baseValue.GetValueType(context);
+		}
+		
+		public object GetValue(ITypeResolveContext context)
+		{
+			object val = baseValue.GetValue(context);
+			if (val == null)
+				return null;
+			TypeCode typeCode = Type.GetTypeCode(val.GetType());
+			if (!(typeCode >= TypeCode.SByte && typeCode <= TypeCode.UInt64))
+				return null;
+			long intVal = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, val, false);
+			return CSharpPrimitiveCast.Cast(typeCode, unchecked(intVal + incrementAmount), false);
+		}
+		
+		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)
+		{
+			baseValue = provider.Intern(baseValue);
+		}
+		
+		int ISupportsInterning.GetHashCodeForInterning()
+		{
+			return baseValue.GetHashCode() ^ incrementAmount;
+		}
+		
+		bool ISupportsInterning.EqualsForInterning(ISupportsInterning other)
+		{
+			IncrementConstantValue o = other as IncrementConstantValue;
+			return o != null && baseValue == o.baseValue && incrementAmount == o.incrementAmount;
+		}
+	}
+	
 	public abstract class ConstantExpression
 	{
 		public abstract ResolveResult Resolve(CSharpResolver resolver);

@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
 {
-	[TestFixture, Ignore("Expression Lambdas not supported by parser")]
+	[TestFixture, Ignore("Lambdas not supported by resolver")]
 	public class LambdaTests : ResolverTestBase
 	{
 		[Test]

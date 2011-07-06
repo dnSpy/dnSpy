@@ -180,7 +180,7 @@ namespace ICSharpCode.NRefactory.Demo
 			SimpleProjectContent project = new SimpleProjectContent();
 			TypeSystemConvertVisitor convertVisitor = new TypeSystemConvertVisitor(project, "dummy.cs");
 			compilationUnit.AcceptVisitor(convertVisitor, null);
-			project.UpdateProjectContent(null, convertVisitor.ParsedFile.TopLevelTypeDefinitions, null, null);
+			project.UpdateProjectContent(null, convertVisitor.ParsedFile);
 			
 			List<ITypeResolveContext> projects = new List<ITypeResolveContext>();
 			projects.Add(project);

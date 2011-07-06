@@ -1,4 +1,4 @@
-﻿// 
+// 
 // FullTypeName.cs
 //
 // Author:
@@ -44,7 +44,19 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public SimpleType(string identifier, AstLocation location)
 		{
-			SetChildByRole (Roles.Identifier, new Identifier(identifier, location));
+			SetChildByRole (Roles.Identifier, CSharp.Identifier.Create (identifier, location));
+		}
+		
+		public SimpleType (string identifier, IEnumerable<AstType> typeArguments)
+		{
+			this.Identifier = identifier;
+			foreach (var arg in typeArguments) {
+				AddChild (arg, Roles.TypeArgument);
+			}
+		}
+		
+		public SimpleType (string identifier, params AstType[] typeArguments) : this (identifier, (IEnumerable<AstType>)typeArguments)
+		{
 		}
 		
 		public string Identifier {
@@ -52,7 +64,16 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole (Roles.Identifier, new Identifier(value, AstLocation.Empty));
+				SetChildByRole (Roles.Identifier, CSharp.Identifier.Create (value, AstLocation.Empty));
+			}
+		}
+		
+		public Identifier IdentifierToken {
+			get {
+				return GetChildByRole (Roles.Identifier);
+			}
+			set {
+				SetChildByRole (Roles.Identifier, value);
 			}
 		}
 		

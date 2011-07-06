@@ -2,6 +2,7 @@
 // This code is distributed under the MS-PL (for details please see \doc\MS-PL.txt)
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.ILSpy;
 using Mono.Cecil;
@@ -16,6 +17,8 @@ namespace ILSpy.BamlDecompiler
 		
 		public CecilDependencyPropertyDescriptor(string member, TypeDefinition type)
 		{
+			if (type == null)
+				throw new ArgumentNullException("type");
 			this.member = member;
 			this.type = type;
 		}

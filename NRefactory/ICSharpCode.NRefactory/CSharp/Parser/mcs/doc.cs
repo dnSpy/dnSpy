@@ -150,6 +150,10 @@ namespace Mono.CSharp
 					HandleSeeAlso (mc, ds_target, seealso);
 				foreach (XmlElement see in n.SelectNodes (".//exception"))
 					HandleException (mc, ds_target, see);
+				foreach (XmlElement node in n.SelectNodes (".//typeparam"))
+					HandleTypeParam (mc, node);
+				foreach (XmlElement node in n.SelectNodes (".//typeparamref"))
+					HandleTypeParamRef (mc, node);
 			}
 
 			n.WriteTo (XmlCommentOutput);
@@ -227,6 +231,55 @@ namespace Mono.CSharp
 		void HandleException (MemberCore mc, DeclSpace ds, XmlElement seealso)
 		{
 			HandleXrefCommon (mc, ds, seealso);
+		}
+
+		//
+		// Handles <typeparam /> node
+		//
+		void HandleTypeParam (MemberCore mc, XmlElement node)
+		{
+			if (!node.HasAttribute ("name"))
+				return;
+
+			string tp_name = node.GetAttribute ("name");
+			if (mc.CurrentTypeParameters != null) {
+				foreach (var tp in mc.CurrentTypeParameters) {
+					if (tp.Name == tp_name)
+						return;
+				}
+			}
+			
+			// TODO: CS1710, CS1712
+			
+			mc.Compiler.Report.Warning (1711, 2, mc.Location,
+				"XML comment on `{0}' has a typeparam name `{1}' but there is no type parameter by that name",
+				mc.GetSignatureForError (), tp_name);
+		}
+
+		//
+		// Handles <typeparamref /> node
+		//
+		void HandleTypeParamRef (MemberCore mc, XmlElement node)
+		{
+			if (!node.HasAttribute ("name"))
+				return;
+
+			string tp_name = node.GetAttribute ("name");
+			var member = mc;
+			do {
+				if (member.CurrentTypeParameters != null) {
+					foreach (var tp in member.CurrentTypeParameters) {
+						if (tp.Name == tp_name)
+							return;
+					}
+				}
+
+				member = member.Parent;
+			} while (member != null);
+
+			mc.Compiler.Report.Warning (1735, 2, mc.Location,
+				"XML comment on `{0}' has a typeparamref name `{1}' that could not be resolved",
+				mc.GetSignatureForError (), tp_name);
 		}
 
 		FullNamedExpression ResolveMemberName (IMemberContext context, MemberName mn)

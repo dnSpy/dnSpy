@@ -44,7 +44,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public SimpleType(string identifier, AstLocation location)
 		{
-			SetChildByRole (Roles.Identifier, new Identifier(identifier, location));
+			SetChildByRole (Roles.Identifier, new Identifier (identifier, location));
 		}
 		
 		public string Identifier {
@@ -52,7 +52,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole (Roles.Identifier, new Identifier(value, AstLocation.Empty));
+				SetChildByRole (Roles.Identifier, new Identifier (value, AstLocation.Empty));
 			}
 		}
 		

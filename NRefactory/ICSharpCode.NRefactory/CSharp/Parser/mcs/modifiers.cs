@@ -37,14 +37,14 @@ namespace Mono.CSharp
 		EXTERN    = 0x0800,
 		VOLATILE  = 0x1000,
 		UNSAFE    = 0x2000,
-		TOP       = 0x4000,
+		ASYNC     = 0x4000,
+		TOP       = 0x8000,
 
 		//
 		// Compiler specific flags
 		//
-		PROPERTY_CUSTOM 		= 0x4000,
+		PROPERTY_CUSTOM 		= 0x10000,
 
-		ASYNC					= 0x10000,
 		PARTIAL					= 0x20000,
 		DEFAULT_ACCESS_MODIFER	= 0x40000,
 		METHOD_EXTENSION		= 0x80000,
@@ -109,6 +109,8 @@ namespace Mono.CSharp
 				s = "volatile"; break;
 			case Modifiers.UNSAFE:
 				s = "unsafe"; break;
+			case Modifiers.ASYNC:
+				s = "async"; break;
 			}
 
 			return s;

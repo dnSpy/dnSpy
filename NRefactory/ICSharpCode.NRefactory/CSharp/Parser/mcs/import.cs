@@ -615,7 +615,7 @@ namespace Mono.CSharp
 				spec = new PropertySpec (MemberKind.Property, declaringType, new ImportedMemberDefinition (pi, type, this), type, pi, mod);
 
 			if (!is_valid_property) {
-				spec.IsNotRealProperty = true;
+				spec.IsNotCSharpCompatible = true;
 				return spec;
 			}
 

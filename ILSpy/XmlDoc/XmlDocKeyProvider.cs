@@ -169,6 +169,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			} else {
 				dotPos = key.LastIndexOf('.');
 			}
+			if (dotPos < 0) return null;
 			TypeDefinition type = FindType(module, key.Substring(2, dotPos - 2));
 			if (type == null)
 				return null;
@@ -192,6 +193,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			} else {
 				ns = string.Empty;
 			}
+			if (string.IsNullOrEmpty(name)) return null;
 			TypeDefinition type = module.GetType(ns, name);
 			if (type == null && ns.Length > 0) {
 				// try if this is a nested type

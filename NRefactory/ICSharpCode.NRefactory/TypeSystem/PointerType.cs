@@ -18,8 +18,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
-		public override Nullable<bool> IsReferenceType {
-			get { return null; }
+		public override bool? IsReferenceType(ITypeResolveContext context)
+		{
+			return null;
 		}
 		
 		public override int GetHashCode()
