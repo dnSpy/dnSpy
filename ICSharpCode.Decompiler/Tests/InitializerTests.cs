@@ -52,8 +52,37 @@ public class InitializerTests
 			get;
 			set;
 		}
+		
+		public InitializerTests.StructData NestedStruct
+		{
+			get;
+			set;
+		}
 	}
-
+	
+	private struct StructData
+	{
+		public int Field;
+		public int Property 
+		{
+			get;
+			set; 
+		}
+		
+		public InitializerTests.Data MoreData
+		{
+			get;
+			set;
+		}
+		
+		public StructData(int initialValue)
+		{
+			this = default(InitializerTests.StructData);
+			this.Field = initialValue;
+			this.Property = initialValue;
+		}
+	}
+	
 	// Helper methods used to ensure initializers used within expressions work correctly
 	private static void X(object a, object b)
 	{
@@ -456,7 +485,53 @@ public class InitializerTests
 			  }
 		  });
 	}
-
+	
+	public static void StructInitializer_DefaultConstructor()
+	{
+		InitializerTests.X(InitializerTests.Y(), new InitializerTests.StructData 
+			{
+				Field = 1,
+				Property = 2
+			});
+	}
+	
+	public static void StructInitializer_ExplicitConstructor()
+	{
+		InitializerTests.X(InitializerTests.Y(), new InitializerTests.StructData(0)
+			{
+				Field = 1,
+				Property = 2
+			});
+	}
+	
+	public static void StructInitializerWithInitializationOfNestedObjects()
+	{
+		InitializerTests.X(InitializerTests.Y(), new InitializerTests.StructData
+		  {
+			MoreData =
+			{
+				a = InitializerTests.MyEnum.a,
+				FieldList =
+				{
+					InitializerTests.MyEnum2.c, 
+					InitializerTests.MyEnum2.d 
+				}
+			}
+		  });
+	}
+	
+	public static void StructInitializerWithinObjectInitializer()
+	{
+		InitializerTests.X(InitializerTests.Y(), new InitializerTests.Data
+			{
+				NestedStruct = new InitializerTests.StructData(2)
+				{
+					Field = 1,
+					Property = 2
+				}
+			});
+	}
+	
 	public void MultidimensionalInit()
 	{
 		int[,] expr_09 = new int[, ]

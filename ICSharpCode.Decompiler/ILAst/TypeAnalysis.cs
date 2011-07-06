@@ -323,13 +323,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (forceInferChildren) {
 							for (int i = 0; i < expr.Arguments.Count; i++) {
 								if (i == 0 && method.HasThis) {
-									ILExpressionPrefix constraint = expr.GetPrefix(ILCode.Constrained);
-									if (constraint != null)
-										InferTypeForExpression(expr.Arguments[i], new ByReferenceType((TypeReference)constraint.Operand));
-									else if (method.DeclaringType.IsValueType)
-										InferTypeForExpression(expr.Arguments[i], new ByReferenceType(method.DeclaringType));
-									else
-										InferTypeForExpression(expr.Arguments[i], method.DeclaringType);
+									InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(method.DeclaringType, expr.GetPrefix(ILCode.Constrained)));
 								} else {
 									InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(method.Parameters[method.HasThis ? i - 1 : i].ParameterType, method));
 								}
@@ -361,17 +355,22 @@ namespace ICSharpCode.Decompiler.ILAst
 					#endregion
 					#region Load/Store Fields
 				case ILCode.Ldfld:
-					if (forceInferChildren)
-						InferTypeForExpression(expr.Arguments[0], ((FieldReference)expr.Operand).DeclaringType);
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(((FieldReference)expr.Operand).DeclaringType, expr.GetPrefix(ILCode.Constrained)));
+					}
 					return GetFieldType((FieldReference)expr.Operand);
 				case ILCode.Ldsfld:
 					return GetFieldType((FieldReference)expr.Operand);
 				case ILCode.Ldflda:
+					if (forceInferChildren) {
+						InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(((FieldReference)expr.Operand).DeclaringType, expr.GetPrefix(ILCode.Constrained)));
+					}
+					return new ByReferenceType(GetFieldType((FieldReference)expr.Operand));
 				case ILCode.Ldsflda:
 					return new ByReferenceType(GetFieldType((FieldReference)expr.Operand));
 				case ILCode.Stfld:
 					if (forceInferChildren) {
-						InferTypeForExpression(expr.Arguments[0], ((FieldReference)expr.Operand).DeclaringType);
+						InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(((FieldReference)expr.Operand).DeclaringType, expr.GetPrefix(ILCode.Constrained)));
 						InferTypeForExpression(expr.Arguments[1], GetFieldType((FieldReference)expr.Operand));
 					}
 					return GetFieldType((FieldReference)expr.Operand);
@@ -794,6 +793,20 @@ namespace ICSharpCode.Decompiler.ILAst
 					Debug.WriteLine("Type Inference: Can't handle " + expr.Code.GetName());
 					return null;
 			}
+		}
+		
+		/// <summary>
+		/// Wraps 'type' in a ByReferenceType if it is a value type. If a constrained prefix is specified,
+		/// returns the constrained type wrapped in a ByReferenceType.
+		/// </summary>
+		TypeReference MakeRefIfValueType(TypeReference type, ILExpressionPrefix constrainedPrefix)
+		{
+			if (constrainedPrefix != null)
+				return new ByReferenceType((TypeReference)constrainedPrefix.Operand);
+			if (type.IsValueType)
+				return new ByReferenceType(type);
+			else
+				return type;
 		}
 		
 		/// <summary>
