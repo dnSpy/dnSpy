@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Runtime.InteropServices;
 
 public static class NullableOperators
 {
@@ -46,42 +47,71 @@ public static class NullableOperators
 		}
 	}
 
-	public static void BoolComplex(bool? a, bool x)
+	public static void BoolComplex(bool? a, Func<bool> x)
 	{
-		if (a == x)
+		if (a == x())
 		{
 			Console.WriteLine();
 		}
-		if (a != x)
-		{
-			Console.WriteLine();
-		}
-
-		if (x == a)
-		{
-			Console.WriteLine();
-		}
-		if (x != a)
+		if (a != x())
 		{
 			Console.WriteLine();
 		}
 
-		if (!(a == x))
+		if (x() == a)
 		{
 			Console.WriteLine();
 		}
-		if (!(a != x))
+		if (x() != a)
 		{
 			Console.WriteLine();
 		}
-		if (!(x == a))
+
+		if (!(a == x()))
 		{
 			Console.WriteLine();
 		}
-		if (!(x != a))
+		if (!(a != x()))
 		{
 			Console.WriteLine();
 		}
+		if (!(x() == a))
+		{
+			Console.WriteLine();
+		}
+		if (!(x() != a))
+		{
+			Console.WriteLine();
+		}
+	}
+
+	public static void BoolConst(bool? a)
+	{
+		if (a == true) 
+		{
+			Console.WriteLine();
+		}
+		if (a != true)
+		{
+			Console.WriteLine();
+		}
+		if (a == false)
+		{
+			Console.WriteLine();
+		}
+		if (a != false)
+		{
+			Console.WriteLine();
+		}
+		// TODO:
+		//if (a ?? true) 
+		//{
+		//  Console.WriteLine();
+		//}
+		//if (a ?? false) 
+		//{
+		//  Console.WriteLine();
+		//}
 	}
 
 	public static void BoolValueBasic(bool? a, bool? b)
@@ -91,20 +121,47 @@ public static class NullableOperators
 
 		Console.WriteLine(!(a == b));
 		Console.WriteLine(!(a != b));
+
+		Console.WriteLine(a & b);
+		Console.WriteLine(a | b);
+		Console.WriteLine(a ^ b);
+		Console.WriteLine(a ?? b);
+		Console.WriteLine(!a);
+		a &= b;
+		a |= b;
+		a ^= b;
 	}
 
-	public static void BoolValueComplex(bool? a, bool x)
+	public static void BoolValueComplex(bool? a, Func<bool> x)
 	{
-		Console.WriteLine(a == x);
-		Console.WriteLine(a != x);
+		Console.WriteLine(a == x());
+		Console.WriteLine(a != x());
 
-		Console.WriteLine(x == a);
-		Console.WriteLine(x != a);
+		Console.WriteLine(x() == a);
+		Console.WriteLine(x() != a);
 
-		Console.WriteLine(!(a == x));
-		Console.WriteLine(!(a != x));
-		Console.WriteLine(!(x == a));
-		Console.WriteLine(!(x != a));
+		Console.WriteLine(!(a == x()));
+		Console.WriteLine(!(a != x()));
+
+		Console.WriteLine(a & x());
+		Console.WriteLine(a | x());
+		Console.WriteLine(a ^ x());
+		Console.WriteLine(a ?? x());
+		a &= x();
+		a |= x();
+		a ^= x();
+
+		Console.WriteLine(x() ^ a);
+	}
+
+	public static void BoolValueConst(bool? a)
+	{
+		Console.WriteLine(a == true);
+		Console.WriteLine(a != true);
+		Console.WriteLine(a == false);
+		Console.WriteLine(a != false);
+		Console.WriteLine(a ?? true);
+		Console.WriteLine(a ?? false);
 	}
 
 	public static void IntBasic(int? a, int? b)
@@ -148,67 +205,72 @@ public static class NullableOperators
 		}
 	}
 
-	public static void IntComplex(int? a, int x)
+	public static void IntComplex(int? a, Func<int> x)
 	{
-		if (a == x)
+		if (a == x())
 		{
 			Console.WriteLine();
 		}
-		if (a != x)
+		if (a != x())
 		{
 			Console.WriteLine();
 		}
-		if (a > x)
-		{
-			Console.WriteLine();
-		}
-		if (a < x)
-		{
-			Console.WriteLine();
-		}
-		if (a >= x)
-		{
-			Console.WriteLine();
-		}
-		if (a <= x)
+		if (a > x())
 		{
 			Console.WriteLine();
 		}
 
-		if (x == a)
+		if (x() == a)
 		{
 			Console.WriteLine();
 		}
-		if (x != a)
+		if (x() != a)
 		{
 			Console.WriteLine();
 		}
-		if (x > a)
-		{
-			Console.WriteLine();
-		}
-		if (x < a)
-		{
-			Console.WriteLine();
-		}
-		if (x >= a)
-		{
-			Console.WriteLine();
-		}
-		if (x <= a)
+		if (x() > a)
 		{
 			Console.WriteLine();
 		}
 
-		if (!(a == x))
+		if (!(a == x()))
 		{
 			Console.WriteLine();
 		}
-		if (!(a != x))
+		if (!(a != x()))
 		{
 			Console.WriteLine();
 		}
-		if (!(a > x))
+		if (!(a > x()))
+		{
+			Console.WriteLine();
+		}
+	}
+
+	public static void IntConst(int? a)
+	{
+		if (a == 2)
+		{
+			Console.WriteLine();
+		}
+		if (a != 2)
+		{
+			Console.WriteLine();
+		}
+		if (a > 2)
+		{
+			Console.WriteLine();
+		}
+
+		if (2 == a)
+		{
+			Console.WriteLine();
+		}
+		if (2 != a)
+		{
+			Console.WriteLine();
+		}
+		if (2 > a)
 		{
 			Console.WriteLine();
 		}
@@ -219,34 +281,109 @@ public static class NullableOperators
 		Console.WriteLine(a == b);
 		Console.WriteLine(a != b);
 		Console.WriteLine(a > b);
-		Console.WriteLine(a < b);
-		Console.WriteLine(a >= b);
-		Console.WriteLine(a <= b);
 
 		Console.WriteLine(!(a == b));
 		Console.WriteLine(!(a != b));
 		Console.WriteLine(!(a > b));
+
+		Console.WriteLine(a + b);
+		Console.WriteLine(a - b);
+		Console.WriteLine(a * b);
+		Console.WriteLine(a / b);
+		Console.WriteLine(a % b);
+		Console.WriteLine(a & b);
+		Console.WriteLine(a | b);
+		Console.WriteLine(a ^ b);
+		Console.WriteLine(a << b);
+		Console.WriteLine(a >> b);
+		Console.WriteLine(a ?? b);
+		Console.WriteLine(-a);
+		Console.WriteLine(~a);
+		// TODO:
+		//Console.WriteLine(a++);
+		//Console.WriteLine(a--);
+		Console.WriteLine(++a);
+		Console.WriteLine(--a);
+		a += b;
+		a -= b;
+		a *= b;
+		a /= b;
+		a %= b;
+		a &= b;
+		a |= b;
+		a ^= b;
+		a <<= b;
+		a >>= b;
 	}
 
-	public static void IntValueComplex(int? a, int x)
+	public static void IntValueComplex(int? a, Func<int> x)
 	{
-		Console.WriteLine(a == x);
-		Console.WriteLine(a != x);
-		Console.WriteLine(a > x);
-		Console.WriteLine(a < x);
-		Console.WriteLine(a >= x);
-		Console.WriteLine(a <= x);
+		Console.WriteLine(a == x());
+		Console.WriteLine(a != x());
+		Console.WriteLine(a > x());
 
-		Console.WriteLine(x == a);
-		Console.WriteLine(x != a);
-		Console.WriteLine(x > a);
-		Console.WriteLine(x < a);
-		Console.WriteLine(x >= a);
-		Console.WriteLine(x <= a);
+		Console.WriteLine(x() == a);
+		Console.WriteLine(x() != a);
+		Console.WriteLine(x() > a);
 
-		Console.WriteLine(!(a == x));
-		Console.WriteLine(!(a != x));
-		Console.WriteLine(!(a > x));
+		Console.WriteLine(a + x());
+		Console.WriteLine(a - x());
+		Console.WriteLine(a * x());
+		Console.WriteLine(a / x());
+		Console.WriteLine(a % x());
+		Console.WriteLine(a & x());
+		Console.WriteLine(a | x());
+		Console.WriteLine(a ^ x());
+		Console.WriteLine(a << x());
+		Console.WriteLine(a >> x());
+		Console.WriteLine(a ?? x());
+		a += x();
+		a -= x();
+		a *= x();
+		a /= x();
+		a %= x();
+		a &= x();
+		a |= x();
+		a ^= x();
+		a <<= x();
+		a >>= x();
+
+		Console.WriteLine(x() + a);
+	}
+
+	public static void IntValueConst(int? a)
+	{
+		Console.WriteLine(a == 2);
+		Console.WriteLine(a != 2);
+		Console.WriteLine(a > 2);
+
+		Console.WriteLine(2 == a);
+		Console.WriteLine(2 != a);
+		Console.WriteLine(2 > a);
+
+		Console.WriteLine(a + 2);
+		Console.WriteLine(a - 2);
+		Console.WriteLine(a * 2);
+		Console.WriteLine(a / 2);
+		Console.WriteLine(a % 2);
+		Console.WriteLine(a & 2);
+		Console.WriteLine(a | 2);
+		Console.WriteLine(a ^ 2);
+		Console.WriteLine(a << 2);
+		Console.WriteLine(a >> 2);
+		Console.WriteLine(a ?? 2);
+		a += 2;
+		a -= 2;
+		a *= 2;
+		a /= 2;
+		a %= 2;
+		a &= 2;
+		a |= 2;
+		a ^= 2;
+		a <<= 2;
+		a >>= 2;
+
+		Console.WriteLine(2 + a);
 	}
 
 	public static void NumberBasic(decimal? a, decimal? b)
@@ -290,67 +427,59 @@ public static class NullableOperators
 		}
 	}
 
-	public static void NumberComplex(decimal? a, decimal x)
+	public static void NumberComplex(decimal? a, Func<decimal> x)
 	{
-		if (a == x)
+		if (a == x())
 		{
 			Console.WriteLine();
 		}
-		if (a != x)
+		if (a != x())
 		{
 			Console.WriteLine();
 		}
-		if (a > x)
-		{
-			Console.WriteLine();
-		}
-		if (a < x)
-		{
-			Console.WriteLine();
-		}
-		if (a >= x)
-		{
-			Console.WriteLine();
-		}
-		if (a <= x)
+		if (a > x())
 		{
 			Console.WriteLine();
 		}
 
-		if (x == a)
+		if (x() == a)
 		{
 			Console.WriteLine();
 		}
-		if (x != a)
+		if (x() != a)
 		{
 			Console.WriteLine();
 		}
-		if (x > a)
+		if (x() > a)
 		{
 			Console.WriteLine();
 		}
-		if (x < a)
+	}
+
+	public static void NumberConst(decimal? a)
+	{
+		if (a == 2m)
 		{
 			Console.WriteLine();
 		}
-		if (x >= a)
+		if (a != 2m)
 		{
 			Console.WriteLine();
 		}
-		if (x <= a)
+		if (a > 2m)
 		{
 			Console.WriteLine();
 		}
 
-		if (!(a == x))
+		if (2m == a)
 		{
 			Console.WriteLine();
 		}
-		if (!(a != x))
+		if (2m != a)
 		{
 			Console.WriteLine();
 		}
-		if (!(a > x))
+		if (2m > a)
 		{
 			Console.WriteLine();
 		}
@@ -361,37 +490,81 @@ public static class NullableOperators
 		Console.WriteLine(a == b);
 		Console.WriteLine(a != b);
 		Console.WriteLine(a > b);
-		Console.WriteLine(a < b);
-		Console.WriteLine(a >= b);
-		Console.WriteLine(a <= b);
 
 		Console.WriteLine(!(a == b));
 		Console.WriteLine(!(a != b));
 		Console.WriteLine(!(a > b));
+
+		Console.WriteLine(a + b);
+		Console.WriteLine(a - b);
+		Console.WriteLine(a * b);
+		Console.WriteLine(a / b);
+		Console.WriteLine(a % b);
+		Console.WriteLine(a ?? b);
+		Console.WriteLine(-a);
+		// TODO:
+		//Console.WriteLine(a++);
+		//Console.WriteLine(a--);
+		//Console.WriteLine(++a);
+		//Console.WriteLine(--a);
+		a += b;
+		a -= b;
+		a *= b;
+		a /= b;
+		a %= b;
 	}
 
-	public static void NumberValueComplex(decimal? a, decimal x)
+	public static void NumberValueComplex(decimal? a, Func<decimal> x)
 	{
-		Console.WriteLine(a == x);
-		Console.WriteLine(a != x);
-		Console.WriteLine(a > x);
-		Console.WriteLine(a < x);
-		Console.WriteLine(a >= x);
-		Console.WriteLine(a <= x);
+		Console.WriteLine(a == x());
+		Console.WriteLine(a != x());
+		Console.WriteLine(a > x());
 
-		Console.WriteLine(x == a);
-		Console.WriteLine(x != a);
-		Console.WriteLine(x > a);
-		Console.WriteLine(x < a);
-		Console.WriteLine(x >= a);
-		Console.WriteLine(x <= a);
+		Console.WriteLine(x() == a);
+		Console.WriteLine(x() != a);
+		Console.WriteLine(x() > a);
 
-		Console.WriteLine(!(a == x));
-		Console.WriteLine(!(a != x));
-		Console.WriteLine(!(a > x));
+		Console.WriteLine(a + x());
+		Console.WriteLine(a - x());
+		Console.WriteLine(a * x());
+		Console.WriteLine(a / x());
+		Console.WriteLine(a % x());
+		Console.WriteLine(a ?? x());
+		a += x();
+		a -= x();
+		a *= x();
+		a /= x();
+		a %= x();
+
+		Console.WriteLine(x() + a);
 	}
 
-	public static void StructBasic(DateTime? a, DateTime? b)
+	public static void NumberValueConst(decimal? a)
+	{
+		Console.WriteLine(a == 2m);
+		Console.WriteLine(a != 2m);
+		Console.WriteLine(a > 2m);
+
+		Console.WriteLine(2m == a);
+		Console.WriteLine(2m != a);
+		Console.WriteLine(2m > a);
+
+		Console.WriteLine(a + 2m);
+		Console.WriteLine(a - 2m);
+		Console.WriteLine(a * 2m);
+		Console.WriteLine(a / 2m);
+		Console.WriteLine(a % 2m);
+		Console.WriteLine(a ?? 2m);
+		a += 2m;
+		a -= 2m;
+		a *= 2m;
+		a /= 2m;
+		a %= 2m;
+
+		Console.WriteLine(2m + a);
+	}
+
+	public static void StructBasic(TS? a, TS? b)
 	{
 		if (a == b)
 		{
@@ -432,104 +605,223 @@ public static class NullableOperators
 		}
 	}
 
-	public static void StructComplex(DateTime? a, DateTime x)
+	public static void StructComplex(TS? a, Func<TS> x)
 	{
-		if (a == x)
+		if (a == x())
 		{
 			Console.WriteLine();
 		}
-		if (a != x)
+		if (a != x())
 		{
 			Console.WriteLine();
 		}
-		if (a > x)
-		{
-			Console.WriteLine();
-		}
-		if (a < x)
-		{
-			Console.WriteLine();
-		}
-		if (a >= x)
-		{
-			Console.WriteLine();
-		}
-		if (a <= x)
+		if (a > x())
 		{
 			Console.WriteLine();
 		}
 
-		if (x == a)
+		if (x() == a)
 		{
 			Console.WriteLine();
 		}
-		if (x != a)
+		if (x() != a)
 		{
 			Console.WriteLine();
 		}
-		if (x > a)
-		{
-			Console.WriteLine();
-		}
-		if (x < a)
-		{
-			Console.WriteLine();
-		}
-		if (x >= a)
-		{
-			Console.WriteLine();
-		}
-		if (x <= a)
-		{
-			Console.WriteLine();
-		}
-
-		if (!(a == x))
-		{
-			Console.WriteLine();
-		}
-		if (!(a != x))
-		{
-			Console.WriteLine();
-		}
-		if (!(a > x))
+		if (x() > a)
 		{
 			Console.WriteLine();
 		}
 	}
 
-	public static void StructValueBasic(DateTime? a, DateTime? b)
+	public static void StructValueBasic(TS? a, TS? b, int? i)
 	{
 		Console.WriteLine(a == b);
 		Console.WriteLine(a != b);
 		Console.WriteLine(a > b);
-		Console.WriteLine(a < b);
-		Console.WriteLine(a >= b);
-		Console.WriteLine(a <= b);
 
 		Console.WriteLine(!(a == b));
 		Console.WriteLine(!(a != b));
 		Console.WriteLine(!(a > b));
+
+		Console.WriteLine(a + b);
+		Console.WriteLine(a - b);
+		Console.WriteLine(a * b);
+		Console.WriteLine(a / b);
+		Console.WriteLine(a % b);
+		Console.WriteLine(a & b);
+		Console.WriteLine(a | b);
+		Console.WriteLine(a ^ b);
+		Console.WriteLine(a << i);
+		Console.WriteLine(a >> i);
+		Console.WriteLine(a ?? b);
+		Console.WriteLine(+a);
+		Console.WriteLine(-a);
+		Console.WriteLine(!a);
+		Console.WriteLine(~a);
+		// TODO:
+		//Console.WriteLine(a++);
+		//Console.WriteLine(a--);
+		//Console.WriteLine(++a);
+		//Console.WriteLine(--a);
+		//Console.WriteLine((int?)a);
+		a += b;
+		a -= b;
+		a *= b;
+		a /= b;
+		a %= b;
+		a &= b;
+		a |= b;
+		a ^= b;
+		a <<= i;
+		a >>= i;
 	}
 
-	public static void StructValueComplex(DateTime? a, DateTime x)
+	public static void StructValueComplex(TS? a, Func<TS> x, Func<int> i)
 	{
-		Console.WriteLine(a == x);
-		Console.WriteLine(a != x);
-		Console.WriteLine(a > x);
-		Console.WriteLine(a < x);
-		Console.WriteLine(a >= x);
-		Console.WriteLine(a <= x);
+		Console.WriteLine(a == x());
+		Console.WriteLine(a != x());
+		Console.WriteLine(a > x());
 
-		Console.WriteLine(x == a);
-		Console.WriteLine(x != a);
-		Console.WriteLine(x > a);
-		Console.WriteLine(x < a);
-		Console.WriteLine(x >= a);
-		Console.WriteLine(x <= a);
+		Console.WriteLine(x() == a);
+		Console.WriteLine(x() != a);
+		Console.WriteLine(x() > a);
 
-		Console.WriteLine(!(a == x));
-		Console.WriteLine(!(a != x));
-		Console.WriteLine(!(a > x));
+		Console.WriteLine(a + x());
+		Console.WriteLine(a - x());
+		Console.WriteLine(a * x());
+		Console.WriteLine(a / x());
+		Console.WriteLine(a % x());
+		Console.WriteLine(a & x());
+		Console.WriteLine(a | x());
+		Console.WriteLine(a ^ x());
+		Console.WriteLine(a << i());
+		Console.WriteLine(a >> i());
+		Console.WriteLine(a ?? x());
+		a += x();
+		a -= x();
+		a *= x();
+		a /= x();
+		a %= x();
+		a &= x();
+		a |= x();
+		a ^= x();
+		a <<= i();
+		a >>= i();
+
+		Console.WriteLine(x() + a);
+	}
+}
+
+// dummy structure for testing custom operators
+[StructLayout(LayoutKind.Sequential, Size = 1)]
+public struct TS
+{
+	// unary
+	public static TS operator +(TS a)
+	{
+		throw null;
+	}
+	public static TS operator -(TS a)
+	{
+		throw null;
+	}
+	public static TS operator !(TS a)
+	{
+		throw null;
+	}
+	public static TS operator ~(TS a)
+	{
+		throw null;
+	}
+	public static TS operator ++(TS a)
+	{
+		throw null;
+	}
+	public static TS operator --(TS a)
+	{
+		throw null;
+	}
+
+	public static explicit operator int(TS a)
+	{
+		throw null;
+	}
+
+	// binary
+	public static TS operator +(TS a, TS b)
+	{
+		throw null;
+	}
+	public static TS operator -(TS a, TS b)
+	{
+		throw null;
+	}
+	public static TS operator *(TS a, TS b)
+	{
+		throw null;
+	}
+	public static TS operator /(TS a, TS b)
+	{
+		throw null;
+	}
+	public static TS operator %(TS a, TS b)
+	{
+		throw null;
+	}
+	public static TS operator &(TS a, TS b)
+	{
+		throw null;
+	}
+	public static TS operator |(TS a, TS b)
+	{
+		throw null;
+	}
+	public static TS operator ^(TS a, TS b)
+	{
+		throw null;
+	}
+	public static TS operator <<(TS a, int b)
+	{
+		throw null;
+	}
+	public static TS operator >>(TS a, int b)
+	{
+		throw null;
+	}
+
+	// comparisons
+	public static bool operator ==(TS a, TS b)
+	{
+		throw null;
+	}
+	public static bool operator !=(TS a, TS b)
+	{
+		throw null;
+	}
+	public static bool operator <(TS a, TS b)
+	{
+		throw null;
+	}
+	public static bool operator <=(TS a, TS b)
+	{
+		throw null;
+	}
+	public static bool operator >(TS a, TS b)
+	{
+		throw null;
+	}
+	public static bool operator >=(TS a, TS b)
+	{
+		throw null;
+	}
+
+	public override bool Equals(object obj)
+	{
+		throw null;
+	}
+	public override int GetHashCode()
+	{
+		throw null;
 	}
 }
