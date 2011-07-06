@@ -40,11 +40,25 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return null;
 		}
 
-		public ILSpyTreeNode CreateNode(string key, Stream data)
+		public ILSpyTreeNode CreateNode(string key, object data)
 		{
+			if (data is System.Drawing.Icon)
+			{
+				MemoryStream s = new MemoryStream();
+				((System.Drawing.Icon)data).Save(s);
+				return new ImageResourceEntryNode(key, s);
+			}
+			else if (data is System.Drawing.Image)
+			{
+				MemoryStream s = new MemoryStream();
+				((System.Drawing.Image)data).Save(s, System.Drawing.Imaging.ImageFormat.Bmp);
+				return new ImageResourceEntryNode(key, s);
+			}
+			if (!(data is Stream))
+			    return null;
 			foreach (string fileExt in imageFileExtensions) {
 				if (key.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
-					return new ImageResourceEntryNode(key, data);
+					return new ImageResourceEntryNode(key, (Stream)data);
 			}
 			return null;
 		}

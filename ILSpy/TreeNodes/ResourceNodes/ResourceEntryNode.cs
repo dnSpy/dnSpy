@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.data = data;
 		}
 
-		public static ILSpyTreeNode Create(string key, Stream data)
+		public static ILSpyTreeNode Create(string key, object data)
 		{
 			ILSpyTreeNode result = null;
 			foreach (var factory in App.CompositionContainer.GetExportedValues<IResourceNodeFactory>()) {
@@ -70,7 +70,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (result != null)
 					break;
 			}
-			return result ?? new ResourceEntryNode(key, data);
+			return result ?? new ResourceEntryNode(key, data as Stream);
 		}
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)

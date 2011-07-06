@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+	x:Class="ICSharpCode.ILSpy.Controls.ResourceStringTable" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<UserControl.CommandBindings>
+	<CommandBinding Command="ApplicationCommands.Copy"
+					Executed="ExecuteCopy"
+					CanExecute="CanExecuteCopy"/>
+	</UserControl.CommandBindings>
+	<ListView
+		Name="resourceListView"
+		SelectionMode="Extended">
+		<ListView.View>
+			<GridView
+				AllowsColumnReorder="False">
+				<GridView.Columns>
+					<GridViewColumn
+						Header="Resource id"
+						DisplayMemberBinding="{Binding Key}" />
+					<GridViewColumn
+						Header="Resource value"
+						DisplayMemberBinding="{Binding Value}" />
+				</GridView.Columns>
+			</GridView>
+		</ListView.View>
+	</ListView>
+</UserControl>

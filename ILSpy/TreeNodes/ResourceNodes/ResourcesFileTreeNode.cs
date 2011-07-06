@@ -18,10 +18,15 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Resources;
+
+using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.Controls;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -38,7 +43,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return null;
 		}
 
-		public ILSpyTreeNode CreateNode(string key, Stream data)
+		public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			return null;
 		}
@@ -46,6 +51,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	
 	sealed class ResourcesFileTreeNode : ResourceTreeNode
 	{
+		ICollection<KeyValuePair<string, string>> filteredEntries = new ObservableCollection<KeyValuePair<string, string>>();
+
 		public ResourcesFileTreeNode(EmbeddedResource er)
 			: base(er)
 		{
@@ -71,12 +78,30 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return;
 				}
 				foreach (DictionaryEntry entry in reader.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
-					if (entry.Value is Stream)
-						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), (Stream)entry.Value));
+					if (entry.Value is String)
+						filteredEntries.Add(new KeyValuePair<string, string>(entry.Key.ToString(), (string)entry.Value));
 					else if (entry.Value is byte[])
 						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), new MemoryStream((byte[])entry.Value)));
+					else 
+						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), entry.Value));
 				}
 			}
+		}
+		
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			base.Decompile(language, output, options);
+			if (filteredEntries.Count == 0)
+				return;
+			ISmartTextOutput smartOutput = output as ISmartTextOutput;
+			if (null != smartOutput) {
+				smartOutput.AddUIElement(
+					delegate {
+						return new ResourceStringTable(filteredEntries);
+					}
+				);
+			}
+			output.WriteLine();
 		}
 	}
 }
