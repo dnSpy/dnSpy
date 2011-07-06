@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
 {
-	[TestFixture, Ignore("DOM for attributes is incomplete")]
+	[TestFixture]
 	public class AttributeTests : ResolverTestBase
 	{
 		[Test]
@@ -41,7 +41,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			string program = "using System; [$LoaderOptimization(3)$] class Test { }";
 			var mrr = Resolve<MemberResolveResult>(program);
-			Assert.AreEqual("System.LoaderOptimization.#ctor", mrr.Member.FullName);
+			Assert.AreEqual("System.LoaderOptimizationAttribute..ctor", mrr.Member.FullName);
 			Assert.AreEqual("System.Byte", (mrr.Member as IMethod).Parameters[0].Type.Resolve(context).FullName);
 		}
 		
@@ -50,7 +50,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			string program = "using System; [$LoaderOptimization(LoaderOptimization.NotSpecified)$] class Test { }";
 			var mrr = Resolve<MemberResolveResult>(program);
-			Assert.AreEqual("System.LoaderOptimization.#ctor", mrr.Member.FullName);
+			Assert.AreEqual("System.LoaderOptimizationAttribute..ctor", mrr.Member.FullName);
 			Assert.AreEqual("System.LoaderOptimization", (mrr.Member as IMethod).Parameters[0].Type.Resolve(context).FullName);
 		}
 		
@@ -78,7 +78,7 @@ enum E { A, B }
 			Assert.AreEqual("MyNamespace.E.A", result.Member.FullName);
 		}
 		
-		[Test]
+		[Test, Ignore("Not implemented in type system.")]
 		public void SD_1384()
 		{
 			string program = @"using System;

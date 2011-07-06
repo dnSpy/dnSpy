@@ -7141,9 +7141,7 @@ namespace Mono.CSharp
 		FullNamedExpression texpr;
 		
 		public FullNamedExpression FullNamedExpression {
-			get {
-				return texpr;
-			}
+			get { return texpr;}
 		}
 		
 		public RefValueExpr (Expression expr, FullNamedExpression texpr, Location loc)
@@ -7728,6 +7726,22 @@ namespace Mono.CSharp
 			return e;
 		}
 
+		protected virtual void Error_OperatorCannotBeApplied (ResolveContext rc, TypeSpec type)
+		{
+			if (type == InternalType.NullLiteral && rc.IsRuntimeBinder)
+				rc.Report.Error (Report.RuntimeErrorId, loc, "Cannot perform member binding on `null' value");
+			else
+				Unary.Error_OperatorCannotBeApplied (rc, loc, ".", type);
+		}
+
+		public static bool IsValidDotExpression (TypeSpec type)
+		{
+			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum |
+				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType;
+
+			return (type.Kind & dot_kinds) != 0;
+		}
+
 		public override Expression LookupNameExpression (ResolveContext rc, MemberLookupRestrictions restrictions)
 		{
 			var sn = expr as SimpleName;
@@ -7788,14 +7802,8 @@ namespace Mono.CSharp
 				return new DynamicMemberBinder (Name, args, loc);
 			}
 
-			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum |
-				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType;
-
-			if ((expr_type.Kind & dot_kinds) == 0) {
-				if (expr_type == InternalType.NullLiteral && rc.IsRuntimeBinder)
-					rc.Report.Error (Report.RuntimeErrorId, loc, "Cannot perform member binding on `null' value");
-				else
-					Unary.Error_OperatorCannotBeApplied (rc, loc, ".", expr_type);
+			if (!IsValidDotExpression (expr_type)) {
+				Error_OperatorCannotBeApplied (rc, expr_type);
 				return null;
 			}
 
@@ -8518,6 +8526,7 @@ namespace Mono.CSharp
 		}
 
 		#region Properties
+
 		protected override TypeSpec DeclaringType {
 			get {
 				return best_candidate.DeclaringType;
@@ -9929,45 +9938,6 @@ namespace Mono.CSharp
 		{
 			ec.Report.Error (828, loc, "An anonymous type property `{0}' cannot be initialized with `{1}'",
 				Name, initializer);
-		}
-	}
-
-	class Await : ExpressionStatement
-	{
-		Expression expr;
-
-		public Await (Expression expr, Location loc)
-		{
-			this.expr = expr;
-			this.loc = loc;
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void EmitStatement (EmitContext ec)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override Expression DoResolve (ResolveContext rc)
-		{
-			expr = expr.Resolve (rc);
-			if (expr == null)
-				return null;
-
-//			Iterator.CreateIterator
-
-			type = expr.Type;
-			eclass = expr.eclass;
-			return this;
 		}
 	}
 }

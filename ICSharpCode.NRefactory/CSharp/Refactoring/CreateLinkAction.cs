@@ -1,10 +1,10 @@
 // 
-// Change.cs
+// CreateLinkAction.cs
 //  
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
-// Copyright (c) 2011 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2011 Mike Krüger <mkrueger@novell.com>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,49 +24,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 
-namespace ICSharpCode.NRefactory
+namespace ICSharpCode.NRefactory.CSharp.Refactoring
 {
-	public class Change
+	public abstract class CreateLinkAction : Action
 	{
-		public int Offset {
+		public IEnumerable<AstNode> Linked {
 			get;
-			set;
+			private set;
 		}
 		
-		int removedChars;
-		public int RemovedChars {
-			get { 
-				return removedChars; 
-			}
-			set {
-				if (value < 0)
-					throw new ArgumentOutOfRangeException ("RemovedChars", "needs to be >= 0");
-				removedChars = value; 
-			}
-		}
-
-		public string InsertedText {
-			get;
-			set;
-		}
-		
-		public Change (int offset, int removedChars, string insertedText)
+		public CreateLinkAction (IEnumerable<AstNode> linked)
 		{
-			if (removedChars < 0)
-				throw new ArgumentOutOfRangeException ("removedChars", "removedChars needs to be >= 0");
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", "offset needs to be >= 0");
-			this.removedChars = removedChars;
-			this.Offset = offset;
-			this.InsertedText = insertedText;
-		}
-		
-		public override string ToString ()
-		{
-			return string.Format ("[Change: Offset={0}, RemovedChars={1}, InsertedText={2}]", Offset, RemovedChars, InsertedText);
+			this.Linked = linked;
 		}
 	}
-	
 }
 

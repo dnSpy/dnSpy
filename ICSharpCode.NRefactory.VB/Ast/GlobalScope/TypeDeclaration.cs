@@ -20,9 +20,11 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public ClassType ClassType { get; set; }
 		
-		public Identifier Name {
-			get { return GetChildByRole(Roles.Identifier); }
-			set { SetChildByRole(Roles.Identifier, value); }
+		public string Name {
+			get { return GetChildByRole(Roles.Identifier).Name; }
+			set { 
+				SetChildByRole(Roles.Identifier, new Identifier (value, AstLocation.Empty));
+			}
 		}
 		
 		public AstNodeCollection<TypeParameterDeclaration> TypeParameters {
@@ -44,7 +46,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				MatchAttributesAndModifiers(t, match) &&
 				Members.DoMatch(t.Members, match) &&
 				ClassType == t.ClassType &&
-				Name.DoMatch(t.Name, match) &&
+				MatchString(Name, t.Name) &&
 				TypeParameters.DoMatch(t.TypeParameters, match) &&
 				InheritsType.DoMatch(t.InheritsType, match) &&
 				ImplementsTypes.DoMatch(t.ImplementsTypes, match);

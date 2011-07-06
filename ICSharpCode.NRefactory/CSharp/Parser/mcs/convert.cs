@@ -195,13 +195,19 @@ namespace Mono.CSharp {
 		//
 		public static bool ImplicitReferenceConversionExists (TypeSpec expr_type, TypeSpec target_type)
 		{
+			return ImplicitReferenceConversionExists (expr_type, target_type, true);
+		}
+
+		static bool ImplicitReferenceConversionExists (TypeSpec expr_type, TypeSpec target_type, bool refOnlyTypeParameter)
+		{
 			// It's here only to speed things up
 			if (target_type.IsStruct)
 				return false;
 
 			switch (expr_type.Kind) {
 			case MemberKind.TypeParameter:
-				return ImplicitTypeParameterConversion (null, (TypeParameterSpec) expr_type, target_type) != null;
+				return ImplicitTypeParameterConversion (null, (TypeParameterSpec) expr_type, target_type) != null &&
+					(!refOnlyTypeParameter || TypeSpec.IsReferenceType (expr_type));
 
 			case MemberKind.Class:
 				//
@@ -698,7 +704,7 @@ namespace Mono.CSharp {
 			if (ImplicitNumericConversion (null, expr_type, target_type) != null)
 				return true;
 
-			if (ImplicitReferenceConversionExists (expr_type, target_type))
+			if (ImplicitReferenceConversionExists (expr_type, target_type, false))
 				return true;
 
 			if (ImplicitBoxingConversion (null, expr_type, target_type) != null)

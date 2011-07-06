@@ -143,6 +143,21 @@ namespace Mono.CSharp
 		UsingsBag ubag;
 		List<Tuple<Modifiers, Location>> mod_locations;
 		Location parameterModifierLocation, savedLocation, savedOpenLocation, savedCloseLocation;
+		Location savedAttrParenOpenLocation, savedAttrParenCloseLocation;
+		Stack<List<Location>> locationListStack = new Stack<List<Location>> (); // used for type parameters
+		
+		object lastYYVal;
+		
+		// Can be used for code completion to get the last valid expression before an error.
+		// needs a hack in yyparse to make it work add 
+		// lastYYVal = yyVal;
+		// after the big switch/case (somewhere around line 3915)
+		public object LastYYVal {
+			get {
+				return lastYYVal;
+			}
+		}
+		
 %}
 
 %token EOF
@@ -654,7 +669,7 @@ attribute_sections
 	  {
 		var sect = (List<Attribute>) $1;
 		$$ = new Attributes (sect);
-		lbag.AddLocation ($$, savedOpenLocation, savedCloseLocation);
+		lbag.AddLocation (sect, savedOpenLocation, savedCloseLocation);
 	  }
 	| attribute_sections attribute_section
 	  {
@@ -664,6 +679,7 @@ attribute_sections
 			attrs = new Attributes (sect);
 		else
 			attrs.AddAttributes (sect);
+		lbag.AddLocation (sect, savedOpenLocation, savedCloseLocation);
 		$$ = attrs;
 	  }
 	;
@@ -759,6 +775,9 @@ attribute
 		Arguments [] arguments = (Arguments []) $3;
 		ATypeNameExpression expr = mname.GetTypeExpression ();
 		$$ = new Attribute (current_attr_target, expr, arguments, mname.Location, lexer.IsEscapedIdentifier (mname));
+		if (arguments != null) {
+			lbag.AddLocation ($$, savedAttrParenOpenLocation, savedAttrParenCloseLocation);
+		}
 	  }
 	;
 
@@ -770,6 +789,8 @@ opt_attribute_arguments
 	: /* empty */   { $$ = null; }
 	| OPEN_PARENS attribute_arguments CLOSE_PARENS
 	  {
+		savedAttrParenOpenLocation = GetLocation ($1);
+		savedAttrParenCloseLocation = GetLocation ($3);
 		$$ = $2;
 	  }
 	;
@@ -1239,8 +1260,18 @@ method_declaration
 		Method method = (Method) $1;
 		method.Block = (ToplevelBlock) $3;
 		
-		if (current_container.Kind == MemberKind.Interface && method.Block != null) {
-			report.Error (531, method.Location, "`{0}': interface members cannot have a definition", method.GetSignatureForError ());
+		if (method.Block == null) {
+			method.ParameterInfo.CheckParameters (method);
+
+			if ((method.ModFlags & Modifiers.ASYNC) != 0) {
+				report.Error (1994, method.Location, "`{0}': The async modifier can only be used with methods that have a body",
+					method.GetSignatureForError ());
+			}
+		} else {
+			if (current_container.Kind == MemberKind.Interface) {
+				report.Error (531, method.Location, "`{0}': interface members cannot have a definition",
+					method.GetSignatureForError ());
+			}
 		}
 
 		current_local_parameters = null;
@@ -1298,9 +1329,14 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  PARTIAL
-	  VOID method_declaration_name
+	  VOID
+	  {
+		lexer.parsing_generic_declaration = true;
+	  }
+	  method_declaration_name
 	  OPEN_PARENS
 	  {
+		lexer.parsing_generic_declaration = false;
 	  	valid_param_mod = ParameterModifierType.All;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS 
@@ -1312,10 +1348,10 @@ method_header
 		lexer.ConstraintsParsing = false;
 		valid_param_mod = 0;
 
-		MemberName name = (MemberName) $5;
-		current_local_parameters = (ParametersCompiled) $8;
+		MemberName name = (MemberName) $6;
+		current_local_parameters = (ParametersCompiled) $9;
 
-		if ($10 != null && name.TypeArguments == null)
+		if ($11 != null && name.TypeArguments == null)
 			report.Error (80, lexer.Location,
 				      "Constraints are not allowed on non-generic declarations");
 
@@ -1330,7 +1366,6 @@ method_header
 		}
 
 		var modifiers = (Modifiers) $2;
-
 
 		const Modifiers invalid_partial_mod = Modifiers.AccessibilityMask | Modifiers.ABSTRACT | Modifiers.EXTERN |
 			Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.SEALED | Modifiers.VIRTUAL;
@@ -1354,9 +1389,8 @@ method_header
 		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
 
-		// TODO: lbag, push void
 		StoreModifierLocation (Modifiers.PARTIAL, GetLocation ($3));
-		lbag.AddMember (method, GetModifierLocations (), GetLocation ($6), GetLocation ($9));
+		lbag.AddMember (method, mod_locations, GetLocation ($7), GetLocation ($10));
 		$$ = method;
 	  }
 	| opt_attributes
@@ -1722,8 +1756,7 @@ indexer_declaration
 	  {
 		valid_param_mod = 0;
 		var type = (FullNamedExpression) $3;
-		Indexer indexer = new Indexer (current_class, type,
-			(MemberName)$4, (Modifiers) $2, (ParametersCompiled) $7, (Attributes) $1);
+		Indexer indexer = new Indexer (current_class, type, (MemberName) $4, (Modifiers) $2, (ParametersCompiled) $7, (Attributes) $1);
 			
 		current_property = indexer;
 
@@ -1746,10 +1779,13 @@ indexer_declaration
 	  }
 	  accessor_declarations 
 	  {
-		  lexer.PropertyParsing = false;
+		lexer.PropertyParsing = false;
 	  }
 	  CLOSE_BRACE
-	  { 
+	  {
+		if (current_property.AccessorFirst != null && current_property.AccessorFirst.Block == null)
+			((Indexer) current_property).ParameterInfo.CheckParameters (current_property);
+	  
 		if (doc_support)
 			current_property.DocComment = ConsumeStoredComment ();
 			
@@ -1974,6 +2010,9 @@ operator_declaration
 				current_class, decl.optype, decl.ret_type, (Modifiers) $2, 
 				current_local_parameters,
 				(ToplevelBlock) $5, (Attributes) $1, decl.location);
+				
+			if (op.Block == null)
+				op.ParameterInfo.CheckParameters (op);
 
 			if (doc_support) {
 				op.DocComment = tmpComment;
@@ -2619,9 +2658,11 @@ delegate_declaration
 
 		Delegate del = new Delegate (current_namespace, current_class, (FullNamedExpression) $4,
 					     (Modifiers) $2, name, p, (Attributes) $1);
+		p.CheckParameters (del);
 
 		ubag.PushTypeDeclaration (del);
 		ubag.PopTypeDeclaration ();
+
 		current_container.AddDelegate (del);
 		current_delegate = del;
 		lexer.ConstraintsParsing = true;
@@ -2694,9 +2735,13 @@ opt_type_argument_list
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
 		if (lang_version < LanguageVersion.ISO_2)
-			FeatureIsNotAvailable (GetLocation ($1), "generics");	  
-	  
-		$$ = $2;
+			FeatureIsNotAvailable (GetLocation ($1), "generics");
+		var list = locationListStack.Pop ();
+		list.Add (GetLocation ($1));
+		list.Add (GetLocation ($2));
+		lbag.AddLocation ($2, list);
+	
+		$$ = $2;;
 	  }
 	| OP_GENERICS_LT error
 	  {
@@ -2711,13 +2756,15 @@ type_arguments
 		TypeArguments type_args = new TypeArguments ();
 		type_args.Add ((FullNamedExpression) $1);
 		$$ = type_args;
+		locationListStack.Push (new List<Location> ());
 	  }
 	| type_arguments COMMA type
 	  {
 		TypeArguments type_args = (TypeArguments) $1;
 		type_args.Add ((FullNamedExpression) $3);
 		$$ = type_args;
-	  }	  
+		locationListStack.Peek ().Add (GetLocation ($2));
+	  }
 	;
 
 //
@@ -3722,7 +3769,7 @@ pointer_member_access
 anonymous_method_expression
 	: DELEGATE opt_anonymous_method_signature
 	  {
-		start_anonymous (false, (ParametersCompiled) $2, GetLocation ($1));
+		start_anonymous (false, (ParametersCompiled) $2, false, GetLocation ($1));
 	  }
 	  block
 	  {
@@ -3732,6 +3779,14 @@ anonymous_method_expression
 		} else {
 			lbag.AddLocation ($$, GetLocation ($1));
 		}
+	  }
+	| ASYNC DELEGATE opt_anonymous_method_signature
+	  {
+		start_anonymous (false, (ParametersCompiled) $3, true, GetLocation ($1));
+	  }
+	  block
+	  {
+		$$ = end_anonymous ((ParametersBlock) $5);
 	  }
 	;
 
@@ -3793,6 +3848,7 @@ cast_expression
 await_expression
 	: AWAIT unary_expression
 	 {
+		current_block.ParametersBlock.IsAsync = true;
 		$$ = new Await ((Expression) $2, GetLocation ($1));
 	 }
 	;
@@ -4127,31 +4183,53 @@ expression_or_error
 lambda_expression
 	: IDENTIFIER ARROW 
 	  {
-		var lt = (Tokenizer.LocatedToken) $1;
+		var lt = (Tokenizer.LocatedToken) $1;	
 		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
-		start_anonymous (true, new ParametersCompiled (p), GetLocation ($1));
+		start_anonymous (true, new ParametersCompiled (p), false, lt.Location);
 	  }
 	  lambda_expression_body
 	  {
 		$$ = end_anonymous ((ParametersBlock) $4);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+	| ASYNC IDENTIFIER ARROW
+	  {
+		var lt = (Tokenizer.LocatedToken) $2;
+		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
+		start_anonymous (true, new ParametersCompiled (p), true, lt.Location);
+	  }
+	  lambda_expression_body
+	  {
+		$$ = end_anonymous ((ParametersBlock) $5);
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
+	  }
 	| OPEN_PARENS_LAMBDA
 	  {
-		if (lang_version <= LanguageVersion.ISO_2)
-			FeatureIsNotAvailable (GetLocation ($1), "lambda expressions");
-	  
 	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
 	  }
 	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
 	  {
 	  	valid_param_mod = 0;
-		start_anonymous (true, (ParametersCompiled) $3, GetLocation ($1));
+		start_anonymous (true, (ParametersCompiled) $3, false, GetLocation ($1));
 	  }
-	  lambda_expression_body 
+	  lambda_expression_body
 	  {
 		$$ = end_anonymous ((ParametersBlock) $7);
 		lbag.AddLocation ($$, GetLocation ($4), GetLocation ($5));
+	  }
+	| ASYNC OPEN_PARENS_LAMBDA
+	  {
+	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;	  
+	  }
+	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
+	  {
+	  	valid_param_mod = 0;
+		start_anonymous (true, (ParametersCompiled) $4, true, GetLocation ($1));
+	  }
+	  lambda_expression_body
+	  {
+		$$ = end_anonymous ((ParametersBlock) $8);
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($5), GetLocation ($6));
 	  }
 	;
 
@@ -4364,7 +4442,7 @@ modifier
 		StoreModifierLocation ($$, GetLocation ($1));
 	  }
 	;
-
+	
 opt_class_base
 	: /* empty */
 	| COLON type_list
@@ -4923,10 +5001,10 @@ statement_expression
 		ExpressionStatement s = $1 as ExpressionStatement;
 		if (s == null) {
 			Expression.Error_InvalidExpressionStatement (report, GetLocation ($1));
-			s = EmptyExpressionStatement.Instance;
+			$$ = new StatementExpression (EmptyExpressionStatement.Instance);
+		} else {
+			$$ = new StatementExpression (s);
 		}
-
-		$$ = new StatementExpression (s);
 	  }
 	;
 
@@ -6490,21 +6568,24 @@ end_block (Location loc)
 	return retval;
 }
 
-void start_anonymous (bool lambda, ParametersCompiled parameters, Location loc)
+void start_anonymous (bool isLambda, ParametersCompiled parameters, bool isAsync, Location loc)
 {
-	if (lang_version == LanguageVersion.ISO_1){
-		FeatureIsNotAvailable (loc, "anonymous methods");
-	}
-
 	oob_stack.Push (current_anonymous_method);
 	oob_stack.Push (current_local_parameters);
 	oob_stack.Push (current_variable);
 
 	current_local_parameters = parameters;
+	if (isLambda) {
+		if (lang_version <= LanguageVersion.ISO_2)
+			FeatureIsNotAvailable (loc, "lambda expressions");
 
-	current_anonymous_method = lambda 
-		? new LambdaExpression (loc) 
-		: new AnonymousMethodExpression (loc);
+		current_anonymous_method = new LambdaExpression (isAsync, loc);
+	} else {
+		if (lang_version == LanguageVersion.ISO_1)
+			FeatureIsNotAvailable (loc, "anonymous methods");
+			
+		current_anonymous_method = new AnonymousMethodExpression (isAsync, loc);
+	}
 
 	// Force the next block to be created as a ToplevelBlock
 	parsing_anonymous_method = true;
@@ -6535,6 +6616,8 @@ void Error_SyntaxError (int token)
 
 void Error_SyntaxError (int error_code, int token, string msg)
 {
+	Lexer.CompleteOnEOF = false;
+
 	// An error message has been reported by tokenizer
 	if (token == Token.ERROR)
 		return;

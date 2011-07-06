@@ -18,36 +18,36 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	public interface ITypeResolveContext
 	{
 		/// <summary>
-		/// Retrieves a class.
+		/// Retrieves a type.
 		/// </summary>
-		/// <param name="nameSpace">Namespace that contains the class</param>
-		/// <param name="name">Name of the class</param>
+		/// <param name="nameSpace">Namespace that contains the type</param>
+		/// <param name="name">Name of the type</param>
 		/// <param name="typeParameterCount">Number of type parameters</param>
 		/// <param name="nameComparer">Language-specific rules for how class names are compared</param>
-		/// <returns>The type definition for the class; or null if no such class exists.</returns>
-		/// <remarks>This method never returns inner classes; it can be used only with top-level classes.</remarks>
-		ITypeDefinition GetClass(string nameSpace, string name, int typeParameterCount, StringComparer nameComparer);
+		/// <returns>The type definition for the class; or null if no such type exists.</returns>
+		/// <remarks>This method never returns inner types; it can be used only with top-level types.</remarks>
+		ITypeDefinition GetTypeDefinition(string nameSpace, string name, int typeParameterCount, StringComparer nameComparer);
 		
 		/// <summary>
-		/// Retrieves all top-level classes.
+		/// Retrieves all top-level types.
 		/// </summary>
 		/// <remarks>
 		/// If this method is called within <c>using (pc.Synchronize())</c>, then the returned enumerable is valid
 		/// only until the end of the synchronize block.
 		/// </remarks>
-		IEnumerable<ITypeDefinition> GetClasses();
+		IEnumerable<ITypeDefinition> GetTypes();
 		
 		/// <summary>
-		/// Retrieves all classes in the specified namespace.
+		/// Retrieves all types in the specified namespace.
 		/// </summary>
-		/// <param name="nameSpace">Namespace in which classes are being retrieved. Use <c>string.Empty</c> for the root namespace.</param>
+		/// <param name="nameSpace">Namespace in which types are being retrieved. Use <c>string.Empty</c> for the root namespace.</param>
 		/// <param name="nameComparer">Language-specific rules for how namespace names are compared</param>
-		/// <returns>List of classes within that namespace.</returns>
+		/// <returns>List of types within that namespace.</returns>
 		/// <remarks>
 		/// If this method is called within <c>using (var spc = pc.Synchronize())</c>, then the returned enumerable is valid
 		/// only until the end of the synchronize block.
 		/// </remarks>
-		IEnumerable<ITypeDefinition> GetClasses(string nameSpace, StringComparer nameComparer);
+		IEnumerable<ITypeDefinition> GetTypes(string nameSpace, StringComparer nameComparer);
 		
 		/// <summary>
 		/// Retrieves all namespaces.
@@ -112,13 +112,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return null;
 		}
 		
-		IEnumerable<ITypeDefinition> ITypeResolveContext.GetClasses()
+		IEnumerable<ITypeDefinition> ITypeResolveContext.GetTypes()
 		{
 			Contract.Ensures(Contract.Result<IEnumerable<ITypeDefinition>>() != null);
 			return null;
 		}
 		
-		IEnumerable<ITypeDefinition> ITypeResolveContext.GetClasses(string nameSpace, StringComparer nameComparer)
+		IEnumerable<ITypeDefinition> ITypeResolveContext.GetTypes(string nameSpace, StringComparer nameComparer)
 		{
 			Contract.Requires(nameSpace != null);
 			Contract.Requires(nameComparer != null);

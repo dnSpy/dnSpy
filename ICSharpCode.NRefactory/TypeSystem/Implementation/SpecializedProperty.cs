@@ -56,12 +56,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		/// <summary>
 		/// Performs type substitution in parameter types and in the return type.
 		/// </summary>
-		public void SubstituteTypes(ITypeResolveContext context, TypeVisitor substitution)
+		public void SubstituteTypes(Func<ITypeReference, ITypeReference> substitution)
 		{
-			this.ReturnType = this.ReturnType.Resolve(context).AcceptVisitor(substitution);
+			this.ReturnType = substitution(this.ReturnType);
 			var p = this.Parameters;
 			for (int i = 0; i < p.Count; i++) {
-				IType newType = p[i].Type.Resolve(context).AcceptVisitor(substitution);
+				ITypeReference newType = substitution(p[i].Type);
 				if (newType != p[i].Type) {
 					p[i] = new DefaultParameter(p[i]) { Type = newType };
 				}

@@ -159,7 +159,7 @@ namespace Mono.CSharp
 			return branching;
 		}
 
-		public FlowBranchingIterator StartFlowBranching (Iterator iterator, FlowBranching parent)
+		public FlowBranchingIterator StartFlowBranching (StateMachineInitializer iterator, FlowBranching parent)
 		{
 			FlowBranchingIterator branching = new FlowBranchingIterator (parent, iterator);
 			current_flow_branching = branching;
@@ -266,6 +266,8 @@ namespace Mono.CSharp
 			ConstructorScope = 1 << 11,
 
 			UsingInitializerScope = 1 << 12,
+
+			LockScope = 1 << 13,
 
 			/// <summary>
 			///   Whether control flow analysis is enabled

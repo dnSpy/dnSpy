@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser
 {
-	[TestFixture, Ignore("TypeSystemConvertVisitor is not complete yet")]
+	[TestFixture]
 	public class TypeSystemConvertVisitorTests : TypeSystemTests
 	{
 		ITypeResolveContext ctx = CecilLoaderTests.Mscorlib;
@@ -30,7 +30,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			TypeSystemConvertVisitor visitor = new TypeSystemConvertVisitor(testCasePC, fileName);
 			cu.AcceptVisitor(visitor, null);
 			ParsedFile parsedFile = visitor.ParsedFile;
-			((SimpleProjectContent)testCasePC).UpdateProjectContent(null, parsedFile.TopLevelTypeDefinitions, null, null);
+			((SimpleProjectContent)testCasePC).UpdateProjectContent(null, parsedFile);
 		}
 	}
 }

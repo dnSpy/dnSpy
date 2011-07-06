@@ -29,7 +29,7 @@ using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class PrimitiveType : AstType
+	public class PrimitiveType : AstType, IRelocatable
 	{
 		public string Keyword { get; set; }
 		public AstLocation Location { get; set; }
@@ -59,6 +59,14 @@ namespace ICSharpCode.NRefactory.CSharp
 				return new AstLocation (Location.Line, Location.Column + (Keyword != null ? Keyword.Length : 0));
 			}
 		}
+		
+		
+		#region IRelocationable implementation
+		void IRelocatable.SetStartLocation (AstLocation startLocation)
+		{
+			this.Location = startLocation;
+		}
+		#endregion
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{

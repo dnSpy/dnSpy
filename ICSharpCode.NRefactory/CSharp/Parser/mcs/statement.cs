@@ -28,7 +28,7 @@ namespace Mono.CSharp {
 		///   Resolves the statement, true means that all sub-statements
 		///   did resolve ok.
 		//  </summary>
-		public virtual bool Resolve (BlockContext ec)
+		public virtual bool Resolve (BlockContext bc)
 		{
 			return true;
 		}
@@ -624,7 +624,8 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class StatementExpression : Statement {
+	public class StatementExpression : Statement
+	{
 		ExpressionStatement expr;
 		
 		public StatementExpression (ExpressionStatement expr)
@@ -637,10 +638,10 @@ namespace Mono.CSharp {
 			get { return this.expr; }
 		}
 		
-		public override bool Resolve (BlockContext ec)
+		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
-			expr = expr.ResolveStatement (ec);
-			return expr != null;
+			StatementExpression target = (StatementExpression) t;
+			target.expr = (ExpressionStatement) expr.Clone (clonectx);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -648,16 +649,10 @@ namespace Mono.CSharp {
 			expr.EmitStatement (ec);
 		}
 
-		public override string ToString ()
+		public override bool Resolve (BlockContext ec)
 		{
-			return "StatementExpression (" + expr + ")";
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Statement t)
-		{
-			StatementExpression target = (StatementExpression) t;
-
-			target.expr = (ExpressionStatement) expr.Clone (clonectx);
+			expr = expr.ResolveStatement (ec);
+			return expr != null;
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
@@ -750,7 +745,7 @@ namespace Mono.CSharp {
 	public class Return : ExitStatement
 	{
 		public Expression Expr { get; protected set; }
-		
+
 		public Return (Expression expr, Location l)
 		{
 			Expr = expr;
@@ -771,6 +766,21 @@ namespace Mono.CSharp {
 				if (ec.ReturnType.Kind == MemberKind.Void)
 					return true;
 
+				//
+				// Return must not be followed by an expression when
+				// the method return type is Task
+				//
+				if (ec.CurrentAnonymousMethod is AsyncInitializer) {
+					var storey = (AsyncTaskStorey) ec.CurrentAnonymousMethod.Storey;
+					if (storey.ReturnType == ec.Module.PredefinedTypes.Task.TypeSpec) {
+						//
+						// Extra trick not to emit ret/leave inside awaiter body
+						//
+						Expr = EmptyExpression.Null;
+						return true;
+					}
+				}
+
 				if (ec.CurrentIterator != null) {
 					Error_ReturnFromIterator (ec);
 				} else {
@@ -783,10 +793,11 @@ namespace Mono.CSharp {
 			}
 
 			Expr = Expr.Resolve (ec);
+			TypeSpec block_return_type = ec.ReturnType;
 
 			AnonymousExpression am = ec.CurrentAnonymousMethod;
 			if (am == null) {
-				if (ec.ReturnType.Kind == MemberKind.Void) {
+				if (block_return_type.Kind == MemberKind.Void) {
 					ec.Report.Error (127, loc,
 						"`{0}': A return keyword must not be followed by any expression when method returns void",
 						ec.GetSignatureForError ());
@@ -797,21 +808,49 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				var l = am as AnonymousMethodBody;
-				if (l != null && l.ReturnTypeInference != null && Expr != null) {
-					l.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
-					return true;
+				var async_block = am as AsyncInitializer;
+				if (async_block != null) {
+					if (Expr != null) {
+						var storey = (AsyncTaskStorey) am.Storey;
+						var async_type = storey.ReturnType;
+
+						if (async_type == null && async_block.ReturnTypeInference != null) {
+							async_block.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
+							return true;
+						}
+
+						if (!async_type.IsGenericTask) {
+							if (this is ContextualReturn)
+								return true;
+
+							ec.Report.Error (1997, loc,
+								"`{0}': A return keyword must not be followed by an expression when async method returns Task. Consider using Task<T>",
+								ec.GetSignatureForError ());
+							return false;
+						}
+
+						//
+						// The return type is actually Task<T> type argument
+						//
+						block_return_type = async_type.TypeArguments[0];
+					}
+				} else {
+					var l = am as AnonymousMethodBody;
+					if (l != null && l.ReturnTypeInference != null && Expr != null) {
+						l.ReturnTypeInference.AddCommonTypeBound (Expr.Type);
+						return true;
+					}
 				}
 			}
 
 			if (Expr == null)
 				return false;
 
-			if (Expr.Type != ec.ReturnType) {
-				Expr = Convert.ImplicitConversionRequired (ec, Expr, ec.ReturnType, loc);
+			if (Expr.Type != block_return_type) {
+				Expr = Convert.ImplicitConversionRequired (ec, Expr, block_return_type, loc);
 
 				if (Expr == null) {
-					if (am != null) {
+					if (am != null && block_return_type == ec.ReturnType) {
 						ec.Report.Error (1662, loc,
 							"Cannot convert `{0}' to delegate type `{1}' because some of the return types in the block are not implicitly convertible to the delegate return type",
 							am.ContainerType, am.GetSignatureForError ());
@@ -827,6 +866,17 @@ namespace Mono.CSharp {
 		{
 			if (Expr != null) {
 				Expr.Emit (ec);
+
+				var async_body = ec.CurrentAnonymousMethod as AsyncInitializer;
+				if (async_body != null) {
+					var async_return = ((AsyncTaskStorey) async_body.Storey).HoistedReturn;
+
+					// It's null for await without async
+					if (async_return != null)
+						async_return.EmitAssign (ec);
+
+					return;
+				}
 
 				if (unwind_protect)
 					ec.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
@@ -1843,7 +1893,8 @@ namespace Mono.CSharp {
 			HasCapturedVariable = 64,
 			HasCapturedThis = 1 << 7,
 			IsExpressionTree = 1 << 8,
-			CompilerGenerated = 1 << 9
+			CompilerGenerated = 1 << 9,
+			IsAsync = 1 << 10
 		}
 
 		public Block Parent;
@@ -1978,12 +2029,11 @@ namespace Mono.CSharp {
 		{
 			var pi = variable as ParametersBlock.ParameterInfo;
 			if (pi != null) {
-				var p = pi.Parameter;
-				ParametersBlock.TopBlock.Report.Error (100, p.Location, "The parameter name `{0}' is a duplicate", p.Name);
+				pi.Parameter.Error_DuplicateName (ParametersBlock.TopBlock.Report);
+			} else {
+				ParametersBlock.TopBlock.Report.Error (128, variable.Location,
+					"A local variable named `{0}' is already defined in this scope", name);
 			}
-
-			ParametersBlock.TopBlock.Report.Error (128, variable.Location,
-				"A local variable named `{0}' is already defined in this scope", name);
 		}
 					
 		public virtual void Error_AlreadyDeclaredTypeParameter (string name, Location loc)
@@ -2424,7 +2474,7 @@ namespace Mono.CSharp {
 		}
 
 		// 
-		// Block is converted to an expression
+		// Block is converted into an expression
 		//
 		sealed class BlockScopeExpression : Expression
 		{
@@ -2516,6 +2566,16 @@ namespace Mono.CSharp {
 		}
 
 		#region Properties
+
+		public bool IsAsync
+		{
+			get {
+				return (flags & Flags.IsAsync) != 0;
+			}
+			set {
+				flags = value ? flags | Flags.IsAsync : flags & ~Flags.IsAsync;
+			}
+		}
 
 		//
 		// Block has been converted to expression tree
@@ -2663,13 +2723,26 @@ namespace Mono.CSharp {
 			if (rc.ReturnType.Kind != MemberKind.Void && !unreachable) {
 				if (rc.CurrentAnonymousMethod == null) {
 					// FIXME: Missing FlowAnalysis for generated iterator MoveNext method
-					if (md is IteratorMethod) {
+					if (md is StateMachineMethod) {
 						unreachable = true;
 					} else {
 						rc.Report.Error (161, md.Location, "`{0}': not all code paths return a value", md.GetSignatureForError ());
 						return false;
 					}
 				} else {
+					//
+					// If an asynchronous body of F is either an expression classified as nothing, or a 
+					// statement block where no return statements have expressions, the inferred return type is Task
+					//
+					if (IsAsync) {
+						var am = rc.CurrentAnonymousMethod as AnonymousMethodBody;
+						if (am != null && am.ReturnTypeInference != null && !am.ReturnTypeInference.HasBounds (0)) {
+							am.ReturnTypeInference = null;
+							am.ReturnType = rc.Module.PredefinedTypes.Task.TypeSpec;
+							return true;
+						}
+					}
+
 					rc.Report.Error (1643, rc.CurrentAnonymousMethod.Location, "Not all code paths return a value in anonymous method of type `{0}'",
 							  rc.CurrentAnonymousMethod.GetSignatureForError ());
 					return false;
@@ -2706,6 +2779,22 @@ namespace Mono.CSharp {
 
 			statements = new List<Statement> (1);
 			AddStatement (new Return (iterator, iterator.Location));
+		}
+
+		public void WrapIntoAsyncTask (TypeContainer host, TypeSpec returnType)
+		{
+			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
+			pb.EndLocation = EndLocation;
+			pb.statements = statements;
+
+			var block_type = host.Module.Compiler.BuiltinTypes.Void;
+			var initializer = new AsyncInitializer (pb, host, block_type);
+			initializer.Type = block_type;
+
+			am_storey = new AsyncTaskStorey (initializer, returnType);
+
+			statements = new List<Statement> (1);
+			AddStatement (new StatementExpression (initializer));
 		}
 	}
 
@@ -2750,6 +2839,16 @@ namespace Mono.CSharp {
 		{
 			this.compiler = source.TopBlock.compiler;
 			top_block = this;
+		}
+
+		public bool IsIterator
+		{
+			get {
+				return (flags & Flags.IsIterator) != 0;
+			}
+			set {
+				flags = value ? flags | Flags.IsIterator : flags & ~Flags.IsIterator;
+			}
 		}
 
 		public override void AddLocalName (string name, INamedBlockVariable li)
@@ -3005,11 +3104,6 @@ namespace Mono.CSharp {
 			}
 
 			return this_variable;
-		}
-
-		public bool IsIterator {
-			get { return (flags & Flags.IsIterator) != 0; }
-			set { flags = value ? flags | Flags.IsIterator : flags & ~Flags.IsIterator; }
 		}
 
 		public bool IsThisAssigned (BlockContext ec)
@@ -3963,7 +4057,8 @@ namespace Mono.CSharp {
 		{
 			return end;
 		}
-		public virtual void EmitForDispose (EmitContext ec, Iterator iterator, Label end, bool have_dispatcher)
+
+		public virtual void EmitForDispose (EmitContext ec, LocalBuilder pc, Label end, bool have_dispatcher)
 		{
 		}
 	}
@@ -4004,7 +4099,7 @@ namespace Mono.CSharp {
 			EmitPreTryBody (ec);
 
 			if (resume_points != null) {
-				ec.EmitInt ((int) Iterator.State.Running);
+				ec.EmitInt ((int) IteratorStorey.State.Running);
 				ec.Emit (OpCodes.Stloc, iter.CurrentPC);
 			}
 
@@ -4080,7 +4175,7 @@ namespace Mono.CSharp {
 			return dispose_try_block;
 		}
 
-		public override void EmitForDispose (EmitContext ec, Iterator iterator, Label end, bool have_dispatcher)
+		public override void EmitForDispose (EmitContext ec, LocalBuilder pc, Label end, bool have_dispatcher)
 		{
 			if (emitted_dispose)
 				return;
@@ -4099,7 +4194,7 @@ namespace Mono.CSharp {
 
 			Label [] labels = null;
 			for (int i = 0; i < resume_points.Count; ++i) {
-				ResumableStatement s = (ResumableStatement) resume_points [i];
+				ResumableStatement s = resume_points [i];
 				Label ret = s.PrepareForDispose (ec, end_of_try);
 				if (ret.Equals (end_of_try) && labels == null)
 					continue;
@@ -4120,7 +4215,7 @@ namespace Mono.CSharp {
 
 				if (emit_dispatcher) {
 					//SymbolWriter.StartIteratorDispatcher (ec.ig);
-					ec.Emit (OpCodes.Ldloc, iterator.CurrentPC);
+					ec.Emit (OpCodes.Ldloc, pc);
 					ec.EmitInt (first_resume_pc);
 					ec.Emit (OpCodes.Sub);
 					ec.Emit (OpCodes.Switch, labels);
@@ -4128,7 +4223,7 @@ namespace Mono.CSharp {
 				}
 
 				foreach (ResumableStatement s in resume_points)
-					s.EmitForDispose (ec, iterator, end_of_try, emit_dispatcher);
+					s.EmitForDispose (ec, pc, end_of_try, emit_dispatcher);
 			}
 
 			ec.MarkLabel (end_of_try);
@@ -4141,7 +4236,8 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Lock : ExceptionStatement {
+	public class Lock : ExceptionStatement
+	{
 		Expression expr;
 		TemporaryVariableReference expr_copy;
 		TemporaryVariableReference lock_taken;
@@ -4182,9 +4278,11 @@ namespace Mono.CSharp {
 				locked = false;
 			}
 
-			ec.StartFlowBranching (this);
-			Statement.Resolve (ec);
-			ec.EndFlowBranching ();
+			using (ec.Set (ResolveContext.Options.LockScope)) {
+				ec.StartFlowBranching (this);
+				Statement.Resolve (ec);
+				ec.EndFlowBranching ();
+			}
 
 			if (lv != null) {
 				lv.IsLockedByStatement = locked;

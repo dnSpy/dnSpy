@@ -388,5 +388,62 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			AssertType(typeof(dynamic), resolver.ResolveBinaryOperator(
 				BinaryOperatorType.NullCoalescing, MakeResult(typeof(string)), MakeResult(typeof(dynamic))));
 		}
+		
+		[Test, Ignore("user-defined operators not yet implemented")]
+		public void LiftedUserDefined()
+		{
+			AssertType(typeof(TimeSpan), resolver.ResolveBinaryOperator(
+				BinaryOperatorType.Subtract, MakeResult(typeof(DateTime)), MakeResult(typeof(DateTime))));
+			AssertType(typeof(TimeSpan?), resolver.ResolveBinaryOperator(
+				BinaryOperatorType.Subtract, MakeResult(typeof(DateTime?)), MakeResult(typeof(DateTime))));
+			AssertType(typeof(TimeSpan?), resolver.ResolveBinaryOperator(
+				BinaryOperatorType.Subtract, MakeResult(typeof(DateTime)), MakeResult(typeof(DateTime?))));
+			AssertType(typeof(TimeSpan?), resolver.ResolveBinaryOperator(
+				BinaryOperatorType.Subtract, MakeResult(typeof(DateTime?)), MakeResult(typeof(DateTime?))));
+		}
+		
+		[Test, Ignore("user-defined operators not yet implemented")]
+		public void UserDefinedNeedsLiftingDueToImplicitConversion()
+		{
+			string program = @"struct S {}
+struct A {
+	public static implicit operator S?(A a) { return null; }
+	
+	public static S operator +(A a, S s) { return s; }
+}
+class Test {
+	void M(A a) {
+		var s = $a + a$;
+	}
+}
+";
+			MemberResolveResult trr = Resolve<MemberResolveResult>(program);
+			Assert.IsFalse(trr.IsError);
+			Assert.AreEqual("A.op_Addition", trr.Member.FullName);
+			// even though we're calling the lifted operator, trr.Member should be the original operator method
+			Assert.AreEqual("S", trr.Member.ReturnType.Resolve(context).ReflectionName);
+			Assert.AreEqual("System.Nullable`1[[S]]", trr.Type.ReflectionName);
+		}
+		
+		[Test, Ignore("user-defined operators not yet implemented")]
+		public void ThereIsNoLiftedOperatorsForClasses()
+		{
+			string program = @"struct S {}
+class A {
+	public static implicit operator S?(A a) { return null; }
+	
+	public static S operator +(A a, S s) { return s; }
+}
+class Test {
+	void M(A a) {
+		var s = $a + a$;
+	}
+}
+";
+			MemberResolveResult trr = Resolve<MemberResolveResult>(program);
+			Assert.IsTrue(trr.IsError); // cannot convert from A to S
+			Assert.AreEqual("A.op_Addition", trr.Member.FullName);
+			Assert.AreEqual("S", trr.Type.ReflectionName);
+		}
 	}
 }

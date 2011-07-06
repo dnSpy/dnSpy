@@ -158,28 +158,18 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class NamedArgument : Argument
+	public class MovableArgument : Argument
 	{
-		public readonly string Name;
-		readonly Location loc;
 		LocalTemporary variable;
 
-		public NamedArgument (string name, Location loc, Expression expr)
-			: this (name, loc, expr, AType.None)
+		public MovableArgument (Argument arg)
+			: this (arg.Expr, arg.ArgType)
 		{
 		}
 
-		public NamedArgument (string name, Location loc, Expression expr, AType modifier)
+		protected MovableArgument (Expression expr, AType modifier)
 			: base (expr, modifier)
 		{
-			this.Name = name;
-			this.loc = loc;
-		}
-
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			ec.Report.Error (853, loc, "An expression tree cannot contain named argument");
-			return base.CreateExpressionTree (ec);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -208,6 +198,30 @@ namespace Mono.CSharp
 
 			Expr = variable;
 		}
+	}
+
+	public class NamedArgument : MovableArgument
+	{
+		public readonly string Name;
+		readonly Location loc;
+
+		public NamedArgument (string name, Location loc, Expression expr)
+			: this (name, loc, expr, AType.None)
+		{
+		}
+
+		public NamedArgument (string name, Location loc, Expression expr, AType modifier)
+			: base (expr, modifier)
+		{
+			this.Name = name;
+			this.loc = loc;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			ec.Report.Error (853, loc, "An expression tree cannot contain named argument");
+			return base.CreateExpressionTree (ec);
+		}
 
 		public Location Location {
 			get { return loc; }
@@ -218,24 +232,25 @@ namespace Mono.CSharp
 	{
 		sealed class ArgumentsOrdered : Arguments
 		{
-			List<NamedArgument> ordered;
+			readonly List<MovableArgument> ordered;
 
 			public ArgumentsOrdered (Arguments args)
 				: base (args.Count)
 			{
 				AddRange (args);
-				ordered = new List<NamedArgument> ();
+				ordered = new List<MovableArgument> ();
 			}
 
-			public void AddOrdered (NamedArgument na)
+			public void AddOrdered (MovableArgument arg)
 			{
-				ordered.Add (na);
+				ordered.Add (arg);
 			}
 
 			public override Expression[] Emit (EmitContext ec, bool dup_args)
 			{
-				foreach (NamedArgument na in ordered)
-					na.EmitAssign (ec);
+				foreach (var a in ordered) {
+					a.EmitAssign (ec);
+				}
 
 				return base.Emit (ec, dup_args);
 			}
@@ -488,8 +503,23 @@ namespace Mono.CSharp
 				return this;
 
 			ArgumentsOrdered ra = this as ArgumentsOrdered;
-			if (ra == null)
+			if (ra == null) {
 				ra = new ArgumentsOrdered (this);
+
+				for (int i = 0; i < args.Count; ++i) {
+					var la = args [i];
+					if (la == a)
+						break;
+
+					var ma = la as MovableArgument;
+					if (ma == null) {
+						ma = new MovableArgument (la);
+						ra.args[i] = ma;
+					}
+
+					ra.AddOrdered (ma);
+				}
+			}
 
 			ra.AddOrdered (a);
 			return ra;

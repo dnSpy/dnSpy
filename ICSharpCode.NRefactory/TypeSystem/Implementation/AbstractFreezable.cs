@@ -63,18 +63,18 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				return new List<T>(inputList);
 		}
 		
-		protected static IList<T> FreezeList<T>(IList<T> list) where T : IFreezable
+		protected static ReadOnlyCollection<T> FreezeList<T>(IList<T> list) where T : IFreezable
 		{
 			if (list == null || list.Count == 0)
 				return EmptyList<T>.Instance;
-			list = new ReadOnlyCollection<T>(list.ToArray());
-			foreach (T item in list) {
+			var result = new ReadOnlyCollection<T>(list.ToArray());
+			foreach (T item in result) {
 				item.Freeze();
 			}
-			return list;
+			return result;
 		}
 		
-		protected static IList<string> FreezeList(IList<string> list)
+		protected static ReadOnlyCollection<string> FreezeList(IList<string> list)
 		{
 			if (list == null || list.Count == 0)
 				return EmptyList<string>.Instance;
@@ -82,7 +82,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				return new ReadOnlyCollection<string>(list.ToArray());
 		}
 		
-		protected static IList<ITypeReference> FreezeList(IList<ITypeReference> list)
+		protected static ReadOnlyCollection<ITypeReference> FreezeList(IList<ITypeReference> list)
 		{
 			if (list == null || list.Count == 0)
 				return EmptyList<ITypeReference>.Instance;

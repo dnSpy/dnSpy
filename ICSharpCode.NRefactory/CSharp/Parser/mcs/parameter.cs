@@ -496,6 +496,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void Error_DuplicateName (Report r)
+		{
+			r.Error (100, Location, "The parameter name `{0}' is a duplicate", Name);
+		}
+
 		public virtual string GetSignatureForError ()
 		{
 			string type_name;
@@ -1107,6 +1112,20 @@ namespace Mono.CSharp {
 			ParametersCompiled parameters = new ParametersCompiled (all_params, all_types);
 			parameters.has_params = userParams.has_params;
 			return parameters;
+		}
+
+		//
+		// Parameters checks for members which don't have a block
+		//
+		public void CheckParameters (MemberCore member)
+		{
+			for (int i = 0; i < parameters.Length; ++i) {
+				var name = parameters[i].Name;
+				for (int ii = i + 1; ii < parameters.Length; ++ii) {
+					if (parameters[ii].Name == name)
+						this[ii].Error_DuplicateName (member.Compiler.Report);
+				}
+			}
 		}
 
 		public bool Resolve (IMemberContext ec)

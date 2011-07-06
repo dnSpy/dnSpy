@@ -63,27 +63,14 @@ namespace Mono.CSharp
 					// DefineInitializedData because it creates public type,
 					// and its name is not unique among modules
 					//
-					size_type = new Struct (null, this, new MemberName ("$ArrayType=" + data.Length, Location), Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED, null);
+					size_type = new Struct (null, this, new MemberName ("$ArrayType=" + data.Length, loc), Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED, null);
 					size_type.CreateType ();
 					size_type.DefineType ();
 
 					size_types.Add (data.Length, size_type);
-					var ctor = Module.PredefinedMembers.StructLayoutAttributeCtor.Resolve (Location);
-					if (ctor != null) {
-						var argsEncoded = new AttributeEncoder ();
-						argsEncoded.Encode ((short) LayoutKind.Explicit);
 
-						var field_size = Module.PredefinedMembers.StructLayoutSize.Resolve (Location);
-						var pack = Module.PredefinedMembers.StructLayoutPack.Resolve (Location);
-						if (field_size != null && pack != null) {
-							argsEncoded.EncodeNamedArguments (
-								new[] { field_size, pack },
-								new[] { new IntConstant (Compiler.BuiltinTypes, (int) data.Length, Location), new IntConstant (Compiler.BuiltinTypes, 1, Location) }
-							);
-
-							size_type.TypeBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), argsEncoded.ToArray ());
-						}
-					}
+					// It has to work even if StructLayoutAttribute does not exist
+					size_type.TypeBuilder.__SetLayout (1, data.Length);
 				}
 
 				var name = "$field-" + fields.ToString ("X");

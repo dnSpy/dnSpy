@@ -46,12 +46,11 @@ namespace Mono.CSharp {
 		{
 			if (attrs == null)
 				return;
-
+		
 			if (attributes == null)
 				attributes = attrs;
 			else
 				attributes.AddAttributes (attrs.Attrs);
-
 			attrs.AttachTo (this, context);
 		}
 
@@ -1108,16 +1107,26 @@ namespace Mono.CSharp {
 	public class Attributes
 	{
 		public readonly List<Attribute> Attrs;
+#if FULL_AST
+		public readonly List<List<Attribute>> Sections = new List<List<Attribute>> ();
+#endif
 
 		public Attributes (Attribute a)
 		{
 			Attrs = new List<Attribute> ();
 			Attrs.Add (a);
+			
+#if FULL_AST
+			Sections.Add (Attrs);
+#endif
 		}
 
 		public Attributes (List<Attribute> attrs)
 		{
 			Attrs = attrs;
+#if FULL_AST
+			Sections.Add (attrs);
+#endif
 		}
 
 		public void AddAttribute (Attribute attr)
@@ -1127,7 +1136,11 @@ namespace Mono.CSharp {
 
 		public void AddAttributes (List<Attribute> attrs)
 		{
+#if FULL_AST
+			Sections.Add (attrs);
+#else
 			Attrs.AddRange (attrs);
+#endif
 		}
 
 		public void AttachTo (Attributable attributable, IMemberContext context)

@@ -197,6 +197,18 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// Returns true for instances of System.Threading.Tasks.Task<T>
+		//
+		public virtual bool IsGenericTask {
+			get {
+				return false;
+			}
+			set {
+				state = value ? state | StateFlags.GenericTask : state & ~StateFlags.GenericTask;
+			}
+		}
+
 		// TODO: Should probably do
 		// IsGenericType -- recursive
 		// HasTypeParameter -- non-recursive
@@ -1638,29 +1650,27 @@ namespace Mono.CSharp
 
 		public override string GetSignatureForDocumentation ()
 		{
-			var e = Element;
-			List<int> ranks = new List<int> (2);
-			ranks.Add (rank);
-
-			while (e is ArrayContainer) {
-				var ac = (ArrayContainer) e;
-				ranks.Add (ac.rank);
-				e = ac.Element;
-			}
-
-			StringBuilder sb = new StringBuilder (e.GetSignatureForDocumentation ());
-			for (int r = 0; r < ranks.Count; ++r) {
-				sb.Append ("[");
-				for (int i = 1; i < ranks[r]; i++) {
-					if (i == 1)
-						sb.Append ("0:");
-
-					sb.Append (",0:");
-				}
-				sb.Append ("]");
-			}
-
+			StringBuilder sb = new StringBuilder ();
+			GetElementSignatureForDocumentation (sb);
 			return sb.ToString ();
+		}
+
+		void GetElementSignatureForDocumentation (StringBuilder sb)
+		{
+			var ac = Element as ArrayContainer;
+			if (ac == null)
+				sb.Append (Element.GetSignatureForDocumentation ());
+			else
+				ac.GetElementSignatureForDocumentation (sb);
+
+			sb.Append ("[");
+			for (int i = 1; i < rank; i++) {
+				if (i == 1)
+					sb.Append ("0:");
+
+				sb.Append (",0:");
+			}
+			sb.Append ("]");
 		}
 
 		public static ArrayContainer MakeType (ModuleContainer module, TypeSpec element)

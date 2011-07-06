@@ -10,6 +10,8 @@ using System.Runtime.InteropServices;
 
 namespace ICSharpCode.NRefactory.TypeSystem.TestCase
 {
+	public delegate S GenericDelegate<in T, out S>(T input) where T : S where S : class;
+	
 	public class SimplePublicClass
 	{
 		public void Method() {}
