@@ -2064,8 +2064,88 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitSelectStatement(SelectStatement selectStatement, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(selectStatement);
+			
+			WriteKeyword("Select");
+			WriteKeyword("Case");
+			selectStatement.Expression.AcceptVisitor(this, data);
+			NewLine();
+			Indent();
+			
+			foreach (CaseStatement stmt in selectStatement.Cases) {
+				stmt.AcceptVisitor(this, data);
+			}
+			
+			Unindent();
+			WriteKeyword("End");
+			WriteKeyword("Select");
+			
+			return EndNode(selectStatement);
 		}
+		
+		public object VisitCaseStatement(CaseStatement caseStatement, object data)
+		{
+			StartNode(caseStatement);
+			
+			WriteKeyword("Case");
+			if (caseStatement.Clauses.Count == 1 && caseStatement.Clauses.First().Expression.IsNull)
+				WriteKeyword("Else");
+			else
+				WriteCommaSeparatedList(caseStatement.Clauses);
+			NewLine();
+			Indent();
+			caseStatement.Body.AcceptVisitor(this, data);
+			Unindent();
+			
+			return EndNode(caseStatement);
+		}
+		
+		public object VisitSimpleCaseClause(SimpleCaseClause simpleCaseClause, object data)
+		{
+			StartNode(simpleCaseClause);
+			simpleCaseClause.Expression.AcceptVisitor(this, data);
+			return EndNode(simpleCaseClause);
+		}
+		
+		public object VisitRangeCaseClause(RangeCaseClause rangeCaseClause, object data)
+		{
+			StartNode(rangeCaseClause);
+			rangeCaseClause.Expression.AcceptVisitor(this, data);
+			WriteKeyword("To");
+			rangeCaseClause.ToExpression.AcceptVisitor(this, data);
+			return EndNode(rangeCaseClause);
+		}
+		
+		public object VisitComparisonCaseClause(ComparisonCaseClause comparisonCaseClause, object data)
+		{
+			StartNode(comparisonCaseClause);
+			switch (comparisonCaseClause.Operator) {
+				case ComparisonOperator.Equality:
+					WriteToken("=", ComparisonCaseClause.OperatorRole);
+					break;
+				case ComparisonOperator.InEquality:
+					WriteToken("<>", ComparisonCaseClause.OperatorRole);
+					break;
+				case ComparisonOperator.LessThan:
+					WriteToken("<", ComparisonCaseClause.OperatorRole);
+					break;
+				case ComparisonOperator.GreaterThan:
+					WriteToken(">", ComparisonCaseClause.OperatorRole);
+					break;
+				case ComparisonOperator.LessThanOrEqual:
+					WriteToken("<=", ComparisonCaseClause.OperatorRole);
+					break;
+				case ComparisonOperator.GreaterThanOrEqual:
+					WriteToken(">=", ComparisonCaseClause.OperatorRole);
+					break;
+				default:
+					throw new Exception("Invalid value for ComparisonOperator");
+			}
+			Space();
+			comparisonCaseClause.Expression.AcceptVisitor(this, data);
+			return EndNode(comparisonCaseClause);
+		}
+
 		
 		public object VisitYieldStatement(YieldStatement yieldStatement, object data)
 		{

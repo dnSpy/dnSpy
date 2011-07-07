@@ -77,6 +77,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			var left = (Expression)assignmentExpression.Left.AcceptVisitor(this, data);
 			var op = AssignmentOperatorType.None;
+			var right = (Expression)assignmentExpression.Right.AcceptVisitor(this, data);
 			
 			switch (assignmentExpression.Operator) {
 				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Assign:
@@ -88,35 +89,37 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Subtract:
 					op = AssignmentOperatorType.Subtract;
 					break;
-//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Multiply:
-//
-//					break;
-//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Divide:
-//
-//					break;
-//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Modulus:
-//
-//					break;
-//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ShiftLeft:
-//
-//					break;
-//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ShiftRight:
-//
-//					break;
-//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.BitwiseAnd:
-//
-//					break;
-//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.BitwiseOr:
-//
-//					break;
-//				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ExclusiveOr:
-//
-//					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Multiply:
+					op = AssignmentOperatorType.Multiply;
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Divide:
+					op = AssignmentOperatorType.Divide;
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.Modulus:
+					op = AssignmentOperatorType.Assign;
+					right = new BinaryOperatorExpression((Expression)left.Clone(), BinaryOperatorType.Modulus, right);
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ShiftLeft:
+					op = AssignmentOperatorType.ShiftLeft;
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ShiftRight:
+					op = AssignmentOperatorType.ShiftRight;
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.BitwiseAnd:
+					op = AssignmentOperatorType.Assign;
+					right = new BinaryOperatorExpression((Expression)left.Clone(), BinaryOperatorType.BitwiseAnd, right);
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.BitwiseOr:
+					op = AssignmentOperatorType.Assign;
+					right = new BinaryOperatorExpression((Expression)left.Clone(), BinaryOperatorType.BitwiseOr, right);
+					break;
+				case ICSharpCode.NRefactory.CSharp.AssignmentOperatorType.ExclusiveOr:
+					op = AssignmentOperatorType.Assign;
+					right = new BinaryOperatorExpression((Expression)left.Clone(), BinaryOperatorType.ExclusiveOr, right);
+					break;
 				default:
 					throw new Exception("Invalid value for AssignmentOperatorType: " + assignmentExpression.Operator);
 			}
-			
-			var right = (Expression)assignmentExpression.Right.AcceptVisitor(this, data);
 			
 			var expr = new AssignmentExpression(left, op, right);
 			return EndNode(assignmentExpression, expr);
@@ -222,10 +225,38 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				return CastType.CType;
 			
 			switch (primType.Keyword) {
+				case "Boolean":
+					return CastType.CBool;
+				case "Byte":
+					return CastType.CByte;
+				case "Char":
+					return CastType.CChar;
+				case "Date":
+					return CastType.CDate;
+				case "Double":
+					return CastType.CDbl;
+				case "Decimal":
+					return CastType.CDec;
 				case "Integer":
 					return CastType.CInt;
+				case "Long":
+					return CastType.CLng;
+				case "Object":
+					return CastType.CObj;
+				case "SByte":
+					return CastType.CSByte;
+				case "Short":
+					return CastType.CShort;
+				case "Single":
+					return CastType.CSng;
 				case "String":
 					return CastType.CStr;
+				case "UInteger":
+					return CastType.CUInt;
+				case "ULong":
+					return CastType.CULng;
+				case "UShort":
+					return CastType.CUShort;
 			}
 			
 			return CastType.CType;
@@ -367,8 +398,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			Expression expr;
 			
-			if (primitiveExpression.Value is string && ((string)primitiveExpression.Value).IndexOfAny(new[] {'\r', '\n'}) > -1)
-				expr = ConvertToConcat((string)primitiveExpression.Value);
+			if ((primitiveExpression.Value is string || primitiveExpression.Value is char) && primitiveExpression.Value.ToString().IndexOfAny(new[] {'\r', '\n'}) > -1)
+				expr = ConvertToConcat(primitiveExpression.Value.ToString());
 			else
 				expr = new PrimitiveExpression(primitiveExpression.Value);
 			
@@ -383,7 +414,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			for (int i = 0; i < literal.Length; i++) {
 				if (literal[i] == '\r') {
 					string part = literal.Substring(start, i - start);
-					parts.Push(new PrimitiveExpression(part));
+					if (!string.IsNullOrEmpty(part))
+						parts.Push(new PrimitiveExpression(part));
 					if (i + 1 < literal.Length && literal[i + 1] == '\n') {
 						i++;
 						parts.Push(new IdentifierExpression() { Identifier = "vbCrLf" });
@@ -392,8 +424,15 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					start = i + 1;
 				} else if (literal[i] == '\n') {
 					string part = literal.Substring(start, i - start);
-					parts.Push(new PrimitiveExpression(part));
+					if (!string.IsNullOrEmpty(part))
+						parts.Push(new PrimitiveExpression(part));
 					parts.Push(new IdentifierExpression() { Identifier = "vbLf" });
+					start = i + 1;
+				} else if (literal[i] == '\t') {
+					string part = literal.Substring(start, i - start);
+					if (!string.IsNullOrEmpty(part))
+						parts.Push(new PrimitiveExpression(part));
+					parts.Push(new IdentifierExpression() { Identifier = "vbTab" });
 					start = i + 1;
 				}
 			}
@@ -850,17 +889,30 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitSwitchStatement(CSharp.SwitchStatement switchStatement, object data)
 		{
-			throw new NotImplementedException();
+			var stmt = new SelectStatement() { Expression = (Expression)switchStatement.Expression.AcceptVisitor(this, data) };
+			ConvertNodes(switchStatement.SwitchSections, stmt.Cases);
+			
+			return EndNode(switchStatement, stmt);
 		}
 		
 		public AstNode VisitSwitchSection(CSharp.SwitchSection switchSection, object data)
 		{
-			throw new NotImplementedException();
+			var caseStmt = new CaseStatement();
+			ConvertNodes(switchSection.CaseLabels, caseStmt.Clauses);
+			if (switchSection.Statements.Count == 1 && switchSection.Statements.FirstOrDefault() is CSharp.BlockStatement)
+				caseStmt.Body = (BlockStatement)switchSection.Statements.FirstOrDefault().AcceptVisitor(this, data);
+			else {
+				caseStmt.Body = new BlockStatement();
+				ConvertNodes(switchSection.Statements, caseStmt.Body.Statements);
+			}
+			if (caseStmt.Body.LastOrDefault() is ExitStatement && ((ExitStatement)caseStmt.Body.LastOrDefault()).ExitKind == ExitKind.Select)
+				caseStmt.Body.LastOrDefault().Remove();
+			return EndNode(switchSection, caseStmt);
 		}
 		
 		public AstNode VisitCaseLabel(CSharp.CaseLabel caseLabel, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(caseLabel, new SimpleCaseClause() { Expression = (Expression)caseLabel.Expression.AcceptVisitor(this, data) });
 		}
 		
 		public AstNode VisitThrowStatement(CSharp.ThrowStatement throwStatement, object data)

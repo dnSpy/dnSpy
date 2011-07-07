@@ -97,5 +97,9 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitSimpleType(SimpleType simpleType, T data);
 		
 		S VisitVariableInitializer(VariableInitializer variableInitializer, T data);
+		S VisitRangeCaseClause(RangeCaseClause rangeCaseClause, T data);
+		S VisitComparisonCaseClause(ComparisonCaseClause comparisonCaseClause, T data);
+		S VisitSimpleCaseClause(SimpleCaseClause simpleCaseClause, T data);
+		S VisitCaseStatement(CaseStatement caseStatement, T data);
 	}
 }

@@ -32,7 +32,30 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	/// </remarks>
 	public class VariableIdentifier : AstNode
 	{
-		public static readonly Role<VariableIdentifier> VariableIdentifierRole = new Role<VariableIdentifier>("VariableIdentifier");
+		#region Null
+		public new static readonly VariableIdentifier Null = new NullVariableIdentifier();
+		
+		sealed class NullVariableIdentifier : VariableIdentifier
+		{
+			public override bool IsNull {
+				get {
+					return true;
+				}
+			}
+			
+			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
+			{
+				return default (S);
+			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
+			}
+		}
+		#endregion
+		
+		public static readonly Role<VariableIdentifier> VariableIdentifierRole = new Role<VariableIdentifier>("VariableIdentifier", VariableIdentifier.Null);
 		
 		public Identifier Name {
 			get { return GetChildByRole(Roles.Identifier); }
