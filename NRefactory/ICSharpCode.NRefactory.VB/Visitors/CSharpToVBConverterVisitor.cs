@@ -791,12 +791,18 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitDoWhileStatement(CSharp.DoWhileStatement doWhileStatement, object data)
 		{
-			throw new NotImplementedException();
+			var stmt = new DoLoopStatement();
+			
+			stmt.ConditionType = ConditionType.LoopWhile;
+			stmt.Expression = (Expression)doWhileStatement.Condition.AcceptVisitor(this, data);
+			stmt.Body = (BlockStatement)doWhileStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			
+			return EndNode(doWhileStatement, stmt);
 		}
 		
 		public AstNode VisitEmptyStatement(CSharp.EmptyStatement emptyStatement, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode<Statement>(emptyStatement, null);
 		}
 		
 		public AstNode VisitExpressionStatement(CSharp.ExpressionStatement expressionStatement, object data)
@@ -816,7 +822,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var stmt = new ForEachStatement() {
 				Body = (BlockStatement)foreachStatement.EmbeddedStatement.AcceptVisitor(this, data),
 				InExpression = (Expression)foreachStatement.InExpression.AcceptVisitor(this, data),
-				Variable = new VariableInitializer() { Identifier = new VariableIdentifier() { Name = foreachStatement.VariableName }, Type = (AstType)foreachStatement.VariableType.AcceptVisitor(this, data) }
+				Variable = new VariableInitializer() {
+					Identifier = new VariableIdentifier() { Name = foreachStatement.VariableName },
+					Type = (AstType)foreachStatement.VariableType.AcceptVisitor(this, data)
+				}
 			};
 			
 			return EndNode(foreachStatement, stmt);
@@ -954,7 +963,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitUsingStatement(CSharp.UsingStatement usingStatement, object data)
 		{
-			throw new NotImplementedException();
+			var stmt = new UsingStatement();
+			
+			stmt.Resources.Add(usingStatement.ResourceAcquisition.AcceptVisitor(this, data));
+			stmt.Body = (BlockStatement)usingStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			
+			return EndNode(usingStatement, stmt);
 		}
 		
 		public AstNode VisitVariableDeclarationStatement(CSharp.VariableDeclarationStatement variableDeclarationStatement, object data)

@@ -88,6 +88,13 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitExitStatement(ExitStatement exitStatement, T data);
 		S VisitSelectStatement(SelectStatement selectStatement, T data);
 		S VisitYieldStatement(YieldStatement yieldStatement, T data);
+		S VisitVariableInitializer(VariableInitializer variableInitializer, T data);
+		S VisitRangeCaseClause(RangeCaseClause rangeCaseClause, T data);
+		S VisitComparisonCaseClause(ComparisonCaseClause comparisonCaseClause, T data);
+		S VisitSimpleCaseClause(SimpleCaseClause simpleCaseClause, T data);
+		S VisitCaseStatement(CaseStatement caseStatement, T data);
+		S VisitDoLoopStatement(DoLoopStatement doLoopStatement, T data);
+		S VisitUsingStatement(UsingStatement usingStatement, T data);
 		
 		// TypeName
 		S VisitPrimitiveType(PrimitiveType primitiveType, T data);
@@ -95,11 +102,5 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitComposedType(ComposedType composedType, T data);
 		S VisitArraySpecifier(ArraySpecifier arraySpecifier, T data);
 		S VisitSimpleType(SimpleType simpleType, T data);
-		
-		S VisitVariableInitializer(VariableInitializer variableInitializer, T data);
-		S VisitRangeCaseClause(RangeCaseClause rangeCaseClause, T data);
-		S VisitComparisonCaseClause(ComparisonCaseClause comparisonCaseClause, T data);
-		S VisitSimpleCaseClause(SimpleCaseClause simpleCaseClause, T data);
-		S VisitCaseStatement(CaseStatement caseStatement, T data);
 	}
 }

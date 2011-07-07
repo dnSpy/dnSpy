@@ -2201,5 +2201,51 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(variableDeclaratorWithObjectCreation);
 		}
+		
+		public object VisitDoLoopStatement(DoLoopStatement doLoopStatement, object data)
+		{
+			StartNode(doLoopStatement);
+			
+			WriteKeyword("Do");
+			if (doLoopStatement.ConditionType == ConditionType.DoUntil) {
+				WriteKeyword("Until");
+				doLoopStatement.Expression.AcceptVisitor(this, data);
+			}
+			if (doLoopStatement.ConditionType == ConditionType.DoWhile) {
+				WriteKeyword("While");
+				doLoopStatement.Expression.AcceptVisitor(this, data);
+			}
+			NewLine();
+			Indent();
+			doLoopStatement.Body.AcceptVisitor(this, data);
+			Unindent();
+			WriteKeyword("Loop");
+			if (doLoopStatement.ConditionType == ConditionType.LoopUntil) {
+				WriteKeyword("Until");
+				doLoopStatement.Expression.AcceptVisitor(this, data);
+			}
+			if (doLoopStatement.ConditionType == ConditionType.LoopWhile) {
+				WriteKeyword("While");
+				doLoopStatement.Expression.AcceptVisitor(this, data);
+			}
+			
+			return EndNode(doLoopStatement);
+		}
+		
+		public object VisitUsingStatement(UsingStatement usingStatement, object data)
+		{
+			StartNode(usingStatement);
+			
+			WriteKeyword("Using");
+			WriteCommaSeparatedList(usingStatement.Resources);
+			NewLine();
+			Indent();
+			usingStatement.Body.AcceptVisitor(this, data);
+			Unindent();
+			WriteKeyword("End");
+			WriteKeyword("Using");
+			
+			return EndNode(usingStatement);
+		}
 	}
 }

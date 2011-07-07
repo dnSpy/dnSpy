@@ -102,23 +102,10 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	public enum ConditionType
 	{
 		None,
-		Until,
-		While,
+		LoopUntil,
+		LoopWhile,
+		DoUntil,
 		DoWhile
-	}
-	
-	public enum ConditionPosition
-	{
-		None,
-		Start,
-		End
-	}
-	
-	public enum ConstructorInitializerType
-	{
-		None,
-		Base,
-		This
 	}
 	
 	public enum ConversionType

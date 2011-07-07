@@ -6,13 +6,13 @@ using System.IO;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
-	public class DoLoopStatement : Statement
+	public class UsingStatement : Statement
 	{
-		public ConditionType ConditionType { get; set; }
+		public static readonly Role<AstNode> ResourceRole = new Role<AstNode>("Resource", AstNode.Null);
 		
-		public Expression Expression {
-			get { return GetChildByRole(Roles.Expression); }
-			set { SetChildByRole(Roles.Expression, value); }
+		/// <remarks>either multiple VariableInitializers or one Expression</remarks>
+		public AstNodeCollection<AstNode> Resources {
+			get { return GetChildrenByRole(ResourceRole); }
 		}
 		
 		public BlockStatement Body {
@@ -27,7 +27,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 		{
-			return visitor.VisitDoLoopStatement(this, data);
+			return visitor.VisitUsingStatement(this, data);
 		}
 	}
 }
