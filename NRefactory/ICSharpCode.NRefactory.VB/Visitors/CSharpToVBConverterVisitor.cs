@@ -175,6 +175,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					op = BinaryOperatorType.LessThanOrEqual;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Add:
+					// TODO might be string concatenation
 					op = BinaryOperatorType.Add;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Subtract:
@@ -860,7 +861,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitGotoStatement(CSharp.GotoStatement gotoStatement, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(gotoStatement, new GoToStatement() { Label = new IdentifierExpression() { Identifier = gotoStatement.Label } });
 		}
 		
 		public AstNode VisitIfElseStatement(CSharp.IfElseStatement ifElseStatement, object data)
@@ -876,7 +877,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitLabelStatement(CSharp.LabelStatement labelStatement, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(labelStatement, new LabelDeclarationStatement() { Label = new IdentifierExpression() { Identifier = labelStatement.Label } });
 		}
 		
 		public AstNode VisitLockStatement(CSharp.LockStatement lockStatement, object data)

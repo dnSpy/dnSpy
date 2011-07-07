@@ -102,5 +102,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitComposedType(ComposedType composedType, T data);
 		S VisitArraySpecifier(ArraySpecifier arraySpecifier, T data);
 		S VisitSimpleType(SimpleType simpleType, T data);
+		
+		S VisitGoToStatement(GoToStatement goToStatement, T data);
 	}
 }

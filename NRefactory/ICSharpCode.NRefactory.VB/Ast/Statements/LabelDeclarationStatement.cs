@@ -11,9 +11,10 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	/// </summary>
 	public class LabelDeclarationStatement : Statement
 	{
-		public Identifier Label {
-			get { return GetChildByRole(Roles.Identifier); }
-			set { SetChildByRole(Roles.Identifier, value); }
+		/// <remarks>either PrimitiveExpression or IdentifierExpression</remarks>
+		public Expression Label {
+			get { return GetChildByRole(Roles.Expression); }
+			set { SetChildByRole(Roles.Expression, value); }
 		}
 		
 		public VBTokenNode Colon {
@@ -28,7 +29,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			LabelDeclarationStatement o = other as LabelDeclarationStatement;
-			return o != null && MatchString(this.Label.Name, o.Label.Name);
+			return o != null && this.Label.DoMatch(o.Label, match);
 		}
 	}
 }

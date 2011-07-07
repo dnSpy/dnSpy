@@ -1344,7 +1344,12 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitLabelDeclarationStatement(LabelDeclarationStatement labelDeclarationStatement, object data)
 		{
-			throw new NotImplementedException();
+			StartNode(labelDeclarationStatement);
+			
+			labelDeclarationStatement.Label.AcceptVisitor(this, data);
+			WriteToken(":", LabelDeclarationStatement.Roles.Colon);
+			
+			return EndNode(labelDeclarationStatement);
 		}
 		
 		public object VisitLocalDeclarationStatement(LocalDeclarationStatement localDeclarationStatement, object data)
@@ -2246,6 +2251,16 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("Using");
 			
 			return EndNode(usingStatement);
+		}
+		
+		public object VisitGoToStatement(GoToStatement goToStatement, object data)
+		{
+			StartNode(goToStatement);
+			
+			WriteKeyword("GoTo");
+			goToStatement.Label.AcceptVisitor(this, data);
+			
+			return EndNode(goToStatement);
 		}
 	}
 }

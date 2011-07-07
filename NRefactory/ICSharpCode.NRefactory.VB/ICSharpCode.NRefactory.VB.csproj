@@ -91,6 +91,7 @@
     <Compile Include="Ast\Statements\ExpressionStatement.cs" />
     <Compile Include="Ast\Statements\ForEachStatement.cs" />
     <Compile Include="Ast\Statements\ForStatement.cs" />
+    <Compile Include="Ast\Statements\GoToStatement.cs" />
     <Compile Include="Ast\Statements\IfElseStatement.cs" />
     <Compile Include="Ast\Statements\LabelDeclarationStatement.cs" />
     <Compile Include="Ast\Statements\LocalDeclarationStatement.cs" />
