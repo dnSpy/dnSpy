@@ -21,7 +21,7 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal class AnalyzedMethodTreeNode : AnalyzerTreeNode, IMemberTreeNode
+	internal class AnalyzedMethodTreeNode : AnalyzerEntityTreeNode
 	{
 		private readonly MethodDefinition analyzedMethod;
 		private readonly string prefix;
@@ -48,12 +48,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
-		{
-			e.Handled = true;
-			MainWindow.Instance.JumpToReference(analyzedMethod);
-		}
-
 		protected override void LoadChildren()
 		{
 			if (analyzedMethod.HasBody)
@@ -71,8 +65,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				this.Children.Add(new AnalyzedInterfaceMethodImplementedByTreeNode(analyzedMethod));
 		}
 
-		MemberReference IMemberTreeNode.Member
-		{
+		public override MemberReference Member {
 			get { return analyzedMethod; }
 		}
 	}

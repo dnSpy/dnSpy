@@ -33,7 +33,6 @@ using System.Windows.Media.Imaging;
 
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
@@ -214,6 +213,8 @@ namespace ICSharpCode.ILSpy
 			get { return assemblyList; }
 		}
 		
+		public event NotifyCollectionChangedEventHandler CurrentAssemblyListChanged;
+		
 		List<LoadedAssembly> commandLineLoadedAssemblies = new List<LoadedAssembly>();
 		
 		bool HandleCommandLineArguments(CommandLineArguments args)
@@ -331,9 +332,17 @@ namespace ICSharpCode.ILSpy
 
 		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.OldItems != null)
-				foreach (LoadedAssembly asm in e.OldItems)
-					history.RemoveAll(n => n.TreeNodes.Any(nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(a => a.LoadedAssembly == asm)));
+			if (e.Action == NotifyCollectionChangedAction.Reset) {
+				history.RemoveAll(_ => true);
+			}
+			if (e.OldItems != null) {
+				var oldAssemblies = new HashSet<LoadedAssembly>(e.OldItems.Cast<LoadedAssembly>());
+				history.RemoveAll(n => n.TreeNodes.Any(
+					nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(
+						a => oldAssemblies.Contains(a.LoadedAssembly))));
+			}
+			if (CurrentAssemblyListChanged != null)
+				CurrentAssemblyListChanged(this, e);
 		}
 		
 		void LoadInitialAssemblies()

@@ -27,13 +27,12 @@ using System.Collections;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedFieldAccessTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedFieldAccessTreeNode : AnalyzerSearchTreeNode
 	{
 		private readonly bool showWrites; // true: show writes; false: show read access
 		private readonly FieldDefinition analyzedField;
-		private readonly ThreadingSupport threading;
 		private Lazy<Hashtable> foundMethods;
-		private object hashLock = new object();
+		private readonly object hashLock = new object();
 
 		public AnalyzedFieldAccessTreeNode(FieldDefinition analyzedField, bool showWrites)
 		{
@@ -42,8 +41,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			this.analyzedField = analyzedField;
 			this.showWrites = showWrites;
-			this.threading = new ThreadingSupport();
-			this.LazyLoading = true;
 		}
 
 		public override object Text
@@ -51,30 +48,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return showWrites ? "Assigned By" : "Read By"; }
 		}
 
-		public override object Icon
-		{
-			get { return Images.Search; }
-		}
-
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
-
-		protected override void OnCollapsing()
-		{
-			if (threading.IsRunning) {
-				this.LazyLoading = true;
-				threading.Cancel();
-				this.Children.Clear();
-			}
-		}
-
-		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);
 
-			var analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedField, FindReferencesInType);
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedField, FindReferencesInType);
 			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
 				yield return child;
 			}
@@ -82,7 +60,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foundMethods = null;
 		}
 
-		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			string name = analyzedField.Name;
 			string declTypeName = analyzedField.DeclaringType.FullName;

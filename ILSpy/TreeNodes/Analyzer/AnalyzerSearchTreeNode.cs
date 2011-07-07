@@ -17,49 +17,51 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Mono.Cecil;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal class AnalyzedTypeTreeNode : AnalyzerEntityTreeNode
+	/// <summary>
+	/// Base class for analyzer nodes that perform a search.
+	/// </summary>
+	public abstract class AnalyzerSearchTreeNode : AnalyzerTreeNode
 	{
-		private readonly TypeDefinition analyzedType;
-
-		public AnalyzedTypeTreeNode(TypeDefinition analyzedType)
+		private readonly ThreadingSupport threading = new ThreadingSupport();
+		
+		protected AnalyzerSearchTreeNode()
 		{
-			if (analyzedType == null)
-				throw new ArgumentNullException("analyzedType");
-			this.analyzedType = analyzedType;
 			this.LazyLoading = true;
 		}
-
+		
 		public override object Icon
 		{
-			get { return TypeTreeNode.GetIcon(analyzedType); }
+			get { return Images.Search; }
 		}
-
-		public override object Text
-		{
-			get
-			{
-				return Language.TypeToString(analyzedType, true);
-			}
-		}
-
+		
 		protected override void LoadChildren()
 		{
-			if (AnalyzedTypeInstantiationsTreeNode.CanShow(analyzedType))
-				this.Children.Add(new AnalyzedTypeInstantiationsTreeNode(analyzedType));
-
-			if (AnalyzedTypeExposedByTreeNode.CanShow(analyzedType))
-				this.Children.Add(new AnalyzedTypeExposedByTreeNode(analyzedType));
-
-			if (AnalyzedTypeExtensionMethodsTreeNode.CanShow(analyzedType))
-				this.Children.Add(new AnalyzedTypeExtensionMethodsTreeNode(analyzedType));
+			threading.LoadChildren(this, FetchChildren);
 		}
-
-		public override MemberReference Member {
-			get { return analyzedType; }
+		
+		protected abstract IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct);
+		
+		protected override void OnIsVisibleChanged()
+		{
+			base.OnIsVisibleChanged();
+			if (!this.IsVisible && threading.IsRunning) {
+				this.LazyLoading = true;
+				threading.Cancel();
+				this.Children.Clear();
+			}
+		}
+		
+		public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
+		{
+			this.LazyLoading = true;
+			threading.Cancel();
+			this.Children.Clear();
+			return true;
 		}
 	}
 }

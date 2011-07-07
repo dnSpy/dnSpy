@@ -17,49 +17,37 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using ICSharpCode.TreeView;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal class AnalyzedTypeTreeNode : AnalyzerEntityTreeNode
+	/// <summary>
+	/// Base class for entity nodes.
+	/// </summary>
+	public abstract class AnalyzerEntityTreeNode : AnalyzerTreeNode, IMemberTreeNode
 	{
-		private readonly TypeDefinition analyzedType;
-
-		public AnalyzedTypeTreeNode(TypeDefinition analyzedType)
+		public abstract MemberReference Member { get; }
+		
+		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
-			if (analyzedType == null)
-				throw new ArgumentNullException("analyzedType");
-			this.analyzedType = analyzedType;
-			this.LazyLoading = true;
+			e.Handled = true;
+			MainWindow.Instance.JumpToReference(this.Member);
 		}
-
-		public override object Icon
+		
+		public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
 		{
-			get { return TypeTreeNode.GetIcon(analyzedType); }
-		}
-
-		public override object Text
-		{
-			get
-			{
-				return Language.TypeToString(analyzedType, true);
+			foreach (LoadedAssembly asm in removedAssemblies) {
+				if (this.Member.Module.Assembly == asm.AssemblyDefinition)
+					return false; // remove this node
 			}
-		}
-
-		protected override void LoadChildren()
-		{
-			if (AnalyzedTypeInstantiationsTreeNode.CanShow(analyzedType))
-				this.Children.Add(new AnalyzedTypeInstantiationsTreeNode(analyzedType));
-
-			if (AnalyzedTypeExposedByTreeNode.CanShow(analyzedType))
-				this.Children.Add(new AnalyzedTypeExposedByTreeNode(analyzedType));
-
-			if (AnalyzedTypeExtensionMethodsTreeNode.CanShow(analyzedType))
-				this.Children.Add(new AnalyzedTypeExtensionMethodsTreeNode(analyzedType));
-		}
-
-		public override MemberReference Member {
-			get { return analyzedType; }
+			this.Children.RemoveAll(
+				delegate(SharpTreeNode n) {
+					AnalyzerTreeNode an = n as AnalyzerTreeNode;
+					return an == null || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
+				});
+			return true;
 		}
 	}
 }
