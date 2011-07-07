@@ -13,6 +13,10 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			set { SetChildByRole(Roles.Expression, value); }
 		}
 		
+		public AstNodeCollection<CaseStatement> Cases {
+			get { return GetChildrenByRole(CaseStatement.CaseStatementRole); }
+		}
+		
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)
 		{
 			throw new NotImplementedException();
@@ -26,7 +30,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	
 	public class CaseStatement : Statement
 	{
-		
+		public static readonly Role<CaseStatement> CaseStatementRole = new Role<CaseStatement>("CaseStatement");
 		
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)
 		{

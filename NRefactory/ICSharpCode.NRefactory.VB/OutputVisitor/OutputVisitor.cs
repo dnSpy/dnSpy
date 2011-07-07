@@ -1251,27 +1251,6 @@ namespace ICSharpCode.NRefactory.VB
 			return EndNode(fieldDeclaration);
 		}
 		
-		public object VisitVariableDeclarator(VariableDeclarator variableDeclarator, object data)
-		{
-			StartNode(variableDeclarator);
-			
-			WriteCommaSeparatedList(variableDeclarator.Identifiers);
-			WriteKeyword("As");
-			if (variableDeclarator.Initializer is ObjectCreationExpression)
-				variableDeclarator.Initializer.AcceptVisitor(this, data);
-			else {
-				variableDeclarator.Type.AcceptVisitor(this, data);
-				if (!variableDeclarator.Initializer.IsNull) {
-					Space();
-					WriteToken("=", VariableDeclarator.Roles.Assign);
-					Space();
-					variableDeclarator.Initializer.AcceptVisitor(this, data);
-				}
-			}
-			
-			return EndNode(variableDeclarator);
-		}
-		
 		public object VisitVariableIdentifier(VariableIdentifier variableIdentifier, object data)
 		{
 			StartNode(variableIdentifier);
@@ -1943,7 +1922,19 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(forStatement);
 			
-			throw new NotImplementedException();
+			WriteKeyword("For");
+			forStatement.Variable.AcceptVisitor(this, data);
+			WriteKeyword("To");
+			forStatement.ToExpression.AcceptVisitor(this, data);
+			if (!forStatement.StepExpression.IsNull) {
+				WriteKeyword("Step");
+				forStatement.StepExpression.AcceptVisitor(this, data);
+			}
+			NewLine();
+			Indent();
+			forStatement.Body.AcceptVisitor(this, data);
+			Unindent();
+			WriteKeyword("Next");
 			
 			return EndNode(forStatement);
 		}
@@ -1954,7 +1945,7 @@ namespace ICSharpCode.NRefactory.VB
 			
 			WriteKeyword("For");
 			WriteKeyword("Each");
-			forEachStatement.Initializer.AcceptVisitor(this, data);
+			forEachStatement.Variable.AcceptVisitor(this, data);
 			WriteKeyword("In");
 			forEachStatement.InExpression.AcceptVisitor(this, data);
 			NewLine();
@@ -2082,6 +2073,53 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("Yield");
 			yieldStatement.Expression.AcceptVisitor(this, data);
 			return EndNode(yieldStatement);
+		}
+		
+		public object VisitVariableInitializer(VariableInitializer variableInitializer, object data)
+		{
+			StartNode(variableInitializer);
+			
+			variableInitializer.Identifier.AcceptVisitor(this, data);
+			if (!variableInitializer.Type.IsNull) {
+				WriteKeyword("As");
+				variableInitializer.Type.AcceptVisitor(this, data);
+			}
+			if (!variableInitializer.Expression.IsNull) {
+				Space();
+				WriteToken("=", VariableInitializer.Roles.Assign);
+				Space();
+				variableInitializer.Expression.AcceptVisitor(this, data);
+			}
+			
+			return EndNode(variableInitializer);
+		}
+		
+		public object VisitVariableDeclaratorWithTypeAndInitializer(VariableDeclaratorWithTypeAndInitializer variableDeclaratorWithTypeAndInitializer, object data)
+		{
+			StartNode(variableDeclaratorWithTypeAndInitializer);
+			
+			WriteCommaSeparatedList(variableDeclaratorWithTypeAndInitializer.Identifiers);
+			WriteKeyword("As");
+			variableDeclaratorWithTypeAndInitializer.Type.AcceptVisitor(this, data);
+			if (!variableDeclaratorWithTypeAndInitializer.Initializer.IsNull) {
+				Space();
+				WriteToken("=", VariableDeclarator.Roles.Assign);
+				Space();
+				variableDeclaratorWithTypeAndInitializer.Initializer.AcceptVisitor(this, data);
+			}
+			
+			return EndNode(variableDeclaratorWithTypeAndInitializer);
+		}
+		
+		public object VisitVariableDeclaratorWithObjectCreation(VariableDeclaratorWithObjectCreation variableDeclaratorWithObjectCreation, object data)
+		{
+			StartNode(variableDeclaratorWithObjectCreation);
+			
+			WriteCommaSeparatedList(variableDeclaratorWithObjectCreation.Identifiers);
+			WriteKeyword("As");
+			variableDeclaratorWithObjectCreation.Initializer.AcceptVisitor(this, data);
+			
+			return EndNode(variableDeclaratorWithObjectCreation);
 		}
 	}
 }

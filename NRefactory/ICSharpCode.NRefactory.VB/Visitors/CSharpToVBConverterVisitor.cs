@@ -774,15 +774,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitForeachStatement(CSharp.ForeachStatement foreachStatement, object data)
 		{
-			var var = new LocalDeclarationStatement();
-			
-			var.Variables.Add(new VariableDeclarator() { Type = (AstType)foreachStatement.VariableType.AcceptVisitor(this, data) });
-			var.Variables.Last().Identifiers.Add(new VariableIdentifier() { Name = foreachStatement.VariableName });
-			
 			var stmt = new ForEachStatement() {
 				Body = (BlockStatement)foreachStatement.EmbeddedStatement.AcceptVisitor(this, data),
 				InExpression = (Expression)foreachStatement.InExpression.AcceptVisitor(this, data),
-				Initializer = var
+				Variable = new VariableInitializer() { Identifier = new VariableIdentifier() { Name = foreachStatement.VariableName }, Type = (AstType)foreachStatement.VariableType.AcceptVisitor(this, data) }
 			};
 			
 			return EndNode(foreachStatement, stmt);
@@ -1256,13 +1251,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitVariableInitializer(CSharp.VariableInitializer variableInitializer, object data)
 		{
-			var decl = new VariableDeclarator();
+			var decl = new VariableDeclaratorWithTypeAndInitializer();
 			
 			// look for type in parent
 			decl.Type = (AstType)variableInitializer.Parent
 				.GetChildByRole(CSharp.VariableInitializer.Roles.Type)
 				.AcceptVisitor(this, data);
-			decl.Identifiers.Add(new VariableIdentifier() { Name = new Identifier(variableInitializer.Name, AstLocation.Empty) });
+			decl.Identifiers.Add(new VariableIdentifier() { Name = variableInitializer.Name });
 			decl.Initializer = (Expression)variableInitializer.Initializer.AcceptVisitor(this, data);
 			
 			return EndNode(variableInitializer, decl);

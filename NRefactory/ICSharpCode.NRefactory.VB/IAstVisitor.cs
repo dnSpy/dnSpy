@@ -36,7 +36,8 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, T data);
 		S VisitMethodDeclaration(MethodDeclaration methodDeclaration, T data);
 		S VisitFieldDeclaration(FieldDeclaration fieldDeclaration, T data);
-		S VisitVariableDeclarator(VariableDeclarator variableDeclarator, T data);
+		S VisitVariableDeclaratorWithTypeAndInitializer(VariableDeclaratorWithTypeAndInitializer variableDeclaratorWithTypeAndInitializer, T data);
+		S VisitVariableDeclaratorWithObjectCreation(VariableDeclaratorWithObjectCreation variableDeclaratorWithObjectCreation, T data);
 		S VisitVariableIdentifier(VariableIdentifier variableIdentifier, T data);
 		S VisitAccessor(Accessor accessor, T data);
 		S VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, T data);
@@ -94,5 +95,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitComposedType(ComposedType composedType, T data);
 		S VisitArraySpecifier(ArraySpecifier arraySpecifier, T data);
 		S VisitSimpleType(SimpleType simpleType, T data);
+		
+		S VisitVariableInitializer(VariableInitializer variableInitializer, T data);
 	}
 }

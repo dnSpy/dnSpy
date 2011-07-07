@@ -8,11 +8,11 @@ namespace ICSharpCode.NRefactory.VB.Ast
 {
 	public class ForEachStatement : Statement
 	{
-		public static readonly Role<Statement> InitializerRole = new Role<Statement>("InitializerRole", Statement.Null);
+		public static readonly Role<AstNode> VariableRole = new Role<AstNode>("Variable", AstNode.Null);
 		
-		public Statement Initializer {
-			get { return GetChildByRole(InitializerRole); }
-			set { SetChildByRole(InitializerRole, value); }
+		public AstNode Variable {
+			get { return GetChildByRole(VariableRole); }
+			set { SetChildByRole(VariableRole, value); }
 		}
 		
 		public Expression InExpression {

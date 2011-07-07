@@ -110,6 +110,7 @@
     <Compile Include="Ast\TypeMembers\MethodDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\OperatorDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\PropertyDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\VariableDeclarator.cs" />
     <Compile Include="Ast\TypeName\AstType.cs" />
     <Compile Include="Ast\TypeName\ComposedType.cs" />
     <Compile Include="Ast\TypeName\PrimitiveType.cs" />
