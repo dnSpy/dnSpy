@@ -128,7 +128,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			DetermineTypeAccessibility();
 
 			if (typeAccessibility == Accessibility.Private) {
-				return FindReferencesInTypeScope(ct);
+				return FindReferencesInEnclosingTypeScope(ct);
 			}
 
 			if (memberAccessibility == Accessibility.Internal ||
@@ -139,7 +139,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			return FindReferencesGlobal(ct);
 		}
-
+		
 		private void DetermineTypeAccessibility()
 		{
 			while (typeScope.IsNested) {
@@ -229,6 +229,17 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private IEnumerable<T> FindReferencesInTypeScope(CancellationToken ct)
 		{
 			foreach (TypeDefinition type in TreeTraversal.PreOrder(typeScope, t => t.NestedTypes)) {
+				ct.ThrowIfCancellationRequested();
+				foreach (var result in typeAnalysisFunction(type)) {
+					ct.ThrowIfCancellationRequested();
+					yield return result;
+				}
+			}
+		}
+
+		private IEnumerable<T> FindReferencesInEnclosingTypeScope(CancellationToken ct)
+		{
+			foreach (TypeDefinition type in TreeTraversal.PreOrder(typeScope.DeclaringType, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 				foreach (var result in typeAnalysisFunction(type)) {
 					ct.ThrowIfCancellationRequested();
