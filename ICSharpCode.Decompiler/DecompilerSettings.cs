@@ -224,6 +224,23 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		#region Options to aid VB decompilation
+		bool introduceIncrementAndDecrement = true;
+		
+		/// <summary>
+		/// Gets/Sets whether to use increment and decrement operators
+		/// </summary>
+		public bool IntroduceIncrementAndDecrement {
+			get { return introduceIncrementAndDecrement; }
+			set {
+				if (introduceIncrementAndDecrement != value) {
+					introduceIncrementAndDecrement = value;
+					OnPropertyChanged("IntroduceIncrementAndDecrement");
+				}
+			}
+		}
+		#endregion
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)

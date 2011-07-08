@@ -122,10 +122,10 @@ namespace ICSharpCode.ILSpy.VB
 			if (currentModule == null)
 				currentModule = currentType.Module;
 			DecompilerSettings settings = options.DecompilerSettings;
-			if (isSingleMember) {
-				settings = settings.Clone();
+			settings = settings.Clone();
+			if (isSingleMember)
 				settings.UsingDeclarations = false;
-			}
+			settings.IntroduceIncrementAndDecrement = false;
 			return new AstBuilder(
 				new DecompilerContext(currentModule) {
 					CancellationToken = options.CancellationToken,
