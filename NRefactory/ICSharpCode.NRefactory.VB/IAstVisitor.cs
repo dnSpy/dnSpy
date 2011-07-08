@@ -52,7 +52,6 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, T data);
 		S VisitInstanceExpression(InstanceExpression instanceExpression, T data);
 		S VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, T data);
-		S VisitAddressOfExpression(AddressOfExpression addressOfExpression, T data);
 		S VisitGetTypeExpression(GetTypeExpression getTypeExpression, T data);
 		S VisitTypeOfIsExpression(TypeOfIsExpression typeOfIsExpression, T data);
 		S VisitGetXmlNamespaceExpression(GetXmlNamespaceExpression getXmlNamespaceExpression, T data);
@@ -104,5 +103,9 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitSimpleType(SimpleType simpleType, T data);
 		
 		S VisitGoToStatement(GoToStatement goToStatement, T data);
+		
+		S VisitSingleLineSubLambdaExpression(SingleLineSubLambdaExpression singleLineSubLambdaExpression, T data);
+		S VisitMultiLineLambdaExpression(MultiLineLambdaExpression multiLineLambdaExpression, T data);
+		S VisitSingleLineFunctionLambdaExpression(SingleLineFunctionLambdaExpression singleLineFunctionLambdaExpression, T data);
 	}
 }

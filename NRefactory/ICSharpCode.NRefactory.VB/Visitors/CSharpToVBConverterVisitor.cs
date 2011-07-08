@@ -327,7 +327,18 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitLambdaExpression(CSharp.LambdaExpression lambdaExpression, object data)
 		{
-			throw new NotImplementedException();
+			LambdaExpression expr = null;
+			
+			if (lambdaExpression.Body is CSharp.Expression) {
+				var singleLine = new SingleLineFunctionLambdaExpression() {
+					EmbeddedExpression = (Expression)lambdaExpression.Body.AcceptVisitor(this, data)
+				};
+				ConvertNodes(lambdaExpression.Parameters, singleLine.Parameters);
+				expr = singleLine;
+			} else
+				throw new NotImplementedException();
+			
+			return EndNode(lambdaExpression, expr);
 		}
 		
 		public AstNode VisitMemberReferenceExpression(CSharp.MemberReferenceExpression memberReferenceExpression, object data)
@@ -526,8 +537,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
 					break;
 				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.AddressOf:
-					expr = new AddressOfExpression() {
-						Expression = (Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data)
+					expr = new UnaryOperatorExpression() {
+						Expression = (Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data),
+						Operator = UnaryOperatorType.AddressOf
 					};
 					break;
 //				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Dereference:

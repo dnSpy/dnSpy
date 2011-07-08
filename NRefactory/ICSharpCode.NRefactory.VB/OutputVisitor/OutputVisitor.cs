@@ -407,17 +407,6 @@ namespace ICSharpCode.NRefactory.VB
 			return EndNode(parenthesizedExpression);
 		}
 		
-		public object VisitAddressOfExpression(AddressOfExpression addressOfExpression, object data)
-		{
-			StartNode(addressOfExpression);
-			
-			WriteKeyword("AddressOf");
-			addressOfExpression.Expression.AcceptVisitor(this, data);
-			
-			return EndNode(addressOfExpression);
-		}
-		
-		
 		public object VisitGetTypeExpression(GetTypeExpression getTypeExpression, object data)
 		{
 			StartNode(getTypeExpression);
@@ -1455,6 +1444,7 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(ifElseStatement);
 			WriteKeyword("If");
 			ifElseStatement.Condition.AcceptVisitor(this, data);
+			Space();
 			WriteKeyword("Then");
 			NewLine();
 			Indent();
@@ -1809,6 +1799,12 @@ namespace ICSharpCode.NRefactory.VB
 					break;
 				case UnaryOperatorType.Plus:
 					WriteToken("+", UnaryOperatorExpression.OperatorRole);
+					break;
+				case UnaryOperatorType.AddressOf:
+					WriteKeyword("AddressOf");
+					break;
+				case UnaryOperatorType.Await:
+					WriteKeyword("Await");
 					break;
 				default:
 					throw new Exception("Invalid value for UnaryOperatorType");
@@ -2262,5 +2258,55 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(goToStatement);
 		}
+		
+		public object VisitSingleLineSubLambdaExpression(SingleLineSubLambdaExpression singleLineSubLambdaExpression, object data)
+		{
+			StartNode(singleLineSubLambdaExpression);
+			
+			WriteModifiers(singleLineSubLambdaExpression.ModifierTokens);
+			WriteKeyword("Sub");
+			WriteCommaSeparatedListInParenthesis(singleLineSubLambdaExpression.Parameters, false);
+			Space();
+			singleLineSubLambdaExpression.EmbeddedStatement.AcceptVisitor(this, data);
+			
+			return EndNode(singleLineSubLambdaExpression);
+		}
+		
+		public object VisitSingleLineFunctionLambdaExpression(SingleLineFunctionLambdaExpression singleLineFunctionLambdaExpression, object data)
+		{
+			StartNode(singleLineFunctionLambdaExpression);
+			
+			WriteModifiers(singleLineFunctionLambdaExpression.ModifierTokens);
+			WriteKeyword("Function");
+			WriteCommaSeparatedListInParenthesis(singleLineFunctionLambdaExpression.Parameters, false);
+			Space();
+			singleLineFunctionLambdaExpression.EmbeddedExpression.AcceptVisitor(this, data);
+			
+			return EndNode(singleLineFunctionLambdaExpression);
+		}
+		
+		public object VisitMultiLineLambdaExpression(MultiLineLambdaExpression multiLineLambdaExpression, object data)
+		{
+			StartNode(multiLineLambdaExpression);
+			
+			WriteModifiers(multiLineLambdaExpression.ModifierTokens);
+			if (multiLineLambdaExpression.IsSub)
+				WriteKeyword("Sub");
+			else
+				WriteKeyword("Function");
+			WriteCommaSeparatedListInParenthesis(multiLineLambdaExpression.Parameters, false);
+			NewLine();
+			Indent();
+			multiLineLambdaExpression.Body.AcceptVisitor(this, data);
+			Unindent();
+			WriteKeyword("End");
+			if (multiLineLambdaExpression.IsSub)
+				WriteKeyword("Sub");
+			else
+				WriteKeyword("Function");
+			
+			return EndNode(multiLineLambdaExpression);
+		}
+
 	}
 }
