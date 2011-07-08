@@ -39,6 +39,7 @@ namespace ICSharpCode.ILSpy.VB
 	public class VBLanguage : Language
 	{
 		Predicate<IAstTransform> transformAbortCondition = null;
+		bool showAllMembers = false;
 		
 		public VBLanguage()
 		{
@@ -98,6 +99,11 @@ namespace ICSharpCode.ILSpy.VB
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
 			codeDomBuilder.AddType(type);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+		}
+		
+		public override bool ShowMember(MemberReference member)
+		{
+			return showAllMembers || !AstBuilder.MemberIsHidden(member, new DecompilationOptions().DecompilerSettings);
 		}
 		
 		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options)

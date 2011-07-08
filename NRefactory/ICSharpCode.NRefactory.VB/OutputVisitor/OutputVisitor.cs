@@ -2307,6 +2307,16 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(multiLineLambdaExpression);
 		}
-
+		
+		public object VisitQueryExpression(QueryExpression queryExpression, object data)
+		{
+			StartNode(queryExpression);
+			
+			foreach (var op in queryExpression.QueryOperators) {
+				op.AcceptVisitor(this, data);
+			}
+			
+			return EndNode(queryExpression);
+		}
 	}
 }

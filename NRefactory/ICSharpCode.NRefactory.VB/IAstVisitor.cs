@@ -107,5 +107,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitSingleLineSubLambdaExpression(SingleLineSubLambdaExpression singleLineSubLambdaExpression, T data);
 		S VisitMultiLineLambdaExpression(MultiLineLambdaExpression multiLineLambdaExpression, T data);
 		S VisitSingleLineFunctionLambdaExpression(SingleLineFunctionLambdaExpression singleLineFunctionLambdaExpression, T data);
+		
+		S VisitQueryExpression(QueryExpression queryExpression, T data);
 	}
 }

@@ -66,6 +66,7 @@
     <Compile Include="Ast\Expressions\NamedArgumentExpression.cs" />
     <Compile Include="Ast\Expressions\ObjectCreationExpression.cs" />
     <Compile Include="Ast\Expressions\ParenthesizedExpression.cs" />
+    <Compile Include="Ast\Expressions\QueryExpression.cs" />
     <Compile Include="Ast\Expressions\SimpleNameExpression.cs" />
     <Compile Include="Ast\Expressions\PrimitiveExpression.cs" />
     <Compile Include="Ast\Expressions\TypeOfIsExpression.cs" />

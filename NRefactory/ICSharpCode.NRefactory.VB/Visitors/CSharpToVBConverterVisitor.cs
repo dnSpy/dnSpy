@@ -469,13 +469,19 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitStackAllocExpression(CSharp.StackAllocExpression stackAllocExpression, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(
+				stackAllocExpression,
+				new InvocationExpression(
+					new IdentifierExpression() { Identifier = "__StackĄlloc" },
+					new TypeReferenceExpression((AstType)stackAllocExpression.Type.AcceptVisitor(this, data)),
+					(Expression)stackAllocExpression.CountExpression.AcceptVisitor(this, data)
+				)
+			);
 		}
 		
 		public AstNode VisitThisReferenceExpression(CSharp.ThisReferenceExpression thisReferenceExpression, object data)
 		{
-			InstanceExpression result = new InstanceExpression(InstanceExpressionType.Me, ConvertLocation(thisReferenceExpression.StartLocation));
-			
+			InstanceExpression result = new InstanceExpression(InstanceExpressionType.Me, ConvertLocation(thisReferenceExpression.StartLocation);
 			return EndNode(thisReferenceExpression, result);
 		}
 		
@@ -518,22 +524,22 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					break;
 				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Increment:
 					expr = new InvocationExpression();
-					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "Increment" };
+					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "__Increment" };
 					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
 					break;
 				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.PostIncrement:
 					expr = new InvocationExpression();
-					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "PostIncrement" };
+					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "__PostIncrement" };
 					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
 					break;
 				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Decrement:
 					expr = new InvocationExpression();
-					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "Decrement" };
+					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "__Decrement" };
 					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
 					break;
 				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.PostDecrement:
 					expr = new InvocationExpression();
-					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "PostDecrement" };
+					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "__PostDecrement" };
 					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
 					break;
 				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.AddressOf:
@@ -562,7 +568,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitQueryExpression(CSharp.QueryExpression queryExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new QueryExpression();
+			ConvertNodes(queryExpression.Clauses, expr.QueryOperators);
+			return EndNode(queryExpression, expr);
 		}
 		
 		public AstNode VisitQueryContinuationClause(CSharp.QueryContinuationClause queryContinuationClause, object data)

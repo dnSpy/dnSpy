@@ -70,38 +70,37 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			return new ComposedType { BaseType = this }.MakeArrayType(rank);
 		}
 		
-		// TODO : reimplement this
-//		/// <summary>
-//		/// Builds an expression that can be used to access a static member on this type.
-//		/// </summary>
-//		public MemberReferenceExpression Member(string memberName)
-//		{
-//			return new TypeReferenceExpression { Type = this }.Member(memberName);
-//		}
-//		
-//		/// <summary>
-//		/// Builds an invocation expression using this type as target.
-//		/// </summary>
-//		public InvocationExpression Invoke(string methodName, IEnumerable<Expression> arguments)
-//		{
-//			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
-//		}
-//		
-//		/// <summary>
-//		/// Builds an invocation expression using this type as target.
-//		/// </summary>
-//		public InvocationExpression Invoke(string methodName, params Expression[] arguments)
-//		{
-//			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
-//		}
-//		
-//		/// <summary>
-//		/// Builds an invocation expression using this type as target.
-//		/// </summary>
-//		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
-//		{
-//			return new TypeReferenceExpression { Type = this }.Invoke(methodName, typeArguments, arguments);
-//		}
+		/// <summary>
+		/// Builds an expression that can be used to access a static member on this type.
+		/// </summary>
+		public MemberAccessExpression Member(string memberName)
+		{
+			return new TypeReferenceExpression { Type = this }.Member(memberName);
+		}
+		
+		/// <summary>
+		/// Builds an invocation expression using this type as target.
+		/// </summary>
+		public InvocationExpression Invoke(string methodName, IEnumerable<Expression> arguments)
+		{
+			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
+		}
+		
+		/// <summary>
+		/// Builds an invocation expression using this type as target.
+		/// </summary>
+		public InvocationExpression Invoke(string methodName, params Expression[] arguments)
+		{
+			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
+		}
+		
+		/// <summary>
+		/// Builds an invocation expression using this type as target.
+		/// </summary>
+		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
+		{
+			return new TypeReferenceExpression { Type = this }.Invoke(methodName, typeArguments, arguments);
+		}
 		
 		public static AstType Create(Type type)
 		{
