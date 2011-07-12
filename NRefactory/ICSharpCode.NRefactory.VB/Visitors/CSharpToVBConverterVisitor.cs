@@ -1191,7 +1191,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitDestructorDeclaration(CSharp.DestructorDeclaration destructorDeclaration, object data)
 		{
-			throw new NotImplementedException();
+			var finalizer = new MethodDeclaration() { Name = "Finalize", IsSub = true };
+			
+			ConvertNodes(destructorDeclaration.Attributes, finalizer.Attributes);
+			ConvertNodes(destructorDeclaration.ModifierTokens, finalizer.ModifierTokens);
+			finalizer.Body = (BlockStatement)destructorDeclaration.Body.AcceptVisitor(this, data);
+			
+			return EndNode(destructorDeclaration, finalizer);
 		}
 		
 		public AstNode VisitEnumMemberDeclaration(CSharp.EnumMemberDeclaration enumMemberDeclaration, object data)
