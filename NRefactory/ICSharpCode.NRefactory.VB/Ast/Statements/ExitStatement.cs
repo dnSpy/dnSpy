@@ -11,7 +11,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	/// </summary>
 	public class ExitStatement : Statement
 	{
-		public static readonly Role<VBTokenNode> ExitKindTokenRole = new Role<VBTokenNode>("ExitKindTokenRole");
+		public static readonly Role<VBTokenNode> ExitKindTokenRole = new Role<VBTokenNode>("ExitKindToken");
 		
 		public ExitKind ExitKind { get; set; }
 		

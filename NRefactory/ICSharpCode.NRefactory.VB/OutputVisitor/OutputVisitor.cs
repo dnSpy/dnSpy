@@ -2319,5 +2319,28 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(queryExpression);
 		}
+		
+		public object VisitContinueStatement(ContinueStatement continueStatement, object data)
+		{
+			StartNode(continueStatement);
+			
+			WriteKeyword("Continue");
+			
+			switch (continueStatement.ContinueKind) {
+				case ContinueKind.Do:
+					WriteKeyword("Do");
+					break;
+				case ContinueKind.For:
+					WriteKeyword("For");
+					break;
+				case ContinueKind.While:
+					WriteKeyword("While");
+					break;
+				default:
+					throw new Exception("Invalid value for ContinueKind");
+			}
+			
+			return EndNode(continueStatement);
+		}
 	}
 }

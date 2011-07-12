@@ -803,13 +803,30 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitCheckedStatement(CSharp.CheckedStatement checkedStatement, object data)
 		{
-			// overflow/underflow checks are default on in VB
+			// overflow/underflow checks are on by default in VB
 			throw new NotImplementedException();
 		}
 		
 		public AstNode VisitContinueStatement(CSharp.ContinueStatement continueStatement, object data)
 		{
-			throw new NotImplementedException();
+			var @continue = new ContinueStatement(ContinueKind.None);
+			
+			foreach (var stmt in continueStatement.Ancestors) {
+				if (stmt is CSharp.DoWhileStatement) {
+					@continue.ContinueKind = ContinueKind.Do;
+					break;
+				}
+				if (stmt is CSharp.ForStatement || stmt is CSharp.ForeachStatement) {
+					@continue.ContinueKind = ContinueKind.For;
+					break;
+				}
+				if (stmt is CSharp.WhileStatement) {
+					@continue.ContinueKind = ContinueKind.While;
+					break;
+				}
+			}
+			
+			return EndNode(continueStatement, @continue);
 		}
 		
 		public AstNode VisitDoWhileStatement(CSharp.DoWhileStatement doWhileStatement, object data)
