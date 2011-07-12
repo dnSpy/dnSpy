@@ -579,7 +579,7 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(arraySpecifier);
 			
 			LPar();
-			for (int i = 0; i < arraySpecifier.Dimensions; i++) {
+			for (int i = 0; i < arraySpecifier.Dimensions - 1; i++) {
 				WriteToken(",", ArraySpecifier.Roles.Comma);
 			}
 			RPar();
@@ -1929,6 +1929,7 @@ namespace ICSharpCode.NRefactory.VB
 			forStatement.ToExpression.AcceptVisitor(this, data);
 			if (!forStatement.StepExpression.IsNull) {
 				WriteKeyword("Step");
+				Space();
 				forStatement.StepExpression.AcceptVisitor(this, data);
 			}
 			NewLine();

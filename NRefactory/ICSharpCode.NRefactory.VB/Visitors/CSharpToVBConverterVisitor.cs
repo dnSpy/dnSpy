@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Ast;
 
@@ -481,7 +482,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitThisReferenceExpression(CSharp.ThisReferenceExpression thisReferenceExpression, object data)
 		{
-			InstanceExpression result = new InstanceExpression(InstanceExpressionType.Me, ConvertLocation(thisReferenceExpression.StartLocation);
+			InstanceExpression result = new InstanceExpression(InstanceExpressionType.Me, ConvertLocation(thisReferenceExpression.StartLocation));
 			return EndNode(thisReferenceExpression, result);
 		}
 		
@@ -802,6 +803,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitCheckedStatement(CSharp.CheckedStatement checkedStatement, object data)
 		{
+			// overflow/underflow checks are default on in VB
 			throw new NotImplementedException();
 		}
 		
@@ -858,6 +860,105 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			if (!forStatement.Initializers.Any() && forStatement.Condition.IsNull && !forStatement.Iterators.Any())
 				return EndNode(forStatement, new WhileStatement() { Condition = new PrimitiveExpression(true), Body = (BlockStatement)forStatement.EmbeddedStatement.AcceptVisitor(this, data) });
 			
+			CSharp.AstNode counterLoop = new CSharp.ForStatement() {
+				Initializers = {
+					new NamedNode(
+						"iteratorVar",
+						new Choice {
+							new CSharp.VariableDeclarationStatement {
+								Type = new Choice {
+									new CSharp.PrimitiveType("long"),
+									new CSharp.PrimitiveType("ulong"),
+									new CSharp.PrimitiveType("int"),
+									new CSharp.PrimitiveType("uint"),
+									new CSharp.PrimitiveType("short"),
+									new CSharp.PrimitiveType("ushort"),
+									new CSharp.PrimitiveType("sbyte"),
+									new CSharp.PrimitiveType("byte")
+								},
+								Variables = {
+									new AnyNode()
+								}
+							},
+							new CSharp.ExpressionStatement(
+								new CSharp.AssignmentExpression()
+							)
+						})
+				},
+				Condition = new NamedNode(
+					"condition",
+					new CSharp.BinaryOperatorExpression {
+						Left = new NamedNode("ident", new CSharp.IdentifierExpression()),
+						Operator = CSharp.BinaryOperatorType.Any,
+						Right = new AnyNode("endExpr")
+					}),
+				Iterators = {
+					new CSharp.ExpressionStatement(
+						new NamedNode(
+							"increment",
+							new CSharp.AssignmentExpression {
+								Left = new Backreference("ident"),
+								Operator = CSharp.AssignmentOperatorType.Any,
+								Right = new NamedNode("factor", new AnyNode())
+							}
+						)
+					)
+				},
+				EmbeddedStatement = new NamedNode("body", new AnyNode())
+			};
+			
+			var match = counterLoop.Match(forStatement);
+			
+			if (match.Success) {
+				var init = match.Get<CSharp.Statement>("iteratorVar").SingleOrDefault();
+				
+				AstNode iteratorVariable;
+				
+				if (init is CSharp.VariableDeclarationStatement) {
+					var var = ((CSharp.VariableDeclarationStatement)init).Variables.First();
+					iteratorVariable = new VariableInitializer() {
+						Identifier = new VariableIdentifier { Name = var.Name },
+						Type = (AstType)((CSharp.VariableDeclarationStatement)init).Type.AcceptVisitor(this, data),
+						Expression = (Expression)var.Initializer.AcceptVisitor(this, data)
+					};
+				} else if (init is CSharp.ExpressionStatement) {
+					iteratorVariable = init.AcceptVisitor(this, data);
+				} else goto end;
+				
+				Expression toExpr = Expression.Null;
+				
+				var cond = match.Get<CSharp.BinaryOperatorExpression>("condition").SingleOrDefault();
+				var endExpr = (Expression)match.Get<CSharp.Expression>("endExpr").SingleOrDefault().AcceptVisitor(this, data);
+				
+				if (cond.Operator == CSharp.BinaryOperatorType.LessThanOrEqual ||
+				    cond.Operator == CSharp.BinaryOperatorType.GreaterThanOrEqual) {
+					toExpr = endExpr;
+				}
+				
+				if (cond.Operator == CSharp.BinaryOperatorType.LessThan)
+					toExpr = new BinaryOperatorExpression(endExpr, BinaryOperatorType.Subtract, new PrimitiveExpression(1));
+				if (cond.Operator == CSharp.BinaryOperatorType.GreaterThan)
+					toExpr = new BinaryOperatorExpression(endExpr, BinaryOperatorType.Add, new PrimitiveExpression(1));
+				
+				Expression stepExpr = Expression.Null;
+				
+				var increment = match.Get<CSharp.AssignmentExpression>("increment").SingleOrDefault();
+				var factorExpr = (Expression)match.Get<CSharp.Expression>("factor").SingleOrDefault().AcceptVisitor(this, data);
+				
+				if (increment.Operator == CSharp.AssignmentOperatorType.Add && (factorExpr is PrimitiveExpression && (int)((PrimitiveExpression)factorExpr).Value != 1))
+					stepExpr = factorExpr;
+				if (increment.Operator == CSharp.AssignmentOperatorType.Subtract)
+					stepExpr = new UnaryOperatorExpression(UnaryOperatorType.Minus, factorExpr);
+				
+				return new ForStatement() {
+					Variable = iteratorVariable,
+					ToExpression = toExpr,
+					StepExpression = stepExpr,
+					Body = (BlockStatement)match.Get<CSharp.Statement>("body").Single().AcceptVisitor(this, data)
+				};
+			}
+			
+		end:
 			var stmt = new WhileStatement() {
 				Condition = (Expression)forStatement.Condition.AcceptVisitor(this, data),
 				Body = (BlockStatement)forStatement.EmbeddedStatement.AcceptVisitor(this, data)
