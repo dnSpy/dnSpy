@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Ast;
@@ -27,13 +26,20 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 	{
 		IEnvironmentProvider provider;
 		Stack<BlockStatement> blocks;
-		// TODO this should belong to the current type member or lambda
-		bool inIterator;
+		Stack<TypeDeclaration> types;
+		Stack<MemberInfo> members;
+		
+		class MemberInfo
+		{
+			public bool inIterator;
+		}
 		
 		public CSharpToVBConverterVisitor(IEnvironmentProvider provider)
 		{
 			this.provider = provider;
 			this.blocks = new Stack<BlockStatement>();
+			this.types = new Stack<TypeDeclaration>();
+			this.members = new Stack<MemberInfo>();
 		}
 		
 		public AstNode VisitAnonymousMethodExpression(CSharp.AnonymousMethodExpression anonymousMethodExpression, object data)
@@ -716,7 +722,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				
 				type.Name = new Identifier(typeDeclaration.Name, AstLocation.Empty);
 				
+				types.Push(type);
 				ConvertNodes(typeDeclaration.Members, type.Members);
+				types.Pop();
 				
 				return EndNode(typeDeclaration, type);
 			}
@@ -1131,13 +1139,15 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitYieldBreakStatement(CSharp.YieldBreakStatement yieldBreakStatement, object data)
 		{
-			inIterator = true;
+			var frame = members.Peek();
+			frame.inIterator = true;
 			return EndNode(yieldBreakStatement, new ReturnStatement());
 		}
 		
 		public AstNode VisitYieldStatement(CSharp.YieldStatement yieldStatement, object data)
 		{
-			inIterator = true;
+			var frame = members.Peek();
+			frame.inIterator = true;
 			return EndNode(yieldStatement, new YieldStatement((Expression)yieldStatement.Expression.AcceptVisitor(this, data)));
 		}
 		
@@ -1197,19 +1207,30 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitEventDeclaration(CSharp.EventDeclaration eventDeclaration, object data)
 		{
-			var result = new EventDeclaration();
-			// TODO event declaration
+			members.Push(new MemberInfo());
 			
-//			ConvertNodes(eventDeclaration.Attributes, result.Attributes);
-//			result.Modifiers = ConvertModifiers(eventDeclaration.Modifiers, eventDeclaration);
-//			result.Name = new Identifier(eventDeclaration., AstLocation.Empty);
+			foreach (var evt in eventDeclaration.Variables) {
+				var result = new EventDeclaration();
+
+				ConvertNodes(eventDeclaration.Attributes, result.Attributes);
+				result.Modifiers = ConvertModifiers(eventDeclaration.Modifiers, eventDeclaration);
+				result.Name = evt.Name;
+				result.ReturnType = (AstType)eventDeclaration.ReturnType.AcceptVisitor(this, data);
+				
+				types.Peek().Members.Add(result);
+			}
 			
-			return EndNode(eventDeclaration, result);
+			members.Pop();
+			
+			return EndNode<EventDeclaration>(eventDeclaration, null);
 		}
 		
 		public AstNode VisitCustomEventDeclaration(CSharp.CustomEventDeclaration customEventDeclaration, object data)
 		{
 			var result = new EventDeclaration();
+			
+			members.Push(new MemberInfo());
+			
 			ConvertNodes(customEventDeclaration.Attributes, result.Attributes);
 			result.Modifiers = ConvertModifiers(customEventDeclaration.Modifiers, customEventDeclaration);
 			result.IsCustom = true;
@@ -1222,6 +1243,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			result.AddHandlerBlock = (Accessor)customEventDeclaration.AddAccessor.AcceptVisitor(this, data);
 			result.RemoveHandlerBlock = (Accessor)customEventDeclaration.RemoveAccessor.AcceptVisitor(this, data);
 			
+			members.Pop();
+			
 			return EndNode(customEventDeclaration, result);
 		}
 		
@@ -1229,9 +1252,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			var decl = new FieldDeclaration();
 			
+			members.Push(new MemberInfo());
+			
 			ConvertNodes(fieldDeclaration.Attributes, decl.Attributes);
 			decl.Modifiers = ConvertModifiers(fieldDeclaration.Modifiers, fieldDeclaration);
 			ConvertNodes(fieldDeclaration.Variables, decl.Variables);
+			
+			members.Pop();
 			
 			return EndNode(fieldDeclaration, decl);
 		}
@@ -1239,6 +1266,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		public AstNode VisitIndexerDeclaration(CSharp.IndexerDeclaration indexerDeclaration, object data)
 		{
 			var decl = new PropertyDeclaration();
+			
+			members.Push(new MemberInfo());
 			
 			ConvertNodes(indexerDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), decl.Attributes);
 			decl.Getter = (Accessor)indexerDeclaration.Getter.AcceptVisitor(this, data);
@@ -1260,12 +1289,16 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				                           });
 			}
 			
+			members.Pop();
+			
 			return EndNode(indexerDeclaration, decl);
 		}
 		
 		public AstNode VisitMethodDeclaration(CSharp.MethodDeclaration methodDeclaration, object data)
 		{
 			var result = new MethodDeclaration();
+			
+			members.Push(new MemberInfo());
 			
 			ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
 			ConvertNodes(methodDeclaration.ModifierTokens, result.ModifierTokens);
@@ -1282,9 +1315,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				result.ReturnType = (AstType)methodDeclaration.ReturnType.AcceptVisitor(this, data);
 			result.Body = (BlockStatement)methodDeclaration.Body.AcceptVisitor(this, data);
 			
-			if (inIterator) {
+			if (members.Pop().inIterator) {
 				result.Modifiers |= Modifiers.Iterator;
-				inIterator = false;
 			}
 			
 			return EndNode(methodDeclaration, result);
@@ -1299,6 +1331,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		public AstNode VisitOperatorDeclaration(CSharp.OperatorDeclaration operatorDeclaration, object data)
 		{
 			var result = new OperatorDeclaration();
+			
+			members.Push(new MemberInfo());
+			
 			ConvertNodes(operatorDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
 			ConvertNodes(operatorDeclaration.ModifierTokens, result.ModifierTokens);
 			switch (operatorDeclaration.OperatorType) {
@@ -1381,6 +1416,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			result.ReturnType = (AstType)operatorDeclaration.ReturnType.AcceptVisitor(this, data);
 			result.Body = (BlockStatement)operatorDeclaration.Body.AcceptVisitor(this, data);
 			
+			members.Pop();
+			
 			return EndNode(operatorDeclaration, result);
 		}
 		
@@ -1427,6 +1464,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			var decl = new PropertyDeclaration();
 			
+			members.Push(new MemberInfo());
+			
 			ConvertNodes(propertyDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), decl.Attributes);
 			decl.Getter = (Accessor)propertyDeclaration.Getter.AcceptVisitor(this, data);
 			decl.Modifiers = ConvertModifiers(propertyDeclaration.Modifiers, propertyDeclaration);
@@ -1446,9 +1485,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				                           });
 			}
 			
-			if (inIterator) {
+			if (members.Pop().inIterator) {
 				decl.Modifiers |= Modifiers.Iterator;
-				inIterator = false;
 			}
 			
 			return EndNode(propertyDeclaration, decl);

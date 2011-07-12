@@ -1766,7 +1766,7 @@ namespace ICSharpCode.NRefactory.VB
 				Space();
 				WriteKeyword("As");
 				eventDeclaration.ReturnType.AcceptVisitor(this, data);
-			}
+			} 
 			WriteImplementsClause(eventDeclaration.ImplementsClause);
 			
 			if (eventDeclaration.IsCustom) {
