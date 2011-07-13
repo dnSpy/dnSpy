@@ -32,7 +32,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		string stringValue;
 		
 		public string StringValue {
-			get { return stringValue; } // TODO ?? VBNetOutputVisitor.ToVBNetString(this); }
+			get { return stringValue ?? OutputVisitor.ToVBNetString(this); }
 		}
 		
 		public PrimitiveExpression(object value)

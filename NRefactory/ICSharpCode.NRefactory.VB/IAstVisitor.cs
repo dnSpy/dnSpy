@@ -35,6 +35,7 @@ namespace ICSharpCode.NRefactory.VB {
 		// TypeMember scope
 		S VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, T data);
 		S VisitMethodDeclaration(MethodDeclaration methodDeclaration, T data);
+		S VisitExternalMethodDeclaration(ExternalMethodDeclaration externalMethodDeclaration, T data);
 		S VisitFieldDeclaration(FieldDeclaration fieldDeclaration, T data);
 		S VisitVariableDeclaratorWithTypeAndInitializer(VariableDeclaratorWithTypeAndInitializer variableDeclaratorWithTypeAndInitializer, T data);
 		S VisitVariableDeclaratorWithObjectCreation(VariableDeclaratorWithObjectCreation variableDeclaratorWithObjectCreation, T data);
@@ -110,5 +111,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitSingleLineFunctionLambdaExpression(SingleLineFunctionLambdaExpression singleLineFunctionLambdaExpression, T data);
 		
 		S VisitQueryExpression(QueryExpression queryExpression, T data);
+		
+
 	}
 }

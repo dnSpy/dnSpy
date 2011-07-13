@@ -113,6 +113,7 @@ namespace ICSharpCode.NRefactory.VB
 		public object VisitParameterDeclaration(ParameterDeclaration parameterDeclaration, object data)
 		{
 			StartNode(parameterDeclaration);
+			WriteAttributes(parameterDeclaration.Attributes);
 			WriteModifiers(parameterDeclaration.ModifierTokens);
 			WriteIdentifier(parameterDeclaration.Name.Name);
 			if (!parameterDeclaration.Type.IsNull) {
@@ -164,7 +165,10 @@ namespace ICSharpCode.NRefactory.VB
 			WriteToken("<", AttributeBlock.Roles.LChevron);
 			WriteCommaSeparatedList(attributeBlock.Attributes);
 			WriteToken(">", AttributeBlock.Roles.RChevron);
-			NewLine();
+			if (attributeBlock.Parent is ParameterDeclaration)
+				Space();
+			else
+				NewLine();
 			
 			return EndNode(attributeBlock);
 		}
@@ -1766,7 +1770,7 @@ namespace ICSharpCode.NRefactory.VB
 				Space();
 				WriteKeyword("As");
 				eventDeclaration.ReturnType.AcceptVisitor(this, data);
-			} 
+			}
 			WriteImplementsClause(eventDeclaration.ImplementsClause);
 			
 			if (eventDeclaration.IsCustom) {
@@ -2341,6 +2345,62 @@ namespace ICSharpCode.NRefactory.VB
 			}
 			
 			return EndNode(continueStatement);
+		}
+		
+		public object VisitExternalMethodDeclaration(ExternalMethodDeclaration externalMethodDeclaration, object data)
+		{
+			StartNode(externalMethodDeclaration);
+			
+			WriteAttributes(externalMethodDeclaration.Attributes);
+			WriteModifiers(externalMethodDeclaration.ModifierTokens);
+			WriteKeyword("Declare");
+			switch (externalMethodDeclaration.CharsetModifier) {
+				case CharsetModifier.None:
+					break;
+				case CharsetModifier.Auto:
+					WriteKeyword("Auto");
+					break;
+				case CharsetModifier.Unicode:
+					WriteKeyword("Unicode");
+					break;
+				case CharsetModifier.Ansi:
+					WriteKeyword("Ansi");
+					break;
+				default:
+					throw new Exception("Invalid value for CharsetModifier");
+			}
+			if (externalMethodDeclaration.IsSub)
+				WriteKeyword("Sub");
+			else
+				WriteKeyword("Function");
+			externalMethodDeclaration.Name.AcceptVisitor(this, data);
+			WriteKeyword("Lib");
+			Space();
+			WritePrimitiveValue(externalMethodDeclaration.Library);
+			Space();
+			if (externalMethodDeclaration.Alias != null) {
+				WriteKeyword("Alias");
+				Space();
+				WritePrimitiveValue(externalMethodDeclaration.Alias);
+				Space();
+			}
+			WriteCommaSeparatedListInParenthesis(externalMethodDeclaration.Parameters, false);
+			if (!externalMethodDeclaration.IsSub && !externalMethodDeclaration.ReturnType.IsNull) {
+				Space();
+				WriteKeyword("As");
+				WriteAttributes(externalMethodDeclaration.ReturnTypeAttributes);
+				externalMethodDeclaration.ReturnType.AcceptVisitor(this, data);
+			}
+			NewLine();
+			
+			return EndNode(externalMethodDeclaration);
+		}
+		
+		public static string ToVBNetString(PrimitiveExpression primitiveExpression)
+		{
+			var writer = new StringWriter();
+			new OutputVisitor(writer, new VBFormattingOptions()).WritePrimitiveValue(primitiveExpression.Value);
+			return writer.ToString();
 		}
 	}
 }

@@ -115,18 +115,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Explicit
 	}
 	
-	///<summary>
-	/// Charset types, used in external methods
-	/// declarations (VB only).
-	///</summary>
-	public enum CharsetModifier
-	{
-		None,
-		Auto,
-		Unicode,
-		Ansi
-	}
-	
 	/// <summary>
 	/// Specifies the ordering direction of a QueryExpressionOrdering node.
 	/// </summary>

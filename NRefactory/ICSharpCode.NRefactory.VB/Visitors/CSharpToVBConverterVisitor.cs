@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+
 using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Ast;
@@ -1302,30 +1302,113 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitMethodDeclaration(CSharp.MethodDeclaration methodDeclaration, object data)
 		{
-			var result = new MethodDeclaration();
+			CSharp.Attribute attr;
+			if ((methodDeclaration.Modifiers & CSharp.Modifiers.Extern) == CSharp.Modifiers.Extern && HasAttribute(methodDeclaration.Attributes, "System.Runtime.InteropServices.DllImportAttribute", out attr)) {
+				var result = new ExternalMethodDeclaration();
+				
+				members.Push(new MemberInfo());
+				
+				// remove AttributeSection if only one attribute is present
+				var attrSec = (CSharp.AttributeSection)attr.Parent;
+				if (attrSec.Attributes.Count == 1)
+					attrSec.Remove();
+				else
+					attr.Remove();
+				
+				result.Library = (attr.Arguments.First().AcceptVisitor(this, data) as PrimitiveExpression).Value.ToString();
+				result.CharsetModifier = ConvertCharset(attr.Arguments);
+				result.Alias = ConvertAlias(attr.Arguments);
+				
+				ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
+				ConvertNodes(methodDeclaration.ModifierTokens, result.ModifierTokens);
+				result.Name = new Identifier(methodDeclaration.Name, AstLocation.Empty);
+				result.IsSub = IsSub(methodDeclaration.ReturnType);
+				ConvertNodes(methodDeclaration.Parameters, result.Parameters);
+				ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), result.ReturnTypeAttributes);
+				if (!result.IsSub)
+					result.ReturnType = (AstType)methodDeclaration.ReturnType.AcceptVisitor(this, data);
+				
+				if (members.Pop().inIterator) {
+					result.Modifiers |= Modifiers.Iterator;
+				}
+				
+				return EndNode(methodDeclaration, result);
+			} else {
+				var result = new MethodDeclaration();
+				
+				members.Push(new MemberInfo());
+				
+				ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
+				ConvertNodes(methodDeclaration.ModifierTokens, result.ModifierTokens);
+				result.Name = new Identifier(methodDeclaration.Name, AstLocation.Empty);
+				result.IsSub = IsSub(methodDeclaration.ReturnType);
+				ConvertNodes(methodDeclaration.Parameters, result.Parameters);
+				ConvertNodes(methodDeclaration.TypeParameters, result.TypeParameters);
+				ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), result.ReturnTypeAttributes);
+				if (!methodDeclaration.PrivateImplementationType.IsNull)
+					result.ImplementsClause.Add(
+						new InterfaceMemberSpecifier((AstType)methodDeclaration.PrivateImplementationType.AcceptVisitor(this, data),
+						                             methodDeclaration.Name));
+				if (!result.IsSub)
+					result.ReturnType = (AstType)methodDeclaration.ReturnType.AcceptVisitor(this, data);
+				result.Body = (BlockStatement)methodDeclaration.Body.AcceptVisitor(this, data);
+				
+				if (members.Pop().inIterator) {
+					result.Modifiers |= Modifiers.Iterator;
+				}
+				
+				return EndNode(methodDeclaration, result);
+			}
+		}
+		
+		string ConvertAlias(CSharp.AstNodeCollection<CSharp.Expression> arguments)
+		{
+			var pattern = new CSharp.AssignmentExpression() {
+				Left = new CSharp.IdentifierExpression("EntryPoint"),
+				Operator = CSharp.AssignmentOperatorType.Assign,
+				Right = new AnyNode("alias")
+			};
 			
-			members.Push(new MemberInfo());
+			var result = arguments
+				.Select(expr => pattern.Match(expr))
+				.FirstOrDefault(r => r.Success);
 			
-			ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
-			ConvertNodes(methodDeclaration.ModifierTokens, result.ModifierTokens);
-			result.Name = new Identifier(methodDeclaration.Name, AstLocation.Empty);
-			result.IsSub = IsSub(methodDeclaration.ReturnType);
-			ConvertNodes(methodDeclaration.Parameters, result.Parameters);
-			ConvertNodes(methodDeclaration.TypeParameters, result.TypeParameters);
-			ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), result.ReturnTypeAttributes);
-			if (!methodDeclaration.PrivateImplementationType.IsNull)
-				result.ImplementsClause.Add(
-					new InterfaceMemberSpecifier((AstType)methodDeclaration.PrivateImplementationType.AcceptVisitor(this, data),
-					                             methodDeclaration.Name));
-			if (!result.IsSub)
-				result.ReturnType = (AstType)methodDeclaration.ReturnType.AcceptVisitor(this, data);
-			result.Body = (BlockStatement)methodDeclaration.Body.AcceptVisitor(this, data);
-			
-			if (members.Pop().inIterator) {
-				result.Modifiers |= Modifiers.Iterator;
+			if (result.Success && result.Has("alias")) {
+				return result.Get<CSharp.PrimitiveExpression>("alias")
+					.First().Value.ToString();
 			}
 			
-			return EndNode(methodDeclaration, result);
+			return null;
+		}
+		
+		CharsetModifier ConvertCharset(CSharp.AstNodeCollection<CSharp.Expression> arguments)
+		{
+			var pattern = new CSharp.AssignmentExpression() {
+				Left = new CSharp.IdentifierExpression("CharSet"),
+				Operator = CSharp.AssignmentOperatorType.Assign,
+				Right = new NamedNode(
+					"modifier",
+					new CSharp.MemberReferenceExpression() {
+						Target = new CSharp.IdentifierExpression("CharSet")
+					})
+			};
+			
+			var result = arguments
+				.Select(expr => pattern.Match(expr))
+				.FirstOrDefault(r => r.Success);
+			
+			if (result.Success && result.Has("modifier")) {
+				switch (result.Get<CSharp.MemberReferenceExpression>("modifier").First().MemberName) {
+					case "Auto":
+						return CharsetModifier.Auto;
+					case "Ansi":
+						return CharsetModifier.Ansi;
+					case "Unicode":
+						return CharsetModifier.Unicode;
+				}
+			}
+			
+			return CharsetModifier.None;
 		}
 		
 		bool IsSub(CSharp.AstType returnType)
