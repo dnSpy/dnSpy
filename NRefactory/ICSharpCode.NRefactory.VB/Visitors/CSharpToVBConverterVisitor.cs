@@ -54,7 +54,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			ConvertNodes(anonymousMethodExpression.Parameters, expr.Parameters);
 			
 			if (members.Pop().inIterator) {
-				expr.Modifiers |= Modifiers.Iterator;
+				expr.Modifiers |= LambdaExpressionModifiers.Iterator;
 			}
 			
 			return EndNode(anonymousMethodExpression, expr);
@@ -62,10 +62,29 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitUndocumentedExpression(CSharp.UndocumentedExpression undocumentedExpression, object data)
 		{
-			// 29.06.2011 20:28:36 Siegfried Pammer: wie soll ich die behandeln?
-			// 29.06.2011 20:28:58 Siegfried Pammer: throw new NotSupportedException(); ?
-			// 29.06.2011 20:35:50 Daniel Grunwald: da würde ich wieder Pseudo-Funktionen einführen
-			throw new NotImplementedException();
+			var invocation = new InvocationExpression();
+			
+			switch (undocumentedExpression.UndocumentedExpressionType) {
+				case CSharp.UndocumentedExpressionType.ArgListAccess:
+				case CSharp.UndocumentedExpressionType.ArgList:
+					invocation.Target = new IdentifierExpression { Identifier = "__ArgList" };
+					break;
+				case CSharp.UndocumentedExpressionType.RefValue:
+					invocation.Target = new IdentifierExpression { Identifier = "__RefValue" };
+					break;
+				case CSharp.UndocumentedExpressionType.RefType:
+					invocation.Target = new IdentifierExpression { Identifier = "__RefType" };
+					break;
+				case CSharp.UndocumentedExpressionType.MakeRef:
+					invocation.Target = new IdentifierExpression { Identifier = "__MakeRef" };
+					break;
+				default:
+					throw new Exception("Invalid value for UndocumentedExpressionType");
+			}
+			
+			ConvertNodes(undocumentedExpression.Arguments, invocation.Arguments);
+			
+			return EndNode(undocumentedExpression, invocation);
 		}
 		
 		public AstNode VisitArrayCreateExpression(CSharp.ArrayCreateExpression arrayCreateExpression, object data)
@@ -583,6 +602,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitEmptyExpression(CSharp.EmptyExpression emptyExpression, object data)
 		{
+			// TODO : not used in ILSpy currently
 			throw new NotImplementedException();
 		}
 		
