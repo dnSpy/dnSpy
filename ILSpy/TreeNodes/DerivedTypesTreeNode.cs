@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.Utils;
 using Mono.Cecil;
@@ -35,7 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		readonly AssemblyList list;
 		readonly TypeDefinition type;
 		ThreadingSupport threading;
-		
+
 		public DerivedTypesTreeNode(AssemblyList list, TypeDefinition type)
 		{
 			this.list = list;
@@ -43,27 +42,29 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.LazyLoading = true;
 			this.threading = new ThreadingSupport();
 		}
-		
-		public override object Text {
+
+		public override object Text
+		{
 			get { return "Derived Types"; }
 		}
-		
-		public override object Icon {
+
+		public override object Icon
+		{
 			get { return Images.SubTypes; }
 		}
-		
+
 		protected override void LoadChildren()
 		{
 			threading.LoadChildren(this, FetchChildren);
 		}
-		
+
 		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
 			var assemblies = list.GetAssemblies().Select(node => node.AssemblyDefinition).Where(asm => asm != null).ToArray();
 			return FindDerivedTypes(type, assemblies, cancellationToken);
 		}
-		
+
 		internal static IEnumerable<DerivedTypesEntryNode> FindDerivedTypes(TypeDefinition type, AssemblyDefinition[] assemblies, CancellationToken cancellationToken)
 		{
 			foreach (AssemblyDefinition asm in assemblies) {
@@ -80,7 +81,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				}
 			}
 		}
-		
+
 		static bool IsSameType(TypeReference typeRef, TypeDefinition type)
 		{
 			if (typeRef.FullName == type.FullName)
@@ -96,66 +97,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return false;
 			return true;
 		}
-		
+
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			threading.Decompile(language, output, options, EnsureLazyChildren);
-		}
-	}
-	
-	class DerivedTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
-	{
-		TypeDefinition def;
-		AssemblyDefinition[] assemblies;
-		ThreadingSupport threading;
-		
-		public DerivedTypesEntryNode(TypeDefinition def, AssemblyDefinition[] assemblies)
-		{
-			this.def = def;
-			this.assemblies = assemblies;
-			this.LazyLoading = true;
-			threading = new ThreadingSupport();
-		}
-		
-		public override bool ShowExpander {
-			get {
-				return !def.IsSealed && base.ShowExpander;
-			}
-		}
-		
-		public override object Text {
-			get { return this.Language.TypeToString(def, true); }
-		}
-		
-		public override object Icon {
-			get {
-				return TypeTreeNode.GetIcon(def);
-			}
-		}
-		
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
-		
-		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct)
-		{
-			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
-			return DerivedTypesTreeNode.FindDerivedTypes(def, assemblies, ct);
-		}
-		
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
-		{
-			e.Handled = BaseTypesEntryNode.ActivateItem(this, def);
-		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.WriteCommentLine(output, language.TypeToString(def, true));
-		}
-		
-		MemberReference IMemberTreeNode.Member {
-			get { return def; }
 		}
 	}
 }

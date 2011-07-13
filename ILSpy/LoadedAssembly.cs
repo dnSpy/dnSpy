@@ -17,11 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-
+using ICSharpCode.ILSpy.Options;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy
@@ -133,6 +134,8 @@ namespace ICSharpCode.ILSpy
 				if (!disposed) {
 					disposed = true;
 					assemblyLoadDisableCount--;
+					// clear the lookup cache since we might have stored the lookups failed due to DisableAssemblyLoad()
+					MainWindow.Instance.CurrentAssemblyList.assemblyLookupCache.Clear();
 				}
 			}
 		}
@@ -171,7 +174,17 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		public IAssemblyResolver GetAssemblyResolver()
+		{
+			return new MyAssemblyResolver(this);
+		}
+		
 		public LoadedAssembly LookupReferencedAssembly(string fullName)
+		{
+			return assemblyList.assemblyLookupCache.GetOrAdd(fullName, LookupReferencedAssemblyInternal);
+		}
+		
+		LoadedAssembly LookupReferencedAssemblyInternal(string fullName)
 		{
 			foreach (LoadedAssembly asm in assemblyList.GetAssemblies()) {
 				if (asm.AssemblyDefinition != null && fullName.Equals(asm.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
@@ -206,6 +219,10 @@ namespace ICSharpCode.ILSpy
 			return this.assemblyTask.ContinueWith(onAssemblyLoaded, taskScheduler);
 		}
 		
+		/// <summary>
+		/// Wait until the assembly is loaded.
+		/// Throws an AggregateException when loading the assembly fails.
+		/// </summary>
 		public void WaitUntilLoaded()
 		{
 			assemblyTask.Wait();

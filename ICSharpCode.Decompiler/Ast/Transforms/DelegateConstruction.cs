@@ -61,7 +61,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public override object VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression, object data)
 		{
-			if (objectCreateExpression.Arguments.Count() == 2) {
+			if (objectCreateExpression.Arguments.Count == 2) {
 				Expression obj = objectCreateExpression.Arguments.First();
 				Expression func = objectCreateExpression.Arguments.Last();
 				Annotation annotation = func.Annotation<Annotation>();
@@ -115,7 +115,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		internal static bool IsAnonymousMethod(DecompilerContext context, MethodDefinition method)
 		{
-			if (method == null || !method.Name.StartsWith("<", StringComparison.Ordinal))
+			if (method == null || !(method.Name.StartsWith("<", StringComparison.Ordinal) || method.Name.Contains("$")))
 				return false;
 			if (!(method.IsCompilerGenerated() || IsPotentialClosure(context, method.DeclaringType)))
 				return false;
@@ -136,6 +136,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			
 			// Create AnonymousMethodExpression and prepare parameters
 			AnonymousMethodExpression ame = new AnonymousMethodExpression();
+			ame.CopyAnnotationsFrom(objectCreateExpression); // copy ILRanges etc.
+			ame.RemoveAnnotations<MethodReference>(); // remove reference to delegate ctor
+			ame.AddAnnotation(method); // add reference to anonymous method
 			ame.Parameters.AddRange(AstBuilder.MakeParameters(method, isLambda: true));
 			ame.HasParameterList = true;
 			
@@ -180,6 +183,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 			if (isLambda) {
 				LambdaExpression lambda = new LambdaExpression();
+				lambda.CopyAnnotationsFrom(ame);
 				ame.Parameters.MoveTo(lambda.Parameters);
 				Expression returnExpr = ((ReturnStatement)body.Statements.Single()).Expression;
 				returnExpr.Remove();
@@ -388,10 +392,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						continue; // skip static fields
 					if (dict.ContainsKey(field)) // skip field if it already was handled as parameter
 						continue;
-					EnsureVariableNameIsAvailable(blockStatement, field.Name);
-					currentlyUsedVariableNames.Add(field.Name);
-					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(field.FieldType, field), field.Name));
-					dict[field] = new IdentifierExpression(field.Name);
+					string capturedVariableName = field.Name;
+					if (capturedVariableName.StartsWith("$VB$Local_", StringComparison.Ordinal) && capturedVariableName.Length > 10)
+						capturedVariableName = capturedVariableName.Substring(10);
+					EnsureVariableNameIsAvailable(blockStatement, capturedVariableName);
+					currentlyUsedVariableNames.Add(capturedVariableName);
+					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(field.FieldType, field), capturedVariableName));
+					dict[field] = new IdentifierExpression(capturedVariableName);
 				}
 				
 				// Now figure out where the closure was accessed and use the simpler replacement expression there:

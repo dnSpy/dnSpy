@@ -237,6 +237,18 @@ namespace Mono.CSharp {
 			return pos < char_count;
 		}
 
+		public char[] ReadChars (int fromPosition, int toPosition)
+		{
+			char[] chars = new char[toPosition - fromPosition];
+			if (buffer_start <= fromPosition && toPosition < buffer_start + buffer.Length) {
+				Array.Copy (buffer, fromPosition - buffer_start, chars, 0, chars.Length);
+			} else {
+				throw new NotImplementedException ();
+			}
+
+			return chars;
+		}
+
 		public int Peek ()
 		{
 			if ((pos >= char_count) && !ReadBuffer ())

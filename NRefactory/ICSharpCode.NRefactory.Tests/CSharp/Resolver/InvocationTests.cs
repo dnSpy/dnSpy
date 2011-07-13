@@ -49,7 +49,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			Assert.AreSame(SharedTypes.UnknownType, result.Type);
 		}
 		
-		[Test, Ignore("Inheritance not supported in parser")]
+		[Test, Ignore("Resolver returns the member from the base class, which is correct according to C# spec, but not what we want to show in tooltips")]
 		public void OverriddenMethodCall()
 		{
 			string program = @"class A {
@@ -70,7 +70,7 @@ class B : A {
 			Assert.AreEqual("B.GetRandomNumber", result.Member.FullName);
 		}
 		
-		[Test, Ignore("Inheritance not supported in parser")]
+		[Test, Ignore("Resolver returns the member from the base class, which is correct according to C# spec, but not what we want to show in tooltips")]
 		public void OverriddenMethodCall2()
 		{
 			string program = @"class A {
@@ -122,7 +122,7 @@ class A {
 			Assert.AreEqual("System.Void", Resolve(program).Type.ReflectionName);
 		}
 		
-		[Test, Ignore("parser is broken for events")]
+		[Test]
 		public void EventCallTest()
 		{
 			string program = @"using System;
@@ -209,7 +209,7 @@ class Program {
 			Assert.IsTrue(((IMethod)mrr.Member).Parameters[0].IsRef);
 		}
 		
-		[Test, Ignore("Inheritance not supported in parser")]
+		[Test, Ignore("Grouping by declaring type not yet implemented")]
 		public void AddedOverload()
 		{
 			string program = @"class BaseClass {
@@ -225,7 +225,7 @@ class DerivedClass : BaseClass {
 			Assert.AreEqual("DerivedClass.Test", mrr.Member.FullName);
 		}
 		
-		[Test, Ignore("Inheritance not supported in parser")]
+		[Test]
 		public void AddedNonApplicableOverload()
 		{
 			string program = @"class BaseClass {
@@ -244,7 +244,7 @@ class DerivedClass : BaseClass {
 			Assert.AreEqual("DerivedClass.Test", mrr.Member.FullName);
 		}
 		
-		[Test, Ignore("Inheritance not supported in parser")]
+		[Test, Ignore("Grouping by declaring type not yet implemented")]
 		public void OverrideShadowed()
 		{
 			string program = @"using System;

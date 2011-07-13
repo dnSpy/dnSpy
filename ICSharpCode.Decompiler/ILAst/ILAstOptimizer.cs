@@ -42,9 +42,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		SimplifyTernaryOperator,
 		SimplifyNullCoalescing,
 		JoinBasicBlocks,
+		SimplifyShiftOperators,
 		TransformDecimalCtorToConstant,
 		SimplifyLdObjAndStObj,
+		SimplifyCustomShortCircuit,
 		TransformArrayInitializers,
+		TransformMultidimensionalArrayInitializers,
 		TransformObjectInitializers,
 		MakeAssignmentExpression,
 		IntroducePostIncrement,
@@ -52,9 +55,11 @@ namespace ICSharpCode.Decompiler.ILAst
 		FindLoops,
 		FindConditions,
 		FlattenNestedMovableBlocks,
+		RemoveEndFinally,
 		RemoveRedundantCode2,
 		GotoRemoval,
 		DuplicateReturns,
+		GotoRemoval2,
 		ReduceIfNesting,
 		InlineVariables3,
 		CachedDelegateInitialization,
@@ -128,7 +133,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.JoinBasicBlocks) return;
 					modified |= block.RunOptimization(new SimpleControlFlow(context, method).JoinBasicBlocks);
-					
+
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyShiftOperators) return;
+					modified |= block.RunOptimization(SimplifyShiftOperators);
+
 					if (abortBeforeStep == ILAstOptimizationStep.TransformDecimalCtorToConstant) return;
 					modified |= block.RunOptimization(TransformDecimalCtorToConstant);
 					modified |= block.RunOptimization(SimplifyLdcI4ConvI8);
@@ -136,8 +144,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (abortBeforeStep == ILAstOptimizationStep.SimplifyLdObjAndStObj) return;
 					modified |= block.RunOptimization(SimplifyLdObjAndStObj);
 					
+					if (abortBeforeStep == ILAstOptimizationStep.SimplifyCustomShortCircuit) return;
+					modified |= block.RunOptimization(new SimpleControlFlow(context, method).SimplifyCustomShortCircuit);
+					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
 					modified |= block.RunOptimization(TransformArrayInitializers);
+
+					if (abortBeforeStep == ILAstOptimizationStep.TransformMultidimensionalArrayInitializers) return;
+					modified |= block.RunOptimization(TransformMultidimensionalArrayInitializers);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformObjectInitializers) return;
 					modified |= block.RunOptimization(TransformObjectInitializers);
@@ -169,6 +183,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (abortBeforeStep == ILAstOptimizationStep.FlattenNestedMovableBlocks) return;
 			FlattenBasicBlocks(method);
 			
+			if (abortBeforeStep == ILAstOptimizationStep.RemoveEndFinally) return;
+			RemoveEndFinally(method);
+			
 			if (abortBeforeStep == ILAstOptimizationStep.RemoveRedundantCode2) return;
 			RemoveRedundantCode(method);
 			
@@ -177,6 +194,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (abortBeforeStep == ILAstOptimizationStep.DuplicateReturns) return;
 			DuplicateReturnStatements(method);
+			
+			if (abortBeforeStep == ILAstOptimizationStep.GotoRemoval2) return;
+			new GotoRemoval().RemoveGotos(method);
 			
 			if (abortBeforeStep == ILAstOptimizationStep.ReduceIfNesting) return;
 			ReduceIfNesting(method);
@@ -308,6 +328,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Converts call and callvirt instructions that read/write properties into CallGetter/CallSetter instructions.
 		/// 
 		/// CallGetter/CallSetter is used to allow the ILAst to represent "while ((SomeProperty = value) != null)".
+		/// 
+		/// Also simplifies 'newobj(SomeDelegate, target, ldvirtftn(F, target))' to 'newobj(SomeDelegate, target, ldvirtftn(F))'
 		/// </summary>
 		void IntroducePropertyAccessInstructions(ILNode node)
 		{
@@ -365,6 +387,19 @@ namespace ICSharpCode.Decompiler.ILAst
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallSetter : ILCode.CallvirtSetter;
 					}
 				}
+			} else if (expr.Code == ILCode.Newobj && expr.Arguments.Count == 2) {
+				// Might be 'newobj(SomeDelegate, target, ldvirtftn(F, target))'.
+				ILVariable target;
+				if (expr.Arguments[0].Match(ILCode.Ldloc, out target)
+				    && expr.Arguments[1].Code == ILCode.Ldvirtftn
+				    && expr.Arguments[1].Arguments.Count == 1
+				    && expr.Arguments[1].Arguments[0].MatchLdloc(target))
+				{
+					// Remove the 'target' argument from the ldvirtftn instruction.
+					// It's not needed in the translation to C#, and needs to be eliminated so that the target expression
+					// can be inlined.
+					expr.Arguments[1].Arguments.Clear();
+				}
 			}
 		}
 		
@@ -398,7 +433,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					    lastNode.IsUnconditionalControlFlow())
 					{
 						// Try to reuse the label
-						ILLabel label = currNode is ILLabel ? ((ILLabel)currNode) : new ILLabel() { Name = "Block_" + (nextLabelIndex++) };
+						ILLabel label = currNode as ILLabel ?? new ILLabel() { Name = "Block_" + (nextLabelIndex++).ToString() };
 						
 						// Terminate the last block
 						if (!lastNode.IsUnconditionalControlFlow()) {
@@ -508,6 +543,25 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		/// <summary>
+		/// Replace endfinally with jump to the end of the finally block
+		/// </summary>
+		void RemoveEndFinally(ILBlock method)
+		{
+			// Go thought the list in reverse so that we do the nested blocks first
+			foreach(var tryCatch in method.GetSelfAndChildrenRecursive<ILTryCatchBlock>(tc => tc.FinallyBlock != null).Reverse()) {
+				ILLabel label = new ILLabel() { Name = "EndFinally_" + nextLabelIndex++ };
+				tryCatch.FinallyBlock.Body.Add(label);
+				foreach(var block in tryCatch.FinallyBlock.GetSelfAndChildrenRecursive<ILBlock>()) {
+					for (int i = 0; i < block.Body.Count; i++) {
+						if (block.Body[i].Match(ILCode.Endfinally)) {
+							block.Body[i] = new ILExpression(ILCode.Br, label).WithILRanges(((ILExpression)block.Body[i]).ILRanges);
+						}
+					}
+				}
+			}
+		}
+		
+		/// <summary>
 		/// Reduce the nesting of conditions.
 		/// It should be done on flat data that already had most gotos removed
 		/// </summary>
@@ -556,16 +610,37 @@ namespace ICSharpCode.Decompiler.ILAst
 			// This ensures that a single IL variable is a single C# variable (gets assigned only one name)
 			// The DeclareVariables transformation might then split up the C# variable again if it is used indendently in two separate scopes.
 			Dictionary<VariableDefinition, ILVariable> dict = new Dictionary<VariableDefinition, ILVariable>();
-			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
-				ILVariable v = expr.Operand as ILVariable;
-				if (v != null && v.OriginalVariable != null) {
+			ReplaceVariables(
+				method,
+				delegate(ILVariable v) {
+					if (v.OriginalVariable == null)
+						return v;
 					ILVariable combinedVariable;
 					if (!dict.TryGetValue(v.OriginalVariable, out combinedVariable)) {
 						dict.Add(v.OriginalVariable, v);
 						combinedVariable = v;
 					}
-					expr.Operand = combinedVariable;
+					return combinedVariable;
+				});
+		}
+		
+		public static void ReplaceVariables(ILNode node, Func<ILVariable, ILVariable> variableMapping)
+		{
+			ILExpression expr = node as ILExpression;
+			if (expr != null) {
+				ILVariable v = expr.Operand as ILVariable;
+				if (v != null)
+					expr.Operand = variableMapping(v);
+				foreach (ILExpression child in expr.Arguments)
+					ReplaceVariables(child, variableMapping);
+			} else {
+				var catchBlock = node as ILTryCatchBlock.CatchBlock;
+				if (catchBlock != null && catchBlock.ExceptionVariable != null) {
+					catchBlock.ExceptionVariable = variableMapping(catchBlock.ExceptionVariable);
 				}
+				
+				foreach (ILNode child in node.GetChildren())
+					ReplaceVariables(child, variableMapping);
 			}
 		}
 		
@@ -694,13 +769,34 @@ namespace ICSharpCode.Decompiler.ILAst
 					// property getters can't be expression statements, but all other method calls can be
 					MethodReference mr = (MethodReference)expr.Operand;
 					return !mr.Name.StartsWith("get_", StringComparison.Ordinal);
+				case ILCode.CallSetter:
+				case ILCode.CallvirtSetter:
 				case ILCode.Newobj:
 				case ILCode.Newarr:
 				case ILCode.Stloc:
+				case ILCode.Stobj:
+				case ILCode.Stsfld:
+				case ILCode.Stfld:
+				case ILCode.Stind_Ref:
+				case ILCode.Stelem_Any:
+				case ILCode.Stelem_I:
+				case ILCode.Stelem_I1:
+				case ILCode.Stelem_I2:
+				case ILCode.Stelem_I4:
+				case ILCode.Stelem_I8:
+				case ILCode.Stelem_R4:
+				case ILCode.Stelem_R8:
+				case ILCode.Stelem_Ref:
 					return true;
 				default:
 					return false;
 			}
+		}
+		
+		public static ILExpression WithILRanges(this ILExpression expr, IEnumerable<ILRange> ilranges)
+		{
+			expr.ILRanges.AddRange(ilranges);
+			return expr;
 		}
 		
 		public static void RemoveTail(this List<ILNode> body, params ILCode[] codes)

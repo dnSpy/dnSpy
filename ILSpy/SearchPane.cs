@@ -36,14 +36,6 @@ using Mono.Cecil;
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
-	/// Notifies panes when they are closed.
-	/// </summary>
-	public interface IPane
-	{
-		void Closed();
-	}
-	
-	/// <summary>
 	/// Search pane
 	/// </summary>
 	public partial class SearchPane : UserControl, IPane

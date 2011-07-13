@@ -227,6 +227,30 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
+		public bool IsPrivate {
+			get { return Accessibility == Accessibility.Private; } 
+		}
+		
+		public bool IsPublic {
+			get { return Accessibility == Accessibility.Public; }
+		}
+		
+		public bool IsProtected {
+			get { return Accessibility == Accessibility.Protected; }
+		}
+		
+		public bool IsInternal {
+			get { return Accessibility == Accessibility.Internal; }
+		}
+		
+		public bool IsProtectedOrInternal {
+			get { return Accessibility == Accessibility.ProtectedOrInternal; }
+		}
+		
+		public bool IsProtectedAndInternal {
+			get { return Accessibility == Accessibility.ProtectedAndInternal; }
+		}
+		
 		public IProjectContent ProjectContent {
 			get { return declaringTypeDefinition.ProjectContent; }
 		}

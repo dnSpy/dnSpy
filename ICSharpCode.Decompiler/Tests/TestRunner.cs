@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.CodeDom.Compiler;
@@ -37,7 +52,7 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\DelegateConstruction.cs");
 		}
 		
-		[Test, Ignore("arg-Variables in catch clauses")]
+		[Test]
 		public void ExceptionHandling()
 		{
 			TestFile(@"..\..\Tests\ExceptionHandling.cs");
@@ -50,12 +65,18 @@ namespace ICSharpCode.Decompiler.Tests
 		}
 		
 		[Test]
+		public void CustomShortCircuitOperators()
+		{
+			TestFile(@"..\..\Tests\CustomShortCircuitOperators.cs");
+		}
+		
+		[Test]
 		public void IncrementDecrement()
 		{
 			TestFile(@"..\..\Tests\IncrementDecrement.cs");
 		}
 		
-		[Test, Ignore("Formatting issues (array initializers not on single line)")]
+		[Test]
 		public void InitializerTests()
 		{
 			TestFile(@"..\..\Tests\InitializerTests.cs");
@@ -71,6 +92,12 @@ namespace ICSharpCode.Decompiler.Tests
 		public void MultidimensionalArray()
 		{
 			TestFile(@"..\..\Tests\MultidimensionalArray.cs");
+		}
+		
+		[Test]
+		public void PInvoke()
+		{
+			TestFile(@"..\..\Tests\PInvoke.cs");
 		}
 		
 		[Test]
@@ -115,6 +142,12 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\YieldReturn.cs");
 		}
 		
+		[Test]
+		public void TypeAnalysis()
+		{
+			TestFile(@"..\..\Tests\TypeAnalysisTests.cs");
+		}
+		
 		static void TestFile(string fileName)
 		{
 			string code = File.ReadAllText(fileName);
@@ -131,7 +164,7 @@ namespace ICSharpCode.Decompiler.Tests
 		{
 			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
 			CompilerParameters options = new CompilerParameters();
-			options.CompilerOptions = "/unsafe";
+			options.CompilerOptions = "/unsafe /o-";
 			options.ReferencedAssemblies.Add("System.Core.dll");
 			CompilerResults results = provider.CompileAssemblyFromSource(options, code);
 			try {

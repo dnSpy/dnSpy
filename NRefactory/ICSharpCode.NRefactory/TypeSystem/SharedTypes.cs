@@ -57,8 +57,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				get { return "?"; }
 			}
 			
-			public override bool? IsReferenceType {
-				get { return null; }
+			public override bool? IsReferenceType(ITypeResolveContext context)
+			{
+				return null;
 			}
 			
 			public override bool Equals(IType other)
@@ -81,8 +82,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				get { return "null"; }
 			}
 			
-			public override bool? IsReferenceType {
-				get { return true; }
+			public override bool? IsReferenceType(ITypeResolveContext context)
+			{
+				return true;
 			}
 			
 			public override bool Equals(IType other)
@@ -105,8 +107,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				get { return "dynamic"; }
 			}
 			
-			public override bool? IsReferenceType {
-				get { return true; }
+			public override bool? IsReferenceType(ITypeResolveContext context)
+			{
+				return true;
 			}
 			
 			public override bool Equals(IType other)

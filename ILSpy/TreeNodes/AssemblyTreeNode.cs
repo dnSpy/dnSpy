@@ -134,6 +134,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					this.Children.Add(ns);
 			}
 		}
+		
+		public override bool CanExpandRecursively {
+			get { return true; }
+		}
 
 		public TypeTreeNode FindTypeNode(TypeDefinition def)
 		{
@@ -191,7 +195,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			assembly.WaitUntilLoaded(); // necessary so that load errors are passed on to the caller
+			try {
+				assembly.WaitUntilLoaded(); // necessary so that load errors are passed on to the caller
+			} catch (AggregateException ex) {
+				language.WriteCommentLine(output, assembly.FileName);
+				if (ex.InnerException is BadImageFormatException) {
+					language.WriteCommentLine(output, "This file does not contain a managed assembly.");
+					return;
+				} else {
+					throw;
+				}
+			}
 			language.DecompileAssembly(assembly, output, options);
 		}
 

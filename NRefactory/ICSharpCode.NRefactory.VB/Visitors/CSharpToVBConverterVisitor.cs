@@ -768,7 +768,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 						ConvertNodes(typeDeclaration.BaseTypes, type.ImplementsTypes);
 				}
 				
-				type.Name = new Identifier(typeDeclaration.Name, AstLocation.Empty);
+				type.Name = typeDeclaration.Name;
 				
 				types.Push(type);
 				ConvertNodes(typeDeclaration.Members, type.Members);

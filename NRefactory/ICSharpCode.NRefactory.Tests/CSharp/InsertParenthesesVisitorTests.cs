@@ -23,7 +23,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			expr = expr.Clone();
 			expr.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
 			StringWriter w = new StringWriter();
-			expr.AcceptVisitor(new OutputVisitor(w, policy), null);
+			w.NewLine = " ";
+			expr.AcceptVisitor(new OutputVisitor(new TextWriterOutputFormatter(w) { IndentationString = "" }, policy), null);
 			return w.ToString();
 		}
 		
@@ -32,7 +33,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			expr = expr.Clone();
 			expr.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = false }, null);
 			StringWriter w = new StringWriter();
-			expr.AcceptVisitor(new OutputVisitor(w, policy), null);
+			w.NewLine = " ";
+			expr.AcceptVisitor(new OutputVisitor(new TextWriterOutputFormatter(w) { IndentationString = "" }, policy), null);
 			return w.ToString();
 		}
 		
@@ -197,8 +199,8 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}.Invoke("ToArray");
 			
-			Assert.AreEqual("(from a in b" + Environment.NewLine + "select a.c ()).ToArray ()", InsertRequired(expr));
-			Assert.AreEqual("(from a in b" + Environment.NewLine + "select a.c ()).ToArray ()", InsertReadable(expr));
+			Assert.AreEqual("( from a in b select a.c ()).ToArray ()", InsertRequired(expr));
+			Assert.AreEqual("( from a in b select a.c ()).ToArray ()", InsertReadable(expr));
 		}
 		
 		[Test]
@@ -221,12 +223,10 @@ namespace ICSharpCode.NRefactory.CSharp
 				query.Clone()
 			);
 			
-			Assert.AreEqual("(from a in b" + Environment.NewLine +
-			                "select a) + from a in b" + Environment.NewLine +
-			                "select a", InsertRequired(expr));
-			Assert.AreEqual("(from a in b" + Environment.NewLine +
-			                "select a) + (from a in b" + Environment.NewLine +
-			                "select a)", InsertReadable(expr));
+			Assert.AreEqual("( from a in b select a) + " +
+			                " from a in b select a", InsertRequired(expr));
+			Assert.AreEqual("( from a in b select a) + " +
+			                "( from a in b select a)", InsertReadable(expr));
 		}
 		
 		[Test]
@@ -244,10 +244,8 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}.IsType(new PrimitiveType("int"));
 			
-			Assert.AreEqual("(from a in b" + Environment.NewLine +
-			                "select a) is int", InsertRequired(expr));
-			Assert.AreEqual("(from a in b" + Environment.NewLine +
-			                "select a) is int", InsertReadable(expr));
+			Assert.AreEqual("( from a in b select a) is int", InsertRequired(expr));
+			Assert.AreEqual("( from a in b select a) is int", InsertReadable(expr));
 		}
 		
 		[Test]

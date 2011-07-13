@@ -27,14 +27,14 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (type.DeclaringTypeDefinition != null) {
 				ITypeDefinition decl = type.DeclaringTypeDefinition.AcceptVisitor(this) as ITypeDefinition;
 				if (decl != null) {
-					foreach (ITypeDefinition c in decl.InnerClasses) {
+					foreach (ITypeDefinition c in decl.NestedTypes) {
 						if (c.Name == type.Name && c.TypeParameterCount == type.TypeParameterCount)
 							return c;
 					}
 				}
 				return type;
 			} else {
-				return context.GetClass(type.Namespace, type.Name, type.TypeParameterCount, StringComparer.Ordinal) ?? type;
+				return context.GetTypeDefinition(type.Namespace, type.Name, type.TypeParameterCount, StringComparer.Ordinal) ?? type;
 			}
 		}
 		

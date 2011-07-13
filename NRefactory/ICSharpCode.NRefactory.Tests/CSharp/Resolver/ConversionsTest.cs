@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ICSharpCode.NRefactory.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
@@ -16,13 +17,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	[TestFixture]
 	public unsafe class ConversionsTest
 	{
-		IProjectContent mscorlib = CecilLoaderTests.Mscorlib;
+		ITypeResolveContext ctx = CecilLoaderTests.Mscorlib;
 		Conversions conversions = new Conversions(CecilLoaderTests.Mscorlib);
 		
 		bool ImplicitConversion(Type from, Type to)
 		{
-			IType from2 = from.ToTypeReference().Resolve(mscorlib);
-			IType to2 = to.ToTypeReference().Resolve(mscorlib);
+			IType from2 = from.ToTypeReference().Resolve(ctx);
+			IType to2 = to.ToTypeReference().Resolve(ctx);
 			return conversions.ImplicitConversion(from2, to2);
 		}
 		
@@ -194,18 +195,102 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			Assert.IsFalse(ImplicitConversion(typeof(int*), typeof(dynamic)));
 		}
 		
-		[Test, Ignore]
-		public void TypeParameterConversions()
+		[Test]
+		public void UnconstrainedTypeParameter()
 		{
-			// TODO: write tests for conversions of type parameters
-			throw new NotImplementedException();
+			DefaultTypeParameter t = new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T");
+			DefaultTypeParameter t2 = new DefaultTypeParameter(EntityType.TypeDefinition, 1, "T2");
+			DefaultTypeParameter tm = new DefaultTypeParameter(EntityType.Method, 0, "TM");
+			
+			Assert.IsFalse(conversions.ImplicitConversion(SharedTypes.Null, t));
+			Assert.IsTrue(conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
+			Assert.IsTrue(conversions.ImplicitConversion(t, SharedTypes.Dynamic));
+			Assert.IsFalse(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
+			
+			Assert.IsTrue(conversions.ImplicitConversion(t, t));
+			Assert.IsFalse(conversions.ImplicitConversion(t2, t));
+			Assert.IsFalse(conversions.ImplicitConversion(t, t2));
+			Assert.IsFalse(conversions.ImplicitConversion(t, tm));
+			Assert.IsFalse(conversions.ImplicitConversion(tm, t));
+		}
+		
+		[Test]
+		public void TypeParameterWithReferenceTypeConstraint()
+		{
+			DefaultTypeParameter t = new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T");
+			t.HasReferenceTypeConstraint = true;
+			
+			Assert.IsTrue(conversions.ImplicitConversion(SharedTypes.Null, t));
+			Assert.IsTrue(conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
+			Assert.IsTrue(conversions.ImplicitConversion(t, SharedTypes.Dynamic));
+			Assert.IsFalse(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
+		}
+		
+		[Test]
+		public void TypeParameterWithValueTypeConstraint()
+		{
+			DefaultTypeParameter t = new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T");
+			t.HasValueTypeConstraint = true;
+			
+			Assert.IsFalse(conversions.ImplicitConversion(SharedTypes.Null, t));
+			Assert.IsTrue(conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
+			Assert.IsTrue(conversions.ImplicitConversion(t, SharedTypes.Dynamic));
+			Assert.IsTrue(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
+		}
+		
+		[Test]
+		public void TypeParameterWithClassConstraint()
+		{
+			DefaultTypeParameter t = new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T");
+			t.Constraints.Add(ctx.GetTypeDefinition(typeof(StringComparer)));
+			
+			Assert.IsTrue(conversions.ImplicitConversion(SharedTypes.Null, t));
+			Assert.IsTrue(conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
+			Assert.IsTrue(conversions.ImplicitConversion(t, SharedTypes.Dynamic));
+			Assert.IsFalse(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
+			Assert.IsTrue(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(StringComparer))));
+			Assert.IsTrue(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(IComparer))));
+			Assert.IsFalse(conversions.ImplicitConversion(t, typeof(IComparer<int>).ToTypeReference().Resolve(ctx)));
+			Assert.IsTrue(conversions.ImplicitConversion(t, typeof(IComparer<string>).ToTypeReference().Resolve(ctx)));
+		}
+		
+		[Test]
+		public void TypeParameterWithInterfaceConstraint()
+		{
+			DefaultTypeParameter t = new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T");
+			t.Constraints.Add(ctx.GetTypeDefinition(typeof(IList)));
+			
+			Assert.IsFalse(conversions.ImplicitConversion(SharedTypes.Null, t));
+			Assert.IsTrue(conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
+			Assert.IsTrue(conversions.ImplicitConversion(t, SharedTypes.Dynamic));
+			Assert.IsFalse(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
+			Assert.IsTrue(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(IList))));
+			Assert.IsTrue(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(IEnumerable))));
+		}
+		
+		[Test]
+		public void UserDefinedImplicitConversion()
+		{
+			Assert.IsTrue(ImplicitConversion(typeof(DateTime), typeof(DateTimeOffset)));
+			Assert.IsFalse(ImplicitConversion(typeof(DateTimeOffset), typeof(DateTime)));
+		}
+		
+		[Test]
+		public void UserDefinedImplicitNullableConversion()
+		{
+			// User-defined conversion followed by nullable conversion
+			Assert.IsTrue(ImplicitConversion(typeof(DateTime), typeof(DateTimeOffset?)));
+			// Lifted user-defined conversion
+			Assert.IsTrue(ImplicitConversion(typeof(DateTime?), typeof(DateTimeOffset?)));
+			// User-defined conversion doesn't drop the nullability
+			Assert.IsFalse(ImplicitConversion(typeof(DateTime?), typeof(DateTimeOffset)));
 		}
 		
 		bool IntegerLiteralConversion(object value, Type to)
 		{
-			IType fromType = value.GetType().ToTypeReference().Resolve(mscorlib);
+			IType fromType = value.GetType().ToTypeReference().Resolve(ctx);
 			ConstantResolveResult crr = new ConstantResolveResult(fromType, value);
-			IType to2 = to.ToTypeReference().Resolve(mscorlib);
+			IType to2 = to.ToTypeReference().Resolve(ctx);
 			return conversions.ImplicitConversion(crr, to2);
 		}
 		
@@ -280,18 +365,18 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		int BetterConversion(Type s, Type t1, Type t2)
 		{
-			IType sType = s.ToTypeReference().Resolve(mscorlib);
-			IType t1Type = t1.ToTypeReference().Resolve(mscorlib);
-			IType t2Type = t2.ToTypeReference().Resolve(mscorlib);
+			IType sType = s.ToTypeReference().Resolve(ctx);
+			IType t1Type = t1.ToTypeReference().Resolve(ctx);
+			IType t2Type = t2.ToTypeReference().Resolve(ctx);
 			return conversions.BetterConversion(sType, t1Type, t2Type);
 		}
 		
 		int BetterConversion(object value, Type t1, Type t2)
 		{
-			IType fromType = value.GetType().ToTypeReference().Resolve(mscorlib);
+			IType fromType = value.GetType().ToTypeReference().Resolve(ctx);
 			ConstantResolveResult crr = new ConstantResolveResult(fromType, value);
-			IType t1Type = t1.ToTypeReference().Resolve(mscorlib);
-			IType t2Type = t2.ToTypeReference().Resolve(mscorlib);
+			IType t1Type = t1.ToTypeReference().Resolve(ctx);
+			IType t2Type = t2.ToTypeReference().Resolve(ctx);
 			return conversions.BetterConversion(crr, t1Type, t2Type);
 		}
 		

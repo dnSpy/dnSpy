@@ -1,9 +1,25 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.TypeSystem;
 using Mono.Cecil;
 
@@ -12,7 +28,7 @@ namespace ICSharpCode.Decompiler.Ast
 	/// <summary>
 	/// ITypeResolveContext implementation that lazily loads types from Cecil.
 	/// </summary>
-	public class CecilTypeResolveContext : ISynchronizedTypeResolveContext, IProjectContent
+	public class CecilTypeResolveContext : AbstractAnnotatable, ISynchronizedTypeResolveContext, IProjectContent
 	{
 		readonly ModuleDefinition module;
 		readonly string[] namespaces;
@@ -76,7 +92,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public IList<IAttribute> AssemblyAttributes { get; private set; }
 		
-		public ITypeDefinition GetClass(string nameSpace, string name, int typeParameterCount, StringComparer nameComparer)
+		public ITypeDefinition GetTypeDefinition(string nameSpace, string name, int typeParameterCount, StringComparer nameComparer)
 		{
 			if (typeParameterCount > 0)
 				name = name + "`" + typeParameterCount.ToString();
@@ -98,14 +114,14 @@ namespace ICSharpCode.Decompiler.Ast
 			return null;
 		}
 		
-		public IEnumerable<ITypeDefinition> GetClasses()
+		public IEnumerable<ITypeDefinition> GetTypes()
 		{
 			foreach (TypeDefinition cecilType in module.Types) {
 				yield return GetClass(cecilType);
 			}
 		}
 		
-		public IEnumerable<ITypeDefinition> GetClasses(string nameSpace, StringComparer nameComparer)
+		public IEnumerable<ITypeDefinition> GetTypes(string nameSpace, StringComparer nameComparer)
 		{
 			foreach (TypeDefinition cecilType in module.Types) {
 				if (nameComparer.Equals(nameSpace, cecilType.Namespace))
@@ -143,6 +159,15 @@ namespace ICSharpCode.Decompiler.Ast
 		void IDisposable.Dispose()
 		{
 			// exit from Synchronize() block
+		}
+		
+		IEnumerable<IParsedFile> IProjectContent.Files {
+			get { return new IParsedFile[0]; }
+		}
+		
+		IParsedFile IProjectContent.GetFile(string fileName)
+		{
+			return null;
 		}
 	}
 }

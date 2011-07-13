@@ -1,3 +1,21 @@
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -334,8 +352,7 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 					#endregion
 					#region Arrays
-				case ILCode.Newarr:
-					case ILCode.InitArray: {
+					case ILCode.Newarr: {
 						var ace = new Ast.ArrayCreateExpression();
 						ace.Type = operandAsTypeRef;
 						ComposedType ct = operandAsTypeRef as ComposedType;
@@ -351,7 +368,39 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						return ace;
 					}
-					case ILCode.Ldlen: return arg1.Member("Length");
+					case ILCode.InitArray: {
+						var ace = new Ast.ArrayCreateExpression();
+						ace.Type = operandAsTypeRef;
+						ComposedType ct = operandAsTypeRef as ComposedType;
+						var arrayType = (ArrayType) operand;
+						if (ct != null)
+						{
+							// change "new (int[,])[10] to new int[10][,]"
+							ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
+							ace.Initializer = new ArrayInitializerExpression();
+							var first = ace.AdditionalArraySpecifiers.First();
+							first.Remove();
+							ace.Arguments.AddRange(Enumerable.Repeat(0, first.Dimensions).Select(i => new EmptyExpression()));
+						}
+						var newArgs = new List<Expression>();
+						foreach (var arrayDimension in arrayType.Dimensions.Skip(1).Reverse())
+						{
+							int length = (int)arrayDimension.UpperBound - (int)arrayDimension.LowerBound;
+							for (int j = 0; j < args.Count; j += length)
+							{
+								var child = new ArrayInitializerExpression();
+								child.Elements.AddRange(args.GetRange(j, length));
+								newArgs.Add(child);
+							}
+							var temp = args;
+							args = newArgs;
+							newArgs = temp;
+							newArgs.Clear();
+						}
+						ace.Initializer.Elements.AddRange(args);
+						return ace;
+					}
+				case ILCode.Ldlen: return arg1.Member("Length");
 				case ILCode.Ldelem_I:
 				case ILCode.Ldelem_I1:
 				case ILCode.Ldelem_I2:
@@ -488,9 +537,12 @@ namespace ICSharpCode.Decompiler.Ast
 						return arg1;
 					else
 						return arg1.CastTo(operandAsTypeRef);
-					case ILCode.Isinst:         return arg1.CastAs(operandAsTypeRef);
-					case ILCode.Box:            return arg1;
-					case ILCode.Unbox:          return InlineAssembly(byteCode, args);
+				case ILCode.Isinst:
+					return arg1.CastAs(operandAsTypeRef);
+				case ILCode.Box:
+					return arg1;
+				case ILCode.Unbox:
+					return MakeRef(arg1.CastTo(operandAsTypeRef));
 					#endregion
 					#region Indirect
 				case ILCode.Ldind_Ref:
@@ -542,11 +594,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Endfilter:   return InlineAssembly(byteCode, args);
 					case ILCode.Endfinally:  return null;
 					case ILCode.Initblk:     return InlineAssembly(byteCode, args);
-				case ILCode.Initobj:
-					if (args[0] is DirectionExpression)
-						return new AssignmentExpression(((DirectionExpression)args[0]).Expression.Detach(), MakeDefaultValue((TypeReference)operand));
-					else
-						return InlineAssembly(byteCode, args);
+					case ILCode.Initobj:      return InlineAssembly(byteCode, args);
 				case ILCode.DefaultValue:
 					return MakeDefaultValue((TypeReference)operand);
 					case ILCode.Jmp: return InlineAssembly(byteCode, args);
@@ -605,7 +653,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Ldstr:  return new Ast.PrimitiveExpression(operand);
 				case ILCode.Ldtoken:
 					if (operand is Cecil.TypeReference) {
-						return new Ast.TypeOfExpression { Type = operandAsTypeRef }.Member("TypeHandle");
+						return AstBuilder.CreateTypeOfExpression((TypeReference)operand).Member("TypeHandle");
 					} else {
 						return InlineAssembly(byteCode, args);
 					}
@@ -737,7 +785,13 @@ namespace ICSharpCode.Decompiler.Ast
 							}
 						}
 						ObjectCreateExpression oce = arg1 as ObjectCreateExpression;
+						DefaultValueExpression dve = arg1 as DefaultValueExpression;
 						if (oce != null) {
+							oce.Initializer = initializer;
+							return oce;
+						} else if (dve != null) {
+							oce = new ObjectCreateExpression(dve.Type.Detach());
+							oce.CopyAnnotationsFrom(dve);
 							oce.Initializer = initializer;
 							return oce;
 						} else {

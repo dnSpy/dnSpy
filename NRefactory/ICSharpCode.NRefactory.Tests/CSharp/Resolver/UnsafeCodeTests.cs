@@ -9,7 +9,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	[TestFixture]
 	public class UnsafeCodeTests : ResolverTestBase
 	{
-		[Test, Ignore("fixed statement not implemented in parser")]
+		[Test, Ignore("Parser returns incorrect positions")]
 		public void FixedStatement()
 		{
 			string program = @"using System;

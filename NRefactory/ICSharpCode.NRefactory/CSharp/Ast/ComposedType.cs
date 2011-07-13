@@ -52,7 +52,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public int PointerRank {
 			get {
-				return GetChildrenByRole(PointerRole).Count();
+				return GetChildrenByRole(PointerRole).Count;
 			}
 			set {
 				if (value < 0)
@@ -141,7 +141,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public int Dimensions {
-			get { return 1 + GetChildrenByRole(Roles.Comma).Count(); }
+			get { return 1 + GetChildrenByRole(Roles.Comma).Count; }
 			set {
 				int d = this.Dimensions;
 				while (d > value) {

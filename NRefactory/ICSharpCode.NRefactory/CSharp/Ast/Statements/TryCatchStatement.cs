@@ -1,4 +1,4 @@
-﻿// 
+// 
 // TryCatchStatement.cs
 //
 // Author:
@@ -140,7 +140,16 @@ namespace ICSharpCode.NRefactory.CSharp
 				if (string.IsNullOrEmpty(value))
 					SetChildByRole (Roles.Identifier, null);
 				else
-					SetChildByRole (Roles.Identifier, new Identifier(value, AstLocation.Empty));
+					SetChildByRole (Roles.Identifier, Identifier.Create (value, AstLocation.Empty));
+			}
+		}
+		
+		public Identifier VariableNameToken {
+			get {
+				return GetChildByRole (Roles.Identifier);
+			}
+			set {
+				SetChildByRole(Roles.Identifier, value);
 			}
 		}
 		

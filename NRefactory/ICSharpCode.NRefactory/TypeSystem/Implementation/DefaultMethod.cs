@@ -36,9 +36,9 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		/// </summary>
 		protected DefaultMethod(IMethod method) : base(method)
 		{
-			returnTypeAttributes = CopyList(returnTypeAttributes);
-			typeParameters = CopyList(typeParameters);
-			parameters = CopyList(parameters);
+			returnTypeAttributes = CopyList(method.ReturnTypeAttributes);
+			typeParameters = CopyList(method.TypeParameters);
+			parameters = CopyList(method.Parameters);
 			this.IsExtensionMethod = method.IsExtensionMethod;
 		}
 		

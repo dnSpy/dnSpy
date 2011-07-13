@@ -1517,6 +1517,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool IsGenericTask {
+			get {
+				return (open_type.state & StateFlags.GenericTask) != 0;
+			}
+		}
+
 		public override bool IsNullableType {
 			get {
 				return (open_type.state & StateFlags.InflatedNullableType) != 0;
@@ -2782,7 +2788,8 @@ namespace Mono.CSharp {
 			//
 			// Some types cannot be used as type arguments
 			//
-			if (bound.Type.Kind == MemberKind.Void || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType)
+			if (bound.Type.Kind == MemberKind.Void || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType ||
+				bound.Type == InternalType.MethodGroup)
 				return;
 
 			var a = bounds [index];
@@ -3062,6 +3069,11 @@ namespace Mono.CSharp {
 
 			fixed_types[i] = best_candidate;
 			return true;
+		}
+
+		public bool HasBounds (int pos)
+		{
+			return bounds[pos] != null;
 		}
 		
 		//

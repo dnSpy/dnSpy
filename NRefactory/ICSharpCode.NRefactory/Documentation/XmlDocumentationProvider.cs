@@ -120,7 +120,7 @@ namespace ICSharpCode.NRefactory.Documentation
 		
 		static string GetRedirectionTarget(string target)
 		{
-			string programFilesDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			string programFilesDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 			programFilesDir = AppendDirectorySeparator(programFilesDir);
 			
 			string corSysDir = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();

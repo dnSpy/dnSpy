@@ -13,10 +13,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.Options;
 
 namespace TestPlugin
 {
-	[ExportOptionPage("TestPlugin")]
+	[ExportOptionPage(Title = "TestPlugin", Order = 0)]
 	partial class CustomOptionPage : UserControl, IOptionPage
 	{
 		static readonly XNamespace ns = "http://www.ilspy.net/testplugin";

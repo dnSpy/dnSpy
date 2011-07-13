@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 {
@@ -34,7 +35,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return this.FullName; }
 		}
 		
-		public abstract bool? IsReferenceType { get; }
+		public abstract bool? IsReferenceType(ITypeResolveContext context);
 		
 		public virtual int TypeParameterCount {
 			get { return 0; }
@@ -87,6 +88,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		public virtual IEnumerable<IEvent> GetEvents(ITypeResolveContext context, Predicate<IEvent> filter = null)
 		{
 			return EmptyList<IEvent>.Instance;
+		}
+		
+		public virtual IEnumerable<IMember> GetMembers(ITypeResolveContext context, Predicate<IMember> filter = null)
+		{
+			return GetMethods(context, filter).SafeCast<IMethod, IMember>()
+				.Concat(GetProperties(context, filter).SafeCast<IProperty, IMember>())
+				.Concat(GetFields(context, filter).SafeCast<IField, IMember>())
+				.Concat(GetEvents(context, filter).SafeCast<IEvent, IMember>());
 		}
 		
 		public override bool Equals(object obj)

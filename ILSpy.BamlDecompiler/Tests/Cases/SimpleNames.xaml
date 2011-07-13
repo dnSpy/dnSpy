@@ -1,0 +1,6 @@
+﻿<Window x:Class="ILSpy.BamlDecompiler.Tests.Cases.SimpleNames" Title="ILSpy.BamlDecompiler.Tests.Cases" Height="300" Width="300" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="clr-namespace:ILSpy.BamlDecompiler.Tests.Cases">
+	<Grid>
+		<Button Name="test" />
+		<mc:MyControl x:Name="test2" />
+	</Grid>
+</Window>

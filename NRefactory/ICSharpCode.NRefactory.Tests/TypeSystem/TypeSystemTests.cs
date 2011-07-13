@@ -28,13 +28,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		
 		ITypeDefinition GetClass(Type type)
 		{
-			return testCasePC.GetClass(type);
+			return testCasePC.GetTypeDefinition(type);
 		}
 		
 		[Test]
 		public void SimplePublicClassTest()
 		{
-			ITypeDefinition c = testCasePC.GetClass(typeof(SimplePublicClass));
+			ITypeDefinition c = testCasePC.GetTypeDefinition(typeof(SimplePublicClass));
 			Assert.AreEqual(typeof(SimplePublicClass).Name, c.Name);
 			Assert.AreEqual(typeof(SimplePublicClass).FullName, c.FullName);
 			Assert.AreEqual(typeof(SimplePublicClass).Namespace, c.Namespace);
@@ -50,8 +50,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void SimplePublicClassMethodTest()
 		{
-			ITypeDefinition c = testCasePC.GetClass(typeof(SimplePublicClass));
-			Assert.AreEqual(2, c.Methods.Count);
+			ITypeDefinition c = testCasePC.GetTypeDefinition(typeof(SimplePublicClass));
 			
 			IMethod method = c.Methods.Single(m => m.Name == "Method");
 			Assert.AreEqual(typeof(SimplePublicClass).FullName + ".Method", method.FullName);
@@ -68,7 +67,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void DynamicType()
 		{
-			ITypeDefinition testClass = testCasePC.GetClass(typeof(DynamicTest));
+			ITypeDefinition testClass = testCasePC.GetTypeDefinition(typeof(DynamicTest));
 			Assert.AreSame(SharedTypes.Dynamic, testClass.Properties.Single().ReturnType.Resolve(ctx));
 			Assert.AreEqual(0, testClass.Properties.Single().Attributes.Count);
 		}
@@ -76,7 +75,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void DynamicTypeInGenerics()
 		{
-			ITypeDefinition testClass = testCasePC.GetClass(typeof(DynamicTest));
+			ITypeDefinition testClass = testCasePC.GetTypeDefinition(typeof(DynamicTest));
 			
 			IMethod m1 = testClass.Methods.Single(me => me.Name == "DynamicGenerics1");
 			Assert.AreEqual("System.Collections.Generic.List`1[[dynamic]]", m1.ReturnType.Resolve(ctx).ReflectionName);
@@ -104,7 +103,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void DynamicParameterHasNoAttributes()
 		{
-			ITypeDefinition testClass = testCasePC.GetClass(typeof(DynamicTest));
+			ITypeDefinition testClass = testCasePC.GetTypeDefinition(typeof(DynamicTest));
 			IMethod m1 = testClass.Methods.Single(me => me.Name == "DynamicGenerics1");
 			Assert.AreEqual(0, m1.Parameters[0].Attributes.Count);
 		}
@@ -134,7 +133,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void TestClassTypeParameters()
 		{
-			var testClass = testCasePC.GetClass(typeof(GenericClass<,>));
+			var testClass = testCasePC.GetTypeDefinition(typeof(GenericClass<,>));
 			Assert.AreEqual(EntityType.TypeDefinition, testClass.TypeParameters[0].OwnerType);
 			Assert.AreEqual(EntityType.TypeDefinition, testClass.TypeParameters[1].OwnerType);
 			Assert.AreSame(testClass.TypeParameters[1], testClass.TypeParameters[0].Constraints[0].Resolve(ctx));
@@ -143,7 +142,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void TestMethod()
 		{
-			var testClass = testCasePC.GetClass(typeof(GenericClass<,>));
+			var testClass = testCasePC.GetTypeDefinition(typeof(GenericClass<,>));
 			
 			IMethod m = testClass.Methods.Single(me => me.Name == "TestMethod");
 			Assert.AreEqual("K", m.TypeParameters[0].Name);
@@ -158,7 +157,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void GetIndex()
 		{
-			var testClass = testCasePC.GetClass(typeof(GenericClass<,>));
+			var testClass = testCasePC.GetTypeDefinition(typeof(GenericClass<,>));
 			
 			IMethod m = testClass.Methods.Single(me => me.Name == "GetIndex");
 			Assert.AreEqual("T", m.TypeParameters[0].Name);
@@ -174,7 +173,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void PropertyWithProtectedSetter()
 		{
-			var testClass = testCasePC.GetClass(typeof(PropertyTest));
+			var testClass = testCasePC.GetTypeDefinition(typeof(PropertyTest));
 			IProperty p = testClass.Properties.Single(pr => pr.Name == "PropertyWithProtectedSetter");
 			Assert.IsTrue(p.CanGet);
 			Assert.IsTrue(p.CanSet);
@@ -186,7 +185,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void PropertyWithPrivateSetter()
 		{
-			var testClass = testCasePC.GetClass(typeof(PropertyTest));
+			var testClass = testCasePC.GetTypeDefinition(typeof(PropertyTest));
 			IProperty p = testClass.Properties.Single(pr => pr.Name == "PropertyWithPrivateSetter");
 			Assert.IsTrue(p.CanGet);
 			Assert.IsTrue(p.CanSet);
@@ -198,7 +197,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void Indexer()
 		{
-			var testClass = testCasePC.GetClass(typeof(PropertyTest));
+			var testClass = testCasePC.GetTypeDefinition(typeof(PropertyTest));
 			IProperty p = testClass.Properties.Single(pr => pr.IsIndexer);
 			Assert.IsTrue(p.CanGet);
 			Assert.AreEqual(Accessibility.Public, p.Accessibility);
@@ -210,9 +209,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void EnumTest()
 		{
-			var e = testCasePC.GetClass(typeof(MyEnum));
+			var e = testCasePC.GetTypeDefinition(typeof(MyEnum));
 			Assert.AreEqual(ClassType.Enum, e.ClassType);
-			Assert.AreEqual(false, e.IsReferenceType);
+			Assert.AreEqual(false, e.IsReferenceType(ctx));
 			Assert.AreEqual("System.Int16", e.BaseTypes[0].Resolve(ctx).ReflectionName);
 			Assert.AreEqual(new[] { "System.Enum" }, e.GetBaseTypes(ctx).Select(t => t.ReflectionName).ToArray());
 		}
@@ -220,7 +219,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void EnumFieldsTest()
 		{
-			var e = testCasePC.GetClass(typeof(MyEnum));
+			var e = testCasePC.GetTypeDefinition(typeof(MyEnum));
 			Assert.AreEqual(5, e.Fields.Count);
 			
 			foreach (IField f in e.Fields) {
@@ -267,21 +266,21 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void SerializableAttribute()
 		{
-			IAttribute attr = ctx.GetClass(typeof(NonCustomAttributes)).Attributes.Single();
+			IAttribute attr = ctx.GetTypeDefinition(typeof(NonCustomAttributes)).Attributes.Single();
 			Assert.AreEqual("System.SerializableAttribute", attr.AttributeType.Resolve(ctx).FullName);
 		}
 		
 		[Test]
 		public void NonSerializedAttribute()
 		{
-			IField field = ctx.GetClass(typeof(NonCustomAttributes)).Fields.Single(f => f.Name == "NonSerializedField");
+			IField field = ctx.GetTypeDefinition(typeof(NonCustomAttributes)).Fields.Single(f => f.Name == "NonSerializedField");
 			Assert.AreEqual("System.NonSerializedAttribute", field.Attributes.Single().AttributeType.Resolve(ctx).FullName);
 		}
 		
 		[Test]
 		public void ExplicitStructLayoutAttribute()
 		{
-			IAttribute attr = ctx.GetClass(typeof(ExplicitFieldLayoutStruct)).Attributes.Single();
+			IAttribute attr = ctx.GetTypeDefinition(typeof(ExplicitFieldLayoutStruct)).Attributes.Single();
 			Assert.AreEqual("System.Runtime.InteropServices.StructLayoutAttribute", attr.AttributeType.Resolve(ctx).FullName);
 			IConstantValue arg1 = attr.GetPositionalArguments(ctx).Single();
 			Assert.AreEqual("System.Runtime.InteropServices.LayoutKind", arg1.GetValueType(ctx).FullName);
@@ -302,13 +301,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void FieldOffsetAttribute()
 		{
-			IField field = ctx.GetClass(typeof(ExplicitFieldLayoutStruct)).Fields.Single(f => f.Name == "Field0");
+			IField field = ctx.GetTypeDefinition(typeof(ExplicitFieldLayoutStruct)).Fields.Single(f => f.Name == "Field0");
 			Assert.AreEqual("System.Runtime.InteropServices.FieldOffsetAttribute", field.Attributes.Single().AttributeType.Resolve(ctx).FullName);
 			IConstantValue arg = field.Attributes.Single().GetPositionalArguments(ctx).Single();
 			Assert.AreEqual("System.Int32", arg.GetValueType(ctx).FullName);
 			Assert.AreEqual(0, arg.GetValue(ctx));
 			
-			field = ctx.GetClass(typeof(ExplicitFieldLayoutStruct)).Fields.Single(f => f.Name == "Field100");
+			field = ctx.GetTypeDefinition(typeof(ExplicitFieldLayoutStruct)).Fields.Single(f => f.Name == "Field100");
 			Assert.AreEqual("System.Runtime.InteropServices.FieldOffsetAttribute", field.Attributes.Single().AttributeType.Resolve(ctx).FullName);
 			arg = field.Attributes.Single().GetPositionalArguments(ctx).Single();
 			Assert.AreEqual("System.Int32", arg.GetValueType(ctx).FullName);
@@ -318,7 +317,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void DllImportAttribute()
 		{
-			IMethod method = ctx.GetClass(typeof(NonCustomAttributes)).Methods.Single(m => m.Name == "DllMethod");
+			IMethod method = ctx.GetTypeDefinition(typeof(NonCustomAttributes)).Methods.Single(m => m.Name == "DllMethod");
 			IAttribute dllImport = method.Attributes.Single();
 			Assert.AreEqual("System.Runtime.InteropServices.DllImportAttribute", dllImport.AttributeType.Resolve(ctx).FullName);
 			Assert.AreEqual("unmanaged.dll", dllImport.GetPositionalArguments(ctx)[0].GetValue(ctx));
@@ -328,7 +327,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void InOutParametersOnRefMethod()
 		{
-			IParameter p = ctx.GetClass(typeof(NonCustomAttributes)).Methods.Single(m => m.Name == "DllMethod").Parameters.Single();
+			IParameter p = ctx.GetTypeDefinition(typeof(NonCustomAttributes)).Methods.Single(m => m.Name == "DllMethod").Parameters.Single();
 			Assert.IsTrue(p.IsRef);
 			Assert.IsFalse(p.IsOut);
 			Assert.AreEqual(2, p.Attributes.Count);
@@ -339,7 +338,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void MarshalAsAttributeOnMethod()
 		{
-			IMethod method = ctx.GetClass(typeof(NonCustomAttributes)).Methods.Single(m => m.Name == "DllMethod");
+			IMethod method = ctx.GetTypeDefinition(typeof(NonCustomAttributes)).Methods.Single(m => m.Name == "DllMethod");
 			IAttribute marshalAs = method.ReturnTypeAttributes.Single();
 			Assert.AreEqual((int)UnmanagedType.Bool, marshalAs.GetPositionalArguments(ctx).Single().GetValue(ctx));
 		}
@@ -347,7 +346,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void MethodWithOutParameter()
 		{
-			IParameter p = ctx.GetClass(typeof(ParameterTests)).Methods.Single(m => m.Name == "MethodWithOutParameter").Parameters.Single();
+			IParameter p = ctx.GetTypeDefinition(typeof(ParameterTests)).Methods.Single(m => m.Name == "MethodWithOutParameter").Parameters.Single();
 			Assert.IsFalse(p.IsRef);
 			Assert.IsTrue(p.IsOut);
 			Assert.AreEqual(0, p.Attributes.Count);
@@ -357,12 +356,43 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void MethodWithParamsArray()
 		{
-			IParameter p = ctx.GetClass(typeof(ParameterTests)).Methods.Single(m => m.Name == "MethodWithParamsArray").Parameters.Single();
+			IParameter p = ctx.GetTypeDefinition(typeof(ParameterTests)).Methods.Single(m => m.Name == "MethodWithParamsArray").Parameters.Single();
 			Assert.IsFalse(p.IsRef);
 			Assert.IsFalse(p.IsOut);
 			Assert.IsTrue(p.IsParams);
 			Assert.AreEqual(0, p.Attributes.Count);
 			Assert.IsTrue(p.Type is ArrayTypeReference);
+		}
+		
+		[Test, Ignore("C# Parser does not set the variance")]
+		public void GenericDelegate_Variance()
+		{
+			ITypeDefinition type = ctx.GetTypeDefinition(typeof(GenericDelegate<,>));
+			Assert.AreEqual(VarianceModifier.Contravariant, type.TypeParameters[0].Variance);
+			Assert.AreEqual(VarianceModifier.Covariant, type.TypeParameters[1].Variance);
+			
+			Assert.AreSame(type.TypeParameters[1], type.TypeParameters[0].Constraints[0]);
+		}
+		
+		[Test]
+		public void GenericDelegate_ReferenceTypeConstraints()
+		{
+			ITypeDefinition type = ctx.GetTypeDefinition(typeof(GenericDelegate<,>));
+			Assert.IsFalse(type.TypeParameters[0].HasReferenceTypeConstraint);
+			Assert.IsTrue(type.TypeParameters[1].HasReferenceTypeConstraint);
+			
+			Assert.IsTrue(type.TypeParameters[0].IsReferenceType(ctx) == true);
+			Assert.IsTrue(type.TypeParameters[1].IsReferenceType(ctx) == true);
+		}
+		
+		[Test]
+		public void GenericDelegate_GetInvokeMethod()
+		{
+			IType type = typeof(GenericDelegate<string, object>).ToTypeReference().Resolve(ctx);
+			IMethod m = type.GetDelegateInvokeMethod();
+			Assert.AreEqual("Invoke", m.Name);
+			Assert.AreEqual("System.Object", m.ReturnType.Resolve(ctx).FullName);
+			Assert.AreEqual("System.String", m.Parameters[0].Type.Resolve(ctx).FullName);
 		}
 	}
 }

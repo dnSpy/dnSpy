@@ -62,6 +62,7 @@
     <Compile Include="Ast\Transforms\CombineQueryExpressions.cs" />
     <Compile Include="Ast\Transforms\ContextTrackingVisitor.cs" />
     <Compile Include="Ast\Transforms\ConvertConstructorCallIntoInitializer.cs" />
+    <Compile Include="Ast\Transforms\DecimalConstantTransform.cs" />
     <Compile Include="Ast\Transforms\DeclareVariables.cs" />
     <Compile Include="Ast\Transforms\DelegateConstruction.cs" />
     <Compile Include="Ast\Transforms\IntroduceExtensionMethods.cs" />

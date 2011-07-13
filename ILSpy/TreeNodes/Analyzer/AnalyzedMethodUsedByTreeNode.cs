@@ -17,7 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
@@ -29,6 +31,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	{
 		private readonly MethodDefinition analyzedMethod;
 		private readonly ThreadingSupport threading;
+		private ConcurrentDictionary<MethodDefinition, int> foundMethods;
 
 		public AnalyzedMethodUsedByTreeNode(MethodDefinition analyzedMethod)
 		{
@@ -66,10 +69,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
 		{
-			ScopedWhereUsedScopeAnalyzer<SharpTreeNode> analyzer;
+			foundMethods = new ConcurrentDictionary<MethodDefinition, int>();
 
-			analyzer = new ScopedWhereUsedScopeAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct);
+			var analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+				yield return child;
+			}
+
+			foundMethods = null;
 		}
 
 		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
@@ -81,8 +88,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					continue;
 				foreach (Instruction instr in method.Body.Instructions) {
 					MethodReference mr = instr.Operand as MethodReference;
-					if (mr != null &&
-						mr.Name == name &&
+					if (mr != null && mr.Name == name &&
 						Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
 						mr.Resolve() == analyzedMethod) {
 						found = true;
@@ -92,9 +98,20 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 				method.Body = null;
 
-				if (found)
-					yield return new AnalyzedMethodTreeNode(method);
+				if (found) {
+					MethodDefinition codeLocation = this.Language.GetOriginalCodeLocation(method) as MethodDefinition;
+					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
+						var node= new AnalyzedMethodTreeNode(codeLocation);
+						node.Language = this.Language;
+						yield return node;
+					}
+				}
 			}
+		}
+
+		private bool HasAlreadyBeenFound(MethodDefinition method)
+		{
+			return !foundMethods.TryAdd(method, 0);
 		}
 	}
 }

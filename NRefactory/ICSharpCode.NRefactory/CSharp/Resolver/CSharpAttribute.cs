@@ -107,10 +107,14 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			// If both types exist, C# considers that to be an ambiguity, but we are less strict.
 			IType type = withoutSuffix.Resolve(context);
-			if (type == SharedTypes.UnknownType)
-				return withSuffix.Resolve(context);
-			else
-				return type;
+			var attrType = context.GetTypeDefinition (typeof(System.Attribute));
+			if (attrType == null)
+				return SharedTypes.UnknownType;
+			
+			if (type == SharedTypes.UnknownType || !(type.GetDefinition () != null && type.GetDefinition ().IsDerivedFrom (attrType, context)))
+				type =  withSuffix.Resolve(context);
+			
+			return type;
 		}
 		
 		public override string ToString()

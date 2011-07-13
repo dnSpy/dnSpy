@@ -1,0 +1,21 @@
+﻿<Window x:Class="ICSharpCode.ILSpy.Options.OptionsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Style="{DynamicResource DialogWindow}"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResizeWithGrip"
+        Title="Options" Height="400" Width="500">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition
+				Height="1*" />
+			<RowDefinition
+				Height="Auto" />
+		</Grid.RowDefinitions>
+		<TabControl Name="tabControl" />
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="12,8">
+			<Button IsDefault="True" Margin="2,0" Name="okButton" Click="OKButton_Click">OK</Button>
+			<Button IsCancel="True" Margin="2,0">Cancel</Button>
+		</StackPanel>
+	</Grid>
+</Window>

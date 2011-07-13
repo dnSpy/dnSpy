@@ -20,7 +20,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// false, if the type is a value type.
 		/// null, if the type is not known (e.g. unconstrained generic type parameter or type not found)
 		/// </returns>
-		bool? IsReferenceType { get; }
+		/// <remarks>
+		/// The resolve context is required for type parameters with a constraint "T : SomeType":
+		/// the type parameter is a reference type iff SomeType is a class type.
+		/// </remarks>
+		bool? IsReferenceType(ITypeResolveContext context);
 		
 		/// <summary>
 		/// Gets the underlying type definition.
@@ -90,14 +94,22 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets all events that can be called on this return type.
 		/// </summary>
 		IEnumerable<IEvent> GetEvents(ITypeResolveContext context, Predicate<IEvent> filter = null);
+		
+		/// <summary>
+		/// Gets all members that can be called on this return type.
+		/// This is the union of GetFields(),GetProperties(),GetMethods() and GetEvents(). This does not include constructors.
+		/// </summary>
+		IEnumerable<IMember> GetMembers(ITypeResolveContext context, Predicate<IMember> filter = null);
 	}
 	
 	#if WITH_CONTRACTS
 	[ContractClassFor(typeof(IType))]
 	abstract class ITypeContract : ITypeReferenceContract, IType
 	{
-		Nullable<bool> IType.IsReferenceType {
-			get { return null; }
+		bool? IType.IsReferenceType(ITypeResolveContext context)
+		{
+			Contract.Requires(context != null);
+			return null;
 		}
 		
 		int IType.TypeParameterCount {
@@ -121,42 +133,49 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IEnumerable<IType> IType.GetNestedTypes(ITypeResolveContext context, Predicate<ITypeDefinition> filter)
 		{
 			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IList<IType>>() != null);
+			Contract.Ensures(Contract.Result<IEnumerable<IType>>() != null);
 			return null;
 		}
 
 		IEnumerable<IMethod> IType.GetMethods(ITypeResolveContext context, Predicate<IMethod> filter)
 		{
 			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IList<IMethod>>() != null);
+			Contract.Ensures(Contract.Result<IEnumerable<IMethod>>() != null);
 			return null;
 		}
 		
 		IEnumerable<IMethod> IType.GetConstructors(ITypeResolveContext context, Predicate<IMethod> filter)
 		{
 			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IList<IMethod>>() != null);
+			Contract.Ensures(Contract.Result<IEnumerable<IMethod>>() != null);
 			return null;
 		}
 		
 		IEnumerable<IProperty> IType.GetProperties(ITypeResolveContext context, Predicate<IProperty> filter)
 		{
 			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IList<IProperty>>() != null);
+			Contract.Ensures(Contract.Result<IEnumerable<IProperty>>() != null);
 			return null;
 		}
 		
 		IEnumerable<IField> IType.GetFields(ITypeResolveContext context, Predicate<IField> filter)
 		{
 			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IList<IField>>() != null);
+			Contract.Ensures(Contract.Result<IEnumerable<IField>>() != null);
 			return null;
 		}
 		
 		IEnumerable<IEvent> IType.GetEvents(ITypeResolveContext context, Predicate<IEvent> filter)
 		{
 			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IList<IEvent>>() != null);
+			Contract.Ensures(Contract.Result<IEnumerable<IEvent>>() != null);
+			return null;
+		}
+		
+		IEnumerable<IMember> IType.GetEvents(ITypeResolveContext context, Predicate<IMember> filter)
+		{
+			Contract.Requires(context != null);
+			Contract.Ensures(Contract.Result<IEnumerable<IMember>>() != null);
 			return null;
 		}
 		

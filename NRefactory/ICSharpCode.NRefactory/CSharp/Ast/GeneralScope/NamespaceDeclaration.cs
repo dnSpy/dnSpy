@@ -1,4 +1,4 @@
-﻿// 
+// 
 // NamespaceDeclaration.cs
 //  
 // Author:
@@ -54,7 +54,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				return builder.ToString ();
 			}
 			set {
-				GetChildrenByRole(Roles.Identifier).ReplaceWith(value.Split('.').Select(ident => new Identifier(ident, AstLocation.Empty)));
+				GetChildrenByRole(Roles.Identifier).ReplaceWith(value.Split('.').Select(ident => Identifier.Create (ident, AstLocation.Empty)));
 			}
 		}
 		

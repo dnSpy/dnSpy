@@ -597,6 +597,13 @@ namespace Mono.CSharp {
 //					MethodBase mb = new PartialMethodDefinitionInfo (this);
 
 					spec = new MethodSpec (kind, Parent.Definition, this, ReturnType, null, parameters, ModFlags);
+					if (MemberName.Arity > 0) {
+						spec.IsGeneric = true;
+
+						// TODO: Have to move DefineMethod after Define (ideally to Emit)
+						throw new NotImplementedException ("Generic partial methods");
+					}
+
 					Parent.MemberCache.AddMember (spec);
 				}
 
@@ -853,8 +860,8 @@ namespace Mono.CSharp {
 			       MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
 				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedModifiersInterface :
-				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct :
-				AllowedModifiersClass,
+				parent.PartialContainer.Kind == MemberKind.Struct ? AllowedModifiersStruct | Modifiers.ASYNC :
+				AllowedModifiersClass | Modifiers.ASYNC,
 				name, attrs, parameters)
 		{
 		}
@@ -1083,7 +1090,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 				
-				if (MethodData.implementing != null) {
+				if (MethodData != null && MethodData.implementing != null) {
 					var base_tp = MethodData.implementing.Constraints[i];
 					if (!tp.Type.HasSameConstraintsImplementation (base_tp)) {
 						Report.SymbolRelatedToPreviousError (MethodData.implementing);
@@ -1133,13 +1140,19 @@ namespace Mono.CSharp {
 				DefineTypeParameters ();
 			}
 
-			if (block != null && block.IsIterator) {
-				//
-				// Current method is turned into automatically generated
-				// wrapper which creates an instance of iterator
-				//
-				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
-				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+			if (block != null) {
+				if (block.IsIterator) {
+					//
+					// Current method is turned into automatically generated
+					// wrapper which creates an instance of iterator
+					//
+					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+				}
+
+				if ((ModFlags & Modifiers.ASYNC) != 0) {
+					AsyncInitializer.Create (block, parameters, Parent.PartialContainer, ReturnType, Location);
+				}
 			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -402,7 +402,7 @@ partial class VBParser
 		while (la.kind == 26) {
 			Get();
 			Identifier();
-			type = new QualifiedType(type, new Identifier(t.val, t.Location));
+			type = new QualifiedType(type, new Identifier (t.val, t.Location));
 		}
 	}
 
@@ -445,7 +445,7 @@ partial class VBParser
 		var result = new AliasImportsClause(); NodeStart(result);
 		AstType alias;
 		Identifier();
-		result.Name = new Identifier(t.val, t.Location);
+		result.Name = new Identifier (t.val, t.Location);
 		Expect(20);
 		TypeName(out alias);
 		result.Alias = alias;

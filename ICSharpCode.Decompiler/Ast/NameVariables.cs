@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
@@ -47,7 +62,7 @@ namespace ICSharpCode.Decompiler.Ast
 					nv.AddExistingName(v.Name);
 				} else if (v.OriginalVariable != null && context.Settings.UseDebugSymbols) {
 					string varName = v.OriginalVariable.Name;
-					if (string.IsNullOrEmpty(varName) || varName.StartsWith("V_", StringComparison.Ordinal) || varName.StartsWith("CS$", StringComparison.Ordinal)) 
+					if (string.IsNullOrEmpty(varName) || varName.StartsWith("V_", StringComparison.Ordinal) || !IsValidName(varName))
 					{
 						// don't use the name from the debug symbols if it looks like a generated name
 						v.Name = null;
@@ -69,6 +84,19 @@ namespace ICSharpCode.Decompiler.Ast
 				if (string.IsNullOrEmpty(varDef.Name))
 					varDef.Name = nv.GenerateNameForVariable(varDef, methodBody);
 			}
+		}
+		
+		static bool IsValidName(string varName)
+		{
+			if (string.IsNullOrEmpty(varName))
+				return false;
+			if (!(char.IsLetter(varName[0]) || varName[0] == '_'))
+				return false;
+			for (int i = 1; i < varName.Length; i++) {
+				if (!(char.IsLetterOrDigit(varName[i]) || varName[i] == '_'))
+					return false;
+			}
+			return true;
 		}
 		
 		DecompilerContext context;
@@ -124,7 +152,7 @@ namespace ICSharpCode.Decompiler.Ast
 				typeNames.Add(nameWithoutDigits, number - 1);
 			}
 			int count = ++typeNames[nameWithoutDigits];
-			if (count > 1) {
+			if (count != 1) {
 				return nameWithoutDigits + count.ToString();
 			} else {
 				return nameWithoutDigits;
@@ -269,6 +297,8 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		string GetNameByType(TypeReference type)
 		{
+			type = TypeAnalysis.UnpackModifiers(type);
+			
 			GenericInstanceType git = type as GenericInstanceType;
 			if (git != null && git.ElementType.FullName == "System.Nullable`1" && git.GenericArguments.Count == 1) {
 				type = ((GenericInstanceType)type).GenericArguments[0];
@@ -279,6 +309,8 @@ namespace ICSharpCode.Decompiler.Ast
 				name = "array";
 			} else if (type.IsPointer || type.IsByReference) {
 				name = "ptr";
+			} else if (type.Name.EndsWith("Exception", StringComparison.Ordinal)) {
+				name = "ex";
 			} else if (!typeNameToVariableNameDict.TryGetValue(type.FullName, out name)) {
 				name = type.Name;
 				// remove the 'I' for interfaces

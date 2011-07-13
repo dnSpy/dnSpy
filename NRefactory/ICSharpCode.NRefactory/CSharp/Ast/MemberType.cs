@@ -1,4 +1,4 @@
-﻿// 
+// 
 // FullTypeName.cs
 //
 // Author:
@@ -47,12 +47,44 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole (Roles.Identifier, new Identifier(value, AstLocation.Empty));
+				SetChildByRole (Roles.Identifier, Identifier.Create (value, AstLocation.Empty));
+			}
+		}
+		
+		public Identifier MemberNameToken {
+			get {
+				return GetChildByRole (Roles.Identifier);
+			}
+			set {
+				SetChildByRole (Roles.Identifier, value);
 			}
 		}
 		
 		public AstNodeCollection<AstType> TypeArguments {
 			get { return GetChildrenByRole (Roles.TypeArgument); }
+		}
+		
+		public MemberType ()
+		{
+		}
+		
+		public MemberType (AstType target, string memberName)
+		{
+			this.Target = target;
+			this.MemberName = memberName;
+		}
+		
+		public MemberType (AstType target, string memberName, IEnumerable<AstType> typeArguments)
+		{
+			this.Target = target;
+			this.MemberName = memberName;
+			foreach (var arg in typeArguments) {
+				AddChild (arg, Roles.TypeArgument);
+			}
+		}
+		
+		public MemberType (AstType target, string memberName, params AstType[] typeArguments) : this (target, memberName, (IEnumerable<AstType>)typeArguments)
+		{
 		}
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)

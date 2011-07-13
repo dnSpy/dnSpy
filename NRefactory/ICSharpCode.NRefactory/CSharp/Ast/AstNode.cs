@@ -23,7 +23,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,7 +32,7 @@ using System.Threading;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public abstract class AstNode : PatternMatching.INode
+	public abstract class AstNode : AbstractAnnotatable, PatternMatching.INode
 	{
 		#region Null
 		public static readonly AstNode Null = new NullAstNode ();
@@ -57,7 +56,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				return default (S);
 			}
 			
-			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			protected internal override bool DoMatch (AstNode other, PatternMatching.Match match)
 			{
 				return other == null || other.IsNull;
 			}
@@ -65,16 +64,16 @@ namespace ICSharpCode.NRefactory.CSharp
 		#endregion
 		
 		#region PatternPlaceholder
-		public static implicit operator AstNode(PatternMatching.Pattern pattern)
+		public static implicit operator AstNode (PatternMatching.Pattern pattern)
 		{
-			return pattern != null ? new PatternPlaceholder(pattern) : null;
+			return pattern != null ? new PatternPlaceholder (pattern) : null;
 		}
 		
 		sealed class PatternPlaceholder : AstNode, PatternMatching.INode
 		{
 			readonly PatternMatching.Pattern child;
 			
-			public PatternPlaceholder(PatternMatching.Pattern child)
+			public PatternPlaceholder (PatternMatching.Pattern child)
 			{
 				this.child = child;
 			}
@@ -83,19 +82,19 @@ namespace ICSharpCode.NRefactory.CSharp
 				get { return NodeType.Pattern; }
 			}
 			
-			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 			{
-				return visitor.VisitPatternPlaceholder(this, child, data);
+				return visitor.VisitPatternPlaceholder (this, child, data);
 			}
 			
-			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			protected internal override bool DoMatch (AstNode other, PatternMatching.Match match)
 			{
-				return child.DoMatch(other, match);
+				return child.DoMatch (other, match);
 			}
 			
-			bool PatternMatching.INode.DoMatchCollection(Role role, PatternMatching.INode pos, PatternMatching.Match match, PatternMatching.BacktrackingInfo backtrackingInfo)
+			bool PatternMatching.INode.DoMatchCollection (Role role, PatternMatching.INode pos, PatternMatching.Match match, PatternMatching.BacktrackingInfo backtrackingInfo)
 			{
-				return child.DoMatchCollection(role, pos, match, backtrackingInfo);
+				return child.DoMatchCollection (role, pos, match, backtrackingInfo);
 			}
 		}
 		#endregion
@@ -163,7 +162,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			get {
 				AstNode next;
 				for (AstNode cur = firstChild; cur != null; cur = next) {
-					Debug.Assert(cur.parent == this);
+					Debug.Assert (cur.parent == this);
 					// Remember next before yielding cur.
 					// This allows removing/replacing nodes while iterating through the list.
 					next = cur.nextSibling;
@@ -188,7 +187,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public IEnumerable<AstNode> Descendants {
 			get {
-				return Utils.TreeTraversal.PreOrder(this.Children, n => n.Children);
+				return Utils.TreeTraversal.PreOrder (this.Children, n => n.Children);
 			}
 		}
 		
@@ -197,7 +196,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public IEnumerable<AstNode> DescendantsAndSelf {
 			get {
-				return Utils.TreeTraversal.PreOrder(this, n => n.Children);
+				return Utils.TreeTraversal.PreOrder (this, n => n.Children);
 			}
 		}
 		
@@ -205,10 +204,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// Gets the first child with the specified role.
 		/// Returns the role's null object if the child is not found.
 		/// </summary>
-		public T GetChildByRole<T>(Role<T> role) where T : AstNode
+		public T GetChildByRole<T> (Role<T> role) where T : AstNode
 		{
 			if (role == null)
-				throw new ArgumentNullException("role");
+				throw new ArgumentNullException ("role");
 			for (var cur = firstChild; cur != null; cur = cur.nextSibling) {
 				if (cur.role == role)
 					return (T)cur;
@@ -216,37 +215,37 @@ namespace ICSharpCode.NRefactory.CSharp
 			return role.NullObject;
 		}
 		
-		public AstNodeCollection<T> GetChildrenByRole<T>(Role<T> role) where T : AstNode
+		public AstNodeCollection<T> GetChildrenByRole<T> (Role<T> role) where T : AstNode
 		{
-			return new AstNodeCollection<T>(this, role);
+			return new AstNodeCollection<T> (this, role);
 		}
 		
-		protected void SetChildByRole<T>(Role<T> role, T newChild) where T : AstNode
+		protected void SetChildByRole<T> (Role<T> role, T newChild) where T : AstNode
 		{
-			AstNode oldChild = GetChildByRole(role);
+			AstNode oldChild = GetChildByRole (role);
 			if (oldChild.IsNull)
-				AddChild(newChild, role);
+				AddChild (newChild, role);
 			else
-				oldChild.ReplaceWith(newChild);
+				oldChild.ReplaceWith (newChild);
 		}
 		
-		public void AddChild<T>(T child, Role<T> role) where T : AstNode
+		public void AddChild<T> (T child, Role<T> role) where T : AstNode
 		{
 			if (role == null)
-				throw new ArgumentNullException("role");
+				throw new ArgumentNullException ("role");
 			if (child == null || child.IsNull)
 				return;
 			if (this.IsNull)
-				throw new InvalidOperationException("Cannot add children to null nodes");
+				throw new InvalidOperationException ("Cannot add children to null nodes");
 			if (child.parent != null)
 				throw new ArgumentException ("Node is already used in another tree.", "child");
-			AddChildUnsafe(child, role);
+			AddChildUnsafe (child, role);
 		}
 		
 		/// <summary>
 		/// Adds a child without performing any safety checks.
 		/// </summary>
-		void AddChildUnsafe(AstNode child, Role role)
+		void AddChildUnsafe (AstNode child, Role role)
 		{
 			child.parent = this;
 			child.role = role;
@@ -259,12 +258,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public void InsertChildBefore<T>(AstNode nextSibling, T child, Role<T> role) where T : AstNode
+		public void InsertChildBefore<T> (AstNode nextSibling, T child, Role<T> role) where T : AstNode
 		{
 			if (role == null)
-				throw new ArgumentNullException("role");
+				throw new ArgumentNullException ("role");
 			if (nextSibling == null || nextSibling.IsNull) {
-				AddChild(child, role);
+				AddChild (child, role);
 				return;
 			}
 			
@@ -276,11 +275,10 @@ namespace ICSharpCode.NRefactory.CSharp
 				throw new ArgumentException ("NextSibling is not a child of this node.", "nextSibling");
 			// No need to test for "Cannot add children to null nodes",
 			// as there isn't any valid nextSibling in null nodes.
-			InsertChildBeforeUnsafe(nextSibling, child, role);
+			InsertChildBeforeUnsafe (nextSibling, child, role);
 		}
 		
-		
-		void InsertChildBeforeUnsafe(AstNode nextSibling, AstNode child, Role role)
+		void InsertChildBeforeUnsafe (AstNode nextSibling, AstNode child, Role role)
 		{
 			child.parent = this;
 			child.role = role;
@@ -288,38 +286,38 @@ namespace ICSharpCode.NRefactory.CSharp
 			child.prevSibling = nextSibling.prevSibling;
 			
 			if (nextSibling.prevSibling != null) {
-				Debug.Assert(nextSibling.prevSibling.nextSibling == nextSibling);
+				Debug.Assert (nextSibling.prevSibling.nextSibling == nextSibling);
 				nextSibling.prevSibling.nextSibling = child;
 			} else {
-				Debug.Assert(firstChild == nextSibling);
+				Debug.Assert (firstChild == nextSibling);
 				firstChild = child;
 			}
 			nextSibling.prevSibling = child;
 		}
 		
-		public void InsertChildAfter<T>(AstNode prevSibling, T child, Role<T> role) where T : AstNode
+		public void InsertChildAfter<T> (AstNode prevSibling, T child, Role<T> role) where T : AstNode
 		{
-			InsertChildBefore((prevSibling == null || prevSibling.IsNull) ? firstChild : prevSibling.nextSibling, child, role);
+			InsertChildBefore ((prevSibling == null || prevSibling.IsNull) ? firstChild : prevSibling.nextSibling, child, role);
 		}
 		
 		/// <summary>
 		/// Removes this node from its parent.
 		/// </summary>
-		public void Remove()
+		public void Remove ()
 		{
 			if (parent != null) {
 				if (prevSibling != null) {
-					Debug.Assert(prevSibling.nextSibling == this);
+					Debug.Assert (prevSibling.nextSibling == this);
 					prevSibling.nextSibling = nextSibling;
 				} else {
-					Debug.Assert(parent.firstChild == this);
+					Debug.Assert (parent.firstChild == this);
 					parent.firstChild = nextSibling;
 				}
 				if (nextSibling != null) {
-					Debug.Assert(nextSibling.prevSibling == this);
+					Debug.Assert (nextSibling.prevSibling == this);
 					nextSibling.prevSibling = prevSibling;
 				} else {
-					Debug.Assert(parent.lastChild == this);
+					Debug.Assert (parent.lastChild == this);
 					parent.lastChild = prevSibling;
 				}
 				parent = null;
@@ -332,28 +330,28 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Replaces this node with the new node.
 		/// </summary>
-		public void ReplaceWith(AstNode newNode)
+		public void ReplaceWith (AstNode newNode)
 		{
 			if (newNode == null || newNode.IsNull) {
-				Remove();
+				Remove ();
 				return;
 			}
 			if (newNode == this)
 				return; // nothing to do...
 			if (parent == null) {
-				throw new InvalidOperationException(this.IsNull ? "Cannot replace the null nodes" : "Cannot replace the root node");
+				throw new InvalidOperationException (this.IsNull ? "Cannot replace the null nodes" : "Cannot replace the root node");
 			}
 			// Because this method doesn't statically check the new node's type with the role,
 			// we perform a runtime test:
-			if (!role.IsValid(newNode)) {
-				throw new ArgumentException (string.Format("The new node '{0}' is not valid in the role {1}", newNode.GetType().Name, role.ToString()), "newNode");
+			if (!role.IsValid (newNode)) {
+				throw new ArgumentException (string.Format ("The new node '{0}' is not valid in the role {1}", newNode.GetType ().Name, role.ToString ()), "newNode");
 			}
 			if (newNode.parent != null) {
 				// newNode is used within this tree?
-				if (newNode.Ancestors.Contains(this)) {
+				if (newNode.Ancestors.Contains (this)) {
 					// e.g. "parenthesizedExpr.ReplaceWith(parenthesizedExpr.Expression);"
 					// enable automatic removal
-					newNode.Remove();
+					newNode.Remove ();
 				} else {
 					throw new ArgumentException ("Node is already used in another tree.", "newNode");
 				}
@@ -365,17 +363,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			newNode.nextSibling = nextSibling;
 			if (parent != null) {
 				if (prevSibling != null) {
-					Debug.Assert(prevSibling.nextSibling == this);
+					Debug.Assert (prevSibling.nextSibling == this);
 					prevSibling.nextSibling = newNode;
 				} else {
-					Debug.Assert(parent.firstChild == this);
+					Debug.Assert (parent.firstChild == this);
 					parent.firstChild = newNode;
 				}
 				if (nextSibling != null) {
-					Debug.Assert(nextSibling.prevSibling == this);
+					Debug.Assert (nextSibling.prevSibling == this);
 					nextSibling.prevSibling = newNode;
 				} else {
-					Debug.Assert(parent.lastChild == this);
+					Debug.Assert (parent.lastChild == this);
 					parent.lastChild = newNode;
 				}
 				parent = null;
@@ -385,31 +383,31 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public AstNode ReplaceWith(Func<AstNode, AstNode> replaceFunction)
+		public AstNode ReplaceWith (Func<AstNode, AstNode> replaceFunction)
 		{
 			if (replaceFunction == null)
-				throw new ArgumentNullException("replaceFunction");
+				throw new ArgumentNullException ("replaceFunction");
 			if (parent == null) {
-				throw new InvalidOperationException(this.IsNull ? "Cannot replace the null nodes" : "Cannot replace the root node");
+				throw new InvalidOperationException (this.IsNull ? "Cannot replace the null nodes" : "Cannot replace the root node");
 			}
 			AstNode oldParent = parent;
 			AstNode oldSuccessor = nextSibling;
 			Role oldRole = role;
-			Remove();
-			AstNode replacement = replaceFunction(this);
+			Remove ();
+			AstNode replacement = replaceFunction (this);
 			if (oldSuccessor != null && oldSuccessor.parent != oldParent)
-				throw new InvalidOperationException("replace function changed nextSibling of node being replaced?");
+				throw new InvalidOperationException ("replace function changed nextSibling of node being replaced?");
 			if (!(replacement == null || replacement.IsNull)) {
 				if (replacement.parent != null)
-					throw new InvalidOperationException("replace function must return the root of a tree");
-				if (!oldRole.IsValid(replacement)) {
-					throw new InvalidOperationException (string.Format("The new node '{0}' is not valid in the role {1}", replacement.GetType().Name, oldRole.ToString()));
+					throw new InvalidOperationException ("replace function must return the root of a tree");
+				if (!oldRole.IsValid (replacement)) {
+					throw new InvalidOperationException (string.Format ("The new node '{0}' is not valid in the role {1}", replacement.GetType ().Name, oldRole.ToString ()));
 				}
 				
 				if (oldSuccessor != null)
-					oldParent.InsertChildBeforeUnsafe(oldSuccessor, replacement, oldRole);
+					oldParent.InsertChildBeforeUnsafe (oldSuccessor, replacement, oldRole);
 				else
-					oldParent.AddChildUnsafe(replacement, oldRole);
+					oldParent.AddChildUnsafe (replacement, oldRole);
 			}
 			return replacement;
 		}
@@ -418,9 +416,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// Clones the whole subtree starting at this AST node.
 		/// </summary>
 		/// <remarks>Annotations are copied over to the new nodes; and any annotations implementing ICloneable will be cloned.</remarks>
-		public AstNode Clone()
+		public AstNode Clone ()
 		{
-			AstNode copy = (AstNode)MemberwiseClone();
+			AstNode copy = (AstNode)MemberwiseClone ();
 			// First, reset the shallow pointer copies
 			copy.parent = null;
 			copy.role = Roles.Root;
@@ -431,7 +429,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			
 			// Then perform a deep copy:
 			for (AstNode cur = firstChild; cur != null; cur = cur.nextSibling) {
-				copy.AddChildUnsafe(cur.Clone(), cur.role);
+				copy.AddChildUnsafe (cur.Clone (), cur.role);
 			}
 			
 			// Finally, clone the annotation, if necessary
@@ -442,175 +440,24 @@ namespace ICSharpCode.NRefactory.CSharp
 			return copy;
 		}
 		
-		#region Annotation support
-		// Annotations: points either null (no annotations), to the single annotation,
-		// or to an AnnotationList.
-		// Once it is pointed at an AnnotationList, it will never change (this allows thread-safety support by locking the list)
-		object annotations;
-		
-		sealed class AnnotationList : List<object>, ICloneable
-		{
-			// There are two uses for this custom list type:
-			// 1) it's private, and thus (unlike List<object>) cannot be confused with real annotations
-			// 2) It allows us to simplify the cloning logic by making the list behave the same as a clonable annotation.
-			public AnnotationList(int initialCapacity) : base(initialCapacity)
-			{
-			}
-			
-			public object Clone()
-			{
-				lock (this) {
-					AnnotationList copy = new AnnotationList(this.Count);
-					for (int i = 0; i < this.Count; i++) {
-						object obj = this[i];
-						ICloneable c = obj as ICloneable;
-						copy.Add(c != null ? c.Clone() : obj);
-					}
-					return copy;
-				}
-			}
-		}
-		
-		public void AddAnnotation(object annotation)
-		{
-			if (annotation == null)
-				throw new ArgumentNullException("annotation");
-			if (this.IsNull)
-				throw new InvalidOperationException("Cannot add annotations to the null node");
-		retry: // Retry until successful
-			object oldAnnotation = Interlocked.CompareExchange(ref this.annotations, annotation, null);
-			if (oldAnnotation == null) {
-				return; // we successfully added a single annotation
-			}
-			AnnotationList list = oldAnnotation as AnnotationList;
-			if (list == null) {
-				// we need to transform the old annotation into a list
-				list = new AnnotationList(4);
-				list.Add(oldAnnotation);
-				list.Add(annotation);
-				if (Interlocked.CompareExchange(ref this.annotations, list, oldAnnotation) != oldAnnotation) {
-					// the transformation failed (some other thread wrote to this.annotations first)
-					goto retry;
-				}
-			} else {
-				// once there's a list, use simple locking
-				lock (list) {
-					list.Add(annotation);
-				}
-			}
-		}
-		
-		public void RemoveAnnotations<T>() where T : class
-		{
-		retry: // Retry until successful
-			object oldAnnotations = this.annotations;
-			AnnotationList list = oldAnnotations as AnnotationList;
-			if (list != null) {
-				lock (list)
-					list.RemoveAll(obj => obj is T);
-			} else if (oldAnnotations is T) {
-				if (Interlocked.CompareExchange(ref this.annotations, null, oldAnnotations) != oldAnnotations) {
-					// Operation failed (some other thread wrote to this.annotations first)
-					goto retry;
-				}
-			}
-		}
-		
-		public void RemoveAnnotations(Type type)
-		{
-			if (type == null)
-				throw new ArgumentNullException("type");
-		retry: // Retry until successful
-			object oldAnnotations = this.annotations;
-			AnnotationList list = oldAnnotations as AnnotationList;
-			if (list != null) {
-				lock (list)
-					list.RemoveAll(obj => type.IsInstanceOfType(obj));
-			} else if (type.IsInstanceOfType(oldAnnotations)) {
-				if (Interlocked.CompareExchange(ref this.annotations, null, oldAnnotations) != oldAnnotations) {
-					// Operation failed (some other thread wrote to this.annotations first)
-					goto retry;
-				}
-			}
-		}
-		
-		public T Annotation<T>() where T: class
-		{
-			object annotations = this.annotations;
-			AnnotationList list = annotations as AnnotationList;
-			if (list != null) {
-				lock (list) {
-					foreach (object obj in list) {
-						T t = obj as T;
-						if (t != null)
-							return t;
-					}
-					return null;
-				}
-			} else {
-				return annotations as T;
-			}
-		}
-		
-		public object Annotation(Type type)
-		{
-			if (type == null)
-				throw new ArgumentNullException("type");
-			object annotations = this.annotations;
-			AnnotationList list = annotations as AnnotationList;
-			if (list != null) {
-				lock (list) {
-					foreach (object obj in list) {
-						if (type.IsInstanceOfType(obj))
-							return obj;
-					}
-				}
-			} else {
-				if (type.IsInstanceOfType(annotations))
-					return annotations;
-			}
-			return null;
-		}
-		
-		/// <summary>
-		/// Gets all annotations stored on this AstNode.
-		/// </summary>
-		public IEnumerable<object> Annotations {
-			get {
-				object annotations = this.annotations;
-				AnnotationList list = annotations as AnnotationList;
-				if (list != null) {
-					lock (list) {
-						return list.ToArray();
-					}
-				} else {
-					if (annotations != null)
-						return new object[] { annotations };
-					else
-						return Enumerable.Empty<object>();
-				}
-			}
-		}
-		#endregion
-		
 		public abstract S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data);
 		
 		#region Pattern Matching
-		protected static bool MatchString(string name1, string name2)
+		protected static bool MatchString (string name1, string name2)
 		{
-			return string.IsNullOrEmpty(name1) || name1 == name2;
+			return string.IsNullOrEmpty (name1) || name1 == name2;
 		}
 		
-		protected internal abstract bool DoMatch(AstNode other, PatternMatching.Match match);
+		protected internal abstract bool DoMatch (AstNode other, PatternMatching.Match match);
 		
-		bool PatternMatching.INode.DoMatch(PatternMatching.INode other, PatternMatching.Match match)
+		bool PatternMatching.INode.DoMatch (PatternMatching.INode other, PatternMatching.Match match)
 		{
 			AstNode o = other as AstNode;
 			// try matching if other is null, or if other is an AstNode
-			return (other == null || o != null) && DoMatch(o, match);
+			return (other == null || o != null) && DoMatch (o, match);
 		}
 		
-		bool PatternMatching.INode.DoMatchCollection(Role role, PatternMatching.INode pos, PatternMatching.Match match, PatternMatching.BacktrackingInfo backtrackingInfo)
+		bool PatternMatching.INode.DoMatchCollection (Role role, PatternMatching.INode pos, PatternMatching.Match match, PatternMatching.BacktrackingInfo backtrackingInfo)
 		{
 			AstNode o = pos as AstNode;
 			return (pos == null || o != null) && DoMatch (o, match);
@@ -623,6 +470,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		PatternMatching.INode PatternMatching.INode.FirstChild {
 			get { return firstChild; }
 		}
+
 		#endregion
 		
 		public AstNode GetNextNode ()
@@ -655,8 +503,168 @@ namespace ICSharpCode.NRefactory.CSharp
 			return null;
 		}
 		
+		public AstNode GetNodeAt (int line, int column)
+		{
+			return GetNodeAt (new AstLocation (line, column));
+		}
+		
+		public AstNode GetNodeAt (AstLocation location, Predicate<AstNode> pred = null)
+		{
+			AstNode result = null;
+			AstNode node = this;
+			while (node.FirstChild != null) {
+				var child = node.FirstChild;
+				while (child != null) {
+					if (child.StartLocation <= location && location < child.EndLocation) {
+						if (pred == null || pred (child))
+							result = child;
+						node = child;
+						break;
+					}
+					child = child.NextSibling;
+				}
+				// found no better child node - therefore the parent is the right one.
+				if (child == null)
+					break;
+			}
+			return result;
+		}
+		
+		public T GetNodeAt<T> (int line, int column) where T : AstNode
+		{
+			return GetNodeAt<T> (new AstLocation (line, column));
+		}
+		
+		/// <summary>
+		/// Gets the node specified by T at location. This is useful for getting a specific node from the tree. For example searching 
+		/// the current method declaration.
+		/// </summary>
+		public T GetNodeAt<T> (AstLocation location) where T : AstNode
+		{
+			T result = null;
+			AstNode node = this;
+			while (node.FirstChild != null) {
+				var child = node.FirstChild;
+				while (child != null) {
+					if (child.StartLocation <= location && location < child.EndLocation) {
+						if (child is T)
+							result = (T)child;
+						node = child;
+						break;
+					}
+					child = child.NextSibling;
+				}
+				// found no better child node - therefore the parent is the right one.
+				if (child == null)
+					break;
+			}
+			return result;
+		}
+		
+		public AstNode GetResolveableNodeAt (int line, int column)
+		{
+			return GetResolveableNodeAt (new AstLocation (line, column));
+		}
+		
+		/// <summary>
+		/// Gets a node that can be resolved at location.
+		/// </summary>
+		public AstNode GetResolveableNodeAt (AstLocation location)
+		{
+			return GetNodeAt (location, delegate (AstNode n) {
+				
+				if (n is TypeDeclaration) {
+					var decl = (TypeDeclaration)n;
+					return decl.NameToken.StartLocation <= location && location <= decl.NameToken.EndLocation;
+				}
+				
+				if (n is DelegateDeclaration) {
+					var decl = (DelegateDeclaration)n;
+					return decl.NameToken.StartLocation <= location && location <= decl.NameToken.EndLocation;
+				}
+				
+				if (n is MemberDeclaration) {
+					var decl = (MemberDeclaration)n;
+					return decl.NameToken.StartLocation <= location && location <= decl.NameToken.EndLocation;
+				}
+				
+				if (n is ConstructorDeclaration) {
+					var decl = (ConstructorDeclaration)n;
+					return decl.IdentifierToken.StartLocation <= location && location <= decl.IdentifierToken.EndLocation;
+				}
+				
+				if (n is DestructorDeclaration) {
+					var decl = (DestructorDeclaration)n;
+					return decl.IdentifierToken.StartLocation <= location && location <= decl.IdentifierToken.EndLocation;
+				}
+				
+				if (n is VariableInitializer) {
+					var decl = (VariableInitializer)n;
+					return decl.NameToken.StartLocation <= location && location <= decl.NameToken.EndLocation;
+				}
+				
+				if (n is ParameterDeclaration) {
+					var decl = (ParameterDeclaration)n;
+					return decl.NameToken.StartLocation <= location && location <= decl.NameToken.EndLocation;
+				}
+				
+				if (n is MemberReferenceExpression) {
+					var decl = (MemberReferenceExpression)n;
+					return decl.MemberNameToken.StartLocation <= location && location <= decl.MemberNameToken.EndLocation;
+				}
+				
+				return n is IdentifierExpression || n is AstType;
+			});
+		}
+		
+		public IEnumerable<AstNode> GetNodesBetween (int startLine, int startColumn, int endLine, int endColumn)
+		{
+			return GetNodesBetween (new AstLocation (startLine, startColumn), new AstLocation (endLine, endColumn));
+		}
+		
+		public IEnumerable<AstNode> GetNodesBetween (AstLocation start, AstLocation end)
+		{
+			AstNode node = this;
+			while (node != null) {
+				AstNode next;
+				if (start <= node.StartLocation && node.EndLocation <= end) {
+					// Remember next before yielding node.
+					// This allows iteration to continue when the caller removes/replaces the node.
+					next = node.NextSibling;
+					yield return node;
+				} else {
+					if (node.EndLocation <= start) {
+						next = node.NextSibling; 
+					} else {
+						next = node.FirstChild;
+					}
+				}
+				
+				if (next != null && next.StartLocation > end)
+					yield break;
+				node = next;
+			}
+		}
+		
+		public bool Contains (int line, int column)
+		{
+			return Contains (new AstLocation (line, column));
+		}
+
+		public bool Contains (AstLocation location)
+		{
+			return this.StartLocation <= location && location < this.EndLocation;
+		}
+		
+		public override void AddAnnotation (object annotation)
+		{
+			if (this.IsNull)
+				throw new InvalidOperationException ("Cannot add annotations to the null node");
+			base.AddAnnotation (annotation);
+		}
+		
 		// the Root role must be available when creating the null nodes, so we can't put it in the Roles class
-		static readonly Role<AstNode> RootRole = new Role<AstNode>("Root");
+		static readonly Role<AstNode> RootRole = new Role<AstNode> ("Root");
 		
 		public static class Roles
 		{
@@ -666,41 +674,38 @@ namespace ICSharpCode.NRefactory.CSharp
 			public static readonly Role<AstNode> Root = RootRole;
 			
 			// some pre defined constants for common roles
-			public static readonly Role<Identifier> Identifier = new Role<Identifier>("Identifier", CSharp.Identifier.Null);
-			
-			public static readonly Role<BlockStatement> Body = new Role<BlockStatement>("Body", CSharp.BlockStatement.Null);
-			public static readonly Role<ParameterDeclaration> Parameter = new Role<ParameterDeclaration>("Parameter");
-			public static readonly Role<Expression> Argument = new Role<Expression>("Argument", CSharp.Expression.Null);
-			public static readonly Role<AstType> Type = new Role<AstType>("Type", CSharp.AstType.Null);
-			public static readonly Role<Expression> Expression = new Role<Expression>("Expression", CSharp.Expression.Null);
-			public static readonly Role<Expression> TargetExpression = new Role<Expression>("Target", CSharp.Expression.Null);
-			public readonly static Role<Expression> Condition = new Role<Expression>("Condition", CSharp.Expression.Null);
-			
-			public static readonly Role<TypeParameterDeclaration> TypeParameter = new Role<TypeParameterDeclaration>("TypeParameter");
-			public static readonly Role<AstType> TypeArgument = new Role<AstType>("TypeArgument", CSharp.AstType.Null);
-			public readonly static Role<Constraint> Constraint = new Role<Constraint>("Constraint");
-			public static readonly Role<VariableInitializer> Variable = new Role<VariableInitializer>("Variable");
-			public static readonly Role<Statement> EmbeddedStatement = new Role<Statement>("EmbeddedStatement", CSharp.Statement.Null);
-			
-			public static readonly Role<CSharpTokenNode> Keyword = new Role<CSharpTokenNode>("Keyword", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> InKeyword = new Role<CSharpTokenNode>("InKeyword", CSharpTokenNode.Null);
+			public static readonly Role<Identifier> Identifier = new Role<Identifier> ("Identifier", CSharp.Identifier.Null);
+			public static readonly Role<BlockStatement> Body = new Role<BlockStatement> ("Body", CSharp.BlockStatement.Null);
+			public static readonly Role<ParameterDeclaration> Parameter = new Role<ParameterDeclaration> ("Parameter");
+			public static readonly Role<Expression> Argument = new Role<Expression> ("Argument", CSharp.Expression.Null);
+			public static readonly Role<AstType> Type = new Role<AstType> ("Type", CSharp.AstType.Null);
+			public static readonly Role<Expression> Expression = new Role<Expression> ("Expression", CSharp.Expression.Null);
+			public static readonly Role<Expression> TargetExpression = new Role<Expression> ("Target", CSharp.Expression.Null);
+			public readonly static Role<Expression> Condition = new Role<Expression> ("Condition", CSharp.Expression.Null);
+			public static readonly Role<TypeParameterDeclaration> TypeParameter = new Role<TypeParameterDeclaration> ("TypeParameter");
+			public static readonly Role<AstType> TypeArgument = new Role<AstType> ("TypeArgument", CSharp.AstType.Null);
+			public readonly static Role<Constraint> Constraint = new Role<Constraint> ("Constraint");
+			public static readonly Role<VariableInitializer> Variable = new Role<VariableInitializer> ("Variable");
+			public static readonly Role<Statement> EmbeddedStatement = new Role<Statement> ("EmbeddedStatement", CSharp.Statement.Null);
+			public static readonly Role<CSharpTokenNode> Keyword = new Role<CSharpTokenNode> ("Keyword", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> InKeyword = new Role<CSharpTokenNode> ("InKeyword", CSharpTokenNode.Null);
 			
 			// some pre defined constants for most used punctuation
-			public static readonly Role<CSharpTokenNode> LPar = new Role<CSharpTokenNode>("LPar", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> RPar = new Role<CSharpTokenNode>("RPar", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> LBracket = new Role<CSharpTokenNode>("LBracket", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> RBracket = new Role<CSharpTokenNode>("RBracket", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> LBrace = new Role<CSharpTokenNode>("LBrace", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> RBrace = new Role<CSharpTokenNode>("RBrace", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> LChevron = new Role<CSharpTokenNode>("LChevron", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> RChevron = new Role<CSharpTokenNode>("RChevron", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> Comma = new Role<CSharpTokenNode>("Comma", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> Dot = new Role<CSharpTokenNode>("Dot", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> Semicolon = new Role<CSharpTokenNode>("Semicolon", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> Assign = new Role<CSharpTokenNode>("Assign", CSharpTokenNode.Null);
-			public static readonly Role<CSharpTokenNode> Colon = new Role<CSharpTokenNode>("Colon", CSharpTokenNode.Null);
-			
-			public static readonly Role<Comment> Comment = new Role<Comment>("Comment");
+			public static readonly Role<CSharpTokenNode> LPar = new Role<CSharpTokenNode> ("LPar", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> RPar = new Role<CSharpTokenNode> ("RPar", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> LBracket = new Role<CSharpTokenNode> ("LBracket", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> RBracket = new Role<CSharpTokenNode> ("RBracket", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> LBrace = new Role<CSharpTokenNode> ("LBrace", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> RBrace = new Role<CSharpTokenNode> ("RBrace", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> LChevron = new Role<CSharpTokenNode> ("LChevron", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> RChevron = new Role<CSharpTokenNode> ("RChevron", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> Comma = new Role<CSharpTokenNode> ("Comma", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> Dot = new Role<CSharpTokenNode> ("Dot", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> Semicolon = new Role<CSharpTokenNode> ("Semicolon", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> Assign = new Role<CSharpTokenNode> ("Assign", CSharpTokenNode.Null);
+			public static readonly Role<CSharpTokenNode> Colon = new Role<CSharpTokenNode> ("Colon", CSharpTokenNode.Null);
+			public static readonly Role<Comment> Comment = new Role<Comment> ("Comment");
+			public static readonly Role<ErrorNode> Error = new Role<ErrorNode> ("Error");
 			
 		}
 	}
