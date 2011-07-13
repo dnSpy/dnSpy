@@ -113,5 +113,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitQueryExpression(QueryExpression queryExpression, T data);
 		
 		S VisitEmptyExpression(EmptyExpression emptyExpression, T data);
+		
+		S VisitAnonymousObjectCreationExpression(AnonymousObjectCreationExpression anonymousObjectCreationExpression, T data);
 	}
 }

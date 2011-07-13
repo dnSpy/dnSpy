@@ -48,6 +48,7 @@
     <Compile Include="Ast\AstNodeCollection.cs" />
     <Compile Include="Ast\Comment.cs" />
     <Compile Include="Ast\Enums.cs" />
+    <Compile Include="Ast\Expressions\AnonymousObjectCreationExpression.cs" />
     <Compile Include="Ast\Expressions\ArrayCreateExpression.cs" />
     <Compile Include="Ast\Expressions\ArrayInitializerExpression.cs" />
     <Compile Include="Ast\Expressions\AssignmentExpression.cs" />

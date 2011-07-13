@@ -429,7 +429,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitAnonymousTypeCreateExpression(CSharp.AnonymousTypeCreateExpression anonymousTypeCreateExpression, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new AnonymousObjectCreationExpression();
+			
+			ConvertNodes(anonymousTypeCreateExpression.Initializer, expr.Initializer);
+			
+			return EndNode(anonymousTypeCreateExpression, expr);
 		}
 		
 		public AstNode VisitParenthesizedExpression(CSharp.ParenthesizedExpression parenthesizedExpression, object data)

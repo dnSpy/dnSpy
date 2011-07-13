@@ -2411,5 +2411,21 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(emptyExpression);
 		}
+		
+		public object VisitAnonymousObjectCreationExpression(AnonymousObjectCreationExpression anonymousObjectCreationExpression, object data)
+		{
+			StartNode(anonymousObjectCreationExpression);
+			
+			WriteKeyword("New");
+			WriteKeyword("With");
+			
+			WriteToken("{", AnonymousObjectCreationExpression.Roles.LBrace);
+			Space();
+			WriteCommaSeparatedList(anonymousObjectCreationExpression.Initializer);
+			Space();
+			WriteToken("}", AnonymousObjectCreationExpression.Roles.RBrace);
+			
+			return EndNode(anonymousObjectCreationExpression);
+		}
 	}
 }
