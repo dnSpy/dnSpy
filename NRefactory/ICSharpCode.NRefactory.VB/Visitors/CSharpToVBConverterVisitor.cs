@@ -894,8 +894,32 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitFixedStatement(CSharp.FixedStatement fixedStatement, object data)
 		{
-			// see http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.gchandle%28v=VS.100%29.aspx
-			throw new NotImplementedException();
+			var block = blocks.Peek();
+			block.AddChild(new Comment(" Emulating fixed-Statement, might not be entirely correct!", false), AstNode.Roles.Comment);
+			
+			var variables = new LocalDeclarationStatement();
+			variables.Modifiers = Modifiers.Dim;
+			var stmt = new TryStatement();
+			stmt.FinallyBlock = new BlockStatement();
+			foreach (var decl in fixedStatement.Variables) {
+				var v = new VariableDeclaratorWithTypeAndInitializer {
+					Identifiers = { new VariableIdentifier { Name = decl.Name } },
+					Type = new SimpleType("GCHandle"),
+					Initializer = new InvocationExpression(
+						new MemberAccessExpression { Target = new IdentifierExpression { Identifier = "GCHandle" }, Member = "Alloc" },
+						(Expression)decl.Initializer.AcceptVisitor(this, data),
+						new MemberAccessExpression { Target = new IdentifierExpression { Identifier = "GCHandleType" }, Member = "Pinned" }
+					)
+				};
+				variables.Variables.Add(v);
+				stmt.FinallyBlock.Add(new IdentifierExpression { Identifier = decl.Name }.Invoke("Free"));
+			}
+			
+			block.Add(variables);
+			
+			stmt.Body = (BlockStatement)fixedStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			
+			return EndNode(fixedStatement, stmt);
 		}
 		
 		public AstNode VisitForeachStatement(CSharp.ForeachStatement foreachStatement, object data)
@@ -1673,11 +1697,17 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitComposedType(CSharp.ComposedType composedType, object data)
 		{
-			var type = new ComposedType();
+			AstType type = new ComposedType();
 			
-			ConvertNodes(composedType.ArraySpecifiers, type.ArraySpecifiers);
-			type.BaseType = (AstType)composedType.BaseType.AcceptVisitor(this, data);
-			type.HasNullableSpecifier = composedType.HasNullableSpecifier;
+			ConvertNodes(composedType.ArraySpecifiers, ((ComposedType)type).ArraySpecifiers);
+			((ComposedType)type).BaseType = (AstType)composedType.BaseType.AcceptVisitor(this, data);
+			((ComposedType)type).HasNullableSpecifier = composedType.HasNullableSpecifier;
+			
+			for (int i = 0; i < composedType.PointerRank; i++) {
+				var tmp = new SimpleType() { Identifier = "__Pointer" };
+				tmp.TypeArguments.Add(type);
+				type = tmp;
+			}
 			
 			return EndNode(composedType, type);
 		}
@@ -1746,6 +1776,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					break;
 				case "class":
 					typeName = "Class";
+					break;
+				case "void":
+					typeName = "Void";
 					break;
 				default:
 					typeName = "unknown";
