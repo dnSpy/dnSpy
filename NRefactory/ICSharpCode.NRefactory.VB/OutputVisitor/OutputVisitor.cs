@@ -2404,5 +2404,12 @@ namespace ICSharpCode.NRefactory.VB
 			new OutputVisitor(writer, new VBFormattingOptions()).WritePrimitiveValue(primitiveExpression.Value);
 			return writer.ToString();
 		}
+		
+		public object VisitEmptyExpression(EmptyExpression emptyExpression, object data)
+		{
+			StartNode(emptyExpression);
+			
+			return EndNode(emptyExpression);
+		}
 	}
 }

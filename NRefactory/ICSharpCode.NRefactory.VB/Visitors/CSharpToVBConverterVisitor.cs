@@ -594,7 +594,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 						Operator = UnaryOperatorType.AddressOf
 					};
 					break;
-//				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Dereference:
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Dereference:
+					expr = new InvocationExpression();
+					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "__Dereference" };
+					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
+					break;
 				default:
 					throw new Exception("Invalid value for UnaryOperatorType");
 			}
@@ -610,8 +614,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitEmptyExpression(CSharp.EmptyExpression emptyExpression, object data)
 		{
-			// TODO : not used in ILSpy currently
-			throw new NotImplementedException();
+			return EndNode(emptyExpression, new EmptyExpression());
 		}
 		
 		public AstNode VisitQueryExpression(CSharp.QueryExpression queryExpression, object data)
@@ -930,6 +933,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			block.Add(variables);
 			
 			stmt.Body = (BlockStatement)fixedStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			
+			foreach (var ident in stmt.Body.Descendants.OfType<IdentifierExpression>()) {
+				ident.ReplaceWith(expr => ((Expression)expr).Invoke("AddrOfPinnedObject"));
+			}
 			
 			return EndNode(fixedStatement, stmt);
 		}

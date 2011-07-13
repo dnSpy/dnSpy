@@ -61,6 +61,4 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			return o != null && this.Type.DoMatch(o.Type, match) && this.Arguments.DoMatch(o.Arguments, match) && this.AdditionalArraySpecifiers.DoMatch(o.AdditionalArraySpecifiers, match) && this.Initializer.DoMatch(o.Initializer, match);
 		}
 	}
-	
-
 }
