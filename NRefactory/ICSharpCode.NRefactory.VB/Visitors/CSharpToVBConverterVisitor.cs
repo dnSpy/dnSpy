@@ -44,7 +44,20 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitAnonymousMethodExpression(CSharp.AnonymousMethodExpression anonymousMethodExpression, object data)
 		{
-			throw new NotImplementedException();
+			members.Push(new MemberInfo());
+			
+			var expr = new MultiLineLambdaExpression() {
+				IsSub = true,
+				Body = (BlockStatement)anonymousMethodExpression.Body.AcceptVisitor(this, data)
+			};
+			
+			ConvertNodes(anonymousMethodExpression.Parameters, expr.Parameters);
+			
+			if (members.Pop().inIterator) {
+				expr.Modifiers |= Modifiers.Iterator;
+			}
+			
+			return EndNode(anonymousMethodExpression, expr);
 		}
 		
 		public AstNode VisitUndocumentedExpression(CSharp.UndocumentedExpression undocumentedExpression, object data)
