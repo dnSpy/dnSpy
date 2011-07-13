@@ -37,7 +37,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		/// </summary>
 		public MemberAccessExpression Member(string memberName)
 		{
-			return new MemberAccessExpression { Target = this, Member = memberName };
+			return new MemberAccessExpression { Target = this, MemberName = memberName };
 		}
 		
 		/// <summary>
@@ -64,7 +64,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			InvocationExpression ie = new InvocationExpression();
 			MemberAccessExpression mre = new MemberAccessExpression();
 			mre.Target = this;
-			mre.Member = methodName;
+			mre.MemberName = methodName;
 			mre.TypeArguments.AddRange(typeArguments);
 			ie.Target = mre;
 			ie.Arguments.AddRange(arguments);

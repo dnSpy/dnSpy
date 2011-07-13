@@ -446,7 +446,7 @@ namespace ICSharpCode.NRefactory.VB
 			
 			memberAccessExpression.Target.AcceptVisitor(this, data);
 			WriteToken(".", MemberAccessExpression.Roles.Dot);
-			memberAccessExpression.Member.AcceptVisitor(this, data);
+			memberAccessExpression.MemberName.AcceptVisitor(this, data);
 			WriteTypeArguments(memberAccessExpression.TypeArguments);
 			
 			return EndNode(memberAccessExpression);
@@ -1644,10 +1644,12 @@ namespace ICSharpCode.NRefactory.VB
 			foreach (var specifier in arrayCreateExpression.AdditionalArraySpecifiers) {
 				specifier.AcceptVisitor(this, data);
 			}
-			Space();
-			WriteToken("=", ArrayCreateExpression.Roles.Assign);
-			Space();
-			arrayCreateExpression.Initializer.AcceptVisitor(this, data);
+			if (!arrayCreateExpression.Initializer.IsNull) {
+				Space();
+				WriteToken("=", ArrayCreateExpression.Roles.Assign);
+				Space();
+				arrayCreateExpression.Initializer.AcceptVisitor(this, data);
+			}
 			return EndNode(arrayCreateExpression);
 		}
 		

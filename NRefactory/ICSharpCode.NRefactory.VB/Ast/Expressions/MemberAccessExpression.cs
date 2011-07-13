@@ -16,7 +16,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			set { SetChildByRole(Roles.Expression, value); }
 		}
 		
-		public Identifier Member {
+		public Identifier MemberName {
 			get { return GetChildByRole(Roles.Identifier); }
 			set { SetChildByRole(Roles.Identifier, value); }
 		}
@@ -30,7 +30,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			var expr = other as MemberAccessExpression;
 			return expr != null &&
 				Target.DoMatch(expr.Target, match) &&
-				Member.DoMatch(expr.Member, match) &&
+				MemberName.DoMatch(expr.MemberName, match) &&
 				TypeArguments.DoMatch(expr.TypeArguments, match);
 		}
 		

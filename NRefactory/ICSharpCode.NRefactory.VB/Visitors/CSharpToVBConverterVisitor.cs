@@ -304,7 +304,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitCheckedExpression(CSharp.CheckedExpression checkedExpression, object data)
 		{
-			throw new NotImplementedException();
+			blocks.Peek().AddChild(new Comment(" The following expression was wrapped in a checked-expression", false), AstNode.Roles.Comment);
+			return EndNode(checkedExpression, checkedExpression.Expression.AcceptVisitor(this, data));
 		}
 		
 		public AstNode VisitConditionalExpression(CSharp.ConditionalExpression conditionalExpression, object data)
@@ -385,7 +386,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var memberAccessExpression = new MemberAccessExpression();
 			
 			memberAccessExpression.Target = (Expression)memberReferenceExpression.Target.AcceptVisitor(this, data);
-			memberAccessExpression.Member = new Identifier(memberReferenceExpression.MemberName, AstLocation.Empty);
+			memberAccessExpression.MemberName = new Identifier(memberReferenceExpression.MemberName, AstLocation.Empty);
 			ConvertNodes(memberReferenceExpression.TypeArguments, memberAccessExpression.TypeArguments);
 			
 			return EndNode(memberReferenceExpression, memberAccessExpression);
@@ -442,14 +443,14 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitPointerReferenceExpression(CSharp.PointerReferenceExpression pointerReferenceExpression, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(pointerReferenceExpression,((Expression)pointerReferenceExpression.Target.AcceptVisitor(this, data)).Invoke("Dereference").Member(pointerReferenceExpression.MemberName));
 		}
 		
 		public AstNode VisitPrimitiveExpression(CSharp.PrimitiveExpression primitiveExpression, object data)
 		{
 			Expression expr;
 			
-			if ((primitiveExpression.Value is string || primitiveExpression.Value is char) && primitiveExpression.Value.ToString().IndexOfAny(new[] {'\r', '\n'}) > -1)
+			if ((primitiveExpression.Value is string || primitiveExpression.Value is char) && primitiveExpression.Value.ToString().IndexOfAny(new[] {'\r', '\n', '\t'}) > -1)
 				expr = ConvertToConcat(primitiveExpression.Value.ToString());
 			else
 				expr = new PrimitiveExpression(primitiveExpression.Value);
@@ -503,7 +504,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitSizeOfExpression(CSharp.SizeOfExpression sizeOfExpression, object data)
 		{
-			throw new NotImplementedException();
+			return EndNode(
+				sizeOfExpression,
+				new InvocationExpression(
+					new IdentifierExpression() { Identifier = "__SizeOf" },
+					new TypeReferenceExpression((AstType)sizeOfExpression.Type.AcceptVisitor(this, data))
+				)
+			);
 		}
 		
 		public AstNode VisitStackAllocExpression(CSharp.StackAllocExpression stackAllocExpression, object data)
@@ -597,7 +604,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitUncheckedExpression(CSharp.UncheckedExpression uncheckedExpression, object data)
 		{
-			throw new NotImplementedException();
+			blocks.Peek().AddChild(new Comment(" The following expression was wrapped in a unchecked-expression", false), AstNode.Roles.Comment);
+			return EndNode(uncheckedExpression, uncheckedExpression.Expression.AcceptVisitor(this, data));
 		}
 		
 		public AstNode VisitEmptyExpression(CSharp.EmptyExpression emptyExpression, object data)
@@ -844,8 +852,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitCheckedStatement(CSharp.CheckedStatement checkedStatement, object data)
 		{
-			// overflow/underflow checks are on by default in VB
-			throw new NotImplementedException();
+			blocks.Peek().AddChild(new Comment(" The following expression was wrapped in a checked-expression", false), AstNode.Roles.Comment);
+			var body = (BlockStatement)checkedStatement.Body.AcceptVisitor(this, data);
+			
+			blocks.Peek().AddRange(body);
+			
+			return EndNode<AstNode>(checkedStatement, null);
 		}
 		
 		public AstNode VisitContinueStatement(CSharp.ContinueStatement continueStatement, object data)
@@ -906,9 +918,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					Identifiers = { new VariableIdentifier { Name = decl.Name } },
 					Type = new SimpleType("GCHandle"),
 					Initializer = new InvocationExpression(
-						new MemberAccessExpression { Target = new IdentifierExpression { Identifier = "GCHandle" }, Member = "Alloc" },
+						new MemberAccessExpression { Target = new IdentifierExpression { Identifier = "GCHandle" }, MemberName = "Alloc" },
 						(Expression)decl.Initializer.AcceptVisitor(this, data),
-						new MemberAccessExpression { Target = new IdentifierExpression { Identifier = "GCHandleType" }, Member = "Pinned" }
+						new MemberAccessExpression { Target = new IdentifierExpression { Identifier = "GCHandleType" }, MemberName = "Pinned" }
 					)
 				};
 				variables.Variables.Add(v);
@@ -1238,7 +1250,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var result = new InvocationExpression(
 				new MemberAccessExpression() {
 					Target = new InstanceExpression(constructorInitializer.ConstructorInitializerType == CSharp.ConstructorInitializerType.This ? InstanceExpressionType.Me : InstanceExpressionType.MyBase, AstLocation.Empty),
-					Member = new Identifier("New", AstLocation.Empty)
+					MemberName = new Identifier("New", AstLocation.Empty)
 				}
 			);
 			ConvertNodes(constructorInitializer.Arguments, result.Arguments);
