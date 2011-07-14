@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ProjectGuid>{6D3D0F0D-348D-456A-A6ED-E9BD5EFABB6A}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.ILSpy.Debugger</RootNamespace>
     <AssemblyName>ILSpy.Debugger.Plugin</AssemblyName>
@@ -41,9 +41,6 @@
     <BaseAddress>4194304</BaseAddress>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <FileAlignment>4096</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
