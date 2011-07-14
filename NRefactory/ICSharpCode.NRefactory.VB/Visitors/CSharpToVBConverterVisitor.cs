@@ -235,6 +235,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.ShiftRight:
 					op = BinaryOperatorType.ShiftRight;
 					break;
+				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.NullCoalescing:
+					var nullCoalescing = new ConditionalExpression {
+						ConditionExpression = left,
+						FalseExpression = right
+					};
+					return EndNode(binaryOperatorExpression, nullCoalescing);
 				default:
 					throw new Exception("Invalid value for BinaryOperatorType: " + binaryOperatorExpression.Operator);
 			}
@@ -635,7 +641,16 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitQueryFromClause(CSharp.QueryFromClause queryFromClause, object data)
 		{
-			throw new NotImplementedException();
+			var op = new FromQueryOperator();
+			op.Variables.Add(
+				new CollectionRangeVariableDeclaration {
+					Identifier = new VariableIdentifier { Name = queryFromClause.Identifier },
+					Type = (AstType)queryFromClause.Type.AcceptVisitor(this, data),
+					Expression = (Expression)queryFromClause.Expression.AcceptVisitor(this, data)
+				}
+			);
+			
+			return EndNode(queryFromClause, op);
 		}
 		
 		public AstNode VisitQueryLetClause(CSharp.QueryLetClause queryLetClause, object data)
@@ -655,22 +670,45 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitQueryOrderClause(CSharp.QueryOrderClause queryOrderClause, object data)
 		{
-			throw new NotImplementedException();
+			var op = new OrderByQueryOperator();
+			
+			ConvertNodes(queryOrderClause.Orderings, op.Expressions);
+			
+			return EndNode(queryOrderClause, op);
 		}
 		
 		public AstNode VisitQueryOrdering(CSharp.QueryOrdering queryOrdering, object data)
 		{
-			throw new NotImplementedException();
+			var expr = new OrderExpression();
+			
+			expr.Direction = (QueryOrderingDirection)queryOrdering.Direction;
+			expr.Expression = (Expression)queryOrdering.Expression.AcceptVisitor(this, data);
+			
+			return EndNode(queryOrdering, expr);
 		}
+		
+		int selectVarCount = 0;
 		
 		public AstNode VisitQuerySelectClause(CSharp.QuerySelectClause querySelectClause, object data)
 		{
-			throw new NotImplementedException();
+			var op = new SelectQueryOperator();
+			
+			op.Variables.Add(
+				new VariableInitializer {
+					Identifier = new VariableIdentifier { Name = "SelectVar" + selectVarCount },
+					Expression = (Expression)querySelectClause.Expression.AcceptVisitor(this, data)
+				});
+			
+			return EndNode(querySelectClause, op);
 		}
 		
 		public AstNode VisitQueryGroupClause(CSharp.QueryGroupClause queryGroupClause, object data)
 		{
+			var op = new GroupByQueryOperator();
+			
 			throw new NotImplementedException();
+			
+			return EndNode(queryGroupClause, op);
 		}
 		
 		public AstNode VisitAttribute(CSharp.Attribute attribute, object data)

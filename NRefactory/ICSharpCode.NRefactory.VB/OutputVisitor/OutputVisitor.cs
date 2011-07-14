@@ -2427,5 +2427,219 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(anonymousObjectCreationExpression);
 		}
+		
+		public object VisitCollectionRangeVariableDeclaration(CollectionRangeVariableDeclaration collectionRangeVariableDeclaration, object data)
+		{
+			StartNode(collectionRangeVariableDeclaration);
+			
+			collectionRangeVariableDeclaration.Identifier.AcceptVisitor(this, data);
+			if (!collectionRangeVariableDeclaration.Type.IsNull) {
+				WriteKeyword("As");
+				collectionRangeVariableDeclaration.Type.AcceptVisitor(this, data);
+			}
+			WriteKeyword("In");
+			collectionRangeVariableDeclaration.Expression.AcceptVisitor(this, data);
+			
+			return EndNode(collectionRangeVariableDeclaration);
+		}
+		
+		public object VisitFromQueryOperator(FromQueryOperator fromQueryOperator, object data)
+		{
+			StartNode(fromQueryOperator);
+			
+			WriteKeyword("From");
+			WriteCommaSeparatedList(fromQueryOperator.Variables);
+			
+			return EndNode(fromQueryOperator);
+		}
+		
+		public object VisitAggregateQueryOperator(AggregateQueryOperator aggregateQueryOperator, object data)
+		{
+			StartNode(aggregateQueryOperator);
+			
+			WriteKeyword("Aggregate");
+			aggregateQueryOperator.Variable.AcceptVisitor(this, data);
+			
+			foreach (var operators in aggregateQueryOperator.SubQueryOperators) {
+				operators.AcceptVisitor(this, data);
+			}
+			
+			WriteKeyword("Into");
+			WriteCommaSeparatedList(aggregateQueryOperator.IntoExpressions);
+			
+			return EndNode(aggregateQueryOperator);
+		}
+		
+		public object VisitSelectQueryOperator(SelectQueryOperator selectQueryOperator, object data)
+		{
+			StartNode(selectQueryOperator);
+			
+			WriteKeyword("Select");
+			WriteCommaSeparatedList(selectQueryOperator.Variables);
+			
+			return EndNode(selectQueryOperator);
+		}
+		
+		public object VisitDistinctQueryOperator(DistinctQueryOperator distinctQueryOperator, object data)
+		{
+			StartNode(distinctQueryOperator);
+			
+			WriteKeyword("Distinct");
+			
+			return EndNode(distinctQueryOperator);
+		}
+		
+		public object VisitWhereQueryOperator(WhereQueryOperator whereQueryOperator, object data)
+		{
+			StartNode(whereQueryOperator);
+			
+			WriteKeyword("Where");
+			whereQueryOperator.Condition.AcceptVisitor(this, data);
+			
+			return EndNode(whereQueryOperator);
+		}
+		
+		public object VisitPartitionQueryOperator(PartitionQueryOperator partitionQueryOperator, object data)
+		{
+			StartNode(partitionQueryOperator);
+			
+			switch (partitionQueryOperator.Kind) {
+				case PartitionKind.Take:
+					WriteKeyword("Take");
+					break;
+				case PartitionKind.TakeWhile:
+					WriteKeyword("Take");
+					WriteKeyword("While");
+					break;
+				case PartitionKind.Skip:
+					WriteKeyword("Skip");
+					break;
+				case PartitionKind.SkipWhile:
+					WriteKeyword("Skip");
+					WriteKeyword("While");
+					break;
+				default:
+					throw new Exception("Invalid value for PartitionKind");
+			}
+			
+			partitionQueryOperator.Expression.AcceptVisitor(this, data);
+			
+			return EndNode(partitionQueryOperator);
+		}
+		
+		public object VisitOrderExpression(OrderExpression orderExpression, object data)
+		{
+			StartNode(orderExpression);
+			
+			orderExpression.Expression.AcceptVisitor(this, data);
+			
+			switch (orderExpression.Direction) {
+				case QueryOrderingDirection.None:
+					break;
+				case QueryOrderingDirection.Ascending:
+					WriteKeyword("Ascending");
+					break;
+				case QueryOrderingDirection.Descending:
+					WriteKeyword("Descending");
+					break;
+				default:
+					throw new Exception("Invalid value for QueryExpressionOrderingDirection");
+			}
+			
+			return EndNode(orderExpression);
+		}
+		
+		public object VisitOrderByQueryOperator(OrderByQueryOperator orderByQueryOperator, object data)
+		{
+			StartNode(orderByQueryOperator);
+			
+			WriteKeyword("Order");
+			WriteKeyword("By");
+			WriteCommaSeparatedList(orderByQueryOperator.Expressions);
+			
+			return EndNode(orderByQueryOperator);
+		}
+		
+		public object VisitLetQueryOperator(LetQueryOperator letQueryOperator, object data)
+		{
+			StartNode(letQueryOperator);
+			
+			WriteKeyword("Let");
+			WriteCommaSeparatedList(letQueryOperator.Variables);
+			
+			return EndNode(letQueryOperator);
+		}
+		
+		public object VisitGroupByQueryOperator(GroupByQueryOperator groupByQueryOperator, object data)
+		{
+			StartNode(groupByQueryOperator);
+			
+			WriteKeyword("Group");
+			WriteCommaSeparatedList(groupByQueryOperator.GroupExpressions);
+			WriteKeyword("By");
+			WriteCommaSeparatedList(groupByQueryOperator.ByExpressions);
+			WriteKeyword("Into");
+			WriteCommaSeparatedList(groupByQueryOperator.IntoExpressions);
+			
+			return EndNode(groupByQueryOperator);
+		}
+		
+		public object VisitJoinQueryOperator(JoinQueryOperator joinQueryOperator, object data)
+		{
+			StartNode(joinQueryOperator);
+			
+			WriteKeyword("Join");
+			joinQueryOperator.JoinVariable.AcceptVisitor(this, data);
+			if (!joinQueryOperator.SubJoinQuery.IsNull) {
+				joinQueryOperator.SubJoinQuery.AcceptVisitor(this, data);
+			}
+			WriteKeyword("On");
+			bool first = true;
+			foreach (var cond in joinQueryOperator.JoinConditions) {
+				if (first)
+					first = false;
+				else
+					WriteKeyword("And");
+				cond.AcceptVisitor(this, data);
+			}
+			
+			return EndNode(joinQueryOperator);
+		}
+		
+		public object VisitJoinCondition(JoinCondition joinCondition, object data)
+		{
+			StartNode(joinCondition);
+			
+			joinCondition.Left.AcceptVisitor(this, data);
+			WriteKeyword("Equals");
+			joinCondition.Right.AcceptVisitor(this, data);
+			
+			return EndNode(joinCondition);
+		}
+		
+		public object VisitGroupJoinQueryOperator(GroupJoinQueryOperator groupJoinQueryOperator, object data)
+		{
+			StartNode(groupJoinQueryOperator);
+			
+			WriteKeyword("Group");
+			WriteKeyword("Join");
+			groupJoinQueryOperator.JoinVariable.AcceptVisitor(this, data);
+			if (!groupJoinQueryOperator.SubJoinQuery.IsNull) {
+				groupJoinQueryOperator.SubJoinQuery.AcceptVisitor(this, data);
+			}
+			WriteKeyword("On");
+			bool first = true;
+			foreach (var cond in groupJoinQueryOperator.JoinConditions) {
+				if (first)
+					first = false;
+				else
+					WriteKeyword("And");
+				cond.AcceptVisitor(this, data);
+			}
+			WriteKeyword("Into");
+			WriteCommaSeparatedList(groupJoinQueryOperator.IntoExpressions);
+			
+			return EndNode(groupJoinQueryOperator);
+		}
 	}
 }

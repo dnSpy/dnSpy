@@ -115,5 +115,21 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitEmptyExpression(EmptyExpression emptyExpression, T data);
 		
 		S VisitAnonymousObjectCreationExpression(AnonymousObjectCreationExpression anonymousObjectCreationExpression, T data);
+		
+		S VisitCollectionRangeVariableDeclaration(CollectionRangeVariableDeclaration collectionRangeVariableDeclaration, T data);
+		
+		S VisitFromQueryOperator(FromQueryOperator fromQueryOperator, T data);
+		S VisitAggregateQueryOperator(AggregateQueryOperator aggregateQueryOperator, T data);
+		S VisitSelectQueryOperator(SelectQueryOperator selectQueryOperator, T data);
+		S VisitDistinctQueryOperator(DistinctQueryOperator distinctQueryOperator, T data);
+		S VisitWhereQueryOperator(WhereQueryOperator whereQueryOperator, T data);
+		S VisitOrderExpression(OrderExpression orderExpression, T data);
+		S VisitOrderByQueryOperator(OrderByQueryOperator orderByQueryOperator, T data);
+		S VisitPartitionQueryOperator(PartitionQueryOperator partitionQueryOperator, T data);
+		S VisitLetQueryOperator(LetQueryOperator letQueryOperator, T data);
+		S VisitGroupByQueryOperator(GroupByQueryOperator groupByQueryOperator, T data);
+		S VisitJoinQueryOperator(JoinQueryOperator joinQueryOperator, T data);
+		S VisitJoinCondition(JoinCondition joinCondition, T data);
+		S VisitGroupJoinQueryOperator(GroupJoinQueryOperator groupJoinQueryOperator, T data);
 	}
 }

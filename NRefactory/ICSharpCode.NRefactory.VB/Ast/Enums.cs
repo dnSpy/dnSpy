@@ -118,7 +118,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	/// <summary>
 	/// Specifies the ordering direction of a QueryExpressionOrdering node.
 	/// </summary>
-	public enum QueryExpressionOrderingDirection
+	public enum QueryOrderingDirection
 	{
 		None,
 		Ascending,
@@ -129,7 +129,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	/// Specifies the partition type for a VB.NET
 	/// query expression.
 	/// </summary>
-	public enum QueryExpressionPartitionType
+	public enum PartitionKind
 	{
 		Take,
 		TakeWhile,
