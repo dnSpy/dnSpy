@@ -1088,7 +1088,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				var increment = match.Get<CSharp.AssignmentExpression>("increment").SingleOrDefault();
 				var factorExpr = (Expression)match.Get<CSharp.Expression>("factor").SingleOrDefault().AcceptVisitor(this, data);
 				
-				if (increment.Operator == CSharp.AssignmentOperatorType.Add && (factorExpr is PrimitiveExpression && (int)((PrimitiveExpression)factorExpr).Value != 1))
+				if (increment.Operator == CSharp.AssignmentOperatorType.Add && (factorExpr is PrimitiveExpression && !IsEqual(((PrimitiveExpression)factorExpr).Value, 1)))
 					stepExpr = factorExpr;
 				if (increment.Operator == CSharp.AssignmentOperatorType.Subtract)
 					stepExpr = new UnaryOperatorExpression(UnaryOperatorType.Minus, factorExpr);
@@ -1111,6 +1111,28 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				blocks.Peek().Statements.Add((Statement)initializer.AcceptVisitor(this, data));
 			
 			return EndNode(forStatement, stmt);
+		}
+		
+		bool IsEqual(object value, int num)
+		{
+			if (value is byte)
+				return (byte)value == num;
+			if (value is sbyte)
+				return (sbyte)value == num;
+			if (value is short)
+				return (short)value == num;
+			if (value is ushort)
+				return (ushort)value == num;
+			if (value is int)
+				return (int)value == num;
+			if (value is uint)
+				return (uint)value == num;
+			if (value is long)
+				return (long)value == num;
+			if (value is ulong)
+				return (ulong)value == (ulong)num;
+			
+			throw new InvalidCastException();
 		}
 		
 		public AstNode VisitGotoCaseStatement(CSharp.GotoCaseStatement gotoCaseStatement, object data)
