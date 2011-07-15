@@ -897,10 +897,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitCheckedStatement(CSharp.CheckedStatement checkedStatement, object data)
 		{
-			blocks.Peek().AddChild(new Comment(" The following expression was wrapped in a checked-expression", false), AstNode.Roles.Comment);
+			blocks.Peek().AddChild(new Comment(" The following expression was wrapped in a checked-statement", false), AstNode.Roles.Comment);
 			var body = (BlockStatement)checkedStatement.Body.AcceptVisitor(this, data);
 			
-			blocks.Peek().AddRange(body);
+			foreach (var stmt in body) {
+				stmt.Remove();
+				blocks.Peek().Add(stmt);
+			}
 			
 			return EndNode<AstNode>(checkedStatement, null);
 		}
