@@ -126,6 +126,8 @@ namespace ICSharpCode.ILSpy.VB
 			if (isSingleMember)
 				settings.UsingDeclarations = false;
 			settings.IntroduceIncrementAndDecrement = false;
+			settings.QueryExpressions = false;
+			settings.AlwaysGenerateExceptionVariableForCatchBlocks = true;
 			return new AstBuilder(
 				new DecompilerContext(currentModule) {
 					CancellationToken = options.CancellationToken,

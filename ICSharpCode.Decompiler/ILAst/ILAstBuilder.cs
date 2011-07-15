@@ -62,7 +62,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		/// <summary> Immutable </summary>
 		class VariableSlot
-		{			
+		{
 			public readonly ByteCode[] StoredBy;    // One of those
 			public readonly bool       StoredByAll; // Overestimate which is useful for exceptional control flow.
 			
@@ -224,10 +224,13 @@ namespace ICSharpCode.Decompiler.ILAst
 		// Virtual instructions to load exception on stack
 		Dictionary<ExceptionHandler, ByteCode> ldexceptions = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
 		
-		public List<ILNode> Build(MethodDefinition methodDef, bool optimize)
+		DecompilerContext context;
+		
+		public List<ILNode> Build(MethodDefinition methodDef, bool optimize, DecompilerContext context)
 		{
 			this.methodDef = methodDef;
 			this.optimize = optimize;
+			this.context = context;
 			
 			if (methodDef.Body.Instructions.Count == 0) return new List<ILNode>();
 			
@@ -351,7 +354,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (!byteCode.Code.IsUnconditionalControlFlow()) {
 					if (exceptionHandlerStarts.Contains(byteCode.Next)) {
 						// Do not fall though down to exception handler
-						// It is invalid IL as per ECMA-335 §12.4.2.8.1, but some obfuscators produce it						
+						// It is invalid IL as per ECMA-335 §12.4.2.8.1, but some obfuscators produce it
 					} else {
 						branchTargets.Add(byteCode.Next);
 					}
@@ -711,7 +714,10 @@ namespace ICSharpCode.Decompiler.ILAst
 							    first.Arguments[0].Operand == ldexception.StoreTo[0])
 							{
 								// The exception is just poped - optimize it all away;
-								catchBlock.ExceptionVariable = null;
+								if (context.Settings.AlwaysGenerateExceptionVariableForCatchBlocks)
+									catchBlock.ExceptionVariable = new ILVariable() { Name = "ex_" + eh.HandlerStart.Offset.ToString("X2"), IsGenerated = true };
+								else
+									catchBlock.ExceptionVariable = null;
 								catchBlock.Body.RemoveAt(0);
 							} else {
 								catchBlock.ExceptionVariable = ldexception.StoreTo[0];
@@ -778,7 +784,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					StackSlot slot = byteCode.StackBefore[i];
 					expr.Arguments.Add(new ILExpression(ILCode.Ldloc, slot.LoadFrom));
 				}
-			
+				
 				// Store the result to temporary variable(s) if needed
 				if (byteCode.StoreTo == null || byteCode.StoreTo.Count == 0) {
 					ast.Add(expr);

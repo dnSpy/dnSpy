@@ -239,6 +239,21 @@ namespace ICSharpCode.Decompiler
 				}
 			}
 		}
+		
+		bool alwaysGenerateExceptionVariableForCatchBlocks = false;
+		
+		/// <summary>
+		/// Gets/Sets whether to always generate exception variables in catch blocks
+		/// </summary>
+		public bool AlwaysGenerateExceptionVariableForCatchBlocks {
+			get { return alwaysGenerateExceptionVariableForCatchBlocks; }
+			set {
+				if (alwaysGenerateExceptionVariableForCatchBlocks != value) {
+					alwaysGenerateExceptionVariableForCatchBlocks = value;
+					OnPropertyChanged("AlwaysGenerateExceptionVariableForCatchBlocks");
+				}
+			}
+		}
 		#endregion
 		
 		public event PropertyChangedEventHandler PropertyChanged;

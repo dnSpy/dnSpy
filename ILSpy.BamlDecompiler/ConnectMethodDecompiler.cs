@@ -56,9 +56,9 @@ namespace ILSpy.BamlDecompiler
 			// decompile method and optimize the switch
 			ILBlock ilMethod = new ILBlock();
 			ILAstBuilder astBuilder = new ILAstBuilder();
-			ilMethod.Body = astBuilder.Build(def, true);
 			ILAstOptimizer optimizer = new ILAstOptimizer();
 			var context = new DecompilerContext(type.Module) { CurrentMethod = def, CurrentType = type };
+			ilMethod.Body = astBuilder.Build(def, true, context);
 			optimizer.Optimize(context, ilMethod, ILAstOptimizationStep.RemoveRedundantCode3);
 			
 			ILSwitch ilSwitch = ilMethod.Body.OfType<ILSwitch>().FirstOrDefault();

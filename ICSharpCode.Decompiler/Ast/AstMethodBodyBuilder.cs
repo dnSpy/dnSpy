@@ -95,7 +95,7 @@ namespace ICSharpCode.Decompiler.Ast
 			context.CancellationToken.ThrowIfCancellationRequested();
 			ILBlock ilMethod = new ILBlock();
 			ILAstBuilder astBuilder = new ILAstBuilder();
-			ilMethod.Body = astBuilder.Build(methodDef, true);
+			ilMethod.Body = astBuilder.Build(methodDef, true, context);
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
 			ILAstOptimizer bodyGraph = new ILAstOptimizer();
