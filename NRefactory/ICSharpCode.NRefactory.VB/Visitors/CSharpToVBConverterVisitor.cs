@@ -1606,99 +1606,112 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitOperatorDeclaration(CSharp.OperatorDeclaration operatorDeclaration, object data)
 		{
-			var result = new OperatorDeclaration();
-			
+			MemberDeclaration result;
 			members.Push(new MemberInfo());
 			
-			ConvertNodes(operatorDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
-			ConvertNodes(operatorDeclaration.ModifierTokens, result.ModifierTokens);
-			switch (operatorDeclaration.OperatorType) {
-				case ICSharpCode.NRefactory.CSharp.OperatorType.LogicalNot:
-				case ICSharpCode.NRefactory.CSharp.OperatorType.OnesComplement:
-					result.Operator = OverloadableOperatorType.Not;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Increment:
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Decrement:
-					throw new NotSupportedException();
-				case ICSharpCode.NRefactory.CSharp.OperatorType.True:
-					result.Operator = OverloadableOperatorType.IsTrue;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.False:
-					result.Operator = OverloadableOperatorType.IsFalse;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Implicit:
-					result.Modifiers |= Modifiers.Widening;
-					result.Operator = OverloadableOperatorType.CType;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Explicit:
-					result.Modifiers |= Modifiers.Narrowing;
-					result.Operator = OverloadableOperatorType.CType;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Addition:
-					result.Operator = OverloadableOperatorType.Add;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Subtraction:
-					result.Operator = OverloadableOperatorType.Subtract;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.UnaryPlus:
-					result.Operator = OverloadableOperatorType.UnaryPlus;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.UnaryNegation:
-					result.Operator = OverloadableOperatorType.UnaryMinus;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Multiply:
-					result.Operator = OverloadableOperatorType.Multiply;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Division:
-					result.Operator = OverloadableOperatorType.Divide;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Modulus:
-					result.Operator = OverloadableOperatorType.Modulus;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.BitwiseAnd:
-					result.Operator = OverloadableOperatorType.BitwiseAnd;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.BitwiseOr:
-					result.Operator = OverloadableOperatorType.BitwiseOr;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.ExclusiveOr:
-					result.Operator = OverloadableOperatorType.ExclusiveOr;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.LeftShift:
-					result.Operator = OverloadableOperatorType.ShiftLeft;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.RightShift:
-					result.Operator = OverloadableOperatorType.ShiftRight;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Equality:
-					result.Operator = OverloadableOperatorType.Equality;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.Inequality:
-					result.Operator = OverloadableOperatorType.InEquality;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.GreaterThan:
-					result.Operator = OverloadableOperatorType.GreaterThan;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.LessThan:
-					result.Operator = OverloadableOperatorType.LessThan;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.GreaterThanOrEqual:
-					result.Operator = OverloadableOperatorType.GreaterThanOrEqual;
-					break;
-				case ICSharpCode.NRefactory.CSharp.OperatorType.LessThanOrEqual:
-					result.Operator = OverloadableOperatorType.LessThanOrEqual;
-					break;
-				default:
-					throw new Exception("Invalid value for OperatorType");
+			if (operatorDeclaration.OperatorType == CSharp.OperatorType.Increment || operatorDeclaration.OperatorType == CSharp.OperatorType.Decrement) {
+				var m = new MethodDeclaration();
+				result = m;
+				
+				ConvertNodes(operatorDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), m.Attributes);
+				ConvertNodes(operatorDeclaration.ModifierTokens, m.ModifierTokens);
+				m.Name = operatorDeclaration.OperatorType == CSharp.OperatorType.Increment ? "op_Increment" : "op_Decrement";
+				ConvertNodes(operatorDeclaration.Parameters, m.Parameters);
+				ConvertNodes(operatorDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), m.ReturnTypeAttributes);
+				m.ReturnType = (AstType)operatorDeclaration.ReturnType.AcceptVisitor(this, data);
+				m.Body = (BlockStatement)operatorDeclaration.Body.AcceptVisitor(this, data);
+			} else {
+				var op = new OperatorDeclaration();
+				result = op;
+				
+				ConvertNodes(operatorDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), op.Attributes);
+				ConvertNodes(operatorDeclaration.ModifierTokens, op.ModifierTokens);
+				switch (operatorDeclaration.OperatorType) {
+					case ICSharpCode.NRefactory.CSharp.OperatorType.LogicalNot:
+					case ICSharpCode.NRefactory.CSharp.OperatorType.OnesComplement:
+						op.Operator = OverloadableOperatorType.Not;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.True:
+						op.Operator = OverloadableOperatorType.IsTrue;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.False:
+						op.Operator = OverloadableOperatorType.IsFalse;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.Implicit:
+						op.Modifiers |= Modifiers.Widening;
+						op.Operator = OverloadableOperatorType.CType;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.Explicit:
+						op.Modifiers |= Modifiers.Narrowing;
+						op.Operator = OverloadableOperatorType.CType;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.Addition:
+						op.Operator = OverloadableOperatorType.Add;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.Subtraction:
+						op.Operator = OverloadableOperatorType.Subtract;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.UnaryPlus:
+						op.Operator = OverloadableOperatorType.UnaryPlus;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.UnaryNegation:
+						op.Operator = OverloadableOperatorType.UnaryMinus;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.Multiply:
+						op.Operator = OverloadableOperatorType.Multiply;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.Division:
+						op.Operator = OverloadableOperatorType.Divide;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.Modulus:
+						op.Operator = OverloadableOperatorType.Modulus;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.BitwiseAnd:
+						op.Operator = OverloadableOperatorType.BitwiseAnd;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.BitwiseOr:
+						op.Operator = OverloadableOperatorType.BitwiseOr;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.ExclusiveOr:
+						op.Operator = OverloadableOperatorType.ExclusiveOr;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.LeftShift:
+						op.Operator = OverloadableOperatorType.ShiftLeft;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.RightShift:
+						op.Operator = OverloadableOperatorType.ShiftRight;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.Equality:
+						op.Operator = OverloadableOperatorType.Equality;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.Inequality:
+						op.Operator = OverloadableOperatorType.InEquality;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.GreaterThan:
+						op.Operator = OverloadableOperatorType.GreaterThan;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.LessThan:
+						op.Operator = OverloadableOperatorType.LessThan;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.GreaterThanOrEqual:
+						op.Operator = OverloadableOperatorType.GreaterThanOrEqual;
+						break;
+					case ICSharpCode.NRefactory.CSharp.OperatorType.LessThanOrEqual:
+						op.Operator = OverloadableOperatorType.LessThanOrEqual;
+						break;
+					default:
+						throw new Exception("Invalid value for OperatorType");
+				}
+				ConvertNodes(operatorDeclaration.Parameters, op.Parameters);
+				ConvertNodes(operatorDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), op.ReturnTypeAttributes);
+				op.ReturnType = (AstType)operatorDeclaration.ReturnType.AcceptVisitor(this, data);
+				op.Body = (BlockStatement)operatorDeclaration.Body.AcceptVisitor(this, data);
 			}
-			ConvertNodes(operatorDeclaration.Parameters, result.Parameters);
-			ConvertNodes(operatorDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), result.ReturnTypeAttributes);
-			result.ReturnType = (AstType)operatorDeclaration.ReturnType.AcceptVisitor(this, data);
-			result.Body = (BlockStatement)operatorDeclaration.Body.AcceptVisitor(this, data);
 			
 			members.Pop();
 			
 			return EndNode(operatorDeclaration, result);
+			
 		}
 		
 		public AstNode VisitParameterDeclaration(CSharp.ParameterDeclaration parameterDeclaration, object data)
