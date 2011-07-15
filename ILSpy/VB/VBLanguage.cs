@@ -447,15 +447,28 @@ namespace ICSharpCode.ILSpy.VB
 				});
 		}
 		
+		public override string FormatTypeName(TypeDefinition type)
+		{
+			if (type == null)
+				throw new ArgumentNullException("type");
+			
+			return TypeToString(ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
+		}
+		
 		public override string TypeToString(TypeReference type, bool includeNamespace, ICustomAttributeProvider typeAttributes = null)
 		{
 			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
 			if (includeNamespace)
 				options |= ConvertTypeOptions.IncludeNamespace;
+
+			return TypeToString(options, type, typeAttributes);
+		}
+		
+		string TypeToString(ConvertTypeOptions options, TypeReference type, ICustomAttributeProvider typeAttributes = null)
+		{
 			var astType = AstBuilder
 				.ConvertType(type, typeAttributes, options)
 				.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider()), null);
-
 			StringWriter w = new StringWriter();
 			// TODO
 //			if (type.IsByReference) {
