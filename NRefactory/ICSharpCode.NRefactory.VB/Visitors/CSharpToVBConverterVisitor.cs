@@ -460,7 +460,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			Expression expr;
 			
-			if ((primitiveExpression.Value is string || primitiveExpression.Value is char) && primitiveExpression.Value.ToString().IndexOfAny(new[] {'\r', '\n', '\t'}) > -1)
+			if (!string.IsNullOrEmpty(primitiveExpression.Value as string) || primitiveExpression.Value is char)
 				expr = ConvertToConcat(primitiveExpression.Value.ToString());
 			else
 				expr = new PrimitiveExpression(primitiveExpression.Value);
@@ -474,29 +474,73 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			int start = 0;
 			
 			for (int i = 0; i < literal.Length; i++) {
-				if (literal[i] == '\r') {
-					string part = literal.Substring(start, i - start);
-					if (!string.IsNullOrEmpty(part))
-						parts.Push(new PrimitiveExpression(part));
-					if (i + 1 < literal.Length && literal[i + 1] == '\n') {
-						i++;
-						parts.Push(new IdentifierExpression() { Identifier = "vbCrLf" });
-					} else
-						parts.Push(new IdentifierExpression() { Identifier = "vbCr" });
-					start = i + 1;
-				} else if (literal[i] == '\n') {
-					string part = literal.Substring(start, i - start);
-					if (!string.IsNullOrEmpty(part))
-						parts.Push(new PrimitiveExpression(part));
-					parts.Push(new IdentifierExpression() { Identifier = "vbLf" });
-					start = i + 1;
-				} else if (literal[i] == '\t') {
-					string part = literal.Substring(start, i - start);
-					if (!string.IsNullOrEmpty(part))
-						parts.Push(new PrimitiveExpression(part));
-					parts.Push(new IdentifierExpression() { Identifier = "vbTab" });
-					start = i + 1;
+				string part;
+				switch (literal[i]) {
+					case '\0':
+						part = literal.Substring(start, i - start);
+						if (!string.IsNullOrEmpty(part))
+							parts.Push(new PrimitiveExpression(part));
+						parts.Push(new IdentifierExpression("vbNullChar"));
+						start = i + 1;
+						break;
+					case '\b':
+						part = literal.Substring(start, i - start);
+						if (!string.IsNullOrEmpty(part))
+							parts.Push(new PrimitiveExpression(part));
+						parts.Push(new IdentifierExpression("vbBack"));
+						start = i + 1;
+						break;
+					case '\f':
+						part = literal.Substring(start, i - start);
+						if (!string.IsNullOrEmpty(part))
+							parts.Push(new PrimitiveExpression(part));
+						parts.Push(new IdentifierExpression("vbFormFeed"));
+						start = i + 1;
+						break;
+					case '\r':
+						part = literal.Substring(start, i - start);
+						if (!string.IsNullOrEmpty(part))
+							parts.Push(new PrimitiveExpression(part));
+						if (i + 1 < literal.Length && literal[i + 1] == '\n') {
+							i++;
+							parts.Push(new IdentifierExpression("vbCrLf"));
+						} else
+							parts.Push(new IdentifierExpression("vbCr"));
+						start = i + 1;
+						break;
+					case '\n':
+						part = literal.Substring(start, i - start);
+						if (!string.IsNullOrEmpty(part))
+							parts.Push(new PrimitiveExpression(part));
+						parts.Push(new IdentifierExpression("vbLf"));
+						start = i + 1;
+						break;
+					case '\t':
+						part = literal.Substring(start, i - start);
+						if (!string.IsNullOrEmpty(part))
+							parts.Push(new PrimitiveExpression(part));
+						parts.Push(new IdentifierExpression("vbTab"));
+						start = i + 1;
+						break;
+					case '\v':
+						part = literal.Substring(start, i - start);
+						if (!string.IsNullOrEmpty(part))
+							parts.Push(new PrimitiveExpression(part));
+						parts.Push(new IdentifierExpression("vbVerticalTab"));
+						start = i + 1;
+						break;
+					default:
+						if ((int)literal[i] > 255) {
+							part = literal.Substring(start, i - start);
+							if (!string.IsNullOrEmpty(part))
+								parts.Push(new PrimitiveExpression(part));
+							parts.Push(new InvocationExpression(new IdentifierExpression("ChrW"), new PrimitiveExpression((int)literal[i])));
+						} else
+							continue;
+						start = i + 1;
+						break;
 				}
+				
 			}
 			
 			if (start < literal.Length) {

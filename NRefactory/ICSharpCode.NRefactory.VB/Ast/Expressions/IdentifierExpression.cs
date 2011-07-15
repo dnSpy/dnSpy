@@ -7,6 +7,16 @@ namespace ICSharpCode.NRefactory.VB.Ast
 {
 	public class IdentifierExpression : Expression
 	{
+		public IdentifierExpression()
+		{
+			
+		}
+		
+		public IdentifierExpression(Identifier identifier)
+		{
+			this.Identifier = identifier;
+		}
+		
 		public Identifier Identifier {
 			get { return GetChildByRole(Roles.Identifier); }
 			set { SetChildByRole(Roles.Identifier, value); }
