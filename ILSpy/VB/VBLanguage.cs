@@ -287,7 +287,6 @@ namespace ICSharpCode.ILSpy.VB
 						foreach (TypeDefinition type in file) {
 							codeDomBuilder.AddType(type);
 						}
-						codeDomBuilder.RunTransformations(transformAbortCondition);
 						RunTransformsAndGenerateCode(codeDomBuilder, new PlainTextOutput(w), options);
 					}
 				});
