@@ -714,9 +714,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		public AstNode VisitAttribute(CSharp.Attribute attribute, object data)
 		{
 			var attr = new VB.Ast.Attribute();
-			
-			// TODO : attribute targets
-			
+			AttributeTarget target;
+			Enum.TryParse(((CSharp.AttributeSection)attribute.Parent).AttributeTarget, true, out target);
+			attr.Target = target;
 			attr.Type = (AstType)attribute.Type.AcceptVisitor(this, data);
 			ConvertNodes(attribute.Arguments, attr.Arguments);
 			

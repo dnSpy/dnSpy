@@ -148,9 +148,21 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(attribute);
 			
-			if (!attribute.Target.IsNull) {
-				attribute.Target.AcceptVisitor(this, data);
-				WriteToken(":", VB.Ast.Attribute.TargetRole);
+			if (attribute.Target != AttributeTarget.None) {
+				switch (attribute.Target) {
+					case AttributeTarget.None:
+						break;
+					case AttributeTarget.Assembly:
+						WriteKeyword("Assembly");
+						break;
+					case AttributeTarget.Module:
+						WriteKeyword("Module");
+						break;
+					default:
+						throw new Exception("Invalid value for AttributeTarget");
+				}
+				WriteToken(":", Ast.Attribute.Roles.Colon);
+				Space();
 			}
 			attribute.Type.AcceptVisitor(this, data);
 			WriteCommaSeparatedListInParenthesis(attribute.Arguments, false);
