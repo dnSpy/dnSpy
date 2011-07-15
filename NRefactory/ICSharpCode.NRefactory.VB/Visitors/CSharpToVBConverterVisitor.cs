@@ -1619,9 +1619,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					break;
 				case ICSharpCode.NRefactory.CSharp.OperatorType.Increment:
 				case ICSharpCode.NRefactory.CSharp.OperatorType.Decrement:
-				case ICSharpCode.NRefactory.CSharp.OperatorType.True:
-				case ICSharpCode.NRefactory.CSharp.OperatorType.False:
 					throw new NotSupportedException();
+				case ICSharpCode.NRefactory.CSharp.OperatorType.True:
+					result.Operator = OverloadableOperatorType.IsTrue;
+					break;
+				case ICSharpCode.NRefactory.CSharp.OperatorType.False:
+					result.Operator = OverloadableOperatorType.IsFalse;
+					break;
 				case ICSharpCode.NRefactory.CSharp.OperatorType.Implicit:
 					result.Modifiers |= Modifiers.Widening;
 					result.Operator = OverloadableOperatorType.CType;
