@@ -89,5 +89,13 @@ namespace ICSharpCode.NRefactory.VB
 				textWriter.Write("'");
 			textWriter.WriteLine(content);
 		}
+		
+		public void MarkFoldStart()
+		{
+		}
+		
+		public void MarkFoldEnd()
+		{
+		}
 	}
 }

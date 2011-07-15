@@ -37,5 +37,8 @@ namespace ICSharpCode.NRefactory.VB
 		void NewLine();
 		
 		void WriteComment(bool isDocumentation, string content);
+		
+		void MarkFoldStart();
+		void MarkFoldEnd();
 	}
 }

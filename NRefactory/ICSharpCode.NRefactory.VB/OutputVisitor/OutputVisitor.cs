@@ -244,12 +244,14 @@ namespace ICSharpCode.NRefactory.VB
 				typeDeclaration.InheritsType.AcceptVisitor(this, data);
 			}
 			WriteImplementsClause(typeDeclaration.ImplementsTypes);
+			MarkFoldStart();
 			NewLine();
 			
 			WriteMembers(typeDeclaration.Members);
 			
 			WriteKeyword("End");
 			WriteClassTypeKeyword(typeDeclaration);
+			MarkFoldEnd();
 			NewLine();
 			return EndNode(typeDeclaration);
 		}
@@ -296,6 +298,7 @@ namespace ICSharpCode.NRefactory.VB
 				WriteKeyword("As");
 				enumDeclaration.UnderlyingType.AcceptVisitor(this, data);
 			}
+			MarkFoldStart();
 			NewLine();
 			
 			Indent();
@@ -306,6 +309,7 @@ namespace ICSharpCode.NRefactory.VB
 			
 			WriteKeyword("End");
 			WriteKeyword("Enum");
+			MarkFoldEnd();
 			NewLine();
 			
 			return EndNode(enumDeclaration);
@@ -505,6 +509,7 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("Sub");
 			WriteKeyword("New");
 			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, false);
+			MarkFoldStart();
 			NewLine();
 			
 			Indent();
@@ -513,6 +518,7 @@ namespace ICSharpCode.NRefactory.VB
 			
 			WriteKeyword("End");
 			WriteKeyword("Sub");
+			MarkFoldEnd();
 			NewLine();
 			
 			return EndNode(constructorDeclaration);
@@ -540,6 +546,7 @@ namespace ICSharpCode.NRefactory.VB
 			WriteHandlesClause(methodDeclaration.HandlesClause);
 			WriteImplementsClause(methodDeclaration.ImplementsClause);
 			if (!methodDeclaration.Body.IsNull) {
+				MarkFoldStart();
 				NewLine();
 				Indent();
 				WriteBlock(methodDeclaration.Body);
@@ -549,10 +556,64 @@ namespace ICSharpCode.NRefactory.VB
 					WriteKeyword("Sub");
 				else
 					WriteKeyword("Function");
+				MarkFoldEnd();
 			}
 			NewLine();
 			
 			return EndNode(methodDeclaration);
+		}
+
+		public object VisitFieldDeclaration(FieldDeclaration fieldDeclaration, object data)
+		{
+			StartNode(fieldDeclaration);
+			
+			WriteAttributes(fieldDeclaration.Attributes);
+			WriteModifiers(fieldDeclaration.ModifierTokens);
+			WriteCommaSeparatedList(fieldDeclaration.Variables);
+			NewLine();
+			
+			return EndNode(fieldDeclaration);
+		}
+		
+		public object VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, object data)
+		{
+			StartNode(propertyDeclaration);
+			
+			WriteAttributes(propertyDeclaration.Attributes);
+			WriteModifiers(propertyDeclaration.ModifierTokens);
+			WriteKeyword("Property");
+			WriteIdentifier(propertyDeclaration.Name.Name);
+			WriteCommaSeparatedListInParenthesis(propertyDeclaration.Parameters, false);
+			if (!propertyDeclaration.ReturnType.IsNull) {
+				Space();
+				WriteKeyword("As");
+				WriteAttributes(propertyDeclaration.ReturnTypeAttributes);
+				propertyDeclaration.ReturnType.AcceptVisitor(this, data);
+			}
+			
+			bool needsBody = !propertyDeclaration.Getter.Body.IsNull || !propertyDeclaration.Setter.Body.IsNull;
+			
+			if (needsBody) {
+				MarkFoldStart();
+				NewLine();
+				Indent();
+				
+				if (!propertyDeclaration.Getter.Body.IsNull) {
+					propertyDeclaration.Getter.AcceptVisitor(this, data);
+				}
+				
+				if (!propertyDeclaration.Setter.Body.IsNull) {
+					propertyDeclaration.Setter.AcceptVisitor(this, data);
+				}
+				Unindent();
+				
+				WriteKeyword("End");
+				WriteKeyword("Property");
+				MarkFoldEnd();
+			}
+			NewLine();
+			
+			return EndNode(propertyDeclaration);
 		}
 		#endregion
 		
@@ -968,6 +1029,16 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			formatter.Unindent();
 		}
+		
+		void MarkFoldStart()
+		{
+			formatter.MarkFoldStart();
+		}
+		
+		void MarkFoldEnd()
+		{
+			formatter.MarkFoldEnd();
+		}
 		#endregion
 		
 		#region IsKeyword Test
@@ -1244,18 +1315,6 @@ namespace ICSharpCode.NRefactory.VB
 		}
 		#endregion
 		
-		public object VisitFieldDeclaration(FieldDeclaration fieldDeclaration, object data)
-		{
-			StartNode(fieldDeclaration);
-			
-			WriteAttributes(fieldDeclaration.Attributes);
-			WriteModifiers(fieldDeclaration.ModifierTokens);
-			WriteCommaSeparatedList(fieldDeclaration.Variables);
-			NewLine();
-			
-			return EndNode(fieldDeclaration);
-		}
-		
 		public object VisitVariableIdentifier(VariableIdentifier variableIdentifier, object data)
 		{
 			StartNode(variableIdentifier);
@@ -1307,45 +1366,7 @@ namespace ICSharpCode.NRefactory.VB
 			
 			return EndNode(accessor);
 		}
-		
-		public object VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, object data)
-		{
-			StartNode(propertyDeclaration);
-			
-			WriteAttributes(propertyDeclaration.Attributes);
-			WriteModifiers(propertyDeclaration.ModifierTokens);
-			WriteKeyword("Property");
-			WriteIdentifier(propertyDeclaration.Name.Name);
-			WriteCommaSeparatedListInParenthesis(propertyDeclaration.Parameters, false);
-			if (!propertyDeclaration.ReturnType.IsNull) {
-				Space();
-				WriteKeyword("As");
-				WriteAttributes(propertyDeclaration.ReturnTypeAttributes);
-				propertyDeclaration.ReturnType.AcceptVisitor(this, data);
-			}
-			
-			bool needsBody = !propertyDeclaration.Getter.Body.IsNull || !propertyDeclaration.Setter.Body.IsNull;
-			
-			if (needsBody) {
-				NewLine();
-				Indent();
-				
-				if (!propertyDeclaration.Getter.Body.IsNull) {
-					propertyDeclaration.Getter.AcceptVisitor(this, data);
-				}
-				
-				if (!propertyDeclaration.Setter.Body.IsNull) {
-					propertyDeclaration.Setter.AcceptVisitor(this, data);
-				}
-				Unindent();
-				
-				WriteKeyword("End");
-				WriteKeyword("Property");
-			}
-			NewLine();
-			
-			return EndNode(propertyDeclaration);
-		}
+
 		
 		public object VisitLabelDeclarationStatement(LabelDeclarationStatement labelDeclarationStatement, object data)
 		{
@@ -1788,6 +1809,7 @@ namespace ICSharpCode.NRefactory.VB
 			WriteImplementsClause(eventDeclaration.ImplementsClause);
 			
 			if (eventDeclaration.IsCustom) {
+				MarkFoldStart();
 				NewLine();
 				Indent();
 				
@@ -1798,6 +1820,7 @@ namespace ICSharpCode.NRefactory.VB
 				Unindent();
 				WriteKeyword("End");
 				WriteKeyword("Event");
+				MarkFoldEnd();
 			}
 			NewLine();
 			
@@ -2070,12 +2093,14 @@ namespace ICSharpCode.NRefactory.VB
 				operatorDeclaration.ReturnType.AcceptVisitor(this, data);
 			}
 			if (!operatorDeclaration.Body.IsNull) {
+				MarkFoldStart();
 				NewLine();
 				Indent();
 				WriteBlock(operatorDeclaration.Body);
 				Unindent();
 				WriteKeyword("End");
 				WriteKeyword("Operator");
+				MarkFoldEnd();
 			}
 			NewLine();
 			

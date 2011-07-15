@@ -139,5 +139,15 @@ namespace ICSharpCode.ILSpy.VB
 				output.Write("'");
 			output.WriteLine(content);
 		}
+		
+		public void MarkFoldStart()
+		{
+			output.MarkFoldStart();
+		}
+		
+		public void MarkFoldEnd()
+		{
+			output.MarkFoldEnd();
+		}
 	}
 }
