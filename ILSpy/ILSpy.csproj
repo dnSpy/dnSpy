@@ -188,6 +188,7 @@
     <Compile Include="TreeNodes\ResourceNodes\XamlResourceNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
+    <Compile Include="VB\ILSpyEnvironmentProvider.cs" />
     <Compile Include="VB\VBLanguage.cs" />
     <Compile Include="VB\VBTextOutputFormatter.cs" />
     <Compile Include="XmlDoc\AddXmlDocTransform.cs" />

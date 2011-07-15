@@ -17,10 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text;
+
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
@@ -60,6 +62,65 @@ namespace ICSharpCode.ILSpy.VB
 		public override void WriteCommentLine(ITextOutput output, string comment)
 		{
 			output.WriteLine("' " + comment);
+		}
+		
+		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
+		{
+			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
+//				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+//				var files = WriteCodeFilesInProject(assembly.AssemblyDefinition, options, directories).ToList();
+//				files.AddRange(WriteResourceFilesInProject(assembly, options, directories));
+//				WriteProjectFile(new TextOutputWriter(output), files, assembly.AssemblyDefinition.MainModule);
+			} else {
+				base.DecompileAssembly(assembly, output, options);
+				output.WriteLine();
+				ModuleDefinition mainModule = assembly.AssemblyDefinition.MainModule;
+				if (mainModule.EntryPoint != null) {
+					output.Write("' Entry point: ");
+					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint);
+					output.WriteLine();
+				}
+				switch (mainModule.Architecture) {
+					case TargetArchitecture.I386:
+						if ((mainModule.Attributes & ModuleAttributes.Required32Bit) == ModuleAttributes.Required32Bit)
+							WriteCommentLine(output, "Architecture: x86");
+						else
+							WriteCommentLine(output, "Architecture: AnyCPU");
+						break;
+					case TargetArchitecture.AMD64:
+						WriteCommentLine(output, "Architecture: x64");
+						break;
+					case TargetArchitecture.IA64:
+						WriteCommentLine(output, "Architecture: Itanium-64");
+						break;
+				}
+				if ((mainModule.Attributes & ModuleAttributes.ILOnly) == 0) {
+					WriteCommentLine(output, "This assembly contains unmanaged code.");
+				}
+				switch (mainModule.Runtime) {
+					case TargetRuntime.Net_1_0:
+						WriteCommentLine(output, "Runtime: .NET 1.0");
+						break;
+					case TargetRuntime.Net_1_1:
+						WriteCommentLine(output, "Runtime: .NET 1.1");
+						break;
+					case TargetRuntime.Net_2_0:
+						WriteCommentLine(output, "Runtime: .NET 2.0");
+						break;
+					case TargetRuntime.Net_4_0:
+						WriteCommentLine(output, "Runtime: .NET 4.0");
+						break;
+				}
+				output.WriteLine();
+				
+				// don't automatically load additional assemblies when an assembly node is selected in the tree view
+				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {
+					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.AssemblyDefinition.MainModule);
+					codeDomBuilder.AddAssembly(assembly.AssemblyDefinition, onlyAssemblyLevel: !options.FullDecompilation);
+					RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+				}
+			}
+			OnDecompilationFinished(null);
 		}
 		
 		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
@@ -160,46 +221,6 @@ namespace ICSharpCode.ILSpy.VB
 			
 			astType.AcceptVisitor(new OutputVisitor(w, new VBFormattingOptions()), null);
 			return w.ToString();
-		}
-	}
-	
-	public class ILSpyEnvironmentProvider : IEnvironmentProvider
-	{
-		public string RootNamespace {
-			get {
-				return "";
-			}
-		}
-		
-		public string GetTypeNameForAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute)
-		{
-			return attribute.Type.Annotations
-				.OfType<Mono.Cecil.MemberReference>()
-				.First()
-				.FullName;
-		}
-		
-		public ClassType GetClassTypeForAstType(ICSharpCode.NRefactory.CSharp.AstType type)
-		{
-			var definition = type.Annotations.OfType<TypeReference>().First().ResolveOrThrow();
-			
-			if (definition.IsClass)
-				return ClassType.Class;
-			if (definition.IsInterface)
-				return ClassType.Interface;
-			if (definition.IsEnum)
-				return ClassType.Enum;
-			if (definition.IsFunctionPointer)
-				return ClassType.Delegate;
-			if (definition.IsValueType)
-				return ClassType.Struct;
-			
-			return ClassType.Module;
-		}
-		
-		public IType ResolveExpression(ICSharpCode.NRefactory.CSharp.Expression expression)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }
