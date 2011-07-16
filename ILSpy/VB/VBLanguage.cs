@@ -245,7 +245,7 @@ namespace ICSharpCode.ILSpy.VB
 				}
 
 				w.WriteStartElement("Import");
-				w.WriteAttributeString("Project", "$(MSBuildToolsPath)\\Microsoft.CSharp.targets"); // TODO change to VB!
+				w.WriteAttributeString("Project", "$(MSBuildToolsPath)\\Microsoft.VisualBasic.targets");
 				w.WriteEndElement();
 
 				w.WriteEndDocument();
