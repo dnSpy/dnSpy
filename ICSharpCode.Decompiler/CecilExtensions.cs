@@ -100,8 +100,10 @@ namespace ICSharpCode.Decompiler
 
 					IMethodSignature method = (IMethodSignature) instruction.Operand;
 					int count = method.HasParameters ? method.Parameters.Count : 0;
-					if (code == OpCodes.Calli || (method.HasThis && code != OpCodes.Newobj))
+					if (method.HasThis && code != OpCodes.Newobj)
 						++count;
+					if (code == OpCodes.Calli)
+						++count; // calli takes a function pointer in additional to the normal args
 
 					return count;
 			}
