@@ -171,6 +171,9 @@ namespace ICSharpCode.ILSpy
 			} else if (e.Key == Key.M && e.KeyboardDevice.Modifiers == ModifierKeys.Control) {
 				searchModeComboBox.SelectedIndex = SearchMode_Member;
 				e.Handled = true;
+			} else if (e.Key == Key.S && e.KeyboardDevice.Modifiers == ModifierKeys.Control) {
+				searchModeComboBox.SelectedIndex = SearchMode_Literal;
+				e.Handled = true;
 			}
 		}
 		
