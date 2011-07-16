@@ -238,13 +238,24 @@ namespace ICSharpCode.NRefactory.VB
 			WriteModifiers(typeDeclaration.ModifierTokens);
 			WriteClassTypeKeyword(typeDeclaration);
 			WriteIdentifier(typeDeclaration.Name.Name);
+			MarkFoldStart();
+			NewLine();
+			
 			if (!typeDeclaration.InheritsType.IsNull) {
-				Space();
+				Indent();
 				WriteKeyword("Inherits");
 				typeDeclaration.InheritsType.AcceptVisitor(this, data);
+				Unindent();
+				NewLine();
 			}
-			WriteImplementsClause(typeDeclaration.ImplementsTypes);
-			MarkFoldStart();
+			if (typeDeclaration.ImplementsTypes.Any()) {
+				Indent();
+				WriteImplementsClause(typeDeclaration.ImplementsTypes);
+				Unindent();
+				NewLine();
+			}
+			
+			if (!typeDeclaration.InheritsType.IsNull || typeDeclaration.ImplementsTypes.Any())
 			NewLine();
 			
 			WriteMembers(typeDeclaration.Members);
@@ -1196,7 +1207,6 @@ namespace ICSharpCode.NRefactory.VB
 		void WriteImplementsClause(AstNodeCollection<AstType> implementsClause)
 		{
 			if (implementsClause.Any()) {
-				Space();
 				WriteKeyword("Implements");
 				WriteCommaSeparatedList(implementsClause);
 			}
