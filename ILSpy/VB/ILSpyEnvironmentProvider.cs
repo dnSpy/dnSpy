@@ -17,8 +17,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Visitors;
 using Mono.Cecil;
@@ -33,12 +36,42 @@ namespace ICSharpCode.ILSpy.VB
 			}
 		}
 		
+		ITypeResolveContext context;
+		
+		CecilLoader loader = new CecilLoader(false);
+		
+		public ILSpyEnvironmentProvider(ITypeResolveContext context)
+		{
+			this.context = context;
+		}
+		
+		public ITypeResolveContext ResolveContext {
+			get {
+				return context;
+			}
+		}
+		
 		public string GetTypeNameForAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute)
 		{
 			return attribute.Type.Annotations
 				.OfType<Mono.Cecil.MemberReference>()
 				.First()
 				.FullName;
+		}
+		
+		public IType ResolveType(NRefactory.VB.Ast.AstType type, NRefactory.VB.Ast.TypeDeclaration entity = null)
+		{
+			var annotation = type.Annotation<TypeReference>();
+			if (annotation == null )
+				return null;
+			
+			IEntity current = null;
+			if (entity != null) {
+				var typeInfo = entity.Annotation<TypeReference>();
+				current = loader.ReadTypeReference(typeInfo).Resolve(context).GetDefinition();
+			}
+			
+			return loader.ReadTypeReference(annotation, entity: current).Resolve(context);
 		}
 		
 		public ClassType GetClassTypeForAstType(ICSharpCode.NRefactory.CSharp.AstType type)
@@ -59,9 +92,61 @@ namespace ICSharpCode.ILSpy.VB
 			return ClassType.Module;
 		}
 		
-		public IType ResolveExpression(ICSharpCode.NRefactory.CSharp.Expression expression)
+		public TypeCode ResolveExpression(ICSharpCode.NRefactory.CSharp.Expression expression)
 		{
-			throw new NotImplementedException();
+			var annotation = expression.Annotations.OfType<TypeInformation>().FirstOrDefault();
+			
+			if (annotation == null)
+				return TypeCode.Object;
+			
+			var definition = annotation.InferredType.Resolve();
+			
+			if (definition == null)
+				return TypeCode.Object;
+			
+			switch (definition.FullName) {
+				case "System.String":
+					return TypeCode.String;
+				default:
+					
+					break;
+			}
+			
+			return TypeCode.Object;
 		}
+		
+		public Nullable<bool> IsReferenceType(ICSharpCode.NRefactory.CSharp.Expression expression)
+		{
+			if (expression is ICSharpCode.NRefactory.CSharp.NullReferenceExpression)
+				return true;
+			
+			var annotation = expression.Annotations.OfType<TypeInformation>().FirstOrDefault();
+			
+			if (annotation == null)
+				return null;
+			
+			var definition = annotation.InferredType.Resolve();
+			
+			if (definition == null)
+				return null;
+			
+			return !definition.IsValueType;
+		}
+		
+		public IEnumerable<NRefactory.VB.Ast.InterfaceMemberSpecifier> CreateMemberSpecifiersForInterfaces(IEnumerable<NRefactory.VB.Ast.AstType> interfaces)
+		{
+			foreach (var type in interfaces) {
+				var def = type.Annotation<TypeReference>().Resolve();
+				if (def == null) continue;
+				foreach (var method in def.Methods.Where(m => !m.Name.StartsWith("get_") && !m.Name.StartsWith("set_"))) {
+					yield return new NRefactory.VB.Ast.InterfaceMemberSpecifier((NRefactory.VB.Ast.AstType)type.Clone(), method.Name);
+				}
+				
+				foreach (var property in def.Properties) {
+					yield return new NRefactory.VB.Ast.InterfaceMemberSpecifier((NRefactory.VB.Ast.AstType)type.Clone(), property.Name);
+				}
+			}
+		}
+		
 	}
 }

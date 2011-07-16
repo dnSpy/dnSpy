@@ -89,8 +89,8 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public override string ToString()
 		{
-			return string.Format("[Identifier Name={0}, StartLocation={1}, TypeCharacter{4}]",
-			                     name, startLocation, TypeCharacter);
+			return string.Format("{0}",
+			                     name);
 		}
 	}
 }

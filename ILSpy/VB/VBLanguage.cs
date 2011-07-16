@@ -32,6 +32,7 @@ using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Visitors;
 using Mono.Cecil;
@@ -121,7 +122,7 @@ namespace ICSharpCode.ILSpy.VB
 				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {
 					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.AssemblyDefinition.MainModule);
 					codeDomBuilder.AddAssembly(assembly.AssemblyDefinition, onlyAssemblyLevel: !options.FullDecompilation);
-					RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+					RunTransformsAndGenerateCode(codeDomBuilder, output, options, assembly.AssemblyDefinition.MainModule);
 				}
 			}
 			OnDecompilationFinished(null);
@@ -303,7 +304,7 @@ namespace ICSharpCode.ILSpy.VB
 						foreach (TypeDefinition type in file) {
 							codeDomBuilder.AddType(type);
 						}
-						RunTransformsAndGenerateCode(codeDomBuilder, new PlainTextOutput(w), options);
+						RunTransformsAndGenerateCode(codeDomBuilder, new PlainTextOutput(w), options, assembly.MainModule);
 					}
 				});
 			AstMethodBodyBuilder.PrintNumberOfUnhandledOpcodes();
@@ -394,7 +395,7 @@ namespace ICSharpCode.ILSpy.VB
 			WriteCommentLine(output, TypeToString(method.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: method.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddMethod(method);
-			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, options, method.Module);
 		}
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
@@ -402,7 +403,7 @@ namespace ICSharpCode.ILSpy.VB
 			WriteCommentLine(output, TypeToString(property.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: property.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddProperty(property);
-			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, options, property.Module);
 		}
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
@@ -410,7 +411,7 @@ namespace ICSharpCode.ILSpy.VB
 			WriteCommentLine(output, TypeToString(field.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: field.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddField(field);
-			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, options, field.Module);
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
@@ -418,14 +419,14 @@ namespace ICSharpCode.ILSpy.VB
 			WriteCommentLine(output, TypeToString(ev.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: ev.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddEvent(ev);
-			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, options, ev.Module);
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
 			codeDomBuilder.AddType(type);
-			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, options, type.Module);
 		}
 		
 		public override bool ShowMember(MemberReference member)
@@ -433,12 +434,12 @@ namespace ICSharpCode.ILSpy.VB
 			return showAllMembers || !AstBuilder.MemberIsHidden(member, new DecompilationOptions().DecompilerSettings);
 		}
 		
-		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options)
+		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options, ModuleDefinition module)
 		{
 			astBuilder.RunTransformations(transformAbortCondition);
 			if (options.DecompilerSettings.ShowXmlDocumentation)
 				AddXmlDocTransform.Run(astBuilder.CompilationUnit);
-			var unit = astBuilder.CompilationUnit.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider()), null);
+			var unit = astBuilder.CompilationUnit.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider(CreateResolveContext(module))), null);
 			var outputFormatter = new VBTextOutputFormatter(output);
 			var formattingPolicy = new VBFormattingOptions();
 			unit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
@@ -480,11 +481,28 @@ namespace ICSharpCode.ILSpy.VB
 			return TypeToString(options, type, typeAttributes);
 		}
 		
+		ITypeResolveContext CreateResolveContext(ModuleDefinition module)
+		{
+			IProjectContent projectContent = new CecilTypeResolveContext(module);
+		
+			List<ITypeResolveContext> resolveContexts = new List<ITypeResolveContext>();
+			resolveContexts.Add(projectContent);
+			foreach (AssemblyNameReference r in module.AssemblyReferences) {
+				AssemblyDefinition d = module.AssemblyResolver.Resolve(r);
+				if (d != null) {
+					resolveContexts.Add(new CecilTypeResolveContext(d.MainModule));
+				}
+			}
+			
+			return new CompositeTypeResolveContext(resolveContexts);
+		}
+		
 		string TypeToString(ConvertTypeOptions options, TypeReference type, ICustomAttributeProvider typeAttributes = null)
 		{
+			
 			var astType = AstBuilder
 				.ConvertType(type, typeAttributes, options)
-				.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider()), null);
+				.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider(CreateResolveContext(type.Resolve().Module))), null);
 			StringWriter w = new StringWriter();
 			// TODO
 //			if (type.IsByReference) {

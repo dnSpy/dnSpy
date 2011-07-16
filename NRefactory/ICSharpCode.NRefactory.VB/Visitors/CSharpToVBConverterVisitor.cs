@@ -16,7 +16,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		string RootNamespace { get; }
 		string GetTypeNameForAttribute(CSharp.Attribute attribute);
 		ClassType GetClassTypeForAstType(CSharp.AstType type);
-		IType ResolveExpression(CSharp.Expression expression);
+		TypeCode ResolveExpression(CSharp.Expression expression);
+		bool? IsReferenceType(CSharp.Expression expression);
+		ITypeResolveContext ResolveContext { get; }
+		IType ResolveType(AstType type, TypeDeclaration entity = null);
 	}
 	
 	/// <summary>
@@ -177,8 +180,6 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var op = BinaryOperatorType.None;
 			var right = (Expression)binaryOperatorExpression.Right.AcceptVisitor(this, data);
 			
-			// TODO obj <> Nothing is wrong; correct would be obj IsNot Nothing
-			
 			switch (binaryOperatorExpression.Operator) {
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.BitwiseAnd:
 					op = BinaryOperatorType.BitwiseAnd;
@@ -202,10 +203,16 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					op = BinaryOperatorType.GreaterThanOrEqual;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.Equality:
-					op = BinaryOperatorType.Equality;
+					if (IsReferentialEquality(binaryOperatorExpression))
+						op = BinaryOperatorType.ReferenceEquality;
+					else
+						op = BinaryOperatorType.Equality;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.InEquality:
-					op = BinaryOperatorType.InEquality;
+					if (IsReferentialEquality(binaryOperatorExpression))
+						op = BinaryOperatorType.ReferenceInequality;
+					else
+						op = BinaryOperatorType.InEquality;
 					break;
 				case ICSharpCode.NRefactory.CSharp.BinaryOperatorType.LessThan:
 					op = BinaryOperatorType.LessThan;
@@ -246,6 +253,17 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			}
 			
 			return EndNode(binaryOperatorExpression, new BinaryOperatorExpression(left, op, right));
+		}
+		
+		bool IsReferentialEquality(CSharp.BinaryOperatorExpression binaryOperatorExpression)
+		{
+			var left = provider.IsReferenceType(binaryOperatorExpression.Left);
+			var right = provider.IsReferenceType(binaryOperatorExpression.Right);
+			
+			var leftCode = provider.ResolveExpression(binaryOperatorExpression.Left);
+			var rightCode = provider.ResolveExpression(binaryOperatorExpression.Right);
+			
+			return (left == true || right == true) && (leftCode != TypeCode.String && rightCode != TypeCode.String);
 		}
 		
 		public AstNode VisitCastExpression(CSharp.CastExpression castExpression, object data)
@@ -806,6 +824,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			if (typeDeclaration.ClassType == ClassType.Enum) {
 				var type = new EnumDeclaration();
+				CopyAnnotations(typeDeclaration, type);
 				
 				ConvertNodes(typeDeclaration.Attributes, type.Attributes);
 				ConvertNodes(typeDeclaration.ModifierTokens, type.ModifierTokens);
@@ -823,6 +842,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				return EndNode(typeDeclaration, type);
 			} else {
 				var type = new TypeDeclaration();
+				CopyAnnotations(typeDeclaration, type);
 				
 				CSharp.Attribute stdModAttr;
 				
@@ -1417,6 +1437,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				result.Name = evt.Name;
 				result.ReturnType = (AstType)eventDeclaration.ReturnType.AcceptVisitor(this, data);
 				
+//				CreateImplementsClausesForEvent(result);
+				
 				types.Peek().Members.Add(result);
 			}
 			
@@ -1441,7 +1463,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			if (!customEventDeclaration.PrivateImplementationType.IsNull)
 				result.ImplementsClause.Add(
 					new InterfaceMemberSpecifier((AstType)customEventDeclaration.PrivateImplementationType.AcceptVisitor(this, data), customEventDeclaration.Name));
-			
+//			else
+//				CreateImplementsClausesForEvent(result);
 			result.AddHandlerBlock = (Accessor)customEventDeclaration.AddAccessor.AcceptVisitor(this, data);
 			result.RemoveHandlerBlock = (Accessor)customEventDeclaration.RemoveAccessor.AcceptVisitor(this, data);
 			
@@ -1553,8 +1576,21 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					result.ImplementsClause.Add(
 						new InterfaceMemberSpecifier((AstType)methodDeclaration.PrivateImplementationType.AcceptVisitor(this, data),
 						                             methodDeclaration.Name));
+//				else
+//					CreateImplementsClausesForMethod(result);
 				if (!result.IsSub)
 					result.ReturnType = (AstType)methodDeclaration.ReturnType.AcceptVisitor(this, data);
+				
+				if (methodDeclaration.IsExtensionMethod) {
+					result.Attributes.Add(
+						new AttributeBlock {
+							Attributes = {
+								new Ast.Attribute {
+									Type = AstType.FromName("System.Runtime.CompilerServices.ExtensionAttribute")
+								}
+							}
+						});
+				}
 				
 				result.Body = (BlockStatement)methodDeclaration.Body.AcceptVisitor(this, data);
 				
@@ -1563,6 +1599,38 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				}
 				
 				return EndNode(methodDeclaration, result);
+			}
+		}
+		
+		void CreateImplementsClausesForMethod(MethodDeclaration result)
+		{
+			if (!types.Any()) return;
+			var current = types.Peek();
+			if (current.ClassType == ClassType.Interface)
+				return;
+			
+			foreach (var type in current.ImplementsTypes) {
+				var resolved = provider.ResolveType(type, current);
+				var found = resolved.GetMembers(provider.ResolveContext, m => m.EntityType == EntityType.Method && m.Name == result.Name.Name);
+				if (found.FirstOrDefault() != null) {
+					result.ImplementsClause.Add(new InterfaceMemberSpecifier((AstType)type.Clone(), found.FirstOrDefault().Name));
+				}
+			}
+		}
+		
+		void CreateImplementsClausesForEvent(EventDeclaration result)
+		{
+			if (!types.Any()) return;
+			var current = types.Peek();
+			if (current.ClassType == ClassType.Interface)
+				return;
+			
+			foreach (var type in current.ImplementsTypes) {
+				var resolved = provider.ResolveType(type, current);
+				var found = resolved.GetMembers(provider.ResolveContext, m => m.EntityType == EntityType.Event && m.Name == result.Name.Name);
+				if (found.FirstOrDefault() != null) {
+					result.ImplementsClause.Add(new InterfaceMemberSpecifier((AstType)type.Clone(), found.FirstOrDefault().Name));
+				}
 			}
 		}
 		
@@ -2106,7 +2174,17 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		T EndNode<T>(CSharp.AstNode node, T result) where T : VB.AstNode
 		{
+			if (result != null) {
+				CopyAnnotations(node, result);
+			}
+			
 			return result;
+		}
+
+		void CopyAnnotations<T>(CSharp.AstNode node, T result) where T : VB.AstNode
+		{
+			foreach (var ann in node.Annotations)
+				result.AddAnnotation(ann);
 		}
 		
 		bool HasAttribute(CSharp.AstNodeCollection<CSharp.AttributeSection> attributes, string name, out CSharp.Attribute foundAttribute)

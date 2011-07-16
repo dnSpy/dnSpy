@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -68,6 +69,24 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		public virtual AstType MakeArrayType(int rank = 1)
 		{
 			return new ComposedType { BaseType = this }.MakeArrayType(rank);
+		}
+		
+		public static AstType FromName(string fullName)
+		{
+			if (string.IsNullOrEmpty(fullName))
+				throw new ArgumentNullException("fullName");
+			fullName = fullName.Trim();
+			if (!fullName.Contains("."))
+				return new SimpleType(fullName);
+			string[] parts = fullName.Split('.');
+			
+			AstType type = new SimpleType(parts.First());
+			
+			foreach (var part in parts.Skip(1)) {
+				type = new QualifiedType(type, part);
+			}
+			
+			return type;
 		}
 		
 		/// <summary>
