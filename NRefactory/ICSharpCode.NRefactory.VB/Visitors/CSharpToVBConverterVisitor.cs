@@ -1411,6 +1411,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				var result = new EventDeclaration();
 
 				ConvertNodes(eventDeclaration.Attributes, result.Attributes);
+				if (types.Any() && types.Peek().ClassType == ClassType.Module)
+					eventDeclaration.Modifiers &= ~CSharp.Modifiers.Static;
 				result.Modifiers = ConvertModifiers(eventDeclaration.Modifiers, eventDeclaration);
 				result.Name = evt.Name;
 				result.ReturnType = (AstType)eventDeclaration.ReturnType.AcceptVisitor(this, data);
@@ -1430,6 +1432,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			members.Push(new MemberInfo());
 			
 			ConvertNodes(customEventDeclaration.Attributes, result.Attributes);
+			if (types.Any() && types.Peek().ClassType == ClassType.Module)
+				customEventDeclaration.Modifiers &= ~CSharp.Modifiers.Static;
 			result.Modifiers = ConvertModifiers(customEventDeclaration.Modifiers, customEventDeclaration);
 			result.IsCustom = true;
 			result.Name = new Identifier(customEventDeclaration.Name, AstLocation.Empty);
@@ -1453,6 +1457,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			members.Push(new MemberInfo());
 			
 			ConvertNodes(fieldDeclaration.Attributes, decl.Attributes);
+			if (types.Any() && types.Peek().ClassType == ClassType.Module)
+				fieldDeclaration.Modifiers &= ~CSharp.Modifiers.Static;
 			decl.Modifiers = ConvertModifiers(fieldDeclaration.Modifiers, fieldDeclaration);
 			ConvertNodes(fieldDeclaration.Variables, decl.Variables);
 			
@@ -1469,6 +1475,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			ConvertNodes(indexerDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), decl.Attributes);
 			decl.Getter = (Accessor)indexerDeclaration.Getter.AcceptVisitor(this, data);
+			if (types.Any() && types.Peek().ClassType == ClassType.Module)
+				indexerDeclaration.Modifiers &= ~CSharp.Modifiers.Static;
 			decl.Modifiers = ConvertModifiers(indexerDeclaration.Modifiers, indexerDeclaration);
 			decl.Name = new Identifier(indexerDeclaration.Name, AstLocation.Empty);
 			ConvertNodes(indexerDeclaration.Parameters, decl.Parameters);
@@ -1495,6 +1503,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		public AstNode VisitMethodDeclaration(CSharp.MethodDeclaration methodDeclaration, object data)
 		{
 			CSharp.Attribute attr;
+			
+			if (types.Any() && types.Peek().ClassType == ClassType.Module)
+				methodDeclaration.Modifiers &= ~CSharp.Modifiers.Static;
+			
 			if ((methodDeclaration.Modifiers & CSharp.Modifiers.Extern) == CSharp.Modifiers.Extern && HasAttribute(methodDeclaration.Attributes, "System.Runtime.InteropServices.DllImportAttribute", out attr)) {
 				var result = new ExternalMethodDeclaration();
 				
@@ -1543,6 +1555,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 						                             methodDeclaration.Name));
 				if (!result.IsSub)
 					result.ReturnType = (AstType)methodDeclaration.ReturnType.AcceptVisitor(this, data);
+				
 				result.Body = (BlockStatement)methodDeclaration.Body.AcceptVisitor(this, data);
 				
 				if (members.Pop().inIterator) {
@@ -1613,6 +1626,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			MemberDeclaration result;
 			members.Push(new MemberInfo());
+			
+			if (types.Any() && types.Peek().ClassType == ClassType.Module)
+				operatorDeclaration.Modifiers &= ~CSharp.Modifiers.Static;
 			
 			if (operatorDeclaration.OperatorType == CSharp.OperatorType.Increment || operatorDeclaration.OperatorType == CSharp.OperatorType.Decrement) {
 				var m = new MethodDeclaration();
@@ -1763,6 +1779,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var decl = new PropertyDeclaration();
 			
 			members.Push(new MemberInfo());
+			
+			if (types.Any() && types.Peek().ClassType == ClassType.Module)
+				propertyDeclaration.Modifiers &= ~CSharp.Modifiers.Static;
 			
 			ConvertNodes(propertyDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), decl.Attributes);
 			decl.Getter = (Accessor)propertyDeclaration.Getter.AcceptVisitor(this, data);
