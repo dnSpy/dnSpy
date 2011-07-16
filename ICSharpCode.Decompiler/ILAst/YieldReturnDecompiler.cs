@@ -224,7 +224,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			ILBlock ilMethod = new ILBlock();
 			ILAstBuilder astBuilder = new ILAstBuilder();
-			ilMethod.Body = astBuilder.Build(method, true);
+			ilMethod.Body = astBuilder.Build(method, true, context);
 			ILAstOptimizer optimizer = new ILAstOptimizer();
 			optimizer.Optimize(context, ilMethod, ILAstOptimizationStep.YieldReturn);
 			return ilMethod;

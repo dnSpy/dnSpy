@@ -163,6 +163,15 @@ namespace Mono.Cecil.Tests {
 			Assert.IsTrue (array.Dimensions [1].IsSized);
 			Assert.AreEqual (0, array.Dimensions [1].LowerBound);
 			Assert.AreEqual (null, array.Dimensions [1].UpperBound);
+
+			var rank_one_low_bound_m1 = types.GetField ("rank_one_low_bound_m1");
+			array = rank_one_low_bound_m1.FieldType as ArrayType;
+			Assert.IsNotNull (array);
+
+			Assert.AreEqual (1, array.Rank);
+			Assert.IsTrue (array.Dimensions [0].IsSized);
+			Assert.AreEqual (-1, array.Dimensions [0].LowerBound);
+			Assert.AreEqual (4, array.Dimensions [0].UpperBound);
 		}
 
 		[TestCSharp ("Fields.cs")]

@@ -24,6 +24,7 @@ using System.Linq;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler
@@ -315,5 +316,31 @@ namespace ICSharpCode.Decompiler
 			line = codeMapping.SourceCodeLine;
 			return true;
 		}
+	}
+	
+	/// <summary>
+	/// Decompilation data. Can be used by other applications to store the decompilation data.
+	/// </summary>
+	public class DecompileInformation
+	{
+		/// <summary>
+		/// Gets ot sets the code mappings
+		/// </summary>
+		public Dictionary<int, List<MemberMapping>> CodeMappings { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the local variables.
+		/// </summary>
+		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
+		
+		/// <summary>
+		/// Gets the list of MembeReferences that are decompiled (TypeDefinitions, MethodDefinitions, etc)
+		/// </summary>
+		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
+		
+		/// <summary>
+		/// Gets (or internal sets) the AST nodes.
+		/// </summary>
+		public IEnumerable<AstNode> AstNodes { get; set; }
 	}
 }

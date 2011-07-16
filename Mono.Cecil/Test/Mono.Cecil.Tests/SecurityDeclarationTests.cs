@@ -88,6 +88,26 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (permission_set, argument.Value);
 		}
 
+		[TestModule ("empty-decsec-att.dll")]
+		public void SecurityDeclarationWithoutAttributes (ModuleDefinition module)
+		{
+			var type = module.GetType ("TestSecurityAction.ModalUITypeEditor");
+			var method = type.GetMethod ("GetEditStyle");
+
+			Assert.IsNotNull (method);
+
+			Assert.AreEqual (1, method.SecurityDeclarations.Count);
+
+			var declaration = method.SecurityDeclarations [0];
+			Assert.AreEqual (SecurityAction.LinkDemand, declaration.Action);
+			Assert.AreEqual (1, declaration.SecurityAttributes.Count);
+
+			var attribute = declaration.SecurityAttributes [0];
+			Assert.AreEqual ("System.Security.Permissions.SecurityPermissionAttribute", attribute.AttributeType.FullName);
+			Assert.AreEqual (0, attribute.Fields.Count);
+			Assert.AreEqual (0, attribute.Properties.Count);
+		}
+
 		[TestModule ("decsec-att.dll")]
 		public void AttributeSecurityDeclaration (ModuleDefinition module)
 		{

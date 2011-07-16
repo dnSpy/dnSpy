@@ -26,9 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Mono.Collections.Generic;
 
 namespace Mono {
 
@@ -47,9 +45,9 @@ namespace Mono.Cecil {
 			return self == null || self.Length == 0;
 		}
 
-		public static bool IsNullOrEmpty<T> (this ICollection<T> self)
+		public static bool IsNullOrEmpty<T> (this Collection<T> self)
 		{
-			return self == null || self.Count == 0;
+			return self == null || self.size == 0;
 		}
 	}
 }

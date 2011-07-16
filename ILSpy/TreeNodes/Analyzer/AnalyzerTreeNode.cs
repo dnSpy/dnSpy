@@ -17,12 +17,14 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	public class AnalyzerTreeNode : SharpTreeNode
+	public abstract class AnalyzerTreeNode : SharpTreeNode
 	{
 		private Language language;
 
@@ -54,7 +56,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			DeleteCore();
 		}
 
-		protected override void OnChildrenChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
 		{
 			if (e.NewItems != null) {
 				foreach (AnalyzerTreeNode a in e.NewItems.OfType<AnalyzerTreeNode>())
@@ -62,5 +64,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 			base.OnChildrenChanged(e);
 		}
+		
+		/// <summary>
+		/// Handles changes to the assembly list.
+		/// </summary>
+		public abstract bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies);
 	}
 }

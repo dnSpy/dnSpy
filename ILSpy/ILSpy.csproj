@@ -9,8 +9,7 @@
     <AssemblyName>ILSpy</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
@@ -175,6 +174,8 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventAccessorTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedVirtualMethodUsedByTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzerEntityTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzerSearchTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\Helpers.cs" />
     <Compile Include="TreeNodes\Analyzer\ScopedWhereUsedAnalyzer.cs" />
     <Compile Include="TreeNodes\BaseTypesEntryNode.cs" />
@@ -189,6 +190,9 @@
     <Compile Include="TreeNodes\ResourceNodes\XamlResourceNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
+    <Compile Include="VB\ILSpyEnvironmentProvider.cs" />
+    <Compile Include="VB\VBLanguage.cs" />
+    <Compile Include="VB\VBTextOutputFormatter.cs" />
     <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
     <Compile Include="XmlDoc\XmlDocKeyProvider.cs" />
     <Compile Include="XmlDoc\XmlDocLoader.cs" />
@@ -339,6 +343,10 @@
       <Project>{63E6915C-7EA4-4D76-AB28-0D7191EEA626}</Project>
       <Name>Mono.Cecil.Pdb</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj">
+      <Project>{7B82B671-419F-45F4-B778-D9286F996EFA}</Project>
+      <Name>ICSharpCode.NRefactory.VB</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
@@ -349,11 +357,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="VB" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\ResourceXml.png" />
     <Resource Include="Images\ResourceXsd.png" />
     <Resource Include="Images\ResourceXslt.png" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Folder Include="AvalonEdit" />
     <Folder Include="Bookmarks" />

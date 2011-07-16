@@ -4,6 +4,7 @@
 <!-- Updated 2005 by Daniel Grunwald for VB.NET 2.0 -->
 <!-- Converted to AvalonEdit format by Daniel Grunwald in 2010 -->
 <!-- Updated 2010 by Siegfried Oleg Pammer for VB.NET 9 and 10 -->
+<!-- Updated 2011 by Siegfried Oleg Pammer for VB 11 CTP -->
 <SyntaxDefinition name="VBNET" extensions=".vb" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
 	<Color name="Comment" foreground="Green" exampleText="' comment" />
 	<Color name="String" exampleText="text = &quot;Hello, World!&quot;" />
@@ -64,6 +65,7 @@
 			<Word>AddressOf</Word>
 			<Word>And</Word>
 			<Word>AndAlso</Word>
+			<Word>Await</Word>
 			<Word>Is</Word>
 			<Word>IsNot</Word>
 			<Word>Like</Word>
@@ -208,6 +210,7 @@
 			<Word>Aggregate</Word>
 			<Word>Ansi</Word>
 			<Word>Ascending</Word>
+			<Word>Async</Word>
 			<Word>Auto</Word>
 			<Word>Binary</Word>
 			<Word>By</Word>
@@ -221,6 +224,7 @@
 			<Word>Group</Word>
 			<Word>Infer</Word>
 			<Word>Into</Word>
+			<Word>Iterator</Word>
 			<Word>Join</Word>
 			<Word>Key</Word>
 			<Word>Off</Word>
@@ -232,6 +236,7 @@
 			<Word>Unicode</Word>
 			<Word>Until</Word>
 			<Word>Where</Word>
+			<Word>Yield</Word>
 		</Keywords>
 	</RuleSet>
 	<RuleSet name="PreprocessorSet" ignoreCase="true">

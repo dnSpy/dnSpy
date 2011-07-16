@@ -131,13 +131,14 @@ namespace ICSharpCode.Decompiler.Ast
 					output.Write("*/");
 					break;
 				case CommentType.Documentation:
-					if (!inDocumentationComment)
+					bool isLastLine = !(nodeStack.Peek().NextSibling is Comment);
+					if (!inDocumentationComment && !isLastLine) {
+						inDocumentationComment = true;
 						output.MarkFoldStart("///" + content, true);
+					}
 					output.Write("///");
 					output.Write(content);
-					inDocumentationComment = true;
-					bool isLastLine = !(nodeStack.Peek().NextSibling is Comment);
-					if (isLastLine) {
+					if (inDocumentationComment && isLastLine) {
 						inDocumentationComment = false;
 						output.MarkFoldEnd();
 					}

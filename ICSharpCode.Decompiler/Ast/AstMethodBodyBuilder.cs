@@ -95,7 +95,7 @@ namespace ICSharpCode.Decompiler.Ast
 			context.CancellationToken.ThrowIfCancellationRequested();
 			ILBlock ilMethod = new ILBlock();
 			ILAstBuilder astBuilder = new ILAstBuilder();
-			ilMethod.Body = astBuilder.Build(methodDef, true);
+			ilMethod.Body = astBuilder.Build(methodDef, true, context);
 			
 			context.CancellationToken.ThrowIfCancellationRequested();
 			ILAstOptimizer bodyGraph = new ILAstOptimizer();
@@ -259,6 +259,9 @@ namespace ICSharpCode.Decompiler.Ast
 				result = node;
 			
 			if (result != null)
+				result = result.WithAnnotation(new TypeInformation(expr.InferredType));
+			
+			if (result != null)
 				return result.WithAnnotation(ilRanges);
 			
 			return result;
@@ -397,7 +400,7 @@ namespace ICSharpCode.Decompiler.Ast
 						ace.Initializer.Elements.AddRange(args);
 						return ace;
 					}
-				case ILCode.Ldlen: return arg1.Member("Length");
+					case ILCode.Ldlen: return arg1.Member("Length");
 				case ILCode.Ldelem_I:
 				case ILCode.Ldelem_I1:
 				case ILCode.Ldelem_I2:
@@ -906,14 +909,21 @@ namespace ICSharpCode.Decompiler.Ast
 					target = ((DirectionExpression)target).Expression;
 					target.Remove(); // detach from DirectionExpression
 				}
-				if (cecilMethodDef != null && cecilMethodDef.DeclaringType.IsInterface) {
-					TypeReference tr = byteCode.Arguments[0].InferredType;
-					if (tr != null) {
-						TypeDefinition td = tr.Resolve();
-						if (td != null && !td.IsInterface) {
-							// Calling an interface method on a non-interface object:
-							// we need to introduce an explicit cast
-							target = target.CastTo(AstBuilder.ConvertType(cecilMethod.DeclaringType));
+				
+				if (cecilMethodDef != null) {
+					// convert null.ToLower() to ((string)null).ToLower()
+					if (target is NullReferenceExpression)
+						target = target.CastTo(AstBuilder.ConvertType(cecilMethod.DeclaringType));
+					
+					if (cecilMethodDef.DeclaringType.IsInterface) {
+						TypeReference tr = byteCode.Arguments[0].InferredType;
+						if (tr != null) {
+							TypeDefinition td = tr.Resolve();
+							if (td != null && !td.IsInterface) {
+								// Calling an interface method on a non-interface object:
+								// we need to introduce an explicit cast
+								target = target.CastTo(AstBuilder.ConvertType(cecilMethod.DeclaringType));
+							}
 						}
 					}
 				}

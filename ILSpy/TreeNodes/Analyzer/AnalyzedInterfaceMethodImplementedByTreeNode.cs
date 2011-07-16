@@ -26,10 +26,9 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedInterfaceMethodImplementedByTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedInterfaceMethodImplementedByTreeNode : AnalyzerSearchTreeNode
 	{
 		private readonly MethodDefinition analyzedMethod;
-		private readonly ThreadingSupport threading;
 
 		public AnalyzedInterfaceMethodImplementedByTreeNode(MethodDefinition analyzedMethod)
 		{
@@ -37,8 +36,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				throw new ArgumentNullException("analyzedMethod");
 
 			this.analyzedMethod = analyzedMethod;
-			this.threading = new ThreadingSupport();
-			this.LazyLoading = true;
 		}
 
 		public override object Text
@@ -46,35 +43,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return "Implemented By"; }
 		}
 
-		public override object Icon
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
-			get { return Images.Search; }
-		}
-
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
-
-		protected override void OnCollapsing()
-		{
-			if (threading.IsRunning) {
-				this.LazyLoading = true;
-				threading.Cancel();
-				this.Children.Clear();
-			}
-		}
-
-		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
-		{
-			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
-			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedMethod, FindReferencesInType);
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
 			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
 				yield return child;
 			}
 		}
 
-		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			if (!type.HasInterfaces)
 				yield break;

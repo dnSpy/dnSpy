@@ -40,6 +40,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			MemberName = "TypeHandle"
 		};
 		
+		DecompilerContext context;
+		
+		public ReplaceMethodCallsWithOperators(DecompilerContext context)
+		{
+			this.context = context;
+		}
+		
 		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
 		{
 			base.VisitInvocationExpression(invocationExpression, data);
@@ -214,7 +221,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					}
 				}
 			}
-			if (assignment.Operator == AssignmentOperatorType.Add || assignment.Operator == AssignmentOperatorType.Subtract) {
+			if (context.Settings.IntroduceIncrementAndDecrement && (assignment.Operator == AssignmentOperatorType.Add || assignment.Operator == AssignmentOperatorType.Subtract)) {
 				// detect increment/decrement
 				if (assignment.Right.IsMatch(new PrimitiveExpression(1))) {
 					// only if it's not a custom operator

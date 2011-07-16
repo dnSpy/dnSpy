@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 		
 		public bool IsRunning {
-			get { return !loadChildrenTask.IsCompleted; }
+			get { return loadChildrenTask != null && !loadChildrenTask.IsCompleted; }
 		}
 		
 		public void Cancel()

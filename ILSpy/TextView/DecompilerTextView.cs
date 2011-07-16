@@ -75,7 +75,7 @@ namespace ICSharpCode.ILSpy.TextView
 		readonly TextMarkerService textMarkerService;
 		
 		[ImportMany(typeof(ITextEditorListener))]
-		IEnumerable<ITextEditorListener> textEditorListeners;
+		IEnumerable<ITextEditorListener> textEditorListeners = null;
 		
 		#region Constructor
 		public DecompilerTextView()

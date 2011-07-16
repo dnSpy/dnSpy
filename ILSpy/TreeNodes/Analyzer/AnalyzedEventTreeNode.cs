@@ -21,7 +21,7 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedEventTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedEventTreeNode : AnalyzerEntityTreeNode
 	{
 		private readonly EventDefinition analyzedEvent;
 		private readonly string prefix;
@@ -33,6 +33,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.analyzedEvent = analyzedEvent;
 			this.prefix = prefix;
 			this.LazyLoading = true;
+		}
+
+		public override MemberReference Member {
+			get { return analyzedEvent; }
 		}
 
 		public override object Icon
@@ -47,12 +51,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				// TODO: This way of formatting is not suitable for events which explicitly implement interfaces.
 				return prefix + Language.TypeToString(analyzedEvent.DeclaringType, true) + "." + EventTreeNode.GetText(analyzedEvent, Language);
 			}
-		}
-
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
-		{
-			e.Handled = true;
-			MainWindow.Instance.JumpToReference(analyzedEvent);
 		}
 
 		protected override void LoadChildren()

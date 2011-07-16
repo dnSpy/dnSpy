@@ -22,7 +22,7 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedPropertyTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedPropertyTreeNode : AnalyzerEntityTreeNode
 	{
 		private readonly PropertyDefinition analyzedProperty;
 		private readonly bool isIndexer;
@@ -50,12 +50,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				// TODO: This way of formatting is not suitable for properties which explicitly implement interfaces.
 				return prefix + Language.TypeToString(analyzedProperty.DeclaringType, true) + "." + PropertyTreeNode.GetText(analyzedProperty, Language, isIndexer);
 			}
-		}
-
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
-		{
-			e.Handled = true;
-			MainWindow.Instance.JumpToReference(analyzedProperty);
 		}
 
 		protected override void LoadChildren()
@@ -89,6 +83,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			return !MainWindow.Instance.CurrentLanguage.ShowMember(property.GetMethod ?? property.SetMethod)
 			    || AnalyzedPropertyOverridesTreeNode.CanShow(property);
+		}
+		
+		public override MemberReference Member {
+			get { return analyzedProperty; }
 		}
 	}
 }

@@ -1,28 +1,5 @@
-﻿// 
-// AstNode.cs
-//
-// Author:
-//       Mike Krüger <mkrueger@novell.com>
-// 
-// Copyright (c) 2009 Novell, Inc (http://www.novell.com)
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 using System.Collections;
@@ -532,13 +509,13 @@ namespace ICSharpCode.NRefactory.VB
 			public static readonly Role<XmlIdentifier> XmlIdentifier = new Role<XmlIdentifier>("XmlIdentifier", Ast.XmlIdentifier.Null);
 			public static readonly Role<XmlLiteralString> XmlLiteralString = new Role<XmlLiteralString>("XmlLiteralString", Ast.XmlLiteralString.Null);
 			
-//			public static readonly Role<BlockStatement> Body = new Role<BlockStatement>("Body", CSharp.BlockStatement.Null);
+			public static readonly Role<BlockStatement> Body = new Role<BlockStatement>("Body", Ast.BlockStatement.Null);
 			public static readonly Role<ParameterDeclaration> Parameter = new Role<ParameterDeclaration>("Parameter");
 			public static readonly Role<Expression> Argument = new Role<Expression>("Argument", Ast.Expression.Null);
 			public static readonly Role<AstType> Type = new Role<AstType>("Type", AstType.Null);
 			public static readonly Role<Expression> Expression = new Role<Expression>("Expression", Ast.Expression.Null);
-//			public static readonly Role<Expression> TargetExpression = new Role<Expression>("Target", CSharp.Expression.Null);
-//			public readonly static Role<Expression> Condition = new Role<Expression>("Condition", CSharp.Expression.Null);
+			public static readonly Role<Expression> TargetExpression = new Role<Expression>("Target", Ast.Expression.Null);
+			public readonly static Role<Expression> Condition = new Role<Expression>("Condition", Ast.Expression.Null);
 //
 			public static readonly Role<TypeParameterDeclaration> TypeParameter = new Role<TypeParameterDeclaration>("TypeParameter");
 			public static readonly Role<AstType> TypeArgument = new Role<AstType>("TypeArgument", AstType.Null);
@@ -558,6 +535,7 @@ namespace ICSharpCode.NRefactory.VB
 			public static readonly Role<VBTokenNode> LChevron = new Role<VBTokenNode>("LChevron", VBTokenNode.Null);
 			public static readonly Role<VBTokenNode> RChevron = new Role<VBTokenNode>("RChevron", VBTokenNode.Null);
 			public static readonly Role<VBTokenNode> Comma = new Role<VBTokenNode>("Comma", VBTokenNode.Null);
+			public static readonly Role<VBTokenNode> QuestionMark = new Role<VBTokenNode>("QuestionMark", VBTokenNode.Null);
 			public static readonly Role<VBTokenNode> Dot = new Role<VBTokenNode>("Dot", VBTokenNode.Null);
 			public static readonly Role<VBTokenNode> Semicolon = new Role<VBTokenNode>("Semicolon", VBTokenNode.Null);
 			public static readonly Role<VBTokenNode> Assign = new Role<VBTokenNode>("Assign", VBTokenNode.Null);
@@ -579,8 +557,5 @@ namespace ICSharpCode.NRefactory.VB
 		}
 	}
 	
-	public class Comment
-	{
-		
-	}
+
 }
