@@ -59,7 +59,7 @@ namespace ICSharpCode.Decompiler
 			throw new NotSupportedException ();
 		}
 		
-		public static int? GetPopDelta(this Instruction instruction)
+		public static int? GetPopDelta(this Instruction instruction, MethodDefinition methodDef)
 		{
 			OpCode code = instruction.OpCode;
 			switch (code.StackBehaviourPop) {
@@ -93,7 +93,7 @@ namespace ICSharpCode.Decompiler
 
 				case StackBehaviour.Varpop:
 					if (code == OpCodes.Ret)
-						return null;
+						return methodDef.ReturnType.IsVoid() ? 0 : 1;
 
 					if (code.FlowControl != FlowControl.Call)
 						break;

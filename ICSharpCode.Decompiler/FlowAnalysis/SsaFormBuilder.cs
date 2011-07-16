@@ -129,7 +129,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					continue;
 				}
 				
-				int popCount = inst.GetPopDelta() ?? stackSize;
+				int popCount = inst.GetPopDelta(method) ?? stackSize;
 				stackSize -= popCount;
 				if (stackSize < 0)
 					throw new InvalidProgramException("IL stack underflow");
