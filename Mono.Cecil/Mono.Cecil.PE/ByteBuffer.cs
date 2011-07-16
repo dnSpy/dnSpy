@@ -140,11 +140,16 @@ namespace Mono.Cecil.PE {
 
 		public int ReadCompressedInt32 ()
 		{
-			var value = (int) ReadCompressedUInt32 ();
-
-			return (value & 1) != 0
-				? -(value >> 1)
-				: value >> 1;
+			var value = (int) (ReadCompressedUInt32 () >> 1);
+			if ((value & 1) == 0)
+				return value;
+			if (value < 0x40)
+				return value - 0x40;
+			if (value < 0x2000)
+				return value - 0x2000;
+			if (value < 0x10000000)
+				return value - 0x10000000;
+			return value - 0x20000000;
 		}
 
 		public float ReadSingle ()
@@ -267,7 +272,19 @@ namespace Mono.Cecil.PE {
 
 		public void WriteCompressedInt32 (int value)
 		{
-			WriteCompressedUInt32 ((uint) ((value < 0) ? ((-value) << 1) | 1 : value << 1));
+			if (value >= 0) {
+				WriteCompressedUInt32 ((uint) (value << 1));
+				return;
+			}
+
+			if (value > -0x40)
+				value = 0x40 + value;
+			else if (value >= -0x2000)
+				value = 0x2000 + value;
+			else if (value >= -0x20000000)
+				value = 0x20000000 + value;
+
+			WriteCompressedUInt32 ((uint) ((value << 1) | 1));
 		}
 
 		public void WriteBytes (byte [] bytes)

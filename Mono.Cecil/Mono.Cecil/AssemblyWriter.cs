@@ -935,11 +935,13 @@ namespace Mono.Cecil {
 					? reference.PublicKeyToken
 					: reference.PublicKey;
 
+				var version = reference.Version;
+
 				var rid = table.AddRow (new AssemblyRefRow (
-					(ushort) reference.Version.Major,
-					(ushort) reference.Version.Minor,
-					(ushort) reference.Version.Build,
-					(ushort) reference.Version.Revision,
+					(ushort) version.Major,
+					(ushort) version.Minor,
+					(ushort) version.Build,
+					(ushort) version.Revision,
 					reference.Attributes,
 					GetBlobIndex (key_or_token),
 					GetStringIndex (reference.Name),
@@ -2448,12 +2450,12 @@ namespace Mono.Cecil {
 			var count = GetNamedArgumentCount (attribute);
 
 			if (count == 0) {
-				WriteCompressedUInt32 (0); // length
+				WriteCompressedUInt32 (1); // length
 				WriteCompressedUInt32 (0); // count
 				return;
 			}
 
-            var buffer = new SignatureWriter (metadata);
+			var buffer = new SignatureWriter (metadata);
 			buffer.WriteCompressedUInt32 ((uint) count);
 			buffer.WriteICustomAttributeNamedArguments (attribute);
 
