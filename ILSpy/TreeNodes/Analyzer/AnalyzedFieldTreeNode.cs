@@ -21,7 +21,7 @@ using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal class AnalyzedFieldTreeNode : AnalyzerTreeNode, IMemberTreeNode
+	internal class AnalyzedFieldTreeNode : AnalyzerEntityTreeNode
 	{
 		private readonly FieldDefinition analyzedField;
 
@@ -47,12 +47,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
-		{
-			e.Handled = true;
-			MainWindow.Instance.JumpToReference(analyzedField);
-		}
-
 		protected override void LoadChildren()
 		{
 			this.Children.Add(new AnalyzedFieldAccessTreeNode(analyzedField, false));
@@ -60,8 +54,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				this.Children.Add(new AnalyzedFieldAccessTreeNode(analyzedField, true));
 		}
 
-		MemberReference IMemberTreeNode.Member
-		{
+		public override MemberReference Member {
 			get { return analyzedField; }
 		}
 	}

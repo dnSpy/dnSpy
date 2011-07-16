@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -69,12 +70,31 @@ namespace ICSharpCode.ILSpy
 			searchModeComboBox.Items.Add(new { Image = Images.Property, Name = "Member" });
 			searchModeComboBox.Items.Add(new { Image = Images.Literal, Name = "Constant" });
 			searchModeComboBox.SelectedIndex = SearchMode_Type;
+			
+			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_Instance_CurrentAssemblyListChanged;
+		}
+		
+		bool runSearchOnNextShow;
+		
+		void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (IsVisible) {
+				StartSearch(this.SearchTerm);
+			} else {
+				StartSearch(null);
+				runSearchOnNextShow = true;
+			}
 		}
 		
 		public void Show()
 		{
-			if (!IsVisible)
+			if (!IsVisible) {
 				MainWindow.Instance.ShowInTopPane("Search", this);
+				if (runSearchOnNextShow) {
+					runSearchOnNextShow = false;
+					StartSearch(this.SearchTerm);
+				}
+			}
 			Dispatcher.BeginInvoke(
 				DispatcherPriority.Background,
 				new Func<bool>(searchBox.Focus));

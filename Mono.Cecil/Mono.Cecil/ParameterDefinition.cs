@@ -49,6 +49,15 @@ namespace Mono.Cecil {
 			get { return method; }
 		}
 
+		public int Sequence {
+			get {
+				if (method == null)
+					return -1;
+
+				return method.HasThis ? index + 1 : index;
+			}
+		}
+
 		public bool HasConstant {
 			get {
 				this.ResolveConstant (ref constant, parameter_type.Module);

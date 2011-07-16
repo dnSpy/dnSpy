@@ -59,7 +59,7 @@ namespace ICSharpCode.Decompiler
 			throw new NotSupportedException ();
 		}
 		
-		public static int? GetPopDelta(this Instruction instruction)
+		public static int? GetPopDelta(this Instruction instruction, MethodDefinition methodDef)
 		{
 			OpCode code = instruction.OpCode;
 			switch (code.StackBehaviourPop) {
@@ -93,15 +93,17 @@ namespace ICSharpCode.Decompiler
 
 				case StackBehaviour.Varpop:
 					if (code == OpCodes.Ret)
-						return null;
+						return methodDef.ReturnType.IsVoid() ? 0 : 1;
 
 					if (code.FlowControl != FlowControl.Call)
 						break;
 
 					IMethodSignature method = (IMethodSignature) instruction.Operand;
 					int count = method.HasParameters ? method.Parameters.Count : 0;
-					if (code == OpCodes.Calli || (method.HasThis && code != OpCodes.Newobj))
+					if (method.HasThis && code != OpCodes.Newobj)
 						++count;
+					if (code == OpCodes.Calli)
+						++count; // calli takes a function pointer in additional to the normal args
 
 					return count;
 			}

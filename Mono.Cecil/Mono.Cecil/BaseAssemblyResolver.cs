@@ -51,6 +51,9 @@ namespace Mono.Cecil {
 		}
 	}
 
+#if !SILVERLIGHT && !CF
+	[Serializable]
+#endif
 	public class AssemblyResolutionException : FileNotFoundException {
 
 		readonly AssemblyNameReference reference;
@@ -64,6 +67,15 @@ namespace Mono.Cecil {
 		{
 			this.reference = reference;
 		}
+
+#if !SILVERLIGHT && !CF
+		protected AssemblyResolutionException (
+			System.Runtime.Serialization.SerializationInfo info,
+			System.Runtime.Serialization.StreamingContext context)
+			: base (info, context)
+		{
+		}
+#endif
 	}
 
 	public abstract class BaseAssemblyResolver : IAssemblyResolver {

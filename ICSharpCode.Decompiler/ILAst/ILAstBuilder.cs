@@ -263,7 +263,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					EndOffset   = inst.Next != null ? inst.Next.Offset : methodDef.Body.CodeSize,
 					Code        = code,
 					Operand     = operand,
-					PopCount    = inst.GetPopDelta(),
+					PopCount    = inst.GetPopDelta(methodDef),
 					PushCount   = inst.GetPushDelta()
 				};
 				if (prefixes != null) {
@@ -704,8 +704,9 @@ namespace ICSharpCode.Decompiler.ILAst
 						};
 						// Handle the automatically pushed exception on the stack
 						ByteCode ldexception = ldexceptions[eh];
-						if (ldexception.StoreTo.Count == 0) {
-							throw new Exception("Exception should be consumed by something");
+						if (ldexception.StoreTo == null || ldexception.StoreTo.Count == 0) {
+							// Exception is not used
+							catchBlock.ExceptionVariable = null;
 						} else if (ldexception.StoreTo.Count == 1) {
 							ILExpression first = catchBlock.Body[0] as ILExpression;
 							if (first != null &&

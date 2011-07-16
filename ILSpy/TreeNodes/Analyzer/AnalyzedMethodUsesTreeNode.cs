@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -27,7 +28,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	/// <summary>
 	/// Shows the methods that are used by this method.
 	/// </summary>
-	internal sealed class AnalyzedMethodUsesTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedMethodUsesTreeNode : AnalyzerSearchTreeNode
 	{
 		private readonly MethodDefinition analyzedMethod;
 
@@ -37,7 +38,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				throw new ArgumentNullException("analyzedMethod");
 
 			this.analyzedMethod = analyzedMethod;
-			this.LazyLoading = true;
 		}
 
 		public override object Text
@@ -45,20 +45,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return "Uses"; }
 		}
 
-		public override object Icon
-		{
-			get { return Images.Search; }
-		}
-
-		protected override void LoadChildren()
-		{
-			analyzedMethod.Body = null;
-			foreach (var child in GetChildren().OrderBy(n => n.Text)) {
-				this.Children.Add(child);
-			}
-		}
-
-		private IEnumerable<AnalyzerTreeNode> GetChildren()
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			foreach (var f in GetUsedFields().Distinct()) {
 				var node = new AnalyzedFieldTreeNode(f);
