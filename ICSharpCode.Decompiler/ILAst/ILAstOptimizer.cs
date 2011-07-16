@@ -240,6 +240,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		/// <summary>
 		/// Removes redundatant Br, Nop, Dup, Pop
+		/// Ignore arguments of 'leave'
 		/// </summary>
 		/// <param name="method"></param>
 		void RemoveRedundantCode(ILBlock method)
@@ -276,6 +277,13 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 				block.Body = newBody;
+			}
+			
+			// Ignore arguments of 'leave'
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>(e => e.Code == ILCode.Leave)) {
+				if (expr.Arguments.Any(arg => !arg.Match(ILCode.Ldloc)))
+					throw new Exception("Leave should have just ldloc at this stage");
+				expr.Arguments.Clear();
 			}
 			
 			// 'dup' removal
