@@ -127,6 +127,14 @@ namespace ICSharpCode.ILSpy.VB
 			OnDecompilationFinished(null);
 		}
 		
+		static readonly string[] projectImports = new[] {
+			"System.Diagnostics",
+			"Microsoft.VisualBasic",
+			"System",
+			"System.Collections",
+			"System.Collections.Generic"
+		};
+		
 		#region WriteProjectFile
 		void WriteProjectFile(TextWriter writer, IEnumerable<Tuple<string, string>> files, ModuleDefinition module)
 		{
@@ -243,6 +251,14 @@ namespace ICSharpCode.ILSpy.VB
 					}
 					w.WriteEndElement();
 				}
+				
+				w.WriteStartElement("ItemGroup"); // Imports
+				foreach (var import in projectImports.OrderBy(x => x)) {
+					w.WriteStartElement("Import");
+					w.WriteAttributeString("Include", import);
+					w.WriteEndElement();
+				}
+				w.WriteEndElement(); // </ItemGroup> (Imports)
 
 				w.WriteStartElement("Import");
 				w.WriteAttributeString("Project", "$(MSBuildToolsPath)\\Microsoft.VisualBasic.targets");
