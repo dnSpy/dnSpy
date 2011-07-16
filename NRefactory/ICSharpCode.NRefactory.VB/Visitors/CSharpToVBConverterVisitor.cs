@@ -837,6 +837,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				} else
 					type.ClassType = typeDeclaration.ClassType;
 				
+				if ((typeDeclaration.Modifiers & CSharp.Modifiers.Static) == CSharp.Modifiers.Static) {
+					type.ClassType = ClassType.Module;
+					typeDeclaration.Modifiers &= ~CSharp.Modifiers.Static;
+				}
+				
 				ConvertNodes(typeDeclaration.Attributes, type.Attributes);
 				ConvertNodes(typeDeclaration.ModifierTokens, type.ModifierTokens);
 				
