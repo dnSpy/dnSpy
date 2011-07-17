@@ -50,7 +50,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			new KeyValuePair<Modifiers, int>(Modifiers.Const, "Const".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Shared, "Shared".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Static, "Static".Length),
-			new KeyValuePair<Modifiers, int>(Modifiers.Override, "Override".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Overrides, "Overrides".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.ReadOnly, "ReadOnly".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.WriteOnly, "WriteOnly".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Shadows, "Shadows".Length),
@@ -109,8 +109,8 @@ namespace ICSharpCode.NRefactory.VB.Ast
 					return "Shared";
 				case Modifiers.Static:
 					return "Static";
-				case Modifiers.Override:
-					return "Override";
+				case Modifiers.Overrides:
+					return "Overrides";
 				case Modifiers.ReadOnly:
 					return "ReadOnly";
 				case Modifiers.Shadows:
