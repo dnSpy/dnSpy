@@ -2112,6 +2112,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			if (readable && !writeable)
 				mod |= Modifiers.ReadOnly;
 			
+			if ((modifier & CSharp.Modifiers.Override) == CSharp.Modifiers.Override)
+				mod |= Modifiers.Overrides;
+			if ((modifier & CSharp.Modifiers.Virtual) == CSharp.Modifiers.Virtual)
+				mod |= Modifiers.Overridable;
 			
 			return mod;
 		}
