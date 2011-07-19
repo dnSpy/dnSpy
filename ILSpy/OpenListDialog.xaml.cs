@@ -48,7 +48,8 @@ namespace ICSharpCode.ILSpy
 
 		void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			okButton.IsEnabled = listView.SelectedItems != null;
+			okButton.IsEnabled = listView.SelectedItem != null;
+			removeButton.IsEnabled = listView.SelectedItem != null;
 		}
 
 		void OKButton_Click(object sender, RoutedEventArgs e)
@@ -84,8 +85,7 @@ namespace ICSharpCode.ILSpy
 
 				if (dotnet4.assemblies.Count > 0)
 				{
-					manager.AssemblyLists.Add(dotnet4.ListName);
-					AssemblyListManager.SaveList(dotnet4);
+					manager.CreateList(dotnet4);
 				}
 			}
 
@@ -104,8 +104,7 @@ namespace ICSharpCode.ILSpy
 
 				if (dotnet35.assemblies.Count > 0)
 				{
-					manager.AssemblyLists.Add(dotnet35.ListName);
-					AssemblyListManager.SaveList(dotnet35);
+					manager.CreateList(dotnet35);
 				}
 			}
 
@@ -138,8 +137,7 @@ namespace ICSharpCode.ILSpy
 
 				if (mvc.assemblies.Count > 0)
 				{
-					manager.AssemblyLists.Add(mvc.ListName);
-					AssemblyListManager.SaveList(mvc);
+					manager.CreateList(mvc);
 				}
 			}
 		}
@@ -150,6 +148,17 @@ namespace ICSharpCode.ILSpy
 			string file = GacInterop.FindAssemblyInNetGac(reference);
 			if (file != null)
 				list.OpenAssembly(file);
+		}
+
+		private void CreateButton_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void RemoveButton_Click(object sender, RoutedEventArgs e)
+		{
+			if(listView.SelectedItem != null)
+				manager.DeleteList(listView.SelectedItem.ToString());
 		}
 
 	}
