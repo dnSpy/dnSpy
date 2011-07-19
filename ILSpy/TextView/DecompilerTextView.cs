@@ -456,7 +456,7 @@ namespace ICSharpCode.ILSpy.TextView
 					int ilOffset = DebugInformation.DebugStepInformation.Item2;
 					int line;
 					MemberReference member;
-					if (!DebugInformation.CodeMappings.ContainsKey(token))
+					if (DebugInformation.CodeMappings == null || !DebugInformation.CodeMappings.ContainsKey(token))
 						return;
 					
 					DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out member, out line);
