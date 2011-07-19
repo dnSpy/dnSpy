@@ -1,5 +1,5 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 
@@ -42,7 +42,9 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		public static readonly Role<Attribute> AttributeRole = new Role<Attribute>("Attribute");
 		public static readonly Role<VBTokenNode> TargetRole = new Role<VBTokenNode>("Target", VBTokenNode.Null);
 		
-		public VBTokenNode Target {
+		public AttributeTarget Target { get; set; }
+		
+		public VBTokenNode TargetKeyword {
 			get { return GetChildByRole(TargetRole); }
 			set { SetChildByRole(TargetRole, value); }
 		}
@@ -81,12 +83,13 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)
 		{
 			var node = other as Attribute;
-			return node != null && node.Target.DoMatch(this.Target, match) && node.Type.DoMatch(this.Type, match) && node.Arguments.DoMatch(this.Arguments, match);
+			return node != null && node.Target == Target && node.TargetKeyword.DoMatch(this.TargetKeyword, match) && node.Type.DoMatch(this.Type, match) && node.Arguments.DoMatch(this.Arguments, match);
 		}
 	}
 	
 	public enum AttributeTarget
 	{
+		None,
 		Assembly,
 		Module
 	}

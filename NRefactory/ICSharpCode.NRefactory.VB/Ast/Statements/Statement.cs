@@ -115,18 +115,18 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		}
 		
 		// Make debugging easier by giving Statements a ToString() implementation
-		public override string ToString()
-		{
-//			if (IsNull)
-//				return "Null";
-//			StringWriter w = new StringWriter();
-//			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingOptions()), null);
-//			string text = w.ToString().TrimEnd().Replace("\t", "").Replace(w.NewLine, " ");
-//			if (text.Length > 100)
-//				return text.Substring(0, 97) + "...";
-//			else
-//				return text;
-			throw new NotImplementedException();
-		}
+//		public override string ToString()
+//		{
+////			if (IsNull)
+////				return "Null";
+////			StringWriter w = new StringWriter();
+////			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingOptions()), null);
+////			string text = w.ToString().TrimEnd().Replace("\t", "").Replace(w.NewLine, " ");
+////			if (text.Length > 100)
+////				return text.Substring(0, 97) + "...";
+////			else
+////				return text;
+//			throw new NotImplementedException();
+//		}
 	}
 }

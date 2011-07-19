@@ -506,6 +506,26 @@ namespace Mono.Cecil {
 			return ((TypeDefinitionCollection) this.Types).GetType (@namespace ?? string.Empty, name);
 		}
 
+		public IEnumerable<TypeDefinition> GetTypes ()
+		{
+			return GetTypes (Types);
+		}
+
+		static IEnumerable<TypeDefinition> GetTypes (Collection<TypeDefinition> types)
+		{
+			for (int i = 0; i < types.Count; i++) {
+				var type = types [i];
+
+				yield return type;
+
+				if (!type.HasNestedTypes)
+					continue;
+
+				foreach (var nested in GetTypes (type.NestedTypes))
+					yield return nested;
+			}
+		}
+
 		static void CheckFullName (string fullName)
 		{
 			if (fullName == null)

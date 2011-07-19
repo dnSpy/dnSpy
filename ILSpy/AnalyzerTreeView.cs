@@ -17,6 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
 
@@ -44,8 +47,24 @@ namespace ICSharpCode.ILSpy
 		private AnalyzerTreeView()
 		{
 			this.ShowRoot = false;
-			this.Root = new AnalyzerTreeNode { Language = MainWindow.Instance.CurrentLanguage };
+			this.Root = new AnalyzerRootNode { Language = MainWindow.Instance.CurrentLanguage };
 			ContextMenuProvider.Add(this);
+			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_Instance_CurrentAssemblyListChanged;
+		}
+
+		void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Reset) {
+				this.Root.Children.Clear();
+			} else {
+				List<LoadedAssembly> removedAssemblies = new List<LoadedAssembly>();
+				if (e.OldItems != null)
+					removedAssemblies.AddRange(e.OldItems.Cast<LoadedAssembly>());
+				List<LoadedAssembly> addedAssemblies = new List<LoadedAssembly>();
+				if (e.NewItems != null)
+					addedAssemblies.AddRange(e.NewItems.Cast<LoadedAssembly>());
+				((AnalyzerRootNode)this.Root).HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
+			}
 		}
 
 		public void Show()
@@ -67,6 +86,19 @@ namespace ICSharpCode.ILSpy
 		void IPane.Closed()
 		{
 			this.Root.Children.Clear();
+		}
+		
+		sealed class AnalyzerRootNode : AnalyzerTreeNode
+		{
+			public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
+			{
+				this.Children.RemoveAll(
+					delegate(SharpTreeNode n) {
+						AnalyzerTreeNode an = n as AnalyzerTreeNode;
+						return an == null || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
+					});
+				return true;
+			}
 		}
 	}
 }

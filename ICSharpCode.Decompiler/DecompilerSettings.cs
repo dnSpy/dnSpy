@@ -224,6 +224,38 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		#region Options to aid VB decompilation
+		bool introduceIncrementAndDecrement = true;
+		
+		/// <summary>
+		/// Gets/Sets whether to use increment and decrement operators
+		/// </summary>
+		public bool IntroduceIncrementAndDecrement {
+			get { return introduceIncrementAndDecrement; }
+			set {
+				if (introduceIncrementAndDecrement != value) {
+					introduceIncrementAndDecrement = value;
+					OnPropertyChanged("IntroduceIncrementAndDecrement");
+				}
+			}
+		}
+		
+		bool alwaysGenerateExceptionVariableForCatchBlocks = false;
+		
+		/// <summary>
+		/// Gets/Sets whether to always generate exception variables in catch blocks
+		/// </summary>
+		public bool AlwaysGenerateExceptionVariableForCatchBlocks {
+			get { return alwaysGenerateExceptionVariableForCatchBlocks; }
+			set {
+				if (alwaysGenerateExceptionVariableForCatchBlocks != value) {
+					alwaysGenerateExceptionVariableForCatchBlocks = value;
+					OnPropertyChanged("AlwaysGenerateExceptionVariableForCatchBlocks");
+				}
+			}
+		}
+		#endregion
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)

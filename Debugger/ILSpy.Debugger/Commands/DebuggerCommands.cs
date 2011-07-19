@@ -10,7 +10,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Xml.Linq;
-
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
@@ -20,6 +19,7 @@ using ICSharpCode.ILSpy.Debugger.UI;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
 {
@@ -182,7 +182,14 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public bool IsVisible(SharpTreeNode[] selectedNodes)
 		{
-			return selectedNodes.All(n => n is AssemblyTreeNode && null != (n as AssemblyTreeNode).LoadedAssembly.AssemblyDefinition.EntryPoint);
+			return selectedNodes.All(
+				delegate (SharpTreeNode n) {
+					AssemblyTreeNode a = n as AssemblyTreeNode;
+					if (a == null)
+						return false;
+					AssemblyDefinition asm = a.LoadedAssembly.AssemblyDefinition;
+					return asm != null && asm.EntryPoint != null;
+				});
 		}
 		
 		public bool IsEnabled(SharpTreeNode[] selectedNodes)

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -46,10 +46,11 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			new KeyValuePair<Modifiers, int>(Modifiers.Overridable, "Overridable".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.NotInheritable, "NotInheritable".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.NotOverridable, "NotOverridable".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Dim, "Dim".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Const, "Const".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Shared, "Shared".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Static, "Static".Length),
-			new KeyValuePair<Modifiers, int>(Modifiers.Override, "Override".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Overrides, "Overrides".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.ReadOnly, "ReadOnly".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.WriteOnly, "WriteOnly".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Shadows, "Shadows".Length),
@@ -57,8 +58,17 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			new KeyValuePair<Modifiers, int>(Modifiers.Overloads, "Overloads".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.WithEvents, "WithEvents".Length),
 			new KeyValuePair<Modifiers, int>(Modifiers.Default, "Default".Length),
-			new KeyValuePair<Modifiers, int>(Modifiers.Dim, "Dim".Length),
-			
+			// parameter modifiers
+			new KeyValuePair<Modifiers, int>(Modifiers.Optional, "Optional".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.ByVal, "ByVal".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.ByRef, "ByRef".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.ParamArray, "ParamArray".Length),
+			// operator modifiers
+			new KeyValuePair<Modifiers, int>(Modifiers.Narrowing, "Narrowing".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Widening, "Widening".Length),
+			// VB 11 modifiers
+			new KeyValuePair<Modifiers, int>(Modifiers.Async, "Async".Length),
+			new KeyValuePair<Modifiers, int>(Modifiers.Iterator, "Iterator".Length),
 			// even though it's used for patterns only, it needs to be in this table to be usable in the AST
 			new KeyValuePair<Modifiers, int>(Modifiers.Any, "Any".Length)
 		};
@@ -99,8 +109,8 @@ namespace ICSharpCode.NRefactory.VB.Ast
 					return "Shared";
 				case Modifiers.Static:
 					return "Static";
-				case Modifiers.Override:
-					return "Override";
+				case Modifiers.Overrides:
+					return "Overrides";
 				case Modifiers.ReadOnly:
 					return "ReadOnly";
 				case Modifiers.Shadows:
@@ -117,8 +127,24 @@ namespace ICSharpCode.NRefactory.VB.Ast
 					return "Dim";
 				case Modifiers.WriteOnly:
 					return "WriteOnly";
+				case Modifiers.Optional:
+					return "Optional";
+				case Modifiers.ByVal:
+					return "ByVal";
+				case Modifiers.ByRef:
+					return "ByRef";
+				case Modifiers.ParamArray:
+					return "ParamArray";
+				case Modifiers.Widening:
+					return "Widening";
+				case Modifiers.Narrowing:
+					return "Narrowing";
+				case Modifiers.Async:
+					return "Async";
+				case Modifiers.Iterator:
+					return "Iterator";
 				default:
-					throw new NotSupportedException("Invalid value for Modifiers");
+					throw new NotSupportedException("Invalid value for Modifiers: " + modifier);
 			}
 		}
 	}

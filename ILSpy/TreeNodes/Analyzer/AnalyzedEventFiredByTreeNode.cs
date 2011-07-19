@@ -27,13 +27,12 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedEventFiredByTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedEventFiredByTreeNode : AnalyzerSearchTreeNode
 	{
 		private readonly EventDefinition analyzedEvent;
 		private readonly FieldDefinition eventBackingField;
 		private readonly MethodDefinition eventFiringMethod;
 
-		private readonly ThreadingSupport threading;
 		private ConcurrentDictionary<MethodDefinition, int> foundMethods;
 
 		public AnalyzedEventFiredByTreeNode(EventDefinition analyzedEvent)
@@ -42,8 +41,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				throw new ArgumentNullException("analyzedEvent");
 
 			this.analyzedEvent = analyzedEvent;
-			this.threading = new ThreadingSupport();
-			this.LazyLoading = true;
 
 			this.eventBackingField = GetBackingField(analyzedEvent);
 			this.eventFiringMethod = analyzedEvent.EventType.Resolve().Methods.First(md => md.Name == "Invoke");
@@ -54,26 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return "Raised By"; }
 		}
 
-		public override object Icon
-		{
-			get { return Images.Search; }
-		}
-
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
-
-		protected override void OnCollapsing()
-		{
-			if (threading.IsRunning) {
-				this.LazyLoading = true;
-				threading.Cancel();
-				this.Children.Clear();
-			}
-		}
-
-		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			foundMethods = new ConcurrentDictionary<MethodDefinition, int>();
 
@@ -84,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foundMethods = null;
 		}
 
-		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			// HACK: in lieu of proper flow analysis, I'm going to use a simple heuristic
 			// If the method accesses the event's backing field, and calls invoke on a delegate 

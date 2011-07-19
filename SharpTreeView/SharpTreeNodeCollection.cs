@@ -99,6 +99,8 @@ namespace ICSharpCode.TreeView
 				throw new ArgumentNullException("nodes");
 			ThrowOnReentrancy();
 			List<SharpTreeNode> newNodes = nodes.ToList();
+			if (newNodes.Count == 0)
+				return;
 			foreach (SharpTreeNode node in newNodes) {
 				ThrowIfValueIsNullOrHasParent(node);
 			}
@@ -117,6 +119,8 @@ namespace ICSharpCode.TreeView
 		public void RemoveRange(int index, int count)
 		{
 			ThrowOnReentrancy();
+			if (count == 0)
+				return;
 			var oldItems = list.GetRange(index, count);
 			list.RemoveRange(index, count);
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems, index));
@@ -172,6 +176,35 @@ namespace ICSharpCode.TreeView
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return list.GetEnumerator();
+		}
+		
+		public void RemoveAll(Predicate<SharpTreeNode> match)
+		{
+			if (match == null)
+				throw new ArgumentNullException("match");
+			ThrowOnReentrancy();
+			int firstToRemove = 0;
+			for (int i = 0; i < list.Count; i++) {
+				bool removeNode;
+				isRaisingEvent = true;
+				try {
+					removeNode = match(list[i]);
+				} finally {
+					isRaisingEvent = false;
+				}
+				if (!removeNode) {
+					if (firstToRemove < i) {
+						RemoveRange(firstToRemove, i - firstToRemove);
+						i = firstToRemove - 1;
+					} else {
+						firstToRemove = i + 1;
+					}
+					Debug.Assert(firstToRemove == i + 1);
+				}
+			}
+			if (firstToRemove < list.Count) {
+				RemoveRange(firstToRemove, list.Count - firstToRemove);
+			}
 		}
 	}
 }

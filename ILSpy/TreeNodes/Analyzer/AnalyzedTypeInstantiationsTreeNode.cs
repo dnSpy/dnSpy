@@ -27,10 +27,9 @@ using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	internal sealed class AnalyzedTypeInstantiationsTreeNode : AnalyzerTreeNode
+	internal sealed class AnalyzedTypeInstantiationsTreeNode : AnalyzerSearchTreeNode
 	{
 		private readonly TypeDefinition analyzedType;
-		private readonly ThreadingSupport threading;
 		private readonly bool isSystemObject;
 
 		public AnalyzedTypeInstantiationsTreeNode(TypeDefinition analyzedType)
@@ -39,8 +38,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				throw new ArgumentNullException("analyzedType");
 
 			this.analyzedType = analyzedType;
-			this.threading = new ThreadingSupport();
-			this.LazyLoading = true;
 
 			this.isSystemObject = (analyzedType.FullName == "System.Object");
 		}
@@ -50,36 +47,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return "Instantiated By"; }
 		}
 
-		public override object Icon
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
-			get { return Images.Search; }
-		}
-
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
-
-		protected override void OnCollapsing()
-		{
-			if (threading.IsRunning) {
-				this.LazyLoading = true;
-				threading.Cancel();
-				this.Children.Clear();
-			}
-		}
-
-		private IEnumerable<SharpTreeNode> FetchChildren(CancellationToken ct)
-		{
-			ScopedWhereUsedAnalyzer<SharpTreeNode> analyzer;
-
-			analyzer = new ScopedWhereUsedAnalyzer<SharpTreeNode>(analyzedType, FindReferencesInType);
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedType, FindReferencesInType);
 			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
 				yield return child;
 			}
 		}
 
-		private IEnumerable<SharpTreeNode> FindReferencesInType(TypeDefinition type)
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			foreach (MethodDefinition method in type.Methods) {
 				bool found = false;

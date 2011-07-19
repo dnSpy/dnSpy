@@ -1,5 +1,5 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -20,11 +20,9 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public ClassType ClassType { get; set; }
 		
-		public string Name {
-			get { return GetChildByRole(Roles.Identifier).Name; }
-			set { 
-				SetChildByRole(Roles.Identifier, new Identifier (value, AstLocation.Empty));
-			}
+		public Identifier Name {
+			get { return GetChildByRole(Roles.Identifier); }
+			set { SetChildByRole(Roles.Identifier, value); }
 		}
 		
 		public AstNodeCollection<TypeParameterDeclaration> TypeParameters {
@@ -33,6 +31,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public AstType InheritsType {
 			get { return GetChildByRole(InheritsTypeRole); }
+			set { SetChildByRole(InheritsTypeRole, value); }
 		}
 		
 		public AstNodeCollection<AstType> ImplementsTypes {
@@ -46,7 +45,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				MatchAttributesAndModifiers(t, match) &&
 				Members.DoMatch(t.Members, match) &&
 				ClassType == t.ClassType &&
-				MatchString(Name, t.Name) &&
+				Name.DoMatch(t.Name, match) &&
 				TypeParameters.DoMatch(t.TypeParameters, match) &&
 				InheritsType.DoMatch(t.InheritsType, match) &&
 				ImplementsTypes.DoMatch(t.ImplementsTypes, match);

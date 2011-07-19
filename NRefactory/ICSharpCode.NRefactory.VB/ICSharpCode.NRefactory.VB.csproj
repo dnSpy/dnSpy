@@ -3,16 +3,20 @@
   <PropertyGroup>
     <ProjectGuid>{7B82B671-419F-45F4-B778-D9286F996EFA}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.NRefactory.VB</RootNamespace>
     <AssemblyName>ICSharpCode.NRefactory.VB</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -46,16 +50,44 @@
     <Compile Include="Ast\AstLocation.cs" />
     <Compile Include="Ast\AstNode.cs" />
     <Compile Include="Ast\AstNodeCollection.cs" />
+    <Compile Include="Ast\Comment.cs" />
     <Compile Include="Ast\Enums.cs" />
+    <Compile Include="Ast\Expressions\AnonymousObjectCreationExpression.cs" />
+    <Compile Include="Ast\Expressions\ArrayCreateExpression.cs" />
+    <Compile Include="Ast\Expressions\ArrayInitializerExpression.cs" />
+    <Compile Include="Ast\Expressions\AssignmentExpression.cs" />
+    <Compile Include="Ast\Expressions\BinaryOperatorExpression.cs" />
+    <Compile Include="Ast\Expressions\CastExpression.cs" />
+    <Compile Include="Ast\Expressions\CollectionRangeVariableDeclaration.cs" />
+    <Compile Include="Ast\Expressions\ConditionalExpression.cs" />
+    <Compile Include="Ast\Expressions\EmptyExpression.cs" />
     <Compile Include="Ast\Expressions\Expression.cs" />
+    <Compile Include="Ast\Expressions\FieldInitializerExpression.cs" />
+    <Compile Include="Ast\Expressions\GetTypeExpression.cs" />
+    <Compile Include="Ast\Expressions\GetXmlNamespaceExpression.cs" />
+    <Compile Include="Ast\Expressions\IdentifierExpression.cs" />
+    <Compile Include="Ast\Expressions\InstanceExpression.cs" />
+    <Compile Include="Ast\Expressions\InvocationExpression.cs" />
+    <Compile Include="Ast\Expressions\LambdaExpression.cs" />
+    <Compile Include="Ast\Expressions\MemberAccessExpression.cs" />
+    <Compile Include="Ast\Expressions\NamedArgumentExpression.cs" />
+    <Compile Include="Ast\Expressions\ObjectCreationExpression.cs" />
+    <Compile Include="Ast\Expressions\ParenthesizedExpression.cs" />
+    <Compile Include="Ast\Expressions\QueryExpression.cs" />
     <Compile Include="Ast\Expressions\SimpleNameExpression.cs" />
     <Compile Include="Ast\Expressions\PrimitiveExpression.cs" />
+    <Compile Include="Ast\Expressions\TypeOfIsExpression.cs" />
+    <Compile Include="Ast\Expressions\TypeReferenceExpression.cs" />
+    <Compile Include="Ast\Expressions\UnaryOperatorExpression.cs" />
+    <Compile Include="Ast\Expressions\VariableInitializer.cs" />
     <Compile Include="Ast\Expressions\XmlIdentifier.cs" />
     <Compile Include="Ast\Expressions\XmlLiteralString.cs" />
     <Compile Include="Ast\General\Attribute.cs" />
     <Compile Include="Ast\General\AttributeBlock.cs" />
     <Compile Include="Ast\General\AttributedNode.cs" />
     <Compile Include="Ast\General\CompilationUnit.cs" />
+    <Compile Include="Ast\General\EventMemberSpecifier.cs" />
+    <Compile Include="Ast\General\InterfaceMemberSpecifier.cs" />
     <Compile Include="Ast\General\ParameterDeclaration.cs" />
     <Compile Include="Ast\General\TypeParameterDeclaration.cs" />
     <Compile Include="Ast\Generated.cs" />
@@ -70,7 +102,35 @@
     <Compile Include="Ast\Identifier.cs" />
     <Compile Include="Ast\INullable.cs" />
     <Compile Include="Ast\Statements\BlockStatement.cs" />
+    <Compile Include="Ast\Statements\ContinueStatement.cs" />
+    <Compile Include="Ast\Statements\DoLoopStatement.cs" />
+    <Compile Include="Ast\Statements\ExitStatement.cs" />
+    <Compile Include="Ast\Statements\ExpressionStatement.cs" />
+    <Compile Include="Ast\Statements\ForEachStatement.cs" />
+    <Compile Include="Ast\Statements\ForStatement.cs" />
+    <Compile Include="Ast\Statements\GoToStatement.cs" />
+    <Compile Include="Ast\Statements\IfElseStatement.cs" />
+    <Compile Include="Ast\Statements\LabelDeclarationStatement.cs" />
+    <Compile Include="Ast\Statements\LocalDeclarationStatement.cs" />
+    <Compile Include="Ast\Statements\ReturnStatement.cs" />
+    <Compile Include="Ast\Statements\SelectStatement.cs" />
     <Compile Include="Ast\Statements\Statement.cs" />
+    <Compile Include="Ast\Statements\SyncLockStatement.cs" />
+    <Compile Include="Ast\Statements\ThrowStatement.cs" />
+    <Compile Include="Ast\Statements\TryStatement.cs" />
+    <Compile Include="Ast\Statements\UsingStatement.cs" />
+    <Compile Include="Ast\Statements\WhileStatement.cs" />
+    <Compile Include="Ast\Statements\WithStatement.cs" />
+    <Compile Include="Ast\Statements\YieldStatement.cs" />
+    <Compile Include="Ast\TypeMembers\Accessor.cs" />
+    <Compile Include="Ast\TypeMembers\ConstructorDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\EventDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\ExternalMethodDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\FieldDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\MethodDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\OperatorDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\PropertyDeclaration.cs" />
+    <Compile Include="Ast\TypeMembers\VariableDeclarator.cs" />
     <Compile Include="Ast\TypeName\AstType.cs" />
     <Compile Include="Ast\TypeName\ComposedType.cs" />
     <Compile Include="Ast\TypeName\PrimitiveType.cs" />
@@ -122,6 +182,7 @@
     <Compile Include="VBParser.cs" />
     <Compile Include="Visitors\AbstractAstTransformer.cs" />
     <Compile Include="Visitors\AbstractAstVisitor.cs" />
+    <Compile Include="Visitors\CSharpToVBConverterVisitor.cs" />
     <Compile Include="Visitors\NodeTrackingAstVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +191,7 @@
     <Folder Include="Ast\General" />
     <Folder Include="Ast\GlobalScope" />
     <Folder Include="Ast\Expressions" />
+    <Folder Include="Ast\TypeMembers" />
     <Folder Include="Ast\Statements" />
     <Folder Include="Ast\TypeName" />
     <Folder Include="Lexer" />

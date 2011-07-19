@@ -1,5 +1,5 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 
@@ -25,7 +25,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Const           = 0x0200,
 		Shared          = 0x0400,
 		Static          = 0x0800,
-		Override        = 0x1000,
+		Overrides        = 0x1000,
 		ReadOnly        = 0x2000,
 		Shadows         = 0x4000,
 		Partial         = 0x8000,
@@ -44,6 +44,12 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		ByRef      = 0x400000,
 		ParamArray = 0x800000,
 		Optional   = 0x1000000,
+		
+		Narrowing  = 0x2000000,
+		Widening   = 0x4000000,
+		
+		Iterator   = 0x8000000,
+		Async      = 0x10000000,
 		
 		/// <summary>
 		/// Special value used to match any modifiers during pattern matching.
@@ -67,13 +73,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Ref
 	}
 	
-	public enum VarianceModifier
-	{
-		Invariant,
-		Covariant,
-		Contravariant
-	};
-	
 	public enum AssignmentOperatorType
 	{
 		None,
@@ -83,7 +82,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Subtract,
 		Multiply,
 		Divide,
-		Modulus,
 		
 		Power,         // (VB only)
 		DivideInteger, // (VB only)
@@ -91,117 +89,6 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		ShiftLeft,
 		ShiftRight,
-		
-		BitwiseAnd,
-		BitwiseOr,
-		ExclusiveOr,
-	}
-	
-	public enum BinaryOperatorType
-	{
-		None,
-		
-		/// <summary>'&amp;' in C#, 'And' in VB.</summary>
-		BitwiseAnd,
-		/// <summary>'|' in C#, 'Or' in VB.</summary>
-		BitwiseOr,
-		/// <summary>'&amp;&amp;' in C#, 'AndAlso' in VB.</summary>
-		LogicalAnd,
-		/// <summary>'||' in C#, 'OrElse' in VB.</summary>
-		LogicalOr,
-		/// <summary>'^' in C#, 'Xor' in VB.</summary>
-		ExclusiveOr,
-		
-		/// <summary>&gt;</summary>
-		GreaterThan,
-		/// <summary>&gt;=</summary>
-		GreaterThanOrEqual,
-		/// <summary>'==' in C#, '=' in VB.</summary>
-		Equality,
-		/// <summary>'!=' in C#, '&lt;&gt;' in VB.</summary>
-		InEquality,
-		/// <summary>&lt;</summary>
-		LessThan,
-		/// <summary>&lt;=</summary>
-		LessThanOrEqual,
-		
-		/// <summary>+</summary>
-		Add,
-		/// <summary>-</summary>
-		Subtract,
-		/// <summary>*</summary>
-		Multiply,
-		/// <summary>/</summary>
-		Divide,
-		/// <summary>'%' in C#, 'Mod' in VB.</summary>
-		Modulus,
-		/// <summary>VB-only: \</summary>
-		DivideInteger,
-		/// <summary>VB-only: ^</summary>
-		Power,
-		/// <summary>VB-only: &amp;</summary>
-		Concat,
-		
-		/// <summary>C#: &lt;&lt;</summary>
-		ShiftLeft,
-		/// <summary>C#: &gt;&gt;</summary>
-		ShiftRight,
-		/// <summary>VB-only: Is</summary>
-		ReferenceEquality,
-		/// <summary>VB-only: IsNot</summary>
-		ReferenceInequality,
-		
-		/// <summary>VB-only: Like</summary>
-		Like,
-		/// <summary>
-		/// 	C#: ??
-		/// 	VB: IF(x, y)
-		/// </summary>
-		NullCoalescing,
-		
-		/// <summary>VB-only: !</summary>
-		DictionaryAccess
-	}
-	
-	public enum CastType
-	{
-		/// <summary>
-		/// direct cast (C#, VB "DirectCast")
-		/// </summary>
-		Cast,
-		/// <summary>
-		/// try cast (C# "as", VB "TryCast")
-		/// </summary>
-		TryCast,
-		/// <summary>
-		/// converting cast (VB "CType")
-		/// </summary>
-		Conversion,
-		/// <summary>
-		/// primitive converting cast (VB "CString" etc.)
-		/// </summary>
-		PrimitiveConversion
-	}
-	
-	public enum UnaryOperatorType
-	{
-		None,
-		Not,
-		BitNot,
-		
-		Minus,
-		Plus,
-		
-		Increment,
-		Decrement,
-		
-		PostIncrement,
-		PostDecrement,
-		
-		/// <summary>Dereferencing pointer</summary>
-		Dereference,
-		/// <summary>Get address of</summary>
-		AddressOf
 	}
 	
 	public enum ContinueType
@@ -215,36 +102,10 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	public enum ConditionType
 	{
 		None,
-		Until,
-		While,
+		LoopUntil,
+		LoopWhile,
+		DoUntil,
 		DoWhile
-	}
-	
-	public enum ConditionPosition
-	{
-		None,
-		Start,
-		End
-	}
-	
-	public enum ExitType
-	{
-		None,
-		Sub,
-		Function,
-		Property,
-		Do,
-		For,
-		While,
-		Select,
-		Try
-	}
-	
-	public enum ConstructorInitializerType
-	{
-		None,
-		Base,
-		This
 	}
 	
 	public enum ConversionType
@@ -254,66 +115,10 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Explicit
 	}
 	
-	public enum OverloadableOperatorType
-	{
-		None,
-		
-		Add,
-		Subtract,
-		Multiply,
-		Divide,
-		Modulus,
-		Concat,
-		
-		UnaryPlus,
-		UnaryMinus,
-		
-		Not,
-		BitNot,
-		
-		BitwiseAnd,
-		BitwiseOr,
-		ExclusiveOr,
-		
-		ShiftLeft,
-		ShiftRight,
-		
-		GreaterThan,
-		GreaterThanOrEqual,
-		Equality,
-		InEquality,
-		LessThan,
-		LessThanOrEqual,
-		
-		Increment,
-		Decrement,
-		
-		IsTrue,
-		IsFalse,
-		
-		// VB specific
-		Like,
-		Power,
-		CType,
-		DivideInteger
-	}
-	
-	///<summary>
-	/// Charset types, used in external methods
-	/// declarations (VB only).
-	///</summary>
-	public enum CharsetModifier
-	{
-		None,
-		Auto,
-		Unicode,
-		Ansi
-	}
-	
 	/// <summary>
 	/// Specifies the ordering direction of a QueryExpressionOrdering node.
 	/// </summary>
-	public enum QueryExpressionOrderingDirection
+	public enum QueryOrderingDirection
 	{
 		None,
 		Ascending,
@@ -324,7 +129,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	/// Specifies the partition type for a VB.NET
 	/// query expression.
 	/// </summary>
-	public enum QueryExpressionPartitionType
+	public enum PartitionKind
 	{
 		Take,
 		TakeWhile,

@@ -79,5 +79,23 @@ namespace ICSharpCode.NRefactory.VB
 		public virtual void EndNode(AstNode node)
 		{
 		}
+		
+		public void WriteComment(bool isDocumentation, string content)
+		{
+			WriteIndentation();
+			if (isDocumentation)
+				textWriter.Write("'''");
+			else
+				textWriter.Write("'");
+			textWriter.WriteLine(content);
+		}
+		
+		public void MarkFoldStart()
+		{
+		}
+		
+		public void MarkFoldEnd()
+		{
+		}
 	}
 }

@@ -6,3 +6,4 @@ obj
 *.userprefs
 *.xml
 *.nupkg
+**/test-results/*

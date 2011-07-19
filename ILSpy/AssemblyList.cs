@@ -148,6 +148,20 @@ namespace ICSharpCode.ILSpy
 			lock (assemblies) {
 				assemblies.Remove(assembly);
 			}
+			RequestGC();
+		}
+		
+		static bool gcRequested;
+		
+		void RequestGC()
+		{
+			if (gcRequested) return;
+			gcRequested = true;
+			App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(
+				delegate {
+					gcRequested = false;
+					GC.Collect();
+				}));
 		}
 		
 		public void Sort(IComparer<LoadedAssembly> comparer)

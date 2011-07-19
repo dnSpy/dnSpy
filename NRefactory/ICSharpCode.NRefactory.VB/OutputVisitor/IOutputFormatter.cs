@@ -16,7 +16,7 @@ namespace ICSharpCode.NRefactory.VB
 		/// <summary>
 		/// Writes an identifier.
 		/// If the identifier conflicts with a keyword, the output visitor will
-		/// call <c>WriteToken("@")</c> before calling WriteIdentifier().
+		/// call <c>WriteToken("[")</c> before and <c>WriteToken("]")</c> after calling WriteIdentifier().
 		/// </summary>
 		void WriteIdentifier(string identifier);
 		
@@ -35,5 +35,10 @@ namespace ICSharpCode.NRefactory.VB
 		void Unindent();
 		
 		void NewLine();
+		
+		void WriteComment(bool isDocumentation, string content);
+		
+		void MarkFoldStart();
+		void MarkFoldEnd();
 	}
 }

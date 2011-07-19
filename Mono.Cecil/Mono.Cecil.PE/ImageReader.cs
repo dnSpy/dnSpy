@@ -276,9 +276,6 @@ namespace Mono.Cecil.PE {
 
 				sections [i] = section;
 
-				if (section.Name == ".reloc")
-					continue;
-
 				ReadSectionData (section);
 			}
 
