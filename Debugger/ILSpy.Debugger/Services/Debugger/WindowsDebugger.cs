@@ -549,7 +549,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			breakpoint = new ILBreakpoint(
 				debugger,
 				bookmark.MemberReference.DeclaringType.FullName,
-				bookmark.MemberReference.FullName,
 				bookmark.LineNumber,
 				bookmark.MemberReference.MetadataToken.ToInt32(),
 				bookmark.ILRange.From,
@@ -816,6 +815,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			int token = frame.MethodInfo.MetadataToken;
 			int ilOffset = frame.IP;
 			string fullName = debugType.FullNameWithoutGenericArguments;
+			
+			DebugInformation.LoadedAssemblies =  MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Select(a => a.AssemblyDefinition);
 			
 			if (DebugInformation.LoadedAssemblies == null)
 				throw new NullReferenceException("No DebugData assemblies!");
