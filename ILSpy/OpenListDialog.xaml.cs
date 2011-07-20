@@ -55,7 +55,6 @@ namespace ICSharpCode.ILSpy
 		void OKButton_Click(object sender, RoutedEventArgs e)
 		{
 			this.DialogResult = true;
-			Close();
 		}
 
 		public string SelectedListName
@@ -152,12 +151,29 @@ namespace ICSharpCode.ILSpy
 
 		private void CreateButton_Click(object sender, RoutedEventArgs e)
 		{
+			CreateListDialog dlg = new CreateListDialog();
+			dlg.Owner = this;
+			dlg.Closing += (s, args) =>
+			{
+				if (dlg.DialogResult == true)
+				{
+					if (manager.AssemblyLists.Contains(dlg.NewListName))
+					{
+						args.Cancel = true;
+						MessageBox.Show("A list with the same name was found.", null, MessageBoxButton.OK);
+					}
+				}
+			};
+			if (dlg.ShowDialog() == true)
+			{
+				manager.CreateList(new AssemblyList(dlg.NewListName));
+			}
 
 		}
 
 		private void RemoveButton_Click(object sender, RoutedEventArgs e)
 		{
-			if(listView.SelectedItem != null)
+			if (listView.SelectedItem != null)
 				manager.DeleteList(listView.SelectedItem.ToString());
 		}
 

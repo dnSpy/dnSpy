@@ -5,7 +5,7 @@
 	WindowStartupLocation="CenterOwner"
 	ResizeMode="CanResizeWithGrip"
 	MinWidth="380"
-	MinHeight="150"
+	MinHeight="250"
 	Height="350"
 	Width="380"
 	FocusManager.FocusedElement="{Binding ElementName=listView}">

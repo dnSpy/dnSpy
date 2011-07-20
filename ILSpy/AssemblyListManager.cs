@@ -91,16 +91,18 @@ namespace ICSharpCode.ILSpy
 				});
 		}
 
-		public void CreateList(AssemblyList list)
+		public bool CreateList(AssemblyList list)
 		{
 			if (!AssemblyLists.Contains(list.ListName))
 			{
 				AssemblyLists.Add(list.ListName);
 				SaveList(list);
+				return true;
 			}
+			return false;
 		}
 
-		public void DeleteList(string Name)
+		public bool DeleteList(string Name)
 		{
 			if (AssemblyLists.Contains(Name))
 			{
@@ -118,7 +120,9 @@ namespace ICSharpCode.ILSpy
 						if (listElement != null)
 							listElement.Remove();
 					});
+				return true;
 			}
+			return false;
 		}
 	}
 }
