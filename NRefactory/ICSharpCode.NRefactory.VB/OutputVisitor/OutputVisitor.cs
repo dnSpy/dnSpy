@@ -1705,6 +1705,11 @@ namespace ICSharpCode.NRefactory.VB
 			WriteCommaSeparatedListInParenthesis(objectCreationExpression.Arguments, false);
 			if (!objectCreationExpression.Initializer.IsNull) {
 				Space();
+				if (objectCreationExpression.Initializer.Elements.Any(x => x is FieldInitializerExpression))
+					WriteKeyword("With");
+				else
+					WriteKeyword("From");
+				Space();
 				objectCreationExpression.Initializer.AcceptVisitor(this, data);
 			}
 			
@@ -1870,7 +1875,7 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(fieldInitializerExpression);
 			
-			if (fieldInitializerExpression.IsKey) {
+			if (fieldInitializerExpression.IsKey && fieldInitializerExpression.Parent is AnonymousObjectCreationExpression) {
 				WriteKeyword("Key");
 				Space();
 			}
