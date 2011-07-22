@@ -115,7 +115,7 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(parameterDeclaration);
 			WriteAttributes(parameterDeclaration.Attributes);
 			WriteModifiers(parameterDeclaration.ModifierTokens);
-			WriteIdentifier(parameterDeclaration.Name.Name);
+			parameterDeclaration.Name.AcceptVisitor(this, data);
 			if (!parameterDeclaration.Type.IsNull) {
 				WriteKeyword("As");
 				parameterDeclaration.Type.AcceptVisitor(this, data);
@@ -1053,7 +1053,7 @@ namespace ICSharpCode.NRefactory.VB
 		#endregion
 		
 		#region IsKeyword Test
-		static readonly HashSet<string> unconditionalKeywords = new HashSet<string> {
+		static readonly HashSet<string> unconditionalKeywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
 			"AddHandler", "AddressOf", "Alias", "And", "AndAlso", "As", "Boolean", "ByRef", "Byte",
 			"ByVal", "Call", "Case", "Catch", "CBool", "CByte", "CChar", "CInt", "Class", "CLng",
 			"CObj", "Const", "Continue", "CSByte", "CShort", "CSng", "CStr", "CType", "CUInt",
