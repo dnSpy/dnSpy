@@ -91,7 +91,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 						// add IL code mappings - used in debugger
 						methodMapping.MemberCodeMappings.Add(
 							new SourceCodeMapping() {
-								SourceCodeLine = output.CurrentLine,
+								SourceCodeLine = output.Location.Line,
 								ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? method.Body.CodeSize : inst.Next.Offset },
 								MemberMapping = methodMapping
 							});
@@ -194,7 +194,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					if (currentMethodMapping != null) {
 						currentMethodMapping.MemberCodeMappings.Add(
 							new SourceCodeMapping() {
-								SourceCodeLine = output.CurrentLine,
+								SourceCodeLine = output.Location.Line,
 								ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? codeSize : inst.Next.Offset },
 								MemberMapping = currentMethodMapping
 							});
