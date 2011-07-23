@@ -398,7 +398,7 @@ namespace ICSharpCode.ILSpy
 					case TypeCode.Int64:
 						TypeCode tc = Type.GetTypeCode(val.GetType());
 						if (tc >= TypeCode.SByte && tc <= TypeCode.UInt64)
-							return Convert.ToInt64(val) == (long)searchTermLiteralValue;
+							return CSharpPrimitiveCast.Cast(TypeCode.Int64, val, false).Equals(searchTermLiteralValue);
 						else
 							return false;
 					case TypeCode.Single:
