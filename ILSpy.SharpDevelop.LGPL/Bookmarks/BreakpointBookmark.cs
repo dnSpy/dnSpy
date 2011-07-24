@@ -63,6 +63,8 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 					isEnabled = value;
 					if (IsEnabledChanged != null)
 						IsEnabledChanged(this, EventArgs.Empty);
+					if (ImageChanged != null)
+					    ImageChanged(this, EventArgs.Empty); // Image property reflects IsEnabled property
 					Redraw();
 				}
 			}
@@ -85,6 +87,8 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		    return IsEnabled ? Images.Breakpoint : Images.DisabledBreakpoint;
 			}
 		}
+		
+		public event EventHandler ImageChanged;
 		
 		public override ITextMarker CreateMarker(ITextMarkerService markerService, int offset, int length)
 		{
