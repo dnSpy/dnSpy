@@ -28,8 +28,7 @@ namespace ICSharpCode.Decompiler
 		readonly TextWriter writer;
 		int indent;
 		bool needsIndent;
-		int lineNumber = 1;
-		int columnNumber = 1;
+		TextOutputLocation location = new TextOutputLocation { Line = 1, Column = 1};
 		
 		public PlainTextOutput(TextWriter writer)
 		{
@@ -43,12 +42,8 @@ namespace ICSharpCode.Decompiler
 			this.writer = new StringWriter();
 		}
 		
-		public int CurrentLine {
-			get { return lineNumber; }
-		}
-		
-		public int CurrentColumn { 
-			get { return columnNumber; }
+		public TextOutputLocation Location { 
+			get { return location; }
 		}
 		
 		public override string ToString()
@@ -72,7 +67,7 @@ namespace ICSharpCode.Decompiler
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
 					writer.Write('\t');
-					columnNumber += TAB_SIZE - 1;
+					location.Column += TAB_SIZE - 1;
 				}
 			}
 		}
@@ -81,22 +76,22 @@ namespace ICSharpCode.Decompiler
 		{
 			WriteIndent();
 			writer.Write(ch);
-			columnNumber++;
+			location.Column++;
 		}
 		
 		public void Write(string text)
 		{
 			WriteIndent();
 			writer.Write(text);
-			columnNumber += text.Length;
+			location.Column += text.Length;
 		}
 		
 		public void WriteLine()
 		{
-			lineNumber++;
+			location.Line++;
 			writer.WriteLine();
 			needsIndent = true;
-			columnNumber = TAB_SIZE * indent;
+			location.Column = TAB_SIZE * indent;
 		}
 		
 		public void WriteDefinition(string text, object definition)

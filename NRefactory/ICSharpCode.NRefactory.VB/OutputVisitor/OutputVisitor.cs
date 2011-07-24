@@ -2145,8 +2145,10 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("Case");
 			if (caseStatement.Clauses.Count == 1 && caseStatement.Clauses.First().Expression.IsNull)
 				WriteKeyword("Else");
-			else
+			else {
+				Space();
 				WriteCommaSeparatedList(caseStatement.Clauses);
+			}
 			NewLine();
 			Indent();
 			caseStatement.Body.AcceptVisitor(this, data);
