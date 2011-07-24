@@ -81,10 +81,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (!settings.ShowInternalApi && !IsPublicAPI)
 				return FilterResult.Hidden;
 			if (settings.SearchTermMatches(type.Name)) {
-				if (type.IsNested && !settings.Language.ShowMember(type))
-					return FilterResult.Hidden;
-				else
+				if (settings.Language.ShowMember(type))
 					return FilterResult.Match;
+				else
+					return FilterResult.Hidden;
 			} else {
 				return FilterResult.Recurse;
 			}

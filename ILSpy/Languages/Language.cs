@@ -207,7 +207,7 @@ namespace ICSharpCode.ILSpy
 				
 				var nodes = TreeTraversal
 					.PreOrder((AstNode)builder.CompilationUnit, n => n.Children)
-					.Where(n => n is AttributedNode && n.Annotation<Tuple<int, int>>() != null);
+					.Where(n => n is AttributedNode && n.Annotation<TextOutputLocation>() != null);
 				
 				OnDecompilationFinished(new DecompileEventArgs {
 				                        	CodeMappings = builder.CodeMappings,
