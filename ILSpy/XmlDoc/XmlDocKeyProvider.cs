@@ -50,6 +50,8 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				b.Append('.');
 				if (member.Name == ".ctor")
 					b.Append("#ctor");
+				else if (member.Name == "..ctor")
+					b.Append("#cctor");
 				else
 					b.Append(member.Name);
 				IList<ParameterDefinition> parameters;
