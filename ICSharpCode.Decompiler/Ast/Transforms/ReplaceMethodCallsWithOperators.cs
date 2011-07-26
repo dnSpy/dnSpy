@@ -51,6 +51,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			base.VisitInvocationExpression(invocationExpression, data);
 			
+			return ProcessInvocationExpression(invocationExpression);
+		}
+
+		internal static object ProcessInvocationExpression(InvocationExpression invocationExpression)
+		{			
 			MethodReference methodRef = invocationExpression.Annotation<MethodReference>();
 			if (methodRef == null)
 				return null;
@@ -115,7 +120,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return null;
 		}
 		
-		BinaryOperatorType? GetBinaryOperatorTypeFromMetadataName(string name)
+		static BinaryOperatorType? GetBinaryOperatorTypeFromMetadataName(string name)
 		{
 			switch (name) {
 				case "op_Addition":
@@ -155,7 +160,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 		}
 		
-		UnaryOperatorType? GetUnaryOperatorTypeFromMetadataName(string name)
+		static UnaryOperatorType? GetUnaryOperatorTypeFromMetadataName(string name)
 		{
 			switch (name) {
 				case "op_LogicalNot":

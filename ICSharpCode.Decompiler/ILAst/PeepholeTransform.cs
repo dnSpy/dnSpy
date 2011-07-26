@@ -403,7 +403,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				op = op.Arguments[0];
 				nullable = true;
 			}
-			if (!CanBeRepresentedAsCompoundAssignment(op.Code))
+			if (!CanBeRepresentedAsCompoundAssignment(op))
 				return false;
 
 			ILExpression ldelem = op.Arguments[0];
@@ -426,9 +426,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			return true;
 		}
 		
-		static bool CanBeRepresentedAsCompoundAssignment(ILCode code)
+		static bool CanBeRepresentedAsCompoundAssignment(ILExpression expr)
 		{
-			switch (code) {
+			switch (expr.Code) {
 				case ILCode.Add:
 				case ILCode.Add_Ovf:
 				case ILCode.Add_Ovf_Un:
@@ -449,6 +449,24 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Shr:
 				case ILCode.Shr_Un:
 					return true;
+				case ILCode.Call:
+					var m = expr.Operand as MethodReference;
+					if (m == null || m.HasThis || expr.Arguments.Count != 2) return false;
+					switch (m.Name) {
+						case "op_Addition":
+						case "op_Subtraction":
+						case "op_Multiply":
+						case "op_Division":
+						case "op_Modulus":
+						case "op_BitwiseAnd":
+						case "op_BitwiseOr":
+						case "op_ExclusiveOr":
+						case "op_LeftShift":
+						case "op_RightShift":
+							return true;
+						default:
+							return false;
+					}
 				default:
 					return false;
 			}

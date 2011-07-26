@@ -429,7 +429,13 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.CompoundAssignment:
 					{
 						CastExpression cast = arg1 as CastExpression;
-						BinaryOperatorExpression boe = (BinaryOperatorExpression)(cast != null ? cast.Expression : arg1);
+						var boe = cast != null ? (BinaryOperatorExpression)cast.Expression : arg1 as BinaryOperatorExpression;
+						// AssignmentExpression doesn't support overloaded operators so they have to be processed to BinaryOperatorExpression
+						if (boe == null) {
+							var tmp = new ParenthesizedExpression(arg1);
+							ReplaceMethodCallsWithOperators.ProcessInvocationExpression((InvocationExpression)arg1);
+							boe = (BinaryOperatorExpression)tmp.Expression;
+						}
 						var assignment = new Ast.AssignmentExpression {
 							Left = boe.Left.Detach(),
 							Operator = ReplaceMethodCallsWithOperators.GetAssignmentOperatorForBinaryOperator(boe.Operator),

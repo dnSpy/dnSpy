@@ -538,8 +538,7 @@ public static class NullableOperators
 		a %= x();
 
 		Console.WriteLine(x() + a);
-		// TODO: compound assignment with custom operators needs to be fixed first
-		//list[0] += x();
+		list[0] += x();
 	}
 
 	public static void NumberValueConst(decimal? a)
@@ -713,8 +712,7 @@ public static class NullableOperators
 		a >>= i();
 
 		Console.WriteLine(x() + a);
-		// TODO: compound assignment with custom operators needs to be fixed first
-		//list[0] += x();
+		list[0] += x();
 	}
 }
 
