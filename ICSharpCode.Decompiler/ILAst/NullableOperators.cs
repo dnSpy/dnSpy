@@ -501,7 +501,10 @@ namespace ICSharpCode.Decompiler.ILAst
 								n.Arguments[0] = n.Arguments[0].Arguments[0];
 								n.Arguments[1] = n.Arguments[1].Arguments[0];
 							}
-						} else if (n.Code != ILCode.Ceq && n.Code != ILCode.Cne) expr.Code = ILCode.NullableOf;
+						} else if (n.Code != ILCode.Ceq && n.Code != ILCode.Cne) {
+							expr.Code = ILCode.NullableOf;
+							expr.InferredType = expr.ExpectedType = null;
+						}
 						return true;
 					}
 				}

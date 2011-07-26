@@ -397,9 +397,21 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			
 			ILExpression op = expr.Arguments.Last();
+			// in case of compound assignments with nullable values the result is inside NullableOf and the operand is inside ValueOf
+			bool nullable = false;
+			if (op.Code == ILCode.NullableOf) {
+				op = op.Arguments[0];
+				nullable = true;
+			}
 			if (!CanBeRepresentedAsCompoundAssignment(op.Code))
 				return false;
+
 			ILExpression ldelem = op.Arguments[0];
+			if (nullable) {
+				if (ldelem.Code != ILCode.ValueOf)
+					return false;
+				ldelem = ldelem.Arguments[0];
+			}
 			if (ldelem.Code != expectedLdelemCode)
 				return false;
 			Debug.Assert(ldelem.Arguments.Count == expr.Arguments.Count - 1);

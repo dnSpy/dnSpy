@@ -131,7 +131,7 @@ public static class NullableOperators
 		a ^= b;
 	}
 
-	public static void BoolValueComplex(bool? a, Func<bool> x)
+	public static void BoolValueComplex(bool? a, Func<bool> x, bool?[] list)
 	{
 		Console.WriteLine(a == x());
 		Console.WriteLine(a != x());
@@ -151,6 +151,7 @@ public static class NullableOperators
 		a ^= x();
 
 		Console.WriteLine(x() ^ a);
+		list[0] ^= x();
 	}
 
 	public static void BoolValueConst(bool? a)
@@ -315,7 +316,7 @@ public static class NullableOperators
 		a >>= b;
 	}
 
-	public static void IntValueComplex(int? a, Func<int> x)
+	public static void IntValueComplex(int? a, Func<int> x, int?[] list)
 	{
 		Console.WriteLine(a == x());
 		Console.WriteLine(a != x());
@@ -348,6 +349,7 @@ public static class NullableOperators
 		a >>= x();
 
 		Console.WriteLine(x() + a);
+		list[0] += x();
 	}
 
 	public static void IntValueConst(int? a)
@@ -513,7 +515,7 @@ public static class NullableOperators
 		a %= b;
 	}
 
-	public static void NumberValueComplex(decimal? a, Func<decimal> x)
+	public static void NumberValueComplex(decimal? a, Func<decimal> x, decimal?[] list)
 	{
 		Console.WriteLine(a == x());
 		Console.WriteLine(a != x());
@@ -536,6 +538,8 @@ public static class NullableOperators
 		a %= x();
 
 		Console.WriteLine(x() + a);
+		// TODO: compound assignment with custom operators needs to be fixed first
+		//list[0] += x();
 	}
 
 	public static void NumberValueConst(decimal? a)
@@ -676,7 +680,7 @@ public static class NullableOperators
 		a >>= i;
 	}
 
-	public static void StructValueComplex(TS? a, Func<TS> x, Func<int> i)
+	public static void StructValueComplex(TS? a, Func<TS> x, Func<int> i, TS?[] list)
 	{
 		Console.WriteLine(a == x());
 		Console.WriteLine(a != x());
@@ -709,6 +713,8 @@ public static class NullableOperators
 		a >>= i();
 
 		Console.WriteLine(x() + a);
+		// TODO: compound assignment with custom operators needs to be fixed first
+		//list[0] += x();
 	}
 }
 

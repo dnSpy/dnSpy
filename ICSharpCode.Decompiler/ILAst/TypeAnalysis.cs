@@ -555,7 +555,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				case ILCode.CompoundAssignment:
 					{
-						TypeReference varType = InferTypeForExpression(expr.Arguments[0].Arguments[0], null);
+						var op = expr.Arguments[0];
+						if (op.Code == ILCode.NullableOf) op = op.Arguments[0].Arguments[0];
+						var varType = InferTypeForExpression(op.Arguments[0], null);
 						if (forceInferChildren) {
 							InferTypeForExpression(expr.Arguments[0], varType);
 						}
