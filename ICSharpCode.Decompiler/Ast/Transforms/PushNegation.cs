@@ -150,9 +150,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		public override object VisitParenthesizedExpression(ParenthesizedExpression expr, object data)
 		{
 			// extra parentheses are redundant after this transformation
-			var res = expr.Expression;
-			expr.ReplaceWith(res);
-			return res.AcceptVisitor(this, data);
+			if(expr.Annotation<InvisibleParenthesis>() != null)	{
+				var res = expr.Expression;
+				expr.ReplaceWith(res);
+				return res.AcceptVisitor(this, data);
+			}
+			return base.VisitParenthesizedExpression(expr, data);
 		}
 	}
 }
