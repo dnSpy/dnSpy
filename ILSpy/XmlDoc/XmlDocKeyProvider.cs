@@ -48,12 +48,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 					b.Append("M:");
 				AppendTypeName(b, member.DeclaringType);
 				b.Append('.');
-				if (member.Name == ".ctor")
-					b.Append("#ctor");
-				else if (member.Name == "..ctor")
-					b.Append("#cctor");
-				else
-					b.Append(member.Name);
+				b.Append(member.Name.Replace('.', '#'));
 				IList<ParameterDefinition> parameters;
 				if (member is PropertyDefinition) {
 					parameters = ((PropertyDefinition)member).Parameters;
@@ -164,10 +159,10 @@ namespace ICSharpCode.ILSpy.XmlDoc
 		static MemberReference FindMember(ModuleDefinition module, string key, Func<TypeDefinition, IEnumerable<MemberReference>> memberSelector)
 		{
 			Debug.WriteLine("Looking for member " + key);
-			int pos = key.IndexOf('(');
+			int parenPos = key.IndexOf('(');
 			int dotPos;
-			if (pos > 0) {
-				dotPos = key.LastIndexOf('.', pos - 1, pos);
+			if (parenPos > 0) {
+				dotPos = key.LastIndexOf('.', parenPos - 1, parenPos);
 			} else {
 				dotPos = key.LastIndexOf('.');
 			}
@@ -175,14 +170,24 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			TypeDefinition type = FindType(module, key.Substring(2, dotPos - 2));
 			if (type == null)
 				return null;
-			Debug.WriteLine("Searching in type " + type.FullName);
+			string shortName;
+			if (parenPos > 0) {
+				shortName = key.Substring(dotPos + 1, parenPos - (dotPos + 1));
+			} else {
+				shortName = key.Substring(dotPos + 1);
+			}
+			Debug.WriteLine("Searching in type {0} for {1}", type.FullName, shortName);
+			MemberReference shortNameMatch = null;
 			foreach (MemberReference member in memberSelector(type)) {
 				string memberKey = GetKey(member);
 				Debug.WriteLine(memberKey);
 				if (memberKey == key)
 					return member;
+				if (shortName == member.Name)
+					shortNameMatch = member;
 			}
-			return null;
+			// if there's no match by ID string (key), return the match by name.
+			return shortNameMatch;
 		}
 		
 		static TypeDefinition FindType(ModuleDefinition module, string name)
