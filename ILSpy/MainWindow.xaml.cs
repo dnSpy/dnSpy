@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy
 		ILSpySettings spySettings;
 		internal SessionSettings sessionSettings;
 
-		AssemblyListManager assemblyListManager;
+		internal AssemblyListManager assemblyListManager;
 		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
 		
@@ -338,6 +338,21 @@ namespace ICSharpCode.ILSpy
 		}
 		#endregion
 		
+		public void ShowAssemblyList(string name)
+		{
+			ILSpySettings settings = this.spySettings;
+			if (settings == null)
+			{
+				settings = ILSpySettings.Load();
+			}
+			AssemblyList list = this.assemblyListManager.LoadList(settings, name);
+			//Only load a new list when it is a different one
+			if (list.ListName != CurrentAssemblyList.ListName)
+			{
+				ShowAssemblyList(list);
+			}
+		}
+
 		void ShowAssemblyList(AssemblyList assemblyList)
 		{
 			history.Clear();
