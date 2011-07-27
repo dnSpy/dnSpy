@@ -70,9 +70,7 @@ namespace ICSharpCode.ILSpy
 			if (!manager.AssemblyLists.Contains(DotNet4List))
 			{
 				AssemblyList dotnet4 = new AssemblyList(DotNet4List);
-				AddToList(dotnet4, "Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
-				AddToList(dotnet4, "PresentationCore, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
-				AddToList(dotnet4, "PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+				AddToList(dotnet4, "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet4, "System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet4, "System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet4, "System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
@@ -80,6 +78,9 @@ namespace ICSharpCode.ILSpy
 				AddToList(dotnet4, "System.Xaml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet4, "System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet4, "System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+				AddToList(dotnet4, "Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+				AddToList(dotnet4, "PresentationCore, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+				AddToList(dotnet4, "PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 				AddToList(dotnet4, "WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 
 				if (dotnet4.assemblies.Count > 0)
@@ -91,14 +92,15 @@ namespace ICSharpCode.ILSpy
 			if (!manager.AssemblyLists.Contains(DotNet35List))
 			{
 				AssemblyList dotnet35 = new AssemblyList(DotNet35List);
-				AddToList(dotnet35, "PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
-				AddToList(dotnet35, "PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+				AddToList(dotnet35, "mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet35, "System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet35, "System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet35, "System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet35, "System.Data.DataSetExtensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet35, "System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet35, "System.Xml.Linq, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+				AddToList(dotnet35, "PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+				AddToList(dotnet35, "PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 				AddToList(dotnet35, "WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 
 				if (dotnet35.assemblies.Count > 0)
@@ -110,7 +112,7 @@ namespace ICSharpCode.ILSpy
 			if (!manager.AssemblyLists.Contains(ASPDotNetMVC3List))
 			{
 				AssemblyList mvc = new AssemblyList(ASPDotNetMVC3List);
-				AddToList(mvc, "Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+				AddToList(mvc, "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(mvc, "System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(mvc, "System.ComponentModel.DataAnnotations, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 				AddToList(mvc, "System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
@@ -133,6 +135,7 @@ namespace ICSharpCode.ILSpy
 				AddToList(mvc, "System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 				AddToList(mvc, "System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(mvc, "System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+				AddToList(mvc, "Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
 				if (mvc.assemblies.Count > 0)
 				{
