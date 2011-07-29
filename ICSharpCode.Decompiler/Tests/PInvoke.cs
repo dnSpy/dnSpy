@@ -84,4 +84,13 @@ public class PInvoke
 	public void CustomMarshal2([MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "MyCompany.MyMarshaler", MarshalCookie = "Cookie")] object o)
 	{
 	}
+	
+	[DllImport("ws2_32.dll", SetLastError = true)]
+	internal static extern IntPtr ioctlsocket([In] IntPtr socketHandle, [In] int cmd, [In] [Out] ref int argp);
+	
+	public void CallMethodWithInOutParameter()
+	{
+		int num = 0;
+		PInvoke.ioctlsocket(IntPtr.Zero, 0, ref num);
+	}
 }

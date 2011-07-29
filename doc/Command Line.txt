@@ -25,9 +25,11 @@ Available options:
     /clearList         Clears the assembly list before loading the specified assemblies.
                        [Note: Assembly Lists are not yet implemented]
     
-    /navigateTo:tag    Navigates to the member specified by the given XML documentation tag.
+    /navigateTo:tag    Navigates to the member specified by the given ID string.
                        The member is searched for only in the assemblies specified on the command line.
                        Example: 'ILSpy ILSpy.exe /navigateTo:T:ICSharpCode.ILSpy.CommandLineArguments'
+                       
+                       The syntax of ID strings is described in appendix A of the C# language specification.
     
     /language:name     Selects the specified language.
                        Example: 'ILSpy /language:C#' or 'ILSpy /language:IL'
