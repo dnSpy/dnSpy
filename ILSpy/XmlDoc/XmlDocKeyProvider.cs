@@ -50,6 +50,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				b.Append('.');
 				b.Append(member.Name.Replace('.', '#'));
 				IList<ParameterDefinition> parameters;
+				TypeReference explicitReturnType = null;
 				if (member is PropertyDefinition) {
 					parameters = ((PropertyDefinition)member).Parameters;
 				} else if (member is MethodReference) {
@@ -59,6 +60,9 @@ namespace ICSharpCode.ILSpy.XmlDoc
 						b.Append(mr.GenericParameters.Count);
 					}
 					parameters = mr.Parameters;
+					if (mr.Name == "op_Implicit" || mr.Name == "op_Explicit") {
+						explicitReturnType = mr.ReturnType;
+					}
 				} else {
 					parameters = null;
 				}
@@ -69,6 +73,10 @@ namespace ICSharpCode.ILSpy.XmlDoc
 						AppendTypeName(b, parameters[i].ParameterType);
 					}
 					b.Append(')');
+				}
+				if (explicitReturnType != null) {
+					b.Append('~');
+					AppendTypeName(b, explicitReturnType);
 				}
 			}
 			return b.ToString();
@@ -101,8 +109,15 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				ArrayType arrayType = type as ArrayType;
 				if (arrayType != null) {
 					b.Append('[');
-					for (int i = 1; i < arrayType.Dimensions.Count; i++) {
-						b.Append(',');
+					for (int i = 0; i < arrayType.Dimensions.Count; i++) {
+						if (i > 0)
+							b.Append(',');
+						ArrayDimension ad = arrayType.Dimensions[i];
+						if (ad.IsSized) {
+							b.Append(ad.LowerBound);
+							b.Append(':');
+							b.Append(ad.UpperBound);
+						}
 					}
 					b.Append(']');
 				}
@@ -112,7 +127,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				}
 				PointerType ptrType = type as PointerType;
 				if (ptrType != null) {
-					b.Append('*'); // TODO: is this correct?
+					b.Append('*');
 				}
 			} else {
 				GenericParameter gp = type as GenericParameter;
@@ -183,7 +198,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				Debug.WriteLine(memberKey);
 				if (memberKey == key)
 					return member;
-				if (shortName == member.Name)
+				if (shortName == member.Name.Replace('.', '#'))
 					shortNameMatch = member;
 			}
 			// if there's no match by ID string (key), return the match by name.
