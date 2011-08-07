@@ -90,20 +90,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			}
 			if (type is GenericInstanceType) {
 				GenericInstanceType giType = (GenericInstanceType)type;
-				if (type.DeclaringType != null) {
-					AppendTypeName(b, type.DeclaringType);
-					b.Append('.');
-				} else if (!string.IsNullOrEmpty(type.Namespace)) {
-					b.Append(type.Namespace);
-					b.Append('.');
-				}
-				b.Append(NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name));
-				b.Append('{');
-				for (int i = 0; i < giType.GenericArguments.Count; i++) {
-					if (i > 0) b.Append(',');
-					AppendTypeName(b, giType.GenericArguments[i]);
-				}
-				b.Append('}');
+				AppendTypeNameWithArguments(b, giType.ElementType, giType.GenericArguments);
 			} else if (type is TypeSpecification) {
 				AppendTypeName(b, ((TypeSpecification)type).ElementType);
 				ArrayType arrayType = type as ArrayType;
@@ -145,6 +132,32 @@ namespace ICSharpCode.ILSpy.XmlDoc
 					b.Append(type.FullName);
 				}
 			}
+		}
+		
+		static int AppendTypeNameWithArguments(StringBuilder b, TypeReference type, IList<TypeReference> genericArguments)
+		{
+			int outerTypeParameterCount = 0;
+			if (type.DeclaringType != null) {
+				TypeReference declType = type.DeclaringType;
+				outerTypeParameterCount = AppendTypeNameWithArguments(b, declType, genericArguments);
+				b.Append('.');
+			} else if (!string.IsNullOrEmpty(type.Namespace)) {
+				b.Append(type.Namespace);
+				b.Append('.');
+			}
+			int localTypeParameterCount = 0;
+			b.Append(NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name, out localTypeParameterCount));
+			
+			if (localTypeParameterCount > 0) {
+				int totalTypeParameterCount = outerTypeParameterCount + localTypeParameterCount;
+				b.Append('{');
+				for (int i = outerTypeParameterCount; i < totalTypeParameterCount && i < genericArguments.Count; i++) {
+					if (i > outerTypeParameterCount) b.Append(',');
+					AppendTypeName(b, genericArguments[i]);
+				}
+				b.Append('}');
+			}
+			return outerTypeParameterCount + localTypeParameterCount;
 		}
 		#endregion
 		
