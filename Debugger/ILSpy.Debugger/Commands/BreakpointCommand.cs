@@ -9,6 +9,7 @@ using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
 {
@@ -27,16 +28,21 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				// check if the codemappings exists for this line
 				var storage = DebugInformation.CodeMappings;
 				int token = 0;
-				foreach (var key in storage.Keys) {
-					var instruction = storage[key].GetInstructionByLineNumber(line, out token);
+				foreach (var storageEntry in storage) {
+					var instruction = storageEntry.Value.GetInstructionByLineNumber(line, out token);
 					
 					if (instruction == null) {
 						continue;
 					}
 					
 					// no bookmark on the line: create a new breakpoint
+					MemberReference memberReference;
+					if (!DebugInformation.DecompiledMemberReferences.TryGetValue(storageEntry.Key, out memberReference)) {
+						continue;
+					}
+						
 					DebuggerService.ToggleBreakpointAt(
-						DebugInformation.DecompiledMemberReferences[key],
+						memberReference,
 						line,
 						instruction.ILInstructionOffset,
 						DebugInformation.Language);

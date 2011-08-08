@@ -26,8 +26,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		
 		public IconBarMargin(IconBarManager manager)
 		{
-			BookmarkManager.Added += delegate { InvalidateVisual(); };
-			BookmarkManager.Removed += delegate { InvalidateVisual(); };
+			BookmarkManager.Added += new BookmarkEventHandler(OnBookmarkAdded);
+			BookmarkManager.Removed += new BookmarkEventHandler(OnBookmarkRemoved);
 			
 			this.manager = manager;
 		}
@@ -242,6 +242,39 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			}
 		}
 		
+		public void OnBookmarkAdded(object sender, BookmarkEventArgs args)
+		{
+			var breakpoint = args.Bookmark as BreakpointBookmark;
+			if (null == breakpoint)
+				return;
+			var storage = DebugInformation.CodeMappings;
+			if (storage == null || storage.Count == 0)
+				return;
+			var key = breakpoint.MemberReference.MetadataToken.ToInt32();
+			if (storage.ContainsKey(key))
+			{
+				// register to show enabled/disabled state
+				breakpoint.ImageChanged += delegate { InvalidateVisual(); };
+				InvalidateVisual();
+			}
+		}
+		
+		public void OnBookmarkRemoved(object sender, BookmarkEventArgs args)
+		{
+			var breakpoint = args.Bookmark as BreakpointBookmark;
+			if (null == breakpoint)
+				return;
+			var storage = DebugInformation.CodeMappings;
+			if (storage == null || storage.Count == 0)
+				return;
+			var key = breakpoint.MemberReference.MetadataToken.ToInt32();
+			if (storage.ContainsKey(key))
+			{    
+				breakpoint.ImageChanged -= delegate { InvalidateVisual(); };
+				InvalidateVisual();
+			}
+		}
+		
 		public void SyncBookmarks()
 		{
 			var storage = DebugInformation.CodeMappings;
@@ -249,7 +282,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				return;
 			
 			//remove existing bookmarks and create new ones
-			List<BreakpointBookmark> newBookmarks = new List<BreakpointBookmark>();
 			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
 				var breakpoint = BookmarkManager.Bookmarks[i] as BreakpointBookmark;
 				if (breakpoint == null)
@@ -257,7 +289,12 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				
 				var key = breakpoint.MemberReference.MetadataToken.ToInt32();
 				if (!storage.ContainsKey(key))
-					continue;
+				{
+				    // in case this was visible before
+				    breakpoint.ImageChanged -= delegate { InvalidateVisual(); };
+				    continue;
+				}
+			    breakpoint.ImageChanged += delegate { InvalidateVisual(); };
 				
 				var member = DebugInformation.DecompiledMemberReferences[key];
 				
@@ -271,16 +308,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				  breakpoint.Location = new AstLocation(map.SourceCodeLine, 0);
 				  breakpoint.ILRange = map.ILInstructionOffset;
 				  
-				  // Why were the breakpoints removed and recreated
-//					newBookmarks.Add(new BreakpointBookmark(
-//						member, new AstLocation(map.SourceCodeLine, 0),
-//						map.ILInstructionOffset, BreakpointAction.Break, DebugInformation.Language));
-//					
-//					BookmarkManager.RemoveMark(breakpoint);
+				  // Why were the breakpoints removed and recreated?
+				  // This prevents enable/disable of breakpoints
 				}
 			}
-			
-			newBookmarks.ForEach(m => BookmarkManager.AddMark(m));
 			
 			SyncCurrentLineBookmark();
 		}
