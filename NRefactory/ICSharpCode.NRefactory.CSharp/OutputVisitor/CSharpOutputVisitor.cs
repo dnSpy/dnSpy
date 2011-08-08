@@ -1738,8 +1738,9 @@ namespace ICSharpCode.NRefactory.CSharp
 				formatter.Indent ();
 			
 			foreach (var statement in switchSection.Statements) {
-				NewLine ();
 				statement.AcceptVisitor (this, data);
+				if(switchSection.NextSibling != null)
+					NewLine();
 			}
 			
 			if (policy.IndentCaseBody)
