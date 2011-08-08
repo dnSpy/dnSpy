@@ -959,29 +959,29 @@ namespace ICSharpCode.Decompiler.Ast
 				if (cecilMethodDef.IsGetter && methodArgs.Count == 0) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
 						if (prop.GetMethod == cecilMethodDef)
-							return target.Member(prop.Name).WithAnnotation(prop);
+							return target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(cecilMethod);
 					}
 				} else if (cecilMethodDef.IsGetter) { // with parameters
 					PropertyDefinition indexer = GetIndexer(cecilMethodDef);
 					if (indexer != null)
-						return target.Indexer(methodArgs).WithAnnotation(indexer);
+						return target.Indexer(methodArgs).WithAnnotation(indexer).WithAnnotation(cecilMethod);
 				} else if (cecilMethodDef.IsSetter && methodArgs.Count == 1) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
 						if (prop.SetMethod == cecilMethodDef)
-							return new Ast.AssignmentExpression(target.Member(prop.Name).WithAnnotation(prop), methodArgs[0]);
+							return new Ast.AssignmentExpression(target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(cecilMethod), methodArgs[0]);
 					}
 				} else if (cecilMethodDef.IsSetter && methodArgs.Count > 1) {
 					PropertyDefinition indexer = GetIndexer(cecilMethodDef);
 					if (indexer != null)
 						return new AssignmentExpression(
-							target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)).WithAnnotation(indexer),
+							target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)).WithAnnotation(indexer).WithAnnotation(cecilMethod),
 							methodArgs[methodArgs.Count - 1]
 						);
 				} else if (cecilMethodDef.IsAddOn && methodArgs.Count == 1) {
 					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
 						if (ev.AddMethod == cecilMethodDef) {
 							return new Ast.AssignmentExpression {
-								Left = target.Member(ev.Name).WithAnnotation(ev),
+								Left = target.Member(ev.Name).WithAnnotation(ev).WithAnnotation(cecilMethod),
 								Operator = AssignmentOperatorType.Add,
 								Right = methodArgs[0]
 							};
@@ -991,7 +991,7 @@ namespace ICSharpCode.Decompiler.Ast
 					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
 						if (ev.RemoveMethod == cecilMethodDef) {
 							return new Ast.AssignmentExpression {
-								Left = target.Member(ev.Name).WithAnnotation(ev),
+								Left = target.Member(ev.Name).WithAnnotation(ev).WithAnnotation(cecilMethod),
 								Operator = AssignmentOperatorType.Subtract,
 								Right = methodArgs[0]
 							};
@@ -999,7 +999,7 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 				} else if (cecilMethodDef.Name == "Invoke" && cecilMethodDef.DeclaringType.BaseType != null && cecilMethodDef.DeclaringType.BaseType.FullName == "System.MulticastDelegate") {
 					AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
-					return target.Invoke(methodArgs);
+					return target.Invoke(methodArgs).WithAnnotation(cecilMethod);
 				}
 			}
 			// Default invocation
