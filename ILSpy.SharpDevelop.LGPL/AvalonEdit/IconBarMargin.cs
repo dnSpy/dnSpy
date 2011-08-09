@@ -282,6 +282,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				return;
 			
 			//remove existing bookmarks and create new ones
+			// update of existing bookmarks for new position does not update TextMarker
+			// this is only done in TextMarkerService handlers for BookmarkManager.Added/Removed
+			List<BreakpointBookmark> newBookmarks = new List<BreakpointBookmark>();
 			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
 				var breakpoint = BookmarkManager.Bookmarks[i] as BreakpointBookmark;
 				if (breakpoint == null)
@@ -290,11 +293,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				var key = breakpoint.MemberReference.MetadataToken.ToInt32();
 				if (!storage.ContainsKey(key))
 				{
-				    // in case this was visible before
-				    breakpoint.ImageChanged -= delegate { InvalidateVisual(); };
 				    continue;
 				}
-			    breakpoint.ImageChanged += delegate { InvalidateVisual(); };
 				
 				var member = DebugInformation.DecompiledMemberReferences[key];
 				
@@ -303,16 +303,16 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					member.MetadataToken.ToInt32(), breakpoint.ILRange.From, out isMatch);
 				
 				if (map != null) {
-				  // update bookmark
-				  breakpoint.MemberReference = member;
-				  breakpoint.Location = new AstLocation(map.SourceCodeLine, 0);
-				  breakpoint.ILRange = map.ILInstructionOffset;
-				  
-				  // Why were the breakpoints removed and recreated?
-				  // This prevents enable/disable of breakpoints
+					BreakpointBookmark newBookmark = new BreakpointBookmark(
+						member, new AstLocation(map.SourceCodeLine, 0),
+						map.ILInstructionOffset, BreakpointAction.Break, DebugInformation.Language);
+				  	newBookmark.IsEnabled = breakpoint.IsEnabled;
+				  	
+				  	newBookmarks.Add(newBookmark);
+					BookmarkManager.RemoveMark(breakpoint);
 				}
 			}
-			
+			newBookmarks.ForEach(m => BookmarkManager.AddMark(m));
 			SyncCurrentLineBookmark();
 		}
 		
