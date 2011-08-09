@@ -204,7 +204,7 @@ namespace ILSpyPlugin
 		}
 	}
 	
-    [ExportMainMenuCommand(Menu="_Debugger", Header="Show _Callstack", MenuCategory="Others", MenuOrder=9)]
+    [ExportMainMenuCommand(Menu="_Debugger", Header="Show _Callstack", MenuCategory="View", MenuOrder=9)]
     public class CallstackPanelcommand : SimpleCommand
     {
         public override void Execute(object parameter)
