@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Tooltips;
@@ -189,6 +190,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public static void JumpToCurrentLine(MemberReference memberReference, int startLine, int startColumn, int endLine, int endColumn)
 		{
 			CurrentLineBookmark.SetPosition(memberReference, startLine, startColumn, endLine, endColumn);
+			MainWindow.Instance.TextView.UnfoldAndScroll(startLine);
 		}
 		
 		#region Tool tips

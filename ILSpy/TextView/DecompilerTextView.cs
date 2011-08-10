@@ -462,7 +462,6 @@ namespace ICSharpCode.ILSpy.TextView
 					DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out member, out line);
 					
 					// update marker
-					CurrentLineBookmark.Remove();
 					CurrentLineBookmark.SetPosition(member, line, 0, line, 0);
 
 					var bm = CurrentLineBookmark.Instance;
