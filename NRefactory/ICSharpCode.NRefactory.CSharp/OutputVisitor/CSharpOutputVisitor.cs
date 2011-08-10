@@ -1734,14 +1734,16 @@ namespace ICSharpCode.NRefactory.CSharp
 				label.AcceptVisitor (this, data);
 				first = false;
 			}
+			if(!(switchSection.Statements.FirstOrDefault() is BlockStatement))
+				NewLine();
+
 			if (policy.IndentCaseBody)
 				formatter.Indent ();
-			
-			foreach (var statement in switchSection.Statements) {
-				statement.AcceptVisitor (this, data);
-				if(switchSection.NextSibling != null)
-					NewLine();
-			}
+
+			foreach (var statement in switchSection.Statements)
+				statement.AcceptVisitor(this, data);
+			if (switchSection.NextSibling != null)
+				NewLine();
 			
 			if (policy.IndentCaseBody)
 				formatter.Unindent ();
