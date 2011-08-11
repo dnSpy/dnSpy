@@ -26,9 +26,9 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	partial class ILAstOptimizer
 	{
-		bool SimplifyNullableOperators(List<ILNode> body, ILExpression expr, int pos)
+		bool SimplifyLiftedOperators(List<ILNode> body, ILExpression expr, int pos)
 		{
-			if (!new PatternMatcher(typeSystem).SimplifyNullableOperators(expr)) return false;
+			if (!new PatternMatcher(typeSystem).SimplifyLiftedOperators(expr)) return false;
 
 			var inlining = new ILInlining(method);
 			while (--pos >= 0 && inlining.InlineIfPossible(body, ref pos)) ;
@@ -44,13 +44,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				this.typeSystem = typeSystem;
 			}
 
-			public bool SimplifyNullableOperators(ILExpression expr)
+			public bool SimplifyLiftedOperators(ILExpression expr)
 			{
 				if (Simplify(expr)) return true;
 
 				bool modified = false;
 				foreach (var a in expr.Arguments)
-					modified |= SimplifyNullableOperators(a);
+					modified |= SimplifyLiftedOperators(a);
 				return modified;
 			}
 

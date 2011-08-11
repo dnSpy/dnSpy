@@ -19,9 +19,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-public static class NullableOperators
+public static class LiftedOperators
 {
-	// C# uses 4 different patterns of IL for operators involving nullable values: bool, other primitive types, decimal, other structs.
+	// C# uses 4 different patterns of IL for lifted operators: bool, other primitive types, decimal, other structs.
 	// Different patterns are used depending on whether both of the operands are nullable or only the left/right operand is nullable.
 	// Negation must not be pushed through such comparisons because it would change the semantics.
 	// A comparison used in a condition differs somewhat from a comparison used as a simple value.
@@ -131,7 +131,7 @@ public static class NullableOperators
 		a ^= b;
 	}
 
-	public static void BoolValueComplex(bool? a, Func<bool> x, bool?[] list)
+	public static void BoolValueComplex(bool? a, Func<bool> x)
 	{
 		Console.WriteLine(a == x());
 		Console.WriteLine(a != x());
@@ -151,7 +151,7 @@ public static class NullableOperators
 		a ^= x();
 
 		Console.WriteLine(x() ^ a);
-		list[0] ^= x();
+		(new bool?[0])[0] ^= x();
 	}
 
 	public static void BoolValueConst(bool? a)
@@ -316,7 +316,7 @@ public static class NullableOperators
 		a >>= b;
 	}
 
-	public static void IntValueComplex(int? a, Func<int> x, int?[] list)
+	public static void IntValueComplex(int? a, Func<int> x)
 	{
 		Console.WriteLine(a == x());
 		Console.WriteLine(a != x());
@@ -349,7 +349,7 @@ public static class NullableOperators
 		a >>= x();
 
 		Console.WriteLine(x() + a);
-		list[0] += x();
+		(new int?[0])[0] += x();
 	}
 
 	public static void IntValueConst(int? a)
@@ -515,7 +515,7 @@ public static class NullableOperators
 		a %= b;
 	}
 
-	public static void NumberValueComplex(decimal? a, Func<decimal> x, decimal?[] list)
+	public static void NumberValueComplex(decimal? a, Func<decimal> x)
 	{
 		Console.WriteLine(a == x());
 		Console.WriteLine(a != x());
@@ -538,7 +538,7 @@ public static class NullableOperators
 		a %= x();
 
 		Console.WriteLine(x() + a);
-		list[0] += x();
+		(new decimal?[0])[0] += x();
 	}
 
 	public static void NumberValueConst(decimal? a)
@@ -679,7 +679,7 @@ public static class NullableOperators
 		a >>= i;
 	}
 
-	public static void StructValueComplex(TS? a, Func<TS> x, Func<int> i, TS?[] list)
+	public static void StructValueComplex(TS? a, Func<TS> x, Func<int> i)
 	{
 		Console.WriteLine(a == x());
 		Console.WriteLine(a != x());
@@ -712,7 +712,7 @@ public static class NullableOperators
 		a >>= i();
 
 		Console.WriteLine(x() + a);
-		list[0] += x();
+		(new TS?[0])[0] += x();
 	}
 }
 

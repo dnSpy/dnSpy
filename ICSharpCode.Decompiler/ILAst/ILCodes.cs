@@ -317,12 +317,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Also used when inlining a method call on a value type: "stloc(v, ...); call(M, ldloca(v));" becomes "call(M, AddressOf(...))"
 		/// </remarks>
 		AddressOf,
-		/// <summary>Simulates getting the value of the nullable argument in comparisons involving nullable values</summary>
+		/// <summary>Simulates getting the value of a lifted operator's nullable argument</summary>
 		/// <remarks>
 		/// For example "stloc(v1, ...); stloc(v2, ...); logicand(ceq(call(Nullable`1::GetValueOrDefault, ldloca(v1)), ldloc(v2)), callgetter(Nullable`1::get_HasValue, ldloca(v1)))" becomes "wrap(ceq(ValueOf(...), ...))"
 		/// </remarks>
 		ValueOf,
-		/// <summary>Simulates creating a new nullable value from a valuetype argument</summary>
+		/// <summary>Simulates creating a new nullable value from a value type argument</summary>
 		/// <remarks>
 		/// For example "stloc(v1, ...); stloc(v2, ...); ternaryop(callgetter(Nullable`1::get_HasValue, ldloca(v1)), newobj(Nullable`1::.ctor, add(call(Nullable`1::GetValueOrDefault, ldloca(v1)), ldloc(v2))), defaultvalue(Nullable`1))"
 		/// becomes "NullableOf(add(valueof(...), ...))"

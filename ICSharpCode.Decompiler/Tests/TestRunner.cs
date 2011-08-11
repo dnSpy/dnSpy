@@ -81,6 +81,12 @@ namespace ICSharpCode.Decompiler.Tests
 		{
 			TestFile(@"..\..\Tests\InitializerTests.cs");
 		}
+
+		[Test]
+		public void LiftedOperators()
+		{
+			TestFile(@"..\..\Tests\LiftedOperators.cs");
+		}
 		
 		[Test]
 		public void Loops()
@@ -92,12 +98,6 @@ namespace ICSharpCode.Decompiler.Tests
 		public void MultidimensionalArray()
 		{
 			TestFile(@"..\..\Tests\MultidimensionalArray.cs");
-		}
-
-		[Test]
-		public void NullableOperators()
-		{
-			TestFile(@"..\..\Tests\NullableOperators.cs");
 		}
 		
 		[Test]

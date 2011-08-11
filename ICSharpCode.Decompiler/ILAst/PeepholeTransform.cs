@@ -397,17 +397,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			
 			ILExpression op = expr.Arguments.Last();
-			// in case of compound assignments with nullable values the result is inside NullableOf and the operand is inside ValueOf
-			bool nullable = false;
+			// in case of compound assignments with a lifted operator the result is inside NullableOf and the operand is inside ValueOf
+			bool liftedOperator = false;
 			if (op.Code == ILCode.NullableOf) {
 				op = op.Arguments[0];
-				nullable = true;
+				liftedOperator = true;
 			}
 			if (!CanBeRepresentedAsCompoundAssignment(op))
 				return false;
 
 			ILExpression ldelem = op.Arguments[0];
-			if (nullable) {
+			if (liftedOperator) {
 				if (ldelem.Code != ILCode.ValueOf)
 					return false;
 				ldelem = ldelem.Arguments[0];
