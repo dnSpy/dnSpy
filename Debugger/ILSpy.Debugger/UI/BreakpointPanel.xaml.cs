@@ -2,6 +2,8 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,8 +11,11 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Options;
 
 namespace ILSpyPlugin
 {
@@ -36,9 +41,11 @@ namespace ILSpyPlugin
         private BreakpointPanel()
         {
           InitializeComponent();
-          view.ItemsSource = BookmarkManager.Bookmarks;
-          BookmarkManager.Added += new BookmarkEventHandler(OnAdded);
-          BookmarkManager.Removed += new BookmarkEventHandler(OnRemoved);
+          SetItemSource();
+          BookmarkManager.Added += delegate { SetItemSource(); };
+          BookmarkManager.Removed += delegate { SetItemSource(); };
+        	DebuggerSettingsPanel.CurrentDebuggerSettings.PropertyChanged += 
+        		delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
         }
         
 		public void Show()
@@ -46,21 +53,22 @@ namespace ILSpyPlugin
 			if (!IsVisible)
 				MainWindow.Instance.ShowInBottomPane("Breakpoints", this);
 		}
-        
-        private void OnAdded(object sender, BookmarkEventArgs e)
-        {
-          view.ItemsSource = null;
-          view.ItemsSource = BookmarkManager.Bookmarks;
-        }
-        private void OnRemoved(object sender, BookmarkEventArgs e)
-        {
-          view.ItemsSource = null;
-          view.ItemsSource = BookmarkManager.Bookmarks;
-        }
-    
 		
+		private void SetItemSource()
+		{
+          	view.ItemsSource = null;
+          	if (DebuggerSettingsPanel.CurrentDebuggerSettings.ShowAllBookmarks)
+				view.ItemsSource = BookmarkManager.Bookmarks;
+          	else
+          		view.ItemsSource = BookmarkManager.Bookmarks.Where(b => b is BreakpointBookmark);
+		}
+        
         public void Closed()
         {
+        	BookmarkManager.Added -= delegate { SetItemSource(); };
+        	BookmarkManager.Removed -= delegate { SetItemSource(); };
+        	DebuggerSettingsPanel.CurrentDebuggerSettings.PropertyChanged -= 
+        		delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
         }
         
 		void view_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -70,7 +78,6 @@ namespace ILSpyPlugin
             var selectedItem = view.SelectedItem as BookmarkBase;
             if (null == selectedItem)
                 return;
-            // TODO: Line should be part of jump target
             MainWindow.Instance.JumpToReference(selectedItem.MemberReference);
             MainWindow.Instance.TextView.UnfoldAndScroll(selectedItem.LineNumber);
             e.Handled = true;

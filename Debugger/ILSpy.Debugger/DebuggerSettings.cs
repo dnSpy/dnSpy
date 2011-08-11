@@ -11,6 +11,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		bool showWarnings = true;
 		bool askArguments = true;
 		bool debugWholeTypesOnly = false;
+		bool showAllBookmarks = false;
 		
 		/// <summary>
 		/// Show warnings messages.
@@ -52,6 +53,20 @@ namespace ICSharpCode.ILSpy.Debugger
 				if (debugWholeTypesOnly != value) {
 					debugWholeTypesOnly = value;
 					OnPropertyChanged("DebugWholeTypesOnly");
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Show all bookmarks in breakpoints window. 
+		/// </summary>
+		[DefaultValue(false)]
+		public bool ShowAllBookmarks {
+			get { return showAllBookmarks; }
+			set {
+				if (showAllBookmarks != value) {
+					showAllBookmarks = value;
+					OnPropertyChanged("ShowAllBookmarks");
 				}
 			}
 		}

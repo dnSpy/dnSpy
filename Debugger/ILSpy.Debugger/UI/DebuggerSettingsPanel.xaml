@@ -6,6 +6,7 @@
 		<StackPanel Margin="10">
 			<CheckBox IsChecked="{Binding ShowWarnings}">Show warning messages</CheckBox>
 			<CheckBox IsChecked="{Binding AskForArguments}">Ask for arguments and working directory before executing a process</CheckBox>
+			<CheckBox IsChecked="{Binding ShowAllBookmarks}">Show all bookmarks in breakpoints window</CheckBox>
 		</StackPanel>
 	</Grid>
 </UserControl>

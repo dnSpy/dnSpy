@@ -19,9 +19,10 @@ namespace ICSharpCode.ILSpy.Options
 	[ExportOptionPage(Title = "Debugger", Order = 2)]
 	partial class DebuggerSettingsPanel : UserControl, IOptionPage
 	{
-		private const string DEBUGGER_SETTINGS = "DebuggerSettings";
-		private const string SHOW_WARNINGS = "showWarnings";
-		private const string ASK_ARGUMENTS = "askForArguments";
+		private static readonly string DEBUGGER_SETTINGS = "DebuggerSettings";
+		private static readonly string SHOW_WARNINGS = "showWarnings";
+		private static readonly string ASK_ARGUMENTS = "askForArguments";
+		private static readonly string SHOW_BOOKMARKS = "showAllBookmarks";
 	 	
 		public DebuggerSettingsPanel()
 		{
@@ -30,7 +31,7 @@ namespace ICSharpCode.ILSpy.Options
 		
 		public void Load(ILSpySettings settings)
 		{
-			this.DataContext = LoadDebuggerSettings(settings);
+			this.DataContext = CurrentDebuggerSettings;
 		}
 		
 		static DebuggerSettings currentDebuggerSettings;
@@ -47,7 +48,7 @@ namespace ICSharpCode.ILSpy.Options
 			DebuggerSettings s = new DebuggerSettings();
 			s.ShowWarnings = (bool?)e.Attribute(SHOW_WARNINGS) ?? s.ShowWarnings;
 			s.AskForArguments = (bool?)e.Attribute(ASK_ARGUMENTS) ?? s.AskForArguments;
-			
+			s.ShowAllBookmarks = (bool?)e.Attribute(SHOW_BOOKMARKS) ?? s.ShowAllBookmarks;
 			return s;
 		}
 		
@@ -57,14 +58,13 @@ namespace ICSharpCode.ILSpy.Options
 			XElement section = new XElement(DEBUGGER_SETTINGS);
 			section.SetAttributeValue(SHOW_WARNINGS, s.ShowWarnings);
 			section.SetAttributeValue(ASK_ARGUMENTS, s.AskForArguments);
-
+			section.SetAttributeValue(SHOW_BOOKMARKS, s.ShowAllBookmarks);
+			
 			XElement existingElement = root.Element(DEBUGGER_SETTINGS);
 			if (existingElement != null)
 				existingElement.ReplaceWith(section);
 			else
 				root.Add(section);
-			
-			currentDebuggerSettings = null; // invalidate cached settings
 		}
 	}
 }

@@ -187,6 +187,8 @@ namespace ILSpyPlugin
 			if (mr == null)
 				return;
 			MainWindow.Instance.JumpToReference(mr);
+			// TODO: jump to associated line
+            // MainWindow.Instance.TextView.UnfoldAndScroll(selectedItem.LineNumber);
             e.Handled = true;
         }
     }
