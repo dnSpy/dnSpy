@@ -45,8 +45,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AstBuilder\ExpressionBuilder.cs" />
-    <Compile Include="AstBuilder\StatementBuilder.cs" />
     <Compile Include="Ast\AstLocation.cs" />
     <Compile Include="Ast\AstNode.cs" />
     <Compile Include="Ast\AstNodeCollection.cs" />
@@ -180,14 +178,10 @@
     <Compile Include="PrettyPrinter\VBNet\VBNetPrettyPrintOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VBParser.cs" />
-    <Compile Include="Visitors\AbstractAstTransformer.cs" />
-    <Compile Include="Visitors\AbstractAstVisitor.cs" />
     <Compile Include="Visitors\CSharpToVBConverterVisitor.cs" />
-    <Compile Include="Visitors\NodeTrackingAstVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Ast" />
-    <Folder Include="AstBuilder" />
     <Folder Include="Ast\General" />
     <Folder Include="Ast\GlobalScope" />
     <Folder Include="Ast\Expressions" />

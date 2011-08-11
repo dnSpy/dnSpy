@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy
 		ILSpySettings spySettings;
 		internal SessionSettings sessionSettings;
 
-		AssemblyListManager assemblyListManager;
+		internal AssemblyListManager assemblyListManager;
 		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
 		
@@ -242,14 +242,29 @@ namespace ICSharpCode.ILSpy
 		{
 			if (args.NavigateTo != null) {
 				bool found = false;
-				foreach (LoadedAssembly asm in commandLineLoadedAssemblies) {
-					AssemblyDefinition def = asm.AssemblyDefinition;
-					if (def != null) {
-						MemberReference mr = XmlDocKeyProvider.FindMemberByKey(def.MainModule, args.NavigateTo);
-						if (mr != null) {
-							found = true;
-							JumpToReference(mr);
-							break;
+				if (args.NavigateTo.StartsWith("N:", StringComparison.Ordinal)) {
+					string namespaceName = args.NavigateTo.Substring(2);
+					foreach (LoadedAssembly asm in commandLineLoadedAssemblies) {
+						AssemblyTreeNode asmNode = assemblyListTreeNode.FindAssemblyNode(asm);
+						if (asmNode != null) {
+							NamespaceTreeNode nsNode = asmNode.FindNamespaceNode(namespaceName);
+							if (nsNode != null) {
+								found = true;
+								SelectNode(nsNode);
+								break;
+							}
+						}
+					}
+				} else {
+					foreach (LoadedAssembly asm in commandLineLoadedAssemblies) {
+						AssemblyDefinition def = asm.AssemblyDefinition;
+						if (def != null) {
+							MemberReference mr = XmlDocKeyProvider.FindMemberByKey(def.MainModule, args.NavigateTo);
+							if (mr != null) {
+								found = true;
+								JumpToReference(mr);
+								break;
+							}
 						}
 					}
 				}
@@ -323,6 +338,21 @@ namespace ICSharpCode.ILSpy
 		}
 		#endregion
 		
+		public void ShowAssemblyList(string name)
+		{
+			ILSpySettings settings = this.spySettings;
+			if (settings == null)
+			{
+				settings = ILSpySettings.Load();
+			}
+			AssemblyList list = this.assemblyListManager.LoadList(settings, name);
+			//Only load a new list when it is a different one
+			if (list.ListName != CurrentAssemblyList.ListName)
+			{
+				ShowAssemblyList(list);
+			}
+		}
+
 		void ShowAssemblyList(AssemblyList assemblyList)
 		{
 			history.Clear();

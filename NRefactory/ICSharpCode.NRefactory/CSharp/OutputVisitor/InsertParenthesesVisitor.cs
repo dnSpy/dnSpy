@@ -132,6 +132,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override object VisitIndexerExpression(IndexerExpression indexerExpression, object data)
 		{
 			ParenthesizeIfRequired(indexerExpression.Target, Primary);
+			ArrayCreateExpression ace = indexerExpression.Target as ArrayCreateExpression;
+			if (ace != null && (InsertParenthesesForReadability || ace.Initializer.IsNull)) {
+				// require parentheses for "(new int[1])[0]"
+				Parenthesize(indexerExpression.Target);
+			}
 			return base.VisitIndexerExpression(indexerExpression, data);
 		}
 		

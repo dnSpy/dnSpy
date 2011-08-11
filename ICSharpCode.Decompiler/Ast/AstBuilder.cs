@@ -1112,6 +1112,11 @@ namespace ICSharpCode.Decompiler.Ast
 				attributedNode.Attributes.Add(new AttributeSection(CreateNonCustomAttribute(typeof(SerializableAttribute))));
 			#endregion
 			
+			#region ComImportAttribute
+			if (typeDefinition.IsImport)
+				attributedNode.Attributes.Add(new AttributeSection(CreateNonCustomAttribute(typeof(ComImportAttribute))));
+			#endregion
+			
 			#region StructLayoutAttribute
 			LayoutKind layoutKind = LayoutKind.Auto;
 			switch (typeDefinition.Attributes & TypeAttributes.LayoutMask) {

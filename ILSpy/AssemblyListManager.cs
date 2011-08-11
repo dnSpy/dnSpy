@@ -90,5 +90,39 @@ namespace ICSharpCode.ILSpy
 						doc.Add(list.SaveAsXml());
 				});
 		}
+
+		public bool CreateList(AssemblyList list)
+		{
+			if (!AssemblyLists.Contains(list.ListName))
+			{
+				AssemblyLists.Add(list.ListName);
+				SaveList(list);
+				return true;
+			}
+			return false;
+		}
+
+		public bool DeleteList(string Name)
+		{
+			if (AssemblyLists.Contains(Name))
+			{
+				AssemblyLists.Remove(Name);
+
+				ILSpySettings.Update(
+					delegate(XElement root)
+					{
+						XElement doc = root.Element("AssemblyLists");
+						if (doc == null)
+						{
+							return;
+						}
+						XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == Name);
+						if (listElement != null)
+							listElement.Remove();
+					});
+				return true;
+			}
+			return false;
+		}
 	}
 }

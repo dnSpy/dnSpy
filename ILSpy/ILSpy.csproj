@@ -100,11 +100,15 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
+    <Compile Include="Commands\OpenListCommand.cs" />
     <Compile Include="Controls\DockedPane.cs" />
     <Compile Include="Commands\DecompileAllCommand.cs" />
     <Compile Include="Commands\ExportCommandAttribute.cs" />
     <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SortableGridViewColumn.cs" />
+    <Compile Include="CreateListDialog.xaml.cs">
+      <DependentUpon>CreateListDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Languages\CSharpLanguage.cs" />
     <Compile Include="DecompilationOptions.cs" />
     <Compile Include="ExtensionMethods.cs" />
@@ -137,6 +141,9 @@
     <Compile Include="Controls\ResourceStringTable.xaml.cs">
       <DependentUpon>ResourceStringTable.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OpenListDialog.xaml.cs">
+      <DependentUpon>OpenListDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Options\DecompilerSettingsPanel.xaml.cs">
       <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
@@ -262,8 +269,13 @@
     <Page Include="Controls\SearchBoxStyle.xaml">
       <DependentUpon>SearchBox.cs</DependentUpon>
     </Page>
+    <Page Include="CreateListDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml" />
     <Page Include="OpenFromGacDialog.xaml" />
+    <Page Include="OpenListDialog.xaml" />
     <Page Include="Options\DecompilerSettingsPanel.xaml" />
     <Page Include="Options\DisplaySettingsPanel.xaml" />
     <Page Include="Options\OptionsDialog.xaml" />
