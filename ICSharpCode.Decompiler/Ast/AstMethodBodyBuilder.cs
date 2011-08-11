@@ -815,7 +815,7 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.InitializedObject:
 					return new InitializedObjectExpression();
 				case ILCode.Wrap:
-					return new ParenthesizedExpression(arg1).WithAnnotation(InvisibleParenthesis.Value);
+					return arg1.WithAnnotation(PushNegation.LiftedOperatorAnnotation);
 				case ILCode.AddressOf:
 					return MakeRef(arg1);
 				case ILCode.NullableOf:

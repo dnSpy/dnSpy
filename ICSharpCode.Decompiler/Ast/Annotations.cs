@@ -12,11 +12,4 @@ namespace ICSharpCode.Decompiler.Ast
 			this.InferredType = inferredType;
 		}
 	}
-
-	sealed class InvisibleParenthesis
-	{
-		InvisibleParenthesis() { }
-
-		public static readonly InvisibleParenthesis Value = new InvisibleParenthesis();
-	}
 }
