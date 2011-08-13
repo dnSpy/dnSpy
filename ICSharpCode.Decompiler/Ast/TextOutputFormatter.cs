@@ -86,6 +86,15 @@ namespace ICSharpCode.Decompiler.Ast
 				//    return variable.OriginalVariable;
 				return variable;
 			}
+
+			var gotoStatement = node as GotoStatement;
+			if (gotoStatement != null)
+			{
+				var method = nodeStack.Select(nd => nd.Annotation<MethodReference>()).FirstOrDefault(mr => mr != null);
+				if (method != null)
+					return method.ToString() + gotoStatement.Label;
+			}
+
 			return null;
 		}
 
@@ -107,6 +116,14 @@ namespace ICSharpCode.Decompiler.Ast
 				} else {
 
 				}
+			}
+
+			var label = node as LabelStatement;
+			if (label != null)
+			{
+				var method = nodeStack.Select(nd => nd.Annotation<MethodReference>()).FirstOrDefault(mr => mr != null);
+				if (method != null)
+					return method.ToString() + label.Label;
 			}
 
 			return null;
