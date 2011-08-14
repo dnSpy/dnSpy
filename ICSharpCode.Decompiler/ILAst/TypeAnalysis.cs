@@ -735,9 +735,12 @@ namespace ICSharpCode.Decompiler.ILAst
 						return tr.IsValueType ? typeSystem.Object : tr;
 					}
 				case ILCode.Box:
-					if (forceInferChildren)
-						InferTypeForExpression(expr.Arguments.Single(), (TypeReference)expr.Operand);
-					return (TypeReference)expr.Operand;
+					{
+						var tr = (TypeReference)expr.Operand;
+						if (forceInferChildren)
+							InferTypeForExpression(expr.Arguments.Single(), tr);
+						return tr.IsValueType ? typeSystem.Object : tr;
+					}
 					#endregion
 					#region Comparison instructions
 				case ILCode.Ceq:
@@ -794,7 +797,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					return null;
 				case ILCode.Wrap:
 				case ILCode.Dup:
-					return InferTypeForExpression(expr.Arguments.Single(), expectedType);
+					{
+						var arg = expr.Arguments.Single();
+						return arg.ExpectedType = InferTypeForExpression(expr.Arguments.Single(), expectedType);
+					}
 				default:
 					Debug.WriteLine("Type Inference: Can't handle " + expr.Code.GetName());
 					return null;
