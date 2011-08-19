@@ -128,6 +128,7 @@ namespace ICSharpCode.Decompiler.Ast
 				else
 					type = AstBuilder.ConvertType(v.Type);
 				var newVarDecl = new VariableDeclarationStatement(type, v.Name);
+				newVarDecl.Variables.Single().AddAnnotation(v);
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
 			
