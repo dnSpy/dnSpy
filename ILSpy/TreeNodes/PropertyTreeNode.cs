@@ -148,6 +148,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			language.DecompileProperty(property, output, options);
 		}
+		
+		public override bool IsPublicAPI {
+			get {
+				switch (GetAttributesOfMostAccessibleMethod(property) & MethodAttributes.MemberAccessMask) {
+					case MethodAttributes.Public:
+					case MethodAttributes.Family:
+					case MethodAttributes.FamORAssem:
+						return true;
+					default:
+						return false;
+				}
+			}
+		}
 
 		MemberReference IMemberTreeNode.Member
 		{

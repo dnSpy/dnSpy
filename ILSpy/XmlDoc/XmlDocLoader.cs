@@ -99,6 +99,9 @@ namespace ICSharpCode.ILSpy.XmlDoc
 		
 		static string LookupLocalizedXmlDoc(string fileName)
 		{
+			if (string.IsNullOrEmpty(fileName))
+				return null;
+			
 			string xmlFileName = Path.ChangeExtension(fileName, ".xml");
 			string currentCulture = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 			string localizedXmlDocFile = GetLocalizedName(xmlFileName, currentCulture);
