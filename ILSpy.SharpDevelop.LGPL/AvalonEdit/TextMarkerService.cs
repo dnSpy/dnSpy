@@ -123,7 +123,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			int lineStart = line.Offset;
 			int lineEnd = lineStart + line.Length;
 			foreach (TextMarker marker in markers.FindOverlappingSegments(lineStart, line.Length).Reverse()) {
-				if (!marker.IsVisible(marker.Bookmark))
+				if (marker.Bookmark != null && !marker.IsVisible(marker.Bookmark))
 					continue;
 				
 				Brush foregroundBrush = null;
@@ -166,7 +166,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			int viewStart = visualLines.First().FirstDocumentLine.Offset;
 			int viewEnd = visualLines.Last().LastDocumentLine.Offset + visualLines.Last().LastDocumentLine.Length;
 			foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart).Reverse()) {
-				if (!marker.IsVisible(marker.Bookmark))
+				if (marker.Bookmark != null && !marker.IsVisible(marker.Bookmark))
 					continue;
 				
 				if (marker.BackgroundColor != null) {

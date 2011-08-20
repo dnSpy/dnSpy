@@ -211,7 +211,7 @@ namespace ICSharpCode.Decompiler.Ast
 								Type = AstBuilder.ConvertType(catchClause.ExceptionType),
 								VariableName = catchClause.ExceptionVariable == null ? null : catchClause.ExceptionVariable.Name,
 								Body = TransformBlock(catchClause)
-							});
+							}.WithAnnotation(catchClause.ExceptionVariable));
 					}
 				}
 				if (tryCatchNode.FinallyBlock != null)
