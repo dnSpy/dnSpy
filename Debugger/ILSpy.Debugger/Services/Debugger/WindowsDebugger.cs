@@ -796,7 +796,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				int line;
 				MemberReference memberReference;
 				
-				if (DebugInformation.CodeMappings.ContainsKey(token) &&
+				if (null != DebugInformation.CodeMappings && 
+				    DebugInformation.CodeMappings.ContainsKey(token) &&
 				    DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out memberReference, out line)) {
 					DebugInformation.DebugStepInformation = null; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();

@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -10,6 +11,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 using Debugger;
 using ICSharpCode.ILSpy;
@@ -17,17 +19,17 @@ using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.XmlDoc;
 using Mono.Cecil;
+using Mono.CSharp;
 
-namespace ILSpyPlugin
+namespace ICSharpCode.ILSpy.Debugger.UI
 {
     /// <summary>
     /// Interaction logic for CallStackPanel.xaml
     /// </summary>
-    public partial class CallStackPanel : UserControl
+    public partial class CallStackPanel : UserControl, IPane
     {
         static CallStackPanel s_instance;
     	IDebugger m_currentDebugger;
-    	Process debuggedProcess;
     	
     	public static CallStackPanel Instance
     	{
@@ -44,24 +46,59 @@ namespace ILSpyPlugin
         private CallStackPanel()
         {
             InitializeComponent();
-            
-            DebuggerService.DebugStarted += new EventHandler(OnDebugStarted);
-            DebuggerService.DebugStopped += new EventHandler(OnDebugStopped);
-            if (DebuggerService.IsDebuggerStarted)
-            	OnDebugStarted(null, EventArgs.Empty);
         }
   
 		public void Show()
 		{
 			if (!IsVisible)
-				MainWindow.Instance.ShowInBottomPane("Callstack", this);
+			{
+                // load debugger settings (to update context menu)
+                ILSpySettings settings = ILSpySettings.Load();
+                DebuggerSettings.Instance.Load(settings);
+                DebuggerSettings.Instance.PropertyChanged += new PropertyChangedEventHandler(OnDebuggerSettingChanged);
+                
+                SwitchModuleColumn();
+			    MainWindow.Instance.ShowInBottomPane("Callstack", this);
+                
+                DebuggerService.DebugStarted += new EventHandler(OnDebugStarted);
+                DebuggerService.DebugStopped += new EventHandler(OnDebugStopped);
+                if (DebuggerService.IsDebuggerStarted)
+                	OnDebugStarted(null, EventArgs.Empty);
+			}
+		}
+		
+		public void Closed()
+		{
+            DebuggerService.DebugStarted -= new EventHandler(OnDebugStarted);
+            DebuggerService.DebugStopped -= new EventHandler(OnDebugStopped);
+            if (null != m_currentDebugger)
+                OnDebugStopped(null, EventArgs.Empty);
+            
+            // save settings
+            DebuggerSettings.Instance.PropertyChanged -= new PropertyChangedEventHandler(OnDebuggerSettingChanged);
+            ILSpySettings.Update(
+                delegate (XElement root) {
+                    DebuggerSettings.Instance.Save(root);
+                });
+		}
+		
+		void OnDebuggerSettingChanged(object sender, PropertyChangedEventArgs args)
+		{
+		    if (args.PropertyName == "ShowModuleName") {
+		        SwitchModuleColumn();
+		    }
+		    else if (args.PropertyName == "ShowArguments"
+		             || args.PropertyName == "ShowArgumentValues") {
+		        RefreshPad();
+		    }
+		        
 		}
         
         void OnDebugStarted(object sender, EventArgs args)
         {
         	m_currentDebugger = DebuggerService.CurrentDebugger;
         	m_currentDebugger.IsProcessRunningChanged += new EventHandler(OnProcessRunningChanged);
-        	debuggedProcess = ((WindowsDebugger)m_currentDebugger).DebuggedProcess;
+        	
         	OnProcessRunningChanged(null, EventArgs.Empty);
         }
 
@@ -69,7 +106,7 @@ namespace ILSpyPlugin
         {        	
         	m_currentDebugger.IsProcessRunningChanged -= new EventHandler(OnProcessRunningChanged);
         	m_currentDebugger = null;
-        	debuggedProcess = null;
+			view.ItemsSource = null;
         }
         
         void OnProcessRunningChanged(object sender, EventArgs args)
@@ -79,18 +116,28 @@ namespace ILSpyPlugin
         	RefreshPad();
         }
         
+        void SwitchModuleColumn()
+        {
+	        foreach (GridViewColumn c in ((GridView)view.View).Columns) {
+	            if ((string)c.Header == "Module") {
+	                c.Width = DebuggerSettings.Instance.ShowModuleName ? double.NaN : 0d;
+	            }
+	        }
+        }
+        
        	void RefreshPad()
 		{
+       	    Process debuggedProcess = ((WindowsDebugger)m_currentDebugger).DebuggedProcess;
 			if (debuggedProcess == null || debuggedProcess.IsRunning || debuggedProcess.SelectedThread == null) {
 				view.ItemsSource = null;
 				return;
 			}
 			
-			List<CallStackItem> items = null;
+			IList<CallStackItem> items = null;
 			StackFrame activeFrame = null;
 			try {
 				Utils.DoEvents(debuggedProcess);
-				items = CreateItems().ToList();
+				items = CreateItems(debuggedProcess);
 				activeFrame = debuggedProcess.SelectedThread.SelectedStackFrame;
 			} catch(AbortedBecauseDebuggeeResumedException) {
 			} catch(System.Exception) {
@@ -104,8 +151,9 @@ namespace ILSpyPlugin
 			view.SelectedItem = items != null ? items.FirstOrDefault(item => object.Equals(activeFrame, item.Frame)) : null;
 		}
 		
-		IEnumerable<CallStackItem> CreateItems()
+		IList<CallStackItem> CreateItems(Process debuggedProcess)
 		{
+		    List<CallStackItem> items = new List<CallStackItem>();
 			foreach (StackFrame frame in debuggedProcess.SelectedThread.GetCallstack(100)) {
 				CallStackItem item;
 				
@@ -116,16 +164,17 @@ namespace ILSpyPlugin
 					Name = GetFullName(frame), ModuleName = moduleName
 				};
 				item.Frame = frame;
-				yield return item;
+				items.Add(item);
 				Utils.DoEvents(debuggedProcess);
 			}
+		    return items;
 		}
 		
 		internal static string GetFullName(StackFrame frame)
 		{
 			// disabled by default, my be switched if options / context menu is added
-			bool showArgumentNames = false;
-			bool showArgumentValues = false;
+			bool showArgumentNames = DebuggerSettings.Instance.ShowArguments;
+			bool showArgumentValues = DebuggerSettings.Instance.ShowArgumentValues;
 
 			StringBuilder name = new StringBuilder();
 			name.Append(frame.MethodInfo.DeclaringType.FullName);
@@ -179,6 +228,7 @@ namespace ILSpyPlugin
             var selectedItem = view.SelectedItem as CallStackItem;
             if (null == selectedItem)
             	return;
+            
             var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(selectedItem.Frame.MethodInfo.DebugModule.FullPath);
             if (null == foundAssembly || null == foundAssembly.AssemblyDefinition)
                 return;
@@ -190,6 +240,14 @@ namespace ILSpyPlugin
 			// TODO: jump to associated line
             // MainWindow.Instance.TextView.UnfoldAndScroll(selectedItem.LineNumber);
             e.Handled = true;
+        }
+        
+        void SwitchIsChecked(object sender, EventArgs args)
+        {
+            if (sender is MenuItem) {
+                var mi = (MenuItem)sender;
+                mi.IsChecked = !mi.IsChecked;
+            }
         }
     }
     

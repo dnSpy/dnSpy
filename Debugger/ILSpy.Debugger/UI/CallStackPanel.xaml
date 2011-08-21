@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <UserControl
-    x:Class="ILSpyPlugin.CallStackPanel" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    >
+    x:Class="ICSharpCode.ILSpy.Debugger.UI.CallStackPanel" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:debugger="clr-namespace:ICSharpCode.ILSpy.Debugger">
     <Grid>
         <ListView
             Name="view"
@@ -30,6 +29,25 @@
                     </GridViewColumn>
                 </GridView>
             </ListView.View>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Header="Show _module names"
+                        IsChecked="{Binding Path=ShowModuleName, Source={x:Static debugger:DebuggerSettings.Instance}, Mode=TwoWay}" 
+                        Click="SwitchIsChecked"
+                    />
+                    <MenuItem
+                        Header="Show _argument names"
+                        IsChecked="{Binding Path=ShowArguments, Source={x:Static debugger:DebuggerSettings.Instance}, Mode=TwoWay}" 
+                        Click="SwitchIsChecked"
+                    />
+                    <MenuItem
+                        Header="Show argument _values"
+                        IsChecked="{Binding Path=ShowArgumentValues, Source={x:Static debugger:DebuggerSettings.Instance}, Mode=TwoWay}" 
+                        Click="SwitchIsChecked"
+                    />
+                </ContextMenu>
+            </ListView.ContextMenu>
         </ListView>
     </Grid>
 </UserControl>

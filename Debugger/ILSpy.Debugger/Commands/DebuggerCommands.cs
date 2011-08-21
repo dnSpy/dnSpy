@@ -138,7 +138,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			foreach (var item in items.First().Items.OfType<MenuItem>()) {
 				string header = (string)item.Header;
 				
-				if (header.StartsWith("Remove")) continue;
+				if (header.StartsWith("Remove") || header.StartsWith("Show")) continue;
 				
 				if (header.StartsWith("Attach") || header.StartsWith("Debug"))
 					item.IsEnabled = enable;

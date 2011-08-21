@@ -17,7 +17,7 @@ using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Options;
 
-namespace ILSpyPlugin
+namespace ICSharpCode.ILSpy.Debugger.UI
 {
     /// <summary>
     /// Interaction logic for BreakpointPanel.xaml
@@ -41,23 +41,27 @@ namespace ILSpyPlugin
         private BreakpointPanel()
         {
           InitializeComponent();
-          SetItemSource();
-          BookmarkManager.Added += delegate { SetItemSource(); };
-          BookmarkManager.Removed += delegate { SetItemSource(); };
-        	DebuggerSettingsPanel.CurrentDebuggerSettings.PropertyChanged += 
-        		delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
         }
         
 		public void Show()
 		{
 			if (!IsVisible)
-				MainWindow.Instance.ShowInBottomPane("Breakpoints", this);
+			{
+                SetItemSource();
+                
+			    MainWindow.Instance.ShowInBottomPane("Breakpoints", this);
+			    
+                BookmarkManager.Added += delegate { SetItemSource(); };
+                BookmarkManager.Removed += delegate { SetItemSource(); };
+                DebuggerSettings.Instance.PropertyChanged += 
+                	delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
+			}
 		}
 		
 		private void SetItemSource()
 		{
           	view.ItemsSource = null;
-          	if (DebuggerSettingsPanel.CurrentDebuggerSettings.ShowAllBookmarks)
+          	if (DebuggerSettings.Instance.ShowAllBookmarks)
 				view.ItemsSource = BookmarkManager.Bookmarks;
           	else
           		view.ItemsSource = BookmarkManager.Bookmarks.Where(b => b is BreakpointBookmark);
@@ -67,7 +71,7 @@ namespace ILSpyPlugin
         {
         	BookmarkManager.Added -= delegate { SetItemSource(); };
         	BookmarkManager.Removed -= delegate { SetItemSource(); };
-        	DebuggerSettingsPanel.CurrentDebuggerSettings.PropertyChanged -= 
+        	DebuggerSettings.Instance.PropertyChanged -= 
         		delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
         }
         
