@@ -59,9 +59,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			foreach (var v in variablesToDeclare) {
 				if (v.ReplacedAssignment == null) {
 					BlockStatement block = (BlockStatement)v.InsertionPoint.Parent;
+					var decl = new VariableDeclarationStatement((AstType)v.Type.Clone(), v.Name);
+					if (v.ILVariable != null)
+						decl.Variables.Single().AddAnnotation(v.ILVariable);
 					block.Statements.InsertBefore(
 						v.InsertionPoint,
-						new VariableDeclarationStatement((AstType)v.Type.Clone(), v.Name));
+						decl);
 				}
 			}
 			// First do all the insertions, then do all the replacements. This is necessary because a replacement might remove our reference point from the AST.
