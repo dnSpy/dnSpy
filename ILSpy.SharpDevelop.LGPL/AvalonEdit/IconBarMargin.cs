@@ -15,6 +15,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -70,10 +71,15 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				// create a dictionary line number => first bookmark
 				Dictionary<int, IBookmark> bookmarkDict = new Dictionary<int, IBookmark>();
 				foreach (var bm in BookmarkManager.Bookmarks) {
-					if (DebugInformation.DecompiledMemberReferences == null || DebugInformation.DecompiledMemberReferences.Count == 0 ||
-					    !DebugInformation.DecompiledMemberReferences.ContainsKey(bm.MemberReference.MetadataToken.ToInt32()))
-						continue;
-					
+					if (bm is BreakpointBookmark) {
+						if (DebugInformation.CodeMappings == null || DebugInformation.CodeMappings.Count == 0 ||
+						    !DebugInformation.CodeMappings.ContainsKey(((BreakpointBookmark)bm).FunctionToken))
+							continue;
+					} else {
+						if (DebugInformation.DecompiledMemberReferences == null || DebugInformation.DecompiledMemberReferences.Count == 0 ||
+						    !DebugInformation.DecompiledMemberReferences.ContainsKey(((MarkerBookmark)bm).MemberReference.MetadataToken.ToInt32()))
+							continue;
+					}
 					int line = bm.LineNumber;
 					IBookmark existingBookmark;
 					if (!bookmarkDict.TryGetValue(line, out existingBookmark) || bm.ZOrder > existingBookmark.ZOrder)
@@ -248,26 +254,24 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			if (storage == null || storage.Count == 0)
 				return;
 			
-			//remove existing bookmarks and create new ones
+			// TODO: handle other types of bookmarks
+			// remove existing bookmarks and create new ones
 			List<BreakpointBookmark> newBookmarks = new List<BreakpointBookmark>();
 			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
 				var breakpoint = BookmarkManager.Bookmarks[i] as BreakpointBookmark;
 				if (breakpoint == null)
 					continue;
 				
-				var key = breakpoint.MemberReference.MetadataToken.ToInt32();
+				var key = breakpoint.FunctionToken;
 				if (!storage.ContainsKey(key))
 					continue;
 				
-				var member = DebugInformation.DecompiledMemberReferences[key];
-				
 				bool isMatch;
-				SourceCodeMapping map = storage[key].GetInstructionByTokenAndOffset(
-					member.MetadataToken.ToInt32(), breakpoint.ILRange.From, out isMatch);
+				SourceCodeMapping map = storage[key].GetInstructionByTokenAndOffset(key, breakpoint.ILRange.From, out isMatch);
 				
 				if (map != null) {
 					newBookmarks.Add(new BreakpointBookmark(
-						member, new AstLocation(map.SourceCodeLine, 0),
+						breakpoint.MemberReference, new AstLocation(map.SourceCodeLine, 0), breakpoint.FunctionToken,
 						map.ILInstructionOffset, BreakpointAction.Break, DebugInformation.Language));
 					
 					BookmarkManager.RemoveMark(breakpoint);
@@ -285,33 +289,25 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			if (CurrentLineBookmark.Instance == null)
 				return;
 			
-			var oldMappings = DebugInformation.OldCodeMappings;
-			var newMappings = DebugInformation.CodeMappings;
-
-			if (oldMappings == null || newMappings == null)
+			var codeMappings = DebugInformation.CodeMappings;
+			if (codeMappings == null)
 				return;
 			
 			// 1. Save it's data
 			int line = CurrentLineBookmark.Instance.LineNumber;
 			var markerType = CurrentLineBookmark.Instance.MemberReference;
+			int token = markerType.MetadataToken.ToInt32();
+			int offset = CurrentLineBookmark.Instance.ILOffset;
 			
-			if (!oldMappings.ContainsKey(markerType.MetadataToken.ToInt32()) || !newMappings.ContainsKey(markerType.MetadataToken.ToInt32()))
+			if (!codeMappings.ContainsKey(token))
 				return;
 			
-			// 2. Remove it
-			CurrentLineBookmark.Remove();
-			
-			// 3. map the marker line
-			int token;
-			var instruction = oldMappings[markerType.MetadataToken.ToInt32()].GetInstructionByLineNumber(line, out token);
-			if (instruction == null)
-				return;
-
+			// 2. map the marker line
 			MemberReference memberReference;
 			int newline;
-			if (newMappings[markerType.MetadataToken.ToInt32()].GetInstructionByTokenAndOffset(token, instruction.ILInstructionOffset.From, out memberReference, out newline)) {
-				// 4. create breakpoint for new languages
-				CurrentLineBookmark.SetPosition(memberReference, newline, 0, newline, 0);
+			if (codeMappings[token].GetInstructionByTokenAndOffset(token, offset, out memberReference, out newline)) {
+				// 3. create breakpoint for new languages
+				DebuggerService.JumpToCurrentLine(memberReference, newline, 0, newline, 0, offset);
 			}
 		}
 	}

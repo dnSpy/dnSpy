@@ -307,6 +307,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public override void Execute(object parameter)
 		{
 			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
+				CurrentLineBookmark.Remove();
 				CurrentDebugger.Continue();
 				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 			}

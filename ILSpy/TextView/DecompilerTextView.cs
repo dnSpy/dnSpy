@@ -46,6 +46,7 @@ using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -452,7 +453,7 @@ namespace ICSharpCode.ILSpy.TextView
 			iconMargin.SyncBookmarks();
 			
 			if (isDecompilationOk) {
-				if (DebugInformation.DebugStepInformation != null) {
+				if (DebugInformation.DebugStepInformation != null && DebuggerService.CurrentDebugger != null) {
 					// repaint bookmarks
 					iconMargin.InvalidateVisual();
 					
@@ -467,8 +468,7 @@ namespace ICSharpCode.ILSpy.TextView
 					DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out member, out line);
 					
 					// update marker
-					CurrentLineBookmark.Remove();
-					CurrentLineBookmark.SetPosition(member, line, 0, line, 0);
+					DebuggerService.JumpToCurrentLine(member, line, 0, line, 0, ilOffset);
 
 					var bm = CurrentLineBookmark.Instance;
 					DocumentLine docline = textEditor.Document.GetLineByNumber(line);
@@ -530,7 +530,6 @@ namespace ICSharpCode.ILSpy.TextView
 		void DecompileNodes(DecompilationContext context, ITextOutput textOutput)
 		{
 			// reset data
-			DebugInformation.OldCodeMappings = DebugInformation.CodeMappings;
 			DebugInformation.CodeMappings = null;
 			DebugInformation.LocalVariables = null;
 			DebugInformation.DecompiledMemberReferences = null;

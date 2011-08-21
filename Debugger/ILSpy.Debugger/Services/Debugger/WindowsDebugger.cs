@@ -1,6 +1,7 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -27,6 +28,7 @@ using StackFrame = Debugger.StackFrame;
 
 namespace ICSharpCode.ILSpy.Debugger.Services
 {
+	[Export(typeof(IDebugger))]
 	public class WindowsDebugger : IDebugger
 	{
 		enum StopAttachedProcessDialogResult {
@@ -283,7 +285,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			int key = frame.MethodInfo.MetadataToken;
 			
 			// get the mapped instruction from the current line marker or the next one
-			if (!DebugInformation.CodeMappings.ContainsKey(key))
+			if (DebugInformation.CodeMappings == null || !DebugInformation.CodeMappings.ContainsKey(key))
 				return null;
 			
 			return DebugInformation.CodeMappings[key].GetInstructionByTokenAndOffset(key, frame.IP, out isMatch);
@@ -550,7 +552,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				debugger,
 				bookmark.MemberReference.DeclaringType.FullName,
 				bookmark.LineNumber,
-				bookmark.MemberReference.MetadataToken.ToInt32(),
+				bookmark.FunctionToken,
 				bookmark.ILRange.From,
 				bookmark.IsEnabled);
 			
@@ -796,11 +798,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				int line;
 				MemberReference memberReference;
 				
-				if (DebugInformation.CodeMappings.ContainsKey(token) &&
+				if (DebugInformation.CodeMappings != null && 
+				    DebugInformation.CodeMappings.ContainsKey(token) &&
 				    DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out memberReference, out line)) {
 					DebugInformation.DebugStepInformation = null; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
-					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0);
+					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0, ilOffset);
 				}
 				else {
 					StepIntoUnknownFrame(frame);
