@@ -15,7 +15,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		static ParserService()
 		{
-			mySet.AddRange((new [] {
+			mySet.AddRange((new string [] {
 			                	".",
 			                	"{",
 			                	"}",
@@ -41,7 +41,14 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			                	@"\t",
 			                	@"\r",
 			                	"|"
-			                }).AsReadOnly());
+			                }));
+		}
+		
+		static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items)
+		{
+			foreach (T item in items)
+				if (!list.Contains(item))
+					list.Add(item);
 		}
 		
 		/// <summary>

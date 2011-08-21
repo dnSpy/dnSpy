@@ -29,6 +29,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.Xml;
@@ -45,6 +46,7 @@ using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -68,11 +70,13 @@ namespace ICSharpCode.ILSpy.TextView
 		ILSpyTreeNode[] decompiledNodes;
 		
 		DefinitionLookup definitionLookup;
+		TextSegmentCollection<ReferenceSegment> references;
 		CancellationTokenSource currentCancellationTokenSource;
 		
 		internal readonly IconBarManager manager;
 		readonly IconBarMargin iconMargin;
 		readonly TextMarkerService textMarkerService;
+		readonly List<ITextMarker> localReferenceMarks = new List<ITextMarker>();
 		
 		[ImportMany(typeof(ITextEditorListener))]
 		IEnumerable<ITextEditorListener> textEditorListeners = null;
@@ -315,7 +319,8 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
 			Stopwatch w = Stopwatch.StartNew();
-			
+
+			ClearLocalReferenceMarks();
 			textEditor.ScrollToHome();
 			if (foldingManager != null) {
 				FoldingManager.Uninstall(foldingManager);
@@ -324,6 +329,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.Document = null; // clear old document while we're changing the highlighting
 			uiElementGenerator.UIElements = textOutput.UIElements;
 			referenceElementGenerator.References = textOutput.References;
+			references = textOutput.References;
 			definitionLookup = textOutput.DefinitionLookup;
 			textEditor.SyntaxHighlighting = highlighting;
 			
@@ -447,7 +453,7 @@ namespace ICSharpCode.ILSpy.TextView
 			iconMargin.SyncBookmarks();
 			
 			if (isDecompilationOk) {
-				if (DebugInformation.DebugStepInformation != null) {
+				if (DebugInformation.DebugStepInformation != null && DebuggerService.CurrentDebugger != null) {
 					// repaint bookmarks
 					iconMargin.InvalidateVisual();
 					
@@ -462,7 +468,7 @@ namespace ICSharpCode.ILSpy.TextView
 					DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out member, out line);
 					
 					// update marker
-					CurrentLineBookmark.SetPosition(member, line, 0, line, 0);
+					DebuggerService.JumpToCurrentLine(member, line, 0, line, 0, ilOffset);
 
 					var bm = CurrentLineBookmark.Instance;
 					DocumentLine docline = textEditor.Document.GetLineByNumber(line);
@@ -524,7 +530,6 @@ namespace ICSharpCode.ILSpy.TextView
 		void DecompileNodes(DecompilationContext context, ITextOutput textOutput)
 		{
 			// reset data
-			DebugInformation.OldCodeMappings = DebugInformation.CodeMappings;
 			DebugInformation.CodeMappings = null;
 			DebugInformation.LocalVariables = null;
 			DebugInformation.DecompiledMemberReferences = null;
@@ -608,6 +613,19 @@ namespace ICSharpCode.ILSpy.TextView
 		internal void JumpToReference(ReferenceSegment referenceSegment)
 		{
 			object reference = referenceSegment.Reference;
+			if (referenceSegment.IsLocal) {
+				ClearLocalReferenceMarks();
+				if (references != null) {
+					foreach (var r in references) {
+						if (r.Reference == reference) {
+							var mark = textMarkerService.Create(r.StartOffset, r.Length);
+							mark.BackgroundColor = r.IsLocalTarget ? Colors.LightSeaGreen : Colors.GreenYellow;
+							localReferenceMarks.Add(mark);
+						}
+					}
+				}
+				return;
+			}
 			if (definitionLookup != null) {
 				int pos = definitionLookup.GetDefinitionPosition(reference);
 				if (pos >= 0) {
@@ -622,6 +640,14 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 			}
 			MainWindow.Instance.JumpToReference(reference);
+		}
+
+		void ClearLocalReferenceMarks()
+		{
+			foreach (var mark in localReferenceMarks) {
+				textMarkerService.Remove(mark);
+			}
+			localReferenceMarks.Clear();
 		}
 		
 		/// <summary>

@@ -48,14 +48,37 @@ namespace ILSpy.BamlDecompiler
 			string assemblyName = name.Substring(comma + 1).Trim();
 			
 			var type = thisAssembly.MainModule.GetType(fullName);
+			
+			if (type == null) {
+				type = TryFindInExportedTypes(fullName, thisAssembly);
+			}
+			
 			if (type == null) {
 				var otherAssembly = resolver.Resolve(assemblyName);
 				if (otherAssembly == null)
 					throw new Exception("could not resolve '" + assemblyName + "'!");
 				type = otherAssembly.MainModule.GetType(fullName.Replace('+', '/'));
+				
+				if (type == null) {
+					type = TryFindInExportedTypes(fullName, otherAssembly);
+				}
 			}
 			
+			if (type == null)
+				throw new Exception("could not resolve '" + name + "'!");
+			
 			return new CecilType(type);
+		}
+
+		TypeDefinition TryFindInExportedTypes(string fullName, AssemblyDefinition asm)
+		{
+			foreach (var exportedType in asm.MainModule.ExportedTypes) {
+				if (exportedType.IsForwarder && exportedType.FullName == fullName) {
+					return exportedType.Resolve();
+				}
+			}
+			
+			return null;
 		}
 		
 		public IDependencyPropertyDescriptor GetDependencyPropertyDescriptor(string name, IType ownerType, IType targetType)

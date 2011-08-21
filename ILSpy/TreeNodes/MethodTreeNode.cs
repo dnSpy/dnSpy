@@ -137,6 +137,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FilterResult.Hidden;
 		}
 
+		public override bool IsPublicAPI {
+			get {
+				return method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly;
+			}
+		}
+		
 		MemberReference IMemberTreeNode.Member
 		{
 			get { return method; }

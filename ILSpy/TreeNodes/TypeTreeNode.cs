@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return HighlightSearchMatch(this.Language.FormatTypeName(type)); }
 		}
 		
-		public bool IsPublicAPI {
+		public override bool IsPublicAPI {
 			get {
 				switch (type.Attributes & TypeAttributes.VisibilityMask) {
 					case TypeAttributes.Public:

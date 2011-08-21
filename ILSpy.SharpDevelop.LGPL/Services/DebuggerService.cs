@@ -27,7 +27,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		static IDebugger GetCompatibleDebugger()
 		{
-			return currentDebugger = new WindowsDebugger();
+			return currentDebugger;
 		}
 		
 		/// <summary>
@@ -39,6 +39,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			get {
 				if (currentDebugger == null) {
 					currentDebugger = GetCompatibleDebugger();
+					if (currentDebugger == null)
+						return null;
 					currentDebugger.DebugStarting += new EventHandler(OnDebugStarting);
 					currentDebugger.DebugStarted += new EventHandler(OnDebugStarted);
 					currentDebugger.DebugStopped += new EventHandler(OnDebugStopped);
@@ -166,12 +168,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 		}
 		
-		public static void ToggleBreakpointAt(MemberReference member, int lineNumber, ILRange range, DecompiledLanguages language)
+		public static void ToggleBreakpointAt(MemberReference member, int lineNumber, int functionToken, ILRange range, DecompiledLanguages language)
 		{
 			BookmarkManager.ToggleBookmark(
 				member.FullName, lineNumber,
 				b => b.CanToggle && b is BreakpointBookmark,
-				location => new BreakpointBookmark(member, location, range, BreakpointAction.Break, language));
+				location => new BreakpointBookmark(member, location, functionToken, range, BreakpointAction.Break, language));
 		}
 		
 		/* TODO: reimplement this stuff
@@ -187,10 +189,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			CurrentLineBookmark.Remove();
 		}
 		
-		public static void JumpToCurrentLine(MemberReference memberReference, int startLine, int startColumn, int endLine, int endColumn)
+		public static void JumpToCurrentLine(MemberReference memberReference, int startLine, int startColumn, int endLine, int endColumn, int ilOffset)
 		{
-			CurrentLineBookmark.SetPosition(memberReference, startLine, startColumn, endLine, endColumn);
-			MainWindow.Instance.TextView.UnfoldAndScroll(startLine);
+			CurrentLineBookmark.SetPosition(memberReference, startLine, startColumn, endLine, endColumn, ilOffset);
 		}
 		
 		#region Tool tips
@@ -200,7 +201,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// showing its current value (when in debugging mode) can be returned
 		/// through the ToolTipRequestEventArgs.SetTooltip() method.
 		/// </summary>
-		internal static void HandleToolTipRequest(ToolTipRequestEventArgs e)
+		public static void HandleToolTipRequest(ToolTipRequestEventArgs e)
 		{
 			if (!e.InDocument)
 				return;
@@ -386,5 +387,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 //			return text.ToString();
 //		}
 		#endregion
+		
+		public static void SetDebugger(Lazy<IDebugger> debugger)
+		{
+			currentDebugger = debugger.Value;
+		}
 	}
 }

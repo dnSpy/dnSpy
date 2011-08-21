@@ -7,7 +7,7 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.ILSpy.Debugger.Tooltips
 {
-	internal class ToolTipRequestEventArgs : EventArgs
+	public class ToolTipRequestEventArgs : EventArgs
 	{
 		/// <summary>
 		/// Gets whether the tool tip request was handled.

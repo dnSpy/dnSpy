@@ -128,6 +128,7 @@ namespace ICSharpCode.Decompiler.Ast
 				else
 					type = AstBuilder.ConvertType(v.Type);
 				var newVarDecl = new VariableDeclarationStatement(type, v.Name);
+				newVarDecl.Variables.Single().AddAnnotation(v);
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
 			
@@ -210,7 +211,7 @@ namespace ICSharpCode.Decompiler.Ast
 								Type = AstBuilder.ConvertType(catchClause.ExceptionType),
 								VariableName = catchClause.ExceptionVariable == null ? null : catchClause.ExceptionVariable.Name,
 								Body = TransformBlock(catchClause)
-							});
+							}.WithAnnotation(catchClause.ExceptionVariable));
 					}
 				}
 				if (tryCatchNode.FinallyBlock != null)

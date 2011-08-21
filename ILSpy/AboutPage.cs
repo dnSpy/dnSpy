@@ -183,7 +183,9 @@ namespace ICSharpCode.ILSpy
 		{
 			var tcs = new TaskCompletionSource<AvailableVersionInfo>();
 			WebClient wc = new WebClient();
-			wc.UseDefaultCredentials = true;
+			IWebProxy systemWebProxy = WebRequest.GetSystemWebProxy();
+			systemWebProxy.Credentials = CredentialCache.DefaultCredentials;
+			wc.Proxy = systemWebProxy;
 			wc.DownloadDataCompleted += delegate(object sender, DownloadDataCompletedEventArgs e) {
 				if (e.Error != null) {
 					tcs.SetException(e.Error);

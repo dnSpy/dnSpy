@@ -36,14 +36,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 					}
 					
 					// no bookmark on the line: create a new breakpoint
-					MemberReference memberReference;
-					if (!DebugInformation.DecompiledMemberReferences.TryGetValue(storageEntry.Key, out memberReference)) {
-						continue;
-					}
-						
 					DebuggerService.ToggleBreakpointAt(
-						memberReference,
+						instruction.MemberMapping.MemberReference,
 						line,
+						token, 
 						instruction.ILInstructionOffset,
 						DebugInformation.Language);
 					break;
