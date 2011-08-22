@@ -390,7 +390,19 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public static void SetDebugger(Lazy<IDebugger> debugger)
 		{
+			if (currentDebugger != null)
+			{
+				currentDebugger.DebugStarting -= new EventHandler(OnDebugStarting);
+				currentDebugger.DebugStarted -= new EventHandler(OnDebugStarted);
+				currentDebugger.DebugStopped -= new EventHandler(OnDebugStopped);
+			}
 			currentDebugger = debugger.Value;
+			if (currentDebugger != null)
+			{
+				currentDebugger.DebugStarting += new EventHandler(OnDebugStarting);
+				currentDebugger.DebugStarted += new EventHandler(OnDebugStarted);
+				currentDebugger.DebugStopped += new EventHandler(OnDebugStopped);
+			}
 		}
 	}
 }
