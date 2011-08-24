@@ -53,7 +53,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			get { return 100; }
 		}
 		
-		public CurrentLineBookmark(MemberReference member, AstLocation location, int ilOffset) : base(member, location)
+		private CurrentLineBookmark(MemberReference member, AstLocation location, int ilOffset) : base(member, location)
 		{
 			this.ILOffset = ilOffset;
 		}

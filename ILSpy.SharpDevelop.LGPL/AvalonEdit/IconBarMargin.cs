@@ -27,8 +27,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		
 		public IconBarMargin(IconBarManager manager)
 		{
-			BookmarkManager.Added += delegate { InvalidateVisual(); };
-			BookmarkManager.Removed += delegate { InvalidateVisual(); };
+			BookmarkManager.Added += new BookmarkEventHandler(OnBookmarkAdded);
+			BookmarkManager.Removed += new BookmarkEventHandler(OnBookmarkRemoved);
 			
 			this.manager = manager;
 		}
@@ -248,6 +248,39 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			}
 		}
 		
+		public void OnBookmarkAdded(object sender, BookmarkEventArgs args)
+		{
+			var breakpoint = args.Bookmark as BreakpointBookmark;
+			if (null == breakpoint)
+				return;
+			var storage = DebugInformation.CodeMappings;
+			if (storage == null || storage.Count == 0)
+				return;
+			var key = breakpoint.MemberReference.MetadataToken.ToInt32();
+			if (storage.ContainsKey(key))
+			{
+				// register to show enabled/disabled state
+				breakpoint.ImageChanged += delegate { InvalidateVisual(); };
+				InvalidateVisual();
+			}
+		}
+		
+		public void OnBookmarkRemoved(object sender, BookmarkEventArgs args)
+		{
+			var breakpoint = args.Bookmark as BreakpointBookmark;
+			if (null == breakpoint)
+				return;
+			var storage = DebugInformation.CodeMappings;
+			if (storage == null || storage.Count == 0)
+				return;
+			var key = breakpoint.MemberReference.MetadataToken.ToInt32();
+			if (storage.ContainsKey(key))
+			{    
+				breakpoint.ImageChanged -= delegate { InvalidateVisual(); };
+				InvalidateVisual();
+			}
+		}
+		
 		public void SyncBookmarks()
 		{
 			var storage = DebugInformation.CodeMappings;
@@ -256,6 +289,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			
 			// TODO: handle other types of bookmarks
 			// remove existing bookmarks and create new ones
+			// update of existing bookmarks for new position does not update TextMarker
+			// this is only done in TextMarkerService handlers for BookmarkManager.Added/Removed
 			List<BreakpointBookmark> newBookmarks = new List<BreakpointBookmark>();
 			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
 				var breakpoint = BookmarkManager.Bookmarks[i] as BreakpointBookmark;
@@ -264,22 +299,25 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				
 				var key = breakpoint.FunctionToken;
 				if (!storage.ContainsKey(key))
-					continue;
+				{
+				    continue;
+				}
 				
 				bool isMatch;
 				SourceCodeMapping map = storage[key].GetInstructionByTokenAndOffset(key, breakpoint.ILRange.From, out isMatch);
 				
 				if (map != null) {
-					newBookmarks.Add(new BreakpointBookmark(
+					BreakpointBookmark newBookmark = new BreakpointBookmark(
 						breakpoint.MemberReference, new AstLocation(map.SourceCodeLine, 0), breakpoint.FunctionToken,
-						map.ILInstructionOffset, BreakpointAction.Break, DebugInformation.Language));
-					
-					BookmarkManager.RemoveMark(breakpoint);
+						map.ILInstructionOffset, BreakpointAction.Break, DebugInformation.Language);
+				  	newBookmark.IsEnabled = breakpoint.IsEnabled;
+				  	
+				  	newBookmarks.Add(newBookmark);
+
+ 				  	BookmarkManager.RemoveMark(breakpoint);
 				}
 			}
-			
 			newBookmarks.ForEach(m => BookmarkManager.AddMark(m));
-			
 			SyncCurrentLineBookmark();
 		}
 		

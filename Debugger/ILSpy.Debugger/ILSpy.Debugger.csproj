@@ -105,6 +105,14 @@
       <DependentUpon>AttachToProcessWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\BreakpointPanel.xaml.cs" >
+      <DependentUpon>BreakpointPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\CallStackPanel.xaml.cs" >
+      <DependentUpon>CallStackPanel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\DebuggerSettingsPanel.xaml.cs">
       <DependentUpon>DebuggerSettingsPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -125,6 +133,8 @@
     <Page Include="ToolTips\PinControlsDictionary.xaml" />
     <Page Include="ToolTips\VisualizerPicker.xaml" />
     <Page Include="UI\AttachToProcessWindow.xaml" />
+    <Page Include="UI\BreakpointPanel.xaml" />
+    <Page Include="UI\CallStackPanel.xaml" />
     <Page Include="UI\DebuggerSettingsPanel.xaml" />
     <Page Include="UI\ExecuteProcessWindow.xaml" />
   </ItemGroup>

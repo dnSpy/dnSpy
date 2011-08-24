@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Tooltips;
@@ -389,7 +390,19 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public static void SetDebugger(Lazy<IDebugger> debugger)
 		{
+			if (currentDebugger != null)
+			{
+				currentDebugger.DebugStarting -= new EventHandler(OnDebugStarting);
+				currentDebugger.DebugStarted -= new EventHandler(OnDebugStarted);
+				currentDebugger.DebugStopped -= new EventHandler(OnDebugStopped);
+			}
 			currentDebugger = debugger.Value;
+			if (currentDebugger != null)
+			{
+				currentDebugger.DebugStarting += new EventHandler(OnDebugStarting);
+				currentDebugger.DebugStarted += new EventHandler(OnDebugStarted);
+				currentDebugger.DebugStopped += new EventHandler(OnDebugStopped);
+			}
 		}
 	}
 }
