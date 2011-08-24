@@ -40,7 +40,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Text="{Binding MemberReference.DeclaringType.Name}"
+                                    Text="{Binding MemberReference.DeclaringType.FullName}"
                                     Margin="1,1,1,1" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
