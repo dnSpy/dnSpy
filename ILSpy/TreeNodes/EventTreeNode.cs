@@ -108,6 +108,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			language.DecompileEvent(ev, output, options);
 		}
 		
+		
+		public override bool IsPublicAPI {
+			get {
+				MethodDefinition accessor = ev.AddMethod ?? ev.RemoveMethod;
+				return accessor != null && (accessor.IsPublic || accessor.IsFamilyOrAssembly || accessor.IsFamily);
+			}
+		}
+		
 		MemberReference IMemberTreeNode.Member
 		{
 			get { return ev; }

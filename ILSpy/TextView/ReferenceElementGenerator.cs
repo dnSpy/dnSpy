@@ -102,7 +102,7 @@ namespace ICSharpCode.ILSpy.TextView
 		protected override void OnQueryCursor(QueryCursorEventArgs e)
 		{
 			e.Handled = true;
-			e.Cursor = Cursors.Hand;
+			e.Cursor = referenceSegment.IsLocal ? Cursors.Arrow : Cursors.Hand;
 		}
 		
 		/// <inheritdoc/>
@@ -110,7 +110,8 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (e.ChangedButton == MouseButton.Left && !e.Handled) {
 				parent.JumpToReference(referenceSegment);
-				e.Handled = true;
+				if(!referenceSegment.IsLocal)
+					e.Handled = true;
 			}
 		}
 		

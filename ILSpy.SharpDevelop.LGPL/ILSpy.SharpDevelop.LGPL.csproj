@@ -33,7 +33,7 @@
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
@@ -77,11 +77,17 @@
     <Compile Include="Bookmarks\MarkerBookmark.cs" />
     <Compile Include="DebugInformation.cs" />
     <Compile Include="Images.cs" />
+    <Compile Include="Models\ToolTipRequestEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DebuggerService.cs" />
+    <Compile Include="Services\IDebugger.cs" />
+    <Compile Include="Services\ParserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AvalonEdit" />
     <Folder Include="Bookmarks" />
+    <Folder Include="Models" />
+    <Folder Include="Services" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">

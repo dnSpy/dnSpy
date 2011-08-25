@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="ICSharpCode.ILSpy.Debugger.UI.BreakpointPanel" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:bm="clr-namespace:ICSharpCode.ILSpy.Bookmarks">
+    <Grid>
+        <ListView
+            Name="view"
+            HorizontalContentAlignment="Stretch"
+            SelectionMode="Single"
+            MouseDoubleClick="view_MouseDoubleClick"
+            KeyUp="view_KeyUp">
+            <ListView.View>
+                <GridView
+                    AllowsColumnReorder="False">
+                    <GridViewColumn
+                        Header="">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel
+                                    Orientation="Horizontal">
+                                    <Image
+                                        Width="16"
+                                        Height="16"
+                                        Margin="1,1,1,1"
+                                        Source="{Binding Image}"
+                                        HorizontalAlignment="Left" />
+                                    <CheckBox
+                                        Width="16"
+                                        Height="16"
+                                        Margin="3,3,3,1"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        IsEnabled="{Binding CanToggle}"
+                                        IsChecked="{Binding IsEnabled}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn
+                        Header="Class">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Text="{Binding MemberReference.DeclaringType.FullName}"
+                                    Margin="1,1,1,1" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn
+                        Header="Method">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Text="{Binding MemberReference.Name}"
+                                    Margin="1,1,1,1" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn
+                        Header="Line">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Text="{Binding LineNumber}"
+                                    Margin="1,1,1,1"
+                                    HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

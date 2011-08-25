@@ -112,6 +112,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			language.DecompileField(field, output, options);
 		}
+		
+		public override bool IsPublicAPI {
+			get {
+				return field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly;
+			}
+		}
 
 		MemberReference IMemberTreeNode.Member
 		{

@@ -634,6 +634,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach (ParameterDefinition p in methodDef.Parameters) {
 				this.Parameters.Add(new ILVariable { Type = p.ParameterType, Name = p.Name, OriginalParameter = p });
 			}
+			if (this.Parameters.Count > 0 && (methodDef.IsSetter || methodDef.IsAddOn || methodDef.IsRemoveOn)) {
+				// last parameter must be 'value', so rename it
+				this.Parameters.Last().Name = "value";
+			}
 			foreach (ByteCode byteCode in body) {
 				ParameterDefinition p;
 				switch (byteCode.Code) {

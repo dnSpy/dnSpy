@@ -48,11 +48,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		public static ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
 		
 		/// <summary>
-		/// Gets or sets the old code mappings.
-		/// </summary>
-		public static Dictionary<int, List<MemberMapping>> OldCodeMappings { get; set; }
-		
-		/// <summary>
 		/// Gets or sets the MembeReference that was decompiled (a TypeDefinition, MethodDefinition, etc)
 		/// </summary>
 		public static Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
