@@ -525,7 +525,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				for(int variableIndex = 0; variableIndex < varCount; variableIndex++) {
 					// Find all stores and loads for this variable
 					var stores = body.Where(b => (b.Code == ILCode.Stloc || b.Code == ILCode.Ldloca) && b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
-					var loads = body.Where(b => (b.Code == ILCode.Ldloc || (b.Code == ILCode.Ldloca && b.Next.Code != ILCode.Initobj)) && b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
+					// ldloca on an uninitialized variable or followed by initobj isn't considered a load
+					var loads = body.Where(b =>
+						(b.Code == ILCode.Ldloc || (b.Code == ILCode.Ldloca && b.Next.Code != ILCode.Initobj &&
+							(b.VariablesBefore[variableIndex].StoredBy.Length != 0 || b.VariablesBefore[variableIndex].StoredByAll)))
+						&& b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
 					TypeReference varType = methodDef.Body.Variables[variableIndex].VariableType;
 					
 					List<VariableInfo> newVars;
@@ -545,9 +549,14 @@ namespace ICSharpCode.Decompiler.ILAst
 						}};
 					} else {
 						// Create a new variable for each store
-						newVars = stores.Where(st => st.Code == ILCode.Stloc || st.Next.Code == ILCode.Initobj).Select(st => new VariableInfo() {
+						newVars = stores.Where(st =>
+						{
+							if (st.Code == ILCode.Stloc || st.Next.Code == ILCode.Initobj) return true;
+							var storedBy = st.VariablesBefore[variableIndex].StoredBy;
+							return storedBy.Length == 0 || storedBy[0] == st;
+						}).Select(st => new VariableInfo() {
 							Variable = new ILVariable() {
-						    		Name = "var_" + variableIndex + "_" + st.Offset.ToString("X2") + (st.Code == ILCode.Stloc ? null : "_default"),
+						    		Name = "var_" + variableIndex + "_" + st.Offset.ToString("X2"),
 						    		Type = varType,
 						    		OriginalVariable = methodDef.Body.Variables[variableIndex]
 						    },
@@ -567,16 +576,16 @@ namespace ICSharpCode.Decompiler.ILAst
 						// Add loads to the data structure; merge variables if necessary
 						foreach(ByteCode load in loads) {
 							ByteCode[] storedBy = load.VariablesBefore[variableIndex].StoredBy;
-							if (storedBy.Length == 0 || storedBy[0] == load) {
+							if (storedBy.Length == 0) {
 								// Load which always loads the default ('uninitialized') value
 								// Create a dummy variable just for this load
 								newVars.Add(new VariableInfo() {
 									Variable = new ILVariable() {
-								    		Name = "var_" + variableIndex + "_" + load.Offset.ToString("X2") + (storedBy.Length == 0 ? "_default" : null),
+								    		Name = "var_" + variableIndex + "_" + load.Offset.ToString("X2") + "_default",
 								    		Type = varType,
 								    		OriginalVariable = methodDef.Body.Variables[variableIndex]
 								    },
-								    Stores = load.Code == ILCode.Ldloc ? new List<ByteCode>() : new List<ByteCode>() { load },
+								    Stores = new List<ByteCode>(),
 								    Loads  = new List<ByteCode>() { load }
 								});
 							} else if (storedBy.Length == 1) {
