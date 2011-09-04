@@ -484,7 +484,7 @@ namespace ICSharpCode.ILSpy.VB
 		ITypeResolveContext CreateResolveContext(ModuleDefinition module)
 		{
 			IProjectContent projectContent = new CecilTypeResolveContext(module);
-		
+			
 			List<ITypeResolveContext> resolveContexts = new List<ITypeResolveContext>();
 			resolveContexts.Add(projectContent);
 			foreach (AssemblyNameReference r in module.AssemblyReferences) {
@@ -499,24 +499,20 @@ namespace ICSharpCode.ILSpy.VB
 		
 		string TypeToString(ConvertTypeOptions options, TypeReference type, ICustomAttributeProvider typeAttributes = null)
 		{
-			
-			var astType = AstBuilder
-				.ConvertType(type, typeAttributes, options)
-				.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider(CreateResolveContext(type.Resolve().Module))), null);
+			var envProvider = new ILSpyEnvironmentProvider(CreateResolveContext(type.Module));
+			var converter = new CSharpToVBConverterVisitor(envProvider);
+			var astType = AstBuilder.ConvertType(type, typeAttributes, options);
 			StringWriter w = new StringWriter();
-			// TODO
-//			if (type.IsByReference) {
-//				ParameterDefinition pd = typeAttributes as ParameterDefinition;
-//				if (pd != null && (!pd.IsIn && pd.IsOut))
-//					w.Write("out ");
-//				else
-//					w.Write("ref ");
-//
-//				if (astType is ComposedType && ((ComposedType)astType).PointerRank > 0)
-//					((ComposedType)astType).PointerRank--;
-//			}
+
+			if (type.IsByReference) {
+				w.Write("ByRef ");
+				if (astType is NRefactory.CSharp.ComposedType && ((NRefactory.CSharp.ComposedType)astType).PointerRank > 0)
+					((NRefactory.CSharp.ComposedType)astType).PointerRank--;
+			}
 			
-			astType.AcceptVisitor(new OutputVisitor(w, new VBFormattingOptions()), null);
+			var vbAstType = astType.AcceptVisitor(converter, null);
+			
+			vbAstType.AcceptVisitor(new OutputVisitor(w, new VBFormattingOptions()), null);
 			return w.ToString();
 		}
 	}
