@@ -1809,11 +1809,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			ConvertNodes(parameterDeclaration.Attributes, param.Attributes);
 			param.Modifiers = ConvertParamModifiers(parameterDeclaration.ParameterModifier);
-			if ((param.Modifiers & Modifiers.None) == Modifiers.None)
-				param.Modifiers = Modifiers.ByVal;
 			if ((parameterDeclaration.ParameterModifier & ICSharpCode.NRefactory.CSharp.ParameterModifier.Out) == ICSharpCode.NRefactory.CSharp.ParameterModifier.Out) {
 				AttributeBlock block = new AttributeBlock();
-				block.Attributes.Add(new Ast.Attribute() { Type = new SimpleType("System.Runtime.InteropServices.OutAttribute") });
+				block.Attributes.Add(new Ast.Attribute() { Type = new SimpleType("Out") });
 				param.Attributes.Add(block);
 			}
 			param.Name = new Identifier(parameterDeclaration.Name, AstLocation.Empty);
@@ -1832,7 +1830,6 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.This:
 					return Modifiers.None;
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Ref:
-					return Modifiers.ByRef;
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Out:
 					return Modifiers.ByRef;
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Params:
