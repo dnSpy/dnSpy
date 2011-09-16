@@ -42,6 +42,7 @@ namespace ICSharpCode.ILSpy
 		bool dirty;
 		
 		internal readonly ConcurrentDictionary<string, LoadedAssembly> assemblyLookupCache = new ConcurrentDictionary<string, LoadedAssembly>();
+		internal readonly ConcurrentDictionary<string, LoadedAssembly> winRTMetadataLookupCache = new ConcurrentDictionary<string, LoadedAssembly>();
 		
 		/// <summary>
 		/// The assemblies in this list.
@@ -103,7 +104,7 @@ namespace ICSharpCode.ILSpy
 		
 		void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			assemblyLookupCache.Clear();
+			ClearCache();
 			// Whenever the assembly list is modified, mark it as dirty
 			// and enqueue a task that saves it once the UI has finished modifying the assembly list.
 			if (!dirty) {
@@ -114,10 +115,16 @@ namespace ICSharpCode.ILSpy
 						delegate {
 							dirty = false;
 							AssemblyListManager.SaveList(this);
-							assemblyLookupCache.Clear();
+							ClearCache();
 						})
 				);
 			}
+		}
+		
+		internal void ClearCache()
+		{
+			assemblyLookupCache.Clear();
+			winRTMetadataLookupCache.Clear();
 		}
 		
 		/// <summary>

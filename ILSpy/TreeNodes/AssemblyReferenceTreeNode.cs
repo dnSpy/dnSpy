@@ -63,7 +63,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
 			if (assemblyListNode != null) {
-				assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r.FullName)));
+				assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r)));
 				e.Handled = true;
 			}
 		}
@@ -72,7 +72,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
 			if (assemblyListNode != null) {
-				var refNode = assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r.FullName));
+				var refNode = assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r));
 				if (refNode != null) {
 					AssemblyDefinition asm = refNode.LoadedAssembly.AssemblyDefinition;
 					if (asm != null) {
@@ -85,7 +85,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.WriteCommentLine(output, r.FullName);
+			if ((r.Attributes & (AssemblyAttributes)0x0200) != 0) {
+				language.WriteCommentLine(output, r.Name + " [WinRT]");
+			} else {
+				language.WriteCommentLine(output, r.FullName);
+			}
 		}
 	}
 }

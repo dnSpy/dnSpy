@@ -127,7 +127,12 @@ namespace ICSharpCode.ILSpy
 		public virtual void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
 		{
 			WriteCommentLine(output, assembly.FileName);
-			WriteCommentLine(output, assembly.AssemblyDefinition.FullName);
+			var name = assembly.AssemblyDefinition.Name;
+			if ((name.Attributes & (AssemblyAttributes)0x0200) != 0) {
+				WriteCommentLine(output, name.Name + " [WinRT]");
+			} else {
+				WriteCommentLine(output, name.FullName);
+			}
 		}
 
 		public virtual void WriteCommentLine(ITextOutput output, string comment)

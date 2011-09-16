@@ -515,7 +515,7 @@ namespace ICSharpCode.ILSpy
 		{
 			e.Handled = true;
 			OpenFileDialog dlg = new OpenFileDialog();
-			dlg.Filter = ".NET assemblies|*.dll;*.exe|All files|*.*";
+			dlg.Filter = ".NET assemblies|*.dll;*.exe;*.winmd|All files|*.*";
 			dlg.Multiselect = true;
 			dlg.RestoreDirectory = true;
 			if (dlg.ShowDialog() == true) {

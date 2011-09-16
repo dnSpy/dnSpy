@@ -135,7 +135,7 @@ namespace ICSharpCode.ILSpy
 					disposed = true;
 					assemblyLoadDisableCount--;
 					// clear the lookup cache since we might have stored the lookups failed due to DisableAssemblyLoad()
-					MainWindow.Instance.CurrentAssemblyList.assemblyLookupCache.Clear();
+					MainWindow.Instance.CurrentAssemblyList.ClearCache();
 				}
 			}
 		}
@@ -151,13 +151,13 @@ namespace ICSharpCode.ILSpy
 			
 			public AssemblyDefinition Resolve(AssemblyNameReference name)
 			{
-				var node = parent.LookupReferencedAssembly(name.FullName);
+				var node = parent.LookupReferencedAssembly(name);
 				return node != null ? node.AssemblyDefinition : null;
 			}
 			
 			public AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
 			{
-				var node = parent.LookupReferencedAssembly(name.FullName);
+				var node = parent.LookupReferencedAssembly(name);
 				return node != null ? node.AssemblyDefinition : null;
 			}
 			
@@ -177,6 +177,17 @@ namespace ICSharpCode.ILSpy
 		public IAssemblyResolver GetAssemblyResolver()
 		{
 			return new MyAssemblyResolver(this);
+		}
+		
+		public LoadedAssembly LookupReferencedAssembly(AssemblyNameReference name)
+		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+			if ((name.Attributes & (AssemblyAttributes)0x0200) != 0) {
+				return assemblyList.winRTMetadataLookupCache.GetOrAdd(name.Name, LookupWinRTMetadata);
+			} else {
+				return assemblyList.assemblyLookupCache.GetOrAdd(name.FullName, LookupReferencedAssemblyInternal);
+			}
 		}
 		
 		public LoadedAssembly LookupReferencedAssembly(string fullName)
@@ -208,6 +219,27 @@ namespace ICSharpCode.ILSpy
 					file = Path.Combine(dir, name.Name + ".exe");
 			}
 			if (file != null) {
+				return assemblyList.OpenAssembly(file);
+			} else {
+				return null;
+			}
+		}
+		
+		LoadedAssembly LookupWinRTMetadata(string name)
+		{
+			foreach (LoadedAssembly asm in assemblyList.GetAssemblies()) {
+				if (asm.AssemblyDefinition != null && name.Equals(asm.AssemblyDefinition.Name.Name, StringComparison.OrdinalIgnoreCase))
+					return asm;
+			}
+			if (assemblyLoadDisableCount > 0)
+				return null;
+			if (!App.Current.Dispatcher.CheckAccess()) {
+				// Call this method on the GUI thread.
+				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(LookupWinRTMetadata), name);
+			}
+			
+			string file = Path.Combine(Environment.SystemDirectory, "WinMetadata", name + ".winmd");
+			if (File.Exists(file)) {
 				return assemblyList.OpenAssembly(file);
 			} else {
 				return null;
