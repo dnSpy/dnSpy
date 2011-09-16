@@ -743,12 +743,12 @@ namespace ICSharpCode.Decompiler.Ast
 			// constraints for override and explicit interface implementation methods are inherited from the base method, so they cannot be specified directly
 			if (!methodDef.IsVirtual || (methodDef.IsNewSlot && !methodDef.IsPrivate)) astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
-				if (!methodDef.HasOverrides) {
+				if (IsExplicitInterfaceImplementation(methodDef)) {
+					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
+				} else {
 					astMethod.Modifiers = ConvertModifiers(methodDef);
 					if (methodDef.IsVirtual == methodDef.IsNewSlot)
 						SetNewModifier(astMethod);
-				} else {
-					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().DeclaringType);
 				}
 				astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
 			}
@@ -777,6 +777,11 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			return astMethod;
+		}
+		
+		bool IsExplicitInterfaceImplementation(MethodDefinition methodDef)
+		{
+			return methodDef.HasOverrides && methodDef.IsPrivate;
 		}
 
 		IEnumerable<TypeParameterDeclaration> MakeTypeParameters(IEnumerable<GenericParameter> genericParameters)
@@ -861,7 +866,7 @@ namespace ICSharpCode.Decompiler.Ast
 			var accessor = propDef.GetMethod ?? propDef.SetMethod;
 			Modifiers getterModifiers = Modifiers.None;
 			Modifiers setterModifiers = Modifiers.None;
-			if (accessor.HasOverrides) {
+			if (IsExplicitInterfaceImplementation(accessor)) {
 				astProp.PrivateImplementationType = ConvertType(accessor.Overrides.First().DeclaringType);
 			} else if (!propDef.DeclaringType.IsInterface) {
 				getterModifiers = ConvertModifiers(propDef.GetMethod);
@@ -967,7 +972,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astEvent.AddAnnotation(eventDef);
 				astEvent.Name = CleanName(eventDef.Name);
 				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
-				if (eventDef.AddMethod == null || !eventDef.AddMethod.HasOverrides)
+				if (eventDef.AddMethod == null || !IsExplicitInterfaceImplementation(eventDef.AddMethod))
 					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
 				else
 					astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().DeclaringType);
