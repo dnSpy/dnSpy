@@ -65,11 +65,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			} else
 				return FilterResult.Recurse;
 		}
-
-		public bool IsPublicAPI
-		{
-			get
-			{
+		
+		public override bool IsPublicAPI {
+			get {
 				switch (type.Attributes & TypeAttributes.VisibilityMask) {
 					case TypeAttributes.Public:
 					case TypeAttributes.NestedPublic:
