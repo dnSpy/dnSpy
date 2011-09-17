@@ -444,7 +444,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// Gets the tooltip control that shows the value of given variable.
 		/// Return null if no tooltip is available.
 		/// </summary>
-		public object GetTooltipControl(AstLocation logicalPosition, string variableName)
+		public object GetTooltipControl(TextLocation logicalPosition, string variableName)
 		{
 			try {
 				var tooltipExpression = GetExpression(variableName);

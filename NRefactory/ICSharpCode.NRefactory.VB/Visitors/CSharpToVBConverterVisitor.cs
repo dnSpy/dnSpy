@@ -15,7 +15,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 	{
 		string RootNamespace { get; }
 		string GetTypeNameForAttribute(CSharp.Attribute attribute);
-		ClassType GetClassTypeForAstType(CSharp.AstType type);
+		TypeKind GetTypeKindForAstType(CSharp.AstType type);
 		TypeCode ResolveExpression(CSharp.Expression expression);
 		bool? IsReferenceType(CSharp.Expression expression);
 		ITypeResolveContext ResolveContext { get; }
@@ -881,7 +881,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				if (typeDeclaration.BaseTypes.Any()) {
 					var first = typeDeclaration.BaseTypes.First();
 					
-					if (provider.GetClassTypeForAstType(first) != ClassType.Interface) {
+					if (provider.GetTypeKindForAstType(first) != TypeKind.Interface) {
 						ConvertNodes(typeDeclaration.BaseTypes.Skip(1), type.ImplementsTypes);
 						type.InheritsType = (AstType)first.AcceptVisitor(this, data);
 					} else

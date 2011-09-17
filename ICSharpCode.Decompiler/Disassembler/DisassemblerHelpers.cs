@@ -222,7 +222,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			} else {
 				// The ECMA specification says that ' inside SQString should be ecaped using an octal escape sequence,
 				// but we follow Microsoft's ILDasm and use \'.
-				return "'" + NRefactory.CSharp.OutputVisitor.ConvertString(identifier).Replace("'", "\\'") + "'";
+				return "'" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(identifier).Replace("'", "\\'") + "'";
 			}
 		}
 		
@@ -353,7 +353,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			string s = operand as string;
 			if (s != null) {
-				writer.Write("\"" + NRefactory.CSharp.OutputVisitor.ConvertString(s) + "\"");
+				writer.Write("\"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(s) + "\"");
 			} else if (operand is char) {
 				writer.Write(((int)(char)operand).ToString());
 			} else if (operand is float) {

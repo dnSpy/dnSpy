@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.ILSpy.Debugger.Services
@@ -84,7 +85,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// Gets the tooltip control that shows the value of given variable.
 		/// Return null if no tooltip is available.
 		/// </summary>
-		object GetTooltipControl(AstLocation logicalPosition, string variable);
+		object GetTooltipControl(TextLocation logicalPosition, string variable);
 		
 		/// <summary>
 		/// Queries the debugger whether it is possible to set the instruction pointer to a given position.

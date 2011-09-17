@@ -74,22 +74,25 @@ namespace ICSharpCode.ILSpy.VB
 			return loader.ReadTypeReference(annotation, entity: current).Resolve(context);
 		}
 		
-		public ClassType GetClassTypeForAstType(ICSharpCode.NRefactory.CSharp.AstType type)
+		public TypeKind GetTypeKindForAstType(ICSharpCode.NRefactory.CSharp.AstType type)
 		{
-			var definition = type.Annotations.OfType<TypeReference>().First().ResolveOrThrow();
+			var annotation = type.Annotation<TypeReference>();
+			if (annotation == null)
+				return TypeKind.Unknown;
 			
+			var definition = annotation.ResolveOrThrow();
 			if (definition.IsClass)
-				return ClassType.Class;
+				return TypeKind.Class;
 			if (definition.IsInterface)
-				return ClassType.Interface;
+				return TypeKind.Interface;
 			if (definition.IsEnum)
-				return ClassType.Enum;
+				return TypeKind.Enum;
 			if (definition.IsFunctionPointer)
-				return ClassType.Delegate;
+				return TypeKind.Delegate;
 			if (definition.IsValueType)
-				return ClassType.Struct;
+				return TypeKind.Struct;
 			
-			return ClassType.Module;
+			return TypeKind.Unknown;
 		}
 		
 		public TypeCode ResolveExpression(ICSharpCode.NRefactory.CSharp.Expression expression)

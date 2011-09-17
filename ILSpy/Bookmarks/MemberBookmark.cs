@@ -138,8 +138,6 @@ namespace ICSharpCode.ILSpy.Bookmarks
 					var n = Node as TypeDeclaration;
 					switch (n.ClassType)
 					{
-						case ClassType.Delegate:
-							return GetTypeOverlayedImage(attrNode, TypeIcon.Delegate);
 						case ClassType.Enum:
 							return GetTypeOverlayedImage(attrNode, TypeIcon.Enum);
 						case ClassType.Struct:

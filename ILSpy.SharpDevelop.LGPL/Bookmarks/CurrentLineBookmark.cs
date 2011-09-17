@@ -6,6 +6,7 @@ using System.Windows.Media;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.SharpDevelop;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -33,7 +34,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			endLine     = makerEndLine;
 			endColumn   = makerEndColumn;
 			
-			instance = new CurrentLineBookmark(memberReference, new AstLocation(startLine, startColumn), ilOffset);
+			instance = new CurrentLineBookmark(memberReference, new TextLocation(startLine, startColumn), ilOffset);
 			BookmarkManager.AddMark(instance);
 		}
 		
@@ -53,7 +54,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			get { return 100; }
 		}
 		
-		private CurrentLineBookmark(MemberReference member, AstLocation location, int ilOffset) : base(member, location)
+		private CurrentLineBookmark(MemberReference member, TextLocation location, int ilOffset) : base(member, location)
 		{
 			this.ILOffset = ilOffset;
 		}

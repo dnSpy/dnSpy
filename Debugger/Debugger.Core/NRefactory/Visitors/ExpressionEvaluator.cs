@@ -22,6 +22,10 @@ namespace ICSharpCode.NRefactory.Visitors
 		public EvaluateException(AstNode code, string msgFmt, params string[] msgArgs):base(code, string.Format(msgFmt, msgArgs)) {}
 	}
 	
+	public enum SupportedLanguage {
+		CSharp
+	}
+	
 	class TypedValue
 	{
 		Value value;
@@ -46,7 +50,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		}
 	}
 	
-	public class ExpressionEvaluator : NotImplementedAstVisitor<object, object>
+	public class ExpressionEvaluator : DepthFirstAstVisitor<object, object>
 	{
 		StackFrame context;
 		
@@ -57,6 +61,11 @@ namespace ICSharpCode.NRefactory.Visitors
 		ExpressionEvaluator(StackFrame context)
 		{
 			this.context = context;
+		}
+		
+		protected override object VisitChildren(AstNode node, object data)
+		{
+			throw new NotImplementedException();
 		}
 		
 		public static AstNode Parse(string code, SupportedLanguage language)

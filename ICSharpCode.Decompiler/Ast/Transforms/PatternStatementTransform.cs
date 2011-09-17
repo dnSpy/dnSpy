@@ -1006,11 +1006,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				TypeReference tr = o.Annotation<TypeReference>();
 				return tr != null && tr.Namespace == ns && tr.Name == name;
 			}
-			
-			public override S AcceptVisitor<T, S>(IPatternAstVisitor<T, S> visitor, T data)
-			{
-				throw new NotImplementedException();
-			}
 		}
 		#endregion
 	}

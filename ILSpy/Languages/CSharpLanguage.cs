@@ -575,7 +575,7 @@ namespace ICSharpCode.ILSpy
 					((ComposedType)astType).PointerRank--;
 			}
 
-			astType.AcceptVisitor(new OutputVisitor(w, new CSharpFormattingOptions()), null);
+			astType.AcceptVisitor(new CSharpOutputVisitor(w, new CSharpFormattingOptions()), null);
 			return w.ToString();
 		}
 

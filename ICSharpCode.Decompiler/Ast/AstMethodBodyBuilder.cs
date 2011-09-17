@@ -754,7 +754,7 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.YieldBreak:
 					return new Ast.YieldBreakStatement();
 				case ILCode.YieldReturn:
-					return new Ast.YieldStatement { Expression = arg1 };
+					return new Ast.YieldReturnStatement { Expression = arg1 };
 				case ILCode.InitObject:
 				case ILCode.InitCollection:
 					{

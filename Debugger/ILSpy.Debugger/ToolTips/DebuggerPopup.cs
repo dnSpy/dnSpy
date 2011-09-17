@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls.Primitives;
-
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
 
@@ -17,7 +17,7 @@ namespace ICSharpCode.ILSpy.Debugger.Tooltips
 	{
 		internal DebuggerTooltipControl contentControl;
 
-		public DebuggerPopup(DebuggerTooltipControl parentControl, AstLocation logicalPosition, bool showPins = true)
+		public DebuggerPopup(DebuggerTooltipControl parentControl, TextLocation logicalPosition, bool showPins = true)
 		{
 			this.contentControl = new DebuggerTooltipControl(parentControl, logicalPosition, showPins);
 			this.contentControl.containingPopup = this;

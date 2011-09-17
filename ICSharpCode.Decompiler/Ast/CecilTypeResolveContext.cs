@@ -90,6 +90,12 @@ namespace ICSharpCode.Decompiler.Ast
 			countUntilNextCleanup = dict.Count + 4;
 		}
 		
+		public string AssemblyName {
+			get { return module.Assembly.Name.Name; }
+		}
+		
+		public IList<IAttribute> ModuleAttributes { get; private set; }
+		
 		public IList<IAttribute> AssemblyAttributes { get; private set; }
 		
 		public ITypeDefinition GetTypeDefinition(string nameSpace, string name, int typeParameterCount, StringComparer nameComparer)
@@ -112,6 +118,11 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			return null;
+		}
+		
+		public ITypeDefinition GetKnownTypeDefinition(TypeCode typeCode)
+		{
+			return GetTypeDefinition("System", ReflectionHelper.GetShortNameByTypeCode(typeCode), 0, StringComparer.Ordinal);
 		}
 		
 		public IEnumerable<ITypeDefinition> GetTypes()
@@ -163,6 +174,11 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		IEnumerable<IParsedFile> IProjectContent.Files {
 			get { return new IParsedFile[0]; }
+		}
+		
+		void IProjectContent.UpdateProjectContent(IParsedFile oldFile, IParsedFile newFile)
+		{
+			throw new NotSupportedException();
 		}
 		
 		IParsedFile IProjectContent.GetFile(string fileName)

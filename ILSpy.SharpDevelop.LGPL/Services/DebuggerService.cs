@@ -11,6 +11,7 @@ using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Tooltips;
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.Semantics;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.Debugger.Services

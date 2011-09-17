@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
@@ -16,6 +15,7 @@ using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -308,7 +308,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				
 				if (map != null) {
 					BreakpointBookmark newBookmark = new BreakpointBookmark(
-						breakpoint.MemberReference, new AstLocation(map.SourceCodeLine, 0), breakpoint.FunctionToken,
+						breakpoint.MemberReference, new TextLocation(map.SourceCodeLine, 0), breakpoint.FunctionToken,
 						map.ILInstructionOffset, BreakpointAction.Break, DebugInformation.Language);
 				  	newBookmark.IsEnabled = breakpoint.IsEnabled;
 				  	

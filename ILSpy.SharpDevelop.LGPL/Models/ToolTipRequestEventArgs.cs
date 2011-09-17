@@ -3,6 +3,7 @@
 
 using System;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.ILSpy.Debugger.Tooltips
@@ -27,7 +28,7 @@ namespace ICSharpCode.ILSpy.Debugger.Tooltips
 		/// <summary>
 		/// The mouse position, in document coordinates.
 		/// </summary>
-		public AstLocation LogicalPosition { get; set; }
+		public TextLocation LogicalPosition { get; set; }
 		
 		/// <summary>
 		/// Gets/Sets the content to show as a tooltip.

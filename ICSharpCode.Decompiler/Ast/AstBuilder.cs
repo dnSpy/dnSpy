@@ -38,7 +38,6 @@ using Mono.Cecil.Cil;
 namespace ICSharpCode.Decompiler.Ast
 {
 	using Ast = ICSharpCode.NRefactory.CSharp;
-	using ClassType = ICSharpCode.NRefactory.TypeSystem.ClassType;
 	using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
 	
 	[Flags]
@@ -141,7 +140,7 @@ namespace ICSharpCode.Decompiler.Ast
 			formattingPolicy.SpaceBeforeMethodDeclarationParentheses = false;
 			formattingPolicy.SpaceBeforeConstructorDeclarationParentheses = false;
 			formattingPolicy.SpaceBeforeDelegateDeclarationParentheses = false;
-			astCompileUnit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
+			astCompileUnit.AcceptVisitor(new CSharpOutputVisitor(outputFormatter, formattingPolicy), null);
 		}
 		
 		public void AddAssembly(AssemblyDefinition assemblyDefinition, bool onlyAssemblyLevel = false)

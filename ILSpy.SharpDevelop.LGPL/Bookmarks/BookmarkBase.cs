@@ -4,7 +4,7 @@
 using System;
 using System.Windows.Input;
 using System.Windows.Media;
-
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -15,14 +15,14 @@ namespace ICSharpCode.ILSpy.Bookmarks
 	/// </summary>
 	public class BookmarkBase : IBookmark
 	{
-		AstLocation location;
+		TextLocation location;
 		
 		protected virtual void RemoveMark()
 		{
 			
 		}
 		
-		public AstLocation Location {
+		public TextLocation Location {
 			get { return location; }
 			set { location = value; }
 		}
@@ -64,7 +64,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			}
 		}
 		
-		public BookmarkBase(MemberReference member, AstLocation location)
+		public BookmarkBase(MemberReference member, TextLocation location)
 		{
 			this.MemberReference = member;
 			this.Location = location;

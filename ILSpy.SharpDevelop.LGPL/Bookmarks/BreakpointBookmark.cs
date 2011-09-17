@@ -8,6 +8,7 @@ using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.SharpDevelop;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -83,7 +84,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public string Tooltip { get; private set; }
 		
-		public BreakpointBookmark(MemberReference member, AstLocation location, int functionToken, ILRange range, BreakpointAction action, DecompiledLanguages language)
+		public BreakpointBookmark(MemberReference member, TextLocation location, int functionToken, ILRange range, BreakpointAction action, DecompiledLanguages language)
 			: base(member, location)
 		{
 			this.action = action;

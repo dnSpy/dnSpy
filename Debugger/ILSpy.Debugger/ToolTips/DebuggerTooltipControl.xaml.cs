@@ -12,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
@@ -33,9 +33,9 @@ namespace ICSharpCode.ILSpy.Debugger.Tooltips
 		private bool showPins;
 		private LazyItemsControl<ITreeNode> lazyGrid;
 		private IEnumerable<ITreeNode> itemsSource;
-		readonly AstLocation logicalPosition;
+		readonly TextLocation logicalPosition;
 		
-		public DebuggerTooltipControl(AstLocation logicalPosition)
+		public DebuggerTooltipControl(TextLocation logicalPosition)
 		{
 			this.logicalPosition = logicalPosition;
 			InitializeComponent();
@@ -43,19 +43,19 @@ namespace ICSharpCode.ILSpy.Debugger.Tooltips
 			Loaded += new RoutedEventHandler(OnLoaded);
 		}
 
-		public DebuggerTooltipControl(AstLocation logicalPosition, ITreeNode node)
+		public DebuggerTooltipControl(TextLocation logicalPosition, ITreeNode node)
 			: this(logicalPosition, new ITreeNode[] { node })
 		{
 			
 		}
 
-		public DebuggerTooltipControl(AstLocation logicalPosition, IEnumerable<ITreeNode> nodes)
+		public DebuggerTooltipControl(TextLocation logicalPosition, IEnumerable<ITreeNode> nodes)
 			: this(logicalPosition)
 		{
 			this.itemsSource = nodes;
 		}
 
-		public DebuggerTooltipControl(DebuggerTooltipControl parentControl, AstLocation logicalPosition, bool showPins = false)
+		public DebuggerTooltipControl(DebuggerTooltipControl parentControl, TextLocation logicalPosition, bool showPins = false)
 			: this(logicalPosition)
 		{
 			this.parentControl = parentControl;

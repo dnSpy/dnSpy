@@ -8,9 +8,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger.Services;
@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.Debugger.Tooltips
 			args.InDocument = pos.HasValue;
 
 			if (pos.HasValue) {
-				args.LogicalPosition = new AstLocation(pos.Value.Line, pos.Value.Column);
+				args.LogicalPosition = new TextLocation(pos.Value.Line, pos.Value.Column);
 			} else {
 				return;
 			}
