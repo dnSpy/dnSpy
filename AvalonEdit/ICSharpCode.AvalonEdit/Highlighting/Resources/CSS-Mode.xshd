@@ -1,0 +1,57 @@
+﻿<SyntaxDefinition name="CSS" extensions=".css" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Comment" foreground="Gray" />
+	<Color name="String" foreground="Green" />
+	<Color name="Selector" foreground="DarkBlue" fontWeight="bold" />
+	<Color name="Class" foreground="DarkMagenta" />
+	<Color name="Property" foreground="Red"/>
+	<Color name="Value" foreground="Blue" />
+	<Color name="Default" foreground="Pink" />
+	<Color name="CurlyBraces" foreground="Black" />
+	<Color name="Colon" foreground="Black" />
+	<RuleSet ignoreCase="true">
+		<Span color="Comment" multiline="true">
+			<Begin>/\*</Begin>
+			<End>\*/</End>
+		</Span>
+		<Span
+			color="Property"
+			multiline="true"
+			ruleSet="CSSBlock">
+			<Begin color="CurlyBraces">\{</Begin>
+			<End color="CurlyBraces">\}</End>
+		</Span>
+		<Span color="Class">
+			<Begin>\#</Begin>
+			<End>\s</End>
+		</Span>
+		<Rule color="Selector">[\d\w]</Rule>
+	</RuleSet>
+
+	<RuleSet name="CSSBlock">
+		<Span color="Comment" multiline="true">
+			<Begin>/\*</Begin>
+			<End>\*/</End>
+		</Span>
+		<Span color="Value" multiline="true">
+			<Begin color="Colon">\:</Begin>
+			<End color="CurlyBraces">\;|(?=\})</End>
+			<RuleSet>
+				<Span color="String" multiline="true">
+					<Begin>"</Begin>
+					<End>"</End>
+					<RuleSet>
+						<Span begin="\\" end="." />
+					</RuleSet>
+				</Span>
+				<Span color="String" multiline="true">
+					<Begin>'</Begin>
+					<End>'</End>
+					<RuleSet>
+						<Span begin="\\" end="." />
+					</RuleSet>
+				</Span>
+			</RuleSet>
+		</Span>
+	</RuleSet>
+</SyntaxDefinition>
+

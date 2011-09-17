@@ -137,11 +137,25 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 				HighlightedLine hl = highlighter.HighlightLine(lineNumberBeingColorized);
 				lineNumberBeingColorized = 0;
 				foreach (HighlightedSection section in hl.Sections) {
+					if (IsEmptyColor(section.Color))
+						continue;
 					ChangeLinePart(section.Offset, section.Offset + section.Length,
 					               visualLineElement => ApplyColorToElement(visualLineElement, section.Color));
 				}
 			}
 			this.lastColorizedLine = line;
+		}
+		
+		/// <summary>
+		/// Gets whether the color is empty (has no effect on a VisualLineTextElement).
+		/// For example, the C# "Punctuation" is an empty color.
+		/// </summary>
+		bool IsEmptyColor(HighlightingColor color)
+		{
+			if (color == null)
+				return true;
+			return color.Background == null && color.Foreground == null
+				&& color.FontStyle == null && color.FontWeight == null;
 		}
 		
 		/// <summary>

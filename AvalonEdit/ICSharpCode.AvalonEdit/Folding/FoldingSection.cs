@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.Text;
 using System.Windows.Threading;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -68,6 +69,72 @@ namespace ICSharpCode.AvalonEdit.Folding
 					if (this.IsFolded && manager != null)
 						manager.Redraw(this);
 				}
+			}
+		}
+		
+		/// <summary>
+		/// Gets the content of the collapsed lines as text.
+		/// </summary>
+		public string TextContent {
+			get {
+				return manager.document.GetText(StartOffset, EndOffset - StartOffset);
+			}
+		}
+		
+		/// <summary>
+		/// Gets the content of the collapsed lines as tooltip text.
+		/// </summary>
+		public string TooltipText {
+			get {
+				// This fixes SD-1394:
+				// Each line is checked for leading indentation whitespaces. If
+				// a line has the same or more indentation than the first line,
+				// it is reduced. If a line is less indented than the first line
+				// the indentation is removed completely.
+				//
+				// See the following example:
+				// 	line 1
+				// 		line 2
+				// 			line 3
+				//  line 4
+				//
+				// is reduced to:
+				// line 1
+				// 	line 2
+				// 		line 3
+				// line 4
+				
+				var startLine = manager.document.GetLineByOffset(StartOffset);
+				var endLine = manager.document.GetLineByOffset(EndOffset);
+				var builder = new StringBuilder();
+				
+				var current = startLine;
+				ISegment startIndent = TextUtilities.GetLeadingWhitespace(manager.document, startLine);
+				
+				while (current != endLine.NextLine) {
+					ISegment currentIndent = TextUtilities.GetLeadingWhitespace(manager.document, current);
+					
+					if (current == startLine && current == endLine)
+						builder.Append(manager.document.GetText(StartOffset, EndOffset - StartOffset));
+					else if (current == startLine) {
+						if (current.EndOffset - StartOffset > 0)
+							builder.AppendLine(manager.document.GetText(StartOffset, current.EndOffset - StartOffset).TrimStart());
+					} else if (current == endLine) {
+						if (startIndent.Length <= currentIndent.Length)
+							builder.Append(manager.document.GetText(current.Offset + startIndent.Length, EndOffset - current.Offset - startIndent.Length));
+						else
+							builder.Append(manager.document.GetText(current.Offset + currentIndent.Length, EndOffset - current.Offset - currentIndent.Length));
+					} else {
+						if (startIndent.Length <= currentIndent.Length)
+							builder.AppendLine(manager.document.GetText(current.Offset + startIndent.Length, current.Length - startIndent.Length));
+						else
+							builder.AppendLine(manager.document.GetText(current.Offset + currentIndent.Length, current.Length - currentIndent.Length));
+					}
+					
+					current = current.NextLine;
+				}
+				
+				return builder.ToString();
 			}
 		}
 		

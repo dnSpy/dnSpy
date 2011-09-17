@@ -126,7 +126,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		{
 		}
 		
-		/// <inheritdoc/>
 		protected override Uri GetUriFromMatch(Match match)
 		{
 			return new Uri("mailto:" + match.Value);

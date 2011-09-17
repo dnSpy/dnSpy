@@ -25,10 +25,9 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 		{
 			var segment = new TextSegment { StartOffset = 0, Length = document.TextLength };
 			string html = HtmlClipboard.CreateHtmlFragment(document, highlighter, segment, new HtmlOptions());
-			Assert.AreEqual("<span style=\"color: #008000; font-weight: bold; \">using</span>&nbsp;" +
-			                "System<span style=\"color: #006400; \">.</span>Text<span style=\"color: #006400; \">;</span><br>" + Environment.NewLine +
+			Assert.AreEqual("<span style=\"color: #008000; font-weight: bold; \">using</span>&nbsp;System.Text;<br>" + Environment.NewLine +
 			                "&nbsp;&nbsp;&nbsp;&nbsp;<span style=\"color: #ff0000; \">string</span>&nbsp;" +
-			                "text =&nbsp;<span style=\"color: #191970; font-weight: bold; \">SomeMethod</span><span style=\"color: #006400; \">();</span>", html);
+			                "text =&nbsp;<span style=\"color: #191970; font-weight: bold; \">SomeMethod</span>();", html);
 		}
 		
 		[Test]

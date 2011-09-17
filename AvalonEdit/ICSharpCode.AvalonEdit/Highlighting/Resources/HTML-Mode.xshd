@@ -4,11 +4,11 @@
 <SyntaxDefinition name="HTML" extensions=".htm;.html" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
 	<Color name="Comment" foreground="DarkSlateGray" />
 	<Color name="Digits" foreground="DarkBlue" />
-	<Color name="ScriptTag" foreground="#FF00FF7F" />
-	<Color name="JavaScriptTag" foreground="#FF00FF7F" />
-	<Color name="JScriptTag" foreground="#FF00FF7F" />
-	<Color name="VBScriptTag" foreground="#FF00FF7F" />
-	<Color name="UnknownScriptTag" foreground="#FF00FF7F" />
+	<Color name="ScriptTag" foreground="#FF8B008B" />
+	<Color name="JavaScriptTag" foreground="#FF8B008B" />
+	<Color name="JScriptTag" foreground="#FF8B008B" />
+	<Color name="VBScriptTag" foreground="#FF8B008B" />
+	<Color name="UnknownScriptTag" foreground="#FF8B008B" />
 	<Color name="HtmlTag" foreground="#FF8B008B" />
 	<Color name="Tags" foreground="#FF8B008B" />
 	<Color name="Attributes" foreground="Red" />
@@ -23,25 +23,25 @@
 			<Begin>&lt;!--</Begin>
 			<End>--&gt;</End>
 		</Span>
-		<Span color="ScriptTag" ruleSet="JavaScriptSet" multiline="true">
-			<Begin>&lt;script&gt;</Begin>
-			<End>&lt;/script&gt;</End>
+		<Span ruleSet="JavaScriptSet" multiline="true">
+			<Begin color="ScriptTag">&lt;script&gt;</Begin>
+			<End color="ScriptTag">&lt;/script&gt;</End>
 		</Span>
-		<Span color="JavaScriptTag" ruleSet="JavaScriptSet" multiline="true">
-			<Begin>&lt;script\ lang="JavaScript"&gt;</Begin>
-			<End>&lt;/script&gt;</End>
+		<Span ruleSet="JavaScriptSet" multiline="true">
+			<Begin color="JavaScriptTag">&lt;script\ lang="JavaScript"&gt;</Begin>
+			<End color="JavaScriptTag">&lt;/script&gt;</End>
 		</Span>
-		<Span color="JScriptTag" multiline="true">
-			<Begin>&lt;script\ lang="JScript"&gt;</Begin>
-			<End>&lt;/script&gt;</End>
+		<Span multiline="true">
+			<Begin color="JScriptTag">&lt;script\ lang="JScript"&gt;</Begin>
+			<End color="JScriptTag">&lt;/script&gt;</End>
 		</Span>
-		<Span color="VBScriptTag" multiline="true">
-			<Begin>&lt;script\ lang="VBScript"&gt;</Begin>
-			<End>&lt;/script&gt;</End>
+		<Span multiline="true">
+			<Begin color="VBScriptTag">&lt;script\ lang="VBScript"&gt;</Begin>
+			<End color="VBScriptTag">&lt;/script&gt;</End>
 		</Span>
-		<Span color="UnknownScriptTag" multiline="true">
-			<Begin>&lt;script[^\w\d_]</Begin>
-			<End>&lt;/script&gt;</End>
+		<Span multiline="true">
+			<Begin color="UnknownScriptTag">&lt;script[^\w\d_]</Begin>
+			<End color="UnknownScriptTag">&lt;/script&gt;</End>
 		</Span>
 		<Span color="HtmlTag" ruleSet="HtmlTagSet" multiline="true">
 			<Begin>&lt;</Begin>

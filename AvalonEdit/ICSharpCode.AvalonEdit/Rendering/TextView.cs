@@ -833,7 +833,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			MeasureInlineObjects();
 			
 			InvalidateVisual(); // = InvalidateArrange+InvalidateRender
-			textLayer.InvalidateVisual();
 			
 			double maxWidth;
 			if (document == null) {
@@ -861,6 +860,8 @@ namespace ICSharpCode.AvalonEdit.Rendering
 					heightTreeHeight = Math.Max(heightTreeHeight, Math.Min(heightTreeHeight - 50, scrollOffset.Y) + scrollViewport.Height);
 				}
 			}
+			
+			textLayer.SetVisualLines(visibleVisualLines);
 			
 			SetScrollData(availableSize,
 			              new Size(maxWidth, heightTreeHeight),
@@ -1153,14 +1154,16 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			}
 		}
 		
-		internal void RenderTextLayer(DrawingContext drawingContext)
+		internal void ArrangeTextLayer(IList<VisualLineDrawingVisual> visuals)
 		{
 			Point pos = new Point(-scrollOffset.X, -clippedPixelsOnTop);
-			foreach (VisualLine visualLine in allVisualLines) {
-				foreach (TextLine textLine in visualLine.TextLines) {
-					textLine.Draw(drawingContext, pos, InvertAxes.None);
-					pos.Y += textLine.Height;
+			foreach (VisualLineDrawingVisual visual in visuals) {
+				TranslateTransform t = visual.Transform as TranslateTransform;
+				if (t == null || t.X != pos.X || t.Y != pos.Y) {
+					visual.Transform = new TranslateTransform(pos.X, pos.Y);
+					visual.Transform.Freeze();
 				}
+				pos.Y += visual.Height;
 			}
 		}
 		#endregion

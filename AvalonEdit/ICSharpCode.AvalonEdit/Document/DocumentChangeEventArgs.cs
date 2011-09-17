@@ -19,7 +19,7 @@ namespace ICSharpCode.AvalonEdit.Document
 		public int Offset { get; private set; }
 		
 		/// <summary>
-		/// The text that was inserted.
+		/// The text that was removed.
 		/// </summary>
 		public string RemovedText { get; private set; }
 		

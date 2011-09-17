@@ -84,6 +84,12 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 		{
 			if (color == null)
 				throw new ArgumentNullException("color");
+			if (color.Foreground == null && color.FontStyle == null && color.FontWeight == null) {
+				// Optimization: don't split the HighlightingState when we're not changing
+				// any property. For example, the "Punctuation" color in C# is
+				// empty by default.
+				return;
+			}
 			int startIndex = GetIndexForOffset(offset);
 			int endIndex = GetIndexForOffset(offset + length);
 			for (int i = startIndex; i < endIndex; i++) {

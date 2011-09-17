@@ -127,7 +127,6 @@ namespace ICSharpCode.AvalonEdit.Document
 			return !left.Equals(right);
 		}
 		
-		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return "[Offset=" + Offset.ToString(CultureInfo.InvariantCulture) + ", Length=" + Length.ToString(CultureInfo.InvariantCulture) + "]";

@@ -51,7 +51,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 			AddBinding(EditingCommands.Delete, ModifierKeys.None, Key.Delete, OnDelete(EditingCommands.SelectRightByCharacter));
 			AddBinding(EditingCommands.DeleteNextWord, ModifierKeys.Control, Key.Delete, OnDelete(EditingCommands.SelectRightByWord));
 			AddBinding(EditingCommands.Backspace, ModifierKeys.None, Key.Back, OnDelete(EditingCommands.SelectLeftByCharacter));
-			InputBindings.Add(new KeyBinding(EditingCommands.Backspace, Key.Back, ModifierKeys.Shift)); // make Shift-Backspace do the same as plain backspace
+			InputBindings.Add(TextAreaDefaultInputHandler.CreateFrozenKeyBinding(EditingCommands.Backspace, ModifierKeys.Shift, Key.Back)); // make Shift-Backspace do the same as plain backspace
 			AddBinding(EditingCommands.DeletePreviousWord, ModifierKeys.Control, Key.Back, OnDelete(EditingCommands.SelectLeftByWord));
 			AddBinding(EditingCommands.EnterParagraphBreak, ModifierKeys.None, Key.Enter, OnEnter);
 			AddBinding(EditingCommands.EnterLineBreak, ModifierKeys.Shift, Key.Enter, OnEnter);
@@ -365,6 +365,8 @@ namespace ICSharpCode.AvalonEdit.Editing
 			if (textArea != null && textArea.Document != null) {
 				args.CanExecute = textArea.ReadOnlySectionProvider.CanInsert(textArea.Caret.Offset)
 					&& Clipboard.ContainsText();
+				// WPF Clipboard.ContainsText() is safe to call without catching ExternalExceptions
+				// because it doesn't try to lock the clipboard - it just peeks inside with IsClipboardFormatAvailable().
 				args.Handled = true;
 			}
 		}
@@ -373,15 +375,24 @@ namespace ICSharpCode.AvalonEdit.Editing
 		{
 			TextArea textArea = GetTextArea(target);
 			if (textArea != null && textArea.Document != null) {
-				Debug.WriteLine( Clipboard.GetText(TextDataFormat.Html) );
+				IDataObject dataObject;
+				try {
+					dataObject = Clipboard.GetDataObject();
+				} catch (ExternalException) {
+					return;
+				}
+				if (dataObject == null)
+					return;
+				Debug.WriteLine( dataObject.GetData(DataFormats.Html) as string );
 				
 				// convert text back to correct newlines for this document
 				string newLine = TextUtilities.GetNewLineFromDocument(textArea.Document, textArea.Caret.Line);
-				string text = TextUtilities.NormalizeNewLines(Clipboard.GetText(), newLine);
+				string text = (string)dataObject.GetData(DataFormats.UnicodeText);
+				text = TextUtilities.NormalizeNewLines(text, newLine);
 				
 				if (!string.IsNullOrEmpty(text)) {
-					bool fullLine = textArea.Options.CutCopyWholeLine && Clipboard.ContainsData(LineSelectedType);
-					bool rectangular = Clipboard.ContainsData(RectangleSelection.RectangularSelectionDataType);
+					bool fullLine = textArea.Options.CutCopyWholeLine && dataObject.GetDataPresent(LineSelectedType);
+					bool rectangular = dataObject.GetDataPresent(RectangleSelection.RectangularSelectionDataType);
 					if (fullLine) {
 						DocumentLine currentLine = textArea.Document.GetLineByNumber(textArea.Caret.Line);
 						if (textArea.ReadOnlySectionProvider.CanInsert(currentLine.Offset)) {

@@ -33,10 +33,38 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		{
 		}
 		
-		protected override void OnRender(DrawingContext drawingContext)
+		List<VisualLineDrawingVisual> visuals = new List<VisualLineDrawingVisual>();
+		
+		internal void SetVisualLines(ICollection<VisualLine> visualLines)
 		{
-			base.OnRender(drawingContext);
-			textView.RenderTextLayer(drawingContext);
+			foreach (VisualLineDrawingVisual v in visuals) {
+				if (v.VisualLine.IsDisposed)
+					RemoveVisualChild(v);
+			}
+			visuals.Clear();
+			foreach (VisualLine newLine in visualLines) {
+				VisualLineDrawingVisual v = newLine.Render();
+				if (!v.IsAdded) {
+					AddVisualChild(v);
+					v.IsAdded = true;
+				}
+				visuals.Add(v);
+			}
+			InvalidateArrange();
+		}
+		
+		protected override int VisualChildrenCount {
+			get { return visuals.Count; }
+		}
+		
+		protected override Visual GetVisualChild(int index)
+		{
+			return visuals[index];
+		}
+		
+		protected override void ArrangeCore(Rect finalRect)
+		{
+			textView.ArrangeTextLayer(visuals);
 		}
 	}
 }

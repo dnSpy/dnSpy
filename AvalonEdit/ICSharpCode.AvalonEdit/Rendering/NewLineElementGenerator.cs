@@ -26,7 +26,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		{
 		}
 		
-		/// <inheritdoc/>
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
 			DocumentLine lastDocumentLine = CurrentContext.VisualLine.LastDocumentLine;
@@ -36,7 +35,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				return -1;
 		}
 		
-		/// <inheritdoc/>
 		public override VisualLineElement ConstructElement(int offset)
 		{
 			string newlineText;

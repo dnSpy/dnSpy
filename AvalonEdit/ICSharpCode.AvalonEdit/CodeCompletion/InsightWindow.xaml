@@ -2,6 +2,8 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:cc="clr-namespace:ICSharpCode.AvalonEdit.CodeCompletion"
 >
+	<cc:InsightWindowTemplateSelector x:Key="templateSelector" />
+	
 	<!-- Template for InsightWindow. Based on the template for ToolTip. -->
 	<Style TargetType="{x:Type cc:InsightWindow}">
 		<Setter Property="SizeToContent" Value="WidthAndHeight" />
@@ -76,6 +78,10 @@
 									</Setter>
 								</Style.Setters>
 							</Style>
+						
+							<DataTemplate x:Key="TextBlockTemplate">
+								<TextBlock TextWrapping="Wrap" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />
+							</DataTemplate>
 						</Grid.Resources>
 						
 						<Grid.ColumnDefinitions>
@@ -100,10 +106,10 @@
 								<Path Stroke="Black" Fill="Black" Data="M 0,0 L 1,0 L 0.5,0.866 Z" Stretch="UniformToFill" />
 							</Button>
 						</StackPanel>
-						<ContentControl Grid.Row="0" Grid.Column="1"
-						                Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Provider.CurrentHeader}"/>
-						<ContentControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-						                Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Provider.CurrentContent}"/>
+						<ContentPresenter Grid.Row="0" Grid.Column="1" ContentTemplateSelector="{StaticResource templateSelector}"
+						                  Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Provider.CurrentHeader}" />
+						<ContentPresenter Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ContentTemplateSelector="{StaticResource templateSelector}"
+						                  Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Provider.CurrentContent}" />
 					</Grid>
 				</ControlTemplate>
 			</Setter.Value>

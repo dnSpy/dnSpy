@@ -153,9 +153,16 @@
 			</para>
         <para>
 			These are the predefined layers:
-			<list class="bullet"><listItem>Background layer: renders the background colors associated with the visual elements</listItem><listItem>Selection layer: renders the background of the selection</listItem><listItem>Text layer: renders the TextLines that were constructed during the Measure step.
-			  	The text layer also serves as container for any inline UI elements.
-			  </listItem><listItem>Caret layer: renders a blinking caret</listItem></list>
+			<list class="bullet">
+			   <listItem>Background layer: renders the background colors associated with the visual elements</listItem>
+			   <listItem>Selection layer: renders the background of the selection</listItem>
+			   <listItem>Text layer: renders the TextLines that were constructed during the Measure step.
+			    Starting with AvalonEdit 4.1, the TextLayer uses child elements to draw the text: one DrawingVisual for each VisualLine.
+			   </listItem>
+			   <listItem>
+			    Immediately after the text layer, any inline UI elements are placed as if they were separate layers.
+			   </listItem>
+			  <listItem>Caret layer: renders a blinking caret</listItem></list>
 			It's also possible to insert new layers into the TextView using the
 			<codeEntityReference qualifyHint="true">M:ICSharpCode.AvalonEdit.Rendering.TextView.InsertLayer(System.Windows.UIElement,ICSharpCode.AvalonEdit.Rendering.KnownLayer,ICSharpCode.AvalonEdit.Rendering.LayerInsertionPosition)</codeEntityReference>
 			method.

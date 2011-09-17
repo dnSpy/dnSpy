@@ -187,5 +187,15 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 			writer.Write(color.ToCss());
 			writer.Write("\"");
 		}
+		
+		/// <summary>
+		/// Gets whether the color needs to be written out to HTML.
+		/// </summary>
+		public virtual bool ColorNeedsSpanForStyling(HighlightingColor color)
+		{
+			if (color == null)
+				throw new ArgumentNullException("color");
+			return !string.IsNullOrEmpty(color.ToCss());
+		}
 	}
 }

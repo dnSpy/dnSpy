@@ -5,7 +5,7 @@
 	<Color name="String" foreground="Blue" exampleText="string text = &quot;Hello, World!&quot;"/>
 	<Color name="Char" foreground="Magenta" exampleText="char linefeed = '\n';"/>
 	<Color name="Preprocessor" foreground="Green" exampleText="#region Title" />
-	<Color name="Punctuation" foreground="DarkGreen" exampleText="a(b.c);" />
+	<Color name="Punctuation" exampleText="a(b.c);" />
 	<Color name="ValueTypes" fontWeight="bold" foreground="Red" exampleText="bool b = true;" />
 	<Color name="ReferenceTypes" foreground="Red" exampleText="object o;" />
 	<Color name="MethodCall" foreground="MidnightBlue" fontWeight="bold" exampleText="o.ToString();"/>
@@ -43,20 +43,21 @@
 		<Span color="Preprocessor">
 			<Begin>\#</Begin>
 			<RuleSet name="PreprocessorSet">
-				<Keywords fontWeight="bold">
-					<Word>if</Word>
-					<Word>else</Word>
-					<Word>elif</Word>
-					<Word>endif</Word>
-					<Word>define</Word>
-					<Word>undef</Word>
-					<Word>warning</Word>
-					<Word>error</Word>
-					<Word>line</Word>
-					<Word>region</Word>
-					<Word>endregion</Word>
-					<Word>pragma</Word>
-				</Keywords>
+				<Span> <!-- preprocessor directives that allow comments -->
+					<Begin fontWeight="bold">
+						(define|undef|if|elif|else|endif|line)\b
+					</Begin>
+					<RuleSet>
+						<Span color="Comment" ruleSet="CommentMarkerSet">
+							<Begin>//</Begin>
+						</Span>
+					</RuleSet>
+				</Span>
+				<Span> <!-- preprocessor directives that don't allow comments -->
+					<Begin fontWeight="bold">
+						(region|endregion|error|warning|pragma)\b
+					</Begin>
+				</Span>
 			</RuleSet>
 		</Span>
 		

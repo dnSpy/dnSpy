@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <!-- The configuration and platform will be used to determine which
          assemblies to include from solution and project documentation
@@ -7,7 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{850b6602-0a7f-413a-864a-e816b98d7407}</ProjectGuid>
-    <SHFBSchemaVersion>1.8.0.0</SHFBSchemaVersion>
+    <SHFBSchemaVersion>1.9.3.0</SHFBSchemaVersion>
     <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
          Studio adds them anyway -->
     <AssemblyName>Documentation</AssemblyName>
@@ -30,63 +31,28 @@
     </WorkingPath>
     <BuildLogFile>
     </BuildLogFile>
-    <FrameworkVersion>3.5</FrameworkVersion>
+    <FrameworkVersion>.NET 4.0.30319</FrameworkVersion>
     <HelpTitle>AvalonEdit</HelpTitle>
-    <CopyrightText>Copyright 2008-2010, Daniel Grunwald</CopyrightText>
+    <CopyrightText>Copyright 2008-2011, Daniel Grunwald</CopyrightText>
     <PresentationStyle>Prototype</PresentationStyle>
-    <HelpFileVersion>4.0.0.0</HelpFileVersion>
+    <HelpFileVersion>4.1.0.0</HelpFileVersion>
     <ComponentConfigurations>
-      <ComponentConfig id="Cached Reflection Index Data" enabled="True">
-        <component id="Cached Reflection Index Data" type="SandcastleBuilder.Components.CachedCopyFromIndexComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
-          <index name="reflection" value="/reflection/apis/api" key="@id" cache="10">
-            <cache base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" cacheFile="{@AppDataFolder}Cache\Reflection.cache" />
-            <data files="reflection.xml" />
-          </index>
-          <copy name="reflection" source="*" target="/document/reference" />
-        </component>
-      </ComponentConfig>
-      <ComponentConfig id="Cached MSDN URL References" enabled="True">
-        <component id="Cached MSDN URL References" type="SandcastleBuilder.Components.CachedResolveReferenceLinksComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
-          <cache filename="{@AppDataFolder}Cache\MsdnUrl.cache" />
-          <targets base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" type="{@SDKLinks}" />
-          <targets files="reflection.xml" type="{@ProjectLinks}" />
-        </component>
-      </ComponentConfig>
-      <ComponentConfig id="IntelliSense Component" enabled="True">
-        <component id="IntelliSense Component" type="SandcastleBuilder.Components.IntelliSenseComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
-          <!-- Output options (optional)
-                 Attributes:
-                    Include Namespaces (false by default)
-                    Namespaces filename ("Namespaces" if not specified or empty)
-                    Directory (current folder if not specified or empty) -->
-          <output includeNamespaces="false" namespacesFile="Namespaces" folder="{@OutputFolder}" />
-        </component>
-      </ComponentConfig>
-      <ComponentConfig id="Cached Framework Comments Index Data" enabled="True">
-        <component id="Cached Framework Comments Index Data" type="SandcastleBuilder.Components.CachedCopyFromIndexComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
-          <index name="comments" value="/doc/members/member" key="@name" cache="100">
-{@CachedFrameworkCommentList}
-{@CommentFileList}
-            </index>
-          <copy name="comments" source="*" target="/document/comments" />
-        </component>
-      </ComponentConfig>
       <ComponentConfig id="Code Block Component" enabled="True">
         <component id="Code Block Component" type="SandcastleBuilder.Components.CodeBlockComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
-          <!-- Base path for relative filenames in source attributes
+<!-- Base path for relative filenames in source attributes
                  (optional) -->
-          <basePath value="{@HtmlEncProjectFolder}" />
-          <!-- Connect to language filter (optional).  If omitted,
+<basePath value="{@HtmlEncProjectFolder}" />
+<!-- Connect to language filter (optional).  If omitted,
                  language filtering is enabled by default. -->
-          <languageFilter value="true" />
-          <!-- Allow missing source files (Optional).  If omitted,
+<languageFilter value="true" />
+<!-- Allow missing source files (Optional).  If omitted,
                  it will generate errors if referenced source files
                  are missing. -->
-          <allowMissingSource value="false" />
-          <!-- Remove region markers from imported code blocks.  If omitted,
+<allowMissingSource value="false" />
+<!-- Remove region markers from imported code blocks.  If omitted,
                  region markers in imported code blocks are left alone. -->
-          <removeRegionMarkers value="false" />
-          <!-- Code colorizer options (required).
+<removeRegionMarkers value="false" />
+<!-- Code colorizer options (required).
                  Attributes:
                     Language syntax configuration file (required)
                     XSLT style file (required)
@@ -97,48 +63,92 @@
                     Keep XML comment "see" tags within the code (optional)
                     Tab size override (optional, 0 = Use syntax file setting)
                     Use language name as default title (optional) -->
-          <colorizer syntaxFile="{@SHFBFolder}Colorizer\highlight.xml" styleFile="{@SHFBFolder}Colorizer\highlight.xsl" copyImageUrl="../icons/CopyCode.gif" language="cs" numberLines="false" outlining="false" keepSeeTags="false" tabSize="0" defaultTitle="true" />
-        </component>
+<colorizer syntaxFile="{@SHFBFolder}Colorizer\highlight.xml" styleFile="{@SHFBFolder}Colorizer\highlight.xsl" copyImageUrl="../icons/CopyCode.gif" language="cs" numberLines="false" outlining="false" keepSeeTags="false" tabSize="0" defaultTitle="true" />
+</component>
       </ComponentConfig>
-      <ComponentConfig id="Post-transform Component" enabled="True">
-        <component id="Post-transform Component" type="SandcastleBuilder.Components.PostTransformComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
-          <!-- Code colorizer files (required).
+<ComponentConfig id="IntelliSense Component" enabled="True"><component id="IntelliSense Component" type="SandcastleBuilder.Components.IntelliSenseComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
+<!-- Output options (optional)
+                 Attributes:
+                    Include Namespaces (false by default)
+                    Namespaces filename ("Namespaces" if not specified or empty)
+                    Directory (current folder if not specified or empty) -->
+<output includeNamespaces="false" namespacesFile="Namespaces" folder="{@OutputFolder}" />
+</component></ComponentConfig>
+<ComponentConfig id="Cached MSDN URL References" enabled="True"><component id="Cached MSDN URL References" type="SandcastleBuilder.Components.CachedResolveReferenceLinksComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll" locale="{@Locale}" linkTarget="{@SdkLinkTarget}">
+<helpOutput format="HtmlHelp1">
+  <cache filename="{@LocalDataFolder}Cache\MsdnUrl.cache" />
+  <targets base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" type="{@HtmlSdkLinkType}" />
+  <targets files="reflection.xml" type="Local" />
+</helpOutput>
+<helpOutput format="MSHelp2">
+  <cache filename="{@LocalDataFolder}Cache\MsdnUrl.cache" />
+  <targets base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" type="{@MSHelp2SdkLinkType}" />
+  <targets files="reflection.xml" type="Index" />
+</helpOutput>
+<helpOutput format="MSHelpViewer">
+  <cache filename="{@LocalDataFolder}Cache\MsdnUrl.cache" />
+  <targets base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" type="{@MSHelpViewerSdkLinkType}" />
+  <targets files="reflection.xml" type="Id" />
+</helpOutput>
+<helpOutput format="Website">
+  <cache filename="{@LocalDataFolder}Cache\MsdnUrl.cache" />
+  <targets base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" type="{@WebsiteSdkLinkType}" />
+  <targets files="reflection.xml" type="Local" />
+</helpOutput>
+</component></ComponentConfig>
+<ComponentConfig id="Post-transform Component" enabled="True"><component id="Post-transform Component" type="SandcastleBuilder.Components.PostTransformComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
+<!-- Code colorizer files (required).
                  Attributes:
                     Stylesheet file (required)
                     Script file (required)
                     "Copy" image file (required) -->
-          <colorizer stylesheet="{@SHFBFolder}Colorizer\highlight.css" scriptFile="{@SHFBFolder}Colorizer\highlight.js" copyImage="{@SHFBFolder}Colorizer\CopyCode.gif" />
-          <!-- Base output path for the files (required).  This should match
+<colorizer stylesheet="{@SHFBFolder}Colorizer\highlight.css" scriptFile="{@SHFBFolder}Colorizer\highlight.js" copyImage="{@SHFBFolder}Colorizer\CopyCode.gif" />
+<!-- Base output paths for the files (required).  These should match
                  the parent folder of the output path of the HTML files (see
-                 SaveComponent). -->
-          <outputPath value="Output\" />
-          <!-- Logo image file (optional).  Filename is required. The height,
+                 each of the SaveComponent instances below). -->
+<outputPaths>
+{@HelpFormatOutputPaths}
+            </outputPaths>
+<!-- Logo image file (optional).  Filename is required. The height,
                  width, altText, placement, and alignment attributes are
                  optional. -->
-          <logoFile filename="" height="0" width="0" altText="" placement="left" alignment="left" />
-        </component>
-      </ComponentConfig>
-    </ComponentConfigurations>
+<logoFile filename="" height="0" width="0" altText="" placement="left" alignment="left" />
+</component></ComponentConfig>
+<ComponentConfig id="Cached Reflection Index Data" enabled="True"><component id="Cached Reflection Index Data" type="SandcastleBuilder.Components.CachedCopyFromIndexComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
+<index name="reflection" value="/reflection/apis/api" key="@id" cache="10">
+  <cache base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" cacheFile="{@LocalDataFolder}Cache\Reflection.cache" />
+  <data files="reflection.xml" />
+</index>
+<copy name="reflection" source="*" target="/document/reference" />
+</component></ComponentConfig>
+<ComponentConfig id="Cached Framework Comments Index Data" enabled="True"><component id="Cached Framework Comments Index Data" type="SandcastleBuilder.Components.CachedCopyFromIndexComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
+<index name="comments" value="/doc/members/member" key="@name" cache="100">
+{@CachedFrameworkCommentList}
+{@CommentFileList}
+            </index>
+<copy name="comments" source="*" target="/document/comments" />
+</component></ComponentConfig></ComponentConfigurations>
     <DocumentationSources>
       <DocumentationSource sourceFile="..\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
     </DocumentationSources>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit" isDocumented="True">This is the main AvalonEdit namespace.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.CodeCompletion" isDocumented="True">This namespace contains classes to show the code completion window.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Document" isDocumented="True">This namespace contains the document model.
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit" isDocumented="True">This is the main AvalonEdit namespace.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.CodeCompletion" isDocumented="True">This namespace contains classes to show the code completion window.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Document" isDocumented="True">This namespace contains the document model.
 The most important class here is TextDocument, which represents document that can be displayed and edited in the text editor.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Editing" isDocumented="True">This namespace is the home of the TextArea class. It manages user input and handles the caret and the selection.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Folding" isDocumented="True">This namespace contains the folding (code collapsing) implementation.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Highlighting" isDocumented="True">This namespace contains the engine for highlighting text documents (DocumentHighlighter).
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Editing" isDocumented="True">This namespace is the home of the TextArea class. It manages user input and handles the caret and the selection.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Folding" isDocumented="True">This namespace contains the folding (code collapsing) implementation.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Highlighting" isDocumented="True">This namespace contains the engine for highlighting text documents (DocumentHighlighter).
 Additionally, the class HighlightingColorizer provides integration of the highlighting engine into the text editor GUI.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Highlighting.Xshd" isDocumented="True">This namespace contains a document model for syntax highlighting definitions (.xshd files).</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Indentation" isDocumented="True">This namespace contains the logic for automatic indentation.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Rendering" isDocumented="True">This namespace contains the text rendering infrastructure.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Utils" isDocumented="True">This namespace contains various utility classes.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="XamlGeneratedNamespace" isDocumented="False" />
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Xml" isDocumented="True">This namespace contains an error-tolerant XML parser with support for incremental parsing, only reparsing the changed regions of a TextDocument.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Snippets" isDocumented="True">Snippets perform automatic text insertion. Snippets can be interactive after they were expanded, for example to allow the user to easily replace fields in the expanded snippet.</NamespaceSummaryItem></NamespaceSummaries>
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Highlighting.Xshd" isDocumented="True">This namespace contains a document model for syntax highlighting definitions (.xshd files).</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Indentation" isDocumented="True">This namespace contains the logic for automatic indentation.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Rendering" isDocumented="True">This namespace contains the text rendering infrastructure.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Utils" isDocumented="True">This namespace contains various utility classes.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="XamlGeneratedNamespace" isDocumented="False" />
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Xml" isDocumented="True">This namespace contains an error-tolerant XML parser with support for incremental parsing, only reparsing the changed regions of a TextDocument.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="ICSharpCode.AvalonEdit.Snippets" isDocumented="True">Snippets perform automatic text insertion. Snippets can be interactive after they were expanded, for example to allow the user to easily replace fields in the expanded snippet.</NamespaceSummaryItem>
+    </NamespaceSummaries>
     <CleanIntermediates>True</CleanIntermediates>
     <SyntaxFilters>Standard</SyntaxFilters>
   </PropertyGroup>

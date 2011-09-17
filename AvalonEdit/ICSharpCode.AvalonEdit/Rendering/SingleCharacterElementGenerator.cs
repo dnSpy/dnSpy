@@ -56,7 +56,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			this.ShowBoxForControlCharacters = options.ShowBoxForControlCharacters;
 		}
 		
-		/// <inheritdoc/>
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
 			DocumentLine endLine = CurrentContext.VisualLine.LastDocumentLine;
@@ -83,7 +82,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			return -1;
 		}
 		
-		/// <inheritdoc/>
 		public override VisualLineElement ConstructElement(int offset)
 		{
 			char c = CurrentContext.Document.GetCharAt(offset);
@@ -230,6 +228,14 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		sealed class SpecialCharacterTextRun : FormattedTextRun
 		{
+			static readonly SolidColorBrush darkGrayBrush;
+			
+			static SpecialCharacterTextRun()
+			{
+				darkGrayBrush = new SolidColorBrush(Color.FromArgb(200, 128, 128, 128));
+				darkGrayBrush.Freeze();
+			}
+			
 			public SpecialCharacterTextRun(FormattedTextElement element, TextRunProperties properties)
 				: base(element, properties)
 			{
@@ -237,10 +243,10 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			
 			public override void Draw(DrawingContext drawingContext, Point origin, bool rightToLeft, bool sideways)
 			{
-				Point newOrigin = new Point(origin.X + 1, origin.Y);
-				var metrics = Format(double.PositiveInfinity);
-				Rect r = new Rect(newOrigin.X + 1, newOrigin.Y - metrics.Baseline, metrics.Width + 1, metrics.Height);
-				drawingContext.DrawRoundedRectangle(Brushes.DarkGray, null, r, 2.5, 2.5);
+				Point newOrigin = new Point(origin.X + 1.5, origin.Y);
+				var metrics = base.Format(double.PositiveInfinity);
+				Rect r = new Rect(newOrigin.X - 0.5, newOrigin.Y - metrics.Baseline, metrics.Width + 2, metrics.Height);
+				drawingContext.DrawRoundedRectangle(darkGrayBrush, null, r, 2.5, 2.5);
 				base.Draw(drawingContext, newOrigin, rightToLeft, sideways);
 			}
 			
