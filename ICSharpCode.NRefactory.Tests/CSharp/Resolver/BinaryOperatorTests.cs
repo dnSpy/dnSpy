@@ -1,7 +1,23 @@
-﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
 
@@ -16,11 +32,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void Multiplication()
 		{
-			AssertType(typeof(int), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Multiply, MakeResult(typeof(int)), MakeResult(typeof(int))));
+			TestOperator(MakeResult(typeof(int)), BinaryOperatorType.Multiply, MakeResult(typeof(int)),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(int));
 			
-			AssertType(typeof(float), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Multiply, MakeResult(typeof(int)), MakeConstant(0.0f)));
+			TestOperator(MakeResult(typeof(int)), BinaryOperatorType.Multiply, MakeConstant(0.0f),
+			             Conversion.ImplicitNumericConversion, Conversion.IdentityConversion, typeof(float));
 			
 			AssertConstant(3.0f, resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Multiply, MakeConstant(1.5f), MakeConstant(2)));
@@ -28,8 +44,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			AssertConstant(6, resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Multiply, MakeConstant((byte)2), MakeConstant((byte)3)));
 			
-			AssertType(typeof(long?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Multiply, MakeResult(typeof(uint?)), MakeResult(typeof(int?))));
+			TestOperator(MakeResult(typeof(uint?)), BinaryOperatorType.Multiply, MakeResult(typeof(int?)),
+			             Conversion.ImplicitNullableConversion, Conversion.ImplicitNullableConversion, typeof(long?));
 			
 			AssertError(typeof(decimal), resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Multiply, MakeResult(typeof(float)), MakeResult(typeof(decimal))));
@@ -38,17 +54,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void Addition()
 		{
-			AssertType(typeof(int?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeResult(typeof(short)), MakeResult(typeof(byte?))));
+			TestOperator(MakeResult(typeof(short)), BinaryOperatorType.Add, MakeResult(typeof(byte?)),
+			             Conversion.ImplicitNullableConversion, Conversion.ImplicitNullableConversion, typeof(int?));
 			
 			AssertConstant(3.0, resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Add, MakeConstant(1.0f), MakeConstant(2.0)));
-			
-			AssertConstant(StringComparison.Ordinal, resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeConstant(StringComparison.InvariantCulture), MakeConstant(2)));
-			
-			AssertConstant(StringComparison.OrdinalIgnoreCase, resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeConstant((short)3), MakeConstant(StringComparison.InvariantCulture)));
 			
 			AssertConstant("Text", resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Add, MakeConstant("Te"), MakeConstant("xt")));
@@ -59,38 +69,76 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			AssertError(typeof(ReflectionHelper.Null), resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Add, MakeConstant(null), MakeConstant(null)));
 			
-			AssertType(typeof(Action), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeResult(typeof(Action)), MakeResult(typeof(Action))));
+			TestOperator(MakeResult(typeof(int?)), BinaryOperatorType.Add, MakeResult(typeof(uint?)),
+			             Conversion.ImplicitNullableConversion, Conversion.ImplicitNullableConversion, typeof(long?));
 			
-			AssertType(typeof(Action<string>), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeResult(typeof(Action<object>)), MakeResult(typeof(Action<string>))));
+			TestOperator(MakeResult(typeof(ushort?)), BinaryOperatorType.Add, MakeResult(typeof(ushort?)),
+			             Conversion.ImplicitNullableConversion, Conversion.ImplicitNullableConversion, typeof(int?));
+			
+			TestOperator(MakeConstant(1), BinaryOperatorType.Add, MakeConstant(null),
+			             Conversion.ImplicitNullableConversion, Conversion.NullLiteralConversion, typeof(int?));
+		}
+		
+		[Test]
+		public void StringPlusNull()
+		{
+			ResolveResult left = MakeResult(typeof(string));
+			var rr = (BinaryOperatorResolveResult)resolver.ResolveBinaryOperator(
+				BinaryOperatorType.Add, left, MakeConstant(null));
+			AssertType(typeof(string), rr);
+			Assert.AreSame(left, rr.Left);
+			Assert.AreEqual("System.String", rr.Right.Type.FullName);
+			Assert.IsTrue(rr.Right.IsCompileTimeConstant);
+			Assert.IsNull(rr.Right.ConstantValue);
+		}
+		
+		[Test]
+		public void DelegateAddition()
+		{
+			TestOperator(MakeResult(typeof(Action)), BinaryOperatorType.Add, MakeResult(typeof(Action)),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(Action));
+			
+			TestOperator(MakeResult(typeof(Action<object>)), BinaryOperatorType.Add, MakeResult(typeof(Action<string>)),
+			             Conversion.ImplicitReferenceConversion, Conversion.IdentityConversion, typeof(Action<string>));
+			
+			TestOperator(MakeResult(typeof(Action<string>)), BinaryOperatorType.Add, MakeResult(typeof(Action<object>)),
+			             Conversion.IdentityConversion, Conversion.ImplicitReferenceConversion, typeof(Action<string>));
 			
 			Assert.IsTrue(resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Add, MakeResult(typeof(Action<int>)), MakeResult(typeof(Action<long>))).IsError);
+		}
+		
+		
+		[Test]
+		public void EnumAddition()
+		{
+			AssertConstant(StringComparison.Ordinal, resolver.ResolveBinaryOperator(
+				BinaryOperatorType.Add, MakeConstant(StringComparison.InvariantCulture), MakeConstant(2)));
 			
-			AssertType(typeof(StringComparison?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeResult(typeof(StringComparison?)), MakeResult(typeof(int))));
+			AssertConstant(StringComparison.OrdinalIgnoreCase, resolver.ResolveBinaryOperator(
+				BinaryOperatorType.Add, MakeConstant((short)3), MakeConstant(StringComparison.InvariantCulture)));
 			
-			AssertType(typeof(StringComparison?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeResult(typeof(int?)), MakeResult(typeof(StringComparison))));
+			TestOperator(MakeResult(typeof(StringComparison?)), BinaryOperatorType.Add, MakeResult(typeof(int)),
+			             Conversion.IdentityConversion, Conversion.ImplicitNullableConversion, typeof(StringComparison?));
 			
-			AssertType(typeof(long?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeResult(typeof(int?)), MakeResult(typeof(uint?))));
+			TestOperator(MakeResult(typeof(StringComparison?)), BinaryOperatorType.Add, MakeResult(typeof(int?)),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(StringComparison?));
 			
-			AssertType(typeof(int?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeResult(typeof(ushort?)), MakeResult(typeof(ushort?))));
+			TestOperator(MakeResult(typeof(int)), BinaryOperatorType.Add, MakeResult(typeof(StringComparison?)),
+			             Conversion.ImplicitNullableConversion, Conversion.IdentityConversion, typeof(StringComparison?));
 			
-			Assert.IsTrue(resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeConstant(null), MakeConstant(null)).IsError);
+			TestOperator(MakeResult(typeof(int?)), BinaryOperatorType.Add, MakeResult(typeof(StringComparison?)),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(StringComparison?));
+		}
+		
+		[Test]
+		public void PointerAddition()
+		{
+			TestOperator(MakeResult(typeof(int*)), BinaryOperatorType.Add, MakeConstant(1),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(int*));
 			
-			AssertType(typeof(int?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeConstant(1), MakeConstant(null)));
-			
-			AssertType(typeof(int*), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeResult(typeof(int*)), MakeConstant(1)));
-			
-			AssertType(typeof(byte*), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Add, MakeResult(typeof(long)), MakeResult(typeof(byte*))));
+			TestOperator(MakeResult(typeof(long)), BinaryOperatorType.Add, MakeResult(typeof(byte*)),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(byte*));
 		}
 		
 		[Test]
@@ -109,44 +157,70 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void Subtraction()
 		{
-			AssertType(typeof(int?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Subtract, MakeResult(typeof(short)), MakeResult(typeof(byte?))));
+			TestOperator(MakeResult(typeof(short)), BinaryOperatorType.Subtract, MakeResult(typeof(byte?)),
+			             Conversion.ImplicitNullableConversion, Conversion.ImplicitNullableConversion, typeof(int?));
+			
+			TestOperator(MakeResult(typeof(float)), BinaryOperatorType.Subtract, MakeResult(typeof(long)),
+			             Conversion.IdentityConversion, Conversion.ImplicitNumericConversion, typeof(float));
 			
 			AssertConstant(-1.0, resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Subtract, MakeConstant(1.0f), MakeConstant(2.0)));
 			
+			Assert.IsTrue(resolver.ResolveBinaryOperator(
+				BinaryOperatorType.Subtract, MakeConstant("Te"), MakeConstant("xt")).IsError);
+		}
+		
+		[Test]
+		public void EnumSubtraction()
+		{
 			AssertConstant(StringComparison.InvariantCulture, resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Subtract, MakeConstant(StringComparison.Ordinal), MakeConstant(2)));
 			
 			AssertConstant(3, resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Subtract, MakeConstant(StringComparison.OrdinalIgnoreCase), MakeConstant(StringComparison.InvariantCulture)));
 			
-			Assert.IsTrue(resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Subtract, MakeConstant("Te"), MakeConstant("xt")).IsError);
+			TestOperator(MakeResult(typeof(StringComparison?)), BinaryOperatorType.Subtract, MakeResult(typeof(int)),
+			             Conversion.IdentityConversion, Conversion.ImplicitNullableConversion, typeof(StringComparison?));
 			
-			AssertType(typeof(Action), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Subtract, MakeResult(typeof(Action)), MakeResult(typeof(Action))));
-			
-			AssertType(typeof(Action<string>), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Subtract, MakeResult(typeof(Action<object>)), MakeResult(typeof(Action<string>))));
-			
-			Assert.IsTrue(resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Subtract, MakeResult(typeof(Action<int>)), MakeResult(typeof(Action<long>))).IsError);
-			
-			AssertType(typeof(StringComparison?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Subtract, MakeResult(typeof(StringComparison?)), MakeResult(typeof(int))));
-			
-			AssertType(typeof(int?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Subtract, MakeResult(typeof(StringComparison?)), MakeResult(typeof(StringComparison))));
+			TestOperator(MakeResult(typeof(StringComparison?)), BinaryOperatorType.Subtract, MakeResult(typeof(StringComparison)),
+			             Conversion.IdentityConversion, Conversion.ImplicitNullableConversion, typeof(int?));
 			
 			Assert.IsTrue(resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Subtract, MakeResult(typeof(int?)), MakeResult(typeof(StringComparison))).IsError);
+		}
+		
+		[Test]
+		public void DelegateSubtraction()
+		{
+			TestOperator(MakeResult(typeof(Action)), BinaryOperatorType.Subtract, MakeResult(typeof(Action)),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(Action));
 			
-			AssertType(typeof(byte*), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Subtract, MakeResult(typeof(byte*)), MakeResult(typeof(uint))));
+			TestOperator(MakeResult(typeof(Action<object>)), BinaryOperatorType.Subtract, MakeResult(typeof(Action<string>)),
+			             Conversion.ImplicitReferenceConversion, Conversion.IdentityConversion, typeof(Action<string>));
 			
-			AssertType(typeof(long), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Subtract, MakeResult(typeof(byte*)), MakeResult(typeof(byte*))));
+			TestOperator(MakeResult(typeof(Action<string>)), BinaryOperatorType.Subtract, MakeResult(typeof(Action<object>)),
+			             Conversion.IdentityConversion, Conversion.ImplicitReferenceConversion, typeof(Action<string>));
+			
+			Assert.IsTrue(resolver.ResolveBinaryOperator(
+				BinaryOperatorType.Subtract, MakeResult(typeof(Action<int>)), MakeResult(typeof(Action<long>))).IsError);
+		}
+		
+		[Test]
+		public void PointerSubtraction()
+		{
+			TestOperator(MakeResult(typeof(int*)), BinaryOperatorType.Subtract, MakeConstant(1),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(int*));
+			
+			TestOperator(MakeResult(typeof(byte*)), BinaryOperatorType.Subtract, MakeResult(typeof(uint)),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(byte*));
+			
+			TestOperator(MakeResult(typeof(byte*)), BinaryOperatorType.Subtract, MakeResult(typeof(short)),
+			             Conversion.IdentityConversion, Conversion.ImplicitNumericConversion, typeof(byte*));
+			
+			TestOperator(MakeResult(typeof(byte*)), BinaryOperatorType.Subtract, MakeResult(typeof(byte*)),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(long));
+			
+			AssertError(typeof(long), resolver.ResolveBinaryOperator(BinaryOperatorType.Subtract, MakeResult(typeof(byte*)), MakeResult(typeof(int*))));
 		}
 		
 		[Test]
@@ -158,18 +232,21 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			AssertConstant(ulong.MaxValue >> 2, resolver.ResolveBinaryOperator(
 				BinaryOperatorType.ShiftRight, MakeConstant(ulong.MaxValue), MakeConstant(2)));
 			
-			AssertType(typeof(int?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.ShiftLeft, MakeResult(typeof(ushort?)), MakeConstant(1)));
+			TestOperator(MakeResult(typeof(ushort?)), BinaryOperatorType.ShiftLeft, MakeConstant(1),
+			             Conversion.ImplicitNullableConversion, Conversion.ImplicitNullableConversion, typeof(int?));
 			
-			AssertType(typeof(int?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.ShiftLeft, MakeConstant(null), MakeConstant(1)));
+			TestOperator(MakeConstant(null), BinaryOperatorType.ShiftLeft, MakeConstant(1),
+			             Conversion.NullLiteralConversion, Conversion.ImplicitNullableConversion, typeof(int?));
 			
-			AssertType(typeof(int?), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.ShiftLeft, MakeConstant(null), MakeConstant(null)));
+			TestOperator(MakeResult(typeof(long)), BinaryOperatorType.ShiftLeft, MakeConstant(null),
+			             Conversion.ImplicitNullableConversion, Conversion.NullLiteralConversion, typeof(long?));
+			
+			TestOperator(MakeConstant(null), BinaryOperatorType.ShiftLeft,  MakeConstant(null),
+			             Conversion.NullLiteralConversion, Conversion.NullLiteralConversion, typeof(int?));
 		}
 		
 		[Test]
-		public void Equality()
+		public void ConstantEquality()
 		{
 			AssertConstant(true, resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Equality, MakeConstant(3), MakeConstant(3)));
@@ -203,9 +280,19 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			AssertConstant(false, resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Equality, MakeConstant(null), MakeConstant('a')));
+		}
+		
+		[Test]
+		public void Equality()
+		{
+			TestOperator(MakeResult(typeof(int*)), BinaryOperatorType.Equality, MakeResult(typeof(uint*)),
+			             Conversion.IdentityConversion, Conversion.IdentityConversion, typeof(bool));
 			
-			AssertType(typeof(bool), resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Equality, MakeResult(typeof(int*)), MakeResult(typeof(uint*))));
+			TestOperator(MakeResult(typeof(int)), BinaryOperatorType.Equality, MakeResult(typeof(int?)),
+			             Conversion.ImplicitNullableConversion, Conversion.IdentityConversion, typeof(bool));
+			
+			TestOperator(MakeResult(typeof(int)), BinaryOperatorType.Equality, MakeResult(typeof(float)),
+			             Conversion.ImplicitNumericConversion, Conversion.IdentityConversion, typeof(bool));
 		}
 		
 		[Test]
@@ -257,8 +344,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			AssertConstant(false, resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Equality, MakeConstant(0), MakeConstant(StringComparison.Ordinal)));
 			
-			AssertConstant(false, resolver.ResolveBinaryOperator(
-				BinaryOperatorType.Equality, MakeConstant(0), MakeConstant(StringComparison.Ordinal)));
+			AssertConstant(true, resolver.ResolveBinaryOperator(
+				BinaryOperatorType.Equality, MakeConstant(0), MakeConstant(StringComparison.CurrentCulture)));
 			
 			Assert.IsFalse(resolver.ResolveBinaryOperator(
 				BinaryOperatorType.Equality, MakeConstant(StringComparison.Ordinal), MakeConstant(1)).IsCompileTimeConstant);
@@ -389,7 +476,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				BinaryOperatorType.NullCoalescing, MakeResult(typeof(string)), MakeResult(typeof(dynamic))));
 		}
 		
-		[Test, Ignore("user-defined operators not yet implemented")]
+		[Test]
 		public void LiftedUserDefined()
 		{
 			AssertType(typeof(TimeSpan), resolver.ResolveBinaryOperator(
@@ -402,7 +489,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				BinaryOperatorType.Subtract, MakeResult(typeof(DateTime?)), MakeResult(typeof(DateTime?))));
 		}
 		
-		[Test, Ignore("user-defined operators not yet implemented")]
+		[Test]
 		public void UserDefinedNeedsLiftingDueToImplicitConversion()
 		{
 			string program = @"struct S {}
@@ -417,16 +504,23 @@ class Test {
 	}
 }
 ";
-			MemberResolveResult trr = Resolve<MemberResolveResult>(program);
-			Assert.IsFalse(trr.IsError);
-			Assert.AreEqual("A.op_Addition", trr.Member.FullName);
+			var irr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(irr.IsError);
+			Assert.IsTrue(irr.IsLiftedOperatorInvocation);
+			Assert.AreEqual("A.op_Addition", irr.Member.FullName);
 			// even though we're calling the lifted operator, trr.Member should be the original operator method
-			Assert.AreEqual("S", trr.Member.ReturnType.Resolve(context).ReflectionName);
-			Assert.AreEqual("System.Nullable`1[[S]]", trr.Type.ReflectionName);
+			Assert.AreEqual("S", irr.Member.ReturnType.Resolve(context).ReflectionName);
+			Assert.AreEqual("System.Nullable`1[[S]]", irr.Type.ReflectionName);
+			
+			Conversion lhsConv = ((ConversionResolveResult)irr.Arguments[0]).Conversion;
+			Conversion rhsConv = ((ConversionResolveResult)irr.Arguments[1]).Conversion;
+			Assert.AreEqual(Conversion.ImplicitNullableConversion, lhsConv);
+			Assert.IsTrue(rhsConv.IsUserDefined);
+			Assert.AreEqual("A.op_Implicit", rhsConv.Method.FullName);
 		}
 		
-		[Test, Ignore("user-defined operators not yet implemented")]
-		public void ThereIsNoLiftedOperatorsForClasses()
+		[Test]
+		public void ThereAreNoLiftedOperatorsForClasses()
 		{
 			string program = @"struct S {}
 class A {
@@ -440,10 +534,10 @@ class Test {
 	}
 }
 ";
-			MemberResolveResult trr = Resolve<MemberResolveResult>(program);
-			Assert.IsTrue(trr.IsError); // cannot convert from A to S
-			Assert.AreEqual("A.op_Addition", trr.Member.FullName);
-			Assert.AreEqual("S", trr.Type.ReflectionName);
+			var irr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsTrue(irr.IsError); // cannot convert from A to S
+			Assert.AreEqual("A.op_Addition", irr.Member.FullName);
+			Assert.AreEqual("S", irr.Type.ReflectionName);
 		}
 	}
 }

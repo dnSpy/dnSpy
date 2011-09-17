@@ -1,7 +1,8 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -70,38 +71,55 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			return new ComposedType { BaseType = this }.MakeArrayType(rank);
 		}
 		
-		// TODO : reimplement this
-//		/// <summary>
-//		/// Builds an expression that can be used to access a static member on this type.
-//		/// </summary>
-//		public MemberReferenceExpression Member(string memberName)
-//		{
-//			return new TypeReferenceExpression { Type = this }.Member(memberName);
-//		}
-//		
-//		/// <summary>
-//		/// Builds an invocation expression using this type as target.
-//		/// </summary>
-//		public InvocationExpression Invoke(string methodName, IEnumerable<Expression> arguments)
-//		{
-//			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
-//		}
-//		
-//		/// <summary>
-//		/// Builds an invocation expression using this type as target.
-//		/// </summary>
-//		public InvocationExpression Invoke(string methodName, params Expression[] arguments)
-//		{
-//			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
-//		}
-//		
-//		/// <summary>
-//		/// Builds an invocation expression using this type as target.
-//		/// </summary>
-//		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
-//		{
-//			return new TypeReferenceExpression { Type = this }.Invoke(methodName, typeArguments, arguments);
-//		}
+		public static AstType FromName(string fullName)
+		{
+			if (string.IsNullOrEmpty(fullName))
+				throw new ArgumentNullException("fullName");
+			fullName = fullName.Trim();
+			if (!fullName.Contains("."))
+				return new SimpleType(fullName);
+			string[] parts = fullName.Split('.');
+			
+			AstType type = new SimpleType(parts.First());
+			
+			foreach (var part in parts.Skip(1)) {
+				type = new QualifiedType(type, part);
+			}
+			
+			return type;
+		}
+		
+		/// <summary>
+		/// Builds an expression that can be used to access a static member on this type.
+		/// </summary>
+		public MemberAccessExpression Member(string memberName)
+		{
+			return new TypeReferenceExpression { Type = this }.Member(memberName);
+		}
+		
+		/// <summary>
+		/// Builds an invocation expression using this type as target.
+		/// </summary>
+		public InvocationExpression Invoke(string methodName, IEnumerable<Expression> arguments)
+		{
+			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
+		}
+		
+		/// <summary>
+		/// Builds an invocation expression using this type as target.
+		/// </summary>
+		public InvocationExpression Invoke(string methodName, params Expression[] arguments)
+		{
+			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
+		}
+		
+		/// <summary>
+		/// Builds an invocation expression using this type as target.
+		/// </summary>
+		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
+		{
+			return new TypeReferenceExpression { Type = this }.Invoke(methodName, typeArguments, arguments);
+		}
 		
 		public static AstType Create(Type type)
 		{

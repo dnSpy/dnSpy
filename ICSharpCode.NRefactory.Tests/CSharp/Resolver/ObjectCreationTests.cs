@@ -1,7 +1,23 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
 
@@ -20,7 +36,7 @@ class A {
 	}
 }
 ";
-			MemberResolveResult result = Resolve<MemberResolveResult>(program);
+			var result = Resolve<CSharpInvocationResolveResult>(program);
 			Assert.AreEqual("System.Collections.Generic.List..ctor", result.Member.FullName);
 			
 			Assert.AreEqual("System.Collections.Generic.List`1[[System.String]]", result.Type.ReflectionName);
@@ -35,7 +51,7 @@ class A {
 	}
 }
 ";
-			ResolveResult result = Resolve<ResolveResult>(program);
+			ResolveResult result = Resolve<ErrorResolveResult>(program);
 			Assert.AreSame(SharedTypes.UnknownType, result.Type);
 		}
 		
@@ -67,21 +83,18 @@ class A {
 	A(double dblVal) {}
 }
 ";
-			MemberResolveResult result = Resolve<MemberResolveResult>(program.Replace("$", "$new A()$"));
-			IMethod m = (IMethod)result.Member;
-			Assert.IsFalse(m.IsStatic, "new A() is static");
-			Assert.AreEqual(0, m.Parameters.Count, "new A() parameter count");
+			var result = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$new A()$"));
+			Assert.IsFalse(result.Member.IsStatic, "new A() is static");
+			Assert.AreEqual(0, result.Member.Parameters.Count, "new A() parameter count");
 			Assert.AreEqual("A", result.Type.FullName);
 			
-			result = Resolve<MemberResolveResult>(program.Replace("$", "$new A(10)$"));
-			m = (IMethod)result.Member;
-			Assert.AreEqual(1, m.Parameters.Count, "new A(10) parameter count");
-			Assert.AreEqual("intVal", m.Parameters[0].Name, "new A(10) parameter");
+			result = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$new A(10)$"));
+			Assert.AreEqual(1, result.Member.Parameters.Count, "new A(10) parameter count");
+			Assert.AreEqual("intVal", result.Member.Parameters[0].Name, "new A(10) parameter");
 			
-			result = Resolve<MemberResolveResult>(program.Replace("$", "$new A(11.1)$"));
-			m = (IMethod)result.Member;
-			Assert.AreEqual(1, m.Parameters.Count, "new A(11.1) parameter count");
-			Assert.AreEqual("dblVal", m.Parameters[0].Name, "new A(11.1) parameter");
+			result = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$new A(11.1)$"));
+			Assert.AreEqual(1, result.Member.Parameters.Count, "new A(11.1) parameter count");
+			Assert.AreEqual("dblVal", result.Member.Parameters[0].Name, "new A(11.1) parameter");
 		}
 		
 		[Test]
@@ -93,14 +106,12 @@ class A {
 	}
 }
 ";
-			MemberResolveResult result = Resolve<MemberResolveResult>(program);
-			IMethod m = (IMethod)result.Member;
-			Assert.IsNotNull(m);
+			var result = Resolve<CSharpInvocationResolveResult>(program);
 			Assert.AreEqual("A", result.Type.ReflectionName);
-			Assert.AreEqual(0, m.Parameters.Count);
+			Assert.AreEqual(0, result.Member.Parameters.Count);
 		}
 		
-		[Test, Ignore("Not implemented")]
+		[Test, Ignore("Parser returns incorrect positions")]
 		public void ChainedConstructorCall()
 		{
 			string program = @"using System;
@@ -122,14 +133,69 @@ class C : B {
  	{}
 }
 ";
-			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "base(b)");
+			InvocationResolveResult mrr = Resolve<InvocationResolveResult>(program.Replace("base(b)", "$base(b)$"));
 			Assert.AreEqual("A..ctor", mrr.Member.FullName);
 			
-			mrr = Resolve<MemberResolveResult>(program, "base(c)");
+			mrr = Resolve<InvocationResolveResult>(program.Replace("base(c)", "$base(c)$"));
 			Assert.AreEqual("B..ctor", mrr.Member.FullName);
 			
-			mrr = Resolve<MemberResolveResult>(program, "this(0)");
+			mrr = Resolve<InvocationResolveResult>(program.Replace("this(0)", "$this(0)$"));
 			Assert.AreEqual("C..ctor", mrr.Member.FullName);
+		}
+		
+		[Test]
+		public void FieldReferenceInObjectInitializer()
+		{
+			string program = @"class A {
+	public int Property;
+}
+class B {
+	void Method() {
+		var x = new A() { $Property = 0$ };
+	}
+}";
+			MemberResolveResult result = Resolve<MemberResolveResult>(program);
+			Assert.AreEqual("A.Property", result.Member.FullName);
+		}
+		
+		[Test]
+		public void FieldReferenceInNestedObjectInitializer()
+		{
+			string program = @"class Point { public float X, Y; }
+class Rect { public Point TopLeft, BottomRight; }
+class B {
+	void Method() {
+		var x = new Rect() { TopLeft = { $X = 1$ } };
+	}
+}";
+			MemberResolveResult result = Resolve<MemberResolveResult>(program);
+			Assert.AreEqual("Point.X", result.Member.FullName);
+		}
+		
+		[Test, Ignore("Parser returns incorrect positions")]
+		public void CollectionInitializerTest()
+		{
+			string program = @"using System.Collections.Generic;
+class B {
+	void Method() {
+		var x = new List<int>() { ${ 0 }$ };
+	}
+}";
+			InvocationResolveResult result = Resolve<InvocationResolveResult>(program);
+			Assert.AreEqual("System.Collections.Generic.List.Add", result.Member.FullName);
+		}
+		
+		[Test, Ignore("Parser returns incorrect positions")]
+		public void DictionaryInitializerTest()
+		{
+			string program = @"using System.Collections.Generic;
+class B {
+	void Method() {
+		var x = new Dictionary<char, int>() { ${ 'a', 0 }$ };
+	}
+}";
+			InvocationResolveResult result = Resolve<InvocationResolveResult>(program);
+			Assert.AreEqual("System.Collections.Generic.Dictionary.Add", result.Member.FullName);
 		}
 	}
 }

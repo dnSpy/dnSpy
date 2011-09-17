@@ -1,5 +1,5 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -28,7 +28,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		void PushContext(Context context, Token la, Token t)
 		{
 			string indent = new string('\t', stack.Count);
-			AstLocation l = la == null ? (t == null ? AstLocation.Empty : t.EndLocation) : la.Location;
+			TextLocation l = la == null ? (t == null ? TextLocation.Empty : t.EndLocation) : la.Location;
 			
 			stack.Push(new Block() { context = context, lastExpressionStart = l });
 			Print(indent + "enter " + context);

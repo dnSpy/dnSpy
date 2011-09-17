@@ -1,4 +1,4 @@
-// 
+﻿// 
 // TestFormattingVisitor.cs
 //  
 // Author:
@@ -142,7 +142,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 			int i2 = result.Text.IndexOf ("right") + "right".Length;
 			if (i1 < 0 || i2 < 0)
 				Assert.Fail ("text invalid:" + result.Text);
-			Assert.AreEqual ("left " + op + " right", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual ("left " + op + " right", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -234,7 +234,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.IndexOf ("condition");
 			int i2 = result.Text.IndexOf ("falseexpr") + "falseexpr".Length;
-			Assert.AreEqual (@"condition ? trueexpr : falseexpr", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"condition ? trueexpr : falseexpr", result.GetText (i1, i2 - i1));
 			
 			
 			policy.SpaceBeforeConditionalOperatorCondition = false;
@@ -250,7 +250,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			i1 = result.Text.IndexOf ("true");
 			i2 = result.Text.IndexOf ("falseexpr") + "falseexpr".Length;
-			Assert.AreEqual (@"true?trueexpr:falseexpr", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"true?trueexpr:falseexpr", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -268,7 +268,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 			
 			int i1 = result.Text.IndexOf ("MethodCall");
 			int i2 = result.Text.IndexOf (";") + ";".Length;
-			Assert.AreEqual (@"MethodCall ();", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"MethodCall ();", result.GetText (i1, i2 - i1));
 			
 			
 			result = GetResult (policy, @"class Test {
@@ -282,7 +282,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.IndexOf ("MethodCall");
 			i2 = result.Text.IndexOf (";") + ";".Length;
-			Assert.AreEqual (@"MethodCall();", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"MethodCall();", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -299,7 +299,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( true )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( true )", result.GetText (i1, i2 - i1));
 			
 			
 			policy.SpaceWithinMethodCallParentheses = false;
@@ -312,7 +312,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 			
 			i1 = result.Text.LastIndexOf ("(");
 			i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(true)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(true)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -329,7 +329,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.IndexOf ("if");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"if (true)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"if (true)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -346,7 +346,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( true )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( true )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -363,7 +363,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.IndexOf ("while");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"while (true)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"while (true)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -381,7 +381,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 			
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( true )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( true )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -398,7 +398,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.IndexOf ("for");
 			int i2 = result.Text.LastIndexOf ("(") + "(".Length;
-			Assert.AreEqual (@"for (", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"for (", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -415,7 +415,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( ;; )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( ;; )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -432,7 +432,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.IndexOf ("foreach");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"foreach (var o in list)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"foreach (var o in list)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -449,7 +449,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( var o in list )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( var o in list )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -466,7 +466,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.IndexOf ("catch");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"catch (Exception)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"catch (Exception)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -483,7 +483,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( Exception )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( Exception )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -500,7 +500,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.IndexOf ("lock");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"lock (this)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"lock (this)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -517,7 +517,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( this )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( this )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -535,7 +535,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 			int i1 = result.Text.LastIndexOf ("for");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
 			
-			Assert.AreEqual (@"for (int i; true; i++)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"for (int i; true; i++)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -554,7 +554,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 			int i1 = result.Text.LastIndexOf ("for");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
 			
-			Assert.AreEqual (@"for (int i ;true ;i++)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"for (int i ;true ;i++)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -572,7 +572,7 @@ return (Test)null;
 			int i1 = result.Text.LastIndexOf ("return");
 			int i2 = result.Text.LastIndexOf ("null") + "null".Length;
 			
-			Assert.AreEqual (@"return (Test) null", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"return (Test) null", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -589,7 +589,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.IndexOf ("using");
 			int i2 = result.Text.LastIndexOf ("(") + "(".Length;
-			Assert.AreEqual (@"using (", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"using (", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -606,7 +606,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( a )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( a )", result.GetText (i1, i2 - i1));
 		}
 
 		static void TestAssignmentOperator (CSharpFormattingOptions policy, string op)
@@ -617,7 +617,7 @@ return (Test)null;
 			int i2 = result.Text.IndexOf ("right") + "right".Length;
 			if (i1 < 0 || i2 < 0)
 				Assert.Fail ("text invalid:" + result.Text);
-			Assert.AreEqual ("left " + op + " right", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual ("left " + op + " right", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -653,7 +653,7 @@ return (Test)null;
 			
 			int i1 = result.Text.LastIndexOf ("left");
 			int i2 = result.Text.LastIndexOf ("right") + "right".Length;
-			Assert.AreEqual (@"left = right", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"left = right", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -670,7 +670,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.IndexOf ("switch");
 			int i2 = result.Text.LastIndexOf ("(") + "(".Length;
-			Assert.AreEqual (@"switch (", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"switch (", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -687,7 +687,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( test )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( test )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -704,7 +704,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( test )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( test )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -720,7 +720,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( int a )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( int a )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -737,7 +737,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( int )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( int )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -754,7 +754,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( int )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( int )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -771,7 +771,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("sizeof");
 			int i2 = result.Text.LastIndexOf ("(") + "(".Length;
-			Assert.AreEqual (@"sizeof (", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"sizeof (", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -788,7 +788,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( int )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( int )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -806,7 +806,7 @@ return (Test)null;
 			
 			int i1 = result.Text.LastIndexOf ("typeof");
 			int i2 = result.Text.LastIndexOf ("(") + "(".Length;
-			Assert.AreEqual (@"typeof (", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"typeof (", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -823,7 +823,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( a + b )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( a + b )", result.GetText (i1, i2 - i1));
 			
 			result = GetResult (policy, @"class Test {
 	void TestMe ()
@@ -835,7 +835,7 @@ return (Test)null;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.LastIndexOf ("(");
 			i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( a + b )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( a + b )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -852,7 +852,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("new");
 			int i2 = result.Text.LastIndexOf (";") + ";".Length;
-			Assert.AreEqual (@"new Test ();", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"new Test ();", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -869,7 +869,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("new");
 			int i2 = result.Text.LastIndexOf (";") + ";".Length;
-			Assert.AreEqual (@"new Test ( 1 );", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"new Test ( 1 );", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -886,7 +886,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("new");
 			int i2 = result.Text.LastIndexOf (";") + ";".Length;
-			Assert.AreEqual (@"new Test ( );", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"new Test ( );", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -904,7 +904,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("new");
 			int i2 = result.Text.LastIndexOf (";") + ";".Length;
-			Assert.AreEqual (@"new Test (1 ,2);", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"new Test (1 ,2);", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -921,7 +921,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("new");
 			int i2 = result.Text.LastIndexOf (";") + ";".Length;
-			Assert.AreEqual (@"new Test (1, 2);", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"new Test (1, 2);", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -936,20 +936,20 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("int");
 			int i2 = result.Text.LastIndexOf (";") + ";".Length;
-			Assert.AreEqual (@"int a, b, c;", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"int a, b, c;", result.GetText (i1, i2 - i1));
 			policy.SpaceBeforeFieldDeclarationComma = true;
 			
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.LastIndexOf ("int");
 			i2 = result.Text.LastIndexOf (";") + ";".Length;
-			Assert.AreEqual (@"int a , b , c;", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"int a , b , c;", result.GetText (i1, i2 - i1));
 			
 			policy.SpaceBeforeFieldDeclarationComma = false;
 			policy.SpaceAfterFieldDeclarationComma = false;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.LastIndexOf ("int");
 			i2 = result.Text.LastIndexOf (";") + ";".Length;
-			Assert.AreEqual (@"int a,b,c;", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"int a,b,c;", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -964,13 +964,13 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a ,int b ,int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a ,int b ,int c)", result.GetText (i1, i2 - i1));
 			
 			policy.SpaceBeforeMethodDeclarationParameterComma = false;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.LastIndexOf ("(");
 			i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a,int b,int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a,int b,int c)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -985,13 +985,13 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a, int b, int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a, int b, int c)", result.GetText (i1, i2 - i1));
 			
 			policy.SpaceAfterMethodDeclarationParameterComma = false;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.LastIndexOf ("(");
 			i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a,int b,int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a,int b,int c)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1008,7 +1008,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.IndexOf ("x");
 			int i2 = result.Text.LastIndexOf ("null") + "null".Length;
-			Assert.AreEqual (@"x => x != null", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"x => x != null", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1026,7 +1026,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.IndexOf ("int");
 			int i2 = result.Text.IndexOf (";") + ";".Length;
-			Assert.AreEqual (@"int a ,b ,c;", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"int a ,b ,c;", result.GetText (i1, i2 - i1));
 
 			result = GetResult (policy, result.Text);
 
@@ -1035,7 +1035,7 @@ return (Test)null;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.IndexOf ("int");
 			i2 = result.Text.IndexOf (";") + ";".Length;
-			Assert.AreEqual (@"int a,b,c;", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"int a,b,c;", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1053,7 +1053,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.IndexOf ("int");
 			int i2 = result.Text.IndexOf (";") + ";".Length;
-			Assert.AreEqual (@"int a = 5 , b = 6 , c;", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"int a = 5 , b = 6 , c;", result.GetText (i1, i2 - i1));
 
 			result = GetResult (policy, result.Text);
 
@@ -1063,7 +1063,7 @@ return (Test)null;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.IndexOf ("int");
 			i2 = result.Text.IndexOf (";") + ";".Length;
-			Assert.AreEqual (@"int a = 5,b = 6,c;", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"int a = 5,b = 6,c;", result.GetText (i1, i2 - i1));
 		}
 		
 		[Test()]
@@ -1081,7 +1081,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.IndexOf ("List");
 			int i2 = result.Text.IndexOf (";") + ";".Length;
-			Assert.AreEqual (@"List<Test> a;", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"List<Test> a;", result.GetText (i1, i2 - i1));
 
 		}
 
@@ -1121,14 +1121,14 @@ return (Test)null;
 			
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a ,int b ,int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a ,int b ,int c)", result.GetText (i1, i2 - i1));
 			
 			policy.SpaceBeforeConstructorDeclarationParameterComma = false;
 			result = GetResult (policy, result.Text);
 			
 			i1 = result.Text.LastIndexOf ("(");
 			i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a,int b,int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a,int b,int c)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1143,13 +1143,13 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a, int b, int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a, int b, int c)", result.GetText (i1, i2 - i1));
 			
 			policy.SpaceAfterConstructorDeclarationParameterComma = false;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.LastIndexOf ("(");
 			i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a,int b,int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a,int b,int c)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1165,7 +1165,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( int a )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( int a )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1181,7 +1181,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( )", result.GetText (i1, i2 - i1));
 		}
 
 		#endregion
@@ -1220,13 +1220,13 @@ return (Test)null;
 			
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a ,int b ,int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a ,int b ,int c)", result.GetText (i1, i2 - i1));
 			
 			policy.SpaceBeforeDelegateDeclarationParameterComma = false;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.LastIndexOf ("(");
 			i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a,int b,int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a,int b,int c)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1240,13 +1240,13 @@ return (Test)null;
 			
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a, int b, int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a, int b, int c)", result.GetText (i1, i2 - i1));
 			
 			policy.SpaceAfterDelegateDeclarationParameterComma = false;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.LastIndexOf ("(");
 			i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(int a,int b,int c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(int a,int b,int c)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1258,7 +1258,7 @@ return (Test)null;
 			
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( int a )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( int a )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1270,7 +1270,7 @@ return (Test)null;
 			
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( )", result.GetText (i1, i2 - i1));
 		}
 
 		#endregion
@@ -1315,13 +1315,13 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(a ,b ,c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(a ,b ,c)", result.GetText (i1, i2 - i1));
 			
 			policy.SpaceBeforeMethodCallParameterComma = false;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.LastIndexOf ("(");
 			i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(a,b,c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(a,b,c)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1340,13 +1340,13 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(a, b, c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(a, b, c)", result.GetText (i1, i2 - i1));
 			
 			policy.SpaceAfterMethodCallParameterComma = false;
 			result = GetResult (policy, result.Text);
 			i1 = result.Text.LastIndexOf ("(");
 			i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"(a,b,c)", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"(a,b,c)", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1364,7 +1364,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( a )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( a )", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1382,7 +1382,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("(");
 			int i2 = result.Text.LastIndexOf (")") + ")".Length;
-			Assert.AreEqual (@"( )", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"( )", result.GetText (i1, i2 - i1));
 		}
 
 		#endregion
@@ -1430,7 +1430,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("[");
 			int i2 = result.Text.LastIndexOf ("]") + "]".Length;
-			Assert.AreEqual (@"[int a ,int b]", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"[int a ,int b]", result.GetText (i1, i2 - i1));
 
 		}
 
@@ -1450,7 +1450,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("[");
 			int i2 = result.Text.LastIndexOf ("]") + "]".Length;
-			Assert.AreEqual (@"[int a, int b]", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"[int a, int b]", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1469,7 +1469,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.LastIndexOf ("[");
 			int i2 = result.Text.LastIndexOf ("]") + "]".Length;
-			Assert.AreEqual (@"[ int a, int b ]", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"[ int a, int b ]", result.GetText (i1, i2 - i1));
 		}
 
 		#endregion
@@ -1540,7 +1540,7 @@ return (Test)null;
 			
 			int i1 = result.Text.LastIndexOf ("[");
 			int i2 = result.Text.LastIndexOf ("]") + "]".Length;
-			Assert.AreEqual (@"[1 ,2 ,3]", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"[1 ,2 ,3]", result.GetText (i1, i2 - i1));
 		}
 
 		[Test()]
@@ -1558,7 +1558,7 @@ return (Test)null;
 			
 			int i1 = result.Text.LastIndexOf ("[");
 			int i2 = result.Text.LastIndexOf ("]") + "]".Length;
-			Assert.AreEqual (@"[1, 2, 3]", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"[1, 2, 3]", result.GetText (i1, i2 - i1));
 		}
 
 		#endregion
@@ -1595,7 +1595,7 @@ return (Test)null;
 }");
 			int i1 = result.Text.IndexOf ("Foo");
 			int i2 = result.Text.LastIndexOf (";") + ";".Length;
-			Assert.AreEqual (@"Foo ();", result.GetTextAt (i1, i2 - i1));
+			Assert.AreEqual (@"Foo ();", result.GetText (i1, i2 - i1));
 		}
 		
 	}

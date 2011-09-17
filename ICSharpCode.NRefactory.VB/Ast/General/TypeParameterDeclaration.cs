@@ -1,9 +1,11 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -21,7 +23,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public string Name {
 			get { return GetChildByRole (Roles.Identifier).Name; }
-			set { SetChildByRole(Roles.Identifier, new Identifier (value, AstLocation.Empty)); }
+			set { SetChildByRole(Roles.Identifier, new Identifier (value, TextLocation.Empty)); }
 		}
 		
 		public AstNodeCollection<AstType> Constraints {

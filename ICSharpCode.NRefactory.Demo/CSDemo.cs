@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
@@ -7,6 +22,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -15,6 +31,7 @@ using System.Windows.Forms;
 
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
@@ -56,6 +73,7 @@ namespace ICSharpCode.NRefactory.Demo
 			}
 			SelectCurrentNode(csharpTreeView.Nodes);
 			resolveButton.Enabled = true;
+			findReferencesButton.Enabled = true;
 		}
 		
 		TreeNode MakeTreeNode(AstNode node)
@@ -130,12 +148,12 @@ namespace ICSharpCode.NRefactory.Demo
 		void CSharpGenerateCodeButtonClick(object sender, EventArgs e)
 		{
 			StringWriter w = new StringWriter();
-			OutputVisitor output = new OutputVisitor(w, new CSharpFormattingOptions());
+			CSharpOutputVisitor output = new CSharpOutputVisitor(w, new CSharpFormattingOptions());
 			compilationUnit.AcceptVisitor(output, null);
 			csharpCodeTextBox.Text = w.ToString();
 		}
 		
-		int GetOffset(TextBox textBox, AstLocation location)
+		int GetOffset(TextBox textBox, TextLocation location)
 		{
 			return textBox.GetFirstCharIndexFromLine(location.Line - 1) + location.Column - 1;
 		}
@@ -144,9 +162,13 @@ namespace ICSharpCode.NRefactory.Demo
 		{
 			AstNode node = e.Node.Tag as AstNode;
 			if (node != null) {
-				int startOffset = GetOffset(csharpCodeTextBox, node.StartLocation);
-				int endOffset = GetOffset(csharpCodeTextBox, node.EndLocation);
-				csharpCodeTextBox.Select(startOffset, endOffset - startOffset);
+				if (node.StartLocation.IsEmpty || node.EndLocation.IsEmpty) {
+					csharpCodeTextBox.DeselectAll();
+				} else {
+					int startOffset = GetOffset(csharpCodeTextBox, node.StartLocation);
+					int endOffset = GetOffset(csharpCodeTextBox, node.EndLocation);
+					csharpCodeTextBox.Select(startOffset, endOffset - startOffset);
+				}
 			}
 		}
 		
@@ -178,9 +200,8 @@ namespace ICSharpCode.NRefactory.Demo
 		void ResolveButtonClick(object sender, EventArgs e)
 		{
 			SimpleProjectContent project = new SimpleProjectContent();
-			TypeSystemConvertVisitor convertVisitor = new TypeSystemConvertVisitor(project, "dummy.cs");
-			compilationUnit.AcceptVisitor(convertVisitor, null);
-			project.UpdateProjectContent(null, convertVisitor.ParsedFile);
+			var parsedFile = new TypeSystemConvertVisitor(project, "dummy.cs").Convert(compilationUnit);
+			project.UpdateProjectContent(null, parsedFile);
 			
 			List<ITypeResolveContext> projects = new List<ITypeResolveContext>();
 			projects.Add(project);
@@ -193,7 +214,7 @@ namespace ICSharpCode.NRefactory.Demo
 				if (csharpTreeView.SelectedNode != null) {
 					navigator = new NodeListResolveVisitorNavigator(new[] { (AstNode)csharpTreeView.SelectedNode.Tag });
 				}
-				ResolveVisitor visitor = new ResolveVisitor(resolver, convertVisitor.ParsedFile, navigator);
+				ResolveVisitor visitor = new ResolveVisitor(resolver, parsedFile, navigator);
 				visitor.Scan(compilationUnit);
 				csharpTreeView.BeginUpdate();
 				ShowResolveResultsInTree(csharpTreeView.Nodes, visitor);
@@ -206,7 +227,7 @@ namespace ICSharpCode.NRefactory.Demo
 			foreach (TreeNode t in c) {
 				AstNode node = t.Tag as AstNode;
 				if (node != null) {
-					ResolveResult rr = v.GetResolveResult(node);
+					ResolveResult rr = v.GetResolveResultIfResolved(node);
 					if (rr != null)
 						t.Text = GetNodeTitle(node) + " " + rr.ToString();
 					else
@@ -227,6 +248,57 @@ namespace ICSharpCode.NRefactory.Demo
 		void CsharpCodeTextBoxTextChanged(object sender, EventArgs e)
 		{
 			resolveButton.Enabled = false;
+			findReferencesButton.Enabled = false;
+		}
+		
+		void FindReferencesButtonClick(object sender, EventArgs e)
+		{
+			if (csharpTreeView.SelectedNode == null)
+				return;
+			
+			SimpleProjectContent project = new SimpleProjectContent();
+			var parsedFile = new TypeSystemConvertVisitor(project, "dummy.cs").Convert(compilationUnit);
+			project.UpdateProjectContent(null, parsedFile);
+			
+			List<ITypeResolveContext> projects = new List<ITypeResolveContext>();
+			projects.Add(project);
+			projects.AddRange(builtInLibs.Value);
+			
+			using (var context = new CompositeTypeResolveContext(projects).Synchronize()) {
+				CSharpResolver resolver = new CSharpResolver(context);
+				
+				AstNode node = (AstNode)csharpTreeView.SelectedNode.Tag;
+				IResolveVisitorNavigator navigator = new NodeListResolveVisitorNavigator(new[] { node });
+				ResolveVisitor visitor = new ResolveVisitor(resolver, parsedFile, navigator);
+				visitor.Scan(compilationUnit);
+				IEntity entity;
+				MemberResolveResult mrr = visitor.GetResolveResult(node) as MemberResolveResult;
+				TypeResolveResult trr = visitor.GetResolveResult(node) as TypeResolveResult;
+				if (mrr != null) {
+					entity = mrr.Member;
+				} else if (trr != null) {
+					entity = trr.Type.GetDefinition();
+				} else {
+					return;
+				}
+				
+				FindReferences fr = new FindReferences();
+				int referenceCount = 0;
+				FoundReferenceCallback callback = delegate(AstNode matchNode, ResolveResult result) {
+					referenceCount++;
+				};
+				
+				var searchScopes = fr.GetSearchScopes(entity);
+				navigator = new CompositeResolveVisitorNavigator(searchScopes.Select(s => s.GetNavigator(callback)).ToArray());
+				visitor = new ResolveVisitor(resolver, parsedFile, navigator);
+				visitor.Scan(compilationUnit);
+				
+				csharpTreeView.BeginUpdate();
+				ShowResolveResultsInTree(csharpTreeView.Nodes, visitor);
+				csharpTreeView.EndUpdate();
+				
+				MessageBox.Show("Found " + referenceCount + " references to " + entity.FullName);
+			}
 		}
 	}
 }

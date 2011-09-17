@@ -31,7 +31,6 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.NRefactory.FormattingTests
 {
-	[Ignore ("TODO")]
 	[TestFixture()]
 	public class TestBlankLineFormatting : TestBase
 	{

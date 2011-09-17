@@ -1,5 +1,5 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole (Roles.Identifier, new Identifier (value, AstLocation.Empty));
+				SetChildByRole (Roles.Identifier, new Identifier (value, TextLocation.Empty));
 			}
 		}
 		

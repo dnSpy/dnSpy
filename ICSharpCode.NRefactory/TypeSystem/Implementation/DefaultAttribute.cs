@@ -1,5 +1,20 @@
-﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
@@ -7,11 +22,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
+using ICSharpCode.NRefactory.Semantics;
+
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 {
 	/// <summary>
 	/// Default implementation of <see cref="IAttribute"/>.
 	/// </summary>
+	[Serializable]
 	public sealed class DefaultAttribute : AbstractFreezable, IAttribute, ISupportsInterning
 	{
 		ITypeReference attributeType;
@@ -68,9 +86,9 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		IList<IConstantValue> IAttribute.GetPositionalArguments(ITypeResolveContext context)
+		public IList<ResolveResult> GetPositionalArguments(ITypeResolveContext context)
 		{
-			return this.PositionalArguments;
+			return this.PositionalArguments.Select(a => a.Resolve(context)).ToList();
 		}
 		
 		public IList<KeyValuePair<string, IConstantValue>> NamedArguments {
@@ -81,9 +99,9 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		IList<KeyValuePair<string, IConstantValue>> IAttribute.GetNamedArguments(ITypeResolveContext context)
+		public IList<KeyValuePair<string, ResolveResult>> GetNamedArguments(ITypeResolveContext context)
 		{
-			return this.NamedArguments;
+			return this.NamedArguments.Select(p => new KeyValuePair<string, ResolveResult>(p.Key, p.Value.Resolve(context))).ToList();
 		}
 		
 		public IMethod ResolveConstructor(ITypeResolveContext context)
@@ -162,6 +180,17 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		{
 			DefaultAttribute a = other as DefaultAttribute;
 			return a != null && attributeType == a.attributeType && positionalArguments == a.positionalArguments && namedArguments == a.namedArguments && region == a.region;
+		}
+		
+		public void AddNamedArgument(string name, ITypeReference type, object value)
+		{
+			AddNamedArgument(name, new SimpleConstantValue(type, value));
+		}
+		
+		public void AddNamedArgument(string name, IConstantValue value)
+		{
+			CheckBeforeMutation();
+			this.NamedArguments.Add(new KeyValuePair<string, IConstantValue>(name, value));
 		}
 	}
 }

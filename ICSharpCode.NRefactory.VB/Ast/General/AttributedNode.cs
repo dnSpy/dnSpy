@@ -1,5 +1,5 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			set { SetModifiers(this, value); }
 		}
 		
-		public IEnumerable<VBModifierToken> ModifierTokens {
+		public AstNodeCollection<VBModifierToken> ModifierTokens {
 			get { return GetChildrenByRole (ModifierRole); }
 		}
 		
@@ -41,7 +41,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				if ((m & newValue) != 0) {
 					if ((m & oldValue) == 0) {
 						// Modifier was added
-						var newToken = new VBModifierToken(AstLocation.Empty, m);
+						var newToken = new VBModifierToken(TextLocation.Empty, m);
 						node.InsertChildAfter(insertionPos, newToken, ModifierRole);
 						insertionPos = newToken;
 					} else {

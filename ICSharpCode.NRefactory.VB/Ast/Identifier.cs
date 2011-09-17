@@ -1,5 +1,5 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 
@@ -43,16 +43,16 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public TypeCode TypeCharacter { get; set; }
 		
-		AstLocation startLocation;
-		public override AstLocation StartLocation {
+		TextLocation startLocation;
+		public override TextLocation StartLocation {
 			get {
 				return startLocation;
 			}
 		}
 		
-		public override AstLocation EndLocation {
+		public override TextLocation EndLocation {
 			get {
-				return new AstLocation (StartLocation.Line, StartLocation.Column + Name.Length);
+				return new TextLocation (StartLocation.Line, StartLocation.Column + Name.Length);
 			}
 		}
 		
@@ -61,12 +61,17 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			this.name = string.Empty;
 		}
 		
-		public Identifier (string name, AstLocation location)
+		public Identifier (string name, TextLocation location)
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
 			this.Name = name;
 			this.startLocation = location;
+		}
+		
+		public static implicit operator Identifier(string name)
+		{
+			return new Identifier(name, TextLocation.Empty);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)
@@ -84,8 +89,8 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public override string ToString()
 		{
-			return string.Format("[Identifier Name={0}, StartLocation={1}, TypeCharacter{4}]",
-			                     name, startLocation, TypeCharacter);
+			return string.Format("{0}",
+			                     name);
 		}
 	}
 }

@@ -1,5 +1,20 @@
-// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
@@ -52,6 +67,17 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		}
 		
 		/// <inheritdoc/>
+		public virtual ITypeDefinition GetKnownTypeDefinition(TypeCode typeCode)
+		{
+			foreach (ITypeResolveContext context in children) {
+				ITypeDefinition d = context.GetKnownTypeDefinition(typeCode);
+				if (d != null)
+					return d;
+			}
+			return null;
+		}
+		
+		/// <inheritdoc/>
 		public ITypeDefinition GetTypeDefinition(string nameSpace, string name, int typeParameterCount, StringComparer nameComparer)
 		{
 			foreach (ITypeResolveContext context in children) {
@@ -100,9 +126,10 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				for (int i = 0; i < sync.Length; i++) {
 					sync[i] = children[i].Synchronize();
 					if (sync[i] == null)
-						throw new InvalidOperationException(children[i] + ".ToString() returned null");
+						throw new InvalidOperationException(children[i] + ".Synchronize() returned null");
 				}
-				ISynchronizedTypeResolveContext r = new CompositeSynchronizedTypeResolveContext(sync, new CacheManager(), true);
+				var knownTypeDefinitions = new ITypeDefinition[ReflectionHelper.ByTypeCodeArraySize];
+				var r = new CompositeSynchronizedTypeResolveContext(sync, knownTypeDefinitions, new CacheManager(), true);
 				success = true;
 				return r;
 			} finally {
@@ -126,12 +153,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		{
 			readonly CacheManager cacheManager;
 			readonly bool isTopLevel;
+			readonly ITypeDefinition[] knownTypeDefinitions;
 			
-			public CompositeSynchronizedTypeResolveContext(ITypeResolveContext[] children, CacheManager cacheManager, bool isTopLevel)
+			public CompositeSynchronizedTypeResolveContext(ITypeResolveContext[] children, ITypeDefinition[] knownTypeDefinitions, CacheManager cacheManager, bool isTopLevel)
 				: base(children)
 			{
 				Debug.Assert(cacheManager != null);
 				this.cacheManager = cacheManager;
+				this.knownTypeDefinitions = knownTypeDefinitions;
 				this.isTopLevel = isTopLevel;
 			}
 			
@@ -152,11 +181,21 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				get { return cacheManager; }
 			}
 			
+			public override ITypeDefinition GetKnownTypeDefinition(TypeCode typeCode)
+			{
+				ITypeDefinition typeDef = knownTypeDefinitions[(int)typeCode];
+				if (typeDef != null)
+					return typeDef;
+				typeDef = base.GetKnownTypeDefinition(typeCode);
+				knownTypeDefinitions[(int)typeCode] = typeDef;
+				return typeDef;
+			}
+			
 			public override ISynchronizedTypeResolveContext Synchronize()
 			{
 				// re-use the same cache manager for nested synchronized contexts
 				if (isTopLevel)
-					return new CompositeSynchronizedTypeResolveContext(children, cacheManager, false);
+					return new CompositeSynchronizedTypeResolveContext(children, knownTypeDefinitions, cacheManager, false);
 				else
 					return this;
 			}

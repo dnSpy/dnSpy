@@ -23,15 +23,15 @@ namespace ICSharpCode.NRefactory.VB.Tests.Lexer
 			Token t = l.NextToken();
 			Assert.AreEqual(Tokens.Public, t.Kind);
 			Assert.AreEqual(new AstLocation(1, 1), t.Location);
-			Assert.AreEqual(new AstLocation(7, 1), t.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 7), t.EndLocation);
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.EOL, t.Kind);
-			Assert.AreEqual(new AstLocation(7, 1), t.Location);
-			Assert.AreEqual(new AstLocation(1, 2), t.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 7), t.Location);
+			Assert.AreEqual(new AstLocation(2, 1), t.EndLocation);
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.Static, t.Kind);
-			Assert.AreEqual(new AstLocation(1, 2), t.Location);
-			Assert.AreEqual(new AstLocation(7, 2), t.EndLocation);
+			Assert.AreEqual(new AstLocation(2, 1), t.Location);
+			Assert.AreEqual(new AstLocation(2, 7), t.EndLocation);
 		}
 		
 		[Test]
@@ -41,15 +41,15 @@ namespace ICSharpCode.NRefactory.VB.Tests.Lexer
 			Token t = l.NextToken();
 			Assert.AreEqual(Tokens.Public, t.Kind);
 			Assert.AreEqual(new AstLocation(1, 1), t.Location);
-			Assert.AreEqual(new AstLocation(7, 1), t.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 7), t.EndLocation);
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.EOL, t.Kind);
-			Assert.AreEqual(new AstLocation(7, 1), t.Location);
-			Assert.AreEqual(new AstLocation(1, 2), t.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 7), t.Location);
+			Assert.AreEqual(new AstLocation(2, 1), t.EndLocation);
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.Static, t.Kind);
-			Assert.AreEqual(new AstLocation(1, 2), t.Location);
-			Assert.AreEqual(new AstLocation(7, 2), t.EndLocation);
+			Assert.AreEqual(new AstLocation(2, 1), t.Location);
+			Assert.AreEqual(new AstLocation(2, 7), t.EndLocation);
 		}
 		
 		[Test]
@@ -59,13 +59,13 @@ namespace ICSharpCode.NRefactory.VB.Tests.Lexer
 			l.NextToken(); // public
 			Token t = l.NextToken();
 			Assert.AreEqual(Tokens.EOL, t.Kind);
-			Assert.AreEqual(new AstLocation(7, 1), t.Location);
-			Assert.AreEqual(new AstLocation(7, 1), t.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 7), t.Location);
+			Assert.AreEqual(new AstLocation(1, 7), t.EndLocation);
 			
 			t = l.NextToken();
 			Assert.AreEqual(Tokens.EOF, t.Kind);
-			Assert.AreEqual(new AstLocation(7, 1), t.Location);
-			Assert.AreEqual(new AstLocation(7, 1), t.EndLocation);
+			Assert.AreEqual(new AstLocation(1, 7), t.Location);
+			Assert.AreEqual(new AstLocation(1, 7), t.EndLocation);
 		}
 		
 		[Test]

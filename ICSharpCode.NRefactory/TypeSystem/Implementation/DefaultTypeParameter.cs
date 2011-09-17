@@ -1,5 +1,20 @@
-﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
@@ -12,6 +27,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	/// <summary>
 	/// Default implementation of <see cref="ITypeParameter"/>.
 	/// </summary>
+	[Serializable]
 	public sealed class DefaultTypeParameter : AbstractFreezable, ITypeParameter, ISupportsInterning
 	{
 		string name;
@@ -48,6 +64,10 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.ownerType = ownerType;
 			this.index = index;
 			this.name = name;
+		}
+		
+		public TypeKind Kind {
+			get { return TypeKind.TypeParameter; }
 		}
 		
 		public string Name {
@@ -87,7 +107,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 						ITypeDefinition constraintDef = constraint.GetDefinition();
 						// While interfaces are reference types, an interface constraint does not
 						// force the type parameter to be a reference type; so we need to explicitly look for classes here.
-						if (constraintDef != null && constraintDef.ClassType == ClassType.Class)
+						if (constraintDef != null && constraintDef.Kind == TypeKind.Class)
 							return true;
 						if (constraint is ITypeParameter) {
 							bool? isReferenceType = constraint.IsReferenceType(context);
@@ -118,24 +138,27 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			return this;
 		}
 		
-		public override int GetHashCode()
-		{
-			unchecked {
-				return (int)ownerType * 178256151 + index;
-			}
-		}
-		
-		public override bool Equals(object obj)
-		{
-			return Equals(obj as IType);
-		}
+//		public override int GetHashCode()
+//		{
+//			unchecked {
+//				return (int)ownerType * 178256151 + index;
+//			}
+//		}
+//
+//		public override bool Equals(object obj)
+//		{
+//			return Equals(obj as IType);
+//		}
 		
 		public bool Equals(IType other)
 		{
-			DefaultTypeParameter p = other as DefaultTypeParameter;
-			if (p == null)
-				return false;
-			return ownerType == p.ownerType && index == p.index;
+			// Use reference equality for type parameters. While we could consider any types with same
+			// ownerType + index as equal for the type system, doing so makes it difficult to cache calculation
+			// results based on types - e.g. the cache in the Conversions class.
+			return this == other;
+			// We can still consider type parameters of different methods/classes to be equal to each other,
+			// if they have been interned. But then also all constraints are equal, so caching conversions
+			// is valid in that case.
 		}
 		
 		public EntityType OwnerType {
@@ -204,14 +227,6 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		IType ITypeParameter.BoundTo {
-			get { return null; }
-		}
-		
-		ITypeParameter ITypeParameter.UnboundTypeParameter {
-			get { return null; }
-		}
-		
 		public IType AcceptVisitor(TypeVisitor visitor)
 		{
 			return visitor.VisitTypeParameter(this);
@@ -229,110 +244,91 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			DefaultTypeDefinition c = new DefaultTypeDefinition(dummyProjectContent, string.Empty, this.Name);
 			c.Region = this.Region;
 			if (HasValueTypeConstraint) {
-				c.ClassType = ClassType.Struct;
+				c.Kind = TypeKind.Struct;
 			} else if (HasDefaultConstructorConstraint) {
-				c.ClassType = ClassType.Class;
+				c.Kind = TypeKind.Class;
 			} else {
-				c.ClassType = ClassType.Interface;
+				c.Kind = TypeKind.Interface;
 			}
 			return c;
 		}
 		
-		public IEnumerable<IMethod> GetConstructors(ITypeResolveContext context, Predicate<IMethod> filter = null)
+		public IEnumerable<IMethod> GetConstructors(ITypeResolveContext context, Predicate<IMethod> filter = null, GetMemberOptions options = GetMemberOptions.IgnoreInheritedMembers)
 		{
-			if (HasDefaultConstructorConstraint || HasValueTypeConstraint) {
-				DefaultMethod m = DefaultMethod.CreateDefaultConstructor(GetDummyClassForTypeParameter());
-				if (filter(m))
-					return new [] { m };
-			}
-			return EmptyList<IMethod>.Instance;
-		}
-		
-		public IEnumerable<IMethod> GetMethods(ITypeResolveContext context, Predicate<IMethod> filter = null)
-		{
-			foreach (var baseType in GetNonCircularBaseTypes(context)) {
-				foreach (var m in baseType.GetMethods(context, filter)) {
-					if (!m.IsStatic)
-						yield return m;
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers) {
+				if (HasDefaultConstructorConstraint || HasValueTypeConstraint) {
+					DefaultMethod m = DefaultMethod.CreateDefaultConstructor(GetDummyClassForTypeParameter());
+					if (filter(m))
+						return new [] { m };
 				}
+				return EmptyList<IMethod>.Instance;
+			} else {
+				return GetMembersHelper.GetConstructors(this, context, filter, options);
 			}
 		}
 		
-		public IEnumerable<IProperty> GetProperties(ITypeResolveContext context, Predicate<IProperty> filter = null)
+		public IEnumerable<IMethod> GetMethods(ITypeResolveContext context, Predicate<IMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			foreach (var baseType in GetNonCircularBaseTypes(context)) {
-				foreach (var m in baseType.GetProperties(context, filter)) {
-					if (!m.IsStatic)
-						yield return m;
-				}
-			}
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IMethod>.Instance;
+			else
+				return GetMembersHelper.GetMethods(this, context, FilterNonStatic(filter), options);
 		}
 		
-		public IEnumerable<IField> GetFields(ITypeResolveContext context, Predicate<IField> filter = null)
+		public IEnumerable<IMethod> GetMethods(IList<IType> typeArguments, ITypeResolveContext context, Predicate<IMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			foreach (var baseType in GetNonCircularBaseTypes(context)) {
-				foreach (var m in baseType.GetFields(context, filter)) {
-					if (!m.IsStatic)
-						yield return m;
-				}
-			}
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IMethod>.Instance;
+			else
+				return GetMembersHelper.GetMethods(this, typeArguments, context, FilterNonStatic(filter), options);
 		}
 		
-		public IEnumerable<IEvent> GetEvents(ITypeResolveContext context, Predicate<IEvent> filter = null)
+		public IEnumerable<IProperty> GetProperties(ITypeResolveContext context, Predicate<IProperty> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			foreach (var baseType in GetNonCircularBaseTypes(context)) {
-				foreach (var m in baseType.GetEvents(context, filter)) {
-					if (!m.IsStatic)
-						yield return m;
-				}
-			}
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IProperty>.Instance;
+			else
+				return GetMembersHelper.GetProperties(this, context, FilterNonStatic(filter), options);
 		}
 		
-		public IEnumerable<IMember> GetMembers(ITypeResolveContext context, Predicate<IMember> filter = null)
+		public IEnumerable<IField> GetFields(ITypeResolveContext context, Predicate<IField> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			foreach (var baseType in GetNonCircularBaseTypes(context)) {
-				foreach (var m in baseType.GetMembers(context, filter)) {
-					if (!m.IsStatic)
-						yield return m;
-				}
-			}
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IField>.Instance;
+			else
+				return GetMembersHelper.GetFields(this, context, FilterNonStatic(filter), options);
 		}
 		
-		// Problem with type parameter resolving - circular declarations
-		//   void Example<S, T> (S s, T t) where S : T where T : S
-		IEnumerable<IType> GetNonCircularBaseTypes(ITypeResolveContext context)
+		public IEnumerable<IEvent> GetEvents(ITypeResolveContext context, Predicate<IEvent> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			var result = this.GetBaseTypes(context).Where(bt => !IsCircular (context, bt));
-			if (result.Any ())
-				return result;
-			
-			// result may be empty, GetBaseTypes doesn't return object/struct when there are only constraints (even circular) as base types are available,
-			// but even when there are only circular references the default base type should be included.
-			IType defaultBaseType = context.GetTypeDefinition("System", HasValueTypeConstraint ? "ValueType" : "Object", 0, StringComparer.Ordinal);
-			if (defaultBaseType != null)
-				return new [] { defaultBaseType };
-			return Enumerable.Empty<IType> ();
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IEvent>.Instance;
+			else
+				return GetMembersHelper.GetEvents(this, context, FilterNonStatic(filter), options);
 		}
 		
-		bool IsCircular(ITypeResolveContext context, IType baseType)
+		public IEnumerable<IMember> GetMembers(ITypeResolveContext context, Predicate<IMember> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			var parameter = baseType as DefaultTypeParameter;
-			if (parameter == null)
-				return false;
-			var stack = new Stack<DefaultTypeParameter>();
-			while (true) {
-				if (parameter == this)
-					return true;
-				foreach (DefaultTypeParameter parameterBaseType in parameter.GetNonCircularBaseTypes(context).Where(t => t is DefaultTypeParameter)) {
-					stack.Push(parameterBaseType); 
-				}
-				if (stack.Count == 0)
-					return false;
-				parameter = stack.Pop();
-			}
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IMember>.Instance;
+			else
+				return GetMembersHelper.GetMembers(this, context, FilterNonStatic(filter), options);
 		}
 		
-		IEnumerable<IType> IType.GetNestedTypes(ITypeResolveContext context, Predicate<ITypeDefinition> filter)
+		static Predicate<T> FilterNonStatic<T>(Predicate<T> filter) where T : class, IMember
+		{
+			if (filter == null)
+				return member => !member.IsStatic;
+			else
+				return member => !member.IsStatic && filter(member);
+		}
+		
+		IEnumerable<IType> IType.GetNestedTypes(ITypeResolveContext context, Predicate<ITypeDefinition> filter, GetMemberOptions options)
+		{
+			return EmptyList<IType>.Instance;
+		}
+		
+		IEnumerable<IType> IType.GetNestedTypes(IList<IType> typeArguments, ITypeResolveContext context, Predicate<ITypeDefinition> filter, GetMemberOptions options)
 		{
 			return EmptyList<IType>.Instance;
 		}
@@ -343,8 +339,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			foreach (ITypeReference constraint in this.Constraints) {
 				IType c = constraint.Resolve(context);
 				yield return c;
-				ITypeDefinition cdef = c.GetDefinition();
-				if (!(cdef != null && cdef.ClassType == ClassType.Interface))
+				if (c.Kind != TypeKind.Interface)
 					hasNonInterfaceConstraint = true;
 			}
 			// Do not add the 'System.Object' constraint if there is another constraint with a base class.
@@ -357,8 +352,13 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)
 		{
-			constraints = provider.InternList(constraints);
-			attributes = provider.InternList(attributes);
+			// protect against cyclic constraints
+			using (var busyLock = BusyManager.Enter(this)) {
+				if (busyLock.Success) {
+					constraints = provider.InternList(constraints);
+					attributes = provider.InternList(attributes);
+				}
+			}
 		}
 		
 		int ISupportsInterning.GetHashCodeForInterning()
@@ -382,6 +382,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			return o != null
 				&& this.attributes == o.attributes
 				&& this.constraints == o.constraints
+				&& this.name == o.name
 				&& this.flags == o.flags
 				&& this.ownerType == o.ownerType
 				&& this.index == o.index

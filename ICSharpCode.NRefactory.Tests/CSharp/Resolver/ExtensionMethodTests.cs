@@ -1,7 +1,23 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
 
@@ -33,31 +49,31 @@ namespace XN {
 	}
 }
 ";
-			MemberResolveResult mrr;
+			InvocationResolveResult mrr;
 			
-			mrr = Resolve<MemberResolveResult>(program.Replace("$", "$a.F(1)$"));
+			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$a.F(1)$"));
 			Assert.AreEqual("XN.XC.F", mrr.Member.FullName);
-			Assert.AreEqual("System.Int32", ((IMethod)mrr.Member).Parameters[1].Type.Resolve(context).FullName);
+			Assert.AreEqual("System.Int32", mrr.Member.Parameters[1].Type.Resolve(context).FullName);
 			
-			mrr = Resolve<MemberResolveResult>(program.Replace("$", "$a.F(\"text\")$"));
+			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$a.F(\"text\")$"));
 			Assert.AreEqual("XN.XC.F", mrr.Member.FullName);
-			Assert.AreEqual("System.String", ((IMethod)mrr.Member).Parameters[1].Type.Resolve(context).FullName);
+			Assert.AreEqual("System.String", mrr.Member.Parameters[1].Type.Resolve(context).FullName);
 			
-			mrr = Resolve<MemberResolveResult>(program.Replace("$", "$b.F(1)$"));
+			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$b.F(1)$"));
 			Assert.AreEqual("B.F", mrr.Member.FullName);
 			
-			mrr = Resolve<MemberResolveResult>(program.Replace("$", "$b.F(\"text\")$"));
+			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$b.F(\"text\")$"));
 			Assert.AreEqual("XN.XC.F", mrr.Member.FullName);
-			Assert.AreEqual("System.String", ((IMethod)mrr.Member).Parameters[1].Type.Resolve(context).FullName);
+			Assert.AreEqual("System.String", mrr.Member.Parameters[1].Type.Resolve(context).FullName);
 			
-			mrr = Resolve<MemberResolveResult>(program.Replace("$", "$c.F(1)$"));
+			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$c.F(1)$"));
 			Assert.AreEqual("C.F", mrr.Member.FullName);
 			
-			mrr = Resolve<MemberResolveResult>(program.Replace("$", "$c.F(\"text\")$"));
+			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$c.F(\"text\")$"));
 			Assert.AreEqual("C.F", mrr.Member.FullName);
 		}
 		
-		[Test, Ignore("Anonymous methods not yet implemented")]
+		[Test]
 		public void ExtensionMethodsTest2()
 		{
 			string program = @"using System; using System.Collections.Generic;
@@ -72,18 +88,18 @@ public static class XC {
 	public static IEnumerable<T> Filter<T>(this IEnumerable<T> source, Predicate<T> predicate) { throw new NotImplementedException(); }
 }
 ";
-			MemberResolveResult mrr;
+			CSharpInvocationResolveResult mrr;
 			
-			mrr = Resolve<MemberResolveResult>(program.Replace("$", "$\"text\".ToInt32()$"));
+			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$\"text\".ToInt32()$"));
 			Assert.AreEqual("XC.ToInt32", mrr.Member.FullName);
 			
-			mrr = Resolve<MemberResolveResult>(program.Replace("$", "$args.Slice(1, 2)$"));
+			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$args.Slice(1, 2)$"));
 			Assert.AreEqual("XC.Slice", mrr.Member.FullName);
 			Assert.AreEqual("System.String[]", mrr.Type.ReflectionName);
 			
-			mrr = Resolve<MemberResolveResult>(program.Replace("$", "$args.Filter(delegate { return true; })$"));
+			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$args.Filter(delegate { return true; })$"));
 			Assert.AreEqual("XC.Filter", mrr.Member.FullName);
-			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.String}", mrr.Type.ReflectionName);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable`1[[System.String]]", mrr.Type.ReflectionName);
 		}
 	}
 }

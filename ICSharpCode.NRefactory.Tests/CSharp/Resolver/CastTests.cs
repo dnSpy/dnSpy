@@ -1,7 +1,24 @@
-﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.NRefactory.Semantics;
+using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
@@ -12,13 +29,34 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	[TestFixture]
 	public class CastTests : ResolverTestBase
 	{
+		void TestCast(Type targetType, ResolveResult input, Conversion expectedConversion)
+		{
+			IType type = targetType.ToTypeReference().Resolve(context);
+			ResolveResult rr = resolver.ResolveCast(type, input);
+			AssertType(targetType, rr);
+			Assert.AreEqual(typeof(ConversionResolveResult), rr.GetType());
+			var crr = (ConversionResolveResult)rr;
+			Assert.AreEqual(expectedConversion, crr.Conversion, "ConversionResolveResult.Conversion");
+			Assert.AreSame(input, crr.Input, "ConversionResolveResult.Input");
+		}
+		
 		[Test]
 		public void SimpleCast()
 		{
-			AssertType(typeof(int), resolver.ResolveCast(ResolveType(typeof(int)), MakeResult(typeof(float))));
-			AssertType(typeof(string), resolver.ResolveCast(ResolveType(typeof(string)), MakeResult(typeof(object))));
-			AssertType(typeof(byte), resolver.ResolveCast(ResolveType(typeof(byte)), MakeResult(typeof(dynamic))));
-			AssertType(typeof(dynamic), resolver.ResolveCast(ResolveType(typeof(dynamic)), MakeResult(typeof(double))));
+			TestCast(typeof(int), MakeResult(typeof(float)), Conversion.ExplicitNumericConversion);
+			TestCast(typeof(string), MakeResult(typeof(object)), Conversion.ExplicitReferenceConversion);
+			TestCast(typeof(byte), MakeResult(typeof(dynamic)), Conversion.ExplicitDynamicConversion);
+			TestCast(typeof(dynamic), MakeResult(typeof(double)), Conversion.BoxingConversion);
+		}
+		
+		[Test]
+		public void NullableCasts()
+		{
+			TestCast(typeof(int), MakeResult(typeof(int?)), Conversion.ExplicitNullableConversion);
+			TestCast(typeof(int?), MakeResult(typeof(int)), Conversion.ImplicitNullableConversion);
+			
+			TestCast(typeof(int?), MakeResult(typeof(long?)), Conversion.ExplicitNullableConversion);
+			TestCast(typeof(long?), MakeResult(typeof(int?)), Conversion.ImplicitNullableConversion);
 		}
 		
 		[Test]

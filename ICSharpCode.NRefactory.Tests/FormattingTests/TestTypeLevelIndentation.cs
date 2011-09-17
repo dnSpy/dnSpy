@@ -45,6 +45,20 @@ namespace ICSharpCode.NRefactory.FormattingTests
 @"class Test {}");
 		}
 		
+		[Test()]
+		public void TestAttributeIndentation ()
+		{
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			policy.ClassBraceStyle = BraceStyle.DoNotChange;
+			
+			Test (policy,
+@"					[Attribute1]
+		[Attribute2()]
+          class Test {}",
+@"[Attribute1]
+[Attribute2()]
+class Test {}");
+		}
 		
 		[Test()]
 		public void TestClassIndentationInNamespaces ()
@@ -249,7 +263,6 @@ A
 }");
 		}
 		
-		[Ignore ("TODO")]
 		[Test()]
 		public void TestIndentMethodBodyOperatorCase ()
 		{
@@ -284,7 +297,6 @@ A
 }");
 		}
 		
-		[Ignore ("TODO")]
 		[Test()]
 		public void TestIndentPropertyBody ()
 		{
@@ -356,7 +368,6 @@ set;
 }");
 		}
 		
-		[Ignore ("TODO")]
 		[Test()]
 		public void TestIndentPropertyBodyIndexerCase ()
 		{
@@ -401,7 +412,6 @@ set {
 }");
 		}
 		
-		[Ignore ("TODO")]
 		[Test()]
 		public void TestPropertyAlignment ()
 		{
@@ -435,7 +445,6 @@ set {
 		}
 
 		
-		[Ignore ("TODO")]
 		[Test()]
 		public void TestIndentNamespaceBody ()
 		{
@@ -515,7 +524,6 @@ set;
 		}
 		
 		
-		[Ignore ("TODO")]
 		[Test()]
 		public void TestIndentEventBody ()
 		{

@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Linq;
@@ -313,8 +328,8 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 				"}", true // expect errors
 			);
 			Assert.AreEqual("A", md.Name);
-			Assert.AreEqual(new AstLocation(2, 1), md.Body.StartLocation);
-			Assert.AreEqual(new AstLocation(5, 2), md.Body.EndLocation);
+			Assert.AreEqual(new TextLocation(2, 1), md.Body.StartLocation);
+			Assert.AreEqual(new TextLocation(5, 2), md.Body.EndLocation);
 		}
 		
 		[Test]
@@ -338,6 +353,34 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 							Name = "baz",
 							DefaultExpression = new PrimitiveExpression(0)
 						}
+					}});
+		}
+		
+		[Test, Ignore("async/await not yet supported")]
+		public void AsyncMethod()
+		{
+			ParseUtilCSharp.AssertTypeMember(
+				"async void MyMethod() {}",
+				new MethodDeclaration {
+					Modifiers = Modifiers.Async,
+					ReturnType = new PrimitiveType("void"),
+					Name = "MyMethod",
+					Body = new BlockStatement()
+				});
+		}
+		
+		[Test, Ignore("async/await not yet supported")]
+		public void AsyncAsyncAsync()
+		{
+			ParseUtilCSharp.AssertTypeMember(
+				"async async async(async async) {}",
+				new MethodDeclaration {
+					Modifiers = Modifiers.Async,
+					ReturnType = new SimpleType("async"),
+					Name = "async",
+					Body = new BlockStatement(),
+					Parameters = {
+						new ParameterDeclaration(new SimpleType("async"), "async")
 					}});
 		}
 	}

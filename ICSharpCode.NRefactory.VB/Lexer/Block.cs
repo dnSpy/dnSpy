@@ -1,5 +1,5 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
@@ -33,11 +33,11 @@ namespace ICSharpCode.NRefactory.VB.Parser
 	{
 		public static readonly Block Default = new Block() {
 			context = Context.Global,
-			lastExpressionStart = AstLocation.Empty
+			lastExpressionStart = TextLocation.Empty
 		};
 		
 		public Context context;
-		public AstLocation lastExpressionStart;
+		public TextLocation lastExpressionStart;
 		public bool isClosed;
 		
 		public override string ToString()

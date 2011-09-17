@@ -1,12 +1,29 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.NRefactory.Semantics;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
 {
-	[TestFixture, Ignore("Lambdas not supported by resolver")]
+	[TestFixture]
 	public class LambdaTests : ResolverTestBase
 	{
 		[Test]
@@ -56,9 +73,9 @@ class SomeClass<T> {
 			Assert.AreEqual("System.String", lrr.Type.ReflectionName);
 		}
 		
-		#region Lambda In Initializer
+		#region Lambda In Array Initializer
 		[Test]
-		public void LambdaInCollectionInitializerTest1()
+		public void LambdaInArrayInitializer1()
 		{
 			string program = @"using System;
 class TestClass {
@@ -67,30 +84,13 @@ class TestClass {
 			i => $i$.ToString()
 		};
 	}
-}
-";
+}";
 			var lrr = Resolve<LocalResolveResult>(program);
 			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
 		}
 		
 		[Test]
-		public void LambdaInCollectionInitializerTest2()
-		{
-			string program = @"using System; using System.Collections.Generic;
-class TestClass {
-	static void Main() {
-		a = new List<Converter<int, string>> {
-			i => $i$.ToString()
-		};
-	}
-}
-";
-			var lrr = Resolve<LocalResolveResult>(program);
-			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
-		}
-		
-		[Test]
-		public void LambdaInCollectionInitializerTest3()
+		public void LambdaInArrayInitializer2()
 		{
 			string program = @"using System;
 class TestClass {
@@ -99,39 +99,112 @@ class TestClass {
 			i => $i$.ToString()
 		};
 	}
-}
-";
+}";
 			var lrr = Resolve<LocalResolveResult>(program);
 			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
 		}
 		
 		[Test]
-		public void LambdaInCollectionInitializerTest4()
+		public void LambdaInArrayInitializer3()
 		{
 			string program = @"using System;
 class TestClass {
 	Converter<int, string>[] field = new Converter<int, string>[] {
 		i => $i$.ToString()
 	};
-}
-";
+}";
 			var lrr = Resolve<LocalResolveResult>(program);
 			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
 		}
 		
 		[Test]
-		public void LambdaInCollectionInitializerTest5()
+		public void LambdaInArrayInitializer4()
 		{
 			string program = @"using System;
 class TestClass {
 	Converter<int, string>[] field = {
 		i => $i$.ToString()
 	};
-}
-";
+}";
 			var lrr = Resolve<LocalResolveResult>(program);
 			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
 		}
+		
+		[Test]
+		public void LambdaIn2DArrayInitializer()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Main() {
+		Converter<int, string>[,] arr = {
+			{ i => $i$.ToString() }
+		};
+	}
+}";
+			var lrr = Resolve<LocalResolveResult>(program);
+			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
+		}
+		
+		[Test, Ignore("Fails due to parser problem")]
+		public void LambdaInInferred2DArrayInitializer()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Main() {
+		var c = new [,] { { null, (Converter<int, string>)null }, { a => $a$.ToString(), b => b.ToString() }};
+	}
+}";
+			var lrr = Resolve<LocalResolveResult>(program);
+			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
+		}
+		#endregion
+		
+		#region Lambda In Collection Initializer
+		[Test]
+		public void LambdaInCollectionInitializer1()
+		{
+			string program = @"using System; using System.Collections.Generic;
+class TestClass {
+	static void Main() {
+		a = new List<Converter<int, string>> {
+			i => $i$.ToString()
+		};
+	}
+}";
+			var lrr = Resolve<LocalResolveResult>(program);
+			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void LambdaInCollectionInitializer2()
+		{
+			string program = @"using System; using System.Collections.Generic;
+class TestClass {
+	static void Main() {
+		a = new Dictionary<Func<char, string>, Converter<int, string>> {
+			{ i => $i$.ToString(), i => i.ToString() }
+		};
+	}
+}";
+			var lrr = Resolve<LocalResolveResult>(program);
+			Assert.AreEqual("System.Char", lrr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void LambdaInCollectionInitializer3()
+		{
+			string program = @"using System; using System.Collections.Generic;
+class TestClass {
+	static void Main() {
+		a = new Dictionary<Func<char, string>, Converter<int, string>> {
+			{ i => i.ToString(), $i$ => i.ToString() }
+		};
+	}
+}";
+			var lrr = Resolve<LocalResolveResult>(program);
+			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
+		}
+		#endregion
 		
 		[Test]
 		public void LambdaInObjectInitializerTest()
@@ -146,12 +219,10 @@ class X {
 }
 class Helper {
 	public Converter<int, string> F;
-}
-";
+}";
 			var lrr = Resolve<LocalResolveResult>(program);
 			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
 		}
-		#endregion
 		
 		[Test]
 		public void LambdaExpressionInCastExpression()
@@ -168,6 +239,20 @@ static class TestClass {
 		}
 		
 		[Test]
+		public void LambdaExpressionInDelegateCreateExpression()
+		{
+			string program = @"using System;
+static class TestClass {
+	static void Main(string[] args) {
+		var f = new Func<int, string>( i => $i$ );
+	}
+	public delegate R Func<T, R>(T arg);
+}";
+			var lrr = Resolve<LocalResolveResult>(program);
+			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
+		}
+		
+		[Test]
 		public void LambdaExpressionInReturnStatement()
 		{
 			string program = @"using System;
@@ -176,7 +261,7 @@ static class TestClass {
 		return i => $i$.ToString();
 	}
 }";
-			var lrr = Resolve<LocalResolveResult>(program, "i");
+			var lrr = Resolve<LocalResolveResult>(program);
 			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
 		}
 		
@@ -273,6 +358,26 @@ class TestClass {
 }";
 			var lrr = Resolve<LocalResolveResult>(program);
 			Assert.AreEqual("System.Int32", lrr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void ConvertAllInGenericMethod()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Method<T>(System.Collections.Generic.List<T> list) {
+		$list.ConvertAll(x => (int)x)$;
+	}
+}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(rr.IsError);
+			SpecializedMethod m = (SpecializedMethod)rr.Member;
+			Assert.AreEqual("System.Int32", m.TypeArguments[0].ReflectionName);
+			Assert.AreEqual("System.Converter`2[[``0],[System.Int32]]", m.Parameters[0].Type.Resolve(context).ReflectionName);
+			
+			var crr = (ConversionResolveResult)rr.Arguments[0];
+			Assert.IsTrue(crr.Conversion.IsAnonymousFunctionConversion);
+			Assert.AreEqual("System.Converter`2[[``0],[System.Int32]]", crr.Type.ReflectionName);
 		}
 		
 		/* TODO write test for this

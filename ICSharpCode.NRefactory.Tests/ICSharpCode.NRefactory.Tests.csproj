@@ -11,13 +11,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
@@ -41,6 +42,26 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\ICSharpCode.NRefactory\bin\Release\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath>..\ICSharpCode.NRefactory\bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath>..\ICSharpCode.NRefactory\bin\Release\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -56,11 +77,16 @@
   <ItemGroup>
     <Compile Include="CSharp\Analysis\DefiniteAssignmentTests.cs" />
     <Compile Include="CSharp\AstStructureTests.cs" />
+    <Compile Include="CSharp\CodeDomConvertVisitorTests.cs" />
     <Compile Include="CSharp\InsertParenthesesVisitorTests.cs" />
+    <Compile Include="CSharp\CSharpOutputVisitorTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\AnonymousTypeCreateExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\ObjectCreateExpressionTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\DelegateDeclarationTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\NamespaceDeclarationTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\TypeDeclarationTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\UsingDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\ParseSelfTests.cs" />
     <Compile Include="CSharp\Parser\Statements\BlockStatementTests.cs" />
     <Compile Include="CSharp\Parser\Statements\CheckedStatementTests.cs" />
     <Compile Include="CSharp\Parser\Statements\EmptyStatementTests.cs" />
@@ -89,9 +115,8 @@
     <Compile Include="CSharp\Parser\TypeMembers\OperatorDeclarationTests.cs" />
     <Compile Include="CSharp\Parser\TypeMembers\PropertyDeclarationTests.cs" />
     <Compile Include="CSharp\Parser\TypeSystemConvertVisitorTests.cs" />
-    <Compile Include="CSharp\Parser\Expression\AliasReferenceExpressionTests.cs" />
-    <Compile Include="CSharp\Parser\Expression\AnonymousMethodTests.cs" />
-    <Compile Include="CSharp\Parser\Expression\ArrayObjectCreateExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\AnonymousMethodExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\ArrayCreateExpressionTests.cs" />
     <Compile Include="CSharp\Parser\Expression\AssignmentExpressionTests.cs" />
     <Compile Include="CSharp\Parser\Expression\BaseReferenceExpressionTests.cs" />
     <Compile Include="CSharp\Parser\Expression\BinaryOperatorExpressionTests.cs" />
@@ -117,6 +142,8 @@
     <Compile Include="CSharp\Parser\Expression\UnaryOperatorExpressionTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\AttributeSectionTests.cs" />
     <Compile Include="CSharp\Parser\ParseUtil.cs" />
+    <Compile Include="CSharp\Refactoring\TypeSystemAstBuilderTests.cs" />
+    <Compile Include="CSharp\Resolver\ArrayCreateTests.cs" />
     <Compile Include="CSharp\Resolver\AttributeTests.cs" />
     <Compile Include="CSharp\Resolver\BinaryOperatorTests.cs" />
     <Compile Include="CSharp\Resolver\CastTests.cs" />
@@ -128,12 +155,14 @@
     <Compile Include="CSharp\Resolver\LocalTypeInferenceTests.cs" />
     <Compile Include="CSharp\Resolver\NameLookupTests.cs" />
     <Compile Include="CSharp\Resolver\ObjectCreationTests.cs" />
+    <Compile Include="CSharp\Resolver\ResolveAtLocationTests.cs" />
     <Compile Include="CSharp\Resolver\TypeInferenceTests.cs" />
     <Compile Include="CSharp\Resolver\ConversionsTest.cs" />
     <Compile Include="CSharp\Resolver\OverloadResolutionTests.cs" />
     <Compile Include="CSharp\Resolver\ResolverTestBase.cs" />
     <Compile Include="CSharp\Resolver\UnaryOperatorTests.cs" />
     <Compile Include="CSharp\Resolver\UnsafeCodeTests.cs" />
+    <Compile Include="Documentation\IDStringTests.cs" />
     <Compile Include="FormattingTests\TestBraceStlye.cs" />
     <Compile Include="FormattingTests\TestFormattingBugs.cs" />
     <Compile Include="FormattingTests\TestSpacingVisitor.cs" />
@@ -144,18 +173,22 @@
     <Compile Include="TypeSystem\GetAllBaseTypesTest.cs" />
     <Compile Include="TypeSystem\GetMembersTests.cs" />
     <Compile Include="TypeSystem\ReflectionHelperTests.cs" />
+    <Compile Include="TypeSystem\SerializedCecilLoaderTests.cs" />
     <Compile Include="TypeSystem\StructureTests.cs" />
     <Compile Include="TypeSystem\TestInterningProvider.cs" />
     <Compile Include="TypeSystem\TypeSystemTests.cs" />
     <Compile Include="TypeSystem\TypeSystemTests.TestCase.cs" />
     <EmbeddedResource Include="TypeSystem\TypeSystemTests.TestCase.cs" />
-    <Compile Include="Untested.cs" />
     <Compile Include="Utils\CSharpPrimitiveCastTests.cs" />
     <Compile Include="Utils\TreeTraversalTests.cs" />
     <Compile Include="FormattingTests\TextEditorTestAdapter.cs" />
     <Compile Include="FormattingTests\TestBlankLineFormatting.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
+      <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>
+      <Name>ICSharpCode.NRefactory.CSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
@@ -163,10 +196,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CSharp\" />
+    <Folder Include="CSharp\Refactoring" />
     <Folder Include="CSharp\Parser\" />
     <Folder Include="CSharp\Parser\" />
     <Folder Include="CSharp\Parser\" />
     <Folder Include="CSharp\Parser\" />
+    <Folder Include="Documentation" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

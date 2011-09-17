@@ -55,7 +55,6 @@ this.TestMethod ();
 }");
 		}
 
-		[Ignore ("TODO")]
 		[Test()]
 		public void TestIndentBlocks ()
 		{
@@ -499,7 +498,6 @@ using (var o = new MyObj()) {
 }");
 		}
 
-		[Ignore ("TODO")]
 		[Test()]
 		public void TestUsingAlignment ()
 		{
@@ -946,7 +944,6 @@ do {
 }");
 		}
 
-		[Ignore ("TODO")]
 		[Test()]
 		public void TestIfAlignment ()
 		{

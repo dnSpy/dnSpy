@@ -1,15 +1,33 @@
-﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
+	using Unbound = ReflectionHelper.UnboundTypeArgument;
+	
 	[TestFixture]
 	public class GetAllBaseTypesTest
 	{
@@ -76,7 +94,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			DefaultTypeDefinition c2 = new DefaultTypeDefinition(mscorlib, string.Empty, "C2");
 			c1.BaseTypes.Add(c2);
 			c2.BaseTypes.Add(c1);
-			Assert.AreEqual(new [] { c1, c2 }, c1.GetAllBaseTypes(context).ToArray());
+			Assert.AreEqual(new [] { c2, c1 }, c1.GetAllBaseTypes(context).ToArray());
 		}
 		
 		[Test]
@@ -113,7 +131,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			// struct S : IEquatable<S> {}
 			// don't use a Cecil-loaded struct for this test; we're testing the implicit addition of System.ValueType
 			DefaultTypeDefinition s = new DefaultTypeDefinition(mscorlib, string.Empty, "S");
-			s.ClassType = ClassType.Struct;
+			s.Kind = TypeKind.Struct;
 			s.BaseTypes.Add(new ParameterizedType(mscorlib.GetTypeDefinition(typeof(IEquatable<>)), new[] { s }));
 			IType[] expected = {
 				s,
@@ -136,6 +154,25 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		
 		[Test]
+		public void BaseTypesOfUnboundDictionary()
+		{
+			Assert.AreEqual(
+				new [] {
+					typeof(Dictionary<,>).FullName,
+					typeof(ICollection<>).FullName + "[[" + typeof(KeyValuePair<,>).FullName + "[[`0],[`1]]]]",
+					typeof(IDictionary<,>).FullName + "[[`0],[`1]]",
+					typeof(IEnumerable<>).FullName + "[[" + typeof(KeyValuePair<,>).FullName + "[[`0],[`1]]]]",
+					typeof(ICollection).FullName,
+					typeof(IDictionary).FullName,
+					typeof(IEnumerable).FullName,
+					typeof(object).FullName,
+					typeof(IDeserializationCallback).FullName,
+					typeof(ISerializable).FullName,
+				},
+				GetAllBaseTypes(typeof(Dictionary<,>)).Select(t => t.ReflectionName).ToArray());
+		}
+		
+		[Test]
 		public void BaseTypeDefinitionsOfListOfString()
 		{
 			Assert.AreEqual(
@@ -143,6 +180,17 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				         typeof(IList), typeof(ICollection), typeof(IEnumerable),
 				         typeof(IEnumerable<>), typeof(ICollection<>), typeof(IList<>)),
 				typeof(List<string>).ToTypeReference().Resolve(context).GetAllBaseTypeDefinitions(context).OrderBy(t => t.ReflectionName).ToArray());
+		}
+		
+		[Test]
+		public void BaseTypeDefinitionsOfStringArray()
+		{
+			Assert.AreEqual(
+				GetTypes(typeof(Array), typeof(object),
+				         typeof(ICloneable), typeof(IStructuralComparable), typeof(IStructuralEquatable),
+				         typeof(IList), typeof(ICollection), typeof(IEnumerable),
+				         typeof(IEnumerable<>), typeof(ICollection<>), typeof(IList<>)),
+				typeof(string[]).ToTypeReference().Resolve(context).GetAllBaseTypeDefinitions(context).OrderBy(t => t.ReflectionName).ToArray());
 		}
 	}
 }

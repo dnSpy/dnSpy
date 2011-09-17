@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.IO;
@@ -59,12 +74,12 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			CSharpParser parser = new CSharpParser();
 			CompilationUnit cu = parser.Parse(new StringReader(code));
 			PropertyDeclaration pd = (PropertyDeclaration)cu.Children.Single().GetChildByRole(TypeDeclaration.MemberRole);
-			Assert.AreEqual(new AstLocation(2, code.IndexOf("{\n\t\tget") - line2Pos + 1), pd.GetChildByRole(AstNode.Roles.LBrace).StartLocation);
-			Assert.AreEqual(new AstLocation(5, 3), pd.EndLocation);
-			Assert.AreEqual(new AstLocation(3, code.IndexOf("{ return") - line3Pos + 1), pd.Getter.Body.StartLocation);
-			Assert.AreEqual(new AstLocation(3, code.IndexOf("}\n\t\tset") + 1 - line3Pos + 1), pd.Getter.Body.EndLocation);
-			Assert.AreEqual(new AstLocation(4, code.IndexOf("{ f =") - line4Pos + 1), pd.Setter.Body.StartLocation);
-			Assert.AreEqual(new AstLocation(4, code.IndexOf("}\n\t}") + 1 - line4Pos + 1), pd.Setter.Body.EndLocation);
+			Assert.AreEqual(new TextLocation(2, code.IndexOf("{\n\t\tget") - line2Pos + 1), pd.GetChildByRole(AstNode.Roles.LBrace).StartLocation);
+			Assert.AreEqual(new TextLocation(5, 3), pd.EndLocation);
+			Assert.AreEqual(new TextLocation(3, code.IndexOf("{ return") - line3Pos + 1), pd.Getter.Body.StartLocation);
+			Assert.AreEqual(new TextLocation(3, code.IndexOf("}\n\t\tset") + 1 - line3Pos + 1), pd.Getter.Body.EndLocation);
+			Assert.AreEqual(new TextLocation(4, code.IndexOf("{ f =") - line4Pos + 1), pd.Setter.Body.StartLocation);
+			Assert.AreEqual(new TextLocation(4, code.IndexOf("}\n\t}") + 1 - line4Pos + 1), pd.Setter.Body.EndLocation);
 		}
 		
 		[Test]

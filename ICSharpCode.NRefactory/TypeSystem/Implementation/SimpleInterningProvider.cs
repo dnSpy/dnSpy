@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections;
@@ -22,21 +37,6 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			// Intern the well-known types first; so that they are used when possible.
 			foreach (ITypeReference r in KnownTypeReference.AllKnownTypeReferences)
 				Intern(r);
-		}
-		
-		sealed class ReferenceComparer : IEqualityComparer<object>
-		{
-			public readonly static ReferenceComparer Instance = new ReferenceComparer();
-			
-			public new bool Equals(object a, object b)
-			{
-				return ReferenceEquals(a, b);
-			}
-			
-			public int GetHashCode(object obj)
-			{
-				return RuntimeHelpers.GetHashCode(obj);
-			}
 		}
 		
 		sealed class InterningComparer : IEqualityComparer<ISupportsInterning>
@@ -89,6 +89,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		Dictionary<ISupportsInterning, ISupportsInterning> supportsInternDict = new Dictionary<ISupportsInterning, ISupportsInterning>(new InterningComparer());
 		Dictionary<IEnumerable, IEnumerable> listDict = new Dictionary<IEnumerable, IEnumerable>(new ListComparer());
 		
+		int stackDepth = 0;
+		
 		public T Intern<T>(T obj) where T : class
 		{
 			if (obj == null)
@@ -105,13 +107,16 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 					else
 						supportsInternDict.Add(s, s);
 				}
-			} else if (obj is IType || Type.GetTypeCode(obj.GetType()) >= TypeCode.Boolean) {
+			} else if (Type.GetTypeCode(obj.GetType()) >= TypeCode.Boolean) {
+				// IType cannot be interned by value because ITypeParameters with different names are considered
+				// equal (for object.Equals), but should not be interned.
 				object output;
 				if (byValueDict.TryGetValue(obj, out output))
 					obj = (T)output;
 				else
 					byValueDict.Add(obj, obj);
 			}
+			stackDepth--;
 			return obj;
 		}
 		
@@ -123,8 +128,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				T oldItem = list[i];
 				T newItem = Intern(oldItem);
 				if (oldItem != newItem) {
-					if (list.IsReadOnly)
-						list = new T[list.Count];
+					if (list.IsReadOnly) {
+						T[] array = new T[list.Count];
+						list.CopyTo(array, 0);
+						list = array;
+					}
 					list[i] = newItem;
 				}
 			}
