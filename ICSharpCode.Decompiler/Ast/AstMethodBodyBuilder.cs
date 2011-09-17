@@ -716,7 +716,7 @@ namespace ICSharpCode.Decompiler.Ast
 								oce.Initializer = new ArrayInitializerExpression();
 								for (int i = 0; i < args.Count; i++) {
 									oce.Initializer.Elements.Add(
-										new NamedArgumentExpression {
+										new NamedExpression {
 											Identifier = ctor.Parameters[i].Name,
 											Expression = args[i]
 										});
@@ -764,7 +764,7 @@ namespace ICSharpCode.Decompiler.Ast
 							if (m.Success) {
 								MemberReferenceExpression mre = m.Get<MemberReferenceExpression>("left").Single();
 								initializer.Elements.Add(
-									new NamedArgumentExpression {
+									new NamedExpression {
 										Identifier = mre.MemberName,
 										Expression = m.Get<Expression>("right").Single().Detach()
 									}.CopyAnnotationsFrom(mre));

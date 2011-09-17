@@ -81,8 +81,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Expression = new ObjectCreateExpression {
 				Initializer = new ArrayInitializerExpression {
 					Elements = {
-						new NamedNode("nae1", new NamedArgumentExpression { Expression = new IdentifierExpression() }),
-						new NamedNode("nae2", new NamedArgumentExpression { Expression = new AnyNode() })
+						new NamedNode("nae1", new NamedExpression { Expression = new IdentifierExpression() }),
+						new NamedNode("nae2", new NamedExpression { Expression = new AnyNode() })
 					}
 				}
 			}};
@@ -100,8 +100,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (!match.Success)
 				return false;
 			QuerySelectClause selectClause = (QuerySelectClause)innerQuery.Clauses.Last();
-			NamedArgumentExpression nae1 = match.Get<NamedArgumentExpression>("nae1").Single();
-			NamedArgumentExpression nae2 = match.Get<NamedArgumentExpression>("nae2").Single();
+			NamedExpression nae1 = match.Get<NamedExpression>("nae1").Single();
+			NamedExpression nae2 = match.Get<NamedExpression>("nae2").Single();
 			if (nae1.Identifier != ((IdentifierExpression)nae1.Expression).Identifier)
 				return false;
 			IdentifierExpression nae2IdentExpr = nae2.Expression as IdentifierExpression;
