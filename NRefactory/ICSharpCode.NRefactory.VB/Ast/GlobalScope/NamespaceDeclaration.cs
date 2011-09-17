@@ -30,7 +30,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				return builder.ToString ();
 			}
 			set {
-				GetChildrenByRole(Roles.Identifier).ReplaceWith(value.Split('.').Select(ident => new Identifier (ident, AstLocation.Empty)));
+				GetChildrenByRole(Roles.Identifier).ReplaceWith(value.Split('.').Select(ident => new Identifier (ident, TextLocation.Empty)));
 			}
 		}
 		

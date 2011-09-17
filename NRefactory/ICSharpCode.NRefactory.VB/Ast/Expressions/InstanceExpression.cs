@@ -10,27 +10,27 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	/// </summary>
 	public class InstanceExpression : Expression
 	{
-		AstLocation location;
+		TextLocation location;
 		
-		public InstanceExpression(InstanceExpressionType type, AstLocation location)
+		public InstanceExpression(InstanceExpressionType type, TextLocation location)
 		{
 			this.Type = type;
 			this.location = location;
 		}
 		
-		public override AstLocation StartLocation {
+		public override TextLocation StartLocation {
 			get { return location; }
 		}
 		
-		public override AstLocation EndLocation {
+		public override TextLocation EndLocation {
 			get {
 				switch (Type) {
 					case InstanceExpressionType.Me:
-						return new AstLocation(location.Line, location.Column + "Me".Length);
+						return new TextLocation(location.Line, location.Column + "Me".Length);
 					case InstanceExpressionType.MyBase:
-						return new AstLocation(location.Line, location.Column + "MyBase".Length);
+						return new TextLocation(location.Line, location.Column + "MyBase".Length);
 					case InstanceExpressionType.MyClass:
-						return new AstLocation(location.Line, location.Column + "MyClass".Length);
+						return new TextLocation(location.Line, location.Column + "MyClass".Length);
 					default:
 						throw new Exception("Invalid value for InstanceExpressionType");
 				}

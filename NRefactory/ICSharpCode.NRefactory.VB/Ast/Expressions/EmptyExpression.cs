@@ -22,15 +22,15 @@ namespace ICSharpCode.NRefactory.VB.Ast
 {
 	public class EmptyExpression : Expression
 	{
-		AstLocation location;
+		TextLocation location;
 	
-		public override AstLocation StartLocation {
+		public override TextLocation StartLocation {
 			get {
 				return location;
 			}
 		}
 	
-		public override AstLocation EndLocation {
+		public override TextLocation EndLocation {
 			get {
 				return location;
 			}
@@ -40,7 +40,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		{
 		}
 	
-		public EmptyExpression(AstLocation location)
+		public EmptyExpression(TextLocation location)
 		{
 			this.location = location;
 		}

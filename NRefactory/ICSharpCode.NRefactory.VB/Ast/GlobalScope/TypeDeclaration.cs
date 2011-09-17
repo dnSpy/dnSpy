@@ -8,6 +8,14 @@ using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
+	public enum ClassType
+	{
+		Class,
+		Struct,
+		Interface,
+		Module
+	}
+	
 	public class TypeDeclaration : AttributedNode
 	{
 		public readonly static Role<AttributedNode> MemberRole = new Role<AttributedNode>("Member");

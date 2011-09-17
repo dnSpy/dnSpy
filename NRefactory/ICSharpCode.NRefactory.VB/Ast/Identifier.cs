@@ -43,16 +43,16 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public TypeCode TypeCharacter { get; set; }
 		
-		AstLocation startLocation;
-		public override AstLocation StartLocation {
+		TextLocation startLocation;
+		public override TextLocation StartLocation {
 			get {
 				return startLocation;
 			}
 		}
 		
-		public override AstLocation EndLocation {
+		public override TextLocation EndLocation {
 			get {
-				return new AstLocation (StartLocation.Line, StartLocation.Column + Name.Length);
+				return new TextLocation (StartLocation.Line, StartLocation.Column + Name.Length);
 			}
 		}
 		
@@ -61,7 +61,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			this.name = string.Empty;
 		}
 		
-		public Identifier (string name, AstLocation location)
+		public Identifier (string name, TextLocation location)
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
@@ -71,7 +71,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public static implicit operator Identifier(string name)
 		{
-			return new Identifier(name, AstLocation.Empty);
+			return new Identifier(name, TextLocation.Empty);
 		}
 		
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)

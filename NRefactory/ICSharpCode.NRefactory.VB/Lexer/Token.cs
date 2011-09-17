@@ -15,7 +15,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		internal readonly object literalValue;
 		internal readonly string val;
 		internal Token next;
-		readonly AstLocation endLocation;
+		readonly TextLocation endLocation;
 		
 		public int Kind {
 			get { return kind; }
@@ -29,13 +29,13 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			get { return val; }
 		}
 		
-		public AstLocation EndLocation {
+		public TextLocation EndLocation {
 			get { return endLocation; }
 		}
 		
-		public AstLocation Location {
+		public TextLocation Location {
 			get {
-				return new AstLocation(line, col);
+				return new TextLocation(line, col);
 			}
 		}
 		
@@ -48,7 +48,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		{
 		}
 		
-		public Token(int kind, AstLocation startLocation, AstLocation endLocation) : this(kind, startLocation, endLocation, "", null)
+		public Token(int kind, TextLocation startLocation, TextLocation endLocation) : this(kind, startLocation, endLocation, "", null)
 		{
 		}
 		
@@ -58,15 +58,15 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			this.col          = col;
 			this.line         = line;
 			this.val          = val;
-			this.endLocation  = new AstLocation(line, col + (val == null ? 1 : val.Length));
+			this.endLocation  = new TextLocation(line, col + (val == null ? 1 : val.Length));
 		}
 		
 		internal Token(int kind, int x, int y, string val, object literalValue)
-			: this(kind, new AstLocation(y, x), new AstLocation(y, x + val.Length), val, literalValue)
+			: this(kind, new TextLocation(y, x), new TextLocation(y, x + val.Length), val, literalValue)
 		{
 		}
 		
-		public Token(int kind, AstLocation startLocation, AstLocation endLocation, string val, object literalValue)
+		public Token(int kind, TextLocation startLocation, TextLocation endLocation, string val, object literalValue)
 		{
 			this.kind         = kind;
 			this.col          = startLocation.Column;

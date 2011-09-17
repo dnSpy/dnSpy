@@ -25,7 +25,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				}
 			}
 			
-			public NullVBTokenNode() : base (AstLocation.Empty, 0)
+			public NullVBTokenNode() : base (TextLocation.Empty, 0)
 			{
 			}
 			
@@ -40,8 +40,8 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			}
 		}
 		
-		AstLocation startLocation;
-		public override AstLocation StartLocation {
+		TextLocation startLocation;
+		public override TextLocation StartLocation {
 			get {
 				return startLocation;
 			}
@@ -49,20 +49,20 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		protected int tokenLength = -1;
 		
-		AstLocation endLocation;
-		public override AstLocation EndLocation {
+		TextLocation endLocation;
+		public override TextLocation EndLocation {
 			get {
-				return tokenLength < 0 ? endLocation : new AstLocation(startLocation.Line, startLocation.Column + tokenLength);
+				return tokenLength < 0 ? endLocation : new TextLocation(startLocation.Line, startLocation.Column + tokenLength);
 			}
 		}
 		
-		public VBTokenNode(AstLocation location, int tokenLength)
+		public VBTokenNode(TextLocation location, int tokenLength)
 		{
 			this.startLocation = location;
 			this.tokenLength = tokenLength;
 		}
 		
-		public VBTokenNode(AstLocation startLocation, AstLocation endLocation)
+		public VBTokenNode(TextLocation startLocation, TextLocation endLocation)
 		{
 			this.startLocation = startLocation;
 			this.endLocation = endLocation;

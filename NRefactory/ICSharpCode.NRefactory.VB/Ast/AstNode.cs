@@ -82,20 +82,20 @@ namespace ICSharpCode.NRefactory.VB
 			}
 		}
 		
-		public virtual AstLocation StartLocation {
+		public virtual TextLocation StartLocation {
 			get {
 				var child = firstChild;
 				if (child == null)
-					return AstLocation.Empty;
+					return TextLocation.Empty;
 				return child.StartLocation;
 			}
 		}
 		
-		public virtual AstLocation EndLocation {
+		public virtual TextLocation EndLocation {
 			get {
 				var child = lastChild;
 				if (child == null)
-					return AstLocation.Empty;
+					return TextLocation.Empty;
 				return child.EndLocation;
 			}
 		}

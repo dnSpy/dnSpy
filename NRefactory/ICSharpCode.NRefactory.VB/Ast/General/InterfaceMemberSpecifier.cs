@@ -18,7 +18,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		public InterfaceMemberSpecifier(AstType target, string member)
 		{
 			Target = new TypeReferenceExpression(target);
-			Member = new Identifier(member, AstLocation.Empty);
+			Member = new Identifier(member, TextLocation.Empty);
 		}
 		
 		public Expression Target {

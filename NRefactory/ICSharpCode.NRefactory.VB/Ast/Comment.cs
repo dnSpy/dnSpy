@@ -26,15 +26,15 @@ namespace ICSharpCode.NRefactory.VB
 			set;
 		}
 		
-		AstLocation startLocation;
-		public override AstLocation StartLocation {
+		TextLocation startLocation;
+		public override TextLocation StartLocation {
 			get { 
 				return startLocation;
 			}
 		}
 		
-		AstLocation endLocation;
-		public override AstLocation EndLocation {
+		TextLocation endLocation;
+		public override TextLocation EndLocation {
 			get {
 				return endLocation;
 			}
@@ -46,7 +46,7 @@ namespace ICSharpCode.NRefactory.VB
 			this.Content = content;
 		}
 		
-		public Comment (bool isDocumentation, AstLocation startLocation, AstLocation endLocation)
+		public Comment (bool isDocumentation, TextLocation startLocation, TextLocation endLocation)
 		{
 			this.IsDocumentationComment = isDocumentation;
 			this.startLocation = startLocation;

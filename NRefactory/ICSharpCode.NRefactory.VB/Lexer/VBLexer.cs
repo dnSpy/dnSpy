@@ -34,7 +34,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		
 		public VBLexer(TextReader reader, VBLexerMemento state) : this(reader)
 		{
-			SetInitialLocation(new AstLocation(state.Line, state.Column));
+			SetInitialLocation(new TextLocation(state.Line, state.Column));
 			lastToken = new Token(state.PrevTokenKind, 0, 0);
 			ef = new ExpressionFinder(state.ExpressionFinder);
 			lineEnd = state.LineEnd;
@@ -54,7 +54,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			
 			unchecked {
 				while (true) {
-					AstLocation startLocation = new AstLocation(Line, Col);
+					TextLocation startLocation = new TextLocation(Line, Col);
 					int nextChar = ReaderRead();
 					if (nextChar == -1)
 						return new Token(Tokens.EOF, Col, Line, string.Empty);
@@ -96,12 +96,12 @@ namespace ICSharpCode.NRefactory.VB.Parser
 								if (ReaderPeek() == '/') {
 									ReaderRead();
 									info.inXmlCloseTag = true;
-									return new Token(Tokens.XmlOpenEndTag, new AstLocation(y, x), new AstLocation(Line, Col));
+									return new Token(Tokens.XmlOpenEndTag, new TextLocation(y, x), new TextLocation(Line, Col));
 								}
 								if (ReaderPeek() == '%' && ReaderPeek(1) == '=') {
 									inXmlMode = false;
 									ReaderRead(); ReaderRead();
-									return new Token(Tokens.XmlStartInlineVB, new AstLocation(y, x), new AstLocation(Line, Col));
+									return new Token(Tokens.XmlStartInlineVB, new TextLocation(y, x), new TextLocation(Line, Col));
 								}
 								if (ReaderPeek() == '?') {
 									ReaderRead();
@@ -122,7 +122,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 									ReaderRead();
 									info.inXmlTag = false;
 									info.level--;
-									return new Token(Tokens.XmlCloseTagEmptyElement, new AstLocation(y, x), new AstLocation(Line, Col));
+									return new Token(Tokens.XmlCloseTagEmptyElement, new TextLocation(y, x), new TextLocation(Line, Col));
 								}
 								break;
 							case '>':
@@ -143,7 +143,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 									return new Token(Tokens.Identifier, x, y, ReadXmlIdent(ch));
 								} else {
 									string content = ReadXmlContent(ch);
-									return new Token(Tokens.XmlContent, startLocation, new AstLocation(Line, Col), content, null);
+									return new Token(Tokens.XmlContent, startLocation, new TextLocation(Line, Col), content, null);
 								}
 						}
 						#endregion
@@ -157,7 +157,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 //									specialTracker.AddEndOfLine(startLocation);
 								} else {
 									lineEnd = true;
-									return new Token(Tokens.EOL, startLocation, new AstLocation(Line, Col), null, null);
+									return new Token(Tokens.EOL, startLocation, new TextLocation(Line, Col), null, null);
 								}
 							}
 							continue;
@@ -314,7 +314,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 							int y = Line;
 							inXmlMode = true;
 							ReaderRead();
-							return new Token(Tokens.XmlEndInlineVB, new AstLocation(y, x), new AstLocation(Line, Col));
+							return new Token(Tokens.XmlEndInlineVB, new TextLocation(y, x), new TextLocation(Line, Col));
 						}
 						#endregion
 						if (ch == '<' && (ef.NextTokenIsPotentialStartOfExpression || ef.NextTokenIsStartOfImportsOrAccessExpression)) {
@@ -326,13 +326,13 @@ namespace ICSharpCode.NRefactory.VB.Parser
 							if (ReaderPeek() == '/') {
 								ReaderRead();
 								info.inXmlCloseTag = true;
-								return new Token(Tokens.XmlOpenEndTag, new AstLocation(y, x), new AstLocation(Line, Col));
+								return new Token(Tokens.XmlOpenEndTag, new TextLocation(y, x), new TextLocation(Line, Col));
 							}
 							// should we allow <%= at start of an expression? not valid with vbc ...
 							if (ReaderPeek() == '%' && ReaderPeek(1) == '=') {
 								inXmlMode = false;
 								ReaderRead(); ReaderRead();
-								return new Token(Tokens.XmlStartInlineVB, new AstLocation(y, x), new AstLocation(Line, Col));
+								return new Token(Tokens.XmlStartInlineVB, new TextLocation(y, x), new TextLocation(Line, Col));
 							}
 							if (ReaderPeek() == '!') {
 								ReaderRead();
@@ -361,7 +361,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			}
 		}
 
-		void CheckXMLState(AstLocation startLocation)
+		void CheckXMLState(TextLocation startLocation)
 		{
 			if (inXmlMode && !xmlModeStack.Any())
 				throw new InvalidOperationException("invalid XML stack state at " + startLocation);
@@ -776,7 +776,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		
 		void ReadPreprocessorDirective()
 		{
-			AstLocation start = new AstLocation(Line, Col - 1);
+			TextLocation start = new TextLocation(Line, Col - 1);
 			string directive = ReadIdent('#');
 			// TODO : expression parser for PP directives
 			// needed for proper conversion to e. g. C#
@@ -833,7 +833,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 		
 		void ReadComment()
 		{
-			AstLocation startPos = new AstLocation(Line, Col);
+			TextLocation startPos = new TextLocation(Line, Col);
 			sb.Length = 0;
 			StringBuilder curWord = specialCommentHash != null ? new StringBuilder() : null;
 			int missingApostrophes = 2; // no. of ' missing until it is a documentation comment
@@ -866,7 +866,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 						string tag = curWord.ToString();
 						curWord.Length = 0;
 						if (specialCommentHash.ContainsKey(tag)) {
-							AstLocation p = new AstLocation(Line, Col);
+							TextLocation p = new TextLocation(Line, Col);
 							string comment = ch + ReadToEndOfLine();
 //							this.TagComments.Add(new TagComment(tag, comment, isAtLineBegin, p, new Location(Col, Line)));
 							sb.Append(comment);
@@ -1046,7 +1046,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			
 			ReaderSkip("?>".Length);
 			
-			return new Token(Tokens.XmlProcessingInstruction, new AstLocation(y, x), new AstLocation(Line, Col), sb.ToString(), null);
+			return new Token(Tokens.XmlProcessingInstruction, new TextLocation(y, x), new TextLocation(Line, Col), sb.ToString(), null);
 		}
 		
 		Token ReadXmlCommentOrCData(int x, int y)
@@ -1060,7 +1060,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 					sb.Append((char)nextChar);
 					if (string.CompareOrdinal(ReaderPeekString("-->".Length), "-->") == 0) {
 						ReaderSkip("-->".Length);
-						return new Token(Tokens.XmlComment, new AstLocation(y, x), new AstLocation(Line, Col), sb.ToString(), null);
+						return new Token(Tokens.XmlComment, new TextLocation(y, x), new TextLocation(Line, Col), sb.ToString(), null);
 					}
 				}
 			}
@@ -1071,12 +1071,12 @@ namespace ICSharpCode.NRefactory.VB.Parser
 					sb.Append((char)nextChar);
 					if (string.CompareOrdinal(ReaderPeekString("]]>".Length), "]]>") == 0) {
 						ReaderSkip("]]>".Length);
-						return new Token(Tokens.XmlCData, new AstLocation(y, x), new AstLocation(Line, Col), sb.ToString(), null);
+						return new Token(Tokens.XmlCData, new TextLocation(y, x), new TextLocation(Line, Col), sb.ToString(), null);
 					}
 				}
 			}
 			
-			return new Token(Tokens.XmlComment, new AstLocation(y, x), new AstLocation(Line, Col), sb.ToString(), null);
+			return new Token(Tokens.XmlComment, new TextLocation(y, x), new TextLocation(Line, Col), sb.ToString(), null);
 		}
 		
 		string ReadXmlContent(char ch)
@@ -1276,7 +1276,7 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			return builder.ToString();
 		}
 		
-		public void SetInitialLocation(AstLocation location)
+		public void SetInitialLocation(TextLocation location)
 		{
 			if (lastToken != null || curToken != null || peekToken != null)
 				throw new InvalidOperationException();
@@ -1404,12 +1404,12 @@ namespace ICSharpCode.NRefactory.VB.Parser
 			errors.Error(line, col, String.Format("Invalid hex number '" + digit + "'"));
 			return 0;
 		}
-		protected AstLocation lastLineEnd = new AstLocation(1, 1);
-		protected AstLocation curLineEnd = new AstLocation(1, 1);
+		protected TextLocation lastLineEnd = new TextLocation(1, 1);
+		protected TextLocation curLineEnd = new TextLocation(1, 1);
 		protected void LineBreak ()
 		{
 			lastLineEnd = curLineEnd;
-			curLineEnd = new AstLocation (line, col - 1);
+			curLineEnd = new TextLocation (line, col - 1);
 		}
 		protected bool HandleLineEnd(char ch)
 		{

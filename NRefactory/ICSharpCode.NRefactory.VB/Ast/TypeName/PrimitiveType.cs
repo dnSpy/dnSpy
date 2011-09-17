@@ -9,7 +9,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	public class PrimitiveType : AstType
 	{
 		public string Keyword { get; set; }
-		public AstLocation Location { get; set; }
+		public TextLocation Location { get; set; }
 		
 		public PrimitiveType()
 		{
@@ -20,20 +20,20 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			this.Keyword = keyword;
 		}
 		
-		public PrimitiveType(string keyword, AstLocation location)
+		public PrimitiveType(string keyword, TextLocation location)
 		{
 			this.Keyword = keyword;
 			this.Location = location;
 		}
 		
-		public override AstLocation StartLocation {
+		public override TextLocation StartLocation {
 			get {
 				return Location;
 			}
 		}
-		public override AstLocation EndLocation {
+		public override TextLocation EndLocation {
 			get {
-				return new AstLocation (Location.Line, Location.Column + (Keyword != null ? Keyword.Length : 0));
+				return new TextLocation (Location.Line, Location.Column + (Keyword != null ? Keyword.Length : 0));
 			}
 		}
 		

@@ -133,28 +133,17 @@ namespace ICSharpCode.NRefactory.VB
 		}
 		
 		#region Equals and GetHashCode implementation
-		public override bool Equals(object obj)
-		{
-			if (obj is AstNodeCollection<T>) {
-				return ((AstNodeCollection<T>)obj) == this;
-			} else {
-				return false;
-			}
-		}
-		
 		public override int GetHashCode()
 		{
 			return node.GetHashCode() ^ role.GetHashCode();
 		}
 		
-		public static bool operator ==(AstNodeCollection<T> left, AstNodeCollection<T> right)
+		public override bool Equals(object obj)
 		{
-			return left.role == right.role && left.node == right.node;
-		}
-		
-		public static bool operator !=(AstNodeCollection<T> left, AstNodeCollection<T> right)
-		{
-			return !(left.role == right.role && left.node == right.node);
+			AstNodeCollection<T> other = obj as AstNodeCollection<T>;
+			if (other == null)
+				return false;
+			return this.node == other.node && this.role == other.role;
 		}
 		#endregion
 		

@@ -1,17 +1,33 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
 {
-	[TestFixture, Ignore("LINQ not yet implemented")]
+	[TestFixture]
 	public class LinqTests : ResolverTestBase
 	{
 		[Test]
-		public void SimpleLinqTest()
+		public void SimpleLinq()
 		{
 			string program = @"using System; using System.Linq;
 class TestClass {
@@ -36,7 +52,7 @@ class TestClass {
 		}
 		
 		[Test]
-		public void LinqGroupTest()
+		public void Group()
 		{
 			string program = @"using System; using System.Linq;
 class TestClass {
@@ -56,7 +72,7 @@ class TestClass {
 		}
 		
 		[Test]
-		public void LinqQueryableGroupTest()
+		public void QueryableGroup()
 		{
 			string program = @"using System; using System.Linq;
 class TestClass {
@@ -76,7 +92,7 @@ class TestClass {
 		}
 		
 		[Test]
-		public void ParenthesizedLinqTest()
+		public void Parenthesized()
 		{
 			string program = @"using System; using System.Linq;
 class TestClass {
@@ -85,13 +101,14 @@ class TestClass {
 	}
 }
 ";
-			ResolveResult rr = Resolve<ResolveResult>(program);
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.AreEqual("System.Linq.Enumerable.Select", rr.Member.FullName);
 			Assert.AreEqual("System.Collections.Generic.IEnumerable", rr.Type.FullName);
 			Assert.AreEqual("System.Int32", ((ParameterizedType)rr.Type).TypeArguments[0].FullName);
 		}
 		
 		[Test]
-		public void LinqSelectReturnTypeTest()
+		public void SelectReturnType()
 		{
 			string program = @"using System;
 class TestClass { static void M() {
@@ -100,12 +117,13 @@ class TestClass { static void M() {
 class XYZ {
 	public int Select<U>(Func<string, U> f) { return 42; }
 }";
-			ResolveResult rr = Resolve<ResolveResult>(program);
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.AreEqual("XYZ.Select", rr.Member.FullName);
 			Assert.AreEqual("System.Int32", rr.Type.FullName);
 		}
 		
 		[Test]
-		public void LinqQueryContinuationTest()
+		public void Continuation()
 		{
 			string program = @"using System; using System.Linq;
 class TestClass {
@@ -131,6 +149,189 @@ class TestClass {
 			
 			lrr = Resolve<LocalResolveResult>(program.Replace("r.ToString", "$r$.ToString"));
 			Assert.AreEqual("System.Collections.Generic.IEnumerable`1[[System.Int32]]", lrr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void OrderingWithSelectCall()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass {
+	void Test(string[] input) {
+		$var$ r = from x in input
+			orderby x.Length
+			select x + x;
+	}
+}
+";
+			TypeResolveResult rr = Resolve<TypeResolveResult>(program);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable`1[[System.String]]", rr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void OrderingWithoutSelectCall()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass {
+	void Test(string[] input) {
+		$var$ r = from x in input
+			orderby x.Length
+			select x;
+	}
+}
+";
+			TypeResolveResult rr = Resolve<TypeResolveResult>(program);
+			Assert.AreEqual("System.Linq.IOrderedEnumerable`1[[System.String]]", rr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void OrderingWithSelectCallDueToSecondRangeVariable1()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass {
+	void Test(string[] input) {
+		$var$ r = from x in input
+			from y in input
+			orderby x.Length
+			select x;
+	}
+}
+";
+			TypeResolveResult rr = Resolve<TypeResolveResult>(program);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable`1[[System.String]]", rr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void OrderingWithSelectCallDueToSecondRangeVariable2()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass {
+	void Test(string[] input) {
+		$var$ r = from x in input
+			join y in input on x equals y
+			orderby x.Length
+			select x;
+	}
+}
+";
+			TypeResolveResult rr = Resolve<TypeResolveResult>(program);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable`1[[System.String]]", rr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void OrderingWithSelectCallDueToSecondRangeVariable3()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass {
+	void Test(string[] input) {
+		$var$ r = from x in input
+			join y in input on x equals y into g
+			orderby x.Length
+			select x;
+	}
+}
+";
+			TypeResolveResult rr = Resolve<TypeResolveResult>(program);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable`1[[System.String]]", rr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void OrderingWithSelectCallDueToSecondRangeVariable4()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass {
+	void Test(string[] input) {
+		$var$ r = from x in input
+			let y = x
+			orderby x.Length
+			select x;
+	}
+}
+";
+			TypeResolveResult rr = Resolve<TypeResolveResult>(program);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable`1[[System.String]]", rr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void DegenerateQuery()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass {
+	void Test(string[] input) {
+		$var$ r = from x in input select x;
+	}
+}
+";
+			TypeResolveResult rr = Resolve<TypeResolveResult>(program);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable`1[[System.String]]", rr.Type.ReflectionName);
+		}
+		
+		[Test, Ignore("Parser bug (incorrect position), but also resolver bug (handles Select as a separate call when it's combined into the GroupJoin)")]
+		public void GroupJoinWithCustomMethod()
+		{
+			string program = @"using System;
+using System.Collections.Generic;
+class TestClass { static void M(long [] args) {
+	var q = (from a in new XYZ() join b in args on a equals b into g select g);
+}}
+class XYZ {
+	public XYZ GroupJoin<T, R>(IEnumerable<T> f, Func<string, object> key1, Func<T, object> key2, Func<string, decimal, R> s) { return this; }
+	public int Select<U>(Func<string, U> f) { return 42; }
+}";
+			var local = Resolve<LocalResolveResult>(program.Replace("into g", "into $g$"));
+			Assert.AreEqual("System.Decimal", local.Type.FullName);
+			
+			local = Resolve<LocalResolveResult>(program.Replace("select g", "select $g$"));
+			Assert.AreEqual("System.Decimal", local.Type.FullName);
+			
+			var trr = Resolve<TypeResolveResult>(program.Replace("var", "$var$"));
+			Assert.AreEqual("XYZ", trr.Type.FullName); // because 'Select' is done as part of GroupJoin()
+		}
+		
+		[Test]
+		public void GroupJoinWithOverloadedCustomMethod()
+		{
+			string program = @"using System;
+using System.Collections.Generic;
+class TestClass
+{
+	static void M(string[] args)
+	{
+		var q = $(from a in new XYZ() join b in args on a equals b into g select g.ToUpper())$;
+	}
+}
+class XYZ
+{
+	public int GroupJoin(IEnumerable<string> f, Func<string, object> key1, Func<string, object> key2, Func<string, int, int> s) { return 0; }
+	public decimal GroupJoin(IEnumerable<string> f, Func<string, object> key1, Func<string, object> key2, Func<string, string, string> s) { return 0; }
+}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual("GroupJoin", rr.Member.Name);
+			Assert.AreEqual("System.Decimal", rr.Type.FullName);
+			
+			rr = Resolve<CSharpInvocationResolveResult>(program.Replace("g.ToUpper()", "g.CompareTo(42)"));
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual("GroupJoin", rr.Member.Name);
+			Assert.AreEqual("System.Int32", rr.Type.FullName);
+		}
+		
+		[Test]
+		public void GroupWithQueryContinuation()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass
+{
+	static void M(string[] args)
+	{
+		var query =
+		from w in ""one to three"".Split()
+			group w by w.Length into g
+			orderby g.Key descending
+			select new { g.Key, Count = g.Count(), Avg = g.Average ($w$ => w.Length) };
+	}
+}";
+			var rr = Resolve<LocalResolveResult>(program);
+			Assert.AreEqual("System.String", rr.Type.FullName);
 		}
 	}
 }

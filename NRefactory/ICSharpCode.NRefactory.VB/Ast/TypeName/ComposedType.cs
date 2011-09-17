@@ -22,7 +22,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				return !GetChildByRole(NullableRole).IsNull;
 			}
 			set {
-				SetChildByRole(NullableRole, value ? new VBTokenNode(AstLocation.Empty, 1) : null);
+				SetChildByRole(NullableRole, value ? new VBTokenNode(TextLocation.Empty, 1) : null);
 			}
 		}
 		
@@ -89,7 +89,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 					d--;
 				}
 				while (d < value) {
-					InsertChildBefore(GetChildByRole(Roles.Comma), new VBTokenNode(AstLocation.Empty, 1), Roles.Comma);
+					InsertChildBefore(GetChildByRole(Roles.Comma), new VBTokenNode(TextLocation.Empty, 1), Roles.Comma);
 					d++;
 				}
 			}

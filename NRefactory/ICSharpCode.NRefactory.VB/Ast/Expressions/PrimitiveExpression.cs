@@ -13,17 +13,17 @@ namespace ICSharpCode.NRefactory.VB.Ast
 	{
 		public static readonly object AnyValue = new object();
 		
-		AstLocation startLocation;
-		public override AstLocation StartLocation {
+		TextLocation startLocation;
+		public override TextLocation StartLocation {
 			get {
 				return startLocation;
 			}
 		}
 		
 		int length;
-		public override AstLocation EndLocation {
+		public override TextLocation EndLocation {
 			get {
-				return new AstLocation(StartLocation.Line, StartLocation.Column + length);
+				return new TextLocation(StartLocation.Line, StartLocation.Column + length);
 			}
 		}
 		
@@ -46,14 +46,14 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			this.stringValue = stringValue;
 		}
 		
-		public PrimitiveExpression(object value, AstLocation startLocation, int length)
+		public PrimitiveExpression(object value, TextLocation startLocation, int length)
 		{
 			this.Value = value;
 			this.startLocation = startLocation;
 			this.length = length;
 		}
 		
-		public PrimitiveExpression(object value, string stringValue, AstLocation startLocation, int length)
+		public PrimitiveExpression(object value, string stringValue, TextLocation startLocation, int length)
 		{
 			this.Value = value;
 			this.stringValue = stringValue;

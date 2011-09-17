@@ -25,7 +25,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		Const           = 0x0200,
 		Shared          = 0x0400,
 		Static          = 0x0800,
-		Overrides        = 0x1000,
+		Override        = 0x1000,
 		ReadOnly        = 0x2000,
 		Shadows         = 0x4000,
 		Partial         = 0x8000,

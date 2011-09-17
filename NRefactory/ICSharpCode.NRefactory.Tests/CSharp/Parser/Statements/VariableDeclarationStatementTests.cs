@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Linq;
@@ -202,6 +217,44 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 		{
 			VariableDeclarationStatement lvd = ParseUtilCSharp.ParseStatement<VariableDeclarationStatement>("DateTime?[] a;");
 			Assert.IsTrue(new VariableDeclarationStatement(new SimpleType("DateTime").MakeNullableType().MakeArrayType(), "a").IsMatch(lvd));
+		}
+		
+		[Test]
+		public void Global()
+		{
+			ParseUtilCSharp.AssertStatement(
+				"global::System.String a;",
+				new VariableDeclarationStatement {
+					Type = new MemberType {
+						Target = new MemberType {
+							Target = new SimpleType("global"),
+							IsDoubleColon = true,
+							MemberName = "System"
+						},
+						IsDoubleColon = false,
+						MemberName = "String",
+					},
+					Variables = {
+						new VariableInitializer("a")
+					}
+				});
+		}
+		
+		[Test]
+		public void ArrayDeclarationWithInitializer()
+		{
+			ParseUtilCSharp.AssertStatement(
+				"int[] a = { 0 };",
+				new VariableDeclarationStatement {
+					Type = new PrimitiveType("int").MakeArrayType(),
+					Variables = {
+						new VariableInitializer {
+							Name = "a",
+							Initializer = new ArrayInitializerExpression {
+								Elements = { new PrimitiveExpression(0) }
+							}
+						}
+					}});
 		}
 	}
 }

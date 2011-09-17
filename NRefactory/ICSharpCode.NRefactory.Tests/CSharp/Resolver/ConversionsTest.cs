@@ -1,9 +1,26 @@
-﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
+using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using NUnit.Framework;
@@ -13,6 +30,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	// assign short names to the fake reflection types
 	using Null = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.Null;
 	using dynamic = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.Dynamic;
+	using C = Conversion;
 	
 	[TestFixture]
 	public unsafe class ConversionsTest
@@ -20,179 +38,209 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		ITypeResolveContext ctx = CecilLoaderTests.Mscorlib;
 		Conversions conversions = new Conversions(CecilLoaderTests.Mscorlib);
 		
-		bool ImplicitConversion(Type from, Type to)
+		Conversion ImplicitConversion(Type from, Type to)
 		{
 			IType from2 = from.ToTypeReference().Resolve(ctx);
 			IType to2 = to.ToTypeReference().Resolve(ctx);
 			return conversions.ImplicitConversion(from2, to2);
 		}
 		
+		Conversion ExplicitConversion(Type from, Type to)
+		{
+			IType from2 = from.ToTypeReference().Resolve(ctx);
+			IType to2 = to.ToTypeReference().Resolve(ctx);
+			return conversions.ExplicitConversion(from2, to2);
+		}
+		
 		[Test]
 		public void IdentityConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(char), typeof(char)));
-			Assert.IsTrue(ImplicitConversion(typeof(string), typeof(string)));
-			Assert.IsTrue(ImplicitConversion(typeof(object), typeof(object)));
-			Assert.IsFalse(ImplicitConversion(typeof(bool), typeof(char)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(char), typeof(char)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(string), typeof(string)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(object), typeof(object)));
+			Assert.AreEqual(C.None,               ImplicitConversion(typeof(bool), typeof(char)));
 			
-			Assert.IsTrue(conversions.ImplicitConversion(SharedTypes.Dynamic, SharedTypes.Dynamic));
-			Assert.IsTrue(conversions.ImplicitConversion(SharedTypes.UnknownType, SharedTypes.UnknownType));
-			Assert.IsTrue(conversions.ImplicitConversion(SharedTypes.Null, SharedTypes.Null));
+			Assert.AreEqual(C.IdentityConversion, conversions.ImplicitConversion(SharedTypes.Dynamic, SharedTypes.Dynamic));
+			Assert.AreEqual(C.IdentityConversion, conversions.ImplicitConversion(SharedTypes.UnknownType, SharedTypes.UnknownType));
+			Assert.AreEqual(C.IdentityConversion, conversions.ImplicitConversion(SharedTypes.Null, SharedTypes.Null));
 		}
 		
 		[Test]
 		public void DynamicIdentityConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(object), typeof(ReflectionHelper.Dynamic)));
-			Assert.IsTrue(ImplicitConversion(typeof(ReflectionHelper.Dynamic), typeof(object)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(object), typeof(ReflectionHelper.Dynamic)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(ReflectionHelper.Dynamic), typeof(object)));
 		}
 		
 		[Test]
 		public void ComplexDynamicIdentityConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(List<object>), typeof(List<dynamic>)));
-			Assert.IsTrue(ImplicitConversion(typeof(List<dynamic>), typeof(List<object>)));
-			Assert.IsFalse(ImplicitConversion(typeof(List<string>), typeof(List<dynamic>)));
-			Assert.IsFalse(ImplicitConversion(typeof(List<dynamic>), typeof(List<string>)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(List<object>), typeof(List<dynamic>)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(List<dynamic>), typeof(List<object>)));
+			Assert.AreEqual(C.None,               ImplicitConversion(typeof(List<string>), typeof(List<dynamic>)));
+			Assert.AreEqual(C.None,               ImplicitConversion(typeof(List<dynamic>), typeof(List<string>)));
 			
-			Assert.IsTrue(ImplicitConversion(typeof(List<List<dynamic>[]>), typeof(List<List<object>[]>)));
-			Assert.IsTrue(ImplicitConversion(typeof(List<List<object>[]>), typeof(List<List<dynamic>[]>)));
-			Assert.IsFalse(ImplicitConversion(typeof(List<List<object>[,]>), typeof(List<List<dynamic>[]>)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(List<List<dynamic>[]>), typeof(List<List<object>[]>)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(List<List<object>[]>), typeof(List<List<dynamic>[]>)));
+			Assert.AreEqual(C.None,               ImplicitConversion(typeof(List<List<object>[,]>), typeof(List<List<dynamic>[]>)));
 		}
 		
 		[Test]
 		public void PrimitiveConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(char), typeof(ushort)));
-			Assert.IsFalse(ImplicitConversion(typeof(byte), typeof(char)));
-			Assert.IsTrue(ImplicitConversion(typeof(int), typeof(long)));
-			Assert.IsFalse(ImplicitConversion(typeof(long), typeof(int)));
-			Assert.IsTrue(ImplicitConversion(typeof(int), typeof(float)));
-			Assert.IsFalse(ImplicitConversion(typeof(bool), typeof(float)));
-			Assert.IsTrue(ImplicitConversion(typeof(float), typeof(double)));
-			Assert.IsFalse(ImplicitConversion(typeof(float), typeof(decimal)));
-			Assert.IsTrue(ImplicitConversion(typeof(char), typeof(long)));
-			Assert.IsTrue(ImplicitConversion(typeof(uint), typeof(long)));
+			Assert.AreEqual(C.ImplicitNumericConversion, ImplicitConversion(typeof(char), typeof(ushort)));
+			Assert.AreEqual(C.None,                      ImplicitConversion(typeof(byte), typeof(char)));
+			Assert.AreEqual(C.ImplicitNumericConversion, ImplicitConversion(typeof(int), typeof(long)));
+			Assert.AreEqual(C.None,                      ImplicitConversion(typeof(long), typeof(int)));
+			Assert.AreEqual(C.ImplicitNumericConversion, ImplicitConversion(typeof(int), typeof(float)));
+			Assert.AreEqual(C.None,                      ImplicitConversion(typeof(bool), typeof(float)));
+			Assert.AreEqual(C.ImplicitNumericConversion, ImplicitConversion(typeof(float), typeof(double)));
+			Assert.AreEqual(C.None,                      ImplicitConversion(typeof(float), typeof(decimal)));
+			Assert.AreEqual(C.ImplicitNumericConversion, ImplicitConversion(typeof(char), typeof(long)));
+			Assert.AreEqual(C.ImplicitNumericConversion, ImplicitConversion(typeof(uint), typeof(long)));
 		}
 		
 		[Test]
 		public void NullableConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(char), typeof(ushort?)));
-			Assert.IsFalse(ImplicitConversion(typeof(byte), typeof(char?)));
-			Assert.IsTrue(ImplicitConversion(typeof(int), typeof(long?)));
-			Assert.IsFalse(ImplicitConversion(typeof(long), typeof(int?)));
-			Assert.IsTrue(ImplicitConversion(typeof(int), typeof(float?)));
-			Assert.IsFalse(ImplicitConversion(typeof(bool), typeof(float?)));
-			Assert.IsTrue(ImplicitConversion(typeof(float), typeof(double?)));
-			Assert.IsFalse(ImplicitConversion(typeof(float), typeof(decimal?)));
+			Assert.AreEqual(C.ImplicitNullableConversion, ImplicitConversion(typeof(char), typeof(ushort?)));
+			Assert.AreEqual(C.None,                       ImplicitConversion(typeof(byte), typeof(char?)));
+			Assert.AreEqual(C.ImplicitNullableConversion, ImplicitConversion(typeof(int), typeof(long?)));
+			Assert.AreEqual(C.None,                       ImplicitConversion(typeof(long), typeof(int?)));
+			Assert.AreEqual(C.ImplicitNullableConversion, ImplicitConversion(typeof(int), typeof(float?)));
+			Assert.AreEqual(C.None                      , ImplicitConversion(typeof(bool), typeof(float?)));
+			Assert.AreEqual(C.ImplicitNullableConversion, ImplicitConversion(typeof(float), typeof(double?)));
+			Assert.AreEqual(C.None,                       ImplicitConversion(typeof(float), typeof(decimal?)));
 		}
 		
 		[Test]
 		public void NullableConversions2()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(char?), typeof(ushort?)));
-			Assert.IsFalse(ImplicitConversion(typeof(byte?), typeof(char?)));
-			Assert.IsTrue(ImplicitConversion(typeof(int?), typeof(long?)));
-			Assert.IsFalse(ImplicitConversion(typeof(long?), typeof(int?)));
-			Assert.IsTrue(ImplicitConversion(typeof(int?), typeof(float?)));
-			Assert.IsFalse(ImplicitConversion(typeof(bool?), typeof(float?)));
-			Assert.IsTrue(ImplicitConversion(typeof(float?), typeof(double?)));
-			Assert.IsFalse(ImplicitConversion(typeof(float?), typeof(decimal?)));
+			Assert.AreEqual(C.ImplicitNullableConversion, ImplicitConversion(typeof(char?), typeof(ushort?)));
+			Assert.AreEqual(C.None,                       ImplicitConversion(typeof(byte?), typeof(char?)));
+			Assert.AreEqual(C.ImplicitNullableConversion, ImplicitConversion(typeof(int?), typeof(long?)));
+			Assert.AreEqual(C.None,                       ImplicitConversion(typeof(long?), typeof(int?)));
+			Assert.AreEqual(C.ImplicitNullableConversion, ImplicitConversion(typeof(int?), typeof(float?)));
+			Assert.AreEqual(C.None,                       ImplicitConversion(typeof(bool?), typeof(float?)));
+			Assert.AreEqual(C.ImplicitNullableConversion, ImplicitConversion(typeof(float?), typeof(double?)));
+			Assert.AreEqual(C.None,                       ImplicitConversion(typeof(float?), typeof(decimal?)));
 		}
 		
 		[Test]
 		public void NullLiteralConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(Null), typeof(int?)));
-			Assert.IsTrue(ImplicitConversion(typeof(Null), typeof(char?)));
-			Assert.IsFalse(ImplicitConversion(typeof(Null), typeof(int)));
-			Assert.IsTrue(ImplicitConversion(typeof(Null), typeof(object)));
-			Assert.IsTrue(ImplicitConversion(typeof(Null), typeof(dynamic)));
-			Assert.IsTrue(ImplicitConversion(typeof(Null), typeof(string)));
-			Assert.IsTrue(ImplicitConversion(typeof(Null), typeof(int[])));
+			Assert.AreEqual(C.NullLiteralConversion, ImplicitConversion(typeof(Null), typeof(int?)));
+			Assert.AreEqual(C.NullLiteralConversion, ImplicitConversion(typeof(Null), typeof(char?)));
+			Assert.AreEqual(C.None,                  ImplicitConversion(typeof(Null), typeof(int)));
+			Assert.AreEqual(C.NullLiteralConversion, ImplicitConversion(typeof(Null), typeof(object)));
+			Assert.AreEqual(C.NullLiteralConversion, ImplicitConversion(typeof(Null), typeof(dynamic)));
+			Assert.AreEqual(C.NullLiteralConversion, ImplicitConversion(typeof(Null), typeof(string)));
+			Assert.AreEqual(C.NullLiteralConversion, ImplicitConversion(typeof(Null), typeof(int[])));
 		}
 		
 		[Test]
 		public void SimpleReferenceConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(string), typeof(object)));
-			Assert.IsTrue(ImplicitConversion(typeof(BitArray), typeof(ICollection)));
-			Assert.IsTrue(ImplicitConversion(typeof(IList), typeof(IEnumerable)));
-			Assert.IsFalse(ImplicitConversion(typeof(object), typeof(string)));
-			Assert.IsFalse(ImplicitConversion(typeof(ICollection), typeof(BitArray)));
-			Assert.IsFalse(ImplicitConversion(typeof(IEnumerable), typeof(IList)));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(string), typeof(object)));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(BitArray), typeof(ICollection)));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(IList), typeof(IEnumerable)));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(object), typeof(string)));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(ICollection), typeof(BitArray)));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(IEnumerable), typeof(IList)));
 		}
 		
 		[Test]
 		public void SimpleDynamicConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(string), typeof(dynamic)));
-			Assert.IsTrue(ImplicitConversion(typeof(dynamic), typeof(string)));
-			Assert.IsTrue(ImplicitConversion(typeof(int), typeof(dynamic)));
-			Assert.IsTrue(ImplicitConversion(typeof(dynamic), typeof(int)));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(string),  typeof(dynamic)));
+			Assert.AreEqual(C.ImplicitDynamicConversion,   ImplicitConversion(typeof(dynamic), typeof(string)));
+			Assert.AreEqual(C.BoxingConversion,            ImplicitConversion(typeof(int),     typeof(dynamic)));
+			Assert.AreEqual(C.ImplicitDynamicConversion,   ImplicitConversion(typeof(dynamic), typeof(int)));
 		}
 		
 		[Test]
 		public void ParameterizedTypeConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(List<string>), typeof(ICollection<string>)));
-			Assert.IsTrue(ImplicitConversion(typeof(IList<string>), typeof(ICollection<string>)));
-			Assert.IsFalse(ImplicitConversion(typeof(List<string>), typeof(ICollection<object>)));
-			Assert.IsFalse(ImplicitConversion(typeof(IList<string>), typeof(ICollection<object>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(List<string>), typeof(ICollection<string>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(IList<string>), typeof(ICollection<string>)));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(List<string>), typeof(ICollection<object>)));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(IList<string>), typeof(ICollection<object>)));
 		}
 		
 		[Test]
 		public void ArrayConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(string[]), typeof(object[])));
-			Assert.IsTrue(ImplicitConversion(typeof(string[,]), typeof(object[,])));
-			Assert.IsFalse(ImplicitConversion(typeof(string[]), typeof(object[,])));
-			Assert.IsFalse(ImplicitConversion(typeof(object[]), typeof(string[])));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(string[]), typeof(object[])));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(string[,]), typeof(object[,])));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(string[]), typeof(object[,])));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(object[]), typeof(string[])));
 			
-			Assert.IsTrue(ImplicitConversion(typeof(string[]), typeof(IList<string>)));
-			Assert.IsFalse(ImplicitConversion(typeof(string[,]), typeof(IList<string>)));
-			Assert.IsTrue(ImplicitConversion(typeof(string[]), typeof(IList<object>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(string[]), typeof(IList<string>)));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(string[,]), typeof(IList<string>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(string[]), typeof(IList<object>)));
 			
-			Assert.IsTrue(ImplicitConversion(typeof(string[]), typeof(Array)));
-			Assert.IsTrue(ImplicitConversion(typeof(string[]), typeof(ICloneable)));
-			Assert.IsFalse(ImplicitConversion(typeof(Array), typeof(string[])));
-			Assert.IsFalse(ImplicitConversion(typeof(object), typeof(object[])));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(string[]), typeof(Array)));
+			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(string[]), typeof(ICloneable)));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(Array), typeof(string[])));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(object), typeof(object[])));
 		}
 		
 		[Test]
 		public void VarianceConversions()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(List<string>), typeof(IEnumerable<object>)));
-			Assert.IsFalse(ImplicitConversion(typeof(List<object>), typeof(IEnumerable<string>)));
-			Assert.IsTrue(ImplicitConversion(typeof(IEnumerable<string>), typeof(IEnumerable<object>)));
-			Assert.IsFalse(ImplicitConversion(typeof(ICollection<string>), typeof(ICollection<object>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                ImplicitConversion(typeof(List<string>), typeof(IEnumerable<object>)));
+			Assert.AreEqual(C.None,
+			                ImplicitConversion(typeof(List<object>), typeof(IEnumerable<string>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                ImplicitConversion(typeof(IEnumerable<string>), typeof(IEnumerable<object>)));
+			Assert.AreEqual(C.None,
+			                ImplicitConversion(typeof(ICollection<string>), typeof(ICollection<object>)));
 			
-			Assert.IsTrue(ImplicitConversion(typeof(Comparer<object>), typeof(IComparer<string>)));
-			Assert.IsTrue(ImplicitConversion(typeof(Comparer<object>), typeof(IComparer<Array>)));
-			Assert.IsFalse(ImplicitConversion(typeof(Comparer<object>), typeof(Comparer<string>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                ImplicitConversion(typeof(Comparer<object>), typeof(IComparer<string>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                ImplicitConversion(typeof(Comparer<object>), typeof(IComparer<Array>)));
+			Assert.AreEqual(C.None,
+			                ImplicitConversion(typeof(Comparer<object>), typeof(Comparer<string>)));
 			
-			Assert.IsFalse(ImplicitConversion(typeof(List<object>), typeof(IEnumerable<string>)));
-			Assert.IsTrue(ImplicitConversion(typeof(IEnumerable<string>), typeof(IEnumerable<object>)));
+			Assert.AreEqual(C.None,
+			                ImplicitConversion(typeof(List<object>), typeof(IEnumerable<string>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                ImplicitConversion(typeof(IEnumerable<string>), typeof(IEnumerable<object>)));
 			
-			Assert.IsTrue(ImplicitConversion(typeof(Func<ICollection, ICollection>), typeof(Func<IList, IEnumerable>)));
-			Assert.IsTrue(ImplicitConversion(typeof(Func<IEnumerable, IList>), typeof(Func<ICollection, ICollection>)));
-			Assert.IsFalse(ImplicitConversion(typeof(Func<ICollection, ICollection>), typeof(Func<IEnumerable, IList>)));
-			Assert.IsFalse(ImplicitConversion(typeof(Func<IList, IEnumerable>), typeof(Func<ICollection, ICollection>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                ImplicitConversion(typeof(Func<ICollection, ICollection>), typeof(Func<IList, IEnumerable>)));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                ImplicitConversion(typeof(Func<IEnumerable, IList>), typeof(Func<ICollection, ICollection>)));
+			Assert.AreEqual(C.None,
+			                ImplicitConversion(typeof(Func<ICollection, ICollection>), typeof(Func<IEnumerable, IList>)));
+			Assert.AreEqual(C.None,
+			                ImplicitConversion(typeof(Func<IList, IEnumerable>), typeof(Func<ICollection, ICollection>)));
 		}
 		
 		[Test]
-		public void PointerConversion()
+		public void ImplicitPointerConversion()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(Null), typeof(int*)));
-			Assert.IsTrue(ImplicitConversion(typeof(int*), typeof(void*)));
+			Assert.AreEqual(C.ImplicitPointerConversion, ImplicitConversion(typeof(Null), typeof(int*)));
+			Assert.AreEqual(C.ImplicitPointerConversion, ImplicitConversion(typeof(int*), typeof(void*)));
+		}
+		
+		[Test]
+		public void ExplicitPointerConversion()
+		{
+			Assert.AreEqual(C.ExplicitPointerConversion, ExplicitConversion(typeof(int*), typeof(short)));
+			Assert.AreEqual(C.ExplicitPointerConversion, ExplicitConversion(typeof(short), typeof(void*)));
+			
+			Assert.AreEqual(C.ExplicitPointerConversion, ExplicitConversion(typeof(void*), typeof(int*)));
+			Assert.AreEqual(C.ExplicitPointerConversion, ExplicitConversion(typeof(long*), typeof(byte*)));
 		}
 		
 		[Test]
 		public void NoConversionFromPointerTypeToObject()
 		{
-			Assert.IsFalse(ImplicitConversion(typeof(int*), typeof(object)));
-			Assert.IsFalse(ImplicitConversion(typeof(int*), typeof(dynamic)));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(int*), typeof(object)));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(int*), typeof(dynamic)));
 		}
 		
 		[Test]
@@ -202,16 +250,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			DefaultTypeParameter t2 = new DefaultTypeParameter(EntityType.TypeDefinition, 1, "T2");
 			DefaultTypeParameter tm = new DefaultTypeParameter(EntityType.Method, 0, "TM");
 			
-			Assert.IsFalse(conversions.ImplicitConversion(SharedTypes.Null, t));
-			Assert.IsTrue(conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
-			Assert.IsTrue(conversions.ImplicitConversion(t, SharedTypes.Dynamic));
-			Assert.IsFalse(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(SharedTypes.Null, t));
+			Assert.AreEqual(C.BoxingConversion, conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
+			Assert.AreEqual(C.BoxingConversion, conversions.ImplicitConversion(t, SharedTypes.Dynamic));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
 			
-			Assert.IsTrue(conversions.ImplicitConversion(t, t));
-			Assert.IsFalse(conversions.ImplicitConversion(t2, t));
-			Assert.IsFalse(conversions.ImplicitConversion(t, t2));
-			Assert.IsFalse(conversions.ImplicitConversion(t, tm));
-			Assert.IsFalse(conversions.ImplicitConversion(tm, t));
+			Assert.AreEqual(C.IdentityConversion, conversions.ImplicitConversion(t, t));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(t2, t));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(t, t2));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(t, tm));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(tm, t));
 		}
 		
 		[Test]
@@ -220,10 +268,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			DefaultTypeParameter t = new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T");
 			t.HasReferenceTypeConstraint = true;
 			
-			Assert.IsTrue(conversions.ImplicitConversion(SharedTypes.Null, t));
-			Assert.IsTrue(conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
-			Assert.IsTrue(conversions.ImplicitConversion(t, SharedTypes.Dynamic));
-			Assert.IsFalse(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
+			Assert.AreEqual(C.NullLiteralConversion, conversions.ImplicitConversion(SharedTypes.Null, t));
+			Assert.AreEqual(C.ImplicitReferenceConversion, conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
+			Assert.AreEqual(C.ImplicitReferenceConversion, conversions.ImplicitConversion(t, SharedTypes.Dynamic));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
 		}
 		
 		[Test]
@@ -232,10 +280,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			DefaultTypeParameter t = new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T");
 			t.HasValueTypeConstraint = true;
 			
-			Assert.IsFalse(conversions.ImplicitConversion(SharedTypes.Null, t));
-			Assert.IsTrue(conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
-			Assert.IsTrue(conversions.ImplicitConversion(t, SharedTypes.Dynamic));
-			Assert.IsTrue(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(SharedTypes.Null, t));
+			Assert.AreEqual(C.BoxingConversion, conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
+			Assert.AreEqual(C.BoxingConversion, conversions.ImplicitConversion(t, SharedTypes.Dynamic));
+			Assert.AreEqual(C.BoxingConversion, conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
 		}
 		
 		[Test]
@@ -244,14 +292,20 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			DefaultTypeParameter t = new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T");
 			t.Constraints.Add(ctx.GetTypeDefinition(typeof(StringComparer)));
 			
-			Assert.IsTrue(conversions.ImplicitConversion(SharedTypes.Null, t));
-			Assert.IsTrue(conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
-			Assert.IsTrue(conversions.ImplicitConversion(t, SharedTypes.Dynamic));
-			Assert.IsFalse(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
-			Assert.IsTrue(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(StringComparer))));
-			Assert.IsTrue(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(IComparer))));
-			Assert.IsFalse(conversions.ImplicitConversion(t, typeof(IComparer<int>).ToTypeReference().Resolve(ctx)));
-			Assert.IsTrue(conversions.ImplicitConversion(t, typeof(IComparer<string>).ToTypeReference().Resolve(ctx)));
+			Assert.AreEqual(C.NullLiteralConversion,
+			                conversions.ImplicitConversion(SharedTypes.Null, t));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                conversions.ImplicitConversion(t, SharedTypes.Dynamic));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(StringComparer))));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(IComparer))));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(t, typeof(IComparer<int>).ToTypeReference().Resolve(ctx)));
+			Assert.AreEqual(C.ImplicitReferenceConversion,
+			                conversions.ImplicitConversion(t, typeof(IComparer<string>).ToTypeReference().Resolve(ctx)));
 		}
 		
 		[Test]
@@ -260,19 +314,26 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			DefaultTypeParameter t = new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T");
 			t.Constraints.Add(ctx.GetTypeDefinition(typeof(IList)));
 			
-			Assert.IsFalse(conversions.ImplicitConversion(SharedTypes.Null, t));
-			Assert.IsTrue(conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
-			Assert.IsTrue(conversions.ImplicitConversion(t, SharedTypes.Dynamic));
-			Assert.IsFalse(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
-			Assert.IsTrue(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(IList))));
-			Assert.IsTrue(conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(IEnumerable))));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(SharedTypes.Null, t));
+			Assert.AreEqual(C.BoxingConversion,
+			                conversions.ImplicitConversion(t, KnownTypeReference.Object.Resolve(ctx)));
+			Assert.AreEqual(C.BoxingConversion,
+			                conversions.ImplicitConversion(t, SharedTypes.Dynamic));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(ValueType))));
+			Assert.AreEqual(C.BoxingConversion,
+			                conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(IList))));
+			Assert.AreEqual(C.BoxingConversion,
+			                conversions.ImplicitConversion(t, ctx.GetTypeDefinition(typeof(IEnumerable))));
 		}
 		
 		[Test]
 		public void UserDefinedImplicitConversion()
 		{
-			Assert.IsTrue(ImplicitConversion(typeof(DateTime), typeof(DateTimeOffset)));
-			Assert.IsFalse(ImplicitConversion(typeof(DateTimeOffset), typeof(DateTime)));
+			Conversion c = ImplicitConversion(typeof(DateTime), typeof(DateTimeOffset));
+			Assert.IsTrue(c.IsImplicitConversion && c.IsUserDefined);
+			Assert.AreEqual("System.DateTimeOffset.op_Implicit", c.Method.FullName);
+			
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(DateTimeOffset), typeof(DateTime)));
 		}
 		
 		[Test]
@@ -286,7 +347,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			Assert.IsFalse(ImplicitConversion(typeof(DateTime?), typeof(DateTimeOffset)));
 		}
 		
-		bool IntegerLiteralConversion(object value, Type to)
+		Conversion IntegerLiteralConversion(object value, Type to)
 		{
 			IType fromType = value.GetType().ToTypeReference().Resolve(ctx);
 			ConstantResolveResult crr = new ConstantResolveResult(fromType, value);
@@ -416,6 +477,25 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			Assert.AreEqual(0, BetterConversion(typeof(byte), typeof(ulong?), typeof(int)));
 			Assert.AreEqual(2, BetterConversion(typeof(ushort?), typeof(long?), typeof(int?)));
 			Assert.AreEqual(0, BetterConversion(typeof(sbyte), typeof(int?), typeof(uint?)));
+		}
+		
+		[Test]
+		public void ExpansiveInheritance()
+		{
+			SimpleProjectContent pc = new SimpleProjectContent();
+			DefaultTypeDefinition a = new DefaultTypeDefinition(pc, string.Empty, "A");
+			DefaultTypeDefinition b = new DefaultTypeDefinition(pc, string.Empty, "B");
+			// interface A<in U>
+			a.Kind = TypeKind.Interface;
+			a.TypeParameters.Add(new DefaultTypeParameter(EntityType.TypeDefinition, 0, "U") { Variance = VarianceModifier.Contravariant });
+			// interface B<X> : A<A<B<X>>> { }
+			DefaultTypeParameter x = new DefaultTypeParameter(EntityType.TypeDefinition, 0, "X");
+			b.TypeParameters.Add(x);
+			b.BaseTypes.Add(new ParameterizedType(a, new[] { new ParameterizedType(a, new [] { new ParameterizedType(b, new [] { x }) } ) }));
+			
+			IType type1 = new ParameterizedType(b, new[] { KnownTypeReference.Double.Resolve(ctx) });
+			IType type2 = new ParameterizedType(a, new [] { new ParameterizedType(b, new[] { KnownTypeReference.String.Resolve(ctx) }) });
+			Assert.IsFalse(conversions.ImplicitConversion(type1, type2));
 		}
 	}
 }

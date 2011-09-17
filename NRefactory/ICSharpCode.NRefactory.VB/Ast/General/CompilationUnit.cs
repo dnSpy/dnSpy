@@ -22,10 +22,10 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public AstNode GetNodeAt (int line, int column)
 		{
-			return GetNodeAt (new AstLocation (line, column));
+			return GetNodeAt (new TextLocation (line, column));
 		}
 		
-		public AstNode GetNodeAt (AstLocation location)
+		public AstNode GetNodeAt (TextLocation location)
 		{
 			AstNode node = this;
 			while (node.FirstChild != null) {
@@ -46,10 +46,10 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public IEnumerable<AstNode> GetNodesBetween (int startLine, int startColumn, int endLine, int endColumn)
 		{
-			return GetNodesBetween (new AstLocation (startLine, startColumn), new AstLocation (endLine, endColumn));
+			return GetNodesBetween (new TextLocation (startLine, startColumn), new TextLocation (endLine, endColumn));
 		}
 		
-		public IEnumerable<AstNode> GetNodesBetween (AstLocation start, AstLocation end)
+		public IEnumerable<AstNode> GetNodesBetween (TextLocation start, TextLocation end)
 		{
 			AstNode node = this;
 			while (node != null) {

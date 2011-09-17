@@ -22,3 +22,20 @@ Features:
 
 For integration into SharpDevelop:
 - Review NR and DOM changes done in the timeframe
+
+
+
+Idea for automated testing of the NR resolver:
+
+Given some source code + the references,
+  Compile source code with MS C# Compiler
+  Load references into NR.TypeSystem
+  Load source code into NR.TypeSystem
+  Load compiled assembly into NR.TypeSystem
+  Compare entities 3a. and 3b. (but ignore compiled-generated members - ILSpy has logic to detect those)
+  For each method:
+    Resolve whole method with ResolveVisitor
+    Ensure there are no errors detected
+    Extract list of methods being called (incl. op_Implicit etc.)
+    Compare with methods being called in compiled assembly. (also compare type arguments)
+

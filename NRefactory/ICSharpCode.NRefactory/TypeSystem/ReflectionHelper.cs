@@ -1,5 +1,20 @@
-﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
@@ -22,6 +37,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// A reflection class used to represent <c>dynamic</c>.
 		/// </summary>
 		public sealed class Dynamic {}
+		
+		/// <summary>
+		/// A reflection class used to represent an unbound type argument.
+		/// </summary>
+		public sealed class UnboundTypeArgument {}
 		
 		#region ITypeResolveContext.GetTypeDefinition(Type)
 		/// <summary>
@@ -78,10 +98,15 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				ITypeReference def = ToTypeReference(type.GetGenericTypeDefinition(), entity);
 				Type[] arguments = type.GetGenericArguments();
 				ITypeReference[] args = new ITypeReference[arguments.Length];
+				bool allUnbound = true;
 				for (int i = 0; i < arguments.Length; i++) {
 					args[i] = ToTypeReference(arguments[i], entity);
+					allUnbound &= args[i].Equals(SharedTypes.UnboundTypeArgument);
 				}
-				return new ParameterizedTypeReference(def, args);
+				if (allUnbound)
+					return def;
+				else
+					return new ParameterizedTypeReference(def, args);
 			} else if (type.IsArray) {
 				return new ArrayTypeReference(ToTypeReference(type.GetElementType(), entity), type.GetArrayRank());
 			} else if (type.IsPointer) {
@@ -111,6 +136,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 					return SharedTypes.Dynamic;
 				else if (type == typeof(Null))
 					return SharedTypes.Null;
+				else if (type == typeof(UnboundTypeArgument))
+					return SharedTypes.UnboundTypeArgument;
 				ITypeReference baseTypeRef = ToTypeReference(type.DeclaringType, entity);
 				int typeParameterCount;
 				string name = SplitTypeParameterCountFromReflectionName(type.Name, out typeParameterCount);
@@ -175,7 +202,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			KnownTypeReference.UInt64,
 			KnownTypeReference.Single,
 			KnownTypeReference.Double,
-			new GetClassTypeReference("System", "Decimal", 0),
+			KnownTypeReference.Decimal,
 			new GetClassTypeReference("System", "DateTime", 0),
 			SharedTypes.UnknownType, // (TypeCode)17 has no enum value?
 			KnownTypeReference.String
@@ -193,25 +220,31 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		#endregion
 		
 		#region GetTypeCode
-		static readonly Dictionary<string, TypeCode> typeNameToCodeDict = new Dictionary<string, TypeCode> {
-			{ "Object",   TypeCode.Object },
-			{ "DBNull",   TypeCode.DBNull },
-			{ "Boolean",  TypeCode.Boolean },
-			{ "Char",     TypeCode.Char },
-			{ "SByte",    TypeCode.SByte },
-			{ "Byte",     TypeCode.Byte },
-			{ "Int16",    TypeCode.Int16 },
-			{ "UInt16",   TypeCode.UInt16 },
-			{ "Int32",    TypeCode.Int32 },
-			{ "UInt32",   TypeCode.UInt32 },
-			{ "Int64",    TypeCode.Int64 },
-			{ "UInt64",   TypeCode.UInt64 },
-			{ "Single",   TypeCode.Single },
-			{ "Double",   TypeCode.Double },
-			{ "Decimal",  TypeCode.Decimal },
-			{ "DateTime", TypeCode.DateTime },
-			{ "String",   TypeCode.String }
+		static readonly string[] typeNamesByTypeCode = {
+			"Void", "Object", "DBNull", "Boolean", "Char",
+			"SByte", "Byte", "Int16", "UInt16", "Int32", "UInt32", "Int64", "UInt64",
+			"Single", "Double", "Decimal", "DateTime", null, "String"
 		};
+		
+		static readonly string[] csharpTypeNamesByTypeCode = {
+			"void", "object", null, "bool", "char",
+			"sbyte", "byte", "short", "ushort", "int", "uint", "long", "ulong",
+			"float", "double", "decimal", null, null, "string"
+		};
+		
+		internal static int ByTypeCodeArraySize {
+			get { return typeNamesByTypeCode.Length; }
+		}
+		
+		public static string GetShortNameByTypeCode(TypeCode typeCode)
+		{
+			return typeNamesByTypeCode[(int)typeCode];
+		}
+		
+		public static string GetCSharpNameByTypeCode(TypeCode typeCode)
+		{
+			return csharpTypeNamesByTypeCode[(int)typeCode];
+		}
 		
 		/// <summary>
 		/// Gets the type code for the specified type, or TypeCode.Empty if none of the other type codes matches.
@@ -219,11 +252,15 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public static TypeCode GetTypeCode(IType type)
 		{
 			ITypeDefinition def = type as ITypeDefinition;
-			TypeCode typeCode;
-			if (def != null && def.TypeParameterCount == 0 && def.Namespace == "System" && typeNameToCodeDict.TryGetValue(def.Name, out typeCode))
-				return typeCode;
-			else
-				return TypeCode.Empty;
+			if (def != null && def.TypeParameterCount == 0 && def.Namespace == "System") {
+				string[] typeNames = typeNamesByTypeCode;
+				string name = def.Name;
+				for (int i = 1; i < typeNames.Length; i++) {
+					if (name == typeNames[i])
+						return (TypeCode)i;
+				}
+			}
+			return TypeCode.Empty;
 		}
 		#endregion
 		

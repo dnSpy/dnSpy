@@ -1,71 +1,62 @@
-﻿// Copyright (c) 2010 AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under MIT X11 license (for details please see \doc\license.txt)
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 {
 	/// <summary>
-	/// Represents a specialized IProperty (e.g. after type substitution).
+	/// Represents a specialized IProperty (property after type substitution).
 	/// </summary>
-	public class SpecializedProperty : DefaultProperty
+	public class SpecializedProperty : SpecializedParameterizedMember, IProperty
 	{
-		readonly IMember memberDefinition;
-		IType declaringType;
+		readonly IProperty propertyDefinition;
 		
-		public SpecializedProperty(IProperty p) : base(p)
+		public SpecializedProperty(IType declaringType, IProperty propertyDefinition)
+			: base(declaringType, propertyDefinition)
 		{
-			this.memberDefinition = p.MemberDefinition;
-			this.declaringType = p.DeclaringType;
+			this.propertyDefinition = propertyDefinition;
 		}
 		
-		public override IType DeclaringType {
-			get { return declaringType; }
-		}
-		
-		public void SetDeclaringType(IType declaringType)
+		internal SpecializedProperty(IType declaringType, IProperty propertyDefinition, TypeVisitor substitution, ITypeResolveContext context)
+			: base(declaringType, propertyDefinition, substitution, context)
 		{
-			CheckBeforeMutation();
-			this.declaringType = declaringType;
+			this.propertyDefinition = propertyDefinition;
 		}
 		
-		public override IMember MemberDefinition {
-			get { return memberDefinition; }
+		public bool CanGet {
+			get { return propertyDefinition.CanGet; }
 		}
 		
-		public override int GetHashCode()
-		{
-			int hashCode = 0;
-			unchecked {
-				if (memberDefinition != null)
-					hashCode += 1000000007 * memberDefinition.GetHashCode();
-				if (declaringType != null)
-					hashCode += 1000000009 * declaringType.GetHashCode();
-			}
-			return hashCode;
+		public bool CanSet {
+			get { return propertyDefinition.CanSet; }
 		}
 		
-		public override bool Equals(object obj)
-		{
-			SpecializedProperty other = obj as SpecializedProperty;
-			if (other == null)
-				return false;
-			return object.Equals(this.memberDefinition, other.memberDefinition) && object.Equals(this.declaringType, other.declaringType);
+		public IAccessor Getter {
+			get { return propertyDefinition.Getter; }
 		}
 		
-		/// <summary>
-		/// Performs type substitution in parameter types and in the return type.
-		/// </summary>
-		public void SubstituteTypes(Func<ITypeReference, ITypeReference> substitution)
-		{
-			this.ReturnType = substitution(this.ReturnType);
-			var p = this.Parameters;
-			for (int i = 0; i < p.Count; i++) {
-				ITypeReference newType = substitution(p[i].Type);
-				if (newType != p[i].Type) {
-					p[i] = new DefaultParameter(p[i]) { Type = newType };
-				}
-			}
+		public IAccessor Setter {
+			get { return propertyDefinition.Setter; }
+		}
+		
+		public bool IsIndexer {
+			get { return propertyDefinition.IsIndexer; }
 		}
 	}
 }

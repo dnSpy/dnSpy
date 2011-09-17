@@ -30,13 +30,13 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public string Value { get; set; }
 		
-		AstLocation startLocation;
-		public override AstLocation StartLocation {
+		TextLocation startLocation;
+		public override TextLocation StartLocation {
 			get { return startLocation; }
 		}
 		
-		AstLocation endLocation;
-		public override AstLocation EndLocation {
+		TextLocation endLocation;
+		public override TextLocation EndLocation {
 			get { return endLocation; }
 		}
 		
@@ -45,7 +45,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			this.Value = string.Empty;
 		}
 		
-		public XmlLiteralString(string value, AstLocation startLocation, AstLocation endLocation)
+		public XmlLiteralString(string value, TextLocation startLocation, TextLocation endLocation)
 		{
 			this.Value = value;
 			this.startLocation = startLocation;

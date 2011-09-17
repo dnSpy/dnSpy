@@ -169,7 +169,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitBaseReferenceExpression(CSharp.BaseReferenceExpression baseReferenceExpression, object data)
 		{
-			InstanceExpression result = new InstanceExpression(InstanceExpressionType.MyBase, ConvertLocation(baseReferenceExpression.StartLocation));
+			InstanceExpression result = new InstanceExpression(InstanceExpressionType.MyBase, baseReferenceExpression.StartLocation);
 			
 			return EndNode(baseReferenceExpression, result);
 		}
@@ -357,7 +357,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		public AstNode VisitIdentifierExpression(CSharp.IdentifierExpression identifierExpression, object data)
 		{
 			var expr = new IdentifierExpression();
-			expr.Identifier = new Identifier(identifierExpression.Identifier, AstLocation.Empty);
+			expr.Identifier = new Identifier(identifierExpression.Identifier, TextLocation.Empty);
 			ConvertNodes(identifierExpression.TypeArguments, expr.TypeArguments);
 			
 			return EndNode(identifierExpression, expr);
@@ -410,7 +410,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var memberAccessExpression = new MemberAccessExpression();
 			
 			memberAccessExpression.Target = (Expression)memberReferenceExpression.Target.AcceptVisitor(this, data);
-			memberAccessExpression.MemberName = new Identifier(memberReferenceExpression.MemberName, AstLocation.Empty);
+			memberAccessExpression.MemberName = new Identifier(memberReferenceExpression.MemberName, TextLocation.Empty);
 			ConvertNodes(memberReferenceExpression.TypeArguments, memberAccessExpression.TypeArguments);
 			
 			return EndNode(memberReferenceExpression, memberAccessExpression);
@@ -418,22 +418,22 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitNamedArgumentExpression(CSharp.NamedArgumentExpression namedArgumentExpression, object data)
 		{
-			Expression expr;
-			
-			if (namedArgumentExpression.Parent is CSharp.ArrayInitializerExpression) {
-				expr = new FieldInitializerExpression {
-					IsKey = true,
-					Identifier = namedArgumentExpression.Identifier,
-					Expression = (Expression)namedArgumentExpression.Expression.AcceptVisitor(this, data)
-				};
-			} else {
-				expr = new NamedArgumentExpression {
-					Identifier = namedArgumentExpression.Identifier,
-					Expression = (Expression)namedArgumentExpression.Expression.AcceptVisitor(this, data)
-				};
-			}
+			Expression expr = new NamedArgumentExpression {
+				Identifier = namedArgumentExpression.Identifier,
+				Expression = (Expression)namedArgumentExpression.Expression.AcceptVisitor(this, data)
+			};
 			
 			return EndNode(namedArgumentExpression, expr);
+		}
+		
+		public AstNode VisitNamedExpression(CSharp.NamedExpression namedExpression, object data)
+		{
+			Expression expr = new FieldInitializerExpression {
+				IsKey = true,
+				Identifier = namedExpression.Identifier,
+				Expression = (Expression)namedExpression.Expression.AcceptVisitor(this, data)
+			};
+			return EndNode(namedExpression, expr);
 		}
 		
 		public AstNode VisitNullReferenceExpression(CSharp.NullReferenceExpression nullReferenceExpression, object data)
@@ -455,7 +455,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			var expr = new AnonymousObjectCreationExpression();
 			
-			ConvertNodes(anonymousTypeCreateExpression.Initializer, expr.Initializer);
+			ConvertNodes(anonymousTypeCreateExpression.Initializers, expr.Initializer);
 			
 			return EndNode(anonymousTypeCreateExpression, expr);
 		}
@@ -599,7 +599,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitThisReferenceExpression(CSharp.ThisReferenceExpression thisReferenceExpression, object data)
 		{
-			InstanceExpression result = new InstanceExpression(InstanceExpressionType.Me, ConvertLocation(thisReferenceExpression.StartLocation));
+			InstanceExpression result = new InstanceExpression(InstanceExpressionType.Me, thisReferenceExpression.StartLocation);
 			return EndNode(thisReferenceExpression, result);
 		}
 		
@@ -798,7 +798,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			ConvertNodes(delegateDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
 			ConvertNodes(delegateDeclaration.ModifierTokens, result.ModifierTokens);
-			result.Name = new Identifier(delegateDeclaration.Name, AstLocation.Empty);
+			result.Name = new Identifier(delegateDeclaration.Name, TextLocation.Empty);
 			result.IsSub = IsSub(delegateDeclaration.ReturnType);
 			ConvertNodes(delegateDeclaration.Parameters, result.Parameters);
 			ConvertNodes(delegateDeclaration.TypeParameters, result.TypeParameters);
@@ -822,7 +822,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			// TODO add missing features!
 			
-			if (typeDeclaration.ClassType == ClassType.Enum) {
+			if (typeDeclaration.ClassType == CSharp.ClassType.Enum) {
 				var type = new EnumDeclaration();
 				CopyAnnotations(typeDeclaration, type);
 				
@@ -835,7 +835,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					type.UnderlyingType = (AstType)first.AcceptVisitor(this, data);
 				}
 				
-				type.Name = new Identifier(typeDeclaration.Name, AstLocation.Empty);
+				type.Name = new Identifier(typeDeclaration.Name, TextLocation.Empty);
 				
 				ConvertNodes(typeDeclaration.Members, type.Members);
 				
@@ -846,7 +846,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				
 				CSharp.Attribute stdModAttr;
 				
-				if (typeDeclaration.ClassType == ClassType.Class && HasAttribute(typeDeclaration.Attributes, "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute", out stdModAttr)) {
+				if (typeDeclaration.ClassType == CSharp.ClassType.Class && HasAttribute(typeDeclaration.Attributes, "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute", out stdModAttr)) {
 					type.ClassType = ClassType.Module;
 					// remove AttributeSection if only one attribute is present
 					var attrSec = (CSharp.AttributeSection)stdModAttr.Parent;
@@ -854,8 +854,21 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 						attrSec.Remove();
 					else
 						stdModAttr.Remove();
-				} else
-					type.ClassType = typeDeclaration.ClassType;
+				} else {
+					switch (typeDeclaration.ClassType) {
+						case CSharp.ClassType.Class:
+							type.ClassType = ClassType.Class;
+							break;
+						case CSharp.ClassType.Struct:
+							type.ClassType = ClassType.Struct;
+							break;
+						case CSharp.ClassType.Interface:
+							type.ClassType = ClassType.Interface;
+							break;
+						default:
+							throw new InvalidOperationException("Invalid value for ClassType");
+					}
+				}
 				
 				if ((typeDeclaration.Modifiers & CSharp.Modifiers.Static) == CSharp.Modifiers.Static) {
 					type.ClassType = ClassType.Module;
@@ -890,7 +903,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var imports = new ImportsStatement();
 			
 			var clause = new AliasImportsClause() {
-				Name = new Identifier(usingAliasDeclaration.Alias, AstLocation.Empty),
+				Name = new Identifier(usingAliasDeclaration.Alias, TextLocation.Empty),
 				Alias = (AstType)usingAliasDeclaration.Import.AcceptVisitor(this, data)
 			};
 			
@@ -1356,11 +1369,11 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			return EndNode(yieldBreakStatement, new ReturnStatement());
 		}
 		
-		public AstNode VisitYieldStatement(CSharp.YieldStatement yieldStatement, object data)
+		public AstNode VisitYieldReturnStatement(CSharp.YieldReturnStatement yieldReturnStatement, object data)
 		{
 			var frame = members.Peek();
 			frame.inIterator = true;
-			return EndNode(yieldStatement, new YieldStatement((Expression)yieldStatement.Expression.AcceptVisitor(this, data)));
+			return EndNode(yieldReturnStatement, new YieldStatement((Expression)yieldReturnStatement.Expression.AcceptVisitor(this, data)));
 		}
 		
 		public AstNode VisitAccessor(CSharp.Accessor accessor, object data)
@@ -1392,8 +1405,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			var result = new InvocationExpression(
 				new MemberAccessExpression() {
-					Target = new InstanceExpression(constructorInitializer.ConstructorInitializerType == CSharp.ConstructorInitializerType.This ? InstanceExpressionType.Me : InstanceExpressionType.MyBase, AstLocation.Empty),
-					MemberName = new Identifier("New", AstLocation.Empty)
+					Target = new InstanceExpression(constructorInitializer.ConstructorInitializerType == CSharp.ConstructorInitializerType.This ? InstanceExpressionType.Me : InstanceExpressionType.MyBase, TextLocation.Empty),
+					MemberName = new Identifier("New", TextLocation.Empty)
 				}
 			);
 			ConvertNodes(constructorInitializer.Arguments, result.Arguments);
@@ -1417,7 +1430,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var result = new EnumMemberDeclaration();
 			
 			ConvertNodes(enumMemberDeclaration.Attributes, result.Attributes);
-			result.Name = new Identifier(enumMemberDeclaration.Name, AstLocation.Empty);
+			result.Name = new Identifier(enumMemberDeclaration.Name, TextLocation.Empty);
 			result.Value = (Expression)enumMemberDeclaration.Initializer.AcceptVisitor(this, data);
 			
 			return EndNode(enumMemberDeclaration, result);
@@ -1458,7 +1471,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				customEventDeclaration.Modifiers &= ~CSharp.Modifiers.Static;
 			result.Modifiers = ConvertModifiers(customEventDeclaration.Modifiers, customEventDeclaration);
 			result.IsCustom = true;
-			result.Name = new Identifier(customEventDeclaration.Name, AstLocation.Empty);
+			result.Name = new Identifier(customEventDeclaration.Name, TextLocation.Empty);
 			result.ReturnType = (AstType)customEventDeclaration.ReturnType.AcceptVisitor(this, data);
 			if (!customEventDeclaration.PrivateImplementationType.IsNull)
 				result.ImplementsClause.Add(
@@ -1501,7 +1514,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			if (types.Any() && types.Peek().ClassType == ClassType.Module)
 				indexerDeclaration.Modifiers &= ~CSharp.Modifiers.Static;
 			decl.Modifiers = ConvertModifiers(indexerDeclaration.Modifiers, indexerDeclaration);
-			decl.Name = new Identifier(indexerDeclaration.Name, AstLocation.Empty);
+			decl.Name = new Identifier(indexerDeclaration.Name, TextLocation.Empty);
 			ConvertNodes(indexerDeclaration.Parameters, decl.Parameters);
 			ConvertNodes(indexerDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), decl.ReturnTypeAttributes);
 			if (!indexerDeclaration.PrivateImplementationType.IsNull)
@@ -1513,7 +1526,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			if (!decl.Setter.IsNull) {
 				decl.Setter.Parameters.Add(new ParameterDeclaration() {
-				                           	Name = new Identifier("value", AstLocation.Empty),
+				                           	Name = new Identifier("value", TextLocation.Empty),
 				                           	Type = (AstType)indexerDeclaration.ReturnType.AcceptVisitor(this, data),
 				                           });
 			}
@@ -1548,7 +1561,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				
 				ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
 				ConvertNodes(methodDeclaration.ModifierTokens, result.ModifierTokens);
-				result.Name = new Identifier(methodDeclaration.Name, AstLocation.Empty);
+				result.Name = new Identifier(methodDeclaration.Name, TextLocation.Empty);
 				result.IsSub = IsSub(methodDeclaration.ReturnType);
 				ConvertNodes(methodDeclaration.Parameters, result.Parameters);
 				ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), result.ReturnTypeAttributes);
@@ -1567,7 +1580,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				
 				ConvertNodes(methodDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), result.Attributes);
 				ConvertNodes(methodDeclaration.ModifierTokens, result.ModifierTokens);
-				result.Name = new Identifier(methodDeclaration.Name, AstLocation.Empty);
+				result.Name = new Identifier(methodDeclaration.Name, TextLocation.Empty);
 				result.IsSub = IsSub(methodDeclaration.ReturnType);
 				ConvertNodes(methodDeclaration.Parameters, result.Parameters);
 				ConvertNodes(methodDeclaration.TypeParameters, result.TypeParameters);
@@ -1814,7 +1827,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				block.Attributes.Add(new Ast.Attribute() { Type = new SimpleType("Out") });
 				param.Attributes.Add(block);
 			}
-			param.Name = new Identifier(parameterDeclaration.Name, AstLocation.Empty);
+			param.Name = new Identifier(parameterDeclaration.Name, TextLocation.Empty);
 			param.Type = (AstType)parameterDeclaration.Type.AcceptVisitor(this, data);
 			param.OptionalValue = (Expression)parameterDeclaration.DefaultExpression.AcceptVisitor(this, data);
 			if (!param.OptionalValue.IsNull)
@@ -1851,7 +1864,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			ConvertNodes(propertyDeclaration.Attributes.Where(section => section.AttributeTarget != "return"), decl.Attributes);
 			decl.Getter = (Accessor)propertyDeclaration.Getter.AcceptVisitor(this, data);
 			decl.Modifiers = ConvertModifiers(propertyDeclaration.Modifiers, propertyDeclaration);
-			decl.Name = new Identifier(propertyDeclaration.Name, AstLocation.Empty);
+			decl.Name = new Identifier(propertyDeclaration.Name, TextLocation.Empty);
 			ConvertNodes(propertyDeclaration.Attributes.Where(section => section.AttributeTarget == "return"), decl.ReturnTypeAttributes);
 			if (!propertyDeclaration.PrivateImplementationType.IsNull)
 				decl.ImplementsClause.Add(
@@ -1862,7 +1875,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			if (!decl.Setter.IsNull) {
 				decl.Setter.Parameters.Add(new ParameterDeclaration() {
-				                           	Name = new Identifier("value", AstLocation.Empty),
+				                           	Name = new Identifier("value", TextLocation.Empty),
 				                           	Type = (AstType)propertyDeclaration.ReturnType.AcceptVisitor(this, data),
 				                           });
 			}
@@ -1925,7 +1938,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			else
 				target = (AstType)memberType.Target.AcceptVisitor(this, data);
 			
-			var type = new QualifiedType(target, new Identifier(memberType.MemberName, AstLocation.Empty));
+			var type = new QualifiedType(target, new Identifier(memberType.MemberName, TextLocation.Empty));
 			ConvertNodes(memberType.TypeArguments, type.TypeArguments);
 			
 			return EndNode(memberType, type);
@@ -2045,7 +2058,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				.GetChildrenByRole(CSharp.AstNode.Roles.Constraint)
 				.SingleOrDefault(c => c.TypeParameter == typeParameterDeclaration.Name);
 			
-			ConvertNodes(constraint == null ? Enumerable.Empty<CSharp.AstType>() : constraint.BaseTypes, param.Constraints);
+			if (constraint != null)
+				ConvertNodes(constraint.BaseTypes, param.Constraints);
 			
 			// TODO : typeParameterDeclaration.Attributes get lost?
 			//ConvertNodes(typeParameterDeclaration.Attributes
@@ -2065,7 +2079,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				var convertedModifiers = ConvertModifiers(mod.Modifier, mod.Parent);
 				VBModifierToken token = null;
 				if (convertedModifiers != Modifiers.None) {
-					token = new VBModifierToken(AstLocation.Empty, convertedModifiers);
+					token = new VBModifierToken(TextLocation.Empty, convertedModifiers);
 					return EndNode(cSharpTokenNode, token);
 				}
 				return EndNode(cSharpTokenNode, token);
@@ -2110,7 +2124,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				mod |= Modifiers.ReadOnly;
 			
 			if ((modifier & CSharp.Modifiers.Override) == CSharp.Modifiers.Override)
-				mod |= Modifiers.Overrides;
+				mod |= Modifiers.Override;
 			if ((modifier & CSharp.Modifiers.Virtual) == CSharp.Modifiers.Virtual)
 				mod |= Modifiers.Overridable;
 			
@@ -2149,7 +2163,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		
 		public AstNode VisitIdentifier(CSharp.Identifier identifier, object data)
 		{
-			var ident = new Identifier(identifier.Name, ConvertLocation(identifier.StartLocation));
+			var ident = new Identifier(identifier.Name, identifier.StartLocation);
 			
 			return EndNode(identifier, ident);
 		}
@@ -2166,11 +2180,6 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				if (n != null)
 					result.Add(n);
 			}
-		}
-		
-		AstLocation ConvertLocation(CSharp.AstLocation location)
-		{
-			return new AstLocation(location.Line, location.Column);
 		}
 		
 		T EndNode<T>(CSharp.AstNode node, T result) where T : VB.AstNode

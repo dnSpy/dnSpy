@@ -17,7 +17,7 @@ namespace ICSharpCode.NRefactory.VB
 	/// <summary>
 	/// Description of OutputVisitor.
 	/// </summary>
-	public class OutputVisitor : IAstVisitor<object, object>, IPatternAstVisitor<object, object>
+	public class OutputVisitor : IAstVisitor<object, object>
 	{
 		readonly IOutputFormatter formatter;
 		readonly VBFormattingOptions policy;
@@ -115,7 +115,7 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(parameterDeclaration);
 			WriteAttributes(parameterDeclaration.Attributes);
 			WriteModifiers(parameterDeclaration.ModifierTokens);
-			parameterDeclaration.Name.AcceptVisitor(this, data);
+			WriteIdentifier(parameterDeclaration.Name.Name);
 			if (!parameterDeclaration.Type.IsNull) {
 				WriteKeyword("As");
 				parameterDeclaration.Type.AcceptVisitor(this, data);
@@ -270,20 +270,16 @@ namespace ICSharpCode.NRefactory.VB
 		void WriteClassTypeKeyword(TypeDeclaration typeDeclaration)
 		{
 			switch (typeDeclaration.ClassType) {
-				case ICSharpCode.NRefactory.TypeSystem.ClassType.Class:
+				case ClassType.Class:
 					WriteKeyword("Class");
 					break;
-				case ICSharpCode.NRefactory.TypeSystem.ClassType.Enum:
-					break;
-				case ICSharpCode.NRefactory.TypeSystem.ClassType.Interface:
+				case ClassType.Interface:
 					WriteKeyword("Interface");
 					break;
-				case ICSharpCode.NRefactory.TypeSystem.ClassType.Struct:
+				case ClassType.Struct:
 					WriteKeyword("Structure");
 					break;
-				case ICSharpCode.NRefactory.TypeSystem.ClassType.Delegate:
-					break;
-				case ICSharpCode.NRefactory.TypeSystem.ClassType.Module:
+				case ClassType.Module:
 					WriteKeyword("Module");
 					break;
 				default:
@@ -683,43 +679,6 @@ namespace ICSharpCode.NRefactory.VB
 			WriteTypeArguments(simpleType.TypeArguments);
 			
 			return EndNode(simpleType);
-		}
-		#endregion
-		
-		#region Pattern Matching
-		public object VisitAnyNode(AnyNode anyNode, object data)
-		{
-			throw new NotImplementedException();
-		}
-		
-		public object VisitBackreference(Backreference backreference, object data)
-		{
-			throw new NotImplementedException();
-		}
-		
-		public object VisitChoice(Choice choice, object data)
-		{
-			throw new NotImplementedException();
-		}
-		
-		public object VisitNamedNode(NamedNode namedNode, object data)
-		{
-			throw new NotImplementedException();
-		}
-		
-		public object VisitRepeat(Repeat repeat, object data)
-		{
-			throw new NotImplementedException();
-		}
-		
-		public object VisitOptionalNode(OptionalNode optionalNode, object data)
-		{
-			throw new NotImplementedException();
-		}
-		
-		public object VisitIdentifierExpressionBackreference(IdentifierExpressionBackreference identifierExpressionBackreference, object data)
-		{
-			throw new NotImplementedException();
 		}
 		#endregion
 		

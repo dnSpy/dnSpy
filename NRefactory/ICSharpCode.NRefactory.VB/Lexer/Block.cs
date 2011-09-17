@@ -33,11 +33,11 @@ namespace ICSharpCode.NRefactory.VB.Parser
 	{
 		public static readonly Block Default = new Block() {
 			context = Context.Global,
-			lastExpressionStart = AstLocation.Empty
+			lastExpressionStart = TextLocation.Empty
 		};
 		
 		public Context context;
-		public AstLocation lastExpressionStart;
+		public TextLocation lastExpressionStart;
 		public bool isClosed;
 		
 		public override string ToString()

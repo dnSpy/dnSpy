@@ -41,7 +41,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				if ((m & newValue) != 0) {
 					if ((m & oldValue) == 0) {
 						// Modifier was added
-						var newToken = new VBModifierToken(AstLocation.Empty, m);
+						var newToken = new VBModifierToken(TextLocation.Empty, m);
 						node.InsertChildAfter(insertionPos, newToken, ModifierRole);
 						insertionPos = newToken;
 					} else {
