@@ -23,6 +23,7 @@ using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.VB;
+using ICSharpCode.NRefactory.VB.Ast;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.VB
@@ -77,23 +78,73 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public void WriteIdentifier(string identifier)
 		{
-			MemberReference memberRef = GetCurrentMemberReference();
-			
-			if (memberRef != null)
+			object memberRef = GetCurrentMemberReference();
+
+			if (memberRef != null) {
 				output.WriteReference(identifier, memberRef);
-			else
-				output.Write(identifier);
+				return;
+			}
+
+			var definition = GetCurrentLocalDefinition();
+			if (definition != null) {
+				output.WriteDefinition(identifier, definition);
+				return;
+			}
+
+			memberRef = GetCurrentLocalReference();
+			if (memberRef != null) {
+				output.WriteReference(identifier, memberRef, true);
+				return;
+			}
+
+			output.Write(identifier);
 		}
 
 		MemberReference GetCurrentMemberReference()
 		{
 			AstNode node = nodeStack.Peek();
 			MemberReference memberRef = node.Annotation<MemberReference>();
-			// TODO : implement this!
-//			if (memberRef == null && node.Role == AstNode.Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreateExpression)) {
-//				memberRef = node.Parent.Annotation<MemberReference>();
-//			}
+			if (memberRef == null && node.Role == AstNode.Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreationExpression)) {
+				memberRef = node.Parent.Annotation<MemberReference>();
+			}
 			return memberRef;
+		}
+
+		object GetCurrentLocalReference()
+		{
+			AstNode node = nodeStack.Peek();
+			ILVariable variable = node.Annotation<ILVariable>();
+			if (variable != null) {
+				if (variable.OriginalParameter != null)
+					return variable.OriginalParameter;
+				//if (variable.OriginalVariable != null)
+				//    return variable.OriginalVariable;
+				return variable;
+			}
+			return null;
+		}
+
+		object GetCurrentLocalDefinition()
+		{
+			AstNode node = nodeStack.Peek();
+			var parameterDef = node.Annotation<ParameterDefinition>();
+			if (parameterDef != null)
+				return parameterDef;
+
+			if (node is VariableInitializer || node is CatchBlock || node is ForEachStatement) {
+				var variable = node.Annotation<ILVariable>();
+				if (variable != null) {
+					if (variable.OriginalParameter != null)
+						return variable.OriginalParameter;
+					//if (variable.OriginalVariable != null)
+					//    return variable.OriginalVariable;
+					return variable;
+				} else {
+
+				}
+			}
+
+			return null;
 		}
 		
 		public void WriteKeyword(string keyword)
