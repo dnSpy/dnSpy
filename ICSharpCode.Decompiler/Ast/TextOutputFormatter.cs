@@ -19,9 +19,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
@@ -198,48 +198,51 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
+		Stack<TextLocation> startLocations = new Stack<TextLocation>();
+		MemberMapping currentMemberMapping;
+		Stack<MemberMapping> parentMemberMappings = new Stack<MemberMapping>();
+		
 		public void StartNode(AstNode node)
 		{
-			// code mappings
-			var ranges = node.Annotation<List<ILRange>>();
-			if (ranges != null && ranges.Count > 0) {
-				// find the ancestor that has method mapping as annotation
-				if (node.Parent != null)
-				{
-					var n = node.Ancestors.FirstOrDefault(a => a.Annotation<MemberMapping>() != null);
-					if (n != null) {
-						MemberMapping mapping = n.Annotation<MemberMapping>();
-
-						// add all ranges
-						foreach (var range in ranges) {
-							mapping.MemberCodeMappings.Add(new SourceCodeMapping {
-							                               	ILInstructionOffset = range,
-							                               	SourceCodeLine = output.Location.Line,
-							                               	MemberMapping = mapping
-							                               });
-						}
-					}
-				}
-			}
-			
-			// definitions of types and their members
-			Predicate<AstNode> predicate = n => n is AttributedNode;
-			
-			if (predicate(node)) {
-				var n = node as AttributedNode;
-				int attributesCount = 0;
-				if (n != null)
-					attributesCount = n.Attributes.Count;
-				node.AddAnnotation(new TextOutputLocation { Line = output.Location.Line + attributesCount, Column = output.Location.Column});
-			}
-			
 			nodeStack.Push(node);
+			startLocations.Push(output.Location);
+			
+			MemberMapping mapping = node.Annotation<MemberMapping>();
+			if (mapping != null) {
+				parentMemberMappings.Push(currentMemberMapping);
+				currentMemberMapping = mapping;
+			}
 		}
 		
 		public void EndNode(AstNode node)
 		{
 			if (nodeStack.Pop() != node)
 				throw new InvalidOperationException();
+			
+			var startLocation = startLocations.Pop();
+			
+			// code mappings
+			if (currentMemberMapping != null) {
+				var ranges = node.Annotation<List<ILRange>>();
+				if (ranges != null && ranges.Count > 0) {
+					// add all ranges
+					foreach (var range in ranges) {
+						currentMemberMapping.MemberCodeMappings.Add(
+							new SourceCodeMapping {
+								ILInstructionOffset = range,
+								StartLocation = startLocation,
+								EndLocation = output.Location,
+								MemberMapping = currentMemberMapping
+							});
+					}
+				}
+			}
+			
+			
+			if (node.Annotation<MemberMapping>() != null) {
+				output.AddDebuggerMemberMapping(currentMemberMapping);
+				currentMemberMapping = parentMemberMappings.Pop();
+			}
 		}
 	}
 }

@@ -125,7 +125,6 @@ namespace ICSharpCode.ILSpy.VB
 					RunTransformsAndGenerateCode(codeDomBuilder, output, options, assembly.AssemblyDefinition.MainModule);
 				}
 			}
-			OnDecompilationFinished(null);
 		}
 		
 		static readonly string[] projectImports = new[] {

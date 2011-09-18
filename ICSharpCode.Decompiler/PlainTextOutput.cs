@@ -18,17 +18,18 @@
 
 using System;
 using System.IO;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.Decompiler
 {
 	public sealed class PlainTextOutput : ITextOutput
 	{
-		const int TAB_SIZE = 4;
-		
 		readonly TextWriter writer;
 		int indent;
 		bool needsIndent;
-		TextOutputLocation location = new TextOutputLocation { Line = 1, Column = 1};
+		
+		int line = 1;
+		int column = 1;
 		
 		public PlainTextOutput(TextWriter writer)
 		{
@@ -42,8 +43,10 @@ namespace ICSharpCode.Decompiler
 			this.writer = new StringWriter();
 		}
 		
-		public TextOutputLocation Location { 
-			get { return location; }
+		public TextLocation Location {
+			get {
+				return new TextLocation(line, column + (needsIndent ? indent : 0));
+			}
 		}
 		
 		public override string ToString()
@@ -67,8 +70,8 @@ namespace ICSharpCode.Decompiler
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
 					writer.Write('\t');
-					location.Column += TAB_SIZE - 1;
 				}
+				column += indent;
 			}
 		}
 		
@@ -76,22 +79,22 @@ namespace ICSharpCode.Decompiler
 		{
 			WriteIndent();
 			writer.Write(ch);
-			location.Column++;
+			column++;
 		}
 		
 		public void Write(string text)
 		{
 			WriteIndent();
 			writer.Write(text);
-			location.Column += text.Length;
+			column += text.Length;
 		}
 		
 		public void WriteLine()
 		{
-			location.Line++;
 			writer.WriteLine();
 			needsIndent = true;
-			location.Column = TAB_SIZE * indent;
+			line++;
+			column = 1;
 		}
 		
 		public void WriteDefinition(string text, object definition)
@@ -109,6 +112,10 @@ namespace ICSharpCode.Decompiler
 		}
 		
 		void ITextOutput.MarkFoldEnd()
+		{
+		}
+		
+		void ITextOutput.AddDebuggerMemberMapping(MemberMapping memberMapping)
 		{
 		}
 	}

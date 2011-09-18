@@ -30,7 +30,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 	/// <summary>
 	/// Disassembles type and member definitions.
 	/// </summary>
-	public sealed class ReflectionDisassembler : BaseCodeMappings
+	public sealed class ReflectionDisassembler
 	{
 		ITextOutput output;
 		CancellationToken cancellationToken;
@@ -45,9 +45,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 			this.output = output;
 			this.cancellationToken = cancellationToken;
 			this.methodBodyDisassembler = new MethodBodyDisassembler(output, detectControlStructure, cancellationToken);
-			
-			this.CodeMappings = new Dictionary<int, List<MemberMapping>>();
-			this.DecompiledMemberReferences = new Dictionary<int, MemberReference>();
 		}
 		
 		#region Disassemble Method
@@ -220,9 +217,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			if (method.HasBody) {
 				// create IL code mappings - used in debugger
-				CreateCodeMappings(method.MetadataToken.ToInt32(), currentMember);
-				MemberMapping methodMapping = method.CreateCodeMapping(this.CodeMappings[method.MetadataToken.ToInt32()], currentMember);
+				MemberMapping methodMapping = new MemberMapping(method);
 				methodBodyDisassembler.Disassemble(method.Body, methodMapping);
+				output.AddDebuggerMemberMapping(methodMapping);
 			}
 			
 			CloseBlock("end of method " + DisassemblerHelpers.Escape(method.DeclaringType.Name) + "::" + DisassemblerHelpers.Escape(method.Name));
@@ -676,9 +673,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public void DisassembleField(FieldDefinition field)
 		{
-			// create mappings for decompiled fields only
-			this.DecompiledMemberReferences.Add(field.MetadataToken.ToInt32(), field);
-			
 			output.WriteDefinition(".field ", field);
 			WriteEnum(field.Attributes & FieldAttributes.FieldAccessMask, fieldVisibility);
 			const FieldAttributes hasXAttributes = FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal | FieldAttributes.HasFieldRVA;

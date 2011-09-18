@@ -18,12 +18,13 @@
 
 using System;
 using System.IO;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.Decompiler
 {
 	public interface ITextOutput
 	{
-		TextOutputLocation Location { get; }
+		TextLocation Location { get; }
 		
 		void Indent();
 		void Unindent();
@@ -33,14 +34,10 @@ namespace ICSharpCode.Decompiler
 		void WriteDefinition(string text, object definition);
 		void WriteReference(string text, object reference, bool isLocal = false);
 		
+		void AddDebuggerMemberMapping(MemberMapping memberMapping);
+		
 		void MarkFoldStart(string collapsedText = "...", bool defaultCollapsed = false);
 		void MarkFoldEnd();
-	}
-	
-	public sealed class TextOutputLocation
-	{
-		public int Line { get; set; }
-		public int Column { get; set; }
 	}
 	
 	public static class TextOutputExtensions

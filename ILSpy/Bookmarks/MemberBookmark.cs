@@ -92,9 +92,9 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		
 		public int LineNumber {
 			get {
-				var t = node.Annotation<TextOutputLocation>();
-				if (t != null)
-					return t.Line;
+				//var t = node.Annotation<TextOutputLocation>();
+				//if (t != null)
+				//	return t.Line;
 				return 0;
 			}
 		}

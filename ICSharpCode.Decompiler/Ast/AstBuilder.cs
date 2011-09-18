@@ -49,7 +49,7 @@ namespace ICSharpCode.Decompiler.Ast
 		DoNotUsePrimitiveTypeNames = 4
 	}
 	
-	public class AstBuilder : BaseCodeMappings
+	public class AstBuilder
 	{
 		DecompilerContext context;
 		CompilationUnit astCompileUnit = new CompilationUnit();
@@ -62,10 +62,6 @@ namespace ICSharpCode.Decompiler.Ast
 				throw new ArgumentNullException("context");
 			this.context = context;
 			this.DecompileMethodBodies = true;
-			
-			this.LocalVariables = new ConcurrentDictionary<int, IEnumerable<ILVariable>>();
-			this.CodeMappings = new Dictionary<int, List<MemberMapping>>();
-			this.DecompiledMemberReferences = new Dictionary<int, MemberReference>();
 		}
 		
 		public static bool MemberIsHidden(MemberReference member, DecompilerSettings settings)
@@ -729,11 +725,7 @@ namespace ICSharpCode.Decompiler.Ast
 
 		AttributedNode CreateMethod(MethodDefinition methodDef)
 		{
-			// Create mapping - used in debugger
-			CreateCodeMappings(methodDef.MetadataToken.ToInt32(), methodDef);
-			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings[methodDef.MetadataToken.ToInt32()]);
-			
-			MethodDeclaration astMethod = new MethodDeclaration().WithAnnotation(methodMapping);
+			MethodDeclaration astMethod = new MethodDeclaration();
 			astMethod.AddAnnotation(methodDef);
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.MethodReturnType);
 			astMethod.Name = CleanName(methodDef.Name);
@@ -823,10 +815,6 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		ConstructorDeclaration CreateConstructor(MethodDefinition methodDef)
 		{
-			// Create mapping - used in debugger
-			CreateCodeMappings(methodDef.MetadataToken.ToInt32(), methodDef);
-			MemberMapping methodMapping = methodDef.CreateCodeMapping(this.CodeMappings[methodDef.MetadataToken.ToInt32()]);
-			
 			ConstructorDeclaration astMethod = new ConstructorDeclaration();
 			astMethod.AddAnnotation(methodDef);
 			astMethod.Modifiers = ConvertModifiers(methodDef);
@@ -838,7 +826,6 @@ namespace ICSharpCode.Decompiler.Ast
 			astMethod.Parameters.AddRange(MakeParameters(methodDef));
 			astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
 			ConvertAttributes(astMethod, methodDef);
-			astMethod.WithAnnotation(methodMapping);
 			if (methodDef.IsStatic && methodDef.DeclaringType.IsBeforeFieldInit && !astMethod.Body.IsNull) {
 				astMethod.Body.InsertChildAfter(null, new Comment(" Note: this type is marked as 'beforefieldinit'."), AstNode.Roles.Comment);
 			}
@@ -891,10 +878,6 @@ namespace ICSharpCode.Decompiler.Ast
 			astProp.ReturnType = ConvertType(propDef.PropertyType, propDef);
 			
 			if (propDef.GetMethod != null) {
-				// Create mapping - used in debugger
-				CreateCodeMappings(propDef.GetMethod.MetadataToken.ToInt32(), propDef);
-				MemberMapping methodMapping = propDef.GetMethod.CreateCodeMapping(this.CodeMappings[propDef.GetMethod.MetadataToken.ToInt32()], propDef);
-				
 				astProp.Getter = new Accessor();
 				astProp.Getter.Body = CreateMethodBody(propDef.GetMethod);
 				astProp.Getter.AddAnnotation(propDef.GetMethod);
@@ -902,14 +885,8 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				if ((getterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
 					astProp.Getter.Modifiers = getterModifiers & Modifiers.VisibilityMask;
-				
-				astProp.Getter.WithAnnotation(methodMapping);
 			}
 			if (propDef.SetMethod != null) {
-				// Create mapping - used in debugger
-				CreateCodeMappings(propDef.SetMethod.MetadataToken.ToInt32(), propDef);
-				MemberMapping methodMapping = propDef.SetMethod.CreateCodeMapping(this.CodeMappings[propDef.SetMethod.MetadataToken.ToInt32()], propDef);
-				
 				astProp.Setter = new Accessor();
 				astProp.Setter.Body = CreateMethodBody(propDef.SetMethod);
 				astProp.Setter.AddAnnotation(propDef.SetMethod);
@@ -924,8 +901,6 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				if ((setterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
 					astProp.Setter.Modifiers = setterModifiers & Modifiers.VisibilityMask;
-				
-				astProp.Setter.WithAnnotation(methodMapping);
 			}
 			ConvertCustomAttributes(astProp, propDef);
 
@@ -977,28 +952,16 @@ namespace ICSharpCode.Decompiler.Ast
 					astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().DeclaringType);
 				
 				if (eventDef.AddMethod != null) {
-					// Create mapping - used in debugger
-					CreateCodeMappings(eventDef.AddMethod.MetadataToken.ToInt32(), eventDef);
-					MemberMapping methodMapping = eventDef.AddMethod.CreateCodeMapping(this.CodeMappings[eventDef.AddMethod.MetadataToken.ToInt32()], eventDef);
-					
 					astEvent.AddAccessor = new Accessor {
 						Body = CreateMethodBody(eventDef.AddMethod)
 					}.WithAnnotation(eventDef.AddMethod);
 					ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
-					
-					astEvent.AddAccessor.WithAnnotation(methodMapping);
 				}
 				if (eventDef.RemoveMethod != null) {
-					// Create mapping - used in debugger
-					CreateCodeMappings(eventDef.RemoveMethod.MetadataToken.ToInt32(), eventDef);
-					MemberMapping methodMapping = eventDef.RemoveMethod.CreateCodeMapping(this.CodeMappings[eventDef.RemoveMethod.MetadataToken.ToInt32()], eventDef);
-					
 					astEvent.RemoveAccessor = new Accessor {
 						Body = CreateMethodBody(eventDef.RemoveMethod)
 					}.WithAnnotation(eventDef.RemoveMethod);
 					ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
-					
-					astEvent.RemoveAccessor.WithAnnotation(methodMapping);
 				}
 				MethodDefinition accessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
 				if (accessor.IsVirtual == accessor.IsNewSlot) {
@@ -1013,15 +976,13 @@ namespace ICSharpCode.Decompiler.Ast
 		BlockStatement CreateMethodBody(MethodDefinition method, IEnumerable<ParameterDeclaration> parameters = null)
 		{
 			if (DecompileMethodBodies)
-				return AstMethodBodyBuilder.CreateMethodBody(method, context, parameters, LocalVariables);
+				return AstMethodBodyBuilder.CreateMethodBody(method, context, parameters);
 			else
 				return null;
 		}
 
 		FieldDeclaration CreateField(FieldDefinition fieldDef)
 		{
-			this.DecompiledMemberReferences.Add(fieldDef.MetadataToken.ToInt32(), fieldDef);
-			
 			FieldDeclaration astField = new FieldDeclaration();
 			astField.AddAnnotation(fieldDef);
 			VariableInitializer initializer = new VariableInitializer(CleanName(fieldDef.Name));
@@ -1673,11 +1634,5 @@ namespace ICSharpCode.Decompiler.Ast
 			                   && (condition == null || condition(m))
 			                   && TypesHierarchyHelpers.IsVisibleFromDerived(m, derived.DeclaringType));
 		}
-		
-		/// <summary>
-		/// Gets the local variables for the current decompiled type, method, etc.
-		/// <remarks>The key is the metadata token.</remarks>
-		/// </summary>
-		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; private set; }
 	}
 }

@@ -85,13 +85,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 				WriteStructureBody(new ILStructure(body), branchTargets, ref inst, methodMapping, method.Body.CodeSize);
 			} else {
 				foreach (var inst in method.Body.Instructions) {
+					var startLocation = output.Location;
 					inst.WriteTo(output);
 					
 					if (methodMapping != null) {
 						// add IL code mappings - used in debugger
 						methodMapping.MemberCodeMappings.Add(
 							new SourceCodeMapping() {
-								SourceCodeLine = output.Location.Line,
+								StartLocation = output.Location,
+								EndLocation = output.Location,
 								ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? method.Body.CodeSize : inst.Next.Offset },
 								MemberMapping = methodMapping
 							});
@@ -188,13 +190,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 					if (!isFirstInstructionInStructure && (prevInstructionWasBranch || branchTargets.Contains(offset))) {
 						output.WriteLine(); // put an empty line after branches, and in front of branch targets
 					}
+					var startLocation = output.Location;
 					inst.WriteTo(output);
 					
 					// add IL code mappings - used in debugger
 					if (currentMethodMapping != null) {
 						currentMethodMapping.MemberCodeMappings.Add(
 							new SourceCodeMapping() {
-								SourceCodeLine = output.Location.Line,
+								StartLocation = startLocation,
+								EndLocation = output.Location,
 								ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? codeSize : inst.Next.Offset },
 								MemberMapping = currentMethodMapping
 							});

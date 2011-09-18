@@ -52,14 +52,12 @@ namespace ICSharpCode.ILSpy
 		{
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
 			dis.DisassembleMethod(method);
-			NotifyDecompilationFinished(dis);
 		}
 		
 		public override void DecompileField(FieldDefinition field, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
 			dis.DisassembleField(field);
-			NotifyDecompilationFinished(dis);
 		}
 		
 		public override void DecompileProperty(PropertyDefinition property, ITextOutput output, DecompilationOptions options)
@@ -78,7 +76,6 @@ namespace ICSharpCode.ILSpy
 				output.WriteLine();
 				rd.DisassembleMethod(m);
 			}
-			NotifyDecompilationFinished(rd);
 		}
 		
 		public override void DecompileEvent(EventDefinition ev, ITextOutput output, DecompilationOptions options)
@@ -97,20 +94,17 @@ namespace ICSharpCode.ILSpy
 				output.WriteLine();
 				rd.DisassembleMethod(m);
 			}
-			NotifyDecompilationFinished(rd);
 		}
 		
 		public override void DecompileType(TypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
 			dis.DisassembleType(type);
-			NotifyDecompilationFinished(dis);
 		}
 		
 		public override void DecompileNamespace(string nameSpace, IEnumerable<TypeDefinition> types, ITextOutput output, DecompilationOptions options)
 		{
 			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleNamespace(nameSpace, types);
-			OnDecompilationFinished(null);
 		}
 		
 		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
@@ -129,7 +123,6 @@ namespace ICSharpCode.ILSpy
 				output.WriteLine();
 				rd.WriteModuleContents(assembly.AssemblyDefinition.MainModule);
 			}
-			OnDecompilationFinished(null);
 		}
 		
 		public override string TypeToString(TypeReference t, bool includeNamespace, ICustomAttributeProvider attributeProvider)

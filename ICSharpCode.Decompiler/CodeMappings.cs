@@ -20,15 +20,16 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler
 {
+	[Obsolete]
 	public enum DecompiledLanguages
 	{
 		IL,
@@ -36,57 +37,36 @@ namespace ICSharpCode.Decompiler
 	}
 	
 	/// <summary>
-	/// Base class for decompliler classes : AstBuilder & ReflectionDisassembler.
-	/// </summary>
-	public abstract class BaseCodeMappings
-	{
-		/// <summary>
-		/// Gets the code mappings.
-		/// <remarks>Key is the metadata token.</remarks>
-		/// </summary>
-		public Dictionary<int, List<MemberMapping>> CodeMappings { get; protected set; }
-		
-		/// <summary>
-		/// Gets the MembeReference that is decompiled (a MethodDefinition, PropertyDefinition etc.)
-		/// <remarks>Key is the metadata token.</remarks>
-		/// </summary>
-		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; protected set; }
-		
-		/// <summary>
-		/// Create data in the CodeMappings and DecompiledMemberReferences.
-		/// </summary>
-		/// <param name="token">Token of the current method.</param>
-		/// <param name="member">Current member (MethodDefinition, PropertyDefinition, EventDefinition).</param>
-		/// <remarks>The token is used in CodeMappings; member (and its token) is used in DecompiledMemberReferences.</remarks>
-		protected virtual void CreateCodeMappings(int token, MemberReference member)
-		{
-			this.CodeMappings.Add(token, new List<MemberMapping>());
-			
-			int t = member.MetadataToken.ToInt32();
-			if (!this.DecompiledMemberReferences.ContainsKey(t))
-				this.DecompiledMemberReferences.Add(t, member);
-		}
-	}
-	
-	/// <summary>
 	/// Maps the source code to IL.
 	/// </summary>
 	public sealed class SourceCodeMapping
 	{
+		[Obsolete("Use StartLocation instead - there might be multiple statements per line (e.g. for loops)")]
+		public int SourceCodeLine {
+			get {
+				return this.StartLocation.Line;
+			}
+		}
+		
 		/// <summary>
-		/// Gets or sets the source code line number in the output.
+		/// Gets or sets the start location of the instruction.
 		/// </summary>
-		public int SourceCodeLine { get; internal set; }
+		public TextLocation StartLocation { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the end location of the instruction.
+		/// </summary>
+		public TextLocation EndLocation { get; set; }
 		
 		/// <summary>
 		/// Gets or sets IL Range offset for the source code line. E.g.: 13-19 &lt;-&gt; 135.
 		/// </summary>
-		public ILRange ILInstructionOffset { get; internal set; }
+		public ILRange ILInstructionOffset { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the member mapping this source code mapping belongs to.
 		/// </summary>
-		public MemberMapping MemberMapping { get; internal set; }
+		public MemberMapping MemberMapping { get; set; }
 		
 		/// <summary>
 		/// Retrieves the array that contains the IL range and the missing gaps between ranges.
@@ -128,6 +108,18 @@ namespace ICSharpCode.Decompiler
 	public sealed class MemberMapping
 	{
 		IEnumerable<ILRange> invertedList;
+		
+		internal MemberMapping()
+		{
+		}
+		
+		public MemberMapping(MethodDefinition method)
+		{
+			this.MetadataToken = method.MetadataToken.ToInt32();
+			this.MemberCodeMappings = new List<SourceCodeMapping>();
+			this.MemberReference = method;
+			this.CodeSize = method.Body.CodeSize;
+		}
 		
 		/// <summary>
 		/// Gets or sets the type of the mapping.
@@ -245,7 +237,7 @@ namespace ICSharpCode.Decompiler
 		public static SourceCodeMapping GetInstructionByTokenAndOffset(
 			this List<MemberMapping> codeMappings,
 			int token,
-			int ilOffset, 
+			int ilOffset,
 			out bool isMatch)
 		{
 			isMatch = false;
@@ -316,31 +308,5 @@ namespace ICSharpCode.Decompiler
 			line = codeMapping.SourceCodeLine;
 			return true;
 		}
-	}
-	
-	/// <summary>
-	/// Decompilation data. Can be used by other applications to store the decompilation data.
-	/// </summary>
-	public class DecompileInformation
-	{
-		/// <summary>
-		/// Gets ot sets the code mappings
-		/// </summary>
-		public Dictionary<int, List<MemberMapping>> CodeMappings { get; set; }
-		
-		/// <summary>
-		/// Gets or sets the local variables.
-		/// </summary>
-		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
-		
-		/// <summary>
-		/// Gets the list of MembeReferences that are decompiled (TypeDefinitions, MethodDefinitions, etc)
-		/// </summary>
-		public Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
-		
-		/// <summary>
-		/// Gets (or internal sets) the AST nodes.
-		/// </summary>
-		public IEnumerable<AstNode> AstNodes { get; set; }
 	}
 }
