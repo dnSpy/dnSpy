@@ -236,7 +236,6 @@ namespace ICSharpCode.ILSpy.VB
 					if (r.Name != "mscorlib") {
 						w.WriteStartElement("Reference");
 						w.WriteAttributeString("Include", r.Name);
-						// TODO: RequiredTargetFramework
 						w.WriteEndElement();
 					}
 				}

@@ -1317,7 +1317,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			if (customAttributeProvider.HasCustomAttributes) {
 				var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
-				foreach (var customAttribute in customAttributeProvider.CustomAttributes) {
+				foreach (var customAttribute in customAttributeProvider.CustomAttributes.OrderBy(a => a.AttributeType.FullName)) {
 					if (customAttribute.AttributeType.Name == "ExtensionAttribute" && customAttribute.AttributeType.Namespace == "System.Runtime.CompilerServices") {
 						// don't show the ExtensionAttribute (it's converted to the 'this' modifier)
 						continue;
@@ -1387,8 +1387,8 @@ namespace ICSharpCode.Decompiler.Ast
 			if (!secDeclProvider.HasSecurityDeclarations)
 				return;
 			var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
-			foreach (var secDecl in secDeclProvider.SecurityDeclarations) {
-				foreach (var secAttribute in secDecl.SecurityAttributes) {
+			foreach (var secDecl in secDeclProvider.SecurityDeclarations.OrderBy(d => d.Action)) {
+				foreach (var secAttribute in secDecl.SecurityAttributes.OrderBy(a => a.AttributeType.FullName)) {
 					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
 					attribute.AddAnnotation(secAttribute);
 					attribute.Type = ConvertType(secAttribute.AttributeType);
