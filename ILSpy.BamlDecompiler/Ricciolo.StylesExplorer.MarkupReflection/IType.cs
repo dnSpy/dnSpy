@@ -17,4 +17,36 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		bool IsSubclassOf(IType type);
 		bool Equals(IType type);
 	}
+	
+	public class UnresolvableType : IType
+	{
+		string assemblyQualifiedName;
+		
+		public UnresolvableType(string assemblyQualifiedName)
+		{
+			this.assemblyQualifiedName = assemblyQualifiedName;
+		}
+		
+		public IType BaseType {
+			get {
+				return null;
+			}
+		}
+		
+		public string AssemblyQualifiedName {
+			get {
+				return assemblyQualifiedName;
+			}
+		}
+		
+		public bool IsSubclassOf(IType type)
+		{
+			return Equals(type);
+		}
+		
+		public bool Equals(IType type)
+		{
+			return type is UnresolvableType && type.AssemblyQualifiedName == AssemblyQualifiedName;
+		}
+	}
 }

@@ -56,7 +56,7 @@ namespace ILSpy.BamlDecompiler
 			if (type == null) {
 				var otherAssembly = resolver.Resolve(assemblyName);
 				if (otherAssembly == null)
-					throw new Exception("could not resolve '" + assemblyName + "'!");
+					return new UnresolvableType(name);
 				type = otherAssembly.MainModule.GetType(fullName.Replace('+', '/'));
 				
 				if (type == null) {
@@ -65,7 +65,7 @@ namespace ILSpy.BamlDecompiler
 			}
 			
 			if (type == null)
-				throw new Exception("could not resolve '" + name + "'!");
+				return new UnresolvableType(name);
 			
 			return new CecilType(type);
 		}
@@ -83,10 +83,15 @@ namespace ILSpy.BamlDecompiler
 		
 		public IDependencyPropertyDescriptor GetDependencyPropertyDescriptor(string name, IType ownerType, IType targetType)
 		{
-			if (!(ownerType is CecilType))
-				throw new ArgumentException();
+			if (ownerType == null)
+				throw new ArgumentNullException("ownerType");
 			
-			return new CecilDependencyPropertyDescriptor(name, ((CecilType)ownerType).type);
+			if (ownerType is CecilType)
+				return new CecilDependencyPropertyDescriptor(name, ((CecilType)ownerType).type);
+			if (ownerType is UnresolvableType)
+				return new UnresolvableDependencyPropertyDescriptor();
+			
+			throw new ArgumentException("Invalid IType: " + ownerType.GetType());
 		}
 		
 		public string RuntimeVersion {

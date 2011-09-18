@@ -11,4 +11,13 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 	{
 		bool IsAttached { get; }
 	}
+	
+	public class UnresolvableDependencyPropertyDescriptor : IDependencyPropertyDescriptor
+	{
+		public bool IsAttached {
+			get {
+				return false;
+			}
+		}
+	}
 }

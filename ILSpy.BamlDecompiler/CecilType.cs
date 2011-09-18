@@ -32,11 +32,11 @@ namespace ILSpy.BamlDecompiler
 			if (type == null)
 				throw new ArgumentNullException("type");
 			if (!(type is CecilType))
-				throw new ArgumentException("type has to be a CecilType");
+				return false;
 			
 			CecilType ct = (CecilType)type;
 			
-			var t = ct.type;
+			var t = this.type;
 			
 			while (t != null) {
 				if (t == ct.type)
@@ -60,7 +60,7 @@ namespace ILSpy.BamlDecompiler
 			if (type == null)
 				throw new ArgumentNullException("type");
 			if (!(type is CecilType))
-				throw new ArgumentException("type has to be a CecilType");
+				return false;
 			
 			return this.type == ((CecilType)type).type;
 		}
