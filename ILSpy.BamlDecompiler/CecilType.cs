@@ -38,6 +38,9 @@ namespace ILSpy.BamlDecompiler
 			
 			var t = this.type;
 			
+			if (t == ct.type)
+				return false;
+			
 			while (t != null) {
 				if (t == ct.type)
 					return true;

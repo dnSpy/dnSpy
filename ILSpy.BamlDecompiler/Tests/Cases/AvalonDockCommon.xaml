@@ -17,8 +17,8 @@
 		<MenuItem Command="ad:DocumentContentCommands.TabbedDocument" />
 	</ContextMenu>
 	<Style x:Key="{x:Type ad:Resizer}" TargetType="{x:Type ad:Resizer}">
-		<Setter Property="Background" Value="#00FFFFFF" />
-		<Setter Property="Template">
+		<Setter Property="Control.Background" Value="#00FFFFFF" />
+		<Setter Property="Control.Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ad:Resizer}">
 					<Border Background="{TemplateBinding Control.Background}" />
@@ -27,17 +27,17 @@
 		</Setter>
 	</Style>
 	<Style x:Key="PaneHeaderCommandStyle" TargetType="{x:Type Button}">
-		<Setter Property="Template">
+		<Setter Property="Control.Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Button}">
 					<Border Name="PaneHeaderCommandIntBorder" Background="#00FFFFFF" BorderThickness="1" Margin="0" Opacity="0.8">
 						<ContentPresenter />
 					</Border>
 					<ControlTemplate.Triggers>
-						<Trigger Property="IsMouseOver" Value="True">
-							<Setter TargetName="PaneHeaderCommandIntBorder" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBorderBrush}}}" Property="BorderBrush" />
-							<Setter TargetName="PaneHeaderCommandIntBorder" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBackground}}}" Property="Background" />
-							<Setter TargetName="PaneHeaderCommandIntBorder" Property="Opacity" Value="1" />
+						<Trigger Property="UIElement.IsMouseOver" Value="True">
+							<Setter TargetName="PaneHeaderCommandIntBorder" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBorderBrush}}}" Property="Border.BorderBrush" />
+							<Setter TargetName="PaneHeaderCommandIntBorder" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBackground}}}" Property="Border.Background" />
+							<Setter TargetName="PaneHeaderCommandIntBorder" Property="UIElement.Opacity" Value="1" />
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
@@ -45,13 +45,13 @@
 		</Setter>
 	</Style>
 	<Style x:Key="PaneHeaderContextMenuCommandStyle" TargetType="{x:Type Border}">
-		<Setter Property="Background" Value="#00FFFFFF" />
-		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="Border.Background" Value="#00FFFFFF" />
+		<Setter Property="Border.BorderThickness" Value="1" />
 		<Style.Triggers>
-			<Trigger Property="IsMouseOver" Value="True">
-				<Setter Property="BorderBrush" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBorderBrush}}}" />
-				<Setter Property="Background" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBackground}}}" />
-				<Setter Property="Opacity" Value="1" />
+			<Trigger Property="UIElement.IsMouseOver" Value="True">
+				<Setter Property="Border.BorderBrush" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBorderBrush}}}" />
+				<Setter Property="Border.Background" Value="{DynamicResource {ComponentResourceKey {x:Type ad:DockingManager}, {x:Static ad:AvalonDockBrushes.PaneHeaderCommandBackground}}}" />
+				<Setter Property="UIElement.Opacity" Value="1" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>

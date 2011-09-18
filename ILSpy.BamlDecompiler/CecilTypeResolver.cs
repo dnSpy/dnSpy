@@ -54,7 +54,7 @@ namespace ILSpy.BamlDecompiler
 			}
 			
 			if (type == null) {
-				var otherAssembly = resolver.Resolve(assemblyName);
+				var otherAssembly = resolver.Resolve(AssemblyNameReference.Parse(assemblyName));
 				if (otherAssembly == null)
 					return new UnresolvableType(name);
 				type = otherAssembly.MainModule.GetType(fullName.Replace('+', '/'));
