@@ -19,8 +19,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <BaseAddress>4194304</BaseAddress>
-    <FileAlignment>4096</FileAlignment>
+    <BaseAddress>448462848</BaseAddress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -32,8 +31,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Release\</OutputPath>
-    <DebugSymbols>False</DebugSymbols>
-    <DebugType>None</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>PdbOnly</DebugType>
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
@@ -96,6 +95,7 @@
     <Compile Include="FlowAnalysis\SsaOptimization.cs" />
     <Compile Include="FlowAnalysis\SsaVariable.cs" />
     <Compile Include="FlowAnalysis\TransformToSsa.cs" />
+    <Compile Include="ILAst\LiftedOperators.cs" />
     <Compile Include="ILAst\InitializerPeepholeTransforms.cs" />
     <Compile Include="ILAst\DefaultDictionary.cs" />
     <Compile Include="ILAst\GotoRemoval.cs" />

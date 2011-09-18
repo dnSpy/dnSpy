@@ -23,6 +23,13 @@
     <BaseAddress>4194304</BaseAddress>
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>..\bin\Debug\</OutputPath>
     <DebugSymbols>true</DebugSymbols>
@@ -57,6 +64,7 @@
   <ItemGroup>
     <Compile Include="CallOverloadedMethod.cs" />
     <Compile Include="CheckedUnchecked.cs" />
+    <Compile Include="LiftedOperators.cs" />
     <Compile Include="CustomShortCircuitOperators.cs" />
     <Compile Include="Helpers\CodeAssert.cs" />
     <Compile Include="IncrementDecrement.cs" />

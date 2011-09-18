@@ -421,7 +421,13 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.CompoundAssignment:
 					{
 						CastExpression cast = arg1 as CastExpression;
-						BinaryOperatorExpression boe = (BinaryOperatorExpression)(cast != null ? cast.Expression : arg1);
+						var boe = cast != null ? (BinaryOperatorExpression)cast.Expression : arg1 as BinaryOperatorExpression;
+						// AssignmentExpression doesn't support overloaded operators so they have to be processed to BinaryOperatorExpression
+						if (boe == null) {
+							var tmp = new ParenthesizedExpression(arg1);
+							ReplaceMethodCallsWithOperators.ProcessInvocationExpression((InvocationExpression)arg1);
+							boe = (BinaryOperatorExpression)tmp.Expression;
+						}
 						var assignment = new Ast.AssignmentExpression {
 							Left = boe.Left.Detach(),
 							Operator = ReplaceMethodCallsWithOperators.GetAssignmentOperatorForBinaryOperator(boe.Operator),
@@ -440,17 +446,25 @@ namespace ICSharpCode.Decompiler.Ast
 					#endregion
 					#region Comparison
 					case ILCode.Ceq: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Equality, arg2);
+					case ILCode.Cne: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
 					case ILCode.Cgt: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
 					case ILCode.Cgt_Un: {
 						// can also mean Inequality, when used with object references
 						TypeReference arg1Type = byteCode.Arguments[0].InferredType;
-						if (arg1Type != null && !arg1Type.IsValueType)
-							return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.InEquality, arg2);
-						else
-							return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThan, arg2);
+						if (arg1Type != null && !arg1Type.IsValueType) goto case ILCode.Cne;
+						goto case ILCode.Cgt;
 					}
+					case ILCode.Cle_Un: {
+						// can also mean Equality, when used with object references
+						TypeReference arg1Type = byteCode.Arguments[0].InferredType;
+						if (arg1Type != null && !arg1Type.IsValueType) goto case ILCode.Ceq;
+						goto case ILCode.Cle;
+					}
+					case ILCode.Cle: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
+					case ILCode.Cge_Un:
+					case ILCode.Cge: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
+					case ILCode.Clt_Un:
 					case ILCode.Clt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
-					case ILCode.Clt_Un: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					#endregion
 					#region Logical
 					case ILCode.LogicNot:   return new Ast.UnaryOperatorExpression(UnaryOperatorType.Not, arg1);
@@ -792,8 +806,12 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 				case ILCode.InitializedObject:
 					return new InitializedObjectExpression();
+				case ILCode.Wrap:
+					return arg1.WithAnnotation(PushNegation.LiftedOperatorAnnotation);
 				case ILCode.AddressOf:
 					return MakeRef(arg1);
+				case ILCode.NullableOf:
+				case ILCode.ValueOf: return arg1;
 				default:
 					throw new Exception("Unknown OpCode: " + byteCode.Code);
 			}

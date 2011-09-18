@@ -175,6 +175,10 @@ namespace ICSharpCode.Decompiler.Ast
 							case ILCode.Clt_Un:
 							case ILCode.Cgt:
 							case ILCode.Cgt_Un:
+							case ILCode.Cle:
+							case ILCode.Cle_Un:
+							case ILCode.Cge:
+							case ILCode.Cge_Un:
 								ILVariable loadVar;
 								if (expr.Arguments[0].Match(ILCode.Ldloc, out loadVar) && loadVar == variable) {
 									isLoopCounter = true;

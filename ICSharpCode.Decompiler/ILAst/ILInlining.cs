@@ -406,7 +406,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		/// <summary>
-		/// Determines whether it is save to move 'expressionBeingMoved' past 'expr'
+		/// Determines whether it is safe to move 'expressionBeingMoved' past 'expr'
 		/// </summary>
 		bool IsSafeForInlineOver(ILExpression expr, ILExpression expressionBeingMoved)
 		{
@@ -427,6 +427,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldflda:
 				case ILCode.Ldsflda:
 				case ILCode.Ldelema:
+				case ILCode.AddressOf:
+				case ILCode.ValueOf:
+				case ILCode.NullableOf:
 					// address-loading instructions are safe if their arguments are safe
 					foreach (ILExpression arg in expr.Arguments) {
 						if (!IsSafeForInlineOver(arg, expressionBeingMoved))
@@ -434,8 +437,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					return true;
 				default:
-					// abort, inlining is not possible
-					return false;
+					// instructions with no side-effects are safe (except for Ldloc and Ldloca which are handled separately)
+					return expr.HasNoSideEffects();
 			}
 		}
 		

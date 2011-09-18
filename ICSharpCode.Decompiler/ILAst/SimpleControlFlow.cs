@@ -98,16 +98,16 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (leftBoolVal != 0) {
 						newExpr = condExpr;
 					} else {
-						newExpr = new ILExpression(ILCode.LogicNot, null, condExpr);
+						newExpr = new ILExpression(ILCode.LogicNot, null, condExpr) { InferredType = typeSystem.Boolean };
 					}
-				} else if (retTypeIsBoolean && trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal)) {
+				} else if ((retTypeIsBoolean || TypeAnalysis.IsBoolean(falseExpr.InferredType)) && trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal) && (leftBoolVal == 0 || leftBoolVal == 1)) {
 					// It can be expressed as logical expression
 					if (leftBoolVal != 0) {
 						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, condExpr, falseExpr);
 					} else {
 						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicAnd, new ILExpression(ILCode.LogicNot, null, condExpr), falseExpr);
 					}
-				} else if (retTypeIsBoolean && falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal)) {
+				} else if ((retTypeIsBoolean || TypeAnalysis.IsBoolean(trueExpr.InferredType)) && falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal) && (rightBoolVal == 0 || rightBoolVal == 1)) {
 					// It can be expressed as logical expression
 					if (rightBoolVal != 0) {
 						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, new ILExpression(ILCode.LogicNot, null, condExpr), trueExpr);
@@ -343,10 +343,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression current = right;
 				while(current.Arguments[0].Match(code))
 					current = current.Arguments[0];
-				current.Arguments[0] = new ILExpression(code, null, left, current.Arguments[0]);
+				current.Arguments[0] = new ILExpression(code, null, left, current.Arguments[0]) { InferredType = typeSystem.Boolean };
 				return right;
 			} else {
-				return new ILExpression(code, null, left, right);
+				return new ILExpression(code, null, left, right) { InferredType = typeSystem.Boolean };
 			}
 		}
 		

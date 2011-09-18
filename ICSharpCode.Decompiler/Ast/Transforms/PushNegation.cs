@@ -26,8 +26,18 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	public class PushNegation: DepthFirstAstVisitor<object, object>, IAstTransform
 	{
+		sealed class LiftedOperator { }
+		/// <summary>
+		/// Annotation for lifted operators that cannot be transformed by PushNegation
+		/// </summary>
+		public static readonly object LiftedOperatorAnnotation = new LiftedOperator();
+
 		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unary, object data)
 		{
+			// lifted operators can't be transformed
+			if (unary.Annotation<LiftedOperator>() != null || unary.Expression.Annotation<LiftedOperator>() != null)
+				return base.VisitUnaryOperatorExpression(unary, data);
+
 			// Remove double negation
 			// !!a
 			if (unary.Operator == UnaryOperatorType.Not &&
@@ -108,6 +118,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public override object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
 		{
+			// lifted operators can't be transformed
+			if (binaryOperatorExpression.Annotation<LiftedOperator>() != null)
+				return base.VisitBinaryOperatorExpression(binaryOperatorExpression, data);
+
 			BinaryOperatorType op = binaryOperatorExpression.Operator;
 			bool? rightOperand = null;
 			if (binaryOperatorExpression.Right is PrimitiveExpression)

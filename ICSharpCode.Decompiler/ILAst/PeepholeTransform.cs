@@ -397,9 +397,21 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			
 			ILExpression op = expr.Arguments.Last();
-			if (!CanBeRepresentedAsCompoundAssignment(op.Code))
+			// in case of compound assignments with a lifted operator the result is inside NullableOf and the operand is inside ValueOf
+			bool liftedOperator = false;
+			if (op.Code == ILCode.NullableOf) {
+				op = op.Arguments[0];
+				liftedOperator = true;
+			}
+			if (!CanBeRepresentedAsCompoundAssignment(op))
 				return false;
+
 			ILExpression ldelem = op.Arguments[0];
+			if (liftedOperator) {
+				if (ldelem.Code != ILCode.ValueOf)
+					return false;
+				ldelem = ldelem.Arguments[0];
+			}
 			if (ldelem.Code != expectedLdelemCode)
 				return false;
 			Debug.Assert(ldelem.Arguments.Count == expr.Arguments.Count - 1);
@@ -414,9 +426,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			return true;
 		}
 		
-		static bool CanBeRepresentedAsCompoundAssignment(ILCode code)
+		static bool CanBeRepresentedAsCompoundAssignment(ILExpression expr)
 		{
-			switch (code) {
+			switch (expr.Code) {
 				case ILCode.Add:
 				case ILCode.Add_Ovf:
 				case ILCode.Add_Ovf_Un:
@@ -437,6 +449,24 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Shr:
 				case ILCode.Shr_Un:
 					return true;
+				case ILCode.Call:
+					var m = expr.Operand as MethodReference;
+					if (m == null || m.HasThis || expr.Arguments.Count != 2) return false;
+					switch (m.Name) {
+						case "op_Addition":
+						case "op_Subtraction":
+						case "op_Multiply":
+						case "op_Division":
+						case "op_Modulus":
+						case "op_BitwiseAnd":
+						case "op_BitwiseOr":
+						case "op_ExclusiveOr":
+						case "op_LeftShift":
+						case "op_RightShift":
+							return true;
+						default:
+							return false;
+					}
 				default:
 					return false;
 			}
@@ -869,6 +899,78 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		#endregion
 		
+		#region SimplifyLogicNot
+		static bool SimplifyLogicNot(List<ILNode> body, ILExpression expr, int pos)
+		{
+			bool modified = false;
+			expr = SimplifyLogicNot(expr, ref modified);
+			Debug.Assert(expr == null);
+			return modified;
+		}
+
+		static ILExpression SimplifyLogicNot(ILExpression expr, ref bool modified)
+		{
+			ILExpression a;
+			// "ceq(a, ldc.i4.0)" becomes "logicnot(a)" if the inferred type for expression "a" is boolean
+			if (expr.Code == ILCode.Ceq && TypeAnalysis.IsBoolean(expr.Arguments[0].InferredType) && (a = expr.Arguments[1]).Code == ILCode.Ldc_I4 && (int)a.Operand == 0) {
+				expr.Code = ILCode.LogicNot;
+				expr.ILRanges.AddRange(a.ILRanges);
+				expr.Arguments.RemoveAt(1);
+				modified = true;
+			}
+
+			ILExpression res = null;
+			while (expr.Code == ILCode.LogicNot) {
+				a = expr.Arguments[0];
+				// remove double negation
+				if (a.Code == ILCode.LogicNot) {
+					res = a.Arguments[0];
+					res.ILRanges.AddRange(expr.ILRanges);
+					res.ILRanges.AddRange(a.ILRanges);
+					expr = res;
+				} else {
+					if (SimplifyLogicNotArgument(expr)) res = expr = a;
+					break;
+				}
+			}
+
+			for (int i = 0; i < expr.Arguments.Count; i++) {
+				a = SimplifyLogicNot(expr.Arguments[i], ref modified);
+				if (a != null) {
+					expr.Arguments[i] = a;
+					modified = true;
+				}
+			}
+
+			return res;
+		}
+
+		/// <summary>
+		/// If the argument is a binary comparison operation then the negation is pushed through it
+		/// </summary>
+		static bool SimplifyLogicNotArgument(ILExpression expr)
+		{
+			var a = expr.Arguments[0];
+			ILCode c;
+			switch (a.Code) {
+				case ILCode.Ceq: c = ILCode.Cne; break;
+				case ILCode.Cne: c = ILCode.Ceq; break;
+				case ILCode.Cgt: c = ILCode.Cle; break;
+				case ILCode.Cgt_Un: c = ILCode.Cle_Un; break;
+				case ILCode.Cge: c = ILCode.Clt; break;
+				case ILCode.Cge_Un: c = ILCode.Clt_Un; break;
+				case ILCode.Clt: c = ILCode.Cge; break;
+				case ILCode.Clt_Un: c = ILCode.Cge_Un; break;
+				case ILCode.Cle: c = ILCode.Cgt; break;
+				case ILCode.Cle_Un: c = ILCode.Cgt_Un; break;
+				default: return false;
+			}
+			a.Code = c;
+			a.ILRanges.AddRange(expr.ILRanges);
+			return true;
+		}
+		#endregion
+
 		#region SimplifyShiftOperators
 		static bool SimplifyShiftOperators(List<ILNode> body, ILExpression expr, int pos)
 		{
