@@ -35,7 +35,7 @@ public class QueryExpressions
 	{
 		public int OrderID;
 		public DateTime OrderDate;
-		public Customer Customer;
+		public QueryExpressions.Customer Customer;
 		public int CustomerID;
 		public decimal Total;
 		public IEnumerable<QueryExpressions.OrderDetail> Details;
@@ -54,7 +54,7 @@ public class QueryExpressions
 	{
 		return
 			from c in this.customers
-			where c.Orders.Count() > 10
+			where c.Orders.Count<QueryExpressions.Order>() > 10
 			where c.Country == "DE"
 			select c;
 	}
@@ -64,7 +64,12 @@ public class QueryExpressions
 		return
 			from c in this.customers
 			from o in c.Orders
-			select new { c.Name, o.OrderID, o.Total };
+			select new
+			{
+				c.Name,
+				o.OrderID,
+				o.Total
+			};
 	}
 	
 	public object SelectManyFollowedByOrderBy()
@@ -73,7 +78,12 @@ public class QueryExpressions
 			from c in this.customers
 			from o in c.Orders
 			orderby o.Total descending
-			select new { c.Name, o.OrderID, o.Total };
+			select new
+			{
+				c.Name,
+				o.OrderID,
+				o.Total
+			};
 	}
 	
 	public object MultipleSelectManyFollowedBySelect()
@@ -82,7 +92,12 @@ public class QueryExpressions
 			from c in this.customers
 			from o in c.Orders
 			from d in o.Details
-			select new { c.Name, o.OrderID, d.Quantity };
+			select new
+			{
+				c.Name,
+				o.OrderID,
+				d.Quantity
+			};
 	}
 	
 	public object MultipleSelectManyFollowedByLet()
@@ -92,16 +107,25 @@ public class QueryExpressions
 			from o in c.Orders
 			from d in o.Details
 			let x = d.Quantity * d.UnitPrice
-			select new { c.Name, o.OrderID, x };
+			select new
+			{
+				c.Name,
+				o.OrderID,
+				x
+			};
 	}
 	
 	public object FromLetWhereSelect()
 	{
 		return
 			from o in this.orders
-			let t = o.Details.Sum(d => d.UnitPrice * d.Quantity)
-			where t >= 1000
-			select new { o.OrderID, Total = t };
+			let t = o.Details.Sum((QueryExpressions.OrderDetail d) => d.UnitPrice * d.Quantity)
+			where t >= 1000m
+			select new
+			{
+				OrderID = o.OrderID,
+				Total = t
+			};
 	}
 	
 	public object MultipleLet()
@@ -116,25 +140,34 @@ public class QueryExpressions
 	public object Join()
 	{
 		return
-			from c in customers
-			join o in orders on c.CustomerID equals o.CustomerID
-			select new { c.Name, o.OrderDate, o.Total };
+			from c in this.customers
+			join o in this.orders on c.CustomerID equals o.CustomerID
+			select new
+			{
+				c.Name,
+				o.OrderDate,
+				o.Total
+			};
 	}
 	
 	public object JoinInto()
 	{
 		return
-			from c in customers
-			join o in orders on c.CustomerID equals o.CustomerID into co
-			let n = co.Count()
+			from c in this.customers
+			join o in this.orders on c.CustomerID equals o.CustomerID into co
+			let n = co.Count<QueryExpressions.Order>()
 			where n >= 10
-			select new { c.Name, OrderCount = n };
+			select new
+			{
+				Name = c.Name,
+				OrderCount = n
+			};
 	}
 	
 	public object OrderBy()
 	{
 		return
-			from o in orders
+			from o in this.orders
 			orderby o.Customer.Name, o.Total descending
 			select o;
 	}
@@ -142,14 +175,14 @@ public class QueryExpressions
 	public object GroupBy()
 	{
 		return
-			from c in customers
+			from c in this.customers
 			group c.Name by c.Country;
 	}
 	
 	public object ExplicitType()
 	{
 		return
-			from Customer c in customers
+			from QueryExpressions.Customer c in this.customers
 			where c.City == "London"
 			select c;
 	}
@@ -157,8 +190,12 @@ public class QueryExpressions
 	public object QueryContinuation()
 	{
 		return
-			from c in customers
+			from c in this.customers
 			group c by c.Country into g
-			select new { Country = g.Key, CustCount = g.Count() };
+			select new
+			{
+				Country = g.Key,
+				CustCount = g.Count<QueryExpressions.Customer>()
+			};
 	}
 }

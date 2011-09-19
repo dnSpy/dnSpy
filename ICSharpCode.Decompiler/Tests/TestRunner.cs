@@ -112,7 +112,7 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\PropertiesAndEvents.cs");
 		}
 		
-		[Test, Ignore("Formatting differences in anonymous method create expressions")]
+		[Test]
 		public void QueryExpressions()
 		{
 			TestFile(@"..\..\Tests\QueryExpressions.cs");

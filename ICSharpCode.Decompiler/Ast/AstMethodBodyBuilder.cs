@@ -714,21 +714,40 @@ namespace ICSharpCode.Decompiler.Ast
 								return ace;
 							}
 						}
-						var oce = new Ast.ObjectCreateExpression();
 						if (declaringType.IsAnonymousType()) {
 							MethodDefinition ctor = ((MethodReference)operand).Resolve();
 							if (methodDef != null) {
-								oce.Initializer = new ArrayInitializerExpression();
+								AnonymousTypeCreateExpression atce = new AnonymousTypeCreateExpression();
+								bool allNamesCanBeInferred = true;
 								for (int i = 0; i < args.Count; i++) {
-									oce.Initializer.Elements.Add(
-										new NamedExpression {
-											Identifier = ctor.Parameters[i].Name,
-											Expression = args[i]
-										});
+									string inferredName;
+									if (args[i] is IdentifierExpression)
+										inferredName = ((IdentifierExpression)args[i]).Identifier;
+									else if (args[i] is MemberReferenceExpression)
+										inferredName = ((MemberReferenceExpression)args[i]).MemberName;
+									else
+										inferredName = null;
+									
+									if (inferredName != ctor.Parameters[i].Name) {
+										allNamesCanBeInferred = false;
+										break;
+									}
 								}
+								if (allNamesCanBeInferred) {
+									atce.Initializers.AddRange(args);
+								} else {
+									for (int i = 0; i < args.Count; i++) {
+										atce.Initializers.Add(
+											new NamedExpression {
+												Identifier = ctor.Parameters[i].Name,
+												Expression = args[i]
+											});
+									}
+								}
+								return atce;
 							}
-							return oce;
 						}
+						var oce = new Ast.ObjectCreateExpression();
 						oce.Type = AstBuilder.ConvertType(declaringType);
 						oce.Arguments.AddRange(args);
 						return oce.WithAnnotation(operand);

@@ -78,11 +78,17 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		}
 		
 		static readonly QuerySelectClause selectTransparentIdentifierPattern = new QuerySelectClause {
-			Expression = new ObjectCreateExpression {
-				Initializer = new ArrayInitializerExpression {
-					Elements = {
+			Expression = new Choice {
+				new AnonymousTypeCreateExpression {
+					Initializers = {
 						new NamedNode("nae1", new NamedExpression { Expression = new IdentifierExpression() }),
-						new NamedNode("nae2", new NamedExpression { Expression = new AnyNode() })
+						new NamedNode("nae2", new NamedExpression { Expression = new AnyNode("nae2Expr") })
+					}
+				},
+				new AnonymousTypeCreateExpression {
+					Initializers = {
+						new NamedNode("identifier", new IdentifierExpression()),
+						new AnyNode("nae2Expr")
 					}
 				}
 			}};
@@ -100,12 +106,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (!match.Success)
 				return false;
 			QuerySelectClause selectClause = (QuerySelectClause)innerQuery.Clauses.Last();
-			NamedExpression nae1 = match.Get<NamedExpression>("nae1").Single();
-			NamedExpression nae2 = match.Get<NamedExpression>("nae2").Single();
-			if (nae1.Identifier != ((IdentifierExpression)nae1.Expression).Identifier)
+			NamedExpression nae1 = match.Get<NamedExpression>("nae1").SingleOrDefault();
+			NamedExpression nae2 = match.Get<NamedExpression>("nae2").SingleOrDefault();
+			if (nae1 != null && nae1.Identifier != ((IdentifierExpression)nae1.Expression).Identifier)
 				return false;
-			IdentifierExpression nae2IdentExpr = nae2.Expression as IdentifierExpression;
-			if (nae2IdentExpr != null && nae2.Identifier == nae2IdentExpr.Identifier) {
+			Expression nae2Expr = match.Get<Expression>("nae2Expr").Single();
+			IdentifierExpression nae2IdentExpr = nae2Expr as IdentifierExpression;
+			if (nae2IdentExpr != null && (nae2 == null || nae2.Identifier == nae2IdentExpr.Identifier)) {
 				// from * in (from x in ... select new { x = x, y = y }) ...
 				// =>
 				// from x in ... ...
@@ -127,7 +134,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				foreach (var clause in innerQuery.Clauses) {
 					query.Clauses.InsertAfter(insertionPos, insertionPos = clause.Detach());
 				}
-				query.Clauses.InsertAfter(insertionPos, new QueryLetClause { Identifier = nae2.Identifier, Expression = nae2.Expression.Detach() });
+				string ident;
+				if (nae2 != null)
+					ident = nae2.Identifier;
+				else if (nae2Expr is IdentifierExpression)
+					ident = ((IdentifierExpression)nae2Expr).Identifier;
+				else if (nae2Expr is MemberReferenceExpression)
+					ident = ((MemberReferenceExpression)nae2Expr).MemberName;
+				else
+					throw new InvalidOperationException("Could not infer name from initializer in AnonymousTypeCreateExpression");
+				query.Clauses.InsertAfter(insertionPos, new QueryLetClause { Identifier = ident, Expression = nae2Expr.Detach() });
 			}
 			return true;
 		}
