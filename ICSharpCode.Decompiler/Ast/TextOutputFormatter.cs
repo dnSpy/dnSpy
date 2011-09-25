@@ -46,7 +46,7 @@ namespace ICSharpCode.Decompiler.Ast
 			object memberRef = GetCurrentMemberReference();
 
 			if (memberRef != null) {
-				output.WriteReference(identifier, memberRef);
+				output.WriteReference(identifier, memberRef, isIconMapping: IsIconMapping());
 				return;
 			}
 
@@ -121,8 +121,9 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			// Attach member reference to token only if there's no identifier in the current node.
 			MemberReference memberRef = GetCurrentMemberReference();
-			if (memberRef != null && nodeStack.Peek().GetChildByRole(AstNode.Roles.Identifier).IsNull)
-				output.WriteReference(token, memberRef);
+			var node = nodeStack.Peek();
+			if (memberRef != null && node.GetChildByRole(AstNode.Roles.Identifier).IsNull)
+				output.WriteReference(token, memberRef, isIconMapping: IsIconMapping());
 			else
 				output.Write(token);
 		}
@@ -243,6 +244,24 @@ namespace ICSharpCode.Decompiler.Ast
 				output.AddDebuggerMemberMapping(currentMemberMapping);
 				currentMemberMapping = parentMemberMappings.Pop();
 			}
+		}
+		
+		private bool IsIconMapping()
+		{
+			if (nodeStack == null || nodeStack.Count == 0)
+				return false;
+			
+			var node = nodeStack.Peek();
+			
+			return 
+				node is FieldDeclaration ||
+				node is ConstructorDeclaration ||
+				node is EventDeclaration ||
+				node is DestructorDeclaration ||
+				node is DelegateDeclaration ||
+				node is OperatorDeclaration||
+				node is MemberDeclaration ||
+				node is TypeDeclaration;
 		}
 	}
 }

@@ -288,7 +288,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			if (DebugInformation.CodeMappings == null || !DebugInformation.CodeMappings.ContainsKey(key))
 				return null;
 			
-			return DebugInformation.CodeMappings[key].GetInstructionByTokenAndOffset(key, frame.IP, out isMatch);
+			return DebugInformation.CodeMappings[key].GetInstructionByTokenAndOffset(frame.IP, out isMatch);
 		}
 		
 		StackFrame GetStackFrame()
@@ -301,7 +301,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				frame.ILRanges = new [] { 0, 1 };
 			} else {
 				//var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-				frame.SourceCodeLine = map.SourceCodeLine;
+				frame.SourceCodeLine = map.StartLocation.Line;
 				frame.ILRanges = map.ToArray(isMatch);
 			}
 			
@@ -800,7 +800,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				
 				if (DebugInformation.CodeMappings != null && 
 				    DebugInformation.CodeMappings.ContainsKey(token) &&
-				    DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out memberReference, out line)) {
+				    DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(ilOffset, out memberReference, out line)) {
 					DebugInformation.DebugStepInformation = null; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
 					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0, ilOffset);

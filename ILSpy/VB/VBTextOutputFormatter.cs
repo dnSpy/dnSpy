@@ -81,7 +81,7 @@ namespace ICSharpCode.ILSpy.VB
 			object memberRef = GetCurrentMemberReference();
 
 			if (memberRef != null) {
-				output.WriteReference(identifier, memberRef);
+				output.WriteReference(identifier, memberRef, isIconMapping: IsIconMapping());
 				return;
 			}
 
@@ -157,7 +157,7 @@ namespace ICSharpCode.ILSpy.VB
 			// Attach member reference to token only if there's no identifier in the current node.
 			MemberReference memberRef = GetCurrentMemberReference();
 			if (memberRef != null && nodeStack.Peek().GetChildByRole(AstNode.Roles.Identifier).IsNull)
-				output.WriteReference(token, memberRef);
+				output.WriteReference(token, memberRef, isIconMapping: IsIconMapping());
 			else
 				output.Write(token);
 		}
@@ -199,6 +199,23 @@ namespace ICSharpCode.ILSpy.VB
 		public void MarkFoldEnd()
 		{
 			output.MarkFoldEnd();
+		}
+		
+		private bool IsIconMapping()
+		{
+			if (nodeStack == null || nodeStack.Count == 0)
+				return false;
+			
+			var node = nodeStack.Peek();
+			
+			return 
+				node is FieldDeclaration ||
+				node is ConstructorDeclaration ||
+				node is EventDeclaration ||
+				node is DelegateDeclaration ||
+				node is OperatorDeclaration||
+				node is MemberDeclaration ||
+				node is TypeDeclaration;
 		}
 	}
 }

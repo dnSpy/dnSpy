@@ -179,6 +179,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.Write(DisassemblerHelpers.Escape(method.Name + "$PST" + method.MetadataToken.ToInt32().ToString("X8")));
 			} else {
 				output.Write(DisassemblerHelpers.Escape(method.Name));
+				output.WriteReference(DisassemblerHelpers.Escape(method.Name), method, isIconMapping: true);
 			}
 			
 			WriteTypeParameters(output, method);
@@ -674,6 +675,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		public void DisassembleField(FieldDefinition field)
 		{
 			output.WriteDefinition(".field ", field);
+			output.WriteReference(DisassemblerHelpers.Escape(field.Name), field, isIconMapping: true);
 			WriteEnum(field.Attributes & FieldAttributes.FieldAccessMask, fieldVisibility);
 			const FieldAttributes hasXAttributes = FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal | FieldAttributes.HasFieldRVA;
 			WriteFlags(field.Attributes & ~(FieldAttributes.FieldAccessMask | hasXAttributes), fieldAttributes);
@@ -712,6 +714,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			currentMember = property;
 			
 			output.WriteDefinition(".property ", property);
+			output.WriteReference(DisassemblerHelpers.Escape(property.Name), property, isIconMapping: true);
 			WriteFlags(property.Attributes, propertyAttributes);
 			if (property.HasThis)
 				output.Write("instance ");
@@ -743,6 +746,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			if (method == null)
 				return;
+			
+			output.WriteReference(DisassemblerHelpers.Escape(method.Name), method, isIconMapping: true);
 			output.Write(keyword);
 			output.Write(' ');
 			method.WriteTo(output);
@@ -762,6 +767,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			currentMember = ev;
 			
 			output.WriteDefinition(".event ", ev);
+			output.WriteReference(DisassemblerHelpers.Escape(ev.Name), ev, isIconMapping: true);
 			WriteFlags(ev.Attributes, eventAttributes);
 			ev.EventType.WriteTo(output, ILNameSyntax.TypeName);
 			output.Write(' ');
@@ -816,6 +822,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			// start writing IL
 			output.WriteDefinition(".class ", type);
+			output.WriteReference(DisassemblerHelpers.Escape(type.Name), type, isIconMapping: true);
 			
 			if ((type.Attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Interface)
 				output.Write("interface ");

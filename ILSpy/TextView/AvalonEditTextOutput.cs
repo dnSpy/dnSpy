@@ -22,11 +22,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
+
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TextView
 {
@@ -65,7 +67,7 @@ namespace ICSharpCode.ILSpy.TextView
 	/// <summary>
 	/// Text output implementation for AvalonEdit.
 	/// </summary>
-	public sealed class AvalonEditTextOutput : ISmartTextOutput
+	public sealed class AvalonEditTextOutput : BaseTextOutput, ISmartTextOutput
 	{
 		int lastLineStart = 0;
 		int lineNumber = 1;
@@ -92,7 +94,8 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
 		internal readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
 		
-		List<MemberMapping> memberMappings = new List<MemberMapping>();
+		/// <summary> Icon mappings. </summary>
+		internal readonly Dictionary<MemberReference, int> IconMappings = new Dictionary<MemberReference, int>();
 		
 		public AvalonEditTextOutput()
 		{
@@ -121,14 +124,10 @@ namespace ICSharpCode.ILSpy.TextView
 			get { return b.Length; }
 		}
 		
-		public ICSharpCode.NRefactory.TextLocation Location {
-			get { 
+		public override ICSharpCode.NRefactory.TextLocation Location {
+			get {
 				return new ICSharpCode.NRefactory.TextLocation(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
 			}
-		}
-		
-		public IList<MemberMapping> MemberMappings {
-			get { return memberMappings; }
 		}
 		
 		#region Text Document
@@ -163,12 +162,12 @@ namespace ICSharpCode.ILSpy.TextView
 		}
 		#endregion
 		
-		public void Indent()
+		public override void Indent()
 		{
 			indent++;
 		}
 		
-		public void Unindent()
+		public override void Unindent()
 		{
 			indent--;
 		}
@@ -184,19 +183,19 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
-		public void Write(char ch)
+		public override void Write(char ch)
 		{
 			WriteIndent();
 			b.Append(ch);
 		}
 		
-		public void Write(string text)
+		public override void Write(string text)
 		{
 			WriteIndent();
 			b.Append(text);
 		}
 		
-		public void WriteLine()
+		public override void WriteLine()
 		{
 			Debug.Assert(textDocument == null);
 			b.AppendLine();
@@ -208,7 +207,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
-		public void WriteDefinition(string text, object definition)
+		public override void WriteDefinition(string text, object definition)
 		{
 			WriteIndent();
 			int start = this.TextLength;
@@ -218,16 +217,20 @@ namespace ICSharpCode.ILSpy.TextView
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = definition, IsLocal = true, IsLocalTarget = true });
 		}
 		
-		public void WriteReference(string text, object reference, bool isLocal)
+		public override void WriteReference(string text, object reference, bool isLocal, bool isIconMapping)
 		{
 			WriteIndent();
 			int start = this.TextLength;
 			b.Append(text);
 			int end = this.TextLength;
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
+			
+			if (isIconMapping && reference is MemberReference && !this.IconMappings.ContainsKey((MemberReference)reference)) {
+				this.IconMappings.Add((MemberReference)reference, this.Location.Line);
+			}
 		}
 		
-		public void MarkFoldStart(string collapsedText, bool defaultCollapsed)
+		public override void MarkFoldStart(string collapsedText, bool defaultCollapsed)
 		{
 			WriteIndent();
 			openFoldings.Push(
@@ -238,7 +241,7 @@ namespace ICSharpCode.ILSpy.TextView
 				});
 		}
 		
-		public void MarkFoldEnd()
+		public override void MarkFoldEnd()
 		{
 			NewFolding f = openFoldings.Pop();
 			f.EndOffset = this.TextLength;
@@ -252,11 +255,6 @@ namespace ICSharpCode.ILSpy.TextView
 					throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
 				this.UIElements.Add(new KeyValuePair<int, Lazy<UIElement>>(this.TextLength, new Lazy<UIElement>(element)));
 			}
-		}
-		
-		public void AddDebuggerMemberMapping(MemberMapping memberMapping)
-		{
-			memberMappings.Add(memberMapping);
 		}
 	}
 }

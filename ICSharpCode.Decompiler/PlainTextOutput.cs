@@ -17,12 +17,57 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+
 using ICSharpCode.NRefactory;
+using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler
 {
-	public sealed class PlainTextOutput : ITextOutput
+	/// <summary>
+	/// Base text output.
+	/// <remarks>Provides access to code mappings.</remarks>
+	/// </summary>
+	public abstract class BaseTextOutput : ITextOutput
+	{
+		#region Code mappings
+		Dictionary<int, MemberMapping> codeMappings = new Dictionary<int, MemberMapping>();
+		
+		public Dictionary<int, MemberMapping> CodeMappings {
+			get { return codeMappings; }
+		}
+		
+		public virtual void AddDebuggerMemberMapping(MemberMapping memberMapping)
+		{
+			if (memberMapping == null)
+				throw new ArgumentNullException("memberMapping");
+			
+			int token = memberMapping.MetadataToken;
+			codeMappings.Add(token, memberMapping);
+		}
+		
+		#endregion
+		
+		#region ITextOutput members
+		public abstract TextLocation Location { get; }
+		public abstract void Indent();
+		public abstract void Unindent();
+		public abstract void Write(char ch);
+		public abstract void Write(string text);
+		public abstract void WriteLine();
+		public abstract void WriteDefinition(string text, object definition);
+		public abstract void WriteReference(string text, object reference, bool isLocal, bool isIconMapping);
+		public abstract void MarkFoldStart(string collapsedText, bool defaultCollapsed);
+		public abstract void MarkFoldEnd();
+		#endregion
+	}
+	
+	/// <summary>
+	/// Plain text output.
+	/// <remarks>Can be used when there's no UI.</remarks>
+	/// </summary>
+	public sealed class PlainTextOutput : BaseTextOutput
 	{
 		readonly TextWriter writer;
 		int indent;
@@ -43,7 +88,7 @@ namespace ICSharpCode.Decompiler
 			this.writer = new StringWriter();
 		}
 		
-		public TextLocation Location {
+		public override TextLocation Location {
 			get {
 				return new TextLocation(line, column + (needsIndent ? indent : 0));
 			}
@@ -54,12 +99,12 @@ namespace ICSharpCode.Decompiler
 			return writer.ToString();
 		}
 		
-		public void Indent()
+		public override void Indent()
 		{
 			indent++;
 		}
 		
-		public void Unindent()
+		public override void Unindent()
 		{
 			indent--;
 		}
@@ -75,21 +120,21 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
-		public void Write(char ch)
+		public override void Write(char ch)
 		{
 			WriteIndent();
 			writer.Write(ch);
 			column++;
 		}
 		
-		public void Write(string text)
+		public override void Write(string text)
 		{
 			WriteIndent();
 			writer.Write(text);
 			column += text.Length;
 		}
 		
-		public void WriteLine()
+		public override void WriteLine()
 		{
 			writer.WriteLine();
 			needsIndent = true;
@@ -97,25 +142,21 @@ namespace ICSharpCode.Decompiler
 			column = 1;
 		}
 		
-		public void WriteDefinition(string text, object definition)
+		public override void WriteDefinition(string text, object definition)
 		{
 			Write(text);
 		}
 		
-		public void WriteReference(string text, object reference, bool isLocal)
+		public override void WriteReference(string text, object reference, bool isLocal, bool isIconMapping)
 		{
 			Write(text);
 		}
 		
-		void ITextOutput.MarkFoldStart(string collapsedText, bool defaultCollapsed)
+		public override void MarkFoldStart(string collapsedText, bool defaultCollapsed)
 		{
 		}
 		
-		void ITextOutput.MarkFoldEnd()
-		{
-		}
-		
-		void ITextOutput.AddDebuggerMemberMapping(MemberMapping memberMapping)
+		public override void MarkFoldEnd()
 		{
 		}
 	}

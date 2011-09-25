@@ -60,12 +60,6 @@ namespace ICSharpCode.ILSpy
 	public abstract class Language
 	{
 		/// <summary>
-		/// Decompile finished event.
-		/// </summary>
-		[Obsolete]
-		public event EventHandler<DecompileEventArgs> DecompileFinished { add {} remove {} }
-		
-		/// <summary>
 		/// Gets the name of the language (as shown in the UI)
 		/// </summary>
 		public abstract string Name { get; }

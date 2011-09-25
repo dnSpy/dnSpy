@@ -11,6 +11,7 @@ using System.Windows.Media;
 
 using Debugger;
 using Debugger.MetaData;
+using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.Debugger.Services;
@@ -161,9 +162,9 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 				}
 				
 				// get local variable index
-				IEnumerable<ILVariable> list;
-				if (DebugInformation.LocalVariables.TryGetValue(token, out list)) {
-					var variable = list.FirstOrDefault(v => v.Name == targetName);
+				MemberMapping mapping;
+				if (DebugInformation.CodeMappings != null && DebugInformation.CodeMappings.TryGetValue(token, out mapping)) {
+					var variable = mapping.LocalVariables.FirstOrDefault(v => v.Name == targetName);
 					if (variable != null && variable.OriginalVariable != null) {
 						if (expression is MemberReferenceExpression) {
 							var memberExpression = (MemberReferenceExpression)expression;
