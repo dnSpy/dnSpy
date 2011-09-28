@@ -602,7 +602,7 @@ namespace ICSharpCode.ILSpy.TextView
 				ClearLocalReferenceMarks();
 				if (references != null) {
 					foreach (var r in references) {
-						if (r.Reference == reference) {
+						if (reference.Equals(r.Reference)) {
 							var mark = textMarkerService.Create(r.StartOffset, r.Length);
 							mark.BackgroundColor = r.IsLocalTarget ? Colors.LightSeaGreen : Colors.GreenYellow;
 							localReferenceMarks.Add(mark);

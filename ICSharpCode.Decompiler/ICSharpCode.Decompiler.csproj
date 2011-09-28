@@ -64,6 +64,7 @@
     <Compile Include="Ast\Transforms\DecimalConstantTransform.cs" />
     <Compile Include="Ast\Transforms\DeclareVariables.cs" />
     <Compile Include="Ast\Transforms\DelegateConstruction.cs" />
+    <Compile Include="Ast\Transforms\FlattenSwitchBlocks.cs" />
     <Compile Include="Ast\Transforms\IntroduceExtensionMethods.cs" />
     <Compile Include="Ast\Transforms\IntroduceQueryExpressions.cs" />
     <Compile Include="Ast\Transforms\IntroduceUnsafeModifier.cs" />
@@ -131,12 +132,7 @@
       <Name>ICSharpCode.NRefactory</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Ast" />
-    <Folder Include="Ast\Transforms" />
-    <Folder Include="Disassembler" />
-    <Folder Include="ILAst" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <Target Name="BeforeBuild">
     <MSBuild Projects="$(MSBuildProjectDirectory)\..\BuildTools\UpdateAssemblyInfo\UpdateAssemblyInfo.csproj" Targets="Build" Properties="Configuration=Debug" />

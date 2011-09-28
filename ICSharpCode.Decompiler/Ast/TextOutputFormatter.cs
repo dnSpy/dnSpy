@@ -33,6 +33,8 @@ namespace ICSharpCode.Decompiler.Ast
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
 		int braceLevelWithinType = -1;
 		bool inDocumentationComment = false;
+		bool firstUsingDeclaration;
+		bool lastUsingDeclaration;
 		
 		public TextOutputFormatter(ITextOutput output)
 		{
@@ -62,6 +64,11 @@ namespace ICSharpCode.Decompiler.Ast
 				return;
 			}
 
+			if (firstUsingDeclaration) {
+				output.MarkFoldStart(defaultCollapsed: true);
+				firstUsingDeclaration = false;
+			}
+
 			output.Write(identifier);
 		}
 
@@ -86,6 +93,15 @@ namespace ICSharpCode.Decompiler.Ast
 				//    return variable.OriginalVariable;
 				return variable;
 			}
+
+			var gotoStatement = node as GotoStatement;
+			if (gotoStatement != null)
+			{
+				var method = nodeStack.Select(nd => nd.Annotation<MethodReference>()).FirstOrDefault(mr => mr != null);
+				if (method != null)
+					return method.ToString() + gotoStatement.Label;
+			}
+
 			return null;
 		}
 
@@ -107,6 +123,14 @@ namespace ICSharpCode.Decompiler.Ast
 				} else {
 
 				}
+			}
+
+			var label = node as LabelStatement;
+			if (label != null)
+			{
+				var method = nodeStack.Select(nd => nd.Annotation<MethodReference>()).FirstOrDefault(mr => mr != null);
+				if (method != null)
+					return method.ToString() + label.Label;
 			}
 
 			return null;
@@ -167,6 +191,10 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void NewLine()
 		{
+			if (lastUsingDeclaration) {
+				output.MarkFoldEnd();
+				lastUsingDeclaration = false;
+			}
 			output.WriteLine();
 		}
 		
@@ -205,6 +233,15 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void StartNode(AstNode node)
 		{
+			if (nodeStack.Count == 0) {
+				if (IsUsingDeclaration(node)) {
+					firstUsingDeclaration = !IsUsingDeclaration(node.PrevSibling);
+					lastUsingDeclaration = !IsUsingDeclaration(node.NextSibling);
+				} else {
+					firstUsingDeclaration = false;
+					lastUsingDeclaration = false;
+				}
+			}
 			nodeStack.Push(node);
 			startLocations.Push(output.Location);
 			
@@ -215,6 +252,11 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
+		private bool IsUsingDeclaration(AstNode node)
+		{
+			return node is UsingDeclaration || node is UsingAliasDeclaration;
+		}
+
 		public void EndNode(AstNode node)
 		{
 			if (nodeStack.Pop() != node)
