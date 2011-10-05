@@ -97,6 +97,11 @@ public static class Generics
 	{
 	}
 	
+	private static void MultidimensionalArray<T>(T[,] array)
+	{
+		array[0, 0] = array[0, 1];
+	}
+
 	public static Dictionary<string, string>.KeyCollection.Enumerator GetEnumerator(Dictionary<string, string> d, Generics.MyArray<string>.NestedClass<int> nc)
 	{
 		// Tests references to inner classes in generic classes

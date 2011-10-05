@@ -916,14 +916,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			GenericParameter gp = type as GenericParameter;
 			if (gp != null) {
-				if (gp.Owner.GenericParameterType == GenericParameterType.Method) {
+				if (member.DeclaringType is ArrayType) {
+					return ((ArrayType)member.DeclaringType).ElementType;
+				} else if (gp.Owner.GenericParameterType == GenericParameterType.Method) {
 					return ((GenericInstanceMethod)member).GenericArguments[gp.Position];
-				} else {
-					if (member.DeclaringType is ArrayType) {
-						return ((ArrayType)member.DeclaringType).ElementType;
-					} else {
-						return ((GenericInstanceType)member.DeclaringType).GenericArguments[gp.Position];
-					}
+				} else  {
+					return ((GenericInstanceType)member.DeclaringType).GenericArguments[gp.Position];
 				}
 			}
 			return type;
