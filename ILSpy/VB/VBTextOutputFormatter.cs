@@ -78,14 +78,19 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public void WriteIdentifier(string identifier)
 		{
+			var definition = GetCurrentDefinition();
+			if (definition != null) {
+				output.WriteDefinition(identifier, definition);
+				return;
+			}
+			
 			object memberRef = GetCurrentMemberReference();
-
 			if (memberRef != null) {
-				output.WriteReference(identifier, memberRef, isIconMapping: IsIconMapping());
+				output.WriteReference(identifier, memberRef);
 				return;
 			}
 
-			var definition = GetCurrentLocalDefinition();
+			definition = GetCurrentLocalDefinition();
 			if (definition != null) {
 				output.WriteDefinition(identifier, definition);
 				return;
@@ -147,6 +152,22 @@ namespace ICSharpCode.ILSpy.VB
 			return null;
 		}
 		
+		object GetCurrentDefinition()
+		{
+			if (nodeStack == null || nodeStack.Count == 0)
+				return null;
+			
+			var node = nodeStack.Peek();			
+			if (IsDefinition(node))
+				return node.Annotation<MemberReference>();
+			
+			node = node.Parent;
+			if (IsDefinition(node))
+				return node.Annotation<MemberReference>();
+
+			return null;
+		}
+		
 		public void WriteKeyword(string keyword)
 		{
 			output.Write(keyword);
@@ -157,7 +178,7 @@ namespace ICSharpCode.ILSpy.VB
 			// Attach member reference to token only if there's no identifier in the current node.
 			MemberReference memberRef = GetCurrentMemberReference();
 			if (memberRef != null && nodeStack.Peek().GetChildByRole(AstNode.Roles.Identifier).IsNull)
-				output.WriteReference(token, memberRef, isIconMapping: IsIconMapping());
+				output.WriteReference(token, memberRef);
 			else
 				output.Write(token);
 		}
@@ -201,14 +222,9 @@ namespace ICSharpCode.ILSpy.VB
 			output.MarkFoldEnd();
 		}
 		
-		private bool IsIconMapping()
+		private static bool IsDefinition(AstNode node)
 		{
-			if (nodeStack == null || nodeStack.Count == 0)
-				return false;
-			
-			var node = nodeStack.Peek();
-			
-			return 
+			return
 				node is FieldDeclaration ||
 				node is ConstructorDeclaration ||
 				node is EventDeclaration ||

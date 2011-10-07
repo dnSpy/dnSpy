@@ -117,10 +117,10 @@ namespace ICSharpCode.ILSpy
 		private static TypeIconCache typeIconCache = new TypeIconCache();
 		private static MemberIconCache memberIconCache = new MemberIconCache();
 
-		public static ImageSource GetIcon(TypeIcon icon, AccessOverlayIcon overlay)
+		public static ImageSource GetIcon(TypeIcon icon, AccessOverlayIcon overlay, bool isStatic = false)
 		{
 			lock (typeIconCache)
-				return typeIconCache.GetIcon(icon, overlay, false);
+				return typeIconCache.GetIcon(icon, overlay, isStatic);
 		}
 
 		public static ImageSource GetIcon(MemberIcon icon, AccessOverlayIcon overlay, bool isStatic)

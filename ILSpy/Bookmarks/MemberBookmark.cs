@@ -52,30 +52,22 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		public virtual ImageSource Image {
 			get {
 				if (member is FieldDefinition)
-					return GetMemberOverlayedImage(member, MemberIcon.Field);
+					return GetOverlayedImage(member as FieldDefinition, MemberIcon.Field);
 				
 				if (member is PropertyDefinition)
-					return GetMemberOverlayedImage(member, MemberIcon.Property);
+					return GetOverlayedImage(member as PropertyDefinition, MemberIcon.Property);
 				
 				if (member is EventDefinition)
-					return GetMemberOverlayedImage(member, MemberIcon.Event);
+					return GetOverlayedImage(member as EventDefinition, MemberIcon.Event);
 				
-				return GetMemberOverlayedImage(member, MemberIcon.Method);
+				if (member is MethodDefinition)
+					return GetOverlayedImage(member as MethodDefinition, MemberIcon.Method);
+				
+				if (member is TypeDefinition)
+					return GetOverlayedImage(member as TypeDefinition);
+				
+				return null;
 			}
-		}
-		
-		ImageSource GetMemberOverlayedImage(MemberReference member, MemberIcon icon)
-		{
-			if (member is FieldDefinition)
-				return Images.GetIcon(icon, ((FieldDefinition)member).IsPublic ? AccessOverlayIcon.Public : AccessOverlayIcon.Private, false);
-			
-			if (member is PropertyDefinition)
-				return Images.GetIcon(icon, AccessOverlayIcon.Public, false);
-			
-			if (member is EventDefinition)
-				return Images.GetIcon(icon, AccessOverlayIcon.Public, false);
-			
-			return Images.GetIcon(icon, ((MethodDefinition)member).IsPublic ? AccessOverlayIcon.Public : AccessOverlayIcon.Private, false);
 		}
 		
 		public int LineNumber {
@@ -102,6 +94,105 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		{
 			throw new NotSupportedException();
 		}
+		
+		#region Overlayed images
+		
+		internal ImageSource GetOverlayedImage(TypeDefinition typeDef)
+		{
+			TypeIcon icon = TypeIcon.Class;
+			if (typeDef.IsEnum)
+				icon = TypeIcon.Enum;			
+			if (typeDef.IsValueType)
+				icon = TypeIcon.Struct;			
+			if (typeDef.IsInterface)
+				icon = TypeIcon.Interface;			
+			if (typeDef.BaseType.FullName == "System.MulticastDelegate" || typeDef.BaseType.FullName == "System.Delegate")
+				icon = TypeIcon.Delegate;
+			
+			bool isStatic = false;
+			AccessOverlayIcon overlayIcon = AccessOverlayIcon.Private;
+			
+			if (typeDef.IsNestedPrivate)
+				overlayIcon = AccessOverlayIcon.Public;
+			else if (typeDef.IsNestedAssembly || typeDef.IsNestedFamilyAndAssembly || typeDef.IsNotPublic)
+				overlayIcon = AccessOverlayIcon.Internal;
+			else if (typeDef.IsNestedFamily)
+				overlayIcon = AccessOverlayIcon.Protected;
+			else if (typeDef.IsNestedFamilyOrAssembly)
+				overlayIcon = AccessOverlayIcon.ProtectedInternal;
+			else if (typeDef.IsPublic || typeDef.IsNestedPublic)
+				overlayIcon = AccessOverlayIcon.Public;
+			
+			if (typeDef.IsAbstract && typeDef.IsSealed)
+				isStatic = true;
+			
+			return Images.GetIcon(icon, overlayIcon, isStatic);
+		}
+		
+		ImageSource GetOverlayedImage(FieldDefinition fieldDef, MemberIcon icon)
+		{
+			bool isStatic = false;
+			AccessOverlayIcon overlayIcon = AccessOverlayIcon.Public;
+			
+			if (fieldDef.IsPrivate)
+				overlayIcon = AccessOverlayIcon.Private;
+			else if (fieldDef.IsAssembly || fieldDef.IsFamilyAndAssembly)
+				overlayIcon = AccessOverlayIcon.Internal;
+			else if (fieldDef.IsFamily)
+				overlayIcon = AccessOverlayIcon.Protected;
+			else if (fieldDef.IsFamilyOrAssembly)
+				overlayIcon = AccessOverlayIcon.ProtectedInternal;
+			else if (fieldDef.IsPublic)
+				overlayIcon = AccessOverlayIcon.Public;
+			
+			if (fieldDef.IsStatic)
+				isStatic = true;
+			
+			return Images.GetIcon(icon, overlayIcon, isStatic);
+		}
+		
+		ImageSource GetOverlayedImage(MethodDefinition methodDef, MemberIcon icon)
+		{
+			bool isStatic = false;
+			AccessOverlayIcon overlayIcon = AccessOverlayIcon.Public;
+			
+			if (methodDef == null)
+				return Images.GetIcon(icon, overlayIcon, isStatic);;
+
+			if (methodDef.IsPrivate)
+				overlayIcon = AccessOverlayIcon.Private;
+			else if (methodDef.IsAssembly || methodDef.IsFamilyAndAssembly)
+				overlayIcon = AccessOverlayIcon.Internal;
+			else if (methodDef.IsFamily)
+				overlayIcon = AccessOverlayIcon.Protected;
+			else if (methodDef.IsFamilyOrAssembly)
+				overlayIcon = AccessOverlayIcon.ProtectedInternal;
+			else if (methodDef.IsPublic)
+				overlayIcon = AccessOverlayIcon.Public;
+			
+			if (methodDef.IsStatic)
+				isStatic = true;
+			
+			return Images.GetIcon(icon, overlayIcon, isStatic);
+		}
+		
+		ImageSource GetOverlayedImage(PropertyDefinition propDef, MemberIcon icon)
+		{
+			bool isStatic = false;
+			AccessOverlayIcon overlayIcon = AccessOverlayIcon.Public;
+			
+			return Images.GetIcon(propDef.IsIndexer() ? MemberIcon.Indexer : icon, overlayIcon, isStatic);
+		}
+		
+		ImageSource GetOverlayedImage(EventDefinition eventDef, MemberIcon icon)
+		{
+			bool isStatic = false;
+			AccessOverlayIcon overlayIcon = AccessOverlayIcon.Public;
+
+			return Images.GetIcon(icon, overlayIcon, isStatic);
+		}
+		
+		#endregion
 	}
 	
 	public class TypeBookmark : MemberBookmark
@@ -113,27 +204,11 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		public override ImageSource Image {
 			get {
 				if (Member is TypeDefinition) {
-					var type = Member as TypeDefinition;
-					if (type.IsEnum)
-						return GetTypeOverlayedImage(type, TypeIcon.Enum);
-					if (type.IsValueType)
-						return GetTypeOverlayedImage(type, TypeIcon.Struct);
-					if (type.IsInterface)
-						return GetTypeOverlayedImage(type, TypeIcon.Interface);
-					
-					return GetTypeOverlayedImage(type, TypeIcon.Class);
+					return GetOverlayedImage(Member as TypeDefinition);
 				}
 				
 				return null;
 			}
-		}
-		
-		ImageSource GetTypeOverlayedImage(TypeDefinition type, TypeIcon icon)
-		{
-			if (type.IsNotPublic)
-				return Images.GetIcon(icon, AccessOverlayIcon.Private);
-			
-			return Images.GetIcon(icon, AccessOverlayIcon.Public);
 		}
 	}
 }

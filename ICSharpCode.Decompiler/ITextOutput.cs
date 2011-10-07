@@ -33,7 +33,7 @@ namespace ICSharpCode.Decompiler
 		void Write(string text);
 		void WriteLine();
 		void WriteDefinition(string text, object definition);
-		void WriteReference(string text, object reference, bool isLocal = false, bool isIconMapping = false);
+		void WriteReference(string text, object reference, bool isLocal = false);
 		
 		void AddDebuggerMemberMapping(MemberMapping memberMapping);
 		

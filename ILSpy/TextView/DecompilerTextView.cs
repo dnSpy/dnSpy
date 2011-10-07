@@ -357,6 +357,12 @@ namespace ICSharpCode.ILSpy.TextView
 				foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
 				Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
 			}
+			
+			// update class bookmarks
+			var document = textEditor.Document;
+			manager.UpdateClassMemberBookmarks(textOutput.DefinitionLookup.ToDictionary(line => document.GetLineByOffset(line).LineNumber),
+			                                   typeof(TypeBookmark), 
+			                                   typeof(MemberBookmark));
 		}
 		#endregion
 		
@@ -550,9 +556,6 @@ namespace ICSharpCode.ILSpy.TextView
 				return;
 			
 			var output = textOutput as AvalonEditTextOutput;
-			
-			// update class bookmarks
-			manager.UpdateClassMemberBookmarks(output.IconMappings, typeof(TypeBookmark), typeof(MemberBookmark));
 			
 			// update debug inforomation
 			DebugInformation.CodeMappings = output.CodeMappings;

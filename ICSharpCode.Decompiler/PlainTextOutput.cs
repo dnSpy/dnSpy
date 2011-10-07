@@ -57,7 +57,7 @@ namespace ICSharpCode.Decompiler
 		public abstract void Write(string text);
 		public abstract void WriteLine();
 		public abstract void WriteDefinition(string text, object definition);
-		public abstract void WriteReference(string text, object reference, bool isLocal, bool isIconMapping);
+		public abstract void WriteReference(string text, object reference, bool isLocal);
 		public abstract void MarkFoldStart(string collapsedText, bool defaultCollapsed);
 		public abstract void MarkFoldEnd();
 		#endregion
@@ -147,7 +147,7 @@ namespace ICSharpCode.Decompiler
 			Write(text);
 		}
 		
-		public override void WriteReference(string text, object reference, bool isLocal, bool isIconMapping)
+		public override void WriteReference(string text, object reference, bool isLocal)
 		{
 			Write(text);
 		}

@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	sealed class DefinitionLookup
 	{
-		Dictionary<object, int> definitions = new Dictionary<object, int>();
+		internal Dictionary<object, int> definitions = new Dictionary<object, int>();
 		
 		public int GetDefinitionPosition(object definition)
 		{
@@ -93,9 +93,6 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
 		internal readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
-		
-		/// <summary> Icon mappings. </summary>
-		internal readonly Dictionary<MemberReference, int> IconMappings = new Dictionary<MemberReference, int>();
 		
 		public AvalonEditTextOutput()
 		{
@@ -217,17 +214,13 @@ namespace ICSharpCode.ILSpy.TextView
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = definition, IsLocal = true, IsLocalTarget = true });
 		}
 		
-		public override void WriteReference(string text, object reference, bool isLocal, bool isIconMapping)
+		public override void WriteReference(string text, object reference, bool isLocal)
 		{
 			WriteIndent();
 			int start = this.TextLength;
 			b.Append(text);
 			int end = this.TextLength;
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
-			
-			if (isIconMapping && reference is MemberReference && !this.IconMappings.ContainsKey((MemberReference)reference)) {
-				this.IconMappings.Add((MemberReference)reference, this.Location.Line);
-			}
 		}
 		
 		public override void MarkFoldStart(string collapsedText, bool defaultCollapsed)
@@ -255,6 +248,26 @@ namespace ICSharpCode.ILSpy.TextView
 					throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
 				this.UIElements.Add(new KeyValuePair<int, Lazy<UIElement>>(this.TextLength, new Lazy<UIElement>(element)));
 			}
+		}
+	}
+	
+	internal static class Extentions
+	{
+		public static Dictionary<MemberReference, int> ToDictionary(this DefinitionLookup definitions, Func<int, int> lineNumber)
+		{
+			if (definitions == null)
+				throw new ArgumentNullException("definitions");
+			
+			var result = new Dictionary<MemberReference, int>();
+			
+			foreach (var element in definitions.definitions) {
+				if (!(element.Key is MemberReference))
+					continue;
+				
+				result.Add((MemberReference)element.Key, lineNumber(element.Value));
+			}
+			
+			return result;
 		}
 	}
 }
