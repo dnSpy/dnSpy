@@ -339,7 +339,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							result.NodesToInsertInCheckedContext = result.NodesToInsertInUncheckedContext + new ConvertCompoundAssignment(expr, false);
 						}
 					}
-				} else {
+				} else if (expr.Role.IsValid(Expression.Null)) {
 					// We use '<' so that expressions are introduced on the deepest level possible (goal 3)
 					if (result.CostInCheckedContext + new Cost(0, 1) < result.CostInUncheckedContext) {
 						result.CostInUncheckedContext = result.CostInCheckedContext + new Cost(0, 1);

@@ -65,48 +65,53 @@ public class CheckedUnchecked
 			}
 		}
 	}
-    public void ObjectCreationInitializerChecked() 
-    {
-        this.TestHelp(new
-        {
-            x = 0,
-            l = 0
-        }, n => checked(new
-        {
-            x = n.x + 1, 
-            l = n.l + 1
-        }));
-    }
+	public void ObjectCreationInitializerChecked() 
+	{
+		this.TestHelp(new
+		{
+			x = 0,
+			l = 0
+		}, n => checked(new
+		{
+			x = n.x + 1, 
+			l = n.l + 1
+		}));
+	}
 
-    public void ObjectCreationWithOneFieldChecked() 
-    {
-        this.TestHelp(new 
-        {
-            x = 0,
-            l = 0
-        }, n => new 
-        {
-            x = checked(n.x + 1), 
-            l = n.l + 1 
-        });
-    }
+	public void ObjectCreationWithOneFieldChecked() 
+	{
+		this.TestHelp(new 
+		{
+			x = 0,
+			l = 0
+		}, n => new 
+		{
+			x = checked(n.x + 1), 
+			l = n.l + 1 
+		});
+	}
 
-    
-    public void ArrayInitializerChecked() 
-    {
-        this.TestHelp<int[]>(new int[]
-        {
-            1,
-            2
-        }, (int[] n) => checked(new int[]
-        {
-            n[0] + 1,
-            n[1] + 1
-        }));
-    }
+	
+	public void ArrayInitializerChecked() 
+	{
+		this.TestHelp<int[]>(new int[]
+		{
+			1,
+			2
+		}, (int[] n) => checked(new int[]
+		{
+			n[0] + 1,
+			n[1] + 1
+		}));
+	}
 
-    public T TestHelp<T>(T t, Func<T, T> f)
-    {
-        return f(t);
-    }
+	public T TestHelp<T>(T t, Func<T, T> f)
+	{
+		return f(t);
+	}
+	
+	public void CheckedInArrayCreationArgument(int a, int b)
+	{
+		Console.WriteLine(new int[checked(a + b)]);
+	}
 }
