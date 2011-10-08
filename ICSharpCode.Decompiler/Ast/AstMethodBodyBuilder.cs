@@ -1063,7 +1063,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		static PropertyDefinition GetIndexer(MethodDefinition cecilMethodDef)
+		internal static PropertyDefinition GetIndexer(MethodDefinition cecilMethodDef)
 		{
 			TypeDefinition typeDef = cecilMethodDef.DeclaringType;
 			string indexerName = null;

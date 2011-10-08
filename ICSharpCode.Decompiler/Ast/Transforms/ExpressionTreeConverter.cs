@@ -81,13 +81,15 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						case "AndAssign":
 							return ConvertAssignmentOperator(invocation, AssignmentOperatorType.BitwiseAnd);
 						case "ArrayAccess":
-						case "ArrayIndex":
-						case "ArrayLength":
 							return NotImplemented(invocation);
+						case "ArrayIndex":
+							return ConvertArrayIndex(invocation);
+						case "ArrayLength":
+							return ConvertArrayLength(invocation);
 						case "Assign":
 							return ConvertAssignmentOperator(invocation, AssignmentOperatorType.Assign);
 						case "Call":
-							return NotImplemented(invocation);
+							return ConvertCall(invocation);
 						case "Coalesce":
 							return ConvertBinaryOperator(invocation, BinaryOperatorType.NullCoalescing);
 						case "Condition":
@@ -98,7 +100,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							else
 								return NotSupported(expr);
 						case "Convert":
+							return ConvertCast(invocation, false);
 						case "ConvertChecked":
+							return ConvertCast(invocation, true);
 						case "Default":
 							return NotImplemented(invocation);
 						case "Divide":
@@ -117,6 +121,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							return ConvertBinaryOperator(invocation, BinaryOperatorType.GreaterThan);
 						case "GreaterThanOrEqual":
 							return ConvertBinaryOperator(invocation, BinaryOperatorType.GreaterThanOrEqual);
+						case "Invoke":
+							return ConvertInvoke(invocation);
 						case "Lambda":
 							return ConvertLambda(invocation);
 						case "LeftShift":
@@ -140,22 +146,27 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						case "MultiplyAssignChecked":
 							return ConvertAssignmentOperator(invocation, AssignmentOperatorType.Multiply, true);
 						case "Negate":
+							return ConvertUnaryOperator(invocation, UnaryOperatorType.Minus, false);
 						case "NegateChecked":
-							return NotImplemented(invocation);
+							return ConvertUnaryOperator(invocation, UnaryOperatorType.Minus, true);
 						case "New":
 							return ConvertNewObject(invocation);
+						case "NewArrayInit":
+							return ConvertNewArrayInit(invocation);
 						case "Not":
-							return NotImplemented(invocation);
+							return ConvertUnaryOperator(invocation, UnaryOperatorType.Not);
 						case "NotEqual":
 							return ConvertBinaryOperator(invocation, BinaryOperatorType.InEquality);
 						case "OnesComplement":
-							return NotImplemented(invocation);
+							return ConvertUnaryOperator(invocation, UnaryOperatorType.BitNot);
 						case "Or":
 							return ConvertBinaryOperator(invocation, BinaryOperatorType.BitwiseOr);
 						case "OrAssign":
 							return ConvertAssignmentOperator(invocation, AssignmentOperatorType.BitwiseOr);
 						case "OrElse":
 							return ConvertBinaryOperator(invocation, BinaryOperatorType.ConditionalOr);
+						case "Property":
+							return ConvertProperty(invocation);
 						case "Quote":
 							return NotImplemented(invocation);
 						case "RightShift":
@@ -241,7 +252,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		#region Convert Field
 		static readonly Expression getFieldFromHandlePattern =
-			new TypePattern(typeof(FieldInfo)).ToType().Invoke("GetFieldFromHandle", new LdTokenPattern("field").ToExpression().Member("FieldHandle"));
+			new TypePattern(typeof(FieldInfo)).ToType().Invoke(
+				"GetFieldFromHandle",
+				new LdTokenPattern("field").ToExpression().Member("FieldHandle"),
+				new OptionalNode(new TypeOfExpression(new AnyNode("declaringType")).Member("TypeHandle"))
+			);
 		
 		Expression ConvertField(InvocationExpression invocation)
 		{
@@ -257,18 +272,155 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (fr == null)
 				return null;
 			
-			Expression target = Convert(invocation.Arguments.ElementAt(0));
-			if (target == null)
+			Expression target = invocation.Arguments.ElementAt(0);
+			Expression convertedTarget;
+			if (target is NullReferenceExpression) {
+				if (m.Has("declaringType"))
+					convertedTarget = new TypeReferenceExpression(m.Get<AstType>("declaringType").Single().Clone());
+				else
+					convertedTarget = new TypeReferenceExpression(AstBuilder.ConvertType(fr.DeclaringType));
+			} else {
+				convertedTarget = Convert(target);
+				if (convertedTarget == null)
+					return null;
+			}
+			
+			return convertedTarget.Member(fr.Name).WithAnnotation(fr);
+		}
+		#endregion
+		
+		#region Convert Property
+		static readonly Expression getMethodFromHandlePattern =
+			new TypePattern(typeof(MethodBase)).ToType().Invoke(
+				"GetMethodFromHandle",
+				new LdTokenPattern("method").ToExpression().Member("MethodHandle"),
+				new OptionalNode(new TypeOfExpression(new AnyNode("declaringType")).Member("TypeHandle"))
+			).CastTo(new TypePattern(typeof(MethodInfo)));
+		
+		Expression ConvertProperty(InvocationExpression invocation)
+		{
+			if (invocation.Arguments.Count != 2)
+				return NotSupported(invocation);
+			
+			Match m = getMethodFromHandlePattern.Match(invocation.Arguments.ElementAt(1));
+			if (!m.Success)
+				return NotSupported(invocation);
+			
+			MethodReference mr = m.Get<AstNode>("method").Single().Annotation<MethodReference>();
+			if (mr == null)
 				return null;
 			
-			return target.Member(fr.Name).WithAnnotation(fr);
+			Expression target = invocation.Arguments.ElementAt(0);
+			Expression convertedTarget;
+			if (target is NullReferenceExpression) {
+				if (m.Has("declaringType"))
+					convertedTarget = new TypeReferenceExpression(m.Get<AstType>("declaringType").Single().Clone());
+				else
+					convertedTarget = new TypeReferenceExpression(AstBuilder.ConvertType(mr.DeclaringType));
+			} else {
+				convertedTarget = Convert(target);
+				if (convertedTarget == null)
+					return null;
+			}
+			
+			string name = mr.Name;
+			if (name.StartsWith("get_", StringComparison.Ordinal) || name.StartsWith("set_", StringComparison.Ordinal))
+				name = name.Substring(4);
+			return convertedTarget.Member(name).WithAnnotation(mr);
+		}
+		#endregion
+		
+		#region Convert Call
+		Expression ConvertCall(InvocationExpression invocation)
+		{
+			if (invocation.Arguments.Count < 2)
+				return NotSupported(invocation);
+			
+			Expression target;
+			int firstArgumentPosition;
+			
+			Match m = getMethodFromHandlePattern.Match(invocation.Arguments.ElementAt(0));
+			if (m.Success) {
+				target = null;
+				firstArgumentPosition = 1;
+			} else {
+				m = getMethodFromHandlePattern.Match(invocation.Arguments.ElementAt(1));
+				if (!m.Success)
+					return NotSupported(invocation);
+				target = invocation.Arguments.ElementAt(0);
+				firstArgumentPosition = 2;
+			}
+			
+			MethodReference mr = m.Get<AstNode>("method").Single().Annotation<MethodReference>();
+			if (mr == null)
+				return null;
+			
+			Expression convertedTarget;
+			if (target == null || target is NullReferenceExpression) {
+				// static method
+				if (m.Has("declaringType"))
+					convertedTarget = new TypeReferenceExpression(m.Get<AstType>("declaringType").Single().Clone());
+				else
+					convertedTarget = new TypeReferenceExpression(AstBuilder.ConvertType(mr.DeclaringType));
+			} else {
+				convertedTarget = Convert(target);
+				if (convertedTarget == null)
+					return null;
+			}
+			
+			MemberReferenceExpression mre = convertedTarget.Member(mr.Name);
+			GenericInstanceMethod gim = mr as GenericInstanceMethod;
+			if (gim != null) {
+				foreach (TypeReference tr in gim.GenericArguments) {
+					mre.TypeArguments.Add(AstBuilder.ConvertType(tr));
+				}
+			}
+			IList<Expression> arguments = null;
+			if (invocation.Arguments.Count == firstArgumentPosition + 1) {
+				Expression argumentArray = invocation.Arguments.ElementAt(firstArgumentPosition);
+				arguments = ConvertExpressionsArray(argumentArray);
+			}
+			if (arguments == null) {
+				arguments = new List<Expression>();
+				foreach (Expression argument in invocation.Arguments.Skip(firstArgumentPosition)) {
+					Expression convertedArgument = Convert(argument);
+					if (convertedArgument == null)
+						return null;
+					arguments.Add(convertedArgument);
+				}
+			}
+			MethodDefinition methodDef = mr.Resolve();
+			if (methodDef != null && methodDef.IsGetter) {
+				PropertyDefinition indexer = AstMethodBodyBuilder.GetIndexer(methodDef);
+				if (indexer != null)
+					return new IndexerExpression(mre.Target.Detach(), arguments).WithAnnotation(indexer);
+			}
+			return new InvocationExpression(mre, arguments).WithAnnotation(mr);
+		}
+		
+		Expression ConvertInvoke(InvocationExpression invocation)
+		{
+			if (invocation.Arguments.Count != 2)
+				return NotSupported(invocation);
+			
+			Expression convertedTarget = Convert(invocation.Arguments.ElementAt(0));
+			IList<Expression> convertedArguments = ConvertExpressionsArray(invocation.Arguments.ElementAt(1));
+			if (convertedTarget != null && convertedArguments != null)
+				return new InvocationExpression(convertedTarget, convertedArguments);
+			else
+				return null;
 		}
 		#endregion
 		
 		#region Convert Binary Operator
+		static readonly Pattern trueOrFalse = new Choice {
+			new PrimitiveExpression(true),
+			new PrimitiveExpression(false)
+		};
+		
 		Expression ConvertBinaryOperator(InvocationExpression invocation, BinaryOperatorType op, bool? isChecked = null)
 		{
-			if (invocation.Arguments.Count != 2)
+			if (invocation.Arguments.Count < 2)
 				return NotSupported(invocation);
 			
 			Expression left = Convert(invocation.Arguments.ElementAt(0));
@@ -281,12 +433,63 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			BinaryOperatorExpression boe = new BinaryOperatorExpression(left, op, right);
 			if (isChecked != null)
 				boe.AddAnnotation(isChecked.Value ? AddCheckedBlocks.CheckedAnnotation : AddCheckedBlocks.UncheckedAnnotation);
-			return boe;
+			
+			switch (invocation.Arguments.Count) {
+				case 2:
+					return boe;
+				case 3:
+					Match m = getMethodFromHandlePattern.Match(invocation.Arguments.ElementAt(2));
+					if (m.Success)
+						return boe.WithAnnotation(m.Get<AstNode>("method").Single().Annotation<MethodReference>());
+					else
+						return null;
+				case 4:
+					if (!trueOrFalse.IsMatch(invocation.Arguments.ElementAt(2)))
+						return null;
+					m = getMethodFromHandlePattern.Match(invocation.Arguments.ElementAt(3));
+					if (m.Success)
+						return boe.WithAnnotation(m.Get<AstNode>("method").Single().Annotation<MethodReference>());
+					else
+						return null;
+				default:
+					return NotSupported(invocation);
+			}
 		}
+		#endregion
 		
+		#region Convert Assignment Operator
 		Expression ConvertAssignmentOperator(InvocationExpression invocation, AssignmentOperatorType op, bool? isChecked = null)
 		{
 			return NotImplemented(invocation);
+		}
+		#endregion
+		
+		#region Convert Unary Operator
+		Expression ConvertUnaryOperator(InvocationExpression invocation, UnaryOperatorType op, bool? isChecked = null)
+		{
+			if (invocation.Arguments.Count < 1)
+				return NotSupported(invocation);
+			
+			Expression expr = Convert(invocation.Arguments.ElementAt(0));
+			if (expr == null)
+				return null;
+			
+			UnaryOperatorExpression uoe = new UnaryOperatorExpression(op, expr);
+			if (isChecked != null)
+				uoe.AddAnnotation(isChecked.Value ? AddCheckedBlocks.CheckedAnnotation : AddCheckedBlocks.UncheckedAnnotation);
+			
+			switch (invocation.Arguments.Count) {
+				case 1:
+					return uoe;
+				case 2:
+					Match m = getMethodFromHandlePattern.Match(invocation.Arguments.ElementAt(1));
+					if (m.Success)
+						return uoe.WithAnnotation(m.Get<AstNode>("method").Single().Annotation<MethodReference>());
+					else
+						return null;
+				default:
+					return NotSupported(invocation);
+			}
 		}
 		#endregion
 		
@@ -311,16 +514,19 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (ctor == null)
 				return null;
 			
+			AstType declaringTypeNode;
 			TypeReference declaringType;
 			if (m.Has("declaringType")) {
-				declaringType = m.Get<AstNode>("declaringType").Single().Annotation<TypeReference>();
+				declaringTypeNode = m.Get<AstType>("declaringType").Single().Clone();
+				declaringType = declaringTypeNode.Annotation<TypeReference>();
 			} else {
+				declaringTypeNode = AstBuilder.ConvertType(ctor.DeclaringType);
 				declaringType = ctor.DeclaringType;
 			}
-			if (declaringType == null)
+			if (declaringTypeNode == null)
 				return null;
 			
-			ObjectCreateExpression oce = new ObjectCreateExpression(AstBuilder.ConvertType(declaringType));
+			ObjectCreateExpression oce = new ObjectCreateExpression(declaringTypeNode);
 			if (invocation.Arguments.Count >= 2) {
 				IList<Expression> arguments = ConvertExpressionsArray(invocation.Arguments.ElementAtOrDefault(1));
 				if (arguments == null)
@@ -348,6 +554,22 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 			
 			return oce;
+		}
+		#endregion
+		
+		#region Convert Cast
+		Expression ConvertCast(InvocationExpression invocation, bool isChecked)
+		{
+			if (invocation.Arguments.Count != 2)
+				return null;
+			Expression converted = Convert(invocation.Arguments.ElementAt(0));
+			AstType type = ConvertTypeReference(invocation.Arguments.ElementAt(1));
+			if (converted != null && type != null) {
+				CastExpression cast = converted.CastTo(type);
+				cast.AddAnnotation(isChecked ? AddCheckedBlocks.CheckedAnnotation : AddCheckedBlocks.UncheckedAnnotation);
+				return cast;
+			}
+			return null;
 		}
 		#endregion
 		
@@ -386,16 +608,23 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		#region Convert TypeAs/TypeIs
 		static readonly TypeOfPattern typeOfPattern = new TypeOfPattern("type");
 		
+		AstType ConvertTypeReference(Expression typeOfExpression)
+		{
+			Match m = typeOfPattern.Match(typeOfExpression);
+			if (m.Success)
+				return m.Get<AstType>("type").Single().Clone();
+			else
+				return null;
+		}
+		
 		Expression ConvertTypeAs(InvocationExpression invocation)
 		{
 			if (invocation.Arguments.Count != 2)
 				return null;
-			Match m = typeOfPattern.Match(invocation.Arguments.ElementAt(1));
-			if (m.Success) {
-				Expression converted = Convert(invocation.Arguments.First());
-				if (converted != null)
-					return new AsExpression(converted, m.Get<AstType>("type").Single().Clone());
-			}
+			Expression converted = Convert(invocation.Arguments.ElementAt(0));
+			AstType type = ConvertTypeReference(invocation.Arguments.ElementAt(1));
+			if (converted != null && type != null)
+				return new AsExpression(converted, type);
 			return null;
 		}
 		
@@ -403,15 +632,61 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			if (invocation.Arguments.Count != 2)
 				return null;
-			Match m = typeOfPattern.Match(invocation.Arguments.ElementAt(1));
-			if (m.Success) {
-				Expression converted = Convert(invocation.Arguments.First());
-				if (converted != null) {
-					return new IsExpression {
-						Expression = converted,
-						Type = m.Get<AstType>("type").Single().Clone()
-					};
-				}
+			Expression converted = Convert(invocation.Arguments.ElementAt(0));
+			AstType type = ConvertTypeReference(invocation.Arguments.ElementAt(1));
+			if (converted != null && type != null)
+				return new IsExpression { Expression = converted, Type = type };
+			return null;
+		}
+		#endregion
+		
+		#region Convert Array
+		Expression ConvertArrayIndex(InvocationExpression invocation)
+		{
+			if (invocation.Arguments.Count != 2)
+				return NotSupported(invocation);
+			
+			Expression targetConverted = Convert(invocation.Arguments.First());
+			if (targetConverted == null)
+				return null;
+			
+			Expression index = invocation.Arguments.ElementAt(1);
+			Expression indexConverted = Convert(index);
+			if (indexConverted != null) {
+				return new IndexerExpression(targetConverted, indexConverted);
+			}
+			IList<Expression> indexesConverted = ConvertExpressionsArray(index);
+			if (indexConverted != null) {
+				return new IndexerExpression(targetConverted, indexesConverted);
+			}
+			return null;
+		}
+		
+		Expression ConvertArrayLength(InvocationExpression invocation)
+		{
+			if (invocation.Arguments.Count != 1)
+				return NotSupported(invocation);
+			
+			Expression targetConverted = Convert(invocation.Arguments.Single());
+			if (targetConverted != null)
+				return targetConverted.Member("Length");
+			else
+				return null;
+		}
+		
+		Expression ConvertNewArrayInit(InvocationExpression invocation)
+		{
+			if (invocation.Arguments.Count != 2)
+				return NotSupported(invocation);
+			
+			AstType elementType = ConvertTypeReference(invocation.Arguments.ElementAt(0));
+			IList<Expression> elements = ConvertExpressionsArray(invocation.Arguments.ElementAt(1));
+			if (elementType != null && elements != null) {
+				return new ArrayCreateExpression {
+					Type = elementType,
+					AdditionalArraySpecifiers = { new ArraySpecifier() },
+					Initializer = new ArrayInitializerExpression(elements)
+				};
 			}
 			return null;
 		}
