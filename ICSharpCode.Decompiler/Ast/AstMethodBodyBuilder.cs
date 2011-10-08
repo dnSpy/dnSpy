@@ -658,18 +658,24 @@ namespace ICSharpCode.Decompiler.Ast
 					if (operand is Cecil.TypeReference) {
 						return AstBuilder.CreateTypeOfExpression((TypeReference)operand).Member("TypeHandle");
 					} else {
-						var referencedEntity = new IdentifierExpression(FormatByteCodeOperand(byteCode.Operand)).WithAnnotation(byteCode.Operand);
+						Expression referencedEntity;
 						string loadName;
 						string handleName;
 						if (operand is Cecil.FieldReference) {
 							loadName = "fieldof";
 							handleName = "FieldHandle";
+							FieldReference fr = (FieldReference)operand;
+							referencedEntity = AstBuilder.ConvertType(fr.DeclaringType).Member(fr.Name).WithAnnotation(fr);
 						} else if (operand is Cecil.MethodReference) {
 							loadName = "methodof";
 							handleName = "MethodHandle";
+							MethodReference mr = (MethodReference)operand;
+							var methodParameters = mr.Parameters.Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(p.ParameterType)));
+							referencedEntity = AstBuilder.ConvertType(mr.DeclaringType).Invoke(mr.Name, methodParameters).WithAnnotation(mr);
 						} else {
 							loadName = "ldtoken";
 							handleName = "Handle";
+							referencedEntity = new IdentifierExpression(FormatByteCodeOperand(byteCode.Operand));
 						}
 						return new IdentifierExpression(loadName).Invoke(referencedEntity).WithAnnotation(new LdTokenAnnotation()).Member(handleName);
 					}
