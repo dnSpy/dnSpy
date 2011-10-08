@@ -204,14 +204,14 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
-		public override void WriteDefinition(string text, object definition)
+		public override void WriteDefinition(string text, object definition, bool isLocal)
 		{
 			WriteIndent();
 			int start = this.TextLength;
 			b.Append(text);
 			int end = this.TextLength;
 			this.DefinitionLookup.AddDefinition(definition, this.TextLength);
-			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = definition, IsLocal = true, IsLocalTarget = true });
+			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = definition, IsLocal = isLocal, IsLocalTarget = true });
 		}
 		
 		public override void WriteReference(string text, object reference, bool isLocal)

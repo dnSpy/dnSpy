@@ -47,7 +47,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
-				output.WriteDefinition(identifier, definition);
+				output.WriteDefinition(identifier, definition, false);
 				return;
 			}
 			

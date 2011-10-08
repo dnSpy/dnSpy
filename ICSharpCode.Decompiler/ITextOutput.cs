@@ -32,7 +32,7 @@ namespace ICSharpCode.Decompiler
 		void Write(char ch);
 		void Write(string text);
 		void WriteLine();
-		void WriteDefinition(string text, object definition);
+		void WriteDefinition(string text, object definition, bool isLocal = true);
 		void WriteReference(string text, object reference, bool isLocal = false);
 		
 		void AddDebuggerMemberMapping(MemberMapping memberMapping);

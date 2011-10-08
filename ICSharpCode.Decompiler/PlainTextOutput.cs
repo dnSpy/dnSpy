@@ -56,7 +56,7 @@ namespace ICSharpCode.Decompiler
 		public abstract void Write(char ch);
 		public abstract void Write(string text);
 		public abstract void WriteLine();
-		public abstract void WriteDefinition(string text, object definition);
+		public abstract void WriteDefinition(string text, object definition, bool isLocal);
 		public abstract void WriteReference(string text, object reference, bool isLocal);
 		public abstract void MarkFoldStart(string collapsedText, bool defaultCollapsed);
 		public abstract void MarkFoldEnd();
@@ -142,7 +142,7 @@ namespace ICSharpCode.Decompiler
 			column = 1;
 		}
 		
-		public override void WriteDefinition(string text, object definition)
+		public override void WriteDefinition(string text, object definition, bool isLocal)
 		{
 			Write(text);
 		}
