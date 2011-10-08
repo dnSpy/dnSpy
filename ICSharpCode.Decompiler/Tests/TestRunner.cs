@@ -52,6 +52,12 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\DelegateConstruction.cs");
 		}
 		
+		[Test, Ignore("Not yet implemented")]
+		public void ExpressionTrees()
+		{
+			TestFile(@"..\..\Tests\ExpressionTrees.cs");
+		}
+		
 		[Test]
 		public void ExceptionHandling()
 		{

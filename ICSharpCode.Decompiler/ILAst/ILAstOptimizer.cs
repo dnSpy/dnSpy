@@ -53,6 +53,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		TransformObjectInitializers,
 		MakeAssignmentExpression,
 		IntroducePostIncrement,
+		InlineExpressionTreeParameterDeclarations,
 		InlineVariables2,
 		FindLoops,
 		FindConditions,
@@ -170,6 +171,11 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					if (abortBeforeStep == ILAstOptimizationStep.IntroducePostIncrement) return;
 					modified |= block.RunOptimization(IntroducePostIncrement);
+					
+					if (abortBeforeStep == ILAstOptimizationStep.InlineExpressionTreeParameterDeclarations) return;
+					if (context.Settings.ExpressionTrees) {
+						modified |= block.RunOptimization(InlineExpressionTreeParameterDeclarations);
+					}
 					
 					if (abortBeforeStep == ILAstOptimizationStep.InlineVariables2) return;
 					modified |= new ILInlining(method).InlineAllInBlock(block);

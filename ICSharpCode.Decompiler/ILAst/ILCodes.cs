@@ -328,6 +328,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// becomes "NullableOf(add(valueof(...), ...))"
 		/// </remarks>
 		NullableOf,
+		/// <summary>
+		/// Declares parameters that are used in an expression tree.
+		/// The last child of this node is the call constructing the expression tree, all other children are the
+		/// assignments to the ParameterExpression variables.
+		/// </summary>
+		ExpressionTreeParameterDeclarations
 	}
 	
 	public static class ILCodeUtil

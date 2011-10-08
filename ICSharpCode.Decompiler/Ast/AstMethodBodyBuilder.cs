@@ -370,9 +370,6 @@ namespace ICSharpCode.Decompiler.Ast
 							// change "new (int[,])[10] to new int[10][,]"
 							ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
 							ace.Initializer = new ArrayInitializerExpression();
-							var first = ace.AdditionalArraySpecifiers.First();
-							first.Remove();
-							ace.Arguments.AddRange(Enumerable.Repeat(0, first.Dimensions).Select(i => new EmptyExpression()));
 						}
 						var newArgs = new List<Expression>();
 						foreach (var arrayDimension in arrayType.Dimensions.Skip(1).Reverse())
@@ -461,9 +458,9 @@ namespace ICSharpCode.Decompiler.Ast
 						goto case ILCode.Cle;
 					}
 					case ILCode.Cle: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
-					case ILCode.Cge_Un:
+				case ILCode.Cge_Un:
 					case ILCode.Cge: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.GreaterThanOrEqual, arg2);
-					case ILCode.Clt_Un:
+				case ILCode.Clt_Un:
 					case ILCode.Clt:    return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThan, arg2);
 					#endregion
 					#region Logical
@@ -661,7 +658,20 @@ namespace ICSharpCode.Decompiler.Ast
 					if (operand is Cecil.TypeReference) {
 						return AstBuilder.CreateTypeOfExpression((TypeReference)operand).Member("TypeHandle");
 					} else {
-						return InlineAssembly(byteCode, args);
+						var referencedEntity = new IdentifierExpression(FormatByteCodeOperand(byteCode.Operand)).WithAnnotation(byteCode.Operand);
+						string loadName;
+						string handleName;
+						if (operand is Cecil.FieldReference) {
+							loadName = "fieldof";
+							handleName = "FieldHandle";
+						} else if (operand is Cecil.MethodReference) {
+							loadName = "methodof";
+							handleName = "MethodHandle";
+						} else {
+							loadName = "ldtoken";
+							handleName = "Handle";
+						}
+						return new IdentifierExpression(loadName).Invoke(referencedEntity).WithAnnotation(new LdTokenAnnotation()).Member(handleName);
 					}
 					case ILCode.Leave:    return new GotoStatement() { Label = ((ILLabel)operand).Name };
 				case ILCode.Localloc:
@@ -718,22 +728,7 @@ namespace ICSharpCode.Decompiler.Ast
 							MethodDefinition ctor = ((MethodReference)operand).Resolve();
 							if (methodDef != null) {
 								AnonymousTypeCreateExpression atce = new AnonymousTypeCreateExpression();
-								bool allNamesCanBeInferred = true;
-								for (int i = 0; i < args.Count; i++) {
-									string inferredName;
-									if (args[i] is IdentifierExpression)
-										inferredName = ((IdentifierExpression)args[i]).Identifier;
-									else if (args[i] is MemberReferenceExpression)
-										inferredName = ((MemberReferenceExpression)args[i]).MemberName;
-									else
-										inferredName = null;
-									
-									if (inferredName != ctor.Parameters[i].Name) {
-										allNamesCanBeInferred = false;
-										break;
-									}
-								}
-								if (allNamesCanBeInferred) {
+								if (CanInferAnonymousTypePropertyNamesFromArguments(args, ctor.Parameters)) {
 									atce.Initializers.AddRange(args);
 								} else {
 									for (int i = 0; i < args.Count; i++) {
@@ -829,11 +824,32 @@ namespace ICSharpCode.Decompiler.Ast
 					return arg1.WithAnnotation(PushNegation.LiftedOperatorAnnotation);
 				case ILCode.AddressOf:
 					return MakeRef(arg1);
+				case ILCode.ExpressionTreeParameterDeclarations:
+					args[args.Count - 1].AddAnnotation(new ParameterDeclarationAnnotation(byteCode));
+					return args[args.Count - 1];
 				case ILCode.NullableOf:
-				case ILCode.ValueOf: return arg1;
+					case ILCode.ValueOf: return arg1;
 				default:
 					throw new Exception("Unknown OpCode: " + byteCode.Code);
 			}
+		}
+		
+		internal static bool CanInferAnonymousTypePropertyNamesFromArguments(IList<Expression> args, IList<ParameterDefinition> parameters)
+		{
+			for (int i = 0; i < args.Count; i++) {
+				string inferredName;
+				if (args[i] is IdentifierExpression)
+					inferredName = ((IdentifierExpression)args[i]).Identifier;
+				else if (args[i] is MemberReferenceExpression)
+					inferredName = ((MemberReferenceExpression)args[i]).MemberName;
+				else
+					inferredName = null;
+				
+				if (inferredName != parameters[i].Name) {
+					return false;
+				}
+			}
+			return true;
 		}
 		
 		static readonly AstNode objectInitializerPattern = new AssignmentExpression(
@@ -1047,7 +1063,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		static PropertyDefinition GetIndexer(MethodDefinition cecilMethodDef)
+		internal static PropertyDefinition GetIndexer(MethodDefinition cecilMethodDef)
 		{
 			TypeDefinition typeDef = cecilMethodDef.DeclaringType;
 			string indexerName = null;

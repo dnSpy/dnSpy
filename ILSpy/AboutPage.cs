@@ -52,6 +52,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		static readonly Uri UpdateUrl = new Uri("http://www.ilspy.net/updates.xml");
+		const string band = "beta";
 		
 		static AvailableVersionInfo latestAvailableVersion;
 		
@@ -193,7 +194,7 @@ namespace ICSharpCode.ILSpy
 					try {
 						XDocument doc = XDocument.Load(new MemoryStream(e.Result));
 						var bands = doc.Root.Elements("band");
-						var currentBand = bands.FirstOrDefault(b => (string)b.Attribute("id") == "stable") ?? bands.First();
+						var currentBand = bands.FirstOrDefault(b => (string)b.Attribute("id") == band) ?? bands.First();
 						Version version = new Version((string)currentBand.Element("latestVersion"));
 						string url = (string)currentBand.Element("downloadUrl");
 						if (!(url.StartsWith("http://", StringComparison.Ordinal) || url.StartsWith("https://", StringComparison.Ordinal)))
