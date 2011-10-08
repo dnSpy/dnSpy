@@ -227,7 +227,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							Name = variableName,
 							Initializer = m1.Get<Expression>("initializer").Single().Detach()
 						}.CopyAnnotationsFrom(node.Expression)
-						.WithAnnotation(m1.Get<AstNode>("variable").Single().Annotation<ILVariable>())
+							.WithAnnotation(m1.Get<AstNode>("variable").Single().Annotation<ILVariable>())
 					}
 				}.CopyAnnotationsFrom(node);
 			} else {
@@ -983,29 +983,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 			// Since the tryFinally instance is not changed, we can continue in the visitor as usual, so return null
 			return null;
-		}
-		#endregion
-		
-		#region Pattern Matching Helpers
-		sealed class TypePattern : Pattern
-		{
-			readonly string ns;
-			readonly string name;
-			
-			public TypePattern(Type type)
-			{
-				this.ns = type.Namespace;
-				this.name = type.Name;
-			}
-			
-			public override bool DoMatch(INode other, Match match)
-			{
-				AstNode o = other as AstNode;
-				if (o == null)
-					return false;
-				TypeReference tr = o.Annotation<TypeReference>();
-				return tr != null && tr.Namespace == ns && tr.Name == name;
-			}
 		}
 		#endregion
 	}

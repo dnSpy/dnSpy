@@ -534,7 +534,7 @@ public class InitializerTests
 	
 	public int[,] MultidimensionalInit()
 	{
-		return new int[, ]
+		return new int[,]
 		{
 
 	        {
@@ -655,7 +655,7 @@ public class InitializerTests
 	{
 		return new int[][,]
 		{
-	        new int[, ]
+			new int[,]
 	            {
 
 	                {
@@ -687,7 +687,7 @@ public class InitializerTests
 					}
 
 	            },
-	        new int[, ]
+	        new int[,]
 	            {
 
 	                {
@@ -719,7 +719,7 @@ public class InitializerTests
 					}
 
 	            },
-	        new int[, ]
+	        new int[,]
 	            {
 
 	                {
@@ -750,7 +750,7 @@ public class InitializerTests
 						0
 					}
 	            },
-	        new int[, ]
+	        new int[,]
 	            {
 
 	                {
@@ -789,7 +789,7 @@ public class InitializerTests
 	{
 		return new int[][,,]
 		{
-			new int[, , ]
+			new int[,,]
 			{
 				{
 					{
@@ -827,7 +827,7 @@ public class InitializerTests
 				}
 			},
 
-			new int[, , ]
+			new int[,,]
 			{
 				{
 					{

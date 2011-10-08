@@ -14,7 +14,7 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <NoWarn>67,169,1058,728</NoWarn>
+    <NoWarn>67,169,1058,728,1720</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="CallOverloadedMethod.cs" />
     <Compile Include="CheckedUnchecked.cs" />
+    <Compile Include="ExpressionTrees.cs" />
     <Compile Include="LiftedOperators.cs" />
     <Compile Include="CustomShortCircuitOperators.cs" />
     <Compile Include="Helpers\CodeAssert.cs" />
