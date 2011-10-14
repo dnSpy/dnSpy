@@ -52,19 +52,19 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		public virtual ImageSource Image {
 			get {
 				if (member is FieldDefinition)
-					return GetOverlayedImage(member as FieldDefinition, MemberIcon.Field);
+					return TreeNodes.FieldTreeNode.GetIcon((FieldDefinition)member);
 				
 				if (member is PropertyDefinition)
-					return GetOverlayedImage(member as PropertyDefinition, MemberIcon.Property);
+					return TreeNodes.PropertyTreeNode.GetIcon((PropertyDefinition)member);
 				
 				if (member is EventDefinition)
-					return GetOverlayedImage(member as EventDefinition, MemberIcon.Event);
+					return TreeNodes.EventTreeNode.GetIcon((EventDefinition)member);
 				
 				if (member is MethodDefinition)
-					return GetOverlayedImage(member as MethodDefinition, MemberIcon.Method);
+					return TreeNodes.MethodTreeNode.GetIcon((MethodDefinition)member);
 				
 				if (member is TypeDefinition)
-					return GetOverlayedImage(member as TypeDefinition);
+					return TreeNodes.TypeTreeNode.GetIcon((TypeDefinition)member);
 				
 				return null;
 			}
@@ -94,105 +94,6 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		{
 			throw new NotSupportedException();
 		}
-		
-		#region Overlayed images
-		
-		internal ImageSource GetOverlayedImage(TypeDefinition typeDef)
-		{
-			TypeIcon icon = TypeIcon.Class;
-			if (typeDef.IsEnum)
-				icon = TypeIcon.Enum;			
-			if (typeDef.IsValueType)
-				icon = TypeIcon.Struct;			
-			if (typeDef.IsInterface)
-				icon = TypeIcon.Interface;			
-			if (typeDef.BaseType.FullName == "System.MulticastDelegate" || typeDef.BaseType.FullName == "System.Delegate")
-				icon = TypeIcon.Delegate;
-			
-			bool isStatic = false;
-			AccessOverlayIcon overlayIcon = AccessOverlayIcon.Private;
-			
-			if (typeDef.IsNestedPrivate)
-				overlayIcon = AccessOverlayIcon.Public;
-			else if (typeDef.IsNestedAssembly || typeDef.IsNestedFamilyAndAssembly || typeDef.IsNotPublic)
-				overlayIcon = AccessOverlayIcon.Internal;
-			else if (typeDef.IsNestedFamily)
-				overlayIcon = AccessOverlayIcon.Protected;
-			else if (typeDef.IsNestedFamilyOrAssembly)
-				overlayIcon = AccessOverlayIcon.ProtectedInternal;
-			else if (typeDef.IsPublic || typeDef.IsNestedPublic)
-				overlayIcon = AccessOverlayIcon.Public;
-			
-			if (typeDef.IsAbstract && typeDef.IsSealed)
-				isStatic = true;
-			
-			return Images.GetIcon(icon, overlayIcon, isStatic);
-		}
-		
-		ImageSource GetOverlayedImage(FieldDefinition fieldDef, MemberIcon icon)
-		{
-			bool isStatic = false;
-			AccessOverlayIcon overlayIcon = AccessOverlayIcon.Public;
-			
-			if (fieldDef.IsPrivate)
-				overlayIcon = AccessOverlayIcon.Private;
-			else if (fieldDef.IsAssembly || fieldDef.IsFamilyAndAssembly)
-				overlayIcon = AccessOverlayIcon.Internal;
-			else if (fieldDef.IsFamily)
-				overlayIcon = AccessOverlayIcon.Protected;
-			else if (fieldDef.IsFamilyOrAssembly)
-				overlayIcon = AccessOverlayIcon.ProtectedInternal;
-			else if (fieldDef.IsPublic)
-				overlayIcon = AccessOverlayIcon.Public;
-			
-			if (fieldDef.IsStatic)
-				isStatic = true;
-			
-			return Images.GetIcon(icon, overlayIcon, isStatic);
-		}
-		
-		ImageSource GetOverlayedImage(MethodDefinition methodDef, MemberIcon icon)
-		{
-			bool isStatic = false;
-			AccessOverlayIcon overlayIcon = AccessOverlayIcon.Public;
-			
-			if (methodDef == null)
-				return Images.GetIcon(icon, overlayIcon, isStatic);;
-
-			if (methodDef.IsPrivate)
-				overlayIcon = AccessOverlayIcon.Private;
-			else if (methodDef.IsAssembly || methodDef.IsFamilyAndAssembly)
-				overlayIcon = AccessOverlayIcon.Internal;
-			else if (methodDef.IsFamily)
-				overlayIcon = AccessOverlayIcon.Protected;
-			else if (methodDef.IsFamilyOrAssembly)
-				overlayIcon = AccessOverlayIcon.ProtectedInternal;
-			else if (methodDef.IsPublic)
-				overlayIcon = AccessOverlayIcon.Public;
-			
-			if (methodDef.IsStatic)
-				isStatic = true;
-			
-			return Images.GetIcon(icon, overlayIcon, isStatic);
-		}
-		
-		ImageSource GetOverlayedImage(PropertyDefinition propDef, MemberIcon icon)
-		{
-			bool isStatic = false;
-			AccessOverlayIcon overlayIcon = AccessOverlayIcon.Public;
-			
-			return Images.GetIcon(propDef.IsIndexer() ? MemberIcon.Indexer : icon, overlayIcon, isStatic);
-		}
-		
-		ImageSource GetOverlayedImage(EventDefinition eventDef, MemberIcon icon)
-		{
-			bool isStatic = false;
-			AccessOverlayIcon overlayIcon = AccessOverlayIcon.Public;
-
-			return Images.GetIcon(icon, overlayIcon, isStatic);
-		}
-		
-		#endregion
 	}
 	
 	public class TypeBookmark : MemberBookmark
@@ -204,7 +105,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		public override ImageSource Image {
 			get {
 				if (Member is TypeDefinition) {
-					return GetOverlayedImage(Member as TypeDefinition);
+					return TreeNodes.TypeTreeNode.GetIcon((TypeDefinition)Member);
 				}
 				
 				return null;

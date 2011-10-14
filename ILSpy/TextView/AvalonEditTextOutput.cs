@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy.TextView
 	/// <summary>
 	/// Text output implementation for AvalonEdit.
 	/// </summary>
-	public sealed class AvalonEditTextOutput : BaseTextOutput, ISmartTextOutput
+	public sealed class AvalonEditTextOutput : ISmartTextOutput
 	{
 		int lastLineStart = 0;
 		int lineNumber = 1;
@@ -93,6 +93,8 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
 		internal readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
+		
+		internal readonly List<MemberMapping> DebuggerMemberMappings = new List<MemberMapping>();
 		
 		public AvalonEditTextOutput()
 		{
@@ -121,7 +123,7 @@ namespace ICSharpCode.ILSpy.TextView
 			get { return b.Length; }
 		}
 		
-		public override ICSharpCode.NRefactory.TextLocation Location {
+		public ICSharpCode.NRefactory.TextLocation Location {
 			get {
 				return new ICSharpCode.NRefactory.TextLocation(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
 			}
@@ -159,12 +161,12 @@ namespace ICSharpCode.ILSpy.TextView
 		}
 		#endregion
 		
-		public override void Indent()
+		public void Indent()
 		{
 			indent++;
 		}
 		
-		public override void Unindent()
+		public void Unindent()
 		{
 			indent--;
 		}
@@ -180,19 +182,19 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
-		public override void Write(char ch)
+		public void Write(char ch)
 		{
 			WriteIndent();
 			b.Append(ch);
 		}
 		
-		public override void Write(string text)
+		public void Write(string text)
 		{
 			WriteIndent();
 			b.Append(text);
 		}
 		
-		public override void WriteLine()
+		public void WriteLine()
 		{
 			Debug.Assert(textDocument == null);
 			b.AppendLine();
@@ -204,7 +206,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
-		public override void WriteDefinition(string text, object definition, bool isLocal)
+		public void WriteDefinition(string text, object definition, bool isLocal)
 		{
 			WriteIndent();
 			int start = this.TextLength;
@@ -214,7 +216,7 @@ namespace ICSharpCode.ILSpy.TextView
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = definition, IsLocal = isLocal, IsLocalTarget = true });
 		}
 		
-		public override void WriteReference(string text, object reference, bool isLocal)
+		public void WriteReference(string text, object reference, bool isLocal)
 		{
 			WriteIndent();
 			int start = this.TextLength;
@@ -223,7 +225,7 @@ namespace ICSharpCode.ILSpy.TextView
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
 		}
 		
-		public override void MarkFoldStart(string collapsedText, bool defaultCollapsed)
+		public void MarkFoldStart(string collapsedText, bool defaultCollapsed)
 		{
 			WriteIndent();
 			openFoldings.Push(
@@ -234,7 +236,7 @@ namespace ICSharpCode.ILSpy.TextView
 				});
 		}
 		
-		public override void MarkFoldEnd()
+		public void MarkFoldEnd()
 		{
 			NewFolding f = openFoldings.Pop();
 			f.EndOffset = this.TextLength;
@@ -249,25 +251,10 @@ namespace ICSharpCode.ILSpy.TextView
 				this.UIElements.Add(new KeyValuePair<int, Lazy<UIElement>>(this.TextLength, new Lazy<UIElement>(element)));
 			}
 		}
-	}
-	
-	internal static class Extentions
-	{
-		public static Dictionary<MemberReference, int> ToDictionary(this DefinitionLookup definitions, Func<int, int> lineNumber)
+		
+		public void AddDebuggerMemberMapping(MemberMapping memberMapping)
 		{
-			if (definitions == null)
-				throw new ArgumentNullException("definitions");
-			
-			var result = new Dictionary<MemberReference, int>();
-			
-			foreach (var element in definitions.definitions) {
-				if (!(element.Key is MemberReference))
-					continue;
-				
-				result.Add((MemberReference)element.Key, lineNumber(element.Value));
-			}
-			
-			return result;
+			DebuggerMemberMappings.Add(memberMapping);
 		}
 	}
 }

@@ -358,11 +358,23 @@ namespace ICSharpCode.ILSpy.TextView
 				Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
 			}
 			
+			// update debugger info
+			DebugInformation.CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => m.MetadataToken);
+			
 			// update class bookmarks
 			var document = textEditor.Document;
-			manager.UpdateClassMemberBookmarks(textOutput.DefinitionLookup.ToDictionary(line => document.GetLineByOffset(line).LineNumber),
-			                                   typeof(TypeBookmark), 
-			                                   typeof(MemberBookmark));
+			manager.Bookmarks.Clear();
+			foreach (var pair in textOutput.DefinitionLookup.definitions) {
+				MemberReference member = pair.Key as MemberReference;
+				int offset = pair.Value;
+				if (member != null) {
+					int line = document.GetLocation(offset).Line;
+					if (member is TypeDefinition)
+						manager.Bookmarks.Add(new TypeBookmark(member, line));
+					else
+						manager.Bookmarks.Add(new MemberBookmark(member, line));
+				}
+			}
 		}
 		#endregion
 		
@@ -535,9 +547,6 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		void DecompileNodes(DecompilationContext context, ITextOutput textOutput)
 		{
-			// reset debug information
-			DebugInformation.CodeMappings = null;
-			
 			var nodes = context.TreeNodes;
 			for (int i = 0; i < nodes.Length; i++) {
 				if (i > 0)
@@ -546,21 +555,7 @@ namespace ICSharpCode.ILSpy.TextView
 				context.Options.CancellationToken.ThrowIfCancellationRequested();
 				nodes[i].Decompile(context.Language, textOutput, context.Options);
 			}
-			
-			OnDecompilationFinished(textOutput);
 		}
-		
-		void OnDecompilationFinished(ITextOutput textOutput)
-		{
-			if (!(textOutput is AvalonEditTextOutput))
-				return;
-			
-			var output = textOutput as AvalonEditTextOutput;
-			
-			// update debug inforomation
-			DebugInformation.CodeMappings = output.CodeMappings;
-		}
-
 		#endregion
 		
 		#region WriteOutputLengthExceededMessage
