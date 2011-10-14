@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 				if (!(mark is MemberBookmark))
 					continue;
 				
-				var member = (mark as MemberBookmark).Node.Annotation<MemberReference>();
+				var member = (mark as MemberBookmark).Member;
 				AnalyzeContextMenuEntry.Analyze(member);
 			}
 		}

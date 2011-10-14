@@ -357,6 +357,12 @@ namespace ICSharpCode.ILSpy.TextView
 				foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
 				Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
 			}
+			
+			// update class bookmarks
+			var document = textEditor.Document;
+			manager.UpdateClassMemberBookmarks(textOutput.DefinitionLookup.ToDictionary(line => document.GetLineByOffset(line).LineNumber),
+			                                   typeof(TypeBookmark), 
+			                                   typeof(MemberBookmark));
 		}
 		#endregion
 		
@@ -465,7 +471,7 @@ namespace ICSharpCode.ILSpy.TextView
 					if (DebugInformation.CodeMappings == null || !DebugInformation.CodeMappings.ContainsKey(token))
 						return;
 					
-					DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(token, ilOffset, out member, out line);
+					DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(ilOffset, out member, out line);
 					
 					// update marker
 					DebuggerService.JumpToCurrentLine(member, line, 0, line, 0, ilOffset);
@@ -529,15 +535,10 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		void DecompileNodes(DecompilationContext context, ITextOutput textOutput)
 		{
-			// reset data
+			// reset debug information
 			DebugInformation.CodeMappings = null;
-			DebugInformation.LocalVariables = null;
-			DebugInformation.DecompiledMemberReferences = null;
-			// set the language
-			DebugInformation.Language = MainWindow.Instance.sessionSettings.FilterSettings.Language.Name.StartsWith("IL") ? DecompiledLanguages.IL : DecompiledLanguages.CSharp;
 			
 			var nodes = context.TreeNodes;
-			context.Language.DecompileFinished += Language_DecompileFinished;
 			for (int i = 0; i < nodes.Length; i++) {
 				if (i > 0)
 					textOutput.WriteLine();
@@ -545,32 +546,19 @@ namespace ICSharpCode.ILSpy.TextView
 				context.Options.CancellationToken.ThrowIfCancellationRequested();
 				nodes[i].Decompile(context.Language, textOutput, context.Options);
 			}
-			context.Language.DecompileFinished -= Language_DecompileFinished;
+			
+			OnDecompilationFinished(textOutput);
 		}
 		
-		void Language_DecompileFinished(object sender, DecompileEventArgs e)
+		void OnDecompilationFinished(ITextOutput textOutput)
 		{
-			if (e != null) {
-				manager.UpdateClassMemberBookmarks(e.AstNodes, typeof(TypeBookmark), typeof(MemberBookmark));
-				if (iconMargin.DecompiledMembers == null) {
-					iconMargin.DecompiledMembers = new List<MemberReference>();
-				}
-				iconMargin.DecompiledMembers.AddRange(e.DecompiledMemberReferences.Values.AsEnumerable());
-				
-				// debugger info
-				if (DebugInformation.CodeMappings == null) {
-					DebugInformation.CodeMappings = e.CodeMappings;
-					DebugInformation.LocalVariables = e.LocalVariables;
-					DebugInformation.DecompiledMemberReferences = e.DecompiledMemberReferences;
-				} else {
-					DebugInformation.CodeMappings.AddRange(e.CodeMappings);
-					DebugInformation.DecompiledMemberReferences.AddRange(e.DecompiledMemberReferences);
-					if (e.LocalVariables != null)
-						DebugInformation.LocalVariables.AddRange(e.LocalVariables);
-				}
-			} else {
-				manager.UpdateClassMemberBookmarks(null, typeof(TypeBookmark), typeof(MemberBookmark));
-			}
+			if (!(textOutput is AvalonEditTextOutput))
+				return;
+			
+			var output = textOutput as AvalonEditTextOutput;
+			
+			// update debug inforomation
+			DebugInformation.CodeMappings = output.CodeMappings;
 		}
 
 		#endregion

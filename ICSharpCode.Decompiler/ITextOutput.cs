@@ -19,6 +19,7 @@
 using System;
 using System.IO;
 using ICSharpCode.NRefactory;
+using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler
 {
@@ -31,7 +32,7 @@ namespace ICSharpCode.Decompiler
 		void Write(char ch);
 		void Write(string text);
 		void WriteLine();
-		void WriteDefinition(string text, object definition);
+		void WriteDefinition(string text, object definition, bool isLocal = true);
 		void WriteReference(string text, object reference, bool isLocal = false);
 		
 		void AddDebuggerMemberMapping(MemberMapping memberMapping);

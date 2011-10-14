@@ -160,7 +160,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.WriteLine();
 			output.Indent();
 			if (method.ExplicitThis) {
-				output.Write("instance explicit ");			
+				output.Write("instance explicit ");
 			} else if (method.HasThis) {
 				output.Write("instance ");
 			}
@@ -743,6 +743,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			if (method == null)
 				return;
+			
 			output.Write(keyword);
 			output.Write(' ');
 			method.WriteTo(output);

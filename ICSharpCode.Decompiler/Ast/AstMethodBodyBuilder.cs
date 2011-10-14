@@ -125,7 +125,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
 			
-			astBlock.AddAnnotation(new MemberMapping(methodDef));
+			astBlock.AddAnnotation(new MemberMapping(methodDef) { LocalVariables = localVariables });
 			
 			return astBlock;
 		}

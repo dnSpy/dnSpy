@@ -28,8 +28,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				// check if the codemappings exists for this line
 				var storage = DebugInformation.CodeMappings;
 				int token = 0;
-				foreach (var storageEntry in storage) {
-					var instruction = storageEntry.Value.GetInstructionByLineNumber(line, out token);
+				foreach (var storageEntry in storage.Values) {
+					var instruction = storageEntry.GetInstructionByLineNumber(line, out token);
 					
 					if (instruction == null) {
 						continue;
@@ -40,8 +40,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						instruction.MemberMapping.MemberReference,
 						line,
 						token, 
-						instruction.ILInstructionOffset,
-						DebugInformation.Language);
+						instruction.ILInstructionOffset);
 					break;
 				}
 				

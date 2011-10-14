@@ -45,6 +45,12 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public void WriteIdentifier(string identifier)
 		{
+			var definition = GetCurrentDefinition();
+			if (definition != null) {
+				output.WriteDefinition(identifier, definition, false);
+				return;
+			}
+			
 			object memberRef = GetCurrentMemberReference();
 
 			if (memberRef != null) {
@@ -52,7 +58,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return;
 			}
 
-			var definition = GetCurrentLocalDefinition();
+			definition = GetCurrentLocalDefinition();
 			if (definition != null) {
 				output.WriteDefinition(identifier, definition);
 				return;
@@ -136,6 +142,22 @@ namespace ICSharpCode.Decompiler.Ast
 			return null;
 		}
 		
+		object GetCurrentDefinition()
+		{
+			if (nodeStack == null || nodeStack.Count == 0)
+				return null;
+			
+			var node = nodeStack.Peek();			
+			if (IsDefinition(node))
+				return node.Annotation<MemberReference>();
+			
+			var fieldDef = node.Parent.Annotation<FieldDefinition>();
+			if (fieldDef != null)
+				return node.Parent.Annotation<MemberReference>();
+
+			return null;
+		}
+		
 		public void WriteKeyword(string keyword)
 		{
 			output.Write(keyword);
@@ -145,7 +167,8 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			// Attach member reference to token only if there's no identifier in the current node.
 			MemberReference memberRef = GetCurrentMemberReference();
-			if (memberRef != null && nodeStack.Peek().GetChildByRole(AstNode.Roles.Identifier).IsNull)
+			var node = nodeStack.Peek();
+			if (memberRef != null && node.GetChildByRole(AstNode.Roles.Identifier).IsNull)
 				output.WriteReference(token, memberRef);
 			else
 				output.Write(token);
@@ -285,6 +308,19 @@ namespace ICSharpCode.Decompiler.Ast
 				output.AddDebuggerMemberMapping(currentMemberMapping);
 				currentMemberMapping = parentMemberMappings.Pop();
 			}
+		}
+		
+		private static bool IsDefinition(AstNode node)
+		{
+			return 
+				node is FieldDeclaration ||
+				node is ConstructorDeclaration ||
+				node is DestructorDeclaration || 
+				node is EventDeclaration ||
+				node is DelegateDeclaration ||
+				node is OperatorDeclaration||
+				node is MemberDeclaration ||
+				node is TypeDeclaration;
 		}
 	}
 }

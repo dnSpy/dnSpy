@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
@@ -16,7 +17,6 @@ using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
@@ -36,8 +36,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		public IconBarManager Manager {
 			get { return manager; }
 		}
-		
-		public IList<MemberReference> DecompiledMembers { get; set; }
 		
 		public virtual void Dispose()
 		{
@@ -74,10 +72,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					if (bm is BreakpointBookmark) {
 						if (DebugInformation.CodeMappings == null || DebugInformation.CodeMappings.Count == 0 ||
 						    !DebugInformation.CodeMappings.ContainsKey(((BreakpointBookmark)bm).FunctionToken))
-							continue;
-					} else {
-						if (DebugInformation.DecompiledMemberReferences == null || DebugInformation.DecompiledMemberReferences.Count == 0 ||
-						    !DebugInformation.DecompiledMemberReferences.ContainsKey(((MarkerBookmark)bm).MemberReference.MetadataToken.ToInt32()))
 							continue;
 					}
 					int line = bm.LineNumber;
@@ -143,11 +137,14 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		{
 			BookmarkBase result = null;
 			foreach (BookmarkBase bm in BookmarkManager.Bookmarks) {
-				if (bm.LineNumber == line &&
-				    this.DecompiledMembers != null && this.DecompiledMembers.Contains(bm.MemberReference)) {
-					if (result == null || bm.ZOrder > result.ZOrder)
-						return result;
-				}
+				if (bm.LineNumber != line)
+					continue;
+				if (DebugInformation.CodeMappings == null || DebugInformation.CodeMappings.Count == 0 ||
+				    !DebugInformation.CodeMappings.ContainsKey(((BreakpointBookmark)bm).FunctionToken))
+					continue;
+				
+				if (result == null || bm.ZOrder > result.ZOrder)
+					return result;
 			}
 			
 			return manager.Bookmarks.FirstOrDefault(b => b.LineNumber == line);
@@ -275,7 +272,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				return;
 			var key = breakpoint.MemberReference.MetadataToken.ToInt32();
 			if (storage.ContainsKey(key))
-			{    
+			{
 				breakpoint.ImageChanged -= delegate { InvalidateVisual(); };
 				InvalidateVisual();
 			}
@@ -299,22 +296,22 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				
 				var key = breakpoint.FunctionToken;
 				if (!storage.ContainsKey(key))
-				{
-				    continue;
-				}
+					continue;
 				
 				bool isMatch;
-				SourceCodeMapping map = storage[key].GetInstructionByTokenAndOffset(key, breakpoint.ILRange.From, out isMatch);
+				SourceCodeMapping map = storage[key].GetInstructionByTokenAndOffset(breakpoint.ILRange.From, out isMatch);
 				
 				if (map != null) {
-					BreakpointBookmark newBookmark = new BreakpointBookmark(
-						breakpoint.MemberReference, new TextLocation(map.SourceCodeLine, 0), breakpoint.FunctionToken,
-						map.ILInstructionOffset, BreakpointAction.Break, DebugInformation.Language);
-				  	newBookmark.IsEnabled = breakpoint.IsEnabled;
-				  	
-				  	newBookmarks.Add(newBookmark);
+					BreakpointBookmark newBookmark = new BreakpointBookmark(breakpoint.MemberReference,
+					                                                        new TextLocation(map.StartLocation.Line, 0),
+					                                                        breakpoint.FunctionToken,
+					                                                        map.ILInstructionOffset,
+					                                                        BreakpointAction.Break);
+					newBookmark.IsEnabled = breakpoint.IsEnabled;
+					
+					newBookmarks.Add(newBookmark);
 
- 				  	BookmarkManager.RemoveMark(breakpoint);
+					BookmarkManager.RemoveMark(breakpoint);
 				}
 			}
 			newBookmarks.ForEach(m => BookmarkManager.AddMark(m));
@@ -343,7 +340,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			// 2. map the marker line
 			MemberReference memberReference;
 			int newline;
-			if (codeMappings[token].GetInstructionByTokenAndOffset(token, offset, out memberReference, out newline)) {
+			if (codeMappings[token].GetInstructionByTokenAndOffset(offset, out memberReference, out newline)) {
 				// 3. create breakpoint for new languages
 				DebuggerService.JumpToCurrentLine(memberReference, newline, 0, newline, 0, offset);
 			}

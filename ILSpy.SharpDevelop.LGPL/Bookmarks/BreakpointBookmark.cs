@@ -27,8 +27,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		bool isEnabled = true;
 		BreakpointAction action = BreakpointAction.Break;
 		
-		public DecompiledLanguages Language { get; private set; }
-		
 		public BreakpointAction Action {
 			get {
 				return action;
@@ -84,14 +82,13 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public string Tooltip { get; private set; }
 		
-		public BreakpointBookmark(MemberReference member, TextLocation location, int functionToken, ILRange range, BreakpointAction action, DecompiledLanguages language)
+		public BreakpointBookmark(MemberReference member, TextLocation location, int functionToken, ILRange range, BreakpointAction action)
 			: base(member, location)
 		{
 			this.action = action;
 			this.FunctionToken = functionToken;
 			this.ILRange = range;
-			this.Tooltip = string.Format("Language:{0}, Line:{1}, IL range:{2}-{3}", language.ToString(), location.Line, range.From, range.To);
-			this.Language = language;
+			this.Tooltip = string.Format("Line:{0}, IL range:{1}-{2}", location.Line, range.From, range.To);
 		}
 		
 		public override ImageSource Image {

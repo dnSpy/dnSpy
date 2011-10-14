@@ -16,22 +16,6 @@ namespace ICSharpCode.ILSpy.Debugger
 	/// </summary>
 	public static class DebugInformation
 	{
-		static DecompiledLanguages language;
-		
-		/// <summary>
-		/// Gets or sets the decompiled language.
-		/// </summary>
-		public static DecompiledLanguages Language {
-			get { return language; }
-			set {
-				var oldLanguage = language;
-				if (value != language) {
-					language = value;
-					OnLanguageChanged(new LanguageEventArgs(oldLanguage, language));
-				}
-			}
-		}
-		
 		/// <summary>
 		/// List of loaded assemblies.
 		/// </summary>
@@ -40,17 +24,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// Gets or sets the current code mappings.
 		/// </summary>
-		public static Dictionary<int, List<MemberMapping>> CodeMappings { get; set; }
-		
-		/// <summary>
-		/// Gets or sets the local variables of the current decompiled type, method, etc.
-		/// </summary>
-		public static ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; set; }
-		
-		/// <summary>
-		/// Gets or sets the MembeReference that was decompiled (a TypeDefinition, MethodDefinition, etc)
-		/// </summary>
-		public static Dictionary<int, MemberReference> DecompiledMemberReferences { get; set; }
+		public static Dictionary<int, MemberMapping> CodeMappings { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the current token, IL offset and member reference. Used for step in/out.
@@ -61,31 +35,5 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// Gets or sets whether the debugger is loaded.
 		/// </summary>
 		public static bool IsDebuggerLoaded { get; set; }
-		
-		/// <summary>
-		/// Occures when the language is changed.
-		/// </summary>
-		public static event EventHandler<LanguageEventArgs> LanguageChanged;
-		
-		private static void OnLanguageChanged(LanguageEventArgs e)
-		{
-			var handler = LanguageChanged;
-			if (handler != null) {
-				handler(null, e);
-			}
-		}
-	}
-	
-	public class LanguageEventArgs : EventArgs
-	{
-		public DecompiledLanguages OldLanguage { get; private set; }
-		
-		public DecompiledLanguages NewLanguage { get; private set; }
-		
-		public LanguageEventArgs(DecompiledLanguages oldLanguage, DecompiledLanguages newLanguage)
-		{
-			this.OldLanguage = oldLanguage;
-			this.NewLanguage = newLanguage;
-		}
 	}
 }
