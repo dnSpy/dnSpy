@@ -183,7 +183,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// Looks up the method node corresponding to the method definition.
 		/// Returns null if no matching node is found.
 		/// </summary>
-		public SharpTreeNode FindMethodNode(MethodDefinition def)
+		public ILSpyTreeNode FindMethodNode(MethodDefinition def)
 		{
 			if (def == null)
 				return null;

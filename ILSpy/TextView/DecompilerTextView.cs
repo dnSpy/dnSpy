@@ -369,10 +369,7 @@ namespace ICSharpCode.ILSpy.TextView
 				int offset = pair.Value;
 				if (member != null) {
 					int line = document.GetLocation(offset).Line;
-					if (member is TypeDefinition)
-						manager.Bookmarks.Add(new TypeBookmark(member, line));
-					else
-						manager.Bookmarks.Add(new MemberBookmark(member, line));
+					manager.Bookmarks.Add(new MemberBookmark(member, line));
 				}
 			}
 		}

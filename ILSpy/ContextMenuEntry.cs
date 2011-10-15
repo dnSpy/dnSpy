@@ -90,12 +90,14 @@ namespace ICSharpCode.ILSpy
 			}
 			ContextMenu menu = new ContextMenu();
 			foreach (var category in entries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
-				if (menu.Items.Count > 0) {
-					menu.Items.Add(new Separator());
-				}
+				bool needSeparatorForCategory = true;
 				foreach (var entryPair in category) {
 					IContextMenuEntry entry = entryPair.Value;
 					if (entry.IsVisible(selectedNodes)) {
+						if (needSeparatorForCategory && menu.Items.Count > 0) {
+							menu.Items.Add(new Separator());
+							needSeparatorForCategory = false;
+						}
 						MenuItem menuItem = new MenuItem();
 						menuItem.Header = entryPair.Metadata.Header;
 						if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {

@@ -93,7 +93,6 @@
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\IconMarginActionsProvider.cs" />
-    <Compile Include="Bookmarks\Commands.cs" />
     <Compile Include="Bookmarks\MemberBookmark.cs" />
     <Compile Include="Commands\BrowseBackCommand.cs" />
     <Compile Include="Commands\BrowseForwardCommand.cs" />

@@ -30,9 +30,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	#region Context menu extensibility
 	public interface IBookmarkContextMenuEntry
 	{
-		bool IsVisible(IBookmark[] bookmarks);
-		bool IsEnabled(IBookmark[] bookmarks);
-		void Execute(IBookmark[] bookmarks);
+		bool IsVisible(IBookmark bookmarks);
+		bool IsEnabled(IBookmark bookmarks);
+		void Execute(IBookmark bookmarks);
 	}
 	
 	public interface IBookmarkContextMenuEntryMetadata
@@ -129,7 +129,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 
 						if (entryPair.Value.IsEnabled()) {
 							entry.Execute(line);
-						} 
+						}
 					}
 				}
 			}
@@ -144,7 +144,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			}
 			
 			if (e.ChangedButton == MouseButton.Right) {
-				// check if we are on a Member				
+				// check if we are on a Member
 				var bookmark = bookmarks.FirstOrDefault(b => b.LineNumber == line);
 				if (bookmark == null) {
 					// don't show the menu
@@ -153,15 +153,17 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					return;
 				}
 				
-				var marks = new[] { bookmark };
 				ContextMenu menu = new ContextMenu();
 				foreach (var category in contextEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
-					if (menu.Items.Count > 0) {
-						menu.Items.Add(new Separator());
-					}
+					bool needSeparatorForCategory = true;
 					foreach (var entryPair in category) {
 						IBookmarkContextMenuEntry entry = entryPair.Value;
-						if (entry.IsVisible(marks)) {
+						if (entry.IsVisible(bookmark)) {
+							if (needSeparatorForCategory && menu.Items.Count > 0) {
+								menu.Items.Add(new Separator());
+								needSeparatorForCategory = false;
+							}
+							
 							MenuItem menuItem = new MenuItem();
 							menuItem.Header = entryPair.Metadata.Header;
 							if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {
@@ -171,8 +173,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 									Source = Images.LoadImage(entry, entryPair.Metadata.Icon)
 								};
 							}
-							if (entryPair.Value.IsEnabled(marks)) {
-								menuItem.Click += delegate { entry.Execute(marks); };
+							if (entryPair.Value.IsEnabled(bookmark)) {
+								menuItem.Click += delegate { entry.Execute(bookmark); };
 							} else
 								menuItem.IsEnabled = false;
 							menu.Items.Add(menuItem);

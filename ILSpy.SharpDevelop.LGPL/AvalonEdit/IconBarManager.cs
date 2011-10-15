@@ -43,21 +43,5 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		}
 		
 		public event EventHandler RedrawRequested;
-		
-		public void UpdateClassMemberBookmarks(Dictionary<MemberReference, int> iconMappings, Type bookmarkType, Type memberType)
-		{
-			this.bookmarks.Clear();
-			
-			if (iconMappings == null || iconMappings.Count == 0)
-				return;
-			
-			foreach (var n in iconMappings) {
-				if (n.Key is TypeDefinition) {
-					this.bookmarks.Add(Activator.CreateInstance(bookmarkType, n.Key, n.Value) as IBookmark);
-				} else {
-					this.bookmarks.Add(Activator.CreateInstance(memberType, n.Key, n.Value) as IBookmark);
-				}
-			}
-		}
 	}
 }

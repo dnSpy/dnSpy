@@ -53,12 +53,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 	
+	/*
 	[ExportBookmarkContextMenuEntry(Header="Disable Breakpoint", Category="Debugger")]
 	public class DisableBreakpointCommand : IBookmarkContextMenuEntry
 	{
-    public bool IsVisible(IBookmark[] bookmarks)
+    public bool IsVisible(IBookmark bookmark)
     {
-      return bookmarks.Any(b => b is BreakpointBookmark && (b as BreakpointBookmark).IsEnabled);
+      return b => b is BreakpointBookmark && (b as BreakpointBookmark).IsEnabled;
     }
   	  
     public bool IsEnabled(IBookmark[] bookmarks)
@@ -70,5 +71,5 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
     {
       throw new NotImplementedException();
     }
-	}
+	}*/
 }

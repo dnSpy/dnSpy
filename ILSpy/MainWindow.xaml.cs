@@ -485,20 +485,30 @@ namespace ICSharpCode.ILSpy
 			return path.ToArray();
 		}
 		
-		public void JumpToReference(object reference)
+		public ILSpyTreeNode FindTreeNode(object reference)
 		{
 			if (reference is TypeReference) {
-				SelectNode(assemblyListTreeNode.FindTypeNode(((TypeReference)reference).Resolve()));
+				return assemblyListTreeNode.FindTypeNode(((TypeReference)reference).Resolve());
 			} else if (reference is MethodReference) {
-				SelectNode(assemblyListTreeNode.FindMethodNode(((MethodReference)reference).Resolve()));
+				return assemblyListTreeNode.FindMethodNode(((MethodReference)reference).Resolve());
 			} else if (reference is FieldReference) {
-				SelectNode(assemblyListTreeNode.FindFieldNode(((FieldReference)reference).Resolve()));
+				return assemblyListTreeNode.FindFieldNode(((FieldReference)reference).Resolve());
 			} else if (reference is PropertyReference) {
-				SelectNode(assemblyListTreeNode.FindPropertyNode(((PropertyReference)reference).Resolve()));
+				return assemblyListTreeNode.FindPropertyNode(((PropertyReference)reference).Resolve());
 			} else if (reference is EventReference) {
-				SelectNode(assemblyListTreeNode.FindEventNode(((EventReference)reference).Resolve()));
+				return assemblyListTreeNode.FindEventNode(((EventReference)reference).Resolve());
 			} else if (reference is AssemblyDefinition) {
-				SelectNode(assemblyListTreeNode.FindAssemblyNode((AssemblyDefinition)reference));
+				return assemblyListTreeNode.FindAssemblyNode((AssemblyDefinition)reference);
+			} else {
+				return null;
+			}
+		}
+		
+		public void JumpToReference(object reference)
+		{
+			ILSpyTreeNode treeNode = FindTreeNode(reference);
+			if (treeNode != null) {
+				SelectNode(treeNode);
 			} else if (reference is Mono.Cecil.Cil.OpCode) {
 				string link = "http://msdn.microsoft.com/library/system.reflection.emit.opcodes." + ((Mono.Cecil.Cil.OpCode)reference).Code.ToString().ToLowerInvariant() + ".aspx";
 				try {

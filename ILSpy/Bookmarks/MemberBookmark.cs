@@ -95,21 +95,4 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			throw new NotSupportedException();
 		}
 	}
-	
-	public class TypeBookmark : MemberBookmark
-	{
-		public TypeBookmark(MemberReference member, int line) : base (member, line)
-		{
-		}
-		
-		public override ImageSource Image {
-			get {
-				if (Member is TypeDefinition) {
-					return TreeNodes.TypeTreeNode.GetIcon((TypeDefinition)Member);
-				}
-				
-				return null;
-			}
-		}
-	}
 }
