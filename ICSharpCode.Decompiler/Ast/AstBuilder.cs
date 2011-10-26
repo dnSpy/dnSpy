@@ -641,6 +641,10 @@ namespace ICSharpCode.Decompiler.Ast
 					modifiers |= Modifiers.Readonly;
 			}
 			
+			RequiredModifierType modreq = fieldDef.FieldType as RequiredModifierType;
+			if (modreq != null && modreq.ModifierType.FullName == typeof(IsVolatile).FullName)
+				modifiers |= Modifiers.Volatile;
+			
 			return modifiers;
 		}
 		

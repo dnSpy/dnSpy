@@ -52,6 +52,7 @@ public static class ValueTypes
 	
 	private static readonly ValueTypes.S ReadOnlyS = default(ValueTypes.S);
 	private static ValueTypes.S MutableS = default(ValueTypes.S);
+	private static volatile int VolatileInt;
 	
 	public static void CallMethodViaField()
 	{
