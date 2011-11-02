@@ -30,10 +30,8 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public class ILAstBuilder
 	{
-		static ByteCode[] EmptyByteCodeArray = new ByteCode[] {};
-		
 		/// <summary> Immutable </summary>
-		class StackSlot
+		sealed class StackSlot
 		{
 			public readonly ByteCode[] PushedBy;  // One of those
 			public readonly ILVariable LoadFrom;  // Where can we get the value from in AST
@@ -61,11 +59,14 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		
 		/// <summary> Immutable </summary>
-		class VariableSlot
+		sealed class VariableSlot
 		{
 			public readonly ByteCode[] StoredBy;    // One of those
 			public readonly bool       StoredByAll; // Overestimate which is useful for exceptional control flow.
 			
+			static readonly VariableSlot EmptyInstance = new VariableSlot(new ByteCode[0], false);
+			public static readonly VariableSlot StoredByAllInstance = new VariableSlot(EmptyInstance.StoredBy, true);
+
 			public VariableSlot(ByteCode[] storedBy, bool storedByAll)
 			{
 				this.StoredBy = storedBy;
@@ -81,9 +82,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			public static VariableSlot[] CloneVariableState(VariableSlot[] state)
 			{
 				VariableSlot[] clone = new VariableSlot[state.Length];
-				for (int i = 0; i < clone.Length; i++) {
-					clone[i] = state[i];
-				}
+				Array.Copy(state, 0, clone, 0, state.Length);
 				return clone;
 			}
 			
@@ -91,7 +90,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			{
 				VariableSlot[] emptyVariableState = new VariableSlot[varCount];
 				for (int i = 0; i < emptyVariableState.Length; i++) {
-					emptyVariableState[i] = new VariableSlot(EmptyByteCodeArray, false);
+					emptyVariableState[i] = EmptyInstance;
 				}
 				return emptyVariableState;
 			}
@@ -100,13 +99,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			{
 				VariableSlot[] unknownVariableState = new VariableSlot[varCount];
 				for (int i = 0; i < unknownVariableState.Length; i++) {
-					unknownVariableState[i] = new VariableSlot(EmptyByteCodeArray, true);
+					unknownVariableState[i] = StoredByAllInstance;
 				}
 				return unknownVariableState;
 			}
 		}
 		
-		class ByteCode
+		sealed class ByteCode
 		{
 			public ILLabel  Label;      // Non-null only if needed
 			public int      Offset;
@@ -342,7 +341,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (byteCode.Code == ILCode.Stloc || byteCode.Code == ILCode.Ldloca) {
 					int varIndex = ((VariableReference)byteCode.Operand).Index;
 					newVariableState[varIndex] = byteCode.Code == ILCode.Stloc || byteCode.Next.Code == ILCode.Initobj ?
-						new VariableSlot(byteCode) : new VariableSlot(newVariableState[varIndex].StoredBy.Union(byteCode), false);
+						new VariableSlot(byteCode) : !newVariableState[varIndex].StoredByAll && IsDeterministicLdloca(byteCode) ?
+						new VariableSlot(newVariableState[varIndex].StoredBy.Union(byteCode), false) : VariableSlot.StoredByAllInstance;
 				}
 				
 				// After the leave, finally block might have touched the variables
@@ -505,8 +505,36 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			return body;
 		}
+
+		static bool IsDeterministicLdloca(ByteCode b)
+		{
+			var v = b.Operand;
+			b = b.Next;
+			if (b.Code == ILCode.Initobj) return true;
+
+			// instance method calls on value types use the variable ref deterministically
+			int stack = 1;
+			while (true) {
+				if (b.PopCount == null) return false;
+				stack -= b.PopCount.GetValueOrDefault();
+				if (stack == 0) break;
+				if (stack < 0) return false;
+				if (b.Code.IsConditionalControlFlow() || b.Code.IsUnconditionalControlFlow()) return false;
+				switch (b.Code) {
+					case ILCode.Ldloc:
+					case ILCode.Ldloca:
+					case ILCode.Stloc:
+						if (b.Operand == v) return false;
+						break;
+				}
+				stack += b.PushCount;
+				b = b.Next;
+				if (b == null) return false;
+			}
+			return (b.Code == ILCode.Call || b.Code == ILCode.Callvirt) && ((MethodReference)b.Operand).HasThis;
+		}
 		
-		class VariableInfo
+		sealed class VariableInfo
 		{
 			public ILVariable Variable;
 			public List<ByteCode> Stores;
@@ -528,7 +556,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					// ldloca on an uninitialized variable or followed by initobj isn't considered a load
 					var loads = body.Where(b =>
 						(b.Code == ILCode.Ldloc || (b.Code == ILCode.Ldloca && b.Next.Code != ILCode.Initobj &&
-							(b.VariablesBefore[variableIndex].StoredBy.Length != 0 || b.VariablesBefore[variableIndex].StoredByAll)))
+							(b.VariablesBefore[variableIndex].StoredBy.Length != 0 || b.VariablesBefore[variableIndex].StoredByAll || !IsDeterministicLdloca(b))))
 						&& b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
 					TypeReference varType = methodDef.Body.Variables[variableIndex].VariableType;
 					
@@ -537,7 +565,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					bool isPinned = methodDef.Body.Variables[variableIndex].IsPinned;
 					// If the variable is pinned, use single variable.
 					// If any of the loads is from "all", use single variable
-					if (isPinned || loads.Any(b => b.VariablesBefore[variableIndex].StoredByAll)) {
+					// If any of the loads is ldloca with a nondeterministic usage pattern, use  single variable
+					if (isPinned || loads.Any(b => b.VariablesBefore[variableIndex].StoredByAll || (b.Code == ILCode.Ldloca && !IsDeterministicLdloca(b)))) {
 						newVars = new List<VariableInfo>(1) { new VariableInfo() {
 							Variable = new ILVariable() {
 								Name = "var_" + variableIndex,
@@ -838,7 +867,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (Array.IndexOf(a, b) >= 0)
 				return a;
 			var res = new T[a.Length + 1];
-			Array.Copy(a, res, a.Length);
+			Array.Copy(a, 0, res, 0, a.Length);
 			res[res.Length - 1] = b;
 			return res;
 		}

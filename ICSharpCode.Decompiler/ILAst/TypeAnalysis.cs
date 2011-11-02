@@ -799,7 +799,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Dup:
 					{
 						var arg = expr.Arguments.Single();
-						return arg.ExpectedType = InferTypeForExpression(expr.Arguments.Single(), expectedType);
+						return arg.ExpectedType = InferTypeForExpression(arg, expectedType);
 					}
 				default:
 					Debug.WriteLine("Type Inference: Can't handle " + expr.Code.GetName());

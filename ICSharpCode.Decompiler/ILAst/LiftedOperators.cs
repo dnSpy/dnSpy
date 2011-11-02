@@ -515,7 +515,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			{
 				// IL ranges from removed nodes are assigned to the new operator expression
 				var removednodes = expr.GetSelfAndChildrenRecursive<ILExpression>().Except(n.GetSelfAndChildrenRecursive<ILExpression>());
-				n.ILRanges = ILRange.OrderAndJoint(n.ILRanges.Concat(removednodes.SelectMany(el => el.ILRanges)));
+				n.ILRanges.AddRange(removednodes.SelectMany(el => el.ILRanges));
 				// the new expression is wrapped in a container so that negations aren't pushed through lifted comparison operations
 				expr.Code = ILCode.Wrap;
 				expr.Arguments.Clear();
