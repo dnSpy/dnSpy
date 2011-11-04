@@ -175,11 +175,15 @@ namespace ICSharpCode.Decompiler.Ast
 				};
 			} else if (node is ILSwitch) {
 				ILSwitch ilSwitch = (ILSwitch)node;
+				if (TypeAnalysis.IsBoolean(ilSwitch.Condition.InferredType) && ilSwitch.CaseBlocks.SelectMany(cb => cb.Values).Any(val => val != 0 && val != 1)) {
+					// If switch cases contain values other then 0 and 1, force the condition to be non-boolean
+					ilSwitch.Condition.ExpectedType = typeSystem.Int32;
+				}
 				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition) };
 				foreach (var caseBlock in ilSwitch.CaseBlocks) {
 					SwitchSection section = new SwitchSection();
 					if (caseBlock.Values != null) {
-						section.CaseLabels.AddRange(caseBlock.Values.Select(i => new CaseLabel() { Expression = AstBuilder.MakePrimitive(i, ilSwitch.Condition.InferredType) }));
+						section.CaseLabels.AddRange(caseBlock.Values.Select(i => new CaseLabel() { Expression = AstBuilder.MakePrimitive(i, ilSwitch.Condition.ExpectedType ?? ilSwitch.Condition.InferredType) }));
 					} else {
 						section.CaseLabels.Add(new CaseLabel());
 					}
