@@ -28,78 +28,60 @@ using Cecil = Mono.Cecil;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
+	/// <summary>
+	/// Converts stack-based bytecode to variable-based bytecode by calculating use-define chains
+	/// </summary>
 	public class ILAstBuilder
 	{
 		/// <summary> Immutable </summary>
-		sealed class StackSlot
+		struct StackSlot
 		{
-			public readonly ByteCode[] PushedBy;  // One of those
-			public readonly ILVariable LoadFrom;  // Where can we get the value from in AST
+			public readonly ByteCode[] Definitions;  // Reaching definitions of this stack slot
+			public readonly ILVariable LoadFrom;     // Variable used for storage of the value
 			
-			public StackSlot(ByteCode[] pushedBy, ILVariable loadFrom)
+			public StackSlot(ByteCode[] definitions, ILVariable loadFrom)
 			{
-				this.PushedBy = pushedBy;
+				this.Definitions = definitions;
 				this.LoadFrom = loadFrom;
 			}
 			
-			public StackSlot(ByteCode pushedBy)
+			public static StackSlot[] ModifyStack(StackSlot[] stack, int popCount, int pushCount, ByteCode pushDefinition)
 			{
-				this.PushedBy = new[] { pushedBy };
-				this.LoadFrom = null;
-			}
-			
-			public static List<StackSlot> CloneStack(List<StackSlot> stack, int? popCount)
-			{
-				if (popCount.HasValue) {
-					return stack.GetRange(0, stack.Count - popCount.Value);
-				} else {
-					return new List<StackSlot>(0);
+				StackSlot[] newStack = new StackSlot[stack.Length - popCount + pushCount];
+				Array.Copy(stack, newStack, stack.Length - popCount);
+				for (int i = stack.Length - popCount; i < newStack.Length; i++) {
+					newStack[i] = new StackSlot(new [] { pushDefinition }, null);
 				}
+				return newStack;
 			}
 		}
 		
 		/// <summary> Immutable </summary>
-		sealed class VariableSlot
+		struct VariableSlot
 		{
-			public readonly ByteCode[] StoredBy;    // One of those
-			public readonly bool       StoredByAll; // Overestimate which is useful for exceptional control flow.
+			public readonly ByteCode[] Definitions;       // Reaching deinitions of this variable
+			public readonly bool       UnknownDefinition; // Used for initial state and exceptional control flow
 			
-			static readonly VariableSlot EmptyInstance = new VariableSlot(new ByteCode[0], false);
-			public static readonly VariableSlot StoredByAllInstance = new VariableSlot(EmptyInstance.StoredBy, true);
+			static readonly VariableSlot UnknownInstance = new VariableSlot(new ByteCode[0], true);
 
-			public VariableSlot(ByteCode[] storedBy, bool storedByAll)
+			public VariableSlot(ByteCode[] definitions, bool unknownDefinition)
 			{
-				this.StoredBy = storedBy;
-				this.StoredByAll = storedByAll;
-			}
-			
-			public VariableSlot(ByteCode storedBy)
-			{
-				this.StoredBy = new[] { storedBy };
-				this.StoredByAll = false;
+				this.Definitions = definitions;
+				this.UnknownDefinition = unknownDefinition;
 			}
 			
 			public static VariableSlot[] CloneVariableState(VariableSlot[] state)
 			{
 				VariableSlot[] clone = new VariableSlot[state.Length];
-				Array.Copy(state, 0, clone, 0, state.Length);
+				Array.Copy(state, clone, state.Length);
 				return clone;
 			}
 			
-			public static VariableSlot[] MakeEmptyState(int varCount)
-			{
-				VariableSlot[] emptyVariableState = new VariableSlot[varCount];
-				for (int i = 0; i < emptyVariableState.Length; i++) {
-					emptyVariableState[i] = EmptyInstance;
-				}
-				return emptyVariableState;
-			}
-			
-			public static VariableSlot[] MakeFullState(int varCount)
+			public static VariableSlot[] MakeUknownState(int varCount)
 			{
 				VariableSlot[] unknownVariableState = new VariableSlot[varCount];
 				for (int i = 0; i < unknownVariableState.Length; i++) {
-					unknownVariableState[i] = StoredByAllInstance;
+					unknownVariableState[i] = UnknownInstance;
 				}
 				return unknownVariableState;
 			}
@@ -117,11 +99,15 @@ namespace ICSharpCode.Decompiler.ILAst
 			public string   Name { get { return "IL_" + this.Offset.ToString("X2"); } }
 			public ByteCode Next;
 			public Instruction[]    Prefixes;        // Non-null only if needed
-			public List<StackSlot>  StackBefore;     // Unique per bytecode; not shared
-			public List<ILVariable> StoreTo;         // Store result of instruction to those AST variables
+			public StackSlot[]      StackBefore;     // Unique per bytecode; not shared
 			public VariableSlot[]   VariablesBefore; // Unique per bytecode; not shared
+			public List<ILVariable> StoreTo;         // Store result of instruction to those AST variables
 			
-			public VariableDefinition OperandAsVariable { get { return (VariableDefinition)this.Operand; } }
+			public bool IsVariableDefinition {
+				get {
+					return (this.Code == ILCode.Stloc) || (this.Code == ILCode.Ldloca && this.Next != null && this.Next.Code == ILCode.Initobj);
+				}
+			}
 			
 			public override string ToString()
 			{
@@ -170,9 +156,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					foreach (StackSlot slot in this.StackBefore) {
 						if (!first) sb.Append(",");
 						bool first2 = true;
-						foreach(ByteCode pushedBy in slot.PushedBy) {
+						foreach(ByteCode defs in slot.Definitions) {
 							if (!first2) sb.Append("|");
-							sb.AppendFormat("IL_{0:X2}", pushedBy.Offset);
+							sb.AppendFormat("IL_{0:X2}", defs.Offset);
 							first2 = false;
 						}
 						first = false;
@@ -196,13 +182,11 @@ namespace ICSharpCode.Decompiler.ILAst
 					bool first = true;
 					foreach (VariableSlot varSlot in this.VariablesBefore) {
 						if (!first) sb.Append(",");
-						if (varSlot.StoredByAll) {
-							sb.Append("*");
-						} else if (varSlot.StoredBy.Length == 0) {
-							sb.Append("_");
+						if (varSlot.UnknownDefinition) {
+							sb.Append("?");
 						} else {
 							bool first2 = true;
-							foreach (ByteCode storedBy in varSlot.StoredBy) {
+							foreach (ByteCode storedBy in varSlot.Definitions) {
 								if (!first2) sb.Append("|");
 								sb.AppendFormat("IL_{0:X2}", storedBy.Offset);
 								first2 = false;
@@ -289,8 +273,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			if(methodDef.Body.HasExceptionHandlers) {
 				foreach(ExceptionHandler ex in methodDef.Body.ExceptionHandlers) {
 					ByteCode handlerStart = instrToByteCode[ex.HandlerStart];
-					handlerStart.StackBefore = new List<StackSlot>();
-					handlerStart.VariablesBefore = VariableSlot.MakeFullState(varCount);
+					handlerStart.StackBefore = new StackSlot[0];
+					handlerStart.VariablesBefore = VariableSlot.MakeUknownState(varCount);
 					if (ex.HandlerType == ExceptionHandlerType.Catch || ex.HandlerType == ExceptionHandlerType.Filter) {
 						// Catch and Filter handlers start with the exeption on the stack
 						ByteCode ldexception = new ByteCode() {
@@ -300,15 +284,13 @@ namespace ICSharpCode.Decompiler.ILAst
 							PushCount = 1
 						};
 						ldexceptions[ex] = ldexception;
-						handlerStart.StackBefore.Add(new StackSlot(ldexception));
+						handlerStart.StackBefore = new StackSlot[] { new StackSlot(new [] { ldexception }, null) };
 					}
 					agenda.Push(handlerStart);
 					
 					if (ex.HandlerType == ExceptionHandlerType.Filter)
 					{
 						ByteCode filterStart = instrToByteCode[ex.FilterStart];
-						filterStart.StackBefore = new List<StackSlot>();
-						filterStart.VariablesBefore = VariableSlot.MakeFullState(varCount);
 						ByteCode ldexception = new ByteCode() {
 							Code = ILCode.Ldexception,
 							Operand = ex.CatchType,
@@ -316,14 +298,15 @@ namespace ICSharpCode.Decompiler.ILAst
 							PushCount = 1
 						};
 						// TODO: ldexceptions[ex] = ldexception;
-						filterStart.StackBefore.Add(new StackSlot(ldexception));
+						filterStart.StackBefore = new StackSlot[] { new StackSlot(new [] { ldexception }, null) };
+						filterStart.VariablesBefore = VariableSlot.MakeUknownState(varCount);
 						agenda.Push(filterStart);
 					}
 				}
 			}
 			
-			body[0].StackBefore = new List<StackSlot>();
-			body[0].VariablesBefore = VariableSlot.MakeEmptyState(varCount);
+			body[0].StackBefore = new StackSlot[0];
+			body[0].VariablesBefore = VariableSlot.MakeUknownState(varCount);
 			agenda.Push(body[0]);
 			
 			// Process agenda
@@ -331,23 +314,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				ByteCode byteCode = agenda.Pop();
 				
 				// Calculate new stack
-				List<StackSlot> newStack = StackSlot.CloneStack(byteCode.StackBefore, byteCode.PopCount);
-				for (int i = 0; i < byteCode.PushCount; i++) {
-					newStack.Add(new StackSlot(byteCode));
-				}
+				StackSlot[] newStack = StackSlot.ModifyStack(byteCode.StackBefore, byteCode.PopCount ?? byteCode.StackBefore.Length, byteCode.PushCount, byteCode);
 				
 				// Calculate new variable state
 				VariableSlot[] newVariableState = VariableSlot.CloneVariableState(byteCode.VariablesBefore);
-				if (byteCode.Code == ILCode.Stloc || byteCode.Code == ILCode.Ldloca) {
-					int varIndex = ((VariableReference)byteCode.Operand).Index;
-					newVariableState[varIndex] = byteCode.Code == ILCode.Stloc || byteCode.Next.Code == ILCode.Initobj ?
-						new VariableSlot(byteCode) : !newVariableState[varIndex].StoredByAll && IsDeterministicLdloca(byteCode) ?
-						new VariableSlot(newVariableState[varIndex].StoredBy.Union(byteCode), false) : VariableSlot.StoredByAllInstance;
+				if (byteCode.IsVariableDefinition) {
+					newVariableState[((VariableReference)byteCode.Operand).Index] = new VariableSlot(new [] { byteCode }, false);
 				}
 				
 				// After the leave, finally block might have touched the variables
 				if (byteCode.Code == ILCode.Leave) {
-					newVariableState = VariableSlot.MakeFullState(varCount);
+					newVariableState = VariableSlot.MakeUknownState(varCount);
 				}
 				
 				// Find all successors
@@ -386,12 +363,12 @@ namespace ICSharpCode.Decompiler.ILAst
 							branchTarget.VariablesBefore = newVariableState;
 						} else {
 							// Do not share data for several bytecodes
-							branchTarget.StackBefore = StackSlot.CloneStack(newStack, 0);
+							branchTarget.StackBefore = StackSlot.ModifyStack(newStack, 0, 0, null);
 							branchTarget.VariablesBefore = VariableSlot.CloneVariableState(newVariableState);
 						}
 						agenda.Push(branchTarget);
 					} else {
-						if (branchTarget.StackBefore.Count != newStack.Count) {
+						if (branchTarget.StackBefore.Length != newStack.Length) {
 							throw new Exception("Inconsistent stack size at " + byteCode.Name);
 						}
 						
@@ -401,11 +378,11 @@ namespace ICSharpCode.Decompiler.ILAst
 						bool modified = false;
 						
 						// Merge stacks - modify the target
-						for (int i = 0; i < newStack.Count; i++) {
-							ByteCode[] oldPushedBy = branchTarget.StackBefore[i].PushedBy;
-							ByteCode[] newPushedBy = oldPushedBy.Union(newStack[i].PushedBy);
-							if (newPushedBy.Length > oldPushedBy.Length) {
-								branchTarget.StackBefore[i] = new StackSlot(newPushedBy, null);
+						for (int i = 0; i < newStack.Length; i++) {
+							ByteCode[] oldDefs = branchTarget.StackBefore[i].Definitions;
+							ByteCode[] newDefs = oldDefs.Union(newStack[i].Definitions);
+							if (newDefs.Length > oldDefs.Length) {
+								branchTarget.StackBefore[i] = new StackSlot(newDefs, null);
 								modified = true;
 							}
 						}
@@ -414,16 +391,15 @@ namespace ICSharpCode.Decompiler.ILAst
 						for (int i = 0; i < newVariableState.Length; i++) {
 							VariableSlot oldSlot = branchTarget.VariablesBefore[i];
 							VariableSlot newSlot = newVariableState[i];
-							// All can not be unioned further
-							if (!oldSlot.StoredByAll) {
-								if (newSlot.StoredByAll) {
+							if (!oldSlot.UnknownDefinition) {
+								if (newSlot.UnknownDefinition) {
 									branchTarget.VariablesBefore[i] = newSlot;
 									modified = true;
 								} else {
-									ByteCode[] oldStoredBy = oldSlot.StoredBy;
-									ByteCode[] newStoredBy = oldStoredBy.Union(newSlot.StoredBy);
-									if (newStoredBy.Length > oldStoredBy.Length) {
-										branchTarget.VariablesBefore[i] = new VariableSlot(newStoredBy, false);
+									ByteCode[] oldDefs = oldSlot.Definitions;
+									ByteCode[] newDefs = oldDefs.Union(newSlot.Definitions);
+									if (newDefs.Length > oldDefs.Length) {
+										branchTarget.VariablesBefore[i] = new VariableSlot(newDefs, false);
 										modified = true;
 									}
 								}
@@ -437,18 +413,18 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 			
-			// Occasionally the compilers or obfuscators generate unreachable code (which migt be intentonally invalid)
+			// Occasionally the compilers or obfuscators generate unreachable code (which might be intentonally invalid)
 			// I belive it is safe to just remove it
 			body.RemoveAll(b => b.StackBefore == null);
 			
 			// Genertate temporary variables to replace stack
 			foreach(ByteCode byteCode in body) {
 				int argIdx = 0;
-				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Count;
-				for (int i = byteCode.StackBefore.Count - popCount; i < byteCode.StackBefore.Count; i++) {
+				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Length;
+				for (int i = byteCode.StackBefore.Length - popCount; i < byteCode.StackBefore.Length; i++) {
 					ILVariable tmpVar = new ILVariable() { Name = string.Format("arg_{0:X2}_{1}", byteCode.Offset, argIdx), IsGenerated = true };
-					byteCode.StackBefore[i] = new StackSlot(byteCode.StackBefore[i].PushedBy, tmpVar);
-					foreach(ByteCode pushedBy in byteCode.StackBefore[i].PushedBy) {
+					byteCode.StackBefore[i] = new StackSlot(byteCode.StackBefore[i].Definitions, tmpVar);
+					foreach(ByteCode pushedBy in byteCode.StackBefore[i].Definitions) {
 						if (pushedBy.StoreTo == null) {
 							pushedBy.StoreTo = new List<ILVariable>(1);
 						}
@@ -467,16 +443,16 @@ namespace ICSharpCode.Decompiler.ILAst
 					var loadedBy = locVars.Select(locVar => body.SelectMany(bc => bc.StackBefore).Single(s => s.LoadFrom == locVar)).ToList();
 					// We now know that all the variables have a single load,
 					// Let's make sure that they have also a single store - us
-					if (loadedBy.All(slot => slot.PushedBy.Length == 1 && slot.PushedBy[0] == byteCode)) {
+					if (loadedBy.All(slot => slot.Definitions.Length == 1 && slot.Definitions[0] == byteCode)) {
 						// Great - we can reduce everything into single variable
 						ILVariable tmpVar = new ILVariable() { Name = string.Format("expr_{0:X2}", byteCode.Offset), IsGenerated = true };
 						byteCode.StoreTo = new List<ILVariable>() { tmpVar };
 						foreach(ByteCode bc in body) {
-							for (int i = 0; i < bc.StackBefore.Count; i++) {
+							for (int i = 0; i < bc.StackBefore.Length; i++) {
 								// Is it one of the variable to be merged?
 								if (locVars.Contains(bc.StackBefore[i].LoadFrom)) {
 									// Replace with the new temp variable
-									bc.StackBefore[i] = new StackSlot(bc.StackBefore[i].PushedBy, tmpVar);
+									bc.StackBefore[i] = new StackSlot(bc.StackBefore[i].Definitions, tmpVar);
 								}
 							}
 						}
@@ -531,14 +507,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				b = b.Next;
 				if (b == null) return false;
 			}
+			if (b.Code == ILCode.Ldfld || b.Code == ILCode.Stfld)
+				return true;
 			return (b.Code == ILCode.Call || b.Code == ILCode.Callvirt) && ((MethodReference)b.Operand).HasThis;
 		}
 		
 		sealed class VariableInfo
 		{
 			public ILVariable Variable;
-			public List<ByteCode> Stores;
-			public List<ByteCode> Loads;
+			public List<ByteCode> Defs;
+			public List<ByteCode> Uses;
 		}
 		
 		/// <summary>
@@ -547,111 +525,75 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		void ConvertLocalVariables(List<ByteCode> body)
 		{
-			if (optimize) {
-				int varCount = methodDef.Body.Variables.Count;
+			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
 				
-				for(int variableIndex = 0; variableIndex < varCount; variableIndex++) {
-					// Find all stores and loads for this variable
-					var stores = body.Where(b => (b.Code == ILCode.Stloc || b.Code == ILCode.Ldloca) && b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
-					// ldloca on an uninitialized variable or followed by initobj isn't considered a load
-					var loads = body.Where(b =>
-						(b.Code == ILCode.Ldloc || (b.Code == ILCode.Ldloca && b.Next.Code != ILCode.Initobj &&
-							(b.VariablesBefore[variableIndex].StoredBy.Length != 0 || b.VariablesBefore[variableIndex].StoredByAll || !IsDeterministicLdloca(b))))
-						&& b.Operand is VariableDefinition && b.OperandAsVariable.Index == variableIndex).ToList();
-					TypeReference varType = methodDef.Body.Variables[variableIndex].VariableType;
+				// Find all definitions and uses of this variable
+				var defs = body.Where(b => b.Operand == varDef &&  b.IsVariableDefinition).ToList();
+				var uses = body.Where(b => b.Operand == varDef && !b.IsVariableDefinition).ToList();
+				
+				List<VariableInfo> newVars;
+				
+				// If the variable is pinned, use single variable.
+				// If any of the uses is from unknown definition, use single variable
+				// If any of the uses is ldloca with a nondeterministic usage pattern, use  single variable
+				if (!optimize || varDef.IsPinned || uses.Any(b => b.VariablesBefore[varDef.Index].UnknownDefinition || (b.Code == ILCode.Ldloca && !IsDeterministicLdloca(b)))) {				
+					newVars = new List<VariableInfo>(1) { new VariableInfo() {
+						Variable = new ILVariable() {
+							Name = string.IsNullOrEmpty(varDef.Name) ? "var_" + varDef.Index : varDef.Name,
+							Type = varDef.IsPinned ? ((PinnedType)varDef.VariableType).ElementType : varDef.VariableType,
+							OriginalVariable = varDef
+						},
+						Defs = defs,
+						Uses = uses
+					}};
+				} else {
+					// Create a new variable for each definition
+					newVars = defs.Select(def => new VariableInfo() {
+						Variable = new ILVariable() {
+							Name = (string.IsNullOrEmpty(varDef.Name) ? "var_" + varDef.Index : varDef.Name) + "_" + def.Offset.ToString("X2"),
+							Type = varDef.VariableType,
+							OriginalVariable = varDef
+					    },
+					    Defs = new List<ByteCode>() { def },
+					    Uses  = new List<ByteCode>()
+					}).ToList();
 					
-					List<VariableInfo> newVars;
+					// VB.NET uses the 'init' to allow use of uninitialized variables.
+					// We do not really care about them too much - if the original variable
+					// was uninitialized at that point it means that no store was called and
+					// thus all our new variables must be uninitialized as well.
+					// So it does not matter which one we load.
 					
-					bool isPinned = methodDef.Body.Variables[variableIndex].IsPinned;
-					// If the variable is pinned, use single variable.
-					// If any of the loads is from "all", use single variable
-					// If any of the loads is ldloca with a nondeterministic usage pattern, use  single variable
-					if (isPinned || loads.Any(b => b.VariablesBefore[variableIndex].StoredByAll || (b.Code == ILCode.Ldloca && !IsDeterministicLdloca(b)))) {
-						newVars = new List<VariableInfo>(1) { new VariableInfo() {
-							Variable = new ILVariable() {
-								Name = "var_" + variableIndex,
-								Type = isPinned ? ((PinnedType)varType).ElementType : varType,
-								OriginalVariable = methodDef.Body.Variables[variableIndex]
-							},
-							Stores = stores,
-							Loads  = loads
-						}};
-					} else {
-						// Create a new variable for each store
-						newVars = stores.Where(st =>
-						{
-							if (st.Code == ILCode.Stloc || st.Next.Code == ILCode.Initobj) return true;
-							var storedBy = st.VariablesBefore[variableIndex].StoredBy;
-							return storedBy.Length == 0 || storedBy[0] == st;
-						}).Select(st => new VariableInfo() {
-							Variable = new ILVariable() {
-						    		Name = "var_" + variableIndex + "_" + st.Offset.ToString("X2"),
-						    		Type = varType,
-						    		OriginalVariable = methodDef.Body.Variables[variableIndex]
-						    },
-						    Stores = new List<ByteCode>() {st},
-						    Loads  = new List<ByteCode>()
-						}).ToList();
-						
-						// VB.NET uses the 'init' to allow use of uninitialized variables.
-						// We do not really care about them too much - if the original variable
-						// was uninitialized at that point it means that no store was called and
-						// thus all our new variables must be uninitialized as well.
-						// So it does not matter which one we load.
-						
-						// TODO: We should add explicit initialization so that C# code compiles.
-						// Remember to handle cases where one path inits the variable, but other does not.
-						
-						// Add loads to the data structure; merge variables if necessary
-						foreach(ByteCode load in loads) {
-							ByteCode[] storedBy = load.VariablesBefore[variableIndex].StoredBy;
-							if (storedBy.Length == 0) {
-								// Load which always loads the default ('uninitialized') value
-								// Create a dummy variable just for this load
-								newVars.Add(new VariableInfo() {
-									Variable = new ILVariable() {
-								    		Name = "var_" + variableIndex + "_" + load.Offset.ToString("X2") + "_default",
-								    		Type = varType,
-								    		OriginalVariable = methodDef.Body.Variables[variableIndex]
-								    },
-								    Stores = new List<ByteCode>(),
-								    Loads  = new List<ByteCode>() { load }
-								});
-							} else if (storedBy.Length == 1) {
-								VariableInfo newVar = newVars.Single(v => v.Stores.Contains(storedBy[0]));
-								newVar.Loads.Add(load);
-								if (load.Code == ILCode.Ldloca) newVar.Stores.Add(load);
-							} else {
-								List<VariableInfo> mergeVars = newVars.Where(v => v.Stores.Intersect(storedBy).Any()).ToList();
-								VariableInfo mergedVar = new VariableInfo() {
-									Variable = mergeVars[0].Variable,
-									Stores = mergeVars.SelectMany(v => v.Stores).ToList(),
-									Loads  = mergeVars.SelectMany(v => v.Loads).ToList()
-								};
-								mergedVar.Loads.Add(load);
-								if (load.Code == ILCode.Ldloca) mergedVar.Stores.Add(load);
-								newVars = newVars.Except(mergeVars).ToList();
-								newVars.Add(mergedVar);
-							}
-						}
-					}
+					// TODO: We should add explicit initialization so that C# code compiles.
+					// Remember to handle cases where one path inits the variable, but other does not.
 					
-					// Set bytecode operands
-					foreach(VariableInfo newVar in newVars) {
-						foreach(ByteCode store in newVar.Stores) {
-							store.Operand = newVar.Variable;
-						}
-						foreach(ByteCode load in newVar.Loads) {
-							load.Operand = newVar.Variable;
+					// Add loads to the data structure; merge variables if necessary
+					foreach(ByteCode use in uses) {
+						ByteCode[] useDefs = use.VariablesBefore[varDef.Index].Definitions;
+						if (useDefs.Length == 1) {
+							VariableInfo newVar = newVars.Single(v => v.Defs.Contains(useDefs[0]));
+							newVar.Uses.Add(use);
+						} else {
+							List<VariableInfo> mergeVars = newVars.Where(v => v.Defs.Intersect(useDefs).Any()).ToList();
+							VariableInfo mergedVar = new VariableInfo() {
+								Variable = mergeVars[0].Variable,
+								Defs = mergeVars.SelectMany(v => v.Defs).ToList(),
+								Uses = mergeVars.SelectMany(v => v.Uses).ToList()
+							};
+							mergedVar.Uses.Add(use);
+							newVars = newVars.Except(mergeVars).ToList();
+							newVars.Add(mergedVar);
 						}
 					}
 				}
-			} else {
-				var variables = methodDef.Body.Variables.Select(v => new ILVariable() { Name = string.IsNullOrEmpty(v.Name) ?  "var_" + v.Index : v.Name, Type = v.VariableType, OriginalVariable = v }).ToList();
-				foreach(ByteCode byteCode in body) {
-					if (byteCode.Code == ILCode.Ldloc || byteCode.Code == ILCode.Stloc || byteCode.Code == ILCode.Ldloca) {
-						int index = ((VariableDefinition)byteCode.Operand).Index;
-						byteCode.Operand = variables[index];
+				
+				// Set bytecode operands
+				foreach(VariableInfo newVar in newVars) {
+					foreach(ByteCode def in newVar.Defs) {
+						def.Operand = newVar.Variable;
+					}
+					foreach(ByteCode use in newVar.Uses) {
+						use.Operand = newVar.Variable;
 					}
 				}
 			}
@@ -824,8 +766,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 				
 				// Reference arguments using temporary variables
-				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Count;
-				for (int i = byteCode.StackBefore.Count - popCount; i < byteCode.StackBefore.Count; i++) {
+				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Length;
+				for (int i = byteCode.StackBefore.Length - popCount; i < byteCode.StackBefore.Length; i++) {
 					StackSlot slot = byteCode.StackBefore[i];
 					expr.Arguments.Add(new ILExpression(ILCode.Ldloc, slot.LoadFrom));
 				}
