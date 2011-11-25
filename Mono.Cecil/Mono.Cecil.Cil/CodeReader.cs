@@ -145,7 +145,7 @@ namespace Mono.Cecil.Cil {
 				code_size = 0;
 
 			var end = start + code_size;
-			var instructions = body.instructions = new InstructionCollection (code_size / 3);
+			var instructions = body.instructions = new InstructionCollection ((code_size + 1) / 2);
 
 			while (position < end) {
 				var offset = base.position - start;
