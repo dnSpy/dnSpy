@@ -27,5 +27,6 @@ namespace ICSharpCode.ILSpy
 		Internal,
 		ProtectedInternal,
 		Private,
+		CompilerControlled
 	}
 }

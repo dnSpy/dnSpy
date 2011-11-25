@@ -332,6 +332,7 @@
     <Resource Include="Images\OverlayPrivate.png" />
     <Resource Include="Images\OverlayProtected.png" />
     <Resource Include="Images\OverlayProtectedInternal.png" />
+    <Resource Include="Images\OverlayCompilerControlled.png" />
     <Resource Include="Images\OverlayStatic.png" />
     <Resource Include="Images\VirtualMethod.png" />
     <Resource Include="Images\PInvokeMethod.png" />
