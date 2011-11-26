@@ -5,8 +5,8 @@
 	WindowStartupLocation="CenterOwner"
 	ResizeMode="NoResize"
 	Width="300"
-    Height="150"
-	FocusManager.FocusedElement="{Binding ElementName=listView}">
+	Height="150"
+	FocusManager.FocusedElement="{Binding ElementName=ListName}">
     <Grid Margin="12,8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
