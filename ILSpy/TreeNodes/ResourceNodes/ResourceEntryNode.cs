@@ -68,9 +68,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (var factory in App.CompositionContainer.GetExportedValues<IResourceNodeFactory>()) {
 				result = factory.CreateNode(key, data);
 				if (result != null)
-					break;
+					return result;
 			}
-			return result ?? new ResourceEntryNode(key, data as Stream);
+			var streamData = data as Stream;
+			if(streamData !=null)
+				result =  new ResourceEntryNode(key, data as Stream);
+
+			return result;
 		}
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)

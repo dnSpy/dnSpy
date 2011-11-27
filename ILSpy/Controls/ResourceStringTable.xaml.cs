@@ -23,13 +23,13 @@ namespace ICSharpCode.ILSpy.Controls
 	/// </summary>
 	public partial class ResourceStringTable : UserControl
 	{
-		public ResourceStringTable(IEnumerable strings)
+		public ResourceStringTable(IEnumerable strings,Size maxSize)
 		{
 			InitializeComponent();
 			// set size to fit decompiler window
 			// TODO: there should be a more transparent way to do this
-			MaxWidth = MainWindow.Instance.mainPane.ActualWidth-20;
-			MaxHeight = MainWindow.Instance.mainPane.ActualHeight-100;
+			MaxWidth = maxSize.Width;
+			MaxHeight = maxSize.Height;
 			resourceListView.ItemsSource = strings;
 		}
 		

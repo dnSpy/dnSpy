@@ -48,10 +48,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return null;
 		}
 	}
-	
+
 	sealed class ResourcesFileTreeNode : ResourceTreeNode
 	{
-		ICollection<KeyValuePair<string, string>> filteredEntries = new ObservableCollection<KeyValuePair<string, string>>();
+		ICollection<KeyValuePair<string, string>> stringTableEntries = new ObservableCollection<KeyValuePair<string, string>>();
+		ICollection<KeyValuePair<string, string>> otherEntries = new ObservableCollection<KeyValuePair<string, string>>();
 
 		public ResourcesFileTreeNode(EmbeddedResource er)
 			: base(er)
@@ -78,30 +79,68 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return;
 				}
 				foreach (DictionaryEntry entry in reader.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
-					if (entry.Value is String)
-						filteredEntries.Add(new KeyValuePair<string, string>(entry.Key.ToString(), (string)entry.Value));
-					else if (entry.Value is byte[])
-						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), new MemoryStream((byte[])entry.Value)));
-					else 
-						Children.Add(ResourceEntryNode.Create(entry.Key.ToString(), entry.Value));
+					ProcessResourceEntry(entry);
 				}
 			}
 		}
-		
+
+		private void ProcessResourceEntry(DictionaryEntry entry)
+		{
+			var keyString = entry.Key.ToString();
+
+			if (entry.Value is String) {
+				stringTableEntries.Add(new KeyValuePair<string, string>(keyString, (string)entry.Value));
+				return;
+			}
+
+			if (entry.Value is byte[]) {
+				Children.Add(ResourceEntryNode.Create(keyString, new MemoryStream((byte[])entry.Value)));
+				return;
+			}
+
+			var node = ResourceEntryNode.Create(keyString, entry.Value);
+			if (node != null) {
+				Children.Add(node);
+				return;
+			}
+
+			if (entry.Value is System.Globalization.CultureInfo) {
+				otherEntries.Add(new KeyValuePair<string, string>(keyString, ((System.Globalization.CultureInfo)entry.Value).DisplayName));
+			} else {
+				otherEntries.Add(new KeyValuePair<string, string>(keyString, entry.Value.ToString()));
+			}
+		}
+
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
+			EnsureLazyChildren();
 			base.Decompile(language, output, options);
-			if (filteredEntries.Count == 0)
-				return;
-			ISmartTextOutput smartOutput = output as ISmartTextOutput;
-			if (null != smartOutput) {
-				smartOutput.AddUIElement(
-					delegate {
-						return new ResourceStringTable(filteredEntries);
-					}
-				);
+			if (stringTableEntries.Count != 0) {
+				ISmartTextOutput smartOutput = output as ISmartTextOutput;
+				if (null != smartOutput) {
+					smartOutput.AddUIElement(
+						delegate {
+							return new ResourceStringTable(stringTableEntries,
+								new System.Windows.Size(MainWindow.Instance.mainPane.ActualWidth - 40,
+														MainWindow.Instance.mainPane.ActualHeight - 100));
+						}
+					);
+				}
+				output.WriteLine();
 			}
-			output.WriteLine();
+			if (otherEntries.Count != 0) {
+				ISmartTextOutput smartOutput = output as ISmartTextOutput;
+				if (null != smartOutput) {
+					smartOutput.AddUIElement(
+						delegate {
+							return new ResourceStringTable(otherEntries,
+								new System.Windows.Size(MainWindow.Instance.mainPane.ActualWidth - 40,
+														MainWindow.Instance.mainPane.ActualHeight - 100));
+						}
+					);
+				}
+				output.WriteLine();
+			}
 		}
 	}
 }
