@@ -19,6 +19,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Mono.Cecil;
+using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy
 {
@@ -179,6 +180,12 @@ namespace ICSharpCode.ILSpy
 			if (listView.SelectedItem != null)
 				manager.DeleteList(listView.SelectedItem.ToString());
 		}
+
+    private void listView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+      if (e.ChangedButton == MouseButton.Left && listView.SelectedItem != null)
+        this.DialogResult = true;
+    }
 
 	}
 }
