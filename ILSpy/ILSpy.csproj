@@ -121,6 +121,7 @@
     <Compile Include="GacInterop.cs" />
     <Compile Include="GuessFileType.cs" />
     <Compile Include="ContextMenuEntry.cs" />
+    <Compile Include="DecompileEventArgs.cs" />
     <Compile Include="Languages\ILAstLanguage.cs" />
     <Compile Include="Languages\ILLanguage.cs" />
     <Compile Include="ILSpySettings.cs" />
