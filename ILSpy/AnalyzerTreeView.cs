@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Analyzer tree view.
 	/// </summary>
-	public partial class AnalyzerTreeView : SharpTreeView, IPane
+	public class AnalyzerTreeView : SharpTreeView, IPane
 	{
 		static AnalyzerTreeView instance;
 
