@@ -17,10 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Markup;
-using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.Controls
 {

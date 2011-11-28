@@ -17,13 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.TypeSystem;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.Bookmarks

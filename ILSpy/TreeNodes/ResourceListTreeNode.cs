@@ -17,19 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections;
-using System.IO;
 using System.Linq;
-using System.Resources;
-using System.Text;
-using System.Windows;
 using System.Windows.Threading;
-
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.TextView;
-using Microsoft.Win32;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes

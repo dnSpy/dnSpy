@@ -18,7 +18,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml;
@@ -135,7 +134,7 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		sealed class MutexProtector : IDisposable
 		{
-			Mutex mutex;
+			readonly Mutex mutex;
 			
 			public MutexProtector(string name)
 			{

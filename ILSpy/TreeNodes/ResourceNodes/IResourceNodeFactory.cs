@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.IO;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes

@@ -19,7 +19,6 @@
 using System;
 using System.Windows.Threading;
 using ICSharpCode.Decompiler;
-using ICSharpCode.TreeView;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
