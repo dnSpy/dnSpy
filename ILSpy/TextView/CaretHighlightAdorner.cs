@@ -33,8 +33,8 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	sealed class CaretHighlightAdorner : Adorner
 	{
-		Pen pen;
-		RectangleGeometry geometry;
+		readonly Pen pen;
+		readonly RectangleGeometry geometry;
 		
 		public CaretHighlightAdorner(TextArea textArea)
 			: base(textArea.TextView)

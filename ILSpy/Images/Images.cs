@@ -115,8 +115,8 @@ namespace ICSharpCode.ILSpy
 		}
 
 
-		private static TypeIconCache typeIconCache = new TypeIconCache();
-		private static MemberIconCache memberIconCache = new MemberIconCache();
+		private static readonly TypeIconCache typeIconCache = new TypeIconCache();
+		private static readonly MemberIconCache memberIconCache = new MemberIconCache();
 
 		public static ImageSource GetIcon(TypeIcon icon, AccessOverlayIcon overlay, bool isStatic = false)
 		{
@@ -246,7 +246,7 @@ namespace ICSharpCode.ILSpy
 
 		private abstract class IconCache<T>
 		{
-			private Dictionary<Tuple<T, AccessOverlayIcon, bool>, ImageSource> cache = new Dictionary<Tuple<T, AccessOverlayIcon, bool>, ImageSource>();
+			private readonly Dictionary<Tuple<T, AccessOverlayIcon, bool>, ImageSource> cache = new Dictionary<Tuple<T, AccessOverlayIcon, bool>, ImageSource>();
 
 			protected void PreloadPublicIconToCache(T icon, ImageSource image)
 			{

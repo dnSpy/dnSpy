@@ -35,10 +35,10 @@ namespace ICSharpCode.ILSpy.VB
 				return "";
 			}
 		}
-		
-		ITypeResolveContext context;
-		
-		CecilLoader loader = new CecilLoader(false);
+
+		readonly ITypeResolveContext context;
+
+		readonly CecilLoader loader = new CecilLoader(false);
 		
 		public ILSpyEnvironmentProvider(ITypeResolveContext context)
 		{
@@ -111,7 +111,6 @@ namespace ICSharpCode.ILSpy.VB
 				case "System.String":
 					return TypeCode.String;
 				default:
-					
 					break;
 			}
 			

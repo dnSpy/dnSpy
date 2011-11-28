@@ -37,8 +37,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				if (!(node.Member is TypeDefinition
 				      || node.Member is FieldDefinition
 				      || node.Member is MethodDefinition
-				      || Analyzer.AnalyzedPropertyTreeNode.CanShow(node.Member)
-				      || Analyzer.AnalyzedEventTreeNode.CanShow(node.Member)))
+				      || AnalyzedPropertyTreeNode.CanShow(node.Member)
+				      || AnalyzedEventTreeNode.CanShow(node.Member)))
 					return false;
 			}
 
@@ -65,10 +65,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			MethodDefinition method = member as MethodDefinition;
 			if (method != null)
 				AnalyzerTreeView.Instance.Show(new AnalyzedMethodTreeNode(method));
-			var propertyAnalyzer = Analyzer.AnalyzedPropertyTreeNode.TryCreateAnalyzer(member);
+			var propertyAnalyzer = AnalyzedPropertyTreeNode.TryCreateAnalyzer(member);
 			if (propertyAnalyzer != null)
 				AnalyzerTreeView.Instance.Show(propertyAnalyzer);
-			var eventAnalyzer = Analyzer.AnalyzedEventTreeNode.TryCreateAnalyzer(member);
+			var eventAnalyzer = AnalyzedEventTreeNode.TryCreateAnalyzer(member);
 			if (eventAnalyzer != null)
 				AnalyzerTreeView.Instance.Show(eventAnalyzer);
 		}

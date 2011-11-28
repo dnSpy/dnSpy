@@ -17,12 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
-using ICSharpCode.Decompiler.ILAst;
 using Mono.Cecil.Cil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
@@ -82,11 +79,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private static MethodDefinition GetTypeConstructor(TypeDefinition type)
 		{
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.Name == ".ctor")
-					return method;
-			}
-			return null;
+			return type.Methods.FirstOrDefault(method => method.Name == ".ctor");
 		}
 
 		private static MethodDefinition FindMethodUsageInType(TypeDefinition type, MethodDefinition analyzedMethod)
@@ -99,7 +92,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (Instruction instr in method.Body.Instructions) {
 					MethodReference mr = instr.Operand as MethodReference;
 					if (mr != null && mr.Name == name &&
-						Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
+						IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
 						mr.Resolve() == analyzedMethod) {
 						found = true;
 						break;

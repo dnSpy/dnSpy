@@ -30,12 +30,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	/// </summary>
 	internal class ScopedWhereUsedAnalyzer<T>
 	{
-		private AssemblyDefinition assemblyScope;
+		private readonly AssemblyDefinition assemblyScope;
 		private TypeDefinition typeScope;
 
-		private Accessibility memberAccessibility = Accessibility.Public;
+		private readonly Accessibility memberAccessibility = Accessibility.Public;
 		private Accessibility typeAccessibility = Accessibility.Public;
-		private Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction;
+		private readonly Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction;
 
 		public ScopedWhereUsedAnalyzer(TypeDefinition type, Func<TypeDefinition, IEnumerable<T>> typeAnalysisFunction)
 		{
@@ -204,7 +204,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			var assemblies = GetAssemblyAndAnyFriends(assemblyScope, ct);
 
 			// use parallelism only on the assembly level (avoid locks within Cecil)
-			return assemblies.AsParallel().WithCancellation(ct).SelectMany((AssemblyDefinition a) => FindReferencesInAssembly(a, ct));
+			return assemblies.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInAssembly(a, ct));
 		}
 
 		private IEnumerable<T> FindReferencesGlobal(CancellationToken ct)
@@ -212,7 +212,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			var assemblies = GetReferencingAssemblies(assemblyScope, ct);
 
 			// use parallelism only on the assembly level (avoid locks within Cecil)
-			return assemblies.AsParallel().WithCancellation(ct).SelectMany((AssemblyDefinition asm) => FindReferencesInAssembly(asm, ct));
+			return assemblies.AsParallel().WithCancellation(ct).SelectMany(asm => FindReferencesInAssembly(asm, ct));
 		}
 
 		private IEnumerable<T> FindReferencesInAssembly(AssemblyDefinition asm, CancellationToken ct)

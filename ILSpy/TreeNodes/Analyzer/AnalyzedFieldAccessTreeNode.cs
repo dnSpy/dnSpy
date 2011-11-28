@@ -17,13 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using ICSharpCode.TreeView;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using System.Collections;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -63,7 +62,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDefinition type)
 		{
 			string name = analyzedField.Name;
-			string declTypeName = analyzedField.DeclaringType.FullName;
 
 			foreach (MethodDefinition method in type.Methods) {
 				bool found = false;

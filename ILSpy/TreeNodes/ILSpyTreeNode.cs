@@ -129,7 +129,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		FilterSettings StripSearchTerm(FilterSettings filterSettings)
+		static FilterSettings StripSearchTerm(FilterSettings filterSettings)
 		{
 			if (filterSettings == null)
 				return null;

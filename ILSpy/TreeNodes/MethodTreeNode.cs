@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// </summary>
 	public sealed class MethodTreeNode : ILSpyTreeNode, IMemberTreeNode
 	{
-		MethodDefinition method;
+		readonly MethodDefinition method;
 
 		public MethodDefinition MethodDefinition
 		{

@@ -123,14 +123,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FilterResult.Match;
 			}
 			
-			public override void Decompile(Language language, ICSharpCode.Decompiler.ITextOutput output, DecompilationOptions options)
+			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 			{
 			}
 		}
 		
 		sealed class ErrorTreeNode : ILSpyTreeNode
 		{
-			string text;
+			readonly string text;
 			
 			public override object Text {
 				get { return text; }
@@ -146,7 +146,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FilterResult.Match;
 			}
 			
-			public override void Decompile(Language language, ICSharpCode.Decompiler.ITextOutput output, DecompilationOptions options)
+			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 			{
 			}
 		}

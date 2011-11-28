@@ -26,9 +26,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 {
 	class DerivedTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
 	{
-		private TypeDefinition type;
-		private AssemblyDefinition[] assemblies;
-		private ThreadingSupport threading;
+		private readonly TypeDefinition type;
+		private readonly AssemblyDefinition[] assemblies;
+		private readonly ThreadingSupport threading;
 
 		public DerivedTypesEntryNode(TypeDefinition type, AssemblyDefinition[] assemblies)
 		{

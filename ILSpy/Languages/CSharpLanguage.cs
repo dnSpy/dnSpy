@@ -25,7 +25,6 @@ using System.Linq;
 using System.Resources;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xaml;
 using System.Xml;
 
 using ICSharpCode.Decompiler;
@@ -451,8 +450,8 @@ namespace ICSharpCode.ILSpy
 		#region WriteResourceFilesInProject
 		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(LoadedAssembly assembly, DecompilationOptions options, HashSet<string> directories)
 		{
-			AppDomain bamlDecompilerAppDomain = null;
-			try {
+			//AppDomain bamlDecompilerAppDomain = null;
+			//try {
 				foreach (EmbeddedResource r in assembly.AssemblyDefinition.MainModule.Resources.OfType<EmbeddedResource>()) {
 					string fileName;
 					Stream s = r.GetResourceStream();
@@ -503,11 +502,11 @@ namespace ICSharpCode.ILSpy
 					}
 					yield return Tuple.Create("EmbeddedResource", fileName);
 				}
-			}
-			finally {
-				if (bamlDecompilerAppDomain != null)
-					AppDomain.Unload(bamlDecompilerAppDomain);
-			}
+			//}
+			//finally {
+			//    if (bamlDecompilerAppDomain != null)
+			//        AppDomain.Unload(bamlDecompilerAppDomain);
+			//}
 		}
 
 		string GetFileNameForResource(string fullName, HashSet<string> directories)
@@ -621,7 +620,7 @@ namespace ICSharpCode.ILSpy
 			if (showAllMembers || !DecompilerSettingsPanel.CurrentDecompilerSettings.AnonymousMethods)
 				return member;
 			else
-				return ICSharpCode.ILSpy.TreeNodes.Analyzer.Helpers.GetOriginalCodeLocation(member);
+				return TreeNodes.Analyzer.Helpers.GetOriginalCodeLocation(member);
 		}
 
 		public override string GetTooltip(MemberReference member)

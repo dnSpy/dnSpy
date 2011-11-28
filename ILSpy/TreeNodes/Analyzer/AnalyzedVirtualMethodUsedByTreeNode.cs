@@ -21,7 +21,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using ICSharpCode.TreeView;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using ICSharpCode.Decompiler.Ast;
@@ -64,9 +63,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			foundMethods = new ConcurrentDictionary<MethodDefinition, int>();
 
-			var BaseMethods = TypesHierarchyHelpers.FindBaseMethods(analyzedMethod).ToArray();
-			if (BaseMethods.Length > 0) {
-				baseMethod = BaseMethods[BaseMethods.Length - 1];
+			var baseMethods = TypesHierarchyHelpers.FindBaseMethods(analyzedMethod).ToArray();
+			if (baseMethods.Length > 0) {
+				baseMethod = baseMethods[baseMethods.Length - 1];
 			} else
 				baseMethod = analyzedMethod;
 

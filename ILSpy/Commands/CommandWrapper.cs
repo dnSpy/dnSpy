@@ -23,7 +23,7 @@ namespace ICSharpCode.ILSpy
 {
 	class CommandWrapper : ICommand
 	{
-		private ICommand wrappedCommand;
+		private readonly ICommand wrappedCommand;
 
 		public CommandWrapper(ICommand wrappedCommand)
 		{

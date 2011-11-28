@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy
 	/// </remarks>
 	public class ILLanguage : Language
 	{
-		bool detectControlStructure;
+		private readonly bool detectControlStructure;
 		
 		public ILLanguage(bool detectControlStructure)
 		{
@@ -125,7 +125,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public override string TypeToString(TypeReference t, bool includeNamespace, ICustomAttributeProvider attributeProvider)
+		public override string TypeToString(TypeReference t, bool includeNamespace, ICustomAttributeProvider attributeProvider = null)
 		{
 			PlainTextOutput output = new PlainTextOutput();
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);

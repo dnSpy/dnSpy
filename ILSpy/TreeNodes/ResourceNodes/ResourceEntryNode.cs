@@ -17,14 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.ComponentModel.Composition;
 using System.IO;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 using Microsoft.Win32;
-using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -38,7 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return key.ToString(); }
+			get { return this.key; }
 		}
 
 		public override object Icon

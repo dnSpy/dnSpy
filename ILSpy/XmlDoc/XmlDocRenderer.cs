@@ -31,7 +31,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 	/// </summary>
 	public class XmlDocRenderer
 	{
-		StringBuilder ret = new StringBuilder();
+		readonly StringBuilder ret = new StringBuilder();
 		
 		public void AppendText(string text)
 		{

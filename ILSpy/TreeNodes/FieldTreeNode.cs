@@ -68,7 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return Images.GetIcon(MemberIcon.Field, GetOverlayIcon(field.Attributes), field.IsStatic);
 		}
 
-		private static bool IsDecimalConstant(Mono.Cecil.FieldDefinition field)
+		private static bool IsDecimalConstant(FieldDefinition field)
 		{
 			var fieldType = field.FieldType;
 			if (fieldType.Name == "Decimal" && fieldType.Namespace == "System") {

@@ -65,7 +65,7 @@ namespace ICSharpCode.ILSpy.Controls
 		
 		public event EventHandler CloseButtonClicked;
 		
-		protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
+		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);
 			if (e.Key == Key.F4 && e.KeyboardDevice.Modifiers == ModifierKeys.Control || e.Key == Key.Escape) {
@@ -79,7 +79,7 @@ namespace ICSharpCode.ILSpy.Controls
 	[MarkupExtensionReturnType(typeof(Color))]
 	class ControlColor : MarkupExtension
 	{
-		float val;
+		readonly float val;
 		
 		/// <summary>
 		/// Amount of highlight (0..1)

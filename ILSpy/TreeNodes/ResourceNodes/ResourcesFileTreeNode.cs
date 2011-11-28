@@ -51,8 +51,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 	sealed class ResourcesFileTreeNode : ResourceTreeNode
 	{
-		ICollection<KeyValuePair<string, string>> stringTableEntries = new ObservableCollection<KeyValuePair<string, string>>();
-		ICollection<KeyValuePair<string, string>> otherEntries = new ObservableCollection<KeyValuePair<string, string>>();
+		readonly ICollection<KeyValuePair<string, string>> stringTableEntries = new ObservableCollection<KeyValuePair<string, string>>();
+		readonly ICollection<KeyValuePair<string, string>> otherEntries = new ObservableCollection<KeyValuePair<string, string>>();
 
 		public ResourcesFileTreeNode(EmbeddedResource er)
 			: base(er)

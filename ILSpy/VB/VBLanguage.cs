@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Resources;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -45,7 +44,7 @@ namespace ICSharpCode.ILSpy.VB
 	[Export(typeof(Language))]
 	public class VBLanguage : Language
 	{
-		Predicate<IAstTransform> transformAbortCondition = null;
+		readonly Predicate<IAstTransform> transformAbortCondition = null;
 		bool showAllMembers = false;
 		
 		public VBLanguage()
@@ -313,8 +312,8 @@ namespace ICSharpCode.ILSpy.VB
 		#region WriteResourceFilesInProject
 		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(LoadedAssembly assembly, DecompilationOptions options, HashSet<string> directories)
 		{
-			AppDomain bamlDecompilerAppDomain = null;
-			try {
+			//AppDomain bamlDecompilerAppDomain = null;
+			//try {
 				foreach (EmbeddedResource r in assembly.AssemblyDefinition.MainModule.Resources.OfType<EmbeddedResource>()) {
 					string fileName;
 					Stream s = r.GetResourceStream();
@@ -365,11 +364,11 @@ namespace ICSharpCode.ILSpy.VB
 					}
 					yield return Tuple.Create("EmbeddedResource", fileName);
 				}
-			}
-			finally {
-				if (bamlDecompilerAppDomain != null)
-					AppDomain.Unload(bamlDecompilerAppDomain);
-			}
+			//}
+			//finally {
+			//    if (bamlDecompilerAppDomain != null)
+			//        AppDomain.Unload(bamlDecompilerAppDomain);
+			//}
 		}
 
 		string GetFileNameForResource(string fullName, HashSet<string> directories)

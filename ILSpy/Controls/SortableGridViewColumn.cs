@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy.Controls
 			set {
 				if (sortBy != value) {
 					sortBy = value;
-					OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("SortBy"));
+					OnPropertyChanged(new PropertyChangedEventArgs("SortBy"));
 				}
 			}
 		}

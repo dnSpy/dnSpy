@@ -20,10 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.NRefactory.Utils;
-using ICSharpCode.TreeView;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
@@ -48,16 +45,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedProperty, FindReferencesInType);
-			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
-				yield return child;
-			}
+			return analyzer.PerformAnalysis(ct).OrderBy(n => n.Text);
 		}
 
 		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDefinition type)
 		{
-			string name = analyzedProperty.Name;
-			string declTypeName = analyzedProperty.DeclaringType.FullName;
-
 			if (!TypesHierarchyHelpers.IsBaseType(analyzedProperty.DeclaringType, type, resolveTypeArguments: false))
 				yield break;
 

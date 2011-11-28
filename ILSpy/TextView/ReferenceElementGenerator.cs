@@ -28,8 +28,8 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	sealed class ReferenceElementGenerator : VisualLineElementGenerator
 	{
-		Action<ReferenceSegment> referenceClicked;
-		Predicate<ReferenceSegment> isLink;
+		readonly Action<ReferenceSegment> referenceClicked;
+		readonly Predicate<ReferenceSegment> isLink;
 		
 		/// <summary>
 		/// The collection of references (hyperlinks).
@@ -84,8 +84,8 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	sealed class VisualLineReferenceText : VisualLineText
 	{
-		ReferenceElementGenerator parent;
-		ReferenceSegment referenceSegment;
+		readonly ReferenceElementGenerator parent;
+		readonly ReferenceSegment referenceSegment;
 		
 		/// <summary>
 		/// Creates a visual line text element with the specified length.

@@ -18,8 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 
@@ -27,7 +25,7 @@ namespace ICSharpCode.ILSpy
 {
 	public class NavigationState : IEquatable<NavigationState>
 	{
-		private HashSet<SharpTreeNode> treeNodes;
+		private readonly HashSet<SharpTreeNode> treeNodes;
 
 		public IEnumerable<SharpTreeNode> TreeNodes { get { return treeNodes; } }
 		public DecompilerTextViewState ViewState { get; private set; }

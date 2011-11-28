@@ -17,14 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections;
-using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
-using System.Resources;
 using System.Text;
-using System.Windows;
-using System.Windows.Threading;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
@@ -40,7 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// </summary>
 	public class ResourceTreeNode : ILSpyTreeNode
 	{
-		Resource r;
+		readonly Resource r;
 		
 		public ResourceTreeNode(Resource r)
 		{
@@ -107,7 +101,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return false;
 		}
 		
-		public override bool Save(TextView.DecompilerTextView textView)
+		public override bool Save(DecompilerTextView textView)
 		{
 			EmbeddedResource er = r as EmbeddedResource;
 			if (er != null) {

@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy.Xaml
 	{
 		private readonly static string[] xmlFileExtensions = { ".xml", ".xsd", ".xslt" };
 
-		public ILSpyTreeNode CreateNode(Mono.Cecil.Resource resource)
+		public ILSpyTreeNode CreateNode(Resource resource)
 		{
 			EmbeddedResource er = resource as EmbeddedResource;
 			if (er != null)

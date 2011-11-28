@@ -31,7 +31,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		static readonly string[] imageFileExtensions = { ".png", ".gif", ".bmp", ".jpg", ".ico" };
 
-		public ILSpyTreeNode CreateNode(Mono.Cecil.Resource resource)
+		public ILSpyTreeNode CreateNode(Resource resource)
 		{
 			EmbeddedResource er = resource as EmbeddedResource;
 			if (er != null) {
@@ -90,7 +90,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				output.AddButton(Images.Save, "Save", delegate {
 					Save(null);
 				});
-				textView.ShowNode(output, this, null);
+				textView.ShowNode(output, this);
 				return true;
 			}
 			catch (Exception) {

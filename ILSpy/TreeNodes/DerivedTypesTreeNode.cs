@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		readonly AssemblyList list;
 		readonly TypeDefinition type;
-		ThreadingSupport threading;
+		readonly ThreadingSupport threading;
 
 		public DerivedTypesTreeNode(AssemblyList list, TypeDefinition type)
 		{

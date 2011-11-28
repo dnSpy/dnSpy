@@ -23,7 +23,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
 	internal class AnalyzedEventAccessorTreeNode : AnalyzedMethodTreeNode
 	{
-		private string name;
+		private readonly string name;
 
 		public AnalyzedEventAccessorTreeNode(MethodDefinition analyzedMethod, string name)
 			: base(analyzedMethod)

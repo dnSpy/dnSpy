@@ -26,9 +26,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 {
 	sealed class BaseTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
 	{
-		private TypeReference tr;
+		private readonly TypeReference tr;
 		private TypeDefinition def;
-		private bool isInterface;
+		private readonly bool isInterface;
 
 		public BaseTypesEntryNode(TypeReference tr, bool isInterface)
 		{

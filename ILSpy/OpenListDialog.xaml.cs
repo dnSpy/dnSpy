@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy
 		public const string DotNet35List = ".NET 3.5";
 		public const string ASPDotNetMVC3List = "ASP.NET (MVC3)";
 
-		AssemblyListManager manager;
+		readonly AssemblyListManager manager;
 
 		public OpenListDialog()
 		{
