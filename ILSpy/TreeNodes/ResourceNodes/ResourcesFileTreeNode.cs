@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	sealed class ResourcesFileTreeNode : ResourceTreeNode
 	{
 		readonly ICollection<KeyValuePair<string, string>> stringTableEntries = new ObservableCollection<KeyValuePair<string, string>>();
-		readonly ICollection<KeyValuePair<string, string>> otherEntries = new ObservableCollection<KeyValuePair<string, string>>();
+		readonly ICollection<ResourceObjectRepresentation> otherEntries = new ObservableCollection<ResourceObjectRepresentation>();
 
 		public ResourcesFileTreeNode(EmbeddedResource er)
 			: base(er)
@@ -104,10 +104,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return;
 			}
 
+			string entryType = entry.Value.GetType().FullName;
 			if (entry.Value is System.Globalization.CultureInfo) {
-				otherEntries.Add(new KeyValuePair<string, string>(keyString, ((System.Globalization.CultureInfo)entry.Value).DisplayName));
+				otherEntries.Add(new ResourceObjectRepresentation(keyString, entryType, ((System.Globalization.CultureInfo)entry.Value).DisplayName));
 			} else {
-				otherEntries.Add(new KeyValuePair<string, string>(keyString, entry.Value.ToString()));
+				otherEntries.Add(new ResourceObjectRepresentation(keyString, entryType, entry.Value.ToString()));
 			}
 		}
 
@@ -121,11 +122,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					smartOutput.AddUIElement(
 						delegate {
 							return new ResourceStringTable(stringTableEntries,
-								new System.Windows.Size(MainWindow.Instance.mainPane.ActualWidth - 40,
-														MainWindow.Instance.mainPane.ActualHeight - 100));
+								new System.Windows.Size(MainWindow.Instance.mainPane.ActualWidth - 45,
+														MainWindow.Instance.mainPane.ActualHeight));
 						}
 					);
 				}
+				output.WriteLine();
 				output.WriteLine();
 			}
 			if (otherEntries.Count != 0) {
@@ -133,14 +135,28 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (null != smartOutput) {
 					smartOutput.AddUIElement(
 						delegate {
-							return new ResourceStringTable(otherEntries,
-								new System.Windows.Size(MainWindow.Instance.mainPane.ActualWidth - 40,
-														MainWindow.Instance.mainPane.ActualHeight - 100));
+							return new ResourceObjectTable(otherEntries,
+								new System.Windows.Size(MainWindow.Instance.mainPane.ActualWidth - 45,
+														MainWindow.Instance.mainPane.ActualHeight));
 						}
 					);
 				}
 				output.WriteLine();
 			}
+		}
+
+		internal class ResourceObjectRepresentation
+		{
+			public ResourceObjectRepresentation(string key, string type, string value)
+			{
+				this.Key = key;
+				this.Type = type;
+				this.Value = value;
+			}
+
+			public string Key { get; private set; }
+			public string Type { get; private set; }
+			public string Value { get; private set; }
 		}
 	}
 }

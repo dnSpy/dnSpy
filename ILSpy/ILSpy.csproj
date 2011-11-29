@@ -104,6 +104,9 @@
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
     <Compile Include="Commands\OpenListCommand.cs" />
+    <Compile Include="Controls\ResourceObjectTable.xaml.cs">
+      <DependentUpon>ResourceObjectTable.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DockedPane.cs" />
     <Compile Include="Commands\DecompileAllCommand.cs" />
     <Compile Include="Commands\ExportCommandAttribute.cs" />
@@ -272,6 +275,9 @@
     <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\ResourceObjectTable.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\ResourceStringTable.xaml" />
     <Page Include="Controls\SearchBoxStyle.xaml">
       <DependentUpon>SearchBox.cs</DependentUpon>

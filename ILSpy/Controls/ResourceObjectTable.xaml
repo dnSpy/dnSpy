@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<UserControl x:Class="ICSharpCode.ILSpy.Controls.ResourceStringTable"
+<UserControl x:Class="ICSharpCode.ILSpy.Controls.ResourceObjectTable"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
->
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<UserControl.CommandBindings>
 		<CommandBinding Command="ApplicationCommands.Copy"
 						Executed="ExecuteCopy"
@@ -26,33 +25,38 @@
 			<RowDefinition />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<Label Content="String Table"
+		<Label Content="Other Resources"
 			   FontFamily="Segoe UI"
 			   FontWeight="Bold"
 			   FontSize="14" />
 		<ListView Name="resourceListView"
-			  FontFamily="Segoe UI"
-			  FontSize="12"
-			  Foreground="Black"
+				  FontFamily="Segoe UI"
+				  FontSize="12"
+				  Foreground="Black"
 				  Grid.Row="1"
 				  AlternationCount="2"
 				  ItemContainerStyle="{StaticResource alternatingWithBinding}">
-		<ListView.View>
-			<GridView AllowsColumnReorder="False">
-				<GridView.Columns>
-					<GridViewColumn DisplayMemberBinding="{Binding Key}">
-						<GridViewColumnHeader Content="Name"
-											  HorizontalContentAlignment="Left"
-											  FontWeight="Bold" />
-					</GridViewColumn>
-					<GridViewColumn DisplayMemberBinding="{Binding Value}">
-						<GridViewColumnHeader Content="Value"
-											  HorizontalContentAlignment="Left"
-											  FontWeight="Bold" />
-					</GridViewColumn>
-				</GridView.Columns>
-			</GridView>
-		</ListView.View>
-	</ListView>
+			<ListView.View>
+				<GridView AllowsColumnReorder="False">
+					<GridView.Columns>
+						<GridViewColumn DisplayMemberBinding="{Binding Key}">
+							<GridViewColumnHeader Content="Name"
+												  HorizontalContentAlignment="Left"
+												  FontWeight="Bold" />
+						</GridViewColumn>
+						<GridViewColumn DisplayMemberBinding="{Binding Value}">
+							<GridViewColumnHeader Content="Value (as string)"
+												  HorizontalContentAlignment="Left"
+												  FontWeight="Bold" />
+						</GridViewColumn>
+						<GridViewColumn DisplayMemberBinding="{Binding Type}">
+							<GridViewColumnHeader Content="Type"
+												  HorizontalContentAlignment="Left"
+												  FontWeight="Bold" />
+						</GridViewColumn>
+					</GridView.Columns>
+				</GridView>
+			</ListView.View>
+		</ListView>
 	</Grid>
 </UserControl>

@@ -26,18 +26,18 @@ using System.Windows.Input;
 namespace ICSharpCode.ILSpy.Controls
 {
 	/// <summary>
-	/// Interaction logic for ResourceStringTable.xaml
+	/// Interaction logic for ResourceObjectTable.xaml
 	/// </summary>
-	public partial class ResourceStringTable : UserControl
+	public partial class ResourceObjectTable : UserControl
 	{
-		public ResourceStringTable(IEnumerable strings,Size maxSize)
+		public ResourceObjectTable(IEnumerable resources,Size maxSize)
 		{
 			InitializeComponent();
 			// set size to fit decompiler window
 			// TODO: there should be a more transparent way to do this
 			Width = maxSize.Width;
 			MaxHeight = maxSize.Height;
-			resourceListView.ItemsSource = strings;
+			resourceListView.ItemsSource = resources;
 		}
 		
 		void ExecuteCopy(object sender, ExecutedRoutedEventArgs args)
