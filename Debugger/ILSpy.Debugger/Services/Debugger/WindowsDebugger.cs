@@ -341,8 +341,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				MessageBox.Show(errorCannotStepNoActiveFunction, "StepOver");
 			} else {
 				var frame = GetStackFrame();
-				if (frame != null)
+				if (frame != null) {
 					frame.AsyncStepOver();
+					//Utils.DoEvents(frame.Process);
+				}
 			}
 		}
 		

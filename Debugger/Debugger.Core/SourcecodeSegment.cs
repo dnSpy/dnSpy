@@ -372,6 +372,9 @@ namespace Debugger
 		
 		public static SourcecodeSegment ResolveForIL(Module module, ICorDebugFunction corFunction, int line, int offset, int[] ranges)
 		{
+			if (ranges == null)
+				return null; // this would lead to a catched exception and the same result
+
 			try {				
 				SourcecodeSegment segment = new SourcecodeSegment();
 				segment.module        = module;

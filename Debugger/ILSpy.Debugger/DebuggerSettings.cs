@@ -17,6 +17,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		private static readonly string SHOW_MODULE = "showModuleName";
 		private static readonly string SHOW_ARGUMENTS = "showArguments";
 		private static readonly string SHOW_ARGUMENTVALUE = "showArgumentValues";
+		private static readonly string BREAK_AT_BEGINNING = "breakAtBeginning";
 	 	
 		private bool showWarnings = true;
 		private bool askArguments = true;
@@ -25,6 +26,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		private bool showModuleName = true;
 		private bool showArguments = false;
 		private bool showArgumentValues = false;
+		private bool breakAtBeginning = false;
 		
 		private static DebuggerSettings s_instance;
 		#endregion
@@ -32,8 +34,11 @@ namespace ICSharpCode.ILSpy.Debugger
 		public static DebuggerSettings Instance 
 		{
 			get {
-				if (null == s_instance)
+				if (null == s_instance) {
 					s_instance = new DebuggerSettings();
+					ILSpySettings settings = ILSpySettings.Load();
+					s_instance.Load(settings);
+				}
 				return s_instance;
 			}
 		}
@@ -51,6 +56,7 @@ namespace ICSharpCode.ILSpy.Debugger
 			ShowModuleName = (bool?)e.Attribute(SHOW_MODULE) ?? ShowModuleName;
 			ShowArguments = (bool?)e.Attribute(SHOW_ARGUMENTS) ?? ShowArguments;
 			ShowArgumentValues = (bool?)e.Attribute(SHOW_ARGUMENTVALUE) ?? ShowArgumentValues;
+			BreakAtBeginning = (bool?)e.Attribute(BREAK_AT_BEGINNING) ?? BreakAtBeginning;
 		}
 		
 		public void Save(XElement root)
@@ -60,8 +66,9 @@ namespace ICSharpCode.ILSpy.Debugger
 			section.SetAttributeValue(ASK_ARGUMENTS, AskForArguments);
 			section.SetAttributeValue(SHOW_BOOKMARKS, ShowAllBookmarks);
 			section.SetAttributeValue(SHOW_MODULE, ShowModuleName);
-    		section.SetAttributeValue(SHOW_ARGUMENTS, ShowArguments);
+			section.SetAttributeValue(SHOW_ARGUMENTS, ShowArguments);
 			section.SetAttributeValue(SHOW_ARGUMENTVALUE, ShowArgumentValues);
+			section.SetAttributeValue(BREAK_AT_BEGINNING, BreakAtBeginning);
 	
 			XElement existingElement = root.Element(DEBUGGER_SETTINGS);
 			if (existingElement != null)
@@ -165,6 +172,20 @@ namespace ICSharpCode.ILSpy.Debugger
 		        if (showArgumentValues != value) {
 		            showArgumentValues = value;
 		            OnPropertyChanged("ShowArgumentValues");
+		        }
+		    }
+		}
+		
+		/// <summary>
+		/// Break debugged process after attach or start.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool BreakAtBeginning {
+		    get { return breakAtBeginning; }
+		    set {
+		        if (breakAtBeginning != value) {
+		            breakAtBeginning = value;
+								OnPropertyChanged("BreakAtBeginning");
 		        }
 		    }
 		}

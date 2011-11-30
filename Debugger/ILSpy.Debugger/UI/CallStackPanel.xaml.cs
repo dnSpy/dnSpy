@@ -52,9 +52,6 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
 			if (!IsVisible)
 			{
-                // load debugger settings (to update context menu)
-                ILSpySettings settings = ILSpySettings.Load();
-                DebuggerSettings.Instance.Load(settings);
                 DebuggerSettings.Instance.PropertyChanged += new PropertyChangedEventHandler(OnDebuggerSettingChanged);
                 
                 SwitchModuleColumn();

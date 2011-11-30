@@ -306,14 +306,14 @@ namespace Debugger
 		DebuggeeState debuggeeState;
 		
 		/// <summary>
-		/// Indentification of the current debugger session. This value changes whenever debugger is continued
+		/// Identification of the current debugger session. This value changes whenever debugger is continued
 		/// </summary>
 		public PauseSession PauseSession {
 			get { return pauseSession; }
 		}
 		
 		/// <summary>
-		/// Indentification of the state of the debugee. This value changes whenever the state of the debugee significatntly changes
+		/// Identification of the state of the debugee. This value changes whenever the state of the debugee significantly changes
 		/// </summary>
 		public DebuggeeState DebuggeeState {
 			get { return debuggeeState; }
@@ -341,7 +341,7 @@ namespace Debugger
 			}
 		}
 		
-		/// <summary> Sets up the eviroment and raises user events </summary>
+		/// <summary> Sets up the environment and raises user events </summary>
 		internal void RaisePausedEvents()
 		{
 			AssertPaused();

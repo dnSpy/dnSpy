@@ -94,6 +94,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		
 		protected void StartExecutable(string fileName, string workingDirectory, string arguments)
 		{
+			CurrentDebugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
 			CurrentDebugger.Start(new ProcessStartInfo {
 			                      	FileName = fileName,
 			                      	WorkingDirectory = workingDirectory ?? Path.GetDirectoryName(fileName),
@@ -104,6 +105,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		
 		protected void StartAttaching(Process process)
 		{
+			CurrentDebugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
 			CurrentDebugger.Attach(process);
 			Finish();
 		}
@@ -202,10 +204,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (!CurrentDebugger.IsDebugging) {
 				AssemblyTreeNode n = selectedNodes[0] as AssemblyTreeNode;
 				
-				var settings = ILSpySettings.Load();
-				XElement e = settings["DebuggerSettings"];
-				var askForArguments = (bool?)e.Attribute("askForArguments");
-				if (askForArguments.HasValue && askForArguments.Value) {
+				if (DebuggerSettings.Instance.AskForArguments) {
 					var window = new ExecuteProcessWindow { Owner = MainWindow.Instance, 
 						SelectedExecutable = n.LoadedAssembly.FileName };
 					if (window.ShowDialog() == true) {
@@ -236,10 +235,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public override void Execute(object parameter)
 		{
 			if (!CurrentDebugger.IsDebugging) {
-				var settings = ILSpySettings.Load();
-				XElement e = settings["DebuggerSettings"];
-				var askForArguments = (bool?)e.Attribute("askForArguments");
-				if (askForArguments.HasValue && askForArguments.Value) {
+				if (DebuggerSettings.Instance.AskForArguments)
+				{
 					var window = new ExecuteProcessWindow { Owner = MainWindow.Instance };
 					if (window.ShowDialog() == true) {
 						string fileName = window.SelectedExecutable;
@@ -280,10 +277,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			if (!CurrentDebugger.IsDebugging) {
 				
-				var settings = ILSpySettings.Load();
-				XElement e = settings["DebuggerSettings"];
-				var showWarnings = (bool?)e.Attribute("showWarnings");
-				if ((showWarnings.HasValue && showWarnings.Value) || !showWarnings.HasValue)
+				if (DebuggerSettings.Instance.ShowWarnings)
 					MessageBox.Show("Warning: When attaching to an application, some local variables might not be available. If possible, use the \"Start Executable\" command.",
 				                "Attach to a process", MessageBoxButton.OK, MessageBoxImage.Warning);
 				
@@ -313,7 +307,25 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			}
 		}
 	}
-	
+
+	[ExportMainMenuCommand(Menu = "_Debugger",
+												 MenuIcon = "Images/Break.png",
+												 MenuCategory = "SteppingArea",
+												 Header = "Break",
+												 IsEnabled = false,
+												 MenuOrder = 2.1)]
+	internal sealed class BreakDebuggingCommand : DebuggerCommand
+	{
+		public override void Execute(object parameter)
+		{
+			if (CurrentDebugger.IsDebugging && CurrentDebugger.IsProcessRunning)
+			{
+				CurrentDebugger.Break();
+				MainWindow.Instance.SetStatus("Debugging...", Brushes.Red);
+			}
+		}
+	}
+
 	[ExportMainMenuCommand(Menu = "_Debugger",
 	                       MenuIcon = "Images/StepInto.png",
 	                       MenuCategory = "SteppingArea",
