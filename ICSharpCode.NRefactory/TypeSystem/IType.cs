@@ -28,30 +28,27 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <remarks>
 	/// <para>
 	/// A type is potentially
-	/// - a type definition (<see cref="ITypeDefiniton"/>, i.e. a class, struct, interface, delegate, or built-in primitive type)
+	/// - a type definition (<see cref="ITypeDefinition"/>, i.e. a class, struct, interface, delegate, or built-in primitive type)
 	/// - a parameterized type (<see cref="ParameterizedType"/>, e.g. List&lt;int>)
 	/// - a type parameter (<see cref="ITypeParameter"/>, e.g. T)
 	/// - an array (<see cref="ArrayType"/>)
 	/// - a pointer (<see cref="PointerType"/>)
 	/// - a managed reference (<see cref="ByReferenceType"/>)
-	/// - one of the special types (<see cref="SharedTypes.UnknownType"/>, <see cref="SharedTypes.Null"/>,
-	///      <see cref="SharedTypes.Dynamic"/>, <see cref="SharedTypes.UnboundTypeArgument"/>)
+	/// - one of the special types (<see cref="SpecialType.UnknownType"/>, <see cref="SpecialType.NullType"/>,
+	///      <see cref="SpecialType.Dynamic"/>, <see cref="SpecialType.UnboundTypeArgument"/>)
 	/// 
 	/// The <see cref="IType.Kind"/> property can be used to switch on the kind of a type.
 	/// </para>
 	/// <para>
-	/// IType uses the null object pattern: <see cref="SharedTypes.UnknownType"/> serves as the null object.
+	/// IType uses the null object pattern: <see cref="SpecialType.UnknownType"/> serves as the null object.
 	/// Methods or properties returning IType never return null unless documented otherwise.
 	/// </para>
 	/// <para>
-	/// Types should be compared for equality using the <see cref="IType.Equals(IType)"/> method.
+	/// Types should be compared for equality using the <see cref="IEquatable{IType}.Equals(IType)"/> method.
 	/// Identical types do not necessarily use the same object reference.
 	/// </para>
 	/// </remarks>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(ITypeContract))]
-	#endif
-	public interface IType : ITypeReference, INamedElement, IEquatable<IType>
+	public interface IType : INamedElement, IEquatable<IType>
 	{
 		/// <summary>
 		/// Gets the type kind.
@@ -66,17 +63,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// false, if the type is a value type.
 		/// null, if the type is not known (e.g. unconstrained generic type parameter or type not found)
 		/// </returns>
-		/// <remarks>
-		/// The resolve context is required for type parameters with a constraint "T : SomeType":
-		/// the type parameter is a reference type iff SomeType is a class type.
-		/// </remarks>
-		bool? IsReferenceType(ITypeResolveContext context);
+		bool? IsReferenceType { get; }
 		
 		/// <summary>
 		/// Gets the underlying type definition.
 		/// Can return null for types which do not have a type definition (for example arrays, pointers, type parameters).
-		/// 
-		/// For partial classes, this method always returns the <see cref="CompoundTypeDefinition"/>.
 		/// </summary>
 		ITypeDefinition GetDefinition();
 		
@@ -109,21 +100,28 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets the direct base types.
 		/// </summary>
-		/// <param name="context">The context used for resolving type references</param>
 		/// <returns>Returns the direct base types including interfaces</returns>
-		IEnumerable<IType> GetBaseTypes(ITypeResolveContext context);
+		IEnumerable<IType> DirectBaseTypes { get; }
+		
+		/// <summary>
+		/// Creates a type reference that can be used to look up a type equivalent to this type in another compilation.
+		/// </summary>
+		/// <remarks>
+		/// If this type is open, the resulting type reference will need to be looked up in an appropriate generic context.
+		/// If this type is closed, the resulting type reference can be looked up in the main resolve context of another compilation.
+		/// </remarks>
+		ITypeReference ToTypeReference();
 		
 		/// <summary>
 		/// Gets inner classes (including inherited inner classes).
 		/// </summary>
-		/// <param name="context">The context used for resolving type references</param>
 		/// <param name="filter">The filter used to select which types to return.
 		/// The filter is tested on the original type definitions (before parameterization).</param>
+		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
 		/// <para>
-		/// If the nested type is generic (and has more type parameters than the outer class),
-		/// this method will return a parameterized type,
-		/// where the additional type parameters are set to <see cref="SharedType.UnboundTypeArgument"/>.
+		/// If the nested type is generic, this method will return a parameterized type,
+		/// where the additional type parameters are set to <see cref="SpecialType.UnboundTypeArgument"/>.
 		/// </para>
 		/// <para>
 		/// Type parameters belonging to the outer class will have the value copied from the outer type
@@ -145,7 +143,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Base.GetNestedTypes() = { Base`1+Nested`1[`0, unbound] }
 		/// </code>
 		/// </example>
-		IEnumerable<IType> GetNestedTypes(ITypeResolveContext context, Predicate<ITypeDefinition> filter = null, GetMemberOptions options = GetMemberOptions.None);
+		IEnumerable<IType> GetNestedTypes(Predicate<ITypeDefinition> filter = null, GetMemberOptions options = GetMemberOptions.None);
 		
 		// Note that we cannot 'leak' the additional type parameter as we leak the normal type parameters, because
 		// the index might collide. For example,
@@ -161,45 +159,45 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// that have <c>typeArguments.Count</c> additional type parameters.
 		/// </summary>
 		/// <param name="typeArguments">The type arguments passed to the inner class</param>
-		/// <param name="context">The context used for resolving type references</param>
 		/// <param name="filter">The filter used to select which types to return.
 		/// The filter is tested on the original type definitions (before parameterization).</param>
+		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
 		/// Type parameters belonging to the outer class will have the value copied from the outer type
 		/// if it is a parameterized type. Otherwise, those existing type parameters will be self-parameterized,
 		/// and thus 'leaked' to the caller in the same way the GetMembers() method does not specialize members
 		/// from an <see cref="ITypeDefinition"/> and 'leaks' type parameters in member signatures.
 		/// </remarks>
-		IEnumerable<IType> GetNestedTypes(IList<IType> typeArguments, ITypeResolveContext context, Predicate<ITypeDefinition> filter = null, GetMemberOptions options = GetMemberOptions.None);
+		IEnumerable<IType> GetNestedTypes(IList<IType> typeArguments, Predicate<ITypeDefinition> filter = null, GetMemberOptions options = GetMemberOptions.None);
 		
 		/// <summary>
 		/// Gets all instance constructors for this type.
 		/// </summary>
-		/// <param name="context">The context used for resolving type references</param>
 		/// <param name="filter">The filter used to select which constructors to return.
 		/// The filter is tested on the original method definitions (before specialization).</param>
+		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
 		/// <para>The result does not include constructors in base classes or static constructors.</para>
 		/// <para>
 		/// For methods on parameterized types, type substitution will be performed on the method signature,
-		/// and the appropriate <see cref="SpecializedMethod"/> will be returned.
+		/// and the appropriate <see cref="Implementation.SpecializedMethod"/> will be returned.
 		/// </para>
 		/// </remarks>
-		IEnumerable<IMethod> GetConstructors(ITypeResolveContext context, Predicate<IMethod> filter = null, GetMemberOptions options = GetMemberOptions.IgnoreInheritedMembers);
+		IEnumerable<IMethod> GetConstructors(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.IgnoreInheritedMembers);
 		
 		/// <summary>
 		/// Gets all methods that can be called on this type.
 		/// </summary>
-		/// <param name="context">The context used for resolving type references</param>
 		/// <param name="filter">The filter used to select which methods to return.
 		/// The filter is tested on the original method definitions (before specialization).</param>
+		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
 		/// <para>
 		/// The result does not include constructors.
 		/// </para>
 		/// <para>
 		/// For methods on parameterized types, type substitution will be performed on the method signature,
-		/// and the appropriate <see cref="SpecializedMethod"/> will be returned.
+		/// and the appropriate <see cref="Implementation.SpecializedMethod"/> will be returned.
 		/// </para>
 		/// <para>
 		/// If the method being returned is generic, and this type is a parameterized type where the type
@@ -212,19 +210,19 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// the ambiguity can be avoided.
 		/// </para>
 		/// </remarks>
-		IEnumerable<IMethod> GetMethods(ITypeResolveContext context, Predicate<IMethod> filter = null, GetMemberOptions options = GetMemberOptions.None);
+		IEnumerable<IMethod> GetMethods(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None);
 		
 		/// <summary>
 		/// Gets all generic methods that can be called on this type with the specified type arguments.
 		/// </summary>
 		/// <param name="typeArguments">The type arguments used for the method call.</param>
-		/// <param name="context">The context used for resolving type references</param>
 		/// <param name="filter">The filter used to select which methods to return.
 		/// The filter is tested on the original method definitions (before specialization).</param>
+		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
 		/// <para>The result does not include constructors.</para>
 		/// <para>
-		/// Type substitution will be performed on the method signature, creating a <see cref="SpecializedMethod"/>
+		/// Type substitution will be performed on the method signature, creating a <see cref="Implementation.SpecializedMethod"/>
 		/// with the specified type arguments.
 		/// </para>
 		/// <para>
@@ -233,50 +231,50 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// and the other overload's remarks about ambiguous signatures apply here as well.
 		/// </para>
 		/// </remarks>
-		IEnumerable<IMethod> GetMethods(IList<IType> typeArguments, ITypeResolveContext context, Predicate<IMethod> filter = null, GetMemberOptions options = GetMemberOptions.None);
+		IEnumerable<IMethod> GetMethods(IList<IType> typeArguments, Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None);
 		
 		/// <summary>
 		/// Gets all properties that can be called on this type.
 		/// </summary>
-		/// <param name="context">The context used for resolving type references</param>
 		/// <param name="filter">The filter used to select which properties to return.
 		/// The filter is tested on the original property definitions (before specialization).</param>
+		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
 		/// For properties on parameterized types, type substitution will be performed on the property signature,
-		/// and the appropriate <see cref="SpecializedProperty"/> will be returned.
+		/// and the appropriate <see cref="Implementation.SpecializedProperty"/> will be returned.
 		/// </remarks>
-		IEnumerable<IProperty> GetProperties(ITypeResolveContext context, Predicate<IProperty> filter = null, GetMemberOptions options = GetMemberOptions.None);
+		IEnumerable<IProperty> GetProperties(Predicate<IUnresolvedProperty> filter = null, GetMemberOptions options = GetMemberOptions.None);
 		
 		/// <summary>
 		/// Gets all fields that can be accessed on this type.
 		/// </summary>
-		/// <param name="context">The context used for resolving type references</param>
 		/// <param name="filter">The filter used to select which constructors to return.
 		/// The filter is tested on the original field definitions (before specialization).</param>
+		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
 		/// For fields on parameterized types, type substitution will be performed on the field's return type,
-		/// and the appropriate <see cref="SpecializedField"/> will be returned.
+		/// and the appropriate <see cref="Implementation.SpecializedField"/> will be returned.
 		/// </remarks>
-		IEnumerable<IField> GetFields(ITypeResolveContext context, Predicate<IField> filter = null, GetMemberOptions options = GetMemberOptions.None);
+		IEnumerable<IField> GetFields(Predicate<IUnresolvedField> filter = null, GetMemberOptions options = GetMemberOptions.None);
 		
 		/// <summary>
 		/// Gets all events that can be accessed on this type.
 		/// </summary>
-		/// <param name="context">The context used for resolving type references</param>
 		/// <param name="filter">The filter used to select which events to return.
 		/// The filter is tested on the original event definitions (before specialization).</param>
+		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
 		/// For fields on parameterized types, type substitution will be performed on the event's return type,
-		/// and the appropriate <see cref="SpecializedEvent"/> will be returned.
+		/// and the appropriate <see cref="Implementation.SpecializedEvent"/> will be returned.
 		/// </remarks>
-		IEnumerable<IEvent> GetEvents(ITypeResolveContext context, Predicate<IEvent> filter = null, GetMemberOptions options = GetMemberOptions.None);
+		IEnumerable<IEvent> GetEvents(Predicate<IUnresolvedEvent> filter = null, GetMemberOptions options = GetMemberOptions.None);
 		
 		/// <summary>
 		/// Gets all members that can be called on this type.
 		/// </summary>
-		/// <param name="context">The context used for resolving type references</param>
 		/// <param name="filter">The filter used to select which members to return.
 		/// The filter is tested on the original member definitions (before specialization).</param>
+		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
 		/// <para>
 		/// The resulting list is the union of GetFields(), GetProperties(), GetMethods() and GetEvents().
@@ -285,10 +283,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </para>
 		/// <para>
 		/// For generic methods, the remarks about ambiguous signatures from the
-		/// <see cref="GetMethods(ITypeResolveContext, Predicate{IMethod})"/> method apply here as well.
+		/// <see cref="GetMethods(Predicate{IUnresolvedMethod}, GetMemberOptions)"/> method apply here as well.
 		/// </para>
 		/// </remarks>
-		IEnumerable<IMember> GetMembers(ITypeResolveContext context, Predicate<IMember> filter = null, GetMemberOptions options = GetMemberOptions.None);
+		IEnumerable<IMember> GetMembers(Predicate<IUnresolvedMember> filter = null, GetMemberOptions options = GetMemberOptions.None);
 	}
 	
 	[Flags]
@@ -308,135 +306,4 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		IgnoreInheritedMembers = 0x02
 	}
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(IType))]
-	abstract class ITypeContract : ITypeReferenceContract, IType
-	{
-		bool? IType.IsReferenceType(ITypeResolveContext context)
-		{
-			Contract.Requires(context != null);
-			return null;
-		}
-		
-		int IType.TypeParameterCount {
-			get {
-				Contract.Ensures(Contract.Result<int>() >= 0);
-				return 0;
-			}
-		}
-		
-		IType IType.DeclaringType {
-			get { return null; }
-		}
-		
-		IEnumerable<IType> IType.GetBaseTypes(ITypeResolveContext context)
-		{
-			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IEnumerable<IType>>() != null);
-			return null;
-		}
-		
-		IEnumerable<IType> IType.GetNestedTypes(ITypeResolveContext context, Predicate<ITypeDefinition> filter, GetMemberOptions options)
-		{
-			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IEnumerable<IType>>() != null);
-			return null;
-		}
-
-		IEnumerable<IMethod> IType.GetMethods(ITypeResolveContext context, Predicate<IMethod> filter, GetMemberOptions options)
-		{
-			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IEnumerable<IMethod>>() != null);
-			return null;
-		}
-		
-		IEnumerable<IMethod> IType.GetConstructors(ITypeResolveContext context, Predicate<IMethod> filter, GetMemberOptions options)
-		{
-			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IEnumerable<IMethod>>() != null);
-			return null;
-		}
-		
-		IEnumerable<IProperty> IType.GetProperties(ITypeResolveContext context, Predicate<IProperty> filter, GetMemberOptions options)
-		{
-			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IEnumerable<IProperty>>() != null);
-			return null;
-		}
-		
-		IEnumerable<IField> IType.GetFields(ITypeResolveContext context, Predicate<IField> filter, GetMemberOptions options)
-		{
-			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IEnumerable<IField>>() != null);
-			return null;
-		}
-		
-		IEnumerable<IEvent> IType.GetEvents(ITypeResolveContext context, Predicate<IEvent> filter, GetMemberOptions options)
-		{
-			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IEnumerable<IEvent>>() != null);
-			return null;
-		}
-		
-		IEnumerable<IMember> IType.GetEvents(ITypeResolveContext context, Predicate<IMember> filter, GetMemberOptions options)
-		{
-			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IEnumerable<IMember>>() != null);
-			return null;
-		}
-		
-		string INamedElement.FullName {
-			get {
-				Contract.Ensures(Contract.Result<string>() != null);
-				return null;
-			}
-		}
-		
-		string INamedElement.Name {
-			get {
-				Contract.Ensures(Contract.Result<string>() != null);
-				return null;
-			}
-		}
-		
-		string INamedElement.Namespace {
-			get {
-				Contract.Ensures(Contract.Result<string>() != null);
-				return null;
-			}
-		}
-		
-		string INamedElement.ReflectionName {
-			get {
-				Contract.Ensures(Contract.Result<string>() != null);
-				return null;
-			}
-		}
-		
-		ITypeDefinition IType.GetDefinition()
-		{
-			return null;
-		}
-		
-		bool IEquatable<IType>.Equals(IType other)
-		{
-			return false;
-		}
-		
-		IType IType.AcceptVisitor(TypeVisitor visitor)
-		{
-			Contract.Requires(visitor != null);
-			Contract.Ensures(Contract.Result<IType>() != null);
-			return this;
-		}
-		
-		IType IType.VisitChildren(TypeVisitor visitor)
-		{
-			Contract.Requires(visitor != null);
-			Contract.Ensures(Contract.Result<IType>() != null);
-			return this;
-		}
-	}
-	#endif
 }

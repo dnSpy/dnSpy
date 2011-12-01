@@ -22,20 +22,27 @@ using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(IParameterContract))]
-	#endif
-	public interface IParameter : IVariable, IFreezable
+	public interface IUnresolvedParameter
 	{
+		/// <summary>
+		/// Gets the name of the variable.
+		/// </summary>
+		string Name { get; }
+		
+		/// <summary>
+		/// Gets the declaration region of the variable.
+		/// </summary>
+		DomRegion Region { get; }
+		
+		/// <summary>
+		/// Gets the type of the variable.
+		/// </summary>
+		ITypeReference Type { get; }
+		
 		/// <summary>
 		/// Gets the list of attributes.
 		/// </summary>
-		IList<IAttribute> Attributes { get; }
-		
-		/// <summary>
-		/// Gets the default value of optional parameters.
-		/// </summary>
-		IConstantValue DefaultValue { get; }
+		IList<IUnresolvedAttribute> Attributes { get; }
 		
 		/// <summary>
 		/// Gets whether this parameter is a C# 'ref' parameter.
@@ -56,54 +63,36 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets whether this parameter is optional.
 		/// </summary>
 		bool IsOptional { get; }
+		
+		IParameter CreateResolvedParameter(ITypeResolveContext context);
 	}
 	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(IParameter))]
-	abstract class IParameterContract : IVariableContract, IParameter
+	public interface IParameter : IVariable
 	{
-		IList<IAttribute> IParameter.Attributes {
-			get {
-				Contract.Ensures(Contract.Result<IList<IAttribute>>() != null);
-				return null;
-			}
-		}
+		/// <summary>
+		/// Gets the list of attributes.
+		/// </summary>
+		IList<IAttribute> Attributes { get; }
 		
-		IConstantValue IParameter.DefaultValue {
-			get { return null; }
-		}
+		/// <summary>
+		/// Gets whether this parameter is a C# 'ref' parameter.
+		/// </summary>
+		bool IsRef { get; }
 		
-		DomRegion IParameter.Region {
-			get { return DomRegion.Empty; }
-		}
+		/// <summary>
+		/// Gets whether this parameter is a C# 'out' parameter.
+		/// </summary>
+		bool IsOut { get; }
 		
-		bool IParameter.IsRef {
-			get { return false; }
-		}
+		/// <summary>
+		/// Gets whether this parameter is a C# 'params' parameter.
+		/// </summary>
+		bool IsParams { get; }
 		
-		bool IParameter.IsOut {
-			get { return false; }
-		}
-		
-		bool IParameter.IsParams {
-			get { return false; }
-		}
-		
-		bool IParameter.IsOptional {
-			get {
-				IParameter @this = this;
-				Contract.Ensures(Contract.Result<bool>() == (@this.DefaultValue != null));
-				return false;
-			}
-		}
-		
-		bool IFreezable.IsFrozen {
-			get { return false; }
-		}
-		
-		void IFreezable.Freeze()
-		{
-		}
+		/// <summary>
+		/// Gets whether this parameter is optional.
+		/// The default value is given by the <see cref="IVariable.ConstantValue"/> property.
+		/// </summary>
+		bool IsOptional { get; }
 	}
-	#endif
 }

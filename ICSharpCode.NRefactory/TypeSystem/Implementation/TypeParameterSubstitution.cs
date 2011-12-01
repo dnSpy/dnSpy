@@ -54,12 +54,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				if (index >= 0 && index < classTypeArguments.Count)
 					return classTypeArguments[index];
 				else
-					return SharedTypes.UnknownType;
+					return SpecialType.UnknownType;
 			} else if (methodTypeArguments != null && type.OwnerType == EntityType.Method) {
 				if (index >= 0 && index < methodTypeArguments.Count)
 					return methodTypeArguments[index];
 				else
-					return SharedTypes.UnknownType;
+					return SpecialType.UnknownType;
 			} else {
 				return base.VisitTypeParameter(type);
 			}

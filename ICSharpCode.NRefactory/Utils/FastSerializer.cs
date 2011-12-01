@@ -353,7 +353,7 @@ namespace ICSharpCode.NRefactory.Utils
 			bool isArray = type.IsArray;
 			if (isArray) {
 				if (type.GetArrayRank() != 1)
-					throw new NotImplementedException();
+					throw new NotSupportedException();
 				type = type.GetElementType();
 				if (!type.IsValueType) {
 					return delegate (SerializationContext context, object array) {
@@ -538,7 +538,7 @@ namespace ICSharpCode.NRefactory.Utils
 			bool isArray = type.IsArray;
 			if (isArray) {
 				if (type.GetArrayRank() != 1)
-					throw new NotImplementedException();
+					throw new NotSupportedException();
 				type = type.GetElementType();
 				if (!type.IsValueType) {
 					return delegate (SerializationContext context, object array) {
@@ -546,7 +546,7 @@ namespace ICSharpCode.NRefactory.Utils
 							context.WriteObjectID(val);
 						}
 					};
-				} else if (type == typeof(byte[])) {
+				} else if (type == typeof(byte)) {
 					return delegate (SerializationContext context, object array) {
 						context.writer.Write((byte[])array);
 					};
@@ -1011,7 +1011,7 @@ namespace ICSharpCode.NRefactory.Utils
 			bool isArray = type.IsArray;
 			if (isArray) {
 				if (type.GetArrayRank() != 1)
-					throw new NotImplementedException();
+					throw new NotSupportedException();
 				type = type.GetElementType();
 				if (!type.IsValueType) {
 					return delegate (DeserializationContext context, object arrayInstance) {
@@ -1020,7 +1020,7 @@ namespace ICSharpCode.NRefactory.Utils
 							array[i] = context.ReadObject();
 						}
 					};
-				} else if (type == typeof(byte[])) {
+				} else if (type == typeof(byte)) {
 					return delegate (DeserializationContext context, object arrayInstance) {
 						byte[] array = (byte[])arrayInstance;
 						BinaryReader binaryReader = context.Reader;
@@ -1080,7 +1080,7 @@ namespace ICSharpCode.NRefactory.Utils
 					Debug.Assert(type.IsPrimitive);
 					il.Emit(OpCodes.Ldloc, instance); // instance
 					il.Emit(OpCodes.Ldloc, loopVariable); // instance, loopVariable
-					EmitReadValueType(il, reader, type); // instance, loopVariable, value
+					ReadPrimitiveValue(il, reader, type); // instance, loopVariable, value
 					switch (Type.GetTypeCode(type)) {
 						case TypeCode.Boolean:
 						case TypeCode.SByte:

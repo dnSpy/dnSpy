@@ -59,7 +59,7 @@ namespace Mono.CSharp {
 			612, 618, 626, 628, 642, 649, 652, 657, 658, 659, 660, 661, 665, 672, 675, 693,
 			728,
 			809, 824,
-			1030, 1058, 1066,
+			1030, 1058, 1060, 1066,
 			1522, 1570, 1571, 1572, 1573, 1574, 1580, 1581, 1584, 1587, 1589, 1590, 1591, 1592,
 			1607, 1616, 1633, 1634, 1635, 1685, 1690, 1691, 1692, 1695, 1696, 1699,
 			1700, 1701, 1702, 1709, 1711, 1717, 1718, 1720, 1735,
@@ -106,6 +106,9 @@ namespace Mono.CSharp {
 				break;
 			case LanguageVersion.V_4:
 				version = "4.0";
+				break;
+			case LanguageVersion.V_5:
+				version = "5.0";
 				break;
 			default:
 				throw new InternalErrorException ("Invalid feature version", compiler.Settings.Version);

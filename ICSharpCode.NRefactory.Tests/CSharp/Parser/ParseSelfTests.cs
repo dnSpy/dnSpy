@@ -19,7 +19,7 @@
 using System;
 using System.IO;
 using ICSharpCode.NRefactory.Editor;
-using ICSharpCode.NRefactory.TypeSystem.Implementation;
+using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser
@@ -46,16 +46,23 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 		[Test]
 		public void GenerateTypeSystem()
 		{
-			SimpleProjectContent pc = new SimpleProjectContent();
+			IProjectContent pc = new CSharpProjectContent();
 			CSharpParser parser = new CSharpParser();
 			parser.GenerateTypeSystemMode = true;
 			foreach (string fileName in fileNames) {
 				CompilationUnit cu;
 				using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan)) {
-					cu = parser.Parse(fs);
+					cu = parser.Parse(fs, fileName);
 				}
-				TypeSystemConvertVisitor cv = new TypeSystemConvertVisitor(pc, fileName);
-				pc.UpdateProjectContent(null, cv.Convert(cu));
+				var parsedFile = cu.ToTypeSystem();
+				foreach (var td in parsedFile.GetAllTypeDefinitions()) {
+					Assert.AreSame(parsedFile, td.ParsedFile);
+					foreach (var member in td.Members) {
+						Assert.AreSame(parsedFile, member.ParsedFile);
+						Assert.AreSame(td, member.DeclaringTypeDefinition);
+					}
+				}
+				pc = pc.UpdateProjectContent(null, parsedFile);
 			}
 		}
 		
@@ -69,7 +76,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			CSharpParser parser = new CSharpParser();
 			foreach (string fileName in fileNames) {
 				this.currentDocument = new ReadOnlyDocument(File.ReadAllText(fileName));
-				CompilationUnit cu = parser.Parse(currentDocument.CreateReader());
+				CompilationUnit cu = parser.Parse(currentDocument.CreateReader(), fileName);
 				if (parser.HasErrors)
 					continue;
 				this.currentFileName = fileName;

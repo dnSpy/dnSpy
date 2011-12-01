@@ -297,11 +297,83 @@ public abstract class MyClass : MyBase, Interface1, My.Test.Interface2
 		}
 		
 		[Test]
+		public void EnumWithInitializerAndWindowsNewline()
+		{
+			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("enum MyEnum { Val1 = 10\r\n}");
+			EnumMemberDeclaration member = (EnumMemberDeclaration)td.Members.Single();
+			Assert.AreEqual("Val1", member.Name);
+			Assert.AreEqual(10, ((PrimitiveExpression)member.Initializer).Value);
+			Assert.AreEqual("10", ((PrimitiveExpression)member.Initializer).LiteralValue);
+		}
+		
+		[Test]
 		public void EnumWithBaseType()
 		{
 			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("enum MyEnum : short { }");
 			Assert.AreEqual("MyEnum", td.Name);
 			Assert.AreEqual("short", ((PrimitiveType)td.BaseTypes.Single()).Keyword);
+		}
+		
+		[Test]
+		public void EnumWithIncorrectNewlineAfterIntegerLiteral()
+		{
+			ParseUtilCSharp.AssertGlobal(
+				"enum DisplayFlags { D = 4\r\r\n}",
+				new TypeDeclaration {
+					ClassType = ClassType.Enum,
+					Name = "DisplayFlags",
+					Members = {
+						new EnumMemberDeclaration {
+							Name = "D",
+							Initializer = new PrimitiveExpression(4)
+						}
+					}});
+		}
+		
+		[Test]
+		public void EnumWithCommaAtEnd()
+		{
+			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("enum MyEnum { A, }");
+			Assert.AreEqual(
+				new Role[] {
+					AstNode.Roles.Keyword,
+					AstNode.Roles.Identifier,
+					AstNode.Roles.LBrace,
+					TypeDeclaration.MemberRole,
+					AstNode.Roles.Comma,
+					AstNode.Roles.RBrace
+				}, td.Children.Select(c => c.Role).ToArray());
+		}
+		
+		[Test]
+		public void EnumWithCommaAndSemicolonAtEnd()
+		{
+			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("enum MyEnum { A, };");
+			Assert.AreEqual(
+				new Role[] {
+					AstNode.Roles.Keyword,
+					AstNode.Roles.Identifier,
+					AstNode.Roles.LBrace,
+					TypeDeclaration.MemberRole,
+					AstNode.Roles.Comma,
+					AstNode.Roles.RBrace,
+					AstNode.Roles.Semicolon
+				}, td.Children.Select(c => c.Role).ToArray());
+		}
+		
+		[Test]
+		public void EnumWithSemicolonAtEnd()
+		{
+			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("enum MyEnum { A };");
+			Assert.AreEqual(
+				new Role[] {
+					AstNode.Roles.Keyword,
+					AstNode.Roles.Identifier,
+					AstNode.Roles.LBrace,
+					TypeDeclaration.MemberRole,
+					AstNode.Roles.RBrace,
+					AstNode.Roles.Semicolon
+				}, td.Children.Select(c => c.Role).ToArray());
 		}
 	}
 }

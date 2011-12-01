@@ -61,6 +61,16 @@ namespace ICSharpCode.NRefactory.CSharp
 			return VisitChildren (comment, data);
 		}
 		
+		public event Action<PreProcessorDirective, T> PreProcessorDirectiveVisited;
+
+		S IAstVisitor<T, S>.VisitPreProcessorDirective (PreProcessorDirective preProcessorDirective, T data)
+		{
+			var handler = PreProcessorDirectiveVisited;
+			if (handler != null)
+				handler (preProcessorDirective, data);
+			return VisitChildren (preProcessorDirective, data);
+		}
+		
 		public event Action<Identifier, T> IdentifierVisited;
 
 		S IAstVisitor<T, S>.VisitIdentifier (Identifier identifier, T data)

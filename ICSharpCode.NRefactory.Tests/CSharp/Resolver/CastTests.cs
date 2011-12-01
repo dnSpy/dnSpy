@@ -29,9 +29,17 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	[TestFixture]
 	public class CastTests : ResolverTestBase
 	{
+		CSharpResolver resolver;
+		
+		public override void SetUp()
+		{
+			base.SetUp();
+			resolver = new CSharpResolver(compilation);
+		}
+		
 		void TestCast(Type targetType, ResolveResult input, Conversion expectedConversion)
 		{
-			IType type = targetType.ToTypeReference().Resolve(context);
+			IType type = compilation.FindType(targetType);
 			ResolveResult rr = resolver.ResolveCast(type, input);
 			AssertType(targetType, rr);
 			Assert.AreEqual(typeof(ConversionResolveResult), rr.GetType());

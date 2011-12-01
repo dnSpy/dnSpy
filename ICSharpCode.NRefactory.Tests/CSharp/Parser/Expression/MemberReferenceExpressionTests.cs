@@ -67,6 +67,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 				"Namespace.Subnamespace.SomeClass<string>.myField",
 				new MemberReferenceExpression {
 					Target = new IdentifierExpression("Namespace").Member("Subnamespace"),
+					MemberName = "SomeClass",
 					TypeArguments = { new PrimitiveType("string") }
 				}.Member("myField")
 			);

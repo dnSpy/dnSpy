@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Linq.Expressions;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -120,6 +121,52 @@ namespace ICSharpCode.NRefactory.CSharp
 					return ">>";
 				case BinaryOperatorType.NullCoalescing:
 					return "??";
+				default:
+					throw new NotSupportedException("Invalid value for BinaryOperatorType");
+			}
+		}
+		
+		public static ExpressionType GetLinqNodeType(BinaryOperatorType op, bool checkForOverflow)
+		{
+			switch (op) {
+				case BinaryOperatorType.BitwiseAnd:
+					return ExpressionType.And;
+				case BinaryOperatorType.BitwiseOr:
+					return ExpressionType.Or;
+				case BinaryOperatorType.ConditionalAnd:
+					return ExpressionType.AndAlso;
+				case BinaryOperatorType.ConditionalOr:
+					return ExpressionType.OrElse;
+				case BinaryOperatorType.ExclusiveOr:
+					return ExpressionType.ExclusiveOr;
+				case BinaryOperatorType.GreaterThan:
+					return ExpressionType.GreaterThan;
+				case BinaryOperatorType.GreaterThanOrEqual:
+					return ExpressionType.GreaterThanOrEqual;
+				case BinaryOperatorType.Equality:
+					return ExpressionType.Equal;
+				case BinaryOperatorType.InEquality:
+					return ExpressionType.NotEqual;
+				case BinaryOperatorType.LessThan:
+					return ExpressionType.LessThan;
+				case BinaryOperatorType.LessThanOrEqual:
+					return ExpressionType.LessThanOrEqual;
+				case BinaryOperatorType.Add:
+					return checkForOverflow ? ExpressionType.AddChecked : ExpressionType.Add;
+				case BinaryOperatorType.Subtract:
+					return checkForOverflow ? ExpressionType.SubtractChecked : ExpressionType.Subtract;
+				case BinaryOperatorType.Multiply:
+					return checkForOverflow ? ExpressionType.MultiplyChecked : ExpressionType.Multiply;
+				case BinaryOperatorType.Divide:
+					return ExpressionType.Divide;
+				case BinaryOperatorType.Modulus:
+					return ExpressionType.Modulo;
+				case BinaryOperatorType.ShiftLeft:
+					return ExpressionType.LeftShift;
+				case BinaryOperatorType.ShiftRight:
+					return ExpressionType.RightShift;
+				case BinaryOperatorType.NullCoalescing:
+					return ExpressionType.Coalesce;
 				default:
 					throw new NotSupportedException("Invalid value for BinaryOperatorType");
 			}

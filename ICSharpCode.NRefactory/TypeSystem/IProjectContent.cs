@@ -23,28 +23,10 @@ using System.Diagnostics.Contracts;
 namespace ICSharpCode.NRefactory.TypeSystem
 {
 	/// <summary>
-	/// Mutable container of all classes in an assembly.
+	/// Represents an assembly consisting of source code (parsed files).
 	/// </summary>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(IProjectContentContract))]
-	#endif
-	public interface IProjectContent : ITypeResolveContext, IAnnotatable
+	public interface IProjectContent : IUnresolvedAssembly
 	{
-		/// <summary>
-		/// Gets the assembly name (short name).
-		/// </summary>
-		string AssemblyName { get; }
-		
-		/// <summary>
-		/// Gets the list of all assembly attributes in the project.
-		/// </summary>
-		IList<IAttribute> AssemblyAttributes { get; }
-		
-		/// <summary>
-		/// Gets the list of all module attributes in the project.
-		/// </summary>
-		IList<IAttribute> ModuleAttributes { get; }
-		
 		/// <summary>
 		/// Gets a parsed file by its file name.
 		/// </summary>
@@ -56,32 +38,50 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IEnumerable<IParsedFile> Files { get; }
 		
 		/// <summary>
-		/// Removes types and attributes from oldFile from the project, and adds those from newFile.
+		/// Gets the referenced assemblies.
+		/// </summary>
+		IEnumerable<IAssemblyReference> AssemblyReferences { get; }
+		
+		/// <summary>
+		/// Creates a new <see cref="ICompilation"/> that allows resolving within this project.
 		/// </summary>
 		/// <remarks>
-		/// It is not allowed to call this method from within a <c>using (var ctx = context.Synchronize())</c> block
-		/// that involves this project content: this method is a write operation and might (if implemented using locks)
-		/// wait until all read operations have finished, causing deadlocks within Synchronize blocks.
+		/// An ICompilation is immutable, it operates on a snapshot of this project.
 		/// </remarks>
-		void UpdateProjectContent(IParsedFile oldFile, IParsedFile newFile);
-	}
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(IProjectContent))]
-	abstract class IProjectContentContract : ITypeResolveContextContract, IProjectContent
-	{
-		IList<IAttribute> IProjectContent.AssemblyAttributes {
-			get {
-				Contract.Ensures(Contract.Result<IList<IAttribute>>() != null);
-				return null;
-			}
-		}
+		ICompilation CreateCompilation();
 		
-		IParsedFile IProjectContent.GetFile(string fileName)
-		{
-			Contract.Requires(fileName != null);
-			return;
-		}
+		/// <summary>
+		/// Creates a new <see cref="ICompilation"/> that allows resolving within this project.
+		/// </summary>
+		/// <param name="solutionSnapshot">The parent solution snapshot to use for the compilation.</param>
+		/// <remarks>
+		/// An ICompilation is immutable, it operates on a snapshot of this project.
+		/// </remarks>
+		ICompilation CreateCompilation(ISolutionSnapshot solutionSnapshot);
+		
+		/// <summary>
+		/// Changes the assembly name of this project content.
+		/// </summary>
+		IProjectContent SetAssemblyName(string newAssemblyName);
+		
+		/// <summary>
+		/// Add assembly references to this project content.
+		/// </summary>
+		IProjectContent AddAssemblyReferences(IEnumerable<IAssemblyReference> references);
+		
+		/// <summary>
+		/// Removes assembly references from this project content.
+		/// </summary>
+		IProjectContent RemoveAssemblyReferences(IEnumerable<IAssemblyReference> references);
+		
+		/// <summary>
+		/// Removes types and attributes from oldFile from the project, and adds those from newFile.
+		/// </summary>
+		IProjectContent UpdateProjectContent(IParsedFile oldFile, IParsedFile newFile);
+		
+		/// <summary>
+		/// Removes types and attributes from oldFiles from the project, and adds those from newFiles.
+		/// </summary>
+		IProjectContent UpdateProjectContent(IEnumerable<IParsedFile> oldFiles, IEnumerable<IParsedFile> newFiles);
 	}
-	#endif
 }

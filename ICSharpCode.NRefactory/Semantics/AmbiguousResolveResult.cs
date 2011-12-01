@@ -37,7 +37,7 @@ namespace ICSharpCode.NRefactory.Semantics
 	
 	public class AmbiguousMemberResolveResult : MemberResolveResult
 	{
-		public AmbiguousMemberResolveResult(ResolveResult targetResult, IMember member, IType returnType) : base(targetResult, member, returnType)
+		public AmbiguousMemberResolveResult(ResolveResult targetResult, IMember member) : base(targetResult, member)
 		{
 		}
 		

@@ -60,9 +60,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			Assert.AreEqual("System.String", result.TargetType.FullName);
 			Assert.AreEqual(1, result.Parameters.Count);
 			Assert.AreEqual("b", result.Parameters[0].Name);
-			Assert.AreEqual("System.String", result.Parameters[0].Type.Resolve(context).ReflectionName);
+			Assert.AreEqual("System.String", result.Parameters[0].Type.ReflectionName);
 			
-			Assert.AreSame(SharedTypes.UnknownType, result.Type);
+			Assert.AreSame(SpecialType.UnknownType, result.Type);
 		}
 		
 		[Test]
@@ -304,8 +304,8 @@ class DerivedClass : MiddleClass {
 			
 			var m = (SpecializedMethod)rr.Member;
 			Assert.AreEqual("X", m.TypeArguments.Single().Name);
-			Assert.AreEqual("T", m.Parameters[0].Type.Resolve(context).Name);
-			Assert.AreEqual("X", m.Parameters[1].Type.Resolve(context).Name);
+			Assert.AreEqual("T", m.Parameters[0].Type.Name);
+			Assert.AreEqual("X", m.Parameters[1].Type.Name);
 		}
 		
 		[Test]
@@ -474,6 +474,24 @@ class A {
 			var rr = Resolve<CSharpInvocationResolveResult>(program);
 			Assert.IsFalse(rr.IsError);
 			Assert.AreEqual("ILeft.Method", rr.Member.FullName);
+		}
+		
+		[Test]
+		public void AcceptVisitor()
+		{
+			string program = @"
+interface IVisitor<in T, out S> { }
+class Test : IVisitor<object, object> {
+	void M() {
+		$Accept(this, null)$;
+	}
+	S Accept<T, S>(IVisitor<T, S> v, T input) { }
+}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(rr.IsError);
+			var typeArguments = ((SpecializedMethod)rr.Member).TypeArguments;
+			Assert.AreEqual("System.Object", typeArguments[0].ReflectionName);
+			Assert.AreEqual("System.Object", typeArguments[1].ReflectionName);
 		}
 	}
 }

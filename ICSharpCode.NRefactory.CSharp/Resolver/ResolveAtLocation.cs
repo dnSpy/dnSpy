@@ -18,6 +18,7 @@
 
 using System;
 using System.Threading;
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 
@@ -29,7 +30,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	/// </summary>
 	public static class ResolveAtLocation
 	{
-		public static ResolveResult Resolve(ITypeResolveContext context, CSharpParsedFile parsedFile, CompilationUnit cu, TextLocation location,
+		public static ResolveResult Resolve(ICompilation compilation, CSharpParsedFile parsedFile, CompilationUnit cu, TextLocation location,
 		                                    CancellationToken cancellationToken = default(CancellationToken))
 		{
 			AstNode node = cu.GetNodeAt(location);
@@ -39,7 +40,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (node is AstType) {
 				resolvableNode = node;
 				if (resolvableNode.Parent is ComposedType) {
-					while (resolvableNode.Parent is ComposedType) 
+					while (resolvableNode.Parent is ComposedType)
 						resolvableNode = resolvableNode.Parent;
 					//node is preffered over the resolvable node. Which shouldn't be done in the case of nullables, arrays etc.
 					node = resolvableNode;
@@ -69,19 +70,17 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			else
 				navigator = new NodeListResolveVisitorNavigator(new[] { resolvableNode });
 			
-			using (var ctx = context.Synchronize()) {
-				CSharpResolver resolver = new CSharpResolver(ctx, cancellationToken);
-				ResolveVisitor v = new ResolveVisitor(resolver, parsedFile, navigator);
-				v.Scan(cu);
-				
-				// Prefer the RR from the token itself, if it was assigned a ResolveResult
-				// (this can happen with the identifiers in various nodes such as catch clauses or foreach statements)
-				ResolveResult rr = v.GetResolveResult(node) ?? v.GetResolveResult(resolvableNode);
-				if (rr is MethodGroupResolveResult && parentInvocation != null)
-					return v.GetResolveResult(parentInvocation);
-				else
-					return rr;
-			}
+			CSharpResolver resolver = new CSharpResolver(compilation);
+			ResolveVisitor v = new ResolveVisitor(resolver, parsedFile, navigator);
+			v.Scan(cu);
+			
+			// Prefer the RR from the token itself, if it was assigned a ResolveResult
+			// (this can happen with the identifiers in various nodes such as catch clauses or foreach statements)
+			ResolveResult rr = v.GetResolveResult(node) ?? v.GetResolveResult(resolvableNode);
+			if (rr is MethodGroupResolveResult && parentInvocation != null)
+				return v.GetResolveResult(parentInvocation);
+			else
+				return rr;
 		}
 	}
 }

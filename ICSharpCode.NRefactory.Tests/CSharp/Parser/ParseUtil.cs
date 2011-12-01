@@ -33,8 +33,10 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 		public static T ParseGlobal<T>(string code, bool expectErrors = false) where T : AstNode
 		{
 			CSharpParser parser = new CSharpParser();
-			CompilationUnit cu = parser.Parse(new StringReader(code));
+			CompilationUnit cu = parser.Parse(new StringReader(code), "parsed.cs");
 			
+			if (parser.HasErrors)
+				parser.ErrorPrinter.Errors.ForEach (err => Console.WriteLine (err.Message));
 			Assert.AreEqual(expectErrors, parser.HasErrors, "HasErrors");
 			
 			AstNode node = cu.Children.Single();
@@ -56,6 +58,8 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			CSharpParser parser = new CSharpParser();
 			var statements = parser.ParseStatements(new StringReader(stmt));
 			
+			if (parser.HasErrors)
+				parser.ErrorPrinter.Errors.ForEach (err => Console.WriteLine (err.Message));
 			Assert.AreEqual(expectErrors, parser.HasErrors, "HasErrors");
 			
 			AstNode statement = statements.Single();
@@ -77,6 +81,8 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			CSharpParser parser = new CSharpParser();
 			AstNode parsedExpression = parser.ParseExpression(new StringReader(expr));
 			
+			if (parser.HasErrors)
+				parser.ErrorPrinter.Errors.ForEach (err => Console.WriteLine (err.Message));
 			Assert.AreEqual(expectErrors, parser.HasErrors, "HasErrors");
 			if (expectErrors && parsedExpression == null)
 				return default (T);
@@ -97,7 +103,8 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 		{
 			CSharpParser parser = new CSharpParser();
 			var members = parser.ParseTypeMembers(new StringReader(expr));
-			
+			if (parser.HasErrors)
+				parser.ErrorPrinter.Errors.ForEach (err => Console.WriteLine (err.Message));
 			Assert.AreEqual(expectErrors, parser.HasErrors, "HasErrors");
 			
 			AttributedNode m = members.Single();

@@ -21,8 +21,8 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
@@ -38,8 +38,8 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </remarks>
 	public class CodeDomConvertVisitor : IAstVisitor<object, CodeObject>
 	{
-		ITypeResolveContext context = MinimalResolveContext.Instance;
-		ResolveVisitor resolveVisitor;
+		//ICompilation compilation = MinimalResolveContext.Instance;
+		CSharpAstResolver resolver;
 		bool useFullyQualifiedTypeNames;
 		
 		/// <summary>
@@ -60,19 +60,15 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <remarks>
 		/// This conversion process requires a resolver because it needs to distinguish field/property/event references etc.
 		/// </remarks>
-		public CodeCompileUnit Convert(CompilationUnit compilationUnit, ITypeResolveContext context, CSharpParsedFile parsedFile)
+		public CodeCompileUnit Convert(ICompilation compilation, CompilationUnit compilationUnit, CSharpParsedFile parsedFile)
 		{
 			if (compilationUnit == null)
 				throw new ArgumentNullException("compilationUnit");
-			if (context == null)
-				throw new ArgumentNullException("context");
-			if (parsedFile == null)
-				throw new ArgumentNullException("parsedFile");
-			using (var ctx = context.Synchronize()) {
-				ResolveVisitor resolveVisitor = new ResolveVisitor(new CSharpResolver(ctx), parsedFile);
-				resolveVisitor.Scan(compilationUnit);
-				return (CodeCompileUnit)Convert(compilationUnit, resolveVisitor);
-			}
+			if (compilation == null)
+				throw new ArgumentNullException("compilation");
+			
+			CSharpAstResolver resolver = new CSharpAstResolver(compilation, compilationUnit, parsedFile);
+			return (CodeCompileUnit)Convert(compilationUnit, resolver);
 		}
 		
 		/// <summary>
@@ -85,28 +81,26 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <remarks>
 		/// This conversion process requires a resolver because it needs to distinguish field/property/event references etc.
 		/// </remarks>
-		public CodeObject Convert(AstNode node, ResolveVisitor resolveVisitor)
+		public CodeObject Convert(AstNode node, CSharpAstResolver resolver)
 		{
 			if (node == null)
 				throw new ArgumentNullException("node");
-			if (resolveVisitor == null)
-				throw new ArgumentNullException("resolveVisitor");
+			if (resolver == null)
+				throw new ArgumentNullException("resolver");
 			try {
-				this.resolveVisitor = resolveVisitor;
-				this.context = resolveVisitor.TypeResolveContext;
+				this.resolver = resolver;
 				return node.AcceptVisitor(this);
 			} finally {
-				this.resolveVisitor = null;
-				this.context = MinimalResolveContext.Instance;
+				this.resolver = null;
 			}
 		}
 		
 		ResolveResult Resolve(AstNode node)
 		{
-			if (resolveVisitor == null)
+			if (resolver == null)
 				return ErrorResolveResult.UnknownError;
 			else
-				return resolveVisitor.GetResolveResult(node);
+				return resolver.Resolve(node);
 		}
 		
 		CodeExpression Convert(Expression expr)
@@ -297,8 +291,8 @@ namespace ICSharpCode.NRefactory.CSharp
 					break;
 				case BinaryOperatorType.Equality:
 				case BinaryOperatorType.InEquality:
-					BinaryOperatorResolveResult rr = Resolve(binaryOperatorExpression) as BinaryOperatorResolveResult;
-					if (rr != null && rr.Left.Type.IsReferenceType(context) == true) {
+					OperatorResolveResult rr = Resolve(binaryOperatorExpression) as OperatorResolveResult;
+					if (rr != null && rr.GetChildResults().Any(cr => cr.Type.IsReferenceType == true)) {
 						if (binaryOperatorExpression.Operator == BinaryOperatorType.Equality)
 							op = CodeBinaryOperatorType.IdentityEquality;
 						else
@@ -1240,16 +1234,22 @@ namespace ICSharpCode.NRefactory.CSharp
 		CodeObject IAstVisitor<object, CodeObject>.VisitPrimitiveType(PrimitiveType primitiveType, object data)
 		{
 			string keyword = primitiveType.Keyword;
-			for (TypeCode c = TypeCode.Empty; c <= TypeCode.String; c++) {
-				if (ReflectionHelper.GetCSharpNameByTypeCode(c) == keyword)
-					return new CodeTypeReference("System." + ReflectionHelper.GetShortNameByTypeCode(c));
+			KnownTypeCode typeCode = TypeSystemConvertVisitor.GetTypeCodeForPrimitiveType(keyword);
+			if (typeCode != KnownTypeCode.None) {
+				KnownTypeReference ktr = KnownTypeReference.Get(typeCode);
+				return new CodeTypeReference(ktr.Namespace + "." + ktr.Name);
 			}
-			return new CodeTypeReference(primitiveType.Keyword);
+			return new CodeTypeReference(keyword);
 		}
 		
-		CodeObject IAstVisitor<object, CodeObject>.VisitComment(Comment comment, object data)
+		CodeObject IAstVisitor<object, CodeObject>.VisitComment (Comment comment, object data)
 		{
-			return new CodeComment(comment.Content, comment.CommentType == CommentType.Documentation);
+			return new CodeComment (comment.Content, comment.CommentType == CommentType.Documentation);
+		}
+		
+		CodeObject IAstVisitor<object, CodeObject>.VisitPreProcessorDirective (PreProcessorDirective preProcessorDirective, object data)
+		{
+			return new CodeComment ("#" + preProcessorDirective.Type.ToString ().ToLower ());
 		}
 		
 		CodeObject IAstVisitor<object, CodeObject>.VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, object data)

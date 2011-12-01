@@ -9,6 +9,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2011 Novell, Inc
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -55,7 +56,9 @@ namespace Mono.CSharp
 		static object evaluator_lock = new object ();
 		static volatile bool invoking;
 		
+#if !STATIC
 		static int count;
+#endif
 		static Thread invoke_thread;
 
 		readonly Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields;
@@ -135,6 +138,11 @@ namespace Mono.CSharp
 		public bool DescribeTypeExpressions;
 
 		/// <summary>
+		///   Whether the evaluator will use terse syntax, and the semicolons at the end are optional
+		/// </summary>
+		public bool Terse = true;
+
+		/// <summary>
 		///   The base class for the classes that host the user generated code
 		/// </summary>
 		/// <remarks>
@@ -200,7 +208,7 @@ namespace Mono.CSharp
 		///   compiled parameter will be set to the delegate
 		///   that can be invoked to execute the code.
 		///
-	    /// </remarks>
+		/// </remarks>
 		public string Compile (string input, out CompiledMethod compiled)
 		{
 			if (input == null || input.Length == 0){
@@ -218,6 +226,10 @@ namespace Mono.CSharp
 
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
+				if (parser == null && Terse && partial_input){
+					bool ignore;
+					parser = ParseString (ParseMode.Silent, input + ";", out ignore);
+				}
 				if (parser == null){
 					compiled = null;
 					if (partial_input)
@@ -604,11 +616,12 @@ namespace Mono.CSharp
 
 		CompiledMethod CompileBlock (Class host, Undo undo, Report Report)
 		{
-			string current_debug_name = "eval-" + count + ".dll";
-			++count;
 #if STATIC
 			throw new NotSupportedException ();
 #else
+			string current_debug_name = "eval-" + count + ".dll";
+			++count;
+
 			AssemblyDefinitionDynamic assembly;
 			AssemblyBuilderAccess access;
 
@@ -1074,7 +1087,7 @@ namespace Mono.CSharp
 					ec.Report.SetPrinter (old_printer);
 				}
 
-				if (tclone != null) {
+				if (tclone is TypeExpr) {
 					Arguments args = new Arguments (1);
 					args.Add (new Argument (new TypeOf ((TypeExpr) clone, Location)));
 					return new Invocation (new SimpleName ("Describe", Location), args).Resolve (ec);

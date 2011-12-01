@@ -129,10 +129,15 @@ namespace Mono.CSharp {
 			if (TypeSpec.IsBaseClass (ba, bb, false) || TypeSpec.IsBaseClass (bb, ba, false))
 				return true;
 
+			Error_ConflictingConstraints (context, spec, ba, bb, loc);
+			return false;
+		}
+
+		public static void Error_ConflictingConstraints (IMemberContext context, TypeParameterSpec tp, TypeSpec ba, TypeSpec bb, Location loc)
+		{
 			context.Module.Compiler.Report.Error (455, loc,
 				"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
-				spec.Name, ba.GetSignatureForError (), bb.GetSignatureForError ());
-			return false;
+				tp.Name, ba.GetSignatureForError (), bb.GetSignatureForError ());
 		}
 
 		public void CheckGenericConstraints (IMemberContext context, bool obsoleteCheck)
@@ -808,7 +813,17 @@ namespace Mono.CSharp {
 				// class A : B<int> { override void Foo<U> () {} }
 				// class B<T> { virtual void Foo<U> () where U : T {} }
 				//
-				return HasSpecialStruct || TypeSpec.IsValueType (BaseType);
+				if (HasSpecialStruct)
+					return true;
+
+				if (targs != null) {
+					foreach (var ta in targs) {
+						if (TypeSpec.IsValueType (ta))
+							return true;
+					}
+				}
+
+				return false;
 			}
 		}
 
@@ -853,21 +868,6 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public void ChangeTypeArgumentToBaseType (int index)
-		{
-			BaseType = targs [index];
-			if (targs.Length == 1) {
-				targs = null;
-			} else {
-				var copy = new TypeSpec[targs.Length - 1];
-				if (index > 0)
-					Array.Copy (targs, copy, index);
-
-				Array.Copy (targs, index + 1, copy, index, targs.Length - index - 1);
-				targs = copy;
-			}
-		}
-
 		public string DisplayDebugInfo ()
 		{
 			var s = GetSignatureForError ();
@@ -900,11 +900,18 @@ namespace Mono.CSharp {
 			var types = targs;
 			if (HasTypeConstraint) {
 				Array.Resize (ref types, types.Length + 1);
+
+				for (int i = 0; i < types.Length - 1; ++i) {
+					types[i] = types[i].BaseType;
+				}
+
 				types[types.Length - 1] = BaseType;
+			} else {
+				types = types.Select (l => l.BaseType).ToArray ();
 			}
 
 			if (types != null)
-				return Convert.FindMostEncompassedType (types.Select (l => l.BaseType));
+				return Convert.FindMostEncompassedType (types);
 
 			return BaseType;
 		}
@@ -1785,6 +1792,16 @@ namespace Mono.CSharp {
 					BaseType = inflator.Inflate (open_type.BaseType);
 				}
 			} else if ((state & StateFlags.PendingBaseTypeInflate) != 0) {
+				//
+				// It can happen when resolving base type without being defined
+				// which is not allowed to happen and will always lead to an error
+				//
+				// class B { class N {} }
+				// class A<T> : A<B.N> {}
+				//
+				if (open_type.BaseType == null)
+					return;
+
 				BaseType = inflator.Inflate (open_type.BaseType);
 				state &= ~StateFlags.PendingBaseTypeInflate;
 			}
@@ -2246,35 +2263,25 @@ namespace Mono.CSharp {
 			// Check the interfaces constraints
 			//
 			if (tparam.Interfaces != null) {
-				if (atype.IsNullableType) {
-					if (mc == null)
-						return false;
-
-					mc.Module.Compiler.Report.Error (313, loc,
-						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' never satisfies interface constraint",
-						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError ());
-					ok = false;
-				} else {
-					foreach (TypeSpec iface in tparam.Interfaces) {
-						var dep = iface.GetMissingDependencies ();
-						if (dep != null) {
-							if (mc == null)
-								return false;
-
-							ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
-							ok = false;
-
-							// return immediately to avoid duplicate errors because we are scanning
-							// expanded interface list
+				foreach (TypeSpec iface in tparam.Interfaces) {
+					var dep = iface.GetMissingDependencies ();
+					if (dep != null) {
+						if (mc == null)
 							return false;
-						}
 
-						if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
-							if (mc == null)
-								return false;
+						ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
+						ok = false;
 
-							ok = false;
-						}
+						// return immediately to avoid duplicate errors because we are scanning
+						// expanded interface list
+						return false;
+					}
+
+					if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
+						if (mc == null)
+							return false;
+
+						ok = false;
 					}
 				}
 			}
@@ -2333,24 +2340,29 @@ namespace Mono.CSharp {
 
 			if (atype.IsGenericParameter) {
 				var tps = (TypeParameterSpec) atype;
+				if (tps.TypeArguments != null) {
+					foreach (var targ in tps.TypeArguments) {
+						if (TypeSpecComparer.Override.IsEqual (targ, ttype))
+							return true;
+					}
+				}
+
 				if (Convert.ImplicitTypeParameterConversion (null, tps, ttype) != null)
 					return true;
 
-				//
-				// LAMESPEC: Identity conversion with inflated type parameter
-				// It's not clear from the spec what rule should apply to inherited
-				// inflated type parameter. The specification allows only type parameter
-				// conversion but that's clearly not enough
-				//
-				if (tps.HasTypeConstraint && tps.BaseType == ttype)
-					return true;
-
 			} else if (TypeSpec.IsValueType (atype)) {
-				if (Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
-					return true;
+				if (atype.IsNullableType) {
+					//
+					// LAMESPEC: Only identity or base type ValueType or Object satisfy nullable type
+					//
+					if (TypeSpec.IsBaseClass (atype, ttype, false))
+						return true;
+				} else {
+					if (Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
+						return true;
+				}
 			} else {
-				var expr = new EmptyExpression (atype);
-				if (Convert.ImplicitStandardConversionExists (expr, ttype))
+				if (Convert.ImplicitReferenceConversionExists (atype, ttype) || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
 					return true;
 			}
 
@@ -2369,9 +2381,21 @@ namespace Mono.CSharp {
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing or type parameter conversion from `{0}' to `{3}'",
 						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
 				} else if (TypeSpec.IsValueType (atype)) {
-					mc.Module.Compiler.Report.Error (315, loc,
-						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
-						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
+					if (atype.IsNullableType) {
+						if (ttype.IsInterface) {
+							mc.Module.Compiler.Report.Error (313, loc,
+								"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' never satisfies interface constraint `{3}'",
+								atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
+						} else {
+							mc.Module.Compiler.Report.Error (312, loc,
+								"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. The nullable type `{0}' does not satisfy constraint `{3}'",
+								atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
+						}
+					} else {
+						mc.Module.Compiler.Report.Error (315, loc,
+							"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no boxing conversion from `{0}' to `{3}'",
+							atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError (), ttype.GetSignatureForError ());
+					}
 				} else {
 					mc.Module.Compiler.Report.Error (311, loc,
 						"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. There is no implicit reference conversion from `{0}' to `{3}'",
@@ -2690,7 +2714,7 @@ namespace Mono.CSharp {
 				// Align params arguments
 				TypeSpec t_i = methodParameters [i >= methodParameters.Length ? methodParameters.Length - 1: i];
 				
-				if (!TypeManager.IsDelegateType (t_i)) {
+				if (!t_i.IsDelegate) {
 					if (!t_i.IsExpressionTreeType)
 						continue;
 
@@ -2700,8 +2724,13 @@ namespace Mono.CSharp {
 				var mi = Delegate.GetInvokeMethod (t_i);
 				TypeSpec rtype = mi.ReturnType;
 
-				if (tic.IsReturnTypeNonDependent (ec, mi, rtype))
-					score -= tic.OutputTypeInference (ec, arguments [i].Expr, t_i);
+				if (tic.IsReturnTypeNonDependent (ec, mi, rtype)) {
+					// It can be null for default arguments
+					if (arguments[i] == null)
+						continue;
+
+					score -= tic.OutputTypeInference (ec, arguments[i].Expr, t_i);
+				}
 			}
 
 
@@ -2920,7 +2949,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < methodParameters.Length; ++i) {
 				TypeSpec t = methodParameters[i];
 
-				if (!TypeManager.IsDelegateType (t)) {
+				if (!t.IsDelegate) {
 					if (!t.IsExpressionTreeType)
 						continue;
 
@@ -3127,6 +3156,13 @@ namespace Mono.CSharp {
 				return gt.GetDefinition ().MakeGenericType (context, inflated_targs);
 			}
 
+			var ac = parameter as ArrayContainer;
+			if (ac != null) {
+				var inflated = InflateGenericArgument (context, ac.Element);
+				if (inflated != ac.Element)
+					return ArrayContainer.MakeType (context.Module, inflated);
+			}
+
 			return parameter;
 		}
 		
@@ -3143,7 +3179,7 @@ namespace Mono.CSharp {
 				if (IsFixed (returnType))
 				    return false;
 			} else if (TypeManager.IsGenericType (returnType)) {
-				if (TypeManager.IsDelegateType (returnType)) {
+				if (returnType.IsDelegate) {
 					invoke = Delegate.GetInvokeMethod (returnType);
 					return IsReturnTypeNonDependent (ec, invoke, invoke.ReturnType);
 				}
@@ -3347,7 +3383,7 @@ namespace Mono.CSharp {
 			// then a lower-bound inference is made from U for Tb.
 			//
 			if (e is MethodGroupExpr) {
-				if (!TypeManager.IsDelegateType (t)) {
+				if (!t.IsDelegate) {
 					if (!t.IsExpressionTreeType)
 						return 0;
 

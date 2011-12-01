@@ -27,7 +27,7 @@ namespace ICSharpCode.NRefactory.Utils
 	/// However, using a simple 'bool busy' is not thread-safe, so we use a
 	/// thread-static BusyManager.
 	/// </summary>
-	static class BusyManager
+	public static class BusyManager
 	{
 		public struct BusyLock : IDisposable
 		{

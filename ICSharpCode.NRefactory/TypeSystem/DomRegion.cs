@@ -30,7 +30,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		readonly int beginColumn;
 		readonly int endColumn;
 		
-		public readonly static DomRegion Empty = new DomRegion(null, -1, -1);
+		public readonly static DomRegion Empty = new DomRegion();
 		
 		public bool IsEmpty {
 			get {
@@ -161,8 +161,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			return string.Format(
 				CultureInfo.InvariantCulture,
-				"[DomRegion FileName={0}, BeginLine={1}, EndLine={2}, BeginColumn={3}, EndColumn={4}]",
-				fileName, beginLine, endLine, beginColumn, endColumn);
+				"[DomRegion FileName={0}, Begin=({1}, {2}), End=({3}, {4})]",
+				fileName, beginLine, beginColumn, endLine, endColumn);
 		}
 		
 		public override bool Equals(object obj)
@@ -174,15 +174,15 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			unchecked {
 				int hashCode = fileName != null ? fileName.GetHashCode() : 0;
-				hashCode ^= BeginColumn + 1100009 * BeginLine + 1200007 * BeginColumn + 1300021 * EndColumn;
+				hashCode ^= beginColumn + 1100009 * beginLine + 1200007 * endLine + 1300021 * endColumn;
 				return hashCode;
 			}
 		}
 		
 		public bool Equals(DomRegion other)
 		{
-			return BeginLine == other.BeginLine && BeginColumn == other.BeginColumn
-				&& EndLine == other.EndLine && EndColumn == other.EndColumn
+			return beginLine == other.beginLine && beginColumn == other.beginColumn
+				&& endLine == other.endLine && endColumn == other.endColumn
 				&& fileName == other.fileName;
 		}
 		

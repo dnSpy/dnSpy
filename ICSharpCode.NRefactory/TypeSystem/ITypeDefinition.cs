@@ -23,33 +23,79 @@ using System.Diagnostics.Contracts;
 namespace ICSharpCode.NRefactory.TypeSystem
 {
 	/// <summary>
-	/// Represents a class, enum, interface, struct, delegate or VB module.
-	/// Also used to represent a part of a partial class.
+	/// Represents an unresolved class, enum, interface, struct, delegate or VB module.
+	/// For partial classes, an unresolved type definition represents only a single part.
 	/// </summary>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(ITypeDefinitionContract))]
-	#endif
+	public interface IUnresolvedTypeDefinition : ITypeReference, IUnresolvedEntity
+	{
+		TypeKind Kind { get; }
+		
+		IList<ITypeReference> BaseTypes { get; }
+		IList<IUnresolvedTypeParameter> TypeParameters { get; }
+		
+		IList<IUnresolvedTypeDefinition> NestedTypes { get; }
+		IList<IUnresolvedMember> Members { get; }
+		
+		IEnumerable<IUnresolvedMethod> Methods { get; }
+		IEnumerable<IUnresolvedProperty> Properties { get; }
+		IEnumerable<IUnresolvedField> Fields { get; }
+		IEnumerable<IUnresolvedEvent> Events { get; }
+		
+		/// <summary>
+		/// Gets whether the type definition contains extension methods.
+		/// Returns null when the type definition needs to be resolved in order to determine whether
+		/// methods are extension methods.
+		/// </summary>
+		bool? HasExtensionMethods { get; }
+		
+		/// <summary>
+		/// Creates a type resolve context for this part of the type definition.
+		/// This method is used to add language-specific elements like the C# UsingScope
+		/// to the type resolve context.
+		/// </summary>
+		/// <param name="parentContext">The parent context (e.g. the parent assembly),
+		/// including the parent </param>
+		ITypeResolveContext CreateResolveContext(ITypeResolveContext parentContext);
+	}
+	
+	/// <summary>
+	/// Represents a class, enum, interface, struct, delegate or VB module.
+	/// For partial classes, this represents the whole class.
+	/// </summary>
 	public interface ITypeDefinition : IType, IEntity
 	{
-		IList<ITypeReference> BaseTypes { get; }
+		/// <summary>
+		/// Returns all parts that contribute to this type definition.
+		/// Non-partial classes have a single part that represents the whole class.
+		/// </summary>
+		IList<IUnresolvedTypeDefinition> Parts { get; }
+		
 		IList<ITypeParameter> TypeParameters { get; }
 		
-		/// <summary>
-		/// If this is a compound class (combination of class parts), this method retrieves all individual class parts.
-		/// Otherwise, a list containing <c>this</c> is returned.
-		/// </summary>
-		IList<ITypeDefinition> GetParts();
-		
 		IList<ITypeDefinition> NestedTypes { get; }
-		IList<IField> Fields { get; }
-		IList<IProperty> Properties { get; }
-		IList<IMethod> Methods { get; }
-		IList<IEvent> Events { get; }
+		IList<IMember> Members { get; }
+		
+		IEnumerable<IField> Fields { get; }
+		IEnumerable<IMethod> Methods { get; }
+		IEnumerable<IProperty> Properties { get; }
+		IEnumerable<IEvent> Events { get; }
 		
 		/// <summary>
-		/// Gets all members declared in this class. This is the union of Fields,Properties,Methods and Events.
+		/// Gets the known type code for this type definition.
 		/// </summary>
-		IEnumerable<IMember> Members { get; }
+		KnownTypeCode KnownTypeCode { get; }
+		
+		/// <summary>
+		/// For enums: returns the underlying primitive type.
+		/// For all other types: returns <see cref="SpecialType.UnknownType"/>.
+		/// </summary>
+		IType EnumUnderlyingType { get; }
+		
+		/// <summary>
+		/// Gets/Sets the declaring type (incl. type arguments, if any).
+		/// This property never returns null -- for top-level entities, it returns SharedTypes.UnknownType.
+		/// </summary>
+		new IType DeclaringType { get; } // solves ambiguity between IType.DeclaringType and IEntity.DeclaringType
 		
 		/// <summary>
 		/// Gets whether this type contains extension methods.
@@ -57,148 +103,4 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <remarks>This property is used to speed up the search for extension methods.</remarks>
 		bool HasExtensionMethods { get; }
 	}
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(ITypeDefinition))]
-	abstract class ITypeDefinitionContract : ITypeContract, ITypeDefinition
-	{
-		ClassType ITypeDefinition.ClassType {
-			get { return default(ClassType); }
-		}
-		
-		IList<ITypeReference> ITypeDefinition.BaseTypes {
-			get {
-				Contract.Ensures(Contract.Result<IList<ITypeReference>>() != null);
-				return null;
-			}
-		}
-		
-		IList<ITypeParameter> ITypeDefinition.TypeParameters {
-			get {
-				Contract.Ensures(Contract.Result<IList<ITypeParameter>>() != null);
-				return null;
-			}
-		}
-		
-		IList<ITypeDefinition> ITypeDefinition.InnerClasses {
-			get {
-				Contract.Ensures(Contract.Result<IList<ITypeDefinition>>() != null);
-				return null;
-			}
-		}
-		
-		IList<IField> ITypeDefinition.Fields {
-			get {
-				Contract.Ensures(Contract.Result<IList<IField>>() != null);
-				return null;
-			}
-		}
-		
-		IList<IProperty> ITypeDefinition.Properties {
-			get {
-				Contract.Ensures(Contract.Result<IList<IProperty>>() != null);
-				return null;
-			}
-		}
-		
-		IList<IMethod> ITypeDefinition.Methods {
-			get {
-				Contract.Ensures(Contract.Result<IList<IMethod>>() != null);
-				return null;
-			}
-		}
-		
-		IList<IEvent> ITypeDefinition.Events {
-			get {
-				Contract.Ensures(Contract.Result<IList<IEvent>>() != null);
-				return null;
-			}
-		}
-		
-		IEnumerable<IMember> ITypeDefinition.Members {
-			get {
-				Contract.Ensures(Contract.Result<IEnumerable<IMember>>() != null);
-				return null;
-			}
-		}
-		
-		ITypeDefinition ITypeDefinition.GetCompoundClass()
-		{
-			Contract.Ensures(Contract.Result<ITypeDefinition>() != null);
-			return null;
-		}
-		
-		IList<ITypeDefinition> ITypeDefinition.GetParts()
-		{
-			Contract.Ensures(Contract.Result<IList<ITypeDefinition>>() != null);
-			return null;
-		}
-		
-		bool ITypeDefinition.HasExtensionMethods {
-			get { return default(bool); }
-		}
-		
-		#region IEntity
-		EntityType IEntity.EntityType {
-			get { return EntityType.None; }
-		}
-		
-		DomRegion IEntity.Region {
-			get { return DomRegion.Empty; }
-		}
-		
-		DomRegion IEntity.BodyRegion {
-			get { return DomRegion.Empty; }
-		}
-		
-		ITypeDefinition IEntity.DeclaringTypeDefinition {
-			get { return null; }
-		}
-		
-		IList<IAttribute> IEntity.Attributes {
-			get { return null; }
-		}
-		
-		string IEntity.Documentation {
-			get { return null; }
-		}
-		
-		bool IEntity.IsStatic {
-			get { return false; }
-		}
-		
-		Accessibility IEntity.Accessibility {
-			get { return Accessibility.None; }
-		}
-		
-		bool IEntity.IsAbstract {
-			get { return false; }
-		}
-		
-		bool IEntity.IsSealed {
-			get { return false; }
-		}
-		
-		bool IEntity.IsShadowing {
-			get { return false; }
-		}
-		
-		bool IEntity.IsSynthetic {
-			get { return false; }
-		}
-		
-		IProjectContent IEntity.ProjectContent {
-			get { return null; }
-		}
-		
-		bool IFreezable.IsFrozen {
-			get { return false; }
-		}
-		
-		void IFreezable.Freeze()
-		{
-		}
-		#endregion
-	}
-	#endif
 }

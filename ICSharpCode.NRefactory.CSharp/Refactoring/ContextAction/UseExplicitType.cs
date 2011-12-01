@@ -36,30 +36,52 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		public bool IsValid (RefactoringContext context)
 		{
 			var varDecl = GetVariableDeclarationStatement (context);
-			if (varDecl == null)
-				return false;
-			var type = context.Resolve (varDecl.Variables.First ().Initializer).Type;
-			return !type.Equals (SharedTypes.Null) && !type.Equals (SharedTypes.UnknownType);
+			IType type;
+			if (varDecl != null) {
+				type = context.Resolve (varDecl.Variables.First ().Initializer).Type;
+			} else {
+				var foreachStatement = GetForeachStatement (context);
+				if (foreachStatement == null)
+					return false;
+				type = context.Resolve (foreachStatement.VariableType).Type;
+			}
+			
+			return !type.Equals (SpecialType.NullType) && !type.Equals (SpecialType.UnknownType);
 		}
 		
 		public void Run (RefactoringContext context)
 		{
-			var varDecl = GetVariableDeclarationStatement (context);
-			
 			using (var script = context.StartScript ()) {
-				var type = context.Resolve (varDecl.Variables.First ().Initializer).Type;
-				script.Replace (varDecl.Type, context.CreateShortType (type));
+				var varDecl = GetVariableDeclarationStatement (context);
+				if (varDecl != null) {
+					var type = context.Resolve (varDecl.Variables.First ().Initializer).Type;
+					script.Replace (varDecl.Type, context.CreateShortType (type));
+				} else {
+					var foreachStatement = GetForeachStatement (context);
+					var type = context.Resolve (foreachStatement.VariableType).Type;
+					script.Replace (foreachStatement.VariableType, context.CreateShortType (type));
+				}
 			}
 		}
 		
+		static readonly AstType varType = new SimpleType ("var");
+
 		static VariableDeclarationStatement GetVariableDeclarationStatement (RefactoringContext context)
 		{
 			var result = context.GetNode<VariableDeclarationStatement> ();
-			if (result != null && result.Variables.Count == 1 && !result.Variables.First ().Initializer.IsNull && result.Type.Contains (context.Location.Line, context.Location.Column) && result.Type.IsMatch (new SimpleType ("var"))) {
+			if (result != null && result.Variables.Count == 1 && !result.Variables.First ().Initializer.IsNull && result.Type.Contains (context.Location.Line, context.Location.Column) && result.Type.IsMatch (varType)) {
 				if (context.Resolve (result.Variables.First ().Initializer) == null)
 					return null;
 				return result;
 			}
+			return null;
+		}
+		
+		static ForeachStatement GetForeachStatement (RefactoringContext context)
+		{
+			var result = context.GetNode<ForeachStatement> ();
+			if (result != null && result.VariableType.Contains (context.Location) && result.VariableType.IsMatch (varType))
+				return result;
 			return null;
 		}
 	}

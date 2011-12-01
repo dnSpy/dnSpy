@@ -27,7 +27,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	/// <see cref="IResolveVisitorNavigator"/> implementation that resolves a list of nodes.
 	/// We will skip all nodes which are not the target nodes or ancestors of the target nodes.
 	/// </summary>
-	public sealed class NodeListResolveVisitorNavigator : IResolveVisitorNavigator
+	public class NodeListResolveVisitorNavigator : IResolveVisitorNavigator
 	{
 		readonly Dictionary<AstNode, ResolveVisitorNavigationMode> dict = new Dictionary<AstNode, ResolveVisitorNavigationMode>();
 		
@@ -55,7 +55,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		}
 		
 		/// <inheritdoc/>
-		public ResolveVisitorNavigationMode Scan(AstNode node)
+		public virtual ResolveVisitorNavigationMode Scan(AstNode node)
 		{
 			ResolveVisitorNavigationMode mode;
 			if (dict.TryGetValue(node, out mode)) {
@@ -65,11 +65,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		void IResolveVisitorNavigator.Resolved(AstNode node, ResolveResult result)
+		public virtual void Resolved(AstNode node, ResolveResult result)
 		{
 		}
 		
-		void IResolveVisitorNavigator.ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
+		public virtual void ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
 		{
 		}
 	}

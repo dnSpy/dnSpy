@@ -6,6 +6,7 @@
 //   Marek Safar (marek.safar@seznam.cz)
 //
 // Copyright 2001 Ximian, Inc.
+// Copyright 2011 Xamarin Inc
 //
 //
 // Notice that during parsing we create objects of type Literal, but the
@@ -126,7 +127,7 @@ namespace Mono.CSharp
 			//
 			// The 0 literal can be converted to an enum value
 			//
-			if (Value == 0 && TypeManager.IsEnumType (type)) {
+			if (Value == 0 && type.IsEnum) {
 				Constant c = ConvertImplicitly (EnumSpec.GetUnderlyingType (type));
 				if (c == null)
 					return null;

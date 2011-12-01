@@ -1,6 +1,6 @@
 ﻿// 
 // CompilationUnit.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -25,11 +25,13 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class CompilationUnit : AstNode 
+	public class CompilationUnit : AstNode
 	{
 		public static readonly Role<AstNode> MemberRole = new Role<AstNode>("Member", AstNode.Null);
 		
@@ -38,6 +40,11 @@ namespace ICSharpCode.NRefactory.CSharp
 				return NodeType.Unknown;
 			}
 		}
+		
+		/// <summary>
+		/// Gets/Sets the file name of this compilation unit.
+		/// </summary>
+		public string FileName { get; set; }
 		
 		List<Error> errors = new List<Error> ();
 		
@@ -71,7 +78,7 @@ namespace ICSharpCode.NRefactory.CSharp
 					yield return (TypeDeclaration)curNode;
 				foreach (var child in curNode.Children) {
 					if (!(child is Statement || child is Expression) &&
-						 (child.Role != TypeDeclaration.MemberRole || (child is TypeDeclaration && includeInnerTypes)))
+					    (child.Role != TypeDeclaration.MemberRole || (child is TypeDeclaration && includeInnerTypes)))
 						nodeStack.Push (child);
 				}
 			}
@@ -86,6 +93,18 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
 		{
 			return visitor.VisitCompilationUnit (this, data);
+		}
+		
+		/// <summary>
+		/// Converts this compilation unit into a parsed file that can be stored in the type system.
+		/// </summary>
+		public CSharpParsedFile ToTypeSystem()
+		{
+			if (string.IsNullOrEmpty(this.FileName))
+				throw new InvalidOperationException("Cannot use ToTypeSystem() on a compilation unit without file name.");
+			var v = new TypeSystemConvertVisitor(this.FileName);
+			v.VisitCompilationUnit(this, null);
+			return v.ParsedFile;
 		}
 	}
 }

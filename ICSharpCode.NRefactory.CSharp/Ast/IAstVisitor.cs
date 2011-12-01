@@ -137,6 +137,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitPrimitiveType(PrimitiveType primitiveType, T data);
 		
 		S VisitComment(Comment comment, T data);
+		S VisitPreProcessorDirective(PreProcessorDirective preProcessorDirective, T data);
+		
 		S VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, T data);
 		S VisitConstraint(Constraint constraint, T data);
 		S VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode, T data);

@@ -1012,7 +1012,7 @@ namespace ICSharpCode.NRefactory.VB
 		#endregion
 		
 		#region IsKeyword Test
-		static readonly HashSet<string> unconditionalKeywords = new HashSet<string> {
+		static readonly HashSet<string> unconditionalKeywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
 			"AddHandler", "AddressOf", "Alias", "And", "AndAlso", "As", "Boolean", "ByRef", "Byte",
 			"ByVal", "Call", "Case", "Catch", "CBool", "CByte", "CChar", "CInt", "Class", "CLng",
 			"CObj", "Const", "Continue", "CSByte", "CShort", "CSng", "CStr", "CType", "CUInt",
@@ -1664,6 +1664,11 @@ namespace ICSharpCode.NRefactory.VB
 			WriteCommaSeparatedListInParenthesis(objectCreationExpression.Arguments, false);
 			if (!objectCreationExpression.Initializer.IsNull) {
 				Space();
+				if (objectCreationExpression.Initializer.Elements.Any(x => x is FieldInitializerExpression))
+					WriteKeyword("With");
+				else
+					WriteKeyword("From");
+				Space();
 				objectCreationExpression.Initializer.AcceptVisitor(this, data);
 			}
 			
@@ -1829,7 +1834,7 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(fieldInitializerExpression);
 			
-			if (fieldInitializerExpression.IsKey) {
+			if (fieldInitializerExpression.IsKey && fieldInitializerExpression.Parent is AnonymousObjectCreationExpression) {
 				WriteKeyword("Key");
 				Space();
 			}
@@ -2104,8 +2109,10 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("Case");
 			if (caseStatement.Clauses.Count == 1 && caseStatement.Clauses.First().Expression.IsNull)
 				WriteKeyword("Else");
-			else
+			else {
+				Space();
 				WriteCommaSeparatedList(caseStatement.Clauses);
+			}
 			NewLine();
 			Indent();
 			caseStatement.Body.AcceptVisitor(this, data);

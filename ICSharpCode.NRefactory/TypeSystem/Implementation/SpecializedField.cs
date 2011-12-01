@@ -31,12 +31,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			: base(declaringType, fieldDefinition)
 		{
 			this.fieldDefinition = fieldDefinition;
+			Initialize(GetSubstitution(declaringType));
 		}
 		
-		internal SpecializedField(IType declaringType, IField fieldDefinition, TypeVisitor substitution, ITypeResolveContext context)
-			: base(declaringType, fieldDefinition, substitution, context)
+		internal SpecializedField(IType declaringType, IField fieldDefinition, TypeVisitor substitution)
+			: base(declaringType, fieldDefinition)
 		{
 			this.fieldDefinition = fieldDefinition;
+			Initialize(substitution);
 		}
 		
 		public bool IsReadOnly {
@@ -47,7 +49,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return fieldDefinition.IsVolatile; }
 		}
 		
-		ITypeReference IVariable.Type {
+		IType IVariable.Type {
 			get { return this.ReturnType; }
 		}
 		
@@ -55,7 +57,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return fieldDefinition.IsConst; }
 		}
 		
-		public IConstantValue ConstantValue {
+		public object ConstantValue {
 			get { return fieldDefinition.ConstantValue; }
 		}
 	}

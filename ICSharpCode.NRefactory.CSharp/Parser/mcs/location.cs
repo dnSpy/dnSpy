@@ -545,6 +545,7 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 		[Conditional ("FULL_AST")]
 		public void StartComment (CommentType type, bool startsLine, int startLine, int startCol)
 		{
+			inComment = true;
 			curComment = type;
 			this.startsLine = startsLine;
 			this.startLine = startLine;
@@ -565,15 +566,21 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 			contentBuilder.Append (str);
 		}
 		
+		bool inComment;
 		[Conditional ("FULL_AST")]
 		public void EndComment (int endLine, int endColumn)
 		{
+			if (!inComment)
+				return;
+			inComment = false;
 			Specials.Add (new Comment (curComment, startsLine, startLine, startCol, endLine, endColumn, contentBuilder.ToString ()));
 		}
 		
 		[Conditional ("FULL_AST")]
 		public void AddPreProcessorDirective (int startLine, int startCol, int endLine, int endColumn, Tokenizer.PreprocessorDirective cmd, string arg)
 		{
+			if (inComment)
+				EndComment (startLine, startCol);
 			Specials.Add (new PreProcessorDirective (startLine, startCol, endLine, endColumn, cmd, arg));
 		}
 

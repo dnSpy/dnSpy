@@ -21,7 +21,6 @@ using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
-	[Serializable]
 	public sealed class ByReferenceType : TypeWithElementType, ISupportsInterning
 	{
 		public ByReferenceType(IType elementType) : base(elementType)
@@ -38,9 +37,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
-		public override bool? IsReferenceType(ITypeResolveContext context)
-		{
-			return null;
+		public override bool? IsReferenceType {
+			get { return null; }
 		}
 		
 		public override int GetHashCode()
@@ -66,6 +64,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				return this;
 			else
 				return new ByReferenceType(e);
+		}
+		
+		public override ITypeReference ToTypeReference()
+		{
+			return new ByReferenceTypeReference(elementType.ToTypeReference());
 		}
 		
 		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)
@@ -109,14 +112,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public override string ToString()
 		{
 			return elementType.ToString() + "&";
-		}
-		
-		public static ITypeReference Create(ITypeReference elementType)
-		{
-			if (elementType is IType)
-				return new ByReferenceType((IType)elementType);
-			else
-				return new ByReferenceTypeReference(elementType);
 		}
 		
 		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)

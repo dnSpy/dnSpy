@@ -268,68 +268,6 @@ namespace ICSharpCode.NRefactory.Documentation
 		}
 		#endregion
 		
-		#region Save index / Restore from index
-		// TODO: consider removing this code, we're just using serialization instead
-		
-		// FILE FORMAT FOR BINARY DOCUMENTATION
-		// long  magic = 0x4244636f446c6d58 (identifies file type = 'XmlDocDB')
-		const long magic = 0x4244636f446c6d58;
-		// short version = 5              (file format version)
-		const short version = 5;
-		// string fileName                (full name of .xml file)
-		// long  fileDate                 (last change date of xml file in DateTime ticks)
-		// int   testHashCode = magicTestString.GetHashCode() // (check if hash-code implementation is compatible)
-		// int   entryCount               (count of entries)
-		// int   indexPointer             (points to location where index starts in the file)
-		// {
-		//   int hashcode
-		//   int positionInFile           (byte number where the docu string starts in the .xml file)
-		// }
-		
-		const string magicTestString = "XmlDoc-Test-String";
-		
-		/// <summary>
-		/// Saves the index into a binary file.
-		/// Use <see cref="LoadFromIndex"/> to load the saved file.
-		/// </summary>
-		public void SaveIndex(BinaryWriter w)
-		{
-			if (w == null)
-				throw new ArgumentNullException("w");
-			w.Write(magic);
-			w.Write(version);
-			w.Write(fileName);
-			w.Write(lastWriteDate.Ticks);
-			w.Write(magicTestString.GetHashCode());
-			w.Write(index.Length);
-			foreach (var entry in index) {
-				w.Write(entry.HashCode);
-				w.Write(entry.PositionInFile);
-			}
-		}
-		
-		/// <summary>
-		/// Restores XmlDocumentationProvider from the index file (created by <see cref="SaveIndex"/>).
-		/// </summary>
-		public static XmlDocumentationProvider LoadFromIndex(BinaryReader r)
-		{
-			if (r.ReadInt64() != magic)
-				throw new InvalidDataException("File is not a stored XmlDoc index");
-			if (r.ReadInt16() != version)
-				throw new InvalidDataException("Index file was created by incompatible version");
-			string fileName = r.ReadString();
-			DateTime lastWriteDate = new DateTime(r.ReadInt64(), DateTimeKind.Utc);
-			if (r.ReadInt32() != magicTestString.GetHashCode())
-				throw new InvalidDataException("Index file was created by another hash code algorithm");
-			int indexLength = r.ReadInt32();
-			IndexEntry[] index = new IndexEntry[indexLength];
-			for (int i = 0; i < index.Length; i++) {
-				index[i] = new IndexEntry(r.ReadInt32(), r.ReadInt32());
-			}
-			return new XmlDocumentationProvider(fileName, lastWriteDate, index);
-		}
-		#endregion
-		
 		#region GetDocumentation
 		/// <inheritdoc/>
 		public string GetDocumentation(IEntity entity)
@@ -355,6 +293,7 @@ namespace ICSharpCode.NRefactory.Documentation
 			while (--m >= 0 && index[m].HashCode == hashcode);
 			// m is now 1 before the first item with the correct hash
 			
+			XmlDocumentationCache cache = this.cache;
 			lock (cache) {
 				string val = cache.Get(key);
 				if (val == null) {

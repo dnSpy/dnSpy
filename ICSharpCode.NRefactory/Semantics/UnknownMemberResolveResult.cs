@@ -33,7 +33,8 @@ namespace ICSharpCode.NRefactory.Semantics
 		readonly string memberName;
 		readonly ReadOnlyCollection<IType> typeArguments;
 		
-		public UnknownMemberResolveResult(IType targetType, string memberName, IEnumerable<IType> typeArguments) : base(SharedTypes.UnknownType)
+		public UnknownMemberResolveResult(IType targetType, string memberName, IEnumerable<IType> typeArguments)
+			: base(SpecialType.UnknownType)
 		{
 			if (targetType == null)
 				throw new ArgumentNullException("targetType");
@@ -74,7 +75,7 @@ namespace ICSharpCode.NRefactory.Semantics
 	{
 		readonly ReadOnlyCollection<IParameter> parameters;
 		
-		public UnknownMethodResolveResult(IType targetType, string methodName, IEnumerable<IType> typeArguments, IEnumerable<IParameter> parameters) 
+		public UnknownMethodResolveResult(IType targetType, string methodName, IEnumerable<IType> typeArguments, IEnumerable<IParameter> parameters)
 			: base(targetType, methodName, typeArguments)
 		{
 			this.parameters = new ReadOnlyCollection<IParameter>(parameters.ToArray());
@@ -91,15 +92,21 @@ namespace ICSharpCode.NRefactory.Semantics
 	public class UnknownIdentifierResolveResult : ResolveResult
 	{
 		readonly string identifier;
+		readonly int typeArgumentCount;
 		
-		public UnknownIdentifierResolveResult(string identifier)
-			: base(SharedTypes.UnknownType)
+		public UnknownIdentifierResolveResult(string identifier, int typeArgumentCount = 0)
+			: base(SpecialType.UnknownType)
 		{
 			this.identifier = identifier;
+			this.typeArgumentCount = typeArgumentCount;
 		}
 		
 		public string Identifier {
 			get { return identifier; }
+		}
+		
+		public int TypeArgumentCount {
+			get { return typeArgumentCount; }
 		}
 		
 		public override bool IsError {

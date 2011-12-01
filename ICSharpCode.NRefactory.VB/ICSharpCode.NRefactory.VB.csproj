@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectGuid>{7B82B671-419F-45F4-B778-D9286F996EFA}</ProjectGuid>
@@ -7,12 +7,13 @@
     <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.NRefactory.VB</RootNamespace>
     <AssemblyName>ICSharpCode.NRefactory.VB</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,8 +45,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AstBuilder\ExpressionBuilder.cs" />
-    <Compile Include="AstBuilder\StatementBuilder.cs" />
     <Compile Include="Ast\AstNode.cs" />
     <Compile Include="Ast\AstNodeCollection.cs" />
     <Compile Include="Ast\Comment.cs" />
@@ -178,27 +177,12 @@
     <Compile Include="PrettyPrinter\VBNet\VBNetPrettyPrintOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VBParser.cs" />
-    <Compile Include="Visitors\AbstractAstTransformer.cs" />
-    <Compile Include="Visitors\AbstractAstVisitor.cs" />
     <Compile Include="Visitors\CSharpToVBConverterVisitor.cs" />
-    <Compile Include="Visitors\NodeTrackingAstVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Ast" />
-    <Folder Include="AstBuilder" />
-    <Folder Include="Ast\General" />
-    <Folder Include="Ast\GlobalScope" />
-    <Folder Include="Ast\Expressions" />
-    <Folder Include="Ast\TypeMembers" />
-    <Folder Include="Ast\Statements" />
-    <Folder Include="Ast\TypeName" />
-    <Folder Include="Lexer" />
-    <Folder Include="Lexer\Special" />
-    <Folder Include="OutputVisitor" />
-    <Folder Include="Parser" />
-    <Folder Include="PrettyPrinter" />
-    <Folder Include="PrettyPrinter\VBNet" />
-    <Folder Include="Visitors" />
+    <Folder Include="Ast\" />
+    <Folder Include="Lexer\" />
+    <Folder Include="PrettyPrinter\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Lexer\ExpressionFinder.atg">

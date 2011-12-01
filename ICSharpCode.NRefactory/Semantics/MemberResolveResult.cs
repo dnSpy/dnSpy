@@ -33,26 +33,8 @@ namespace ICSharpCode.NRefactory.Semantics
 		readonly object constantValue;
 		readonly ResolveResult targetResult;
 		
-		public MemberResolveResult(ResolveResult targetResult, IMember member, IType returnType) : base(returnType)
-		{
-			if (member == null)
-				throw new ArgumentNullException("member");
-			this.targetResult = targetResult;
-			this.member = member;
-		}
-		
-		public MemberResolveResult(ResolveResult targetResult, IMember member, IType returnType, object constantValue) : base(returnType)
-		{
-			if (member == null)
-				throw new ArgumentNullException("member");
-			this.targetResult = targetResult;
-			this.member = member;
-			this.isConstant = true;
-			this.constantValue = constantValue;
-		}
-		
-		public MemberResolveResult(ResolveResult targetResult, IMember member, ITypeResolveContext context) 
-			: base(member.EntityType == EntityType.Constructor ? member.DeclaringType : member.ReturnType.Resolve(context))
+		public MemberResolveResult(ResolveResult targetResult, IMember member)
+			: base(member.EntityType == EntityType.Constructor ? member.DeclaringType : member.ReturnType)
 		{
 			this.targetResult = targetResult;
 			this.member = member;
@@ -60,8 +42,17 @@ namespace ICSharpCode.NRefactory.Semantics
 			if (field != null) {
 				isConstant = field.IsConst;
 				if (isConstant)
-					constantValue = field.ConstantValue.Resolve(context).ConstantValue;
+					constantValue = field.ConstantValue;
 			}
+		}
+		
+		public MemberResolveResult(ResolveResult targetResult, IMember member, IType returnType, bool isConstant, object constantValue)
+			: base(returnType)
+		{
+			this.targetResult = targetResult;
+			this.member = member;
+			this.isConstant = isConstant;
+			this.constantValue = constantValue;
 		}
 		
 		public ResolveResult TargetResult {

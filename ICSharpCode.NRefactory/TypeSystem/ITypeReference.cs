@@ -42,10 +42,38 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		/// <returns>
 		/// Returns the resolved type.
-		/// In case of an error, returns <see cref="SharedTypes.UnknownType"/>.
+		/// In case of an error, returns <see cref="SpecialType.UnknownType"/>.
 		/// Never returns null.
 		/// </returns>
 		IType Resolve(ITypeResolveContext context);
+	}
+	
+	public interface ITypeResolveContext
+	{
+		/// <summary>
+		/// Gets the parent compilation.
+		/// This property never returns null.
+		/// </summary>
+		ICompilation Compilation { get; }
+		
+		/// <summary>
+		/// Gets the current assembly.
+		/// This property may return null if this context does not specify any assembly.
+		/// </summary>
+		IAssembly CurrentAssembly { get; }
+		
+		/// <summary>
+		/// Gets the current type definition.
+		/// </summary>
+		ITypeDefinition CurrentTypeDefinition { get ;}
+		
+		/// <summary>
+		/// Gets the current member.
+		/// </summary>
+		IMember CurrentMember { get; }
+		
+		ITypeResolveContext WithCurrentTypeDefinition(ITypeDefinition typeDefinition);
+		ITypeResolveContext WithCurrentMember(IMember member);
 	}
 	
 	#if WITH_CONTRACTS

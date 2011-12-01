@@ -169,7 +169,8 @@ namespace Mono.CSharp
 					break;
 				default:
 					// Ignore private fields (even for error reporting) to not require extra dependencies
-					if (IgnorePrivateMembers || HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
+					if ((IgnorePrivateMembers && !declaringType.IsStruct) ||
+						HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
 						return null;
 
 					mod = Modifiers.PRIVATE;
@@ -1887,7 +1888,13 @@ namespace Mono.CSharp
 					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate && importer.IgnorePrivateMembers)
 						continue;
 
-					imported = importer.CreateNestedType (t, declaringType);
+					try {
+						imported = importer.CreateNestedType (t, declaringType);
+					} catch (Exception e) {
+						throw new InternalErrorException (e, "Could not import nested type `{0}' from `{1}'",
+							t.FullName, declaringType.MemberDefinition.DeclaringAssembly.FullName);
+					}
+
 					cache.AddMemberImported (imported);
 				}
 

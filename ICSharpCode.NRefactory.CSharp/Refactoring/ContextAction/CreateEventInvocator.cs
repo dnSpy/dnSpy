@@ -1,4 +1,4 @@
-// 
+﻿// 
 // CreateEventInvocator.cs
 //  
 // Author:
@@ -84,7 +84,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			};
 			
 			foreach (var par in pars) {
-				var typeName = context.CreateShortType (par.Type.Resolve (context.TypeResolveContext));
+				var typeName = context.CreateShortType (par.Type);
 				var decl = new ParameterDeclaration (typeName, par.Name);
 				methodDeclaration.Parameters.Add (decl);
 			}

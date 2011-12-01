@@ -120,7 +120,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 					}});
 		}
 		
-		[Test, Ignore("async/await not yet supported")]
+		[Test]
 		public void AsyncLambdaExpression()
 		{
 			ParseUtilCSharp.AssertExpression(
@@ -132,7 +132,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 				});
 		}
 		
-		[Test, Ignore("async/await not yet supported")]
+		[Test]
 		public void AsyncLambdaExpressionWithMultipleParameters()
 		{
 			ParseUtilCSharp.AssertExpression(

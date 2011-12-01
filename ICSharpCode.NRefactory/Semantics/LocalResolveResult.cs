@@ -27,21 +27,20 @@ namespace ICSharpCode.NRefactory.Semantics
 	public class LocalResolveResult : ResolveResult
 	{
 		readonly IVariable variable;
-		readonly object constantValue;
 		
-		public LocalResolveResult(IVariable variable, IType type, object constantValue = null)
-			: base(UnpackTypeIfByRefParameter(type, variable))
+		public LocalResolveResult(IVariable variable)
+			: base(UnpackTypeIfByRefParameter(variable))
+		{
+			this.variable = variable;
+		}
+		
+		static IType UnpackTypeIfByRefParameter(IVariable variable)
 		{
 			if (variable == null)
 				throw new ArgumentNullException("variable");
-			this.variable = variable;
-			this.constantValue = constantValue;
-		}
-		
-		static IType UnpackTypeIfByRefParameter(IType type, IVariable v)
-		{
+			IType type = variable.Type;
 			if (type.Kind == TypeKind.ByReference) {
-				IParameter p = v as IParameter;
+				IParameter p = variable as IParameter;
 				if (p != null && (p.IsRef || p.IsOut))
 					return ((ByReferenceType)type).ElementType;
 			}
@@ -61,7 +60,7 @@ namespace ICSharpCode.NRefactory.Semantics
 		}
 		
 		public override object ConstantValue {
-			get { return constantValue; }
+			get { return variable.ConstantValue; }
 		}
 		
 		public override string ToString()

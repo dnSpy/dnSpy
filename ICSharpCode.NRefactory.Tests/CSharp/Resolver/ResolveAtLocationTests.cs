@@ -55,7 +55,7 @@ class A { void M() {
 	Console.W$riteLine(1);
 }}");
 			Assert.AreEqual("System.Console.WriteLine", rr.Member.FullName);
-			Assert.AreEqual("System.Int32", rr.Member.Parameters[0].Type.Resolve(context).FullName);
+			Assert.AreEqual("System.Int32", rr.Member.Parameters[0].Type.FullName);
 		}
 		
 		[Test]
@@ -68,10 +68,10 @@ class A { void M() {
 			Assert.AreEqual("System.Int32", rr.Type.FullName);
 		}
 		
-		[Test, Ignore("Parser returns incorrect positions")]
+		[Test]
 		public void BaseCtorCall()
 		{
-			var rr = ResolveAtLocation<InvocationResolveResult>(@"using System;
+			var rr = ResolveAtLocation<CSharpInvocationResolveResult>(@"using System;
 class A { public A() : ba$se() {} }");
 			Assert.AreEqual("System.Object..ctor", rr.Member.FullName);
 		}

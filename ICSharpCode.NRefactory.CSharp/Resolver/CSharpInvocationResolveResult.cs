@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 
@@ -53,7 +54,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		readonly IList<int> argumentToParameterMap;
 		
 		public CSharpInvocationResolveResult(
-			ResolveResult targetResult, IParameterizedMember member, IType returnType,
+			ResolveResult targetResult, IParameterizedMember member,
 			IList<ResolveResult> arguments,
 			OverloadResolutionErrors overloadResolutionErrors = OverloadResolutionErrors.None,
 			bool isExtensionMethodInvocation = false,
@@ -61,7 +62,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			bool isLiftedOperatorInvocation = false,
 			bool isDelegateInvocation = false,
 			IList<int> argumentToParameterMap = null)
-			: base(targetResult, member, returnType, arguments)
+			: base(targetResult, member, arguments)
 		{
 			this.OverloadResolutionErrors = overloadResolutionErrors;
 			this.IsExtensionMethodInvocation = isExtensionMethodInvocation;
@@ -84,6 +85,41 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		public IList<int> GetArgumentToParameterMap()
 		{
 			return argumentToParameterMap;
+		}
+		
+		public override IList<ResolveResult> GetArgumentsForCall()
+		{
+			ResolveResult[] results = new ResolveResult[Member.Parameters.Count];
+			List<ResolveResult> paramsArguments = IsExpandedForm ? new List<ResolveResult>() : null;
+			// map arguments to parameters:
+			for (int i = 0; i < Arguments.Count; i++) {
+				int mappedTo;
+				if (argumentToParameterMap != null)
+					mappedTo = argumentToParameterMap[i];
+				else
+					mappedTo = IsExpandedForm ? Math.Min(i, results.Length - 1) : i;
+				
+				if (mappedTo >= 0 && mappedTo < results.Length) {
+					if (IsExpandedForm && mappedTo == results.Length - 1)
+						paramsArguments.Add(Arguments[i]);
+					else
+						results[mappedTo] = Arguments[i];
+				}
+			}
+			if (IsExpandedForm)
+				results[results.Length - 1] = new ArrayCreateResolveResult(Member.Parameters.Last().Type, null, paramsArguments.ToArray());
+			
+			for (int i = 0; i < results.Length; i++) {
+				if (results[i] == null) {
+					if (Member.Parameters[i].IsOptional) {
+						results[i] = new ConstantResolveResult(Member.Parameters[i].Type, Member.Parameters[i].ConstantValue);
+					} else {
+						results[i] = ErrorResolveResult.UnknownError;
+					}
+				}
+			}
+			
+			return results;
 		}
 	}
 }

@@ -28,6 +28,14 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	[TestFixture]
 	public unsafe class UnaryOperatorTests : ResolverTestBase
 	{
+		CSharpResolver resolver;
+		
+		public override void SetUp()
+		{
+			base.SetUp();
+			resolver = new CSharpResolver(compilation);
+		}
+		
 		[Test]
 		public void TestAddressOf()
 		{

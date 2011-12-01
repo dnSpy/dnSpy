@@ -62,8 +62,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// </summary>
 		ArgumentTypeMismatch = 0x0100,
 		/// <summary>
-		/// There is no unique best overload
+		/// There is no unique best overload.
+		/// This error does not apply to any single candidate, but only to the overall result of overload resolution.
 		/// </summary>
-		AmbiguousMatch = 0x0200
+		AmbiguousMatch = 0x0200,
+		/// <summary>
+		/// The member is not accessible.
+		/// </summary>
+		Inaccessible = 0x0400
 	}
 }

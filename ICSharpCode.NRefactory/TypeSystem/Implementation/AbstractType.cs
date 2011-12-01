@@ -51,7 +51,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return this.FullName; }
 		}
 		
-		public abstract bool? IsReferenceType(ITypeResolveContext context);
+		public abstract bool? IsReferenceType  { get; }
 		
 		public abstract TypeKind Kind { get; }
 		
@@ -68,72 +68,75 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			return null;
 		}
 		
-		IType ITypeReference.Resolve(ITypeResolveContext context)
-		{
-			return this;
+		public virtual IEnumerable<IType> DirectBaseTypes {
+			get { return EmptyList<IType>.Instance; }
 		}
 		
-		public virtual IEnumerable<IType> GetBaseTypes(ITypeResolveContext context)
-		{
-			return EmptyList<IType>.Instance;
-		}
+		public abstract ITypeReference ToTypeReference();
 		
-		public virtual IEnumerable<IType> GetNestedTypes(ITypeResolveContext context, Predicate<ITypeDefinition> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		public virtual IEnumerable<IType> GetNestedTypes(Predicate<ITypeDefinition> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
 			return EmptyList<IType>.Instance;
 		}
 		
-		public virtual IEnumerable<IType> GetNestedTypes(IList<IType> typeArguments, ITypeResolveContext context, Predicate<ITypeDefinition> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		public virtual IEnumerable<IType> GetNestedTypes(IList<IType> typeArguments, Predicate<ITypeDefinition> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
 			return EmptyList<IType>.Instance;
 		}
 		
-		public virtual IEnumerable<IMethod> GetMethods(ITypeResolveContext context, Predicate<IMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		public virtual IEnumerable<IMethod> GetMethods(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
 			return EmptyList<IMethod>.Instance;
 		}
 		
-		public virtual IEnumerable<IMethod> GetMethods(IList<IType> typeArguments, ITypeResolveContext context, Predicate<IMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		public virtual IEnumerable<IMethod> GetMethods(IList<IType> typeArguments, Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
 			return EmptyList<IMethod>.Instance;
 		}
 		
-		public virtual IEnumerable<IMethod> GetConstructors(ITypeResolveContext context, Predicate<IMethod> filter = null, GetMemberOptions options = GetMemberOptions.IgnoreInheritedMembers)
+		public virtual IEnumerable<IMethod> GetConstructors(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.IgnoreInheritedMembers)
 		{
 			return EmptyList<IMethod>.Instance;
 		}
 		
-		public virtual IEnumerable<IProperty> GetProperties(ITypeResolveContext context, Predicate<IProperty> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		public virtual IEnumerable<IProperty> GetProperties(Predicate<IUnresolvedProperty> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
 			return EmptyList<IProperty>.Instance;
 		}
 		
-		public virtual IEnumerable<IField> GetFields(ITypeResolveContext context, Predicate<IField> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		public virtual IEnumerable<IField> GetFields(Predicate<IUnresolvedField> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
 			return EmptyList<IField>.Instance;
 		}
 		
-		public virtual IEnumerable<IEvent> GetEvents(ITypeResolveContext context, Predicate<IEvent> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		public virtual IEnumerable<IEvent> GetEvents(Predicate<IUnresolvedEvent> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
 			return EmptyList<IEvent>.Instance;
 		}
 		
-		public virtual IEnumerable<IMember> GetMembers(ITypeResolveContext context, Predicate<IMember> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		public virtual IEnumerable<IMember> GetMembers(Predicate<IUnresolvedMember> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			IEnumerable<IMember> members = GetMethods(context, filter, options);
+			IEnumerable<IMember> members = GetMethods(filter, options);
 			return members
-				.Concat(GetProperties(context, filter, options))
-				.Concat(GetFields(context, filter, options))
-				.Concat(GetEvents(context, filter, options));
+				.Concat(GetProperties(filter, options))
+				.Concat(GetFields(filter, options))
+				.Concat(GetEvents(filter, options));
 		}
 		
-		public override bool Equals(object obj)
+		public override sealed bool Equals(object obj)
 		{
 			return Equals(obj as IType);
 		}
 		
-		public abstract override int GetHashCode();
-		public abstract bool Equals(IType other);
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+		
+		public virtual bool Equals(IType other)
+		{
+			return this == other; // use reference equality by default
+		}
 		
 		public override string ToString()
 		{

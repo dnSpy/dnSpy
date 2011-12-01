@@ -8,6 +8,7 @@
 //
 // Copyright 2001 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2008 Novell, Inc
+// Copyright 2011 Xamarin Inc
 //
 //
 
@@ -27,7 +28,6 @@ using IKVM.Reflection.Emit;
 #else
 using System.Reflection;
 using System.Reflection.Emit;
-//using Mono.Collections.Generic;
 #endif
 
 namespace Mono.CSharp {
@@ -1347,7 +1347,7 @@ namespace Mono.CSharp {
 			} else {
 				Report.Error (102, symbol.Location,
 					"The type `{0}' already contains a definition for `{1}'",
-					GetSignatureForError (), symbol.MemberName.Name);
+					GetSignatureForError (), name);
 			}
 
 			return false;

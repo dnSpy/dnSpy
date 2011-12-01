@@ -32,13 +32,6 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	/// </summary>
 	public sealed class SimpleInterningProvider : IInterningProvider
 	{
-		public SimpleInterningProvider()
-		{
-			// Intern the well-known types first; so that they are used when possible.
-			foreach (ITypeReference r in KnownTypeReference.AllKnownTypeReferences)
-				Intern(r);
-		}
-		
 		sealed class InterningComparer : IEqualityComparer<ISupportsInterning>
 		{
 			public bool Equals(ISupportsInterning x, ISupportsInterning y)
@@ -98,18 +91,17 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			ISupportsInterning s = obj as ISupportsInterning;
 			if (s != null) {
 				ISupportsInterning output;
-				if (supportsInternDict.TryGetValue(s, out output)) {
-					obj = (T)output;
-				} else {
+				//if (supportsInternDict.TryGetValue(s, out output)) {
+				//	obj = (T)output;
+				//} else {
 					s.PrepareForInterning(this);
 					if (supportsInternDict.TryGetValue(s, out output))
 						obj = (T)output;
 					else
 						supportsInternDict.Add(s, s);
-				}
+				//}
 			} else if (Type.GetTypeCode(obj.GetType()) >= TypeCode.Boolean) {
-				// IType cannot be interned by value because ITypeParameters with different names are considered
-				// equal (for object.Equals), but should not be interned.
+				// Intern primitive types (and strings) by value
 				object output;
 				if (byValueDict.TryGetValue(obj, out output))
 					obj = (T)output;

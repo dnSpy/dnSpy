@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectGuid>{63D3B27A-D966-4902-90B3-30290E1692F1}</ProjectGuid>
@@ -7,7 +7,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.NRefactory</RootNamespace>
     <AssemblyName>ICSharpCode.NRefactory.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -33,14 +32,20 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\ICSharpCode.NRefactory\bin\Debug\</OutputPath>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\ICSharpCode.NRefactory\bin\Release\</OutputPath>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,14 +55,12 @@
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\ICSharpCode.NRefactory\bin\Debug\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\ICSharpCode.NRefactory\bin\Release\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -65,11 +68,9 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
-    <Reference Include="System.Core">
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq">
-    </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <HintPath>..\..\Mono.Cecil\Test\libs\nunit-2.4.8\nunit.framework.dll</HintPath>
     </Reference>
@@ -77,6 +78,7 @@
   <ItemGroup>
     <Compile Include="CSharp\Analysis\DefiniteAssignmentTests.cs" />
     <Compile Include="CSharp\AstStructureTests.cs" />
+    <Compile Include="CSharp\CSharpAmbienceTests.cs" />
     <Compile Include="CSharp\CodeDomConvertVisitorTests.cs" />
     <Compile Include="CSharp\InsertParenthesesVisitorTests.cs" />
     <Compile Include="CSharp\CSharpOutputVisitorTests.cs" />
@@ -84,6 +86,7 @@
     <Compile Include="CSharp\Parser\Expression\ObjectCreateExpressionTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\DelegateDeclarationTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\NamespaceDeclarationTests.cs" />
+    <Compile Include="CSharp\Parser\GeneralScope\PreprocessorDirectiveTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\TypeDeclarationTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\UsingDeclarationTests.cs" />
     <Compile Include="CSharp\Parser\ParseSelfTests.cs" />
@@ -153,6 +156,7 @@
     <Compile Include="CSharp\Resolver\LambdaTests.cs" />
     <Compile Include="CSharp\Resolver\LinqTests.cs" />
     <Compile Include="CSharp\Resolver\LocalTypeInferenceTests.cs" />
+    <Compile Include="CSharp\Resolver\MemberLookupTests.cs" />
     <Compile Include="CSharp\Resolver\NameLookupTests.cs" />
     <Compile Include="CSharp\Resolver\ObjectCreationTests.cs" />
     <Compile Include="CSharp\Resolver\ResolveAtLocationTests.cs" />
@@ -176,6 +180,7 @@
     <Compile Include="TypeSystem\SerializedCecilLoaderTests.cs" />
     <Compile Include="TypeSystem\StructureTests.cs" />
     <Compile Include="TypeSystem\TestInterningProvider.cs" />
+    <Compile Include="TypeSystem\TypeParameterTests.cs" />
     <Compile Include="TypeSystem\TypeSystemTests.cs" />
     <Compile Include="TypeSystem\TypeSystemTests.TestCase.cs" />
     <EmbeddedResource Include="TypeSystem\TypeSystemTests.TestCase.cs" />
@@ -183,25 +188,40 @@
     <Compile Include="Utils\TreeTraversalTests.cs" />
     <Compile Include="FormattingTests\TextEditorTestAdapter.cs" />
     <Compile Include="FormattingTests\TestBlankLineFormatting.cs" />
+    <Compile Include="CSharp\ContextAction\UseVarKeywordTests.cs" />
+    <Compile Include="CSharp\ContextAction\TestRefactoringContext.cs" />
+    <Compile Include="CSharp\ContextAction\ContextActionTestBase.cs" />
+    <Compile Include="CSharp\ContextAction\UseExplicitTypeTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\CodeCompletionAccessibleTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\CodeCompletionBugTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\CodeCompletionCSharp3Tests.cs" />
+    <Compile Include="CSharp\CodeCompletion\CodeCompletionCSharpTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\CodeComplteionOperatorTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\CompletionDataList.cs" />
+    <Compile Include="CSharp\CodeCompletion\EnumContextTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\KeywordTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\ObjectInitializerTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\ParameterCompletionTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\PreProcessorTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\TestBase.cs" />
+    <Compile Include="CSharp\CodeCompletion\VariableDeclarationStatementTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
       <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>
       <Name>ICSharpCode.NRefactory.CSharp</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CSharp\" />
-    <Folder Include="CSharp\Refactoring" />
     <Folder Include="CSharp\Parser\" />
-    <Folder Include="CSharp\Parser\" />
-    <Folder Include="CSharp\Parser\" />
-    <Folder Include="CSharp\Parser\" />
-    <Folder Include="Documentation" />
+    <Folder Include="CSharp\ContextAction\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -25,18 +25,18 @@ namespace ICSharpCode.NRefactory.CSharp
 	[TestFixture]
 	public class CSharpOutputVisitorTests
 	{
-		void AssertOutput(string expected, Expression expr, CSharpFormattingOptions policy = null)
+		void AssertOutput(string expected, AstNode node, CSharpFormattingOptions policy = null)
 		{
 			if (policy == null)
-				policy = new CSharpFormattingOptions();;
+				policy = new CSharpFormattingOptions();
 			StringWriter w = new StringWriter();
 			w.NewLine = "\n";
-			expr.AcceptVisitor(new CSharpOutputVisitor(new TextWriterOutputFormatter(w) { IndentationString = "\t" }, policy), null);
+			node.AcceptVisitor(new CSharpOutputVisitor(new TextWriterOutputFormatter(w) { IndentationString = "$" }, policy), null);
 			Assert.AreEqual(expected.Replace("\r", ""), w.ToString());
 		}
 		
-		[Test, Ignore("Incorrect whitespace")]
-		public void AssignmentInCollectionInitialize()
+		[Test]
+		public void AssignmentInCollectionInitializer()
 		{
 			Expression expr = new ObjectCreateExpression {
 				Type = new SimpleType("List"),
@@ -47,7 +47,37 @@ namespace ICSharpCode.NRefactory.CSharp
 				)
 			};
 			
-			AssertOutput("new List {\n  {\n    a = 1\n  }\n}", expr);
+			AssertOutput("new List {\n${\n$$a = 1\n$}\n}", expr);
+		}
+		
+		[Test]
+		public void EnumDeclarationWithInitializers()
+		{
+			TypeDeclaration type = new TypeDeclaration {
+				ClassType = ClassType.Enum,
+				Name = "DisplayFlags",
+				Members = {
+					new EnumMemberDeclaration {
+						Name = "D",
+						Initializer = new PrimitiveExpression(4)
+					}
+				}};
+			
+			AssertOutput("enum DisplayFlags\n{\n$D = 4\n}\n", type);
+		}
+		
+		[Test]
+		public void InlineCommentAtEndOfCondition()
+		{
+			IfElseStatement condition = new IfElseStatement();
+			condition.AddChild(new CSharpTokenNode(new TextLocation(1, 1), 2), IfElseStatement.IfKeywordRole);
+			condition.AddChild(new CSharpTokenNode(new TextLocation(1, 4), 1), IfElseStatement.Roles.LPar);
+			condition.AddChild(new IdentifierExpression("cond", new TextLocation(1, 5)), IfElseStatement.ConditionRole);
+			condition.AddChild(new Comment(CommentType.MultiLine, new TextLocation(1, 9), new TextLocation(1, 14)) { Content = "a" }, IfElseStatement.Roles.Comment);
+			condition.AddChild(new CSharpTokenNode(new TextLocation(1, 14), 1), IfElseStatement.Roles.RPar);
+			condition.AddChild(new ReturnStatement(), IfElseStatement.TrueRole);
+			
+			AssertOutput("if (cond/*a*/)\n$return;\n", condition);
 		}
 	}
 }

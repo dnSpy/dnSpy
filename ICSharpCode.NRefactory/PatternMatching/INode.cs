@@ -41,7 +41,7 @@ namespace ICSharpCode.NRefactory.PatternMatching
 		/// <c>this</c> is the pattern, <paramref name="other"/> is the AST that is being matched.
 		/// </summary>
 		/// <returns>
-		/// A match object. Check <see cref="Match.Success"/> to see whether the match was successful.
+		/// A match object. Check <see cref="PatternMatching.Match.Success"/> to see whether the match was successful.
 		/// </returns>
 		/// <remarks>
 		/// Patterns are ASTs that contain special pattern nodes (from the PatternMatching namespace).

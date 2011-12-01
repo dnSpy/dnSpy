@@ -25,7 +25,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	/// A simple constant value that is independent of the resolve context.
 	/// </summary>
 	[Serializable]
-	public sealed class SimpleConstantValue : Immutable, IConstantValue, ISupportsInterning
+	public sealed class SimpleConstantValue : IConstantValue, ISupportsInterning
 	{
 		ITypeReference type;
 		object value;
@@ -40,11 +40,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public ResolveResult Resolve(ITypeResolveContext context)
 		{
-			if (value is ITypeReference) {
-				return new TypeOfResolveResult(type.Resolve(context), ((ITypeReference)value).Resolve(context));
-			} else {
-				return new ConstantResolveResult(type.Resolve(context), value);
-			}
+			return new ConstantResolveResult(type.Resolve(context), value);
 		}
 		
 		public override string ToString()

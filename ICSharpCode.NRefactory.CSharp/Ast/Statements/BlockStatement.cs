@@ -116,7 +116,6 @@ namespace ICSharpCode.NRefactory.CSharp
 			return o != null && !o.IsNull && this.Statements.DoMatch(o.Statements, match);
 		}
 		
-		#region Builder methods
 		public void Add(Statement statement)
 		{
 			AddChild(statement, StatementRole);
@@ -124,25 +123,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public void Add(Expression expression)
 		{
-			AddChild(new ExpressionStatement { Expression = expression }, StatementRole);
+			AddChild(new ExpressionStatement(expression), StatementRole);
 		}
-		
-		public void AddRange(IEnumerable<Statement> statements)
-		{
-			foreach (Statement st in statements)
-				AddChild(st, StatementRole);
-		}
-		
-		public void AddAssignment(Expression left, Expression right)
-		{
-			Add(new AssignmentExpression { Left = left, Operator = AssignmentOperatorType.Assign, Right = right });
-		}
-		
-		public void AddReturnStatement(Expression expression)
-		{
-			Add(new ReturnStatement { Expression = expression });
-		}
-		#endregion
 		
 		IEnumerator<Statement> IEnumerable<Statement>.GetEnumerator()
 		{

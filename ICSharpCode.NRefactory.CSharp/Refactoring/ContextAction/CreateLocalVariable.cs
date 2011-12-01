@@ -1,4 +1,4 @@
-// 
+﻿// 
 // CreateLocalVariable.cs
 //  
 // Author:
@@ -120,7 +120,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				}
 				if (result.Parameters.Count < i)
 					return null;
-				return context.CreateShortType (result.Parameters[i].Type.Resolve (context.TypeResolveContext));
+				return context.CreateShortType (result.Parameters[i].Type);
 			}
 			return null;
 		}

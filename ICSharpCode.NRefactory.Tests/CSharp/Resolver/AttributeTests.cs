@@ -58,7 +58,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			string program = "using System; [$LoaderOptimization(3)$] class Test { }";
 			var mrr = Resolve<CSharpInvocationResolveResult>(program);
 			Assert.AreEqual("System.LoaderOptimizationAttribute..ctor", mrr.Member.FullName);
-			Assert.AreEqual("System.Byte", mrr.Member.Parameters[0].Type.Resolve(context).FullName);
+			Assert.AreEqual("System.Byte", mrr.Member.Parameters[0].Type.FullName);
 		}
 		
 		[Test]
@@ -67,7 +67,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			string program = "using System; [$LoaderOptimization(LoaderOptimization.NotSpecified)$] class Test { }";
 			var mrr = Resolve<CSharpInvocationResolveResult>(program);
 			Assert.AreEqual("System.LoaderOptimizationAttribute..ctor", mrr.Member.FullName);
-			Assert.AreEqual("System.LoaderOptimization", mrr.Member.Parameters[0].Type.Resolve(context).FullName);
+			Assert.AreEqual("System.LoaderOptimization", mrr.Member.Parameters[0].Type.FullName);
 		}
 		
 		[Test]
@@ -103,18 +103,18 @@ enum E { A, B }
 			Assert.AreEqual("MyNamespace.E.A", result.Member.FullName);
 		}
 		
-		[Test, Ignore("Not implemented in type system.")]
+		[Test]
 		public void SD_1384()
 		{
 			string program = @"using System;
 class Flags {
-	[Flags]
-	enum $Test$ { }
+	$[Flags]
+	enum Test { }$
 }";
 			TypeResolveResult result = Resolve<TypeResolveResult>(program);
 			Assert.AreEqual("Flags.Test", result.Type.FullName);
 			
-			var rt = result.Type.GetDefinition().Attributes[0].AttributeType.Resolve(context);
+			var rt = result.Type.GetDefinition().Attributes[0].AttributeType;
 			Assert.AreEqual("System.FlagsAttribute", rt.FullName);
 		}
 	}

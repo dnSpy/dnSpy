@@ -15,10 +15,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 	{
 		string RootNamespace { get; }
 		string GetTypeNameForAttribute(CSharp.Attribute attribute);
-		ClassType GetClassTypeForAstType(CSharp.AstType type);
+		TypeKind GetTypeKindForAstType(CSharp.AstType type);
 		TypeCode ResolveExpression(CSharp.Expression expression);
 		bool? IsReferenceType(CSharp.Expression expression);
-		ITypeResolveContext ResolveContext { get; }
+		//ITypeResolveContext ResolveContext { get; }
 		IType ResolveType(AstType type, TypeDeclaration entity = null);
 	}
 	
@@ -881,7 +881,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				if (typeDeclaration.BaseTypes.Any()) {
 					var first = typeDeclaration.BaseTypes.First();
 					
-					if (provider.GetClassTypeForAstType(first) != ClassType.Interface) {
+					if (provider.GetTypeKindForAstType(first) != TypeKind.Interface) {
 						ConvertNodes(typeDeclaration.BaseTypes.Skip(1), type.ImplementsTypes);
 						type.InheritsType = (AstType)first.AcceptVisitor(this, data);
 					} else
@@ -1624,7 +1624,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			foreach (var type in current.ImplementsTypes) {
 				var resolved = provider.ResolveType(type, current);
-				var found = resolved.GetMembers(provider.ResolveContext, m => m.EntityType == EntityType.Method && m.Name == result.Name.Name);
+				var found = resolved.GetMembers(m => m.EntityType == EntityType.Method && m.Name == result.Name.Name);
 				if (found.FirstOrDefault() != null) {
 					result.ImplementsClause.Add(new InterfaceMemberSpecifier((AstType)type.Clone(), found.FirstOrDefault().Name));
 				}
@@ -1640,7 +1640,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			foreach (var type in current.ImplementsTypes) {
 				var resolved = provider.ResolveType(type, current);
-				var found = resolved.GetMembers(provider.ResolveContext, m => m.EntityType == EntityType.Event && m.Name == result.Name.Name);
+				var found = resolved.GetMembers(m => m.EntityType == EntityType.Event && m.Name == result.Name.Name);
 				if (found.FirstOrDefault() != null) {
 					result.ImplementsClause.Add(new InterfaceMemberSpecifier((AstType)type.Clone(), found.FirstOrDefault().Name));
 				}
@@ -1822,11 +1822,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			ConvertNodes(parameterDeclaration.Attributes, param.Attributes);
 			param.Modifiers = ConvertParamModifiers(parameterDeclaration.ParameterModifier);
-			if ((param.Modifiers & Modifiers.None) == Modifiers.None)
-				param.Modifiers = Modifiers.ByVal;
 			if ((parameterDeclaration.ParameterModifier & ICSharpCode.NRefactory.CSharp.ParameterModifier.Out) == ICSharpCode.NRefactory.CSharp.ParameterModifier.Out) {
 				AttributeBlock block = new AttributeBlock();
-				block.Attributes.Add(new Ast.Attribute() { Type = new SimpleType("System.Runtime.InteropServices.OutAttribute") });
+				block.Attributes.Add(new Ast.Attribute() { Type = new SimpleType("Out") });
 				param.Attributes.Add(block);
 			}
 			param.Name = new Identifier(parameterDeclaration.Name, TextLocation.Empty);
@@ -1845,7 +1843,6 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.This:
 					return Modifiers.None;
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Ref:
-					return Modifiers.ByRef;
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Out:
 					return Modifiers.ByRef;
 				case ICSharpCode.NRefactory.CSharp.ParameterModifier.Params:
@@ -2040,16 +2037,22 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			return EndNode(primitiveType, new PrimitiveType(typeName));
 		}
 		
-		public AstNode VisitComment(CSharp.Comment comment, object data)
+		public AstNode VisitComment (CSharp.Comment comment, object data)
 		{
-			var c = new Comment(comment.Content, comment.CommentType == CSharp.CommentType.Documentation);
+			var c = new Comment (comment.Content, comment.CommentType == CSharp.CommentType.Documentation);
 			
 			if (comment.CommentType == CSharp.CommentType.MultiLine)
-				throw new NotImplementedException();
+				throw new NotImplementedException ();
 			
-			return EndNode(comment, c);
+			return EndNode (comment, c);
 		}
 		
+		public AstNode VisitPreProcessorDirective (CSharp.PreProcessorDirective preProcessorDirective, object data)
+		{
+			// TODO
+			return null;
+		}
+
 		public AstNode VisitTypeParameterDeclaration(CSharp.TypeParameterDeclaration typeParameterDeclaration, object data)
 		{
 			var param = new TypeParameterDeclaration() {
@@ -2126,6 +2129,10 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			if (readable && !writeable)
 				mod |= Modifiers.ReadOnly;
 			
+			if ((modifier & CSharp.Modifiers.Override) == CSharp.Modifiers.Override)
+				mod |= Modifiers.Override;
+			if ((modifier & CSharp.Modifiers.Virtual) == CSharp.Modifiers.Virtual)
+				mod |= Modifiers.Overridable;
 			
 			return mod;
 		}

@@ -19,24 +19,64 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
 	/// <summary>
-	/// Method/field/entity.
+	/// Method/field/property/event.
 	/// </summary>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(IMemberContract))]
-	#endif
-	public interface IMember : IEntity
+	public interface IUnresolvedMember : IUnresolvedEntity
 	{
 		/// <summary>
-		/// Gets/Sets the declaring type (incl. type arguments, if any).
-		/// This property never returns null -- for top-level members, it returns SharedTypes.UnknownType.
-		/// If this is not a specialized member, the value returned is equal to <see cref="IEntity.DeclaringTypeDefinition"/>.
+		/// Gets the return type of this member.
+		/// This property never returns null.
 		/// </summary>
-		IType DeclaringType { get; }
+		ITypeReference ReturnType { get; }
 		
+		/// <summary>
+		/// Gets whether this member is explicitly implementing an interface.
+		/// If this property is true, the member can only be called through the interfaces it implements.
+		/// </summary>
+		bool IsExplicitInterfaceImplementation { get; }
+		
+		/// <summary>
+		/// Gets the interfaces that are explicitly implemented by this member.
+		/// </summary>
+		IList<IMemberReference> InterfaceImplementations { get; }
+		
+		/// <summary>
+		/// Gets if the member is virtual. Is true only if the "virtual" modifier was used, but non-virtual
+		/// members can be overridden, too; if they are abstract or overriding a method.
+		/// </summary>
+		bool IsVirtual { get; }
+		
+		/// <summary>
+		/// Gets whether this member is overriding another member.
+		/// </summary>
+		bool IsOverride { get; }
+		
+		/// <summary>
+		/// Gets if the member can be overridden. Returns true when the member is "abstract", "virtual" or "override" but not "sealed".
+		/// </summary>
+		bool IsOverridable { get; }
+		
+		IMember CreateResolved(ITypeResolveContext context);
+	}
+	
+	public interface IMemberReference
+	{
+		/// <summary>
+		/// Resolves the member.
+		/// </summary>
+		IMember Resolve(ITypeResolveContext context);
+	}
+	
+	/// <summary>
+	/// Method/field/property/event.
+	/// </summary>
+	public interface IMember : IEntity
+	{
 		/// <summary>
 		/// Gets the original member definition for this member.
 		/// Returns <c>this</c> if this is not a specialized member.
@@ -48,76 +88,37 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets the return type of this member.
 		/// This property never returns null.
 		/// </summary>
-		ITypeReference ReturnType { get; }
+		IType ReturnType { get; }
 		
 		/// <summary>
-		/// Gets the list of interfaces this member is implementing explicitly.
+		/// Gets the interface members implemented by this member (both implicitly and explicitly).
 		/// </summary>
-		IList<IExplicitInterfaceImplementation> InterfaceImplementations { get; }
+		IList<IMember> InterfaceImplementations { get; }
+		
+		/// <summary>
+		/// Gets whether this member is explicitly implementing an interface.
+		/// </summary>
+		bool IsExplicitInterfaceImplementation { get; }
 		
 		/// <summary>
 		/// Gets if the member is virtual. Is true only if the "virtual" modifier was used, but non-virtual
-		/// members can be overridden, too; if they are already overriding a method.
+		/// members can be overridden, too; if they are abstract or overriding a method.
 		/// </summary>
-		bool IsVirtual {
-			get;
-		}
-		
-		bool IsOverride {
-			get;
-		}
+		bool IsVirtual { get; }
 		
 		/// <summary>
-		/// Gets if the member can be overridden. Returns true when the member is "virtual" or "override" but not "sealed".
+		/// Gets whether this member is overriding another member.
 		/// </summary>
-		bool IsOverridable {
-			get;
-		}
+		bool IsOverride { get; }
+		
+		/// <summary>
+		/// Gets if the member can be overridden. Returns true when the member is "abstract", "virtual" or "override" but not "sealed".
+		/// </summary>
+		bool IsOverridable { get; }
+		
+		/// <summary>
+		/// Creates a member reference that can be used to rediscover this member in another compilation.
+		/// </summary>
+		IMemberReference ToMemberReference();
 	}
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(IMember))]
-	abstract class IMemberContract : IEntityContract, IMember
-	{
-		IType IMember.DeclaringType {
-			get {
-				Contract.Ensures(Contract.Result<IType>() != null);
-				return null;
-			}
-		}
-		
-		IMember IMember.MemberDefinition {
-			get {
-				Contract.Ensures(Contract.Result<IMember>() != null);
-				return null;
-			}
-		}
-		
-		ITypeReference IMember.ReturnType {
-			get {
-				Contract.Ensures(Contract.Result<ITypeReference>() != null);
-				return null;
-			}
-		}
-		
-		IList<IExplicitInterfaceImplementation> IMember.InterfaceImplementations {
-			get {
-				Contract.Ensures(Contract.Result<IList<IExplicitInterfaceImplementation>>() != null);
-				return null;
-			}
-		}
-		
-		bool IMember.IsVirtual {
-			get { return false; }
-		}
-		
-		bool IMember.IsOverride {
-			get { return false; }
-		}
-		
-		bool IMember.IsOverridable {
-			get { return false; }
-		}
-	}
-	#endif
 }

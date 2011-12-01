@@ -30,31 +30,36 @@ namespace ICSharpCode.NRefactory.Documentation
 	[TestFixture]
 	public class IDStringTests
 	{
-		class IDStringTestProjectContent : SimpleProjectContent, IDocumentationProvider
+		class IDStringTestProjectContent : DefaultUnresolvedAssembly, IDocumentationProvider
 		{
+			public IDStringTestProjectContent() : base("Test") {}
+			
 			public string GetDocumentation(IEntity entity)
 			{
 				// Note: there's no mscorlib in the context.
 				// These tests only use primitive types from mscorlib, so the full name is known
 				// without resolving them.
-				return IDStringProvider.GetIDString(entity, this);
+				return IDStringProvider.GetIDString(entity);
 			}
 		}
 		
 		IDStringTestProjectContent pc;
+		ICompilation compilation;
 		
 		void Init(string program)
 		{
 			pc = new IDStringTestProjectContent();
 			
-			var cu = new CSharpParser().Parse(new StringReader(program));
-			var parsedFile = new TypeSystemConvertVisitor(pc, "program.cs").Convert(cu);
-			pc.UpdateProjectContent(null, parsedFile);
+			var cu = new CSharpParser().Parse(new StringReader(program), "program.cs");
+			foreach (var type in cu.ToTypeSystem().TopLevelTypeDefinitions) {
+				pc.AddTypeDefinition(type);
+			}
+			compilation = new SimpleCompilation(pc, CecilLoaderTests.Mscorlib);
 		}
 		
 		ITypeDefinition GetTypeDefinition(string nameSpace, string name, int typeParameterCount = 0)
 		{
-			return pc.GetTypeDefinition(nameSpace, name, typeParameterCount, StringComparer.Ordinal);
+			return compilation.MainAssembly.GetTypeDefinition(nameSpace, name, typeParameterCount);
 		}
 		
 		[Test]
@@ -155,7 +160,7 @@ namespace Acme
 }";
 			Init(program);
 			ITypeDefinition widget = GetTypeDefinition("Acme", "Widget");
-			Assert.AreEqual("M:Acme.Widget.Finalize", widget.Methods.Single().Documentation);
+			Assert.AreEqual("M:Acme.Widget.Finalize", widget.Methods.Single(m => m.EntityType == EntityType.Destructor).Documentation);
 		}
 		
 		[Test]
@@ -195,7 +200,7 @@ namespace Acme
 }";
 			Init(program);
 			ITypeDefinition widget = GetTypeDefinition("Acme", "Widget");
-			Assert.AreEqual("M:Acme.Widget.NestedClass.M(System.Int32)", widget.NestedTypes.Single().Methods.Single().Documentation);
+			Assert.AreEqual("M:Acme.Widget.NestedClass.M(System.Int32)", widget.NestedTypes.Single().Methods.Single(m => m.EntityType == EntityType.Method).Documentation);
 			Assert.AreEqual("M:Acme.Widget.M0", widget.Methods.Single(m => m.Name == "M0").Documentation);
 			Assert.AreEqual("M:Acme.Widget.M1(System.Char,System.Single@,Acme.ValueType@)",
 			                widget.Methods.Single(m => m.Name == "M1").Documentation);
@@ -211,7 +216,7 @@ namespace Acme
 			                widget.Methods.Single(m => m.Name == "M6").Documentation);
 			
 			Assert.AreEqual("M:Acme.MyList`1.Test(`0)",
-			                GetTypeDefinition("Acme", "MyList", 1).Methods.Single().Documentation);
+			                GetTypeDefinition("Acme", "MyList", 1).Methods.Single(m => m.Name == "Test").Documentation);
 			
 			Assert.AreEqual("M:Acme.UseList.Process(Acme.MyList{Color})",
 			                GetTypeDefinition("Acme", "UseList").Methods.Single(m => m.Name == "Process").Documentation);
@@ -225,7 +230,7 @@ namespace Acme
 			Init("class A<X> { class B<Y> { void M(A<Y>.B<X> a) { } } }");
 			ITypeDefinition b = GetTypeDefinition("", "A", 1).NestedTypes.Single();
 			Assert.AreEqual("T:A`1.B`1", b.Documentation);
-			Assert.AreEqual("M:A`1.B`1.M(A{`1}.B{`0})", b.Methods.Single().Documentation);
+			Assert.AreEqual("M:A`1.B`1.M(A{`1}.B{`0})", b.Methods.Single(m => m.EntityType == EntityType.Method).Documentation);
 		}
 		
 		[Test]
@@ -281,7 +286,7 @@ namespace Acme
 }";
 			Init(program);
 			ITypeDefinition widget = GetTypeDefinition("Acme", "Widget");
-			Assert.AreEqual("M:Acme.Widget.op_UnaryPlus(Acme.Widget)", widget.Methods.Single().Documentation);
+			Assert.AreEqual("M:Acme.Widget.op_UnaryPlus(Acme.Widget)", widget.Methods.Single(m => m.EntityType == EntityType.Operator).Documentation);
 		}
 		
 		[Test]
@@ -297,7 +302,7 @@ namespace Acme
 }";
 			Init(program);
 			ITypeDefinition widget = GetTypeDefinition("Acme", "Widget");
-			Assert.AreEqual("M:Acme.Widget.op_Addition(Acme.Widget,Acme.Widget)", widget.Methods.Single().Documentation);
+			Assert.AreEqual("M:Acme.Widget.op_Addition(Acme.Widget,Acme.Widget)", widget.Methods.Single(m => m.EntityType == EntityType.Operator).Documentation);
 		}
 		
 		[Test]
@@ -314,14 +319,14 @@ namespace Acme
 }";
 			Init(program);
 			ITypeDefinition widget = GetTypeDefinition("Acme", "Widget");
-			Assert.AreEqual("M:Acme.Widget.op_Explicit(Acme.Widget)~System.Int32", widget.Methods.First().Documentation);
-			Assert.AreEqual("M:Acme.Widget.op_Implicit(Acme.Widget)~System.Int64", widget.Methods.Last().Documentation);
+			Assert.AreEqual("M:Acme.Widget.op_Explicit(Acme.Widget)~System.Int32", widget.Methods.First(m => m.EntityType == EntityType.Operator).Documentation);
+			Assert.AreEqual("M:Acme.Widget.op_Implicit(Acme.Widget)~System.Int64", widget.Methods.Last(m => m.EntityType == EntityType.Operator).Documentation);
 		}
 		
 		[Test]
 		public void CorlibIDStrings()
 		{
-			var list = CecilLoaderTests.Mscorlib.GetTypeDefinition(typeof(List<>));
+			var list = new SimpleCompilation(CecilLoaderTests.Mscorlib).FindType(typeof(List<>)).GetDefinition();
 			Assert.AreEqual("T:System.Collections.Generic.List`1",
 			                IDStringProvider.GetIDString(list));
 			Assert.AreEqual("M:System.Collections.Generic.List`1.Add(`0)",

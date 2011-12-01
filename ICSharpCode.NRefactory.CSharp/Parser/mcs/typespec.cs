@@ -284,6 +284,28 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// Whether a type is unmanaged. This is used by the unsafe code
+		//
+		public bool IsUnmanaged {
+			get {
+				if (IsPointer)
+					return ((ElementTypeSpec) this).Element.IsUnmanaged;
+
+				var ds = MemberDefinition as DeclSpace;
+				if (ds != null)
+					return ds.IsUnmanagedType ();
+
+				if (Kind == MemberKind.Void)
+					return true;
+
+				if (IsNested && DeclaringType.IsGenericOrParentIsGeneric)
+					return false;
+
+				return IsValueType (this);
+			}
+		}
+
 		public MemberCache MemberCache {
 			get {
 				if (cache == null || (state & StateFlags.PendingMemberCacheMembers) != 0)
@@ -338,6 +360,34 @@ namespace Mono.CSharp
 			}
 
 			return false;
+		}
+
+		//
+		// Special version used during type definition
+		//
+		public bool AddInterfaceDefined (TypeSpec iface)
+		{
+			if (!AddInterface (iface))
+				return false;
+
+			//
+			// We can get into a situation where a type is inflated before
+			// its interfaces are resoved. Consider this situation
+			//
+			// class A<T> : X<A<int>>, IFoo {}
+			//
+			// When resolving base class of X`1 we inflate context type A`1
+			// All this happens before we even hit IFoo resolve. Without
+			// additional expansion any inside usage of A<T> would miss IFoo
+			// interface because it comes from early inflated TypeSpec
+			//
+			if (inflated_instances != null) {
+				foreach (var inflated in inflated_instances) {
+					inflated.Value.AddInterface (iface);
+				}
+			}
+
+			return true;
 		}
 
 		public AttributeUsageAttribute GetAttributeUsage (PredefinedAttribute pa)
@@ -1247,6 +1297,7 @@ namespace Mono.CSharp
 		public static readonly InternalType NullLiteral = new InternalType ("null");
 		public static readonly InternalType FakeInternalType = new InternalType ("<fake$type>");
 		public static readonly InternalType Namespace = new InternalType ("<namespace>");
+		public static readonly InternalType ErrorType = new InternalType ("<error>");
 
 		readonly string name;
 
