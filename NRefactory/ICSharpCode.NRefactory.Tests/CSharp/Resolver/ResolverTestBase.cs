@@ -21,8 +21,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-
 using ICSharpCode.NRefactory.CSharp.Parser;
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
@@ -35,61 +35,21 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	/// </summary>
 	public abstract class ResolverTestBase
 	{
-		protected readonly IProjectContent mscorlib = CecilLoaderTests.Mscorlib;
-		protected SimpleProjectContent project;
-		protected ITypeResolveContext context;
-		protected CSharpResolver resolver;
+		protected readonly IUnresolvedAssembly mscorlib = CecilLoaderTests.Mscorlib;
+		protected IProjectContent project;
+		protected ICompilation compilation;
 		
 		[SetUp]
 		public virtual void SetUp()
 		{
-			project = new SimpleProjectContent();
-			context = new CompositeTypeResolveContext(new [] { project, mscorlib, CecilLoaderTests.SystemCore });
-			resolver = new CSharpResolver(context);
-			resolver.CurrentUsingScope = MakeUsingScope("");
-		}
-		
-		protected UsingScope MakeUsingScope(string namespaceName)
-		{
-			UsingScope u = new UsingScope(project);
-			if (!string.IsNullOrEmpty(namespaceName)) {
-				foreach (string element in namespaceName.Split('.')) {
-					u = new UsingScope(u, string.IsNullOrEmpty(u.NamespaceName) ? element : u.NamespaceName + "." + element);
-				}
-			}
-			return u;
-		}
-		
-		/// <summary>
-		/// Adds a using to the current using scope.
-		/// </summary>
-		protected void AddUsing(string namespaceName)
-		{
-			resolver.CurrentUsingScope.Usings.Add(MakeReference(namespaceName));
-		}
-		
-		/// <summary>
-		/// Adds a using alias to the current using scope.
-		/// </summary>
-		protected void AddUsingAlias(string alias, string target)
-		{
-			resolver.CurrentUsingScope.UsingAliases.Add(new KeyValuePair<string, ITypeOrNamespaceReference>(alias, MakeReference(target)));
-		}
-		
-		protected ITypeOrNamespaceReference MakeReference(string namespaceName)
-		{
-			string[] nameParts = namespaceName.Split('.');
-			ITypeOrNamespaceReference r = new SimpleTypeOrNamespaceReference(nameParts[0], new ITypeReference[0], resolver.CurrentTypeDefinition, resolver.CurrentUsingScope, SimpleNameLookupMode.TypeInUsingDeclaration);
-			for (int i = 1; i < nameParts.Length; i++) {
-				r = new MemberTypeOrNamespaceReference(r, nameParts[i], new ITypeReference[0], resolver.CurrentTypeDefinition, resolver.CurrentUsingScope);
-			}
-			return r;
+			project = new CSharpProjectContent().AddAssemblyReferences(new [] { mscorlib, CecilLoaderTests.SystemCore });
+			compilation = project.CreateCompilation();
 		}
 		
 		protected IType ResolveType(Type type)
 		{
-			IType t = type.ToTypeReference().Resolve(context);
-			if (SharedTypes.UnknownType.Equals(t))
+			IType t = compilation.FindType(type);
+			if (t.Kind == TypeKind.Unknown)
 				throw new InvalidOperationException("Could not resolve type");
 			return t;
 		}
@@ -97,7 +57,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		protected ConstantResolveResult MakeConstant(object value)
 		{
 			if (value == null)
-				return new ConstantResolveResult(SharedTypes.Null, null);
+				return new ConstantResolveResult(SpecialType.NullType, null);
 			IType type = ResolveType(value.GetType());
 			if (type.Kind == TypeKind.Enum)
 				value = Convert.ChangeType(value, Enum.GetUnderlyingType(value.GetType()));
@@ -107,6 +67,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		protected ResolveResult MakeResult(Type type)
 		{
 			return new ResolveResult(ResolveType(type));
+		}
+		
+		protected static TypeOrNamespaceReference MakeReference(string namespaceName)
+		{
+			string[] nameParts = namespaceName.Split('.');
+			TypeOrNamespaceReference r = new SimpleTypeOrNamespaceReference(nameParts[0], new ITypeReference[0], SimpleNameLookupMode.TypeInUsingDeclaration);
+			for (int i = 1; i < nameParts.Length; i++) {
+				r = new MemberTypeOrNamespaceReference(r, nameParts[i], new ITypeReference[0]);
+			}
+			return r;
 		}
 		
 		protected void AssertConstant(object expectedValue, ResolveResult rr)
@@ -128,35 +98,37 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			Assert.IsFalse(rr.IsError, rr.ToString() + " is an error");
 			Assert.IsFalse(rr.IsCompileTimeConstant, rr.ToString() + " is a compile-time constant");
-			Assert.AreEqual(expectedType.ToTypeReference().Resolve(context), rr.Type);
+			Assert.AreEqual(compilation.FindType(expectedType), rr.Type);
 		}
 		
 		protected void AssertError(Type expectedType, ResolveResult rr)
 		{
 			Assert.IsTrue(rr.IsError, rr.ToString() + " is not an error, but an error was expected");
 			Assert.IsFalse(rr.IsCompileTimeConstant, rr.ToString() + " is a compile-time constant");
-			Assert.AreEqual(expectedType.ToTypeReference().Resolve(context), rr.Type);
+			Assert.AreEqual(compilation.FindType(expectedType), rr.Type);
 		}
 		
 		protected void TestOperator(UnaryOperatorType op, ResolveResult input,
 		                            Conversion expectedConversion, Type expectedResultType)
 		{
+			CSharpResolver resolver = new CSharpResolver(compilation);
 			var rr = resolver.ResolveUnaryOperator(op, input);
 			AssertType(expectedResultType, rr);
-			Assert.AreEqual(typeof(UnaryOperatorResolveResult), rr.GetType());
-			var uorr = (UnaryOperatorResolveResult)rr;
-			AssertConversion(uorr.Input, input, expectedConversion, "Conversion");
+			Assert.AreEqual(typeof(OperatorResolveResult), rr.GetType());
+			var uorr = (OperatorResolveResult)rr;
+			AssertConversion(uorr.Operands[0], input, expectedConversion, "Conversion");
 		}
 		
 		protected void TestOperator(ResolveResult lhs, BinaryOperatorType op, ResolveResult rhs,
 		                            Conversion expectedLeftConversion, Conversion expectedRightConversion, Type expectedResultType)
 		{
+			CSharpResolver resolver = new CSharpResolver(compilation);
 			var rr = resolver.ResolveBinaryOperator(op, lhs, rhs);
 			AssertType(expectedResultType, rr);
-			Assert.AreEqual(typeof(BinaryOperatorResolveResult), rr.GetType());
-			var borr = (BinaryOperatorResolveResult)rr;
-			AssertConversion(borr.Left, lhs, expectedLeftConversion, "Left conversion");
-			AssertConversion(borr.Right, rhs, expectedRightConversion, "Right conversion");
+			Assert.AreEqual(typeof(OperatorResolveResult), rr.GetType());
+			var borr = (OperatorResolveResult)rr;
+			AssertConversion(borr.Operands[0], lhs, expectedLeftConversion, "Left conversion");
+			AssertConversion(borr.Operands[1], rhs, expectedRightConversion, "Right conversion");
 		}
 		
 		protected void AssertConversion(ResolveResult conversionResult, ResolveResult expectedRR, Conversion expectedConversion, string text)
@@ -189,17 +161,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		protected ResolveResult Resolve(string code)
 		{
-			CompilationUnit cu = new CSharpParser().Parse(new StringReader(code.Replace("$", "")));
+			CompilationUnit cu = new CSharpParser().Parse(new StringReader(code.Replace("$", "")), "code.cs");
 			
 			TextLocation[] dollars = FindDollarSigns(code).ToArray();
 			Assert.AreEqual(2, dollars.Length, "Expected 2 dollar signs marking start+end of desired node");
 			
 			SetUp();
 			
-			CSharpParsedFile parsedFile = new CSharpParsedFile("test.cs", resolver.CurrentUsingScope);
-			TypeSystemConvertVisitor convertVisitor = new TypeSystemConvertVisitor(parsedFile, resolver.CurrentUsingScope, null);
-			cu.AcceptVisitor(convertVisitor, null);
-			project.UpdateProjectContent(null, convertVisitor.ParsedFile);
+			CSharpParsedFile parsedFile = cu.ToTypeSystem();
+			project = project.UpdateProjectContent(null, parsedFile);
+			compilation = project.CreateCompilation();
 			
 			FindNodeVisitor fnv = new FindNodeVisitor(dollars[0], dollars[1]);
 			cu.AcceptVisitor(fnv, null);
@@ -208,13 +179,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			Debug.WriteLine(new string('=', 70));
 			Debug.WriteLine("Starting new resolver for " + fnv.ResultNode);
 			
-			var navigator = new NodeListResolveVisitorNavigator(new[] { fnv.ResultNode });
-			ResolveResult rr;
-			using (var context = this.context.Synchronize()) {
-				ResolveVisitor rv = new ResolveVisitor(new CSharpResolver(context), convertVisitor.ParsedFile, navigator);
-				rv.Scan(cu);
-				rr = rv.GetResolveResult(fnv.ResultNode);
-			}
+			CSharpAstResolver resolver = new CSharpAstResolver(compilation, cu, parsedFile);
+			ResolveResult rr = resolver.Resolve(fnv.ResultNode);
 			Assert.IsNotNull(rr, "ResolveResult is null - did something go wrong while navigating to the target node?");
 			Debug.WriteLine("ResolveResult is " + rr);
 			return rr;
@@ -224,7 +190,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			ResolveResult rr = Resolve(code);
 			Assert.IsNotNull(rr);
-			Assert.IsTrue(rr.GetType() == typeof(T), "Resolve should be " + typeof(T).Name + ", but was " + rr.GetType().Name);
+			if (typeof(T) == typeof(LambdaResolveResult)) {
+				Assert.IsTrue(rr is LambdaResolveResult, "Resolve should be " + typeof(T).Name + ", but was " + rr.GetType().Name);
+			} else {
+				Assert.IsTrue(rr.GetType() == typeof(T), "Resolve should be " + typeof(T).Name + ", but was " + rr.GetType().Name);
+			}
 			return (T)rr;
 		}
 		
@@ -254,19 +224,18 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		protected ResolveResult ResolveAtLocation(string code)
 		{
-			CompilationUnit cu = new CSharpParser().Parse(new StringReader(code.Replace("$", "")));
+			CompilationUnit cu = new CSharpParser().Parse(new StringReader(code.Replace("$", "")), "test.cs");
 			
 			TextLocation[] dollars = FindDollarSigns(code).ToArray();
 			Assert.AreEqual(1, dollars.Length, "Expected 1 dollar signs marking the location");
 			
 			SetUp();
 			
-			CSharpParsedFile parsedFile = new CSharpParsedFile("test.cs", resolver.CurrentUsingScope);
-			TypeSystemConvertVisitor convertVisitor = new TypeSystemConvertVisitor(parsedFile, resolver.CurrentUsingScope, null);
-			cu.AcceptVisitor(convertVisitor, null);
-			project.UpdateProjectContent(null, convertVisitor.ParsedFile);
+			CSharpParsedFile parsedFile = cu.ToTypeSystem();
+			project = project.UpdateProjectContent(null, parsedFile);
+			compilation = project.CreateCompilation();
 			
-			ResolveResult rr = Resolver.ResolveAtLocation.Resolve(this.context, parsedFile, cu, dollars[0]);
+			ResolveResult rr = Resolver.ResolveAtLocation.Resolve(compilation, parsedFile, cu, dollars[0]);
 			return rr;
 		}
 		

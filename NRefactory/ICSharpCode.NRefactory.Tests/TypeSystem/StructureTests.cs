@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Reflection;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.TypeSystem
@@ -31,6 +32,42 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				if (typeof(ISupportsInterning).IsAssignableFrom(type) && !type.IsInterface) {
 					Assert.IsTrue(type.IsSealed, type.FullName);
 				}
+			}
+		}
+		
+		[Test]
+		public void System_TypeCode_corresponds_with_KnownTypeCode()
+		{
+			foreach (TypeCode typeCode in Enum.GetValues(typeof(System.TypeCode))) {
+				if (typeCode == TypeCode.Empty)
+					Assert.AreEqual("None", ((KnownTypeCode)typeCode).ToString());
+				else
+					Assert.AreEqual(typeCode.ToString(), ((KnownTypeCode)typeCode).ToString());
+			}
+		}
+		
+		[Test]
+		public void KnownTypeReference_Get_returns_correct_KnownType()
+		{
+			foreach (KnownTypeCode typeCode in Enum.GetValues(typeof(KnownTypeCode))) {
+				if (typeCode == KnownTypeCode.None) {
+					Assert.IsNull(KnownTypeReference.Get(KnownTypeCode.None));
+				} else {
+					Assert.AreEqual(typeCode, KnownTypeReference.Get(typeCode).KnownTypeCode);
+				}
+			}
+		}
+		
+		[Test]
+		public void KnownTypeReference_has_static_fields_for_KnownTypes()
+		{
+			foreach (KnownTypeCode typeCode in Enum.GetValues(typeof(KnownTypeCode))) {
+				if (typeCode == KnownTypeCode.None)
+					continue;
+				FieldInfo field = typeof(KnownTypeReference).GetField(typeCode.ToString());
+				Assert.IsNotNull(field, "Missing field for " + typeCode.ToString());
+				KnownTypeReference ktr = (KnownTypeReference)field.GetValue(null);
+				Assert.AreEqual(typeCode, ktr.KnownTypeCode);
 			}
 		}
 	}

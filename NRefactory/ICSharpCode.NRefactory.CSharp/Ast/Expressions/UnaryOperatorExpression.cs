@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Linq.Expressions;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -94,6 +95,34 @@ namespace ICSharpCode.NRefactory.CSharp
 					return "&";
 				case UnaryOperatorType.Await:
 					return "await";
+				default:
+					throw new NotSupportedException("Invalid value for UnaryOperatorType");
+			}
+		}
+		
+		public static ExpressionType GetLinqNodeType(UnaryOperatorType op, bool checkForOverflow)
+		{
+			switch (op) {
+				case UnaryOperatorType.Not:
+					return ExpressionType.Not;
+				case UnaryOperatorType.BitNot:
+					return ExpressionType.OnesComplement;
+				case UnaryOperatorType.Minus:
+					return checkForOverflow ? ExpressionType.NegateChecked : ExpressionType.Negate;
+				case UnaryOperatorType.Plus:
+					return ExpressionType.UnaryPlus;
+				case UnaryOperatorType.Increment:
+					return ExpressionType.PreIncrementAssign;
+				case UnaryOperatorType.Decrement:
+					return ExpressionType.PreDecrementAssign;
+				case UnaryOperatorType.PostIncrement:
+					return ExpressionType.PostIncrementAssign;
+				case UnaryOperatorType.PostDecrement:
+					return ExpressionType.PostDecrementAssign;
+				case UnaryOperatorType.Dereference:
+				case UnaryOperatorType.AddressOf:
+				case UnaryOperatorType.Await:
+					return ExpressionType.Extension;
 				default:
 					throw new NotSupportedException("Invalid value for UnaryOperatorType");
 			}

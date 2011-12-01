@@ -26,10 +26,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Type parameter of a generic class/method.
 	/// </summary>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(ITypeParameterContract))]
-	#endif
-	public interface ITypeParameter : IType, IFreezable
+	public interface IUnresolvedTypeParameter : INamedElement
 	{
 		/// <summary>
 		/// Get the type of this type parameter's owner.
@@ -45,12 +42,66 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets the list of attributes declared on this type parameter.
 		/// </summary>
+		IList<IUnresolvedAttribute> Attributes { get; }
+		
+		/// <summary>
+		/// Gets the variance of this type parameter.
+		/// </summary>
+		VarianceModifier Variance { get; }
+		
+		/// <summary>
+		/// Gets the region where the type parameter is defined.
+		/// </summary>
+		DomRegion Region { get; }
+		
+		ITypeParameter CreateResolvedTypeParameter(ITypeResolveContext context);
+	}
+	
+	/// <summary>
+	/// Type parameter of a generic class/method.
+	/// </summary>
+	public interface ITypeParameter : IType
+	{
+		/// <summary>
+		/// Get the type of this type parameter's owner.
+		/// </summary>
+		/// <returns>EntityType.TypeDefinition or EntityType.Method</returns>
+		EntityType OwnerType { get; }
+		
+		/// <summary>
+		/// Gets the owning method/class.
+		/// </summary>
+		IEntity Owner { get; }
+		
+		/// <summary>
+		/// Gets the index of the type parameter in the type parameter list of the owning method/class.
+		/// </summary>
+		int Index { get; }
+		
+		/// <summary>
+		/// Gets the list of attributes declared on this type parameter.
+		/// </summary>
 		IList<IAttribute> Attributes { get; }
 		
 		/// <summary>
-		/// Gets the constraints of this type parameter.
+		/// Gets the variance of this type parameter.
 		/// </summary>
-		IList<ITypeReference> Constraints { get; }
+		VarianceModifier Variance { get; }
+		
+		/// <summary>
+		/// Gets the region where the type parameter is defined.
+		/// </summary>
+		DomRegion Region { get; }
+		
+		/// <summary>
+		/// Gets the effective base class of this type parameter.
+		/// </summary>
+		IType EffectiveBaseClass { get; }
+		
+		/// <summary>
+		/// Gets the effective interface set of this type parameter.
+		/// </summary>
+		IList<IType> EffectiveInterfaceSet { get; }
 		
 		/// <summary>
 		/// Gets if the type parameter has the 'new()' constraint.
@@ -66,16 +117,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets if the type parameter has the 'struct' constraint.
 		/// </summary>
 		bool HasValueTypeConstraint { get; }
-		
-		/// <summary>
-		/// Gets the variance of this type parameter.
-		/// </summary>
-		VarianceModifier Variance { get; }
-		
-		/// <summary>
-		/// Gets the region where the type parameter is defined.
-		/// </summary>
-		DomRegion Region { get; }
 	}
 	
 	/// <summary>
@@ -96,75 +137,4 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		Contravariant
 	};
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(ITypeParameter))]
-	abstract class ITypeParameterContract : ITypeContract, ITypeParameter
-	{
-		int ITypeParameter.Index {
-			get {
-				Contract.Ensures(Contract.Result<int>() >= 0);
-				return 0;
-			}
-		}
-		
-		IList<IAttribute> ITypeParameter.Attributes {
-			get {
-				Contract.Ensures(Contract.Result<IList<IAttribute>>() != null);
-				return null;
-			}
-		}
-		
-		IList<ITypeReference> ITypeParameter.Constraints {
-			get {
-				Contract.Ensures(Contract.Result<IList<ITypeReference>>() != null);
-				return null;
-			}
-		}
-		
-		bool ITypeParameter.HasDefaultConstructorConstraint {
-			get { return false; }
-		}
-		
-		bool ITypeParameter.HasReferenceTypeConstraint {
-			get { return false; }
-		}
-		
-		bool ITypeParameter.HasValueTypeConstraint {
-			get { return false; }
-		}
-		
-		IType ITypeParameter.BoundTo {
-			get { return null; }
-		}
-		
-		ITypeParameter ITypeParameter.UnboundTypeParameter {
-			get {
-				ITypeParameter @this = this;
-				Contract.Ensures((Contract.Result<ITypeParameter>() != null) == (@this.BoundTo != null));
-				return null;
-			}
-		}
-		
-		VarianceModifier ITypeParameter.Variance {
-			get { return VarianceModifier.Invariant; }
-		}
-		
-		bool IFreezable.IsFrozen {
-			get { return false; }
-		}
-		
-		void IFreezable.Freeze()
-		{
-		}
-		
-		EntityType ITypeParameter.OwnerType {
-			get { return EntityType.None; }
-		}
-		
-		DomRegion ITypeParameter.Region {
-			get { return DomRegion.Empty; }
-		}
-	}
-	#endif
 }

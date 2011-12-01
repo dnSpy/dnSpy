@@ -9,6 +9,7 @@
 //
 // Copyright 2001, 2002 Ximian, Inc (http://www.ximian.com)
 // Copyright 2003-2008 Novell, Inc.
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -598,6 +599,10 @@ namespace Mono.CSharp {
 
 					if (!TypeSpecComparer.Override.IsEqual (mi.ReturnType, base_method.ReturnType))
 						return false;
+
+					if (mi.IsGeneric && !Method.CheckImplementingMethodConstraints (container, base_method, mi)) {
+						return true;
+					}
 				}
 
 				if (base_method != null) {
@@ -686,7 +691,7 @@ namespace Mono.CSharp {
 							if (candidate.IsStatic) {
 								Report.Error (736, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' is static",
-									container.GetSignatureForError (), mi.GetSignatureForError (), TypeManager.CSharpSignature (candidate));
+									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError ());
 							} else if ((candidate.Modifiers & Modifiers.PUBLIC) == 0) {
 								Report.Error (737, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' in not public",
@@ -694,8 +699,8 @@ namespace Mono.CSharp {
 							} else {
 								Report.Error (738, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not match interface member return type `{4}'",
-									container.GetSignatureForError (), mi.GetSignatureForError (), TypeManager.CSharpSignature (candidate),
-									TypeManager.CSharpName (candidate.ReturnType), TypeManager.CSharpName (mi.ReturnType));
+									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError (),
+									candidate.ReturnType.GetSignatureForError (), mi.ReturnType.GetSignatureForError ());
 							}
 						} else {
 							Report.Error (535, container.Location, "`{0}' does not implement interface member `{1}'",

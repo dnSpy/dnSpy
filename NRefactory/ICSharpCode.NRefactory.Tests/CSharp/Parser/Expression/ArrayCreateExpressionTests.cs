@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
@@ -144,6 +145,18 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 							new AssignmentExpression(new IdentifierExpression("a"), new PrimitiveExpression(10))
 						}
 					}});
+		}
+		
+		[Test]
+		public void ArrayInitializerWithCommaAtEnd()
+		{
+			var ace = ParseUtilCSharp.ParseExpression<ArrayCreateExpression>("new [] { 1, }");
+			Assert.AreEqual(new Role[] {
+			                	AstNode.Roles.LBrace,
+			                	AstNode.Roles.Expression,
+			                	AstNode.Roles.Comma,
+			                	AstNode.Roles.RBrace
+			                }, ace.Initializer.Children.Select(c => c.Role).ToArray());
 		}
 	}
 }

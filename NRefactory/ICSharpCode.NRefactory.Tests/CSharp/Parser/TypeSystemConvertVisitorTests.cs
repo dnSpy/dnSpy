@@ -31,7 +31,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 		[TestFixtureSetUp]
 		public void FixtureSetUp()
 		{
-			testCasePC = ParseTestCase();
+			compilation = ParseTestCase().CreateCompilation();
 		}
 		
 		internal static IProjectContent ParseTestCase()
@@ -41,14 +41,14 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			CSharpParser parser = new CSharpParser();
 			CompilationUnit cu;
 			using (Stream s = typeof(TypeSystemTests).Assembly.GetManifestResourceStream(typeof(TypeSystemTests), fileName)) {
-				cu = parser.Parse(s);
+				cu = parser.Parse(s, fileName);
 			}
 			
-			var testCasePC = new SimpleProjectContent();
-			CSharpParsedFile parsedFile = new TypeSystemConvertVisitor(testCasePC, fileName).Convert(cu);
-			parsedFile.Freeze();
-			testCasePC.UpdateProjectContent(null, parsedFile);
-			return testCasePC;
+			var parsedFile = cu.ToTypeSystem();
+			return new CSharpProjectContent()
+				.UpdateProjectContent(null, parsedFile)
+				.AddAssemblyReferences(new[] { CecilLoaderTests.Mscorlib })
+				.SetAssemblyName(typeof(TypeSystemTests).Assembly.GetName().Name);
 		}
 	}
 	
@@ -62,7 +62,8 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			using (MemoryStream ms = new MemoryStream()) {
 				serializer.Serialize(ms, TypeSystemConvertVisitorTests.ParseTestCase());
 				ms.Position = 0;
-				testCasePC = (IProjectContent)serializer.Deserialize(ms);
+				var pc = (IProjectContent)serializer.Deserialize(ms);
+				compilation = pc.CreateCompilation();
 			}
 		}
 	}

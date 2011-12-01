@@ -25,13 +25,35 @@ using ICSharpCode.NRefactory.Semantics;
 namespace ICSharpCode.NRefactory.TypeSystem
 {
 	/// <summary>
+	/// Represents an unresolved attribute.
+	/// </summary>
+	#if WITH_CONTRACTS
+	[ContractClass(typeof(IUnresolvedAttributeContract))]
+	#endif
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+	public interface IUnresolvedAttribute
+	{
+		/// <summary>
+		/// Gets the code region of this attribute.
+		/// </summary>
+		DomRegion Region { get; }
+		
+		//ITypeReference AttributeType { get; }
+		
+		/// <summary>
+		/// Resolves the attribute.
+		/// </summary>
+		IAttribute CreateResolvedAttribute(ITypeResolveContext context);
+	}
+	
+	/// <summary>
 	/// Represents an attribute.
 	/// </summary>
 	#if WITH_CONTRACTS
 	[ContractClass(typeof(IAttributeContract))]
 	#endif
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-	public interface IAttribute : IFreezable
+	public interface IAttribute
 	{
 		/// <summary>
 		/// Gets the code region of this attribute.
@@ -41,23 +63,23 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets the type of the attribute.
 		/// </summary>
-		ITypeReference AttributeType { get; }
+		IType AttributeType { get; }
 		
 		/// <summary>
-		/// Gets the positional arguments passed to the attribute.
+		/// Gets the constructor being used.
+		/// This property may return null if no matching constructor was found.
 		/// </summary>
-		IList<ResolveResult> GetPositionalArguments(ITypeResolveContext context);
+		IMethod Constructor { get; }
+		
+		/// <summary>
+		/// Gets the positional arguments.
+		/// </summary>
+		IList<ResolveResult> PositionalArguments { get; }
 		
 		/// <summary>
 		/// Gets the named arguments passed to the attribute.
 		/// </summary>
-		IList<KeyValuePair<string, ResolveResult>> GetNamedArguments(ITypeResolveContext context);
-		
-		/// <summary>
-		/// Resolves the constructor method used for this attribute invocation.
-		/// Returns null if the constructor cannot be found.
-		/// </summary>
-		IMethod ResolveConstructor(ITypeResolveContext context);
+		IList<KeyValuePair<IMember, ResolveResult>> NamedArguments { get; }
 	}
 	
 	#if WITH_CONTRACTS

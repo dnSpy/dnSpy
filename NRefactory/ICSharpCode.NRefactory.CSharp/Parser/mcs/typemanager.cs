@@ -8,7 +8,8 @@
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
-// Copyright 2003-2008 Novell, Inc.
+// Copyright 2003-2011 Novell, Inc.
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -208,6 +209,7 @@ namespace Mono.CSharp
 		public readonly PredefinedType MethodBase;
 		public readonly PredefinedType MethodInfo;
 		public readonly PredefinedType ConstructorInfo;
+		public readonly PredefinedType MemberBinding;
 
 		//
 		// C# 4.0
@@ -256,6 +258,7 @@ namespace Mono.CSharp
 
 			Expression = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression");
 			ExpressionGeneric = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "Expression", 1);
+			MemberBinding = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "MemberBinding");
 			ParameterExpression = new PredefinedType (module, MemberKind.Class, "System.Linq.Expressions", "ParameterExpression");
 			FieldInfo = new PredefinedType (module, MemberKind.Class, "System.Reflection", "FieldInfo");
 			MethodBase = new PredefinedType (module, MemberKind.Class, "System.Reflection", "MethodBase");
@@ -379,14 +382,9 @@ namespace Mono.CSharp
 				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncVoidMethodBuilder.TypeSpec));
 
 			AsyncTaskMethodBuilderGenericSetResult = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
-				MemberFilter.Method ("SetResult", 0,
-					new ParametersImported (
-						new[] {
-								new ParameterData (null, Parameter.Modifier.NONE)
-							},
-						new[] {
-								new TypeParameterSpec (0, null, SpecialConstraint.None, Variance.None, null)
-							}, false), btypes.Void));
+				"SetResult", MemberKind.Method, () => new TypeSpec[] {
+						types.AsyncTaskMethodBuilderGeneric.TypeSpec.MemberDefinition.TypeParameters[0]
+				});
 
 			AsyncTaskMethodBuilderGenericSetException = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilderGeneric,
 				MemberFilter.Method ("SetException", 0,
@@ -701,8 +699,8 @@ namespace Mono.CSharp
 		T member;
 		TypeSpec declaring_type;
 		readonly PredefinedType declaring_type_predefined;
-		readonly PredefinedType[] parameters_predefined;
 		MemberFilter filter;
+		readonly Func<TypeSpec[]> filter_builder;
 
 		public PredefinedMember (ModuleContainer module, PredefinedType type, MemberFilter filter)
 		{
@@ -726,7 +724,24 @@ namespace Mono.CSharp
 		public PredefinedMember (ModuleContainer module, PredefinedType type, string name, MemberKind kind, params PredefinedType[] types)
 			: this (module, type, new MemberFilter (name, 0, kind, null, null))
 		{
-			parameters_predefined = types;
+			filter_builder = () => {
+				var ptypes = new TypeSpec[types.Length];
+				for (int i = 0; i < ptypes.Length; ++i) {
+					var p = types[i];
+					if (!p.Define ())
+						return null;
+
+					ptypes[i] = p.TypeSpec;
+				}
+
+				return ptypes;
+			};
+		}
+
+		public PredefinedMember (ModuleContainer module, PredefinedType type, string name, MemberKind kind, Func<TypeSpec[]> typesBuilder)
+			: this (module, type, new MemberFilter (name, 0, kind, null, null))
+		{
+			filter_builder = typesBuilder;
 		}
 
 		public PredefinedMember (ModuleContainer module, BuiltinTypeSpec type, string name, params TypeSpec[] types)
@@ -746,20 +761,14 @@ namespace Mono.CSharp
 				declaring_type = declaring_type_predefined.TypeSpec;
 			}
 
-			if (parameters_predefined != null) {
-				TypeSpec[] types = new TypeSpec [parameters_predefined.Length];
-				for (int i = 0; i < types.Length; ++i) {
-					var p = parameters_predefined [i];
-					if (!p.Define ())
-						return null;
-
-					types[i] = p.TypeSpec;
-				}
+			if (filter_builder != null) {
+				var types = filter_builder ();
 
 				if (filter.Kind == MemberKind.Field)
 					filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind, null, types [0]);
 				else
-					filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind, ParametersCompiled.CreateFullyResolved (types), filter.MemberType);
+					filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind,
+						ParametersCompiled.CreateFullyResolved (types), filter.MemberType);
 			}
 
 			member = MemberCache.FindMember (declaring_type, filter, BindingRestriction.DeclaredOnly) as T;
@@ -785,16 +794,9 @@ namespace Mono.CSharp
 					return null;
 			}
 
-			if (parameters_predefined != null) {
-				TypeSpec[] types = new TypeSpec[parameters_predefined.Length];
-				for (int i = 0; i < types.Length; ++i) {
-					var p = parameters_predefined[i];
-					types[i] = p.Resolve ();
-					if (types[i] == null)
-						return null;
-				}
-
-				filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind, ParametersCompiled.CreateFullyResolved (types), filter.MemberType);
+			if (filter_builder != null) {
+				filter = new MemberFilter (filter.Name, filter.Arity, filter.Kind,
+					ParametersCompiled.CreateFullyResolved (filter_builder ()), filter.MemberType);
 			}
 
 			string method_args = null;
@@ -842,43 +844,6 @@ namespace Mono.CSharp
 	{
 		return mb.GetSignatureForError ();
 	}
-
-	// Obsolete
-	public static bool IsDelegateType (TypeSpec t)
-	{
-		return t.IsDelegate;
-	}
-	
-	// Obsolete
-	public static bool IsEnumType (TypeSpec t)
-	{
-		return t.IsEnum;
-	}
-
-	//
-	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
-	//
-	public static bool IsUnmanagedType (TypeSpec t)
-	{
-		var ds = t.MemberDefinition as DeclSpace;
-		if (ds != null)
-			return ds.IsUnmanagedType ();
-
-		if (t.Kind == MemberKind.Void)
-			return true;
-
-		// Someone did the work of checking if the ElementType of t is unmanaged.  Let's not repeat it.
-		if (t.IsPointer)
-			return IsUnmanagedType (GetElementType (t));
-
-		if (!TypeSpec.IsValueType (t))
-			return false;
-
-		if (t.IsNested && t.DeclaringType.IsGenericOrParentIsGeneric)
-			return false;
-
-		return true;
-	}	
 		
 	public static bool IsFamilyAccessible (TypeSpec type, TypeSpec parent)
 	{
@@ -944,11 +909,11 @@ namespace Mono.CSharp
 	/// </summary>
 	public static bool VerifyUnmanaged (ModuleContainer rc, TypeSpec t, Location loc)
 	{
-		while (t.IsPointer)
-			t = GetElementType (t);
-
-		if (IsUnmanagedType (t))
+		if (t.IsUnmanaged)
 			return true;
+
+		while (t.IsPointer)
+			t = ((ElementTypeSpec) t).Element;
 
 		rc.Compiler.Report.SymbolRelatedToPreviousError (t);
 		rc.Compiler.Report.Error (208, loc,

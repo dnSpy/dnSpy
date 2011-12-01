@@ -83,7 +83,7 @@ namespace ICSharpCode.NRefactory.PatternMatching
 			return false;
 		}
 		
-		internal void Add(string groupName, INode node)
+		public void Add(string groupName, INode node)
 		{
 			if (groupName != null && node != null) {
 				results.Add(new KeyValuePair<string, INode>(groupName, node));

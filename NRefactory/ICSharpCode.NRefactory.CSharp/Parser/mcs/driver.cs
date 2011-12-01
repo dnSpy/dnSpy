@@ -9,6 +9,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004, 2005, 2006, 2007, 2008 Novell, Inc
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -434,7 +435,8 @@ namespace Mono.CSharp
 					var setting = cmd.ParseArguments (args);
 					if (setting == null || r.Errors > 0)
 						return null;
-
+					setting.Version = LanguageVersion.V_5;
+					
 					CompilerContext ctx = new CompilerContext (setting, r);
 					
 					var files = new List<CompilationSourceFile> ();
@@ -445,7 +447,7 @@ namespace Mono.CSharp
 					Location.Initialize (files);
 
 					// TODO: encoding from driver
-					SeekableStreamReader reader = new SeekableStreamReader (input, Encoding.Default);
+					SeekableStreamReader reader = new SeekableStreamReader (input, Encoding.UTF8);
 				
 					RootContext.ToplevelTypes = module;
 					

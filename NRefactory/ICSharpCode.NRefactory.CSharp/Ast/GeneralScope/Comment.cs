@@ -26,10 +26,24 @@
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public enum CommentType {
+	public enum CommentType 
+	{
+		/// <summary>
+		/// "//" comment
+		/// </summary>
 		SingleLine,
+		/// <summary>
+		/// "/* */" comment
+		/// </summary>
 		MultiLine,
-		Documentation
+		/// <summary>
+		/// "///" comment
+		/// </summary>
+		Documentation,
+		/// <summary>
+		/// Inactive code (code in non-taken "#if")
+		/// </summary>
+		InactiveCode
 	}
 	
 	public class Comment : AstNode, IRelocatable

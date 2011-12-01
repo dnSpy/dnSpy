@@ -83,7 +83,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			this.targetForResolveCalls = targetForResolveCalls;
 		}
 		
-		
 		ResolveVisitorNavigationMode IResolveVisitorNavigator.Scan(AstNode node)
 		{
 			return mode;

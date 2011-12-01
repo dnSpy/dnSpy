@@ -39,12 +39,6 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			protected set;
 		}
 
-		public virtual ITypeResolveContext TypeResolveContext {
-			get {
-				return null;
-			}
-		}
-		
 		public TextLocation Location {
 			get;
 			protected set;
@@ -62,12 +56,14 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		
 		public AstType CreateShortType (string ns, string typeName)
 		{
-			return CreateShortType (TypeResolveContext.GetTypeDefinition (ns, typeName, 0, StringComparer.Ordinal));
+			throw new NotImplementedException();
+			//return CreateShortType (TypeResolveContext.GetTypeDefinition (ns, typeName, 0, StringComparer.Ordinal));
 		}
 		
 		public virtual AstType CreateShortType (AstType fullType)
 		{
-			return CreateShortType (Resolve (fullType).Type.Resolve (TypeResolveContext));
+			throw new NotImplementedException();
+			//return CreateShortType (Resolve (fullType).Type.Resolve (TypeResolveContext));
 		}
 		
 //		public abstract IType GetDefinition (AstType resolvedType);
@@ -133,7 +129,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		#region ConvertTypes
 		public static ICSharpCode.NRefactory.CSharp.AstType ConvertToAstType (this IType type)
 		{
-			var builder = new TypeSystemAstBuilder (MinimalResolveContext.Instance);
+			var builder = new TypeSystemAstBuilder ();
 			return builder.ConvertType (type);
 		}
 		#endregion

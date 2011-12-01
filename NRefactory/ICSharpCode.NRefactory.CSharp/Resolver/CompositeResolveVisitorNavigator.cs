@@ -31,6 +31,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (navigators == null)
 				throw new ArgumentNullException("navigators");
 			this.navigators = navigators;
+			foreach (var n in navigators) {
+				if (n == null)
+					throw new ArgumentException("Array must not contain nulls.");
+			}
 		}
 		
 		public ResolveVisitorNavigationMode Scan(AstNode node)

@@ -22,7 +22,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 
@@ -58,7 +58,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		readonly ResolveResult targetResult;
 		readonly string methodName;
 		
-		public MethodGroupResolveResult(ResolveResult targetResult, string methodName, IList<MethodListWithDeclaringType> methods, IList<IType> typeArguments) : base(SharedTypes.UnknownType)
+		public MethodGroupResolveResult(ResolveResult targetResult, string methodName, IList<MethodListWithDeclaringType> methods, IList<IType> typeArguments) : base(SpecialType.UnknownType)
 		{
 			if (targetResult == null)
 				throw new ArgumentNullException("targetResult");
@@ -100,8 +100,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		}
 		
 		/// <summary>
-		/// Gets the methods that were found.
+		/// Gets the methods that were found, grouped by their declaring type.
 		/// This list does not include extension methods.
+		/// Base types come first in the list.
 		/// </summary>
 		public IEnumerable<MethodListWithDeclaringType> MethodsGroupedByDeclaringType {
 			get { return methodLists; }
@@ -120,9 +121,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// </summary>
 		internal List<List<IMethod>> extensionMethods;
 		
-		// Resolver+UsingScope are used to fetch extension methods on demand
+		// the resolver is used to fetch extension methods on demand
 		internal CSharpResolver resolver;
-		internal UsingScope usingScope;
 		
 		/// <summary>
 		/// Gets all candidate extension methods.
@@ -140,14 +140,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			if (resolver != null) {
 				Debug.Assert(extensionMethods == null);
-				UsingScope oldUsingScope = resolver.CurrentUsingScope;
 				try {
-					resolver.CurrentUsingScope = usingScope;
 					extensionMethods = resolver.GetExtensionMethods(this.TargetType, methodName, typeArguments);
 				} finally {
-					resolver.CurrentUsingScope = oldUsingScope;
 					resolver = null;
-					usingScope = null;
 				}
 			}
 			return extensionMethods ?? EmptyList<List<IMethod>>.Instance;
@@ -158,13 +154,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return string.Format("[{0} with {1} method(s)]", GetType().Name, this.Methods.Count());
 		}
 		
-		public OverloadResolution PerformOverloadResolution(ITypeResolveContext context, ResolveResult[] arguments, string[] argumentNames = null, bool allowExtensionMethods = true, bool allowExpandingParams = true, Conversions conversions = null)
+		public OverloadResolution PerformOverloadResolution(ICompilation compilation, ResolveResult[] arguments, string[] argumentNames = null, bool allowExtensionMethods = true, bool allowExpandingParams = true, Conversions conversions = null)
 		{
 			Log.WriteLine("Performing overload resolution for " + this);
 			Log.WriteCollection("  Arguments: ", arguments);
 			
 			var typeArgumentArray = this.TypeArguments.ToArray();
-			OverloadResolution or = new OverloadResolution(context, arguments, argumentNames, typeArgumentArray, conversions);
+			OverloadResolution or = new OverloadResolution(compilation, arguments, argumentNames, typeArgumentArray, conversions);
 			or.AllowExpandingParams = allowExpandingParams;
 			
 			or.AddMethodLists(methodLists);
@@ -184,7 +180,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 						extArgumentNames = new string[argumentNames.Length + 1];
 						argumentNames.CopyTo(extArgumentNames, 1);
 					}
-					var extOr = new OverloadResolution(context, extArguments, extArgumentNames, typeArgumentArray, conversions);
+					var extOr = new OverloadResolution(compilation, extArguments, extArgumentNames, typeArgumentArray, conversions);
 					extOr.AllowExpandingParams = allowExpandingParams;
 					extOr.IsExtensionMethodInvocation = true;
 					

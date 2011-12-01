@@ -25,15 +25,18 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents an array type.
 	/// </summary>
-	[Serializable]
-	public sealed class ArrayType : TypeWithElementType, ISupportsInterning
+	public sealed class ArrayType : TypeWithElementType
 	{
 		readonly int dimensions;
+		readonly ICompilation compilation;
 		
-		public ArrayType(IType elementType, int dimensions = 1) : base(elementType)
+		public ArrayType(ICompilation compilation, IType elementType, int dimensions = 1) : base(elementType)
 		{
+			if (compilation == null)
+				throw new ArgumentNullException("compilation");
 			if (dimensions <= 0)
 				throw new ArgumentOutOfRangeException("dimensions", dimensions, "dimensions must be positive");
+			this.compilation = compilation;
 			this.dimensions = dimensions;
 		}
 		
@@ -51,9 +54,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
-		public override bool? IsReferenceType(ITypeResolveContext context)
-		{
-			return true;
+		public override bool? IsReferenceType {
+			get { return true; }
 		}
 		
 		public override int GetHashCode()
@@ -67,40 +69,43 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return a != null && elementType.Equals(a.elementType) && a.dimensions == dimensions;
 		}
 		
-		static readonly GetClassTypeReference systemArray = new GetClassTypeReference("System", "Array", 0);
-		static readonly GetClassTypeReference listInterface = new GetClassTypeReference("System.Collections.Generic", "IList", 1);
-		
-		public override IEnumerable<IType> GetBaseTypes(ITypeResolveContext context)
+		public override ITypeReference ToTypeReference()
 		{
-			List<IType> baseTypes = new List<IType>();
-			IType t = systemArray.Resolve(context);
-			if (t != SharedTypes.UnknownType)
-				baseTypes.Add(t);
-			if (dimensions == 1) { // single-dimensional arrays implement IList<T>
-				ITypeDefinition def = listInterface.Resolve(context) as ITypeDefinition;
-				if (def != null)
-					baseTypes.Add(new ParameterizedType(def, new[] { elementType }));
+			return new ArrayTypeReference(elementType.ToTypeReference(), dimensions);
+		}
+		
+		public override IEnumerable<IType> DirectBaseTypes {
+			get {
+				List<IType> baseTypes = new List<IType>();
+				IType t = compilation.FindType(KnownTypeCode.Array);
+				if (t.Kind != TypeKind.Unknown)
+					baseTypes.Add(t);
+				if (dimensions == 1) { // single-dimensional arrays implement IList<T>
+					ITypeDefinition def = compilation.FindType(KnownTypeCode.IListOfT) as ITypeDefinition;
+					if (def != null)
+						baseTypes.Add(new ParameterizedType(def, new[] { elementType }));
+				}
+				return baseTypes;
 			}
-			return baseTypes;
 		}
 		
-		public override IEnumerable<IMethod> GetMethods(ITypeResolveContext context, Predicate<IMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		public override IEnumerable<IMethod> GetMethods(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			return systemArray.Resolve(context).GetMethods(context, filter, options);
+			return compilation.FindType(KnownTypeCode.Array).GetMethods(filter, options);
 		}
 		
-		static readonly DefaultParameter indexerParam = new DefaultParameter(KnownTypeReference.Int32, string.Empty);
+		//static readonly DefaultUnresolvedParameter indexerParam = new DefaultUnresolvedParameter(KnownTypeReference.Int32, string.Empty);
 		
-		public override IEnumerable<IProperty> GetProperties(ITypeResolveContext context, Predicate<IProperty> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		public override IEnumerable<IProperty> GetProperties(Predicate<IUnresolvedProperty> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			ITypeDefinition arrayDef = systemArray.Resolve(context) as ITypeDefinition;
+			ITypeDefinition arrayDef = compilation.FindType(KnownTypeCode.Array) as ITypeDefinition;
 			if (arrayDef != null) {
 				if ((options & GetMemberOptions.IgnoreInheritedMembers) == 0) {
-					foreach (IProperty p in arrayDef.GetProperties(context, filter, options)) {
+					foreach (IProperty p in arrayDef.GetProperties(filter, options)) {
 						yield return p;
 					}
 				}
-				DefaultProperty indexer = new DefaultProperty(arrayDef, "Items") {
+				/*DefaultUnresolvedProperty indexer = new DefaultUnresolvedProperty(arrayDef, "Items") {
 					EntityType = EntityType.Indexer,
 					ReturnType = elementType,
 					Accessibility = Accessibility.Public,
@@ -113,12 +118,12 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				}
 				indexer.Freeze();
 				if (filter == null || filter(indexer)) {
-					yield return indexer;
-				}
+					yield return indexer.CreateResolved(context);
+				}*/
 			}
 		}
 		
-		// Events, Fields: System.Array doesn't have any; so we can use the AbstractType default implementation
+		// NestedTypes, Events, Fields: System.Array doesn't have any; so we can use the AbstractType default implementation
 		// that simply returns an empty list
 		
 		public override IType AcceptVisitor(TypeVisitor visitor)
@@ -132,23 +137,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			if (e == elementType)
 				return this;
 			else
-				return new ArrayType(e, dimensions);
-		}
-		
-		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)
-		{
-			elementType = provider.Intern(elementType);
-		}
-		
-		int ISupportsInterning.GetHashCodeForInterning()
-		{
-			return elementType.GetHashCode() ^ dimensions;
-		}
-		
-		bool ISupportsInterning.EqualsForInterning(ISupportsInterning other)
-		{
-			ArrayType o = other as ArrayType;
-			return o != null && elementType == o.elementType && dimensions == o.dimensions;
+				return new ArrayType(compilation, e, dimensions);
 		}
 	}
 	
@@ -178,20 +167,12 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		
 		public IType Resolve(ITypeResolveContext context)
 		{
-			return new ArrayType(elementType.Resolve(context), dimensions);
+			return new ArrayType(context.Compilation, elementType.Resolve(context), dimensions);
 		}
 		
 		public override string ToString()
 		{
 			return elementType.ToString() + "[" + new string(',', dimensions - 1) + "]";
-		}
-		
-		public static ITypeReference Create(ITypeReference elementType, int dimensions)
-		{
-			if (elementType is IType)
-				return new ArrayType((IType)elementType, dimensions);
-			else
-				return new ArrayTypeReference(elementType, dimensions);
 		}
 		
 		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)

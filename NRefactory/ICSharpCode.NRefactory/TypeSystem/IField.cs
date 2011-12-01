@@ -24,15 +24,35 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents a field or constant.
 	/// </summary>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(IFieldContract))]
-	#endif
+	public interface IUnresolvedField : IUnresolvedMember
+	{
+		/// <summary>
+		/// Gets whether this field is readonly.
+		/// </summary>
+		bool IsReadOnly { get; }
+		
+		/// <summary>
+		/// Gets whether this field is volatile.
+		/// </summary>
+		bool IsVolatile { get; }
+		
+		/// <summary>
+		/// Gets whether this field is a constant (C#-like const).
+		/// </summary>
+		bool IsConst { get; }
+		
+		IConstantValue ConstantValue { get; }
+	}
+	
+	/// <summary>
+	/// Represents a field or constant.
+	/// </summary>
 	public interface IField : IMember, IVariable
 	{
 		/// <summary>
 		/// Gets the name of the field.
 		/// </summary>
-		new string Name { get; } // solve ambiguity between INamedElement.Name and IVariable.Name
+		new string Name { get; } // solve ambiguity between IMember.Name and IVariable.Name
 		
 		/// <summary>
 		/// Gets the region where the field is declared.
@@ -49,42 +69,4 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		bool IsVolatile { get; }
 	}
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(IField))]
-	abstract class IFieldContract : IMemberContract, IField
-	{
-		string IField.Name {
-			get {
-				Contract.Ensures(Contract.Result<string>() != null);
-				return null;
-			}
-		}
-		
-		bool IField.IsReadOnly {
-			get { return false; }
-		}
-		
-		bool IField.IsVolatile {
-			get { return false; }
-		}
-		
-		
-		string IVariable.Name {
-			get { return null;  }
-		}
-		
-		ITypeReference IVariable.Type {
-			get { return null; }
-		}
-		
-		bool IVariable.IsConst {
-			get { return false; }
-		}
-		
-		IConstantValue IVariable.ConstantValue {
-			get { return null; }
-		}
-	}
-	#endif
 }

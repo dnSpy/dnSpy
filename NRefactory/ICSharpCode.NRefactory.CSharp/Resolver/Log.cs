@@ -37,19 +37,19 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	{
 		const bool logEnabled = false;
 		
-//		[Conditional(logEnabled ? "DEBUG" : "LOG_DISABLED")]
+		[Conditional(logEnabled ? "DEBUG" : "LOG_DISABLED")]
 		internal static void WriteLine(string text)
 		{
 			Debug.WriteLine(text);
 		}
 		
-//		[Conditional(logEnabled ? "DEBUG" : "LOG_DISABLED")]
+		[Conditional(logEnabled ? "DEBUG" : "LOG_DISABLED")]
 		internal static void WriteLine(string format, params object[] args)
 		{
 			Debug.WriteLine(format, args);
 		}
 		
-//		[Conditional(logEnabled ? "DEBUG" : "LOG_DISABLED")]
+		[Conditional(logEnabled ? "DEBUG" : "LOG_DISABLED")]
 		internal static void WriteCollection<T>(string text, IEnumerable<T> lines)
 		{
 			#if DEBUG
@@ -65,13 +65,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			#endif
 		}
 		
-//		[Conditional(logEnabled ? "DEBUG" : "LOG_DISABLED")]
+		[Conditional(logEnabled ? "DEBUG" : "LOG_DISABLED")]
 		public static void Indent()
 		{
 			Debug.Indent();
 		}
 		
-//		[Conditional(logEnabled ? "DEBUG" : "LOG_DISABLED")]
+		[Conditional(logEnabled ? "DEBUG" : "LOG_DISABLED")]
 		public static void Unindent()
 		{
 			Debug.Unindent();

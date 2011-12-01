@@ -33,12 +33,7 @@ namespace ICSharpCode.NRefactory.Documentation
 		/// <summary>
 		/// Gets the ID string (C# 4.0 spec, §A.3.1) for the specified entity.
 		/// </summary>
-		/// <remarks>
-		/// The type resolve context is optional and is not needed for entities loaded from assemblies:
-		/// This method can get the ID string for any type reference produced by the CecilLoader without
-		/// having to resolve the type reference.
-		/// </remarks>
-		public static string GetIDString(IEntity entity, ITypeResolveContext context = null)
+		public static string GetIDString(IEntity entity)
 		{
 			StringBuilder b = new StringBuilder();
 			switch (entity.EntityType) {
@@ -75,13 +70,13 @@ namespace ICSharpCode.NRefactory.Documentation
 				var parameters = parameterizedMember.Parameters;
 				for (int i = 0; i < parameters.Count; i++) {
 					if (i > 0) b.Append(',');
-					AppendTypeName(b, parameters[i].Type, context);
+					AppendTypeName(b, parameters[i].Type);
 				}
 				b.Append(')');
 			}
 			if (member.EntityType == EntityType.Operator && (member.Name == "op_Implicit" || member.Name == "op_Explicit")) {
 				b.Append('~');
-				AppendTypeName(b, member.ReturnType, context);
+				AppendTypeName(b, member.ReturnType);
 			}
 			return b.ToString();
 		}
@@ -160,124 +155,6 @@ namespace ICSharpCode.NRefactory.Documentation
 					b.Append('`');
 					b.Append(tpc);
 				}
-			}
-		}
-		
-		static void AppendTypeName(StringBuilder b, ITypeReference type, ITypeResolveContext context)
-		{
-			IType resolvedType = type as IType;
-			if (resolvedType != null) {
-				AppendTypeName(b, resolvedType);
-				return;
-			}
-			KnownTypeReference knownType = type as KnownTypeReference;
-			if (knownType != null) {
-				if (!string.IsNullOrEmpty(knownType.Namespace)) {
-					b.Append(knownType.Namespace);
-					b.Append('.');
-				}
-				b.Append(knownType.Name);
-				return;
-			}
-			GetClassTypeReference gctr = type as GetClassTypeReference;
-			if (gctr != null) {
-				if (!string.IsNullOrEmpty(gctr.Namespace)) {
-					b.Append(gctr.Namespace);
-					b.Append('.');
-				}
-				b.Append(gctr.Name);
-				if (gctr.TypeParameterCount > 0) {
-					b.Append('`');
-					b.Append(gctr.TypeParameterCount);
-				}
-				return;
-			}
-			NestedTypeReference ntr = type as NestedTypeReference;
-			if (ntr != null) {
-				AppendTypeName(b, ntr.DeclaringTypeReference, context);
-				b.Append('.');
-				b.Append(ntr.Name);
-				if (ntr.AdditionalTypeParameterCount > 0) {
-					b.Append('`');
-					b.Append(ntr.AdditionalTypeParameterCount);
-				}
-				return;
-			}
-			ParameterizedTypeReference pt = type as ParameterizedTypeReference;
-			if (pt != null && IsGetClassTypeReference(pt.GenericType)) {
-				AppendParameterizedTypeName(b, pt.GenericType, pt.TypeArguments, context);
-				return;
-			}
-			ArrayTypeReference array = type as ArrayTypeReference;
-			if (array != null) {
-				AppendTypeName(b, array.ElementType, context);
-				b.Append('[');
-				if (array.Dimensions > 1) {
-					for (int i = 0; i < array.Dimensions; i++) {
-						if (i > 0) b.Append(',');
-						b.Append("0:");
-					}
-				}
-				b.Append(']');
-				return;
-			}
-			PointerTypeReference ptr = type as PointerTypeReference;
-			if (ptr != null) {
-				AppendTypeName(b, ptr.ElementType, context);
-				b.Append('*');
-				return;
-			}
-			ByReferenceTypeReference brtr = type as ByReferenceTypeReference;
-			if (brtr != null) {
-				AppendTypeName(b, brtr.ElementType, context);
-				b.Append('@');
-				return;
-			}
-			if (context == null)
-				b.Append('?');
-			else
-				AppendTypeName(b, type.Resolve(context));
-		}
-		
-		static bool IsGetClassTypeReference(ITypeReference type)
-		{
-			NestedTypeReference ntr;
-			while ((ntr = type as NestedTypeReference) != null)
-				type = ntr.DeclaringTypeReference;
-			return type is GetClassTypeReference;
-		}
-		
-		static int AppendParameterizedTypeName(StringBuilder b, ITypeReference type, IList<ITypeReference> typeArguments, ITypeResolveContext context)
-		{
-			GetClassTypeReference gctr = type as GetClassTypeReference;
-			if (gctr != null) {
-				if (!string.IsNullOrEmpty(gctr.Namespace)) {
-					b.Append(gctr.Namespace);
-					b.Append('.');
-				}
-				b.Append(gctr.Name);
-				if (gctr.TypeParameterCount > 0) {
-					b.Append('{');
-					for (int i = 0; i < gctr.TypeParameterCount && i < typeArguments.Count; i++) {
-						if (i > 0) b.Append(',');
-						AppendTypeName(b, typeArguments[i], context);
-					}
-					b.Append('}');
-				}
-				return gctr.TypeParameterCount;
-			} else {
-				NestedTypeReference ntr = (NestedTypeReference)type;
-				int outerTpc = AppendParameterizedTypeName(b, ntr.DeclaringTypeReference, typeArguments, context);
-				b.Append('.');
-				if (ntr.AdditionalTypeParameterCount > 0) {
-					b.Append('{');
-					for (int i = 0; i < ntr.AdditionalTypeParameterCount && i + outerTpc < typeArguments.Count; i++) {
-						if (i > 0) b.Append(',');
-						AppendTypeName(b, typeArguments[i + outerTpc], context);
-					}
-					b.Append('}');
-				}
-				return outerTpc + ntr.AdditionalTypeParameterCount;
 			}
 		}
 	}

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using NUnit.Framework;
@@ -52,72 +53,73 @@ namespace OtherNS {
 }
 ";
 		
-		SimpleProjectContent pc;
-		ITypeResolveContext ctx;
+		IProjectContent pc;
+		ICompilation compilation;
 		ITypeDefinition baseClass, derivedClass, nestedClass, systemClass;
 		CSharpParsedFile parsedFile;
 		
 		[SetUp]
 		public void SetUp()
 		{
-			pc = new SimpleProjectContent();
-			var cu = new CSharpParser().Parse(new StringReader(program));
-			parsedFile = new TypeSystemConvertVisitor(pc, "program.cs").Convert(cu);
-			pc.UpdateProjectContent(null, parsedFile);
+			pc = new CSharpProjectContent();
+			pc = pc.SetAssemblyName("MyAssembly");
+			parsedFile = new CSharpParser().Parse(new StringReader(program), "program.cs").ToTypeSystem();
+			pc = pc.UpdateProjectContent(null, parsedFile);
+			pc = pc.AddAssemblyReferences(new [] { CecilLoaderTests.Mscorlib });
 			
-			ctx = new CompositeTypeResolveContext(new[] { pc, CecilLoaderTests.Mscorlib });
+			compilation = pc.CreateCompilation();
 			
-			baseClass = pc.GetTypeDefinition(string.Empty, "Base", 1, StringComparer.Ordinal);
+			baseClass = compilation.RootNamespace.GetTypeDefinition("Base", 1);
 			nestedClass = baseClass.NestedTypes.Single();
-			derivedClass = pc.GetTypeDefinition(string.Empty, "Derived", 2, StringComparer.Ordinal);
-			systemClass = pc.GetTypeDefinition("NS", "System", 0, StringComparer.Ordinal);
+			derivedClass = compilation.RootNamespace.GetTypeDefinition("Derived", 2);
+			systemClass = compilation.FindType("NS.System, MyAssembly").GetDefinition();
 		}
 		
 		TypeSystemAstBuilder CreateBuilder(ITypeDefinition currentTypeDef = null)
 		{
+			UsingScope usingScope = currentTypeDef != null ? parsedFile.GetUsingScope(currentTypeDef.Region.Begin) : parsedFile.RootUsingScope;
 			return new TypeSystemAstBuilder(
-				new CSharpResolver(ctx) {
-					CurrentUsingScope = currentTypeDef != null ? parsedFile.GetUsingScope(currentTypeDef.Region.Begin) : parsedFile.RootUsingScope,
+				new CSharpResolver(compilation) {
+					CurrentUsingScope = usingScope.Resolve(compilation),
 					CurrentTypeDefinition = currentTypeDef
 				});
 		}
 		
-		string TypeToString(ITypeReference type, ITypeDefinition currentTypeDef = null)
+		string TypeToString(IType type, ITypeDefinition currentTypeDef = null)
 		{
 			var builder = CreateBuilder(currentTypeDef);
-			IType resolvedType = type.Resolve(ctx);
-			AstType node = builder.ConvertType(resolvedType);
+			AstType node = builder.ConvertType(type);
 			return node.ToString();
 		}
 		
 		[Test]
 		public void PrimitiveVoid()
 		{
-			Assert.AreEqual("void", TypeToString(KnownTypeReference.Void));
+			Assert.AreEqual("void", TypeToString(compilation.FindType(KnownTypeCode.Void)));
 		}
 		
 		[Test]
 		public void PrimitiveInt()
 		{
-			Assert.AreEqual("int", TypeToString(KnownTypeReference.Int32));
+			Assert.AreEqual("int", TypeToString(compilation.FindType(KnownTypeCode.Int32)));
 		}
 		
 		[Test]
 		public void PrimitiveDecimal()
 		{
-			Assert.AreEqual("decimal", TypeToString(KnownTypeReference.Decimal));
+			Assert.AreEqual("decimal", TypeToString(compilation.FindType(KnownTypeCode.Decimal)));
 		}
 		
 		[Test]
 		public void SystemType()
 		{
-			Assert.AreEqual("Type", TypeToString(KnownTypeReference.Type));
+			Assert.AreEqual("Type", TypeToString(compilation.FindType(KnownTypeCode.Type)));
 		}
 		
 		[Test]
 		public void ListOfNSSystem()
 		{
-			var type = new ParameterizedType(ctx.GetTypeDefinition(typeof(List<>)), new[] { systemClass });
+			var type = new ParameterizedType(compilation.FindType(typeof(List<>)).GetDefinition(), new[] { systemClass });
 			Assert.AreEqual("List<NS.System>", TypeToString(type));
 			Assert.AreEqual("List<System>", TypeToString(type, systemClass));
 		}
@@ -125,26 +127,26 @@ namespace OtherNS {
 		[Test]
 		public void NonGenericIEnumerable()
 		{
-			Assert.AreEqual("System.Collections.IEnumerable", TypeToString(typeof(IEnumerable).ToTypeReference()));
+			Assert.AreEqual("System.Collections.IEnumerable", TypeToString(compilation.FindType(typeof(IEnumerable))));
 		}
 		
 		[Test]
 		public void NonGenericIEnumerableWithSystemNamespaceCollision()
 		{
-			Assert.AreEqual("global::System.Collections.IEnumerable", TypeToString(typeof(IEnumerable).ToTypeReference(), systemClass));
+			Assert.AreEqual("global::System.Collections.IEnumerable", TypeToString(compilation.FindType(typeof(IEnumerable)), systemClass));
 		}
 		
 		[Test]
 		public void AliasedNamespace()
 		{
-			var type = typeof(System.Reflection.Assembly).ToTypeReference();
+			var type = compilation.FindType(typeof(System.Reflection.Assembly));
 			Assert.AreEqual("R.Assembly", TypeToString(type, systemClass));
 		}
 		
 		[Test]
 		public void AliasedType()
 		{
-			var type = new ParameterizedTypeReference(ctx.GetTypeDefinition(typeof(List<>)), new[] { KnownTypeReference.Char });
+			var type = new ParameterizedType(compilation.FindType(typeof(List<>)).GetDefinition(), new[] { compilation.FindType(KnownTypeCode.Char) });
 			Assert.AreEqual("List<char>", TypeToString(type));
 			Assert.AreEqual("L", TypeToString(type, systemClass));
 		}
@@ -159,7 +161,7 @@ namespace OtherNS {
 		[Test]
 		public void NestedType()
 		{
-			var type = new ParameterizedTypeReference(nestedClass, new[] { KnownTypeReference.Char, KnownTypeReference.String });
+			var type = new ParameterizedType(nestedClass, new[] { compilation.FindType(KnownTypeCode.Char), compilation.FindType(KnownTypeCode.String) });
 			Assert.AreEqual("Base<char>.Nested<string>", TypeToString(type));
 			Assert.AreEqual("Base<char>.Nested<string>", TypeToString(type, baseClass));
 			Assert.AreEqual("Base<char>.Nested<string>", TypeToString(type, nestedClass));
@@ -169,7 +171,7 @@ namespace OtherNS {
 		[Test]
 		public void NestedTypeInCurrentClass()
 		{
-			var type = new ParameterizedTypeReference(nestedClass, new[] { baseClass.TypeParameters[0], KnownTypeReference.String });
+			var type = new ParameterizedType(nestedClass, new[] { baseClass.TypeParameters[0], compilation.FindType(KnownTypeCode.String) });
 			Assert.AreEqual("Nested<string>", TypeToString(type, baseClass));
 			Assert.AreEqual("Nested<string>", TypeToString(type, nestedClass));
 		}
@@ -177,36 +179,36 @@ namespace OtherNS {
 		[Test]
 		public void NestedTypeInDerivedClass()
 		{
-			var type1 = new ParameterizedTypeReference(nestedClass, new[] { derivedClass.TypeParameters[0], KnownTypeReference.String });
+			var type1 = new ParameterizedType(nestedClass, new[] { derivedClass.TypeParameters[0], compilation.FindType(KnownTypeCode.String) });
 			Assert.AreEqual("Base<T>.Nested<string>", TypeToString(type1, derivedClass));
 			
-			var type2 = new ParameterizedTypeReference(nestedClass, new[] { derivedClass.TypeParameters[1], KnownTypeReference.String });
+			var type2 = new ParameterizedType(nestedClass, new[] { derivedClass.TypeParameters[1], compilation.FindType(KnownTypeCode.String) });
 			Assert.AreEqual("Nested<string>", TypeToString(type2, derivedClass));
 		}
 		
 		[Test]
 		public void MultidimensionalArray()
 		{
-			Assert.AreEqual("byte[][,]", TypeToString(typeof(byte[][,]).ToTypeReference()));
+			Assert.AreEqual("byte[][,]", TypeToString(compilation.FindType(typeof(byte[][,]))));
 		}
 		
 		[Test]
 		public void Pointer()
 		{
-			Assert.AreEqual("long*", TypeToString(typeof(long*).ToTypeReference()));
+			Assert.AreEqual("long*", TypeToString(compilation.FindType(typeof(long*))));
 		}
 		
 		[Test]
 		public void NullableType()
 		{
-			Assert.AreEqual("ulong?", TypeToString(typeof(ulong?).ToTypeReference()));
+			Assert.AreEqual("ulong?", TypeToString(compilation.FindType(typeof(ulong?))));
 		}
 		
 		[Test]
 		public void AmbiguousType()
 		{
-			Assert.AreEqual("System.Array", TypeToString(typeof(Array).ToTypeReference()));
-			Assert.AreEqual("OtherNS.Array", TypeToString(ctx.GetTypeDefinition("OtherNS", "Array", 0, StringComparer.Ordinal)));
+			Assert.AreEqual("System.Array", TypeToString(compilation.FindType(typeof(Array))));
+			Assert.AreEqual("OtherNS.Array", TypeToString(compilation.FindType("OtherNS.Array, MyAssembly")));
 		}
 	}
 }

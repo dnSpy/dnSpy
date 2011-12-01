@@ -3,12 +3,13 @@
 //
 // Authors: Miguel de Icaza (miguel@gnu.org)
 //          Martin Baulig (martin@ximian.com)
-//          Marek Safar (marek.safar@seznam.cz)
+//          Marek Safar (marek.safar@gmail.com)
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
-// Copyright 2004-2008 Novell, Inc
+// Copyright 2004-2011 Novell, Inc
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 
 using System;
@@ -1241,7 +1242,7 @@ namespace Mono.CSharp
 					if (iface_type == null)
 						continue;
 					
-					if (!spec.AddInterface (iface_type))
+					if (!spec.AddInterfaceDefined (iface_type))
 						continue;
 
 					TypeBuilder.AddInterfaceImplementation (iface_type.GetMetaInfo ());
@@ -1257,7 +1258,7 @@ namespace Mono.CSharp
 						var base_ifaces = new List<TypeSpec> (iface_type.Interfaces);
 						for (int i = 0; i < base_ifaces.Count; ++i) {
 							var ii_iface_type = base_ifaces[i];
-							if (spec.AddInterface (ii_iface_type)) {
+							if (spec.AddInterfaceDefined (ii_iface_type)) {
 								TypeBuilder.AddInterfaceImplementation (ii_iface_type.GetMetaInfo ());
 
 								if (ii_iface_type.Interfaces != null)
@@ -1575,7 +1576,9 @@ namespace Mono.CSharp
 								GetSignatureForError (), iface_type.GetSignatureForError ());
 							return false;
 						}
+					}
 
+					if (iface_type.IsGenericOrParentIsGeneric) {
 						if (spec.Interfaces != null) {
 							foreach (var prev_iface in iface_exprs) {
 								if (prev_iface == iface_type)
@@ -2593,12 +2596,6 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				Method method = m as Method;
-				if (method != null && method.ParameterInfo.HasExtensionMethodType) {
-					Report.Error (1105, m.Location, "`{0}': Extension methods must be declared static", m.GetSignatureForError ());
-					continue;
-				}
-
 				Report.Error (708, m.Location, "`{0}': cannot declare instance members in a static class", m.GetSignatureForError ());
 			}
 
@@ -2848,44 +2845,41 @@ namespace Mono.CSharp
 
 		public override bool IsUnmanagedType ()
 		{
-			if (fields == null)
-				return true;
-
 			if (has_unmanaged_check_done)
 				return is_unmanaged;
 
 			if (requires_delayed_unmanagedtype_check)
 				return true;
 
-			requires_delayed_unmanagedtype_check = true;
-
-			foreach (FieldBase f in fields) {
-				if (f.IsStatic)
-					continue;
-
-				// It can happen when recursive unmanaged types are defined
-				// struct S { S* s; }
-				TypeSpec mt = f.MemberType;
-				if (mt == null) {
-					return true;
-				}
-
-				while (mt.IsPointer)
-					mt = TypeManager.GetElementType (mt);
-
-				if (mt.IsGenericOrParentIsGeneric || mt.IsGenericParameter) {
-					has_unmanaged_check_done = true;
-					return false;
-				}
-
-				if (TypeManager.IsUnmanagedType (mt))
-					continue;
-
+			if (Parent != null && Parent.IsGeneric) {
 				has_unmanaged_check_done = true;
 				return false;
 			}
 
-			has_unmanaged_check_done = true;
+			if (fields != null) {
+				requires_delayed_unmanagedtype_check = true;
+
+				foreach (FieldBase f in fields) {
+					if (f.IsStatic)
+						continue;
+
+					// It can happen when recursive unmanaged types are defined
+					// struct S { S* s; }
+					TypeSpec mt = f.MemberType;
+					if (mt == null) {
+						return true;
+					}
+
+					if (mt.IsUnmanaged)
+						continue;
+
+					has_unmanaged_check_done = true;
+					return false;
+				}
+
+				has_unmanaged_check_done = true;
+			}
+
 			is_unmanaged = true;
 			return true;
 		}
@@ -3149,13 +3143,13 @@ namespace Mono.CSharp
 					if (OptAttributes == null || !OptAttributes.Contains (Module.PredefinedAttributes.Obsolete)) {
 						Report.SymbolRelatedToPreviousError (base_member);
 						Report.Warning (672, 1, Location, "Member `{0}' overrides obsolete member `{1}'. Add the Obsolete attribute to `{0}'",
-							GetSignatureForError (), TypeManager.GetFullNameSignature (base_member));
+							GetSignatureForError (), base_member.GetSignatureForError ());
 					}
 				} else {
 					if (OptAttributes != null && OptAttributes.Contains (Module.PredefinedAttributes.Obsolete)) {
 						Report.SymbolRelatedToPreviousError (base_member);
 						Report.Warning (809, 1, Location, "Obsolete member `{0}' overrides non-obsolete member `{1}'",
-							GetSignatureForError (), TypeManager.GetFullNameSignature (base_member));
+							GetSignatureForError (), base_member.GetSignatureForError ());
 					}
 				}
 
@@ -3598,13 +3592,22 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected bool IsTypePermitted ()
+		protected void IsTypePermitted ()
 		{
 			if (MemberType.IsSpecialRuntimeType) {
-				Report.Error (610, Location, "Field or property cannot be of type `{0}'", TypeManager.CSharpName (MemberType));
-				return false;
+				if (Parent is StateMachine) {
+					Report.Error (4012, Location,
+						"Parameters or local variables of type `{0}' cannot be declared in async methods or iterators",
+						MemberType.GetSignatureForError ());
+				} else if (Parent is HoistedStoreyClass) {
+					Report.Error (4013, Location,
+						"Local variables of type `{0}' cannot be used inside anonymous methods, lambda expressions or query expressions",
+						MemberType.GetSignatureForError ());
+				} else {
+					Report.Error (610, Location, 
+						"Field or property cannot be of type `{0}'", MemberType.GetSignatureForError ());
+				}
 			}
-			return true;
 		}
 
 		protected virtual bool CheckBase ()

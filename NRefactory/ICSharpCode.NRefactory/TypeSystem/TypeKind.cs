@@ -47,17 +47,17 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <see cref="KnownTypeReference.Void"/>
 		Void,
 		
-		/// <see cref="SharedTypes.UnknownType"/>
+		/// <see cref="SpecialType.UnknownType"/>
 		Unknown,
 		/// <summary>The type of the null literal.</summary>
-		/// <see cref="SharedTypes.NullType"/>
+		/// <see cref="SpecialType.NullType"/>
 		Null,
 		/// <summary>Type representing the C# 'dynamic' type.</summary>
-		/// <see cref="SharedTypes.DynamicType"/>
+		/// <see cref="SpecialType.Dynamic"/>
 		Dynamic,
 		/// <summary>Represents missing type arguments in partially parameterized types.</summary>
-		/// <see cref="SharedTypes.UnboundTypeArgument"/>
-		/// <see cref="IType.GetNestedTypes"/>
+		/// <see cref="SpecialType.UnboundTypeArgument"/>
+		/// <see cref="IType.GetNestedTypes(Predicate{ITypeDefinition}, GetMemberOptions)"/>
 		UnboundTypeArgument,
 		
 		/// <summary>The type is a type parameter.</summary>
@@ -73,6 +73,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>A managed reference type</summary>
 		/// <see cref="ByReferenceType"/>
 		ByReference,
+		/// <summary>An anonymous type</summary>
+		/// <see cref="AnonymousType"/>
+		Anonymous,
 		
 		/// <summary>Intersection of several types</summary>
 		/// <see cref="IntersectionType"/>

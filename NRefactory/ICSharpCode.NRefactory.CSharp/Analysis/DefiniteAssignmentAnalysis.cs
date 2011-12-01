@@ -81,56 +81,42 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			}
 		}
 		
-		readonly DerivedControlFlowGraphBuilder cfgBuilder = new DerivedControlFlowGraphBuilder();
 		readonly DefiniteAssignmentVisitor visitor = new DefiniteAssignmentVisitor();
 		readonly List<DefiniteAssignmentNode> allNodes = new List<DefiniteAssignmentNode>();
 		readonly Dictionary<Statement, DefiniteAssignmentNode> beginNodeDict = new Dictionary<Statement, DefiniteAssignmentNode>();
 		readonly Dictionary<Statement, DefiniteAssignmentNode> endNodeDict = new Dictionary<Statement, DefiniteAssignmentNode>();
 		readonly Dictionary<Statement, DefiniteAssignmentNode> conditionNodeDict = new Dictionary<Statement, DefiniteAssignmentNode>();
-		readonly ResolveVisitor resolveVisitor;
-		readonly CancellationToken cancellationToken;
+		readonly CSharpAstResolver resolver;
 		Dictionary<ControlFlowEdge, DefiniteAssignmentStatus> edgeStatus = new Dictionary<ControlFlowEdge, DefiniteAssignmentStatus>();
 		
 		string variableName;
 		List<IdentifierExpression> unassignedVariableUses = new List<IdentifierExpression>();
 		int analyzedRangeStart, analyzedRangeEnd;
+		CancellationToken analysisCancellationToken;
 		
 		Queue<DefiniteAssignmentNode> nodesWithModifiedInput = new Queue<DefiniteAssignmentNode>();
 		
-		public DefiniteAssignmentAnalysis(Statement rootStatement)
-			: this(rootStatement, null, CancellationToken.None)
-		{
-		}
-		
 		public DefiniteAssignmentAnalysis(Statement rootStatement, CancellationToken cancellationToken)
-			: this(rootStatement, null, cancellationToken)
+			: this(rootStatement,
+			       new CSharpAstResolver(new CSharpResolver(MinimalCorlib.Instance.CreateCompilation()), rootStatement),
+			       cancellationToken)
 		{
 		}
 		
-		public DefiniteAssignmentAnalysis(Statement rootStatement, ITypeResolveContext context)
-			: this(rootStatement, context, CancellationToken.None)
-		{
-		}
-		
-		public DefiniteAssignmentAnalysis(Statement rootStatement, ITypeResolveContext context, CancellationToken cancellationToken)
-			: this(rootStatement, new ResolveVisitor(new CSharpResolver(context ?? MinimalResolveContext.Instance, cancellationToken),
-			                                         null))
-		{
-		}
-		
-		public DefiniteAssignmentAnalysis(Statement rootStatement, ResolveVisitor resolveVisitor)
+		public DefiniteAssignmentAnalysis(Statement rootStatement, CSharpAstResolver resolver, CancellationToken cancellationToken)
 		{
 			if (rootStatement == null)
 				throw new ArgumentNullException("rootStatement");
-			if (resolveVisitor == null)
-				throw new ArgumentNullException("resolveVisitor");
-			this.resolveVisitor = resolveVisitor;
-			this.cancellationToken = resolveVisitor.CancellationToken;
+			if (resolver == null)
+				throw new ArgumentNullException("resolver");
+			this.resolver = resolver;
+			
 			visitor.analysis = this;
-			if (resolveVisitor.TypeResolveContext is MinimalResolveContext) {
+			DerivedControlFlowGraphBuilder cfgBuilder = new DerivedControlFlowGraphBuilder();
+			if (resolver.TypeResolveContext.Compilation.MainAssembly.UnresolvedAssembly is MinimalCorlib) {
 				cfgBuilder.EvaluateOnlyPrimitiveConstants = true;
 			}
-			allNodes.AddRange(cfgBuilder.BuildControlFlowGraph(rootStatement, resolveVisitor).Cast<DefiniteAssignmentNode>());
+			allNodes.AddRange(cfgBuilder.BuildControlFlowGraph(rootStatement, resolver, cancellationToken).Cast<DefiniteAssignmentNode>());
 			for (int i = 0; i < allNodes.Count; i++) {
 				DefiniteAssignmentNode node = allNodes[i];
 				node.Index = i; // assign numbers to the nodes
@@ -138,7 +124,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 					// Anonymous methods have separate control flow graphs, but we also need to analyze those.
 					// Iterate backwards so that anonymous methods are inserted in the correct order
 					for (AstNode child = node.NextStatement.LastChild; child != null; child = child.PrevSibling) {
-						InsertAnonymousMethods(i + 1, child);
+						InsertAnonymousMethods(i + 1, child, cfgBuilder, cancellationToken);
 					}
 				}
 				// Now register the node in the dictionaries:
@@ -159,25 +145,25 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			this.analyzedRangeEnd = allNodes.Count - 1;
 		}
 		
-		void InsertAnonymousMethods(int insertPos, AstNode node)
+		void InsertAnonymousMethods(int insertPos, AstNode node, ControlFlowGraphBuilder cfgBuilder, CancellationToken cancellationToken)
 		{
 			// Ignore any statements, as those have their own ControlFlowNode and get handled separately
 			if (node is Statement)
 				return;
 			AnonymousMethodExpression ame = node as AnonymousMethodExpression;
 			if (ame != null) {
-				allNodes.InsertRange(insertPos, cfgBuilder.BuildControlFlowGraph(ame.Body, resolveVisitor).Cast<DefiniteAssignmentNode>());
+				allNodes.InsertRange(insertPos, cfgBuilder.BuildControlFlowGraph(ame.Body, resolver, cancellationToken).Cast<DefiniteAssignmentNode>());
 				return;
 			}
 			LambdaExpression lambda = node as LambdaExpression;
 			if (lambda != null && lambda.Body is Statement) {
-				allNodes.InsertRange(insertPos, cfgBuilder.BuildControlFlowGraph((Statement)lambda.Body, resolveVisitor).Cast<DefiniteAssignmentNode>());
+				allNodes.InsertRange(insertPos, cfgBuilder.BuildControlFlowGraph((Statement)lambda.Body, resolver, cancellationToken).Cast<DefiniteAssignmentNode>());
 				return;
 			}
 			// Descend into child expressions
 			// Iterate backwards so that anonymous methods are inserted in the correct order
 			for (AstNode child = node.LastChild; child != null; child = child.PrevSibling) {
-				InsertAnonymousMethods(insertPos, child);
+				InsertAnonymousMethods(insertPos, child, cfgBuilder, cancellationToken);
 			}
 		}
 		
@@ -209,26 +195,32 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			this.analyzedRangeEnd = endIndex;
 		}
 		
-		public void Analyze(string variable, DefiniteAssignmentStatus initialStatus = DefiniteAssignmentStatus.PotentiallyAssigned)
+		public void Analyze(string variable, DefiniteAssignmentStatus initialStatus = DefiniteAssignmentStatus.PotentiallyAssigned, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			this.analysisCancellationToken = cancellationToken;
 			this.variableName = variable;
-			// Reset the status:
-			unassignedVariableUses.Clear();
-			foreach (DefiniteAssignmentNode node in allNodes) {
-				node.NodeStatus = DefiniteAssignmentStatus.CodeUnreachable;
-				foreach (ControlFlowEdge edge in node.Outgoing)
-					edgeStatus[edge] = DefiniteAssignmentStatus.CodeUnreachable;
-			}
-			
-			ChangeNodeStatus(allNodes[analyzedRangeStart], initialStatus);
-			// Iterate as long as the input status of some nodes is changing:
-			while (nodesWithModifiedInput.Count > 0) {
-				DefiniteAssignmentNode node = nodesWithModifiedInput.Dequeue();
-				DefiniteAssignmentStatus inputStatus = DefiniteAssignmentStatus.CodeUnreachable;
-				foreach (ControlFlowEdge edge in node.Incoming) {
-					inputStatus = MergeStatus(inputStatus, edgeStatus[edge]);
+			try {
+				// Reset the status:
+				unassignedVariableUses.Clear();
+				foreach (DefiniteAssignmentNode node in allNodes) {
+					node.NodeStatus = DefiniteAssignmentStatus.CodeUnreachable;
+					foreach (ControlFlowEdge edge in node.Outgoing)
+						edgeStatus[edge] = DefiniteAssignmentStatus.CodeUnreachable;
 				}
-				ChangeNodeStatus(node, inputStatus);
+				
+				ChangeNodeStatus(allNodes[analyzedRangeStart], initialStatus);
+				// Iterate as long as the input status of some nodes is changing:
+				while (nodesWithModifiedInput.Count > 0) {
+					DefiniteAssignmentNode node = nodesWithModifiedInput.Dequeue();
+					DefiniteAssignmentStatus inputStatus = DefiniteAssignmentStatus.CodeUnreachable;
+					foreach (ControlFlowEdge edge in node.Incoming) {
+						inputStatus = MergeStatus(inputStatus, edgeStatus[edge]);
+					}
+					ChangeNodeStatus(node, inputStatus);
+				}
+			} finally {
+				this.analysisCancellationToken = CancellationToken.None;
+				this.variableName = null;
 			}
 		}
 		
@@ -414,13 +406,9 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// Evaluates an expression.
 		/// </summary>
 		/// <returns>The constant value of the expression; or null if the expression is not a constant.</returns>
-		ConstantResolveResult EvaluateConstant(Expression expr)
+		ResolveResult EvaluateConstant(Expression expr)
 		{
-			if (resolveVisitor.TypeResolveContext is MinimalResolveContext) {
-				if (!(expr is PrimitiveExpression || expr is NullReferenceExpression))
-					return null;
-			}
-			return resolveVisitor.Resolve(expr) as ConstantResolveResult;
+			return resolver.Resolve(expr, analysisCancellationToken);
 		}
 		
 		/// <summary>
@@ -429,8 +417,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// <returns>The value of the constant boolean expression; or null if the value is not a constant boolean expression.</returns>
 		bool? EvaluateCondition(Expression expr)
 		{
-			ConstantResolveResult rr = EvaluateConstant(expr);
-			if (rr != null)
+			ResolveResult rr = EvaluateConstant(expr);
+			if (rr != null && rr.IsCompileTimeConstant)
 				return rr.ConstantValue as bool?;
 			else
 				return null;
@@ -457,6 +445,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				Debug.Assert(data == CleanSpecialValues(data));
 				DefiniteAssignmentStatus status = data;
 				foreach (AstNode child in node.Children) {
+					analysis.analysisCancellationToken.ThrowIfCancellationRequested();
+					
 					Debug.Assert(!(child is Statement)); // statements are visited with the CFG, not with the visitor pattern
 					status = child.AcceptVisitor(this, status);
 					status = CleanSpecialValues(status);
@@ -569,6 +559,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			}
 			#endregion
 			
+			#region Expressions
 			public override DefiniteAssignmentStatus VisitDirectionExpression(DirectionExpression directionExpression, DefiniteAssignmentStatus data)
 			{
 				if (directionExpression.FieldDirection == FieldDirection.Out) {
@@ -678,8 +669,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 						return DefiniteAssignmentStatus.PotentiallyAssigned;
 				} else if (binaryOperatorExpression.Operator == BinaryOperatorType.NullCoalescing) {
 					// C# 4.0 spec: §5.3.3.27 Definite assignment for ?? expressions
-					ConstantResolveResult crr = analysis.EvaluateConstant(binaryOperatorExpression.Left);
-					if (crr != null && crr.ConstantValue == null)
+					ResolveResult crr = analysis.EvaluateConstant(binaryOperatorExpression.Left);
+					if (crr != null && crr.IsCompileTimeConstant && crr.ConstantValue == null)
 						return binaryOperatorExpression.Right.AcceptVisitor(this, data);
 					DefiniteAssignmentStatus status = CleanSpecialValues(binaryOperatorExpression.Left.AcceptVisitor(this, data));
 					binaryOperatorExpression.Right.AcceptVisitor(this, status);
@@ -763,6 +754,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				}
 				return data;
 			}
+			#endregion
 		}
 	}
 }

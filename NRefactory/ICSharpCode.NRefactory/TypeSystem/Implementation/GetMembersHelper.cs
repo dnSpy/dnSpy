@@ -35,21 +35,21 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	static class GetMembersHelper
 	{
 		#region GetNestedTypes
-		public static IEnumerable<IType> GetNestedTypes(IType type, ITypeResolveContext context, Predicate<ITypeDefinition> filter, GetMemberOptions options)
+		public static IEnumerable<IType> GetNestedTypes(IType type, Predicate<ITypeDefinition> filter, GetMemberOptions options)
 		{
-			return GetNestedTypes(type, null, context, filter, options);
+			return GetNestedTypes(type, null, filter, options);
 		}
 		
-		public static IEnumerable<IType> GetNestedTypes(IType type, IList<IType> nestedTypeArguments, ITypeResolveContext context, Predicate<ITypeDefinition> filter, GetMemberOptions options)
+		public static IEnumerable<IType> GetNestedTypes(IType type, IList<IType> nestedTypeArguments, Predicate<ITypeDefinition> filter, GetMemberOptions options)
 		{
 			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers) {
-				return GetNestedTypesImpl(type, nestedTypeArguments, context, filter, options);
+				return GetNestedTypesImpl(type, nestedTypeArguments, filter, options);
 			} else {
-				return type.GetNonInterfaceBaseTypes(context).SelectMany(t => GetNestedTypesImpl(t, nestedTypeArguments, context, filter, options));
+				return type.GetNonInterfaceBaseTypes().SelectMany(t => GetNestedTypesImpl(t, nestedTypeArguments, filter, options));
 			}
 		}
 		
-		static IEnumerable<IType> GetNestedTypesImpl(IType outerType, IList<IType> nestedTypeArguments, ITypeResolveContext context, Predicate<ITypeDefinition> filter, GetMemberOptions options)
+		static IEnumerable<IType> GetNestedTypesImpl(IType outerType, IList<IType> nestedTypeArguments, Predicate<ITypeDefinition> filter, GetMemberOptions options)
 		{
 			ITypeDefinition outerTypeDef = outerType.GetDefinition();
 			if (outerTypeDef == null)
@@ -66,12 +66,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				if (!(filter == null || filter(nestedType)))
 					continue;
 				
-				if ((options & GetMemberOptions.ReturnMemberDefinitions) == GetMemberOptions.ReturnMemberDefinitions) {
-					yield return nestedType;
-				} else if (totalTypeParameterCount == 0 || (pt == null && totalTypeParameterCount == outerTypeParameterCount)) {
-					// The nested type has no new type parameters, and there are no type arguments
-					// to copy from the outer type
-					// -> we can directly return the nested type definition
+				if (totalTypeParameterCount == 0 || (options & GetMemberOptions.ReturnMemberDefinitions) == GetMemberOptions.ReturnMemberDefinitions) {
 					yield return nestedType;
 				} else {
 					// We need to parameterize the nested type
@@ -83,7 +78,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 						if (nestedTypeArguments != null)
 							newTypeArguments[i] = nestedTypeArguments[i - outerTypeParameterCount];
 						else
-							newTypeArguments[i] = SharedTypes.UnboundTypeArgument;
+							newTypeArguments[i] = SpecialType.UnboundTypeArgument;
 					}
 					yield return new ParameterizedType(nestedType, newTypeArguments);
 				}
@@ -92,34 +87,34 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		#endregion
 		
 		#region GetMethods
-		public static IEnumerable<IMethod> GetMethods(IType type, ITypeResolveContext context, Predicate<IMethod> filter, GetMemberOptions options)
+		public static IEnumerable<IMethod> GetMethods(IType type, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
 		{
-			return GetMethods(type, null, context, filter, options);
+			return GetMethods(type, null, filter, options);
 		}
 		
-		public static IEnumerable<IMethod> GetMethods(IType type, IList<IType> typeArguments, ITypeResolveContext context, Predicate<IMethod> filter, GetMemberOptions options)
+		public static IEnumerable<IMethod> GetMethods(IType type, IList<IType> typeArguments, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
 		{
 			if (typeArguments != null && typeArguments.Count > 0) {
 				filter = FilterTypeParameterCount(typeArguments.Count).And(filter);
 			}
 			
 			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers) {
-				return GetMethodsImpl(type, typeArguments, context, filter, options);
+				return GetMethodsImpl(type, typeArguments, filter, options);
 			} else {
-				return type.GetNonInterfaceBaseTypes(context).SelectMany(t => GetMethodsImpl(t, typeArguments, context, filter, options));
+				return type.GetNonInterfaceBaseTypes().SelectMany(t => GetMethodsImpl(t, typeArguments, filter, options));
 			}
 		}
 		
-		static Predicate<IMethod> FilterTypeParameterCount(int expectedTypeParameterCount)
+		static Predicate<IUnresolvedMethod> FilterTypeParameterCount(int expectedTypeParameterCount)
 		{
 			return m => m.TypeParameters.Count == expectedTypeParameterCount;
 		}
 		
 		const GetMemberOptions declaredMembers = GetMemberOptions.IgnoreInheritedMembers | GetMemberOptions.ReturnMemberDefinitions;
 		
-		static IEnumerable<IMethod> GetMethodsImpl(IType baseType, IList<IType> methodTypeArguments, ITypeResolveContext context, Predicate<IMethod> filter, GetMemberOptions options)
+		static IEnumerable<IMethod> GetMethodsImpl(IType baseType, IList<IType> methodTypeArguments, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
 		{
-			IEnumerable<IMethod> declaredMethods = baseType.GetMethods(context, filter, options | declaredMembers);
+			IEnumerable<IMethod> declaredMethods = baseType.GetMethods(filter, options | declaredMembers);
 			
 			ParameterizedType pt = baseType as ParameterizedType;
 			if ((options & GetMemberOptions.ReturnMemberDefinitions) == 0
@@ -137,7 +132,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 						else
 							substitution = new TypeParameterSubstitution(null, methodTypeArguments);
 					}
-					yield return new SpecializedMethod(baseType, m, methodTypeArguments, substitution, context);
+					yield return new SpecializedMethod(baseType, m, methodTypeArguments, substitution);
 				}
 			} else {
 				foreach (IMethod m in declaredMethods) {
@@ -148,18 +143,18 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		#endregion
 		
 		#region GetConstructors
-		public static IEnumerable<IMethod> GetConstructors(IType type, ITypeResolveContext context, Predicate<IMethod> filter, GetMemberOptions options)
+		public static IEnumerable<IMethod> GetConstructors(IType type, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
 		{
 			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers) {
-				return GetConstructorsImpl(type, context, filter, options);
+				return GetConstructorsImpl(type, filter, options);
 			} else {
-				return type.GetNonInterfaceBaseTypes(context).SelectMany(t => GetConstructorsImpl(t, context, filter, options));
+				return type.GetNonInterfaceBaseTypes().SelectMany(t => GetConstructorsImpl(t, filter, options));
 			}
 		}
 		
-		static IEnumerable<IMethod> GetConstructorsImpl(IType baseType, ITypeResolveContext context, Predicate<IMethod> filter, GetMemberOptions options)
+		static IEnumerable<IMethod> GetConstructorsImpl(IType baseType, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
 		{
-			IEnumerable<IMethod> declaredCtors = baseType.GetConstructors(context, filter, options | declaredMembers);
+			IEnumerable<IMethod> declaredCtors = baseType.GetConstructors(filter, options | declaredMembers);
 			if ((options & GetMemberOptions.ReturnMemberDefinitions) == GetMemberOptions.ReturnMemberDefinitions) {
 				return declaredCtors;
 			}
@@ -167,7 +162,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			ParameterizedType pt = baseType as ParameterizedType;
 			if (pt != null) {
 				var substitution = pt.GetSubstitution();
-				return declaredCtors.Select(m => new SpecializedMethod(pt, m, null, substitution, context));
+				return declaredCtors.Select(m => new SpecializedMethod(pt, m, null, substitution));
 			} else {
 				return declaredCtors;
 			}
@@ -175,18 +170,18 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		#endregion
 		
 		#region GetProperties
-		public static IEnumerable<IProperty> GetProperties(IType type, ITypeResolveContext context, Predicate<IProperty> filter, GetMemberOptions options)
+		public static IEnumerable<IProperty> GetProperties(IType type, Predicate<IUnresolvedProperty> filter, GetMemberOptions options)
 		{
 			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers) {
-				return GetPropertiesImpl(type, context, filter, options);
+				return GetPropertiesImpl(type, filter, options);
 			} else {
-				return type.GetNonInterfaceBaseTypes(context).SelectMany(t => GetPropertiesImpl(t, context, filter, options));
+				return type.GetNonInterfaceBaseTypes().SelectMany(t => GetPropertiesImpl(t, filter, options));
 			}
 		}
 		
-		static IEnumerable<IProperty> GetPropertiesImpl(IType baseType, ITypeResolveContext context, Predicate<IProperty> filter, GetMemberOptions options)
+		static IEnumerable<IProperty> GetPropertiesImpl(IType baseType, Predicate<IUnresolvedProperty> filter, GetMemberOptions options)
 		{
-			IEnumerable<IProperty> declaredProperties = baseType.GetProperties(context, filter, options | declaredMembers);
+			IEnumerable<IProperty> declaredProperties = baseType.GetProperties(filter, options | declaredMembers);
 			if ((options & GetMemberOptions.ReturnMemberDefinitions) == GetMemberOptions.ReturnMemberDefinitions) {
 				return declaredProperties;
 			}
@@ -194,7 +189,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			ParameterizedType pt = baseType as ParameterizedType;
 			if (pt != null) {
 				var substitution = pt.GetSubstitution();
-				return declaredProperties.Select(m => new SpecializedProperty(pt, m, substitution, context));
+				return declaredProperties.Select(m => new SpecializedProperty(pt, m, substitution));
 			} else {
 				return declaredProperties;
 			}
@@ -202,18 +197,18 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		#endregion
 		
 		#region GetFields
-		public static IEnumerable<IField> GetFields(IType type, ITypeResolveContext context, Predicate<IField> filter, GetMemberOptions options)
+		public static IEnumerable<IField> GetFields(IType type, Predicate<IUnresolvedField> filter, GetMemberOptions options)
 		{
 			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers) {
-				return GetFieldsImpl(type, context, filter, options);
+				return GetFieldsImpl(type, filter, options);
 			} else {
-				return type.GetNonInterfaceBaseTypes(context).SelectMany(t => GetFieldsImpl(t, context, filter, options));
+				return type.GetNonInterfaceBaseTypes().SelectMany(t => GetFieldsImpl(t, filter, options));
 			}
 		}
 		
-		static IEnumerable<IField> GetFieldsImpl(IType baseType, ITypeResolveContext context, Predicate<IField> filter, GetMemberOptions options)
+		static IEnumerable<IField> GetFieldsImpl(IType baseType, Predicate<IUnresolvedField> filter, GetMemberOptions options)
 		{
-			IEnumerable<IField> declaredFields = baseType.GetFields(context, filter, options | declaredMembers);
+			IEnumerable<IField> declaredFields = baseType.GetFields(filter, options | declaredMembers);
 			if ((options & GetMemberOptions.ReturnMemberDefinitions) == GetMemberOptions.ReturnMemberDefinitions) {
 				return declaredFields;
 			}
@@ -221,7 +216,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			ParameterizedType pt = baseType as ParameterizedType;
 			if (pt != null) {
 				var substitution = pt.GetSubstitution();
-				return declaredFields.Select(m => new SpecializedField(pt, m, substitution, context));
+				return declaredFields.Select(m => new SpecializedField(pt, m, substitution));
 			} else {
 				return declaredFields;
 			}
@@ -229,18 +224,18 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		#endregion
 		
 		#region GetEvents
-		public static IEnumerable<IEvent> GetEvents(IType type, ITypeResolveContext context, Predicate<IEvent> filter, GetMemberOptions options)
+		public static IEnumerable<IEvent> GetEvents(IType type, Predicate<IUnresolvedEvent> filter, GetMemberOptions options)
 		{
 			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers) {
-				return GetEventsImpl(type, context, filter, options);
+				return GetEventsImpl(type, filter, options);
 			} else {
-				return type.GetNonInterfaceBaseTypes(context).SelectMany(t => GetEventsImpl(t, context, filter, options));
+				return type.GetNonInterfaceBaseTypes().SelectMany(t => GetEventsImpl(t, filter, options));
 			}
 		}
 		
-		static IEnumerable<IEvent> GetEventsImpl(IType baseType, ITypeResolveContext context, Predicate<IEvent> filter, GetMemberOptions options)
+		static IEnumerable<IEvent> GetEventsImpl(IType baseType, Predicate<IUnresolvedEvent> filter, GetMemberOptions options)
 		{
-			IEnumerable<IEvent> declaredEvents = baseType.GetEvents(context, filter, options | declaredMembers);
+			IEnumerable<IEvent> declaredEvents = baseType.GetEvents(filter, options | declaredMembers);
 			if ((options & GetMemberOptions.ReturnMemberDefinitions) == GetMemberOptions.ReturnMemberDefinitions) {
 				return declaredEvents;
 			}
@@ -248,7 +243,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			ParameterizedType pt = baseType as ParameterizedType;
 			if (pt != null) {
 				var substitution = pt.GetSubstitution();
-				return declaredEvents.Select(m => new SpecializedEvent(pt, m, substitution, context));
+				return declaredEvents.Select(m => new SpecializedEvent(pt, m, substitution));
 			} else {
 				return declaredEvents;
 			}
@@ -256,24 +251,24 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		#endregion
 		
 		#region GetMembers
-		public static IEnumerable<IMember> GetMembers(IType type, ITypeResolveContext context, Predicate<IMember> filter, GetMemberOptions options)
+		public static IEnumerable<IMember> GetMembers(IType type, Predicate<IUnresolvedMember> filter, GetMemberOptions options)
 		{
 			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers) {
-				return GetMembersImpl(type, context, filter, options);
+				return GetMembersImpl(type, filter, options);
 			} else {
-				return type.GetNonInterfaceBaseTypes(context).SelectMany(t => GetMembersImpl(t, context, filter, options));
+				return type.GetNonInterfaceBaseTypes().SelectMany(t => GetMembersImpl(t, filter, options));
 			}
 		}
 		
-		static IEnumerable<IMember> GetMembersImpl(IType baseType, ITypeResolveContext context, Predicate<IMember> filter, GetMemberOptions options)
+		static IEnumerable<IMember> GetMembersImpl(IType baseType, Predicate<IUnresolvedMember> filter, GetMemberOptions options)
 		{
-			foreach (var m in GetMethodsImpl(baseType, null, context, filter, options))
+			foreach (var m in GetMethodsImpl(baseType, null, filter, options))
 				yield return m;
-			foreach (var m in GetPropertiesImpl(baseType, context, filter, options))
+			foreach (var m in GetPropertiesImpl(baseType, filter, options))
 				yield return m;
-			foreach (var m in GetFieldsImpl(baseType, context, filter, options))
+			foreach (var m in GetFieldsImpl(baseType, filter, options))
 				yield return m;
-			foreach (var m in GetEventsImpl(baseType, context, filter, options))
+			foreach (var m in GetEventsImpl(baseType, filter, options))
 				yield return m;
 		}
 		#endregion

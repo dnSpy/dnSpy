@@ -24,13 +24,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents a single file that was parsed.
 	/// </summary>
-	public interface IParsedFile : IFreezable
+	public interface IParsedFile
 	{
-		/// <summary>
-		/// Gets the parent project content.
-		/// </summary>
-		IProjectContent ProjectContent { get; }
-		
 		/// <summary>
 		/// Returns the full path of the file.
 		/// </summary>
@@ -44,35 +39,35 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets all top-level type definitions.
 		/// </summary>
-		IList<ITypeDefinition> TopLevelTypeDefinitions { get; }
+		IList<IUnresolvedTypeDefinition> TopLevelTypeDefinitions { get; }
 		
 		/// <summary>
 		/// Gets all assembly attributes that are defined in this file.
 		/// </summary>
-		IList<IAttribute> AssemblyAttributes { get; }
+		IList<IUnresolvedAttribute> AssemblyAttributes { get; }
 		
 		/// <summary>
 		/// Gets all module attributes that are defined in this file.
 		/// </summary>
-		IList<IAttribute> ModuleAttributes { get; }
+		IList<IUnresolvedAttribute> ModuleAttributes { get; }
 		
 		/// <summary>
 		/// Gets the top-level type defined at the specified location.
 		/// Returns null if no type is defined at that location.
 		/// </summary>
-		ITypeDefinition GetTopLevelTypeDefinition(TextLocation location);
+		IUnresolvedTypeDefinition GetTopLevelTypeDefinition(TextLocation location);
 		
 		/// <summary>
 		/// Gets the type (potentially a nested type) defined at the specified location.
 		/// Returns null if no type is defined at that location.
 		/// </summary>
-		ITypeDefinition GetInnermostTypeDefinition(TextLocation location);
+		IUnresolvedTypeDefinition GetInnermostTypeDefinition(TextLocation location);
 		
 		/// <summary>
 		/// Gets the member defined at the specified location.
 		/// Returns null if no member is defined at that location.
 		/// </summary>
-		IMember GetMember(TextLocation location);
+		IUnresolvedMember GetMember(TextLocation location);
 		
 		/// <summary>
 		/// Gets the parser errors.

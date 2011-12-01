@@ -20,6 +20,7 @@
     <AssemblyOriginatorKeyFile>..\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
+    <DocumentationFile>bin\Release\ICSharpCode.NRefactory.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,7 +34,6 @@
     <Optimize>False</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -42,13 +42,15 @@
     <Optimize>True</Optimize>
     <DefineConstants>TRACE</DefineConstants>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <WarningLevel>4</WarningLevel>
+    <DebugType>Full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -66,6 +68,7 @@
     <Compile Include="Editor\ReadOnlyDocument.cs" />
     <Compile Include="Editor\StringTextSource.cs" />
     <Compile Include="Editor\TextChangeEventArgs.cs" />
+    <Compile Include="IAnnotatable.cs" />
     <Compile Include="PatternMatching\BacktrackingInfo.cs" />
     <Compile Include="PatternMatching\Choice.cs" />
     <Compile Include="PatternMatching\AnyNode.cs" />
@@ -84,16 +87,20 @@
     <Compile Include="Semantics\ArrayCreateResolveResult.cs" />
     <Compile Include="Semantics\ByReferenceResolveResult.cs" />
     <Compile Include="Semantics\ConstantResolveResult.cs" />
+    <Compile Include="Semantics\ErrorResolveResult.cs" />
     <Compile Include="Semantics\InvocationResolveResult.cs" />
     <Compile Include="Semantics\LocalResolveResult.cs" />
     <Compile Include="Semantics\MemberResolveResult.cs" />
     <Compile Include="Semantics\NamespaceResolveResult.cs" />
+    <Compile Include="Semantics\OperatorResolveResult.cs" />
     <Compile Include="Semantics\ResolveResult.cs" />
+    <Compile Include="Semantics\ThisResolveResult.cs" />
     <Compile Include="Semantics\TypeOfResolveResult.cs" />
     <Compile Include="Semantics\TypeResolveResult.cs" />
     <Compile Include="Semantics\UnknownMemberResolveResult.cs" />
     <Compile Include="TextLocation.cs" />
     <Compile Include="TypeSystem\Accessibility.cs" />
+    <Compile Include="TypeSystem\AnonymousType.cs" />
     <Compile Include="TypeSystem\ArrayType.cs" />
     <Compile Include="TypeSystem\ByReferenceType.cs" />
     <Compile Include="TypeSystem\CecilLoader.cs" />
@@ -101,65 +108,85 @@
     <Compile Include="TypeSystem\EntityType.cs" />
     <Compile Include="TypeSystem\ExtensionMethods.cs" />
     <Compile Include="TypeSystem\IAccessor.cs" />
+    <Compile Include="TypeSystem\IAmbience.cs" />
+    <Compile Include="TypeSystem\IAssembly.cs" />
     <Compile Include="TypeSystem\IAttribute.cs" />
+    <Compile Include="TypeSystem\ICompilation.cs" />
     <Compile Include="TypeSystem\IConstantValue.cs" />
     <Compile Include="TypeSystem\IDocumentationProvider.cs" />
     <Compile Include="TypeSystem\IEntity.cs" />
     <Compile Include="TypeSystem\IEvent.cs" />
-    <Compile Include="TypeSystem\IExplicitInterfaceImplementation.cs" />
     <Compile Include="TypeSystem\IField.cs" />
     <Compile Include="TypeSystem\IFreezable.cs" />
     <Compile Include="TypeSystem\IInterningProvider.cs" />
     <Compile Include="TypeSystem\IMember.cs" />
     <Compile Include="TypeSystem\IMethod.cs" />
     <Compile Include="TypeSystem\Implementation\AbstractFreezable.cs" />
-    <Compile Include="TypeSystem\Implementation\AbstractMember.cs" />
+    <Compile Include="TypeSystem\Implementation\AbstractResolvedEntity.cs" />
+    <Compile Include="TypeSystem\Implementation\AbstractResolvedMember.cs" />
+    <Compile Include="TypeSystem\Implementation\AbstractResolvedTypeParameter.cs" />
     <Compile Include="TypeSystem\Implementation\AbstractType.cs" />
+    <Compile Include="TypeSystem\Implementation\AbstractUnresolvedEntity.cs" />
+    <Compile Include="TypeSystem\Implementation\AbstractUnresolvedMember.cs" />
     <Compile Include="TypeSystem\Implementation\BaseTypeCollector.cs" />
-    <Compile Include="TypeSystem\Implementation\CompoundTypeDefinition.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultAccessor.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultAttribute.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultEvent.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultExplicitInterfaceImplementation.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultField.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultMethod.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultAssemblyReference.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultMemberReference.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultParameter.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultProperty.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultTypeParameter.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultResolvedAccessor.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultResolvedEvent.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultResolvedField.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultResolvedMethod.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultResolvedProperty.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultResolvedTypeDefinition.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultResolvedTypeParameter.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultSolutionSnapshot.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedAccessor.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedAssembly.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedAttribute.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedEvent.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedField.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedMethod.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedParameter.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedProperty.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedTypeDefinition.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedTypeParameter.cs" />
+    <Compile Include="TypeSystem\Implementation\DummyTypeParameter.cs" />
+    <Compile Include="TypeSystem\Implementation\FullNameAndTypeParameterCount.cs" />
     <Compile Include="TypeSystem\Implementation\GetClassTypeReference.cs" />
-    <Compile Include="TypeSystem\Implementation\CompositeTypeResolveContext.cs" />
     <Compile Include="TypeSystem\Implementation\GetMembersHelper.cs" />
-    <Compile Include="TypeSystem\Implementation\MinimalResolveContext.cs" />
-    <Compile Include="TypeSystem\Implementation\TypeParameterSubstitution.cs" />
+    <Compile Include="TypeSystem\Implementation\KnownTypeCache.cs" />
+    <Compile Include="TypeSystem\Implementation\MergedNamespace.cs" />
+    <Compile Include="TypeSystem\Implementation\MinimalCorlib.cs" />
     <Compile Include="TypeSystem\Implementation\NestedTypeReference.cs" />
-    <Compile Include="TypeSystem\Implementation\ProxyTypeResolveContext.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultTypeDefinition.cs" />
+    <Compile Include="TypeSystem\Implementation\SimpleCompilation.cs" />
     <Compile Include="TypeSystem\Implementation\SimpleConstantValue.cs" />
     <Compile Include="TypeSystem\Implementation\SimpleInterningProvider.cs" />
-    <Compile Include="TypeSystem\Implementation\SimpleProjectContent.cs" />
+    <Compile Include="TypeSystem\Implementation\SimpleTypeResolveContext.cs" />
     <Compile Include="TypeSystem\Implementation\SpecializedEvent.cs" />
     <Compile Include="TypeSystem\Implementation\SpecializedField.cs" />
     <Compile Include="TypeSystem\Implementation\SpecializedMember.cs" />
     <Compile Include="TypeSystem\Implementation\SpecializedMethod.cs" />
     <Compile Include="TypeSystem\Implementation\SpecializedProperty.cs" />
-    <Compile Include="TypeSystem\Implementation\SubstitutionTypeReference.cs" />
-    <Compile Include="TypeSystem\Implementation\TypeStorage.cs" />
+    <Compile Include="TypeSystem\Implementation\TypeParameterReference.cs" />
+    <Compile Include="TypeSystem\Implementation\TypeParameterSubstitution.cs" />
     <Compile Include="TypeSystem\Implementation\TypeWithElementType.cs" />
+    <Compile Include="TypeSystem\Implementation\UnknownType.cs" />
     <Compile Include="TypeSystem\Implementation\VoidTypeDefinition.cs" />
     <Compile Include="TypeSystem\INamedElement.cs" />
+    <Compile Include="TypeSystem\INamespace.cs" />
+    <Compile Include="TypeSystem\InheritanceHelper.cs" />
     <Compile Include="TypeSystem\IntersectionType.cs" />
     <Compile Include="TypeSystem\IParameter.cs" />
     <Compile Include="TypeSystem\IParameterizedMember.cs" />
     <Compile Include="TypeSystem\IParsedFile.cs" />
     <Compile Include="TypeSystem\IProjectContent.cs" />
     <Compile Include="TypeSystem\IProperty.cs" />
+    <Compile Include="TypeSystem\ISolutionSnapshot.cs" />
     <Compile Include="TypeSystem\ISupportsInterning.cs" />
-    <Compile Include="TypeSystem\ISynchronizedTypeResolveContext.cs" />
     <Compile Include="TypeSystem\IType.cs" />
     <Compile Include="TypeSystem\ITypeDefinition.cs" />
     <Compile Include="TypeSystem\ITypeParameter.cs" />
     <Compile Include="TypeSystem\ITypeReference.cs" />
-    <Compile Include="TypeSystem\ITypeResolveContext.cs" />
     <Compile Include="TypeSystem\KnownTypeReference.cs" />
     <Compile Include="TypeSystem\NullableType.cs" />
     <Compile Include="TypeSystem\ParameterizedType.cs" />
@@ -170,7 +197,7 @@
     <Compile Include="TypeSystem\IVariable.cs" />
     <Compile Include="TypeSystem\PointerType.cs" />
     <Compile Include="TypeSystem\ReflectionHelper.cs" />
-    <Compile Include="TypeSystem\SharedTypes.cs" />
+    <Compile Include="TypeSystem\SpecialType.cs" />
     <Compile Include="Utils\7BitEncodedInts.cs" />
     <Compile Include="Utils\BitVector16.cs" />
     <Compile Include="Utils\BusyManager.cs" />
@@ -180,18 +207,23 @@
     <Compile Include="Utils\ExtensionMethods.cs" />
     <Compile Include="Utils\FastSerializer.cs" />
     <Compile Include="Utils\GraphVizGraph.cs" />
+    <Compile Include="Utils\ImmutableStack.cs" />
+    <Compile Include="Utils\LazyInit.cs" />
     <Compile Include="Utils\Platform.cs" />
+    <Compile Include="Utils\ProjectedList.cs" />
     <Compile Include="Utils\ReferenceComparer.cs" />
     <Compile Include="Utils\TreeTraversal.cs" />
     <Compile Include="TypeSystem\Error.cs" />
-    <Compile Include="TypeSystem\IAnnotatable.cs" />
     <Compile Include="Completion\ICompletionData.cs" />
     <Compile Include="Completion\DisplayFlags.cs" />
-    <Compile Include="Completion\ICompletionDataFactory.cs" />
     <Compile Include="Completion\IEntityCompletionData.cs" />
+    <Compile Include="Completion\CompletionCategory.cs" />
+    <Compile Include="Completion\IParameterDataProvider.cs" />
+    <Compile Include="Completion\IVariableCompletionData.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Completion\" />
+    <Folder Include="TypeSystem\Implementation" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">

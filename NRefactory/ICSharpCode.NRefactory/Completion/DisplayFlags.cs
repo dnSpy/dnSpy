@@ -32,7 +32,8 @@ namespace ICSharpCode.NRefactory.Completion
 	{
 		None = 0,
 		Hidden = 1,
-		Obsolete = 2
+		Obsolete = 2,
+		DescriptionHasMarkup = 4
 	}
 }
 

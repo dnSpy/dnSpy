@@ -8,6 +8,7 @@
 //
 // Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2003-2008 Novell, Inc.
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -399,8 +400,13 @@ namespace Mono.CSharp
 
 		public new void Define ()
 		{
-			foreach (TypeContainer tc in types)
-				tc.DefineType ();
+			foreach (TypeContainer tc in types) {
+				try {
+					tc.DefineType ();
+				} catch (Exception e) {
+					throw new InternalErrorException (tc, e);
+				}
+			}
 
 			foreach (TypeContainer tc in types)
 				tc.ResolveTypeParameters ();

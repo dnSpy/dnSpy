@@ -22,7 +22,7 @@ using System.Diagnostics.Contracts;
 namespace ICSharpCode.NRefactory.TypeSystem
 {
 	/// <summary>
-	/// Represents a variable (name/return type pair).
+	/// Represents a variable (name/type pair).
 	/// </summary>
 	#if WITH_CONTRACTS
 	[ContractClass(typeof(IVariableContract))]
@@ -42,17 +42,18 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets the type of the variable.
 		/// </summary>
-		ITypeReference Type { get; }
+		IType Type { get; }
 		
 		/// <summary>
-		/// Gets whether this field is a constant (C#-like const).
+		/// Gets whether this variable is a constant (C#-like const).
 		/// </summary>
 		bool IsConst { get; }
 		
 		/// <summary>
 		/// If this field is a constant, retrieves the value.
+		/// For parameters, this is the default value.
 		/// </summary>
-		IConstantValue ConstantValue { get; }
+		object ConstantValue { get; }
 	}
 	
 	#if WITH_CONTRACTS
@@ -81,7 +82,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
-		IConstantValue IVariable.ConstantValue {
+		object IVariable.ConstantValue {
 			get { return null; }
 		}
 	}

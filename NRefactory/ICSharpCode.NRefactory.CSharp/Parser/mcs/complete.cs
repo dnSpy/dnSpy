@@ -7,6 +7,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2003-2009 Novell, Inc.
+// Copyright 2011 Xamarin Inc
 //
 // Completion* classes derive from ExpressionStatement as this allows
 // them to pass through the parser in many conditions that require
@@ -120,7 +121,7 @@ namespace Mono.CSharp {
 
 			TypeSpec expr_type = expr_resolved.Type;
 			if (expr_type.IsPointer || expr_type.Kind == MemberKind.Void || expr_type == InternalType.NullLiteral || expr_type == InternalType.AnonymousMethod) {
-				Unary.Error_OperatorCannotBeApplied (ec, loc, ".", expr_type);
+				expr_resolved.Error_OperatorCannotBeApplied (ec, loc, ".", expr_type);
 				return null;
 			}
 

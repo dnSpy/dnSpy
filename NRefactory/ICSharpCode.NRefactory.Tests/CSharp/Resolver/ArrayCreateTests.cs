@@ -23,7 +23,6 @@ using NUnit.Framework;
 namespace ICSharpCode.NRefactory.CSharp.Resolver
 {
 	[TestFixture]
-	[Ignore("Parser produces incorrect positions")]
 	public class ArrayCreateTests : ResolverTestBase
 	{
 		[Test]

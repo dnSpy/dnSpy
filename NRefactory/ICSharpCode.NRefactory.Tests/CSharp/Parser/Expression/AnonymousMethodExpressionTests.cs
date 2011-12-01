@@ -69,7 +69,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			Assert.IsTrue(ame.Body.Statements.First() is ReturnStatement);
 		}
 		
-		[Test, Ignore("async/await not yet supported")]
+		[Test]
 		public void AsyncAnonymousMethod()
 		{
 			AnonymousMethodExpression ame = Parse("async delegate {}");

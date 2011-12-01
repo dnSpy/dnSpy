@@ -32,13 +32,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	[TestFixture]
 	public class TypeInferenceTests
 	{
-		readonly ITypeResolveContext ctx = CecilLoaderTests.Mscorlib;
+		readonly ICompilation compilation = new SimpleCompilation(CecilLoaderTests.Mscorlib);
 		TypeInference ti;
 		
 		[SetUp]
 		public void Setup()
 		{
-			ti = new TypeInference(ctx);
+			ti = new TypeInference(compilation);
 		}
 		
 		#region Type Inference
@@ -46,8 +46,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			IType[] r = new IType[types.Length];
 			for (int i = 0; i < types.Length; i++) {
-				r[i] = types[i].ToTypeReference().Resolve(CecilLoaderTests.Mscorlib);
-				Assert.AreNotSame(r[i], SharedTypes.UnknownType);
+				r[i] = compilation.FindType(types[i]);
+				Assert.AreNotSame(r[i], SpecialType.UnknownType);
 			}
 			Array.Sort(r, (a,b)=>a.ReflectionName.CompareTo(b.ReflectionName));
 			return r;
@@ -56,15 +56,15 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void ArrayToEnumerable()
 		{
-			ITypeParameter tp = new DefaultTypeParameter(EntityType.Method, 0, "T");
-			IType stringType = KnownTypeReference.String.Resolve(ctx);
-			ITypeDefinition enumerableType = ctx.GetTypeDefinition(typeof(IEnumerable<>));
+			ITypeParameter tp = new DefaultTypeParameter(compilation, EntityType.Method, 0, "T");
+			IType stringType = compilation.FindType(KnownTypeCode.String);
+			ITypeDefinition enumerableType = compilation.FindType(KnownTypeCode.IEnumerableOfT).GetDefinition();
 			
 			bool success;
 			Assert.AreEqual(
 				new [] { stringType },
 				ti.InferTypeArguments(new [] { tp },
-				                      new [] { new ResolveResult(new ArrayType(stringType)) },
+				                      new [] { new ResolveResult(new ArrayType(compilation, stringType)) },
 				                      new [] { new ParameterizedType(enumerableType, new [] { tp }) },
 				                      out success));
 			Assert.IsTrue(success);
@@ -73,13 +73,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void EnumerableToArrayInContravariantType()
 		{
-			ITypeParameter tp = new DefaultTypeParameter(EntityType.Method, 0, "T");
-			IType stringType = KnownTypeReference.String.Resolve(ctx);
-			ITypeDefinition enumerableType = ctx.GetTypeDefinition(typeof(IEnumerable<>));
-			ITypeDefinition comparerType = ctx.GetTypeDefinition(typeof(IComparer<>));
+			ITypeParameter tp = new DefaultTypeParameter(compilation, EntityType.Method, 0, "T");
+			IType stringType = compilation.FindType(KnownTypeCode.String);
+			ITypeDefinition enumerableType = compilation.FindType(typeof(IEnumerable<>)).GetDefinition();
+			ITypeDefinition comparerType = compilation.FindType(typeof(IComparer<>)).GetDefinition();
 			
-			var comparerOfIEnumerableOfString = new ParameterizedType(comparerType, new [] { new ParameterizedType(enumerableType, new [] { stringType} ) });
-			var comparerOfTpArray = new ParameterizedType(comparerType, new [] { new ArrayType(tp) });
+			var comparerOfIEnumerableOfString = new ParameterizedType(comparerType, new [] { new ParameterizedType(enumerableType, new [] { stringType } ) });
+			var comparerOfTpArray = new ParameterizedType(comparerType, new [] { new ArrayType(compilation, tp) });
 			
 			bool success;
 			Assert.AreEqual(
@@ -87,6 +87,23 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				ti.InferTypeArguments(new [] { tp },
 				                      new [] { new ResolveResult(comparerOfIEnumerableOfString) },
 				                      new [] { comparerOfTpArray },
+				                      out success));
+			Assert.IsTrue(success);
+		}
+		
+		[Test]
+		public void InferFromObjectAndFromNullLiteral()
+		{
+			// M<T>(T a, T b);
+			ITypeParameter tp = new DefaultTypeParameter(compilation, EntityType.Method, 0, "T");
+			
+			// M(new object(), null);
+			bool success;
+			Assert.AreEqual(
+				new [] { compilation.FindType(KnownTypeCode.Object) },
+				ti.InferTypeArguments(new [] { tp },
+				                      new [] { new ResolveResult(compilation.FindType(KnownTypeCode.Object)), new ResolveResult(SpecialType.NullType) },
+				                      new [] { tp, tp },
 				                      out success));
 			Assert.IsTrue(success);
 		}
@@ -98,16 +115,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			// static void M<A, B>(Func<A, B> f) {}
 			// M(int.Parse); // type inference fails
-			DefaultTypeParameter A = new DefaultTypeParameter(EntityType.Method, 0, "A");
-			DefaultTypeParameter B = new DefaultTypeParameter(EntityType.Method, 1, "B");
+			var A = new DefaultTypeParameter(compilation, EntityType.Method, 0, "A");
+			var B = new DefaultTypeParameter(compilation, EntityType.Method, 1, "B");
 			
-			ITypeDefinition declType = ctx.GetTypeDefinition(typeof(int));
-			var methods = new MethodListWithDeclaringType(declType, declType.Methods.Where(m => m.Name == "Parse"));
+			IType declType = compilation.FindType(typeof(int));
+			var methods = new MethodListWithDeclaringType(declType, declType.GetMethods(m => m.Name == "Parse"));
 			var argument = new MethodGroupResolveResult(new TypeResolveResult(declType), "Parse", new[] { methods }, new IType[0]);
 			
 			bool success;
 			ti.InferTypeArguments(new [] { A, B }, new [] { argument },
-			                      new [] { new ParameterizedType(ctx.GetTypeDefinition(typeof(Func<,>)), new[] { A, B }) },
+			                      new [] { new ParameterizedType(compilation.FindType(typeof(Func<,>)).GetDefinition(), new[] { A, B }) },
 			                      out success);
 			Assert.IsFalse(success);
 		}
@@ -118,17 +135,17 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			// static void M<T>(Func<T> f) {}
 			// M(Console.ReadKey); // type inference produces ConsoleKeyInfo
 			
-			DefaultTypeParameter T = new DefaultTypeParameter(EntityType.Method, 0, "T");
+			var T = new DefaultTypeParameter(compilation, EntityType.Method, 0, "T");
 			
-			ITypeDefinition declType = ctx.GetTypeDefinition(typeof(Console));
-			var methods = new MethodListWithDeclaringType(declType, declType.Methods.Where(m => m.Name == "ReadKey"));
+			IType declType = compilation.FindType(typeof(Console));
+			var methods = new MethodListWithDeclaringType(declType, declType.GetMethods(m => m.Name == "ReadKey"));
 			var argument = new MethodGroupResolveResult(new TypeResolveResult(declType), "ReadKey", new[] { methods }, new IType[0]);
 			
 			bool success;
 			Assert.AreEqual(
-				new [] { ctx.GetTypeDefinition(typeof(ConsoleKeyInfo)) },
+				new [] { compilation.FindType(typeof(ConsoleKeyInfo)) },
 				ti.InferTypeArguments(new [] { T }, new [] { argument },
-				                      new [] { new ParameterizedType(ctx.GetTypeDefinition(typeof(Func<>)), new[] { T }) },
+				                      new [] { new ParameterizedType(compilation.FindType(typeof(Func<>)).GetDefinition(), new[] { T }) },
 				                      out success));
 			Assert.IsTrue(success);
 		}
@@ -149,7 +166,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				this.parameters = new IParameter[expectedParameterTypes.Length];
 				for (int i = 0; i < parameters.Length; i++) {
 					// UnknownType because this lambda is implicitly typed
-					parameters[i] = new DefaultParameter(SharedTypes.UnknownType, "X" + i);
+					parameters[i] = new DefaultParameter(SpecialType.UnknownType, "X" + i);
 				}
 			}
 			
@@ -179,6 +196,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				get { return false; }
 			}
 			
+			public override ResolveResult Body {
+				get { throw new NotImplementedException(); }
+			}
+			
 			public override IType GetInferredReturnType(IType[] parameterTypes)
 			{
 				Assert.AreEqual(expectedParameterTypes, parameterTypes, "Parameters types passed to " + this);
@@ -196,28 +217,28 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		public void TestLambdaInference()
 		{
 			ITypeParameter[] typeParameters = {
-				new DefaultTypeParameter(EntityType.Method, 0, "X"),
-				new DefaultTypeParameter(EntityType.Method, 1, "Y"),
-				new DefaultTypeParameter(EntityType.Method, 2, "Z")
+				new DefaultTypeParameter(compilation, EntityType.Method, 0, "X"),
+				new DefaultTypeParameter(compilation, EntityType.Method, 1, "Y"),
+				new DefaultTypeParameter(compilation, EntityType.Method, 2, "Z")
 			};
 			IType[] parameterTypes = {
 				typeParameters[0],
-				new ParameterizedType(ctx.GetTypeDefinition(typeof(Func<,>)), new[] { typeParameters[0], typeParameters[1] }),
-				new ParameterizedType(ctx.GetTypeDefinition(typeof(Func<,>)), new[] { typeParameters[1], typeParameters[2] })
+				new ParameterizedType(compilation.FindType(typeof(Func<,>)).GetDefinition(), new[] { typeParameters[0], typeParameters[1] }),
+				new ParameterizedType(compilation.FindType(typeof(Func<,>)).GetDefinition(), new[] { typeParameters[1], typeParameters[2] })
 			};
 			// Signature:  M<X,Y,Z>(X x, Func<X,Y> y, Func<Y,Z> z) {}
 			// Invocation: M(default(string), s => default(int), t => default(float));
 			ResolveResult[] arguments = {
-				new ResolveResult(KnownTypeReference.String.Resolve(ctx)),
-				new MockImplicitLambda(new[] { KnownTypeReference.String.Resolve(ctx) }, KnownTypeReference.Int32.Resolve(ctx)),
-				new MockImplicitLambda(new[] { KnownTypeReference.Int32.Resolve(ctx) }, KnownTypeReference.Single.Resolve(ctx))
+				new ResolveResult(compilation.FindType(KnownTypeCode.String)),
+				new MockImplicitLambda(new[] { compilation.FindType(KnownTypeCode.String) }, compilation.FindType(KnownTypeCode.Int32)),
+				new MockImplicitLambda(new[] { compilation.FindType(KnownTypeCode.Int32) }, compilation.FindType(KnownTypeCode.Single))
 			};
 			bool success;
 			Assert.AreEqual(
 				new [] {
-					KnownTypeReference.String.Resolve(ctx),
-					KnownTypeReference.Int32.Resolve(ctx),
-					KnownTypeReference.Single.Resolve(ctx)
+					compilation.FindType(KnownTypeCode.String),
+					compilation.FindType(KnownTypeCode.Int32),
+					compilation.FindType(KnownTypeCode.Single)
 				},
 				ti.InferTypeArguments(typeParameters, arguments, parameterTypes, out success));
 			Assert.IsTrue(success);
@@ -226,26 +247,26 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void ConvertAllLambdaInference()
 		{
-			ITypeParameter[] classTypeParameters  = { new DefaultTypeParameter(EntityType.TypeDefinition, 0, "T") };
-			ITypeParameter[] methodTypeParameters = { new DefaultTypeParameter(EntityType.Method, 0, "R") };
+			ITypeParameter[] classTypeParameters  = { new DefaultTypeParameter(compilation, EntityType.TypeDefinition, 0, "T") };
+			ITypeParameter[] methodTypeParameters = { new DefaultTypeParameter(compilation, EntityType.Method, 0, "R") };
 			
 			IType[] parameterTypes = {
-				new ParameterizedType(ctx.GetTypeDefinition(typeof(Converter<,>)),
+				new ParameterizedType(compilation.FindType(typeof(Converter<,>)).GetDefinition(),
 				                      new[] { classTypeParameters[0], methodTypeParameters[0] })
 			};
 			
 			// Signature:  List<T>.ConvertAll<R>(Converter<T, R> converter);
 			// Invocation: listOfString.ConvertAll(s => default(int));
 			ResolveResult[] arguments = {
-				new MockImplicitLambda(new[] { KnownTypeReference.String.Resolve(ctx) }, KnownTypeReference.Int32.Resolve(ctx))
+				new MockImplicitLambda(new[] { compilation.FindType(KnownTypeCode.String) }, compilation.FindType(KnownTypeCode.Int32))
 			};
 			IType[] classTypeArguments = {
-				KnownTypeReference.String.Resolve(ctx)
+				compilation.FindType(KnownTypeCode.String)
 			};
 			
 			bool success;
 			Assert.AreEqual(
-				new [] { KnownTypeReference.Int32.Resolve(ctx) },
+				new [] { compilation.FindType(KnownTypeCode.Int32) },
 				ti.InferTypeArguments(methodTypeParameters, arguments, parameterTypes, out success, classTypeArguments));
 		}
 		#endregion

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectGuid>{53DCA265-3C3C-42F9-B647-F72BA678122B}</ProjectGuid>
@@ -14,7 +14,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <SignAssembly>True</SignAssembly>
+    <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
@@ -165,10 +165,12 @@
     <Compile Include="Ast\TypeMembers\ParameterDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\PropertyDeclaration.cs" />
     <Compile Include="Ast\TypeMembers\VariableInitializer.cs" />
+    <Compile Include="CSharpProjectContent.cs" />
     <Compile Include="Formatter\AstFormattingVisitor.cs" />
     <Compile Include="Formatter\CSharpFormattingOptions.cs" />
     <Compile Include="Formatter\Indent.cs" />
     <Compile Include="OutputVisitor\CodeDomConvertVisitor.cs" />
+    <Compile Include="OutputVisitor\CSharpAmbience.cs" />
     <Compile Include="OutputVisitor\InsertParenthesesVisitor.cs" />
     <Compile Include="OutputVisitor\IOutputFormatter.cs" />
     <Compile Include="OutputVisitor\CSharpOutputVisitor.cs" />
@@ -233,8 +235,6 @@
     <Compile Include="Parser\mcs\typemanager.cs" />
     <Compile Include="Parser\mcs\typespec.cs" />
     <Compile Include="Parser\mcs\visit.cs" />
-    <Compile Include="Parser\ParsedFile.cs" />
-    <Compile Include="Parser\TypeSystemConvertVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Refactoring\Action.cs" />
     <Compile Include="Refactoring\ContextAction\AddAnotherAccessor.cs" />
@@ -270,38 +270,52 @@
     <Compile Include="Refactoring\Script.cs" />
     <Compile Include="Refactoring\TextReplaceAction.cs" />
     <Compile Include="Refactoring\TypeSystemAstBuilder.cs" />
-    <Compile Include="Resolver\AliasNamespaceReference.cs" />
     <Compile Include="Resolver\CompositeResolveVisitorNavigator.cs" />
-    <Compile Include="Resolver\ConstantValues.cs" />
     <Compile Include="Resolver\ConversionResolveResult.cs" />
     <Compile Include="Resolver\Conversions.cs" />
-    <Compile Include="Resolver\CSharpAttribute.cs" />
+    <Compile Include="Resolver\CSharpAstResolver.cs" />
     <Compile Include="Resolver\CSharpInvocationResolveResult.cs" />
+    <Compile Include="Resolver\CSharpOperators.cs" />
     <Compile Include="Resolver\CSharpResolver.cs" />
     <Compile Include="Resolver\DetectSkippableNodesNavigator.cs" />
-    <Compile Include="Resolver\ErrorResolveResult.cs" />
     <Compile Include="Resolver\FindReferencedEntities.cs" />
     <Compile Include="Resolver\FindReferences.cs" />
     <Compile Include="Resolver\FindReferenceSearchScope.cs" />
     <Compile Include="Resolver\IResolveVisitorNavigator.cs" />
-    <Compile Include="Resolver\ITypeOrNamespaceReference.cs" />
     <Compile Include="Resolver\LambdaResolveResult.cs" />
     <Compile Include="Resolver\Log.cs" />
-    <Compile Include="Resolver\MapTypeIntoNewContext.cs" />
     <Compile Include="Resolver\MemberLookup.cs" />
-    <Compile Include="Resolver\MemberTypeOrNamespaceReference.cs" />
     <Compile Include="Resolver\MethodGroupResolveResult.cs" />
     <Compile Include="Resolver\NodeListResolveVisitorNavigator.cs" />
-    <Compile Include="Resolver\OperatorResolveResult.cs" />
     <Compile Include="Resolver\OverloadResolution.cs" />
     <Compile Include="Resolver\OverloadResolutionErrors.cs" />
     <Compile Include="Resolver\ResolveAtLocation.cs" />
     <Compile Include="Resolver\ResolveVisitor.cs" />
     <Compile Include="Resolver\SimpleNameLookupMode.cs" />
-    <Compile Include="Resolver\SimpleTypeOrNamespaceReference.cs" />
     <Compile Include="Resolver\TypeInference.cs" />
-    <Compile Include="Resolver\UsingScope.cs" />
+    <Compile Include="Completion\ICompletionDataFactory.cs" />
+    <Compile Include="Completion\IParameterCompletionDataFactory.cs" />
+    <Compile Include="TypeSystem\AliasNamespaceReference.cs" />
+    <Compile Include="TypeSystem\AttributeTypeReference.cs" />
+    <Compile Include="TypeSystem\ConstantValues.cs" />
+    <Compile Include="TypeSystem\CSharpAssembly.cs" />
+    <Compile Include="TypeSystem\CSharpAttribute.cs" />
+    <Compile Include="TypeSystem\CSharpParsedFile.cs" />
+    <Compile Include="TypeSystem\CSharpUnresolvedTypeDefinition.cs" />
+    <Compile Include="TypeSystem\CSharpTypeResolveContext.cs" />
+    <Compile Include="TypeSystem\ResolvedUsingScope.cs" />
+    <Compile Include="TypeSystem\TypeOrNamespaceReference.cs" />
+    <Compile Include="TypeSystem\MemberTypeOrNamespaceReference.cs" />
+    <Compile Include="TypeSystem\SimpleTypeOrNamespaceReference.cs" />
+    <Compile Include="TypeSystem\MethodTypeParameterWithInheritedConstraints.cs" />
+    <Compile Include="TypeSystem\TypeSystemConvertVisitor.cs" />
+    <Compile Include="TypeSystem\UsingScope.cs" />
+    <Compile Include="Ast\GeneralScope\PreProcessorDirective.cs" />
+    <Compile Include="Ast\Expressions\ErrorExpression.cs" />
+    <Compile Include="Completion\CompletionDataWrapper.cs" />
     <Compile Include="Completion\CSharpCompletionEngine.cs" />
+    <Compile Include="Completion\CSharpCompletionEngineBase.cs" />
+    <Compile Include="Completion\CSharpParameterCompletionEngine.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
@@ -310,4 +324,16 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <ItemGroup>
+    <Folder Include="Completion\" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <TextStylePolicy TabWidth="4" EolMarker="Unix" inheritsSet="Mono" inheritsScope="text/plain" scope="text/plain" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>

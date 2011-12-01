@@ -53,18 +53,18 @@ namespace XN {
 			
 			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$a.F(1)$"));
 			Assert.AreEqual("XN.XC.F", mrr.Member.FullName);
-			Assert.AreEqual("System.Int32", mrr.Member.Parameters[1].Type.Resolve(context).FullName);
+			Assert.AreEqual("System.Int32", mrr.Member.Parameters[1].Type.FullName);
 			
 			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$a.F(\"text\")$"));
 			Assert.AreEqual("XN.XC.F", mrr.Member.FullName);
-			Assert.AreEqual("System.String", mrr.Member.Parameters[1].Type.Resolve(context).FullName);
+			Assert.AreEqual("System.String", mrr.Member.Parameters[1].Type.FullName);
 			
 			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$b.F(1)$"));
 			Assert.AreEqual("B.F", mrr.Member.FullName);
 			
 			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$b.F(\"text\")$"));
 			Assert.AreEqual("XN.XC.F", mrr.Member.FullName);
-			Assert.AreEqual("System.String", mrr.Member.Parameters[1].Type.Resolve(context).FullName);
+			Assert.AreEqual("System.String", mrr.Member.Parameters[1].Type.FullName);
 			
 			mrr = Resolve<CSharpInvocationResolveResult>(program.Replace("$", "$c.F(1)$"));
 			Assert.AreEqual("C.F", mrr.Member.FullName);

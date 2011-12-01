@@ -29,25 +29,39 @@ using ICSharpCode.NRefactory.PatternMatching;
 
 namespace ICSharpCode.NRefactory.CSharp.Refactoring
 {
-	public class UseVarKeyword: IContextAction
+	public class UseVarKeyword : IContextAction
 	{
 		public bool IsValid (RefactoringContext context)
 		{
-			return GetVariableDeclarationStatement (context) != null;
+			return GetVariableDeclarationStatement (context) != null || GetForeachStatement (context) != null;
 		}
 		
 		public void Run (RefactoringContext context)
 		{
-			var varDecl = GetVariableDeclarationStatement (context);
 			using (var script = context.StartScript ()) {
-				script.Replace (varDecl.Type, new SimpleType ("var"));
+				var varDecl = GetVariableDeclarationStatement (context);
+				if (varDecl != null) {
+					script.Replace (varDecl.Type, new SimpleType ("var"));
+				} else {
+					script.Replace (GetForeachStatement (context).VariableType, new SimpleType ("var"));
+				}
 			}
 		}
 		
+		static readonly AstType varType = new SimpleType ("var");
+
 		static VariableDeclarationStatement GetVariableDeclarationStatement (RefactoringContext context)
 		{
 			var result = context.GetNode<VariableDeclarationStatement> ();
-			if (result != null && result.Variables.Count == 1 && !result.Variables.First ().Initializer.IsNull && result.Type.Contains (context.Location.Line, context.Location.Column) && !result.Type.IsMatch (new SimpleType ("var")))
+			if (result != null && result.Variables.Count == 1 && !result.Variables.First ().Initializer.IsNull && result.Type.Contains (context.Location) && !result.Type.IsMatch (varType))
+				return result;
+			return null;
+		}
+		
+		static ForeachStatement GetForeachStatement (RefactoringContext context)
+		{
+			var result = context.GetNode<ForeachStatement> ();
+			if (result != null && result.VariableType.Contains (context.Location) && !result.VariableType.IsMatch (varType))
 				return result;
 			return null;
 		}

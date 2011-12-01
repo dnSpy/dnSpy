@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using ICSharpCode.NRefactory.Utils;
 
@@ -33,30 +34,30 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets all base types.
 		/// </summary>
-		/// <remarks>This is the reflexive and transitive closure of <see cref="IType.GetBaseTypes"/>.
+		/// <remarks>This is the reflexive and transitive closure of <see cref="IType.DirectBaseTypes"/>.
 		/// Note that this method does not return all supertypes - doing so is impossible due to contravariance
 		/// (and undesirable for covariance as the list could become very large).
 		/// 
-		/// The output is ordered so that base types occur in before derived types.
+		/// The output is ordered so that base types occur before derived types.
 		/// </remarks>
-		public static IEnumerable<IType> GetAllBaseTypes(this IType type, ITypeResolveContext context)
+		public static IEnumerable<IType> GetAllBaseTypes(this IType type)
 		{
-			BaseTypeCollector collector = new BaseTypeCollector(context);
+			BaseTypeCollector collector = new BaseTypeCollector();
 			collector.CollectBaseTypes(type);
 			return collector;
 		}
 		
 		/// <summary>
-		/// Gets the non-interface base types.
+		/// Gets all non-interface base types.
 		/// </summary>
 		/// <remarks>
-		/// When <paramref name="type"/> is an interface, this method will also return base interfaces.
+		/// When <paramref name="type"/> is an interface, this method will also return base interfaces (return same output as GetAllBaseTypes()).
 		/// 
-		/// The output is ordered so that base types occur in before derived types.
+		/// The output is ordered so that base types occur before derived types.
 		/// </remarks>
-		public static IEnumerable<IType> GetNonInterfaceBaseTypes(this IType type, ITypeResolveContext context)
+		public static IEnumerable<IType> GetNonInterfaceBaseTypes(this IType type)
 		{
-			BaseTypeCollector collector = new BaseTypeCollector(context);
+			BaseTypeCollector collector = new BaseTypeCollector();
 			collector.SkipImplementedInterfaces = true;
 			collector.CollectBaseTypes(type);
 			return collector;
@@ -70,16 +71,14 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <remarks>
 		/// This is equivalent to type.GetAllBaseTypes().Select(t => t.GetDefinition()).Where(d => d != null).Distinct().
 		/// </remarks>
-		public static IEnumerable<ITypeDefinition> GetAllBaseTypeDefinitions(this IType type, ITypeResolveContext context)
+		public static IEnumerable<ITypeDefinition> GetAllBaseTypeDefinitions(this IType type)
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
-			if (context == null)
-				throw new ArgumentNullException("context");
 			
 			HashSet<ITypeDefinition> typeDefinitions = new HashSet<ITypeDefinition>();
 			Func<ITypeDefinition, IEnumerable<ITypeDefinition>> recursion =
-				t => t.GetBaseTypes(context).Select(b => b.GetDefinition()).Where(d => d != null && typeDefinitions.Add(d));
+				t => t.DirectBaseTypes.Select(b => b.GetDefinition()).Where(d => d != null && typeDefinitions.Add(d));
 			
 			ITypeDefinition typeDef = type.GetDefinition();
 			if (typeDef != null) {
@@ -87,7 +86,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				return TreeTraversal.PreOrder(typeDef, recursion);
 			} else {
 				return TreeTraversal.PreOrder(
-					type.GetBaseTypes(context).Select(b => b.GetDefinition()).Where(d => d != null && typeDefinitions.Add(d)),
+					type.DirectBaseTypes.Select(b => b.GetDefinition()).Where(d => d != null && typeDefinitions.Add(d)),
 					recursion);
 			}
 		}
@@ -95,9 +94,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets whether this type definition is derived from the base type defintiion.
 		/// </summary>
-		public static bool IsDerivedFrom(this ITypeDefinition type, ITypeDefinition baseType, ITypeResolveContext context)
+		public static bool IsDerivedFrom(this ITypeDefinition type, ITypeDefinition baseType)
 		{
-			return GetAllBaseTypeDefinitions(type, context).Contains(baseType);
+			return GetAllBaseTypeDefinitions(type).Contains(baseType);
 		}
 		#endregion
 		
@@ -151,50 +150,45 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		#endregion
 		
-		#region IsEnum / IsDelegate
+		#region Import
 		/// <summary>
-		/// Gets whether the type is an enumeration type.
+		/// Imports a type from another compilation.
 		/// </summary>
-		[Obsolete("Use type.Kind == TypeKind.Enum instead")]
-		public static bool IsEnum(this IType type)
+		public static IType Import(this ICompilation compilation, IType type)
 		{
+			if (compilation == null)
+				throw new ArgumentNullException("compilation");
 			if (type == null)
-				throw new ArgumentNullException("type");
-			return type.Kind == TypeKind.Enum;
+				return null;
+			return type.ToTypeReference().Resolve(compilation.TypeResolveContext);
 		}
 		
 		/// <summary>
-		/// Gets the underlying type for this enum type.
+		/// Imports a type from another compilation.
 		/// </summary>
-		public static IType GetEnumUnderlyingType(this IType enumType, ITypeResolveContext context)
+		public static ITypeDefinition Import(this ICompilation compilation, ITypeDefinition typeDefinition)
 		{
-			if (enumType == null)
-				throw new ArgumentNullException("enumType");
-			if (context == null)
-				throw new ArgumentNullException("context");
-			ITypeDefinition def = enumType.GetDefinition();
-			if (def != null && def.Kind == TypeKind.Enum) {
-				if (def.BaseTypes.Count == 1)
-					return def.BaseTypes[0].Resolve(context);
-				else
-					return KnownTypeReference.Int32.Resolve(context);
-			} else {
-				return SharedTypes.UnknownType;
-			}
+			if (compilation == null)
+				throw new ArgumentNullException("compilation");
+			if (typeDefinition == null)
+				return null;
+			return typeDefinition.ToTypeReference().Resolve(compilation.TypeResolveContext).GetDefinition();
 		}
 		
 		/// <summary>
-		/// Gets whether the type is an delegate type.
+		/// Imports a member from another compilation.
 		/// </summary>
-		/// <remarks>This method returns <c>false</c> for System.Delegate itself</remarks>
-		[Obsolete("Use type.Kind == TypeKind.Delegate instead")]
-		public static bool IsDelegate(this IType type)
+		public static IMember Import(this ICompilation compilation, IMember member)
 		{
-			if (type == null)
-				throw new ArgumentNullException("type");
-			return type.Kind == TypeKind.Delegate;
+			if (compilation == null)
+				throw new ArgumentNullException("compilation");
+			if (member == null)
+				return null;
+			return member.ToMemberReference().Resolve(compilation.TypeResolveContext);
 		}
+		#endregion
 		
+		#region GetDelegateInvokeMethod
 		/// <summary>
 		/// Gets the invoke method for a delegate type.
 		/// </summary>
@@ -207,13 +201,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				throw new ArgumentNullException("type");
 			ITypeDefinition def = type.GetDefinition();
 			if (def != null && def.Kind == TypeKind.Delegate) {
-				foreach (IMethod method in def.Methods) {
-					if (method.Name == "Invoke") {
+				foreach (IMember member in def.Members) {
+					if (member.Name == "Invoke" && member is IMethod) {
 						ParameterizedType pt = type as ParameterizedType;
 						if (pt != null) {
-							return new SpecializedMethod(pt, method);
+							return new SpecializedMethod(pt, (IMethod)member);
 						}
-						return method;
+						return (IMethod)member;
 					}
 				}
 			}
@@ -221,37 +215,28 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		#endregion
 		
-		#region InternalsVisibleTo
-		/// <summary>
-		/// Gets whether the internals of this project are visible to the other project
-		/// </summary>
-		public static bool InternalsVisibleTo(this IProjectContent projectContent, IProjectContent other, ITypeResolveContext context)
-		{
-			if (projectContent == other)
-				return true;
-			// TODO: implement support for [InternalsVisibleToAttribute]
-			// Make sure implementation doesn't hurt performance, e.g. don't resolve all assembly attributes whenever
-			// this method is called - it'll be called once per internal member during lookup operations
-			return false;
-		}
-		#endregion
-		
-		#region GetAllTypes
-		/// <summary>
-		/// Gets all type definitions, including nested types.
-		/// </summary>
-		public static IEnumerable<ITypeDefinition> GetAllTypes(this ITypeResolveContext context)
-		{
-			return TreeTraversal.PreOrder(context.GetTypes(), t => t.NestedTypes);
-		}
-		#endregion
-		
 		#region GetType/Member
+		public static IEnumerable<IUnresolvedTypeDefinition> GetAllTypeDefinitions (this IParsedFile file)
+		{
+			return TreeTraversal.PreOrder(file.TopLevelTypeDefinitions, t => t.NestedTypes);
+		}
+		
+		public static IEnumerable<ITypeDefinition> GetAllTypeDefinitions (this IAssembly assembly)
+		{
+			return TreeTraversal.PreOrder(assembly.TopLevelTypeDefinitions, t => t.NestedTypes);
+		}
+		
+		public static IEnumerable<ITypeDefinition> GetAllTypeDefinitions (this ICompilation compilation)
+		{
+			return compilation.MainAssembly.GetAllTypeDefinitions()
+				.Concat(compilation.ReferencedAssemblies.SelectMany(a => a.GetAllTypeDefinitions()));
+		}
+		
 		/// <summary>
 		/// Gets the type (potentially a nested type) defined at the specified location.
 		/// Returns null if no type is defined at that location.
 		/// </summary>
-		public static ITypeDefinition GetInnermostTypeDefinition (this IParsedFile file, int line, int column)
+		public static IUnresolvedTypeDefinition GetInnermostTypeDefinition (this IParsedFile file, int line, int column)
 		{
 			return file.GetInnermostTypeDefinition (new TextLocation (line, column));
 		}
@@ -260,20 +245,78 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets the member defined at the specified location.
 		/// Returns null if no member is defined at that location.
 		/// </summary>
-		public static IMember GetMember (this IParsedFile file, int line, int column)
+		public static IUnresolvedMember GetMember (this IParsedFile file, int line, int column)
 		{
 			return file.GetMember (new TextLocation (line, column));
 		}
 		#endregion
 		
+		#region Resolve on collections
+		public static IList<IAttribute> CreateResolvedAttributes(this IList<IUnresolvedAttribute> attributes, ITypeResolveContext context)
+		{
+			if (attributes == null)
+				throw new ArgumentNullException("attributes");
+			if (attributes.Count == 0)
+				return EmptyList<IAttribute>.Instance;
+			else
+				return new ProjectedList<ITypeResolveContext, IUnresolvedAttribute, IAttribute>(context, attributes, (c, a) => a.CreateResolvedAttribute(c));
+		}
+		
+		public static IList<ITypeParameter> CreateResolvedTypeParameters(this IList<IUnresolvedTypeParameter> typeParameters, ITypeResolveContext context)
+		{
+			if (typeParameters == null)
+				throw new ArgumentNullException("typeParameters");
+			if (typeParameters.Count == 0)
+				return EmptyList<ITypeParameter>.Instance;
+			else
+				return new ProjectedList<ITypeResolveContext, IUnresolvedTypeParameter, ITypeParameter>(context, typeParameters, (c, a) => a.CreateResolvedTypeParameter(c));
+		}
+		
+		public static IList<IParameter> CreateResolvedParameters(this IList<IUnresolvedParameter> parameters, ITypeResolveContext context)
+		{
+			if (parameters == null)
+				throw new ArgumentNullException("parameters");
+			if (parameters.Count == 0)
+				return EmptyList<IParameter>.Instance;
+			else
+				return new ProjectedList<ITypeResolveContext, IUnresolvedParameter, IParameter>(context, parameters, (c, a) => a.CreateResolvedParameter(c));
+		}
+		
+		public static IList<IType> Resolve(this IList<ITypeReference> typeReferences, ITypeResolveContext context)
+		{
+			if (typeReferences == null)
+				throw new ArgumentNullException("typeReferences");
+			if (typeReferences.Count == 0)
+				return EmptyList<IType>.Instance;
+			else
+				return new ProjectedList<ITypeResolveContext, ITypeReference, IType>(context, typeReferences, (c, t) => t.Resolve(c));
+		}
+		
+		public static IList<ResolveResult> Resolve(this IList<IConstantValue> constantValues, ITypeResolveContext context)
+		{
+			if (constantValues.Count == 0)
+				return EmptyList<ResolveResult>.Instance;
+			else
+				return new ProjectedList<ITypeResolveContext, IConstantValue, ResolveResult>(context, constantValues, (c, t) => t.Resolve(c));
+		}
+		#endregion
+		
 		#region GetSubTypeDefinitions
+		public static IEnumerable<ITypeDefinition> GetSubTypeDefinitions (this IType baseType)
+		{
+			var def = baseType.GetDefinition ();
+			if (def == null)
+				return Enumerable.Empty<ITypeDefinition> ();
+			return def.GetSubTypeDefinitions ();
+		}
+		
 		/// <summary>
 		/// Gets all sub type definitions defined in a context.
 		/// </summary>
-		public static IEnumerable<ITypeDefinition> GetSubTypeDefinitions (this ITypeDefinition baseType, ITypeResolveContext context)
+		public static IEnumerable<ITypeDefinition> GetSubTypeDefinitions (this ITypeDefinition baseType)
 		{
-			foreach (var contextType in context.GetAllTypes ()) {
-				if (contextType.IsDerivedFrom (baseType, context))
+			foreach (var contextType in baseType.Compilation.GetAllTypeDefinitions ()) {
+				if (contextType.IsDerivedFrom (baseType))
 					yield return contextType;
 			}
 		}

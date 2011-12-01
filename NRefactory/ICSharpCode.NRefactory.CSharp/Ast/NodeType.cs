@@ -32,7 +32,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		Unknown,
 		/// <summary>
-		/// DomType
+		/// AstType
 		/// </summary>
 		TypeReference,
 		/// <summary>

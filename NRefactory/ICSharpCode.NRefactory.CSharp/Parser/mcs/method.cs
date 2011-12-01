@@ -9,6 +9,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2008 Novell, Inc
+// Copyright 2011 Xamarin Inc.
 //
 
 using System;
@@ -898,6 +899,42 @@ namespace Mono.CSharp {
 
 #endregion
 
+		public static Method Create (DeclSpace parent, GenericMethod generic, FullNamedExpression returnType, Modifiers mod,
+				   MemberName name, ParametersCompiled parameters, Attributes attrs, bool hasConstraints)
+		{
+			var m = new Method (parent, generic, returnType, mod, name, parameters, attrs);
+
+			if (hasConstraints && ((mod & Modifiers.OVERRIDE) != 0 || m.IsExplicitImpl)) {
+				m.Report.Error (460, m.Location,
+					"`{0}': Cannot specify constraints for overrides and explicit interface implementation methods",
+					m.GetSignatureForError ());
+			}
+
+			if ((mod & Modifiers.PARTIAL) != 0) {
+				const Modifiers invalid_partial_mod = Modifiers.AccessibilityMask | Modifiers.ABSTRACT | Modifiers.EXTERN |
+					Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.SEALED | Modifiers.VIRTUAL;
+
+				if ((mod & invalid_partial_mod) != 0) {
+					m.Report.Error (750, m.Location,
+						"A partial method cannot define access modifier or any of abstract, extern, new, override, sealed, or virtual modifiers");
+					mod &= ~invalid_partial_mod;
+				}
+
+				if ((parent.ModFlags & Modifiers.PARTIAL) == 0) {
+					m.Report.Error (751, m.Location, 
+						"A partial method must be declared within a partial class or partial struct");
+				}
+			}
+
+			if ((mod & Modifiers.STATIC) == 0 && parameters.HasExtensionMethodType) {
+				m.Report.Error (1105, m.Location, "`{0}': Extension methods must be declared static",
+					m.GetSignatureForError ());
+			}
+
+
+			return m;
+		}
+
 		public override string GetSignatureForError()
 		{
 			return base.GetSignatureForError () + parameters.GetSignatureForError ();
@@ -1066,7 +1103,7 @@ namespace Mono.CSharp {
 					base_tparam.InflateConstraints (inflator, local_tparam);
 
 					//
-					// Check all type argument constraints for possible collision
+					// Check all type argument constraints for possible collision or unification
 					// introduced by inflating inherited constraints in this context
 					//
 					// Conflict example:
@@ -1075,31 +1112,67 @@ namespace Mono.CSharp {
 					// class B : A<int> { override void Foo<U> {} }
 					//
 					var local_tparam_targs = local_tparam.TypeArguments;
-					if (local_tparam_targs != null) {					
+					if (local_tparam_targs != null) {
 						for (int ii = 0; ii < local_tparam_targs.Length; ++ii) {
 							var ta = local_tparam_targs [ii];
 							if (!ta.IsClass && !ta.IsStruct)
 								continue;
 
-							if (Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location)) {
-								local_tparam.ChangeTypeArgumentToBaseType (ii);
+							TypeSpec[] unique_tparams = null;
+							for (int iii = ii + 1; iii < local_tparam_targs.Length; ++iii) {
+								//
+								// Remove any identical or unified constraint types
+								//
+								var tparam_checked = local_tparam_targs[iii];
+								if (TypeSpecComparer.IsEqual (ta, tparam_checked) || TypeSpec.IsBaseClass (ta, tparam_checked, false)) {
+									unique_tparams = new TypeSpec[local_tparam_targs.Length - 1];
+									Array.Copy (local_tparam_targs, 0, unique_tparams, 0, iii);
+									Array.Copy (local_tparam_targs, iii + 1, unique_tparams, iii, local_tparam_targs.Length - iii - 1);
+								} else if (!TypeSpec.IsBaseClass (tparam_checked, ta, false)) {
+									Constraints.Error_ConflictingConstraints (this, local_tparam, ta, tparam_checked, Location);
+								}
 							}
+
+							if (unique_tparams != null) {
+								local_tparam_targs = unique_tparams;
+								local_tparam.TypeArguments = local_tparam_targs;
+								continue;
+							}
+
+							Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location);
 						}
 					}
 
 					continue;
 				}
-				
-				if (MethodData != null && MethodData.implementing != null) {
-					var base_tp = MethodData.implementing.Constraints[i];
-					if (!tp.Type.HasSameConstraintsImplementation (base_tp)) {
-						Report.SymbolRelatedToPreviousError (MethodData.implementing);
-						Report.Error (425, Location,
-							"The constraints for type parameter `{0}' of method `{1}' must match the constraints for type parameter `{2}' of interface method `{3}'. Consider using an explicit interface implementation instead",
-							tp.GetSignatureForError (), GetSignatureForError (), base_tp.GetSignatureForError (), MethodData.implementing.GetSignatureForError ());
-					}
+			}
+
+			if (base_tparams == null && MethodData != null && MethodData.implementing != null) {
+				CheckImplementingMethodConstraints (Parent, spec, MethodData.implementing);
+			}
+		}
+
+		public static bool CheckImplementingMethodConstraints (TypeContainer container, MethodSpec method, MethodSpec baseMethod)
+		{
+			var tparams = method.Constraints;
+			var base_tparams = baseMethod.Constraints;
+			for (int i = 0; i < tparams.Length; ++i) {
+				if (!tparams[i].HasSameConstraintsImplementation (base_tparams[i])) {
+					container.Compiler.Report.SymbolRelatedToPreviousError (method);
+					container.Compiler.Report.SymbolRelatedToPreviousError (baseMethod);
+
+					// Using container location because the interface can be implemented
+					// by base class
+					container.Compiler.Report.Error (425, container.Location,
+						"The constraints for type parameter `{0}' of method `{1}' must match the constraints for type parameter `{2}' of interface method `{3}'. Consider using an explicit interface implementation instead",
+						tparams[i].GetSignatureForError (), method.GetSignatureForError (),
+						base_tparams[i].GetSignatureForError (), baseMethod.GetSignatureForError ());
+ 
+					return false;
 				}
 			}
+
+			return true;
 		}
 
 		public override void Accept (StructuralVisitor visitor)
@@ -1151,6 +1224,12 @@ namespace Mono.CSharp {
 				}
 
 				if ((ModFlags & Modifiers.ASYNC) != 0) {
+					if (ReturnType.Kind != MemberKind.Void &&
+						ReturnType != Module.PredefinedTypes.Task.TypeSpec &&
+						!ReturnType.IsGenericTask) {
+						Report.Error (1983, Location, "The return type of an async method must be void, Task, or Task<T>");
+					}
+
 					AsyncInitializer.Create (this, block, parameters, Parent.PartialContainer, ReturnType, Location);
 				}
 			}
@@ -1167,7 +1246,7 @@ namespace Mono.CSharp {
 					PredefinedAttribute pa = Module.PredefinedAttributes.Extension;
 					if (!pa.IsDefined) {
 						Report.Error (1110, Location,
-							"`{0}': Extension methods cannot be declared without a reference to System.Core.dll assembly. Add the assembly reference or remove `this' modifer from the first parameter",
+							"`{0}': Extension methods require `System.Runtime.CompilerServices.ExtensionAttribute' type to be available. Are you missing an assembly reference?",
 							GetSignatureForError ());
 					}
 
@@ -1190,6 +1269,9 @@ namespace Mono.CSharp {
 					if (Parent.DeclaringAssembly.EntryPoint == null) {
 						if (Parent.IsGeneric || MemberName.IsGeneric) {
 							Report.Warning (402, 4, Location, "`{0}': an entry point cannot be generic or in a generic type",
+								GetSignatureForError ());
+						} else if ((ModFlags & Modifiers.ASYNC) != 0) {
+							Report.Error (4009, Location, "`{0}': an entry point cannot be async method",
 								GetSignatureForError ());
 						} else {
 							SetIsUsed ();
@@ -1621,9 +1703,9 @@ namespace Mono.CSharp {
 				// initializer, it must initialize all of the struct's fields.
 				if ((Parent.PartialContainer.Kind == MemberKind.Struct) &&
 					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
-					block.AddThisVariable (bc, Parent, Location);
+					block.AddThisVariable (bc);
 
-				if (block != null && (ModFlags & Modifiers.STATIC) == 0){
+				if ((ModFlags & Modifiers.STATIC) == 0){
 					if (Parent.PartialContainer.Kind == MemberKind.Class && Initializer == null)
 						Initializer = new GeneratedBaseInitializer (Location);
 

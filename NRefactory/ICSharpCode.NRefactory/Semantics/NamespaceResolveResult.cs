@@ -26,20 +26,24 @@ namespace ICSharpCode.NRefactory.Semantics
 	/// </summary>
 	public class NamespaceResolveResult : ResolveResult
 	{
-		readonly string namespaceName;
+		readonly INamespace ns;
 		
-		public NamespaceResolveResult(string namespaceName) : base(SharedTypes.UnknownType)
+		public NamespaceResolveResult(INamespace ns) : base(SpecialType.UnknownType)
 		{
-			this.namespaceName = namespaceName;
+			this.ns = ns;
+		}
+		
+		public INamespace Namespace {
+			get { return ns; }
 		}
 		
 		public string NamespaceName {
-			get { return namespaceName; }
+			get { return ns.FullName; }
 		}
 		
 		public override string ToString()
 		{
-			return string.Format("[{0} {1}]", GetType().Name, namespaceName);
+			return string.Format("[{0} {1}]", GetType().Name, ns);
 		}
 	}
 }

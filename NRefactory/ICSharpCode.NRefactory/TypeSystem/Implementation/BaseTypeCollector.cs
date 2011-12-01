@@ -26,7 +26,6 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	/// </summary>
 	sealed class BaseTypeCollector : List<IType>
 	{
-		readonly ITypeResolveContext context;
 		readonly Stack<IType> activeTypes = new Stack<IType>();
 		
 		/// <summary>
@@ -34,11 +33,6 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		/// of a class.
 		/// </summary>
 		internal bool SkipImplementedInterfaces;
-		
-		public BaseTypeCollector(ITypeResolveContext context)
-		{
-			this.context = context;
-		}
 		
 		public void CollectBaseTypes(IType type)
 		{
@@ -60,8 +54,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			// Avoid outputting a type more than once - necessary for "diamond" multiple inheritance
 			// (e.g. C implements I1 and I2, and both interfaces derive from Object)
 			if (!this.Contains(type)) {
-				foreach (IType baseType in type.GetBaseTypes(context)) {
-					if (SkipImplementedInterfaces && def != null && def.Kind != TypeKind.Interface) {
+				foreach (IType baseType in type.DirectBaseTypes) {
+					if (SkipImplementedInterfaces && def != null && def.Kind != TypeKind.Interface && def.Kind != TypeKind.TypeParameter) {
 						if (baseType.Kind == TypeKind.Interface) {
 							// skip the interface
 							continue;

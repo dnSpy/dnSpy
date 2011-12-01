@@ -24,7 +24,7 @@ using System.Threading;
 
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.Semantics;
-using ICSharpCode.NRefactory.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace ICSharpCode.NRefactory.CSharp.Analysis
 {
@@ -145,38 +145,35 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		
 		protected virtual ControlFlowNode CreateNode(Statement previousStatement, Statement nextStatement, ControlFlowNodeType type)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
 			return new ControlFlowNode(previousStatement, nextStatement, type);
 		}
 		
 		protected virtual ControlFlowEdge CreateEdge(ControlFlowNode from, ControlFlowNode to, ControlFlowEdgeType type)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
 			return new ControlFlowEdge(from, to, type);
 		}
 		
 		Statement rootStatement;
-		ResolveVisitor resolveVisitor;
+		CSharpAstResolver resolver;
 		List<ControlFlowNode> nodes;
 		Dictionary<string, ControlFlowNode> labels;
 		List<ControlFlowNode> gotoStatements;
+		CancellationToken cancellationToken;
 		
-		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, ITypeResolveContext context)
+		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return BuildControlFlowGraph(statement, context, CancellationToken.None);
+			CSharpResolver r = new CSharpResolver(MinimalCorlib.Instance.CreateCompilation());
+			return BuildControlFlowGraph(statement, new CSharpAstResolver(r, statement), cancellationToken);
 		}
 		
-		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, ITypeResolveContext context, CancellationToken cancellationToken)
-		{
-			return BuildControlFlowGraph(statement, new ResolveVisitor(
-				new CSharpResolver(context, cancellationToken),
-				null));
-		}
-		
-		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, ResolveVisitor resolveVisitor)
+		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, CSharpAstResolver resolver, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (statement == null)
 				throw new ArgumentNullException("statement");
-			if (resolveVisitor == null)
-				throw new ArgumentNullException("resolveVisitor");
+			if (resolver == null)
+				throw new ArgumentNullException("resolver");
 			
 			NodeCreationVisitor nodeCreationVisitor = new NodeCreationVisitor();
 			nodeCreationVisitor.builder = this;
@@ -185,7 +182,9 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				this.labels = new Dictionary<string, ControlFlowNode>();
 				this.gotoStatements = new List<ControlFlowNode>();
 				this.rootStatement = statement;
-				this.resolveVisitor = resolveVisitor;
+				this.resolver = resolver;
+				this.cancellationToken = cancellationToken;
+				
 				ControlFlowNode entryPoint = CreateStartNode(statement);
 				statement.AcceptVisitor(nodeCreationVisitor, entryPoint);
 				
@@ -205,7 +204,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				this.labels = null;
 				this.gotoStatements = null;
 				this.rootStatement = null;
-				this.resolveVisitor = null;
+				this.resolver = null;
+				this.cancellationToken = CancellationToken.None;
 			}
 		}
 		
@@ -282,13 +282,13 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// Evaluates an expression.
 		/// </summary>
 		/// <returns>The constant value of the expression; or null if the expression is not a constant.</returns>
-		ConstantResolveResult EvaluateConstant(Expression expr)
+		ResolveResult EvaluateConstant(Expression expr)
 		{
 			if (EvaluateOnlyPrimitiveConstants) {
 				if (!(expr is PrimitiveExpression || expr is NullReferenceExpression))
 					return null;
 			}
-			return resolveVisitor.Resolve(expr) as ConstantResolveResult;
+			return resolver.Resolve(expr, cancellationToken);
 		}
 		
 		/// <summary>
@@ -297,18 +297,18 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		/// <returns>The value of the constant boolean expression; or null if the value is not a constant boolean expression.</returns>
 		bool? EvaluateCondition(Expression expr)
 		{
-			ConstantResolveResult rr = EvaluateConstant(expr);
-			if (rr != null)
+			ResolveResult rr = EvaluateConstant(expr);
+			if (rr != null && rr.IsCompileTimeConstant)
 				return rr.ConstantValue as bool?;
 			else
 				return null;
 		}
 		
-		bool AreEqualConstants(ConstantResolveResult c1, ConstantResolveResult c2)
+		bool AreEqualConstants(ResolveResult c1, ResolveResult c2)
 		{
-			if (c1 == null || c2 == null)
+			if (c1 == null || c2 == null || !c1.IsCompileTimeConstant || !c2.IsCompileTimeConstant)
 				return false;
-			CSharpResolver r = new CSharpResolver(resolveVisitor.TypeResolveContext, resolveVisitor.CancellationToken);
+			CSharpResolver r = new CSharpResolver(resolver.TypeResolveContext);
 			ResolveResult c = r.ResolveBinaryOperator(BinaryOperatorType.Equality, c1, c2);
 			return c.IsCompileTimeConstant && (c.ConstantValue as bool?) == true;
 		}
@@ -422,35 +422,40 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			public override ControlFlowNode VisitSwitchStatement(SwitchStatement switchStatement, ControlFlowNode data)
 			{
 				// First, figure out which switch section will get called (if the expression is constant):
-				ConstantResolveResult constant = builder.EvaluateConstant(switchStatement.Expression);
+				ResolveResult constant = builder.EvaluateConstant(switchStatement.Expression);
 				SwitchSection defaultSection = null;
 				SwitchSection sectionMatchedByConstant = null;
 				foreach (SwitchSection section in switchStatement.SwitchSections) {
 					foreach (CaseLabel label in section.CaseLabels) {
 						if (label.Expression.IsNull) {
 							defaultSection = section;
-						} else if (constant != null) {
-							ConstantResolveResult labelConstant = builder.EvaluateConstant(label.Expression);
+						} else if (constant != null && constant.IsCompileTimeConstant) {
+							ResolveResult labelConstant = builder.EvaluateConstant(label.Expression);
 							if (builder.AreEqualConstants(constant, labelConstant))
 								sectionMatchedByConstant = section;
 						}
 					}
 				}
-				if (constant != null && sectionMatchedByConstant == null)
+				if (constant.IsCompileTimeConstant && sectionMatchedByConstant == null)
 					sectionMatchedByConstant = defaultSection;
 				
 				int gotoCaseOrDefaultInOuterScope = gotoCaseOrDefault.Count;
+				List<ControlFlowNode> sectionStartNodes = new List<ControlFlowNode>();
 				
 				ControlFlowNode end = builder.CreateEndNode(switchStatement, addToNodeList: false);
 				breakTargets.Push(end);
 				foreach (SwitchSection section in switchStatement.SwitchSections) {
-					if (constant == null || section == sectionMatchedByConstant) {
+					int sectionStartNodeID = builder.nodes.Count;
+					if (constant == null || !constant.IsCompileTimeConstant || section == sectionMatchedByConstant) {
 						HandleStatementList(section.Statements, data);
 					} else {
 						// This section is unreachable: pass null to HandleStatementList.
 						HandleStatementList(section.Statements, null);
 					}
 					// Don't bother connecting the ends of the sections: the 'break' statement takes care of that.
+					
+					// Store the section start node for 'goto case' statements.
+					sectionStartNodes.Add(sectionStartNodeID < builder.nodes.Count ? builder.nodes[sectionStartNodeID] : null);
 				}
 				breakTargets.Pop();
 				if (defaultSection == null && sectionMatchedByConstant == null) {
@@ -459,7 +464,38 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				
 				if (gotoCaseOrDefault.Count > gotoCaseOrDefaultInOuterScope) {
 					// Resolve 'goto case' statements:
-					throw new NotImplementedException();
+					for (int i = gotoCaseOrDefaultInOuterScope; i < gotoCaseOrDefault.Count; i++) {
+						ControlFlowNode gotoCaseNode = gotoCaseOrDefault[i];
+						GotoCaseStatement gotoCaseStatement = gotoCaseNode.NextStatement as GotoCaseStatement;
+						ResolveResult gotoCaseConstant = null;
+						if (gotoCaseStatement != null) {
+							gotoCaseConstant = builder.EvaluateConstant(gotoCaseStatement.LabelExpression);
+						}
+						int targetSectionIndex = -1;
+						int currentSectionIndex = 0;
+						foreach (SwitchSection section in switchStatement.SwitchSections) {
+							foreach (CaseLabel label in section.CaseLabels) {
+								if (gotoCaseStatement != null) {
+									// goto case
+									if (!label.Expression.IsNull) {
+										ResolveResult labelConstant = builder.EvaluateConstant(label.Expression);
+										if (builder.AreEqualConstants(gotoCaseConstant, labelConstant))
+											targetSectionIndex = currentSectionIndex;
+									}
+								} else {
+									// goto default
+									if (label.Expression.IsNull)
+										targetSectionIndex = currentSectionIndex;
+								}
+							}
+							currentSectionIndex++;
+						}
+						if (targetSectionIndex >= 0 && sectionStartNodes[targetSectionIndex] != null)
+							Connect(gotoCaseNode, sectionStartNodes[targetSectionIndex], ControlFlowEdgeType.Jump);
+						else
+							Connect(gotoCaseNode, end, ControlFlowEdgeType.Jump);
+					}
+					gotoCaseOrDefault.RemoveRange(gotoCaseOrDefaultInOuterScope, gotoCaseOrDefault.Count - gotoCaseOrDefaultInOuterScope);
 				}
 				
 				builder.nodes.Add(end);

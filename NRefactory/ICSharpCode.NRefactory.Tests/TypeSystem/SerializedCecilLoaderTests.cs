@@ -18,6 +18,7 @@
 
 using System;
 using System.IO;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using ICSharpCode.NRefactory.Utils;
 using NUnit.Framework;
 
@@ -30,12 +31,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public void FixtureSetUp()
 		{
 			CecilLoader loader = new CecilLoader() { IncludeInternalMembers = true };
-			IProjectContent pc = loader.LoadAssemblyFile(typeof(TestCase.SimplePublicClass).Assembly.Location);
+			IUnresolvedAssembly pc = loader.LoadAssemblyFile(typeof(TestCase.SimplePublicClass).Assembly.Location);
 			FastSerializer serializer = new FastSerializer();
 			using (MemoryStream ms = new MemoryStream()) {
 				serializer.Serialize(ms, pc);
 				ms.Position = 0;
-				testCasePC = (IProjectContent)serializer.Deserialize(ms);
+				var asm = (IUnresolvedAssembly)serializer.Deserialize(ms);
+				base.compilation = new SimpleCompilation(asm, CecilLoaderTests.Mscorlib);
 			}
 		}
 	}

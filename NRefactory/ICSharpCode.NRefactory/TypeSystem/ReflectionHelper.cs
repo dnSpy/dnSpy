@@ -43,43 +43,23 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		public sealed class UnboundTypeArgument {}
 		
-		#region ITypeResolveContext.GetTypeDefinition(Type)
+		#region ICompilation.FindType
 		/// <summary>
-		/// Retrieves a type definition.
+		/// Retrieves the specified type in this compilation.
+		/// Returns <see cref="SpecialType.UnknownType"/> if the type cannot be found in this compilation.
 		/// </summary>
-		/// <returns>Returns the type definition; or null if it is not found.</returns>
-		/// <remarks>
-		/// This method retrieves the type definition; consider using <code>type.ToTypeReference().Resolve(context)</code> instead
-		/// if you need an <see cref="IType"/>.
-		/// </remarks>
-		public static ITypeDefinition GetTypeDefinition(this ITypeResolveContext context, Type type)
+		public static IType FindType(this ICompilation compilation, Type type)
 		{
-			if (type == null)
-				return null;
-			while (type.IsArray || type.IsPointer || type.IsByRef)
-				type = type.GetElementType();
-			if (type.IsGenericType && !type.IsGenericTypeDefinition)
-				type = type.GetGenericTypeDefinition();
-			if (type.IsGenericParameter)
-				return null;
-			if (type.DeclaringType != null) {
-				ITypeDefinition declaringType = GetTypeDefinition(context, type.DeclaringType);
-				if (declaringType != null) {
-					int typeParameterCount;
-					string name = SplitTypeParameterCountFromReflectionName(type.Name, out typeParameterCount);
-					typeParameterCount += declaringType.TypeParameterCount;
-					foreach (ITypeDefinition nestedType in declaringType.NestedTypes) {
-						if (nestedType.Name == name && nestedType.TypeParameterCount == typeParameterCount) {
-							return nestedType;
-						}
-					}
-				}
-				return null;
-			} else {
-				int typeParameterCount;
-				string name = SplitTypeParameterCountFromReflectionName(type.Name, out typeParameterCount);
-				return context.GetTypeDefinition(type.Namespace, name, typeParameterCount, StringComparer.Ordinal);
-			}
+			return type.ToTypeReference().Resolve(compilation.TypeResolveContext);
+		}
+		
+		/// <summary>
+		/// Retrieves the specified type in this compilation.
+		/// Returns <see cref="SpecialType.UnknownType"/> if the type cannot be found in this compilation.
+		/// </summary>
+		public static IType FindType(this ICompilation compilation, string reflectionTypeName)
+		{
+			return ParseReflectionName(reflectionTypeName).Resolve(compilation.TypeResolveContext);
 		}
 		#endregion
 		
@@ -88,64 +68,52 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Creates a reference to the specified type.
 		/// </summary>
 		/// <param name="type">The type to be converted.</param>
-		/// <param name="entity">The parent entity, used to fetch the ITypeParameter for generic types.</param>
 		/// <returns>Returns the type reference.</returns>
-		public static ITypeReference ToTypeReference(this Type type, IEntity entity = null)
+		public static ITypeReference ToTypeReference(this Type type)
 		{
 			if (type == null)
-				return SharedTypes.UnknownType;
+				return SpecialType.UnknownType;
 			if (type.IsGenericType && !type.IsGenericTypeDefinition) {
-				ITypeReference def = ToTypeReference(type.GetGenericTypeDefinition(), entity);
+				ITypeReference def = ToTypeReference(type.GetGenericTypeDefinition());
 				Type[] arguments = type.GetGenericArguments();
 				ITypeReference[] args = new ITypeReference[arguments.Length];
 				bool allUnbound = true;
 				for (int i = 0; i < arguments.Length; i++) {
-					args[i] = ToTypeReference(arguments[i], entity);
-					allUnbound &= args[i].Equals(SharedTypes.UnboundTypeArgument);
+					args[i] = ToTypeReference(arguments[i]);
+					allUnbound &= args[i].Equals(SpecialType.UnboundTypeArgument);
 				}
 				if (allUnbound)
 					return def;
 				else
 					return new ParameterizedTypeReference(def, args);
 			} else if (type.IsArray) {
-				return new ArrayTypeReference(ToTypeReference(type.GetElementType(), entity), type.GetArrayRank());
+				return new ArrayTypeReference(ToTypeReference(type.GetElementType()), type.GetArrayRank());
 			} else if (type.IsPointer) {
-				return new PointerTypeReference(ToTypeReference(type.GetElementType(), entity));
+				return new PointerTypeReference(ToTypeReference(type.GetElementType()));
 			} else if (type.IsByRef) {
-				return new ByReferenceTypeReference(ToTypeReference(type.GetElementType(), entity));
+				return new ByReferenceTypeReference(ToTypeReference(type.GetElementType()));
 			} else if (type.IsGenericParameter) {
 				if (type.DeclaringMethod != null) {
-					IMethod method = entity as IMethod;
-					if (method != null) {
-						if (type.GenericParameterPosition < method.TypeParameters.Count) {
-							return method.TypeParameters[type.GenericParameterPosition];
-						}
-					}
-					return SharedTypes.UnknownType;
+					return new TypeParameterReference(EntityType.Method, type.GenericParameterPosition);
 				} else {
-					ITypeDefinition c = (entity as ITypeDefinition) ?? (entity != null ? entity.DeclaringTypeDefinition : null);
-					if (c != null && type.GenericParameterPosition < c.TypeParameters.Count) {
-						if (c.TypeParameters[type.GenericParameterPosition].Name == type.Name) {
-							return c.TypeParameters[type.GenericParameterPosition];
-						}
-					}
-					return SharedTypes.UnknownType;
+					return new TypeParameterReference(EntityType.TypeDefinition, type.GenericParameterPosition);
 				}
 			} else if (type.DeclaringType != null) {
 				if (type == typeof(Dynamic))
-					return SharedTypes.Dynamic;
+					return SpecialType.Dynamic;
 				else if (type == typeof(Null))
-					return SharedTypes.Null;
+					return SpecialType.NullType;
 				else if (type == typeof(UnboundTypeArgument))
-					return SharedTypes.UnboundTypeArgument;
-				ITypeReference baseTypeRef = ToTypeReference(type.DeclaringType, entity);
+					return SpecialType.UnboundTypeArgument;
+				ITypeReference baseTypeRef = ToTypeReference(type.DeclaringType);
 				int typeParameterCount;
 				string name = SplitTypeParameterCountFromReflectionName(type.Name, out typeParameterCount);
 				return new NestedTypeReference(baseTypeRef, name, typeParameterCount);
 			} else {
+				IAssemblyReference assemblyReference = new DefaultAssemblyReference(type.Assembly.FullName);
 				int typeParameterCount;
 				string name = SplitTypeParameterCountFromReflectionName(type.Name, out typeParameterCount);
-				return new GetClassTypeReference(type.Namespace, name, typeParameterCount);
+				return new GetClassTypeReference(assemblyReference, type.Namespace, name, typeParameterCount);
 			}
 		}
 		#endregion
@@ -185,28 +153,14 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		#endregion
 		
-		#region TypeCode.ToTypeReference()
-		static readonly ITypeReference[] primitiveTypeReferences = {
-			SharedTypes.UnknownType, // TypeCode.Empty
-			KnownTypeReference.Object,
-			new GetClassTypeReference("System", "DBNull", 0),
-			KnownTypeReference.Boolean,
-			KnownTypeReference.Char,
-			KnownTypeReference.SByte,
-			KnownTypeReference.Byte,
-			KnownTypeReference.Int16,
-			KnownTypeReference.UInt16,
-			KnownTypeReference.Int32,
-			KnownTypeReference.UInt32,
-			KnownTypeReference.Int64,
-			KnownTypeReference.UInt64,
-			KnownTypeReference.Single,
-			KnownTypeReference.Double,
-			KnownTypeReference.Decimal,
-			new GetClassTypeReference("System", "DateTime", 0),
-			SharedTypes.UnknownType, // (TypeCode)17 has no enum value?
-			KnownTypeReference.String
-		};
+		#region TypeCode support
+		/// <summary>
+		/// Retrieves a built-in type using the specified type code.
+		/// </summary>
+		public static IType FindType(this ICompilation compilation, TypeCode typeCode)
+		{
+			return compilation.FindType((KnownTypeCode)typeCode);
+		}
 		
 		/// <summary>
 		/// Creates a reference to the specified type.
@@ -215,50 +169,21 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <returns>Returns the type reference.</returns>
 		public static ITypeReference ToTypeReference(this TypeCode typeCode)
 		{
-			return primitiveTypeReferences[(int)typeCode];
-		}
-		#endregion
-		
-		#region GetTypeCode
-		static readonly string[] typeNamesByTypeCode = {
-			"Void", "Object", "DBNull", "Boolean", "Char",
-			"SByte", "Byte", "Int16", "UInt16", "Int32", "UInt32", "Int64", "UInt64",
-			"Single", "Double", "Decimal", "DateTime", null, "String"
-		};
-		
-		static readonly string[] csharpTypeNamesByTypeCode = {
-			"void", "object", null, "bool", "char",
-			"sbyte", "byte", "short", "ushort", "int", "uint", "long", "ulong",
-			"float", "double", "decimal", null, null, "string"
-		};
-		
-		internal static int ByTypeCodeArraySize {
-			get { return typeNamesByTypeCode.Length; }
-		}
-		
-		public static string GetShortNameByTypeCode(TypeCode typeCode)
-		{
-			return typeNamesByTypeCode[(int)typeCode];
-		}
-		
-		public static string GetCSharpNameByTypeCode(TypeCode typeCode)
-		{
-			return csharpTypeNamesByTypeCode[(int)typeCode];
+			return KnownTypeReference.Get((KnownTypeCode)typeCode);
 		}
 		
 		/// <summary>
-		/// Gets the type code for the specified type, or TypeCode.Empty if none of the other type codes matches.
+		/// Gets the type code for the specified type, or TypeCode.Empty if none of the other type codes match.
 		/// </summary>
 		public static TypeCode GetTypeCode(IType type)
 		{
 			ITypeDefinition def = type as ITypeDefinition;
-			if (def != null && def.TypeParameterCount == 0 && def.Namespace == "System") {
-				string[] typeNames = typeNamesByTypeCode;
-				string name = def.Name;
-				for (int i = 1; i < typeNames.Length; i++) {
-					if (name == typeNames[i])
-						return (TypeCode)i;
-				}
+			if (def != null) {
+				KnownTypeCode typeCode = def.KnownTypeCode;
+				if (typeCode <= KnownTypeCode.String && typeCode != KnownTypeCode.Void)
+					return (TypeCode)typeCode;
+				else
+					return TypeCode.Empty;
 			}
 			return TypeCode.Empty;
 		}
@@ -269,16 +194,14 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Parses a reflection name into a type reference.
 		/// </summary>
 		/// <param name="reflectionTypeName">The reflection name of the type.</param>
-		/// <param name="parentEntity">Parent entity, used to find the type parameters for open types.
-		/// If no entity is provided, type parameters are converted to <see cref="SharedTypes.UnknownType"/>.</param>
 		/// <exception cref="ReflectionNameParseException">The syntax of the reflection type name is invalid</exception>
 		/// <returns>A type reference that represents the reflection name.</returns>
-		public static ITypeReference ParseReflectionName(string reflectionTypeName, IEntity parentEntity = null)
+		public static ITypeReference ParseReflectionName(string reflectionTypeName)
 		{
 			if (reflectionTypeName == null)
 				throw new ArgumentNullException("reflectionTypeName");
 			int pos = 0;
-			ITypeReference r = ParseReflectionName(reflectionTypeName, ref pos, parentEntity);
+			ITypeReference r = ParseReflectionName(reflectionTypeName, ref pos);
 			if (pos < reflectionTypeName.Length)
 				throw new ReflectionNameParseException(pos, "Expected end of type name");
 			return r;
@@ -300,7 +223,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
-		static ITypeReference ParseReflectionName(string reflectionTypeName, ref int pos, IEntity entity)
+		static ITypeReference ParseReflectionName(string reflectionTypeName, ref int pos)
 		{
 			if (pos == reflectionTypeName.Length)
 				throw new ReflectionNameParseException(pos, "Unexpected end");
@@ -313,25 +236,18 @@ namespace ICSharpCode.NRefactory.TypeSystem
 					// method type parameter reference
 					pos++;
 					int index = ReadTypeParameterCount(reflectionTypeName, ref pos);
-					IMethod method = entity as IMethod;
-					if (method != null && index >= 0 && index < method.TypeParameters.Count)
-						return method.TypeParameters[index];
-					else
-						return SharedTypes.UnknownType;
+					return new TypeParameterReference(EntityType.Method, index);
 				} else {
 					// class type parameter reference
 					int index = ReadTypeParameterCount(reflectionTypeName, ref pos);
-					ITypeDefinition c = (entity as ITypeDefinition) ?? (entity != null ? entity.DeclaringTypeDefinition : null);
-					if (c != null && index >= 0 && index < c.TypeParameters.Count)
-						return c.TypeParameters[index];
-					else
-						return SharedTypes.UnknownType;
+					return new TypeParameterReference(EntityType.TypeDefinition, index);
 				}
 			}
 			// not a type parameter reference: read the actual type name
 			int tpc;
 			string typeName = ReadTypeName(reflectionTypeName, ref pos, out tpc);
-			ITypeReference reference = new GetClassTypeReference(typeName, tpc);
+			string assemblyName = SkipAheadAndReadAssemblyName(reflectionTypeName, pos);
+			ITypeReference reference = CreateGetClassTypeReference(assemblyName, typeName, tpc);
 			// read type suffixes
 			while (pos < reflectionTypeName.Length) {
 				switch (reflectionTypeName[pos++]) {
@@ -353,7 +269,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 							// it's a generic type
 							List<ITypeReference> typeArguments = new List<ITypeReference>(tpc);
 							pos++;
-							typeArguments.Add(ParseReflectionName(reflectionTypeName, ref pos, entity));
+							typeArguments.Add(ParseReflectionName(reflectionTypeName, ref pos));
 							if (pos < reflectionTypeName.Length && reflectionTypeName[pos] == ']')
 								pos++;
 							else
@@ -366,7 +282,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 								else
 									throw new ReflectionNameParseException(pos, "Expected another type argument");
 								
-								typeArguments.Add(ParseReflectionName(reflectionTypeName, ref pos, entity));
+								typeArguments.Add(ParseReflectionName(reflectionTypeName, ref pos));
 								
 								if (pos < reflectionTypeName.Length && reflectionTypeName[pos] == ']')
 									pos++;
@@ -409,6 +325,51 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				}
 			}
 			return reference;
+		}
+		
+		static ITypeReference CreateGetClassTypeReference(string assemblyName, string typeName, int tpc)
+		{
+			IAssemblyReference assemblyReference;
+			if (assemblyName != null) {
+				assemblyReference = new DefaultAssemblyReference(assemblyName);
+			} else {
+				assemblyReference = DefaultAssemblyReference.CurrentAssembly;
+			}
+			int pos = typeName.LastIndexOf('.');
+			if (pos < 0)
+				return new GetClassTypeReference(assemblyReference, string.Empty, typeName, tpc);
+			else
+				return new GetClassTypeReference(assemblyReference, typeName.Substring(0, pos), typeName.Substring(pos + 1), tpc);
+		}
+		
+		static string SkipAheadAndReadAssemblyName(string reflectionTypeName, int pos)
+		{
+			int nestingLevel = 0;
+			while (pos < reflectionTypeName.Length) {
+				switch (reflectionTypeName[pos++]) {
+					case '[':
+						nestingLevel++;
+						break;
+					case ']':
+						if (nestingLevel == 0)
+							return null;
+						nestingLevel--;
+						break;
+					case ',':
+						if (nestingLevel == 0) {
+							// first skip the whitespace
+							while (pos < reflectionTypeName.Length && reflectionTypeName[pos] == ' ')
+								pos++;
+							// everything up to the end/next ']' is the assembly name
+							int endPos = pos;
+							while (endPos < reflectionTypeName.Length && reflectionTypeName[endPos] != ']')
+								endPos++;
+							return reflectionTypeName.Substring(pos, endPos - pos);
+						}
+						break;
+				}
+			}
+			return null;
 		}
 		
 		static string ReadTypeName(string reflectionTypeName, ref int pos, out int tpc)

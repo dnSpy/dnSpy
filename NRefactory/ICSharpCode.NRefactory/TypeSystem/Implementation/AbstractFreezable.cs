@@ -23,22 +23,44 @@ using System.Linq;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 {
-	/// <summary>
-	/// Base class for immutable objects. Provides implementation for IFreezable that reports the
-	/// object as always-frozen.
-	/// </summary>
-	[Serializable]
-	public abstract class Immutable : IFreezable
+	public static class FreezableHelper
 	{
-		bool IFreezable.IsFrozen {
-			get { return true; }
+		public static void ThrowIfFrozen(IFreezable freezable)
+		{
+			if (freezable.IsFrozen)
+				throw new InvalidOperationException("Cannot mutate frozen " + freezable.GetType().Name);
 		}
 		
-		void IFreezable.Freeze()
+		public static IList<T> FreezeListAndElements<T>(IList<T> list)
 		{
+			if (list != null) {
+				foreach (T item in list)
+					Freeze(item);
+			}
+			return FreezeList(list);
+		}
+		
+		public static IList<T> FreezeList<T>(IList<T> list)
+		{
+			if (list == null || list.Count == 0)
+				return EmptyList<T>.Instance;
+			if (list.IsReadOnly) {
+				// If the list is already read-only, return it directly.
+				// This is important, otherwise we might undo the effects of interning.
+				return list;
+			} else {
+				return new ReadOnlyCollection<T>(list.ToArray());
+			}
+		}
+		
+		public static void Freeze(object item)
+		{
+			IFreezable f = item as IFreezable;
+			if (f != null)
+				f.Freeze();
 		}
 	}
-	
+
 	[Serializable]
 	public abstract class AbstractFreezable : IFreezable
 	{
@@ -66,45 +88,13 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		{
 		}
 		
-		protected void CheckBeforeMutation()
-		{
-			if (isFrozen)
-				throw new InvalidOperationException("Cannot mutate frozen " + GetType().Name);
-		}
-		
+		/*
 		protected static IList<T> CopyList<T>(IList<T> inputList)
 		{
 			if (inputList == null || inputList.Count == 0)
 				return null;
 			else
 				return new List<T>(inputList);
-		}
-		
-		protected static IList<T> FreezeList<T>(IList<T> list) where T : IFreezable
-		{
-			if (list == null || list.Count == 0)
-				return EmptyList<T>.Instance;
-			var result = new ReadOnlyCollection<T>(list.ToArray());
-			foreach (T item in result) {
-				item.Freeze();
-			}
-			return result;
-		}
-		
-		protected static IList<string> FreezeList(IList<string> list)
-		{
-			if (list == null || list.Count == 0)
-				return EmptyList<string>.Instance;
-			else
-				return new ReadOnlyCollection<string>(list.ToArray());
-		}
-		
-		protected static IList<ITypeReference> FreezeList(IList<ITypeReference> list)
-		{
-			if (list == null || list.Count == 0)
-				return EmptyList<ITypeReference>.Instance;
-			else
-				return new ReadOnlyCollection<ITypeReference>(list.ToArray());
-		}
+		}*/
 	}
 }

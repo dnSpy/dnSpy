@@ -24,7 +24,30 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents an accessor (property getter/setter; or event add/remove/invoke).
 	/// </summary>
-	public interface IAccessor : IFreezable
+	public interface IUnresolvedAccessor : IHasAccessibility
+	{
+		/// <summary>
+		/// Gets the accessor region.
+		/// </summary>
+		DomRegion Region { get; }
+		
+		/// <summary>
+		/// Gets the attributes defined on this accessor.
+		/// </summary>
+		IList<IUnresolvedAttribute> Attributes { get; }
+		
+		/// <summary>
+		/// Gets the attributes defined on the return type of the accessor. (e.g. [return: MarshalAs(...)])
+		/// </summary>
+		IList<IUnresolvedAttribute> ReturnTypeAttributes { get; }
+		
+		IAccessor CreateResolvedAccessor(ITypeResolveContext context);
+	}
+	
+	/// <summary>
+	/// Represents an accessor (property getter/setter; or event add/remove/invoke).
+	/// </summary>
+	public interface IAccessor : IHasAccessibility
 	{
 		/// <summary>
 		/// Gets the accessor region.
@@ -40,10 +63,5 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets the attributes defined on the return type of the accessor. (e.g. [return: MarshalAs(...)])
 		/// </summary>
 		IList<IAttribute> ReturnTypeAttributes { get; }
-		
-		/// <summary>
-		/// Gets the accessibility of this accessor.
-		/// </summary>
-		Accessibility Accessibility { get; }
 	}
 }

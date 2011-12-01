@@ -9,6 +9,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2008 Novell, Inc
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -743,7 +744,7 @@ namespace Mono.CSharp
 
 			FieldExpr fe = new FieldExpr (field, Location);
 			if ((field.ModFlags & Modifiers.STATIC) == 0)
-				fe.InstanceExpression = new CompilerGeneratedThis (fe.Type, Location);
+				fe.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
 
 			// Create get block
 			Get.Block = new ToplevelBlock (Compiler, ParametersCompiled.EmptyReadOnlyParameters, Location);
@@ -780,6 +781,16 @@ namespace Mono.CSharp
 
 			if (!DefineAccessors ())
 				return false;
+
+			if (AccessorSecond == null) {
+				PropertyMethod pm;
+				if (AccessorFirst is GetMethod)
+					pm = new SetMethod (this, 0, ParametersCompiled.EmptyReadOnlyParameters, null, Location);
+				else
+					pm = new GetMethod (this, 0, null, Location);
+
+				Parent.AddMember (pm);
+			}
 
 			if (!CheckBase ())
 				return false;
@@ -876,7 +887,7 @@ namespace Mono.CSharp
 		abstract class EventFieldAccessor : AEventAccessor
 		{
 			protected EventFieldAccessor (EventField method, string prefix)
-				: base (method, prefix, null, Location.Null)
+				: base (method, prefix, null, method.Location)
 			{
 			}
 
@@ -1275,7 +1286,7 @@ namespace Mono.CSharp
 			if (!base.Define ())
 				return false;
 
-			if (!TypeManager.IsDelegateType (MemberType)) {
+			if (!MemberType.IsDelegate) {
 				Report.Error (66, Location, "`{0}': event must be of a delegate type", GetSignatureForError ());
 			}
 

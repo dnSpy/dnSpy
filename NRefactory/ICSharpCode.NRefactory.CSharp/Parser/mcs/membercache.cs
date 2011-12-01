@@ -8,6 +8,7 @@
 //
 // Copyright 2001 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2010 Novell, Inc
+// Copyright 2011 Xamarin Inc
 //
 //
 
@@ -684,6 +685,44 @@ namespace Mono.CSharp {
 			throw new NotImplementedException (member.GetType ().ToString ());
 		}
 
+		public static List<FieldSpec> GetAllFieldsForDefiniteAssignment (TypeSpec container)
+		{
+			List<FieldSpec> fields = null;
+			foreach (var entry in container.MemberCache.member_hash) {
+				foreach (var name_entry in entry.Value) {
+					if (name_entry.Kind != MemberKind.Field)
+						continue;
+
+					if ((name_entry.Modifiers & Modifiers.STATIC) != 0)
+						continue;
+
+					//
+					// Fixed size buffers are not subject to definite assignment checking
+					//
+					if (name_entry is FixedFieldSpec || name_entry is ConstSpec)
+						continue;
+
+					var fs = (FieldSpec) name_entry;
+
+					//
+					// LAMESPEC: Very bizzare hack, definitive assignment is not done
+					// for imported non-public reference fields except array. No idea what the
+					// actual csc rule is
+					//
+					if (!fs.IsPublic && container.MemberDefinition.IsImported && (!fs.MemberType.IsArray && TypeSpec.IsReferenceType (fs.MemberType)))
+						continue;
+
+					if (fields == null)
+						fields = new List<FieldSpec> ();
+
+					fields.Add (fs);
+					break;
+				}
+			}
+
+			return fields ?? new List<FieldSpec> (0);
+		}
+
 		public static IList<MemberSpec> GetCompletitionMembers (IMemberContext ctx, TypeSpec container, string name)
 		{
 			var matches = new List<MemberSpec> ();
@@ -1139,10 +1178,14 @@ namespace Mono.CSharp {
 					if (name_entry.MemberDefinition.CLSAttributeValue == false)
 					    continue;
 
-					IParametersMember p_a = name_entry as IParametersMember;
-					if (p_a != null && !name_entry.IsAccessor) {
-						if (!is_imported_type) {
+					IParametersMember p_a = null;
+					if (!is_imported_type) {
+						p_a = name_entry as IParametersMember;
+						if (p_a != null && !name_entry.IsAccessor) {
 							var p_a_pd = p_a.Parameters;
+							//
+							// Check differing overloads in @container
+							//
 							for (int ii = i + 1; ii < entry.Value.Count; ++ii) {
 								var checked_entry = entry.Value[ii];
 								IParametersMember p_b = checked_entry as IParametersMember;
@@ -1157,24 +1200,7 @@ namespace Mono.CSharp {
 
 								var res = ParametersCompiled.IsSameClsSignature (p_a.Parameters, p_b.Parameters);
 								if (res != 0) {
-									var last = GetLaterDefinedMember (checked_entry, name_entry);
-									if (last == checked_entry.MemberDefinition) {
-										report.SymbolRelatedToPreviousError (name_entry);
-									} else {
-										report.SymbolRelatedToPreviousError (checked_entry);
-									}
-
-									if ((res & 1) != 0) {
-										report.Warning (3006, 1, last.Location,
-												"Overloaded method `{0}' differing only in ref or out, or in array rank, is not CLS-compliant",
-												name_entry.GetSignatureForError ());
-									}
-
-									if ((res & 2) != 0) {
-										report.Warning (3007, 1, last.Location,
-											"Overloaded method `{0}' differing only by unnamed array types is not CLS-compliant",
-											name_entry.GetSignatureForError ());
-									}
+									ReportOverloadedMethodClsDifference (name_entry, checked_entry, res, report);
 								}
 							}
 						}
@@ -1192,11 +1218,26 @@ namespace Mono.CSharp {
 					} else {
 						bool same_names_only = true;
 						foreach (var f in found) {
-							if (f.Name == name_entry.Name)
-								continue;
+							if (f.Name == name_entry.Name) {
+								if (p_a != null) {
+									IParametersMember p_b = f as IParametersMember;
+									if (p_b == null)
+										continue;
 
-//							if (f.IsAccessor && name_entry.IsAccessor)
-//								continue;
+									if (p_a.Parameters.Count != p_b.Parameters.Count)
+										continue;
+
+									if (f.IsAccessor)
+										continue;
+
+									var res = ParametersCompiled.IsSameClsSignature (p_a.Parameters, p_b.Parameters);
+									if (res != 0) {
+										ReportOverloadedMethodClsDifference (f, name_entry, res, report);
+									}
+								}
+
+								continue;
+							}
 
 							same_names_only = false;
 							if (!is_imported_type) {
@@ -1235,10 +1276,35 @@ namespace Mono.CSharp {
 			if (mc_b == null)
 				return mc_a;
 
+			if (a.DeclaringType.MemberDefinition != b.DeclaringType.MemberDefinition)
+				return mc_b;
+
 			if (mc_a.Location.File != mc_a.Location.File)
 				return mc_b;
 
 			return mc_b.Location.Row > mc_a.Location.Row ? mc_b : mc_a;
+		}
+
+		static void ReportOverloadedMethodClsDifference (MemberSpec a, MemberSpec b, int res, Report report)
+		{
+			var last = GetLaterDefinedMember (a, b);
+			if (last == a.MemberDefinition) {
+				report.SymbolRelatedToPreviousError (b);
+			} else {
+				report.SymbolRelatedToPreviousError (a);
+			}
+
+			if ((res & 1) != 0) {
+				report.Warning (3006, 1, last.Location,
+						"Overloaded method `{0}' differing only in ref or out, or in array rank, is not CLS-compliant",
+						last.GetSignatureForError ());
+			}
+
+			if ((res & 2) != 0) {
+				report.Warning (3007, 1, last.Location,
+					"Overloaded method `{0}' differing only by unnamed array types is not CLS-compliant",
+					last.GetSignatureForError ());
+			}
 		}
 
 		public bool CheckExistingMembersOverloads (MemberCore member, AParametersCollection parameters)

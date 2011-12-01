@@ -59,6 +59,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 						Identifier = "MyInterface",
 						TypeArguments = { new PrimitiveType("string") }
 					},
+					Name = "this",
 					Parameters = {
 						new ParameterDeclaration(new PrimitiveType("int"), "a"),
 						new ParameterDeclaration(new PrimitiveType("string"), "b")

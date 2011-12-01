@@ -142,7 +142,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		void WriteSpecials (AstNode start, AstNode end)
 		{
 			for (AstNode pos = start; pos != end; pos = pos.NextSibling) {
-				if (pos.Role == AstNode.Roles.Comment) {
+				if (pos.Role == AstNode.Roles.Comment || pos.Role == AstNode.Roles.PreProcessorDirective) {
 					pos.AcceptVisitor (this, null);
 				}
 			}
@@ -154,10 +154,21 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		void WriteSpecialsUpToRole (Role role)
 		{
-			for (AstNode pos = positionStack.Peek(); pos != null; pos = pos.NextSibling) {
+			WriteSpecialsUpToRole (role, null);
+		}
+		
+		void WriteSpecialsUpToRole (Role role, AstNode nextNode)
+		{
+			if (positionStack.Count == 0)
+				return;
+			// Look for the role between the current position and the nextNode.
+			for (AstNode pos = positionStack.Peek(); pos != null && pos != nextNode; pos = pos.NextSibling) {
 				if (pos.Role == role) {
 					WriteSpecials (positionStack.Pop (), pos);
-					positionStack.Push (pos);
+					// Push the next sibling because the node matching the role is not a special,
+					// and should be considered to be already handled.
+					positionStack.Push (pos.NextSibling);
+					// This is necessary for OptionalComma() to work correctly.
 					break;
 				}
 			}
@@ -169,22 +180,15 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		void WriteSpecialsUpToNode (AstNode node)
 		{
+			if (positionStack.Count == 0)
+				return;
 			for (AstNode pos = positionStack.Peek(); pos != null; pos = pos.NextSibling) {
 				if (pos == node) {
 					WriteSpecials (positionStack.Pop (), pos);
-					positionStack.Push (pos);
-					break;
-				}
-			}
-		}
-		
-		void WriteSpecialsUpToRole (Role role, AstNode nextNode)
-		{
-			// Look for the role between the current position and the nextNode.
-			for (AstNode pos = positionStack.Peek(); pos != null && pos != nextNode; pos = pos.NextSibling) {
-				if (pos.Role == AstNode.Roles.Comma) {
-					WriteSpecials (positionStack.Pop (), pos);
-					positionStack.Push (pos);
+					// Push the next sibling because the node itself is not a special,
+					// and should be considered to be already handled.
+					positionStack.Push (pos.NextSibling);
+					// This is necessary for OptionalComma() to work correctly.
 					break;
 				}
 			}
@@ -204,6 +208,32 @@ namespace ICSharpCode.NRefactory.CSharp
 			formatter.WriteToken (",");
 			lastWritten = LastWritten.Other;
 			Space (!noSpaceAfterComma && policy.SpaceAfterBracketComma); // TODO: Comma policy has changed.
+		}
+		
+		/// <summary>
+		/// Writes an optional comma, e.g. at the end of an enum declaration or in an array initializer
+		/// </summary>
+		void OptionalComma()
+		{
+			// Look if there's a comma after the current node, and insert it if it exists.
+			AstNode pos = positionStack.Peek();
+			while (pos != null && pos.NodeType == NodeType.Whitespace)
+				pos = pos.NextSibling;
+			if (pos != null && pos.Role == AstNode.Roles.Comma)
+				Comma(null, noSpaceAfterComma: true);
+		}
+		
+		/// <summary>
+		/// Writes an optional semicolon, e.g. at the end of a type or namespace declaration.
+		/// </summary>
+		void OptionalSemicolon()
+		{
+			// Look if there's a semicolon after the current node, and insert it if it exists.
+			AstNode pos = positionStack.Peek();
+			while (pos != null && pos.NodeType == NodeType.Whitespace)
+				pos = pos.NextSibling;
+			if (pos != null && pos.Role == AstNode.Roles.Semicolon)
+				Semicolon();
 		}
 		
 		void WriteCommaSeparatedList (IEnumerable<AstNode> list)
@@ -341,7 +371,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		void RPar ()
 		{
-			WriteToken (")", AstNode.Roles.LPar);
+			WriteToken (")", AstNode.Roles.RPar);
 		}
 		
 		/// <summary>
@@ -441,7 +471,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		void WriteTypeParameters (IEnumerable<TypeParameterDeclaration> typeParameters)
+		public void WriteTypeParameters (IEnumerable<TypeParameterDeclaration> typeParameters)
 		{
 			if (typeParameters.Any ()) {
 				WriteToken ("<", AstNode.Roles.LChevron);
@@ -574,10 +604,27 @@ namespace ICSharpCode.NRefactory.CSharp
 		public object VisitArrayInitializerExpression (ArrayInitializerExpression arrayInitializerExpression, object data)
 		{
 			StartNode (arrayInitializerExpression);
-			PrintInitializerElements(arrayInitializerExpression.Elements);
+			bool bracesAreOptional = arrayInitializerExpression.Elements.Count == 1
+				&& IsObjectInitializer(arrayInitializerExpression.Parent);
+			if (bracesAreOptional && arrayInitializerExpression.LBraceToken.IsNull) {
+				arrayInitializerExpression.Elements.Single().AcceptVisitor(this, data);
+			} else {
+				PrintInitializerElements(arrayInitializerExpression.Elements);
+			}
 			return EndNode (arrayInitializerExpression);
 		}
-
+		
+		bool IsObjectInitializer(AstNode node)
+		{
+			if (!(node is ArrayInitializerExpression))
+				return false;
+			if (node.Parent is ObjectCreateExpression)
+				return node.Role == ObjectCreateExpression.InitializerRole;
+			if (node.Parent is NamedExpression)
+				return node.Role == NamedExpression.Roles.Expression;
+			return false;
+		}
+		
 		void PrintInitializerElements(AstNodeCollection<Expression> elements)
 		{
 			BraceStyle style;
@@ -596,6 +643,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 				node.AcceptVisitor(this, null);
 			}
+			OptionalComma();
 			NewLine();
 			CloseBrace(style);
 		}
@@ -881,7 +929,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode (anonymousTypeCreateExpression);
 			WriteKeyword ("new");
-			Space ();
 			PrintInitializerElements(anonymousTypeCreateExpression.Initializers);
 			return EndNode (anonymousTypeCreateExpression);
 		}
@@ -1306,9 +1353,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode (attribute);
 			attribute.Type.AcceptVisitor (this, data);
-			Space (policy.SpaceBeforeMethodCallParentheses);
-			if (attribute.Arguments.Count != 0 || !attribute.GetChildByRole (AstNode.Roles.LPar).IsNull)
+			if (attribute.Arguments.Count != 0 || !attribute.GetChildByRole (AstNode.Roles.LPar).IsNull) {
+				Space (policy.SpaceBeforeMethodCallParentheses);
 				WriteCommaSeparatedListInParenthesis (attribute.Arguments, policy.SpaceWithinMethodCallParentheses);
+			}
 			return EndNode (attribute);
 		}
 		
@@ -1358,6 +1406,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			foreach (var member in namespaceDeclaration.Members)
 				member.AcceptVisitor (this, data);
 			CloseBrace (policy.NamespaceBraceStyle);
+			OptionalSemicolon ();
 			NewLine ();
 			return EndNode (namespaceDeclaration);
 		}
@@ -1409,6 +1458,7 @@ namespace ICSharpCode.NRefactory.CSharp
 					}
 					member.AcceptVisitor (this, data);
 				}
+				OptionalComma();
 				NewLine ();
 			} else {
 				foreach (var member in typeDeclaration.Members) {
@@ -1416,6 +1466,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			CloseBrace (braceStyle);
+			OptionalSemicolon ();
 			NewLine ();
 			return EndNode (typeDeclaration);
 		}
@@ -1848,6 +1899,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public object VisitVariableDeclarationStatement (VariableDeclarationStatement variableDeclarationStatement, object data)
 		{
 			StartNode (variableDeclarationStatement);
+			WriteModifiers (variableDeclarationStatement.GetChildrenByRole (VariableDeclarationStatement.ModifierRole));
 			variableDeclarationStatement.Type.AcceptVisitor (this, data);
 			Space ();
 			WriteCommaSeparatedList (variableDeclarationStatement.Variables);
@@ -2264,6 +2316,25 @@ namespace ICSharpCode.NRefactory.CSharp
 			return null;
 		}
 		
+		public object VisitPreProcessorDirective (PreProcessorDirective preProcessorDirective, object data)
+		{
+			if (lastWritten == LastWritten.Division) {
+				// When there's a comment starting after a division operator
+				// "1.0 / /*comment*/a", then we need to insert a space in front of the comment.
+				formatter.Space ();
+			}
+			formatter.StartNode (preProcessorDirective);
+			formatter.WriteToken ("#" + preProcessorDirective.Type.ToString ().ToLower ());
+			if (!string.IsNullOrEmpty(preProcessorDirective.Argument)) {
+				formatter.Space();
+				formatter.WriteToken(preProcessorDirective.Argument);
+			}
+			formatter.NewLine();
+			formatter.EndNode (preProcessorDirective);
+			lastWritten = LastWritten.Whitespace;
+			return null;
+		}
+		
 		public object VisitTypeParameterDeclaration (TypeParameterDeclaration typeParameterDeclaration, object data)
 		{
 			StartNode (typeParameterDeclaration);
@@ -2415,7 +2486,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			} else if (childNode is OptionalNode) {
 				VisitOptionalNode((OptionalNode)childNode, data);
 			} else {
-				throw new InvalidOperationException ("Unknown node type in pattern");
+				WritePrimitiveValue(childNode);
 			}
 		}
 		#endregion

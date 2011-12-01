@@ -31,7 +31,8 @@ namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
 	/// name = expression
-	/// This isn't the same as 'assign' even if it has the same syntax. This expression is used in object initializers.
+	/// This isn't the same as 'assign' even though it has the same syntax.
+	/// This expression is used in object initializers and for named attribute arguments [Attr(FieldName = value)].
 	/// </summary>
 	public class NamedExpression : Expression
 	{

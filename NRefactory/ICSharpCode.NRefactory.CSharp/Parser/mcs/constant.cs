@@ -7,6 +7,7 @@
 //
 // Copyright 2001-2003 Ximian, Inc.
 // Copyright 2003-2008 Novell, Inc.
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -274,7 +275,7 @@ namespace Mono.CSharp {
 				return this;
 
 			Constant c;
-			if (TypeManager.IsEnumType (target_type)) {
+			if (target_type.IsEnum) {
 				c = TryReduce (ec, EnumSpec.GetUnderlyingType (target_type));
 				if (c == null)
 					return null;

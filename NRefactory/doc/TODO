@@ -1,23 +1,17 @@
 ﻿
 Parser:
-- "extern alias" declarations
-- "fixed int Field[100];" (fixed-size field declarations)
-- support generics
-- fix bugs (see currently ignored unit tests)
 - put newlines into the AST
 - add API to report errors
 - allow multithreaded parsing
 
 Resolver:
 - Tons of unit tests for TypeSystemConvertVisitor
-- Lambda expressions
-- Handle attributes
 - Port all #D resolver unit tests to NR
 - Port all MD resolver unit tests to NR
+- Think about removing ParameterizedType and specializing the ITypeDefinition instead.
 
 Features:
 - Code Completion
-- Find References
 - Extract Method refactoring
 
 For integration into SharpDevelop:

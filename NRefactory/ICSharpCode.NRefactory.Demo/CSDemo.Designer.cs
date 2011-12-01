@@ -89,6 +89,7 @@ namespace ICSharpCode.NRefactory.Demo
 			this.csharpCodeTextBox.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.csharpCodeTextBox.HideSelection = false;
 			this.csharpCodeTextBox.Location = new System.Drawing.Point(0, 0);
+			this.csharpCodeTextBox.MaxLength = 99999999;
 			this.csharpCodeTextBox.Multiline = true;
 			this.csharpCodeTextBox.Name = "csharpCodeTextBox";
 			this.csharpCodeTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;

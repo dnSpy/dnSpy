@@ -46,6 +46,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			{
 				return default (S);
 			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
+			}
 		}
 		
 		public override NodeType NodeType {

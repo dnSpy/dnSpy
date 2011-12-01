@@ -30,7 +30,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents the intersection of several types.
 	/// </summary>
-	[Serializable]
 	public class IntersectionType : AbstractType
 	{
 		readonly ReadOnlyCollection<IType> types;
@@ -47,9 +46,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		
 		public static IType Create(IEnumerable<IType> types)
 		{
-			IType[] arr = types.Where(t => t != null).Distinct().ToArray();
+			IType[] arr = types.Distinct().ToArray();
+			foreach (IType type in arr) {
+				if (type == null)
+					throw new ArgumentNullException();
+			}
 			if (arr.Length == 0)
-				return SharedTypes.UnknownType;
+				return SpecialType.UnknownType;
 			else if (arr.Length == 1)
 				return arr[0];
 			else
@@ -57,8 +60,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		
 		public override TypeKind Kind {
-				get { return TypeKind.Intersection; }
-			}
+			get { return TypeKind.Intersection; }
+		}
 		
 		public override string Name {
 			get {
@@ -84,14 +87,15 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 		}
 		
-		public override bool? IsReferenceType(ITypeResolveContext context)
-		{
-			foreach (var t in types) {
-				bool? isReferenceType = t.IsReferenceType(context);
-				if (isReferenceType.HasValue)
-					return isReferenceType.Value;
+		public override bool? IsReferenceType {
+			get {
+				foreach (var t in types) {
+					bool? isReferenceType = t.IsReferenceType;
+					if (isReferenceType.HasValue)
+						return isReferenceType.Value;
+				}
+				return null;
 			}
-			return null;
 		}
 		
 		public override int GetHashCode()
@@ -119,42 +123,46 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return false;
 		}
 		
-		public override IEnumerable<IType> GetBaseTypes(ITypeResolveContext context)
-		{
-			return types;
+		public override IEnumerable<IType> DirectBaseTypes {
+			get { return types; }
 		}
 		
-		public override IEnumerable<IMethod> GetMethods(ITypeResolveContext context, Predicate<IMethod> filter, GetMemberOptions options)
+		public override ITypeReference ToTypeReference()
 		{
-			return GetMembersHelper.GetMethods(this, context, FilterNonStatic(filter), options);
+			throw new NotSupportedException();
 		}
 		
-		public override IEnumerable<IMethod> GetMethods(IList<IType> typeArguments, ITypeResolveContext context, Predicate<IMethod> filter, GetMemberOptions options)
+		public override IEnumerable<IMethod> GetMethods(Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
 		{
-			return GetMembersHelper.GetMethods(this, typeArguments, context, filter, options);
+			return GetMembersHelper.GetMethods(this, FilterNonStatic(filter), options);
 		}
 		
-		public override IEnumerable<IProperty> GetProperties(ITypeResolveContext context, Predicate<IProperty> filter, GetMemberOptions options)
+		public override IEnumerable<IMethod> GetMethods(IList<IType> typeArguments, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
 		{
-			return GetMembersHelper.GetProperties(this, context, FilterNonStatic(filter), options);
+			return GetMembersHelper.GetMethods(this, typeArguments, filter, options);
 		}
 		
-		public override IEnumerable<IField> GetFields(ITypeResolveContext context, Predicate<IField> filter, GetMemberOptions options)
+		public override IEnumerable<IProperty> GetProperties(Predicate<IUnresolvedProperty> filter, GetMemberOptions options)
 		{
-			return GetMembersHelper.GetFields(this, context, FilterNonStatic(filter), options);
+			return GetMembersHelper.GetProperties(this, FilterNonStatic(filter), options);
 		}
 		
-		public override IEnumerable<IEvent> GetEvents(ITypeResolveContext context, Predicate<IEvent> filter, GetMemberOptions options)
+		public override IEnumerable<IField> GetFields(Predicate<IUnresolvedField> filter, GetMemberOptions options)
 		{
-			return GetMembersHelper.GetEvents(this, context, FilterNonStatic(filter), options);
+			return GetMembersHelper.GetFields(this, FilterNonStatic(filter), options);
 		}
 		
-		public override IEnumerable<IMember> GetMembers(ITypeResolveContext context, Predicate<IMember> filter, GetMemberOptions options)
+		public override IEnumerable<IEvent> GetEvents(Predicate<IUnresolvedEvent> filter, GetMemberOptions options)
 		{
-			return GetMembersHelper.GetMembers(this, context, FilterNonStatic(filter), options);
+			return GetMembersHelper.GetEvents(this, FilterNonStatic(filter), options);
 		}
 		
-		static Predicate<T> FilterNonStatic<T>(Predicate<T> filter) where T : class, IMember
+		public override IEnumerable<IMember> GetMembers(Predicate<IUnresolvedMember> filter, GetMemberOptions options)
+		{
+			return GetMembersHelper.GetMembers(this, FilterNonStatic(filter), options);
+		}
+		
+		static Predicate<T> FilterNonStatic<T>(Predicate<T> filter) where T : class, IUnresolvedMember
 		{
 			if (filter == null)
 				return member => !member.IsStatic;

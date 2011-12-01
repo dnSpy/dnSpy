@@ -1,48 +1,84 @@
 ﻿Overview of the NRefactory library:
 
-ICSharpCode.Editor:
-	Interfaces that abstract from the text editor control used.
-	Maybe future AvalonEdit versions will directly implement these interfaces, but you could also write adapters for other editors.
+Features:
+	- C# Parser
+	- Abstract Syntax Tree with pattern-matching support
+	- Semantic Analysis for C# (supports C# 4.0 + async/await)
+	- Code Completion for C#
+	- Pretty Printer for C#
+	- Lots of C# refactorings
+	- VB support is not implemented yet.
 
-ICSharpCode.NRefactory.TypeSystem:
-	Contains a language-independent representation of the .NET type system.
-
-ICSharpCode.NRefactory.TypeSystem.Implementation:
-	Contains base classes that help implementing the type system interfaces.
-
-ICSharpCode.NRefactory.CSharp.Ast:
-	Abstract Syntax Tree for C#
-
-ICSharpCode.NRefactory.CSharp.Resolver:
-	Semantic analysis for C# (resolving the meaning of expressions)
-
-ICSharpCode.NRefactory.CSharp.Analysis:
-	Semantic analysis for C# (additional analysis functionality)
-
-ICSharpCode.NRefactory.Documentation:
-	Classes for working with .xml documentation files.
-
-ICSharpCode.NRefactory.PatternMatching:
-	Provides classes for pattern matching over the C# and VB ASTs.
-
-ICSharpCode.NRefactory.Util:
-	Various helper classes.
-
-ICSharpCode.NRefactory.VB.Ast: (in the separate ICSharpCode.NRefactory.VB assembly)
-	Abstract Syntax Tree for VB
 
 Dependencies:
-	.NET 3.5 or .NET 4.0
-	Mono.Cecil 0.9.4
+	.NET 4.0
+	Mono.Cecil 0.9.5
+	NRefactory contains a modified copy of mcs (Mono's C# compiler) for the C# parser.
+
+
+How to compile:
+	1. Get Mono.Cecil
+		Download Cecil from https://github.com/jbevain/cecil/ and unzip it into a directory named "Mono.Cecil"
+		next to the directory containing NRefactory.
+	2. Open NRefactory.sln in your favorite .NET IDE and compile.
+
+
+Namespace overview:
+
+ICSharpCode.NRefactory assembly
+	ICSharpCode.NRefactory.Editor:
+		Interfaces that abstract from the text editor control used.
+		Maybe future AvalonEdit versions will directly implement these interfaces, but you could also write adapters for other editors.
+	
+	ICSharpCode.NRefactory.TypeSystem:
+		Contains a language-independent representation of the .NET type system.
+		The type system is divided into two portions: unresolved and resolved type systems.
+	
+	ICSharpCode.NRefactory.TypeSystem.Implementation:
+		Contains default implementations for the type system interfaces.
+	
+	ICSharpCode.NRefactory.Semantics:
+		Contains classes used to represent the semantics of a language element.
+	
+	ICSharpCode.NRefactory.Documentation:
+		Classes for working with .xml documentation files.
+	
+	ICSharpCode.NRefactory.PatternMatching:
+		Provides classes for pattern matching over the C# and VB ASTs.
+	
+	ICSharpCode.NRefactory.Util:
+		Various helper classes.
+
+
+ICSharpCode.NRefactory.CSharp assembly
+	ICSharpCode.NRefactory.CSharp:
+		Abstract Syntax Tree for C#
+	
+	ICSharpCode.NRefactory.CSharp.Completion:
+		Code completion (IntelliSense) for C#
+	
+	ICSharpCode.NRefactory.CSharp.Resolver:
+		Semantic analysis for C# (resolving the meaning of expressions)
+	
+	ICSharpCode.NRefactory.CSharp.Analysis:
+		Semantic analysis for C# (additional analysis functionality)
+
+	ICSharpCode.NRefactory.CSharp.TypeSystem:
+		Contains type system implementations specific to C#.
+
+
+ICSharpCode.NRefactory.VB assembly
+	ICSharpCode.NRefactory.VB:
+		Abstract Syntax Tree for VB
+
 
 Null-Object pattern:
 	The NRefactory library makes extensive use of the null object pattern.
 	As a result, NullReferenceExceptions should be very rare when working with this library.
-	In the type system, both ITypeReference and IType use SharedTypes.UnknownType to represent
+	In the type system, both ITypeReference and IType use SpecialType.UnknownType to represent
 	unknown types.
-	Unless the method is documented otherwise, no method or property returning a ITypeReference or
-	IType will return null.
-	When adding to this library, to try to keep such uses of null rare.
+	Unless the XML documentation says otherwise, no method or property returning a ITypeReference
+	or IType will return null.
 	
 	Note that the null object pattern is not used for ITypeDefinition:
 	IProjectContent.GetClass() returns null when a type is not found. Take care to abort your
@@ -83,8 +119,8 @@ Q:	What is the difference between types and type references?
 A:	If you've previously used the .NET Reflection API, the concept of type references will be new
 	to you.
 	
-	NRefactory has the concept of the "project content": every assembly/project is stored
-	independently from other assemblies/projects.
+	NRefactory has the concept of the "unresolved type system": every assembly/project is stored
+	in unresolved form.
 	It is possible to load some source code into a project which contains the type reference
 	"int[]" without having to load mscorlib into NRefactory.
 	So inside the entities stored for the project, the array type is only referenced using an
@@ -94,50 +130,39 @@ A:	If you've previously used the .NET Reflection API, the concept of type refere
 	       IType Resolve(ITypeResolutionContext context);
 	    }
 	By calling the Resolve()-method, you will get back the actual ArrayType.
-	At this point, you have to provide the type resolution context:
 	
-	Note that every type can also be used as type reference - the IType interface derives from
-	ITypeReference.
-	Every IType simply returns itself when the Resolve()-method is called.
-	Types are often directly used as references when source and target of the reference are within
-	the same assembly.
-	
-	Because an ArrayType must have an IType as element type, we also need the ArrayTypeReference
-	to represent an array of a type that's not yet resolved.
-	When resolved, the ArrayTypeReference produces an array type:
-		new ArrayTypeReference(r).Resolve(context) = new ArrayType(r.Resolve(context))
+	Not only type references are split up this way; pretty much every class in the type system
+	comes in unresolved and resolved forms.
+
+
+Q:  What is a compilation (ICompilation)?
+
+A:	A compilation serves as the root object of the resolved type system.
+	It consists of a main assembly and multiple referenced assemblies,
+	and may also contain additional information like compiler options.
 
 
 Q:  What's in an ITypeResolveContext?
 
 A:  An ITypeResolveContext is an environment for looking up namespaces and types.
-	Usually, a resolve context will represent a set of projects.
-	Most of the time, that set will be the current project, plus the direct references of the
-	current project.
+	It consists of the current compilation, the current type definition,
+	and language-specific implementations may add additional information (e.g. the list of usings).
 	
-	Every project content on its own is a type resolve context (IProjectContent extends
-	ITypeResolveContext); but (with the exception of mscorlib) isn't useful for resolving types as
-	you also need the references.
-	To represent a set of projects, the class CompositeTypeResolveContext can be used.
+	Generally, you cannot resolve a type reference without knowing what kind of context is expected.
 
 
 Q:	How do I get the IType or ITypeReference for a primitive type such as string or int?
 	
-A:	Please use:
-		TypeCode.Int32.ToTypeReference().Resolve(context)
-	Skip the Resolve() call if you only need the type reference.
+A:	To get an IType for a primitive type, use:
+		compilation.FindType(KnownTypeCode.Int32)
 	
-	ReflectionHelper.ToTypeReference is very fast if given a TypeCode (it simply looks up an
-	existing type reference in an array), and your code will benefit from caching of the resolve
-	result (once that gets implemented for these primitive type references).
+	To get an ITypeReference, use:
+		KnownTypeReference.Int32
 	
-	Avoid using "context.GetClass(typeof(int))" - this call involves Reflection on the System.Type
-	being passed, cannot benefit from any caching implemented in the future, and most importantly:
-	it may return null.
-	And do you always test your code in a scenario where mscorlib isn't contained in the resolve
-	context?
-	The approach suggested above will return SharedTypes.UnknownType when the type cannot be
-	resolved, so you don't run into the risk of getting NullReferenceExceptions.
+	It is also possible to use a System.Type for retrieving a type:
+	   compilation.FindType(typeof(int))
+	or
+	   typeof(int).ToTypeReference().
 
 
 Q:	Is it thread-safe?
@@ -150,80 +175,26 @@ A:	This question is a bit difficult to answer.
 	can be executed concurrently.
 	[Actually, sometimes static state is used for caches, but those uses are thread-safe.]
 	TODO: what about the C# parser? gmcs is full of static state...
+		-> this is being worked on; for the time being, NRefactory uses a global lock during parsing;
+		   so it's thread-safe but slow.
 	
 	Some instance methods may use hidden instance state, so it is not safe to e.g use an instance
 	of the CSharp.Resolver.Conversions class concurrently.
 	Instead, you need to create an instance on every thread.
 	
-	In the case of project contents, it is desirable to be able to use them, and all the classes in
-	that project content, on multiple threads - for example, to provide code completion in an IDE
-	while a background thread parses more files and adds them to the project content.
+	The type system itself is thread-safe. Both the unresolved and the resolved type systems are
+	immutable.
 	
-	For this reason, the entity interfaces (ITypeDefinition, IMember, etc.) are designed to be
-	freezable. Once the Freeze() method is called, an entity instance becomes immutable and
-	thread-safe.
+	When you add to an IProjectContent, the existing project content isn't modified,
+	but a new project content is created instead. All implementations of the type system interfaces
+	are either immutable or freezable.
 	
-	Whether an ITypeResolveContext is thread-safe depends on the implementation:
-		TypeStorage: thread-safe for concurrent reads, but only if it's not written to
-				(see XML documentation on TypeStorage)
-		CecilProjectContent: immutable and thread-safe
-		SimpleProjectContent: fully thread-safe
-		CompositeTypeResolveContext: depends on the child contexts
-	
-	Usually, you'll work with a set of loaded projects (SimpleProjectContents)
-	and loaded external assemblies (CecilProjectContent).
-	A CompositeTypeResolveContext representing such a set is thread-safe.
-	
-	Hoever, some algorithms can become confused if two GetClass() calls with same arguments
-	produce different results (e.g. because another thread updated a class definition).
-	Also, there's a performance problem: if you have a composite of 15 SimpleProjectContents and
-	the resolve algorithm requests 100 types, that's 1500 times entering and leaving the read-lock.
-	Moreoever, internal caches in the library are not used when passing a mutable
-	ITypeResolveContext.
-	
-	The solution is to make the read lock more coarse-grained:
-		using (var syncContext = compositeTypeResolveContext.Synchronize()) {
-			resolver.ResolveStuff(syncContext);
-		}
-	On the call to Synchronize(), all 15 SimpleProjectContents are locked for reading.
-	The return value "syncContext" can then be used to access the type resolve context without
-	further synchronization overhead.
-	It is guaranteed not to change (within the using block), so the library may cache some
-	information. (TODO: give example of a cache)
-	Once the return value is disposed, the read-locks are released (and the caches are cleared).
+	And on the resolved type system side, ICompilation is immutable as well.
+	Internally, the resolved type system will resolve elements only on demand, but this is done
+	in a thread-safe manner.
 
 
 Q:	What format do the .ToString() methods use?
 
 A:	They don't use any particular format. They're merely intended as a debugging aid.
 	Currently .ToString() usually matches .ReflectionName, but that may change in the future.
-
-
-Q:	Why are there extension methods IType.IsEnum() and IType.IsDelegate(), but no IType.IsStruct()
-	or IType.IsInterface()?
-
-A:	Because if you're asking whether a type is a struct, it's very likely that you're asking the
-	wrong question.
-	The distinction between class/struct/interface/enum/delegate is important in the world of type
-	definitions, and there's ITypeDefinition.ClassType to address this. But the distinction isn't
-	so important in the world of types.
-	
-	If whatever you are doing works with struct-types, then it likely will also work with
-	enum-types, and also with type parameters with a value-type constraint.
-	So instead of asking IsStruct(), you really should be asking: IType.IsReferenceType == false
-	
-	Enums and delegates are special because you can do special things with those types
-	(e.g. subtract them from each other).
-	If you really need to know, you can do
-		"type.GetDefinition() != null && type.GetDefinition().ClassType == WhatIWant"
-	yourself, but for the most part you should be fine with IsReferenceType, IsEnum and IsDelegate.
-
-
-Q:	What's the difference between the .NET 3.5 and .NET 4.0 versions?
-
-A:	As for visible API difference, not much. The .NET 4.0 build has some additional overloads for a few methods,
-	taking a System.Threading.CancellationToken to allow aborting a resolve run.
-	Internally, the .NET 4.0 version might be tiny bit more performant because it uses covariance for IEnumerable,
-	where the .NET 3.5 version has to allocate wrapper objects instead.
-	
-	Both versions support loading assemblies of all .NET versions (1.0 to 4.0); and both support C# 4.0.

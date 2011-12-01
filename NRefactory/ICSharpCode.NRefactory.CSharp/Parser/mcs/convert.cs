@@ -8,7 +8,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2003-2008 Novell, Inc.
-// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com)
 //
 
 using System;
@@ -818,7 +818,7 @@ namespace Mono.CSharp {
 		///  Finds "most encompassed type" according to the spec (13.4.2)
 		///  amongst the methods in the MethodGroupExpr
 		/// </summary>
-		public static TypeSpec FindMostEncompassedType (IEnumerable<TypeSpec> types)
+		public static TypeSpec FindMostEncompassedType (IList<TypeSpec> types)
 		{
 			TypeSpec best = null;
 			EmptyExpression expr;
@@ -1259,7 +1259,7 @@ namespace Mono.CSharp {
 		static Expression ImplicitConversionStandard (ResolveContext ec, Expression expr, TypeSpec target_type, Location loc, bool explicit_cast)
 		{
 			if (expr.eclass == ExprClass.MethodGroup){
-				if (!TypeManager.IsDelegateType (target_type)){
+				if (!target_type.IsDelegate){
 					return null;
 				}
 
@@ -1334,7 +1334,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			if (expr is IntegralConstant && TypeManager.IsEnumType (target_type)){
+			if (expr is IntegralConstant && target_type.IsEnum){
 				var i = (IntegralConstant) expr;
 				//
 				// LAMESPEC: csc allows any constant like 0 values to be converted, including const float f = 0.0
@@ -1871,7 +1871,7 @@ namespace Mono.CSharp {
 			//
 			// From System delegate to any delegate-type
 			//
-			if (source_type.BuiltinType == BuiltinTypeSpec.Type.Delegate && TypeManager.IsDelegateType (target_type))
+			if (source_type.BuiltinType == BuiltinTypeSpec.Type.Delegate && target_type.IsDelegate)
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 			//
@@ -1931,8 +1931,8 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			if (TypeManager.IsEnumType (expr_type)) {
-				TypeSpec real_target = TypeManager.IsEnumType (target_type) ? EnumSpec.GetUnderlyingType (target_type) : target_type;
+			if (expr_type.IsEnum) {
+				TypeSpec real_target = target_type.IsEnum ? EnumSpec.GetUnderlyingType (target_type) : target_type;
 				Expression underlying = EmptyCast.Create (expr, EnumSpec.GetUnderlyingType (expr_type));
 				if (underlying.Type == real_target)
 					ne = underlying;
@@ -1952,14 +1952,14 @@ namespace Mono.CSharp {
 				return ne != null ? EmptyCast.Create (ne, target_type) : null;
 			}
 
-			if (TypeManager.IsEnumType (target_type)) {
+			if (target_type.IsEnum) {
 				//
 				// System.Enum can be unboxed to any enum-type
 				//
 				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Enum)
 					return new UnboxCast (expr, target_type);
 
-				TypeSpec real_target = TypeManager.IsEnumType (target_type) ? EnumSpec.GetUnderlyingType (target_type) : target_type;
+				TypeSpec real_target = target_type.IsEnum ? EnumSpec.GetUnderlyingType (target_type) : target_type;
 
 				if (expr_type == real_target)
 					return EmptyCast.Create (expr, target_type);

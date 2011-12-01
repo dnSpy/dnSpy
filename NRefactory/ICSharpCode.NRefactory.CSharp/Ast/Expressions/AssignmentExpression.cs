@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Linq.Expressions;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -111,6 +112,36 @@ namespace ICSharpCode.NRefactory.CSharp
 					return "|=";
 				case AssignmentOperatorType.ExclusiveOr:
 					return "^=";
+				default:
+					throw new NotSupportedException("Invalid value for AssignmentOperatorType");
+			}
+		}
+		
+		public static ExpressionType GetLinqNodeType(AssignmentOperatorType op, bool checkForOverflow)
+		{
+			switch (op) {
+				case AssignmentOperatorType.Assign:
+					return ExpressionType.Assign;
+				case AssignmentOperatorType.Add:
+					return checkForOverflow ? ExpressionType.AddAssignChecked : ExpressionType.AddAssign;
+				case AssignmentOperatorType.Subtract:
+					return checkForOverflow ? ExpressionType.SubtractAssignChecked : ExpressionType.SubtractAssign;
+				case AssignmentOperatorType.Multiply:
+					return checkForOverflow ? ExpressionType.MultiplyAssignChecked : ExpressionType.MultiplyAssign;
+				case AssignmentOperatorType.Divide:
+					return ExpressionType.DivideAssign;
+				case AssignmentOperatorType.Modulus:
+					return ExpressionType.ModuloAssign;
+				case AssignmentOperatorType.ShiftLeft:
+					return ExpressionType.LeftShiftAssign;
+				case AssignmentOperatorType.ShiftRight:
+					return ExpressionType.RightShiftAssign;
+				case AssignmentOperatorType.BitwiseAnd:
+					return ExpressionType.AndAssign;
+				case AssignmentOperatorType.BitwiseOr:
+					return ExpressionType.OrAssign;
+				case AssignmentOperatorType.ExclusiveOr:
+					return ExpressionType.ExclusiveOrAssign;
 				default:
 					throw new NotSupportedException("Invalid value for AssignmentOperatorType");
 			}

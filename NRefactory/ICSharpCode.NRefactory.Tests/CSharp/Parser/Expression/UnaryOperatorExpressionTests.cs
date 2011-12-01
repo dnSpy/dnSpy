@@ -92,7 +92,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			TestUnaryOperatorExpressionTest("&a", UnaryOperatorType.AddressOf);
 		}
 		
-		[Test, Ignore("async/await not yet supported")]
+		[Test]
 		public void Await()
 		{
 			ParseUtilCSharp.AssertExpression(
@@ -104,7 +104,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 				});
 		}
 		
-		[Test, Ignore("async/await not yet supported")]
+		[Test]
 		public void AwaitAwait()
 		{
 			ParseUtilCSharp.AssertExpression(

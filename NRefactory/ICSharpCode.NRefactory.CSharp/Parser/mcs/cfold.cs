@@ -6,7 +6,7 @@
 //   Marek Safar (marek.safar@seznam.cz)
 //
 // Copyright 2002, 2003 Ximian, Inc.
-// Copyright 2003-2008, Novell, Inc.
+// Copyright 2003-2011, Novell, Inc.
 // 
 using System;
 

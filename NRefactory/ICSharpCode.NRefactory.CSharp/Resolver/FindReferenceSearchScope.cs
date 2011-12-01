@@ -27,6 +27,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	public interface IFindReferenceSearchScope
 	{
 		/// <summary>
+		/// Gets the parent compilation for this search scope.
+		/// </summary>
+		ICompilation Compilation { get; }
+		
+		/// <summary>
 		/// Gets the search term. Only files that contain this identifier need to be parsed.
 		/// Can return null if all files need to be parsed.
 		/// </summary>

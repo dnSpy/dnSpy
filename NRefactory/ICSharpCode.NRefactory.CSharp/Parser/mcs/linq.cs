@@ -6,6 +6,7 @@
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2007-2008 Novell, Inc
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -349,6 +350,12 @@ namespace Mono.CSharp.Linq
 		public bool IsDeclared {
 			get {
 				return true;
+			}
+		}
+
+		public bool IsParameter {
+			get {
+				return false;
 			}
 		}
 
