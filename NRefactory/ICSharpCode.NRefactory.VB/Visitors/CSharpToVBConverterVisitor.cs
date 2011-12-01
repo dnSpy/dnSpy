@@ -1116,7 +1116,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				Condition = new NamedNode(
 					"condition",
 					new CSharp.BinaryOperatorExpression {
-						Left = new NamedNode("ident", new CSharp.IdentifierExpression()),
+						Left = new NamedNode("ident", new CSharp.IdentifierExpression(Pattern.AnyString)),
 						Operator = CSharp.BinaryOperatorType.Any,
 						Right = new AnyNode("endExpr")
 					}),
@@ -1675,7 +1675,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				Right = new NamedNode(
 					"modifier",
 					new CSharp.MemberReferenceExpression() {
-						Target = new CSharp.IdentifierExpression("CharSet")
+						Target = new CSharp.IdentifierExpression("CharSet"),
+						MemberName = Pattern.AnyString
 					})
 			};
 			

@@ -55,7 +55,6 @@
     <Compile Include="Ast\Annotations.cs" />
     <Compile Include="Ast\AstBuilder.cs" />
     <Compile Include="Ast\AstMethodBodyBuilder.cs" />
-    <Compile Include="Ast\CecilTypeResolveContext.cs" />
     <Compile Include="Ast\CommentStatement.cs" />
     <Compile Include="Ast\DecompilerContext.cs" />
     <Compile Include="Ast\NameVariables.cs" />

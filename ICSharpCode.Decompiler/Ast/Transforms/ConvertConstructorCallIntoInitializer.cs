@@ -60,7 +60,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		static readonly ExpressionStatement fieldInitializerPattern = new ExpressionStatement {
 			Expression = new AssignmentExpression {
-				Left = new NamedNode("fieldAccess", new MemberReferenceExpression { Target = new ThisReferenceExpression() }),
+				Left = new NamedNode("fieldAccess", new MemberReferenceExpression { 
+				                     	Target = new ThisReferenceExpression(),
+				                     	MemberName = Pattern.AnyString
+				                     }),
 				Operator = AssignmentOperatorType.Assign,
 				Right = new AnyNode("initializer")
 			}

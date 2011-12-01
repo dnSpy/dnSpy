@@ -81,13 +81,19 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Expression = new Choice {
 				new AnonymousTypeCreateExpression {
 					Initializers = {
-						new NamedNode("nae1", new NamedExpression { Expression = new IdentifierExpression() }),
-						new NamedNode("nae2", new NamedExpression { Expression = new AnyNode("nae2Expr") })
+						new NamedExpression {
+							Identifier = Pattern.AnyString,
+							Expression = new IdentifierExpression(Pattern.AnyString)
+						}.WithName("nae1"),
+						new NamedExpression {
+							Identifier = Pattern.AnyString,
+							Expression = new AnyNode("nae2Expr")
+						}.WithName("nae2")
 					}
 				},
 				new AnonymousTypeCreateExpression {
 					Initializers = {
-						new NamedNode("identifier", new IdentifierExpression()),
+						new NamedNode("identifier", new IdentifierExpression(Pattern.AnyString)),
 						new AnyNode("nae2Expr")
 					}
 				}
