@@ -154,7 +154,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		
 		public ITypeDefinition GetTypeDefinition(string ns, string name, int typeParameterCount)
 		{
-			var key = new FullNameAndTypeParameterCount(ns, name, typeParameterCount);
+			var key = new FullNameAndTypeParameterCount(ns ?? string.Empty, name, typeParameterCount);
 			DefaultResolvedTypeDefinition def;
 			if (GetTypes().TryGetValue(key, out def))
 				return def;
@@ -187,6 +187,9 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 					}
 					typeDef = new DefaultResolvedTypeDefinition(new SimpleTypeResolveContext(parentType), parts.ToArray());
 					foreach (var part in parts) {
+						// TODO: Fix that hack !
+						if (nestedTypeDict.ContainsKey (part))
+							continue;
 						nestedTypeDict.Add(part, typeDef);
 					}
 					return typeDef;

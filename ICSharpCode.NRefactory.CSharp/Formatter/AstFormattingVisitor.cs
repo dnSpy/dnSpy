@@ -995,7 +995,7 @@ namespace ICSharpCode.NRefactory.CSharp
 					return;
 				}
 			}
-			//Console.WriteLine ("offset={0}, removedChars={1}, insertedText={2}", offset, removedChars, insertedText == null ? "<null>" : insertedText.Replace ("\n", "\\n").Replace ("\t", "\\t").Replace (" ", "."));
+			//Console.WriteLine ("offset={0}, removedChars={1}, insertedText={2}", offset, removedChars, insertedText == null ? "<null>" : insertedText.Replace ("\n", "\\n").Replace ("\r", "\\r").Replace ("\t", "\\t").Replace (" ", "."));
 			//Console.WriteLine (Environment.StackTrace);
 			
 			changes.Add (factory.CreateTextReplaceAction (offset, removedChars, insertedText));

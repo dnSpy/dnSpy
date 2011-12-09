@@ -115,17 +115,17 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			Assert.IsTrue(expr.Arguments.Single() is InvocationExpression);
 		}
 		
-		[Test, Ignore("Positions not yet accurate when parsing expression only (because class/method is added around it)")]
+		[Test]
 		public void NestedInvocationPositions()
 		{
 			InvocationExpression expr = ParseUtilCSharp.ParseExpression<InvocationExpression>("a.B().C(args)");
-			Assert.AreEqual(new TextLocation(1, 8), expr.StartLocation);
+			Assert.AreEqual(new TextLocation(1, 1), expr.StartLocation);
 			Assert.AreEqual(new TextLocation(1, 14), expr.EndLocation);
 			MemberReferenceExpression mre = (MemberReferenceExpression)expr.Target;
-			Assert.AreEqual(new TextLocation(1, 6), mre.StartLocation);
+			Assert.AreEqual(new TextLocation(1, 1), mre.StartLocation);
 			Assert.AreEqual(new TextLocation(1, 8), mre.EndLocation);
 			
-			Assert.AreEqual(new TextLocation(1, 4), mre.Target.StartLocation);
+			Assert.AreEqual(new TextLocation(1, 1), mre.Target.StartLocation);
 			Assert.AreEqual(new TextLocation(1, 6), mre.Target.EndLocation);
 		}
 		

@@ -62,8 +62,63 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 			
 			Assert.AreEqual(PreProcessorDirectiveType.Endif, pp.Last().Type);
 			Assert.AreEqual(string.Empty, pp.Last().Argument);
-			Assert.AreEqual(new TextLocation(4, 2), pp.First().StartLocation);
-			Assert.AreEqual(new TextLocation(4, 8), pp.First().EndLocation);
+			Assert.AreEqual(new TextLocation(4, 2), pp.Last().StartLocation);
+			Assert.AreEqual(new TextLocation(4, 8), pp.Last().EndLocation);
+		}
+		
+		[Test]
+		public void NestedInactiveIf()
+		{
+			string program = @"namespace NS {
+	#if SOMETHING
+	class A {
+		#if B
+		void M() {}
+		#endif
+	}
+	#endif
+}";
+			NamespaceDeclaration ns = ParseUtilCSharp.ParseGlobal<NamespaceDeclaration>(program);
+			Assert.AreEqual(0, ns.Members.Count);
+			
+			Assert.AreEqual(new Role[] {
+			                	AstNode.Roles.Keyword,
+			                	AstNode.Roles.Identifier,
+			                	AstNode.Roles.LBrace,
+			                	AstNode.Roles.PreProcessorDirective,
+			                	AstNode.Roles.Comment,
+			                	AstNode.Roles.PreProcessorDirective,
+			                	AstNode.Roles.Comment,
+			                	AstNode.Roles.PreProcessorDirective,
+			                	AstNode.Roles.Comment,
+			                	AstNode.Roles.PreProcessorDirective,
+			                	AstNode.Roles.RBrace
+			                }, ns.Children.Select(c => c.Role).ToArray());
+		}
+		
+		[Test]
+		public void CommentOnEndOfIfDirective()
+		{
+			string program = @"namespace NS {
+	#if SOMETHING // comment
+	class A { }
+	#endif
+}";
+			NamespaceDeclaration ns = ParseUtilCSharp.ParseGlobal<NamespaceDeclaration>(program);
+			Assert.AreEqual(0, ns.Members.Count);
+			
+			Assert.AreEqual(new Role[] {
+			                	AstNode.Roles.Keyword,
+			                	AstNode.Roles.Identifier,
+			                	AstNode.Roles.LBrace,
+			                	AstNode.Roles.PreProcessorDirective,
+			                	AstNode.Roles.Comment,
+			                	AstNode.Roles.Comment,
+			                	AstNode.Roles.PreProcessorDirective,
+			                	AstNode.Roles.RBrace
+			                }, ns.Children.Select(c => c.Role).ToArray());
+			Assert.AreEqual(CommentType.SingleLine, ns.GetChildrenByRole(AstNode.Roles.Comment).First().CommentType);
+			Assert.AreEqual(CommentType.InactiveCode, ns.GetChildrenByRole(AstNode.Roles.Comment).Last().CommentType);
 		}
 		
 		[Test]

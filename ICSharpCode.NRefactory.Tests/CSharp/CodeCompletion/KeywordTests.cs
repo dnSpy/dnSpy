@@ -161,7 +161,6 @@ class Test
 			});
 		}
 		
-		[Ignore("needs to be fixed in parser.")]
 		[Test()]
 		public void IsAsKeywordTest ()
 		{
@@ -196,7 +195,6 @@ provider => {
 			});
 		}
 		
-		[Ignore()]
 		[Test()]
 		public void PublicClassContextTest2 ()
 		{
@@ -209,7 +207,6 @@ provider => {
 			});
 		}
 		
-		[Ignore()]
 		[Test()]
 		public void PublicClassContextTestContinuation1 ()
 		{
@@ -220,7 +217,6 @@ provider => {
 			});
 		}
 		
-		[Ignore()]
 		[Test()]
 		public void PublicClassContextTestContinuation2 ()
 		{
@@ -231,6 +227,84 @@ provider => {
 			});
 		}
 		
+		[Test()]
+		public void StatementKeywordTests ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"using System;
+class Test
+{
+	public void MyMethod ()
+	{
+		$s$
+}
+", (provider) => {
+				Assert.IsNotNull (provider.Find ("bool"), "keyword 'bool' not found.");
+				Assert.IsNotNull (provider.Find ("char"), "keyword 'char' not found.");
+				Assert.IsNotNull (provider.Find ("byte"), "keyword 'byte' not found.");
+				Assert.IsNotNull (provider.Find ("sbyte"), "keyword 'sbyte' not found.");
+				Assert.IsNotNull (provider.Find ("int"), "keyword 'int' not found.");
+				Assert.IsNotNull (provider.Find ("uint"), "keyword 'uint' not found.");
+				Assert.IsNotNull (provider.Find ("short"), "keyword 'short' not found.");
+				Assert.IsNotNull (provider.Find ("ushort"), "keyword 'ushort' not found.");
+				Assert.IsNotNull (provider.Find ("long"), "keyword 'long' not found.");
+				Assert.IsNotNull (provider.Find ("ulong"), "keyword 'ulong' not found.");
+				Assert.IsNotNull (provider.Find ("float"), "keyword 'float' not found.");
+				Assert.IsNotNull (provider.Find ("double"), "keyword 'double' not found.");
+				Assert.IsNotNull (provider.Find ("decimal"), "keyword 'decimal' not found.");
+				
+				Assert.IsNotNull (provider.Find ("const"), "keyword 'const' not found.");
+				Assert.IsNotNull (provider.Find ("dynamic"), "keyword 'dynamic' not found.");
+				Assert.IsNotNull (provider.Find ("var"), "keyword 'var' not found.");
+				
+				Assert.IsNotNull (provider.Find ("do"), "keyword 'do' not found.");
+				Assert.IsNotNull (provider.Find ("while"), "keyword 'while' not found.");
+				Assert.IsNotNull (provider.Find ("for"), "keyword 'for' not found.");
+				Assert.IsNotNull (provider.Find ("foreach"), "keyword 'foreach' not found.");
+				
+				Assert.IsNotNull (provider.Find ("goto"), "keyword 'goto' not found.");
+				Assert.IsNotNull (provider.Find ("break"), "keyword 'break' not found.");
+				Assert.IsNotNull (provider.Find ("continue"), "keyword 'continue' not found.");
+				Assert.IsNotNull (provider.Find ("return"), "keyword 'return' not found.");
+				Assert.IsNotNull (provider.Find ("throw"), "keyword 'throw' not found.");
+				
+				Assert.IsNotNull (provider.Find ("fixed"), "keyword 'fixed' not found.");
+				Assert.IsNotNull (provider.Find ("using"), "keyword 'using' not found.");
+				Assert.IsNotNull (provider.Find ("lock"), "keyword 'lock' not found.");
+				
+				Assert.IsNotNull (provider.Find ("true"), "keyword 'true' not found.");
+				Assert.IsNotNull (provider.Find ("false"), "keyword 'false' not found.");
+				
+				Assert.IsNotNull (provider.Find ("null"), "keyword 'null' not found.");
+				
+				Assert.IsNotNull (provider.Find ("typeof"), "keyword 'typeof' not found.");
+				Assert.IsNotNull (provider.Find ("sizeof"), "keyword 'sizeof' not found.");
+				
+				Assert.IsNotNull (provider.Find ("from"), "keyword 'from' not found.");
+				Assert.IsNotNull (provider.Find ("yield"), "keyword 'yield' not found.");
+				
+				Assert.IsNotNull (provider.Find ("new"), "keyword 'new' not found.");
+			});
+		}
+		
+		[Test()]
+		public void ForeachInKeywordTest ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"using System;
+class Test
+{
+	public void Method ()
+	{
+		$foreach (var o i$
+	}
+}
+", (provider) => {
+			// Either empty list or in - both behaviours are ok.
+			if (provider.Count > 0)
+				Assert.IsNotNull (provider.Find ("in"), "keyword 'in' not found.");
+			});
+		}
 	}
 }
 

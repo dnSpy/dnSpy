@@ -314,6 +314,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			var ctors = compilation.FindType(typeof(MyStructWithCtor)).GetConstructors();
 			Assert.AreEqual(2, ctors.Count());
 			Assert.IsFalse(ctors.Any(c => c.IsStatic));
+			Assert.IsTrue(ctors.All(c => c.ReturnType.Kind == TypeKind.Void));
 		}
 		
 		[Test]

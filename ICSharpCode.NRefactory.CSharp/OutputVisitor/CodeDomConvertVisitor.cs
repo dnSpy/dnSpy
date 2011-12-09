@@ -1269,7 +1269,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				CodeTypeParameter tp = new CodeTypeParameter(tpDecl.Name);
 				tp.CustomAttributes.AddRange(Convert(tpDecl.Attributes));
 				foreach (Constraint constraint in constraints) {
-					if (constraint.TypeParameter == tp.Name) {
+					if (constraint.TypeParameter.Identifier == tp.Name) {
 						foreach (AstType baseType in constraint.BaseTypes) {
 							if (baseType is PrimitiveType && ((PrimitiveType)baseType).Keyword == "new") {
 								tp.HasConstructorConstraint = true;

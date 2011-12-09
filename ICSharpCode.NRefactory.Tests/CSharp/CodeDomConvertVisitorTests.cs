@@ -51,8 +51,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		string Convert(Expression expr)
 		{
 			CSharpResolver resolver = new CSharpResolver(compilation);
-			resolver.CurrentUsingScope = parsedFile.RootUsingScope.Resolve(compilation);
-			resolver.CurrentTypeDefinition = compilation.FindType(KnownTypeCode.Object).GetDefinition();
+			resolver = resolver.WithCurrentUsingScope(parsedFile.RootUsingScope.Resolve(compilation));
+			resolver = resolver.WithCurrentTypeDefinition(compilation.FindType(KnownTypeCode.Object).GetDefinition());
 			var codeExpr = (CodeExpression)convertVisitor.Convert(expr, new CSharpAstResolver(resolver, expr, parsedFile));
 			
 			StringWriter writer = new StringWriter();

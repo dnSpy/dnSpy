@@ -166,14 +166,14 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 				});
 		}
 		
-		[Test, Ignore ("TODO")]
+		[Test]
 		public void IntMaxValueToBigInt()
 		{
 			ParseUtilCSharp.AssertExpression(
 				"(BigInt)int.MaxValue",
 				new CastExpression {
 					Type = new SimpleType("BigInt"),
-					Expression = new PrimitiveExpression("int").Member("MaxValue")
+					Expression = new PrimitiveType("int").Member("MaxValue")
 				});
 		}
 	}

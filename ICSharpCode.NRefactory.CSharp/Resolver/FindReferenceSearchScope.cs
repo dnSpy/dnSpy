@@ -27,7 +27,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	public interface IFindReferenceSearchScope
 	{
 		/// <summary>
-		/// Gets the parent compilation for this search scope.
+		/// Gets the compilation in which the entity being search for was defined.
+		/// This is not necessarily the same compilation as is being searched in.
 		/// </summary>
 		ICompilation Compilation { get; }
 		
@@ -51,6 +52,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// Creates a navigator that can find references to this entity and reports
 		/// them to the specified callback.
 		/// </summary>
-		IResolveVisitorNavigator GetNavigator(FoundReferenceCallback callback);
+		IResolveVisitorNavigator GetNavigator(ICompilation compilation, FoundReferenceCallback callback);
 	}
 }

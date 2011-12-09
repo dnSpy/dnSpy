@@ -105,7 +105,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public IUnresolvedTypeDefinition GetTypeDefinition(string ns, string name, int typeParameterCount)
 		{
-			var key = new FullNameAndTypeParameterCount(ns, name, typeParameterCount);
+			var key = new FullNameAndTypeParameterCount(ns ?? string.Empty, name, typeParameterCount);
 			IUnresolvedTypeDefinition td;
 			if (typeDefinitions.TryGetValue(key, out td))
 				return td;

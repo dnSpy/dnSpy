@@ -2062,7 +2062,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			var constraint = typeParameterDeclaration.Parent
 				.GetChildrenByRole(CSharp.AstNode.Roles.Constraint)
-				.SingleOrDefault(c => c.TypeParameter == typeParameterDeclaration.Name);
+				.SingleOrDefault(c => c.TypeParameter.Identifier == typeParameterDeclaration.Name);
 			
 			if (constraint != null)
 				ConvertNodes(constraint.BaseTypes, param.Constraints);

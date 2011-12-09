@@ -436,7 +436,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 						}
 					}
 				}
-				if (constant.IsCompileTimeConstant && sectionMatchedByConstant == null)
+				if (constant != null && constant.IsCompileTimeConstant && sectionMatchedByConstant == null)
 					sectionMatchedByConstant = defaultSection;
 				
 				int gotoCaseOrDefaultInOuterScope = gotoCaseOrDefault.Count;

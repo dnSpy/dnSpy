@@ -318,17 +318,16 @@ namespace Mono.CSharp
 				string assembly_name = a.GetString ();
 				if (assembly_name.Length == 0)
 					return;
-
-				AssemblyName aname = null;
-				try {
-					aname = new AssemblyName (assembly_name);
-				} catch (Exception) {
+#if STATIC
+				ParsedAssemblyName aname;
+				ParseAssemblyResult r = Fusion.ParseAssemblyName (assembly_name, out aname);
+				if (r != ParseAssemblyResult.OK) {
 					Report.Warning (1700, 3, a.Location, "Assembly reference `{0}' is invalid and cannot be resolved",
 						assembly_name);
 					return;
 				}
 
-				if (aname.Version != null || aname.CultureInfo != null || aname.ProcessorArchitecture != ProcessorArchitecture.None) {
+				if (aname.Version != null || aname.Culture != null || aname.ProcessorArchitecture != ProcessorArchitecture.None) {
 					Report.Error (1725, a.Location,
 						"Friend assembly reference `{0}' is invalid. InternalsVisibleTo declarations cannot have a version, culture or processor architecture specified",
 						assembly_name);
@@ -336,13 +335,13 @@ namespace Mono.CSharp
 					return;
 				}
 
-				// TODO: GetPublicKey () does not work on .NET when AssemblyName is constructed from a string
-				if (public_key != null && aname.GetPublicKey () == null) {
+				if (public_key != null && !aname.HasPublicKey) {
 					Report.Error (1726, a.Location,
 						"Friend assembly reference `{0}' is invalid. Strong named assemblies must specify a public key in their InternalsVisibleTo declarations",
 						assembly_name);
 					return;
 				}
+#endif
 			} else if (a.Type == pa.RuntimeCompatibility) {
 				wrap_non_exception_throws_custom = true;
 			} else if (a.Type == pa.AssemblyFileVersion) {
@@ -486,6 +485,7 @@ namespace Mono.CSharp
 				}
 #else
 				var args = new PermissionSet[3];
+#pragma warning disable 618
 				declarative_security.TryGetValue (SecurityAction.RequestMinimum, out args[0]);
 				declarative_security.TryGetValue (SecurityAction.RequestOptional, out args[1]);
 				declarative_security.TryGetValue (SecurityAction.RequestRefuse, out args[2]);
@@ -827,7 +827,7 @@ namespace Mono.CSharp
 			Compiler.TimeReporter.Stop (TimeReporter.TimerType.OutputSave);
 
 			// Save debug symbols file
-			if (symbol_writer != null) {
+			if (symbol_writer != null && Compiler.Report.Errors == 0) {
 				// TODO: it should run in parallel
 				Compiler.TimeReporter.Start (TimeReporter.TimerType.DebugSave);
 				symbol_writer.WriteSymbolFile (SymbolWriter.GetGuid (module.Builder));

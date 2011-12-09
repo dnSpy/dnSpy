@@ -316,7 +316,7 @@ namespace ICSharpCode.NRefactory.Demo
 			};
 			
 			var searchScopes = fr.GetSearchScopes(entity);
-			fr.FindReferencesInFile(searchScopes, parsedFile, compilationUnit, callback, CancellationToken.None);
+			fr.FindReferencesInFile(searchScopes, parsedFile, compilationUnit, compilation, callback, CancellationToken.None);
 			
 			MessageBox.Show("Found " + referenceCount + " references to " + entity.FullName);
 		}

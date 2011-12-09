@@ -152,12 +152,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void AdditionWithOverflow()
 		{
-			resolver.CheckForOverflow = false;
-			AssertConstant(int.MinValue, resolver.ResolveBinaryOperator(
+			AssertConstant(int.MinValue, resolver.WithCheckForOverflow(false).ResolveBinaryOperator(
 				BinaryOperatorType.Add, MakeConstant(int.MaxValue), MakeConstant(1)));
 			
-			resolver.CheckForOverflow = true;
-			AssertError(typeof(int), resolver.ResolveBinaryOperator(
+			AssertError(typeof(int), resolver.WithCheckForOverflow(true).ResolveBinaryOperator(
 				BinaryOperatorType.Add, MakeConstant(int.MaxValue), MakeConstant(1)));
 		}
 		

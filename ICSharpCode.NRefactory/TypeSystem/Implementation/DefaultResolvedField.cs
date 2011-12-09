@@ -51,7 +51,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get {
 				ResolveResult rr = this.constantValue;
 				if (rr == null) {
-					rr = ((IUnresolvedField)unresolved).ConstantValue.Resolve(context);
+					IConstantValue unresolvedCV = ((IUnresolvedField)unresolved).ConstantValue;
+					if (unresolvedCV != null)
+						rr = unresolvedCV.Resolve(context);
+					else
+						rr = ErrorResolveResult.UnknownError;
 					this.constantValue = rr;
 				}
 				return rr.ConstantValue;

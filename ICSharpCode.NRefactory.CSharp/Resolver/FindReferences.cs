@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using ICSharpCode.NRefactory.CSharp.Refactoring;
 using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
@@ -93,24 +94,39 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		#endregion
 		
 		#region class SearchScope
-		abstract class SearchScope : IResolveVisitorNavigator, IFindReferenceSearchScope
+		sealed class SearchScope : IFindReferenceSearchScope
 		{
-			protected string searchTerm;
-			internal ICompilation compilation;
+			readonly Func<ICompilation, FindReferenceNavigator> factory;
+			
+			public SearchScope(Func<ICompilation, FindReferenceNavigator> factory)
+			{
+				this.factory = factory;
+			}
+			
+			public SearchScope(string searchTerm, Func<ICompilation, FindReferenceNavigator> factory)
+			{
+				this.searchTerm = searchTerm;
+				this.factory = factory;
+			}
+			
+			internal string searchTerm;
+			internal ICompilation declarationCompilation;
 			internal Accessibility accessibility;
 			internal ITypeDefinition topLevelTypeDefinition;
 			
-			FoundReferenceCallback callback;
-			
-			ICompilation IFindReferenceSearchScope.Compilation {
-				get { return compilation; }
+			IResolveVisitorNavigator IFindReferenceSearchScope.GetNavigator(ICompilation compilation, FoundReferenceCallback callback)
+			{
+				FindReferenceNavigator n = factory(compilation);
+				if (n != null) {
+					n.callback = callback;
+					return n;
+				} else {
+					return new ConstantModeResolveVisitorNavigator(ResolveVisitorNavigationMode.Skip, null);
+				}
 			}
 			
-			IResolveVisitorNavigator IFindReferenceSearchScope.GetNavigator(FoundReferenceCallback callback)
-			{
-				SearchScope n = (SearchScope)MemberwiseClone();
-				n.callback = callback;
-				return n;
+			ICompilation IFindReferenceSearchScope.Compilation {
+				get { return declarationCompilation; }
 			}
 			
 			string IFindReferenceSearchScope.SearchTerm {
@@ -124,6 +140,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			ITypeDefinition IFindReferenceSearchScope.TopLevelTypeDefinition {
 				get { return topLevelTypeDefinition; }
 			}
+		}
+		
+		abstract class FindReferenceNavigator : IResolveVisitorNavigator
+		{
+			internal FoundReferenceCallback callback;
 			
 			internal abstract bool CanMatch(AstNode node);
 			internal abstract bool IsMatch(ResolveResult rr);
@@ -143,12 +164,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				}
 			}
 			
-			void IResolveVisitorNavigator.ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
-			{
-				ProcessConversion(expression, result, conversion, targetType);
-			}
-			
-			internal virtual void ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
+			public virtual void ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
 			{
 			}
 			
@@ -173,33 +189,33 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			SearchScope additionalScope = null;
 			switch (entity.EntityType) {
 				case EntityType.TypeDefinition:
-					scope = new FindTypeDefinitionReferences((ITypeDefinition)entity, this.FindTypeReferencesEvenIfAliased);
+					scope = FindTypeDefinitionReferences((ITypeDefinition)entity, this.FindTypeReferencesEvenIfAliased);
 					break;
 				case EntityType.Field:
 					if (entity.DeclaringTypeDefinition != null && entity.DeclaringTypeDefinition.Kind == TypeKind.Enum)
-						scope = new FindEnumMemberReferences((IField)entity);
+						scope = FindMemberReferences(entity, m => new FindEnumMemberReferences((IField)m));
 					else
-						scope = new FindFieldReferences((IField)entity);
+						scope = FindMemberReferences(entity, m => new FindFieldReferences((IField)m));
 					break;
 				case EntityType.Property:
-					scope = new FindPropertyReferences((IProperty)entity);
+					scope = FindMemberReferences(entity, m => new FindPropertyReferences((IProperty)m));
 					break;
 				case EntityType.Event:
-					scope = new FindEventReferences((IEvent)entity);
+					scope = FindMemberReferences(entity, m => new FindEventReferences((IEvent)m));
 					break;
 				case EntityType.Method:
 					scope = GetSearchScopeForMethod((IMethod)entity);
 					break;
 				case EntityType.Indexer:
-					scope = new FindIndexerReferences((IProperty)entity);
+					scope = FindIndexerReferences((IProperty)entity);
 					break;
 				case EntityType.Operator:
 					scope = GetSearchScopeForOperator((IMethod)entity);
 					break;
 				case EntityType.Constructor:
-					IMethod ctor = (IMethod)entity;
-					scope = new FindObjectCreateReferences(ctor);
-					additionalScope = new FindChainedConstructorReferences(ctor);
+					IMethod ctor = (IMethod)((IMethod)entity).MemberDefinition;
+					scope = FindObjectCreateReferences(ctor);
+					additionalScope = FindChainedConstructorReferences(ctor);
 					break;
 				case EntityType.Destructor:
 					return EmptyList<IFindReferenceSearchScope>.Instance;
@@ -208,12 +224,12 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 			if (scope.accessibility == Accessibility.None)
 				scope.accessibility = effectiveAccessibility;
-			scope.compilation = entity.Compilation;
+			scope.declarationCompilation = entity.Compilation;
 			scope.topLevelTypeDefinition = topLevelTypeDefinition;
 			if (additionalScope != null) {
 				if (additionalScope.accessibility == Accessibility.None)
 					additionalScope.accessibility = effectiveAccessibility;
-				additionalScope.compilation = entity.Compilation;
+				additionalScope.declarationCompilation = entity.Compilation;
 				additionalScope.topLevelTypeDefinition = topLevelTypeDefinition;
 				return new[] { scope, additionalScope };
 			} else {
@@ -284,11 +300,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// <param name="context">The type resolve context to use for resolving the file.</param>
 		/// <param name="callback">Callback used to report the references that were found.</param>
 		public void FindReferencesInFile(IFindReferenceSearchScope searchScope, CSharpParsedFile parsedFile, CompilationUnit compilationUnit,
-		                                 FoundReferenceCallback callback, CancellationToken cancellationToken)
+		                                 ICompilation compilation, FoundReferenceCallback callback, CancellationToken cancellationToken)
 		{
 			if (searchScope == null)
 				throw new ArgumentNullException("searchScope");
-			FindReferencesInFile(new[] { searchScope }, parsedFile, compilationUnit, callback, cancellationToken);
+			FindReferencesInFile(new[] { searchScope }, parsedFile, compilationUnit, compilation, callback, cancellationToken);
 		}
 		
 		/// <summary>
@@ -300,7 +316,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// <param name="callback">Callback used to report the references that were found.</param>
 		/// <param name="cancellationToken">Cancellation token.</param>
 		public void FindReferencesInFile(IList<IFindReferenceSearchScope> searchScopes, CSharpParsedFile parsedFile, CompilationUnit compilationUnit,
-		                                 FoundReferenceCallback callback, CancellationToken cancellationToken)
+		                                 ICompilation compilation, FoundReferenceCallback callback, CancellationToken cancellationToken)
 		{
 			if (searchScopes == null)
 				throw new ArgumentNullException("searchScopes");
@@ -308,41 +324,61 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				throw new ArgumentNullException("parsedFile");
 			if (compilationUnit == null)
 				throw new ArgumentNullException("compilationUnit");
+			if (compilation == null)
+				throw new ArgumentNullException("compilation");
+			if (callback == null)
+				throw new ArgumentNullException("callback");
 			
 			if (searchScopes.Count == 0)
 				return;
-			ICompilation compilation = searchScopes[0].Compilation;
 			IResolveVisitorNavigator navigator;
 			if (searchScopes.Count == 1) {
-				navigator = searchScopes[0].GetNavigator(callback);
+				navigator = searchScopes[0].GetNavigator(compilation, callback);
 			} else {
 				IResolveVisitorNavigator[] navigators = new IResolveVisitorNavigator[searchScopes.Count];
 				for (int i = 0; i < navigators.Length; i++) {
-					if (searchScopes[i].Compilation != compilation)
-						throw new InvalidOperationException("All search scopes must belong to the same compilation");
-					navigators[i] = searchScopes[i].GetNavigator(callback);
+					navigators[i] = searchScopes[i].GetNavigator(compilation, callback);
 				}
 				navigator = new CompositeResolveVisitorNavigator(navigators);
 			}
 			
+			cancellationToken.ThrowIfCancellationRequested();
 			navigator = new DetectSkippableNodesNavigator(navigator, compilationUnit);
+			cancellationToken.ThrowIfCancellationRequested();
 			CSharpAstResolver resolver = new CSharpAstResolver(compilation, compilationUnit, parsedFile);
-			resolver.ApplyNavigator(navigator);
+			resolver.ApplyNavigator(navigator, cancellationToken);
 		}
 		#endregion
 		
 		#region Find TypeDefinition References
-		sealed class FindTypeDefinitionReferences : SearchScope
+		SearchScope FindTypeDefinitionReferences(ITypeDefinition typeDefinition, bool findTypeReferencesEvenIfAliased)
 		{
-			ITypeDefinition typeDefinition;
+			string searchTerm = null;
+			if (!findTypeReferencesEvenIfAliased && ReflectionHelper.GetTypeCode(typeDefinition) == TypeCode.Empty) {
+				// not a built-in type
+				searchTerm = typeDefinition.Name;
+			}
 			
-			public FindTypeDefinitionReferences(ITypeDefinition typeDefinition, bool findTypeReferencesEvenIfAliased)
+			return new SearchScope(
+				searchTerm,
+				delegate (ICompilation compilation) {
+					ITypeDefinition imported = compilation.Import(typeDefinition);
+					if (imported != null)
+						return new FindTypeDefinitionReferencesNavigator(imported, searchTerm);
+					else
+						return null;
+				});
+		}
+		
+		sealed class FindTypeDefinitionReferencesNavigator : FindReferenceNavigator
+		{
+			readonly ITypeDefinition typeDefinition;
+			readonly string searchTerm;
+			
+			public FindTypeDefinitionReferencesNavigator(ITypeDefinition typeDefinition, string searchTerm)
 			{
 				this.typeDefinition = typeDefinition;
-				if (!findTypeReferencesEvenIfAliased && ReflectionHelper.GetTypeCode(typeDefinition) == TypeCode.Empty) {
-					// not a built-in type
-					this.searchTerm = typeDefinition.Name;
-				}
+				this.searchTerm = searchTerm;
 			}
 			
 			internal override bool CanMatch(AstNode node)
@@ -378,11 +414,24 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		#endregion
 		
 		#region Find Member References
-		class FindMemberReferences : SearchScope
+		SearchScope FindMemberReferences(IEntity member, Func<IMember, FindMemberReferencesNavigator> factory)
+		{
+			string searchTerm = member.Name;
+			IMember memberDefinition = ((IMember)member).MemberDefinition;
+			return new SearchScope(
+				searchTerm,
+				delegate(ICompilation compilation) {
+					IMember imported = compilation.Import(memberDefinition);
+					return imported != null ? factory(imported) : null;
+				});
+		}
+		
+		class FindMemberReferencesNavigator : FindReferenceNavigator
 		{
 			readonly IMember member;
+			readonly string searchTerm;
 			
-			public FindMemberReferences(IMember member)
+			public FindMemberReferencesNavigator(IMember member)
 			{
 				this.member = member.MemberDefinition;
 				this.searchTerm = member.Name;
@@ -416,7 +465,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		sealed class FindFieldReferences : FindMemberReferences
+		sealed class FindFieldReferences : FindMemberReferencesNavigator
 		{
 			public FindFieldReferences(IField field) : base(field)
 			{
@@ -431,7 +480,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		sealed class FindEnumMemberReferences : FindMemberReferences
+		sealed class FindEnumMemberReferences : FindMemberReferencesNavigator
 		{
 			public FindEnumMemberReferences(IField field) : base(field)
 			{
@@ -443,7 +492,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		sealed class FindPropertyReferences : FindMemberReferences
+		sealed class FindPropertyReferences : FindMemberReferencesNavigator
 		{
 			public FindPropertyReferences(IProperty property) : base(property)
 			{
@@ -455,7 +504,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		sealed class FindEventReferences : FindMemberReferences
+		sealed class FindEventReferences : FindMemberReferencesNavigator
 		{
 			public FindEventReferences(IEvent ev) : base(ev)
 			{
@@ -474,46 +523,67 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		#region Find Method References
 		SearchScope GetSearchScopeForMethod(IMethod method)
 		{
+			method = (IMethod)method.MemberDefinition;
+			
+			Type specialNodeType;
 			switch (method.Name) {
 				case "Add":
-					return new FindMethodReferences(method, typeof(ArrayInitializerExpression));
+					specialNodeType = typeof(ArrayInitializerExpression);
+					break;
 				case "Where":
-					return new FindMethodReferences(method, typeof(QueryWhereClause));
+					specialNodeType = typeof(QueryWhereClause);
+					break;
 				case "Select":
-					return new FindMethodReferences(method, typeof(QuerySelectClause));
+					specialNodeType = typeof(QuerySelectClause);
+					break;
 				case "SelectMany":
-					return new FindMethodReferences(method, typeof(QueryFromClause));
+					specialNodeType = typeof(QueryFromClause);
+					break;
 				case "Join":
 				case "GroupJoin":
-					return new FindMethodReferences(method, typeof(QueryJoinClause));
+					specialNodeType = typeof(QueryJoinClause);
+					break;
 				case "OrderBy":
 				case "OrderByDescending":
 				case "ThenBy":
 				case "ThenByDescending":
-					return new FindMethodReferences(method, typeof(QueryOrdering));
+					specialNodeType = typeof(QueryOrdering);
+					break;
 				case "GroupBy":
-					return new FindMethodReferences(method, typeof(QueryGroupClause));
+					specialNodeType = typeof(QueryGroupClause);
+					break;
 				case "Invoke":
 					if (method.DeclaringTypeDefinition != null && method.DeclaringTypeDefinition.Kind == TypeKind.Delegate)
-						return new FindMethodReferences(method, typeof(InvocationExpression));
+						specialNodeType = typeof(InvocationExpression);
 					else
-						return new FindMethodReferences(method);
+						specialNodeType = null;
+					break;
 				default:
-					return new FindMethodReferences(method);
+					specialNodeType = null;
+					break;
 			}
+			// Use searchTerm only if specialNodeType==null
+			string searchTerm = (specialNodeType == null) ? method.Name : null;
+			return new SearchScope(
+				searchTerm,
+				delegate (ICompilation compilation) {
+					IMethod imported = compilation.Import(method);
+					if (imported != null)
+						return new FindMethodReferences(imported, specialNodeType);
+					else
+						return null;
+				});
 		}
 		
-		sealed class FindMethodReferences : SearchScope
+		sealed class FindMethodReferences : FindReferenceNavigator
 		{
 			readonly IMethod method;
 			readonly Type specialNodeType;
 			
-			public FindMethodReferences(IMethod method, Type specialNodeType = null)
+			public FindMethodReferences(IMethod method, Type specialNodeType)
 			{
-				this.method = (IMethod)method.MemberDefinition;
+				this.method = method;
 				this.specialNodeType = specialNodeType;
-				if (specialNodeType == null)
-					this.searchTerm = method.Name;
 			}
 			
 			internal override bool CanMatch(AstNode node)
@@ -549,13 +619,26 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		#endregion
 		
 		#region Find Indexer References
-		sealed class FindIndexerReferences : SearchScope
+		SearchScope FindIndexerReferences(IProperty indexer)
+		{
+			indexer = (IProperty)indexer.MemberDefinition;
+			return new SearchScope(
+				delegate (ICompilation compilation) {
+					IProperty imported = compilation.Import(indexer);
+					if (imported != null)
+						return new FindIndexerReferencesNavigator(imported);
+					else
+						return null;
+				});
+		}
+		
+		sealed class FindIndexerReferencesNavigator : FindReferenceNavigator
 		{
 			readonly IProperty indexer;
 			
-			public FindIndexerReferences(IProperty indexer)
+			public FindIndexerReferencesNavigator(IProperty indexer)
 			{
-				this.indexer = (IProperty)indexer.MemberDefinition;
+				this.indexer = indexer;
 			}
 			
 			internal override bool CanMatch(AstNode node)
@@ -576,73 +659,88 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			OperatorType? opType = OperatorDeclaration.GetOperatorType(op.Name);
 			if (opType == null)
-				return new FindMethodReferences(op);
+				return GetSearchScopeForMethod(op);
 			switch (opType.Value) {
 				case OperatorType.LogicalNot:
-					return new FindUnaryOperator(op, UnaryOperatorType.Not);
+					return FindUnaryOperator(op, UnaryOperatorType.Not);
 				case OperatorType.OnesComplement:
-					return new FindUnaryOperator(op, UnaryOperatorType.BitNot);
+					return FindUnaryOperator(op, UnaryOperatorType.BitNot);
 				case OperatorType.UnaryPlus:
-					return new FindUnaryOperator(op, UnaryOperatorType.Plus);
+					return FindUnaryOperator(op, UnaryOperatorType.Plus);
 				case OperatorType.UnaryNegation:
-					return new FindUnaryOperator(op, UnaryOperatorType.Minus);
+					return FindUnaryOperator(op, UnaryOperatorType.Minus);
 				case OperatorType.Increment:
-					return new FindUnaryOperator(op, UnaryOperatorType.Increment);
+					return FindUnaryOperator(op, UnaryOperatorType.Increment);
 				case OperatorType.Decrement:
-					return new FindUnaryOperator(op, UnaryOperatorType.Decrement);
+					return FindUnaryOperator(op, UnaryOperatorType.Decrement);
 				case OperatorType.True:
 				case OperatorType.False:
 					// TODO: implement search for op_True/op_False correctly
-					return new FindMethodReferences(op);
+					return GetSearchScopeForMethod(op);
 				case OperatorType.Addition:
-					return new FindBinaryOperator(op, BinaryOperatorType.Add);
+					return FindBinaryOperator(op, BinaryOperatorType.Add);
 				case OperatorType.Subtraction:
-					return new FindBinaryOperator(op, BinaryOperatorType.Subtract);
+					return FindBinaryOperator(op, BinaryOperatorType.Subtract);
 				case OperatorType.Multiply:
-					return new FindBinaryOperator(op, BinaryOperatorType.Multiply);
+					return FindBinaryOperator(op, BinaryOperatorType.Multiply);
 				case OperatorType.Division:
-					return new FindBinaryOperator(op, BinaryOperatorType.Divide);
+					return FindBinaryOperator(op, BinaryOperatorType.Divide);
 				case OperatorType.Modulus:
-					return new FindBinaryOperator(op, BinaryOperatorType.Modulus);
+					return FindBinaryOperator(op, BinaryOperatorType.Modulus);
 				case OperatorType.BitwiseAnd:
 					// TODO: an overloaded bitwise operator can also be called using the corresponding logical operator
 					// (if op_True/op_False is defined)
-					return new FindBinaryOperator(op, BinaryOperatorType.BitwiseAnd);
+					return FindBinaryOperator(op, BinaryOperatorType.BitwiseAnd);
 				case OperatorType.BitwiseOr:
-					return new FindBinaryOperator(op, BinaryOperatorType.BitwiseOr);
+					return FindBinaryOperator(op, BinaryOperatorType.BitwiseOr);
 				case OperatorType.ExclusiveOr:
-					return new FindBinaryOperator(op, BinaryOperatorType.ExclusiveOr);
+					return FindBinaryOperator(op, BinaryOperatorType.ExclusiveOr);
 				case OperatorType.LeftShift:
-					return new FindBinaryOperator(op, BinaryOperatorType.ShiftLeft);
+					return FindBinaryOperator(op, BinaryOperatorType.ShiftLeft);
 				case OperatorType.RightShift:
-					return new FindBinaryOperator(op, BinaryOperatorType.ShiftRight);
+					return FindBinaryOperator(op, BinaryOperatorType.ShiftRight);
 				case OperatorType.Equality:
-					return new FindBinaryOperator(op, BinaryOperatorType.Equality);
+					return FindBinaryOperator(op, BinaryOperatorType.Equality);
 				case OperatorType.Inequality:
-					return new FindBinaryOperator(op, BinaryOperatorType.InEquality);
+					return FindBinaryOperator(op, BinaryOperatorType.InEquality);
 				case OperatorType.GreaterThan:
-					return new FindBinaryOperator(op, BinaryOperatorType.GreaterThan);
+					return FindBinaryOperator(op, BinaryOperatorType.GreaterThan);
 				case OperatorType.LessThan:
-					return new FindBinaryOperator(op, BinaryOperatorType.LessThan);
+					return FindBinaryOperator(op, BinaryOperatorType.LessThan);
 				case OperatorType.GreaterThanOrEqual:
-					return new FindBinaryOperator(op, BinaryOperatorType.GreaterThanOrEqual);
+					return FindBinaryOperator(op, BinaryOperatorType.GreaterThanOrEqual);
 				case OperatorType.LessThanOrEqual:
-					return new FindBinaryOperator(op, BinaryOperatorType.LessThanOrEqual);
+					return FindBinaryOperator(op, BinaryOperatorType.LessThanOrEqual);
 				case OperatorType.Implicit:
-					return new FindImplicitOperator(op);
+					return FindOperator(op, m => new FindImplicitOperatorNavigator(m));
 				case OperatorType.Explicit:
-					return new FindExplicitOperator(op);
+					return FindOperator(op, m => new FindExplicitOperatorNavigator(m));
 				default:
 					throw new InvalidOperationException("Invalid value for OperatorType");
 			}
 		}
 		
-		sealed class FindUnaryOperator : SearchScope
+		SearchScope FindOperator(IMethod op, Func<IMethod, FindReferenceNavigator> factory)
+		{
+			op = (IMethod)op.MemberDefinition;
+			return new SearchScope(
+				delegate (ICompilation compilation) {
+					IMethod imported = compilation.Import(op);
+					return imported != null ? factory(imported) : null;
+				});
+		}
+		
+		SearchScope FindUnaryOperator(IMethod op, UnaryOperatorType operatorType)
+		{
+			return FindOperator(op, m => new FindUnaryOperatorNavigator(m, operatorType));
+		}
+		
+		sealed class FindUnaryOperatorNavigator : FindReferenceNavigator
 		{
 			readonly IMethod op;
 			readonly UnaryOperatorType operatorType;
 			
-			public FindUnaryOperator(IMethod op, UnaryOperatorType operatorType)
+			public FindUnaryOperatorNavigator(IMethod op, UnaryOperatorType operatorType)
 			{
 				this.op = op;
 				this.operatorType = operatorType;
@@ -669,12 +767,17 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		sealed class FindBinaryOperator : SearchScope
+		SearchScope FindBinaryOperator(IMethod op, BinaryOperatorType operatorType)
+		{
+			return FindOperator(op, m => new FindBinaryOperatorNavigator(m, operatorType));
+		}
+		
+		sealed class FindBinaryOperatorNavigator : FindReferenceNavigator
 		{
 			readonly IMethod op;
 			readonly BinaryOperatorType operatorType;
 			
-			public FindBinaryOperator(IMethod op, BinaryOperatorType operatorType)
+			public FindBinaryOperatorNavigator(IMethod op, BinaryOperatorType operatorType)
 			{
 				this.op = op;
 				this.operatorType = operatorType;
@@ -696,11 +799,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		sealed class FindImplicitOperator : SearchScope
+		sealed class FindImplicitOperatorNavigator : FindReferenceNavigator
 		{
 			readonly IMethod op;
 			
-			public FindImplicitOperator(IMethod op)
+			public FindImplicitOperatorNavigator(IMethod op)
 			{
 				this.op = op;
 			}
@@ -716,7 +819,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				return mrr != null && op == mrr.Member.MemberDefinition;
 			}
 			
-			internal override void ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
+			public override void ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
 			{
 				if (conversion.IsUserDefined && conversion.Method.MemberDefinition == op) {
 					ReportMatch(expression, result);
@@ -724,11 +827,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		sealed class FindExplicitOperator : SearchScope
+		sealed class FindExplicitOperatorNavigator : FindReferenceNavigator
 		{
 			readonly IMethod op;
 			
-			public FindExplicitOperator(IMethod op)
+			public FindExplicitOperatorNavigator(IMethod op)
 			{
 				this.op = op;
 			}
@@ -747,17 +850,32 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		#endregion
 		
 		#region Find Constructor References
-		sealed class FindObjectCreateReferences : SearchScope
+		SearchScope FindObjectCreateReferences(IMethod ctor)
+		{
+			ctor = (IMethod)ctor.MemberDefinition;
+			string searchTerm = null;
+			if (ReflectionHelper.GetTypeCode(ctor.DeclaringTypeDefinition) == TypeCode.Empty) {
+				// not a built-in type
+				searchTerm = ctor.DeclaringTypeDefinition.Name;
+			}
+			return new SearchScope(
+				searchTerm,
+				delegate (ICompilation compilation) {
+					IMethod imported = compilation.Import(ctor);
+					if (imported != null)
+						return new FindObjectCreateReferencesNavigator(ctor);
+					else
+						return null;
+				});
+		}
+		
+		sealed class FindObjectCreateReferencesNavigator : FindReferenceNavigator
 		{
 			readonly IMethod ctor;
 			
-			public FindObjectCreateReferences(IMethod ctor)
+			public FindObjectCreateReferencesNavigator(IMethod ctor)
 			{
-				this.ctor = (IMethod)ctor.MemberDefinition;
-				if (ReflectionHelper.GetTypeCode(ctor.DeclaringTypeDefinition) == TypeCode.Empty) {
-					// not a built-in type
-					this.searchTerm = ctor.DeclaringTypeDefinition.Name;
-				}
+				this.ctor = ctor;
 			}
 			
 			internal override bool CanMatch(AstNode node)
@@ -772,18 +890,32 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		sealed class FindChainedConstructorReferences : SearchScope
+		SearchScope FindChainedConstructorReferences(IMethod ctor)
+		{
+			ctor = (IMethod)ctor.MemberDefinition;
+			SearchScope searchScope = new SearchScope(
+				delegate (ICompilation compilation) {
+					IMethod imported = compilation.Import(ctor);
+					if (imported != null)
+						return new FindChainedConstructorReferencesNavigator(imported);
+					else
+						return null;
+				});
+			if (ctor.DeclaringTypeDefinition.IsSealed)
+				searchScope.accessibility = Accessibility.Private;
+			else
+				searchScope.accessibility = Accessibility.Protected;
+			searchScope.accessibility = MergeAccessibility(GetEffectiveAccessibility(ctor), searchScope.accessibility);
+			return searchScope;
+		}
+		
+		sealed class FindChainedConstructorReferencesNavigator : FindReferenceNavigator
 		{
 			readonly IMethod ctor;
 			
-			public FindChainedConstructorReferences(IMethod ctor)
+			public FindChainedConstructorReferencesNavigator(IMethod ctor)
 			{
-				this.ctor = (IMethod)ctor.MemberDefinition;
-				if (ctor.DeclaringTypeDefinition.IsSealed)
-					this.accessibility = Accessibility.Private;
-				else
-					this.accessibility = Accessibility.Protected;
-				this.accessibility = MergeAccessibility(GetEffectiveAccessibility(ctor), this.accessibility);
+				this.ctor = ctor;
 			}
 			
 			internal override bool CanMatch(AstNode node)
@@ -814,12 +946,12 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			if (variable == null)
 				throw new ArgumentNullException("variable");
-			var navigator = new FindLocalReferencesNavigator(variable);
-			navigator.compilation = compilation;
-			FindReferencesInFile(navigator, parsedFile, compilationUnit, callback, cancellationToken);
+			var searchScope = new SearchScope(c => new FindLocalReferencesNavigator(variable));
+			searchScope.declarationCompilation = compilation;
+			FindReferencesInFile(searchScope, parsedFile, compilationUnit, compilation, callback, cancellationToken);
 		}
 		
-		class FindLocalReferencesNavigator : SearchScope
+		class FindLocalReferencesNavigator : FindReferenceNavigator
 		{
 			readonly IVariable variable;
 			

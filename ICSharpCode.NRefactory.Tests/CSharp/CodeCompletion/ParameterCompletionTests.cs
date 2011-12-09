@@ -515,6 +515,33 @@ class A
 			Assert.IsNotNull (provider, "provider was not created.");
 			Assert.AreEqual (1, provider.OverloadCount);
 		}
+		
+		
+		[Test()]
+		public void TestConstructorCase2 ()
+		{
+			IParameterDataProvider provider = CreateProvider (
+@"
+namespace Test 
+{
+	struct TestMe 
+	{
+		public TestMe (string a)
+		{
+		}
+	}
+	
+	class A
+	{
+		void Method ()
+		{
+			$new TestMe ($
+		}
+	}
+}");
+			Assert.IsNotNull (provider, "provider was not created.");
+			Assert.AreEqual (2, provider.OverloadCount);
+		}
 
 	
 	}

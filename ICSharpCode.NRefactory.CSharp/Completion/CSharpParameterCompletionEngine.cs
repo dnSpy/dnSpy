@@ -194,6 +194,8 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 		{
 			SetOffset (triggerOffset);
 			var text = GetMemberTextToCaret ();
+			if (text.Item1.EndsWith ("(")) 
+				return 0;
 			var parameter = new Stack<int> ();
 			
 			bool inSingleComment = false, inString = false, inVerbatimString = false, inChar = false, inMultiLineComment = false;
@@ -278,8 +280,6 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 			}
 			if (parameter.Count == 0)
 				return -1;
-			if (text.Item1.EndsWith ("(")) 
-				return 1;
 			return parameter.Pop () + 1;
 		}
 		

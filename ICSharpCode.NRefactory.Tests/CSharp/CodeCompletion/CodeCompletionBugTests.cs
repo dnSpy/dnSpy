@@ -1496,9 +1496,106 @@ class A
 }
 ");
 			Assert.IsNotNull (provider, "provider not found.");
-			
+			Assert.IsNotNull (provider.Find ("A"), "class 'A' not found.");
+			Assert.AreEqual ("A", provider.DefaultCompletionString);
 			Assert.IsNull (provider.Find ("B"), "class 'B' found, but shouldn'tj.");
 		}
+		
+		/// <summary>
+		/// Bug 2295 - [New Resolver] 'new' completion doesn't select the correct class name 
+		/// </summary>
+		[Test()]
+		public void TestBug2295 ()
+		{
+			CombinedProviderTest (
+@"
+class A
+{
+	public void Test()
+	{
+		A a;
+		$a = new $
+	}
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("A"), "class 'A' not found.");
+				Assert.AreEqual ("A", provider.DefaultCompletionString);
+			});
+		}
+		
+		/// <summary>
+		/// Bug 2061 - Typing 'new' in a method all does not offer valid completion
+		/// </summary>
+		[Test()]
+		public void TestBug2061 ()
+		{
+			CombinedProviderTest (
+@"
+class A
+{
+	void CallTest(A a)
+	{
+	}
+	public void Test()
+	{
+		$CallTest(new $
+	}
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("A"), "class 'A' not found.");
+				Assert.AreEqual ("A", provider.DefaultCompletionString);
+			});
+		}
+	
+		[Test()]
+		public void TestBug2061Case2 ()
+		{
+			CombinedProviderTest (
+@"
+class A
+{
+	void CallTest(int i, string s, A a)
+	{
+	}
+
+	public void Test()
+	{
+		$CallTest(5, """", new $
+	}
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("A"), "class 'A' not found.");
+				Assert.AreEqual ("A", provider.DefaultCompletionString);
+			});
+		}
+		
+		[Test()]
+		public void TestNewInConstructor ()
+		{
+			CombinedProviderTest (
+@"
+class CallTest
+{
+	public CallTest(int i, string s, A a)
+	{
+
+	}
+}
+
+class A
+{
+
+
+	public void Test()
+	{
+		$new CallTest(5, """", new $
+	}
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("A"), "class 'A' not found.");
+				Assert.AreEqual ("A", provider.DefaultCompletionString);
+			});
+		}		
 		
 		/// <summary>
 		/// Bug 473686 - Constants are not included in code completion
@@ -3771,6 +3868,51 @@ public partial class TestMe
 			Assert.IsNotNull (provider, "provider not found.");
 			Assert.IsNotNull (provider.Find ("MyMethod"), "method 'MyMethod' not found.");
 			Assert.IsNull (provider.Find ("Implemented"), "method 'Implemented'  found.");
-		}		
+		}
+		
+		/// <summary>
+		/// Bug 224 - Code completion cannot handle lambdas properly. 
+		/// </summary>
+		[Test()]
+		public void TestBug224 ()
+		{
+			CombinedProviderTest (
+@"
+using System;
+
+public sealed class CrashEventArgs : EventArgs
+{
+	public int ArgsNum { get; set; }
+
+	public CrashEventArgs ()
+	{
+		
+	}
+}
+
+interface ICrashMonitor
+{
+	event EventHandler<CrashEventArgs> CrashDetected;
+
+	void StartMonitoring ();
+
+	void StopMonitoring ();
+}
+
+namespace ConsoleProject
+{
+	class MainClass
+	{
+		public static void Main (string[] args)
+		{
+			ICrashMonitor mon;
+			$mon.CrashDetected += (sender, e) => e.$
+		}
+	}
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("ArgsNum"), "property 'ArgsNum' not found.");
+			});
+		}	
 	}
 }

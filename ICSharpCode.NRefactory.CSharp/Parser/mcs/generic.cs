@@ -3264,7 +3264,7 @@ namespace Mono.CSharp {
 				return LowerBoundInference (u_ac.Element, v_i);
 			}
 			
-			if (TypeManager.IsGenericType (v)) {
+			if (v.IsGenericOrParentIsGeneric) {
 				//
 				// if V is a constructed type C<V1..Vk> and there is a unique type C<U1..Uk>
 				// such that U is identical to, inherits from (directly or indirectly),
@@ -3292,8 +3292,8 @@ namespace Mono.CSharp {
 					}
 				}
 
-				TypeSpec [] unique_candidate_targs = null;
-				TypeSpec[] ga_v = TypeManager.GetTypeArguments (v);
+				TypeSpec[] unique_candidate_targs = null;
+				var ga_v = TypeSpec.GetAllTypeArguments (v);
 				foreach (TypeSpec u_candidate in u_candidates) {
 					//
 					// The unique set of types U1..Uk means that if we have an interface I<T>,
@@ -3301,7 +3301,7 @@ namespace Mono.CSharp {
 					// type I<T> by applying type U because T could be int or long
 					//
 					if (unique_candidate_targs != null) {
-						TypeSpec[] second_unique_candidate_targs = TypeManager.GetTypeArguments (u_candidate);
+						TypeSpec[] second_unique_candidate_targs = TypeSpec.GetAllTypeArguments (u_candidate);
 						if (TypeSpecComparer.Equals (unique_candidate_targs, second_unique_candidate_targs)) {
 							unique_candidate_targs = second_unique_candidate_targs;
 							continue;
@@ -3327,15 +3327,25 @@ namespace Mono.CSharp {
 						for (int i = 0; i < unique_candidate_targs.Length; ++i)
 							unique_candidate_targs[i] = u_candidate;
 					} else {
-						unique_candidate_targs = TypeManager.GetTypeArguments (u_candidate);
+						unique_candidate_targs = TypeSpec.GetAllTypeArguments (u_candidate);
 					}
 				}
 
 				if (unique_candidate_targs != null) {
-					var ga_open_v = open_v.TypeParameters;
 					int score = 0;
+					int tp_index = -1;
+					TypeParameterSpec[] tps = null;
+
 					for (int i = 0; i < unique_candidate_targs.Length; ++i) {
-						Variance variance = ga_open_v [i].Variance;
+						if (tp_index < 0) {
+							while (v.Arity == 0)
+								v = v.DeclaringType;
+
+							tps = v.MemberDefinition.TypeParameters;
+							tp_index = tps.Length - 1;
+						}
+
+						Variance variance = tps [tp_index--].Variance;
 
 						TypeSpec u_i = unique_candidate_targs [i];
 						if (variance == Variance.None || TypeSpec.IsValueType (u_i)) {
@@ -3349,6 +3359,7 @@ namespace Mono.CSharp {
 								++score;
 						}
 					}
+
 					return score;
 				}
 			}

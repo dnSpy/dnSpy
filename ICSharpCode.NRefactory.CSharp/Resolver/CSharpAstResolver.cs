@@ -70,7 +70,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				throw new ArgumentNullException("resolver");
 			if (rootNode == null)
 				throw new ArgumentNullException("rootNode");
-			this.initialResolverState = resolver.Clone();
+			this.initialResolverState = resolver;
 			this.rootNode = rootNode;
 			this.parsedFile = parsedFile;
 		}

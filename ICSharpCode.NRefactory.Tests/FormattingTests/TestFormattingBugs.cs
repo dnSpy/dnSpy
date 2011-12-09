@@ -133,7 +133,7 @@ using (IDisposable b = null) {
 			int start = result.GetOffset (5, 1);
 			int end = result.GetOffset (result.LineCount - 1, 1);
 			string text = result.GetText (start, end - start).Trim ();
-			expectedOutput = expectedOutput.Replace ("\n", "\n\t\t");
+			expectedOutput = NormalizeNewlines(expectedOutput).Replace ("\n", "\n\t\t");
 			Assert.AreEqual (expectedOutput, text);
 		}
 

@@ -47,6 +47,22 @@ class MyTest
 		}
 		
 		[Test()]
+		public void TestDefaultBehaviorInForeach ()
+		{
+			var provider = CodeCompletionBugTests.CreateProvider (
+@"
+class MyTest
+{
+	public void Test ()
+	{
+		$foreach (var v$
+	}
+}
+");
+			Assert.IsTrue (provider == null || provider.Count == 0, "provider should be empty.");
+		}
+		
+		[Test()]
 		public void TestIntNameProposal ()
 		{
 			var provider = CodeCompletionBugTests.CreateCtrlSpaceProvider (
@@ -74,6 +90,23 @@ class MyTest
 	public void Test ()
 	{
 		$MyTest $
+	}
+}
+");
+			Assert.IsNotNull (provider.Find ("myTest"), "name proposal 'myTest' not found.");
+			Assert.IsNotNull (provider.Find ("test"), "name proposal 'test' not found.");
+		}
+		
+		[Test()]
+		public void TestNameProposalForeach ()
+		{
+			var provider = CodeCompletionBugTests.CreateCtrlSpaceProvider (
+@"
+class MyTest
+{
+	public void Test ()
+	{
+		$foreach (MyTest $
 	}
 }
 ");

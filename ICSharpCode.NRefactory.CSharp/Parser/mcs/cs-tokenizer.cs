@@ -836,7 +836,6 @@ namespace Mono.CSharp
 			}
 
 			return res;
-			return res;
 		}
 
 		static PreprocessorDirective GetPreprocessorDirective (char[] id, int id_len)
@@ -1825,11 +1824,11 @@ namespace Mono.CSharp
 		{
 			// skip over white space
 			do {
+				endLine = line;
+				endCol = col;
 				c = get_char ();
 			} while (c == ' ' || c == '\t');
-
-			endLine = line;
-			endCol = col;
+			
 			int pos = 0;
 			while (c != -1 && c >= 'a' && c <= 'z') {
 				id_builder[pos++] = (char) c;
@@ -1870,17 +1869,13 @@ namespace Mono.CSharp
 				return cmd;
 			}
 			
-
 			// skip over white space
-			while (c == ' ' || c == '\t')
+			while (c == ' ' || c == '\t') {
 				c = get_char ();
-
+			}
 			int has_identifier_argument = (int)(cmd & PreprocessorDirective.RequiresArgument);
 
 			int pos = 0;
-			endLine = line;
-			endCol = col;
-
 			while (c != -1 && c != '\n' && c != '\r') {
 				if (c == '\\' && has_identifier_argument >= 0) {
 					if (has_identifier_argument != 0) {
@@ -1914,9 +1909,9 @@ namespace Mono.CSharp
 
 					break;
 				}
-
+				
 				endLine = line;
-				endCol = col;
+				endCol = col + 1;
 				
 				if (pos == value_builder.Length)
 					Array.Resize (ref value_builder, pos * 2);
@@ -1935,7 +1930,7 @@ namespace Mono.CSharp
 				arg = arg.Trim (simple_whitespaces);
 			}
 			if (position_stack.Count == 0)
-				sbag.AddPreProcessorDirective (startLine, startCol, endLine, endCol + 1, cmd, arg);
+				sbag.AddPreProcessorDirective (startLine, startCol, endLine, endCol, cmd, arg);
 
 			return cmd;
 		}
@@ -3348,7 +3343,7 @@ namespace Mono.CSharp
 					
 					if (ParsePreprocessingDirective (true))
 						continue;
-					sbag.StartComment (SpecialsBag.CommentType.Multi, false, line, col);
+					sbag.StartComment (SpecialsBag.CommentType.InactiveCode, false, line, 1);
 					bool directive_expected = false;
 					while ((c = get_char ()) != -1) {
 						if (col == 1) {
@@ -3359,6 +3354,7 @@ namespace Mono.CSharp
 //								Eror_WrongPreprocessorLocation ();
 //								return Token.ERROR;
 //							}
+							sbag.PushCommentChar (c);
 							continue;
 						}
 

@@ -53,7 +53,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 					TypeParameters = { new TypeParameterDeclaration { Name = "T" } },
 					Constraints = {
 						new Constraint {
-							TypeParameter = "T",
+							TypeParameter = new SimpleType ("T"),
 							BaseTypes = { new SimpleType("ICloneable") }
 						}
 					}});

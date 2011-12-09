@@ -40,6 +40,24 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.EntityType = EntityType.TypeDefinition;
 		}
 		
+		public DefaultUnresolvedTypeDefinition(string fullName)
+		{
+			string namespaceName;
+			string name;
+			int idx = fullName.LastIndexOf ('.');
+			if (idx > 0) {
+				namespaceName = fullName.Substring (0, idx);
+				name = fullName.Substring (idx + 1);
+			} else {
+				namespaceName = "";
+				name = fullName;
+			}
+
+			this.EntityType = EntityType.TypeDefinition;
+			this.namespaceName = namespaceName;
+			this.Name = name;
+		}
+		
 		public DefaultUnresolvedTypeDefinition(string namespaceName, string name)
 		{
 			this.EntityType = EntityType.TypeDefinition;

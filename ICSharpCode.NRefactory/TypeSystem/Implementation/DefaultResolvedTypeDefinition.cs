@@ -290,45 +290,51 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 					LazyInit.ReadBarrier();
 					return result;
 				} else {
-					result = new List<IType>();
-					bool hasNonInterface = false;
-					if (this.Kind != TypeKind.Enum) {
-						foreach (var part in parts) {
-							var context = part.CreateResolveContext(parentContext).WithCurrentTypeDefinition(this);
-							foreach (var baseTypeRef in part.BaseTypes) {
-								IType baseType = baseTypeRef.Resolve(context);
-								if (!(baseType.Kind == TypeKind.Unknown || result.Contains(baseType))) {
-									result.Add(baseType);
-									if (baseType.Kind != TypeKind.Interface)
-										hasNonInterface = true;
-								}
-							}
-						}
-					}
-					if (!hasNonInterface && !(this.Name == "Object" && this.Namespace == "System" && this.TypeParameterCount == 0)) {
-						KnownTypeCode primitiveBaseType;
-						switch (this.Kind) {
-							case TypeKind.Enum:
-								primitiveBaseType = KnownTypeCode.Enum;
-								break;
-							case TypeKind.Struct:
-							case TypeKind.Void:
-								primitiveBaseType = KnownTypeCode.ValueType;
-								break;
-							case TypeKind.Delegate:
-								primitiveBaseType = KnownTypeCode.Delegate;
-								break;
-							default:
-								primitiveBaseType = KnownTypeCode.Object;
-								break;
-						}
-						IType t = parentContext.Compilation.FindType(primitiveBaseType);
-						if (t.Kind != TypeKind.Unknown)
-							result.Add(t);
-					}
+					result = CalculateDirectBaseTypes();
 					return LazyInit.GetOrSet(ref this.directBaseTypes, result);
 				}
 			}
+		}
+		
+		IList<IType> CalculateDirectBaseTypes()
+		{
+			List<IType> result = new List<IType>();
+			bool hasNonInterface = false;
+			if (this.Kind != TypeKind.Enum) {
+				foreach (var part in parts) {
+					var context = part.CreateResolveContext(parentContext).WithCurrentTypeDefinition(this);
+					foreach (var baseTypeRef in part.BaseTypes) {
+						IType baseType = baseTypeRef.Resolve(context);
+						if (!(baseType.Kind == TypeKind.Unknown || result.Contains(baseType))) {
+							result.Add(baseType);
+							if (baseType.Kind != TypeKind.Interface)
+								hasNonInterface = true;
+						}
+					}
+				}
+			}
+			if (!hasNonInterface && !(this.Name == "Object" && this.Namespace == "System" && this.TypeParameterCount == 0)) {
+				KnownTypeCode primitiveBaseType;
+				switch (this.Kind) {
+					case TypeKind.Enum:
+						primitiveBaseType = KnownTypeCode.Enum;
+						break;
+					case TypeKind.Struct:
+					case TypeKind.Void:
+						primitiveBaseType = KnownTypeCode.ValueType;
+						break;
+					case TypeKind.Delegate:
+						primitiveBaseType = KnownTypeCode.Delegate;
+						break;
+					default:
+						primitiveBaseType = KnownTypeCode.Object;
+						break;
+				}
+				IType t = parentContext.Compilation.FindType(primitiveBaseType);
+				if (t.Kind != TypeKind.Unknown)
+					result.Add(t);
+			}
+			return result;
 		}
 		#endregion
 		

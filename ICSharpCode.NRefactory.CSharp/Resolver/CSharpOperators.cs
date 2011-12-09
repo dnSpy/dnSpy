@@ -289,6 +289,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			public override object Invoke(CSharpResolver resolver, object input)
 			{
+				if (input == null)
+					return null;
 				return func((T)resolver.CSharpPrimitiveCast(Type.GetTypeCode(typeof(T)), input));
 			}
 			
@@ -456,6 +458,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			public override object Invoke(CSharpResolver resolver, object lhs, object rhs)
 			{
+				if (lhs == null || rhs == null)
+					return null;
 				Func<T1, T2, T1> func = resolver.CheckForOverflow ? checkedFunc : uncheckedFunc;
 				return func((T1)resolver.CSharpPrimitiveCast(Type.GetTypeCode(typeof(T1)), lhs),
 				            (T2)resolver.CSharpPrimitiveCast(Type.GetTypeCode(typeof(T2)), rhs));
@@ -692,6 +696,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			public override object Invoke(CSharpResolver resolver, object lhs, object rhs)
 			{
+				if (lhs == null && rhs == null)
+					return !Negate; // ==: true; !=: false
+				if (lhs == null || rhs == null)
+					return Negate; // ==: false; !=: true
 				lhs = resolver.CSharpPrimitiveCast(Type, lhs);
 				rhs = resolver.CSharpPrimitiveCast(Type, rhs);
 				bool equal;
@@ -734,10 +742,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			public override object Invoke(CSharpResolver resolver, object lhs, object rhs)
 			{
-				if (lhs == null && rhs == null)
-					return !baseMethod.Negate; // ==: true; !=: false
-				if (lhs == null || rhs == null)
-					return baseMethod.Negate; // ==: false; !=: true
 				return baseMethod.Invoke(resolver, lhs, rhs);
 			}
 			
@@ -809,6 +813,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			public override object Invoke(CSharpResolver resolver, object lhs, object rhs)
 			{
+				if (lhs == null || rhs == null)
+					return null;
 				return func((T1)resolver.CSharpPrimitiveCast(Type.GetTypeCode(typeof(T1)), lhs),
 				            (T2)resolver.CSharpPrimitiveCast(Type.GetTypeCode(typeof(T2)), rhs));
 			}

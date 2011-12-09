@@ -6044,7 +6044,7 @@ namespace Mono.CSharp
 
 		// The number of constants in array initializers
 		int const_initializers_count;
-		bool only_constant_initializers;
+//		bool only_constant_initializers;
 		
 		public List<Expression> Arguments {
 			get { return this.arguments; }
@@ -6179,7 +6179,7 @@ namespace Mono.CSharp
 							++const_initializers_count;
 						}
 					} else {
-						only_constant_initializers = false;
+//						only_constant_initializers = false;
 					}
 					
 					array_data.Add (element);
@@ -6284,7 +6284,7 @@ namespace Mono.CSharp
 
 		protected bool ResolveInitializers (ResolveContext ec)
 		{
-			only_constant_initializers = true;
+//			only_constant_initializers = true;
 
 			if (arguments != null) {
 				bool res = true;

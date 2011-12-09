@@ -33,7 +33,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			);
 		}
 		
-		[Test, Ignore("parser is broken and produces IdentifierExpression instead of PrimitiveType")]
+		[Test]
 		public void ShortMaxValueTest()
 		{
 			ParseUtilCSharp.AssertExpression(
@@ -42,7 +42,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			);
 		}
 		
-		[Test, Ignore("Parsing of @-identifiers is broken")]
+		[Test]
 		public void IdentShortMaxValueTest()
 		{
 			ParseUtilCSharp.AssertExpression(
