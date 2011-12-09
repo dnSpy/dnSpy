@@ -30,6 +30,10 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public FullNameAndTypeParameterCount(string nameSpace, string name, int typeParameterCount)
 		{
+			if (nameSpace == null)
+				throw new ArgumentNullException("nameSpace");
+			if (name == null)
+				throw new ArgumentNullException("name");
 			this.Namespace = nameSpace;
 			this.Name = name;
 			this.TypeParameterCount = typeParameterCount;

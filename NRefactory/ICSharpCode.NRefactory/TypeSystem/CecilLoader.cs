@@ -1645,10 +1645,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				}
 			}
 			
-			if (method.IsConstructor)
-				m.ReturnType = parentType;
-			else
-				m.ReturnType = ReadTypeReference(method.ReturnType, typeAttributes: method.MethodReturnType);
+			m.ReturnType = ReadTypeReference(method.ReturnType, typeAttributes: method.MethodReturnType);
 			
 			if (HasAnyAttributes(method))
 				AddAttributes(method, m.Attributes, m.ReturnTypeAttributes);

@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
+using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 {
@@ -137,6 +138,30 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 					return entity;
 			}
 			return null;
+		}
+		
+		public ITypeResolveContext GetTypeResolveContext (ICompilation compilation, TextLocation loc)
+		{
+			var rctx = new CSharpTypeResolveContext (compilation.MainAssembly);
+			rctx = rctx.WithUsingScope (GetUsingScope (loc).Resolve (compilation));
+			var curDef = GetInnermostTypeDefinition (loc);
+			if (curDef != null) {
+				var resolvedDef = curDef.Resolve (rctx).GetDefinition ();
+				if (resolvedDef == null)
+					return rctx;
+				rctx = rctx.WithCurrentTypeDefinition (resolvedDef);
+				
+				var curMember = resolvedDef.Members.FirstOrDefault (m => m.Region.FileName == FileName && m.Region.Begin <= loc && loc < m.BodyRegion.End);
+				if (curMember != null)
+					rctx = rctx.WithCurrentMember (curMember);
+			}
+			
+			return rctx;
+		}
+
+		public ICSharpCode.NRefactory.CSharp.Resolver.CSharpResolver GetResolver (ICompilation compilation, TextLocation loc)
+		{
+			return new ICSharpCode.NRefactory.CSharp.Resolver.CSharpResolver (GetTypeResolveContext (compilation, loc) as CSharpTypeResolveContext);
 		}
 	}
 }

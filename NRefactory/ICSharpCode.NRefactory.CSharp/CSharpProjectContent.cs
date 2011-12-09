@@ -139,7 +139,18 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public IProjectContent UpdateProjectContent(IEnumerable<IParsedFile> oldFiles, IEnumerable<IParsedFile> newFiles)
 		{
-			throw new NotImplementedException();
+			CSharpProjectContent pc = new CSharpProjectContent(this);
+			if (oldFiles != null) {
+				foreach (var oldFile in oldFiles) {
+					pc.parsedFiles.Remove(oldFile.FileName);
+				}
+			}
+			if (newFiles != null) {
+				foreach (var newFile in newFiles) {
+					pc.parsedFiles.Add(newFile.FileName, newFile);
+				}
+			}
+			return pc;
 		}
 		
 		IAssembly IAssemblyReference.Resolve(ITypeResolveContext context)

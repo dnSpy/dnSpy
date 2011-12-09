@@ -62,7 +62,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem.ConstantValues
 				nestedContext = nestedContext.WithUsingScope(context.CurrentUsingScope.UnresolvedUsingScope.Resolve(nestedCompilation));
 			}
 			if (context.CurrentTypeDefinition != null) {
-				nestedContext = nestedContext.WithCurrentTypeDefinition(context.CurrentTypeDefinition.ToTypeReference().Resolve(nestedContext).GetDefinition());
+				nestedContext = nestedContext.WithCurrentTypeDefinition(nestedCompilation.Import(context.CurrentTypeDefinition));
 			}
 			return nestedContext;
 		}
@@ -432,13 +432,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem.ConstantValues
 		
 		public override ResolveResult Resolve(CSharpResolver resolver)
 		{
-			bool oldCheckForOverflow = resolver.CheckForOverflow;
-			try {
-				resolver.CheckForOverflow = this.checkForOverflow;
-				return expression.Resolve(resolver);
-			} finally {
-				resolver.CheckForOverflow = oldCheckForOverflow;
-			}
+			return expression.Resolve(resolver.WithCheckForOverflow(checkForOverflow));
 		}
 		
 		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)

@@ -37,6 +37,8 @@ using ICSharpCode.NRefactory.TypeSystem;
 using System.Threading.Tasks;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using Gdk;
+using System.Threading;
+using System.Diagnostics;
 
 namespace ICSharpCode.NRefactory.GtkDemo
 {
@@ -123,7 +125,7 @@ namespace ICSharpCode.NRefactory.GtkDemo
 			this.editor.Caret.PositionChanged += HandlePositionChanged;
 		}
 		
-		public void ShowUnit (CompilationUnit unit, ResolveVisitor visitor)
+		public void ShowUnit (CompilationUnit unit, CSharpAstResolver visitor)
 		{
 			this.unit = unit;
 			store.Clear ();
@@ -159,7 +161,7 @@ namespace ICSharpCode.NRefactory.GtkDemo
 			return null;
 		}
 		
-		public void AddChildren (AstNode node, ResolveVisitor visitor, TreeIter iter)
+		public void AddChildren (AstNode node, CSharpAstResolver visitor, TreeIter iter)
 		{
 			if (node == null)
 				return;
@@ -168,7 +170,7 @@ namespace ICSharpCode.NRefactory.GtkDemo
 				ResolveResult result = null;
 				try {
 					if (child is Expression)
-						result = visitor.GetResolveResult (child);
+						result = visitor.Resolve (child, CancellationToken.None);
 				} catch (Exception){
 					result = null;
 				}
@@ -215,48 +217,41 @@ namespace ICSharpCode.NRefactory.GtkDemo
 		void HandleClicked (object sender, EventArgs e)
 		{
 			var parser = new CSharpParser ();
-			var unit = parser.Parse (editor.Text);
+			var unit = parser.Parse (editor.Text, "dummy.cs");
 			
-			var project = new SimpleProjectContent();
-			var parsedFile = new TypeSystemConvertVisitor(project, "dummy.cs").Convert (unit);
-			project.UpdateProjectContent(null, parsedFile);
+			var parsedFile = unit.ToTypeSystem();
 			
-			var projects = new List<ITypeResolveContext>();
-			projects.Add(project);
-			projects.AddRange(builtInLibs.Value);
+			IProjectContent project = new CSharpProjectContent ();
+			project = project.UpdateProjectContent (null, parsedFile);
+			project = project.AddAssemblyReferences (builtInLibs.Value);
 			
-			using (var context = new CompositeTypeResolveContext(projects).Synchronize()) {
-				var resolver = new CSharpResolver(context);
-				
-				IResolveVisitorNavigator navigator = null;
-//				if (csharpTreeView.SelectedNode != null) {
-//					navigator = new NodeListResolveVisitorNavigator(new[] { (AstNode)csharpTreeView.SelectedNode.Tag });
-//				}
-				
-				var visitor = new ResolveVisitor (resolver, parsedFile, navigator);
-				visitor.Scan(unit);
-				ShowUnit (unit, visitor);
-			}
+			
+			CSharpAstResolver resolver = new CSharpAstResolver(project.CreateCompilation (), unit, parsedFile);
+			ShowUnit (unit, resolver);
 			
 		}
 		
-		Lazy<IList<IProjectContent>> builtInLibs = new Lazy<IList<IProjectContent>>(
+		Lazy<IList<IUnresolvedAssembly>> builtInLibs = new Lazy<IList<IUnresolvedAssembly>>(
 			delegate {
-				Assembly[] assemblies = new Assembly[] { // Compiler error ?
+				Assembly[] assemblies =  new Assembly[] {
 					typeof(object).Assembly, // mscorlib
 					typeof(Uri).Assembly, // System.dll
-					typeof(System.Linq.Enumerable).Assembly,
-					typeof(ICSharpCode.NRefactory.TypeSystem.IProjectContent).Assembly
+					typeof(System.Linq.Enumerable).Assembly, // System.Core.dll
+//					typeof(System.Xml.XmlDocument).Assembly, // System.Xml.dll
+//					typeof(System.Drawing.Bitmap).Assembly, // System.Drawing.dll
+//					typeof(Form).Assembly, // System.Windows.Forms.dll
+					typeof(ICSharpCode.NRefactory.TypeSystem.IProjectContent).Assembly,
 				};
-				IProjectContent[] projectContents = new IProjectContent[assemblies.Length];
+				IUnresolvedAssembly[] projectContents = new IUnresolvedAssembly[assemblies.Length];
 				Parallel.For(
 					0, assemblies.Length,
 					delegate (int i) {
+						Stopwatch w = Stopwatch.StartNew();
 						CecilLoader loader = new CecilLoader();
 						projectContents[i] = loader.LoadAssemblyFile(assemblies[i].Location);
 					});
 				return projectContents;
 			});
-		}
+	}
 }
 

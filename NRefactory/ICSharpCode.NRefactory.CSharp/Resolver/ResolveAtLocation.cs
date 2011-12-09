@@ -58,6 +58,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				return null;
 			}
 			
+			if (resolvableNode != null && resolvableNode.Parent is ObjectCreateExpression) {
+				resolvableNode = resolvableNode.Parent;
+			}
+			
 			InvocationExpression parentInvocation = null;
 			if ((resolvableNode is IdentifierExpression || resolvableNode is MemberReferenceExpression || resolvableNode is PointerReferenceExpression)) {
 				// we also need to resolve the invocation

@@ -151,19 +151,6 @@ namespace Mono.CSharp
 		List<Location> attributeCommas = new List<Location> ();
 		List<Location> attributeArgumentCommas = new List<Location> ();
 		List<Location> parameterListCommas = new List<Location> ();
-		
-		object lastYYVal;
-		
-		// Can be used for code completion to get the last valid expression before an error.
-		// needs a hack in yyparse to make it work add 
-		// lastYYVal = yyVal;
-		// after the big switch/case (somewhere around line 3915)
-		public object LastYYVal {
-			get {
-				return lastYYVal;
-			}
-		}
-		
 %}
 
 %token EOF
@@ -5165,6 +5152,12 @@ if_statement
 		if ($7 is EmptyStatement)
 			Warning_EmptyStatement (GetLocation ($7));
 	  }
+	| IF open_parens_any boolean_expression error {
+		var eloc = GetLocation ($3);
+		report.Error (1026, eloc, "Expected a ')'");
+		$$ = new If ((BooleanExpression) $3, null, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($2));
+	  }
 	;
 
 switch_statement
@@ -5275,6 +5268,18 @@ do_statement
 	  {
 		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3), GetLocation ($4), GetLocation ($6), GetLocation ($7));
+	  }
+	| DO embedded_statement error
+	  {
+		var loc = GetLocation ($1);
+		report.Error (-100, loc, "Expected `while'");
+		$$ = new Do ((Statement) $2, null, loc);
+	  }
+	| DO embedded_statement 
+	  WHILE open_parens_any boolean_expression error
+	  {
+		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($3), GetLocation ($4));
 	  }
 	;
 
@@ -5403,6 +5408,27 @@ foreach_statement
 		lbag.AddStatement (f, GetLocation ($2), GetLocation ($5), GetLocation ($7));
 		$$ = end_block (GetLocation ($7));
 	  }
+	| FOREACH open_parens_any type identifier_inside_body error
+	  {
+		start_block (GetLocation ($2));
+		current_block.IsCompilerGenerated = true;
+		var lt = $4 as Tokenizer.LocatedToken;
+		var li = lt != null ? new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ForeachVariable | LocalVariable.Flags.Used, lt.Location) : null;
+		
+		Foreach f = new Foreach ((Expression) $3, li, null, null, GetLocation ($1));
+		current_block.AddStatement (f);
+		
+		lbag.AddStatement (f, GetLocation ($2));
+		$$ = end_block (GetLocation ($5));
+	  }
+	| FOREACH open_parens_any type error
+	  {
+		Foreach f = new Foreach ((Expression) $3, null, null, null, GetLocation ($1));
+		current_block.AddStatement (f);
+		
+		lbag.AddStatement (f, GetLocation ($2));
+		$$ = f;
+	  }
 	;
 
 jump_statement
@@ -5521,7 +5547,7 @@ try_statement
 	| TRY block error 
 	  {
 		report.Error (1524, GetLocation ($1), "Expected catch or finally");
-		$$ = null;
+		$$ = new TryCatch ((Block) $2, null, GetLocation ($1), false);
 	  }
 	;
 

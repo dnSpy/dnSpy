@@ -390,6 +390,30 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		//
+		// Returns all type arguments, usefull for nested types
+		//
+		public static TypeSpec[] GetAllTypeArguments (TypeSpec type)
+		{
+			IList<TypeSpec> targs = TypeSpec.EmptyTypes;
+
+			do {
+				if (type.Arity > 0) {
+					if (targs.Count == 0) {
+						targs = type.TypeArguments;
+					} else {
+						var list = targs as List<TypeSpec> ?? new List<TypeSpec> (targs);
+						list.AddRange (type.TypeArguments);
+						targs = list;
+					}
+				}
+
+				type = type.declaringType;
+			} while (type != null);
+
+			return targs as TypeSpec[] ?? ((List<TypeSpec>) targs).ToArray ();
+		}
+
 		public AttributeUsageAttribute GetAttributeUsage (PredefinedAttribute pa)
 		{
 			if (Kind != MemberKind.Class)

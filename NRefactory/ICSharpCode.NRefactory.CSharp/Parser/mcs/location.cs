@@ -477,7 +477,8 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 		{
 			Single,
 			Multi,
-			Documentation
+			Documentation,
+			InactiveCode
 		}
 		
 		public class Comment

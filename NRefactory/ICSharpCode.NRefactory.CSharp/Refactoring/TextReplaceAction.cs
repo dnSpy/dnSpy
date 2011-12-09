@@ -128,7 +128,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		/// </returns>
 		public override string ToString ()
 		{
-			return string.Format ("[TextReplaceAction: Offset={0}, RemovedChars={1}, InsertedText={2}]", Offset, RemovedChars, InsertedText == null ? "<null>" : InsertedText.Replace ("\t", "\\t").Replace ("\n", "\\n"));
+			return string.Format ("[TextReplaceAction: Offset={0}, RemovedChars={1}, InsertedText={2}]", Offset, RemovedChars, InsertedText == null ? "<null>" : InsertedText.Replace ("\t", "\\t").Replace ("\n", "\\n").Replace ("\r", "\\r"));
 		}
 	}
 }

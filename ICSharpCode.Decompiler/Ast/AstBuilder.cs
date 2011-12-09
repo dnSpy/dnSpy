@@ -797,7 +797,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			foreach (var gp in genericParameters) {
 				Constraint c = new Constraint();
-				c.TypeParameter = CleanName(gp.Name);
+				c.TypeParameter = new SimpleType(CleanName(gp.Name));
 				// class/struct must be first
 				if (gp.HasReferenceTypeConstraint)
 					c.BaseTypes.Add(new PrimitiveType("class"));

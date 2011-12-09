@@ -38,6 +38,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		public readonly static Role<CSharpTokenNode> ColonRole = TypeDeclaration.ColonRole;
 		public readonly static Role<AstType> BaseTypeRole = TypeDeclaration.BaseTypeRole;
+		public readonly static Role<SimpleType> TypeParameterRole = new Role<SimpleType> ("TypeParameter", SimpleType.Null);
 		
 		public override NodeType NodeType {
 			get {
@@ -45,12 +46,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public string TypeParameter {
+		public SimpleType TypeParameter {
 			get {
-				return GetChildByRole (Roles.Identifier).Name;
+				return GetChildByRole (TypeParameterRole);
 			}
 			set {
-				SetChildByRole(Roles.Identifier, Identifier.Create (value, TextLocation.Empty));
+				SetChildByRole(TypeParameterRole, value);
 			}
 		}
 		
@@ -66,7 +67,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			Constraint o = other as Constraint;
-			return o != null && MatchString(this.TypeParameter, o.TypeParameter) && this.BaseTypes.DoMatch(o.BaseTypes, match);
+			return o != null && this.TypeParameter.DoMatch (o.TypeParameter, match) && this.BaseTypes.DoMatch(o.BaseTypes, match);
 		}
 	}
 }

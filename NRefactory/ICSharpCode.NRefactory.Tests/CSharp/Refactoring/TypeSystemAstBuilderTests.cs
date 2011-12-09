@@ -78,11 +78,8 @@ namespace OtherNS {
 		TypeSystemAstBuilder CreateBuilder(ITypeDefinition currentTypeDef = null)
 		{
 			UsingScope usingScope = currentTypeDef != null ? parsedFile.GetUsingScope(currentTypeDef.Region.Begin) : parsedFile.RootUsingScope;
-			return new TypeSystemAstBuilder(
-				new CSharpResolver(compilation) {
-					CurrentUsingScope = usingScope.Resolve(compilation),
-					CurrentTypeDefinition = currentTypeDef
-				});
+			return new TypeSystemAstBuilder(new CSharpResolver(
+				new CSharpTypeResolveContext(compilation.MainAssembly, usingScope.Resolve(compilation), currentTypeDef)));
 		}
 		
 		string TypeToString(IType type, ITypeDefinition currentTypeDef = null)

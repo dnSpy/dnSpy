@@ -462,8 +462,7 @@ namespace Mono.CSharp
 						ModuleCompiled = RootContext.ToplevelTypes,
 						LocationsBag = parser.LocationsBag, 
 						UsingsBag = parser.UsingsBag, 
-						SpecialsBag = parser.Lexer.sbag,
-						LastYYValue = parser.LastYYVal
+						SpecialsBag = parser.Lexer.sbag
 					};
 				} finally {
 					Reset ();

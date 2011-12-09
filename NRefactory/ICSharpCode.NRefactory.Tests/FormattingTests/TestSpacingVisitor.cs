@@ -1100,12 +1100,12 @@ return (Test)null;
 	}
 }");
 			
-			Assert.AreEqual (@"class Test
+			Assert.AreEqual (NormalizeNewlines(@"class Test
 {
 	Test ()
 	{
 	}
-}", result.Text);
+}"), result.Text);
 		}
 
 		[Test()]
@@ -1290,13 +1290,13 @@ return (Test)null;
 	}
 }");
 			
-			Assert.AreEqual (@"class FooBar
+			Assert.AreEqual (NormalizeNewlines(@"class FooBar
 {
 	public void Foo ()
 	{
 		Test ();
 	}
-}", result.Text);
+}"), result.Text);
 		}
 
 		[Test()]
@@ -1403,14 +1403,14 @@ return (Test)null;
 		}
 	}
 }");
-			Assert.AreEqual (@"class FooBar
+			Assert.AreEqual (NormalizeNewlines(@"class FooBar
 {
 	public int this [int a, int b] {
 		get {
 			return a + b;	
 		}
 	}
-}", result.Text);
+}"), result.Text);
 		}
 
 		[Test()]
@@ -1489,13 +1489,13 @@ return (Test)null;
 		this[0] = 5;
 	}
 }");
-			Assert.AreEqual (@"class Test
+			Assert.AreEqual (NormalizeNewlines(@"class Test
 {
 	void TestMe ()
 	{
 		this[ 0 ] = 5;
 	}
-}", result.Text);
+}"), result.Text);
 			
 			
 		}
@@ -1513,13 +1513,13 @@ return (Test)null;
 		this[0] = 5;
 	}
 }");
-			Assert.AreEqual (@"class Test
+			Assert.AreEqual (NormalizeNewlines(@"class Test
 {
 	void TestMe ()
 	{
 		this [0] = 5;
 	}
-}", result.Text);
+}"), result.Text);
 			
 			
 		}
@@ -1574,11 +1574,11 @@ return (Test)null;
 	int[][] b;
 }");
 			
-			Assert.AreEqual (@"class Test
+			Assert.AreEqual (NormalizeNewlines(@"class Test
 {
 	int [] a;
 	int [][] b;
-}", result.Text);
+}"), result.Text);
 			
 			
 		}

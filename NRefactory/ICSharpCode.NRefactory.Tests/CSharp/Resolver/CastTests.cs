@@ -81,10 +81,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void OverflowingCast()
 		{
-			resolver.CheckForOverflow = false;
-			AssertConstant(uint.MaxValue, resolver.ResolveCast(ResolveType(typeof(uint)), MakeConstant(-1.6)));
-			resolver.CheckForOverflow = true;
-			AssertError(typeof(uint), resolver.ResolveCast(ResolveType(typeof(uint)), MakeConstant(-1.6)));
+			AssertConstant(uint.MaxValue, resolver.WithCheckForOverflow(false).ResolveCast(ResolveType(typeof(uint)), MakeConstant(-1.6)));
+			AssertError(typeof(uint), resolver.WithCheckForOverflow(true).ResolveCast(ResolveType(typeof(uint)), MakeConstant(-1.6)));
 		}
 		
 		[Test]
@@ -96,8 +94,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void OverflowingCastToEnum()
 		{
-			resolver.CheckForOverflow = true;
-			AssertError(typeof(StringComparison), resolver.ResolveCast(ResolveType(typeof(StringComparison)), MakeConstant(long.MaxValue)));
+			AssertError(typeof(StringComparison), resolver.WithCheckForOverflow(true).ResolveCast(ResolveType(typeof(StringComparison)), MakeConstant(long.MaxValue)));
 		}
 	}
 }

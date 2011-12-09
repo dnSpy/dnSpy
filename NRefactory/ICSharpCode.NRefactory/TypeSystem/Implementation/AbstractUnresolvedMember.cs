@@ -28,7 +28,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	[Serializable]
 	public abstract class AbstractUnresolvedMember : AbstractUnresolvedEntity, IUnresolvedMember
 	{
-		ITypeReference returnType;
+		ITypeReference returnType = SpecialType.UnknownType;
 		IList<IMemberReference> interfaceImplementations;
 		
 		public override void ApplyInterningProvider(IInterningProvider provider)
@@ -67,6 +67,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		public ITypeReference ReturnType {
 			get { return returnType; }
 			set {
+				if (value == null)
+					throw new ArgumentNullException();
 				ThrowIfFrozen();
 				returnType = value;
 			}

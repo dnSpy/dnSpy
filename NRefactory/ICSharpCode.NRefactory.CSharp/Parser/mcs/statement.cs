@@ -667,6 +667,37 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class StatementErrorExpression : Statement
+	{
+		readonly Expression expr;
+
+		public StatementErrorExpression (Expression expr)
+		{
+			this.expr = expr;
+		}
+
+		public Expression Expression {
+			get {
+				return expr;
+			}
+		}
+
+		protected override void DoEmit (EmitContext ec)
+		{
+			throw new NotSupportedException ();
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
+	}
+
 	//
 	// Simple version of statement list not requiring a block
 	//
@@ -5181,11 +5212,13 @@ namespace Mono.CSharp {
 			this.Block = block;
 			this.Specific = catch_clauses;
 			this.inside_try_finally = inside_try_finally;
-
-			Catch c = catch_clauses [0];
-			if (c.IsGeneral) {
-				this.General = c;			
-				catch_clauses.RemoveAt (0);
+			
+			if (catch_clauses != null) {
+				Catch c = catch_clauses [0];
+				if (c.IsGeneral) {
+					this.General = c;			
+					catch_clauses.RemoveAt (0);
+				}
 			}
 		}
 
@@ -6154,37 +6187,6 @@ namespace Mono.CSharp {
 			target.type = type.Clone (clonectx);
 			target.expr = expr.Clone (clonectx);
 			target.statement = statement.Clone (clonectx);
-		}
-		
-		public override object Accept (StructuralVisitor visitor)
-		{
-			return visitor.Visit (this);
-		}
-	}
-	
-	public class StatementErrorExpression : Statement
-	{
-		readonly Expression expr;
-		
-		public Expression Expression {
-			get {
-				return expr;
-			}
-		}
-		
-		public StatementErrorExpression (Expression expr)
-		{
-			this.expr = expr;
-		}
-		
-		protected override void DoEmit (EmitContext ec)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		protected override void CloneTo (CloneContext clonectx, Statement target)
-		{
-			throw new NotImplementedException ();
 		}
 		
 		public override object Accept (StructuralVisitor visitor)

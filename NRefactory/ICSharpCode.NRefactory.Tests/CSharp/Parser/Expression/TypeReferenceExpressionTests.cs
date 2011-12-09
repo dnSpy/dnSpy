@@ -38,19 +38,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			}));
 		}
 		
-		[Test, Ignore ("Doesn't work")]
-		public void GlobalTypeReferenceExpressionWithoutTypeName()
-		{
-			TypeReferenceExpression tr = ParseUtilCSharp.ParseExpression<TypeReferenceExpression>("global::", true);
-			Assert.IsTrue (tr.IsMatch (new TypeReferenceExpression () {
-				Type = new MemberType () {
-					Target = new SimpleType ("global"),
-					IsDoubleColon = true,
-				}
-			}));
-		}
-		
-		[Test, Ignore("Primitive types as member reference target are not supported yet")]
+		[Test]
 		public void IntReferenceExpression()
 		{
 			MemberReferenceExpression fre = ParseUtilCSharp.ParseExpression<MemberReferenceExpression>("int.MaxValue");

@@ -17,9 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-
 using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
@@ -70,6 +70,26 @@ public class Form1 {
 			AttributeSection decl = type.Attributes.Single();
 			Assert.AreEqual(new TextLocation(1, 1), decl.StartLocation);
 			Assert.AreEqual("type", decl.AttributeTarget);
+		}
+		
+		[Test]
+		public void AttributeWithoutParenthesis()
+		{
+			string program = @"[Attr] class Test {}";
+			TypeDeclaration type = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(program);
+			var attr = type.Attributes.Single().Attributes.Single();
+			Assert.IsTrue(attr.GetChildByRole(AstNode.Roles.LPar).IsNull);
+			Assert.IsTrue(attr.GetChildByRole(AstNode.Roles.RPar).IsNull);
+		}
+		
+		[Test, Ignore("Parser bug - parenthesis are missing")]
+		public void AttributeWithEmptyParenthesis()
+		{
+			string program = @"[Attr()] class Test {}";
+			TypeDeclaration type = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(program);
+			var attr = type.Attributes.Single().Attributes.Single();
+			Assert.IsFalse(attr.GetChildByRole(AstNode.Roles.LPar).IsNull);
+			Assert.IsFalse(attr.GetChildByRole(AstNode.Roles.RPar).IsNull);
 		}
 		
 		[Test]
@@ -169,6 +189,18 @@ public class Form1 {
 							}
 						}
 					}});
+		}
+		
+		[Test]
+		public void AssemblyAttributeBeforeNamespace()
+		{
+			var cu = new CSharpParser().Parse(new StringReader("using System; [assembly: Attr] namespace X {}"), "code.cs");
+			Assert.AreEqual(
+				new Type[] {
+					typeof(UsingDeclaration),
+					typeof(AttributeSection),
+					typeof(NamespaceDeclaration)
+				}, cu.Children.Select(c => c.GetType()).ToArray());
 		}
 	}
 }

@@ -149,7 +149,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 					Parameters = { new ParameterDeclaration(new SimpleType("T"), "a") },
 					Constraints = {
 						new Constraint {
-							TypeParameter = "T",
+							TypeParameter = new SimpleType ("T"),
 							BaseTypes = { new SimpleType("ISomeInterface") }
 						}
 					},
@@ -176,7 +176,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 							Parameters = { new ParameterDeclaration(new SimpleType("T"), "a") },
 							Constraints = {
 								new Constraint {
-									TypeParameter = "T",
+									TypeParameter = new SimpleType ("T"),
 									BaseTypes = { new SimpleType("ISomeInterface") }
 								}
 							}
@@ -202,7 +202,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 							Parameters = { new ParameterDeclaration(new SimpleType("T"), "a") },
 							Constraints = {
 								new Constraint {
-									TypeParameter = "T",
+									TypeParameter = new SimpleType ("T"),
 									BaseTypes = { new SimpleType("ISomeInterface") }
 								}
 							}

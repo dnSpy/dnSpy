@@ -191,14 +191,14 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 			Assert.AreEqual(20, lvd.EndLocation.Column);
 		}
 		
-		[Test, Ignore("Nested arrays are broken in the parser")]
+		[Test]
 		public void NestedArray()
 		{
 			VariableDeclarationStatement lvd = ParseUtilCSharp.ParseStatement<VariableDeclarationStatement>("DateTime[,][] a;");
 			Assert.IsTrue(new VariableDeclarationStatement(new SimpleType("DateTime").MakeArrayType(1).MakeArrayType(2), "a").IsMatch(lvd));
 		}
 		
-		[Test, Ignore("Nested pointers are broken in the parser")]
+		[Test]
 		public void NestedPointers()
 		{
 			VariableDeclarationStatement lvd = ParseUtilCSharp.ParseStatement<VariableDeclarationStatement>("DateTime*** a;");

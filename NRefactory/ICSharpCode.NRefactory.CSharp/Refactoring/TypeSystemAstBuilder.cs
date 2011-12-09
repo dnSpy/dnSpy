@@ -682,7 +682,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				return null;
 			}
 			Constraint c = new Constraint();
-			c.TypeParameter = tp.Name;
+			c.TypeParameter = new SimpleType (tp.Name);
 			if (tp.HasReferenceTypeConstraint) {
 				c.BaseTypes.Add(new PrimitiveType("class"));
 			} else if (tp.HasValueTypeConstraint) {

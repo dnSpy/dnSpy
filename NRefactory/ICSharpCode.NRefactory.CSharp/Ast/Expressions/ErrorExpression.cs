@@ -27,16 +27,43 @@ using System;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class ErrorExpression : EmptyExpression
+	public class ErrorExpression : Expression
 	{
+		TextLocation location;
+
+		public override TextLocation StartLocation {
+			get {
+				return location;
+			}
+		}
+		
+		public override TextLocation EndLocation {
+			get {
+				return location;
+			}
+		}
+
 		public ErrorExpression ()
 		{
 		}
 
-		public ErrorExpression (TextLocation location) : base (location)
+		public ErrorExpression (TextLocation location)
 		{
+			this.location = location;
 		}
 		
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		{
+			// nothing
+			return default(S);
+		}
+		
+		protected internal override bool DoMatch (AstNode other, PatternMatching.Match match)
+		{
+			var o = other as ErrorExpression;
+			return o != null;
+		}
 	}
 }
 

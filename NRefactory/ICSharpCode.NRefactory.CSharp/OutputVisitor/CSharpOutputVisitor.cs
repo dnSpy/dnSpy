@@ -604,8 +604,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		public object VisitArrayInitializerExpression (ArrayInitializerExpression arrayInitializerExpression, object data)
 		{
 			StartNode (arrayInitializerExpression);
+			// "new List<int> { { 1 } }" and "new List<int> { 1 }" are the same semantically.
+			// We also use the same AST for both: we always use two nested ArrayInitializerExpressions
+			// for collection initializers, even if the user did not write nested brackets.
+			// The output visitor will output nested braces only if they are necessary,
+			// or if the braces tokens exist in the AST.
 			bool bracesAreOptional = arrayInitializerExpression.Elements.Count == 1
-				&& IsObjectInitializer(arrayInitializerExpression.Parent);
+				&& IsObjectOrCollectionInitializer(arrayInitializerExpression.Parent)
+				&& !CanBeConfusedWithObjectInitializer(arrayInitializerExpression.Elements.Single());
 			if (bracesAreOptional && arrayInitializerExpression.LBraceToken.IsNull) {
 				arrayInitializerExpression.Elements.Single().AcceptVisitor(this, data);
 			} else {
@@ -614,7 +620,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			return EndNode (arrayInitializerExpression);
 		}
 		
-		bool IsObjectInitializer(AstNode node)
+		bool CanBeConfusedWithObjectInitializer(Expression expr)
+		{
+			// "int a; new List<int> { a = 1 };" is an object initalizers and invalid, but
+			// "int a; new List<int> { { a = 1 } };" is a valid collection initializer.
+			AssignmentExpression ae = expr as AssignmentExpression;
+			return ae != null && ae.Operator == AssignmentOperatorType.Assign;
+		}
+		
+		bool IsObjectOrCollectionInitializer(AstNode node)
 		{
 			if (!(node is ArrayInitializerExpression))
 				return false;
@@ -2318,18 +2332,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public object VisitPreProcessorDirective (PreProcessorDirective preProcessorDirective, object data)
 		{
-			if (lastWritten == LastWritten.Division) {
-				// When there's a comment starting after a division operator
-				// "1.0 / /*comment*/a", then we need to insert a space in front of the comment.
-				formatter.Space ();
-			}
 			formatter.StartNode (preProcessorDirective);
-			formatter.WriteToken ("#" + preProcessorDirective.Type.ToString ().ToLower ());
-			if (!string.IsNullOrEmpty(preProcessorDirective.Argument)) {
-				formatter.Space();
-				formatter.WriteToken(preProcessorDirective.Argument);
-			}
-			formatter.NewLine();
+			formatter.WritePreProcessorDirective(preProcessorDirective.Type, preProcessorDirective.Argument);
 			formatter.EndNode (preProcessorDirective);
 			lastWritten = LastWritten.Whitespace;
 			return null;
@@ -2360,7 +2364,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode (constraint);
 			Space ();
 			WriteKeyword ("where");
-			WriteIdentifier (constraint.TypeParameter);
+			WriteIdentifier (constraint.TypeParameter.Identifier);
 			Space ();
 			WriteToken (":", Constraint.ColonRole);
 			Space ();

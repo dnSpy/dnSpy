@@ -142,7 +142,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				Accessibility = typeDefinition.IsAbstract ? Accessibility.Protected : Accessibility.Public,
 				IsSynthetic = true,
 				Region = region,
-				ReturnType = typeDefinition
+				ReturnType = KnownTypeReference.Void
 			};
 		}
 	}

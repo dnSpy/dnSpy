@@ -147,7 +147,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (nodeStack == null || nodeStack.Count == 0)
 				return null;
 			
-			var node = nodeStack.Peek();			
+			var node = nodeStack.Peek();
 			if (IsDefinition(node))
 				return node.Annotation<MemberReference>();
 			
@@ -246,7 +246,22 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 					output.WriteLine();
 					break;
+				default:
+					output.Write(content);
+					break;
 			}
+		}
+		
+		public void WritePreProcessorDirective(PreProcessorDirectiveType type, string argument)
+		{
+			// pre-processor directive must start on its own line
+			output.Write('#');
+			output.Write(type.ToString().ToLowerInvariant());
+			if (!string.IsNullOrEmpty(argument)) {
+				output.Write(' ');
+				output.Write(argument);
+			}
+			output.WriteLine();
 		}
 		
 		Stack<TextLocation> startLocations = new Stack<TextLocation>();
@@ -312,10 +327,10 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		private static bool IsDefinition(AstNode node)
 		{
-			return 
+			return
 				node is FieldDeclaration ||
 				node is ConstructorDeclaration ||
-				node is DestructorDeclaration || 
+				node is DestructorDeclaration ||
 				node is EventDeclaration ||
 				node is DelegateDeclaration ||
 				node is OperatorDeclaration||

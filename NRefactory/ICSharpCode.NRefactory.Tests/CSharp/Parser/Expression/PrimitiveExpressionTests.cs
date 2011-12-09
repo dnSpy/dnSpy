@@ -46,12 +46,19 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			PrimitiveExpression pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>(code);
 			Assert.AreEqual(value.GetType(), pe.Value.GetType());
 			Assert.AreEqual(value, pe.Value);
+			Assert.AreEqual(code, pe.LiteralValue);
 		}
 		
 		[Test]
-		public void DoubleTest1()
+		public void DoubleWithLeadingDot()
 		{
 			CheckLiteral(".5e-06", .5e-06);
+		}
+		
+		[Test]
+		public void FloatWithLeadingDot()
+		{
+			CheckLiteral(".5e-06f", .5e-06f);
 		}
 		
 		[Test]
@@ -60,10 +67,12 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			CheckLiteral("'\\u0356'", '\u0356');
 		}
 		
-		[Test, Ignore("this special case isn't implemented yet")]
+		[Test]
 		public void IntMinValueTest()
 		{
-			CheckLiteral("-2147483648", -2147483648);
+			ParseUtilCSharp.AssertExpression(
+				"-2147483648",
+				new UnaryOperatorExpression(UnaryOperatorType.Minus, new PrimitiveExpression(-2147483648)));
 		}
 		
 		[Test]
@@ -73,10 +82,12 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			CheckLiteral("2147483648", 2147483648); // uint
 		}
 		
-		[Test, Ignore("this special case isn't implemented yet")]
+		[Test]
 		public void LongMinValueTest()
 		{
-			CheckLiteral("-9223372036854775808", -9223372036854775808);
+			ParseUtilCSharp.AssertExpression(
+				"-9223372036854775808",
+				new UnaryOperatorExpression(UnaryOperatorType.Minus, new PrimitiveExpression(9223372036854775808)));
 		}
 		
 		[Test]
@@ -215,12 +226,13 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			CheckLiteral(@"'\U00000041'", '\U00000041');
 		}
 		
-		[Test, Ignore(@"Parser includes \r in integer literal")]
+		[Test]
 		public void TestPositionOfIntegerAtEndOfLine()
 		{
 			var pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>("0\r\n");
 			Assert.AreEqual(new TextLocation(1, 1), pe.StartLocation);
 			Assert.AreEqual(new TextLocation(1, 2), pe.EndLocation);
+			Assert.AreEqual("0", pe.LiteralValue);
 		}
 	}
 }

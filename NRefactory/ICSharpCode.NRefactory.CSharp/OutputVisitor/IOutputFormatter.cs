@@ -55,5 +55,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		void NewLine();
 		
 		void WriteComment(CommentType commentType, string content);
+		void WritePreProcessorDirective(PreProcessorDirectiveType type, string argument);
 	}
 }

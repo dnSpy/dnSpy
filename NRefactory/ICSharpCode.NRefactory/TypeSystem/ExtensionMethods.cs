@@ -172,6 +172,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				throw new ArgumentNullException("compilation");
 			if (typeDefinition == null)
 				return null;
+			if (typeDefinition.Compilation == compilation)
+				return typeDefinition;
 			return typeDefinition.ToTypeReference().Resolve(compilation.TypeResolveContext).GetDefinition();
 		}
 		
@@ -184,7 +186,41 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				throw new ArgumentNullException("compilation");
 			if (member == null)
 				return null;
+			if (member.Compilation == compilation)
+				return member;
 			return member.ToMemberReference().Resolve(compilation.TypeResolveContext);
+		}
+		
+		/// <summary>
+		/// Imports a member from another compilation.
+		/// </summary>
+		public static IMethod Import(this ICompilation compilation, IMethod method)
+		{
+			return (IMethod)compilation.Import((IMember)method);
+		}
+		
+		/// <summary>
+		/// Imports a member from another compilation.
+		/// </summary>
+		public static IField Import(this ICompilation compilation, IField field)
+		{
+			return (IField)compilation.Import((IMember)field);
+		}
+		
+		/// <summary>
+		/// Imports a member from another compilation.
+		/// </summary>
+		public static IEvent Import(this ICompilation compilation, IEvent ev)
+		{
+			return (IEvent)compilation.Import((IMember)ev);
+		}
+		
+		/// <summary>
+		/// Imports a member from another compilation.
+		/// </summary>
+		public static IProperty Import(this ICompilation compilation, IProperty property)
+		{
+			return (IProperty)compilation.Import((IMember)property);
 		}
 		#endregion
 		

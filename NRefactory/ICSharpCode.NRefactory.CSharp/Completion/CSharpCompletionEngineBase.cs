@@ -402,60 +402,13 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 			} else {
 				return null;
 			}
-//			Print (baseUnit);
-			/*	var member = Unit.GetNodeAt<AttributedNode> (memberLocation);
-			var member2 = baseUnit.GetNodeAt<AttributedNode> (memberLocation);
-			member2.Remove ();
-			member.ReplaceWith (member2);
-			var tsvisitor = new TypeSystemConvertVisitor (ProjectContent, CSharpParsedFile.FileName);
-			baseUnit.AcceptVisitor (tsvisitor, null);*/
-			return Tuple.Create (CSharpParsedFile, (AstNode)expr, baseUnit);
-
-			/*
-			
-			///////
-			if (currentMember == null && currentType == null)
-				return null;
-			
-			CSharpParser parser = new CSharpParser ();
-			int startOffset;
-			if (currentMember != null) {
-				startOffset = document.Editor.LocationToOffset (currentMember.Region.BeginLine, currentMember.Region.BeginColumn);
-			} else {
-				startOffset = document.Editor.LocationToOffset (currentType.Region.BeginLine, currentType.Region.BeginColumn);
-			}
-			string memberText = Document.Editor.GetTextBetween (startOffset, Document.Editor.Caret.Offset - 1);
-			
-			var memberLocation = currentMember != null ? currentMember.Region.Begin : currentType.Region.Begin;
-			StringBuilder wrapper = new StringBuilder ();
-			wrapper.Append ("class Stub {");
-			wrapper.AppendLine ();
-			wrapper.Append (memberText);
-			
-			if (afterBracket) {
-				wrapper.Append ("();");
-			} else {
-				wrapper.Append ("x);");
-			}
-			
-			wrapper.Append (" SomeCall (); } } }");
-			var stream = new System.IO.StringReader (wrapper.ToString ());
-			var baseUnit = parser.Parse (stream, memberLocation.Line - 2);
-			stream.Close ();
-			var expr = baseUnit.GetNodeAt<Expression> (document.Editor.Caret.Line, document.Editor.Caret.Column);
-			if (expr is InvocationExpression) {
-				expr = ((InvocationExpression)expr).Target;
-			}
-			if (expr == null)
-				return null;
 			var member = Unit.GetNodeAt<AttributedNode> (memberLocation);
 			var member2 = baseUnit.GetNodeAt<AttributedNode> (memberLocation);
 			member2.Remove ();
 			member.ReplaceWith (member2);
-			
-			var tsvisitor = new TypeSystemConvertVisitor (ProjectContext, Document.FileName);
+			var tsvisitor = new TypeSystemConvertVisitor (CSharpParsedFile.FileName);
 			Unit.AcceptVisitor (tsvisitor, null);
-			return Tuple.Create (tsvisitor.ParsedFile, expr, Unit);*/
+			return Tuple.Create (tsvisitor.ParsedFile, (AstNode)expr, Unit);
 		}
 		
 		protected Tuple<ResolveResult, CSharpResolver> ResolveExpression (CSharpParsedFile file, AstNode expr, CompilationUnit unit)
