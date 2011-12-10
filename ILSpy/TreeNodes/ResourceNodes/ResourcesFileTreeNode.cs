@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	sealed class ResourcesFileTreeNode : ResourceTreeNode
 	{
 		readonly ICollection<KeyValuePair<string, string>> stringTableEntries = new ObservableCollection<KeyValuePair<string, string>>();
-		readonly ICollection<ResourceObjectRepresentation> otherEntries = new ObservableCollection<ResourceObjectRepresentation>();
+		readonly ICollection<SerializedObjectRepresentation> otherEntries = new ObservableCollection<SerializedObjectRepresentation>();
 
 		public ResourcesFileTreeNode(EmbeddedResource er)
 			: base(er)
@@ -106,9 +106,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 			string entryType = entry.Value.GetType().FullName;
 			if (entry.Value is System.Globalization.CultureInfo) {
-				otherEntries.Add(new ResourceObjectRepresentation(keyString, entryType, ((System.Globalization.CultureInfo)entry.Value).DisplayName));
+				otherEntries.Add(new SerializedObjectRepresentation(keyString, entryType, ((System.Globalization.CultureInfo)entry.Value).DisplayName));
 			} else {
-				otherEntries.Add(new ResourceObjectRepresentation(keyString, entryType, entry.Value.ToString()));
+				otherEntries.Add(new SerializedObjectRepresentation(keyString, entryType, entry.Value.ToString()));
 			}
 		}
 
@@ -145,9 +145,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		internal class ResourceObjectRepresentation
+		internal class SerializedObjectRepresentation
 		{
-			public ResourceObjectRepresentation(string key, string type, string value)
+			public SerializedObjectRepresentation(string key, string type, string value)
 			{
 				this.Key = key;
 				this.Type = type;
