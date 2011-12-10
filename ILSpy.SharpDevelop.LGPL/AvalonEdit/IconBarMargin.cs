@@ -52,7 +52,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// <inheritdoc/>
 		protected override Size MeasureOverride(Size availableSize)
 		{
-			return new Size(18, 0);
+			// 16px wide icon + 1px each side padding + 1px right-side border
+			return new Size(19, 0);
 		}
 		
 		protected override void OnRender(DrawingContext drawingContext)
@@ -86,13 +87,14 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					if (!bookmarkDict.TryGetValue(line, out existingBookmark) || bm.ZOrder > existingBookmark.ZOrder)
 						bookmarkDict[line] = bm;
 				}
-				
+
+				const double imagePadding = 1.0;
 				Size pixelSize = PixelSnapHelpers.GetPixelSize(this);
 				foreach (VisualLine line in textView.VisualLines) {
 					int lineNumber = line.FirstDocumentLine.LineNumber;
 					IBookmark bm;
 					if (bookmarkDict.TryGetValue(lineNumber, out bm)) {
-						Rect rect = new Rect(0, PixelSnapHelpers.Round(line.VisualTop - textView.VerticalOffset, pixelSize.Height), 16, 16);
+						Rect rect = new Rect(imagePadding, PixelSnapHelpers.Round(line.VisualTop - textView.VerticalOffset, pixelSize.Height), 16, 16);
 						if (dragDropBookmark == bm && dragStarted)
 							drawingContext.PushOpacity(0.5);
 						drawingContext.DrawImage(bm.Image, rect);
@@ -101,7 +103,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					}
 				}
 				if (dragDropBookmark != null && dragStarted) {
-					Rect rect = new Rect(0, PixelSnapHelpers.Round(dragDropCurrentPoint - 8, pixelSize.Height), 16, 16);
+					Rect rect = new Rect(imagePadding, PixelSnapHelpers.Round(dragDropCurrentPoint - 8, pixelSize.Height), 16, 16);
 					drawingContext.DrawImage(dragDropBookmark.Image, rect);
 				}
 			}
