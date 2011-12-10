@@ -17,8 +17,8 @@
 				   TargetType="{x:Type ListBoxItem}">
 				<Setter Property="Background"
 						Value="{Binding RelativeSource={RelativeSource Self},
-                     Path=(ItemsControl.AlternationIndex),
-                     Converter={StaticResource BackgroundConverter}}" />
+					 Path=(ItemsControl.AlternationIndex),
+					 Converter={StaticResource BackgroundConverter}}" />
 			</Style>
 		</Grid.Resources>
 		<Grid.RowDefinitions>
@@ -28,10 +28,10 @@
 		<Label Content="Other Resources"
 			   FontFamily="Segoe UI"
 			   FontWeight="Bold"
-			   FontSize="14" />
+			   FontSize="12pt" />
 		<ListView Name="resourceListView"
 				  FontFamily="Segoe UI"
-				  FontSize="12"
+				  FontSize="9pt"
 				  Foreground="Black"
 				  Grid.Row="1"
 				  AlternationCount="2"
