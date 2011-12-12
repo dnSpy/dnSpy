@@ -104,6 +104,7 @@
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
     <Compile Include="Commands\OpenListCommand.cs" />
+    <Compile Include="Controls\MarkupExtensions.cs" />
     <Compile Include="Controls\ResourceObjectTable.xaml.cs">
       <DependentUpon>ResourceObjectTable.xaml</DependentUpon>
     </Compile>
