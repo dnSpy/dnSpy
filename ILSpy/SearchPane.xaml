@@ -1,28 +1,41 @@
-﻿<UserControl x:Class="ICSharpCode.ILSpy.SearchPane" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls" x:Name="self">
+﻿<UserControl x:Class="ICSharpCode.ILSpy.SearchPane" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" x:Name="self" mc:Ignorable="d"
+		d:DesignHeight="300" d:DesignWidth="300">
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="21" />
+			<RowDefinition Height="Auto"  />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="Auto" />
-		</Grid.ColumnDefinitions>
-		<controls:SearchBox DockPanel.Dock="Top" WatermarkText="Search" WatermarkColor="Gray" ToolTip="Search" Text="{Binding SearchTerm, ElementName=self}" x:Name="searchBox" Grid.Column="0" Grid.Row="0" UpdateDelay="0:0:0.1" PreviewKeyDown="SearchBox_PreviewKeyDown" />
-		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
-			<Label Margin="0,-1">Search _for:</Label>
-			<ComboBox Name="searchModeComboBox" Width="100" SelectionChanged="SearchModeComboBox_SelectionChanged">
-				<ComboBox.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
-							<Image Width="16" Height="16" Source="{Binding Image}" Margin="0,0,4,0" />
-							<TextBlock Text="{Binding Name}" />
-						</StackPanel>
-					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>
-		</StackPanel>
-		<ListBox Name="listBox" HorizontalContentAlignment="Stretch" SelectionMode="Single" MouseDoubleClick="ListBox_MouseDoubleClick" KeyDown="ListBox_KeyDown" Grid.Row="1" Grid.ColumnSpan="2">
+		<Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+			<Grid Height="23">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<controls:SearchBox x:Name="searchBox" DockPanel.Dock="Top" Grid.Column="0" Grid.Row="0" Margin="1"
+						PreviewKeyDown="SearchBox_PreviewKeyDown"
+						Text="{Binding SearchTerm, ElementName=self}" ToolTip="Search" UpdateDelay="0:0:0.1"
+						WatermarkColor="Gray" WatermarkText="Search" />
+				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
+					<Label Margin="0,-1">Search _for:</Label>
+					<ComboBox Width="100" Name="searchModeComboBox" Margin="1"
+							SelectionChanged="SearchModeComboBox_SelectionChanged">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<Image Height="16" Margin="0,0,4,0" Width="16" Source="{Binding Image}" />
+									<TextBlock Text="{Binding Name}" />
+								</StackPanel>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+				</StackPanel>
+			</Grid>
+		</Border>
+		<ListBox Grid.Row="1" BorderThickness="0,0,0,0" HorizontalContentAlignment="Stretch" KeyDown="ListBox_KeyDown"
+				MouseDoubleClick="ListBox_MouseDoubleClick" Name="listBox" SelectionMode="Single">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid>
@@ -31,10 +44,10 @@
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
-						<Image Width="16" Height="16" Source="{Binding Image}" HorizontalAlignment="Left" />
-						<TextBlock Text="{Binding Name}" Grid.Column="1" />
-						<StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right">
-							<Image Width="16" Height="16" Source="{Binding LocationImage}" Margin="4,0,4,0" />
+						<Image Height="16" Width="16" HorizontalAlignment="Left" Source="{Binding Image}" />
+						<TextBlock Grid.Column="1" Text="{Binding Name}" />
+						<StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,0,2,0">
+							<Image Height="16" Margin="4,0,4,0" Width="16" Source="{Binding LocationImage}" />
 							<TextBlock Text="{Binding Location}" TextTrimming="CharacterEllipsis" />
 						</StackPanel>
 					</Grid>
