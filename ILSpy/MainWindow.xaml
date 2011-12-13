@@ -41,7 +41,7 @@
 	</Window.CommandBindings>
 	<DockPanel>
 		<!-- Main menu -->
-		<Menu DockPanel.Dock="Top" Name="mainMenu">
+		<Menu DockPanel.Dock="Top" Name="mainMenu" Height="23">
 			<MenuItem Header="_File" /> <!-- contents of file menu are added using MEF -->
 			<MenuItem Header="_View">
 				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
