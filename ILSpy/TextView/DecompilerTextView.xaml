@@ -1,24 +1,24 @@
 ﻿<UserControl x:Class="ICSharpCode.ILSpy.TextView.DecompilerTextView" x:ClassModifier="public" x:Name="self"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ae="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit">
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:ae="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit">
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="boolToVisibility" />
 	</UserControl.Resources>
 	<Grid>
-		<ae:TextEditor
-			Name="textEditor"
-			FontFamily="Consolas"
-			FontSize="10pt"
-			IsReadOnly="True"
-			Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
-			Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}" />
-		<Border Name="waitAdorner" Background="#C0FFFFFF" Visibility="Collapsed">
-			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-				<TextBlock FontSize="14pt">Decompiling...</TextBlock>
-				<ProgressBar IsIndeterminate="True" Height="16" Margin="0, 4" />
-				<Button Click="cancelButton_Click" HorizontalAlignment="Center">Cancel</Button>
-			</StackPanel>
+		<Border BorderThickness="1,1,0,1" BorderBrush="#FF828790">
+			<Grid>
+				<ae:TextEditor Name="textEditor" FontFamily="Consolas" FontSize="10pt" IsReadOnly="True"
+						Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
+						Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}" />
+				<Border Name="waitAdorner" Background="#C0FFFFFF" Visibility="Collapsed">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock FontSize="14pt">Decompiling...</TextBlock>
+						<ProgressBar IsIndeterminate="True" Height="16" Margin="0, 4" />
+						<Button Click="cancelButton_Click" HorizontalAlignment="Center">Cancel</Button>
+					</StackPanel>
+				</Border>
+			</Grid>
 		</Border>
 	</Grid>
 </UserControl>
