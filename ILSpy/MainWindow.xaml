@@ -11,7 +11,9 @@
 	UseLayoutRounding="True"
 	TextOptions.TextFormattingMode="Display"
 	FocusManager.FocusedElement="{Binding ElementName=treeView}"
->
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" d:DesignHeight="500" d:DesignWidth="500"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+	>
 	<Window.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 	</Window.Resources>
@@ -52,7 +54,7 @@
 		<!-- ToolBar -->
 		<ToolBar
 			Name="toolBar"
-			DockPanel.Dock="Top">
+			DockPanel.Dock="Top" ToolBarTray.IsLocked="True">
 			<ToolBar.Resources>
 				<!-- Make images transparent if menu command is disabled -->
 				<Style TargetType="{x:Type Image}">
@@ -111,7 +113,8 @@
 				SelectionChanged="TreeView_SelectionChanged"
 				ShowRoot="False"
 				AllowDropOrder="True"
-				AllowDrop="True" />
+				AllowDrop="True" 
+				BorderThickness="0,1,1,1" Visibility="Visible" />
 			<GridSplitter
 				Grid.ZIndex="1"
 				Grid.Column="1"
@@ -129,9 +132,9 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="0" Name="topPaneRow" />
-					<RowDefinition Height="1" />
+					<RowDefinition Height="0" />
 					<RowDefinition Height="0.7*" MinHeight="100" Name="textViewRow" />
-					<RowDefinition Height="1" />
+					<RowDefinition Height="0" />
 					<RowDefinition Height="0" Name="bottomPaneRow" />
 				</Grid.RowDefinitions>
 				<Border BorderBrush="Black" BorderThickness="1" Name="updateAvailablePanel" Visibility="Collapsed">
@@ -143,8 +146,10 @@
 						</StackPanel>
 					</DockPanel>
 				</Border>
-				
-				<controls:DockedPane x:Name="topPane" Grid.Row="1" Title="Top" Visibility="Collapsed" CloseButtonClicked="TopPane_CloseButtonClicked" />
+
+				<controls:DockedPane x:Name="topPane" Grid.Row="1" Title="Top" Visibility="Collapsed"
+						CloseButtonClicked="TopPane_CloseButtonClicked" Margin="0,0,0,3"
+						BorderThickness="1,1,0,1" />
 				
 				<GridSplitter
 					Grid.ZIndex="1"
@@ -168,8 +173,9 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Center"
 					Visibility="{Binding Visibility, ElementName=bottomPane}" />
-				
-				<controls:DockedPane x:Name="bottomPane" Grid.Row="5" Title="Bottom" Visibility="Collapsed" CloseButtonClicked="BottomPane_CloseButtonClicked" />
+
+				<controls:DockedPane x:Name="bottomPane" Grid.Row="5" Title="Bottom" Visibility="Collapsed"
+						CloseButtonClicked="BottomPane_CloseButtonClicked" Margin="0,3,0,0" BorderThickness="1,1,0,1"/>
 			</Grid>
 		</Grid>
 	</DockPanel>
