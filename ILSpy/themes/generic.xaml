@@ -26,7 +26,9 @@
 			      Data            = "M 5,5 L 10,10 L 15,5 L 5,5"/>
 		</StackPanel>
 	</DataTemplate>
-	
+
+	<SolidColorBrush x:Key="paneBorder" Color="#828790" />
+
 	<!-- DockedPane -->
 	<Style TargetType="{x:Type controls:DockedPane}">
 		<Style.Resources>
@@ -89,16 +91,18 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type controls:DockedPane}">
-					<Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" CornerRadius="0,2,0,0">
-						<DockPanel>
-							<Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" DockPanel.Dock="Top">
+					<Border BorderThickness="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness}" BorderBrush="{StaticResource paneBorder}">
+							<DockPanel>
+							<Border BorderThickness="0,0,0,0" BorderBrush="{StaticResource paneBorder}"
+									Background="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" DockPanel.Dock="Top">
 								<Grid>
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="1*"/>
 										<ColumnDefinition Width="Auto" />
 									</Grid.ColumnDefinitions>
-									<TextBlock Text="{TemplateBinding Title}" Margin="3,0" Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-									<Button x:Name="PART_Close" Grid.Column="2" VerticalAlignment="Center" Width="16" Height="16" DockPanel.Dock="Right" Style="{DynamicResource CloseButtonStyle}" ToolTip="Close">
+									<TextBlock Text="{TemplateBinding Title}" Margin="3,0"
+											Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" VerticalAlignment="Center"/>
+									<Button x:Name="PART_Close" Grid.Column="2" VerticalAlignment="Center" Width="16" Height="16" DockPanel.Dock="Right" Style="{DynamicResource CloseButtonStyle}" ToolTip="Close" Margin="1">
 										<Path x:Name="Path" Stretch="Fill" StrokeThickness="0.5" Stroke="#FF333333" Fill="#FF969696" Data="F1 M 0,1.3333L 1.33333,0L 4,2.6666L 6.6666,0 8,1.3333L 5.3333,4L 8,6.6666L 6.6666,8L 4,5.3333L 1.3333,8L 0,6.6666L 2.6666,4L 0,1.3333 Z " HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 									</Button>
 								</Grid>
@@ -109,5 +113,6 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
+		<Setter Property="Control.BorderBrush" Value="{StaticResource paneBorder}" />
 	</Style>
 </ResourceDictionary>
