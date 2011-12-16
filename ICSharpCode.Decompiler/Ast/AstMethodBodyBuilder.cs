@@ -999,6 +999,7 @@ namespace ICSharpCode.Decompiler.Ast
 				// This is equivalent to 'target = new ValueType(args);'.
 				ObjectCreateExpression oce = new ObjectCreateExpression();
 				oce.Type = AstBuilder.ConvertType(cecilMethod.DeclaringType);
+				oce.AddAnnotation(cecilMethod);
 				AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
 				oce.Arguments.AddRange(methodArgs);
 				return new AssignmentExpression(target, oce);
