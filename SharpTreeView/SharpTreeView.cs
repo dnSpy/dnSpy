@@ -135,11 +135,11 @@ namespace ICSharpCode.TreeView
 				this.ItemsSource = flattener;
 			}
 		}
-		
+
 		void flattener_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			// Deselect nodes that are being hidden
-			if (e.Action == NotifyCollectionChangedAction.Remove) {
+			// Deselect nodes that are being hidden, if any remain in the tree
+			if (e.Action == NotifyCollectionChangedAction.Remove && Items.Count > 0) {
 				List<SharpTreeNode> selectedOldItems = null;
 				foreach (SharpTreeNode node in e.OldItems) {
 					if (node.IsSelected) {
