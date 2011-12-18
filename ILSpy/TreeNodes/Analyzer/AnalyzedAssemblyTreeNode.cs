@@ -17,35 +17,43 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using ICSharpCode.Decompiler;
 using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	/// <summary>
-	/// ExtensionMethods used in ILSpy.
-	/// </summary>
-	public static class ExtensionMethods
+	internal class AnalyzedAssemblyTreeNode : AnalyzerEntityTreeNode
 	{
-		public static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items)
+		private readonly AssemblyDefinition analyzedAssembly;
+
+		public AnalyzedAssemblyTreeNode(AssemblyDefinition analyzedAssembly)
 		{
-			foreach (T item in items)
-				if (!list.Contains(item))
-					list.Add(item);
+			if (analyzedAssembly == null)
+				throw new ArgumentNullException("analyzedAssembly");
+			this.analyzedAssembly = analyzedAssembly;
+			//this.LazyLoading = true;
 		}
 
-		public static bool IsCustomAttribute(this TypeDefinition type)
+		public override object Icon
 		{
-			while (type.FullName != "System.Object") {
-				var resolvedBaseType = type.BaseType.Resolve();
-				if (resolvedBaseType == null)
-					return false;
-				if (resolvedBaseType.FullName == "System.Attribute")
-					return true;
-				type = resolvedBaseType;
+			get { return Images.Assembly; }
+		}
+
+		public override object Text
+		{
+			get
+			{
+				return analyzedAssembly.Name.Name;
 			}
-			return false;
+		}
+
+		protected override void LoadChildren()
+		{
+			//this.Children.Add(new AnalyzedAssemblyReferencedByTreeNode(analyzedAssembly));
+		}
+
+		public override MemberReference Member
+		{
+			get { return null; }
 		}
 	}
 }

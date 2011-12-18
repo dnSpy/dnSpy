@@ -48,6 +48,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		protected override void LoadChildren()
 		{
+			if (AnalyzedAttributeAppliedToTreeNode.CanShow(analyzedType))
+				this.Children.Add(new AnalyzedAttributeAppliedToTreeNode(analyzedType));
+
 			if (AnalyzedTypeInstantiationsTreeNode.CanShow(analyzedType))
 				this.Children.Add(new AnalyzedTypeInstantiationsTreeNode(analyzedType));
 
