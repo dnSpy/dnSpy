@@ -154,7 +154,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			switch (elementType) {
 				case TypeCode.Boolean:
 				case TypeCode.Byte:
-					if (initialValue.Length == output.Length) {
+					if (initialValue.Length >= output.Length) {
 						for (int j = 0; j < output.Length; j++) {
 							output[j] = new ILExpression(ILCode.Ldc_I4, (int)initialValue[j]);
 						}
@@ -162,7 +162,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					return false;
 				case TypeCode.SByte:
-					if (initialValue.Length == output.Length) {
+					if (initialValue.Length >= output.Length) {
 						for (int j = 0; j < output.Length; j++) {
 							output[j] = new ILExpression(ILCode.Ldc_I4, (int)unchecked((sbyte)initialValue[j]));
 						}
@@ -170,7 +170,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					return false;
 				case TypeCode.Int16:
-					if (initialValue.Length == output.Length * 2) {
+					if (initialValue.Length >= output.Length * 2) {
 						for (int j = 0; j < output.Length; j++) {
 							output[j] = new ILExpression(ILCode.Ldc_I4, (int)BitConverter.ToInt16(initialValue, j * 2));
 						}
@@ -179,7 +179,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return false;
 				case TypeCode.Char:
 				case TypeCode.UInt16:
-					if (initialValue.Length == output.Length * 2) {
+					if (initialValue.Length >= output.Length * 2) {
 						for (int j = 0; j < output.Length; j++) {
 							output[j] = new ILExpression(ILCode.Ldc_I4, (int)BitConverter.ToUInt16(initialValue, j * 2));
 						}
@@ -188,7 +188,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return false;
 				case TypeCode.Int32:
 				case TypeCode.UInt32:
-					if (initialValue.Length == output.Length * 4) {
+					if (initialValue.Length >= output.Length * 4) {
 						for (int j = 0; j < output.Length; j++) {
 							output[j] = new ILExpression(ILCode.Ldc_I4, BitConverter.ToInt32(initialValue, j * 4));
 						}
@@ -197,7 +197,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return false;
 				case TypeCode.Int64:
 				case TypeCode.UInt64:
-					if (initialValue.Length == output.Length * 8) {
+					if (initialValue.Length >= output.Length * 8) {
 						for (int j = 0; j < output.Length; j++) {
 							output[j] = new ILExpression(ILCode.Ldc_I8, BitConverter.ToInt64(initialValue, j * 8));
 						}
@@ -205,7 +205,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					return false;
 				case TypeCode.Single:
-					if (initialValue.Length == output.Length * 4) {
+					if (initialValue.Length >= output.Length * 4) {
 						for (int j = 0; j < output.Length; j++) {
 							output[j] = new ILExpression(ILCode.Ldc_R4, BitConverter.ToSingle(initialValue, j * 4));
 						}
@@ -213,7 +213,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					return false;
 				case TypeCode.Double:
-					if (initialValue.Length == output.Length * 8) {
+					if (initialValue.Length >= output.Length * 8) {
 						for (int j = 0; j < output.Length; j++) {
 							output[j] = new ILExpression(ILCode.Ldc_R8, BitConverter.ToDouble(initialValue, j * 8));
 						}
