@@ -109,7 +109,6 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression[] newArr;
 				int initArrayPos;
 				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, arrayType, totalElements, out newArr, out initArrayPos)) {
-					var mdArr = Array.CreateInstance(typeof(ILExpression), arrayLengths);
 					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType, newArr));
 					body.RemoveAt(initArrayPos);
 					return true;
