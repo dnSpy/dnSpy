@@ -215,6 +215,23 @@ namespace ICSharpCode.Decompiler
 				return true;
 			return IsCompilerGeneratedOrIsInCompilerGeneratedClass(member.DeclaringType);
 		}
+
+		public static TypeReference GetEnumUnderlyingType(this TypeDefinition type)
+		{
+			if (!type.IsEnum)
+				throw new ArgumentException("Type must be an enum", "type");
+
+			var fields = type.Fields;
+
+			for (int i = 0; i < fields.Count; i++)
+			{
+				var field = fields[i];
+				if (!field.IsStatic)
+					return field.FieldType;
+			}
+
+			throw new NotSupportedException();
+		}
 		
 		public static bool IsAnonymousType(this TypeReference type)
 		{
