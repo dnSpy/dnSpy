@@ -220,11 +220,16 @@ namespace ICSharpCode.Decompiler
 		{
 			if (type == null)
 				return false;
-			if (string.IsNullOrEmpty(type.Namespace) && type.Name.StartsWith("<>", StringComparison.Ordinal) && type.Name.Contains("AnonymousType")) {
+			if (string.IsNullOrEmpty(type.Namespace) && type.HasGeneratedName() && type.Name.Contains("Anon")) {
 				TypeDefinition td = type.Resolve();
 				return td != null && td.IsCompilerGenerated();
 			}
 			return false;
+		}
+
+		public static bool HasGeneratedName(this MemberReference member)
+		{
+			return member.Name.StartsWith("<", StringComparison.Ordinal);
 		}
 		
 		public static bool ContainsAnonymousType(this TypeReference type)
