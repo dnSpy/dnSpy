@@ -54,6 +54,7 @@ namespace Mono.Cecil.Cil {
 		JScript,
 		Smc,
 		MCpp,
+		FSharp,
 	}
 
 	public enum DocumentLanguageVendor {

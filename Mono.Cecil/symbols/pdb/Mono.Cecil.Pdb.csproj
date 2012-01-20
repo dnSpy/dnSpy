@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">net_4_0_Debug</Configuration>
@@ -108,7 +108,6 @@
     <Compile Include="Microsoft.Cci.Pdb\PdbScope.cs" />
     <Compile Include="Microsoft.Cci.Pdb\PdbSlot.cs" />
     <Compile Include="Microsoft.Cci.Pdb\PdbSource.cs" />
-    <Compile Include="Microsoft.Cci.Pdb\PdbWriter.cs" />
     <Compile Include="Microsoft.Cci.Pdb\SourceLocationProvider.cs" />
     <Compile Include="Mono.Cecil.Pdb\AssemblyInfo.cs" />
     <Compile Include="Mono.Cecil.Pdb\ISymUnmanagedDocumentWriter.cs" />

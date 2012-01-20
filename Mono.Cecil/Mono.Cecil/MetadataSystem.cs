@@ -78,7 +78,7 @@ namespace Mono.Cecil {
 
 		static void InitializePrimitives ()
 		{
-			primitive_value_types = new Dictionary<string, Row<ElementType, bool>> (18) {
+			primitive_value_types = new Dictionary<string, Row<ElementType, bool>> (18, StringComparer.Ordinal) {
 				{ "Void", new Row<ElementType, bool> (ElementType.Void, false) },
 				{ "Boolean", new Row<ElementType, bool> (ElementType.Boolean, true) },
 				{ "Char", new Row<ElementType, bool> (ElementType.Char, true) },
@@ -100,30 +100,47 @@ namespace Mono.Cecil {
 			};
 		}
 
-		public static void TryProcessPrimitiveType (TypeReference type)
+		public static void TryProcessPrimitiveTypeReference (TypeReference type)
 		{
 			var scope = type.scope;
-			if (scope == null)
+			if (scope == null || scope.MetadataScopeType != MetadataScopeType.AssemblyNameReference || scope.Name != "mscorlib")
 				return;
-
-			if (scope.MetadataScopeType != MetadataScopeType.AssemblyNameReference)
-				return;
-
-			if (scope.Name != "mscorlib")
-				return;
-
-			if (type.Namespace != "System")
-				return;
-
-			if (primitive_value_types == null)
-				InitializePrimitives ();
 
 			Row<ElementType, bool> primitive_data;
-			if (!primitive_value_types.TryGetValue (type.Name, out primitive_data))
+			if (!TryGetPrimitiveData (type, out primitive_data))
 				return;
 
 			type.etype = primitive_data.Col1;
 			type.IsValueType = primitive_data.Col2;
+		}
+
+		public static bool TryGetPrimitiveElementType (TypeDefinition type, out ElementType etype)
+		{
+			etype = ElementType.None;
+
+			if (!type.HasImage || !type.Module.IsCorlib ())
+				return false;
+
+			Row<ElementType, bool> primitive_data;
+			if (TryGetPrimitiveData (type, out primitive_data) && primitive_data.Col1.IsPrimitive ()) {
+				etype = primitive_data.Col1;
+				return true;
+			}
+
+			return false;
+		}
+
+		static bool TryGetPrimitiveData (TypeReference type, out Row<ElementType, bool> primitive_data)
+		{
+			primitive_data = new Row<ElementType, bool> ();
+
+			if (type.Namespace != "System")
+				return false;
+
+			if (primitive_value_types == null)
+				InitializePrimitives ();
+
+			return primitive_value_types.TryGetValue (type.Name, out primitive_data);
 		}
 
 		public void Clear ()

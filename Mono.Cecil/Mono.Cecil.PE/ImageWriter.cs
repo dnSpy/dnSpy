@@ -71,11 +71,11 @@ namespace Mono.Cecil.PE {
 		{
 			this.module = module;
 			this.metadata = metadata;
+			this.pe64 = module.Architecture != TargetArchitecture.I386;
 			this.GetDebugHeader ();
 			this.GetWin32Resources ();
 			this.text_map = BuildTextMap ();
 			this.sections = 2; // text + reloc
-			this.pe64 = module.Architecture != TargetArchitecture.I386;
 			this.time_stamp = (uint) DateTime.UtcNow.Subtract (new DateTime (1970, 1, 1)).TotalSeconds;
 		}
 

@@ -519,6 +519,9 @@ namespace Mono.Cecil.Cil {
 
 		static bool IsFatRange (Instruction start, Instruction end)
 		{
+			if (start == null)
+				throw new ArgumentException ();
+
 			if (end == null)
 				return true;
 

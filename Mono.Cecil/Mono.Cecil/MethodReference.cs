@@ -99,7 +99,7 @@ namespace Mono.Cecil {
 				if (generic_parameters != null)
 					return generic_parameters;
 
-				return generic_parameters = new Collection<GenericParameter> ();
+				return generic_parameters = new GenericParameterCollection (this);
 			}
 		}
 

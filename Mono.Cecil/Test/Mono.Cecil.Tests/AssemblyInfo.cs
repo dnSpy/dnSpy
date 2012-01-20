@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle ("Mono.Cecil.Tests")]
 [assembly: AssemblyProduct ("Mono.Cecil")]
-[assembly: AssemblyCopyright ("Copyright © 2008 - 2010 Jb Evain")]
+[assembly: AssemblyCopyright ("Copyright © 2008 - 2011 Jb Evain")]
 
 [assembly: ComVisible (false)]
 

@@ -24,7 +24,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual ("String", type.Name);
 			Assert.AreEqual (MetadataType.String, type.MetadataType);
 			Assert.IsFalse (type.IsValueType);
-			Assert.IsInstanceOfType (typeof (TypeReference), type);
+			Assert.IsInstanceOf (typeof (TypeReference), type);
 		}
 
 		[Test]
@@ -43,7 +43,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual ("Int32", type.Name);
 			Assert.AreEqual (MetadataType.Int32, type.MetadataType);
 			Assert.IsTrue (type.IsValueType);
-			Assert.IsInstanceOfType (typeof (TypeReference), type);
+			Assert.IsInstanceOf (typeof (TypeReference), type);
 		}
 
 		[Test]
@@ -59,7 +59,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (module, type.Module);
 			Assert.AreEqual ("Mono.Cecil.Tests", type.Namespace);
 			Assert.AreEqual ("TypeParserTests", type.Name);
-			Assert.IsInstanceOfType (typeof (TypeDefinition), type);
+			Assert.IsInstanceOf (typeof (TypeDefinition), type);
 		}
 
 		[Test]
@@ -72,7 +72,7 @@ namespace Mono.Cecil.Tests {
 
 			var type = TypeParser.ParseType (module, fullname);
 
-			Assert.IsInstanceOfType (typeof (ByReferenceType), type);
+			Assert.IsInstanceOf (typeof (ByReferenceType), type);
 
 			type = ((ByReferenceType) type).ElementType;
 
@@ -81,7 +81,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (module, type.Module);
 			Assert.AreEqual ("System", type.Namespace);
 			Assert.AreEqual ("String", type.Name);
-			Assert.IsInstanceOfType (typeof (TypeReference), type);
+			Assert.IsInstanceOf (typeof (TypeReference), type);
 		}
 
 		[Test]
@@ -98,7 +98,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (module, type.Module);
 			Assert.AreEqual ("Mono.Cecil", type.Namespace);
 			Assert.AreEqual ("TypeDefinition", type.Name);
-			Assert.IsInstanceOfType (typeof (TypeReference), type);
+			Assert.IsInstanceOf (typeof (TypeReference), type);
 		}
 
 		[Test]
@@ -115,7 +115,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (module, type.Module);
 			Assert.AreEqual ("System.Collections.Generic", type.Namespace);
 			Assert.AreEqual ("Dictionary`2", type.Name);
-			Assert.IsInstanceOfType (typeof (TypeReference), type);
+			Assert.IsInstanceOf (typeof (TypeReference), type);
 			Assert.AreEqual (2, type.GenericParameters.Count);
 		}
 
@@ -156,7 +156,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (module, type.Module);
 			Assert.AreEqual ("", type.Namespace);
 			Assert.AreEqual ("Baz`1", type.Name);
-			Assert.IsInstanceOfType (typeof (TypeReference), type);
+			Assert.IsInstanceOf (typeof (TypeReference), type);
 			Assert.AreEqual (1, type.GenericParameters.Count);
 
 			type = type.DeclaringType;
@@ -166,7 +166,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (module, type.Module);
 			Assert.AreEqual ("", type.Namespace);
 			Assert.AreEqual ("Bar`1", type.Name);
-			Assert.IsInstanceOfType (typeof (TypeReference), type);
+			Assert.IsInstanceOf (typeof (TypeReference), type);
 			Assert.AreEqual (1, type.GenericParameters.Count);
 
 			type = type.DeclaringType;
@@ -176,7 +176,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (module, type.Module);
 			Assert.AreEqual ("Bingo", type.Namespace);
 			Assert.AreEqual ("Foo`1", type.Name);
-			Assert.IsInstanceOfType (typeof (TypeReference), type);
+			Assert.IsInstanceOf (typeof (TypeReference), type);
 			Assert.AreEqual (1, type.GenericParameters.Count);
 		}
 
@@ -203,7 +203,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (module, type.Module);
 			Assert.AreEqual ("Bingo", type.Namespace);
 			Assert.AreEqual ("Gazonk", type.Name);
-			Assert.IsInstanceOfType (typeof (TypeReference), type);
+			Assert.IsInstanceOf (typeof (TypeReference), type);
 		}
 
 		[Test]
@@ -227,7 +227,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (module, type.Module);
 			Assert.AreEqual ("Bingo", type.Namespace);
 			Assert.AreEqual ("Gazonk", type.Name);
-			Assert.IsInstanceOfType (typeof (TypeReference), type);
+			Assert.IsInstanceOf (typeof (TypeReference), type);
 		}
 
 		[Test]
@@ -290,7 +290,7 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (2, type.GenericParameters.Count);
 
 			var argument = instance.GenericArguments [0];
-			Assert.IsInstanceOfType (typeof (TypeDefinition), argument);
+			Assert.IsInstanceOf (typeof (TypeDefinition), argument);
 			Assert.AreEqual (module, argument.Module);
 			Assert.AreEqual ("Mono.Cecil.Tests", argument.Namespace);
 			Assert.AreEqual ("TypeParserTests", argument.Name);
@@ -332,13 +332,13 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (module, argument.Module);
 			Assert.AreEqual ("", argument.Namespace);
 			Assert.AreEqual ("Bar", argument.Name);
-			Assert.IsInstanceOfType (typeof (TypeDefinition), argument);
+			Assert.IsInstanceOf (typeof (TypeDefinition), argument);
 
 			argument = instance.GenericArguments [1];
 			Assert.AreEqual (module, argument.Module);
 			Assert.AreEqual ("", argument.Namespace);
 			Assert.AreEqual ("Bar", argument.Name);
-			Assert.IsInstanceOfType (typeof (TypeDefinition), argument);
+			Assert.IsInstanceOf (typeof (TypeDefinition), argument);
 		}
 
 		[Test]
@@ -376,13 +376,13 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (2, instance.GenericArguments.Count);
 			Assert.AreEqual (module, instance.Module);
 			Assert.AreEqual ("Mono.Cecil.Tests.TypeParserTests/Foo`2", instance.ElementType.FullName);
-			Assert.IsInstanceOfType (typeof (TypeDefinition), instance.ElementType);
+			Assert.IsInstanceOf (typeof (TypeDefinition), instance.ElementType);
 
 			argument = instance.GenericArguments [0];
 			Assert.AreEqual (module, argument.Module);
 			Assert.AreEqual ("Mono.Cecil.Tests", argument.Namespace);
 			Assert.AreEqual ("TypeParserTests", argument.Name);
-			Assert.IsInstanceOfType (typeof (TypeDefinition), argument);
+			Assert.IsInstanceOf (typeof (TypeDefinition), argument);
 
 			argument = instance.GenericArguments [1];
 			Assert.AreEqual ("mscorlib", argument.Scope.Name);

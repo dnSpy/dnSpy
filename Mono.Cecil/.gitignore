@@ -7,3 +7,4 @@ obj
 *.xml
 *.nupkg
 **/test-results/*
+*Resharper*

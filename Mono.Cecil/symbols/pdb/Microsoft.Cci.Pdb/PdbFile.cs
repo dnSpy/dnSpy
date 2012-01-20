@@ -1,6 +1,11 @@
 //-----------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft Corporation.  All Rights Reserved.
+// Copyright (c) Microsoft. All rights reserved.
+// This code is licensed under the Microsoft Public License.
+// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
+// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 //
 //-----------------------------------------------------------------------------
 using System;
@@ -21,7 +26,7 @@ namespace Microsoft.Cci.Pdb {
       bits.ReadGuid(out doctype);
     }
 
-    static Dictionary<string,int> LoadNameIndex(BitAccess bits, out int age, out Guid guid) {
+    static Dictionary<string, int> LoadNameIndex(BitAccess bits, out int age, out Guid guid) {
       Dictionary<string, int> result = new Dictionary<string, int>();
       int ver;
       int sig;
@@ -30,9 +35,9 @@ namespace Microsoft.Cci.Pdb {
       bits.ReadInt32(out age);    //  8..11 Age
       bits.ReadGuid(out guid);       // 12..27 GUID
 
-      if (ver != 20000404) {
-        throw new PdbDebugException("Unsupported PDB Stream version {0}", ver);
-      }
+      //if (ver != 20000404) {
+      //  throw new PdbDebugException("Unsupported PDB Stream version {0}", ver);
+      //}
 
       // Read string buffer.
       int buf;
@@ -70,7 +75,7 @@ namespace Microsoft.Cci.Pdb {
           bits.ReadCString(out name);
           bits.Position = saved;
 
-          result.Add(name, ni);
+          result.Add(name.ToUpperInvariant(), ni);
           j++;
         }
       }
@@ -128,15 +133,11 @@ namespace Microsoft.Cci.Pdb {
 
     private static PdbFunction match = new PdbFunction();
 
-    private static PdbFunction FindFunction(PdbFunction[] funcs, ushort sec, uint off) {
+    private static int FindFunction(PdbFunction[] funcs, ushort sec, uint off) {
       match.segment = sec;
       match.address = off;
 
-      int item = Array.BinarySearch(funcs, match, PdbFunction.byAddress);
-      if (item >= 0) {
-        return funcs[item];
-      }
-      return null;
+      return Array.BinarySearch(funcs, match, PdbFunction.byAddress);
     }
 
     static void LoadManagedLines(PdbFunction[] funcs,
@@ -146,7 +147,7 @@ namespace Microsoft.Cci.Pdb {
                                  Dictionary<string, int> nameIndex,
                                  PdbReader reader,
                                  uint limit) {
-      Array.Sort(funcs, PdbFunction.byAddress);
+      Array.Sort(funcs, PdbFunction.byAddressAndToken);
       IntHashTable checks = new IntHashTable();
 
       // Read the files first
@@ -172,15 +173,15 @@ namespace Microsoft.Cci.Pdb {
               string name = (string)names[(int)chk.name];
               int guidStream;
               Guid doctypeGuid = SymDocumentType.Text;
-              Guid languageGuid = SymLanguageType.CSharp;
-              Guid vendorGuid = SymLanguageVendor.Microsoft;
-              if (nameIndex.TryGetValue("/src/files/"+name, out guidStream)) {
+              Guid languageGuid = Guid.Empty;
+              Guid vendorGuid = Guid.Empty;
+              if (nameIndex.TryGetValue("/SRC/FILES/"+name.ToUpperInvariant(), out guidStream)) {
                 var guidBits = new BitAccess(0x100);
                 dir.streams[guidStream].Read(reader, guidBits);
                 LoadGuidStream(guidBits, out doctypeGuid, out languageGuid, out vendorGuid);
               }
 
-              PdbSource src = new PdbSource((uint)ni, name, doctypeGuid, languageGuid, vendorGuid);
+              PdbSource src = new PdbSource(/*(uint)ni,*/ name, doctypeGuid, languageGuid, vendorGuid);
               checks.Add(ni, src);
               bits.Position += chk.len;
               bits.Align(4);
@@ -211,8 +212,25 @@ namespace Microsoft.Cci.Pdb {
               bits.ReadUInt16(out sec.sec);
               bits.ReadUInt16(out sec.flags);
               bits.ReadUInt32(out sec.cod);
-              PdbFunction func = FindFunction(funcs, sec.sec, sec.off);
-              if (func == null) break;
+              int funcIndex = FindFunction(funcs, sec.sec, sec.off);
+              if (funcIndex < 0) break;
+              var func = funcs[funcIndex];
+              if (func.lines == null) {
+                while (funcIndex > 0) {
+                  var f = funcs[funcIndex-1];
+                  if (f.lines != null || f.segment != sec.sec || f.address != sec.off) break;
+                  func = f;
+                  funcIndex--;
+                }
+             } else {
+                while (funcIndex < funcs.Length-1 && func.lines != null) {
+                  var f = funcs[funcIndex+1];
+                  if (f.segment != sec.sec || f.address != sec.off) break;
+                  func = f;
+                  funcIndex++;
+                }
+              }
+              if (func.lines != null) break;
 
               // Count the line blocks.
               int begSym = bits.Position;
@@ -255,7 +273,7 @@ namespace Microsoft.Cci.Pdb {
 
                   uint lineBegin = line.flags & (uint)CV_Line_Flags.linenumStart;
                   uint delta = (line.flags & (uint)CV_Line_Flags.deltaLineEnd) >> 24;
-                  bool statement = ((line.flags & (uint)CV_Line_Flags.fStatement) == 0);
+                  //bool statement = ((line.flags & (uint)CV_Line_Flags.fStatement) == 0);
                   if ((sec.flags & 1) != 0) {
                     bits.Position = pcol + 4 * i;
                     bits.ReadUInt16(out column.offColumnStart);
@@ -295,7 +313,7 @@ namespace Microsoft.Cci.Pdb {
 
       bits.Position = 4;
       // Console.WriteLine("{0}:", info.moduleName);
-      funcs = PdbFunction.LoadManagedFunctions(info.moduleName,
+      funcs = PdbFunction.LoadManagedFunctions(/*info.moduleName,*/
                                                bits, (uint)info.cbSyms,
                                                readStrings);
       if (funcs != null) {
@@ -316,10 +334,10 @@ namespace Microsoft.Cci.Pdb {
       DbiHeader dh = new DbiHeader(bits);
       header = new DbiDbgHdr();
 
-      if (dh.sig != -1 || dh.ver != 19990903) {
-        throw new PdbException("Unsupported DBI Stream version, sig={0}, ver={1}",
-                               dh.sig, dh.ver);
-      }
+      //if (dh.sig != -1 || dh.ver != 19990903) {
+      //  throw new PdbException("Unsupported DBI Stream version, sig={0}, ver={1}",
+      //                         dh.sig, dh.ver);
+      //}
 
       // Read gpmod section.
       ArrayList modList = new ArrayList();
@@ -377,7 +395,7 @@ namespace Microsoft.Cci.Pdb {
       dir.streams[1].Read(reader, bits);
       Dictionary<string, int> nameIndex = LoadNameIndex(bits, out age, out guid);
       int nameStream;
-      if (!nameIndex.TryGetValue("/names", out nameStream)) {
+      if (!nameIndex.TryGetValue("/NAMES", out nameStream)) {
         throw new PdbException("No `name' stream");
       }
 
@@ -413,7 +431,7 @@ namespace Microsoft.Cci.Pdb {
       }
 
       //
-      Array.Sort(funcs, PdbFunction.byAddress);
+      Array.Sort(funcs, PdbFunction.byAddressAndToken);
       //Array.Sort(funcs, PdbFunction.byToken);
       return funcs;
     }

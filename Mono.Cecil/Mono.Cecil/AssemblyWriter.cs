@@ -1458,7 +1458,7 @@ namespace Mono.Cecil {
 		{
 			var pinvoke = method.PInvokeInfo;
 			if (pinvoke == null)
-				throw new ArgumentException ();
+				return;
 
 			var table = GetTable<ImplMapTable> (Table.ImplMap);
 			table.AddRow (new ImplMapRow (

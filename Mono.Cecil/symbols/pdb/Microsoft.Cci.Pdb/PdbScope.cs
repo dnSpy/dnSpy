@@ -1,6 +1,11 @@
 //-----------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft Corporation.  All Rights Reserved.
+// Copyright (c) Microsoft. All rights reserved.
+// This code is licensed under the Microsoft Public License.
+// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
+// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 //
 //-----------------------------------------------------------------------------
 using System;
@@ -12,13 +17,25 @@ namespace Microsoft.Cci.Pdb {
     internal PdbScope[] scopes;
     internal string[] usedNamespaces;
 
-    internal uint segment;
+    //internal uint segment;
     internal uint address;
+    internal uint offset;
     internal uint length;
 
-    internal PdbScope(BlockSym32 block, BitAccess bits, out uint typind) {
-      this.segment = block.seg;
+    internal PdbScope(uint address, uint length, PdbSlot[] slots, PdbConstant[] constants, string[] usedNamespaces) {
+      this.constants = constants;
+      this.slots = slots;
+      this.scopes = new PdbScope[0];
+      this.usedNamespaces = usedNamespaces;
+      this.address = address;
+      this.offset = 0;
+      this.length = length;
+    }
+
+    internal PdbScope(uint funcOffset, BlockSym32 block, BitAccess bits, out uint typind) {
+      //this.segment = block.seg;
       this.address = block.off;
+      this.offset = block.off - funcOffset;
       this.length = block.len;
       typind = 0;
 
@@ -58,7 +75,7 @@ namespace Microsoft.Cci.Pdb {
               bits.SkipCString(out sub.name);
 
               bits.Position = stop;
-              scopes[scope++] = new PdbScope(sub, bits, out typind);
+              scopes[scope++] = new PdbScope(funcOffset, sub, bits, out typind);
               break;
             }
 
@@ -82,8 +99,9 @@ namespace Microsoft.Cci.Pdb {
             break;
 
           default:
-            throw new PdbException("Unknown SYM in scope {0}", (SYM)rec);
-          // bits.Position = stop;
+            //throw new PdbException("Unknown SYM in scope {0}", (SYM)rec);
+            bits.Position = stop;
+            break;
         }
       }
 

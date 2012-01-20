@@ -88,40 +88,32 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual (1, heap [Table.AssemblyRef].Length);
 		}
 
-		[Test]
-		public void ReadX64Image ()
+		[TestModule ("hello.x64.exe")]
+		public void X64Module (ModuleDefinition module)
 		{
-			var image = GetResourceImage ("hello.x64.exe");
-
-			Assert.AreEqual (TargetArchitecture.AMD64, image.Architecture);
-			Assert.AreEqual (ModuleAttributes.ILOnly, image.Attributes);
+			Assert.AreEqual (TargetArchitecture.AMD64, module.Image.Architecture);
+			Assert.AreEqual (ModuleAttributes.ILOnly, module.Image.Attributes);
 		}
 
-		[Test]
-		public void ReadIA64Image ()
+		[TestModule ("hello.ia64.exe")]
+		public void IA64Module (ModuleDefinition module)
 		{
-			var image = GetResourceImage ("hello.ia64.exe");
-
-			Assert.AreEqual (TargetArchitecture.IA64, image.Architecture);
-			Assert.AreEqual (ModuleAttributes.ILOnly, image.Attributes);
+			Assert.AreEqual (TargetArchitecture.IA64, module.Image.Architecture);
+			Assert.AreEqual (ModuleAttributes.ILOnly, module.Image.Attributes);
 		}
 
-		[Test]
-		public void ReadX86Image ()
+		[TestModule ("hello.x86.exe")]
+		public void X86Module (ModuleDefinition module)
 		{
-			var image = GetResourceImage ("hello.x86.exe");
-
-			Assert.AreEqual (TargetArchitecture.I386, image.Architecture);
-			Assert.AreEqual (ModuleAttributes.ILOnly | ModuleAttributes.Required32Bit, image.Attributes);
+			Assert.AreEqual (TargetArchitecture.I386, module.Image.Architecture);
+			Assert.AreEqual (ModuleAttributes.ILOnly | ModuleAttributes.Required32Bit, module.Image.Attributes);
 		}
 
-		[Test]
-		public void ReadAnyCpuImage ()
+		[TestModule ("hello.anycpu.exe")]
+		public void AnyCpuModule (ModuleDefinition module)
 		{
-			var image = GetResourceImage ("hello.anycpu.exe");
-
-			Assert.AreEqual (TargetArchitecture.I386, image.Architecture);
-			Assert.AreEqual (ModuleAttributes.ILOnly, image.Attributes);
+			Assert.AreEqual (TargetArchitecture.I386, module.Image.Architecture);
+			Assert.AreEqual (ModuleAttributes.ILOnly, module.Image.Attributes);
 		}
 	}
 }

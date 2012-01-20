@@ -93,6 +93,7 @@ namespace Mono.Cecil {
 	public sealed class SecurityDeclaration {
 
 		readonly internal uint signature;
+		byte [] blob;
 		readonly ModuleDefinition module;
 
 		internal bool resolved;
@@ -137,12 +138,22 @@ namespace Mono.Cecil {
 			this.resolved = true;
 		}
 
+		public SecurityDeclaration (SecurityAction action, byte [] blob)
+		{
+			this.action = action;
+			this.resolved = false;
+			this.blob = blob;
+		}
+
 		public byte [] GetBlob ()
 		{
+			if (blob != null)
+				return blob;
+
 			if (!HasImage || signature == 0)
 				throw new NotSupportedException ();
 
-			return module.Read (this, (declaration, reader) => reader.ReadSecurityDeclarationBlob (declaration.signature));
+			return blob = module.Read (this, (declaration, reader) => reader.ReadSecurityDeclarationBlob (declaration.signature));
 		}
 
 		void Resolve ()
@@ -165,9 +176,7 @@ namespace Mono.Cecil {
 			this ISecurityDeclarationProvider self,
 			ModuleDefinition module)
 		{
-			return module.HasImage ()
-				? module.Read (self, (provider, reader) => reader.HasSecurityDeclarations (provider))
-				: false;
+			return module.HasImage () && module.Read (self, (provider, reader) => reader.HasSecurityDeclarations (provider));
 		}
 
 		public static Collection<SecurityDeclaration> GetSecurityDeclarations (

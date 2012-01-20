@@ -40,9 +40,7 @@ namespace Mono.Cecil {
 			this IMarshalInfoProvider self,
 			ModuleDefinition module)
 		{
-			return module.HasImage ()
-				? module.Read (self, (provider, reader) => reader.HasMarshalInfo (provider))
-				: false;
+			return module.HasImage () && module.Read (self, (provider, reader) => reader.HasMarshalInfo (provider));
 		}
 
 		public static MarshalInfo GetMarshalInfo (

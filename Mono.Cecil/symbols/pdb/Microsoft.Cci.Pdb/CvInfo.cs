@@ -1,6 +1,11 @@
 //-----------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft Corporation.  All Rights Reserved.
+// Copyright (c) Microsoft. All rights reserved.
+// This code is licensed under the Microsoft Public License.
+// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
+// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 //
 //-----------------------------------------------------------------------------
 //
@@ -163,67 +168,67 @@ namespace Microsoft.Cci.Pdb {
 
     // function to extract primitive mode, type and size
 
-    internal static CV_prmode CV_MODE(TYPE_ENUM typ) {
-      return (CV_prmode)((((uint)typ) & CV_MMASK) >> CV_MSHIFT);
-    }
+    //internal static CV_prmode CV_MODE(TYPE_ENUM typ) {
+    //  return (CV_prmode)((((uint)typ) & CV_MMASK) >> CV_MSHIFT);
+    //}
 
-    internal static CV_type CV_TYPE(TYPE_ENUM typ) {
-      return (CV_type)((((uint)typ) & CV_TMASK) >> CV_TSHIFT);
-    }
+    //internal static CV_type CV_TYPE(TYPE_ENUM typ) {
+    //  return (CV_type)((((uint)typ) & CV_TMASK) >> CV_TSHIFT);
+    //}
 
-    internal static uint CV_SUBT(TYPE_ENUM typ) {
-      return ((((uint)typ) & CV_SMASK) >> CV_SSHIFT);
-    }
+    //internal static uint CV_SUBT(TYPE_ENUM typ) {
+    //  return ((((uint)typ) & CV_SMASK) >> CV_SSHIFT);
+    //}
 
     // functions to check the type of a primitive
 
-    internal static bool CV_TYP_IS_DIRECT(TYPE_ENUM typ) {
-      return (CV_MODE(typ) == CV_prmode.CV_TM_DIRECT);
-    }
+    //internal static bool CV_TYP_IS_DIRECT(TYPE_ENUM typ) {
+    //  return (CV_MODE(typ) == CV_prmode.CV_TM_DIRECT);
+    //}
 
-    internal static bool CV_TYP_IS_PTR(TYPE_ENUM typ) {
-      return (CV_MODE(typ) != CV_prmode.CV_TM_DIRECT);
-    }
+    //internal static bool CV_TYP_IS_PTR(TYPE_ENUM typ) {
+    //  return (CV_MODE(typ) != CV_prmode.CV_TM_DIRECT);
+    //}
 
-    internal static bool CV_TYP_IS_SIGNED(TYPE_ENUM typ) {
-      return
-          (((CV_TYPE(typ) == CV_type.CV_SIGNED) && CV_TYP_IS_DIRECT(typ)) ||
-                 (typ == TYPE_ENUM.T_INT1)  ||
-                 (typ == TYPE_ENUM.T_INT2)  ||
-                 (typ == TYPE_ENUM.T_INT4)  ||
-                 (typ == TYPE_ENUM.T_INT8)  ||
-                 (typ == TYPE_ENUM.T_INT16) ||
-                 (typ == TYPE_ENUM.T_RCHAR));
-    }
+    //internal static bool CV_TYP_IS_SIGNED(TYPE_ENUM typ) {
+    //  return
+    //      (((CV_TYPE(typ) == CV_type.CV_SIGNED) && CV_TYP_IS_DIRECT(typ)) ||
+    //             (typ == TYPE_ENUM.T_INT1)  ||
+    //             (typ == TYPE_ENUM.T_INT2)  ||
+    //             (typ == TYPE_ENUM.T_INT4)  ||
+    //             (typ == TYPE_ENUM.T_INT8)  ||
+    //             (typ == TYPE_ENUM.T_INT16) ||
+    //             (typ == TYPE_ENUM.T_RCHAR));
+    //}
 
-    internal static bool CV_TYP_IS_UNSIGNED(TYPE_ENUM typ) {
-      return (((CV_TYPE(typ) == CV_type.CV_UNSIGNED) && CV_TYP_IS_DIRECT(typ)) ||
-                    (typ == TYPE_ENUM.T_UINT1) ||
-                    (typ == TYPE_ENUM.T_UINT2) ||
-                    (typ == TYPE_ENUM.T_UINT4) ||
-                    (typ == TYPE_ENUM.T_UINT8) ||
-                    (typ == TYPE_ENUM.T_UINT16));
-    }
+    //internal static bool CV_TYP_IS_UNSIGNED(TYPE_ENUM typ) {
+    //  return (((CV_TYPE(typ) == CV_type.CV_UNSIGNED) && CV_TYP_IS_DIRECT(typ)) ||
+    //                (typ == TYPE_ENUM.T_UINT1) ||
+    //                (typ == TYPE_ENUM.T_UINT2) ||
+    //                (typ == TYPE_ENUM.T_UINT4) ||
+    //                (typ == TYPE_ENUM.T_UINT8) ||
+    //                (typ == TYPE_ENUM.T_UINT16));
+    //}
 
-    internal static bool CV_TYP_IS_REAL(TYPE_ENUM typ) {
-      return ((CV_TYPE(typ) == CV_type.CV_REAL)  && CV_TYP_IS_DIRECT(typ));
-    }
+    //internal static bool CV_TYP_IS_REAL(TYPE_ENUM typ) {
+    //  return ((CV_TYPE(typ) == CV_type.CV_REAL)  && CV_TYP_IS_DIRECT(typ));
+    //}
 
     const uint CV_FIRST_NONPRIM = 0x1000;
 
-    internal static bool CV_IS_PRIMITIVE(TYPE_ENUM typ) {
-      return ((uint)(typ) < CV_FIRST_NONPRIM);
-    }
+    //internal static bool CV_IS_PRIMITIVE(TYPE_ENUM typ) {
+    //  return ((uint)(typ) < CV_FIRST_NONPRIM);
+    //}
 
-    internal static bool CV_TYP_IS_COMPLEX(TYPE_ENUM typ) {
-      return ((CV_TYPE(typ) == CV_type.CV_COMPLEX) && CV_TYP_IS_DIRECT(typ));
-    }
+    //internal static bool CV_TYP_IS_COMPLEX(TYPE_ENUM typ) {
+    //  return ((CV_TYPE(typ) == CV_type.CV_COMPLEX) && CV_TYP_IS_DIRECT(typ));
+    //}
 
-    internal static bool CV_IS_INTERNAL_PTR(TYPE_ENUM typ) {
-      return (CV_IS_PRIMITIVE(typ) &&
-                    CV_TYPE(typ) == CV_type.CV_CVRESERVED &&
-                    CV_TYP_IS_PTR(typ));
-    }
+    //internal static bool CV_IS_INTERNAL_PTR(TYPE_ENUM typ) {
+    //  return (CV_IS_PRIMITIVE(typ) &&
+    //                CV_TYPE(typ) == CV_type.CV_CVRESERVED &&
+    //                CV_TYP_IS_PTR(typ));
+    //}
   }
 
   // selected values for type_index - for a more complete definition, see

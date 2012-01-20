@@ -16,7 +16,7 @@ namespace Mono.Cecil.Tests {
 
 			var string_array = @string.MakeArrayType ();
 
-			Assert.IsInstanceOfType (typeof (ArrayType), string_array);
+			Assert.IsInstanceOf (typeof (ArrayType), string_array);
 			Assert.AreEqual (1, string_array.Rank);
 		}
 
@@ -27,7 +27,7 @@ namespace Mono.Cecil.Tests {
 
 			var string_array = @string.MakeArrayType (3);
 
-			Assert.IsInstanceOfType (typeof (ArrayType), string_array);
+			Assert.IsInstanceOf (typeof (ArrayType), string_array);
 			Assert.AreEqual (3, string_array.Rank);
 		}
 
@@ -38,7 +38,7 @@ namespace Mono.Cecil.Tests {
 
 			var string_ptr = @string.MakePointerType ();
 
-			Assert.IsInstanceOfType (typeof (PointerType), string_ptr);
+			Assert.IsInstanceOf (typeof (PointerType), string_ptr);
 		}
 
 		[Test]
@@ -48,7 +48,7 @@ namespace Mono.Cecil.Tests {
 
 			var string_byref = @string.MakeByReferenceType ();
 
-			Assert.IsInstanceOfType (typeof (ByReferenceType), string_byref);
+			Assert.IsInstanceOf (typeof (ByReferenceType), string_byref);
 		}
 
 		class OptionalModifier {}
@@ -61,7 +61,7 @@ namespace Mono.Cecil.Tests {
 
 			var string_modopt = @string.MakeOptionalModifierType (modopt);
 
-			Assert.IsInstanceOfType (typeof (OptionalModifierType), string_modopt);
+			Assert.IsInstanceOf (typeof (OptionalModifierType), string_modopt);
 			Assert.AreEqual (modopt, string_modopt.ModifierType);
 		}
 
@@ -75,7 +75,7 @@ namespace Mono.Cecil.Tests {
 
 			var string_modreq = @string.MakeRequiredModifierType (modreq);
 
-			Assert.IsInstanceOfType (typeof (RequiredModifierType), string_modreq);
+			Assert.IsInstanceOf (typeof (RequiredModifierType), string_modreq);
 			Assert.AreEqual (modreq, string_modreq.ModifierType);
 		}
 
@@ -86,7 +86,7 @@ namespace Mono.Cecil.Tests {
 
 			var pinned_byte_array = byte_array.MakePinnedType ();
 
-			Assert.IsInstanceOfType (typeof (PinnedType), pinned_byte_array);
+			Assert.IsInstanceOf (typeof (PinnedType), pinned_byte_array);
 		}
 
 		[Test]
@@ -96,7 +96,7 @@ namespace Mono.Cecil.Tests {
 
 			var string_sentinel = @string.MakeSentinelType ();
 
-			Assert.IsInstanceOfType (typeof (SentinelType), string_sentinel);
+			Assert.IsInstanceOf (typeof (SentinelType), string_sentinel);
 		}
 
 		class Foo<T1, T2> {}
@@ -110,7 +110,7 @@ namespace Mono.Cecil.Tests {
 
 			var foo_string_int = foo.MakeGenericInstanceType (@string, @int);
 
-			Assert.IsInstanceOfType (typeof (GenericInstanceType), foo_string_int);
+			Assert.IsInstanceOf (typeof (GenericInstanceType), foo_string_int);
 			Assert.AreEqual (2, foo_string_int.GenericArguments.Count);
 			Assert.AreEqual (@string, foo_string_int.GenericArguments [0]);
 			Assert.AreEqual (@int, foo_string_int.GenericArguments [1]);

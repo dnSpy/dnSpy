@@ -135,7 +135,7 @@ namespace Mono.Cecil {
 				if (generic_parameters != null)
 					return generic_parameters;
 
-				return generic_parameters = new Collection<GenericParameter> ();
+				return generic_parameters = new GenericParameterCollection (this);
 			}
 		}
 
@@ -216,28 +216,8 @@ namespace Mono.Cecil {
 			get { return false; }
 		}
 
-		public bool IsPrimitive {
-			get {
-				switch (etype) {
-				case ElementType.Boolean:
-				case ElementType.Char:
-				case ElementType.I:
-				case ElementType.U:
-				case ElementType.I1:
-				case ElementType.U1:
-				case ElementType.I2:
-				case ElementType.U2:
-				case ElementType.I4:
-				case ElementType.U4:
-				case ElementType.I8:
-				case ElementType.U8:
-				case ElementType.R4:
-				case ElementType.R8:
-					return true;
-				default:
-					return false;
-				}
-			}
+		public virtual bool IsPrimitive {
+			get { return etype.IsPrimitive (); }
 		}
 
 		public virtual MetadataType MetadataType {
@@ -287,6 +267,29 @@ namespace Mono.Cecil {
 	}
 
 	static partial class Mixin {
+
+		public static bool IsPrimitive (this ElementType self)
+		{
+			switch (self) {
+			case ElementType.Boolean:
+			case ElementType.Char:
+			case ElementType.I:
+			case ElementType.U:
+			case ElementType.I1:
+			case ElementType.U1:
+			case ElementType.I2:
+			case ElementType.U2:
+			case ElementType.I4:
+			case ElementType.U4:
+			case ElementType.I8:
+			case ElementType.U8:
+			case ElementType.R4:
+			case ElementType.R8:
+				return true;
+			default:
+				return false;
+			}
+		}
 
 		public static bool IsTypeOf (this TypeReference self, string @namespace, string name)
 		{

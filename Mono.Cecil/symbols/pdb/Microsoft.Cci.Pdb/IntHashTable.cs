@@ -1,6 +1,11 @@
 //-----------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft Corporation.  All Rights Reserved.
+// Copyright (c) Microsoft. All rights reserved.
+// This code is licensed under the Microsoft Public License.
+// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
+// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 //
 //-----------------------------------------------------------------------------
 using System;
@@ -54,7 +59,7 @@ namespace Microsoft.Cci.Pdb {
   // By Brian Grunkemeyer, algorithm by Patrick Dussud.
   // Version 1.30 2/20/2000
   //| <include path='docs/doc[@for="IntHashTable"]/*' />
-  internal class IntHashTable : IEnumerable {
+  internal class IntHashTable {//: IEnumerable {
     /*
       Implementation Notes:
 
@@ -125,7 +130,7 @@ namespace Microsoft.Cci.Pdb {
             187751, 225307, 270371, 324449, 389357, 467237, 560689, 672827, 807403, 968897, 1162687, 1395263,
             1674319, 2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369};
 
-    private int GetPrime(int minSize) {
+    private static int GetPrime(int minSize) {
       if (minSize < 0) {
         throw new ArgumentException("Arg_HTCapacityOverflow");
       }
@@ -168,17 +173,17 @@ namespace Microsoft.Cci.Pdb {
       : this(0, 100) {
     }
 
-    // Constructs a new hashtable with the given initial capacity and a load
-    // factor of 1.0. The capacity argument serves as an indication of
-    // the number of entries the hashtable will contain. When this number (or
-    // an approximation) is known, specifying it in the constructor can
-    // eliminate a number of resizing operations that would otherwise be
-    // performed when elements are added to the hashtable.
-    //
-    //| <include path='docs/doc[@for="IntHashTable.IntHashTable1"]/*' />
-    internal IntHashTable(int capacity)
-      : this(capacity, 100) {
-    }
+    //// Constructs a new hashtable with the given initial capacity and a load
+    //// factor of 1.0. The capacity argument serves as an indication of
+    //// the number of entries the hashtable will contain. When this number (or
+    //// an approximation) is known, specifying it in the constructor can
+    //// eliminate a number of resizing operations that would otherwise be
+    //// performed when elements are added to the hashtable.
+    ////
+    ////| <include path='docs/doc[@for="IntHashTable.IntHashTable1"]/*' />
+    //internal IntHashTable(int capacity)
+    //  : this(capacity, 100) {
+    //}
 
     // Constructs a new hashtable with the given initial capacity and load
     // factor. The capacity argument serves as an indication of the
@@ -213,7 +218,7 @@ namespace Microsoft.Cci.Pdb {
     // The out parameter seed is h1(key), while the out parameter
     // incr is h2(key, hashSize).  Callers of this function should
     // add incr each time through a loop.
-    private uint InitHash(int key, int hashsize, out uint seed, out uint incr) {
+    private static uint InitHash(int key, int hashsize, out uint seed, out uint incr) {
       // Hashcode must be positive.  Also, we must not use the sign bit, since
       // that is used for the collision bit.
       uint hashcode = (uint)key & 0x7FFFFFFF;
@@ -236,52 +241,52 @@ namespace Microsoft.Cci.Pdb {
       Insert(key, value, true);
     }
 
-    // Removes all entries from this hashtable.
-    //| <include path='docs/doc[@for="IntHashTable.Clear"]/*' />
-    internal void Clear() {
-      if (count == 0)
-        return;
+    //// Removes all entries from this hashtable.
+    ////| <include path='docs/doc[@for="IntHashTable.Clear"]/*' />
+    //internal void Clear() {
+    //  if (count == 0)
+    //    return;
 
-      for (int i = 0; i < buckets.Length; i++) {
-        buckets[i].hash_coll = 0;
-        buckets[i].key = -1;
-        buckets[i].val = null;
-      }
+    //  for (int i = 0; i < buckets.Length; i++) {
+    //    buckets[i].hash_coll = 0;
+    //    buckets[i].key = -1;
+    //    buckets[i].val = null;
+    //  }
 
-      count = 0;
-      occupancy = 0;
-    }
+    //  count = 0;
+    //  occupancy = 0;
+    //}
 
     // Checks if this hashtable contains an entry with the given key.  This is
     // an O(1) operation.
     //
     //| <include path='docs/doc[@for="IntHashTable.Contains"]/*' />
-    internal bool Contains(int key) {
-      if (key < 0) {
-        throw new ArgumentException("Argument_KeyLessThanZero");
-      }
+    //internal bool Contains(int key) {
+    //  if (key < 0) {
+    //    throw new ArgumentException("Argument_KeyLessThanZero");
+    //  }
 
-      uint seed;
-      uint incr;
-      // Take a snapshot of buckets, in case another thread resizes table
-      bucket[] lbuckets = buckets;
-      uint hashcode = InitHash(key, lbuckets.Length, out seed, out incr);
-      int ntry = 0;
+    //  uint seed;
+    //  uint incr;
+    //  // Take a snapshot of buckets, in case another thread resizes table
+    //  bucket[] lbuckets = buckets;
+    //  uint hashcode = InitHash(key, lbuckets.Length, out seed, out incr);
+    //  int ntry = 0;
 
-      bucket b;
-      do {
-        int bucketNumber = (int)(seed % (uint)lbuckets.Length);
-        b = lbuckets[bucketNumber];
-        if (b.val == null) {
-          return false;
-        }
-        if (((b.hash_coll & 0x7FFFFFFF) == hashcode) && b.key == key) {
-          return true;
-        }
-        seed += incr;
-      } while (b.hash_coll < 0 && ++ntry < lbuckets.Length);
-      return false;
-    }
+    //  bucket b;
+    //  do {
+    //    int bucketNumber = (int)(seed % (uint)lbuckets.Length);
+    //    b = lbuckets[bucketNumber];
+    //    if (b.val == null) {
+    //      return false;
+    //    }
+    //    if (((b.hash_coll & 0x7FFFFFFF) == hashcode) && b.key == key) {
+    //      return true;
+    //    }
+    //    seed += incr;
+    //  } while (b.hash_coll < 0 && ++ntry < lbuckets.Length);
+    //  return false;
+    //}
 
     // Returns the value associated with the given key. If an entry with the
     // given key is not found, the returned value is null.
@@ -313,9 +318,9 @@ namespace Microsoft.Cci.Pdb {
         } while (b.hash_coll < 0 && ++ntry < lbuckets.Length);
         return null;
       }
-      set {
-        Insert(key, value, false);
-      }
+      //set {
+      //  Insert(key, value, false);
+      //}
     }
 
     // Increases the bucket count of this hashtable. This method is called from
@@ -374,9 +379,9 @@ namespace Microsoft.Cci.Pdb {
     // enumerator will throw an exception.
     //
     //| <include path='docs/doc[@for="IntHashTable.IEnumerable.GetEnumerator"]/*' />
-    IEnumerator IEnumerable.GetEnumerator() {
-      return new IntHashTableEnumerator(this);
-    }
+    //IEnumerator IEnumerable.GetEnumerator() {
+    //  return new IntHashTableEnumerator(this);
+    //}
 
     // Internal method to compare two keys.
     //
@@ -502,78 +507,77 @@ namespace Microsoft.Cci.Pdb {
     // Returns the number of associations in this hashtable.
     //
     //| <include path='docs/doc[@for="IntHashTable.Count"]/*' />
-    internal int Count {
-      get { return count; }
-    }
+    //internal int Count {
+    //  get { return count; }
+    //}
 
     // Implements an enumerator for a hashtable. The enumerator uses the
     // internal version number of the hashtabke to ensure that no modifications
     // are made to the hashtable while an enumeration is in progress.
-    private class IntHashTableEnumerator : IEnumerator {
-      private IntHashTable hashtable;
-      private int bucket;
-      private int version;
-      private bool current;
-      private int currentKey;
-      private Object currentValue;
+    //private class IntHashTableEnumerator : IEnumerator {
+    //  private IntHashTable hashtable;
+    //  private int bucket;
+    //  private int version;
+    //  private bool current;
+    //  //private int currentKey;
+    //  private Object currentValue;
 
-      internal IntHashTableEnumerator(IntHashTable hashtable) {
-        this.hashtable = hashtable;
-        bucket = hashtable.buckets.Length;
-        version = hashtable.version;
-        current = false;
-      }
+    //  internal IntHashTableEnumerator(IntHashTable hashtable) {
+    //    this.hashtable = hashtable;
+    //    bucket = hashtable.buckets.Length;
+    //    version = hashtable.version;
+    //  }
 
-      public bool MoveNext() {
-        if (version != hashtable.version)
-          throw new InvalidOperationException("InvalidOperation_EnumFailedVersion");
-        while (bucket > 0) {
-          bucket--;
-          Object val = hashtable.buckets[bucket].val;
-          if (val != null) {
-            currentKey = hashtable.buckets[bucket].key;
-            currentValue = val;
-            current = true;
-            return true;
-          }
-        }
-        current = false;
-        return false;
-      }
+    //  public bool MoveNext() {
+    //    if (version != hashtable.version)
+    //      throw new InvalidOperationException("InvalidOperation_EnumFailedVersion");
+    //    while (bucket > 0) {
+    //      bucket--;
+    //      Object val = hashtable.buckets[bucket].val;
+    //      if (val != null) {
+    //        //currentKey = hashtable.buckets[bucket].key;
+    //        currentValue = val;
+    //        current = true;
+    //        return true;
+    //      }
+    //    }
+    //    current = false;
+    //    return false;
+    //  }
 
-      internal int Key {
-        get {
-          if (current == false)
-            throw new InvalidOperationException("InvalidOperation_EnumOpCantHappen");
-          return currentKey;
-        }
-      }
+    //  //internal int Key {
+    //  //  get {
+    //  //    if (current == false)
+    //  //      throw new InvalidOperationException("InvalidOperation_EnumOpCantHappen");
+    //  //    return currentKey;
+    //  //  }
+    //  //}
 
-      public Object Current {
-        get {
-          if (current == false)
-            throw new InvalidOperationException("InvalidOperation_EnumOpCantHappen");
-          return currentValue;
-        }
-      }
+    //  public Object Current {
+    //    get {
+    //      if (current == false)
+    //        throw new InvalidOperationException("InvalidOperation_EnumOpCantHappen");
+    //      return currentValue;
+    //    }
+    //  }
 
-      public Object Value {
-        get {
-          if (version != hashtable.version)
-            throw new InvalidOperationException("InvalidOperation_EnumFailedVersion");
-          if (current == false)
-            throw new InvalidOperationException("InvalidOperation_EnumOpCantHappen");
-          return currentValue;
-        }
-      }
+    //  //public Object Value {
+    //  //  get {
+    //  //    if (version != hashtable.version)
+    //  //      throw new InvalidOperationException("InvalidOperation_EnumFailedVersion");
+    //  //    if (current == false)
+    //  //      throw new InvalidOperationException("InvalidOperation_EnumOpCantHappen");
+    //  //    return currentValue;
+    //  //  }
+    //  //}
 
-      public void Reset() {
-        if (version != hashtable.version) throw new InvalidOperationException("InvalidOperation_EnumFailedVersion");
-        current = false;
-        bucket = hashtable.buckets.Length;
-        currentKey = -1;
-        currentValue = null;
-      }
-    }
+    //  public void Reset() {
+    //    if (version != hashtable.version) throw new InvalidOperationException("InvalidOperation_EnumFailedVersion");
+    //    current = false;
+    //    bucket = hashtable.buckets.Length;
+    //    //currentKey = -1;
+    //    currentValue = null;
+    //  }
+    //}
   }
 }

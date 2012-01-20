@@ -245,25 +245,25 @@ namespace Mono.Cecil.Tests {
 			var field = fields.GetField ("int32_int16");
 			Assert.AreEqual ("System.Int32", field.FieldType.FullName);
 			Assert.IsTrue (field.HasConstant);
-			Assert.IsInstanceOfType (typeof (short), field.Constant);
+			Assert.IsInstanceOf (typeof (short), field.Constant);
 			Assert.AreEqual ((short) 1, field.Constant);
 
 			field = fields.GetField ("int16_int32");
 			Assert.AreEqual ("System.Int16", field.FieldType.FullName);
 			Assert.IsTrue (field.HasConstant);
-			Assert.IsInstanceOfType (typeof (int), field.Constant);
+			Assert.IsInstanceOf (typeof (int), field.Constant);
 			Assert.AreEqual (1, field.Constant);
 
 			field = fields.GetField ("char_int16");
 			Assert.AreEqual ("System.Char", field.FieldType.FullName);
 			Assert.IsTrue (field.HasConstant);
-			Assert.IsInstanceOfType (typeof (short), field.Constant);
+			Assert.IsInstanceOf (typeof (short), field.Constant);
 			Assert.AreEqual ((short) 1, field.Constant);
 
 			field = fields.GetField ("int16_char");
 			Assert.AreEqual ("System.Int16", field.FieldType.FullName);
 			Assert.IsTrue (field.HasConstant);
-			Assert.IsInstanceOfType (typeof (char), field.Constant);
+			Assert.IsInstanceOf (typeof (char), field.Constant);
 			Assert.AreEqual ('s', field.Constant);
 		}
 

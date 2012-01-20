@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle ("Mono.Cecil.Mdb")]
 [assembly: AssemblyProduct ("Mono.Cecil")]
-[assembly: AssemblyCopyright ("Copyright © 2008 - 2010 Jb Evain")]
+[assembly: AssemblyCopyright ("Copyright © 2008 - 2011 Jb Evain")]
 
 [assembly: CLSCompliant (false)]
 [assembly: ComVisible (false)]

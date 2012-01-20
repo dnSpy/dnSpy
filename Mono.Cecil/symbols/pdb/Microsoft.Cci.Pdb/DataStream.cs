@@ -1,6 +1,11 @@
 //-----------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft Corporation.  All Rights Reserved.
+// Copyright (c) Microsoft. All rights reserved.
+// This code is licensed under the Microsoft Public License.
+// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
+// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 //
 //-----------------------------------------------------------------------------
 using System;
@@ -9,8 +14,6 @@ using System.IO;
 namespace Microsoft.Cci.Pdb {
   internal class DataStream {
     internal DataStream() {
-      this.contentSize = 0;
-      this.pages = null;
     }
 
     internal DataStream(int contentSize, BitAccess bits, int count) {
@@ -72,73 +75,35 @@ namespace Microsoft.Cci.Pdb {
       }
     }
 
-    internal void Write(PdbWriter writer, byte[] bytes) {
-      Write(writer, bytes, bytes.Length);
-    }
+    //private void AddPages(int page0, int count) {
+    //  if (pages == null) {
+    //    pages = new int[count];
+    //    for (int i = 0; i < count; i++) {
+    //      pages[i] = page0 + i;
+    //    }
+    //  } else {
+    //    int[] old = pages;
+    //    int used = old.Length;
 
-    internal void Write(PdbWriter writer, byte[] bytes, int data) {
-      if (bytes == null || data == 0) {
-        return;
-      }
+    //    pages = new int[used + count];
+    //    Array.Copy(old, pages, used);
+    //    for (int i = 0; i < count; i++) {
+    //      pages[used + i] = page0 + i;
+    //    }
+    //  }
+    //}
 
-      int left = data;
-      int used = 0;
-      int rema = contentSize % writer.pageSize;
-      if (rema != 0) {
-        int todo = writer.pageSize - rema;
-        if (todo > left) {
-          todo = left;
-        }
-
-        int lastPage = pages[pages.Length - 1];
-        writer.Seek(lastPage, rema);
-        writer.Write(bytes, used, todo);
-        used += todo;
-        left -= todo;
-      }
-
-      if (left > 0) {
-        int count = (left + writer.pageSize - 1) / writer.pageSize;
-        int page0 = writer.AllocatePages(count);
-
-        writer.Seek(page0, 0);
-        writer.Write(bytes, used, left);
-
-        AddPages(page0, count);
-      }
-
-      contentSize += data;
-    }
-
-    private void AddPages(int page0, int count) {
-      if (pages == null) {
-        pages = new int[count];
-        for (int i = 0; i < count; i++) {
-          pages[i] = page0 + i;
-        }
-      } else {
-        int[] old = pages;
-        int used = old.Length;
-
-        pages = new int[used + count];
-        Array.Copy(old, pages, used);
-        for (int i = 0; i < count; i++) {
-          pages[used + i] = page0 + i;
-        }
-      }
-    }
-
-    internal int Pages {
-      get { return pages == null ? 0 : pages.Length; }
-    }
+    //internal int Pages {
+    //  get { return pages == null ? 0 : pages.Length; }
+    //}
 
     internal int Length {
       get { return contentSize; }
     }
 
-    internal int GetPage(int index) {
-      return pages[index];
-    }
+    //internal int GetPage(int index) {
+    //  return pages[index];
+    //}
 
     internal int contentSize;
     internal int[] pages;

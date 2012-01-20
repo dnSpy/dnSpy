@@ -201,7 +201,56 @@ namespace Mono.Cecil.Tests {
 	IL_0005: ret
 ", method);
 
+			Assert.AreEqual (method.Body.ThisParameter.ParameterType, type);
 			Assert.AreEqual (method.Body.ThisParameter, method.Body.Instructions [0].Operand);
+		}
+
+		[Test]
+		public void ThisParameterStaticMethod ()
+		{
+			var static_method = typeof (ModuleDefinition).ToDefinition ().Methods.Where (m => m.IsStatic).First ();
+			Assert.IsNull (static_method.Body.ThisParameter);
+		}
+
+		[Test]
+		public void ThisParameterPrimitive ()
+		{
+			var int32 = typeof (int).ToDefinition ();
+			var int_to_string = int32.Methods.Where (m => m.Name == "ToString" && m.Parameters.Count == 0).First();
+			Assert.IsNotNull (int_to_string);
+
+			var this_parameter_type = int_to_string.Body.ThisParameter.ParameterType;
+			Assert.IsTrue (this_parameter_type.IsPointer);
+
+			var element_type = ((PointerType) this_parameter_type).ElementType;
+			Assert.AreEqual (int32, element_type);
+		}
+
+		[Test]
+		public void ThisParameterValueType ()
+		{
+			var token = typeof (MetadataToken).ToDefinition ();
+			var token_to_string = token.Methods.Where (m => m.Name == "ToString" && m.Parameters.Count == 0).First ();
+			Assert.IsNotNull (token_to_string);
+
+			var this_parameter_type = token_to_string.Body.ThisParameter.ParameterType;
+			Assert.IsTrue (this_parameter_type.IsPointer);
+
+			var element_type = ((PointerType) this_parameter_type).ElementType;
+			Assert.AreEqual (token, element_type);
+		}
+
+		[Test]
+		public void ThisParameterObject ()
+		{
+			var module = typeof (MethodBodyTests).ToDefinition ().Module;
+			var @object = module.TypeSystem.Object.Resolve ();
+			var method = @object.Methods.Where (m => m.HasBody).First ();
+
+			var type = method.Body.ThisParameter.ParameterType;
+			Assert.IsFalse (type.IsValueType);
+			Assert.IsFalse (type.IsPrimitive);
+			Assert.IsFalse (type.IsPointer);
 		}
 
 		[TestIL ("hello.il")]

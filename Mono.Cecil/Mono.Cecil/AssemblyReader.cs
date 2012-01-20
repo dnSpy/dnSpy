@@ -85,6 +85,9 @@ namespace Mono.Cecil {
 			if (parameters.AssemblyResolver != null)
 				module.assembly_resolver = parameters.AssemblyResolver;
 
+			if (parameters.MetadataResolver != null)
+				module.metadata_resolver = parameters.MetadataResolver;
+
 			return module;
 		}
 
@@ -525,11 +528,10 @@ namespace Mono.Cecil {
 
 		public MethodDefinition ReadEntryPoint ()
 		{
-			if (module.Kind != ModuleKind.Console && module.Kind != ModuleKind.Windows)
+			if (module.Image.EntryPointToken == 0)
 				return null;
 
 			var token = new MetadataToken (module.Image.EntryPointToken);
-
 			return GetMethodDefinition (token.RID);
 		}
 
@@ -1031,7 +1033,7 @@ namespace Mono.Cecil {
 			type.scope = scope;
 			type.DeclaringType = declaring_type;
 
-			MetadataSystem.TryProcessPrimitiveType (type);
+			MetadataSystem.TryProcessPrimitiveTypeReference (type);
 
 			return type;
 		}
@@ -1796,11 +1798,11 @@ namespace Mono.Cecil {
 			Range range;
 			if (!metadata.TryGetGenericParameterRange (provider, out range)
 				|| !MoveTo (Table.GenericParam, range.Start))
-				return new Collection<GenericParameter> ();
+				return new GenericParameterCollection (provider);
 
 			metadata.RemoveGenericParameterRange (provider);
 
-			var generic_parameters = new Collection<GenericParameter> ((int) range.Length);
+			var generic_parameters = new GenericParameterCollection (provider, (int) range.Length);
 
 			for (uint i = 0; i < range.Length; i++) {
 				ReadUInt16 (); // index
@@ -2186,7 +2188,8 @@ namespace Mono.Cecil {
 		{
 			var declaring_type = GetTypeDefOrRef (type);
 
-			this.context = declaring_type;
+			if (!declaring_type.IsArray)
+				this.context = declaring_type;
 
 			var member = ReadMemberReferenceSignature (signature, declaring_type);
 			member.Name = name;
@@ -2368,8 +2371,12 @@ namespace Mono.Cecil {
 		public void ReadCustomAttributeSignature (CustomAttribute attribute)
 		{
 			var reader = ReadSignature (attribute.signature);
+
+			if (!reader.CanReadMore ())
+				return;
+
 			if (reader.ReadUInt16 () != 0x0001)
-			    throw new InvalidOperationException ();
+				throw new InvalidOperationException ();
 
 			var constructor = attribute.Constructor;
 			if (constructor.HasParameters)
@@ -2645,9 +2652,10 @@ namespace Mono.Cecil {
 		GenericParameter GetGenericParameter (GenericParameterType type, uint var)
 		{
 			var context = reader.context;
+			int index = (int) var;
 
 			if (context == null)
-				throw new NotSupportedException ();
+				return GetUnboundGenericParameter (type, index);
 
 			IGenericParameterProvider provider;
 
@@ -2662,12 +2670,18 @@ namespace Mono.Cecil {
 				throw new NotSupportedException ();
 			}
 
-			int index = (int) var;
-
 			if (!context.IsDefinition)
 				CheckGenericContext (provider, index);
 
+			if (index >= provider.GenericParameters.Count)
+				return GetUnboundGenericParameter (type, index);
+
 			return provider.GenericParameters [index];
+		}
+
+		GenericParameter GetUnboundGenericParameter (GenericParameterType type, int index)
+		{
+			return new GenericParameter (index, type, reader.module);
 		}
 
 		static void CheckGenericContext (IGenericParameterProvider owner, int index)
@@ -2812,7 +2826,7 @@ namespace Mono.Cecil {
 			method.CallingConvention = (MethodCallingConvention) calling_convention;
 
 			var generic_context = method as MethodReference;
-			if (generic_context != null)
+			if (generic_context != null && !generic_context.DeclaringType.IsArray)
 				reader.context = generic_context;
 
 			if ((calling_convention & 0x10) != 0) {

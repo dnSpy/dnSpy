@@ -75,17 +75,17 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="nunit.core, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.core, Version=2.5.10.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\nunit-2.4.8\nunit.core.dll</HintPath>
+      <HintPath>libs\nunit-2.5.10\nunit.core.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.core.interfaces, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.core.interfaces, Version=2.5.10.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\nunit-2.4.8\nunit.core.interfaces.dll</HintPath>
+      <HintPath>libs\nunit-2.5.10\nunit.core.interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework, Version=2.5.10.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\nunit-2.4.8\nunit.framework.dll</HintPath>
+      <HintPath>libs\nunit-2.5.10\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
@@ -141,9 +141,14 @@
   <ItemGroup>
     <Content Include="Resources\assemblies\boxedoptarg.dll" />
     <Content Include="Resources\assemblies\catch.exe" />
+    <Content Include="Resources\assemblies\cppcli.dll" />
+    <Content Include="Resources\assemblies\cscgpbug.dll" />
     <Content Include="Resources\assemblies\decsec-att.dll" />
     <Content Include="Resources\assemblies\decsec-xml.dll" />
+    <Content Include="Resources\assemblies\decsec1-xml.dll" />
+    <Content Include="Resources\assemblies\empty-decsec-att.dll" />
     <Content Include="Resources\assemblies\fptr.exe" />
+    <Content Include="Resources\assemblies\gifaceref.exe" />
     <Content Include="Resources\assemblies\hello.anycpu.exe" />
     <Content Include="Resources\assemblies\hello.exe" />
     <Content Include="Resources\assemblies\hello.ia64.exe" />
@@ -154,7 +159,9 @@
     <Content Include="Resources\assemblies\iterator.exe" />
     <Content Include="Resources\assemblies\libhello.dll" />
     <Content Include="Resources\assemblies\libres.dll" />
+    <Content Include="Resources\assemblies\marshal.dll" />
     <Content Include="Resources\assemblies\mma.exe" />
+    <Content Include="Resources\assemblies\noblob.dll" />
     <Content Include="Resources\assemblies\pinvoke.exe" />
     <Content Include="Resources\assemblies\switch.exe" />
     <Content Include="Resources\assemblies\text_file.txt" />

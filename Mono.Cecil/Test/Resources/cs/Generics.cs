@@ -112,3 +112,10 @@ public class DoubleFuncClass<X> {
 	public void Test<T> () { Test<X, int> (); Test<T, X> (); }
 	public void Test<T, T1> () { Test<T1> (); Test<T1, T> (); }
 }
+
+public class LaMatrix {
+	public static T At<T> (T[,] m, int i, int j)
+	{
+		return m [i, j];
+	}
+}

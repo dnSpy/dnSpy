@@ -44,3 +44,15 @@
 	.field private static literal int16 int16_char = char(0x0073)
 	.field private static literal int32 int32_nullref = nullref
 }
+
+.class public auto ansi CustomAttribute extends [mscorlib]System.Attribute
+{
+	.custom instance void CustomAttribute::.ctor() = ()
+
+	.method public hidebysig specialname rtspecialname instance void .ctor()
+	{
+		ldarg.0
+		call instance void [mscorlib]System.Attribute::.ctor()
+		ret
+	}
+}

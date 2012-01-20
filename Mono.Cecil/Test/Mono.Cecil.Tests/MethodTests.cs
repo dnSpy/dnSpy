@@ -189,5 +189,13 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual ("System.Collections.Generic.List`1<TBeta>", new_list_beta.DeclaringType.FullName);
 			Assert.AreEqual ("System.Collections.Generic.List`1<TCharlie>", new_list_charlie.DeclaringType.FullName);
 		}
+
+		[Test]
+		public void ReturnParameterMethod ()
+		{
+			var method = typeof (MethodTests).ToDefinition ().GetMethod ("ReturnParameterMethod");
+			Assert.IsNotNull (method);
+			Assert.AreEqual (method, method.MethodReturnType.Parameter.Method);
+		}
 	}
 }

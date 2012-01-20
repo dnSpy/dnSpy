@@ -12,6 +12,16 @@ namespace Mono.Cecil.Tests {
 	[TestFixture]
 	public class ModuleTests : BaseTestFixture {
 
+		[Test]
+		public void CreateModuleEscapesAssemblyName ()
+		{
+			var module = ModuleDefinition.CreateModule ("Test.dll", ModuleKind.Dll);
+			Assert.AreEqual ("Test", module.Assembly.Name.Name);
+
+			module = ModuleDefinition.CreateModule ("Test.exe", ModuleKind.Console);
+			Assert.AreEqual ("Test", module.Assembly.Name.Name);
+		}
+
 		[TestModule ("hello.exe")]
 		public void SingleModule (ModuleDefinition module)
 		{

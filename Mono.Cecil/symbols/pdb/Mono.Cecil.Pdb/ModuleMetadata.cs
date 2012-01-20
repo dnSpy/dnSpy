@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -75,7 +76,7 @@ namespace Mono.Cecil.Pdb {
 		uint FindTypeDefByName (string szTypeDef, uint tkEnclosingClass);
 		Guid GetScopeProps (StringBuilder szName, uint cchName, out uint pchName);
 		uint GetModuleFromScope ();
-		uint GetTypeDefProps (uint td, IntPtr szTypeDef, uint cchTypeDef, out uint pchTypeDef, ref uint pdwTypeDefFlags);
+		uint GetTypeDefProps (uint td, IntPtr szTypeDef, uint cchTypeDef, out uint pchTypeDef, IntPtr pdwTypeDefFlags);
 		uint GetInterfaceImplProps (uint iiImpl, out uint pClass);
 		uint GetTypeRefProps (uint tr, out uint ptkResolutionScope, StringBuilder szName, uint cchName);
 		uint ResolveTypeRef (uint tr, [In] ref Guid riid, [MarshalAs (UnmanagedType.Interface)] out object ppIScope);
@@ -95,8 +96,7 @@ namespace Mono.Cecil.Pdb {
 		uint FindMethod (uint td, string szName, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] byte [] pvSigBlob, uint cbSigBlob);
 		uint FindField (uint td, string szName, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] byte [] pvSigBlob, uint cbSigBlob);
 		uint FindMemberRef (uint td, string szName, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] byte [] pvSigBlob, uint cbSigBlob);
-		uint GetMethodProps (uint mb, out uint pClass, IntPtr szMethod, uint cchMethod, out uint pchMethod, IntPtr pdwAttr,
-		  IntPtr ppvSigBlob, IntPtr pcbSigBlob, IntPtr pulCodeRVA);
+		uint GetMethodProps (uint mb, out uint pClass, IntPtr szMethod, uint cchMethod, out uint pchMethod, IntPtr pdwAttr, IntPtr ppvSigBlob, IntPtr pcbSigBlob, IntPtr pulCodeRVA);
 		uint GetMemberRefProps (uint mr, ref uint ptk, StringBuilder szMember, uint cchMember, out uint pchMember, out IntPtr /* byte* */ ppvSigBlob);
 		uint EnumProperties (ref uint phEnum, uint td, IntPtr /* uint* */ rProperties, uint cMax);
 		uint EnumEvents (ref uint phEnum, uint td, IntPtr /* uint* */ rEvents, uint cMax);
@@ -147,9 +147,45 @@ namespace Mono.Cecil.Pdb {
 
 		readonly ModuleDefinition module;
 
+		Dictionary<uint, TypeDefinition> types;
+		Dictionary<uint, MethodDefinition> methods;
+
 		public ModuleMetadata (ModuleDefinition module)
 		{
 			this.module = module;
+		}
+
+		bool TryGetType (uint token, out TypeDefinition type)
+		{
+			if (types == null)
+				InitializeMetadata (module);
+
+			return types.TryGetValue (token, out type);
+		}
+
+		bool TryGetMethod (uint token, out MethodDefinition method)
+		{
+			if (methods == null)
+				InitializeMetadata (module);
+
+			return methods.TryGetValue (token, out method);
+		}
+
+		void InitializeMetadata (ModuleDefinition module)
+		{
+			types = new Dictionary<uint, TypeDefinition> ();
+			methods = new Dictionary<uint, MethodDefinition> ();
+
+			foreach (var type in module.GetTypes ()) {
+				types.Add (type.MetadataToken.ToUInt32 (), type);
+				InitializeMethods (type);
+			}
+		}
+
+		void InitializeMethods (TypeDefinition type)
+		{
+			foreach (var method in type.Methods)
+				methods.Add (method.MetadataToken.ToUInt32 (), method);
 		}
 
 		public void SetModuleProps (string szName)
@@ -442,10 +478,40 @@ namespace Mono.Cecil.Pdb {
 			throw new NotImplementedException ();
 		}
 
-		public uint GetTypeDefProps (uint td, IntPtr szTypeDef, uint cchTypeDef, out uint pchTypeDef, ref uint pdwTypeDefFlags)
+		public uint GetTypeDefProps (uint td, IntPtr szTypeDef, uint cchTypeDef, out uint pchTypeDef, IntPtr pdwTypeDefFlags)
 		{
-			pchTypeDef = 0;
-			return td;
+			TypeDefinition type;
+			if (!TryGetType (td, out type)) {
+				Marshal.WriteInt16 (szTypeDef, 0);
+				pchTypeDef = 1;
+				return 0;
+			}
+
+			WriteString (type.Name, szTypeDef, cchTypeDef, out pchTypeDef);
+			WriteIntPtr (pdwTypeDefFlags, (uint) type.Attributes);
+			return type.BaseType != null ? type.BaseType.MetadataToken.ToUInt32 () : 0;
+		}
+
+		static void WriteIntPtr (IntPtr ptr, uint value)
+		{
+			if (ptr == IntPtr.Zero)
+				return;
+
+			Marshal.WriteInt32 (ptr, (int) value);
+		}
+
+		static void WriteString (string str, IntPtr buffer, uint bufferSize, out uint chars)
+		{
+			var length = str.Length + 1 >= bufferSize ? bufferSize - 1 : (uint) str.Length;
+			chars = length + 1;
+			var offset = 0;
+
+			for (int i = 0; i < length; i++) {
+				Marshal.WriteInt16 (buffer, offset, str [i]);
+				offset += 2;
+			}
+
+			Marshal.WriteInt16 (buffer, offset, 0);
 		}
 
 		public uint GetInterfaceImplProps (uint iiImpl, out uint pClass)
@@ -535,9 +601,20 @@ namespace Mono.Cecil.Pdb {
 
 		public uint GetMethodProps (uint mb, out uint pClass, IntPtr szMethod, uint cchMethod, out uint pchMethod, IntPtr pdwAttr, IntPtr ppvSigBlob, IntPtr pcbSigBlob, IntPtr pulCodeRVA)
 		{
-			pClass = 0;
-			pchMethod = 0;
-			return mb;
+			MethodDefinition method;
+			if (!TryGetMethod (mb, out method)) {
+				Marshal.WriteInt16 (szMethod, 0);
+				pchMethod = 1;
+				pClass = 0;
+				return 0;
+			}
+
+			pClass = method.DeclaringType.MetadataToken.ToUInt32 ();
+			WriteString (method.Name, szMethod, cchMethod, out pchMethod);
+			WriteIntPtr (pdwAttr, (uint) method.Attributes);
+			WriteIntPtr (pulCodeRVA, (uint) method.RVA);
+
+			return (uint) method.ImplAttributes;
 		}
 
 		public uint GetMemberRefProps (uint mr, ref uint ptk, StringBuilder szMember, uint cchMember, out uint pchMember, out IntPtr ppvSigBlob)
@@ -697,7 +774,11 @@ namespace Mono.Cecil.Pdb {
 
 		public uint GetNestedClassProps (uint tdNestedClass)
 		{
-			throw new NotImplementedException ();
+			TypeDefinition type;
+			if (!TryGetType (tdNestedClass, out type))
+				return 0;
+
+			return type.IsNested ? type.DeclaringType.MetadataToken.ToUInt32 () : 0;
 		}
 
 		public uint GetNativeCallConvFromSig (IntPtr pvSig, uint cbSig)

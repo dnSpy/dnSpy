@@ -158,18 +158,10 @@ namespace Mono.Cecil {
 
 		internal static TypeSystem CreateTypeSystem (ModuleDefinition module)
 		{
-			if (IsCorlib (module))
+			if (module.IsCorlib ())
 				return new CorlibTypeSystem (module);
 
 			return new CommonTypeSystem (module);
-		}
-
-		static bool IsCorlib (ModuleDefinition module)
-		{
-			if (module.Assembly == null)
-				return false;
-
-			return module.Assembly.Name.Name == "mscorlib";
 		}
 
 		internal abstract TypeReference LookupType (string @namespace, string name);

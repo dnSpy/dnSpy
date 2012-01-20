@@ -1,6 +1,11 @@
 //-----------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft Corporation.  All Rights Reserved.
+// Copyright (c) Microsoft. All rights reserved.
+// This code is licensed under the Microsoft Public License.
+// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
+// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 //
 //-----------------------------------------------------------------------------
 using System;
@@ -22,6 +27,11 @@ namespace Microsoft.Cci.Pdb {
         this.value = tag1;
       } else if (tag2 == 0x80) {
         switch (tag1) {
+          case 0x00: //sbyte
+            sbyte sb;
+            bits.ReadInt8(out sb);
+            this.value = sb;
+            break;
           case 0x01: //short
             short s;
             bits.ReadInt16(out s);

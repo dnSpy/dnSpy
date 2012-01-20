@@ -36,7 +36,9 @@ namespace Mono.Cecil {
 
 	public sealed class GenericParameter : TypeReference, ICustomAttributeProvider {
 
-		readonly IGenericParameterProvider owner;
+		internal int position;
+		internal GenericParameterType type;
+		internal IGenericParameterProvider owner;
 
 		ushort attributes;
 		Collection<TypeReference> constraints;
@@ -48,12 +50,11 @@ namespace Mono.Cecil {
 		}
 
 		public int Position {
-			get {
-				if (owner == null)
-					return -1;
+			get { return position; }
+		}
 
-				return owner.GenericParameters.IndexOf (this);
-			}
+		public GenericParameterType Type {
+			get { return type; }
 		}
 
 		public IGenericParameterProvider Owner {
@@ -99,15 +100,17 @@ namespace Mono.Cecil {
 
 		public override IMetadataScope Scope {
 			get {
-				if (owner.GenericParameterType == GenericParameterType.Method)
-					return ((MethodReference) owner).DeclaringType.Scope;
+				if (owner == null)
+					return null;
 
-				return ((TypeReference) owner).Scope;
+				return owner.GenericParameterType == GenericParameterType.Method
+					? ((MethodReference) owner).DeclaringType.Scope
+					: ((TypeReference) owner).Scope;
 			}
 		}
 
 		public override ModuleDefinition Module {
-			get { return ((MemberReference) owner).Module; }
+			get { return module ?? owner.Module; }
 		}
 
 		public override string Name {
@@ -115,7 +118,7 @@ namespace Mono.Cecil {
 				if (!string.IsNullOrEmpty (base.Name))
 					return base.Name;
 
-				return base.Name = (owner.GenericParameterType == GenericParameterType.Type ? "!" : "!!") + Position;
+				return base.Name = (type == GenericParameterType.Method ? "!!" : "!") + position;
 			}
 		}
 
@@ -185,13 +188,90 @@ namespace Mono.Cecil {
 			if (owner == null)
 				throw new ArgumentNullException ();
 
+			this.position = -1;
 			this.owner = owner;
-			this.etype = owner.GenericParameterType == GenericParameterType.Type ? ElementType.Var : ElementType.MVar;
+			this.type = owner.GenericParameterType;
+			this.etype = ConvertGenericParameterType (this.type);
+		}
+
+		public GenericParameter (int position, GenericParameterType type, ModuleDefinition module)
+			: base (string.Empty, string.Empty)
+		{
+			if (module == null)
+				throw new ArgumentNullException ();
+
+			this.position = position;
+			this.type = type;
+			this.etype = ConvertGenericParameterType (type);
+			this.module = module;
+		}
+
+		static ElementType ConvertGenericParameterType (GenericParameterType type)
+		{
+			switch (type) {
+			case GenericParameterType.Type:
+				return ElementType.Var;
+			case GenericParameterType.Method:
+				return ElementType.MVar;
+			}
+
+			throw new ArgumentOutOfRangeException ();
 		}
 
 		public override TypeDefinition Resolve ()
 		{
 			return null;
+		}
+	}
+
+	sealed class GenericParameterCollection : Collection<GenericParameter> {
+
+		readonly IGenericParameterProvider owner;
+
+		internal GenericParameterCollection (IGenericParameterProvider owner)
+		{
+			this.owner = owner;
+		}
+
+		internal GenericParameterCollection (IGenericParameterProvider owner, int capacity)
+			: base (capacity)
+		{
+			this.owner = owner;
+		}
+
+		protected override void OnAdd (GenericParameter item, int index)
+		{
+			UpdateGenericParameter (item, index);
+		}
+
+		protected override void OnInsert (GenericParameter item, int index)
+		{
+			UpdateGenericParameter (item, index);
+
+			for (int i = index; i < size; i++)
+				items[i].position = i + 1;
+		}
+
+		protected override void OnSet (GenericParameter item, int index)
+		{
+			UpdateGenericParameter (item, index);
+		}
+
+		void UpdateGenericParameter (GenericParameter item, int index)
+		{
+			item.owner = owner;
+			item.position = index;
+			item.type = owner.GenericParameterType;
+		}
+
+		protected override void OnRemove (GenericParameter item, int index)
+		{
+			item.owner = null;
+			item.position = -1;
+			item.type = GenericParameterType.Type;
+
+			for (int i = index + 1; i < size; i++)
+				items[i].position = i - 1;
 		}
 	}
 }

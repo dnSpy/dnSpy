@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -85,6 +86,39 @@ namespace Mono.Cecil.Tests {
 				+ "=neutral, PublicKeyToken=b77a5c561934e089\"\r\nversion=\"1\"\r\nFla"
 				+ "gs=\"UnmanagedCode\"/>\r\n</PermissionSet>\r\n";
 
+			Assert.AreEqual (permission_set, argument.Value);
+		}
+
+		[Test]
+		public void DefineSecurityDeclarationByBlob ()
+		{
+			var file = Path.Combine(Path.GetTempPath(), "SecDecBlob.dll");
+			var module = ModuleDefinition.CreateModule ("SecDecBlob.dll", new ModuleParameters { Kind = ModuleKind.Dll, Runtime = TargetRuntime.Net_2_0 });
+
+			const string permission_set = "<PermissionSet class=\"System.Security.PermissionSe"
+				+ "t\"\r\nversion=\"1\">\r\n<IPermission class=\"System.Security.Permis"
+				+ "sions.SecurityPermission, mscorlib, Version=2.0.0.0, Culture"
+				+ "=neutral, PublicKeyToken=b77a5c561934e089\"\r\nversion=\"1\"\r\nFla"
+				+ "gs=\"UnmanagedCode\"/>\r\n</PermissionSet>\r\n";
+
+			var declaration = new SecurityDeclaration (SecurityAction.Deny, Encoding.Unicode.GetBytes (permission_set));
+			module.Assembly.SecurityDeclarations.Add (declaration);
+
+			module.Write (file);
+			module = ModuleDefinition.ReadModule (file);
+
+			declaration = module.Assembly.SecurityDeclarations [0];
+			Assert.AreEqual (SecurityAction.Deny, declaration.Action);
+			Assert.AreEqual (1, declaration.SecurityAttributes.Count);
+
+			var attribute = declaration.SecurityAttributes [0];
+			Assert.AreEqual ("System.Security.Permissions.PermissionSetAttribute", attribute.AttributeType.FullName);
+			Assert.AreEqual (1, attribute.Properties.Count);
+
+			var named_argument = attribute.Properties [0];
+			Assert.AreEqual ("XML", named_argument.Name);
+			var argument = named_argument.Argument;
+			Assert.AreEqual ("System.String", argument.Type.FullName);
 			Assert.AreEqual (permission_set, argument.Value);
 		}
 

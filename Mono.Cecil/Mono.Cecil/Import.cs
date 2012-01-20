@@ -351,7 +351,7 @@ namespace Mono.Cecil {
 				ImportScope (type.Scope),
 				type.IsValueType);
 
-			MetadataSystem.TryProcessPrimitiveType (reference);
+			MetadataSystem.TryProcessPrimitiveTypeReference (reference);
 
 			if (type.IsNested)
 				reference.DeclaringType = ImportType (type.DeclaringType, context);

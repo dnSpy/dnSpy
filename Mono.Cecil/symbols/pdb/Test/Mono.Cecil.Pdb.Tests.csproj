@@ -92,21 +92,25 @@
     <Compile Include="Mono.Cecil.Tests\PdbTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\assemblies\fsapp.exe" />
+    <Content Include="Resources\assemblies\fsapp.pdb" />
     <Content Include="Resources\assemblies\test.exe" />
     <Content Include="Resources\assemblies\test.pdb" />
+    <Content Include="Resources\assemblies\VBConsApp.exe" />
+    <Content Include="Resources\assemblies\VBConsApp.pdb" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="nunit.core, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.core, Version=2.5.10.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Test\libs\nunit-2.4.8\nunit.core.dll</HintPath>
+      <HintPath>..\..\..\Test\libs\nunit-2.5.10\nunit.core.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.core.interfaces, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.core.interfaces, Version=2.5.10.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Test\libs\nunit-2.4.8\nunit.core.interfaces.dll</HintPath>
+      <HintPath>..\..\..\Test\libs\nunit-2.5.10\nunit.core.interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework, Version=2.5.10.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Test\libs\nunit-2.4.8\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\Test\libs\nunit-2.5.10\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

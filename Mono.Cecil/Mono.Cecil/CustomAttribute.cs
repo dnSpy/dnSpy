@@ -188,7 +188,7 @@ namespace Mono.Cecil {
 			if (blob != null)
 				return blob;
 
-			if (!HasImage || signature == 0)
+			if (!HasImage)
 				throw new NotSupportedException ();
 
 			return Module.Read (ref blob, this, (attribute, reader) => reader.ReadCustomAttributeBlob (attribute.signature));
@@ -210,7 +210,7 @@ namespace Mono.Cecil {
 						fields.Clear ();
 					if (properties != null)
 						properties.Clear ();
-					
+
 					resolved = false;
 				}
 				return this;

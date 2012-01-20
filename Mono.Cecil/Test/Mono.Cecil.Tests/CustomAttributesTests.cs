@@ -342,6 +342,14 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual ("System.Collections.Generic.Dictionary`2<System.String,OpenGeneric`2<Machin,System.Int32>[,]>", type.FullName);
 		}
 
+		[TestIL ("types.il")]
+		public void EmptyBlob (ModuleDefinition module)
+		{
+			var attribute = module.GetType ("CustomAttribute");
+			Assert.AreEqual (1, attribute.CustomAttributes.Count);
+			Assert.AreEqual (0, attribute.CustomAttributes [0].ConstructorArguments.Count);
+		}
+
 		[Test]
 		public void DefineCustomAttributeFromBlob ()
 		{

@@ -1,6 +1,11 @@
 //-----------------------------------------------------------------------------
 //
-// Copyright (C) Microsoft Corporation.  All Rights Reserved.
+// Copyright (c) Microsoft. All rights reserved.
+// This code is licensed under the Microsoft Public License.
+// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
+// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 //
 //-----------------------------------------------------------------------------
 using System;
@@ -12,7 +17,6 @@ namespace Microsoft.Cci.Pdb {
 
     internal BitAccess(int capacity) {
       this.buffer = new byte[capacity];
-      this.offset = 0;
     }
 
     internal byte[] Buffer {
@@ -26,15 +30,26 @@ namespace Microsoft.Cci.Pdb {
       offset = 0;
     }
 
+    internal void Append(Stream stream, int count) {
+      int newCapacity = offset + count;
+      if (buffer.Length < newCapacity) {
+        byte[] newBuffer = new byte[newCapacity];
+        Array.Copy(buffer, newBuffer, buffer.Length);
+        buffer = newBuffer;
+      }
+      stream.Read(buffer, offset, count);
+      offset += count;
+    }
+
     internal int Position {
       get { return offset; }
       set { offset = value; }
     }
     private int offset;
 
-    internal void WriteBuffer(Stream stream, int count) {
-      stream.Write(buffer, 0, count);
-    }
+    //internal void WriteBuffer(Stream stream, int count) {
+    //  stream.Write(buffer, 0, count);
+    //}
 
     internal void MinCapacity(int capacity) {
       if (buffer.Length < capacity) {
@@ -49,30 +64,35 @@ namespace Microsoft.Cci.Pdb {
       }
     }
 
-    internal void WriteInt32(int value) {
-      buffer[offset + 0] = (byte)value;
-      buffer[offset + 1] = (byte)(value >> 8);
-      buffer[offset + 2] = (byte)(value >> 16);
-      buffer[offset + 3] = (byte)(value >> 24);
-      offset += 4;
-    }
+    //internal void WriteInt32(int value) {
+    //  buffer[offset + 0] = (byte)value;
+    //  buffer[offset + 1] = (byte)(value >> 8);
+    //  buffer[offset + 2] = (byte)(value >> 16);
+    //  buffer[offset + 3] = (byte)(value >> 24);
+    //  offset += 4;
+    //}
 
-    internal void WriteInt32(int[] values) {
-      for (int i = 0; i < values.Length; i++) {
-        WriteInt32(values[i]);
-      }
-    }
+    //internal void WriteInt32(int[] values) {
+    //  for (int i = 0; i < values.Length; i++) {
+    //    WriteInt32(values[i]);
+    //  }
+    //}
 
-    internal void WriteBytes(byte[] bytes) {
-      for (int i = 0; i < bytes.Length; i++) {
-        buffer[offset++] = bytes[i];
-      }
-    }
+    //internal void WriteBytes(byte[] bytes) {
+    //  for (int i = 0; i < bytes.Length; i++) {
+    //    buffer[offset++] = bytes[i];
+    //  }
+    //}
 
     internal void ReadInt16(out short value) {
       value = (short)((buffer[offset + 0] & 0xFF) |
                             (buffer[offset + 1] << 8));
       offset += 2;
+    }
+
+    internal void ReadInt8(out sbyte value) {
+      value = (sbyte)buffer[offset];
+      offset += 1;
     }
 
     internal void ReadInt32(out int value) {
@@ -84,14 +104,14 @@ namespace Microsoft.Cci.Pdb {
     }
 
     internal void ReadInt64(out long value) {
-      value = (long)((buffer[offset + 0] & 0xFF) |
-                           (buffer[offset + 1] << 8) |
-                           (buffer[offset + 2] << 16) |
-                           (buffer[offset + 3] << 24) |
-                           (buffer[offset + 4] << 32) |
-                           (buffer[offset + 5] << 40) |
-                           (buffer[offset + 6] << 48) |
-                           (buffer[offset + 7] << 56));
+      value = (long)(((ulong)buffer[offset + 0] & 0xFF) |
+                           ((ulong)buffer[offset + 1] << 8) |
+                           ((ulong)buffer[offset + 2] << 16) |
+                           ((ulong)buffer[offset + 3] << 24) |
+                           ((ulong)buffer[offset + 4] << 32) |
+                           ((ulong)buffer[offset + 5] << 40) |
+                           ((ulong)buffer[offset + 6] << 48) |
+                           ((ulong)buffer[offset + 7] << 56));
       offset += 8;
     }
 
@@ -115,14 +135,14 @@ namespace Microsoft.Cci.Pdb {
     }
 
     internal void ReadUInt64(out ulong value) {
-      value = (ulong)((buffer[offset + 0] & 0xFF) |
-                           (buffer[offset + 1] << 8) |
-                           (buffer[offset + 2] << 16) |
-                           (buffer[offset + 3] << 24) |
-                           (buffer[offset + 4] << 32) |
-                           (buffer[offset + 5] << 40) |
-                           (buffer[offset + 6] << 48) |
-                           (buffer[offset + 7] << 56));
+      value = (ulong)(((ulong)buffer[offset + 0] & 0xFF) |
+                           ((ulong)buffer[offset + 1] << 8) |
+                           ((ulong)buffer[offset + 2] << 16) |
+                           ((ulong)buffer[offset + 3] << 24) |
+                           ((ulong)buffer[offset + 4] << 32) |
+                           ((ulong)buffer[offset + 5] << 40) |
+                           ((ulong)buffer[offset + 6] << 48) |
+                           ((ulong)buffer[offset + 7] << 56));
       offset += 8;
     }
 
@@ -159,7 +179,7 @@ namespace Microsoft.Cci.Pdb {
     internal decimal ReadDecimal() {
       int[] bits = new int[4];
       this.ReadInt32(bits);
-      return new decimal(bits);
+      return new decimal(bits[2], bits[3], bits[1], bits[0] < 0, (byte)((bits[0] & 0x00FF0000) >> 16));
     }
 
     internal void ReadBString(out string value) {

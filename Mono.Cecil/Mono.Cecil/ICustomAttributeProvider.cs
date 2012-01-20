@@ -44,9 +44,7 @@ namespace Mono.Cecil {
 			this ICustomAttributeProvider self,
 			ModuleDefinition module)
 		{
-			return module.HasImage ()
-				? module.Read (self, (provider, reader) => reader.HasCustomAttributes (provider))
-				: false;
+			return module.HasImage () && module.Read (self, (provider, reader) => reader.HasCustomAttributes (provider));
 		}
 
 		public static Collection<CustomAttribute> GetCustomAttributes (

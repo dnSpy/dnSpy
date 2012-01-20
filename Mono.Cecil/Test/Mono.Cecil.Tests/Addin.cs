@@ -173,15 +173,17 @@ namespace Mono.Cecil.Tests {
 			return ModuleDefinition.ReadModule (rt_module, reader_parameters);
 		}
 
-		public override void RunTestMethod (TestCaseResult testResult)
+		public override TestResult RunTest ()
 		{
+			var result = new TestResult (TestName);
 			var module = GetModule ();
 			if (module == null)
-				return;
+				return result;
 
 			Reflect.InvokeMethod (Method, Fixture, new object [] { module });
 
-            testResult.Success ();
+			result.Success ();
+			return result;
 		}
 	}
 

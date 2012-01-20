@@ -47,6 +47,7 @@ namespace Mono.Cecil {
 
 		ReadingMode reading_mode;
 		IAssemblyResolver assembly_resolver;
+		IMetadataResolver metadata_resolver;
 		Stream symbol_stream;
 		ISymbolReaderProvider symbol_reader_provider;
 		bool read_symbols;
@@ -59,6 +60,11 @@ namespace Mono.Cecil {
 		public IAssemblyResolver AssemblyResolver {
 			get { return assembly_resolver; }
 			set { assembly_resolver = value; }
+		}
+
+		public IMetadataResolver MetadataResolver {
+			get { return metadata_resolver; }
+			set { metadata_resolver = value; }
 		}
 
 		public Stream SymbolStream {
@@ -95,6 +101,7 @@ namespace Mono.Cecil {
 		TargetRuntime runtime;
 		TargetArchitecture architecture;
 		IAssemblyResolver assembly_resolver;
+		IMetadataResolver metadata_resolver;
 
 		public ModuleKind Kind {
 			get { return kind; }
@@ -114,6 +121,11 @@ namespace Mono.Cecil {
 		public IAssemblyResolver AssemblyResolver {
 			get { return assembly_resolver; }
 			set { assembly_resolver = value; }
+		}
+
+		public IMetadataResolver MetadataResolver {
+			get { return metadata_resolver; }
+			set { metadata_resolver = value; }
 		}
 
 		public ModuleParameters ()
@@ -186,6 +198,7 @@ namespace Mono.Cecil {
 		internal ISymbolReader SymbolReader;
 
 		internal IAssemblyResolver assembly_resolver;
+		internal IMetadataResolver metadata_resolver;
 		internal TypeSystem type_system;
 
 		readonly MetadataReader reader;
@@ -263,7 +276,7 @@ namespace Mono.Cecil {
 		internal MetadataImporter MetadataImporter {
 			get {
 				if (importer == null)
-					Interlocked.CompareExchange(ref importer, new MetadataImporter(this), null);
+					Interlocked.CompareExchange (ref importer, new MetadataImporter (this), null);
 				return importer;
 			}
 		}
@@ -273,10 +286,19 @@ namespace Mono.Cecil {
 			get { return assembly_resolver; }
 		}
 
+		public IMetadataResolver MetadataResolver {
+			get {
+				if (metadata_resolver == null)
+					Interlocked.CompareExchange (ref metadata_resolver, new MetadataResolver (assembly_resolver), null);
+
+				return metadata_resolver;
+			}
+		}
+
 		public TypeSystem TypeSystem {
 			get {
 				if (type_system == null)
-					Interlocked.CompareExchange(ref type_system, TypeSystem.CreateTypeSystem (this), null);
+					Interlocked.CompareExchange (ref type_system, TypeSystem.CreateTypeSystem (this), null);
 				return type_system;
 			}
 		}
@@ -488,6 +510,13 @@ namespace Mono.Cecil {
 			return Read (this, (_, reader) => reader.GetMemberReferences ());
 		}
 
+		public TypeReference GetType (string fullName, bool runtimeName)
+		{
+			return runtimeName
+				? TypeParser.ParseType (this, fullName)
+				: GetType (fullName);
+		}
+
 		public TypeDefinition GetType (string fullName)
 		{
 			CheckFullName (fullName);
@@ -555,17 +584,17 @@ namespace Mono.Cecil {
 
 		internal FieldDefinition Resolve (FieldReference field)
 		{
-			return MetadataResolver.Resolve (AssemblyResolver, field);
+			return MetadataResolver.Resolve (field);
 		}
 
 		internal MethodDefinition Resolve (MethodReference method)
 		{
-			return MetadataResolver.Resolve (AssemblyResolver, method);
+			return MetadataResolver.Resolve (method);
 		}
 
 		internal TypeDefinition Resolve (TypeReference type)
 		{
-			return MetadataResolver.Resolve (AssemblyResolver, type);
+			return MetadataResolver.Resolve (type);
 		}
 
 #if !READ_ONLY
@@ -790,7 +819,7 @@ namespace Mono.Cecil {
 		{
 			return Read (token, (t, reader) => reader.LookupToken (t));
 		}
-		
+
 		readonly object module_lock = new object();
 
 		internal object SyncRoot {
@@ -811,13 +840,13 @@ namespace Mono.Cecil {
 				return ret;
 			}
 		}
-		
+
 		internal TRet Read<TItem, TRet> (ref TRet variable, TItem item, Func<TItem, MetadataReader, TRet> read) where TRet : class
 		{
 			lock (module_lock) {
 				if (variable != null)
 					return variable;
-				
+
 				var position = reader.position;
 				var context = reader.context;
 
@@ -866,16 +895,27 @@ namespace Mono.Cecil {
 			if (parameters.AssemblyResolver != null)
 				module.assembly_resolver = parameters.AssemblyResolver;
 
+			if (parameters.MetadataResolver != null)
+				module.metadata_resolver = parameters.MetadataResolver;
+
 			if (parameters.Kind != ModuleKind.NetModule) {
 				var assembly = new AssemblyDefinition ();
 				module.assembly = assembly;
-				module.assembly.Name = new AssemblyNameDefinition (name, new Version (0, 0));
+				module.assembly.Name = CreateAssemblyName (name);
 				assembly.main_module = module;
 			}
 
 			module.Types.Add (new TypeDefinition (string.Empty, "<Module>", TypeAttributes.NotPublic));
 
 			return module;
+		}
+
+		static AssemblyNameDefinition CreateAssemblyName (string name)
+		{
+			if (name.EndsWith (".dll") || name.EndsWith (".exe"))
+				name = name.Substring (0, name.Length - 4);
+
+			return new AssemblyNameDefinition (name, new Version (0, 0, 0, 0));
 		}
 
 #endif
@@ -886,10 +926,10 @@ namespace Mono.Cecil {
 				throw new InvalidOperationException ();
 
 			var provider = SymbolProvider.GetPlatformReaderProvider ();
+			if (provider == null)
+				throw new InvalidOperationException ();
 
-			SymbolReader = provider.GetSymbolReader (this, fq_name);
-
-			ProcessDebugHeader ();
+			ReadSymbols (provider.GetSymbolReader (this, fq_name));
 		}
 
 		public void ReadSymbols (ISymbolReader reader)
@@ -991,6 +1031,14 @@ namespace Mono.Cecil {
 		public static bool HasImage (this ModuleDefinition self)
 		{
 			return self != null && self.HasImage;
+		}
+
+		public static bool IsCorlib (this ModuleDefinition module)
+		{
+			if (module.Assembly == null)
+				return false;
+
+			return module.Assembly.Name.Name == "mscorlib";
 		}
 
 		public static string GetFullyQualifiedName (this Stream self)

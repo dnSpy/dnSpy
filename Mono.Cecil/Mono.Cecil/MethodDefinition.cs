@@ -145,7 +145,7 @@ namespace Mono.Cecil {
 
 				return body = new MethodBody (this);
 			}
-			set { 
+			set {
 				// we reset Body to null in ILSpy to save memory; so we need that operation to be thread-safe
 				lock (Module.SyncRoot) {
 					body = value;

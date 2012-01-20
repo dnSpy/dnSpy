@@ -274,7 +274,7 @@ namespace Mono.Cecil.Metadata {
 
 	class StringHeapBuffer : HeapBuffer {
 
-		readonly Dictionary<string, uint> strings = new Dictionary<string, uint> ();
+		readonly Dictionary<string, uint> strings = new Dictionary<string, uint> (StringComparer.Ordinal);
 
 		public sealed override bool IsEmpty {
 			get { return length <= 1; }
