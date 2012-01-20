@@ -220,7 +220,7 @@ namespace ICSharpCode.Decompiler
 		{
 			if (type == null)
 				return false;
-			if (string.IsNullOrEmpty(type.Namespace) && type.HasGeneratedName() && type.Name.Contains("Anon")) {
+			if (string.IsNullOrEmpty(type.Namespace) && type.HasGeneratedName() && (type.Name.Contains("AnonType") || type.Name.Contains("AnonymousType"))) {
 				TypeDefinition td = type.Resolve();
 				return td != null && td.IsCompilerGenerated();
 			}
