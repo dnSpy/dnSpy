@@ -77,7 +77,7 @@ namespace ICSharpCode.Decompiler.Ast
 			TypeDefinition type = member as TypeDefinition;
 			if (type != null) {
 				if (type.DeclaringType != null) {
-					if (settings.AnonymousMethods && type.HasGeneratedName() && type.IsCompilerGenerated())
+					if (settings.AnonymousMethods && IsClosureType(type))
 						return true;
 					if (settings.YieldReturn && YieldReturnDecompiler.IsCompilerGeneratorEnumerator(type))
 						return true;
@@ -103,6 +103,11 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			
 			return false;
+		}
+
+		static bool IsClosureType(TypeDefinition type)
+		{
+			return type.HasGeneratedName() && type.IsCompilerGenerated() && (type.Name.Contains("DisplayClass") || type.Name.Contains("AnonStorey"));
 		}
 		
 		/// <summary>
