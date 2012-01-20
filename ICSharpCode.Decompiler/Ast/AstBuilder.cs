@@ -92,9 +92,9 @@ namespace ICSharpCode.Decompiler.Ast
 			FieldDefinition field = member as FieldDefinition;
 			if (field != null) {
 				if (field.IsCompilerGenerated()) {
-					if (settings.AnonymousMethods && (field.HasGeneratedName() || field.Name.StartsWith("CS$<>", StringComparison.Ordinal)))
+					if (settings.AnonymousMethods && IsAnonymousMethodCacheField(field))
 						return true;
-					if (settings.AutomaticProperties && field.HasGeneratedName() && field.Name.EndsWith("BackingField", StringComparison.Ordinal))
+					if (settings.AutomaticProperties && IsAutomaticPropertyBackingField(field))
 						return true;
 				}
 				// event-fields are not [CompilerGenerated]
@@ -103,6 +103,16 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			
 			return false;
+		}
+
+		static bool IsAutomaticPropertyBackingField(FieldDefinition field)
+		{
+			return field.HasGeneratedName() && field.Name.EndsWith("BackingField", StringComparison.Ordinal);
+		}
+
+		static bool IsAnonymousMethodCacheField(FieldDefinition field)
+		{
+			return field.Name.StartsWith("CS$<>", StringComparison.Ordinal) || field.Name.StartsWith("<>f__am", StringComparison.Ordinal);
 		}
 
 		static bool IsClosureType(TypeDefinition type)
