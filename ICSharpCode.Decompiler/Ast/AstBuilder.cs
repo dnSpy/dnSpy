@@ -70,14 +70,14 @@ namespace ICSharpCode.Decompiler.Ast
 			if (method != null) {
 				if (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn)
 					return true;
-				if (settings.AnonymousMethods && method.Name.StartsWith("<", StringComparison.Ordinal) && method.IsCompilerGenerated())
+				if (settings.AnonymousMethods && IsGeneratedMemberName(method.Name) && method.IsCompilerGenerated())
 					return true;
 			}
 
 			TypeDefinition type = member as TypeDefinition;
 			if (type != null) {
 				if (type.DeclaringType != null) {
-					if (settings.AnonymousMethods && type.Name.StartsWith("<>c__DisplayClass", StringComparison.Ordinal) && type.IsCompilerGenerated())
+					if (settings.AnonymousMethods && IsGeneratedMemberName(type.Name) && type.IsCompilerGenerated())
 						return true;
 					if (settings.YieldReturn && YieldReturnDecompiler.IsCompilerGeneratorEnumerator(type))
 						return true;
@@ -92,9 +92,9 @@ namespace ICSharpCode.Decompiler.Ast
 			FieldDefinition field = member as FieldDefinition;
 			if (field != null) {
 				if (field.IsCompilerGenerated()) {
-					if (settings.AnonymousMethods && field.Name.StartsWith("CS$<>", StringComparison.Ordinal))
+					if (settings.AnonymousMethods && (IsGeneratedMemberName(field.Name) || field.Name.StartsWith("CS$<>", StringComparison.Ordinal)))
 						return true;
-					if (settings.AutomaticProperties && field.Name.StartsWith("<", StringComparison.Ordinal) && field.Name.EndsWith("BackingField", StringComparison.Ordinal))
+					if (settings.AutomaticProperties && IsGeneratedMemberName(field.Name) && field.Name.EndsWith("BackingField", StringComparison.Ordinal))
 						return true;
 				}
 				// event-fields are not [CompilerGenerated]
@@ -103,6 +103,11 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			
 			return false;
+		}
+
+		static bool IsGeneratedMemberName(string name)
+		{
+			return name.StartsWith("<", StringComparison.Ordinal);
 		}
 		
 		/// <summary>
