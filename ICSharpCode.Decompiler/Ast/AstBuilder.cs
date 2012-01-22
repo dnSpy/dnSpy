@@ -96,6 +96,8 @@ namespace ICSharpCode.Decompiler.Ast
 						return true;
 					if (settings.AutomaticProperties && IsAutomaticPropertyBackingField(field))
 						return true;
+					if (settings.SwitchStatementOnString && IsSwitchOnStringCache(field))
+						return true;
 				}
 				// event-fields are not [CompilerGenerated]
 				if (settings.AutomaticEvents && field.DeclaringType.Events.Any(ev => ev.Name == field.Name))
@@ -103,6 +105,11 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			
 			return false;
+		}
+
+		static bool IsSwitchOnStringCache(FieldDefinition field)
+		{
+			return field.Name.StartsWith("<>f__switch", StringComparison.Ordinal);
 		}
 
 		static bool IsAutomaticPropertyBackingField(FieldDefinition field)
