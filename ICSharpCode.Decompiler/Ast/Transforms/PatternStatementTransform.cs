@@ -791,7 +791,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (!m.Success)
 				return dict;
 
-			foreach (ArrayInitializerExpression initializer in m.Get<ArrayInitializerExpression>("dictJumpTable").ToArray()) {
+			foreach (ArrayInitializerExpression initializer in m.Get<ArrayInitializerExpression>("dictJumpTable")) {
 				KeyValuePair<string, int> pair;
 				if (TryGetPairFrom(initializer.Elements, out pair))
 					dict.Add(pair);
