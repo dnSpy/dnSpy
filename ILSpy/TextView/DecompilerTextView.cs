@@ -479,8 +479,9 @@ namespace ICSharpCode.ILSpy.TextView
 					MemberReference member;
 					if (DebugInformation.CodeMappings == null || !DebugInformation.CodeMappings.ContainsKey(token))
 						return;
-					
-					DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(ilOffset, out member, out line);
+
+          if (!DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(ilOffset, out member, out line))
+            return;
 					
 					// update marker
 					DebuggerService.JumpToCurrentLine(member, line, 0, line, 0, ilOffset);

@@ -141,9 +141,11 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			foreach (BookmarkBase bm in BookmarkManager.Bookmarks) {
 				if (bm.LineNumber != line)
 					continue;
-				if (DebugInformation.CodeMappings == null || DebugInformation.CodeMappings.Count == 0 ||
-				    !DebugInformation.CodeMappings.ContainsKey(((BreakpointBookmark)bm).FunctionToken))
-					continue;
+				if (bm is BreakpointBookmark) {
+					if (DebugInformation.CodeMappings == null || DebugInformation.CodeMappings.Count == 0 ||
+						!DebugInformation.CodeMappings.ContainsKey(((BreakpointBookmark)bm).FunctionToken))
+						continue;
+				}
 				
 				if (result == null || bm.ZOrder > result.ZOrder)
 					return result;
