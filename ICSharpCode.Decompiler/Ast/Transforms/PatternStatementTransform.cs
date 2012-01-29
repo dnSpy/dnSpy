@@ -716,7 +716,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					return null;
 			}
 			FieldReference cachedDictField = m.Get<AstNode>("cachedDict").Single().Annotation<FieldReference>();
-			if (cachedDictField == null || !cachedDictField.DeclaringType.Name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
+			if (cachedDictField == null)
 				return null;
 			List<Statement> dictCreation = m.Get<BlockStatement>("dictCreation").Single().Statements.ToList();
 			List<KeyValuePair<string, int>> dict = BuildDictionary(dictCreation);
@@ -765,6 +765,43 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		List<KeyValuePair<string, int>> BuildDictionary(List<Statement> dictCreation)
 		{
+			if (context.Settings.ObjectOrCollectionInitializers && dictCreation.Count == 1)
+				return BuildDictionaryFromInitializer(dictCreation[0]);
+
+			return BuildDictionaryFromAddMethodCalls(dictCreation);
+		}
+
+		static readonly Statement assignInitializedDictionary = new ExpressionStatement {
+			Expression = new AssignmentExpression {
+				Left = new AnyNode().ToExpression(),
+				Right = new ObjectCreateExpression {
+					Type = new AnyNode(),
+					Arguments = { new Repeat(new AnyNode()) },
+					Initializer = new ArrayInitializerExpression {
+						Elements = { new Repeat(new AnyNode("dictJumpTable")) }
+					}
+				},
+			},
+		};
+
+		private List<KeyValuePair<string, int>> BuildDictionaryFromInitializer(Statement statement)
+		{
+			List<KeyValuePair<string, int>> dict = new List<KeyValuePair<string, int>>();
+			Match m = assignInitializedDictionary.Match(statement);
+			if (!m.Success)
+				return dict;
+
+			foreach (ArrayInitializerExpression initializer in m.Get<ArrayInitializerExpression>("dictJumpTable")) {
+				KeyValuePair<string, int> pair;
+				if (TryGetPairFrom(initializer.Elements, out pair))
+					dict.Add(pair);
+			}
+
+			return dict;
+		}
+
+		private static List<KeyValuePair<string, int>> BuildDictionaryFromAddMethodCalls(List<Statement> dictCreation)
+		{
 			List<KeyValuePair<string, int>> dict = new List<KeyValuePair<string, int>>();
 			for (int i = 0; i < dictCreation.Count; i++) {
 				ExpressionStatement es = dictCreation[i] as ExpressionStatement;
@@ -773,13 +810,27 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				InvocationExpression ie = es.Expression as InvocationExpression;
 				if (ie == null)
 					continue;
-				PrimitiveExpression arg1 = ie.Arguments.ElementAtOrDefault(0) as PrimitiveExpression;
-				PrimitiveExpression arg2 = ie.Arguments.ElementAtOrDefault(1) as PrimitiveExpression;
-				if (arg1 != null && arg2 != null && arg1.Value is string && arg2.Value is int)
-					dict.Add(new KeyValuePair<string, int>((string)arg1.Value, (int)arg2.Value));
+
+				KeyValuePair<string, int> pair;
+				if (TryGetPairFrom(ie.Arguments, out pair))
+					dict.Add(pair);
 			}
 			return dict;
 		}
+
+		private static bool TryGetPairFrom(AstNodeCollection<Expression> expressions, out KeyValuePair<string, int> pair)
+		{
+			PrimitiveExpression arg1 = expressions.ElementAtOrDefault(0) as PrimitiveExpression;
+			PrimitiveExpression arg2 = expressions.ElementAtOrDefault(1) as PrimitiveExpression;
+			if (arg1 != null && arg2 != null && arg1.Value is string && arg2.Value is int) {
+				pair = new KeyValuePair<string, int>((string)arg1.Value, (int)arg2.Value);
+				return true;
+			}
+
+			pair = default(KeyValuePair<string, int>);
+			return false;
+		}
+
 		#endregion
 		
 		#region Automatic Properties

@@ -385,7 +385,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			MethodReference addMethod;
 			List<ILExpression> args;
-			if (expr.Match(ILCode.Callvirt, out addMethod, out args)) {
+			if (expr.Match(ILCode.Callvirt, out addMethod, out args) || expr.Match(ILCode.Call, out addMethod, out args)) {
 				if (addMethod.Name == "Add" && addMethod.HasThis) {
 					return args.Count >= 2;
 				}
