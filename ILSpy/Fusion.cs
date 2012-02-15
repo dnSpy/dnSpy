@@ -24,51 +24,6 @@ using System.Text;
 namespace ICSharpCode.ILSpy
 {
 	// .NET Fusion COM interfaces
-	[ComImport(), Guid("E707DCDE-D1CD-11D2-BAB9-00C04F8ECEAE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	internal interface IAssemblyCache
-	{
-		[PreserveSig()]
-		int UninstallAssembly(uint dwFlags,
-		                      [MarshalAs(UnmanagedType.LPWStr)] string pszAssemblyName,
-		                      IntPtr pvReserved,
-		                      out uint pulDisposition);
-		
-		[PreserveSig()]
-		int QueryAssemblyInfo(uint dwFlags,
-		                      [MarshalAs(UnmanagedType.LPWStr)] string pszAssemblyName,
-		                      IntPtr pAsmInfo);
-		
-		[PreserveSig()]
-		int CreateAssemblyCacheItem(uint dwFlags,
-		                            IntPtr pvReserved,
-		                            out IAssemblyCacheItem ppAsmItem,
-		                            [MarshalAs(UnmanagedType.LPWStr)] string pszAssemblyName);
-		
-		[PreserveSig()]
-		int CreateAssemblyScavenger(out object ppAsmScavenger);
-		
-		[PreserveSig()]
-		int InstallAssembly(uint dwFlags,
-		                    [MarshalAs(UnmanagedType.LPWStr)] string pszManifestFilePath,
-		                    IntPtr pvReserved);
-	}
-	
-	[ComImport(), Guid("9E3AAEB4-D1CD-11D2-BAB9-00C04F8ECEAE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	internal interface IAssemblyCacheItem
-	{
-		void CreateStream([MarshalAs(UnmanagedType.LPWStr)] string pszName,
-		                  uint dwFormat,
-		                  uint dwFlags,
-		                  uint dwMaxSize,
-		                  out IStream ppStream);
-		
-		void IsNameEqual(IAssemblyName pName);
-		
-		void Commit(uint dwFlags);
-		
-		void MarkAssemblyVisible(uint dwFlags);
-	}
-	
 	[ComImport(), Guid("CD193BC0-B4BC-11D2-9833-00C04FC31D2E"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	internal interface IAssemblyName
 	{
@@ -147,47 +102,8 @@ namespace ICSharpCode.ILSpy
 		int Clone(out IAssemblyEnum ppEnum);
 	}
 	
-	
-	[ComImport(), Guid("1D23DF4D-A1E2-4B8B-93D6-6EA3DC285A54"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	internal interface IHistoryReader
-	{
-		[PreserveSig()]
-		int GetFilePath([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder wzFilePath,
-		                ref uint pdwSize);
-		
-		[PreserveSig()]
-		int GetApplicationName([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder wzAppName,
-		                       ref uint pdwSize);
-		
-		[PreserveSig()]
-		int GetEXEModulePath([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder wzExePath,
-		                     ref uint pdwSize);
-		
-		void GetNumActivations(out uint pdwNumActivations);
-		
-		void GetActivationDate(uint dwIdx,             // One-based!
-		                       out long /* FILETIME */ pftDate);
-		
-		[PreserveSig()]
-		int GetRunTimeVersion(ref long /* FILETIME */ pftActivationDate,
-		                      [Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder wzRunTimeVersion,
-		                      ref uint pdwSize);
-		
-		void GetNumAssemblies(ref long /* FILETIME */ pftActivationDate,
-		                      out uint pdwNumAsms);
-		
-		void GetHistoryAssembly(ref long /* FILETIME */ pftActivationDate,
-		                        uint dwIdx,             // One-based!
-		                        [MarshalAs(UnmanagedType.IUnknown)] out object ppHistAsm);
-		
-	}
-	
 	internal static class Fusion
 	{
-		[DllImport("fusion.dll", CharSet=CharSet.Auto)]
-		internal static extern int CreateAssemblyCache(out IAssemblyCache ppAsmCache,
-		                                               uint dwReserved);
-		
 		// dwFlags: 1 = Enumerate native image (NGEN) assemblies
 		//          2 = Enumerate GAC assemblies
 		//          4 = Enumerate Downloaded assemblies
@@ -198,17 +114,6 @@ namespace ICSharpCode.ILSpy
 		                                              IAssemblyName pName,
 		                                              uint dwFlags,
 		                                              int pvReserved);
-		
-		[DllImport("fusion.dll", CharSet=CharSet.Auto)]
-		internal static extern int CreateAssemblyNameObject(out IAssemblyName ppName,
-		                                                    string szAssemblyName,
-		                                                    uint dwFlags,
-		                                                    int pvReserved);
-		
-		// ?????
-		[DllImport("fusion.dll")]
-		internal static extern int CreateApplicationContext(out IApplicationContext ppAppContext,
-		                                                    uint dw);
 		
 		[DllImport("fusion.dll")]
 		internal static extern int GetCachePath(uint flags,
