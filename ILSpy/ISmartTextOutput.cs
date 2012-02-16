@@ -49,6 +49,8 @@ namespace ICSharpCode.ILSpy
 					Button button = new Button();
 					button.Cursor = Cursors.Arrow;
 					button.Margin = new Thickness(2);
+					button.Padding = new Thickness(9, 1, 9, 1);
+					button.MinWidth = 73;
 					if (icon != null) {
 						button.Content = new StackPanel {
 							Orientation = Orientation.Horizontal,
