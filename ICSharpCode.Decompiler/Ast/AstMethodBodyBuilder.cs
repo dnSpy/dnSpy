@@ -525,6 +525,10 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Conv_Ovf_U2_Un:
 				case ILCode.Conv_Ovf_U4_Un:
 				case ILCode.Conv_Ovf_U8_Un:
+				case ILCode.Conv_Ovf_I:
+				case ILCode.Conv_Ovf_U:
+				case ILCode.Conv_Ovf_I_Un:
+				case ILCode.Conv_Ovf_U_Un:
 					{
 						// conversion was handled by Convert() function using the info from type analysis
 						CastExpression cast = arg1 as CastExpression;
@@ -533,11 +537,8 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						return arg1;
 					}
-					case ILCode.Conv_Ovf_I:     return arg1.CastTo(new SimpleType("IntPtr")); // TODO
-					case ILCode.Conv_Ovf_U:     return arg1.CastTo(new SimpleType("UIntPtr"));
-					case ILCode.Conv_Ovf_I_Un:  return arg1.CastTo(new SimpleType("IntPtr"));
-					case ILCode.Conv_Ovf_U_Un:  return arg1.CastTo(new SimpleType("UIntPtr"));
-					case ILCode.Castclass:      return arg1.CastTo(operandAsTypeRef);
+				case ILCode.Castclass:
+					return arg1.CastTo(operandAsTypeRef);
 				case ILCode.Unbox_Any:
 					// unboxing does not require a cast if the argument was an isinst instruction
 					if (arg1 is AsExpression && byteCode.Arguments[0].Code == ILCode.Isinst && TypeAnalysis.IsSameType(operand as TypeReference, byteCode.Arguments[0].Operand as TypeReference))

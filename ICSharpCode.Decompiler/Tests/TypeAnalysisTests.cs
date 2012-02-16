@@ -120,4 +120,14 @@ public class TypeAnalysisTests
 		Console.WriteLine(o is Random);
 		Console.WriteLine(!(o is Random));
 	}
+	
+	public byte[] CreateArrayWithInt(int length)
+	{
+		return new byte[length];
+	}
+	
+	public byte[] CreateArrayWithLong(long length)
+	{
+		return new byte[length];
+	}
 }

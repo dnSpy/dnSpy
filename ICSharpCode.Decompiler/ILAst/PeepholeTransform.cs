@@ -28,8 +28,20 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public partial class ILAstOptimizer
 	{
-		#region TransformDecimalCtorToConstant
-		static bool TransformDecimalCtorToConstant(List<ILNode> body, ILExpression expr, int pos)
+		#region TypeConversionSimplifications
+		static bool TypeConversionSimplifications(List<ILNode> body, ILExpression expr, int pos)
+		{
+			bool modified = false;
+			modified |= TransformDecimalCtorToConstant(expr);
+			modified |= SimplifyLdcI4ConvI8(expr);
+			modified |= RemoveConvIFromArrayCreation(expr);
+			foreach(ILExpression arg in expr.Arguments) {
+				modified |= TypeConversionSimplifications(null, arg, -1);
+			}
+			return modified;
+		}
+		
+		static bool TransformDecimalCtorToConstant(ILExpression expr)
 		{
 			MethodReference r;
 			List<ILExpression> args;
@@ -62,11 +74,34 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 			}
-			bool modified = false;
-			foreach(ILExpression arg in expr.Arguments) {
-				modified |= TransformDecimalCtorToConstant(null, arg, -1);
+			return false;
+		}
+		
+		static bool SimplifyLdcI4ConvI8(ILExpression expr)
+		{
+			ILExpression ldc;
+			int val;
+			if (expr.Match(ILCode.Conv_I8, out ldc) && ldc.Match(ILCode.Ldc_I4, out val)) {
+				expr.Code = ILCode.Ldc_I8;
+				expr.Operand = (long)val;
+				expr.Arguments.Clear();
+				return true;
 			}
-			return modified;
+			return false;
+		}
+		
+		static bool RemoveConvIFromArrayCreation(ILExpression expr)
+		{
+			TypeReference typeRef;
+			ILExpression length;
+			ILExpression input;
+			if (expr.Match(ILCode.Newarr, out typeRef, out length)) {
+				if (length.Match(ILCode.Conv_Ovf_I, out input) || length.Match(ILCode.Conv_I, out input)) {
+					expr.Arguments[0] = input;
+					return true;
+				}
+			}
+			return false;
 		}
 		#endregion
 		
@@ -126,25 +161,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			} else {
 				return expr;
 			}
-		}
-		#endregion
-		
-		#region SimplifyLdcI4ConvI8
-		static bool SimplifyLdcI4ConvI8(List<ILNode> body, ILExpression expr, int pos)
-		{
-			ILExpression ldc;
-			int val;
-			if (expr.Match(ILCode.Conv_I8, out ldc) && ldc.Match(ILCode.Ldc_I4, out val)) {
-				expr.Code = ILCode.Ldc_I8;
-				expr.Operand = (long)val;
-				expr.Arguments.Clear();
-				return true;
-			}
-			bool modified = false;
-			foreach(ILExpression arg in expr.Arguments) {
-				modified |= SimplifyLdcI4ConvI8(null, arg, -1);
-			}
-			return modified;
 		}
 		#endregion
 		

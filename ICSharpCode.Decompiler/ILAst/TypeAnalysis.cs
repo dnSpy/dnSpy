@@ -606,8 +606,19 @@ namespace ICSharpCode.Decompiler.ILAst
 					#endregion
 					#region Array instructions
 				case ILCode.Newarr:
-					if (forceInferChildren)
-						InferTypeForExpression(expr.Arguments.Single(), typeSystem.Int32);
+					if (forceInferChildren) {
+						var lengthType = InferTypeForExpression(expr.Arguments.Single(), null);
+						if (lengthType == typeSystem.IntPtr) {
+							lengthType = typeSystem.Int64;
+						} else if (lengthType == typeSystem.UIntPtr) {
+							lengthType = typeSystem.UInt64;
+						} else if (lengthType != typeSystem.UInt32 && lengthType != typeSystem.Int64 && lengthType != typeSystem.UInt64) {
+							lengthType = typeSystem.Int32;
+						}
+						if (forceInferChildren) {
+							InferTypeForExpression(expr.Arguments.Single(), lengthType);
+						}
+					}
 					return new ArrayType((TypeReference)expr.Operand);
 				case ILCode.InitArray:
 					var operandAsArrayType = (ArrayType)expr.Operand;
