@@ -533,10 +533,10 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						return arg1;
 					}
-					case ILCode.Conv_Ovf_I:     return arg1.CastTo(typeof(IntPtr)); // TODO
-					case ILCode.Conv_Ovf_U:     return arg1.CastTo(typeof(UIntPtr));
-					case ILCode.Conv_Ovf_I_Un:  return arg1.CastTo(typeof(IntPtr));
-					case ILCode.Conv_Ovf_U_Un:  return arg1.CastTo(typeof(UIntPtr));
+					case ILCode.Conv_Ovf_I:     return arg1.CastTo(new SimpleType("IntPtr")); // TODO
+					case ILCode.Conv_Ovf_U:     return arg1.CastTo(new SimpleType("UIntPtr"));
+					case ILCode.Conv_Ovf_I_Un:  return arg1.CastTo(new SimpleType("IntPtr"));
+					case ILCode.Conv_Ovf_U_Un:  return arg1.CastTo(new SimpleType("UIntPtr"));
 					case ILCode.Castclass:      return arg1.CastTo(operandAsTypeRef);
 				case ILCode.Unbox_Any:
 					// unboxing does not require a cast if the argument was an isinst instruction

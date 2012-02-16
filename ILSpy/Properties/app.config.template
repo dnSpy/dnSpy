@@ -6,7 +6,7 @@
 	<runtime>
 		<assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
 			<!-- The redirects allow using AddIns with a different ILSpy version than they were compiled against. -->
-			<!-- No guarantee they'll work correctly, though. -->
+			<!-- No guarantee they'll work correctly, though (there might be breaking API changes in ILSpy). -->
 			<dependentAssembly>
 				<assemblyIdentity name="ICSharpCode.TreeView" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
 				<bindingRedirect oldVersion="4.1.0.0-99.9.9.9" newVersion="4.1.0.7275"/>
@@ -17,15 +17,15 @@
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="ICSharpCode.NRefactory" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
-				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.2"/>
+				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.4"/>
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="ICSharpCode.NRefactory.CSharp" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
-				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.2"/>
+				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.4"/>
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="ICSharpCode.NRefactory.VB" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
-				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.2"/>
+				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.4"/>
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="ICSharpCode.Decompiler" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
