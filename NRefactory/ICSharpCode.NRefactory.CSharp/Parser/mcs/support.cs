@@ -37,7 +37,7 @@ namespace Mono.CSharp {
 			return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode (obj);
 		}
 	}
-
+#if !NET_4_0 && !MONODROID
 	public class Tuple<T1, T2> : IEquatable<Tuple<T1, T2>>
 	{
 		public Tuple (T1 item1, T2 item2)
@@ -107,6 +107,7 @@ namespace Mono.CSharp {
 			return new Tuple<T1, T2, T3> (item1, item2, item3);
 		}
 	}
+#endif
 
 	static class ArrayComparer
 	{
@@ -237,7 +238,14 @@ namespace Mono.CSharp {
 
 			return pos < char_count;
 		}
-
+		
+		public char GetChar (int position)
+		{
+			if (buffer_start <= position && position < buffer.Length)
+				return buffer[position];
+			return '\0';
+		}
+		
 		public char[] ReadChars (int fromPosition, int toPosition)
 		{
 			char[] chars = new char[toPosition - fromPosition];

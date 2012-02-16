@@ -63,8 +63,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			TestCast(typeof(int), MakeResult(typeof(int?)), Conversion.ExplicitNullableConversion);
 			TestCast(typeof(int?), MakeResult(typeof(int)), Conversion.ImplicitNullableConversion);
 			
-			TestCast(typeof(int?), MakeResult(typeof(long?)), Conversion.ExplicitNullableConversion);
-			TestCast(typeof(long?), MakeResult(typeof(int?)), Conversion.ImplicitNullableConversion);
+			TestCast(typeof(int?), MakeResult(typeof(long?)), Conversion.ExplicitLiftedNumericConversion);
+			TestCast(typeof(long?), MakeResult(typeof(int?)), Conversion.ImplicitLiftedNumericConversion);
 		}
 		
 		[Test]

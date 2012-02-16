@@ -89,8 +89,7 @@ namespace Mono.CSharp {
 		public AttributeTargets Target;
 		readonly ATypeNameExpression expression;
 
-		public Arguments PosArguments;
-		public Arguments NamedArguments;
+		Arguments pos_args, named_args;
 
 		bool resolve_error;
 		bool arg_resolved;
@@ -118,8 +117,8 @@ namespace Mono.CSharp {
 		{
 			this.expression = expr;
 			if (args != null) {
-				PosArguments = args[0];
-				NamedArguments = args[1];
+				pos_args = args[0];
+				named_args = args[1];
 			}
 			this.loc = loc;
 			ExplicitTarget = target;
@@ -129,6 +128,24 @@ namespace Mono.CSharp {
 		public Location Location {
 			get {
 				return loc;
+			}
+		}
+
+		public Arguments NamedArguments {
+			get {
+				return named_args;
+			}
+		}
+
+		public Arguments PositionalArguments {
+			get {
+				return pos_args;
+			}
+		}
+
+		public ATypeNameExpression TypeExpression {
+			get {
+				return expression;
 			}
 		}
 
@@ -147,7 +164,7 @@ namespace Mono.CSharp {
 			}
 
 			if (NamedArguments == null)
-				NamedArguments = new Arguments (1);
+				named_args = new Arguments (1);
 
 			var value = Constant.CreateConstant (rc.Module.PredefinedTypes.CharSet.TypeSpec, rc.Module.DefaultCharSet, Location);
 			NamedArguments.Add (new NamedArgument (dll_import_char_set, loc, value));
@@ -156,8 +173,8 @@ namespace Mono.CSharp {
 		public Attribute Clone ()
 		{
 			Attribute a = new Attribute (ExplicitTarget, expression, null, loc, nameEscaped);
-			a.PosArguments = PosArguments;
-			a.NamedArguments = NamedArguments;
+			a.pos_args = pos_args;
+			a.named_args = NamedArguments;
 			return a;
 		}
 
@@ -432,14 +449,14 @@ namespace Mono.CSharp {
 
 			MethodSpec ctor;
 			// Try if the attribute is simple and has been resolved before
-			if (PosArguments != null || !context.Module.AttributeConstructorCache.TryGetValue (Type, out ctor)) {
+			if (pos_args != null || !context.Module.AttributeConstructorCache.TryGetValue (Type, out ctor)) {
 				rc = CreateResolveContext ();
 				ctor = ResolveConstructor (rc);
 				if (ctor == null) {
 					return null;
 				}
 
-				if (PosArguments == null && ctor.Parameters.IsEmpty)
+				if (pos_args == null && ctor.Parameters.IsEmpty)
 					context.Module.AttributeConstructorCache.Add (Type, ctor);
 			}
 
@@ -468,16 +485,16 @@ namespace Mono.CSharp {
 
 		MethodSpec ResolveConstructor (ResolveContext ec)
 		{
-			if (PosArguments != null) {
+			if (pos_args != null) {
 				bool dynamic;
-				PosArguments.Resolve (ec, out dynamic);
+				pos_args.Resolve (ec, out dynamic);
 				if (dynamic) {
 					Error_AttributeArgumentIsDynamic (ec.MemberContext, loc);
 					return null;
 				}
 			}
 
-			return Expression.ConstructorLookup (ec, Type, ref PosArguments, loc);
+			return Expression.ConstructorLookup (ec, Type, ref pos_args, loc);
 		}
 
 		bool ResolveNamedArguments (ResolveContext ec)
@@ -637,7 +654,7 @@ namespace Mono.CSharp {
 			if (resolve_error)
 				return DefaultUsageAttribute;
 
-			AttributeUsageAttribute usage_attribute = new AttributeUsageAttribute ((AttributeTargets)((Constant) PosArguments [0].Expr).GetValue ());
+			AttributeUsageAttribute usage_attribute = new AttributeUsageAttribute ((AttributeTargets) ((Constant) pos_args[0].Expr).GetValue ());
 
 			var field = GetNamedValue ("AllowMultiple") as BoolConstant;
 			if (field != null)
@@ -660,10 +677,10 @@ namespace Mono.CSharp {
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve ();
 
-			if (resolve_error || PosArguments.Count != 1 || !(PosArguments [0].Expr is Constant))
+			if (resolve_error || pos_args.Count != 1 || !(pos_args[0].Expr is Constant))
 				return null;
 
-			return ((Constant) PosArguments [0].Expr).GetValue () as string;
+			return ((Constant) pos_args[0].Expr).GetValue () as string;
 		}
 
 		/// <summary>
@@ -679,7 +696,7 @@ namespace Mono.CSharp {
 			if (resolve_error)
 				return null;
 
-			return ((Constant) PosArguments[0].Expr).GetValue () as string;
+			return ((Constant) pos_args[0].Expr).GetValue () as string;
 		}
 
 		/// <summary>
@@ -701,14 +718,14 @@ namespace Mono.CSharp {
 			if (resolve_error)
 				return null;
 
-			if (PosArguments == null)
+			if (pos_args == null)
 				return new ObsoleteAttribute ();
 
-			string msg = ((Constant) PosArguments[0].Expr).GetValue () as string;
-			if (PosArguments.Count == 1)
+			string msg = ((Constant) pos_args[0].Expr).GetValue () as string;
+			if (pos_args.Count == 1)
 				return new ObsoleteAttribute (msg);
 
-			return new ObsoleteAttribute (msg, ((BoolConstant) PosArguments[1].Expr).Value);
+			return new ObsoleteAttribute (msg, ((BoolConstant) pos_args[1].Expr).Value);
 		}
 
 		/// <summary>
@@ -726,7 +743,7 @@ namespace Mono.CSharp {
 			if (resolve_error)
 				return false;
 
-			return ((BoolConstant) PosArguments[0].Expr).Value;
+			return ((BoolConstant) pos_args[0].Expr).Value;
 		}
 
 		public TypeSpec GetCoClassAttributeValue ()
@@ -812,7 +829,7 @@ namespace Mono.CSharp {
 
 		System.Security.Permissions.SecurityAction GetSecurityActionValue ()
 		{
-			return (SecurityAction) ((Constant) PosArguments[0].Expr).GetValue ();
+			return (SecurityAction) ((Constant) pos_args[0].Expr).GetValue ();
 		}
 
 		/// <summary>
@@ -822,9 +839,9 @@ namespace Mono.CSharp {
 		public void ExtractSecurityPermissionSet (MethodSpec ctor, ref SecurityType permissions)
 		{
 #if STATIC
-			object[] values = new object [PosArguments.Count];
+			object[] values = new object[pos_args.Count];
 			for (int i = 0; i < values.Length; ++i)
-				values [i] = ((Constant) PosArguments [i].Expr).GetValue ();
+				values[i] = ((Constant) pos_args[i].Expr).GetValue ();
 
 			PropertyInfo[] prop;
 			object[] prop_values;
@@ -865,7 +882,7 @@ namespace Mono.CSharp {
 
 		public CharSet GetCharSetValue ()
 		{
-			return (CharSet)System.Enum.Parse (typeof (CharSet), ((Constant) PosArguments [0].Expr).GetValue ().ToString ());
+			return (CharSet) System.Enum.Parse (typeof (CharSet), ((Constant) pos_args[0].Expr).GetValue ().ToString ());
 		}
 
 		public bool HasField (string fieldName)
@@ -887,8 +904,8 @@ namespace Mono.CSharp {
 		public bool IsInternalCall ()
 		{
 			MethodImplOptions options = 0;
-			if (PosArguments.Count == 1) {
-				options = (MethodImplOptions) System.Enum.Parse (typeof (MethodImplOptions), ((Constant) PosArguments[0].Expr).GetValue ().ToString ());
+			if (pos_args.Count == 1) {
+				options = (MethodImplOptions) System.Enum.Parse (typeof (MethodImplOptions), ((Constant) pos_args[0].Expr).GetValue ().ToString ());
 			} else if (HasField ("Value")) {
 				var named = GetNamedValue ("Value");
 				options = (MethodImplOptions) System.Enum.Parse (typeof (MethodImplOptions), named.GetValue ().ToString ());
@@ -902,19 +919,19 @@ namespace Mono.CSharp {
 		// 
 		public bool IsExplicitLayoutKind ()
 		{
-			if (PosArguments == null || PosArguments.Count != 1)
+			if (pos_args == null || pos_args.Count != 1)
 				return false;
 
-			var value = (LayoutKind) System.Enum.Parse (typeof (LayoutKind), ((Constant) PosArguments[0].Expr).GetValue ().ToString ());
+			var value = (LayoutKind) System.Enum.Parse (typeof (LayoutKind), ((Constant) pos_args[0].Expr).GetValue ().ToString ());
 			return value == LayoutKind.Explicit;
 		}
 
 		public Expression GetParameterDefaultValue ()
 		{
-			if (PosArguments == null)
+			if (pos_args == null)
 				return null;
 
-			return PosArguments[0].Expr;
+			return pos_args[0].Expr;
 		}
 
 		public override bool Equals (object obj)
@@ -951,16 +968,16 @@ namespace Mono.CSharp {
 			}
 
 			byte[] cdata;
-			if (PosArguments == null && named_values == null) {
+			if (pos_args == null && named_values == null) {
 				cdata = AttributeEncoder.Empty;
 			} else {
 				AttributeEncoder encoder = new AttributeEncoder ();
 
-				if (PosArguments != null) {
+				if (pos_args != null) {
 					var param_types = ctor.Parameters.Types;
-					for (int j = 0; j < PosArguments.Count; ++j) {
+					for (int j = 0; j < pos_args.Count; ++j) {
 						var pt = param_types[j];
-						var arg_expr = PosArguments[j].Expr;
+						var arg_expr = pos_args[j].Expr;
 						if (j == 0) {
 							if ((Type == predefined.IndexerName || Type == predefined.Conditional) && arg_expr is Constant) {
 								string v = ((Constant) arg_expr).GetValue () as string;
@@ -984,15 +1001,15 @@ namespace Mono.CSharp {
 										"System.AttributeUsage");
 								}
 							} else if (Type == predefined.MarshalAs) {
-								if (PosArguments.Count == 1) {
-									var u_type = (UnmanagedType) System.Enum.Parse (typeof (UnmanagedType), ((Constant) PosArguments[0].Expr).GetValue ().ToString ());
+								if (pos_args.Count == 1) {
+									var u_type = (UnmanagedType) System.Enum.Parse (typeof (UnmanagedType), ((Constant) pos_args[0].Expr).GetValue ().ToString ());
 									if (u_type == UnmanagedType.ByValArray && !(Owner is FieldBase)) {
 										Error_AttributeEmitError ("Specified unmanaged type is only valid on fields");
 									}
 								}
 							} else if (Type == predefined.DllImport) {
-								if (PosArguments.Count == 1 && PosArguments[0].Expr is Constant) {
-									var value = ((Constant) PosArguments[0].Expr).GetValue () as string;
+								if (pos_args.Count == 1 && pos_args[0].Expr is Constant) {
+									var value = ((Constant) pos_args[0].Expr).GetValue () as string;
 									if (string.IsNullOrEmpty (value))
 										Error_AttributeEmitError ("DllName cannot be empty");
 								}
@@ -1055,8 +1072,8 @@ namespace Mono.CSharp {
 
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (Owner.IsClsComplianceRequired ()) {
-				if (PosArguments != null)
-					PosArguments.CheckArrayAsAttribute (context.Module.Compiler);
+				if (pos_args != null)
+					pos_args.CheckArrayAsAttribute (context.Module.Compiler);
 			
 				if (NamedArguments == null)
 					return;
@@ -1067,10 +1084,10 @@ namespace Mono.CSharp {
 
 		private Expression GetValue () 
 		{
-			if (PosArguments == null || PosArguments.Count < 1)
+			if (pos_args == null || pos_args.Count < 1)
 				return null;
 
-			return PosArguments [0].Expr;
+			return pos_args[0].Expr;
 		}
 
 		public string GetString () 

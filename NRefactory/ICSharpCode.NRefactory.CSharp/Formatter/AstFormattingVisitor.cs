@@ -873,7 +873,8 @@ namespace ICSharpCode.NRefactory.CSharp
 					nextStatementIndent = " ";
 				}
 			}
-			if (!(policy.AlignEmbeddedIfStatements && node is IfElseStatement && node.Parent is IfElseStatement || 
+			if (policy.IndentBlocks &&
+				!(policy.AlignEmbeddedIfStatements && node is IfElseStatement && node.Parent is IfElseStatement || 
 				policy.AlignEmbeddedUsingStatements && node is UsingStatement && node.Parent is UsingStatement)) 
 				curIndent.Level++;
 			object result = isBlock ? base.VisitBlockStatement ((BlockStatement)node, null) : node.AcceptVisitor (this, null);
@@ -1158,6 +1159,12 @@ namespace ICSharpCode.NRefactory.CSharp
 				curIndent.Level++;
 			
 			foreach (var stmt in switchSection.Statements) {
+				if (stmt is BreakStatement && !policy.IndentBreakStatements && policy.IndentCaseBody) {
+					curIndent.Level--;
+					stmt.AcceptVisitor (this, null);
+					curIndent.Level++;
+					continue;
+				}
 				stmt.AcceptVisitor (this, null);
 			}
 			if (policy.IndentCaseBody)

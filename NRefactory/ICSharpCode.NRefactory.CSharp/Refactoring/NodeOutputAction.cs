@@ -62,23 +62,28 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		{
 			public int Offset {
 				get;
-				set;
+				internal set;
 			}
 
 			public int Length {
-				get {
-					return EndOffset - Offset;
-				}
+				get;
+				internal set;
 			}
 
 			public int EndOffset {
-				get;
-				set;
+				get {
+					return Offset + Length;
+				}
 			}
 			
 			public Segment (int offset)
 			{
 				this.Offset = offset;
+			}
+			
+			public override string ToString ()
+			{
+				return string.Format ("[NodeOutput.Segment: Offset={0}, Length={1}, EndOffset={2}]", Offset, Length, EndOffset);
 			}
 		}
 	}

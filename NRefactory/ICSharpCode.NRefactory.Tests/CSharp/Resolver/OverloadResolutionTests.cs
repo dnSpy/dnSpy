@@ -188,6 +188,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			var m3 = MakeUnresolvedMethod();
 			m3.TypeParameters.Add(new DefaultUnresolvedTypeParameter(EntityType.Method, 0, "T"));
 			
+			ICompilation compilation = TypeSystemHelper.CreateCompilation(classConstraint);
 			var context = new SimpleTypeResolveContext(compilation.MainAssembly);
 			IMethod resolvedM1 = (IMethod)m1.CreateResolved(context);
 			IMethod resolvedM2 = (IMethod)m2.CreateResolved(context);

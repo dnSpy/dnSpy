@@ -49,12 +49,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return propertyDefinition.CanSet; }
 		}
 		
-		public IAccessor Getter {
-			get { return propertyDefinition.Getter; }
+		public IMethod Getter {
+			get { return WrapAccessor(propertyDefinition.Getter); }
 		}
 		
-		public IAccessor Setter {
-			get { return propertyDefinition.Setter; }
+		public IMethod Setter {
+			get { return WrapAccessor(propertyDefinition.Setter); }
 		}
 		
 		public bool IsIndexer {

@@ -57,6 +57,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RPar); }
 		}
 		
+		public CSharpTokenNode ColonToken {
+			get { return GetChildByRole (Roles.Colon); }
+		}
+		
 		public ConstructorInitializer Initializer {
 			get { return GetChildByRole (InitializerRole); }
 			set { SetChildByRole( InitializerRole, value); }

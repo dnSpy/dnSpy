@@ -80,7 +80,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				IType t = compilation.FindType(KnownTypeCode.Array);
 				if (t.Kind != TypeKind.Unknown)
 					baseTypes.Add(t);
-				if (dimensions == 1) { // single-dimensional arrays implement IList<T>
+				if (dimensions == 1 && elementType.Kind != TypeKind.Pointer) {
+					// single-dimensional arrays implement IList<T>
 					ITypeDefinition def = compilation.FindType(KnownTypeCode.IListOfT) as ITypeDefinition;
 					if (def != null)
 						baseTypes.Add(new ParameterizedType(def, new[] { elementType }));

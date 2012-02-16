@@ -78,11 +78,9 @@ namespace Mono.CSharp {
 		{
 			var results = new List<string> ();
 
-			AppendResults (results, Prefix, ec.Module.Evaluator.GetVarNames ());
-			AppendResults (results, Prefix, ec.CurrentMemberDefinition.Parent.NamespaceEntry.CompletionGetTypesStartingWith (Prefix));
-			AppendResults (results, Prefix, ec.Module.Evaluator.GetUsingList ());
-			
-			throw new CompletionResult (Prefix, results.ToArray ());
+			ec.CurrentMemberDefinition.GetCompletionStartingWith (Prefix, results);
+
+			throw new CompletionResult (Prefix, results.Distinct ().Select (l => l.Substring (Prefix.Length)).ToArray ());
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -140,17 +138,9 @@ namespace Mono.CSharp {
 				else
 					namespaced_partial = nexpr.Name + "." + partial_name;
 
-#if false
-				Console.WriteLine ("Workign with: namespaced partial {0}", namespaced_partial);
-				foreach (var x in ec.TypeContainer.NamespaceEntry.CompletionGetTypesStartingWith (ec.TypeContainer, namespaced_partial)){
-					Console.WriteLine ("    {0}", x);
-				}
-#endif
-
-				CompletionSimpleName.AppendResults (
-					results,
-					partial_name, 
-					ec.CurrentMemberDefinition.Parent.NamespaceEntry.CompletionGetTypesStartingWith (namespaced_partial));
+				ec.CurrentMemberDefinition.GetCompletionStartingWith (namespaced_partial, results);
+				if (partial_name != null)
+					results = results.Select (l => l.Substring (partial_name.Length)).ToList ();
 			} else {
 				var r = MemberCache.GetCompletitionMembers (ec, expr_type, partial_name).Select (l => l.Name);
 				AppendResults (results, partial_name, r);

@@ -26,6 +26,8 @@
 
 using System;
 using NUnit.Framework;
+using ICSharpCode.NRefactory.CSharp.Parser;
+using System.Linq;
 
 namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 {
@@ -286,6 +288,125 @@ class Test
 				Assert.IsNotNull (provider.Find ("new"), "keyword 'new' not found.");
 			});
 		}
+		
+		[Test()]
+		public void VariableDeclarationTestForCase ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"using System;
+class Test
+{
+	public void MyMethod ()
+	{
+		$for (s$
+}
+", (provider) => {
+				Assert.IsNotNull (provider.Find ("bool"), "keyword 'bool' not found.");
+				Assert.IsNotNull (provider.Find ("char"), "keyword 'char' not found.");
+				Assert.IsNotNull (provider.Find ("byte"), "keyword 'byte' not found.");
+				Assert.IsNotNull (provider.Find ("sbyte"), "keyword 'sbyte' not found.");
+				Assert.IsNotNull (provider.Find ("int"), "keyword 'int' not found.");
+				Assert.IsNotNull (provider.Find ("uint"), "keyword 'uint' not found.");
+				Assert.IsNotNull (provider.Find ("short"), "keyword 'short' not found.");
+				Assert.IsNotNull (provider.Find ("ushort"), "keyword 'ushort' not found.");
+				Assert.IsNotNull (provider.Find ("long"), "keyword 'long' not found.");
+				Assert.IsNotNull (provider.Find ("ulong"), "keyword 'ulong' not found.");
+				Assert.IsNotNull (provider.Find ("float"), "keyword 'float' not found.");
+				Assert.IsNotNull (provider.Find ("double"), "keyword 'double' not found.");
+				Assert.IsNotNull (provider.Find ("decimal"), "keyword 'decimal' not found.");
+				
+				Assert.IsNotNull (provider.Find ("var"), "keyword 'var' not found.");
+			});
+		}
+		
+		[Test()]
+		public void VariableDeclarationTestForeachCase ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"using System;
+class Test
+{
+	public void MyMethod ()
+	{
+		$foreach (s$
+}
+", (provider) => {
+				Assert.IsNotNull (provider.Find ("bool"), "keyword 'bool' not found.");
+				Assert.IsNotNull (provider.Find ("char"), "keyword 'char' not found.");
+				Assert.IsNotNull (provider.Find ("byte"), "keyword 'byte' not found.");
+				Assert.IsNotNull (provider.Find ("sbyte"), "keyword 'sbyte' not found.");
+				Assert.IsNotNull (provider.Find ("int"), "keyword 'int' not found.");
+				Assert.IsNotNull (provider.Find ("uint"), "keyword 'uint' not found.");
+				Assert.IsNotNull (provider.Find ("short"), "keyword 'short' not found.");
+				Assert.IsNotNull (provider.Find ("ushort"), "keyword 'ushort' not found.");
+				Assert.IsNotNull (provider.Find ("long"), "keyword 'long' not found.");
+				Assert.IsNotNull (provider.Find ("ulong"), "keyword 'ulong' not found.");
+				Assert.IsNotNull (provider.Find ("float"), "keyword 'float' not found.");
+				Assert.IsNotNull (provider.Find ("double"), "keyword 'double' not found.");
+				Assert.IsNotNull (provider.Find ("decimal"), "keyword 'decimal' not found.");
+				
+				Assert.IsNotNull (provider.Find ("var"), "keyword 'var' not found.");
+			});
+		}
+		
+		[Test()]
+		public void VariableDeclarationTestUsingCase ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"using System;
+class Test
+{
+	public void MyMethod ()
+	{
+		$foreach (s$
+}
+", (provider) => {
+				Assert.IsNotNull (provider.Find ("bool"), "keyword 'bool' not found.");
+				Assert.IsNotNull (provider.Find ("char"), "keyword 'char' not found.");
+				Assert.IsNotNull (provider.Find ("byte"), "keyword 'byte' not found.");
+				Assert.IsNotNull (provider.Find ("sbyte"), "keyword 'sbyte' not found.");
+				Assert.IsNotNull (provider.Find ("int"), "keyword 'int' not found.");
+				Assert.IsNotNull (provider.Find ("uint"), "keyword 'uint' not found.");
+				Assert.IsNotNull (provider.Find ("short"), "keyword 'short' not found.");
+				Assert.IsNotNull (provider.Find ("ushort"), "keyword 'ushort' not found.");
+				Assert.IsNotNull (provider.Find ("long"), "keyword 'long' not found.");
+				Assert.IsNotNull (provider.Find ("ulong"), "keyword 'ulong' not found.");
+				Assert.IsNotNull (provider.Find ("float"), "keyword 'float' not found.");
+				Assert.IsNotNull (provider.Find ("double"), "keyword 'double' not found.");
+				Assert.IsNotNull (provider.Find ("decimal"), "keyword 'decimal' not found.");
+				
+				Assert.IsNotNull (provider.Find ("var"), "keyword 'var' not found.");
+			});
+		}
+		
+		[Test()]
+		public void VariableDeclarationTestMethodDeclarationCase ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"using System;
+class Test
+{
+	$public void MyMethod (s$
+}
+", (provider) => {
+				Assert.IsNotNull (provider.Find ("bool"), "keyword 'bool' not found.");
+				Assert.IsNotNull (provider.Find ("char"), "keyword 'char' not found.");
+				Assert.IsNotNull (provider.Find ("byte"), "keyword 'byte' not found.");
+				Assert.IsNotNull (provider.Find ("sbyte"), "keyword 'sbyte' not found.");
+				Assert.IsNotNull (provider.Find ("int"), "keyword 'int' not found.");
+				Assert.IsNotNull (provider.Find ("uint"), "keyword 'uint' not found.");
+				Assert.IsNotNull (provider.Find ("short"), "keyword 'short' not found.");
+				Assert.IsNotNull (provider.Find ("ushort"), "keyword 'ushort' not found.");
+				Assert.IsNotNull (provider.Find ("long"), "keyword 'long' not found.");
+				Assert.IsNotNull (provider.Find ("ulong"), "keyword 'ulong' not found.");
+				Assert.IsNotNull (provider.Find ("float"), "keyword 'float' not found.");
+				Assert.IsNotNull (provider.Find ("double"), "keyword 'double' not found.");
+				Assert.IsNotNull (provider.Find ("decimal"), "keyword 'decimal' not found.");
+				
+				Assert.IsNull (provider.Find ("var"), "keyword 'var' found.");
+			});
+		}
+		
 		
 		[Test()]
 		public void ForeachInKeywordTest ()

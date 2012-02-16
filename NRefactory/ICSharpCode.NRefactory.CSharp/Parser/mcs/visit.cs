@@ -22,80 +22,50 @@ namespace Mono.CSharp
 		}
 
 		public virtual void Visit (ModuleContainer mc)
-		{/*
-			if (mc.Delegates != null) {
-				foreach (TypeContainer tc in mc.Delegates) {
-					tc.Accept (this);
-				}
-			}*/
-			if (mc.Types != null) {
-				foreach (TypeContainer tc in mc.Types) {
-					tc.Accept (this);
-				}
+		{
+			foreach (var container in mc.Containers) {
+				container.Accept (this);
 			}
+			
 		}
 
-		void VisitTypeContainer (TypeContainer tc)
+		void VisitTypeDefinition (TypeDefinition tc)
 		{
-			foreach (MemberCore member in tc.OrderedAllMembers) {
-				member.Accept (this);
+			foreach (var container in tc.Members) {
+				container.Accept (this);
 			}
 		}
 		
-		protected void VisitNamespaceUsings (UsingsBag.Namespace nspace)
-		{
-			foreach (object u in nspace.usings) {
-				if (u is UsingsBag.Using) {
-					((UsingsBag.Using)u).Accept (this);
-				} else {
-					((UsingsBag.AliasUsing)u).Accept (this);
-				}
-			}
-		}
-		
-		protected void VisitNamespaceBody (UsingsBag.Namespace nspace)
-		{
-			foreach (object member in nspace.members) {
-				if (member is MemberCore) {
-					((MemberCore)member).Accept (this);
-				} else {
-					((UsingsBag.Namespace)member).Accept (this);
-				}
-			}
-		}
-		
-		public virtual void Visit (UsingsBag.Namespace nspace)
-		{
-			VisitNamespaceUsings (nspace);
-			VisitNamespaceBody (nspace);
-		}
-		
-		public virtual void Visit (UsingsBag.Using u)
-		{
-		}
-		
-		public virtual void Visit (UsingsBag.AliasUsing aliasUsing)
+		public virtual void Visit (NamespaceContainer ns)
 		{
 		}
 
-		public virtual void Visit (UsingsBag.ExternAlias externAlias)
+		public virtual void Visit (UsingNamespace un)
 		{
 		}
 
+		public virtual void Visit (UsingAliasNamespace uan)
+		{
+		}
+		
+		public virtual void Visit (UsingExternAlias uea)
+		{
+		}
+		
 		public virtual void Visit (Class c)
 		{
-			VisitTypeContainer (c);
+			VisitTypeDefinition (c);
 		}
 
 		public virtual void Visit (Struct s)
 		{
-			VisitTypeContainer (s);
+			VisitTypeDefinition (s);
 		}
 
 
 		public virtual void Visit (Interface i)
 		{
-			VisitTypeContainer (i);
+			VisitTypeDefinition (i);
 		}
 
 		public virtual void Visit (Delegate d)
@@ -104,7 +74,7 @@ namespace Mono.CSharp
 
 		public virtual void Visit (Enum e)
 		{
-			VisitTypeContainer (e);
+			VisitTypeDefinition (e);
 		}
 
 		public virtual void Visit (FixedField f)

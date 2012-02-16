@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectGuid>{63D3B27A-D966-4902-90B3-30290E1692F1}</ProjectGuid>
@@ -84,6 +84,7 @@
     <Compile Include="CSharp\CSharpOutputVisitorTests.cs" />
     <Compile Include="CSharp\Parser\Expression\AnonymousTypeCreateExpressionTests.cs" />
     <Compile Include="CSharp\Parser\Expression\ObjectCreateExpressionTests.cs" />
+    <Compile Include="CSharp\Parser\Expression\UndocumentedExpressionTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\DelegateDeclarationTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\NamespaceDeclarationTests.cs" />
     <Compile Include="CSharp\Parser\GeneralScope\PreprocessorDirectiveTests.cs" />
@@ -146,12 +147,14 @@
     <Compile Include="CSharp\Parser\GeneralScope\AttributeSectionTests.cs" />
     <Compile Include="CSharp\Parser\ParseUtil.cs" />
     <Compile Include="CSharp\Refactoring\TypeSystemAstBuilderTests.cs" />
+    <Compile Include="CSharp\Resolver\AnonymousTypeTests.cs" />
     <Compile Include="CSharp\Resolver\ArrayCreateTests.cs" />
     <Compile Include="CSharp\Resolver\AttributeTests.cs" />
     <Compile Include="CSharp\Resolver\BinaryOperatorTests.cs" />
     <Compile Include="CSharp\Resolver\CastTests.cs" />
     <Compile Include="CSharp\Resolver\ConditionalOperatorTests.cs" />
     <Compile Include="CSharp\Resolver\ExtensionMethodTests.cs" />
+    <Compile Include="CSharp\Resolver\FindReferencesTest.cs" />
     <Compile Include="CSharp\Resolver\InvocationTests.cs" />
     <Compile Include="CSharp\Resolver\LambdaTests.cs" />
     <Compile Include="CSharp\Resolver\LinqTests.cs" />
@@ -173,6 +176,7 @@
     <Compile Include="FormattingTests\TestStatementIndentation.cs" />
     <Compile Include="FormattingTests\TestTypeLevelIndentation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeSystem\BlobLoaderTests.cs" />
     <Compile Include="TypeSystem\CecilLoaderTests.cs" />
     <Compile Include="TypeSystem\GetAllBaseTypesTest.cs" />
     <Compile Include="TypeSystem\GetMembersTests.cs" />
@@ -181,6 +185,7 @@
     <Compile Include="TypeSystem\StructureTests.cs" />
     <Compile Include="TypeSystem\TestInterningProvider.cs" />
     <Compile Include="TypeSystem\TypeParameterTests.cs" />
+    <Compile Include="TypeSystem\TypeSystemHelper.cs" />
     <Compile Include="TypeSystem\TypeSystemTests.cs" />
     <Compile Include="TypeSystem\TypeSystemTests.TestCase.cs" />
     <EmbeddedResource Include="TypeSystem\TypeSystemTests.TestCase.cs" />
@@ -205,8 +210,30 @@
     <Compile Include="CSharp\CodeCompletion\PreProcessorTests.cs" />
     <Compile Include="CSharp\CodeCompletion\TestBase.cs" />
     <Compile Include="CSharp\CodeCompletion\VariableDeclarationStatementTests.cs" />
+    <Compile Include="CSharp\CodeCompletion\NameContextTests.cs" />
+    <Compile Include="CSharp\ContextAction\SplitDeclarationAndAssignmentTests.cs" />
+    <Compile Include="CSharp\ContextAction\SplitStringTests.cs" />
+    <Compile Include="CSharp\ContextAction\ReplaceEmptyStringTests.cs" />
+    <Compile Include="CSharp\ContextAction\RemoveBracesTests.cs" />
+    <Compile Include="CSharp\ContextAction\RemoveBackingStoreTests.cs" />
+    <Compile Include="CSharp\ContextAction\InvertIfTests.cs" />
+    <Compile Include="CSharp\ContextAction\IntroduceFormatItemTests.cs" />
+    <Compile Include="CSharp\ContextAction\InsertAnonymousMethodSignatureTests.cs" />
+    <Compile Include="CSharp\ContextAction\GenerateSwitchLabelsTests.cs" />
+    <Compile Include="CSharp\ContextAction\GenerateGetterTests.cs" />
+    <Compile Include="CSharp\ContextAction\FlipOperatorArgumentsTests.cs" />
+    <Compile Include="CSharp\ContextAction\ConvertHexToDecTests.cs" />
+    <Compile Include="CSharp\ContextAction\ConvertDecToHexTests.cs" />
+    <Compile Include="CSharp\ContextAction\CheckIfParameterIsNullTests.cs" />
+    <Compile Include="CSharp\ContextAction\ConvertForeachToForTests.cs" />
+    <Compile Include="CSharp\ContextAction\AddAnotherAccessorTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">
+      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
+      <Name>Mono.Cecil</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
       <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>
       <Name>ICSharpCode.NRefactory.CSharp</Name>
@@ -224,4 +251,13 @@
     <Folder Include="CSharp\ContextAction\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <TextStylePolicy TabWidth="4" EolMarker="Unix" inheritsSet="Mono" inheritsScope="text/plain" scope="text/plain" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>

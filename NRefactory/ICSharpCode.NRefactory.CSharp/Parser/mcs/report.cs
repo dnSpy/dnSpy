@@ -21,27 +21,15 @@ namespace Mono.CSharp {
 	//
 	public class Report
 	{
-		/// <summary>  
-		///   Whether warnings should be considered errors
-		/// </summary>
-		public bool WarningsAreErrors;
-		List<int> warnings_as_error;
-		List<int> warnings_only;
-
 		public const int RuntimeErrorId = 10000;
 
-		//
-		// Keeps track of the warnings that we are ignoring
-		//
-		HashSet<int> warning_ignore_table;
-
 		Dictionary<int, WarningRegions> warning_regions_table;
-
-		int warning_level;
 
 		ReportPrinter printer;
 
 		int reporting_disabled;
+
+		readonly CompilerSettings settings;
 		
 		/// <summary>
 		/// List of symbols related to reported error/warning. You have to fill it before error/warning is reported.
@@ -72,13 +60,15 @@ namespace Mono.CSharp {
 
 		static HashSet<int> AllWarningsHashSet;
 
-		public Report (ReportPrinter printer)
+		public Report (CompilerContext context, ReportPrinter printer)
 		{
+			if (context == null)
+				throw new ArgumentNullException ("settings");
 			if (printer == null)
 				throw new ArgumentNullException ("printer");
 
+			this.settings = context.Settings;
 			this.printer = printer;
-			warning_level = 4;
 		}
 
 		public void DisableReporting ()
@@ -124,44 +114,6 @@ namespace Mono.CSharp {
 			Error (1644, loc,
 				"Feature `{0}' is not supported in Mono mcs1 compiler. Consider using the `gmcs' compiler instead",
 				feature);
-		}
-		
-		bool IsWarningEnabled (int code, int level, Location loc)
-		{
-			if (WarningLevel < level)
-				return false;
-
-			if (IsWarningDisabledGlobally (code))
-				return false;
-
-			if (warning_regions_table == null || loc.IsNull)
-				return true;
-
-			WarningRegions regions;
-			if (!warning_regions_table.TryGetValue (loc.File, out regions))
-				return true;
-
-			return regions.IsWarningEnabled (code, loc.Row);
-		}
-
-		public bool IsWarningDisabledGlobally (int code)
-		{
-			return warning_ignore_table != null && warning_ignore_table.Contains (code);
-		}
-
-		bool IsWarningAsError (int code)
-		{
-			bool is_error = WarningsAreErrors;
-
-			// Check specific list
-			if (warnings_as_error != null)
-				is_error |= warnings_as_error.Contains (code);
-
-			// Ignore excluded warnings
-			if (warnings_only != null && warnings_only.Contains (code))
-				is_error = false;
-
-			return is_error;
 		}
 		        
 		public void RuntimeMissingSupport (Location loc, string feature) 
@@ -217,44 +169,6 @@ namespace Mono.CSharp {
 			extra_information.Add (msg);
 		}
 
-		public void AddWarningAsError (string warningId)
-		{
-			int id;
-			try {
-				id = int.Parse (warningId);
-			} catch {
-				CheckWarningCode (warningId, Location.Null);
-				return;
-			}
-
-			if (!CheckWarningCode (id, Location.Null))
-				return;
-
-			if (warnings_as_error == null)
-				warnings_as_error = new List<int> ();
-			
-			warnings_as_error.Add (id);
-		}
-
-		public void RemoveWarningAsError (string warningId)
-		{
-			int id;
-			try {
-				id = int.Parse (warningId);
-			} catch {
-				CheckWarningCode (warningId, Location.Null);
-				return;
-			}
-
-			if (!CheckWarningCode (id, Location.Null))
-				return;
-
-			if (warnings_only == null)
-				warnings_only = new List<int> ();
-
-			warnings_only.Add (id);
-		}
-
 		public bool CheckWarningCode (string code, Location loc)
 		{
 			Warning (1691, 1, loc, "`{0}' is not a valid warning number", code);
@@ -300,11 +214,17 @@ namespace Mono.CSharp {
 			if (reporting_disabled > 0)
 				return;
 
-			if (!IsWarningEnabled (code, level, loc))
+			if (!settings.IsWarningEnabled (code, level))
 				return;
 
+			if (warning_regions_table != null && !loc.IsNull) {
+				WarningRegions regions;
+				if (warning_regions_table.TryGetValue (loc.File, out regions) && !regions.IsWarningEnabled (code, loc.Row))
+					return;
+			}
+
 			AbstractMessage msg;
-			if (IsWarningAsError (code)) {
+			if (settings.IsWarningAsError (code)) {
 				message = "Warning as Error: " + message;
 				msg = new ErrorMessage (code, loc, message, extra_information);
 			} else {
@@ -420,28 +340,11 @@ namespace Mono.CSharp {
 			get { return printer; }
 		}
 
-		public void SetIgnoreWarning (int code)
-		{
-			if (warning_ignore_table == null)
-				warning_ignore_table = new HashSet<int> ();
-
-			warning_ignore_table.Add (code);
-		}
-
 		public ReportPrinter SetPrinter (ReportPrinter printer)
 		{
 			ReportPrinter old = this.printer;
 			this.printer = printer;
 			return old;
-		}
-
-		public int WarningLevel {
-			get {
-				return warning_level;
-			}
-			set {
-				warning_level = value;
-			}
 		}
 
 		[Conditional ("MCS_DEBUG")]
@@ -999,7 +902,6 @@ namespace Mono.CSharp {
 			ReferencesImporting,
 			PredefinedTypesInit,
 			ModuleDefinitionTotal,
-			UsingResolve,
 			EmitTotal,
 			CloseTypes,
 			Resouces,
@@ -1058,7 +960,6 @@ namespace Mono.CSharp {
 				{ TimerType.ReferencesImporting, "Referenced assemblies importing" },
 				{ TimerType.PredefinedTypesInit, "Predefined types initialization" },
 				{ TimerType.ModuleDefinitionTotal, "Module definition" },
-				{ TimerType.UsingResolve, "Top-level usings resolve" },
 				{ TimerType.EmitTotal, "Resolving and emitting members blocks" },
 				{ TimerType.CloseTypes, "Module types closed" },
 				{ TimerType.Resouces, "Embedding resources" },
@@ -1202,13 +1103,13 @@ namespace Mono.CSharp {
 			regions.Add (new EnableAll (line));
 		}
 
-		public void WarningEnable (Location location, int code, Report Report)
+		public void WarningEnable (Location location, int code, CompilerContext context)
 		{
-			if (!Report.CheckWarningCode (code, location))
+			if (!context.Report.CheckWarningCode (code, location))
 				return;
 
-			if (Report.IsWarningDisabledGlobally (code))
-				Report.Warning (1635, 1, location, "Cannot restore warning `CS{0:0000}' because it was disabled globally", code);
+			if (context.Settings.IsWarningDisabledGlobally (code))
+				context.Report.Warning (1635, 1, location, "Cannot restore warning `CS{0:0000}' because it was disabled globally", code);
 
 			regions.Add (new Enable (location.Row, code));
 		}

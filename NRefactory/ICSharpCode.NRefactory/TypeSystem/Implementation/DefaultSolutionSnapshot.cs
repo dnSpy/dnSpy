@@ -24,7 +24,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	/// <summary>
 	/// Default implementation of ISolutionSnapshot.
 	/// </summary>
-	public sealed class DefaultSolutionSnapshot : ISolutionSnapshot
+	public class DefaultSolutionSnapshot : ISolutionSnapshot
 	{
 		ConcurrentDictionary<IProjectContent, ICompilation> dictionary = new ConcurrentDictionary<IProjectContent, ICompilation>();
 		

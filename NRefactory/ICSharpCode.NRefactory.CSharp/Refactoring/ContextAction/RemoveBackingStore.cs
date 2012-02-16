@@ -99,7 +99,8 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			if (propertyDeclaration.Getter.Body.Statements.Count != 1)
 				return null;
 			var returnStatement = propertyDeclaration.Getter.Body.Statements.First () as ReturnStatement;
-			
+			if (returnStatement == null)
+				return null;
 			var result = context.Resolve (returnStatement.Expression);
 			if (result == null || !(result is MemberResolveResult))
 				return null;

@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using ICSharpCode.NRefactory.Utils;
 
@@ -33,12 +34,32 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		int typeParameterCount;
 		
 		/// <summary>
-		/// Creates a new GetClassTypeReference that searches a type in the specified assembly.
+		/// Creates a new GetClassTypeReference that searches a top-level type.
 		/// </summary>
+		/// <param name="nameSpace">The namespace name containing the type, e.g. "System.Collections.Generic".</param>
+		/// <param name="name">The name of the type, e.g. "List".</param>
+		/// <param name="typeParameterCount">The number of type parameters, (e.g. 1 for List&lt;T&gt;).</param>
+		public GetClassTypeReference(string nameSpace, string name, int typeParameterCount)
+		{
+			if (nameSpace == null)
+				throw new ArgumentNullException("nameSpace");
+			if (name == null)
+				throw new ArgumentNullException("name");
+			this.nameSpace = nameSpace;
+			this.name = name;
+			this.typeParameterCount = typeParameterCount;
+		}
+		
+		/// <summary>
+		/// Creates a new GetClassTypeReference that searches a top-level type in the specified assembly.
+		/// </summary>
+		/// <param name="assembly">A reference to the assembly containing this type.
+		/// If this parameter is null, the GetClassTypeReference will search in all assemblies belonging to the ICompilation.</param>
+		/// <param name="nameSpace">The namespace name containing the type, e.g. "System.Collections.Generic".</param>
+		/// <param name="name">The name of the type, e.g. "List".</param>
+		/// <param name="typeParameterCount">The number of type parameters, (e.g. 1 for List&lt;T&gt;).</param>
 		public GetClassTypeReference(IAssemblyReference assembly, string nameSpace, string name, int typeParameterCount)
 		{
-			if (assembly == null)
-				throw new ArgumentNullException("assembly");
 			if (nameSpace == null)
 				throw new ArgumentNullException("nameSpace");
 			if (name == null)
@@ -59,20 +80,32 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			if (context == null)
 				throw new ArgumentNullException("context");
 			
-			IAssembly asm = assembly.Resolve(context);
 			IType type = null;
-			if (asm != null) {
-				type = asm.GetTypeDefinition(nameSpace, name, typeParameterCount);
+			if (assembly == null) {
+				var compilation = context.Compilation;
+				foreach (var asm in new[] { context.CurrentAssembly, compilation.MainAssembly }.Concat(compilation.ReferencedAssemblies)) {
+					if (asm != null) {
+						type = asm.GetTypeDefinition(nameSpace, name, typeParameterCount);
+						if (type != null)
+							return type;
+					}
+				}
+			} else {
+				IAssembly asm = assembly.Resolve(context);
+				if (asm != null) {
+					type = asm.GetTypeDefinition(nameSpace, name, typeParameterCount);
+				}
 			}
 			return type ?? new UnknownType(nameSpace, name, typeParameterCount);
 		}
 		
 		public override string ToString()
 		{
+			string asmSuffix = (assembly != null ? ", " + assembly.ToString() : null);
 			if (typeParameterCount == 0)
-				return BuildQualifiedName(nameSpace, name);
+				return BuildQualifiedName(nameSpace, name) + asmSuffix;
 			else
-				return BuildQualifiedName(nameSpace, name) + "`" + typeParameterCount;
+				return BuildQualifiedName(nameSpace, name) + "`" + typeParameterCount + asmSuffix;
 		}
 		
 		static string BuildQualifiedName (string name1, string name2)

@@ -312,10 +312,12 @@ namespace ICSharpCode.NRefactory.Demo
 			FindReferences fr = new FindReferences();
 			int referenceCount = 0;
 			FoundReferenceCallback callback = delegate(AstNode matchNode, ResolveResult result) {
+				Debug.WriteLine(matchNode.StartLocation + " - " + matchNode + " - " + result);
 				referenceCount++;
 			};
 			
 			var searchScopes = fr.GetSearchScopes(entity);
+			Debug.WriteLine("Find references to " + entity.ReflectionName);
 			fr.FindReferencesInFile(searchScopes, parsedFile, compilationUnit, compilation, callback, CancellationToken.None);
 			
 			MessageBox.Show("Found " + referenceCount + " references to " + entity.FullName);

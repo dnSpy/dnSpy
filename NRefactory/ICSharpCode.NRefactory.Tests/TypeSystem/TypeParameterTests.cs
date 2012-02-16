@@ -36,7 +36,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			                     	Constraints = { new TypeParameterReference(EntityType.TypeDefinition, 0) }
 			                     });
 			
-			ITypeDefinition resolvedC = new SimpleCompilation(CecilLoaderTests.Mscorlib).MainAssembly.GetTypeDefinition(c);
+			ITypeDefinition resolvedC = TypeSystemHelper.CreateCompilation(c).MainAssembly.GetTypeDefinition(c);
 			// At runtime, we might have T=System.ValueType and U=int, so C# can't inherit the 'class' constraint
 			// from one type parameter to another.
 			Assert.AreEqual(true, resolvedC.TypeParameters[0].IsReferenceType);
@@ -54,7 +54,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			                     	Constraints = { new TypeParameterReference(EntityType.TypeDefinition, 0) }
 			                     });
 			
-			ITypeDefinition resolvedC = new SimpleCompilation(CecilLoaderTests.Mscorlib).MainAssembly.GetTypeDefinition(c);
+			ITypeDefinition resolvedC = TypeSystemHelper.CreateCompilation(c).MainAssembly.GetTypeDefinition(c);
 			// At runtime, we might have T=System.ValueType and U=int, so C# can't inherit the 'class' constraint
 			// from one type parameter to another.
 			Assert.AreEqual(true, resolvedC.TypeParameters[0].IsReferenceType);
@@ -73,7 +73,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			                     	Constraints = { new TypeParameterReference(EntityType.TypeDefinition, 0) }
 			                     });
 			
-			ITypeDefinition resolvedC = new SimpleCompilation(CecilLoaderTests.Mscorlib).MainAssembly.GetTypeDefinition(c);
+			ITypeDefinition resolvedC = TypeSystemHelper.CreateCompilation(c).MainAssembly.GetTypeDefinition(c);
 			Assert.AreEqual(true, resolvedC.TypeParameters[0].IsReferenceType);
 			Assert.AreEqual(true, resolvedC.TypeParameters[1].IsReferenceType);
 			Assert.AreEqual("System.Collections.Generic.List`1[[System.String]]", resolvedC.TypeParameters[0].EffectiveBaseClass.ReflectionName);

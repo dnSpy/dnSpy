@@ -25,6 +25,7 @@ using System.Text;
 using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
 {
@@ -126,6 +127,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		/// <summary>
 		/// Gets all candidate extension methods.
+		/// Note: this includes candidates that are not eligible due to an inapplicable
+		/// this argument.
 		/// </summary>
 		/// <remarks>
 		/// The results are stored in nested lists because they are grouped by using scope.
@@ -136,17 +139,41 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		///    new List { all extensions from SomeExtensions }
 		/// }
 		/// </remarks>
-		public IList<List<IMethod>> GetExtensionMethods()
+		public IEnumerable<IEnumerable<IMethod>> GetExtensionMethods()
 		{
 			if (resolver != null) {
 				Debug.Assert(extensionMethods == null);
 				try {
-					extensionMethods = resolver.GetExtensionMethods(this.TargetType, methodName, typeArguments);
+					extensionMethods = resolver.GetExtensionMethods(methodName, typeArguments);
 				} finally {
 					resolver = null;
 				}
 			}
-			return extensionMethods ?? EmptyList<List<IMethod>>.Instance;
+			return extensionMethods ?? Enumerable.Empty<IEnumerable<IMethod>>();
+		}
+		
+		public IEnumerable<IEnumerable<IMethod>> GetEligibleExtensionMethods(bool substituteInferredTypes)
+		{
+			var result = new List<List<IMethod>>();
+			foreach (var methodGroup in GetExtensionMethods()) {
+				var outputGroup = new List<IMethod>();
+				foreach (var method in methodGroup) {
+					IType[] inferredTypes;
+					if (CSharpResolver.IsEligibleExtensionMethod(
+						method.Compilation, Conversions.Get(method.Compilation),
+						this.TargetType, method, true, out inferredTypes))
+					{
+						if (substituteInferredTypes && inferredTypes != null) {
+							outputGroup.Add(new SpecializedMethod(method.DeclaringType, method, inferredTypes));
+						} else {
+							outputGroup.Add(method);
+						}
+					}
+				}
+				if (outputGroup.Count > 0)
+					result.Add(outputGroup);
+			}
+			return result;
 		}
 		
 		public override string ToString()
@@ -170,8 +197,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				
 				var extensionMethods = this.GetExtensionMethods();
 				
-				if (extensionMethods.Count > 0) {
-					Log.WriteLine("No candidate is applicable, trying {0} extension methods groups...", extensionMethods.Count);
+				if (extensionMethods.Any()) {
+					Log.WriteLine("No candidate is applicable, trying {0} extension methods groups...", extensionMethods.Count());
 					ResolveResult[] extArguments = new ResolveResult[arguments.Length + 1];
 					extArguments[0] = new ResolveResult(this.TargetType);
 					arguments.CopyTo(extArguments, 1);

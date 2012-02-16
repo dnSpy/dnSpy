@@ -27,8 +27,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	{
 		protected new readonly IUnresolvedProperty unresolved;
 		readonly IList<IParameter> parameters;
-		IAccessor getter;
-		IAccessor setter;
+		IMethod getter;
+		IMethod setter;
 		
 		public DefaultResolvedProperty(IUnresolvedProperty unresolved, ITypeResolveContext parentContext)
 			: base(unresolved, parentContext)
@@ -49,32 +49,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return unresolved.CanSet; }
 		}
 		
-		public IAccessor Getter {
-			get {
-				if (!unresolved.CanGet)
-					return null;
-				IAccessor result = this.getter;
-				if (result != null) {
-					LazyInit.ReadBarrier();
-					return result;
-				} else {
-					return LazyInit.GetOrSet(ref this.getter, unresolved.Getter.CreateResolvedAccessor(context));
-				}
-			}
+		public IMethod Getter {
+			get { return GetAccessor(ref getter, unresolved.Getter); }
 		}
 		
-		public IAccessor Setter {
-			get {
-				if (!unresolved.CanSet)
-					return null;
-				IAccessor result = this.setter;
-				if (result != null) {
-					LazyInit.ReadBarrier();
-					return result;
-				} else {
-					return LazyInit.GetOrSet(ref this.setter, unresolved.Setter.CreateResolvedAccessor(context));
-				}
-			}
+		public IMethod Setter {
+			get { return GetAccessor(ref setter, unresolved.Setter); }
 		}
 		
 		public bool IsIndexer {
@@ -83,9 +63,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public override IMemberReference ToMemberReference()
 		{
-			return new DefaultMemberReference(
-				this.EntityType, this.DeclaringType.ToTypeReference(), this.Name, 0,
-				this.Parameters.Select(p => p.Type.ToTypeReference()).ToList());
+			var declTypeRef = this.DeclaringType.ToTypeReference();
+			if (IsExplicitInterfaceImplementation && InterfaceImplementations.Count == 1) {
+				return new ExplicitInterfaceImplementationMemberReference(declTypeRef, InterfaceImplementations[0].ToMemberReference());
+			} else {
+				return new DefaultMemberReference(
+					this.EntityType, declTypeRef, this.Name, 0,
+					this.Parameters.Select(p => p.Type.ToTypeReference()).ToList());
+			}
 		}
 	}
 }

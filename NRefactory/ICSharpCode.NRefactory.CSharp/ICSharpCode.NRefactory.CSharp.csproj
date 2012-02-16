@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectGuid>{53DCA265-3C3C-42F9-B647-F72BA678122B}</ProjectGuid>
@@ -7,6 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.NRefactory.CSharp</RootNamespace>
     <AssemblyName>ICSharpCode.NRefactory.CSharp</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
@@ -18,6 +19,8 @@
     <AssemblyOriginatorKeyFile>..\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
+    <DocumentationFile>..\ICSharpCode.NRefactory\bin\$(Configuration)\ICSharpCode.NRefactory.CSharp.xml</DocumentationFile>
+    <NoWarn>1591,1587,1570</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,7 +40,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>..\ICSharpCode.NRefactory\bin\Release\</OutputPath>
     <DebugSymbols>false</DebugSymbols>
-    <DebugType>None</DebugType>
+    <DebugType>PdbOnly</DebugType>
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE;FULL_AST</DefineConstants>
@@ -55,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Analysis\ControlFlow.cs" />
     <Compile Include="Analysis\DefiniteAssignmentAnalysis.cs" />
+    <Compile Include="Analysis\ReachabilityAnalysis.cs" />
     <Compile Include="Ast\AstNode.cs" />
     <Compile Include="Ast\AstNodeCollection.cs" />
     <Compile Include="Ast\AstType.cs" />
@@ -195,7 +199,6 @@
     <Compile Include="Parser\mcs\cs-tokenizer.cs" />
     <Compile Include="Parser\mcs\decl.cs" />
     <Compile Include="Parser\mcs\delegate.cs" />
-    <Compile Include="Parser\mcs\doc-bootstrap.cs" />
     <Compile Include="Parser\mcs\doc.cs" />
     <Compile Include="Parser\mcs\driver.cs" />
     <Compile Include="Parser\mcs\dynamic.cs" />
@@ -206,7 +209,6 @@
     <Compile Include="Parser\mcs\field.cs" />
     <Compile Include="Parser\mcs\flowanalysis.cs" />
     <Compile Include="Parser\mcs\generic.cs" />
-    <Compile Include="Parser\mcs\hosting.cs" />
     <Compile Include="Parser\mcs\import.cs" />
     <Compile Include="Parser\mcs\iterators.cs" />
     <Compile Include="Parser\mcs\lambda.cs" />
@@ -227,8 +229,6 @@
     <Compile Include="Parser\mcs\property.cs" />
     <Compile Include="Parser\mcs\reflection.cs" />
     <Compile Include="Parser\mcs\report.cs" />
-    <Compile Include="Parser\mcs\rootcontext.cs" />
-    <Compile Include="Parser\mcs\roottypes.cs" />
     <Compile Include="Parser\mcs\statement.cs" />
     <Compile Include="Parser\mcs\support.cs" />
     <Compile Include="Parser\mcs\symbolwriter.cs" />
@@ -271,7 +271,6 @@
     <Compile Include="Refactoring\TextReplaceAction.cs" />
     <Compile Include="Refactoring\TypeSystemAstBuilder.cs" />
     <Compile Include="Resolver\CompositeResolveVisitorNavigator.cs" />
-    <Compile Include="Resolver\ConversionResolveResult.cs" />
     <Compile Include="Resolver\Conversions.cs" />
     <Compile Include="Resolver\CSharpAstResolver.cs" />
     <Compile Include="Resolver\CSharpInvocationResolveResult.cs" />
@@ -291,10 +290,10 @@
     <Compile Include="Resolver\OverloadResolutionErrors.cs" />
     <Compile Include="Resolver\ResolveAtLocation.cs" />
     <Compile Include="Resolver\ResolveVisitor.cs" />
-    <Compile Include="Resolver\SimpleNameLookupMode.cs" />
     <Compile Include="Resolver\TypeInference.cs" />
     <Compile Include="Completion\ICompletionDataFactory.cs" />
     <Compile Include="Completion\IParameterCompletionDataFactory.cs" />
+    <Compile Include="SimpleNameLookupMode.cs" />
     <Compile Include="TypeSystem\AliasNamespaceReference.cs" />
     <Compile Include="TypeSystem\AttributeTypeReference.cs" />
     <Compile Include="TypeSystem\ConstantValues.cs" />
@@ -316,6 +315,9 @@
     <Compile Include="Completion\CSharpCompletionEngine.cs" />
     <Compile Include="Completion\CSharpCompletionEngineBase.cs" />
     <Compile Include="Completion\CSharpParameterCompletionEngine.cs" />
+    <Compile Include="Completion\IMemberProvider.cs" />
+    <Compile Include="Parser\mcs\module.cs" />
+    <Compile Include="Parser\mcs\settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">

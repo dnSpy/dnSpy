@@ -372,7 +372,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			// C# 4.0 spec: §7.5.2.4 Output types
 			LambdaResolveResult lrr = e as LambdaResolveResult;
-			if (lrr != null && lrr.IsImplicitlyTyped || e is MethodGroupResolveResult) {
+			if (lrr != null || e is MethodGroupResolveResult) {
 				IMethod m = GetDelegateOrExpressionTreeSignature(t);
 				if (m != null) {
 					return new[] { m.ReturnType };
@@ -854,12 +854,12 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			// First try the Fixing algorithm from the C# spec (§7.5.2.11)
 			List<IType> candidateTypes = lowerBounds.Union(upperBounds)
-				.Where(c => lowerBounds.All(b => conversions.ImplicitConversion(b, c)))
-				.Where(c => upperBounds.All(b => conversions.ImplicitConversion(c, b)))
+				.Where(c => lowerBounds.All(b => conversions.ImplicitConversion(b, c).IsValid))
+				.Where(c => upperBounds.All(b => conversions.ImplicitConversion(c, b).IsValid))
 				.ToList(); // evaluate the query only once
 			
 			candidateTypes = candidateTypes.Where(
-				c => candidateTypes.All(o => conversions.ImplicitConversion(c, o))
+				c => candidateTypes.All(o => conversions.ImplicitConversion(c, o).IsValid)
 			).ToList();
 			// If the specified algorithm produces a single candidate, we return
 			// that candidate.

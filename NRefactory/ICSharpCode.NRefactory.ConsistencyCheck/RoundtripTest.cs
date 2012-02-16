@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using ICSharpCode.NRefactory.CSharp;
@@ -33,8 +34,8 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 	{
 		public static void RunTest(CSharpFile file)
 		{
-			// TODO: also try Windows-style newlines once the parser bug with integer literals followed by \r is fixed
 			string code = file.Content.Text.Replace("\r\n", "\n");
+			Debug.Assert(code.IndexOf('\r') < 0);
 			if (code.Contains("#pragma"))
 				return; // skip code with preprocessor directives
 			if (code.Contains("enum VarianceModifier") || file.FileName.EndsWith("ecore.cs") || file.FileName.EndsWith("method.cs"))
@@ -43,18 +44,20 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 				return; // skip due to optional , at end of array initializer (see ArrayCreateExpressionTests.ArrayInitializerWithCommaAtEnd)
 			if (file.FileName.EndsWith("cs-parser.cs"))
 				return; // skip due to completely messed up comment locations
-			if (file.FileName.EndsWith("PrimitiveExpressionTests.cs"))
-				return; // skip due to PrimitiveExpressionTests.*WithLeadingDot
 			if (file.FileName.Contains("FormattingTests") || file.FileName.Contains("ContextAction") || file.FileName.Contains("CodeCompletion"))
 				return; // skip due to AttributeSectionTests.AttributeWithEmptyParenthesis
-			if (file.FileName.EndsWith("TypeSystemTests.TestCase.cs"))
+			if (file.FileName.EndsWith("TypeSystemTests.TestCase.cs") || file.FileName.EndsWith("AssemblyInfo.cs"))
 				return; // skip due to AttributeSectionTests.AssemblyAttributeBeforeNamespace
 			if (file.FileName.EndsWith("dynamic.cs") || file.FileName.EndsWith("expression.cs"))
 				return; // skip due to PreprocessorDirectiveTests.NestedInactiveIf
 			if (file.FileName.EndsWith("property.cs"))
 				return; // skip due to PreprocessorDirectiveTests.CommentOnEndOfIfDirective
+			if (file.FileName.EndsWith("DefaultResolvedTypeDefinition.cs"))
+				return; // skip due to MethodDeclarationTests.GenericMethodWithMultipleConstraints
 			
 			Roundtrip(file.Project.CreateParser(), file.FileName, code);
+			// After trying unix-style newlines, also try windows-style newlines:
+			Roundtrip(file.Project.CreateParser(), file.FileName, code.Replace("\n", "\r\n"));
 		}
 		
 		public static void Roundtrip(CSharpParser parser, string fileName, string code)
@@ -85,6 +88,10 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			}
 			if (pos2 != generatedCode.Length)
 				throw new InvalidOperationException("Mismatch at end of file " + fileName);
+			
+			// 3b - validate that there are no lone \r
+			if (generatedCode.Replace(w.NewLine, "\n").IndexOf('\r') >= 0)
+				throw new InvalidOperationException(@"Got lone \r in " + fileName);
 			
 			// 4. Parse generated output
 			CompilationUnit generatedCU;

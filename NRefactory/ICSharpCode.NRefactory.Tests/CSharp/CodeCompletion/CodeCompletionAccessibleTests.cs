@@ -1166,5 +1166,24 @@ $$
 			Assert.IsNotNull (provider.Find ("Test"), "class 'Test' not found.");
 		}
 		
+		/// <summary>
+		/// Bug 3320 - Constants accessed by class name do not show in completion list
+		/// </summary>
+		[Test()]
+		public void TestBug3320 ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (@"
+public class Foo
+{
+    public const int Bar = 5;
+
+    public void DoStuff()
+    {
+        $Foo.$
+    } 
+}", provider => {
+				Assert.IsNotNull (provider.Find ("Bar"), "'Bar' not found.");
+			});
+		}
 	}
 }

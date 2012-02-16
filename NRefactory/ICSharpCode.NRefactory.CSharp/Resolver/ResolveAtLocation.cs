@@ -33,56 +33,61 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		public static ResolveResult Resolve(ICompilation compilation, CSharpParsedFile parsedFile, CompilationUnit cu, TextLocation location,
 		                                    CancellationToken cancellationToken = default(CancellationToken))
 		{
-			AstNode node = cu.GetNodeAt(location);
+			AstNode node;
+			return Resolve(compilation, parsedFile, cu, location, out node, cancellationToken);
+		}
+		
+		public static ResolveResult Resolve(ICompilation compilation, CSharpParsedFile parsedFile, CompilationUnit cu, TextLocation location, out AstNode node,
+		                                    CancellationToken cancellationToken = default(CancellationToken))
+		{
+			node = cu.GetNodeAt(location);
 			if (node == null)
 				return null;
-			AstNode resolvableNode;
-			if (node is AstType) {
-				resolvableNode = node;
-				if (resolvableNode.Parent is ComposedType) {
-					while (resolvableNode.Parent is ComposedType)
-						resolvableNode = resolvableNode.Parent;
-					//node is preffered over the resolvable node. Which shouldn't be done in the case of nullables, arrays etc.
-					node = resolvableNode;
-				}
-			} else if (node is Identifier) {
-				resolvableNode = node.Parent;
-			} else if (node.NodeType == NodeType.Token) {
-				if (node.Parent is ConstructorInitializer) {
-					resolvableNode = node.Parent;
+			if (CSharpAstResolver.IsUnresolvableNode(node)) {
+				if (node is Identifier) {
+					node = node.Parent;
+				} else if (node.NodeType == NodeType.Token) {
+					if (node.Parent is IndexerExpression || node.Parent is ConstructorInitializer) {
+						// There's no other place where one could hover to see the indexer's tooltip,
+						// so we need to resolve it when hovering over the '[' or ']'.
+						// For constructor initializer, the same applies to the 'base'/'this' token.
+						node = node.Parent;
+					} else {
+						return null;
+					}
 				} else {
+					// don't resolve arbitrary nodes - we don't want to show tooltips for everything
 					return null;
 				}
 			} else {
-				// don't resolve arbitrary nodes - we don't want to show tooltips for everything
-				return null;
+				// It's a resolvable node.
+				// However, we usually don't want to show the tooltip everywhere
+				// For example, hovering with the mouse over an empty line between two methods causes
+				// node==TypeDeclaration, but we don't want to show any tooltip.
+				
+				if (!node.GetChildByRole(AstNode.Roles.Identifier).IsNull) {
+					// We'll suppress the tooltip for resolvable nodes if there is an identifier that
+					// could be hovered over instead:
+					return null;
+				}
 			}
+			if (node == null)
+				return null;
 			
-			if (resolvableNode != null && resolvableNode.Parent is ObjectCreateExpression) {
-				resolvableNode = resolvableNode.Parent;
+			if (node.Parent is ObjectCreateExpression && node.Role == ObjectCreateExpression.Roles.Type) {
+				node = node.Parent;
 			}
 			
 			InvocationExpression parentInvocation = null;
-			if ((resolvableNode is IdentifierExpression || resolvableNode is MemberReferenceExpression || resolvableNode is PointerReferenceExpression)) {
+			if (node is IdentifierExpression || node is MemberReferenceExpression || node is PointerReferenceExpression) {
 				// we also need to resolve the invocation
-				parentInvocation = resolvableNode.Parent as InvocationExpression;
+				parentInvocation = node.Parent as InvocationExpression;
 			}
 			
-			IResolveVisitorNavigator navigator;
-			if (parentInvocation != null)
-				navigator = new NodeListResolveVisitorNavigator(new[] { resolvableNode, parentInvocation });
-			else
-				navigator = new NodeListResolveVisitorNavigator(new[] { resolvableNode });
-			
-			CSharpResolver resolver = new CSharpResolver(compilation);
-			ResolveVisitor v = new ResolveVisitor(resolver, parsedFile, navigator);
-			v.Scan(cu);
-			
-			// Prefer the RR from the token itself, if it was assigned a ResolveResult
-			// (this can happen with the identifiers in various nodes such as catch clauses or foreach statements)
-			ResolveResult rr = v.GetResolveResult(node) ?? v.GetResolveResult(resolvableNode);
+			CSharpAstResolver resolver = new CSharpAstResolver(compilation, cu, parsedFile);
+			ResolveResult rr = resolver.Resolve(node, cancellationToken);
 			if (rr is MethodGroupResolveResult && parentInvocation != null)
-				return v.GetResolveResult(parentInvocation);
+				return resolver.Resolve(parentInvocation);
 			else
 				return rr;
 		}

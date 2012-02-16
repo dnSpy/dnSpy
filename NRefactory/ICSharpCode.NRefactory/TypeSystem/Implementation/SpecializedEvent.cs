@@ -53,16 +53,16 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return eventDefinition.CanInvoke; }
 		}
 		
-		public IAccessor AddAccessor {
-			get { return eventDefinition.AddAccessor; }
+		public IMethod AddAccessor {
+			get { return WrapAccessor(eventDefinition.AddAccessor); }
 		}
 		
-		public IAccessor RemoveAccessor {
-			get { return eventDefinition.RemoveAccessor; }
+		public IMethod RemoveAccessor {
+			get { return WrapAccessor(eventDefinition.RemoveAccessor); }
 		}
 		
-		public IAccessor InvokeAccessor {
-			get { return eventDefinition.InvokeAccessor; }
+		public IMethod InvokeAccessor {
+			get { return WrapAccessor(eventDefinition.InvokeAccessor); }
 		}
 	}
 }

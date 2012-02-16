@@ -75,5 +75,22 @@ namespace ICSharpCode.NRefactory.Editor
 			this.removedText = removedText ?? string.Empty;
 			this.insertedText = insertedText ?? string.Empty;
 		}
+		
+		/// <summary>
+		/// Gets the new offset where the specified offset moves after this document change.
+		/// </summary>
+		public virtual int GetNewOffset(int offset, AnchorMovementType movementType = AnchorMovementType.Default)
+		{
+			if (offset >= this.Offset && offset <= this.Offset + this.RemovalLength) {
+				if (movementType == AnchorMovementType.BeforeInsertion)
+					return this.Offset;
+				else
+					return this.Offset + this.InsertionLength;
+			} else if (offset > this.Offset) {
+				return offset + this.InsertionLength - this.RemovalLength;
+			} else {
+				return offset;
+			}
+		}
 	}
 }

@@ -63,6 +63,7 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 		ICompletionData CreateEventCreationCompletionData (string varName, IType delegateType, IEvent evt, string parameterDefinition, IUnresolvedMember currentMember, IUnresolvedTypeDefinition currentType);
 
 		ICompletionData CreateNewOverrideCompletionData (int declarationBegin, IUnresolvedTypeDefinition type, IMember m);
+		ICompletionData CreateNewPartialCompletionData (int declarationBegin, IUnresolvedTypeDefinition type, IUnresolvedMember m);
 		
 		IEnumerable<ICompletionData> CreateCodeTemplateCompletionData ();
 		

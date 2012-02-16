@@ -48,22 +48,36 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			get;
 		}
 		
+		public ICompilation Compilation {
+			get;
+			protected set;
+		}
+		
 		public abstract CSharpFormattingOptions FormattingOptions {
 			get;
 		}
 
 		public abstract AstType CreateShortType (IType fullType);
 		
-		public AstType CreateShortType (string ns, string typeName)
+		public AstType CreateShortType (string ns, string name, int typeParameterCount = 0)
 		{
-			throw new NotImplementedException();
-			//return CreateShortType (TypeResolveContext.GetTypeDefinition (ns, typeName, 0, StringComparer.Ordinal));
+			var def = Compilation.MainAssembly.GetTypeDefinition (ns, name, typeParameterCount);
+			if (def == null) {
+				foreach (var asm in Compilation.ReferencedAssemblies) {
+					def = asm.GetTypeDefinition (ns, name, typeParameterCount);
+					if (def != null)
+						break;
+				}
+				
+			}
+			if (def == null)
+				return new MemberType (new SimpleType (ns), name);
+			return CreateShortType (def);
 		}
 		
 		public virtual AstType CreateShortType (AstType fullType)
 		{
-			throw new NotImplementedException();
-			//return CreateShortType (Resolve (fullType).Type.Resolve (TypeResolveContext));
+			return CreateShortType (Resolve (fullType).Type);
 		}
 		
 //		public abstract IType GetDefinition (AstType resolvedType);

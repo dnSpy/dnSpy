@@ -33,6 +33,12 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		}
 		
 		[Test]
+		public void InsideClassBody()
+		{
+			Assert.IsNull(ResolveAtLocation("class Test { $ }"));
+		}
+		
+		[Test]
 		public void UsingDeclarationNamespace()
 		{
 			var rr = ResolveAtLocation<NamespaceResolveResult>("using $System;");
@@ -116,6 +122,15 @@ class A { public A() : ba$se() {} }");
 		{
 			var rr = ResolveAtLocation<MemberResolveResult>("public class A { event EventHandler Test, Te$st2; }");
 			Assert.AreEqual("Test2", rr.Member.Name);
+		}
+		
+		[Test]
+		public void Indexer()
+		{
+			var rr = ResolveAtLocation<CSharpInvocationResolveResult>(
+				"using System.Collections.Generic;" +
+				"public class A { int M(List<int> a) { return a$[1]; } }");
+			Assert.AreEqual(EntityType.Indexer, rr.Member.EntityType);
 		}
 	}
 }

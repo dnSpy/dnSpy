@@ -46,6 +46,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.TestCase
 		public ParamsAttribute(params object[] x) {}
 	}
 	
+	[Double(1)]
+	public class DoubleAttribute : Attribute
+	{
+		public DoubleAttribute(double val) {}
+	}
+	
 	public unsafe class DynamicTest
 	{
 		public dynamic SimpleProperty { get; set; }
@@ -63,6 +69,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.TestCase
 	{
 		public void TestMethod<K, V>(string param) where V: K where K: IComparable<V> {}
 		public void GetIndex<T>(T element) where T : IEquatable<T> {}
+		
+		public NestedEnum EnumField;
+		
+		public enum NestedEnum {
+			EnumMember
+		}
 	}
 	
 	public class PropertyTest
@@ -71,7 +83,9 @@ namespace ICSharpCode.NRefactory.TypeSystem.TestCase
 		
 		public object PropertyWithPrivateSetter { get; private set; }
 		
-		public string this[int index] { get { return "Test"; } }
+		public object PropertyWithoutSetter { get { return null; } }
+		
+		public string this[int index] { get { return "Test"; } set {} }
 	}
 	
 	public enum MyEnum : short
@@ -146,10 +160,47 @@ namespace ICSharpCode.NRefactory.TypeSystem.TestCase
 	
 	public class OuterGeneric<X>
 	{
-		public class Inner {}
+		public class Inner {
+			public OuterGeneric<X> referenceToOuter;
+			public Inner(OuterGeneric<X> referenceToOuter) {}
+		}
 		
 		public OuterGeneric<X>.Inner Field1;
 		public Inner Field2;
 		public OuterGeneric<OuterGeneric<X>.Inner>.Inner Field3;
+	}
+	
+	public class ExplicitDisposableImplementation : IDisposable
+	{
+		void IDisposable.Dispose() {}
+	}
+	
+	public interface IGenericInterface<T>
+	{
+		void Test<S>(T a, S b) where S : T;
+		void Test<S>(T a, ref S b);
+	}
+	
+	public class ExplicitGenericInterfaceImplementation : IGenericInterface<string>
+	{
+		void IGenericInterface<string>.Test<T>(string a, T b) {}
+		void IGenericInterface<string>.Test<T>(string a, ref T b) {}
+	}
+	
+	public interface IGenericInterfaceWithUnifiableMethods<T, S>
+	{
+		void Test(T a);
+		void Test(S a);
+	}
+	
+	public class ImplementationOfUnifiedMethods : IGenericInterfaceWithUnifiableMethods<int, int>
+	{
+		public void Test(int a) {}
+	}
+	
+	public class ExplicitGenericInterfaceImplementationWithUnifiableMethods<T, S> : IGenericInterfaceWithUnifiableMethods<T, S>
+	{
+		void IGenericInterfaceWithUnifiableMethods<T, S>.Test(T a) {}
+		void IGenericInterfaceWithUnifiableMethods<T, S>.Test(S a) {}
 	}
 }

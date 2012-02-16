@@ -72,7 +72,7 @@ namespace OtherNS {
 			baseClass = compilation.RootNamespace.GetTypeDefinition("Base", 1);
 			nestedClass = baseClass.NestedTypes.Single();
 			derivedClass = compilation.RootNamespace.GetTypeDefinition("Derived", 2);
-			systemClass = compilation.FindType("NS.System, MyAssembly").GetDefinition();
+			systemClass = compilation.RootNamespace.GetChildNamespace("NS").GetTypeDefinition("System", 0);
 		}
 		
 		TypeSystemAstBuilder CreateBuilder(ITypeDefinition currentTypeDef = null)
@@ -160,6 +160,8 @@ namespace OtherNS {
 		{
 			var type = new ParameterizedType(nestedClass, new[] { compilation.FindType(KnownTypeCode.Char), compilation.FindType(KnownTypeCode.String) });
 			Assert.AreEqual("Base<char>.Nested<string>", TypeToString(type));
+			// The short form "Nested<string>" refers to "Base<T>.Nested<string>",
+			// so we need to use the long form to specify that T=char.
 			Assert.AreEqual("Base<char>.Nested<string>", TypeToString(type, baseClass));
 			Assert.AreEqual("Base<char>.Nested<string>", TypeToString(type, nestedClass));
 			Assert.AreEqual("Base<char>.Nested<string>", TypeToString(type, derivedClass));
@@ -177,6 +179,7 @@ namespace OtherNS {
 		public void NestedTypeInDerivedClass()
 		{
 			var type1 = new ParameterizedType(nestedClass, new[] { derivedClass.TypeParameters[0], compilation.FindType(KnownTypeCode.String) });
+			// short form "Nested<string>" cannot be used as it would refer to "Base<S>.Nested<string>"
 			Assert.AreEqual("Base<T>.Nested<string>", TypeToString(type1, derivedClass));
 			
 			var type2 = new ParameterizedType(nestedClass, new[] { derivedClass.TypeParameters[1], compilation.FindType(KnownTypeCode.String) });
@@ -205,7 +208,7 @@ namespace OtherNS {
 		public void AmbiguousType()
 		{
 			Assert.AreEqual("System.Array", TypeToString(compilation.FindType(typeof(Array))));
-			Assert.AreEqual("OtherNS.Array", TypeToString(compilation.FindType("OtherNS.Array, MyAssembly")));
+			Assert.AreEqual("OtherNS.Array", TypeToString(compilation.MainAssembly.GetTypeDefinition("OtherNS", "Array", 0)));
 		}
 	}
 }

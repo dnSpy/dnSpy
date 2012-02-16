@@ -41,8 +41,8 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 
 		static string GetCountProperty (IType type)
 		{
-//			if (!type.)
-//				return "Length";
+			if (type.Kind == TypeKind.Array)
+				return "Length";
 			return "Count";
 		}
 

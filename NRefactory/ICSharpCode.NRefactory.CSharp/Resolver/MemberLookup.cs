@@ -65,6 +65,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// </summary>
 		public bool IsProtectedAccessAllowed(IType targetType)
 		{
+			if (targetType.Kind == TypeKind.TypeParameter)
+				targetType = ((ITypeParameter)targetType).EffectiveBaseClass;
 			ITypeDefinition typeDef = targetType.GetDefinition();
 			if (typeDef == null)
 				return false;
@@ -569,6 +571,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					return new AmbiguousTypeResolveResult(resultGroup.NestedTypes[0]);
 				else
 					return new TypeResolveResult(resultGroup.NestedTypes[0]);
+			}
+			
+			if (resultGroup.NonMethod.IsStatic && targetResolveResult is ThisResolveResult) {
+				targetResolveResult = new TypeResolveResult(targetResolveResult.Type);
 			}
 			
 			if (lookupGroups.Count > 1) {

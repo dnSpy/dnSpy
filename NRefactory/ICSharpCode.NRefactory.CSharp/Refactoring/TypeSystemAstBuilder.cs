@@ -39,9 +39,6 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		/// <summary>
 		/// Creates a new TypeSystemAstBuilder.
 		/// </summary>
-		/// <param name="context">
-		/// Context used for resolving types.
-		/// </param>
 		public TypeSystemAstBuilder()
 		{
 			InitProperties();
@@ -190,7 +187,6 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				AddTypeArguments(shortResult, typeArguments, outerTypeParameterCount, typeDef.TypeParameterCount);
 				return shortResult;
 			}
-			
 			MemberType result = new MemberType();
 			if (typeDef.DeclaringTypeDefinition != null) {
 				// Handle nested types
@@ -518,7 +514,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			return decl;
 		}
 		
-		Accessor ConvertAccessor(IAccessor accessor)
+		Accessor ConvertAccessor(IMethod accessor)
 		{
 			if (accessor == null)
 				return Accessor.Null;

@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
@@ -47,6 +48,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			{
 				return other == null || other.IsNull;
 			}
+			
+			public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode)
+			{
+				return SpecialType.UnknownType;
+			}
 		}
 		#endregion
 		
@@ -74,6 +80,11 @@ namespace ICSharpCode.NRefactory.CSharp
 				return visitor.VisitPatternPlaceholder(this, child, data);
 			}
 			
+			public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode)
+			{
+				throw new NotSupportedException();
+			}
+			
 			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 			{
 				return child.DoMatch(other, match);
@@ -94,6 +105,18 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return (AstType)base.Clone();
 		}
+		
+		/// <summary>
+		/// Create an ITypeReference for this AstType.
+		/// </summary>
+		/// <remarks>
+		/// The resulting type reference will read the context information from the
+		/// <see cref="ITypeResolveContext"/>:
+		/// For resolving type parameters, the CurrentTypeDefinition/CurrentMember is used.
+		/// For resolving simple names, the current namespace and usings from the CurrentUsingScope
+		/// (on CSharpTypeResolveContext only) is used.
+		/// </remarks>
+		public abstract ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type);
 		
 		/// <summary>
 		/// Creates a pointer type from this type by nesting it in a <see cref="ComposedType"/>.
@@ -152,43 +175,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
 		{
 			return new TypeReferenceExpression { Type = this }.Invoke(methodName, typeArguments, arguments);
-		}
-		
-		public static AstType Create(Type type)
-		{
-			switch (Type.GetTypeCode(type)) {
-				case TypeCode.Object:
-					return new PrimitiveType("object");
-				case TypeCode.Boolean:
-					return new PrimitiveType("bool");
-				case TypeCode.Char:
-					return new PrimitiveType("char");
-				case TypeCode.SByte:
-					return new PrimitiveType("sbyte");
-				case TypeCode.Byte:
-					return new PrimitiveType("byte");
-				case TypeCode.Int16:
-					return new PrimitiveType("short");
-				case TypeCode.UInt16:
-					return new PrimitiveType("ushort");
-				case TypeCode.Int32:
-					return new PrimitiveType("int");
-				case TypeCode.UInt32:
-					return new PrimitiveType("uint");
-				case TypeCode.Int64:
-					return new PrimitiveType("long");
-				case TypeCode.UInt64:
-					return new PrimitiveType("ulong");
-				case TypeCode.Single:
-					return new PrimitiveType("float");
-				case TypeCode.Double:
-					return new PrimitiveType("double");
-				case TypeCode.Decimal:
-					return new PrimitiveType("decimal");
-				case TypeCode.String:
-					return new PrimitiveType("string");
-			}
-			return new SimpleType(type.FullName); // TODO: implement this correctly
 		}
 	}
 }

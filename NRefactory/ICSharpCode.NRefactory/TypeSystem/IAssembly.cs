@@ -102,11 +102,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		ITypeDefinition GetTypeDefinition(string ns, string name, int typeParameterCount);
 		
 		/// <summary>
-		/// Gets the type definition for the specified unresolved type.
-		/// </summary>
-		ITypeDefinition GetTypeDefinition(IUnresolvedTypeDefinition unresolved);
-		
-		/// <summary>
 		/// Gets all non-nested types in the assembly.
 		/// </summary>
 		IEnumerable<ITypeDefinition> TopLevelTypeDefinitions { get; }

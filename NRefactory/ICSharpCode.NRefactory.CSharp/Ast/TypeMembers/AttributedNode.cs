@@ -25,6 +25,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	public abstract class AttributedNode : AstNode
 	{
 		public static readonly Role<AttributeSection> AttributeRole = new Role<AttributeSection>("Attribute");
+		public static readonly Role<AttributeSection> UnattachedAttributeRole = new Role<AttributeSection>("UnattachedAttribute");
 		public static readonly Role<CSharpModifierToken> ModifierRole = new Role<CSharpModifierToken>("Modifier");
 		
 		public AstNodeCollection<AttributeSection> Attributes {

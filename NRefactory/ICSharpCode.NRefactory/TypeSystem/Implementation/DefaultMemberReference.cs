@@ -70,7 +70,17 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 					if (parameterizedMember == null || parameterizedMember.Parameters.Count == 0)
 						return member;
 				} else if (parameterTypes.Count == parameterizedMember.Parameters.Count) {
-					
+					bool signatureMatches = true;
+					for (int i = 0; i < parameterTypes.Count; i++) {
+						IType type1 = ParameterListComparer.Instance.NormalizeMethodTypeParameters(resolvedParameterTypes[i]);
+						IType type2 = ParameterListComparer.Instance.NormalizeMethodTypeParameters(parameterizedMember.Parameters[i].Type);
+						if (!type1.Equals(type2)) {
+							signatureMatches = false;
+							break;
+						}
+					}
+					if (signatureMatches)
+						return member;
 				}
 			}
 			return null;

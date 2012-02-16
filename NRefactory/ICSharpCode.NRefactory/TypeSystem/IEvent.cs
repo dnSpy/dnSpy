@@ -28,9 +28,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool CanRemove { get; }
 		bool CanInvoke { get; }
 		
-		IUnresolvedAccessor AddAccessor { get; }
-		IUnresolvedAccessor RemoveAccessor { get; }
-		IUnresolvedAccessor InvokeAccessor { get; }
+		IUnresolvedMethod AddAccessor { get; }
+		IUnresolvedMethod RemoveAccessor { get; }
+		IUnresolvedMethod InvokeAccessor { get; }
 	}
 	
 	public interface IEvent : IMember
@@ -39,8 +39,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool CanRemove { get; }
 		bool CanInvoke { get; }
 		
-		IAccessor AddAccessor { get; }
-		IAccessor RemoveAccessor { get; }
-		IAccessor InvokeAccessor { get; }
+		IMethod AddAccessor { get; }
+		IMethod RemoveAccessor { get; }
+		IMethod InvokeAccessor { get; }
 	}
 }

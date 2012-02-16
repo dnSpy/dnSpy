@@ -191,6 +191,7 @@ public class Form1 {
 					}});
 		}
 		
+		[Ignore("Fixme!")]
 		[Test]
 		public void AssemblyAttributeBeforeNamespace()
 		{

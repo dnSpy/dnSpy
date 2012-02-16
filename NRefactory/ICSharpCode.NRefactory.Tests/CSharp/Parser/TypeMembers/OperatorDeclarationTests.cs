@@ -64,5 +64,11 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.AreEqual("MyObject", ((SimpleType)od.ReturnType).Identifier);
 			Assert.AreEqual("op_UnaryPlus", od.Name);
 		}
+		
+		[Test, Ignore("Parser crash")]
+		public void InvalidOperatorTrueDeclaration()
+		{
+			ParseUtilCSharp.ParseTypeMember<OperatorDeclaration>("public static implicit operator true(MyBool b) {}", expectErrors: true);
+		}
 	}
 }

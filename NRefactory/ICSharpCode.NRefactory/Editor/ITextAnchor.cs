@@ -121,8 +121,8 @@ namespace ICSharpCode.NRefactory.Editor
 	{
 		/// <summary>
 		/// When text is inserted at the anchor position, the type of the insertion
-		/// determines where the caret moves to. For normal insertions, the anchor will stay
-		/// behind the inserted text.
+		/// determines where the caret moves to. For normal insertions, the anchor will move
+		/// after the inserted text.
 		/// </summary>
 		Default,
 		/// <summary>

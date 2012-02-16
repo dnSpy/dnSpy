@@ -44,5 +44,13 @@ namespace ICSharpCode.NRefactory.CSharp.ContextActions
 			return context.doc.Text;
 			
 		}
+		
+		protected static void TestWrongContext (IContextAction action, string input)
+		{
+			var context = new TestRefactoringContext (input);
+			if (!action.IsValid (context))
+				Console.WriteLine ("invalid node is:" + context.GetNode ());
+			Assert.IsTrue (!action.IsValid (context), action.GetType () + " shouldn't be valid there.");
+		}
 	}
 }

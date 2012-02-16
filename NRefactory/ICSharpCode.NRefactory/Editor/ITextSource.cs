@@ -24,7 +24,7 @@ namespace ICSharpCode.NRefactory.Editor
 {
 	/// <summary>
 	/// A read-only view on a (potentially mutable) text source.
-	/// The IDocument interfaces derives from this interface.
+	/// The IDocument interface derives from this interface.
 	/// </summary>
 	public interface ITextSource
 	{

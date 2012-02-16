@@ -26,7 +26,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	[Serializable]
 	public class DefaultUnresolvedEvent : AbstractUnresolvedMember, IUnresolvedEvent
 	{
-		IUnresolvedAccessor addAccessor, removeAccessor, invokeAccessor;
+		IUnresolvedMethod addAccessor, removeAccessor, invokeAccessor;
 		
 		protected override void FreezeInternal()
 		{
@@ -70,7 +70,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return invokeAccessor != null; }
 		}
 		
-		public IUnresolvedAccessor AddAccessor {
+		public IUnresolvedMethod AddAccessor {
 			get { return addAccessor; }
 			set {
 				ThrowIfFrozen();
@@ -78,7 +78,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		public IUnresolvedAccessor RemoveAccessor {
+		public IUnresolvedMethod RemoveAccessor {
 			get { return removeAccessor; }
 			set {
 				ThrowIfFrozen();
@@ -86,7 +86,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		public IUnresolvedAccessor InvokeAccessor {
+		public IUnresolvedMethod InvokeAccessor {
 			get { return invokeAccessor; }
 			set {
 				ThrowIfFrozen();

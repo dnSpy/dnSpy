@@ -25,9 +25,9 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	public class DefaultResolvedEvent : AbstractResolvedMember, IEvent
 	{
 		protected new readonly IUnresolvedEvent unresolved;
-		IAccessor addAccessor;
-		IAccessor removeAccessor;
-		IAccessor invokeAccessor;
+		IMethod addAccessor;
+		IMethod removeAccessor;
+		IMethod invokeAccessor;
 		
 		public DefaultResolvedEvent(IUnresolvedEvent unresolved, ITypeResolveContext parentContext)
 			: base(unresolved, parentContext)
@@ -47,46 +47,16 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return unresolved.CanInvoke; }
 		}
 		
-		public IAccessor AddAccessor {
-			get {
-				if (!unresolved.CanAdd)
-					return null;
-				IAccessor result = this.addAccessor;
-				if (result != null) {
-					LazyInit.ReadBarrier();
-					return result;
-				} else {
-					return LazyInit.GetOrSet(ref this.addAccessor, unresolved.AddAccessor.CreateResolvedAccessor(context));
-				}
-			}
+		public IMethod AddAccessor {
+			get { return GetAccessor(ref addAccessor, unresolved.AddAccessor); }
 		}
 		
-		public IAccessor RemoveAccessor {
-			get {
-				if (!unresolved.CanRemove)
-					return null;
-				IAccessor result = this.removeAccessor;
-				if (result != null) {
-					LazyInit.ReadBarrier();
-					return result;
-				} else {
-					return LazyInit.GetOrSet(ref this.removeAccessor, unresolved.RemoveAccessor.CreateResolvedAccessor(context));
-				}
-			}
+		public IMethod RemoveAccessor {
+			get { return GetAccessor(ref removeAccessor, unresolved.RemoveAccessor); }
 		}
 		
-		public IAccessor InvokeAccessor {
-			get {
-				if (!unresolved.CanInvoke)
-					return null;
-				IAccessor result = this.invokeAccessor;
-				if (result != null) {
-					LazyInit.ReadBarrier();
-					return result;
-				} else {
-					return LazyInit.GetOrSet(ref this.invokeAccessor, unresolved.InvokeAccessor.CreateResolvedAccessor(context));
-				}
-			}
+		public IMethod InvokeAccessor {
+			get { return GetAccessor(ref invokeAccessor, unresolved.InvokeAccessor); }
 		}
 	}
 }

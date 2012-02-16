@@ -442,12 +442,7 @@ namespace Mono.CSharp
 			return assembly.GetType (compiler.BuiltinTypes.Object.FullName) != null;
 		}
 
-		public override Assembly LoadAssemblyFile (string fileName)
-		{
-			return LoadAssemblyFile (fileName, false);
-		}
-
-		Assembly LoadAssemblyFile (string assembly, bool soft)
+		public override Assembly LoadAssemblyFile (string assembly, bool isImplicitReference)
 		{
 			Assembly a = null;
 
@@ -464,7 +459,7 @@ namespace Mono.CSharp
 						a = Assembly.Load (ass);
 					}
 				} catch (FileNotFoundException) {
-					bool err = !soft;
+					bool err = !isImplicitReference;
 					foreach (string dir in paths) {
 						string full_path = Path.Combine (dir, assembly);
 						if (!assembly.EndsWith (".dll") && !assembly.EndsWith (".exe"))
@@ -488,11 +483,6 @@ namespace Mono.CSharp
 			}
 
 			return a;
-		}
-
-		public override Assembly LoadAssemblyDefault (string fileName)
-		{
-			return LoadAssemblyFile (fileName, true);
 		}
 
 		Module LoadModuleFile (AssemblyDefinitionDynamic assembly, string module)

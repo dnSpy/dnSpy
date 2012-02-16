@@ -62,9 +62,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public override IMemberReference ToMemberReference()
 		{
-			return new DefaultMemberReference(
-				this.EntityType, this.DeclaringType.ToTypeReference(), this.Name, this.TypeParameters.Count,
-				this.Parameters.Select(p => p.Type.ToTypeReference()).ToList());
+			var declTypeRef = this.DeclaringType.ToTypeReference();
+			if (IsExplicitInterfaceImplementation && InterfaceImplementations.Count == 1) {
+				return new ExplicitInterfaceImplementationMemberReference(declTypeRef, InterfaceImplementations[0].ToMemberReference());
+			} else {
+				return new DefaultMemberReference(
+					this.EntityType, declTypeRef, this.Name, this.TypeParameters.Count,
+					this.Parameters.Select(p => p.Type.ToTypeReference()).ToList());
+			}
 		}
 	}
 }

@@ -257,7 +257,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				return GetTypeDefinition(unresolved.GetTypeDefinition(ns, name, typeParameterCount));
 			}
 			
-			public ITypeDefinition GetTypeDefinition(IUnresolvedTypeDefinition unresolved)
+			ITypeDefinition GetTypeDefinition(IUnresolvedTypeDefinition unresolved)
 			{
 				if (unresolved == null)
 					return null;
@@ -280,6 +280,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				get {
 					return unresolved.TopLevelTypeDefinitions.Select(t => GetTypeDefinition(t));
 				}
+			}
+			
+			public override string ToString()
+			{
+				return "[DefaultResolvedAssembly " + AssemblyName + "]";
 			}
 			
 			sealed class NS : INamespace

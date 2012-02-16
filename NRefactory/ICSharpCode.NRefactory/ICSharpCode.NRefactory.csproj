@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectGuid>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</ProjectGuid>
@@ -13,44 +13,38 @@
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <NoWarn>1591,0618</NoWarn>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA1026;-Microsoft.Security#CA2104</CodeAnalysisRules>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
-    <DocumentationFile>bin\Release\ICSharpCode.NRefactory.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\ICSharpCode.NRefactory.xml</DocumentationFile>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <BaseAddress>465371136</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
-    <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Release\</OutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>PdbOnly</DebugType>
     <Optimize>True</Optimize>
     <DefineConstants>TRACE</DefineConstants>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <WarningLevel>4</WarningLevel>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <WarningLevel>4</WarningLevel>
-    <DebugType>Full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>PdbOnly</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -87,7 +81,9 @@
     <Compile Include="Semantics\ArrayCreateResolveResult.cs" />
     <Compile Include="Semantics\ByReferenceResolveResult.cs" />
     <Compile Include="Semantics\ConstantResolveResult.cs" />
+    <Compile Include="Semantics\ConversionResolveResult.cs" />
     <Compile Include="Semantics\ErrorResolveResult.cs" />
+    <Compile Include="Semantics\Conversion.cs" />
     <Compile Include="Semantics\InvocationResolveResult.cs" />
     <Compile Include="Semantics\LocalResolveResult.cs" />
     <Compile Include="Semantics\MemberResolveResult.cs" />
@@ -107,7 +103,6 @@
     <Compile Include="TypeSystem\DomRegion.cs" />
     <Compile Include="TypeSystem\EntityType.cs" />
     <Compile Include="TypeSystem\ExtensionMethods.cs" />
-    <Compile Include="TypeSystem\IAccessor.cs" />
     <Compile Include="TypeSystem\IAmbience.cs" />
     <Compile Include="TypeSystem\IAssembly.cs" />
     <Compile Include="TypeSystem\IAttribute.cs" />
@@ -132,7 +127,6 @@
     <Compile Include="TypeSystem\Implementation\DefaultAssemblyReference.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultMemberReference.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultParameter.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultResolvedAccessor.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultResolvedEvent.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultResolvedField.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultResolvedMethod.cs" />
@@ -140,7 +134,6 @@
     <Compile Include="TypeSystem\Implementation\DefaultResolvedTypeDefinition.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultResolvedTypeParameter.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultSolutionSnapshot.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultUnresolvedAccessor.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultUnresolvedAssembly.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultUnresolvedAttribute.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultUnresolvedEvent.cs" />
@@ -151,6 +144,7 @@
     <Compile Include="TypeSystem\Implementation\DefaultUnresolvedTypeDefinition.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultUnresolvedTypeParameter.cs" />
     <Compile Include="TypeSystem\Implementation\DummyTypeParameter.cs" />
+    <Compile Include="TypeSystem\Implementation\ExplicitInterfaceImplementationMemberReference.cs" />
     <Compile Include="TypeSystem\Implementation\FullNameAndTypeParameterCount.cs" />
     <Compile Include="TypeSystem\Implementation\GetClassTypeReference.cs" />
     <Compile Include="TypeSystem\Implementation\GetMembersHelper.cs" />
@@ -167,6 +161,7 @@
     <Compile Include="TypeSystem\Implementation\SpecializedMember.cs" />
     <Compile Include="TypeSystem\Implementation\SpecializedMethod.cs" />
     <Compile Include="TypeSystem\Implementation\SpecializedProperty.cs" />
+    <Compile Include="TypeSystem\Implementation\SpecializingMemberReference.cs" />
     <Compile Include="TypeSystem\Implementation\TypeParameterReference.cs" />
     <Compile Include="TypeSystem\Implementation\TypeParameterSubstitution.cs" />
     <Compile Include="TypeSystem\Implementation\TypeWithElementType.cs" />

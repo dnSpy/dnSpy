@@ -117,6 +117,40 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
+		/// <summary>
+		/// Gets the binary operator for the specified compound assignment operator.
+		/// Returns null if 'op' is not a compound assignment.
+		/// </summary>
+		public static BinaryOperatorType? GetCorrespondingBinaryOperator(AssignmentOperatorType op)
+		{
+			switch (op) {
+				case AssignmentOperatorType.Assign:
+					return null;
+				case AssignmentOperatorType.Add:
+					return BinaryOperatorType.Add;
+				case AssignmentOperatorType.Subtract:
+					return BinaryOperatorType.Subtract;
+				case AssignmentOperatorType.Multiply:
+					return BinaryOperatorType.Multiply;
+				case AssignmentOperatorType.Divide:
+					return BinaryOperatorType.Divide;
+				case AssignmentOperatorType.Modulus:
+					return BinaryOperatorType.Modulus;
+				case AssignmentOperatorType.ShiftLeft:
+					return BinaryOperatorType.ShiftLeft;
+				case AssignmentOperatorType.ShiftRight:
+					return BinaryOperatorType.ShiftRight;
+				case AssignmentOperatorType.BitwiseAnd:
+					return BinaryOperatorType.BitwiseAnd;
+				case AssignmentOperatorType.BitwiseOr:
+					return BinaryOperatorType.BitwiseOr;
+				case AssignmentOperatorType.ExclusiveOr:
+					return BinaryOperatorType.ExclusiveOr;
+				default:
+					throw new NotSupportedException("Invalid value for AssignmentOperatorType");
+			}
+		}
+		
 		public static ExpressionType GetLinqNodeType(AssignmentOperatorType op, bool checkForOverflow)
 		{
 			switch (op) {

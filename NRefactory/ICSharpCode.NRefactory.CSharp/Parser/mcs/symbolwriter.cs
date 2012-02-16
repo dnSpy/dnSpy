@@ -92,11 +92,10 @@ namespace Mono.CSharp
 			}
 		}
 
-		public static SourceMethodBuilder OpenMethod (ICompileUnit file, int ns_id,
-							      IMethodDef method)
+		public static SourceMethodBuilder OpenMethod (ICompileUnit file, IMethodDef method)
 		{
 			if (symwriter != null)
-				return symwriter.OpenMethod (file, ns_id, method);
+				return symwriter.OpenMethod (file, -1 /* Not used */, method);
 			else
 				return null;
 		}
@@ -123,15 +122,6 @@ namespace Mono.CSharp
 				int offset = GetILOffset (ig);
 				symwriter.CloseScope (offset);
 			}
-		}
-
-		public static int DefineNamespace (string name, CompileUnitEntry source,
-						   string[] using_clauses, int parent)
-		{
-			if (symwriter != null)
-				return symwriter.DefineNamespace (name, source, using_clauses, parent);
-			else
-				return -1;
 		}
 
 		public static void DefineAnonymousScope (int id)
@@ -232,8 +222,7 @@ namespace Mono.CSharp
 			if (symwriter != null) {
 				SourceFileEntry file = loc.SourceFile.SourceFileEntry;
 				int offset = GetILOffset (ig);
-				symwriter.MarkSequencePoint (
-					offset, file, loc.Row, loc.Column, loc.Hidden);
+				symwriter.MarkSequencePoint (offset, file, loc.Row, loc.Column, false);
 			}
 		}
 

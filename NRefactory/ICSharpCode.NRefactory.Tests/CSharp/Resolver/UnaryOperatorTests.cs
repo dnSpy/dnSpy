@@ -71,6 +71,15 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			TestOperator(UnaryOperatorType.Increment, MakeResult(typeof(byte)),
 			             Conversion.IdentityConversion, typeof(byte));
 			
+			TestOperator(UnaryOperatorType.PostIncrement, MakeResult(typeof(char)),
+			             Conversion.IdentityConversion, typeof(char));
+			
+			TestOperator(UnaryOperatorType.PostIncrement, MakeResult(typeof(float)),
+			             Conversion.IdentityConversion, typeof(float));
+			
+			TestOperator(UnaryOperatorType.PostIncrement, MakeResult(typeof(decimal)),
+			             Conversion.IdentityConversion, typeof(decimal));
+			
 			TestOperator(UnaryOperatorType.Decrement, MakeResult(typeof(ulong)),
 			             Conversion.IdentityConversion, typeof(ulong));
 			

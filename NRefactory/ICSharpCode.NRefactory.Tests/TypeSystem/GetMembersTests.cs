@@ -27,12 +27,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	[TestFixture]
 	public class GetMembersTests
 	{
-		ICompilation compilation = new SimpleCompilation(CecilLoaderTests.Mscorlib);
-		
 		[Test]
 		public void EmptyClassHasToString()
 		{
 			DefaultUnresolvedTypeDefinition c = new DefaultUnresolvedTypeDefinition(string.Empty, "C");
+			var compilation = TypeSystemHelper.CreateCompilation(c);
 			Assert.AreEqual("System.Object.ToString", compilation.MainAssembly.GetTypeDefinition(c).GetMethods(m => m.Name == "ToString").Single().FullName);
 		}
 		
@@ -52,6 +51,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			c.BaseTypes.Add(b1);
 			c.BaseTypes.Add(b2);
 			
+			var compilation = TypeSystemHelper.CreateCompilation(b1, b2, c);
 			ITypeDefinition resolvedC = compilation.MainAssembly.GetTypeDefinition(c);
 			Assert.AreEqual(new[] { "P1", "P2" }, resolvedC.GetProperties().Select(p => p.Name).ToArray());
 			// Test that there's only one copy of ToString():
@@ -61,6 +61,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void GetNestedTypesOfUnboundGenericClass()
 		{
+			var compilation = TypeSystemHelper.CreateCompilation();
 			ITypeDefinition dictionary = compilation.FindType(typeof(Dictionary<,>)).GetDefinition();
 			IType keyCollection = dictionary.GetNestedTypes().Single(t => t.Name == "KeyCollection");
 			// the type should be parameterized
@@ -70,6 +71,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		[Test]
 		public void GetNestedTypesOfBoundGenericClass()
 		{
+			var compilation = TypeSystemHelper.CreateCompilation();
 			IType dictionary = compilation.FindType(typeof(Dictionary<string, int>));
 			IType keyCollection = dictionary.GetNestedTypes().Single(t => t.Name == "KeyCollection");
 			Assert.AreEqual(compilation.FindType(typeof(Dictionary<string, int>.KeyCollection)), keyCollection);
@@ -88,6 +90,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			a.NestedTypes.Add(b);
 			
+			var compilation = TypeSystemHelper.CreateCompilation(a, b);
 			ITypeDefinition resolvedA = compilation.MainAssembly.GetTypeDefinition(a);
 			ITypeDefinition resolvedB = compilation.MainAssembly.GetTypeDefinition(b);
 			

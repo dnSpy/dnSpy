@@ -127,6 +127,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				get { return this; }
 			}
 			
+			IUnresolvedMember IMember.UnresolvedMember {
+				get { return null; }
+			}
+			
 			IList<IMember> IMember.InterfaceImplementations {
 				get { return EmptyList<IMember>.Instance; }
 			}
@@ -751,42 +755,75 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		}
 		
 		// C# 4.0 spec: §7.10 Relational and type-testing operators
-		static readonly TypeCode[] equalityOperatorsFor = {
+		static readonly TypeCode[] valueEqualityOperatorsFor = {
 			TypeCode.Int32, TypeCode.UInt32,
 			TypeCode.Int64, TypeCode.UInt64,
 			TypeCode.Single, TypeCode.Double,
 			TypeCode.Decimal,
-			TypeCode.Boolean,
-			TypeCode.String, TypeCode.Object
+			TypeCode.Boolean
 		};
 		
-		OperatorMethod[] equalityOperators;
+		OperatorMethod[] valueEqualityOperators;
 		
-		public OperatorMethod[] EqualityOperators {
+		public OperatorMethod[] ValueEqualityOperators {
 			get {
-				OperatorMethod[] ops = equalityOperators;
+				OperatorMethod[] ops = valueEqualityOperators;
 				if (ops != null) {
 					LazyInit.ReadBarrier();
 					return ops;
 				} else {
-					return LazyInit.GetOrSet(ref equalityOperators, Lift(
-						equalityOperatorsFor.Select(c => new EqualityOperatorMethod(this, c, false)).ToArray()
+					return LazyInit.GetOrSet(ref valueEqualityOperators, Lift(
+						valueEqualityOperatorsFor.Select(c => new EqualityOperatorMethod(this, c, false)).ToArray()
 					));
 				}
 			}
 		}
 		
-		OperatorMethod[] inequalityOperators;
+		OperatorMethod[] valueInequalityOperators;
 		
-		public OperatorMethod[] InequalityOperators {
+		public OperatorMethod[] ValueInequalityOperators {
 			get {
-				OperatorMethod[] ops = inequalityOperators;
+				OperatorMethod[] ops = valueInequalityOperators;
 				if (ops != null) {
 					LazyInit.ReadBarrier();
 					return ops;
 				} else {
-					return LazyInit.GetOrSet(ref inequalityOperators, Lift(
-						equalityOperatorsFor.Select(c => new EqualityOperatorMethod(this, c, true)).ToArray()
+					return LazyInit.GetOrSet(ref valueInequalityOperators, Lift(
+						valueEqualityOperatorsFor.Select(c => new EqualityOperatorMethod(this, c, true)).ToArray()
+					));
+				}
+			}
+		}
+		
+		OperatorMethod[] referenceEqualityOperators;
+		
+		public OperatorMethod[] ReferenceEqualityOperators {
+			get {
+				OperatorMethod[] ops = referenceEqualityOperators;
+				if (ops != null) {
+					LazyInit.ReadBarrier();
+					return ops;
+				} else {
+					return LazyInit.GetOrSet(ref referenceEqualityOperators, Lift(
+						new EqualityOperatorMethod(this, TypeCode.Object, false),
+						new EqualityOperatorMethod(this, TypeCode.String, false)
+					));
+				}
+			}
+		}
+		
+		OperatorMethod[] referenceInequalityOperators;
+		
+		public OperatorMethod[] ReferenceInequalityOperators {
+			get {
+				OperatorMethod[] ops = referenceInequalityOperators;
+				if (ops != null) {
+					LazyInit.ReadBarrier();
+					return ops;
+				} else {
+					return LazyInit.GetOrSet(ref referenceInequalityOperators, Lift(
+						new EqualityOperatorMethod(this, TypeCode.Object, true),
+						new EqualityOperatorMethod(this, TypeCode.String, true)
 					));
 				}
 			}
@@ -821,7 +858,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			public override OperatorMethod Lift(CSharpOperators operators)
 			{
-				return new LiftedBinaryOperatorMethod(operators, this);
+				var lifted = new LiftedBinaryOperatorMethod(operators, this);
+				lifted.ReturnType = this.ReturnType; // don't lift the return type for relational operators
+				return lifted;
 			}
 		}
 		

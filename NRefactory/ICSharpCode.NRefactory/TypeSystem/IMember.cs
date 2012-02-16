@@ -43,7 +43,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets the interfaces that are explicitly implemented by this member.
 		/// </summary>
-		IList<IMemberReference> InterfaceImplementations { get; }
+		IList<IMemberReference> ExplicitInterfaceImplementations { get; }
 		
 		/// <summary>
 		/// Gets if the member is virtual. Is true only if the "virtual" modifier was used, but non-virtual
@@ -85,8 +85,20 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IMember MemberDefinition { get; }
 		
 		/// <summary>
+		/// Gets the unresolved member instance from which this member was created.
+		/// This property may return <c>null</c> for special members that do not have a corresponding unresolved member instance.
+		/// </summary>
+		/// <remarks>
+		/// For specialized members, this property returns the unresolved member for the original member definition.
+		/// For partial methods, this property returns the implementing partial method declaration, if one exists, and the
+		/// defining partial method declaration otherwise.
+		/// For the members used to represent the built-in C# operators like "operator +(int, int);", this property returns <c>null</c>.
+		/// </remarks>
+		IUnresolvedMember UnresolvedMember { get; }
+		
+		/// <summary>
 		/// Gets the return type of this member.
-		/// This property never returns null.
+		/// This property never returns <c>null</c>.
 		/// </summary>
 		IType ReturnType { get; }
 		

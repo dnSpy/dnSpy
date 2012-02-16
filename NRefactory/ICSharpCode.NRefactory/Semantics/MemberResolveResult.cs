@@ -59,6 +59,10 @@ namespace ICSharpCode.NRefactory.Semantics
 			get { return targetResult; }
 		}
 		
+		/// <summary>
+		/// Gets the member.
+		/// This property never returns null.
+		/// </summary>
 		public IMember Member {
 			get { return member; }
 		}

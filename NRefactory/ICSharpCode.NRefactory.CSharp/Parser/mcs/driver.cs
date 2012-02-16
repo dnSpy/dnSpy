@@ -41,20 +41,22 @@ namespace Mono.CSharp
 			}
 		}
 
-		void tokenize_file (CompilationSourceFile file)
+		void tokenize_file (SourceFile sourceFile, ModuleContainer module)
 		{
 			Stream input;
 
 			try {
-				input = File.OpenRead (file.Name);
+				input = File.OpenRead (sourceFile.Name);
 			} catch {
-				Report.Error (2001, "Source file `" + file.Name + "' could not be found");
+				Report.Error (2001, "Source file `" + sourceFile.Name + "' could not be found");
 				return;
 			}
 
 			using (input){
 				SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
-				Tokenizer lexer = new Tokenizer (reader, file, ctx);
+				var file = new CompilationSourceFile (module, sourceFile);
+
+				Tokenizer lexer = new Tokenizer (reader, file);
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
@@ -70,20 +72,21 @@ namespace Mono.CSharp
 
 		void Parse (ModuleContainer module)
 		{
-			Location.Initialize (module.Compiler.SourceFiles);
-
 			bool tokenize_only = module.Compiler.Settings.TokenizeOnly;
 			var sources = module.Compiler.SourceFiles;
+
+			Location.Initialize (sources);
+
 			for (int i = 0; i < sources.Count; ++i) {
 				if (tokenize_only) {
-					tokenize_file (sources[i]);
+					tokenize_file (sources[i], module);
 				} else {
 					Parse (sources[i], module);
 				}
 			}
 		}
 
-		public void Parse (CompilationSourceFile file, ModuleContainer module)
+		public void Parse (SourceFile file, ModuleContainer module)
 		{
 			Stream input;
 
@@ -96,6 +99,7 @@ namespace Mono.CSharp
 
 			// Check 'MZ' header
 			if (input.ReadByte () == 77 && input.ReadByte () == 90) {
+
 				Report.Error (2015, "Source file `{0}' is a binary file and not a text file", file.Name);
 				input.Close ();
 				return;
@@ -107,30 +111,32 @@ namespace Mono.CSharp
 			Parse (reader, file, module);
 			reader.Dispose ();
 			input.Close ();
-		}	
-		
-		public void Parse (SeekableStreamReader reader, CompilationSourceFile file, ModuleContainer module)
+		}
+
+		public CSharpParser Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module)
 		{
-			file.NamespaceContainer = new NamespaceContainer (null, module, null, file);
+			var file = new CompilationSourceFile (module, sourceFile);
+			module.AddTypeContainer (file);
 
 			CSharpParser parser = new CSharpParser (reader, file);
+			parser.Lexer.sbag = new SpecialsBag ();
 			parser.parse ();
+			return parser;
 		}
 		
 		public static int Main (string[] args)
 		{
 			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 
-			var r = new Report (new ConsoleReportPrinter ());
-			CommandLineParser cmd = new CommandLineParser (r);
+			CommandLineParser cmd = new CommandLineParser (Console.Out);
 			var settings = cmd.ParseArguments (args);
-			if (settings == null || r.Errors > 0)
+			if (settings == null)
 				return 1;
 
 			if (cmd.HasBeenStopped)
 				return 0;
 
-			Driver d = new Driver (new CompilerContext (settings, r));
+			Driver d = new Driver (new CompilerContext (settings, new ConsoleReportPrinter ()));
 
 			if (d.Compile () && d.Report.Errors == 0) {
 				if (d.Report.Warnings > 0) {
@@ -263,7 +269,7 @@ namespace Mono.CSharp
 			// loaded assembly into compiled builder to be resolved
 			// correctly
 			tr.Start (TimeReporter.TimerType.CreateTypeTotal);
-			module.CreateType ();
+			module.CreateContainer ();
 			importer.AddCompiledAssembly (assembly);
 			tr.Stop (TimeReporter.TimerType.CreateTypeTotal);
 
@@ -292,17 +298,11 @@ namespace Mono.CSharp
 			if (!assembly.Create (AppDomain.CurrentDomain, AssemblyBuilderAccess.Save))
 				return false;
 
-			module.CreateType ();
+			module.CreateContainer ();
 
 			loader.LoadModules (assembly, module.GlobalRootNamespace);
 #endif
 			module.InitializePredefinedTypes ();
-
-			tr.Start (TimeReporter.TimerType.UsingResolve);
-			foreach (var source_file in ctx.SourceFiles) {
-				source_file.NamespaceContainer.Resolve ();
-			}
-			tr.Stop (TimeReporter.TimerType.UsingResolve);
 
 			tr.Start (TimeReporter.TimerType.ModuleDefinitionTotal);
 			module.Define ();
@@ -331,7 +331,7 @@ namespace Mono.CSharp
 			}
 
 			tr.Start (TimeReporter.TimerType.CloseTypes);
-			module.CloseType ();
+			module.CloseContainer ();
 			tr.Stop (TimeReporter.TimerType.CloseTypes);
 
 			tr.Start (TimeReporter.TimerType.Resouces);
@@ -356,26 +356,24 @@ namespace Mono.CSharp
 	public class CompilerCompilationUnit {
 		public ModuleContainer ModuleCompiled { get; set; }
 		public LocationsBag LocationsBag { get; set; }
-		public UsingsBag UsingsBag { get; set; }
 		public SpecialsBag SpecialsBag { get; set; }
 		public object LastYYValue { get; set; }
 	}
-	
+
 	//
 	// This is the only public entry point
 	//
-	public class CompilerCallableEntryPoint : MarshalByRefObject {
-		
+	public class CompilerCallableEntryPoint : MarshalByRefObject
+	{
 		public static bool InvokeCompiler (string [] args, TextWriter error)
 		{
 			try {
-				var r = new Report (new StreamReportPrinter (error));
-				CommandLineParser cmd = new CommandLineParser (r, error);
+				CommandLineParser cmd = new CommandLineParser (error);
 				var setting = cmd.ParseArguments (args);
-				if (setting == null || r.Errors > 0)
+				if (setting == null)
 					return false;
 
-				var d = new Driver (new CompilerContext (setting, r));
+				var d = new Driver (new CompilerContext (setting, new StreamReportPrinter (error)));
 				return d.Compile ();
 			} finally {
 				Reset ();
@@ -400,74 +398,15 @@ namespace Mono.CSharp
 		
 		public static void Reset (bool full_flag)
 		{
-			CSharpParser.yacc_verbose_flag = 0;
 			Location.Reset ();
 			
 			if (!full_flag)
 				return;
 
-			AnonymousTypeClass.Reset ();
-			AnonymousMethodBody.Reset ();
-			AnonymousMethodStorey.Reset ();
 			SymbolWriter.Reset ();
-			Switch.Reset ();
 			Linq.QueryBlock.TransparentParameter.Reset ();
 			TypeInfo.Reset ();
 		}
-		
-		public static CompilerCompilationUnit ParseFile (string[] args, Stream input, string inputFile, TextWriter reportStream)
-		{
-			return ParseFile (args, input, inputFile, new StreamReportPrinter (reportStream));
-		}
-		
-		internal static object parseLock = new object ();
-
-		public static CompilerCompilationUnit ParseFile (string[] args, Stream input, string inputFile, ReportPrinter reportPrinter)
-		{
-			lock (parseLock) {
-				try {
-					//                                     Driver d = Driver.Create (args, false, null, reportPrinter);
-					//                                     if (d == null)
-					//                                             return null;
-       
-					var r = new Report (reportPrinter);
-					CommandLineParser cmd = new CommandLineParser (r, Console.Out);
-					var setting = cmd.ParseArguments (args);
-					if (setting == null || r.Errors > 0)
-						return null;
-					setting.Version = LanguageVersion.V_5;
-					
-					CompilerContext ctx = new CompilerContext (setting, r);
-					
-					var files = new List<CompilationSourceFile> ();
-					var unit = new CompilationSourceFile (inputFile, inputFile, 0);
-					var module = new ModuleContainer (ctx);
-					unit.NamespaceContainer = new NamespaceContainer (null, module, null, unit);
-					files.Add (unit);
-					Location.Initialize (files);
-
-					// TODO: encoding from driver
-					SeekableStreamReader reader = new SeekableStreamReader (input, Encoding.UTF8);
-				
-					RootContext.ToplevelTypes = module;
-					
-					CSharpParser parser = new CSharpParser (reader, unit);
-					parser.Lexer.TabSize = 1;
-					parser.Lexer.sbag = new SpecialsBag ();
-					parser.LocationsBag = new LocationsBag ();
-					parser.UsingsBag = new UsingsBag ();
-					parser.parse ();
-					
-					return new CompilerCompilationUnit () { 
-						ModuleCompiled = RootContext.ToplevelTypes,
-						LocationsBag = parser.LocationsBag, 
-						UsingsBag = parser.UsingsBag, 
-						SpecialsBag = parser.Lexer.sbag
-					};
-				} finally {
-					Reset ();
-				}
-			}
-		}
 	}
+	
 }
