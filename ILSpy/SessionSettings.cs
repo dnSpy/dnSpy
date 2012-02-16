@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy
 			}
 			
 			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
-			this.WindowBounds = FromString((string)doc.Element("WindowBounds"), new Rect(10, 10, 750, 550));
+			this.WindowBounds = FromString((string)doc.Element("WindowBounds"), DefaultWindowBounds);
 			this.SplitterPosition = FromString((string)doc.Element("SplitterPosition"), 0.4);
 			this.TopPaneSplitterPosition = FromString((string)doc.Element("TopPaneSplitterPosition"), 0.3);
 			this.BottomPaneSplitterPosition = FromString((string)doc.Element("BottomPaneSplitterPosition"), 0.3);
@@ -69,6 +69,7 @@ namespace ICSharpCode.ILSpy
 		
 		public WindowState WindowState = WindowState.Normal;
 		public Rect WindowBounds;
+		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 750, 550);
 		/// <summary>
 		/// position of the left/right splitter
 		/// </summary>

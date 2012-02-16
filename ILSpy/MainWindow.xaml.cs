@@ -31,7 +31,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -78,12 +77,6 @@ namespace ICSharpCode.ILSpy
 			this.Icon = new BitmapImage(new Uri("pack://application:,,,/ILSpy;component/images/ILSpy.ico"));
 			
 			this.DataContext = sessionSettings;
-			this.Left = sessionSettings.WindowBounds.Left;
-			this.Top = sessionSettings.WindowBounds.Top;
-			this.Width = sessionSettings.WindowBounds.Width;
-			this.Height = sessionSettings.WindowBounds.Height;
-			// TODO: validate bounds (maybe a monitor was removed...)
-			this.WindowState = sessionSettings.WindowState;
 			
 			InitializeComponent();
 			App.CompositionContainer.ComposeParts(this);
@@ -100,6 +93,14 @@ namespace ICSharpCode.ILSpy
 			ContextMenuProvider.Add(treeView);
 			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
+		}
+		
+		void SetWindowBounds(Rect bounds)
+		{
+			this.Left = bounds.Left;
+			this.Top = bounds.Top;
+			this.Width = bounds.Width;
+			this.Height = bounds.Height;
 		}
 		
 		#region Toolbar extensibility
@@ -187,10 +188,26 @@ namespace ICSharpCode.ILSpy
 		protected override void OnSourceInitialized(EventArgs e)
 		{
 			base.OnSourceInitialized(e);
-			HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
-			if (source != null) {
-				source.AddHook(WndProc);
+			PresentationSource source = PresentationSource.FromVisual(this);
+			HwndSource hwndSource = source as HwndSource;
+			if (hwndSource != null) {
+				hwndSource.AddHook(WndProc);
 			}
+			// Validate and Set Window Bounds
+			Rect bounds = Rect.Transform(sessionSettings.WindowBounds, source.CompositionTarget.TransformToDevice);
+			var boundsRect = new System.Drawing.Rectangle((int)bounds.Left, (int)bounds.Top, (int)bounds.Width, (int)bounds.Height);
+			bool boundsOK = false;
+			foreach (var screen in System.Windows.Forms.Screen.AllScreens) {
+				var intersection = System.Drawing.Rectangle.Intersect(boundsRect, screen.WorkingArea);
+				if (intersection.Width > 10 && intersection.Height > 10)
+					boundsOK = true;
+			}
+			if (boundsOK)
+				SetWindowBounds(sessionSettings.WindowBounds);
+			else
+				SetWindowBounds(SessionSettings.DefaultWindowBounds);
+			
+			this.WindowState = sessionSettings.WindowState;
 		}
 		
 		unsafe IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
