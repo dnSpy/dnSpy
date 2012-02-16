@@ -31,6 +31,10 @@
 			<Begin color="JavaScriptTag">&lt;script\ lang="JavaScript"&gt;</Begin>
 			<End color="JavaScriptTag">&lt;/script&gt;</End>
 		</Span>
+		<Span ruleSet="JavaScriptSet" multiline="true">
+			<Begin color="JavaScriptTag">&lt;script\s.*?text/javascript.*?&gt;</Begin>
+			<End color="JavaScriptTag">&lt;/script&gt;</End>
+		</Span>
 		<Span multiline="true">
 			<Begin color="JScriptTag">&lt;script\ lang="JScript"&gt;</Begin>
 			<End color="JScriptTag">&lt;/script&gt;</End>

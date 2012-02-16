@@ -81,7 +81,7 @@ namespace ICSharpCode.AvalonEdit
 		protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
 		{
 			base.OnGotKeyboardFocus(e);
-			if (!this.TextArea.IsKeyboardFocusWithin) {
+			if (e.NewFocus == this) {
 				Keyboard.Focus(this.TextArea);
 				e.Handled = true;
 			}
@@ -818,7 +818,7 @@ namespace ICSharpCode.AvalonEdit
 					int length = this.SelectionLength;
 					textArea.Document.Replace(offset, length, value);
 					// keep inserted text selected
-					textArea.Selection = new SimpleSelection(offset, offset + value.Length);
+					textArea.Selection = SimpleSelection.Create(textArea, offset, offset + value.Length);
 				}
 			}
 		}
@@ -890,7 +890,7 @@ namespace ICSharpCode.AvalonEdit
 				throw new ArgumentOutOfRangeException("start", start, "Value must be between 0 and " + documentLength);
 			if (length < 0 || start + length > documentLength)
 				throw new ArgumentOutOfRangeException("length", length, "Value must be between 0 and " + (documentLength - length));
-			textArea.Selection = new SimpleSelection(start, start + length);
+			textArea.Selection = SimpleSelection.Create(textArea, start, start + length);
 			textArea.Caret.Offset = start + length;
 		}
 		

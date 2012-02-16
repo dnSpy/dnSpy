@@ -115,7 +115,8 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			if (newValue != null) {
 				TextDocumentWeakEventManager.Changing.AddListener(newValue, this);
 				formatter = TextFormatterFactory.Create(this);
-				heightTree = new HeightTree(newValue, DefaultLineHeight); // measuring DefaultLineHeight depends on formatter
+				InvalidateDefaultTextMetrics(); // measuring DefaultLineHeight depends on formatter
+				heightTree = new HeightTree(newValue, DefaultLineHeight);
 				cachedElements = new TextViewCachedElements();
 			}
 			InvalidateMeasure(DispatcherPriority.Normal);
@@ -263,7 +264,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		#endregion
 		
 		#region Builtin ElementGenerators
-		NewLineElementGenerator newLineElementGenerator;
+//		NewLineElementGenerator newLineElementGenerator;
 		SingleCharacterElementGenerator singleCharacterElementGenerator;
 		LinkElementGenerator linkElementGenerator;
 		MailLinkElementGenerator mailLinkElementGenerator;
@@ -272,7 +273,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		{
 			TextEditorOptions options = this.Options;
 			
-			AddRemoveDefaultElementGeneratorOnDemand(ref newLineElementGenerator, options.ShowEndOfLine);
+//			AddRemoveDefaultElementGeneratorOnDemand(ref newLineElementGenerator, options.ShowEndOfLine);
 			AddRemoveDefaultElementGeneratorOnDemand(ref singleCharacterElementGenerator, options.ShowBoxForControlCharacters || options.ShowSpaces || options.ShowTabs);
 			AddRemoveDefaultElementGeneratorOnDemand(ref linkElementGenerator, options.EnableHyperlinks);
 			AddRemoveDefaultElementGeneratorOnDemand(ref mailLinkElementGenerator, options.EnableEmailHyperlinks);
@@ -610,6 +611,18 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		}
 		
 		/// <summary>
+		/// Causes a known layer to redraw.
+		/// This method does not invalidate visual lines;
+		/// use the <see cref="Redraw()"/> method to do that.
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "knownLayer",
+		                                                 Justification="This method is meant to invalidate only a specific layer - I just haven't figured out how to do that, yet.")]
+		public void InvalidateLayer(KnownLayer knownLayer, DispatcherPriority priority)
+		{
+			InvalidateMeasure(priority);
+		}
+		
+		/// <summary>
 		/// Causes the text editor to redraw all lines overlapping with the specified segment.
 		/// Does nothing if segment is null.
 		/// </summary>
@@ -811,7 +824,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		/// Additonal amount that allows horizontal scrolling past the end of the longest line.
 		/// This is necessary to ensure the caret always is visible, even when it is at the end of the longest line.
 		/// </summary>
-		const double AdditionalHorizontalScrollAmount = 30;
+		const double AdditionalHorizontalScrollAmount = 3;
 		
 		Size lastAvailableSize;
 		bool inMeasure;
@@ -869,10 +882,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			if (VisualLinesChanged != null)
 				VisualLinesChanged(this, EventArgs.Empty);
 			
-			return new Size(
-				canHorizontallyScroll ? Math.Min(availableSize.Width, maxWidth) : maxWidth,
-				canVerticallyScroll ? Math.Min(availableSize.Height, heightTreeHeight) : heightTreeHeight
-			);
+			return new Size(Math.Min(availableSize.Width, maxWidth), Math.Min(availableSize.Height, heightTreeHeight));
 		}
 		
 		/// <summary>
@@ -1004,7 +1014,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			var textLines = new List<TextLine>();
 			paragraphProperties.indent = 0;
 			paragraphProperties.firstLineInParagraph = true;
-			while (textOffset <= visualLine.VisualLength) {
+			while (textOffset <= visualLine.VisualLengthWithEndOfLineMarker) {
 				TextLine textLine = formatter.FormatLine(
 					textSource,
 					textOffset,
@@ -1016,7 +1026,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				textOffset += textLine.Length;
 				
 				// exit loop so that we don't do the indentation calculation if there's only a single line
-				if (textOffset >= visualLine.VisualLength)
+				if (textOffset >= visualLine.VisualLengthWithEndOfLineMarker)
 					break;
 				
 				if (paragraphProperties.firstLineInParagraph) {
@@ -1278,6 +1288,11 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		void SetScrollOffset(Vector vector)
 		{
+			if (!canHorizontallyScroll)
+				vector.X = 0;
+			if (!canVerticallyScroll)
+				vector.Y = 0;
+			
 			if (!scrollOffset.IsClose(vector)) {
 				scrollOffset = vector;
 				if (ScrollOffsetChanged != null)
@@ -1355,29 +1370,64 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			OnScrollChange();
 		}
 		
+		bool defaultTextMetricsValid;
 		double wideSpaceWidth; // Width of an 'x'. Used as basis for the tab width, and for scrolling.
 		double defaultLineHeight; // Height of a line containing 'x'. Used for scrolling.
+		double defaultBaseline; // Baseline of a line containing 'x'. Used for TextTop/TextBottom calculation.
 		
-		double WideSpaceWidth {
+		/// <summary>
+		/// Gets the width of a 'wide space' (the space width used for calculating the tab size).
+		/// </summary>
+		/// <remarks>
+		/// This is the width of an 'x' in the current font.
+		/// We do not measure the width of an actual space as that would lead to tiny tabs in
+		/// some proportional fonts.
+		/// For monospaced fonts, this property will return the expected value, as 'x' and ' ' have the same width.
+		/// </remarks>
+		public double WideSpaceWidth {
 			get {
-				if (wideSpaceWidth == 0) {
-					MeasureWideSpaceWidthAndDefaultLineHeight();
-				}
+				CalculateDefaultTextMetrics();
 				return wideSpaceWidth;
 			}
 		}
 		
-		double DefaultLineHeight {
+		/// <summary>
+		/// Gets the default line height. This is the height of an empty line or a line containing regular text.
+		/// Lines that include formatted text or custom UI elements may have a different line height.
+		/// </summary>
+		public double DefaultLineHeight {
 			get {
-				if (defaultLineHeight == 0) {
-					MeasureWideSpaceWidthAndDefaultLineHeight();
-				}
+				CalculateDefaultTextMetrics();
 				return defaultLineHeight;
 			}
 		}
 		
-		void MeasureWideSpaceWidthAndDefaultLineHeight()
+		/// <summary>
+		/// Gets the default baseline position. This is the difference between <see cref="VisualYPosition.TextTop"/>
+		/// and <see cref="VisualYPosition.Baseline"/> for a line containing regular text.
+		/// Lines that include formatted text or custom UI elements may have a different baseline.
+		/// </summary>
+		public double DefaultBaseline {
+			get {
+				CalculateDefaultTextMetrics();
+				return defaultBaseline;
+			}
+		}
+		
+		void InvalidateDefaultTextMetrics()
 		{
+			defaultTextMetricsValid = false;
+			if (heightTree != null) {
+				// calculate immediately so that height tree gets updated
+				CalculateDefaultTextMetrics();
+			}
+		}
+		
+		void CalculateDefaultTextMetrics()
+		{
+			if (defaultTextMetricsValid)
+				return;
+			defaultTextMetricsValid = true;
 			if (formatter != null) {
 				var textRunProperties = CreateGlobalTextRunProperties();
 				using (var line = formatter.FormatLine(
@@ -1387,10 +1437,12 @@ namespace ICSharpCode.AvalonEdit.Rendering
 					null))
 				{
 					wideSpaceWidth = Math.Max(1, line.WidthIncludingTrailingWhitespace);
+					defaultBaseline = Math.Max(1, line.Baseline);
 					defaultLineHeight = Math.Max(1, line.Height);
 				}
 			} else {
 				wideSpaceWidth = FontSize / 2;
+				defaultBaseline = FontSize;
 				defaultLineHeight = FontSize + 3;
 			}
 			// Update heightTree.DefaultLineHeight, if a document is loaded.
@@ -1612,6 +1664,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		/// <summary>
 		/// Gets the text view position from the specified visual position.
+		/// If the position is within a character, it is rounded to the next character boundary.
 		/// </summary>
 		/// <param name="visualPosition">The position in WPF device-independent pixels relative
 		/// to the top left corner of the document.</param>
@@ -1625,6 +1678,26 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			if (line == null)
 				return null;
 			int visualColumn = line.GetVisualColumn(visualPosition);
+			int documentOffset = line.GetRelativeOffset(visualColumn) + line.FirstDocumentLine.Offset;
+			return new TextViewPosition(document.GetLocation(documentOffset), visualColumn);
+		}
+		
+		/// <summary>
+		/// Gets the text view position from the specified visual position.
+		/// If the position is inside a character, the position in front of the character is returned.
+		/// </summary>
+		/// <param name="visualPosition">The position in WPF device-independent pixels relative
+		/// to the top left corner of the document.</param>
+		/// <returns>The logical position, or null if the position is outside the document.</returns>
+		public TextViewPosition? GetPositionFloor(Point visualPosition)
+		{
+			VerifyAccess();
+			if (this.Document == null)
+				throw ThrowUtil.NoDocumentAssigned();
+			VisualLine line = GetVisualLineFromVisualTop(visualPosition.Y);
+			if (line == null)
+				return null;
+			int visualColumn = line.GetVisualColumnFloor(visualPosition);
 			int documentOffset = line.GetRelativeOffset(visualColumn) + line.FirstDocumentLine.Offset;
 			return new TextViewPosition(document.GetLocation(documentOffset), visualColumn);
 		}
@@ -1796,7 +1869,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				// changing text formatter requires recreating the cached elements
 				RecreateCachedElements();
 				// and we need to re-measure the font metrics:
-				MeasureWideSpaceWidthAndDefaultLineHeight();
+				InvalidateDefaultTextMetrics();
 			} else if (e.Property == Control.ForegroundProperty
 			           || e.Property == TextView.NonPrintableCharacterBrushProperty)
 			{
@@ -1813,7 +1886,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				// changing font properties requires recreating cached elements
 				RecreateCachedElements();
 				// and we need to re-measure the font metrics:
-				MeasureWideSpaceWidthAndDefaultLineHeight();
+				InvalidateDefaultTextMetrics();
 				Redraw();
 			}
 		}

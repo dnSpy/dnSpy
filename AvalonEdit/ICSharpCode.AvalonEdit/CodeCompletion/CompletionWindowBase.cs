@@ -308,7 +308,11 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 			UpdatePosition();
 		}
 		
-		void UpdatePosition()
+		/// <summary>
+		/// Updates the position of the CompletionWindow based on the parent TextView position and the screen working area.
+		/// It ensures that the CompletionWindow is completely visible on the screen.
+		/// </summary>
+		protected void UpdatePosition()
 		{
 			TextView textView = this.TextArea.TextView;
 			// PointToScreen returns device dependent units (physical pixels)

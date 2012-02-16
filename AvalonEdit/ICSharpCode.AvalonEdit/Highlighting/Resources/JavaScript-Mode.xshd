@@ -3,9 +3,10 @@
 <!-- converted to AvalonEdit format by Siegfried Pammer in 2010 -->
 <SyntaxDefinition name="JavaScript" extensions=".js" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
 	<Color name="Digits" foreground="DarkBlue" />
-	<Color name="Comment" foreground="DarkSlateGray" />
+	<Color name="Comment" foreground="Green" />
 	<Color name="String" foreground="Sienna" />
 	<Color name="Character" foreground="Sienna" />
+	<Color name="Regex" foreground="Sienna" />
 	<Color name="JavaScriptKeyWords" foreground="Blue" />
 	<Color name="JavaScriptIntrinsics" foreground="Blue" />
 	<Color name="JavaScriptLiterals" foreground="Blue" />
@@ -103,6 +104,14 @@
 		<Span color="Comment" multiline="true">
 			<Begin>/\*</Begin>
 			<End>\*/</End>
+		</Span>
+		<!--<Rule color="Regex">/.*/</Rule>-->
+		<Span color="Regex">
+			<Begin>/</Begin>
+			<End>/</End>
+			<RuleSet>
+				<Span begin="\\/" end="." />
+			</RuleSet>
 		</Span>
 		<Span color="String" multiline="true">
 			<Begin>"</Begin>

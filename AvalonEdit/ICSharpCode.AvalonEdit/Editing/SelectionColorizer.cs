@@ -28,15 +28,25 @@ namespace ICSharpCode.AvalonEdit.Editing
 			int lineStartOffset = context.VisualLine.FirstDocumentLine.Offset;
 			int lineEndOffset = context.VisualLine.LastDocumentLine.Offset + context.VisualLine.LastDocumentLine.TotalLength;
 			
-			foreach (ISegment segment in textArea.Selection.Segments) {
-				int segmentStart = segment.Offset;
-				int segmentEnd = segment.Offset + segment.Length;
+			foreach (SelectionSegment segment in textArea.Selection.Segments) {
+				int segmentStart = segment.StartOffset;
+				int segmentEnd = segment.EndOffset;
 				if (segmentEnd <= lineStartOffset)
 					continue;
 				if (segmentStart >= lineEndOffset)
 					continue;
-				int startColumn = context.VisualLine.GetVisualColumn(Math.Max(0, segmentStart - lineStartOffset));
-				int endColumn = context.VisualLine.GetVisualColumn(segmentEnd - lineStartOffset);
+				int startColumn;
+				if (segmentStart < lineStartOffset)
+					startColumn = 0;
+				else
+					startColumn = context.VisualLine.ValidateVisualColumn(segment.StartOffset, segment.StartVisualColumn, textArea.Selection.EnableVirtualSpace);
+				
+				int endColumn;
+				if (segmentEnd > lineEndOffset)
+					endColumn = textArea.Selection.EnableVirtualSpace ? int.MaxValue : context.VisualLine.VisualLengthWithEndOfLineMarker;
+				else
+					endColumn = context.VisualLine.ValidateVisualColumn(segment.EndOffset, segment.EndVisualColumn, textArea.Selection.EnableVirtualSpace);
+				
 				ChangeVisualElements(
 					startColumn, endColumn,
 					element => {

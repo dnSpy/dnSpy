@@ -17,11 +17,11 @@ namespace ICSharpCode.AvalonEdit.Editing
 			TextArea textArea = new TextArea();
 			textArea.Document = new TextDocument("1\n2\n3\n4th line");
 			textArea.Caret.Offset = 6;
-			textArea.Selection = new SimpleSelection(3, 6);
+			textArea.Selection = Selection.Create(textArea, 3, 6);
 			textArea.Document = new TextDocument("1\n2nd");
 			Assert.AreEqual(0, textArea.Caret.Offset);
 			Assert.AreEqual(new TextLocation(1, 1), textArea.Caret.Location);
-			Assert.AreSame(Selection.Empty, textArea.Selection);
+			Assert.IsTrue(textArea.Selection.IsEmpty);
 		}
 		
 		[Test]
@@ -30,11 +30,11 @@ namespace ICSharpCode.AvalonEdit.Editing
 			TextArea textArea = new TextArea();
 			textArea.Document = new TextDocument("1\n2\n3\n4th line");
 			textArea.Caret.Offset = 6;
-			textArea.Selection = new SimpleSelection(3, 6);
+			textArea.Selection = Selection.Create(textArea, 3, 6);
 			textArea.Document = null;
 			Assert.AreEqual(0, textArea.Caret.Offset);
 			Assert.AreEqual(new TextLocation(1, 1), textArea.Caret.Location);
-			Assert.AreSame(Selection.Empty, textArea.Selection);
+			Assert.IsTrue(textArea.Selection.IsEmpty);
 		}
 		
 		[Test]

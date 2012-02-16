@@ -37,8 +37,8 @@ namespace ICSharpCode.AvalonEdit.Editing
 		{
 			this.caretRectangle = caretRectangle;
 			this.isVisible = true;
-			InvalidateVisual();
 			StartBlinkAnimation();
+			InvalidateVisual();
 		}
 		
 		public void Hide()
@@ -53,9 +53,9 @@ namespace ICSharpCode.AvalonEdit.Editing
 		void StartBlinkAnimation()
 		{
 			TimeSpan blinkTime = Win32.CaretBlinkTime;
-			if (blinkTime.TotalMilliseconds >= 0) {
-				blink = false;
-				caretBlinkTimer_Tick(null, null);
+			blink = true; // the caret should visible initially
+			// This is important if blinking is disabled (system reports a negative blinkTime)
+			if (blinkTime.TotalMilliseconds > 0) {
 				caretBlinkTimer.Interval = blinkTime;
 				caretBlinkTimer.Start();
 			}

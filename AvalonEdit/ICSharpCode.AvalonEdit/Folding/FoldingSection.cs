@@ -84,6 +84,7 @@ namespace ICSharpCode.AvalonEdit.Folding
 		/// <summary>
 		/// Gets the content of the collapsed lines as tooltip text.
 		/// </summary>
+		[Obsolete]
 		public string TooltipText {
 			get {
 				// This fixes SD-1394:

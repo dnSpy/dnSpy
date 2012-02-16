@@ -13,78 +13,60 @@ namespace ICSharpCode.AvalonEdit.Editing
 	/// <summary>
 	/// A simple selection.
 	/// </summary>
-	public sealed class SimpleSelection : Selection, ISegment
+	sealed class SimpleSelection : Selection
 	{
+		readonly TextViewPosition start, end;
 		readonly int startOffset, endOffset;
 		
 		/// <summary>
 		/// Creates a new SimpleSelection instance.
 		/// </summary>
-		public SimpleSelection(int startOffset, int endOffset)
+		internal SimpleSelection(TextArea textArea, TextViewPosition start, TextViewPosition end)
+			: base(textArea)
 		{
-			this.startOffset = startOffset;
-			this.endOffset = endOffset;
-		}
-		
-		/// <summary>
-		/// Creates a new SimpleSelection instance.
-		/// </summary>
-		public SimpleSelection(ISegment segment)
-		{
-			if (segment == null)
-				throw new ArgumentNullException("segment");
-			this.startOffset = segment.Offset;
-			this.endOffset = startOffset + segment.Length;
+			this.start = start;
+			this.end = end;
+			this.startOffset = textArea.Document.GetOffset(start.Location);
+			this.endOffset = textArea.Document.GetOffset(end.Location);
 		}
 		
 		/// <inheritdoc/>
-		public override IEnumerable<ISegment> Segments {
+		public override IEnumerable<SelectionSegment> Segments {
 			get {
-				if (!IsEmpty) {
-					return ExtensionMethods.Sequence<ISegment>(this);
-				} else {
-					return Empty<ISegment>.Array;
-				}
+				return ExtensionMethods.Sequence<SelectionSegment>(new SelectionSegment(startOffset, start.VisualColumn, endOffset, end.VisualColumn));
 			}
 		}
 		
 		/// <inheritdoc/>
 		public override ISegment SurroundingSegment {
 			get {
-				if (IsEmpty)
-					return null;
-				else
-					return this;
+				return new SelectionSegment(startOffset, endOffset);
 			}
 		}
 		
 		/// <inheritdoc/>
-		public override void ReplaceSelectionWithText(TextArea textArea, string newText)
+		public override void ReplaceSelectionWithText(string newText)
 		{
-			if (textArea == null)
-				throw new ArgumentNullException("textArea");
 			if (newText == null)
 				throw new ArgumentNullException("newText");
 			using (textArea.Document.RunUpdate()) {
-				if (IsEmpty) {
-					if (newText.Length > 0) {
-						if (textArea.ReadOnlySectionProvider.CanInsert(textArea.Caret.Offset)) {
-							textArea.Document.Insert(textArea.Caret.Offset, newText);
+				ISegment[] segmentsToDelete = textArea.GetDeletableSegments(this.SurroundingSegment);
+				for (int i = segmentsToDelete.Length - 1; i >= 0; i--) {
+					if (i == segmentsToDelete.Length - 1) {
+						if (segmentsToDelete[i].Offset == SurroundingSegment.Offset && segmentsToDelete[i].Length == SurroundingSegment.Length) {
+							newText = AddSpacesIfRequired(newText, start, end);
 						}
+						int vc = textArea.Caret.VisualColumn;
+						textArea.Caret.Offset = segmentsToDelete[i].EndOffset;
+						if (string.IsNullOrEmpty(newText))
+							textArea.Caret.VisualColumn = vc;
+						textArea.Document.Replace(segmentsToDelete[i], newText);
+					} else {
+						textArea.Document.Remove(segmentsToDelete[i]);
 					}
-				} else {
-					ISegment[] segmentsToDelete = textArea.GetDeletableSegments(this);
-					for (int i = segmentsToDelete.Length - 1; i >= 0; i--) {
-						if (i == segmentsToDelete.Length - 1) {
-							textArea.Caret.Offset = segmentsToDelete[i].EndOffset;
-							textArea.Document.Replace(segmentsToDelete[i], newText);
-						} else {
-							textArea.Document.Remove(segmentsToDelete[i]);
-						}
-					}
-					if (segmentsToDelete.Length != 0) {
-						textArea.Selection = Selection.Empty;
-					}
+				}
+				if (segmentsToDelete.Length != 0) {
+					textArea.ClearSelection();
 				}
 			}
 		}
@@ -108,25 +90,16 @@ namespace ICSharpCode.AvalonEdit.Editing
 		{
 			if (e == null)
 				throw new ArgumentNullException("e");
-			return new SimpleSelection(
-				e.GetNewOffset(startOffset, AnchorMovementType.Default),
-				e.GetNewOffset(endOffset, AnchorMovementType.Default)
+			return Selection.Create(
+				textArea,
+				new TextViewPosition(textArea.Document.GetLocation(e.GetNewOffset(startOffset, AnchorMovementType.Default)), start.VisualColumn),
+				new TextViewPosition(textArea.Document.GetLocation(e.GetNewOffset(endOffset, AnchorMovementType.Default)), end.VisualColumn)
 			);
 		}
 		
 		/// <inheritdoc/>
 		public override bool IsEmpty {
 			get { return startOffset == endOffset; }
-		}
-		
-		// For segments, Offset must be less than or equal to EndOffset;
-		// so we must use Min/Max.
-		int ISegment.Offset {
-			get { return Math.Min(startOffset, endOffset); }
-		}
-		
-		int ISegment.EndOffset {
-			get { return Math.Max(startOffset, endOffset); }
 		}
 		
 		/// <inheritdoc/>
@@ -137,18 +110,25 @@ namespace ICSharpCode.AvalonEdit.Editing
 		}
 		
 		/// <inheritdoc/>
-		public override Selection SetEndpoint(int newEndOffset)
+		public override Selection SetEndpoint(TextViewPosition endPosition)
 		{
-			if (IsEmpty)
-				throw new NotSupportedException();
-			else
-				return new SimpleSelection(startOffset, newEndOffset);
+			return Create(textArea, start, endPosition);
+		}
+		
+		public override Selection StartSelectionOrSetEndpoint(TextViewPosition startPosition, TextViewPosition endPosition)
+		{
+			var document = textArea.Document;
+			if (document == null)
+				throw ThrowUtil.NoDocumentAssigned();
+			return Create(textArea, start, endPosition);
 		}
 		
 		/// <inheritdoc/>
 		public override int GetHashCode()
 		{
-			return startOffset ^ endOffset;
+			unchecked {
+				return startOffset * 27811 + endOffset + textArea.GetHashCode();
+			}
 		}
 		
 		/// <inheritdoc/>
@@ -156,15 +136,15 @@ namespace ICSharpCode.AvalonEdit.Editing
 		{
 			SimpleSelection other = obj as SimpleSelection;
 			if (other == null) return false;
-			if (IsEmpty && other.IsEmpty)
-				return true;
-			return this.startOffset == other.startOffset && this.endOffset == other.endOffset;
+			return this.start.Equals(other.start) && this.end.Equals(other.end)
+				&& this.startOffset == other.startOffset && this.endOffset == other.endOffset
+				&& this.textArea == other.textArea;
 		}
 		
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return "[SimpleSelection Start=" + startOffset + " End=" + endOffset + "]";
+			return "[SimpleSelection Start=" + start + " End=" + end + "]";
 		}
 	}
 }

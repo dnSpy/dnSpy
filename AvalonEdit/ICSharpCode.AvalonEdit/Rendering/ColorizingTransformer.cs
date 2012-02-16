@@ -24,9 +24,16 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		/// </summary>
 		public void Transform(ITextRunConstructionContext context, IList<VisualLineElement> elements)
 		{
+			if (elements == null)
+				throw new ArgumentNullException("elements");
+			if (this.CurrentElements != null)
+				throw new InvalidOperationException("Recursive Transform() call");
 			this.CurrentElements = elements;
-			Colorize(context);
-			this.CurrentElements = null;
+			try {
+				Colorize(context);
+			} finally {
+				this.CurrentElements = null;
+			}
 		}
 		
 		/// <summary>

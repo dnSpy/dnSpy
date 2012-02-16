@@ -43,6 +43,8 @@
 					<Word>term</Word>
 					<Word>description</Word>
 					<Word>listheader</Word>
+					<Word>typeparam</Word>
+					<Word>typeparamref</Word>
 				</Keywords>
 			</RuleSet>
 		</Span>

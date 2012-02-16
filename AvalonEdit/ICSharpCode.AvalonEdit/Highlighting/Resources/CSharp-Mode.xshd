@@ -169,6 +169,7 @@
 			<Word>equals</Word>
 			<Word>var</Word>
 			<Word>dynamic</Word>
+			<Word>await</Word>
 		</Keywords>
 		
 		<Keywords color="ExceptionKeywords">
@@ -238,6 +239,7 @@
 			<Word>static</Word>
 			<Word>virtual</Word>
 			<Word>volatile</Word>
+			<Word>async</Word>
 		</Keywords>
 		
 		<Keywords color="Visibility">

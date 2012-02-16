@@ -15,6 +15,19 @@ namespace ICSharpCode.AvalonEdit
 		int line, column, visualColumn;
 		
 		/// <summary>
+		/// Gets/Sets Location.
+		/// </summary>
+		public TextLocation Location {
+			get {
+				return new TextLocation(line, column);
+			}
+			set {
+				line = value.Line;
+				column = value.Column;
+			}
+		}
+		
+		/// <summary>
 		/// Gets/Sets the line number.
 		/// </summary>
 		public int Line {
@@ -86,6 +99,7 @@ namespace ICSharpCode.AvalonEdit
 		/// <summary>
 		/// Implicit conversion to <see cref="TextLocation"/>.
 		/// </summary>
+		[Obsolete("Avoid")]
 		public static implicit operator TextLocation(TextViewPosition position)
 		{
 			return new TextLocation(position.Line, position.Column);

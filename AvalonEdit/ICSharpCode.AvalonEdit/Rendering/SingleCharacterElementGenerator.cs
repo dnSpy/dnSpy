@@ -197,14 +197,14 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			
 			public override TextEmbeddedObjectMetrics Format(double remainingParagraphWidth)
 			{
-				return new TextEmbeddedObjectMetrics(element.text.WidthIncludingTrailingWhitespace,
-				                                     element.text.Height,
-				                                     element.text.Baseline);
+				double width = Math.Min(0, element.text.WidthIncludingTrailingWhitespace - 1);
+				return new TextEmbeddedObjectMetrics(width, element.text.Height, element.text.Baseline);
 			}
 			
 			public override Rect ComputeBoundingBox(bool rightToLeft, bool sideways)
 			{
-				return new Rect(0, 0, element.text.WidthIncludingTrailingWhitespace, element.text.Height);
+				double width = Math.Min(0, element.text.WidthIncludingTrailingWhitespace - 1);
+				return new Rect(0, 0, width, element.text.Height);
 			}
 			
 			public override void Draw(DrawingContext drawingContext, Point origin, bool rightToLeft, bool sideways)

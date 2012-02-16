@@ -12,6 +12,8 @@ namespace ICSharpCode.AvalonEdit.Document
 	{
 		static readonly char[] newline = { '\r', '\n' };
 		
+		internal static readonly string[] NewlineStrings = { "\r\n", "\r", "\n" };
+		
 		/// <summary>
 		/// Gets the location of the next new line character, or SimpleSegment.Invalid
 		/// if none is found.

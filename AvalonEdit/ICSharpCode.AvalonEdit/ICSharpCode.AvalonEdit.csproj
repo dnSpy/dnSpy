@@ -33,7 +33,7 @@
     <DefineConstants>DEBUG;TRACE;DOTNET4</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>false</DebugSymbols>
     <DebugType>PdbOnly</DebugType>
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
@@ -140,6 +140,10 @@
     <Compile Include="Editing\DottedLineMargin.cs" />
     <Compile Include="Editing\DragDropException.cs" />
     <Compile Include="Editing\EditingCommandHandler.cs" />
+    <Compile Include="Editing\EmptySelection.cs">
+      <DependentUpon>Selection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editing\SelectionSegment.cs" />
     <Compile Include="Folding\AbstractFoldingStrategy.cs" />
     <Compile Include="Folding\FoldingElementGenerator.cs" />
     <Compile Include="Folding\FoldingManager.cs" />
@@ -255,7 +259,6 @@
     </Compile>
     <Compile Include="Rendering\LinkElementGenerator.cs" />
     <Compile Include="Rendering\MouseHoverLogic.cs" />
-    <Compile Include="Rendering\NewLineElementGenerator.cs" />
     <Compile Include="Rendering\SimpleTextSource.cs">
       <DependentUpon>FormattedTextElement.cs</DependentUpon>
     </Compile>
@@ -287,6 +290,16 @@
     <Compile Include="Rendering\VisualYPosition.cs">
       <DependentUpon>VisualLine.cs</DependentUpon>
     </Compile>
+    <Compile Include="Search\Localization.cs" />
+    <Compile Include="Search\RegexSearchStrategy.cs" />
+    <Compile Include="Search\DropDownButton.cs" />
+    <Compile Include="Search\ISearchStrategy.cs" />
+    <Compile Include="Search\SearchCommands.cs" />
+    <Compile Include="Search\SearchResultBackgroundRenderer.cs" />
+    <Compile Include="Search\SearchPanel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Search\SearchStrategyFactory.cs" />
     <Compile Include="Snippets\IActiveElement.cs" />
     <Compile Include="Snippets\SnippetAnchorElement.cs" />
     <Compile Include="Snippets\SnippetEventArgs.cs" />
@@ -323,7 +336,9 @@
     </Compile>
     <Compile Include="TextViewPosition.cs" />
     <Compile Include="Utils\Boxes.cs" />
-    <Compile Include="Utils\BusyManager.cs" />
+    <Compile Include="Utils\BusyManager.cs">
+      <DependentUpon>ObserveAddRemoveCollection.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\CharRope.cs" />
     <Compile Include="Utils\CompressingTreeList.cs" />
     <Compile Include="Utils\Constants.cs" />
@@ -403,10 +418,23 @@
   <ItemGroup>
     <Page Include="CodeCompletion\CompletionList.xaml" />
     <Page Include="CodeCompletion\InsightWindow.xaml" />
+    <Page Include="Search\SearchPanel.xaml">
+      <DependentUpon>SearchPanel.cs</DependentUpon>
+    </Page>
+    <Page Include="Search\DropDownButton.xaml">
+      <DependentUpon>DropDownButton.cs</DependentUpon>
+    </Page>
     <Page Include="TextEditor.xaml" />
     <Page Include="themes\generic.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Highlighting\Resources\CSS-Mode.xshd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Search" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Search\next.png" />
+    <Resource Include="Search\prev.png" />
   </ItemGroup>
 </Project>

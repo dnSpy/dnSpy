@@ -29,9 +29,16 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 		{
 			this.CloseAutomatically = true;
 			AttachEvents();
+		}
+		
+		/// <inheritdoc/>
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
 			
 			Rect caret = this.TextArea.Caret.CalculateCaretRectangle();
-			Rect workingArea = System.Windows.Forms.Screen.FromPoint(caret.Location.ToSystemDrawing()).WorkingArea.ToWpf();
+			Point pointOnScreen = this.TextArea.TextView.PointToScreen(caret.Location - this.TextArea.TextView.ScrollOffset);
+			Rect workingArea = System.Windows.Forms.Screen.FromPoint(pointOnScreen.ToSystemDrawing()).WorkingArea.ToWpf().TransformFromDevice(this);
 			
 			MaxHeight = workingArea.Height;
 			MaxWidth = Math.Min(workingArea.Width, Math.Max(1000, workingArea.Width * 0.6));

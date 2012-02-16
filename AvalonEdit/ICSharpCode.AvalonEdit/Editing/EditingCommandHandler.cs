@@ -12,9 +12,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
-
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Search;
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace ICSharpCode.AvalonEdit.Editing
@@ -148,7 +148,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 							segments = null;
 						}
 					} else {
-						segments = textArea.Selection.Segments;
+						segments = textArea.Selection.Segments.Cast<ISegment>();
 					}
 					if (segments != null) {
 						foreach (ISegment segment in segments.Reverse()) {
@@ -181,7 +181,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 			TextArea textArea = GetTextArea(target);
 			if (textArea != null && textArea.Document != null) {
 				using (textArea.Document.RunUpdate()) {
-					if (textArea.Selection.IsMultiline(textArea.Document)) {
+					if (textArea.Selection.IsMultiline) {
 						var segment = textArea.Selection.SurroundingSegment;
 						DocumentLine start = textArea.Document.GetLineByOffset(segment.Offset);
 						DocumentLine end = textArea.Document.GetLineByOffset(segment.EndOffset);
@@ -234,7 +234,10 @@ namespace ICSharpCode.AvalonEdit.Editing
 					using (textArea.Document.RunUpdate()) {
 						if (textArea.Selection.IsEmpty) {
 							TextViewPosition oldCaretPosition = textArea.Caret.Position;
-							selectingCommand.Execute(args.Parameter, textArea);
+							if (textArea.Caret.IsInVirtualSpace && selectingCommand == EditingCommands.SelectRightByCharacter)
+								EditingCommands.SelectRightByWord.Execute(args.Parameter, textArea);
+							else
+								selectingCommand.Execute(args.Parameter, textArea);
 							bool hasSomethingDeletable = false;
 							foreach (ISegment s in textArea.Selection.Segments) {
 								if (textArea.GetDeletableSegments(s).Length > 0) {
@@ -246,7 +249,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 								// If nothing in the selection is deletable; then reset caret+selection
 								// to the previous value. This prevents the caret from moving through read-only sections.
 								textArea.Caret.Position = oldCaretPosition;
-								textArea.Selection = Selection.Empty;
+								textArea.ClearSelection();
 							}
 						}
 						textArea.RemoveSelectedText();
@@ -325,7 +328,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 				return;
 			}
 			
-			string text = textArea.Selection.GetText(textArea.Document);
+			string text = textArea.Selection.GetText();
 			text = TextUtilities.NormalizeNewLines(text, Environment.NewLine);
 			textArea.OnTextCopied(new TextEventArgs(text));
 		}
@@ -387,8 +390,13 @@ namespace ICSharpCode.AvalonEdit.Editing
 				
 				// convert text back to correct newlines for this document
 				string newLine = TextUtilities.GetNewLineFromDocument(textArea.Document, textArea.Caret.Line);
-				string text = (string)dataObject.GetData(DataFormats.UnicodeText);
-				text = TextUtilities.NormalizeNewLines(text, newLine);
+				string text;
+				try {
+					text = (string)dataObject.GetData(DataFormats.UnicodeText);
+					text = TextUtilities.NormalizeNewLines(text, newLine);
+				} catch (OutOfMemoryException) {
+					return;
+				}
 				
 				if (!string.IsNullOrEmpty(text)) {
 					bool fullLine = textArea.Options.CutCopyWholeLine && dataObject.GetDataPresent(LineSelectedType);
@@ -398,8 +406,8 @@ namespace ICSharpCode.AvalonEdit.Editing
 						if (textArea.ReadOnlySectionProvider.CanInsert(currentLine.Offset)) {
 							textArea.Document.Insert(currentLine.Offset, text);
 						}
-					} else if (rectangular && textArea.Selection.IsEmpty) {
-						if (!RectangleSelection.PerformRectangularPaste(textArea, textArea.Caret.Offset, text, false))
+					} else if (rectangular && textArea.Selection.IsEmpty && !(textArea.Selection is RectangleSelection)) {
+						if (!RectangleSelection.PerformRectangularPaste(textArea, textArea.Caret.Position, text, false))
 							textArea.ReplaceSelectionWithText(text);
 					} else {
 						textArea.ReplaceSelectionWithText(text);
@@ -417,7 +425,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 			TextArea textArea = GetTextArea(target);
 			if (textArea != null && textArea.Document != null) {
 				DocumentLine currentLine = textArea.Document.GetLineByNumber(textArea.Caret.Line);
-				textArea.Selection = new SimpleSelection(currentLine.Offset, currentLine.Offset + currentLine.TotalLength);
+				textArea.Selection = Selection.Create(textArea, currentLine.Offset, currentLine.Offset + currentLine.TotalLength);
 				textArea.RemoveSelectedText();
 				args.Handled = true;
 			}

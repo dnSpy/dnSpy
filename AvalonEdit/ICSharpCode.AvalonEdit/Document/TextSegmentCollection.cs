@@ -267,13 +267,33 @@ namespace ICSharpCode.AvalonEdit.Document
 		/// <summary>
 		/// Gets the previous segment before the specified segment.
 		/// Segments are sorted by their start offset.
-		/// Returns null if segment is the last segment.
+		/// Returns null if segment is the first segment.
 		/// </summary>
 		public T GetPreviousSegment(T segment)
 		{
 			if (!Contains(segment))
 				throw new ArgumentException("segment is not inside the segment tree");
 			return (T)segment.Predecessor;
+		}
+		#endregion
+		
+		#region FirstSegment/LastSegment
+		/// <summary>
+		/// Returns the first segment in the collection or null, if the collection is empty.
+		/// </summary>
+		public T FirstSegment {
+			get {
+				return root == null ? null : (T)root.LeftMost;
+			}
+		}
+		
+		/// <summary>
+		/// Returns the last segment in the collection or null, if the collection is empty.
+		/// </summary>
+		public T LastSegment {
+			get {
+				return root == null ? null : (T)root.RightMost;
+			}
 		}
 		#endregion
 		

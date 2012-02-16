@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media.TextFormatting;
 using System.Windows.Threading;
-
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
@@ -222,11 +222,11 @@ namespace ICSharpCode.AvalonEdit.Editing
 							// the undo groups when text is moved.
 							textArea.Document.UndoStack.StartUndoGroup(this.currentDragDescriptor);
 							try {
-								if (rectangular && RectangleSelection.PerformRectangularPaste(textArea, start, text, true)) {
+								if (rectangular && RectangleSelection.PerformRectangularPaste(textArea, textArea.Caret.Position, text, true)) {
 									
 								} else {
 									textArea.Document.Insert(start, text);
-									textArea.Selection = new SimpleSelection(start, start + text.Length);
+									textArea.Selection = Selection.Create(textArea, start, start + text.Length);
 								}
 							} finally {
 								textArea.Document.UndoStack.EndUndoGroup();
@@ -391,23 +391,23 @@ namespace ICSharpCode.AvalonEdit.Editing
 					}
 				}
 				
-				int oldOffset = textArea.Caret.Offset;
+				var oldPosition = textArea.Caret.Position;
 				SetCaretOffsetToMousePosition(e);
 				
 				
 				if (!shift) {
-					textArea.Selection = Selection.Empty;
+					textArea.ClearSelection();
 				}
 				if (textArea.CaptureMouse()) {
 					if ((modifiers & ModifierKeys.Alt) == ModifierKeys.Alt && textArea.Options.EnableRectangularSelection) {
 						mode = SelectionMode.Rectangular;
 						if (shift && textArea.Selection is RectangleSelection) {
-							textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(oldOffset, textArea.Caret.Offset);
+							textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(oldPosition, textArea.Caret.Position);
 						}
 					} else if (e.ClickCount == 1 && ((modifiers & ModifierKeys.Control) == 0)) {
 						mode = SelectionMode.Normal;
 						if (shift && !(textArea.Selection is RectangleSelection)) {
-							textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(oldOffset, textArea.Caret.Offset);
+							textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(oldPosition, textArea.Caret.Position);
 						}
 					} else {
 						SimpleSegment startWord;
@@ -425,13 +425,13 @@ namespace ICSharpCode.AvalonEdit.Editing
 						}
 						if (shift && !textArea.Selection.IsEmpty) {
 							if (startWord.Offset < textArea.Selection.SurroundingSegment.Offset) {
-								textArea.Selection = textArea.Selection.SetEndpoint(startWord.Offset);
+								textArea.Selection = textArea.Selection.SetEndpoint(new TextViewPosition(textArea.Document.GetLocation(startWord.Offset)));
 							} else if (startWord.EndOffset > textArea.Selection.SurroundingSegment.EndOffset) {
-								textArea.Selection = textArea.Selection.SetEndpoint(startWord.EndOffset);
+								textArea.Selection = textArea.Selection.SetEndpoint(new TextViewPosition(textArea.Document.GetLocation(startWord.EndOffset)));
 							}
 							this.startWord = new AnchorSegment(textArea.Document, textArea.Selection.SurroundingSegment);
 						} else {
-							textArea.Selection = new SimpleSelection(startWord.Offset, startWord.EndOffset);
+							textArea.Selection = Selection.Create(textArea, startWord.Offset, startWord.EndOffset);
 							this.startWord = new AnchorSegment(textArea.Document, startWord.Offset, startWord.Length);
 						}
 					}
@@ -454,11 +454,11 @@ namespace ICSharpCode.AvalonEdit.Editing
 			pos += textView.ScrollOffset;
 			VisualLine line = textView.GetVisualLineFromVisualTop(pos.Y);
 			if (line != null) {
-				int visualColumn = line.GetVisualColumn(pos);
-				int wordStartVC = line.GetNextCaretPosition(visualColumn + 1, LogicalDirection.Backward, CaretPositioningMode.WordStartOrSymbol);
+				int visualColumn = line.GetVisualColumn(pos, textArea.Selection.EnableVirtualSpace);
+				int wordStartVC = line.GetNextCaretPosition(visualColumn + 1, LogicalDirection.Backward, CaretPositioningMode.WordStartOrSymbol, textArea.Selection.EnableVirtualSpace);
 				if (wordStartVC == -1)
 					wordStartVC = 0;
-				int wordEndVC = line.GetNextCaretPosition(wordStartVC, LogicalDirection.Forward, CaretPositioningMode.WordBorderOrSymbol);
+				int wordEndVC = line.GetNextCaretPosition(wordStartVC, LogicalDirection.Forward, CaretPositioningMode.WordBorderOrSymbol, textArea.Selection.EnableVirtualSpace);
 				if (wordEndVC == -1)
 					wordEndVC = line.VisualLength;
 				int relOffset = line.FirstDocumentLine.Offset;
@@ -507,7 +507,27 @@ namespace ICSharpCode.AvalonEdit.Editing
 				pos.Y = textView.DocumentHeight - ExtensionMethods.Epsilon;
 			VisualLine line = textView.GetVisualLineFromVisualTop(pos.Y);
 			if (line != null) {
-				visualColumn = line.GetVisualColumn(pos);
+				visualColumn = line.GetVisualColumn(pos, textArea.Selection.EnableVirtualSpace);
+				return line.GetRelativeOffset(visualColumn) + line.FirstDocumentLine.Offset;
+			}
+			return -1;
+		}
+		
+		int GetOffsetFromMousePositionFirstTextLineOnly(Point positionRelativeToTextView, out int visualColumn)
+		{
+			visualColumn = 0;
+			TextView textView = textArea.TextView;
+			Point pos = positionRelativeToTextView;
+			if (pos.Y < 0)
+				pos.Y = 0;
+			if (pos.Y > textView.ActualHeight)
+				pos.Y = textView.ActualHeight;
+			pos += textView.ScrollOffset;
+			if (pos.Y > textView.DocumentHeight)
+				pos.Y = textView.DocumentHeight - ExtensionMethods.Epsilon;
+			VisualLine line = textView.GetVisualLineFromVisualTop(pos.Y);
+			if (line != null) {
+				visualColumn = line.GetVisualColumn(line.TextLines.First(), positionRelativeToTextView.X, textArea.Selection.EnableVirtualSpace);
 				return line.GetRelativeOffset(visualColumn) + line.FirstDocumentLine.Offset;
 			}
 			return -1;
@@ -548,7 +568,11 @@ namespace ICSharpCode.AvalonEdit.Editing
 		void SetCaretOffsetToMousePosition(MouseEventArgs e, ISegment allowedSegment)
 		{
 			int visualColumn;
-			int offset = GetOffsetFromMousePosition(e, out visualColumn);
+			int offset;
+			if (mode == SelectionMode.Rectangular)
+				offset = GetOffsetFromMousePositionFirstTextLineOnly(e.GetPosition(textArea.TextView), out visualColumn);
+			else
+				offset = GetOffsetFromMousePosition(e, out visualColumn);
 			if (allowedSegment != null) {
 				offset = offset.CoerceValue(allowedSegment.Offset, allowedSegment.EndOffset);
 			}
@@ -560,20 +584,21 @@ namespace ICSharpCode.AvalonEdit.Editing
 		
 		void ExtendSelectionToMouse(MouseEventArgs e)
 		{
-			int oldOffset = textArea.Caret.Offset;
+			TextViewPosition oldPosition = textArea.Caret.Position;
 			if (mode == SelectionMode.Normal || mode == SelectionMode.Rectangular) {
 				SetCaretOffsetToMousePosition(e);
 				if (mode == SelectionMode.Normal && textArea.Selection is RectangleSelection)
-					textArea.Selection = new SimpleSelection(oldOffset, textArea.Caret.Offset);
+					textArea.Selection = new SimpleSelection(textArea, oldPosition, textArea.Caret.Position);
 				else if (mode == SelectionMode.Rectangular && !(textArea.Selection is RectangleSelection))
-					textArea.Selection = new RectangleSelection(textArea.Document, oldOffset, textArea.Caret.Offset);
+					textArea.Selection = new RectangleSelection(textArea, oldPosition, textArea.Caret.Position);
 				else
-					textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(oldOffset, textArea.Caret.Offset);
+					textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(oldPosition, textArea.Caret.Position);
 			} else if (mode == SelectionMode.WholeWord || mode == SelectionMode.WholeLine) {
 				var newWord = (mode == SelectionMode.WholeLine) ? GetLineAtMousePosition(e) : GetWordAtMousePosition(e);
 				if (newWord != SimpleSegment.Invalid) {
-					textArea.Selection = new SimpleSelection(Math.Min(newWord.Offset, startWord.Offset),
-					                                         Math.Max(newWord.EndOffset, startWord.EndOffset));
+					textArea.Selection = Selection.Create(textArea,
+					                                      Math.Min(newWord.Offset, startWord.Offset),
+					                                      Math.Max(newWord.EndOffset, startWord.EndOffset));
 					// Set caret offset, but limit the caret to stay inside the selection.
 					// in whole-word selection, it's otherwise possible that we get the caret outside the
 					// selection - but the TextArea doesn't like that and will reset the selection, causing
@@ -594,7 +619,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 			if (mode == SelectionMode.PossibleDragStart) {
 				// -> this was not a drag start (mouse didn't move after mousedown)
 				SetCaretOffsetToMousePosition(e);
-				textArea.Selection = Selection.Empty;
+				textArea.ClearSelection();
 			} else if (mode == SelectionMode.Normal || mode == SelectionMode.WholeWord || mode == SelectionMode.WholeLine || mode == SelectionMode.Rectangular) {
 				ExtendSelectionToMouse(e);
 			}

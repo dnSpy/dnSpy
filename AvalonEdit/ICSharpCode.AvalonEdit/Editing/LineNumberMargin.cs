@@ -62,8 +62,8 @@ namespace ICSharpCode.AvalonEdit.Editing
 						lineNumber.ToString(CultureInfo.CurrentCulture),
 						typeface, emSize, foreground
 					);
-					drawingContext.DrawText(text, new Point(renderSize.Width - text.Width,
-					                                        line.VisualTop - textView.VerticalOffset));
+					double y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
+					drawingContext.DrawText(text, new Point(renderSize.Width - text.Width, y - textView.VerticalOffset));
 				}
 			}
 		}
@@ -158,9 +158,9 @@ namespace ICSharpCode.AvalonEdit.Editing
 					if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift) {
 						SimpleSelection simpleSelection = textArea.Selection as SimpleSelection;
 						if (simpleSelection != null)
-							selectionStart = new AnchorSegment(Document, simpleSelection);
+							selectionStart = new AnchorSegment(Document, simpleSelection.SurroundingSegment);
 					}
-					textArea.Selection = new SimpleSelection(selectionStart);
+					textArea.Selection = Selection.Create(textArea, selectionStart);
 					if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift) {
 						ExtendSelection(currentSeg);
 					}
@@ -191,10 +191,10 @@ namespace ICSharpCode.AvalonEdit.Editing
 		{
 			if (currentSeg.Offset < selectionStart.Offset) {
 				textArea.Caret.Offset = currentSeg.Offset;
-				textArea.Selection = new SimpleSelection(currentSeg.Offset, selectionStart.Offset + selectionStart.Length);
+				textArea.Selection = Selection.Create(textArea, currentSeg.Offset, selectionStart.Offset + selectionStart.Length);
 			} else {
 				textArea.Caret.Offset = currentSeg.Offset + currentSeg.Length;
-				textArea.Selection = new SimpleSelection(selectionStart.Offset, currentSeg.Offset + currentSeg.Length);
+				textArea.Selection = Selection.Create(textArea, selectionStart.Offset, currentSeg.Offset + currentSeg.Length);
 			}
 		}
 		

@@ -80,16 +80,26 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			int matchOffset;
 			Match m = GetMatch(offset, out matchOffset);
 			if (m.Success && matchOffset == offset) {
-				Uri uri = GetUriFromMatch(m);
-				if (uri == null)
-					return null;
-				VisualLineLinkText linkText = new VisualLineLinkText(CurrentContext.VisualLine, m.Length);
-				linkText.NavigateUri = uri;
-				linkText.RequireControlModifierForClick = this.RequireControlModifierForClick;
-				return linkText;
+				return ConstructElementFromMatch(m);
 			} else {
 				return null;
 			}
+		}
+		
+		/// <summary>
+		/// Constructs a VisualLineElement that replaces the matched text.
+		/// The default implementation will create a <see cref="VisualLineLinkText"/>
+		/// based on the URI provided by <see cref="GetUriFromMatch"/>.
+		/// </summary>
+		protected virtual VisualLineElement ConstructElementFromMatch(Match m)
+		{
+			Uri uri = GetUriFromMatch(m);
+			if (uri == null)
+				return null;
+			VisualLineLinkText linkText = new VisualLineLinkText(CurrentContext.VisualLine, m.Length);
+			linkText.NavigateUri = uri;
+			linkText.RequireControlModifierForClick = this.RequireControlModifierForClick;
+			return linkText;
 		}
 		
 		/// <summary>

@@ -425,26 +425,35 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		HeightTreeNode GetNodeByVisualPosition(double position)
 		{
-			if (position <= 0) {
-				return root.LeftMost;
-			}
-			if (position > root.totalHeight) {
-				return root.RightMost;
-			}
 			HeightTreeNode node = root;
 			while (true) {
-				if (node.left != null && position < node.left.totalHeight) {
+				double positionAfterLeft = position;
+				if (node.left != null) {
+					positionAfterLeft -= node.left.totalHeight;
+					if (positionAfterLeft < 0) {
+						// Descend into left
+						node = node.left;
+						continue;
+					}
+				}
+				double positionBeforeRight = positionAfterLeft - node.lineNode.TotalHeight;
+				if (positionBeforeRight < 0) {
+					// Found the correct node
+					return node;
+				}
+				if (node.right == null || node.right.totalHeight == 0) {
+					// Can happen when position>node.totalHeight,
+					// i.e. at the end of the document, or due to rounding errors in previous loop iterations.
+					
+					// If node.lineNode isn't collapsed, return that.
+					// Also return node.lineNode if there is no previous node that we could return instead.
+					if (node.lineNode.TotalHeight > 0 || node.left == null)
+						return node;
+					// Otherwise, descend into left (find the last non-collapsed node)
 					node = node.left;
 				} else {
-					if (node.left != null) {
-						position -= node.left.totalHeight;
-					}
-					position -= node.lineNode.TotalHeight;
-					if (position < 0 || node.right == null)
-						return node;
-					// node.right==null can happen when totalHeight is incorrect due to rounding errors,
-					// so position can be below the rounded totalHeight but larger than the sum
-					// of all nodes
+					// Descend into right
+					position = positionBeforeRight;
 					node = node.right;
 				}
 			}

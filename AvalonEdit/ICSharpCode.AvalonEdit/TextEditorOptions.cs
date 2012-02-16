@@ -342,7 +342,7 @@ namespace ICSharpCode.AvalonEdit
 			set {
 				if (enableRectangularSelection != value) {
 					enableRectangularSelection = value;
-					OnPropertyChanged("AllowRectangularSelection");
+					OnPropertyChanged("EnableRectangularSelection");
 				}
 			}
 		}
@@ -358,7 +358,26 @@ namespace ICSharpCode.AvalonEdit
 			set {
 				if (enableTextDragDrop != value) {
 					enableTextDragDrop = value;
-					OnPropertyChanged("EnableTextDrag");
+					OnPropertyChanged("EnableTextDragDrop");
+				}
+			}
+		}
+		
+		bool enableVirtualSpace;
+		
+		/// <summary>
+		/// Gets/Sets whether the user can set the caret behind the line ending
+		/// (into "virtual space").
+		/// Note that virtual space is always used (independent from this setting)
+		/// when doing rectangle selections.
+		/// </summary>
+		[DefaultValue(false)]
+		public virtual bool EnableVirtualSpace {
+			get { return enableVirtualSpace; }
+			set {
+				if (enableVirtualSpace != value) {
+					enableVirtualSpace = value;
+					OnPropertyChanged("EnableVirtualSpace");
 				}
 			}
 		}

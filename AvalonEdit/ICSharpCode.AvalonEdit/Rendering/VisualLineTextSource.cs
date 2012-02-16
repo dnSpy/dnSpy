@@ -49,11 +49,32 @@ namespace ICSharpCode.AvalonEdit.Rendering
 						return run;
 					}
 				}
+				if (TextView.Options.ShowEndOfLine && textSourceCharacterIndex == VisualLine.VisualLength) {
+					return CreateTextRunForNewLine();
+				}
 				return new TextEndOfParagraph(1);
 			} catch (Exception ex) {
 				Debug.WriteLine(ex.ToString());
 				throw;
 			}
+		}
+
+		TextRun CreateTextRunForNewLine()
+		{
+			string newlineText = "";
+			DocumentLine lastDocumentLine = VisualLine.LastDocumentLine;
+			if (lastDocumentLine.DelimiterLength == 2) {
+				newlineText = "¶";
+			} else if (lastDocumentLine.DelimiterLength == 1) {
+				char newlineChar = Document.GetCharAt(lastDocumentLine.Offset + lastDocumentLine.Length);
+				if (newlineChar == '\r')
+					newlineText = "\\r";
+				else if (newlineChar == '\n')
+					newlineText = "\\n";
+				else
+					newlineText = "?";
+			}
+			return new FormattedTextRun(new FormattedTextElement(TextView.cachedElements.GetTextForNonPrintableCharacter(newlineText, this), 0), GlobalTextRunProperties);
 		}
 		
 		public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit)

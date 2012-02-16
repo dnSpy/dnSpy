@@ -15,18 +15,32 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		/// </summary>
 		LineTop,
 		/// <summary>
-		/// Returns the top of the text. If the line contains inline UI elements larger than the text, TextTop
-		/// will be below LineTop.
+		/// Returns the top of the text.
+		/// If the line contains inline UI elements larger than the text, TextTop may be below LineTop.
+		/// For a line containing regular text (all in the editor's main font), this will be equal to LineTop.
 		/// </summary>
 		TextTop,
 		/// <summary>
-		/// Returns the bottom of the TextLine. This is the same as the bottom of the text (the text is always
-		/// aligned at the bottom border).
+		/// Returns the bottom of the TextLine.
 		/// </summary>
 		LineBottom,
 		/// <summary>
 		/// The middle between LineTop and LineBottom.
 		/// </summary>
-		LineMiddle
+		LineMiddle,
+		/// <summary>
+		/// Returns the bottom of the text. 
+		/// If the line contains inline UI elements larger than the text, TextBottom might be above LineBottom.
+		/// For a line containing regular text (all in the editor's main font), this will be equal to LineBottom.
+		/// </summary>
+		TextBottom,
+		/// <summary>
+		/// The middle between TextTop and TextBottom.
+		/// </summary>
+		TextMiddle,
+		/// <summary>
+		/// Returns the baseline of the text.
+		/// </summary>
+		Baseline
 	}
 }

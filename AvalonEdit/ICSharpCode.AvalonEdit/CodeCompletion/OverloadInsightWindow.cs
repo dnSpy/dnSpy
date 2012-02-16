@@ -48,6 +48,10 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 						overloadViewer.ChangeIndex(+1);
 						break;
 				}
+				if (e.Handled) {
+					UpdateLayout();
+					UpdatePosition();
+				}
 			}
 		}
 	}
