@@ -1,4 +1,4 @@
-//
+﻿//
 // CodeCompletionCSharp3Tests.cs
 //
 // Author:
@@ -346,6 +346,130 @@ namespace Foo
 ");
 			Assert.IsNotNull (provider, "provider == null");
 			Assert.IsNotNull (provider.Find ("Value"), "field 'Value' not found.");
+		}
+		
+		[Ignore("Fixme!")]
+		[Test()]
+		public void TestLinqWhere() {
+			CompletionDataList provider = CodeCompletionBugTests.CreateProvider(
+@"
+using System.Collections.Generic;
+using System.Linq;
+class A
+{
+	public static void Method1()
+	{
+    	int[] enumerable =  new int[]{1,2,3};
+		$IEnumerable<int> q = from i in enumerable where i.$
+	}
+}
+
+");
+			Assert.IsNotNull(provider); // <--- here 0 item in the completion list
+			Assert.IsNotNull(provider.Find("ToString"));
+		}
+		
+		[Test()]
+		public void TestLinqSelectContext () 
+		{
+			var provider = CodeCompletionBugTests.CreateProvider(
+@"
+using System.Collections.Generic;
+using System.Linq;
+class A
+{
+	public static void Main (string[] args)
+	{
+		$from a in args select n$
+	}
+}
+
+");
+			Assert.IsNotNull(provider); // <--- here 0 item in the completion list
+			Assert.IsNotNull(provider.Find("new"), "'new' not found");
+			Assert.IsNotNull(provider.Find("args"), "'args' not found");
+			Assert.IsNotNull(provider.Find("a"), "'a' not found");
+		}
+		
+		[Test()]
+		public void TestLinqAnonymousTypeContext () 
+		{
+			var provider = CodeCompletionBugTests.CreateProvider(
+@"
+using System.Collections.Generic;
+using System.Linq;
+class A
+{
+	public static void Main (string[] args)
+	{
+		Test($from a in args select new { t$);
+	}
+}
+
+");
+			Assert.IsNotNull(provider);
+			Assert.IsFalse (provider.AutoSelect );
+		}
+		
+		[Test()]
+		public void TestLinqAnonymousTypeContextCase2 () 
+		{
+			var provider = CodeCompletionBugTests.CreateProvider(
+@"
+using System.Collections.Generic;
+using System.Linq;
+class A
+{
+	public static void Main (string[] args)
+	{
+		$from a in args select new { test = a$
+	}
+}
+
+");
+			Assert.IsNotNull(provider); // <--- here 0 item in the completion list
+			Assert.IsTrue (provider.AutoSelect );
+			Assert.IsNotNull(provider.Find("a"), "'a' not found");
+			Assert.IsNotNull(provider.Find("new"), "'new' not found");
+			Assert.IsNotNull(provider.Find("args"), "'args' not found");
+		}
+		
+		[Test()]
+		public void TestLinqAnonymousTypeContextCase3 () 
+		{
+			var provider = CodeCompletionBugTests.CreateProvider(
+@"
+using System.Collections.Generic;
+using System.Linq;
+class A
+{
+	public static void Main (string[] args)
+	{
+		$from a in args select new { test = a }$
+	}
+}
+
+");
+			Assert.IsTrue(provider == null || provider.Count == 0); // <--- here 0 item in the completion list
+		}
+		
+		[Test()]
+		public void TestLinqExpressionContext () 
+		{
+			var provider = CodeCompletionBugTests.CreateProvider(
+@"
+using System.Collections.Generic;
+using System.Linq;
+class A
+{
+	public static void Main (string[] args)
+	{
+		$from a in args where a !$
+	}
+}
+
+");
+			Assert.IsTrue(provider == null || provider.Count == 0); // <--- here 0 item in the completion list
 		}
 	}
 }

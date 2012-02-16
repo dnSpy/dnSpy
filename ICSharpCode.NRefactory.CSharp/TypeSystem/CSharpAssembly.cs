@@ -130,9 +130,45 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			get { return compilation; }
 		}
 		
-		bool IAssembly.InternalsVisibleTo(IAssembly assembly)
+		public bool InternalsVisibleTo(IAssembly assembly)
 		{
-			return this == assembly;
+			if (this == assembly)
+				return true;
+			foreach (string shortName in GetInternalsVisibleTo()) {
+				if (assembly.AssemblyName == shortName)
+					return true;
+			}
+			return false;
+		}
+		
+		volatile string[] internalsVisibleTo;
+		
+		string[] GetInternalsVisibleTo()
+		{
+			var result = this.internalsVisibleTo;
+			if (result != null) {
+				return result;
+			} else {
+				internalsVisibleTo = (
+					from attr in this.AssemblyAttributes
+					where attr.AttributeType.Name == "InternalsVisibleToAttribute"
+					&& attr.AttributeType.Namespace == "System.Runtime.CompilerServices"
+					&& attr.PositionalArguments.Count == 1
+					select GetShortName(attr.PositionalArguments.Single().ConstantValue as string)
+				).ToArray();
+				return internalsVisibleTo;
+			}
+		}
+		
+		static string GetShortName(string fullAssemblyName)
+		{
+			if (fullAssemblyName == null)
+				return null;
+			int pos = fullAssemblyName.IndexOf(',');
+			if (pos < 0)
+				return fullAssemblyName;
+			else
+				return fullAssemblyName.Substring(0, pos);
 		}
 		
 		Dictionary<FullNameAndTypeParameterCount, DefaultResolvedTypeDefinition> typeDict;
@@ -162,45 +198,15 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				return null;
 		}
 		
-		Dictionary<IUnresolvedTypeDefinition, ITypeDefinition> nestedTypeDict = new Dictionary<IUnresolvedTypeDefinition, ITypeDefinition>();
-		
-		public ITypeDefinition GetTypeDefinition(IUnresolvedTypeDefinition unresolved)
-		{
-			if (unresolved.DeclaringTypeDefinition == null) {
-				return GetTypeDefinition(unresolved.Namespace, unresolved.Name, unresolved.TypeParameters.Count);
-			} else {
-				lock (nestedTypeDict) {
-					ITypeDefinition typeDef;
-					if (nestedTypeDict.TryGetValue(unresolved, out typeDef))
-						return typeDef;
-					
-					ITypeDefinition parentType = GetTypeDefinition(unresolved.DeclaringTypeDefinition);
-					if (parentType == null)
-						return null;
-					List<IUnresolvedTypeDefinition> parts = new List<IUnresolvedTypeDefinition>();
-					foreach (var parentPart in parentType.Parts) {
-						foreach (var nestedPart in parentPart.NestedTypes) {
-							if (nestedPart.Name == unresolved.Name && nestedPart.TypeParameters.Count == unresolved.TypeParameters.Count) {
-								parts.Add(nestedPart);
-							}
-						}
-					}
-					typeDef = new DefaultResolvedTypeDefinition(new SimpleTypeResolveContext(parentType), parts.ToArray());
-					foreach (var part in parts) {
-						// TODO: Fix that hack !
-						if (nestedTypeDict.ContainsKey (part))
-							continue;
-						nestedTypeDict.Add(part, typeDef);
-					}
-					return typeDef;
-				}
-			}
-		}
-		
 		public IEnumerable<ITypeDefinition> TopLevelTypeDefinitions {
 			get {
 				return GetTypes().Values;
 			}
+		}
+		
+		public override string ToString()
+		{
+			return "[CSharpAssembly " + this.AssemblyName + "]";
 		}
 		
 		sealed class NS : INamespace

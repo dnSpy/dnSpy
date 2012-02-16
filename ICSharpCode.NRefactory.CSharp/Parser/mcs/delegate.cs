@@ -28,7 +28,7 @@ namespace Mono.CSharp {
 	//
 	// Delegate container implementation
 	//
-	public class Delegate : TypeContainer, IParametersMember
+	public class Delegate : TypeDefinition, IParametersMember
 	{
  		public FullNamedExpression ReturnType;
 		readonly ParametersCompiled parameters;
@@ -55,10 +55,9 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
- 		public Delegate (NamespaceContainer ns, DeclSpace parent, FullNamedExpression type,
-				 Modifiers mod_flags, MemberName name, ParametersCompiled param_list,
+ 		public Delegate (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, ParametersCompiled param_list,
 				 Attributes attrs)
-			: base (ns, parent, name, attrs, MemberKind.Delegate)
+			: base (parent, name, attrs, MemberKind.Delegate)
 
 		{
 			this.ReturnType = type;
@@ -81,6 +80,13 @@ namespace Mono.CSharp {
 				return parameters;
 			}
 		}
+
+		public FullNamedExpression TypExpression {
+			get {
+				return ReturnType;
+			}
+		}
+
 		#endregion
 
 		public override void Accept (StructuralVisitor visitor)
@@ -123,7 +129,7 @@ namespace Mono.CSharp {
 			);
 
 			Constructor = new Constructor (this, Constructor.ConstructorName,
-				Modifiers.PUBLIC, null, ctor_parameters, null, Location);
+				Modifiers.PUBLIC, null, ctor_parameters, Location);
 			Constructor.Define ();
 
 			//
@@ -178,7 +184,7 @@ namespace Mono.CSharp {
 			TypeManager.CheckTypeVariance (ret_type, Variance.Covariant, this);
 
 			var resolved_rt = new TypeExpression (ret_type, Location);
-			InvokeBuilder = new Method (this, null, resolved_rt, MethodModifiers, new MemberName (InvokeMethodName), p, null);
+			InvokeBuilder = new Method (this, resolved_rt, MethodModifiers, new MemberName (InvokeMethodName), p, null);
 			InvokeBuilder.Define ();
 
 			//
@@ -232,7 +238,7 @@ namespace Mono.CSharp {
 				}
 			);
 
-			BeginInvokeBuilder = new Method (this, null,
+			BeginInvokeBuilder = new Method (this,
 				new TypeExpression (iasync_result.TypeSpec, Location), MethodModifiers,
 				new MemberName ("BeginInvoke"), async_parameters, null);
 			BeginInvokeBuilder.Define ();
@@ -282,19 +288,21 @@ namespace Mono.CSharp {
 			//
 			// Create method, define parameters, register parameters with type system
 			//
-			EndInvokeBuilder = new Method (this, null, returnType, MethodModifiers, new MemberName ("EndInvoke"), end_parameters, null);
+			EndInvokeBuilder = new Method (this, returnType, MethodModifiers, new MemberName ("EndInvoke"), end_parameters, null);
 			EndInvokeBuilder.Define ();
 		}
 
-		public override void DefineConstants ()
+		public override void PrepareEmit ()
 		{
 			if (!Parameters.IsEmpty) {
 				parameters.ResolveDefaultValues (this);
 			}
 		}
 
-		public override void EmitType ()
+		public override void Emit ()
 		{
+			base.Emit ();
+
 			if (ReturnType.Type != null) {
 				if (ReturnType.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
@@ -321,12 +329,6 @@ namespace Mono.CSharp {
 				BeginInvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 				EndInvokeBuilder.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 			}
-
-			if (OptAttributes != null) {
-				OptAttributes.Emit ();
-			}
-
-			base.Emit ();
 		}
 
 		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
@@ -338,9 +340,7 @@ namespace Mono.CSharp {
 
 		protected override TypeAttributes TypeAttr {
 			get {
-				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel) |
-					TypeAttributes.Class | TypeAttributes.Sealed |
-					base.TypeAttr;
+				return base.TypeAttr | TypeAttributes.Class | TypeAttributes.Sealed;
 			}
 		}
 
@@ -525,7 +525,7 @@ namespace Mono.CSharp {
 				Error_ConversionFailed (ec, delegate_method, ret_expr);
 			}
 
-			if (delegate_method.IsConditionallyExcluded (ec.Module.Compiler, loc)) {
+			if (delegate_method.IsConditionallyExcluded (ec, loc)) {
 				ec.Report.SymbolRelatedToPreviousError (delegate_method);
 				MethodOrOperator m = delegate_method.MemberDefinition as MethodOrOperator;
 				if (m != null && m.IsPartialDefinition) {

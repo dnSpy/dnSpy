@@ -27,6 +27,7 @@ using System;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.Completion;
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp.Completion
 {
@@ -41,6 +42,8 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 		IParameterDataProvider CreateDelegateDataProvider (IType type);
 		
 		IParameterDataProvider CreateIndexerParameterDataProvider (IType type, AstNode resolvedNode);
+		
+		IParameterDataProvider CreateTypeParameterDataProvider (IEnumerable<IType> types);
 	}
 	
 }

@@ -47,7 +47,21 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.parts = parts;
 			ITypeResolveContext contextForTypeParameters = parts[0].CreateResolveContext(parentContext);
 			contextForTypeParameters = contextForTypeParameters.WithCurrentTypeDefinition(this);
-			this.TypeParameters = parts[0].TypeParameters.CreateResolvedTypeParameters(contextForTypeParameters);
+			if (parentContext.CurrentTypeDefinition == null || parentContext.CurrentTypeDefinition.TypeParameterCount == 0) {
+				this.TypeParameters = parts[0].TypeParameters.CreateResolvedTypeParameters(contextForTypeParameters);
+			} else {
+				// This is a nested class inside a generic class; copy type parameters from outer class if we can:
+				var outerClass = parentContext.CurrentTypeDefinition;
+				ITypeParameter[] typeParameters = new ITypeParameter[parts[0].TypeParameters.Count];
+				for (int i = 0; i < typeParameters.Length; i++) {
+					var unresolvedTP = parts[0].TypeParameters[i];
+					if (i < outerClass.TypeParameterCount && outerClass.TypeParameters[i].Name == unresolvedTP.Name)
+						typeParameters[i] = outerClass.TypeParameters[i];
+					else
+						typeParameters[i] = unresolvedTP.CreateResolvedTypeParameter(contextForTypeParameters);
+				}
+				this.TypeParameters = Array.AsReadOnly(typeParameters);
+			}
 			List<IUnresolvedAttribute> unresolvedAttributes = new List<IUnresolvedAttribute>();
 			List<ITypeResolveContext> contextPerAttribute = new List<ITypeResolveContext>();
 			List<ITypeResolveContext> contextPerMember = new List<ITypeResolveContext>();
@@ -115,16 +129,13 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 					LazyInit.ReadBarrier();
 					return result;
 				} else {
-					result = new List<ITypeDefinition>();
-					foreach (var part in parts) {
-						var context = part.CreateResolveContext(parentContext).WithCurrentTypeDefinition(this);
-						foreach (var nestedTypeRef in part.NestedTypes) {
-							ITypeDefinition nestedType = (ITypeDefinition)nestedTypeRef.Resolve(context);
-							if (!result.Contains(nestedType))
-								result.Add(nestedType);
-						}
-					}
-					return LazyInit.GetOrSet(ref this.nestedTypes, new ReadOnlyCollection<ITypeDefinition>(result));
+					result = (
+						from part in parts
+						from nestedTypeRef in part.NestedTypes
+						group nestedTypeRef by nestedTypeRef.Name into g
+						select new DefaultResolvedTypeDefinition(new SimpleTypeResolveContext(this), g.ToArray())
+					).ToList<ITypeDefinition>().AsReadOnly();
+					return LazyInit.GetOrSet(ref this.nestedTypes, result);
 				}
 			}
 		}
@@ -450,7 +461,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				if (asm != null)
 					asmRef = new DefaultAssemblyReference(asm.AssemblyName);
 				else
-					asmRef = DefaultAssemblyReference.CurrentAssembly;
+					asmRef = null;
 				return new GetClassTypeReference(asmRef, this.Namespace, this.Name, this.TypeParameterCount);
 			}
 		}

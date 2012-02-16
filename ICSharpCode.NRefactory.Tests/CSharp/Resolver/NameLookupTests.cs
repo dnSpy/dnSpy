@@ -61,8 +61,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void SimpleNameLookupWithoutContext()
 		{
-			// nothing should be found without specifying any UsingScope - however, the resolver also must not crash
-			Assert.IsTrue(resolver.WithCurrentUsingScope(null).ResolveSimpleName("System", new IType[0]).IsError);
+			// without any using scope, we still want to find elements of the global namespace:
+			var nrr = (NamespaceResolveResult)resolver.WithCurrentUsingScope(null).ResolveSimpleName("System", new IType[0]);
+			Assert.AreEqual("System", nrr.NamespaceName);
 		}
 		
 		[Test]

@@ -28,8 +28,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool CanGet { get; }
 		bool CanSet { get; }
 		
-		IUnresolvedAccessor Getter { get; }
-		IUnresolvedAccessor Setter { get; }
+		IUnresolvedMethod Getter { get; }
+		IUnresolvedMethod Setter { get; }
 		
 		bool IsIndexer { get; }
 	}
@@ -42,8 +42,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool CanGet { get; }
 		bool CanSet { get; }
 		
-		IAccessor Getter { get; }
-		IAccessor Setter { get; }
+		IMethod Getter { get; }
+		IMethod Setter { get; }
 		
 		bool IsIndexer { get; }
 	}

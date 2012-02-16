@@ -39,7 +39,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public override void SetUp()
 		{
 			base.SetUp();
-			parsedFile = new CSharpParsedFile("test.cs", new UsingScope());
+			parsedFile = new CSharpParsedFile("test.cs");
 			parsedFile.RootUsingScope.Usings.Add(MakeReference("System"));
 			parsedFile.RootUsingScope.Usings.Add(MakeReference("System.Collections.Generic"));
 			parsedFile.RootUsingScope.Usings.Add(MakeReference("System.Linq"));

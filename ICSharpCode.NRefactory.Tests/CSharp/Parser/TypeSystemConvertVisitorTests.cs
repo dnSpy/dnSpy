@@ -18,8 +18,10 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
+using ICSharpCode.NRefactory.TypeSystem.TestCase;
 using ICSharpCode.NRefactory.Utils;
 using NUnit.Framework;
 
@@ -49,6 +51,59 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 				.UpdateProjectContent(null, parsedFile)
 				.AddAssemblyReferences(new[] { CecilLoaderTests.Mscorlib })
 				.SetAssemblyName(typeof(TypeSystemTests).Assembly.GetName().Name);
+		}
+		
+		[Test]
+		public void ConvertStandaloneTypeReference()
+		{
+			var typeRef = new MemberType(new SimpleType("System"), "Array").ToTypeReference();
+			Assert.AreEqual(compilation.FindType(KnownTypeCode.Array), typeRef.Resolve(compilation.TypeResolveContext));
+		}
+		
+		[Test]
+		public void ExplicitDisposableImplementation()
+		{
+			ITypeDefinition disposable = GetTypeDefinition(typeof(NRefactory.TypeSystem.TestCase.ExplicitDisposableImplementation));
+			IMethod method = disposable.Methods.Single(m => m.Name == "Dispose");
+			Assert.IsTrue(method.IsExplicitInterfaceImplementation);
+			Assert.AreEqual("System.IDisposable.Dispose", method.InterfaceImplementations.Single().FullName);
+		}
+		
+		[Test]
+		public void ExplicitGenericInterfaceImplementation()
+		{
+			ITypeDefinition impl = GetTypeDefinition(typeof(NRefactory.TypeSystem.TestCase.ExplicitGenericInterfaceImplementation));
+			IType genericInterfaceOfString = compilation.FindType(typeof(IGenericInterface<string>));
+			IMethod implMethod1 = impl.Methods.Single(m => m.Name == "Test" && !m.Parameters[1].IsRef);
+			IMethod implMethod2 = impl.Methods.Single(m => m.Name == "Test" && m.Parameters[1].IsRef);
+			Assert.IsTrue(implMethod1.IsExplicitInterfaceImplementation);
+			Assert.IsTrue(implMethod2.IsExplicitInterfaceImplementation);
+			
+			IMethod interfaceMethod1 = (IMethod)implMethod1.InterfaceImplementations.Single();
+			Assert.AreEqual(genericInterfaceOfString, interfaceMethod1.DeclaringType);
+			Assert.IsTrue(!interfaceMethod1.Parameters[1].IsRef);
+			
+			IMethod interfaceMethod2 = (IMethod)implMethod2.InterfaceImplementations.Single();
+			Assert.AreEqual(genericInterfaceOfString, interfaceMethod2.DeclaringType);
+			Assert.IsTrue(interfaceMethod2.Parameters[1].IsRef);
+		}
+		
+		[Test]
+		public void ExplicitImplementationOfUnifiedMethods()
+		{
+			IType type = compilation.FindType(typeof(ExplicitGenericInterfaceImplementationWithUnifiableMethods<int, int>));
+			Assert.AreEqual(2, type.GetMethods(m => m.IsExplicitInterfaceImplementation).Count());
+			foreach (IMethod method in type.GetMethods(m => m.IsExplicitInterfaceImplementation)) {
+				Assert.AreEqual(1, method.InterfaceImplementations.Count, method.ToString());
+				Assert.AreEqual("System.Int32", method.Parameters.Single().Type.ReflectionName);
+				IMethod interfaceMethod = (IMethod)method.InterfaceImplementations.Single();
+				Assert.AreEqual("System.Int32", interfaceMethod.Parameters.Single().Type.ReflectionName);
+				var genericParamType = ((IMethod)method.MemberDefinition).Parameters.Single().Type;
+				var interfaceGenericParamType = ((IMethod)interfaceMethod.MemberDefinition).Parameters.Single().Type;
+				Assert.AreEqual(TypeKind.TypeParameter, genericParamType.Kind);
+				Assert.AreEqual(TypeKind.TypeParameter, interfaceGenericParamType.Kind);
+				Assert.AreEqual(genericParamType.ReflectionName, interfaceGenericParamType.ReflectionName);
+			}
 		}
 	}
 	

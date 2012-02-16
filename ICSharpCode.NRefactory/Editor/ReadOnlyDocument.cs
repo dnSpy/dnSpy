@@ -84,6 +84,17 @@ namespace ICSharpCode.NRefactory.Editor
 				this.endOffset = doc.GetEndOffset(lineNumber);
 			}
 			
+			public override int GetHashCode()
+			{
+				return doc.GetHashCode() ^ lineNumber;
+			}
+			
+			public override bool Equals(object obj)
+			{
+				ReadOnlyDocumentLine other = obj as ReadOnlyDocumentLine;
+				return other != null && doc == other.doc && lineNumber == other.lineNumber;
+			}
+			
 			public int Offset {
 				get { return offset; }
 			}
@@ -128,6 +139,10 @@ namespace ICSharpCode.NRefactory.Editor
 					else
 						return new ReadOnlyDocumentLine(doc, lineNumber + 1);
 				}
+			}
+			
+			public bool IsDeleted {
+				get { return false; }
 			}
 		}
 		

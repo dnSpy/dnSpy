@@ -41,6 +41,7 @@ namespace Mono.CSharp {
 		InternalCompilerType = 1 << 21,
 		MissingType = 1 << 22,
 		Void = 1 << 23,
+		Namespace = 1 << 24,
 
 		NestedMask = Class | Struct | Delegate | Enum | Interface,
 		GenericMask = Method | Class | Struct | Delegate | Interface,
@@ -303,24 +304,28 @@ namespace Mono.CSharp {
 		{
 			if (member.Kind == MemberKind.Operator) {
 				var dt = member.DeclaringType;
-				switch (dt.BuiltinType) {
-				case BuiltinTypeSpec.Type.String:
-				case BuiltinTypeSpec.Type.Delegate:
-				case BuiltinTypeSpec.Type.MulticastDelegate:
-					// Some core types have user operators but they cannot be used as normal
-					// user operators as they are predefined and therefore having different
-					// rules (e.g. binary operators) by not setting the flag we hide them for
-					// user conversions
-					// TODO: Should I do this for all core types ?
-					break;
-				default:
-					if (name == Operator.GetMetadataName (Operator.OpType.Implicit) || name == Operator.GetMetadataName (Operator.OpType.Explicit)) {
-						state |= StateFlags.HasConversionOperator;
-					} else {
-						state |= StateFlags.HasUserOperator;
-					}
 
-					break;
+				//
+				// Some core types have user operators but they cannot be used like normal
+				// user operators as they are predefined and therefore having different
+				// rules (e.g. binary operators) by not setting the flag we hide them for
+				// user conversions
+				//
+				if (!BuiltinTypeSpec.IsPrimitiveType (dt)) {
+					switch (dt.BuiltinType) {
+					case BuiltinTypeSpec.Type.String:
+					case BuiltinTypeSpec.Type.Delegate:
+					case BuiltinTypeSpec.Type.MulticastDelegate:
+						break;
+					default:
+						if (name == Operator.GetMetadataName (Operator.OpType.Implicit) || name == Operator.GetMetadataName (Operator.OpType.Explicit)) {
+							state |= StateFlags.HasConversionOperator;
+						} else {
+							state |= StateFlags.HasUserOperator;
+						}
+
+						break;
+					}
 				}
 			}
 
@@ -468,7 +473,7 @@ namespace Mono.CSharp {
 				// based on type definition
 				var tc = container.MemberDefinition as TypeContainer;
 				if (tc != null)
-					tc.DefineType ();
+					tc.DefineContainer ();
 
 				if (container.MemberCacheTypes.member_hash.TryGetValue (name, out applicable)) {
 					for (int i = applicable.Count - 1; i >= 0; i--) {
@@ -889,7 +894,7 @@ namespace Mono.CSharp {
 				return IndexerNameAlias;
 
 			if (mc is Constructor)
-				return Constructor.ConstructorName;
+				return mc.IsStatic ? Constructor.TypeConstructorName : Constructor.ConstructorName;
 
 			return mc.MemberName.Name;
 		}

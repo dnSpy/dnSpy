@@ -51,5 +51,10 @@ namespace ICSharpCode.NRefactory.Editor
 		/// Gets the next line. Returns null if this is the last line in the document.
 		/// </summary>
 		IDocumentLine NextLine { get; }
+		
+		/// <summary>
+		/// Gets whether the line was deleted.
+		/// </summary>
+		bool IsDeleted { get; }
 	}
 }

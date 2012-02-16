@@ -17,7 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
 using ICSharpCode.NRefactory.Semantics;
+using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using NUnit.Framework;
 
@@ -366,7 +368,7 @@ class TestClass {
 			string program = @"using System;
 class TestClass {
 	static void Method<T>(System.Collections.Generic.List<T> list) {
-		$list.ConvertAll(x => (int)x)$;
+		$list.ConvertAll(x => (int)(object)x)$;
 	}
 }";
 			var rr = Resolve<CSharpInvocationResolveResult>(program);
@@ -392,18 +394,171 @@ class TestClass {
 			Assert.IsFalse(rr.HasParameterList);
 		}
 		
-		/* TODO write test for this
-class A
-{
+		[Test]
+		public void NonVoidMethodInActionLambdaIsValidConversion()
+		{
+			string program = @"using System;
+class TestClass {
+	void Run(Action a) { }
+	int M() {
+		Run(() => $M()$);
+	}
+}";
+			var c = GetConversion(program);
+			Assert.IsTrue(c.IsValid);
+		}
+		
+		[Test]
+		public void NonVoidMethodInImplicitlyTypedActionLambdaIsValidConversion()
+		{
+			string program = @"using System;
+class TestClass {
+	void Run(Action<string> a) { }
+	int M() {
+		Run(x => $M()$);
+	}
+}";
+			var c = GetConversion(program);
+			Assert.IsTrue(c.IsValid);
+		}
+		
+		[Test]
+		public void ImplicitLambdaInNewFunc()
+		{
+			string program = @"using System;
+class Test {
+	static bool b;
+	object x = new Func<int, string>(a => $a$.ToString());
+}";
+			var r = Resolve(program);
+			Assert.AreEqual("System.Int32", r.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void LambdaInNewAction()
+		{
+			string program = @"using System;
+class Test {
+	static bool b;
+	object x = new Action(() => $b = true$);
+}";
+			var c = GetConversion(program);
+			Assert.IsTrue(c.IsValid);
+		}
+		
+		[Test]
+		public void AnonymousMethodInNewEventHandler()
+		{
+			// The switch statement causes the control flow analysis to ask the resolver if it's a constant,
+			// which caused a bug.
+			string program = @"using System;
+class Test {
+	static bool b;
+	object x = new EventHandler<AssemblyLoadEventArgs>($delegate (object sender, AssemblyLoadEventArgs e) { switch (e.Action) {} }$);
+}";
+			var c = GetConversion(program);
+			Assert.IsTrue(c.IsValid);
+		}
+		
+		[Test]
+		public void ThrowingAnonymousMethodIsConvertibleToFunc()
+		{
+			string program = @"using System;
+class Test {
+	Func<string, int> x = $delegate { throw new NotImplementedException(); }$;
+}";
+			var c = GetConversion(program);
+			Assert.IsTrue(c.IsValid);
+		}
+		
+		[Test]
+		public void EmptyAnonymousMethodIsNotConvertibleToFunc()
+		{
+			string program = @"using System;
+class Test {
+	Func<string, int> x = $delegate { }$;
+}";
+			var c = GetConversion(program);
+			Assert.IsFalse(c.IsValid);
+		}
+		
+		[Test]
+		public void RaisePropertyChanged_WithExpressionLambda()
+		{
+			string program = @"using System;
+using System.Linq.Expressions;
+class Test {
+	void RaisePropertyChanged<T>(Expression<Func<T>> propertyExpression) {}
+	void RaisePropertyChanged(string propertyName) {}
+	string MyProperty { get {} }
+	void Test() {
+		$RaisePropertyChanged(() => MyProperty)$;
+	}
+}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual("propertyExpression", rr.Member.Parameters.Single().Name);
+		}
+		
+		[Test]
+		public void ParenthesizedExpressionIsNotValidExpressionStatement()
+		{
+			string program = @"using System;
+class A {
     static void Foo(string x, Action<Action> y) { Console.WriteLine(1); }
     static void Foo(object x, Func<Func<int>, int> y) { Console.WriteLine(2); }
 
     static void Main()
-    {
-        Foo(null, x => x()); // Prints 1
-        Foo(null, x => (x())); // Prints 2
-    }
-}
-		 */
+    { ";
+			var rr = ResolveAtLocation<CSharpInvocationResolveResult>(program + "$Foo(null, x => x()); // Prints 1\n}}");
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual("System.String", rr.Member.Parameters[0].Type.ReflectionName);
+			
+			rr = ResolveAtLocation<CSharpInvocationResolveResult>(program + "$Foo(null, x => (x())); // Prints 2\n}}");
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual("System.Object", rr.Member.Parameters[0].Type.ReflectionName);
+		}
+		
+		[Test]
+		public void LambdaWithComparisonToString()
+		{
+			string program = @"using System;
+class Test {
+    static void Foo(Func<int, bool> f) {}
+    static void Foo(Func<string, bool> f) {}
+    static void Main() { $Foo(x => x == ""text"")$; } }";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(rr.IsError);
+			var invoke = rr.Member.Parameters.Single().Type.GetDelegateInvokeMethod();
+			Assert.AreEqual("System.String", invoke.Parameters.Single().Type.ReflectionName);
+		}
+		
+		[Test]
+		public void LambdaWithComparisonToInt()
+		{
+			string program = @"using System;
+class Test {
+    static void Foo(Func<int, bool> f) {}
+    static void Foo(Func<string, bool> f) {}
+    static void Main() { $Foo(x => x == 42)$; } }";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(rr.IsError);
+			var invoke = rr.Member.Parameters.Single().Type.GetDelegateInvokeMethod();
+			Assert.AreEqual("System.Int32", invoke.Parameters.Single().Type.ReflectionName);
+		}
+		
+		[Test]
+		public void StartNewTask()
+		{
+			string program = @"using System;
+class Test {
+	int Calculate() {}
+    static void Main() {
+    	$System.Threading.Tasks.Task.Factory.StartNew(() => Calculate())$;
+	}}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual("System.Threading.Tasks.Task`1[[System.Int32]]", rr.Type.ReflectionName);
+		}
 	}
 }

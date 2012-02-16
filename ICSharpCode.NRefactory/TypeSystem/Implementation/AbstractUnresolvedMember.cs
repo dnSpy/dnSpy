@@ -94,7 +94,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}*/
 		
-		public IList<IMemberReference> InterfaceImplementations {
+		public IList<IMemberReference> ExplicitInterfaceImplementations {
 			get {
 				if (interfaceImplementations == null)
 					interfaceImplementations = new List<IMemberReference>();

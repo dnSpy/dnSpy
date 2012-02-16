@@ -1,4 +1,4 @@
-//
+﻿//
 // CodeCompletionBugTests.cs
 //
 // Author:
@@ -25,22 +25,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.Collections.Generic;
 using System.IO;
-
-using NUnit.Framework;
-using ICSharpCode.NRefactory.TypeSystem.Implementation;
-using ICSharpCode.NRefactory.CSharp.Completion;
-using ICSharpCode.NRefactory.Completion;
 using System.Linq;
-using ICSharpCode.NRefactory.TypeSystem;
-using ICSharpCode.NRefactory.Editor;
-using System.Diagnostics;
 using System.Text;
-using ICSharpCode.NRefactory.CSharp.TypeSystem;
 
+using ICSharpCode.NRefactory.Completion;
+using ICSharpCode.NRefactory.CSharp.Completion;
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
+using ICSharpCode.NRefactory.Editor;
+using ICSharpCode.NRefactory.TypeSystem;
+using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 {
@@ -70,9 +66,11 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			act (provider);
 		}
 		
-		class TestFactory : ICompletionDataFactory
+		class TestFactory
+		: ICompletionDataFactory
 		{
-			class CompletionData : ICompletionData
+			class CompletionData
+			: ICompletionData
 			{
 				#region ICompletionData implementation
 				public void AddOverload (ICompletionData data)
@@ -183,7 +181,12 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			{
 				return new CompletionData (m.Name);
 			}
-
+			
+			public ICompletionData CreateNewPartialCompletionData (int declarationBegin, IUnresolvedTypeDefinition type, IUnresolvedMember m)
+			{
+				return new CompletionData (m.Name);
+			}
+			
 			public System.Collections.Generic.IEnumerable<ICompletionData> CreateCodeTemplateCompletionData ()
 			{
 				return Enumerable.Empty<ICompletionData> ();
@@ -212,7 +215,6 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			}
 			var doc = new ReadOnlyDocument (editorText);
 			
-			var engine = new CSharpCompletionEngine (doc, new TestFactory ());
 			IProjectContent pctx = new CSharpProjectContent ();
 			pctx = pctx.AddAssemblyReferences (new [] { CecilLoaderTests.Mscorlib, CecilLoaderTests.SystemCore });
 			
@@ -226,6 +228,8 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			
 			var rctx = new CSharpTypeResolveContext (cmp.MainAssembly);
 			rctx = rctx.WithUsingScope (parsedFile.GetUsingScope (loc).Resolve (cmp));
+			
+
 			var curDef = parsedFile.GetInnermostTypeDefinition (loc);
 			if (curDef != null) {
 				var resolvedDef = curDef.Resolve (rctx).GetDefinition ();
@@ -234,13 +238,10 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 				if (curMember != null)
 					rctx = rctx.WithCurrentMember (curMember);
 			}
-			engine.ctx = rctx;
+			var engine = new CSharpCompletionEngine (doc, new TestFactory (), pctx, rctx, compilationUnit, parsedFile);
 				
 			engine.EolMarker = Environment.NewLine;
 			engine.FormattingPolicy = new CSharpFormattingOptions ();
-			engine.CSharpParsedFile = parsedFile;
-			engine.ProjectContent = pctx;
-			engine.Unit = compilationUnit;
 			
 			var data = engine.GetCompletionData (cursorPosition, isCtrlSpace);
 			
@@ -262,13 +263,9 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			pctx = pctx.UpdateProjectContent (null, parsedFile);
 			var cmp = pctx.CreateCompilation ();
 			
-			var engine = new CSharpCompletionEngine (doc, new TestFactory ());
-			engine.ctx = new CSharpTypeResolveContext (cmp.MainAssembly);
+			var engine = new CSharpCompletionEngine (doc, new TestFactory (), pctx, new CSharpTypeResolveContext (cmp.MainAssembly), compilationUnit, parsedFile);
 			engine.EolMarker = Environment.NewLine;
 			engine.FormattingPolicy = new CSharpFormattingOptions ();
-			engine.CSharpParsedFile = parsedFile;
-			engine.ProjectContent = pctx;
-			engine.Unit = compilationUnit;
 			return Tuple.Create (doc, engine);
 		}
 		
@@ -306,7 +303,8 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			Assert.IsNotNull (provider.Find ("ReferenceEquals"), "Method 'System.Object.ReferenceEquals' not found.");
 		}
 		
-		class TestLocVisitor : ICSharpCode.NRefactory.CSharp.DepthFirstAstVisitor<object, object>
+		class TestLocVisitor
+		: ICSharpCode.NRefactory.CSharp.DepthFirstAstVisitor<object, object>
 		{
 			public List<Tuple<TextLocation, string>> output = new List<Tuple<TextLocation, string>> ();
 			
@@ -332,7 +330,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			int exceptions = 0;
 			int i = 0;
 			foreach (var file in Directory.EnumerateFiles ("/Users/mike/work/mono/mcs/tests", "*.cs")) {
-				if  (i++>2)
+				if (i++ > 2)
 					break;
 				if (i <= 2)
 					continue;
@@ -353,7 +351,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 						}
 					}
 				} catch (Exception e) {
-					Console.WriteLine ("Exception in:" +file);
+					Console.WriteLine ("Exception in:" + file);
 					exceptions++;
 				}
 			}
@@ -363,7 +361,6 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			if (missing > 0)
 				Assert.Fail ();
 		}
-		
 			
 		[Test()]
 		public void TestSimpleCodeCompletion ()
@@ -385,6 +382,7 @@ void TestMethod ()
 			Assert.IsNotNull (provider.Find ("TM2"));
 			Assert.IsNotNull (provider.Find ("TF1"));
 		}
+
 		[Test()]
 		public void TestSimpleInterfaceCodeCompletion ()
 		{
@@ -428,7 +426,27 @@ namespace ThisOne {
 			Assert.IsNotNull (provider);
 			Assert.IsNotNull (provider.Find ("Other.TheEnum"), "Other.TheEnum not found.");
 		}
+		
+		[Test()]
+		public void TestInnerEnum ()
+		{
+			var provider = CreateProvider (
+@"class Other { 
+	public enum TheEnum { One, Two }
+	public Other (TheEnum e) { }
+}
 
+public class Test {
+	public void TestMethod () {
+		$new Other (O$
+	}
+}");
+			Assert.IsNotNull (provider);
+			Assert.IsNotNull (provider.Find ("Other.TheEnum"), "'Other.TheEnum' not found.");
+		}
+
+		
+		
 		/// <summary>
 		/// Bug 318834 - autocompletion kicks in when inputting decimals
 		/// </summary>
@@ -1103,6 +1121,7 @@ namespace MyNamespace
 		/// <summary>
 		/// Bug 432434B - Code completion doesn't work with subclasses
 		/// </summary>
+		[Ignore("Fixme!")]
 		[Test()]
 		public void TestBug432434B ()
 		{
@@ -1502,6 +1521,32 @@ class A
 		}
 		
 		/// <summary>
+		/// Bug 2268 - Potential omission in code completion
+		/// </summary>
+		[Test()]
+		public void TestBug2268 ()
+		{
+			CombinedProviderTest (
+@"
+public class Outer
+{
+    static int value = 5;
+
+    class Inner
+    {
+        void Method ()
+        {
+            $v$
+        }
+    }
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("value"), "field 'value' not found.");
+			});
+		}
+		
+		
+		/// <summary>
 		/// Bug 2295 - [New Resolver] 'new' completion doesn't select the correct class name 
 		/// </summary>
 		[Test()]
@@ -1522,6 +1567,27 @@ class A
 				Assert.AreEqual ("A", provider.DefaultCompletionString);
 			});
 		}
+		
+		
+		/// <summary>
+		/// Bug 2198 - Typing generic argument to a class/method pops up type completion window
+		/// </summary>
+		[Test()]
+		public void TestBug2198 ()
+		{
+			CombinedProviderTest (@"$class Klass <T$", provider => {
+				Assert.AreEqual (0, provider.Count, "provider needs to be empty");
+			});
+		}
+		
+		[Test()]
+		public void TestBug2198Case2 ()
+		{
+			CombinedProviderTest (@"$class Klass { void Test<T$", provider => {
+				Assert.AreEqual (0, provider.Count, "provider needs to be empty");
+			});
+		}
+		
 		
 		/// <summary>
 		/// Bug 2061 - Typing 'new' in a method all does not offer valid completion
@@ -1566,6 +1632,241 @@ class A
 ", provider => {
 				Assert.IsNotNull (provider.Find ("A"), "class 'A' not found.");
 				Assert.AreEqual ("A", provider.DefaultCompletionString);
+			});
+		}
+		
+		/// <summary>
+		/// Bug 2788 - Locals do not show up inside the 'for' statement context
+		/// </summary>
+		[Test()]
+		public void TestBug2788 ()
+		{
+			CombinedProviderTest (
+@"
+class A
+{
+	public void Test()
+	{
+		
+		var foo = new byte[100];
+		$for (int i = 0; i < f$
+	}
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("foo"), "'foo' not found.");
+				Assert.IsNotNull (provider.Find ("i"), "'i' not found.");
+			});
+		}
+		
+		/// <summary>
+		/// Bug 2800 - Finalize is offered as a valid completion target
+		/// </summary>
+		[Test()]
+		public void TestBug2800 ()
+		{
+			CombinedProviderTest (
+@"
+class A
+{
+	public void Test()
+	{
+		$this.$
+	}
+}
+", provider => {
+				Assert.IsNull (provider.Find ("Finalize"), "'Finalize' found.");
+			});
+		}
+		
+		[Test()]
+		public void TestBug2800B ()
+		{
+			CombinedProviderTest (
+@"
+class A
+{
+	$public override $
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("ToString"), "'ToString' not found.");
+				Assert.IsNull (provider.Find ("Finalize"), "'Finalize' found.");
+			});
+		}
+		
+		/// <summary>
+		/// Bug 3370 -MD ignores member hiding
+		/// </summary>
+		[Test()]
+		public void TestBug3370 ()
+		{
+			CombinedProviderTest (
+@"
+class A
+{
+	$public override $
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("ToString"), "'ToString' not found.");
+				Assert.IsNull (provider.Find ("Finalize"), "'Finalize' found.");
+			});
+		}
+		
+		/// <summary>
+		/// Bug 2793 - op_Equality should not be offered in the completion list
+		/// </summary>
+		[Test()]
+		public void Test2793 ()
+		{
+			CombinedProviderTest (
+@"
+using System;
+
+public class MyClass
+{
+    public class A
+    {
+        public event EventHandler MouseClick;
+    }
+
+    public class B : A
+    {
+        public new event EventHandler MouseClick;
+    }
+
+    public class C : B
+    {
+        public new void MouseClick ()
+        {
+        }
+    }
+
+    static public void Main ()
+    {
+        C myclass = new C ();
+        $myclass.$
+    }
+}", provider => {
+				Assert.AreEqual (1, provider.Data.Where(c => c.DisplayText == "MouseClick").Count ());
+			});
+		}
+		
+		/// <summary>
+		/// Bug 2798 - Unnecessary namespace qualification being prepended
+		/// </summary>
+		[Test()]
+		public void Test2798 ()
+		{
+			CombinedProviderTest (
+@"
+using System;
+
+namespace Foobar
+{
+    class MainClass
+    {
+        public enum Foo
+        {
+            Value1,
+            Value2
+        }
+
+        public class Test
+        {
+            Foo Foo {
+                get; set;
+            }
+
+            public static void Method (Foo foo)
+            {
+                $if (foo == F$
+            }
+        }
+    }
+}
+", provider => {
+				Assert.IsNull (provider.Find ("MainClass.Foo"), "'MainClass.Foo' found.");
+				Assert.IsNotNull (provider.Find ("Foo"), "'Foo' not found.");
+				Assert.IsNotNull (provider.Find ("Foo.Value1"), "'Foo.Value1' not found.");
+				Assert.IsNotNull (provider.Find ("Foo.Value2"), "'Foo.Value2' not found.");
+			});
+		}
+		
+		
+		/// <summary>
+		/// Bug 2799 - No completion offered when declaring fields in a class
+		/// </summary>
+		[Test()]
+		public void TestBug2799 ()
+		{
+			CombinedProviderTest (
+@"namespace Foobar
+{
+    class MainClass
+    {
+        public enum Foo
+        {
+            Value1,
+            Value2
+        }
+    }
+
+
+    public class Second
+    {
+        $MainClass.$
+    }
+}
+
+", provider => {
+				Assert.IsNotNull (provider.Find ("Foo"), "'Foo' not found.");
+			});
+		}
+		
+		/// <summary>
+		/// Bug 3371 - MD intellisense ignores namespace aliases
+		/// </summary>
+		[Test()]
+		public void TestBug3371 ()
+		{
+			CombinedProviderTest (
+@"namespace A
+{
+    using Base = B.Color;
+
+    class Color
+    {
+        protected Base Base
+        {
+            get { return Base.Blue; }
+        }
+
+        protected Base NewBase {
+            get {
+                $return Base.$
+            }
+        }
+
+        public static void Main ()
+        {
+        }
+    }
+}
+
+namespace B
+{
+    public struct Color
+    {
+        public static Color Blue = new Color ();
+
+        public static Color From (int i)
+        {
+            return new Color ();
+        }
+    }
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("Blue"), "'Blue' not found.");
+				Assert.IsNotNull (provider.Find ("From"), "'From' not found.");
 			});
 		}
 		
@@ -1709,6 +2010,66 @@ class Test
 		}
 		
 		/// <summary>
+		/// Bug 3438 - [New Resolver] Local var missing in code completion
+		/// </summary>
+		[Test()]
+		public void Test3438 ()
+		{
+			CombinedProviderTest (
+@"
+using System;
+using System.Text;
+
+class C
+{
+	void GetElementXml (int indent)
+	{
+		StringBuilder sb = new StringBuilder ();
+		if (indent == 0)
+			sb.Append ("" xmlns:android=\""http://schemas.android.com/apk/res/android\"""");
+		
+		if (indent != 0) {
+			string data;
+			$d$
+		}
+	}	
+}", provider => {
+				Assert.IsNotNull (provider.Find ("data"), "'data' not found.");
+			});
+		}
+		
+		/// <summary>
+		/// Bug 3436 - [New Resolver] Type missing in return type completion
+		/// </summary>
+		[Test()]
+		public void Test3436 ()
+		{
+			CombinedProviderTest (
+@"
+namespace A 
+{
+	public class SomeClass {}
+}
+
+namespace Foo 
+{
+	public partial class Bar {}
+}
+
+namespace Foo 
+{
+	using A;
+	public partial class Bar {
+		$S$
+	}
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("SomeClass"), "'SomeClass' not found.");
+			});
+		}
+		
+		
+		/// <summary>
 		/// Bug 474199 - Code completion not working for a nested class
 		/// </summary>
 		[Test()]
@@ -1740,7 +2101,7 @@ class Test
 ");
 			Assert.IsNotNull (provider, "provider not found.");
 			Assert.AreEqual (1, provider.OverloadCount, "There should be one overload");
-			Assert.AreEqual (1, provider.GetParameterCount(0), "Parameter 'test' should exist");
+			Assert.AreEqual (1, provider.GetParameterCount (0), "Parameter 'test' should exist");
 		}
 		
 		/// <summary>
@@ -2194,7 +2555,7 @@ class MyClass2
 		[Test()]
 		public void TestBug542976 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 class KeyValuePair<S, T>
 {
@@ -2244,7 +2605,7 @@ namespace TestMe
 		[Test()]
 		public void TestBug545189A ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 public class A<T>
 {
@@ -2273,7 +2634,7 @@ public class Foo
 		[Test()]
 		public void TestBug549864 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 delegate T MyFunc<S, T> (S t);
 
@@ -2302,7 +2663,7 @@ class TestClass
 		[Test()]
 		public void TestBug550185 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 public interface IMyinterface<T> {
 	T Foo ();
@@ -2336,7 +2697,7 @@ class TestClass
 		[Test()]
 		public void TestBug553101 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 namespace Some.Type 
 {
@@ -2365,7 +2726,7 @@ namespace Test
 		[Test()]
 		public void TestBug555523A ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 class A
 {
@@ -2412,7 +2773,7 @@ class MainClass
 		[Test()]
 		public void TestBug555523B ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 class A
 {
@@ -2460,7 +2821,7 @@ class MainClass
 		[Test()]
 		public void TestBug561964 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 interface A1 {
 	int A { get; }
@@ -2495,7 +2856,7 @@ class Foo : IFoo
 		[Test()]
 		public void TestBug568204 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 public class Style 
 {
@@ -2530,7 +2891,7 @@ public class Foo
 		[Test()]
 		public void TestBug577225 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 using Foo;
 	
@@ -2572,7 +2933,7 @@ namespace Other
 		[Test()]
 		public void TestBug582017 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 class Bar
 {
@@ -2599,7 +2960,7 @@ class Foo
 		[Test()]
 		public void TestBug586304 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 using System;
 using System.Collections.Generic;
@@ -2641,7 +3002,7 @@ public class Test
 		[Test()]
 		public void TestBug586304B ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 public delegate S Func<T, S> (T t);
 
@@ -2681,7 +3042,7 @@ class MyClass
 		[Test()]
 		public void TestBug587543 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 interface ITest
 {
@@ -2707,7 +3068,7 @@ class C
 		[Test()]
 		public void TestBug587549 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 public interface ITest
 {
@@ -2745,7 +3106,7 @@ public class PrinterImpl : Printer
 		[Test()]
 		public void TestBug588223 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 class Lazy<T> { public void Foo () {} }
 class Lazy<T, S> { public void Bar () {} }
@@ -2785,7 +3146,7 @@ class Test
 		[Test()]
 		public void TestBug592120 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 
 interface IBar
@@ -2815,7 +3176,7 @@ class Foo
 		[Test()]
 		public void TestBug576354 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 delegate T Func<S, T> (S s);
 
@@ -2858,7 +3219,7 @@ class MyTest
 		[Test()]
 		public void TestBug534680 ()
 		{
-				CompletionDataList provider = CreateCtrlSpaceProvider (
+			CompletionDataList provider = CreateCtrlSpaceProvider (
 @"
 class Foo
 {
@@ -2878,7 +3239,7 @@ class Foo
 		[Test()]
 		public void TestBug610006 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 class MainClass
 {
@@ -2903,7 +3264,7 @@ class MainClass
 		[Test()]
 		public void TestBug614045 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"
 namespace A
 {
@@ -2942,7 +3303,7 @@ namespace B
 		[Test()]
 		public void TestBug615992 ()
 		{
-				CompletionDataList provider = CreateProvider (
+			CompletionDataList provider = CreateProvider (
 @"public delegate void Act<T> (T t);
 
 public class Foo
@@ -3589,7 +3950,7 @@ public class Test
 ");
 			Assert.IsNotNull (provider, "provider not found.");
 			Assert.IsNotNull (provider.Find ("SomeMethod"), "method 'SomeMethod' not found.");
-	}
+		}
 		/// <summary>
 		/// Bug 678340 - Cannot infer types from Dictionary<K,V>.Values
 		/// </summary>
@@ -3847,7 +4208,6 @@ void TestMethod ()
 			Assert.IsNotNull (provider.Find ("TF1"));
 		}
 		
-
 		[Test()]
 		public void TestPartialCompletionData ()
 		{
@@ -3913,6 +4273,240 @@ namespace ConsoleProject
 ", provider => {
 				Assert.IsNotNull (provider.Find ("ArgsNum"), "property 'ArgsNum' not found.");
 			});
-		}	
+		}
+		
+		[Test()]
+		public void TestParameterContext ()
+		{
+			var provider = CreateProvider (
+@"
+public class TestMe
+{
+	$void TestMe (TestClassParameter t$
+}");
+			Assert.IsTrue (provider == null || provider.Count == 0, "provider was not empty.");
+		}
+		
+		/// <summary>
+		/// Bug 2123 - Completion kicks in after an array type is used in method parameters
+		/// </summary>
+		[Test()]
+		public void TestParameterContextCase2FromBug2123 ()
+		{
+			CompletionDataList provider = CreateProvider (
+@"class Program
+{
+	public Program ($string[] a$)
+	{
+	}
+}");
+			Assert.IsTrue (provider == null || provider.Count == 0, "provider should be empty.");
+		}
+		
+		[Test()]
+		public void TestParameterContextNameProposal ()
+		{
+			var provider = CreateCtrlSpaceProvider (
+@"
+public class TestMe
+{
+	$void TestMe (TestClassParameter t$
+}");
+			Assert.IsNotNull (provider, "provider not found.");
+			Assert.IsNotNull (provider.Find ("testClassParameter"), "'testClassParameter' not found.");
+			Assert.IsNotNull (provider.Find ("classParameter"), "'classParameter' not found.");
+			Assert.IsNotNull (provider.Find ("parameter"), "'parameter' not found.");
+		}
+		
+		[Test()]
+		public void TestParameterTypeNameContext ()
+		{
+			CombinedProviderTest (
+@"class Program
+{
+	public Program ($System.$)
+	{
+	}
+}", provider => {
+				Assert.IsNotNull (provider.Find ("Object"), "'Object' not found.");
+			});
+		}
+		
+		[Test()]
+		public void TestMethodNameContext ()
+		{
+			CompletionDataList provider = CreateProvider (
+@"using System;
+namespace Test 
+{
+	class Program
+	{
+		void SomeMethod ()
+		{
+			
+		}
+		
+		$public void T$
+	}
+}");
+			Assert.IsTrue (provider == null || provider.Count == 0, "provider should be empty.");
+		}
+		
+		[Test()]
+		public void TestNamedParameters ()
+		{
+			CombinedProviderTest (
+@"class MyClass {
+    string Bar { get; set; }
+
+    void MethodOne(string foo="""", string bar="""")
+	{
+    }
+
+    void MethodTwo() {
+        $MethodOne(b$
+    }
+}", provider => {
+				Assert.IsNotNull (provider.Find ("bar"), "'bar' not found.");
+				Assert.IsNotNull (provider.Find ("foo"), "'foo' not found.");
+			});
+		}
+		
+		[Test()]
+		public void TestNamedParametersConstructorCase ()
+		{
+			CombinedProviderTest (
+@"class MyClass {
+    MyClass(string foo="""", string bar="""")
+	{
+    }
+
+    void MethodTwo() {
+        $new MyClass(b$
+    }
+}", provider => {
+				Assert.IsNotNull (provider.Find ("bar"), "'bar' not found.");
+				Assert.IsNotNull (provider.Find ("foo"), "'foo' not found.");
+			});
+		}
+		
+		[Test()]
+		public void TestConstructorThisBase ()
+		{
+			CombinedProviderTest (
+@"class Program
+{
+	public Program () : $t$
+	{
+	}
+}", provider => {
+				Assert.IsNotNull (provider.Find ("this"), "'this' not found.");
+				Assert.IsNotNull (provider.Find ("base"), "'base' not found.");
+			});
+		}
+		
+		[Ignore("Fixme!")]
+		[Test()]
+		public void TestAnonymousArguments ()
+		{
+			CombinedProviderTest (
+@"
+using System;
+class Program
+{
+	public static void Main ()
+	{
+		EventHandler f = delegate (object sender, EventArgs args) {
+			$Console.WriteLine(s$
+		};
+	}
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("sender"), "'sender' not found.");
+				Assert.IsNotNull (provider.Find ("args"), "'args' not found.");
+			});
+		}
+		
+		[Test()]
+		public void TestCodeCompletionCategorySorting ()
+		{
+			CompletionDataList provider = CreateProvider (
+@"class CClass : BClass
+{
+	public int C;
+}
+
+class BClass : AClass
+{
+	public int B;
+}
+
+class AClass
+{
+	public int A;
+}
+
+class Test
+{
+	public void TestMethod ()
+	{
+		CClass a;
+		$a.$
+	}
+}");
+			Assert.IsNotNull (provider, "provider not found.");
+			
+			var list = new List<CompletionCategory> ();
+			
+			for (int i = 0; i < provider.Count; i++) {
+				if (list.Contains (provider [i].CompletionCategory))
+					continue;
+				list.Add (provider [i].CompletionCategory);
+			}	
+			Assert.AreEqual (4, list.Count);
+			
+			list.Sort ();
+			Assert.AreEqual ("CClass", list [0].DisplayText);
+			Assert.AreEqual ("BClass", list [1].DisplayText);
+			Assert.AreEqual ("AClass", list [2].DisplayText);
+			Assert.AreEqual ("System.Object", list [3].DisplayText);
+		}
+		
+		[Test()]
+		public void TestAsExpressionContext ()
+		{
+			var provider = CreateProvider (
+@"class CClass : BClass
+{
+	public int C;
+}
+
+class BClass : AClass
+{
+	public int B;
+}
+
+class AClass
+{
+	public int A;
+}
+
+class Test
+{
+	public void TestMethod ()
+	{
+		AClass a;
+		$a as A$
+	}
+}");
+			Assert.IsNotNull (provider, "provider not found.");
+			
+			Assert.IsNotNull (provider.Find ("AClass"), "'AClass' not found.");
+			Assert.IsNotNull (provider.Find ("BClass"), "'BClass' not found.");
+			Assert.IsNotNull (provider.Find ("CClass"), "'CClass' not found.");
+			Assert.IsNotNull (provider.Find ("Test"), "'Test' not found.");
+			Assert.IsNull (provider.Find ("TestMethod"), "'TestMethod' found.");
+			
+		}
 	}
 }

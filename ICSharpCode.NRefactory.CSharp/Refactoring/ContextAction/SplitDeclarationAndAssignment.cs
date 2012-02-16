@@ -61,9 +61,10 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		{
 			var result = context.GetNode<VariableDeclarationStatement> ();
 			if (result != null && result.Variables.Count == 1 && !result.Variables.First ().Initializer.IsNull && result.Variables.First ().NameToken.Contains (context.Location.Line, context.Location.Column)) {
-				resolvedType = context.Resolve (result.Variables.First ().Initializer).Type.ConvertToAstType ();
-				if (resolvedType == null)
-					return null;
+				resolvedType = result.Type.Clone ();
+				// resolvedType = context.Resolve (result.Variables.First ().Initializer).Type.ConvertToAstType ();
+				// if (resolvedType == null)
+				// 	return null;
 				return result;
 			}
 			resolvedType = null;

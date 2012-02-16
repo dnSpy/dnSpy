@@ -27,7 +27,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	[Serializable]
 	public class DefaultUnresolvedProperty : AbstractUnresolvedMember, IUnresolvedProperty
 	{
-		IUnresolvedAccessor getter, setter;
+		IUnresolvedMethod getter, setter;
 		IList<IUnresolvedParameter> parameters;
 		
 		protected override void FreezeInternal()
@@ -80,7 +80,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return setter != null; }
 		}
 		
-		public IUnresolvedAccessor Getter {
+		public IUnresolvedMethod Getter {
 			get { return getter; }
 			set {
 				ThrowIfFrozen();
@@ -88,7 +88,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		public IUnresolvedAccessor Setter {
+		public IUnresolvedMethod Setter {
 			get { return setter; }
 			set {
 				ThrowIfFrozen();

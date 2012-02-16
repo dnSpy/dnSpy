@@ -42,7 +42,6 @@ namespace ICSharpCode.NRefactory.CSharp.ContextActions
 	{
 		internal IDocument doc;
 		CSharpParsedFile parsedFile;
-		ICompilation compilation;
 		CSharpAstResolver resolver;
 		
 		public override bool HasCSharp3Support {
@@ -68,8 +67,9 @@ namespace ICSharpCode.NRefactory.CSharp.ContextActions
 		
 		public override void ReplaceReferences (IMember member, MemberDeclaration replaceWidth)
 		{
-			throw new NotImplementedException ();
+//			throw new NotImplementedException ();
 		}
+		
 		class MyScript : Script
 		{
 			TestRefactoringContext trc;
@@ -81,7 +81,7 @@ namespace ICSharpCode.NRefactory.CSharp.ContextActions
 			
 			public override void Dispose ()
 			{
-				trc.doc = new ReadOnlyDocument (TestBase.ApplyChanges (trc.doc.Text, new List<TextReplaceAction> (Actions.Cast<TextReplaceAction>())));
+				trc.doc = new ReadOnlyDocument (TestBase.ApplyChanges (trc.doc.Text, new List<TextReplaceAction> (Actions.Where (act => act is TextReplaceAction).Cast<TextReplaceAction>())));
 			}
 			
 			public override void InsertWithCursor (string operation, AstNode node, InsertPosition defaultPosition)
@@ -97,7 +97,7 @@ namespace ICSharpCode.NRefactory.CSharp.ContextActions
 		#region Text stuff
 		public override string EolMarker { get { return Environment.NewLine; } }
 
-		public override bool IsSomethingSelected { get { return SelectionStart >= 0; }  }
+		public override bool IsSomethingSelected { get { return SelectionStart > 0; }  }
 
 		public override string SelectedText { get { return IsSomethingSelected ? doc.GetText (SelectionStart, SelectionLength) : ""; } }
 		
@@ -139,6 +139,16 @@ namespace ICSharpCode.NRefactory.CSharp.ContextActions
 			int idx = content.IndexOf ("$");
 			if (idx >= 0)
 				content = content.Substring (0, idx) + content.Substring (idx + 1);
+			int idx1 = content.IndexOf ("<-");
+			int idx2 = content.IndexOf ("->");
+			
+			if (0 <= idx1 && idx1 < idx2) {
+				content = content.Substring (0, idx2) + content.Substring (idx2 + 2);
+				content = content.Substring (0, idx1) + content.Substring (idx1 + 2);
+				selectionStart = idx1;
+				idx = selectionEnd = idx2 - 2;
+			}
+			
 			doc = new ReadOnlyDocument (content);
 			var parser = new CSharpParser ();
 			Unit = parser.Parse (content, "program.cs");
@@ -151,8 +161,8 @@ namespace ICSharpCode.NRefactory.CSharp.ContextActions
 			pc = pc.UpdateProjectContent(null, parsedFile);
 			pc = pc.AddAssemblyReferences(new[] { CecilLoaderTests.Mscorlib, CecilLoaderTests.SystemCore });
 			
-			compilation = pc.CreateCompilation();
-			resolver = new CSharpAstResolver(compilation, Unit, parsedFile);
+			Compilation = pc.CreateCompilation();
+			resolver = new CSharpAstResolver(Compilation, Unit, parsedFile);
 			if (idx >= 0)
 				Location = doc.GetLocation (idx);
 		}
@@ -176,7 +186,7 @@ namespace ICSharpCode.NRefactory.CSharp.ContextActions
 
 		public override NodeSelectionAction CreateNodeSelectionAction (AstNode node)
 		{
-			throw new NotImplementedException ();
+			return new TestNodeSelectAction (node);
 		}
 
 		public override FormatTextAction CreateFormatTextAction (Func<RefactoringContext, AstNode> callback)
@@ -186,7 +196,27 @@ namespace ICSharpCode.NRefactory.CSharp.ContextActions
 
 		public override CreateLinkAction CreateLinkAction (IEnumerable<AstNode> linkedNodes)
 		{
-			throw new NotImplementedException ();
+			return new TestNodeLinkAction (linkedNodes);
+		}
+		
+		class TestNodeLinkAction : CreateLinkAction
+		{
+			public TestNodeLinkAction (IEnumerable<AstNode> linkedNodes) : base (linkedNodes)
+			{
+			}
+			
+			public override void Perform (Script script)
+			{
+			}
+		}
+		class TestNodeSelectAction : NodeSelectionAction
+		{
+			public TestNodeSelectAction (AstNode astNode) : base (astNode)
+			{
+			}
+			public override void Perform (Script script)
+			{
+			}
 		}
 		
 		public class TestNodeOutputAction : NodeOutputAction

@@ -25,22 +25,45 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Statements
 	[TestFixture]
 	public class UsingStatementTests
 	{
-		[Test, Ignore("Parser doesn't report the VariableDeclarationStatement")]
+		[Test]
 		public void UsingStatementWithVariableDeclaration()
 		{
-			UsingStatement usingStmt = ParseUtilCSharp.ParseStatement<UsingStatement>("using (MyVar var = new MyVar()) { } ");
-			VariableDeclarationStatement varDecl = (VariableDeclarationStatement)usingStmt.ResourceAcquisition;
-			Assert.AreEqual("var", varDecl.Variables.Single().Name);
-			Assert.IsTrue(varDecl.Variables.Single().Initializer is ObjectCreateExpression);
-			Assert.AreEqual("MyVar", ((SimpleType)varDecl.Type).Identifier);
-			Assert.IsTrue(usingStmt.EmbeddedStatement is BlockStatement);
+			ParseUtilCSharp.AssertStatement(
+				"using (MyVar var = new MyVar()) { }",
+				new UsingStatement {
+					ResourceAcquisition = new VariableDeclarationStatement(
+						new SimpleType("MyVar"),
+						"var",
+						new ObjectCreateExpression(new SimpleType("MyVar"))),
+					EmbeddedStatement = new BlockStatement()
+				});
+		}
+		
+		[Test]
+		public void UsingStatementWithMultipleVariableDeclaration()
+		{
+			ParseUtilCSharp.AssertStatement(
+				"using (MyVar a = new MyVar(), b = null);",
+				new UsingStatement {
+					ResourceAcquisition = new VariableDeclarationStatement {
+						Type = new SimpleType("MyVar"),
+						Variables = {
+							new VariableInitializer("a", new ObjectCreateExpression(new SimpleType("MyVar"))),
+							new VariableInitializer("b", new NullReferenceExpression())
+						}
+					},
+					EmbeddedStatement = new EmptyStatement()
+				});
 		}
 		
 		public void UsingStatementWithExpression()
 		{
-			UsingStatement usingStmt = ParseUtilCSharp.ParseStatement<UsingStatement>("using (new MyVar()) { } ");
-			Assert.IsTrue(usingStmt.ResourceAcquisition is ObjectCreateExpression);
-			Assert.IsTrue(usingStmt.EmbeddedStatement is BlockStatement);
+			ParseUtilCSharp.AssertStatement(
+				"using (MyVar var = new MyVar()) { }",
+				new UsingStatement {
+					ResourceAcquisition = new ObjectCreateExpression(new SimpleType("MyVar")),
+					EmbeddedStatement = new BlockStatement()
+				});
 		}
 	}
 }

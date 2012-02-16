@@ -30,9 +30,15 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 	{
 		public static readonly string[] AssemblySearchPaths = {
 			@"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0",
+			@"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\v3.5",
+			@"C:\Windows\Microsoft.NET\Framework\v2.0.50727",
 			@"C:\Program Files (x86)\GtkSharp\2.12\lib\gtk-sharp-2.0",
 			@"C:\Program Files (x86)\GtkSharp\2.12\lib\Mono.Posix",
+			@"C:\work\SD\src\Tools\NUnit"
 		};
+		//public const string SolutionFile = @"C:\work\NRefactory\NRefactory.sln";
+		//public const string SolutionFile = @"C:\work\SD\SharpDevelop.sln";
+		public const string SolutionFile = @"C:\work\ILSpy\ILSpy.sln";
 		
 		public const string TempPath = @"C:\temp";
 		
@@ -41,7 +47,7 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 		public static void Main(string[] args)
 		{
 			using (new Timer("Loading solution... ")) {
-				solution = new Solution(Path.GetFullPath("../../../NRefactory.sln"));
+				solution = new Solution(SolutionFile);
 			}
 			
 			Console.WriteLine("Loaded {0} lines of code ({1:f1} MB) in {2} files in {3} projects.",
@@ -52,6 +58,8 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			
 			//RunTestOnAllFiles("Roundtripping test", RoundtripTest.RunTest);
 			RunTestOnAllFiles("Resolver test", ResolverTest.RunTest);
+			RunTestOnAllFiles("Resolver test (randomized order)", RandomizedOrderResolverTest.RunTest);
+			new FindReferencesConsistencyCheck(solution).Run();
 			
 			Console.Write("Press any key to continue . . . ");
 			Console.ReadKey(true);
@@ -72,20 +80,20 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 		{
 			return assemblyDict.GetOrAdd(assemblyFileName, file => new CecilLoader().LoadAssemblyFile(file));
 		}
+	}
+	
+	sealed class Timer : IDisposable
+	{
+		Stopwatch w = Stopwatch.StartNew();
 		
-		sealed class Timer : IDisposable
+		public Timer(string title)
 		{
-			Stopwatch w = Stopwatch.StartNew();
-			
-			public Timer(string title)
-			{
-				Console.Write(title);
-			}
-			
-			public void Dispose()
-			{
-				Console.WriteLine(w.Elapsed);
-			}
+			Console.Write(title);
+		}
+		
+		public void Dispose()
+		{
+			Console.WriteLine(w.Elapsed);
 		}
 	}
 }

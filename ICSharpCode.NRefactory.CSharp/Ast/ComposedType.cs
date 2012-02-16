@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -113,6 +114,22 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			InsertChildBefore(this.ArraySpecifiers.FirstOrDefault(), new ArraySpecifier(dimensions), ArraySpecifierRole);
 			return this;
+		}
+		
+		public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type)
+		{
+			ITypeReference t = this.BaseType.ToTypeReference(lookupMode);
+			if (this.HasNullableSpecifier) {
+				t = NullableType.Create(t);
+			}
+			int pointerRank = this.PointerRank;
+			for (int i = 0; i < pointerRank; i++) {
+				t = new PointerTypeReference(t);
+			}
+			foreach (var a in this.ArraySpecifiers.Reverse()) {
+				t = new ArrayTypeReference(t, a.Dimensions);
+			}
+			return t;
 		}
 	}
 	

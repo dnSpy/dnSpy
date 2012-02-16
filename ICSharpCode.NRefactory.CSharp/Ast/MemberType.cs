@@ -28,6 +28,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -113,6 +115,28 @@ namespace ICSharpCode.NRefactory.CSharp
 				b.Append('>');
 			}
 			return b.ToString();
+		}
+		
+		public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type)
+		{
+			TypeOrNamespaceReference t;
+			if (this.IsDoubleColon) {
+				SimpleType st = this.Target as SimpleType;
+				if (st != null) {
+					t = new AliasNamespaceReference(st.Identifier);
+				} else {
+					t = null;
+				}
+			} else {
+				t = this.Target.ToTypeReference(lookupMode) as TypeOrNamespaceReference;
+			}
+			if (t == null)
+				return SpecialType.UnknownType;
+			var typeArguments = new List<ITypeReference>();
+			foreach (var ta in this.TypeArguments) {
+				typeArguments.Add(ta.ToTypeReference(lookupMode));
+			}
+			return new MemberTypeOrNamespaceReference(t, this.MemberName, typeArguments);
 		}
 	}
 }

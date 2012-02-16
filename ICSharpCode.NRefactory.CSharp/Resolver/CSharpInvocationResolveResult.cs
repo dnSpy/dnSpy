@@ -46,11 +46,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// </summary>
 		public readonly bool IsExpandedForm;
 		
-		/// <summary>
-		/// Gets whether this is a lifted operator invocation.
-		/// </summary>
-		public readonly bool IsLiftedOperatorInvocation;
-		
 		readonly IList<int> argumentToParameterMap;
 		
 		public CSharpInvocationResolveResult(
@@ -59,7 +54,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			OverloadResolutionErrors overloadResolutionErrors = OverloadResolutionErrors.None,
 			bool isExtensionMethodInvocation = false,
 			bool isExpandedForm = false,
-			bool isLiftedOperatorInvocation = false,
 			bool isDelegateInvocation = false,
 			IList<int> argumentToParameterMap = null)
 			: base(targetResult, member, arguments)
@@ -67,7 +61,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			this.OverloadResolutionErrors = overloadResolutionErrors;
 			this.IsExtensionMethodInvocation = isExtensionMethodInvocation;
 			this.IsExpandedForm = isExpandedForm;
-			this.IsLiftedOperatorInvocation = isLiftedOperatorInvocation;
 			this.IsDelegateInvocation = isDelegateInvocation;
 			this.argumentToParameterMap = argumentToParameterMap;
 		}

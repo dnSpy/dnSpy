@@ -13,7 +13,7 @@ using System;
 using System.Linq;
 using SLE = System.Linq.Expressions;
 
-#if NET_4_0
+#if NET_4_0 || MONODROID
 using System.Dynamic;
 #endif
 
@@ -63,7 +63,7 @@ namespace Mono.CSharp
 	//
 	public class RuntimeValueExpression : Expression, IDynamicAssign, IMemoryLocation
 	{
-#if !NET_4_0
+#if !NET_4_0 && !MONODROID
 		public class DynamicMetaObject
 		{
 			public TypeSpec RuntimeType;
@@ -146,7 +146,7 @@ namespace Mono.CSharp
 			return base.MakeExpression (ctx);
 #else
 
-	#if NET_4_0		
+#if NET_4_0 || MONODROID
 				if (type.IsStruct && !obj.Expression.Type.IsValueType)
 					return SLE.Expression.Unbox (obj.Expression, type.GetMetaInfo ());
 
@@ -181,7 +181,7 @@ namespace Mono.CSharp
 			return this;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MONODROID
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
@@ -253,7 +253,7 @@ namespace Mono.CSharp
 		protected CSharpBinderFlags flags;
 
 		TypeSpec binder_type;
-		TypeParameter[] context_mvars;
+		TypeParameters context_mvars;
 
 		public DynamicExpressionStatement (IDynamicBinder binder, Arguments args, Location loc)
 		{
@@ -349,7 +349,7 @@ namespace Mono.CSharp
 			var site_container = ec.CreateDynamicSite ();
 
 			if (context_mvars != null) {
-				TypeParameter[] tparam;
+				TypeParameters tparam;
 				TypeContainer sc = site_container;
 				do {
 					tparam = sc.CurrentTypeParameters;
@@ -430,7 +430,7 @@ namespace Mono.CSharp
 				p[0] = new Parameter (targs[0], "p0", Parameter.Modifier.NONE, null, loc);
 
 				var site = ec.CreateDynamicSite ();
-				int index = site.Types == null ? 0 : site.Types.Count;
+				int index = site.Containers == null ? 0 : site.Containers.Count;
 
 				if (mutator != null)
 					rt = mutator.Mutate (rt);
@@ -439,17 +439,16 @@ namespace Mono.CSharp
 					p[i] = new Parameter (targs[i], "p" + i.ToString ("X"), arguments[i - 1].Modifier, null, loc);
 				}
 
-				d = new Delegate (site.NamespaceEntry, site, new TypeExpression (rt, loc),
+				d = new Delegate (site, new TypeExpression (rt, loc),
 					Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED,
 					new MemberName ("Container" + index.ToString ("X")),
 					new ParametersCompiled (p), null);
 
-				d.CreateType ();
-				d.DefineType ();
+				d.CreateContainer ();
+				d.DefineContainer ();
 				d.Define ();
-				d.Emit ();
 
-				site.AddDelegate (d);
+				site.AddTypeContainer (d);
 				del_type = new TypeExpression (d.CurrentType, loc);
 				if (targs_for_instance != null) {
 					del_type_instance_access = null;
@@ -466,7 +465,7 @@ namespace Mono.CSharp
 				return;
 
 			if (del_type_instance_access == null) {
-				var dt = d.CurrentType.DeclaringType.MakeGenericType (module, context_mvars.Select (l => l.Type).ToArray ());
+				var dt = d.CurrentType.DeclaringType.MakeGenericType (module, context_mvars.Types);
 				del_type_instance_access = new TypeExpression (MemberCache.GetMember (dt, d.CurrentType), loc);
 			}
 
@@ -482,12 +481,12 @@ namespace Mono.CSharp
 			if (inflate_using_mvar || context_mvars == null) {
 				gt = site_container.CurrentType;
 			} else {
-				gt = site_container.CurrentType.MakeGenericType (module, context_mvars.Select (l => l.Type).ToArray ());
+				gt = site_container.CurrentType.MakeGenericType (module, context_mvars.Types);
 			}
 
 			// When site container already exists the inflated version has to be
 			// updated manually to contain newly created field
-			if (gt is InflatedTypeSpec && site_container.Fields.Count > 1) {
+			if (gt is InflatedTypeSpec && site_container.AnonymousMethodsCounter > 1) {
 				var tparams = gt.MemberDefinition.TypeParametersCount > 0 ? gt.MemberDefinition.TypeParameters : TypeParameterSpec.EmptyTypes;
 				var inflator = new TypeParameterInflator (module, gt, tparams, gt.TypeArguments);
 				gt.MemberCache.AddMember (field.InflateMember (inflator));
@@ -957,7 +956,7 @@ namespace Mono.CSharp
 
 	sealed class DynamicSiteClass : HoistedStoreyClass
 	{
-		public DynamicSiteClass (TypeContainer parent, MemberBase host, TypeParameter[] tparams)
+		public DynamicSiteClass (TypeDefinition parent, MemberBase host, TypeParameters tparams)
 			: base (parent, MakeMemberName (host, "DynamicSite", parent.DynamicSitesCounter, tparams, Location.Null), tparams, Modifiers.STATIC)
 		{
 			parent.DynamicSitesCounter++;
@@ -965,7 +964,7 @@ namespace Mono.CSharp
 
 		public FieldSpec CreateCallSiteField (FullNamedExpression type, Location loc)
 		{
-			int index = fields == null ? 0 : fields.Count;
+			int index = AnonymousMethodsCounter++;
 			Field f = new HoistedField (this, type, Modifiers.PUBLIC | Modifiers.STATIC, "Site" + index.ToString ("X"), null, loc);
 			f.Define ();
 

@@ -85,12 +85,16 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (nodes != null)
 				nodes = nodes.ToList();
 			Clear();
-			foreach (T node in nodes)
-				Add(node);
+			if (nodes != null) {
+				foreach (T node in nodes)
+					Add(node);
+			}
 		}
 		
 		public void MoveTo(ICollection<T> targetCollection)
 		{
+			if (targetCollection == null)
+				throw new ArgumentNullException("targetCollection");
 			foreach (T node in this) {
 				node.Remove();
 				targetCollection.Add(node);
@@ -122,6 +126,31 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			foreach (T item in this)
 				item.Remove();
+		}
+		
+		/// <summary>
+		/// Returns the first element for which the predicate returns true,
+		/// or the null node (AstNode with IsNull=true) if no such object is found.
+		/// </summary>
+		public T FirstOrNullObject(Func<T, bool> predicate = null)
+		{
+			foreach (T item in this)
+				if (predicate == null || predicate(item))
+					return item;
+			return role.NullObject;
+		}
+		
+		/// <summary>
+		/// Returns the last element for which the predicate returns true,
+		/// or the null node (AstNode with IsNull=true) if no such object is found.
+		/// </summary>
+		public T LastOrNullObject(Func<T, bool> predicate = null)
+		{
+			T result = role.NullObject;
+			foreach (T item in this)
+				if (predicate == null || predicate(item))
+					result = item;
+			return result;
 		}
 		
 		bool ICollection<T>.IsReadOnly {

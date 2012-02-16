@@ -52,7 +52,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				
 				var paramType = delegateMethod.Parameters [k].Type;
 				
-				sb.Append (paramType.ToString ());
+				sb.Append (context.CreateShortType (paramType));
 				sb.Append (" ");
 				sb.Append (delegateMethod.Parameters [k].Name);
 			}
@@ -68,19 +68,19 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			delegateType = null;
 			
 			var anonymousMethodExpression = context.GetNode<AnonymousMethodExpression> ();
-			if (anonymousMethodExpression == null || !anonymousMethodExpression.DelegateToken.Contains (context.Location.Line, context.Location.Column) || anonymousMethodExpression.HasParameterList)
+			if (anonymousMethodExpression == null || !anonymousMethodExpression.DelegateToken.Contains (context.Location) || anonymousMethodExpression.HasParameterList)
 				return null;
 			
 			IType resolvedType = null;
 			var parent = anonymousMethodExpression.Parent;
+			
 			if (parent is AssignmentExpression) {
 				resolvedType = context.Resolve (((AssignmentExpression)parent).Left).Type;
-			} else if (parent is VariableDeclarationStatement) {
-				resolvedType = context.Resolve (((VariableDeclarationStatement)parent).Type).Type;
+			} else if (parent is VariableInitializer) {
+				resolvedType = context.Resolve (((VariableDeclarationStatement)parent.Parent).Type).Type;
 			} else if (parent is InvocationExpression) {
 				// TODO: handle invocations
 			}
-			
 			if (resolvedType == null)
 				return null;
 			delegateType = resolvedType;

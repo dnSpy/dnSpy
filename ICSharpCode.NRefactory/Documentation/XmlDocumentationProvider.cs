@@ -134,13 +134,6 @@ namespace ICSharpCode.NRefactory.Documentation
 			}
 		}
 		
-		private XmlDocumentationProvider(string fileName, DateTime lastWriteDate, IndexEntry[] index)
-		{
-			this.fileName = fileName;
-			this.lastWriteDate = lastWriteDate;
-			this.index = index;
-		}
-		
 		static string GetRedirectionTarget(string target)
 		{
 			string programFilesDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);

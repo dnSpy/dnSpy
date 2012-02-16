@@ -22,7 +22,7 @@ using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
-	public sealed class PointerType : TypeWithElementType, ISupportsInterning
+	public sealed class PointerType : TypeWithElementType
 	{
 		public PointerType(IType elementType) : base(elementType)
 		{
@@ -70,22 +70,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public override ITypeReference ToTypeReference()
 		{
 			return new PointerTypeReference(elementType.ToTypeReference());
-		}
-		
-		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)
-		{
-			elementType = provider.Intern(elementType);
-		}
-		
-		int ISupportsInterning.GetHashCodeForInterning()
-		{
-			return elementType.GetHashCode() ^ 91725811;
-		}
-		
-		bool ISupportsInterning.EqualsForInterning(ISupportsInterning other)
-		{
-			PointerType o = other as PointerType;
-			return o != null && this.elementType == o.elementType;
 		}
 	}
 	

@@ -51,8 +51,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			this.namedCtorArguments = namedCtorArguments ?? EmptyList<KeyValuePair<string, IConstantValue>>.Instance;
 			this.namedArguments = namedArguments ?? EmptyList<KeyValuePair<string, IConstantValue>>.Instance;
 		}
-		
-		public DomRegion Region {
+				public DomRegion Region {
 			get { return region; }
 		}
 		

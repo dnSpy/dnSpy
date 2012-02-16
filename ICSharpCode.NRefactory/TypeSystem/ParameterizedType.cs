@@ -37,7 +37,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// the type arguments.
 	/// </remarks>
 	[Serializable]
-	public sealed class ParameterizedType : IType, ISupportsInterning
+	public sealed class ParameterizedType : IType
 	{
 		readonly ITypeDefinition genericType;
 		readonly IType[] typeArguments;
@@ -319,31 +319,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				return this;
 			else
 				return new ParameterizedType(def, ta);
-		}
-		
-		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)
-		{
-			for (int i = 0; i < typeArguments.Length; i++) {
-				typeArguments[i] = provider.Intern(typeArguments[i]);
-			}
-		}
-		
-		int ISupportsInterning.GetHashCodeForInterning()
-		{
-			return GetHashCode();
-		}
-		
-		bool ISupportsInterning.EqualsForInterning(ISupportsInterning other)
-		{
-			ParameterizedType o = other as ParameterizedType;
-			if (o != null && genericType == o.genericType && typeArguments.Length == o.typeArguments.Length) {
-				for (int i = 0; i < typeArguments.Length; i++) {
-					if (typeArguments[i] != o.typeArguments[i])
-						return false;
-				}
-				return true;
-			}
-			return false;
 		}
 	}
 	

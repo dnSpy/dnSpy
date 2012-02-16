@@ -54,7 +54,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// Converts a compilation unit to CodeDom.
 		/// </summary>
 		/// <param name="compilationUnit">The input compilation unit.</param>
-		/// <param name="context">Type resolve context, used for resolving type references.</param>
+		/// <param name="compilation">The current compilation.</param>
 		/// <param name="parsedFile">CSharpParsedFile, used for resolving.</param>
 		/// <returns>Converted CodeCompileUnit</returns>
 		/// <remarks>
@@ -75,8 +75,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// Converts a C# AST node to CodeDom.
 		/// </summary>
 		/// <param name="node">The input node.</param>
-		/// <param name="resolveVisitor">The resolve visitor.
-		/// The visitor must be already initialized for the file containing the given node (Scan must be called).</param>
+		/// <param name="resolver">The AST resolver.</param>
 		/// <returns>The node converted into CodeDom</returns>
 		/// <remarks>
 		/// This conversion process requires a resolver because it needs to distinguish field/property/event references etc.
@@ -1233,13 +1232,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		CodeObject IAstVisitor<object, CodeObject>.VisitPrimitiveType(PrimitiveType primitiveType, object data)
 		{
-			string keyword = primitiveType.Keyword;
-			KnownTypeCode typeCode = TypeSystemConvertVisitor.GetTypeCodeForPrimitiveType(keyword);
+			KnownTypeCode typeCode = primitiveType.KnownTypeCode;
 			if (typeCode != KnownTypeCode.None) {
 				KnownTypeReference ktr = KnownTypeReference.Get(typeCode);
 				return new CodeTypeReference(ktr.Namespace + "." + ktr.Name);
 			}
-			return new CodeTypeReference(keyword);
+			return new CodeTypeReference(primitiveType.Keyword);
 		}
 		
 		CodeObject IAstVisitor<object, CodeObject>.VisitComment (Comment comment, object data)

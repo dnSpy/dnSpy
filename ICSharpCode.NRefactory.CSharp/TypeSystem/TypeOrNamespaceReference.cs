@@ -44,7 +44,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		}
 		
 		/// <summary>
-		/// Returns the type that is referenced; or <see cref="SpecialTypes.UnknownType"/> if the type isn't found.
+		/// Returns the type that is referenced; or <see cref="SpecialType.UnknownType"/> if the type isn't found.
 		/// </summary>
 		public IType ResolveType(CSharpResolver resolver)
 		{
@@ -58,7 +58,11 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			// to what we're doing with ConstantExpression.
 			// However, in almost all cases this will work correctly - if the resulting type is only available in the
 			// nested compilation and not in this, we wouldn't be able to map it anyways.
-			return ResolveType(new CSharpResolver((CSharpTypeResolveContext)context));
+			var ctx = context as CSharpTypeResolveContext;
+			if (ctx == null) {
+				ctx = new CSharpTypeResolveContext(context.CurrentAssembly ?? context.Compilation.MainAssembly, null, context.CurrentTypeDefinition, context.CurrentMember);
+			}
+			return ResolveType(new CSharpResolver(ctx));
 			
 			// A potential issue might be this scenario:
 			

@@ -21,7 +21,7 @@ using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
-	public sealed class ByReferenceType : TypeWithElementType, ISupportsInterning
+	public sealed class ByReferenceType : TypeWithElementType
 	{
 		public ByReferenceType(IType elementType) : base(elementType)
 		{
@@ -69,22 +69,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public override ITypeReference ToTypeReference()
 		{
 			return new ByReferenceTypeReference(elementType.ToTypeReference());
-		}
-		
-		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)
-		{
-			elementType = provider.Intern(elementType);
-		}
-		
-		int ISupportsInterning.GetHashCodeForInterning()
-		{
-			return GetHashCode();
-		}
-		
-		bool ISupportsInterning.EqualsForInterning(ISupportsInterning other)
-		{
-			ByReferenceType brt = other as ByReferenceType;
-			return brt != null && this.elementType == brt.elementType;
 		}
 	}
 	

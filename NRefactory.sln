@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-# SharpDevelop 4.2.0.8278-alpha
+# SharpDevelop 4.2.0.8528-beta
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC98210E-1646-483B-819A-2BB8272461E4}"
 	ProjectSection(SolutionItems) = preProject
 		README = README
 		doc\TODO = doc\TODO
+		Packages\ICSharpCode.NRefactory.nuspec = Packages\ICSharpCode.NRefactory.nuspec
+		ICSharpCode.NRefactory.snk = ICSharpCode.NRefactory.snk
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory", "ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj", "{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}"

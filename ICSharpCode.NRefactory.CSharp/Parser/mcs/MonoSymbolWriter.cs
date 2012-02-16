@@ -153,6 +153,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			return entry;
 		}
 
+		[Obsolete]
 		public int DefineNamespace (string name, CompileUnitEntry unit,
 					    string[] using_clauses, int parent)
 		{
@@ -250,6 +251,8 @@ namespace Mono.CompilerServices.SymbolWriter
 #else		
 		Stack<CodeBlockEntry> _block_stack;
 #endif
+		List<LineNumberEntry> method_lines;
+
 		string _real_name;
 		IMethodDef _method;
 		ICompileUnit _comp_unit;
@@ -261,25 +264,33 @@ namespace Mono.CompilerServices.SymbolWriter
 			this._comp_unit = comp_unit;
 			this._method = method;
 			this._ns_id = ns_id;
-
-			method_lines = new LineNumberEntry [32];
+			method_lines = new List<LineNumberEntry> ();
 		}
 
-		private LineNumberEntry [] method_lines;
-		private int method_lines_pos = 0;
-
-		public void MarkSequencePoint (int offset, SourceFileEntry file, int line, int column,
-					       bool is_hidden)
+		public void MarkSequencePoint (int offset, SourceFileEntry file, int line, int column, bool is_hidden)
 		{
-			if (method_lines_pos == method_lines.Length) {
-				LineNumberEntry [] tmp = method_lines;
-				method_lines = new LineNumberEntry [method_lines.Length * 2];
-				Array.Copy (tmp, method_lines, method_lines_pos);
+			int file_idx = file != null ? file.Index : 0;
+			var lne = new LineNumberEntry (file_idx, line, offset, is_hidden);
+
+			if (method_lines.Count > 0) {
+				var prev = method_lines[method_lines.Count - 1];
+
+				//
+				// Same offset cannot be used for multiple lines
+				// 
+				if (prev.Offset == offset) {
+					//
+					// Use the new location because debugger will adjust
+					// the breakpoint to next line with sequence point
+					//
+					if (LineNumberEntry.LocationComparer.Default.Compare (lne, prev) > 0)
+						method_lines[method_lines.Count - 1] = lne;
+
+					return;
+				}
 			}
 
-			int file_idx = file != null ? file.Index : 0;
-			method_lines [method_lines_pos++] = new LineNumberEntry (
-				file_idx, line, offset, is_hidden);
+			method_lines.Add (lne);
 		}
 
 		public void StartBlock (CodeBlockEntry.Type type, int start_offset)
@@ -370,10 +381,12 @@ namespace Mono.CompilerServices.SymbolWriter
 				new ScopeVariable (scope, index));
 		}
 
+		[Obsolete]
 		public string RealMethodName {
 			get { return _real_name; }
 		}
 
+		[Obsolete ("It has no meaning")]
 		public void SetRealMethodName (string name)
 		{
 			_real_name = name;
@@ -389,12 +402,9 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public void DefineMethod (MonoSymbolFile file)
 		{
-			LineNumberEntry[] lines = new LineNumberEntry [method_lines_pos];
-			Array.Copy (method_lines, lines, method_lines_pos);
-
 			MethodEntry entry = new MethodEntry (
 				file, _comp_unit.Entry, _method.Token, ScopeVariables,
-				Locals, lines, Blocks, RealMethodName, 0, //_method_flags,
+				Locals, method_lines.ToArray (), Blocks, _real_name, 0, //_method_flags,
 				_ns_id);
 
 			file.AddMethod (entry);

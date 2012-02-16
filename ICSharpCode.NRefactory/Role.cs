@@ -48,7 +48,7 @@ namespace ICSharpCode.NRefactory
 		/// </summary>
 		/// <remarks>
 		/// Roles used for non-collections should always have a null object, so that no AST property returns null.
-		/// However, roles used for collections only may leave out the null object.
+		/// However, if a role used for collections only, it may leave out the null object.
 		/// </remarks>
 		public T NullObject {
 			get { return nullObject; }
@@ -66,7 +66,7 @@ namespace ICSharpCode.NRefactory
 			this.name = name;
 		}
 		
-		public Role(string name, T nullObject = null)
+		public Role(string name, T nullObject)
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");

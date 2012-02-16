@@ -128,6 +128,42 @@ class Derived : Base {
 		}
 		
 		[Test]
+		public void InstanceFieldImplicitThis()
+		{
+			string program = @"class Test {
+	public int Field;
+	int M() { return $Field$; }
+}";
+			var rr = Resolve<MemberResolveResult>(program);
+			Assert.AreEqual("Test.Field", rr.Member.FullName);
+			Assert.IsTrue(rr.TargetResult is ThisResolveResult);
+		}
+		
+		[Test]
+		public void InstanceFieldExplicitThis()
+		{
+			string program = @"class Test {
+	public int Field;
+	int M() { return $this.Field$; }
+}";
+			var rr = Resolve<MemberResolveResult>(program);
+			Assert.AreEqual("Test.Field", rr.Member.FullName);
+			Assert.IsTrue(rr.TargetResult is ThisResolveResult);
+		}
+		
+		[Test]
+		public void StaticField()
+		{
+			string program = @"class Test {
+	public static int Field;
+	int M() { return $Field$; }
+}";
+			var rr = Resolve<MemberResolveResult>(program);
+			Assert.AreEqual("Test.Field", rr.Member.FullName);
+			Assert.IsTrue(rr.TargetResult is TypeResolveResult);
+		}
+		
+		[Test]
 		public void TestOuterTemplateParameter()
 		{
 			string program = @"public class A<T>
@@ -276,6 +312,36 @@ class Derived : Base {
 			var rr = Resolve<MemberResolveResult>(program);
 			Assert.IsFalse(rr.IsError);
 			Assert.AreEqual("Base.X", rr.Member.FullName);
+		}
+		
+		[Test]
+		public void ProtectedMemberViaTypeParameter()
+		{
+			string program = @"using System;
+class Base
+{
+	protected void Test() {}
+	public void Test(int a = 0) {}
+}
+class Derived<T> : Base where T : Derived<T>
+{
+	void M(Derived<T> a, Base b, T c) {
+		a.Test(); // calls Test()
+		b.Test(); // calls Test(int)
+		c.Test(); // calls Test()
+	}
+}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program.Replace("a.Test()", "$a.Test()$"));
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual(0, rr.Member.Parameters.Count);
+			
+			rr = Resolve<CSharpInvocationResolveResult>(program.Replace("b.Test()", "$b.Test()$"));
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual(1, rr.Member.Parameters.Count);
+			
+			rr = Resolve<CSharpInvocationResolveResult>(program.Replace("c.Test()", "$c.Test()$"));
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual(0, rr.Member.Parameters.Count);
 		}
 	}
 }

@@ -47,6 +47,21 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 		}
 		
 		[Test()]
+		public void Test2142Case2 ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"enum Name {
+	Foo,
+	Bar,
+	$p$
+}
+", provider => {
+				Assert.AreEqual (0, provider.Count);
+			});
+		}
+		
+		
+		[Test()]
 		public void TestEnumAssignment ()
 		{
 			CodeCompletionBugTests.CombinedProviderTest (

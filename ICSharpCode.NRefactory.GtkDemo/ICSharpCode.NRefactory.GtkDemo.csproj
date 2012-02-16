@@ -84,7 +84,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CSharpDemo.cs" />
+    <None Include="CSharpDemo.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Mono.TextEditor.dll" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>ICSharpCode.NRefactory</id>
+    <version>5.0.0.4</version>
+    <title>NRefactory</title>
+    <authors>Daniel Grunwald, Mike Krüger</authors>
+    <owners>Daniel Grunwald</owners>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>https://github.com/icsharpcode/NRefactory/</projectUrl>
+    <iconUrl>http://community.sharpdevelop.net/blogs/mattward/SharpDevelop.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>NRefactory supports analysis of C# source code: it includes a parser, abstract syntax tree, type system, semantic analysis (resolver), code completion, and several refactorings.</description>
+    <releaseNotes>This is an alpha release. Expect bugs and breaking changes in the future.</releaseNotes>
+    <copyright>Copyright 2010-2012 AlphaSierraPapa</copyright>
+    <tags>C# Parser Semantic Analysis SharpDevelop</tags>
+    <dependencies>
+      <dependency id="Mono.Cecil" version="0.9.5.2" />
+    </dependencies>
+  </metadata>
+	<files>
+		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.dll" target="lib\Net40" />
+		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.pdb" target="lib\Net40" />
+		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.xml" target="lib\Net40" />
+		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.CSharp.dll" target="lib\Net40" />
+		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.CSharp.pdb" target="lib\Net40" />
+		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.CSharp.xml" target="lib\Net40" />
+		<file src="..\ICSharpCode.NRefactory\**\*.cs" target="src\ICSharpCode.NRefactory" />
+		<file src="..\ICSharpCode.NRefactory.CSharp\**\*.cs" target="src\ICSharpCode.NRefactory.CSharp" />
+	</files>
+</package>

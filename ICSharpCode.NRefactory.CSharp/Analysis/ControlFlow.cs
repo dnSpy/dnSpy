@@ -21,9 +21,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.Semantics;
+using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace ICSharpCode.NRefactory.CSharp.Analysis
@@ -156,7 +157,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		}
 		
 		Statement rootStatement;
-		CSharpAstResolver resolver;
+		CSharpTypeResolveContext typeResolveContext;
+		Func<AstNode, CancellationToken, ResolveResult> resolver;
 		List<ControlFlowNode> nodes;
 		Dictionary<string, ControlFlowNode> labels;
 		List<ControlFlowNode> gotoStatements;
@@ -164,6 +166,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		
 		public IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (statement == null)
+				throw new ArgumentNullException("statement");
 			CSharpResolver r = new CSharpResolver(MinimalCorlib.Instance.CreateCompilation());
 			return BuildControlFlowGraph(statement, new CSharpAstResolver(r, statement), cancellationToken);
 		}
@@ -174,7 +178,11 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				throw new ArgumentNullException("statement");
 			if (resolver == null)
 				throw new ArgumentNullException("resolver");
-			
+			return BuildControlFlowGraph(statement, resolver.Resolve, resolver.TypeResolveContext, cancellationToken);
+		}
+		
+		internal IList<ControlFlowNode> BuildControlFlowGraph(Statement statement, Func<AstNode, CancellationToken, ResolveResult> resolver, CSharpTypeResolveContext typeResolveContext, CancellationToken cancellationToken)
+		{
 			NodeCreationVisitor nodeCreationVisitor = new NodeCreationVisitor();
 			nodeCreationVisitor.builder = this;
 			try {
@@ -183,6 +191,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				this.gotoStatements = new List<ControlFlowNode>();
 				this.rootStatement = statement;
 				this.resolver = resolver;
+				this.typeResolveContext = typeResolveContext;
 				this.cancellationToken = cancellationToken;
 				
 				ControlFlowNode entryPoint = CreateStartNode(statement);
@@ -205,6 +214,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				this.gotoStatements = null;
 				this.rootStatement = null;
 				this.resolver = null;
+				this.typeResolveContext = null;
 				this.cancellationToken = CancellationToken.None;
 			}
 		}
@@ -288,7 +298,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				if (!(expr is PrimitiveExpression || expr is NullReferenceExpression))
 					return null;
 			}
-			return resolver.Resolve(expr, cancellationToken);
+			return resolver(expr, cancellationToken);
 		}
 		
 		/// <summary>
@@ -308,7 +318,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 		{
 			if (c1 == null || c2 == null || !c1.IsCompileTimeConstant || !c2.IsCompileTimeConstant)
 				return false;
-			CSharpResolver r = new CSharpResolver(resolver.TypeResolveContext);
+			CSharpResolver r = new CSharpResolver(typeResolveContext);
 			ResolveResult c = r.ResolveBinaryOperator(BinaryOperatorType.Equality, c1, c2);
 			return c.IsCompileTimeConstant && (c.ConstantValue as bool?) == true;
 		}

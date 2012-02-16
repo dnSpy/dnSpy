@@ -31,7 +31,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	[TestFixture]
 	public class GetAllBaseTypesTest
 	{
-		ICompilation compilation = new SimpleCompilation(CecilLoaderTests.Mscorlib);
+		ICompilation compilation;
+		
+		[SetUp]
+		public void SetUp()
+		{
+			compilation = new SimpleCompilation(CecilLoaderTests.Mscorlib);
+		}
 		
 		IType[] GetAllBaseTypes(Type type)
 		{
@@ -73,6 +79,15 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		
 		[Test]
+		public unsafe void ArrayOfPointers()
+		{
+			Assert.AreEqual(GetTypes(typeof(int*[]), typeof(Array), typeof(object),
+			                         typeof(IList), typeof(ICollection), typeof(IEnumerable),
+			                         typeof(IStructuralEquatable), typeof(IStructuralComparable), typeof(ICloneable)),
+			                GetAllBaseTypes(typeof(int*[])));
+		}
+		
+		[Test]
 		public void MultidimensionalArrayOfString()
 		{
 			Assert.AreEqual(GetTypes(typeof(string[,]), typeof(Array), typeof(object),
@@ -87,6 +102,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			// class C : C {}
 			var c = new DefaultUnresolvedTypeDefinition(string.Empty, "C");
 			c.BaseTypes.Add(c);
+			compilation = TypeSystemHelper.CreateCompilation(c);
 			ITypeDefinition resolvedC = Resolve(c);
 			Assert.AreEqual(new [] { resolvedC }, resolvedC.GetAllBaseTypes().ToArray());
 		}
@@ -99,6 +115,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			var c2 = new DefaultUnresolvedTypeDefinition(string.Empty, "C2");
 			c1.BaseTypes.Add(c2);
 			c2.BaseTypes.Add(c1);
+			compilation = TypeSystemHelper.CreateCompilation(c1, c2);
 			ITypeDefinition resolvedC1 = Resolve(c1);
 			ITypeDefinition resolvedC2 = Resolve(c2);
 			Assert.AreEqual(new [] { resolvedC2, resolvedC1 }, resolvedC1.GetAllBaseTypes().ToArray());
@@ -111,6 +128,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			var c = new DefaultUnresolvedTypeDefinition(string.Empty, "C");
 			c.TypeParameters.Add(new DefaultUnresolvedTypeParameter(EntityType.TypeDefinition, 0, "X"));
 			c.BaseTypes.Add(new ParameterizedTypeReference(c, new [] { new ParameterizedTypeReference(c, new [] { new TypeParameterReference(EntityType.TypeDefinition, 0) }) }));
+			compilation = TypeSystemHelper.CreateCompilation(c);
 			ITypeDefinition resolvedC = Resolve(c);
 			Assert.AreEqual(new [] { resolvedC }, resolvedC.GetAllBaseTypes().ToArray());
 		}
@@ -122,6 +140,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			var c = new DefaultUnresolvedTypeDefinition(string.Empty, "C");
 			c.BaseTypes.Add(typeof(IEnumerable<int>).ToTypeReference());
 			c.BaseTypes.Add(typeof(IEnumerable<uint>).ToTypeReference());
+			compilation = TypeSystemHelper.CreateCompilation(c);
 			ITypeDefinition resolvedC = Resolve(c);
 			IType[] expected = {
 				resolvedC,
@@ -142,6 +161,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			var s = new DefaultUnresolvedTypeDefinition(string.Empty, "S");
 			s.Kind = TypeKind.Struct;
 			s.BaseTypes.Add(new ParameterizedTypeReference(typeof(IEquatable<>).ToTypeReference(), new[] { s }));
+			compilation = TypeSystemHelper.CreateCompilation(s);
 			ITypeDefinition resolvedS = Resolve(s);
 			IType[] expected = {
 				resolvedS,

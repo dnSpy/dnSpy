@@ -146,10 +146,56 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		}
 		
 		[Test]
+		public void ByteAndZeroLiteral()
+		{
+			AssertType(typeof(int), resolver.ResolveConditional(
+				MakeResult(typeof(bool)), MakeResult(typeof(byte)), MakeConstant(0)));
+		}
+		
+		[Test]
+		public void ByteAndUShort()
+		{
+			AssertType(typeof(ushort), resolver.ResolveConditional(
+				MakeResult(typeof(bool)), MakeResult(typeof(byte)), MakeResult(typeof(ushort))));
+		}
+		
+		[Test]
 		public void EnumAndZeroLiteral()
 		{
 			AssertType(typeof(StringComparison), resolver.ResolveConditional(
 				MakeResult(typeof(bool)), MakeResult(typeof(StringComparison)), MakeConstant(0)));
+		}
+		
+		[Test]
+		public void TypeWithImplicitConversionToBool()
+		{
+			string program = @"struct MyBool {
+	public static implicit operator bool(MyBool b) {}
+	void Test() {
+		var x = $this$ ? 1 : 0;
+	}
+}";
+			Assert.AreEqual("System.Boolean", GetExpectedType(program).ReflectionName);
+			Conversion c = GetConversion(program);
+			Assert.IsTrue(c.IsValid);
+			Assert.IsTrue(c.IsUserDefined);
+			Assert.AreEqual("op_Implicit", c.Method.Name);
+		}
+		
+		[Test]
+		public void TypeWithOperatorTrue()
+		{
+			string program = @"struct MyBool {
+	public static bool operator true(MyBool b) {}
+	void Test() {
+		var x = $this$ ? 1 : 0;
+	}
+}";
+			Assert.AreEqual("System.Boolean", GetExpectedType(program).ReflectionName);
+			Conversion c = GetConversion(program);
+			Assert.IsTrue(c.IsValid);
+			Assert.IsTrue(c.IsUserDefined);
+			Assert.AreEqual("op_True", c.Method.Name);
 		}
 	}
 }

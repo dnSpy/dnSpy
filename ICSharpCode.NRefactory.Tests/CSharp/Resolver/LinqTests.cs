@@ -17,8 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
@@ -296,7 +298,7 @@ class TestClass
 {
 	static void M(string[] args)
 	{
-		var q = $(from a in new XYZ() join b in args on a equals b into g select g.ToUpper())$;
+		var q = (from a in new XYZ() $join b in args on a equals b into g$ select g.ToUpper());
 	}
 }
 class XYZ
@@ -332,6 +334,63 @@ class TestClass
 }";
 			var rr = Resolve<LocalResolveResult>(program);
 			Assert.AreEqual("System.String", rr.Type.FullName);
+		}
+		
+		[Test]
+		public void SelectManyInvocation()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass
+{
+	static void M(string[] args)
+	{
+		var query = from w in args $from c in w$ select c - '0';
+	}
+}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual("SelectMany", rr.Member.Name);
+			Assert.AreEqual(3, rr.Member.Parameters.Count);
+			var typeArguments = ((SpecializedMethod)rr.Member).TypeArguments;
+			Assert.AreEqual(3, typeArguments.Count);
+			Assert.AreEqual("System.String", typeArguments[0].ReflectionName, "TSource");
+			Assert.AreEqual("System.Char", typeArguments[1].ReflectionName, "TCollection");
+			Assert.AreEqual("System.Int32", typeArguments[2].ReflectionName, "TResult");
+		}
+		
+		[Test]
+		public void SelectManyInvocationWithTransparentIdentifier()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass
+{
+	static void M(string[] args)
+	{
+		var query = from w in args $from c in w$ orderby c select c - '0';
+	}
+}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual("SelectMany", rr.Member.Name);
+			Assert.AreEqual(3, rr.Member.Parameters.Count);
+			var typeArguments = ((SpecializedMethod)rr.Member).TypeArguments;
+			Assert.AreEqual(3, typeArguments.Count);
+			Assert.AreEqual("System.String", typeArguments[0].ReflectionName, "TSource");
+			Assert.AreEqual("System.Char", typeArguments[1].ReflectionName, "TCollection");
+			Assert.AreEqual(TypeKind.Anonymous, typeArguments[2].Kind, "TResult");
+		}
+		
+		[Test]
+		public void FromClauseDoesNotResolveToSourceVariable()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass {
+	static void M(string[] args) {
+		var query = $from w in args$ select int.Parse(w);
+	}}";
+			var rr = Resolve<ConversionResolveResult>(program);
+			Assert.AreEqual("System.String[]", rr.Type.ReflectionName);
+			Assert.AreEqual(Conversion.IdentityConversion, rr.Conversion);
 		}
 	}
 }

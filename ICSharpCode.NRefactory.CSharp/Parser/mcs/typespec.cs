@@ -292,7 +292,7 @@ namespace Mono.CSharp
 				if (IsPointer)
 					return ((ElementTypeSpec) this).Element.IsUnmanaged;
 
-				var ds = MemberDefinition as DeclSpace;
+				var ds = MemberDefinition as TypeDefinition;
 				if (ds != null)
 					return ds.IsUnmanagedType ();
 

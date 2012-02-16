@@ -48,6 +48,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Retrieves the specified type in this compilation.
 		/// Returns <see cref="SpecialType.UnknownType"/> if the type cannot be found in this compilation.
 		/// </summary>
+		/// <remarks>
+		/// This method cannot be used with open types; all type parameters will be substituted
+		/// with <see cref="SpecialType.UnknownType"/>.
+		/// </remarks>
 		public static IType FindType(this ICompilation compilation, Type type)
 		{
 			return type.ToTypeReference().Resolve(compilation.TypeResolveContext);
@@ -57,6 +61,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Retrieves the specified type in this compilation.
 		/// Returns <see cref="SpecialType.UnknownType"/> if the type cannot be found in this compilation.
 		/// </summary>
+		[Obsolete("Use ReflectionHelper.ParseReflectionName(reflectionTypeName).Resolve(compilation.TypeResolveContext) instead. " +
+		          "Make sure to read the ParseReflectionName() documentation for caveats.")]
 		public static IType FindType(this ICompilation compilation, string reflectionTypeName)
 		{
 			return ParseReflectionName(reflectionTypeName).Resolve(compilation.TypeResolveContext);
@@ -69,6 +75,12 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		/// <param name="type">The type to be converted.</param>
 		/// <returns>Returns the type reference.</returns>
+		/// <remarks>
+		/// If the type is open (contains type parameters '`0' or '``0'),
+		/// an <see cref="ITypeResolveContext"/> with the appropriate CurrentTypeDefinition/CurrentMember is required
+		/// to resolve the type reference.
+		/// For closed types, the root type resolve context for the compilation is sufficient.
+		/// </remarks>
 		public static ITypeReference ToTypeReference(this Type type)
 		{
 			if (type == null)
@@ -196,6 +208,15 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <param name="reflectionTypeName">The reflection name of the type.</param>
 		/// <exception cref="ReflectionNameParseException">The syntax of the reflection type name is invalid</exception>
 		/// <returns>A type reference that represents the reflection name.</returns>
+		/// <remarks>
+		/// If the type is open (contains type parameters '`0' or '``0'),
+		/// an <see cref="ITypeResolveContext"/> with the appropriate CurrentTypeDefinition/CurrentMember is required
+		/// to resolve the reference to the ITypeParameter.
+		/// For looking up closed, assembly qualified type names, the root type resolve context for the compilation
+		/// is sufficient.
+		/// When looking up a type name that isn't assembly qualified, the type reference will look in
+		/// <see cref="ITypeResolveContext.CurrentAssembly"/> first, and .
+		/// </remarks>
 		public static ITypeReference ParseReflectionName(string reflectionTypeName)
 		{
 			if (reflectionTypeName == null)
@@ -333,7 +354,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			if (assemblyName != null) {
 				assemblyReference = new DefaultAssemblyReference(assemblyName);
 			} else {
-				assemblyReference = DefaultAssemblyReference.CurrentAssembly;
+				assemblyReference = null;
 			}
 			int pos = typeName.LastIndexOf('.');
 			if (pos < 0)

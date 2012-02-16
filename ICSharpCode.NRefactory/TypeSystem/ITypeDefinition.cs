@@ -54,7 +54,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// to the type resolve context.
 		/// </summary>
 		/// <param name="parentContext">The parent context (e.g. the parent assembly),
-		/// including the parent </param>
+		/// including the parent type definition for inner classes.</param>
 		ITypeResolveContext CreateResolveContext(ITypeResolveContext parentContext);
 	}
 	

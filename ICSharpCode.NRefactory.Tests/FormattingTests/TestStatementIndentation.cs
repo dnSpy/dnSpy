@@ -90,6 +90,42 @@ this.TestMethod ();
 	}
 }");
 		}
+		
+		[Test()]
+		public void TestIndentBlocksCase2 ()
+		{
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			policy.IndentBlocks = true;
+			
+			var adapter = Test (policy,
+@"class Test {
+	Test TestMethod ()
+	{
+		if (true) {
+		Something ();
+		}
+	}
+}",
+@"class Test
+{
+	Test TestMethod ()
+	{
+		if (true) {
+			Something ();
+		}
+	}
+}");
+			policy.IndentBlocks = false;
+			Continue (policy, adapter, @"class Test
+{
+	Test TestMethod ()
+	{
+		if (true) {
+		Something ();
+		}
+	}
+}");
+		}
 
 		[Test()]
 		public void TestBreakIndentation ()
@@ -1561,6 +1597,81 @@ if (b) {
 	}
 }");
 		}
+		
+		
+		[Test()]
+		public void TestSwitchIndentBreak ()
+		{
+			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			
+			policy.IndentSwitchBody = true;
+			policy.IndentBreakStatements = true;
+			
+			Test (policy, @"class Test
+{
+	Test TestMethod ()
+	{
+		switch (a) {
+			case 1:
+			case 2:
+			DoSomething ();
+			break;
+			default:
+			Foo ();
+			break;
+		}
+	}
+}",
+@"class Test
+{
+	Test TestMethod ()
+	{
+		switch (a) {
+			case 1:
+			case 2:
+				DoSomething ();
+				break;
+			default:
+				Foo ();
+				break;
+		}
+	}
+}");
+			policy.IndentSwitchBody = true;
+			policy.IndentBreakStatements = false;
+			
+			Test (policy, @"class Test
+{
+	Test TestMethod ()
+	{
+		switch (a) {
+			case 1:
+			case 2:
+			DoSomething ();
+			break;
+			default:
+			Foo ();
+			break;
+		}
+	}
+}",
+@"class Test
+{
+	Test TestMethod ()
+	{
+		switch (a) {
+			case 1:
+			case 2:
+				DoSomething ();
+			break;
+			default:
+				Foo ();
+			break;
+		}
+	}
+}");
+		}
+
 
 		[Test()]
 		public void TestTryCatchBracketPlacement ()

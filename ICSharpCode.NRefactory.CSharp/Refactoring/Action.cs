@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Change.cs
 //  
 // Author:
@@ -46,9 +46,6 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		/// <summary>
 		/// Performs the change.
 		/// </summary>
-		/// <param name='rctx'>
-		/// The context on which the change should perform on.
-		/// </param>
 		public abstract void Perform (Script script);
 	}
 }

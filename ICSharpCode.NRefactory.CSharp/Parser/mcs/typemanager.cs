@@ -148,7 +148,7 @@ namespace Mono.CSharp
 				if (found == null || found == p)
 					continue;
 
-				var tc = found.MemberDefinition as TypeContainer;
+				var tc = found.MemberDefinition as TypeDefinition;
 				if (tc != null) {
 					var ns = module.GlobalRootNamespace.GetNamespace (p.Namespace, false);
 					ns.SetBuiltinType (p);

@@ -806,7 +806,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		sealed class CecilResolvedAttribute : IAttribute
 		{
 			readonly ITypeResolveContext context;
-			readonly CecilUnresolvedAttribute unresolved;
+			readonly byte[] blob;
+			readonly IList<ITypeReference> ctorParameterTypes;
 			readonly IType attributeType;
 			
 			IMethod constructor;
@@ -818,8 +819,16 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			public CecilResolvedAttribute(ITypeResolveContext context, CecilUnresolvedAttribute unresolved)
 			{
 				this.context = context;
-				this.unresolved = unresolved;
+				this.blob = unresolved.blob;
+				this.ctorParameterTypes = unresolved.ctorParameterTypes;
 				this.attributeType = unresolved.attributeType.Resolve(context);
+			}
+			
+			public CecilResolvedAttribute(ITypeResolveContext context, IType attributeType)
+			{
+				this.context = context;
+				this.attributeType = attributeType;
+				this.ctorParameterTypes = EmptyList<ITypeReference>.Instance;
 			}
 			
 			public DomRegion Region {
@@ -842,7 +851,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			IMethod ResolveConstructor()
 			{
-				var parameterTypes = unresolved.ctorParameterTypes.Resolve(context);
+				var parameterTypes = ctorParameterTypes.Resolve(context);
 				foreach (var ctor in attributeType.GetConstructors(m => m.Parameters.Count == parameterTypes.Count)) {
 					bool ok = true;
 					for (int i = 0; i < parameterTypes.Count; i++) {
@@ -901,12 +910,14 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			void DecodeBlob(List<ResolveResult> positionalArguments, List<KeyValuePair<IMember, ResolveResult>> namedArguments)
 			{
-				BlobReader reader = new BlobReader(unresolved.blob, context.CurrentAssembly);
+				if (blob == null)
+					return;
+				BlobReader reader = new BlobReader(blob, context.CurrentAssembly);
 				if (reader.ReadUInt16() != 0x0001) {
 					Debug.WriteLine("Unknown blob prolog");
 					return;
 				}
-				foreach (var ctorParameter in unresolved.ctorParameterTypes.Resolve(context)) {
+				foreach (var ctorParameter in ctorParameterTypes.Resolve(context)) {
 					positionalArguments.Add(reader.ReadFixedArg(ctorParameter));
 				}
 				ushort numNamed = reader.ReadUInt16();
@@ -1109,7 +1120,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				if (typeCode == KnownTypeCode.Object) {
 					// boxed value type
 					IType boxedTyped = ReadCustomAttributeFieldOrPropType();
-					return ReadElem(boxedTyped);
+					ResolveResult elem = ReadElem(boxedTyped);
+					if (elem.IsCompileTimeConstant && elem.ConstantValue == null)
+						return new ConstantResolveResult(elementType, null);
+					else
+						return new ConversionResolveResult(elementType, elem, Conversion.BoxingConversion);
 				} else if (typeCode == KnownTypeCode.Type) {
 					return new TypeOfResolveResult(underlyingType, ReadType());
 				} else {
@@ -1147,7 +1162,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 					case KnownTypeCode.String:
 						return ReadSerString();
 					default:
-						return ErrorResolveResult.UnknownError;
+						throw new NotSupportedException();
 				}
 			}
 			
@@ -1262,31 +1277,49 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		static readonly ITypeReference securityActionTypeReference = typeof(System.Security.Permissions.SecurityAction).ToTypeReference();
 		static readonly ITypeReference permissionSetAttributeTypeReference = typeof(System.Security.Permissions.PermissionSetAttribute).ToTypeReference();
 		
+		/// <summary>
+		/// Reads a security declaration.
+		/// </summary>
+		[CLSCompliant(false)]
+		public IList<IUnresolvedAttribute> ReadSecurityDeclaration(SecurityDeclaration secDecl)
+		{
+			if (secDecl == null)
+				throw new ArgumentNullException("secDecl");
+			var result = new List<IUnresolvedAttribute>();
+			AddSecurityAttributes(secDecl, result);
+			return result;
+		}
+		
 		void AddSecurityAttributes(Mono.Collections.Generic.Collection<SecurityDeclaration> securityDeclarations, IList<IUnresolvedAttribute> targetCollection)
 		{
 			foreach (var secDecl in securityDeclarations) {
-				byte[] blob = secDecl.GetBlob();
-				BlobReader reader = new BlobReader(blob, null);
-				var securityAction = new SimpleConstantValue(securityActionTypeReference, (int)secDecl.Action);
-				if (reader.ReadByte() == '.') {
-					// binary attribute
-					uint attributeCount = reader.ReadCompressedUInt32();
-					UnresolvedSecurityDeclaration unresolvedSecDecl = new UnresolvedSecurityDeclaration(securityAction, blob);
-					if (this.InterningProvider != null) {
-						unresolvedSecDecl = this.InterningProvider.Intern(unresolvedSecDecl);
-					}
-					for (uint i = 0; i < attributeCount; i++) {
-						targetCollection.Add(new UnresolvedSecurityAttribute(unresolvedSecDecl, (int)i));
-					}
-				} else {
-					// for backward compatibility with .NET 1.0: XML-encoded attribute
-					var attr = new DefaultUnresolvedAttribute(permissionSetAttributeTypeReference);
-					attr.ConstructorParameterTypes.Add(securityActionTypeReference);
-					attr.PositionalArguments.Add(securityAction);
-					string xml = System.Text.Encoding.Unicode.GetString(blob);
-					attr.AddNamedPropertyArgument("XML", KnownTypeReference.String, xml);
-					targetCollection.Add(attr);
+				AddSecurityAttributes(secDecl, targetCollection);
+			}
+		}
+		
+		void AddSecurityAttributes(SecurityDeclaration secDecl, IList<IUnresolvedAttribute> targetCollection)
+		{
+			byte[] blob = secDecl.GetBlob();
+			BlobReader reader = new BlobReader(blob, null);
+			var securityAction = new SimpleConstantValue(securityActionTypeReference, (int)secDecl.Action);
+			if (reader.ReadByte() == '.') {
+				// binary attribute
+				uint attributeCount = reader.ReadCompressedUInt32();
+				UnresolvedSecurityDeclaration unresolvedSecDecl = new UnresolvedSecurityDeclaration(securityAction, blob);
+				if (this.InterningProvider != null) {
+					unresolvedSecDecl = this.InterningProvider.Intern(unresolvedSecDecl);
 				}
+				for (uint i = 0; i < attributeCount; i++) {
+					targetCollection.Add(new UnresolvedSecurityAttribute(unresolvedSecDecl, (int)i));
+				}
+			} else {
+				// for backward compatibility with .NET 1.0: XML-encoded attribute
+				var attr = new DefaultUnresolvedAttribute(permissionSetAttributeTypeReference);
+				attr.ConstructorParameterTypes.Add(securityActionTypeReference);
+				attr.PositionalArguments.Add(securityAction);
+				string xml = System.Text.Encoding.Unicode.GetString(blob);
+				attr.AddNamedPropertyArgument("XML", KnownTypeReference.String, xml);
+				targetCollection.Add(attr);
 			}
 		}
 		
@@ -1314,14 +1347,30 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				
 				ITypeResolveContext context = new SimpleTypeResolveContext(currentAssembly);
 				BlobReader reader = new BlobReader(blob, currentAssembly);
-				IList<IAttribute> result = new List<IAttribute>();
 				if (reader.ReadByte() != '.') {
 					// should not use UnresolvedSecurityDeclaration for XML secdecls
 					throw new InvalidOperationException();
 				}
 				ResolveResult securityActionRR = securityAction.Resolve(context);
 				uint attributeCount = reader.ReadCompressedUInt32();
-				for (uint i = 0; i < attributeCount; i++) {
+				IAttribute[] attributes = new IAttribute[attributeCount];
+				try {
+					ReadSecurityBlob(reader, attributes, context, securityActionRR);
+				} catch (NotSupportedException ex) {
+					// ignore invalid blobs
+					Debug.WriteLine(ex.ToString());
+				}
+				for (int i = 0; i < attributes.Length; i++) {
+					if (attributes[i] == null)
+						attributes[i] = new CecilResolvedAttribute(context, SpecialType.UnknownType);
+				}
+				return attributes;
+//				return (IList<IAttribute>)cache.GetOrAddShared(this, attributes);
+			}
+			
+			void ReadSecurityBlob(BlobReader reader, IAttribute[] attributes, ITypeResolveContext context, ResolveResult securityActionRR)
+			{
+				for (int i = 0; i < attributes.Length; i++) {
 					string attributeTypeName = reader.ReadSerString();
 					ITypeReference attributeTypeRef = ReflectionHelper.ParseReflectionName(attributeTypeName);
 					IType attributeType = attributeTypeRef.Resolve(context);
@@ -1337,15 +1386,12 @@ namespace ICSharpCode.NRefactory.TypeSystem
 							namedArgs.Add(namedArg);
 						
 					}
-					result.Add(new ResolvedSecurityAttribute {
-					           	AttributeType = attributeType,
-					           	NamedArguments = namedArgs,
-					           	PositionalArguments = new ResolveResult[] { securityActionRR }
-					           });
+					attributes[i] = new ResolvedSecurityAttribute {
+						AttributeType = attributeType,
+						NamedArguments = namedArgs,
+						PositionalArguments = new ResolveResult[] { securityActionRR }
+					};
 				}
-				
-				return result;
-//				return (IList<IAttribute>)cache.GetOrAddShared(this, result);
 			}
 			
 			void ISupportsInterning.PrepareForInterning(IInterningProvider provider)
@@ -1580,15 +1626,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			td.AddDefaultConstructorIfRequired = (td.Kind == TypeKind.Struct || td.Kind == TypeKind.Enum);
 			if (typeDefinition.HasMethods) {
 				foreach (MethodDefinition method in typeDefinition.Methods) {
-					if (IsVisible(method.Attributes)) {
+					if (IsVisible(method.Attributes) && !IsAccessor(method.SemanticsAttributes)) {
 						EntityType type = EntityType.Method;
 						if (method.IsSpecialName) {
 							if (method.IsConstructor)
 								type = EntityType.Constructor;
 							else if (method.Name.StartsWith("op_", StringComparison.Ordinal))
 								type = EntityType.Operator;
-							else
-								continue;
 						}
 						td.Members.Add(ReadMethod(method, td, type));
 					}
@@ -1625,12 +1669,19 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				}
 			}
 		}
+		
+		static bool IsAccessor(MethodSemanticsAttributes semantics)
+		{
+			return !(semantics == MethodSemanticsAttributes.None || semantics == MethodSemanticsAttributes.Other);
+		}
 		#endregion
 		
 		#region Read Method
 		[CLSCompliant(false)]
 		public IUnresolvedMethod ReadMethod(MethodDefinition method, IUnresolvedTypeDefinition parentType, EntityType methodType = EntityType.Method)
 		{
+			if (method == null)
+				return null;
 			DefaultUnresolvedMethod m = new DefaultUnresolvedMethod(parentType, method.Name);
 			m.EntityType = methodType;
 			if (method.HasGenericParameters) {
@@ -1858,8 +1909,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			TranslateModifiers(property.GetMethod ?? property.SetMethod, p);
 			p.ReturnType = ReadTypeReference(property.PropertyType, typeAttributes: property);
 			
-			p.Getter = ReadAccessor(property.GetMethod);
-			p.Setter = ReadAccessor(property.SetMethod);
+			p.Getter = ReadMethod(property.GetMethod, parentType);
+			p.Setter = ReadMethod(property.SetMethod, parentType);
 			
 			if (property.HasParameters) {
 				foreach (ParameterDefinition par in property.Parameters) {
@@ -1870,23 +1921,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			FinishReadMember(p, property);
 			return p;
-		}
-		
-		IUnresolvedAccessor ReadAccessor(MethodDefinition accessorMethod)
-		{
-			if (accessorMethod != null && IsVisible(accessorMethod.Attributes)) {
-				Accessibility accessibility = GetAccessibility(accessorMethod.Attributes);
-				if (HasAnyAttributes(accessorMethod)) {
-					DefaultUnresolvedAccessor a = new DefaultUnresolvedAccessor();
-					a.Accessibility = accessibility;
-					AddAttributes(accessorMethod, a.Attributes, a.ReturnTypeAttributes);
-					return a;
-				} else {
-					return DefaultUnresolvedAccessor.GetFromAccessibility(accessibility);
-				}
-			} else {
-				return null;
-			}
 		}
 		#endregion
 		
@@ -1903,9 +1937,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			TranslateModifiers(ev.AddMethod, e);
 			e.ReturnType = ReadTypeReference(ev.EventType, typeAttributes: ev);
 			
-			e.AddAccessor = ReadAccessor(ev.AddMethod);
-			e.RemoveAccessor = ReadAccessor(ev.RemoveMethod);
-			e.InvokeAccessor = ReadAccessor(ev.InvokeMethod);
+			e.AddAccessor = ReadMethod(ev.AddMethod, parentType);
+			e.RemoveAccessor = ReadMethod(ev.RemoveMethod, parentType);
+			e.InvokeAccessor = ReadMethod(ev.InvokeMethod, parentType);
 			
 			AddAttributes(ev, e);
 			
@@ -1934,7 +1968,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				throw new NotSupportedException ("This instance contains no cecil references.");
 			object result;
 			if (!typeSystemTranslationTable.TryGetValue (typeSystemObject, out result))
-				throw new InvalidOperationException ("No cecil reference stored for " + typeSystemObject);
+				return null;
 			return result as T;
 		}
 		

@@ -281,6 +281,30 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 				});
 		}
 		
+		[Test, Ignore("Parser bug: constraints added in wrong order")]
+		public void GenericMethodWithMultipleConstraints()
+		{
+			ParseUtilCSharp.AssertTypeMember(
+				"void MyMethod<A, B>() where A : IA where B : IB {} ",
+				new MethodDeclaration {
+					ReturnType = new PrimitiveType("void"),
+					Name = "MyMethod",
+					TypeParameters = {
+						new TypeParameterDeclaration { Name = "A" },
+						new TypeParameterDeclaration { Name = "B" }
+					},
+					Constraints = {
+						new Constraint {
+							TypeParameter = new SimpleType("A"),
+							BaseTypes = { new SimpleType("IA") }
+						},
+						new Constraint {
+							TypeParameter = new SimpleType("B"),
+							BaseTypes = { new SimpleType("IB") }
+						}
+					}});
+		}
+		
 		[Test]
 		public void IncompleteConstraintsTest()
 		{

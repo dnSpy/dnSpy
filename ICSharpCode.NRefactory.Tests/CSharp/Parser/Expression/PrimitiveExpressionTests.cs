@@ -72,7 +72,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 		{
 			ParseUtilCSharp.AssertExpression(
 				"-2147483648",
-				new UnaryOperatorExpression(UnaryOperatorType.Minus, new PrimitiveExpression(-2147483648)));
+				new UnaryOperatorExpression(UnaryOperatorType.Minus, new PrimitiveExpression(2147483648)));
 		}
 		
 		[Test]

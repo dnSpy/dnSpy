@@ -25,6 +25,8 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace ICSharpCode.NRefactory.CSharp.Refactoring
 {
@@ -148,22 +150,42 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			return level;
 		}
 		
+		sealed class SegmentTrackingOutputFormatter : TextWriterOutputFormatter
+		{
+			readonly NodeOutput result;
+			readonly StringWriter stringWriter;
+			
+			public SegmentTrackingOutputFormatter(NodeOutput result, StringWriter stringWriter)
+				: base(stringWriter)
+			{
+				this.result = result;
+				this.stringWriter = stringWriter;
+			}
+			
+			public override void StartNode(AstNode node)
+			{
+				base.StartNode(node);
+				result.NodeSegments [node] = new NodeOutput.Segment (stringWriter.GetStringBuilder ().Length);
+			}
+			
+			public override void EndNode(AstNode node)
+			{
+				var nodeSegment = result.NodeSegments [node];
+				nodeSegment.Length = stringWriter.GetStringBuilder ().Length - nodeSegment.Offset;
+				base.EndNode(node);
+			}
+		}
+		
 		protected NodeOutput OutputNode (int indentLevel, AstNode node, bool startWithNewLine = false)
 		{
 			var result = new NodeOutput ();
-			var stringWriter = new System.IO.StringWriter ();
-			var formatter = new TextWriterOutputFormatter (stringWriter);
+			var stringWriter = new StringWriter ();
+			var formatter = new SegmentTrackingOutputFormatter (result, stringWriter);
 			formatter.Indentation = indentLevel;
 			stringWriter.NewLine = Context.EolMarker;
 			if (startWithNewLine)
 				formatter.NewLine ();
 			var visitor = new CSharpOutputVisitor (formatter, Context.FormattingOptions);
-			visitor.OutputStarted += (sender, e) => {
-				result.NodeSegments [e.AstNode] = new NodeOutput.Segment (stringWriter.GetStringBuilder ().Length);
-			};
-			visitor.OutputFinished += (sender, e) => {
-				result.NodeSegments [e.AstNode].EndOffset = stringWriter.GetStringBuilder ().Length;
-			};
 			node.AcceptVisitor (visitor, null);
 			result.Text = stringWriter.ToString ().TrimEnd ();
 			if (node is FieldDeclaration)

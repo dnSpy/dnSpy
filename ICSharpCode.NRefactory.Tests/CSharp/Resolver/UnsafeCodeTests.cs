@@ -41,5 +41,29 @@ class TestClass {
 			var rr = Resolve<ResolveResult>(program.Replace("$p$", "$*p$"));
 			Assert.AreEqual("System.Byte", lrr.Type.ReflectionName);
 		}
+		
+		[Test]
+		public void FixedStatementArrayPointerConversion()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Main(byte[] a) {
+		fixed (byte* p = $a$) {
+		} } }";
+			Assert.AreEqual("System.Byte*", GetExpectedType(program).ReflectionName);
+			Assert.AreEqual(Conversion.ImplicitPointerConversion, GetConversion(program));
+		}
+		
+		[Test]
+		public void FixedStatementStringPointerConversion()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Main(string a) {
+		fixed (char* p = $a$) {
+		} } }";
+			Assert.AreEqual("System.Char*", GetExpectedType(program).ReflectionName);
+			Assert.AreEqual(Conversion.ImplicitPointerConversion, GetConversion(program));
+		}
 	}
 }

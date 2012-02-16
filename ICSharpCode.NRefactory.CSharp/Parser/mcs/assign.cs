@@ -357,7 +357,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MONODROID
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			var tassign = target as IDynamicAssign;
@@ -417,6 +417,11 @@ namespace Mono.CSharp {
 
 			_target.target = target.Clone (clonectx);
 			_target.source = source.Clone (clonectx);
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -560,7 +565,18 @@ namespace Mono.CSharp {
 		{
 			if (resolved == null)
 				return;
-			
+
+			//
+			// Emit sequence symbol info even if we are in compiler generated
+			// block to allow debugging filed initializers when constructor is
+			// compiler generated
+			//
+			if (ec.HasSet (BuilderContext.Options.OmitDebugInfo)) {
+				using (ec.With (BuilderContext.Options.OmitDebugInfo, false)) {
+					ec.Mark (loc);
+				}
+			}
+
 			if (resolved != this)
 				resolved.EmitStatement (ec);
 			else
@@ -651,6 +667,12 @@ namespace Mono.CSharp {
 			: this (op, target, source, loc)
 		{
 			this.left = left;
+		}
+
+		public Binary.Operator Operator {
+			get {
+				return op;
+			}
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -811,10 +833,10 @@ namespace Mono.CSharp {
 			ctarget.right = ctarget.source = source.Clone (clonectx);
 			ctarget.target = target.Clone (clonectx);
 		}
+
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
 		}
-
 	}
 }

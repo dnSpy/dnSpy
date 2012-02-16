@@ -43,7 +43,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public void Resolved(AstNode node, ResolveResult result)
 		{
-			if (ResolveVisitor.ActsAsParenthesizedExpression(node))
+			if (ParenthesizedExpression.ActsAsParenthesizedExpression(node))
 				return;
 			
 			MemberResolveResult mrr = result as MemberResolveResult;

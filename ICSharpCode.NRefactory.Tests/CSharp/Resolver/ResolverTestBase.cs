@@ -159,7 +159,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		protected ResolveResult Resolve(string code)
+		protected Tuple<CSharpAstResolver, AstNode> PrepareResolver(string code)
 		{
 			CompilationUnit cu = new CSharpParser().Parse(new StringReader(code.Replace("$", "")), "code.cs");
 			
@@ -176,14 +176,32 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			cu.AcceptVisitor(fnv, null);
 			Assert.IsNotNull(fnv.ResultNode, "Did not find DOM node at the specified location");
 			
-			Debug.WriteLine(new string('=', 70));
-			Debug.WriteLine("Starting new resolver for " + fnv.ResultNode);
-			
 			CSharpAstResolver resolver = new CSharpAstResolver(compilation, cu, parsedFile);
-			ResolveResult rr = resolver.Resolve(fnv.ResultNode);
+			return Tuple.Create(resolver, fnv.ResultNode);
+		}
+		
+		protected ResolveResult Resolve(string code)
+		{
+			var prep = PrepareResolver(code);
+			Debug.WriteLine(new string('=', 70));
+			Debug.WriteLine("Starting new resolver for " + prep.Item2);
+			
+			ResolveResult rr = prep.Item1.Resolve(prep.Item2);
 			Assert.IsNotNull(rr, "ResolveResult is null - did something go wrong while navigating to the target node?");
 			Debug.WriteLine("ResolveResult is " + rr);
 			return rr;
+		}
+		
+		protected Conversion GetConversion(string code)
+		{
+			var prep = PrepareResolver(code);
+			return prep.Item1.GetConversion((Expression)prep.Item2);
+		}
+		
+		protected IType GetExpectedType(string code)
+		{
+			var prep = PrepareResolver(code);
+			return prep.Item1.GetExpectedType((Expression)prep.Item2);
 		}
 		
 		protected T Resolve<T>(string code) where T : ResolveResult

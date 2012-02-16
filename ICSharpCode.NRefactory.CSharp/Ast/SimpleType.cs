@@ -28,6 +28,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -52,6 +55,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 			{
 				return other == null || other.IsNull;
+			}
+			
+			public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode)
+			{
+				return SpecialType.UnknownType;
 			}
 		}
 		#endregion
@@ -129,6 +137,19 @@ namespace ICSharpCode.NRefactory.CSharp
 				b.Append('>');
 			}
 			return b.ToString();
+		}
+		
+		public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type)
+		{
+			var typeArguments = new List<ITypeReference>();
+			foreach (var ta in this.TypeArguments) {
+				typeArguments.Add(ta.ToTypeReference(lookupMode));
+			}
+			if (typeArguments.Count == 0 && string.IsNullOrEmpty(this.Identifier)) {
+				// empty SimpleType is used for typeof(List<>).
+				return SpecialType.UnboundTypeArgument;
+			}
+			return new SimpleTypeOrNamespaceReference(this.Identifier, typeArguments, lookupMode);
 		}
 	}
 }

@@ -67,7 +67,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public TypeParameter[] CurrentTypeParameters {
+		public TypeParameters CurrentTypeParameters {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -129,7 +129,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   The container for this PendingImplementation
 		/// </summary>
-		readonly TypeContainer container;
+		readonly TypeDefinition container;
 		
 		/// <summary>
 		///   This is the array of TypeAndMethods that describes the pending implementations
@@ -137,7 +137,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		TypeAndMethods [] pending_implementations;
 
-		PendingImplementation (TypeContainer container, MissingInterfacesInfo[] missing_ifaces, MethodSpec[] abstract_methods, int total)
+		PendingImplementation (TypeDefinition container, MissingInterfacesInfo[] missing_ifaces, MethodSpec[] abstract_methods, int total)
 		{
 			var type_builder = container.Definition;
 			
@@ -189,7 +189,7 @@ namespace Mono.CSharp {
 
 		static readonly MissingInterfacesInfo [] EmptyMissingInterfacesInfo = new MissingInterfacesInfo [0];
 		
-		static MissingInterfacesInfo [] GetMissingInterfaces (TypeContainer container)
+		static MissingInterfacesInfo [] GetMissingInterfaces (TypeDefinition container)
 		{
 			//
 			// Notice that Interfaces will only return the interfaces that the Type
@@ -233,7 +233,7 @@ namespace Mono.CSharp {
 		// Register method implementations are either abstract methods
 		// flagged as such on the base class or interface methods
 		//
-		static public PendingImplementation GetPendingImplementations (TypeContainer container)
+		static public PendingImplementation GetPendingImplementations (TypeDefinition container)
 		{
 			TypeSpec b = container.BaseType;
 
@@ -443,7 +443,7 @@ namespace Mono.CSharp {
 						optional = tm.optional;
 					}
 
-					if (op == Operation.Lookup && name.Left != null && ambiguousCandidate == null) {
+					if (op == Operation.Lookup && name.ExplicitInterface != null && ambiguousCandidate == null) {
 						ambiguousCandidate = m;
 						continue;
 					}

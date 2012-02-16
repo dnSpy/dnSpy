@@ -31,6 +31,62 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 {
 	public class ObjectInitializerTests : TestBase
 	{
+		[Test()]
+		public void TestArrayInitializerStart ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"using System;
+
+class MyTest
+{
+	public void Test ()
+	{
+		$new [] { M$
+	}
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("Tuple"), "class 'MyTest' not found.");
+			});
+		}
+		
+		[Test()]
+		public void TestArrayInitializerSimple ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"using System;
+
+class MyTest
+{
+	public void Test ()
+	{
+		$new [] { Tuple.$
+	}
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("Create"), "method 'Create' not found.");
+			});
+		}
+		
+		/// <summary>
+		/// Bug 432727 - No completion if no constructor
+		/// </summary>
+		[Test()]
+		public void TestArrayInitializerParameterContext ()
+		{
+			var provider = ParameterCompletionTests.CreateProvider (
+@"using System;
+
+class MyTest
+{
+	public void Test ()
+	{
+		$new [] { Tuple.Create($
+	}
+}");
+			Assert.IsNotNull (provider, "provider was not created.");
+			Assert.Greater (provider.OverloadCount, 1);
+		}
+		
 		/// <summary>
 		/// Bug 487236 - Object initializer completion uses wrong type
 		/// </summary>
@@ -262,6 +318,73 @@ class MyTest
 }
 ", provider => {
 			Assert.IsNotNull (provider.Find ("Str"), "field 'Str' not found.");
+			});
+		}
+		
+		/// <summary>
+		/// Bug 2434 - Object-Initializer Intellisense broken when using constructor arguments
+		/// </summary>
+		[Test()]
+		public void TestBug2434 ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"
+class User
+{
+  public User() {}
+  public User(int id) { }
+
+  public string Id { get; set; }
+  public string Name { get; set; }
+}
+
+class MyTest
+{
+	static string Str = ""hello"";
+
+	public void Test ()
+	{
+		$new User(12) { 
+			N$
+	}
+}
+", provider => {
+			Assert.IsNotNull (provider.Find ("Id"), "Property 'Id' not found.");
+			Assert.IsNotNull (provider.Find ("Name"), "Property 'Name' not found.");
+			});
+		}
+		
+		[Test()]
+		public void TestBug2434Case2 ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"
+class User
+{
+  public User() {}
+  public User(int id) { }
+
+  public string Id { get; set; }
+  public string Name { get; set; }
+}
+
+class MyTest
+{
+	static string Str = ""hello"";
+
+	public void Test ()
+	{
+		string myString;
+
+		$new User(12) { 
+			Name = S$
+	}
+}
+", provider => {
+			Assert.IsNull (provider.Find ("Id"), "Property 'Id' found.");
+			Assert.IsNull (provider.Find ("Name"), "Property 'Name' found.");
+			Assert.IsNotNull (provider.Find ("Str"), "Field 'Str' not found.");
+			Assert.IsNotNull (provider.Find ("myString"), "Local 'myString' not found.");
 			});
 		}
 	}

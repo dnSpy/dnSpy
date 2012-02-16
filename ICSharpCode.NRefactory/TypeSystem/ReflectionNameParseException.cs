@@ -24,6 +24,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents an error while parsing a reflection name.
 	/// </summary>
+	[Serializable]
 	public class ReflectionNameParseException : Exception
 	{
 		int position;

@@ -50,6 +50,12 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			}));
 		}
 		
+		[Test]
+		public void Bool_TrueString()
+		{
+			ParseUtilCSharp.AssertExpression("bool.TrueString", new PrimitiveType("bool").Member("TrueString"));
+		}
+		
 	/*	[Test]
 		public void StandaloneIntReferenceExpression()
 		{

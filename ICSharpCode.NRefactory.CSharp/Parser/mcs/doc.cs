@@ -32,6 +32,7 @@ namespace Mono.CSharp
 		readonly XmlDocument XmlDocumentation;
 
 		readonly ModuleContainer module;
+		readonly ModuleContainer doc_module;
 
 		//
 		// The output for XML documentation.
@@ -48,6 +49,9 @@ namespace Mono.CSharp
 
 		public DocumentationBuilder (ModuleContainer module)
 		{
+			doc_module = new ModuleContainer (module.Compiler);
+			doc_module.DocumentationBuilder = this;
+
 			this.module = module;
 			XmlDocumentation = new XmlDocument ();
 			XmlDocumentation.PreserveWhitespace = false;
@@ -141,7 +145,7 @@ namespace Mono.CSharp
 				}
 
 				// FIXME: it could be done with XmlReader
-				DeclSpace ds_target = mc as DeclSpace;
+				var ds_target = mc as TypeContainer;
 				if (ds_target == null)
 					ds_target = mc.Parent;
 
@@ -213,7 +217,7 @@ namespace Mono.CSharp
 		//
 		// Handles <see> elements.
 		//
-		void HandleSee (MemberCore mc, DeclSpace ds, XmlElement see)
+		void HandleSee (MemberCore mc, TypeContainer ds, XmlElement see)
 		{
 			HandleXrefCommon (mc, ds, see);
 		}
@@ -221,7 +225,7 @@ namespace Mono.CSharp
 		//
 		// Handles <seealso> elements.
 		//
-		void HandleSeeAlso (MemberCore mc, DeclSpace ds, XmlElement seealso)
+		void HandleSeeAlso (MemberCore mc, TypeContainer ds, XmlElement seealso)
 		{
 			HandleXrefCommon (mc, ds, seealso);
 		}
@@ -229,7 +233,7 @@ namespace Mono.CSharp
 		//
 		// Handles <exception> elements.
 		//
-		void HandleException (MemberCore mc, DeclSpace ds, XmlElement seealso)
+		void HandleException (MemberCore mc, TypeContainer ds, XmlElement seealso)
 		{
 			HandleXrefCommon (mc, ds, seealso);
 		}
@@ -244,10 +248,8 @@ namespace Mono.CSharp
 
 			string tp_name = node.GetAttribute ("name");
 			if (mc.CurrentTypeParameters != null) {
-				foreach (var tp in mc.CurrentTypeParameters) {
-					if (tp.Name == tp_name)
-						return;
-				}
+				if (mc.CurrentTypeParameters.Find (tp_name) != null)
+					return;
 			}
 			
 			// TODO: CS1710, CS1712
@@ -269,10 +271,8 @@ namespace Mono.CSharp
 			var member = mc;
 			do {
 				if (member.CurrentTypeParameters != null) {
-					foreach (var tp in member.CurrentTypeParameters) {
-						if (tp.Name == tp_name)
-							return;
-					}
+					if (member.CurrentTypeParameters.Find (tp_name) != null)
+						return;
 				}
 
 				member = member.Parent;
@@ -308,7 +308,7 @@ namespace Mono.CSharp
 		//
 		// Processes "see" or "seealso" elements from cref attribute.
 		//
-		void HandleXrefCommon (MemberCore mc, DeclSpace ds, XmlElement xref)
+		void HandleXrefCommon (MemberCore mc, TypeContainer ds, XmlElement xref)
 		{
 			string cref = xref.GetAttribute ("cref");
 			// when, XmlReader, "if (cref == null)"
@@ -326,13 +326,10 @@ namespace Mono.CSharp
 			var s = new MemoryStream (encoding.GetBytes (cref));
 			SeekableStreamReader seekable = new SeekableStreamReader (s, encoding);
 
-			var source_file = new CompilationSourceFile ("{documentation}", "", 1);
-			var doc_module = new ModuleContainer (module.Compiler);
-			doc_module.DocumentationBuilder = this;
-			source_file.NamespaceContainer = new NamespaceContainer (null, doc_module, null, source_file);
+			var source_file = new CompilationSourceFile (doc_module);
+			var report = new Report (doc_module.Compiler, new NullReportPrinter ());
 
-			Report parse_report = new Report (new NullReportPrinter ());
-			var parser = new CSharpParser (seekable, source_file, parse_report);
+			var parser = new CSharpParser (seekable, source_file, report);
 			ParsedParameters = null;
 			ParsedName = null;
 			ParsedBuiltinType = null;
@@ -340,7 +337,7 @@ namespace Mono.CSharp
 			parser.Lexer.putback_char = Tokenizer.DocumentationXref;
 			parser.Lexer.parsing_generic_declaration_doc = true;
 			parser.parse ();
-			if (parse_report.Errors > 0) {
+			if (report.Errors > 0) {
 				Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
 					mc.GetSignatureForError (), cref);
 
