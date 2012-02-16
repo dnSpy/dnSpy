@@ -17,7 +17,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <ApplicationIcon>Images\ILSpy.ico</ApplicationIcon>
     <RunCodeAnalysis>False</RunCodeAnalysis>
-    <StartArguments>/separate "C:\temp\decompiled\Mono.Cecil.dll"</StartArguments>
+    <StartArguments>/separate</StartArguments>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\NRefactory\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
