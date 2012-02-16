@@ -39,7 +39,7 @@ namespace ILSpy.BamlDecompiler
 							output.Write(ex.ToString());
 						}
 						return output;
-					}),
+					}, token),
 				t => textView.ShowNode(t.Result, this, highlighting)
 			);
 			return true;

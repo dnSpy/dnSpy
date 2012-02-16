@@ -61,7 +61,7 @@ namespace ICSharpCode.ILSpy
 					}
 				});
 				return output;
-			}), task => MainWindow.Instance.TextView.ShowText(task.Result));
+			}, ct), task => MainWindow.Instance.TextView.ShowText(task.Result));
 		}
 	}
 }

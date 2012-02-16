@@ -261,7 +261,13 @@ namespace ICSharpCode.ILSpy.TextView
 					if (currentCancellationTokenSource == myCancellationTokenSource) {
 						currentCancellationTokenSource = null;
 						waitAdorner.Visibility = Visibility.Collapsed;
-						taskCompleted(task);
+						if (task.IsCanceled) {
+							AvalonEditTextOutput output = new AvalonEditTextOutput();
+							output.WriteLine("The operation was canceled.");
+							ShowOutput(output);
+						} else {
+							taskCompleted(task);
+						}
 					} else {
 						try {
 							task.Wait();
@@ -480,8 +486,8 @@ namespace ICSharpCode.ILSpy.TextView
 					if (DebugInformation.CodeMappings == null || !DebugInformation.CodeMappings.ContainsKey(token))
 						return;
 
-          if (!DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(ilOffset, out member, out line))
-            return;
+					if (!DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(ilOffset, out member, out line))
+						return;
 					
 					// update marker
 					DebuggerService.JumpToCurrentLine(member, line, 0, line, 0, ilOffset);
@@ -520,10 +526,12 @@ namespace ICSharpCode.ILSpy.TextView
 							DecompileNodes(context, textOutput);
 							textOutput.PrepareDocument();
 							tcs.SetResult(textOutput);
+						} catch (OutputLengthExceededException ex) {
+							tcs.SetException(ex);
 						} catch (AggregateException ex) {
 							tcs.SetException(ex);
-						} catch (OperationCanceledException ex) {
-							tcs.SetException(ex);
+						} catch (OperationCanceledException) {
+							tcs.SetCanceled();
 						}
 					} else
 						#endif
@@ -534,6 +542,8 @@ namespace ICSharpCode.ILSpy.TextView
 							DecompileNodes(context, textOutput);
 							textOutput.PrepareDocument();
 							tcs.SetResult(textOutput);
+						} catch (OperationCanceledException) {
+							tcs.SetCanceled();
 						} catch (Exception ex) {
 							tcs.SetException(ex);
 						}
@@ -586,7 +596,7 @@ namespace ICSharpCode.ILSpy.TextView
 			output.WriteLine();
 		}
 		#endregion
-		
+
 		#region JumpToReference
 		/// <summary>
 		/// Jumps to the definition referred to by the <see cref="ReferenceSegment"/>.
@@ -717,9 +727,9 @@ namespace ICSharpCode.ILSpy.TextView
 						output.AddButton(null, "Open Explorer", delegate { Process.Start("explorer", "/select,\"" + fileName + "\""); });
 						output.WriteLine();
 						tcs.SetResult(output);
-						#if DEBUG
 					} catch (OperationCanceledException ex) {
-						tcs.SetException(ex);
+						tcs.SetCanceled();
+						#if DEBUG
 					} catch (AggregateException ex) {
 						tcs.SetException(ex);
 						#else
