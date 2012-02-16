@@ -83,7 +83,7 @@
 	</Target>
 	
 	<Target Name="createsetup">
-		<CreateItem Include="$(ILSpyBin)\*.dll;$(ILSpyBin)\*.exe">
+		<CreateItem Include="$(ILSpyBin)\*.dll;$(ILSpyBin)\*.exe;$(ILSpyBin)\*.config">
 			<Output TaskParameter="Include" ItemName="BinFileToZip"/>
 		</CreateItem>
 		<Message Importance="high" Text="Creating ZIP file $(ArtefactPrefix)$(BuildNumber)_Binaries.zip"/>
