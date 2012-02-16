@@ -175,7 +175,13 @@ namespace ICSharpCode.Decompiler.Ast
 				};
 			} else if (node is ILSwitch) {
 				ILSwitch ilSwitch = (ILSwitch)node;
-				if (TypeAnalysis.IsBoolean(ilSwitch.Condition.InferredType) && ilSwitch.CaseBlocks.SelectMany(cb => cb.Values).Any(val => val != 0 && val != 1)) {
+				if (TypeAnalysis.IsBoolean(ilSwitch.Condition.InferredType) && (
+					from cb in ilSwitch.CaseBlocks
+					where cb.Values != null
+					from val in cb.Values
+					select val
+				).Any(val => val != 0 && val != 1))
+				{
 					// If switch cases contain values other then 0 and 1, force the condition to be non-boolean
 					ilSwitch.Condition.ExpectedType = typeSystem.Int32;
 				}

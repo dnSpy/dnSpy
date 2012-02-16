@@ -74,4 +74,16 @@ public static class Switch
 				return "Default";
 		}
 	}
+	
+	public static string SwitchOverBool(bool b)
+	{
+		switch (b) {
+			case true:
+				return bool.TrueString;
+			case false:
+				return bool.FalseString;
+			default:
+				return null;
+		}
+	}
 }
