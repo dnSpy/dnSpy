@@ -270,8 +270,22 @@ namespace ICSharpCode.ILSpy
 				}
 				if (!found) {
 					AvalonEditTextOutput output = new AvalonEditTextOutput();
-					output.Write("Cannot find " + args.NavigateTo);
+					output.Write(string.Format("Cannot find '{0}' in command line specified assemblies.", args.NavigateTo));
 					decompilerTextView.ShowText(output);
+				}
+			} else if (commandLineLoadedAssemblies.Count == 1) {
+				// NavigateTo == null and an assembly was given on the command-line:
+				// Select the newly loaded assembly
+				JumpToReference(commandLineLoadedAssemblies[0].AssemblyDefinition);
+			} else {
+				SharpTreeNode node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
+				if (node != null) {
+					SelectNode(node);
+					
+					// only if not showing the about page, perform the update check:
+					ShowMessageIfUpdatesAvailableAsync(spySettings);
+				} else {
+					AboutPage.Display(decompilerTextView);
 				}
 			}
 			commandLineLoadedAssemblies.Clear(); // clear references once we don't need them anymore
@@ -297,18 +311,6 @@ namespace ICSharpCode.ILSpy
 			ShowAssemblyList(this.assemblyList);
 			
 			HandleCommandLineArgumentsAfterShowList(App.CommandLineArguments);
-			
-			if (App.CommandLineArguments.NavigateTo == null) {
-				SharpTreeNode node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
-				if (node != null) {
-					SelectNode(node);
-					
-					// only if not showing the about page, perform the update check:
-					ShowMessageIfUpdatesAvailableAsync(spySettings);
-				} else {
-					AboutPage.Display(decompilerTextView);
-				}
-			}
 		}
 		
 		#region Update Check

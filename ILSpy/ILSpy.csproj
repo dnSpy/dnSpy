@@ -17,7 +17,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <ApplicationIcon>Images\ILSpy.ico</ApplicationIcon>
     <RunCodeAnalysis>False</RunCodeAnalysis>
-    <StartArguments>/separate</StartArguments>
+    <StartArguments>/separate "C:\temp\decompiled\Mono.Cecil.dll"</StartArguments>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\NRefactory\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
@@ -28,6 +28,7 @@
     <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
