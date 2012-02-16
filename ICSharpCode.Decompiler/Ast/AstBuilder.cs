@@ -318,7 +318,7 @@ namespace ICSharpCode.Decompiler.Ast
 				long expectedEnumMemberValue = 0;
 				bool forcePrintingInitializers = IsFlagsEnum(typeDef);
 				foreach (FieldDefinition field in typeDef.Fields) {
-					if (field.IsRuntimeSpecialName) {
+					if (!field.IsStatic) {
 						// the value__ field
 						if (field.FieldType != typeDef.Module.TypeSystem.Int32) {
 							astType.AddChild(ConvertType(field.FieldType), TypeDeclaration.BaseTypeRole);
@@ -1518,7 +1518,7 @@ namespace ICSharpCode.Decompiler.Ast
 					foreach (FieldDefinition field in enumDefinition.Fields) {
 						if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false), val))
 							return ConvertType(type).Member(field.Name).WithAnnotation(field);
-						else if (!field.IsStatic && field.IsRuntimeSpecialName)
+						else if (!field.IsStatic)
 							enumBaseTypeCode = TypeAnalysis.GetTypeCode(field.FieldType); // use primitive type of the enum
 					}
 					if (IsFlagsEnum(enumDefinition)) {

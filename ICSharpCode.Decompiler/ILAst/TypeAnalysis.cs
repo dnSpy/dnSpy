@@ -1046,18 +1046,28 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		public const int NativeInt = 33; // treat native int as between int32 and int64
 		
-		public static int GetInformationAmount(TypeReference type)
+		/// <summary>
+		/// Gets the underlying type, if the specified type is an enum.
+		/// Otherwise, returns null.
+		/// </summary>
+		public static TypeReference GetEnumUnderlyingType(TypeReference enumType)
 		{
-			if (type == null)
-				return 0;
-			if (type.IsValueType && !IsArrayPointerOrReference(type)) {
+			// unfortunately we cannot rely on enumType.IsValueType here - it's not set when the instruction operand is a typeref (as opposed to a typespec)
+			if (enumType != null && !IsArrayPointerOrReference(enumType)) {
 				// value type might be an enum
-				TypeDefinition typeDef = type.Resolve() as TypeDefinition;
+				TypeDefinition typeDef = enumType.Resolve() as TypeDefinition;
 				if (typeDef != null && typeDef.IsEnum) {
-					TypeReference underlyingType = typeDef.Fields.Single(f => f.IsRuntimeSpecialName && !f.IsStatic).FieldType;
-					return GetInformationAmount(underlyingType);
+					return typeDef.Fields.Single(f => !f.IsStatic).FieldType;
 				}
 			}
+			return null;
+		}
+		
+		public static int GetInformationAmount(TypeReference type)
+		{
+			type = GetEnumUnderlyingType(type) ?? type;
+			if (type == null)
+				return 0;
 			switch (type.MetadataType) {
 				case MetadataType.Void:
 					return 0;
@@ -1109,14 +1119,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		static bool? IsSigned(TypeReference type)
 		{
-			if (type == null || IsArrayPointerOrReference(type))
+			type = GetEnumUnderlyingType(type) ?? type;
+			if (type == null)
 				return null;
-			// unfortunately we cannot rely on type.IsValueType here - it's not set when the instruction operand is a typeref (as opposed to a typespec)
-			TypeDefinition typeDef = type.Resolve() as TypeDefinition;
-			if (typeDef != null && typeDef.IsEnum) {
-				TypeReference underlyingType = typeDef.Fields.Single(f => f.IsRuntimeSpecialName && !f.IsStatic).FieldType;
-				return IsSigned(underlyingType);
-			}
 			switch (type.MetadataType) {
 				case MetadataType.SByte:
 				case MetadataType.Int16:
@@ -1138,10 +1143,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		static bool OperandFitsInType(TypeReference type, int num)
 		{
-			TypeDefinition typeDef = type.Resolve() as TypeDefinition;
-			if (typeDef != null && typeDef.IsEnum) {
-				type = typeDef.Fields.Single(f => f.IsRuntimeSpecialName && !f.IsStatic).FieldType;
-			}
+			type = GetEnumUnderlyingType(type) ?? type;
 			switch (type.MetadataType) {
 				case MetadataType.SByte:
 					return sbyte.MinValue <= num && num <= sbyte.MaxValue;
