@@ -130,4 +130,14 @@ public class TypeAnalysisTests
 	{
 		return new byte[length];
 	}
+	
+	public byte[] CreateArrayWithUInt(uint length)
+	{
+		return new byte[length];
+	}
+	
+	public byte[] CreateArrayWithULong(ulong length)
+	{
+		return new byte[length];
+	}
 }

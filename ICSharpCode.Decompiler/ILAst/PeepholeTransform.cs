@@ -96,7 +96,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression length;
 			ILExpression input;
 			if (expr.Match(ILCode.Newarr, out typeRef, out length)) {
-				if (length.Match(ILCode.Conv_Ovf_I, out input) || length.Match(ILCode.Conv_I, out input)) {
+				if (length.Match(ILCode.Conv_Ovf_I, out input) || length.Match(ILCode.Conv_I, out input)
+				    || length.Match(ILCode.Conv_Ovf_I_Un, out input) || length.Match(ILCode.Conv_U, out input))
+				{
 					expr.Arguments[0] = input;
 					return true;
 				}
