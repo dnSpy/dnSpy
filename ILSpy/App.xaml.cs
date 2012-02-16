@@ -21,11 +21,11 @@ using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
 using System.Windows.Threading;
-
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
 
@@ -59,7 +59,17 @@ namespace ICSharpCode.ILSpy
 			
 			var catalog = new AggregateCatalog();
 			catalog.Catalogs.Add(new AssemblyCatalog(typeof(App).Assembly));
-			catalog.Catalogs.Add(new DirectoryCatalog(".", "*.Plugin.dll"));
+			// Don't use DirectoryCatalog, that causes problems if the plugins are from the Internet zone
+			// see http://stackoverflow.com/questions/8063841/mef-loading-plugins-from-a-network-shared-folder
+			string appPath = Path.GetDirectoryName(typeof(App).Module.FullyQualifiedName);
+			foreach (string plugin in Directory.GetFiles(appPath, "*.Plugin.dll")) {
+				string shortName = Path.GetFileNameWithoutExtension(plugin);
+				try {
+					catalog.Catalogs.Add(new AssemblyCatalog(Assembly.Load(shortName)));
+				} catch (Exception ex) {
+					MessageBox.Show(ex.ToString(), "Error loading plugin " + shortName);
+				}
+			}
 			
 			compositionContainer = new CompositionContainer(catalog);
 			
