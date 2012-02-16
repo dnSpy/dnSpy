@@ -63,7 +63,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					    v == v3 &&
 					    nextExpr.Arguments[1].Match(ILCode.Ldc_I4, out arrayPos) &&
 					    arrayPos >= operands.Count &&
-					    arrayPos <= operands.Count + maxConsecutiveDefaultValueExpressions) {
+					    arrayPos <= operands.Count + maxConsecutiveDefaultValueExpressions &&
+					    !nextExpr.Arguments[2].ContainsReferenceTo(v3))
+					{
 						while (operands.Count < arrayPos)
 							operands.Add(new ILExpression(ILCode.DefaultValue, elementType));
 						operands.Add(nextExpr.Arguments[2]);

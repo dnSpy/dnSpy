@@ -851,5 +851,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!collection.Remove(key))
 				throw new Exception("The key was not found in the dictionary");
 		}
+		
+		public static bool ContainsReferenceTo(this ILExpression expr, ILVariable v)
+		{
+			if (expr.Operand == v)
+				return true;
+			foreach (var arg in expr.Arguments) {
+				if (ContainsReferenceTo(arg, v))
+					return true;
+			}
+			return false;
+		}
 	}
 }

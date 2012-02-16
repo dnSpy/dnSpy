@@ -353,6 +353,15 @@ public class InitializerTests
 					InitializerTests.MyEnum.b
 				});
 	}
+	
+	public static void RecursiveArrayInitializer()
+	{
+		int[] array = new int[3];
+		array[0] = 1;
+		array[1] = 2;
+		array[2] = array[1] + 1;
+		array[0] = 0;
+	}
 	#endregion
 
 	public static void CollectionInitializerList()
@@ -363,6 +372,13 @@ public class InitializerTests
 					2,
 					3
 				});
+	}
+
+	public static object RecursiveCollectionInitializer()
+	{
+		List<object> list = new List<object>();
+		list.Add(list);
+		return list;
 	}
 
 	public static void CollectionInitializerDictionary()

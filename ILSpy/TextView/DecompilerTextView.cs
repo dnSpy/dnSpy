@@ -727,7 +727,7 @@ namespace ICSharpCode.ILSpy.TextView
 						output.AddButton(null, "Open Explorer", delegate { Process.Start("explorer", "/select,\"" + fileName + "\""); });
 						output.WriteLine();
 						tcs.SetResult(output);
-					} catch (OperationCanceledException ex) {
+					} catch (OperationCanceledException) {
 						tcs.SetCanceled();
 						#if DEBUG
 					} catch (AggregateException ex) {
