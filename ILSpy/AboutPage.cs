@@ -221,7 +221,7 @@ namespace ICSharpCode.ILSpy
 				XElement s = spySettings["UpdateSettings"];
 				this.automaticUpdateCheckEnabled = (bool?)s.Element("AutomaticUpdateCheckEnabled") ?? true;
 				try {
-					this.LastSuccessfulUpdateCheck = (DateTime?)s.Element("LastSuccessfulUpdateCheck");
+					this.lastSuccessfulUpdateCheck = (DateTime?)s.Element("LastSuccessfulUpdateCheck");
 				} catch (FormatException) {
 					// avoid crashing on settings files invalid due to
 					// https://github.com/icsharpcode/ILSpy/issues/closed/#issue/2
