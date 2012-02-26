@@ -949,7 +949,6 @@ namespace ICSharpCode.Decompiler.Ast
 		IndexerDeclaration ConvertPropertyToIndexer(PropertyDeclaration astProp, PropertyDefinition propDef)
 		{
 			var astIndexer = new IndexerDeclaration();
-			astIndexer.Name = astProp.Name;
 			astIndexer.CopyAnnotationsFrom(astProp);
 			astProp.Attributes.MoveTo(astIndexer.Attributes);
 			astIndexer.Modifiers = astProp.Modifiers;

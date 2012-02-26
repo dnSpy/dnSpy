@@ -282,6 +282,9 @@ namespace ICSharpCode.Decompiler.Ast
 			nodeStack.Push(node);
 			startLocations.Push(output.Location);
 			
+			if (node is AttributedNode && node.GetChildByRole(AstNode.Roles.Identifier).IsNull)
+				output.WriteDefinition("", node.Annotation<MemberReference>(), false);
+			
 			MemberMapping mapping = node.Annotation<MemberMapping>();
 			if (mapping != null) {
 				parentMemberMappings.Push(currentMemberMapping);
