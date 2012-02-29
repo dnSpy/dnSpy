@@ -92,6 +92,11 @@ namespace Mono.Cecil {
 			set { attributes = attributes.SetAttributes ((uint) AssemblyAttributes.Retargetable, value); }
 		}
 
+		public bool IsWindowsRuntime {
+			get { return attributes.GetAttributes ((uint) AssemblyAttributes.WindowsRuntime); }
+			set { attributes = attributes.SetAttributes ((uint) AssemblyAttributes.WindowsRuntime, value); }
+		}
+
 		public byte [] PublicKey {
 			get { return public_key; }
 			set {

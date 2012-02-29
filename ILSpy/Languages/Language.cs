@@ -89,7 +89,7 @@ namespace ICSharpCode.ILSpy
 		{
 			WriteCommentLine(output, assembly.FileName);
 			var name = assembly.AssemblyDefinition.Name;
-			if ((name.Attributes & (AssemblyAttributes)0x0200) != 0) {
+			if (name.IsWindowsRuntime) {
 				WriteCommentLine(output, name.Name + " [WinRT]");
 			} else {
 				WriteCommentLine(output, name.FullName);

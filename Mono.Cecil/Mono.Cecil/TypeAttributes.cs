@@ -62,6 +62,7 @@ namespace Mono.Cecil {
 		// Implementation attributes
 		Import				= 0x00001000,	// Class/Interface is imported
 		Serializable		= 0x00002000,	// Class is serializable
+		WindowsRuntime		= 0x00004000,	// Windows Runtime type
 
 		// String formatting attributes
 		StringFormatMask	= 0x00030000,	// Use this mask to retrieve string information for native interop

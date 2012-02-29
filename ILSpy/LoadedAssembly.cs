@@ -181,7 +181,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
-			if ((name.Attributes & (AssemblyAttributes)0x0200) != 0) {
+			if (name.IsWindowsRuntime) {
 				return assemblyList.winRTMetadataLookupCache.GetOrAdd(name.Name, LookupWinRTMetadata);
 			} else {
 				return assemblyList.assemblyLookupCache.GetOrAdd(name.FullName, LookupReferencedAssemblyInternal);

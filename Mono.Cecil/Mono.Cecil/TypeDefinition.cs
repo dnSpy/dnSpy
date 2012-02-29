@@ -389,6 +389,11 @@ namespace Mono.Cecil {
 			set { attributes = attributes.SetAttributes ((uint) TypeAttributes.Serializable, value); }
 		}
 
+		public bool IsWindowsRuntime {
+			get { return attributes.GetAttributes ((uint) TypeAttributes.WindowsRuntime); }
+			set { attributes = attributes.SetAttributes ((uint) TypeAttributes.WindowsRuntime, value); }
+		}
+
 		public bool IsAnsiClass {
 			get { return attributes.GetMaskedAttributes ((uint) TypeAttributes.StringFormatMask, (uint) TypeAttributes.AnsiClass); }
 			set { attributes = attributes.SetMaskedAttributes ((uint) TypeAttributes.StringFormatMask, (uint) TypeAttributes.AnsiClass, value); }

@@ -83,7 +83,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			if ((r.Attributes & (AssemblyAttributes)0x0200) != 0) {
+			if (r.IsWindowsRuntime) {
 				language.WriteCommentLine(output, r.Name + " [WinRT]");
 			} else {
 				language.WriteCommentLine(output, r.FullName);
