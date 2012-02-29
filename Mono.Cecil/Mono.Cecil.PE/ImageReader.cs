@@ -118,9 +118,11 @@ namespace Mono.Cecil.PE {
 				return TargetArchitecture.AMD64;
 			case 0x0200:
 				return TargetArchitecture.IA64;
+			case 0x01c4:
+				return TargetArchitecture.ARMv7;
 			}
 
-			throw new NotSupportedException ();
+			throw new NotSupportedException (machine.ToString());
 		}
 
 		static ModuleKind GetModuleKind (ushort characteristics, ushort subsystem)

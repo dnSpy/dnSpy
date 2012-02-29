@@ -41,6 +41,7 @@ namespace Mono.Cecil {
 		I386,
 		AMD64,
 		IA64,
+		ARMv7
 	}
 
 	[Flags]
@@ -48,5 +49,6 @@ namespace Mono.Cecil {
 		ILOnly = 1,
 		Required32Bit = 2,
 		StrongNameSigned = 8,
+		Preferred32Bit = 0x00020000
 	}
 }
