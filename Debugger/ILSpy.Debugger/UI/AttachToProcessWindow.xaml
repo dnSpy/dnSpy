@@ -13,9 +13,9 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition
-				Height="1.8*" />
+				Height="1*" />
 			<RowDefinition
-				Height="0.17*" />
+				Height="Auto" />
 		</Grid.RowDefinitions>
 		<ListView
 			MouseDoubleClick="RunningProcesses_MouseDoubleClick"
@@ -45,12 +45,14 @@
 				HorizontalAlignment="Center"
 				x:Name="AttachButton"
 				Click="AttachButton_Click"
+				IsDefault="True"
 				Content="Attach"
 				Width="100" />
 			<Button
 				DockPanel.Dock="Right"
 				x:Name="CancelButton"
 				Content="Cancel"
+				IsCancel="True"
 				Click="CancelButton_Click"
 				Width="100" />
 		</DockPanel>

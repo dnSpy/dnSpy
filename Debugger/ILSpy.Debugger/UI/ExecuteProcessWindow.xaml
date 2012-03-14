@@ -6,108 +6,105 @@
 	WindowState="Normal"
 	WindowStyle="ToolWindow"
 	ShowInTaskbar="False"
-	Height="250"
-	Width="596">
-	<Grid
-		Height="217">
+	Height="171"
+	Width="509">
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition
 				Height="1.4*" />
 			<RowDefinition
-				Height="0.2*" />
+				Height="Auto" />
 		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition
+				Width="125" />
+			<ColumnDefinition
+				Width="1*" />
+			<ColumnDefinition
+				Width="40" />
+		</Grid.ColumnDefinitions>
 		<Label
 			Content="Executable"
 			Grid.Column="0"
 			Grid.Row="0"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
-			Margin="19.5,28.5,0,0"
-			Width="92"
-			Height="25" />
+			Margin="19.5,15.5,0,0" />
 		<TextBox
-			Grid.Column="0"
+			Name="pathTextBox"
+			Grid.Column="1"
 			Grid.Row="0"
-			HorizontalAlignment="Right"
+			HorizontalAlignment="Stretch"
 			VerticalAlignment="Top"
-			Margin="0,28.5,84.5,0"
-			Width="368"
-			Height="25"
-			Name="pathTextBox" />
+			Margin="5,15.5,0,0" />
 		<Button
-			Grid.Column="0"
-			Grid.Row="0"
-			HorizontalAlignment="Left"
-			VerticalAlignment="Top"
-			Margin="502.5,28.5,0,0"
-			Width="25"
-			Height="25"
 			Content="..."
+			MinWidth="25"
 			Name="pathButton"
-			Click="pathButton_Click" />
-		<TextBox
-			Grid.Column="0"
+			Click="pathButton_Click"
+			Grid.Column="2"
 			Grid.Row="0"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
-			Margin="133.5,81,0,0"
-			Width="368"
-			Height="25"
-			Name="argumentsTextBox" />
+			Margin="5,15.5,0,0" />
 		<Label
 			Content="Arguments"
 			Grid.Column="0"
 			Grid.Row="0"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
-			Margin="19.5,81,0,0"
-			Width="92"
-			Height="31" />
-		<Button
-			Content="..."
-			Grid.Column="0"
-			Grid.Row="0"
-			HorizontalAlignment="Left"
-			Width="25"
-			Click="workingDirectoryButton_Click"
-			Height="25"
-			VerticalAlignment="Bottom"
-			Margin="502.5,0,0,30.875"
-			Name="workingDirectoryButton" />
+			Margin="19.5,46.46,0,0" />
 		<TextBox
-			Grid.Column="0"
+			Name="argumentsTextBox"
+			Grid.Column="1"
 			Grid.Row="0"
-			HorizontalAlignment="Left"
+			HorizontalAlignment="Stretch"
 			VerticalAlignment="Top"
-			Margin="133.5,134,0,0"
-			Width="368"
-			Height="25"
-			Name="workingDirectoryTextBox" />
+			Margin="5,46.46,0,0" />
 		<Label
 			Content="Working directory"
 			Grid.Column="0"
 			Grid.Row="0"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
-			Margin="19.5,134,0,0"
-			Width="113"
-			Height="31" />
-		<DockPanel
+			Margin="19.5,77.42,0,0" />
+		<TextBox
+			Name="workingDirectoryTextBox"
+			Grid.Column="1"
+			Grid.Row="0"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Margin="5,77.42,0,0" />
+		<Button
+			Content="..."
+			MinWidth="25"
+			Click="workingDirectoryButton_Click"
+			Name="workingDirectoryButton"
+			Grid.Column="2"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="5,77.42,0,0" />
+		<StackPanel
+			Margin="4"
+			Orientation="Horizontal"
+			HorizontalAlignment="Right"
 			Grid.Row="1"
-			LastChildFill="False">
+			Grid.ColumnSpan="3">
 			<Button
+				Margin="0,0,4,0"
 				DockPanel.Dock="Left"
 				HorizontalAlignment="Center"
 				x:Name="ExecuteButton"
+				IsDefault="True"
 				Click="ExecuteButton_Click"
-				Content="Execute"
-				Width="100" />
+				Content="Execute" />
 			<Button
 				DockPanel.Dock="Right"
+				IsCancel="True"
 				x:Name="CancelButton"
 				Content="Cancel"
-				Click="CancelButton_Click"
-				Width="100" />
-		</DockPanel>
+				Click="CancelButton_Click" />
+		</StackPanel>
 	</Grid>
 </Window>
