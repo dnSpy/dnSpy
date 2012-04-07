@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy.TextView
 	/// <summary>
 	/// A text segment that references some object. Used for hyperlinks in the editor.
 	/// </summary>
-	sealed class ReferenceSegment : TextSegment
+	public sealed class ReferenceSegment : TextSegment
 	{
 		public object Reference;
 		public bool IsLocal;

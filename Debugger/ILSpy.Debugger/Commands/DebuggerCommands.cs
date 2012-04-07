@@ -179,12 +179,12 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 	
-	[ExportContextMenuEntry(Header = "_Debug Assembly", Icon = "Images/application-x-executable.png")]
+	[ExportContextMenuEntryAttribute(Header = "_Debug Assembly", Icon = "Images/application-x-executable.png")]
 	internal sealed class DebugExecutableNodeCommand : DebuggerCommand, IContextMenuEntry
 	{
-		public bool IsVisible(SharpTreeNode[] selectedNodes)
+		public bool IsVisible(TextViewContext context)
 		{
-			return selectedNodes.All(
+			return context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(
 				delegate (SharpTreeNode n) {
 					AssemblyTreeNode a = n as AssemblyTreeNode;
 					if (a == null)
@@ -194,15 +194,17 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				});
 		}
 		
-		public bool IsEnabled(SharpTreeNode[] selectedNodes)
+		public bool IsEnabled(TextViewContext context)
 		{
-			return selectedNodes.Length == 1;
+			return context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1;
 		}
 		
-		public void Execute(SharpTreeNode[] selectedNodes)
+		public void Execute(TextViewContext context)
 		{
+			if (context.SelectedTreeNodes == null)
+				return;
 			if (!CurrentDebugger.IsDebugging) {
-				AssemblyTreeNode n = selectedNodes[0] as AssemblyTreeNode;
+				AssemblyTreeNode n = context.SelectedTreeNodes[0] as AssemblyTreeNode;
 				
 				if (DebuggerSettings.Instance.AskForArguments) {
 					var window = new ExecuteProcessWindow { Owner = MainWindow.Instance, 

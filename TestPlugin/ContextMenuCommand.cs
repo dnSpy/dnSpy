@@ -11,22 +11,24 @@ using Mono.Cecil;
 
 namespace TestPlugin
 {
-	[ExportContextMenuEntry(Header = "_Save Assembly")]
+	[ExportContextMenuEntryAttribute(Header = "_Save Assembly")]
 	public class SaveAssembly : IContextMenuEntry
 	{
-		public bool IsVisible(SharpTreeNode[] selectedNodes)
+		public bool IsVisible(TextViewContext context)
 		{
-			return selectedNodes.All(n => n is AssemblyTreeNode);
+			return context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
 		}
 		
-		public bool IsEnabled(SharpTreeNode[] selectedNodes)
+		public bool IsEnabled(TextViewContext context)
 		{
-			return selectedNodes.Length == 1;
+			return context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1;
 		}
 		
-		public void Execute(SharpTreeNode[] selectedNodes)
+		public void Execute(TextViewContext context)
 		{
-			AssemblyTreeNode node = (AssemblyTreeNode)selectedNodes[0];
+			if (context.SelectedTreeNodes == null)
+				return;
+			AssemblyTreeNode node = (AssemblyTreeNode)context.SelectedTreeNodes[0];
 			AssemblyDefinition asm = node.LoadedAssembly.AssemblyDefinition as AssemblyDefinition;
 			if (asm != null) {
 				SaveFileDialog dlg = new SaveFileDialog();

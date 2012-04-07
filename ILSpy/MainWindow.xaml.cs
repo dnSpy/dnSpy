@@ -90,7 +90,7 @@ namespace ICSharpCode.ILSpy
 			
 			InitMainMenu();
 			InitToolbar();
-			ContextMenuProvider.Add(treeView);
+			ContextMenuProvider.Add(treeView, decompilerTextView);
 			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
 		}

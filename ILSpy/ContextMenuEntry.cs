@@ -19,17 +19,49 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
-
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
 {
 	public interface IContextMenuEntry
 	{
-		bool IsVisible(SharpTreeNode[] selectedNodes);
-		bool IsEnabled(SharpTreeNode[] selectedNodes);
-		void Execute(SharpTreeNode[] selectedNodes);
+		bool IsVisible(TextViewContext context);
+		bool IsEnabled(TextViewContext context);
+		void Execute(TextViewContext context);
+	}
+	
+	public class TextViewContext
+	{
+		/// <summary>
+		/// Returns the selected nodes in the tree view.
+		/// Returns null, if context menu does not belong to a tree view.
+		/// </summary>
+		public SharpTreeNode[] SelectedTreeNodes { get; private set; }
+		
+		/// <summary>
+		/// Returns the text view the context menu is assigned to.
+		/// Returns null, if context menu is not assigned to a text view.
+		/// </summary>
+		public DecompilerTextView TextView { get; private set; }
+		
+		/// <summary>
+		/// Returns the reference the mouse cursor is currently hovering above.
+		/// Returns null, if there was no reference found.
+		/// </summary>
+		public ReferenceSegment Reference { get; private set; }
+		
+		public static TextViewContext Create(SharpTreeNode[] selectedTreeNodes = null, DecompilerTextView textView = null)
+		{
+			var reference = textView != null ? textView.GetReferenceSegmentAtMousePosition() : null;
+			return new TextViewContext {
+				SelectedTreeNodes = selectedTreeNodes,
+				TextView = textView,
+				Reference = reference
+			};
+		}
 	}
 	
 	public interface IContextMenuEntryMetadata
@@ -61,23 +93,31 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Enables extensible context menu support for the specified tree view.
 		/// </summary>
-		public static void Add(SharpTreeView treeView)
+		public static void Add(SharpTreeView treeView, DecompilerTextView textView = null)
 		{
-			var provider = new ContextMenuProvider(treeView);
+			var provider = new ContextMenuProvider(treeView, textView);
 			treeView.ContextMenuOpening += provider.treeView_ContextMenuOpening;
 			// Context menu is shown only when the ContextMenu property is not null before the
 			// ContextMenuOpening event handler is called.
 			treeView.ContextMenu = new ContextMenu();
+			if (textView != null) {
+				textView.ContextMenuOpening += provider.textView_ContextMenuOpening;
+				// Context menu is shown only when the ContextMenu property is not null before the
+				// ContextMenuOpening event handler is called.
+				textView.ContextMenu = new ContextMenu();
+			}
 		}
 		
 		readonly SharpTreeView treeView;
+		readonly DecompilerTextView textView;
 		
 		[ImportMany(typeof(IContextMenuEntry))]
 		Lazy<IContextMenuEntry, IContextMenuEntryMetadata>[] entries = null;
 		
-		private ContextMenuProvider(SharpTreeView treeView)
+		ContextMenuProvider(SharpTreeView treeView, DecompilerTextView textView = null)
 		{
 			this.treeView = treeView;
+			this.textView = textView;
 			App.CompositionContainer.ComposeParts(this);
 		}
 		
@@ -88,12 +128,34 @@ namespace ICSharpCode.ILSpy
 				e.Handled = true; // don't show the menu
 				return;
 			}
-			ContextMenu menu = new ContextMenu();
+			TextViewContext context = TextViewContext.Create(selectedNodes);
+			ContextMenu menu;
+			if (ShowContextMenu(context, out menu))
+				treeView.ContextMenu = menu;
+			else
+				// hide the context menu.
+				e.Handled = true;
+		}
+		
+		void textView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+		{
+			TextViewContext context = TextViewContext.Create(textView: textView);
+			ContextMenu menu;
+			if (ShowContextMenu(context, out menu))
+				textView.ContextMenu = menu;
+			else
+				// hide the context menu.
+				e.Handled = true;
+		}
+
+		bool ShowContextMenu(TextViewContext context, out ContextMenu menu)
+		{
+			menu = new ContextMenu();
 			foreach (var category in entries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
 				bool needSeparatorForCategory = true;
 				foreach (var entryPair in category) {
 					IContextMenuEntry entry = entryPair.Value;
-					if (entry.IsVisible(selectedNodes)) {
+					if (entry.IsVisible(context)) {
 						if (needSeparatorForCategory && menu.Items.Count > 0) {
 							menu.Items.Add(new Separator());
 							needSeparatorForCategory = false;
@@ -107,22 +169,15 @@ namespace ICSharpCode.ILSpy
 								Source = Images.LoadImage(entry, entryPair.Metadata.Icon)
 							};
 						}
-						if (entryPair.Value.IsEnabled(selectedNodes)) {
-							menuItem.Click += delegate
-							{
-								entry.Execute(selectedNodes);
-							};
+						if (entryPair.Value.IsEnabled(context)) {
+							menuItem.Click += delegate { entry.Execute(context); };
 						} else
 							menuItem.IsEnabled = false;
 						menu.Items.Add(menuItem);
 					}
 				}
 			}
-			if (menu.Items.Count > 0)
-				treeView.ContextMenu = menu;
-			else
-				// hide the context menu.
-				e.Handled = true;
+			return menu.Items.Count > 0;
 		}
 	}
 }

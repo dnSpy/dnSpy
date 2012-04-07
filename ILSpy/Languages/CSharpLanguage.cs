@@ -230,7 +230,6 @@ namespace ICSharpCode.ILSpy
 						return "x86";
 					else
 						return "AnyCPU (64-bit preferred)";
-					break;
 				case TargetArchitecture.AMD64:
 					return "x64";
 				case TargetArchitecture.IA64:
@@ -250,7 +249,6 @@ namespace ICSharpCode.ILSpy
 						return "x86";
 					else
 						return "AnyCPU";
-					break;
 				case TargetArchitecture.AMD64:
 					return "x64";
 				case TargetArchitecture.IA64:

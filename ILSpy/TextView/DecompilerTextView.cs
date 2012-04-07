@@ -182,7 +182,7 @@ namespace ICSharpCode.ILSpy.TextView
 			TextViewPosition? position = textEditor.TextArea.TextView.GetPosition(e.GetPosition(textEditor.TextArea.TextView) + textEditor.TextArea.TextView.ScrollOffset);
 			if (position == null)
 				return;
-			int offset = textEditor.Document.GetOffset(position.Value);
+			int offset = textEditor.Document.GetOffset(position.Value.Location);
 			ReferenceSegment seg = referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
 			if (seg == null)
 				return;
@@ -760,6 +760,15 @@ namespace ICSharpCode.ILSpy.TextView
 			return text;
 		}
 		#endregion
+
+		internal ReferenceSegment GetReferenceSegmentAtMousePosition()
+		{
+			TextViewPosition? position = textEditor.TextArea.TextView.GetPosition(Mouse.GetPosition(textEditor.TextArea.TextView) + textEditor.TextArea.TextView.ScrollOffset);
+			if (position == null)
+				return null;
+			int offset = textEditor.Document.GetOffset(position.Value.Location);
+			return referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
+		}
 
 		public DecompilerTextViewState GetState()
 		{
