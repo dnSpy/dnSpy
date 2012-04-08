@@ -42,6 +42,12 @@ namespace ICSharpCode.ILSpy
 		public SharpTreeNode[] SelectedTreeNodes { get; private set; }
 		
 		/// <summary>
+		/// Returns the tree view the context menu is assigned to.
+		/// Returns null, if context menu is not assigned to a tree view.
+		/// </summary>
+		public SharpTreeView TreeView { get; private set; }
+		
+		/// <summary>
 		/// Returns the text view the context menu is assigned to.
 		/// Returns null, if context menu is not assigned to a text view.
 		/// </summary>
@@ -53,10 +59,12 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public ReferenceSegment Reference { get; private set; }
 		
-		public static TextViewContext Create(SharpTreeNode[] selectedTreeNodes = null, DecompilerTextView textView = null)
+		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null)
 		{
 			var reference = textView != null ? textView.GetReferenceSegmentAtMousePosition() : null;
+			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().ToArray() : null;
 			return new TextViewContext {
+				TreeView = treeView,
 				SelectedTreeNodes = selectedTreeNodes,
 				TextView = textView,
 				Reference = reference
@@ -123,12 +131,11 @@ namespace ICSharpCode.ILSpy
 		
 		void treeView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
-			SharpTreeNode[] selectedNodes = treeView.GetTopLevelSelection().ToArray();
-			if (selectedNodes.Length == 0) {
+			TextViewContext context = TextViewContext.Create(treeView);
+			if (context.SelectedTreeNodes.Length == 0) {
 				e.Handled = true; // don't show the menu
 				return;
 			}
-			TextViewContext context = TextViewContext.Create(selectedNodes);
 			ContextMenu menu;
 			if (ShowContextMenu(context, out menu))
 				treeView.ContextMenu = menu;

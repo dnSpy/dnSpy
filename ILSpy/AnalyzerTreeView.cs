@@ -84,6 +84,23 @@ namespace ICSharpCode.ILSpy
 			this.SelectedItem = node;
 			this.FocusNode(node);
 		}
+		
+		public void ShowOrFocus(AnalyzerTreeNode node)
+		{
+			if (node is AnalyzerEntityTreeNode) {
+				var an = node as AnalyzerEntityTreeNode;
+				var found = this.Root.Children.OfType<AnalyzerEntityTreeNode>().FirstOrDefault(n => n.Member == an.Member);
+				if (found != null) {
+					Show();
+					
+					found.IsExpanded = true;
+					this.SelectedItem = found;
+					this.FocusNode(found);
+					return;
+				}
+			}
+			Show(node);
+		}
 
 		void IPane.Closed()
 		{

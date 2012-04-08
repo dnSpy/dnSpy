@@ -52,16 +52,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		public void Execute(TextViewContext context)
 		{
-			var segment = context.Reference;
 			if (context.SelectedTreeNodes != null) {
-				// TODO: figure out when equivalent nodes are already present
-				// and focus those instead.
 				foreach (IMemberTreeNode node in context.SelectedTreeNodes) {
 					Analyze(node.Member);
 				}
-			} else if (segment != null && segment.Reference is MemberReference) {
-				if (segment.Reference is MemberReference)
-					Analyze((MemberReference)segment.Reference);
+			} else if (context.Reference != null && context.Reference.Reference is MemberReference) {
+				if (context.Reference.Reference is MemberReference)
+					Analyze((MemberReference)context.Reference.Reference);
 				// TODO: implement support for other references: ParameterReference, etc.
 			}
 		}
@@ -72,19 +69,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (member is TypeReference)
 				type = ((TypeReference)member).Resolve();
 			if (type != null)
-				AnalyzerTreeView.Instance.Show(new AnalyzedTypeTreeNode(type.Resolve()));
+				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedTypeTreeNode(type.Resolve()));
 			FieldDefinition field = member as FieldDefinition;
 			if (field != null)
-				AnalyzerTreeView.Instance.Show(new AnalyzedFieldTreeNode(field));
+				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedFieldTreeNode(field));
 			MethodDefinition method = member as MethodDefinition;
 			if (method != null)
-				AnalyzerTreeView.Instance.Show(new AnalyzedMethodTreeNode(method));
+				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedMethodTreeNode(method));
 			var propertyAnalyzer = AnalyzedPropertyTreeNode.TryCreateAnalyzer(member);
 			if (propertyAnalyzer != null)
-				AnalyzerTreeView.Instance.Show(propertyAnalyzer);
+				AnalyzerTreeView.Instance.ShowOrFocus(propertyAnalyzer);
 			var eventAnalyzer = AnalyzedEventTreeNode.TryCreateAnalyzer(member);
 			if (eventAnalyzer != null)
-				AnalyzerTreeView.Instance.Show(eventAnalyzer);
+				AnalyzerTreeView.Instance.ShowOrFocus(eventAnalyzer);
 		}
 	}
 }
