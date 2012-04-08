@@ -689,7 +689,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				bool isNotKey = (identifier > 0xe8);
 				if (isNotKey)
 					identifier = (short)(identifier - 0xe8);
-				ResourceName resource = (ResourceName) KnownInfo.KnownResourceTable[(int)identifier];
+				ResourceName resource = KnownInfo.KnownResourceTable[identifier];
 				if (!isNotKey)
 					return new ResourceName(resource.Name + "Key");
 				return resource;
@@ -1512,9 +1512,12 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		object GetStaticResource(short identifier)
 		{
-			if (identifier < keys[currentKey - 1].StaticResources.Count)
-				return keys[currentKey - 1].StaticResources[(int)identifier];
-
+			int keyIndex = currentKey;
+			while (keyIndex >= 0 && !keys[keyIndex].HasStaticResources)
+				keyIndex--;
+			if (keyIndex >= 0 && identifier < keys[keyIndex].StaticResources.Count)
+				return keys[keyIndex].StaticResources[(int)identifier];
+//			Debug.WriteLine(string.Format("Cannot find StaticResource: {0}", identifier));
 //			return "???" + identifier + "???";
 			throw new ArgumentException("Cannot find StaticResource: " + identifier, "identifier");
 		}
