@@ -10,20 +10,19 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 	/// </summary>
 	public class XmlPIMapping
 	{
-		private string _xmlNamespace;
-		private short _assemblyId;
-		private string _clrNamespace;
-		private static XmlPIMapping _default = new XmlPIMapping(PresentationNamespace, 0, String.Empty);
+		string _xmlNamespace;
+		string assemblyName;
+		string _clrNamespace;
 
 		public const string XamlNamespace = "http://schemas.microsoft.com/winfx/2006/xaml";
 		public const string PresentationNamespace = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
 		public const string PresentationOptionsNamespace = "http://schemas.microsoft.com/winfx/2006/xaml/presentation/options";
 		public const string McNamespace = "http://schemas.openxmlformats.org/markup-compatibility/2006";
 
-		public XmlPIMapping(string xmlNamespace, short assemblyId, string clrNamespace)
+		public XmlPIMapping(string xmlNamespace, string assembly, string clrNamespace)
 		{
 			_xmlNamespace = xmlNamespace;
-			_assemblyId = assemblyId;
+			assemblyName = assembly;
 			_clrNamespace = clrNamespace;
 		}
 
@@ -37,11 +36,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		}
 
 		/// <summary>
-		/// Restituisce l'id dell'assembly
+		/// Name of the assembly.
 		/// </summary>
-		public short AssemblyId
-		{
-			get { return _assemblyId; }
+		public string Assembly {
+			get { return assemblyName; }
 		}
 
 		/// <summary>
@@ -51,13 +49,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		{
 			get { return _clrNamespace; }
 		}
-
-		/// <summary>
-		/// Restituisce il mapping di default di WPF
-		/// </summary>
-		public static XmlPIMapping Presentation
+		
+		public static XmlPIMapping GetPresentationMapping(Func<short, string> assemblyResolve)
 		{
-			get { return _default; }
+			return new XmlPIMapping(PresentationNamespace, assemblyResolve(0), string.Empty);
 		}
 	}
 }
