@@ -329,6 +329,8 @@ namespace ICSharpCode.ILSpy
 					AboutPage.Display(decompilerTextView);
 				}
 			}
+			
+			NavigationCommands.Search.InputGestures.Add(new KeyGesture(Key.E, ModifierKeys.Control));
 		}
 		
 		#region Update Check
